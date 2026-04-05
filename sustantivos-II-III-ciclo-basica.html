@@ -1415,46 +1415,45 @@ function toggleAns(){ ansVisible=!ansVisible; document.querySelectorAll('.tg-ans
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
   {
-    // Horizontal: SUSTANTIVO(fila 0)
-    // Vertical:   GENERO(col 2), NUMERO(col 9)
+    // Horizontal: SUSTANTIVO(fila 0), NUMERO(fila 9)
+    // Vertical:   GENERO(col 0)
     // Diagonal↘:  CONCRETO(desde 1,1)
     // Diagonal↗:  COMUN(desde 8,5), PROPIO(desde 8,1)
     size:10,
     grid:[
       ['S','U','S','T','A','N','T','I','V','O'],
-      ['K','C','G','P','Q','Z','X','R','L','N'],
-      ['A','B','O','E','Y','M','V','D','F','U'],
-      ['W','T','N','N','N','C','P','J','G','M'],
-      ['M','J','E','X','C','E','L','K','H','E'],
-      ['C','Q','R','U','Z','R','R','T','W','R'],
-      ['I','X','O','Z','B','C','E','N','M','O'],
-      ['O','N','L','F','M','R','T','D','U','C'],
-      ['P','P','G','K','P','C','I','J','M','X'],
-      ['T','Y','D','V','O','A','Q','W','K','B']
+      ['G','C','L','P','Q','Z','W','R','B','K'],
+      ['E','A','O','F','Y','M','V','D','L','U'],
+      ['N','T','K','N','B','C','O','J','G','H'],
+      ['E','J','H','W','C','I','L','K','A','N'],
+      ['R','Q','Z','U','P','R','D','T','U','Y'],
+      ['O','X','Y','O','B','C','E','M','F','K'],
+      ['L','Z','R','F','M','W','O','T','D','C'],
+      ['A','P','G','K','H','C','I','J','O','X'],
+      ['T','Y','N','U','M','E','R','O','K','B']
     ],
     words:[
       {w:'SUSTANTIVO', cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]]},
       {w:'CONCRETO',   cells:[[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]]},
-      {w:'GENERO',     cells:[[1,2],[2,2],[3,2],[4,2],[5,2],[6,2]]},
-      {w:'NUMERO',     cells:[[1,9],[2,9],[3,9],[4,9],[5,9],[6,9]]},
+      {w:'GENERO',     cells:[[1,0],[2,0],[3,0],[4,0],[5,0],[6,0]]},
+      {w:'NUMERO',     cells:[[9,2],[9,3],[9,4],[9,5],[9,6],[9,7]]},
       {w:'COMUN',      cells:[[8,5],[7,6],[6,7],[5,8],[4,9]]},
-      {w:'PROPIO',     cells:[[8,1],[7,2],[6,3],[5,4],[4,5],[3,6]]},
+      {w:'PROPIO',     cells:[[8,1],[7,2],[6,3],[5,4],[4,5],[3,6]]}
     ]
   },
   {
-    // Horizontal: COLECTIVO(fila 0), INDIVIDUAL(fila 9)
-    // Vertical:   MASCULINO(col 9), JAURIA(col 1)
-    // Diagonal↘:  REBAÑO(desde 2,2)
-    // Diagonal↗:  OVEJA(desde 7,4 hacia 3,8)
+    // Horizontal: COLECTIVO(fila 0), REBAÑO(fila 2), INDIVIDUAL(fila 9)
+    // Vertical:   JAURIA(col 1), MASCULINO(col 9)
+    // Diagonal↗:  OVEJA(desde 7,4)
     size:10,
     grid:[
       ['C','O','L','E','C','T','I','V','O','M'],
-      ['P','J','E','M','E','N','I','N','O','A'],
-      ['K','A','R','E','B','A','Ñ','O','W','S'],
-      ['Q','U','Z','O','V','E','J','A','A','C'],
-      ['Y','R','H','G','J','D','S','J','P','U'],
-      ['M','I','N','B','V','E','V','Z','K','L'],
-      ['L','A','P','O','I','O','Y','T','R','I'],
+      ['P','J','E','M','K','N','I','Z','W','A'],
+      ['K','A','R','E','B','A','Ñ','O','F','S'],
+      ['Q','U','Z','O','V','Y','T','D','A','C'],
+      ['Y','R','H','G','J','W','S','J','P','U'],
+      ['M','I','N','B','P','K','E','Z','K','L'],
+      ['L','A','P','O','I','V','Y','T','R','I'],
       ['W','K','E','S','O','F','G','H','J','N'],
       ['X','C','V','B','N','M','K','L','P','O'],
       ['I','N','D','I','V','I','D','U','A','L']
@@ -1469,6 +1468,7 @@ const sopaSets=[
     ]
   }
 ];
+
 let currentSopaSetIdx=0, sopaFoundWords=new Set();
 let sopaFirstClickCell=null, sopaPointerStartCell=null, sopaPointerMoved=false, sopaSelectedCells=[];
 
@@ -1588,7 +1588,6 @@ function toggleSopaWords(){
   sfx('click');
   const set=sopaSets[currentSopaSetIdx];
   const btn=document.getElementById('sopaWordsBtn');
-  // Resaltar celdas ocultas (no encontradas aún) durante 2 s
   const revealCells=[];
   set.words.forEach(wObj=>{
     if(sopaFoundWords.has(wObj.w)) return;
