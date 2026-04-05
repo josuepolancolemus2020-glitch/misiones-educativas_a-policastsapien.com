@@ -370,6 +370,20 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 @media print{
   body *{display:none!important;}
 }
+/* ================= ACCESIBILIDAD: LETRA GRANDE ================= */
+body.letra-grande p, 
+body.letra-grande span, 
+body.letra-grande li, 
+body.letra-grande h2, 
+body.letra-grande h3,
+body.letra-grande .sopa-cell { 
+    font-size: 115% !important;
+    line-height: 1.6; 
+}
+
+body.letra-grande button {
+    font-size: initial;
+}
 </style>
 </head>
 <body>
@@ -791,11 +805,30 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
     <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
     <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
     <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
   </div>
 </footer>
 
 <script>
+// Función para hacer la letra más grande (Accesibilidad)
+function toggleLetra() {
+    document.body.classList.toggle('letra-grande');
+    
+    // Si tienes activados los sonidos, que suene al hacer clic
+    if(typeof sfx === 'function') sfx('click'); 
+    
+    // Guardar la preferencia para que no se borre al cambiar de página
+    const estaActivado = document.body.classList.contains('letra-grande');
+    localStorage.setItem('preferenciaLetra', estaActivado);
+}
+
+// Revisar la memoria al cargar la página
+window.addEventListener('DOMContentLoaded', () => {
+    if(localStorage.getItem('preferenciaLetra') === 'true') {
+        document.body.classList.add('letra-grande');
+    }
+});
 // ===================== UTILIDADES =====================
 const _pick = (arr, n) => [...arr].sort(() => Math.random() - 0.5).slice(0, n);
 const _shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
