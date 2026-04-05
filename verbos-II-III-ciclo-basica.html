@@ -357,6 +357,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .sopa-words{display:flex;flex-wrap:wrap;justify-content:center;gap:0.6rem;font-size:0.85rem;margin-bottom:1rem;}
 .sopa-w{padding:0.3rem 0.7rem;background:var(--card);border:2px solid var(--border);border-radius:12px;font-family:'Fredoka',sans-serif;transition:all 0.3s;}
 .sopa-w.found{border-color:var(--jade);background:var(--jade-gl);color:var(--jade);text-decoration:line-through;}
+.sopa-cell.sopa-reveal{background:var(--yellow);color:#111;animation:sopaRevealPulse 0.5s ease infinite alternate;}
+@keyframes sopaRevealPulse{from{opacity:0.5}to{opacity:1}}
 .sopa-hint{font-size:0.78rem;color:var(--gray);text-align:center;margin-bottom:0.4rem;}
 
 @media(max-width:600px){
@@ -673,6 +675,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
       <div class="sopa-grid" id="sopaGrid"></div>
     </div>
     <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-sec" id="sopaWordsBtn" onclick="toggleSopaWords()">🔦 Ver palabras</button>
       <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
     </div>
     <div id="fbSopa" class="fb" role="alert"></div>
@@ -1580,7 +1583,29 @@ function checkSopaSelection(){
 function nextSopaSet(){
   sfx('click'); sopaFoundWords=new Set();
   currentSopaSetIdx=(currentSopaSetIdx+1)%sopaSets.length;
-  buildSopa(); showToast('🔄 Nueva sopa cargada');
+  buildSopa();
+  showToast('🔄 Nueva sopa cargada');
+}
+let _sopaRevealTimer=null;
+function toggleSopaWords(){
+  sfx('click');
+  const set=sopaSets[currentSopaSetIdx];
+  const btn=document.getElementById('sopaWordsBtn');
+  // Resaltar celdas ocultas (no encontradas aún) durante 2 s
+  const revealCells=[];
+  set.words.forEach(wObj=>{
+    if(sopaFoundWords.has(wObj.w)) return;
+    wObj.cells.forEach(([r,c])=>{
+      const cell=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);
+      if(cell){ cell.classList.add('sopa-reveal'); revealCells.push(cell); }
+    });
+  });
+  btn.disabled=true;
+  clearTimeout(_sopaRevealTimer);
+  _sopaRevealTimer=setTimeout(()=>{
+    revealCells.forEach(c=>c.classList.remove('sopa-reveal'));
+    btn.disabled=false;
+  },2000);
 }
 
 let _sopaResizeTimer=null;
