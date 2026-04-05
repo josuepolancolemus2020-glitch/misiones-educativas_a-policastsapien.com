@@ -60,7 +60,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .xp-lvl{font-family:'Fredoka',sans-serif;font-size:0.72rem;background:rgba(255,255,255,0.1);border-radius:12px;padding:0.12rem 0.55rem;color:white;white-space:nowrap;}
 
 /* HERO */
-.hero{position:relative;z-index:10;padding:0.6rem 1.2rem 0.8rem;background:linear-gradient(135deg,#e84393 0%,#0984e3 55%,#6c5ce7 100%);color:white;overflow:hidden;}
+.hero{position:relative;z-index:10;padding:0.6rem 1.2rem 0.8rem;background: linear-gradient(135deg, var(--pri) 0%, var(--sec) 100%);color:white;overflow:hidden;}
 .hero::before{content:'VERBO · ACCIÓN · ESTADO · PASADO · PRESENTE · FUTURO · INDICATIVO · SUBJUNTIVO · IMPERATIVO · REGULAR · IRREGULAR';position:absolute;top:0;left:-10%;width:120%;height:100%;font-family:'Fredoka',sans-serif;font-size:0.9rem;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.15);white-space:nowrap;overflow:hidden;display:flex;align-items:center;animation:drift 28s linear infinite;pointer-events:none;}
 @keyframes drift{0%{transform:translateX(0)}100%{transform:translateX(-30%)}}
 .hero::after{display:none;}
