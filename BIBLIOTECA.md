@@ -35,12 +35,13 @@ Esta biblioteca centraliza los fragmentos de código (snippets), soluciones lóg
 - background: linear-gradient(135deg, #e84393 0%, #0984e3 55%, #6c5ce7 100%);
 
 /* Lo que se agregó (Variables dinámicas): */
-+ background: linear-gradient(135deg, var(--pri) 0%, var(--sec) 100%);
++ ↓//AGREGAR DESDE AQUÍ ↓ BUSCAR LÍNEA APROXIMADA 
+ background: linear-gradient(135deg, var(--pri) 0%, var(--sec) 100%);
++ ↑//HASTA AQUÍ
 ```
 
 ---
-
-## 2. Corrección de Coordenadas y Matrices (Sopa de Letras)
+## 2. Corrección de Coordenadas y Matrices (Sopa de Letras) cambia según contenido, este corresponde a los sustantivos
 
 **Descripción:** Reparación profunda del motor de la sopa de letras. Se reconstruyeron las matrices de letras (grid) y se recalcularon las coordenadas [fila, columna] del "juez" para validar las palabras.
 
@@ -98,7 +99,8 @@ Esta biblioteca centraliza los fragmentos de código (snippets), soluciones lóg
   @media print{
     body *{display:none!important;}
   }
-+ /* ================= ACCESIBILIDAD: LETRA GRANDE ================= */
++ ↓//AGREGAR DESDE AQUÍ ↓ BUSCAR LÍNEA APROXIMADA 373
+ /* ================= ACCESIBILIDAD: LETRA GRANDE ================= */
  body.letra-grande p, 
  body.letra-grande span, 
  body.letra-grande li, 
@@ -108,10 +110,11 @@ Esta biblioteca centraliza los fragmentos de código (snippets), soluciones lóg
      font-size: 115% !important;
      line-height: 1.6; 
  }
- 
++ ↑//HASTA AQUÍ
  body.letra-grande button {
      font-size: initial;
  }
+
   </style>
   </head>
   <body>
@@ -119,31 +122,34 @@ Esta biblioteca centraliza los fragmentos de código (snippets), soluciones lóg
 <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
     <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
     <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
-+   <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
++ ↓//AGREGAR DESDE AQUÍ ↓ BUSCAR LÍNEA APROXIMADA 700-800
+   <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
++ ↑//HASTA AQUÍ
     <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
   </div>
 </footer>
 
 <script>
-+ // Función para hacer la letra más grande (Accesibilidad)
-+ function toggleLetra() {
-+     document.body.classList.toggle('letra-grande');
-+     
-+     // Si tienes activados los sonidos, que suene al hacer clic
-+     if(typeof sfx === 'function') sfx('click'); 
-+     
-+     // Guardar la preferencia para que no se borre al cambiar de página
-+     const estaActivado = document.body.classList.contains('letra-grande');
-+     localStorage.setItem('preferenciaLetra', estaActivado);
-+ }
-+ 
-+ // Revisar la memoria al cargar la página
-+ window.addEventListener('DOMContentLoaded', () => {
-+     if(localStorage.getItem('preferenciaLetra') === 'true') {
-+         document.body.classList.add('letra-grande');
-+     }
-+ });
-
++ ↓//REEMPLAZAR DESDE AQUÍ ↓ BUSCAR LÍNEA APROXIMADA 700-800
+ // Función para hacer la letra más grande (Accesibilidad)
+ function toggleLetra() {
+     document.body.classList.toggle('letra-grande');
+     
+     // Si tienes activados los sonidos, que suene al hacer clic
+     if(typeof sfx === 'function') sfx('click'); 
+     
+     // Guardar la preferencia para que no se borre al cambiar de página
+     const estaActivado = document.body.classList.contains('letra-grande');
+     localStorage.setItem('preferenciaLetra', estaActivado);
+ }
+ 
+ // Revisar la memoria al cargar la página
+ window.addEventListener('DOMContentLoaded', () => {
+     if(localStorage.getItem('preferenciaLetra') === 'true') {
+         document.body.classList.add('letra-grande');
+     }
+ });
++ ↑//HASTA AQUÍ
   // ===================== UTILIDADES =====================
   const _pick = (arr, n) => [...arr].sort(() => Math.random() - 0.5).slice(0, n);
   const _shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
@@ -163,22 +169,90 @@ Esta biblioteca centraliza los fragmentos de código (snippets), soluciones lóg
       item.textContent=clsSelectedWord.textContent; item.dataset.t=clsSelectedWord.dataset.t;
       const original=clsSelectedWord;
 -     item.onclick=(ev)=>{ ev.stopPropagation(); document.getElementById('clsBank').appendChild(original); original.classList.remove('sel-word'); item.remove(); sfx('click'); };
-+     item.onclick = (ev) => {
-+         ev.stopPropagation(); // Evita que el clic se pase a la caja de atrás
-+         
-+         // El Candado Inteligente
-+         if (clsSelectedWord !== null) {
-+             // Manos llenas: En lugar de sacar la palabra, hacemos clic en la caja contenedora
-+             // para que la nueva palabra seleccionada caiga aquí adentro.
-+             col.click(); 
-+         } else {
-+             // Manos vacías: Devolvemos la palabra al banco
-+             document.getElementById('clsBank').appendChild(original);
-+             original.classList.remove('sel-word');
-+             item.remove();
-+             if(typeof sfx === 'function') sfx('click');
-+         }
-+     };
+
++ ↓//REEMPLAZAR DESDE AQUÍ ↓ BUSCAR LÍNEA APROXIMADA 111
+``` item.onclick = (ev) => {
+         ev.stopPropagation(); // Evita que el clic se pase a la caja de atrás
+         
+         // El Candado Inteligente
+         if (clsSelectedWord !== null) {
+             // Manos llenas: En lugar de sacar la palabra, hacemos clic en la caja contenedora
+             // para que la nueva palabra seleccionada caiga aquí adentro.
+             col.click(); 
+         } else {
+             // Manos vacías: Devolvemos la palabra al banco
+             document.getElementById('clsBank').appendChild(original);
+             original.classList.remove('sel-word');
+             item.remove();
+             if(typeof sfx === 'function') sfx('click');
+         }
+     };
++ ↑//HASTA AQUÍ 
       wordsCol.appendChild(item); clsSelectedWord.remove(); clsSelectedWord=null; sfx('click');
     };
   });
+```
+
+## 5. Función de Pistas "Ver Palabras" (Sopa de Letras)
+
+     Descripción: Lógica y diseño para revelar temporalmente las palabras ocultas en la sopa de letras. Genera una animación intermitente amarilla sobre las celdas de las palabras que el usuario aún no ha encontrado y deshabilita el botón por 2 segundos.
+
+     Ubicación:
+
+     HTML: Botón <button id="sopaWordsBtn"> (Aprox. línea 926).
+     CSS: Etiqueta <style> (Aprox. línea 360).
+     JS: Dentro de la etiqueta <script> (Aprox. línea 1585).
+     <!-- HTML -->
+
+     <!-- HTML -->
+
+```diff
++ ↓//COPIAR DESDE AQUÍ ↓ BUSCAR LÍNEA APROXIMADA 926
+<button class="btn btn-sec" id="sopaWordsBtn" onclick="toggleSopaWords()"> 🔦 Ver palabras</button>
++ ↑//HASTA AQUÍ
+
+/* CSS */
++ ↓//COPIAR DESDE AQUÍ ↓ BUSCAR LÍNEA APROXIMADA 360
+.sopa-cell.sopa-reveal {
+    background: var(--yellow);
+    color: #111;
+    animation: sopaRevealPulse 0.5s ease infinite alternate;
+}
+@keyframes sopaRevealPulse {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+}
+.sopa-hint {
+    font-size: 0.78rem;
+    color: var(--gray);
+    text-align: center;
+    margin-bottom: 0.4rem;
+}
++ ↑//HASTA AQUÍ
+
+/* JAVASCRIPT */
++ ↓//COPIAR DESDE AQUÍ ↓ BUSCAR LÍNEA APROXIMADA 1585
+let _sopaRevealTimer=null;
+
+function toggleSopaWords(){
+  sfx('click');
+  const set=sopaSets[currentSopaSetIdx];
+  const btn=document.getElementById('sopaWordsBtn');
+  const revealCells=[];
+  
+  set.words.forEach(wObj=>{
+    if(sopaFoundWords.has(wObj.w)) return;
+    wObj.cells.forEach(([r,c])=>{
+      const cell=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);
+      if(cell){ cell.classList.add('sopa-reveal'); revealCells.push(cell); }
+    });
+  });
+  
+  btn.disabled=true;
+  clearTimeout(_sopaRevealTimer);
+  _sopaRevealTimer=setTimeout(()=>{
+    revealCells.forEach(c=>c.classList.remove('sopa-reveal'));
+    btn.disabled=false;
+  },2000);
+}
++ ↑//HASTA AQUÍ
