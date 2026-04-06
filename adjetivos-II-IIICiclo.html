@@ -534,7 +534,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
   </div>
   <button class="next-sec-btn" onclick="go('s-flash')">
     <span class="nsb-icon">🃏</span>
-    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Flashcards</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -586,6 +585,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     <h2>🗂️ Clasifica los Adjetivos</h2>
     <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una palabra del banco y toca la columna donde pertenece.</p>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes conceptos te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
       <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
@@ -645,6 +647,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     <h2>🏆 Reto Final — ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el adjetivo rápidamente.</p>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
     <div class="game" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
       <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
