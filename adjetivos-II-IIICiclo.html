@@ -974,11 +974,11 @@ function go(id){
   const btn = document.querySelector(`[data-s="${id}"]`);
   if(btn){ btn.classList.add('active'); btn.setAttribute('aria-selected','true'); }
   window.scrollTo({top:0,behavior:'smooth'});
-}
-function fb(id, msg, ok){
-  const el = document.getElementById(id);
-  el.textContent = msg; el.className = 'fb show '+(ok?'ok':'err');
-  setTimeout(()=>el.classList.remove('show'), 3500);
+  
+  // NUEVO: Recalcular tamaño de la Sopa de Letras al abrir la pestaña
+  if (id === 's-sopa') {
+      setTimeout(buildSopa, 50);
+  }
 }
 
 // ===================== FLASHCARD DATA =====================
