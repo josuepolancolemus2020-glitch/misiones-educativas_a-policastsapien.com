@@ -1081,7 +1081,22 @@ function buildClass(){
       const item = document.createElement('div'); item.className='drop-item';
       item.textContent=clsSelectedWord.textContent; item.dataset.t=clsSelectedWord.dataset.t;
       const original=clsSelectedWord;
-      item.onclick=(ev)=>{ ev.stopPropagation(); document.getElementById('clsBank').appendChild(original); original.classList.remove('sel-word'); item.remove(); sfx('click'); };
+      item.onclick = (ev) => {
+         ev.stopPropagation(); // Evita que el clic se pase a la caja de atrás
+         
+         // El Candado Inteligente
+         if (clsSelectedWord !== null) {
+             // Manos llenas: En lugar de sacar la palabra, hacemos clic en la caja contenedora
+             // para que la nueva palabra seleccionada caiga aquí adentro.
+             col.click(); 
+         } else {
+             // Manos vacías: Devolvemos la palabra al banco
+             document.getElementById('clsBank').appendChild(original);
+             original.classList.remove('sel-word');
+             item.remove();
+             if(typeof sfx === 'function') sfx('click');
+         }
+     };
       wordsCol.appendChild(item); clsSelectedWord.remove(); clsSelectedWord=null; sfx('click');
     };
   });
