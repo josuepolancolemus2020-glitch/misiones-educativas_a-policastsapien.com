@@ -1402,7 +1402,7 @@ function genIdentifyTask(out, count){
   _instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el adjetivo en las siguientes oraciones. Escribe al lado qué tipo de adjetivo es.','<strong>Ejemplo:</strong> El perro grande corre. → <span style="color:var(--jade);font-weight:700;">Adjetivo calificativo (grande)</span>']);
   _pick(identifyTaskDB, Math.min(count, identifyTaskDB.length)).forEach((item,i)=>{
     const div=document.createElement('div'); div.className='tg-task';
-    div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><em style="font-size:0.92rem;">${item.s}</em><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;
+    div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;
     out.appendChild(div);
   });
 }
@@ -1432,7 +1432,7 @@ function genCompleteTask(out, count){
     const item=pool[i%pool.length];
     const div=document.createElement('div'); div.className='tg-task';
     const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
-    div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><span style="font-size:0.9rem;">${sent}</span><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📋 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;
+    div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📋 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;
     out.appendChild(div);
   }
 }
