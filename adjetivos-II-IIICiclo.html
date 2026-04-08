@@ -275,8 +275,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .tg-instruction-block h4{font-family:'Fredoka',sans-serif;font-size:0.95rem;color:var(--pri);margin-bottom:0.4rem;}
 .tg-instruction-block p{font-size:0.85rem;color:var(--dark);margin-bottom:0.2rem;}
 .tg-task {
-    padding: 0.4rem 0.5rem;
-    margin-bottom: 0.2rem; /* Menos separación entre tareas */
+    padding: 0.1rem 0.5rem; /* Reducimos el espacio interior arriba y abajo casi a cero */
+    margin-bottom: 0; /* Eliminamos por completo el margen extra debajo de cada bloque */
     display: flex;
     gap: 0.8rem;
     align-items: flex-start;
@@ -290,8 +290,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .tt-e{background:var(--pink-gl);color:var(--pink);}
 .tg-task-content {
     flex: 1;
-    font-size: 1.15rem; /* ¡Letra mucho más grande! */
-    line-height: 1.6;
+    font-size: 1.3rem; /* ¡Letra todavía más grande! */
+    line-height: 1.4; /* Reducimos esto un poco para que el texto se acerque más a la línea de abajo */
     color: var(--dark);
 }
 .tg-answer{display:none;margin-top:0.4rem;font-size:0.82rem;color:var(--gray);background:rgba(0,0,0,0.04);border-radius:6px;padding:0.4rem 0.6rem;}
