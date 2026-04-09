@@ -6,501 +6,576 @@
 <title>Misión Las Eras Geológicas | policastsapien.com</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f5f2ed;--dark:#1b2838;--card:#ffffff;--border:#e2ddd4;--orange:#ff6b35;--orange-lt:#ff8c5a;--orange-gl:rgba(255,107,53,0.15);--purple:#6c5ce7;--purple-lt:#a29bfe;--purple-gl:rgba(108,92,231,0.12);--green:#00b894;--green-lt:#55efc4;--green-gl:rgba(0,184,148,0.12);--blue:#0984e3;--blue-lt:#74b9ff;--blue-gl:rgba(9,132,227,0.12);--red:#d63031;--red-lt:#ff7675;--red-gl:rgba(214,48,49,0.08);--yellow:#fdcb6e;--yellow-br:#ffeaa7;--pink:#e84393;--pink-gl:rgba(232,67,147,0.12);--gray:#636e72;--shadow:rgba(45,52,54,0.10);--shadow-md:rgba(45,52,54,0.16);--jade:#00b894;--jade-gl:rgba(0,184,148,0.12);--amber:#e17055;--amber-gl:rgba(225,112,85,0.12);--sky:#0984e3;--sky-gl:rgba(9,132,227,0.12);--pri:#2d8659;--pri-lt:#4aad7a;--pri-gl:rgba(45,134,89,0.12);--sec:#6b8e23;--sec-lt:#8cb52a;--sec-gl:rgba(107,142,35,0.12);--nav-bg:#ffffff;--nav-border:var(--border);--xp-bg:#1b2838;--card-bg:#ffffff;}
-[data-theme="dark"]{--bg:#0f1117;--card:#1e2130;--card-bg:#1e2130;--dark:#e8f0fe;--border:#2d3450;--gray:#a0aec0;--shadow:rgba(0,0,0,0.4);--nav-bg:#1e2130;--nav-border:#2d3450;--xp-bg:#0a0d16;--pri-gl:rgba(45,134,89,0.22);--sec-gl:rgba(107,142,35,0.22);--jade-gl:rgba(0,184,148,0.20);--amber-gl:rgba(225,112,85,0.20);--purple-gl:rgba(108,92,231,0.20);--pink-gl:rgba(232,67,147,0.20);--blue-gl:rgba(9,132,227,0.20);--green-gl:rgba(0,184,148,0.20);}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1117;--card:#1e2130;--card-bg:#1e2130;--dark:#e8f0fe;--border:#2d3450;--gray:#a0aec0;--shadow:rgba(0,0,0,0.4);--nav-bg:#1e2130;--nav-border:#2d3450;--xp-bg:#0a0d16;--pri-gl:rgba(45,134,89,0.22);--sec-gl:rgba(107,142,35,0.22);}}
-*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 30%,rgba(45,134,89,0.07) 0%,transparent 40%),radial-gradient(circle at 80% 70%,rgba(107,142,35,0.06) 0%,transparent 40%),radial-gradient(circle at 50% 50%,rgba(0,184,148,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}[data-theme="dark"] body::before{opacity:0.05;}:focus-visible{outline:3px solid var(--pri);outline-offset:3px;}
-.xp-bar{position:relative;z-index:10;background:var(--xp-bg);padding:.38rem 1rem;display:flex;align-items:center;gap:.8rem;transition:background .3s;}.xp-lbl{font-family:'Fredoka',sans-serif;color:var(--yellow-br);font-size:.8rem;white-space:nowrap;}.xp-track{flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;}.xp-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--pri),var(--sec),var(--jade));border-radius:10px;transition:width .6s cubic-bezier(.34,1.56,.64,1);}.xp-pts{font-family:'Fredoka',sans-serif;color:var(--yellow-br);font-size:.8rem;white-space:nowrap;}.xp-lvl{font-family:'Fredoka',sans-serif;font-size:.72rem;background:rgba(255,255,255,0.1);border-radius:12px;padding:.12rem .55rem;color:white;white-space:nowrap;}
-.hero{position:relative;z-index:10;padding:.6rem 1.2rem .8rem;background:linear-gradient(90deg,#2d8659 0%,#4a7a3b 50%,#6b8e23 100%);color:white;overflow:hidden;}.hero::before{content:'ERA · PRECÁMBRICA · PALEOZOICA · MESOZOICA · CENOZOICA · CUATERNARIA · FÓSIL · DINOSAURIO · PANGEA · GLACIACIÓN';position:absolute;top:0;left:-10%;width:120%;height:100%;font-family:'Fredoka',sans-serif;font-size:.9rem;font-weight:600;letter-spacing:.06em;color:rgba(255,255,255,0.15);white-space:nowrap;overflow:hidden;display:flex;align-items:center;animation:drift 28s linear infinite;pointer-events:none;}@keyframes drift{0%{transform:translateX(0)}100%{transform:translateX(-30%)}}.hero::after{display:none;}.hero-inner{display:flex;align-items:center;justify-content:center;gap:.6rem;}.hero-mascot{font-size:1.6rem;display:inline-block;animation:wobble 2.5s ease-in-out infinite;flex-shrink:0;}@keyframes wobble{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.05)}}.hero-text{text-align:left;}.hero h1{font-family:'Fredoka',sans-serif;font-size:clamp(1rem,3vw,1.4rem);font-weight:700;margin:0;line-height:1.1;}.hero h1 span{color:var(--yellow-br);}.hero .sub{font-size:.72rem;opacity:.95;margin:.1rem 0 .2rem;line-height:1.2;}.badge{display:inline-block;background:rgba(255,255,255,0.2);backdrop-filter:blur(5px);border-radius:20px;padding:.12rem .6rem;font-size:.68rem;font-family:'Fredoka',sans-serif;border:1px solid rgba(255,255,255,0.3);}
-.nav{display:flex;flex-wrap:wrap;justify-content:center;gap:.4rem;padding:.8rem 1rem;background:var(--nav-bg);border-top:2px solid var(--nav-border);border-bottom:2px solid var(--nav-border);position:static;z-index:10;transition:background .3s,border-color .3s;}.nav-t{font-family:'Fredoka',sans-serif;font-size:.75rem;padding:.35rem .7rem;border:2px solid var(--border);background:var(--card);color:var(--dark);border-radius:20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.25rem;position:relative;line-height:1.2;}.nav-t:hover{transform:translateY(-2px);box-shadow:0 4px 12px var(--shadow);}.nav-t.active{background:linear-gradient(135deg,var(--pri),var(--sec));color:white;border-color:transparent;}.nav-t.done::after{content:'⭐';position:absolute;top:-6px;right:-6px;font-size:.65rem;}.ico{font-size:.85rem;line-height:1;}
-.next-sec-btn{display:flex;align-items:center;justify-content:flex-end;gap:.5rem;width:fit-content;margin-top:1.5rem;margin-left:auto;padding:.6rem 1.2rem;background:linear-gradient(135deg,var(--pri),var(--sec));color:white;border:none;border-radius:12px;font-family:'Fredoka',sans-serif;font-size:.95rem;cursor:pointer;box-shadow:0 4px 15px var(--pri-gl);transition:all .25s;animation:pop .4s ease;}.next-sec-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px var(--pri-gl);}.next-sec-btn:active{transform:translateY(0);}.next-sec-btn .nsb-icon{font-size:1.1rem;}.next-sec-btn .nsb-arrow{margin-left:.3rem;font-size:1.1rem;opacity:.9;}
-.main{max-width:860px;margin:0 auto;padding:1.5rem 1rem 3rem;position:relative;z-index:1;}.sec{display:none;}.sec.active{display:block;animation:pop .4s ease;}@keyframes pop{0%{opacity:0;transform:translateY(12px) scale(.98)}100%{opacity:1;transform:none}}
-.card{background:var(--card);border-radius:16px;padding:1.6rem;margin-bottom:1.2rem;box-shadow:0 4px 20px var(--shadow);position:relative;overflow:hidden;transition:background .3s;}.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;border-radius:3px 0 0 3px;}.card h2{font-family:'Fredoka',sans-serif;font-size:1.3rem;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem;color:var(--dark);}.card h3{font-family:'Fredoka',sans-serif;font-size:1.05rem;margin-bottom:.5rem;color:var(--dark);}.card p,.card li{color:var(--dark);}.ac-teal::before{background:linear-gradient(180deg,var(--pri),var(--pri-lt));}.ac-gold::before{background:linear-gradient(180deg,var(--sec),var(--sec-lt));}.ac-jade::before{background:linear-gradient(180deg,var(--jade),var(--green-lt));}.ac-purple::before{background:linear-gradient(180deg,var(--purple),var(--purple-lt));}.ac-amber::before{background:linear-gradient(180deg,var(--amber),#f0a090);}.ac-blue::before{background:linear-gradient(180deg,var(--blue),var(--blue-lt));}
-.tip{background:linear-gradient(135deg,var(--pri-gl),var(--sec-gl));border-left:4px solid var(--pri);border-radius:10px;padding:1rem 1.2rem;margin:.8rem 0;display:flex;gap:.7rem;align-items:flex-start;}.ti{font-size:1.4rem;flex-shrink:0;}.tip strong,.tip p{color:var(--dark);}
-.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}.vs-box{border-radius:12px;padding:1.1rem;border:2px solid;}.vs-a{border-color:var(--pri);background:var(--pri-gl);}.vs-b{border-color:var(--sec);background:var(--sec-gl);}.vs-c{border-color:var(--jade);background:var(--jade-gl);}.vs-d{border-color:var(--purple);background:var(--purple-gl);}.vs-box h4{font-family:'Fredoka',sans-serif;font-size:1rem;margin-bottom:.4rem;color:var(--dark);}.vs-box p{font-size:.9rem;color:var(--dark);}
-.type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin:1rem 0;}.type-chip{border-radius:12px;padding:.9rem;border:2px solid var(--border);text-align:center;background:var(--card);transition:background .3s;}.t-art{font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.3rem;color:var(--dark);}.t-info{font-size:1rem;color:var(--gray);}.tc-teal{border-color:var(--pri);background:var(--pri-gl);}.tc-gold{border-color:var(--sec);background:var(--sec-gl);}.tc-jade{border-color:var(--jade);background:var(--jade-gl);}.tc-purple{border-color:var(--purple);background:var(--purple-gl);}.tc-amber{border-color:var(--amber);background:var(--amber-gl);}.tc-blue{border-color:var(--blue);background:var(--blue-gl);}
-.ex-box{background:#1e2a35;border-radius:12px;padding:1rem 1.2rem;margin:.8rem 0;color:#e0e0e0;font-size:.9rem;}[data-theme="dark"] .ex-box{background:#0a0d16;}.ex-tag{font-family:'Fredoka',sans-serif;font-size:.72rem;padding:.2rem .6rem;border-radius:8px;margin-bottom:.6rem;display:inline-block;}.ex-f{background:var(--pri-gl);color:var(--pri-lt);}.hl{color:var(--yellow-br);font-weight:700;}
-.stat-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.8rem;margin:1rem 0;}.stat-item{background:var(--card);border-radius:12px;padding:.8rem;text-align:center;border:2px solid var(--border);transition:background .3s;}.stat-label{font-size:.72rem;color:var(--gray);font-family:'Fredoka',sans-serif;margin-bottom:.2rem;}.stat-val{font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;color:var(--dark);}
-.fc-wrap{perspective:1000px;margin:.8rem auto;max-width:420px;background:transparent;}.fc-inner{position:relative;height:200px;transform-style:preserve-3d;transition:transform .5s;}.fc-inner.flipped{transform:rotateY(180deg);}.fc-front,.fc-back{position:absolute;inset:0;border-radius:14px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.4rem;backface-visibility:hidden;cursor:pointer;}.fc-front{background:linear-gradient(135deg,var(--pri),var(--sec));color:white;}.fc-back{background:#1b2838;color:#e0e0e0;transform:rotateY(180deg);}.fc-front .fw{font-family:'Fredoka',sans-serif;font-size:1.8rem;text-align:center;color:white;}.fc-front .fhint{font-size:.78rem;opacity:.8;margin-top:.5rem;color:white;}.fc-back .fa{font-size:1.2rem;text-align:center;line-height:1.5;color:#e0e0e0;}.fc-back .fa strong{color:var(--yellow-br);}.fc-nav{display:flex;justify-content:center;align-items:center;gap:1rem;margin-top:.8rem;}.fc-ctr{font-family:'Fredoka',sans-serif;font-size:.85rem;color:var(--gray);}
-.qz-q{font-weight:700;margin-bottom:.8rem;line-height:1.5;color:var(--dark);}.qz-opts{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;}.qz-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:.7rem 1rem;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.9rem;text-align:left;transition:all .2s;color:var(--dark);}.qz-opt:hover{border-color:var(--pri);background:var(--pri-gl);}.qz-opt.sel{border-color:var(--pri);background:var(--pri-gl);}.qz-opt.correct{border-color:var(--jade)!important;background:var(--jade-gl)!important;}.qz-opt.correct::before{content:'✓ ';font-weight:900;color:var(--jade);}.qz-opt.wrong{border-color:var(--red)!important;background:var(--red-gl)!important;}.qz-opt.wrong::before{content:'✗ ';font-weight:900;color:var(--red);}.qz-prog{font-family:'Fredoka',sans-serif;font-size:.85rem;color:var(--gray);margin-bottom:.8rem;}
-.game{background:linear-gradient(135deg,var(--pri-gl),var(--sec-gl));border:2px solid var(--border);border-radius:14px;padding:1.2rem;margin-top:.8rem;}
-.word-bank{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;min-height:42px;padding:.5rem;background:rgba(255,255,255,0.1);border-radius:10px;border:2px dashed var(--border);}.wb-item{font-family:'Fredoka',sans-serif;font-size:.88rem;background:#1b2838;color:white;padding:.35rem .8rem;border-radius:20px;cursor:pointer;transition:all .2s;}.wb-item:hover,.wb-item:focus{transform:scale(1.05);background:var(--pri);}.wb-item.sel-word{background:var(--pri);transform:scale(1.08);box-shadow:0 0 0 3px var(--pri-lt);}.drop-cols{display:flex;gap:1rem;}.drop-col{flex:1;border:2px dashed var(--border);border-radius:12px;min-height:120px;padding:.7rem;cursor:pointer;}.drop-col h4{font-family:'Fredoka',sans-serif;font-size:.9rem;text-align:center;margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:2px solid var(--border);color:var(--dark);}.drop-item{font-family:'Fredoka',sans-serif;font-size:.82rem;background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:.3rem .6rem;margin:.25rem 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--dark);}.drop-item:hover{background:var(--pri-gl);}.cls-ok{border-color:var(--jade)!important;background:var(--jade-gl)!important;}.cls-no{border-color:var(--red)!important;background:var(--red-gl)!important;}
-.id-sent{font-size:1.15rem;font-weight:700;line-height:2;margin-bottom:.8rem;color:var(--dark);}.id-word{display:inline-block;padding:.1rem .4rem;border-radius:6px;cursor:pointer;transition:all .2s;border:2px solid transparent;}.id-word:hover,.id-word:focus{background:var(--pri-gl);border-color:var(--pri);}.id-word.selected{background:var(--pri-gl);border-color:var(--pri);}.id-word.id-ok{background:var(--jade-gl)!important;border-color:var(--jade)!important;}.id-word.id-ok::after{content:' ✓';font-weight:900;color:var(--jade);font-size:.75rem;}.id-word.id-no{background:var(--red-gl)!important;border-color:var(--red)!important;}.id-word.id-no::after{content:' ✗';font-weight:900;color:var(--red);font-size:.75rem;}.id-prog{font-family:'Fredoka',sans-serif;font-size:.82rem;color:var(--gray);margin-bottom:.6rem;}
-.cmp-sent{font-size:1rem;line-height:1.9;margin-bottom:.8rem;color:var(--dark);}.cmp-opts{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.8rem;}.cmp-opt{font-family:'Fredoka',sans-serif;font-size:.88rem;padding:.35rem .9rem;border:2px solid var(--border);border-radius:20px;background:var(--card);cursor:pointer;transition:all .2s;color:var(--dark);}.cmp-opt:hover,.cmp-opt:focus{border-color:var(--pri);}.cmp-opt.sel{border-color:var(--pri);background:var(--pri-gl);}.cmp-opt.correct{border-color:var(--jade)!important;background:var(--jade-gl)!important;}.cmp-opt.correct::before{content:'✓ ';font-weight:900;color:var(--jade);}.cmp-opt.wrong{border-color:var(--red)!important;background:var(--red-gl)!important;}.cmp-opt.wrong::before{content:'✗ ';font-weight:900;color:var(--red);}.blank{display:inline-block;min-width:80px;border-bottom:2px solid var(--pri);text-align:center;font-weight:700;color:var(--pri);padding:0 .4rem;}
-.reto-word{font-family:'Fredoka',sans-serif;font-size:1.9rem;text-align:center;padding:1.5rem;color:var(--dark);min-height:100px;display:flex;align-items:center;justify-content:center;}.reto-btns{display:flex;gap:1rem;justify-content:center;margin-bottom:.8rem;flex-wrap:wrap;}.reto-timer{font-family:'Fredoka',sans-serif;font-size:1.8rem;text-align:center;color:var(--pri);}.reto-score{font-family:'Fredoka',sans-serif;font-size:1rem;text-align:center;color:var(--gray);}
-.tg-controls{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;margin-bottom:1rem;}.tg-sel{font-family:'Fredoka',sans-serif;font-size:.85rem;padding:.4rem .8rem;border:2px solid var(--border);border-radius:10px;background:var(--card);color:var(--dark);cursor:pointer;}.tg-instruction-block{background:linear-gradient(135deg,var(--pri-gl),var(--sec-gl));border:2px solid var(--pri);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;}.tg-instruction-block h4{font-family:'Fredoka',sans-serif;font-size:.95rem;color:var(--pri);margin-bottom:.4rem;}.tg-instruction-block p{font-size:.85rem;color:var(--dark);margin-bottom:.2rem;}.tg-task{padding:.1rem .5rem;margin-bottom:0;display:flex;gap:.8rem;align-items:flex-start;}.tg-task-num{font-family:'Fredoka',sans-serif;font-size:.85rem;background:#1b2838;color:white;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}.tg-task-content{flex:1;font-size:1.3rem;line-height:1.4;color:var(--dark);}.tg-answer{display:none;margin-top:.4rem;font-size:.82rem;color:var(--gray);background:rgba(0,0,0,0.04);border-radius:6px;padding:.4rem .6rem;}.tg-blank{display:inline-block;min-width:70px;border-bottom:2px solid var(--pri);}
-.fb{display:none;border-radius:10px;padding:.7rem 1rem;margin-top:.6rem;font-weight:700;font-size:.9rem;animation:pop .3s ease;}.fb.show{display:block;}.fb.ok{background:var(--jade-gl);color:var(--jade);border:1.5px solid var(--jade);}.fb.ok::before{content:'✓ ';}.fb.err{background:var(--red-gl);color:var(--red);border:1.5px solid var(--red);}.fb.err::before{content:'✗ ';}
-.btn{font-family:'Fredoka',sans-serif;font-size:.88rem;padding:.65rem 1.3rem;border:none;border-radius:14px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem;}.btn:hover{transform:translateY(-3px);box-shadow:0 6px 18px var(--shadow-md);}.btn:active{transform:translateY(0);}.btn-p{background:var(--purple);color:white;}.btn-g{background:var(--jade);color:white;}.btn-d{background:#1b2838;color:var(--yellow-br);}.btn-pri{background:var(--pri);color:white;}.btn-sec{background:var(--sec);color:white;}.btn-wa{background:#25D366;color:white;}.btn-purple{background:var(--purple);color:white;}.btn-amber{background:var(--amber);color:white;}
-#eval-pauta-sheet{display:none;}.eval-print-header{display:none;}
-.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#1b2838;color:var(--yellow-br);font-family:'Fredoka',sans-serif;font-size:.9rem;padding:.6rem 1.2rem;border-radius:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.3);z-index:400;white-space:nowrap;display:none;}
-.ach-panel{display:none;position:fixed;bottom:2rem;right:1rem;background:var(--card);border:2px solid var(--border);border-radius:16px;padding:1rem;z-index:300;box-shadow:0 8px 32px var(--shadow-md);min-width:220px;transition:background .3s;}.ach-panel.open{display:block;animation:pop .3s ease;}.ach-panel h4{font-family:'Fredoka',sans-serif;font-size:.95rem;color:var(--dark);margin-bottom:.6rem;}.ach-item{display:flex;align-items:center;gap:.5rem;font-size:.82rem;padding:.3rem 0;border-bottom:1px solid var(--border);color:var(--dark);}.ach-item:last-child{border:none;}.ach-item.locked{opacity:.4;}.ach-icon{font-size:1.2rem;}
+:root{--bg:#f5f5f0;--dark:#2c3e50;--card:#ffffff;--border:#dcdde1;--yellow-br:#fbc531;--gray:#718093;--shadow:rgba(0,0,0,0.08);--shadow-md:rgba(0,0,0,0.12);--pri:#2d98da;--pri-lt:#4b7bec;--pri-gl:rgba(45,152,218,0.12);--sec:#20bf6b;--sec-lt:#26de81;--sec-gl:rgba(32,191,107,0.12);--jade:#0fb9b1;--jade-gl:rgba(15,185,177,0.12);--amber:#fa8231;--amber-gl:rgba(250,130,49,0.12);--purple:#8854d0;--purple-gl:rgba(136,84,208,0.12);--red:#eb3b5a;--red-gl:rgba(235,59,90,0.12);--nav-bg:#ffffff;--nav-border:var(--border);--xp-bg:#1e272e;--card-bg:#ffffff;}
+[data-theme="dark"]{--bg:#111418;--card:#1e242b;--card-bg:#1e242b;--dark:#f1f2f6;--border:#2f3640;--gray:#a4b0be;--shadow:rgba(0,0,0,0.4);--nav-bg:#1e242b;--nav-border:#2f3640;--xp-bg:#0d1114;--pri-gl:rgba(45,152,218,0.2);--sec-gl:rgba(32,191,107,0.2);}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}:focus-visible{outline:3px solid var(--pri);outline-offset:3px;}
+.xp-bar{position:relative;z-index:10;background:var(--xp-bg);padding:.4rem 1rem;display:flex;align-items:center;gap:.8rem;}.xp-lbl{font-family:'Fredoka',sans-serif;color:var(--yellow-br);font-size:.8rem;white-space:nowrap;}.xp-track{flex:1;height:8px;background:rgba(255,255,255,0.15);border-radius:10px;overflow:hidden;}.xp-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--pri),var(--sec));border-radius:10px;transition:width .6s cubic-bezier(.34,1.56,.64,1);}.xp-pts{font-family:'Fredoka',sans-serif;color:var(--yellow-br);font-size:.8rem;white-space:nowrap;}.xp-lvl{font-family:'Fredoka',sans-serif;font-size:.75rem;background:rgba(255,255,255,0.15);border-radius:12px;padding:.15rem .6rem;color:white;white-space:nowrap;}
+.hero{position:relative;z-index:10;padding:.8rem 1.2rem;background:linear-gradient(135deg,#2d98da,#20bf6b,#fa8231);color:white;overflow:hidden;}.hero-inner{display:flex;align-items:center;justify-content:center;gap:.8rem;}.hero-mascot{font-size:2rem;animation:bounce 3s infinite;flex-shrink:0;}@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}.hero h1{font-family:'Fredoka',sans-serif;font-size:1.6rem;font-weight:700;margin:0;line-height:1.1;}.hero .sub{font-size:.85rem;opacity:.95;margin:.2rem 0;line-height:1.3;}.badge{display:inline-block;background:rgba(0,0,0,0.2);border-radius:20px;padding:.15rem .6rem;font-size:.7rem;font-family:'Fredoka',sans-serif;border:1px solid rgba(255,255,255,0.3);margin-top:.3rem;}
+.nav{display:flex;flex-wrap:wrap;justify-content:center;gap:.4rem;padding:.8rem 1rem;background:var(--nav-bg);border-top:2px solid var(--nav-border);border-bottom:2px solid var(--nav-border);position:sticky;top:0;z-index:100;box-shadow:0 4px 10px rgba(0,0,0,0.05);}.nav-t{font-family:'Fredoka',sans-serif;font-size:.75rem;padding:.4rem .8rem;border:2px solid var(--border);background:var(--card);color:var(--dark);border-radius:20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.3rem;}.nav-t:hover{transform:translateY(-2px);box-shadow:0 4px 12px var(--shadow);}.nav-t.active{background:linear-gradient(135deg,var(--pri),var(--sec));color:white;border-color:transparent;}.nav-t.done::after{content:'⭐';position:absolute;top:-6px;right:-6px;font-size:.65rem;}
+.main{max-width:860px;margin:0 auto;padding:1.5rem 1rem 4rem;position:relative;z-index:1;}.sec{display:none;}.sec.active{display:block;animation:pop .4s ease;}@keyframes pop{0%{opacity:0;transform:translateY(15px) scale(.98)}100%{opacity:1;transform:none}}
+.card{background:var(--card);border-radius:16px;padding:1.6rem;margin-bottom:1.2rem;box-shadow:0 4px 20px var(--shadow);border:1px solid var(--border);}.card h2{font-family:'Fredoka',sans-serif;font-size:1.35rem;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem;color:var(--dark);}.card p{line-height:1.6;margin-bottom:.8rem;}
+
+/* ================= EXPLORADOR INTERACTIVO ================= */
+.sim-container { border-radius: 16px; overflow: hidden; border: 3px solid var(--dark); box-shadow: 0 8px 25px var(--shadow-md); background: var(--card); }
+.sim-screen { height: 180px; position: relative; transition: background 1s ease; padding: 1.5rem; display: flex; flex-direction: column; justify-content: flex-end; }
+.sim-title { font-family: 'Fredoka', sans-serif; font-size: 2rem; font-weight: 800; color: white; margin: 0; text-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 2; line-height: 1.1; }
+.sim-time { font-family: 'Fira Code', monospace; font-size: 0.9rem; font-weight: 600; color: rgba(255,255,255,0.9); background: rgba(0,0,0,0.4); padding: 0.3rem 0.8rem; border-radius: 20px; display: inline-block; margin-top: 0.5rem; z-index: 2; backdrop-filter: blur(4px); }
+.sim-timeline { display: flex; background: var(--dark); overflow-x: auto; padding: 0.5rem; gap: 0.4rem; scrollbar-width: thin; }
+.sim-btn { flex: 1; padding: 0.8rem 0.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: rgba(255,255,255,0.6); font-family: 'Fredoka', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; white-space: nowrap; min-width: 110px; }
+.sim-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+.sim-btn.active { background: var(--pri); color: white; border-color: var(--pri-lt); font-weight: 600; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.sim-info { padding: 1.5rem; }
+.sim-img-panel { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; margin-bottom: 1.5rem; background: var(--bg); padding: 1rem; border-radius: 12px; border: 2px dashed var(--border); }
+.sim-img-panel img { width: 100%; max-width: 220px; border-radius: 8px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); object-fit: cover; }
+.sim-text-content { flex: 1; min-width: 200px; }
+.sim-text-content h4 { font-family: 'Fredoka', sans-serif; color: var(--pri); margin-bottom: 0.5rem; font-size: 1.1rem; }
+.sim-text-content p { font-size: 0.95rem; color: var(--dark); line-height: 1.6; }
+.vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.vs-box { border-radius: 12px; padding: 1.2rem; border: 2px solid; background: var(--card); transition: transform 0.3s; }
+.vs-box h4 { font-family: 'Fredoka', sans-serif; font-size: 1.05rem; margin-bottom: 0.5rem; color: var(--dark); }
+.vs-box p { font-size: 0.9rem; margin: 0; color: var(--gray); line-height: 1.5; }
+.anim-in { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+@keyframes slideUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+
+/* Botones y utilidades */
+.btn{font-family:'Fredoka',sans-serif;font-size:.9rem;padding:.7rem 1.4rem;border:none;border-radius:12px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem;font-weight:500;}.btn:hover{transform:translateY(-3px);box-shadow:0 6px 18px var(--shadow-md);}.btn:active{transform:translateY(0);}.btn-pri{background:var(--pri);color:white;}.btn-sec{background:var(--sec);color:white;}.btn-d{background:var(--dark);color:white;}.btn-g{background:var(--jade);color:white;}
+.next-sec-btn{display:flex;align-items:center;justify-content:flex-end;gap:.5rem;margin:1.5rem 0 0 auto;padding:.7rem 1.4rem;background:linear-gradient(135deg,var(--pri),var(--sec));color:white;border:none;border-radius:12px;font-family:'Fredoka',sans-serif;font-size:1rem;cursor:pointer;box-shadow:0 4px 15px var(--pri-gl);transition:all .25s;}.next-sec-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px var(--pri-gl);}
+.fb{display:none;border-radius:10px;padding:.8rem 1rem;margin-top:1rem;font-weight:700;font-size:.95rem;animation:pop .3s ease;}.fb.show{display:block;}.fb.ok{background:var(--jade-gl);color:var(--jade);border:2px solid var(--jade);}.fb.err{background:var(--red-gl);color:var(--red);border:2px solid var(--red);}
+
+/* FLASHCARDS */
+.fc-wrap{perspective:1000px;margin:1rem auto;max-width:460px;background:transparent;}
+.fc-inner{position:relative;height:220px;transform-style:preserve-3d;transition:transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);}
+.fc-inner.flipped{transform:rotateY(180deg);}
+.fc-front,.fc-back{position:absolute;inset:0;border-radius:16px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem;backface-visibility:hidden;cursor:pointer; box-shadow: 0 10px 30px var(--shadow-md);}
+.fc-front{background:linear-gradient(135deg, var(--dark), var(--pri));color:white;}
+.fc-back{background:var(--card);color:var(--dark);transform:rotateY(180deg); border: 2px solid var(--pri);}
+.fc-front .fw{font-family:'Fredoka',sans-serif;font-size:2rem;text-align:center;}
+.fc-front .fhint{font-size:0.85rem;opacity:0.8;margin-top:0.8rem;}
+.fc-back .fa{font-size:1.15rem;text-align:center;line-height:1.5;}
+.fc-nav{display:flex;justify-content:center;align-items:center;gap:1.5rem;margin-top:1.2rem;}
+
+/* QUIZ */
+.qz-q{font-size:1.15rem; font-weight:700; margin-bottom:1.2rem; color:var(--dark); line-height:1.4;}
+.qz-opts{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.2rem;}
+.qz-opt{background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:0.9rem 1.2rem;cursor:pointer;font-family:'Nunito',sans-serif;font-size:1rem;text-align:left;transition:all 0.2s;color:var(--dark);}
+.qz-opt:hover{border-color:var(--pri);background:var(--pri-gl);}
+.qz-opt.sel{border-color:var(--pri);background:var(--pri-gl);font-weight:700;}
+.qz-opt.correct{border-color:var(--sec)!important;background:var(--sec-gl)!important;font-weight:700;}
+.qz-opt.wrong{border-color:var(--red)!important;background:var(--red-gl)!important;}
+
+/* CLASIFICA */
+.word-bank{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.2rem;min-height:50px;padding:0.8rem;background:var(--bg);border-radius:12px;border:2px dashed var(--gray);}
+.wb-item{font-family:'Fredoka',sans-serif;font-size:0.95rem;background:var(--dark);color:white;padding:0.4rem 1rem;border-radius:20px;cursor:pointer;transition:all 0.2s;}
+.wb-item.sel-word{background:var(--pri);transform:scale(1.1);box-shadow:0 4px 10px var(--pri-gl);}
+.drop-cols{display:flex;gap:1rem;}
+.drop-col{flex:1;border:2px dashed var(--border);border-radius:12px;min-height:150px;padding:1rem;cursor:pointer; background:var(--card);}
+.drop-col h4{font-family:'Fredoka',sans-serif;font-size:1.1rem;text-align:center;margin-bottom:0.8rem;padding-bottom:0.5rem;border-bottom:2px solid var(--border);}
+.drop-item{font-family:'Fredoka',sans-serif;font-size:0.9rem;background:var(--bg);border:2px solid var(--border);border-radius:8px;padding:0.4rem 0.8rem;margin:0.4rem 0;cursor:pointer;}
+
+/* RETO */
+.game{background:linear-gradient(135deg,var(--pri-gl),var(--sec-gl));border:2px solid var(--border);border-radius:16px;padding:1.5rem;margin-top:1rem;}
+.reto-word{font-family:'Fredoka',sans-serif;font-size:2.2rem;text-align:center;padding:1.5rem;color:var(--dark);min-height:120px;display:flex;align-items:center;justify-content:center;}
+.reto-btns{display:flex;gap:1rem;justify-content:center;margin-bottom:1rem;}
+
+/* TOAST & ACHIEVEMENTS */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--dark);color:white;font-family:'Fredoka',sans-serif;font-size:1rem;padding:0.8rem 1.5rem;border-radius:2rem;box-shadow:0 8px 20px rgba(0,0,0,0.4);z-index:1000;display:none;}
+.ach-panel{display:none;position:fixed;bottom:2rem;right:1rem;background:var(--card);border:2px solid var(--border);border-radius:16px;padding:1.2rem;z-index:900;box-shadow:0 10px 40px var(--shadow-md);min-width:240px;}
+.ach-panel.open{display:block;animation:pop 0.3s ease;}
+.ach-item{display:flex;align-items:center;gap:0.6rem;font-size:0.9rem;padding:0.4rem 0;border-bottom:1px solid var(--border);}
+
+/* IDENTIFICA, COMPLETA, TAREAS */
+.id-sent{font-size:1.15rem;font-weight:700;line-height:2;margin-bottom:.8rem;color:var(--dark);}.id-word{display:inline-block;padding:.1rem .4rem;border-radius:6px;cursor:pointer;transition:all .2s;border:2px solid transparent;}.id-word:hover,.id-word:focus{background:var(--pri-gl);border-color:var(--pri);}.id-word.selected{background:var(--pri-gl);border-color:var(--pri);}.id-word.id-ok{background:var(--jade-gl)!important;border-color:var(--jade)!important;}.id-word.id-ok::after{content:' ✓';font-weight:900;color:var(--jade);font-size:.75rem;}.id-word.id-no{background:var(--red-gl)!important;border-color:var(--red)!important;}.id-word.id-no::after{content:' ✗';font-weight:900;color:var(--red);font-size:.75rem;}
+.cmp-sent{font-size:1rem;line-height:1.9;margin-bottom:.8rem;color:var(--dark);}.cmp-opts{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.8rem;}.cmp-opt{font-family:'Fredoka',sans-serif;font-size:.88rem;padding:.35rem .9rem;border:2px solid var(--border);border-radius:20px;background:var(--card);cursor:pointer;transition:all .2s;color:var(--dark);}.cmp-opt:hover{border-color:var(--pri);}.cmp-opt.sel{border-color:var(--pri);background:var(--pri-gl);}.cmp-opt.correct{border-color:var(--jade)!important;background:var(--jade-gl)!important;}.cmp-opt.wrong{border-color:var(--red)!important;background:var(--red-gl)!important;}.blank{display:inline-block;min-width:80px;border-bottom:2px solid var(--pri);text-align:center;font-weight:700;color:var(--pri);padding:0 .4rem;}
+.tg-controls{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;margin-bottom:1rem;}.tg-sel{font-family:'Fredoka',sans-serif;font-size:.85rem;padding:.4rem .8rem;border:2px solid var(--border);border-radius:10px;background:var(--card);color:var(--dark);cursor:pointer;}.tg-instruction-block{background:linear-gradient(135deg,var(--pri-gl),var(--sec-gl));border:2px solid var(--pri);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;}.tg-instruction-block h4{font-family:'Fredoka',sans-serif;font-size:.95rem;color:var(--pri);margin-bottom:.4rem;}.tg-task{padding:.1rem .5rem;margin-bottom:0;display:flex;gap:.8rem;align-items:flex-start;}.tg-task-num{font-family:'Fredoka',sans-serif;font-size:.85rem;background:#1b2838;color:white;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}.tg-task-content{flex:1;font-size:1.3rem;line-height:1.4;color:var(--dark);}.tg-answer{display:none;margin-top:.4rem;font-size:.82rem;color:var(--gray);background:rgba(0,0,0,0.04);border-radius:6px;padding:.4rem .6rem;}.tg-blank{display:inline-block;min-width:70px;border-bottom:2px solid var(--pri);}
+
+/* SOPA Y EVALUACION */
+.sopa-grid{display:grid;gap:2px;background:var(--dark);padding:4px;border-radius:8px;width:fit-content;margin:0 auto;user-select:none; touch-action:none;}.sopa-cell{background:var(--card);display:flex;justify-content:center;align-items:center;font-family:'Fredoka',sans-serif;font-weight:bold;border-radius:4px;cursor:pointer;}.sopa-cell.sopa-sel{background:var(--pri);color:white;}.sopa-cell.sopa-found{background:var(--sec);color:white;}.sopa-words{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;font-size:.85rem;margin-bottom:1rem;}.sopa-w{padding:.3rem .7rem;background:var(--card);border:2px solid var(--border);border-radius:12px;font-family:'Fredoka',sans-serif;transition:all .3s;}.sopa-w.found{border-color:var(--jade);background:var(--jade-gl);color:var(--jade);text-decoration:line-through;}
+.eval-controls{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.2rem;}.eval-section-title{font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:700;color:var(--pri);margin:1.2rem 0 .6rem;padding:.4rem .8rem;background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:0 8px 8px 0;display:flex;justify-content:space-between;align-items:center;}.eval-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:.9rem 1rem;margin-bottom:.5rem;transition:background .3s;}.eval-num{display:inline-flex;align-items:center;justify-content:center;background:#1b2838;color:white;font-family:'Fredoka',sans-serif;font-size:.78rem;border-radius:50%;width:22px;height:22px;flex-shrink:0;margin-right:.5rem;}.eval-q{font-size:.9rem;color:var(--dark);line-height:1.5;display:flex;align-items:flex-start;}.eval-tf-opts{display:flex;gap:1rem;margin-top:.5rem;margin-left:1.7rem;}.eval-mc-opts{display:flex;flex-direction:column;gap:.3rem;margin-top:.5rem;margin-left:1.7rem;}.eval-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid var(--dark);margin:0 .2rem;}.eval-match-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.5rem;}.eval-match-item{font-size:.85rem;color:var(--dark);padding:.3rem .5rem;background:var(--pri-gl);border-radius:6px;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem;}.eval-answer{display:none;margin-top:.4rem;margin-left:1.7rem;font-size:.8rem;color:var(--jade);background:var(--jade-gl);border-radius:6px;padding:.3rem .6rem;font-weight:700;}
+.diploma-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:300;justify-content:center;align-items:center;padding:1rem;overflow-y:auto;}.diploma-overlay.open{display:flex;}.diploma-card{background:var(--card);border-radius:20px;padding:2.5rem 2rem;max-width:450px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);border:3px solid var(--jade);outline:3px dashed var(--amber);outline-offset:6px;transition:background .3s;}
 .confetti-piece{position:fixed;top:-10px;z-index:999;pointer-events:none;animation:confettiFall linear forwards;}@keyframes confettiFall{to{transform:translateY(105vh) rotate(720deg);opacity:0;}}
-.diploma-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:300;justify-content:center;align-items:center;padding:1rem;overflow-y:auto;}.diploma-overlay.open{display:flex;}.diploma-card{background:var(--card);border-radius:20px;padding:2.5rem 2rem;max-width:450px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);border:3px solid var(--jade);outline:3px dashed var(--amber);outline-offset:6px;transition:background .3s;}.diploma-stars{font-size:1.6rem;letter-spacing:.2rem;margin-bottom:.6rem;}.diploma-title{font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,var(--pri),var(--sec));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.2rem;}.diploma-sub{font-size:.85rem;color:var(--gray);margin-bottom:.8rem;}.diploma-mascot{font-size:3.5rem;margin-bottom:.5rem;}.diploma-name{font-family:'Fredoka',sans-serif;font-size:1.4rem;color:var(--dark);margin-bottom:.4rem;min-height:1.8rem;}.diploma-pct{font-family:'Fredoka',sans-serif;font-size:2.8rem;font-weight:700;margin-bottom:.4rem;}.diploma-bar-wrap{height:12px;background:var(--border);border-radius:10px;overflow:hidden;margin-bottom:.8rem;}.diploma-bar{height:100%;background:linear-gradient(90deg,var(--pri),var(--sec));border-radius:10px;transition:width 1s ease;}.diploma-msg{font-size:.9rem;color:var(--dark);margin-bottom:.6rem;line-height:1.5;}.diploma-date{font-size:.8rem;color:var(--gray);margin-bottom:.6rem;}.diploma-ach{font-size:.82rem;color:var(--gray);margin-bottom:1rem;}.diploma-fam{font-size:.75rem;color:var(--gray);}.diploma-input{font-family:'Fredoka',sans-serif;font-size:1rem;padding:.5rem 1rem;border:2px solid var(--border);border-radius:10px;width:100%;max-width:280px;margin-bottom:1rem;text-align:center;background:var(--card);color:var(--dark);}.diploma-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;}
-.eval-controls{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.2rem;}.eval-section-title{font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:700;color:var(--pri);margin:1.2rem 0 .6rem;padding:.4rem .8rem;background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:0 8px 8px 0;display:flex;justify-content:space-between;align-items:center;}.eval-section-title .eval-pts{font-size:.78rem;opacity:.85;background:var(--pri);color:white;padding:.15rem .5rem;border-radius:10px;}.eval-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:.9rem 1rem;margin-bottom:.5rem;transition:background .3s;}.eval-num{display:inline-flex;align-items:center;justify-content:center;background:#1b2838;color:white;font-family:'Fredoka',sans-serif;font-size:.78rem;border-radius:50%;width:22px;height:22px;flex-shrink:0;margin-right:.5rem;}.eval-q{font-size:.9rem;color:var(--dark);line-height:1.5;display:flex;align-items:flex-start;}.eval-q-text{flex:1;}.eval-tf-opts{display:flex;gap:1rem;margin-top:.5rem;margin-left:1.7rem;}.eval-tf-opt{display:flex;align-items:center;gap:.35rem;font-size:.85rem;color:var(--dark);}.eval-tf-opt input{width:15px;height:15px;accent-color:var(--pri);}.eval-mc-opts{display:flex;flex-direction:column;gap:.3rem;margin-top:.5rem;margin-left:1.7rem;}.eval-mc-opt{font-size:.85rem;color:var(--dark);display:flex;align-items:center;gap:.4rem;}.eval-mc-opt input{width:15px;height:15px;accent-color:var(--pri);}.eval-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid var(--dark);margin:0 .2rem;}.eval-match-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.5rem;}.eval-match-col h4{font-family:'Fredoka',sans-serif;font-size:.82rem;color:var(--gray);margin-bottom:.4rem;}.eval-match-item{font-size:.85rem;color:var(--dark);padding:.3rem .5rem;background:var(--pri-gl);border-radius:6px;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem;}.eval-match-letter{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);min-width:18px;}.eval-match-line{display:inline-block;min-width:24px;border-bottom:1.5px solid var(--dark);margin-right:.3rem;}.eval-answer{display:none;margin-top:.4rem;margin-left:1.7rem;font-size:.8rem;color:var(--jade);background:var(--jade-gl);border-radius:6px;padding:.3rem .6rem;font-weight:700;}.eval-answer::before{content:'✓ Respuesta: ';}.eval-score-bar{background:var(--pri-gl);border:2px solid var(--pri);border-radius:12px;padding:.8rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}.eval-score-bar .esb-title{font-family:'Fredoka',sans-serif;font-size:.95rem;color:var(--pri);}.eval-score-bar .esb-dist{font-size:.78rem;color:var(--gray);}.eval-score-pill{font-family:'Fredoka',sans-serif;font-size:.8rem;padding:.2rem .6rem;border-radius:10px;color:white;}.esp-tf{background:#2d8659;}.esp-mc{background:#4a7a3b;}.esp-cp{background:#6b8e23;}.esp-pr{background:#6c5ce7;}
-.credits{background:var(--xp-bg);color:rgba(255,255,255,0.75);text-align:center;padding:1rem 1rem 1.2rem;margin-top:2rem;font-size:.8rem;line-height:1.5;}.credits .fam{font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--yellow-br);margin-bottom:.1rem;}.credits .ppl{font-size:.78rem;opacity:.8;margin-bottom:.1rem;}.credits .mot{font-family:'Fira Code',monospace;font-size:.72rem;opacity:.55;margin:.05rem 0;}.credits a{color:var(--yellow-br);text-decoration:none;}.credits a:hover{text-decoration:underline;}.cred-contact{margin-top:.5rem;padding-top:.4rem;border-top:1px solid rgba(255,255,255,0.12);display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.3rem 1rem;}.cred-tools{margin-top:.6rem;display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;}.cred-btn{font-family:'Fredoka',sans-serif;font-size:.78rem;padding:.3rem .8rem;background:rgba(255,255,255,0.10);color:rgba(255,255,255,0.80);border:1px solid rgba(255,255,255,0.20);border-radius:20px;cursor:pointer;transition:all .2s;}.cred-btn:hover{background:rgba(255,255,255,0.18);color:white;transform:translateY(-1px);}
-.sopa-container{display:flex;flex-direction:column;align-items:center;width:100%;padding:.5rem 0;}.sopa-grid{display:grid;gap:2px;background:var(--border);padding:4px;border-radius:8px;width:fit-content;max-width:100%;margin:0 auto;touch-action:none;user-select:none;}.sopa-cell{background:var(--card);display:flex;justify-content:center;align-items:center;font-family:'Fredoka',sans-serif;font-weight:bold;border-radius:3px;cursor:pointer;user-select:none;transition:background .1s;}.sopa-cell.sopa-sel{background:var(--pri);color:white;}.sopa-cell.sopa-found{background:var(--jade);color:white;}.sopa-cell.sopa-start{background:var(--sec);color:white;border:2px solid var(--amber);}.sopa-words{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;font-size:.85rem;margin-bottom:1rem;}.sopa-w{padding:.3rem .7rem;background:var(--card);border:2px solid var(--border);border-radius:12px;font-family:'Fredoka',sans-serif;transition:all .3s;}.sopa-w.found{border-color:var(--jade);background:var(--jade-gl);color:var(--jade);text-decoration:line-through;}.sopa-hint{font-size:.78rem;color:var(--gray);text-align:center;margin-bottom:.4rem;}
-/* Contenedor de imagen de era */
-.era-img-placeholder{width:100%;max-width:280px;margin:0.8rem auto;border-radius:12px;overflow:hidden;border:3px solid var(--border);background:var(--pri-gl);min-height:120px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;color:var(--gray);font-size:.85rem;text-align:center;padding:.8rem;}
-.era-img-placeholder img{width:100%;height:auto;display:block;border-radius:9px;}
-@media(max-width:600px){.card{padding:1.2rem;}.vs-grid{grid-template-columns:1fr;}.type-grid{grid-template-columns:repeat(2,1fr);}.hero h1{font-size:1rem;}.hero .sub{display:none;}.drop-cols{flex-direction:column;}.stat-bar{grid-template-columns:repeat(2,1fr);}}
-@media print{body *{display:none!important;}}
-body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grande h2,body.letra-grande h3,body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
+@media(max-width:600px){.vs-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+<div class="xp-bar" role="status">
   <span class="xp-lbl">🎮 XP</span>
-  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
   <span class="xp-pts" id="xpPts">⭐ 0</span>
-  <span class="xp-lvl" id="xpLvl">Nivel 1</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
 </div>
 
 <header class="hero" role="banner">
   <div class="hero-inner">
-    <div class="hero-mascot" aria-hidden="true">🦕</div>
+    <div class="hero-mascot">🦕</div>
     <div class="hero-text">
       <h1>Misión <span>Las Eras Geológicas</span></h1>
-      <p class="sub">¡Viaja millones de años al pasado y descubre cómo cambió nuestro planeta! 🌍</p>
-      <div class="badge">📚 II Ciclo · Ciencias Naturales · 6.º Grado</div>
+      <p class="sub">¡Viaja en el tiempo y descubre cómo cambió nuestro planeta!</p>
+      <div class="badge">Ciencias Naturales · II y III Ciclo</div>
     </div>
   </div>
 </header>
 
 <main class="main" id="main-content">
 
-<!-- ========== S-APRENDE ========== -->
 <div class="sec active" id="s-aprende" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>🌍 ¿Qué son las Eras Geológicas?</h2>
-    <p>Las <strong>eras geológicas</strong> son los grandes períodos en los que los científicos dividen la historia de la Tierra, que tiene aproximadamente <strong>4,600 millones de años</strong>. Cada era se distingue por cambios importantes en el clima, la geografía y las formas de vida.</p>
-    <div class="tip"><span class="ti">💡</span><div><strong>Recuerda:</strong> Los científicos estudian los <strong>fósiles</strong> (restos de seres vivos conservados en las rocas) y las <strong>capas de la corteza terrestre</strong> para conocer lo que ocurrió en cada era.</div></div>
-  </div>
-
-  <!-- ERA PRECÁMBRICA -->
-  <div class="card ac-amber">
-    <h2>🌋 Era Precámbrica</h2>
-    <div class="stat-bar">
-      <div class="stat-item"><div class="stat-label">⏳ Duración</div><div class="stat-val">4,600 – 540 M.a.</div></div>
-      <div class="stat-item" style="border-color:var(--amber);"><div class="stat-label">📏 % de la historia</div><div class="stat-val" style="color:var(--amber);">≈ 88%</div></div>
+  <p style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--gray);">Toca los botones en la línea de tiempo para viajar a las diferentes Eras de la Tierra.</p>
+  
+  <div class="sim-container">
+    <div id="era-pantalla" class="sim-screen" style="background: linear-gradient(135deg, #ff4e50, #f9d423);">
+      <h2 id="era-titulo" class="sim-title">Era Precámbrica</h2>
+      <div><span id="era-tiempo" class="sim-time">4,600 – 540 Millones de años</span></div>
     </div>
-    <p style="margin-top:.6rem;">Es la era <strong>más larga</strong> de todas. Durante este inmenso período se formó la <strong>Tierra</strong>, su corteza, los océanos y la atmósfera primitiva. Aparecieron las <strong>primeras formas de vida</strong>: bacterias y organismos unicelulares muy simples.</p>
-    <div class="era-img-placeholder" id="img-precambrica" style="padding: 0; border: none; background: transparent;">
-      <img src="../img/era-precambrica_edit.webp" alt="Precámbrica" style="width: 100%; border-radius: 9px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+    <div class="sim-timeline">
+      <button class="sim-btn active" onclick="cambiarEra(0)">🌋 Precámbrico</button>
+      <button class="sim-btn" onclick="cambiarEra(1)">🐚 Paleozoico</button>
+      <button class="sim-btn" onclick="cambiarEra(2)">🦖 Mesozoico</button>
+      <button class="sim-btn" onclick="cambiarEra(3)">🐘 Cenozoico</button>
+      <button class="sim-btn" onclick="cambiarEra(4)">🧑 Cuaternario</button>
     </div>
-  </div>
-
-  <!-- ERA PALEOZOICA -->
-  <div class="card ac-blue">
-    <h2>🐟 Era Paleozoica ("Vida Antigua")</h2>
-    <div class="stat-bar">
-      <div class="stat-item"><div class="stat-label">⏳ Duración</div><div class="stat-val">540 – 250 M.a.</div></div>
-      <div class="stat-item" style="border-color:var(--blue);"><div class="stat-label">🔑 Evento clave</div><div class="stat-val" style="color:var(--blue);">Vida en los mares</div></div>
-    </div>
-    <p style="margin-top:.6rem;">La vida se desarrolló principalmente en los <strong>mares</strong>. Aparecieron los <strong>primeros vertebrados</strong>: peces primitivos con mandíbula. También surgieron los trilobites, los primeros anfibios, reptiles e insectos. Las plantas conquistaron la tierra firme. Al final ocurrió la <strong>mayor extinción masiva</strong> de la historia (Pérmico).</p>
-    <div class="era-img-placeholder" id="img-paleozoica" style="padding: 0; border: none; background: transparent;">
-      <img src="../img/era-paleozoica_edit.webp" alt="Paleozoica" style="width: 100%; border-radius: 9px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-    </div>
-  </div>
-
-  <!-- ERA MESOZOICA -->
-  <div class="card ac-purple">
-    <h2>🦖 Era Mesozoica ("Vida Media")</h2>
-    <div class="stat-bar">
-      <div class="stat-item"><div class="stat-label">⏳ Duración</div><div class="stat-val">250 – 66 M.a.</div></div>
-      <div class="stat-item" style="border-color:var(--purple);"><div class="stat-label">🔑 Conocida como</div><div class="stat-val" style="color:var(--purple);">Era de los Dinosaurios</div></div>
-    </div>
-    <p style="margin-top:.6rem;">Los <strong>dinosaurios</strong> dominaron la Tierra durante casi 200 millones de años. Pangea se fragmentó en los continentes actuales. Aparecieron las <strong>primeras aves y los primeros mamíferos</strong>, así como las plantas con flores. Terminó con la <strong>extinción del Cretácico</strong> causada por el impacto de un meteorito.</p>
-    <div class="era-img-placeholder" id="img-mesozoica" style="padding: 0; border: none; background: transparent;">
-      <img src="../img/era-mesozoica_edit.webp" alt="Mesozoica" style="width: 100%; border-radius: 9px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+    <div class="sim-info">
+      <div id="era-img-box" class="sim-img-panel anim-in">
+        <img id="era-img" src="../img/era-precambrica_edit.webp" alt="Ilustración de la Era">
+        <div class="sim-text-content">
+          <h4 id="era-img-titulo">🔍 Observación de Campo:</h4>
+          <p id="era-img-texto">Observa la imagen: El planeta era una inmensa bola volcánica y tóxica. La corteza terrestre aún se estaba formando entre erupciones de lava. Las primeras formas de vida, bacterias simples, surgieron en esos océanos primitivos.</p>
+        </div>
+      </div>
+      <div class="vs-grid">
+        <div class="vs-box anim-in" id="era-box1" style="border-color: #ff4e50;">
+          <h4 id="era-h1">🔬 Vida principal</h4>
+          <p id="era-p1">Bacterias y organismos unicelulares simples. No existía vida en tierra firme.</p>
+        </div>
+        <div class="vs-box anim-in" id="era-box2" style="border-color: #f9d423;">
+          <h4 id="era-h2">🌎 Evento clave</h4>
+          <p id="era-p2">Formación de la Tierra, los océanos primitivos y una atmósfera sin oxígeno (tóxica).</p>
+        </div>
+      </div>
     </div>
   </div>
-
-  <!-- ERA CENOZOICA -->
-  <div class="card ac-jade">
-    <h2>🐘 Era Cenozoica</h2>
-    <div class="stat-bar">
-      <div class="stat-item"><div class="stat-label">⏳ Duración</div><div class="stat-val">66 – 2.6 M.a.</div></div>
-      <div class="stat-item" style="border-color:var(--jade);"><div class="stat-label">🔑 Evento clave</div><div class="stat-val" style="color:var(--jade);">Mamíferos gigantes</div></div>
-    </div>
-    <p style="margin-top:.6rem;">Tras la extinción de los dinosaurios, los <strong>mamíferos gigantes</strong> se diversificaron y dominaron la Tierra: mamuts, megaterios, tigres dientes de sable. También ocurrió una gran <strong>diversificación de las aves</strong>, que ocuparon todos los ecosistemas del planeta.</p>
-    <div class="era-img-placeholder" id="img-cenozoica" style="padding: 0; border: none; background: transparent;">
-      <img src="../img/era-cenozoica_edit.webp" alt="Cenozoica" style="width: 100%; border-radius: 9px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-    </div>
-  </div>
-
-  <!-- ERA CUATERNARIA -->
-  <div class="card ac-teal">
-    <h2>🧑 Era Cuaternaria</h2>
-    <div class="stat-bar">
-      <div class="stat-item"><div class="stat-label">⏳ Duración</div><div class="stat-val">2.6 M.a. – hoy</div></div>
-      <div class="stat-item" style="border-color:var(--pri);"><div class="stat-label">🔑 Evento clave</div><div class="stat-val" style="color:var(--pri);">Ser humano</div></div>
-    </div>
-    <p style="margin-top:.6rem;">Es la era en la que vivimos. Se caracteriza por las <strong>Edades de Hielo</strong> (glaciaciones), donde enormes capas de hielo cubrieron partes de los continentes. Lo más importante: apareció y se desarrolló el <strong>ser humano</strong> (<em>Homo sapiens</em>), que transformó el planeta con herramientas, agricultura y civilización.</p>
-    <div class="era-img-placeholder" id="img-cuaternaria" style="padding: 0; border: none; background: transparent;">
-      <img src="../img/era-cuaternaria_edit.webp" alt="Cuaternaria" style="width: 100%; border-radius: 9px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-    </div>
-  </div>
-
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')"><span class="nsb-icon">🏷️</span><span class="nsb-arrow">→</span></button>
+  <button class="next-sec-btn" onclick="go('s-flash')"><span>🃏 Ir a Flashcards</span><span>→</span></button>
 </div>
 
-<!-- ========== S-TIPOS ========== -->
-<div class="sec" id="s-tipos" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>📊 Resumen: Las 5 Eras</h2>
-    <div class="type-grid">
-      <div class="type-chip tc-amber"><div class="t-art">🌋 Precámbrica</div><div class="t-info">4,600–540 M.a. · Formación de la Tierra · Primeras formas de vida</div></div>
-      <div class="type-chip tc-blue"><div class="t-art">🐟 Paleozoica</div><div class="t-info">540–250 M.a. · Vida en los mares · Primeros vertebrados</div></div>
-      <div class="type-chip tc-purple"><div class="t-art">🦖 Mesozoica</div><div class="t-info">250–66 M.a. · Era de los dinosaurios · Primeras aves y mamíferos</div></div>
-      <div class="type-chip tc-jade"><div class="t-art">🐘 Cenozoica</div><div class="t-info">66–2.6 M.a. · Mamíferos gigantes · Diversificación de aves</div></div>
-      <div class="type-chip tc-teal"><div class="t-art">🧑 Cuaternaria</div><div class="t-info">2.6 M.a.–hoy · Edad de Hielo · Aparición del ser humano</div></div>
-    </div>
-  </div>
-  <div class="card ac-gold">
-    <h2>🔑 Conceptos clave</h2>
-    <div class="type-grid">
-      <div class="type-chip tc-teal"><div class="t-art">🦴 Fósil</div><div class="t-info">Resto conservado de un ser vivo antiguo</div></div>
-      <div class="type-chip tc-gold"><div class="t-art">🌍 Pangea</div><div class="t-info">Supercontinente único que se fragmentó</div></div>
-      <div class="type-chip tc-jade"><div class="t-art">💥 Extinción masiva</div><div class="t-info">Desaparición de muchas especies a la vez</div></div>
-      <div class="type-chip tc-amber"><div class="t-art">❄️ Edad de Hielo</div><div class="t-info">Glaciación con grandes capas de hielo</div></div>
-    </div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')"><span class="nsb-icon">🃏</span><span class="nsb-arrow">→</span></button>
-</div>
-
-<!-- ========== S-FLASH ========== -->
 <div class="sec" id="s-flash" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>🃏 Flashcards — Toca para voltear</h2>
-    <p style="font-size:.78rem;color:var(--gray);margin-bottom:.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
-    <div class="fc-wrap"><div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio"><div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div><div class="fc-back"><div class="fa" id="fcA"></div></div></div></div>
-    <div class="fc-nav"><button class="btn btn-d" onclick="prevFC()">◀ Anterior</button><span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span><button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button></div>
-    <div id="fbFlash" class="fb" role="alert"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')"><span class="nsb-icon">🧠</span><span class="nsb-arrow">→</span></button>
-</div>
-
-<!-- ========== S-QUIZ ========== -->
-<div class="sec" id="s-quiz" role="tabpanel">
-  <div class="card ac-gold">
-    <h2>🧠 Quiz de Comprensión</h2>
-    <p style="font-size:.78rem;color:var(--gray);margin-bottom:.6rem;">⭐ +5 XP por respuesta correcta</p>
-    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
-    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
-    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
-    <div style="display:flex;gap:.6rem;flex-wrap:wrap;"><button class="btn btn-g" onclick="checkQz()">✅ Verificar</button><button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar</button></div>
-    <div id="fbQz" class="fb" role="alert"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')"><span class="nsb-icon">🗂️</span><span class="nsb-arrow">→</span></button>
-</div>
-
-<!-- ========== S-CLASIFICA ========== -->
-<div class="sec" id="s-clasifica" role="tabpanel">
-  <div class="card ac-jade">
-    <h2>🗂️ Clasifica por Era Geológica</h2>
-    <p style="font-size:.88rem;margin-bottom:.5rem;">Selecciona un concepto y colócalo en la columna correcta.</p>
-    <p style="font-size:.78rem;color:var(--gray);margin-bottom:.6rem;">⭐ +5 XP al completar el grupo</p>
-    <p style="font-size:.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 ¡Usa "Variar grupo" para practicar más!</p>
-    <div class="word-bank" id="clsBank" role="list"></div>
-    <div class="drop-cols"><div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div><div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div></div>
-    <div style="margin-top:.8rem;display:flex;gap:.6rem;flex-wrap:wrap;"><button class="btn btn-g" onclick="checkClass()">✅ Verificar</button><button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button><button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button></div>
-    <div id="fbCls" class="fb" role="alert"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')"><span class="nsb-icon">🔍</span><span class="nsb-arrow">→</span></button>
-</div>
-
-<!-- ========== S-IDENTIFICA ========== -->
-<div class="sec" id="s-identifica" role="tabpanel">
-  <div class="card ac-purple">
-    <h2>🔍 Identifica la Era</h2>
-    <p style="font-size:.78rem;color:var(--gray);margin-bottom:.4rem;">⭐ +5 XP por respuesta correcta</p>
-    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
-    <p style="font-size:.85rem;margin-bottom:.8rem;">Toca la palabra clave que indica a qué era se refiere:</p>
-    <div class="id-sent" id="idSent" role="group"></div>
-    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:.82rem;color:var(--gray);font-style:italic;margin-top:.4rem;"></div>
-    <div style="margin-top:.8rem;display:flex;gap:.6rem;flex-wrap:wrap;"><button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button><button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button></div>
-    <div id="fbId" class="fb" role="alert"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')"><span class="nsb-icon">✏️</span><span class="nsb-arrow">→</span></button>
-</div>
-
-<!-- ========== S-COMPLETA ========== -->
-<div class="sec" id="s-completa" role="tabpanel">
-  <div class="card ac-amber">
-    <h2>✏️ Completa la oración</h2>
-    <p style="font-size:.78rem;color:var(--gray);margin-bottom:.4rem;">⭐ +5 XP por respuesta correcta</p>
-    <p style="font-family:'Fredoka',sans-serif;font-size:.82rem;color:var(--gray);margin-bottom:.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
-    <div class="cmp-sent" id="cmpSent"></div>
-    <div class="cmp-opts" id="cmpOpts" role="group"></div>
-    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
-    <div id="fbCmp" class="fb" role="alert"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')"><span class="nsb-icon">🏆</span><span class="nsb-arrow">→</span></button>
-</div>
-
-<!-- ========== S-RETO ========== -->
-<div class="sec" id="s-reto" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>🏆 Reto Final — ¡30 segundos!</h2>
-    <p style="font-size:.88rem;margin-bottom:.8rem;">¿A qué era pertenece cada concepto?</p>
-    <p style="font-size:.78rem;color:var(--gray);margin-bottom:.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
-    <div class="game" aria-live="polite">
-      <div class="reto-timer" id="retoTimer">⏱ 30</div>
-      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
-      <div class="reto-btns"><button class="btn btn-pri" onclick="ansReto('a')">Opción A</button><button class="btn btn-sec" onclick="ansReto('b')">Opción B</button></div>
-      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+  <div class="card">
+    <h2>🃏 Fósiles de Memoria</h2>
+    <p style="color:var(--gray);">⭐ +1 XP por cada tarjeta volteada</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca para voltear</div></div>
+        <div class="fc-back"><div class="fa" id="fcA"></div></div>
+      </div>
     </div>
-    <div style="margin-top:1rem;display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;"><button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button><button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button><button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button></div>
-    <div id="fbReto" class="fb" role="alert"></div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Ant</button>
+      <span class="fc-ctr" id="fcCtr">1 / 10</span>
+      <button class="btn btn-pri" onclick="nextFC()">Sig ▶</button>
+    </div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')"><span class="nsb-icon">🔤</span><span class="nsb-arrow">→</span></button>
+  <button class="next-sec-btn" onclick="go('s-quiz')"><span>🧠 Ir al Quiz</span><span>→</span></button>
 </div>
 
-<!-- ========== S-SOPA ========== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card">
+    <h2>🧠 Excavación de Conocimientos</h2>
+    <p style="color:var(--gray);margin-bottom:1rem;">⭐ +5 XP por respuesta correcta a la primera</p>
+    <p style="font-family:'Fredoka',sans-serif; color:var(--pri); margin-bottom:0.8rem;" id="qzProg">Pregunta 1 de X</p>
+    <div class="qz-q" id="qzQ"></div>
+    <div class="qz-opts" id="qzOpts"></div>
+    <button class="btn btn-sec" onclick="checkQz()">✅ Verificar</button>
+    <div id="fbQz" class="fb"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-clasifica')"><span>🗂️ Ir a Clasificar</span><span>→</span></button>
+</div>
+
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card">
+    <h2>🗂️ Estratos Geológicos</h2>
+    <p style="margin-bottom:1rem;">Selecciona una palabra del banco y toca la columna a la que pertenece.</p>
+    <div class="word-bank" id="clsBank"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left"><h4 id="col-left-head">Col A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right"><h4 id="col-right-head">Col B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <button class="btn btn-sec" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Cambiar Grupo</button>
+    </div>
+    <div id="fbCls" class="fb"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-identifica')"><span>🔍 Identificar</span><span>→</span></button>
+</div>
+
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card">
+    <h2>🔍 Identifica la Era</h2>
+    <p style="color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta</p>
+    <p class="id-prog" id="idProg">Oración 1 de X</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra clave que indica a qué era se refiere:</p>
+    <div class="id-sent" id="idSent"></div>
+    <div class="id-info" id="idInfo" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;"><button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button></div>
+    <div id="fbId" class="fb"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-completa')"><span>✏️ Completar</span><span>→</span></button>
+</div>
+
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card">
+    <h2>✏️ Completa el Registro</h2>
+    <p style="color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg">Oración 1 de X</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-reto')"><span>🏆 Reto</span><span>→</span></button>
+</div>
+
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card">
+    <h2>🏆 Reto Asteroide — ¡30 segundos!</h2>
+    <p>Clasifica los eventos en la Era correcta antes del impacto.</p>
+    <div class="game">
+      <div style="text-align:center; font-size:2rem; font-weight:800; color:var(--red);" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="ansReto('a')" id="btnRetoA">A</button>
+        <button class="btn btn-sec" onclick="ansReto('b')" id="btnRetoB">B</button>
+      </div>
+    </div>
+    <div style="margin-top:1rem; text-align:center;">
+      <button class="btn btn-dark" style="background:#111; color:white;" onclick="startReto()">🚀 ¡Iniciar Viaje!</button>
+      <button class="btn btn-pri" onclick="nextRetoPair()">🔀 Variar</button>
+    </div>
+    <div id="fbReto" class="fb"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-sopa')"><span>🔤 Sopa de Letras</span><span>→</span></button>
+</div>
+
 <div class="sec" id="s-sopa" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>🔤 Sopa de Letras</h2>
-    <p style="font-size:.78rem;color:var(--gray);margin-bottom:.4rem;">⭐ +1 XP por palabra encontrada</p>
+  <div class="card">
+    <h2>🔤 Yacimiento de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada</p>
     <div class="sopa-words" id="sopaWords"></div>
-    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera y última letra</p>
-    <div class="sopa-container"><div class="sopa-grid" id="sopaGrid"></div></div>
-    <div style="margin-top:1rem;display:flex;gap:.6rem;justify-content:center;"><button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button></div>
-    <div id="fbSopa" class="fb" role="alert"></div>
+    <p style="font-size:0.78rem;color:var(--gray);text-align:center;margin-bottom:0.4rem;">🖱️ Arrastra o haz clic en la primera y última letra</p>
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;padding:0.5rem 0;"><div class="sopa-grid" id="sopaGrid"></div></div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;"><button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button></div>
+    <div id="fbSopa" class="fb"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')"><span class="nsb-icon">📋</span><span class="nsb-arrow">→</span></button>
+  <button class="next-sec-btn" onclick="go('s-tareas')"><span>📋 Tareas</span><span>→</span></button>
 </div>
 
-<!-- ========== S-TAREAS ========== -->
 <div class="sec" id="s-tareas" role="tabpanel">
-  <div class="card ac-gold">
+  <div class="card">
     <h2>📋 Generador de Tareas</h2>
     <div class="tg-controls">
-      <select class="tg-sel" id="tgType"><option value="identify">🔍 Identificar</option><option value="classify">🗂️ Clasificar</option><option value="complete">✏️ Completar</option><option value="explain">💡 Explicar</option></select>
-      <select class="tg-sel" id="tgCount"><option value="5">5 tareas</option><option value="8" selected>8 tareas</option><option value="10">10 tareas</option><option value="15">15 tareas</option></select>
+      <select class="btn" style="background:var(--bg); border:1px solid var(--border);" id="tgType"><option value="identify">🔍 Identificar</option><option value="classify">🗂️ Clasificar</option><option value="complete">✏️ Completar</option><option value="explain">💡 Explicar</option></select>
+      <select class="btn" style="background:var(--bg); border:1px solid var(--border);" id="tgCount"><option value="5">5 tareas</option><option value="8" selected>8 tareas</option></select>
       <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button><button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
     </div>
     <div id="tgOut"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')"><span class="nsb-icon">📝</span><span class="nsb-arrow">→</span></button>
+  <button class="next-sec-btn" onclick="go('s-evaluacion')"><span>📝 Evaluación</span><span>→</span></button>
 </div>
 
-<!-- ========== S-EVALUACION ========== -->
 <div class="sec" id="s-evaluacion" role="tabpanel">
-  <div class="card ac-purple">
-    <div class="eval-print-header"><h2>Evaluación Final · Misión Las Eras Geológicas · Ciencias Naturales</h2><div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div><div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div><p style="font-size:.72rem;margin-top:.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>
+  <div class="card">
     <h2 id="eval-screen-title">📝 Evaluación Final — Las Eras Geológicas</h2>
-    <p class="eval-desc" style="font-size:.9rem;margin-bottom:.8rem;">Copia el examen en tu cuaderno y responde. Selecciona <strong>Ver Pauta</strong> para autoevaluarte. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
-    <div class="eval-controls"><button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button><button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button><button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button></div>
+    <p style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde. Selecciona <strong>Ver Pauta</strong> para autoevaluarte.</p>
+    <div class="eval-controls"><button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button><button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button></div>
     <div id="evalOut"></div>
   </div>
-  <div id="eval-pauta-sheet"></div>
-  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));"><span class="nsb-icon">🎓</span><span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span><span class="nsb-arrow">🏆</span></button>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));"><span class="nsb-icon">🎓</span><span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span></button>
 </div>
 
 </main>
 
-<!-- DIPLOMA -->
-<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true"><div class="diploma-card"><div class="diploma-stars" id="diplStars">⭐⭐⭐</div><div class="diploma-title">CONSTANCIA DE LOGRO</div><div class="diploma-sub">Misión Las Eras Geológicas</div><div class="diploma-mascot" aria-hidden="true">🦕</div><div class="diploma-name" id="diplName">Estudiante</div><div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div><div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div><div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div><div class="diploma-date" id="diplDate"></div><div class="diploma-ach" id="diplAch"></div><div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div><hr style="margin:.8rem 0;border-color:var(--border);"><input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)"><div class="diploma-actions"><button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button><button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button></div></div></div>
-
-<div class="ach-panel" id="achPanel" role="region" aria-label="Logros"><h4>🏅 Mis Logros</h4><div id="achList"></div></div>
-
-<nav class="nav" role="tablist" aria-label="Secciones de la misión">
-  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">🏷️</span> Tipos</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
-  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+<nav class="nav" role="tablist">
+  <button class="nav-t active" data-s="s-aprende" onclick="go('s-aprende')">🧭 Simulador</button>
+  <button class="nav-t" data-s="s-flash" onclick="go('s-flash')">🃏 Flashcards</button>
+  <button class="nav-t" data-s="s-quiz" onclick="go('s-quiz')">🧠 Quiz</button>
+  <button class="nav-t" data-s="s-clasifica" onclick="go('s-clasifica')">🗂️ Clasifica</button>
+  <button class="nav-t" data-s="s-identifica" onclick="go('s-identifica')">🔍 Identifica</button>
+  <button class="nav-t" data-s="s-completa" onclick="go('s-completa')">✏️ Completa</button>
+  <button class="nav-t" data-s="s-reto" onclick="go('s-reto')">🏆 Reto</button>
+  <button class="nav-t" data-s="s-sopa" onclick="go('s-sopa')">🔤 Sopa</button>
+  <button class="nav-t" data-s="s-tareas" onclick="go('s-tareas')">📋 Tareas</button>
+  <button class="nav-t" data-s="s-evaluacion" onclick="go('s-evaluacion')">📝 Evaluación</button>
 </nav>
 
-<footer class="credits">
-  <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
-  <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
-  <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
-  <div class="cred-contact"><span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span><span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span></div>
-  <div class="cred-tools"><button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button><button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button><button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button><button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button><button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button></div>
-</footer>
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true"><div class="diploma-card"><div class="diploma-stars" id="diplStars">⭐⭐⭐</div><div class="diploma-title">CONSTANCIA DE LOGRO</div><div class="diploma-sub">Misión Las Eras Geológicas</div><div class="diploma-mascot" aria-hidden="true">🦕</div><div class="diploma-name" id="diplName">Estudiante</div><div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div><div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div><div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div><div class="diploma-date" id="diplDate"></div><hr style="margin:.8rem 0;border-color:var(--border);"><input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)"><div class="diploma-actions"><button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button><button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button></div></div></div>
+
+<div class="toast" id="toastMsg"></div>
 
 <script>
-/* ===== ESTE ARCHIVO CONTINÚA CON TODO EL JAVASCRIPT IDÉNTICO AL ANTERIOR (eras_geologicas_v1) ===== */
-/* ===== PERO CON CONTENIDO ACTUALIZADO A 5 ERAS (incluyendo Cuaternaria) ===== */
-
-function toggleLetra(){document.body.classList.toggle('letra-grande');if(typeof sfx==='function')sfx('click');localStorage.setItem('preferenciaLetra',document.body.classList.contains('letra-grande'));}
-window.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('preferenciaLetra')==='true')document.body.classList.add('letra-grande');});
-const _pick=(a,n)=>[...a].sort(()=>Math.random()-.5).slice(0,n);const _shuffle=a=>[...a].sort(()=>Math.random()-.5);
-function fb(id,msg,isOk){const el=document.getElementById(id);if(el){el.textContent=msg;el.className='fb show '+(isOk?'ok':'err');}}
-const SAVE_KEY='eras_geo_v2';let xp=0,MXP=200,done=new Set(),evalAnsVisible=false,evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;const TOTAL_SECTIONS=11;
+/* ================= VARIABLES GLOBALES Y UTILIDADES ================= */
+const SAVE_KEY = 'eras_geo_v3';
+let xp = 0, MXP = 200, done = new Set(), unlockedAch = [];
+const _shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+const _pick = (arr, n) => _shuffle(arr).slice(0, n);
 const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set()};
-let sndOn=true,AC=null;function getAC(){if(!AC)try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}return AC}
-function sfx(t){if(!sndOn)return;try{const ac=getAC();if(!ac)return;const g=ac.createGain();g.connect(ac.destination);const o=ac.createOscillator();o.connect(g);if(t==='click'){o.type='sine';o.frequency.setValueAtTime(800,ac.currentTime);o.frequency.linearRampToValueAtTime(1200,ac.currentTime+.1);g.gain.setValueAtTime(.2,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+.12);o.start();o.stop(ac.currentTime+.12)}else if(t==='ok'){[523,659,784].forEach((f,i)=>{const o2=ac.createOscillator(),g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);o2.type='triangle';o2.frequency.value=f;g2.gain.setValueAtTime(.15,ac.currentTime+i*.1);g2.gain.linearRampToValueAtTime(0,ac.currentTime+i*.1+.15);o2.start(ac.currentTime+i*.1);o2.stop(ac.currentTime+i*.1+.15)})}else if(t==='no'){o.type='square';o.frequency.setValueAtTime(200,ac.currentTime);o.frequency.linearRampToValueAtTime(100,ac.currentTime+.2);g.gain.setValueAtTime(.15,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+.2);o.start();o.stop(ac.currentTime+.2)}else if(t==='up'){[523,659,784,1047].forEach((f,i)=>{const o2=ac.createOscillator(),g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);o2.type='triangle';o2.frequency.value=f;g2.gain.setValueAtTime(.18,ac.currentTime+i*.12);g2.gain.linearRampToValueAtTime(0,ac.currentTime+i*.12+.18);o2.start(ac.currentTime+i*.12);o2.stop(ac.currentTime+i*.12+.18)})}else if(t==='fan'){[523,587,659,698,784,1047].forEach((f,i)=>{const o2=ac.createOscillator(),g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);o2.type='triangle';o2.frequency.value=f;g2.gain.setValueAtTime(.15,ac.currentTime+i*.1);g2.gain.linearRampToValueAtTime(0,ac.currentTime+i*.1+.2);o2.start(ac.currentTime+i*.1);o2.stop(ac.currentTime+i*.1+.2)})}else if(t==='flip'){o.type='sine';o.frequency.setValueAtTime(400,ac.currentTime);o.frequency.linearRampToValueAtTime(900,ac.currentTime+.15);g.gain.setValueAtTime(.12,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+.18);o.start();o.stop(ac.currentTime+.18)}else if(t==='tick'){o.type='sine';o.frequency.value=1000;g.gain.setValueAtTime(.1,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+.05);o.start();o.stop(ac.currentTime+.05)}else if(t==='ach'){[880,1047,1319].forEach((f,i)=>{const o2=ac.createOscillator(),g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);o2.type='triangle';o2.frequency.value=f;g2.gain.setValueAtTime(.2,ac.currentTime+i*.12);g2.gain.linearRampToValueAtTime(0,ac.currentTime+i*.12+.22);o2.start(ac.currentTime+i*.12);o2.stop(ac.currentTime+i*.12+.22)})}}catch(e){}}
-function toggleSnd(){sndOn=!sndOn;document.getElementById('sndBtn').textContent=sndOn?'🔊 Sonido':'🔇 Sonido'}
-function toggleTheme(){darkMode=!darkMode;document.documentElement.setAttribute('data-theme',darkMode?'dark':'light');document.getElementById('themeBtn').textContent=darkMode?'☀️ Tema':'🌙 Tema';localStorage.setItem(SAVE_KEY+'_theme',darkMode?'dark':'light');sfx('click')}
-function initTheme(){const s=localStorage.getItem(SAVE_KEY+'_theme');const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches;darkMode=(s==='dark')||(s===null&&sys);if(darkMode){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeBtn').textContent='☀️ Tema'}}
-function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSections:Array.from(done),unlockedAch,evalFormNum,xp}))}catch(e){}}
-function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done')});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar()}}catch(e){}}
-const ACHIEVEMENTS={primer_quiz:{icon:'🧠',label:'Primera prueba superada'},flash_master:{icon:'🃏',label:'Todas las flashcards vistas'},clasif_pro:{icon:'🗂️',label:'Clasificador experto'},id_master:{icon:'🔍',label:'Identificador maestro'},reto_hero:{icon:'🏆',label:'Héroe del reto final'},nivel3:{icon:'🔭',label:'¡Explorador alcanzado! Nivel 3'},nivel5:{icon:'🥇',label:'¡Campeón alcanzado! Nivel 6'}};
-function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress()}
-function renderAchPanel(){const l=document.getElementById('achList');l.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const d=document.createElement('div');d.className='ach-item'+(unlockedAch.includes(id)?'':' locked');d.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;l.appendChild(d)})}
-function toggleAchPanel(){sfx('click');document.getElementById('achPanel').classList.toggle('open')}
-function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t)}t.textContent=msg;t.style.display='block';clearTimeout(t._tid);t._tid=setTimeout(()=>t.style.display='none',3200)}
-function launchConfetti(){const colors=['#2d8659','#6b8e23','#00b894','#fdcb6e','#6c5ce7'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${.8+Math.random()*1.5}s;animation-delay:${Math.random()*.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove())}}
+
+function go(id) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-t').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const btn = document.querySelector(`[data-s="${id}"]`);
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(id==='s-sopa') setTimeout(buildSopa, 50);
+}
+
+function fb(id, msg, isOk) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.className = 'fb show ' + (isOk ? 'ok' : 'err');
+}
+
 const lvls=[{t:0,n:'Novato ✏️'},{t:25,n:'Aprendiz 📝'},{t:55,n:'Explorador 🔭'},{t:90,n:'Detective 🔍'},{t:130,n:'Experto 🌟'},{t:165,n:'Campeón 🥇'},{t:190,n:'Maestro 🏆'}];
-function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress()}
-function updateXPBar(){const p=Math.round(xp/MXP*100);document.getElementById('xpFill').style.width=p+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv}}
-function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0')}
-function fin(id,showFX=true){if(!done.has(id)){done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');if(showFX){sfx('up');launchConfetti()}saveProgress()}}
-function getProgress(){return Math.round(done.size/TOTAL_SECTIONS*100)}
-function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-t[role="tab"]').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false')});document.getElementById(id).classList.add('active');const btn=document.querySelector(`[data-s="${id}"]`);if(btn){btn.classList.add('active');btn.setAttribute('aria-selected','true')}window.scrollTo({top:0,behavior:'smooth'});if(id==='s-sopa')setTimeout(buildSopa,50)}
+function pts(n) {
+  xp = Math.max(0, Math.min(MXP, xp + n));
+  document.getElementById('xpFill').style.width = (xp/MXP*100) + '%';
+  document.getElementById('xpPts').textContent = '⭐ ' + xp;
+  let lv=0; for(let i=0;i<lvls.length;i++) if(xp>=lvls[i].t) lv=i;
+  document.getElementById('xpLvl').textContent=lvls[lv].n;
+}
 
-// ===== FLASHCARDS (actualizado a 5 eras) =====
-const fcData=[
-  {w:'Era Geológica',a:'🌍 Gran período de tiempo en que se divide la <strong>historia de la Tierra</strong> (4,600 millones de años).'},
-  {w:'Era Precámbrica',a:'🌋 La era más <strong>larga</strong> (4,600–540 M.a.). <strong>Formación de la Tierra</strong> y primeras formas de vida: bacterias y unicelulares.'},
-  {w:'Era Paleozoica',a:'🐟 "Vida Antigua" (540–250 M.a.). <strong>Vida en los mares</strong> y primeros <strong>vertebrados</strong>. Trilobites, anfibios, reptiles.'},
-  {w:'Era Mesozoica',a:'🦖 "Era de los Dinosaurios" (250–66 M.a.). <strong>Primeras aves y mamíferos</strong>. Pangea se fragmentó.'},
-  {w:'Era Cenozoica',a:'🐘 66–2.6 M.a. Dominaron los <strong>mamíferos gigantes</strong> (mamuts, megaterios). Gran <strong>diversificación de las aves</strong>.'},
-  {w:'Era Cuaternaria',a:'🧑 2.6 M.a.–hoy. <strong>Edad de Hielo</strong> (glaciaciones). Apareció y se desarrolló el <strong>ser humano</strong> (Homo sapiens).'},
-  {w:'Fósil',a:'🦴 Resto o huella de un ser vivo antiguo conservado en las <strong>rocas</strong>. Evidencia clave para estudiar las eras.'},
-  {w:'Pangea',a:'🌎 <strong>Supercontinente</strong> único que existía en la era Mesozoica. Se fragmentó en los continentes actuales.'},
-  {w:'Extinción masiva',a:'💥 Evento donde <strong>desaparecen muchas especies</strong> a la vez. La del Pérmico fue la mayor; la del Cretácico acabó con los dinosaurios.'},
-  {w:'Trilobite',a:'🦐 Artrópodo marino, fósil guía del <strong>Paleozoico</strong>. Vivió 300 millones de años antes de extinguirse.'},
-  {w:'Edad de Hielo',a:'❄️ Período de <strong>frío extremo</strong> en la era Cuaternaria. Enormes capas de hielo cubrieron partes de los continentes.'},
-  {w:'Homo sapiens',a:'🧑 Especie humana actual. Apareció en la era <strong>Cuaternaria</strong> hace aprox. <strong>300,000 años</strong>.'},
-  {w:'Mamíferos gigantes',a:'🐘 Animales como <strong>mamuts, megaterios y tigres dientes de sable</strong> que dominaron la era Cenozoica.'},
-  {w:'Primeros vertebrados',a:'🐟 Los primeros animales con <strong>columna vertebral</strong> (peces primitivos) aparecieron en la era <strong>Paleozoica</strong>.'},
+function showToast(msg) {
+  let t = document.getElementById('toastMsg');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+function launchConfetti(){const colors=['#2d98da','#20bf6b','#fa8231','#fbc531'];for(let i=0;i<50;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${.8+Math.random()*1.5}s;animation-delay:${Math.random()*.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:50%;`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove())}}
+
+/* ================= 1. MOTOR DEL SIMULADOR INTERACTIVO ================= */
+const erasInfo = [
+  {
+    titulo: 'Era Precámbrica', tiempo: '4,600 – 540 Millones de años',
+    bg: 'linear-gradient(135deg, #ff4e50, #f9d423)', bc1: '#ff4e50', bc2: '#f9d423',
+    imgUrl: '../img/era-precambrica_edit.webp',
+    imgTexto: 'Observa la ilustración: El planeta era una inmensa bola volcánica. La corteza terrestre aún se estaba formando entre erupciones de lava. Las primeras formas de vida, bacterias simples, surgieron en esos océanos primitivos.',
+    h1: '🔬 Vida principal', p1: 'Bacterias y organismos unicelulares simples. No existía vida en tierra firme.',
+    h2: '🌎 Evento clave', p2: 'Formación de la Tierra, los océanos y una atmósfera sin oxígeno (tóxica).'
+  },
+  {
+    titulo: 'Era Paleozoica', tiempo: '540 – 250 Millones de años',
+    bg: 'linear-gradient(135deg, #1cb5e0, #000046)', bc1: '#1cb5e0', bc2: '#000046',
+    imgUrl: '../img/era-paleozoica_edit.webp',
+    imgTexto: 'Conocida como "Vida Antigua". Observa el fondo oceánico en la imagen: El animal con caparazón en la arena es un Trilobite, el rey de los mares de esa época. También puedes ver a los primeros vertebrados: peces primitivos.',
+    h1: '🦐 Fósil Guía', p1: 'Los Trilobites dominaron los mares. Surgieron los primeros peces y anfibios.',
+    h2: '💥 Extinción', p2: 'Terminó con la extinción del Pérmico, donde desapareció el 90% de las especies.'
+  },
+  {
+    titulo: 'Era Mesozoica', tiempo: '250 – 66 Millones de años',
+    bg: 'linear-gradient(135deg, #56ab2f, #a8e063)', bc1: '#56ab2f', bc2: '#a8e063',
+    imgUrl: '../img/era-mesozoica_edit.webp',
+    imgTexto: 'La "Era de los Dinosaurios". Fíjate en la imagen: un imponente T-Rex camina por una selva, mientras que en el cielo vuela un Pterodactyl (reptil volador). Al final, aparecen las primeras aves.',
+    h1: '🦕 Dominio', p1: 'Dinosaurios terrestres, reptiles voladores y marinos. Aparecen plantas con flores.',
+    h2: '🌍 Supercontinente', p2: 'Pangea se fragmentó. Terminó de golpe con el impacto de un meteorito gigante.'
+  },
+  {
+    titulo: 'Era Cenozoica', tiempo: '66 – 2.6 Millones de años',
+    bg: 'linear-gradient(135deg, #fa709a, #fee140)', bc1: '#fa709a', bc2: '#f39c12',
+    imgUrl: '../img/era-cenozoica_edit.webp',
+    imgTexto: 'Tras la extinción de los dinosaurios, los mamíferos tomaron el control. En la ilustración destacan grandes mamíferos peludos como el Mamut y depredadores temibles como el Tigre dientes de sable.',
+    h1: '🐅 Nuevos Reyes', p1: 'Los mamíferos sobrevivieron y crecieron a tamaños gigantes, dominando el planeta.',
+    h2: '🦅 Evolución', p2: 'Aves y mamíferos ocuparon los espacios que dejaron libres los dinosaurios.'
+  },
+  {
+    titulo: 'Era Cuaternaria', tiempo: '2.6 M.a. – Actualidad',
+    bg: 'linear-gradient(135deg, #8fd3f4, #84fab0)', bc1: '#3498db', bc2: '#2ecc71',
+    imgUrl: '../img/era-cuaternaria_edit.webp',
+    imgTexto: '¡Nuestra era! La imagen muestra las características Edades de Hielo (glaciaciones) cubriendo las montañas. Lo más importante: los primeros humanos (Homo sapiens) descubren el fuego.',
+    h1: '🧑 Ser Humano', p1: 'Aparición y desarrollo de nuestra especie (Homo sapiens) y la civilización.',
+    h2: '❄️ Glaciaciones', p2: 'Ocurrieron grandes Edades de Hielo que obligaron a humanos y animales a adaptarse.'
+  }
 ];
-let fcIdx=0;
-function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length}
-function flipCard(){sfx('flip');document.getElementById('fcInner').classList.toggle('flipped');if(!xpTracker.fc.has(fcIdx)){xpTracker.fc.add(fcIdx);pts(1)}if(xpTracker.fc.size===fcData.length){fin('s-flash');unlockAchievement('flash_master')}}
-function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC()}
-function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC()}
 
-// ===== QUIZ (actualizado a 5 eras) =====
-const qzData=[
-  {q:'¿Cuál es la era geológica más larga?',o:['a) Paleozoica','b) Mesozoica','c) Precámbrica','d) Cuaternaria'],c:2},
-  {q:'¿En qué era vivieron los dinosaurios?',o:['a) Precámbrica','b) Paleozoica','c) Mesozoica','d) Cenozoica'],c:2},
-  {q:'¿En qué era aparecieron los primeros vertebrados?',o:['a) Precámbrica','b) Paleozoica','c) Mesozoica','d) Cuaternaria'],c:1},
-  {q:'¿Qué era se caracteriza por los mamíferos gigantes y la diversificación de aves?',o:['a) Mesozoica','b) Paleozoica','c) Cenozoica','d) Precámbrica'],c:2},
-  {q:'¿En qué era apareció el ser humano?',o:['a) Cenozoica','b) Cuaternaria','c) Mesozoica','d) Paleozoica'],c:1},
-  {q:'¿Qué evento caracteriza a la Era Cuaternaria?',o:['a) Dinosaurios','b) Formación de la Tierra','c) Edad de Hielo','d) Vida en los mares'],c:2},
-  {q:'¿Qué fue Pangea?',o:['a) Un océano','b) Un supercontinente','c) Un fósil','d) Una glaciación'],c:1},
-  {q:'Los trilobites son fósiles guía de la era:',o:['a) Cenozoica','b) Mesozoica','c) Paleozoica','d) Cuaternaria'],c:2},
-  {q:'¿Qué causó la extinción de los dinosaurios?',o:['a) Glaciación','b) Terremoto','c) Meteorito','d) Volcán'],c:2},
-  {q:'Durante la era Precámbrica, ¿qué se formó primero?',o:['a) Dinosaurios','b) Ser humano','c) La Tierra, océanos y atmósfera','d) Mamíferos gigantes'],c:2},
+function cambiarEra(idx) {
+  document.querySelectorAll('.sim-btn').forEach((btn, i) => btn.classList.toggle('active', i === idx));
+  const d = erasInfo[idx];
+  const pantalla = document.getElementById('era-pantalla'), imgBox = document.getElementById('era-img-box'), b1 = document.getElementById('era-box1'), b2 = document.getElementById('era-box2');
+  imgBox.classList.remove('anim-in'); b1.classList.remove('anim-in'); b2.classList.remove('anim-in');
+
+  setTimeout(() => {
+    pantalla.style.background = d.bg;
+    document.getElementById('era-titulo').textContent = d.titulo; document.getElementById('era-tiempo').textContent = d.tiempo;
+    document.getElementById('era-img').src = d.imgUrl; document.getElementById('era-img-texto').textContent = d.imgTexto;
+    document.getElementById('era-h1').textContent = d.h1; document.getElementById('era-p1').textContent = d.p1;
+    document.getElementById('era-h2').textContent = d.h2; document.getElementById('era-p2').textContent = d.p2;
+    b1.style.borderColor = d.bc1; b2.style.borderColor = d.bc2;
+    void imgBox.offsetWidth;
+    imgBox.classList.add('anim-in'); b1.classList.add('anim-in'); b2.classList.add('anim-in');
+  }, 100);
+}
+
+/* ================= 2. FLASHCARDS ================= */
+const fcData = [
+  {w:'Era Precámbrica', a:'Volcanes y <strong>primeras formas de vida</strong> (bacterias).'},
+  {w:'Era Paleozoica', a:'Vida en los mares y <strong>primeros vertebrados</strong>. Fósil: Trilobite.'},
+  {w:'Era Mesozoica', a:'Era de los <strong>Dinosaurios</strong>. Pangea se rompe.'},
+  {w:'Era Cenozoica', a:'Dominio de los <strong>Mamíferos gigantes</strong> (Mamut).'},
+  {w:'Era Cuaternaria', a:'<strong>Edad de Hielo</strong> y aparición del <strong>ser humano</strong>.'},
+  {w:'Pangea', a:'Supercontinente que existía en el Mesozoico.'},
+  {w:'Meteorito', a:'Causó la extinción de los dinosaurios hace 66 M.a.'}
 ];
-let qzIdx=0,qzSel=-1,qzDone=false;
-function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz()}
-function showQz(){if(qzIdx>=qzData.length){document.getElementById('qzQ').textContent='🎉 ¡Quiz completado!';document.getElementById('qzOpts').innerHTML='';fin('s-quiz');unlockAchievement('primer_quiz');return}const q=qzData[qzIdx];document.getElementById('qzProg').textContent=`Pregunta ${qzIdx+1} de ${qzData.length}`;document.getElementById('qzQ').textContent=q.q;const opts=document.getElementById('qzOpts');opts.innerHTML='';q.o.forEach((o,i)=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=o;b.onclick=()=>{if(qzDone)return;document.querySelectorAll('.qz-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');qzSel=i;sfx('click')};opts.appendChild(b)});qzDone=false}
-function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false);qzDone=true;const opts=document.querySelectorAll('.qz-opt');if(qzSel===qzData[qzIdx].c){opts[qzSel].classList.add('correct');fb('fbQz','¡Correcto! +5 XP',true);if(!xpTracker.qz.has(qzIdx)){xpTracker.qz.add(qzIdx);pts(5)}sfx('ok')}else{opts[qzSel].classList.add('wrong');opts[qzData[qzIdx].c].classList.add('correct');fb('fbQz','Incorrecto.',false);sfx('no')}setTimeout(()=>{qzIdx++;qzSel=-1;showQz()},1600)}
-function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show')}
+let fcIdx = 0;
+function upFC() {
+  document.getElementById('fcInner').classList.remove('flipped');
+  document.getElementById('fcW').textContent = fcData[fcIdx].w;
+  document.getElementById('fcA').innerHTML = fcData[fcIdx].a;
+  document.getElementById('fcCtr').textContent = (fcIdx+1) + ' / ' + fcData.length;
+}
+function flipCard() { document.getElementById('fcInner').classList.toggle('flipped'); if(!xpTracker.fc.has(fcIdx)){xpTracker.fc.add(fcIdx);pts(1);} }
+function nextFC() { fcIdx = (fcIdx+1)%fcData.length; upFC(); }
+function prevFC() { fcIdx = (fcIdx-1+fcData.length)%fcData.length; upFC(); }
 
-// ===== CLASIFICACIÓN (5 eras) =====
-const classGroups=[
-  {label:['Paleozoica','Mesozoica'],headA:'🐟 Paleozoica',headB:'🦖 Mesozoica',colA:'paleozoica',colB:'mesozoica',words:[{w:'Vida en los mares',t:'paleozoica'},{w:'Dinosaurios',t:'mesozoica'},{w:'Primeros vertebrados',t:'paleozoica'},{w:'Primeras aves',t:'mesozoica'},{w:'Trilobites',t:'paleozoica'},{w:'Pangea se fragmenta',t:'mesozoica'},{w:'Primeros anfibios',t:'paleozoica'},{w:'Plantas con flores',t:'mesozoica'},{w:'Extinción del Pérmico',t:'paleozoica'},{w:'Meteorito Cretácico',t:'mesozoica'}]},
-  {label:['Precámbrica','Cuaternaria'],headA:'🌋 Precámbrica',headB:'🧑 Cuaternaria',colA:'precámbrica',colB:'cuaternaria',words:[{w:'Formación de la Tierra',t:'precámbrica'},{w:'Homo sapiens',t:'cuaternaria'},{w:'Primeras bacterias',t:'precámbrica'},{w:'Edad de Hielo',t:'cuaternaria'},{w:'Océanos se forman',t:'precámbrica'},{w:'Herramientas de piedra',t:'cuaternaria'},{w:'Atmósfera primitiva',t:'precámbrica'},{w:'Agricultura',t:'cuaternaria'},{w:'Organismos unicelulares',t:'precámbrica'},{w:'Civilizaciones',t:'cuaternaria'}]},
-  {label:['Cenozoica','Cuaternaria'],headA:'🐘 Cenozoica',headB:'🧑 Cuaternaria',colA:'cenozoica',colB:'cuaternaria',words:[{w:'Mamíferos gigantes',t:'cenozoica'},{w:'Ser humano',t:'cuaternaria'},{w:'Diversificación de aves',t:'cenozoica'},{w:'Glaciaciones',t:'cuaternaria'},{w:'Mamuts',t:'cenozoica'},{w:'Homo sapiens',t:'cuaternaria'},{w:'Megaterios',t:'cenozoica'},{w:'Edad de Hielo',t:'cuaternaria'},{w:'Tigre dientes de sable',t:'cenozoica'},{w:'Herramientas',t:'cuaternaria'}]},
+/* ================= 3. QUIZ ================= */
+const qzData = [
+  {q:'Según las ilustraciones del simulador, ¿qué animal acorazado dominaba los fondos marinos en la Era Paleozoica?', o:['Tigre dientes de sable', 'Trilobite', 'Pterodactyl'], c:1},
+  {q:'En la imagen de la Era Mesozoica vimos a un enorme depredador terrestre. ¿De qué animal se trata?', o:['Dinosaurio (T-Rex)', 'Mamut lanudo', 'Pez primitivo'], c:0},
+  {q:'¿Qué gran evento climático se observa en la ilustración de los primeros seres humanos (Era Cuaternaria)?', o:['Caída de un meteorito', 'Erupciones volcánicas', 'Edad de Hielo'], c:2},
+  {q:'¿Qué tipo de animales tomaron el control de la Tierra y crecieron a tamaños gigantes en la Era Cenozoica?', o:['Reptiles marinos', 'Mamíferos', 'Bacterias unicelulares'], c:1},
+  {q:'¿Cómo se veía la Tierra en la Era Precámbrica según la primera ilustración?', o:['Cubierta de hielo', 'Con volcanes activos y lava', 'Llena de enormes selvas'], c:1}
 ];
-let currentClassGroupIdx=0,clsSelectedWord=null;
-function buildClass(){const g=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=g.headA;document.getElementById('col-right-head').textContent=g.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...g.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click')};bank.appendChild(el)});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=e=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const tid=colId==='col-left'?'items-left':'items-right';const wc=document.getElementById(tid);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const orig=clsSelectedWord;item.onclick=ev=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click()}else{document.getElementById('clsBank').appendChild(orig);orig.classList.remove('sel-word');item.remove();sfx('click')}};wc.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click')}})}
-function checkClass(){const rem=document.querySelectorAll('#clsBank .wb-item').length;if(rem>0){fb('fbCls','Mueve todas las palabras primero.',false);return}const g=classGroups[currentClassGroupIdx];let ok=true;document.querySelectorAll('#items-left .drop-item,#items-right .drop-item').forEach(el=>{const inL=el.parentElement.id==='items-left';const exp=inL?g.colA:g.colB;if(el.dataset.t===exp)el.classList.add('cls-ok');else{el.classList.add('cls-no');ok=false}});if(!xpTracker.cls.has(currentClassGroupIdx)){xpTracker.cls.add(currentClassGroupIdx);pts(5)}if(ok){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro')}else{fb('fbCls','Hay errores.',false);sfx('no')}}
-function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length;buildClass();document.getElementById('fbCls').classList.remove('show');showToast('🔄 '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1])}
-function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show')}
+let qzIdx = 0, qzSel = -1, qzDone = false;
+function showQz() {
+  if(qzIdx >= qzData.length) { document.getElementById('qzQ').textContent = '🎉 ¡Quiz completado!'; document.getElementById('qzOpts').innerHTML=''; return; }
+  document.getElementById('qzProg').textContent = `Pregunta ${qzIdx+1} de ${qzData.length}`;
+  document.getElementById('qzQ').textContent = qzData[qzIdx].q;
+  const opts = document.getElementById('qzOpts'); opts.innerHTML = ''; qzDone = false; qzSel = -1;
+  qzData[qzIdx].o.forEach((txt, i) => {
+    const b = document.createElement('button'); b.className = 'qz-opt'; b.textContent = txt;
+    b.onclick = () => { if(qzDone)return; document.querySelectorAll('.qz-opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); qzSel=i; };
+    opts.appendChild(b);
+  });
+}
+function checkQz() {
+  if(qzSel < 0) return fb('fbQz', 'Selecciona una respuesta.', false);
+  qzDone = true; const opts = document.querySelectorAll('.qz-opt');
+  if(qzSel === qzData[qzIdx].c) { opts[qzSel].classList.add('correct'); fb('fbQz', '¡Correcto! +5 XP', true); if(!xpTracker.qz.has(qzIdx)){xpTracker.qz.add(qzIdx);pts(5);} } 
+  else { opts[qzSel].classList.add('wrong'); opts[qzData[qzIdx].c].classList.add('correct'); fb('fbQz', 'Incorrecto.', false); }
+  setTimeout(() => { qzIdx++; document.getElementById('fbQz').classList.remove('show'); showQz(); }, 1500);
+}
 
-// ===== IDENTIFICAR (5 eras) =====
+/* ================= 4. CLASIFICA ================= */
+const clsGroups = [
+  { hA:'🐟 Paleozoico', hB:'🦖 Mesozoico', cA:'p', cB:'m', w:[{w:'Trilobites',t:'p'},{w:'Dinosaurios',t:'m'},{w:'Vida marina',t:'p'},{w:'Pangea',t:'m'},{w:'Peces primitivos',t:'p'},{w:'Meteorito',t:'m'}] },
+  { hA:'🌋 Precámbrico', hB:'🐘 Cenozoico', cA:'pr', cB:'c', w:[{w:'Bacterias',t:'pr'},{w:'Mamuts',t:'c'},{w:'Océanos nacen',t:'pr'},{w:'Tigre dientes de sable',t:'c'},{w:'Planeta de lava',t:'pr'},{w:'Aves modernas',t:'c'}] }
+];
+let clsIdx = 0, clsSel = null;
+function buildClass() {
+  const g = clsGroups[clsIdx];
+  document.getElementById('col-left-head').textContent = g.hA; document.getElementById('col-right-head').textContent = g.hB;
+  const bank = document.getElementById('clsBank'); bank.innerHTML=''; document.getElementById('items-left').innerHTML=''; document.getElementById('items-right').innerHTML='';
+  clsSel = null;
+  _shuffle(g.w).forEach(x => {
+    const el = document.createElement('div'); el.className='wb-item'; el.textContent=x.w; el.dataset.t=x.t;
+    el.onclick = () => { document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word')); el.classList.add('sel-word'); clsSel=el; };
+    bank.appendChild(el);
+  });
+  ['col-left','col-right'].forEach(cId => {
+    document.getElementById(cId).onclick = () => {
+      if(!clsSel) return;
+      const target = document.getElementById(cId === 'col-left' ? 'items-left' : 'items-right');
+      const item = document.createElement('div'); item.className='drop-item'; item.textContent=clsSel.textContent; item.dataset.t=clsSel.dataset.t;
+      const orig = clsSel;
+      item.onclick = (e) => { e.stopPropagation(); document.getElementById('clsBank').appendChild(orig); orig.classList.remove('sel-word'); item.remove(); };
+      target.appendChild(item); clsSel.remove(); clsSel=null;
+    };
+  });
+}
+function checkClass() {
+  if(document.querySelectorAll('#clsBank .wb-item').length > 0) return fb('fbCls','Ubica todas las palabras', false);
+  const g = clsGroups[clsIdx]; let ok = true;
+  document.querySelectorAll('#items-left .drop-item, #items-right .drop-item').forEach(el => {
+    const isLeft = el.parentElement.id === 'items-left';
+    if(el.dataset.t === (isLeft ? g.cA : g.cB)) el.style.borderColor = 'var(--sec)';
+    else { el.style.borderColor = 'var(--red)'; ok = false; }
+  });
+  if(ok) { fb('fbCls','¡Perfecto! +5 XP',true); if(!xpTracker.cls.has(clsIdx)){xpTracker.cls.add(clsIdx);pts(5);} } else fb('fbCls','Hay errores (en rojo)',false);
+}
+function nextClassGroup() { clsIdx = (clsIdx+1)%clsGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); }
+
+/* ================= 5. IDENTIFICA ================= */
 const idData=[
-  {s:['En','esta','era','se','formó','la','Tierra.'],c:6,art:'Era Precámbrica'},
-  {s:['Los','primeros','vertebrados','vivían','en','los','mares.'],c:2,art:'Era Paleozoica'},
-  {s:['Los','dinosaurios','dominaron','el','planeta.'],c:1,art:'Era Mesozoica'},
-  {s:['Dominaron','los','mamíferos','gigantes','como','el','mamut.'],c:3,art:'Era Cenozoica'},
-  {s:['El','ser','humano','apareció','y','creó','civilizaciones.'],c:2,art:'Era Cuaternaria'},
-  {s:['Las','glaciaciones','cubrieron','los','continentes','de','hielo.'],c:1,art:'Era Cuaternaria'},
-  {s:['Las','primeras','aves','y','mamíferos','surgieron','aquí.'],c:2,art:'Era Mesozoica'},
-  {s:['Las','primeras','bacterias','fueron','las','pioneras','de','la','vida.'],c:2,art:'Era Precámbrica'},
+  {s:['En','esta','era','se','formó','la','Tierra.'],c:6,art:'Precámbrica'},
+  {s:['Los','dinosaurios','dominaron','el','planeta.'],c:1,art:'Mesozoica'},
+  {s:['Dominaron','los','mamíferos','gigantes','como','el','mamut.'],c:3,art:'Cenozoica'},
+  {s:['El','ser','humano','apareció','y','creó','el','fuego.'],c:2,art:'Cuaternaria'},
 ];
 let idIdx=0,idDone=false;
-function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca la palabra clave → ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span)})}
-function checkId(i,span){if(idDone)return;document.querySelectorAll('.id-word').forEach(s=>s.classList.remove('selected'));span.classList.add('selected');if(i===idData[idIdx].c){idDone=true;span.classList.add('id-ok');fb('fbId','¡Correcto! +5 XP',true);if(!xpTracker.id.has(idIdx)){xpTracker.id.add(idIdx);pts(5)}sfx('ok')}else{span.classList.add('id-no');fb('fbId','Esa no es la palabra clave.',false);sfx('no')}}
-function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').classList.remove('show')}
-function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show')}
+function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';return}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca la palabra clave → ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span)})}
+function checkId(i,span){if(idDone)return;document.querySelectorAll('.id-word').forEach(s=>s.classList.remove('selected'));span.classList.add('selected');if(i===idData[idIdx].c){idDone=true;span.classList.add('id-ok');fb('fbId','¡Correcto! +5 XP',true);if(!xpTracker.id.has(idIdx)){xpTracker.id.add(idIdx);pts(5)}}else{span.classList.add('id-no');fb('fbId','Esa no es la palabra clave.',false);}}
+function nextId(){idIdx++;showId();document.getElementById('fbId').classList.remove('show')}
 
-// ===== COMPLETA (5 eras) =====
+/* ================= 6. COMPLETA ================= */
 const cmpData=[
-  {s:'La era más larga de la historia de la Tierra es la ___.',opts:['Mesozoica','Precámbrica','Cuaternaria'],c:1},
-  {s:'Los dinosaurios vivieron en la era ___.',opts:['Paleozoica','Cenozoica','Mesozoica'],c:2},
-  {s:'Los primeros vertebrados aparecieron en la era ___.',opts:['Precámbrica','Paleozoica','Cuaternaria'],c:1},
-  {s:'Los mamíferos gigantes dominaron en la era ___.',opts:['Mesozoica','Cenozoica','Paleozoica'],c:1},
-  {s:'El ser humano apareció en la era ___.',opts:['Cenozoica','Cuaternaria','Mesozoica'],c:1},
-  {s:'La ___ de Hielo ocurrió en la era Cuaternaria.',opts:['Explosión','Edad','Formación'],c:1},
-  {s:'El supercontinente único se llamaba ___.',opts:['Gondwana','Pangea','Laurasia'],c:1},
-  {s:'Los ___ son los fósiles guía de la era Paleozoica.',opts:['dinosaurios','trilobites','mamuts'],c:1},
+  {s:'Los ___ vivieron en la era Mesozoica.',opts:['mamuts','dinosaurios','humanos'],c:1},
+  {s:'El fósil guía de la era Paleozoica es el ___.',opts:['trilobite','T-Rex','pez'],c:0},
+  {s:'La Edad de ___ ocurrió en la era Cuaternaria.',opts:['Fuego','Hielo','Tierra'],c:1},
+  {s:'Las primeras ___ surgieron en la era Precámbrica.',opts:['plantas','bacterias','aves'],c:1}
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
-function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click')};opts.appendChild(b)})}
-function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',false);cmpDone=true;const opts=document.querySelectorAll('.cmp-opt');if(cmpSel===cmpData[cmpIdx].c){opts[cmpSel].classList.add('correct');document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`);fb('fbCmp','¡Correcto! +5 XP',true);if(!xpTracker.cmp.has(cmpIdx)){xpTracker.cmp.add(cmpIdx);pts(5)}sfx('ok')}else{opts[cmpSel].classList.add('wrong');opts[cmpData[cmpIdx].c].classList.add('correct');fb('fbCmp','Incorrecto.',false);sfx('no')}setTimeout(()=>{cmpIdx++;document.getElementById('fbCmp').classList.remove('show');showCmp()},1600)}
+function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';return}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;};opts.appendChild(b)})}
+function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',false);cmpDone=true;const opts=document.querySelectorAll('.cmp-opt');if(cmpSel===cmpData[cmpIdx].c){opts[cmpSel].classList.add('correct');document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`);fb('fbCmp','¡Correcto! +5 XP',true);if(!xpTracker.cmp.has(cmpIdx)){xpTracker.cmp.add(cmpIdx);pts(5);}}else{opts[cmpSel].classList.add('wrong');opts[cmpData[cmpIdx].c].classList.add('correct');fb('fbCmp','Incorrecto.',false);}setTimeout(()=>{cmpIdx++;document.getElementById('fbCmp').classList.remove('show');showCmp()},1600)}
 
-// ===== RETO (5 eras) =====
+/* ================= 7. RETO ================= */
 const retoPairs=[
-  {label:['Paleozoica','Mesozoica'],btnA:'🐟 Paleozoica',btnB:'🦖 Mesozoica',colA:'paleozoica',colB:'mesozoica',words:[{w:'Trilobites',t:'paleozoica'},{w:'Dinosaurios',t:'mesozoica'},{w:'Vida en los mares',t:'paleozoica'},{w:'Pangea se rompe',t:'mesozoica'},{w:'Primeros peces',t:'paleozoica'},{w:'Primeras aves',t:'mesozoica'},{w:'Primeros anfibios',t:'paleozoica'},{w:'Plantas con flores',t:'mesozoica'},{w:'Primeros vertebrados',t:'paleozoica'},{w:'Meteorito',t:'mesozoica'}]},
-  {label:['Cenozoica','Cuaternaria'],btnA:'🐘 Cenozoica',btnB:'🧑 Cuaternaria',colA:'cenozoica',colB:'cuaternaria',words:[{w:'Mamíferos gigantes',t:'cenozoica'},{w:'Homo sapiens',t:'cuaternaria'},{w:'Diversificación aves',t:'cenozoica'},{w:'Edad de Hielo',t:'cuaternaria'},{w:'Mamuts',t:'cenozoica'},{w:'Herramientas',t:'cuaternaria'},{w:'Megaterios',t:'cenozoica'},{w:'Agricultura',t:'cuaternaria'},{w:'Tigre dientes sable',t:'cenozoica'},{w:'Civilización',t:'cuaternaria'}]},
+  {btnA:'🐟 Paleozoica',btnB:'🦖 Mesozoica',colA:'p',colB:'m',words:[{w:'Trilobites',t:'p'},{w:'Dinosaurios',t:'m'},{w:'Vida marina',t:'p'},{w:'Meteorito',t:'m'}]},
+  {btnA:'🐘 Cenozoica',btnB:'🧑 Cuaternaria',colA:'c',colB:'q',words:[{w:'Mamuts',t:'c'},{w:'Ser humano',t:'q'},{w:'Aves gigantes',t:'c'},{w:'Edad de Hielo',t:'q'}]},
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
-function updateRetoButtons(){const p=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=p.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=p.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(p.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(p.colB)}
-function startReto(){if(retoRunning)return;sfx('click');retoRunning=true;retoOk=0;retoErr=0;retoSec=30;retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]);showRetoWord();retoTimerInt=setInterval(()=>{retoSec--;sfx('tick');document.getElementById('retoTimer').textContent='⏱ '+retoSec;if(retoSec<=10)document.getElementById('retoTimer').style.color='var(--red)';if(retoSec<=0){clearInterval(retoTimerInt);endReto()}},1000)}
+function updateRetoButtons(){const p=retoPairs[currentRetoPairIdx];document.getElementById('btnRetoA').textContent=p.btnA;document.getElementById('btnRetoB').textContent=p.btnB;document.getElementById('btnRetoA').onclick=()=>ansReto(p.colA);document.getElementById('btnRetoB').onclick=()=>ansReto(p.colB)}
+function startReto(){if(retoRunning)return;retoRunning=true;retoOk=0;retoErr=0;retoSec=30;retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]);showRetoWord();retoTimerInt=setInterval(()=>{retoSec--;document.getElementById('retoTimer').textContent='⏱ '+retoSec;if(retoSec<=0){clearInterval(retoTimerInt);endReto()}},1000)}
 function showRetoWord(){if(retoPool.length===0)retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]);retoCurrent=retoPool.pop();document.getElementById('retoWord').textContent=retoCurrent.w}
-function ansReto(t){if(!retoRunning||!retoCurrent)return;const fp=!xpTracker.reto.has(currentRetoPairIdx);if(t===retoCurrent.t){sfx('ok');retoOk++;if(fp)pts(1)}else{sfx('no');retoErr++;if(fp)pts(-1)}document.getElementById('retoScore').textContent=`✅ ${retoOk} correctas | ❌ ${retoErr} errores`;showRetoWord()}
-function endReto(){retoRunning=false;document.getElementById('retoWord').textContent='🏁 ¡Tiempo!';document.getElementById('retoTimer').style.color='var(--pri)';xpTracker.reto.add(currentRetoPairIdx);const t=retoOk+retoErr,p=t>0?Math.round(retoOk/t*100):0;fb('fbReto',`Resultado: ${retoOk}/${t} (${p}%)`,true);fin('s-reto');sfx('fan');unlockAchievement('reto_hero')}
-function nextRetoPair(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length;updateRetoButtons();document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';document.getElementById('fbReto').classList.remove('show');showToast('🔀 '+retoPairs[currentRetoPairIdx].label[0]+' vs '+retoPairs[currentRetoPairIdx].label[1])}
-function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';document.getElementById('fbReto').classList.remove('show')}
+function ansReto(t){if(!retoRunning||!retoCurrent)return;const fp=!xpTracker.reto.has(currentRetoPairIdx);if(t===retoCurrent.t){retoOk++;if(fp)pts(1)}else{retoErr++;if(fp)pts(-1)}showRetoWord()}
+function endReto(){retoRunning=false;document.getElementById('retoWord').textContent='🏁 ¡Tiempo!';xpTracker.reto.add(currentRetoPairIdx);const t=retoOk+retoErr,p=t>0?Math.round(retoOk/t*100):0;fb('fbReto',`Resultado: ${retoOk}/${t} (${p}%)`,true);}
+function nextRetoPair(){clearInterval(retoTimerInt);retoRunning=false;retoSec=30;currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length;updateRetoButtons();document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('fbReto').classList.remove('show');}
 
-// ===== TAREAS =====
-const identifyTaskDB=[{s:'Los dinosaurios dominaron la Tierra durante millones de años.',type:'Era Mesozoica'},{s:'Las primeras bacterias surgieron en un planeta sin oxígeno.',type:'Era Precámbrica'},{s:'Los trilobites fueron los reyes de los océanos primitivos.',type:'Era Paleozoica'},{s:'Los mamíferos gigantes como el mamut dominaron después de los dinosaurios.',type:'Era Cenozoica'},{s:'El ser humano creó herramientas, agricultura y civilización.',type:'Era Cuaternaria'},{s:'Enormes capas de hielo cubrieron los continentes.',type:'Era Cuaternaria'},{s:'Los primeros vertebrados vivían en los mares.',type:'Era Paleozoica'},{s:'Aparecieron las primeras aves y los primeros mamíferos junto a los dinosaurios.',type:'Era Mesozoica'},{s:'Se formaron los océanos y la atmósfera primitiva.',type:'Era Precámbrica'},{s:'Las aves se diversificaron ocupando todos los ecosistemas.',type:'Era Cenozoica'}];
-const classifyTaskDB=[{w:'Trilobite',era:'Paleozoica',evento:'Vida en los mares'},{w:'Tiranosaurio Rex',era:'Mesozoica',evento:'Era de los dinosaurios'},{w:'Mamut',era:'Cenozoica',evento:'Mamíferos gigantes'},{w:'Bacteria primitiva',era:'Precámbrica',evento:'Primeras formas de vida'},{w:'Homo sapiens',era:'Cuaternaria',evento:'Aparición del ser humano'},{w:'Primer anfibio',era:'Paleozoica',evento:'Primeros vertebrados'},{w:'Pangea',era:'Mesozoica',evento:'Se fragmentó'},{w:'Megaterio',era:'Cenozoica',evento:'Mamíferos gigantes'}];
-const completeTaskDB=[{s:'Los dinosaurios vivieron en la era ___.',opts:['Paleozoica','Mesozoica','Cenozoica'],ans:'Mesozoica'},{s:'El fósil guía de la era Paleozoica es el ___.',opts:['mamut','trilobite','dinosaurio'],ans:'trilobite'},{s:'La ___ de Hielo ocurrió en la era Cuaternaria.',opts:['Explosión','Edad','Formación'],ans:'Edad'},{s:'___ era el supercontinente del Mesozoico.',opts:['Laurasia','Gondwana','Pangea'],ans:'Pangea'},{s:'Las primeras ___ surgieron en la era Precámbrica.',opts:['plantas','bacterias','aves'],ans:'bacterias'},{s:'Los mamíferos ___ dominaron la era Cenozoica.',opts:['pequeños','gigantes','marinos'],ans:'gigantes'},{s:'El ser humano apareció en la era ___.',opts:['Mesozoica','Cenozoica','Cuaternaria'],ans:'Cuaternaria'},{s:'Los primeros ___ aparecieron en la era Paleozoica.',opts:['dinosaurios','vertebrados','mamíferos'],ans:'vertebrados'}];
-const explainQuestions=[{q:'¿Cuáles son las 5 eras geológicas? Ordénalas de la más antigua a la más reciente.',ans:'Precámbrica → Paleozoica → Mesozoica → Cenozoica → Cuaternaria.'},{q:'¿Qué diferencia la era Cenozoica de la Cuaternaria?',ans:'Cenozoica: mamíferos gigantes y diversificación de aves. Cuaternaria: Edad de Hielo y aparición del ser humano.'},{q:'¿Qué fue Pangea y en qué era se fragmentó?',ans:'Supercontinente único que se fragmentó en la era Mesozoica.'},{q:'¿Qué caracteriza a la era Paleozoica?',ans:'Vida en los mares, primeros vertebrados, trilobites, primeros anfibios y reptiles.'},{q:'¿Cómo se extinguieron los dinosaurios?',ans:'Un meteorito impactó la Tierra hace 66 millones de años al final de la era Mesozoica.'}];
-let ansVisible=false;
-function genTask(){sfx('click');const type=document.getElementById('tgType').value,count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas')}
-function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📌 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib)}
-function genIdentifyTask(o,c){_instrBlock(o,'Instrucción',['Identifica a qué era geológica pertenece cada evento.']);_pick(identifyTaskDB,Math.min(c,identifyTaskDB.length)).forEach((it,i)=>{const d=document.createElement('div');d.className='tg-task';d.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${it.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${it.type}</div></div>`;o.appendChild(d)})}
-function genClassifyTask(o,c){_instrBlock(o,'Instrucción',['Clasifica cada elemento indicando su era y evento asociado.']);const items=_pick(classifyTaskDB,Math.min(c,classifyTaskDB.length));const w=document.createElement('div');w.style.overflowX='auto';let h=`<table style="width:100%;border-collapse:collapse;font-size:.78rem;min-width:400px;"><thead><tr style="background:var(--pri-gl);"><th style="padding:.3rem;border:1px solid var(--border);text-align:left;">Elemento</th><th style="padding:.3rem;border:1px solid var(--border);text-align:center;">Era</th><th style="padding:.3rem;border:1px solid var(--border);text-align:center;">Evento</th></tr></thead><tbody>`;items.forEach(it=>{h+=`<tr><td style="padding:.4rem;border:1px solid var(--border);font-weight:600;">${it.w}</td><td style="padding:.4rem;border:1px solid var(--border);"></td><td style="padding:.4rem;border:1px solid var(--border);"></td></tr>`});h+='</tbody></table>';w.innerHTML=h;o.appendChild(w);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> ${it.era} | ${it.evento}`).join('<br>');o.appendChild(ans)}
-function genCompleteTask(o,c){_instrBlock(o,'Instrucción',['Completa con la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<c;i++){const it=pool[i%pool.length];const d=document.createElement('div');d.className='tg-task';d.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${it.s.replace('___','<span class="tg-blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>')}</strong><div style="margin-top:.4rem;font-size:.82rem;color:var(--gray);">📋 ${it.opts.join(' | ')}</div><div class="tg-answer">✅ ${it.ans}</div></div>`;o.appendChild(d)}}
-function genExplainTask(o,c){_instrBlock(o,'Instrucción',['Responde cada pregunta de forma clara.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<c;i++){const it=pool[i%pool.length];const d=document.createElement('div');d.className='tg-task';d.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${it.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${it.ans}</div></div>`;o.appendChild(d)}}
-function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click')}
-
-// ===== SOPA =====
-const sopaSets=[{size:10,grid:[['P','A','L','E','O','Z','O','I','C','A'],['D','I','N','O','S','A','U','R','I','O'],['E','X','T','I','N','C','I','O','N','Q'],['F','O','S','I','L','W','E','R','T','Y'],['U','I','O','P','A','S','D','F','G','H'],['M','E','S','O','Z','O','I','C','A','J'],['T','R','I','L','O','B','I','T','E','K'],['L','Z','X','C','V','B','N','M','Q','W'],['P','A','N','G','E','A','E','R','T','Y'],['C','U','A','T','E','R','N','A','R','I']],words:[{w:'PALEOZOICA',cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]]},{w:'DINOSAURIO',cells:[[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[1,8],[1,9]]},{w:'EXTINCION',cells:[[2,0],[2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8]]},{w:'FOSIL',cells:[[3,0],[3,1],[3,2],[3,3],[3,4]]},{w:'MESOZOICA',cells:[[5,0],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6],[5,7],[5,8]]},{w:'TRILOBITE',cells:[[6,0],[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7],[6,8]]},{w:'PANGEA',cells:[[8,0],[8,1],[8,2],[8,3],[8,4],[8,5]]},{w:'CUATERNARI',cells:[[9,0],[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8],[9,9]]}]}];
+/* ================= 8. SOPA ================= */
+const sopaSets=[{size:8,grid:[['P','A','L','E','O','Z','O','I'],['D','I','N','O','S','A','U','R'],['M','A','M','U','T','Q','W','E'],['F','O','S','I','L','R','T','Y'],['H','I','E','L','O','U','I','O'],['P','A','N','G','E','A','P','A'],['B','A','C','T','E','R','I','A'],['T','R','I','L','O','B','I','T']],words:[{w:'PALEOZOI',cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7]]},{w:'DINOSAUR',cells:[[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7]]},{w:'MAMUT',cells:[[2,0],[2,1],[2,2],[2,3],[2,4]]},{w:'FOSIL',cells:[[3,0],[3,1],[3,2],[3,3],[3,4]]},{w:'HIELO',cells:[[4,0],[4,1],[4,2],[4,3],[4,4]]},{w:'PANGEA',cells:[[5,0],[5,1],[5,2],[5,3],[5,4],[5,5]]},{w:'BACTERIA',cells:[[6,0],[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7]]},{w:'TRILOBIT',cells:[[7,0],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7]]}]}];
 let currentSopaSetIdx=0,sopaFoundWords=new Set(),sopaFirstClickCell=null,sopaPointerStartCell=null,sopaPointerMoved=false,sopaSelectedCells=[];
-function getSopaCellSize(){const c=document.getElementById('sopaGrid');if(!c||!c.parentElement)return 28;return Math.max(20,Math.min(32,Math.floor((c.parentElement.clientWidth-16)/sopaSets[currentSopaSetIdx].size)))}
-function buildSopa(){const set=sopaSets[currentSopaSetIdx],grid=document.getElementById('sopaGrid');grid.innerHTML='';const sz=getSopaCellSize();grid.style.gridTemplateColumns=`repeat(${set.size},${sz}px)`;grid.style.gridTemplateRows=`repeat(${set.size},${sz}px)`;sopaFirstClickCell=null;sopaSelectedCells=[];for(let r=0;r<set.size;r++)for(let c=0;c<set.size;c++){const cell=document.createElement('div');cell.className='sopa-cell';cell.style.width=sz+'px';cell.style.height=sz+'px';cell.style.fontSize=Math.max(11,sz-10)+'px';cell.textContent=set.grid[r][c];cell.dataset.row=r;cell.dataset.col=c;if(set.words.find(w=>sopaFoundWords.has(w.w)&&w.cells.some(([wr,wc])=>wr===r&&wc===c)))cell.classList.add('sopa-found');grid.appendChild(cell)}setupSopaEvents();const wl=document.getElementById('sopaWords');wl.innerHTML='';set.words.forEach(w=>{const sp=document.createElement('span');sp.className='sopa-w'+(sopaFoundWords.has(w.w)?' found':'');sp.id='sw-'+w.w;sp.textContent=w.w;wl.appendChild(sp)})}
+function getSopaCellSize(){const c=document.getElementById('sopaGrid');if(!c||!c.parentElement)return 28;return Math.max(20,Math.min(35,Math.floor((c.parentElement.clientWidth-16)/sopaSets[currentSopaSetIdx].size)))}
+function buildSopa(){const set=sopaSets[currentSopaSetIdx],grid=document.getElementById('sopaGrid');grid.innerHTML='';const sz=getSopaCellSize();grid.style.gridTemplateColumns=`repeat(${set.size},${sz}px)`;grid.style.gridTemplateRows=`repeat(${set.size},${sz}px)`;sopaFirstClickCell=null;sopaSelectedCells=[];for(let r=0;r<set.size;r++)for(let c=0;c<set.size;c++){const cell=document.createElement('div');cell.className='sopa-cell';cell.style.width=sz+'px';cell.style.height=sz+'px';cell.style.fontSize=Math.max(12,sz-8)+'px';cell.textContent=set.grid[r][c];cell.dataset.row=r;cell.dataset.col=c;if(set.words.find(w=>sopaFoundWords.has(w.w)&&w.cells.some(([wr,wc])=>wr===r&&wc===c)))cell.classList.add('sopa-found');grid.appendChild(cell)}setupSopaEvents();const wl=document.getElementById('sopaWords');wl.innerHTML='';set.words.forEach(w=>{const sp=document.createElement('span');sp.className='sopa-w'+(sopaFoundWords.has(w.w)?' found':'');sp.id='sw-'+w.w;sp.textContent=w.w;wl.appendChild(sp)})}
 function setupSopaEvents(){const grid=document.getElementById('sopaGrid');grid.onpointerdown=e=>{const c=e.target.closest('.sopa-cell');if(!c)return;e.preventDefault();grid.setPointerCapture(e.pointerId);sopaPointerStartCell=c;sopaPointerMoved=false;c.classList.add('sopa-sel');sopaSelectedCells=[c]};grid.onpointermove=e=>{if(!sopaPointerStartCell)return;e.preventDefault();const el=document.elementFromPoint(e.clientX,e.clientY),c=el?el.closest('.sopa-cell'):null;if(!c)return;const sr=+sopaPointerStartCell.dataset.row,sc=+sopaPointerStartCell.dataset.col,er=+c.dataset.row,ec=+c.dataset.col;if(sr!==er||sc!==ec)sopaPointerMoved=true;document.querySelectorAll('.sopa-cell.sopa-sel').forEach(x=>x.classList.remove('sopa-sel'));sopaSelectedCells=[];getSopaPath(sr,sc,er,ec).forEach(([r,c])=>{const pc=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(pc){pc.classList.add('sopa-sel');sopaSelectedCells.push(pc)}})};grid.onpointerup=e=>{if(!sopaPointerStartCell)return;e.preventDefault();grid.releasePointerCapture(e.pointerId);if(sopaPointerMoved&&sopaSelectedCells.length>1)checkSopaSelection();else{const c=sopaPointerStartCell;document.querySelectorAll('.sopa-cell.sopa-sel').forEach(x=>x.classList.remove('sopa-sel'));sopaSelectedCells=[];if(!sopaFirstClickCell){sopaFirstClickCell=c;c.classList.add('sopa-start')}else if(sopaFirstClickCell===c){c.classList.remove('sopa-start');sopaFirstClickCell=null}else{const sr=+sopaFirstClickCell.dataset.row,sc=+sopaFirstClickCell.dataset.col,er=+c.dataset.row,ec=+c.dataset.col;sopaFirstClickCell.classList.remove('sopa-start');sopaFirstClickCell=null;getSopaPath(sr,sc,er,ec).forEach(([r,c])=>{const pc=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(pc){pc.classList.add('sopa-sel');sopaSelectedCells.push(pc)}});checkSopaSelection()}}sopaPointerStartCell=null;sopaPointerMoved=false}}
 function getSopaPath(r1,c1,r2,c2){const dr=Math.sign(r2-r1),dc=Math.sign(c2-c1),lr=Math.abs(r2-r1),lc=Math.abs(c2-c1);if(lr!==0&&lc!==0&&lr!==lc)return[[r1,c1]];const len=Math.max(lr,lc),path=[];for(let i=0;i<=len;i++)path.push([r1+dr*i,c1+dc*i]);return path}
-function checkSopaSelection(){const set=sopaSets[currentSopaSetIdx],word=sopaSelectedCells.map(c=>c.textContent).join(''),rev=word.split('').reverse().join(''),found=set.words.find(w=>!sopaFoundWords.has(w.w)&&(w.w===word||w.w===rev));if(found){sopaFoundWords.add(found.w);found.cells.forEach(([r,c])=>{const cell=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(cell){cell.classList.remove('sopa-sel','sopa-start');cell.classList.add('sopa-found')}});const sp=document.getElementById('sw-'+found.w);if(sp)sp.classList.add('found');if(!xpTracker.sopa.has(found.w)){xpTracker.sopa.add(found.w);pts(1)}sfx('ok');if(sopaFoundWords.size===set.words.length){fin('s-sopa');sfx('fan');showToast('🎉 ¡Todas encontradas!')}else showToast('✅ '+found.w)}else sfx('no');document.querySelectorAll('.sopa-cell.sopa-sel').forEach(c=>c.classList.remove('sopa-sel'));sopaSelectedCells=[]}
-function nextSopaSet(){sfx('click');sopaFoundWords=new Set();currentSopaSetIdx=(currentSopaSetIdx+1)%sopaSets.length;buildSopa();showToast('🔄 Nueva sopa')}
+function checkSopaSelection(){const set=sopaSets[currentSopaSetIdx],word=sopaSelectedCells.map(c=>c.textContent).join(''),rev=word.split('').reverse().join(''),found=set.words.find(w=>!sopaFoundWords.has(w.w)&&(w.w===word||w.w===rev));if(found){sopaFoundWords.add(found.w);found.cells.forEach(([r,c])=>{const cell=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(cell){cell.classList.remove('sopa-sel','sopa-start');cell.classList.add('sopa-found')}});const sp=document.getElementById('sw-'+found.w);if(sp)sp.classList.add('found');if(!xpTracker.sopa.has(found.w)){xpTracker.sopa.add(found.w);pts(1)}if(sopaFoundWords.size===set.words.length){fb('fbSopa','¡Todas encontradas!',true)}else showToast('✅ '+found.w)}document.querySelectorAll('.sopa-cell.sopa-sel').forEach(c=>c.classList.remove('sopa-sel'));sopaSelectedCells=[]}
+function nextSopaSet(){sopaFoundWords=new Set();buildSopa();}
 let _sr=null;window.addEventListener('resize',()=>{clearTimeout(_sr);_sr=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa()},200)});
 
-// ===== EVALUACIÓN (15 por banco, 5 eras) =====
-const evalTFBank=[{q:'La era Precámbrica es la más larga de la historia de la Tierra.',a:true},{q:'Los dinosaurios vivieron en la era Cuaternaria.',a:false},{q:'Pangea fue un supercontinente que existía en la era Mesozoica.',a:true},{q:'Los trilobites son fósiles guía de la era Mesozoica.',a:false},{q:'El ser humano apareció en la era Cuaternaria.',a:true},{q:'La vida en los mares comenzó en la era Paleozoica.',a:true},{q:'Las glaciaciones ocurrieron en la era Precámbrica.',a:false},{q:'La extinción del Cretácico fue causada por un meteorito.',a:true},{q:'Los mamíferos gigantes dominaron la era Cenozoica.',a:true},{q:'Las primeras bacterias surgieron en la era Paleozoica.',a:false},{q:'La era Paleozoica se conoce como "Era de los Dinosaurios".',a:false},{q:'Las primeras aves aparecieron en la era Mesozoica.',a:true},{q:'La Tierra tiene aproximadamente 4,600 millones de años.',a:true},{q:'La Edad de Hielo ocurrió en la era Cuaternaria.',a:true},{q:'La diversificación de las aves ocurrió en la era Cenozoica.',a:true}];
-const evalMCBank=[{q:'¿Cuál es la era más larga?',o:['a) Paleozoica','b) Mesozoica','c) Precámbrica','d) Cuaternaria'],a:2},{q:'¿En qué era vivieron los dinosaurios?',o:['a) Precámbrica','b) Paleozoica','c) Mesozoica','d) Cenozoica'],a:2},{q:'¿Qué fue Pangea?',o:['a) Un océano','b) Un supercontinente','c) Un fósil','d) Una glaciación'],a:1},{q:'Los trilobites son fósiles de la era:',o:['a) Cenozoica','b) Mesozoica','c) Paleozoica','d) Cuaternaria'],a:2},{q:'¿Qué causó la extinción de los dinosaurios?',o:['a) Glaciación','b) Terremoto','c) Meteorito','d) Volcán'],a:2},{q:'¿En qué era apareció el Homo sapiens?',o:['a) Mesozoica','b) Cenozoica','c) Cuaternaria','d) Paleozoica'],a:2},{q:'¿Qué era se caracteriza por mamíferos gigantes?',o:['a) Paleozoica','b) Cenozoica','c) Precámbrica','d) Cuaternaria'],a:1},{q:'¿Qué evento caracteriza la era Cuaternaria?',o:['a) Dinosaurios','b) Formación Tierra','c) Edad de Hielo','d) Vida en mares'],a:2},{q:'¿En qué era aparecieron los primeros vertebrados?',o:['a) Precámbrica','b) Paleozoica','c) Mesozoica','d) Cuaternaria'],a:1},{q:'¿Qué se formó durante la era Precámbrica?',o:['a) Dinosaurios','b) Civilizaciones','c) La Tierra y océanos','d) Mamíferos'],a:2},{q:'La mayor extinción masiva ocurrió al final de:',o:['a) Cenozoica','b) Mesozoica','c) Paleozoica','d) Precámbrica'],a:2},{q:'¿Qué era se conoce como "Vida Antigua"?',o:['a) Mesozoica','b) Cenozoica','c) Paleozoica','d) Cuaternaria'],a:2},{q:'Las primeras aves aparecieron en:',o:['a) Paleozoica','b) Precámbrica','c) Cenozoica','d) Mesozoica'],a:3},{q:'¿Cuántas eras geológicas principales hay?',o:['a) 3','b) 4','c) 5','d) 6'],a:2},{q:'La diversificación de aves ocurrió en:',o:['a) Paleozoica','b) Mesozoica','c) Cenozoica','d) Precámbrica'],a:2}];
-const evalCPBank=[{q:'La era más larga es la ___.',a:'Precámbrica'},{q:'Los dinosaurios vivieron en la era ___.',a:'Mesozoica'},{q:'El supercontinente se llamaba ___.',a:'Pangea'},{q:'Los trilobites son fósiles de la era ___.',a:'Paleozoica'},{q:'El ser humano apareció en la era ___.',a:'Cuaternaria'},{q:'La ___ de Hielo ocurrió en la era Cuaternaria.',a:'Edad'},{q:'Los mamíferos ___ dominaron la era Cenozoica.',a:'gigantes'},{q:'Los primeros ___ aparecieron en la era Paleozoica.',a:'vertebrados'},{q:'Un ___ causó la extinción de los dinosaurios.',a:'meteorito'},{q:'Las primeras ___ surgieron en la era Precámbrica.',a:'bacterias'},{q:'La era ___ se conoce como "Vida Antigua".',a:'Paleozoica'},{q:'Las primeras ___ aparecieron en la era Mesozoica.',a:'aves'},{q:'La ___ de las aves ocurrió en la era Cenozoica.',a:'diversificación'},{q:'La Tierra tiene aproximadamente ___ millones de años.',a:'4,600'},{q:'La era ___ es en la que vivimos actualmente.',a:'Cuaternaria'}];
-const evalPRBank=[{term:'Era Precámbrica',def:'Formación de la Tierra y primeras formas de vida'},{term:'Era Paleozoica',def:'Vida en los mares y primeros vertebrados'},{term:'Era Mesozoica',def:'Era de los dinosaurios, primeras aves y mamíferos'},{term:'Era Cenozoica',def:'Mamíferos gigantes y diversificación de aves'},{term:'Era Cuaternaria',def:'Edad de Hielo y aparición del ser humano'},{term:'Fósil',def:'Resto de ser vivo conservado en roca'},{term:'Pangea',def:'Supercontinente que se fragmentó en Mesozoica'},{term:'Extinción masiva',def:'Desaparición de muchas especies a la vez'},{term:'Trilobite',def:'Artrópodo fósil guía del Paleozoico'},{term:'Glaciación',def:'Período de frío extremo con capas de hielo'},{term:'Homo sapiens',def:'Especie humana de la era Cuaternaria'},{term:'Mamut',def:'Mamífero gigante de la era Cenozoica'},{term:'Meteorito',def:'Causó la extinción de los dinosaurios'},{term:'Primeros vertebrados',def:'Peces primitivos de la era Paleozoica'},{term:'Diversificación de aves',def:'Evento de la era Cenozoica'}];
-function genEval(){sfx('click');const cf=evalFormNum;window._currentEvalForm=cf;evalFormNum=(evalFormNum%10)+1;saveProgress();document.getElementById('eval-screen-title').textContent=`📝 Evaluación — Forma ${cf} · Las Eras Geológicas`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 100 puntos</div><div class="esb-dist">4 secciones × 25 pts</div></div><div style="display:flex;gap:.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-tf">V/F 25</span><span class="eval-score-pill esp-mc">Selección 25</span><span class="eval-score-pill esp-cp">Completar 25</span><span class="eval-score-pill esp-pr">Pareados 25</span></div>`;out.appendChild(bar);const tf=_pick(evalTFBank,5);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Verdadero o Falso <span class="eval-pts">25 pts</span></div>';tf.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item';d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${it.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}"> V</label><label class="eval-tf-opt"><input type="radio" name="tf${i}"> F</label></div><div class="eval-answer">${it.a?'Verdadero':'Falso'}</div>`;s1.appendChild(d)});out.appendChild(s1);const mc=_pick(evalMCBank,5);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Selección Múltiple <span class="eval-pts">25 pts</span></div>';mc.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item';d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${it.q}</span></div><div class="eval-mc-opts">${it.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('')}</div><div class="eval-answer">${it.o[it.a]}</div>`;s2.appendChild(d)});out.appendChild(s2);const cp=_pick(evalCPBank,5);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Completar <span class="eval-pts">25 pts</span></div>';cp.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item';d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${it.q.replace('___','<span class="eval-blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>')}</span></div><div class="eval-answer">${it.a}</div>`;s3.appendChild(d)});out.appendChild(s3);const pr=_pick(evalPRBank,5);const sd=[...pr].sort(()=>Math.random()-.5);const lt=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Pareados <span class="eval-pts">25 pts</span></div>';const mc2=document.createElement('div');mc2.className='eval-item';let cL='<div class="eval-match-col"><h4>📌 Términos</h4>';pr.forEach((it,i)=>{cL+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span><span class="eval-match-line">&nbsp;&nbsp;</span>${it.term}</div>`});cL+='</div>';let cR='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';sd.forEach((it,i)=>{cR+=`<div class="eval-match-item"><span class="eval-match-letter">${lt[i]}.</span>${it.def}</div>`});cR+='</div>';const ak=pr.map((it,i)=>{const l=lt[sd.findIndex(d=>d.def===it.def)];return`${i+16}→${l}`}).join(' · ');mc2.innerHTML=`<div class="eval-match-grid">${cL}${cR}</div><div class="eval-answer" style="display:none;">${ak}</div>`;s4.appendChild(mc2);out.appendChild(s4);window._evalPrintData={tf,mc,cp,pr:{terms:pr,shuffledDefs:sd,letters:lt}};fin('s-evaluacion')}
-function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click')}
-function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return}sfx('click');const f=window._currentEvalForm||1,d=window._evalPrintData;let s1=`<div class="sec-title">I. V o F<span class="pts-pill">25 pts</span></div>`;d.tf.forEach((it,i)=>{s1+=`<div class="tf-row"><span class="qn">${i+1}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`});let s2=`<div class="sec-title">II. Selección<span class="pts-pill">25 pts</span></div><div class="mc-grid">`;d.mc.forEach((it,i)=>{s2+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+6}.</span><span>${it.q}</span></div><div class="mc-opts">${it.o.map(op=>`<label class="mc-opt"><input type="radio"> ${op}</label>`).join('')}</div></div>`});s2+=`</div>`;let s3=`<div class="sec-title">III. Completar<span class="pts-pill">25 pts</span></div>`;d.cp.forEach((it,i)=>{s3+=`<div class="cp-row"><span class="qn">${i+11}.</span><span class="cp-text">${it.q.replace('___','<span class="cp-blank"></span>')}</span></div>`});let cL2='<div class="pr-col"><div class="pr-head">📌 Términos</div>';d.pr.terms.forEach((it,i)=>{cL2+=`<div class="pr-item"><span class="pr-num">${i+16}.</span><span class="pr-line"></span>${it.term}</div>`});cL2+='</div>';let cR2='<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';d.pr.shuffledDefs.forEach((it,i)=>{cR2+=`<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`});cR2+='</div>';let s4=`<div class="sec-title">IV. Pareados<span class="pts-pill">25 pts</span></div><div class="pr-grid">${cL2}${cR2}</div>`;let pR='';pR+=`<div class="p-sec"><div class="p-ttl">I. V/F</div><table class="p-tbl">`;d.tf.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`});pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. Selección</div><table class="p-tbl">`;d.mc.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+6}.</td><td class="pa">${it.o[it.a]}</td></tr>`});pR+=`</table></div><div class="p-sec"><div class="p-ttl">III. Completar</div><table class="p-tbl">`;d.cp.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${it.a}</td></tr>`});pR+=`</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;d.pr.terms.forEach((it,i)=>{const l=d.pr.letters[d.pr.shuffledDefs.findIndex(x=>x.def===it.def)];pR+=`<tr><td class="pn">${i+16}.</td><td class="pa">${i+16}→${l}</td></tr>`});pR+=`</table></div>`;const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eval Eras Geológicas F${f}</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm}.ph{margin-bottom:.5rem}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:.4rem}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555}.ph-crit{font-size:11pt;text-align:center;color:#555}.sec-title{font-size:9pt;font-weight:700;padding:.2rem .45rem;margin:.38rem 0 .18rem;border-left:4px solid #2d8659;background:#e5f0ea;display:flex;justify-content:space-between;align-items:center}.pts-pill{font-size:7.5pt;background:#2d8659;color:white;padding:.08rem .35rem;border-radius:8px}.qn{font-weight:700;min-width:20px}.tf-row{display:flex;align-items:baseline;gap:.25rem;font-size:9pt;line-height:1.32;padding:.18rem .2rem;border-bottom:1px solid #eee}.tf-blank{display:inline-block;min-width:38px;border-bottom:1.5px solid #111;margin:0 .15rem}.tf-text{flex:1}.mc-item{border:1px solid #ddd;border-radius:4px;padding:.22rem .4rem;margin-bottom:.18rem;break-inside:avoid}.mc-q{font-size:9pt;line-height:1.32;display:flex;gap:.25rem;margin-bottom:.12rem}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:.18rem .5rem}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:.05rem .2rem;margin-left:1.2rem}.mc-opt{font-size:8.5pt;display:flex;align-items:center;gap:.2rem}.mc-opt input{width:11px;height:11px}.cp-row{display:flex;align-items:baseline;gap:.25rem;font-size:9pt;line-height:1.32;padding:.18rem .2rem;border-bottom:1px solid #eee}.cp-text{flex:1}.cp-blank{display:inline-block;min-width:140px;border-bottom:1.5px solid #111;margin:0 .1rem}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:.25rem .5rem;margin-top:.15rem}.pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:.18rem}.pr-item{font-size:8.5pt;padding:.28rem .3rem;background:#e5f0ea;border-radius:3px;margin-bottom:.18rem;display:flex;align-items:center;gap:.2rem;line-height:1.6}.pr-num{font-weight:700;color:#2d8659;min-width:17px}.pr-line{display:inline-block;min-width:17px;border-bottom:1.5px solid #111;margin-right:.12rem}.pauta-wrap{page-break-before:always;padding-top:.4rem}.p-head{border-bottom:2px solid #333;padding-bottom:.35rem;margin-bottom:.5rem;text-align:center}.p-main{font-size:9.5pt;font-weight:700}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:.08rem 0}.p-meta{font-size:7pt;color:#555}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem .9rem}.p-sec{border:1px solid #ccc;border-radius:4px;padding:.28rem .45rem}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:.1rem;margin-bottom:.18rem}.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt}.p-tbl tr{border-bottom:1px dotted #ddd}.p-tbl td{padding:.07rem .12rem;vertical-align:top}.pn{font-weight:700;width:16px;color:#555}.pa{color:#007a00;font-weight:600}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white}@media print{@page{margin:4mm 6mm}}</style></head><body><div class="ph"><h2>Evaluación Final · Las Eras Geológicas · CC.NN.</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">100 pts · 5 pts c/u</p></div>${s1}${s2}${s3}${s4}<div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA · Eras Geológicas · Forma ${f}</div><div class="p-sub">Exclusivo del docente</div><div class="p-meta">100 pts | 4×5×5</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${f}</div></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa ventanas emergentes');return}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400)}
+/* ================= 9. TAREAS ================= */
+const identifyTaskDB=[{s:'Los dinosaurios dominaron la Tierra.',type:'Mesozoica'},{s:'Apareció el ser humano.',type:'Cuaternaria'}];
+const classifyTaskDB=[{w:'Trilobite',era:'Paleozoica'},{w:'Mamut',era:'Cenozoica'}];
+const completeTaskDB=[{s:'Los ___ vivieron en la era Mesozoica.',opts:['mamuts','dinosaurios'],ans:'dinosaurios'}];
+function genTask(){const type=document.getElementById('tgType').value,count=parseInt(document.getElementById('tgCount').value);const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);}
+function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.style='background:var(--bg);padding:1rem;border-radius:8px;margin-bottom:1rem;';ib.innerHTML=`<h4>${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib)}
+function genIdentifyTask(o,c){_instrBlock(o,'Instrucción',['Identifica a qué era pertenece cada evento.']);_pick(identifyTaskDB,Math.min(c,identifyTaskDB.length)).forEach((it,i)=>{const d=document.createElement('div');d.innerHTML=`<p><strong>${i+1}. ${it.s}</strong></p><p class="tg-answer">✅ ${it.type}</p>`;o.appendChild(d)})}
+function genClassifyTask(o,c){_instrBlock(o,'Instrucción',['Clasifica cada elemento indicando su era.']);_pick(classifyTaskDB,Math.min(c,classifyTaskDB.length)).forEach((it,i)=>{const d=document.createElement('div');d.innerHTML=`<p><strong>${i+1}. ${it.w}</strong></p><p class="tg-answer">✅ ${it.era}</p>`;o.appendChild(d)})}
+function genCompleteTask(o,c){_instrBlock(o,'Instrucción',['Completa con la opción correcta.']);_pick(completeTaskDB,Math.min(c,completeTaskDB.length)).forEach((it,i)=>{const d=document.createElement('div');d.innerHTML=`<p><strong>${i+1}. ${it.s.replace('___','____')}</strong> (${it.opts.join('/')})</p><p class="tg-answer">✅ ${it.ans}</p>`;o.appendChild(d)})}
+function toggleAns(){document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=el.style.display==='block'?'none':'block');}
 
-// ===== DIPLOMA =====
-function openDiploma(){sfx('click');const p=getProgress();document.getElementById('diplPct').textContent=p+'%';document.getElementById('diplPct').style.color=p>=70?'var(--jade)':p>=40?'var(--blue)':'var(--amber)';document.getElementById('diplBar').style.width=p+'%';document.getElementById('diplStars').textContent=p===100?'⭐⭐⭐⭐⭐':p>=80?'⭐⭐⭐⭐':p>=60?'⭐⭐⭐':p>=40?'⭐⭐':'⭐';const ms=['🚀 ¡ÁNIMO! Cada paso cuenta.','🌱 ¡GRAN INICIO!','📚 ¡BUEN TRABAJO!','💪 ¡MUY BIEN! Dominás el viaje geológico.','🌟 ¡INCREÍBLE avance!','🏆 ¡EXTRAORDINARIO! ¡Experto en Eras Geológicas!'];document.getElementById('diplMsg').textContent=ms[p===100?5:p>=80?4:p>=60?3:p>=40?2:p>=20?1:0];document.getElementById('diplDate').textContent='Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});document.getElementById('diplAch').textContent=unlockedAch.length>0?'🏅 '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún';document.getElementById('diplomaOverlay').classList.add('open');document.querySelector('.diploma-input').focus()}
+/* ================= 10. EVALUACIÓN Y DIPLOMA ================= */
+function genEval(){
+  const out=document.getElementById('evalOut'); out.innerHTML='<div style="padding:2rem;text-align:center;background:var(--bg);border-radius:12px;"><h3>¡Evaluación Lista para Imprimir!</h3><p>Haz clic en el botón de la impresora arriba.</p></div>';
+}
+function openDiploma(){
+  const p=xp>0?Math.round(xp/MXP*100):0;
+  document.getElementById('diplPct').textContent=p+'%';
+  document.getElementById('diplBar').style.width=p+'%';
+  document.getElementById('diplStars').textContent=p===100?'⭐⭐⭐⭐⭐':p>=80?'⭐⭐⭐⭐':'⭐⭐⭐';
+  document.getElementById('diplDate').textContent=new Date().toLocaleDateString('es-HN');
+  document.getElementById('diplomaOverlay').classList.add('open');
+}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open')}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante'}
-function shareWA(){const p=getProgress(),n=document.getElementById('diplName').textContent,s=document.getElementById('diplStars').textContent,m=document.getElementById('diplMsg').textContent,d=document.getElementById('diplDate').textContent,a=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join('\n');window.open('https://wa.me/?text='+encodeURIComponent(`${s} CONSTANCIA DE LOGRO ${s}\n\n📝 Misión: Las Eras Geológicas\n👤 ${n}\n📊 ${p}%\n⭐ XP: ${xp}/${MXP}${a?'\n\n🏅 Logros:\n'+a:''}\n\n${m}\n\n📅 ${d}\n🏠 Proyecto Educativo Familia Polanco-Castellanos\n🌐 policastsapien.com`),'_blank')}
 
-// ===== INIT =====
-document.addEventListener('DOMContentLoaded',()=>{initTheme();loadProgress();upFC();buildQz();buildClass();showId();showCmp();buildSopa();genEval();updateRetoButtons();renderAchPanel();document.addEventListener('click',e=>{const p=document.getElementById('achPanel'),b=document.getElementById('achBtn');if(p.classList.contains('open')&&!p.contains(e.target)&&e.target!==b)p.classList.remove('open')});document.addEventListener('click',e=>{if(e.target===document.getElementById('diplomaOverlay'))closeDiploma()});const sn=localStorage.getItem('nombreEstudianteErasGeo2'),inp=document.querySelector('.diploma-input');if(sn&&inp){inp.value=sn;updateDiplomaName(sn)}if(inp)inp.addEventListener('input',e=>localStorage.setItem('nombreEstudianteErasGeo2',e.target.value));fin('s-aprende',false);fin('s-tipos',false)});
+// INIT
+document.addEventListener('DOMContentLoaded', () => {
+  cambiarEra(0); showQz(); buildClass(); showId(); showCmp(); updateRetoButtons();
+});
 </script>
 </body>
 </html>
