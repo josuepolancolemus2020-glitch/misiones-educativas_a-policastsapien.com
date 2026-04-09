@@ -240,7 +240,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .cls-no{border-color:var(--red)!important;background:var(--red-gl)!important;}
 
 /* IDENTIFY */
-.id-sent{font-size:1rem;line-height:2;margin-bottom:0.8rem;color:var(--dark);}
+.id-sent{font-size:1.15rem; font-weight:700; line-height:2; margin-bottom:0.8rem; color:var(--dark);}
 .id-word{display:inline-block;padding:0.1rem 0.4rem;border-radius:6px;cursor:pointer;transition:all 0.2s;border:2px solid transparent;}
 .id-word:hover,.id-word:focus{background:var(--pri-gl);border-color:var(--pri);}
 .id-word.selected{background:var(--pri-gl);border-color:var(--pri);}
@@ -599,7 +599,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
     <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes conceptos te ayudará a dominar el tema.</p>
     <div class="word-bank" id="clsBank" role="list"></div>
-    <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
       <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
       <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
@@ -880,7 +879,7 @@ function initTheme(){ const s=localStorage.getItem(SAVE_KEY+'_theme'); const sys
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress(){
-  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum})); }catch(e){}
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, xp})); }catch(e){}
 }
 function loadProgress(){
   try{
@@ -893,9 +892,14 @@ function loadProgress(){
     });
     if(s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum) evalFormNum = s.evalFormNum;
+    
+    // NUEVO: Recuperar los puntos XP guardados
+    if(s.xp !== undefined) { 
+        xp = s.xp; 
+        updateXPBar(); 
+    }
   }catch(e){}
 }
-
 // ===================== ACHIEVEMENTS =====================
 const ACHIEVEMENTS = {
   primer_quiz:{icon:'🧠',label:'Primera prueba superada'},
@@ -1283,7 +1287,7 @@ function updateRetoButtons(){
 }
 function startReto(){
   if(retoRunning) return;
-  sfx('click'); retoRunning=true; retoOk=0; retoErr=0;
+  sfx('click'); retoRunning=true; retoOk=0; retoErr=0; retoSec=30;
   retoPool = _shuffle([...retoPairs[currentRetoPairIdx].words, ...retoPairs[currentRetoPairIdx].words]);
   showRetoWord();
   retoTimerInt = setInterval(()=>{
