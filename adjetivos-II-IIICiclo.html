@@ -519,7 +519,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
   </div>
 
-  <button class="next-sec-btn" onclick="go('s-tipos')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
     <span class="nsb-icon">🏷️</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -543,7 +543,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
       <div class="type-chip tc-jade"><div class="t-art">🟰 Igualdad</div><div class="t-info">tan ... como (tan lindo como)</div></div>
     </div>
   </div>
-  <button class="next-sec-btn" onclick="go('s-flash')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
     <span class="nsb-icon">🃏</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -566,7 +566,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="fbFlash" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" onclick="go('s-quiz')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
     <span class="nsb-icon">🧠</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -585,7 +585,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="fbQz" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" onclick="go('s-clasifica')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
     <span class="nsb-icon">🗂️</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -610,7 +610,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="fbCls" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" onclick="go('s-identifica')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
     <span class="nsb-icon">🔍</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -630,7 +630,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="fbId" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" onclick="go('s-completa')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
     <span class="nsb-icon">✏️</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -646,7 +646,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
     <div id="fbCmp" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" onclick="go('s-reto')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
     <span class="nsb-icon">🏆</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -674,7 +674,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="fbReto" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" onclick="go('s-sopa')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
     <span class="nsb-icon">🔤</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -694,7 +694,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="fbSopa" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" onclick="go('s-tareas')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
     <span class="nsb-icon">📋</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -721,7 +721,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="tgOut"></div>
   </div>
-  <button class="next-sec-btn" onclick="go('s-evaluacion')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
     <span class="nsb-icon">📝</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -1188,7 +1188,9 @@ const idData=[
   {s:['Asistió','mucha','gente','al','evento.'],c:1,art:'Adjetivo indefinido'},
 ];
 let idIdx = 0;
+let idDone = false;
 function showId(){
+  idDone = false;
   if(idIdx>=idData.length){
     document.getElementById('idSent').innerHTML='🎉 ¡Completado!';
     fin('s-identifica'); unlockAchievement('id_master'); return;
@@ -1204,9 +1206,13 @@ function showId(){
   });
 }
 function checkId(i, span){
+  if(idDone) return; // 👈 1. SI EL CANDADO ESTÁ CERRADO, NO HACER NADA
+  
   document.querySelectorAll('.id-word').forEach(s=>s.classList.remove('selected'));
   span.classList.add('selected');
+  
   if(i===idData[idIdx].c){
+    idDone = true; // 👈 2. RESPUESTA CORRECTA: CERRAMOS EL CANDADO
     span.classList.add('id-ok'); fb('fbId','¡Correcto! +5 XP',true);
     if(!xpTracker.id.has(idIdx)){ xpTracker.id.add(idIdx); pts(5); }
     sfx('ok');
@@ -1259,7 +1265,7 @@ function checkCmp(){
     opts[cmpSel].classList.add('wrong'); opts[cmpData[cmpIdx].c].classList.add('correct');
     fb('fbCmp','Incorrecto. Fíjate en la concordancia.',false); sfx('no');
   }
-  setTimeout(()=>{ cmpIdx++; showCmp(); }, 1600);
+  setTimeout(()=>{ cmpIdx++; document.getElementById('fbCmp').classList.remove('show'); showCmp(); }, 1600);
 }
 
 // ===================== RETO FINAL =====================
