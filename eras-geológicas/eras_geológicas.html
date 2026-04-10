@@ -890,7 +890,210 @@ body.letra-grande .sopa-cell {
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
   <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
 </nav>
+<style>
+    .memo-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.8rem;
+        margin: 1.5rem auto;
+        max-width: 420px;
+        perspective: 1000px;
+    }
+    .memo-card {
+        aspect-ratio: 1/1;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+    }
+    .memo-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+    .memo-card.flipped .memo-inner {
+        transform: rotateY(180deg);
+    }
+    .memo-front, .memo-back {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        border: 2px solid var(--border);
+        box-shadow: 0 4px 8px var(--shadow);
+    }
+    .memo-front {
+        background: linear-gradient(135deg, var(--pri), var(--sec));
+        color: white;
+        z-index: 2;
+    }
+    .memo-front::after {
+        content: '❓';
+        font-size: 1.4rem;
+        opacity: 0.8;
+    }
+    .memo-back {
+        background: var(--card);
+        transform: rotateY(180deg);
+    }
+    .memo-card.matched .memo-inner {
+        animation: pulseMatch 0.5s ease;
+    }
+    @keyframes pulseMatch {
+        0% { transform: rotateY(180deg) scale(1); }
+        50% { transform: rotateY(180deg) scale(1.1); }
+        100% { transform: rotateY(180deg) scale(1); }
+    }
+    @media (max-width: 400px) {
+        .memo-grid { gap: 0.5rem; }
+        .memo-back { font-size: 1.5rem; }
+    }
+</style>
 
+<div class="sec" id="s-memoria" role="tabpanel">
+    <div class="card ac-blue">
+        <h2>🧠 Memoria Prehistórica</h2>
+        <p>¡Encuentra las parejas de fósiles y animales para completar el registro!</p>
+
+        <div class="stat-bar">
+            <div class="stat-item">
+                <div class="stat-label">Parejas</div>
+                <div class="stat-val" id="memoPairs">0 / 8</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Intentos</div>
+                <div class="stat-val" id="memoTries">0</div>
+            </div>
+        </div>
+
+        <div class="memo-grid" id="memoGrid"></div>
+
+        <div style="text-align:center; margin-top: 1rem;">
+            <button class="btn btn-pri" onclick="initMemory()">🔄 Reiniciar Juego</button>
+        </div>
+
+        <div id="fbMemo" class="fb" role="alert"></div>
+    </div>
+
+    <button class="next-sec-btn" onclick="go('s-flash')">
+        <span class="nsb-icon">🃏</span>
+        <span class="nsb-arrow">→</span>
+    </button>
+</div>
+
+<script>
+    const memoEmojis = ['🦕', '🦖', '🦣', '🐚', '🌋', '🐟', '🦎', '🌳'];
+    let memoCards = [;
+    let flippedCards = [];
+    let memoPairsFound = 0;
+    let memoTries = 0;
+    let memoLock = false;
+
+    function initMemory() {
+        const grid = document.getElementById('memoGrid');
+        grid.innerHTML = '';
+        memoCards = _shuffle([...memoEmojis, ...memoEmojis);
+        memoPairsFound = 0;
+        memoTries = 0;
+        memoLock = false;
+        flippedCards = [];
+
+        document.getElementById('memoPairs').textContent = `0 / ${memoEmojis.length}`;
+        document.getElementById('memoTries').textContent = '0';
+        document.getElementById('fbMemo').classList.remove('show');
+
+        memoCards.forEach((emoji, index) => {
+            const card = document.createElement('div');
+            card.className = 'memo-card';
+            card.dataset.index = index;
+            card.dataset.emoji = emoji;
+            card.innerHTML = `
+                <div class="memo-inner">
+                    <div class="memo-front"></div>
+                    <div class="memo-back">${emoji}</div>
+                </div>
+            `;
+            card.onclick = () => flipMemoCard(card);
+            grid.appendChild(card);
+        });
+        if(typeof sfx === 'function') sfx('click');
+    }
+
+    function flipMemoCard(card) {
+        if (memoLock || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+        card.classList.add('flipped');
+        flippedCards.push(card);
+        if(typeof sfx === 'function') sfx('flip');
+
+        if (flippedCards.length === 2) {
+            memoTries++;
+            document.getElementById('memoTries').textContent = memoTries;
+            checkMemoMatch();
+        }
+    }
+
+    function checkMemoMatch() {
+        memoLock = true;
+        const [c1, c2] = flippedCards;
+        const isMatch = c1.dataset.emoji === c2.dataset.emoji;
+
+        if (isMatch) {
+            memoPairsFound++;
+            document.getElementById('memoPairs').textContent = `${memoPairsFound} / ${memoEmojis.length}`;
+            c1.classList.add('matched');
+            c2.classList.add('matched');
+            flippedCards = [];
+            memoLock = false;
+            if(typeof sfx === 'function') sfx('ok');
+
+            if (memoPairsFound === memoEmojis.length) {
+                setTimeout(winMemory, 500);
+            }
+        } else {
+            setTimeout(() => {
+                c1.classList.remove('flipped');
+                c2.classList.remove('flipped');
+                flippedCards = [];
+                memoLock = false;
+                if(typeof sfx === 'function') sfx('no');
+            }, 1000);
+        }
+    }
+
+    function winMemory() {
+        if(typeof sfx === 'function') sfx('fan');
+        fb('fbMemo', '¡Excelente memoria! Has encontrado todos los pares. +15 XP', true);
+        if(!xpTracker.memoWin) {
+            xpTracker.memoWin = true;
+            if(typeof pts === 'function') pts(15);
+        }
+        if(typeof fin === 'function') fin('s-memoria');
+        if(typeof launchConfetti === 'function') launchConfetti();
+    }
+
+    // Inyectar botón en la navegación al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+        const nav = document.querySelector('.nav');
+        if (nav) {
+            const btn = document.createElement('button');
+            btn.className = 'nav-t';
+            btn.setAttribute('role', 'tab');
+            btn.setAttribute('data-s', 's-memoria');
+            btn.onclick = () => go('s-memoria');
+            btn.innerHTML = '<span class="ico">🧠</span> Memoria';
+            // Insertar antes del botón de Constancia
+            nav.insertBefore(btn, nav.lastElementChild);
+        }
+        initMemory();
+        xpTracker.memoWin = false;
+    });
+</script>
 <!-- ==================== FOOTER ==================== -->
 <footer class="credits">
   <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
