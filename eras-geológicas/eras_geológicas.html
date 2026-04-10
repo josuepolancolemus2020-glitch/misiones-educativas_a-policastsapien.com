@@ -424,6 +424,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .sopa-w.found{border-color:var(--jade);background:var(--jade-gl);color:var(--jade);text-decoration:line-through;}
 .sopa-hint{font-size:0.78rem;color:var(--gray);text-align:center;margin-bottom:0.4rem;}
 
+/* SOPA FLASH — linterna */
+@keyframes sopaFlash{
+  0%,100%{background:var(--yellow);color:#1b2838;transform:scale(1.15);box-shadow:0 0 6px var(--yellow);}
+  50%{background:var(--amber);color:white;transform:scale(1);}
+}
+.sopa-cell.sopa-flash{animation:sopaFlash 0.44s ease-in-out 3;position:relative;z-index:2;}
+
 /* CREDITS */
 .credits{background:var(--xp-bg);color:rgba(255,255,255,0.75);text-align:center;padding:1rem 1rem 1.2rem;margin-top:2rem;font-size:0.8rem;line-height:1.5;}
 .credits .fam{font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--yellow-br);margin-bottom:0.1rem;}
@@ -773,6 +780,7 @@ body.letra-grande .sopa-cell {
     </div>
     <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
       <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaFlashlight()" title="Ilumina brevemente todas las palabras ocultas">🔦 Pista</button>
     </div>
     <div id="fbSopa" class="fb" role="alert"></div>
   </div>
@@ -1074,7 +1082,7 @@ function go(id){
   const btn = document.querySelector(`[data-s="${id}"]`);
   if(btn){ btn.classList.add('active'); btn.setAttribute('aria-selected','true'); }
   window.scrollTo({top:0,behavior:'smooth'});
-  if (id === 's-sopa') { setTimeout(buildSopa, 50); }
+  if (id === 's-sopa') { setTimeout(()=>{ if(currentSopaSet) _renderSopaGrid(); else buildSopa(); }, 50); }
 }
 
 // ===================== SIMULADOR INTERACTIVO =====================
@@ -1601,70 +1609,72 @@ function genExplainTask(out, count){
 function toggleAns(){ ansVisible=!ansVisible; document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none'); sfx('click'); }
 
 // ===================== SOPA DE LETRAS =====================
-const sopaSets=[
-  {
-    size:10,
-    grid:[
-      ['P','A','L','E','O','Z','O','I','C','A'],
-      ['D','I','N','O','S','A','U','R','I','O'],
-      ['M','A','M','U','T','Q','W','E','H','G'],
-      ['F','O','S','I','L','R','T','Y','I','L'],
-      ['P','A','N','G','E','A','U','I','E','A'],
-      ['T','R','I','L','O','B','I','T','L','C'],
-      ['W','L','O','W','E','R','V','T','O','I'],
-      ['B','E','R','A','C','V','B','O','N','A'],
-      ['M','Q','Z','O','E','T','S','E','U','R'],
-      ['V','M','E','S','O','Z','O','I','C','A']
-    ],
-    words:[
-      {w:'PALEOZOICA', cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]]},
-      {w:'DINOSAURIO', cells:[[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[1,8],[1,9]]},
-      {w:'MAMUT',      cells:[[2,0],[2,1],[2,2],[2,3],[2,4]]},
-      {w:'FOSIL',      cells:[[3,0],[3,1],[3,2],[3,3],[3,4]]},
-      {w:'PANGEA',     cells:[[4,0],[4,1],[4,2],[4,3],[4,4],[4,5]]},
-      {w:'TRILOBITE',  cells:[[5,0],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6],[5,7]]},
-      {w:'HIELO',      cells:[[2,8],[3,8],[4,8],[5,8],[6,8]]},
-      {w:'GLACIAR',    cells:[[2,9],[3,9],[4,9],[5,9],[6,9],[7,9],[8,9]]},
-      {w:'MESOZOICA',  cells:[[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8],[9,9]]}
-    ]
-  },
-  {
-    size:10,
-    grid:[
-      ['E','R','A','S','G','E','O','L','O','G'],
-      ['B','A','C','T','E','R','I','A','Q','W'],
-      ['P','R','E','C','A','M','B','R','I','C'],
-      ['M','E','T','E','O','R','I','T','O','A'],
-      ['V','E','R','T','E','B','R','A','D','O'],
-      ['C','U','A','T','E','R','N','A','R','I'],
-      ['A','V','E','S','Z','X','C','V','B','N'],
-      ['M','A','M','I','F','E','R','O','S','Q'],
-      ['H','O','M','O','S','A','P','I','E','N'],
-      ['P','A','N','G','E','A','L','U','W','X']
-    ],
-    words:[
-      {w:'BACTERIA',    cells:[[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7]]},
-      {w:'METEORITO',   cells:[[3,0],[3,1],[3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[3,8]]},
-      {w:'VERTEBRADO',  cells:[[4,0],[4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8],[4,9]]},
-      {w:'AVES',        cells:[[6,0],[6,1],[6,2],[6,3]]},
-      {w:'MAMIFEROS',   cells:[[7,0],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8]]},
-      {w:'PANGEA',      cells:[[9,0],[9,1],[9,2],[9,3],[9,4],[9,5]]},
-      {w:'HOMOSAPIEN',  cells:[[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,6],[8,7],[8,8],[8,9]]}
-    ]
-  }
+// Listas de palabras para cada set (la cuadrícula se genera dinámicamente)
+const sopaWordLists=[
+  {words:['PALEOZOICA','DINOSAURIO','MAMUT','FOSIL','PANGEA','TRILOBITE','HIELO','GLACIAR','MESOZOICA']},
+  {words:['BACTERIA','METEORITO','VERTEBRADO','MAMIFEROS','PANGEA','HOMOSAPIEN','AVES','GLACIAR']},
+  {words:['CENOZOICA','EXTINCION','TRILOBITE','FOSIL','ERA','GLACIAR','MAMUT','HIELO','PANGEA']},
 ];
-let currentSopaSetIdx=0, sopaFoundWords=new Set();
+
+let currentSopaSetIdx=0, sopaFoundWords=new Set(), currentSopaSet=null;
 let sopaFirstClickCell=null, sopaPointerStartCell=null, sopaPointerMoved=false, sopaSelectedCells=[];
+
+// Genera una cuadrícula en las 8 direcciones de forma aleatoria
+function generateSopaGrid(words){
+  const SIZE=10;
+  // [dr, dc]: →←↓↑↘↙↗↖
+  const DIRS=[[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
+  const LETTERS='ABCDEFGHIJLMNOPRSTUVWXZ';
+  const g=Array.from({length:SIZE},()=>Array(SIZE).fill(''));
+  const placed=[];
+  for(const word of words){
+    let ok=false;
+    const dirs=_shuffle([...DIRS]);
+    for(let t=0;t<200&&!ok;t++){
+      const[dr,dc]=dirs[t%dirs.length];
+      const r=Math.floor(Math.random()*SIZE);
+      const c=Math.floor(Math.random()*SIZE);
+      const cells=[];let fits=true;
+      for(let i=0;i<word.length;i++){
+        const nr=r+dr*i,nc=c+dc*i;
+        if(nr<0||nr>=SIZE||nc<0||nc>=SIZE){fits=false;break;}
+        if(g[nr][nc]!==''&&g[nr][nc]!==word[i]){fits=false;break;}
+        cells.push([nr,nc]);
+      }
+      if(fits){cells.forEach(([nr,nc],i)=>g[nr][nc]=word[i]);placed.push({w:word,cells});ok=true;}
+    }
+    // Fallback: colocación horizontal forzada si no cupo en ninguna dirección
+    if(!ok){
+      outer:for(let r2=0;r2<SIZE;r2++){
+        for(let c2=0;c2<=SIZE-word.length;c2++){
+          const cells=[];let fits=true;
+          for(let i=0;i<word.length;i++){
+            if(g[r2][c2+i]!==''&&g[r2][c2+i]!==word[i]){fits=false;break;}
+            cells.push([r2,c2+i]);
+          }
+          if(fits){cells.forEach(([nr,nc],i)=>g[nr][nc]=word[i]);placed.push({w:word,cells});ok=true;break outer;}
+        }
+      }
+    }
+  }
+  // Rellenar celdas vacías con letras aleatorias
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)
+    if(!g[r][c]) g[r][c]=LETTERS[Math.floor(Math.random()*LETTERS.length)];
+  return{size:SIZE,grid:g,words:placed};
+}
 
 function getSopaCellSize(){
   const container=document.getElementById('sopaGrid');
   if(!container||!container.parentElement) return 28;
   const avail=container.parentElement.clientWidth-16;
-  const set=sopaSets[currentSopaSetIdx];
-  return Math.max(20,Math.min(32,Math.floor(avail/set.size)));
+  const sz=(currentSopaSet||{size:10}).size;
+  return Math.max(20,Math.min(32,Math.floor(avail/sz)));
 }
-function buildSopa(){
-  const set=sopaSets[currentSopaSetIdx];
+
+// Solo re-dibuja la cuadrícula con el set actual (para resize sin regenerar)
+function _renderSopaGrid(){
+  if(!currentSopaSet) return;
+  const set=currentSopaSet;
   const grid=document.getElementById('sopaGrid'); grid.innerHTML='';
   const sz=getSopaCellSize();
   grid.style.gridTemplateColumns=`repeat(${set.size},${sz}px)`;
@@ -1675,8 +1685,8 @@ function buildSopa(){
     cell.style.width=sz+'px'; cell.style.height=sz+'px';
     cell.style.fontSize=Math.max(11,sz-10)+'px';
     cell.textContent=set.grid[r][c]; cell.dataset.row=r; cell.dataset.col=c;
-    const alreadyFound=set.words.find(w=>sopaFoundWords.has(w.w)&&w.cells.some(([wr,wc])=>wr===r&&wc===c));
-    if(alreadyFound) cell.classList.add('sopa-found');
+    if(set.words.find(w=>sopaFoundWords.has(w.w)&&w.cells.some(([wr,wc])=>wr===r&&wc===c)))
+      cell.classList.add('sopa-found');
     grid.appendChild(cell);
   }
   setupSopaEvents();
@@ -1686,21 +1696,30 @@ function buildSopa(){
     sp.id='sw-'+wObj.w; sp.textContent=wObj.w; wl.appendChild(sp);
   });
 }
+
+// Genera un nuevo grid y lo dibuja (nuevo set o primera carga)
+function buildSopa(){
+  sopaFoundWords=new Set();
+  currentSopaSet=generateSopaGrid(sopaWordLists[currentSopaSetIdx].words);
+  _renderSopaGrid();
+}
+
 function setupSopaEvents(){
   const grid=document.getElementById('sopaGrid');
   grid.onpointerdown=e=>{const cell=e.target.closest('.sopa-cell');if(!cell)return;e.preventDefault();grid.setPointerCapture(e.pointerId);sopaPointerStartCell=cell;sopaPointerMoved=false;cell.classList.add('sopa-sel');sopaSelectedCells=[cell];};
   grid.onpointermove=e=>{if(!sopaPointerStartCell)return;e.preventDefault();const el=document.elementFromPoint(e.clientX,e.clientY);const cell=el?el.closest('.sopa-cell'):null;if(!cell)return;const sr=parseInt(sopaPointerStartCell.dataset.row),sc=parseInt(sopaPointerStartCell.dataset.col);const er=parseInt(cell.dataset.row),ec=parseInt(cell.dataset.col);if(sr!==er||sc!==ec)sopaPointerMoved=true;document.querySelectorAll('.sopa-cell.sopa-sel').forEach(c=>c.classList.remove('sopa-sel'));sopaSelectedCells=[];getSopaPath(sr,sc,er,ec).forEach(([r,c])=>{const pc=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(pc){pc.classList.add('sopa-sel');sopaSelectedCells.push(pc);}});};
   grid.onpointerup=e=>{if(!sopaPointerStartCell)return;e.preventDefault();grid.releasePointerCapture(e.pointerId);if(sopaPointerMoved&&sopaSelectedCells.length>1){checkSopaSelection();}else{const cell=sopaPointerStartCell;document.querySelectorAll('.sopa-cell.sopa-sel').forEach(c=>c.classList.remove('sopa-sel'));sopaSelectedCells=[];if(!sopaFirstClickCell){sopaFirstClickCell=cell;cell.classList.add('sopa-start');}else if(sopaFirstClickCell===cell){cell.classList.remove('sopa-start');sopaFirstClickCell=null;}else{const sr=parseInt(sopaFirstClickCell.dataset.row),sc=parseInt(sopaFirstClickCell.dataset.col);const er=parseInt(cell.dataset.row),ec=parseInt(cell.dataset.col);sopaFirstClickCell.classList.remove('sopa-start');sopaFirstClickCell=null;getSopaPath(sr,sc,er,ec).forEach(([r,c])=>{const pc=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(pc){pc.classList.add('sopa-sel');sopaSelectedCells.push(pc);}});checkSopaSelection();}}sopaPointerStartCell=null;sopaPointerMoved=false;};
 }
-function getSopaPath(r1,c1,r2,c2){const dr=Math.sign(r2-r1),dc=Math.sign(c2-c1);const lr=Math.abs(r2-r1),lc=Math.abs(c2-c1);if(lr!==0&&lc!==0&&lr!==lc) return [[r1,c1]];const len=Math.max(lr,lc); const path=[];for(let i=0;i<=len;i++) path.push([r1+dr*i,c1+dc*i]);return path;}
+function getSopaPath(r1,c1,r2,c2){const dr=Math.sign(r2-r1),dc=Math.sign(c2-c1);const lr=Math.abs(r2-r1),lc=Math.abs(c2-c1);if(lr!==0&&lc!==0&&lr!==lc) return [[r1,c1]];const len=Math.max(lr,lc);const path=[];for(let i=0;i<=len;i++) path.push([r1+dr*i,c1+dc*i]);return path;}
 function checkSopaSelection(){
-  const set=sopaSets[currentSopaSetIdx];
+  if(!currentSopaSet) return;
+  const set=currentSopaSet;
   const word=sopaSelectedCells.map(c=>c.textContent).join('');
   const wordRev=word.split('').reverse().join('');
   const found=set.words.find(wObj=>!sopaFoundWords.has(wObj.w)&&(wObj.w===word||wObj.w===wordRev));
   if(found){
     sopaFoundWords.add(found.w);
-    found.cells.forEach(([r,c])=>{const cell=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(cell){cell.classList.remove('sopa-sel','sopa-start');cell.classList.add('sopa-found');}});
+    found.cells.forEach(([r,c])=>{const cell=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(cell){cell.classList.remove('sopa-sel','sopa-start','sopa-flash');cell.classList.add('sopa-found');}});
     const sp=document.getElementById('sw-'+found.w); if(sp) sp.classList.add('found');
     if(!xpTracker.sopa.has(found.w)){xpTracker.sopa.add(found.w);pts(1);}
     sfx('ok');
@@ -1710,10 +1729,36 @@ function checkSopaSelection(){
   document.querySelectorAll('.sopa-cell.sopa-sel').forEach(c=>c.classList.remove('sopa-sel'));
   sopaSelectedCells=[];
 }
-function nextSopaSet(){sfx('click');sopaFoundWords=new Set();currentSopaSetIdx=(currentSopaSetIdx+1)%sopaSets.length;buildSopa();showToast('🔄 Nueva sopa cargada');}
+function nextSopaSet(){
+  sfx('click');
+  currentSopaSetIdx=(currentSopaSetIdx+1)%sopaWordLists.length;
+  buildSopa();
+  showToast('🔄 Nueva sopa cargada');
+}
+
+// 🔦 Linterna: parpadea brevemente las celdas de palabras no encontradas
+function sopaFlashlight(){
+  if(!currentSopaSet){showToast('⚠️ La sopa aún se está generando');return;}
+  sfx('click');
+  const flashCells=[];
+  currentSopaSet.words.forEach(wObj=>{
+    if(!sopaFoundWords.has(wObj.w)){
+      wObj.cells.forEach(([r,c])=>{
+        const el=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);
+        if(el&&!el.classList.contains('sopa-found')){
+          el.classList.add('sopa-flash');
+          flashCells.push(el);
+        }
+      });
+    }
+  });
+  // Retirar el flash después de 3 ciclos × 0.44s ≈ 1.4 s
+  setTimeout(()=>flashCells.forEach(el=>el.classList.remove('sopa-flash')), 1450);
+}
 
 let _sopaResizeTimer=null;
-window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active')) buildSopa();},200);});
+// En resize solo se redibuja (sin regenerar) para conservar el progreso
+window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active')) _renderSopaGrid();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
