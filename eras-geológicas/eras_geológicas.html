@@ -462,6 +462,18 @@ body.letra-grande .sopa-cell {
     line-height: 1.6;
 }
 
+/* ASIMILACIÓN — Ordenación Lógica */
+.ord-list{list-style:none;padding:0;margin:0.8rem 0;display:flex;flex-direction:column;gap:0.5rem;}
+.ord-item{display:flex;align-items:center;gap:0.6rem;background:var(--card);border:2px solid var(--border);border-radius:10px;padding:0.6rem 0.8rem;font-family:'Fredoka',sans-serif;font-size:0.95rem;color:var(--dark);transition:background 0.25s,border-color 0.25s;}
+.ord-item.ord-ok{border-color:var(--jade);background:var(--jade-gl);}
+.ord-item.ord-no{border-color:var(--red);background:var(--red-gl);}
+.ord-num{font-weight:700;color:var(--pri);min-width:1.6rem;font-size:0.88rem;}
+.ord-label{flex:1;}
+.ord-btns{display:flex;flex-direction:column;gap:0.2rem;margin-left:auto;}
+.ord-btn{background:var(--pri-gl);border:1.5px solid var(--pri);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:0.72rem;display:flex;align-items:center;justify-content:center;transition:background 0.2s;color:var(--pri);font-weight:700;line-height:1;}
+.ord-btn:hover{background:var(--pri);color:white;}
+.ord-btn:disabled{opacity:0.25;cursor:default;pointer-events:none;}
+
 /* MEMORIA */
 .memo-grid {
     display: grid;
@@ -854,6 +866,31 @@ body.letra-grande .sopa-cell {
   </button>
 </div>
 
+<!-- ==================== S-ASIMILACION ==================== -->
+<div class="sec" id="s-asimilacion" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🕹️ Asimilación — Juegos Interactivos</h2>
+    <p style="font-size:0.88rem;color:var(--gray);">Consolida lo aprendido con estos minijuegos. ⭐ +5 XP por juego completado (primera vez).</p>
+  </div>
+
+  <!-- JUEGO 1: Ordenación Lógica -->
+  <div class="card ac-blue">
+    <h2>⏳ Juego 1 — Línea del Tiempo</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Ordena las eras de la <strong>más antigua</strong> a la <strong>más reciente</strong> usando ▲ / ▼.</p>
+    <ol class="ord-list" id="ordList"></ol>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem;">
+      <button class="btn btn-g" onclick="checkOrdenacion()">✅ Verificar orden</button>
+      <button class="btn btn-d" onclick="buildOrdenacion()">🔀 Mezclar</button>
+    </div>
+    <div id="fbOrd" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
 <!-- ==================== S-TAREAS ==================== -->
 <div class="sec" id="s-tareas" role="tabpanel">
   <div class="card ac-gold">
@@ -978,6 +1015,7 @@ body.letra-grande .sopa-cell {
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-memoria" data-s="s-memoria" onclick="go('s-memoria')"><span class="ico">🧠</span> Memoria</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-asimilacion" data-s="s-asimilacion" onclick="go('s-asimilacion')"><span class="ico">🕹️</span> Asimilación</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
   <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
@@ -1130,11 +1168,12 @@ let evalFormNum = 1;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
-const TOTAL_SECTIONS = 12;
+const TOTAL_SECTIONS = 13;
 
 const xpTracker = {
   fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(),
   cmp: new Set(), reto: new Set(), sopa: new Set(),
+  asim: new Set(),
 };
 
 // ===================== SONIDO =====================
@@ -2217,12 +2256,77 @@ function shareWA(){
   window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
 }
 
+// ===================== ASIMILACIÓN — JUEGO 1: ORDENACIÓN =====================
+const ordCorrect = ['Precámbrica','Paleozoica','Mesozoica','Cenozoica','Cuaternaria'];
+const ordEmojis  = {Precámbrica:'🌋',Paleozoica:'🐚',Mesozoica:'🦖',Cenozoica:'🐘',Cuaternaria:'🧑'};
+
+function buildOrdenacion(){
+  const list = document.getElementById('ordList');
+  list.innerHTML = '';
+  _shuffle([...ordCorrect]).forEach(era => {
+    const li = document.createElement('li');
+    li.className = 'ord-item';
+    li.dataset.era = era;
+    li.innerHTML = `<span class="ord-num"></span>
+      <span class="ord-label">${ordEmojis[era]} ${era}</span>
+      <div class="ord-btns">
+        <button class="ord-btn" onclick="moveOrd(this,-1)" title="Subir" aria-label="Subir ${era}">▲</button>
+        <button class="ord-btn" onclick="moveOrd(this,1)"  title="Bajar" aria-label="Bajar ${era}">▼</button>
+      </div>`;
+    list.appendChild(li);
+  });
+  _refreshOrd();
+  document.getElementById('fbOrd').classList.remove('show');
+}
+
+function _refreshOrd(){
+  const items = [...document.querySelectorAll('#ordList .ord-item')];
+  items.forEach((el, i) => {
+    el.querySelector('.ord-num').textContent = (i+1)+'.';
+    el.querySelector('[title="Subir"]').disabled = i === 0;
+    el.querySelector('[title="Bajar"]').disabled = i === items.length - 1;
+    el.classList.remove('ord-ok','ord-no');
+  });
+}
+
+function moveOrd(btn, dir){
+  sfx('click');
+  const item  = btn.closest('.ord-item');
+  const list  = item.parentElement;
+  const items = [...list.children];
+  const idx   = items.indexOf(item);
+  const swap  = idx + dir;
+  if(swap < 0 || swap >= items.length) return;
+  dir === -1 ? list.insertBefore(item, items[swap]) : list.insertBefore(items[swap], item);
+  _refreshOrd();
+}
+
+function checkOrdenacion(){
+  const items = [...document.querySelectorAll('#ordList .ord-item')];
+  let allOk = true;
+  items.forEach((el, i) => {
+    const ok = el.dataset.era === ordCorrect[i];
+    el.classList.toggle('ord-ok', ok);
+    el.classList.toggle('ord-no', !ok);
+    if(!ok) allOk = false;
+  });
+  if(allOk){
+    fb('fbOrd','¡Orden perfecto! +5 XP', true);
+    sfx('ok');
+    if(!xpTracker.asim.has('ord')){ xpTracker.asim.add('ord'); pts(5); fin('s-asimilacion'); launchConfetti(); }
+  } else {
+    fb('fbOrd','Hay eras fuera de lugar — las rojas necesitan moverse.', false);
+    sfx('no');
+  }
+}
+
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   loadProgress();
   cambiarEra(0);
   upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval();
+  buildOrdenacion();
   updateRetoButtons();
   renderAchPanel();
   document.addEventListener('click',function(e){
