@@ -482,6 +482,13 @@ body.letra-grande .sopa-cell {
 .asoc-item.asoc-sel{border-color:var(--pri);background:var(--pri-gl);transform:scale(1.04);box-shadow:0 0 0 3px var(--pri-lt);}
 .asoc-item.asoc-ok{border-color:var(--jade)!important;background:var(--jade-gl)!important;cursor:default;color:var(--jade);font-weight:700;pointer-events:none;}
 
+/* ASIMILACIÓN — Anagrama */
+.ana-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin:1rem auto;max-width:270px;}
+.ana-cell{aspect-ratio:1/1;background:var(--card);border:2px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:1.5rem;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--dark);user-select:none;}
+.ana-cell:hover:not(.ana-ok){border-color:var(--pri);background:var(--pri-gl);}
+.ana-cell.ana-sel{border-color:var(--amber);background:var(--amber-gl);transform:scale(1.1);box-shadow:0 0 0 3px var(--amber);color:var(--dark);}
+.ana-cell.ana-ok{border-color:var(--jade)!important;background:var(--jade-gl)!important;color:var(--jade);cursor:default;pointer-events:none;}
+
 /* MEMORIA */
 .memo-grid {
     display: grid;
@@ -911,6 +918,22 @@ body.letra-grande .sopa-cell {
       <button class="btn btn-d" onclick="buildAsociacion()">🔀 Reiniciar parejas</button>
     </div>
     <div id="fbAsoc" class="fb" role="alert"></div>
+  </div>
+
+  <!-- JUEGO 3: Anagrama -->
+  <div class="card ac-amber">
+    <h2>🔀 Juego 3 — Anagrama</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca dos letras para intercambiarlas y forma la palabra correcta.</p>
+    <div class="tip" style="margin:0.4rem 0 0.6rem;">
+      <span class="ti">💡</span>
+      <div><strong>Pista:</strong> Roca espacial que acabó con los dinosaurios.</div>
+    </div>
+    <div class="ana-grid" id="anaGrid" role="group" aria-label="Cuadrícula de letras"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;margin-top:0.8rem;">
+      <button class="btn btn-g" onclick="checkAnagrama()">✅ Verificar</button>
+      <button class="btn btn-d" onclick="buildAnagrama()">🔀 Mezclar</button>
+    </div>
+    <div id="fbAna" class="fb" role="alert"></div>
   </div>
 
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
@@ -2406,13 +2429,82 @@ function selectAsocRight(el){
   }
 }
 
+// ===================== ASIMILACIÓN — JUEGO 3: ANAGRAMA =====================
+const anaWord = 'METEORITO';
+let anaLetters  = [];   // [{letter, id}]
+let anaSelected = null; // posición seleccionada (o null)
+
+function buildAnagrama(){
+  anaSelected = null;
+  // Mezclar garantizando que no quede resuelto de entrada
+  do { anaLetters = _shuffle([...anaWord].map((l,i) => ({letter:l, id:i}))); }
+  while(anaLetters.map(o=>o.letter).join('') === anaWord);
+  _renderAna();
+  document.getElementById('fbAna').classList.remove('show');
+}
+
+function _renderAna(){
+  const grid = document.getElementById('anaGrid');
+  grid.innerHTML = '';
+  anaLetters.forEach((obj, pos) => {
+    const cell = document.createElement('div');
+    cell.className = 'ana-cell';
+    cell.textContent = obj.letter;
+    cell.dataset.pos = pos;
+    cell.setAttribute('aria-label', `Letra ${obj.letter}, posición ${pos+1}`);
+    cell.onclick = () => _clickAna(pos);
+    if(pos === anaSelected) cell.classList.add('ana-sel');
+    grid.appendChild(cell);
+  });
+}
+
+function _clickAna(pos){
+  if(anaSelected === null){
+    // Primera selección
+    anaSelected = pos;
+    sfx('click');
+    _renderAna();
+  } else if(anaSelected === pos){
+    // Deseleccionar
+    anaSelected = null;
+    sfx('click');
+    _renderAna();
+  } else {
+    // Intercambiar
+    const tmp = anaLetters[anaSelected];
+    anaLetters[anaSelected] = anaLetters[pos];
+    anaLetters[pos] = tmp;
+    anaSelected = null;
+    sfx('click');
+    _renderAna();
+    // Auto-detectar victoria
+    if(anaLetters.map(o=>o.letter).join('') === anaWord) _winAna();
+  }
+}
+
+function checkAnagrama(){
+  if(anaLetters.map(o=>o.letter).join('') === anaWord){
+    _winAna();
+  } else {
+    fb('fbAna','Aún no es correcto — sigue intercambiando letras.', false);
+    sfx('no');
+  }
+}
+
+function _winAna(){
+  document.querySelectorAll('#anaGrid .ana-cell').forEach(c => c.classList.add('ana-ok'));
+  fb('fbAna','¡METEORITO! Correcto. +5 XP', true);
+  sfx('ok');
+  if(!xpTracker.asim.has('ana')){ xpTracker.asim.add('ana'); pts(5); launchConfetti(); }
+}
+
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   loadProgress();
   cambiarEra(0);
   upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval();
-  buildOrdenacion(); buildAsociacion();
+  buildOrdenacion(); buildAsociacion(); buildAnagrama();
   updateRetoButtons();
   renderAchPanel();
   document.addEventListener('click',function(e){
