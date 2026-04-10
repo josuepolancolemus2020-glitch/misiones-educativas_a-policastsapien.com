@@ -474,6 +474,14 @@ body.letra-grande .sopa-cell {
 .ord-btn:hover{background:var(--pri);color:white;}
 .ord-btn:disabled{opacity:0.25;cursor:default;pointer-events:none;}
 
+/* ASIMILACIÓN — Asociación Simple */
+.asoc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin:0.8rem 0;}
+.asoc-col h4{font-family:'Fredoka',sans-serif;font-size:0.88rem;color:var(--gray);margin-bottom:0.5rem;text-align:center;}
+.asoc-item{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:0.6rem 0.8rem;cursor:pointer;font-family:'Fredoka',sans-serif;font-size:0.88rem;text-align:center;color:var(--dark);transition:all 0.2s;margin-bottom:0.4rem;user-select:none;}
+.asoc-item:hover:not(.asoc-ok){border-color:var(--pri);background:var(--pri-gl);}
+.asoc-item.asoc-sel{border-color:var(--pri);background:var(--pri-gl);transform:scale(1.04);box-shadow:0 0 0 3px var(--pri-lt);}
+.asoc-item.asoc-ok{border-color:var(--jade)!important;background:var(--jade-gl)!important;cursor:default;color:var(--jade);font-weight:700;pointer-events:none;}
+
 /* MEMORIA */
 .memo-grid {
     display: grid;
@@ -883,6 +891,26 @@ body.letra-grande .sopa-cell {
       <button class="btn btn-d" onclick="buildOrdenacion()">🔀 Mezclar</button>
     </div>
     <div id="fbOrd" class="fb" role="alert"></div>
+  </div>
+
+  <!-- JUEGO 2: Asociación Simple -->
+  <div class="card ac-jade">
+    <h2>🔗 Juego 2 — Parejas Fósiles</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Toca un <strong>término</strong> de la izquierda y luego su <strong>era</strong> correcta a la derecha.</p>
+    <div class="asoc-grid">
+      <div class="asoc-col">
+        <h4>📌 Términos</h4>
+        <div id="asocLeft"></div>
+      </div>
+      <div class="asoc-col">
+        <h4>🗓️ Eras</h4>
+        <div id="asocRight"></div>
+      </div>
+    </div>
+    <div style="margin-top:0.6rem;">
+      <button class="btn btn-d" onclick="buildAsociacion()">🔀 Reiniciar parejas</button>
+    </div>
+    <div id="fbAsoc" class="fb" role="alert"></div>
   </div>
 
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
@@ -2320,13 +2348,71 @@ function checkOrdenacion(){
   }
 }
 
+// ===================== ASIMILACIÓN — JUEGO 2: ASOCIACIÓN =====================
+const asocPairs = [
+  {term:'🦐 Trilobite',  era:'🐚 Paleozoica',  key:'tri'},
+  {term:'🦖 Dinosaurio', era:'🦖 Mesozoica',   key:'din'},
+  {term:'🐘 Mamut',      era:'🐘 Cenozoica',   key:'mam'},
+  {term:'❄️ Glaciación', era:'🧑 Cuaternaria', key:'gla'},
+];
+let asocSel  = null;
+let asocDone = 0;
+
+function buildAsociacion(){
+  asocSel = null; asocDone = 0;
+  const leftCol  = document.getElementById('asocLeft');
+  const rightCol = document.getElementById('asocRight');
+  leftCol.innerHTML = ''; rightCol.innerHTML = '';
+  document.getElementById('fbAsoc').classList.remove('show');
+
+  _shuffle([...asocPairs]).forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'asoc-item'; el.textContent = p.term; el.dataset.key = p.key;
+    el.onclick = () => selectAsocLeft(el);
+    leftCol.appendChild(el);
+  });
+  _shuffle([...asocPairs]).forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'asoc-item'; el.textContent = p.era; el.dataset.key = p.key;
+    el.onclick = () => selectAsocRight(el);
+    rightCol.appendChild(el);
+  });
+}
+
+function selectAsocLeft(el){
+  if(el.classList.contains('asoc-ok')) return;
+  sfx('click');
+  document.querySelectorAll('#asocLeft .asoc-item').forEach(i => i.classList.remove('asoc-sel'));
+  el.classList.add('asoc-sel');
+  asocSel = el;
+}
+
+function selectAsocRight(el){
+  if(el.classList.contains('asoc-ok') || !asocSel) return;
+  sfx('click');
+  if(asocSel.dataset.key === el.dataset.key){
+    asocSel.classList.remove('asoc-sel'); asocSel.classList.add('asoc-ok');
+    el.classList.add('asoc-ok');
+    asocSel = null; asocDone++;
+    sfx('ok');
+    if(asocDone === asocPairs.length){
+      fb('fbAsoc','¡Todas las parejas correctas! +5 XP', true);
+      if(!xpTracker.asim.has('asoc')){ xpTracker.asim.add('asoc'); pts(5); launchConfetti(); }
+    }
+  } else {
+    sfx('no');
+    asocSel.classList.remove('asoc-sel'); asocSel = null;
+    fb('fbAsoc','Esa pareja no coincide — intenta de nuevo.', false);
+  }
+}
+
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   loadProgress();
   cambiarEra(0);
   upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval();
-  buildOrdenacion();
+  buildOrdenacion(); buildAsociacion();
   updateRetoButtons();
   renderAchPanel();
   document.addEventListener('click',function(e){
