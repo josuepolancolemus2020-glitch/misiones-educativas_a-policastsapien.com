@@ -123,6 +123,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .next-sec-btn .nsb-name {
     font-size: 0.95rem;
 }
+.next-sec-btn .nsb-hint {
+    font-size: 0.72rem;
+    opacity: 0.85;
+}
 .next-sec-btn .nsb-arrow {
     margin-left: 0.3rem;
     font-size: 1.1rem;
@@ -496,7 +500,7 @@ body.letra-grande .sopa-cell {
     <div class="sim-info">
       <p id="era-desc" style="font-size:0.92rem;margin-bottom:0.8rem;color:var(--dark);line-height:1.6;"></p>
       <div id="era-img-box" class="sim-img-panel anim-in">
-        <img id="era-img" src="descriptivas-img/era-precambrica_edit.webp"
+        <img id="era-img" src="descriptivas-img/era-precambrica_edit.webp" alt="Ilustración de la era geológica">
         <div class="sim-text-content">
           <h4 id="era-img-titulo">🔍 Observación de Campo:</h4>
           <p id="era-img-texto">Observa la imagen: El planeta era una inmensa bola volcánica. La corteza aún se formaba entre erupciones de lava. Las primeras formas de vida, bacterias simples, surgieron en esos océanos primitivos.</p>
@@ -716,7 +720,10 @@ body.letra-grande .sopa-cell {
     <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
     <div class="cmp-sent" id="cmpSent"></div>
     <div class="cmp-opts" id="cmpOpts" role="group"></div>
-    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+      <button class="btn btn-d" onclick="resetCmp()">🔄 Reiniciar</button>
+    </div>
     <div id="fbCmp" class="fb" role="alert"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
@@ -1206,6 +1213,7 @@ function showQz(){
   qzDone = false;
 }
 function checkQz(){
+  if(qzDone) return;
   if(qzSel<0) return fb('fbQz','Selecciona una respuesta.',false);
   qzDone = true;
   const opts = document.querySelectorAll('.qz-opt');
@@ -1376,6 +1384,7 @@ function showCmp(){
   });
 }
 function checkCmp(){
+  if(cmpDone) return;
   if(cmpSel<0) return fb('fbCmp','Selecciona una opción.',false);
   cmpDone = true;
   const opts = document.querySelectorAll('.cmp-opt');
@@ -1391,6 +1400,7 @@ function checkCmp(){
   }
   setTimeout(()=>{ cmpIdx++; document.getElementById('fbCmp').classList.remove('show'); showCmp(); }, 1600);
 }
+function resetCmp(){ sfx('click'); cmpIdx=0; cmpSel=-1; cmpDone=false; showCmp(); document.getElementById('fbCmp').classList.remove('show'); }
 
 // ===================== RETO FINAL =====================
 const retoPairs = [
