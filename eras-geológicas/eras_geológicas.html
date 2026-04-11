@@ -329,10 +329,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .btn-purple{background:var(--purple);color:white;}
 .btn-amber{background:var(--amber);color:white;}
 
-/* PAUTA */
-#eval-pauta-sheet{display:none;}
-.eval-print-header{display:none;}
-
 /* TOAST */
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#1b2838;color:var(--yellow-br);font-family:'Fredoka',sans-serif;font-size:0.9rem;padding:0.6rem 1.2rem;border-radius:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.3);z-index:400;white-space:nowrap;display:none;}
 
@@ -656,6 +652,7 @@ body.letra-grande .sopa-cell {
         <button class="tl-nav-btn" id="btnNextPoster" onclick="nextPosterFlip()">Siguiente ▶</button>
       </div>
     </div>
+  </div>
 
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
     <span class="nsb-icon">🏷️</span>
@@ -857,8 +854,8 @@ body.letra-grande .sopa-cell {
     </div>
     <div id="fbSopa" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
-    <span class="nsb-icon">📋</span>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-asimilacion')">
+    <span class="nsb-icon">🕹️</span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -964,12 +961,6 @@ body.letra-grande .sopa-cell {
 <!-- ==================== S-EVALUACION ==================== -->
 <div class="sec" id="s-evaluacion" role="tabpanel">
   <div class="card ac-purple">
-    <div class="eval-print-header">
-      <h2>Evaluación Final de Misión Las Eras Geológicas · II y III Ciclo · CC.NN.</h2>
-      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
-      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
-      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
-    </div>
     <h2 id="eval-screen-title">📝 Evaluación Final — Las Eras Geológicas</h2>
     <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
     <div class="eval-controls">
@@ -979,7 +970,6 @@ body.letra-grande .sopa-cell {
     </div>
     <div id="evalOut"></div>
   </div>
-  <div id="eval-pauta-sheet"></div>
   <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
     <span class="nsb-icon">🎓</span>
     <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
