@@ -396,20 +396,31 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .eval-score-pill{font-family:'Fredoka',sans-serif;font-size:0.8rem;padding:0.2rem 0.6rem;border-radius:10px;color:white;}
 .esp-tf{background:#2d8659;}.esp-mc{background:#4a7a3b;}.esp-cp{background:#6b8e23;}.esp-pr{background:#6c5ce7;}
 
-/* TIMELINE GALLERY — scroll horizontal, tarjetas verticales */
-.tl-gallery{display:flex;gap:1rem;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:0.5rem 0 1rem;scrollbar-width:thin;scrollbar-color:var(--pri) var(--border);}
-.tl-gallery::-webkit-scrollbar{height:6px;}
-.tl-gallery::-webkit-scrollbar-track{background:var(--border);border-radius:10px;}
-.tl-gallery::-webkit-scrollbar-thumb{background:var(--pri);border-radius:10px;}
-.tl-card{flex:0 0 75vw;max-width:320px;min-width:260px;scroll-snap-align:center;border-radius:16px;overflow:hidden;border:3px solid var(--border);background:var(--card);box-shadow:0 6px 20px var(--shadow);transition:transform 0.3s,box-shadow 0.3s;}
-.tl-card:hover{transform:translateY(-4px);box-shadow:0 10px 30px var(--shadow-md);}
-.tl-card img{width:100%;aspect-ratio:9/14;object-fit:cover;display:block;background:#1b2838;}
-.tl-caption{padding:0.9rem 1rem;display:flex;flex-direction:column;gap:0.25rem;}
-.tl-era-name{font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;color:var(--dark);}
-.tl-era-time{font-family:'Fira Code',monospace;font-size:0.78rem;color:var(--pri);font-weight:600;}
-.tl-caption p{font-size:0.82rem;color:var(--gray);line-height:1.4;margin:0.15rem 0 0;}
-@media(max-width:600px){
-  .tl-card{flex:0 0 82vw;max-width:300px;min-width:240px;}
+/* TIMELINE GALLERY — CARRUSEL DE FLASHCARDS */
+.tl-gallery { display: flex; gap: 1.2rem; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding: 0.5rem 0.5rem 1.5rem; scrollbar-width: thin; scrollbar-color: var(--pri) var(--border); }
+.tl-gallery::-webkit-scrollbar { height: 8px; }
+.tl-gallery::-webkit-scrollbar-track { background: var(--border); border-radius: 10px; }
+.tl-gallery::-webkit-scrollbar-thumb { background: var(--pri); border-radius: 10px; }
+
+.tl-card { flex: 0 0 70vw; max-width: 280px; min-width: 240px; scroll-snap-align: center; height: 360px; perspective: 1000px; cursor: pointer; }
+.tl-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
+.tl-card.flipped .tl-card-inner { transform: rotateY(180deg); }
+
+.tl-front, .tl-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 16px; border: 3px solid var(--border); box-shadow: 0 6px 20px var(--shadow); background: var(--card); overflow: hidden; display: flex; flex-direction: column; }
+.tl-front:hover { border-color: var(--pri); box-shadow: 0 8px 25px var(--pri-gl); }
+
+/* Lado Frontal (Imagen) */
+.tl-front img { width: 100%; height: calc(100% - 3.5rem); object-fit: cover; background: #1b2838; border-bottom: 2px solid var(--border); }
+.tl-front-title { height: 3.5rem; display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--dark); background: var(--card); }
+
+/* Lado Trasero (Información) */
+.tl-back { transform: rotateY(180deg); justify-content: center; align-items: center; padding: 1.8rem; text-align: center; background: linear-gradient(135deg, var(--card), var(--pri-gl)); border-color: var(--pri); }
+.tl-back-time { font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--pri); font-weight: 700; margin-bottom: 1rem; padding: 0.4rem 0.9rem; background: var(--card); border: 2px solid var(--pri); border-radius: 20px; }
+.tl-back-desc { font-size: 0.95rem; color: var(--dark); line-height: 1.5; margin-bottom: auto; }
+.tl-hint { font-size: 0.75rem; color: var(--gray); opacity: 0.8; font-weight: 600; margin-top: 1rem; }
+
+@media(max-width: 600px) {
+  .tl-card { flex: 0 0 80vw; max-width: 280px; min-width: 240px; height: 340px; }
 }
 
 /* SOPA DE LETRAS */
@@ -641,49 +652,75 @@ body.letra-grande .sopa-cell {
       <div class="stat-item"><div class="stat-label">🧑 Cuaternaria</div><div class="stat-val">2.6 M.a.</div></div>
     </div>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin:1rem 0 0.5rem;text-align:center;">👆 Desliza para ver las ilustraciones de cada era →</p>
-    <div class="tl-gallery">
-      <div class="tl-card">
-        <img src="carrusel-img/precambrica.edit.webp" alt="Era Precámbrica" loading="lazy">
-        <div class="tl-caption">
-          <span class="tl-era-name">🌋 Era Precámbrica</span>
-          <span class="tl-era-time">4,600 – 540 M.a.</span>
-          <p>Volcanes, lava, primeros océanos y las primeras bacterias.</p>
+    <div class="tl-card" onclick="this.classList.toggle('flipped'); if(typeof sfx==='function') sfx('flip');">
+        <div class="tl-card-inner">
+          <div class="tl-front">
+            <img src="carrusel-img/precambrica.edit.webp" alt="Era Precámbrica" loading="lazy">
+            <div class="tl-front-title">🌋 Era Precámbrica</div>
+          </div>
+          <div class="tl-back">
+            <div class="tl-back-time">4,600 – 540 M.a.</div>
+            <p class="tl-back-desc">Volcanes, lava, primeros océanos y las primeras bacterias.</p>
+            <div class="tl-hint">👆 Toca para voltear</div>
+          </div>
         </div>
       </div>
-      <div class="tl-card">
-        <img src="carrusel-img/paleozoica.edit.webp" alt="Era Paleozoica" loading="lazy">
-        <div class="tl-caption">
-          <span class="tl-era-name">🐚 Era Paleozoica</span>
-          <span class="tl-era-time">540 – 250 M.a.</span>
-          <p>Trilobites, primeros peces, anfibios y la gran extinción del Pérmico.</p>
+
+      <div class="tl-card" onclick="this.classList.toggle('flipped'); if(typeof sfx==='function') sfx('flip');">
+        <div class="tl-card-inner">
+          <div class="tl-front">
+            <img src="carrusel-img/paleozoica.edit.webp" alt="Era Paleozoica" loading="lazy">
+            <div class="tl-front-title">🐚 Era Paleozoica</div>
+          </div>
+          <div class="tl-back">
+            <div class="tl-back-time">540 – 250 M.a.</div>
+            <p class="tl-back-desc">Trilobites, primeros peces, anfibios y la gran extinción del Pérmico.</p>
+            <div class="tl-hint">👆 Toca para voltear</div>
+          </div>
         </div>
       </div>
-      <div class="tl-card">
-        <img src="carrusel-img/mesozoica.edit.webp" alt="Era Mesozoica" loading="lazy">
-        <div class="tl-caption">
-          <span class="tl-era-name">🦖 Era Mesozoica</span>
-          <span class="tl-era-time">250 – 66 M.a.</span>
-          <p>Dinosaurios, Pangea se fragmenta, primeras aves y flores.</p>
+
+      <div class="tl-card" onclick="this.classList.toggle('flipped'); if(typeof sfx==='function') sfx('flip');">
+        <div class="tl-card-inner">
+          <div class="tl-front">
+            <img src="carrusel-img/mesozoica.edit.webp" alt="Era Mesozoica" loading="lazy">
+            <div class="tl-front-title">🦖 Era Mesozoica</div>
+          </div>
+          <div class="tl-back">
+            <div class="tl-back-time">250 – 66 M.a.</div>
+            <p class="tl-back-desc">Dinosaurios, Pangea se fragmenta, primeras aves y plantas con flores.</p>
+            <div class="tl-hint">👆 Toca para voltear</div>
+          </div>
         </div>
       </div>
-      <div class="tl-card">
-        <img src="carrusel-img/cenozoica.edit.webp" alt="Era Cenozoica" loading="lazy">
-        <div class="tl-caption">
-          <span class="tl-era-name">🐘 Era Cenozoica</span>
-          <span class="tl-era-time">66 – 2.6 M.a.</span>
-          <p>Mamuts, tigres dientes de sable y diversificación de aves.</p>
+
+      <div class="tl-card" onclick="this.classList.toggle('flipped'); if(typeof sfx==='function') sfx('flip');">
+        <div class="tl-card-inner">
+          <div class="tl-front">
+            <img src="carrusel-img/cenozoica.edit.webp" alt="Era Cenozoica" loading="lazy">
+            <div class="tl-front-title">🐘 Era Cenozoica</div>
+          </div>
+          <div class="tl-back">
+            <div class="tl-back-time">66 – 2.6 M.a.</div>
+            <p class="tl-back-desc">Mamíferos gigantes (como mamuts y tigres dientes de sable) y diversificación de aves.</p>
+            <div class="tl-hint">👆 Toca para voltear</div>
+          </div>
         </div>
       </div>
-      <div class="tl-card">
-        <img src="carrusel-img/cuaternaria.edit.webp" alt="Era Cuaternaria" loading="lazy">
-        <div class="tl-caption">
-          <span class="tl-era-name">🧑 Era Cuaternaria</span>
-          <span class="tl-era-time">2.6 M.a. – Hoy</span>
-          <p>Edad de Hielo, Homo sapiens, fuego y civilización.</p>
+
+      <div class="tl-card" onclick="this.classList.toggle('flipped'); if(typeof sfx==='function') sfx('flip');">
+        <div class="tl-card-inner">
+          <div class="tl-front">
+            <img src="carrusel-img/cuaternaria.edit.webp" alt="Era Cuaternaria" loading="lazy">
+            <div class="tl-front-title">🧑 Era Cuaternaria</div>
+          </div>
+          <div class="tl-back">
+            <div class="tl-back-time">2.6 M.a. – Hoy</div>
+            <p class="tl-back-desc">Ocurre la Edad de Hielo, aparece el Homo sapiens, descubre el fuego y crea civilizaciones.</p>
+            <div class="tl-hint">👆 Toca para voltear</div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
     <span class="nsb-icon">🏷️</span>
