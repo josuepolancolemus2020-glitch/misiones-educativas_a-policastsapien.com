@@ -1,4 +1,4 @@
-// js/interaccion_explorador.js
+﻿// js/interaccion_explorador.js
 
 window.WidgetExploradorJSON = {
   prompt: "Widget unificado Explorador Maestro de Ángulos multidireccional.",
@@ -212,12 +212,12 @@ window.WidgetExploradorJSON = {
           const largeArcFlag = ang <= 180 ? "0" : "1";
           
           // M start.x start.y A r r 0 large-arc sweep(0 for -Y) end.x end.y
-          const pathD = \`M \${radius} 0 A \${radius} \${radius} 0 \${largeArcFlag} 0 \${end.x} \${end.y}\`;
+          const pathD = `M ${radius} 0 A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
           
           // fill coloring depending on size to keep it clean
           if (ang < 180) {
               arc.setAttribute('d', pathD + " L 0 0 Z");
-              arc.setAttribute('fill', \`rgba(\${hexToRgb(config.hex)}, 0.15)\`);
+              arc.setAttribute('fill', `rgba(${hexToRgb(config.hex)}, 0.15)`);
           } else {
               arc.setAttribute('d', pathD);
               arc.setAttribute('fill', 'none'); // For very large angles, filled pie looks odd, use just stroke
@@ -248,7 +248,7 @@ window.WidgetExploradorJSON = {
     function hexToRgb(hex) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? 
-            \`\${parseInt(result[1], 16)}, \${parseInt(result[2], 16)}, \${parseInt(result[3], 16)}\` : '0,0,0';
+            `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0,0,0';
     }
 
     // Events
