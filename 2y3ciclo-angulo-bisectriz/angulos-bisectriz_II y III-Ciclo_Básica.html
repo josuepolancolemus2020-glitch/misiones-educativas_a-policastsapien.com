@@ -121,117 +121,8 @@
 
   <div class="card ac-jade">
     <h2>🔍 Explora los Ángulos — Un tipo a la vez</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Toca cada tarjeta para resaltarla y estudiar su forma:</p>
-    <div class="svg-angles-grid">
-
-      <!-- ── AGUDO ── -->
-      <div class="svg-angle-card" style="border-color:var(--pri);">
-        <h3>📐 Ángulo Agudo</h3>
-        <svg viewBox="0 0 200 165" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ángulo agudo">
-          <g class="svg-organ" tabindex="0" role="button" aria-label="Ver ángulo agudo">
-            <!-- rayo horizontal -->
-            <line x1="25" y1="140" x2="178" y2="140" stroke="var(--pri)" stroke-width="3.5"/>
-            <!-- rayo diagonal 45° hacia arriba-derecha -->
-            <line x1="25" y1="140" x2="135" y2="30" stroke="var(--pri)" stroke-width="3.5"/>
-            <!-- arco indicador del ángulo (~45°) -->
-            <path d="M 65 140 A 40 40 0 0 0 53 112" fill="none" stroke="var(--yellow)" stroke-width="2.5"/>
-            <!-- vértice -->
-            <circle cx="25" cy="140" r="5" fill="var(--pri)"/>
-            <!-- etiqueta del ángulo -->
-            <text x="82" y="125" font-family="Fredoka" font-size="14" fill="var(--pri)" text-anchor="middle" font-weight="700">45°</text>
-          </g>
-        </svg>
-        <div class="svg-angle-desc" style="background:var(--pri-gl);border-color:var(--purple-lt);">Mide <strong>menos de 90°</strong>.<br>Ej: 30°, 45°, 60°. Más cerrado que la esquina de una hoja.</div>
-      </div>
-
-      <!-- ── RECTO ── -->
-      <div class="svg-angle-card" style="border-color:var(--sec);">
-        <h3>🔲 Ángulo Recto</h3>
-        <svg viewBox="0 0 200 165" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ángulo recto">
-          <g class="svg-organ" tabindex="0" role="button" aria-label="Ver ángulo recto">
-            <!-- rayo horizontal -->
-            <line x1="25" y1="140" x2="178" y2="140" stroke="var(--sec)" stroke-width="3.5"/>
-            <!-- rayo vertical -->
-            <line x1="25" y1="140" x2="25" y2="15" stroke="var(--sec)" stroke-width="3.5"/>
-            <!-- cuadradito de 90° -->
-            <rect x="25" y="120" width="20" height="20" fill="none" stroke="var(--yellow)" stroke-width="2.5"/>
-            <!-- vértice -->
-            <circle cx="25" cy="140" r="5" fill="var(--sec)"/>
-            <!-- etiqueta -->
-            <text x="75" y="105" font-family="Fredoka" font-size="14" fill="var(--sec)" text-anchor="middle" font-weight="700">90°</text>
-          </g>
-        </svg>
-        <div class="svg-angle-desc" style="background:var(--sec-gl);border-color:var(--green-lt);">Mide exactamente <strong>90°</strong>. El cuadradito lo identifica.<br>Ej: la esquina de una hoja de papel.</div>
-      </div>
-
-      <!-- ── OBTUSO ── -->
-      <div class="svg-angle-card" style="border-color:var(--amber);">
-        <h3>📏 Ángulo Obtuso</h3>
-        <svg viewBox="0 0 200 165" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ángulo obtuso">
-          <g class="svg-organ" tabindex="0" role="button" aria-label="Ver ángulo obtuso">
-            <!-- rayo derecho horizontal -->
-            <line x1="85" y1="140" x2="178" y2="140" stroke="var(--amber)" stroke-width="3.5"/>
-            <!-- rayo izquierdo subiendo (~120° desde el rayo derecho): dirección cos(120°)=-0.5, -sin(120°)=-0.866 -->
-            <line x1="85" y1="140" x2="35" y2="53" stroke="var(--amber)" stroke-width="3.5"/>
-            <!-- arco indicador 120°: desde (125,140) hasta (65,106) radio 40, sweep CCW -->
-            <path d="M 125 140 A 40 40 0 0 0 65 106" fill="none" stroke="var(--yellow)" stroke-width="2.5"/>
-            <!-- vértice -->
-            <circle cx="85" cy="140" r="5" fill="var(--amber)"/>
-            <!-- etiqueta -->
-            <text x="75" y="118" font-family="Fredoka" font-size="13" fill="var(--amber)" text-anchor="middle" font-weight="700">120°</text>
-          </g>
-        </svg>
-        <div class="svg-angle-desc" style="background:var(--amber-gl);border-color:var(--amber);">Mide <strong>entre 90° y 180°</strong>.<br>Ej: 100°, 120°, 135°. Más abierto que la esquina.</div>
-      </div>
-
-      <!-- ── LLANO ── -->
-      <div class="svg-angle-card" style="border-color:var(--blue);">
-        <h3>➖ Ángulo Llano</h3>
-        <svg viewBox="0 0 200 165" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ángulo llano">
-          <g class="svg-organ" tabindex="0" role="button" aria-label="Ver ángulo llano">
-            <!-- rayo izquierdo -->
-            <line x1="100" y1="115" x2="12" y2="115" stroke="var(--blue)" stroke-width="3.5"/>
-            <!-- rayo derecho -->
-            <line x1="100" y1="115" x2="188" y2="115" stroke="var(--blue)" stroke-width="3.5"/>
-            <!-- semicírculo superior (arco 180°): de (140,115) a (60,115) pasando por arriba; large-arc=1 CCW -->
-            <path d="M 140 115 A 40 40 0 1 0 60 115" fill="none" stroke="var(--yellow)" stroke-width="2.5"/>
-            <!-- vértice -->
-            <circle cx="100" cy="115" r="5" fill="var(--blue)"/>
-            <!-- etiqueta dentro del semicírculo -->
-            <text x="100" y="70" font-family="Fredoka" font-size="14" fill="var(--blue)" text-anchor="middle" font-weight="700">180°</text>
-          </g>
-        </svg>
-        <div class="svg-angle-desc" style="background:var(--blue-gl);border-color:var(--blue-lt);">Mide exactamente <strong>180°</strong>.<br>Los dos rayos forman una línea recta perfecta.</div>
-      </div>
-
-      <!-- ── BISECTRIZ ── -->
-      <div class="svg-angle-card" style="border-color:var(--red);">
-        <h3>✂️ Bisectriz</h3>
-        <svg viewBox="0 0 200 165" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bisectriz de un ángulo recto">
-          <g class="svg-organ" tabindex="0" role="button" aria-label="Ver bisectriz">
-            <!-- ángulo recto base -->
-            <line x1="25" y1="140" x2="178" y2="140" stroke="var(--pri)" stroke-width="3"/>
-            <line x1="25" y1="140" x2="25" y2="15" stroke="var(--pri)" stroke-width="3"/>
-            <!-- bisectriz (rayo dashed a 45°) -->
-            <line x1="25" y1="140" x2="132" y2="33" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7,4"/>
-            <!-- arco mitad inferior (entre rayo horizontal y bisectriz, radio 30) -->
-            <path d="M 55 140 A 30 30 0 0 0 46 119" fill="none" stroke="var(--yellow)" stroke-width="2"/>
-            <!-- arco mitad superior (entre bisectriz y rayo vertical, radio 30) -->
-            <path d="M 46 119 A 30 30 0 0 0 25 110" fill="none" stroke="var(--yellow)" stroke-width="2"/>
-            <!-- vértice -->
-            <circle cx="25" cy="140" r="5" fill="var(--pri)"/>
-            <!-- etiquetas de 45° -->
-            <text x="72" y="128" font-family="Fredoka" font-size="12" fill="var(--gray)">45°</text>
-            <text x="40" y="107" font-family="Fredoka" font-size="12" fill="var(--gray)">45°</text>
-            <!-- etiqueta bisectriz -->
-            <text x="138" y="30" font-family="Fredoka" font-size="11" fill="var(--red)" font-weight="700">bisectriz</text>
-          </g>
-        </svg>
-        <div class="svg-angle-desc" style="background:var(--red-gl);border-color:var(--red-lt);">Rayo que divide un ángulo en <strong>dos partes iguales</strong>.<br>Aquí divide 90° en dos ángulos de 45°.</div>
-      </div>
-
-    </div>
-  </div>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Usa los controles interactivos para abrir el ángulo y rotarlo en el espacio tridimensional.</p>
+    <div id="widget-explorador-interactive"></div>
 
   <button class="next-sec-btn" aria-label="Ir a la sección Tipos de Ángulos" onclick="go('s-tipos')">
     <span class="nsb-icon">🏷️</span>
@@ -566,6 +457,7 @@
 
 <script src="js/interaccion_bisectriz.js"></script>
 <script src="js/interaccion_comple_suple.js"></script>
+<script src="js/interaccion_explorador.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
       if(window.WidgetBisectrizJSON) {
@@ -573,6 +465,9 @@
       }
       if(window.WidgetCompleSupleJSON) {
           window.WidgetCompleSupleJSON.mount('widget-comple-suple-interactive');
+      }
+      if(window.WidgetExploradorJSON) {
+          window.WidgetExploradorJSON.mount('widget-explorador-interactive');
       }
   });
 </script>
