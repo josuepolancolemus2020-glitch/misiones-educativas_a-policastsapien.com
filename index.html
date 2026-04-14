@@ -4,54 +4,148 @@
     <meta charset="UTF-8">
     <title>Menú de Misiones Educativas</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; background-color: #f5f2ed; color: #1b2838; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            padding: 40px; 
+            background-color: #f5f2ed; 
+            color: #1b2838; 
+            max-width: 800px;
+            margin: 0 auto;
+        }
         
         /* Título principal */
-        h1 { color: #419b88; }
+        h1 { 
+            color: #419b88; 
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #636e72;
+            margin-bottom: 40px;
+        }
         
-        /* Nuevos estilos para los títulos de las materias */
+        /* Estilos para los títulos de las materias */
         h2 { 
             color: #ff6b35; 
-            margin-top: 35px; 
-            margin-bottom: 10px;
-            border-bottom: 2px solid #e0ddd5; 
+            margin-top: 40px; 
+            margin-bottom: 15px;
+            border-bottom: 3px solid #ff6b35; 
             padding-bottom: 5px; 
-            max-width: 600px; 
-            font-size: 22px;
+            font-size: 24px;
         }
 
-        .menu { list-style: none; padding: 0; margin-top: 0; }
-        .menu li { margin-bottom: 15px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 600px; }
-        .menu a { text-decoration: none; color: #00b894; font-weight: bold; font-size: 18px; display: block; transition: color 0.2s; }
-        .menu a:hover { color: #ff6b35; }
+        /* Estilos para los subtítulos de nivel */
+        h3 {
+            color: #419b88;
+            font-size: 18px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* La lista de misiones */
+        .menu { 
+            list-style: none; 
+            padding: 0; 
+            margin-top: 0; 
+        }
+        .menu li { 
+            margin-bottom: 12px; 
+            background: white; 
+            padding: 12px 18px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+            border-left: 4px solid #00b894;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .menu li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .menu a { 
+            text-decoration: none; 
+            color: #2d3436; 
+            font-weight: 600; 
+            font-size: 16px; 
+            display: block; 
+            transition: color 0.2s; 
+        }
+        .menu a:hover { 
+            color: #ff6b35; 
+        }
+
+        /* Botón de próximamente */
+        .coming-soon {
+            border-left-color: #b2bec3 !important;
+            background-color: #fdfdfd !important;
+        }
+        .coming-soon a {
+            color: #b2bec3 !important;
+            font-weight: 400 !important;
+            cursor: default;
+        }
     </style>
 </head>
 <body>
+
     <h1>📚 Misiones Educativas</h1>
-    <p>Selecciona una misión para comenzar:</p>
+    <p class="subtitle">Selecciona una misión para comenzar tu entrenamiento.</p>
 
     <h2>📖 Español</h2>
+    
+    <h3>🌱 II y III Ciclo de Básica</h3>
     <ul class="menu">
-        <li><a href="adjetivos-avanzado.html">Misión 1: El Adjetivo Avanzado</a></li>
-        <li><a href="adjetivos-II-IIICiclo.html">Misión 2: Adjetivos II y III Ciclo</a></li>
-        <li><a href="verbos-II-III-ciclo-basica.html">Misión 3: Verbos II y III Ciclo</a></li>
-        <li><a href="sustantivos-II-III-ciclo-basica.html">Misión 4: Sustantivos II y III Ciclo</a></li>
-        <li><a href="pronombres-II-III-ciclo-basica.html">Misión 5: Pronombres II y III Ciclo</a></li>
+        <li><a href="adjetivos-II-IIICiclo.html">Misión: Adjetivos</a></li>
+        <li><a href="verbos-II-III-ciclo-basica.html">Misión: Verbos</a></li>
+        <li><a href="sustantivos-II-III-ciclo-basica.html">Misión: Sustantivos</a></li>
+        <li><a href="pronombres-II-III-ciclo-basica.html">Misión: Pronombres</a></li>
     </ul>
+
+    <h3>🎓 Nivel Avanzado (Bachillerato / Univ.)</h3>
+    <ul class="menu">
+        <li><a href="adjetivos-avanzado.html">Misión: El Adjetivo Avanzado</a></li>
+    </ul>
+
 
     <h2>📐 Matemáticas</h2>
+
+    <h3>🌱 II y III Ciclo de Básica</h3>
     <ul class="menu">
-        <li><a href="angulos-bisectriz_II y III-Ciclo_Básica.html">Misión 7: Ángulos y bisectriz</a></li>
+        <li><a href="angulos-bisectriz_II y III-Ciclo_Básica.html">Misión: Ángulos y bisectriz</a></li>
     </ul>
+
+    <h3>🎓 Nivel Avanzado (Bachillerato / Univ.)</h3>
+    <ul class="menu">
+        <li class="coming-soon"><a href="#">Próximamente...</a></li>
+    </ul>
+
 
     <h2>🔬 Ciencias Naturales</h2>
+
+    <h3>🌱 II y III Ciclo de Básica</h3>
     <ul class="menu">
-        <li><a href="eras-geológicas/eras_geológicas.html">Misión 6: Las Eras Geológicas</a></li>
+        <li><a href="eras-geológicas/eras_geológicas.html">Misión: Las Eras Geológicas</a></li>
     </ul>
 
-    <h2>🌍 Ciencias Sociales</h2>
+    <h3>🎓 Nivel Avanzado (Bachillerato / Univ.)</h3>
     <ul class="menu">
-        <li><a href="#" style="color: #999; font-weight: normal;">Próximamente nuevas misiones...</a></li>
+        <li class="coming-soon"><a href="#">Próximamente...</a></li>
+    </ul>
+
+
+    <h2>🌍 Ciencias Sociales</h2>
+
+    <h3>🌱 II y III Ciclo de Básica</h3>
+    <ul class="menu">
+        <li class="coming-soon"><a href="#">Próximamente...</a></li>
+    </ul>
+
+    <h3>🎓 Nivel Avanzado (Bachillerato / Univ.)</h3>
+    <ul class="menu">
+        <li class="coming-soon"><a href="#">Próximamente...</a></li>
     </ul>
 
 </body>
