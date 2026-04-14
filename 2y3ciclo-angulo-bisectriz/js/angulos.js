@@ -85,7 +85,7 @@ const ACHIEVEMENTS = {
   id_master:{icon:'🔍',label:'Identificador de conceptos maestro'},
   reto_hero:{icon:'🏆',label:'Héroe del reto geométrico'},
   nivel3:{icon:'🔭',label:'¡Explorador alcanzado! Nivel 3'},
-  nivel5:{icon:'🥇',label:'¡Campeón alcanzado! Nivel 6'}
+  nivel6:{icon:'🥇',label:'¡Campeón alcanzado! Nivel 6'}
 };
 function unlockAchievement(id){ if(unlockedAch.includes(id)) return; unlockedAch.push(id); sfx('ach'); showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label); launchConfetti(); renderAchPanel(); saveProgress(); }
 function renderAchPanel(){ const list=document.getElementById('achList'); list.innerHTML=''; Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{ const div=document.createElement('div'); div.className='ach-item'+(unlockedAch.includes(id)?'':' locked'); div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`; list.appendChild(div); }); }
@@ -96,7 +96,7 @@ function launchConfetti(){ const colors=['#6c5ce7','#00b894','#0984e3','#fdcb6e'
 // ===================== XP =====================
 const lvls=[{t:0,n:'Novato ✏️'},{t:25,n:'Aprendiz 📝'},{t:55,n:'Explorador 🔭'},{t:90,n:'Detective 🔍'},{t:130,n:'Experto 🌟'},{t:165,n:'Campeón 🥇'},{t:190,n:'Maestro 🏆'}];
 function pts(n){ xp=Math.max(0,Math.min(MXP,xp+n)); updateXPBar(); saveProgress(); }
-function updateXPBar(){ const pct=Math.round((xp/MXP)*100); document.getElementById('xpFill').style.width=pct+'%'; const el=document.getElementById('xpPts'); el.textContent='⭐ '+xp; el.style.transform='scale(1.3)'; setTimeout(()=>el.style.transform='',300); let lv=0; for(let i=0;i<lvls.length;i++) if(xp>=lvls[i].t) lv=i; document.getElementById('xpLvl').textContent=lvls[lv].n; if(lv!==prevLevel){if(lv>=2) unlockAchievement('nivel3');if(lv>=5) unlockAchievement('nivel5');prevLevel=lv;} }
+function updateXPBar(){ const pct=Math.round((xp/MXP)*100); document.getElementById('xpFill').style.width=pct+'%'; const el=document.getElementById('xpPts'); el.textContent='⭐ '+xp; el.style.transform='scale(1.3)'; setTimeout(()=>el.style.transform='',300); let lv=0; for(let i=0;i<lvls.length;i++) if(xp>=lvls[i].t) lv=i; document.getElementById('xpLvl').textContent=lvls[lv].n; if(lv!==prevLevel){if(lv>=2) unlockAchievement('nivel3');if(lv>=5) unlockAchievement('nivel6');prevLevel=lv;} }
 function fin(id){
   if(!done.has(id)){ done.add(id); const b=document.querySelector(`[data-s="${id}"]`); if(b) b.classList.add('done'); sfx('up'); launchConfetti(); saveProgress(); }
 }

@@ -1,8 +1,6 @@
 // js/interaccion_comple_suple.js
 
 window.WidgetCompleSupleJSON = {
-  prompt: "Simulador interactivo de ángulos complementarios y suplementarios...",
-  
   mount: function(containerId) {
     const container = document.getElementById(containerId);
     if (!container) {

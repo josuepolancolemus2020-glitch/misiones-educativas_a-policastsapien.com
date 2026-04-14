@@ -1,8 +1,6 @@
 ﻿// js/interaccion_explorador.js
 
 window.WidgetExploradorJSON = {
-  prompt: "Widget unificado Explorador Maestro de Ángulos multidireccional.",
-  
   mount: function(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;

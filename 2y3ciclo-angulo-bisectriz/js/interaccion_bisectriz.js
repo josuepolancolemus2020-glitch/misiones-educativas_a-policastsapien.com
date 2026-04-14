@@ -1,8 +1,6 @@
 // js/interaccion_bisectriz.js
 
 window.WidgetBisectrizJSON = {
-  prompt: "Un simulador interactivo de ángulo y bisectriz. Objetivo: Permitir al usuario explorar visualmente cómo cambia un ángulo y cómo su bisectriz lo divide dinámicamente en dos ángulos iguales. Estrategia: Diseño Estándar (Simulación). Entradas: Un deslizador para ajustar la medida del ángulo total (de 10 a 180 grados). Con etiqueta: 'Ángulo Total'. Un interruptor de palanca para mostrar u ocultar la bisectriz. Con etiqueta: 'Mostrar Bisectriz'. Un botón para restablecer el ángulo a un valor aleatorio. Con etiqueta: 'Ángulo Aleatorio'. Comportamiento: En un lienzo, dibujar el ángulo en tiempo real basándose en la medida seleccionada por el usuario, mostrando su medida total en texto. Al activar 'Mostrar Bisectriz', dibujar la bisectriz como una línea de puntos con una flecha, extendiéndose desde el vértice. Etiquetar claramente los dos ángulos resultantes (semiángulos) con sus medidas exactas. Resaltar visualmente que los dos ángulos formados son congruentes (iguales) usando arcos de ángulo coincidentes. Incluir una breve explicación textual: 'La bisectriz divide el ángulo total en dos ángulos idénticos de [medida semiángulo] cada uno.'",
-
   mount: function(containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
