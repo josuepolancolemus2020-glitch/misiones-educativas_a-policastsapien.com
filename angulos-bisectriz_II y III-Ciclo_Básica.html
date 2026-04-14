@@ -356,6 +356,54 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
   .stat-bar{grid-template-columns:repeat(2,1fr);}
 }
 
+/* ORGANIZADOR PREVIO */
+.organizer{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0.7rem;margin:1rem 0;}
+.org-node{border-radius:12px;padding:0.8rem 0.6rem;text-align:center;border:2px solid var(--border);}
+.org-node .org-ico{font-size:1.4rem;display:block;margin-bottom:0.3rem;}
+.org-node .org-lbl{font-family:'Fredoka',sans-serif;font-size:0.88rem;font-weight:700;color:var(--dark);}
+.org-node .org-sub{font-size:0.72rem;color:var(--gray);margin-top:0.15rem;}
+.on-pri{border-color:var(--pri);background:var(--pri-gl);}
+.on-sec{border-color:var(--sec);background:var(--sec-gl);}
+.on-amb{border-color:var(--amber);background:var(--amber-gl);}
+.on-ppl{border-color:var(--purple);background:var(--purple-gl);}
+.on-jd{border-color:var(--jade);background:var(--jade-gl);}
+
+/* VIDA REAL */
+.real-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.7rem;margin:1rem 0;}
+.real-item{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:0.8rem;text-align:center;transition:background 0.3s;}
+.real-ico{font-size:1.6rem;display:block;margin-bottom:0.3rem;}
+.real-txt{font-size:0.82rem;color:var(--dark);line-height:1.4;}
+.real-ang{font-family:'Fredoka',sans-serif;font-size:0.78rem;margin-top:0.3rem;padding:0.15rem 0.5rem;border-radius:8px;display:inline-block;}
+
+/* BLOOM BADGE */
+.bloom-badge{display:inline-flex;align-items:center;gap:0.3rem;font-family:'Fredoka',sans-serif;font-size:0.7rem;padding:0.18rem 0.55rem;border-radius:20px;margin-bottom:0.6rem;border:1.5px solid;}
+.bl-r{background:#ece9ff;border-color:var(--pri);color:var(--pri);}
+.bl-c{background:#e0f7f4;border-color:var(--sec);color:var(--sec);}
+.bl-a{background:#fff3e0;border-color:var(--amber);color:var(--amber);}
+.bl-an{background:#fce4ec;border-color:var(--pink);color:var(--pink);}
+.bl-e{background:#e8f5e9;border-color:var(--jade);color:var(--jade);}
+.bl-cr{background:#f3e5f5;border-color:var(--purple);color:var(--purple);}
+
+/* HINT QUIZ */
+.hint-box{background:linear-gradient(135deg,var(--amber-gl),rgba(253,203,110,0.15));border:2px dashed var(--amber);border-radius:10px;padding:0.7rem 1rem;margin:0.5rem 0;font-size:0.88rem;color:var(--dark);display:none;animation:pop 0.25s ease;}
+.hint-box.show{display:block;}
+
+/* EXPLANATION BOX */
+.exp-box{border-radius:10px;padding:0.7rem 1rem;margin-top:0.5rem;font-size:0.85rem;line-height:1.5;display:none;animation:pop 0.3s ease;}
+.exp-box.show{display:block;}
+.exp-box.ok{background:var(--jade-gl);border-left:4px solid var(--jade);color:var(--dark);}
+.exp-box.err{background:var(--red-gl);border-left:4px solid var(--red);color:var(--dark);}
+
+/* METACOGNICIÓN */
+.meta-check{background:linear-gradient(135deg,var(--purple-gl),var(--pri-gl));border:2px solid var(--purple);border-radius:14px;padding:1.2rem 1.4rem;margin:1.2rem 0;}
+.meta-check h4{font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--purple);margin-bottom:0.8rem;}
+.meta-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;flex-wrap:wrap;}
+.meta-lbl{font-size:0.85rem;color:var(--dark);flex:1;min-width:120px;}
+.meta-stars{display:flex;gap:0.25rem;}
+.meta-star{background:none;border:none;font-size:1.1rem;cursor:pointer;opacity:0.35;transition:opacity 0.2s,transform 0.15s;}
+.meta-star:hover,.meta-star.lit{opacity:1;}
+.meta-star.lit{transform:scale(1.2);}
+
 @media print{
   body *{display:none!important;}
 }
@@ -385,6 +433,25 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 
 <!-- ==================== S-APRENDE ==================== -->
 <div class="sec active" id="s-aprende" role="tabpanel">
+
+  <!-- ORGANIZADOR PREVIO (Ausubel: activar conocimiento previo, anclar el nuevo) -->
+  <div class="card ac-purple">
+    <span class="bloom-badge bl-r">🧩 Nivel Bloom: Recordar + Comprender</span>
+    <h2>🗺️ Ruta de Aprendizaje — ¿Qué vamos a explorar?</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;line-height:1.6;">Antes de comenzar, activa lo que ya sabes. En esta misión aprenderás <strong>5 conceptos clave</strong> que se conectan entre sí:</p>
+    <div class="organizer">
+      <div class="org-node on-pri"><span class="org-ico">📐</span><span class="org-lbl">Ángulo</span><span class="org-sub">La base de todo</span></div>
+      <div class="org-node on-sec"><span class="org-ico">🏷️</span><span class="org-lbl">Tipos</span><span class="org-sub">Agudo · Recto · Obtuso · Llano</span></div>
+      <div class="org-node on-jd"><span class="org-ico">✂️</span><span class="org-lbl">Bisectriz</span><span class="org-sub">Divide en 2 partes iguales</span></div>
+      <div class="org-node on-amb"><span class="org-ico">🧩</span><span class="org-lbl">Complementarios</span><span class="org-sub">Suman 90°</span></div>
+      <div class="org-node on-ppl"><span class="org-ico">🔗</span><span class="org-lbl">Suplementarios</span><span class="org-sub">Suman 180°</span></div>
+    </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">🤔</span>
+      <div><strong>Activa tu mente:</strong> ¿Dónde has visto ángulos en tu casa o escuela? Piénsalo 10 segundos antes de continuar.</div>
+    </div>
+  </div>
+
   <div class="card ac-teal">
     <h2>📖 ¿Qué es un Ángulo?</h2>
     <p style="font-size:0.92rem;line-height:1.7;">Un <strong>ángulo</strong> es la abertura formada por dos <strong>rayos</strong> (semirrectas) que comparten un mismo punto de origen llamado <strong>vértice</strong>. Los ángulos se miden en <strong>grados (°)</strong> usando un instrumento llamado <strong>transportador</strong>.</p>
@@ -412,6 +479,44 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     <div class="tip">
       <span class="ti">⚡</span>
       <div><strong>Fórmula rápida:</strong> Para hallar la medida de cada mitad: <strong>ángulo ÷ 2 = medida de cada parte</strong>.</div>
+    </div>
+  </div>
+
+  <!-- CONEXIÓN CON LA VIDA REAL (Ausubel: aprendizaje significativo — conectar con experiencias previas) -->
+  <div class="card ac-amber">
+    <h2>🌎 Los Ángulos en tu Vida Cotidiana</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;line-height:1.6;">Los ángulos están en <strong>todas partes</strong>. Reconocerlos en tu entorno te ayudará a recordarlos mejor:</p>
+    <div class="real-grid">
+      <div class="real-item">
+        <span class="real-ico">🕒</span>
+        <div class="real-txt">Reloj a las 3:00</div>
+        <span class="real-ang" style="background:var(--sec-gl);color:var(--sec);">🔲 Recto · 90°</span>
+      </div>
+      <div class="real-item">
+        <span class="real-ico">✏️</span>
+        <div class="real-txt">Punta de un lápiz</div>
+        <span class="real-ang" style="background:var(--pri-gl);color:var(--pri);">📐 Agudo · &lt;90°</span>
+      </div>
+      <div class="real-item">
+        <span class="real-ico">🚪</span>
+        <div class="real-txt">Puerta al abrirse</div>
+        <span class="real-ang" style="background:var(--amber-gl);color:var(--amber);">📏 Obtuso · 90-180°</span>
+      </div>
+      <div class="real-item">
+        <span class="real-ico">🏠</span>
+        <div class="real-txt">Techo de una casa</div>
+        <span class="real-ang" style="background:var(--amber-gl);color:var(--amber);">📏 Obtuso típico</span>
+      </div>
+      <div class="real-item">
+        <span class="real-ico">🛣️</span>
+        <div class="real-txt">Carretera recta</div>
+        <span class="real-ang" style="background:var(--blue-gl);color:var(--blue);">➖ Llano · 180°</span>
+      </div>
+      <div class="real-item">
+        <span class="real-ico">✂️</span>
+        <div class="real-txt">Tijeras abiertas</div>
+        <span class="real-ang" style="background:var(--jade-gl);color:var(--jade);">✂️ Bisectriz = eje</span>
+      </div>
     </div>
   </div>
 
@@ -448,10 +553,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
           <text x="380" y="306" font-family="Fredoka" font-size="11" fill="var(--gray)" text-anchor="middle">90° – 180°</text>
         </g>
         <!-- Llano -->
-        <g class="svg-organ" data-label="➖ Ángulo LLANO: mide exactamente 180°. Los dos rayos forman una línea recta." tabindex="0" role="button" aria-label="Ángulo llano">
+        <g class="svg-organ" data-label="➖ Ángulo LLANO: mide exactamente 180°. Los dos rayos forman una línea recta perfecta." tabindex="0" role="button" aria-label="Ángulo llano">
           <line x1="470" y1="250" x2="590" y2="250" stroke="var(--blue)" stroke-width="3"/>
-          <line x1="470" y1="250" x2="470" y2="250" stroke="var(--blue)" stroke-width="3"/>
-          <line x1="590" y1="250" x2="470" y2="250" stroke="var(--blue)" stroke-width="3"/>
           <line x1="470" y1="250" x2="350" y2="250" stroke="var(--blue)" stroke-width="3" stroke-dasharray="6,3"/>
           <path d="M 500 250 A 30 30 0 0 0 440 250" fill="none" stroke="var(--yellow)" stroke-width="2"/>
           <circle cx="470" cy="250" r="4" fill="var(--blue)"/>
@@ -476,8 +579,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
   </div>
 
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+  <button class="next-sec-btn" aria-label="Ir a la sección Tipos de Ángulos" onclick="go('s-tipos')">
     <span class="nsb-icon">🏷️</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Tipos de Ángulos</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -517,8 +621,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
       <div><strong>Para calcular:</strong> Si conoces la medida del ángulo, divídela entre 2 para obtener la medida de cada mitad. Ejemplo: bisectriz de 140° → cada mitad = <strong>70°</strong>.</div>
     </div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+  <button class="next-sec-btn" aria-label="Ir a la sección Flashcards" onclick="go('s-flash')">
     <span class="nsb-icon">🃏</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Tarjetas de Estudio</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -541,8 +646,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="fbFlash" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio de Ángulos" onclick="go('s-quiz')">
     <span class="nsb-icon">🧠</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Pon a prueba tus conocimientos!</span><span class="nsb-name">Laboratorio — Quiz</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -550,20 +656,25 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 <!-- ==================== S-QUIZ ==================== -->
 <div class="sec" id="s-quiz" role="tabpanel">
   <div class="card ac-gold">
+    <span class="bloom-badge bl-a">🎯 Nivel Bloom: Aplicar</span>
     <h2>🧠 Laboratorio de Ángulos</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez) · 💡 Usa «Pista» si la necesitas</p>
     <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
     <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
-    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div class="hint-box" id="qzHint" role="status" aria-live="polite"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones de respuesta"></div>
     <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
       <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
-      <button class="btn btn-pri" onclick="if(qzDone){qzIdx++;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}">▶ Siguiente</button>
+      <button class="btn btn-pri" onclick="nextQz()">▶ Siguiente</button>
+      <button class="btn btn-amber" onclick="showHint()" style="background:var(--amber);color:white;">💡 Pista</button>
       <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar</button>
     </div>
     <div id="fbQz" class="fb" role="alert"></div>
+    <div class="exp-box" id="expQz" role="status" aria-live="polite"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+  <button class="next-sec-btn" aria-label="Ir a Clasificar Ángulos" onclick="go('s-clasifica')">
     <span class="nsb-icon">🗂️</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Clasifica los Ángulos</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -571,8 +682,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 <!-- ==================== S-CLASIFICA ==================== -->
 <div class="sec" id="s-clasifica" role="tabpanel">
   <div class="card ac-jade">
+    <span class="bloom-badge bl-an">📊 Nivel Bloom: Analizar</span>
     <h2>🗂️ Clasifica los Ángulos</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por clasificación correcta</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.3rem;">⭐ +5 XP por clasificación correcta</p>
+    <p style="font-size:0.8rem;color:var(--dark);margin-bottom:0.6rem;">👆 Toca un ángulo del banco → luego toca la columna donde crees que pertenece. Para devolverlo, toca el ítem ya colocado sin seleccionar otro.</p>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
       <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
@@ -585,8 +698,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="fbCls" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+  <button class="next-sec-btn" aria-label="Ir a Identificar Conceptos" onclick="go('s-identifica')">
     <span class="nsb-icon">🔍</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Identifica el Concepto</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -594,6 +708,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 <!-- ==================== S-IDENTIFICA ==================== -->
 <div class="sec" id="s-identifica" role="tabpanel">
   <div class="card ac-purple">
+    <span class="bloom-badge bl-an">🔬 Nivel Bloom: Analizar</span>
     <h2>🔍 Identifica el Concepto</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
@@ -606,8 +721,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="fbId" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+  <button class="next-sec-btn" aria-label="Ir a Completar Oraciones" onclick="go('s-completa')">
     <span class="nsb-icon">✏️</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Completa la Oración</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -615,6 +731,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 <!-- ==================== S-COMPLETA ==================== -->
 <div class="sec" id="s-completa" role="tabpanel">
   <div class="card ac-amber">
+    <span class="bloom-badge bl-a">✏️ Nivel Bloom: Aplicar</span>
     <h2>✏️ Completa la Oración Geométrica</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
     <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
@@ -622,12 +739,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     <div class="cmp-opts" id="cmpOpts" role="group"></div>
     <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
       <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextCmp()">▶ Siguiente</button>
       <button class="btn btn-d" onclick="resetCmp()">🔄 Reiniciar</button>
     </div>
     <div id="fbCmp" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+  <button class="next-sec-btn" aria-label="Ir al Reto Geométrico" onclick="go('s-reto')">
     <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Desafía tu velocidad!</span><span class="nsb-name">Reto Geométrico</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -655,8 +774,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="fbReto" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+  <button class="next-sec-btn" aria-label="Ir al Generador de Tareas" onclick="go('s-tareas')">
     <span class="nsb-icon">📋</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Generador de Tareas</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -683,15 +803,31 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
     </div>
     <div id="tgOut"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+  <button class="next-sec-btn" aria-label="Ir a la Evaluación Final" onclick="go('s-evaluacion')">
     <span class="nsb-icon">📝</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra todo lo aprendido!</span><span class="nsb-name">Evaluación Final</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
 <!-- ==================== S-EVALUACION ==================== -->
 <div class="sec" id="s-evaluacion" role="tabpanel">
+  <!-- METACOGNICIÓN: el estudiante reflexiona sobre su propio aprendizaje -->
+  <div class="meta-check" id="metaCheck">
+    <h4>🤔 Reflexión Metacognitiva — ¿Cómo te fue?</h4>
+    <p style="font-size:0.82rem;color:var(--dark);margin-bottom:0.8rem;">Antes de ver la evaluación, califica con ⭐ tu nivel de confianza en cada concepto (1 = necesito repasar · 5 = lo domino):</p>
+    <div class="meta-row"><span class="meta-lbl">📐 Tipos de ángulos</span><div class="meta-stars" data-meta="tipos"></div></div>
+    <div class="meta-row"><span class="meta-lbl">✂️ Bisectriz</span><div class="meta-stars" data-meta="bise"></div></div>
+    <div class="meta-row"><span class="meta-lbl">🧩 Complementarios / Suplementarios</span><div class="meta-stars" data-meta="comp"></div></div>
+    <div class="meta-row"><span class="meta-lbl">🔧 Transportador y vértice</span><div class="meta-stars" data-meta="inst"></div></div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">💬</span>
+      <div>Compartir esta reflexión con tu maestro/a o familiar te ayuda a identificar dónde poner más esfuerzo. ¡Eso es aprender a aprender!</div>
+    </div>
+  </div>
+
   <div class="card ac-purple">
+    <span class="bloom-badge bl-e">🏆 Nivel Bloom: Evaluar</span>
     <h2 id="eval-screen-title">📝 Evaluación Final — Ángulos y Bisectriz</h2>
     <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
     <div class="eval-controls">
@@ -854,12 +990,14 @@ function getProgress(){ return Math.round((done.size/10)*100); }
 // ===================== NAV =====================
 function go(id){ sfx('click'); document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.nav-t[role="tab"]').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');}); document.getElementById(id).classList.add('active'); const btn=document.querySelector(`[data-s="${id}"]`); if(btn){btn.classList.add('active');btn.setAttribute('aria-selected','true');} window.scrollTo({top:0,behavior:'smooth'}); }
 
-// ===================== SVG INTERACTIVO =====================
-document.querySelectorAll('.svg-organ').forEach(el => {
-  const show = () => { document.getElementById('svgInfoText').textContent = el.dataset.label; document.getElementById('svgInfo').style.display = 'flex'; sfx('click'); };
-  el.addEventListener('click', show);
-  el.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); show(); } });
-});
+// ===================== SVG INTERACTIVO (inicializado en DOMContentLoaded) =====================
+function initSVGOrgans(){
+  document.querySelectorAll('.svg-organ').forEach(el => {
+    const show = () => { document.getElementById('svgInfoText').textContent = el.dataset.label; document.getElementById('svgInfo').style.display = 'flex'; sfx('click'); };
+    el.addEventListener('click', show);
+    el.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); show(); } });
+  });
+}
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
@@ -882,29 +1020,102 @@ function flipCard(){ sfx('flip'); document.getElementById('fcInner').classList.t
 function nextFC(){ sfx('click'); fcIdx=(fcIdx+1)%fcData.length; upFC(); }
 function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; upFC(); }
 
-// ===================== QUIZ DATA =====================
+// ===================== QUIZ DATA (con pistas y explicaciones — aprendizaje significativo) =====================
 const qzData=[
-  {q:'¿Cuánto mide un ángulo recto?',o:['a) 45°','b) 90°','c) 180°','d) 360°'],c:1},
-  {q:'Un ángulo de 135° es de tipo:',o:['a) Agudo','b) Recto','c) Obtuso','d) Llano'],c:2},
-  {q:'¿Qué hace la bisectriz de un ángulo?',o:['a) Lo elimina','b) Lo duplica','c) Lo divide en dos partes iguales','d) Lo convierte en recto'],c:2},
-  {q:'Si un ángulo mide 60°, su bisectriz crea dos ángulos de:',o:['a) 20°','b) 30°','c) 45°','d) 60°'],c:1},
-  {q:'¿Cuánto suman dos ángulos suplementarios?',o:['a) 90°','b) 180°','c) 270°','d) 360°'],c:1},
-  {q:'Un ángulo de 55° es de tipo:',o:['a) Agudo','b) Recto','c) Obtuso','d) Llano'],c:0},
-  {q:'¿Cuánto suman dos ángulos complementarios?',o:['a) 45°','b) 90°','c) 180°','d) 360°'],c:1},
-  {q:'El complemento de un ángulo de 40° es:',o:['a) 40°','b) 50°','c) 140°','d) 320°'],c:1},
-  {q:'¿Cuánto mide un ángulo llano?',o:['a) 90°','b) 120°','c) 180°','d) 360°'],c:2},
+  {q:'¿Cuánto mide un ángulo recto?',
+   o:['a) 45°','b) 90°','c) 180°','d) 360°'],c:1,
+   hint:'💡 Piensa en la esquina perfecta de una hoja de papel o en las manecillas de un reloj a las 3:00.',
+   exp:'Un ángulo recto mide exactamente 90°. Se identifica con un pequeño cuadrado en el vértice. Ni más ni menos — la mitad de un llano.'},
+  {q:'Un ángulo de 135° es de tipo:',
+   o:['a) Agudo','b) Recto','c) Obtuso','d) Llano'],c:2,
+   hint:'💡 135° está entre 90° y 180°. ¿Cuál tipo de ángulo vive en ese rango?',
+   exp:'Es obtuso: mide más de 90° pero menos de 180°. Agudo sería menor de 90°; llano sería exactamente 180°.'},
+  {q:'¿Qué hace la bisectriz de un ángulo?',
+   o:['a) Lo elimina','b) Lo duplica','c) Lo divide en dos partes iguales','d) Lo convierte en recto'],c:2,
+   hint:'💡 La palabra "bisectriz" viene del latín "bi" (dos) + "secar" (cortar). ¿Qué corta en dos?',
+   exp:'La bisectriz es el rayo que divide el ángulo exactamente por la mitad, creando dos ángulos iguales. Fórmula: ángulo ÷ 2.'},
+  {q:'Si un ángulo mide 60°, su bisectriz crea dos ángulos de:',
+   o:['a) 20°','b) 30°','c) 45°','d) 60°'],c:1,
+   hint:'💡 Usa la fórmula de la bisectriz: ángulo total ÷ 2 = cada mitad.',
+   exp:'60° ÷ 2 = 30°. La bisectriz siempre divide en partes iguales, así que ambas mitades miden lo mismo.'},
+  {q:'¿Cuánto suman dos ángulos suplementarios?',
+   o:['a) 90°','b) 180°','c) 270°','d) 360°'],c:1,
+   hint:'💡 Suplementario → piensa en un ángulo llano. Un llano mide exactamente…',
+   exp:'Dos ángulos suplementarios suman 180°, igual que un ángulo llano. Ejemplo: 110° + 70° = 180°.'},
+  {q:'Un ángulo de 55° es de tipo:',
+   o:['a) Agudo','b) Recto','c) Obtuso','d) Llano'],c:0,
+   hint:'💡 55° es menor que 90°. ¿Qué tipo de ángulo mide menos de 90°?',
+   exp:'Es agudo porque mide menos de 90°. Todo ángulo entre 0° y 89° es agudo — más cerrado que una esquina de cuaderno.'},
+  {q:'¿Cuánto suman dos ángulos complementarios?',
+   o:['a) 45°','b) 90°','c) 180°','d) 360°'],c:1,
+   hint:'💡 Complementario → piensa en un ángulo recto. Un recto mide exactamente…',
+   exp:'Dos ángulos complementarios suman 90°, igual que un ángulo recto. Ejemplo: 30° + 60° = 90°.'},
+  {q:'El complemento de un ángulo de 40° es:',
+   o:['a) 40°','b) 50°','c) 140°','d) 320°'],c:1,
+   hint:'💡 Complementario = suma 90°. Entonces: 90° − 40° = ?',
+   exp:'90° − 40° = 50°. Verificación: 40° + 50° = 90° ✓. Si quisieras el suplemento sería 180° − 40° = 140°.'},
+  {q:'¿Cuánto mide un ángulo llano?',
+   o:['a) 90°','b) 120°','c) 180°','d) 360°'],c:2,
+   hint:'💡 Un ángulo llano parece una línea recta. Desde un lado al otro son la mitad de un giro completo.',
+   exp:'Un ángulo llano mide 180°. Sus dos rayos forman una línea recta perfecta. El completo es 360° (vuelta entera).'},
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
 function showQz(){
-  if(qzIdx>=qzData.length){ document.getElementById('qzQ').textContent='🎉 ¡Quiz completado!'; document.getElementById('qzOpts').innerHTML=''; fin('s-quiz'); unlockAchievement('primer_quiz'); return; }
-  const q=qzData[qzIdx]; document.getElementById('qzProg').textContent=`Pregunta ${qzIdx+1} de ${qzData.length}`; document.getElementById('qzQ').textContent=q.q;
+  if(qzIdx>=qzData.length){
+    document.getElementById('qzQ').textContent='🎉 ¡Quiz completado! Revisaste todas las preguntas.';
+    document.getElementById('qzOpts').innerHTML='';
+    document.getElementById('qzHint').classList.remove('show');
+    document.getElementById('expQz').classList.remove('show');
+    document.getElementById('fbQz').classList.remove('show');
+    fin('s-quiz'); unlockAchievement('primer_quiz'); return;
+  }
+  const q=qzData[qzIdx];
+  document.getElementById('qzProg').textContent=`Pregunta ${qzIdx+1} de ${qzData.length}`;
+  document.getElementById('qzQ').textContent=q.q;
+  document.getElementById('qzHint').classList.remove('show');
+  document.getElementById('expQz').classList.remove('show');
+  document.getElementById('fbQz').classList.remove('show');
   const opts=document.getElementById('qzOpts'); opts.innerHTML='';
   q.o.forEach((o,i)=>{ const b=document.createElement('button'); b.className='qz-opt'; b.textContent=o; b.onclick=()=>{if(qzDone)return;document.querySelectorAll('.qz-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');qzSel=i;sfx('click');}; opts.appendChild(b); });
   qzDone=false;
 }
-function checkQz(){ if(qzDone)return; if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false); qzDone=true; const opts=document.querySelectorAll('.qz-opt'); if(qzSel===qzData[qzIdx].c){opts[qzSel].classList.add('correct');fb('fbQz','¡Correcto! +5 XP',true);if(!xpTracker.qz.has(qzIdx)){xpTracker.qz.add(qzIdx);pts(5);}sfx('ok');}else{opts[qzSel].classList.add('wrong');opts[qzData[qzIdx].c].classList.add('correct');fb('fbQz','Incorrecto. Revisa la respuesta correcta.',false);sfx('no');} setTimeout(()=>{qzIdx++;qzSel=-1;showQz();},1600); }
-function resetQz(){ sfx('click'); qzIdx=0; qzSel=-1; qzDone=false; showQz(); document.getElementById('fbQz').classList.remove('show'); }
+// BUG FIX: eliminado setTimeout que causaba avance doble al presionar "Siguiente" antes de los 1600ms
+function checkQz(){
+  if(qzDone)return;
+  if(qzSel<0)return fb('fbQz','Selecciona una respuesta primero.',false);
+  qzDone=true;
+  const q=qzData[qzIdx];
+  const opts=document.querySelectorAll('.qz-opt');
+  const expEl=document.getElementById('expQz');
+  if(qzSel===q.c){
+    opts[qzSel].classList.add('correct');
+    fb('fbQz','¡Correcto! +5 XP',true);
+    if(!xpTracker.qz.has(qzIdx)){xpTracker.qz.add(qzIdx);pts(5);}
+    sfx('ok');
+    expEl.className='exp-box show ok';
+  }else{
+    opts[qzSel].classList.add('wrong');
+    opts[q.c].classList.add('correct');
+    fb('fbQz','Incorrecto — observa la explicación abajo.',false);
+    sfx('no');
+    expEl.className='exp-box show err';
+  }
+  expEl.textContent='📖 '+q.exp;
+  document.getElementById('qzHint').classList.remove('show');
+}
+function nextQz(){
+  if(!qzDone)return;
+  qzIdx++; qzSel=-1; qzDone=false;
+  showQz();
+}
+function showHint(){
+  if(qzDone)return;
+  const hintEl=document.getElementById('qzHint');
+  const q=qzData[qzIdx];
+  if(q&&q.hint){ hintEl.textContent=q.hint; hintEl.classList.add('show'); sfx('click'); }
+}
+function resetQz(){ sfx('click'); qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups = [
@@ -966,7 +1177,31 @@ function showCmp(){
   const opts=document.getElementById('cmpOpts'); opts.innerHTML=''; cmpSel=-1; cmpDone=false;
   d.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='cmp-opt'; b.textContent=o; b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');}; opts.appendChild(b); });
 }
-function checkCmp(){ if(cmpDone)return; if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',false); cmpDone=true; const opts=document.querySelectorAll('.cmp-opt'); if(cmpSel===cmpData[cmpIdx].c){opts[cmpSel].classList.add('correct');document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`);fb('fbCmp','¡Correcto! +5 XP',true);if(!xpTracker.cmp.has(cmpIdx)){xpTracker.cmp.add(cmpIdx);pts(5);}sfx('ok');}else{opts[cmpSel].classList.add('wrong');opts[cmpData[cmpIdx].c].classList.add('correct');fb('fbCmp','Incorrecto. Revisa la respuesta.',false);sfx('no');} setTimeout(()=>{cmpIdx++;document.getElementById('fbCmp').classList.remove('show');showCmp();},1600); }
+// BUG FIX: eliminado setTimeout que avanzaba automáticamente sin control del estudiante
+function checkCmp(){
+  if(cmpDone)return;
+  if(cmpSel<0)return fb('fbCmp','Selecciona una opción primero.',false);
+  cmpDone=true;
+  const opts=document.querySelectorAll('.cmp-opt');
+  if(cmpSel===cmpData[cmpIdx].c){
+    opts[cmpSel].classList.add('correct');
+    document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`);
+    fb('fbCmp','¡Correcto! +5 XP — Presiona «Siguiente» para continuar.',true);
+    if(!xpTracker.cmp.has(cmpIdx)){xpTracker.cmp.add(cmpIdx);pts(5);}
+    sfx('ok');
+  }else{
+    opts[cmpSel].classList.add('wrong');
+    opts[cmpData[cmpIdx].c].classList.add('correct');
+    fb('fbCmp','Incorrecto. Observa la opción correcta y presiona «Siguiente».',false);
+    sfx('no');
+  }
+}
+function nextCmp(){
+  if(!cmpDone)return;
+  cmpIdx++; cmpSel=-1; cmpDone=false;
+  document.getElementById('fbCmp').classList.remove('show');
+  showCmp();
+}
 function resetCmp(){ sfx('click'); cmpIdx=0; cmpSel=-1; cmpDone=false; showCmp(); document.getElementById('fbCmp').classList.remove('show'); }
 
 // ===================== RETO FINAL =====================
@@ -1189,9 +1424,30 @@ function shareWA(){
   window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
 }
 
+// ===================== METACOGNICIÓN — estrellas interactivas =====================
+function initMetaStars(){
+  document.querySelectorAll('.meta-stars').forEach(container=>{
+    for(let i=1;i<=5;i++){
+      const btn=document.createElement('button');
+      btn.className='meta-star';
+      btn.textContent='⭐';
+      btn.setAttribute('aria-label',`${i} de 5`);
+      btn.dataset.val=i;
+      btn.onclick=()=>{
+        sfx('click');
+        const stars=container.querySelectorAll('.meta-star');
+        const val=parseInt(btn.dataset.val);
+        stars.forEach((s,idx)=>s.classList.toggle('lit',idx<val));
+      };
+      container.appendChild(btn);
+    }
+  });
+}
+
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme(); loadProgress();
+  initSVGOrgans(); initMetaStars();
   upFC(); buildQz(); buildClass(); showId(); showCmp(); genTask(); genEval();
   updateRetoButtons(); renderAchPanel();
   document.addEventListener('click',function(e){ const panel=document.getElementById('achPanel'); const btn=document.getElementById('achBtn'); if(panel.classList.contains('open')&&!panel.contains(e.target)&&e.target!==btn) panel.classList.remove('open'); });
