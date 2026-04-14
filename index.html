@@ -2,8 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú de Misiones Educativas</title>
     <style>
+        /* ========================================== */
+        /* DISEÑO BASE (COMPUTADORAS Y TABLETS)       */
+        /* ========================================== */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             padding: 40px; 
@@ -86,6 +90,34 @@
             color: #b2bec3 !important;
             font-weight: 400 !important;
             cursor: default;
+        }
+
+        /* ========================================== */
+        /* AJUSTES EXCLUSIVOS PARA TELÉFONOS MÓVILES  */
+        /* ========================================== */
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 15px; /* Reducimos los bordes blancos en celular */
+            }
+            h1 {
+                font-size: 28px; 
+            }
+            .subtitle {
+                font-size: 16px; 
+                margin-bottom: 30px;
+            }
+            h2 {
+                font-size: 26px; 
+            }
+            h3 {
+                font-size: 20px; 
+            }
+            .menu li {
+                padding: 16px 20px; /* Hacemos la caja táctil más grande */
+            }
+            .menu a {
+                font-size: 18px; /* Letra más grande para leer fácil */
+            }
         }
     </style>
 </head>
