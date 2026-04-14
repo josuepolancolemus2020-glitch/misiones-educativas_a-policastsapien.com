@@ -363,11 +363,11 @@ html.fs-lg{font-size:20px;}
 }
 
 /* ORGANIZADOR PREVIO */
-.organizer{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0.7rem;margin:1rem 0;}
-.org-node{border-radius:12px;padding:0.8rem 0.6rem;text-align:center;border:2px solid var(--border);}
-.org-node .org-ico{font-size:1.4rem;display:block;margin-bottom:0.3rem;}
-.org-node .org-lbl{font-family:'Fredoka',sans-serif;font-size:0.88rem;font-weight:700;color:var(--dark);}
-.org-node .org-sub{font-size:0.72rem;color:var(--gray);margin-top:0.15rem;}
+.organizer{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:0.6rem;margin:1rem 0;}
+.org-node{border-radius:12px;padding:0.65rem 0.5rem;text-align:center;border:2px solid var(--border);overflow:hidden;}
+.org-node .org-ico{font-size:1.25rem;display:block;margin-bottom:0.2rem;line-height:1;}
+.org-node .org-lbl{font-family:'Fredoka',sans-serif;font-size:0.8rem;font-weight:700;color:var(--dark);display:block;word-break:break-word;overflow-wrap:break-word;hyphens:auto;line-height:1.25;}
+.org-node .org-sub{font-size:0.66rem;color:var(--gray);margin-top:0.2rem;display:block;word-break:break-word;overflow-wrap:break-word;line-height:1.3;}
 .on-pri{border-color:var(--pri);background:var(--pri-gl);}
 .on-sec{border-color:var(--sec);background:var(--sec-gl);}
 .on-amb{border-color:var(--amber);background:var(--amber-gl);}
@@ -447,7 +447,7 @@ html.fs-lg{font-size:20px;}
     <p style="font-size:0.88rem;margin-bottom:0.8rem;line-height:1.6;">Antes de comenzar, activa lo que ya sabes. En esta misión aprenderás <strong>5 conceptos clave</strong> que se conectan entre sí:</p>
     <div class="organizer">
       <div class="org-node on-pri"><span class="org-ico">📐</span><span class="org-lbl">Ángulo</span><span class="org-sub">La base de todo</span></div>
-      <div class="org-node on-sec"><span class="org-ico">🏷️</span><span class="org-lbl">Tipos</span><span class="org-sub">Agudo · Recto · Obtuso · Llano</span></div>
+      <div class="org-node on-sec"><span class="org-ico">🏷️</span><span class="org-lbl">Tipos</span><span class="org-sub">Agudo · Recto · Obtuso · Llano · Completo</span></div>
       <div class="org-node on-jd"><span class="org-ico">✂️</span><span class="org-lbl">Bisectriz</span><span class="org-sub">Divide en 2 partes iguales</span></div>
       <div class="org-node on-amb"><span class="org-ico">🧩</span><span class="org-lbl">Complementarios</span><span class="org-sub">Suman 90°</span></div>
       <div class="org-node on-ppl"><span class="org-ico">🔗</span><span class="org-lbl">Suplementarios</span><span class="org-sub">Suman 180°</span></div>
