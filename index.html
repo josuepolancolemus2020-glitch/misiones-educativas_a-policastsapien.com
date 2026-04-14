@@ -5,28 +5,53 @@
     <title>Menú de Misiones Educativas</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; background-color: #f5f2ed; color: #1b2838; }
+        
+        /* Título principal */
         h1 { color: #419b88; }
-        .menu { list-style: none; padding: 0; }
-        .menu li { margin-bottom: 15px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 500px; }
-        .menu a { text-decoration: none; color: #00b894; font-weight: bold; font-size: 18px; display: block; }
+        
+        /* Nuevos estilos para los títulos de las materias */
+        h2 { 
+            color: #ff6b35; 
+            margin-top: 35px; 
+            margin-bottom: 10px;
+            border-bottom: 2px solid #e0ddd5; 
+            padding-bottom: 5px; 
+            max-width: 600px; 
+            font-size: 22px;
+        }
+
+        .menu { list-style: none; padding: 0; margin-top: 0; }
+        .menu li { margin-bottom: 15px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 600px; }
+        .menu a { text-decoration: none; color: #00b894; font-weight: bold; font-size: 18px; display: block; transition: color 0.2s; }
         .menu a:hover { color: #ff6b35; }
     </style>
 </head>
 <body>
-    <h1>📚 Misiones Educativas - Español</h1>
+    <h1>📚 Misiones Educativas</h1>
     <p>Selecciona una misión para comenzar:</p>
-    
+
+    <h2>📖 Español</h2>
     <ul class="menu">
         <li><a href="adjetivos-avanzado.html">Misión 1: El Adjetivo Avanzado</a></li>
         <li><a href="adjetivos-II-IIICiclo.html">Misión 2: Adjetivos II y III Ciclo</a></li>
         <li><a href="verbos-II-III-ciclo-basica.html">Misión 3: Verbos II y III Ciclo</a></li>
         <li><a href="sustantivos-II-III-ciclo-basica.html">Misión 4: Sustantivos II y III Ciclo</a></li>
         <li><a href="pronombres-II-III-ciclo-basica.html">Misión 5: Pronombres II y III Ciclo</a></li>
-        <li><a href="eras-geológicas/eras_geológicas.html">Misión 6: Las Eras Geológicas</a></li>
-        <li><a href="angulos-bisectriz_II y III-Ciclo_Básica.html">Misión 7: Angulos y bisectriz</a></li>
-
     </ul>
 
+    <h2>📐 Matemáticas</h2>
+    <ul class="menu">
+        <li><a href="angulos-bisectriz_II y III-Ciclo_Básica.html">Misión 7: Ángulos y bisectriz</a></li>
+    </ul>
+
+    <h2>🔬 Ciencias Naturales</h2>
+    <ul class="menu">
+        <li><a href="eras-geológicas/eras_geológicas.html">Misión 6: Las Eras Geológicas</a></li>
+    </ul>
+
+    <h2>🌍 Ciencias Sociales</h2>
+    <ul class="menu">
+        <li><a href="#" style="color: #999; font-weight: normal;">Próximamente nuevas misiones...</a></li>
     </ul>
 
 </body>
