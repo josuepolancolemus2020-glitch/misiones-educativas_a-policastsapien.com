@@ -78,6 +78,7 @@
       <span class="ti">⚡</span>
       <div><strong>Fórmula rápida:</strong> Para hallar la medida de cada mitad: <strong>ángulo ÷ 2 = medida de cada parte</strong>.</div>
     </div>
+    <div id="widget-bisectriz-interactive"></div>
   </div>
 
   <!-- CONEXIÓN CON LA VIDA REAL (Ausubel: aprendizaje significativo — conectar con experiencias previas) -->
@@ -562,6 +563,14 @@
   </div>
 </footer>
 
+<script src="js/interaccion_bisectriz.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+      if(window.WidgetBisectrizJSON) {
+          window.WidgetBisectrizJSON.mount('widget-bisectriz-interactive');
+      }
+  });
+</script>
 <script src="js/angulos.js"></script>
 </body>
 </html>
