@@ -1,477 +1,598 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Misión Ángulos y Bisectriz | policastsapien.com</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/angulos.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misión Ángulos y Bisectriz | policastsapien.com</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/angulos.css">
 </head>
+
 <body>
 
-<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
-  <span class="xp-lbl">🎮 XP</span>
-  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
-  <span class="xp-pts" id="xpPts">⭐ 0</span>
-  <span class="xp-lvl" id="xpLvl">Nivel 1</span>
-</div>
-
-<header class="hero" role="banner">
-  <div class="hero-inner">
-    <div class="hero-mascot" aria-hidden="true">📐</div>
-    <div class="hero-text">
-      <h1>Misión <span>Ángulos y Bisectriz</span></h1>
-      <p class="sub">¡Domina los ángulos y conviértete en maestro de la geometría! 📏</p>
-      <div class="badge">📐 II Ciclo · Matemáticas</div>
+  <div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+    <span class="xp-lbl">🎮 XP</span>
+    <div class="xp-track" aria-hidden="true">
+      <div class="xp-fill" id="xpFill"></div>
     </div>
-  </div>
-</header>
-
-<main class="main" id="main-content">
-
-<!-- ==================== S-APRENDE ==================== -->
-<div class="sec active" id="s-aprende" role="tabpanel">
-
-  <!-- ORGANIZADOR PREVIO (Ausubel: activar conocimiento previo, anclar el nuevo) -->
-  <div class="card ac-purple">
-    <span class="bloom-badge bl-r">🧩 Nivel Bloom: Recordar + Comprender</span>
-    <h2>🗺️ Ruta de Aprendizaje — ¿Qué vamos a explorar?</h2>
-    <p style="font-size:0.88rem;margin-bottom:0.8rem;line-height:1.6;">Antes de comenzar, activa lo que ya sabes. En esta misión aprenderás <strong>5 conceptos clave</strong> que se conectan entre sí:</p>
-    <div class="organizer">
-      <div class="org-node on-pri"><span class="org-ico">📐</span><span class="org-lbl">Ángulo</span><span class="org-sub">La base de todo</span></div>
-      <div class="org-node on-sec"><span class="org-ico">🏷️</span><span class="org-lbl">Tipos</span><span class="org-sub">Agudo · Recto · Obtuso · Llano · Completo</span></div>
-      <div class="org-node on-jd"><span class="org-ico">✂️</span><span class="org-lbl">Bisectriz</span><span class="org-sub">Divide en 2 partes iguales</span></div>
-      <div class="org-node on-amb"><span class="org-ico">🧩</span><span class="org-lbl">Complementarios</span><span class="org-sub">Suman 90°</span></div>
-      <div class="org-node on-ppl"><span class="org-ico">🔗</span><span class="org-lbl">Suplementarios</span><span class="org-sub">Suman 180°</span></div>
-    </div>
-    <div class="tip" style="margin-top:0.6rem;">
-      <span class="ti">🤔</span>
-      <div><strong>Activa tu mente:</strong> ¿Dónde has visto ángulos en tu casa o escuela? Piénsalo 10 segundos antes de continuar.</div>
-    </div>
+    <span class="xp-pts" id="xpPts">⭐ 0</span>
+    <span class="xp-lvl" id="xpLvl">Nivel 1</span>
   </div>
 
-  <div class="card ac-teal">
-    <h2>📖 ¿Qué es un Ángulo?</h2>
-    <p style="font-size:0.92rem;line-height:1.7;">Un <strong>ángulo</strong> es la abertura formada por dos <strong>rayos</strong> (semirrectas) que comparten un mismo punto de origen llamado <strong>vértice</strong>. Los ángulos se miden en <strong>grados (°)</strong> usando un instrumento llamado <strong>transportador</strong>.</p>
-    <div class="tip">
-      <span class="ti">💡</span>
-      <div><strong>Recuerda:</strong> Un ángulo se nombra con tres letras: la del medio es siempre el <strong>vértice</strong>. Ejemplo: ∠ABC — el vértice es B.</div>
-    </div>
-    <div class="stat-bar">
-      <div class="stat-item"><div class="stat-label">📐 Agudo</div><div class="stat-val">&lt; 90°</div></div>
-      <div class="stat-item"><div class="stat-label">🔲 Recto</div><div class="stat-val">= 90°</div></div>
-      <div class="stat-item"><div class="stat-label">📏 Obtuso</div><div class="stat-val">90° – 180°</div></div>
-      <div class="stat-item"><div class="stat-label">➖ Llano</div><div class="stat-val">= 180°</div></div>
-      <div class="stat-item"><div class="stat-label">🔄 Completo</div><div class="stat-val">= 360°</div></div>
-    </div>
-  </div>
-
-  <div class="card ac-gold">
-    <h2>✂️ ¿Qué es la Bisectriz?</h2>
-    <p style="font-size:0.92rem;line-height:1.7;">La <strong>bisectriz</strong> de un ángulo es el <strong>rayo que lo divide en dos ángulos iguales</strong>. Es como cortar un ángulo exactamente por la mitad.</p>
-    <div class="ex-box">
-      <div class="ex-tag ex-f">Ejemplo</div>
-      <p>Si el ∠ABC mide <span class="hl">80°</span>, su bisectriz lo divide en dos ángulos de <span class="hl2">40°</span> cada uno.</p>
-      <p style="margin-top:0.4rem;">Si el ∠DEF mide <span class="hl">120°</span>, su bisectriz crea dos ángulos de <span class="hl2">60°</span> cada uno.</p>
-    </div>
-    <div class="tip">
-      <span class="ti">⚡</span>
-      <div><strong>Fórmula rápida:</strong> Para hallar la medida de cada mitad: <strong>ángulo ÷ 2 = medida de cada parte</strong>.</div>
-    </div>
-    <div id="widget-bisectriz-interactive"></div>
-  </div>
-
-  <!-- CONEXIÓN CON LA VIDA REAL (Ausubel: aprendizaje significativo — conectar con experiencias previas) -->
-  <div class="card ac-amber">
-    <h2>🌎 Los Ángulos en tu Vida Cotidiana</h2>
-    <p style="font-size:0.88rem;margin-bottom:0.8rem;line-height:1.6;">Los ángulos están en <strong>todas partes</strong>. Reconocerlos en tu entorno te ayudará a recordarlos mejor:</p>
-    <div class="real-grid">
-      <div class="real-item">
-        <span class="real-ico">🕒</span>
-        <div class="real-txt">Reloj a las 3:00</div>
-        <span class="real-ang" style="background:var(--sec-gl);color:var(--sec);">🔲 Recto · 90°</span>
-      </div>
-      <div class="real-item">
-        <span class="real-ico">✏️</span>
-        <div class="real-txt">Punta de un lápiz</div>
-        <span class="real-ang" style="background:var(--pri-gl);color:var(--pri);">📐 Agudo · &lt;90°</span>
-      </div>
-      <div class="real-item">
-        <span class="real-ico">🚪</span>
-        <div class="real-txt">Puerta al abrirse</div>
-        <span class="real-ang" style="background:var(--amber-gl);color:var(--amber);">📏 Obtuso · 90-180°</span>
-      </div>
-      <div class="real-item">
-        <span class="real-ico">🏠</span>
-        <div class="real-txt">Techo de una casa</div>
-        <span class="real-ang" style="background:var(--amber-gl);color:var(--amber);">📏 Obtuso típico</span>
-      </div>
-      <div class="real-item">
-        <span class="real-ico">🛣️</span>
-        <div class="real-txt">Carretera recta</div>
-        <span class="real-ang" style="background:var(--blue-gl);color:var(--blue);">➖ Llano · 180°</span>
-      </div>
-      <div class="real-item">
-        <span class="real-ico">✂️</span>
-        <div class="real-txt">Tijeras abiertas</div>
-        <span class="real-ang" style="background:var(--jade-gl);color:var(--jade);">✂️ Bisectriz = eje</span>
+  <header class="hero" role="banner">
+    <div class="hero-inner">
+      <div class="hero-mascot" aria-hidden="true">📐</div>
+      <div class="hero-text">
+        <h1>Misión <span>Ángulos y Bisectriz</span></h1>
+        <p class="sub">¡Domina los ángulos y conviértete en maestro de la geometría! 📏</p>
+        <div class="badge">📐 II Ciclo · Matemáticas</div>
       </div>
     </div>
-  </div>
+  </header>
 
-  <div class="card ac-jade">
-    <h2>🔍 Explora los Ángulos — Un tipo a la vez</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Usa los controles interactivos para abrir el ángulo y rotarlo en el espacio tridimensional.</p>
-    <div id="widget-explorador-interactive"></div>
-  </div>
+  <main class="main" id="main-content">
 
-  <button class="next-sec-btn" aria-label="Ir a la sección Tipos de Ángulos" onclick="go('s-tipos')">
-    <span class="nsb-icon">🏷️</span>
-    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Tipos de Ángulos</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
+    <!-- ==================== S-APRENDE ==================== -->
+    <div class="sec active" id="s-aprende" role="tabpanel">
 
-<!-- ==================== S-TIPOS ==================== -->
-<div class="sec" id="s-tipos" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>🏷️ Tipos de Ángulos</h2>
-    <p style="font-size:0.92rem;line-height:1.7;margin-bottom:1rem;">Existen varios tipos de ángulos dependiendo de su amplitud o abertura (su medida en grados). Observa la siguiente ilustración para comparar visualmente los tres ángulos más comunes: <strong>Agudo, Recto y Obtuso</strong>.</p>
-    <img src="img/tipos_angulos.png" alt="Tipos de Ángulos: Agudo, Recto, Obtuso" style="width:100%; object-fit:cover; border-radius:12px; margin-bottom: 1.2rem; box-shadow:0 4px 12px rgba(0,0,0,0.15); border: 2px solid var(--border);">
-    <div class="type-grid">
-      <div class="type-chip tc-teal"><div class="t-art">📐 Agudo</div><div class="t-info">Menor de 90°</div></div>
-      <div class="type-chip tc-gold"><div class="t-art">🔲 Recto</div><div class="t-info">Exactamente 90°</div></div>
-      <div class="type-chip tc-amber"><div class="t-art">📏 Obtuso</div><div class="t-info">Entre 90° y 180°</div></div>
-      <div class="type-chip tc-jade"><div class="t-art">➖ Llano</div><div class="t-info">Exactamente 180°</div></div>
-      <div class="type-chip tc-purple"><div class="t-art">🔄 Completo</div><div class="t-info">Exactamente 360°</div></div>
-    </div>
-  </div>
-  <div class="card ac-gold">
-    <h2>🤝 Ángulos Complementarios y Suplementarios</h2>
-    <div class="vs-grid">
-      <div class="vs-box vs-a">
-        <h4>🧩 Complementarios</h4>
-        <p>Dos ángulos son <strong>complementarios</strong> cuando su suma es exactamente <strong>90°</strong>.</p>
-        <p style="margin-top:0.3rem;font-size:0.85rem;">Ejemplo: 30° + 60° = 90° ✓</p>
+      <!-- ORGANIZADOR PREVIO (Ausubel: activar conocimiento previo, anclar el nuevo) -->
+      <div class="card ac-purple">
+        <span class="bloom-badge bl-r">🧩 Nivel Bloom: Recordar + Comprender</span>
+        <h2>🗺️ Ruta de Aprendizaje — ¿Qué vamos a explorar?</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;line-height:1.6;">Antes de comenzar, activa lo que ya sabes. En
+          esta misión aprenderás <strong>5 conceptos clave</strong> que se conectan entre sí:</p>
+        <div class="organizer">
+          <div class="org-node on-pri"><span class="org-ico">📐</span><span class="org-lbl">Ángulo</span><span
+              class="org-sub">La base de todo</span></div>
+          <div class="org-node on-sec"><span class="org-ico">🏷️</span><span class="org-lbl">Tipos</span><span
+              class="org-sub">Agudo · Recto · Obtuso · Llano · Completo</span></div>
+          <div class="org-node on-jd"><span class="org-ico">✂️</span><span class="org-lbl">Bisectriz</span><span
+              class="org-sub">Divide en 2 partes iguales</span></div>
+          <div class="org-node on-amb"><span class="org-ico">🧩</span><span class="org-lbl">Complementarios</span><span
+              class="org-sub">Suman 90°</span></div>
+          <div class="org-node on-ppl"><span class="org-ico">🔗</span><span class="org-lbl">Suplementarios</span><span
+              class="org-sub">Suman 180°</span></div>
+        </div>
+        <div class="tip" style="margin-top:0.6rem;">
+          <span class="ti">🤔</span>
+          <div><strong>Activa tu mente:</strong> ¿Dónde has visto ángulos en tu casa o escuela? Piénsalo 10 segundos
+            antes de continuar.</div>
+        </div>
       </div>
-      <div class="vs-box vs-b">
-        <h4>🔗 Suplementarios</h4>
-        <p>Dos ángulos son <strong>suplementarios</strong> cuando su suma es exactamente <strong>180°</strong>.</p>
-        <p style="margin-top:0.3rem;font-size:0.85rem;">Ejemplo: 110° + 70° = 180° ✓</p>
+
+      <div class="card ac-teal">
+        <h2>📖 ¿Qué es un Ángulo?</h2>
+        <p style="font-size:0.92rem;line-height:1.7;">Un <strong>ángulo</strong> es la abertura formada por dos
+          <strong>rayos</strong> (semirrectas) que comparten un mismo punto de origen llamado <strong>vértice</strong>.
+          Los ángulos se miden en <strong>grados (°)</strong> usando un instrumento llamado
+          <strong>transportador</strong>.</p>
+        <div class="tip">
+          <span class="ti">💡</span>
+          <div><strong>Recuerda:</strong> Un ángulo se nombra con tres letras: la del medio es siempre el
+            <strong>vértice</strong>. Ejemplo: ∠ABC — el vértice es B.</div>
+        </div>
+        <div class="stat-bar">
+          <div class="stat-item">
+            <div class="stat-label">📐 Agudo</div>
+            <div class="stat-val">&lt; 90°</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">🔲 Recto</div>
+            <div class="stat-val">= 90°</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">📏 Obtuso</div>
+            <div class="stat-val">90° – 180°</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">➖ Llano</div>
+            <div class="stat-val">= 180°</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">🔄 Completo</div>
+            <div class="stat-val">= 360°</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-gold">
+        <h2>✂️ ¿Qué es la Bisectriz?</h2>
+        <p style="font-size:0.92rem;line-height:1.7;">La <strong>bisectriz</strong> de un ángulo es el <strong>rayo que
+            lo divide en dos ángulos iguales</strong>. Es como cortar un ángulo exactamente por la mitad.</p>
+        <div class="ex-box">
+          <div class="ex-tag ex-f">Ejemplo</div>
+          <p>Si el ∠ABC mide <span class="hl">80°</span>, su bisectriz lo divide en dos ángulos de <span
+              class="hl2">40°</span> cada uno.</p>
+          <p style="margin-top:0.4rem;">Si el ∠DEF mide <span class="hl">120°</span>, su bisectriz crea dos ángulos de
+            <span class="hl2">60°</span> cada uno.</p>
+        </div>
+        <div class="tip">
+          <span class="ti">⚡</span>
+          <div><strong>Fórmula rápida:</strong> Para hallar la medida de cada mitad: <strong>ángulo ÷ 2 = medida de cada
+              parte</strong>.</div>
+        </div>
+        <div id="widget-bisectriz-interactive"></div>
+      </div>
+
+      <!-- CONEXIÓN CON LA VIDA REAL (Ausubel: aprendizaje significativo — conectar con experiencias previas) -->
+      <div class="card ac-amber">
+        <h2>🌎 Los Ángulos en tu Vida Cotidiana</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;line-height:1.6;">Los ángulos están en <strong>todas
+            partes</strong>. Reconocerlos en tu entorno te ayudará a recordarlos mejor:</p>
+        <div class="real-grid">
+          <div class="real-item">
+            <span class="real-ico">🕒</span>
+            <div class="real-txt">Reloj a las 3:00</div>
+            <span class="real-ang" style="background:var(--sec-gl);color:var(--sec);">🔲 Recto · 90°</span>
+          </div>
+          <div class="real-item">
+            <span class="real-ico">✏️</span>
+            <div class="real-txt">Punta de un lápiz</div>
+            <span class="real-ang" style="background:var(--pri-gl);color:var(--pri);">📐 Agudo · &lt;90°</span>
+          </div>
+          <div class="real-item">
+            <span class="real-ico">🚪</span>
+            <div class="real-txt">Puerta al abrirse</div>
+            <span class="real-ang" style="background:var(--amber-gl);color:var(--amber);">📏 Obtuso · 90-180°</span>
+          </div>
+          <div class="real-item">
+            <span class="real-ico">🏠</span>
+            <div class="real-txt">Techo de una casa</div>
+            <span class="real-ang" style="background:var(--amber-gl);color:var(--amber);">📏 Obtuso típico</span>
+          </div>
+          <div class="real-item">
+            <span class="real-ico">🛣️</span>
+            <div class="real-txt">Carretera recta</div>
+            <span class="real-ang" style="background:var(--blue-gl);color:var(--blue);">➖ Llano · 180°</span>
+          </div>
+          <div class="real-item">
+            <span class="real-ico">✂️</span>
+            <div class="real-txt">Tijeras abiertas</div>
+            <span class="real-ang" style="background:var(--jade-gl);color:var(--jade);">✂️ Bisectriz = eje</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-jade">
+        <h2>🔍 Explora los Ángulos — Un tipo a la vez</h2>
+        <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Usa los controles interactivos para abrir
+          el ángulo y rotarlo en el espacio tridimensional.</p>
+        <div id="widget-explorador-interactive"></div>
+      </div>
+
+      <button class="next-sec-btn" aria-label="Ir a la sección Tipos de Ángulos" onclick="go('s-tipos')">
+        <span class="nsb-icon">🏷️</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Tipos de
+            Ángulos</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-TIPOS ==================== -->
+    <div class="sec" id="s-tipos" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🏷️ Tipos de Ángulos</h2>
+        <p style="font-size:0.92rem;line-height:1.7;margin-bottom:1rem;">Existen varios tipos de ángulos dependiendo de
+          su amplitud o abertura (su medida en grados). Observa la siguiente ilustración para comparar visualmente los
+          tres ángulos más comunes: <strong>Agudo, Recto y Obtuso</strong>.</p>
+        <img src="img/tipos_angulos.png" alt="Tipos de Ángulos: Agudo, Recto, Obtuso"
+          style="width:100%; object-fit:cover; border-radius:12px; margin-bottom: 1.2rem; box-shadow:0 4px 12px rgba(0,0,0,0.15); border: 2px solid var(--border);">
+        <div class="type-grid">
+          <div class="type-chip tc-teal">
+            <div class="t-art">📐 Agudo</div>
+            <div class="t-info">Menor de 90°</div>
+          </div>
+          <div class="type-chip tc-gold">
+            <div class="t-art">🔲 Recto</div>
+            <div class="t-info">Exactamente 90°</div>
+          </div>
+          <div class="type-chip tc-amber">
+            <div class="t-art">📏 Obtuso</div>
+            <div class="t-info">Entre 90° y 180°</div>
+          </div>
+          <div class="type-chip tc-jade">
+            <div class="t-art">➖ Llano</div>
+            <div class="t-info">Exactamente 180°</div>
+          </div>
+          <div class="type-chip tc-purple">
+            <div class="t-art">🔄 Completo</div>
+            <div class="t-info">Exactamente 360°</div>
+          </div>
+        </div>
+      </div>
+      <div class="card ac-gold">
+        <h2>🤝 Ángulos Complementarios y Suplementarios</h2>
+        <div class="vs-grid">
+          <div class="vs-box vs-a">
+            <h4>🧩 Complementarios</h4>
+            <p>Dos ángulos son <strong>complementarios</strong> cuando su suma es exactamente <strong>90°</strong>.</p>
+            <p style="margin-top:0.3rem;font-size:0.85rem;">Ejemplo: 30° + 60° = 90° ✓</p>
+          </div>
+          <div class="vs-box vs-b">
+            <h4>🔗 Suplementarios</h4>
+            <p>Dos ángulos son <strong>suplementarios</strong> cuando su suma es exactamente <strong>180°</strong>.</p>
+            <p style="margin-top:0.3rem;font-size:0.85rem;">Ejemplo: 110° + 70° = 180° ✓</p>
+          </div>
+        </div>
+        <div id="widget-comple-suple-interactive"></div>
+      </div>
+      <div class="card ac-jade">
+        <h2>✂️ La Bisectriz en la Práctica</h2>
+        <p>Construir una bisectriz con <strong>compás y regla</strong> es una habilidad clave en geometría. La bisectriz
+          siempre divide el ángulo en <strong>dos partes exactamente iguales</strong>.</p>
+        <div class="tip">
+          <span class="ti">🧮</span>
+          <div><strong>Para calcular:</strong> Si conoces la medida del ángulo, divídela entre 2 para obtener la medida
+            de cada mitad. Ejemplo: bisectriz de 140° → cada mitad = <strong>70°</strong>.</div>
+        </div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la sección Flashcards" onclick="go('s-flash')">
+        <span class="nsb-icon">🃏</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Tarjetas de
+            Estudio</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-FLASH ==================== -->
+    <div class="sec" id="s-flash" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🃏 Tarjetas de Geometría — Toca para voltear</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera
+          vez)</p>
+        <div class="fc-wrap">
+          <div class="fc-inner" id="fcInner" onclick="flipCard()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0"
+            role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+            <div class="fc-front">
+              <div class="fw" id="fcW"></div>
+              <div class="fhint">👆 Toca · Enter para voltear</div>
+            </div>
+            <div class="fc-back">
+              <div class="fa" id="fcA"></div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-nav">
+          <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+          <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 12</span>
+          <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+        </div>
+        <div id="fbFlash" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir al Laboratorio de Ángulos" onclick="go('s-quiz')">
+        <span class="nsb-icon">🧠</span>
+        <span class="nsb-label"><span class="nsb-hint">¡Pon a prueba tus conocimientos!</span><span
+            class="nsb-name">Laboratorio — Quiz</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-QUIZ ==================== -->
+    <div class="sec" id="s-quiz" role="tabpanel">
+      <div class="card ac-gold">
+        <span class="bloom-badge bl-a">🎯 Nivel Bloom: Aplicar</span>
+        <h2>🧠 Laboratorio de Ángulos</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera
+          vez) · 💡 Usa «Pista» si la necesitas</p>
+        <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+        <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+        <div class="hint-box" id="qzHint" role="status" aria-live="polite"></div>
+        <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones de respuesta"></div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+          <button class="btn btn-pri" onclick="nextQz()">▶ Siguiente</button>
+          <button class="btn btn-amber" onclick="showHint()" style="background:var(--amber);color:white;">💡
+            Pista</button>
+          <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbQz" class="fb" role="alert"></div>
+        <div class="exp-box" id="expQz" role="status" aria-live="polite"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a Clasificar Ángulos" onclick="go('s-clasifica')">
+        <span class="nsb-icon">🗂️</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Clasifica los
+            Ángulos</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-CLASIFICA ==================== -->
+    <div class="sec" id="s-clasifica" role="tabpanel">
+      <div class="card ac-jade">
+        <span class="bloom-badge bl-an">📊 Nivel Bloom: Analizar</span>
+        <h2>🗂️ Clasifica los Ángulos</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.3rem;">⭐ +5 XP por clasificación correcta</p>
+        <p style="font-size:0.8rem;color:var(--dark);margin-bottom:0.6rem;">👆 Toca un ángulo del banco → luego toca la
+          columna donde crees que pertenece. Para devolverlo, toca el ítem ya colocado sin seleccionar otro.</p>
+        <div class="word-bank" id="clsBank" role="list"></div>
+        <div class="drop-cols">
+          <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda">
+            <h4 id="col-left-head">Columna A</h4>
+            <div id="items-left"></div>
+          </div>
+          <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha">
+            <h4 id="col-right-head">Columna B</h4>
+            <div id="items-right"></div>
+          </div>
+        </div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+          <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+          <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbCls" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a Identificar Conceptos" onclick="go('s-identifica')">
+        <span class="nsb-icon">🔍</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Identifica el
+            Concepto</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-IDENTIFICA ==================== -->
+    <div class="sec" id="s-identifica" role="tabpanel">
+      <div class="card ac-purple">
+        <span class="bloom-badge bl-an">🔬 Nivel Bloom: Analizar</span>
+        <h2>🔍 Identifica el Concepto</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez
+          por pregunta)</p>
+        <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+        <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra clave que responde la pista:</p>
+        <div class="id-sent" id="idSent" role="group"></div>
+        <div class="id-info" id="idInfo" role="status" aria-live="polite"
+          style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+          <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbId" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a Completar Oraciones" onclick="go('s-completa')">
+        <span class="nsb-icon">✏️</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Completa la
+            Oración</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-COMPLETA ==================== -->
+    <div class="sec" id="s-completa" role="tabpanel">
+      <div class="card ac-amber">
+        <span class="bloom-badge bl-a">✏️ Nivel Bloom: Aplicar</span>
+        <h2>✏️ Completa la Oración Geométrica</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera
+          vez)</p>
+        <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;"
+          id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+        <div class="cmp-sent" id="cmpSent"></div>
+        <div class="cmp-opts" id="cmpOpts" role="group"></div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+          <button class="btn btn-pri" onclick="nextCmp()">▶ Siguiente</button>
+          <button class="btn btn-d" onclick="resetCmp()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbCmp" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir al Reto Geométrico" onclick="go('s-reto')">
+        <span class="nsb-icon">🏆</span>
+        <span class="nsb-label"><span class="nsb-hint">¡Desafía tu velocidad!</span><span class="nsb-name">Reto
+            Geométrico</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-RETO ==================== -->
+    <div class="sec" id="s-reto" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🏆 Reto Geométrico — ¡30 segundos!</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada ángulo en la categoría correcta antes de que
+          se acabe el tiempo.</p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo
+          primera partida)</p>
+        <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Usa «Variar
+          pareja» para practicar con otras categorías.</p>
+        <div class="game" aria-live="polite">
+          <div class="reto-timer" id="retoTimer">⏱ 30</div>
+          <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+          <div class="reto-btns">
+            <button class="btn btn-pri" onclick="ansReto('a')">Opción A</button>
+            <button class="btn btn-sec" onclick="ansReto('b')">Opción B</button>
+          </div>
+          <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+          <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+          <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbReto" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir al Generador de Tareas" onclick="go('s-tareas')">
+        <span class="nsb-icon">📋</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Generador de
+            Tareas</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-TAREAS ==================== -->
+    <div class="sec" id="s-tareas" role="tabpanel">
+      <div class="card ac-gold">
+        <h2>📋 Generador de Tareas</h2>
+        <div class="tg-controls">
+          <select class="tg-sel" id="tgType">
+            <option value="identify">🔍 Identificar</option>
+            <option value="classify">🗂️ Clasificar</option>
+            <option value="complete">✏️ Completar oraciones</option>
+            <option value="explain">💡 Explicar</option>
+          </select>
+          <select class="tg-sel" id="tgCount">
+            <option value="5">5 tareas</option>
+            <option value="8" selected>8 tareas</option>
+            <option value="10">10 tareas</option>
+            <option value="15">15 tareas</option>
+          </select>
+          <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+          <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+        </div>
+        <div id="tgOut"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la Evaluación Final" onclick="go('s-evaluacion')">
+        <span class="nsb-icon">📝</span>
+        <span class="nsb-label"><span class="nsb-hint">¡Demuestra todo lo aprendido!</span><span
+            class="nsb-name">Evaluación Final</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-EVALUACION ==================== -->
+    <div class="sec" id="s-evaluacion" role="tabpanel">
+      <!-- METACOGNICIÓN: el estudiante reflexiona sobre su propio aprendizaje -->
+      <div class="meta-check" id="metaCheck">
+        <h4>🤔 Reflexión Metacognitiva — ¿Cómo te fue?</h4>
+        <p style="font-size:0.82rem;color:var(--dark);margin-bottom:0.8rem;">Antes de ver la evaluación, califica con ⭐
+          tu nivel de confianza en cada concepto (1 = necesito repasar · 5 = lo domino):</p>
+        <div class="meta-row"><span class="meta-lbl">📐 Tipos de ángulos</span>
+          <div class="meta-stars" data-meta="tipos"></div>
+        </div>
+        <div class="meta-row"><span class="meta-lbl">✂️ Bisectriz</span>
+          <div class="meta-stars" data-meta="bise"></div>
+        </div>
+        <div class="meta-row"><span class="meta-lbl">🧩 Complementarios / Suplementarios</span>
+          <div class="meta-stars" data-meta="comp"></div>
+        </div>
+        <div class="meta-row"><span class="meta-lbl">🔧 Transportador y vértice</span>
+          <div class="meta-stars" data-meta="inst"></div>
+        </div>
+        <div class="tip" style="margin-top:0.6rem;">
+          <span class="ti">💬</span>
+          <div>Compartir esta reflexión con tu maestro/a o familiar te ayuda a identificar dónde poner más esfuerzo.
+            ¡Eso es aprender a aprender!</div>
+        </div>
+      </div>
+
+      <div class="card ac-purple">
+        <span class="bloom-badge bl-e">🏆 Nivel Bloom: Evaluar</span>
+        <h2 id="eval-screen-title">📝 Evaluación Final — Ángulos y Bisectriz</h2>
+        <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde
+          las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas
+            preguntas cuando quieras.</strong></p>
+        <div class="eval-controls">
+          <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+          <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+          <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+        </div>
+        <div id="evalOut"></div>
+      </div>
+      <button class="next-sec-btn" onclick="openDiploma()"
+        style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+        <span class="nsb-icon">🎓</span>
+        <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi
+            Constancia</span></span>
+        <span class="nsb-arrow">🏆</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ==================== DIPLOMA ==================== -->
+  <div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+    <div class="diploma-card">
+      <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+      <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+      <div class="diploma-sub">Misión Ángulos y Bisectriz</div>
+      <div class="diploma-mascot" aria-hidden="true">📐</div>
+      <div class="diploma-name" id="diplName">Estudiante</div>
+      <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+      <div class="diploma-bar-wrap">
+        <div class="diploma-bar" id="diplBar" style="width:0%"></div>
+      </div>
+      <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+      <div class="diploma-date" id="diplDate"></div>
+      <div class="diploma-ach" id="diplAch"></div>
+      <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
+      <hr style="margin:0.8rem 0;border-color:var(--border);">
+      <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..."
+        oninput="updateDiplomaName(this.value)">
+      <div class="diploma-actions">
+        <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+        <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
       </div>
     </div>
-    <div id="widget-comple-suple-interactive"></div>
-  </div>
-  <div class="card ac-jade">
-    <h2>✂️ La Bisectriz en la Práctica</h2>
-    <p>Construir una bisectriz con <strong>compás y regla</strong> es una habilidad clave en geometría. La bisectriz siempre divide el ángulo en <strong>dos partes exactamente iguales</strong>.</p>
-    <div class="tip">
-      <span class="ti">🧮</span>
-      <div><strong>Para calcular:</strong> Si conoces la medida del ángulo, divídela entre 2 para obtener la medida de cada mitad. Ejemplo: bisectriz de 140° → cada mitad = <strong>70°</strong>.</div>
-    </div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a la sección Flashcards" onclick="go('s-flash')">
-    <span class="nsb-icon">🃏</span>
-    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Tarjetas de Estudio</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== S-FLASH ==================== -->
-<div class="sec" id="s-flash" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>🃏 Tarjetas de Geometría — Toca para voltear</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
-    <div class="fc-wrap">
-      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
-        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
-        <div class="fc-back"><div class="fa" id="fcA"></div></div>
-      </div>
-    </div>
-    <div class="fc-nav">
-      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
-      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 12</span>
-      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
-    </div>
-    <div id="fbFlash" class="fb" role="alert"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir al Laboratorio de Ángulos" onclick="go('s-quiz')">
-    <span class="nsb-icon">🧠</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Pon a prueba tus conocimientos!</span><span class="nsb-name">Laboratorio — Quiz</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== S-QUIZ ==================== -->
-<div class="sec" id="s-quiz" role="tabpanel">
-  <div class="card ac-gold">
-    <span class="bloom-badge bl-a">🎯 Nivel Bloom: Aplicar</span>
-    <h2>🧠 Laboratorio de Ángulos</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez) · 💡 Usa «Pista» si la necesitas</p>
-    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
-    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
-    <div class="hint-box" id="qzHint" role="status" aria-live="polite"></div>
-    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones de respuesta"></div>
-    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
-      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
-      <button class="btn btn-pri" onclick="nextQz()">▶ Siguiente</button>
-      <button class="btn btn-amber" onclick="showHint()" style="background:var(--amber);color:white;">💡 Pista</button>
-      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar</button>
-    </div>
-    <div id="fbQz" class="fb" role="alert"></div>
-    <div class="exp-box" id="expQz" role="status" aria-live="polite"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a Clasificar Ángulos" onclick="go('s-clasifica')">
-    <span class="nsb-icon">🗂️</span>
-    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Clasifica los Ángulos</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== S-CLASIFICA ==================== -->
-<div class="sec" id="s-clasifica" role="tabpanel">
-  <div class="card ac-jade">
-    <span class="bloom-badge bl-an">📊 Nivel Bloom: Analizar</span>
-    <h2>🗂️ Clasifica los Ángulos</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.3rem;">⭐ +5 XP por clasificación correcta</p>
-    <p style="font-size:0.8rem;color:var(--dark);margin-bottom:0.6rem;">👆 Toca un ángulo del banco → luego toca la columna donde crees que pertenece. Para devolverlo, toca el ítem ya colocado sin seleccionar otro.</p>
-    <div class="word-bank" id="clsBank" role="list"></div>
-    <div class="drop-cols">
-      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
-      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
-    </div>
-    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
-      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
-      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
-      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
-    </div>
-    <div id="fbCls" class="fb" role="alert"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a Identificar Conceptos" onclick="go('s-identifica')">
-    <span class="nsb-icon">🔍</span>
-    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Identifica el Concepto</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== S-IDENTIFICA ==================== -->
-<div class="sec" id="s-identifica" role="tabpanel">
-  <div class="card ac-purple">
-    <span class="bloom-badge bl-an">🔬 Nivel Bloom: Analizar</span>
-    <h2>🔍 Identifica el Concepto</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
-    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
-    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra clave que responde la pista:</p>
-    <div class="id-sent" id="idSent" role="group"></div>
-    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
-    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
-      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
-      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
-    </div>
-    <div id="fbId" class="fb" role="alert"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a Completar Oraciones" onclick="go('s-completa')">
-    <span class="nsb-icon">✏️</span>
-    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Completa la Oración</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== S-COMPLETA ==================== -->
-<div class="sec" id="s-completa" role="tabpanel">
-  <div class="card ac-amber">
-    <span class="bloom-badge bl-a">✏️ Nivel Bloom: Aplicar</span>
-    <h2>✏️ Completa la Oración Geométrica</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
-    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
-    <div class="cmp-sent" id="cmpSent"></div>
-    <div class="cmp-opts" id="cmpOpts" role="group"></div>
-    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
-      <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
-      <button class="btn btn-pri" onclick="nextCmp()">▶ Siguiente</button>
-      <button class="btn btn-d" onclick="resetCmp()">🔄 Reiniciar</button>
-    </div>
-    <div id="fbCmp" class="fb" role="alert"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir al Reto Geométrico" onclick="go('s-reto')">
-    <span class="nsb-icon">🏆</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Desafía tu velocidad!</span><span class="nsb-name">Reto Geométrico</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== S-RETO ==================== -->
-<div class="sec" id="s-reto" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>🏆 Reto Geométrico — ¡30 segundos!</h2>
-    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada ángulo en la categoría correcta antes de que se acabe el tiempo.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
-    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Usa «Variar pareja» para practicar con otras categorías.</p>
-    <div class="game" aria-live="polite">
-      <div class="reto-timer" id="retoTimer">⏱ 30</div>
-      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
-      <div class="reto-btns">
-        <button class="btn btn-pri" onclick="ansReto('a')">Opción A</button>
-        <button class="btn btn-sec" onclick="ansReto('b')">Opción B</button>
-      </div>
-      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
-    </div>
-    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
-      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
-      <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
-      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
-    </div>
-    <div id="fbReto" class="fb" role="alert"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir al Generador de Tareas" onclick="go('s-tareas')">
-    <span class="nsb-icon">📋</span>
-    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Generador de Tareas</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== S-TAREAS ==================== -->
-<div class="sec" id="s-tareas" role="tabpanel">
-  <div class="card ac-gold">
-    <h2>📋 Generador de Tareas</h2>
-    <div class="tg-controls">
-      <select class="tg-sel" id="tgType">
-        <option value="identify">🔍 Identificar</option>
-        <option value="classify">🗂️ Clasificar</option>
-        <option value="complete">✏️ Completar oraciones</option>
-        <option value="explain">💡 Explicar</option>
-      </select>
-      <select class="tg-sel" id="tgCount">
-        <option value="5">5 tareas</option>
-        <option value="8" selected>8 tareas</option>
-        <option value="10">10 tareas</option>
-        <option value="15">15 tareas</option>
-      </select>
-      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
-      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
-    </div>
-    <div id="tgOut"></div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir a la Evaluación Final" onclick="go('s-evaluacion')">
-    <span class="nsb-icon">📝</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Demuestra todo lo aprendido!</span><span class="nsb-name">Evaluación Final</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== S-EVALUACION ==================== -->
-<div class="sec" id="s-evaluacion" role="tabpanel">
-  <!-- METACOGNICIÓN: el estudiante reflexiona sobre su propio aprendizaje -->
-  <div class="meta-check" id="metaCheck">
-    <h4>🤔 Reflexión Metacognitiva — ¿Cómo te fue?</h4>
-    <p style="font-size:0.82rem;color:var(--dark);margin-bottom:0.8rem;">Antes de ver la evaluación, califica con ⭐ tu nivel de confianza en cada concepto (1 = necesito repasar · 5 = lo domino):</p>
-    <div class="meta-row"><span class="meta-lbl">📐 Tipos de ángulos</span><div class="meta-stars" data-meta="tipos"></div></div>
-    <div class="meta-row"><span class="meta-lbl">✂️ Bisectriz</span><div class="meta-stars" data-meta="bise"></div></div>
-    <div class="meta-row"><span class="meta-lbl">🧩 Complementarios / Suplementarios</span><div class="meta-stars" data-meta="comp"></div></div>
-    <div class="meta-row"><span class="meta-lbl">🔧 Transportador y vértice</span><div class="meta-stars" data-meta="inst"></div></div>
-    <div class="tip" style="margin-top:0.6rem;">
-      <span class="ti">💬</span>
-      <div>Compartir esta reflexión con tu maestro/a o familiar te ayuda a identificar dónde poner más esfuerzo. ¡Eso es aprender a aprender!</div>
-    </div>
   </div>
 
-  <div class="card ac-purple">
-    <span class="bloom-badge bl-e">🏆 Nivel Bloom: Evaluar</span>
-    <h2 id="eval-screen-title">📝 Evaluación Final — Ángulos y Bisectriz</h2>
-    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
-    <div class="eval-controls">
-      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
-      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
-      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+  <!-- ==================== LOGROS ==================== -->
+  <div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+    <h4>🏅 Mis Logros</h4>
+    <div id="achList"></div>
+  </div>
+
+  <!-- ==================== NAV (STATIC) ==================== -->
+  <nav class="nav" role="tablist" aria-label="Secciones de la misión">
+    <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende"
+      onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos"
+      onclick="go('s-tipos')"><span class="ico">🏷️</span> Tipos</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash"
+      onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz"
+      onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica"
+      onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica"
+      onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa"
+      onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto"
+      onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas"
+      onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion"
+      onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+    <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);"
+      aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  </nav>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="credits">
+    <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
+    <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
+    <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
+    <div class="cred-contact">
+      <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+      <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
     </div>
-    <div id="evalOut"></div>
-  </div>
-  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
-    <span class="nsb-icon">🎓</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
-    <span class="nsb-arrow">🏆</span>
-  </button>
-</div>
-
-</main>
-
-<!-- ==================== DIPLOMA ==================== -->
-<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
-  <div class="diploma-card">
-    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
-    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
-    <div class="diploma-sub">Misión Ángulos y Bisectriz</div>
-    <div class="diploma-mascot" aria-hidden="true">📐</div>
-    <div class="diploma-name" id="diplName">Estudiante</div>
-    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
-    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
-    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
-    <div class="diploma-date" id="diplDate"></div>
-    <div class="diploma-ach" id="diplAch"></div>
-    <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
-    <hr style="margin:0.8rem 0;border-color:var(--border);">
-    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
-    <div class="diploma-actions">
-      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
-      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    <div class="cred-tools">
+      <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+      <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+      <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+      <button class="cred-btn" id="fsBtn" onclick="toggleFontSize()" aria-label="Cambiar tamaño de letra">🔤
+        Letra</button>
     </div>
-  </div>
-</div>
+  </footer>
 
-<!-- ==================== LOGROS ==================== -->
-<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
-  <h4>🏅 Mis Logros</h4>
-  <div id="achList"></div>
-</div>
-
-<!-- ==================== NAV (STATIC) ==================== -->
-<nav class="nav" role="tablist" aria-label="Secciones de la misión">
-  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">🏷️</span> Tipos</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
-  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
-</nav>
-
-<!-- ==================== FOOTER ==================== -->
-<footer class="credits">
-  <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
-  <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
-  <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
-  <div class="cred-contact">
-    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
-    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
-  </div>
-  <div class="cred-tools">
-    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
-    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
-    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
-    <button class="cred-btn" id="fsBtn" onclick="toggleFontSize()" aria-label="Cambiar tamaño de letra">🔤 Letra</button>
-  </div>
-</footer>
-
-<script src="js/interaccion_bisectriz.js"></script>
-<script src="js/interaccion_comple_suple.js"></script>
-<script src="js/interaccion_explorador.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-      if(window.WidgetBisectrizJSON) {
-          window.WidgetBisectrizJSON.mount('widget-bisectriz-interactive');
+  <script src="js/interaccion_bisectriz.js"></script>
+  <script src="js/interaccion_comple_suple.js"></script>
+  <script src="js/interaccion_explorador.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetBisectrizJSON) {
+        window.WidgetBisectrizJSON.mount('widget-bisectriz-interactive');
       }
-      if(window.WidgetCompleSupleJSON) {
-          window.WidgetCompleSupleJSON.mount('widget-comple-suple-interactive');
+      if (window.WidgetCompleSupleJSON) {
+        window.WidgetCompleSupleJSON.mount('widget-comple-suple-interactive');
       }
-      if(window.WidgetExploradorJSON) {
-          window.WidgetExploradorJSON.mount('widget-explorador-interactive');
+      if (window.WidgetExploradorJSON) {
+        window.WidgetExploradorJSON.mount('widget-explorador-interactive');
       }
-  });
-</script>
-<script src="js/angulos.js"></script>
+    });
+  </script>
+  <script src="js/angulos.js"></script>
 </body>
+
 </html>
