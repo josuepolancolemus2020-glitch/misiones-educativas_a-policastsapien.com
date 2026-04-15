@@ -1153,8 +1153,14 @@ document.addEventListener('DOMContentLoaded', () => {
 //  LA MÁQUINA CLASIFICADORA
 // =====================================================================
 // axis: 'pc' = ¿Propio o Común?   |   axis: 'ac' = ¿Abstracto o Concreto?
-// Cada palabra pertenece a UN eje para evitar confusiones pedagógicas
-// (p.ej. "mesa" es común Y concreto → se pregunta solo por el eje indicado)
+//
+// Regla del banco de palabras:
+//   - Eje 'pc': propios son nombres únicos (personas, lugares).
+//               Comunes incluyen tanto concretos (niño, río) COMO abstractos
+//               (amistad, problema) para que el estudiante vea que "común"
+//               no equivale a "concreto". Ninguna palabra se repite en 'ac'.
+//   - Eje 'ac': palabras donde la distinción sensorial es clara y no causan
+//               confusión con el eje propio/común.
 const MAQ_WORDS = [
     // — Eje Propio / Común —
     { word: 'Honduras',    type: 'propio', axis: 'pc', emoji: '🇭🇳' },
@@ -1162,13 +1168,15 @@ const MAQ_WORDS = [
     { word: 'Tegucigalpa', type: 'propio', axis: 'pc', emoji: '🏙️' },
     { word: 'Copán',       type: 'propio', axis: 'pc', emoji: '🏛️' },
     { word: 'Lempira',     type: 'propio', axis: 'pc', emoji: '⚔️' },
-    { word: 'Simón',       type: 'propio', axis: 'pc', emoji: '🧑' },
-    { word: 'perro',       type: 'comun',  axis: 'pc', emoji: '🐕' },
+    { word: 'Juan',        type: 'propio', axis: 'pc', emoji: '🧑' },
+    // Comunes concretos (para mostrar que común ≠ solo abstracto)
+    { word: 'niño',        type: 'comun',  axis: 'pc', emoji: '🧒' },
     { word: 'ciudad',      type: 'comun',  axis: 'pc', emoji: '🏙️' },
-    { word: 'libro',       type: 'comun',  axis: 'pc', emoji: '📚' },
     { word: 'río',         type: 'comun',  axis: 'pc', emoji: '🏞️' },
-    { word: 'árbol',       type: 'comun',  axis: 'pc', emoji: '🌳' },
-    { word: 'escuela',     type: 'comun',  axis: 'pc', emoji: '🏫' },
+    { word: 'animal',      type: 'comun',  axis: 'pc', emoji: '🐾' },
+    // Comunes abstractos (para mostrar que común ≠ solo concreto)
+    { word: 'amistad',     type: 'comun',  axis: 'pc', emoji: '🤝' },
+    { word: 'problema',    type: 'comun',  axis: 'pc', emoji: '❓' },
     // — Eje Abstracto / Concreto —
     { word: 'amor',        type: 'abstracto', axis: 'ac', emoji: '❤️' },
     { word: 'libertad',    type: 'abstracto', axis: 'ac', emoji: '🕊️' },
@@ -1265,12 +1273,22 @@ function initMaq() {
         </div>
 
         <div class="maq-controls" id="maqControls" role="group" aria-label="Clasificar sustantivo">
-          ${MAQ_CATS.map(c => `
-            <button class="maq-btn maq-btn-${c.type}" data-type="${c.type}" onclick="maqAnswer('${c.type}')" aria-label="Clasificar como ${c.label}">
-              <span class="maq-btn-icon">${c.icon}</span>
-              <span class="maq-btn-label">${c.label}</span>
+          <div class="maq-axis-group" id="maqGrp-pc">
+            <button class="maq-btn maq-btn-propio"    data-type="propio"    onclick="maqAnswer('propio')"    aria-label="Clasificar como Propio">
+              <span class="maq-btn-icon">⭐</span><span class="maq-btn-label">Propio</span>
             </button>
-          `).join('')}
+            <button class="maq-btn maq-btn-comun"     data-type="comun"     onclick="maqAnswer('comun')"     aria-label="Clasificar como Común">
+              <span class="maq-btn-icon">🏠</span><span class="maq-btn-label">Común</span>
+            </button>
+          </div>
+          <div class="maq-axis-group" id="maqGrp-ac">
+            <button class="maq-btn maq-btn-abstracto" data-type="abstracto" onclick="maqAnswer('abstracto')" aria-label="Clasificar como Abstracto">
+              <span class="maq-btn-icon">💭</span><span class="maq-btn-label">Abstracto</span>
+            </button>
+            <button class="maq-btn maq-btn-concreto"  data-type="concreto"  onclick="maqAnswer('concreto')"  aria-label="Clasificar como Concreto">
+              <span class="maq-btn-icon">🪨</span><span class="maq-btn-label">Concreto</span>
+            </button>
+          </div>
         </div>
 
         <div class="maq-footer">
@@ -1410,15 +1428,17 @@ function maqCatLabel(type) {
 }
 
 function maqSetBtns(on, axis) {
+    // Show only the 2-button group that belongs to the current axis.
+    // The other group is hidden entirely so the student never sees
+    // categories that don't apply to this word.
+    Object.keys(MAQ_AXES).forEach(ax => {
+        const grp = document.getElementById(`maqGrp-${ax}`);
+        if (!grp) return;
+        grp.style.display = (!axis || axis === ax) ? '' : 'none';
+    });
     document.querySelectorAll('#maqControls .maq-btn').forEach(b => {
-        if (!on) {
-            b.disabled = true;
-            b.classList.remove('maq-btn-dim');
-            return;
-        }
         const inAxis = !axis || MAQ_AXES[axis].types.includes(b.dataset.type);
-        b.disabled = !inAxis;
-        b.classList.toggle('maq-btn-dim', !inAxis);
+        b.disabled = !on || !inAxis;
     });
 }
 

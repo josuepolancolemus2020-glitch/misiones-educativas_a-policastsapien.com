@@ -2132,15 +2132,6 @@ body.letra-grande button {
     min-height: 1.4rem;
 }
 
-/* Buttons belonging to the OTHER axis are visually muted */
-.maq-btn.maq-btn-dim {
-    opacity: 0.22;
-    filter: grayscale(0.6);
-    cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none !important;
-}
-
 /* Belt row: rollers + moving track */
 .maq-belt-row {
     display: flex;
@@ -2292,15 +2283,14 @@ body.letra-grande button {
 .maq-bin-label { font-size: 0.57rem; font-weight: 800; color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 0.15rem; text-align: center; }
 .maq-bin-count { font-size: 0.85rem; font-weight: 800; color: #fff; margin-top: 0.1rem; }
 
-/* Category buttons */
+/* Category buttons — shown as 2 per axis, only the active axis visible */
 .maq-controls {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
     margin-bottom: 0.6rem;
 }
-@media (min-width: 400px) {
-    .maq-controls { grid-template-columns: repeat(4, 1fr); }
+.maq-axis-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
 }
 .maq-btn {
     display: flex;
