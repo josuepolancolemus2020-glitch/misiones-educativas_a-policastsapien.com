@@ -1148,3 +1148,270 @@ document.addEventListener('DOMContentLoaded', () => {
     fin('s-aprende', false);
     fin('s-tipos', false);
 });
+
+// =====================================================================
+//  LA MÁQUINA CLASIFICADORA
+// =====================================================================
+const MAQ_WORDS = [
+    { word: 'Honduras',    type: 'propio',    emoji: '🇭🇳' },
+    { word: 'María',       type: 'propio',    emoji: '👤'  },
+    { word: 'Tegucigalpa', type: 'propio',    emoji: '🏙️' },
+    { word: 'Copán',       type: 'propio',    emoji: '🏛️' },
+    { word: 'Lempira',     type: 'propio',    emoji: '⚔️' },
+    { word: 'Colombia',    type: 'propio',    emoji: '🌎' },
+    { word: 'perro',       type: 'comun',     emoji: '🐕' },
+    { word: 'ciudad',      type: 'comun',     emoji: '🏙️' },
+    { word: 'libro',       type: 'comun',     emoji: '📚' },
+    { word: 'mesa',        type: 'comun',     emoji: '🪑' },
+    { word: 'árbol',       type: 'comun',     emoji: '🌳' },
+    { word: 'escuela',     type: 'comun',     emoji: '🏫' },
+    { word: 'amor',        type: 'abstracto', emoji: '❤️' },
+    { word: 'libertad',    type: 'abstracto', emoji: '🕊️' },
+    { word: 'valentía',    type: 'abstracto', emoji: '💪' },
+    { word: 'tristeza',    type: 'abstracto', emoji: '😢' },
+    { word: 'esperanza',   type: 'abstracto', emoji: '🌟' },
+    { word: 'justicia',    type: 'abstracto', emoji: '⚖️' },
+    { word: 'piedra',      type: 'concreto',  emoji: '🪨' },
+    { word: 'silla',       type: 'concreto',  emoji: '🪑' },
+    { word: 'lluvia',      type: 'concreto',  emoji: '🌧️' },
+    { word: 'pan',         type: 'concreto',  emoji: '🍞' },
+    { word: 'mariposa',    type: 'concreto',  emoji: '🦋' },
+    { word: 'montaña',     type: 'concreto',  emoji: '⛰️' },
+];
+
+const MAQ_CATS = [
+    { type: 'propio',    label: 'Propio',    icon: '⭐' },
+    { type: 'comun',     label: 'Común',     icon: '🏠' },
+    { type: 'abstracto', label: 'Abstracto', icon: '💭' },
+    { type: 'concreto',  label: 'Concreto',  icon: '🪨' },
+];
+
+let maqQueue = [], maqIdx = 0, maqActive = false;
+let maqScore = { correct: 0, errors: 0 };
+let maqBinCounts = { propio: 0, comun: 0, abstracto: 0, concreto: 0 };
+let maqXpSet = new Set();
+
+function maqEnsureInit() {
+    const host = document.getElementById('widget-clasificador');
+    if (host && !host.hasChildNodes()) initMaq();
+}
+
+function initMaq() {
+    const host = document.getElementById('widget-clasificador');
+    if (!host) return;
+
+    maqQueue = _shuffle([...MAQ_WORDS]);
+    maqIdx = 0;
+    maqScore = { correct: 0, errors: 0 };
+    maqBinCounts = { propio: 0, comun: 0, abstracto: 0, concreto: 0 };
+    maqActive = false;
+
+    host.innerHTML = `
+      <div class="maq-machine">
+        <div class="maq-info-bar">
+          <span class="maq-info-ok">✅ <span id="maqOk">0</span> correctas</span>
+          <span class="maq-info-ctr" id="maqCtr" aria-live="polite">1 / ${maqQueue.length}</span>
+          <span class="maq-info-err">❌ <span id="maqErr">0</span> errores</span>
+        </div>
+        <div class="maq-progress-wrap">
+          <div class="maq-progress-fill" id="maqProgFill" style="width:0%"></div>
+        </div>
+
+        <div class="maq-scene" role="region" aria-label="Cinta transportadora">
+
+          <div class="maq-shredder" id="maqShredder" aria-hidden="true">
+            <div class="maq-shred-top">💢</div>
+            <div class="maq-shred-teeth">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="maq-belt-row">
+            <div class="maq-roller" aria-hidden="true"></div>
+            <div class="maq-belt" aria-hidden="true">
+              <div class="maq-chip-stage">
+                <div class="maq-word-chip" id="maqChip" aria-live="assertive" aria-atomic="true">
+                  <span class="maq-chip-emoji" id="maqChipEmoji"></span>
+                  <span class="maq-chip-word"  id="maqChipWord"></span>
+                </div>
+              </div>
+            </div>
+            <div class="maq-roller" aria-hidden="true"></div>
+          </div>
+
+          <div class="maq-bins" aria-hidden="true">
+            ${MAQ_CATS.map(c => `
+              <div class="maq-bin maq-bin-${c.type}" id="maqBin-${c.type}">
+                <span class="maq-bin-icon">${c.icon}</span>
+                <span class="maq-bin-label">${c.label}</span>
+                <span class="maq-bin-count" id="maqCt-${c.type}">0</span>
+              </div>
+            `).join('')}
+          </div>
+
+        </div>
+
+        <div class="maq-controls" id="maqControls" role="group" aria-label="Clasificar sustantivo">
+          ${MAQ_CATS.map(c => `
+            <button class="maq-btn maq-btn-${c.type}" onclick="maqAnswer('${c.type}')" aria-label="Clasificar como ${c.label}">
+              <span class="maq-btn-icon">${c.icon}</span>
+              <span class="maq-btn-label">${c.label}</span>
+            </button>
+          `).join('')}
+        </div>
+
+        <div class="maq-footer">
+          <div class="maq-feedback" id="maqFb" role="alert" aria-live="polite"></div>
+          <button class="maq-restart" onclick="initMaq()">🔄 Reiniciar</button>
+        </div>
+      </div>`;
+
+    setTimeout(() => maqNextWord(), 200);
+}
+
+/* Set chip CSS vars. Pass animated=false to jump instantly (no transition). */
+function maqSetChip(xpx, ypx, s, op, animated) {
+    const chip = document.getElementById('maqChip');
+    if (!chip) return;
+    if (!animated) {
+        chip.style.transition = 'none';
+        void chip.offsetWidth; // force reflow so the "none" takes effect immediately
+    } else {
+        chip.style.transition = 'transform 0.55s cubic-bezier(.34,1.4,.64,1), opacity 0.35s ease';
+    }
+    chip.style.setProperty('--cx', xpx + 'px');
+    chip.style.setProperty('--cy', ypx + 'px');
+    chip.style.setProperty('--cs', s);
+    chip.style.setProperty('--co', op);
+}
+
+function maqNextWord() {
+    if (maqIdx >= maqQueue.length) { maqShowEnd(); return; }
+
+    const w = maqQueue[maqIdx];
+    const emojiEl = document.getElementById('maqChipEmoji');
+    const wordEl  = document.getElementById('maqChipWord');
+    const fb      = document.getElementById('maqFb');
+    const ctr     = document.getElementById('maqCtr');
+    const fill    = document.getElementById('maqProgFill');
+
+    if (emojiEl) emojiEl.textContent = w.emoji;
+    if (wordEl)  wordEl.textContent  = w.word;
+    if (fb)      { fb.textContent = ''; fb.className = 'maq-feedback'; }
+    if (ctr)     ctr.textContent = `${maqIdx + 1} / ${maqQueue.length}`;
+    if (fill)    fill.style.width = `${(maqIdx / maqQueue.length) * 100}%`;
+
+    maqSetBtns(false);
+
+    // Place chip off-screen left instantly, then animate in
+    maqSetChip(-180, 0, 0.6, 0, false);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        maqSetChip(0, 0, 1, 1, true);
+        setTimeout(() => { maqSetBtns(true); maqActive = true; }, 420);
+    }));
+}
+
+function maqAnswer(type) {
+    if (!maqActive) return;
+    maqActive = false;
+    maqSetBtns(false);
+    sfx('click');
+
+    const w    = maqQueue[maqIdx];
+    const chip = document.getElementById('maqChip');
+    const fb   = document.getElementById('maqFb');
+
+    if (type === w.type) {
+        // ---- CORRECT ----
+        maqScore.correct++;
+        maqBinCounts[type]++;
+        const okEl  = document.getElementById('maqOk');
+        const ctEl  = document.getElementById(`maqCt-${type}`);
+        const binEl = document.getElementById(`maqBin-${type}`);
+        if (okEl)  okEl.textContent  = maqScore.correct;
+        if (ctEl)  ctEl.textContent  = maqBinCounts[type];
+        if (fb) { fb.textContent = `✅ ¡Correcto! "${w.word}" es sustantivo ${maqCatLabel(type).toLowerCase()}.`; fb.className = 'maq-feedback maq-fb-ok'; }
+        if (!maqXpSet.has(maqIdx)) { pts(2); maqXpSet.add(maqIdx); }
+        sfx('ok');
+
+        if (chip && binEl) {
+            const cr = chip.getBoundingClientRect();
+            const br = binEl.getBoundingClientRect();
+            const dx = (br.left + br.width  / 2) - (cr.left + cr.width  / 2);
+            const dy = (br.top  + br.height / 2) - (cr.top  + cr.height / 2);
+            chip.style.transition = 'transform 0.5s cubic-bezier(.4,0,.2,1), opacity 0.4s ease';
+            chip.style.setProperty('--cx', dx + 'px');
+            chip.style.setProperty('--cy', dy + 'px');
+            chip.style.setProperty('--cs', '0.1');
+            chip.style.setProperty('--co', '0');
+            binEl.classList.remove('maq-bin-pop');
+            void binEl.offsetWidth;
+            binEl.classList.add('maq-bin-pop');
+        }
+        setTimeout(() => { maqIdx++; maqNextWord(); }, 620);
+
+    } else {
+        // ---- WRONG ----
+        maqScore.errors++;
+        const errEl = document.getElementById('maqErr');
+        if (errEl) errEl.textContent = maqScore.errors;
+        if (fb) { fb.textContent = `❌ No es ${maqCatLabel(type)}. Esa palabra era: ${maqCatLabel(w.type)}.`; fb.className = 'maq-feedback maq-fb-err'; }
+        sfx('no');
+
+        if (chip) {
+            chip.classList.remove('maq-chip-shake');
+            void chip.offsetWidth;
+            chip.classList.add('maq-chip-shake');
+            chip.addEventListener('animationend', () => {
+                chip.classList.remove('maq-chip-shake');
+                const shredder = document.getElementById('maqShredder');
+                if (shredder) {
+                    const cr = chip.getBoundingClientRect();
+                    const sr = shredder.getBoundingClientRect();
+                    const dx = (sr.left + sr.width  / 2) - (cr.left + cr.width  / 2);
+                    const dy = (sr.top  + sr.height / 2) - (cr.top  + cr.height / 2);
+                    chip.style.transition = 'transform 0.35s ease-in, opacity 0.3s ease';
+                    chip.style.setProperty('--cx', dx + 'px');
+                    chip.style.setProperty('--cy', dy + 'px');
+                    chip.style.setProperty('--cs', '0.05');
+                    chip.style.setProperty('--co', '0');
+                    shredder.classList.remove('maq-shred-flash');
+                    void shredder.offsetWidth;
+                    shredder.classList.add('maq-shred-flash');
+                }
+                setTimeout(() => { maqIdx++; maqNextWord(); }, 450);
+            }, { once: true });
+        }
+    }
+}
+
+function maqCatLabel(type) {
+    return { propio: 'Propio', comun: 'Común', abstracto: 'Abstracto', concreto: 'Concreto' }[type] || type;
+}
+
+function maqSetBtns(on) {
+    document.querySelectorAll('#maqControls .maq-btn').forEach(b => b.disabled = !on);
+}
+
+function maqShowEnd() {
+    const host = document.getElementById('widget-clasificador');
+    if (!host) return;
+    const total = maqQueue.length;
+    const pct   = Math.round((maqScore.correct / total) * 100);
+    const medal = pct === 100 ? '🥇' : pct >= 80 ? '🥈' : pct >= 60 ? '🥉' : '🎯';
+    const msg   = pct === 100 ? '¡Máquina perfecta! ¡Eres un maestro clasificador!'
+                : pct >= 80  ? '¡Excelente! La máquina quedó muy impresionada.'
+                : pct >= 60  ? '¡Bien! Sigue practicando para perfeccionar tu clasificación.'
+                :               '¡Estudia los tipos de sustantivos y vuelve a intentarlo!';
+    const machine = host.querySelector('.maq-machine');
+    if (!machine) return;
+    machine.innerHTML = `
+      <div class="maq-end">
+        <div class="maq-end-medal">${medal}</div>
+        <div class="maq-end-pct">${pct}%</div>
+        <div class="maq-end-msg">${msg}</div>
+        <p class="maq-end-detail">✅ ${maqScore.correct} correctas &nbsp;·&nbsp; ❌ ${maqScore.errors} errores &nbsp;·&nbsp; ${total} palabras</p>
+        <button class="btn btn-pri" onclick="initMaq()">🔄 Jugar de nuevo</button>
+      </div>`;
+    sfx(pct >= 70 ? 'fan' : 'up');
+}

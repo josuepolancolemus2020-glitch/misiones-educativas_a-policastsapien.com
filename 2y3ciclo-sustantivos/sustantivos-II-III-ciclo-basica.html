@@ -395,6 +395,20 @@
         </div>
         <div id="fbSopa" class="fb" role="alert"></div>
       </div>
+      <button class="next-sec-btn" onclick="go('s-maquina');maqEnsureInit()">
+        <span class="nsb-icon">⚙️</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
+            class="nsb-name">Máquina</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-maquina" role="tabpanel">
+      <div class="card ac-jade">
+        <h2>⚙️ La Máquina Clasificadora</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +2 XP por clasificación correcta · Clasifica cada palabra antes de que escape por la trituradora</p>
+        <div id="widget-clasificador"></div>
+      </div>
       <button class="next-sec-btn" onclick="go('s-tareas')">
         <span class="nsb-icon">📋</span>
         <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
@@ -517,6 +531,8 @@
       onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa"
       onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-maquina" data-s="s-maquina"
+      onclick="go('s-maquina');maqEnsureInit()"><span class="ico">⚙️</span> Máquina</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas"
       onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion"
