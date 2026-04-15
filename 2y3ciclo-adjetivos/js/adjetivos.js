@@ -37,7 +37,7 @@ let evalFormNum = 1;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
-const TOTAL_SECTIONS = 11;
+const TOTAL_SECTIONS = 12;
 
 // XP TRACKER
 const xpTracker = {
@@ -1085,6 +1085,85 @@ ${s1}${s2}${s3}${s4}
   setTimeout(()=>win.print(), 400);
 }
 
+// ===================== LABORATORIO DE MONSTRUOS =====================
+var MON_STATE = { color: 'verde', size: 'normal', mood: 'feliz' };
+
+var MON_COLORS = { verde: '#00b894', morado: '#6c5ce7' };
+
+var MON_MOUTH = {
+  feliz:   'M 83 89 Q 100 103 117 89',
+  enojado: 'M 83 99 Q 100 88 117 99'
+};
+
+var MON_BROW_L = {
+  feliz:   'M 74 54 Q 84 49 93 54',
+  enojado: 'M 74 50 Q 84 57 93 50'
+};
+
+var MON_BROW_R = {
+  feliz:   'M 107 54 Q 116 49 126 54',
+  enojado: 'M 107 50 Q 116 57 126 50'
+};
+
+var MON_SCALE = { normal: 1, gigante: 1.5, diminuto: 0.52 };
+
+function labSetColor(color) {
+  MON_STATE.color = color;
+  document.querySelectorAll('.mon-fill').forEach(function(el) {
+    el.setAttribute('fill', MON_COLORS[color]);
+  });
+  labUpdateBtn('color', color);
+  labUpdateSentence();
+  if (typeof sfx === 'function') sfx('click');
+}
+
+function labSetSize(size) {
+  MON_STATE.size = (MON_STATE.size === size) ? 'normal' : size;
+  var wrapper = document.getElementById('mon-wrapper');
+  if (wrapper) wrapper.style.transform = 'scale(' + MON_SCALE[MON_STATE.size] + ')';
+  labUpdateBtn('size', MON_STATE.size);
+  labUpdateSentence();
+  if (typeof sfx === 'function') sfx('click');
+}
+
+function labSetMood(mood) {
+  MON_STATE.mood = mood;
+  var mouth = document.getElementById('mon-mouth');
+  var browL = document.getElementById('mon-brow-l');
+  var browR = document.getElementById('mon-brow-r');
+  if (mouth) mouth.setAttribute('d', MON_MOUTH[mood]);
+  if (browL) browL.setAttribute('d', MON_BROW_L[mood]);
+  if (browR) browR.setAttribute('d', MON_BROW_R[mood]);
+  labUpdateBtn('mood', mood);
+  labUpdateSentence();
+  if (typeof sfx === 'function') sfx('click');
+}
+
+function labUpdateBtn(group, val) {
+  document.querySelectorAll('[data-lab-group="' + group + '"]').forEach(function(btn) {
+    btn.classList.remove('active-pri', 'active-sec');
+    if (btn.getAttribute('data-lab-val') === val) {
+      btn.classList.add((val === 'morado' || val === 'enojado') ? 'active-sec' : 'active-pri');
+    }
+  });
+}
+
+function labUpdateSentence() {
+  var el = document.getElementById('lab-sentence');
+  if (!el) return;
+  var sizeLabel = { normal: '', gigante: ', gigante', diminuto: ', diminuto' };
+  el.innerHTML = 'Este es un monstruo <strong>' +
+    MON_STATE.color +
+    sizeLabel[MON_STATE.size] +
+    ' y ' + MON_STATE.mood +
+    '</strong>.';
+}
+
+function labInit() {
+  labSetColor('verde');
+  labSetMood('feliz');
+}
+
 // ===================== DIPLOMA =====================
 function openDiploma(){
   sfx('click');
@@ -1119,7 +1198,7 @@ function shareWA(){
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   loadProgress();
-  upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa();  genEval();
+  upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval(); labInit();
   updateRetoButtons();
   renderAchPanel();
   document.addEventListener('click',function(e){
