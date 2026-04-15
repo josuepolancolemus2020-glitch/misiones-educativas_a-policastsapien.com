@@ -1152,32 +1152,43 @@ document.addEventListener('DOMContentLoaded', () => {
 // =====================================================================
 //  LA MÁQUINA CLASIFICADORA
 // =====================================================================
+// axis: 'pc' = ¿Propio o Común?   |   axis: 'ac' = ¿Abstracto o Concreto?
+// Cada palabra pertenece a UN eje para evitar confusiones pedagógicas
+// (p.ej. "mesa" es común Y concreto → se pregunta solo por el eje indicado)
 const MAQ_WORDS = [
-    { word: 'Honduras',    type: 'propio',    emoji: '🇭🇳' },
-    { word: 'María',       type: 'propio',    emoji: '👤'  },
-    { word: 'Tegucigalpa', type: 'propio',    emoji: '🏙️' },
-    { word: 'Copán',       type: 'propio',    emoji: '🏛️' },
-    { word: 'Lempira',     type: 'propio',    emoji: '⚔️' },
-    { word: 'Colombia',    type: 'propio',    emoji: '🌎' },
-    { word: 'perro',       type: 'comun',     emoji: '🐕' },
-    { word: 'ciudad',      type: 'comun',     emoji: '🏙️' },
-    { word: 'libro',       type: 'comun',     emoji: '📚' },
-    { word: 'mesa',        type: 'comun',     emoji: '🪑' },
-    { word: 'árbol',       type: 'comun',     emoji: '🌳' },
-    { word: 'escuela',     type: 'comun',     emoji: '🏫' },
-    { word: 'amor',        type: 'abstracto', emoji: '❤️' },
-    { word: 'libertad',    type: 'abstracto', emoji: '🕊️' },
-    { word: 'valentía',    type: 'abstracto', emoji: '💪' },
-    { word: 'tristeza',    type: 'abstracto', emoji: '😢' },
-    { word: 'esperanza',   type: 'abstracto', emoji: '🌟' },
-    { word: 'justicia',    type: 'abstracto', emoji: '⚖️' },
-    { word: 'piedra',      type: 'concreto',  emoji: '🪨' },
-    { word: 'silla',       type: 'concreto',  emoji: '🪑' },
-    { word: 'lluvia',      type: 'concreto',  emoji: '🌧️' },
-    { word: 'pan',         type: 'concreto',  emoji: '🍞' },
-    { word: 'mariposa',    type: 'concreto',  emoji: '🦋' },
-    { word: 'montaña',     type: 'concreto',  emoji: '⛰️' },
+    // — Eje Propio / Común —
+    { word: 'Honduras',    type: 'propio', axis: 'pc', emoji: '🇭🇳' },
+    { word: 'María',       type: 'propio', axis: 'pc', emoji: '👤'  },
+    { word: 'Tegucigalpa', type: 'propio', axis: 'pc', emoji: '🏙️' },
+    { word: 'Copán',       type: 'propio', axis: 'pc', emoji: '🏛️' },
+    { word: 'Lempira',     type: 'propio', axis: 'pc', emoji: '⚔️' },
+    { word: 'Simón',       type: 'propio', axis: 'pc', emoji: '🧑' },
+    { word: 'perro',       type: 'comun',  axis: 'pc', emoji: '🐕' },
+    { word: 'ciudad',      type: 'comun',  axis: 'pc', emoji: '🏙️' },
+    { word: 'libro',       type: 'comun',  axis: 'pc', emoji: '📚' },
+    { word: 'río',         type: 'comun',  axis: 'pc', emoji: '🏞️' },
+    { word: 'árbol',       type: 'comun',  axis: 'pc', emoji: '🌳' },
+    { word: 'escuela',     type: 'comun',  axis: 'pc', emoji: '🏫' },
+    // — Eje Abstracto / Concreto —
+    { word: 'amor',        type: 'abstracto', axis: 'ac', emoji: '❤️' },
+    { word: 'libertad',    type: 'abstracto', axis: 'ac', emoji: '🕊️' },
+    { word: 'valentía',    type: 'abstracto', axis: 'ac', emoji: '💪' },
+    { word: 'tristeza',    type: 'abstracto', axis: 'ac', emoji: '😢' },
+    { word: 'esperanza',   type: 'abstracto', axis: 'ac', emoji: '🌟' },
+    { word: 'justicia',    type: 'abstracto', axis: 'ac', emoji: '⚖️' },
+    { word: 'piedra',      type: 'concreto',  axis: 'ac', emoji: '🪨' },
+    { word: 'lluvia',      type: 'concreto',  axis: 'ac', emoji: '🌧️' },
+    { word: 'pan',         type: 'concreto',  axis: 'ac', emoji: '🍞' },
+    { word: 'mariposa',    type: 'concreto',  axis: 'ac', emoji: '🦋' },
+    { word: 'montaña',     type: 'concreto',  axis: 'ac', emoji: '⛰️' },
+    { word: 'música',      type: 'concreto',  axis: 'ac', emoji: '🎵' },
 ];
+
+// Ejes de clasificación: cada eje tiene su pregunta y sus dos tipos válidos
+const MAQ_AXES = {
+    pc: { label: '¿Propio o Común?',       types: ['propio',    'comun']    },
+    ac: { label: '¿Abstracto o Concreto?', types: ['abstracto', 'concreto'] },
+};
 
 const MAQ_CATS = [
     { type: 'propio',    label: 'Propio',    icon: '⭐' },
@@ -1226,6 +1237,8 @@ function initMaq() {
             </div>
           </div>
 
+          <div class="maq-axis-label" id="maqAxisLabel" aria-live="polite"></div>
+
           <div class="maq-belt-row">
             <div class="maq-roller" aria-hidden="true"></div>
             <div class="maq-belt" aria-hidden="true">
@@ -1253,7 +1266,7 @@ function initMaq() {
 
         <div class="maq-controls" id="maqControls" role="group" aria-label="Clasificar sustantivo">
           ${MAQ_CATS.map(c => `
-            <button class="maq-btn maq-btn-${c.type}" onclick="maqAnswer('${c.type}')" aria-label="Clasificar como ${c.label}">
+            <button class="maq-btn maq-btn-${c.type}" data-type="${c.type}" onclick="maqAnswer('${c.type}')" aria-label="Clasificar como ${c.label}">
               <span class="maq-btn-icon">${c.icon}</span>
               <span class="maq-btn-label">${c.label}</span>
             </button>
@@ -1301,6 +1314,10 @@ function maqNextWord() {
     if (ctr)     ctr.textContent = `${maqIdx + 1} / ${maqQueue.length}`;
     if (fill)    fill.style.width = `${(maqIdx / maqQueue.length) * 100}%`;
 
+    // Show which classification axis applies to this word
+    const axisEl = document.getElementById('maqAxisLabel');
+    if (axisEl) axisEl.textContent = MAQ_AXES[w.axis].label;
+
     maqSetBtns(false);
 
     // Place chip off-screen left instantly, then animate in.
@@ -1308,7 +1325,7 @@ function maqNextWord() {
     maqSetChip(-180, 0, 0.6, 0, false);
     setTimeout(() => {
         maqSetChip(0, 0, 1, 1, true);
-        setTimeout(() => { maqSetBtns(true); maqActive = true; }, 440);
+        setTimeout(() => { maqSetBtns(true, w.axis); maqActive = true; }, 440);
     }, 32);
 }
 
@@ -1392,8 +1409,17 @@ function maqCatLabel(type) {
     return { propio: 'Propio', comun: 'Común', abstracto: 'Abstracto', concreto: 'Concreto' }[type] || type;
 }
 
-function maqSetBtns(on) {
-    document.querySelectorAll('#maqControls .maq-btn').forEach(b => b.disabled = !on);
+function maqSetBtns(on, axis) {
+    document.querySelectorAll('#maqControls .maq-btn').forEach(b => {
+        if (!on) {
+            b.disabled = true;
+            b.classList.remove('maq-btn-dim');
+            return;
+        }
+        const inAxis = !axis || MAQ_AXES[axis].types.includes(b.dataset.type);
+        b.disabled = !inAxis;
+        b.classList.toggle('maq-btn-dim', !inAxis);
+    });
 }
 
 function maqShowEnd() {

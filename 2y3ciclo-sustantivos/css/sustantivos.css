@@ -2115,6 +2115,32 @@ body.letra-grande button {
     clip-path: polygon(0 0, 100% 0, 50% 100%);
 }
 
+/* Axis question label — shown above the belt */
+.maq-axis-label {
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sec);
+    background: rgba(217,159,42,0.12);
+    border: 1px solid rgba(217,159,42,0.3);
+    border-radius: 20px;
+    padding: 0.2rem 0.8rem;
+    margin: 0 auto 0.5rem;
+    width: fit-content;
+    min-height: 1.4rem;
+}
+
+/* Buttons belonging to the OTHER axis are visually muted */
+.maq-btn.maq-btn-dim {
+    opacity: 0.22;
+    filter: grayscale(0.6);
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
 /* Belt row: rollers + moving track */
 .maq-belt-row {
     display: flex;
