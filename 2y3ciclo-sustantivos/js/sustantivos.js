@@ -1303,12 +1303,13 @@ function maqNextWord() {
 
     maqSetBtns(false);
 
-    // Place chip off-screen left instantly, then animate in
+    // Place chip off-screen left instantly, then animate in.
+    // Uses setTimeout instead of double-rAF: more reliable on Android Chrome.
     maqSetChip(-180, 0, 0.6, 0, false);
-    requestAnimationFrame(() => requestAnimationFrame(() => {
+    setTimeout(() => {
         maqSetChip(0, 0, 1, 1, true);
-        setTimeout(() => { maqSetBtns(true); maqActive = true; }, 420);
-    }));
+        setTimeout(() => { maqSetBtns(true); maqActive = true; }, 440);
+    }, 32);
 }
 
 function maqAnswer(type) {
@@ -1362,7 +1363,9 @@ function maqAnswer(type) {
             chip.classList.remove('maq-chip-shake');
             void chip.offsetWidth;
             chip.classList.add('maq-chip-shake');
-            chip.addEventListener('animationend', () => {
+            // Use setTimeout instead of animationend: more reliable on iOS Safari
+            // and when prefers-reduced-motion is active (animation never fires).
+            setTimeout(() => {
                 chip.classList.remove('maq-chip-shake');
                 const shredder = document.getElementById('maqShredder');
                 if (shredder) {
@@ -1379,8 +1382,8 @@ function maqAnswer(type) {
                     void shredder.offsetWidth;
                     shredder.classList.add('maq-shred-flash');
                 }
-                setTimeout(() => { maqIdx++; maqNextWord(); }, 450);
-            }, { once: true });
+                setTimeout(() => { maqIdx++; maqNextWord(); }, 400);
+            }, 460); // 420ms animation duration + 40ms buffer
         }
     }
 }

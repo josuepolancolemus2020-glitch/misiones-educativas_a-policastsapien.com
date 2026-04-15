@@ -2334,6 +2334,15 @@ body.letra-grande button {
 }
 .maq-restart:hover { background: var(--gray); color: #fff; }
 
+/* Reduced-motion: skip animations but keep the game functional */
+@media (prefers-reduced-motion: reduce) {
+    .maq-word-chip       { transition: opacity 0.15s ease !important; }
+    .maq-belt            { animation: none !important; }
+    .maq-chip-shake      { animation: none !important; }
+    .maq-bin-pop         { animation: none !important; }
+    .maq-shred-flash .maq-shred-top { animation: none !important; }
+}
+
 /* End / results screen */
 .maq-end {
     text-align: center;
