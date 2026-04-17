@@ -907,134 +907,187 @@ const evalPRBank=[
   {term:'Antípoda',def:'Punto opuesto en la Tierra (±180° longitud)'},
 ];
 
-function genEval(){
-  sfx('click');
-  const cf = evalFormNum;
-  window._currentEvalForm = cf;
-  evalAnsVisible = false;
-  const out = document.getElementById('evalOut'); out.innerHTML='';
-  const pauta = document.getElementById('eval-pauta-sheet'); pauta.innerHTML='';
-
-  const tfItems = _pick(evalTFBank,5);
-  const mcItems = _pick(evalMCBank,5);
-  const cpItems = _pick(evalCPBank,5);
-  const prItems = _pick(evalPRBank,5);
-
-  // ===== Sección I: V/F =====
-  const s1 = document.createElement('div'); s1.className='eval-section';
-  s1.innerHTML=`<h3 class="eval-sec-title">I. Verdadero o Falso (Escribe V o F) <span class="eval-pts-sec">25 pts</span></h3>`;
-  tfItems.forEach((item,i)=>{
-    const row=document.createElement('div'); row.className='eval-row eval-row-tf';
-    row.innerHTML=`<span class="eval-num">${i+1}.</span><span class="eval-q">${item.q}</span><span class="eval-ans-box">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
-    s1.appendChild(row);
-  });
-  out.appendChild(s1);
-
-  // ===== Sección II: Opción Múltiple =====
-  const s2 = document.createElement('div'); s2.className='eval-section';
-  s2.innerHTML=`<h3 class="eval-sec-title">II. Selección Múltiple <span class="eval-pts-sec">25 pts</span></h3>`;
-  mcItems.forEach((item,i)=>{
-    const qNum = i+6;
-    const row=document.createElement('div'); row.className='eval-row eval-row-mc';
-    const optsHTML = item.o.map(o=>`<span class="eval-mc-opt">${o}</span>`).join('');
-    row.innerHTML=`<div class="eval-mc-wrap"><div class="eval-mc-q"><span class="eval-num">${qNum}.</span> ${item.q}</div><div class="eval-opts-grid">${optsHTML}</div></div>`;
-    s2.appendChild(row);
-  });
-  out.appendChild(s2);
-
-  // ===== Sección III: Completar =====
-  const s3 = document.createElement('div'); s3.className='eval-section';
-  s3.innerHTML=`<h3 class="eval-sec-title">III. Completar el espacio <span class="eval-pts-sec">25 pts</span></h3>`;
-  cpItems.forEach((item,i)=>{
-    const qNum = i+11;
-    const row=document.createElement('div'); row.className='eval-row eval-row-cp';
-    const qText = item.q.replace('___','<span class="eval-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
-    row.innerHTML=`<span class="eval-num">${qNum}.</span><span class="eval-q">${qText}</span>`;
-    s3.appendChild(row);
-  });
-  out.appendChild(s3);
-
-  // ===== Sección IV: Términos Pareados =====
-  const s4 = document.createElement('div'); s4.className='eval-section';
-  s4.innerHTML=`<h3 class="eval-sec-title">IV. Términos Pareados <span class="eval-pts-sec">25 pts</span></h3>`;
-  const shuffled=_shuffle([...prItems]);
-  const headerRow = `<div class="eval-pair-header"><div class="eval-pair-h-l">📌 Términos</div><div class="eval-pair-h-r">🔑 Definiciones</div></div>`;
-  const leftCol=prItems.map((it,i)=>`<div class="eval-pair-l"><span class="eval-pair-line">&nbsp;&nbsp;</span><span class="eval-num">${i+16}.</span> ${it.term}</div>`).join('');
-  const rightCol=shuffled.map((it,i)=>`<div class="eval-pair-r"><span class="eval-num-r">${String.fromCharCode(65+i)}.</span> ${it.def}</div>`).join('');
-  s4.innerHTML+=`${headerRow}<div class="eval-pairs-wrap"><div class="eval-col-l">${leftCol}</div><div class="eval-col-r">${rightCol}</div></div>`;
-  out.appendChild(s4);
-
-  // ===== PAUTA (página separada, solo docente) =====
-  const pautaHTML = `
-    <div class="eval-pauta-header">
-      <h2>✅ PAUTA — Evaluación Final · Misión Coordenadas Geográficas · Forma ${cf}</h2>
-      <p class="eval-pauta-warn">Documento exclusivo del docente · No distribuir al estudiante</p>
-      <p class="eval-pauta-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</p>
-    </div>
-    <div class="eval-pauta-grid">
-      <div class="eval-pauta-col">
-        <h4>I. V o F</h4>
-        ${tfItems.map((it,i)=>`<div class="eval-pauta-item"><strong>${i+1}.</strong> ${it.a?'V':'F'}</div>`).join('')}
-      </div>
-      <div class="eval-pauta-col">
-        <h4>II. Selección</h4>
-        ${mcItems.map((it,i)=>`<div class="eval-pauta-item"><strong>${i+6}.</strong> ${it.o[it.a]}</div>`).join('')}
-      </div>
-      <div class="eval-pauta-col">
-        <h4>III. Completar</h4>
-        ${cpItems.map((it,i)=>`<div class="eval-pauta-item"><strong>${i+11}.</strong> ${it.a}</div>`).join('')}
-      </div>
-      <div class="eval-pauta-col">
-        <h4>IV. Pareados</h4>
-        ${prItems.map((it,i)=>{const idx=shuffled.findIndex(s=>s.term===it.term);return `<div class="eval-pauta-item"><strong>${i+16}.</strong> ${i+16}→${String.fromCharCode(65+idx)}</div>`;}).join('')}
-      </div>
-    </div>
-  `;
-  pauta.innerHTML = pautaHTML;
-
-  // Marca de formulario (esquina)
-  const formMarkOut = document.createElement('div');
-  formMarkOut.className = 'eval-form-mark';
-  formMarkOut.textContent = `Forma ${cf}`;
-  out.appendChild(formMarkOut);
-
-  evalFormNum++;
-  saveProgress();
+function genEval() {
+    sfx('click');
+    const cf = evalFormNum;
+    window._currentEvalForm = cf;
+    evalFormNum = (evalFormNum % 10) + 1;
+    saveProgress();
+    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · Coordenadas Geográficas`;
+    evalAnsVisible = false;
+    const out = document.getElementById('evalOut'); out.innerHTML = '';
+    const bar = document.createElement('div'); bar.className = 'eval-score-bar';
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-tf">V/F 25pts</span><span class="eval-score-pill esp-mc">Selección 25pts</span><span class="eval-score-pill esp-cp">Completar 25pts</span><span class="eval-score-pill esp-pr">Pareados 25pts</span></div>`;
+    out.appendChild(bar);
+    const tfItems = _pick(evalTFBank, 5);
+    const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+    tfItems.forEach((item, i) => {
+        const d = document.createElement('div'); d.className = 'eval-item';
+        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Falso</label></div><div class="eval-answer">${item.a ? 'Verdadero' : 'Falso'}</div>`;
+        s1.appendChild(d);
+    });
+    out.appendChild(s1);
+    const mcItems = _pick(evalMCBank, 5);
+    const s2 = document.createElement('div'); s2.innerHTML = '<div class="eval-section-title">II. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+    mcItems.forEach((item, i) => {
+        const d = document.createElement('div'); d.className = 'eval-item';
+        const optsHtml = item.o.map((op, oi) => `<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');
+        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1 + 5}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div>`;
+        s2.appendChild(d);
+    });
+    out.appendChild(s2);
+    const cpItems = _pick(evalCPBank, 5);
+    const s3 = document.createElement('div'); s3.innerHTML = '<div class="eval-section-title">III. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+    cpItems.forEach((item, i) => {
+        const d = document.createElement('div'); d.className = 'eval-item';
+        const qHtml = item.q.replace('___', '<span class="eval-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1 + 10}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div>`;
+        s3.appendChild(d);
+    });
+    out.appendChild(s3);
+    const prItems = _pick(evalPRBank, 5);
+    const shuffledDefs = [...prItems].sort(() => Math.random() - 0.5);
+    const letters = ['A', 'B', 'C', 'D', 'E'];
+    const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+    const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
+    let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
+    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <span class="eval-match-line">&nbsp;&nbsp;&nbsp;</span> ${item.term}</div>`; });
+    colLeft += '</div>';
+    let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
+    shuffledDefs.forEach((item, i) => { colRight += `<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
+    colRight += '</div>';
+    const ansKey = prItems.map((item, i) => { const letter = letters[shuffledDefs.findIndex(d => d.def === item.def)]; return `${i + 16}→${letter}`; }).join(' · ');
+    matchCard.innerHTML = `<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div>`;
+    s4.appendChild(matchCard); out.appendChild(s4);
+    window._evalPrintData = { tf: tfItems, mc: mcItems, cp: cpItems, pr: { terms: prItems, shuffledDefs, letters } };
+    fin('s-evaluacion');
 }
 
-function toggleEvalAns(){
-  sfx('click');
-  evalAnsVisible=!evalAnsVisible;
-  // Alternar visibilidad de la pauta en pantalla para revisión
-  const pauta = document.getElementById('eval-pauta-sheet');
-  if(pauta){
-    if(evalAnsVisible){
-      pauta.style.display = 'block';
-      pauta.style.marginTop = '1.5rem';
-      pauta.style.padding = '1rem';
-      pauta.style.border = '2px dashed var(--purple)';
-      pauta.style.borderRadius = '10px';
-      pauta.style.background = 'var(--purple-gl, #f3f0ff)';
-      showToast('👁 Pauta mostrada en pantalla');
-    } else {
-      pauta.style.display = 'none';
-      showToast('🙈 Pauta oculta');
-    }
-  }
+function toggleEvalAns() {
+    evalAnsVisible = !evalAnsVisible;
+    document.querySelectorAll('#evalOut .eval-answer').forEach(el => el.style.display = evalAnsVisible ? 'block' : 'none');
+    sfx('click');
 }
 
-function printEval(){
-  sfx('click');
-  // Asegurar que la evaluación esté generada
-  const out = document.getElementById('evalOut');
-  if(!out || !out.children.length){
-    genEval();
-  }
-  // Cerrar overlays que puedan interferir con la impresión
-  document.getElementById('diplomaOverlay')?.classList.remove('open');
-  document.getElementById('achPanel')?.classList.remove('open');
-  // Pequeño delay para que el DOM se asiente antes de abrir el diálogo de impresión
-  setTimeout(()=>{ window.print(); }, 250);
+function printEval() {
+    if (!window._evalPrintData) { showToast('⚠️ Genera una evaluación primero'); return; }
+    sfx('click');
+    const forma = window._currentEvalForm || 1;
+    const d = window._evalPrintData;
+
+    // ── I. Verdadero o Falso — raya antes del enunciado
+    let s1 = `<div class="sec-title">I. Verdadero o Falso <span style="font-weight:400;font-size:8pt;color:#555;">(Escribe V o F)</span><span class="pts-pill">25 pts</span></div>`;
+    d.tf.forEach((it, i) => { s1 += `<div class="tf-row"><span class="qn">${i + 1}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`; });
+
+    // ── II. Selección múltiple — 2 columnas de preguntas, 4 opciones en fila
+    let s2 = `<div class="sec-title">II. Selección Múltiple<span class="pts-pill">25 pts</span></div><div class="mc-grid">`;
+    d.mc.forEach((it, i) => { const opts = it.o.map((op, oi) => `<label class="mc-opt"><input type="radio" name="mc${i}"> ${op}</label>`).join(''); s2 += `<div class="mc-item"><div class="mc-q"><span class="qn">${i + 6}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`; });
+    s2 += `</div>`;
+
+    // ── III. Completar
+    let s3 = `<div class="sec-title">III. Completar el espacio<span class="pts-pill">25 pts</span></div>`;
+    d.cp.forEach((it, i) => { const q = it.q.replace('___', '<span class="cp-blank"></span>'); s3 += `<div class="cp-row"><span class="qn">${i + 11}.</span><span class="cp-text">${q}</span></div>`; });
+
+    // ── IV. Pareados
+    let colL = '<div class="pr-col"><div class="pr-head">📌 Términos</div>';
+    d.pr.terms.forEach((it, i) => { colL += `<div class="pr-item"><span class="pr-num">${i + 16}.</span><span class="pr-line"></span>${it.term}</div>`; });
+    colL += '</div>';
+    let colR = '<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';
+    d.pr.shuffledDefs.forEach((it, i) => { colR += `<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`; });
+    colR += '</div>';
+    let s4 = `<div class="sec-title">IV. Términos Pareados<span class="pts-pill">25 pts</span></div><div class="pr-grid">${colL}${colR}</div>`;
+
+    // ── Pauta
+    let pR = '';
+    pR += `<div class="p-sec"><div class="p-ttl">I. V o F</div><table class="p-tbl">`;
+    d.tf.forEach((it, i) => { pR += `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.a ? 'V' : 'F'}</td></tr>`; });
+    pR += `</table></div><div class="p-sec"><div class="p-ttl">II. Selección</div><table class="p-tbl">`;
+    d.mc.forEach((it, i) => { pR += `<tr><td class="pn">${i + 6}.</td><td class="pa">${it.o[it.a]}</td></tr>`; });
+    pR += `</table></div><div class="p-sec"><div class="p-ttl">III. Completar</div><table class="p-tbl">`;
+    d.cp.forEach((it, i) => { pR += `<tr><td class="pn">${i + 11}.</td><td class="pa">${it.a}</td></tr>`; });
+    pR += `</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;
+    d.pr.terms.forEach((it, i) => { const l = d.pr.letters[d.pr.shuffledDefs.findIndex(df => df.def === it.def)]; pR += `<tr><td class="pn">${i + 16}.</td><td class="pa">${i + 16}→${l}</td></tr>`; });
+    pR += `</table></div>`;
+
+    const doc = `<!DOCTYPE html><html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evaluación Coordenadas Geográficas · Forma ${forma}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;}
+/* ENCABEZADO */
+.ph{margin-bottom:0.5rem;}
+.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:11pt;text-align:center;color:#555;margin-top:0.15rem;}
+/* SECCIONES */
+.sec-title{font-size:9pt;font-weight:700;padding:0.2rem 0.45rem;margin:0.38rem 0 0.18rem;border-left:4px solid #419b88;background:#e4f4f0;display:flex;justify-content:space-between;align-items:center;}
+.pts-pill{font-size:7.5pt;background:#419b88;color:white;padding:0.08rem 0.35rem;border-radius:8px;}
+.qn{font-weight:700;min-width:20px;flex-shrink:0;}
+/* V/F */
+.tf-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.tf-blank{display:inline-block;min-width:38px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.15rem;}
+.tf-text{flex:1;}
+/* MC */
+.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.22rem 0.4rem;margin-bottom:0.18rem;break-inside:avoid;page-break-inside:avoid;}
+.mc-q{font-size:9pt;line-height:1.32;display:flex;gap:0.25rem;margin-bottom:0.12rem;}
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.18rem 0.5rem;}
+.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.05rem 0.2rem;margin-left:1.2rem;}
+.mc-opt{font-size:8.5pt;display:flex;align-items:center;gap:0.2rem;}
+.mc-opt input{width:11px;height:11px;flex-shrink:0;}
+/* Completar */
+.cp-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-text{flex:1;}
+.cp-blank{display:inline-block;min-width:140px;border-bottom:1.5px solid #111;margin:0 0.1rem;}
+/* Pareados */
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.25rem 0.5rem;margin-top:0.15rem;}
+.pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:0.18rem;}
+.pr-item{font-size:8.5pt;padding:0.28rem 0.3rem;background:#e4f4f0;border-radius:3px;margin-bottom:0.18rem;display:flex;align-items:center;gap:0.2rem;line-height:1.6;}
+.pr-num{font-weight:700;color:#419b88;min-width:17px;flex-shrink:0;}
+.pr-line{display:inline-block;min-width:17px;border-bottom:1.5px solid #111;margin-right:0.12rem;flex-shrink:0;}
+/* Pauta */
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}
+.p-main{font-size:9.5pt;font-weight:700;}
+.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:7pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.28rem 0.45rem;}
+.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}
+.p-tbl tr{border-bottom:1px dotted #ddd;}
+.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}
+.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}
+.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}
+@media print{@page{margin:4mm 6mm;}}
+</style></head><body>
+<div class="ph">
+  <h2>Evaluación Final de Misión Coordenadas Geográficas - Geografía - Ciencias Sociales</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+</div>
+${s1}${s2}${s3}${s4}
+<div class="pauta-wrap">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Evaluación Final · Misión Coordenadas Geográficas · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="forma-tag">Forma ${forma}</div>
+</body></html>`;
+
+    const win = window.open('', '_blank', '');
+    if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+    win.document.write(doc);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
 }
 
 // ===================== LABORATORIO PLANISFERIO =====================
