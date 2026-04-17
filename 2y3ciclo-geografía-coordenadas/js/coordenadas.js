@@ -976,16 +976,16 @@ function printEval() {
     const d = window._evalPrintData;
 
     // ── I. Verdadero o Falso — raya antes del enunciado
-    let s1 = `<div class="sec-title">I. Verdadero o Falso <span style="font-weight:400;font-size:8pt;color:#555;">(Escribe V o F)</span><span class="pts-pill">25 pts</span></div>`;
+    let s1 = `<div class="sec-title">I. Verdadero o Falso <span style="font-weight:400;font-size:8pt;color:#555;">(Escribe V o F)</span><span class="pts-pill">25 pts</span></div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
     d.tf.forEach((it, i) => { s1 += `<div class="tf-row"><span class="qn">${i + 1}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`; });
 
     // ── II. Selección múltiple — 2 columnas de preguntas, 4 opciones en fila
-    let s2 = `<div class="sec-title">II. Selección Múltiple<span class="pts-pill">25 pts</span></div><div class="mc-grid">`;
+    let s2 = `<div class="sec-title">II. Selección Múltiple<span class="pts-pill">25 pts</span></div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="mc-grid">`;
     d.mc.forEach((it, i) => { const opts = it.o.map((op, oi) => `<label class="mc-opt"><input type="radio" name="mc${i}"> ${op}</label>`).join(''); s2 += `<div class="mc-item"><div class="mc-q"><span class="qn">${i + 6}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`; });
     s2 += `</div>`;
 
     // ── III. Completar
-    let s3 = `<div class="sec-title">III. Completar el espacio<span class="pts-pill">25 pts</span></div>`;
+    let s3 = `<div class="sec-title">III. Completar el espacio<span class="pts-pill">25 pts</span></div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
     d.cp.forEach((it, i) => { const q = it.q.replace('___', '<span class="cp-blank"></span>'); s3 += `<div class="cp-row"><span class="qn">${i + 11}.</span><span class="cp-text">${q}</span></div>`; });
 
     // ── IV. Pareados
@@ -995,7 +995,7 @@ function printEval() {
     let colR = '<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';
     d.pr.shuffledDefs.forEach((it, i) => { colR += `<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`; });
     colR += '</div>';
-    let s4 = `<div class="sec-title">IV. Términos Pareados<span class="pts-pill">25 pts</span></div><div class="pr-grid">${colL}${colR}</div>`;
+    let s4 = `<div class="sec-title">IV. Términos Pareados<span class="pts-pill">25 pts</span></div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="pr-grid">${colL}${colR}</div>`;
 
     // ── Pauta
     let pR = '';
@@ -1063,6 +1063,13 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 .p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}
 .pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}
 .forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}
+/* Obtenido por sección y total */
+.obt-row{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;font-size:8.5pt;color:#16a34a;font-weight:700;font-style:italic;margin:0.1rem 0 0.2rem;padding-right:0.3rem;}
+.obt-lbl{font-weight:700;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #16a34a;height:11px;}
+.obt-pct{font-weight:700;}
+.total-row{display:flex;align-items:baseline;justify-content:center;gap:6px;font-size:10pt;color:#16a34a;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.35rem 0;border-top:1.5px solid #16a34a;border-bottom:1.5px solid #16a34a;}
+.total-row .obt-line{min-width:70px;border-bottom:1.5px solid #16a34a;}
 @media print{@page{margin:4mm 6mm;}}
 </style></head><body>
 <div class="ph">
@@ -1072,6 +1079,7 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
+<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 <div class="pauta-wrap">
   <div class="p-head">
     <div class="p-main">✅ PAUTA — Evaluación Final · Misión Coordenadas Geográficas · Forma ${forma}</div>
