@@ -975,7 +975,16 @@ function toggleEvalAns(){
 
 function printEval(){
   sfx('click');
-  window.print();
+  // Asegurar que la evaluación esté generada
+  const out = document.getElementById('evalOut');
+  if(!out || !out.children.length){
+    genEval();
+  }
+  // Ocultar el botón de constancia y otros overlays que puedan interferir
+  document.getElementById('diplomaOverlay')?.classList.remove('open');
+  document.getElementById('achPanel')?.classList.remove('open');
+  // Dar un pequeño delay para que el DOM se asiente antes de imprimir
+  setTimeout(()=>{ window.print(); }, 250);
 }
 
 // ===================== LABORATORIO PLANISFERIO =====================

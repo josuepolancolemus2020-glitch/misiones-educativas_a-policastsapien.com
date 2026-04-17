@@ -408,7 +408,80 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 }
 
 @media print{
-  body *{display:none!important;}
+  /* Ocultar todo por defecto */
+  body > *{display:none !important;}
+  /* Mostrar solo el contenedor principal y la sección de evaluación */
+  body > main, body > main > #s-evaluacion{display:block !important;}
+  body, html{background:white !important; color:black !important; margin:0 !important; padding:0 !important;}
+  /* Reset del main */
+  main.main{padding:0 !important; margin:0 !important; max-width:100% !important; box-shadow:none !important;}
+  /* Mostrar únicamente la sección de evaluación, ocultando el resto de secciones */
+  .sec{display:none !important;}
+  #s-evaluacion{display:block !important; padding:0 !important; margin:0 !important;}
+  /* Ocultar botones, barra XP, navegación, hero, footer, overlays */
+  .xp-bar, .hero, .nav, footer.credits, .ach-panel, .diploma-overlay, .next-sec-btn,
+  .eval-controls, .toast, .confetti-piece, #eval-screen-title, .eval-desc{display:none !important;}
+  /* Ocultar el botón de ir a la constancia dentro de evaluación */
+  #s-evaluacion > button{display:none !important;}
+  /* Dar estilo limpio al card de la evaluación */
+  #s-evaluacion .card{
+    border:none !important; box-shadow:none !important; background:white !important;
+    padding:0.5cm !important; margin:0 !important; border-radius:0 !important;
+  }
+  #s-evaluacion .card::before{display:none !important;}
+  /* Encabezado de impresión */
+  .eval-print-header{display:block !important; margin-bottom:0.6cm;}
+  .eval-print-header h2{
+    font-size:13pt !important; text-align:center !important;
+    color:black !important; margin:0 0 0.3cm 0 !important; font-weight:700;
+  }
+  .eval-ph-nombre{
+    font-size:10pt !important; display:flex !important; gap:0.3cm;
+    margin-bottom:0.2cm !important; flex-wrap:wrap;
+  }
+  .eval-ph-line-full{flex:1; border-bottom:1px solid #333; min-width:4cm;}
+  .eval-ph-line-fecha{flex:0 0 3cm; border-bottom:1px solid #333;}
+  .eval-ph-line-xs{flex:0 0 1.8cm; border-bottom:1px solid #333;}
+  /* Estilos generales para secciones */
+  .eval-section{
+    display:block !important; page-break-inside:avoid; margin-bottom:0.4cm;
+  }
+  .eval-sec-title{
+    font-size:11pt !important; color:black !important;
+    border-bottom:1px solid #333; padding:0.15cm 0; margin:0.3cm 0 0.2cm 0 !important;
+    background:#f0f0f0 !important; padding-left:0.2cm !important;
+  }
+  .eval-pts{font-size:9pt !important; color:#555 !important; font-weight:normal;}
+  .eval-row{
+    display:flex !important; gap:0.2cm; font-size:10pt !important;
+    margin-bottom:0.25cm !important; page-break-inside:avoid;
+    color:black !important;
+  }
+  .eval-num, .eval-num-r{font-weight:700; flex-shrink:0;}
+  .eval-q{flex:1;}
+  .eval-ans-box{
+    flex:0 0 1.5cm; border:1px solid #333; padding:0.05cm 0.2cm;
+    text-align:center; font-weight:600;
+  }
+  .eval-mc-wrap{flex:1;}
+  .eval-opts-print{font-size:9pt !important; margin-top:0.1cm; color:#222 !important;}
+  .eval-blank{
+    display:inline-block; min-width:3cm; border-bottom:1px solid #333;
+  }
+  .eval-pairs-wrap{
+    display:flex !important; gap:0.4cm; font-size:10pt !important;
+    page-break-inside:avoid;
+  }
+  .eval-col-l, .eval-col-r{flex:1;}
+  .eval-pair-l, .eval-pair-r{margin-bottom:0.18cm;}
+  /* Ocultar respuestas (pauta) siempre al imprimir salvo que el usuario las haya mostrado */
+  .eval-answer.eval-hidden{display:none !important;}
+  .eval-answer{
+    font-size:8.5pt !important; color:#0a6 !important; margin-top:0.1cm;
+    font-style:italic; background:#f5fff5 !important; padding:0.1cm 0.2cm;
+    border-left:2px solid #0a6;
+  }
+  @page{size:letter; margin:1.2cm 1.3cm;}
 }
 /* ================= ACCESIBILIDAD: LETRA GRANDE ================= */
  body.letra-grande p,
