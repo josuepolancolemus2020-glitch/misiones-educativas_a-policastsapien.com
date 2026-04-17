@@ -917,34 +917,42 @@ function genEval() {
     evalAnsVisible = false;
     const out = document.getElementById('evalOut'); out.innerHTML = '';
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-tf">V/F 25pts</span><span class="eval-score-pill esp-mc">Selección 25pts</span><span class="eval-score-pill esp-cp">Completar 25pts</span><span class="eval-score-pill esp-pr">Pareados 25pts</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25pts</span><span class="eval-score-pill esp-tf">V/F 25pts</span><span class="eval-score-pill esp-mc">Selección 25pts</span><span class="eval-score-pill esp-pr">Pareados 25pts</span></div>`;
     out.appendChild(bar);
-    const tfItems = _pick(evalTFBank, 5);
-    const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-    tfItems.forEach((item, i) => {
-        const d = document.createElement('div'); d.className = 'eval-item';
-        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Falso</label></div><div class="eval-answer">${item.a ? 'Verdadero' : 'Falso'}</div>`;
-        s1.appendChild(d);
-    });
-    out.appendChild(s1);
-    const mcItems = _pick(evalMCBank, 5);
-    const s2 = document.createElement('div'); s2.innerHTML = '<div class="eval-section-title">II. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-    mcItems.forEach((item, i) => {
-        const d = document.createElement('div'); d.className = 'eval-item';
-        const optsHtml = item.o.map((op, oi) => `<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');
-        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1 + 5}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div>`;
-        s2.appendChild(d);
-    });
-    out.appendChild(s2);
+
+    // I. Completar (1-5)
     const cpItems = _pick(evalCPBank, 5);
-    const s3 = document.createElement('div'); s3.innerHTML = '<div class="eval-section-title">III. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+    const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     cpItems.forEach((item, i) => {
         const d = document.createElement('div'); d.className = 'eval-item';
         const qHtml = item.q.replace('___', '<span class="eval-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
-        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1 + 10}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div>`;
+        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div>`;
+        s1.appendChild(d);
+    });
+    out.appendChild(s1);
+
+    // II. Verdadero o Falso (6-10)
+    const tfItems = _pick(evalTFBank, 5);
+    const s2 = document.createElement('div'); s2.innerHTML = '<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+    tfItems.forEach((item, i) => {
+        const d = document.createElement('div'); d.className = 'eval-item';
+        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Falso</label></div><div class="eval-answer">${item.a ? 'Verdadero' : 'Falso'}</div>`;
+        s2.appendChild(d);
+    });
+    out.appendChild(s2);
+
+    // III. Selección Múltiple (11-15)
+    const mcItems = _pick(evalMCBank, 5);
+    const s3 = document.createElement('div'); s3.innerHTML = '<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+    mcItems.forEach((item, i) => {
+        const d = document.createElement('div'); d.className = 'eval-item';
+        const optsHtml = item.o.map((op, oi) => `<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');
+        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div>`;
         s3.appendChild(d);
     });
     out.appendChild(s3);
+
+    // IV. Términos Pareados (16-20)
     const prItems = _pick(evalPRBank, 5);
     const shuffledDefs = [...prItems].sort(() => Math.random() - 0.5);
     const letters = ['A', 'B', 'C', 'D', 'E'];
@@ -959,6 +967,7 @@ function genEval() {
     const ansKey = prItems.map((item, i) => { const letter = letters[shuffledDefs.findIndex(d => d.def === item.def)]; return `${i + 16}→${letter}`; }).join(' · ');
     matchCard.innerHTML = `<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div>`;
     s4.appendChild(matchCard); out.appendChild(s4);
+
     window._evalPrintData = { tf: tfItems, mc: mcItems, cp: cpItems, pr: { terms: prItems, shuffledDefs, letters } };
     fin('s-evaluacion');
 }
@@ -975,20 +984,20 @@ function printEval() {
     const forma = window._currentEvalForm || 1;
     const d = window._evalPrintData;
 
-    // ── I. Verdadero o Falso — raya antes del enunciado
-    let s1 = `<div class="sec-title">I. Verdadero o Falso <span style="font-weight:400;font-size:8pt;color:#555;">(Escribe V o F)</span></div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
-    d.tf.forEach((it, i) => { s1 += `<div class="tf-row"><span class="qn">${i + 1}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`; });
+    // ── I. Completar (1-5)
+    let s1 = `<div class="sec-title">I. Completar el espacio</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
+    d.cp.forEach((it, i) => { const q = it.q.replace('___', '<span class="cp-blank"></span>'); s1 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text">${q}</span></div>`; });
 
-    // ── II. Selección múltiple — 2 columnas de preguntas, 4 opciones en fila
-    let s2 = `<div class="sec-title">II. Selección Múltiple</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="mc-grid">`;
-    d.mc.forEach((it, i) => { const opts = it.o.map((op, oi) => `<label class="mc-opt"><input type="radio" name="mc${i}"> ${op}</label>`).join(''); s2 += `<div class="mc-item"><div class="mc-q"><span class="qn">${i + 6}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`; });
-    s2 += `</div>`;
+    // ── II. Verdadero o Falso (6-10) — raya antes del enunciado
+    let s2 = `<div class="sec-title">II. Verdadero o Falso</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
+    d.tf.forEach((it, i) => { s2 += `<div class="tf-row"><span class="qn">${i + 6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`; });
 
-    // ── III. Completar
-    let s3 = `<div class="sec-title">III. Completar el espacio</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
-    d.cp.forEach((it, i) => { const q = it.q.replace('___', '<span class="cp-blank"></span>'); s3 += `<div class="cp-row"><span class="qn">${i + 11}.</span><span class="cp-text">${q}</span></div>`; });
+    // ── III. Selección múltiple (11-15) — 2 columnas de preguntas, 4 opciones en fila
+    let s3 = `<div class="sec-title">III. Selección Múltiple</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="mc-grid">`;
+    d.mc.forEach((it, i) => { const opts = it.o.map((op, oi) => `<label class="mc-opt"><input type="radio" name="mc${i}"> ${op}</label>`).join(''); s3 += `<div class="mc-item"><div class="mc-q"><span class="qn">${i + 11}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`; });
+    s3 += `</div>`;
 
-    // ── IV. Pareados
+    // ── IV. Pareados (16-20)
     let colL = '<div class="pr-col"><div class="pr-head">📌 Términos</div>';
     d.pr.terms.forEach((it, i) => { colL += `<div class="pr-item"><span class="pr-num">${i + 16}.</span><span class="pr-line"></span>${it.term}</div>`; });
     colL += '</div>';
@@ -997,14 +1006,14 @@ function printEval() {
     colR += '</div>';
     let s4 = `<div class="pr-section"><div class="sec-title">IV. Términos Pareados</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="pr-grid">${colL}${colR}</div></div>`;
 
-    // ── Pauta
+    // ── Pauta (orden nuevo: I. Completar, II. V/F, III. Selección, IV. Pareados)
     let pR = '';
-    pR += `<div class="p-sec"><div class="p-ttl">I. V o F</div><table class="p-tbl">`;
-    d.tf.forEach((it, i) => { pR += `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.a ? 'V' : 'F'}</td></tr>`; });
-    pR += `</table></div><div class="p-sec"><div class="p-ttl">II. Selección</div><table class="p-tbl">`;
-    d.mc.forEach((it, i) => { pR += `<tr><td class="pn">${i + 6}.</td><td class="pa">${it.o[it.a]}</td></tr>`; });
-    pR += `</table></div><div class="p-sec"><div class="p-ttl">III. Completar</div><table class="p-tbl">`;
-    d.cp.forEach((it, i) => { pR += `<tr><td class="pn">${i + 11}.</td><td class="pa">${it.a}</td></tr>`; });
+    pR += `<div class="p-sec"><div class="p-ttl">I. Completar</div><table class="p-tbl">`;
+    d.cp.forEach((it, i) => { pR += `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.a}</td></tr>`; });
+    pR += `</table></div><div class="p-sec"><div class="p-ttl">II. V o F</div><table class="p-tbl">`;
+    d.tf.forEach((it, i) => { pR += `<tr><td class="pn">${i + 6}.</td><td class="pa">${it.a ? 'V' : 'F'}</td></tr>`; });
+    pR += `</table></div><div class="p-sec"><div class="p-ttl">III. Selección</div><table class="p-tbl">`;
+    d.mc.forEach((it, i) => { pR += `<tr><td class="pn">${i + 11}.</td><td class="pa">${it.o[it.a]}</td></tr>`; });
     pR += `</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;
     d.pr.terms.forEach((it, i) => { const l = d.pr.letters[d.pr.shuffledDefs.findIndex(df => df.def === it.def)]; pR += `<tr><td class="pn">${i + 16}.</td><td class="pa">${i + 16}→${l}</td></tr>`; });
     pR += `</table></div>`;
@@ -1025,31 +1034,31 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 .ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
 .ph-crit{font-size:11pt;text-align:center;color:#555;margin-top:0.15rem;}
 /* SECCIONES */
-.sec-title{font-size:9pt;font-weight:700;padding:0.2rem 0.45rem;margin:0.38rem 0 0.18rem;border-left:4px solid #c0392b;background:#fbe9e7;display:flex;justify-content:space-between;align-items:center;}
-.pts-pill{font-size:7.5pt;background:#c0392b;color:white;padding:0.08rem 0.35rem;border-radius:8px;}
-.qn{font-weight:700;min-width:20px;flex-shrink:0;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.4rem 0 0.2rem;border-left:4px solid #c0392b;background:#fbe9e7;display:flex;justify-content:space-between;align-items:center;}
+.pts-pill{font-size:8.5pt;background:#c0392b;color:white;padding:0.08rem 0.35rem;border-radius:8px;}
+.qn{font-weight:700;min-width:22px;flex-shrink:0;}
 /* V/F */
-.tf-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
-.tf-blank{display:inline-block;min-width:38px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.15rem;}
+.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}
+.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;}
 .tf-text{flex:1;}
 /* MC */
-.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.22rem 0.4rem;margin-bottom:0.18rem;break-inside:avoid;page-break-inside:avoid;}
-.mc-q{font-size:9pt;line-height:1.32;display:flex;gap:0.25rem;margin-bottom:0.12rem;}
-.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.18rem 0.5rem;}
-.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.05rem 0.2rem;margin-left:1.2rem;}
-.mc-opt{font-size:8.5pt;display:flex;align-items:center;gap:0.2rem;}
-.mc-opt input{width:11px;height:11px;flex-shrink:0;}
+.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;page-break-inside:avoid;}
+.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}
+.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}
+.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}
+.mc-opt input{width:12px;height:12px;flex-shrink:0;}
 /* Completar */
-.cp-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}
 .cp-text{flex:1;}
-.cp-blank{display:inline-block;min-width:140px;border-bottom:1.5px solid #111;margin:0 0.1rem;}
+.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
 /* Pareados */
 .pr-section{break-inside:avoid;page-break-inside:avoid;}
-.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.25rem 0.5rem;margin-top:0.15rem;break-inside:avoid;page-break-inside:avoid;}
-.pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:0.18rem;}
-.pr-item{font-size:8.5pt;padding:0.28rem 0.3rem;background:#fbe9e7;border-radius:3px;margin-bottom:0.18rem;display:flex;align-items:center;gap:0.2rem;line-height:1.6;break-inside:avoid;page-break-inside:avoid;}
-.pr-num{font-weight:700;color:#c0392b;min-width:17px;flex-shrink:0;}
-.pr-line{display:inline-block;min-width:17px;border-bottom:1.5px solid #111;margin-right:0.12rem;flex-shrink:0;}
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;break-inside:avoid;page-break-inside:avoid;}
+.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.2rem;}
+.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:#fbe9e7;border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}
+.pr-num{font-weight:700;color:#c0392b;min-width:19px;flex-shrink:0;}
+.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}
 /* Pauta */
 .pauta-wrap{page-break-before:always;padding-top:0.4rem;}
 .p-head{border-bottom:2px solid #333;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}
@@ -1065,12 +1074,12 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 .pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}
 .forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}
 /* Obtenido por sección y total */
-.obt-row{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;font-size:8.5pt;color:#c0392b;font-weight:700;font-style:italic;margin:0.1rem 0 0.2rem;padding-right:0.3rem;}
+.obt-row{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;font-size:9.5pt;color:#c0392b;font-weight:700;font-style:italic;margin:0.12rem 0 0.22rem;padding-right:0.3rem;}
 .obt-lbl{font-weight:700;}
-.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #c0392b;height:11px;}
+.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #c0392b;height:12px;}
 .obt-pct{font-weight:700;}
-.total-row{display:flex;align-items:baseline;justify-content:center;gap:6px;font-size:10pt;color:#c0392b;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.35rem 0;}
-.total-row .obt-line{min-width:70px;border-bottom:1.5px solid #c0392b;}
+.total-row{display:flex;align-items:baseline;justify-content:center;gap:7px;font-size:11pt;color:#c0392b;font-weight:700;font-style:italic;margin-top:1.2rem;padding:0.4rem 0;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c0392b;}
 @media print{@page{margin:4mm 6mm;}}
 </style></head><body>
 <div class="ph">
