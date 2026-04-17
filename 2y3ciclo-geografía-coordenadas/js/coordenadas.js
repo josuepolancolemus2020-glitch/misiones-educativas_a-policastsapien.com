@@ -1078,7 +1078,7 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 .obt-lbl{font-weight:700;}
 .obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #c0392b;height:12px;}
 .obt-pct{font-weight:700;}
-.total-row{display:flex;align-items:baseline;justify-content:center;gap:7px;font-size:11pt;color:#c0392b;font-weight:700;font-style:italic;margin-top:1.2rem;padding:0.4rem 0;}
+.total-row{display:flex;align-items:baseline;justify-content:center;gap:7px;font-size:11pt;color:#c0392b;font-weight:700;font-style:italic;margin-top:0.3rem;padding:0.2rem 0;page-break-before:avoid;break-before:avoid;}
 .total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c0392b;}
 @media print{@page{margin:4mm 6mm;}}
 </style></head><body>
