@@ -976,16 +976,16 @@ function printEval() {
     const d = window._evalPrintData;
 
     // ── I. Verdadero o Falso — raya antes del enunciado
-    let s1 = `<div class="sec-title">I. Verdadero o Falso <span style="font-weight:400;font-size:8pt;color:#555;">(Escribe V o F)</span><span class="pts-pill">25 pts</span></div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
+    let s1 = `<div class="sec-title">I. Verdadero o Falso <span style="font-weight:400;font-size:8pt;color:#555;">(Escribe V o F)</span></div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
     d.tf.forEach((it, i) => { s1 += `<div class="tf-row"><span class="qn">${i + 1}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`; });
 
     // ── II. Selección múltiple — 2 columnas de preguntas, 4 opciones en fila
-    let s2 = `<div class="sec-title">II. Selección Múltiple<span class="pts-pill">25 pts</span></div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="mc-grid">`;
+    let s2 = `<div class="sec-title">II. Selección Múltiple</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="mc-grid">`;
     d.mc.forEach((it, i) => { const opts = it.o.map((op, oi) => `<label class="mc-opt"><input type="radio" name="mc${i}"> ${op}</label>`).join(''); s2 += `<div class="mc-item"><div class="mc-q"><span class="qn">${i + 6}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`; });
     s2 += `</div>`;
 
     // ── III. Completar
-    let s3 = `<div class="sec-title">III. Completar el espacio<span class="pts-pill">25 pts</span></div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
+    let s3 = `<div class="sec-title">III. Completar el espacio</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
     d.cp.forEach((it, i) => { const q = it.q.replace('___', '<span class="cp-blank"></span>'); s3 += `<div class="cp-row"><span class="qn">${i + 11}.</span><span class="cp-text">${q}</span></div>`; });
 
     // ── IV. Pareados
@@ -995,7 +995,7 @@ function printEval() {
     let colR = '<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';
     d.pr.shuffledDefs.forEach((it, i) => { colR += `<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`; });
     colR += '</div>';
-    let s4 = `<div class="sec-title">IV. Términos Pareados<span class="pts-pill">25 pts</span></div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="pr-grid">${colL}${colR}</div>`;
+    let s4 = `<div class="pr-section"><div class="sec-title">IV. Términos Pareados</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="pr-grid">${colL}${colR}</div></div>`;
 
     // ── Pauta
     let pR = '';
@@ -1025,8 +1025,8 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 .ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
 .ph-crit{font-size:11pt;text-align:center;color:#555;margin-top:0.15rem;}
 /* SECCIONES */
-.sec-title{font-size:9pt;font-weight:700;padding:0.2rem 0.45rem;margin:0.38rem 0 0.18rem;border-left:4px solid #419b88;background:#e4f4f0;display:flex;justify-content:space-between;align-items:center;}
-.pts-pill{font-size:7.5pt;background:#419b88;color:white;padding:0.08rem 0.35rem;border-radius:8px;}
+.sec-title{font-size:9pt;font-weight:700;padding:0.2rem 0.45rem;margin:0.38rem 0 0.18rem;border-left:4px solid #c0392b;background:#fbe9e7;display:flex;justify-content:space-between;align-items:center;}
+.pts-pill{font-size:7.5pt;background:#c0392b;color:white;padding:0.08rem 0.35rem;border-radius:8px;}
 .qn{font-weight:700;min-width:20px;flex-shrink:0;}
 /* V/F */
 .tf-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
@@ -1044,10 +1044,11 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 .cp-text{flex:1;}
 .cp-blank{display:inline-block;min-width:140px;border-bottom:1.5px solid #111;margin:0 0.1rem;}
 /* Pareados */
-.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.25rem 0.5rem;margin-top:0.15rem;}
+.pr-section{break-inside:avoid;page-break-inside:avoid;}
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.25rem 0.5rem;margin-top:0.15rem;break-inside:avoid;page-break-inside:avoid;}
 .pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:0.18rem;}
-.pr-item{font-size:8.5pt;padding:0.28rem 0.3rem;background:#e4f4f0;border-radius:3px;margin-bottom:0.18rem;display:flex;align-items:center;gap:0.2rem;line-height:1.6;}
-.pr-num{font-weight:700;color:#419b88;min-width:17px;flex-shrink:0;}
+.pr-item{font-size:8.5pt;padding:0.28rem 0.3rem;background:#fbe9e7;border-radius:3px;margin-bottom:0.18rem;display:flex;align-items:center;gap:0.2rem;line-height:1.6;break-inside:avoid;page-break-inside:avoid;}
+.pr-num{font-weight:700;color:#c0392b;min-width:17px;flex-shrink:0;}
 .pr-line{display:inline-block;min-width:17px;border-bottom:1.5px solid #111;margin-right:0.12rem;flex-shrink:0;}
 /* Pauta */
 .pauta-wrap{page-break-before:always;padding-top:0.4rem;}
@@ -1064,12 +1065,12 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 .pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}
 .forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}
 /* Obtenido por sección y total */
-.obt-row{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;font-size:8.5pt;color:#16a34a;font-weight:700;font-style:italic;margin:0.1rem 0 0.2rem;padding-right:0.3rem;}
+.obt-row{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;font-size:8.5pt;color:#c0392b;font-weight:700;font-style:italic;margin:0.1rem 0 0.2rem;padding-right:0.3rem;}
 .obt-lbl{font-weight:700;}
-.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #16a34a;height:11px;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #c0392b;height:11px;}
 .obt-pct{font-weight:700;}
-.total-row{display:flex;align-items:baseline;justify-content:center;gap:6px;font-size:10pt;color:#16a34a;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.35rem 0;border-top:1.5px solid #16a34a;border-bottom:1.5px solid #16a34a;}
-.total-row .obt-line{min-width:70px;border-bottom:1.5px solid #16a34a;}
+.total-row{display:flex;align-items:baseline;justify-content:center;gap:6px;font-size:10pt;color:#c0392b;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.35rem 0;}
+.total-row .obt-line{min-width:70px;border-bottom:1.5px solid #c0392b;}
 @media print{@page{margin:4mm 6mm;}}
 </style></head><body>
 <div class="ph">
