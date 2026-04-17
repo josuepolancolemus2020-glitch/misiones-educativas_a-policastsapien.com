@@ -985,26 +985,27 @@ function printEval() {
     const d = window._evalPrintData;
 
     // ── I. Completar (1-5)
-    let s1 = `<div class="sec-title">I. Completar el espacio</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
+    let s1 = `<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;
     d.cp.forEach((it, i) => { const q = it.q.replace('___', '<span class="cp-blank"></span>'); s1 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text">${q}</span></div>`; });
 
     // ── II. Verdadero o Falso (6-10) — raya antes del enunciado
-    let s2 = `<div class="sec-title">II. Verdadero o Falso</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div>`;
+    let s2 = `<div class="sec-title"><span>II. Verdadero o Falso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;
     d.tf.forEach((it, i) => { s2 += `<div class="tf-row"><span class="qn">${i + 6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`; });
 
     // ── III. Selección múltiple (11-15) — 2 columnas de preguntas, 4 opciones en fila
-    let s3 = `<div class="sec-title">III. Selección Múltiple</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="mc-grid">`;
+    let s3 = `<div class="sec-title"><span>III. Selección Múltiple</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="mc-grid">`;
     d.mc.forEach((it, i) => { const opts = it.o.map((op, oi) => `<label class="mc-opt"><input type="radio" name="mc${i}"> ${op}</label>`).join(''); s3 += `<div class="mc-item"><div class="mc-q"><span class="qn">${i + 11}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`; });
     s3 += `</div>`;
 
     // ── IV. Pareados (16-20)
-    let colL = '<div class="pr-col"><div class="pr-head">📌 Términos</div>';
-    d.pr.terms.forEach((it, i) => { colL += `<div class="pr-item"><span class="pr-num">${i + 16}.</span><span class="pr-line"></span>${it.term}</div>`; });
-    colL += '</div>';
-    let colR = '<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';
-    d.pr.shuffledDefs.forEach((it, i) => { colR += `<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`; });
-    colR += '</div>';
-    let s4 = `<div class="pr-section"><div class="sec-title">IV. Términos Pareados</div><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div><div class="pr-grid">${colL}${colR}</div></div>`;
+let colL = '<div class="pr-col"><div class="pr-head">📌 Términos</div>';
+d.pr.terms.forEach((it, i) => { colL += `<div class="pr-item"><span class="pr-num">${i + 16}.</span><span class="pr-line"></span>${it.term}</div>`; });
+colL += '</div>';
+let colR = '<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';
+d.pr.shuffledDefs.forEach((it, i) => { colR += `<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`; });
+colR += '</div>';
+// 👇 ESTA ES LA LÍNEA CORREGIDA 👇
+let s4 = `<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;
 
     // ── Pauta (orden nuevo: I. Completar, II. V/F, III. Selección, IV. Pareados)
     let pR = '';
@@ -1074,7 +1075,7 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 .pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}
 .forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}
 /* Obtenido por sección y total */
-.obt-row{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;font-size:9.5pt;color:#c0392b;font-weight:700;font-style:italic;margin:0.12rem 0 0.22rem;padding-right:0.3rem;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#c0392b;font-weight:700;font-style:italic;}
 .obt-lbl{font-weight:700;}
 .obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #c0392b;height:12px;}
 .obt-pct{font-weight:700;}
