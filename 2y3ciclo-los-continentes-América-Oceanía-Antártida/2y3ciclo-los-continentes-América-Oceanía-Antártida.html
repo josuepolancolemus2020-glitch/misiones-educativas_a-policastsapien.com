@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Los Continentes: América, Oceanía y Antártida | policastsapien.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/continentes-aoa.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Nivel 1</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🌎</div>
+    <div class="hero-text">
+      <h1>Misión <span>Los Continentes: América, Oceanía y Antártida</span></h1>
+      <p class="sub">¡Explora el hemisferio oeste, el océano Pacífico y el continente helado del sur! 🗺️</p>
+      <div class="badge">🌐 II y III Ciclo · Geografía · Ciencias Sociales</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🌎 ¿Qué son estos tres continentes?</h2>
+    <p>En esta misión exploraremos tres continentes muy diferentes entre sí: <strong>América</strong> —el continente donde vivimos—, <strong>Oceanía</strong> —el más pequeño y oceánico— y <strong>Antártida</strong> —el más frío y sin población permanente—. Juntos nos enseñan la enorme diversidad geográfica, cultural y ambiental de nuestro planeta.</p>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Dato clave:</strong> Honduras está ubicada en el corazón de <strong>América Central</strong>. Nuestros lazos más fuertes son con América del Norte (especialmente EE.UU.), y compartimos con Oceanía y Antártida el reto del <strong>cambio climático</strong> que amenaza nuestras costas.</div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🌎 América: El continente de las Américas</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🗺️ Geografía</h4>
+        <p>Área: <strong>42.5 millones km²</strong> · 35 países. Se extiende ~15,000 km de norte a sur. Andes: cordillera más larga del mundo (~7,000 km). Río Amazonas: el más <strong>caudaloso del mundo</strong> (7,062 km).</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🏛️ Regiones</h4>
+        <p><strong>América del Norte:</strong> EE.UU., Canadá, México. <strong>América Central:</strong> Guatemala, Honduras, El Salvador, Nicaragua, Costa Rica, Panamá, Belice. <strong>América del Sur:</strong> Brasil, Argentina, Colombia, Perú y más.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>💰 Economía</h4>
+        <p>EE.UU.: <strong>1ª economía mundial</strong>. Brasil: mayor de Am. del Sur. CAFTA-DR: libre comercio entre EE.UU. y Centroamérica. Mayor productor mundial de maíz y soja.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🎭 Civilizaciones</h4>
+        <p>Cuna de las civilizaciones: <strong>Maya</strong> (Honduras, México, Guatemala), <strong>Azteca</strong> (México), <strong>Inca</strong> (Perú). Sitio arqueológico de <strong>Copán</strong> en Honduras: Patrimonio UNESCO.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🇭🇳 Honduras y América</span><br>
+      <span>EE.UU. recibe más del <span class="hl">50% de las exportaciones hondureñas</span>: café ☕, banano 🍌, textiles, mariscos. El acuerdo <span class="hl2">CAFTA-DR</span> facilita este comercio. Las <span class="hl">remesas</span> desde EE.UU. y Canadá representan ~25% del PIB de Honduras. Honduras es miembro activo de la <span class="hl2">OEA</span>.</span>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>⛰️ Los Andes y el Río Amazonas: maravillas de América</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>⛰️ Los Andes</h4>
+        <p>La <strong>cordillera más larga del mundo</strong> (~7,000 km). Atraviesa Venezuela, Colombia, Ecuador, Perú, Bolivia, Chile y Argentina. Su pico más alto: <strong>Aconcagua (6,961 m)</strong> en Argentina.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>💧 Río Amazonas</h4>
+        <p>El río <strong>más caudaloso del mundo</strong>. Nace en los Andes peruanos y desemboca en el Atlántico (Brasil). La cuenca amazónica alberga el <strong>mayor bosque tropical del planeta</strong>, vital para el clima global.</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">🌏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CONTINENTES ===== -->
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🌏 Oceanía: El continente oceánico</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🗺️ Geografía</h4>
+        <p>Área: <strong>8.5 millones km²</strong> — el más pequeño. Australia ocupa la mayor parte. Islas del Pacífico: <strong>Melanesia, Micronesia y Polinesia</strong>. Monte Kosciuszko: 2,228 m (Australia).</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🪸 Gran Barrera de Coral</h4>
+        <p>El <strong>mayor arrecife de coral del mundo</strong> (2,300 km), frente a la costa nordeste de Australia. Es Patrimonio Natural de la <strong>UNESCO</strong>. Hogar de más de 1,500 especies de peces.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>💰 Economía</h4>
+        <p>Australia: <strong>13ª economía mundial</strong>. Exporta hierro, carbón, oro y productos agropecuarios. Nueva Zelanda lidera la exportación mundial de <strong>lácteos y carne</strong>. Turismo como motor económico.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🎭 Pueblos originarios</h4>
+        <p><strong>Aborígenes australianos</strong>: los habitantes más antiguos del mundo (60,000+ años de presencia). <strong>Maoríes</strong> de Nueva Zelanda: famosos por el <em>haka</em>. Arte rupestre aborigen: el más antiguo del mundo.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🇭🇳 Honduras y Oceanía</span><br>
+      <span>Las relaciones son principalmente a través de la <span class="hl">ONU y organismos del Pacífico</span>. Honduras puede aprender del modelo de <span class="hl2">ecoturismo marino</span> de Australia para proteger sus arrecifes del Caribe. Comparten preocupaciones sobre el <span class="hl">cambio climático</span> y la elevación del nivel del mar.</span>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>❄️ Antártida: El continente helado</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🗺️ Geografía</h4>
+        <p>Área: <strong>14.2 millones km²</strong>. El continente más frío, seco y ventoso del mundo. Temperatura mínima registrada: <strong>-89.2°C</strong>. Monte Vinson: <strong>4,892 m</strong> (punto más alto).</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>💧 Reserva de agua dulce</h4>
+        <p>La Antártida contiene el <strong>70% del agua dulce del planeta</strong> en forma de hielo. Su deshielo por el cambio climático amenaza con elevar el nivel del mar hasta <strong>60 metros</strong>, afectando costas de todo el mundo.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>📜 Tratado Antártico</h4>
+        <p>Firmado en <strong>1959</strong> por 12 países; hoy tiene 54 signatarios. Prohíbe actividades militares y minería comercial. Establece la Antártida como <strong>zona de paz y ciencia</strong>. Ningún país puede reclamar soberanía.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🐧 Fauna</h4>
+        <p>No hay población humana permanente. Solo <strong>científicos</strong> (~4,000 en verano, ~1,000 en invierno). Fauna: <strong>pingüinos</strong> (18 especies en el mundo), focas leopardo, ballenas jorobadas y petreles.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🇭🇳 Honduras y Antártida</span><br>
+      <span>Honduras, como país tropical costero, es <span class="hl">altamente vulnerable</span> al deshielo antártico. El aumento del nivel del mar amenaza zonas costeras como el norte del país. Honduras apoya el <span class="hl2">Acuerdo de París</span> sobre cambio climático, vinculado directamente a la protección del hielo antártico.</span>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔍 Los tres continentes de un vistazo</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🌎 América</div><div class="t-info">42.5M km² · 35 países · CAFTA · Copán</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🌏 Oceanía</div><div class="t-info">8.5M km² · Australia · Gran Barrera Coral</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">❄️ Antártida</div><div class="t-info">14.2M km² · -89°C · 70% agua dulce</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">⛰️ Los Andes</div><div class="t-info">~7,000 km · Am. del Sur · Cordillera más larga</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">💧 Amazonas</div><div class="t-info">7,062 km · Más caudaloso del mundo</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">🐧 Pingüinos</div><div class="t-info">18 especies · Antártida · Sin depredadores terrestres</div></div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🧪 Laboratorio de Continentes</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Selecciona un continente y un aspecto para explorar sus características. ¡Combina todos para aprender!</p>
+    <div id="lab-sentence" class="lab-sentence">🌎 Explorando: <strong>América</strong> → <strong>Geografía</strong></div>
+    <div class="lab-stage">
+      <div id="lab-display" class="lab-display-box"></div>
+    </div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">🌎 Continente:</span>
+        <button class="lab-btn lab-cont-btn" data-continent="america" onclick="labShowContinent('america')">🌎 América</button>
+        <button class="lab-btn lab-cont-btn" data-continent="oceania" onclick="labShowContinent('oceania')">🌏 Oceanía</button>
+        <button class="lab-btn lab-cont-btn" data-continent="antartica" onclick="labShowContinent('antartica')">❄️ Antártida</button>
+      </div>
+      <div class="lab-group">
+        <span class="lab-group-label">📌 Aspecto:</span>
+        <button class="lab-btn lab-asp-btn" data-aspecto="geo" onclick="labShowAspecto('geo')">🗺️ Geografía</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="eco" onclick="labShowAspecto('eco')">💰 Economía</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="soc" onclick="labShowAspecto('soc')">👥 Sociedad</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="cul" onclick="labShowAspecto('cul')">🎭 Cultura</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="hn" onclick="labShowAspecto('hn')">🇭🇳 Con HN</button>
+      </div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fa" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 15</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 12</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Conceptos</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un término del banco y toca la columna donde pertenece.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 10</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el concepto geográfico rápidamente.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="ansReto('a')">Opción A</button>
+        <button class="btn btn-sec" onclick="ansReto('b')">Opción B</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔄 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · Los Continentes: América, Oceanía y Antártida · II y III Ciclo · Geografía · Ciencias Sociales</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final — Los Continentes: América, Oceanía y Antártida</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🌎</span>
+  </button>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Los Continentes: América, Oceanía y Antártida</div>
+    <div class="diploma-mascot" aria-hidden="true">🌎</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">🌐</span> Continentes</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
+  <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
+  <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/continentes-aoa.js"></script>
+</body>
+</html>
