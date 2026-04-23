@@ -304,9 +304,12 @@
     <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
       <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
       <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-sec" onclick="toggleSteps()">🔍 Ver paso a paso</button>
       <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
     </div>
-    <div id="fbQz" class="fb" role="alert"></div>
+    <div id="fbQz" class="fb" role="status" aria-live="polite"></div>
+    <div class="fb-context" id="fbQzContext" role="status" aria-live="polite"></div>
+    <div class="step-by-step" id="qzSteps"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
     <span class="nsb-icon">🗂️</span>
@@ -493,7 +496,7 @@
   <div class="card ac-teal">
     <h2>🏆 Reto Final — ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el término decimal rápidamente.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ Intento registrado (sin penalización)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
     <div class="game" id="gameBox" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
@@ -608,6 +611,10 @@
     <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
     <div class="diploma-date" id="diplDate"></div>
     <div class="diploma-ach" id="diplAch"></div>
+    <div class="mastery-wrap">
+      <h3 class="mastery-head">📊 Dominio por Tema</h3>
+      <div id="masteryBars"></div>
+    </div>
     <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
     <hr style="margin:0.8rem 0;border-color:var(--border);">
     <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
@@ -642,6 +649,13 @@
   <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
 </nav>
 
+<!-- ==================== SELECTOR DE MODO ==================== -->
+<div class="support-selector" role="toolbar" aria-label="Modo de aprendizaje">
+  <button class="support-btn active" onclick="setSupportMode('guided')">📖 Guiado</button>
+  <button class="support-btn" onclick="setSupportMode('autonomous')">🧠 Autónomo</button>
+  <button class="support-btn" onclick="setSupportMode('challenge')">⚡ Reto</button>
+</div>
+
 <!-- ==================== FOOTER ==================== -->
 <footer class="credits">
   <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
@@ -657,8 +671,26 @@
     <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
     <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
     <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+    <button class="cred-btn" onclick="exportProgressCSV()">📥 Exportar Progreso</button>
   </div>
 </footer>
+
+<!-- ==================== MODAL METACOGNICIÓN ==================== -->
+<div class="metacog-modal" id="metacogModal" role="dialog" aria-modal="true" aria-labelledby="metacogTitle">
+  <div class="metacog-card">
+    <h3 id="metacogTitle">🧠 Reflexión de Aprendizaje</h3>
+    <p>Identifica tu error principal:</p>
+    <label class="metacog-check"><input type="checkbox" value="decimas"> Confundí décimas con centésimas</label>
+    <label class="metacog-check"><input type="checkbox" value="punto"> No alineé el punto decimal</label>
+    <label class="metacog-check"><input type="checkbox" value="calculo"> Error de cálculo/operación</label>
+    <label class="metacog-check"><input type="checkbox" value="contexto"> No entendí el contexto real</label>
+    <textarea class="metacog-textarea" placeholder="¿Qué haré diferente la próxima vez?"></textarea>
+    <div class="metacog-actions">
+      <button class="btn btn-d" onclick="closeMetacog()">Cerrar</button>
+      <button class="btn btn-g" onclick="saveMetacog()">💾 Guardar reflexión</button>
+    </div>
+  </div>
+</div>
 
 <script src="js/decimales.js"></script>
 </body>
