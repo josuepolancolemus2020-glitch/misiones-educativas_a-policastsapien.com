@@ -371,6 +371,117 @@
     <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
     <div id="fbCmp" class="fb" role="alert"></div>
   </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== WIDGETS ==================== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <!-- Widget 1: Recta Numérica -->
+  <div class="card ac-teal">
+    <h2>📏 Ubica en la Recta Numérica</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP al ubicar correctamente (primera vez por número)</p>
+    <div class="nl-challenge">Ubica el número: <strong id="nlTarget" class="nl-num">0.3</strong></div>
+    <div class="nl-container">
+      <svg id="nlSvg" viewBox="0 0 400 80" width="100%" xmlns="http://www.w3.org/2000/svg" style="cursor:crosshair;display:block;" onclick="nlClick(event)"></svg>
+    </div>
+    <p style="font-size:0.75rem;color:var(--gray);text-align:center;margin-top:0.2rem;">↑ Haz clic en la posición correcta del número</p>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nlNext()">▶ Siguiente número</button>
+      <button class="btn btn-d" onclick="nlReset()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbNl" class="fb" role="alert"></div>
+  </div>
+
+  <!-- Widget 2: Ordenar Decimales -->
+  <div class="card ac-gold">
+    <h2>↕️ Ordena de Menor a Mayor</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por grupo)</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ordenar los números de <strong>menor a mayor</strong>:</p>
+    <div class="sort-list" id="sortList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkSort()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextSort()">🔄 Nuevo grupo</button>
+    </div>
+    <div id="fbSort" class="fb" role="alert"></div>
+  </div>
+
+  <!-- Widget 3: Constructor de Decimales -->
+  <div class="card ac-jade">
+    <h2>🔧 Constructor de Decimales</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por número construido correctamente</p>
+    <div class="bldr-challenge">Forma el número: <strong id="bldrTarget" class="bldr-num">0.35</strong></div>
+    <div class="bldr-display" id="bldrDisplay">0.000</div>
+    <div class="bldr-slots">
+      <div class="bldr-slot">
+        <div class="bldr-label">Décimas</div>
+        <div class="bldr-controls">
+          <button class="bldr-btn" onclick="bldrChange('d',1)">▲</button>
+          <div class="bldr-digit" id="bldrD">0</div>
+          <button class="bldr-btn" onclick="bldrChange('d',-1)">▼</button>
+        </div>
+        <div class="bldr-pos">1/10</div>
+      </div>
+      <div class="bldr-slot">
+        <div class="bldr-label">Centésimas</div>
+        <div class="bldr-controls">
+          <button class="bldr-btn" onclick="bldrChange('c',1)">▲</button>
+          <div class="bldr-digit" id="bldrC">0</div>
+          <button class="bldr-btn" onclick="bldrChange('c',-1)">▼</button>
+        </div>
+        <div class="bldr-pos">1/100</div>
+      </div>
+      <div class="bldr-slot">
+        <div class="bldr-label">Milésimas</div>
+        <div class="bldr-controls">
+          <button class="bldr-btn" onclick="bldrChange('m',1)">▲</button>
+          <div class="bldr-digit" id="bldrM">0</div>
+          <button class="bldr-btn" onclick="bldrChange('m',-1)">▼</button>
+        </div>
+        <div class="bldr-pos">1/1,000</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkBldr()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextBldr()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetBldr()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbBldr" class="fb" role="alert"></div>
+  </div>
+
+  <!-- Widget 4: Comparador Visual -->
+  <div class="card ac-purple">
+    <h2>⚖️ Comparador Visual de Decimales</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por comparación correcta</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">El número <strong>A</strong> (izquierda) es… ¿qué relación tiene con <strong>B</strong> (derecha)?</p>
+    <div class="cmp-vis-wrap">
+      <div class="cmp-vis-side">
+        <div class="cmp-vis-label">A</div>
+        <div class="cmp-vis-num" id="cmpVisA">0.75</div>
+        <div class="cmp-vis-bar-wrap"><div class="cmp-vis-bar" id="cmpVisBarA"></div></div>
+        <div class="cmp-vis-pct" id="cmpVisPctA">75/100</div>
+      </div>
+      <div class="cmp-vis-btns">
+        <button class="cmp-sym-btn" data-rel="gt" onclick="ansComp('gt')">Mayor ›</button>
+        <button class="cmp-sym-btn" data-rel="eq" onclick="ansComp('eq')">=  Igual</button>
+        <button class="cmp-sym-btn" data-rel="lt" onclick="ansComp('lt')">‹ Menor</button>
+      </div>
+      <div class="cmp-vis-side">
+        <div class="cmp-vis-label">B</div>
+        <div class="cmp-vis-num" id="cmpVisB">0.8</div>
+        <div class="cmp-vis-bar-wrap"><div class="cmp-vis-bar cmp-vis-bar-b" id="cmpVisBarB"></div></div>
+        <div class="cmp-vis-pct" id="cmpVisPctB">8/10</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;justify-content:center;">
+      <button class="btn btn-pri" onclick="nextComp()">▶ Siguiente par</button>
+    </div>
+    <div id="fbComp" class="fb" role="alert"></div>
+  </div>
+
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
     <span class="nsb-icon">🏆</span>
     <span class="nsb-arrow">→</span>
@@ -523,6 +634,7 @@
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>

@@ -20,8 +20,8 @@ function fb(id, msg, isOk) {
 const SAVE_KEY = 'matematica_decimales_v1';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1, unlockedAch = [], darkMode = false, prevLevel = 0;
-const TOTAL_SECTIONS = 12;
-const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), sopa: new Set() };
+const TOTAL_SECTIONS = 13;
+const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), sopa: new Set(), nl: new Set(), sort: new Set(), bldr: new Set(), compVis: new Set() };
 
 // ===================== SONIDO =====================
 let sndOn = true; let AC = null;
@@ -470,6 +470,155 @@ function decLabInit(){
   decLabUpdateSentence();
 }
 
+// ===================== WIDGET: RECTA NUMÉRICA =====================
+const nlNumbers=[
+  {v:0.3,label:'0.3',range:[0,1]},{v:0.7,label:'0.7',range:[0,1]},
+  {v:0.15,label:'0.15',range:[0,1]},{v:0.85,label:'0.85',range:[0,1]},
+  {v:0.45,label:'0.45',range:[0,1]},{v:0.6,label:'0.6',range:[0,1]},
+  {v:1.2,label:'1.2',range:[0,2]},{v:1.5,label:'1.5',range:[0,2]},
+  {v:0.25,label:'0.25',range:[0,1]},{v:1.75,label:'1.75',range:[0,2]},
+];
+let nlIdx=0,nlAnswered=false;
+function buildNl(){
+  const item=nlNumbers[nlIdx];
+  const [minR,maxR]=item.range;
+  document.getElementById('nlTarget').textContent=item.label;
+  nlAnswered=false;
+  const svg=document.getElementById('nlSvg');
+  if(!svg)return;
+  const W=400,pad=36,lY=52,lineW=W-2*pad;
+  const steps=Math.round((maxR-minR)/0.1);
+  let c=`<text x="${W/2}" y="16" text-anchor="middle" font-size="12.5" fill="var(--sec)" font-family="Fredoka,sans-serif" font-weight="700">¿Dónde está ${item.label}? ↓ Haz clic aquí</text>`;
+  c+=`<line x1="${pad}" y1="${lY}" x2="${W-pad}" y2="${lY}" stroke="var(--pri)" stroke-width="3" stroke-linecap="round"/>`;
+  c+=`<polygon points="${W-pad+2},${lY} ${W-pad-7},${lY-4} ${W-pad-7},${lY+4}" fill="var(--pri)"/>`;
+  for(let i=0;i<=steps;i++){
+    const val=Math.round((minR+i*0.1)*100)/100;
+    const x=pad+(i/steps)*lineW;
+    const major=i%5===0;
+    c+=`<line x1="${x}" y1="${lY-(major?10:5)}" x2="${x}" y2="${lY+(major?10:5)}" stroke="${major?'var(--pri)':'rgba(25,118,210,0.4)'}" stroke-width="${major?2:1}"/>`;
+    if(major){const lbl=val===Math.floor(val)?val.toFixed(1):val;c+=`<text x="${x}" y="${lY+24}" text-anchor="middle" font-size="11" fill="var(--dark)" font-family="Fredoka,sans-serif">${lbl}</text>`;}
+  }
+  svg.innerHTML=c;
+  svg._nlMin=minR;svg._nlMax=maxR;svg._nlLY=lY;svg._nlPad=pad;svg._nlLineW=lineW;
+  document.getElementById('fbNl').classList.remove('show');
+}
+function nlClick(e){
+  if(nlAnswered)return;
+  const svg=document.getElementById('nlSvg');
+  const rect=svg.getBoundingClientRect();
+  if(rect.width===0)return;
+  const item=nlNumbers[nlIdx];
+  const minR=svg._nlMin,maxR=svg._nlMax,pad=svg._nlPad,lineW=svg._nlLineW,lY=svg._nlLY;
+  const W=400,svgScale=W/rect.width;
+  const clickX=(e.clientX-rect.left)*svgScale;
+  const clickVal=minR+((clickX-pad)/lineW)*(maxR-minR);
+  if(clickVal<minR-0.05||clickVal>maxR+0.05)return;
+  const xCorrect=pad+((item.v-minR)/(maxR-minR))*lineW;
+  const xClicked=Math.max(pad,Math.min(W-pad,clickX));
+  const tol=0.06*(maxR-minR);
+  const isOk=Math.abs(clickVal-item.v)<=tol;
+  const mc=isOk?'var(--jade)':'var(--red)';
+  svg.innerHTML+=`<circle cx="${xClicked}" cy="${lY}" r="8" fill="${mc}" opacity="0.9"/><text x="${xClicked}" y="${lY-14}" text-anchor="middle" font-size="10" fill="${mc}" font-family="Fredoka,sans-serif">Tú</text>`;
+  if(!isOk)svg.innerHTML+=`<circle cx="${xCorrect}" cy="${lY}" r="9" fill="var(--jade)" opacity="0.85"/><text x="${xCorrect}" y="${lY-14}" text-anchor="middle" font-size="10" fill="var(--jade)" font-family="Fredoka,sans-serif">${item.label}</text>`;
+  nlAnswered=true;
+  if(isOk){fb('fbNl',`¡Muy bien! Ubicaste ${item.label} correctamente. +3 XP`,true);if(!xpTracker.nl.has(nlIdx)){xpTracker.nl.add(nlIdx);pts(3);}sfx('ok');}
+  else{fb('fbNl',`Casi. El ${item.label} está marcado en verde para que lo veas.`,false);sfx('no');}
+}
+function nlNext(){sfx('click');nlIdx=(nlIdx+1)%nlNumbers.length;buildNl();}
+function nlReset(){sfx('click');nlIdx=0;buildNl();}
+
+// ===================== WIDGET: ORDENAR DECIMALES =====================
+const sortGroups=[
+  [0.3,0.7,0.1,0.5,0.9],
+  [1.5,0.75,2.0,0.25,1.25],
+  [3.14,0.99,1.5,2.07,0.5],
+  [0.08,0.35,0.8,0.12,0.45],
+  [1.1,0.9,1.01,0.99,1.0],
+];
+let currentSortIdx=0,sortItems=[];
+function _fmtN(n){const s=n.toString();return s.includes('.')?s:s+'.0';}
+function buildSort(){sortItems=_shuffle([...sortGroups[currentSortIdx]]);renderSort();document.getElementById('fbSort').classList.remove('show');}
+function renderSort(){
+  const list=document.getElementById('sortList');if(!list)return;list.innerHTML='';
+  sortItems.forEach((num,i)=>{
+    const div=document.createElement('div');div.className='sort-item';
+    div.innerHTML=`<div class="sort-arrows"><button class="sort-arrow" onclick="sortMove(${i},-1)"${i===0?' disabled':''}>▲</button><button class="sort-arrow" onclick="sortMove(${i},1)"${i===sortItems.length-1?' disabled':''}>▼</button></div><div class="sort-item-num">${_fmtN(num)}</div>`;
+    list.appendChild(div);
+  });
+}
+function sortMove(idx,dir){sfx('click');const ni=idx+dir;if(ni<0||ni>=sortItems.length)return;[sortItems[idx],sortItems[ni]]=[sortItems[ni],sortItems[idx]];renderSort();}
+function checkSort(){
+  const sorted=[...sortItems].sort((a,b)=>a-b);
+  const isOk=sortItems.every((v,i)=>v===sorted[i]);
+  document.querySelectorAll('.sort-item').forEach((el,i)=>{el.classList.remove('sort-ok','sort-no');el.classList.add(sortItems[i]===sorted[i]?'sort-ok':'sort-no');});
+  if(isOk){fb('fbSort','¡Orden perfecto! De menor a mayor. +4 XP',true);if(!xpTracker.sort.has(currentSortIdx)){xpTracker.sort.add(currentSortIdx);pts(4);}sfx('fan');fin('s-widgets');}
+  else{fb('fbSort','Hay elementos fuera de orden. Los marcados en rojo están incorrectos.',false);sfx('no');}
+}
+function nextSort(){sfx('click');currentSortIdx=(currentSortIdx+1)%sortGroups.length;buildSort();}
+
+// ===================== WIDGET: CONSTRUCTOR DE DECIMALES =====================
+const bldrChallenges=[
+  {target:'0.35',d:3,c:5,m:0},{target:'0.7',d:7,c:0,m:0},
+  {target:'0.08',d:0,c:8,m:0},{target:'0.125',d:1,c:2,m:5},
+  {target:'0.4',d:4,c:0,m:0},{target:'0.75',d:7,c:5,m:0},
+  {target:'0.009',d:0,c:0,m:9},{target:'0.236',d:2,c:3,m:6},
+  {target:'0.5',d:5,c:0,m:0},{target:'0.048',d:0,c:4,m:8},
+];
+let bldrIdx=0,bldrD=0,bldrC=0,bldrM=0,bldrDone=false;
+function buildBldr(){bldrD=0;bldrC=0;bldrM=0;bldrDone=false;const ch=bldrChallenges[bldrIdx];const el=document.getElementById('bldrTarget');if(el)el.textContent=ch.target;updateBldrDisplay();const fbEl=document.getElementById('fbBldr');if(fbEl)fbEl.classList.remove('show');}
+function bldrChange(pos,dir){if(bldrDone)return;sfx('click');if(pos==='d')bldrD=(bldrD+dir+10)%10;else if(pos==='c')bldrC=(bldrC+dir+10)%10;else bldrM=(bldrM+dir+10)%10;updateBldrDisplay();}
+function updateBldrDisplay(){
+  const dEl=document.getElementById('bldrD'),cEl=document.getElementById('bldrC'),mEl=document.getElementById('bldrM'),disp=document.getElementById('bldrDisplay');
+  if(dEl)dEl.textContent=bldrD;if(cEl)cEl.textContent=bldrC;if(mEl)mEl.textContent=bldrM;
+  if(disp)disp.textContent='0.'+bldrD+bldrC+bldrM;
+}
+function checkBldr(){
+  const ch=bldrChallenges[bldrIdx];
+  if(bldrD===ch.d&&bldrC===ch.c&&bldrM===ch.m){
+    fb('fbBldr',`¡Correcto! Construiste ${ch.target} = 0.${ch.d}${ch.c}${ch.m}. +4 XP`,true);
+    if(!xpTracker.bldr.has(bldrIdx)){xpTracker.bldr.add(bldrIdx);pts(4);}sfx('ok');bldrDone=true;
+  }else{fb('fbBldr',`Aún no. Pista: décimas=${ch.d}, centésimas=${ch.c}, milésimas=${ch.m}.`,false);sfx('no');}
+}
+function nextBldr(){sfx('click');bldrIdx=(bldrIdx+1)%bldrChallenges.length;buildBldr();}
+function resetBldr(){sfx('click');bldrIdx=0;buildBldr();}
+
+// ===================== WIDGET: COMPARADOR VISUAL =====================
+const compVisPairs=[
+  {a:0.75,b:0.8,aL:'0.75',bL:'0.8',rel:'lt',aF:'75/100',bF:'8/10'},
+  {a:0.5,b:0.5,aL:'0.50',bL:'0.500',rel:'eq',aF:'5/10',bF:'500/1,000'},
+  {a:0.3,b:0.25,aL:'0.3',bL:'0.25',rel:'gt',aF:'3/10',bF:'25/100'},
+  {a:1.5,b:1.05,aL:'1.5',bL:'1.05',rel:'gt',aF:'15/10',bF:'105/100'},
+  {a:0.09,b:0.9,aL:'0.09',bL:'0.9',rel:'lt',aF:'9/100',bF:'9/10'},
+  {a:0.125,b:0.25,aL:'0.125',bL:'0.25',rel:'lt',aF:'125/1,000',bF:'25/100'},
+  {a:2.0,b:1.99,aL:'2.0',bL:'1.99',rel:'gt',aF:'200/100',bF:'199/100'},
+  {a:0.7,b:0.70,aL:'0.7',bL:'0.70',rel:'eq',aF:'7/10',bF:'70/100'},
+];
+let compVisIdx=0,compAnswered=false,_compTimer=null;
+function buildComp(){
+  const p=compVisPairs[compVisIdx];
+  const setT=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  setT('cmpVisA',p.aL);setT('cmpVisB',p.bL);setT('cmpVisPctA',p.aF);setT('cmpVisPctB',p.bF);
+  const mx=Math.max(p.a,p.b);
+  const bA=document.getElementById('cmpVisBarA'),bB=document.getElementById('cmpVisBarB');
+  if(bA)bA.style.width=(p.a/mx*100)+'%';if(bB)bB.style.width=(p.b/mx*100)+'%';
+  document.querySelectorAll('.cmp-sym-btn').forEach(b=>b.classList.remove('cmp-ok','cmp-no'));
+  compAnswered=false;const fbEl=document.getElementById('fbComp');if(fbEl)fbEl.classList.remove('show');
+}
+function ansComp(rel){
+  if(compAnswered)return;compAnswered=true;
+  const p=compVisPairs[compVisIdx];const isOk=rel===p.rel;
+  const syms={lt:'<',eq:'=',gt:'>'};
+  document.querySelectorAll('.cmp-sym-btn').forEach(b=>{
+    const bRel=b.dataset.rel;
+    if(bRel===rel)b.classList.add(isOk?'cmp-ok':'cmp-no');
+    if(!isOk&&bRel===p.rel)b.classList.add('cmp-ok');
+  });
+  if(isOk){fb('fbComp',`¡Correcto! ${p.aL} ${syms[p.rel]} ${p.bL}. +3 XP`,true);if(!xpTracker.compVis.has(compVisIdx)){xpTracker.compVis.add(compVisIdx);pts(3);}sfx('ok');}
+  else{fb('fbComp',`La relación correcta es: ${p.aL} ${syms[p.rel]} ${p.bL}`,false);sfx('no');}
+  _compTimer=setTimeout(()=>nextComp(),2500);
+}
+function nextComp(){if(_compTimer){clearTimeout(_compTimer);_compTimer=null;}sfx('click');compVisIdx=(compVisIdx+1)%compVisPairs.length;buildComp();}
+
 function checkLabChallenge(){
   const el=document.getElementById('labChallengeText');
   if(LAB_STATE.entero&&!LAB_STATE.decimas&&LAB_STATE.centesimas&&LAB_STATE.milesimas){
@@ -658,6 +807,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadProgress();
   upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval();
   updateRetoButtons(); decLabInit(); renderAchPanel();
+  buildNl(); buildSort(); buildBldr(); buildComp();
   document.addEventListener('click',function(e){ const panel=document.getElementById('achPanel'); const btn=document.getElementById('achBtn'); if(panel.classList.contains('open')&&!panel.contains(e.target)&&e.target!==btn) panel.classList.remove('open'); });
   document.addEventListener('click',function(e){ if(e.target===document.getElementById('diplomaOverlay')) closeDiploma(); });
   const savedName=localStorage.getItem('nombreEstudianteDecimales');
