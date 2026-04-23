@@ -1,11 +1,3 @@
-(function() {
-'use strict';
-// 🎓 PEDAGOGÍA: IIFE — encapsula el módulo, evita colisión con otros scripts
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-let supportMode = 'guided';
-let consecutiveErrors = 0;
-let errorLog = [];
-
 // ===================== ACCESIBILIDAD =====================
 function toggleLetra() {
   document.body.classList.toggle('letra-grande');
@@ -25,8 +17,7 @@ function fb(id, msg, isOk) {
 }
 
 // ===================== VARIABLES GLOBALES =====================
-const SAVE_KEY = 'matematica_decimales_v2';
-const _LEGACY_KEY = 'matematica_decimales_v1';
+const SAVE_KEY = 'matematica_decimales_v1';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1, unlockedAch = [], darkMode = false, prevLevel = 0;
 const TOTAL_SECTIONS = 13;
@@ -59,20 +50,16 @@ function initTheme(){ const s=localStorage.getItem(SAVE_KEY+'_theme'); const sys
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress(){
-  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, xp, supportMode, errorLog:errorLog.slice(-50)})); }catch(e){}
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, xp})); }catch(e){}
 }
 function loadProgress(){
   try{
-    // 🎓 PEDAGOGÍA: Migración de v1 → v2 para no perder progreso existente
-    const raw=localStorage.getItem(SAVE_KEY)||localStorage.getItem(_LEGACY_KEY);
-    const s=JSON.parse(raw);
+    const s=JSON.parse(localStorage.getItem(SAVE_KEY));
     if(!s) return;
     if(s.doneSections&&Array.isArray(s.doneSections)) s.doneSections.forEach(id=>{ done.add(id); const b=document.querySelector(`[data-s="${id}"]`); if(b) b.classList.add('done'); });
     if(s.unlockedAch&&Array.isArray(s.unlockedAch)) unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum) evalFormNum=s.evalFormNum;
     if(s.xp!==undefined){ xp=s.xp; updateXPBar(); }
-    if(s.supportMode) supportMode=s.supportMode;
-    if(s.errorLog&&Array.isArray(s.errorLog)) errorLog=s.errorLog;
   }catch(e){}
 }
 
@@ -84,21 +71,13 @@ const ACHIEVEMENTS = {
   id_master:{icon:'🔍',label:'Identificador maestro'},
   reto_hero:{icon:'🏆',label:'Héroe del reto final'},
   nivel3:{icon:'🔭',label:'¡Explorador alcanzado! Nivel 3'},
-  nivel5:{icon:'🔥',label:'¡Campeón alcanzado! Nivel 6'},
-  // 🎓 PEDAGOGÍA: Insignias de proceso — valoran el esfuerzo, no solo el resultado
-  perseverancia:{icon:'💪',label:'Perseverancia: superaste 3 errores seguidos'},
-  analista:{icon:'🔬',label:'Analista: consultaste el paso a paso'},
-  reflector:{icon:'🪞',label:'Reflexivo: completaste una autoevaluación'},
+  nivel5:{icon:'🔥',label:'¡Campeón alcanzado! Nivel 6'}
 };
 function unlockAchievement(id){ if(unlockedAch.includes(id)) return; unlockedAch.push(id); sfx('ach'); showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label); launchConfetti(); renderAchPanel(); saveProgress(); }
 function renderAchPanel(){ const list=document.getElementById('achList'); list.innerHTML=''; Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{ const div=document.createElement('div'); div.className='ach-item'+(unlockedAch.includes(id)?'':' locked'); div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`; list.appendChild(div); }); }
 function toggleAchPanel(){ sfx('click'); document.getElementById('achPanel').classList.toggle('open'); }
 function showToast(msg){ let t=document.querySelector('.toast'); if(!t){ t=document.createElement('div'); t.className='toast'; document.body.appendChild(t); } t.textContent=msg; t.style.display='block'; clearTimeout(t._tid); t._tid=setTimeout(()=>t.style.display='none',3200); }
-function launchConfetti(){
-  // 🎓 PEDAGOGÍA: Respeta prefers-reduced-motion — no lanza confeti si hay sensibilidad
-  if(reduceMotion) return;
-  const colors=['#1976d2','#f57c00','#00b894','#fdcb6e','#6c5ce7']; for(let i=0;i<60;i++){ const c=document.createElement('div'); c.className='confetti-piece'; c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`; document.body.appendChild(c); c.addEventListener('animationend',()=>c.remove()); }
-}
+function launchConfetti(){ const colors=['#1976d2','#f57c00','#00b894','#fdcb6e','#6c5ce7']; for(let i=0;i<60;i++){ const c=document.createElement('div'); c.className='confetti-piece'; c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`; document.body.appendChild(c); c.addEventListener('animationend',()=>c.remove()); } }
 
 // ===================== XP =====================
 const lvls=[{t:0,n:'Novato ✏️'},{t:25,n:'Aprendiz 📐'},{t:55,n:'Explorador 🔭'},{t:90,n:'Detective 🔍'},{t:130,n:'Experto 📊'},{t:165,n:'Campeón 🔥'},{t:190,n:'Maestro 🎓'}];
@@ -165,36 +144,8 @@ function checkQz(){
   if(qzSel<0) return fb('fbQz','Selecciona una respuesta.',false);
   qzDone=true;
   const opts=document.querySelectorAll('.qz-opt');
-  const ctxEl=document.getElementById('fbQzContext');
-  const stepsEl=document.getElementById('qzSteps');
-  if(qzSel===qzData[qzIdx].c){
-    opts[qzSel].classList.add('correct');
-    fb('fbQz','¡Correcto! +5 XP',true);
-    if(ctxEl){ctxEl.textContent='';ctxEl.classList.remove('show');}
-    if(stepsEl) stepsEl.classList.remove('show');
-    // 🎓 PEDAGOGÍA: Reinicia contador de errores consecutivos al acertar
-    if(consecutiveErrors>=3) unlockAchievement('perseverancia');
-    consecutiveErrors=0;
-    if(!xpTracker.qz.has(qzIdx)){ xpTracker.qz.add(qzIdx); pts(5); }
-    sfx('ok');
-    setTimeout(()=>{ qzIdx++; qzSel=-1; showQz(); },1600);
-  } else {
-    opts[qzSel].classList.add('wrong');
-    opts[qzData[qzIdx].c].classList.add('correct');
-    const _fbMsg=qzData[qzIdx].feedback||'Incorrecto. Revisa la respuesta correcta.';
-    fb('fbQz',_fbMsg,false);
-    // 🎓 PEDAGOGÍA: Feedback contextual con sugerencia procedimental (evaluación formativa)
-    if(ctxEl){
-      const proc=qzData[qzIdx].procedure||'Revisa la sección Aprende o consulta la tabla de valor posicional.';
-      ctxEl.innerHTML=`<strong>💡 Sugerencia:</strong> ${proc}`;
-      ctxEl.classList.add('show');
-    }
-    consecutiveErrors++;
-    sfx('no');
-    // 🎓 PEDAGOGÍA: Tras 3 errores seguidos, activa reflexión metacognitiva (UDL)
-    if(consecutiveErrors>=3) setTimeout(()=>showMetacog(),2000);
-    setTimeout(()=>{ qzIdx++; qzSel=-1; showQz(); },3500);
-  }
+  if(qzSel===qzData[qzIdx].c){ opts[qzSel].classList.add('correct'); fb('fbQz','¡Correcto! +5 XP',true); if(!xpTracker.qz.has(qzIdx)){ xpTracker.qz.add(qzIdx); pts(5); } sfx('ok'); setTimeout(()=>{ qzIdx++; qzSel=-1; showQz(); },1600); }
+  else{ opts[qzSel].classList.add('wrong'); opts[qzData[qzIdx].c].classList.add('correct'); const _fbMsg=qzData[qzIdx].feedback||'Incorrecto. Revisa la respuesta correcta.'; fb('fbQz',_fbMsg,false); sfx('no'); setTimeout(()=>{ qzIdx++; qzSel=-1; showQz(); },3500); }
 }
 function useHintQz(){
   if(qzDone) return;
@@ -367,10 +318,7 @@ function updateRetoButtons(){ const pair=retoPairs[currentRetoPairIdx]; document
 function startReto(){ if(retoRunning)return; sfx('click'); retoRunning=true; retoOk=0; retoErr=0; retoSec=30; retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]); showRetoWord(); const _fill=document.getElementById('retoBarFill'); if(_fill){_fill.style.width='100%';_fill.style.background='var(--jade)';}
   retoTimerInt=setInterval(()=>{ retoSec--; sfx('tick'); document.getElementById('retoTimer').textContent='⏱ '+retoSec; if(retoSec<=10) document.getElementById('retoTimer').style.color='var(--red)'; const fill=document.getElementById('retoBarFill'); if(fill){fill.style.width=(retoSec/30*100)+'%';if(retoSec<=10)fill.style.background='var(--red)';} if(retoSec<=0){ clearInterval(retoTimerInt); endReto(); } },1000); }
 function showRetoWord(){ if(retoPool.length===0) retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]); retoCurrent=retoPool.pop(); document.getElementById('retoWord').textContent=retoCurrent.w; }
-function ansReto(t){ if(!retoRunning||!retoCurrent)return; const firstPlay=!xpTracker.reto.has(currentRetoPairIdx); if(t===retoCurrent.t){ sfx('ok'); retoOk++; if(firstPlay) pts(1); } else{ sfx('no'); retoErr++;
-    // 🎓 PEDAGOGÍA: Elimina penalización para ambiente de bajo riesgo (growth mindset)
-    updateAriaLive('retoScore','Intento registrado. La respuesta correcta era: '+(retoCurrent?retoCurrent.t:''));
-    const _gb=document.getElementById('gameBox'); if(_gb){_gb.classList.remove('shake-error');void _gb.offsetWidth;_gb.classList.add('shake-error');} } document.getElementById('retoScore').textContent=`✔ ${retoOk} correctas | ✗ ${retoErr} errores`; showRetoWord(); }
+function ansReto(t){ if(!retoRunning||!retoCurrent)return; const firstPlay=!xpTracker.reto.has(currentRetoPairIdx); if(t===retoCurrent.t){ sfx('ok'); retoOk++; if(firstPlay) pts(1); } else{ sfx('no'); retoErr++; if(firstPlay) pts(-1); const _gb=document.getElementById('gameBox'); if(_gb){_gb.classList.remove('shake-error');void _gb.offsetWidth;_gb.classList.add('shake-error');} } document.getElementById('retoScore').textContent=`✔ ${retoOk} correctas | ✗ ${retoErr} errores`; showRetoWord(); }
 function endReto(){ retoRunning=false; document.getElementById('retoWord').textContent='🏁 ¡Tiempo!'; document.getElementById('retoTimer').style.color='var(--pri)'; xpTracker.reto.add(currentRetoPairIdx); const total=retoOk+retoErr; const pct=total>0?Math.round((retoOk/total)*100):0; fb('fbReto',`Resultado: ${retoOk}/${total} (${pct}%) ¡Bien hecho!`,true); fin('s-reto'); sfx('fan'); unlockAchievement('reto_hero'); }
 function nextRetoPair(){ sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0; currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; updateRetoButtons(); document.getElementById('retoTimer').textContent='⏱ 30'; document.getElementById('retoTimer').style.color='var(--pri)'; document.getElementById('retoWord').textContent='¡Prepárate!'; document.getElementById('retoScore').textContent='✔ 0 correctas | ✗ 0 errores'; document.getElementById('fbReto').classList.remove('show'); showToast(`🔄 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`); }
 function resetReto(){ sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0; document.getElementById('retoTimer').textContent='⏱ 30'; document.getElementById('retoTimer').style.color='var(--pri)'; document.getElementById('retoWord').textContent='¡Prepárate!'; document.getElementById('retoScore').textContent='✔ 0 correctas | ✗ 0 errores'; document.getElementById('fbReto').classList.remove('show'); }
@@ -838,7 +786,6 @@ function openDiploma(){
   document.getElementById('diplDate').textContent='Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
   const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡sigue completando secciones!';
   document.getElementById('diplAch').textContent=achStr;
-  updateMasteryBars();
   document.getElementById('diplomaOverlay').classList.add('open');
   document.querySelector('.diploma-input').focus();
 }
@@ -854,110 +801,6 @@ function shareWA(){
   window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
 }
 
-// ===================== NUEVAS FUNCIONES PEDAGÓGICAS =====================
-
-// 🎓 PEDAGOGÍA: Actualiza ARIA live region sin alterar el sistema de feedback visual
-function updateAriaLive(id, msg) {
-  const el = document.getElementById(id);
-  if(el) { el.setAttribute('aria-label', msg); }
-}
-
-// 🎓 PEDAGOGÍA: Modo de apoyo UDL — adapta nivel de andamiaje al perfil del alumno
-function setSupportMode(mode) {
-  supportMode = mode;
-  document.querySelectorAll('.support-btn').forEach(b => b.classList.remove('active'));
-  const active = document.querySelector(`.support-btn[onclick*="${mode}"]`);
-  if(active) active.classList.add('active');
-  localStorage.setItem(SAVE_KEY + '_support', mode);
-  const msgs = { guided:'📖 Modo Guiado — pistas siempre visibles', autonomous:'🧠 Modo Autónomo — resuelve por tu cuenta', challenge:'⚡ Modo Reto — sin ayudas, máximo XP' };
-  showToast(msgs[mode] || '');
-  sfx('click');
-}
-
-// 🎓 PEDAGOGÍA: Andamiaje procedimental — el alumno elige cuándo ver el procedimiento
-function toggleSteps() {
-  const container = document.getElementById('qzSteps');
-  if(!container) return;
-  container.classList.toggle('show');
-  if(container.classList.contains('show')) {
-    const q = qzData[qzIdx];
-    const procedure = (q && q.procedure) ? q.procedure : 'Revisa la sección <strong>Aprende</strong> → Tabla de Valor Posicional, o la sección <strong>Tipos</strong> para operaciones.';
-    container.innerHTML = `<strong>📋 Paso a paso:</strong><br>${procedure}`;
-    unlockAchievement('analista');
-  }
-  sfx('click');
-}
-
-// 🎓 PEDAGOGÍA: Exportación para el docente — datos de proceso, no solo de resultado
-function exportProgressCSV() {
-  sfx('click');
-  const secciones = ['s-aprende','s-tipos','s-lab','s-flash','s-quiz','s-clasifica','s-identifica','s-completa','s-widgets','s-reto','s-sopa','s-tareas','s-evaluacion'];
-  const nombres   = ['Aprende','Tipos','Lab','Flashcards','Quiz','Clasifica','Identifica','Completa','Widgets','Reto','Sopa','Tareas','Evaluación'];
-  const fecha = new Date().toLocaleDateString('es-HN');
-  let rows = [['Sección','Completada','Fecha']];
-  secciones.forEach((id,i) => rows.push([nombres[i], done.has(id)?'Sí':'No', done.has(id)?fecha:'-']));
-  rows.push([]);
-  rows.push(['XP Total','Nivel','Logros']);
-  rows.push([xp, document.getElementById('xpLvl')?.textContent||'', unlockedAch.map(id=>ACHIEVEMENTS[id]?.label||id).join(' | ')]);
-  if(errorLog.length>0){
-    rows.push([]);
-    rows.push(['--- Reflexiones metacognitivas ---']);
-    rows.push(['Fecha','Sección','Errores identificados','Notas']);
-    errorLog.slice(-10).forEach(e=>rows.push([e.date||'',e.section||'',( e.errorTypes||[]).join('; '),e.notes||'']));
-  }
-  const csv = rows.map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download='progreso_decimales.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url), 1000);
-  showToast('📥 Progreso exportado como CSV');
-}
-
-// 🎓 PEDAGOGÍA: Metacognición activa — el alumno identifica su patrón de error
-function showMetacog() {
-  const modal = document.getElementById('metacogModal');
-  if(modal) { modal.classList.add('open'); modal.querySelector('.metacog-textarea')?.focus(); }
-}
-function closeMetacog() {
-  const modal = document.getElementById('metacogModal');
-  if(modal) modal.classList.remove('open');
-}
-function saveMetacog() {
-  const checkboxes = document.querySelectorAll('.metacog-check input:checked');
-  const errorTypes = Array.from(checkboxes).map(cb=>cb.value);
-  const textarea = document.querySelector('.metacog-textarea');
-  const notes = textarea ? textarea.value.trim() : '';
-  errorLog.push({ date:new Date().toLocaleDateString('es-HN'), section:'quiz', errorTypes, notes, consecutiveErrors });
-  if(errorLog.length>50) errorLog=errorLog.slice(-50);
-  consecutiveErrors=0;
-  saveProgress();
-  unlockAchievement('reflector');
-  if(textarea) textarea.value='';
-  document.querySelectorAll('.metacog-check input').forEach(cb=>cb.checked=false);
-  closeMetacog();
-  showToast('💾 Reflexión guardada. ¡Sigue adelante!');
-  sfx('ok');
-}
-
-// 🎓 PEDAGOGÍA: Evaluación formativa continua — visualiza dominio por tracker
-function updateMasteryBars() {
-  const container = document.getElementById('masteryBars');
-  if(!container) return;
-  const topics = [
-    {label:'Quiz',       tracker:'qz',      total:qzData.length},
-    {label:'Clasificar', tracker:'cls',     total:classGroups.length},
-    {label:'Identificar',tracker:'id',      total:idData.length},
-    {label:'Completar',  tracker:'cmp',     total:cmpData.length},
-    {label:'Flashcards', tracker:'fc',      total:fcData.length},
-  ];
-  container.innerHTML = topics.map(t=>{
-    const pct = t.total>0 ? Math.round((xpTracker[t.tracker].size/t.total)*100) : 0;
-    const color = pct>=80?'var(--jade)':pct>=50?'var(--pri)':'var(--amber)';
-    return `<div class="mastery-head"><span>${t.label}</span><span>${pct}%</span></div><div class="mastery-bar"><div class="mastery-fill" style="width:${pct}%;background:${color}"></div></div>`;
-  }).join('');
-}
-
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
@@ -965,12 +808,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval();
   updateRetoButtons(); decLabInit(); renderAchPanel();
   buildNl(); buildSort(); buildBldr(); buildComp();
-  // Restaurar modo de apoyo guardado
-  const savedSupport = localStorage.getItem(SAVE_KEY+'_support');
-  if(savedSupport) setSupportMode(savedSupport);
   document.addEventListener('click',function(e){ const panel=document.getElementById('achPanel'); const btn=document.getElementById('achBtn'); if(panel.classList.contains('open')&&!panel.contains(e.target)&&e.target!==btn) panel.classList.remove('open'); });
   document.addEventListener('click',function(e){ if(e.target===document.getElementById('diplomaOverlay')) closeDiploma(); });
-  document.addEventListener('click',function(e){ if(e.target===document.getElementById('metacogModal')) closeMetacog(); });
   const savedName=localStorage.getItem('nombreEstudianteDecimales');
   const inputName=document.querySelector('.diploma-input');
   if(savedName&&inputName){ inputName.value=savedName; updateDiplomaName(savedName); }
@@ -978,30 +817,3 @@ document.addEventListener('DOMContentLoaded',()=>{
   fin('s-aprende',false);
   fin('s-tipos',false);
 });
-
-// ===================== EXPOSICIÓN AL WINDOW =====================
-// 🎓 PEDAGOGÍA: Solo se exponen las funciones necesarias para onclick/oninput del HTML
-const _expose = {
-  go, toggleLetra, toggleSnd, toggleTheme, toggleAchPanel, resetXP,
-  flipCard, nextFC, prevFC,
-  checkQz, resetQz, useHintQz, toggleSteps,
-  checkClass, nextClassGroup, resetClass,
-  nextId, resetId,
-  checkCmp,
-  startReto, ansReto, nextRetoPair, resetReto,
-  nextSopaSet,
-  genTask, toggleAns,
-  genEval, toggleEvalAns, printEval,
-  openDiploma, closeDiploma, updateDiplomaName, shareWA,
-  decLabToggleEntero, decLabToggleDecimas, decLabToggleCentesimas, decLabToggleMilesimas,
-  checkLabChallenge,
-  nlClick, nlNext, nlReset,
-  sortMove, checkSort, nextSort,
-  bldrChange, checkBldr, nextBldr, resetBldr,
-  ansComp, nextComp,
-  setSupportMode, exportProgressCSV,
-  showMetacog, closeMetacog, saveMetacog,
-};
-Object.keys(_expose).forEach(k => { window[k] = _expose[k]; });
-
-})(); // fin IIFE
