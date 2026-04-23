@@ -18,7 +18,10 @@
 
 <header class="hero" role="banner">
   <div class="hero-inner">
-    <div class="hero-mascot" aria-hidden="true">🔢</div>
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🔢</div>
+      <div class="mascot-tooltip">¡Hola! Soy Deci. ¡Vamos a aprender! 🚀</div>
+    </div>
     <div class="hero-text">
       <h1>Misión <span>Números Decimales</span></h1>
       <p class="sub">¡Domina el punto decimal, el valor posicional y las operaciones con decimales! 🎯</p>
@@ -253,6 +256,11 @@
         <button class="lab-btn" data-lab-group="centesimas" data-lab-val="off" onclick="decLabToggleCentesimas()">Centésimas (6)</button>
         <button class="lab-btn" data-lab-group="milesimas" data-lab-val="off" onclick="decLabToggleMilesimas()">Milésimas (8)</button>
       </div>
+      <div class="lab-group">
+        <span class="lab-group-label" style="width:auto; color:var(--pri);">🎯 Reto de Deci:</span>
+        <span id="labChallengeText" style="font-size:0.85rem; font-weight:bold; margin-right: 0.5rem;">¡Forma 47.068!</span>
+        <button class="btn btn-g" onclick="checkLabChallenge()">✅ ¡Armado!</button>
+      </div>
     </div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
@@ -295,6 +303,7 @@
     <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
     <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
       <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
       <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
     </div>
     <div id="fbQz" class="fb" role="alert"></div>
@@ -309,7 +318,7 @@
 <div class="sec" id="s-clasifica" role="tabpanel">
   <div class="card ac-jade">
     <h2>🗂️ Clasifica los Conceptos</h2>
-    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un término del banco y toca la columna donde pertenece.</p>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Arrastra cada término del banco a la columna donde pertenece. También puedes arrastrar entre columnas o devolver al banco.</p>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
     <div class="word-bank" id="clsBank" role="list"></div>
@@ -375,8 +384,9 @@
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el término decimal rápidamente.</p>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
-    <div class="game" aria-live="polite">
+    <div class="game" id="gameBox" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
       <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
       <div class="reto-btns">
         <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('a')">Opción A</button>

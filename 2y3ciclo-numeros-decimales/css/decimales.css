@@ -59,7 +59,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 @keyframes drift{0%{transform:translateX(0)}100%{transform:translateX(-30%)}}
 .hero::after{display:none;}
 .hero-inner{display:flex;align-items:center;justify-content:center;gap:0.6rem;}
-.hero-mascot{font-size:1.6rem;display:inline-block;animation:wobble 2.5s ease-in-out infinite;flex-shrink:0;}
+.hero-mascot-wrap{position:relative;display:inline-flex;align-items:center;flex-shrink:0;}
+.hero-mascot{font-size:1.6rem;display:inline-block;animation:wobble 2.5s ease-in-out infinite;}
+.mascot-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(6px);background:#1b2838;color:var(--yellow-br);font-family:'Fredoka',sans-serif;font-size:0.78rem;padding:0.4rem 0.8rem;border-radius:10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;z-index:20;}
+.mascot-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1b2838;}
+.hero-mascot-wrap:hover .mascot-tooltip{opacity:1;transform:translateX(-50%) translateY(0);}
 @keyframes wobble{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.05)}}
 .hero-text{text-align:left;}
 .hero h1{font-family:'Fredoka',sans-serif;font-size:clamp(1rem,3vw,1.4rem);font-weight:700;margin:0;line-height:1.1;}
@@ -218,6 +222,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .blank{display:inline-block;min-width:80px;border-bottom:2px solid var(--pri);text-align:center;font-weight:700;color:var(--pri);padding:0 0.4rem;}
 
 /* RETO */
+.reto-bar-wrap{height:12px;background:rgba(0,0,0,0.1);border-radius:8px;overflow:hidden;margin:0.4rem 0 0.8rem;}
+.reto-bar-fill{height:100%;width:100%;background:var(--jade);border-radius:8px;transition:width 0.5s linear,background 0.3s;}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(6px)}75%{transform:translateX(-4px)}90%{transform:translateX(4px)}}
+.shake-error{animation:shake 0.5s ease;}
 .reto-word{font-family:'Fredoka',sans-serif;font-size:1.9rem;text-align:center;padding:1.5rem;color:var(--dark);min-height:100px;display:flex;align-items:center;justify-content:center;}
 .reto-btns{display:flex;gap:1rem;justify-content:center;margin-bottom:0.8rem;flex-wrap:wrap;}
 .reto-timer{font-family:'Fredoka',sans-serif;font-size:1.8rem;text-align:center;color:var(--pri);}

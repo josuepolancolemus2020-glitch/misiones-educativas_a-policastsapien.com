@@ -116,8 +116,8 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué símbolo se usa en Honduras para separar la parte entera de la decimal?',o:['a) La coma (,)','b) El punto (.)','c) El guion (-)','d) La barra (/)'],c:1},
-  {q:'¿Cuál es el valor posicional del dígito 5 en 0.05?',o:['a) Décimas','b) Unidades','c) Centésimas','d) Milésimas'],c:2},
+  {q:'¿Qué símbolo se usa en Honduras para separar la parte entera de la decimal?',o:['a) La coma (,)','b) El punto (.)','c) El guion (-)','d) La barra (/)'],c:1,feedback:'En Honduras usamos el punto (.). La coma se reserva para separar los miles: 1,000.'},
+  {q:'¿Cuál es el valor posicional del dígito 5 en 0.05?',o:['a) Décimas','b) Unidades','c) Centésimas','d) Milésimas'],c:2,feedback:'El 1.er lugar después del punto son décimas, el 2.º lugar son centésimas (0.05 → 5 centésimas).'},
   {q:'¿Cómo se lee correctamente el número 3.7?',o:['a) Treinta y siete','b) Tres coma siete','c) Tres enteros siete décimas','d) Tres punto siete centésimas'],c:2},
   {q:'¿Cuál de estos números es el mayor?',o:['a) 0.75','b) 0.8','c) 0.079','d) 0.7'],c:1},
   {q:'Al redondear 4.56 a la décima más cercana, ¿cuál es el resultado?',o:['a) 4.5','b) 5.0','c) 4.6','d) 4.55'],c:2},
@@ -144,9 +144,15 @@ function checkQz(){
   if(qzSel<0) return fb('fbQz','Selecciona una respuesta.',false);
   qzDone=true;
   const opts=document.querySelectorAll('.qz-opt');
-  if(qzSel===qzData[qzIdx].c){ opts[qzSel].classList.add('correct'); fb('fbQz','¡Correcto! +5 XP',true); if(!xpTracker.qz.has(qzIdx)){ xpTracker.qz.add(qzIdx); pts(5); } sfx('ok'); }
-  else{ opts[qzSel].classList.add('wrong'); opts[qzData[qzIdx].c].classList.add('correct'); fb('fbQz','Incorrecto. Revisa la respuesta correcta.',false); sfx('no'); }
-  setTimeout(()=>{ qzIdx++; qzSel=-1; showQz(); },1600);
+  if(qzSel===qzData[qzIdx].c){ opts[qzSel].classList.add('correct'); fb('fbQz','¡Correcto! +5 XP',true); if(!xpTracker.qz.has(qzIdx)){ xpTracker.qz.add(qzIdx); pts(5); } sfx('ok'); setTimeout(()=>{ qzIdx++; qzSel=-1; showQz(); },1600); }
+  else{ opts[qzSel].classList.add('wrong'); opts[qzData[qzIdx].c].classList.add('correct'); const _fbMsg=qzData[qzIdx].feedback||'Incorrecto. Revisa la respuesta correcta.'; fb('fbQz',_fbMsg,false); sfx('no'); setTimeout(()=>{ qzIdx++; qzSel=-1; showQz(); },3500); }
+}
+function useHintQz(){
+  if(qzDone) return;
+  if(xp<2){ showToast('⚠️ Necesitas al menos 2 XP para usar una pista.'); return; }
+  pts(-2); sfx('click'); showToast('💡 Pista aplicada: -2 XP');
+  const opts=document.querySelectorAll('.qz-opt'); let hidden=0;
+  for(let i=0;i<opts.length&&hidden<2;i++){ if(i!==qzData[qzIdx].c&&opts[i].style.opacity!=='0.3'){ opts[i].style.opacity='0.3'; opts[i].style.pointerEvents='none'; hidden++; } }
 }
 function resetQz(){ sfx('click'); qzIdx=0; qzSel=-1; qzDone=false; showQz(); document.getElementById('fbQz').classList.remove('show'); }
 
@@ -178,24 +184,45 @@ function buildClass(){
   clsSelectedWord=null;
   document.getElementById('items-left').innerHTML='';
   document.getElementById('items-right').innerHTML='';
-  _shuffle([...group.words]).forEach(w=>{
-    const el=document.createElement('div'); el.className='wb-item'; el.textContent=w.w; el.dataset.t=w.t;
-    el.onclick=()=>{ document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word')); el.classList.add('sel-word'); clsSelectedWord=el; sfx('click'); };
-    bank.appendChild(el);
-  });
-  ['col-left','col-right'].forEach(colId=>{
-    const col=document.getElementById(colId);
-    col.onclick=(e)=>{
-      if(!clsSelectedWord||e.target.classList.contains('drop-item')) return;
-      const targetId=colId==='col-left'?'items-left':'items-right';
-      const wordsCol=document.getElementById(targetId);
-      const item=document.createElement('div'); item.className='drop-item';
-      item.textContent=clsSelectedWord.textContent; item.dataset.t=clsSelectedWord.dataset.t;
-      const original=clsSelectedWord;
-      item.onclick=(ev)=>{ ev.stopPropagation(); if(clsSelectedWord!==null){ col.click(); } else{ document.getElementById('clsBank').appendChild(original); original.classList.remove('sel-word'); item.remove(); sfx('click'); } };
-      wordsCol.appendChild(item); clsSelectedWord.remove(); clsSelectedWord=null; sfx('click');
+
+  function _mkDrag(el,text,type){
+    el.draggable=true;
+    el.ondragstart=(e)=>{e.dataTransfer.setData('text/plain',JSON.stringify({text,type}));e.dataTransfer.effectAllowed='move';setTimeout(()=>{el.style.opacity='0.4';},0);};
+    el.ondragend=()=>{el.style.opacity='';};
+    return el;
+  }
+  function _removeWord(text,type){
+    document.querySelectorAll('#clsBank .wb-item,#items-left .drop-item,#items-right .drop-item').forEach(el=>{
+      if(el.textContent===text&&el.dataset.t===type)el.remove();
+    });
+  }
+  function _mkBankItem(text,type){
+    const el=document.createElement('div');el.className='wb-item';el.textContent=text;el.dataset.t=type;
+    return _mkDrag(el,text,type);
+  }
+  function _mkDropItem(text,type){
+    const el=document.createElement('div');el.className='drop-item';el.textContent=text;el.dataset.t=type;
+    _mkDrag(el,text,type);
+    el.onclick=(ev)=>{ev.stopPropagation();_removeWord(text,type);bank.appendChild(_mkBankItem(text,type));sfx('click');};
+    return el;
+  }
+  function _addDropZone(target,targetListId,isBank){
+    target.ondragover=(e)=>{e.preventDefault();e.dataTransfer.dropEffect='move';target.style.borderColor='var(--pri)';};
+    target.ondragleave=()=>{target.style.borderColor='';};
+    target.ondrop=(e)=>{
+      e.preventDefault();target.style.borderColor='';
+      let data;try{data=JSON.parse(e.dataTransfer.getData('text/plain'));}catch{return;}
+      _removeWord(data.text,data.type);
+      if(isBank){bank.appendChild(_mkBankItem(data.text,data.type));}
+      else{document.getElementById(targetListId).appendChild(_mkDropItem(data.text,data.type));}
+      sfx('click');
     };
-  });
+  }
+
+  _shuffle([...group.words]).forEach(w=>{bank.appendChild(_mkBankItem(w.w,w.t));});
+  _addDropZone(document.getElementById('col-left'),'items-left',false);
+  _addDropZone(document.getElementById('col-right'),'items-right',false);
+  _addDropZone(bank,'clsBank',true);
 }
 function checkClass(){
   const remaining=document.querySelectorAll('#clsBank .wb-item').length;
@@ -288,9 +315,10 @@ const retoPairs=[
 ];
 let currentRetoPairIdx=0, retoPool=[], retoOk=0, retoErr=0, retoTimerInt=null, retoSec=30, retoRunning=false, retoCurrent=null;
 function updateRetoButtons(){ const pair=retoPairs[currentRetoPairIdx]; document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA; document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB; document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA); document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB); }
-function startReto(){ if(retoRunning)return; sfx('click'); retoRunning=true; retoOk=0; retoErr=0; retoSec=30; retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]); showRetoWord(); retoTimerInt=setInterval(()=>{ retoSec--; sfx('tick'); document.getElementById('retoTimer').textContent='⏱ '+retoSec; if(retoSec<=10) document.getElementById('retoTimer').style.color='var(--red)'; if(retoSec<=0){ clearInterval(retoTimerInt); endReto(); } },1000); }
+function startReto(){ if(retoRunning)return; sfx('click'); retoRunning=true; retoOk=0; retoErr=0; retoSec=30; retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]); showRetoWord(); const _fill=document.getElementById('retoBarFill'); if(_fill){_fill.style.width='100%';_fill.style.background='var(--jade)';}
+  retoTimerInt=setInterval(()=>{ retoSec--; sfx('tick'); document.getElementById('retoTimer').textContent='⏱ '+retoSec; if(retoSec<=10) document.getElementById('retoTimer').style.color='var(--red)'; const fill=document.getElementById('retoBarFill'); if(fill){fill.style.width=(retoSec/30*100)+'%';if(retoSec<=10)fill.style.background='var(--red)';} if(retoSec<=0){ clearInterval(retoTimerInt); endReto(); } },1000); }
 function showRetoWord(){ if(retoPool.length===0) retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]); retoCurrent=retoPool.pop(); document.getElementById('retoWord').textContent=retoCurrent.w; }
-function ansReto(t){ if(!retoRunning||!retoCurrent)return; const firstPlay=!xpTracker.reto.has(currentRetoPairIdx); if(t===retoCurrent.t){ sfx('ok'); retoOk++; if(firstPlay) pts(1); } else{ sfx('no'); retoErr++; if(firstPlay) pts(-1); } document.getElementById('retoScore').textContent=`✔ ${retoOk} correctas | ✗ ${retoErr} errores`; showRetoWord(); }
+function ansReto(t){ if(!retoRunning||!retoCurrent)return; const firstPlay=!xpTracker.reto.has(currentRetoPairIdx); if(t===retoCurrent.t){ sfx('ok'); retoOk++; if(firstPlay) pts(1); } else{ sfx('no'); retoErr++; if(firstPlay) pts(-1); const _gb=document.getElementById('gameBox'); if(_gb){_gb.classList.remove('shake-error');void _gb.offsetWidth;_gb.classList.add('shake-error');} } document.getElementById('retoScore').textContent=`✔ ${retoOk} correctas | ✗ ${retoErr} errores`; showRetoWord(); }
 function endReto(){ retoRunning=false; document.getElementById('retoWord').textContent='🏁 ¡Tiempo!'; document.getElementById('retoTimer').style.color='var(--pri)'; xpTracker.reto.add(currentRetoPairIdx); const total=retoOk+retoErr; const pct=total>0?Math.round((retoOk/total)*100):0; fb('fbReto',`Resultado: ${retoOk}/${total} (${pct}%) ¡Bien hecho!`,true); fin('s-reto'); sfx('fan'); unlockAchievement('reto_hero'); }
 function nextRetoPair(){ sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0; currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; updateRetoButtons(); document.getElementById('retoTimer').textContent='⏱ 30'; document.getElementById('retoTimer').style.color='var(--pri)'; document.getElementById('retoWord').textContent='¡Prepárate!'; document.getElementById('retoScore').textContent='✔ 0 correctas | ✗ 0 errores'; document.getElementById('fbReto').classList.remove('show'); showToast(`🔄 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`); }
 function resetReto(){ sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0; document.getElementById('retoTimer').textContent='⏱ 30'; document.getElementById('retoTimer').style.color='var(--pri)'; document.getElementById('retoWord').textContent='¡Prepárate!'; document.getElementById('retoScore').textContent='✔ 0 correctas | ✗ 0 errores'; document.getElementById('fbReto').classList.remove('show'); }
@@ -440,6 +468,16 @@ function decLabInit(){
   _labSetOpacity('lab-bg-milesimas','0.08'); _labSetOpacity('lab-lbl-milesimas','0');
   labUpdateBtn('entero','on');
   decLabUpdateSentence();
+}
+
+function checkLabChallenge(){
+  const el=document.getElementById('labChallengeText');
+  if(LAB_STATE.entero&&!LAB_STATE.decimas&&LAB_STATE.centesimas&&LAB_STATE.milesimas){
+    pts(5); sfx('fan'); if(el) el.textContent='¡Reto superado! 🎉';
+    showToast('🎉 ¡Reto del laboratorio superado! +5 XP');
+  } else {
+    sfx('no'); showToast('💡 Activa: Parte Entera, Centésimas y Milésimas. Desactiva las Décimas.');
+  }
 }
 
 // ===================== EVALUACIÓN FINAL =====================
