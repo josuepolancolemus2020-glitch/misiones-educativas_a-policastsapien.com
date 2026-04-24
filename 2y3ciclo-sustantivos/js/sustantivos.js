@@ -923,6 +923,7 @@ function genEval() {
     document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · Los Sustantivos`;
     evalAnsVisible = false;
     const out = document.getElementById('evalOut'); out.innerHTML = '';
+    const prevResult = document.getElementById('evalGradeResult'); if (prevResult) prevResult.remove();
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
     bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-tf">V/F 25pts</span><span class="eval-score-pill esp-mc">Selección 25pts</span><span class="eval-score-pill esp-cp">Completar 25pts</span><span class="eval-score-pill esp-pr">Pareados 25pts</span></div>`;
     out.appendChild(bar);
@@ -947,8 +948,8 @@ function genEval() {
     const s3 = document.createElement('div'); s3.innerHTML = '<div class="eval-section-title">III. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     cpItems.forEach((item, i) => {
         const d = document.createElement('div'); d.className = 'eval-item';
-        const qHtml = item.q.replace('___', '<span class="eval-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
-        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1 + 10}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div>`;
+        const qHtml = item.q.replace('___', `<input type="text" name="cp${i}" class="eval-text-input" autocomplete="off" placeholder="...">`);
+        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1 + 10}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer" style="display:none;">${item.a}</div>`;
         s3.appendChild(d);
     });
     out.appendChild(s3);
@@ -958,13 +959,16 @@ function genEval() {
     const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
     let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
-    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <span class="eval-match-line">&nbsp;&nbsp;&nbsp;</span> ${item.term}</div>`; });
+    prItems.forEach((item, i) => {
+        const opts = letters.map(l => `<option value="${l}">${l}</option>`).join('');
+        colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select name="pr${i}" class="eval-pr-select"><option value="">—</option>${opts}</select> ${item.term}</div>`;
+    });
     colLeft += '</div>';
     let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
     shuffledDefs.forEach((item, i) => { colRight += `<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
     colRight += '</div>';
     const ansKey = prItems.map((item, i) => { const letter = letters[shuffledDefs.findIndex(d => d.def === item.def)]; return `${i + 16}→${letter}`; }).join(' · ');
-    matchCard.innerHTML = `<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div>`;
+    matchCard.innerHTML = `<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" data-pr-key="1" style="display:none;">${ansKey}</div>`;
     s4.appendChild(matchCard); out.appendChild(s4);
     window._evalPrintData = { tf: tfItems, mc: mcItems, cp: cpItems, pr: { terms: prItems, shuffledDefs, letters } };
     fin('s-evaluacion');
@@ -974,42 +978,113 @@ function toggleEvalAns() {
     document.querySelectorAll('#evalOut .eval-answer').forEach(el => el.style.display = evalAnsVisible ? 'block' : 'none');
     sfx('click');
 }
+function gradeEval() {
+    if (!window._evalPrintData) { showToast('⚠️ Genera una evaluación primero'); return; }
+    sfx('click');
+    const d = window._evalPrintData;
+    let cpScore = 0, tfScore = 0, mcScore = 0, prScore = 0;
+    function norm(s) { return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/\s+/g, ' '); }
+    // I. Completar
+    d.cp.forEach((item, i) => {
+        const inp = document.querySelector(`input[name="cp${i}"]`);
+        if (!inp) return;
+        const answers = Array.isArray(item.a) ? item.a : [item.a];
+        const isOk = answers.some(a => norm(inp.value) === norm(a));
+        if (isOk) cpScore += 5;
+        inp.classList.remove('eval-correct', 'eval-wrong');
+        inp.classList.add(isOk ? 'eval-correct' : 'eval-wrong');
+        const ansEl = inp.closest('.eval-item')?.querySelector('.eval-answer');
+        if (ansEl) {
+            ansEl.style.display = 'block';
+            ansEl.style.color = isOk ? '#27ae60' : '#c0392b';
+            if (!isOk && inp.value.trim()) ansEl.textContent = 'Respuesta correcta: ' + answers[0];
+        }
+    });
+    // II. Verdadero o Falso
+    d.tf.forEach((item, i) => {
+        const radios = document.querySelectorAll(`#evalOut input[name="tf${i}"]`);
+        const checked = [...radios].find(r => r.checked);
+        const isVerdadero = checked ? checked.parentElement.textContent.trim() === 'Verdadero' : null;
+        const isOk = checked !== null && (isVerdadero === item.a);
+        if (isOk) tfScore += 5;
+        const itemEl = radios[0]?.closest('.eval-item');
+        if (itemEl) {
+            itemEl.style.borderColor = isOk ? '#27ae60' : '#c0392b';
+            const ansEl = itemEl.querySelector('.eval-answer');
+            if (ansEl) { ansEl.style.display = 'block'; ansEl.style.color = isOk ? '#27ae60' : '#c0392b'; }
+        }
+    });
+    // III. Selección Múltiple
+    d.mc.forEach((item, i) => {
+        const radios = document.querySelectorAll(`#evalOut input[name="mc${i}"]`);
+        const checked = [...radios].find(r => r.checked);
+        const isOk = checked !== null && parseInt(checked.value) === item.a;
+        if (isOk) mcScore += 5;
+        const itemEl = radios[0]?.closest('.eval-item');
+        if (itemEl) {
+            itemEl.style.borderColor = isOk ? '#27ae60' : '#c0392b';
+            const ansEl = itemEl.querySelector('.eval-answer');
+            if (ansEl) { ansEl.style.display = 'block'; ansEl.style.color = isOk ? '#27ae60' : '#c0392b'; }
+        }
+    });
+    // IV. Pareados
+    d.pr.terms.forEach((item, i) => {
+        const correctLetter = d.pr.letters[d.pr.shuffledDefs.findIndex(df => df.def === item.def)];
+        const sel = document.querySelector(`#evalOut select[name="pr${i}"]`);
+        const given = sel ? sel.value : '';
+        const isOk = given === correctLetter;
+        if (isOk) prScore += 5;
+        if (sel) {
+            sel.style.borderColor = isOk ? '#27ae60' : (given ? '#c0392b' : '');
+            sel.style.backgroundColor = isOk ? '#e8f8f5' : (given ? '#fbe9e7' : '');
+        }
+    });
+    const prAnsEl = document.querySelector('#evalOut [data-pr-key]');
+    if (prAnsEl) { prAnsEl.style.display = 'block'; prAnsEl.style.color = '#c0392b'; }
+    const total = cpScore + tfScore + mcScore + prScore;
+    const msg = total >= 90 ? '🏆 ¡Excelente! Dominas los sustantivos.' : total >= 70 ? '😊 ¡Buen trabajo! Sigue practicando.' : total >= 50 ? '📚 Vas bien, repasa los temas con errores.' : '💪 ¡Ánimo! Estudia y vuelve a intentarlo.';
+    let res = document.getElementById('evalGradeResult');
+    if (!res) { res = document.createElement('div'); res.id = 'evalGradeResult'; document.getElementById('evalOut').after(res); }
+    res.className = 'eval-grade-result';
+    res.innerHTML = `<div class="egr-title">🎯 Resultado automático: ${total}/100 puntos</div><div class="egr-scores">Completar: ${cpScore}/25 · V/F: ${tfScore}/25 · Selección: ${mcScore}/25 · Pareados: ${prScore}/25</div><div class="egr-msg">${msg}</div><div class="egr-note">Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</div>`;
+    res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 function printEval() {
     if (!window._evalPrintData) { showToast('⚠️ Genera una evaluación primero'); return; }
     sfx('click');
     const forma = window._currentEvalForm || 1;
     const d = window._evalPrintData;
 
-    // ── I. Verdadero o Falso — raya antes del enunciado
-    let s1 = `<div class="sec-title">I. Verdadero o Falso <span style="font-weight:400;font-size:8pt;color:#555;">(Escribe V o F)</span><span class="pts-pill">25 pts</span></div>`;
-    d.tf.forEach((it, i) => { s1 += `<div class="tf-row"><span class="qn">${i + 1}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`; });
+    // ── I. Completar el espacio (preguntas 1-5)
+    let s1 = '<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>';
+    d.cp.forEach((it, i) => { const q = it.q.replace('___', '<span class="cp-blank"></span>'); s1 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text">${q}</span></div>`; });
 
-    // ── II. Selección múltiple — 2 columnas de preguntas, 4 opciones en fila
-    let s2 = `<div class="sec-title">II. Selección Múltiple<span class="pts-pill">25 pts</span></div><div class="mc-grid">`;
-    d.mc.forEach((it, i) => { const opts = it.o.map((op, oi) => `<label class="mc-opt"><input type="radio" name="mc${i}"> ${op}</label>`).join(''); s2 += `<div class="mc-item"><div class="mc-q"><span class="qn">${i + 6}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`; });
-    s2 += `</div>`;
+    // ── II. Verdadero o Falso (preguntas 6-10)
+    let s2 = '<div class="sec-title"><span>II. Verdadero o Falso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>';
+    d.tf.forEach((it, i) => { s2 += `<div class="tf-row"><span class="qn">${i + 6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`; });
 
-    // ── III. Completar
-    let s3 = `<div class="sec-title">III. Completar el espacio<span class="pts-pill">25 pts</span></div>`;
-    d.cp.forEach((it, i) => { const q = it.q.replace('___', '<span class="cp-blank"></span>'); s3 += `<div class="cp-row"><span class="qn">${i + 11}.</span><span class="cp-text">${q}</span></div>`; });
+    // ── III. Selección Múltiple (preguntas 11-15)
+    let s3 = '<div class="sec-title"><span>III. Selección Múltiple</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="mc-grid">';
+    d.mc.forEach((it, i) => { const opts = it.o.map((op, oi) => `<label class="mc-opt"><input type="radio" name="mcp${i}"> ${op}</label>`).join(''); s3 += `<div class="mc-item"><div class="mc-q"><span class="qn">${i + 11}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`; });
+    s3 += '</div>';
 
-    // ── IV. Pareados
+    // ── IV. Términos Pareados (preguntas 16-20)
     let colL = '<div class="pr-col"><div class="pr-head">📌 Términos</div>';
     d.pr.terms.forEach((it, i) => { colL += `<div class="pr-item"><span class="pr-num">${i + 16}.</span><span class="pr-line"></span>${it.term}</div>`; });
     colL += '</div>';
     let colR = '<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';
     d.pr.shuffledDefs.forEach((it, i) => { colR += `<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`; });
     colR += '</div>';
-    let s4 = `<div class="sec-title">IV. Términos Pareados<span class="pts-pill">25 pts</span></div><div class="pr-grid">${colL}${colR}</div>`;
+    let s4 = `<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;
 
     // ── Pauta
     let pR = '';
-    pR += `<div class="p-sec"><div class="p-ttl">I. V o F</div><table class="p-tbl">`;
-    d.tf.forEach((it, i) => { pR += `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.a ? 'V' : 'F'}</td></tr>`; });
-    pR += `</table></div><div class="p-sec"><div class="p-ttl">II. Selección</div><table class="p-tbl">`;
-    d.mc.forEach((it, i) => { pR += `<tr><td class="pn">${i + 6}.</td><td class="pa">${it.o[it.a]}</td></tr>`; });
-    pR += `</table></div><div class="p-sec"><div class="p-ttl">III. Completar</div><table class="p-tbl">`;
-    d.cp.forEach((it, i) => { pR += `<tr><td class="pn">${i + 11}.</td><td class="pa">${it.a}</td></tr>`; });
+    pR += `<div class="p-sec"><div class="p-ttl">I. Completar</div><table class="p-tbl">`;
+    d.cp.forEach((it, i) => { pR += `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.a}</td></tr>`; });
+    pR += `</table></div><div class="p-sec"><div class="p-ttl">II. V o F</div><table class="p-tbl">`;
+    d.tf.forEach((it, i) => { pR += `<tr><td class="pn">${i + 6}.</td><td class="pa">${it.a ? 'V' : 'F'}</td></tr>`; });
+    pR += `</table></div><div class="p-sec"><div class="p-ttl">III. Selección</div><table class="p-tbl">`;
+    d.mc.forEach((it, i) => { pR += `<tr><td class="pn">${i + 11}.</td><td class="pa">${it.o[it.a]}</td></tr>`; });
     pR += `</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;
     d.pr.terms.forEach((it, i) => { const l = d.pr.letters[d.pr.shuffledDefs.findIndex(df => df.def === it.def)]; pR += `<tr><td class="pn">${i + 16}.</td><td class="pa">${i + 16}→${l}</td></tr>`; });
     pR += `</table></div>`;
@@ -1019,50 +1094,48 @@ function printEval() {
 <title>Evaluación Los Sustantivos · Forma ${forma}</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;}
-/* ENCABEZADO */
-.ph{margin-bottom:0.5rem;}
-.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}
-.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+body {font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;color:#111;background:#fff;padding:2mm 5mm;}
+.ph{margin-bottom:0.4rem;}
+.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.3rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}
 .ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}
 .ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
 .ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
 .ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
-.ph-crit{font-size:11pt;text-align:center;color:#555;margin-top:0.15rem;}
-/* SECCIONES */
-.sec-title{font-size:9pt;font-weight:700;padding:0.2rem 0.45rem;margin:0.38rem 0 0.18rem;border-left:4px solid #e84393;background:#fce4f0;display:flex;justify-content:space-between;align-items:center;}
-.pts-pill{font-size:7.5pt;background:#e84393;color:white;padding:0.08rem 0.35rem;border-radius:8px;}
+.ph-crit{font-size:9pt;text-align:center;color:#555;margin-top:0.1rem;}
+.sec-title {font-size:10pt;font-weight:700;padding:0.15rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #d35400;background:#fdf2e9;color:#d35400;}
+.obt-row {display:flex;align-items:baseline;gap:4px;font-size:9pt;font-weight:700;font-style:italic;color:#d35400;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:30px;border-bottom:1.5px solid #d35400;margin:0 2px;}
+.obt-pct{white-space:nowrap;}
 .qn{font-weight:700;min-width:20px;flex-shrink:0;}
-/* V/F */
-.tf-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.tf-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.15rem 0.2rem;border-bottom:1px solid #eee;}
 .tf-blank{display:inline-block;min-width:38px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.15rem;}
 .tf-text{flex:1;}
-/* MC */
-.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.22rem 0.4rem;margin-bottom:0.18rem;break-inside:avoid;page-break-inside:avoid;}
-.mc-q{font-size:9pt;line-height:1.32;display:flex;gap:0.25rem;margin-bottom:0.12rem;}
-.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.18rem 0.5rem;}
+.mc-item {border:1px solid #ddd;border-radius:4px;padding:0.15rem 0.3rem;margin-bottom:0.12rem;break-inside:avoid;page-break-inside:avoid;}
+.mc-q{font-size:9pt;line-height:1.32;display:flex;gap:0.25rem;margin-bottom:0.1rem;}
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.15rem 0.5rem;}
 .mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.05rem 0.2rem;margin-left:1.2rem;}
 .mc-opt{font-size:8.5pt;display:flex;align-items:center;gap:0.2rem;}
 .mc-opt input{width:11px;height:11px;flex-shrink:0;}
-/* Completar */
-.cp-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.15rem 0.2rem;border-bottom:1px solid #eee;}
 .cp-text{flex:1;}
 .cp-blank{display:inline-block;min-width:140px;border-bottom:1.5px solid #111;margin:0 0.1rem;}
-/* Pareados */
-.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.25rem 0.5rem;margin-top:0.15rem;}
-.pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:0.18rem;}
-.pr-item{font-size:8.5pt;padding:0.28rem 0.3rem;background:#fce4f0;border-radius:3px;margin-bottom:0.18rem;display:flex;align-items:center;gap:0.2rem;line-height:1.6;}
-.pr-num{font-weight:700;color:#e84393;min-width:17px;flex-shrink:0;}
+.pr-section{margin-top:0.2rem;}
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.1rem;}
+.pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:0.15rem;}
+.pr-item {font-size:9.5pt;padding:0.15rem 0.25rem;background:#fdf2e9;border-radius:3px;margin-bottom:0.1rem;display:flex;align-items:center;gap:0.2rem;line-height:1.15;break-inside:avoid;page-break-inside:avoid;}
+.pr-num {font-weight:700;color:#d35400;min-width:17px;flex-shrink:0;}
 .pr-line{display:inline-block;min-width:17px;border-bottom:1.5px solid #111;margin-right:0.12rem;flex-shrink:0;}
-/* Pauta */
+.total-row {display:flex;align-items:baseline;justify-content:flex-start;margin-left:30%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.3rem;padding:0.2rem 0;page-break-before:avoid;break-before:avoid;color:#d35400;border-top:2px solid #d35400;}
 .pauta-wrap{page-break-before:always;padding-top:0.4rem;}
-.p-head{border-bottom:2px solid #333;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
 .p-main{font-size:9.5pt;font-weight:700;}
 .p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}
 .p-meta{font-size:7pt;color:#555;}
 .p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
-.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.28rem 0.45rem;}
-.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.25rem 0.4rem;}
+.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;}
 .p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}
 .p-tbl tr{border-bottom:1px dotted #ddd;}
 .p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}
@@ -1071,12 +1144,13 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 @media print{@page{margin:4mm 6mm;}}
 </style></head><body>
 <div class="ph">
-  <h2>Evaluación Final de Misión Los Sustantivos - Español - Lengua</h2>
+  <h2>Evaluación Final de Misión Los Sustantivos — Español — Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
+<div class="total-row"><span>Total Obtenido:</span><span class="obt-line" style="min-width:40px;"></span><span>/ 100 puntos</span></div>
 <div class="pauta-wrap">
   <div class="p-head">
     <div class="p-main">✅ PAUTA — Evaluación Final · Misión Los Sustantivos · Forma ${forma}</div>

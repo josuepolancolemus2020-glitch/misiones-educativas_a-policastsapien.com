@@ -1794,6 +1794,81 @@ body::before {
     background: #6c5ce7;
 }
 
+/* EVAL INTERACTIVE GRADING */
+.eval-text-input {
+    border: none;
+    border-bottom: 2px solid var(--pri);
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.88rem;
+    color: var(--dark);
+    padding: 0.1rem 0.3rem;
+    min-width: 130px;
+    margin: 0 0.2rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.eval-text-input:focus {
+    border-bottom-color: var(--jade);
+}
+.eval-text-input.eval-correct {
+    border-color: #27ae60;
+    background: #e8f8f5;
+    border-radius: 4px;
+}
+.eval-text-input.eval-wrong {
+    border-color: #c0392b;
+    background: #fbe9e7;
+    border-radius: 4px;
+}
+.eval-pr-select {
+    border: 1.5px solid var(--pri);
+    border-radius: 6px;
+    background: var(--card);
+    font-family: inherit;
+    font-size: 0.82rem;
+    color: var(--dark);
+    padding: 0.15rem 0.3rem;
+    cursor: pointer;
+    min-width: 50px;
+    transition: border-color 0.2s;
+}
+.eval-grade-result {
+    background: var(--card);
+    border: 2px solid #d35400;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-top: 1rem;
+    scroll-margin-top: 2rem;
+}
+.egr-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #d35400;
+    margin-bottom: 0.4rem;
+}
+.egr-scores {
+    font-size: 0.88rem;
+    color: var(--dark);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.egr-msg {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--jade);
+    margin-bottom: 0.4rem;
+}
+.egr-note {
+    font-size: 0.75rem;
+    color: var(--gray);
+    font-style: italic;
+    border-top: 1px solid var(--border);
+    padding-top: 0.4rem;
+    margin-top: 0.4rem;
+}
+
 /* CREDITS */
 .credits {
     background: var(--xp-bg);
