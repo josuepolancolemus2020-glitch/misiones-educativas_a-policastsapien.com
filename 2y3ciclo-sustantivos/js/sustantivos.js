@@ -923,54 +923,35 @@ function genEval() {
     document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · Los Sustantivos`;
     evalAnsVisible = false;
     const out = document.getElementById('evalOut'); out.innerHTML = '';
-    const prevResult = document.getElementById('evalGradeResult'); if (prevResult) prevResult.remove();
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-tf">V/F 25pts</span><span class="eval-score-pill esp-mc">Selección 25pts</span><span class="eval-score-pill esp-cp">Completar 25pts</span><span class="eval-score-pill esp-pr">Pareados 25pts</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
     out.appendChild(bar);
-    const tfItems = _pick(evalTFBank, 5);
-    const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-    tfItems.forEach((item, i) => {
-        const d = document.createElement('div'); d.className = 'eval-item';
-        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Falso</label></div><div class="eval-answer">${item.a ? 'Verdadero' : 'Falso'}</div>`;
-        s1.appendChild(d);
-    });
-    out.appendChild(s1);
-    const mcItems = _pick(evalMCBank, 5);
-    const s2 = document.createElement('div'); s2.innerHTML = '<div class="eval-section-title">II. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-    mcItems.forEach((item, i) => {
-        const d = document.createElement('div'); d.className = 'eval-item';
-        const optsHtml = item.o.map((op, oi) => `<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');
-        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1 + 5}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div>`;
-        s2.appendChild(d);
-    });
-    out.appendChild(s2);
     const cpItems = _pick(evalCPBank, 5);
-    const s3 = document.createElement('div'); s3.innerHTML = '<div class="eval-section-title">III. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-    cpItems.forEach((item, i) => {
-        const d = document.createElement('div'); d.className = 'eval-item';
-        const qHtml = item.q.replace('___', `<input type="text" name="cp${i}" class="eval-text-input" autocomplete="off" placeholder="...">`);
-        d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1 + 10}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer" style="display:none;">${item.a}</div>`;
-        s3.appendChild(d);
-    });
+    const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+    cpItems.forEach((item, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.dataset.evalType = 'cp'; d.dataset.evalIndex = i; const qHtml = item.q.replace('___', `<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`); d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`; s1.appendChild(d); });
+    out.appendChild(s1);
+    const tfItems = _pick(evalTFBank, 5);
+    const s2 = document.createElement('div'); s2.innerHTML = '<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+    tfItems.forEach((item, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.dataset.evalType = 'tf'; d.dataset.evalIndex = i; d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a ? 'Verdadero' : 'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`; s2.appendChild(d); });
+    out.appendChild(s2);
+    const mcItems = _pick(evalMCBank, 5);
+    const s3 = document.createElement('div'); s3.innerHTML = '<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+    mcItems.forEach((item, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.dataset.evalType = 'mc'; d.dataset.evalIndex = i; const optsHtml = item.o.map((op, oi) => `<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join(''); d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`; s3.appendChild(d); });
     out.appendChild(s3);
-    const prItems = _pick(evalPRBank, 5);
-    const shuffledDefs = [...prItems].sort(() => Math.random() - 0.5);
-    const letters = ['A', 'B', 'C', 'D', 'E'];
+    const prItems = _pick(evalPRBank, 5); const shuffledDefs = [...prItems].sort(() => Math.random() - 0.5); const letters = ['A', 'B', 'C', 'D', 'E'];
     const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
     let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
-    prItems.forEach((item, i) => {
-        const opts = letters.map(l => `<option value="${l}">${l}</option>`).join('');
-        colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select name="pr${i}" class="eval-pr-select"><option value="">—</option>${opts}</select> ${item.term}</div>`;
-    });
+    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">—</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
     colLeft += '</div>';
     let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
     shuffledDefs.forEach((item, i) => { colRight += `<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
     colRight += '</div>';
     const ansKey = prItems.map((item, i) => { const letter = letters[shuffledDefs.findIndex(d => d.def === item.def)]; return `${i + 16}→${letter}`; }).join(' · ');
-    matchCard.innerHTML = `<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" data-pr-key="1" style="display:none;">${ansKey}</div>`;
+    matchCard.innerHTML = `<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;
     s4.appendChild(matchCard); out.appendChild(s4);
     window._evalPrintData = { tf: tfItems, mc: mcItems, cp: cpItems, pr: { terms: prItems, shuffledDefs, letters } };
+    const autoPanel = document.createElement('div'); autoPanel.id = 'evalAutoResult'; autoPanel.className = 'eval-auto-result'; autoPanel.innerHTML = '<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.'; out.appendChild(autoPanel);
     fin('s-evaluacion');
 }
 function toggleEvalAns() {
@@ -978,76 +959,68 @@ function toggleEvalAns() {
     document.querySelectorAll('#evalOut .eval-answer').forEach(el => el.style.display = evalAnsVisible ? 'block' : 'none');
     sfx('click');
 }
+function normalizeEvalAnswer(v) {
+    return (v || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').replace(/[()]/g, '').trim();
+}
+function isCpCorrect(student, expected) {
+    const s = normalizeEvalAnswer(student);
+    const e = normalizeEvalAnswer(expected);
+    if (!s) return false;
+    const variants = new Set([e]);
+    if (e.includes(' ')) e.split(' ').forEach(x => x && variants.add(x));
+    if (e.includes('comun')) variants.add('comun');
+    if (e.includes('propio')) variants.add('propio');
+    if (e.includes('concreto')) variants.add('concreto');
+    if (e.includes('abstracto')) variants.add('abstracto');
+    return variants.has(s) || e.replace(/[^a-záéíóú0-9]/g, '') === s.replace(/[^a-záéíóú0-9]/g, '');
+}
+function setEvalFeedback(id, ok, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
+}
 function gradeEval() {
     if (!window._evalPrintData) { showToast('⚠️ Genera una evaluación primero'); return; }
     sfx('click');
     const d = window._evalPrintData;
-    let cpScore = 0, tfScore = 0, mcScore = 0, prScore = 0;
-    function norm(s) { return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/\s+/g, ' '); }
-    // I. Completar
-    d.cp.forEach((item, i) => {
-        const inp = document.querySelector(`input[name="cp${i}"]`);
-        if (!inp) return;
-        const answers = Array.isArray(item.a) ? item.a : [item.a];
-        const isOk = answers.some(a => norm(inp.value) === norm(a));
-        if (isOk) cpScore += 5;
-        inp.classList.remove('eval-correct', 'eval-wrong');
-        inp.classList.add(isOk ? 'eval-correct' : 'eval-wrong');
-        const ansEl = inp.closest('.eval-item')?.querySelector('.eval-answer');
-        if (ansEl) {
-            ansEl.style.display = 'block';
-            ansEl.style.color = isOk ? '#27ae60' : '#c0392b';
-            if (!isOk && inp.value.trim()) ansEl.textContent = 'Respuesta correcta: ' + answers[0];
-        }
+    let total = 0;
+    const detail = { cp: 0, tf: 0, mc: 0, pr: 0 };
+    d.cp.forEach((it, i) => {
+        const input = document.querySelector(`[data-cp="${i}"]`);
+        const ok = isCpCorrect(input ? input.value : '', it.a);
+        if (input) { input.classList.toggle('eval-input-ok', ok); input.classList.toggle('eval-input-no', !ok); }
+        if (ok) { detail.cp++; total += 5; }
+        setEvalFeedback('evalFbCp' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. Respuesta esperada: ' + it.a);
     });
-    // II. Verdadero o Falso
-    d.tf.forEach((item, i) => {
-        const radios = document.querySelectorAll(`#evalOut input[name="tf${i}"]`);
-        const checked = [...radios].find(r => r.checked);
-        const isVerdadero = checked ? checked.parentElement.textContent.trim() === 'Verdadero' : null;
-        const isOk = checked !== null && (isVerdadero === item.a);
-        if (isOk) tfScore += 5;
-        const itemEl = radios[0]?.closest('.eval-item');
-        if (itemEl) {
-            itemEl.style.borderColor = isOk ? '#27ae60' : '#c0392b';
-            const ansEl = itemEl.querySelector('.eval-answer');
-            if (ansEl) { ansEl.style.display = 'block'; ansEl.style.color = isOk ? '#27ae60' : '#c0392b'; }
-        }
+    d.tf.forEach((it, i) => {
+        const selected = document.querySelector(`input[name="tf${i}"]:checked`);
+        const ok = !!selected && (selected.value === 'true') === it.a;
+        if (ok) { detail.tf++; total += 5; }
+        setEvalFeedback('evalFbTf' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. Respuesta esperada: ' + (it.a ? 'Verdadero' : 'Falso'));
     });
-    // III. Selección Múltiple
-    d.mc.forEach((item, i) => {
-        const radios = document.querySelectorAll(`#evalOut input[name="mc${i}"]`);
-        const checked = [...radios].find(r => r.checked);
-        const isOk = checked !== null && parseInt(checked.value) === item.a;
-        if (isOk) mcScore += 5;
-        const itemEl = radios[0]?.closest('.eval-item');
-        if (itemEl) {
-            itemEl.style.borderColor = isOk ? '#27ae60' : '#c0392b';
-            const ansEl = itemEl.querySelector('.eval-answer');
-            if (ansEl) { ansEl.style.display = 'block'; ansEl.style.color = isOk ? '#27ae60' : '#c0392b'; }
-        }
+    d.mc.forEach((it, i) => {
+        const selected = document.querySelector(`input[name="mc${i}"]:checked`);
+        const ok = !!selected && Number(selected.value) === it.a;
+        if (ok) { detail.mc++; total += 5; }
+        setEvalFeedback('evalFbMc' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. Respuesta esperada: ' + it.o[it.a]);
     });
-    // IV. Pareados
-    d.pr.terms.forEach((item, i) => {
-        const correctLetter = d.pr.letters[d.pr.shuffledDefs.findIndex(df => df.def === item.def)];
-        const sel = document.querySelector(`#evalOut select[name="pr${i}"]`);
-        const given = sel ? sel.value : '';
-        const isOk = given === correctLetter;
-        if (isOk) prScore += 5;
-        if (sel) {
-            sel.style.borderColor = isOk ? '#27ae60' : (given ? '#c0392b' : '');
-            sel.style.backgroundColor = isOk ? '#e8f8f5' : (given ? '#fbe9e7' : '');
-        }
+    const expectedLetters = d.pr.terms.map(it => d.pr.letters[d.pr.shuffledDefs.findIndex(df => df.def === it.def)]);
+    expectedLetters.forEach((letter, i) => {
+        const sel = document.querySelector(`[data-pr="${i}"]`);
+        const ok = !!sel && sel.value === letter;
+        if (sel) { sel.classList.toggle('eval-input-ok', ok); sel.classList.toggle('eval-input-no', !ok); }
+        if (ok) { detail.pr++; total += 5; }
     });
-    const prAnsEl = document.querySelector('#evalOut [data-pr-key]');
-    if (prAnsEl) { prAnsEl.style.display = 'block'; prAnsEl.style.color = '#c0392b'; }
-    const total = cpScore + tfScore + mcScore + prScore;
-    const msg = total >= 90 ? '🏆 ¡Excelente! Dominas los sustantivos.' : total >= 70 ? '😊 ¡Buen trabajo! Sigue practicando.' : total >= 50 ? '📚 Vas bien, repasa los temas con errores.' : '💪 ¡Ánimo! Estudia y vuelve a intentarlo.';
-    let res = document.getElementById('evalGradeResult');
-    if (!res) { res = document.createElement('div'); res.id = 'evalGradeResult'; document.getElementById('evalOut').after(res); }
-    res.className = 'eval-grade-result';
-    res.innerHTML = `<div class="egr-title">🎯 Resultado automático: ${total}/100 puntos</div><div class="egr-scores">Completar: ${cpScore}/25 · V/F: ${tfScore}/25 · Selección: ${mcScore}/25 · Pareados: ${prScore}/25</div><div class="egr-msg">${msg}</div><div class="egr-note">Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</div>`;
-    res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const prMsg = `Pareados: ${detail.pr}/5 correctos. ${detail.pr === 5 ? 'Excelente. +25 pts' : 'Clave: ' + expectedLetters.map((l, i) => (i + 16) + '→' + l).join(' · ')}`;
+    setEvalFeedback('evalFbPr', detail.pr === 5, prMsg);
+    const result = document.getElementById('evalAutoResult');
+    if (result) {
+        result.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk');
+        result.innerHTML = `<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Completar: ${detail.cp * 5}/25 · V/F: ${detail.tf * 5}/25 · Selección: ${detail.mc * 5}/25 · Pareados: ${detail.pr * 5}/25</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`;
+    }
+    if (total >= 70) { pts(8); showToast('🎯 Evaluación calificada: ' + total + '/100'); }
+    else showToast('🧮 Evaluación calificada: ' + total + '/100. Revisa las respuestas marcadas.');
 }
 function printEval() {
     if (!window._evalPrintData) { showToast('⚠️ Genera una evaluación primero'); return; }
