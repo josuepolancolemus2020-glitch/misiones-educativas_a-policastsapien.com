@@ -1086,12 +1086,12 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 .p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}
 .pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}
 .forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}
-@media print{@page{size:letter portrait;margin:8mm 12mm;}}
+@media print{@page{size:letter portrait;margin:12.7mm;}}
 </style></head><body>
 <div class="ph">
   <h2>Evaluación Final de Misión Los Verbos — Español — Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
