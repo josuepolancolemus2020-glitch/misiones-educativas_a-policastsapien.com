@@ -483,47 +483,195 @@ function genEval(){
   sfx('click'); const cf=evalFormNum; window._currentEvalForm=cf; evalFormNum=(evalFormNum%10)+1; saveProgress();
   document.getElementById('eval-screen-title').textContent=`📝 Evaluación Final — Forma ${cf} · Ángulos y Bisectriz`;
   evalAnsVisible=false; const out=document.getElementById('evalOut'); out.innerHTML='';
-  const bar=document.createElement('div');bar.className='eval-score-bar'; bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-tf">V/F 25pts</span><span class="eval-score-pill esp-mc">Selección 25pts</span><span class="eval-score-pill esp-cp">Completar 25pts</span><span class="eval-score-pill esp-pr">Pareados 25pts</span></div>`;
+  const bar=document.createElement('div');bar.className='eval-score-bar'; bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
   out.appendChild(bar);
-  const tfItems=_pick(evalTFBank,5); const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-  tfItems.forEach((item,i)=>{ const d=document.createElement('div');d.className='eval-item'; d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div>`; s1.appendChild(d); });
+  const cpItems=_pick(evalCPBank,5);
+  const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+  cpItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.dataset.evalType='cp'; d.dataset.evalIndex=i; const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`; s1.appendChild(d); });
   out.appendChild(s1);
-  const mcItems=_pick(evalMCBank,5); const s2=document.createElement('div'); s2.innerHTML='<div class="eval-section-title">II. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-  mcItems.forEach((item,i)=>{ const d=document.createElement('div');d.className='eval-item'; const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join(''); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1+5}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div>`; s2.appendChild(d); });
+  const tfItems=_pick(evalTFBank,5);
+  const s2=document.createElement('div'); s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+  tfItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.dataset.evalType='tf'; d.dataset.evalIndex=i; d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`; s2.appendChild(d); });
   out.appendChild(s2);
-  const cpItems=_pick(evalCPBank,5); const s3=document.createElement('div'); s3.innerHTML='<div class="eval-section-title">III. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-  cpItems.forEach((item,i)=>{ const d=document.createElement('div');d.className='eval-item'; const qHtml=item.q.replace('___','<span class="eval-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1+10}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div>`; s3.appendChild(d); });
+  const mcItems=_pick(evalMCBank,5);
+  const s3=document.createElement('div'); s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+  mcItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.dataset.evalType='mc'; d.dataset.evalIndex=i; const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join(''); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`; s3.appendChild(d); });
   out.appendChild(s3);
   const prItems=_pick(evalPRBank,5); const shuffledDefs=[...prItems].sort(()=>Math.random()-0.5); const letters=['A','B','C','D','E'];
   const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item';
-  let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>'; prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <span class="eval-match-line">&nbsp;&nbsp;&nbsp;</span> ${item.term}</div>`;}); colLeft+='</div>';
+  let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>'; prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;}); colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>'; shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;}); colRight+='</div>';
   const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return `${i+16}→${letter}`;}).join(' · ');
-  matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div>`;
+  matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;
   s4.appendChild(matchCard); out.appendChild(s4);
   window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};
+  const autoPanel=document.createElement('div'); autoPanel.id='evalAutoResult'; autoPanel.className='eval-auto-result'; autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.'; out.appendChild(autoPanel);
   fin('s-evaluacion');
 }
 function toggleEvalAns(){ evalAnsVisible=!evalAnsVisible; document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none'); sfx('click'); }
+function normalizeEvalAnswer(v){
+    return (v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();
+}
+function isCpCorrect(student,expected){
+    const s=normalizeEvalAnswer(student);
+    const e=normalizeEvalAnswer(expected);
+    if(!s) return false;
+    const variants=new Set([e]);
+    if(e.includes(' ')) e.split(' ').forEach(x=>x&&variants.add(x));
+    return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');
+}
+function setEvalFeedback(id,ok,msg){
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.textContent=msg;
+    el.className='eval-item-feedback '+(ok?'eval-ok':'eval-no');
+}
+function gradeEval(){
+    if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}
+    sfx('click');
+    const d=window._evalPrintData;
+    let total=0;
+    const detail={cp:0,tf:0,mc:0,pr:0};
+    d.cp.forEach((it,i)=>{
+        const input=document.querySelector(`[data-cp="${i}"]`);
+        const ok=isCpCorrect(input?input.value:'',it.a);
+        if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}
+        if(ok){detail.cp++;total+=5;}
+        setEvalFeedback('evalFbCp'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.a);
+    });
+    d.tf.forEach((it,i)=>{
+        const selected=document.querySelector(`input[name="tf${i}"]:checked`);
+        const ok=!!selected&&(selected.value==='true')===it.a;
+        if(ok){detail.tf++;total+=5;}
+        setEvalFeedback('evalFbTf'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+(it.a?'Verdadero':'Falso'));
+    });
+    d.mc.forEach((it,i)=>{
+        const selected=document.querySelector(`input[name="mc${i}"]:checked`);
+        const ok=!!selected&&Number(selected.value)===it.a;
+        if(ok){detail.mc++;total+=5;}
+        setEvalFeedback('evalFbMc'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.o[it.a]);
+    });
+    const expectedLetters=d.pr.terms.map(it=>d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]);
+    expectedLetters.forEach((letter,i)=>{
+        const sel=document.querySelector(`[data-pr="${i}"]`);
+        const ok=!!sel&&sel.value===letter;
+        if(sel){sel.classList.toggle('eval-input-ok',ok);sel.classList.toggle('eval-input-no',!ok);}
+        if(ok){detail.pr++;total+=5;}
+    });
+    const prMsg=`Pareados: ${detail.pr}/5 correctos. ${detail.pr===5?'Excelente. +25 pts':'Clave: '+expectedLetters.map((l,i)=>(i+16)+'→'+l).join(' · ')}`;
+    setEvalFeedback('evalFbPr',detail.pr===5,prMsg);
+    const result=document.getElementById('evalAutoResult');
+    if(result){
+        result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');
+        result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Completar: ${detail.cp*5}/25 · V/F: ${detail.tf*5}/25 · Selección: ${detail.mc*5}/25 · Pareados: ${detail.pr*5}/25</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`;
+    }
+    if(total>=70){pts(8);showToast('🎯 Evaluación calificada: '+total+'/100');}
+    else showToast('🧮 Evaluación calificada: '+total+'/100. Revisa las respuestas marcadas.');
+}
 
 function printEval(){
   if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;} sfx('click');
   const forma=window._currentEvalForm||1; const d=window._evalPrintData;
-  let s1=`<div class="sec-title">I. Verdadero o Falso <span style="font-weight:400;font-size:8pt;color:#555;">(Escribe V o F)</span><span class="pts-pill">25 pts</span></div>`;
-  d.tf.forEach((it,i)=>{s1+=`<div class="tf-row"><span class="qn">${i+1}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`;});
-  let s2=`<div class="sec-title">II. Selección Múltiple<span class="pts-pill">25 pts</span></div><div class="mc-grid">`;
-  d.mc.forEach((it,i)=>{const opts=it.o.map(op=>`<label class="mc-opt"><input type="radio" name="mc${i}"> ${op}</label>`).join('');s2+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+6}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`;});s2+=`</div>`;
-  let s3=`<div class="sec-title">III. Completar el espacio<span class="pts-pill">25 pts</span></div>`;
-  d.cp.forEach((it,i)=>{const q=it.q.replace('___','<span class="cp-blank"></span>');s3+=`<div class="cp-row"><span class="qn">${i+11}.</span><span class="cp-text">${q}</span></div>`;});
+
+  // ── I. Completar el espacio (preguntas 1-5)
+  let s1='<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>';
+  d.cp.forEach((it,i)=>{const q=it.q.replace('___','<span class="cp-blank"></span>');s1+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text">${q}</span></div>`;});
+
+  // ── II. Verdadero o Falso (preguntas 6-10)
+  let s2='<div class="sec-title"><span>II. Verdadero o Falso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>';
+  d.tf.forEach((it,i)=>{s2+=`<div class="tf-row"><span class="qn">${i+6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`;});
+
+  // ── III. Selección Múltiple (preguntas 11-15)
+  let s3='<div class="sec-title"><span>III. Selección Múltiple</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="mc-grid">';
+  d.mc.forEach((it,i)=>{const opts=it.o.map((op,oi)=>`<label class="mc-opt"><input type="radio" name="mcp${i}"> ${op}</label>`).join('');s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+11}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`;});
+  s3+='</div>';
+
+  // ── IV. Términos Pareados (preguntas 16-20)
   let colL='<div class="pr-col"><div class="pr-head">📌 Términos</div>';d.pr.terms.forEach((it,i)=>{colL+=`<div class="pr-item"><span class="pr-num">${i+16}.</span><span class="pr-line"></span>${it.term}</div>`;});colL+='</div>';
   let colR='<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';d.pr.shuffledDefs.forEach((it,i)=>{colR+=`<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`;});colR+='</div>';
-  let s4=`<div class="sec-title">IV. Términos Pareados<span class="pts-pill">25 pts</span></div><div class="pr-grid">${colL}${colR}</div>`;
-  let pR='';pR+=`<div class="p-sec"><div class="p-ttl">I. V o F</div><table class="p-tbl">`;d.tf.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`;});
-  pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. Selección</div><table class="p-tbl">`;d.mc.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+6}.</td><td class="pa">${it.o[it.a]}</td></tr>`;});
-  pR+=`</table></div><div class="p-sec"><div class="p-ttl">III. Completar</div><table class="p-tbl">`;d.cp.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${it.a}</td></tr>`;});
+  let s4=`<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;
+
+  // ── Pauta
+  let pR='';
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Completar</div><table class="p-tbl">`;d.cp.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${it.a}</td></tr>`;});
+  pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. V o F</div><table class="p-tbl">`;d.tf.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+6}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`;});
+  pR+=`</table></div><div class="p-sec"><div class="p-ttl">III. Selección</div><table class="p-tbl">`;d.mc.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${it.o[it.a]}</td></tr>`;});
   pR+=`</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;d.pr.terms.forEach((it,i)=>{const l=d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)];pR+=`<tr><td class="pn">${i+16}.</td><td class="pa">${i+16}→${l}</td></tr>`;});pR+=`</table></div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Evaluación Ángulos y Bisectriz · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:11pt;text-align:center;color:#555;margin-top:0.15rem;}.sec-title{font-size:9pt;font-weight:700;padding:0.2rem 0.45rem;margin:0.38rem 0 0.18rem;border-left:4px solid #6c5ce7;background:#ece9ff;display:flex;justify-content:space-between;align-items:center;}.pts-pill{font-size:7.5pt;background:#6c5ce7;color:white;padding:0.08rem 0.35rem;border-radius:8px;}.qn{font-weight:700;min-width:20px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:38px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.15rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.22rem 0.4rem;margin-bottom:0.18rem;break-inside:avoid;}.mc-q{font-size:9pt;line-height:1.32;display:flex;gap:0.25rem;margin-bottom:0.12rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.18rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.05rem 0.2rem;margin-left:1.2rem;}.mc-opt{font-size:8.5pt;display:flex;align-items:center;gap:0.2rem;}.mc-opt input{width:11px;height:11px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:140px;border-bottom:1.5px solid #111;margin:0 0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.25rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:0.18rem;}.pr-item{font-size:8.5pt;padding:0.28rem 0.3rem;background:#ece9ff;border-radius:3px;margin-bottom:0.18rem;display:flex;align-items:center;gap:0.2rem;line-height:1.6;}.pr-num{font-weight:700;color:#6c5ce7;min-width:17px;flex-shrink:0;}.pr-line{display:inline-block;min-width:17px;border-bottom:1.5px solid #111;margin-right:0.12rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.28rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{margin:4mm 6mm;}}</style></head><body><div class="ph"><h2>Evaluación Final · Misión Ángulos y Bisectriz · Matemáticas</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Misión Ángulos y Bisectriz · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
+
+  const doc=`<!DOCTYPE html><html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evaluación Ángulos y Bisectriz · Forma ${forma}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body {font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;color:#111;background:#fff;padding:2mm 5mm;}
+.ph{margin-bottom:0.4rem;}
+.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.3rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9pt;text-align:center;color:#555;margin-top:0.1rem;}
+.sec-title {font-size:10pt;font-weight:700;padding:0.15rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #2980b9;background:#eaf2f8;color:#2980b9;}
+.obt-row {display:flex;align-items:baseline;gap:4px;font-size:9pt;font-weight:700;font-style:italic;color:#2980b9;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #2980b9;height:12px;}
+.obt-pct{white-space:nowrap;}
+.qn{font-weight:700;min-width:20px;flex-shrink:0;}
+.tf-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.15rem 0.2rem;border-bottom:1px solid #eee;}
+.tf-blank{display:inline-block;min-width:38px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.15rem;}
+.tf-text{flex:1;}
+.mc-item {border:1px solid #ddd;border-radius:4px;padding:0.15rem 0.3rem;margin-bottom:0.12rem;break-inside:avoid;page-break-inside:avoid;}
+.mc-q{font-size:9pt;line-height:1.32;display:flex;gap:0.25rem;margin-bottom:0.1rem;}
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.15rem 0.5rem;}
+.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.05rem 0.2rem;margin-left:1.2rem;}
+.mc-opt{font-size:8.5pt;display:flex;align-items:center;gap:0.2rem;}
+.mc-opt input{width:11px;height:11px;flex-shrink:0;}
+.cp-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.15rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-text{flex:1;}
+.cp-blank{display:inline-block;min-width:140px;border-bottom:1.5px solid #111;margin:0 0.1rem;}
+.pr-section{margin-top:0.2rem;}
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.1rem;}
+.pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:0.15rem;}
+.pr-item {font-size:9.5pt;padding:0.15rem 0.25rem;background:#eaf2f8;border-radius:3px;margin-bottom:0.1rem;display:flex;align-items:center;gap:0.2rem;line-height:1.15;break-inside:avoid;page-break-inside:avoid;}
+.pr-num {font-weight:700;color:#2980b9;min-width:17px;flex-shrink:0;}
+.pr-line{display:inline-block;min-width:17px;border-bottom:1.5px solid #111;margin-right:0.12rem;flex-shrink:0;}
+.total-row {display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.3rem;padding:0.2rem 0;page-break-before:avoid;break-before:avoid;color:#2980b9;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #2980b9;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:9.5pt;font-weight:700;}
+.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:7pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.25rem 0.4rem;}
+.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;}
+.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}
+.p-tbl tr{border-bottom:1px dotted #ddd;}
+.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}
+.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}
+.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}
+@media print{@page{margin:4mm 6mm;}}
+</style></head><body>
+<div class="ph">
+  <h2>Evaluación Final · Misión Ángulos y Bisectriz · Matemáticas</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+</div>
+${s1}${s2}${s3}${s4}
+<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="pauta-wrap">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Evaluación Final · Misión Ángulos y Bisectriz · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="forma-tag">Forma ${forma}</div>
+</body></html>`;
   const win=window.open('','_blank',''); if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;} win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
 }
 
