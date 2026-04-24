@@ -1076,10 +1076,10 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;color:#111;backgro
 .ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
 .ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
 .ph-crit{font-size:9pt;text-align:center;color:#555;margin-top:0.1rem;}
-.sec-title {font-size:10pt;font-weight:700;padding:0.15rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #d35400;background:#fdf2e9;color:#d35400;}
-.obt-row {display:flex;align-items:baseline;gap:4px;font-size:9pt;font-weight:700;font-style:italic;color:#d35400;}
+.sec-title {font-size:10pt;font-weight:700;padding:0.15rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c49000;background:#fef9e7;color:#c49000;}
+.obt-row {display:flex;align-items:baseline;gap:4px;font-size:9pt;font-weight:700;font-style:italic;color:#c49000;}
 .obt-lbl{white-space:nowrap;}
-.obt-line{display:inline-block;min-width:30px;border-bottom:1.5px solid #d35400;margin:0 2px;}
+.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #c49000;height:12px;}
 .obt-pct{white-space:nowrap;}
 .qn{font-weight:700;min-width:20px;flex-shrink:0;}
 .tf-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.15rem 0.2rem;border-bottom:1px solid #eee;}
@@ -1097,10 +1097,11 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;color:#111;backgro
 .pr-section{margin-top:0.2rem;}
 .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.1rem;}
 .pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:0.15rem;}
-.pr-item {font-size:9.5pt;padding:0.15rem 0.25rem;background:#fdf2e9;border-radius:3px;margin-bottom:0.1rem;display:flex;align-items:center;gap:0.2rem;line-height:1.15;break-inside:avoid;page-break-inside:avoid;}
-.pr-num {font-weight:700;color:#d35400;min-width:17px;flex-shrink:0;}
+.pr-item {font-size:9.5pt;padding:0.15rem 0.25rem;background:#fef9e7;border-radius:3px;margin-bottom:0.1rem;display:flex;align-items:center;gap:0.2rem;line-height:1.15;break-inside:avoid;page-break-inside:avoid;}
+.pr-num {font-weight:700;color:#c49000;min-width:17px;flex-shrink:0;}
 .pr-line{display:inline-block;min-width:17px;border-bottom:1.5px solid #111;margin-right:0.12rem;flex-shrink:0;}
-.total-row {display:flex;align-items:baseline;justify-content:flex-start;margin-left:30%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.3rem;padding:0.2rem 0;page-break-before:avoid;break-before:avoid;color:#d35400;border-top:2px solid #d35400;}
+.total-row {display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.3rem;padding:0.2rem 0;page-break-before:avoid;break-before:avoid;color:#c49000;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c49000;}
 .pauta-wrap{page-break-before:always;padding-top:0.4rem;}
 .p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
 .p-main{font-size:9.5pt;font-weight:700;}
@@ -1123,7 +1124,7 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;color:#111;backgro
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total Obtenido:</span><span class="obt-line" style="min-width:40px;"></span><span>/ 100 puntos</span></div>
+<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 <div class="pauta-wrap">
   <div class="p-head">
     <div class="p-main">✅ PAUTA — Evaluación Final · Misión Los Sustantivos · Forma ${forma}</div>
