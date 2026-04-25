@@ -1162,40 +1162,40 @@ function printEval() {
 <title>Evaluación Las Eras Geológicas · Forma ${forma}</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body {font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;color:#111;background:#fff;padding:2mm 5mm;}
-.ph{margin-bottom:0.4rem;}
-.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.3rem;}
-.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}
-.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}
+body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:2mm 6mm;}
+.ph{margin-bottom:0.55rem;}
+.ph h2{font-size:12pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:5px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:13px;display:block;}
 .ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
 .ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
 .ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
-.ph-crit{font-size:9pt;text-align:center;color:#555;margin-top:0.1rem;}
-.sec-title {font-size:10pt;font-weight:700;padding:0.15rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}
-.obt-row {display:flex;align-items:baseline;gap:4px;font-size:9pt;font-weight:700;font-style:italic;color:#27ae60;}
+.ph-crit{font-size:10.5pt;text-align:center;color:#555;margin-top:0.2rem;}
+.sec-title {font-size:11pt;font-weight:700;padding:0.2rem 0.48rem;margin:0.38rem 0 0.17rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}
+.obt-row {display:flex;align-items:baseline;gap:4px;font-size:10pt;font-weight:700;font-style:italic;color:#27ae60;}
 .obt-lbl{white-space:nowrap;}
-.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #27ae60;height:12px;}
+.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #27ae60;height:13px;}
 .obt-pct{white-space:nowrap;}
-.qn{font-weight:700;min-width:20px;flex-shrink:0;}
-.tf-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.15rem 0.2rem;border-bottom:1px solid #eee;}
-.tf-blank{display:inline-block;min-width:38px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.15rem;}
+.qn{font-weight:700;min-width:22px;flex-shrink:0;}
+.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:11pt;line-height:1.4;padding:0.22rem 0.25rem;border-bottom:1px solid #eee;}
+.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}
 .tf-text{flex:1;}
-.mc-item {border:1px solid #ddd;border-radius:4px;padding:0.15rem 0.3rem;margin-bottom:0.12rem;break-inside:avoid;page-break-inside:avoid;}
-.mc-q{font-size:9pt;line-height:1.32;display:flex;gap:0.25rem;margin-bottom:0.1rem;}
-.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.15rem 0.5rem;}
-.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.05rem 0.2rem;margin-left:1.2rem;}
-.mc-opt{font-size:8.5pt;display:flex;align-items:center;gap:0.2rem;}
+.mc-item {border:1px solid #ddd;border-radius:4px;padding:0.22rem 0.42rem;margin-bottom:0.17rem;break-inside:avoid;page-break-inside:avoid;}
+.mc-q{font-size:11pt;line-height:1.4;display:flex;gap:0.28rem;margin-bottom:0.15rem;}
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.17rem 0.5rem;}
+.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.06rem 0.2rem;margin-left:1.2rem;}
+.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.2rem;}
 .mc-opt input{width:11px;height:11px;flex-shrink:0;}
-.cp-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.15rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:11pt;line-height:1.4;padding:0.22rem 0.25rem;border-bottom:1px solid #eee;}
 .cp-text{flex:1;}
-.cp-blank{display:inline-block;min-width:140px;border-bottom:1.5px solid #111;margin:0 0.1rem;}
-.pr-section{margin-top:0.2rem;}
-.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.1rem;}
-.pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:0.15rem;}
-.pr-item {font-size:9.5pt;padding:0.15rem 0.25rem;background:#e8f8f5;border-radius:3px;margin-bottom:0.1rem;display:flex;align-items:center;gap:0.2rem;line-height:1.15;break-inside:avoid;page-break-inside:avoid;}
-.pr-num {font-weight:700;color:#27ae60;min-width:17px;flex-shrink:0;}
-.pr-line{display:inline-block;min-width:17px;border-bottom:1.5px solid #111;margin-right:0.12rem;flex-shrink:0;}
-.total-row {display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.3rem;padding:0.2rem 0;page-break-before:avoid;break-before:avoid;color:#27ae60;}
+.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.pr-section{margin-top:0.22rem;}
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}
+.pr-head{font-size:9.5pt;font-weight:700;color:#555;margin-bottom:0.18rem;}
+.pr-item {font-size:11pt;padding:0.2rem 0.35rem;background:#e8f8f5;border-radius:3px;margin-bottom:0.14rem;display:flex;align-items:center;gap:0.2rem;line-height:1.28;break-inside:avoid;page-break-inside:avoid;}
+.pr-num {font-weight:700;color:#27ae60;min-width:19px;flex-shrink:0;}
+.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}
+.total-row {display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:12pt;font-weight:700;font-style:italic;margin-top:0.42rem;padding:0.28rem 0;page-break-before:avoid;break-before:avoid;color:#27ae60;}
 .total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}
 .pauta-wrap{page-break-before:always;padding-top:0.4rem;}
 .p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
@@ -1210,12 +1210,12 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;color:#111;backgro
 .p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}
 .pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}
 .forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}
-@media print{@page{margin:4mm 6mm;}}
+@media print{@page{size:letter portrait;margin:12.7mm;}}
 </style></head><body>
 <div class="ph">
   <h2>Evaluación Final · Misión Las Eras Geológicas · CC.NN.</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
