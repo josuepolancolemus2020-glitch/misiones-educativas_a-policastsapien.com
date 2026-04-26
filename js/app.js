@@ -39,6 +39,39 @@ const LEVELS = [
   { n: 5, min: 800, max: Infinity, label: 'Sabio', emoji: '🏆' },
 ];
 
+const FRASES = [
+  { texto: "El éxito es la suma de pequeños esfuerzos repetidos día tras día.", autor: "Robert Collier" },
+  { texto: "La educación es el arma más poderosa que puedes usar para cambiar el mundo.", autor: "Nelson Mandela" },
+  { texto: "No importa cuán despacio vayas, siempre que no te detengas.", autor: "Confucio" },
+  { texto: "El conocimiento es el único bien que crece cuanto más se comparte.", autor: "Proverbio" },
+  { texto: "Nunca es demasiado tarde para aprender algo nuevo.", autor: "Anónimo" },
+  { texto: "La perseverancia es el camino al éxito.", autor: "Charles Chaplin" },
+  { texto: "Cada libro que lees es un mundo nuevo que descubres.", autor: "Anónimo" },
+  { texto: "Un día sin aprender algo nuevo es un día perdido.", autor: "Albert Einstein" },
+  { texto: "La constancia convierte lo ordinario en extraordinario.", autor: "Anónimo" },
+  { texto: "Tu futuro se construye con lo que haces hoy.", autor: "Robert Kiyosaki" },
+  { texto: "Primero aprende las reglas; luego juega mejor que nadie.", autor: "Albert Einstein" },
+  { texto: "La mente que se abre a una nueva idea jamás volverá a su tamaño original.", autor: "Albert Einstein" },
+  { texto: "El aprendizaje es un tesoro que te acompañará a todas partes.", autor: "Proverbio chino" },
+  { texto: "Estudia, no para saber más, sino para saber mejor.", autor: "Séneca" },
+  { texto: "Invertir en conocimiento siempre paga el mejor interés.", autor: "Benjamin Franklin" },
+  { texto: "Los sueños no funcionan a menos que tú también lo hagas.", autor: "John C. Maxwell" },
+  { texto: "El único límite a tu aprendizaje es el que tú mismo te pongas.", autor: "Anónimo" },
+  { texto: "Cada pequeño avance de hoy es la gran diferencia de mañana.", autor: "Anónimo" },
+  { texto: "La perseverancia convierte lo imposible en posible.", autor: "Anónimo" },
+  { texto: "No hay atajos hacia el conocimiento verdadero.", autor: "Anónimo" },
+  { texto: "Un buen estudiante nunca deja de aprender, incluso fuera del aula.", autor: "Anónimo" },
+  { texto: "El esfuerzo de hoy es el orgullo de mañana.", autor: "Anónimo" },
+  { texto: "Cada vez que estudias, te conviertes en una versión mejor de ti mismo.", autor: "Anónimo" },
+  { texto: "La disciplina es el puente entre las metas y los logros.", autor: "Jim Rohn" },
+  { texto: "El que estudia con constancia, cosecha con abundancia.", autor: "Proverbio" },
+  { texto: "No te compares con otros; compárate con quien eras ayer.", autor: "Anónimo" },
+  { texto: "Aprender es el regalo más valioso que te haces a ti mismo.", autor: "Anónimo" },
+  { texto: "La educación no es llenar un balde, sino encender un fuego.", autor: "W.B. Yeats" },
+  { texto: "Con dedicación y paciencia, cualquier meta es alcanzable.", autor: "Anónimo" },
+  { texto: "Los grandes logros requieren tiempo. Dale tiempo a tu aprendizaje.", autor: "Anónimo" },
+];
+
 /* ─────────────────────────────────────────────
    STATE
 ───────────────────────────────────────────── */
@@ -94,24 +127,14 @@ function featuredMission(s) {
 
 function renderHome() {
   const s = load();
-  const lv = getLevel(s.xp);
-  const pct = xpPct(s.xp);
-  const next = lv.n < 5 ? lv.max + 1 : null;
 
-  // XP card
-  document.getElementById('home-avatar').textContent = lv.emoji;
-  document.getElementById('home-name').textContent   = displayName(s);
-  document.getElementById('home-rank').textContent   = lv.label;
-  document.getElementById('home-level').textContent  = `Nivel ${lv.n}`;
-  requestAnimationFrame(() => {
-    document.getElementById('xp-fill').style.width = pct + '%';
-  });
-  document.getElementById('xp-current').innerHTML = `<i class="fa-solid fa-star"></i> ${s.xp} XP`;
-  document.getElementById('xp-next').textContent  = next ? `Siguiente: ${next} XP` : '¡Nivel máximo! 🏆';
+  // Saludo
+  document.getElementById('home-name').textContent = displayName(s) + '!';
 
-  // Stats
-  document.getElementById('stat-done').textContent = s.visited.length;
-  document.getElementById('stat-xp').textContent   = s.xp;
+  // Frase motivacional aleatoria
+  const frase = FRASES[Math.floor(Math.random() * FRASES.length)];
+  document.getElementById('motiv-text').textContent  = frase.texto;
+  document.getElementById('motiv-autor').textContent = '— ' + frase.autor;
 
   // Featured
   const m = featuredMission(s);
