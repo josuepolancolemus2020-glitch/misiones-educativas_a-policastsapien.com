@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meta-app-v3';
+const CACHE_NAME = 'meta-app-v4';
 const urlsToCache = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting(); // <--- NUEVO: Fuerza la actualización inmediata
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -23,7 +24,6 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Cache hit - return response
         if (response) {
           return response;
         }
@@ -32,7 +32,6 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// NUEVO CÓDIGO: Borra el caché viejo cuando actualizas la app
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -43,6 +42,6 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim()) // <--- NUEVO: Toma el control de la página de inmediato
   );
 });
