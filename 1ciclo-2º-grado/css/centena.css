@@ -41,7 +41,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 :focus-visible{outline:3px solid var(--pri);outline-offset:3px;}
 
 /* XP BAR */
-.xp-bar{position:relative;z-index:10;background:var(--xp-bg);padding:0.38rem 1rem;display:flex;align-items:center;gap:0.8rem;transition:background 0.3s;}
+.xp-bar{position:sticky;top:0;z-index:1000;background:var(--xp-bg);padding:0.4rem 0.8rem;display:flex;align-items:center;gap:0.6rem;transition:background 0.3s;}
 .xp-lbl{font-family:'Fredoka',sans-serif;color:var(--yellow-br);font-size:0.8rem;white-space:nowrap;}
 .xp-track{flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;}
 .xp-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--pri),var(--sec),#1565c0);border-radius:10px;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
@@ -414,11 +414,45 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .cred-btn:hover{background:rgba(255,255,255,0.18);color:white;transform:translateY(-1px);}
 
 /* BOTÓN REGRESO A LA APP */
-.xp-bar{position:sticky;top:0;z-index:1000;}
-.xp-back-btn{display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;transition:transform 0.2s;}
-.xp-back-btn:active{transform:scale(0.9);}
-.xp-back-logo{width:32px;height:32px;object-fit:contain;background-color:white;border-radius:50%;padding:2px;border:1.5px solid var(--pri);}
-.xp-back-arrow{color:var(--yellow-br);font-size:1.1rem;}
+.xp-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--xp-bg);
+  padding: 0.4rem 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: background 0.3s;
+}
+
+.xp-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.xp-back-btn:active {
+  transform: scale(0.9);
+}
+
+.xp-back-arrow {
+  color: var(--yellow-br);
+  font-size: 1.1rem;
+}
+
+.xp-back-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  background-color: white !important;
+  border-radius: 50%;
+  padding: 2px;
+  border: 1.5px solid var(--pri);
+}
 
 /* ACCESIBILIDAD */
 body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grande h2,body.letra-grande h3,body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
