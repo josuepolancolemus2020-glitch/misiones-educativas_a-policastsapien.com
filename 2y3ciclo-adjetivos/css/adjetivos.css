@@ -500,3 +500,48 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
   border-color: var(--sec);
   box-shadow: 0 3px 10px var(--sec-gl);
 }
+/* ====== INTEGRACIÓN BOTÓN REGRESO EN BARRA XP ====== */
+.xp-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem; /* Espaciado entre elementos */
+  padding: 0.4rem 0.8rem;
+}
+
+.xp-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  position: relative;
+  margin-right: 2px;
+  transition: transform 0.2s;
+}
+
+.xp-back-btn:active {
+  transform: scale(0.9);
+}
+
+.xp-back-logo {
+  width: 28px; /* Tamaño pequeño para que quepa en la barra */
+  height: 28px;
+  object-fit: contain;
+  background: white;
+  border-radius: 50%;
+  padding: 2px;
+  border: 1.5px solid var(--pri);
+}
+
+.xp-back-arrow {
+  position: absolute;
+  left: -8px; /* Pequeña flecha que sobresale a la izquierda */
+  font-size: 10px;
+  color: var(--yellow-br);
+  background: var(--xp-bg);
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.xp-lbl {
+  margin-left: 2px; /* Ajuste para que la palabra XP no quede pegada */
+}
