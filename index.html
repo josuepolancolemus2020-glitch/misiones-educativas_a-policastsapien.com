@@ -15,7 +15,7 @@
   <!-- ========== INICIO ========== -->
   <div id="view-inicio" class="view active">
     <header class="app-header">
-      <img src="img/logo.png" alt="PoliCastSapien Editorial" class="header-logo">
+      <div></div>
       <div class="brand-center">
         <div class="brand-logo">M.E.T.A.</div>
         <div class="brand-sub">Misiones Educativas Tecnológicas Asincrónicas</div>
@@ -65,7 +65,32 @@
           <span class="stat-l">XP</span>
         </div>
       </div>
+    <div class="selectors-container">
+        
+        <div class="selector-group">
+          <label><i class="fa-solid fa-earth-americas"></i> Elige tu País</label>
+          <select id="country-select" class="custom-select">
+            <option value="HN">🇭🇳 Honduras</option>
+            <option value="MX" disabled>🇲🇽 México (Próximamente)</option>
+            <option value="GT" disabled>🇬🇹 Guatemala (Próximamente)</option>
+            <option value="SV" disabled>🇸🇻 El Salvador (Próximamente)</option>
+            <option value="NI" disabled>🇳🇮 Nicaragua (Próximamente)</option>
+            <option value="CR" disabled>🇨🇷 Costa Rica (Próximamente)</option>
+            <option value="PA" disabled>🇵🇦 Panamá (Próximamente)</option>
+          </select>
+        </div>
 
+        <div class="selector-group">
+          <label><i class="fa-solid fa-graduation-cap"></i> Grado</label>
+          <select id="grade-select" class="custom-select">
+            <option value="1-3">1° a 3° Grado</option>
+            <option value="4-6">4° a 6° Grado</option>
+            <option value="7-9" selected>7° a 9° Grado</option>
+            <option value="bach">Bachillerato</option>
+          </select>
+        </div>
+
+      </div>
       <!-- Subjects -->
       <h2 class="section-title">Explorar por materia</h2>
       <div class="subjects-row">
@@ -185,10 +210,6 @@
       <button id="reset-btn" class="reset-btn">
         <i class="fa-solid fa-arrow-rotate-left"></i> Reiniciar todo el progreso
       </button>
-
-      <div class="publisher-credit">
-        <img src="img/logo.png" alt="PoliCastSapien Editorial" class="publisher-logo">
-      </div>
 
     </div>
   </div>
