@@ -3,198 +3,217 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#114494">
-  <title>M.E.T.A. Misiones Educativas Tecnológicas Asincrónicas</title>
-  
+  <meta name="theme-color" content="#1e3a7c">
+  <title>M.E.T.A. — Misiones Educativas Tecnológicas Asincrónicas</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Fallback icons if PWA is installed -->
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3063/3063822.png">
 </head>
 <body>
 
-  <!-- ================= INICIO VIEW ================= -->
+  <!-- ========== INICIO ========== -->
   <div id="view-inicio" class="view active">
-    
-    <!-- Header -->
-    <header class="top-header">
-      <div class="editorial-mark" title="PoliCastSapien Editorial">
-        <img src="img/pcs-mark.svg" alt="PoliCastSapien Editorial" class="pcs-mark">
+    <header class="app-header">
+      <div></div>
+      <div class="brand-center">
+        <div class="brand-logo">M.E.T.A.</div>
+        <div class="brand-sub">Misiones Educativas Tecnológicas Asincrónicas</div>
       </div>
-      <div class="logo-container">
-        <h1 class="logo-main">M.E.T.A.</h1>
-        <span class="logo-sub">Misiones Educativas</span>
+      <button class="notif-btn" id="notif-btn" aria-label="Notificaciones">
+        <i class="fa-regular fa-bell"></i>
+        <span class="notif-dot" id="notif-dot" hidden></span>
+      </button>
+    </header>
+    <div class="view-scroll">
+
+      <!-- XP Card -->
+      <div class="xp-card">
+        <div class="xp-top">
+          <div class="xp-left">
+            <span class="xp-avatar" id="home-avatar">🌱</span>
+            <div>
+              <div class="xp-name" id="home-name">Estudiante</div>
+              <div class="xp-rank" id="home-rank">Explorador</div>
+            </div>
+          </div>
+          <div class="level-chip" id="home-level">Nivel 1</div>
+        </div>
+        <div class="xp-bar-track">
+          <div class="xp-bar-fill" id="xp-fill" style="width:0%"></div>
+        </div>
+        <div class="xp-foot">
+          <span id="xp-current"><i class="fa-solid fa-star"></i> 0 XP</span>
+          <span id="xp-next">Siguiente: 100 XP</span>
+        </div>
       </div>
-      <div class="header-right">
-        <button class="notification-btn" aria-label="Notificaciones">
-          <i class="fa-regular fa-bell"></i>
-          <div class="notif-dot"></div>
+
+      <!-- Stats -->
+      <div class="stats-strip">
+        <div class="stat-cell">
+          <span class="stat-n" id="stat-done">0</span>
+          <span class="stat-l">Visitadas</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-cell">
+          <span class="stat-n">13</span>
+          <span class="stat-l">Total</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-cell">
+          <span class="stat-n" id="stat-xp">0</span>
+          <span class="stat-l">XP</span>
+        </div>
+      </div>
+
+      <!-- Subjects -->
+      <h2 class="section-title">Explorar por materia</h2>
+      <div class="subjects-row">
+        <button class="subj-chip esp" data-subject="español">
+          <i class="fa-solid fa-book-open"></i>
+          <span>Español</span>
+          <em>5 misiones</em>
+        </button>
+        <button class="subj-chip mat" data-subject="matemáticas">
+          <i class="fa-solid fa-superscript"></i>
+          <span>Matemáticas</span>
+          <em>3 misiones</em>
+        </button>
+        <button class="subj-chip cnat" data-subject="naturales">
+          <i class="fa-solid fa-seedling"></i>
+          <span>C. Naturales</span>
+          <em>2 misiones</em>
+        </button>
+        <button class="subj-chip csoc" data-subject="sociales">
+          <i class="fa-solid fa-earth-americas"></i>
+          <span>C. Sociales</span>
+          <em>3 misiones</em>
         </button>
       </div>
-    </header>
 
-    <!-- Greeting -->
-    <div class="greeting">
-      👋 ¡Hola! Elige tu misión de hoy
+      <!-- Featured -->
+      <h2 class="section-title">Misión destacada</h2>
+      <div id="featured-card" class="featured-card"></div>
+
+      <!-- Recent -->
+      <div id="recent-wrap" hidden>
+        <h2 class="section-title">Continúa explorando</h2>
+        <div id="recent-list" class="small-list"></div>
+      </div>
+
     </div>
+  </div>
 
-    <!-- XP Card -->
-    <div class="xp-card">
-      <div class="xp-header">
-        <div class="xp-points">
-          <div class="xp-icon">
-            <i class="fa-solid fa-star"></i>
-          </div>
-          <span>XP 240</span>
-        </div>
-        <div class="xp-level">
-          Nivel 3
-        </div>
-      </div>
-      <div class="xp-bar-bg">
-        <div class="xp-bar-fill"></div>
-      </div>
-    </div>
-
-    <!-- Grades -->
-    <h2 class="section-title">Selecciona tu grado</h2>
-    <div class="items-grid">
-      <div class="item-card theme-green" data-subject="all">
-        <div class="item-icon"><i class="fa-solid fa-cube"></i><!-- Backup icon if no backpack -->🎒</div>
-        <div class="item-title">2°</div>
-        <div class="item-subtitle">grado</div>
-      </div>
-      <div class="item-card theme-blue" data-subject="all">
-        <div class="item-icon"><i class="fa-solid fa-book"></i></div>
-        <div class="item-title">6°</div>
-        <div class="item-subtitle">grado</div>
-      </div>
-      <div class="item-card theme-orange" data-subject="all">
-        <div class="item-icon"><i class="fa-solid fa-pencil"></i></div>
-        <div class="item-title">7°</div>
-        <div class="item-subtitle">grado</div>
-      </div>
-      <div class="item-card theme-purple" data-subject="all">
-        <div class="item-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-        <div class="item-title" style="font-size:11px;">Bachillerato</div>
-      </div>
-    </div>
-
-    <!-- Subjects -->
-    <h2 class="section-title">Elige tu materia</h2>
-    <div class="items-grid">
-      <div class="item-card theme-green" data-subject="español">
-        <div class="item-icon"><i class="fa-solid fa-book-open"></i></div>
-        <div class="item-title">Español</div>
-      </div>
-      <div class="item-card theme-blue" data-subject="matemáticas">
-        <div class="item-icon"><i class="fa-solid fa-calculator"></i></div>
-        <div class="item-title">Matemáticas</div>
-      </div>
-      <div class="item-card theme-green" data-subject="ciencias naturales">
-        <div class="item-icon"><i class="fa-solid fa-leaf"></i></div>
-        <div class="item-title">Ciencias<br>Naturales</div>
-      </div>
-      <div class="item-card theme-orange" data-subject="ciencias sociales">
-        <div class="item-icon"><i class="fa-solid fa-globe"></i></div>
-        <div class="item-title">Ciencias<br>Sociales</div>
-      </div>
-    </div>
-
-    <!-- Mission of the Day -->
-    <div class="daily-mission-card">
-      <div class="hero-image" style="font-size: 80px;">🧑‍🤝‍🧑</div>
-      <div class="daily-content">
-        <div class="daily-title">Misión del día</div>
-        <div class="daily-desc">Conversamos con respeto.<br>Aprendamos a escuchar, saludar y dialogar con amabilidad.</div>
-        <div class="daily-actions">
-          <div class="daily-xp">
-            <i class="fa-solid fa-star"></i> +20 XP
-          </div>
-          <button class="btn-start" onclick="document.querySelector('.nav-item[data-target=\'view-misiones\']').click()">
-            Comenzar misión <i class="fa-solid fa-chevron-right" style="font-size:10px;"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-  </div> <!-- End Inicio View -->
-
-  <!-- ================= MISIONES VIEW ================= -->
+  <!-- ========== MISIONES ========== -->
   <div id="view-misiones" class="view">
-    <header class="top-header" style="justify-content: center;">
-      <h1 class="logo-main" style="font-size: 24px;">Mis Misiones</h1>
+    <header class="app-header compact">
+      <div></div>
+      <h1 class="view-title">Misiones</h1>
+      <div></div>
     </header>
-
-    <div class="filter-tabs">
-      <button class="filter-btn active" data-filter="all">Todas</button>
-      <button class="filter-btn" data-filter="español">Español</button>
-      <button class="filter-btn" data-filter="matemáticas">Matemáticas</button>
-      <button class="filter-btn" data-filter="ciencias naturales">Naturales</button>
-      <button class="filter-btn" data-filter="ciencias sociales">Sociales</button>
-    </div>
-
-    <div id="missions-container" class="mission-list">
-      <!-- Inyectado por app.js -->
+    <div class="view-scroll">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="search-input" type="search" placeholder="Buscar misión…" autocomplete="off">
+      </div>
+      <div class="pills-row">
+        <button class="pill active" data-filter="all">Todas</button>
+        <button class="pill" data-filter="español">Español</button>
+        <button class="pill" data-filter="matemáticas">Matemáticas</button>
+        <button class="pill" data-filter="naturales">C. Naturales</button>
+        <button class="pill" data-filter="sociales">C. Sociales</button>
+      </div>
+      <div id="missions-container" class="missions-list"></div>
     </div>
   </div>
 
-  <!-- ================= PROGRESO VIEW ================= -->
+  <!-- ========== PROGRESO ========== -->
   <div id="view-progreso" class="view">
-    <header class="top-header" style="justify-content: center;">
-      <h1 class="logo-main" style="font-size: 24px;">Progreso</h1>
+    <header class="app-header compact">
+      <div></div>
+      <h1 class="view-title">Mi Progreso</h1>
+      <div></div>
     </header>
-    <div class="empty-state">
-      <div style="font-size: 40px; margin-bottom: 10px;">📊</div>
-      <h3>En construcción</h3>
-      <p>Próximamente podrás ver tus estadísticas.</p>
+    <div class="view-scroll">
+      <div id="progress-overview"></div>
+      <div id="progress-subjects"></div>
+      <div id="visited-missions"></div>
     </div>
   </div>
 
-  <!-- ================= PERFIL VIEW ================= -->
+  <!-- ========== PERFIL ========== -->
   <div id="view-perfil" class="view">
-    <header class="top-header" style="justify-content: center;">
-      <h1 class="logo-main" style="font-size: 24px;">Mi Perfil</h1>
+    <header class="app-header compact">
+      <div></div>
+      <h1 class="view-title">Mi Perfil</h1>
+      <div></div>
     </header>
-    <div class="empty-state">
-      <div style="font-size: 40px; margin-bottom: 10px;">🧑‍🎓</div>
-      <h3>En construcción</h3>
-      <p>Próximamente podrás editar tus datos y avatares.</p>
+    <div class="view-scroll">
+
+      <div class="profile-hero">
+        <div class="profile-emoji" id="prf-avatar">🌱</div>
+        <div class="profile-name-disp" id="prf-name">Estudiante</div>
+        <div class="profile-rank" id="prf-rank">Nivel 1 · Explorador · 0 XP</div>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">Tu nombre</label>
+        <input id="name-input" type="text" class="setting-input" placeholder="Escribe tu nombre…" maxlength="30">
+        <button id="save-name-btn" class="save-btn">Guardar nombre</button>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">Nivel de estudios</label>
+        <div class="grade-grid" id="grade-grid">
+          <button class="grade-btn" data-grade="1ciclo">2° Grado</button>
+          <button class="grade-btn active" data-grade="2y3ciclo">II y III Ciclo</button>
+          <button class="grade-btn" data-grade="bach">Bachillerato</button>
+          <button class="grade-btn" data-grade="all">Todos los niveles</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">Mis estadísticas</label>
+        <div class="stats-table">
+          <div class="stats-row"><span>Misiones visitadas</span><strong id="prf-visited">0 / 13</strong></div>
+          <div class="stats-row"><span>XP acumulado</span><strong id="prf-xp">0 XP</strong></div>
+          <div class="stats-row"><span>Nivel actual</span><strong id="prf-level">Nivel 1</strong></div>
+          <div class="stats-row"><span>Rango</span><strong id="prf-badge">Explorador</strong></div>
+        </div>
+      </div>
+
+      <button id="reset-btn" class="reset-btn">
+        <i class="fa-solid fa-arrow-rotate-left"></i> Reiniciar todo el progreso
+      </button>
+
     </div>
   </div>
 
-  <!-- ================= BOTTOM NAVIGATION ================= -->
+  <!-- ========== BOTTOM NAV ========== -->
   <nav class="bottom-nav">
-    <button class="nav-item active" data-target="view-inicio">
-      <i class="fa-solid fa-house" style="font-size: 20px;"></i>
+    <button class="nav-btn active" data-view="view-inicio">
+      <i class="fa-solid fa-house"></i>
       <span>Inicio</span>
     </button>
-    <button class="nav-item" data-target="view-misiones">
-      <i class="fa-solid fa-rocket" style="font-size: 20px;"></i>
+    <button class="nav-btn" data-view="view-misiones">
+      <i class="fa-solid fa-rocket"></i>
       <span>Misiones</span>
     </button>
-    <button class="nav-item" data-target="view-progreso">
-      <i class="fa-solid fa-chart-simple" style="font-size: 20px;"></i>
+    <button class="nav-btn" data-view="view-progreso">
+      <i class="fa-solid fa-chart-line"></i>
       <span>Progreso</span>
     </button>
-    <button class="nav-item" data-target="view-perfil">
-      <i class="fa-solid fa-user" style="font-size: 20px;"></i>
+    <button class="nav-btn" data-view="view-perfil">
+      <i class="fa-solid fa-user"></i>
       <span>Perfil</span>
     </button>
   </nav>
 
   <script src="js/app.js"></script>
   <script>
-    // Registro del Service Worker para la PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').then(registration => {
-          console.log('ServiceWorker registrado exitosamente:', registration.scope);
-        }).catch(err => {
-          console.log('Fallo en registro de ServiceWorker:', err);
-        });
+        navigator.serviceWorker.register('sw.js').catch(() => {});
       });
     }
   </script>
