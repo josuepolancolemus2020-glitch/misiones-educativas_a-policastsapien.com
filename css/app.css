@@ -63,6 +63,25 @@ a { text-decoration: none; color: inherit; }
 }
 .app-header.compact { padding: 12px 20px; }
 
+.header-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+}
+
+.publisher-credit {
+  display: flex;
+  justify-content: center;
+  padding: 28px 0 12px;
+}
+
+.publisher-logo {
+  height: 90px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.92;
+}
+
 .brand-center { text-align: center; }
 
 .brand-logo {
