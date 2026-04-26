@@ -191,6 +191,67 @@ a { text-decoration: none; color: inherit; }
   transition: opacity 0.28s ease, transform 0.28s ease;
 }
 
+/* ====== PENSADOR CARD ====== */
+.pensador-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.pensador-foto-wrap { flex-shrink: 0; }
+
+.pensador-foto {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  border: 2.5px solid var(--brand);
+  background: #fff;
+  display: block;
+}
+
+.pensador-cita {
+  position: relative;
+  padding-left: 14px;
+}
+
+.pensador-cita::before {
+  content: '"';
+  position: absolute;
+  left: 0;
+  top: -6px;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--brand-light);
+  opacity: 0.28;
+  font-family: Georgia, serif;
+  pointer-events: none;
+}
+
+.pensador-text {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text);
+  font-style: italic;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.pensador-autor {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 700;
+  display: block;
+  text-align: right;
+}
+
 /* ====== MOTIVACIÓN CARD ====== */
 .motivacion-card {
   background: var(--surface);
