@@ -527,6 +527,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
   transform: scale(0.9);
 }
 
+.xp-back-arrow {
+  color: var(--yellow-br);
+  font-size: 1.1rem;
+}
+
 .xp-back-logo {
   width: 32px; /* Tamaño ideal para el círculo */
   height: 32px;
