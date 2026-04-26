@@ -1,27 +1,23 @@
 'use strict';
 
 /* ─────────────────────────────────────────────
-   DATA
+   MISSIONS
 ───────────────────────────────────────────── */
 
 const MISSIONS = [
-  // ESPAÑOL
-  { id:  1, title: 'Los Adjetivos',                           subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '📝', url: '2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html' },
-  { id:  2, title: 'Los Verbos',                              subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '✍️', url: '2y3ciclo-verbos/verbos-II-III-ciclo-basica.html' },
-  { id:  3, title: 'Los Sustantivos',                         subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '📖', url: '2y3ciclo-sustantivos/sustantivos-II-III-ciclo-basica.html' },
-  { id:  4, title: 'Los Pronombres',                          subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '💬', url: '2y3ciclo-pronombres/pronombres-II-III-ciclo-basica.html' },
-  { id:  5, title: 'El Adjetivo Avanzado',                    subject: 'español',     color: 'bach', grade: 'Bachillerato',   cycle: 'bach',     xp: 40, icon: '🎓', url: 'bach-uni-adjetivos/adjetivos-avanzado.html' },
-  // MATEMÁTICAS
-  { id:  6, title: 'Números de Tres Cifras',                  subject: 'matemáticas', color: 'mat',  grade: '2° Grado',       cycle: '1ciclo',   xp: 20, icon: '🔢', url: '1ciclo-2º-grado/numeros-hasta-999.html' },
-  { id:  7, title: 'Ángulos y Bisectriz',                     subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '📐', url: '2y3ciclo-angulo-bisectriz/angulos-bisectriz_II y III-Ciclo_Básica.html' },
-  { id:  8, title: 'Números Decimales',                       subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '🔢', url: '2y3ciclo-numeros-decimales/2y3ciclo-numeros-decimales.html' },
-  // CIENCIAS NATURALES
-  { id:  9, title: 'Las Eras Geológicas',                     subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 35, icon: '🦕', url: '2y3ciclo-eras-geológicas/eras_geológicas.html' },
-  { id: 10, title: 'Áreas Protegidas de Honduras',            subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🌿', url: '2y3ciclo-áreas-protegidas-de-honduras/2y3ciclo-áreas-protegidas-de-Honduras.html' },
-  // CIENCIAS SOCIALES
-  { id: 11, title: 'Geografía y Coordenadas',                 subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '🗺️', url: '2y3ciclo-geografía-coordenadas/2y3ciclo_geografia-coordenadas.html' },
-  { id: 12, title: 'Continentes: Europa, Asia y África',      subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🌍', url: '2y3ciclo-los-Continentes-Europa-Asia-y-Africa/2y3ciclo_geografia-continentes-eas.html' },
-  { id: 13, title: 'Continentes: América, Oceanía y Antártida', subject: 'sociales',  color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🌎', url: '2y3ciclo-los-continentes-América-Oceanía-Antártida/2y3ciclo-los-continentes-América-Oceanía-Antártida.html' },
+  { id:  1, title: 'Los Adjetivos',                             subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '📝', url: '2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html' },
+  { id:  2, title: 'Los Verbos',                                subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '✍️', url: '2y3ciclo-verbos/verbos-II-III-ciclo-basica.html' },
+  { id:  3, title: 'Los Sustantivos',                           subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '📖', url: '2y3ciclo-sustantivos/sustantivos-II-III-ciclo-basica.html' },
+  { id:  4, title: 'Los Pronombres',                            subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '💬', url: '2y3ciclo-pronombres/pronombres-II-III-ciclo-basica.html' },
+  { id:  5, title: 'El Adjetivo Avanzado',                      subject: 'español',     color: 'bach', grade: 'Bachillerato',   cycle: 'bach',     xp: 40, icon: '🎓', url: 'bach-uni-adjetivos/adjetivos-avanzado.html' },
+  { id:  6, title: 'Números de Tres Cifras',                    subject: 'matemáticas', color: 'mat',  grade: '2° Grado',       cycle: '1ciclo',   xp: 20, icon: '🔢', url: '1ciclo-2º-grado/numeros-hasta-999.html' },
+  { id:  7, title: 'Ángulos y Bisectriz',                       subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '📐', url: '2y3ciclo-angulo-bisectriz/angulos-bisectriz_II y III-Ciclo_Básica.html' },
+  { id:  8, title: 'Números Decimales',                         subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '🔢', url: '2y3ciclo-numeros-decimales/2y3ciclo-numeros-decimales.html' },
+  { id:  9, title: 'Las Eras Geológicas',                       subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 35, icon: '🦕', url: '2y3ciclo-eras-geológicas/eras_geológicas.html' },
+  { id: 10, title: 'Áreas Protegidas de Honduras',              subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🌿', url: '2y3ciclo-áreas-protegidas-de-honduras/2y3ciclo-áreas-protegidas-de-Honduras.html' },
+  { id: 11, title: 'Geografía y Coordenadas',                   subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '🗺️', url: '2y3ciclo-geografía-coordenadas/2y3ciclo_geografia-coordenadas.html' },
+  { id: 12, title: 'Continentes: Europa, Asia y África',        subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🌍', url: '2y3ciclo-los-Continentes-Europa-Asia-y-Africa/2y3ciclo_geografia-continentes-eas.html' },
+  { id: 13, title: 'Continentes: América, Oceanía y Antártida', subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🌎', url: '2y3ciclo-los-continentes-América-Oceanía-Antártida/2y3ciclo-los-continentes-América-Oceanía-Antártida.html' },
 ];
 
 const SUBJECT_LABELS = {
@@ -32,12 +28,16 @@ const SUBJECT_LABELS = {
 };
 
 const LEVELS = [
-  { n: 1, min:   0, max:  99, label: 'Explorador', emoji: '🌱' },
-  { n: 2, min: 100, max: 249, label: 'Aprendiz',   emoji: '📚' },
-  { n: 3, min: 250, max: 499, label: 'Estudioso',  emoji: '🔍' },
-  { n: 4, min: 500, max: 799, label: 'Académico',  emoji: '⚡' },
-  { n: 5, min: 800, max: Infinity, label: 'Sabio', emoji: '🏆' },
+  { n: 1, min:   0, max:  99,       label: 'Explorador', emoji: '🌱' },
+  { n: 2, min: 100, max: 249,       label: 'Aprendiz',   emoji: '📚' },
+  { n: 3, min: 250, max: 499,       label: 'Estudioso',  emoji: '🔍' },
+  { n: 4, min: 500, max: 799,       label: 'Académico',  emoji: '⚡' },
+  { n: 5, min: 800, max: Infinity,  label: 'Sabio',      emoji: '🏆' },
 ];
+
+/* ─────────────────────────────────────────────
+   FRASES MOTIVACIONALES (50)
+───────────────────────────────────────────── */
 
 const FRASES = [
   { texto: "El éxito es la suma de pequeños esfuerzos repetidos día tras día.", autor: "Robert Collier" },
@@ -70,7 +70,167 @@ const FRASES = [
   { texto: "La educación no es llenar un balde, sino encender un fuego.", autor: "W.B. Yeats" },
   { texto: "Con dedicación y paciencia, cualquier meta es alcanzable.", autor: "Anónimo" },
   { texto: "Los grandes logros requieren tiempo. Dale tiempo a tu aprendizaje.", autor: "Anónimo" },
+  { texto: "El conocimiento que no se usa es como una semilla que no se siembra.", autor: "Anónimo" },
+  { texto: "Estudiar hoy es construir el puente hacia el futuro que sueñas.", autor: "Anónimo" },
+  { texto: "Cada pregunta que haces hoy es una respuesta que tendrás mañana.", autor: "Anónimo" },
+  { texto: "La inteligencia no es un don, es una habilidad que se desarrolla con práctica.", autor: "Carol Dweck" },
+  { texto: "Los que no saben, aprenden. Los que aprenden, crecen. Los que crecen, triunfan.", autor: "Anónimo" },
+  { texto: "Lee, aprende, cuestiona. Ese es el camino de los grandes.", autor: "Anónimo" },
+  { texto: "La perseverancia no es una carrera larga; son muchas carreras cortas seguidas una tras otra.", autor: "Walter Elliot" },
+  { texto: "El único fracaso verdadero es aquel del que no aprendemos nada.", autor: "John Powell" },
+  { texto: "Aprende de ayer, vive para hoy, espera del mañana.", autor: "Albert Einstein" },
+  { texto: "No te rindas. El principio siempre es la parte más difícil.", autor: "Anónimo" },
+  { texto: "El esfuerzo constante da resultados que el talento solo no puede lograr.", autor: "Anónimo" },
+  { texto: "Cada momento de estudio es una inversión que tu futuro yo agradecerá.", autor: "Anónimo" },
+  { texto: "Sé curioso, no crítico. La curiosidad abre puertas que la duda cierra.", autor: "Walt Whitman" },
+  { texto: "La educación es el pasaporte hacia el futuro, porque el mañana pertenece a quienes se preparan hoy.", autor: "Malcolm X" },
+  { texto: "Nunca dejes de aprender, porque la vida nunca deja de enseñar.", autor: "Anónimo" },
+  { texto: "Los grandes logros no son resultado de la suerte, sino de la constancia y la determinación.", autor: "Anónimo" },
+  { texto: "Hoy es un buen día para aprender algo que no sabías ayer.", autor: "Anónimo" },
+  { texto: "Un libro abierto es un cerebro que habla; cerrado, un amigo que espera.", autor: "Anónimo" },
+  { texto: "El secreto de comenzar es dividir las tareas complejas en pequeñas acciones manejables.", autor: "Mark Twain" },
+  { texto: "La curiosidad es el motor más poderoso del aprendizaje. Aliméntala cada día.", autor: "Anónimo" },
 ];
+
+/* ─────────────────────────────────────────────
+   DATOS POR PAÍS
+───────────────────────────────────────────── */
+
+const COUNTRY_DATA = {
+  HN: {
+    nombre: 'Honduras',
+    bandera: '🇭🇳',
+    tema: { brand: '#0F4C96', brandMid: '#1A6AC7', brandLight: '#4D9FD4' },
+    curiosidades: [
+      { texto: 'Las Ruinas de Copán contienen la "Escalinata Jeroglífica" más larga del mundo maya, con más de 2,500 bloques inscritos que narran la historia de la dinastía real.', categoria: 'Historia' },
+      { texto: 'Honduras alberga la segunda barrera de coral más grande del mundo en su costa caribeña: el Sistema Arrecifal Mesoamericano, con miles de especies marinas.', categoria: 'Naturaleza' },
+      { texto: 'El nombre "Honduras" proviene de una exclamación de Cristóbal Colón: "¡Gracias a Dios que hemos salido de estas honduras!", refiriéndose a las profundas aguas del Caribe.', categoria: 'Historia' },
+      { texto: 'La moneda de Honduras se llama "Lempira", en honor al valiente cacique indígena que resistió la conquista española en el siglo XVI.', categoria: 'Civismo' },
+      { texto: 'Honduras celebra su independencia el 15 de septiembre junto a Guatemala, El Salvador, Nicaragua y Costa Rica, pues estos cinco países se independizaron juntos en 1821.', categoria: 'Civismo' },
+      { texto: 'La Biósfera del Río Plátano es la reserva tropical más grande de Centroamérica y fue declarada Patrimonio Natural de la Humanidad por la UNESCO.', categoria: 'Naturaleza' },
+      { texto: 'La guara roja (macaw escarlata) es el ave nacional de Honduras. Habita en la Mosquitia y es símbolo de libertad y la rica biodiversidad hondureña.', categoria: 'Naturaleza' },
+      { texto: 'Honduras tiene 18 departamentos. Su capital, Tegucigalpa, es una de las pocas capitales del mundo sin un sistema ferroviario dentro de la ciudad.', categoria: 'Geografía' },
+      { texto: 'El pino es el árbol nacional de Honduras. El país tiene la mayor cobertura de bosques de pino de toda Centroamérica, cubriendo gran parte de sus montañas.', categoria: 'Naturaleza' },
+      { texto: 'El Golfo de Fonseca es compartido por Honduras, El Salvador y Nicaragua, y fue históricamente una ruta estratégica de comercio en el Pacífico centroamericano.', categoria: 'Geografía' },
+      { texto: 'La orquídea Rhyncholaelia digbyana es la flor nacional de Honduras, reconocida internacionalmente por su exquisita fragancia nocturna.', categoria: 'Naturaleza' },
+      { texto: 'La ciudad de Copán Ruinas fue el centro cultural maya más importante del sur de Mesoamérica y alcanzó su apogeo entre los años 400 y 800 d.C.', categoria: 'Historia' },
+    ],
+  },
+  MX: {
+    nombre: 'México',
+    bandera: '🇲🇽',
+    tema: { brand: '#006847', brandMid: '#008A5E', brandLight: '#3DAF72' },
+    curiosidades: [
+      { texto: 'El chocolate, el aguacate, el chile, el maíz y el tomate son originarios de México y fueron dados al mundo gracias a las civilizaciones mesoamericanas.', categoria: 'Cultura' },
+      { texto: 'México tiene 35 sitios Patrimonio de la Humanidad reconocidos por la UNESCO, más que cualquier otro país de América Latina.', categoria: 'Cultura' },
+      { texto: 'La Pirámide del Sol en Teotihuacán mide 65 metros de altura y fue, en su apogeo (siglo II d.C.), la tercera ciudad más grande del mundo.', categoria: 'Historia' },
+      { texto: 'El "Día de Muertos" es una tradición declarada Patrimonio Cultural Inmaterial de la Humanidad por la UNESCO. Las familias honran a sus difuntos con altares y ofrendas coloridas.', categoria: 'Cultura' },
+      { texto: 'El ajolote es una especie que solo existe naturalmente en el lago Xochimilco en Ciudad de México. Es famoso por su capacidad de regenerar extremidades y órganos completos.', categoria: 'Naturaleza' },
+      { texto: 'La mariposa monarca realiza una migración de más de 4,500 km desde Canadá hasta los bosques de Michoacán, México, cada año sin fallar.', categoria: 'Naturaleza' },
+      { texto: 'México tiene 68 lenguas indígenas nacionales reconocidas oficialmente por el gobierno, además del español, reflejando su enorme riqueza cultural.', categoria: 'Cultura' },
+      { texto: 'La Ciudad de México fue construida sobre el antiguo lago Texcoco por los aztecas. Actualmente la ciudad se hunde varios centímetros cada año por el peso de sus edificios.', categoria: 'Historia' },
+      { texto: 'El mariachi, la música emblemática de México, fue declarado Patrimonio Cultural Inmaterial de la Humanidad por la UNESCO en el año 2011.', categoria: 'Cultura' },
+      { texto: 'México produce más del 50% del aguacate que se consume en todo el mundo, siendo el estado de Michoacán el principal productor mundial.', categoria: 'Economía' },
+      { texto: 'La Universidad Nacional Autónoma de México (UNAM), fundada en 1551, es una de las universidades más antiguas y más grandes de toda América.', categoria: 'Educación' },
+      { texto: 'El escudo de la bandera mexicana representa la leyenda azteca: un águila parada sobre un nopal devorando una serpiente, que marcó el lugar donde se fundó Tenochtitlán.', categoria: 'Civismo' },
+    ],
+  },
+  GT: {
+    nombre: 'Guatemala',
+    bandera: '🇬🇹',
+    tema: { brand: '#1B5E9E', brandMid: '#2878C8', brandLight: '#5BA0E0' },
+    curiosidades: [
+      { texto: 'Guatemala es conocida como "El País de la Eterna Primavera" debido a su clima templado y agradable durante todo el año en gran parte de su territorio.', categoria: 'Geografía' },
+      { texto: 'Tikal, en el Petén guatemalteco, fue una de las ciudades más poderosas del mundo maya. Sus pirámides superan los 70 metros de altura y dominaron la selva por siglos.', categoria: 'Historia' },
+      { texto: 'El quetzal es el ave nacional de Guatemala y también el nombre de su moneda. Esta ave era sagrada para los mayas y simbolizaba la libertad, pues muere en cautiverio.', categoria: 'Cultura' },
+      { texto: 'Guatemala tiene 33 volcanes, de los cuales 3 están activos. El volcán Santiaguito es uno de los más activos del mundo, en erupción casi continua desde 1922.', categoria: 'Naturaleza' },
+      { texto: 'El lago Atitlán, rodeado de volcanes y pueblos indígenas mayas, fue considerado por el explorador Alexander von Humboldt como el lago más hermoso del mundo.', categoria: 'Naturaleza' },
+      { texto: 'La Semana Santa en Antigua Guatemala es una de las celebraciones religiosas más coloridas del mundo, con impresionantes alfombras de aserrín y flores en las calles.', categoria: 'Cultura' },
+      { texto: 'El Libro Sagrado Maya "Popol Vuh", que narra la creación del mundo según la cosmovisión maya-quiché, fue escrito originalmente en Guatemala en el siglo XVI.', categoria: 'Historia' },
+      { texto: 'Guatemala tiene 22 grupos étnicos mayas diferentes que representan el 60% de la población, manteniendo vivas sus lenguas, trajes y tradiciones ancestrales.', categoria: 'Cultura' },
+      { texto: 'Guatemala fue el primer país de Centroamérica en abolir la esclavitud, en el año 1824, apenas tres años después de su independencia en 1821.', categoria: 'Civismo' },
+      { texto: 'Guatemala es el mayor productor y exportador de cardamomo a nivel mundial. Su cardamomo es considerado el más aromático y de mayor calidad del planeta.', categoria: 'Economía' },
+      { texto: 'La biodiversidad de Guatemala incluye más de 8,000 especies de plantas, más de 900 especies de aves y unas 1,200 especies de mariposas registradas.', categoria: 'Naturaleza' },
+      { texto: 'Antigua Guatemala, la antigua capital colonial, es Patrimonio de la Humanidad por la UNESCO y conserva una de las mejores arquitecturas barrocas de América.', categoria: 'Historia' },
+    ],
+  },
+  SV: {
+    nombre: 'El Salvador',
+    bandera: '🇸🇻',
+    tema: { brand: '#1B3A8F', brandMid: '#2455CC', brandLight: '#5B8DEF' },
+    curiosidades: [
+      { texto: 'El Salvador es el país más pequeño de Centroamérica pero el más densamente poblado, con cerca de 300 personas por kilómetro cuadrado.', categoria: 'Geografía' },
+      { texto: 'La pupusa es el plato nacional de El Salvador: una tortilla gruesa rellena de queso, frijoles o chicharrón. Tiene su propio día de celebración cada segundo domingo de noviembre.', categoria: 'Cultura' },
+      { texto: 'El Salvador es el único país de Centroamérica sin costa en el Mar Caribe. Todo su litoral da al Océano Pacífico, con bellas playas de arena negra volcánica.', categoria: 'Geografía' },
+      { texto: 'El volcán Izalco fue conocido históricamente como el "Faro del Pacífico". Estuvo en erupción casi continua por más de 200 años y servía de guía a los marineros.', categoria: 'Naturaleza' },
+      { texto: 'El añil (índigo) producido en El Salvador durante la época colonial fue uno de los más cotizados del mundo y fue la principal fuente de riqueza del país antes del café.', categoria: 'Historia' },
+      { texto: 'El Lago de Coatepeque es un cráter volcánico inundado con aguas de tonos turquesa, considerado uno de los cuerpos de agua más hermosos de Centroamérica.', categoria: 'Naturaleza' },
+      { texto: 'El Cipitío y La Siguanaba son las figuras más famosas del folclore salvadoreño, leyendas que se transmiten de generación en generación en todo el país.', categoria: 'Cultura' },
+      { texto: 'El Salvador celebra su independencia el 15 de septiembre de 1821, fecha que comparte con Guatemala, Honduras, Nicaragua y Costa Rica como hermanos centroamericanos.', categoria: 'Civismo' },
+      { texto: 'El Parque Nacional El Imposible es el bosque más extenso y mejor conservado de El Salvador, protegiendo una diversidad extraordinaria de flora y fauna nativa.', categoria: 'Naturaleza' },
+      { texto: 'El Salvador posee más de 20 volcanes. El de Santa Ana (Ilamatepec) es el más alto del país con 2,381 metros sobre el nivel del mar y un cráter espectacular.', categoria: 'Naturaleza' },
+      { texto: 'El Salvador fue el primer país de América Latina en incluir el derecho al agua potable como un derecho fundamental en su Constitución Nacional.', categoria: 'Civismo' },
+      { texto: 'La flor nacional de El Salvador es la Flor de Izote (Yucca elephantipes). Sus pétalos son un alimento tradicional muy apreciado en la gastronomía salvadoreña.', categoria: 'Cultura' },
+    ],
+  },
+  NI: {
+    nombre: 'Nicaragua',
+    bandera: '🇳🇮',
+    tema: { brand: '#003893', brandMid: '#0050D9', brandLight: '#4D7FE8' },
+    curiosidades: [
+      { texto: 'Nicaragua es el país más grande de Centroamérica, con aproximadamente 130,000 km² de territorio. Sus dos grandes lagos representan una parte importante de esa superficie.', categoria: 'Geografía' },
+      { texto: 'El lago de Nicaragua (Cocibolca) es el lago más grande de Centroamérica y el único lago de agua dulce del mundo donde históricamente habitaron tiburones de río.', categoria: 'Naturaleza' },
+      { texto: 'La ciudad de Granada, fundada en 1524, es considerada la primera ciudad colonial de América continental que fue fundada y se mantiene en el mismo lugar original.', categoria: 'Historia' },
+      { texto: 'Rubén Darío, nacido en Nicaragua en 1867, es el padre del Modernismo literario en lengua española, uno de los movimientos más influyentes de la poesía universal.', categoria: 'Cultura' },
+      { texto: 'El volcán Masaya es uno de los pocos volcanes del mundo con un lago de lava visible a simple vista. Los españoles lo llamaron "La Boca del Infierno" por su impresionante aspecto.', categoria: 'Naturaleza' },
+      { texto: 'La Reserva de Biosfera BOSAWAS es la reserva de selva tropical más grande de Centroamérica y la segunda más grande de América Latina, después del Amazonas.', categoria: 'Naturaleza' },
+      { texto: 'Nicaragua posee más de 40 volcanes distribuidos en su territorio, siendo una de las cadenas volcánicas más activas y espectaculares de toda Centroamérica.', categoria: 'Naturaleza' },
+      { texto: 'El gallo pinto (arroz mezclado con frijoles) es el plato más representativo de Nicaragua. Se consume en desayuno, almuerzo y cena, siendo parte del alma culinaria del país.', categoria: 'Cultura' },
+      { texto: 'Las isletas de Granada son 365 pequeñas islas e islotes formados por la antigua erupción del volcán Mombacho en el lago de Nicaragua, un paisaje único en el mundo.', categoria: 'Naturaleza' },
+      { texto: 'Nicaragua fue el primer país latinoamericano en incluir los derechos de las comunidades indígenas y afrodescendientes en su constitución, reconociendo su autonomía regional.', categoria: 'Civismo' },
+      { texto: 'El café nicaragüense, cultivado en las montañas del norte del país, es reconocido internacionalmente como uno de los mejores cafés del mundo por su sabor suave y aromático.', categoria: 'Economía' },
+      { texto: 'La bahía de San Juan del Sur es un importante hábitat de tortugas marinas que anidan en sus costas cada año. El Pacífico nicaragüense es hogar de la tortuga paslama.', categoria: 'Naturaleza' },
+    ],
+  },
+  CR: {
+    nombre: 'Costa Rica',
+    bandera: '🇨🇷',
+    tema: { brand: '#B22234', brandMid: '#D42941', brandLight: '#E87080' },
+    curiosidades: [
+      { texto: 'Costa Rica abolió su ejército en 1948 mediante su Constitución. Es uno de los pocos países del mundo sin fuerzas militares. El dinero invertido se destina a educación y salud.', categoria: 'Civismo' },
+      { texto: 'Costa Rica alberga el 5% de la biodiversidad mundial en solo el 0.03% del territorio del planeta, incluyendo más de 500,000 especies de animales y plantas.', categoria: 'Naturaleza' },
+      { texto: 'El 99% de la electricidad de Costa Rica proviene de fuentes renovables: hidroeléctrica, geotérmica, eólica y solar. Es líder mundial reconocido en energías limpias.', categoria: 'Medio Ambiente' },
+      { texto: '"Pura Vida" es mucho más que una frase en Costa Rica: es una filosofía de vida que expresa gratitud y tranquilidad. Se usa como saludo, despedida y respuesta a todo.', categoria: 'Cultura' },
+      { texto: 'Costa Rica fue el primer país tropical en revertir la deforestación: pasó de tener solo el 21% de bosques en 1987 al 57% de cobertura forestal que tiene hoy.', categoria: 'Medio Ambiente' },
+      { texto: 'El sistema de parques nacionales de Costa Rica protege más del 25% del territorio nacional, siendo uno de los sistemas de conservación más completos del mundo.', categoria: 'Naturaleza' },
+      { texto: 'El quetzal, ave sagrada de los mayas, habita en los bosques nebulosos de Costa Rica, especialmente en el Parque Nacional Los Quetzales y en la reserva de Monteverde.', categoria: 'Naturaleza' },
+      { texto: 'Costa Rica tiene el mayor Índice de Desarrollo Humano de Centroamérica según el PNUD, con alta esperanza de vida, educación accesible y calidad de vida reconocida.', categoria: 'Civismo' },
+      { texto: 'El Parque Nacional Corcovado, en la Península de Osa, es considerado por la revista National Geographic como "el lugar biológicamente más intenso de la Tierra".', categoria: 'Naturaleza' },
+      { texto: 'Costa Rica recibe cada año cerca de 3 millones de turistas. El ecoturismo es su principal fuente de ingresos y un modelo que otros países buscan imitar.', categoria: 'Economía' },
+      { texto: 'La tasa de alfabetización de Costa Rica supera el 97%, resultado de décadas de inversión en educación pública gratuita y obligatoria desde el siglo XIX.', categoria: 'Educación' },
+      { texto: 'La tortuga baula, la tortuga marina más grande del mundo, anida en las playas del Caribe costarricense. El Parque Nacional Tortuguero es clave para su conservación.', categoria: 'Naturaleza' },
+    ],
+  },
+  PA: {
+    nombre: 'Panamá',
+    bandera: '🇵🇦',
+    tema: { brand: '#005293', brandMid: '#0070C5', brandLight: '#4DA8E8' },
+    curiosidades: [
+      { texto: 'El Canal de Panamá, inaugurado en 1914, conecta el Océano Atlántico con el Pacífico y es una de las maravillas de la ingeniería moderna. Por él transita el 5% del comercio mundial.', categoria: 'Historia' },
+      { texto: 'Panamá es el único lugar del mundo donde puedes ver el sol salir en el Océano Pacífico y ponerse en el Atlántico, todo desde un mismo punto del territorio nacional.', categoria: 'Geografía' },
+      { texto: 'La Ciudad de Panamá es la única capital de América Latina que tiene una selva tropical dentro de sus límites urbanos: el Parque Natural Metropolitano.', categoria: 'Naturaleza' },
+      { texto: 'Panamá tiene más de 900 especies de aves registradas, más que toda América del Norte y Europa juntas. Por eso es el paraíso mundial para los observadores de aves.', categoria: 'Naturaleza' },
+      { texto: 'El famoso sombrero "Panamá" es en realidad de origen ecuatoriano. Recibió ese nombre porque se distribuía desde el istmo hacia el mundo durante la construcción del canal.', categoria: 'Cultura' },
+      { texto: 'La mola es el arte textil del pueblo Kuna (Guna) de Panamá: intrincados diseños geométricos multicolores que representan su cosmovisión y son reconocidos mundialmente.', categoria: 'Cultura' },
+      { texto: 'El Parque Nacional Darién, en la frontera con Colombia, es Patrimonio de la Humanidad por la UNESCO y alberga una de las selvas más biodiversas e inexploradas del planeta.', categoria: 'Naturaleza' },
+      { texto: 'Panamá usa el dólar estadounidense como moneda de curso legal junto al Balboa panameño, manteniendo una paridad 1:1 desde 1904, lo que da estabilidad económica al país.', categoria: 'Economía' },
+      { texto: 'El Archipiélago de San Blás (Guna Yala) está formado por más de 365 islas e islotes turquesas. Es administrado de forma autónoma por el pueblo indígena Guna.', categoria: 'Cultura' },
+      { texto: 'El 40% del territorio panameño está cubierto por bosques tropicales. Panamá es uno de los países con mayor cobertura forestal en relación a su tamaño en toda América.', categoria: 'Naturaleza' },
+      { texto: 'El Festival Nacional de la Pollera en Las Tablas celebra el traje típico panameño, considerado uno de los trajes folclóricos más elaborados y hermosos del mundo entero.', categoria: 'Cultura' },
+      { texto: 'La biodiversidad marina de Panamá es excepcional. Las costas panameñas del Pacífico y el Caribe concentran algunas de las mayores densidades de vida marina del planeta.', categoria: 'Naturaleza' },
+    ],
+  },
+};
 
 /* ─────────────────────────────────────────────
    STATE
@@ -79,7 +239,7 @@ const FRASES = [
 const KEY = 'meta_v2';
 
 function blank() {
-  return { name: '', grade: '2y3ciclo', xp: 0, visited: [], lastVisited: [] };
+  return { name: '', grade: '2y3ciclo', country: 'HN', xp: 0, visited: [], lastVisited: [] };
 }
 
 function load() {
@@ -122,22 +282,118 @@ function featuredMission(s) {
 }
 
 /* ─────────────────────────────────────────────
+   ROTACIÓN AUTOMÁTICA
+───────────────────────────────────────────── */
+
+const ROTATION_MS = 3 * 60 * 1000; // 3 minutos
+
+let _motivIdx       = Math.floor(Math.random() * FRASES.length);
+let _factIdx        = 0;
+let _currentCountry = 'HN';
+let _rotInterval    = null;
+
+function fadeUpdate(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(6px)';
+  setTimeout(() => {
+    el.textContent = text;
+    el.style.opacity = '';
+    el.style.transform = '';
+  }, 280);
+}
+
+function renderFactDots() {
+  const dotsEl = document.getElementById('cc-dots');
+  const data   = COUNTRY_DATA[_currentCountry];
+  if (!dotsEl || !data) return;
+  const total   = data.curiosidades.length;
+  const visible = Math.min(total, 10);
+  const active  = _factIdx % visible;
+  dotsEl.innerHTML = Array.from({ length: visible }, (_, i) =>
+    `<span class="cc-dot${i === active ? ' active' : ''}"></span>`
+  ).join('');
+}
+
+function tickRotation() {
+  _motivIdx = (_motivIdx + 1) % FRASES.length;
+  _factIdx++;
+
+  const frase = FRASES[_motivIdx];
+  fadeUpdate('motiv-text',  frase.texto);
+  fadeUpdate('motiv-autor', '— ' + frase.autor);
+
+  const data = COUNTRY_DATA[_currentCountry];
+  if (data) {
+    const fact = data.curiosidades[_factIdx % data.curiosidades.length];
+    fadeUpdate('cc-text',     fact.texto);
+    fadeUpdate('cc-category', fact.categoria);
+    setTimeout(renderFactDots, 290);
+  }
+}
+
+function startRotation() {
+  clearInterval(_rotInterval);
+  _rotInterval = setInterval(tickRotation, ROTATION_MS);
+}
+
+/* ─────────────────────────────────────────────
+   TEMA POR PAÍS
+───────────────────────────────────────────── */
+
+function applyCountryTheme(code) {
+  const data = COUNTRY_DATA[code];
+  if (!data) return;
+  const r = document.documentElement.style;
+  r.setProperty('--brand',       data.tema.brand);
+  r.setProperty('--brand-mid',   data.tema.brandMid);
+  r.setProperty('--brand-light', data.tema.brandLight);
+}
+
+function renderCountryCard(code) {
+  const data = COUNTRY_DATA[code];
+  if (!data) return;
+
+  const idx  = _factIdx % data.curiosidades.length;
+  const fact = data.curiosidades[idx];
+
+  const flagEl    = document.getElementById('cc-flag');
+  const nameEl    = document.getElementById('cc-country-name');
+  const textEl    = document.getElementById('cc-text');
+  const catEl     = document.getElementById('cc-category');
+
+  if (flagEl) flagEl.textContent = data.bandera;
+  if (nameEl) nameEl.textContent = data.nombre;
+  if (textEl) textEl.textContent = fact.texto;
+  if (catEl)  catEl.textContent  = fact.categoria;
+
+  renderFactDots();
+}
+
+/* ─────────────────────────────────────────────
    RENDER — HOME
 ───────────────────────────────────────────── */
 
 function renderHome() {
-  const s = load();
+  const s       = load();
+  const country = s.country || 'HN';
 
   // Saludo
   document.getElementById('home-name').textContent = displayName(s) + '!';
 
-  // Frase motivacional aleatoria
-  const frase = FRASES[Math.floor(Math.random() * FRASES.length)];
+  // Frase motivacional (índice global de rotación)
+  const frase = FRASES[_motivIdx];
   document.getElementById('motiv-text').textContent  = frase.texto;
   document.getElementById('motiv-autor').textContent = '— ' + frase.autor;
 
-  // Featured
-  const m = featuredMission(s);
+  // Tema y datos del país
+  _currentCountry = country;
+  applyCountryTheme(country);
+  renderCountryCard(country);
+
+  // Misión destacada
+  const m    = featuredMission(s);
   const done = s.visited.includes(m.id);
   const card = document.getElementById('featured-card');
   card.innerHTML = `
@@ -157,9 +413,9 @@ function renderHome() {
   `;
   card.onclick = () => visitMission(m.id);
 
-  // Recent
-  const wrap = document.getElementById('recent-wrap');
-  const list = document.getElementById('recent-list');
+  // Recientes
+  const wrap   = document.getElementById('recent-wrap');
+  const list   = document.getElementById('recent-list');
   const recent = (s.lastVisited || [])
     .slice(0, 3)
     .map(id => MISSIONS.find(m => m.id === id))
@@ -242,8 +498,8 @@ function renderMissions(filter, query) {
 ───────────────────────────────────────────── */
 
 function renderProgress() {
-  const s = load();
-  const lv = getLevel(s.xp);
+  const s   = load();
+  const lv  = getLevel(s.xp);
   const pct = xpPct(s.xp);
 
   document.getElementById('progress-overview').innerHTML = `
@@ -263,10 +519,10 @@ function renderProgress() {
     </div>`;
 
   const subjects = [
-    { key: 'español',     label: 'Español',      color: 'var(--esp)' },
-    { key: 'matemáticas', label: 'Matemáticas',   color: 'var(--mat)' },
-    { key: 'naturales',   label: 'C. Naturales',  color: 'var(--cnat)' },
-    { key: 'sociales',    label: 'C. Sociales',   color: 'var(--csoc)' },
+    { key: 'español',     label: 'Español',     color: 'var(--esp)'  },
+    { key: 'matemáticas', label: 'Matemáticas',  color: 'var(--mat)'  },
+    { key: 'naturales',   label: 'C. Naturales', color: 'var(--cnat)' },
+    { key: 'sociales',    label: 'C. Sociales',  color: 'var(--csoc)' },
   ];
 
   document.getElementById('progress-subjects').innerHTML = `
@@ -321,7 +577,7 @@ function renderProgress() {
 ───────────────────────────────────────────── */
 
 function renderProfile() {
-  const s = load();
+  const s  = load();
   const lv = getLevel(s.xp);
 
   document.getElementById('prf-avatar').textContent = lv.emoji;
@@ -379,7 +635,6 @@ function switchView(id) {
   if (id === 'view-progreso') renderProgress();
   if (id === 'view-perfil')   renderProfile();
 
-  // Scroll to top
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
 }
@@ -407,15 +662,43 @@ function toast(msg) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Initial home render
+  // Aplicar tema del país guardado antes de renderizar
+  const s0      = load();
+  const country0 = s0.country || 'HN';
+  _currentCountry = country0;
+  applyCountryTheme(country0);
+
+  // Sincronizar selector de país con el estado guardado
+  const countryEl = document.getElementById('country-select');
+  if (countryEl) countryEl.value = country0;
+
+  // Render inicial
   renderHome();
 
-  // Nav buttons
+  // Iniciar rotación automática cada 3 minutos
+  startRotation();
+
+  // Cambio de país
+  if (countryEl) {
+    countryEl.addEventListener('change', () => {
+      const s = load();
+      s.country = countryEl.value;
+      save(s);
+      _currentCountry = s.country;
+      _factIdx = 0;
+      applyCountryTheme(s.country);
+      renderCountryCard(s.country);
+      const d = COUNTRY_DATA[s.country];
+      if (d) toast(`${d.bandera} ¡Explorando ${d.nombre}!`);
+    });
+  }
+
+  // Navegación
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => switchView(btn.dataset.view));
   });
 
-  // Subject chips → go to missions filtered
+  // Chips de materias → misiones filtradas
   document.querySelectorAll('.subj-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       currentFilter = chip.dataset.subject;
@@ -432,7 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Search
+  // Búsqueda
   const searchEl = document.getElementById('search-input');
   if (searchEl) {
     searchEl.addEventListener('input', () => {
@@ -441,7 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Filter pills
+  // Pills de filtro
   document.querySelectorAll('.pill').forEach(pill => {
     pill.addEventListener('click', () => {
       document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
@@ -451,12 +734,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Notification button
+  // Notificaciones
   document.getElementById('notif-btn').addEventListener('click', () => {
     toast('Sin notificaciones nuevas por ahora');
   });
 
-  // Save name
+  // Guardar nombre
   document.getElementById('save-name-btn').addEventListener('click', () => {
     const s = load();
     s.name = document.getElementById('name-input').value.trim();
@@ -470,7 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') document.getElementById('save-name-btn').click();
   });
 
-  // Grade buttons
+  // Botones de grado
   document.querySelectorAll('.grade-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const s = load();
@@ -482,7 +765,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Reset
+  // Reiniciar
   document.getElementById('reset-btn').addEventListener('click', () => {
     if (confirm('¿Reiniciar todo tu progreso? Esta acción no se puede deshacer.')) {
       localStorage.removeItem(KEY);

@@ -47,12 +47,12 @@
           <label><i class="fa-solid fa-earth-americas"></i> Elige tu País</label>
           <select id="country-select" class="custom-select">
             <option value="HN">🇭🇳 Honduras</option>
-            <option value="MX" disabled>🇲🇽 México (Próximamente)</option>
-            <option value="GT" disabled>🇬🇹 Guatemala (Próximamente)</option>
-            <option value="SV" disabled>🇸🇻 El Salvador (Próximamente)</option>
-            <option value="NI" disabled>🇳🇮 Nicaragua (Próximamente)</option>
-            <option value="CR" disabled>🇨🇷 Costa Rica (Próximamente)</option>
-            <option value="PA" disabled>🇵🇦 Panamá (Próximamente)</option>
+            <option value="MX">🇲🇽 México</option>
+            <option value="GT">🇬🇹 Guatemala</option>
+            <option value="SV">🇸🇻 El Salvador</option>
+            <option value="NI">🇳🇮 Nicaragua</option>
+            <option value="CR">🇨🇷 Costa Rica</option>
+            <option value="PA">🇵🇦 Panamá</option>
           </select>
         </div>
 
@@ -67,6 +67,23 @@
         </div>
 
       </div>
+      <!-- Tarjeta de datos del país -->
+      <div class="country-card">
+        <div class="cc-header">
+          <span class="cc-flag" id="cc-flag">🇭🇳</span>
+          <div class="cc-title-wrap">
+            <div class="cc-label">¿Sabías que…?</div>
+            <div class="cc-country-name" id="cc-country-name">Honduras</div>
+          </div>
+          <div class="cc-dots" id="cc-dots"></div>
+        </div>
+        <p class="cc-text" id="cc-text"></p>
+        <div class="cc-footer">
+          <span class="cc-category" id="cc-category"></span>
+          <span class="cc-timer-hint">↻ cada 3 min</span>
+        </div>
+      </div>
+
       <!-- Subjects -->
       <h2 class="section-title">Explorar por materia</h2>
       <div class="subjects-row">

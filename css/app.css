@@ -168,6 +168,29 @@ a { text-decoration: none; color: inherit; }
 .xp-foot { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
 .xp-foot span:first-child { color: var(--accent); font-weight: 700; }
 
+/* ====== TRANSICIONES DE TEMA ====== */
+.brand-logo,
+.view-title,
+.level-chip,
+.pill.active,
+.save-btn,
+.featured-card,
+.section-title::before,
+.motiv-cita::before,
+.nav-btn.active {
+  transition-property: background, background-color, color, border-color, box-shadow;
+  transition-duration: 0.55s;
+  transition-timing-function: ease;
+}
+
+/* Textos que hacen fade en la rotación */
+.motiv-text,
+.motiv-autor,
+.cc-text,
+.cc-category {
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
 /* ====== MOTIVACIÓN CARD ====== */
 .motivacion-card {
   background: var(--surface);
@@ -591,6 +614,105 @@ a { text-decoration: none; color: inherit; }
   font-size: 13px; font-weight: 600; z-index: 999;
   opacity: 0; transition: opacity .25s;
   pointer-events: none; white-space: nowrap;
+}
+
+/* ====== COUNTRY CARD ====== */
+.country-card {
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 16px 18px 14px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--brand-light);
+  margin-bottom: 20px;
+  transition: border-color 0.55s ease;
+}
+
+.cc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 11px;
+}
+
+.cc-flag {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.cc-title-wrap { flex: 1; min-width: 0; }
+
+.cc-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--muted);
+  margin-bottom: 1px;
+}
+
+.cc-country-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--brand);
+  transition: color 0.55s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cc-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.cc-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.cc-dot.active {
+  background: var(--brand-light);
+  transform: scale(1.35);
+  transition: background 0.55s ease, transform 0.3s ease;
+}
+
+.cc-text {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.cc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cc-category {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--brand);
+  background: var(--bg);
+  padding: 3px 10px;
+  border-radius: 12px;
+  transition: color 0.55s ease;
+}
+
+.cc-timer-hint {
+  font-size: 10px;
+  color: var(--faint);
+  font-weight: 500;
 }
 
 /* ====== DESKTOP ====== */
