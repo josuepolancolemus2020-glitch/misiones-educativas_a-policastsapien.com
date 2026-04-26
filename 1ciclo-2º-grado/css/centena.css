@@ -413,6 +413,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .cred-btn{font-family:'Fredoka',sans-serif;font-size:0.78rem;padding:0.3rem 0.8rem;background:rgba(255,255,255,0.10);color:rgba(255,255,255,0.80);border:1px solid rgba(255,255,255,0.20);border-radius:20px;cursor:pointer;transition:all 0.2s;}
 .cred-btn:hover{background:rgba(255,255,255,0.18);color:white;transform:translateY(-1px);}
 
+/* BOTÓN REGRESO A LA APP */
+.xp-bar{position:sticky;top:0;z-index:1000;}
+.xp-back-btn{display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;transition:transform 0.2s;}
+.xp-back-btn:active{transform:scale(0.9);}
+.xp-back-logo{width:32px;height:32px;object-fit:contain;background-color:white;border-radius:50%;padding:2px;border:1.5px solid var(--pri);}
+.xp-back-arrow{color:var(--yellow-br);font-size:1.1rem;}
+
 /* ACCESIBILIDAD */
 body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grande h2,body.letra-grande h3,body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
 
