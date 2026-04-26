@@ -628,22 +628,29 @@ a { text-decoration: none; color: inherit; }
   transition: border-color 0.55s ease;
 }
 
-.cc-header {
+/* — Encabezado — */
+.cc-head {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 11px;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
 }
 
-.cc-flag {
-  font-size: 28px;
-  line-height: 1;
+.cc-flag-visual {
+  width: 62px;
+  height: 41px;
+  border-radius: 5px;
   flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+  overflow: hidden;
 }
 
-.cc-title-wrap { flex: 1; min-width: 0; }
+.cc-head-info { flex: 1; min-width: 0; }
 
-.cc-label {
+.cc-exploring {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
@@ -653,34 +660,105 @@ a { text-decoration: none; color: inherit; }
 }
 
 .cc-country-name {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
   color: var(--brand);
   transition: color 0.55s ease;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.15;
 }
 
-.cc-dots {
-  display: flex;
-  gap: 4px;
-  align-items: center;
+.cc-lema {
+  font-size: 10px;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 3px;
+  line-height: 1.3;
+}
+
+.cc-emoji-flag {
+  font-size: 30px;
+  line-height: 1;
   flex-shrink: 0;
+  align-self: center;
 }
 
-.cc-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--border);
-  transition: background 0.3s ease, transform 0.3s ease;
+/* — Símbolos patrios — */
+.cc-simbolos {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+.cc-simbolos::-webkit-scrollbar { display: none; }
+
+.cc-sim-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  padding: 8px 10px 7px;
+  flex-shrink: 0;
+  min-width: 66px;
+  text-align: center;
+  transition: border-color 0.4s ease;
 }
 
-.cc-dot.active {
-  background: var(--brand-light);
-  transform: scale(1.35);
-  transition: background 0.55s ease, transform 0.3s ease;
+.cc-sim-emoji  { font-size: 22px; line-height: 1; }
+.cc-sim-nombre { font-size: 10px; font-weight: 700; color: var(--text); white-space: nowrap; margin-top: 1px; }
+.cc-sim-tipo   { font-size: 9px;  font-weight: 500; color: var(--muted); white-space: nowrap; }
+
+/* — Curiosidad deslizable — */
+.cc-curious-block {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 12px 14px 13px;
+  margin-bottom: 12px;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  position: relative;
+  overflow: hidden;
+}
+.cc-curious-block:active { cursor: grabbing; }
+.cc-curious-block::before {
+  content: '‹';
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: var(--faint);
+  opacity: .5;
+  pointer-events: none;
+}
+.cc-curious-block::after {
+  content: '›';
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: var(--faint);
+  opacity: .5;
+  pointer-events: none;
+}
+
+.cc-curious-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: var(--brand-light);
+  transition: color 0.55s ease;
+  margin-bottom: 6px;
 }
 
 .cc-text {
@@ -688,9 +766,11 @@ a { text-decoration: none; color: inherit; }
   line-height: 1.65;
   color: var(--text);
   font-weight: 500;
-  margin-bottom: 10px;
+  margin: 0;
+  padding: 0 10px;
 }
 
+/* — Footer — */
 .cc-footer {
   display: flex;
   justify-content: space-between;
@@ -709,10 +789,53 @@ a { text-decoration: none; color: inherit; }
   transition: color 0.55s ease;
 }
 
-.cc-timer-hint {
-  font-size: 10px;
-  color: var(--faint);
-  font-weight: 500;
+/* — Navegación prev/next — */
+.cc-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cc-nav-btn {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  transition: all .15s;
+}
+.cc-nav-btn:active { background: var(--bg); transform: scale(.9); }
+@media (hover: hover) {
+  .cc-nav-btn:hover { border-color: var(--brand-light); color: var(--brand); }
+}
+
+/* — Puntitos — */
+.cc-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.cc-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.cc-dot.active {
+  background: var(--brand-light);
+  transform: scale(1.4);
+  transition: background 0.55s ease, transform 0.3s ease;
 }
 
 /* ====== DESKTOP ====== */

@@ -69,19 +69,37 @@
       </div>
       <!-- Tarjeta de datos del país -->
       <div class="country-card">
-        <div class="cc-header">
-          <span class="cc-flag" id="cc-flag">🇭🇳</span>
-          <div class="cc-title-wrap">
-            <div class="cc-label">¿Sabías que…?</div>
+
+        <!-- Encabezado: bandera visual + nombre + lema -->
+        <div class="cc-head">
+          <div class="cc-flag-visual" id="cc-flag-visual"></div>
+          <div class="cc-head-info">
+            <div class="cc-exploring">Explorando</div>
             <div class="cc-country-name" id="cc-country-name">Honduras</div>
+            <div class="cc-lema" id="cc-lema"></div>
           </div>
-          <div class="cc-dots" id="cc-dots"></div>
+          <span class="cc-emoji-flag" id="cc-flag">🇭🇳</span>
         </div>
-        <p class="cc-text" id="cc-text"></p>
+
+        <!-- Símbolos patrios -->
+        <div class="cc-simbolos" id="cc-simbolos"></div>
+
+        <!-- Curiosidad deslizable -->
+        <div class="cc-curious-block" id="cc-swipe-area">
+          <span class="cc-curious-label">¿Sabías que…?</span>
+          <p class="cc-text" id="cc-text"></p>
+        </div>
+
+        <!-- Footer: categoría + navegación -->
         <div class="cc-footer">
           <span class="cc-category" id="cc-category"></span>
-          <span class="cc-timer-hint">↻ cada 3 min</span>
+          <div class="cc-nav">
+            <button class="cc-nav-btn" id="cc-prev" aria-label="Anterior">‹</button>
+            <div class="cc-dots" id="cc-dots"></div>
+            <button class="cc-nav-btn" id="cc-next" aria-label="Siguiente">›</button>
+          </div>
         </div>
+
       </div>
 
       <!-- Subjects -->

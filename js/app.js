@@ -100,6 +100,14 @@ const COUNTRY_DATA = {
   HN: {
     nombre: 'Honduras',
     bandera: '🇭🇳',
+    lema: 'Libre, Soberana e Independiente',
+    flagBg: 'linear-gradient(180deg,#0073CF 33.3%,#fff 33.3% 66.6%,#0073CF 66.6%)',
+    simbolos: [
+      { emoji: '🦜', nombre: 'Guara Roja',  tipo: 'Ave nacional'      },
+      { emoji: '🌺', nombre: 'Orquídea',    tipo: 'Flor nacional'     },
+      { emoji: '🌲', nombre: 'Pino',        tipo: 'Árbol nacional'    },
+      { emoji: '🏛️', nombre: 'Copán',       tipo: 'Patrimonio UNESCO' },
+    ],
     tema: { brand: '#0F4C96', brandMid: '#1A6AC7', brandLight: '#4D9FD4' },
     curiosidades: [
       { texto: 'Las Ruinas de Copán contienen la "Escalinata Jeroglífica" más larga del mundo maya, con más de 2,500 bloques inscritos que narran la historia de la dinastía real.', categoria: 'Historia' },
@@ -119,6 +127,14 @@ const COUNTRY_DATA = {
   MX: {
     nombre: 'México',
     bandera: '🇲🇽',
+    lema: 'La Patria es Primero',
+    flagBg: 'linear-gradient(90deg,#006847 33.3%,#fff 33.3% 66.6%,#CE1126 66.6%)',
+    simbolos: [
+      { emoji: '🦅', nombre: 'Águila Real',  tipo: 'Ave nacional'       },
+      { emoji: '🌺', nombre: 'Dalia',        tipo: 'Flor nacional'      },
+      { emoji: '🌳', nombre: 'Ahuehuete',    tipo: 'Árbol nacional'     },
+      { emoji: '🐆', nombre: 'Jaguar',       tipo: 'Fauna emblemática'  },
+    ],
     tema: { brand: '#006847', brandMid: '#008A5E', brandLight: '#3DAF72' },
     curiosidades: [
       { texto: 'El chocolate, el aguacate, el chile, el maíz y el tomate son originarios de México y fueron dados al mundo gracias a las civilizaciones mesoamericanas.', categoria: 'Cultura' },
@@ -138,6 +154,14 @@ const COUNTRY_DATA = {
   GT: {
     nombre: 'Guatemala',
     bandera: '🇬🇹',
+    lema: 'El País de la Eterna Primavera',
+    flagBg: 'linear-gradient(90deg,#4997D0 33.3%,#fff 33.3% 66.6%,#4997D0 66.6%)',
+    simbolos: [
+      { emoji: '🦅', nombre: 'Quetzal',     tipo: 'Ave nacional'      },
+      { emoji: '🌿', nombre: 'Monja Blanca', tipo: 'Flor nacional'    },
+      { emoji: '🌳', nombre: 'Ceiba',       tipo: 'Árbol nacional'    },
+      { emoji: '🏛️', nombre: 'Tikal',       tipo: 'Patrimonio UNESCO' },
+    ],
     tema: { brand: '#1B5E9E', brandMid: '#2878C8', brandLight: '#5BA0E0' },
     curiosidades: [
       { texto: 'Guatemala es conocida como "El País de la Eterna Primavera" debido a su clima templado y agradable durante todo el año en gran parte de su territorio.', categoria: 'Geografía' },
@@ -157,6 +181,14 @@ const COUNTRY_DATA = {
   SV: {
     nombre: 'El Salvador',
     bandera: '🇸🇻',
+    lema: 'Dios, Unión, Libertad',
+    flagBg: 'linear-gradient(180deg,#0F47AF 33.3%,#fff 33.3% 66.6%,#0F47AF 66.6%)',
+    simbolos: [
+      { emoji: '🦜', nombre: 'Torogoz',        tipo: 'Ave nacional'     },
+      { emoji: '🌿', nombre: 'Flor de Izote',  tipo: 'Flor nacional'    },
+      { emoji: '🌳', nombre: 'Maquilishuat',   tipo: 'Árbol nacional'   },
+      { emoji: '🌊', nombre: 'Costa Pacífica', tipo: 'Orgullo natural'  },
+    ],
     tema: { brand: '#1B3A8F', brandMid: '#2455CC', brandLight: '#5B8DEF' },
     curiosidades: [
       { texto: 'El Salvador es el país más pequeño de Centroamérica pero el más densamente poblado, con cerca de 300 personas por kilómetro cuadrado.', categoria: 'Geografía' },
@@ -176,6 +208,14 @@ const COUNTRY_DATA = {
   NI: {
     nombre: 'Nicaragua',
     bandera: '🇳🇮',
+    lema: 'Tierra de Poetas y Volcanes',
+    flagBg: 'linear-gradient(180deg,#003893 33.3%,#fff 33.3% 66.6%,#003893 66.6%)',
+    simbolos: [
+      { emoji: '🐦', nombre: 'Guardabarranco', tipo: 'Ave nacional'      },
+      { emoji: '🌸', nombre: 'Sacuanjoche',    tipo: 'Flor nacional'     },
+      { emoji: '🌳', nombre: 'Madroño',        tipo: 'Árbol nacional'    },
+      { emoji: '🌊', nombre: 'Lago Cocibolca', tipo: 'Maravilla natural' },
+    ],
     tema: { brand: '#003893', brandMid: '#0050D9', brandLight: '#4D7FE8' },
     curiosidades: [
       { texto: 'Nicaragua es el país más grande de Centroamérica, con aproximadamente 130,000 km² de territorio. Sus dos grandes lagos representan una parte importante de esa superficie.', categoria: 'Geografía' },
@@ -195,6 +235,14 @@ const COUNTRY_DATA = {
   CR: {
     nombre: 'Costa Rica',
     bandera: '🇨🇷',
+    lema: '¡Vivan siempre el trabajo y la paz!',
+    flagBg: 'linear-gradient(180deg,#002B7F 16.7%,#fff 16.7% 33.3%,#CE1126 33.3% 66.7%,#fff 66.7% 83.3%,#002B7F 83.3%)',
+    simbolos: [
+      { emoji: '🐦', nombre: 'Yigüirro',      tipo: 'Ave nacional'          },
+      { emoji: '🌸', nombre: 'Guaria Morada', tipo: 'Flor nacional'         },
+      { emoji: '🌳', nombre: 'Guanacaste',    tipo: 'Árbol nacional'        },
+      { emoji: '🦥', nombre: 'Perezoso',      tipo: 'Símbolo del ecoturismo'},
+    ],
     tema: { brand: '#B22234', brandMid: '#D42941', brandLight: '#E87080' },
     curiosidades: [
       { texto: 'Costa Rica abolió su ejército en 1948 mediante su Constitución. Es uno de los pocos países del mundo sin fuerzas militares. El dinero invertido se destina a educación y salud.', categoria: 'Civismo' },
@@ -214,6 +262,14 @@ const COUNTRY_DATA = {
   PA: {
     nombre: 'Panamá',
     bandera: '🇵🇦',
+    lema: 'Pro Mundi Beneficio',
+    flagBg: 'linear-gradient(to right,#fff 50%,#D21034 50%) top/100% 50% no-repeat,linear-gradient(to right,#002B7F 50%,#fff 50%) bottom/100% 50% no-repeat',
+    simbolos: [
+      { emoji: '🦅', nombre: 'Águila Harpía',     tipo: 'Ave nacional'      },
+      { emoji: '🌸', nombre: 'Espíritu Santo',    tipo: 'Flor nacional'     },
+      { emoji: '🌳', nombre: 'Árbol Panamá',      tipo: 'Árbol nacional'    },
+      { emoji: '⚓', nombre: 'Canal de Panamá',   tipo: 'Maravilla mundial' },
+    ],
     tema: { brand: '#005293', brandMid: '#0070C5', brandLight: '#4DA8E8' },
     curiosidades: [
       { texto: 'El Canal de Panamá, inaugurado en 1914, conecta el Océano Atlántico con el Pacífico y es una de las maravillas de la ingeniería moderna. Por él transita el 5% del comercio mundial.', categoria: 'Historia' },
@@ -282,15 +338,31 @@ function featuredMission(s) {
 }
 
 /* ─────────────────────────────────────────────
-   ROTACIÓN AUTOMÁTICA
+   ROTACIÓN AUTOMÁTICA (tiempo basado en lectura)
 ───────────────────────────────────────────── */
 
-const ROTATION_MS = 3 * 60 * 1000; // 3 minutos
+// Velocidad de lectura promedio en español: ~200 palabras/minuto
+// Buffer 1.8× para dar tiempo de comprensión
+const WPM        = 200;
+const READ_BUF   = 1.8;
+const MIN_DELAY  = 14000;  // mínimo 14 s (textos muy cortos)
+const MAX_DELAY  = 95000;  // máximo 95 s (textos muy largos)
 
 let _motivIdx       = Math.floor(Math.random() * FRASES.length);
 let _factIdx        = 0;
 let _currentCountry = 'HN';
-let _rotInterval    = null;
+let _rotTimeout     = null;
+
+function calcReadingDelay() {
+  const frase = FRASES[_motivIdx];
+  const data  = COUNTRY_DATA[_currentCountry];
+  const fact  = data ? data.curiosidades[_factIdx % data.curiosidades.length] : null;
+  // Contar palabras del texto visible actualmente
+  const combined = [frase.texto, fact ? fact.texto : ''].join(' ');
+  const words    = combined.trim().split(/\s+/).filter(Boolean).length;
+  const ms       = Math.round((words / WPM) * 60 * READ_BUF * 1000);
+  return Math.min(MAX_DELAY, Math.max(MIN_DELAY, ms));
+}
 
 function fadeUpdate(id, text) {
   const el = document.getElementById(id);
@@ -331,11 +403,13 @@ function tickRotation() {
     fadeUpdate('cc-category', fact.categoria);
     setTimeout(renderFactDots, 290);
   }
+
+  scheduleNextTick();
 }
 
-function startRotation() {
-  clearInterval(_rotInterval);
-  _rotInterval = setInterval(tickRotation, ROTATION_MS);
+function scheduleNextTick() {
+  clearTimeout(_rotTimeout);
+  _rotTimeout = setTimeout(tickRotation, calcReadingDelay());
 }
 
 /* ─────────────────────────────────────────────
@@ -358,17 +432,57 @@ function renderCountryCard(code) {
   const idx  = _factIdx % data.curiosidades.length;
   const fact = data.curiosidades[idx];
 
-  const flagEl    = document.getElementById('cc-flag');
-  const nameEl    = document.getElementById('cc-country-name');
-  const textEl    = document.getElementById('cc-text');
-  const catEl     = document.getElementById('cc-category');
+  // Bandera visual CSS
+  const flagVisual = document.getElementById('cc-flag-visual');
+  if (flagVisual) flagVisual.style.background = data.flagBg;
+
+  // Emoji + nombre + lema
+  const flagEl = document.getElementById('cc-flag');
+  const nameEl = document.getElementById('cc-country-name');
+  const lemaEl = document.getElementById('cc-lema');
+  const textEl = document.getElementById('cc-text');
+  const catEl  = document.getElementById('cc-category');
 
   if (flagEl) flagEl.textContent = data.bandera;
   if (nameEl) nameEl.textContent = data.nombre;
+  if (lemaEl) lemaEl.textContent = data.lema || '';
   if (textEl) textEl.textContent = fact.texto;
   if (catEl)  catEl.textContent  = fact.categoria;
 
+  // Símbolos patrios
+  const simEl = document.getElementById('cc-simbolos');
+  if (simEl && data.simbolos) {
+    simEl.innerHTML = data.simbolos.map(s => `
+      <div class="cc-sim-item">
+        <span class="cc-sim-emoji">${s.emoji}</span>
+        <span class="cc-sim-nombre">${s.nombre}</span>
+        <span class="cc-sim-tipo">${s.tipo}</span>
+      </div>`).join('');
+  }
+
   renderFactDots();
+}
+
+function nextFact() {
+  const data = COUNTRY_DATA[_currentCountry];
+  if (!data) return;
+  _factIdx = (_factIdx + 1) % data.curiosidades.length;
+  const fact = data.curiosidades[_factIdx];
+  fadeUpdate('cc-text',     fact.texto);
+  fadeUpdate('cc-category', fact.categoria);
+  setTimeout(renderFactDots, 290);
+  scheduleNextTick();
+}
+
+function prevFact() {
+  const data = COUNTRY_DATA[_currentCountry];
+  if (!data) return;
+  _factIdx = (_factIdx - 1 + data.curiosidades.length) % data.curiosidades.length;
+  const fact = data.curiosidades[_factIdx];
+  fadeUpdate('cc-text',     fact.texto);
+  fadeUpdate('cc-category', fact.categoria);
+  setTimeout(renderFactDots, 290);
+  scheduleNextTick();
 }
 
 /* ─────────────────────────────────────────────
@@ -675,8 +789,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render inicial
   renderHome();
 
-  // Iniciar rotación automática cada 3 minutos
-  startRotation();
+  // Iniciar rotación automática con tiempo adaptado a la lectura
+  scheduleNextTick();
 
   // Cambio de país
   if (countryEl) {
@@ -688,9 +802,33 @@ document.addEventListener('DOMContentLoaded', () => {
       _factIdx = 0;
       applyCountryTheme(s.country);
       renderCountryCard(s.country);
+      scheduleNextTick(); // reinicia el temporizador con el texto nuevo
       const d = COUNTRY_DATA[s.country];
       if (d) toast(`${d.bandera} ¡Explorando ${d.nombre}!`);
     });
+  }
+
+  // Botones prev/next de curiosidades
+  const prevBtn = document.getElementById('cc-prev');
+  const nextBtn = document.getElementById('cc-next');
+  if (prevBtn) prevBtn.addEventListener('click', prevFact);
+  if (nextBtn) nextBtn.addEventListener('click', nextFact);
+
+  // Swipe táctil en la tarjeta de curiosidades
+  const swipeArea = document.getElementById('cc-swipe-area');
+  if (swipeArea) {
+    let touchX = 0, touchY = 0;
+    swipeArea.addEventListener('touchstart', e => {
+      touchX = e.touches[0].clientX;
+      touchY = e.touches[0].clientY;
+    }, { passive: true });
+    swipeArea.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchX;
+      const dy = e.changedTouches[0].clientY - touchY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 38) {
+        dx < 0 ? nextFact() : prevFact();
+      }
+    }, { passive: true });
   }
 
   // Navegación
