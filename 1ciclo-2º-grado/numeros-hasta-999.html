@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión: Números de Tres Cifras | 2° Grado | policastsapien.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/centena.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🔢</div>
+      <div class="mascot-tooltip">¡Hola! Soy Centi. ¡Contamos juntos! 🚀</div>
+    </div>
+    <div class="hero-text">
+      <h1>Misión <span>Números de Tres Cifras</span></h1>
+      <p class="sub">¡Aprende a contar, leer y escribir números hasta el 999! 🎯</p>
+      <div class="badge">🌱 1er Ciclo · 2° Grado · Matemática</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ==================== APRENDE ==================== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🧱 ¿Qué es una Centena?</h2>
+    <p><strong>Una centena</strong> es un grupo de <strong>100 unidades</strong>. Si tienes 10 grupos de 10, ya tienes una centena.</p>
+    <div class="vs-grid" style="margin-top:1rem;">
+      <div class="vs-box vs-a">
+        <h4>🟢 10 decenas = 1 centena</h4>
+        <p>10 grupos de 10 unidades forman <strong>100 unidades</strong> (una centena).</p>
+        <p style="font-size:1.3rem;font-family:'Fredoka',sans-serif;margin-top:0.5rem;">10 × 10 = <strong>100</strong></p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🔵 Así contamos centenas:</h4>
+        <p style="font-family:'Fredoka',sans-serif;font-size:1rem;line-height:2;">
+          1 centena = <strong>100</strong><br>
+          2 centenas = <strong>200</strong><br>
+          3 centenas = <strong>300</strong><br>
+          …<br>
+          9 centenas = <strong>900</strong>
+        </p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div>Los números de <strong>tres cifras</strong> van del <strong>100</strong> (cien) al <strong>999</strong> (novecientos noventa y nueve). ¡Son 900 números en total!</div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>🏠 Los Tres Lugares: C · D · U</h2>
+    <p style="margin-bottom:1rem;">Todo número de tres cifras tiene tres posiciones. Cada posición tiene un valor diferente:</p>
+    <table class="cdu-table">
+      <thead>
+        <tr>
+          <th class="cdu-h-c">C<br><small>Centenas</small></th>
+          <th class="cdu-h-d">D<br><small>Decenas</small></th>
+          <th class="cdu-h-u">U<br><small>Unidades</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cdu-cell-c">3</td>
+          <td class="cdu-cell-d">4</td>
+          <td class="cdu-cell-u">7</td>
+        </tr>
+        <tr class="cdu-row-read">
+          <td>Vale 300</td>
+          <td>Vale 40</td>
+          <td>Vale 7</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ex-box">
+      <span class="ex-tag ex-f">📖 El número 347</span><br>
+      <span>El <span class="hl">3</span> está en las <strong>centenas</strong> → vale <span class="hl">300</span><br>
+      El <span class="hl">4</span> está en las <strong>decenas</strong> → vale <span class="hl">40</span><br>
+      El <span class="hl">7</span> está en las <strong>unidades</strong> → vale <span class="hl">7</span></span>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📖 Cómo se Leen los Números</h2>
+    <p style="margin-bottom:0.8rem;">Para leer un número de tres cifras, empezamos por las centenas:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">100</div><div class="t-info">cien</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">200</div><div class="t-info">doscientos</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">300</div><div class="t-info">trescientos</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">400</div><div class="t-info">cuatrocientos</div></div>
+      <div class="type-chip tc-teal"><div class="t-art">500</div><div class="t-info">quinientos</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">600</div><div class="t-info">seiscientos</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">700</div><div class="t-info">setecientos</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">800</div><div class="t-info">ochocientos</div></div>
+      <div class="type-chip tc-teal"><div class="t-art">900</div><div class="t-info">novecientos</div></div>
+    </div>
+    <div class="ex-box" style="margin-top:0.8rem;">
+      <span class="ex-tag ex-m">✏️ Ejemplos</span><br>
+      <span><span class="hl">528</span> → quinientos veintiocho<br>
+      <span class="hl">703</span> → setecientos tres<br>
+      <span class="hl">100</span> → cien<br>
+      <span class="hl">215</span> → doscientos quince</span>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>🔧 Composición y Descomposición</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔨 Composición</h4>
+        <p>Unir las partes para formar el número:</p>
+        <p style="font-size:1.1rem;font-family:'Fredoka',sans-serif;margin-top:0.5rem;text-align:center;">
+          300 + 40 + 5 = <strong>345</strong>
+        </p>
+      </div>
+      <div class="vs-box vs-c">
+        <h4>✂️ Descomposición</h4>
+        <p>Separar el número en sus partes:</p>
+        <p style="font-size:1.1rem;font-family:'Fredoka',sans-serif;margin-top:0.5rem;text-align:center;">
+          <strong>562</strong> = 500 + 60 + 2
+        </p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">🎯</span>
+      <div><strong>Truco:</strong> Para descomponer un número, mira cada dígito en su posición.<br>
+      En <strong>847</strong>: el 8 vale <strong>800</strong> (centenas), el 4 vale <strong>40</strong> (decenas), el 7 vale <strong>7</strong> (unidades).<br>
+      847 = <strong>800 + 40 + 7</strong></div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la tabla CDU" onclick="go('s-tabla')">
+    <span class="nsb-icon">📊</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Muy bien!</span><span class="nsb-name">Ver la Tabla CDU</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== TABLA ==================== -->
+<div class="sec" id="s-tabla" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>📊 Tabla de Valor Posicional</h2>
+    <p style="margin-bottom:1rem;">Cada dígito tiene un valor según su posición. Observa estos ejemplos:</p>
+    <table class="cdu-table">
+      <thead>
+        <tr>
+          <th class="cdu-h-c">C · Centenas</th>
+          <th class="cdu-h-d">D · Decenas</th>
+          <th class="cdu-h-u">U · Unidades</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cdu-cell-c">4</td><td class="cdu-cell-d">5</td><td class="cdu-cell-u">6</td>
+        </tr>
+        <tr class="cdu-row-read">
+          <td>4 centenas = 400</td><td>5 decenas = 50</td><td>6 unidades = 6</td>
+        </tr>
+        <tr>
+          <td class="cdu-cell-c">7</td><td class="cdu-cell-d">0</td><td class="cdu-cell-u">3</td>
+        </tr>
+        <tr class="cdu-row-read">
+          <td>7 centenas = 700</td><td>0 decenas = 0</td><td>3 unidades = 3</td>
+        </tr>
+        <tr>
+          <td class="cdu-cell-c">1</td><td class="cdu-cell-d">2</td><td class="cdu-cell-u">0</td>
+        </tr>
+        <tr class="cdu-row-read">
+          <td>1 centena = 100</td><td>2 decenas = 20</td><td>0 unidades = 0</td>
+        </tr>
+        <tr>
+          <td class="cdu-cell-c">9</td><td class="cdu-cell-d">9</td><td class="cdu-cell-u">9</td>
+        </tr>
+        <tr class="cdu-row-read">
+          <td>9 centenas = 900</td><td>9 decenas = 90</td><td>9 unidades = 9</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card ac-blue">
+    <h2>🎨 Los Colores de CDU</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal">
+        <div class="t-art" style="color:var(--cen);">🟢 C</div>
+        <div class="t-info"><strong>Centenas</strong><br>Tercer lugar desde la derecha<br>Cada 1 vale 100</div>
+      </div>
+      <div class="type-chip tc-blue">
+        <div class="t-art" style="color:var(--dec);">🔵 D</div>
+        <div class="t-info"><strong>Decenas</strong><br>Segundo lugar desde la derecha<br>Cada 1 vale 10</div>
+      </div>
+      <div class="type-chip tc-amber">
+        <div class="t-art" style="color:var(--uni);">🟠 U</div>
+        <div class="t-info"><strong>Unidades</strong><br>Primer lugar desde la derecha<br>Cada 1 vale 1</div>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">📌 Regla importante</span><br>
+      <span>El <span class="hl">0</span> en cualquier posición significa que <strong>no hay</strong> ningún grupo en esa posición.<br>
+      En <span class="hl">504</span>: hay 5 centenas, <strong>ninguna decena</strong> (0 decenas), y 4 unidades.<br>
+      504 = 500 + <strong>0</strong> + 4</span>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al laboratorio" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Vamos a explorar!</span><span class="nsb-name">Laboratorio CDU</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== LAB ==================== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🧪 Laboratorio: Construye tu Número</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Usa los botones ▲▼ para cambiar las centenas, decenas y unidades. ¡Observa cómo cambia el número!</p>
+
+    <!-- Visual blocks -->
+    <div class="lab-visual" id="labVis"></div>
+
+    <!-- Number display -->
+    <div class="lab-number-display">
+      <div class="lab-number-big" id="labNum">235</div>
+      <div class="lab-number-words" id="labWords">doscientos treinta y cinco</div>
+      <div class="lab-number-decomp" id="labDecomp">200 + 30 + 5 = 235</div>
+    </div>
+
+    <!-- CDU buttons -->
+    <div class="lab-cdu-btns">
+      <div class="lab-cdu-slot lab-cdu-slot-c">
+        <span class="lab-cdu-slot-lbl">C · Centenas</span>
+        <div class="lab-cdu-btn" onclick="changeC(1)">▲</div>
+        <div class="lab-cdu-digit" id="labC">2</div>
+        <div class="lab-cdu-btn" onclick="changeC(-1)">▼</div>
+      </div>
+      <div style="font-family:'Fredoka',sans-serif;font-size:2rem;color:var(--gray);align-self:center;">·</div>
+      <div class="lab-cdu-slot lab-cdu-slot-d">
+        <span class="lab-cdu-slot-lbl">D · Decenas</span>
+        <div class="lab-cdu-btn" onclick="changeD(1)">▲</div>
+        <div class="lab-cdu-digit" id="labD">3</div>
+        <div class="lab-cdu-btn" onclick="changeD(-1)">▼</div>
+      </div>
+      <div style="font-family:'Fredoka',sans-serif;font-size:2rem;color:var(--gray);align-self:center;">·</div>
+      <div class="lab-cdu-slot lab-cdu-slot-u">
+        <span class="lab-cdu-slot-lbl">U · Unidades</span>
+        <div class="lab-cdu-btn" onclick="changeU(1)">▲</div>
+        <div class="lab-cdu-digit" id="labU">5</div>
+        <div class="lab-cdu-btn" onclick="changeU(-1)">▼</div>
+      </div>
+    </div>
+
+    <!-- Challenge -->
+    <div style="margin-top:1.2rem;text-align:center;background:var(--sec-gl);border:2px solid var(--sec);border-radius:12px;padding:0.8rem;">
+      <p style="font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--dark);margin-bottom:0.5rem;">🎯 Reto: <strong id="labChallengeText">¡Forma el número 456!</strong></p>
+      <button class="btn btn-sec" onclick="checkLabChallenge()">✅ ¡Lo formé!</button>
+      <button class="btn btn-d" onclick="newLabChallenge()" style="margin-left:0.5rem;">🔀 Nuevo reto</button>
+    </div>
+    <div id="fbLab" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a flashcards" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Memoriza!</span><span class="nsb-name">Flashcards</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== FLASHCARDS ==================== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fa" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 16</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al quiz" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Prueba tus conocimientos!</span><span class="nsb-name">Quiz</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== QUIZ ==================== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 12</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a clasificar" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ordena y clasifica!</span><span class="nsb-name">Clasifica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== CLASIFICA ==================== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Números</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un número del banco y luego toca la columna donde pertenece.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Usa "Variar grupo" para practicar con diferentes categorías.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" onclick="placeInCol('left')"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" onclick="placeInCol('right')"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">↺ Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a identifica" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Encuentra la respuesta!</span><span class="nsb-name">Identifica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== IDENTIFICA ==================== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el Concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 10</p>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Toca la palabra o número que se pide:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.85rem;color:var(--gray);font-style:italic;margin-top:0.4rem;font-family:'Fredoka',sans-serif;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a completar oraciones" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Llena los espacios!</span><span class="nsb-name">Completa</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== COMPLETA ==================== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la Oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a widgets" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Juega y practica!</span><span class="nsb-name">Widgets</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== WIDGETS ==================== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <!-- Widget 1: Recta Numérica -->
+  <div class="card ac-teal">
+    <h2>📏 Ubica en la Recta Numérica</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP al ubicar correctamente (primera vez)</p>
+    <div class="nl-challenge">Ubica el número: <strong id="nlTarget" class="nl-num">150</strong></div>
+    <div class="nl-container">
+      <svg id="nlSvg" viewBox="0 0 400 80" width="100%" xmlns="http://www.w3.org/2000/svg" style="cursor:crosshair;display:block;" onclick="nlClick(event)"></svg>
+    </div>
+    <p style="font-size:0.75rem;color:var(--gray);text-align:center;margin-top:0.2rem;">↑ Haz clic en la posición correcta del número</p>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nlNext()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="nlReset()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbNl" class="fb" role="alert"></div>
+  </div>
+
+  <!-- Widget 2: Constructor CDU -->
+  <div class="card ac-jade">
+    <h2>🔧 Constructor de Números</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por número construido correctamente</p>
+    <div class="bldr-challenge">Forma el número: <strong id="bldrTarget" class="bldr-num">235</strong></div>
+    <div class="bldr-display" id="bldrDisplay">000</div>
+    <div class="bldr-slots">
+      <div class="bldr-slot">
+        <div class="bldr-label" style="color:var(--cen);font-weight:700;">Centenas</div>
+        <div class="bldr-controls">
+          <button class="bldr-btn" style="background:var(--cen);" onclick="bldrChange('c',1)">▲</button>
+          <div class="bldr-digit" style="color:var(--cen);border-color:var(--cen);" id="bldrDC">0</div>
+          <button class="bldr-btn" style="background:var(--cen);" onclick="bldrChange('c',-1)">▼</button>
+        </div>
+        <div class="bldr-pos">×100</div>
+      </div>
+      <div class="bldr-slot">
+        <div class="bldr-label" style="color:var(--dec);font-weight:700;">Decenas</div>
+        <div class="bldr-controls">
+          <button class="bldr-btn" style="background:var(--dec);" onclick="bldrChange('d',1)">▲</button>
+          <div class="bldr-digit" style="color:var(--dec);border-color:var(--dec);" id="bldrDD">0</div>
+          <button class="bldr-btn" style="background:var(--dec);" onclick="bldrChange('d',-1)">▼</button>
+        </div>
+        <div class="bldr-pos">×10</div>
+      </div>
+      <div class="bldr-slot">
+        <div class="bldr-label" style="color:var(--uni);font-weight:700;">Unidades</div>
+        <div class="bldr-controls">
+          <button class="bldr-btn" style="background:var(--uni);" onclick="bldrChange('u',1)">▲</button>
+          <div class="bldr-digit" style="color:var(--uni);border-color:var(--uni);" id="bldrDU">0</div>
+          <button class="bldr-btn" style="background:var(--uni);" onclick="bldrChange('u',-1)">▼</button>
+        </div>
+        <div class="bldr-pos">×1</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkBldr()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextBldr()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetBldr()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbBldr" class="fb" role="alert"></div>
+  </div>
+
+  <!-- Widget 3: Ordenar -->
+  <div class="card ac-gold">
+    <h2>↕️ Ordena de Menor a Mayor</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez)</p>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ordenar los números de <strong>menor a mayor</strong>:</p>
+    <div class="sort-list" id="sortList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkSort()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextSort()">🔄 Nuevo grupo</button>
+    </div>
+    <div id="fbSort" class="fb" role="alert"></div>
+  </div>
+
+  <!-- Widget 4: Comparar -->
+  <div class="card ac-purple">
+    <h2>⚖️ Compara los Números</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por comparación correcta</p>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">El número <strong>A</strong> (izquierda) comparado con <strong>B</strong> (derecha):</p>
+    <div class="cmp-vis-wrap">
+      <div class="cmp-vis-side">
+        <div class="cmp-vis-label">A</div>
+        <div class="cmp-vis-num" id="cmpVisA">345</div>
+        <div class="cmp-vis-bar-wrap"><div class="cmp-vis-bar" id="cmpVisBarA"></div></div>
+        <div class="cmp-vis-pct" id="cmpVisPctA">345 / 999</div>
+      </div>
+      <div class="cmp-vis-btns">
+        <button class="cmp-sym-btn" data-rel="gt" onclick="ansComp('gt')">A es mayor ›</button>
+        <button class="cmp-sym-btn" data-rel="eq" onclick="ansComp('eq')">=  Son iguales</button>
+        <button class="cmp-sym-btn" data-rel="lt" onclick="ansComp('lt')">‹ A es menor</button>
+      </div>
+      <div class="cmp-vis-side">
+        <div class="cmp-vis-label">B</div>
+        <div class="cmp-vis-num" id="cmpVisB">543</div>
+        <div class="cmp-vis-bar-wrap"><div class="cmp-vis-bar cmp-vis-bar-b" id="cmpVisBarB"></div></div>
+        <div class="cmp-vis-pct" id="cmpVisPctB">543 / 999</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;justify-content:center;">
+      <button class="btn btn-pri" onclick="nextComp()">▶ Siguiente par</button>
+    </div>
+    <div id="fbComp" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir al reto final" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra tu velocidad!</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== RETO ==================== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el número rápidamente. ¡Toca la categoría correcta!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Usa "Variar pareja" para jugar con otras categorías.</p>
+    <div class="game" id="gameBox" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('a')">Opción A</button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('b')">Opción B</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 | ❌ 0</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a sopa de letras" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Busca las palabras!</span><span class="nsb-name">Sopa de Letras</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== SOPA DE LETRAS ==================== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Toca la primera letra y luego la última de cada palabra</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al generador de tareas" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica en casa!</span><span class="nsb-name">Tareas</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== TAREAS ==================== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar CDU</option>
+        <option value="write">✏️ Leer y escribir</option>
+        <option value="decompose">➕ Descomponer</option>
+        <option value="compose">🔧 Componer</option>
+        <option value="order">↕️ Ordenar números</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 ejercicios</option>
+        <option value="8" selected>8 ejercicios</option>
+        <option value="10">10 ejercicios</option>
+        <option value="15">15 ejercicios</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Ver respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la evaluación" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra todo lo que aprendiste!</span><span class="nsb-name">Evaluación</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== EVALUACIÓN ==================== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2 style="font-family:'Fredoka',sans-serif;font-size:1.2rem;text-align:center;margin-bottom:0.5rem;">Evaluación — Números de Tres Cifras · 2° Grado · Matemática</h2>
+      <div style="display:flex;gap:1rem;font-size:0.85rem;margin-bottom:0.3rem;"><strong>Nombre:</strong><span style="flex:1;border-bottom:1px solid #000;">&nbsp;</span><strong>Fecha:</strong><span style="min-width:80px;border-bottom:1px solid #000;">&nbsp;</span></div>
+      <div style="display:flex;gap:1rem;font-size:0.85rem;"><strong>Centro Educativo:</strong><span style="flex:1;border-bottom:1px solid #000;">&nbsp;</span><strong>Sección:</strong><span style="min-width:60px;border-bottom:1px solid #000;">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.3rem;text-align:center;">Valor total: 100 puntos · Valor de cada respuesta indicado por sección</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación Final — Números de Tres Cifras</h2>
+    <p style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde. Usa <strong>Ver Pauta</strong> para autoevaluarte. Puedes generar nuevas preguntas.</p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+</main>
+
+<!-- ==================== DIPLOMA ==================== -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión: Números de Tres Cifras · 2° Grado</div>
+    <div class="diploma-mascot" aria-hidden="true">🔢</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--pri)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LOGROS ==================== -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- ==================== NAVEGACIÓN ==================== -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tabla" data-s="s-tabla" onclick="go('s-tabla')"><span class="ico">📊</span> Tabla CDU</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--pri);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+</nav>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
+  <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
+  <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+  </div>
+</footer>
+
+<script src="js/centena.js"></script>
+</body>
+</html>
