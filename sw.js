@@ -1,10 +1,11 @@
-const CACHE_NAME = 'meta-app-v2';
+const CACHE_NAME = 'meta-app-v3';
 const urlsToCache = [
   './',
   './index.html',
   './css/app.css',
   './js/app.js',
   './manifest.json',
+  './img/logo.png',
   'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
@@ -28,5 +29,20 @@ self.addEventListener('fetch', event => {
         }
         return fetch(event.request);
       })
+  );
+});
+
+// NUEVO CÓDIGO: Borra el caché viejo cuando actualizas la app
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
   );
 });
