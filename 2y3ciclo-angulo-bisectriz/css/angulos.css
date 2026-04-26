@@ -422,6 +422,26 @@ html.fs-lg{font-size:20px;}
 .meta-star:hover,.meta-star.lit{opacity:1;}
 .meta-star.lit{transform:scale(1.2);}
 
+.xp-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.xp-back-btn:active { transform: scale(0.9); }
+.xp-back-arrow { color: var(--yellow-br); font-size: 1.1rem; }
+.xp-back-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  background-color: white;
+  border-radius: 50%;
+  padding: 2px;
+  border: 1.5px solid var(--pri);
+}
+
 @media print{
   body *{display:none!important;}
 }
