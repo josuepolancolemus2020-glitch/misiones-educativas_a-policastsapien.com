@@ -49,6 +49,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 /* XP BAR */
 .xp-bar{position:relative;z-index:10;background:var(--xp-bg);padding:0.38rem 1rem;display:flex;align-items:center;gap:0.8rem;transition:background 0.3s;}
 .xp-lbl{font-family:'Fredoka',sans-serif;color:var(--yellow-br);font-size:0.8rem;white-space:nowrap;}
+.xp-back-btn{display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;transition:transform 0.2s;}
+.xp-back-btn:active{transform:scale(0.9);}
+.xp-back-arrow{color:var(--yellow-br);font-size:1.1rem;}
+.xp-back-logo{width:32px;height:32px;object-fit:contain;background-color:white!important;border-radius:50%;padding:2px;border:1.5px solid var(--pri);}
 .xp-track{flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;}
 .xp-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--pri),var(--sec),var(--jade));border-radius:10px;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
 .xp-pts{font-family:'Fredoka',sans-serif;color:var(--yellow-br);font-size:0.8rem;white-space:nowrap;}

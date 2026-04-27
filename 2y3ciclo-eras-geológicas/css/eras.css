@@ -134,6 +134,10 @@ body::before {
     font-size: 0.8rem;
     white-space: nowrap;
 }
+.xp-back-btn{display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;transition:transform 0.2s;}
+.xp-back-btn:active{transform:scale(0.9);}
+.xp-back-arrow{color:var(--yellow-br);font-size:1.1rem;}
+.xp-back-logo{width:32px;height:32px;object-fit:contain;background-color:white!important;border-radius:50%;padding:2px;border:1.5px solid var(--pri);}
 
 .xp-track {
     flex: 1;
