@@ -771,34 +771,28 @@ a { text-decoration: none; color: inherit; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: 11px;
-  padding: 8px 6px 7px;
+  gap: 5px;
   text-align: center;
   width: 100%;
-  transition: border-color 0.4s ease;
 }
 
-.cc-sim-emoji  { font-size: 22px; line-height: 1; }
-.cc-sim-nombre { font-size: 10px; font-weight: 700; color: var(--text); margin-top: 2px; }
+.cc-sim-emoji  { font-size: 28px; line-height: 1; }
+.cc-sim-nombre { font-size: 10px; font-weight: 700; color: var(--text); }
 .cc-sim-tipo   { font-size: 9px;  font-weight: 500; color: var(--muted); }
 
-/* Imagen oval dentro del ítem */
 .cc-sim-img {
   width: 64px;
   height: 64px;
+  border-radius: 50%;
   object-fit: contain;
-  border-radius: 10px;
-  border: 1.5px solid var(--border);
-  background: #ffffff;
-  padding: 5px;
+  background: #fff;
+  border: 2.5px solid var(--brand);
   display: block;
+  transition: border-color 0.55s;
 }
 .cc-sim-clickable { cursor: pointer; transition: transform 0.15s; }
 .cc-sim-clickable:active { transform: scale(0.93); }
-.cc-sim-clickable:active .cc-sim-oval { border-color: var(--brand); }
+.cc-sim-clickable:active .cc-sim-img { border-color: var(--brand-light); }
 
 /* ====== MODAL SÍMBOLOS ====== */
 .sim-modal-backdrop {

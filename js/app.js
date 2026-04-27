@@ -216,19 +216,19 @@ const COUNTRY_DATA = {
     lema: 'Dios, Unión, Libertad',
     flagBg: 'linear-gradient(180deg,#0F47AF 33.3%,#fff 33.3% 66.6%,#0F47AF 66.6%)',
     simbolosMayores: [
-      { emoji: '🇸🇻', nombre: 'Bandera Nacional', tipo: 'Símbolo patrio', img: 'img/salvador_img/bandera_edit.webp',
+      { emoji: '🇸🇻', nombre: 'Bandera Nacional', tipo: 'Símbolo patrio', img: 'img/salvador_img/bandera.webp',
         info: 'Tres franjas horizontales: azul, blanca y azul. El azul representa los dos océanos que bañan Centroamérica; el blanco simboliza la paz. El Escudo Nacional aparece en el centro de la franja blanca. Su diseño actual ha sido utilizado desde 1912.' },
-      { emoji: '🛡️', nombre: 'Escudo de Armas', tipo: 'Símbolo patrio', img: 'img/salvador_img/escudo_edit.webp',
+      { emoji: '🛡️', nombre: 'Escudo de Armas', tipo: 'Símbolo patrio', img: 'img/salvador_img/escudo.webp',
         info: 'Presenta un triángulo equilátero que simboliza la igualdad. Dentro se representan cinco volcanes, el océano Pacífico, el sol naciente y un arco iris. En la base del triángulo se lee el lema nacional: "DIOS UNIÓN LIBERTAD". El texto exterior reza: "REPÚBLICA DE EL SALVADOR EN LA AMERICA CENTRAL". Está enmarcado por ramas de laurel.' },
       { emoji: '🎵', nombre: 'Himno Nacional', tipo: 'Símbolo patrio',
         info: 'Letra del general Juan José Cañas y música del compositor italiano Juan Aberle. Fue adoptado oficialmente el 15 de septiembre de 1879. Su coro comienza: "Saludemos la Patria orgullosos…"' },
     ],
     simbolos: [
-      { emoji: '🦜', nombre: 'Torogoz', tipo: 'Ave nacional', img: 'img/salvador_img/ave_edit.webp',
+      { emoji: '🦜', nombre: 'Torogoz', tipo: 'Ave nacional', img: 'img/salvador_img/ave.webp',
         info: 'Eumomota superciliosa. Declarado ave nacional en 1999. Se distingue por su plumaje verde esmeralda en el cuerpo, pecho naranja, marcas azul turquesa en la cabeza y sus características plumas caudales alargadas con extremos en forma de raqueta. Habita en zonas boscosas y quebradas.' },
-      { emoji: '🌿', nombre: 'Flor de Izote', tipo: 'Flor nacional', img: 'img/salvador_img/flor_edit.webp',
+      { emoji: '🌿', nombre: 'Flor de Izote', tipo: 'Flor nacional', img: 'img/salvador_img/flor.webp',
         info: 'Yucca elephantipes. Declarada flor nacional en 1995. Planta de hojas largas y rígidas de color verde oscuro, con una espiga central que produce racimos de flores blancas acampanadas. Sus pétalos son comestibles y forman parte de la gastronomía tradicional salvadoreña.' },
-      { emoji: '🌳', nombre: 'Maquilishuat', tipo: 'Árbol nacional', img: 'img/salvador_img/arbol_edit.webp',
+      { emoji: '🌳', nombre: 'Maquilishuat', tipo: 'Árbol nacional', img: 'img/salvador_img/arbol.webp',
         info: 'Tabebuia rosea. Declarado árbol nacional en 1939. Se caracteriza por su llamativa floración rosada o violeta que cubre toda la copa. Florece principalmente al inicio de la época seca, cuando el árbol pierde la mayoría de sus hojas, creando un espectacular manto de color.' },
       { emoji: '🌊', nombre: 'Costa Pacífica', tipo: 'Orgullo natural',
         info: 'El Salvador es el único país de Centroamérica con costa exclusivamente en el Océano Pacífico, sin acceso al Mar Caribe. Su litoral se extiende por aproximadamente 321 km y alberga importantes ecosistemas marinos, playas de arena volcánica y sitios de anidación de tortugas marinas.' },
@@ -551,7 +551,7 @@ function renderCountryCard(code) {
       const key = 'sim_' + Math.random().toString(36).slice(2);
       _simRegistry.set(key, s);
       const visual = s.img
-        ? `<img src="${s.img}" alt="${s.nombre}" class="cc-sim-img" loading="lazy">`
+        ? `<img src="${s.img}" alt="${s.nombre}" class="cc-sim-img">`
         : `<span class="cc-sim-emoji">${s.emoji}</span>`;
       return `<div class="cc-sim-item cc-sim-clickable" onclick="openSimModal('${key}')">${visual}<span class="cc-sim-nombre">${s.nombre}</span><span class="cc-sim-tipo">${s.tipo}</span></div>`;
     };
