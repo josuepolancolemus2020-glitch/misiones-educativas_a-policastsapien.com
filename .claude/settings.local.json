@@ -6,7 +6,8 @@
       "Bash(node -e \"const f=require\\('fs'\\).readFileSync\\('c:/Users/Dell/OneDrive/Documents/GitHub/misiones-educativas_a-policastsapien.com/2y3ciclo-sustantivos/js/sustantivos.js','utf8'\\); const line=f.split\\('\\\\n'\\)[985]; console.log\\(JSON.stringify\\(line\\)\\);\")",
       "Bash(python3 -c ' *)",
       "Bash(grep -E \"^[^.]*[^/]$\")",
-      "Bash(grep -v \"^c:\\\\Users\\\\Dell\\\\OneDrive\\\\Documents\\\\GitHub\\\\misiones-educativas_a-policastsapien.com/index.html$\")"
+      "Bash(grep -v \"^c:\\\\Users\\\\Dell\\\\OneDrive\\\\Documents\\\\GitHub\\\\misiones-educativas_a-policastsapien.com/index.html$\")",
+      "Bash(python -c ' *)"
     ]
   }
 }
