@@ -1,0 +1,6 @@
+[
+  { "key": "español", "label": "Español", "color": "esp" },
+  { "key": "matemáticas", "label": "Matemáticas", "color": "mat" },
+  { "key": "naturales", "label": "C. Naturales", "color": "cnat" },
+  { "key": "sociales", "label": "C. Sociales", "color": "csoc" }
+]

@@ -1,0 +1,19 @@
+{
+  "country": "HN",
+  "cycle": "bach",
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "HN-bach-001",
+      "legacyId": 5,
+      "title": "El Adjetivo Avanzado",
+      "subject": "español",
+      "gradeLabel": "Bachillerato",
+      "xp": 40,
+      "icon": "🎓",
+      "color": "bach",
+      "url": "bach-uni-adjetivos/adjetivos-avanzado.html",
+      "status": "published"
+    }
+  ]
+}

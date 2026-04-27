@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Country Content",
+  "type": "object",
+  "required": ["code", "name", "flagEmoji"],
+  "properties": {
+    "code": { "type": "string", "minLength": 2, "maxLength": 2 },
+    "name": { "type": "string" },
+    "flagEmoji": { "type": "string" },
+    "motto": { "type": ["string", "null"] },
+    "flagBg": { "type": ["string", "null"] },
+    "theme": { "type": ["object", "null"] },
+    "symbols": { "type": ["array", "null"] },
+    "facts": { "type": ["array", "null"] },
+    "version": { "type": ["string", "null"] },
+    "updatedAt": { "type": ["string", "null"] }
+  },
+  "additionalProperties": true
+}

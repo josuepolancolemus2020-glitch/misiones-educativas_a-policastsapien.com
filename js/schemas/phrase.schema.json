@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Motivational Phrase",
+  "type": "object",
+  "required": ["texto", "autor"],
+  "properties": {
+    "texto": { "type": "string" },
+    "autor": { "type": "string" }
+  },
+  "additionalProperties": false
+}

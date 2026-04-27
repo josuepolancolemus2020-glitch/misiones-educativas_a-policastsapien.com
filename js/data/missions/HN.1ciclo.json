@@ -1,0 +1,19 @@
+{
+  "country": "HN",
+  "cycle": "1ciclo",
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "HN-1ciclo-001",
+      "legacyId": 6,
+      "title": "Números de Tres Cifras",
+      "subject": "matemáticas",
+      "gradeLabel": "2° Grado",
+      "xp": 20,
+      "icon": "🔢",
+      "color": "mat",
+      "url": "1ciclo-2º-grado/numeros-hasta-999.html",
+      "status": "published"
+    }
+  ]
+}

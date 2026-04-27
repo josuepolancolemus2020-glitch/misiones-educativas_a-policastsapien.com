@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Proceres",
+  "type": "object",
+  "required": ["country", "items"],
+  "properties": {
+    "country": { "type": "string" },
+    "version": { "type": ["string", "null"] },
+    "updatedAt": { "type": ["string", "null"] },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "period": { "type": ["string", "null"] },
+          "description": { "type": ["string", "null"] },
+          "quote": { "type": ["string", "null"] },
+          "image": { "type": ["string", "null"] }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

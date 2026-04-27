@@ -1,0 +1,12 @@
+{
+  "country": "HN",
+  "cycle": "2y3ciclo",
+  "version": "1.0.0",
+  "status": "seeded",
+  "items": [
+    { "id": "HN-2y3ciclo-001", "legacyId": 1, "title": "Los Adjetivos", "subject": "español", "gradeLabel": "II y III Ciclo", "xp": 25, "icon": "📝", "color": "esp", "url": "2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html", "status": "published" },
+    { "id": "HN-2y3ciclo-002", "legacyId": 2, "title": "Los Verbos", "subject": "español", "gradeLabel": "II y III Ciclo", "xp": 25, "icon": "✍️", "color": "esp", "url": "2y3ciclo-verbos/verbos-II-III-ciclo-basica.html", "status": "published" },
+    { "id": "HN-2y3ciclo-003", "legacyId": 3, "title": "Los Sustantivos", "subject": "español", "gradeLabel": "II y III Ciclo", "xp": 25, "icon": "📖", "color": "esp", "url": "2y3ciclo-sustantivos/sustantivos-II-III-ciclo-basica.html", "status": "published" }
+  ],
+  "note": "Semilla inicial. Completar con el resto de misiones de app.js en iteración 2."
+}

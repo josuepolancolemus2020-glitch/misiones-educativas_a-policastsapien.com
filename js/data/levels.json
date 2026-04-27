@@ -1,0 +1,7 @@
+[
+  { "n": 1, "min": 0, "max": 99, "label": "Explorador", "emoji": "🌱" },
+  { "n": 2, "min": 100, "max": 249, "label": "Aprendiz", "emoji": "📚" },
+  { "n": 3, "min": 250, "max": 499, "label": "Estudioso", "emoji": "🔍" },
+  { "n": 4, "min": 500, "max": 799, "label": "Académico", "emoji": "⚡" },
+  { "n": 5, "min": 800, "max": 999999999, "label": "Sabio", "emoji": "🏆" }
+]

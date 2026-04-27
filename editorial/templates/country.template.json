@@ -1,0 +1,16 @@
+{
+  "code": "HN",
+  "name": "Nombre del pais",
+  "flagEmoji": "🇭🇳",
+  "motto": "Lema",
+  "flagBg": "linear-gradient(...)",
+  "theme": {
+    "brand": "#0F4C96",
+    "brandMid": "#1A6AC7",
+    "brandLight": "#4D9FD4"
+  },
+  "symbols": [],
+  "facts": [],
+  "version": "1.0.0",
+  "updatedAt": "2026-04-26T00:00:00Z"
+}

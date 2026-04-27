@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-04-26T00:00:00Z",
+  "items": [
+    { "texto": "El éxito es la suma de pequeños esfuerzos repetidos día tras día.", "autor": "Robert Collier" },
+    { "texto": "La educación es el arma más poderosa que puedes usar para cambiar el mundo.", "autor": "Nelson Mandela" },
+    { "texto": "No importa cuán despacio vayas, siempre que no te detengas.", "autor": "Confucio" },
+    { "texto": "El conocimiento es el único bien que crece cuanto más se comparte.", "autor": "Proverbio" },
+    { "texto": "Hoy es un buen día para aprender algo que no sabías ayer.", "autor": "Anónimo" }
+  ],
+  "note": "Semilla inicial para migración. La fuente completa actual sigue en js/app.js."
+}

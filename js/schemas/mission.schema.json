@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mission",
+  "type": "object",
+  "required": ["id", "title", "subject", "xp", "url", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "legacyId": { "type": ["integer", "null"] },
+    "country": { "type": ["string", "null"] },
+    "cycle": { "type": ["string", "null"] },
+    "gradeLabel": { "type": ["string", "null"] },
+    "subject": { "type": "string" },
+    "title": { "type": "string" },
+    "icon": { "type": ["string", "null"] },
+    "color": { "type": ["string", "null"] },
+    "xp": { "type": "integer", "minimum": 0 },
+    "url": { "type": "string" },
+    "status": { "type": "string", "enum": ["draft", "review", "published", "archived"] },
+    "author": { "type": ["string", "null"] },
+    "reviewedBy": { "type": ["string", "null"] },
+    "version": { "type": ["string", "null"] },
+    "updatedAt": { "type": ["string", "null"] }
+  },
+  "additionalProperties": true
+}

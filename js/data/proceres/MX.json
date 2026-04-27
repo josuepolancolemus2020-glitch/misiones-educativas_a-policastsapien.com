@@ -1,0 +1,14 @@
+{
+  "country": "MX",
+  "version": "1.0.0",
+  "status": "seeded",
+  "items": [
+    {
+      "name": "Miguel Hidalgo y Costilla",
+      "period": "1753 – 1811",
+      "description": "El Padre de la Patria.",
+      "quote": "El indulto es para los criminales, no para los defensores de la patria.",
+      "image": "img/mexico_img/Miguel Idalgo.png"
+    }
+  ]
+}

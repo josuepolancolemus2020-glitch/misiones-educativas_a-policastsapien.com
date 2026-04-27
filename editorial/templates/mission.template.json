@@ -1,0 +1,22 @@
+{
+  "id": "PAIS-ciclo-###",
+  "legacyId": null,
+  "country": "HN",
+  "cycle": "2y3ciclo",
+  "gradeLabel": "II y III Ciclo",
+  "subject": "español",
+  "title": "Titulo de la mision",
+  "icon": "📝",
+  "color": "esp",
+  "xp": 25,
+  "url": "ruta/archivo.html",
+  "status": "draft",
+  "author": "autor.editorial",
+  "reviewedBy": null,
+  "version": "1.0.0",
+  "updatedAt": "2026-04-26T00:00:00Z",
+  "tags": [],
+  "competencias": [],
+  "estimatedMinutes": 20,
+  "prerequisites": []
+}
