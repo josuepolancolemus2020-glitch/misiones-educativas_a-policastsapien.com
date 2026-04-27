@@ -1091,8 +1091,62 @@ a { text-decoration: none; color: inherit; }
   border-top: 1px solid var(--border);
 }
 
-/* ====== DESKTOP ====== */
-@media (min-width: 640px) {
-  body { max-width: 420px; margin: 0 auto; box-shadow: 0 0 60px rgba(0,0,0,.12); border: 1px solid var(--border); }
-  .bottom-nav { max-width: 420px; margin: 0 auto; left: 50%; transform: translateX(-50%); }
+/* ====== TABLET (600px+) ====== */
+@media (min-width: 600px) {
+  body {
+    max-width: 700px;
+    margin: 0 auto;
+    box-shadow: 0 0 50px rgba(0,0,0,.10);
+    border: 1px solid var(--border);
+  }
+  .bottom-nav {
+    max-width: 700px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .view-scroll { padding: 20px 28px calc(var(--nav-h) + 20px); }
+
+  /* Materias: 4 en una fila */
+  .subjects-row { grid-template-columns: repeat(4, 1fr); }
+
+  /* Símbolos: 4 columnas */
+  .cc-sim-grid { grid-template-columns: repeat(4, 1fr); }
+
+  /* Prócer más grande */
+  .pensador-foto { width: 80px; height: 80px; }
+
+  /* Próceres carrusel */
+  .proc-foto { width: 88px; height: 88px; }
+
+  /* Selectors en fila */
+  .selectors-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+}
+
+/* ====== DESKTOP (1024px+) ====== */
+@media (min-width: 1024px) {
+  body { max-width: 960px; }
+  .bottom-nav { max-width: 960px; }
+
+  .view-scroll { padding: 28px 48px calc(var(--nav-h) + 24px); }
+
+  .app-header { padding: 16px 48px 14px; }
+
+  /* Misiones en 2 columnas */
+  .missions-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+  /* Tarjeta país más espaciosa */
+  .country-card { padding: 20px 24px; }
+
+  /* Símbolos: hasta 5 columnas */
+  .cc-sim-grid { grid-template-columns: repeat(5, 1fr); }
+
+  /* Modal más ancho */
+  .sim-modal { max-width: 380px; }
+
+  /* Imagen prócer en modal más grande */
+  .sim-modal-img { width: 180px; height: 180px; }
+
+  /* Recientes en 2 columnas */
+  .small-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 }
