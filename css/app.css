@@ -782,8 +782,110 @@ a { text-decoration: none; color: inherit; }
 }
 
 .cc-sim-emoji  { font-size: 22px; line-height: 1; }
-.cc-sim-nombre { font-size: 10px; font-weight: 700; color: var(--text); margin-top: 1px; }
+.cc-sim-nombre { font-size: 10px; font-weight: 700; color: var(--text); margin-top: 2px; }
 .cc-sim-tipo   { font-size: 9px;  font-weight: 500; color: var(--muted); }
+
+/* Imagen oval dentro del ítem */
+.cc-sim-oval {
+  width: 58px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  transition: border-color 0.3s, transform 0.15s;
+  flex-shrink: 0;
+}
+.cc-sim-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+.cc-sim-clickable { cursor: pointer; transition: transform 0.15s; }
+.cc-sim-clickable:active { transform: scale(0.93); }
+.cc-sim-clickable:active .cc-sim-oval { border-color: var(--brand); }
+
+/* ====== MODAL SÍMBOLOS ====== */
+.sim-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.58);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: simFadeIn 0.18s ease;
+}
+@keyframes simFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.sim-modal {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 24px 20px 20px;
+  max-width: 300px;
+  width: 100%;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.32);
+  text-align: center;
+  animation: simSlideUp 0.22s ease;
+}
+@keyframes simSlideUp {
+  from { transform: translateY(22px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.sim-modal-img-wrap {
+  width: 120px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 14px;
+  border: 3px solid var(--brand);
+  transition: border-color 0.55s;
+}
+.sim-modal-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sim-modal-emoji { font-size: 52px; margin-bottom: 12px; }
+
+.sim-modal-badge {
+  display: inline-block;
+  background: var(--brand);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 8px;
+  transition: background 0.55s;
+}
+.sim-modal-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.25;
+}
+.sim-modal-info {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 18px;
+  text-align: left;
+}
+.sim-modal-close {
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 30px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.55s;
+  width: 100%;
+}
 
 /* — Curiosidad deslizable — */
 .cc-curious-block {

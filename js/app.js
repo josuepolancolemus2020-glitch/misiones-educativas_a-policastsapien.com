@@ -113,15 +113,22 @@ const COUNTRY_DATA = {
     lema: 'Libre, Soberana e Independiente',
     flagBg: 'linear-gradient(180deg,#0073CF 33.3%,#fff 33.3% 66.6%,#0073CF 66.6%)',
     simbolosMayores: [
-      { emoji: '🇭🇳', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
-      { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
-      { emoji: '🎵',  nombre: 'Himno',    tipo: 'Símbolo patrio' },
+      { emoji: '🇭🇳', nombre: 'Bandera Nacional', tipo: 'Símbolo patrio', img: 'img/honduras_img/simbolos/bandera.webp',
+        info: 'Tres franjas horizontales azul-blanca-azul. Las cinco estrellas del centro representan a los países que formaron la República Federal de Centroamérica. Adoptada el 16 de septiembre de 1825.' },
+      { emoji: '🛡️', nombre: 'Escudo de Armas', tipo: 'Símbolo patrio', img: 'img/honduras_img/simbolos/escudo.webp',
+        info: 'Creado en 1825. Muestra un volcán, el sol naciente y un arco iris rodeado de bosques de pino. El quetzal en la cima simboliza la independencia. Reza: "República de Honduras, Libre, Soberana e Independiente".' },
+      { emoji: '🎵', nombre: 'Himno Nacional', tipo: 'Símbolo patrio',
+        info: 'Letra de Augusto C. Coello y música del compositor alemán Carlos Hartling. Adoptado oficialmente el 15 de noviembre de 1915. Su coro comienza: "Tu bandera es un lampo de cielo…"' },
     ],
     simbolos: [
-      { emoji: '🦜', nombre: 'Guara Roja',  tipo: 'Ave nacional'      },
-      { emoji: '🌺', nombre: 'Orquídea',    tipo: 'Flor nacional'     },
-      { emoji: '🌲', nombre: 'Pino',        tipo: 'Árbol nacional'    },
-      { emoji: '🏛️', nombre: 'Copán',       tipo: 'Patrimonio UNESCO' },
+      { emoji: '🦜', nombre: 'Guara Roja', tipo: 'Ave nacional', img: 'img/honduras_img/simbolos/guacamaya.webp',
+        info: 'Ara macao. Declarada ave nacional en 1993. Habita en los bosques tropicales de la Mosquitia hondureña. Su plumaje rojo, azul y amarillo la convierte en una de las aves más coloridas del mundo.' },
+      { emoji: '🌺', nombre: 'Orquídea', tipo: 'Flor nacional', img: 'img/honduras_img/simbolos/orquidea.webp',
+        info: 'Rhyncholaelia digbyana. Declarada flor nacional en 1969. De color blanco-verdoso con bordes en flecos. Reconocida por su exquisita fragancia nocturna y considerada una de las más bellas del continente.' },
+      { emoji: '🌲', nombre: 'Pino', tipo: 'Árbol nacional', img: 'img/honduras_img/simbolos/pino.webp',
+        info: 'Honduras posee la mayor cobertura de bosques de pino de toda Centroamérica. Cubre gran parte de las montañas y es fuente de vida para miles de familias y ecosistemas del país.' },
+      { emoji: '🦌', nombre: 'Venado Cola Blanca', tipo: 'Mamífero nacional', img: 'img/honduras_img/simbolos/venado.webp',
+        info: 'Odocoileus virginianus. Mamífero nacional de Honduras. Habita en bosques, sabanas y zonas rurales. Conocido por su elegancia y velocidad, ha sido parte de la cultura y tradición hondureña por siglos.' },
     ],
     tema: { brand: '#0F4C96', brandMid: '#1A6AC7', brandLight: '#4D9FD4' },
     curiosidades: [
@@ -337,6 +344,44 @@ const COUNTRY_DATA = {
    STATE
 ───────────────────────────────────────────── */
 
+/* ─────────────────────────────────────────────
+   MODAL SÍMBOLOS
+───────────────────────────────────────────── */
+
+const _simRegistry = new Map();
+
+function openSimModal(key) {
+  const s = _simRegistry.get(key);
+  if (!s) return;
+
+  const backdrop = document.createElement('div');
+  backdrop.className = 'sim-modal-backdrop';
+  backdrop.setAttribute('role', 'dialog');
+  backdrop.setAttribute('aria-modal', 'true');
+
+  const imgHTML = s.img
+    ? `<div class="sim-modal-img-wrap"><img src="${s.img}" alt="${s.nombre}" class="sim-modal-img"></div>`
+    : `<div class="sim-modal-emoji">${s.emoji}</div>`;
+
+  backdrop.innerHTML = `
+    <div class="sim-modal">
+      ${imgHTML}
+      <span class="sim-modal-badge">${s.tipo}</span>
+      <div class="sim-modal-title">${s.nombre}</div>
+      ${s.info ? `<p class="sim-modal-info">${s.info}</p>` : ''}
+      <button class="sim-modal-close" aria-label="Cerrar">Cerrar ✕</button>
+    </div>`;
+
+  backdrop.querySelector('.sim-modal-close').addEventListener('click', () => backdrop.remove());
+  backdrop.addEventListener('click', e => { if (e.target === backdrop) backdrop.remove(); });
+  document.body.appendChild(backdrop);
+}
+window.openSimModal = openSimModal;
+
+/* ─────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────── */
+
 const KEY = 'meta_v2';
 
 function blank() {
@@ -490,28 +535,26 @@ function renderCountryCard(code) {
   if (textEl) textEl.textContent = fact.texto;
   if (catEl)  catEl.textContent  = fact.categoria;
 
-  // Símbolos patrios — dos secciones
+  // Símbolos patrios — dos secciones con imágenes y modal
   const simEl = document.getElementById('cc-simbolos');
   if (simEl) {
-    const buildGrid = arr => arr.map(s => `
-      <div class="cc-sim-item">
-        <span class="cc-sim-emoji">${s.emoji}</span>
-        <span class="cc-sim-nombre">${s.nombre}</span>
-        <span class="cc-sim-tipo">${s.tipo}</span>
-      </div>`).join('');
+    _simRegistry.clear();
+
+    const buildItem = s => {
+      const key = 'sim_' + Math.random().toString(36).slice(2);
+      _simRegistry.set(key, s);
+      const visual = s.img
+        ? `<div class="cc-sim-oval"><img src="${s.img}" alt="${s.nombre}" class="cc-sim-img" loading="lazy"></div>`
+        : `<span class="cc-sim-emoji">${s.emoji}</span>`;
+      return `<div class="cc-sim-item cc-sim-clickable" onclick="openSimModal('${key}')">${visual}<span class="cc-sim-nombre">${s.nombre}</span><span class="cc-sim-tipo">${s.tipo}</span></div>`;
+    };
 
     let html = '';
     if (data.simbolosMayores && data.simbolosMayores.length) {
-      html += `<div class="cc-sim-section">
-        <div class="cc-sim-label">🏅 Símbolos Patrios</div>
-        <div class="cc-sim-grid">${buildGrid(data.simbolosMayores)}</div>
-      </div>`;
+      html += `<div class="cc-sim-section"><div class="cc-sim-label">🏅 Símbolos Patrios</div><div class="cc-sim-grid">${data.simbolosMayores.map(buildItem).join('')}</div></div>`;
     }
     if (data.simbolos && data.simbolos.length) {
-      html += `<div class="cc-sim-section">
-        <div class="cc-sim-label">🌿 Símbolos Nacionales</div>
-        <div class="cc-sim-grid">${buildGrid(data.simbolos)}</div>
-      </div>`;
+      html += `<div class="cc-sim-section"><div class="cc-sim-label">🌿 Símbolos Nacionales</div><div class="cc-sim-grid">${data.simbolos.map(buildItem).join('')}</div></div>`;
     }
     simEl.innerHTML = html;
   }
