@@ -516,7 +516,24 @@ function renderHome() {
   applyCountryTheme(country);
   renderCountryCard(country);
 
-  // Misión destacada
+  // Chips de materia: misiones o "Próximamente" según país
+  document.querySelectorAll('.subj-chip').forEach(chip => {
+    const em = chip.querySelector('em');
+    if (!em) return;
+    if (country === 'HN') {
+      const count = MISSIONS.filter(m => m.subject === chip.dataset.subject).length;
+      em.textContent = `${count} misión${count !== 1 ? 'es' : ''}`;
+    } else {
+      em.textContent = 'Próximamente';
+    }
+  });
+
+  // Sección Misión destacada + Recientes: solo Honduras
+  const featuredSection = document.getElementById('featured-section');
+  if (featuredSection) featuredSection.hidden = (country !== 'HN');
+
+  if (country !== 'HN') return;
+
   const m    = featuredMission(s);
   const done = s.visited.includes(m.id);
   const card = document.getElementById('featured-card');
@@ -537,7 +554,6 @@ function renderHome() {
   `;
   card.onclick = () => visitMission(m.id);
 
-  // Recientes
   const wrap   = document.getElementById('recent-wrap');
   const list   = document.getElementById('recent-list');
   const recent = (s.lastVisited || [])

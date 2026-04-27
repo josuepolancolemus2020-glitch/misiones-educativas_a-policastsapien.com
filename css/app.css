@@ -746,15 +746,11 @@ a { text-decoration: none; color: inherit; }
 
 /* — Símbolos patrios — */
 .cc-simbolos {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 7px;
   margin-bottom: 14px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 2px;
 }
-.cc-simbolos::-webkit-scrollbar { display: none; }
 
 .cc-sim-item {
   display: flex;
@@ -764,16 +760,14 @@ a { text-decoration: none; color: inherit; }
   background: var(--bg);
   border: 1.5px solid var(--border);
   border-radius: 11px;
-  padding: 8px 10px 7px;
-  flex-shrink: 0;
-  min-width: 66px;
+  padding: 8px 6px 7px;
   text-align: center;
   transition: border-color 0.4s ease;
 }
 
 .cc-sim-emoji  { font-size: 22px; line-height: 1; }
-.cc-sim-nombre { font-size: 10px; font-weight: 700; color: var(--text); white-space: nowrap; margin-top: 1px; }
-.cc-sim-tipo   { font-size: 9px;  font-weight: 500; color: var(--muted); white-space: nowrap; }
+.cc-sim-nombre { font-size: 10px; font-weight: 700; color: var(--text); margin-top: 1px; }
+.cc-sim-tipo   { font-size: 9px;  font-weight: 500; color: var(--muted); }
 
 /* — Curiosidad deslizable — */
 .cc-curious-block {
