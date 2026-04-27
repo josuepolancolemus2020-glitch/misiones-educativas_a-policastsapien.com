@@ -1013,7 +1013,24 @@ document.addEventListener('DOMContentLoaded', () => {
       _factIdx = 0;
       applyCountryTheme(s.country);
       renderCountryCard(s.country);
-      scheduleNextTick(); // reinicia el temporizador con el texto nuevo
+      scheduleNextTick();
+
+      // Actualizar chips de materia (Próximamente vs conteo real)
+      document.querySelectorAll('.subj-chip').forEach(chip => {
+        const em = chip.querySelector('em');
+        if (!em) return;
+        if (s.country === 'HN') {
+          const count = MISSIONS.filter(m => m.subject === chip.dataset.subject).length;
+          em.textContent = `${count} misión${count !== 1 ? 'es' : ''}`;
+        } else {
+          em.textContent = 'Próximamente';
+        }
+      });
+
+      // Mostrar u ocultar sección Misión destacada
+      const featuredSection = document.getElementById('featured-section');
+      if (featuredSection) featuredSection.hidden = (s.country !== 'HN');
+
       const d = COUNTRY_DATA[s.country];
       if (d) toast(`${d.bandera} ¡Explorando ${d.nombre}!`);
     });
