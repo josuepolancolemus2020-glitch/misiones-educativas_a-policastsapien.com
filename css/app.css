@@ -1137,6 +1137,82 @@ a { text-decoration: none; color: inherit; }
   border-top: 1px solid var(--border);
 }
 
+/* ====== TEACHER PANEL ====== */
+.teacher-panel-group { border-left: 4px solid var(--accent) !important; }
+.teacher-panel-head {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+}
+.teacher-panel-icon { font-size: 22px; color: var(--accent); }
+.teacher-panel-desc { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.4; }
+.teacher-tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.teacher-tool-item {
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); padding: 14px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  text-align: center; position: relative; cursor: default;
+}
+.teacher-tool-item i  { font-size: 22px; color: var(--brand); }
+.teacher-tool-item span { font-size: 11px; font-weight: 600; color: var(--text); }
+.teacher-tool-item::after {
+  content: 'Pronto';
+  position: absolute; top: 4px; right: 4px;
+  font-size: 8px; font-weight: 700;
+  background: var(--accent); color: #fff;
+  padding: 1px 5px; border-radius: 6px;
+  text-transform: uppercase; letter-spacing: .3px;
+}
+.teacher-tool-coming { opacity: 0.45; }
+
+/* ====== GOBIERNO ESCOLAR – NUEVOS ESTILOS ====== */
+.ge-code-box { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.ge-code-input {
+  font-size: 22px !important; font-weight: 800 !important;
+  text-align: center; letter-spacing: 4px; text-transform: uppercase;
+  padding: 14px !important;
+}
+.ge-code-error {
+  background: #fef2f2; border: 1px solid #fecaca;
+  color: #dc2626; padding: 9px 12px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; line-height: 1.4;
+}
+.ge-ballot-header { margin-bottom: 12px; }
+.ge-badge-voter {
+  display: block; margin-bottom: 8px;
+  font-size: 11px; font-weight: 700;
+  background: #22c55e; color: #fff;
+  padding: 4px 12px; border-radius: 12px;
+  text-align: center; letter-spacing: .4px;
+}
+.ge-vote-planilla {
+  font-size: 13px; font-weight: 800; color: var(--brand);
+  text-align: center; pointer-events: none; line-height: 1.2;
+}
+.ge-vote-emoji { font-size: 40px; pointer-events: none; }
+.ge-urna-row-header {
+  display: grid; grid-template-columns: 1fr 72px 72px;
+  gap: 6px; margin-bottom: 4px;
+}
+.ge-urna-col-lbl {
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  text-align: center; text-transform: uppercase; letter-spacing: .5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ge-urna-row {
+  display: grid; grid-template-columns: 1fr 72px 72px;
+  gap: 6px; align-items: center; margin-bottom: 6px;
+}
+.ge-urna-lbl { font-size: 12px; font-weight: 700; color: var(--text); }
+.ge-mini-input { width: 72px !important; text-align: center !important; font-weight: 700 !important; padding: 8px 4px !important; }
+.ge-other-urnas { margin-bottom: 16px; }
+.ge-winner-wrap { margin-top: 14px; }
+.ge-winner {
+  background: linear-gradient(135deg, var(--brand), var(--brand-light));
+  color: #fff; padding: 14px; border-radius: var(--r-sm);
+  text-align: center; font-size: 15px; font-weight: 700;
+  animation: fadeUp .3s ease;
+}
+.ge-votes-count { text-align: center; font-size: 12px; color: var(--muted); margin-top: 10px; }
+
 /* ====== TABLET (600px+) ====== */
 @media (min-width: 600px) {
   body {

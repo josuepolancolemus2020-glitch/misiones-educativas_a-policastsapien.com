@@ -141,98 +141,138 @@
 
       <!-- Gobierno Escolar 2026 -->
       <div id="gobierno-escolar-section" hidden>
-        <h2 class="section-title">Misión Gobierno Escolar 2026</h2>
-        
-        <!-- Configuración Mode -->
+        <h2 class="section-title">🗳️ Gobierno Escolar 2026</h2>
+
+        <!-- Configuración (Secretario de Mesa) -->
         <div id="ge-config-view" class="ge-card">
-          <p class="ge-subtitle">Configura las planillas para iniciar la elección.</p>
-          
+          <p class="ge-subtitle"><i class="fa-solid fa-chalkboard-user"></i> Secretario de mesa: configura las planillas antes de iniciar la urna.</p>
           <div class="ge-planillas-container">
             <div class="ge-planilla">
-              <label>Planilla 1</label>
+              <label>📋 Planilla 1</label>
+              <input type="text" id="ge-planilla-1" placeholder="Nombre de la planilla (ej: Planilla Azul)" class="ge-input">
               <div class="ge-img-upload">
                 <input type="file" id="ge-img-1" accept="image/*" hidden>
                 <button class="ge-upload-btn" onclick="document.getElementById('ge-img-1').click()">
-                  <i class="fa-solid fa-camera"></i> Subir Foto
+                  <i class="fa-solid fa-camera"></i> Foto
                 </button>
                 <img id="ge-preview-1" class="ge-preview" src="" hidden>
               </div>
-              <input type="text" id="ge-name-1" placeholder="Nombre candidato" class="ge-input">
+              <input type="text" id="ge-name-1" placeholder="Candidato principal (opcional)" class="ge-input">
             </div>
-            
             <div class="ge-planilla">
-              <label>Planilla 2</label>
+              <label>📋 Planilla 2</label>
+              <input type="text" id="ge-planilla-2" placeholder="Nombre de la planilla (ej: Planilla Roja)" class="ge-input">
               <div class="ge-img-upload">
                 <input type="file" id="ge-img-2" accept="image/*" hidden>
                 <button class="ge-upload-btn" onclick="document.getElementById('ge-img-2').click()">
-                  <i class="fa-solid fa-camera"></i> Subir Foto
+                  <i class="fa-solid fa-camera"></i> Foto
                 </button>
                 <img id="ge-preview-2" class="ge-preview" src="" hidden>
               </div>
-              <input type="text" id="ge-name-2" placeholder="Nombre candidato" class="ge-input">
+              <input type="text" id="ge-name-2" placeholder="Candidato principal (opcional)" class="ge-input">
             </div>
           </div>
-          
-          <button class="ge-btn" id="ge-save-config-btn">Guardar y Habilitar Urna</button>
+          <button class="ge-btn" id="ge-save-config-btn">
+            <i class="fa-solid fa-lock-open"></i> Guardar y Habilitar Urna
+          </button>
         </div>
 
-        <!-- Votación Mode -->
-        <div id="ge-voting-view" class="ge-card" hidden>
+        <!-- Ingreso de Código de Votación -->
+        <div id="ge-code-view" class="ge-card" hidden>
           <div class="ge-header-actions">
-            <span class="ge-badge">Urna Electrónica Activa</span>
-            <button class="ge-icon-btn" id="ge-end-voting-btn" aria-label="Finalizar votación"><i class="fa-solid fa-lock"></i></button>
+            <span class="ge-badge"><i class="fa-solid fa-circle-dot"></i> Urna Activa</span>
+            <button class="ge-icon-btn" id="ge-end-voting-btn" aria-label="Finalizar votación">
+              <i class="fa-solid fa-lock"></i>
+            </button>
           </div>
-          <p class="ge-subtitle">Toca la foto de tu candidato para votar. El voto es secreto.</p>
-          
+          <p class="ge-subtitle">Ingresa tu código para votar. Formato: <strong>Grado-Sección-NºLista</strong> (ej: <strong>7-A-12</strong>)</p>
+          <div class="ge-code-box">
+            <input type="text" id="ge-code-input" placeholder="ej: 7-A-12 ó 9-B-3" class="ge-input ge-code-input" maxlength="20" autocomplete="off" inputmode="text">
+            <div id="ge-code-error" class="ge-code-error" hidden></div>
+            <button class="ge-btn" id="ge-validate-code-btn">
+              <i class="fa-solid fa-check"></i> Validar Código y Votar
+            </button>
+          </div>
+        </div>
+
+        <!-- Papeleta de Votación -->
+        <div id="ge-voting-view" class="ge-card" hidden>
+          <div class="ge-ballot-header">
+            <span class="ge-badge-voter" id="ge-ballot-voter-code"></span>
+            <p class="ge-subtitle">Toca la planilla de tu elección. Solo puedes votar <strong>una vez</strong>.</p>
+          </div>
           <div class="ge-voting-container">
             <button class="ge-vote-btn" id="ge-vote-1">
-              <img id="ge-vote-img-1" class="ge-vote-img" src="">
+              <div class="ge-vote-emoji" id="ge-vote-emoji-1">🗳️</div>
+              <img id="ge-vote-img-1" class="ge-vote-img" src="" hidden>
+              <span id="ge-vote-planilla-1" class="ge-vote-planilla"></span>
               <span id="ge-vote-name-1" class="ge-vote-name"></span>
             </button>
             <button class="ge-vote-btn" id="ge-vote-2">
-              <img id="ge-vote-img-2" class="ge-vote-img" src="">
+              <div class="ge-vote-emoji" id="ge-vote-emoji-2">🗳️</div>
+              <img id="ge-vote-img-2" class="ge-vote-img" src="" hidden>
+              <span id="ge-vote-planilla-2" class="ge-vote-planilla"></span>
               <span id="ge-vote-name-2" class="ge-vote-name"></span>
             </button>
           </div>
-          <div id="ge-vote-feedback" class="ge-feedback" hidden>¡Voto Registrado!</div>
+          <div id="ge-vote-feedback" class="ge-feedback" hidden>
+            <i class="fa-solid fa-circle-check"></i> ¡Voto registrado con éxito!
+          </div>
         </div>
 
-        <!-- Resultados Mode -->
+        <!-- Resultados -->
         <div id="ge-results-view" class="ge-card" hidden>
           <div class="ge-header-actions">
-            <span class="ge-badge">Resultados</span>
-            <button class="ge-icon-btn" id="ge-reset-btn" aria-label="Reiniciar"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+            <span class="ge-badge">📊 Resultados</span>
+            <button class="ge-icon-btn" id="ge-reset-btn" aria-label="Reiniciar">
+              <i class="fa-solid fa-arrow-rotate-left"></i>
+            </button>
           </div>
-          
           <div class="ge-results-list">
             <div class="ge-result-item">
               <span id="ge-res-name-1" class="ge-res-name">Planilla 1</span>
-              <span id="ge-res-votes-1" class="ge-res-votes">0 votos locales</span>
+              <span id="ge-res-votes-1" class="ge-res-votes">0 votos</span>
             </div>
             <div class="ge-result-item">
               <span id="ge-res-name-2" class="ge-res-name">Planilla 2</span>
-              <span id="ge-res-votes-2" class="ge-res-votes">0 votos locales</span>
+              <span id="ge-res-votes-2" class="ge-res-votes">0 votos</span>
             </div>
           </div>
-
           <div class="ge-other-urnas">
-            <p class="ge-urnas-title">Sumar otras urnas (Opcional):</p>
-            <div class="ge-urnas-inputs">
-              <input type="number" id="ge-other-1" placeholder="Votos extra P1" class="ge-input">
-              <input type="number" id="ge-other-2" placeholder="Votos extra P2" class="ge-input">
+            <p class="ge-urnas-title"><i class="fa-solid fa-mobile-screen"></i> Sumar resultados de otras urnas (teléfonos):</p>
+            <div class="ge-urna-row-header">
+              <span></span>
+              <span class="ge-urna-col-lbl" id="ge-urna-lbl-p1">P1</span>
+              <span class="ge-urna-col-lbl" id="ge-urna-lbl-p2">P2</span>
+            </div>
+            <div class="ge-urna-row">
+              <span class="ge-urna-lbl">📱 Urna 2</span>
+              <input type="number" id="ge-u2-p1" placeholder="0" class="ge-input ge-mini-input" min="0">
+              <input type="number" id="ge-u2-p2" placeholder="0" class="ge-input ge-mini-input" min="0">
+            </div>
+            <div class="ge-urna-row">
+              <span class="ge-urna-lbl">📱 Urna 3</span>
+              <input type="number" id="ge-u3-p1" placeholder="0" class="ge-input ge-mini-input" min="0">
+              <input type="number" id="ge-u3-p2" placeholder="0" class="ge-input ge-mini-input" min="0">
+            </div>
+            <div class="ge-urna-row">
+              <span class="ge-urna-lbl">📱 Urna 4</span>
+              <input type="number" id="ge-u4-p1" placeholder="0" class="ge-input ge-mini-input" min="0">
+              <input type="number" id="ge-u4-p2" placeholder="0" class="ge-input ge-mini-input" min="0">
             </div>
           </div>
-
           <div class="ge-total-wrap">
             <div class="ge-total-item">
-              <span class="ge-total-label">Total P1</span>
+              <span class="ge-total-label" id="ge-total-label-1">Total P1</span>
               <span id="ge-total-1" class="ge-total-val">0</span>
             </div>
             <div class="ge-total-item">
-              <span class="ge-total-label">Total P2</span>
+              <span class="ge-total-label" id="ge-total-label-2">Total P2</span>
               <span id="ge-total-2" class="ge-total-val">0</span>
             </div>
           </div>
+          <div id="ge-winner-wrap" class="ge-winner-wrap"></div>
+          <p class="ge-votes-count" id="ge-votes-count"></p>
         </div>
       </div>
 
@@ -330,6 +370,41 @@
           <div class="stats-row"><span>XP acumulado</span><strong id="prf-xp">0 XP</strong></div>
           <div class="stats-row"><span>Nivel actual</span><strong id="prf-level">Nivel 1</strong></div>
           <div class="stats-row"><span>Rango</span><strong id="prf-badge">Explorador</strong></div>
+        </div>
+      </div>
+
+      <!-- Panel del Docente -->
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-chalkboard-user teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">Herramientas del Docente</label>
+        </div>
+        <p class="teacher-panel-desc">Recursos y herramientas para el aula. Próximamente disponibles.</p>
+        <div class="teacher-tools-grid">
+          <div class="teacher-tool-item">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Rúbricas</span>
+          </div>
+          <div class="teacher-tool-item">
+            <i class="fa-solid fa-clipboard-user"></i>
+            <span>Asistencia</span>
+          </div>
+          <div class="teacher-tool-item">
+            <i class="fa-solid fa-stopwatch"></i>
+            <span>Cronómetro</span>
+          </div>
+          <div class="teacher-tool-item">
+            <i class="fa-solid fa-file-pen"></i>
+            <span>Evaluaciones</span>
+          </div>
+          <div class="teacher-tool-item">
+            <i class="fa-solid fa-chart-bar"></i>
+            <span>Estadísticas</span>
+          </div>
+          <div class="teacher-tool-item teacher-tool-coming">
+            <i class="fa-solid fa-plus"></i>
+            <span>Más…</span>
+          </div>
         </div>
       </div>
 

@@ -1155,175 +1155,268 @@ document.addEventListener('DOMContentLoaded', () => {
    GOBIERNO ESCOLAR 2026 LOGIC
 ───────────────────────────────────────────── */
 
-const KEY_GE = 'meta_ge_v1';
+const KEY_GE = 'meta_ge_v2';
+
+function blankGE() {
+  return {
+    mode: 'config',
+    p1: { planilla: '', name: '', img: '', votes: 0 },
+    p2: { planilla: '', name: '', img: '', votes: 0 },
+    usedCodes: []
+  };
+}
 
 function loadGE() {
   try {
     const raw = localStorage.getItem(KEY_GE);
-    if (raw) return JSON.parse(raw);
+    if (raw) return Object.assign(blankGE(), JSON.parse(raw));
   } catch (_) {}
-  return {
-    mode: 'config', // config | voting | results
-    p1: { name: '', img: '', votes: 0 },
-    p2: { name: '', img: '', votes: 0 }
-  };
+  return blankGE();
 }
 
 function saveGE(state) {
   try { localStorage.setItem(KEY_GE, JSON.stringify(state)); } catch (_) {}
 }
 
-function handleImageUpload(e, previewId, planillaKey) {
+let _geCurrentCode = null;
+
+function handleImageUpload(e, previewId) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(event) {
-    const base64 = event.target.result;
-    document.getElementById(previewId).src = base64;
-    document.getElementById(previewId).hidden = false;
-    document.getElementById(previewId).dataset.base64 = base64;
+  reader.onload = function(ev) {
+    const b64 = ev.target.result;
+    const img = document.getElementById(previewId);
+    if (img) { img.src = b64; img.hidden = false; img._b64 = b64; }
   };
   reader.readAsDataURL(file);
 }
 
 function renderGobiernoEscolar() {
   const ge = loadGE();
-  
-  const vConfig = document.getElementById('ge-config-view');
-  const vVoting = document.getElementById('ge-voting-view');
-  const vResults = document.getElementById('ge-results-view');
-  
-  if (!vConfig || !vVoting || !vResults) return;
 
-  vConfig.hidden = true;
-  vVoting.hidden = true;
-  vResults.hidden = true;
+  const vConfig  = document.getElementById('ge-config-view');
+  const vCode    = document.getElementById('ge-code-view');
+  const vVoting  = document.getElementById('ge-voting-view');
+  const vResults = document.getElementById('ge-results-view');
+  if (!vConfig || !vCode || !vVoting || !vResults) return;
+
+  [vConfig, vCode, vVoting, vResults].forEach(v => v.hidden = true);
 
   if (ge.mode === 'config') {
     vConfig.hidden = false;
-    document.getElementById('ge-name-1').value = ge.p1.name;
-    document.getElementById('ge-name-2').value = ge.p2.name;
-    if (ge.p1.img) {
-      document.getElementById('ge-preview-1').src = ge.p1.img;
-      document.getElementById('ge-preview-1').hidden = false;
-      document.getElementById('ge-preview-1').dataset.base64 = ge.p1.img;
-    }
-    if (ge.p2.img) {
-      document.getElementById('ge-preview-2').src = ge.p2.img;
-      document.getElementById('ge-preview-2').hidden = false;
-      document.getElementById('ge-preview-2').dataset.base64 = ge.p2.img;
-    }
+    const el = id => document.getElementById(id);
+    if (el('ge-planilla-1')) el('ge-planilla-1').value = ge.p1.planilla;
+    if (el('ge-planilla-2')) el('ge-planilla-2').value = ge.p2.planilla;
+    if (el('ge-name-1'))     el('ge-name-1').value     = ge.p1.name;
+    if (el('ge-name-2'))     el('ge-name-2').value     = ge.p2.name;
+    const p1 = el('ge-preview-1'), p2 = el('ge-preview-2');
+    if (ge.p1.img && p1) { p1.src = ge.p1.img; p1.hidden = false; p1._b64 = ge.p1.img; }
+    if (ge.p2.img && p2) { p2.src = ge.p2.img; p2.hidden = false; p2._b64 = ge.p2.img; }
+
   } else if (ge.mode === 'voting') {
-    vVoting.hidden = false;
-    document.getElementById('ge-vote-img-1').src = ge.p1.img || '';
-    document.getElementById('ge-vote-name-1').textContent = ge.p1.name || 'Planilla 1';
-    document.getElementById('ge-vote-img-2').src = ge.p2.img || '';
-    document.getElementById('ge-vote-name-2').textContent = ge.p2.name || 'Planilla 2';
+    _geCurrentCode = null;
+    vCode.hidden = false;
+    const ci = document.getElementById('ge-code-input');
+    const ce = document.getElementById('ge-code-error');
+    if (ci) ci.value = '';
+    if (ce) ce.hidden = true;
+
   } else if (ge.mode === 'results') {
     vResults.hidden = false;
-    document.getElementById('ge-res-name-1').textContent = ge.p1.name || 'Planilla 1';
-    document.getElementById('ge-res-votes-1').textContent = ge.p1.votes + ' votos locales';
-    document.getElementById('ge-res-name-2').textContent = ge.p2.name || 'Planilla 2';
-    document.getElementById('ge-res-votes-2').textContent = ge.p2.votes + ' votos locales';
+    const n1 = ge.p1.planilla || ge.p1.name || 'Planilla 1';
+    const n2 = ge.p2.planilla || ge.p2.name || 'Planilla 2';
+    const el = id => document.getElementById(id);
+    if (el('ge-res-name-1'))  el('ge-res-name-1').textContent  = n1;
+    if (el('ge-res-votes-1')) el('ge-res-votes-1').textContent = ge.p1.votes + ' votos (esta urna)';
+    if (el('ge-res-name-2'))  el('ge-res-name-2').textContent  = n2;
+    if (el('ge-res-votes-2')) el('ge-res-votes-2').textContent = ge.p2.votes + ' votos (esta urna)';
+    if (el('ge-total-label-1')) el('ge-total-label-1').textContent = 'Total ' + n1;
+    if (el('ge-total-label-2')) el('ge-total-label-2').textContent = 'Total ' + n2;
+    if (el('ge-urna-lbl-p1'))   el('ge-urna-lbl-p1').textContent  = n1.substring(0, 8);
+    if (el('ge-urna-lbl-p2'))   el('ge-urna-lbl-p2').textContent  = n2.substring(0, 8);
     calcTotalGE();
   }
 }
 
 function calcTotalGE() {
   const ge = loadGE();
-  const extra1 = parseInt(document.getElementById('ge-other-1').value) || 0;
-  const extra2 = parseInt(document.getElementById('ge-other-2').value) || 0;
-  
-  const total1 = document.getElementById('ge-total-1');
-  if (total1) total1.textContent = ge.p1.votes + extra1;
-  
-  const total2 = document.getElementById('ge-total-2');
-  if (total2) total2.textContent = ge.p2.votes + extra2;
+  const v = id => parseInt(document.getElementById(id)?.value) || 0;
+  const t1 = ge.p1.votes + v('ge-u2-p1') + v('ge-u3-p1') + v('ge-u4-p1');
+  const t2 = ge.p2.votes + v('ge-u2-p2') + v('ge-u3-p2') + v('ge-u4-p2');
+
+  const el = id => document.getElementById(id);
+  if (el('ge-total-1')) el('ge-total-1').textContent = t1;
+  if (el('ge-total-2')) el('ge-total-2').textContent = t2;
+
+  const wrap = el('ge-winner-wrap');
+  if (wrap) {
+    const n1 = ge.p1.planilla || ge.p1.name || 'Planilla 1';
+    const n2 = ge.p2.planilla || ge.p2.name || 'Planilla 2';
+    const total = t1 + t2;
+    if (total > 0) {
+      const msg = t1 > t2 ? `🏆 Ganador: <strong>${n1}</strong>`
+                : t2 > t1 ? `🏆 Ganador: <strong>${n2}</strong>`
+                : '🤝 Empate técnico';
+      wrap.innerHTML = `<div class="ge-winner">${msg}</div>`;
+    } else {
+      wrap.innerHTML = '';
+    }
+  }
+  const vc = el('ge-votes-count');
+  if (vc) {
+    const used = (ge.usedCodes || []).length;
+    vc.textContent = `Estudiantes que votaron: ${used}  ·  Total votos contados: ${t1 + t2}`;
+  }
 }
 
-function showVoteFeedback() {
+function validateVotingCode(raw) {
+  const code = raw.trim().toUpperCase();
+  if (!code) return { valid: false, msg: 'Escribe tu código de votación.' };
+  const parts = code.split('-');
+  if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2])
+    return { valid: false, msg: 'Formato incorrecto. Usa: Grado-Sección-NºLista  (ej: 7-A-12)' };
+  if (!/^\d+$/.test(parts[0]))
+    return { valid: false, msg: 'El Grado debe ser un número (ej: 7 ó 9).' };
+  if (!/^\d+$/.test(parts[2]))
+    return { valid: false, msg: 'El Nº de Lista debe ser un número (ej: 12 ó 3).' };
+  const ge = loadGE();
+  if ((ge.usedCodes || []).includes(code))
+    return { valid: false, msg: '⚠️ Este código ya fue usado. Cada estudiante solo puede votar una vez.' };
+  return { valid: true, code };
+}
+
+function showBallot(code) {
+  _geCurrentCode = code;
+  const ge = loadGE();
+
+  const vCode   = document.getElementById('ge-code-view');
+  const vVoting = document.getElementById('ge-voting-view');
+  if (vCode)   vCode.hidden = true;
+  if (vVoting) vVoting.hidden = false;
+
+  const voterEl = document.getElementById('ge-ballot-voter-code');
+  if (voterEl) voterEl.textContent = `Votante: ${code}`;
+
+  const n1 = ge.p1.planilla || ge.p1.name || 'Planilla 1';
+  const n2 = ge.p2.planilla || ge.p2.name || 'Planilla 2';
+  const el = id => document.getElementById(id);
+
+  const img1 = el('ge-vote-img-1'), img2 = el('ge-vote-img-2');
+  const em1  = el('ge-vote-emoji-1'), em2 = el('ge-vote-emoji-2');
+  if (ge.p1.img && img1) { img1.src = ge.p1.img; img1.hidden = false; if (em1) em1.hidden = true; }
+  else { if (img1) img1.hidden = true; if (em1) em1.hidden = false; }
+  if (ge.p2.img && img2) { img2.src = ge.p2.img; img2.hidden = false; if (em2) em2.hidden = true; }
+  else { if (img2) img2.hidden = true; if (em2) em2.hidden = false; }
+
+  if (el('ge-vote-planilla-1')) el('ge-vote-planilla-1').textContent = n1;
+  if (el('ge-vote-planilla-2')) el('ge-vote-planilla-2').textContent = n2;
+  if (el('ge-vote-name-1'))     el('ge-vote-name-1').textContent     = ge.p1.name || '';
+  if (el('ge-vote-name-2'))     el('ge-vote-name-2').textContent     = ge.p2.name || '';
+
+  const fb = el('ge-vote-feedback');
+  if (fb) fb.hidden = true;
+}
+
+function recordVote(planilla) {
+  if (!_geCurrentCode) return;
+  const ge = loadGE();
+  if (planilla === 1) ge.p1.votes++; else ge.p2.votes++;
+  if (!ge.usedCodes) ge.usedCodes = [];
+  ge.usedCodes.push(_geCurrentCode);
+  saveGE(ge);
+  _geCurrentCode = null;
+
   const fb = document.getElementById('ge-vote-feedback');
-  if (!fb) return;
-  fb.hidden = false;
-  setTimeout(() => { fb.hidden = true; }, 2000);
+  if (fb) {
+    fb.hidden = false;
+    setTimeout(() => {
+      fb.hidden = true;
+      document.getElementById('ge-voting-view').hidden = true;
+      const vCode = document.getElementById('ge-code-view');
+      if (vCode) {
+        vCode.hidden = false;
+        const ci = document.getElementById('ge-code-input');
+        const ce = document.getElementById('ge-code-error');
+        if (ci) { ci.value = ''; ci.focus(); }
+        if (ce) ce.hidden = true;
+      }
+    }, 2200);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const imgInput1 = document.getElementById('ge-img-1');
-  if (imgInput1) imgInput1.addEventListener('change', (e) => handleImageUpload(e, 'ge-preview-1', 'p1'));
-  
-  const imgInput2 = document.getElementById('ge-img-2');
-  if (imgInput2) imgInput2.addEventListener('change', (e) => handleImageUpload(e, 'ge-preview-2', 'p2'));
 
-  const saveConfigBtn = document.getElementById('ge-save-config-btn');
-  if (saveConfigBtn) {
-    saveConfigBtn.addEventListener('click', () => {
+  document.getElementById('ge-img-1')?.addEventListener('change', e => handleImageUpload(e, 'ge-preview-1'));
+  document.getElementById('ge-img-2')?.addEventListener('change', e => handleImageUpload(e, 'ge-preview-2'));
+
+  document.getElementById('ge-save-config-btn')?.addEventListener('click', () => {
+    const el = id => document.getElementById(id);
+    const planilla1 = el('ge-planilla-1')?.value.trim();
+    const planilla2 = el('ge-planilla-2')?.value.trim();
+    if (!planilla1 || !planilla2) {
+      toast('Por favor ingresa el nombre de ambas planillas');
+      return;
+    }
+    const ge = loadGE();
+    ge.p1.planilla = planilla1;
+    ge.p2.planilla = planilla2;
+    ge.p1.name = el('ge-name-1')?.value.trim() || '';
+    ge.p2.name = el('ge-name-2')?.value.trim() || '';
+    const p1 = el('ge-preview-1'), p2 = el('ge-preview-2');
+    if (p1?._b64) ge.p1.img = p1._b64;
+    if (p2?._b64) ge.p2.img = p2._b64;
+    ge.mode = 'voting';
+    ge.p1.votes = 0;
+    ge.p2.votes = 0;
+    ge.usedCodes = [];
+    saveGE(ge);
+    renderGobiernoEscolar();
+    toast('✅ ¡Urna habilitada! Ya pueden votar.');
+  });
+
+  document.getElementById('ge-validate-code-btn')?.addEventListener('click', () => {
+    const input = document.getElementById('ge-code-input');
+    const errorEl = document.getElementById('ge-code-error');
+    if (!input) return;
+    const result = validateVotingCode(input.value);
+    if (result.valid) {
+      if (errorEl) errorEl.hidden = true;
+      showBallot(result.code);
+    } else {
+      if (errorEl) { errorEl.textContent = result.msg; errorEl.hidden = false; }
+      else toast(result.msg);
+    }
+  });
+
+  document.getElementById('ge-code-input')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('ge-validate-code-btn')?.click();
+  });
+
+  document.getElementById('ge-end-voting-btn')?.addEventListener('click', () => {
+    const pin = prompt('PIN del secretario de mesa para cerrar la urna (por defecto: 1234):');
+    if (pin === '1234') {
       const ge = loadGE();
-      ge.p1.name = document.getElementById('ge-name-1').value.trim();
-      ge.p1.img = document.getElementById('ge-preview-1').dataset.base64 || ge.p1.img;
-      ge.p2.name = document.getElementById('ge-name-2').value.trim();
-      ge.p2.img = document.getElementById('ge-preview-2').dataset.base64 || ge.p2.img;
-      
-      if (!ge.p1.name || !ge.p2.name) {
-        toast('Por favor, ingresa los nombres de ambas planillas');
-        return;
-      }
-      
-      ge.mode = 'voting';
+      ge.mode = 'results';
       saveGE(ge);
       renderGobiernoEscolar();
-      toast('Urna habilitada');
-    });
-  }
+    } else if (pin !== null) {
+      toast('PIN incorrecto');
+    }
+  });
 
-  const endVotingBtn = document.getElementById('ge-end-voting-btn');
-  if (endVotingBtn) {
-    endVotingBtn.addEventListener('click', () => {
-      const pin = prompt('Ingrese PIN para finalizar votación (PIN por defecto: 1234):');
-      if (pin === '1234') {
-        const ge = loadGE();
-        ge.mode = 'results';
-        saveGE(ge);
-        renderGobiernoEscolar();
-      } else if (pin !== null) {
-        toast('PIN incorrecto');
-      }
-    });
-  }
+  document.getElementById('ge-vote-1')?.addEventListener('click', () => recordVote(1));
+  document.getElementById('ge-vote-2')?.addEventListener('click', () => recordVote(2));
 
-  const vote1Btn = document.getElementById('ge-vote-1');
-  if (vote1Btn) {
-    vote1Btn.addEventListener('click', () => {
-      const ge = loadGE();
-      ge.p1.votes++;
-      saveGE(ge);
-      showVoteFeedback();
-    });
-  }
+  document.getElementById('ge-reset-btn')?.addEventListener('click', () => {
+    if (confirm('¿Reiniciar la elección? Se borrarán todos los votos y la configuración.')) {
+      localStorage.removeItem(KEY_GE);
+      renderGobiernoEscolar();
+      toast('Elección reiniciada');
+    }
+  });
 
-  const vote2Btn = document.getElementById('ge-vote-2');
-  if (vote2Btn) {
-    vote2Btn.addEventListener('click', () => {
-      const ge = loadGE();
-      ge.p2.votes++;
-      saveGE(ge);
-      showVoteFeedback();
-    });
-  }
-
-  const resetGeBtn = document.getElementById('ge-reset-btn');
-  if (resetGeBtn) {
-    resetGeBtn.addEventListener('click', () => {
-      if (confirm('¿Reiniciar la elección? Se borrarán todos los votos locales y configuraciones.')) {
-        localStorage.removeItem(KEY_GE);
-        renderGobiernoEscolar();
-      }
-    });
-  }
-
-  const geOther1 = document.getElementById('ge-other-1');
-  if (geOther1) geOther1.addEventListener('input', calcTotalGE);
-  
-  const geOther2 = document.getElementById('ge-other-2');
-  if (geOther2) geOther2.addEventListener('input', calcTotalGE);
+  ['ge-u2-p1','ge-u2-p2','ge-u3-p1','ge-u3-p2','ge-u4-p1','ge-u4-p2'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', calcTotalGE);
+  });
 });
