@@ -745,11 +745,26 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* — Símbolos patrios — */
-.cc-simbolos {
+.cc-simbolos { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+
+.cc-sim-section {}
+
+.cc-sim-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: var(--brand);
+  margin-bottom: 6px;
+  padding-left: 2px;
+  transition: color 0.55s ease;
+}
+
+.cc-sim-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 7px;
-  margin-bottom: 14px;
+  gap: 6px;
+  justify-items: center;
 }
 
 .cc-sim-item {
@@ -762,6 +777,7 @@ a { text-decoration: none; color: inherit; }
   border-radius: 11px;
   padding: 8px 6px 7px;
   text-align: center;
+  width: 100%;
   transition: border-color 0.4s ease;
 }
 

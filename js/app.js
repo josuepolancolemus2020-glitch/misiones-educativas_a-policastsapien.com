@@ -112,6 +112,11 @@ const COUNTRY_DATA = {
     bandera: '🇭🇳',
     lema: 'Libre, Soberana e Independiente',
     flagBg: 'linear-gradient(180deg,#0073CF 33.3%,#fff 33.3% 66.6%,#0073CF 66.6%)',
+    simbolosMayores: [
+      { emoji: '🇭🇳', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
+      { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
+      { emoji: '🎵',  nombre: 'Himno',    tipo: 'Símbolo patrio' },
+    ],
     simbolos: [
       { emoji: '🦜', nombre: 'Guara Roja',  tipo: 'Ave nacional'      },
       { emoji: '🌺', nombre: 'Orquídea',    tipo: 'Flor nacional'     },
@@ -139,6 +144,11 @@ const COUNTRY_DATA = {
     bandera: '🇲🇽',
     lema: 'La Patria es Primero',
     flagBg: 'linear-gradient(90deg,#006847 33.3%,#fff 33.3% 66.6%,#CE1126 66.6%)',
+    simbolosMayores: [
+      { emoji: '🇲🇽', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
+      { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
+      { emoji: '🎵',  nombre: 'Himno',    tipo: 'Símbolo patrio' },
+    ],
     simbolos: [
       { emoji: '🦅', nombre: 'Águila Real',  tipo: 'Ave nacional'       },
       { emoji: '🌺', nombre: 'Dalia',        tipo: 'Flor nacional'      },
@@ -166,6 +176,11 @@ const COUNTRY_DATA = {
     bandera: '🇬🇹',
     lema: 'El País de la Eterna Primavera',
     flagBg: 'linear-gradient(90deg,#4997D0 33.3%,#fff 33.3% 66.6%,#4997D0 66.6%)',
+    simbolosMayores: [
+      { emoji: '🇬🇹', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
+      { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
+      { emoji: '🎵',  nombre: 'Himno',    tipo: 'Símbolo patrio' },
+    ],
     simbolos: [
       { emoji: '🦅', nombre: 'Quetzal',     tipo: 'Ave nacional'      },
       { emoji: '🌿', nombre: 'Monja Blanca', tipo: 'Flor nacional'    },
@@ -193,6 +208,11 @@ const COUNTRY_DATA = {
     bandera: '🇸🇻',
     lema: 'Dios, Unión, Libertad',
     flagBg: 'linear-gradient(180deg,#0F47AF 33.3%,#fff 33.3% 66.6%,#0F47AF 66.6%)',
+    simbolosMayores: [
+      { emoji: '🇸🇻', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
+      { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
+      { emoji: '🎵',  nombre: 'Himno',    tipo: 'Símbolo patrio' },
+    ],
     simbolos: [
       { emoji: '🦜', nombre: 'Torogoz',        tipo: 'Ave nacional'     },
       { emoji: '🌿', nombre: 'Flor de Izote',  tipo: 'Flor nacional'    },
@@ -220,6 +240,11 @@ const COUNTRY_DATA = {
     bandera: '🇳🇮',
     lema: 'Tierra de Poetas y Volcanes',
     flagBg: 'linear-gradient(180deg,#003893 33.3%,#fff 33.3% 66.6%,#003893 66.6%)',
+    simbolosMayores: [
+      { emoji: '🇳🇮', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
+      { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
+      { emoji: '🎵',  nombre: 'Himno',    tipo: 'Símbolo patrio' },
+    ],
     simbolos: [
       { emoji: '🐦', nombre: 'Guardabarranco', tipo: 'Ave nacional'      },
       { emoji: '🌸', nombre: 'Sacuanjoche',    tipo: 'Flor nacional'     },
@@ -247,6 +272,11 @@ const COUNTRY_DATA = {
     bandera: '🇨🇷',
     lema: '¡Vivan siempre el trabajo y la paz!',
     flagBg: 'linear-gradient(180deg,#002B7F 16.7%,#fff 16.7% 33.3%,#CE1126 33.3% 66.7%,#fff 66.7% 83.3%,#002B7F 83.3%)',
+    simbolosMayores: [
+      { emoji: '🇨🇷', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
+      { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
+      { emoji: '🎵',  nombre: 'Himno',    tipo: 'Símbolo patrio' },
+    ],
     simbolos: [
       { emoji: '🐦', nombre: 'Yigüirro',      tipo: 'Ave nacional'          },
       { emoji: '🌸', nombre: 'Guaria Morada', tipo: 'Flor nacional'         },
@@ -274,6 +304,11 @@ const COUNTRY_DATA = {
     bandera: '🇵🇦',
     lema: 'Pro Mundi Beneficio',
     flagBg: 'linear-gradient(to right,#fff 50%,#D21034 50%) top/100% 50% no-repeat,linear-gradient(to right,#002B7F 50%,#fff 50%) bottom/100% 50% no-repeat',
+    simbolosMayores: [
+      { emoji: '🇵🇦', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
+      { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
+      { emoji: '🎵',  nombre: 'Himno',    tipo: 'Símbolo patrio' },
+    ],
     simbolos: [
       { emoji: '🦅', nombre: 'Águila Harpía',     tipo: 'Ave nacional'      },
       { emoji: '🌸', nombre: 'Espíritu Santo',    tipo: 'Flor nacional'     },
@@ -442,10 +477,6 @@ function renderCountryCard(code) {
   const idx  = _factIdx % data.curiosidades.length;
   const fact = data.curiosidades[idx];
 
-  // Bandera visual CSS
-  const flagVisual = document.getElementById('cc-flag-visual');
-  if (flagVisual) flagVisual.style.background = data.flagBg;
-
   // Emoji + nombre + lema
   const flagEl = document.getElementById('cc-flag');
   const nameEl = document.getElementById('cc-country-name');
@@ -459,15 +490,30 @@ function renderCountryCard(code) {
   if (textEl) textEl.textContent = fact.texto;
   if (catEl)  catEl.textContent  = fact.categoria;
 
-  // Símbolos patrios
+  // Símbolos patrios — dos secciones
   const simEl = document.getElementById('cc-simbolos');
-  if (simEl && data.simbolos) {
-    simEl.innerHTML = data.simbolos.map(s => `
+  if (simEl) {
+    const buildGrid = arr => arr.map(s => `
       <div class="cc-sim-item">
         <span class="cc-sim-emoji">${s.emoji}</span>
         <span class="cc-sim-nombre">${s.nombre}</span>
         <span class="cc-sim-tipo">${s.tipo}</span>
       </div>`).join('');
+
+    let html = '';
+    if (data.simbolosMayores && data.simbolosMayores.length) {
+      html += `<div class="cc-sim-section">
+        <div class="cc-sim-label">🏅 Símbolos Patrios</div>
+        <div class="cc-sim-grid">${buildGrid(data.simbolosMayores)}</div>
+      </div>`;
+    }
+    if (data.simbolos && data.simbolos.length) {
+      html += `<div class="cc-sim-section">
+        <div class="cc-sim-label">🌿 Símbolos Nacionales</div>
+        <div class="cc-sim-grid">${buildGrid(data.simbolos)}</div>
+      </div>`;
+    }
+    simEl.innerHTML = html;
   }
 
   renderFactDots();
