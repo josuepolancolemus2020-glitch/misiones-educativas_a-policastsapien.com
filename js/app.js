@@ -20,6 +20,16 @@ const MISSIONS = [
   { id: 13, title: 'Continentes: América, Oceanía y Antártida', subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🌎', url: '2y3ciclo-los-continentes-América-Oceanía-Antártida/2y3ciclo-los-continentes-América-Oceanía-Antártida.html' },
 ];
 
+const PROCERES_DATA = {
+  MX: [
+    { nombre: 'Miguel Hidalgo y Costilla', fecha: '1753 – 1811', desc: '«El Padre de la Patria». Sacerdote y líder que dio el famoso Grito de Dolores.', cita: 'El indulto es para los criminales, no para los defensores de la patria.', img: 'img/mexico_img/Miguel Idalgo.png' },
+    { nombre: 'Benito Juárez', fecha: '1806 – 1872', desc: '«El Benemérito de las Américas». De origen zapoteca, estableció las bases de un Estado laico y moderno.', cita: 'Entre los individuos, como entre las naciones, el respeto al derecho ajeno es la paz.', img: 'img/mexico_img/Benito_juarez.png' },
+    { nombre: 'Sor Juana Inés de la Cruz', fecha: '1648 – 1695', desc: '«La Décima Musa». Brillante escritora y filósofa que defendió el derecho a la educación.', cita: 'No estudio para saber más, sino para ignorar menos.', img: 'img/mexico_img/Sor_Juana_Inés de la Cruz.png' },
+    { nombre: 'José María Morelos y Pavón', fecha: '1765 – 1815', desc: '«El Siervo de la Nación». Genio militar que sentó las bases de la igualdad social.', cita: 'Que la esclavitud se proscriba para siempre y lo mismo la distinción de castas.', img: 'img/mexico_img/josé_María Morelos.png' },
+    { nombre: 'José Vasconcelos', fecha: '1882 – 1959', desc: '«El Maestro de la Juventud de América». Impulsó bibliotecas, escuelas y el muralismo.', cita: 'Por mi raza hablará el espíritu.', img: 'img/mexico_img/José_Vasconcelos.png' },
+  ],
+};
+
 const SUBJECT_LABELS = {
   'español':     'Español',
   'matemáticas': 'Matemáticas',
@@ -553,11 +563,100 @@ function renderHome() {
 }
 
 /* ─────────────────────────────────────────────
+   RENDER — PRÓCERES CAROUSEL
+───────────────────────────────────────────── */
+
+let _proceresIdx = 0;
+
+function renderProceres(country) {
+  const section = document.getElementById('proceres-section');
+  if (!section) return;
+  const data = PROCERES_DATA[country];
+  if (!data || !data.length) { section.innerHTML = ''; return; }
+  _proceresIdx = 0;
+  _buildProceresHTML(country, data);
+}
+
+function _buildProceresHTML(country, data) {
+  const section = document.getElementById('proceres-section');
+  if (!section) return;
+  const cd = COUNTRY_DATA[country];
+  const item = data[_proceresIdx];
+  const dots = data.map((_, i) =>
+    `<span class="cc-dot${i === _proceresIdx ? ' active' : ''}"></span>`
+  ).join('');
+
+  section.innerHTML = `
+    <div class="proc-card">
+      <div class="proc-card-header">
+        <span class="proc-flag">${cd ? cd.bandera : ''}</span>
+        <span class="proc-card-title">Próceres de ${cd ? cd.nombre : country}</span>
+      </div>
+      <div class="proc-body" id="proc-swipe">
+        <img src="${item.img}" alt="${item.nombre}" class="proc-foto">
+        <div class="proc-info">
+          <div class="proc-nombre">${item.nombre}</div>
+          <div class="proc-fecha">${item.fecha}</div>
+          <p class="proc-desc">${item.desc}</p>
+          <p class="proc-cita">"${item.cita}"</p>
+        </div>
+      </div>
+      <div class="proc-footer">
+        <button class="cc-nav-btn" id="proc-prev" aria-label="Anterior">‹</button>
+        <div class="cc-dots">${dots}</div>
+        <button class="cc-nav-btn" id="proc-next" aria-label="Siguiente">›</button>
+      </div>
+    </div>`;
+
+  document.getElementById('proc-prev').addEventListener('click', () => {
+    _proceresIdx = (_proceresIdx - 1 + data.length) % data.length;
+    _buildProceresHTML(country, data);
+  });
+  document.getElementById('proc-next').addEventListener('click', () => {
+    _proceresIdx = (_proceresIdx + 1) % data.length;
+    _buildProceresHTML(country, data);
+  });
+
+  const swipe = document.getElementById('proc-swipe');
+  if (swipe) {
+    let _tx = 0;
+    swipe.addEventListener('touchstart', e => { _tx = e.touches[0].clientX; }, { passive: true });
+    swipe.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - _tx;
+      if (Math.abs(dx) > 38) {
+        _proceresIdx = dx < 0
+          ? (_proceresIdx + 1) % data.length
+          : (_proceresIdx - 1 + data.length) % data.length;
+        _buildProceresHTML(country, data);
+      }
+    }, { passive: true });
+  }
+}
+
+/* ─────────────────────────────────────────────
    RENDER — MISSIONS
 ───────────────────────────────────────────── */
 
 function renderMissions(filter, query) {
   const s = load();
+  const country = s.country || 'HN';
+
+  renderProceres(country);
+
+  const container = document.getElementById('missions-container');
+
+  if (country !== 'HN') {
+    const cd = COUNTRY_DATA[country];
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🚀</div>
+        <h3>¡Próximamente!</h3>
+        <p>Las misiones para <strong>${cd ? cd.nombre : 'este país'}</strong> están en camino.<br>
+           Cambia a <strong>🇭🇳 Honduras</strong> para explorar las misiones disponibles.</p>
+      </div>`;
+    return;
+  }
+
   let list = [...MISSIONS];
 
   if (filter && filter !== 'all') {
@@ -572,8 +671,6 @@ function renderMissions(filter, query) {
       m.grade.toLowerCase().includes(q)
     );
   }
-
-  const container = document.getElementById('missions-container');
 
   if (!list.length) {
     container.innerHTML = `

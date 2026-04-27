@@ -490,7 +490,8 @@ a { text-decoration: none; color: inherit; }
 .search-box input::placeholder { color: var(--faint); }
 
 /* ====== PILLS ====== */
-.pills-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; scrollbar-width: none; }
+.pills-wrap { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.pills-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
 .pills-row::-webkit-scrollbar { display: none; }
 .pill {
   flex-shrink: 0; background: var(--surface);
@@ -897,6 +898,95 @@ a { text-decoration: none; color: inherit; }
   background: var(--brand-light);
   transform: scale(1.4);
   transition: background 0.55s ease, transform 0.3s ease;
+}
+
+/* ====== CARRUSEL PRÓCERES ====== */
+.proc-card {
+  background: var(--surface);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.proc-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.proc-flag { font-size: 20px; line-height: 1; }
+
+.proc-card-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--brand);
+  letter-spacing: .2px;
+}
+
+.proc-body {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.proc-foto {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  border: 2.5px solid var(--brand);
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.proc-info { flex: 1; min-width: 0; }
+
+.proc-nombre {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.proc-fecha {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.proc-desc {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.55;
+  margin-bottom: 6px;
+}
+
+.proc-cita {
+  font-size: 12px;
+  color: var(--brand);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.5;
+  border-left: 2px solid var(--brand-light);
+  padding-left: 8px;
+}
+
+.proc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
 }
 
 /* ====== DESKTOP ====== */
