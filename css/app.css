@@ -786,25 +786,14 @@ a { text-decoration: none; color: inherit; }
 .cc-sim-tipo   { font-size: 9px;  font-weight: 500; color: var(--muted); }
 
 /* Imagen oval dentro del ítem */
-.cc-sim-oval {
-  width: 68px;
-  height: 68px;
+.cc-sim-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
   border-radius: 10px;
-  overflow: hidden;
   border: 1.5px solid var(--border);
   background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 5px;
-  flex-shrink: 0;
-  transition: border-color 0.3s, transform 0.15s;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
-}
-.cc-sim-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
   display: block;
 }
 .cc-sim-clickable { cursor: pointer; transition: transform 0.15s; }
@@ -840,22 +829,18 @@ a { text-decoration: none; color: inherit; }
   to   { transform: translateY(0);    opacity: 1; }
 }
 
-.sim-modal-img-wrap {
-  width: 160px;
-  height: 160px;
+.sim-modal-img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
   border-radius: 14px;
-  overflow: hidden;
-  margin: 0 auto 14px;
   border: 3px solid var(--brand);
   background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 10px;
+  display: block;
+  margin: 0 auto 14px;
   transition: border-color 0.55s;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
 }
-.sim-modal-img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .sim-modal-emoji { font-size: 52px; margin-bottom: 12px; }
 
 .sim-modal-badge {

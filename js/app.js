@@ -367,7 +367,7 @@ function openSimModal(key) {
   backdrop.setAttribute('aria-modal', 'true');
 
   const imgHTML = s.img
-    ? `<div class="sim-modal-img-wrap"><img src="${s.img}" alt="${s.nombre}" class="sim-modal-img"></div>`
+    ? `<img src="${s.img}" alt="${s.nombre}" class="sim-modal-img">`
     : `<div class="sim-modal-emoji">${s.emoji}</div>`;
 
   backdrop.innerHTML = `
@@ -551,7 +551,7 @@ function renderCountryCard(code) {
       const key = 'sim_' + Math.random().toString(36).slice(2);
       _simRegistry.set(key, s);
       const visual = s.img
-        ? `<div class="cc-sim-oval"><img src="${s.img}" alt="${s.nombre}" class="cc-sim-img" loading="lazy"></div>`
+        ? `<img src="${s.img}" alt="${s.nombre}" class="cc-sim-img" loading="lazy">`
         : `<span class="cc-sim-emoji">${s.emoji}</span>`;
       return `<div class="cc-sim-item cc-sim-clickable" onclick="openSimModal('${key}')">${visual}<span class="cc-sim-nombre">${s.nombre}</span><span class="cc-sim-tipo">${s.tipo}</span></div>`;
     };
