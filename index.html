@@ -139,6 +139,103 @@
         </button>
       </div>
 
+      <!-- Gobierno Escolar 2026 -->
+      <div id="gobierno-escolar-section" hidden>
+        <h2 class="section-title">Misión Gobierno Escolar 2026</h2>
+        
+        <!-- Configuración Mode -->
+        <div id="ge-config-view" class="ge-card">
+          <p class="ge-subtitle">Configura las planillas para iniciar la elección.</p>
+          
+          <div class="ge-planillas-container">
+            <div class="ge-planilla">
+              <label>Planilla 1</label>
+              <div class="ge-img-upload">
+                <input type="file" id="ge-img-1" accept="image/*" hidden>
+                <button class="ge-upload-btn" onclick="document.getElementById('ge-img-1').click()">
+                  <i class="fa-solid fa-camera"></i> Subir Foto
+                </button>
+                <img id="ge-preview-1" class="ge-preview" src="" hidden>
+              </div>
+              <input type="text" id="ge-name-1" placeholder="Nombre candidato" class="ge-input">
+            </div>
+            
+            <div class="ge-planilla">
+              <label>Planilla 2</label>
+              <div class="ge-img-upload">
+                <input type="file" id="ge-img-2" accept="image/*" hidden>
+                <button class="ge-upload-btn" onclick="document.getElementById('ge-img-2').click()">
+                  <i class="fa-solid fa-camera"></i> Subir Foto
+                </button>
+                <img id="ge-preview-2" class="ge-preview" src="" hidden>
+              </div>
+              <input type="text" id="ge-name-2" placeholder="Nombre candidato" class="ge-input">
+            </div>
+          </div>
+          
+          <button class="ge-btn" id="ge-save-config-btn">Guardar y Habilitar Urna</button>
+        </div>
+
+        <!-- Votación Mode -->
+        <div id="ge-voting-view" class="ge-card" hidden>
+          <div class="ge-header-actions">
+            <span class="ge-badge">Urna Electrónica Activa</span>
+            <button class="ge-icon-btn" id="ge-end-voting-btn" aria-label="Finalizar votación"><i class="fa-solid fa-lock"></i></button>
+          </div>
+          <p class="ge-subtitle">Toca la foto de tu candidato para votar. El voto es secreto.</p>
+          
+          <div class="ge-voting-container">
+            <button class="ge-vote-btn" id="ge-vote-1">
+              <img id="ge-vote-img-1" class="ge-vote-img" src="">
+              <span id="ge-vote-name-1" class="ge-vote-name"></span>
+            </button>
+            <button class="ge-vote-btn" id="ge-vote-2">
+              <img id="ge-vote-img-2" class="ge-vote-img" src="">
+              <span id="ge-vote-name-2" class="ge-vote-name"></span>
+            </button>
+          </div>
+          <div id="ge-vote-feedback" class="ge-feedback" hidden>¡Voto Registrado!</div>
+        </div>
+
+        <!-- Resultados Mode -->
+        <div id="ge-results-view" class="ge-card" hidden>
+          <div class="ge-header-actions">
+            <span class="ge-badge">Resultados</span>
+            <button class="ge-icon-btn" id="ge-reset-btn" aria-label="Reiniciar"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+          </div>
+          
+          <div class="ge-results-list">
+            <div class="ge-result-item">
+              <span id="ge-res-name-1" class="ge-res-name">Planilla 1</span>
+              <span id="ge-res-votes-1" class="ge-res-votes">0 votos locales</span>
+            </div>
+            <div class="ge-result-item">
+              <span id="ge-res-name-2" class="ge-res-name">Planilla 2</span>
+              <span id="ge-res-votes-2" class="ge-res-votes">0 votos locales</span>
+            </div>
+          </div>
+
+          <div class="ge-other-urnas">
+            <p class="ge-urnas-title">Sumar otras urnas (Opcional):</p>
+            <div class="ge-urnas-inputs">
+              <input type="number" id="ge-other-1" placeholder="Votos extra P1" class="ge-input">
+              <input type="number" id="ge-other-2" placeholder="Votos extra P2" class="ge-input">
+            </div>
+          </div>
+
+          <div class="ge-total-wrap">
+            <div class="ge-total-item">
+              <span class="ge-total-label">Total P1</span>
+              <span id="ge-total-1" class="ge-total-val">0</span>
+            </div>
+            <div class="ge-total-item">
+              <span class="ge-total-label">Total P2</span>
+              <span id="ge-total-2" class="ge-total-val">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Featured + Recent (solo Honduras) -->
       <div id="featured-section">
         <h2 class="section-title">Misión destacada</h2>

@@ -1083,6 +1083,52 @@ a { text-decoration: none; color: inherit; }
   padding-left: 8px;
 }
 
+/* ====== GOBIERNO ESCOLAR ====== */
+.ge-card {
+  background: var(--surface); border-radius: var(--r);
+  padding: 18px 20px; box-shadow: var(--shadow);
+  border: 1px solid var(--border); border-left: 4px solid var(--brand);
+  margin-bottom: 20px;
+}
+.ge-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 16px; line-height: 1.4; }
+.ge-header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.ge-badge { font-size: 11px; font-weight: 700; background: var(--brand-light); color: #fff; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.ge-icon-btn { background: var(--bg); border: 1px solid var(--border); color: var(--text); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .15s; }
+.ge-icon-btn:hover { background: var(--surface); border-color: var(--brand); color: var(--brand); }
+
+.ge-planillas-container { display: flex; flex-direction: column; gap: 16px; margin-bottom: 18px; }
+.ge-planilla { background: var(--bg); padding: 14px; border-radius: var(--r-sm); border: 1px solid var(--border); }
+.ge-planilla label { display: block; font-size: 12px; font-weight: 700; color: var(--brand); margin-bottom: 8px; text-transform: uppercase; }
+.ge-img-upload { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.ge-upload-btn { background: #fff; border: 1px dashed var(--brand-light); color: var(--brand); font-size: 12px; font-weight: 600; padding: 8px 12px; border-radius: 8px; cursor: pointer; flex: 1; text-align: center; transition: background .15s; }
+.ge-upload-btn:hover { background: var(--mat-bg); }
+.ge-preview { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brand); background: #fff; }
+.ge-input { width: 100%; border: 1px solid var(--border); padding: 10px 12px; border-radius: 8px; font-size: 14px; outline: none; background: #fff; transition: border-color .15s; }
+.ge-input:focus { border-color: var(--brand-light); }
+.ge-btn { width: 100%; background: var(--brand); color: #fff; font-weight: 700; padding: 12px; border: none; border-radius: 8px; cursor: pointer; transition: background .15s; }
+.ge-btn:hover { background: var(--brand-mid); }
+
+.ge-voting-container { display: flex; gap: 12px; justify-content: space-around; margin-bottom: 12px; }
+.ge-vote-btn { flex: 1; background: var(--bg); border: 2px solid var(--border); border-radius: var(--r); padding: 16px 10px; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; transition: all .15s; }
+.ge-vote-btn:active { transform: scale(0.95); }
+.ge-vote-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--brand-light); background: #fff; pointer-events: none; }
+.ge-vote-name { font-size: 14px; font-weight: 700; color: var(--text); pointer-events: none; text-align: center; }
+
+.ge-feedback { text-align: center; background: #22c55e; color: #fff; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 14px; animation: fadeUp .25s ease; }
+
+.ge-results-list { margin-bottom: 20px; }
+.ge-result-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.ge-res-name { font-weight: 700; font-size: 15px; color: var(--text); }
+.ge-res-votes { font-weight: 700; font-size: 14px; color: var(--brand); background: var(--mat-bg); padding: 4px 10px; border-radius: 12px; }
+
+.ge-urnas-title { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 10px; }
+.ge-urnas-inputs { display: flex; gap: 10px; margin-bottom: 20px; }
+
+.ge-total-wrap { display: flex; gap: 12px; }
+.ge-total-item { flex: 1; background: var(--brand); color: #fff; padding: 14px; border-radius: var(--r-sm); text-align: center; box-shadow: var(--shadow); }
+.ge-total-label { display: block; font-size: 11px; font-weight: 600; opacity: 0.8; text-transform: uppercase; margin-bottom: 4px; }
+.ge-total-val { display: block; font-size: 24px; font-weight: 800; line-height: 1; }
+
 .proc-footer {
   display: flex;
   justify-content: space-between;
