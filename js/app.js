@@ -5,8 +5,8 @@
 ───────────────────────────────────────────── */
 
 const MISSIONS = [
-  { id:  1, title: 'Los Adjetivos',                             subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '📝', url: '2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html' },
-  { id:  2, title: 'Los Verbos',                                subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '✍️', url: '2y3ciclo-verbos/verbos-II-III-ciclo-basica.html' },
+  { id:  1, title: 'Los Adjetivos',                             subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '📝', url: 'mision.html?id=1' },
+  { id:  2, title: 'Los Verbos',                                subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '✍️', url: 'mision.html?id=2' },
   { id:  3, title: 'Los Sustantivos',                           subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '📖', url: '2y3ciclo-sustantivos/sustantivos-II-III-ciclo-basica.html' },
   { id:  4, title: 'Los Pronombres',                            subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '💬', url: '2y3ciclo-pronombres/pronombres-II-III-ciclo-basica.html' },
   { id:  5, title: 'El Adjetivo Avanzado',                      subject: 'español',     color: 'bach', grade: 'Bachillerato',   cycle: 'bach',     xp: 40, icon: '🎓', url: 'bach-uni-adjetivos/adjetivos-avanzado.html' },

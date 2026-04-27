@@ -1,0 +1,210 @@
+{
+  "misiones": [
+    {
+      "id": 1,
+      "titulo": "Los Adjetivos",
+      "icono": "📝",
+      "materia": "español",
+      "materia_label": "Español",
+      "ciclo": "II y III Ciclo",
+      "color": "esp",
+      "xp_base": 25,
+      "descripcion": "Aprende qué son los adjetivos, sus tipos y cómo concordar en género y número con el sustantivo.",
+      "quiz": [
+        {
+          "pregunta": "¿Para qué sirve el adjetivo calificativo?",
+          "opciones": [
+            "Para nombrar cosas",
+            "Para expresar una cualidad del sustantivo",
+            "Para indicar la acción de la oración",
+            "Para sustituir al nombre"
+          ],
+          "correcta": 1
+        },
+        {
+          "pregunta": "¿En qué grado está el adjetivo en: «Mi perro es muy rápido»?",
+          "opciones": [
+            "Positivo",
+            "Comparativo de superioridad",
+            "Superlativo",
+            "Demostrativo"
+          ],
+          "correcta": 2
+        },
+        {
+          "pregunta": "¿Qué tipo de adjetivo es «nuestro» en «nuestro colegio»?",
+          "opciones": [
+            "Calificativo",
+            "Demostrativo",
+            "Indefinido",
+            "Posesivo"
+          ],
+          "correcta": 3
+        },
+        {
+          "pregunta": "En la frase «Este libro es interesante», ¿qué es «Este»?",
+          "opciones": [
+            "Adjetivo demostrativo",
+            "Adjetivo numeral",
+            "Sustantivo propio",
+            "Verbo regular"
+          ],
+          "correcta": 0
+        },
+        {
+          "pregunta": "¿Cómo se dice «bueno» en grado superlativo absoluto?",
+          "opciones": [
+            "Más bueno",
+            "Buenísimo",
+            "Tan bueno",
+            "Mejor"
+          ],
+          "correcta": 1
+        },
+        {
+          "pregunta": "¿Qué adjetivo concuerda con «las montañas»?",
+          "opciones": [
+            "alto",
+            "altas",
+            "alta",
+            "altos"
+          ],
+          "correcta": 1
+        },
+        {
+          "pregunta": "En la frase «Tengo tres gatos», ¿qué tipo de adjetivo es «tres»?",
+          "opciones": [
+            "Posesivo",
+            "Indefinido",
+            "Numeral",
+            "Calificativo"
+          ],
+          "correcta": 2
+        },
+        {
+          "pregunta": "El grado comparativo de igualdad se forma con las palabras:",
+          "opciones": [
+            "más ... que",
+            "menos ... que",
+            "muy ... ísimo",
+            "tan ... como"
+          ],
+          "correcta": 3
+        },
+        {
+          "pregunta": "¿Cuál es un adjetivo indefinido?",
+          "opciones": [
+            "Aquel",
+            "Muchos",
+            "Azul",
+            "Primer"
+          ],
+          "correcta": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "titulo": "Los Verbos",
+      "icono": "✍️",
+      "materia": "español",
+      "materia_label": "Español",
+      "ciclo": "II y III Ciclo",
+      "color": "esp",
+      "xp_base": 25,
+      "descripcion": "Comprende qué son los verbos, su conjugación, tiempos verbales y modos (indicativo, subjuntivo, imperativo).",
+      "quiz": [
+        {
+          "pregunta": "¿Qué expresa un verbo?",
+          "opciones": [
+            "Una característica del sujeto",
+            "El nombre de un objeto",
+            "Una acción, estado o proceso",
+            "La unión de dos oraciones"
+          ],
+          "correcta": 2
+        },
+        {
+          "pregunta": "¿Cuáles son las terminaciones del infinitivo?",
+          "opciones": [
+            "-ando, -iendo",
+            "-ar, -er, -ir",
+            "-ado, -ido",
+            "-o, -as, -a"
+          ],
+          "correcta": 1
+        },
+        {
+          "pregunta": "Si digo «Yo comeré pizza», ¿en qué tiempo está el verbo?",
+          "opciones": [
+            "Pasado",
+            "Presente",
+            "Futuro",
+            "Infinitivo"
+          ],
+          "correcta": 2
+        },
+        {
+          "pregunta": "¿Cuál es la raíz del verbo «correr»?",
+          "opciones": [
+            "cor-",
+            "corr-",
+            "-er",
+            "corre-"
+          ],
+          "correcta": 1
+        },
+        {
+          "pregunta": "¿Qué verbo está en plural?",
+          "opciones": [
+            "saltó",
+            "dormimos",
+            "ríes",
+            "pinto"
+          ],
+          "correcta": 1
+        },
+        {
+          "pregunta": "«Ojalá ganemos el partido». ¿En qué modo está el verbo?",
+          "opciones": [
+            "Indicativo",
+            "Imperativo",
+            "Subjuntivo",
+            "Infinitivo"
+          ],
+          "correcta": 2
+        },
+        {
+          "pregunta": "¿Cuál de estos es un verbo copulativo?",
+          "opciones": [
+            "saltar",
+            "escribir",
+            "parecer",
+            "pensar"
+          ],
+          "correcta": 2
+        },
+        {
+          "pregunta": "Un verbo es regular cuando...",
+          "opciones": [
+            "Siempre termina en -ar",
+            "Mantiene su raíz al conjugarlo",
+            "Cambia su raíz al conjugarlo",
+            "Solo tiene tiempo presente"
+          ],
+          "correcta": 1
+        },
+        {
+          "pregunta": "¿En qué persona está el verbo en la oración «Tú estudias mucho»?",
+          "opciones": [
+            "Primera persona",
+            "Segunda persona",
+            "Tercera persona",
+            "No tiene persona"
+          ],
+          "correcta": 1
+        }
+      ]
+    }
+  ]
+}
