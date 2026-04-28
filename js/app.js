@@ -1783,27 +1783,42 @@ tbody tr:nth-child(even){background:#f8fafc;}
 
 <div class="footer">Generado con M.E.T.A.S. — Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas · ${fecha}</div>
 </div>
-<script>window.onload=function(){window.print();}</script>
 </body></html>`;
 
-  // Usar iframe oculto — no requiere permiso de popup
-  let iframe = document.getElementById('pa-print-iframe');
-  if (!iframe) {
-    iframe = document.createElement('iframe');
-    iframe.id = 'pa-print-iframe';
-    iframe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;opacity:0;pointer-events:none;';
-    document.body.appendChild(iframe);
-  }
-  const doc = iframe.contentDocument || iframe.contentWindow.document;
-  doc.open(); doc.write(html); doc.close();
-  // Esperar a que el iframe cargue antes de imprimir
-  iframe.onload = () => {
-    try { iframe.contentWindow.focus(); iframe.contentWindow.print(); } catch(e) { toast('Error al imprimir'); }
-  };
-  // Fallback si onload no dispara (algunos navegadores)
+  // Inyectar estilos de impresión en la página actual y llamar window.print()
+  document.getElementById('pa-print-area')?.remove();
+  document.getElementById('pa-print-style')?.remove();
+
+  const printArea = document.createElement('div');
+  printArea.id = 'pa-print-area';
+  // Extraer solo el contenido del <body> del HTML generado
+  const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  const bodyContent = bodyMatch ? bodyMatch[1] : html;
+  // Extraer CSS del <head>
+  const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+  const printCSS = styleMatch ? styleMatch[1] : '';
+  printArea.innerHTML = bodyContent;
+  document.body.appendChild(printArea);
+
+  const styleTag = document.createElement('style');
+  styleTag.id = 'pa-print-style';
+  styleTag.textContent = `
+    ${printCSS}
+    @media print {
+      body > *:not(#pa-print-area) { display: none !important; }
+      #pa-print-area { display: block !important; position: static !important; }
+    }
+    #pa-print-area { display: none; }
+  `;
+  document.head.appendChild(styleTag);
+
+  window.print();
+
+  // Limpiar después de que se cierre el diálogo
   setTimeout(() => {
-    try { iframe.contentWindow.focus(); iframe.contentWindow.print(); } catch(e) {}
-  }, 800);
+    document.getElementById('pa-print-area')?.remove();
+    document.getElementById('pa-print-style')?.remove();
+  }, 2000);
 }
 window.paPrint = paPrint;
 
