@@ -1,6 +1,6 @@
 {
-  "name": "M.E.T.A. Misiones Educativas",
-  "short_name": "M.E.T.A.",
+  "name": "M.E.T.A.S. Misiones Educativas",
+  "short_name": "M.E.T.A.S.",
   "description": "Aplicación de misiones educativas interactiva.",
   "start_url": "./index.html",
   "display": "standalone",
