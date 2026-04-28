@@ -1112,22 +1112,26 @@ document.addEventListener('DOMContentLoaded', () => {
     toast('Sin notificaciones nuevas por ahora');
   });
 
-  // ── Header oculto al hacer scroll hacia abajo ──
+  // ── Header oculto al hacer scroll (se pausa si hay un input enfocado) ──
   document.querySelectorAll('.view-scroll').forEach(scroll => {
     let lastY = 0;
     let ticking = false;
     scroll.addEventListener('scroll', () => {
       if (ticking) return;
+      // Si el usuario está escribiendo en un campo, no animar el header
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) return;
       ticking = true;
       requestAnimationFrame(() => {
         const header = scroll.closest('.view') && scroll.closest('.view').querySelector('.app-header');
         if (!header) { ticking = false; return; }
         const y = scroll.scrollTop;
-        if (y > lastY && y > 48) {
+        const delta = y - lastY;
+        if (delta > 6 && y > 48) {
           const h = header.offsetHeight;
           header.style.transform = `translateY(-${h}px)`;
           header.style.marginBottom = `-${h}px`;
-        } else if (y < lastY) {
+        } else if (delta < -6) {
           header.style.transform = '';
           header.style.marginBottom = '';
         }
@@ -1501,11 +1505,11 @@ function paAddRow(num, name = '', grade = '') {
 
 function paCollect() {
   return Array.from(document.querySelectorAll('.pa-student-row')).map((row, i) => {
-    const name  = row.querySelector('.pa-inp-name')?.value.trim() || '';
+    const name  = row.querySelector('.pa-inp-name')?.value.trim() || `#${i + 1}`;
     const raw   = row.querySelector('.pa-inp-grade-cell')?.value.trim().toUpperCase() || '';
     const grade = raw === 'NSP' ? 'NSP' : (raw === '' ? null : (parseFloat(raw) || 0));
     return { id: i + 1, name, grade };
-  }).filter(s => s.name);
+  }).filter(s => s.grade !== null);
 }
 
 function paGenerate() {
