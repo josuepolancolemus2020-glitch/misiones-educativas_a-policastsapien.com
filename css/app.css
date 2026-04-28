@@ -1202,6 +1202,76 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ====== TEACHER PANEL ====== */
+/* ====== PARTE MENSUAL ====== */
+.parte-card {
+  background: var(--surface); border-radius: var(--r);
+  padding: 18px; margin-bottom: 14px;
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+}
+.parte-section-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 14px; }
+.parte-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.parte-field { display: flex; flex-direction: column; }
+.parte-field label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.pm-hint { font-size: 9px; font-weight: 500; color: var(--faint); text-transform: none; letter-spacing: 0; margin-left: 4px; }
+.parte-input {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 10px 12px; font-size: 14px; outline: none;
+  background: var(--bg); color: var(--text); font-family: inherit;
+  transition: border-color .15s;
+}
+.parte-input:focus { border-color: var(--brand-light); background: var(--surface); }
+.pm-seccion-btns { display: flex; gap: 6px; }
+.pm-sec-btn {
+  flex: 1; background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 9px 4px; font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all .15s; font-family: inherit;
+}
+.pm-sec-btn.pm-sec-active { background: #eff6ff; border-color: var(--brand); color: var(--brand); }
+
+/* Tabla de matrícula */
+.pm-tabla-mat { display: flex; flex-direction: column; gap: 4px; }
+.pm-mat-head { display: grid; grid-template-columns: 1.2fr 1fr 1fr 0.8fr; gap: 6px; padding: 0 0 6px; border-bottom: 1px solid var(--border); }
+.pm-mat-head span { font-size: 10px; font-weight: 700; color: var(--muted); text-align: center; text-transform: uppercase; letter-spacing: .4px; }
+.pm-mat-head span:first-child { text-align: left; }
+.pm-mat-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr 0.8fr; gap: 6px; align-items: center; padding: 5px 0; }
+.pm-mat-sub { opacity: .85; }
+.pm-mat-actual { border-top: 2px solid var(--brand); padding-top: 8px; margin-top: 4px; }
+.pm-mat-lbl { font-size: 12px; font-weight: 600; color: var(--text); }
+.pm-mat-inp { padding: 7px 6px !important; text-align: center; font-weight: 700; font-size: 13px !important; }
+.pm-mat-total { text-align: center; font-size: 13px; font-weight: 700; color: var(--brand); }
+.pm-mat-grand { font-size: 16px; font-weight: 800; }
+
+/* Resultados */
+.pm-resultados-card { border-left: 4px solid var(--brand-light); }
+.pm-resultado-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.pm-res-lbl-wrap { display: flex; flex-direction: column; gap: 3px; }
+.pm-res-label { font-size: 14px; font-weight: 700; color: var(--text); }
+.pm-res-formula { font-size: 10px; color: var(--faint); }
+.pm-res-value { font-size: 26px; font-weight: 900; color: var(--brand); flex-shrink: 0; margin-left: 10px; }
+.pm-pct-value { font-size: 32px; }
+.pm-bar-wrap { height: 10px; background: var(--bg); border-radius: 10px; overflow: hidden; margin: 14px 0 10px; }
+.pm-bar-fill { height: 100%; border-radius: 10px; transition: width .8s cubic-bezier(.34,1.56,.64,1), background .4s; }
+.pm-semaforo { margin-bottom: 14px; }
+.pm-semaforo-text { font-size: 13px; font-weight: 600; color: var(--text); }
+.parte-btn-secundario {
+  width: 100%; background: var(--bg); color: var(--brand);
+  border: 1.5px solid var(--brand); border-radius: 8px; padding: 11px;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .15s; font-family: inherit;
+}
+.parte-btn-secundario:active { background: #eff6ff; }
+
+/* Herramienta activa en grid docente */
+.teacher-tool-item.teacher-tool-active {
+  background: #eff6ff; border-color: var(--brand);
+  cursor: pointer; transition: transform .15s, box-shadow .15s;
+}
+.teacher-tool-item.teacher-tool-active i  { color: var(--brand); }
+.teacher-tool-item.teacher-tool-active span { color: var(--brand); font-weight: 700; }
+.teacher-tool-item.teacher-tool-active::after { display: none; }
+.teacher-tool-item.teacher-tool-active:active { transform: scale(.95); }
+
 /* Botón volver en vistas secundarias */
 .back-icon-btn {
   background: none; border: none; cursor: pointer;

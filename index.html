@@ -225,10 +225,10 @@
             <i class="fa-solid fa-list-check"></i>
             <span>Rúbricas</span>
           </div>
-          <div class="teacher-tool-item">
-            <i class="fa-solid fa-clipboard-user"></i>
-            <span>Asistencia</span>
-          </div>
+          <button class="teacher-tool-item teacher-tool-active" id="goto-parte-btn">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Parte Mensual</span>
+          </button>
           <div class="teacher-tool-item">
             <i class="fa-solid fa-stopwatch"></i>
             <span>Cronómetro</span>
@@ -406,6 +406,147 @@
         </div>
         <div id="ge-winner-wrap" class="ge-winner-wrap"></div>
         <p class="ge-votes-count" id="ge-votes-count"></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== PARTE MENSUAL ========== -->
+  <div id="view-parte-mensual" class="view">
+    <header class="app-header compact">
+      <button class="back-icon-btn" id="parte-back-btn" aria-label="Volver">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h1 class="view-title">Parte Mensual</h1>
+      <div></div>
+    </header>
+    <div class="view-scroll">
+
+      <!-- Datos del grupo -->
+      <div class="parte-card">
+        <h3 class="parte-section-title">📋 Datos del Grupo</h3>
+        <div class="parte-row-2">
+          <div class="parte-field">
+            <label>Grado</label>
+            <input type="text" id="pm-grado" placeholder="ej: 7°" class="parte-input">
+          </div>
+          <div class="parte-field">
+            <label>Sección</label>
+            <div class="pm-seccion-btns">
+              <button class="pm-sec-btn pm-sec-active" data-sec="A">A</button>
+              <button class="pm-sec-btn" data-sec="B">B</button>
+              <button class="pm-sec-btn" data-sec="C">C</button>
+              <button class="pm-sec-btn" data-sec="D">D</button>
+            </div>
+          </div>
+        </div>
+        <div class="parte-row-2">
+          <div class="parte-field">
+            <label>Mes</label>
+            <select id="pm-mes" class="parte-input">
+              <option value="2">Febrero</option>
+              <option value="3">Marzo</option>
+              <option value="4" selected>Abril</option>
+              <option value="5">Mayo</option>
+              <option value="6">Junio</option>
+              <option value="7">Julio</option>
+              <option value="8">Agosto</option>
+              <option value="9">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+            </select>
+          </div>
+          <div class="parte-field">
+            <label>Año</label>
+            <input type="number" id="pm-anio" value="2026" class="parte-input">
+          </div>
+        </div>
+        <div class="parte-field" style="margin-bottom:0;">
+          <label>Días Trabajados <span class="pm-hint">(los proporciona el director)</span></label>
+          <input type="number" id="pm-dias" placeholder="ej: 22" class="parte-input" min="1" max="31">
+        </div>
+      </div>
+
+      <!-- Matrícula -->
+      <div class="parte-card">
+        <h3 class="parte-section-title">👥 Matrícula</h3>
+        <div class="pm-tabla-mat">
+          <div class="pm-mat-head">
+            <span></span><span>Varones (H)</span><span>Niñas (M)</span><span>Total</span>
+          </div>
+          <div class="pm-mat-row">
+            <span class="pm-mat-lbl">Anterior</span>
+            <input type="number" id="pm-ant-h" class="parte-input pm-mat-inp" min="0" placeholder="0">
+            <input type="number" id="pm-ant-m" class="parte-input pm-mat-inp" min="0" placeholder="0">
+            <span class="pm-mat-total" id="pm-ant-tot">0</span>
+          </div>
+          <div class="pm-mat-row pm-mat-sub">
+            <span class="pm-mat-lbl">+ Ingresos</span>
+            <input type="number" id="pm-ing-h" class="parte-input pm-mat-inp" min="0" placeholder="0">
+            <input type="number" id="pm-ing-m" class="parte-input pm-mat-inp" min="0" placeholder="0">
+            <span class="pm-mat-total" id="pm-ing-tot">0</span>
+          </div>
+          <div class="pm-mat-row pm-mat-sub">
+            <span class="pm-mat-lbl">− Desertores</span>
+            <input type="number" id="pm-des-h" class="parte-input pm-mat-inp" min="0" placeholder="0">
+            <input type="number" id="pm-des-m" class="parte-input pm-mat-inp" min="0" placeholder="0">
+            <span class="pm-mat-total" id="pm-des-tot">0</span>
+          </div>
+          <div class="pm-mat-row pm-mat-sub">
+            <span class="pm-mat-lbl">± Traslados</span>
+            <input type="number" id="pm-tra-h" class="parte-input pm-mat-inp" min="0" placeholder="0">
+            <input type="number" id="pm-tra-m" class="parte-input pm-mat-inp" min="0" placeholder="0">
+            <span class="pm-mat-total" id="pm-tra-tot">0</span>
+          </div>
+          <div class="pm-mat-row pm-mat-actual">
+            <span class="pm-mat-lbl">= Actual</span>
+            <span class="pm-mat-total" id="pm-act-h">0</span>
+            <span class="pm-mat-total" id="pm-act-m">0</span>
+            <span class="pm-mat-total pm-mat-grand" id="pm-act-tot">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inasistencias -->
+      <div class="parte-card">
+        <h3 class="parte-section-title">📅 Inasistencias del Mes</h3>
+        <div class="pm-tabla-mat">
+          <div class="pm-mat-head">
+            <span></span><span>Varones (H)</span><span>Niñas (M)</span><span>Total</span>
+          </div>
+          <div class="pm-mat-row">
+            <span class="pm-mat-lbl">Inasistencias</span>
+            <input type="number" id="pm-inas-h" class="parte-input pm-mat-inp" min="0" placeholder="0">
+            <input type="number" id="pm-inas-m" class="parte-input pm-mat-inp" min="0" placeholder="0">
+            <span class="pm-mat-total pm-mat-grand" id="pm-inas-tot">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resultados -->
+      <div class="parte-card pm-resultados-card">
+        <h3 class="parte-section-title">📊 Resultados</h3>
+        <div class="pm-resultado-item">
+          <div class="pm-res-lbl-wrap">
+            <span class="pm-res-label">Asistencia Media</span>
+            <span class="pm-res-formula">Matrícula − (Inasist. ÷ Días trabajados)</span>
+          </div>
+          <span class="pm-res-value" id="pm-asist-media">—</span>
+        </div>
+        <div class="pm-resultado-item" style="border-bottom:none;">
+          <div class="pm-res-lbl-wrap">
+            <span class="pm-res-label">Tanto por Ciento</span>
+            <span class="pm-res-formula">(Asist. Media ÷ Matrícula) × 100</span>
+          </div>
+          <span class="pm-res-value pm-pct-value" id="pm-pct-asist">—</span>
+        </div>
+        <div class="pm-bar-wrap">
+          <div class="pm-bar-fill" id="pm-bar-fill" style="width:0%"></div>
+        </div>
+        <div class="pm-semaforo" id="pm-semaforo"></div>
+        <button class="parte-btn-secundario" id="pm-informe-btn">
+          <i class="fa-solid fa-file-lines"></i> Copiar Informe de Texto
+        </button>
       </div>
 
     </div>

@@ -945,7 +945,8 @@ function switchView(id) {
   if (id === 'view-misiones') renderMissions(currentFilter, currentQuery);
   if (id === 'view-progreso') renderProgress();
   if (id === 'view-perfil')   renderProfile();
-  if (id === 'view-gobierno') renderGobiernoEscolar();
+  if (id === 'view-gobierno')       renderGobiernoEscolar();
+  if (id === 'view-parte-mensual')  { /* la UI se recalcula en tiempo real con inputs */ }
 
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
@@ -1445,5 +1446,144 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── SUMAR URNAS ── */
   ['ge-u2-p1','ge-u2-p2','ge-u3-p1','ge-u3-p2','ge-u4-p1','ge-u4-p2'].forEach(id => {
     document.getElementById(id)?.addEventListener('input', calcTotalGE);
+  });
+});
+
+/* ─────────────────────────────────────────────
+   PARTE MENSUAL — LÓGICA SEDUC HONDURAS
+   Fórmulas:
+   Asistencia Media = Matrícula Actual − (Total Inasistencias ÷ Días Trabajados)
+   Tanto por Ciento = (Asistencia Media ÷ Matrícula Actual) × 100
+───────────────────────────────────────────── */
+
+let _pmSeccion = 'A';
+
+function pmN(id) { return parseInt(document.getElementById(id)?.value) || 0; }
+function pmSet(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+function pmActualizar() {
+  // Matrícula Actual = Anterior + Ingresos − Desertores ± Traslados (por género)
+  const antH = pmN('pm-ant-h'), antM = pmN('pm-ant-m');
+  const ingH = pmN('pm-ing-h'), ingM = pmN('pm-ing-m');
+  const desH = pmN('pm-des-h'), desM = pmN('pm-des-m');
+  const traH = pmN('pm-tra-h'), traM = pmN('pm-tra-m');
+
+  const actH = antH + ingH - desH + traH;
+  const actM = antM + ingM - desM + traM;
+  const actTot = actH + actM;
+
+  pmSet('pm-ant-tot', antH + antM);
+  pmSet('pm-ing-tot', ingH + ingM);
+  pmSet('pm-des-tot', desH + desM);
+  pmSet('pm-tra-tot', traH + traM);
+  pmSet('pm-act-h',   Math.max(0, actH));
+  pmSet('pm-act-m',   Math.max(0, actM));
+  pmSet('pm-act-tot', Math.max(0, actTot));
+
+  // Inasistencias
+  const inasH = pmN('pm-inas-h'), inasM = pmN('pm-inas-m');
+  pmSet('pm-inas-tot', inasH + inasM);
+  const inasTot = inasH + inasM;
+
+  const dias = pmN('pm-dias');
+  const matricula = Math.max(0, actTot);
+
+  // Calcular resultados
+  const mediaEl = document.getElementById('pm-asist-media');
+  const pctEl   = document.getElementById('pm-pct-asist');
+  const barEl   = document.getElementById('pm-bar-fill');
+  const semaEl  = document.getElementById('pm-semaforo');
+
+  if (!matricula || !dias) {
+    if (mediaEl) mediaEl.textContent = '—';
+    if (pctEl)   pctEl.textContent   = '—';
+    if (barEl)   barEl.style.width   = '0%';
+    if (semaEl)  semaEl.innerHTML    = '';
+    return;
+  }
+
+  const media = matricula - (inasTot / dias);
+  const pct   = (media / matricula) * 100;
+
+  if (mediaEl) mediaEl.textContent = media.toFixed(2);
+  if (pctEl) {
+    pctEl.textContent = pct.toFixed(1) + '%';
+    pctEl.style.color = pct >= 90 ? '#16a34a' : pct >= 75 ? '#d97706' : '#dc2626';
+  }
+  if (barEl) {
+    barEl.style.width = Math.min(100, Math.max(0, pct)).toFixed(1) + '%';
+    barEl.style.background = pct >= 90
+      ? 'linear-gradient(90deg,#22c55e,#16a34a)'
+      : pct >= 75 ? 'linear-gradient(90deg,#f59e0b,#d97706)'
+      : 'linear-gradient(90deg,#ef4444,#dc2626)';
+  }
+  if (semaEl) {
+    const icon = pct >= 90 ? '✅' : pct >= 75 ? '⚠️' : '🔴';
+    const msg  = pct >= 90 ? 'Asistencia satisfactoria'
+               : pct >= 75 ? 'Asistencia regular — requiere seguimiento'
+               : 'Asistencia crítica — acción inmediata';
+    semaEl.innerHTML = `<span class="pm-semaforo-text">${icon} ${msg}</span>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Navegación
+  document.getElementById('goto-parte-btn')?.addEventListener('click', () => switchView('view-parte-mensual'));
+  document.getElementById('parte-back-btn')?.addEventListener('click', () => switchView('view-perfil'));
+
+  // Sección
+  document.querySelectorAll('.pm-sec-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.pm-sec-btn').forEach(b => b.classList.remove('pm-sec-active'));
+      btn.classList.add('pm-sec-active');
+      _pmSeccion = btn.dataset.sec;
+    });
+  });
+
+  // Recalcular en cualquier cambio
+  const pmIds = [
+    'pm-ant-h','pm-ant-m','pm-ing-h','pm-ing-m',
+    'pm-des-h','pm-des-m','pm-tra-h','pm-tra-m',
+    'pm-inas-h','pm-inas-m','pm-dias'
+  ];
+  pmIds.forEach(id => document.getElementById(id)?.addEventListener('input', pmActualizar));
+
+  // Informe de texto
+  document.getElementById('pm-informe-btn')?.addEventListener('click', () => {
+    const mesEl  = document.getElementById('pm-mes');
+    const mesNom = mesEl ? mesEl.options[mesEl.selectedIndex].text : '—';
+    const anio   = document.getElementById('pm-anio')?.value || '2026';
+    const grado  = document.getElementById('pm-grado')?.value || '—';
+
+    const texto = [
+      '══════════════════════════════',
+      '   PARTE MENSUAL DE ASISTENCIA',
+      '       SEDUC - HONDURAS',
+      '══════════════════════════════',
+      `Grado: ${grado}   Sección: ${_pmSeccion}`,
+      `Mes: ${mesNom} ${anio}`,
+      `Días Trabajados: ${pmN('pm-dias')}`,
+      '─────────────────────────────',
+      'MATRÍCULA',
+      `  Anterior : H ${pmN('pm-ant-h')}  M ${pmN('pm-ant-m')}  T ${pmN('pm-ant-h')+pmN('pm-ant-m')}`,
+      `  Ingresos : H ${pmN('pm-ing-h')}  M ${pmN('pm-ing-m')}  T ${pmN('pm-ing-h')+pmN('pm-ing-m')}`,
+      `  Desertores: H ${pmN('pm-des-h')}  M ${pmN('pm-des-m')}  T ${pmN('pm-des-h')+pmN('pm-des-m')}`,
+      `  Traslados : H ${pmN('pm-tra-h')}  M ${pmN('pm-tra-m')}  T ${pmN('pm-tra-h')+pmN('pm-tra-m')}`,
+      `  ACTUAL    : H ${document.getElementById('pm-act-h')?.textContent||0}  M ${document.getElementById('pm-act-m')?.textContent||0}  T ${document.getElementById('pm-act-tot')?.textContent||0}`,
+      '─────────────────────────────',
+      'INASISTENCIAS',
+      `  H ${pmN('pm-inas-h')}  M ${pmN('pm-inas-m')}  T ${pmN('pm-inas-h')+pmN('pm-inas-m')}`,
+      '─────────────────────────────',
+      `Asistencia Media : ${document.getElementById('pm-asist-media')?.textContent||'—'}`,
+      `Tanto por Ciento : ${document.getElementById('pm-pct-asist')?.textContent||'—'}`,
+      '══════════════════════════════',
+    ].join('\n');
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(texto).then(() => toast('✅ Informe copiado al portapapeles'));
+    } else {
+      prompt('Copia este texto:', texto);
+    }
   });
 });
