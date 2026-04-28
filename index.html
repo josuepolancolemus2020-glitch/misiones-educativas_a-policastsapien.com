@@ -237,10 +237,10 @@
             <i class="fa-solid fa-file-pen"></i>
             <span>Evaluaciones</span>
           </div>
-          <div class="teacher-tool-item">
-            <i class="fa-solid fa-chart-bar"></i>
-            <span>Estadísticas</span>
-          </div>
+          <button class="teacher-tool-item teacher-tool-active" id="goto-plan-btn">
+            <i class="fa-solid fa-chart-column"></i>
+            <span>Plan de Acción</span>
+          </button>
           <div class="teacher-tool-item teacher-tool-coming">
             <i class="fa-solid fa-plus"></i>
             <span>Más…</span>
@@ -407,6 +407,76 @@
         <div id="ge-winner-wrap" class="ge-winner-wrap"></div>
         <p class="ge-votes-count" id="ge-votes-count"></p>
       </div>
+
+    </div>
+  </div>
+
+  <!-- ========== PLAN DE ACCIÓN ========== -->
+  <div id="view-plan-accion" class="view">
+    <header class="app-header compact">
+      <button class="back-icon-btn" id="plan-back-btn" aria-label="Volver">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h1 class="view-title">Plan de Acción</h1>
+      <div></div>
+    </header>
+    <div class="view-scroll">
+
+      <!-- Datos de la evaluación -->
+      <div class="pa-card">
+        <div class="pa-card-title">📋 Datos de la Evaluación</div>
+        <div class="pa-row-2">
+          <div class="pa-field"><label>Grado</label><input type="text" id="pa-grado" class="pa-inp-field" placeholder="ej: 6°"></div>
+          <div class="pa-field"><label>Sección</label><input type="text" id="pa-seccion" class="pa-inp-field" placeholder="ej: 1"></div>
+        </div>
+        <div class="pa-field" style="margin-bottom:10px;">
+          <label>Docente</label>
+          <input type="text" id="pa-docente" class="pa-inp-field" placeholder="Nombre completo del docente">
+        </div>
+        <div class="pa-field">
+          <label>Nombre de la Evaluación / Misión</label>
+          <input type="text" id="pa-evaluacion" class="pa-inp-field" placeholder="ej: 1ª E — Coordenadas y Paralelos">
+        </div>
+      </div>
+
+      <!-- Entrada de calificaciones -->
+      <div class="pa-card">
+        <div class="pa-card-title">✏️ Calificaciones</div>
+
+        <!-- Tabs de entrada -->
+        <div class="pa-entry-tabs">
+          <button class="pa-etab pa-etab-active" data-etab="manual">Entrada manual</button>
+          <button class="pa-etab" data-etab="pegar">Pegar lista</button>
+        </div>
+
+        <!-- Manual -->
+        <div id="pa-entry-manual">
+          <div class="pa-col-header">
+            <span class="pa-ch-num">#</span>
+            <span class="pa-ch-name">Nombre del Estudiante</span>
+            <span class="pa-ch-grade">Nota</span>
+            <span style="width:28px;"></span>
+          </div>
+          <div id="pa-students-list"></div>
+          <button class="pa-add-btn" id="pa-add-student-btn">
+            <i class="fa-solid fa-plus"></i> Agregar estudiante
+          </button>
+        </div>
+
+        <!-- Pegar -->
+        <div id="pa-entry-pegar" style="display:none;">
+          <p class="pa-paste-hint">Una línea por estudiante: <strong>Nombre, Nota</strong><br>La nota puede ser un número (0-100) o <strong>NSP</strong></p>
+          <textarea id="pa-paste-area" class="pa-paste-area" placeholder="Ada Sarai Sevilla, NSP&#10;Ashly Belén Miranda, 35&#10;Brianna Monserrath López, 100&#10;..."></textarea>
+          <button class="pa-add-btn" id="pa-import-btn"><i class="fa-solid fa-file-import"></i> Importar lista</button>
+        </div>
+
+        <button class="pa-gen-btn" id="pa-generate-btn">
+          <i class="fa-solid fa-chart-column"></i> Generar Análisis
+        </button>
+      </div>
+
+      <!-- Dashboard (se genera dinámicamente) -->
+      <div id="pa-dashboard" style="display:none;"></div>
 
     </div>
   </div>

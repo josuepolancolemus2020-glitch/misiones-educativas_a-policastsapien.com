@@ -946,6 +946,7 @@ function switchView(id) {
   if (id === 'view-progreso') renderProgress();
   if (id === 'view-perfil')   renderProfile();
   if (id === 'view-gobierno')       renderGobiernoEscolar();
+  if (id === 'view-plan-accion')    paInit();
   if (id === 'view-parte-mensual')  { /* la UI se recalcula en tiempo real con inputs */ }
 
   const scroll = document.querySelector(`#${id} .view-scroll`);
@@ -1446,6 +1447,240 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── SUMAR URNAS ── */
   ['ge-u2-p1','ge-u2-p2','ge-u3-p1','ge-u3-p2','ge-u4-p1','ge-u4-p2'].forEach(id => {
     document.getElementById(id)?.addEventListener('input', calcTotalGE);
+  });
+});
+
+/* ─────────────────────────────────────────────
+   PLAN DE ACCIÓN — ANÁLISIS DE CALIFICACIONES
+───────────────────────────────────────────── */
+
+const PA_CATS = [
+  { key:'avanzado',       label:'Avanzado',       min:95,  max:100, color:'#16a34a', bg:'#dcfce7' },
+  { key:'muyBueno',       label:'Muy Bueno',      min:80,  max:94,  color:'#0891b2', bg:'#cffafe' },
+  { key:'satisfactorio',  label:'Satisfactorio',  min:70,  max:79,  color:'#a16207', bg:'#fef9c3' },
+  { key:'debeMejorar',    label:'Debe Mejorar',   min:60,  max:69,  color:'#b45309', bg:'#fef3c7' },
+  { key:'insatisfactorio',label:'Insatisfactorio',min:0,   max:59,  color:'#dc2626', bg:'#fee2e2' },
+];
+const PA_SUGS = {
+  avanzado:       'Excelente comprensión. Retarlos con ejercicios de nivel superior y tutorías entre pares.',
+  muyBueno:       'Dominan el tema teóricamente. Proporcionarles actividades de aplicación práctica.',
+  satisfactorio:  'Comprensión básica. Usar recursos visuales y reglas mnemotécnicas para afianzar.',
+  debeMejorar:    'Confunden conceptos. Actividades lúdicas y trabajo con pares más avanzados.',
+  insatisfactorio:'ALERTA: Atención inmediata. Regresar a conceptos fundamentales con material simplificado.',
+};
+
+let _paInitDone = false;
+
+function paGradeColors(g) {
+  if (typeof g !== 'number') return { bg:'#e5e7eb', txt:'#374151' };
+  if (g >= 95) return { bg:'#22c55e', txt:'#fff' };
+  if (g >= 80) return { bg:'#22d3ee', txt:'#000' };
+  if (g >= 70) return { bg:'#fef08a', txt:'#000' };
+  if (g >= 60) return { bg:'#facc15', txt:'#000' };
+  return { bg:'#ef4444', txt:'#fff' };
+}
+
+function paAddRow(num, name = '', grade = '') {
+  const list = document.getElementById('pa-students-list');
+  if (!list) return;
+  const row = document.createElement('div');
+  row.className = 'pa-student-row';
+  row.innerHTML = `
+    <span class="pa-row-num">${num}</span>
+    <input type="text" class="pa-inp-field pa-inp-name" placeholder="Nombre…" value="${name}">
+    <input type="text" class="pa-inp-grade-cell" placeholder="0-100 / NSP" value="${grade}" maxlength="3">
+    <button class="pa-del-row" title="Eliminar"><i class="fa-solid fa-xmark"></i></button>`;
+  row.querySelector('.pa-del-row').addEventListener('click', () => {
+    row.remove();
+    document.querySelectorAll('.pa-student-row').forEach((r, i) => {
+      const n = r.querySelector('.pa-row-num'); if (n) n.textContent = i + 1;
+    });
+  });
+  list.appendChild(row);
+}
+
+function paCollect() {
+  return Array.from(document.querySelectorAll('.pa-student-row')).map((row, i) => {
+    const name  = row.querySelector('.pa-inp-name')?.value.trim() || '';
+    const raw   = row.querySelector('.pa-inp-grade-cell')?.value.trim().toUpperCase() || '';
+    const grade = raw === 'NSP' ? 'NSP' : (raw === '' ? null : (parseFloat(raw) || 0));
+    return { id: i + 1, name, grade };
+  }).filter(s => s.name);
+}
+
+function paGenerate() {
+  const students = paCollect();
+  if (!students.length) { toast('Agrega al menos un estudiante con nombre'); return; }
+
+  const numeric   = students.filter(s => typeof s.grade === 'number');
+  const nsp       = students.filter(s => s.grade === 'NSP');
+  const total     = students.length;
+  const avg       = numeric.length ? (numeric.reduce((a, s) => a + s.grade, 0) / numeric.length) : 0;
+  const passing   = numeric.filter(s => s.grade >= 70).length;
+  const pRate     = numeric.length ? Math.round((passing / numeric.length) * 100) : 0;
+  const toRecover = numeric.filter(s => s.grade <= 65);
+
+  const cats = {};
+  PA_CATS.forEach(c => { cats[c.key] = numeric.filter(s => s.grade >= c.min && s.grade <= c.max).length; });
+  const maxCat = Math.max(...Object.values(cats), 1);
+
+  const grado     = document.getElementById('pa-grado')?.value    || '—';
+  const seccion   = document.getElementById('pa-seccion')?.value  || '—';
+  const docente   = document.getElementById('pa-docente')?.value  || '—';
+  const evaluacion= document.getElementById('pa-evaluacion')?.value || 'Evaluación';
+
+  const avgColor = avg >= 70 ? '#16a34a' : avg >= 60 ? '#d97706' : '#dc2626';
+
+  const dash = document.getElementById('pa-dashboard');
+  if (!dash) return;
+
+  dash.innerHTML = `
+    <div class="pa-dash-head">
+      <div>
+        <div class="pa-dash-title">ANÁLISIS Y PLAN DE ACCIÓN</div>
+        <div class="pa-dash-sub">📌 ${evaluacion}</div>
+      </div>
+      <div class="pa-dash-meta">
+        <span><b>Grado:</b> ${grado}</span>
+        <span><b>Sección:</b> ${seccion}</span>
+        <span><b>Docente:</b> ${docente}</span>
+      </div>
+    </div>
+
+    <div class="pa-tabs-out">
+      <button class="pa-otab pa-otab-active" data-otab="overview">📊 Dashboard</button>
+      <button class="pa-otab" data-otab="planilla">📋 Planilla</button>
+    </div>
+
+    <div id="pa-out-overview">
+      <div class="pa-stats-grid">
+        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#3b82f6">👥</div><div class="pa-stat-lbl">En Lista</div><div class="pa-stat-val">${total}</div></div>
+        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#8b5cf6">📈</div><div class="pa-stat-lbl">Promedio</div><div class="pa-stat-val" style="color:${avgColor}">${avg.toFixed(1)}</div></div>
+        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#22c55e">🏆</div><div class="pa-stat-lbl">Aprobación</div><div class="pa-stat-val">${pRate}%</div><div class="pa-stat-sub">≥ 70%</div></div>
+        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#ef4444">⚠️</div><div class="pa-stat-lbl">Recuperación</div><div class="pa-stat-val">${toRecover.length}</div><div class="pa-stat-sub">nota ≤ 65</div></div>
+      </div>
+
+      <div class="pa-two-col">
+        <div class="pa-card">
+          <div class="pa-card-title">📊 Distribución</div>
+          ${PA_CATS.map(c => `
+            <div class="pa-dist-row">
+              <div class="pa-dist-info"><span class="pa-dist-lbl">${c.label}</span><span class="pa-dist-cnt">${cats[c.key]}</span></div>
+              <div class="pa-dist-track"><div class="pa-dist-fill" style="width:${Math.round((cats[c.key]/maxCat)*100)}%;background:${c.color}"></div></div>
+            </div>`).join('')}
+        </div>
+        <div class="pa-card">
+          <div class="pa-card-title">💡 Sugerencias</div>
+          ${PA_CATS.filter(c => cats[c.key] > 0).map(c => `
+            <div class="pa-sug-item" style="border-left:4px solid ${c.color};background:${c.bg}">
+              <div class="pa-sug-head"><span class="pa-sug-title" style="color:${c.color}">${c.label}</span><span class="pa-sug-cnt">${cats[c.key]}</span></div>
+              <p class="pa-sug-text">${PA_SUGS[c.key]}</p>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="pa-card pa-plan-card">
+        <div class="pa-card-title">📅 Plan de Acción — Recuperación y NSP</div>
+        <div class="pa-plan-grid">
+          <div>
+            <div class="pa-plan-sub">⚠️ Lista de Recuperación (${toRecover.length} alumnos)</div>
+            <p class="pa-plan-note">Irán a recuperación una semana después de la entrega del primer examen.</p>
+            <ul class="pa-recup-list">
+              ${toRecover.length ? toRecover.map(s => `
+                <li class="pa-recup-item">
+                  <span class="pa-recup-name">#${s.id} ${s.name}</span>
+                  <span class="pa-grade-chip" style="background:${s.grade<=55?'#ef4444':'#facc15'};color:${s.grade<=55?'#fff':'#000'}">${s.grade}</span>
+                </li>`).join('') : '<li class="pa-empty-msg">Sin alumnos a recuperación ✅</li>'}
+            </ul>
+          </div>
+          <div>
+            <div class="pa-plan-sub">📋 Prueba Pendiente — NSP (${nsp.length})</div>
+            <p class="pa-plan-note">Harán la prueba el mismo día que los alumnos en recuperación.</p>
+            <ul class="pa-recup-list">
+              ${nsp.length ? nsp.map(s => `
+                <li class="pa-recup-item">
+                  <span class="pa-recup-name">#${s.id} ${s.name}</span>
+                  <span class="pa-grade-chip" style="background:#d1d5db;color:#374151">NSP</span>
+                </li>`).join('') : '<li class="pa-empty-msg">Sin alumnos NSP ✅</li>'}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pa-out-planilla" style="display:none;">
+      <div class="pa-card" style="padding:0;overflow:hidden;">
+        <table class="pa-table">
+          <thead><tr><th>#</th><th>Nombre</th><th>${evaluacion}</th></tr></thead>
+          <tbody>
+            ${students.map(s => {
+              const c = paGradeColors(s.grade);
+              return `<tr><td class="pa-td-n">${s.id}</td><td class="pa-td-name">${s.name}</td><td class="pa-td-g" style="background:${c.bg};color:${c.txt}">${s.grade ?? '—'}</td></tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+
+  // Tab switching
+  dash.querySelectorAll('.pa-otab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      dash.querySelectorAll('.pa-otab').forEach(t => t.classList.remove('pa-otab-active'));
+      tab.classList.add('pa-otab-active');
+      document.getElementById('pa-out-overview').style.display  = tab.dataset.otab === 'overview'  ? '' : 'none';
+      document.getElementById('pa-out-planilla').style.display  = tab.dataset.otab === 'planilla'  ? '' : 'none';
+    });
+  });
+
+  dash.style.display = '';
+  dash.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function paInit() {
+  if (_paInitDone) return;
+  _paInitDone = true;
+  for (let i = 1; i <= 5; i++) paAddRow(i);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('goto-plan-btn')?.addEventListener('click', () => { switchView('view-plan-accion'); paInit(); });
+  document.getElementById('plan-back-btn')?.addEventListener('click', () => switchView('view-perfil'));
+
+  document.getElementById('pa-add-student-btn')?.addEventListener('click', () => {
+    paAddRow(document.querySelectorAll('.pa-student-row').length + 1);
+  });
+
+  document.getElementById('pa-generate-btn')?.addEventListener('click', paGenerate);
+
+  // Entry tab switching
+  document.querySelectorAll('.pa-etab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.pa-etab').forEach(t => t.classList.remove('pa-etab-active'));
+      tab.classList.add('pa-etab-active');
+      document.getElementById('pa-entry-manual').style.display = tab.dataset.etab === 'manual' ? '' : 'none';
+      document.getElementById('pa-entry-pegar').style.display  = tab.dataset.etab === 'pegar'  ? '' : 'none';
+    });
+  });
+
+  // Import from paste
+  document.getElementById('pa-import-btn')?.addEventListener('click', () => {
+    const text = document.getElementById('pa-paste-area')?.value.trim();
+    if (!text) return;
+    const lines = text.split('\n').filter(l => l.trim());
+    const list = document.getElementById('pa-students-list');
+    if (list) list.innerHTML = '';
+    lines.forEach((line, i) => {
+      const parts = line.split(',');
+      const name  = (parts[0] || '').trim();
+      const grade = (parts[1] || '').trim();
+      if (name) paAddRow(i + 1, name, grade);
+    });
+    // switch to manual tab to show
+    document.querySelectorAll('.pa-etab').forEach(t => t.classList.remove('pa-etab-active'));
+    document.querySelector('.pa-etab[data-etab="manual"]')?.classList.add('pa-etab-active');
+    document.getElementById('pa-entry-manual').style.display = '';
+    document.getElementById('pa-entry-pegar').style.display  = 'none';
+    toast(`✅ ${lines.length} estudiantes importados`);
   });
 });
 

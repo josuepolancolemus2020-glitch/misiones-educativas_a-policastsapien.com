@@ -1202,6 +1202,103 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ====== TEACHER PANEL ====== */
+/* ====== PLAN DE ACCIÓN ====== */
+.pa-card { background:var(--surface);border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);border:1px solid var(--border); }
+.pa-card-title { font-size:13px;font-weight:800;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px; }
+.pa-row-2 { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px; }
+.pa-field { display:flex;flex-direction:column;gap:5px; }
+.pa-field label { font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px; }
+.pa-inp-field { width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;outline:none;background:var(--bg);color:var(--text);font-family:inherit;transition:border-color .15s; }
+.pa-inp-field:focus { border-color:var(--brand-light);background:var(--surface); }
+
+/* Tabs de entrada */
+.pa-entry-tabs { display:flex;gap:8px;margin-bottom:14px; }
+.pa-etab { flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s; }
+.pa-etab.pa-etab-active { background:#eff6ff;border-color:var(--brand);color:var(--brand); }
+
+/* Columna header */
+.pa-col-header { display:grid;grid-template-columns:28px 1fr 72px 28px;gap:6px;padding:0 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px; }
+.pa-ch-num,.pa-ch-name,.pa-ch-grade { font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px; }
+.pa-ch-num,.pa-ch-grade { text-align:center; }
+
+/* Filas de estudiante */
+.pa-student-row { display:grid;grid-template-columns:28px 1fr 72px 28px;gap:6px;align-items:center;margin-bottom:6px; }
+.pa-row-num { font-size:12px;font-weight:700;color:var(--muted);text-align:center; }
+.pa-inp-grade-cell { border:1.5px solid var(--border);border-radius:8px;padding:8px 4px;font-size:13px;font-weight:700;text-align:center;outline:none;background:var(--bg);font-family:inherit;transition:border-color .15s; }
+.pa-inp-grade-cell:focus { border-color:var(--brand-light); }
+.pa-del-row { background:none;border:none;cursor:pointer;color:var(--faint);font-size:13px;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px;transition:color .15s; }
+.pa-del-row:active { color:#ef4444; }
+
+/* Textarea pegar */
+.pa-paste-hint { font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.5; }
+.pa-paste-area { width:100%;height:160px;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;outline:none;background:var(--bg);color:var(--text);font-family:inherit;resize:vertical;transition:border-color .15s; }
+.pa-paste-area:focus { border-color:var(--brand-light); }
+
+/* Botones */
+.pa-add-btn { width:100%;background:var(--bg);border:1.5px dashed var(--border);border-radius:8px;padding:10px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;margin:4px 0 14px;display:flex;align-items:center;justify-content:center;gap:8px;transition:border-color .15s,color .15s; }
+.pa-add-btn:active { border-color:var(--brand-light);color:var(--brand); }
+.pa-gen-btn { width:100%;background:linear-gradient(135deg,var(--brand),var(--brand-mid));color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,124,.25);transition:transform .15s; }
+.pa-gen-btn:active { transform:scale(.97); }
+
+/* Dashboard output */
+.pa-dash-head { background:linear-gradient(135deg,var(--brand),var(--brand-mid));color:#fff;border-radius:var(--r);padding:18px;margin-bottom:14px;display:flex;flex-direction:column;gap:8px; }
+.pa-dash-title { font-size:15px;font-weight:900;letter-spacing:.5px; }
+.pa-dash-sub { font-size:12px;opacity:.85; }
+.pa-dash-meta { display:flex;flex-wrap:wrap;gap:10px;font-size:12px;background:rgba(255,255,255,.15);border-radius:8px;padding:8px 12px; }
+.pa-dash-meta span { font-weight:500; }
+
+/* Output tabs */
+.pa-tabs-out { display:flex;gap:0;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden; }
+.pa-otab { flex:1;background:none;border:none;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s; }
+.pa-otab.pa-otab-active { background:var(--brand);color:#fff; }
+
+/* Stats grid */
+.pa-stats-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px; }
+.pa-stat-card { background:var(--surface);border-radius:12px;padding:14px;border:1px solid var(--border);box-shadow:var(--shadow);display:flex;align-items:center;gap:10px; }
+.pa-stat-ic { width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+.pa-stat-lbl { font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px; }
+.pa-stat-val { font-size:22px;font-weight:900;color:var(--text);line-height:1; }
+.pa-stat-sub { font-size:10px;color:var(--faint);margin-top:2px; }
+
+/* Two column layout */
+.pa-two-col { display:flex;flex-direction:column;gap:12px;margin-bottom:14px; }
+@media(min-width:600px) { .pa-two-col { flex-direction:row; } .pa-two-col > * { flex:1; } }
+
+/* Distribution */
+.pa-dist-row { margin-bottom:10px; }
+.pa-dist-info { display:flex;justify-content:space-between;margin-bottom:4px; }
+.pa-dist-lbl { font-size:12px;font-weight:600;color:var(--text); }
+.pa-dist-cnt { font-size:12px;font-weight:700;color:var(--muted); }
+.pa-dist-track { height:8px;background:var(--bg);border-radius:8px;overflow:hidden; }
+.pa-dist-fill { height:100%;border-radius:8px;transition:width .6s ease; }
+
+/* Suggestions */
+.pa-sug-item { padding:10px 12px;border-radius:8px;margin-bottom:8px; }
+.pa-sug-head { display:flex;justify-content:space-between;margin-bottom:4px; }
+.pa-sug-title { font-size:12px;font-weight:800; }
+.pa-sug-cnt { font-size:11px;font-weight:700;background:rgba(0,0,0,.1);padding:1px 7px;border-radius:8px; }
+.pa-sug-text { font-size:11px;color:#374151;line-height:1.5; }
+
+/* Plan */
+.pa-plan-card { border-left:4px solid #ef4444 !important; }
+.pa-plan-grid { display:grid;grid-template-columns:1fr;gap:16px; }
+@media(min-width:520px) { .pa-plan-grid { grid-template-columns:1fr 1fr; } }
+.pa-plan-sub { font-size:12px;font-weight:800;color:var(--text);margin-bottom:6px; }
+.pa-plan-note { font-size:11px;color:var(--muted);background:var(--bg);border-radius:8px;padding:8px 10px;margin-bottom:8px;line-height:1.4; }
+.pa-recup-list { list-style:none;display:flex;flex-direction:column;gap:4px; }
+.pa-recup-item { display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:12px; }
+.pa-recup-name { color:var(--text);font-weight:500;flex:1;margin-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.pa-grade-chip { font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0; }
+.pa-empty-msg { font-size:12px;color:var(--muted);font-style:italic;padding:8px 0; }
+
+/* Planilla table */
+.pa-table { width:100%;border-collapse:collapse;font-size:13px; }
+.pa-table th { background:#eff6ff;font-size:10px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.4px;padding:10px 12px;text-align:left;border-bottom:2px solid var(--border); }
+.pa-table th:last-child,.pa-td-g { text-align:center; }
+.pa-td-n { padding:8px 12px;font-weight:700;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--border);width:36px;text-align:center; }
+.pa-td-name { padding:8px 12px;color:var(--text);border-bottom:1px solid var(--border); }
+.pa-td-g { padding:8px 12px;font-weight:800;border-bottom:1px solid var(--border);border-left:1px solid var(--border); }
+
 /* ====== PARTE MENSUAL ====== */
 .parte-card {
   background: var(--surface); border-radius: var(--r);
