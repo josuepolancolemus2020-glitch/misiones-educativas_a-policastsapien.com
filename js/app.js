@@ -1549,41 +1549,4 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
   pmIds.forEach(id => document.getElementById(id)?.addEventListener('input', pmActualizar));
 
-  // Informe de texto
-  document.getElementById('pm-informe-btn')?.addEventListener('click', () => {
-    const mesEl  = document.getElementById('pm-mes');
-    const mesNom = mesEl ? mesEl.options[mesEl.selectedIndex].text : '—';
-    const anio   = document.getElementById('pm-anio')?.value || '2026';
-    const grado  = document.getElementById('pm-grado')?.value || '—';
-
-    const texto = [
-      '══════════════════════════════',
-      '   PARTE MENSUAL DE ASISTENCIA',
-      '       SEDUC - HONDURAS',
-      '══════════════════════════════',
-      `Grado: ${grado}   Sección: ${_pmSeccion}`,
-      `Mes: ${mesNom} ${anio}`,
-      `Días Trabajados: ${pmN('pm-dias')}`,
-      '─────────────────────────────',
-      'MATRÍCULA',
-      `  Anterior : H ${pmN('pm-ant-h')}  M ${pmN('pm-ant-m')}  T ${pmN('pm-ant-h')+pmN('pm-ant-m')}`,
-      `  Ingresos : H ${pmN('pm-ing-h')}  M ${pmN('pm-ing-m')}  T ${pmN('pm-ing-h')+pmN('pm-ing-m')}`,
-      `  Desertores: H ${pmN('pm-des-h')}  M ${pmN('pm-des-m')}  T ${pmN('pm-des-h')+pmN('pm-des-m')}`,
-      `  Traslados : H ${pmN('pm-tra-h')}  M ${pmN('pm-tra-m')}  T ${pmN('pm-tra-h')+pmN('pm-tra-m')}`,
-      `  ACTUAL    : H ${document.getElementById('pm-act-h')?.textContent||0}  M ${document.getElementById('pm-act-m')?.textContent||0}  T ${document.getElementById('pm-act-tot')?.textContent||0}`,
-      '─────────────────────────────',
-      'INASISTENCIAS',
-      `  H ${pmN('pm-inas-h')}  M ${pmN('pm-inas-m')}  T ${pmN('pm-inas-h')+pmN('pm-inas-m')}`,
-      '─────────────────────────────',
-      `Asistencia Media : ${document.getElementById('pm-asist-media')?.textContent||'—'}`,
-      `Tanto por Ciento : ${document.getElementById('pm-pct-asist')?.textContent||'—'}`,
-      '══════════════════════════════',
-    ].join('\n');
-
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(texto).then(() => toast('✅ Informe copiado al portapapeles'));
-    } else {
-      prompt('Copia este texto:', texto);
-    }
-  });
 });
