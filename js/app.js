@@ -1203,8 +1203,27 @@ function handleImageUpload(e, previewId) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    const img = document.getElementById(previewId);
-    if (img) { img.src = ev.target.result; img.style.display = ''; img._b64 = ev.target.result; }
+    const b64 = ev.target.result;
+    // Miniatura junto al botón
+    const thumb = document.getElementById(previewId);
+    if (thumb) { thumb.src = b64; thumb.style.display = ''; thumb._b64 = b64; }
+    // Vista previa grande
+    const num = previewId === 'ge-preview-1' ? '1' : '2';
+    const bigImg  = document.getElementById('ge-big-preview-' + num);
+    const bigCard = document.getElementById('ge-prev-' + num);
+    if (bigImg)  bigImg.src = b64;
+    if (bigCard) bigCard.style.display = '';
+    // Nombre en la vista previa (planilla o candidato)
+    const nameEl = document.getElementById('ge-big-name-' + num);
+    if (nameEl) {
+      const label = (document.getElementById('ge-planilla-' + num) || {}).value
+                 || (document.getElementById('ge-name-' + num)     || {}).value
+                 || ('Planilla ' + num);
+      nameEl.textContent = label;
+    }
+    // Mostrar sección previa
+    const section = document.getElementById('ge-preview-section');
+    if (section) section.style.display = '';
   };
   reader.readAsDataURL(file);
 }
