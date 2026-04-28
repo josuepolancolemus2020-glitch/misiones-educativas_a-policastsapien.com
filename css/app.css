@@ -1217,6 +1217,7 @@ a { text-decoration: none; color: inherit; }
 .pa-etab.pa-etab-active { background:#eff6ff;border-color:var(--brand);color:var(--brand); }
 
 /* Columna header */
+.pa-optional-hint { font-size:12px;color:var(--muted);background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin-bottom:10px;line-height:1.5; }
 .pa-col-header { display:grid;grid-template-columns:28px 1fr 72px 28px;gap:6px;padding:0 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px; }
 .pa-ch-num,.pa-ch-name,.pa-ch-grade { font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px; }
 .pa-ch-num,.pa-ch-grade { text-align:center; }

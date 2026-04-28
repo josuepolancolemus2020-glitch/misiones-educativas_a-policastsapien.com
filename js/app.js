@@ -1112,10 +1112,13 @@ document.addEventListener('DOMContentLoaded', () => {
     toast('Sin notificaciones nuevas por ahora');
   });
 
-  // ── Header oculto al hacer scroll (se pausa si hay un input enfocado) ──
+  // ── Header oculto al hacer scroll (acumulador anti-tembladera) ──
   document.querySelectorAll('.view-scroll').forEach(scroll => {
     let lastY = 0;
+    let accumulated = 0;
     let ticking = false;
+    const HIDE_THRESHOLD = 22;
+
     scroll.addEventListener('scroll', () => {
       if (ticking) return;
       const active = document.activeElement;
@@ -1125,24 +1128,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const header = scroll.closest('.view') && scroll.closest('.view').querySelector('.app-header');
         if (!header) { ticking = false; return; }
         const y = Math.max(0, scroll.scrollTop);
-        // Al llegar al tope: siempre mostrar y salir sin más animación
+
         if (y <= 4) {
           header.style.transform = '';
           header.style.marginBottom = '';
-          lastY = 0;
+          lastY = 0; accumulated = 0;
           ticking = false;
           return;
         }
+
         const delta = y - lastY;
-        if (delta > 6 && y > 48) {
+        lastY = y;
+        accumulated += delta;
+
+        if (accumulated > HIDE_THRESHOLD && y > 56) {
           const h = header.offsetHeight;
           header.style.transform = `translateY(-${h}px)`;
           header.style.marginBottom = `-${h}px`;
-        } else if (delta < -6) {
+          accumulated = 0;
+        } else if (accumulated < -HIDE_THRESHOLD) {
           header.style.transform = '';
           header.style.marginBottom = '';
+          accumulated = 0;
         }
-        lastY = y;
         ticking = false;
       });
     }, { passive: true });
@@ -1777,9 +1785,24 @@ tbody tr:nth-child(even){background:#f8fafc;}
 <script>window.onload=function(){window.print();}</script>
 </body></html>`;
 
-  const w = window.open('', '_blank');
-  if (w) { w.document.write(html); w.document.close(); }
-  else toast('Permite ventanas emergentes para imprimir');
+  // Usar iframe oculto — no requiere permiso de popup
+  let iframe = document.getElementById('pa-print-iframe');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'pa-print-iframe';
+    iframe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;opacity:0;pointer-events:none;';
+    document.body.appendChild(iframe);
+  }
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  doc.open(); doc.write(html); doc.close();
+  // Esperar a que el iframe cargue antes de imprimir
+  iframe.onload = () => {
+    try { iframe.contentWindow.focus(); iframe.contentWindow.print(); } catch(e) { toast('Error al imprimir'); }
+  };
+  // Fallback si onload no dispara (algunos navegadores)
+  setTimeout(() => {
+    try { iframe.contentWindow.focus(); iframe.contentWindow.print(); } catch(e) {}
+  }, 800);
 }
 window.paPrint = paPrint;
 
