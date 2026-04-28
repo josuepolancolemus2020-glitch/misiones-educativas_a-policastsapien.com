@@ -935,10 +935,11 @@ let currentQuery  = '';
 
 function switchView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  const btn = document.querySelector(`.nav-btn[data-view="${id}"]`);
-  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.drawer-item').forEach(b => b.classList.remove('active'));
+  const view = document.getElementById(id);
+  if (view) view.classList.add('active');
+  const item = document.querySelector(`.drawer-item[data-view="${id}"]`);
+  if (item) item.classList.add('active');
 
   if (id === 'view-inicio')   renderHome();
   if (id === 'view-misiones') renderMissions(currentFilter, currentQuery);
@@ -1045,9 +1046,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
   }
 
-  // Navegación
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchView(btn.dataset.view));
+  // ── Drawer / Hamburguesa ──
+  function openDrawer() {
+    document.getElementById('app-drawer').classList.add('open');
+    document.getElementById('drawer-overlay').classList.add('open');
+  }
+  function closeDrawer() {
+    document.getElementById('app-drawer').classList.remove('open');
+    document.getElementById('drawer-overlay').classList.remove('open');
+  }
+
+  document.querySelectorAll('.hamburger-btn').forEach(btn => {
+    btn.addEventListener('click', openDrawer);
+  });
+  document.getElementById('drawer-close-btn')?.addEventListener('click', closeDrawer);
+  document.getElementById('drawer-overlay')?.addEventListener('click', closeDrawer);
+
+  document.querySelectorAll('.drawer-item').forEach(item => {
+    item.addEventListener('click', () => {
+      switchView(item.dataset.view);
+      closeDrawer();
+    });
   });
 
   // Chips de materias → misiones filtradas
@@ -1089,6 +1108,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // Notificaciones
   document.getElementById('notif-btn').addEventListener('click', () => {
     toast('Sin notificaciones nuevas por ahora');
+  });
+
+  // ── Header oculto al hacer scroll hacia abajo ──
+  document.querySelectorAll('.view-scroll').forEach(scroll => {
+    let lastY = 0;
+    let ticking = false;
+    scroll.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const header = scroll.closest('.view') && scroll.closest('.view').querySelector('.app-header');
+        if (!header) { ticking = false; return; }
+        const y = scroll.scrollTop;
+        if (y > lastY && y > 48) {
+          const h = header.offsetHeight;
+          header.style.transform = `translateY(-${h}px)`;
+          header.style.marginBottom = `-${h}px`;
+        } else if (y < lastY) {
+          header.style.transform = '';
+          header.style.marginBottom = '';
+        }
+        lastY = Math.max(0, y);
+        ticking = false;
+      });
+    }, { passive: true });
   });
 
   // Navegación: Gobierno Escolar desde Perfil
