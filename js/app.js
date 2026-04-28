@@ -1352,17 +1352,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('ge-save-config-btn')?.addEventListener('click', () => {
     const el = id => document.getElementById(id);
-    const planilla1 = el('ge-planilla-1')?.value.trim();
-    const planilla2 = el('ge-planilla-2')?.value.trim();
-    if (!planilla1 || !planilla2) {
-      toast('Por favor ingresa el nombre de ambas planillas');
-      return;
-    }
+    const raw1  = el('ge-planilla-1')?.value.trim();
+    const raw2  = el('ge-planilla-2')?.value.trim();
+    const cand1 = el('ge-name-1')?.value.trim();
+    const cand2 = el('ge-name-2')?.value.trim();
+    const planilla1 = raw1 || cand1 || 'Planilla 1';
+    const planilla2 = raw2 || cand2 || 'Planilla 2';
     const ge = loadGE();
     ge.p1.planilla = planilla1;
     ge.p2.planilla = planilla2;
-    ge.p1.name = el('ge-name-1')?.value.trim() || '';
-    ge.p2.name = el('ge-name-2')?.value.trim() || '';
+    ge.p1.name = cand1 || '';
+    ge.p2.name = cand2 || '';
     const p1 = el('ge-preview-1'), p2 = el('ge-preview-2');
     if (p1?._b64) ge.p1.img = p1._b64;
     if (p2?._b64) ge.p2.img = p2._b64;
