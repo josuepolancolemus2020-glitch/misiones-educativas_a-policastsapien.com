@@ -630,12 +630,7 @@ function renderHome() {
   const featuredSection = document.getElementById('featured-section');
   if (featuredSection) featuredSection.hidden = (country !== 'HN');
 
-  const geSection = document.getElementById('gobierno-escolar-section');
-  if (geSection) geSection.hidden = (country !== 'HN');
-
   if (country !== 'HN') return;
-
-  if (typeof renderGobiernoEscolar === 'function') renderGobiernoEscolar();
 
   const m    = featuredMission(s);
   const done = s.visited.includes(m.id);
@@ -907,22 +902,7 @@ function renderProgress() {
 ───────────────────────────────────────────── */
 
 function renderProfile() {
-  const s  = load();
-  const lv = getLevel(s.xp);
-
-  document.getElementById('prf-avatar').textContent = lv.emoji;
-  document.getElementById('prf-name').textContent   = displayName(s);
-  document.getElementById('prf-rank').textContent   = `Nivel ${lv.n} · ${lv.label} · ${s.xp} XP`;
-  document.getElementById('name-input').value       = s.name;
-
-  document.querySelectorAll('.grade-btn').forEach(btn =>
-    btn.classList.toggle('active', btn.dataset.grade === s.grade)
-  );
-
-  document.getElementById('prf-visited').textContent = `${s.visited.length} / ${MISSIONS.length}`;
-  document.getElementById('prf-xp').textContent      = `${s.xp} XP`;
-  document.getElementById('prf-level').textContent   = `Nivel ${lv.n}`;
-  document.getElementById('prf-badge').textContent   = lv.label;
+  // Los elementos de estudiante fueron removidos del perfil; sección solo muestra herramientas del docente
 }
 
 /* ─────────────────────────────────────────────
@@ -964,6 +944,7 @@ function switchView(id) {
   if (id === 'view-misiones') renderMissions(currentFilter, currentQuery);
   if (id === 'view-progreso') renderProgress();
   if (id === 'view-perfil')   renderProfile();
+  if (id === 'view-gobierno') renderGobiernoEscolar();
 
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
@@ -1035,10 +1016,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // Mostrar u ocultar sección Misión destacada
       const featuredSection = document.getElementById('featured-section');
       if (featuredSection) featuredSection.hidden = (s.country !== 'HN');
-
-      const geSection = document.getElementById('gobierno-escolar-section');
-      if (geSection) geSection.hidden = (s.country !== 'HN');
-      if (s.country === 'HN' && typeof renderGobiernoEscolar === 'function') renderGobiernoEscolar();
 
       const d = COUNTRY_DATA[s.country];
       if (d) toast(`${d.bandera} ¡Explorando ${d.nombre}!`);
@@ -1114,40 +1091,14 @@ document.addEventListener('DOMContentLoaded', () => {
     toast('Sin notificaciones nuevas por ahora');
   });
 
-  // Guardar nombre
-  document.getElementById('save-name-btn').addEventListener('click', () => {
-    const s = load();
-    s.name = document.getElementById('name-input').value.trim();
-    save(s);
-    renderProfile();
-    renderHome();
-    toast('¡Nombre guardado!');
+  // Navegación: Gobierno Escolar desde Perfil
+  document.getElementById('goto-gobierno-btn')?.addEventListener('click', () => {
+    switchView('view-gobierno');
   });
 
-  document.getElementById('name-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('save-name-btn').click();
-  });
-
-  // Botones de grado
-  document.querySelectorAll('.grade-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const s = load();
-      s.grade = btn.dataset.grade;
-      save(s);
-      document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      toast('Nivel de estudios actualizado');
-    });
-  });
-
-  // Reiniciar
-  document.getElementById('reset-btn').addEventListener('click', () => {
-    if (confirm('¿Reiniciar todo tu progreso? Esta acción no se puede deshacer.')) {
-      localStorage.removeItem(KEY);
-      renderProfile();
-      renderHome();
-      toast('Progreso reiniciado');
-    }
+  // Botón volver desde Gobierno Escolar
+  document.getElementById('gobierno-back-btn')?.addEventListener('click', () => {
+    switchView('view-perfil');
   });
 });
 
