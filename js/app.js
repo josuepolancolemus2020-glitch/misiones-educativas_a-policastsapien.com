@@ -1118,14 +1118,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let ticking = false;
     scroll.addEventListener('scroll', () => {
       if (ticking) return;
-      // Si el usuario está escribiendo en un campo, no animar el header
       const active = document.activeElement;
       if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) return;
       ticking = true;
       requestAnimationFrame(() => {
         const header = scroll.closest('.view') && scroll.closest('.view').querySelector('.app-header');
         if (!header) { ticking = false; return; }
-        const y = scroll.scrollTop;
+        const y = Math.max(0, scroll.scrollTop);
+        // Al llegar al tope: siempre mostrar y salir sin más animación
+        if (y <= 4) {
+          header.style.transform = '';
+          header.style.marginBottom = '';
+          lastY = 0;
+          ticking = false;
+          return;
+        }
         const delta = y - lastY;
         if (delta > 6 && y > 48) {
           const h = header.offsetHeight;
@@ -1135,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', () => {
           header.style.transform = '';
           header.style.marginBottom = '';
         }
-        lastY = Math.max(0, y);
+        lastY = y;
         ticking = false;
       });
     }, { passive: true });
@@ -1624,7 +1631,11 @@ function paGenerate() {
           </tbody>
         </table>
       </div>
-    </div>`;
+    </div>
+
+    <button onclick="paPrint()" class="pa-print-btn">
+      <i class="fa-solid fa-print"></i> Imprimir / Guardar PDF
+    </button>`;
 
   // Tab switching
   dash.querySelectorAll('.pa-otab').forEach(tab => {
@@ -1639,6 +1650,138 @@ function paGenerate() {
   dash.style.display = '';
   dash.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+function paPrint() {
+  const students = _paStudents;
+  if (!students || !students.length) { toast('Genera el análisis primero'); return; }
+
+  const numeric    = students.filter(s => typeof s.grade === 'number');
+  const nsp        = students.filter(s => s.grade === 'NSP');
+  const avg        = numeric.length ? (numeric.reduce((a,s) => a + s.grade, 0) / numeric.length) : 0;
+  const passing    = numeric.filter(s => s.grade >= 70).length;
+  const pRate      = numeric.length ? Math.round((passing / numeric.length) * 100) : 0;
+  const toRecover  = numeric.filter(s => s.grade <= 65);
+  const cats       = {};
+  PA_CATS.forEach(c => { cats[c.key] = numeric.filter(s => s.grade >= c.min && s.grade <= c.max).length; });
+  const maxCatV    = Math.max(...Object.values(cats), 1);
+
+  const grado      = document.getElementById('pa-grado')?.value     || '—';
+  const seccion    = document.getElementById('pa-seccion')?.value   || '—';
+  const docente    = document.getElementById('pa-docente')?.value   || '—';
+  const evaluacion = document.getElementById('pa-evaluacion')?.value || 'Evaluación';
+  const fecha      = new Date().toLocaleDateString('es-HN', { year:'numeric', month:'long', day:'numeric' });
+
+  const avgColor   = avg >= 70 ? '#16a34a' : avg >= 60 ? '#d97706' : '#dc2626';
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Plan de Acción — ${evaluacion}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;font-size:12px;color:#111;background:#fff;}
+.page{max-width:190mm;margin:0 auto;padding:12mm 15mm;}
+.head{background:#1e3a7c;color:#fff;padding:14px 18px;border-radius:8px;margin-bottom:14px;}
+.head-title{font-size:16px;font-weight:900;letter-spacing:.8px;}
+.head-sub{font-size:11px;opacity:.85;margin-top:3px;}
+.head-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:10px;background:rgba(255,255,255,.15);padding:7px 10px;border-radius:6px;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;page-break-inside:avoid;}
+.stat{border:1px solid #e2e8f0;border-radius:7px;padding:10px;text-align:center;}
+.stat-lbl{font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.stat-val{font-size:22px;font-weight:900;color:#1e3a7c;margin:3px 0;}
+.stat-sub{font-size:9px;color:#94a3b8;}
+.sec-title{font-size:12px;font-weight:800;color:#1e3a7c;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;page-break-inside:avoid;}
+.card{border:1px solid #e2e8f0;border-radius:7px;padding:12px;page-break-inside:avoid;}
+.dist-row{margin-bottom:7px;}
+.dist-info{display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;}
+.dist-bar{height:6px;background:#f1f5f9;border-radius:4px;overflow:hidden;}
+.dist-fill{height:100%;border-radius:4px;}
+.sug-item{border-left:4px solid;padding:7px 9px;border-radius:4px;margin-bottom:7px;page-break-inside:avoid;}
+.sug-head{display:flex;justify-content:space-between;margin-bottom:3px;}
+.sug-title{font-size:10px;font-weight:800;}
+.sug-cnt{font-size:9px;background:rgba(0,0,0,.12);padding:1px 6px;border-radius:6px;}
+.sug-text{font-size:10px;color:#374151;line-height:1.4;}
+.plan-box{border:1px solid #fecaca;border-left:4px solid #ef4444;border-radius:7px;padding:12px;margin-bottom:14px;}
+.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+.plan-sub{font-size:11px;font-weight:800;margin-bottom:5px;}
+.plan-note{font-size:9px;color:#64748b;background:#f8fafc;padding:5px 7px;border-radius:5px;margin-bottom:6px;line-height:1.4;}
+.rlist{list-style:none;}
+.ritem{display:flex;justify-content:space-between;align-items:center;padding:3px 7px;border:1px solid #e2e8f0;border-radius:5px;margin-bottom:3px;font-size:10px;page-break-inside:avoid;}
+.chip{font-weight:700;padding:2px 7px;border-radius:5px;font-size:9px;}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+thead tr{background:#eff6ff;page-break-inside:avoid;}
+th{color:#1e3a7c;font-weight:700;padding:7px 10px;text-align:left;border:1px solid #e2e8f0;font-size:9px;text-transform:uppercase;letter-spacing:.4px;}
+td{padding:5px 10px;border:1px solid #e2e8f0;}
+tr{page-break-inside:avoid;}
+tbody tr:nth-child(even){background:#f8fafc;}
+.td-n{text-align:center;font-weight:700;color:#94a3b8;width:30px;}
+.td-g{text-align:center;font-weight:800;width:80px;}
+.footer{font-size:9px;color:#94a3b8;text-align:center;border-top:1px solid #e2e8f0;padding-top:8px;margin-top:14px;}
+.pb{page-break-before:always;}
+@media print{body{padding:0;}.page{padding:8mm 12mm;}}
+</style></head><body><div class="page">
+
+<div class="head">
+  <div class="head-title">ANÁLISIS Y PLAN DE ACCIÓN</div>
+  <div class="head-sub">📌 ${evaluacion}</div>
+  <div class="head-meta">
+    <span><b>Grado:</b> ${grado}</span><span><b>Sección:</b> ${seccion}</span>
+    <span><b>Docente:</b> ${docente}</span><span><b>Fecha:</b> ${fecha}</span>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-lbl">En Lista</div><div class="stat-val">${students.length}</div></div>
+  <div class="stat"><div class="stat-lbl">Promedio</div><div class="stat-val" style="color:${avgColor}">${avg.toFixed(1)}</div></div>
+  <div class="stat"><div class="stat-lbl">Aprobación</div><div class="stat-val">${pRate}%</div><div class="stat-sub">≥ 70%</div></div>
+  <div class="stat"><div class="stat-lbl">Recuperación</div><div class="stat-val">${toRecover.length}</div><div class="stat-sub">nota ≤ 65</div></div>
+</div>
+
+<div class="two-col">
+  <div class="card">
+    <div class="sec-title">Distribución</div>
+    ${PA_CATS.map(c => `<div class="dist-row"><div class="dist-info"><span>${c.label}</span><span>${cats[c.key]} alum.</span></div><div class="dist-bar"><div class="dist-fill" style="width:${Math.round((cats[c.key]/maxCatV)*100)}%;background:${c.color}"></div></div></div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="sec-title">Sugerencias Pedagógicas</div>
+    ${PA_CATS.filter(c => cats[c.key] > 0).map(c => `<div class="sug-item" style="border-left-color:${c.color};background:${c.bg}"><div class="sug-head"><span class="sug-title" style="color:${c.color}">${c.label}</span><span class="sug-cnt">${cats[c.key]}</span></div><p class="sug-text">${PA_SUGS[c.key]}</p></div>`).join('')}
+  </div>
+</div>
+
+<div class="plan-box">
+  <div class="sec-title">Plan de Acción — Recuperación y NSP</div>
+  <div class="plan-grid">
+    <div>
+      <div class="plan-sub">⚠️ Lista de Recuperación (${toRecover.length})</div>
+      <div class="plan-note">Irán a recuperación una semana después de la entrega del primer examen.</div>
+      <ul class="rlist">${toRecover.length ? toRecover.map(s => `<li class="ritem"><span>#${s.id} ${s.name}</span><span class="chip" style="background:${s.grade<=55?'#ef4444':'#facc15'};color:${s.grade<=55?'#fff':'#000'}">${s.grade}</span></li>`).join('') : '<li style="font-size:10px;color:#64748b;font-style:italic">Sin alumnos ✅</li>'}</ul>
+    </div>
+    <div>
+      <div class="plan-sub">📋 NSP — Prueba Pendiente (${nsp.length})</div>
+      <div class="plan-note">Harán la prueba el mismo día que los alumnos en recuperación.</div>
+      <ul class="rlist">${nsp.length ? nsp.map(s => `<li class="ritem"><span>#${s.id} ${s.name}</span><span class="chip" style="background:#d1d5db;color:#374151">NSP</span></li>`).join('') : '<li style="font-size:10px;color:#64748b;font-style:italic">Sin alumnos ✅</li>'}</ul>
+    </div>
+  </div>
+</div>
+
+<div class="pb"></div>
+<div class="sec-title" style="margin-bottom:10px;">Planilla de Calificaciones</div>
+<table>
+  <thead><tr><th class="td-n">#</th><th>Nombre del Estudiante</th><th class="td-g">${evaluacion}</th></tr></thead>
+  <tbody>
+    ${students.map(s => { const c = paGradeColors(s.grade); return `<tr><td class="td-n">${s.id}</td><td>${s.name}</td><td class="td-g" style="background:${c.bg};color:${c.txt}">${s.grade ?? '—'}</td></tr>`; }).join('')}
+  </tbody>
+</table>
+
+<div class="footer">Generado con M.E.T.A.S. — Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas · ${fecha}</div>
+</div>
+<script>window.onload=function(){window.print();}</script>
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  if (w) { w.document.write(html); w.document.close(); }
+  else toast('Permite ventanas emergentes para imprimir');
+}
+window.paPrint = paPrint;
 
 function paInit() {
   if (_paInitDone) return;
