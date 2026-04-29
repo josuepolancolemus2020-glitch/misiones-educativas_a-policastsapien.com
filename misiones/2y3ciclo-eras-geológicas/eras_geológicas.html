@@ -4,20 +4,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Misión Los Sustantivos | policastsapien.com</title>
+  <title>Misión Las Eras Geológicas | policastsapien.com</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/sustantivos.css">
+  <link rel="stylesheet" href="css/eras.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
 
   <div class="xp-bar" role="status" aria-label="Barra de progreso XP">
-    <a href="../index.html" class="xp-back-btn" title="Regresar al inicio">
+    <a href="../../index.html" class="xp-back-btn" title="Regresar al inicio">
       <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
-      <img src="../img/logo.png" alt="Logo" class="xp-back-logo">
+      <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
     </a>
     <span class="xp-lbl">🎮 XP</span>
     <div class="xp-track" aria-hidden="true">
@@ -29,203 +29,177 @@
 
   <header class="hero" role="banner">
     <div class="hero-inner">
-      <div class="hero-mascot" aria-hidden="true">📝</div>
+      <div class="hero-mascot" aria-hidden="true">🦕</div>
       <div class="hero-text">
-        <h1>Misión <span>Los Sustantivos</span></h1>
-        <p class="sub">¡Descubre las palabras que nombran todo lo que existe y lo que imaginamos! ✨</p>
-        <div class="badge">📚 II y III Ciclo · Español · Lengua</div>
+        <h1>Misión <span>Las Eras Geológicas</span></h1>
+        <p class="sub">¡Viaja en el tiempo y descubre cómo cambió nuestro planeta! 🌍</p>
+        <div class="badge">🔬 II y III Ciclo · Ciencias Naturales</div>
       </div>
     </div>
   </header>
 
   <main class="main" id="main-content">
 
+    <!-- ==================== S-APRENDE (SIMULADOR) ==================== -->
     <div class="sec active" id="s-aprende" role="tabpanel">
       <div class="card ac-teal">
-        <h2>📝 ¿Qué es un Sustantivo?</h2>
-        <p>El <strong>sustantivo</strong> es la palabra que usamos para <strong>nombrar</strong> a las personas,
-          animales, cosas, lugares, sentimientos e ideas. Sin sustantivos, ¡no podríamos hablar de nada!</p>
+        <h2>🧭 Explorador de Eras Geológicas</h2>
+        <p>Toca los botones en la línea de tiempo para viajar a las diferentes Eras de la Tierra.</p>
+      </div>
+
+      <div class="sim-container">
+        <div id="era-pantalla" class="sim-screen" style="background: linear-gradient(135deg, #ff4e50, #f9d423);">
+          <h2 id="era-titulo" class="sim-title">Era Precámbrica</h2>
+          <div><span id="era-tiempo" class="sim-time">4,600 – 540 Millones de años</span></div>
+        </div>
+        <div class="sim-timeline">
+          <button class="sim-btn active" onclick="cambiarEra(0)">🌋 Precámbrico</button>
+          <button class="sim-btn" onclick="cambiarEra(1)">🐚 Paleozoico</button>
+          <button class="sim-btn" onclick="cambiarEra(2)">🦖 Mesozoico</button>
+          <button class="sim-btn" onclick="cambiarEra(3)">🐘 Cenozoico</button>
+          <button class="sim-btn" onclick="cambiarEra(4)">🧑 Cuaternario</button>
+        </div>
+        <div class="sim-info">
+          <p id="era-desc" style="font-size:0.92rem;margin-bottom:0.8rem;color:var(--dark);line-height:1.6;"></p>
+          <div id="era-img-box" class="sim-img-panel anim-in">
+            <img id="era-img" src="descriptivas-img/era-precambrica_edit.webp" alt="Ilustración de la era geológica">
+            <div class="sim-text-content">
+              <h4 id="era-img-titulo">🔍 Observación de Campo:</h4>
+              <p id="era-img-texto">Observa la imagen: El planeta era una inmensa bola volcánica. La corteza aún se
+                formaba entre erupciones de lava. Las primeras formas de vida, bacterias simples, surgieron en esos
+                océanos primitivos.</p>
+            </div>
+          </div>
+          <div class="sim-facts">
+            <div class="sim-fact anim-in" id="era-box1" style="border-color: #ff4e50;">
+              <h4 id="era-h1">🔬 Vida principal</h4>
+              <p id="era-p1">Bacterias y organismos unicelulares simples. No existía vida en tierra firme.</p>
+            </div>
+            <div class="sim-fact anim-in" id="era-box2" style="border-color: #f9d423;">
+              <h4 id="era-h2">🌎 Evento clave</h4>
+              <p id="era-p2">Formación de la Tierra, los océanos y una atmósfera sin oxígeno.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-gold" style="margin-top:1.2rem;">
+        <h2>📊 Línea del Tiempo Resumida</h2>
         <div class="tip">
           <span class="ti">💡</span>
-          <div><strong>Recuerda:</strong> Todo lo que puedes nombrar es un sustantivo. Si puedes decir «el» o «la» antes
-            de una palabra, ¡es un sustantivo! Ejemplo: <strong>el perro</strong>, <strong>la mesa</strong>, <strong>la
-              alegría</strong>.</div>
+          <div><strong>Recuerda:</strong> La Tierra tiene aproximadamente <strong>4,600 millones de años</strong>. Su
+            historia se divide en 5 grandes eras geológicas, desde la formación del planeta hasta la actualidad.</div>
         </div>
-      </div>
-
-      <div class="card ac-gold">
-        <h2>🏷️ Propios y Comunes</h2>
-        <div class="vs-grid">
-          <div class="vs-box vs-a">
-            <h4>👤 Propio</h4>
-            <p>Nombra a un ser o lugar <strong>específico y único</strong>. Siempre se escribe con <strong>mayúscula
-                inicial</strong>.</p>
-            <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplos: <em>Honduras, María, Tegucigalpa, Copán</em></p>
+        <div class="stat-bar">
+          <div class="stat-item">
+            <div class="stat-label">🌋 Precámbrica</div>
+            <div class="stat-val">4,600 M.a.</div>
           </div>
-          <div class="vs-box vs-b">
-            <h4>🏠 Común</h4>
-            <p>Nombra a cualquier ser, cosa o lugar <strong>sin distinguirlo</strong> de los demás de su misma clase.
-            </p>
-            <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplos: <em>perro, ciudad, río, escuela</em></p>
+          <div class="stat-item">
+            <div class="stat-label">🐚 Paleozoica</div>
+            <div class="stat-val">540 M.a.</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">🦖 Mesozoica</div>
+            <div class="stat-val">250 M.a.</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">🐘 Cenozoica</div>
+            <div class="stat-val">66 M.a.</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">🧑 Cuaternaria</div>
+            <div class="stat-val">2.6 M.a.</div>
           </div>
         </div>
-        <div class="ex-box">
-          <span class="ex-tag ex-f">🇭🇳 Sustantivos de Honduras</span><br>
-          <span>En Honduras usamos sustantivos todos los días: ciudades (<span class="hl">Comayagua</span>), comida
-            (<span class="hl2">baleada</span>, <span class="hl3">pupusa</span>) y moneda
-            (<strong>lempira</strong>).</span>
-        </div>
-      </div>
-
-      <div class="card ac-jade">
-        <h2>🪨 Concretos y Abstractos</h2>
-        <div class="vs-grid">
-          <div class="vs-box vs-c">
-            <h4>🪨 Concreto</h4>
-            <p>Nombra algo que podemos percibir con los <strong>cinco sentidos</strong>: ver, oír, tocar, oler o
-              saborear.</p>
-            <ul>
-              <li><strong>Ejemplos:</strong> mesa, música, perfume, chocolate</li>
-            </ul>
+        <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin:1rem 0 0.5rem;text-align:center;"> Explora
+          las ilustraciones de cada era </p>
+        <div class="tl-single-wrap">
+          <div class="tl-flip-card" onclick="nextPosterFlip()" title="Toca para girar a la siguiente">
+            <div class="tl-flip-inner" id="posterInner">
+              <div class="tl-flip-face tl-flip-front" id="posterFront">
+                <img src="carrusel-img/precambrica.edit.webp" alt="Era Precámbrica" loading="lazy">
+              </div>
+              <div class="tl-flip-face tl-flip-back" id="posterBack">
+              </div>
+            </div>
           </div>
-          <div class="vs-box vs-d">
-            <h4>💭 Abstracto</h4>
-            <p>Nombra algo que <strong>no podemos percibir</strong> con los sentidos físicos: sentimientos, ideas,
-              valores.</p>
-            <ul>
-              <li><strong>Ejemplos:</strong> amor, libertad, valentía, tristeza</li>
-            </ul>
+          <div class="tl-nav-btns">
+            <button class="tl-nav-btn" id="btnPrevPoster" onclick="prevPosterFlip()" disabled>◀ Anterior</button>
+            <span class="tl-dots" id="posterDots">1 / 5</span>
+            <button class="tl-nav-btn" id="btnNextPoster" onclick="nextPosterFlip()">Siguiente ▶</button>
           </div>
         </div>
       </div>
 
-      <div class="card ac-amber">
-        <h2>🌳 Individuales y Colectivos</h2>
-        <div class="vs-grid">
-          <div class="vs-box vs-a">
-            <h4>🐕 Individual</h4>
-            <p>Nombra a <strong>un solo</strong> ser u objeto, aunque esté en singular.</p>
-            <ul>
-              <li><strong>Ejemplos:</strong> árbol, soldado, abeja, estrella.</li>
-            </ul>
-          </div>
-          <div class="vs-box vs-b">
-            <h4>🌳 Colectivo</h4>
-            <p>Nombra a un <strong>conjunto o grupo</strong> de seres, aun estando en singular.</p>
-            <ul>
-              <li><strong>Ejemplos:</strong> bosque (árboles), ejército (soldados), enjambre (abejas).</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="card ac-purple">
-        <h2>⚧ Género y Número</h2>
-        <div class="vs-grid">
-          <div class="vs-box vs-a">
-            <h4>♂️♀️ Género</h4>
-            <p>Los sustantivos pueden ser <strong>Masculinos</strong> (llevan el/los) o <strong>Femeninos</strong>
-              (llevan la/las).</p>
-            <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplos: <em>el niño, la gata, los libros</em></p>
-          </div>
-          <div class="vs-box vs-b">
-            <h4>🔢 Número</h4>
-            <p>Pueden estar en <strong>Singular</strong> (uno solo) o <strong>Plural</strong> (más de uno, agregando -s
-              o -es).</p>
-            <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplos: <em>casa → casas, flor → flores</em></p>
-          </div>
-        </div>
-        <div class="tip">
-          <span class="ti">⚡</span>
-          <div><strong>Primitivos y Derivados:</strong> Un primitivo es la palabra original (<em>pan</em>). Un derivado
-            se forma usando sufijos (<em>panadería</em>). También pueden ser Aumentativos (<em>casona</em>), Diminutivos
-            (<em>casita</em>) o Despectivos (<em>casucha</em>).</div>
-        </div>
-      </div>
-
-      <button class="next-sec-btn" onclick="go('s-tipos')">
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
         <span class="nsb-icon">🏷️</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
-            class="nsb-name">Tipos</span></span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
+    <!-- ==================== S-TIPOS ==================== -->
     <div class="sec" id="s-tipos" role="tabpanel">
       <div class="card ac-teal">
-        <h2>📊 Según su Significado</h2>
+        <h2>🏷️ Características de Cada Era</h2>
         <div class="type-grid">
           <div class="type-chip tc-teal">
-            <div class="t-art">⭐ Propio</div>
-            <div class="t-info">Nombre único: María, Copán</div>
+            <div class="t-art">🌋 Precámbrica</div>
+            <div class="t-info">Bacterias, volcanes, océanos sin oxígeno</div>
           </div>
           <div class="type-chip tc-gold">
-            <div class="t-art">🏠 Común</div>
-            <div class="t-info">Nombre general: perro, ciudad</div>
+            <div class="t-art">🐚 Paleozoica</div>
+            <div class="t-info">Trilobites, primeros vertebrados, anfibios</div>
           </div>
           <div class="type-chip tc-jade">
-            <div class="t-art">🪨 Concreto</div>
-            <div class="t-info">Sensorial: mesa, pan</div>
+            <div class="t-art">🦖 Mesozoica</div>
+            <div class="t-info">Dinosaurios, Pangea, primeras aves</div>
           </div>
           <div class="type-chip tc-purple">
-            <div class="t-art">💭 Abstracto</div>
-            <div class="t-info">Ideales: amor, tristeza</div>
+            <div class="t-art">🐘 Cenozoica</div>
+            <div class="t-info">Mamíferos gigantes, diversificación de aves</div>
           </div>
           <div class="type-chip tc-amber">
-            <div class="t-art">🐕 Individual</div>
-            <div class="t-info">Un solo ser: árbol, soldado</div>
-          </div>
-          <div class="type-chip tc-blue">
-            <div class="t-art">🌳 Colectivo</div>
-            <div class="t-info">Un grupo: bosque, ejército</div>
+            <div class="t-art">🧑 Cuaternaria</div>
+            <div class="t-info">Edad de Hielo, aparición del ser humano</div>
           </div>
         </div>
       </div>
       <div class="card ac-gold">
-        <h2>🔢 Según se pueden Contar</h2>
-        <div class="type-grid">
-          <div class="type-chip tc-teal">
-            <div class="t-art">🔢 Contable</div>
-            <div class="t-info">Se cuenta: tres libros, dos gatos</div>
+        <h2>💥 Las Grandes Extinciones</h2>
+        <div class="vs-grid">
+          <div class="vs-box vs-a">
+            <h4>☠️ Extinción del Pérmico</h4>
+            <p>Al final de la Era Paleozoica desapareció el <strong>90% de las especies</strong>. Es la peor extinción
+              masiva de la historia.</p>
           </div>
-          <div class="type-chip tc-gold">
-            <div class="t-art">💧 Incontable</div>
-            <div class="t-info">Se mide: agua, arena, aire</div>
+          <div class="vs-box vs-b">
+            <h4>☄️ Extinción del Cretácico</h4>
+            <p>Un <strong>meteorito</strong> impactó la Tierra hace 66 M.a. y acabó con los dinosaurios, cerrando la Era
+              Mesozoica.</p>
           </div>
         </div>
       </div>
       <div class="card ac-jade">
-        <h2>⚧ Según Género y Número</h2>
-        <div class="type-grid">
-          <div class="type-chip tc-teal">
-            <div class="t-art">♂️ Masculino</div>
-            <div class="t-info">El niño, el gato, el sol</div>
-          </div>
-          <div class="type-chip tc-gold">
-            <div class="t-art">♀️ Femenino</div>
-            <div class="t-info">La niña, la luna, la mesa</div>
-          </div>
-          <div class="type-chip tc-jade">
-            <div class="t-art">1️⃣ Singular</div>
-            <div class="t-info">Un solo ser: casa, flor, río</div>
-          </div>
-          <div class="type-chip tc-purple">
-            <div class="t-art">🔢 Plural</div>
-            <div class="t-info">Varios seres: casas, ríos</div>
-          </div>
+        <h2>🌍 Pangea — El Supercontinente</h2>
+        <p>Durante la Era Mesozoica existió un único supercontinente llamado <strong>Pangea</strong>, que se fragmentó
+          poco a poco formando los continentes que conocemos hoy.</p>
+        <div class="tip">
+          <span class="ti">⚡</span>
+          <div><strong>Dato interesante:</strong> La palabra «Pangea» viene del griego y significa <strong>«toda la
+              Tierra»</strong>. Sus partes se llaman Laurasia (norte) y Gondwana (sur).</div>
         </div>
       </div>
-      <button class="next-sec-btn" onclick="go('s-flash')">
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
         <span class="nsb-icon">🃏</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
-            class="nsb-name">Flashcards</span></span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
+    <!-- ==================== S-FLASH ==================== -->
     <div class="sec" id="s-flash" role="tabpanel">
       <div class="card ac-teal">
-        <h2>🃏 Flashcards — Toca para voltear</h2>
+        <h2>🃏 Fósiles de Memoria — Toca para voltear</h2>
         <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera
           vez)</p>
         <div class="fc-wrap">
@@ -243,21 +217,21 @@
         </div>
         <div class="fc-nav">
           <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
-          <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 13</span>
+          <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
           <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
         </div>
         <div id="fbFlash" class="fb" role="alert"></div>
       </div>
-      <button class="next-sec-btn" onclick="go('s-quiz')">
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
         <span class="nsb-icon">🧠</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Quiz</span></span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
+    <!-- ==================== S-QUIZ ==================== -->
     <div class="sec" id="s-quiz" role="tabpanel">
       <div class="card ac-gold">
-        <h2>🧠 Quiz de Comprensión</h2>
+        <h2>🧠 Excavación de Conocimientos</h2>
         <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez
           por pregunta)</p>
         <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
@@ -269,21 +243,22 @@
         </div>
         <div id="fbQz" class="fb" role="alert"></div>
       </div>
-      <button class="next-sec-btn" onclick="go('s-clasifica')">
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
         <span class="nsb-icon">🗂️</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
-            class="nsb-name">Clasifica</span></span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
+    <!-- ==================== S-CLASIFICA ==================== -->
     <div class="sec" id="s-clasifica" role="tabpanel">
       <div class="card ac-jade">
-        <h2>🗂️ Clasifica los Sustantivos</h2>
+        <h2>🗂️ Estratos Geológicos</h2>
         <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una palabra del banco y toca la columna donde
           pertenece.</p>
         <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)
         </p>
+        <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: ¡Usa el botón
+          "Variar grupo" varias veces! Practicar con diferentes conceptos te ayudará a dominar el tema.</p>
         <div class="word-bank" id="clsBank" role="list"></div>
         <div class="drop-cols">
           <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda">
@@ -302,21 +277,20 @@
         </div>
         <div id="fbCls" class="fb" role="alert"></div>
       </div>
-      <button class="next-sec-btn" onclick="go('s-identifica')">
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
         <span class="nsb-icon">🔍</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
-            class="nsb-name">Identifica</span></span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
+    <!-- ==================== S-IDENTIFICA ==================== -->
     <div class="sec" id="s-identifica" role="tabpanel">
       <div class="card ac-purple">
-        <h2>🔍 Identifica el sustantivo</h2>
+        <h2>🔍 Identifica la Era</h2>
         <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez
           por pregunta)</p>
-        <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 9</p>
-        <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra que funciona como el sustantivo indicado:</p>
+        <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+        <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra clave que responde la pista:</p>
         <div class="id-sent" id="idSent" role="group"></div>
         <div class="id-info" id="idInfo" role="status" aria-live="polite"
           style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
@@ -326,40 +300,44 @@
         </div>
         <div id="fbId" class="fb" role="alert"></div>
       </div>
-      <button class="next-sec-btn" onclick="go('s-completa')">
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
         <span class="nsb-icon">✏️</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
-            class="nsb-name">Completa</span></span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
+    <!-- ==================== S-COMPLETA ==================== -->
     <div class="sec" id="s-completa" role="tabpanel">
       <div class="card ac-amber">
-        <h2>✏️ Completa la oración</h2>
+        <h2>✏️ Completa el Registro Fósil</h2>
         <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera
           vez)</p>
         <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;"
           id="cmpProg" aria-live="polite">Oración 1 de 8</p>
         <div class="cmp-sent" id="cmpSent"></div>
         <div class="cmp-opts" id="cmpOpts" role="group"></div>
-        <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+          <button class="btn btn-d" onclick="resetCmp()">🔄 Reiniciar</button>
+        </div>
         <div id="fbCmp" class="fb" role="alert"></div>
       </div>
-      <button class="next-sec-btn" onclick="go('s-reto')">
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
         <span class="nsb-icon">🏆</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Reto
-            Final</span></span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
+    <!-- ==================== S-RETO ==================== -->
     <div class="sec" id="s-reto" role="tabpanel">
       <div class="card ac-teal">
-        <h2>🏆 Reto Final — ¡30 segundos!</h2>
-        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el sustantivo rápidamente.</p>
+        <h2>🏆 Reto Asteroide — ¡30 segundos!</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica los eventos en la Era correcta antes del impacto.
+        </p>
         <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo
           primera partida)</p>
+        <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: Al terminar,
+          usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
         <div class="game" aria-live="polite">
           <div class="reto-timer" id="retoTimer">⏱ 30</div>
           <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
@@ -376,17 +354,16 @@
         </div>
         <div id="fbReto" class="fb" role="alert"></div>
       </div>
-      <button class="next-sec-btn" onclick="go('s-sopa')">
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
         <span class="nsb-icon">🔤</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Sopa de
-            Letras</span></span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
+    <!-- ==================== S-SOPA ==================== -->
     <div class="sec" id="s-sopa" role="tabpanel">
       <div class="card ac-teal">
-        <h2>🔤 Sopa de Letras</h2>
+        <h2>🔤 Yacimiento de Letras</h2>
         <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera
           vez)</p>
         <div class="sopa-words" id="sopaWords"></div>
@@ -395,33 +372,94 @@
           <div class="sopa-grid" id="sopaGrid"></div>
         </div>
         <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
-          <button class="btn btn-sec" id="sopaWordsBtn" onclick="toggleSopaWords()">🔦 Ver palabras</button>
           <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+          <button class="btn btn-amber" onclick="sopaFlashlight()"
+            title="Ilumina brevemente todas las palabras ocultas">🔦 Pista</button>
         </div>
         <div id="fbSopa" class="fb" role="alert"></div>
       </div>
-      <button class="next-sec-btn" onclick="go('s-maquina');maqEnsureInit()">
-        <span class="nsb-icon">⚙️</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
-            class="nsb-name">Máquina</span></span>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-asimilacion')">
+        <span class="nsb-icon">🕹️</span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
-    <div class="sec" id="s-maquina" role="tabpanel">
-      <div class="card ac-jade">
-        <h2>⚙️ La Máquina Clasificadora</h2>
-        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +2 XP por clasificación correcta · Clasifica cada palabra antes de que escape por la trituradora</p>
-        <div id="widget-clasificador"></div>
+    <!-- ==================== S-ASIMILACION ==================== -->
+    <div class="sec" id="s-asimilacion" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🕹️ Asimilación — Juegos Interactivos</h2>
+        <p style="font-size:0.88rem;color:var(--gray);">Consolida lo aprendido con estos minijuegos. ⭐ +5 XP por juego
+          completado (primera vez).</p>
       </div>
-      <button class="next-sec-btn" onclick="go('s-tareas')">
+
+      <!-- JUEGO 1: Ordenación Lógica -->
+      <div class="card ac-blue">
+        <h2>⏳ Juego 1 — Línea del Tiempo</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Ordena las eras de la <strong>más antigua</strong> a la
+          <strong>más reciente</strong> usando ▲ / ▼.</p>
+        <ol class="ord-list" id="ordList"></ol>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem;">
+          <button class="btn btn-g" onclick="checkOrdenacion()">✅ Verificar orden</button>
+          <button class="btn btn-d" onclick="buildOrdenacion()">🔀 Mezclar</button>
+        </div>
+        <div id="fbOrd" class="fb" role="alert"></div>
+      </div>
+
+      <!-- JUEGO 2: Asociación Simple -->
+      <div class="card ac-jade">
+        <h2>🔗 Juego 2 — Parejas Fósiles</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Toca un <strong>término</strong> de la izquierda y luego su
+          <strong>era</strong> correcta a la derecha.</p>
+        <div class="asoc-grid">
+          <div class="asoc-col">
+            <h4>📌 Términos</h4>
+            <div id="asocLeft"></div>
+          </div>
+          <div class="asoc-col">
+            <h4>🗓️ Eras</h4>
+            <div id="asocRight"></div>
+          </div>
+        </div>
+        <div style="margin-top:0.6rem;">
+          <button class="btn btn-d" onclick="buildAsociacion()">🔀 Reiniciar parejas</button>
+        </div>
+        <div id="fbAsoc" class="fb" role="alert"></div>
+      </div>
+
+      <!-- JUEGO 3: Anagrama -->
+      <div class="card ac-amber">
+        <h2>🔀 Juego 3 — Anagrama</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca dos letras para intercambiarlas y forma la palabra
+          correcta.</p>
+        <div class="tip" style="margin:0.4rem 0 0.6rem;">
+          <span class="ti">💡</span>
+          <div><strong>Pista:</strong> Roca espacial que acabó con los dinosaurios.</div>
+        </div>
+        <div class="ana-grid" id="anaGrid" role="group" aria-label="Cuadrícula de letras"></div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;margin-top:0.8rem;">
+          <button class="btn btn-g" onclick="checkAnagrama()">✅ Verificar</button>
+          <button class="btn btn-d" onclick="buildAnagrama()">🔀 Mezclar</button>
+        </div>
+        <div id="fbAna" class="fb" role="alert"></div>
+      </div>
+
+      <!-- JUEGO 4: Mini-Crucigrama -->
+      <div class="card ac-jade">
+        <h2>🔤 Juego 4 — Mini-Crucigrama</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Lee cada pista y escribe la respuesta. Las letras se muestran
+          en mayúscula automáticamente.</p>
+        <div class="cruci-list" id="cruciList" role="list"></div>
+        <button class="btn btn-g" style="margin-top:0.4rem;" onclick="checkCrucigrama()">✅ Verificar Crucigrama</button>
+        <div id="fbCruci" class="fb" role="alert"></div>
+      </div>
+
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
         <span class="nsb-icon">📋</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
-            class="nsb-name">Tareas</span></span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
+    <!-- ==================== S-TAREAS ==================== -->
     <div class="sec" id="s-tareas" role="tabpanel">
       <div class="card ac-gold">
         <h2>📋 Generador de Tareas</h2>
@@ -443,29 +481,16 @@
         </div>
         <div id="tgOut"></div>
       </div>
-      <button class="next-sec-btn" onclick="go('s-evaluacion')">
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
         <span class="nsb-icon">📝</span>
-        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Evaluación
-            Final</span></span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
 
+    <!-- ==================== S-EVALUACION ==================== -->
     <div class="sec" id="s-evaluacion" role="tabpanel">
       <div class="card ac-purple">
-        <div class="eval-print-header">
-          <h2>Evaluación Final de Misión Los Sustantivos al II y III Ciclo · Español · Lengua</h2>
-          <div class="eval-ph-nombre"><strong>Nombre:</strong><span
-              class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span
-              class="eval-ph-line-fecha">&nbsp;</span></div>
-          <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span
-              class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span
-              class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span>
-          </div>
-          <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta
-            vale 5 puntos</p>
-        </div>
-        <h2 id="eval-screen-title">📝 Evaluación Final — Los Sustantivos</h2>
+        <h2 id="eval-screen-title">📝 Evaluación Final — Las Eras Geológicas</h2>
         <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde
           las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas
             preguntas cuando quieras.</strong></p>
@@ -477,8 +502,8 @@
         </div>
         <div id="evalOut"></div>
       </div>
-      <div id="eval-pauta-sheet"></div>
-      <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,#e84393,#6c5ce7);">
+      <button class="next-sec-btn" onclick="openDiploma()"
+        style="background:linear-gradient(135deg,var(--pri),var(--sec));">
         <span class="nsb-icon">🎓</span>
         <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi
             Constancia</span></span>
@@ -486,14 +511,42 @@
       </button>
     </div>
 
+    <!-- ==================== S-MEMORIA ==================== -->
+    <div class="sec" id="s-memoria" role="tabpanel">
+      <div class="card ac-blue">
+        <h2>🧠 Memoria Prehistórica</h2>
+        <p>¡Encuentra las parejas de fósiles y animales para completar el registro!</p>
+        <div class="stat-bar">
+          <div class="stat-item">
+            <div class="stat-label">Parejas</div>
+            <div class="stat-val" id="memoPairs">0 / 8</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Intentos</div>
+            <div class="stat-val" id="memoTries">0</div>
+          </div>
+        </div>
+        <div class="memo-grid" id="memoGrid"></div>
+        <div style="text-align:center; margin-top: 1rem;">
+          <button class="btn btn-pri" onclick="initMemory()">🔄 Reiniciar Juego</button>
+        </div>
+        <div id="fbMemo" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-flash')">
+        <span class="nsb-icon">🃏</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
   </main>
 
+  <!-- ==================== DIPLOMA ==================== -->
   <div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
     <div class="diploma-card">
       <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
       <div class="diploma-title">CONSTANCIA DE LOGRO</div>
-      <div class="diploma-sub">Misión Los Sustantivos</div>
-      <div class="diploma-mascot" aria-hidden="true">📝</div>
+      <div class="diploma-sub">Misión Las Eras Geológicas</div>
+      <div class="diploma-mascot" aria-hidden="true">🦕</div>
       <div class="diploma-name" id="diplName">Estudiante</div>
       <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
       <div class="diploma-bar-wrap">
@@ -513,14 +566,16 @@
     </div>
   </div>
 
+  <!-- ==================== LOGROS ==================== -->
   <div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
     <h4>🏅 Mis Logros</h4>
     <div id="achList"></div>
   </div>
 
+  <!-- ==================== NAV (STATIC) ==================== -->
   <nav class="nav" role="tablist" aria-label="Secciones de la misión">
     <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende"
-      onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+      onclick="go('s-aprende')"><span class="ico">🧭</span> Simulador</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos"
       onclick="go('s-tipos')"><span class="ico">🏷️</span> Tipos</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash"
@@ -535,10 +590,12 @@
       onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto"
       onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-memoria" data-s="s-memoria"
+      onclick="go('s-memoria')"><span class="ico">🧠</span> Memoria</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa"
       onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
-    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-maquina" data-s="s-maquina"
-      onclick="go('s-maquina');maqEnsureInit()"><span class="ico">⚙️</span> Máquina</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-asimilacion" data-s="s-asimilacion"
+      onclick="go('s-asimilacion')"><span class="ico">🕹️</span> Asimilación</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas"
       onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion"
@@ -547,6 +604,7 @@
       aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
   </nav>
 
+  <!-- ==================== FOOTER ==================== -->
   <footer class="credits">
     <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
     <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
@@ -564,7 +622,7 @@
     </div>
   </footer>
 
-  <script src="js/sustantivos.js"></script>
+  <script src="js/eras.js"></script>
 </body>
 
 </html>
