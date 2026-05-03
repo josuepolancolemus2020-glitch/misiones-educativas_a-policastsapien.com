@@ -1022,6 +1022,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const d = COUNTRY_DATA[s.country];
       if (d) toast(`${d.bandera} ¡Explorando ${d.nombre}!`);
+
+      // Quitar foco del select para que el scroll listener no quede bloqueado,
+      // y restaurar el header si estaba oculto por el scroll.
+      countryEl.blur();
+      const header = document.querySelector('#view-inicio .app-header');
+      if (header) { header.style.transform = ''; header.style.marginBottom = ''; }
     });
   }
 
