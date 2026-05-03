@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Números Decimales | policastsapien.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/decimales.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html" class="xp-back-btn" title="Regresar al inicio">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🔢</div>
+      <div class="mascot-tooltip">¡Hola! Soy Deci. ¡Vamos a aprender! 🚀</div>
+    </div>
+    <div class="hero-text">
+      <h1>Misión <span>Números Decimales</span></h1>
+      <p class="sub">¡Domina el punto decimal, el valor posicional y las operaciones con decimales! 🎯</p>
+      <div class="badge">🧮 II y III Ciclo · Matemática</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ==================== APRENDE ==================== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔢 ¿Qué es un Número Decimal?</h2>
+    <p>Un <strong>número decimal</strong> tiene dos partes separadas por un <strong>punto decimal (.)</strong>: la <em>parte entera</em> (a la izquierda) y la <em>parte decimal</em> (a la derecha). Ejemplo: en el número <strong>47.368</strong>, el 47 es la parte entera y .368 es la parte decimal.</p>
+    <div class="tip">
+      <span class="ti">🇭🇳</span>
+      <div><strong>Honduras usa el punto (.) como separador decimal</strong> — igual que en los Estados Unidos. La coma (,) se usa para separar miles: 1,000 · 10,000 · 1,000,000. Nunca uses coma como decimal.</div>
+    </div>
+    <figure style="margin:1rem 0 0;text-align:center;">
+      <img src="img/portada tema-edit.webp" alt="Los números decimales en nuestra vida diaria" loading="lazy" style="max-width:100%;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.15);">
+      <figcaption style="font-size:0.78rem;color:var(--gray);margin-top:0.4rem;font-style:italic;">Los números decimales están presentes en nuestra vida cotidiana</figcaption>
+    </figure>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📐 Valor Posicional Decimal</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>⬅️ Parte Entera</h4>
+        <p>A la <strong>izquierda del punto</strong>. Sigue el sistema de valor posicional normal: unidades, decenas, centenas, etc.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: en <strong>47.368</strong>, la parte entera es <em>47</em>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>➡️ Parte Decimal</h4>
+        <p>A la <strong>derecha del punto</strong>. Cada posición vale <em>diez veces menos</em> que la anterior.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: en <strong>47.368</strong>, la parte decimal es <em>.368</em>.</p>
+      </div>
+    </div>
+    <figure style="margin:1rem 0 0;text-align:center;">
+      <img src="img/ubicación-del-punto-decimal-edit.webp" alt="Ubicación del punto decimal en un número" loading="lazy" style="max-width:100%;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.15);">
+      <figcaption style="font-size:0.78rem;color:var(--gray);margin-top:0.4rem;font-style:italic;">El punto decimal separa la parte entera (izquierda) de la parte decimal (derecha)</figcaption>
+    </figure>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔍 Posiciones Después del Punto</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>🔵 Décimas (1/10)</h4>
+        <p>Primer lugar a la derecha del punto. En <strong>0.7</strong>, el 7 está en las <em>décimas</em> = 7 × 1/10 = 0.7</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🟠 Centésimas (1/100)</h4>
+        <p>Segundo lugar a la derecha del punto. En <strong>0.04</strong>, el 4 está en las <em>centésimas</em> = 4 × 1/100 = 0.04</p>
+      </div>
+    </div>
+    <div class="vs-grid" style="margin-top:0.6rem;">
+      <div class="vs-box vs-a">
+        <h4>🟣 Milésimas (1/1,000)</h4>
+        <p>Tercer lugar a la derecha del punto. En <strong>0.009</strong>, el 9 está en las <em>milésimas</em> = 9 × 1/1,000 = 0.009</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🟤 Diezmilésimas (1/10,000)</h4>
+        <p>Cuarto lugar a la derecha del punto. En <strong>0.0003</strong>, el 3 está en las <em>diezmilésimas</em>.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">📖 Lectura</span><br>
+      <span>El número <span class="hl">4.35</span> se lee: <strong>"cuatro enteros treinta y cinco centésimas"</strong> o también <em>"cuatro punto treinta y cinco"</em>.</span>
+    </div>
+    <figure style="margin:1rem 0 0;text-align:center;">
+      <img src="img/como-se-lee-edit.webp" alt="Cómo se lee correctamente un número decimal" loading="lazy" style="max-width:100%;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.15);">
+      <figcaption style="font-size:0.78rem;color:var(--gray);margin-top:0.4rem;font-style:italic;">Así se lee correctamente un número decimal según cada posición</figcaption>
+    </figure>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>⚖️ Comparar y Redondear</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>📊 Comparar Decimales</h4>
+        <p>Se compara dígito a dígito desde la izquierda. Añade ceros si es necesario para igualar longitud.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;"><strong>0.8 > 0.75</strong> → décimas: 8 > 7 ✓</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🔄 Redondear</h4>
+        <p>Si el dígito siguiente es <strong>≥ 5</strong>, se suma 1 al dígito en cuestión. Si es <strong>< 5</strong>, queda igual.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;"><strong>3.67 → 3.7</strong> (a la décima: el 7 ≥ 5)</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">⚡</span>
+      <div><strong>Truco:</strong> Para alinear decimales al sumar o restar, pon los puntos exactamente uno debajo del otro en la columna. Puedes agregar ceros a la derecha sin cambiar el valor: <strong>2.5 = 2.50 = 2.500</strong>.</div>
+    </div>
+    <figure style="margin:1rem 0 0;text-align:center;">
+      <img src="img/ubicacion-en-la-recta-numerica-edit.webp" alt="Ubicación de decimales en la recta numérica" loading="lazy" style="max-width:100%;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.15);">
+      <figcaption style="font-size:0.78rem;color:var(--gray);margin-top:0.4rem;font-style:italic;">Los números decimales tienen su posición exacta en la recta numérica</figcaption>
+    </figure>
+    <figure style="margin:1rem 0 0;text-align:center;">
+      <img src="img/ejemplos-de-uso-edit.webp" alt="Ejemplos de uso de los números decimales" loading="lazy" style="max-width:100%;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.15);">
+      <figcaption style="font-size:0.78rem;color:var(--gray);margin-top:0.4rem;font-style:italic;">Ejemplos de uso de los decimales en situaciones cotidianas</figcaption>
+    </figure>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">📊</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== TIPOS ==================== -->
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>📊 Tabla de Valor Posicional</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">⬅️ Centenas</div><div class="t-info">100 · Tercer lugar a la izquierda del punto</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">⬅️ Decenas</div><div class="t-info">10 · Segundo lugar a la izquierda del punto</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">⬅️ Unidades</div><div class="t-info">1 · Primer lugar a la izquierda del punto</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">· Punto ·</div><div class="t-info">Separador decimal en Honduras</div></div>
+      <div class="type-chip tc-teal"><div class="t-art">➡️ Décimas</div><div class="t-info">1/10 = 0.1 · 1er lugar decimal</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">➡️ Centésimas</div><div class="t-info">1/100 = 0.01 · 2do lugar decimal</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">➡️ Milésimas</div><div class="t-info">1/1,000 = 0.001 · 3er lugar decimal</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">➡️ Diezmilésimas</div><div class="t-info">1/10,000 = 0.0001 · 4to lugar decimal</div></div>
+    </div>
+  </div>
+  <div class="card ac-gold">
+    <h2>🔁 Fracciones Decimales Equivalentes</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">1/2</div><div class="t-info">= 0.5 · Medio</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">1/4</div><div class="t-info">= 0.25 · Un cuarto</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">3/4</div><div class="t-info">= 0.75 · Tres cuartos</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">1/5</div><div class="t-info">= 0.2 · Un quinto</div></div>
+      <div class="type-chip tc-teal"><div class="t-art">1/10</div><div class="t-info">= 0.1 · Una décima</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">1/100</div><div class="t-info">= 0.01 · Una centésima</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">2/5</div><div class="t-info">= 0.4 · Dos quintos</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">1/8</div><div class="t-info">= 0.125 · Un octavo</div></div>
+    </div>
+  </div>
+  <div class="card ac-jade">
+    <h2>➕ Operaciones con Decimales</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal">
+        <div class="t-art">➕ Suma</div>
+        <div class="t-info">Alinea los puntos. 2.5 + 1.35 = 3.85</div>
+      </div>
+      <div class="type-chip tc-gold">
+        <div class="t-art">➖ Resta</div>
+        <div class="t-info">Alinea los puntos. 5.0 − 2.35 = 2.65</div>
+      </div>
+      <div class="type-chip tc-jade">
+        <div class="t-art">✖️ Multiplicación</div>
+        <div class="t-info">Multiplica, luego coloca decimales. 0.3 × 0.2 = 0.06</div>
+      </div>
+      <div class="type-chip tc-purple">
+        <div class="t-art">➗ División</div>
+        <div class="t-info">÷10 → punto va izquierda. 4.5 ÷ 10 = 0.45</div>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">💡 Regla</span><br>
+      <span>Al <span class="hl">multiplicar</span> por 10, 100, 1,000… el punto se mueve a la <strong>derecha</strong>. Al <span class="hl">dividir</span>, se mueve a la <strong>izquierda</strong>.</span>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== LAB ==================== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🧪 Laboratorio de Valor Posicional</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Activa y desactiva las partes del número <strong>47.368</strong> para explorar su valor posicional. ¡Observa qué representa cada dígito!</p>
+    <div id="lab-sentence" class="lab-sentence">🔍 Observas: la <strong>Parte Entera</strong> (47).</div>
+    <div class="lab-stage">
+      <div id="mon-wrapper" class="mon-wrapper">
+        <!-- TABLA DE VALOR POSICIONAL SVG INTERACTIVA -->
+        <svg id="dec-lab-svg" viewBox="0 0 280 180" width="280" height="180"
+             xmlns="http://www.w3.org/2000/svg" aria-label="Tabla de valor posicional interactiva" role="img">
+
+          <!-- Título superior -->
+          <text x="140" y="13" text-anchor="middle" font-size="8.5" font-weight="700" fill="#333">Número: 47.368 — Tabla de Valor Posicional</text>
+
+          <!-- ======= PARTE ENTERA (azul) ======= -->
+          <rect id="lab-bg-entero" x="8" y="18" width="88" height="130" rx="6"
+                fill="#1976d2" opacity="1"/>
+          <!-- Header entero -->
+          <text x="52" y="34" text-anchor="middle" font-size="7.5" fill="white" font-weight="700">Parte Entera</text>
+          <!-- Sub-headers: Decenas, Unidades -->
+          <text x="30" y="46" text-anchor="middle" font-size="6.5" fill="rgba(255,255,255,0.85)">Decenas</text>
+          <text x="74" y="46" text-anchor="middle" font-size="6.5" fill="rgba(255,255,255,0.85)">Unidades</text>
+          <!-- Separador vertical dentro del bloque entero -->
+          <line x1="52" y1="48" x2="52" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="3,2"/>
+          <!-- Dígitos grandes -->
+          <text x="30" y="90" text-anchor="middle" font-size="36" fill="white" font-weight="800">4</text>
+          <text x="74" y="90" text-anchor="middle" font-size="36" fill="white" font-weight="800">7</text>
+          <!-- Valores -->
+          <text x="30" y="108" text-anchor="middle" font-size="7" fill="rgba(255,255,255,0.9)">= 40</text>
+          <text x="74" y="108" text-anchor="middle" font-size="7" fill="rgba(255,255,255,0.9)">= 7</text>
+          <!-- Label activable -->
+          <text id="lab-lbl-entero" x="52" y="136" text-anchor="middle" font-size="7" fill="white" font-weight="700" opacity="1">47 = 40 + 7</text>
+
+          <!-- ======= PUNTO DECIMAL ======= -->
+          <rect x="98" y="18" width="14" height="130" rx="3" fill="#eceff1" opacity="0.7"/>
+          <text x="105" y="94" text-anchor="middle" font-size="28" fill="#333" font-weight="900">.</text>
+          <text x="105" y="148" text-anchor="middle" font-size="6" fill="#555">punto</text>
+
+          <!-- ======= DÉCIMAS (naranja) ======= -->
+          <rect id="lab-bg-decimas" x="114" y="18" width="46" height="130" rx="6"
+                fill="#f57c00" opacity="0.08"/>
+          <text x="137" y="34" text-anchor="middle" font-size="7" fill="#f57c00" font-weight="700">Décimas</text>
+          <text x="137" y="46" text-anchor="middle" font-size="6" fill="#f57c00">1/10</text>
+          <text x="137" y="90" text-anchor="middle" font-size="36" fill="#f57c00" font-weight="800">3</text>
+          <text x="137" y="108" text-anchor="middle" font-size="7" fill="#f57c00">= 0.3</text>
+          <text id="lab-lbl-decimas" x="137" y="136" text-anchor="middle" font-size="6.5" fill="#f57c00" font-weight="700" opacity="0">3 × 1/10</text>
+
+          <!-- ======= CENTÉSIMAS (verde) ======= -->
+          <rect id="lab-bg-centesimas" x="162" y="18" width="46" height="130" rx="6"
+                fill="#388e3c" opacity="0.08"/>
+          <text x="185" y="34" text-anchor="middle" font-size="7" fill="#388e3c" font-weight="700">Centésimas</text>
+          <text x="185" y="46" text-anchor="middle" font-size="6" fill="#388e3c">1/100</text>
+          <text x="185" y="90" text-anchor="middle" font-size="36" fill="#388e3c" font-weight="800">6</text>
+          <text x="185" y="108" text-anchor="middle" font-size="7" fill="#388e3c">= 0.06</text>
+          <text id="lab-lbl-centesimas" x="185" y="136" text-anchor="middle" font-size="6.5" fill="#388e3c" font-weight="700" opacity="0">6 × 1/100</text>
+
+          <!-- ======= MILÉSIMAS (morado) ======= -->
+          <rect id="lab-bg-milesimas" x="210" y="18" width="46" height="130" rx="6"
+                fill="#7b1fa2" opacity="0.08"/>
+          <text x="233" y="34" text-anchor="middle" font-size="7" fill="#7b1fa2" font-weight="700">Milésimas</text>
+          <text x="233" y="46" text-anchor="middle" font-size="6" fill="#7b1fa2">1/1,000</text>
+          <text x="233" y="90" text-anchor="middle" font-size="36" fill="#7b1fa2" font-weight="800">8</text>
+          <text x="233" y="108" text-anchor="middle" font-size="7" fill="#7b1fa2">= 0.008</text>
+          <text id="lab-lbl-milesimas" x="233" y="136" text-anchor="middle" font-size="6.5" fill="#7b1fa2" font-weight="700" opacity="0">8 × 1/1,000</text>
+
+          <!-- Línea de posiciones (y=152) -->
+          <text x="8" y="158" font-size="6" fill="#888">← Parte Entera →</text>
+          <text x="105" y="158" text-anchor="middle" font-size="6" fill="#888">·</text>
+          <text x="165" y="158" font-size="6" fill="#888">← Parte Decimal →</text>
+        </svg>
+      </div>
+    </div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">🔢 Parte Entera:</span>
+        <button class="lab-btn active-pri" data-lab-group="entero" data-lab-val="on" onclick="decLabToggleEntero()">Parte Entera (47)</button>
+      </div>
+      <div class="lab-group">
+        <span class="lab-group-label">🔵 Parte Decimal:</span>
+        <button class="lab-btn" data-lab-group="decimas" data-lab-val="off" onclick="decLabToggleDecimas()">Décimas (3)</button>
+        <button class="lab-btn" data-lab-group="centesimas" data-lab-val="off" onclick="decLabToggleCentesimas()">Centésimas (6)</button>
+        <button class="lab-btn" data-lab-group="milesimas" data-lab-val="off" onclick="decLabToggleMilesimas()">Milésimas (8)</button>
+      </div>
+      <div class="lab-group">
+        <span class="lab-group-label" style="width:auto; color:var(--pri);">🎯 Reto de Deci:</span>
+        <span id="labChallengeText" style="font-size:0.85rem; font-weight:bold; margin-right: 0.5rem;">¡Forma 47.068!</span>
+        <button class="btn btn-g" onclick="checkLabChallenge()">✅ ¡Armado!</button>
+      </div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== FLASHCARDS ==================== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fa" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 15</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== QUIZ ==================== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 12</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== CLASIFICA ==================== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Conceptos</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Arrastra cada término del banco a la columna donde pertenece. También puedes arrastrar entre columnas o devolver al banco.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== IDENTIFICA ==================== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 10</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== COMPLETA ==================== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== WIDGETS ==================== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <!-- Widget 1: Recta Numérica -->
+  <div class="card ac-teal">
+    <h2>📏 Ubica en la Recta Numérica</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP al ubicar correctamente (primera vez por número)</p>
+    <div class="nl-challenge">Ubica el número: <strong id="nlTarget" class="nl-num">0.3</strong></div>
+    <div class="nl-container">
+      <svg id="nlSvg" viewBox="0 0 400 80" width="100%" xmlns="http://www.w3.org/2000/svg" style="cursor:crosshair;display:block;" onclick="nlClick(event)"></svg>
+    </div>
+    <p style="font-size:0.75rem;color:var(--gray);text-align:center;margin-top:0.2rem;">↑ Haz clic en la posición correcta del número</p>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nlNext()">▶ Siguiente número</button>
+      <button class="btn btn-d" onclick="nlReset()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbNl" class="fb" role="alert"></div>
+  </div>
+
+  <!-- Widget 2: Ordenar Decimales -->
+  <div class="card ac-gold">
+    <h2>↕️ Ordena de Menor a Mayor</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por grupo)</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ordenar los números de <strong>menor a mayor</strong>:</p>
+    <div class="sort-list" id="sortList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkSort()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextSort()">🔄 Nuevo grupo</button>
+    </div>
+    <div id="fbSort" class="fb" role="alert"></div>
+  </div>
+
+  <!-- Widget 3: Constructor de Decimales -->
+  <div class="card ac-jade">
+    <h2>🔧 Constructor de Decimales</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por número construido correctamente</p>
+    <div class="bldr-challenge">Forma el número: <strong id="bldrTarget" class="bldr-num">0.35</strong></div>
+    <div class="bldr-display" id="bldrDisplay">0.000</div>
+    <div class="bldr-slots">
+      <div class="bldr-slot">
+        <div class="bldr-label">Décimas</div>
+        <div class="bldr-controls">
+          <button class="bldr-btn" onclick="bldrChange('d',1)">▲</button>
+          <div class="bldr-digit" id="bldrD">0</div>
+          <button class="bldr-btn" onclick="bldrChange('d',-1)">▼</button>
+        </div>
+        <div class="bldr-pos">1/10</div>
+      </div>
+      <div class="bldr-slot">
+        <div class="bldr-label">Centésimas</div>
+        <div class="bldr-controls">
+          <button class="bldr-btn" onclick="bldrChange('c',1)">▲</button>
+          <div class="bldr-digit" id="bldrC">0</div>
+          <button class="bldr-btn" onclick="bldrChange('c',-1)">▼</button>
+        </div>
+        <div class="bldr-pos">1/100</div>
+      </div>
+      <div class="bldr-slot">
+        <div class="bldr-label">Milésimas</div>
+        <div class="bldr-controls">
+          <button class="bldr-btn" onclick="bldrChange('m',1)">▲</button>
+          <div class="bldr-digit" id="bldrM">0</div>
+          <button class="bldr-btn" onclick="bldrChange('m',-1)">▼</button>
+        </div>
+        <div class="bldr-pos">1/1,000</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkBldr()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextBldr()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetBldr()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbBldr" class="fb" role="alert"></div>
+  </div>
+
+  <!-- Widget 4: Comparador Visual -->
+  <div class="card ac-purple">
+    <h2>⚖️ Comparador Visual de Decimales</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por comparación correcta</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">El número <strong>A</strong> (izquierda) es… ¿qué relación tiene con <strong>B</strong> (derecha)?</p>
+    <div class="cmp-vis-wrap">
+      <div class="cmp-vis-side">
+        <div class="cmp-vis-label">A</div>
+        <div class="cmp-vis-num" id="cmpVisA">0.75</div>
+        <div class="cmp-vis-bar-wrap"><div class="cmp-vis-bar" id="cmpVisBarA"></div></div>
+        <div class="cmp-vis-pct" id="cmpVisPctA">75/100</div>
+      </div>
+      <div class="cmp-vis-btns">
+        <button class="cmp-sym-btn" data-rel="gt" onclick="ansComp('gt')">Mayor ›</button>
+        <button class="cmp-sym-btn" data-rel="eq" onclick="ansComp('eq')">=  Igual</button>
+        <button class="cmp-sym-btn" data-rel="lt" onclick="ansComp('lt')">‹ Menor</button>
+      </div>
+      <div class="cmp-vis-side">
+        <div class="cmp-vis-label">B</div>
+        <div class="cmp-vis-num" id="cmpVisB">0.8</div>
+        <div class="cmp-vis-bar-wrap"><div class="cmp-vis-bar cmp-vis-bar-b" id="cmpVisBarB"></div></div>
+        <div class="cmp-vis-pct" id="cmpVisPctB">8/10</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;justify-content:center;">
+      <button class="btn btn-pri" onclick="nextComp()">▶ Siguiente par</button>
+    </div>
+    <div id="fbComp" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== RETO ==================== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el término decimal rápidamente.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+    <div class="game" id="gameBox" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('a')">Opción A</button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('b')">Opción B</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== SOPA DE LETRAS ==================== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== TAREAS ==================== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ==================== EVALUACIÓN ==================== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final de Misión Números Decimales · II y III Ciclo · Matemática</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación Final — Números Decimales</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+</main>
+
+<!-- ==================== DIPLOMA ==================== -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Números Decimales</div>
+    <div class="diploma-mascot" aria-hidden="true">🔢</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LOGROS ==================== -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- ==================== NAVEGACIÓN ==================== -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Tipos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+</nav>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
+  <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
+  <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/decimales.js"></script>
+</body>
+</html>

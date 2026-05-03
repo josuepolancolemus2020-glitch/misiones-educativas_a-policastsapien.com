@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Los Continentes: Europa, Asia y África | policastsapien.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/continentes-eas.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html" class="xp-back-btn" title="Regresar al inicio">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Nivel 1</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🌍</div>
+    <div class="hero-text">
+      <h1>Misión <span>Los Continentes: Europa, Asia y África</span></h1>
+      <p class="sub">¡Explora los tres grandes continentes del mundo y sus vínculos con Honduras! 🗺️</p>
+      <div class="badge">🌐 II y III Ciclo · Geografía · Ciencias Sociales</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🌐 ¿Qué son los continentes?</h2>
+    <p>Los <strong>continentes</strong> son las grandes masas de tierra que conforman la superficie de la Tierra. Estudiar Europa, Asia y África nos permite comprender cómo se organiza el mundo en términos <strong>geográficos, económicos, sociales y culturales</strong>, y cómo estos continentes se relacionan con Honduras.</p>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Dato clave:</strong> Estos tres continentes juntos concentran el <strong>80% de la población mundial</strong> y la mayor parte de las relaciones de cooperación y comercio que Honduras mantiene con el resto del mundo.</div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🌍 Europa: El continente de la cooperación</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🗺️ Geografía</h4>
+        <p>Área: <strong>10.5 millones km²</strong> · 44 países. Cordilleras: Alpes, Pirineos, Urales. Ríos: Danubio, Rin, Volga. Mares: Mediterráneo, Báltico, del Norte.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🇪🇺 Unión Europea (UE)</h4>
+        <p>Bloque de <strong>27 países</strong> con mercado único, libre circulación y el <strong>euro (€)</strong>. Instituciones en Bruselas, Estrasburgo y Luxemburgo. Principal socio comercial de Honduras.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>💰 Economía</h4>
+        <p>Economías de alto desarrollo: Alemania (4.ª mundial), Francia, Reino Unido. Industrias clave: automóvil, farmacéutica, turismo. Recibe el <strong>50% del turismo mundial</strong>.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🎭 Cultura</h4>
+        <p>Cuna del Renacimiento, la Ilustración y la Revolución Industrial. Religión predominante: Cristianismo. Patrimonio: Coliseo, Torre Eiffel, Alhambra.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🇭🇳 Honduras y Europa</span><br>
+      <span>Honduras <span class="hl">exporta</span> café ☕, banano 🍌 y textiles a la UE. Europa brinda <strong>cooperación</strong> en salud, educación y desarrollo rural. El acuerdo <span class="hl2">AACUE</span> facilita el comercio entre Centroamérica y la Unión Europea.</span>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🌊 El Mar Mediterráneo: puente entre continentes</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>📍 Ubicación</h4>
+        <p>Mar interior que separa <strong>Europa (norte) de África (sur)</strong>. Al este conecta con Asia a través del Canal de Suez. Fundamental en la historia de la humanidad.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🏛️ Historia</h4>
+        <p>Cuna de civilizaciones: <strong>Grecia, Roma, Egipto, Fenicia y Cartago</strong>. Ruta comercial activa por más de 3,000 años. Aún hoy es vital para el transporte marítimo mundial.</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">🌏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CONTINENTES ===== -->
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🌏 Asia: El continente gigante</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🗺️ Geografía</h4>
+        <p>Área: <strong>44.6 millones km²</strong> — el más grande del mundo. 48 países. Himalaya: <strong>Monte Everest 8,849 m</strong>. Ríos: Yangtze, Ganges, Indo. Desierto de Gobi.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>👥 Sociedad</h4>
+        <p>Población: <strong>4,700 millones</strong> (60% de la humanidad). China e India superan 1,400 millones c/u. El <strong>monzón</strong> organiza la agricultura de miles de millones.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>📈 Economía</h4>
+        <p>China: <strong>2.ª economía mundial</strong>. Japón: 3.ª. India: 5.ª y en ascenso. "Tigres asiáticos": Corea del Sur, Taiwán, Singapur. Arabia Saudita: mayor exportador de petróleo.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🎭 Cultura</h4>
+        <p>Cuna de las primeras civilizaciones: Mesopotamia, India, China. Religiones: Hinduismo, Budismo, Islam, Confucionismo. Patrimonio: Gran Muralla, Taj Mahal, Angkor Wat.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🇭🇳 Honduras y Asia</span><br>
+      <span>Honduras <span class="hl">importa</span> de China: ropa, tecnología y maquinaria. <strong>KOICA</strong> (Corea del Sur) apoya becas y formación técnica. Honduras <span class="hl2">exporta</span> mariscos y café a Japón y Corea del Sur.</span>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>🌍 África: El continente diverso</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🗺️ Geografía</h4>
+        <p>Área: <strong>30.4 millones km²</strong> — 2.º más grande. 54 países. Sahara: <strong>9.2 millones km²</strong>. Río Nilo: <strong>6,650 km</strong> (el más largo del mundo). Kilimanjaro: 5,895 m.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🗣️ Diversidad</h4>
+        <p>Más de <strong>2,000 idiomas</strong>. Organización continental: <strong>Unión Africana (UA)</strong> con 55 miembros. El continente más joven del mundo (edad media: 19 años).</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>💰 Economía</h4>
+        <p>Nigeria (mayor PIB africano), Sudáfrica, Egipto. Recursos: petróleo, diamantes, oro, cobre. Agricultura: 60% de la fuerza laboral. Gran <strong>potencial de desarrollo</strong>.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🎭 Cultura</h4>
+        <p>Cuna de la humanidad. Pirámides de Egipto, Gran Zimbabwe, Timbuktu. Raíces de jazz, blues, reggae y afrobeat. Colonialismo dejó herencias lingüísticas: francés, inglés, portugués.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🇭🇳 Honduras y África</span><br>
+      <span>Las relaciones se dan principalmente a través de la <span class="hl">ONU y la Unión Africana</span>. Comparten desafíos de desarrollo y cambio climático. Cooperación en foros <span class="hl2">G77 y Sur-Sur</span> en crecimiento.</span>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔍 Los tres continentes de un vistazo</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🌍 Europa</div><div class="t-info">10.5M km² · 44 países · UE · Alta economía</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🌏 Asia</div><div class="t-info">44.6M km² · 48 países · Himalaya · 60% humanidad</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🌍 África</div><div class="t-info">30.4M km² · 54 países · Sahara · 2,000 idiomas</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">🏔️ Everest</div><div class="t-info">8,849 m · Himalaya, Asia · Cumbre más alta</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🌊 Nilo</div><div class="t-info">6,650 km · África · Río más largo del mundo</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🏜️ Sahara</div><div class="t-info">9.2M km² · Norte de África · Mayor desierto caluroso</div></div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🧪 Laboratorio de Continentes</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Selecciona un continente y un aspecto para explorar sus características. ¡Combina todos para aprender!</p>
+    <div id="lab-sentence" class="lab-sentence">🌍 Explorando: <strong>Europa</strong> → <strong>Geografía</strong></div>
+    <div class="lab-stage">
+      <div id="lab-display" class="lab-display-box">
+        <!-- Rellenado por JS -->
+      </div>
+    </div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">🌍 Continente:</span>
+        <button class="lab-btn lab-cont-btn" data-continent="europa" onclick="labShowContinent('europa')">🌍 Europa</button>
+        <button class="lab-btn lab-cont-btn" data-continent="asia" onclick="labShowContinent('asia')">🌏 Asia</button>
+        <button class="lab-btn lab-cont-btn" data-continent="africa" onclick="labShowContinent('africa')">🌍 África</button>
+      </div>
+      <div class="lab-group">
+        <span class="lab-group-label">📌 Aspecto:</span>
+        <button class="lab-btn lab-asp-btn" data-aspecto="geo" onclick="labShowAspecto('geo')">🗺️ Geografía</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="eco" onclick="labShowAspecto('eco')">💰 Economía</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="soc" onclick="labShowAspecto('soc')">👥 Sociedad</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="cul" onclick="labShowAspecto('cul')">🎭 Cultura</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="hn" onclick="labShowAspecto('hn')">🇭🇳 Con HN</button>
+      </div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fa" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 15</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 12</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Conceptos</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un término del banco y toca la columna donde pertenece.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 10</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el concepto geográfico rápidamente.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="ansReto('a')">Opción A</button>
+        <button class="btn btn-sec" onclick="ansReto('b')">Opción B</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔄 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · Los Continentes: Europa, Asia y África · II y III Ciclo · Geografía · Ciencias Sociales</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final — Los Continentes: Europa, Asia y África</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🌍</span>
+  </button>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Los Continentes: Europa, Asia y África</div>
+    <div class="diploma-mascot" aria-hidden="true">🌍</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">🌐</span> Continentes</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
+  <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
+  <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/continentes-eas.js"></script>
+</body>
+</html>

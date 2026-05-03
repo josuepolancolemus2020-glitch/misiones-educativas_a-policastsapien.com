@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misión Las Eras Geológicas | policastsapien.com</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/eras.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+  <div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+    <a href="../../index.html" class="xp-back-btn" title="Regresar al inicio">
+      <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+      <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+    </a>
+    <span class="xp-lbl">🎮 XP</span>
+    <div class="xp-track" aria-hidden="true">
+      <div class="xp-fill" id="xpFill"></div>
+    </div>
+    <span class="xp-pts" id="xpPts">⭐ 0</span>
+    <span class="xp-lvl" id="xpLvl">Nivel 1</span>
+  </div>
+
+  <header class="hero" role="banner">
+    <div class="hero-inner">
+      <div class="hero-mascot" aria-hidden="true">🦕</div>
+      <div class="hero-text">
+        <h1>Misión <span>Las Eras Geológicas</span></h1>
+        <p class="sub">¡Viaja en el tiempo y descubre cómo cambió nuestro planeta! 🌍</p>
+        <div class="badge">🔬 II y III Ciclo · Ciencias Naturales</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main" id="main-content">
+
+    <!-- ==================== S-APRENDE (SIMULADOR) ==================== -->
+    <div class="sec active" id="s-aprende" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🧭 Explorador de Eras Geológicas</h2>
+        <p>Toca los botones en la línea de tiempo para viajar a las diferentes Eras de la Tierra.</p>
+      </div>
+
+      <div class="sim-container">
+        <div id="era-pantalla" class="sim-screen" style="background: linear-gradient(135deg, #ff4e50, #f9d423);">
+          <h2 id="era-titulo" class="sim-title">Era Precámbrica</h2>
+          <div><span id="era-tiempo" class="sim-time">4,600 – 540 Millones de años</span></div>
+        </div>
+        <div class="sim-timeline">
+          <button class="sim-btn active" onclick="cambiarEra(0)">🌋 Precámbrico</button>
+          <button class="sim-btn" onclick="cambiarEra(1)">🐚 Paleozoico</button>
+          <button class="sim-btn" onclick="cambiarEra(2)">🦖 Mesozoico</button>
+          <button class="sim-btn" onclick="cambiarEra(3)">🐘 Cenozoico</button>
+          <button class="sim-btn" onclick="cambiarEra(4)">🧑 Cuaternario</button>
+        </div>
+        <div class="sim-info">
+          <p id="era-desc" style="font-size:0.92rem;margin-bottom:0.8rem;color:var(--dark);line-height:1.6;"></p>
+          <div id="era-img-box" class="sim-img-panel anim-in">
+            <img id="era-img" src="descriptivas-img/era-precambrica_edit.webp" alt="Ilustración de la era geológica">
+            <div class="sim-text-content">
+              <h4 id="era-img-titulo">🔍 Observación de Campo:</h4>
+              <p id="era-img-texto">Observa la imagen: El planeta era una inmensa bola volcánica. La corteza aún se
+                formaba entre erupciones de lava. Las primeras formas de vida, bacterias simples, surgieron en esos
+                océanos primitivos.</p>
+            </div>
+          </div>
+          <div class="sim-facts">
+            <div class="sim-fact anim-in" id="era-box1" style="border-color: #ff4e50;">
+              <h4 id="era-h1">🔬 Vida principal</h4>
+              <p id="era-p1">Bacterias y organismos unicelulares simples. No existía vida en tierra firme.</p>
+            </div>
+            <div class="sim-fact anim-in" id="era-box2" style="border-color: #f9d423;">
+              <h4 id="era-h2">🌎 Evento clave</h4>
+              <p id="era-p2">Formación de la Tierra, los océanos y una atmósfera sin oxígeno.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-gold" style="margin-top:1.2rem;">
+        <h2>📊 Línea del Tiempo Resumida</h2>
+        <div class="tip">
+          <span class="ti">💡</span>
+          <div><strong>Recuerda:</strong> La Tierra tiene aproximadamente <strong>4,600 millones de años</strong>. Su
+            historia se divide en 5 grandes eras geológicas, desde la formación del planeta hasta la actualidad.</div>
+        </div>
+        <div class="stat-bar">
+          <div class="stat-item">
+            <div class="stat-label">🌋 Precámbrica</div>
+            <div class="stat-val">4,600 M.a.</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">🐚 Paleozoica</div>
+            <div class="stat-val">540 M.a.</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">🦖 Mesozoica</div>
+            <div class="stat-val">250 M.a.</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">🐘 Cenozoica</div>
+            <div class="stat-val">66 M.a.</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">🧑 Cuaternaria</div>
+            <div class="stat-val">2.6 M.a.</div>
+          </div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin:1rem 0 0.5rem;text-align:center;"> Explora
+          las ilustraciones de cada era </p>
+        <div class="tl-single-wrap">
+          <div class="tl-flip-card" onclick="nextPosterFlip()" title="Toca para girar a la siguiente">
+            <div class="tl-flip-inner" id="posterInner">
+              <div class="tl-flip-face tl-flip-front" id="posterFront">
+                <img src="carrusel-img/precambrica.edit.webp" alt="Era Precámbrica" loading="lazy">
+              </div>
+              <div class="tl-flip-face tl-flip-back" id="posterBack">
+              </div>
+            </div>
+          </div>
+          <div class="tl-nav-btns">
+            <button class="tl-nav-btn" id="btnPrevPoster" onclick="prevPosterFlip()" disabled>◀ Anterior</button>
+            <span class="tl-dots" id="posterDots">1 / 5</span>
+            <button class="tl-nav-btn" id="btnNextPoster" onclick="nextPosterFlip()">Siguiente ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+        <span class="nsb-icon">🏷️</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-TIPOS ==================== -->
+    <div class="sec" id="s-tipos" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🏷️ Características de Cada Era</h2>
+        <div class="type-grid">
+          <div class="type-chip tc-teal">
+            <div class="t-art">🌋 Precámbrica</div>
+            <div class="t-info">Bacterias, volcanes, océanos sin oxígeno</div>
+          </div>
+          <div class="type-chip tc-gold">
+            <div class="t-art">🐚 Paleozoica</div>
+            <div class="t-info">Trilobites, primeros vertebrados, anfibios</div>
+          </div>
+          <div class="type-chip tc-jade">
+            <div class="t-art">🦖 Mesozoica</div>
+            <div class="t-info">Dinosaurios, Pangea, primeras aves</div>
+          </div>
+          <div class="type-chip tc-purple">
+            <div class="t-art">🐘 Cenozoica</div>
+            <div class="t-info">Mamíferos gigantes, diversificación de aves</div>
+          </div>
+          <div class="type-chip tc-amber">
+            <div class="t-art">🧑 Cuaternaria</div>
+            <div class="t-info">Edad de Hielo, aparición del ser humano</div>
+          </div>
+        </div>
+      </div>
+      <div class="card ac-gold">
+        <h2>💥 Las Grandes Extinciones</h2>
+        <div class="vs-grid">
+          <div class="vs-box vs-a">
+            <h4>☠️ Extinción del Pérmico</h4>
+            <p>Al final de la Era Paleozoica desapareció el <strong>90% de las especies</strong>. Es la peor extinción
+              masiva de la historia.</p>
+          </div>
+          <div class="vs-box vs-b">
+            <h4>☄️ Extinción del Cretácico</h4>
+            <p>Un <strong>meteorito</strong> impactó la Tierra hace 66 M.a. y acabó con los dinosaurios, cerrando la Era
+              Mesozoica.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card ac-jade">
+        <h2>🌍 Pangea — El Supercontinente</h2>
+        <p>Durante la Era Mesozoica existió un único supercontinente llamado <strong>Pangea</strong>, que se fragmentó
+          poco a poco formando los continentes que conocemos hoy.</p>
+        <div class="tip">
+          <span class="ti">⚡</span>
+          <div><strong>Dato interesante:</strong> La palabra «Pangea» viene del griego y significa <strong>«toda la
+              Tierra»</strong>. Sus partes se llaman Laurasia (norte) y Gondwana (sur).</div>
+        </div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+        <span class="nsb-icon">🃏</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-FLASH ==================== -->
+    <div class="sec" id="s-flash" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🃏 Fósiles de Memoria — Toca para voltear</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera
+          vez)</p>
+        <div class="fc-wrap">
+          <div class="fc-inner" id="fcInner" onclick="flipCard()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0"
+            role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+            <div class="fc-front">
+              <div class="fw" id="fcW"></div>
+              <div class="fhint">👆 Toca · Enter para voltear</div>
+            </div>
+            <div class="fc-back">
+              <div class="fa" id="fcA"></div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-nav">
+          <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+          <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+          <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+        </div>
+        <div id="fbFlash" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+        <span class="nsb-icon">🧠</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-QUIZ ==================== -->
+    <div class="sec" id="s-quiz" role="tabpanel">
+      <div class="card ac-gold">
+        <h2>🧠 Excavación de Conocimientos</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez
+          por pregunta)</p>
+        <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+        <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+        <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+          <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+        </div>
+        <div id="fbQz" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+        <span class="nsb-icon">🗂️</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-CLASIFICA ==================== -->
+    <div class="sec" id="s-clasifica" role="tabpanel">
+      <div class="card ac-jade">
+        <h2>🗂️ Estratos Geológicos</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una palabra del banco y toca la columna donde
+          pertenece.</p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)
+        </p>
+        <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: ¡Usa el botón
+          "Variar grupo" varias veces! Practicar con diferentes conceptos te ayudará a dominar el tema.</p>
+        <div class="word-bank" id="clsBank" role="list"></div>
+        <div class="drop-cols">
+          <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda">
+            <h4 id="col-left-head">Columna A</h4>
+            <div id="items-left"></div>
+          </div>
+          <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha">
+            <h4 id="col-right-head">Columna B</h4>
+            <div id="items-right"></div>
+          </div>
+        </div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+          <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+          <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbCls" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+        <span class="nsb-icon">🔍</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-IDENTIFICA ==================== -->
+    <div class="sec" id="s-identifica" role="tabpanel">
+      <div class="card ac-purple">
+        <h2>🔍 Identifica la Era</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez
+          por pregunta)</p>
+        <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+        <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra clave que responde la pista:</p>
+        <div class="id-sent" id="idSent" role="group"></div>
+        <div class="id-info" id="idInfo" role="status" aria-live="polite"
+          style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+          <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbId" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+        <span class="nsb-icon">✏️</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-COMPLETA ==================== -->
+    <div class="sec" id="s-completa" role="tabpanel">
+      <div class="card ac-amber">
+        <h2>✏️ Completa el Registro Fósil</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera
+          vez)</p>
+        <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;"
+          id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+        <div class="cmp-sent" id="cmpSent"></div>
+        <div class="cmp-opts" id="cmpOpts" role="group"></div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+          <button class="btn btn-d" onclick="resetCmp()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbCmp" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+        <span class="nsb-icon">🏆</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-RETO ==================== -->
+    <div class="sec" id="s-reto" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🏆 Reto Asteroide — ¡30 segundos!</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica los eventos en la Era correcta antes del impacto.
+        </p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo
+          primera partida)</p>
+        <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: Al terminar,
+          usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+        <div class="game" aria-live="polite">
+          <div class="reto-timer" id="retoTimer">⏱ 30</div>
+          <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+          <div class="reto-btns">
+            <button class="btn btn-pri" onclick="ansReto('a')">Opción A</button>
+            <button class="btn btn-sec" onclick="ansReto('b')">Opción B</button>
+          </div>
+          <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+          <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+          <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbReto" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+        <span class="nsb-icon">🔤</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-SOPA ==================== -->
+    <div class="sec" id="s-sopa" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🔤 Yacimiento de Letras</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera
+          vez)</p>
+        <div class="sopa-words" id="sopaWords"></div>
+        <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+        <div class="sopa-container">
+          <div class="sopa-grid" id="sopaGrid"></div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+          <button class="btn btn-amber" onclick="sopaFlashlight()"
+            title="Ilumina brevemente todas las palabras ocultas">🔦 Pista</button>
+        </div>
+        <div id="fbSopa" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-asimilacion')">
+        <span class="nsb-icon">🕹️</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-ASIMILACION ==================== -->
+    <div class="sec" id="s-asimilacion" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🕹️ Asimilación — Juegos Interactivos</h2>
+        <p style="font-size:0.88rem;color:var(--gray);">Consolida lo aprendido con estos minijuegos. ⭐ +5 XP por juego
+          completado (primera vez).</p>
+      </div>
+
+      <!-- JUEGO 1: Ordenación Lógica -->
+      <div class="card ac-blue">
+        <h2>⏳ Juego 1 — Línea del Tiempo</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Ordena las eras de la <strong>más antigua</strong> a la
+          <strong>más reciente</strong> usando ▲ / ▼.</p>
+        <ol class="ord-list" id="ordList"></ol>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem;">
+          <button class="btn btn-g" onclick="checkOrdenacion()">✅ Verificar orden</button>
+          <button class="btn btn-d" onclick="buildOrdenacion()">🔀 Mezclar</button>
+        </div>
+        <div id="fbOrd" class="fb" role="alert"></div>
+      </div>
+
+      <!-- JUEGO 2: Asociación Simple -->
+      <div class="card ac-jade">
+        <h2>🔗 Juego 2 — Parejas Fósiles</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Toca un <strong>término</strong> de la izquierda y luego su
+          <strong>era</strong> correcta a la derecha.</p>
+        <div class="asoc-grid">
+          <div class="asoc-col">
+            <h4>📌 Términos</h4>
+            <div id="asocLeft"></div>
+          </div>
+          <div class="asoc-col">
+            <h4>🗓️ Eras</h4>
+            <div id="asocRight"></div>
+          </div>
+        </div>
+        <div style="margin-top:0.6rem;">
+          <button class="btn btn-d" onclick="buildAsociacion()">🔀 Reiniciar parejas</button>
+        </div>
+        <div id="fbAsoc" class="fb" role="alert"></div>
+      </div>
+
+      <!-- JUEGO 3: Anagrama -->
+      <div class="card ac-amber">
+        <h2>🔀 Juego 3 — Anagrama</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca dos letras para intercambiarlas y forma la palabra
+          correcta.</p>
+        <div class="tip" style="margin:0.4rem 0 0.6rem;">
+          <span class="ti">💡</span>
+          <div><strong>Pista:</strong> Roca espacial que acabó con los dinosaurios.</div>
+        </div>
+        <div class="ana-grid" id="anaGrid" role="group" aria-label="Cuadrícula de letras"></div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;margin-top:0.8rem;">
+          <button class="btn btn-g" onclick="checkAnagrama()">✅ Verificar</button>
+          <button class="btn btn-d" onclick="buildAnagrama()">🔀 Mezclar</button>
+        </div>
+        <div id="fbAna" class="fb" role="alert"></div>
+      </div>
+
+      <!-- JUEGO 4: Mini-Crucigrama -->
+      <div class="card ac-jade">
+        <h2>🔤 Juego 4 — Mini-Crucigrama</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Lee cada pista y escribe la respuesta. Las letras se muestran
+          en mayúscula automáticamente.</p>
+        <div class="cruci-list" id="cruciList" role="list"></div>
+        <button class="btn btn-g" style="margin-top:0.4rem;" onclick="checkCrucigrama()">✅ Verificar Crucigrama</button>
+        <div id="fbCruci" class="fb" role="alert"></div>
+      </div>
+
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+        <span class="nsb-icon">📋</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-TAREAS ==================== -->
+    <div class="sec" id="s-tareas" role="tabpanel">
+      <div class="card ac-gold">
+        <h2>📋 Generador de Tareas</h2>
+        <div class="tg-controls">
+          <select class="tg-sel" id="tgType">
+            <option value="identify">🔍 Identificar</option>
+            <option value="classify">🗂️ Clasificar</option>
+            <option value="complete">✏️ Completar oraciones</option>
+            <option value="explain">💡 Explicar</option>
+          </select>
+          <select class="tg-sel" id="tgCount">
+            <option value="5">5 tareas</option>
+            <option value="8" selected>8 tareas</option>
+            <option value="10">10 tareas</option>
+            <option value="15">15 tareas</option>
+          </select>
+          <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+          <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+        </div>
+        <div id="tgOut"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+        <span class="nsb-icon">📝</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-EVALUACION ==================== -->
+    <div class="sec" id="s-evaluacion" role="tabpanel">
+      <div class="card ac-purple">
+        <h2 id="eval-screen-title">📝 Evaluación Final — Las Eras Geológicas</h2>
+        <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde
+          las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas
+            preguntas cuando quieras.</strong></p>
+        <div class="eval-controls">
+          <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+          <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+          <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+          <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+        </div>
+        <div id="evalOut"></div>
+      </div>
+      <button class="next-sec-btn" onclick="openDiploma()"
+        style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+        <span class="nsb-icon">🎓</span>
+        <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi
+            Constancia</span></span>
+        <span class="nsb-arrow">🏆</span>
+      </button>
+    </div>
+
+    <!-- ==================== S-MEMORIA ==================== -->
+    <div class="sec" id="s-memoria" role="tabpanel">
+      <div class="card ac-blue">
+        <h2>🧠 Memoria Prehistórica</h2>
+        <p>¡Encuentra las parejas de fósiles y animales para completar el registro!</p>
+        <div class="stat-bar">
+          <div class="stat-item">
+            <div class="stat-label">Parejas</div>
+            <div class="stat-val" id="memoPairs">0 / 8</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Intentos</div>
+            <div class="stat-val" id="memoTries">0</div>
+          </div>
+        </div>
+        <div class="memo-grid" id="memoGrid"></div>
+        <div style="text-align:center; margin-top: 1rem;">
+          <button class="btn btn-pri" onclick="initMemory()">🔄 Reiniciar Juego</button>
+        </div>
+        <div id="fbMemo" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-flash')">
+        <span class="nsb-icon">🃏</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ==================== DIPLOMA ==================== -->
+  <div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+    <div class="diploma-card">
+      <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+      <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+      <div class="diploma-sub">Misión Las Eras Geológicas</div>
+      <div class="diploma-mascot" aria-hidden="true">🦕</div>
+      <div class="diploma-name" id="diplName">Estudiante</div>
+      <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+      <div class="diploma-bar-wrap">
+        <div class="diploma-bar" id="diplBar" style="width:0%"></div>
+      </div>
+      <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+      <div class="diploma-date" id="diplDate"></div>
+      <div class="diploma-ach" id="diplAch"></div>
+      <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
+      <hr style="margin:0.8rem 0;border-color:var(--border);">
+      <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..."
+        oninput="updateDiplomaName(this.value)">
+      <div class="diploma-actions">
+        <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+        <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== LOGROS ==================== -->
+  <div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+    <h4>🏅 Mis Logros</h4>
+    <div id="achList"></div>
+  </div>
+
+  <!-- ==================== NAV (STATIC) ==================== -->
+  <nav class="nav" role="tablist" aria-label="Secciones de la misión">
+    <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende"
+      onclick="go('s-aprende')"><span class="ico">🧭</span> Simulador</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos"
+      onclick="go('s-tipos')"><span class="ico">🏷️</span> Tipos</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash"
+      onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz"
+      onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica"
+      onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica"
+      onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa"
+      onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto"
+      onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-memoria" data-s="s-memoria"
+      onclick="go('s-memoria')"><span class="ico">🧠</span> Memoria</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa"
+      onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-asimilacion" data-s="s-asimilacion"
+      onclick="go('s-asimilacion')"><span class="ico">🕹️</span> Asimilación</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas"
+      onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion"
+      onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+    <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);"
+      aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  </nav>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="credits">
+    <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
+    <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
+    <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
+    <div class="cred-contact">
+      <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+      <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+    </div>
+    <div class="cred-tools">
+      <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+      <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+      <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+      <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+      <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+    </div>
+  </footer>
+
+  <script src="js/eras.js"></script>
+</body>
+
+</html>

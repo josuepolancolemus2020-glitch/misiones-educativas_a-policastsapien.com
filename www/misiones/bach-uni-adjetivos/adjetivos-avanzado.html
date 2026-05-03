@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión El Adjetivo Avanzado | policastsapien.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html" class="xp-back-btn" title="Regresar al inicio">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Nivel 1</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🎨</div>
+    <div class="hero-text">
+      <h1>Misión <span>El Adjetivo (Avanzado)</span></h1>
+      <p class="sub">Profundiza en la sintaxis, morfología y semántica adjetival según la NGLE. ✨</p>
+      <div class="badge">📚 Bachillerato y Universidad · Gramática Española</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<div class="sec active" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🎨 Definición y Naturaleza</h2>
+    <p>Sintácticamente, el <strong>adjetivo</strong> es el núcleo del Sintagma Adjetival (SAdj). Semánticamente, no solo "califica"; expresa propiedades, relaciones, cantidades o referencias espaciotemporales que delimitan o evalúan la extensión del sustantivo al que modifican.</p>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Acuerdo NGLE:</strong> Los tradicionales "adjetivos determinativos" (mi, este, algún) se clasifican hoy bajo la categoría transversal de <strong>Determinantes</strong> y <strong>Cuantificadores</strong>, reservando el término "adjetivo" principalmente para los calificativos, relacionales y adverbiales.</div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🏷️ Clasificación Semántica (NGLE)</h2>
+    <img src="img/adj_clasificacion.png" alt="Ilustración comparativa de adjetivos calificativos y relacionales" style="width:100%; max-height:260px; object-fit:cover; border-radius:12px; margin-bottom: 1rem; box-shadow:0 4px 12px rgba(0,0,0,0.15); border: 2px solid var(--border);">
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>✨ Adjetivos Calificativos</h4>
+        <p>Denotan cualidades o propiedades (físicas o abstractas). Son graduables y pueden ser base de adverbios en <em>-mente</em>.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplos: <em>perro <strong>grande</strong>, solución <strong>inteligente</strong></em>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🔗 Adjetivos Relacionales</h4>
+        <p>Clasifican al sustantivo en un ámbito o clase. No expresan cualidades, no admiten grado (*muy solar) ni adverbios en -mente.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplos: <em>crisis <strong>económica</strong>, energía <strong>solar</strong></em>.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">⏱️ Adjetivos Adverbiales</span><br>
+      <span>Poseen significado temporal o modal, similar al de un adverbio. No califican al objeto en sí, sino a la condición temporal o intencional de este.<br>Ejemplos: <em>el <strong>actual</strong> presidente, un <strong>presunto</strong> culpable, un <strong>falso</strong> amigo</em>.</span>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🧩 Funciones Sintácticas</h2>
+    <img src="img/adj_sintaxis.png" alt="Esquema visual de sintaxis" style="width:100%; max-height:260px; object-fit:cover; border-radius:12px; margin-bottom: 1rem; box-shadow:0 4px 12px rgba(0,0,0,0.15); border: 2px solid var(--border);">
+    <p style="margin-bottom:0.6rem;">El adjetivo o SAdj puede desempeñar tres funciones fundamentales en la oración:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>1️⃣ Modificador / Adyacente</h4>
+        <p>Incide directamente sobre un núcleo nominal dentro de un Sintagma Nominal (SN).</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ej: <em>La casa <strong>vieja</strong> se derrumbó.</em></p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>2️⃣ Atributo</h4>
+        <p>Se predica del sujeto a través de un verbo copulativo (ser, estar, parecer).</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ej: <em>La casa está <strong>vieja</strong>.</em></p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-f">3️⃣ Complemento Predicativo (CPred)</span><br>
+      <span>Modifica simultáneamente a un verbo pleno (predicativo) y a un sustantivo (Sujeto o CD) con el que concuerda en género y número.<br>Ejemplo: <em>Los atletas llegaron <strong>cansados</strong>. / Trajo <strong>fría</strong> la sopa.</em></span>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>⚖️ Posición: Restrictivos y No Restrictivos</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🛑 Restrictivos (Especificativos)</h4>
+        <p>Suelen ir pospuestos. Delimitan o restringen la extensión del sustantivo, seleccionando un subgrupo.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ej: <em>Me gustan los coches <strong>rojos</strong>.</em> (Solo los rojos).</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>📖 No restrictivos (Explicativos/Epítetos)</h4>
+        <p>A menudo van antepuestos. No limitan el alcance del sustantivo, sino que añaden una nota descriptiva o subjetiva.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ej: <em>La <strong>blanca</strong> nieve. / Sus <strong>hermosos</strong> ojos.</em></p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">⚠️</span>
+      <div><strong>Cambio de Significado:</strong> La posición antepuesta o pospuesta puede alterar semánticamente ciertos adjetivos (valor relacional vs. calificativo). Ej: <em>un hombre <strong>pobre</strong></em> (sin dinero) vs. <em>un <strong>pobre</strong> hombre</em> (digno de lástima).</div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>📉 Morfología: Elativos y Apócope</h2>
+    <img src="img/adj_elativos.png" alt="Ilustración de adjetivos elativos extremos" style="width:100%; max-height:260px; object-fit:cover; border-radius:12px; margin-bottom: 1rem; box-shadow:0 4px 12px rgba(0,0,0,0.15); border: 2px solid var(--border);">
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔥 Adjetivos Elativos</h4>
+        <p>Llevan implícito el grado extremo sin necesidad de morfemas superlativos (*muy enorme, *muy diminuto son anómalos).</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ej: <em>precioso, atroz, excelente, ínfimo</em>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>✂️ Apócope</h4>
+        <p>Pérdida de un fonema o sílaba final cuando el adjetivo precede a un sustantivo.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ej: <em>bueno -> <strong>buen</strong> tiempo; grande -> <strong>gran</strong> rey</em>.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">🏛️</span>
+      <div><strong>Superlativos Absolutos Léxicos (Base supletiva latina):</strong> bueno -> <strong>óptimo</strong> | malo -> <strong>pésimo</strong> | grande -> <strong>máximo</strong> | pequeño -> <strong>mínimo</strong>.</div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" onclick="go('s-tipos')">
+    <span class="nsb-icon">🏷️</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Clases y Conceptos</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>📊 Semántica y Naturaleza Léxica</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">✨ Calificativos</div><div class="t-info">Propiedades graduables. Intersectivos: mesa redonda.</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🔗 Relacionales</div><div class="t-info">Clasifican, no admiten grado. Ej: análisis sintáctico.</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">⏱️ Adverbiales</div><div class="t-info">Significado modal/temporal. Ej: presunto culpable.</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">🔥 Elativos Léxicos</div><div class="t-info">Grado máximo implícito. Ej: diminuto, enorme, atroz.</div></div>
+    </div>
+  </div>
+  <div class="card ac-gold">
+    <h2>⚙️ Función Sintáctica y Sintaxis</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">📖 Adyacente</div><div class="t-info">Modificador directo dentro del SN (El coche azul).</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">⚓ Atributo</div><div class="t-info">Predicación con V. Copulativo (El coche es azul).</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🎯 C. Predicativo</div><div class="t-info">Modifica Verbo pleno y Sustantivo (Llegó cansado).</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">✂️ Apocopado</div><div class="t-info">Pérdida fonética antepuesta (Un gran hombre).</div></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Flashcards</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Repaso Avanzado</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fa" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Quiz Avanzado</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz Analítico y Sintáctico</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Clasifica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasificación Morfosintáctica</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una palabra del banco y toca la columna donde pertenece según la gramática moderna.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Identifica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identificación Sintáctica</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra solicitada con precisión estructural:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Completa</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Morfología Supletiva y Apócope</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Análisis rápido de categorización adjetival.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="ansReto('a')">Opción A</button>
+        <button class="btn btn-sec" onclick="ansReto('b')">Opción B</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Sopa de Letras</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras Avanzada</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Tareas</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas Analíticas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Análisis Sintáctico</option>
+        <option value="classify">🗂️ Matriz Morfosemántica</option>
+        <option value="complete">✏️ Completar Concordancias</option>
+        <option value="explain">💡 Explicar Teoría (NGLE)</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Evaluación Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final: El Adjetivo (Nivel Universitario) · Gramática Española</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Universidad/Instituto:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Carrera/Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación Final — Sintaxis y Semántica Adjetival</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde las preguntas teóricas basadas en la NGLE, después selecciona <strong>Ver Pauta</strong> para la retroalimentación. <strong>Genera nuevas formas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Módulo aprobado!</span><span class="nsb-name">Ver Constancia Académica</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+</main>
+
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CERTIFICADO ACADÉMICO</div>
+    <div class="diploma-sub">Estudio Avanzado: El Adjetivo y SAdj (NGLE)</div>
+    <div class="diploma-mascot" aria-hidden="true">🎓</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros Académicos</h4>
+  <div id="achList"></div>
+</div>
+
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> NGLE</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">🏷️</span> Taxonomía</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Memorización</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Análisis</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Morfología</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Sintaxis</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Concordancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Presión</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Léxico</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Ejercicios</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Examen</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Certificado</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
+  <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
+  <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Bachillerato y Nivel Superior.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

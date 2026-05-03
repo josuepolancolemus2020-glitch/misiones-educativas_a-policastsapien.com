@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misión Los Verbos | policastsapien.com</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/verbos.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+  <div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+    <a href="../../index.html" class="xp-back-btn" title="Regresar al inicio">
+      <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+      <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+    </a>
+    <span class="xp-lbl">🎮 XP</span>
+    <div class="xp-track" aria-hidden="true">
+      <div class="xp-fill" id="xpFill"></div>
+    </div>
+    <span class="xp-pts" id="xpPts">⭐ 0</span>
+    <span class="xp-lvl" id="xpLvl">Nivel 1</span>
+  </div>
+
+  <header class="hero" role="banner">
+    <div class="hero-inner">
+      <div class="hero-mascot" aria-hidden="true">🏃‍♂️</div>
+      <div class="hero-text">
+        <h1>Misión <span>Los Verbos</span></h1>
+        <p class="sub">¡Descubre las palabras que dan vida, acción y movimiento a nuestras oraciones! ✨</p>
+        <div class="badge">📚 II y III Ciclo · Español · Lengua</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main" id="main-content">
+
+    <div class="sec active" id="s-aprende" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🏃‍♂️ ¿Qué es un Verbo?</h2>
+        <p>El <strong>verbo</strong> es la palabra más importante de la oración. Sirve para expresar
+          <strong>acciones</strong> (correr, saltar), <strong>estados</strong> (ser, estar) o <strong>procesos</strong>
+          (crecer, vivir) que realiza o sufre el sujeto.</p>
+        <div class="tip">
+          <span class="ti">💡</span>
+          <div><strong>Recuerda:</strong> El verbo es el <strong>núcleo del predicado</strong>. Sin un verbo conjugado,
+            no hay una oración completa.</div>
+        </div>
+      </div>
+
+      <div class="card ac-gold">
+        <h2>🏷️ Raíz, Desinencia y Conjugaciones</h2>
+        <div class="vs-grid">
+          <div class="vs-box vs-a">
+            <h4>🌱 Raíz</h4>
+            <p>Es la parte del verbo que no cambia (en los regulares) y contiene el significado principal.</p>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: de cantar → <em>cant-</em></p>
+          </div>
+          <div class="vs-box vs-b">
+            <h4>🧩 Desinencia</h4>
+            <p>Es la terminación que se añade a la raíz para indicar tiempo, persona y número.</p>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: cant-<em>amos</em></p>
+          </div>
+        </div>
+        <div class="ex-box">
+          <span class="ex-tag ex-f">🔢 Las 3 Conjugaciones (Infinitivo)</span><br>
+          <span><span class="hl">1ra:</span> terminados en <strong>-ar</strong> (amar, saltar). <span
+              class="hl2">2da:</span> terminados en <strong>-er</strong> (comer, leer). <span class="hl3">3ra:</span>
+            terminados en <strong>-ir</strong> (vivir, reír).</span>
+        </div>
+      </div>
+
+      <div class="card ac-jade">
+        <h2>⏳ Tiempos y Modos Verbales</h2>
+        <div class="vs-grid">
+          <div class="vs-box vs-c">
+            <h4>⏱️ Tiempo</h4>
+            <p>Indica <strong>cuándo</strong> ocurre la acción:</p>
+            <ul>
+              <li><strong>Pasado:</strong> Ya ocurrió <em>(jugué)</em></li>
+              <li><strong>Presente:</strong> Ocurre ahora <em>(juego)</em></li>
+              <li><strong>Futuro:</strong> Ocurrirá <em>(jugaré)</em></li>
+            </ul>
+          </div>
+          <div class="vs-box vs-d">
+            <h4>🎭 Modo</h4>
+            <p>Indica la <strong>actitud</strong> del hablante:</p>
+            <ul>
+              <li><strong>Indicativo:</strong> Hechos reales <em>(Él corre)</em></li>
+              <li><strong>Subjuntivo:</strong> Dudas o deseos <em>(Ojalá corra)</em></li>
+              <li><strong>Imperativo:</strong> Órdenes o ruegos <em>(¡Corre rápido!)</em></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-amber">
+        <h2>👥 Persona y Número</h2>
+        <div class="vs-grid">
+          <div class="vs-box vs-a">
+            <h4>🗣️ Persona</h4>
+            <p>Indica <strong>quién</strong> realiza la acción.</p>
+            <ul>
+              <li><strong>1ra:</strong> Quien habla (Yo / Nosotros)</li>
+              <li><strong>2da:</strong> Quien escucha (Tú / Vosotros / Ustedes)</li>
+              <li><strong>3ra:</strong> De quien se habla (Él / Ella / Ellos)</li>
+            </ul>
+          </div>
+          <div class="vs-box vs-b">
+            <h4>🔢 Número</h4>
+            <p>Indica <strong>cuántos</strong> realizan la acción.</p>
+            <ul>
+              <li><strong>Singular:</strong> Un solo sujeto (Yo leo, Ella canta).</li>
+              <li><strong>Plural:</strong> Varios sujetos (Nosotros leemos, Ellos cantan).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-purple">
+        <h2>✨ Clasificación de los Verbos</h2>
+        <div class="vs-grid">
+          <div class="vs-box vs-a">
+            <h4>📏 Regulares</h4>
+            <p>Al conjugarlos, <strong>mantienen su raíz</strong> igual en todos los tiempos y personas.</p>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplos: <em>cantar (canto, canté), vivir</em></p>
+          </div>
+          <div class="vs-box vs-b">
+            <h4>🔄 Irregulares</h4>
+            <p>Al conjugarlos, <strong>cambian su raíz</strong> o su desinencia respecto al modelo.</p>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplos: <em>ir (fui, iré), ser (soy, seré)</em></p>
+          </div>
+        </div>
+        <div class="tip">
+          <span class="ti">⚡</span>
+          <div><strong>Verbos Copulativos:</strong> Son aquellos que unen al sujeto con un atributo (no expresan acción
+            pura, sino estado). Los más comunes son: <strong>ser, estar y parecer</strong>.</div>
+        </div>
+      </div>
+
+      <button class="next-sec-btn" onclick="go('s-tipos')">
+        <span class="nsb-icon">🏷️</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
+            class="nsb-name">Tipos</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-tipos" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>📊 Según su Forma y Función</h2>
+        <div class="type-grid">
+          <div class="type-chip tc-teal">
+            <div class="t-art">📏 Regular</div>
+            <div class="t-info">No cambia su raíz: amar, correr</div>
+          </div>
+          <div class="type-chip tc-gold">
+            <div class="t-art">🔄 Irregular</div>
+            <div class="t-info">Cambia su raíz: ser, ir, tener</div>
+          </div>
+          <div class="type-chip tc-jade">
+            <div class="t-art">🏃‍♂️ Acción</div>
+            <div class="t-info">Expresa movimiento: saltar, comer</div>
+          </div>
+          <div class="type-chip tc-purple">
+            <div class="t-art">🧘‍♂️ Estado</div>
+            <div class="t-info">Verbos copulativos: ser, estar, parecer</div>
+          </div>
+        </div>
+      </div>
+      <div class="card ac-gold">
+        <h2>⏱️ Según el Tiempo</h2>
+        <div class="type-grid">
+          <div class="type-chip tc-teal">
+            <div class="t-art">⏪ Pasado</div>
+            <div class="t-info">Ayer: canté, comiste, vivieron</div>
+          </div>
+          <div class="type-chip tc-gold">
+            <div class="t-art">▶️ Presente</div>
+            <div class="t-info">Hoy: canto, comes, viven</div>
+          </div>
+          <div class="type-chip tc-jade">
+            <div class="t-art">⏩ Futuro</div>
+            <div class="t-info">Mañana: cantaré, comerás, vivirán</div>
+          </div>
+        </div>
+      </div>
+      <div class="card ac-jade">
+        <h2>🎭 Según el Modo</h2>
+        <div class="type-grid">
+          <div class="type-chip tc-teal">
+            <div class="t-art">✅ Indicativo</div>
+            <div class="t-info">Hechos reales: Carlos lee un libro</div>
+          </div>
+          <div class="type-chip tc-gold">
+            <div class="t-art">💭 Subjuntivo</div>
+            <div class="t-info">Deseos o dudas: Ojalá Carlos lea</div>
+          </div>
+          <div class="type-chip tc-jade">
+            <div class="t-art">⚠️ Imperativo</div>
+            <div class="t-info">Órdenes o ruegos: ¡Carlos, lee!</div>
+          </div>
+        </div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-flash')">
+        <span class="nsb-icon">🃏</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
+            class="nsb-name">Flashcards</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-flash" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🃏 Flashcards — Toca para voltear</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera
+          vez)</p>
+        <div class="fc-wrap">
+          <div class="fc-inner" id="fcInner" onclick="flipCard()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0"
+            role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+            <div class="fc-front">
+              <div class="fw" id="fcW"></div>
+              <div class="fhint">👆 Toca · Enter para voltear</div>
+            </div>
+            <div class="fc-back">
+              <div class="fa" id="fcA"></div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-nav">
+          <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+          <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+          <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+        </div>
+        <div id="fbFlash" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-quiz')">
+        <span class="nsb-icon">🧠</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Quiz</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-quiz" role="tabpanel">
+      <div class="card ac-gold">
+        <h2>🧠 Quiz de Comprensión</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez
+          por pregunta)</p>
+        <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+        <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+        <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+          <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+        </div>
+        <div id="fbQz" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-clasifica')">
+        <span class="nsb-icon">🗂️</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
+            class="nsb-name">Clasifica</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-clasifica" role="tabpanel">
+      <div class="card ac-jade">
+        <h2>🗂️ Clasifica los Verbos</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una palabra del banco y toca la columna donde
+          pertenece.</p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)
+        </p>
+        <div class="word-bank" id="clsBank" role="list"></div>
+        <div class="drop-cols">
+          <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda">
+            <h4 id="col-left-head">Columna A</h4>
+            <div id="items-left"></div>
+          </div>
+          <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha">
+            <h4 id="col-right-head">Columna B</h4>
+            <div id="items-right"></div>
+          </div>
+        </div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+          <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+          <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbCls" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-identifica')">
+        <span class="nsb-icon">🔍</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
+            class="nsb-name">Identifica</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-identifica" role="tabpanel">
+      <div class="card ac-purple">
+        <h2>🔍 Identifica el verbo</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez
+          por pregunta)</p>
+        <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+        <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra que funciona como verbo:</p>
+        <div class="id-sent" id="idSent" role="group"></div>
+        <div class="id-info" id="idInfo" role="status" aria-live="polite"
+          style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+          <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbId" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-completa')">
+        <span class="nsb-icon">✏️</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
+            class="nsb-name">Completa</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-completa" role="tabpanel">
+      <div class="card ac-amber">
+        <h2>✏️ Completa la oración</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera
+          vez)</p>
+        <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;"
+          id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+        <div class="cmp-sent" id="cmpSent"></div>
+        <div class="cmp-opts" id="cmpOpts" role="group"></div>
+        <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+        <div id="fbCmp" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-reto')">
+        <span class="nsb-icon">🏆</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Reto
+            Final</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-reto" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🏆 Reto Final — ¡30 segundos!</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el verbo rápidamente.</p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo
+          primera partida)</p>
+        <div class="game" aria-live="polite">
+          <div class="reto-timer" id="retoTimer">⏱ 30</div>
+          <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+          <div class="reto-btns">
+            <button class="btn btn-pri" onclick="ansReto('a')">Opción A</button>
+            <button class="btn btn-sec" onclick="ansReto('b')">Opción B</button>
+          </div>
+          <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+          <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+          <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbReto" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-sopa')">
+        <span class="nsb-icon">🔤</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Sopa de
+            Letras</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-sopa" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🔤 Sopa de Letras</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera
+          vez)</p>
+        <div class="sopa-words" id="sopaWords"></div>
+        <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+        <div class="sopa-container">
+          <div class="sopa-grid" id="sopaGrid"></div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-sec" id="sopaWordsBtn" onclick="toggleSopaWords()">🔦 Ver palabras</button>
+          <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+        </div>
+        <div id="fbSopa" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-tareas')">
+        <span class="nsb-icon">📋</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span
+            class="nsb-name">Tareas</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-tareas" role="tabpanel">
+      <div class="card ac-gold">
+        <h2>📋 Generador de Tareas</h2>
+        <div class="tg-controls">
+          <select class="tg-sel" id="tgType">
+            <option value="identify">🔍 Identificar</option>
+            <option value="classify">🗂️ Clasificar</option>
+            <option value="complete">✏️ Completar oraciones</option>
+            <option value="explain">💡 Explicar</option>
+          </select>
+          <select class="tg-sel" id="tgCount">
+            <option value="5">5 tareas</option>
+            <option value="8" selected>8 tareas</option>
+            <option value="10">10 tareas</option>
+            <option value="15">15 tareas</option>
+          </select>
+          <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+          <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+        </div>
+        <div id="tgOut"></div>
+      </div>
+      <button class="next-sec-btn" onclick="go('s-evaluacion')">
+        <span class="nsb-icon">📝</span>
+        <span class="nsb-label"><span class="nsb-hint">Siguiente sección</span><span class="nsb-name">Evaluación
+            Final</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-evaluacion" role="tabpanel">
+      <div class="card ac-purple">
+        <div class="eval-print-header">
+          <h2>Evaluación Final de Misión Los Verbos al II y III Ciclo · Español · Lengua</h2>
+          <div class="eval-ph-nombre"><strong>Nombre:</strong><span
+              class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span
+              class="eval-ph-line-fecha">&nbsp;</span></div>
+          <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span
+              class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span
+              class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span>
+          </div>
+          <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta
+            vale 5 puntos</p>
+        </div>
+        <h2 id="eval-screen-title">📝 Evaluación Final — Los Verbos</h2>
+        <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde
+          las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas
+            preguntas cuando quieras.</strong></p>
+        <div class="eval-controls">
+          <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+          <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+          <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+          <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+        </div>
+        <div id="evalOut"></div>
+      </div>
+      <div id="eval-pauta-sheet"></div>
+      <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,#e84393,#6c5ce7);">
+        <span class="nsb-icon">🎓</span>
+        <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi
+            Constancia</span></span>
+        <span class="nsb-arrow">🏆</span>
+      </button>
+    </div>
+
+  </main>
+
+  <div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+    <div class="diploma-card">
+      <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+      <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+      <div class="diploma-sub">Misión Los Verbos</div>
+      <div class="diploma-mascot" aria-hidden="true">🏃‍♂️</div>
+      <div class="diploma-name" id="diplName">Estudiante</div>
+      <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+      <div class="diploma-bar-wrap">
+        <div class="diploma-bar" id="diplBar" style="width:0%"></div>
+      </div>
+      <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+      <div class="diploma-date" id="diplDate"></div>
+      <div class="diploma-ach" id="diplAch"></div>
+      <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
+      <hr style="margin:0.8rem 0;border-color:var(--border);">
+      <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..."
+        oninput="updateDiplomaName(this.value)">
+      <div class="diploma-actions">
+        <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+        <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+    <h4>🏅 Mis Logros</h4>
+    <div id="achList"></div>
+  </div>
+
+  <nav class="nav" role="tablist" aria-label="Secciones de la misión">
+    <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende"
+      onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos"
+      onclick="go('s-tipos')"><span class="ico">🏷️</span> Tipos</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash"
+      onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz"
+      onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica"
+      onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica"
+      onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa"
+      onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto"
+      onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa"
+      onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas"
+      onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion"
+      onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+    <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);"
+      aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  </nav>
+
+  <footer class="credits">
+    <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
+    <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
+    <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
+    <div class="cred-contact">
+      <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+      <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+    </div>
+    <div class="cred-tools">
+      <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+      <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+      <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+      <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+      <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+    </div>
+  </footer>
+
+  <script src="js/verbos.js"></script>
+</body>
+
+</html>
