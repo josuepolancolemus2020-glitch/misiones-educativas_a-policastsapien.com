@@ -159,74 +159,110 @@ function _coLayout(n, W, H) {
    RENDER
 ══════════════════════════════════════════ */
 
-// Dibuja banner, logo circular (dentro del cintillo) y marca de agua
+/**
+ * Divide un texto en líneas que no superen maxWidth (en px del canvas).
+ * Devuelve un array de strings, máximo 3 líneas.
+ */
+function _coWrapText(ctx, text, maxWidth) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines = [];
+  let current = '';
+
+  for (const word of words) {
+    if (lines.length === 3) break;
+    const test = current ? current + ' ' + word : word;
+    if (ctx.measureText(test).width <= maxWidth) {
+      current = test;
+    } else {
+      if (current) lines.push(current);
+      // Palabra sola más ancha que el área: empujar igual para no perderla
+      current = word;
+    }
+  }
+  if (current && lines.length < 3) lines.push(current);
+  return lines.slice(0, 3);
+}
+
+// Dibuja banner, logo circular (object-fit:cover) y texto con word-wrap
 function _coDrawOverlays(ctx, W, H) {
   if (!_coMeta) return;
   const { bannerH, text, format } = _coMeta;
-  const bannerY  = H - bannerH;
-  const isVert   = format === 'vertical';
+  const bannerY = H - bannerH;
+  const isVert  = format === 'vertical';
 
-  // ── Cintillo oscuro ────────────────────────────────────────────────
+  // ── Cintillo oscuro ──────────────────────────────────────────────
   ctx.fillStyle = 'rgba(10,18,40,0.87)';
   ctx.fillRect(0, bannerY, W, bannerH);
-
-  // Línea de acento superior
+  // Borde de acento
   ctx.fillStyle = '#1e3a7c';
   ctx.fillRect(0, bannerY, W, 5);
 
-  // ── Logo circular (dentro del banner, no tapa fotos) ───────────────
-  const LOGO_D  = isVert ? 120 : 96;   // diámetro del círculo
-  const LOGO_R  = LOGO_D / 2;
-  const PAD     = 22;
-  const logoCX  = PAD + LOGO_R;
-  const logoCY  = bannerY + bannerH / 2;
+  // ── Logo circular — object-fit: cover (sin bordes blancos) ────────
+  const LOGO_D = isVert ? 130 : 106;
+  const LOGO_R = LOGO_D / 2;
+  const PAD    = 26;
+  const logoCX = PAD + LOGO_R;
+  const logoCY = bannerY + bannerH / 2;
 
   if (_coLogoCache) {
     ctx.save();
 
-    // Borde blanco alrededor del círculo
+    // Aro blanco exterior
     ctx.beginPath();
     ctx.arc(logoCX, logoCY, LOGO_R + 4, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(255,255,255,0.95)';
     ctx.fill();
 
-    // Recortar al círculo e insertar imagen
+    // Clip al círculo exacto
     ctx.beginPath();
     ctx.arc(logoCX, logoCY, LOGO_R, 0, Math.PI * 2);
     ctx.clip();
 
-    const lA    = _coLogoCache.naturalWidth / _coLogoCache.naturalHeight;
-    const inner = LOGO_D * 0.82;   // imagen ligeramente más pequeña que el círculo
-    const lW    = lA >= 1 ? inner       : inner * lA;
-    const lH    = lA >= 1 ? inner / lA  : inner;
-    ctx.drawImage(_coLogoCache, logoCX - lW / 2, logoCY - lH / 2, lW, lH);
+    // object-fit: cover → la imagen llena el círculo completo sin huecos.
+    // La dimensión más pequeña de la imagen escala hasta LOGO_D;
+    // la más grande desborda y queda recortada por el clip.
+    const iA = _coLogoCache.naturalWidth / _coLogoCache.naturalHeight;
+    let drawW, drawH;
+    if (iA >= 1) {
+      // Imagen más ancha que alta → escalar por altura
+      drawH = LOGO_D;
+      drawW = LOGO_D * iA;
+    } else {
+      // Imagen más alta que ancha → escalar por anchura
+      drawW = LOGO_D;
+      drawH = LOGO_D / iA;
+    }
+    ctx.drawImage(_coLogoCache, logoCX - drawW / 2, logoCY - drawH / 2, drawW, drawH);
 
     ctx.restore();
   }
 
-  // ── Texto de evidencia ─────────────────────────────────────────────
+  // ── Texto con word-wrap (máx. 3 líneas) ─────────────────────────
   if (text) {
-    // Si hay logo, el texto ocupa la zona a su derecha; si no, todo el ancho
-    const textLeft  = _coLogoCache ? logoCX + LOGO_R + 20 : PAD;
+    const textLeft  = _coLogoCache ? logoCX + LOGO_R + 26 : PAD;
     const textRight = W - PAD;
-    const textCX    = (textLeft + textRight) / 2;
     const maxW      = textRight - textLeft;
+    const textCX    = textLeft + maxW / 2;
 
-    let fs = isVert ? 70 : 56;
+    const FONT_SIZE   = isVert ? 60 : 52;
+    const LINE_HEIGHT = Math.round(FONT_SIZE * 1.38);
+
     ctx.fillStyle    = '#ffffff';
-    ctx.font         = `700 ${fs}px Arial, sans-serif`;
+    ctx.font         = `700 ${FONT_SIZE}px Arial, sans-serif`;
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
 
-    // Reducir tamaño hasta que quepa en el ancho disponible
-    while (ctx.measureText(text).width > maxW && fs > 22) {
-      fs -= 2;
-      ctx.font = `700 ${fs}px Arial, sans-serif`;
-    }
-    ctx.fillText(text, textCX, bannerY + bannerH / 2, maxW);
+    const lines   = _coWrapText(ctx, text, maxW);
+    const totalH  = lines.length * LINE_HEIGHT;
+    // Centrar verticalmente el bloque de texto en el banner
+    const startY  = bannerY + (bannerH - totalH) / 2 + LINE_HEIGHT / 2;
+
+    lines.forEach((line, i) => {
+      ctx.fillText(line, textCX, startY + i * LINE_HEIGHT, maxW);
+    });
   }
 
-  // ── Marca de agua discreta ─────────────────────────────────────────
+  // ── Marca de agua discreta ──────────────────────────────────────
   ctx.fillStyle    = 'rgba(255,255,255,0.25)';
   ctx.font         = `500 ${isVert ? 22 : 18}px Arial, sans-serif`;
   ctx.textAlign    = 'right';
@@ -349,7 +385,8 @@ async function coGenerate() {
 
     const CW      = 1080;
     const CH      = format === 'vertical' ? 1920 : 1080;
-    const BANNER_H = format === 'vertical' ? 160  : 130;
+    // 3 líneas × ~72px line-height + 40px padding + logo (106/130px) = ~220/260px
+    const BANNER_H = format === 'vertical' ? 260  : 220;
     const PHOTO_H  = CH - BANNER_H;
 
     canvas.width  = CW;
@@ -491,29 +528,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Descargar ────────────────────────────
   document.getElementById('co-download-btn')?.addEventListener('click', () => {
     const canvas = document.getElementById('collage-canvas');
-    if (!canvas || !_coMeta) return;
+    if (!canvas || !_coMeta) { toast('Genera el collage primero'); return; }
 
     const btn = document.getElementById('co-download-btn');
-    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Preparando…'; }
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando…'; }
 
-    // toBlob es asíncrono y más eficiente en memoria que toDataURL
-    canvas.toBlob(blob => {
-      if (!blob) {
-        toast('No se pudo exportar la imagen. Intenta de nuevo.');
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Descargar / Guardar Imagen'; }
-        return;
-      }
-      const url = URL.createObjectURL(blob);
-      const a   = document.createElement('a');
-      a.href     = url;
-      a.download = `collage-metas-${Date.now()}.jpg`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      // Liberar el Blob URL después de que el navegador lo procese
-      setTimeout(() => URL.revokeObjectURL(url), 500);
-      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Descargar / Guardar Imagen'; }
-    }, 'image/jpeg', 0.9);
+    // toDataURL es síncrono y confiable para forzar descarga directa de JPG
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    const a       = document.createElement('a');
+    a.href        = dataUrl;
+    a.download    = 'evidencia-metas.jpg';
+    a.click();
+
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Descargar / Guardar Imagen'; }
   });
 });
 
