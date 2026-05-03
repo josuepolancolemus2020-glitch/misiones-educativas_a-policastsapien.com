@@ -1580,10 +1580,10 @@ function paGenerate() {
 
     <div id="pa-out-overview">
       <div class="pa-stats-grid">
-        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#3b82f6">👥</div><div class="pa-stat-lbl">En Lista</div><div class="pa-stat-val">${total}</div></div>
-        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#8b5cf6">📈</div><div class="pa-stat-lbl">Promedio</div><div class="pa-stat-val" style="color:${avgColor}">${avg.toFixed(1)}</div></div>
-        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#22c55e">🏆</div><div class="pa-stat-lbl">Aprobación</div><div class="pa-stat-val">${pRate}%</div><div class="pa-stat-sub">≥ 70%</div></div>
-        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#ef4444">⚠️</div><div class="pa-stat-lbl">Recuperación</div><div class="pa-stat-val">${toRecover.length}</div><div class="pa-stat-sub">nota ≤ 65</div></div>
+        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#3b82f6">👥</div><div class="pa-stat-info"><div class="pa-stat-lbl">En Lista</div><div class="pa-stat-val">${total}</div></div></div>
+        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#8b5cf6">📈</div><div class="pa-stat-info"><div class="pa-stat-lbl">Promedio</div><div class="pa-stat-val" style="color:${avgColor}">${avg.toFixed(1)}</div></div></div>
+        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#22c55e">🏆</div><div class="pa-stat-info"><div class="pa-stat-lbl">Aprobación</div><div class="pa-stat-val">${pRate}%</div><div class="pa-stat-sub">≥ 70%</div></div></div>
+        <div class="pa-stat-card"><div class="pa-stat-ic" style="background:#ef4444">⚠️</div><div class="pa-stat-info"><div class="pa-stat-lbl">Recuperación</div><div class="pa-stat-val">${toRecover.length}</div><div class="pa-stat-sub">nota ≤ 65</div></div></div>
       </div>
 
       <div class="pa-two-col">
@@ -1791,40 +1791,16 @@ tbody tr:nth-child(even){background:#f8fafc;}
 </div>
 </body></html>`;
 
-  // Inyectar estilos de impresión en la página actual y llamar window.print()
-  document.getElementById('pa-print-area')?.remove();
-  document.getElementById('pa-print-style')?.remove();
-
-  const printArea = document.createElement('div');
-  printArea.id = 'pa-print-area';
-  // Extraer solo el contenido del <body> del HTML generado
-  const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-  const bodyContent = bodyMatch ? bodyMatch[1] : html;
-  // Extraer CSS del <head>
-  const styleMatch = html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-  const printCSS = styleMatch ? styleMatch[1] : '';
-  printArea.innerHTML = bodyContent;
-  document.body.appendChild(printArea);
-
-  const styleTag = document.createElement('style');
-  styleTag.id = 'pa-print-style';
-  styleTag.textContent = `
-    ${printCSS}
-    @media print {
-      body > *:not(#pa-print-area) { display: none !important; }
-      #pa-print-area { display: block !important; position: static !important; }
-    }
-    #pa-print-area { display: none; }
-  `;
-  document.head.appendChild(styleTag);
-
-  window.print();
-
-  // Limpiar después de que se cierre el diálogo
-  setTimeout(() => {
-    document.getElementById('pa-print-area')?.remove();
-    document.getElementById('pa-print-style')?.remove();
-  }, 2000);
+  const printWin = window.open('', '_blank');
+  if (!printWin) {
+    toast('Activa las ventanas emergentes para imprimir');
+    return;
+  }
+  printWin.document.open();
+  printWin.document.write(html);
+  printWin.document.close();
+  printWin.focus();
+  setTimeout(() => printWin.print(), 700);
 }
 window.paPrint = paPrint;
 
