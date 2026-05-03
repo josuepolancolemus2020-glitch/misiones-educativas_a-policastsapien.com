@@ -159,54 +159,76 @@ function _coLayout(n, W, H) {
    RENDER
 ══════════════════════════════════════════ */
 
-// Dibuja banner, logo y marca de agua (no las fotos)
+// Dibuja banner, logo circular (dentro del cintillo) y marca de agua
 function _coDrawOverlays(ctx, W, H) {
   if (!_coMeta) return;
   const { bannerH, text, format } = _coMeta;
-  const bannerY = H - bannerH;
+  const bannerY  = H - bannerH;
+  const isVert   = format === 'vertical';
 
-  // Cintillo oscuro
+  // ── Cintillo oscuro ────────────────────────────────────────────────
   ctx.fillStyle = 'rgba(10,18,40,0.87)';
   ctx.fillRect(0, bannerY, W, bannerH);
 
-  // Borde de acento
+  // Línea de acento superior
   ctx.fillStyle = '#1e3a7c';
-  ctx.fillRect(0, bannerY, W, 4);
+  ctx.fillRect(0, bannerY, W, 5);
 
-  // Texto de evidencia
+  // ── Logo circular (dentro del banner, no tapa fotos) ───────────────
+  const LOGO_D  = isVert ? 120 : 96;   // diámetro del círculo
+  const LOGO_R  = LOGO_D / 2;
+  const PAD     = 22;
+  const logoCX  = PAD + LOGO_R;
+  const logoCY  = bannerY + bannerH / 2;
+
+  if (_coLogoCache) {
+    ctx.save();
+
+    // Borde blanco alrededor del círculo
+    ctx.beginPath();
+    ctx.arc(logoCX, logoCY, LOGO_R + 4, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.fill();
+
+    // Recortar al círculo e insertar imagen
+    ctx.beginPath();
+    ctx.arc(logoCX, logoCY, LOGO_R, 0, Math.PI * 2);
+    ctx.clip();
+
+    const lA    = _coLogoCache.naturalWidth / _coLogoCache.naturalHeight;
+    const inner = LOGO_D * 0.82;   // imagen ligeramente más pequeña que el círculo
+    const lW    = lA >= 1 ? inner       : inner * lA;
+    const lH    = lA >= 1 ? inner / lA  : inner;
+    ctx.drawImage(_coLogoCache, logoCX - lW / 2, logoCY - lH / 2, lW, lH);
+
+    ctx.restore();
+  }
+
+  // ── Texto de evidencia ─────────────────────────────────────────────
   if (text) {
-    let fs = format === 'vertical' ? 44 : 36;
+    // Si hay logo, el texto ocupa la zona a su derecha; si no, todo el ancho
+    const textLeft  = _coLogoCache ? logoCX + LOGO_R + 20 : PAD;
+    const textRight = W - PAD;
+    const textCX    = (textLeft + textRight) / 2;
+    const maxW      = textRight - textLeft;
+
+    let fs = isVert ? 70 : 56;
     ctx.fillStyle    = '#ffffff';
     ctx.font         = `700 ${fs}px Arial, sans-serif`;
     ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
-    while (ctx.measureText(text).width > W - 220 && fs > 18) {
+
+    // Reducir tamaño hasta que quepa en el ancho disponible
+    while (ctx.measureText(text).width > maxW && fs > 22) {
       fs -= 2;
       ctx.font = `700 ${fs}px Arial, sans-serif`;
     }
-    ctx.fillText(text, W / 2, bannerY + bannerH / 2);
+    ctx.fillText(text, textCX, bannerY + bannerH / 2, maxW);
   }
 
-  // Logo
-  if (_coLogoCache) {
-    const SIZE = format === 'vertical' ? 110 : 88;
-    const PAD  = 16;
-    ctx.fillStyle = 'rgba(255,255,255,0.92)';
-    _coRR(ctx, PAD, PAD, SIZE, SIZE, 14);
-    ctx.fill();
-    const lA    = _coLogoCache.naturalWidth / _coLogoCache.naturalHeight;
-    const inner = SIZE - 16;
-    const lW    = lA >= 1 ? inner         : inner * lA;
-    const lH    = lA >= 1 ? inner / lA    : inner;
-    ctx.drawImage(_coLogoCache,
-      PAD + (SIZE - lW) / 2,
-      PAD + (SIZE - lH) / 2,
-      lW, lH);
-  }
-
-  // Marca de agua discreta
-  ctx.fillStyle    = 'rgba(255,255,255,0.28)';
-  ctx.font         = `500 ${format === 'vertical' ? 22 : 18}px Arial, sans-serif`;
+  // ── Marca de agua discreta ─────────────────────────────────────────
+  ctx.fillStyle    = 'rgba(255,255,255,0.25)';
+  ctx.font         = `500 ${isVert ? 22 : 18}px Arial, sans-serif`;
   ctx.textAlign    = 'right';
   ctx.textBaseline = 'bottom';
   ctx.fillText('M.E.T.A.S.', W - 16, H - 10);
@@ -327,7 +349,7 @@ async function coGenerate() {
 
     const CW      = 1080;
     const CH      = format === 'vertical' ? 1920 : 1080;
-    const BANNER_H = format === 'vertical' ? 110  : 90;
+    const BANNER_H = format === 'vertical' ? 160  : 130;
     const PHOTO_H  = CH - BANNER_H;
 
     canvas.width  = CW;
@@ -416,58 +438,6 @@ function _coRenderThumbs() {
 }
 
 /* ══════════════════════════════════════════
-   COMPARTIR
-══════════════════════════════════════════ */
-
-/**
- * Comparte la imagen del canvas usando la Web Share API (nivel 2 — archivos).
- * Soportado en Android Chrome / Safari iOS 15+.
- * Si el dispositivo no soporta compartir archivos, muestra un toast informativo.
- */
-async function shareCollage() {
-  const canvas = document.getElementById('collage-canvas');
-  if (!canvas || !_coMeta) {
-    toast('Genera el collage primero');
-    return;
-  }
-
-  // Deshabilitar el botón mientras se procesa
-  const btn = document.getElementById('co-share-btn');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Preparando…'; }
-
-  try {
-    // Exportar el canvas a Blob JPG
-    const blob = await new Promise((res, rej) =>
-      canvas.toBlob(b => b ? res(b) : rej(new Error('toBlob falló')), 'image/jpeg', 0.9)
-    );
-
-    const file = new File([blob], `evidencia-metas-${Date.now()}.jpg`, { type: 'image/jpeg' });
-
-    // Verificar soporte de Web Share API con archivos
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        files:  [file],
-        title:  'Evidencia Pedagógica',
-        text:   'Evidencia generada con M.E.T.A.S.',
-      });
-      // navigator.share resuelve cuando el usuario elige destino o cancela
-    } else {
-      // Fallback: el dispositivo no soporta compartir archivos nativamente
-      toast('Tu dispositivo no soporta compartir directamente. Usa el botón de descargar.');
-    }
-
-  } catch (err) {
-    // AbortError = el usuario canceló el diálogo → no mostrar error
-    if (err.name !== 'AbortError') {
-      toast('No se pudo compartir. Usa el botón de descargar.');
-      console.error('[Collage share]', err);
-    }
-  } finally {
-    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-share-nodes"></i> Compartir'; }
-  }
-}
-
-/* ══════════════════════════════════════════
    EVENT LISTENERS
 ══════════════════════════════════════════ */
 
@@ -521,16 +491,30 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Descargar ────────────────────────────
   document.getElementById('co-download-btn')?.addEventListener('click', () => {
     const canvas = document.getElementById('collage-canvas');
-    if (!canvas) return;
-    const a    = document.createElement('a');
-    a.download = `collage-metas-${Date.now()}.jpg`;
-    a.href     = canvas.toDataURL('image/jpeg', 0.9);
-    a.click();
-  });
+    if (!canvas || !_coMeta) return;
 
-  // ── Compartir ─────────────────────────────
-  document.getElementById('co-share-btn')
-    ?.addEventListener('click', shareCollage);
+    const btn = document.getElementById('co-download-btn');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Preparando…'; }
+
+    // toBlob es asíncrono y más eficiente en memoria que toDataURL
+    canvas.toBlob(blob => {
+      if (!blob) {
+        toast('No se pudo exportar la imagen. Intenta de nuevo.');
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Descargar / Guardar Imagen'; }
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.href     = url;
+      a.download = `collage-metas-${Date.now()}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // Liberar el Blob URL después de que el navegador lo procese
+      setTimeout(() => URL.revokeObjectURL(url), 500);
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Descargar / Guardar Imagen'; }
+    }, 'image/jpeg', 0.9);
+  });
 });
 
 window.initCollage = initCollage;

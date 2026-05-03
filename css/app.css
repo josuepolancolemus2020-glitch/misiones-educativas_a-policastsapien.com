@@ -1646,18 +1646,6 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 24px;
 }
 
-/* Fila de botones de acción (Descargar + Compartir) */
-.co-action-row {
-  display: flex; gap: 10px; margin-top: 14px;
-}
-.co-action-row .pa-print-btn { flex: 1; margin-top: 0; }
-
-/* Botón Compartir con fondo verde-éxito para distinguirlo visualmente */
-.co-btn-share {
-  background: linear-gradient(135deg, #16a34a, #15803d) !important;
-  box-shadow: 0 4px 12px rgba(22,163,74,.28) !important;
-}
-.co-btn-share:active { transform: scale(.97); }
 .co-canvas {
   width: 100%; height: auto; display: block;
   border-radius: 12px; border: 1px solid var(--border);
