@@ -249,10 +249,10 @@
             <i class="fa-solid fa-stethoscope"></i>
             <span>Eval. Diagnóstica</span>
           </div>
-          <div class="teacher-tool-item teacher-tool-coming">
-            <i class="fa-solid fa-plus"></i>
-            <span>Más…</span>
-          </div>
+          <button class="teacher-tool-item teacher-tool-active" id="goto-collage-btn">
+            <i class="fa-solid fa-images"></i>
+            <span>Collage</span>
+          </button>
         </div>
       </div>
 
@@ -628,6 +628,101 @@
     </div>
   </div>
 
+  <!-- ========== COLLAGE DE EVIDENCIAS ========== -->
+  <div id="view-collage" class="view">
+    <header class="app-header compact">
+      <button class="back-icon-btn" id="collage-back-btn" aria-label="Volver">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h1 class="view-title">Collage de Evidencias</h1>
+      <div></div>
+    </header>
+    <div class="view-scroll">
+
+      <!-- Logo del centro -->
+      <div class="pa-card">
+        <div class="pa-card-title"><i class="fa-solid fa-school co-title-icon"></i> Logo del Centro</div>
+        <label class="co-upload-label" for="co-logo-input">
+          <i class="fa-solid fa-image"></i>
+          <span>Seleccionar logo <em>(opcional)</em></span>
+        </label>
+        <input type="file" id="co-logo-input" accept="image/*" style="display:none;">
+        <div id="co-logo-preview" class="co-logo-preview" style="display:none;">
+          <img id="co-logo-img" src="" alt="Logo del centro">
+          <button class="co-remove-btn" id="co-logo-remove" title="Quitar logo">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Texto de evidencia -->
+      <div class="pa-card">
+        <div class="pa-card-title"><i class="fa-solid fa-pen-to-square co-title-icon"></i> Texto de Evidencia</div>
+        <textarea id="co-text" class="pa-paste-area co-textarea" rows="2"
+          placeholder="Ej: Laboratorio de Ciencias — 7° Grado A · Mayo 2026"></textarea>
+      </div>
+
+      <!-- Formato -->
+      <div class="pa-card">
+        <div class="pa-card-title"><i class="fa-solid fa-crop-simple co-title-icon"></i> Formato del Collage</div>
+        <div class="co-format-row">
+          <label class="co-format-opt">
+            <input type="radio" name="co-format" value="square" checked>
+            <span class="co-format-card">
+              <i class="fa-regular fa-square"></i>
+              <b>Cuadrado 1:1</b>
+              <small>Instagram / WhatsApp</small>
+            </span>
+          </label>
+          <label class="co-format-opt">
+            <input type="radio" name="co-format" value="vertical">
+            <span class="co-format-card">
+              <i class="fa-solid fa-mobile-screen"></i>
+              <b>Vertical 9:16</b>
+              <small>Historia / Reels</small>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Fotografías -->
+      <div class="pa-card">
+        <div class="pa-card-title">
+          <i class="fa-solid fa-camera co-title-icon"></i> Fotografías
+          <span class="co-photo-count" id="co-photo-count">0 / 6</span>
+        </div>
+        <label class="co-upload-label" for="co-photos-input">
+          <i class="fa-solid fa-images"></i>
+          <span>Seleccionar fotos <em>(máx. 6)</em></span>
+        </label>
+        <input type="file" id="co-photos-input" accept="image/*" multiple style="display:none;">
+        <div id="co-photos-thumbs" class="co-thumbs-grid"></div>
+      </div>
+
+      <!-- Botón generar -->
+      <button class="pa-gen-btn" id="co-generate-btn">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Generar Collage
+      </button>
+
+      <!-- Vista previa + descarga -->
+      <div id="co-preview-wrap" class="co-preview-wrap" style="display:none;">
+        <div class="pa-card-title" style="margin-bottom:12px;">
+          <i class="fa-solid fa-image co-title-icon"></i> Vista Previa
+        </div>
+        <canvas id="collage-canvas" class="co-canvas"></canvas>
+        <div class="co-action-row">
+          <button class="pa-print-btn co-btn-download" id="co-download-btn">
+            <i class="fa-solid fa-download"></i> Descargar
+          </button>
+          <button class="pa-print-btn co-btn-share" id="co-share-btn">
+            <i class="fa-solid fa-share-nodes"></i> Compartir
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ========== DRAWER ========== -->
   <div id="drawer-overlay" class="drawer-overlay"></div>
   <aside id="app-drawer" class="app-drawer" role="navigation" aria-label="Menú principal">
@@ -679,6 +774,7 @@
   <script src="js/tools/gobierno-escolar.js"></script>
   <script src="js/tools/plan-accion.js"></script>
   <script src="js/tools/parte-mensual.js"></script>
+  <script src="js/tools/collage-maker.js"></script>
   <script src="js/app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {

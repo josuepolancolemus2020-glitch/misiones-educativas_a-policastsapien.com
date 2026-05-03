@@ -618,6 +618,7 @@ function switchView(id) {
   if (id === 'view-gobierno')       renderGobiernoEscolar();
   if (id === 'view-plan-accion')    paInit();
   if (id === 'view-parte-mensual')  { /* la UI se recalcula en tiempo real con inputs */ }
+  if (id === 'view-collage')        initCollage();
 
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
