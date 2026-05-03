@@ -1496,6 +1496,7 @@ const PA_SUGS = {
 };
 
 let _paInitDone = false;
+let _paStudents = [];
 
 function paGradeColors(g) {
   if (typeof g !== 'number') return { bg:'#e5e7eb', txt:'#374151' };
@@ -1537,6 +1538,7 @@ function paCollect() {
 function paGenerate() {
   const students = paCollect();
   if (!students.length) { toast('Agrega al menos un estudiante con nombre'); return; }
+  _paStudents = students;
 
   const numeric   = students.filter(s => typeof s.grade === 'number');
   const nsp       = students.filter(s => s.grade === 'NSP');
