@@ -22,7 +22,8 @@
   "homepage": "https://github.com/josuepolancolemus2020-glitch/misiones-educativas_a-policastsapien.com#readme",
   "dependencies": {
     "@capacitor/android": "^8.3.1",
-    "@capacitor/core": "^8.3.1"
+    "@capacitor/core": "^8.3.1",
+    "@capacitor/share": "^8.0.1"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.3.1"

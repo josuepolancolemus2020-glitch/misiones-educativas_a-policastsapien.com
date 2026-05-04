@@ -856,28 +856,40 @@ document.addEventListener('DOMContentLoaded', () => {
     ?.addEventListener('click', coGenerate);
 
   // ── Descarga directa (toDataURL + <a download>) — compatible con más WebViews ──
-  document.getElementById('co-download-btn')?.addEventListener('click', () => {
+  const coDlLabel = '<i class="fa-solid fa-download"></i> Descargar / Guardar Imagen';
+
+  document.getElementById('co-download-btn')?.addEventListener('click', async () => {
     const canvas = document.getElementById('collage-canvas');
     if (!canvas || !_coMeta) { toast('Genera el collage primero'); return; }
 
-    try {
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-      const imgObj = document.getElementById('co-final-img');
-      const modal = document.getElementById('co-save-modal');
+    const btn = document.getElementById('co-download-btn');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Procesando...';
+    }
 
-      if (imgObj && modal) {
-        imgObj.src = dataUrl;
-        modal.style.display = 'flex';
-      }
+    let dataUrl = '';
+    try {
+      dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+      await capacitorShare.Share.share({ url: dataUrl, dialogTitle: 'Guardar Collage' });
     } catch (e) {
       console.error('[Collage descarga]', e);
-      toast('Error al generar la imagen final.');
+      try {
+        if (!dataUrl) dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = 'evidencia-metas.jpg';
+        a.click();
+      } catch (e2) {
+        console.error('[Collage descarga fallback]', e2);
+        toast('No se pudo compartir ni descargar la imagen.');
+      }
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = coDlLabel;
+      }
     }
-  });
-
-  document.getElementById('co-close-modal-btn')?.addEventListener('click', () => {
-    const modal = document.getElementById('co-save-modal');
-    if (modal) modal.style.display = 'none';
   });
 
   _coInitGridOverlay();

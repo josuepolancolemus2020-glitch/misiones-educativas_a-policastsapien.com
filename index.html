@@ -772,6 +772,9 @@
   <script src="js/tools/gobierno-escolar.js"></script>
   <script src="js/tools/plan-accion.js"></script>
   <script src="js/tools/parte-mensual.js"></script>
+  <!-- Capacitor Share (Vanilla): core expone capacitorExports; plugin define capacitorShare -->
+  <script src="https://unpkg.com/@capacitor/core@8.3.1/dist/capacitor.js"></script>
+  <script src="https://unpkg.com/@capacitor/share@latest/dist/plugin.js"></script>
   <script src="js/tools/collage-maker.js"></script>
   <script src="js/app.js"></script>
   <script>
@@ -782,15 +785,5 @@
     }
   </script>
 
-  <div id="co-save-modal" class="sim-modal-backdrop" style="display: none; z-index: 500;">
-    <div class="sim-modal" style="max-width: 90%; padding: 16px;">
-      <h3 style="font-size: 17px; font-weight: 800; color: var(--brand); margin-bottom: 8px;">¡Collage Listo!</h3>
-      <p style="font-size: 13px; color: var(--text); margin-bottom: 14px; font-weight: 600;">
-        👇 <strong>Mantén presionada</strong> la imagen unos segundos y elige "Guardar imagen" o "Compartir".
-      </p>
-      <img id="co-final-img" src="" alt="Collage final" style="width: 100%; border-radius: 8px; box-shadow: var(--shadow); margin-bottom: 16px; -webkit-touch-callout: default !important; user-select: auto !important; pointer-events: auto !important;">
-      <button id="co-close-modal-btn" class="sim-modal-close">Volver a editar</button>
-    </div>
-  </div>
 </body>
 </html>
