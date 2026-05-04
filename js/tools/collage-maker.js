@@ -855,40 +855,50 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('co-generate-btn')
     ?.addEventListener('click', coGenerate);
 
-  // ── Descarga directa (toDataURL + <a download>) — compatible con más WebViews ──
-  const coDlLabel = '<i class="fa-solid fa-download"></i> Descargar / Guardar Imagen';
-
+  // ── Descargar / Compartir ────────────────────────────────────────
   document.getElementById('co-download-btn')?.addEventListener('click', async () => {
     const canvas = document.getElementById('collage-canvas');
     if (!canvas || !_coMeta) { toast('Genera el collage primero'); return; }
 
     const btn = document.getElementById('co-download-btn');
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = 'Procesando...';
-    }
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando…'; }
 
     let dataUrl = '';
     try {
+      // 1. Obtener la imagen
       dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-      await capacitorShare.Share.share({ url: dataUrl, dialogTitle: 'Guardar Collage' });
+
+      // Detectar si estamos en un dispositivo móvil con Capacitor
+      if (window.capacitorFilesystem && window.capacitorShare) {
+        // 2. Extraer solo la data base64 (sin el encabezado data:image/jpeg;base64,)
+        const base64Data = dataUrl.split(',')[1];
+        const fileName   = 'evidencia-' + Date.now() + '.jpg';
+
+        // 3. Escribir el archivo en la caché del dispositivo
+        const result = await capacitorFilesystem.Filesystem.writeFile({
+          path:      fileName,
+          data:      base64Data,
+          directory: 'CACHE',
+        });
+
+        // 4. Compartir el archivo físico con su URI real
+        await capacitorShare.Share.share({
+          url:         result.uri,
+          dialogTitle: 'Guardar/Compartir Collage',
+        });
+      } else {
+        throw new Error('Capacitor no disponible, usando fallback web');
+      }
     } catch (e) {
-      console.error('[Collage descarga]', e);
-      try {
-        if (!dataUrl) dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-        const a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = 'evidencia-metas.jpg';
-        a.click();
-      } catch (e2) {
-        console.error('[Collage descarga fallback]', e2);
-        toast('No se pudo compartir ni descargar la imagen.');
-      }
+      console.warn('[Collage] Usando fallback web:', e);
+      // Fallback para PC (Chrome / Edge) o cuando Capacitor no está presente
+      if (!dataUrl) dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+      const a  = document.createElement('a');
+      a.href   = dataUrl;
+      a.download = 'evidencia-metas.jpg';
+      a.click();
     } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = coDlLabel;
-      }
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Descargar / Guardar Imagen'; }
     }
   });
 
