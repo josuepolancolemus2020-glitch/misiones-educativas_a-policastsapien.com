@@ -525,22 +525,51 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('co-generate-btn')
     ?.addEventListener('click', coGenerate);
 
-  // ── Descargar ────────────────────────────
-  document.getElementById('co-download-btn')?.addEventListener('click', () => {
+  // ── Compartir / Guardar (Web Share API + fallback <a download>) ──
+  const coShareBtnLabel = '<i class="fa-solid fa-share-nodes"></i> Compartir / Guardar';
+
+  document.getElementById('co-share-btn')?.addEventListener('click', () => {
     const canvas = document.getElementById('collage-canvas');
     if (!canvas || !_coMeta) { toast('Genera el collage primero'); return; }
 
-    const btn = document.getElementById('co-download-btn');
-    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando…'; }
+    const btn = document.getElementById('co-share-btn');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Procesando...';
+    }
 
-    // toDataURL es síncrono y confiable para forzar descarga directa de JPG
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-    const a       = document.createElement('a');
-    a.href        = dataUrl;
-    a.download    = 'evidencia-metas.jpg';
-    a.click();
+    canvas.toBlob(async (blob) => {
+      if (!blob) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = coShareBtnLabel;
+        }
+        toast('No se pudo generar la imagen');
+        return;
+      }
 
-    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Descargar / Guardar Imagen'; }
+      const file = new File([blob], 'evidencia-metas.jpg', { type: 'image/jpeg' });
+
+      try {
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: 'Evidencia Pedagógica' });
+        } else {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'evidencia-metas.jpg';
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      } catch (e) {
+        if (e && e.name !== 'AbortError') console.error(e);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = coShareBtnLabel;
+        }
+      }
+    }, 'image/jpeg', 0.9);
   });
 });
 
