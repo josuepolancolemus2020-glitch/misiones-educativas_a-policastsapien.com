@@ -709,9 +709,12 @@
         <div class="pa-card-title" style="margin-bottom:12px;">
           <i class="fa-solid fa-image co-title-icon"></i> Vista Previa
         </div>
-        <canvas id="collage-canvas" class="co-canvas"></canvas>
-        <button class="pa-print-btn" id="co-share-btn">
-          <i class="fa-solid fa-share-nodes"></i> Compartir / Guardar
+        <div class="co-canvas-stage" id="co-canvas-stage">
+          <canvas id="collage-canvas" class="co-canvas"></canvas>
+          <div class="co-grid-overlay" id="co-grid-overlay" aria-hidden="true"></div>
+        </div>
+        <button class="pa-print-btn" id="co-download-btn" type="button">
+          <i class="fa-solid fa-download"></i> Descargar / Guardar Imagen
         </button>
       </div>
 

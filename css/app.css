@@ -1646,10 +1646,111 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 24px;
 }
 
+/* Pila canvas + separadores de cuadrícula (misma relación de aspecto) */
+.co-canvas-stage {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
 .co-canvas {
   width: 100%; height: auto; display: block;
-  border-radius: 12px; border: 1px solid var(--border);
-  box-shadow: var(--shadow);
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
   touch-action: none;   /* evita scroll al arrastrar en móvil */
   user-select: none;
+  vertical-align: top;
+}
+
+/* Capa sobre el canvas: separadores táctiles entre celdas de fotos */
+.co-grid-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Separador vertical (arrastre ↔): franja ancha para dedo, línea visible al centro */
+.grid-separator-v {
+  position: absolute;
+  top: 0;
+  width: 44px;
+  min-height: 48px;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: ew-resize;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent calc(50% - 2px),
+    rgba(30, 58, 124, 0.55) 50%,
+    transparent calc(50% + 2px),
+    transparent 100%
+  );
+  box-sizing: border-box;
+}
+
+.grid-separator-v::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 28px;
+  margin: -14px 0 0 -4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(30, 58, 124, 0.35);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* Separador horizontal (arrastre ↕) */
+.grid-separator-h {
+  position: absolute;
+  left: 0;
+  height: 44px;
+  min-width: 48px;
+  transform: translateY(-50%);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: ns-resize;
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent calc(50% - 2px),
+    rgba(30, 58, 124, 0.55) 50%,
+    transparent calc(50% + 2px),
+    transparent 100%
+  );
+  box-sizing: border-box;
+}
+
+.grid-separator-h::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 8px;
+  margin: -4px 0 0 -14px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(30, 58, 124, 0.35);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.co-grid-overlay .grid-separator-v.is-dragging,
+.co-grid-overlay .grid-separator-h.is-dragging {
+  background-color: rgba(30, 58, 124, 0.08);
 }
