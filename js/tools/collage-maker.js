@@ -856,33 +856,28 @@ document.addEventListener('DOMContentLoaded', () => {
     ?.addEventListener('click', coGenerate);
 
   // ── Descarga directa (toDataURL + <a download>) — compatible con más WebViews ──
-  const coDlLabel = '<i class="fa-solid fa-download"></i> Descargar / Guardar Imagen';
-
   document.getElementById('co-download-btn')?.addEventListener('click', () => {
     const canvas = document.getElementById('collage-canvas');
     if (!canvas || !_coMeta) { toast('Genera el collage primero'); return; }
 
-    const btn = document.getElementById('co-download-btn');
-    if (btn) {
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando…';
-    }
-
     try {
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = 'evidencia-metas.jpg';
-      a.click();
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+      const imgObj = document.getElementById('co-final-img');
+      const modal = document.getElementById('co-save-modal');
+
+      if (imgObj && modal) {
+        imgObj.src = dataUrl;
+        modal.style.display = 'flex';
+      }
     } catch (e) {
       console.error('[Collage descarga]', e);
-      toast('No se pudo guardar la imagen.');
-    } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = coDlLabel;
-      }
+      toast('Error al generar la imagen final.');
     }
+  });
+
+  document.getElementById('co-close-modal-btn')?.addEventListener('click', () => {
+    const modal = document.getElementById('co-save-modal');
+    if (modal) modal.style.display = 'none';
   });
 
   _coInitGridOverlay();
