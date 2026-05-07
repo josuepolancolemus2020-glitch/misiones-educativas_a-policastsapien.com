@@ -938,14 +938,17 @@ body::before {
     color: white;
 }
 
-.fc-back .fa {
-    font-size: 1.2rem;
+.fc-back .fc-ans {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
     text-align: center;
     line-height: 1.5;
     color: #e0e0e0;
+    text-transform: none;
 }
 
-.fc-back .fa strong {
+.fc-back .fc-ans strong {
     color: var(--yellow-br);
 }
 
