@@ -170,6 +170,30 @@ body::before {
     white-space: nowrap;
 }
 
+.xp-share-wa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    gap: 0.05rem;
+    transition: transform 0.2s;
+}
+.xp-share-wa:active { transform: scale(0.9); }
+.xp-share-icon {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+}
+.xp-share-lbl {
+    font-family: 'Fredoka', sans-serif;
+    color: white;
+    font-size: 0.5rem;
+    text-align: center;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
 /* HERO */
 .hero {
     position: relative;
