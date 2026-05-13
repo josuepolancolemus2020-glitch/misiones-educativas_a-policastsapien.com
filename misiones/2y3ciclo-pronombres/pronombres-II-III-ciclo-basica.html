@@ -406,18 +406,6 @@
         </button>
         <p class="classroom-hint">Genera las tareas primero · luego haz clic para copiarlas y abrirlas en Classroom.</p>
 
-        <hr class="classroom-divider">
-        <h4 class="classroom-step2-title">Paso 2 — Genera el enlace para tus alumnos</h4>
-        <p class="classroom-step2-desc">Después de crear la tarea en Classroom, copia su enlace directo y pégalo aquí. Se generará un enlace especial de la misión que llevará a tus alumnos directo a la asignación.</p>
-        <div class="classroom-link-row">
-          <input type="url" id="classroomAssignmentUrl" class="classroom-link-input" placeholder="https://classroom.google.com/c/...">
-          <button class="btn btn-classroom" onclick="generarEnlaceAlumno()">Generar enlace</button>
-        </div>
-        <div id="classroomLinkOut" style="display:none;">
-          <p class="classroom-step2-desc" style="margin-top:0.6rem;color:var(--jade);">Comparte este enlace con tus alumnos (WhatsApp, email, etc.):</p>
-          <div class="classroom-link-result" id="classroomLinkResult"></div>
-          <button class="btn btn-g" style="margin-top:0.5rem;" onclick="copiarEnlaceAlumno()">📋 Copiar enlace</button>
-        </div>
       </div>
 
       <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
