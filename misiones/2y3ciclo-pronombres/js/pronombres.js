@@ -1160,7 +1160,72 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function asignarEnClassroom() {
+    const out = document.getElementById('tgOut');
     const url = encodeURIComponent(window.location.href);
     const titulo = encodeURIComponent('Misión Los Pronombres | II y III Ciclo – policastsapien.com');
-    window.open('https://classroom.google.com/share?url=' + url + '&title=' + titulo, '_blank');
+    const classroomUrl = 'https://classroom.google.com/share?url=' + url + '&title=' + titulo;
+
+    if (!out || out.innerHTML.trim() === '') {
+        _classroomHint('⚠️ Primero genera las tareas con el botón "Generar" y luego haz clic aquí.', false);
+        return;
+    }
+
+    const tipoEl = document.getElementById('tgType');
+    const tipoText = tipoEl ? tipoEl.options[tipoEl.selectedIndex].text.replace(/^\S+\s*/, '') : '';
+    let texto = '📚 MISIÓN: LOS PRONOMBRES | II y III Ciclo – Español · Lengua\n';
+    texto += '🔗 ' + window.location.href + '\n';
+    texto += '📋 Tipo de tarea: ' + tipoText + '\n';
+    texto += '─'.repeat(45) + '\n\n';
+
+    const instr = out.querySelector('.tg-instruction-block');
+    if (instr) {
+        const instrClone = instr.cloneNode(true);
+        texto += '📌 INSTRUCCIÓN:\n' + instrClone.textContent.replace(/\s+/g, ' ').trim() + '\n\n';
+    }
+
+    const tasks = out.querySelectorAll('.tg-task');
+    if (tasks.length > 0) {
+        tasks.forEach((task, i) => {
+            const content = task.querySelector('.tg-task-content');
+            if (content) {
+                const clone = content.cloneNode(true);
+                const ans = clone.querySelector('.tg-answer');
+                if (ans) ans.remove();
+                texto += (i + 1) + '. ' + clone.textContent.replace(/\s+/g, ' ').trim() + '\n\n';
+            }
+        });
+    } else {
+        // Tabla (tipo classify)
+        const table = out.querySelector('table');
+        if (table) {
+            table.querySelectorAll('tr').forEach(row => {
+                const cells = [...row.querySelectorAll('th, td')].map(c => c.textContent.trim());
+                texto += cells.join(' | ') + '\n';
+            });
+            texto += '\n';
+        }
+    }
+
+    navigator.clipboard.writeText(texto).then(() => {
+        _classroomHint('✅ ¡Tareas copiadas! En Classroom pégalas en la descripción de la tarea (Ctrl+V).', true);
+    }).catch(() => {
+        _classroomHint('Classroom abierto. Copia el texto de las tareas manualmente y pégalo en la descripción.', false);
+    });
+
+    window.open(classroomUrl, '_blank');
+}
+
+function _classroomHint(msg, ok) {
+    const hint = document.querySelector('.classroom-hint');
+    if (!hint) return;
+    hint.textContent = msg;
+    hint.style.color = ok ? 'var(--jade)' : 'var(--amber)';
+    hint.style.fontStyle = 'normal';
+    hint.style.fontWeight = '600';
+    setTimeout(() => {
+        hint.textContent = 'Genera las tareas primero · luego haz clic para copiarlas y abrirlas en Classroom.';
+        hint.style.color = '';
+        hint.style.fontStyle = '';
+        hint.style.fontWeight = '';
+    }, 7000);
 }
