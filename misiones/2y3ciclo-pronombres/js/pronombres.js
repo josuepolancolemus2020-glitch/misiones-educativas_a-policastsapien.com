@@ -1140,7 +1140,7 @@ function shareWA() {
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     loadProgress();
-    upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval();
+    upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval(); initStudentClassroomCard();
     updateRetoButtons();
     renderAchPanel();
     document.addEventListener('click', function (e) {
@@ -1158,6 +1158,95 @@ document.addEventListener('DOMContentLoaded', () => {
     fin('s-aprende', false);
     fin('s-tipos', false);
 });
+
+function initStudentClassroomCard() {
+    const params = new URLSearchParams(window.location.search);
+    const tareaUrl = params.get('tarea');
+    const card = document.getElementById('studentClassroomCard');
+    if (!card) return;
+
+    card.style.display = 'block';
+
+    if (tareaUrl && tareaUrl.startsWith('https://classroom.google.com/')) {
+        card.style.borderLeft = '4px solid #0f9d58';
+        const header = document.createElement('div');
+        header.className = 'student-task-assigned';
+        const icon = document.createElement('div');
+        icon.className = 'student-task-icon';
+        icon.textContent = '📋';
+        const info = document.createElement('div');
+        const title = document.createElement('h3');
+        title.className = 'student-task-title';
+        title.textContent = 'Tienes una tarea asignada en Google Classroom';
+        const sub = document.createElement('p');
+        sub.className = 'student-task-sub';
+        sub.textContent = 'Completa las actividades de esta misión y luego entrégala en Classroom.';
+        info.appendChild(title);
+        info.appendChild(sub);
+        header.appendChild(icon);
+        header.appendChild(info);
+        const btn = document.createElement('a');
+        btn.href = tareaUrl;
+        btn.target = '_blank';
+        btn.rel = 'noopener noreferrer';
+        btn.className = 'btn btn-classroom student-task-btn';
+        btn.textContent = 'Ir a entregar en Classroom →';
+        card.appendChild(header);
+        card.appendChild(btn);
+    } else {
+        card.style.borderLeft = '4px solid var(--border)';
+        const wrap = document.createElement('div');
+        wrap.className = 'student-generic-title';
+        const emoji = document.createElement('span');
+        emoji.textContent = '🎓';
+        const title = document.createElement('h4');
+        title.textContent = '¿Tu maestro te asignó una tarea?';
+        wrap.appendChild(emoji);
+        wrap.appendChild(title);
+        const desc = document.createElement('p');
+        desc.className = 'classroom-step2-desc';
+        desc.textContent = 'Si tu maestro compartió un enlace especial de la misión, ábrelo desde ahí para ver tu tarea. Si no, puedes ir directamente a Classroom.';
+        const btn = document.createElement('a');
+        btn.href = 'https://classroom.google.com';
+        btn.target = '_blank';
+        btn.rel = 'noopener noreferrer';
+        btn.className = 'btn btn-d';
+        btn.style.display = 'inline-block';
+        btn.style.textDecoration = 'none';
+        btn.textContent = 'Ir a Google Classroom';
+        card.appendChild(wrap);
+        card.appendChild(desc);
+        card.appendChild(btn);
+    }
+}
+
+function generarEnlaceAlumno() {
+    const input = document.getElementById('classroomAssignmentUrl');
+    const url = input ? input.value.trim() : '';
+    if (!url || !url.startsWith('https://classroom.google.com/')) {
+        _classroomHint('⚠️ Pega un enlace válido de Google Classroom (debe empezar con https://classroom.google.com/).', false);
+        return;
+    }
+    const misionBase = window.location.origin + window.location.pathname;
+    const enlace = misionBase + '?tarea=' + encodeURIComponent(url);
+    const out = document.getElementById('classroomLinkOut');
+    const result = document.getElementById('classroomLinkResult');
+    result.textContent = enlace;
+    out.style.display = 'block';
+    navigator.clipboard.writeText(enlace).then(() => {
+        _classroomHint('✅ Enlace copiado. ¡Compártelo con tus alumnos!', true);
+    }).catch(() => {
+        _classroomHint('Enlace generado. Cópialo manualmente del recuadro.', false);
+    });
+}
+
+function copiarEnlaceAlumno() {
+    const result = document.getElementById('classroomLinkResult');
+    if (!result) return;
+    navigator.clipboard.writeText(result.textContent).then(() => {
+        _classroomHint('✅ Enlace copiado al portapapeles.', true);
+    });
+}
 
 function asignarEnClassroom() {
     const out = document.getElementById('tgOut');
