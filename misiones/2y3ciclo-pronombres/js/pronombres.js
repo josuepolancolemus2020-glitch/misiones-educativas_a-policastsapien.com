@@ -1158,3 +1158,9 @@ document.addEventListener('DOMContentLoaded', () => {
     fin('s-aprende', false);
     fin('s-tipos', false);
 });
+
+function asignarEnClassroom() {
+    const url = encodeURIComponent(window.location.href);
+    const titulo = encodeURIComponent('Misión Los Pronombres | II y III Ciclo – policastsapien.com');
+    window.open('https://classroom.google.com/share?url=' + url + '&title=' + titulo, '_blank');
+}
