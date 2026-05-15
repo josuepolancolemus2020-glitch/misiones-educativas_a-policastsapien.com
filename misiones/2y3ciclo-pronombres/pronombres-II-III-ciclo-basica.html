@@ -408,8 +408,8 @@
 
       </div>
 
-      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-recursos')">
-        <span class="nsb-icon">📁</span>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+        <span class="nsb-icon">📝</span>
         <span class="nsb-arrow">→</span>
       </button>
     </div>
@@ -437,10 +437,6 @@
           <div>Los archivos se abren directamente en el navegador. Puedes descargarlos o verlos sin necesidad de una cuenta de Google.</div>
         </div>
       </div>
-      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
-        <span class="nsb-icon">📝</span>
-        <span class="nsb-arrow">→</span>
-      </button>
     </div>
 
     <div class="sec" id="s-evaluacion" role="tabpanel">
@@ -532,12 +528,12 @@
       onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas"
       onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
-    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos"
-      onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion"
       onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
     <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);"
       aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos"
+      onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
   </nav>
 
   <footer class="credits">
