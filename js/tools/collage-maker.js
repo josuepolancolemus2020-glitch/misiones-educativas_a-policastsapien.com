@@ -869,20 +869,21 @@ document.addEventListener('DOMContentLoaded', () => {
       dataUrl = canvas.toDataURL('image/jpeg', 0.95);
 
       // Detectar si estamos en un dispositivo móvil con Capacitor
-      if (window.capacitorFilesystem && window.capacitorShare) {
+      const cap = window.Capacitor;
+      if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins?.Filesystem && cap.Plugins?.Share) {
         // 2. Extraer solo la data base64 (sin el encabezado data:image/jpeg;base64,)
         const base64Data = dataUrl.split(',')[1];
         const fileName   = 'evidencia-' + Date.now() + '.jpg';
 
         // 3. Escribir el archivo en la caché del dispositivo
-        const result = await capacitorFilesystem.Filesystem.writeFile({
+        const result = await cap.Plugins.Filesystem.writeFile({
           path:      fileName,
           data:      base64Data,
           directory: 'CACHE',
         });
 
         // 4. Compartir el archivo físico con su URI real
-        await capacitorShare.Share.share({
+        await cap.Plugins.Share.share({
           url:         result.uri,
           dialogTitle: 'Guardar/Compartir Collage',
         });
