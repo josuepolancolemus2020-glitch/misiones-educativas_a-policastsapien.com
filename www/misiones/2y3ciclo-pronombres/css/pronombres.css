@@ -771,14 +771,17 @@ body::before {
     color: white;
 }
 
-.fc-back .fa {
-    font-size: 1.2rem;
+.fc-back .fc-ans {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
     text-align: center;
     line-height: 1.5;
     color: #e0e0e0;
+    text-transform: none;
 }
 
-.fc-back .fa strong {
+.fc-back .fc-ans strong {
     color: var(--yellow-br);
 }
 
@@ -1341,6 +1344,148 @@ body::before {
 .btn-amber {
     background: var(--amber);
     color: white;
+}
+
+.btn-classroom {
+    background: #0f9d58;
+    color: white;
+}
+
+.classroom-card {
+    border-left: 4px solid #0f9d58;
+    margin-top: 1rem;
+}
+
+.classroom-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+.classroom-header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--dark);
+}
+
+.classroom-desc {
+    font-size: 0.88rem;
+    color: var(--gray);
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+}
+
+.classroom-hint {
+    font-size: 0.72rem;
+    color: var(--gray);
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+.classroom-divider {
+    border: none;
+    border-top: 1.5px solid var(--border);
+    margin: 1rem 0;
+}
+
+.classroom-step2-title {
+    font-size: 0.95rem;
+    color: var(--dark);
+    margin: 0 0 0.4rem 0;
+}
+
+.classroom-step2-desc {
+    font-size: 0.82rem;
+    color: var(--gray);
+    margin-bottom: 0.7rem;
+    line-height: 1.5;
+}
+
+.classroom-link-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.classroom-link-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.45rem 0.7rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    background: var(--card-bg);
+    color: var(--dark);
+    font-family: 'Fira Code', monospace;
+}
+
+.classroom-link-input:focus {
+    outline: none;
+    border-color: #0f9d58;
+}
+
+.classroom-link-result {
+    background: var(--pri-gl);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.75rem;
+    font-family: 'Fira Code', monospace;
+    color: var(--dark);
+    word-break: break-all;
+    line-height: 1.5;
+}
+
+/* --- TARJETA ALUMNO --- */
+.student-classroom-card {
+    margin-bottom: 1rem;
+}
+
+.student-task-assigned {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.student-task-icon {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.student-task-title {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    color: #0f9d58;
+}
+
+.student-task-sub {
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin: 0;
+}
+
+.student-task-btn {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 0.6rem 1.2rem;
+}
+
+.student-generic-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.student-generic-title h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--gray);
 }
 
 /* PAUTA */
@@ -1997,4 +2142,21 @@ body.letra-grande h3,
 body.letra-grande .sopa-cell {
     font-size: 125% !important;
     line-height: 1.6;
+}
+/* WhatsApp Share Button */
+.xp-share-wa {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+.xp-share-wa:active { transform: scale(0.9); }
+.xp-share-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 50%;
+    padding: 2px;
+    border: 1.5px solid var(--pri);
 }

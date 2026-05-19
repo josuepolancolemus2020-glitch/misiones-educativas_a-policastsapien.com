@@ -938,14 +938,17 @@ body::before {
     color: white;
 }
 
-.fc-back .fa {
-    font-size: 1.2rem;
+.fc-back .fc-ans {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
     text-align: center;
     line-height: 1.5;
     color: #e0e0e0;
+    text-transform: none;
 }
 
-.fc-back .fa strong {
+.fc-back .fc-ans strong {
     color: var(--yellow-br);
 }
 
@@ -2619,3 +2622,20 @@ body.letra-grande .sopa-cell {
 .eval-auto-risk{border-color:var(--amber);background:var(--amber-gl);}
 .eval-auto-risk strong{color:var(--amber);}
 @media print{.eval-cp-input,.eval-match-select,.eval-item-feedback,.eval-auto-result{display:none!important;}}
+/* WhatsApp Share Button */
+.xp-share-wa {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+.xp-share-wa:active { transform: scale(0.9); }
+.xp-share-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 50%;
+    padding: 2px;
+    border: 1.5px solid var(--pri);
+}

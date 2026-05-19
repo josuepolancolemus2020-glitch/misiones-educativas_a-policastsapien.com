@@ -1,3 +1,10 @@
+// Compartir misión por WhatsApp
+function compartirMision() {
+    const url = window.location.href;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Gramática Española._ ✍️\n\n🔗 *Enlace:* ${url}`;
+    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+}
+
 // ===================== UTILIDADES =====================
 const _pick = (arr, n) => [...arr].sort(() => Math.random() - 0.5).slice(0, n);
 const _shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);

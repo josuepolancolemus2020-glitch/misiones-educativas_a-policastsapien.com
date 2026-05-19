@@ -170,6 +170,23 @@ body::before {
     white-space: nowrap;
 }
 
+.xp-share-wa {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+.xp-share-wa:active { transform: scale(0.9); }
+.xp-share-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 50%;
+    padding: 2px;
+    border: 1.5px solid var(--pri);
+}
+
 /* HERO */
 .hero {
     position: relative;

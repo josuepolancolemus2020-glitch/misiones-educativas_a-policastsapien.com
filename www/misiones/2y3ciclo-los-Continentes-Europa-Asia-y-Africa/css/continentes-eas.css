@@ -537,3 +537,21 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
   border-color: var(--sec);
   box-shadow: 0 3px 10px var(--sec-gl);
 }
+
+/* WhatsApp Share Button */
+.xp-share-wa {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+.xp-share-wa:active { transform: scale(0.9); }
+.xp-share-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 50%;
+    padding: 2px;
+    border: 1.5px solid var(--pri);
+}

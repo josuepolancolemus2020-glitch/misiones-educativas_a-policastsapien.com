@@ -1,3 +1,10 @@
+// Compartir misión por WhatsApp
+function compartirMision() {
+    const url = window.location.href;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n🔗 *Enlace:* ${url}`;
+    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+}
+
 // Función para hacer la letra más grande (Accesibilidad)
 function toggleLetra() {
     document.body.classList.toggle('letra-grande');
@@ -1133,7 +1140,7 @@ function shareWA() {
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     loadProgress();
-    upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval();
+    upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval(); initStudentClassroomCard();
     updateRetoButtons();
     renderAchPanel();
     document.addEventListener('click', function (e) {
@@ -1151,3 +1158,163 @@ document.addEventListener('DOMContentLoaded', () => {
     fin('s-aprende', false);
     fin('s-tipos', false);
 });
+
+function initStudentClassroomCard() {
+    const params = new URLSearchParams(window.location.search);
+    const tareaUrl = params.get('tarea');
+    const card = document.getElementById('studentClassroomCard');
+    if (!card) return;
+
+    card.style.display = 'block';
+
+    if (tareaUrl && tareaUrl.startsWith('https://classroom.google.com/')) {
+        card.style.borderLeft = '4px solid #0f9d58';
+        const header = document.createElement('div');
+        header.className = 'student-task-assigned';
+        const icon = document.createElement('div');
+        icon.className = 'student-task-icon';
+        icon.textContent = '📋';
+        const info = document.createElement('div');
+        const title = document.createElement('h3');
+        title.className = 'student-task-title';
+        title.textContent = 'Tienes una tarea asignada en Google Classroom';
+        const sub = document.createElement('p');
+        sub.className = 'student-task-sub';
+        sub.textContent = 'Completa las actividades de esta misión y luego entrégala en Classroom.';
+        info.appendChild(title);
+        info.appendChild(sub);
+        header.appendChild(icon);
+        header.appendChild(info);
+        const btn = document.createElement('a');
+        btn.href = tareaUrl;
+        btn.target = '_blank';
+        btn.rel = 'noopener noreferrer';
+        btn.className = 'btn btn-classroom student-task-btn';
+        btn.textContent = 'Ir a entregar en Classroom →';
+        card.appendChild(header);
+        card.appendChild(btn);
+    } else {
+        card.style.borderLeft = '4px solid var(--border)';
+        const wrap = document.createElement('div');
+        wrap.className = 'student-generic-title';
+        const emoji = document.createElement('span');
+        emoji.textContent = '🎓';
+        const title = document.createElement('h4');
+        title.textContent = '¿Tu maestro te asignó una tarea?';
+        wrap.appendChild(emoji);
+        wrap.appendChild(title);
+        const desc = document.createElement('p');
+        desc.className = 'classroom-step2-desc';
+        desc.textContent = 'Si tu maestro compartió un enlace especial de la misión, ábrelo desde ahí para ver tu tarea. Si no, puedes ir directamente a Classroom.';
+        const btn = document.createElement('a');
+        btn.href = 'https://classroom.google.com';
+        btn.target = '_blank';
+        btn.rel = 'noopener noreferrer';
+        btn.className = 'btn btn-d';
+        btn.style.display = 'inline-block';
+        btn.style.textDecoration = 'none';
+        btn.textContent = 'Ir a Google Classroom';
+        card.appendChild(wrap);
+        card.appendChild(desc);
+        card.appendChild(btn);
+    }
+}
+
+function generarEnlaceAlumno() {
+    const input = document.getElementById('classroomAssignmentUrl');
+    const url = input ? input.value.trim() : '';
+    if (!url || !url.startsWith('https://classroom.google.com/')) {
+        _classroomHint('⚠️ Pega un enlace válido de Google Classroom (debe empezar con https://classroom.google.com/).', false);
+        return;
+    }
+    const misionBase = window.location.origin + window.location.pathname;
+    const enlace = misionBase + '?tarea=' + encodeURIComponent(url);
+    const out = document.getElementById('classroomLinkOut');
+    const result = document.getElementById('classroomLinkResult');
+    result.textContent = enlace;
+    out.style.display = 'block';
+    navigator.clipboard.writeText(enlace).then(() => {
+        _classroomHint('✅ Enlace copiado. ¡Compártelo con tus alumnos!', true);
+    }).catch(() => {
+        _classroomHint('Enlace generado. Cópialo manualmente del recuadro.', false);
+    });
+}
+
+function copiarEnlaceAlumno() {
+    const result = document.getElementById('classroomLinkResult');
+    if (!result) return;
+    navigator.clipboard.writeText(result.textContent).then(() => {
+        _classroomHint('✅ Enlace copiado al portapapeles.', true);
+    });
+}
+
+function asignarEnClassroom() {
+    const out = document.getElementById('tgOut');
+    const url = encodeURIComponent(window.location.href);
+    const titulo = encodeURIComponent('Misión Los Pronombres | II y III Ciclo – policastsapien.com');
+    const classroomUrl = 'https://classroom.google.com/share?url=' + url + '&title=' + titulo;
+
+    if (!out || out.innerHTML.trim() === '') {
+        _classroomHint('⚠️ Primero genera las tareas con el botón "Generar" y luego haz clic aquí.', false);
+        return;
+    }
+
+    const tipoEl = document.getElementById('tgType');
+    const tipoText = tipoEl ? tipoEl.options[tipoEl.selectedIndex].text.replace(/^\S+\s*/, '') : '';
+    let texto = '📚 MISIÓN: LOS PRONOMBRES | II y III Ciclo – Español · Lengua\n';
+    texto += '🔗 ' + window.location.href + '\n';
+    texto += '📋 Tipo de tarea: ' + tipoText + '\n';
+    texto += '─'.repeat(45) + '\n\n';
+
+    const instr = out.querySelector('.tg-instruction-block');
+    if (instr) {
+        const instrClone = instr.cloneNode(true);
+        texto += '📌 INSTRUCCIÓN:\n' + instrClone.textContent.replace(/\s+/g, ' ').trim() + '\n\n';
+    }
+
+    const tasks = out.querySelectorAll('.tg-task');
+    if (tasks.length > 0) {
+        tasks.forEach((task, i) => {
+            const content = task.querySelector('.tg-task-content');
+            if (content) {
+                const clone = content.cloneNode(true);
+                const ans = clone.querySelector('.tg-answer');
+                if (ans) ans.remove();
+                texto += (i + 1) + '. ' + clone.textContent.replace(/\s+/g, ' ').trim() + '\n\n';
+            }
+        });
+    } else {
+        // Tabla (tipo classify)
+        const table = out.querySelector('table');
+        if (table) {
+            table.querySelectorAll('tr').forEach(row => {
+                const cells = [...row.querySelectorAll('th, td')].map(c => c.textContent.trim());
+                texto += cells.join(' | ') + '\n';
+            });
+            texto += '\n';
+        }
+    }
+
+    navigator.clipboard.writeText(texto).then(() => {
+        _classroomHint('✅ ¡Tareas copiadas! En Classroom pégalas en la descripción de la tarea (Ctrl+V).', true);
+    }).catch(() => {
+        _classroomHint('Classroom abierto. Copia el texto de las tareas manualmente y pégalo en la descripción.', false);
+    });
+
+    window.open(classroomUrl, '_blank');
+}
+
+function _classroomHint(msg, ok) {
+    const hint = document.querySelector('.classroom-hint');
+    if (!hint) return;
+    hint.textContent = msg;
+    hint.style.color = ok ? 'var(--jade)' : 'var(--amber)';
+    hint.style.fontStyle = 'normal';
+    hint.style.fontWeight = '600';
+    setTimeout(() => {
+        hint.textContent = 'Genera las tareas primero · luego haz clic para copiarlas y abrirlas en Classroom.';
+        hint.style.color = '';
+        hint.style.fontStyle = '';
+        hint.style.fontWeight = '';
+    }, 7000);
+}
