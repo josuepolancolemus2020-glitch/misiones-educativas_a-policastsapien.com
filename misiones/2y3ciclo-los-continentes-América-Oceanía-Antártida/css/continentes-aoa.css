@@ -355,6 +355,15 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .sopa-w{padding:0.3rem 0.7rem;background:var(--card);border:2px solid var(--border);border-radius:12px;font-family:'Fredoka',sans-serif;transition:all 0.3s;}
 .sopa-w.found{border-color:var(--jade);background:var(--jade-gl);color:var(--jade);text-decoration:line-through;}
 .sopa-hint{font-size:0.78rem;color:var(--gray);text-align:center;margin-bottom:0.4rem;}
+.sopa-cell.sopa-reveal {
+    background: var(--yellow) !important;
+    color: #111 !important;
+    animation: sopaRevealPulse 0.5s ease infinite alternate;
+}
+@keyframes sopaRevealPulse {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+}
 
 /* LABORATORIO */
 .lab-sentence{font-family:'Fredoka',sans-serif;font-size:1.05rem;color:var(--dark);background:var(--pri-gl);border:2px solid var(--pri);border-radius:12px;padding:0.75rem 1.2rem;margin-bottom:1.2rem;min-height:2.8rem;display:flex;align-items:center;justify-content:center;text-align:center;transition:border-color 0.3s,background 0.3s;}

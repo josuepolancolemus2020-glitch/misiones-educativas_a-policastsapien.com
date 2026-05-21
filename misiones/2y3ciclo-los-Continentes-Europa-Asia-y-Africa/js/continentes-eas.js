@@ -697,6 +697,7 @@ const sopaSets = [
 ];
 let currentSopaSetIdx=0, sopaFoundWords=new Set();
 let sopaFirstClickCell=null, sopaPointerStartCell=null, sopaPointerMoved=false, sopaSelectedCells=[];
+let _sopaRevealTimer=null;
 
 function getSopaCellSize(){
   const container=document.getElementById('sopaGrid');
@@ -807,6 +808,25 @@ function nextSopaSet(){
   sfx('click'); sopaFoundWords=new Set();
   currentSopaSetIdx=(currentSopaSetIdx+1)%sopaSets.length;
   buildSopa(); showToast('🔄 Nueva sopa cargada');
+}
+function toggleSopaWords(){
+  sfx('click');
+  const set=sopaSets[currentSopaSetIdx];
+  const btn=document.getElementById('sopaWordsBtn');
+  const revealCells=[];
+  set.words.forEach(wObj=>{
+    if(sopaFoundWords.has(wObj.w)) return;
+    wObj.cells.forEach(([r,c])=>{
+      const cell=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);
+      if(cell){ cell.classList.add('sopa-reveal'); revealCells.push(cell); }
+    });
+  });
+  btn.disabled=true;
+  clearTimeout(_sopaRevealTimer);
+  _sopaRevealTimer=setTimeout(()=>{
+    revealCells.forEach(c=>c.classList.remove('sopa-reveal'));
+    btn.disabled=false;
+  },2000);
 }
 let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{
