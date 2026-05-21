@@ -1087,7 +1087,7 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 @media print{@page{size:letter portrait;margin:12.7mm;}}
 </style></head><body>
 <div class="ph">
-  <h2>Evaluación Final · El Bosque y las Áreas Protegidas de Honduras · Forma ${forma} · II y III Ciclo · Ciencias Naturales</h2>
+  <h2>Evaluación Final · Áreas Protegidas de Honduras · II y III Ciclo · Ciencias Naturales</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
   <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
