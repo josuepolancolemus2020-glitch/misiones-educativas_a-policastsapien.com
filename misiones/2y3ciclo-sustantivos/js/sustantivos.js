@@ -1151,9 +1151,10 @@ ${s1}${s2}${s3}${s4}
 }
 
 // ===================== DIPLOMA =====================
+function _diplPct() { return xp >= MXP ? 100 : Math.round((xp / MXP) * 100); }
 function openDiploma() {
     sfx('click');
-    const pct = getProgress();
+    const pct = _diplPct();
     document.getElementById('diplPct').textContent = pct + '%';
     document.getElementById('diplPct').style.color = pct >= 70 ? 'var(--jade)' : pct >= 40 ? 'var(--blue)' : 'var(--amber)';
     document.getElementById('diplBar').style.width = pct + '%';
@@ -1171,13 +1172,44 @@ function openDiploma() {
 function closeDiploma() { document.getElementById('diplomaOverlay').classList.remove('open'); }
 function updateDiplomaName(v) { document.getElementById('diplName').textContent = v || 'Estudiante'; }
 function shareWA() {
-    const pct = getProgress(); const name = document.getElementById('diplName').textContent;
+    const pct = _diplPct(); const name = document.getElementById('diplName').textContent;
     const stars = document.getElementById('diplStars').textContent;
     const msg = document.getElementById('diplMsg').textContent;
     const date = document.getElementById('diplDate').textContent;
     const achText = unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join('\n');
     const txt = `${stars} CONSTANCIA DE LOGRO ${stars}\n\n📝 Misión: Los Sustantivos\n👤 Estudiante: ${name}\n📊 Progreso: ${pct}% completado\n⭐ XP obtenido: ${xp} de ${MXP}${achText ? '\n\n🏅 Logros desbloqueados:\n' + achText : ''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo Familia Polanco-Castellanos\n🌐 policastsapien.com`;
     window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+}
+function _downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+async function captureDiploma() {
+    if (typeof html2canvas === 'undefined') { showToast('⚠️ Cargando... intenta de nuevo'); return; }
+    sfx('click');
+    const card = document.querySelector('.diploma-card');
+    const toHide = [card.querySelector('.diploma-input'), card.querySelector('.diploma-actions'), card.querySelector('hr')];
+    toHide.forEach(el => { if (el) el.style.display = 'none'; });
+    try {
+        const canvas = await html2canvas(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+        toHide.forEach(el => { if (el) el.style.display = ''; });
+        canvas.toBlob(async (blob) => {
+            const name = (document.getElementById('diplName').textContent || 'Estudiante').replace(/\s+/g, '-');
+            const fileName = `constancia-sustantivos-${name}.png`;
+            const file = new File([blob], fileName, { type: 'image/png' });
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                try { await navigator.share({ files: [file], title: 'Constancia de Logro — Los Sustantivos' }); }
+                catch (e) { if (e.name !== 'AbortError') _downloadBlob(blob, fileName); }
+            } else {
+                _downloadBlob(blob, fileName);
+            }
+        }, 'image/png');
+    } catch (e) {
+        toHide.forEach(el => { if (el) el.style.display = ''; });
+        showToast('⚠️ No se pudo capturar la constancia');
+    }
 }
 
 // ===================== INIT =====================

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -15,7 +15,7 @@
 <body>
 
   <div class="xp-bar" role="status" aria-label="Barra de progreso XP">
-    <a href="../../index.html?view=misiones&filter=español" class="xp-back-btn" title="Regresar a misiones">
+    <a href="../../index.html?view=misiones&filter=español" class="xp-back-btn" title="Regresar a misiones de Español">
       <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
       <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
     </a>
@@ -536,6 +536,7 @@
         oninput="updateDiplomaName(this.value)">
       <div class="diploma-actions">
         <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+        <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
         <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
       </div>
     </div>
@@ -578,9 +579,9 @@
   </nav>
 
   <footer class="credits">
-    <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
-    <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
-    <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
+    <p class="fam">🏠 Proyecto Educativo M.E.T.A.S </p>
+    <p class="ppl">Desarrollado por Docentes: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+    <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
     <div class="cred-contact">
       <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
       <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
@@ -594,6 +595,7 @@
     </div>
   </footer>
 
+  <script src="js/html2canvas.min.js"></script>
   <script src="js/sustantivos.js"></script>
 </body>
 
