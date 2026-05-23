@@ -1,4 +1,4 @@
-// Compartir misión por WhatsApp
+﻿// Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
     const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n🔗 *Enlace:* ${url}`;
@@ -356,7 +356,7 @@ const idData = [
     { s: ['¿Quién', 'rompió', 'el', 'vaso?'], c: 0, art: 'Pronombre interrogativo' },
     { s: ['Te', 'dije', 'la', 'verdad.'], c: 0, art: 'Pronombre proclítico' },
     { s: ['La', 'niña', 'que', 'canta', 'es', 'mi', 'prima.'], c: 2, art: 'Pronombre relativo' },
-    { s: ['No', 'quiero', 'esa,', 'quiero', 'esta.'], c: 4, art: 'Pronombre demostrativo' },
+    { s: ['No', 'quiero', 'esa,', 'quiero', 'esta.'], c: [2, 4], art: 'Pronombre demostrativo' },
     { s: ['Dámelo', 'ahora', 'mismo.'], c: 0, art: 'Pronombre enclítico' },
 ];
 let idIdx = 0;
@@ -369,7 +369,7 @@ function showId() {
     }
     const d = idData[idIdx];
     document.getElementById('idProg').textContent = `Oración ${idIdx + 1} de ${idData.length}`;
-    document.getElementById('idInfo').textContent = `Busca: ${d.art}`;
+    document.getElementById('idInfo').textContent = `Busca: ${d.art}` + (Array.isArray(d.c) ? ` (hay ${d.c.length} en esta oración)` : '');
     const sent = document.getElementById('idSent'); sent.innerHTML = '';
     d.s.forEach((w, i) => {
         const span = document.createElement('span'); span.className = 'id-word'; span.textContent = w + ' ';
@@ -383,9 +383,22 @@ function checkId(i, span) {
     document.querySelectorAll('.id-word').forEach(s => s.classList.remove('selected'));
     span.classList.add('selected');
 
-    if (i === idData[idIdx].c) {
+    const correct = idData[idIdx].c;
+    const isArray = Array.isArray(correct);
+    const isCorrect = isArray ? correct.includes(i) : i === correct;
+
+    if (isCorrect) {
         idDone = true;
-        span.classList.add('id-ok'); fb('fbId', '¡Correcto! +5 XP', true);
+        span.classList.add('id-ok');
+        if (isArray) {
+            const allWords = document.querySelectorAll('.id-word');
+            correct.forEach(ci => { if (ci !== i) allWords[ci].classList.add('id-ok'); });
+            const others = correct.filter(ci => ci !== i)
+                .map(ci => '"' + idData[idIdx].s[ci].replace(/[,.]$/, '') + '"').join(' y ');
+            fb('fbId', `¡Correcto! +5 XP — ${others} también es ${idData[idIdx].art.toLowerCase()} en esta oración.`, true);
+        } else {
+            fb('fbId', '¡Correcto! +5 XP', true);
+        }
         if (!xpTracker.id.has(idIdx)) { xpTracker.id.add(idIdx); pts(5); }
         sfx('ok');
     } else {
@@ -1107,9 +1120,10 @@ ${s1}${s2}${s3}${s4}
 }
 
 // ===================== DIPLOMA =====================
+function _diplPct() { return xp >= MXP ? 100 : Math.round((xp / MXP) * 100); }
 function openDiploma() {
     sfx('click');
-    const pct = getProgress();
+    const pct = _diplPct();
     document.getElementById('diplPct').textContent = pct + '%';
     document.getElementById('diplPct').style.color = pct >= 70 ? 'var(--jade)' : pct >= 40 ? 'var(--blue)' : 'var(--amber)';
     document.getElementById('diplBar').style.width = pct + '%';
@@ -1127,15 +1141,46 @@ function openDiploma() {
 function closeDiploma() { document.getElementById('diplomaOverlay').classList.remove('open'); }
 function updateDiplomaName(v) { document.getElementById('diplName').textContent = v || 'Estudiante'; }
 function shareWA() {
-    const pct = getProgress(); const name = document.getElementById('diplName').textContent;
+    const pct = _diplPct(); const name = document.getElementById('diplName').textContent;
     const stars = document.getElementById('diplStars').textContent;
     const msg = document.getElementById('diplMsg').textContent;
     const date = document.getElementById('diplDate').textContent;
     const achText = unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join('\n');
-    const txt = `${stars} CONSTANCIA DE LOGRO ${stars}\n\n📝 Misión: Los Pronombres\n👤 Estudiante: ${name}\n📊 Progreso: ${pct}% completado\n⭐ XP obtenido: ${xp} de ${MXP}${achText ? '\n\n🏅 Logros desbloqueados:\n' + achText : ''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo Familia Polanco-Castellanos\n🌐 policastsapien.com`;
+    const txt = `${stars} CONSTANCIA DE LOGRO ${stars}\n\n📝 Misión: Los Pronombres\n👤 Estudiante: ${name}\n📊 Progreso: ${pct}% completado\n⭐ XP obtenido: ${xp} de ${MXP}${achText ? '\n\n🏅 Logros desbloqueados:\n' + achText : ''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com`;
     window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
 }
 
+async function captureDiploma() {
+    if (typeof html2canvas === 'undefined') { showToast('⚠️ Cargando... intenta de nuevo'); return; }
+    sfx('click');
+    const card = document.querySelector('.diploma-card');
+    const btn = document.querySelector('.diploma-actions .btn-pri');
+    const toHide = [card.querySelector('.diploma-input'), card.querySelector('.diploma-actions'), card.querySelector('hr')];
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Capturando...'; }
+    toHide.forEach(el => { if (el) el.style.display = 'none'; });
+    let dataUrl = '';
+    try {
+        const canvas = await html2canvas(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+        toHide.forEach(el => { if (el) el.style.display = ''; });
+        dataUrl = canvas.toDataURL('image/png');
+        const name = (document.getElementById('diplName').textContent || 'Estudiante').replace(/\s+/g, '-');
+        const fileName = 'constancia-' + name + '.png';
+        const cap = window.Capacitor;
+        if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins?.Filesystem && cap.Plugins?.Share) {
+            const base64Data = dataUrl.split(',')[1];
+            const result = await cap.Plugins.Filesystem.writeFile({ path: fileName, data: base64Data, directory: 'CACHE' });
+            await cap.Plugins.Share.share({ url: result.uri, dialogTitle: 'Guardar / Compartir Constancia' });
+        } else {
+            const a = document.createElement('a');
+            a.href = dataUrl; a.download = fileName; a.click();
+        }
+    } catch (e) {
+        toHide.forEach(el => { if (el) el.style.display = ''; });
+        if (e.name !== 'AbortError') showToast('⚠️ No se pudo guardar la constancia');
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '📷 Guardar foto'; }
+    }
+}
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();

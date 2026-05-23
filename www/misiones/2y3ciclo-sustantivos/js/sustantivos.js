@@ -1,4 +1,4 @@
-// Compartir misión por WhatsApp
+﻿// Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
     const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n🔗 *Enlace:* ${url}`;
@@ -1177,7 +1177,7 @@ function shareWA() {
     const msg = document.getElementById('diplMsg').textContent;
     const date = document.getElementById('diplDate').textContent;
     const achText = unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join('\n');
-    const txt = `${stars} CONSTANCIA DE LOGRO ${stars}\n\n📝 Misión: Los Sustantivos\n👤 Estudiante: ${name}\n📊 Progreso: ${pct}% completado\n⭐ XP obtenido: ${xp} de ${MXP}${achText ? '\n\n🏅 Logros desbloqueados:\n' + achText : ''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo Familia Polanco-Castellanos\n🌐 policastsapien.com`;
+    const txt = `${stars} CONSTANCIA DE LOGRO ${stars}\n\n📝 Misión: Los Sustantivos\n👤 Estudiante: ${name}\n📊 Progreso: ${pct}% completado\n⭐ XP obtenido: ${xp} de ${MXP}${achText ? '\n\n🏅 Logros desbloqueados:\n' + achText : ''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com`;
     window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
 }
 async function captureDiploma() {

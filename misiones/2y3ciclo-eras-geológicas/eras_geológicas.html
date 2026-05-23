@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -583,12 +583,13 @@
       <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
       <div class="diploma-date" id="diplDate"></div>
       <div class="diploma-ach" id="diplAch"></div>
-      <div class="diploma-fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</div>
+      <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
       <hr style="margin:0.8rem 0;border-color:var(--border);">
       <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..."
         oninput="updateDiplomaName(this.value)">
       <div class="diploma-actions">
         <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+        <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
         <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
       </div>
     </div>
@@ -636,7 +637,7 @@
 
   <!-- ==================== FOOTER ==================== -->
   <footer class="credits">
-    <p class="fam">🏠 Proyecto Educativo Familia Polanco-Castellanos</p>
+    <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
     <p class="ppl">Jael &amp; Angelly Polanco · Lic. Josué E. Polanco · Evelyn Castellanos</p>
     <div class="mot">«Sembrando aprendizaje en casa, cultivado con IA» 🌱 · Lee, interactúa, recuerda el saber.</div>
     <div class="cred-contact">
@@ -652,6 +653,7 @@
     </div>
   </footer>
 
+    <script src="js/html2canvas.min.js"></script>
   <script src="js/eras.js"></script>
 </body>
 

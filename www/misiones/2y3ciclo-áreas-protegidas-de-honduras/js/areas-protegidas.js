@@ -1,4 +1,4 @@
-// Compartir misión por WhatsApp
+﻿// Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
     const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Ciencias Naturales._ ✍️\n\n🔗 *Enlace:* ${url}`;
@@ -1177,9 +1177,10 @@ function updateLabDisplay(){
 }
 
 // ===================== DIPLOMA =====================
+function _diplPct() { return xp >= MXP ? 100 : Math.round((xp / MXP) * 100); }
 function openDiploma(){
   sfx('fan');
-  const pct=getProgress();
+  const pct = _diplPct();
   document.getElementById('diplPct').textContent=pct+'%';
   document.getElementById('diplBar').style.width=pct+'%';
   document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
@@ -1196,11 +1197,42 @@ function closeDiploma(){document.getElementById('diplomaOverlay').classList.remo
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
 function shareWA(){
   const name=document.getElementById('diplName').textContent||'Estudiante';
-  const pct=getProgress();
+  const pct = _diplPct();
   const msg=`🌲 ¡${name} completó la Misión "El Bosque y las Áreas Protegidas de Honduras"! 🏅 Progreso: ${pct}% · 🌿 policastsapien.com`;
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 
+async function captureDiploma() {
+    if (typeof html2canvas === 'undefined') { showToast('⚠️ Cargando... intenta de nuevo'); return; }
+    sfx('click');
+    const card = document.querySelector('.diploma-card');
+    const btn = document.querySelector('.diploma-actions .btn-pri');
+    const toHide = [card.querySelector('.diploma-input'), card.querySelector('.diploma-actions'), card.querySelector('hr')];
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Capturando...'; }
+    toHide.forEach(el => { if (el) el.style.display = 'none'; });
+    let dataUrl = '';
+    try {
+        const canvas = await html2canvas(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+        toHide.forEach(el => { if (el) el.style.display = ''; });
+        dataUrl = canvas.toDataURL('image/png');
+        const name = (document.getElementById('diplName').textContent || 'Estudiante').replace(/\s+/g, '-');
+        const fileName = 'constancia-' + name + '.png';
+        const cap = window.Capacitor;
+        if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins?.Filesystem && cap.Plugins?.Share) {
+            const base64Data = dataUrl.split(',')[1];
+            const result = await cap.Plugins.Filesystem.writeFile({ path: fileName, data: base64Data, directory: 'CACHE' });
+            await cap.Plugins.Share.share({ url: result.uri, dialogTitle: 'Guardar / Compartir Constancia' });
+        } else {
+            const a = document.createElement('a');
+            a.href = dataUrl; a.download = fileName; a.click();
+        }
+    } catch (e) {
+        toHide.forEach(el => { if (el) el.style.display = ''; });
+        if (e.name !== 'AbortError') showToast('⚠️ No se pudo guardar la constancia');
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '📷 Guardar foto'; }
+    }
+}
 // ===================== INIT =====================
 window.addEventListener('DOMContentLoaded',()=>{
   initTheme();
