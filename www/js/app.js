@@ -663,6 +663,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Iniciar rotación automática con tiempo adaptado a la lectura
   scheduleNextTick();
 
+  // Si se regresa desde una misión con ?view=misiones&filter=X, ir directamente
+  const _urlParams = new URLSearchParams(window.location.search);
+  if (_urlParams.get('view') === 'misiones') {
+    const _filter = _urlParams.get('filter') || 'all';
+    currentFilter = _filter;
+    document.querySelectorAll('.pill').forEach(p =>
+      p.classList.toggle('active', p.dataset.filter === currentFilter)
+    );
+    switchView('view-misiones');
+  }
+
   // Cambio de país
   if (countryEl) {
     countryEl.addEventListener('change', () => {
