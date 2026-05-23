@@ -356,7 +356,7 @@ const idData = [
     { s: ['¿Quién', 'rompió', 'el', 'vaso?'], c: 0, art: 'Pronombre interrogativo' },
     { s: ['Te', 'dije', 'la', 'verdad.'], c: 0, art: 'Pronombre proclítico' },
     { s: ['La', 'niña', 'que', 'canta', 'es', 'mi', 'prima.'], c: 2, art: 'Pronombre relativo' },
-    { s: ['No', 'quiero', 'esa,', 'quiero', 'esta.'], c: 4, art: 'Pronombre demostrativo' },
+    { s: ['No', 'quiero', 'esa,', 'quiero', 'esta.'], c: [2, 4], art: 'Pronombre demostrativo' },
     { s: ['Dámelo', 'ahora', 'mismo.'], c: 0, art: 'Pronombre enclítico' },
 ];
 let idIdx = 0;
@@ -369,7 +369,7 @@ function showId() {
     }
     const d = idData[idIdx];
     document.getElementById('idProg').textContent = `Oración ${idIdx + 1} de ${idData.length}`;
-    document.getElementById('idInfo').textContent = `Busca: ${d.art}`;
+    document.getElementById('idInfo').textContent = `Busca: ${d.art}` + (Array.isArray(d.c) ? ` (hay ${d.c.length} en esta oración)` : '');
     const sent = document.getElementById('idSent'); sent.innerHTML = '';
     d.s.forEach((w, i) => {
         const span = document.createElement('span'); span.className = 'id-word'; span.textContent = w + ' ';
@@ -383,9 +383,22 @@ function checkId(i, span) {
     document.querySelectorAll('.id-word').forEach(s => s.classList.remove('selected'));
     span.classList.add('selected');
 
-    if (i === idData[idIdx].c) {
+    const correct = idData[idIdx].c;
+    const isArray = Array.isArray(correct);
+    const isCorrect = isArray ? correct.includes(i) : i === correct;
+
+    if (isCorrect) {
         idDone = true;
-        span.classList.add('id-ok'); fb('fbId', '¡Correcto! +5 XP', true);
+        span.classList.add('id-ok');
+        if (isArray) {
+            const allWords = document.querySelectorAll('.id-word');
+            correct.forEach(ci => { if (ci !== i) allWords[ci].classList.add('id-ok'); });
+            const others = correct.filter(ci => ci !== i)
+                .map(ci => '"' + idData[idIdx].s[ci].replace(/[,.]$/, '') + '"').join(' y ');
+            fb('fbId', `¡Correcto! +5 XP — ${others} también es ${idData[idIdx].art.toLowerCase()} en esta oración.`, true);
+        } else {
+            fb('fbId', '¡Correcto! +5 XP', true);
+        }
         if (!xpTracker.id.has(idIdx)) { xpTracker.id.add(idIdx); pts(5); }
         sfx('ok');
     } else {
