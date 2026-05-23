@@ -791,14 +791,14 @@ body::before {
     color: white;
 }
 
-.fc-back .fa {
+.fc-back .fca {
     font-size: 0.88rem;
     text-align: center;
     line-height: 1.5;
     color: #e0e0e0;
 }
 
-.fc-back .fa strong {
+.fc-back .fca strong {
     color: var(--yellow-br);
 }
 
