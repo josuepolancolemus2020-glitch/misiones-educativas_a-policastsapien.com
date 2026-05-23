@@ -597,7 +597,7 @@ const sopaSets=[
     words:[
       {w:'OCEANIA',cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]]},
       {w:'AUSTRALIA',cells:[[2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8],[2,9]]},
-      {w:'PINGUINO',cells:[[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0],[9,0]]},
+      {w:'PINGUINOS',cells:[[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0],[9,0]]},
       {w:'CORAL',cells:[[4,2],[4,3],[4,4],[4,5],[4,6]]},
       {w:'ANTARTIDA',cells:[[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8],[7,9]]}
     ]
@@ -605,6 +605,7 @@ const sopaSets=[
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
 let sopaFirstClickCell=null,sopaPointerStartCell=null,sopaPointerMoved=false,sopaSelectedCells=[];
+let _sopaRevealTimer=null;
 
 function getSopaCellSize(){const container=document.getElementById('sopaGrid');if(!container||!container.parentElement)return 28;const avail=container.parentElement.clientWidth-16;const set=sopaSets[currentSopaSetIdx];return Math.max(20,Math.min(32,Math.floor(avail/set.size)));}
 function buildSopa(){
@@ -667,6 +668,25 @@ function checkSopaSelection(){
   document.querySelectorAll('.sopa-cell.sopa-sel').forEach(c=>c.classList.remove('sopa-sel'));sopaSelectedCells=[];
 }
 function nextSopaSet(){sfx('click');sopaFoundWords=new Set();currentSopaSetIdx=(currentSopaSetIdx+1)%sopaSets.length;buildSopa();showToast('🔄 Nueva sopa cargada');}
+function toggleSopaWords(){
+  sfx('click');
+  const set=sopaSets[currentSopaSetIdx];
+  const btn=document.getElementById('sopaWordsBtn');
+  const revealCells=[];
+  set.words.forEach(wObj=>{
+    if(sopaFoundWords.has(wObj.w)) return;
+    wObj.cells.forEach(([r,c])=>{
+      const cell=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);
+      if(cell){ cell.classList.add('sopa-reveal'); revealCells.push(cell); }
+    });
+  });
+  btn.disabled=true;
+  clearTimeout(_sopaRevealTimer);
+  _sopaRevealTimer=setTimeout(()=>{
+    revealCells.forEach(c=>c.classList.remove('sopa-reveal'));
+    btn.disabled=false;
+  },2000);
+}
 let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
