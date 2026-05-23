@@ -1,4 +1,4 @@
-// Compartir misión por WhatsApp
+﻿// Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
     const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n🔗 *Enlace:* ${url}`;
@@ -360,7 +360,7 @@ const idData = [
     { s: ['Ayer', 'visité', 'a', 'mi', 'abuela.'], c: 1, art: 'Verbo en pasado' },
     { s: ['Mañana', 'iremos', 'al', 'cine.'], c: 1, art: 'Verbo en futuro' },
     { s: ['El', 'cielo', 'es', 'azul.'], c: 2, art: 'Verbo copulativo' },
-    { s: ['Quiero', 'aprender', 'a', 'nadar.'], c: 1, art: 'El verbo principal (infinitivo no, el conjugado)' },
+    { s: ['Quiero', 'aprender', 'a', 'nadar.'], c: 0, art: 'Verbo principal conjugado (no el infinitivo)' },
     { s: ['¡Ven', 'aquí', 'ahora!'], c: 0, art: 'Verbo en imperativo' },
     { s: ['Ojalá', 'ganemos', 'el', 'premio.'], c: 1, art: 'Verbo en subjuntivo' },
 ];

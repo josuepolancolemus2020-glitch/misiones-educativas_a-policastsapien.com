@@ -1,4 +1,4 @@
-// Compartir misión por WhatsApp
+﻿// Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
     const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n🔗 *Enlace:* ${url}`;
@@ -349,15 +349,15 @@ function resetClass() { sfx('click'); buildClass(); document.getElementById('fbC
 
 // ===================== IDENTIFICAR =====================
 const idData = [
-    { s: ['María', 'viajó', 'a', 'Tegucigalpa', 'ayer.'], c: 0, art: 'sustantivo propio', info: '«María» es un sustantivo propio porque nombra a una persona específica.' },
-    { s: ['El', 'perro', 'corre', 'por', 'el', 'parque.'], c: 1, art: 'sustantivo común', info: '«perro» es un sustantivo común porque nombra a cualquier perro sin distinguirlo.' },
+    { s: ['María', 'llegó', 'puntual', 'a', 'clase.'], c: 0, art: 'sustantivo propio', info: '«María» es un sustantivo propio porque nombra a una persona específica.' },
+    { s: ['El', 'perro', 'corre', 'muy', 'rápido.'], c: 1, art: 'sustantivo común', info: '«perro» es un sustantivo común porque nombra a cualquier perro sin distinguirlo.' },
     { s: ['La', 'valentía', 'del', 'soldado', 'fue', 'admirable.'], c: 1, art: 'sustantivo abstracto', info: '«valentía» es abstracto porque no se puede percibir con los sentidos.' },
     { s: ['Un', 'enjambre', 'de', 'abejas', 'voló', 'sobre', 'nosotros.'], c: 1, art: 'sustantivo colectivo', info: '«enjambre» es colectivo porque nombra un grupo de abejas en singular.' },
-    { s: ['El', 'chocolate', 'tiene', 'un', 'sabor', 'delicioso.'], c: 1, art: 'sustantivo concreto', info: '«chocolate» es concreto porque lo podemos saborear, tocar y oler.' },
+    { s: ['El', 'chocolate', 'es', 'muy', 'dulce.'], c: 1, art: 'sustantivo concreto', info: '«chocolate» es concreto porque lo podemos saborear, tocar y oler.' },
     { s: ['La', 'panadería', 'abre', 'temprano', 'cada', 'mañana.'], c: 1, art: 'sustantivo derivado', info: '«panadería» es derivado porque viene del sustantivo primitivo «pan».' },
     { s: ['El', 'agua', 'del', 'río', 'está', 'muy', 'fría.'], c: 1, art: 'sustantivo incontable', info: '«agua» es incontable porque no se puede contar, solo medir.' },
     { s: ['Honduras', 'tiene', 'hermosos', 'bosques', 'tropicales.'], c: 0, art: 'sustantivo propio', info: '«Honduras» es propio porque nombra a un país específico.' },
-    { s: ['Tres', 'libros', 'están', 'sobre', 'la', 'mesa.'], c: 1, art: 'sustantivo contable', info: '«libros» es contable porque podemos contar cuántos hay: tres.' },
+    { s: ['Tres', 'libros', 'están', 'sobre', 'la', 'arena.'], c: 1, art: 'sustantivo contable', info: '«libros» es contable porque podemos contar cuántos hay: tres.' },
 ];
 let idIdx = 0;
 function showId() {
