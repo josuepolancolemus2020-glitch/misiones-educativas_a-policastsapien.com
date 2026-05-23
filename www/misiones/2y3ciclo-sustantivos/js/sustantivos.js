@@ -1180,35 +1180,35 @@ function shareWA() {
     const txt = `${stars} CONSTANCIA DE LOGRO ${stars}\n\n📝 Misión: Los Sustantivos\n👤 Estudiante: ${name}\n📊 Progreso: ${pct}% completado\n⭐ XP obtenido: ${xp} de ${MXP}${achText ? '\n\n🏅 Logros desbloqueados:\n' + achText : ''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo Familia Polanco-Castellanos\n🌐 policastsapien.com`;
     window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
 }
-function _downloadBlob(blob, filename) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 5000);
-}
 async function captureDiploma() {
     if (typeof html2canvas === 'undefined') { showToast('⚠️ Cargando... intenta de nuevo'); return; }
     sfx('click');
     const card = document.querySelector('.diploma-card');
+    const btn = document.querySelector('.diploma-actions .btn-pri');
     const toHide = [card.querySelector('.diploma-input'), card.querySelector('.diploma-actions'), card.querySelector('hr')];
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Capturando...'; }
     toHide.forEach(el => { if (el) el.style.display = 'none'; });
+    let dataUrl = '';
     try {
         const canvas = await html2canvas(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
         toHide.forEach(el => { if (el) el.style.display = ''; });
-        canvas.toBlob(async (blob) => {
-            const name = (document.getElementById('diplName').textContent || 'Estudiante').replace(/\s+/g, '-');
-            const fileName = `constancia-sustantivos-${name}.png`;
-            const file = new File([blob], fileName, { type: 'image/png' });
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                try { await navigator.share({ files: [file], title: 'Constancia de Logro — Los Sustantivos' }); }
-                catch (e) { if (e.name !== 'AbortError') _downloadBlob(blob, fileName); }
-            } else {
-                _downloadBlob(blob, fileName);
-            }
-        }, 'image/png');
+        dataUrl = canvas.toDataURL('image/png');
+        const name = (document.getElementById('diplName').textContent || 'Estudiante').replace(/\s+/g, '-');
+        const fileName = 'constancia-sustantivos-' + name + '.png';
+        const cap = window.Capacitor;
+        if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins?.Filesystem && cap.Plugins?.Share) {
+            const base64Data = dataUrl.split(',')[1];
+            const result = await cap.Plugins.Filesystem.writeFile({ path: fileName, data: base64Data, directory: 'CACHE' });
+            await cap.Plugins.Share.share({ url: result.uri, dialogTitle: 'Guardar / Compartir Constancia' });
+        } else {
+            const a = document.createElement('a');
+            a.href = dataUrl; a.download = fileName; a.click();
+        }
     } catch (e) {
         toHide.forEach(el => { if (el) el.style.display = ''; });
-        showToast('⚠️ No se pudo capturar la constancia');
+        if (e.name !== 'AbortError') showToast('⚠️ No se pudo guardar la constancia');
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '📷 Guardar foto'; }
     }
 }
 
