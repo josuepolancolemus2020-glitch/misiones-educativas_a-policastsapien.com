@@ -61,7 +61,7 @@
       <div class="vs-box vs-b">
         <h4>➡️ Ceros en el Cociente</h4>
         <p>Si al bajar una cifra, el número formado es menor que el divisor, se coloca un <strong>cero en el cociente</strong> antes de seguir.</p>
-        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: Al dividir <strong>4.16 ÷ 4</strong>, al llegar al 1 (1 < 4), pones 0 en el cociente y bajas el 6.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: Al dividir <strong>4.16 ÷ 4</strong>, al llegar al 1 (1 &lt; 4), pones 0 en el cociente y bajas el 6.</p>
       </div>
     </div>
   </div>
@@ -73,12 +73,12 @@
       <div class="vs-box vs-c">
         <h4>🔵 Divisor MENOR que 1</h4>
         <p>Si divides entre un número menor que 1 (ej. 0.5), el resultado será <strong>MAYOR</strong> que el número original.</p>
-        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: <strong>10 ÷ 0.5 = 20</strong> (¡20 > 10!)</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: <strong>10 ÷ 0.5 = 20</strong> (¡20 &gt; 10!)</p>
       </div>
       <div class="vs-box vs-d">
         <h4>🟠 Divisor MAYOR que 1</h4>
         <p>Si divides entre un número mayor que 1 (ej. 2.5), el resultado será <strong>MENOR</strong> que el número original.</p>
-        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: <strong>10 ÷ 2.5 = 4</strong> (4 < 10)</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: <strong>10 ÷ 2.5 = 4</strong> (4 &lt; 10)</p>
       </div>
     </div>
     <div class="ex-box">
@@ -113,30 +113,9 @@
 
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-amber">
-    <h2>🧪 Laboratorio de Movimiento del Punto</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Experimenta convirtiendo el divisor en un número entero. Observa cómo el dividendo debe cambiar exactamente igual.</p>
-    <div id="lab-sentence" class="lab-sentence">🔍 Operación inicial: <strong>4.5 ÷ 0.5</strong></div>
-    
-    <div class="lab-stage" style="flex-direction: column; gap: 1rem;">
-      <div style="font-size: 2rem; font-family: 'Fredoka'; display: flex; align-items: center; gap: 1rem; background: var(--card); padding: 1rem 2rem; border-radius: 12px; border: 2px solid var(--amber);">
-        <div id="lab-dividendo" style="color: var(--pri);">4.5</div>
-        <div style="color: var(--gray);">÷</div>
-        <div id="lab-divisor" style="color: var(--sec);">0.5</div>
-      </div>
-      <div id="lab-resultado" style="font-size: 1.2rem; font-weight: bold; color: var(--jade); opacity: 0;">= 9</div>
-    </div>
-
-    <div class="lab-controls">
-      <div class="lab-group">
-        <span class="lab-group-label" style="width:auto;">Mover punto:</span>
-        <button class="lab-btn" onclick="labMovePoint(0)">Reset (x1)</button>
-        <button class="lab-btn" onclick="labMovePoint(1)">x10 (1 espacio)</button>
-        <button class="lab-btn" onclick="labMovePoint(2)">x100 (2 espacios)</button>
-      </div>
-      <div class="ex-box" style="text-align:center; background: var(--amber-gl); color: var(--dark); border: 1px dashed var(--amber);">
-        <span id="lab-explicacion">Multiplica ambos números por la misma potencia de 10 para quitar los decimales del divisor.</span>
-      </div>
-    </div>
+    <h2>🧪 Laboratorio: Movimiento del Punto</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Desliza para multiplicar ambos números por potencias de 10. Observa cómo el divisor se convierte en entero.</p>
+    <div id="widget-movimiento-interactive"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
     <span class="nsb-icon">🃏</span>
@@ -247,27 +226,11 @@
 </div>
 
 <div class="sec" id="s-widgets" role="tabpanel">
-
   <div class="card ac-teal">
-    <h2>🔗 Equivalencias de División</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por emparejar correctamente. Mueve el punto para encontrar la división entera equivalente.</p>
-    <div class="cmp-vis-wrap">
-      <div class="cmp-vis-side">
-        <div class="cmp-vis-label">Operación original</div>
-        <div class="cmp-vis-num" id="widgEquivOri">1.5 ÷ 0.3</div>
-      </div>
-      <div class="cmp-vis-btns">
-        <button class="cmp-sym-btn" onclick="ansEquiv('150 ÷ 3')">150 ÷ 3</button>
-        <button class="cmp-sym-btn" onclick="ansEquiv('15 ÷ 3')">15 ÷ 3</button>
-        <button class="cmp-sym-btn" onclick="ansEquiv('1.5 ÷ 3')">1.5 ÷ 3</button>
-      </div>
-    </div>
-    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;justify-content:center;">
-      <button class="btn btn-pri" onclick="nextEquiv()">▶ Siguiente</button>
-    </div>
-    <div id="fbEquiv" class="fb" role="alert"></div>
+    <h2>📊 Explorador del Cociente</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">¿Qué pasa con el resultado cuando divides entre decimales pequeños? ¡Descúbrelo moviendo el divisor!</p>
+    <div id="widget-cociente-interactive"></div>
   </div>
-
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
     <span class="nsb-icon">🏆</span>
     <span class="nsb-arrow">→</span>
@@ -460,5 +423,20 @@
 
   <script src="js/html2canvas.min.js"></script>
   <script src="js/division-decimales.js"></script>
+  
+  <script src="js/interaccion_movimiento.js"></script>
+  <script src="js/interaccion_cociente.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetMovimientoJSON) {
+        window.WidgetMovimientoJSON.mount('widget-movimiento-interactive');
+      }
+      if (window.WidgetCocienteJSON) {
+        window.WidgetCocienteJSON.mount('widget-cociente-interactive');
+      }
+    });
+  </script>
+
 </body>
 </html>
