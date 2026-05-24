@@ -84,6 +84,9 @@
           <span class="ti">💡</span>
           <div><strong>Recuerda:</strong> El <strong>radio (r)</strong> es la distancia desde el centro del círculo hasta cualquier punto del borde. Si conoces el diámetro, el radio es exactamente la mitad.</div>
         </div>
+
+        <div id="widget-circulo-interactive"></div>
+
       </div>
 
       <div class="card ac-gold">
@@ -102,6 +105,9 @@
             <p style="text-align:center; margin-top:0.5rem;">$$P = L_{arco} + 2r$$</p>
           </div>
         </div>
+
+        <div id="widget-sector-interactive"></div>
+
       </div>
 
       <div class="card ac-jade">
@@ -109,13 +115,16 @@
         <p style="font-size:0.92rem;line-height:1.7;">Un <strong>polígono regular</strong> (como un pentágono o hexágono) tiene todos sus lados y ángulos iguales. Para calcular su área, necesitamos conocer dos elementos vitales:</p>
         <ul style="padding-left:1.5rem; font-size:0.92rem; margin-top:0.5rem; margin-bottom:1rem; line-height:1.6;">
             <li><strong>Centro:</strong> El punto interior que está a la misma distancia de todos los vértices.</li>
-            <li><strong>Apotema ($a$):</strong> El segmento que va desde el centro hasta el punto medio de cualquiera de sus lados (formando un ángulo de 90°).</li>
+            <li><strong>Apotema (a):</strong> El segmento que va desde el centro hasta el punto medio de cualquiera de sus lados (formando un ángulo de 90°).</li>
         </ul>
         <div class="tip">
           <span class="ti">⚡</span>
-          <div><strong>Fórmula del Área:</strong> Para cualquier polígono regular, se multiplica el Perímetro ($P$) por la apotema ($a$) y se divide entre 2:<br>
+          <div><strong>Fórmula del Área:</strong> Para cualquier polígono regular, se multiplica el Perímetro (P) por la apotema (a) y se divide entre 2:<br>
           $$A = \frac{P \cdot a}{2}$$</div>
         </div>
+
+        <div id="widget-poligono-interactive"></div>
+
       </div>
 
       <div class="card ac-amber">
@@ -158,19 +167,19 @@
         <p style="font-size:0.92rem;line-height:1.7;margin-bottom:1rem;">Usa las tarjetas de abajo para familiarizarte con los componentes que forman los círculos y los polígonos regulares.</p>
         <div class="type-grid">
           <div class="type-chip tc-teal">
-            <div class="t-art">📏 Radio ($r$)</div>
+            <div class="t-art">📏 Radio (r)</div>
             <div class="t-info">Del centro al borde</div>
           </div>
           <div class="type-chip tc-gold">
-            <div class="t-art">↔️ Diámetro ($d$)</div>
+            <div class="t-art">↔️ Diámetro (d)</div>
             <div class="t-info">Cruza el centro (2 radios)</div>
           </div>
           <div class="type-chip tc-amber">
-            <div class="t-art">📐 Apotema ($a$)</div>
+            <div class="t-art">📐 Apotema (a)</div>
             <div class="t-info">Del centro al lado (90°)</div>
           </div>
           <div class="type-chip tc-jade">
-            <div class="t-art">🔄 Perímetro ($P$)</div>
+            <div class="t-art">🔄 Perímetro (P)</div>
             <div class="t-info">Suma de los lados</div>
           </div>
           <div class="type-chip tc-purple">
@@ -512,6 +521,17 @@
 
   <script src="js/html2canvas.min.js"></script>
   <script src="js/circulos-poligonos.js"></script>
+
+  <script src="js/interaccion_circulo.js"></script>
+  <script src="js/interaccion_sector.js"></script>
+  <script src="js/interaccion_poligono.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetCirculoJSON) window.WidgetCirculoJSON.mount('widget-circulo-interactive');
+      if (window.WidgetSectorJSON) window.WidgetSectorJSON.mount('widget-sector-interactive');
+      if (window.WidgetPoligonoJSON) window.WidgetPoligonoJSON.mount('widget-poligono-interactive');
+    });
+  </script>
 
 </body>
 </html>
