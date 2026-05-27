@@ -84,6 +84,16 @@ function paGenerate() {
   const dash = document.getElementById('pa-dashboard');
   if (!dash) return;
 
+  // Grade grid — 3 columns of 15 students each
+  const ngSlices = [students.slice(0, 15), students.slice(15, 30), students.slice(30, 45)];
+  const ngGridHtml = ngSlices.filter(s => s.length > 0).map(slice => {
+    const rows = slice.map(s => {
+      const c = paGradeColors(s.grade);
+      return `<div class="pa-ng-row"><span class="pa-ng-num">#${s.id}</span><span class="pa-ng-chip" style="background:${c.bg};color:${c.txt}">${s.grade}</span></div>`;
+    }).join('');
+    return `<div class="pa-ng-col">${rows}</div>`;
+  }).join('');
+
   dash.innerHTML = `
     <div class="pa-dash-head">
       <div>
@@ -155,6 +165,11 @@ function paGenerate() {
             </ul>
           </div>
         </div>
+      </div>
+
+      <div class="pa-card">
+        <div class="pa-card-title">📋 Calificaciones según número de Lista</div>
+        <div class="pa-ng-grid">${ngGridHtml}</div>
       </div>
     </div>
 

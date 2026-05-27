@@ -1310,6 +1310,13 @@ a { text-decoration: none; color: inherit; }
 .pa-td-name { padding:8px 12px;color:var(--text);border-bottom:1px solid var(--border); }
 .pa-td-g { padding:8px 12px;font-weight:800;border-bottom:1px solid var(--border);border-left:1px solid var(--border); }
 
+/* Grade number grid */
+.pa-ng-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:8px; }
+.pa-ng-col { display:flex;flex-direction:column;gap:3px; }
+.pa-ng-row { display:flex;align-items:center;gap:4px;min-height:24px; }
+.pa-ng-num { font-size:10px;font-weight:600;color:var(--muted);width:26px;text-align:right;flex-shrink:0; }
+.pa-ng-chip { font-size:12px;font-weight:800;padding:4px 0;border-radius:6px;text-align:center;flex:1; }
+
 /* ====== PARTE MENSUAL ====== */
 .parte-card {
   background: var(--surface); border-radius: var(--r);
