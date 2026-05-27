@@ -167,9 +167,14 @@ function paGenerate() {
         </div>
       </div>
 
-      <div class="pa-card">
+      <div class="pa-card pa-ng-card" id="pa-ng-capture">
+        <div class="pa-ng-titulo">${evaluacion}</div>
         <div class="pa-card-title">📋 Calificaciones según número de Lista</div>
         <div class="pa-ng-grid">${ngGridHtml}</div>
+        <div class="pa-ng-msg">"La excelencia es la consecuencia natural de una sola causa: la disciplina. Disciplina para estudiar cada día, cumplir cada tarea y <strong>usar el teléfono exclusivamente como herramienta de aprendizaje</strong>. Quien lo practique alcanzará la calificación más alta."</div>
+        <div class="pa-ng-actions">
+          <button onclick="paCaptureGrilla()" class="pa-ng-capture-btn"><i class="fa-solid fa-camera"></i> Capturar / Compartir</button>
+        </div>
       </div>
     </div>
 
@@ -342,6 +347,38 @@ tbody tr:nth-child(even){background:#f8fafc;}
   setTimeout(() => printWin.print(), 700);
 }
 window.paPrint = paPrint;
+
+async function paCaptureGrilla() {
+  if (typeof html2canvas === 'undefined') { toast('⚠️ Cargando... intenta de nuevo'); return; }
+  const card = document.getElementById('pa-ng-capture');
+  const btn  = card?.querySelector('.pa-ng-capture-btn');
+  const acts = card?.querySelector('.pa-ng-actions');
+  if (!card) return;
+  if (btn)  { btn.disabled = true; btn.innerHTML = '⏳ Capturando...'; }
+  if (acts) acts.style.display = 'none';
+  try {
+    const canvas = await html2canvas(card, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+    if (acts) acts.style.display = '';
+    const dataUrl   = canvas.toDataURL('image/png');
+    const grado     = document.getElementById('pa-grado')?.value    || 'grado';
+    const seccion   = document.getElementById('pa-seccion')?.value  || 'seccion';
+    const fileName  = `calificaciones-${grado}-${seccion}.png`.replace(/\s+/g, '-');
+    const cap = window.Capacitor;
+    if (cap && cap.isNativePlatform?.() && cap.Plugins?.Filesystem && cap.Plugins?.Share) {
+      const result = await cap.Plugins.Filesystem.writeFile({ path: fileName, data: dataUrl.split(',')[1], directory: 'CACHE' });
+      await cap.Plugins.Share.share({ url: result.uri, dialogTitle: 'Guardar / Compartir Calificaciones' });
+    } else {
+      const a = document.createElement('a');
+      a.href = dataUrl; a.download = fileName; a.click();
+    }
+  } catch(e) {
+    if (acts) acts.style.display = '';
+    if (e.name !== 'AbortError') toast('⚠️ No se pudo capturar la imagen');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-camera"></i> Capturar / Compartir'; }
+  }
+}
+window.paCaptureGrilla = paCaptureGrilla;
 
 function paInit() {
   if (_paInitDone) return;

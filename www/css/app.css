@@ -1311,11 +1311,16 @@ a { text-decoration: none; color: inherit; }
 .pa-td-g { padding:8px 12px;font-weight:800;border-bottom:1px solid var(--border);border-left:1px solid var(--border); }
 
 /* Grade number grid */
+.pa-ng-titulo { font-size:13px;font-weight:800;color:var(--brand);text-align:center;margin-bottom:12px;line-height:1.4;border-bottom:2px solid var(--border);padding-bottom:10px; }
 .pa-ng-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:8px; }
 .pa-ng-col { display:flex;flex-direction:column;gap:3px; }
 .pa-ng-row { display:flex;align-items:center;gap:4px;min-height:24px; }
 .pa-ng-num { font-size:10px;font-weight:600;color:var(--muted);width:26px;text-align:right;flex-shrink:0; }
 .pa-ng-chip { font-size:12px;font-weight:800;padding:4px 0;border-radius:6px;text-align:center;flex:1; }
+.pa-ng-msg { font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px;border-top:1px solid var(--border);padding-top:10px;text-align:justify; }
+.pa-ng-actions { margin-top:12px; }
+.pa-ng-capture-btn { width:100%;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s; }
+.pa-ng-capture-btn:active { transform:scale(.97); }
 
 /* ====== PARTE MENSUAL ====== */
 .parte-card {
