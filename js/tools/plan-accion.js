@@ -6,7 +6,7 @@ const PA_CATS = [
   { key:'avanzado',       label:'Avanzado',       min:95,  max:100, color:'#16a34a', bg:'#dcfce7' },
   { key:'muyBueno',       label:'Muy Bueno',      min:80,  max:94,  color:'#0891b2', bg:'#cffafe' },
   { key:'satisfactorio',  label:'Satisfactorio',  min:70,  max:79,  color:'#a16207', bg:'#fef9c3' },
-  { key:'debeMejorar',    label:'Debe Mejorar',   min:60,  max:69,  color:'#b45309', bg:'#fef3c7' },
+  { key:'debeMejorar',    label:'Debe Mejorar',   min:60,  max:69,  color:'#ea580c', bg:'#ffedd5' },
   { key:'insatisfactorio',label:'Insatisfactorio',min:0,   max:59,  color:'#dc2626', bg:'#fee2e2' },
 ];
 const PA_SUGS = {
@@ -25,7 +25,7 @@ function paGradeColors(g) {
   if (g >= 95) return { bg:'#22c55e', txt:'#fff' };
   if (g >= 80) return { bg:'#22d3ee', txt:'#000' };
   if (g >= 70) return { bg:'#fef08a', txt:'#000' };
-  if (g >= 60) return { bg:'#facc15', txt:'#000' };
+  if (g >= 60) return { bg:'#f97316', txt:'#fff' };
   return { bg:'#ef4444', txt:'#fff' };
 }
 
@@ -149,7 +149,7 @@ function paGenerate() {
               ${toRecover.length ? toRecover.map(s => `
                 <li class="pa-recup-item">
                   <span class="pa-recup-name">#${s.id} ${s.name}</span>
-                  <span class="pa-grade-chip" style="background:${s.grade<=55?'#ef4444':'#facc15'};color:${s.grade<=55?'#fff':'#000'}">${s.grade}</span>
+                  <span class="pa-grade-chip" style="background:${s.grade<=55?'#ef4444':'#f97316'};color:#fff">${s.grade}</span>
                 </li>`).join('') : '<li class="pa-empty-msg">Sin alumnos a recuperación ✅</li>'}
             </ul>
           </div>
@@ -307,7 +307,7 @@ tbody tr:nth-child(even){background:#f8fafc;}
     <div>
       <div class="plan-sub">⚠️ Lista de Recuperación (${toRecover.length})</div>
       <div class="plan-note">Irán a recuperación una semana después de la entrega del primer examen.</div>
-      <ul class="rlist">${toRecover.length ? toRecover.map(s => `<li class="ritem"><span>#${s.id} ${s.name}</span><span class="chip" style="background:${s.grade<=55?'#ef4444':'#facc15'};color:${s.grade<=55?'#fff':'#000'}">${s.grade}</span></li>`).join('') : '<li style="font-size:10px;color:#64748b;font-style:italic">Sin alumnos ✅</li>'}</ul>
+      <ul class="rlist">${toRecover.length ? toRecover.map(s => `<li class="ritem"><span>#${s.id} ${s.name}</span><span class="chip" style="background:${s.grade<=55?'#ef4444':'#f97316'};color:#fff">${s.grade}</span></li>`).join('') : '<li style="font-size:10px;color:#64748b;font-style:italic">Sin alumnos ✅</li>'}</ul>
     </div>
     <div>
       <div class="plan-sub">📋 NSP — Prueba Pendiente (${nsp.length})</div>
