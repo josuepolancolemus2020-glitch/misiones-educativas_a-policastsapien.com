@@ -451,11 +451,14 @@
       <div class="pa-card">
         <div class="pa-card-title">✏️ Calificaciones</div>
 
-        <!-- Tabs de entrada -->
+        <!-- Tabs de entrada + botón Generar -->
         <div class="pa-entry-tabs">
           <button class="pa-etab pa-etab-active" data-etab="manual">Entrada manual</button>
           <button class="pa-etab" data-etab="pegar">Pegar lista</button>
         </div>
+        <button class="pa-gen-btn" id="pa-generate-btn" style="margin-bottom:14px;">
+          <i class="fa-solid fa-chart-column"></i> Generar Análisis
+        </button>
 
         <!-- Manual -->
         <div id="pa-entry-manual">
@@ -479,9 +482,6 @@
           <button class="pa-add-btn" id="pa-import-btn"><i class="fa-solid fa-file-import"></i> Importar lista</button>
         </div>
 
-        <button class="pa-gen-btn" id="pa-generate-btn">
-          <i class="fa-solid fa-chart-column"></i> Generar Análisis
-        </button>
       </div>
 
       <!-- Dashboard (se genera dinámicamente) -->

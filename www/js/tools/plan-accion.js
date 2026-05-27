@@ -383,7 +383,7 @@ window.paCaptureGrilla = paCaptureGrilla;
 function paInit() {
   if (_paInitDone) return;
   _paInitDone = true;
-  for (let i = 1; i <= 5; i++) paAddRow(i);
+  for (let i = 1; i <= 20; i++) paAddRow(i);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
