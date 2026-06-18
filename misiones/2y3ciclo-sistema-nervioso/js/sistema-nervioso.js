@@ -11,8 +11,8 @@ function fb(id,msg,isOk){const el=document.getElementById(id);if(el){el.textCont
 const SAVE_KEY='sistema_nervioso_v1';
 let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
 let evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;
-const TOTAL_SECTIONS=12;
-const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set()};
+const TOTAL_SECTIONS=13;
+const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set(),wgt:new Set()};
 
 // ===================== SONIDO =====================
 let sndOn=true;let AC=null;
@@ -36,7 +36,8 @@ const ACHIEVEMENTS={
   id_master:{icon:'🔍',label:'Identificador de conceptos nerviosos maestro'},
   reto_hero:{icon:'🏆',label:'Héroe del reto de clasificación nerviosa'},
   nivel3:{icon:'🔬',label:'¡Neurólogo! Nivel 3'},
-  nivel5:{icon:'🥇',label:'¡Maestro del Sistema Nervioso! Nivel 6'}
+  nivel5:{icon:'🥇',label:'¡Maestro del Sistema Nervioso! Nivel 6'},
+  widgets_master:{icon:'🧩',label:'Widgets del sistema nervioso dominados'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -53,7 +54,7 @@ function fin(id,showFX=true){if(!done.has(id)){done.add(id);const b=document.que
 function getProgress(){return Math.round((done.size/TOTAL_SECTIONS)*100);}
 
 // ===================== NAV =====================
-function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-t[role="tab"]').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById(id).classList.add('active');const btn=document.querySelector(`[data-s="${id}"]`);if(btn){btn.classList.add('active');btn.setAttribute('aria-selected','true');}window.scrollTo({top:0,behavior:'smooth'});if(id==='s-sopa'){setTimeout(buildSopa,50);}}
+function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-t[role="tab"]').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById(id).classList.add('active');const btn=document.querySelector(`[data-s="${id}"]`);if(btn){btn.classList.add('active');btn.setAttribute('aria-selected','true');}window.scrollTo({top:0,behavior:'smooth'});if(id==='s-sopa'){setTimeout(buildSopa,50);}if(id==='s-widgets'){setTimeout(buildRoute,50);}}
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
@@ -144,6 +145,64 @@ const cmpData=[
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
 function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',false);cmpDone=true;const opts=document.querySelectorAll('.cmp-opt');if(cmpSel===cmpData[cmpIdx].c){opts[cmpSel].classList.add('correct');document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`);fb('fbCmp','¡Correcto! +5 XP',true);if(!xpTracker.cmp.has(cmpIdx)){xpTracker.cmp.add(cmpIdx);pts(5);}sfx('ok');}else{opts[cmpSel].classList.add('wrong');opts[cmpData[cmpIdx].c].classList.add('correct');fb('fbCmp','Incorrecto. Revisa bien la respuesta.',false);sfx('no');}setTimeout(()=>{cmpIdx++;document.getElementById('fbCmp').classList.remove('show');showCmp();},1600);}
+
+// ===================== WIDGETS =====================
+// Widget 1: Ordenar Ruta del Impulso
+const routeSets=[
+  {label:'Ruta del Impulso Nervioso',steps:['Receptor sensorial','Neurona sensorial','SNC (médula o encéfalo)','Neurona motora','Efector (músculo)']},
+  {label:'Arco Reflejo',steps:['Estímulo externo','Receptor nervioso','Neurona sensorial','Médula espinal','Neurona motora','Efector (músculo)']},
+  {label:'Transmisión Sináptica',steps:['Potencial de acción en el axón','Botón sináptico activado','Liberación de neurotransmisor','Cruce del espacio sináptico','Receptor postsináptico activado']},
+];
+let currentRouteIdx=0,routeItems=[];
+function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
+function renderRoute(){const list=document.getElementById('routeList');if(!list)return;list.innerHTML='';routeItems.forEach((step,i)=>{const div=document.createElement('div');div.className='sort-item';div.innerHTML=`<div class="sort-arrows"><button class="sort-arrow" onclick="routeMove(${i},-1)"${i===0?' disabled':''}>▲</button><button class="sort-arrow" onclick="routeMove(${i},1)"${i===routeItems.length-1?' disabled':''}>▼</button></div><div class="sort-step-num">${i+1}.</div><div class="sort-item-txt">${step}</div>`;list.appendChild(div);});}
+function routeMove(idx,dir){sfx('click');const ni=idx+dir;if(ni<0||ni>=routeItems.length)return;[routeItems[idx],routeItems[ni]]=[routeItems[ni],routeItems[idx]];renderRoute();}
+function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden. Revisa el arreglo.',false);sfx('no');}}
+function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Ruta: '+routeSets[currentRouteIdx].label);}
+
+// Widget 2: Partes de la Neurona
+const neuronPartes=[
+  {desc:'Contiene el núcleo y el citoplasma de la neurona',ans:'Soma',opts:['Soma','Dendrita','Axón','Mielina']},
+  {desc:'Recibe impulsos de otras neuronas',ans:'Dendrita',opts:['Soma','Dendrita','Axón','Nodo de Ranvier']},
+  {desc:'Transmite el impulso nervioso hacia otras células',ans:'Axón',opts:['Dendrita','Soma','Axón','Sinapsis']},
+  {desc:'Vaina lipídica que acelera la conducción del impulso',ans:'Mielina',opts:['Axón','Mielina','Soma','Sinapsis']},
+  {desc:'Espacio entre nodos donde el impulso "salta" (conducción saltatoria)',ans:'Nodo de Ranvier',opts:['Axón','Mielina','Nodo de Ranvier','Dendrita']},
+  {desc:'Zona donde se liberan los neurotransmisores hacia la sinapsis',ans:'Botón sináptico',opts:['Soma','Botón sináptico','Axón','Dendrita']},
+  {desc:'Neurona que lleva información de los receptores sensoriales al SNC',ans:'Neurona sensorial',opts:['Neurona motora','Interneurona','Neurona sensorial','Neurona eferente']},
+  {desc:'Neurona que lleva órdenes del SNC hacia músculos y glándulas',ans:'Neurona motora',opts:['Neurona sensorial','Neurona motora','Interneurona','Soma']},
+];
+let neuronIdx=0,neuronDone=false;
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todas las partes identificadas!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Parte ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
+function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
+function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
+
+// Widget 3: Neurotransmisores → Función
+const neuroPairs=[
+  {trans:'Dopamina',func:'Movimiento y placer; su pérdida causa Parkinson',opts:['Movimiento y placer; su pérdida causa Parkinson','Estado de ánimo y bienestar','Contracción muscular voluntaria','Inhibición nerviosa']},
+  {trans:'Serotonina',func:'Estado de ánimo y bienestar',opts:['Movimiento y placer; su pérdida causa Parkinson','Estado de ánimo y bienestar','Contracción muscular voluntaria','Activación del sistema simpático']},
+  {trans:'GABA',func:'Inhibición nerviosa',opts:['Inhibición nerviosa','Estado de ánimo y bienestar','Movimiento y placer; su pérdida causa Parkinson','Contracción muscular voluntaria']},
+  {trans:'Acetilcolina',func:'Contracción muscular voluntaria',opts:['Inhibición nerviosa','Estado de ánimo y bienestar','Movimiento y placer; su pérdida causa Parkinson','Contracción muscular voluntaria']},
+  {trans:'Noradrenalina',func:'Activación del sistema simpático (lucha o huye)',opts:['Activación del sistema simpático (lucha o huye)','Estado de ánimo y bienestar','Movimiento y placer; su pérdida causa Parkinson','Inhibición nerviosa']},
+];
+let neuroIdx=0,neuroDone=false;
+function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
+function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.querySelectorAll('#neuroOpts .qz-opt').forEach(b=>{if(b.textContent===d.func)b.classList.add('correct');else if(b===btn&&b.textContent!==d.func)b.classList.add('wrong');});const isOk=opt===d.func;if(isOk){fb('fbNeuro','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuro_'+neuroIdx)){xpTracker.wgt.add('neuro_'+neuroIdx);pts(3);}sfx('ok');}else{fb('fbNeuro','Correcto: '+d.func,false);sfx('no');}setTimeout(()=>{neuroIdx++;showNeuro();},1800);}
+function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
+
+// Widget 4: Enfermedades → Característica principal
+const enfermedadData=[
+  {disease:'Alzheimer',characteristic:'Destruye neuronas y sinapsis; principal causa de demencia',opts:['Destruye neuronas y sinapsis; principal causa de demencia','Destruye la vaina de mielina','Pérdida de dopamina con temblores involuntarios','Descargas eléctricas anormales en el cerebro']},
+  {disease:'Parkinson',characteristic:'Pérdida de dopamina con temblores involuntarios',opts:['Destruye neuronas y sinapsis; principal causa de demencia','Destruye la vaina de mielina','Pérdida de dopamina con temblores involuntarios','Descargas eléctricas anormales en el cerebro']},
+  {disease:'Esclerosis múltiple',characteristic:'Destruye la vaina de mielina afectando la conducción',opts:['Destruye neuronas y sinapsis; principal causa de demencia','Destruye la vaina de mielina afectando la conducción','Pérdida de dopamina con temblores involuntarios','Compresión de nervios en la muñeca']},
+  {disease:'Epilepsia',characteristic:'Descargas eléctricas anormales en el cerebro',opts:['Destruye neuronas y sinapsis; principal causa de demencia','Destruye la vaina de mielina afectando la conducción','Pérdida de dopamina con temblores involuntarios','Descargas eléctricas anormales en el cerebro']},
+  {disease:'Meningitis',characteristic:'Inflamación de las meninges que rodean el SNC',opts:['Inflamación de las meninges que rodean el SNC','Destruye la vaina de mielina afectando la conducción','Pérdida de dopamina con temblores involuntarios','Descargas eléctricas anormales en el cerebro']},
+  {disease:'ACV (Derrame cerebral)',characteristic:'Obstrucción o ruptura de vasos cerebrales',opts:['Inflamación de las meninges que rodean el SNC','Destruye la vaina de mielina afectando la conducción','Obstrucción o ruptura de vasos cerebrales','Descargas eléctricas anormales en el cerebro']},
+];
+let enferIdx=0,enferDone=false;
+function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
+function checkEnfer(opt,btn,d){if(enferDone)return;enferDone=true;document.querySelectorAll('#enferOpts .qz-opt').forEach(b=>{if(b.textContent===d.characteristic)b.classList.add('correct');else if(b===btn&&b.textContent!==d.characteristic)b.classList.add('wrong');});const isOk=opt===d.characteristic;if(isOk){fb('fbEnfer','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('enfer_'+enferIdx)){xpTracker.wgt.add('enfer_'+enferIdx);pts(3);}sfx('ok');}else{fb('fbEnfer','Correcto: '+d.characteristic,false);sfx('no');}setTimeout(()=>{enferIdx++;showEnfer();},1800);}
+function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
@@ -397,6 +456,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   showId();
   showCmp();
   updateRetoButtons();
+  buildRoute();
+  showNeuron();
+  showNeuro();
+  showEnfer();
   updateLabDisplay();
   document.querySelector('[data-parte="cerebro"]')?.classList.add('active-pri');
   document.querySelector('[data-aspecto="estructura"]')?.classList.add('active-sec');
