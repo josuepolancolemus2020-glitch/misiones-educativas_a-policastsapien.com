@@ -300,7 +300,7 @@ const evalMCBank=[
   {q:'¿Cuál es el tipo de neurona que recibe estímulos y los envía al SNC?',o:['a) Motora','b) Sensorial','c) Interneurona','d) Eferente'],a:1},
 ];
 const evalCPBank=[
-  {q:'El ___ es la unidad estructural y funcional del sistema nervioso.',a:'neurona'},
+  {q:'La ___ es la unidad estructural y funcional del sistema nervioso.',a:'neurona'},
   {q:'La vaina de ___ acelera la conducción del impulso nervioso.',a:'mielina'},
   {q:'El SNP está formado por ___ pares de nervios craneales.',a:'12'},
   {q:'El ___ coordina el equilibrio y los movimientos finos.',a:'cerebelo'},
