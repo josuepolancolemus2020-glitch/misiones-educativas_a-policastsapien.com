@@ -27,6 +27,7 @@ function fb(id, msg, isOk) {
 const SAVE_KEY = 'matematica_decimales_v1';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1, unlockedAch = [], darkMode = false, prevLevel = 0;
+let evalOpFormNum = 1, evalOpAnsVisible = false;
 const TOTAL_SECTIONS = 13;
 const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), sopa: new Set(), nl: new Set(), sort: new Set(), bldr: new Set(), compVis: new Set() };
 
@@ -799,6 +800,204 @@ function printEval(){
   win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
 }
 
+// ===================== PRUEBA OPERATIVA (EJERCICIOS APLICADOS) =====================
+function evalSwitchMode(mode){
+  sfx('click');
+  const cWrap=document.getElementById('evalConceptWrap'), oWrap=document.getElementById('evalOpWrap');
+  const cBtn=document.getElementById('evalModeBtnConcept'), oBtn=document.getElementById('evalModeBtnOp');
+  if(mode==='op'){ cWrap.style.display='none'; oWrap.style.display='block'; cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected','false'); oBtn.classList.add('active'); oBtn.setAttribute('aria-selected','true'); }
+  else{ oWrap.style.display='none'; cWrap.style.display='block'; oBtn.classList.remove('active'); oBtn.setAttribute('aria-selected','false'); cBtn.classList.add('active'); cBtn.setAttribute('aria-selected','true'); }
+}
+
+// ---- Aritmética decimal exacta: value = v / 10^s (evita errores de coma flotante) ----
+function _rint(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function _decFmt(d,fixed=false){
+  let v=d.v,s=d.s; const neg=v<0; v=Math.abs(v);
+  let str=String(v).padStart(s+1,'0');
+  let intPart=s>0?str.slice(0,str.length-s):str;
+  let fracPart=s>0?str.slice(str.length-s):'';
+  intPart=intPart.replace(/^0+(?=\d)/,'')||'0';
+  if(!fixed) fracPart=fracPart.replace(/0+$/,'');
+  return (neg?'-':'')+intPart+(fracPart?'.'+fracPart:'');
+}
+function _decAlign(a,b){ const s=Math.max(a.s,b.s); return [a.v*10**(s-a.s), b.v*10**(s-b.s), s]; }
+function _decAdd(a,b){ const [av,bv,s]=_decAlign(a,b); return {v:av+bv,s}; }
+function _decSub(a,b){ const [av,bv,s]=_decAlign(a,b); return {v:av-bv,s}; }
+function _decCmp(a,b){ const [av,bv]=_decAlign(a,b); return av===bv?0:(av>bv?1:-1); }
+function _decRoundTo(d,targetScale){ if(d.s<=targetScale) return {v:d.v*10**(targetScale-d.s),s:targetScale}; const div=10**(d.s-targetScale); return {v:Math.round(d.v/div),s:targetScale}; }
+function _decShift(d,k){ let v=d.v,s=d.s-k; if(s<0){ v=v*10**(-s); s=0; } return {v,s}; }
+function _randDec(maxIntDigits,scale){ const intDigits=_rint(1,maxIntDigits); const intPart=intDigits===1?_rint(0,9):_rint(10**(intDigits-1),10**intDigits-1); const fracPart=scale>0?_rint(0,10**scale-1):0; return {v:intPart*10**scale+fracPart,s:scale}; }
+
+function genOpItems(){
+  const items=[];
+  for(let i=0;i<5;i++){
+    const isAdd=Math.random()<0.55;
+    let a,b;
+    do{ a=_randDec(_rint(1,3),_rint(0,3)); b=_randDec(_rint(1,3),_rint(0,3)); }while(!_decFmt(a).includes('.')&&!_decFmt(b).includes('.'));
+    let op=isAdd?'+':'-';
+    if(!isAdd){ if(_decCmp(a,b)<0){ const t=a; a=b; b=t; } if(_decCmp(a,b)===0) op='+'; }
+    const result=op==='+'?_decAdd(a,b):_decSub(a,b);
+    items.push({a:_decFmt(a),b:_decFmt(b),op,ans:_decFmt(result)});
+  }
+  return items;
+}
+function genRoundItems(){
+  const items=[];
+  for(let i=0;i<10;i++){
+    const trick=Math.random()<0.15;
+    const num=_randDec(_rint(1,2),trick?2:3);
+    const rounded=_decRoundTo(num,2);
+    items.push({q:_decFmt(num,true),ans:_decFmt(rounded,true)});
+  }
+  return items;
+}
+function genCmpItems(){
+  const items=[];
+  for(let i=0;i<10;i++){
+    const forceEq=Math.random()<0.2;
+    let a=_randDec(_rint(1,2),_rint(1,3)), b;
+    if(forceEq){ b=Math.random()<0.5?{v:a.v*10,s:a.s+1}:{v:a.v,s:a.s}; }
+    else{ b=_randDec(_rint(1,2),_rint(1,3)); if(_decCmp(a,b)===0) b=_decAdd(b,{v:1,s:b.s}); }
+    const c=_decCmp(a,b);
+    items.push({a:_decFmt(a),b:_decFmt(b),rel:c===0?'eq':(c>0?'gt':'lt')});
+  }
+  return items;
+}
+function genPowItems(){
+  const items=[]; const powers=[10,100,1000]; const ops=['×','÷'];
+  for(let i=0;i<10;i++){
+    const op=ops[_rint(0,1)]; const power=powers[_rint(0,2)];
+    const base=_randDec(_rint(1,3),_rint(1,3));
+    const k=Math.log10(power)*(op==='×'?1:-1);
+    const result=_decShift(base,k);
+    items.push({base:_decFmt(base),op,power,ans:_decFmt(result)});
+  }
+  return items;
+}
+function genOrdItems(){
+  const groups=[];
+  for(let g=0;g<4;g++){
+    const dir=Math.random()<0.5?'mayor':'menor';
+    const nums=[]; let tries=0;
+    while(nums.length<5&&tries<300){ tries++; const cand=_randDec(1,_rint(2,3)); if(!nums.some(n=>_decCmp(n,cand)===0)) nums.push(cand); }
+    const sortedAsc=[...nums].sort((x,y)=>_decCmp(x,y));
+    const correctOrder=(dir==='mayor'?[...sortedAsc].reverse():sortedAsc).map(n=>_decFmt(n));
+    groups.push({dir,display:_shuffle(nums).map(n=>_decFmt(n)),correctOrder});
+  }
+  return groups;
+}
+
+function genEvalOp(){
+  sfx('click');
+  const cf=evalOpFormNum; window._currentEvalOpForm=cf; evalOpFormNum=(evalOpFormNum%10)+1; saveProgress();
+  document.getElementById('evalop-screen-title').textContent=`📐 Prueba Operativa — Forma ${cf} · Números Decimales`;
+  evalOpAnsVisible=false;
+  const out=document.getElementById('evalOpOut'); out.innerHTML='';
+
+  const opItems=genOpItems();
+  const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Operaciones (suma y resta) <span class="eval-pts">50 pts · 10 pts c/u</span></div>';
+  opItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.a} ${it.op} ${it.b} =</span><input class="eval-cp-input" type="text" data-opx="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbOpx${i}" aria-live="polite"></div>`; s1.appendChild(d); });
+  out.appendChild(s1);
+
+  const roundItems=genRoundItems();
+  const s2=document.createElement('div'); s2.innerHTML='<div class="eval-section-title">II. Redondear a la centésima más próxima <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
+  roundItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.q} ≈</span><input class="eval-cp-input" type="text" data-rnd="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbRnd${i}" aria-live="polite"></div>`; s2.appendChild(d); });
+  out.appendChild(s2);
+
+  const cmpItems=genCmpItems();
+  const s3=document.createElement('div'); s3.innerHTML='<div class="eval-section-title">III. Compara: ¿mayor, menor o igual? <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
+  cmpItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text opx-expr">${it.a} ___ ${it.b}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="cmp${i}" value="gt"> Mayor que (&gt;)</label><label class="eval-cmp-opt"><input type="radio" name="cmp${i}" value="lt"> Menor que (&lt;)</label><label class="eval-cmp-opt"><input type="radio" name="cmp${i}" value="eq"> Igual (=)</label></div><div class="eval-answer">${it.rel==='gt'?'Mayor que':it.rel==='lt'?'Menor que':'Igual'}</div><div class="eval-item-feedback" id="evalFbCmp${i}" aria-live="polite"></div>`; s3.appendChild(d); });
+  out.appendChild(s3);
+
+  const powItems=genPowItems();
+  const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Multiplica o divide por potencias de 10 <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
+  powItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.base} ${it.op} ${it.power} =</span><input class="eval-cp-input" type="text" data-pow="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbPow${i}" aria-live="polite"></div>`; s4.appendChild(d); });
+  out.appendChild(s4);
+
+  const ordGroups=genOrdItems();
+  const s5=document.createElement('div'); s5.innerHTML='<div class="eval-section-title">V. Ordena cada grupo de cantidades decimales <span class="eval-pts">20 pts · 5 pts c/u</span></div>';
+  ordGroups.forEach((g,gi)=>{
+    const d=document.createElement('div'); d.className='eval-item eval-auto-item evord-group';
+    d.innerHTML=`<div class="evord-dir">${gi+1}. Ordena de ${g.dir==='mayor'?'MAYOR a menor':'MENOR a mayor'}:</div><div class="evord-list" id="evordList${gi}"></div><div class="eval-answer">${g.correctOrder.join(' · ')}</div><div class="eval-item-feedback" id="evalFbOrd${gi}" aria-live="polite"></div>`;
+    s5.appendChild(d);
+  });
+  out.appendChild(s5);
+
+  window._evalOpData={ops:opItems,round:roundItems,cmp:cmpItems,pow:powItems,ord:ordGroups.map(g=>({dir:g.dir,current:[...g.display],correctOrder:g.correctOrder}))};
+  ordGroups.forEach((g,gi)=>_renderOrdGroup(gi));
+  const autoPanel=document.createElement('div'); autoPanel.id='evalOpAutoResult'; autoPanel.className='eval-auto-result'; autoPanel.innerHTML='<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original para resolver en papel.'; out.appendChild(autoPanel);
+  fin('s-evaluacion');
+}
+
+function _renderOrdGroup(gi){
+  const data=window._evalOpData.ord[gi];
+  const list=document.getElementById('evordList'+gi); if(!list) return;
+  list.innerHTML='';
+  data.current.forEach((label,i)=>{
+    const div=document.createElement('div'); div.className='evord-item';
+    div.innerHTML=`<div class="evord-arrows"><button class="sort-arrow" onclick="evordMove(${gi},${i},-1)"${i===0?' disabled':''}>▲</button><button class="sort-arrow" onclick="evordMove(${gi},${i},1)"${i===data.current.length-1?' disabled':''}>▼</button></div><div class="evord-num">${label}</div>`;
+    list.appendChild(div);
+  });
+}
+function evordMove(gi,idx,dir){
+  sfx('click');
+  const data=window._evalOpData.ord[gi]; const ni=idx+dir;
+  if(ni<0||ni>=data.current.length) return;
+  [data.current[idx],data.current[ni]]=[data.current[ni],data.current[idx]];
+  _renderOrdGroup(gi);
+}
+
+function toggleEvalOpAns(){ evalOpAnsVisible=!evalOpAnsVisible; document.querySelectorAll('#evalOpOut .eval-answer').forEach(el=>el.style.display=evalOpAnsVisible?'block':'none'); sfx('click'); }
+
+function isOpNumCorrect(student,expectedStr){
+  if(student===undefined||student===null) return false;
+  const s=student.toString().trim().replace(',','.');
+  if(s==='') return false;
+  const sn=parseFloat(s); const en=parseFloat(expectedStr);
+  if(isNaN(sn)||isNaN(en)) return false;
+  return Math.abs(sn-en)<1e-6;
+}
+function gradeEvalOp(){
+  if(!window._evalOpData){ showToast('⚠️ Genera una prueba operativa primero'); return; }
+  sfx('click');
+  const d=window._evalOpData;
+  let total=0; const detail={ops:0,round:0,cmp:0,pow:0,ord:0};
+  d.ops.forEach((it,i)=>{ const input=document.querySelector(`[data-opx="${i}"]`); const ok=isOpNumCorrect(input?input.value:'',it.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.ops++; total+=10; } setEvalFeedback('evalFbOpx'+i,ok,ok?'Correcto. +10 pts':'Revisar. Respuesta esperada: '+it.ans); });
+  d.round.forEach((it,i)=>{ const input=document.querySelector(`[data-rnd="${i}"]`); const ok=isOpNumCorrect(input?input.value:'',it.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.round++; total+=1; } setEvalFeedback('evalFbRnd'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+it.ans); });
+  d.cmp.forEach((it,i)=>{ const selected=document.querySelector(`input[name="cmp${i}"]:checked`); const ok=!!selected&&selected.value===it.rel; if(ok){ detail.cmp++; total+=1; } setEvalFeedback('evalFbCmp'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+(it.rel==='gt'?'Mayor que':it.rel==='lt'?'Menor que':'Igual')); });
+  d.pow.forEach((it,i)=>{ const input=document.querySelector(`[data-pow="${i}"]`); const ok=isOpNumCorrect(input?input.value:'',it.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.pow++; total+=1; } setEvalFeedback('evalFbPow'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+it.ans); });
+  d.ord.forEach((g,gi)=>{ const ok=g.current.every((v,i)=>v===g.correctOrder[i]); if(ok){ detail.ord++; total+=5; } setEvalFeedback('evalFbOrd'+gi,ok,ok?'¡Orden correcto! +5 pts':'Orden incorrecto. Clave: '+g.correctOrder.join(' · ')); });
+  const result=document.getElementById('evalOpAutoResult');
+  if(result){ result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk'); result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Operaciones: ${detail.ops*10}/50 · Redondeo: ${detail.round}/10 · Comparar: ${detail.cmp}/10 · Pot. de 10: ${detail.pow}/10 · Ordenar: ${detail.ord*5}/20</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`; }
+  if(total>=70){ pts(8); showToast('🎯 Prueba operativa calificada: '+total+'/100'); }
+  else showToast('🧮 Prueba operativa calificada: '+total+'/100. Revisa las respuestas marcadas.');
+}
+
+function printEvalOp(){
+  if(!window._evalOpData){ showToast('⚠️ Genera una prueba operativa primero'); return; }
+  sfx('click');
+  const forma=window._currentEvalOpForm||1; const d=window._evalOpData;
+  let s1=`<div class="sec-title"><span>I. Operaciones (suma y resta)</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 50%</span></div></div><p class="opx-instr">Resuelve con lápiz grafito las sumas y restas; trabaja el proceso en la cuadrícula y coloca la respuesta. Valor 10% c/u.</p>`;
+  d.ops.forEach((it,i)=>{ s1+=`<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="opx-print-expr">${it.a} ${it.op} ${it.b} =</span><span class="opx-blank"></span></div>`; });
+  s1+=`<div class="op-grid"></div>`;
+  let s2=`<div class="sec-title"><span>II. Redondear a la centésima más próxima</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><table class="rnd-tbl"><tr><th>Cantidad</th><th>Respuesta</th></tr>${d.round.map(it=>`<tr><td>${it.q}</td><td></td></tr>`).join('')}</table>`;
+  const cmpHalf=Math.ceil(d.cmp.length/2);
+  const cmpRow=(it)=>`<div class="cmp-print-row"><span class="cmp-print-num">${it.a}</span><span class="cmp-box">&nbsp;</span><span class="cmp-print-num">${it.b}</span></div>`;
+  let s3=`<div class="sec-title"><span>III. Compara: ¿mayor, menor o igual?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="cmp-print-grid"><div>${d.cmp.slice(0,cmpHalf).map(cmpRow).join('')}</div><div>${d.cmp.slice(cmpHalf).map(cmpRow).join('')}</div></div>`;
+  let s4=`<div class="sec-title"><span>IV. Multiplica o divide por potencias de 10</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><table class="rnd-tbl"><tr><th>Operación</th><th>Respuesta</th></tr>${d.pow.map(it=>`<tr><td>${it.base} ${it.op} ${it.power} =</td><td></td></tr>`).join('')}</table>`;
+  let s5=`<div class="sec-title"><span>V. Ordena cada grupo de cantidades decimales</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20%</span></div></div><div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordene de ${g.dir==='mayor'?'Mayor a Menor':'Menor a Mayor'}.</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${v}</td>`).join('')}</tr><tr>${g.current.map(()=>'<td class="ord-print-cell"></td>').join('')}</tr></table></div>`).join('')}</div>`;
+  let pR='';
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Operaciones</div><table class="p-tbl">${d.ops.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Redondeo</div><table class="p-tbl">${d.round.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III. Comparar</div><table class="p-tbl">${d.cmp.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.rel==='gt'?'&gt;':it.rel==='lt'?'&lt;':'='}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">IV. Pot. de 10</div><table class="p-tbl">${d.pow.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Ordenar</div>${d.ord.map((g,gi)=>`<div class="p-ord-line"><strong>${gi+1}.</strong> ${g.correctOrder.join(' · ')}</div>`).join('')}</div>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Números Decimales · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#555;margin-top:0.15rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.4rem 0 0.2rem;border-left:4px solid #e17055;background:#fbe9e4;display:flex;justify-content:space-between;align-items:center;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#e17055;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #e17055;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.18rem 0.2rem;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{flex:1;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.op-grid{margin-top:0.3rem;height:110mm;border:1px solid #99ccff;background-image:linear-gradient(#cfe8ff 1px,transparent 1px),linear-gradient(90deg,#cfe8ff 1px,transparent 1px);background-size:6mm 6mm;}.rnd-tbl{width:60%;border-collapse:collapse;margin-top:0.2rem;font-size:10pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #999;padding:0.18rem 0.5rem;text-align:left;}.cmp-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.cmp-print-row{display:flex;align-items:center;gap:0.4rem;font-size:11pt;padding:0.2rem 0;}.cmp-box{display:inline-block;width:22px;height:18px;border:1.5px solid #111;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;}.ord-print-dir{font-size:9.5pt;font-weight:700;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #999;padding:0.15rem 0.3rem;text-align:center;}.ord-print-cell{height:16px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.25rem 0.4rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}.p-ord-line{font-size:8pt;margin-bottom:0.15rem;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:10mm;}}</style></head><body><div class="ph"><h2>Examen de Matemáticas — Actividades Operativas · Números Decimales · II y III Ciclo</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Operaciones 50% · Redondeo 10% · Comparar 10% · Pot. de 10: 10% · Ordenar 20%</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row" style="margin-top:0.4rem;font-weight:700;">Total obtenido: <span class="obt-line" style="min-width:80px;"></span> de 100%</div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Números Decimales · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
+  const win=window.open('','_blank','');
+  if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
+  win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
+}
+
 // ===================== DIPLOMA =====================
 function _diplPct() { return xp >= MXP ? 100 : Math.round((xp / MXP) * 100); }
 function openDiploma(){
@@ -865,7 +1064,7 @@ async function captureDiploma() {
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   loadProgress();
-  upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval();
+  upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval(); genEvalOp();
   updateRetoButtons(); decLabInit(); renderAchPanel();
   buildNl(); buildSort(); buildBldr(); buildComp();
   document.addEventListener('click',function(e){ const panel=document.getElementById('achPanel'); const btn=document.getElementById('achBtn'); if(panel.classList.contains('open')&&!panel.contains(e.target)&&e.target!==btn) panel.classList.remove('open'); });
