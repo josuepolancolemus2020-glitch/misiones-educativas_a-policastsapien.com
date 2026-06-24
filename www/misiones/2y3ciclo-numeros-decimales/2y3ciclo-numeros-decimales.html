@@ -595,8 +595,13 @@
   </button>
 </div>
 
-<!-- ==================== EVALUACIÓN CONCEPTUAL ==================== -->
+<!-- ==================== EVALUACIÓN ==================== -->
 <div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Prueba Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
   <div class="card ac-purple">
     <div class="eval-print-header">
       <h2>Evaluación Final de Misión Números Decimales · II y III Ciclo · Matemática</h2>
@@ -614,14 +619,8 @@
     </div>
     <div id="evalOut"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion-op')">
-    <span class="nsb-icon">📐</span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== EVALUACIÓN PRÁCTICA / OPERATIVA ==================== -->
-<div class="sec" id="s-evaluacion-op" role="tabpanel">
+  </div>
+  <div id="evalOpWrap" style="display:none;">
   <div class="card ac-amber">
     <div class="eval-print-header">
       <h2>Examen de Matemáticas — Actividades Operativas del Tema Números Decimales · II y III Ciclo</h2>
@@ -638,6 +637,7 @@
       <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
     </div>
     <div id="evalOpOut"></div>
+  </div>
   </div>
   <div id="eval-pauta-sheet"></div>
   <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
@@ -719,7 +719,6 @@
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion-op" data-s="s-evaluacion-op" onclick="go('s-evaluacion-op')"><span class="ico">📐</span> Práctica</button>
   <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
 </nav>
