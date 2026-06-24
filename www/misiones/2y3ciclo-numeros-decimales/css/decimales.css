@@ -367,10 +367,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 @media print{.eval-cp-input,.eval-match-select,.eval-item-feedback,.eval-auto-result{display:none!important;}}
 
 /* PRUEBA OPERATIVA */
-.eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
-.eval-mode-btn{flex:1;min-width:160px;font-family:'Fredoka',sans-serif;font-size:0.9rem;padding:0.65rem 1rem;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--gray);cursor:pointer;transition:all 0.2s;}
-.eval-mode-btn:hover{border-color:var(--pri);}
-.eval-mode-btn.active{border-color:var(--pri);background:var(--pri-gl);color:var(--pri);font-weight:700;}
 .opx-row{display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;}
 .opx-expr{font-family:'Fira Code',monospace;font-weight:600;font-size:1rem;color:var(--dark);}
 .eval-cmp-opts{display:flex;gap:1rem;margin-top:0.5rem;margin-left:1.7rem;flex-wrap:wrap;}

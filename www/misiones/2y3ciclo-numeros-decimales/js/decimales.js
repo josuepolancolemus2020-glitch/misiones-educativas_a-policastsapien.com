@@ -28,7 +28,7 @@ const SAVE_KEY = 'matematica_decimales_v1';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1, unlockedAch = [], darkMode = false, prevLevel = 0;
 let evalOpFormNum = 1, evalOpAnsVisible = false;
-const TOTAL_SECTIONS = 13;
+const TOTAL_SECTIONS = 14;
 const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), sopa: new Set(), nl: new Set(), sort: new Set(), bldr: new Set(), compVis: new Set() };
 
 // ===================== SONIDO =====================
@@ -801,14 +801,6 @@ function printEval(){
 }
 
 // ===================== PRUEBA OPERATIVA (EJERCICIOS APLICADOS) =====================
-function evalSwitchMode(mode){
-  sfx('click');
-  const cWrap=document.getElementById('evalConceptWrap'), oWrap=document.getElementById('evalOpWrap');
-  const cBtn=document.getElementById('evalModeBtnConcept'), oBtn=document.getElementById('evalModeBtnOp');
-  if(mode==='op'){ cWrap.style.display='none'; oWrap.style.display='block'; cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected','false'); oBtn.classList.add('active'); oBtn.setAttribute('aria-selected','true'); }
-  else{ oWrap.style.display='none'; cWrap.style.display='block'; oBtn.classList.remove('active'); oBtn.setAttribute('aria-selected','false'); cBtn.classList.add('active'); cBtn.setAttribute('aria-selected','true'); }
-}
-
 // ---- Aritmética decimal exacta: value = v / 10^s (evita errores de coma flotante) ----
 function _rint(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
 function _decFmt(d,fixed=false){
@@ -926,7 +918,7 @@ function genEvalOp(){
   window._evalOpData={ops:opItems,round:roundItems,cmp:cmpItems,pow:powItems,ord:ordGroups.map(g=>({dir:g.dir,current:[...g.display],correctOrder:g.correctOrder}))};
   ordGroups.forEach((g,gi)=>_renderOrdGroup(gi));
   const autoPanel=document.createElement('div'); autoPanel.id='evalOpAutoResult'; autoPanel.className='eval-auto-result'; autoPanel.innerHTML='<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original para resolver en papel.'; out.appendChild(autoPanel);
-  fin('s-evaluacion');
+  fin('s-evaluacion-op');
 }
 
 function _renderOrdGroup(gi){
