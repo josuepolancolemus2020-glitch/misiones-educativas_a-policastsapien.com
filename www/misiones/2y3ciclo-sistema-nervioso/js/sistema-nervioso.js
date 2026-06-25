@@ -11,6 +11,7 @@ function fb(id,msg,isOk){const el=document.getElementById(id);if(el){el.textCont
 const SAVE_KEY='sistema_nervioso_v1';
 let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
 let evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;
+let evalCritFormNum=1,evalCritAnsVisible=false;
 const TOTAL_SECTIONS=13;
 const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set(),wgt:new Set()};
 
@@ -25,8 +26,8 @@ function toggleTheme(){darkMode=!darkMode;document.documentElement.setAttribute(
 function initTheme(){const s=localStorage.getItem(SAVE_KEY+'_theme');const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;darkMode=(s==='dark')||(s===null&&sys);if(darkMode){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeBtn').textContent='☀️ Tema';}}
 
 // ===================== LOCALSTORAGE =====================
-function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSections:Array.from(done),unlockedAch,evalFormNum,xp}));}catch(e){}}
-function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
+function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSections:Array.from(done),unlockedAch,evalFormNum,evalCritFormNum,xp}));}catch(e){}}
+function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalCritFormNum)evalCritFormNum=s.evalCritFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
 
 // ===================== ACHIEVEMENTS =====================
 const ACHIEVEMENTS={
@@ -400,6 +401,184 @@ function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);cons
 function setEvalFeedback(id,ok,msg){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.className='eval-item-feedback '+(ok?'eval-ok':'eval-no');}
 function gradeEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const d=window._evalPrintData;let total=0;const detail={cp:0,tf:0,mc:0,pr:0};d.cp.forEach((it,i)=>{const input=document.querySelector(`[data-cp="${i}"]`);const ok=isCpCorrect(input?input.value:'',it.a);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.cp++;total+=5;}setEvalFeedback('evalFbCp'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.a);});d.tf.forEach((it,i)=>{const selected=document.querySelector(`input[name="tf${i}"]:checked`);const ok=!!selected&&(selected.value==='true')===it.a;if(ok){detail.tf++;total+=5;}setEvalFeedback('evalFbTf'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+(it.a?'Verdadero':'Falso'));});d.mc.forEach((it,i)=>{const selected=document.querySelector(`input[name="mc${i}"]:checked`);const ok=!!selected&&Number(selected.value)===it.a;if(ok){detail.mc++;total+=5;}setEvalFeedback('evalFbMc'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.o[it.a]);});const expectedLetters=d.pr.terms.map(it=>d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]);expectedLetters.forEach((letter,i)=>{const sel=document.querySelector(`[data-pr="${i}"]`);const ok=!!sel&&sel.value===letter;if(sel){sel.classList.toggle('eval-input-ok',ok);sel.classList.toggle('eval-input-no',!ok);}if(ok){detail.pr++;total+=5;}});const prMsg=`Pareados: ${detail.pr}/5 correctos. ${detail.pr===5?'Excelente. +25 pts':'Clave: '+expectedLetters.map((l,i)=>(i+16)+'→'+l).join(' · ')}`;setEvalFeedback('evalFbPr',detail.pr===5,prMsg);const result=document.getElementById('evalAutoResult');if(result){result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Completar: ${detail.cp*5}/25 · V/F: ${detail.tf*5}/25 · Selección: ${detail.mc*5}/25 · Pareados: ${detail.pr*5}/25</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`;}if(total>=70){pts(8);showToast('🎯 Evaluación calificada: '+total+'/100');}else showToast('🧮 Evaluación calificada: '+total+'/100. Revisa las respuestas marcadas.');}
 function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const forma=window._currentEvalForm||1;const d=window._evalPrintData;let s1=`<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;d.cp.forEach((it,i)=>{const q=it.q.replace('___','<span class="cp-blank"></span>');s1+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text">${q}</span></div>`;});let s2=`<div class="sec-title"><span>II. Verdadero o Falso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;d.tf.forEach((it,i)=>{s2+=`<div class="tf-row"><span class="qn">${i+6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`;});let s3=`<div class="sec-title"><span>III. Selección Múltiple</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="mc-grid">`;d.mc.forEach((it,i)=>{const opts=it.o.map((op,oi)=>`<label class="mc-opt"><input type="radio" name="mcp${i}"> ${op}</label>`).join('');s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+11}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`;});s3+=`</div>`;let colL='<div class="pr-col"><div class="pr-head">📌 Términos</div>';d.pr.terms.forEach((it,i)=>{colL+=`<div class="pr-item"><span class="pr-num">${i+16}.</span><span class="pr-line"></span>${it.term}</div>`;});colL+='</div>';let colR='<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';d.pr.shuffledDefs.forEach((it,i)=>{colR+=`<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`;});colR+='</div>';let s4=`<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;let pR='';pR+=`<div class="p-sec"><div class="p-ttl">I. Completar</div><table class="p-tbl">`;d.cp.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${it.a}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. V o F</div><table class="p-tbl">`;d.tf.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+6}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">III. Selección</div><table class="p-tbl">`;d.mc.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${it.o[it.a]}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;d.pr.terms.forEach((it,i)=>{const l=d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)];pR+=`<tr><td class="pn">${i+16}.</td><td class="pa">${i+16}→${l}</td></tr>`;});pR+=`</table></div>`;const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación El Sistema Nervioso · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #27ae60;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#e8f8f5;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#27ae60;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#27ae60;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.25rem 0.4rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:12.7mm;}}</style></head><body><div class="ph"><h2>Evaluación Final · El Sistema Nervioso · II y III Ciclo · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · El Sistema Nervioso · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
+
+// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+function evalSwitchMode(mode){
+  sfx('click');
+  const cWrap=document.getElementById('evalConceptWrap'),critWrap=document.getElementById('evalCritWrap');
+  const cBtn=document.getElementById('evalModeBtnConcept'),critBtn=document.getElementById('evalModeBtnCrit');
+  if(mode==='crit'){
+    cWrap.style.display='none';critWrap.style.display='block';
+    cBtn.classList.remove('active');cBtn.setAttribute('aria-selected','false');
+    critBtn.classList.add('active');critBtn.setAttribute('aria-selected','true');
+    if(!window._evalCritData)genEvalCrit();
+  }else{
+    critWrap.style.display='none';cWrap.style.display='block';
+    critBtn.classList.remove('active');critBtn.setAttribute('aria-selected','false');
+    cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
+  }
+}
+
+const critCaseBank=[
+  {txt:'Daniela toca accidentalmente una taza muy caliente y retira la mano de inmediato, antes de pensar conscientemente en lo ocurrido.'},
+  {txt:'Carlos pisa sin darse cuenta un vidrio roto y levanta el pie de inmediato, antes de sentir el dolor por completo.'},
+  {txt:'A Sofía le llega de golpe una luz muy brillante a los ojos y parpadea rápidamente sin proponérselo.'},
+  {txt:'Luis toca por error una plancha caliente mientras dobla la ropa y retira la mano al instante, antes de darse cuenta del calor.'},
+  {txt:'El médico golpea suavemente la rodilla de Mario con un martillo de reflejos y su pierna se extiende sola, sin que él lo decida.'},
+  {txt:'Ana se acerca demasiado a una olla con agua hirviendo y aparta la mano apenas siente el vapor caliente sobre su piel.'},
+];
+const critCaseQuestions=[
+  '1. Explica qué ocurrió en su sistema nervioso desde el estímulo hasta la respuesta.',
+  '2. ¿Por qué reaccionó antes de "pensarlo" conscientemente?',
+  '3. ¿Qué partes del sistema nervioso participaron en esta respuesta?',
+  '4. ¿Qué habría pasado si la médula espinal no pudiera enviar la respuesta correctamente?',
+];
+const critCaseGuides=[
+  'El estímulo activa un receptor sensorial → la neurona sensorial lleva el impulso a la médula espinal → una interneurona lo procesa y lo envía por una neurona motora → el músculo (efector) se contrae y aleja la parte del cuerpo.',
+  'Porque es un reflejo: la respuesta se procesa directamente en la médula espinal sin esperar a que el cerebro interprete la sensación, lo que la hace mucho más rápida que una respuesta consciente.',
+  'Receptor sensorial, neurona sensorial, médula espinal (con interneurona), neurona motora y efector (músculo).',
+  'No habría reflejo: la señal tendría que viajar hasta el cerebro y regresar, lo cual es más lento, así que el cuerpo permanecería en contacto con el estímulo dañino más tiempo y la lesión sería mayor.',
+];
+
+const critErrorBank=[
+  {txt:'"El cerebro controla todos los reflejos del cuerpo. Cuando una persona se quema, primero piensa en el dolor y luego la médula espinal decide mover la mano."',
+   g1:'No todos los reflejos pasan por el cerebro: el arco reflejo se procesa directamente en la médula espinal.',
+   g2:'El orden está invertido: primero la médula espinal genera la respuesta motora (retirar la mano) y solo después el cerebro percibe el dolor.'},
+  {txt:'"Las neuronas motoras llevan la información de los sentidos hacia el cerebro, mientras que las neuronas sensoriales llevan las órdenes hacia los músculos."',
+   g1:'Las funciones están invertidas: las neuronas sensoriales (aferentes) llevan la información de los sentidos hacia el SNC.',
+   g2:'Las neuronas motoras (eferentes) son las que llevan las órdenes del SNC hacia los músculos, no al revés.'},
+  {txt:'"El cerebelo es el encargado de pensar, recordar y tomar decisiones, mientras que el cerebro solo se encarga de mantener el equilibrio."',
+   g1:'El cerebro (corteza cerebral) es el que controla el pensamiento, la memoria y la toma de decisiones, no el cerebelo.',
+   g2:'El cerebelo es el que coordina el equilibrio, la postura y los movimientos finos, no el cerebro.'},
+  {txt:'"La médula espinal forma parte del Sistema Nervioso Periférico, y los nervios craneales pertenecen al Sistema Nervioso Central."',
+   g1:'La médula espinal es parte del Sistema Nervioso Central (SNC), junto con el encéfalo.',
+   g2:'Los nervios craneales son parte del Sistema Nervioso Periférico (SNP), no del SNC.'},
+  {txt:'"El sistema nervioso simpático calma el cuerpo después de una situación de estrés, mientras que el parasimpático lo activa en momentos de peligro."',
+   g1:'El sistema simpático es el que activa al cuerpo ante el peligro o el estrés ("lucha o huye"), no lo calma.',
+   g2:'El sistema parasimpático es el que calma y restaura al cuerpo después del estrés ("descanso y digestión"), no lo activa.'},
+  {txt:'"La falta de acetilcolina causa la enfermedad de Parkinson, y la dopamina es la encargada de contraer los músculos esqueléticos."',
+   g1:'El Parkinson es causado por la pérdida de dopamina, no por la falta de acetilcolina.',
+   g2:'La acetilcolina es el neurotransmisor encargado de la contracción muscular voluntaria, no la dopamina.'},
+];
+
+const critDecisionBank=[
+  'Un estudiante duerme poco, pasa muchas horas con videojuegos, no desayuna bien y casi no hace ejercicio. En clase se muestra distraído, irritable y con dificultad para recordar.',
+  'Un joven pasa todo el día frente al celular, se acuesta muy tarde, no practica ningún deporte y consume muchas bebidas energizantes. Se queja de dolores de cabeza frecuentes y falta de concentración.',
+  'Una persona anda en bicicleta sin casco todos los días, fuma cigarrillos de forma ocasional y rara vez duerme las horas necesarias. Sus amigos notan que reacciona más lento de lo normal.',
+  'Un estudiante trasnocha estudiando la noche antes de los exámenes, no hace pausas activas durante el día y casi no lee. Le cuesta mantener la atención en clase.',
+  'Una persona trabaja muchas horas frente a la computadora sin descansos, no hace ejercicio físico y duerme menos de 5 horas cada noche. Presenta cambios de humor frecuentes.',
+];
+const critDecisionGuide='Debe proponer 3 cambios concretos relacionados con los hábitos de cuidado del sistema nervioso (dormir 8–9 h, hacer ejercicio físico, alimentarse bien, leer/aprender, evitar el exceso de pantallas, evitar alcohol/drogas/estimulantes, usar casco, manejar el estrés) y explicar con sus palabras por qué cada cambio ayuda a la salud del sistema nervioso.';
+
+const critCompareBank=[
+  {a:'Una persona olvida nombres, lugares y conversaciones recientes, y su confusión empeora con el tiempo.',b:'Una persona tiene temblores en reposo, rigidez muscular y dificultad para iniciar movimientos.',
+   ga:'Alzheimer — afecta principalmente la memoria y las funciones cognitivas (destruye neuronas y sinapsis).',
+   gb:'Parkinson — afecta principalmente el movimiento, por la pérdida de dopamina en el cerebro.',
+   gr:'No son el mismo problema porque afectan funciones distintas del sistema nervioso (memoria/cognición vs. control motor) y tienen causas diferentes (degeneración relacionada con la memoria vs. falta de dopamina).'},
+  {a:'Una persona sufre descargas eléctricas anormales en el cerebro que producen convulsiones repentinas.',b:'Una persona presenta debilidad muscular progresiva y problemas de visión por daño a la vaina de mielina.',
+   ga:'Epilepsia — afecta la actividad eléctrica normal de las neuronas cerebrales.',
+   gb:'Esclerosis múltiple — afecta la conducción del impulso nervioso al dañar la mielina.',
+   gr:'No son el mismo problema: una altera la actividad eléctrica del cerebro (descargas anormales) y la otra daña la estructura que acelera la conducción del impulso (la mielina).'},
+  {a:'Una persona presenta fiebre alta, rigidez de cuello y dolor de cabeza intenso por inflamación de las meninges.',b:'Una persona presenta pérdida progresiva de la memoria y confusión que empeora con los años.',
+   ga:'Meningitis — es una infección/inflamación de las meninges que rodean el SNC.',
+   gb:'Alzheimer — es una enfermedad neurodegenerativa que destruye neuronas relacionadas con la memoria.',
+   gr:'No son el mismo problema: una es una infección aguda que inflama las membranas del SNC y la otra es una degeneración progresiva y crónica de las neuronas.'},
+  {a:'Una persona tiene temblor en reposo y mucha dificultad para iniciar sus movimientos.',b:'Una persona sufre episodios breves de pérdida de conciencia acompañados de movimientos involuntarios.',
+   ga:'Parkinson — afecta el control del movimiento por falta de dopamina.',
+   gb:'Epilepsia — afecta la actividad eléctrica normal del cerebro.',
+   gr:'No son el mismo problema: uno es un trastorno progresivo del movimiento por falta de un neurotransmisor, y el otro es un trastorno episódico causado por descargas eléctricas anormales.'},
+];
+
+const critCauseBank=[
+  {cause:'Una persona duerme pocas horas durante varios días seguidos.',guide:'Bajo rendimiento, falta de concentración, irritabilidad y dificultad para consolidar la memoria (el sistema nervioso no logra descansar ni repararse).'},
+  {cause:'Una persona no usa casco al andar en bicicleta y sufre una caída fuerte sobre la cabeza.',guide:'Riesgo de traumatismo craneal y posible daño al tejido cerebral.'},
+  {cause:'Una persona consume alcohol en exceso de forma constante.',guide:'Daño a las neuronas (especialmente del cerebelo), pérdida de coordinación y deterioro cognitivo progresivo.'},
+  {cause:'Una persona pasa muchas horas seguidas frente a pantallas sin descanso, incluso de noche.',guide:'Fatiga visual, dolores de cabeza y alteración del sueño, lo que afecta el descanso del sistema nervioso.'},
+];
+const critEffectBank=[
+  {effect:'Retira la mano rápidamente.',guide:'Tocó algo muy caliente o doloroso: se activó un arco reflejo ante un estímulo nocivo.'},
+  {effect:'Tiene dificultad para mantener el equilibrio al caminar.',guide:'Posible daño o mal funcionamiento del cerebelo.'},
+  {effect:'Olvida conversaciones recientes y nombres de personas cercanas.',guide:'Degeneración de neuronas relacionadas con la memoria, como ocurre en el Alzheimer.'},
+  {effect:'Sufre convulsiones repentinas e involuntarias.',guide:'Descargas eléctricas anormales en el cerebro, como ocurre en la epilepsia.'},
+];
+
+function genEvalCrit(){
+  sfx('click');
+  const cf=evalCritFormNum;window._currentEvalCritForm=cf;evalCritFormNum=(evalCritFormNum%10)+1;saveProgress();
+  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · El Sistema Nervioso`;
+  evalCritAnsVisible=false;
+  const out=document.getElementById('evalCritOut');out.innerHTML='';
+
+  const kase=_pick(critCaseBank,1)[0];
+  const s1=document.createElement('div');
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el reflejo nervioso <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  out.appendChild(s1);
+
+  const err=_pick(critErrorBank,1)[0];
+  const s2=document.createElement('div');
+  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  out.appendChild(s2);
+
+  const dec=_pick(critDecisionBank,1)[0];
+  const s3=document.createElement('div');
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: cuidar el sistema nervioso <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué tres cambios recomendarías para cuidar mejor su sistema nervioso? Explica por qué ayudaría cada cambio.</div><textarea class="crit-textarea" rows="4" aria-label="Tres cambios recomendados y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  out.appendChild(s3);
+
+  const cmp=_pick(critCompareBank,1)[0];
+  const s4=document.createElement('div');
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué enfermedad podría relacionarse con cada caso? 2. ¿Qué función del sistema nervioso parece afectada en cada uno? 3. ¿Por qué no son el mismo problema?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  out.appendChild(s4);
+
+  const causes=_pick(critCauseBank,2),effects=_pick(critEffectBank,2);
+  let ceRows='';
+  causes.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Causa</span>${it.cause}</div><div class="crit-ce-cell"><span class="crit-ce-tag">Efecto</span><textarea class="crit-textarea" rows="2" aria-label="Efecto de: ${it.cause}" placeholder="Escribe el efecto..."></textarea></div></div><div class="crit-pauta">${it.guide}</div></div>`;});
+  effects.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell"><span class="crit-ce-tag">Causa</span><textarea class="crit-textarea" rows="2" aria-label="Causa de: ${it.effect}" placeholder="Escribe la causa..."></textarea></div><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Efecto</span>${it.effect}</div></div><div class="crit-pauta">${it.guide}</div></div>`;});
+  const s5=document.createElement('div');
+  s5.innerHTML=`<div class="eval-section-title">V. Análisis de causas y efectos <span class="eval-pts">20 pts</span></div><div class="eval-item">${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  out.appendChild(s5);
+
+  window._evalCritData={kase,err,dec,cmp,causes,effects};
+  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje (0–20) en cada casilla. Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
+  fin('s-evaluacion');
+}
+function toggleEvalCritAns(){evalCritAnsVisible=!evalCritAnsVisible;document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');sfx('click');}
+function calcCritTotal(){
+  if(!window._evalCritData){showToast('⚠️ Genera una prueba primero');return;}
+  sfx('click');
+  let total=0;
+  document.querySelectorAll('#evalCritOut .crit-score-input').forEach(inp=>{let v=parseInt(inp.value)||0;v=Math.max(0,Math.min(20,v));inp.value=v;total+=v;});
+  const panel=document.getElementById('evalCritTotalResult');
+  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara siempre tus respuestas con la Pauta antes de anotar el puntaje de cada sección.</em>`;}
+  const formKey='crit_'+(window._currentEvalCritForm||1);
+  if(total>=70){if(!xpTracker.wgt.has(formKey)){xpTracker.wgt.add(formKey);pts(8);}showToast('🎯 Pensamiento crítico: '+total+'/100');}
+  else showToast('🧮 Puntaje registrado: '+total+'/100. ¡Sigue practicando!');
+}
+function printEvalCrit(){
+  if(!window._evalCritData){showToast('⚠️ Genera una prueba primero');return;}
+  sfx('click');
+  const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
+  const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: el reflejo nervioso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(2)}`;});
+  let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(2)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: cuidar el sistema nervioso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué tres cambios recomendarías para cuidar mejor su sistema nervioso? Explica por qué cada cambio ayudaría.</p>${lines(4)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué enfermedad podría relacionarse con cada caso? 2. ¿Qué función del sistema nervioso parece afectada en cada uno? 3. ¿Por qué no son el mismo problema?</p>${lines(4)}`;
+  let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
+  d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
+  d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
+  ceTbl+='</table>';
+  let s5=`<div class="sec-title"><span>V. Análisis de causas y efectos</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div>${ceTbl}`;
+  let pR='';
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Caso</div>${critCaseQuestions.map((q,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${critCaseGuides[i]}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Corrige el error</div><div class="p-crit-line"><strong>Error 1:</strong> ${d.err.g1}</div><div class="p-crit-line"><strong>Error 2:</strong> ${d.err.g2}</div></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it=>`<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it=>`<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico El Sistema Nervioso · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.3rem 0 0.15rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c0392b;background:#fdecea;color:#c0392b;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c0392b;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #c0392b;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#fdecea;border-left:3px solid #c0392b;padding:0.25rem 0.5rem;margin:0.15rem 0 0.25rem;line-height:1.35;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.2rem 0 0.1rem;line-height:1.3;}.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:3px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.2rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#fdecea;border-radius:4px;padding:0.3rem 0.45rem;line-height:1.3;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.2rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.4rem;text-align:left;min-height:24px;}.crit-print-tbl th{background:#fdecea;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:7.5pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.25rem;padding:0.15rem 0;color:#c0392b;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c0392b;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:12.7mm;}}</style></head><body><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · El Sistema Nervioso · II y III Ciclo · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · El Sistema Nervioso · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
+  const win=window.open('','_blank','');
+  if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
+  win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
+}
 
 // ===================== LABORATORIO DEL SISTEMA NERVIOSO =====================
 const parteData={
