@@ -13,7 +13,9 @@
       "Bash(curl -s http://localhost:8791/)",
       "Bash(netstat -ano)",
       "Bash(awk '{print $NF}')",
-      "Bash(powershell -Command \"Stop-Process -Id 28720 -Force -ErrorAction SilentlyContinue\")"
+      "Bash(powershell -Command \"Stop-Process -Id 28720 -Force -ErrorAction SilentlyContinue\")",
+      "Bash(node test-print-pages.js)",
+      "Bash(node view-pdf.js)"
     ]
   }
 }
