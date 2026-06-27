@@ -19,7 +19,8 @@
       "Bash(node \"C:/Users/Dell/AppData/Local/Temp/claude/c--Desarrollo-misiones-educativas-a-policastsapien-com/b0bd2de1-497d-4ec7-a095-107044633e43/scratchpad/static-server.js\" www 8791)",
       "Bash(curl -sf http://localhost:8791/misiones/2y3ciclo-sistema-nervioso/sistema-nervioso.html)",
       "Bash(node test-worstcase.js)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(gh api *)"
     ]
   }
 }
