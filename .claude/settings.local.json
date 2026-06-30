@@ -29,7 +29,10 @@
       "Bash(npx playwright *)",
       "Bash(node verify-adverbios.js)",
       "Bash(node verify-sopa.js)",
-      "Bash(pkill -f \"serve -l 8123\")"
+      "Bash(pkill -f \"serve -l 8123\")",
+      "Bash(node --check \"misiones/2y3ciclo-acentuacion/js/acentuacion.js\")",
+      "Bash(node verify-acentuacion.js)",
+      "Bash(pkill -f \"serve -l 8124\")"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios"

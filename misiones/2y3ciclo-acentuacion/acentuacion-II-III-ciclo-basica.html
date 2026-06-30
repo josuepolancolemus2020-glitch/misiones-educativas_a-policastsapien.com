@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misión La Acentuación | policastsapien.com</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/acentuacion.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+  <div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+    <a href="../../index.html?view=misiones&filter=español" class="xp-back-btn" title="Regresar a misiones de Español">
+      <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+      <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+    </a>
+    <span class="xp-lbl">🎮 XP</span>
+    <div class="xp-track" aria-hidden="true">
+      <div class="xp-fill" id="xpFill"></div>
+    </div>
+    <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+      <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+    </a>
+    <span class="xp-pts" id="xpPts">⭐ 0</span>
+    <span class="xp-lvl" id="xpLvl">Nivel 1</span>
+  </div>
+
+  <header class="hero" role="banner">
+    <div class="hero-inner">
+      <div class="hero-mascot" aria-hidden="true">🔤</div>
+      <div class="hero-text">
+        <h1>Misión <span>La Acentuación</span></h1>
+        <p class="sub">¡Domina la sílaba, el diptongo, el hiato y las reglas de la tilde! ✨</p>
+        <div class="badge">📚 II y III Ciclo · Español · Lengua</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main" id="main-content">
+
+    <!-- ===== APRENDE ===== -->
+    <div class="sec active" id="s-aprende" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🔤 ¿Qué es la Sílaba?</h2>
+        <p>La <strong>sílaba</strong> es la unidad mínima de pronunciación de una palabra. Toda sílaba tiene como
+          núcleo obligatorio una <strong>vocal</strong>. Ejemplo: <em>ca-sa</em> (2 sílabas), <em>ca-mi-no</em> (3
+          sílabas).</p>
+        <div class="tip">
+          <span class="ti">💡</span>
+          <div><strong>Sílaba tónica y átona:</strong> En toda palabra hay una sílaba que se pronuncia con
+            <strong>mayor intensidad</strong>: la <strong>tónica</strong>. Las demás son <strong>átonas</strong>. Ej:
+            en "ca-MI-no", la tónica es "mi".</div>
+        </div>
+      </div>
+
+      <div class="card ac-gold">
+        <h2>🔡 Vocales Fuertes y Débiles</h2>
+        <p>Para entender el diptongo, el triptongo y el hiato, primero hay que reconocer los dos tipos de vocales.</p>
+        <div class="stat-bar">
+          <div class="stat-item">
+            <div class="stat-label">Fuertes (abiertas)</div>
+            <div class="stat-val">a · e · o</div>
+          </div>
+          <div class="stat-item" style="border-color:var(--blue); background:var(--blue-gl);">
+            <div class="stat-label" style="color:var(--dark);">Débiles (cerradas)</div>
+            <div class="stat-val" style="color:var(--blue);">i · u</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-jade">
+        <h2>🔗 El Diptongo</h2>
+        <p>Unión de <strong>dos vocales</strong> que se pronuncian en una misma sílaba.</p>
+        <div class="vs-grid">
+          <div class="vs-box vs-a">
+            <h4>🔹 Fuerte + débil átona (o viceversa)</h4>
+            <p style="font-size:0.85rem;">Ej: <em>ai</em>-re, <em>cau</em>-sa, p<em>ia</em>-no, f<em>ue</em>-go,
+              c<em>iu</em>-dad.</p>
+          </div>
+          <div class="vs-box vs-b">
+            <h4>🔹 Dos débiles distintas</h4>
+            <p style="font-size:0.85rem;">Ej: c<em>iu</em>-dad (iu), c<em>ui</em>-da-do (ui), v<em>iu</em>-da.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-purple">
+        <h2>🔺 El Triptongo</h2>
+        <p>Unión de <strong>tres vocales</strong> en una misma sílaba: <strong>débil átona + fuerte + débil
+            átona</strong>.</p>
+        <div class="ex-box">
+          <span class="ex-tag ex-d">🔺 Ejemplos</span><br>
+          <span><span class="hl">buey</span>, <span class="hl2">U-ru-guay</span>, <span class="hl3">miau</span>,
+            a-ve-ri-güéis.</span>
+        </div>
+      </div>
+
+      <div class="card ac-amber">
+        <h2>✂️ El Hiato</h2>
+        <p>Ocurre cuando <strong>dos vocales juntas</strong> se pronuncian en <strong>sílabas distintas</strong>
+          (rompen la unión).</p>
+        <div class="vs-grid">
+          <div class="vs-box vs-c">
+            <h4>➗ Hiato Simple</h4>
+            <p style="font-size:0.85rem;">Dos vocales <strong>fuertes</strong> (iguales o distintas) juntas. Ej:
+              ca-os, po-e-ta, te-a-tro, pe-or.</p>
+          </div>
+          <div class="vs-box vs-d">
+            <h4>⚡ Hiato Acentual</h4>
+            <p style="font-size:0.85rem;">Vocal <strong>débil tónica</strong> + fuerte (o viceversa). <strong>Siempre
+                lleva tilde</strong> en la débil. Ej: dí-a, ba-úl, pa-ís, ra-íz.</p>
+          </div>
+        </div>
+        <div class="tip">
+          <span class="ti">💡</span>
+          <div><strong>Clave:</strong> El hiato acentual rompe la regla general — la vocal débil <strong>siempre</strong>
+            lleva tilde cuando es tónica junto a una fuerte, sin importar en qué letra termine la palabra.</div>
+        </div>
+      </div>
+
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+        <span class="nsb-icon">🏷️</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== ESTRUCTURA ===== -->
+    <div class="sec" id="s-estructura" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🏷️ Clasificación según el Acento</h2>
+        <p>Toda palabra de más de una sílaba se clasifica según la posición de su sílaba tónica.</p>
+        <div class="type-grid">
+          <div class="type-chip tc-teal">
+            <div class="t-art">🔚 Agudas</div>
+            <div class="t-info">Tónica en la última sílaba. Ej: camión.</div>
+          </div>
+          <div class="type-chip tc-gold">
+            <div class="t-art">➖ Llanas</div>
+            <div class="t-info">Tónica en la penúltima. Ej: árbol.</div>
+          </div>
+          <div class="type-chip tc-jade">
+            <div class="t-art">⏫ Esdrújulas</div>
+            <div class="t-info">Tónica en la antepenúltima. Ej: música.</div>
+          </div>
+          <div class="type-chip tc-purple">
+            <div class="t-art">🔝 Sobresdrújulas</div>
+            <div class="t-info">Tónica antes de la antepenúltima. Ej: cuéntaselo.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-gold">
+        <h2>📐 Reglas Generales de Tildación</h2>
+        <div class="vs-grid">
+          <div class="vs-box vs-a">
+            <h4>🔚 Agudas</h4>
+            <p style="font-size:0.85rem;">Llevan tilde si terminan en <strong>N, S o VOCAL</strong>. Ej: camión,
+              compás, sofá. <br>Sin tilde: reloj, pared, feliz.</p>
+          </div>
+          <div class="vs-box vs-b">
+            <h4>➖ Llanas</h4>
+            <p style="font-size:0.85rem;">Llevan tilde si <strong>NO</strong> terminan en N, S o VOCAL. Ej: árbol,
+              azúcar, fácil. <br>Sin tilde: casa, examen, joven.</p>
+          </div>
+        </div>
+        <div class="tip">
+          <span class="ti">⏫</span>
+          <div><strong>Esdrújulas y sobresdrújulas:</strong> Siempre llevan tilde, sin excepción. Ej: música, médico,
+            cuéntaselo, explícaselo.</div>
+        </div>
+      </div>
+
+      <div class="card ac-jade">
+        <h2>🆚 La Tilde Diacrítica</h2>
+        <p>Distingue dos palabras que se escriben igual pero cumplen una <strong>función gramatical
+            distinta</strong>.</p>
+        <div class="type-grid">
+          <div class="type-chip tc-teal">
+            <div class="t-art">él / el</div>
+            <div class="t-info">Pronombre / artículo</div>
+          </div>
+          <div class="type-chip tc-gold">
+            <div class="t-art">tú / tu</div>
+            <div class="t-info">Pronombre / posesivo</div>
+          </div>
+          <div class="type-chip tc-jade">
+            <div class="t-art">mí / mi</div>
+            <div class="t-info">Pronombre / posesivo</div>
+          </div>
+          <div class="type-chip tc-purple">
+            <div class="t-art">sí / si</div>
+            <div class="t-info">Afirmación / condicional</div>
+          </div>
+          <div class="type-chip tc-amber">
+            <div class="t-art">sé / se</div>
+            <div class="t-info">Verbo saber-ser / pronombre</div>
+          </div>
+          <div class="type-chip tc-blue">
+            <div class="t-art">té / te</div>
+            <div class="t-info">Sustantivo / pronombre</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-purple">
+        <h2>⚠️ Casos Especiales</h2>
+        <div class="vs-grid">
+          <div class="vs-box vs-a">
+            <h4>🔠 Mayúsculas</h4>
+            <p style="font-size:0.85rem;">Las palabras en mayúscula <strong>sí llevan tilde</strong> si la regla lo
+              exige. Ej: ÁFRICA, CAMIÓN, MÚSICA.</p>
+          </div>
+          <div class="vs-box vs-b">
+            <h4>🧩 Palabras compuestas</h4>
+            <p style="font-size:0.85rem;">Pueden perder la tilde de la primera palabra simple al unirse sin guion. Ej:
+              balón+cesto → baloncesto.</p>
+          </div>
+        </div>
+        <div class="ex-box">
+          <span class="ex-tag ex-d">🔧 Adverbios en -mente</span><br>
+          <span>Conservan la tilde del adjetivo si este la tenía: <span class="hl">fácil</span> →
+            <span class="hl2">fácilmente</span>; <span class="hl3">lenta</span> → lentamente (sin tilde, porque
+            "lenta" no la tiene).</span>
+        </div>
+      </div>
+
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+        <span class="nsb-icon">🧪</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== LAB ===== -->
+    <div class="sec" id="s-lab" role="tabpanel">
+      <div class="card ac-jade">
+        <h2>🧪 Laboratorio de Acentuación</h2>
+        <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Selecciona un tipo de palabra y un
+          aspecto para explorar sus características. ¡Combina todos para aprender!</p>
+        <div id="lab-sentence" class="lab-sentence">🔤 Explorando: <strong>Agudas</strong> → <strong>Regla</strong></div>
+        <div class="lab-stage">
+          <div id="lab-display" class="lab-display-box">
+            <!-- Rellenado por JS -->
+          </div>
+        </div>
+        <div class="lab-controls">
+          <div class="lab-group">
+            <span class="lab-group-label">🏷️ Tipo:</span>
+            <button class="lab-btn lab-cont-btn" data-parte="agudas" onclick="labShowParte('agudas')">🔚 Agudas</button>
+            <button class="lab-btn lab-cont-btn" data-parte="llanas" onclick="labShowParte('llanas')">➖ Llanas</button>
+            <button class="lab-btn lab-cont-btn" data-parte="esdrujulas" onclick="labShowParte('esdrujulas')">⏫ Esdrújulas</button>
+            <button class="lab-btn lab-cont-btn" data-parte="sobresdrujulas" onclick="labShowParte('sobresdrujulas')">🔝 Sobresdrújulas</button>
+          </div>
+          <div class="lab-group">
+            <span class="lab-group-label">📌 Aspecto:</span>
+            <button class="lab-btn lab-asp-btn" data-aspecto="regla" onclick="labShowAspecto('regla')">📐 Regla</button>
+            <button class="lab-btn lab-asp-btn" data-aspecto="ejemplos" onclick="labShowAspecto('ejemplos')">📝 Ejemplos</button>
+            <button class="lab-btn lab-asp-btn" data-aspecto="casos" onclick="labShowAspecto('casos')">🧩 Casos especiales</button>
+            <button class="lab-btn lab-asp-btn" data-aspecto="errores" onclick="labShowAspecto('errores')">⚠️ Errores comunes</button>
+          </div>
+        </div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+        <span class="nsb-icon">🃏</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== FLASHCARDS ===== -->
+    <div class="sec" id="s-flash" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🃏 Flashcards — Toca para voltear</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada
+          (primera vez)</p>
+        <div class="fc-wrap">
+          <div class="fc-inner" id="fcInner" onclick="flipCard()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0"
+            role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+            <div class="fc-front">
+              <div class="fw" id="fcW"></div>
+              <div class="fhint">🃏 Toca · Enter para voltear</div>
+            </div>
+            <div class="fc-back">
+              <div class="fca" id="fcA"></div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-nav">
+          <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+          <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+          <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+        </div>
+        <div id="fbFlash" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+        <span class="nsb-icon">🧠</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== QUIZ ===== -->
+    <div class="sec" id="s-quiz" role="tabpanel">
+      <div class="card ac-gold">
+        <h2>🧠 Quiz de Comprensión</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera
+          vez por pregunta)</p>
+        <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
+        <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+        <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button>
+          <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+        </div>
+        <div id="fbQz" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+        <span class="nsb-icon">🗂️</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== CLASIFICA ===== -->
+    <div class="sec" id="s-clasifica" role="tabpanel">
+      <div class="card ac-jade">
+        <h2>🗂️ Clasifica las Palabras</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una palabra del banco y toca la columna donde
+          pertenece.</p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera
+          vez)</p>
+        <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: ¡Usa el botón
+          "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+        <div class="word-bank" id="clsBank" role="list"></div>
+        <div class="drop-cols">
+          <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda">
+            <h4 id="col-left-head">Columna A</h4>
+            <div id="items-left"></div>
+          </div>
+          <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha">
+            <h4 id="col-right-head">Columna B</h4>
+            <div id="items-right"></div>
+          </div>
+        </div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+          <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+          <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbCls" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+        <span class="nsb-icon">🔍</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== IDENTIFICA ===== -->
+    <div class="sec" id="s-identifica" role="tabpanel">
+      <div class="card ac-purple">
+        <h2>🔍 Identifica la palabra</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera
+          vez por pregunta)</p>
+        <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+        <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra solicitada:</p>
+        <div class="id-sent" id="idSent" role="group"></div>
+        <div class="id-info" id="idInfo" role="status" aria-live="polite"
+          style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+          <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbId" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+        <span class="nsb-icon">✏️</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== COMPLETA ===== -->
+    <div class="sec" id="s-completa" role="tabpanel">
+      <div class="card ac-amber">
+        <h2>✏️ Completa la oración</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera
+          vez)</p>
+        <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;"
+          id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+        <div class="cmp-sent" id="cmpSent"></div>
+        <div class="cmp-opts" id="cmpOpts" role="group"></div>
+        <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button>
+        <div id="fbCmp" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+        <span class="nsb-icon">🧩</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== WIDGETS ===== -->
+    <div class="sec" id="s-widgets" role="tabpanel">
+
+      <div class="card ac-teal">
+        <h2>🔢 Ordena: Pasos de Acentuación</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez
+          por ruta)</p>
+        <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para poner los pasos
+          en el orden correcto de principio a fin:</p>
+        <div class="sort-list" id="routeList"></div>
+        <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+          <button class="btn btn-pri" onclick="nextRoute()">🔄 Nuevo procedimiento</button>
+        </div>
+        <div id="fbRoute" class="fb" role="alert"></div>
+      </div>
+
+      <div class="card ac-gold">
+        <h2>🏷️ Identifica el Tipo de Palabra</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera
+          vez por palabra)</p>
+        <p class="id-prog" id="wtypeProg" aria-live="polite">Palabra 1 de 8</p>
+        <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Qué tipo de palabra es, según su acento?</p>
+        <div class="neuron-desc" id="wtypeDesc">Cargando...</div>
+        <div class="cmp-opts" id="wtypeOpts" role="group" style="margin-top:0.8rem;"></div>
+        <div id="fbWtype" class="fb" role="alert"></div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="nextWtype()">▶ Siguiente</button>
+          <button class="btn btn-d" onclick="resetWtype()">🔄 Reiniciar</button>
+        </div>
+      </div>
+
+      <div class="card ac-jade">
+        <h2>🔗 Empareja: Concepto → Ejemplo</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera
+          vez)</p>
+        <p class="id-prog" id="silProg" aria-live="polite">1 de 5</p>
+        <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Cuál es el ejemplo correcto para este concepto?</p>
+        <div class="neuro-trans-display" id="silTerm">Diptongo</div>
+        <div class="qz-opts" id="silOpts" role="group" style="margin-top:0.8rem;"></div>
+        <div id="fbSil" class="fb" role="alert"></div>
+        <div style="margin-top:0.8rem;">
+          <button class="btn btn-d" onclick="resetSil()">🔄 Reiniciar</button>
+        </div>
+      </div>
+
+      <div class="card ac-purple">
+        <h2>🆚 Tilde Diacrítica en Contexto</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera
+          vez)</p>
+        <p class="id-prog" id="diaProg" aria-live="polite">1 de 6</p>
+        <p style="font-size:0.85rem;margin-bottom:0.6rem;">Elige la palabra correcta para completar la oración:</p>
+        <div class="neuro-trans-display" id="diaCtx">Cargando...</div>
+        <div class="qz-opts" id="diaOpts" role="group" style="margin-top:0.8rem;"></div>
+        <div id="fbDia" class="fb" role="alert"></div>
+        <div style="margin-top:0.8rem;">
+          <button class="btn btn-d" onclick="resetDia()">🔄 Reiniciar</button>
+        </div>
+      </div>
+
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+        <span class="nsb-icon">🏆</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== RETO ===== -->
+    <div class="sec" id="s-reto" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🏆 Reto Final — ¡30 segundos!</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica la palabra rápidamente.</p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto
+          (solo primera partida)</p>
+        <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: Al terminar,
+          usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+        <div class="game" aria-live="polite">
+          <div class="reto-timer" id="retoTimer">⏱ 30</div>
+          <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+          <div class="reto-btns">
+            <button class="btn btn-pri" onclick="ansReto('a')">Opción A</button>
+            <button class="btn btn-sec" onclick="ansReto('b')">Opción B</button>
+          </div>
+          <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+          <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+          <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbReto" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+        <span class="nsb-icon">🔤</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== SOPA ===== -->
+    <div class="sec" id="s-sopa" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🔤 Sopa de Letras</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera
+          vez)</p>
+        <div class="sopa-words" id="sopaWords"></div>
+        <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+        <div class="sopa-container">
+          <div class="sopa-grid" id="sopaGrid"></div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+        </div>
+        <div id="fbSopa" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+        <span class="nsb-icon">📋</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== TAREAS ===== -->
+    <div class="sec" id="s-tareas" role="tabpanel">
+
+      <div class="card student-classroom-card" id="studentClassroomCard" style="display:none;"></div>
+
+      <div class="card ac-gold">
+        <h2>📋 Generador de Tareas</h2>
+        <div class="tg-controls">
+          <select class="tg-sel" id="tgType">
+            <option value="identify">🔍 Identificar</option>
+            <option value="classify">🗂️ Clasificar</option>
+            <option value="complete">✏️ Completar oraciones</option>
+            <option value="explain">💡 Explicar</option>
+          </select>
+          <select class="tg-sel" id="tgCount">
+            <option value="5">5 tareas</option>
+            <option value="8" selected>8 tareas</option>
+            <option value="10">10 tareas</option>
+            <option value="15">15 tareas</option>
+          </select>
+          <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+          <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+        </div>
+        <div id="tgOut"></div>
+      </div>
+
+      <div class="card classroom-card">
+        <div class="classroom-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="28" height="28" aria-hidden="true">
+            <rect width="48" height="48" rx="6" fill="#0f9d58"/>
+            <circle cx="24" cy="17" r="6" fill="white"/>
+            <path d="M10 38c0-7.7 6.3-14 14-14s14 6.3 14 14" fill="white"/>
+          </svg>
+          <h3>Asignar en Google Classroom</h3>
+        </div>
+        <p class="classroom-desc">¿Eres docente? <strong>1.</strong> Genera las tareas arriba con el botón "Generar".
+          <strong>2.</strong> Haz clic aquí — se copian automáticamente al portapapeles y se abre Google Classroom.
+          <strong>3.</strong> Crea la tarea en Classroom y pega el contenido (Ctrl+V) en la descripción.</p>
+        <button class="btn btn-classroom" onclick="asignarEnClassroom()">
+          Asignar estas tareas en Classroom
+        </button>
+        <p class="classroom-hint">Genera las tareas primero · luego haz clic para copiarlas y abrirlas en Classroom.</p>
+
+      </div>
+
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+        <span class="nsb-icon">🎓</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== EVALUACIÓN ===== -->
+    <div class="sec" id="s-evaluacion" role="tabpanel">
+      <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+        <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true"
+          onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+        <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false"
+          onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+      </div>
+      <div id="evalConceptWrap">
+        <div class="card ac-purple">
+          <div class="eval-print-header">
+            <h2>Evaluación Final de Misión La Acentuación · II y III Ciclo · Español · Lengua</h2>
+            <div class="eval-ph-nombre"><strong>Nombre:</strong><span
+                class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span
+                class="eval-ph-line-fecha">&nbsp;</span></div>
+            <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span
+                class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span
+                class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span
+                class="eval-ph-line-xs">&nbsp;</span></div>
+            <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada
+              respuesta vale 5 puntos</p>
+          </div>
+          <h2 id="eval-screen-title">📝 Evaluación Final — La Acentuación</h2>
+          <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y
+            responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes.
+            <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+          <div class="eval-controls">
+            <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+            <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+            <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+            <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+          </div>
+          <div id="evalOut"></div>
+        </div>
+      </div>
+      <div id="evalCritWrap" style="display:none;">
+        <div class="card ac-amber">
+          <div class="eval-print-header">
+            <h2>Evaluación Competencial · Pensamiento Crítico · La Acentuación · II y III Ciclo</h2>
+            <div class="eval-ph-nombre"><strong>Nombre:</strong><span
+                class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span
+                class="eval-ph-line-fecha">&nbsp;</span></div>
+            <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span
+                class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span
+                class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span
+                class="eval-ph-line-xs">&nbsp;</span></div>
+            <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones
+              de 20 puntos</p>
+          </div>
+          <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — La Acentuación</h2>
+          <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias
+            palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de
+            cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+          <div class="eval-controls">
+            <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+            <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+            <button class="btn btn-g" onclick="calcCritTotal()">🧮 Calcular Total</button>
+            <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+          </div>
+          <div id="evalCritOut"></div>
+        </div>
+      </div>
+      <div id="eval-pauta-sheet"></div>
+      <button class="next-sec-btn" onclick="openDiploma()"
+        style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+        <span class="nsb-icon">🎓</span>
+        <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi
+            Constancia</span></span>
+        <span class="nsb-arrow">🏆</span>
+      </button>
+    </div>
+
+    <!-- ===== RECURSOS ===== -->
+    <div class="sec" id="s-recursos" role="tabpanel">
+      <div class="card ac-blue">
+        <h2>📁 Recursos del Tema</h2>
+        <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión:
+          presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.
+        </p>
+        <a href="https://drive.google.com/drive/folders/1eQSt36lHQ4SIyJDnoDWlnS9vv7dTIJwB?usp=sharing" target="_blank"
+          rel="noopener noreferrer" class="btn btn-pri recursos-btn"
+          style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+            <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+            <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+            <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+            <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+            <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+            <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+          </svg>
+          Abrir carpeta en Google Drive
+        </a>
+        <div class="tip" style="margin-top:1.2rem;">
+          <span class="ti">💡</span>
+          <div>Los archivos se abren directamente en el navegador. Puedes descargarlos o verlos sin necesidad de una
+            cuenta de Google.</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- DIPLOMA -->
+  <div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+    <div class="diploma-card">
+      <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+      <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+      <div class="diploma-sub">Misión La Acentuación</div>
+      <div class="diploma-mascot" aria-hidden="true">🔤</div>
+      <div class="diploma-name" id="diplName">Estudiante</div>
+      <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+      <div class="diploma-bar-wrap">
+        <div class="diploma-bar" id="diplBar" style="width:0%"></div>
+      </div>
+      <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+      <div class="diploma-date" id="diplDate"></div>
+      <div class="diploma-ach" id="diplAch"></div>
+      <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+      <hr style="margin:0.8rem 0;border-color:var(--border);">
+      <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..."
+        oninput="updateDiplomaName(this.value)">
+      <div class="diploma-actions">
+        <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+        <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+        <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGROS -->
+  <div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+    <h4>🏅 Mis Logros</h4>
+    <div id="achList"></div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav" role="tablist" aria-label="Secciones de la misión">
+    <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende"
+      onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura"
+      onclick="go('s-estructura')"><span class="ico">🏷️</span> Estructura</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab"
+      onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash"
+      onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz"
+      onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica"
+      onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica"
+      onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa"
+      onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets"
+      onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto"
+      onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa"
+      onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas"
+      onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion"
+      onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+    <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);"
+      aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos"
+      onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+  </nav>
+
+  <footer class="credits">
+    <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+    <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+    <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser
+      perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+    <div class="cred-contact">
+      <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+      <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+    </div>
+    <div class="cred-tools">
+      <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+      <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+      <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+      <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+      <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+    </div>
+  </footer>
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/acentuacion.js"></script>
+</body>
+
+</html>
