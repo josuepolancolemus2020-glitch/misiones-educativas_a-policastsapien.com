@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misión Los Adverbios | policastsapien.com</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/adverbios.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+  <div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+    <a href="../../index.html?view=misiones&filter=español" class="xp-back-btn" title="Regresar a misiones de Español">
+      <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+      <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+    </a>
+    <span class="xp-lbl">🎮 XP</span>
+    <div class="xp-track" aria-hidden="true">
+      <div class="xp-fill" id="xpFill"></div>
+    </div>
+    <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+      <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+    </a>
+    <span class="xp-pts" id="xpPts">⭐ 0</span>
+    <span class="xp-lvl" id="xpLvl">Nivel 1</span>
+  </div>
+
+  <header class="hero" role="banner">
+    <div class="hero-inner">
+      <div class="hero-mascot" aria-hidden="true">🧭</div>
+      <div class="hero-text">
+        <h1>Misión <span>Los Adverbios</span></h1>
+        <p class="sub">¡Descubre las palabras que dicen cómo, cuándo, dónde y cuánto! ✨</p>
+        <div class="badge">📚 II y III Ciclo · Español · Lengua</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main" id="main-content">
+
+    <div class="sec active" id="s-aprende" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🧭 ¿Qué es un Adverbio?</h2>
+        <p>El <strong>adverbio</strong> es la palabra que <strong>modifica al verbo</strong>, a un adjetivo o a otro
+          adverbio, aportando información sobre cómo, cuándo, dónde, cuánto o de qué manera ocurre algo. A diferencia
+          del adjetivo, <strong>el adverbio es invariable</strong>: no cambia de género ni de número.</p>
+        <div class="tip">
+          <span class="ti">💡</span>
+          <div><strong>Ojo:</strong> No confundas el adverbio con el adjetivo. "Juan es <em>rápido</em>" (Adjetivo,
+            describe a Juan y concuerda en género/número) vs "Juan corre <em><strong>rápido</strong></em>" (Adverbio,
+            modifica al verbo "corre" y nunca cambia).</div>
+        </div>
+      </div>
+
+      <div class="card ac-gold">
+        <h2>🗺️ Adverbios de Lugar y Tiempo</h2>
+        <p>Indican dónde y cuándo sucede la acción.</p>
+        <div class="vs-grid">
+          <div class="vs-box vs-a">
+            <h4>📍 De Lugar</h4>
+            <p>Indican el sitio donde ocurre la acción.</p>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplos: <em>aquí, allí, ahí, cerca, lejos, dentro,
+                fuera, arriba, abajo, encima, debajo.</em></p>
+          </div>
+          <div class="vs-box vs-b">
+            <h4>⏰ De Tiempo</h4>
+            <p>Indican el momento en que ocurre la acción.</p>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplos: <em>hoy, ayer, mañana, ahora, antes, después,
+                siempre, nunca, todavía, pronto.</em></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-jade">
+        <h2>🎭 Adverbios de Modo y Cantidad</h2>
+        <div class="vs-grid">
+          <div class="vs-box vs-c">
+            <h4>🎯 De Modo</h4>
+            <p>Indican <strong>cómo</strong> se realiza la acción. Muchos terminan en <strong>-mente</strong>.</p>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Ej: <em>bien, mal, rápidamente, lentamente,
+                fácilmente, así, despacio.</em></p>
+          </div>
+          <div class="vs-box vs-d">
+            <h4>⚖️ De Cantidad</h4>
+            <p>Indican la <strong>intensidad o cantidad</strong> de la acción o cualidad.</p>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Ej: <em>mucho, poco, muy, bastante, demasiado,
+                nada, casi, más, menos.</em></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-purple">
+        <h2>✅ Adverbios de Afirmación, Negación y Duda</h2>
+        <div class="type-grid">
+          <div class="type-chip tc-jade">
+            <div class="t-art">✅ Afirmación</div>
+            <div class="t-info">sí, también, claro, efectivamente.</div>
+          </div>
+          <div class="type-chip tc-amber">
+            <div class="t-art">❌ Negación</div>
+            <div class="t-info">no, nunca, jamás, tampoco.</div>
+          </div>
+          <div class="type-chip tc-blue">
+            <div class="t-art">❓ Duda</div>
+            <div class="t-info">quizás, tal vez, acaso, posiblemente.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ac-amber">
+        <h2>🔧 Formación con el sufijo "-mente"</h2>
+        <p>Muchos adverbios de modo se forman añadiendo <strong>-mente</strong> al adjetivo en su forma femenina
+          singular. Si el adjetivo lleva tilde, el adverbio la conserva.</p>
+        <div class="stat-bar">
+          <div class="stat-item">
+            <div class="stat-label">Adjetivo</div>
+            <div class="stat-val">lenta</div>
+          </div>
+          <div class="stat-item" style="border-color:var(--blue); background:var(--blue-gl);">
+            <div class="stat-label" style="color:var(--dark);">+ mente</div>
+            <div class="stat-val" style="color:var(--blue);">lentamente</div>
+          </div>
+        </div>
+        <div class="tip" style="margin-top:0.8rem;">
+          <span class="ti">💡</span>
+          <div>Cuando hay <strong>dos o más adverbios en -mente seguidos</strong> en una misma oración, solo el último
+            lleva el sufijo: "Habló <strong>clara y precisamente</strong>" (no "claramente y precisamente").</div>
+        </div>
+      </div>
+
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+        <span class="nsb-icon">🏷️</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-tipos" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>📊 Clases de Adverbios</h2>
+        <div class="type-grid">
+          <div class="type-chip tc-teal">
+            <div class="t-art">📍 Lugar</div>
+            <div class="t-info">¿Dónde? aquí, allí, lejos.</div>
+          </div>
+          <div class="type-chip tc-gold">
+            <div class="t-art">⏰ Tiempo</div>
+            <div class="t-info">¿Cuándo? hoy, ayer, siempre.</div>
+          </div>
+          <div class="type-chip tc-jade">
+            <div class="t-art">🎯 Modo</div>
+            <div class="t-info">¿Cómo? bien, mal, rápidamente.</div>
+          </div>
+          <div class="type-chip tc-purple">
+            <div class="t-art">⚖️ Cantidad</div>
+            <div class="t-info">¿Cuánto? mucho, poco, muy.</div>
+          </div>
+          <div class="type-chip tc-amber">
+            <div class="t-art">✅ Afirmación</div>
+            <div class="t-info">sí, también, claro.</div>
+          </div>
+          <div class="type-chip tc-blue">
+            <div class="t-art">❌ Negación</div>
+            <div class="t-info">no, nunca, jamás.</div>
+          </div>
+          <div class="type-chip tc-green">
+            <div class="t-art">❓ Duda</div>
+            <div class="t-info">quizás, tal vez, acaso.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card ac-gold">
+        <h2>🔧 Formación de adverbios en -mente</h2>
+        <div class="type-grid">
+          <div class="type-chip tc-teal">
+            <div class="t-art">📐 Adjetivo</div>
+            <div class="t-info">rápida, clara, fácil.</div>
+          </div>
+          <div class="type-chip tc-gold">
+            <div class="t-art">➕ Sufijo</div>
+            <div class="t-info">+ mente = rápidamente, claramente, fácilmente.</div>
+          </div>
+        </div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+        <span class="nsb-icon">🃏</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-flash" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🃏 Flashcards — Toca para voltear</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera
+          vez)</p>
+        <div class="fc-wrap">
+          <div class="fc-inner" id="fcInner" onclick="flipCard()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0"
+            role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+            <div class="fc-front">
+              <div class="fw" id="fcW"></div>
+              <div class="fhint">👆 Toca · Enter para voltear</div>
+            </div>
+            <div class="fc-back">
+              <div class="fc-ans" id="fcA"></div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-nav">
+          <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+          <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 11</span>
+          <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+        </div>
+        <div id="fbFlash" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+        <span class="nsb-icon">🧠</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-quiz" role="tabpanel">
+      <div class="card ac-gold">
+        <h2>🧠 Quiz de Comprensión</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez
+          por pregunta)</p>
+        <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
+        <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+        <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+          <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+        </div>
+        <div id="fbQz" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+        <span class="nsb-icon">🗂️</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-clasifica" role="tabpanel">
+      <div class="card ac-jade">
+        <h2>🗂️ Clasifica los Adverbios</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una palabra del banco y toca la columna donde
+          pertenece.</p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)
+        </p>
+        <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: ¡Usa el botón
+          "Variar grupo" varias veces! Practicar con diferentes conceptos te ayudará a dominar el tema.</p>
+        <div class="word-bank" id="clsBank" role="list"></div>
+        <div class="drop-cols">
+          <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda">
+            <h4 id="col-left-head">Columna A</h4>
+            <div id="items-left"></div>
+          </div>
+          <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha">
+            <h4 id="col-right-head">Columna B</h4>
+            <div id="items-right"></div>
+          </div>
+        </div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+          <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+          <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbCls" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+        <span class="nsb-icon">🔍</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-identifica" role="tabpanel">
+      <div class="card ac-purple">
+        <h2>🔍 Identifica el adverbio</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez
+          por pregunta)</p>
+        <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+        <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra solicitada:</p>
+        <div class="id-sent" id="idSent" role="group"></div>
+        <div class="id-info" id="idInfo" role="status" aria-live="polite"
+          style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+          <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbId" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+        <span class="nsb-icon">✏️</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-completa" role="tabpanel">
+      <div class="card ac-amber">
+        <h2>✏️ Completa la oración</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera
+          vez)</p>
+        <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;"
+          id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+        <div class="cmp-sent" id="cmpSent"></div>
+        <div class="cmp-opts" id="cmpOpts" role="group"></div>
+        <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+        <div id="fbCmp" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+        <span class="nsb-icon">🏆</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-reto" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🏆 Reto Final — ¡30 segundos!</h2>
+        <p style="font-size:0.88rem;margin-bottom:0.8rem;">¿El adverbio es de <strong>Lugar</strong> o de
+          <strong>Tiempo</strong>?</p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo
+          primera partida)</p>
+        <p style="font-size:0.82rem; color:var(--pri); font-weight:600; margin-bottom:1rem;">💡 Consejo: Al terminar,
+          usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+        <div class="game" aria-live="polite">
+          <div class="reto-timer" id="retoTimer">⏱ 30</div>
+          <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+          <div class="reto-btns">
+            <button class="btn btn-pri" onclick="ansReto('a')">Opción A</button>
+            <button class="btn btn-sec" onclick="ansReto('b')">Opción B</button>
+          </div>
+          <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+          <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+          <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+        </div>
+        <div id="fbReto" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+        <span class="nsb-icon">🔤</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-sopa" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>🔤 Sopa de Letras</h2>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera
+          vez)</p>
+        <div class="sopa-words" id="sopaWords"></div>
+        <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+        <div class="sopa-container">
+          <div class="sopa-grid" id="sopaGrid"></div>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+        </div>
+        <div id="fbSopa" class="fb" role="alert"></div>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+        <span class="nsb-icon">📋</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-tareas" role="tabpanel">
+
+      <div class="card student-classroom-card" id="studentClassroomCard" style="display:none;"></div>
+
+      <div class="card ac-gold">
+        <h2>📋 Generador de Tareas</h2>
+        <div class="tg-controls">
+          <select class="tg-sel" id="tgType">
+            <option value="identify">🔍 Identificar</option>
+            <option value="classify">🗂️ Clasificar</option>
+            <option value="complete">✏️ Completar oraciones</option>
+            <option value="explain">💡 Explicar</option>
+          </select>
+          <select class="tg-sel" id="tgCount">
+            <option value="5">5 tareas</option>
+            <option value="8" selected>8 tareas</option>
+            <option value="10">10 tareas</option>
+            <option value="15">15 tareas</option>
+          </select>
+          <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+          <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+        </div>
+        <div id="tgOut"></div>
+      </div>
+
+      <div class="card classroom-card">
+        <div class="classroom-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="28" height="28" aria-hidden="true">
+            <rect width="48" height="48" rx="6" fill="#0f9d58"/>
+            <circle cx="24" cy="17" r="6" fill="white"/>
+            <path d="M10 38c0-7.7 6.3-14 14-14s14 6.3 14 14" fill="white"/>
+          </svg>
+          <h3>Asignar en Google Classroom</h3>
+        </div>
+        <p class="classroom-desc">¿Eres docente? <strong>1.</strong> Genera las tareas arriba con el botón "Generar". <strong>2.</strong> Haz clic aquí — se copian automáticamente al portapapeles y se abre Google Classroom. <strong>3.</strong> Crea la tarea en Classroom y pega el contenido (Ctrl+V) en la descripción.</p>
+        <button class="btn btn-classroom" onclick="asignarEnClassroom()">
+          Asignar estas tareas en Classroom
+        </button>
+        <p class="classroom-hint">Genera las tareas primero · luego haz clic para copiarlas y abrirlas en Classroom.</p>
+
+      </div>
+
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+        <span class="nsb-icon">📝</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="sec" id="s-recursos" role="tabpanel">
+      <div class="card ac-blue">
+        <h2>📁 Recursos del Tema</h2>
+        <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
+        <a href="https://drive.google.com/drive/folders/1eQSt36lHQ4SIyJDnoDWlnS9vv7dTIJwB?usp=sharing"
+           target="_blank" rel="noopener noreferrer"
+           class="btn btn-pri recursos-btn"
+           style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+            <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+            <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+            <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+            <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+            <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+            <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+          </svg>
+          Abrir carpeta en Google Drive
+        </a>
+        <div class="tip" style="margin-top:1.2rem;">
+          <span class="ti">💡</span>
+          <div>Los archivos se abren directamente en el navegador. Puedes descargarlos o verlos sin necesidad de una cuenta de Google.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" id="s-evaluacion" role="tabpanel">
+      <div class="card ac-purple">
+        <div class="eval-print-header">
+          <h2>Evaluación Final de Misión Los Adverbios · II y III Ciclo · Español · Lengua</h2>
+          <div class="eval-ph-nombre"><strong>Nombre:</strong><span
+              class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span
+              class="eval-ph-line-fecha">&nbsp;</span></div>
+          <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span
+              class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span
+              class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span>
+          </div>
+          <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta
+            vale 5 puntos</p>
+        </div>
+        <h2 id="eval-screen-title">📝 Evaluación Final — Los Adverbios</h2>
+        <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde
+          las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas
+            preguntas cuando quieras.</strong></p>
+        <div class="eval-controls">
+          <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+          <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+          <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+          <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+        </div>
+        <div id="evalOut"></div>
+      </div>
+      <div id="eval-pauta-sheet"></div>
+      <button class="next-sec-btn" onclick="openDiploma()"
+        style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+        <span class="nsb-icon">🎓</span>
+        <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi
+            Constancia</span></span>
+        <span class="nsb-arrow">🏆</span>
+      </button>
+    </div>
+
+  </main>
+
+  <div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+    <div class="diploma-card">
+      <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+      <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+      <div class="diploma-sub">Misión Los Adverbios</div>
+      <div class="diploma-mascot" aria-hidden="true">🧭</div>
+      <div class="diploma-name" id="diplName">Estudiante</div>
+      <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+      <div class="diploma-bar-wrap">
+        <div class="diploma-bar" id="diplBar" style="width:0%"></div>
+      </div>
+      <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+      <div class="diploma-date" id="diplDate"></div>
+      <div class="diploma-ach" id="diplAch"></div>
+      <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+      <hr style="margin:0.8rem 0;border-color:var(--border);">
+      <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..."
+        oninput="updateDiplomaName(this.value)">
+      <div class="diploma-actions">
+        <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+        <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+        <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+    <h4>🏅 Mis Logros</h4>
+    <div id="achList"></div>
+  </div>
+
+  <nav class="nav" role="tablist" aria-label="Secciones de la misión">
+    <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende"
+      onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos"
+      onclick="go('s-tipos')"><span class="ico">🏷️</span> Tipos</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash"
+      onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz"
+      onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica"
+      onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica"
+      onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa"
+      onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto"
+      onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa"
+      onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas"
+      onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion"
+      onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+    <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);"
+      aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos"
+      onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+  </nav>
+
+  <footer class="credits">
+    <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+    <div class="cred-contact">
+      <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+      <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+    </div>
+    <div class="cred-tools">
+      <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+      <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+      <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+      <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+      <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+    </div>
+  </footer>
+    <script src="js/html2canvas.min.js"></script>
+  <script src="js/adverbios.js"></script>
+</body>
+
+</html>

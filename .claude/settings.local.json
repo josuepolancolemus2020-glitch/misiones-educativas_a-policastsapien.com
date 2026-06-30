@@ -20,7 +20,19 @@
       "Bash(curl -sf http://localhost:8791/misiones/2y3ciclo-sistema-nervioso/sistema-nervioso.html)",
       "Bash(node test-worstcase.js)",
       "Bash(node -e ' *)",
-      "Bash(gh api *)"
+      "Bash(gh api *)",
+      "Bash(mkdir -p \"misiones/2y3ciclo-adverbios/css\" \"misiones/2y3ciclo-adverbios/js\" && ls \"misiones/2y3ciclo-adverbios\")",
+      "Bash(node --check \"misiones/2y3ciclo-adverbios/js/adverbios.js\")",
+      "Bash(echo \"exit:$?\")",
+      "Bash(npx --yes playwright --version)",
+      "Bash(npm install *)",
+      "Bash(npx playwright *)",
+      "Bash(node verify-adverbios.js)",
+      "Bash(node verify-sopa.js)",
+      "Bash(pkill -f \"serve -l 8123\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios"
     ]
   }
 }
