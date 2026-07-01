@@ -414,8 +414,10 @@ function spinWheel() {
   const subject = validSubjects[Math.floor(Math.random() * validSubjects.length)];
   const idx     = CAMP_SUBJECTS.indexOf(subject);
 
-  /* Ángulo central de cada sector (12 o'clock = 0°, sentido horario) */
-  const sectorCenter = [45, 135, 225, 315][idx];
+  /* Para que el sector quede bajo la flecha (tope = 0°), necesitamos que
+     rotate(θ) lleve ese sector al tope: θ = 360 - centro_original.
+     Centros: ESP=45 MAT=135 NAT=225 SOC=315 → targets: 315 225 135 45 */
+  const sectorCenter = [315, 225, 135, 45][idx];
   const curAngle     = campState.wheelRotation % 360;
   let   extra        = sectorCenter - curAngle;
   if (extra <= 0) extra += 360;
