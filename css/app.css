@@ -1772,6 +1772,15 @@ a { text-decoration: none; color: inherit; }
    CAMPEONÍSIMO
    ==================================================================== */
 
+/* ── Error fallback ── */
+.camp-error-msg {
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
 /* ── Setup ── */
 .camp-setup {
   padding: 8px 4px 24px;
@@ -2314,5 +2323,124 @@ a { text-decoration: none; color: inherit; }
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
+  cursor: pointer;
+}
+
+/* ── Temporizador circular SVG ── */
+.camp-q-subj-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.camp-q-timer-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.camp-timer-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.camp-q-timer-num {
+  position: relative;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--brand);
+  font-variant-numeric: tabular-nums;
+  z-index: 1;
+}
+.camp-q-timer-wrap.camp-timer-urgent .camp-q-timer-num {
+  color: #ef4444;
+  animation: campPulse 1s infinite;
+}
+.camp-q-timer-wrap.camp-timer-urgent #camp-timer-arc {
+  stroke: #ef4444;
+}
+
+/* ── Selector de Misiones ── */
+.camp-ms-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.camp-ms-global {
+  padding: 5px 11px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--brand);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.camp-ms-global:active { opacity: .8; }
+.camp-ms-global.camp-ms-none {
+  background: var(--surface);
+  color: var(--muted);
+}
+.camp-ms-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+.camp-ms-block {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.camp-ms-bhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 800;
+}
+.camp-ms-bh-esp  { background: #fef3c7; color: #92400e; }
+.camp-ms-bh-mat  { background: #dbeafe; color: #1d4ed8; }
+.camp-ms-bh-cnat { background: #ccfbf1; color: #0f766e; }
+.camp-ms-bh-csoc { background: #fee2e2; color: #b91c1c; }
+.camp-ms-tog {
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(0,0,0,.15);
+  background: rgba(255,255,255,.65);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  color: inherit;
+}
+.camp-ms-blist {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: var(--surface);
+}
+.camp-ms-blbl {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 3px 0;
+}
+.camp-ms-ck {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--brand);
+  flex-shrink: 0;
   cursor: pointer;
 }
