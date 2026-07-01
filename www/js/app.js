@@ -619,6 +619,7 @@ function switchView(id) {
   if (id === 'view-plan-accion')    paInit();
   if (id === 'view-parte-mensual')  { /* la UI se recalcula en tiempo real con inputs */ }
   if (id === 'view-collage')        initCollage();
+  if (id === 'view-campeonismo')    initCampeonismo();
 
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
@@ -646,6 +647,9 @@ function toast(msg) {
 ───────────────────────────────────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  // Módulos de herramientas — registrar navegación
+  if (typeof campRegisterNav === 'function') campRegisterNav();
 
   // Aplicar tema del país guardado antes de renderizar
   const s0      = load();

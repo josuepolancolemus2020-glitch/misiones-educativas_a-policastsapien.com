@@ -253,6 +253,10 @@
             <i class="fa-solid fa-images"></i>
             <span>Collage</span>
           </button>
+          <button class="teacher-tool-item teacher-tool-active" id="goto-camp-btn">
+            <i class="fa-solid fa-trophy"></i>
+            <span>Campeonísimo</span>
+          </button>
         </div>
       </div>
 
@@ -628,6 +632,20 @@
     </div>
   </div>
 
+  <!-- ========== CAMPEONÍSIMO ========== -->
+  <div id="view-campeonismo" class="view">
+    <header class="app-header compact">
+      <button class="back-icon-btn" id="camp-back-btn" aria-label="Volver">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h1 class="view-title">🏆 Campeonísimo</h1>
+      <div></div>
+    </header>
+    <div class="view-scroll" id="camp-scroll">
+      <div id="camp-content"></div>
+    </div>
+  </div>
+
   <!-- ========== COLLAGE DE EVIDENCIAS ========== -->
   <div id="view-collage" class="view">
     <header class="app-header compact">
@@ -746,6 +764,9 @@
       <button class="drawer-item" data-view="view-gobierno">
         <i class="fa-solid fa-check-to-slot"></i><span>Gobierno Escolar 2026</span>
       </button>
+      <button class="drawer-item" data-view="view-campeonismo">
+        <i class="fa-solid fa-trophy"></i><span>Campeonísimo</span>
+      </button>
     </nav>
     <div class="drawer-divider"></div>
     <div class="drawer-section-label">Configuración</div>
@@ -774,6 +795,8 @@
   <script src="js/tools/plan-accion.js"></script>
   <script src="js/tools/parte-mensual.js"></script>
   <script src="js/tools/collage-maker.js"></script>
+  <script src="js/data/campeonismo-bank.js"></script>
+  <script src="js/tools/campeonismo.js"></script>
   <script src="js/app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
