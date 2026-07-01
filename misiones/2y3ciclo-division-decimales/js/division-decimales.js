@@ -27,8 +27,8 @@ function fb(id, msg, isOk) {
 const SAVE_KEY = 'matematica_div_decimales_v1';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1, unlockedAch = [], darkMode = false, prevLevel = 0;
-const TOTAL_SECTIONS = 13;
-const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), sopa: new Set(), equiv: new Set() };
+const TOTAL_SECTIONS = 16;
+const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), sopa: new Set(), equiv: new Set(), predice: new Set(), explica: new Set() };
 
 // ===================== SONIDO =====================
 let sndOn = true; let AC = null;
@@ -378,9 +378,10 @@ function nextEquiv() {
 
 // ===================== RETO FINAL =====================
 const retoPoolWords=[
-  {w:'10 ÷ 0.5',t:'mayor'}, {w:'15 ÷ 2.5',t:'menor'}, {w:'8 ÷ 0.1',t:'mayor'}, {w:'5 ÷ 5',t:'menor'}, // 5/5=1, no es mayor. Se clasifica en menor (o igual, forzamos la logica de divisor>=1)
+  {w:'10 ÷ 0.5',t:'mayor'}, {w:'15 ÷ 2.5',t:'menor'}, {w:'8 ÷ 0.1',t:'mayor'},
   {w:'12 ÷ 0.4',t:'mayor'}, {w:'20 ÷ 4',t:'menor'}, {w:'6 ÷ 0.2',t:'mayor'}, {w:'18 ÷ 6',t:'menor'},
-  {w:'2 ÷ 0.05',t:'mayor'}, {w:'9 ÷ 3',t:'menor'}
+  {w:'2 ÷ 0.05',t:'mayor'}, {w:'9 ÷ 3',t:'menor'}, {w:'4 ÷ 0.25',t:'mayor'}, {w:'15 ÷ 3',t:'menor'},
+  {w:'5 ÷ 1',t:'igual'}, {w:'8 ÷ 1',t:'igual'}, {w:'12 ÷ 1',t:'igual'}
 ];
 let retoPool=[], retoOk=0, retoErr=0, retoTimerInt=null, retoSec=30, retoRunning=false, retoCurrent=null;
 function startReto(){ 
@@ -390,12 +391,23 @@ function startReto(){
   retoTimerInt=setInterval(()=>{ retoSec--; sfx('tick'); document.getElementById('retoTimer').textContent='⏱ '+retoSec; if(retoSec<=10) document.getElementById('retoTimer').style.color='var(--red)'; const fill=document.getElementById('retoBarFill'); if(fill){fill.style.width=(retoSec/30*100)+'%';if(retoSec<=10)fill.style.background='var(--red)';} if(retoSec<=0){ clearInterval(retoTimerInt); endReto(); } },1000); 
 }
 function showRetoWord(){ if(retoPool.length===0) retoPool=_shuffle([...retoPoolWords,...retoPoolWords]); retoCurrent=retoPool.pop(); document.getElementById('retoWord').textContent=retoCurrent.w; }
-function ansReto(t){ 
-    if(!retoRunning||!retoCurrent)return; 
-    const firstPlay=!xpTracker.reto.has(1); // Usamos id 1 fijo
-    if(t===retoCurrent.t){ sfx('ok'); retoOk++; if(firstPlay) pts(1); } 
-    else{ sfx('no'); retoErr++; if(firstPlay) pts(-1); const _gb=document.getElementById('gameBox'); if(_gb){_gb.classList.remove('shake-error');void _gb.offsetWidth;_gb.classList.add('shake-error');} } 
-    document.getElementById('retoScore').textContent=`✔ ${retoOk} correctas | ✗ ${retoErr} errores`; showRetoWord(); 
+function ansReto(t){
+    if(!retoRunning||!retoCurrent)return;
+    const firstPlay=!xpTracker.reto.has(1);
+    const correct=(t===retoCurrent.t);
+    if(correct){ sfx('ok'); retoOk++; if(firstPlay) pts(1); }
+    else{
+      sfx('no'); retoErr++; if(firstPlay) pts(-1);
+      const _gb=document.getElementById('gameBox'); if(_gb){_gb.classList.remove('shake-error');void _gb.offsetWidth;_gb.classList.add('shake-error');}
+      const _fb=document.getElementById('fbReto');
+      if(_fb){
+        const labels={mayor:'MAYOR que el dividendo',menor:'MENOR que el dividendo',igual:'IGUAL al dividendo'};
+        _fb.textContent=`El resultado de ${retoCurrent.w} es ${labels[retoCurrent.t]}`;
+        _fb.className='fb show err';
+        setTimeout(()=>_fb.classList.remove('show'),2000);
+      }
+    }
+    document.getElementById('retoScore').textContent=`✔ ${retoOk} correctas | ✗ ${retoErr} errores`; showRetoWord();
 }
 function endReto(){ retoRunning=false; document.getElementById('retoWord').textContent='🏁 ¡Tiempo!'; document.getElementById('retoTimer').style.color='var(--pri)'; xpTracker.reto.add(1); const total=retoOk+retoErr; const pct=total>0?Math.round((retoOk/total)*100):0; fb('fbReto',`Resultado: ${retoOk}/${total} (${pct}%) ¡Bien hecho!`,true); fin('s-reto'); sfx('fan'); unlockAchievement('reto_hero'); }
 function resetReto(){ sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0; document.getElementById('retoTimer').textContent='⏱ 30'; document.getElementById('retoTimer').style.color='var(--pri)'; document.getElementById('retoWord').textContent='¡Prepárate!'; document.getElementById('retoScore').textContent='✔ 0 correctas | ✗ 0 errores'; document.getElementById('fbReto').classList.remove('show'); }
@@ -417,7 +429,7 @@ const classifyTaskDB=[
   {w:'15 ÷ 2.5',pos:'Cociente Menor',val:'6',equiv:'150 ÷ 25'},
 ];
 const completeTaskDB=[
-  {s:'El número que reparte se llama ___.',opts:['dividendo','divisor','cociente'],ans:'divisor'},
+  {s:'El número que indica en cuántas partes se reparte se llama ___.',opts:['dividendo','divisor','cociente'],ans:'divisor'},
   {s:'La división 1.2 ÷ 0.3 equivale a ___.',opts:['120 ÷ 3','12 ÷ 3','12 ÷ 30'],ans:'12 ÷ 3'},
   {s:'Dividir entre 0.1 hace que el número sea ___.',opts:['mayor','menor','igual'],ans:'mayor'},
   {s:'Mover el punto 2 veces equivale a multiplicar por ___.',opts:['10','100','1000'],ans:'100'},
@@ -428,8 +440,25 @@ const explainQuestions=[
   {q:'¿Por qué 10 ÷ 0.5 da un resultado mayor a 10?',ans:'Porque estamos repartiendo 10 en porciones menores a la unidad (mitades), así que obtenemos más porciones (20).'},
   {q:'¿Cuándo se debe agregar un cero al cociente?',ans:'Cuando al bajar una cifra del dividendo, la cantidad formada es menor que el divisor y no se puede repartir.'}
 ];
+const pensamientoTaskDB=[
+  {q:'Encuentra el error: "Para resolver 3 ÷ 0.5, convierto solo 0.5 en 5 y hago 3 ÷ 5 = 0.6."',ans:'El error es mover el punto solo en el divisor. Si 0.5 → 5 (×10), también hay que convertir 3 → 30 (×10). Lo correcto: 30 ÷ 5 = 6, no 0.6.',type:'🔎 Detectar error'},
+  {q:'Explica por qué 8 ÷ 0.2 es mayor que 8.',ans:'Porque el divisor (0.2) es menor que 1. Al dividir entre un número menor que 1, el cociente siempre será MAYOR que el dividendo. 8 ÷ 0.2 = 40.',type:'💬 Justificar'},
+  {q:'Inventa un problema con lempiras, litros, libras, metros o alimentos que se resuelva con una división decimal.',ans:'Respuesta variable. Ej: "Tengo 4.5 litros de jugo y sirvo vasos de 0.5 litros. ¿Cuántos vasos lleno?" R: 4.5 ÷ 0.5 = 9 vasos.',type:'✏️ Crear problema'},
+  {q:'Resuelve 4.5 ÷ 0.5 y explica cada movimiento del punto.',ans:'Paso 1: El divisor (0.5) tiene 1 decimal → muevo 1 espacio en ambos. Paso 2: 45 ÷ 5. Paso 3: 45 ÷ 5 = 9. El cociente es 9.',type:'🧮 Resolver y explicar'},
+  {q:'Sin calcular, ordena de mayor a menor los cocientes: 10÷0.5, 10÷1, 10÷2. Justifica.',ans:'10÷0.5=20 > 10÷1=10 > 10÷2=5. Cuanto menor el divisor, mayor el cociente. El dividendo es siempre 10.',type:'🧠 Razonar sin calcular'},
+  {q:'¿Qué pasaría si al resolver 6 ÷ 0.3 solo mueves el punto en el divisor y no en el dividendo?',ans:'Obtendrías 6 ÷ 3 = 2, que es incorrecto. La respuesta correcta es 60 ÷ 3 = 20. Mover solo uno cambia la proporción.',type:'⚠️ Analizar error'},
+];
+function genPensamientoTask(out,count){
+  _instrBlock(out,'Instrucción',['Desarrolla con argumentos. Escribe, explica o inventa según se pide.','<em>Lo importante es tu razonamiento, no solo el resultado.</em>']);
+  const pool=_shuffle([...pensamientoTaskDB]);
+  for(let i=0;i<count;i++){
+    const item=pool[i%pool.length]; const div=document.createElement('div'); div.className='tg-task';
+    div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><span class="tg-type-tag">${item.type}</span><br><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✔ ${item.ans}</div></div>`;
+    out.appendChild(div);
+  }
+}
 let ansVisible=false;
-function genTask(){ sfx('click'); const type=document.getElementById('tgType').value; const count=parseInt(document.getElementById('tgCount').value); ansVisible=false; const out=document.getElementById('tgOut'); out.innerHTML=''; if(type==='identify') genIdentifyTask(out,count); else if(type==='classify') genClassifyTask(out,count); else if(type==='complete') genCompleteTask(out,count); else if(type==='explain') genExplainTask(out,count); fin('s-tareas'); }
+function genTask(){ sfx('click'); const type=document.getElementById('tgType').value; const count=parseInt(document.getElementById('tgCount').value); ansVisible=false; const out=document.getElementById('tgOut'); out.innerHTML=''; if(type==='identify') genIdentifyTask(out,count); else if(type==='classify') genClassifyTask(out,count); else if(type==='complete') genCompleteTask(out,count); else if(type==='explain') genExplainTask(out,count); else if(type==='pensamiento') genPensamientoTask(out,count); fin('s-tareas'); }
 function _instrBlock(out,title,lines){ const ib=document.createElement('div'); ib.className='tg-instruction-block'; ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join(''); out.appendChild(ib); }
 function genIdentifyTask(out,count){ _instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya el concepto matemático indicado.','<strong>Ejemplo:</strong> Mover a la derecha. → <span style="color:var(--jade);font-weight:700;">Regla del punto</span>']); _pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{ const div=document.createElement('div'); div.className='tg-task'; div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✔ ${item.type}</div></div>`; out.appendChild(div); }); }
 function genClassifyTask(out,count){ _instrBlock(out,'Instrucción',['Copia la tabla. Escribe si el cociente será Mayor o Menor que el dividendo, el resultado exacto y la equivalencia entera.']); const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length)); const wrap=document.createElement('div'); wrap.style.overflowX='auto'; const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`; let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:480px;"><thead><tr style="background:var(--pri-gl);">${th('Operación','text-align:left;')}${th('Cociente > o <')}${th('Resultado')}${th('Equivalencia')}</tr></thead><tbody>`; items.forEach(it=>{ html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(3).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>'; }); html+='</tbody></table>'; wrap.innerHTML=html; out.appendChild(wrap); const ans=document.createElement('div'); ans.className='tg-answer'; ans.style.marginTop='0.8rem'; ans.innerHTML='<strong>✔ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> ${it.pos} | R: ${it.val} | Eq: ${it.equiv}`).join('<br>'); out.appendChild(ans); }
@@ -447,7 +476,7 @@ const sopaSets=[
       ['V','W','D','E','R','E','C','H','A','N'],
       ['I','B','C','D','E','F','G','H','I','T'],
       ['S','J','M','A','Y','O','R','Q','R','O'],
-      ['O','S','T','U','V','W','X','Y','Z','M'],
+      ['O','S','T','U','C','W','X','Y','Z','M'],
       ['R','A','B','C','E','E','F','G','H','E'],
       ['A','S','U','C','R','R','J','K','L','N'],
       ['O','N','O','P','O','R','O','T','U','O'],
@@ -458,15 +487,13 @@ const sopaSets=[
       {w:'DIVISOR',   cells:[[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0]]},
       {w:'DERECHA',   cells:[[2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8]]},
       {w:'MAYOR',     cells:[[4,2],[4,3],[4,4],[4,5],[4,6]]},
-      {w:'CERO',      cells:[[7,3],[8,4],[6,4],[6,5]]}, // Just rough placement, functionality relies on exact cell matching
+      {w:'CERO',      cells:[[5,4],[6,4],[7,4],[8,4]]},
       {w:'COCIENTE',  cells:[[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8]]},
       {w:'PUNTO',     cells:[[0,9],[1,9],[2,9],[3,9],[4,9]]},
       {w:'MENOR',     cells:[[5,9],[6,9],[7,9],[8,9],[9,9]]}
     ]
   }
 ];
-// (The visual grid generated above is simplified. For the exact coordinates to work flawlessly: )
-sopaSets[0].words[4].cells = [[7,3],[8,4],[9,5],[6,5]]; // Just fixing length, but Sopa logic connects them based on array.
 let currentSopaSetIdx=0, sopaFoundWords=new Set();
 let sopaFirstClickCell=null, sopaPointerStartCell=null, sopaPointerMoved=false, sopaSelectedCells=[];
 function getSopaCellSize(){ const container=document.getElementById('sopaGrid'); if(!container||!container.parentElement)return 28; const avail=container.parentElement.clientWidth-16; const set=sopaSets[currentSopaSetIdx]; return Math.max(20,Math.min(32,Math.floor(avail/set.size))); }
@@ -523,6 +550,13 @@ const evalPRBank=[
   {term:'Equivalencia',def:'Multiplicar dividendo y divisor por la misma cantidad'},
 ];
 
+const evalExplainBank=[
+  {q:'Resuelve 4.5 ÷ 0.5 paso a paso y explica qué haces con el punto decimal.',rubric:['Mueve el punto 1 espacio en ambos → 45 ÷ 5','Resultado correcto: 9','Explica que multiplicar ambos por 10 mantiene el cociente igual']},
+  {q:'Sin resolver exactamente, indica si 8 ÷ 0.2 será mayor o menor que 8. Justifica tu respuesta.',rubric:['Responde: mayor','Explica que el divisor (0.2) es menor que 1','Menciona que dividir entre un decimal pequeño aumenta el resultado']},
+  {q:'Inventa un problema de la vida real que se resuelva con 6 ÷ 0.3.',rubric:['Usa un contexto cotidiano (lempiras, metros, etc.)','La operación a resolver es 6 ÷ 0.3','El resultado (20) tiene sentido en el problema']},
+  {q:'Encuentra el error: "Para resolver 5 ÷ 0.5, escribo 5 ÷ 5 = 1."',rubric:['Identifica el error: no se mueve el punto en el dividendo','Lo correcto sería 50 ÷ 5 = 10','Explica la regla: ambos números deben multiplicarse por 10']},
+  {q:'Explica por qué agregar ceros al dividendo no significa inventar números.',rubric:['Menciona equivalencia (multiplicar por 10)','Explica que la proporción se mantiene','Usa un ejemplo: 3 ÷ 0.5 = 30 ÷ 5 = 6']},
+];
 function genEval(){
   sfx('click');
   const cf=evalFormNum; window._currentEvalForm=cf; evalFormNum=(evalFormNum%10)+1; saveProgress();
@@ -530,33 +564,39 @@ function genEval(){
   evalAnsVisible=false;
   const out=document.getElementById('evalOut'); out.innerHTML='';
   const bar=document.createElement('div'); bar.className='eval-score-bar';
-  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">5 secciones × 4 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 20 pts</span><span class="eval-score-pill esp-tf">II. V/F 20 pts</span><span class="eval-score-pill esp-mc">III. Selección 20 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 20 pts</span><span class="eval-score-pill esp-ex">V. Explica 20 pts</span></div>`;
   out.appendChild(bar);
-  const cpItems=_pick(evalCPBank,5);
-  const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+  const cpItems=_pick(evalCPBank,4);
+  const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">20 pts · 5 pts c/u</span></div>';
   cpItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item'; const qHtml=item.q.replace('___','<span class="eval-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div>`; s1.appendChild(d); });
   out.appendChild(s1);
-  const tfItems=_pick(evalTFBank,5);
-  const s2=document.createElement('div'); s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-  tfItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item'; d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div>`; s2.appendChild(d); });
+  const tfItems=_pick(evalTFBank,4);
+  const s2=document.createElement('div'); s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso razonado <span class="eval-pts">20 pts · 5 pts c/u</span></div>';
+  tfItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item'; d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+5}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}"> Falso</label></div><div style="margin-top:0.4rem;margin-left:1.7rem;font-size:0.82rem;color:var(--gray);">Justifica por qué: <span style="display:inline-block;min-width:180px;border-bottom:1px solid var(--border);">&nbsp;</span></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div>`; s2.appendChild(d); });
   out.appendChild(s2);
-  const mcItems=_pick(evalMCBank,5);
-  const s3=document.createElement('div'); s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-  mcItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item'; const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join(''); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div>`; s3.appendChild(d); });
+  const mcItems=_pick(evalMCBank,4);
+  const s3=document.createElement('div'); s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">20 pts · 5 pts c/u</span></div>';
+  mcItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item'; const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join(''); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+9}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div>`; s3.appendChild(d); });
   out.appendChild(s3);
-  const prItems=_pick(evalPRBank,5); const shuffledDefs=[...prItems].sort(()=>Math.random()-0.5); const letters=['A','B','C','D','E'];
-  const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
+  const prItems=_pick(evalPRBank,4); const shuffledDefs=[...prItems].sort(()=>Math.random()-0.5); const letters=['A','B','C','D'];
+  const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">20 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item';
   let colLeft='<div class="eval-match-col"><h4>📘 Términos</h4>';
-  prItems.forEach((item,i)=>{ colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <span class="eval-match-line">&nbsp;&nbsp;&nbsp;</span> ${item.term}</div>`; });
+  prItems.forEach((item,i)=>{ colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+13}.</span> <span class="eval-match-line">&nbsp;&nbsp;&nbsp;</span> ${item.term}</div>`; });
   colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>📗 Definiciones</h4>';
   shuffledDefs.forEach((item,i)=>{ colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
   colRight+='</div>';
-  const ansKey=prItems.map((item,i)=>{ const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)]; return `${i+16}→${letter}`; }).join(' · ');
+  const ansKey=prItems.map((item,i)=>{ const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)]; return `${i+13}→${letter}`; }).join(' · ');
   matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div>`;
   s4.appendChild(matchCard); out.appendChild(s4);
-  window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};
+  const exItems=_pick(evalExplainBank,4);
+  const s5=document.createElement('div'); s5.innerHTML='<div class="eval-section-title">V. Explica y resuelve <span class="eval-pts">20 pts · 5 pts c/u</span></div>';
+  exItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item';
+    d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+17}</span><span class="eval-q-text">${item.q}</span></div><div style="margin-top:0.5rem;margin-left:1.7rem;"><div style="border-bottom:1px solid var(--border);min-width:100%;height:1.4rem;margin-top:0.3rem;">&nbsp;</div><div style="border-bottom:1px solid var(--border);min-width:100%;height:1.4rem;margin-top:0.3rem;">&nbsp;</div><div style="border-bottom:1px solid var(--border);min-width:100%;height:1.4rem;margin-top:0.3rem;">&nbsp;</div></div><div class="eval-answer"><strong>Pauta (para docente):</strong><br>${item.rubric.map(r=>`• ${r}`).join('<br>')}</div>`;
+    s5.appendChild(d); });
+  out.appendChild(s5);
+  window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters},ex:exItems};
   fin('s-evaluacion');
 }
 function toggleEvalAns(){ evalAnsVisible=!evalAnsVisible; document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none'); sfx('click'); }
@@ -565,35 +605,198 @@ function printEval(){
   if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}
   sfx('click');
   const forma=window._currentEvalForm||1; const d=window._evalPrintData;
-  let s1=`<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;
+  let s1=`<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div>`;
   d.cp.forEach((it,i)=>{ const q=it.q.replace('___','<span class="cp-blank"></span>'); s1+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text">${q}</span></div>`; });
-  let s2=`<div class="sec-title"><span>II. Verdadero o Falso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;
-  d.tf.forEach((it,i)=>{ s2+=`<div class="tf-row"><span class="qn">${i+6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`; });
-  let s3=`<div class="sec-title"><span>III. Selección Múltiple</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="mc-grid">`;
-  d.mc.forEach((it,i)=>{ const opts=it.o.map((op,oi)=>`<label class="mc-opt"><input type="radio" name="mc${i}"> ${op}</label>`).join(''); s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+11}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`; });
+  let s2=`<div class="sec-title"><span>II. Verdadero o Falso razonado</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div>`;
+  d.tf.forEach((it,i)=>{ s2+=`<div class="tf-row"><span class="qn">${i+5}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}<div class="tf-just">Justifica: <span class="tf-just-line"></span></div></span></div>`; });
+  let s3=`<div class="sec-title"><span>III. Selección Múltiple</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><div class="mc-grid">`;
+  d.mc.forEach((it,i)=>{ const opts=it.o.map((op,oi)=>`<label class="mc-opt"><input type="radio" name="mc${i}"> ${op}</label>`).join(''); s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+9}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`; });
   s3+=`</div>`;
   let colL='<div class="pr-col"><div class="pr-head">📘 Términos</div>';
-  d.pr.terms.forEach((it,i)=>{ colL+=`<div class="pr-item"><span class="pr-num">${i+16}.</span><span class="pr-line"></span>${it.term}</div>`; });
+  d.pr.terms.forEach((it,i)=>{ colL+=`<div class="pr-item"><span class="pr-num">${i+13}.</span><span class="pr-line"></span>${it.term}</div>`; });
   colL+='</div>';
   let colR='<div class="pr-col"><div class="pr-head">📗 Definiciones</div>';
   d.pr.shuffledDefs.forEach((it,i)=>{ colR+=`<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`; });
   colR+='</div>';
-  let s4=`<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;
+  let s4=`<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;
+  let s5=`<div class="sec-title"><span>V. Explica y resuelve</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div>`;
+  (d.ex||[]).forEach((it,i)=>{ s5+=`<div class="ex-item"><div class="ex-q"><span class="qn">${i+17}.</span><span class="ex-text">${it.q}</span></div><div class="ex-lines"><div class="ex-line"></div><div class="ex-line"></div><div class="ex-line"></div></div></div>`; });
   let pR='';
   pR+=`<div class="p-sec"><div class="p-ttl">I. Completar</div><table class="p-tbl">`;
   d.cp.forEach((it,i)=>{ pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${it.a}</td></tr>`; });
-  pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. V o F</div><table class="p-tbl">`;
-  d.tf.forEach((it,i)=>{ pR+=`<tr><td class="pn">${i+6}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`; });
+  pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. V o F razonado</div><table class="p-tbl">`;
+  d.tf.forEach((it,i)=>{ pR+=`<tr><td class="pn">${i+5}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`; });
   pR+=`</table></div><div class="p-sec"><div class="p-ttl">III. Selección</div><table class="p-tbl">`;
-  d.mc.forEach((it,i)=>{ pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${it.o[it.a]}</td></tr>`; });
+  d.mc.forEach((it,i)=>{ pR+=`<tr><td class="pn">${i+9}.</td><td class="pa">${it.o[it.a]}</td></tr>`; });
   pR+=`</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;
-  d.pr.terms.forEach((it,i)=>{ const l=d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]; pR+=`<tr><td class="pn">${i+16}.</td><td class="pa">${i+16}→${l}</td></tr>`; });
+  d.pr.terms.forEach((it,i)=>{ const l=d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]; pR+=`<tr><td class="pn">${i+13}.</td><td class="pa">${i+13}→${l}</td></tr>`; });
   pR+=`</table></div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación División de Decimales · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:11pt;text-align:center;color:#555;margin-top:0.15rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.4rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-opt input{width:12px;height:12px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.2rem;}.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:#e3f2fd;border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:#1565c0;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.28rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #1565c0;height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.3rem;padding:0.2rem 0;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #1565c0;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{margin:4mm 6mm;}}</style></head><body><div class="ph"><h2>Evaluación Final de Misión División de Decimales — Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✔ PAUTA — Evaluación Final · Misión División de Decimales · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
+  let pEx=`<div class="p-sec-full"><div class="p-ttl">V. Explica y resuelve — Pauta docente</div>`;
+  (d.ex||[]).forEach((it,i)=>{ pEx+=`<div class="p-ex-item"><span class="pn">${i+17}.</span><div class="p-ex-rubric">${it.rubric.map(r=>`<div>• ${r}</div>`).join('')}</div></div>`; });
+  pEx+=`</div>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación División de Decimales · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.25rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.qn{font-weight:700;min-width:22px;flex-shrink:0;color:#1565c0;}.tf-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.25rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;margin-top:0.2rem;}.tf-text{flex:1;}.tf-just{font-size:9pt;color:#555;margin-top:0.2rem;}.tf-just-line{display:inline-block;min-width:150px;border-bottom:1px solid #aaa;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}.mc-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-opt input{width:12px;height:12px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:#e3f2fd;border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:#1565c0;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.ex-item{padding:0.3rem 0.2rem;border-bottom:1px solid #eee;}.ex-q{display:flex;gap:0.3rem;font-size:10.5pt;line-height:1.4;margin-bottom:0.2rem;}.ex-text{flex:1;}.ex-lines{margin-left:1.5rem;}.ex-line{border-bottom:1px solid #bbb;height:1.3rem;margin-bottom:0.2rem;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;color:#1565c0;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.28rem 0.45rem;}.p-sec-full{border:1px solid #cce0ff;border-radius:4px;padding:0.4rem 0.6rem;margin-top:0.4rem;}.p-ttl{font-size:8pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#1565c0;}.pa{color:#007a00;font-weight:600;}.p-ex-item{display:flex;gap:0.4rem;font-size:8pt;padding:0.2rem 0;border-bottom:1px dotted #ddd;}.p-ex-rubric{flex:1;color:#004d00;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.4rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #1565c0;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{margin:5mm 7mm;}}</style></head><body><div class="ph"><h2>Evaluación Final · Misión División de Decimales · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones × 4 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE — Evaluación Final · División de Decimales · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 5 secciones × 4 preguntas × 5 pts | Matemáticas II y III Ciclo</div></div><div class="p-grid">${pR}</div>${pEx}</div><div class="forma-tag">Forma ${forma}</div></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
 }
+
+// ===================== MINI QUIZ INLINE (SECCIÓN APRENDE) =====================
+function answerMQ(wrapId, btn, isOk, msg) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap || wrap.dataset.done) return;
+  wrap.dataset.done = '1';
+  const allBtns = wrap.querySelectorAll('.mq-btn');
+  allBtns.forEach(b => { b.disabled = true; });
+  btn.classList.add(isOk ? 'mq-ok' : 'mq-no');
+  if (!isOk) {
+    allBtns.forEach(b => { if (b.onclick.toString().includes('true,')) b.classList.add('mq-ok'); });
+  }
+  const fbEl = document.getElementById(wrapId + '-fb');
+  if (fbEl) { fbEl.textContent = (isOk ? '✔ ' : '💡 ') + msg; fbEl.className = 'mq-fb show ' + (isOk ? 'ok' : 'err'); }
+  if (isOk) sfx('ok'); else sfx('no');
+}
+
+// ===================== PREDICE ANTES DE RESOLVER =====================
+const prediceData = [
+  {
+    q: 'Si tienes 10 lempiras y los divides en grupos de 0.50, ¿saldrán más o menos de 10 grupos?',
+    opts: ['Más de 10 grupos', 'Menos de 10 grupos', 'Exactamente 10 grupos'],
+    correct: 0,
+    feedback: '¡Correcto! 10 ÷ 0.50 = 20 grupos. Al dividir entre un número MENOR que 1, siempre obtienes MÁS partes que el número original.',
+    wrongFeedback: 'La respuesta es: más de 10 grupos. 10 ÷ 0.50 = 20. Como 0.50 es menor que 1 (una mitad), caben 20 mitades en 10. ¡Aprenderás por qué en la sección Aprende!'
+  },
+  {
+    q: 'Antes de resolver 8 ÷ 0.2, ¿crees que el resultado será mayor o menor que 8?',
+    opts: ['Mayor que 8', 'Menor que 8', 'Igual a 8'],
+    correct: 0,
+    feedback: '¡Excelente intuición! 8 ÷ 0.2 = 40. El divisor (0.2) es menor que 1, por eso el resultado CRECE. ¿Puedes imaginar cuántas porciones de 0.2 caben en 8?',
+    wrongFeedback: 'La respuesta es: mayor que 8. 8 ÷ 0.2 = 40. Como 0.2 < 1, al dividir en porciones pequeñas, obtienes MÁS porciones que el número original.'
+  },
+  {
+    q: 'Antes de resolver 15 ÷ 2.5, ¿crees que el resultado será mayor o menor que 15?',
+    opts: ['Mayor que 15', 'Menor que 15', 'Igual a 15'],
+    correct: 1,
+    feedback: '¡Muy bien! 15 ÷ 2.5 = 6. El divisor (2.5) es mayor que 1, por eso el resultado DISMINUYE. Cada porción es grande, entonces caben pocas.',
+    wrongFeedback: 'La respuesta es: menor que 15. 15 ÷ 2.5 = 6. Como 2.5 > 1, cada porción es grande, ¡así que caben menos porciones!'
+  }
+];
+let prediceAnswered = new Set();
+
+function buildPredice() {
+  const container = document.getElementById('prediceWidget');
+  if (!container) return;
+  container.innerHTML = '';
+  prediceData.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'predice-card';
+    card.innerHTML = `
+      <div class="predice-num">Predicción ${i + 1} de ${prediceData.length}</div>
+      <div class="predice-q">${item.q}</div>
+      <div class="predice-opts" id="predice-opts-${i}">
+        ${item.opts.map((o, j) => `<button class="predice-btn" onclick="answerPredice(${i},${j})" id="pb-${i}-${j}">${o}</button>`).join('')}
+      </div>
+      <div class="predice-fb" id="predice-fb-${i}"></div>`;
+    container.appendChild(card);
+  });
+}
+
+function answerPredice(qi, ai) {
+  const item = prediceData[qi];
+  const fbEl = document.getElementById(`predice-fb-${qi}`);
+  const opts = document.querySelectorAll(`#predice-opts-${qi} .predice-btn`);
+  opts.forEach(b => { b.disabled = true; });
+  const isOk = (ai === item.correct);
+  if (isOk) {
+    opts[ai].classList.add('predice-ok');
+    fbEl.textContent = '✔ ' + item.feedback;
+    fbEl.className = 'predice-fb show ok';
+    if (!xpTracker.predice.has(qi)) { xpTracker.predice.add(qi); pts(3); }
+    sfx('ok');
+  } else {
+    opts[ai].classList.add('predice-no');
+    opts[item.correct].classList.add('predice-ok');
+    fbEl.textContent = '💡 ' + item.wrongFeedback;
+    fbEl.className = 'predice-fb show err';
+    sfx('no');
+  }
+  prediceAnswered.add(qi);
+  if (prediceAnswered.size === prediceData.length) { fin('s-predice'); sfx('fan'); showToast('🔮 ¡Predicciones completadas! Ahora a aprender.'); }
+}
+
+// ===================== EXPLICA CON TUS PALABRAS =====================
+const explicaData = [
+  {
+    q: 'Explica por qué 10 ÷ 0.5 da 20.',
+    hint: '💡 Pista: ¿Cuántas mitades (0.5) caben en 10?',
+    rubric: ['✓ Menciona dividendo y divisor correctamente', '✓ Explica que el divisor es menor que 1', '✓ Da un razonamiento o ejemplo coherente'],
+    suggested: 'Tengo 10 y divido en grupos de 0.5 (medios). En 10 caben 20 medios. El divisor (0.5) es menor que 1, por eso el resultado (20) es mayor que el dividendo (10). Equivale a multiplicar ambos por 10: 100 ÷ 5 = 20.'
+  },
+  {
+    q: '¿Por qué dividir entre un número menor que 1 puede hacer crecer el resultado?',
+    hint: '💡 Pista: Imagina cortar una tira de papel en piezas muy pequeñas.',
+    rubric: ['✓ Usa un ejemplo o analogía concreta', '✓ Explica que piezas pequeñas generan más porciones', '✓ Menciona que el cociente supera al dividendo'],
+    suggested: 'Si corto 6 metros de tela en pedazos de 0.5 metros, ¿cuántos pedazos obtengo? 6 ÷ 0.5 = 12 pedazos. Cuanto más pequeñas las porciones (divisor menor), más porciones obtienes (cociente mayor).'
+  },
+  {
+    q: '¿Qué pasaría si solo movieras el punto en el divisor y no en el dividendo?',
+    hint: '💡 Pista: Recuerda la Regla de Oro: lo que le haces al divisor, debes hacérselo al dividendo.',
+    rubric: ['✓ Identifica que el resultado cambiaría y sería incorrecto', '✓ Menciona que ambos deben multiplicarse por lo mismo', '✓ Da un ejemplo del error'],
+    suggested: 'La división cambiaría y daría un resultado incorrecto. Ejemplo: 1.2 ÷ 0.4. Si solo conviertes el divisor → 1.2 ÷ 4 = 0.3 (¡ERROR!). Lo correcto es mover en ambos: 12 ÷ 4 = 3.'
+  },
+  {
+    q: 'Inventa un problema de la vida diaria que se resuelva con 12 ÷ 0.4.',
+    hint: '💡 Pista: Piensa en lempiras, metros de tela, litros de refresco o libras de fruta.',
+    rubric: ['✓ El contexto es de la vida real', '✓ La operación a usar es 12 ÷ 0.4', '✓ El resultado (30) tiene sentido en el problema'],
+    suggested: '"Tengo 12 metros de tela y quiero hacer lazos de 0.4 metros cada uno. ¿Cuántos lazos puedo hacer?" 12 ÷ 0.4 = 30 lazos.'
+  },
+  {
+    q: 'Explica por qué agregar ceros no significa inventar números.',
+    hint: '💡 Pista: Piensa en fracciones equivalentes: ½ = 2/4 = 5/10.',
+    rubric: ['✓ Menciona que es multiplicar dividendo y divisor por la misma cantidad', '✓ Explica que la proporción no cambia', '✓ Usa un ejemplo con divisiones'],
+    suggested: 'Agregar un cero equivale a multiplicar por 10. Por ejemplo: 3 ÷ 0.5 → (×10) → 30 ÷ 5. El resultado (6) es el mismo. No inventamos nada, solo cambiamos la forma manteniendo la misma proporción.'
+  }
+];
+let explicaIdx = 0;
+
+function buildExplica() { showExplicaItem(0); }
+
+function showExplicaItem(idx) {
+  explicaIdx = idx;
+  const container = document.getElementById('explicaContainer');
+  if (!container) return;
+  const item = explicaData[idx];
+  container.innerHTML = `
+    <div class="explica-prog">Pregunta ${idx + 1} de ${explicaData.length}</div>
+    <div class="explica-q">${item.q}</div>
+    <p class="explica-hint">${item.hint}</p>
+    <div class="explica-lines">
+      <div class="explica-line"></div><div class="explica-line"></div><div class="explica-line"></div>
+    </div>
+    <div class="explica-rubric" id="explicaRubric" style="display:none;">
+      <h4>📋 Criterios de evaluación (pauta):</h4>
+      ${item.rubric.map(r => `<label class="rubric-item"><input type="checkbox"> ${r}</label>`).join('')}
+      <div class="explica-suggested"><strong>💬 Respuesta sugerida:</strong><br>${item.suggested}</div>
+    </div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem;">
+      <button class="btn btn-amber" onclick="toggleExplicaRubric()">📋 Ver pauta</button>
+      ${idx > 0 ? `<button class="btn btn-d" onclick="prevExplica()">◀ Anterior</button>` : ''}
+      <button class="btn btn-g" onclick="nextExplica()">${idx < explicaData.length - 1 ? '▶ Siguiente' : '🎓 Finalizar'}</button>
+    </div>`;
+}
+
+function toggleExplicaRubric() {
+  const r = document.getElementById('explicaRubric'); if (!r) return;
+  const showing = r.style.display !== 'none';
+  r.style.display = showing ? 'none' : 'block';
+  sfx('click');
+  if (!showing && !xpTracker.explica.has(explicaIdx)) { xpTracker.explica.add(explicaIdx); pts(2); }
+}
+function nextExplica() {
+  sfx('click');
+  if (explicaIdx < explicaData.length - 1) { showExplicaItem(explicaIdx + 1); }
+  else { fin('s-explica'); sfx('fan'); showToast('🎉 ¡Sección Explica completada! +10 XP total'); }
+}
+function prevExplica() { sfx('click'); if (explicaIdx > 0) showExplicaItem(explicaIdx - 1); }
 
 // ===================== DIPLOMA =====================
 function _diplPct() { return xp >= MXP ? 100 : Math.round((xp / MXP) * 100); }
@@ -663,6 +866,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadProgress();
   upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval();
   buildEquiv();
+  buildPredice();
+  buildExplica();
   document.addEventListener('click',function(e){ const panel=document.getElementById('achPanel'); const btn=document.getElementById('achBtn'); if(panel.classList.contains('open')&&!panel.contains(e.target)&&e.target!==btn) panel.classList.remove('open'); });
   document.addEventListener('click',function(e){ if(e.target===document.getElementById('diplomaOverlay')) closeDiploma(); });
   const savedName=localStorage.getItem('nombreEstudianteDivDecimales');
@@ -671,4 +876,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(inputName) inputName.addEventListener('input',e=>localStorage.setItem('nombreEstudianteDivDecimales',e.target.value));
   fin('s-aprende',false);
   fin('s-tipos',false);
+  fin('s-errores',false);
 });

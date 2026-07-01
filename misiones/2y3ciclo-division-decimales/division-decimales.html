@@ -40,50 +40,119 @@
 
 <main class="main" id="main-content">
 
-<div class="sec active" id="s-aprende" role="tabpanel">
+<div class="sec active" id="s-predice" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔮 Predice antes de resolver</h2>
+    <p style="margin-bottom:0.5rem;">Antes de aprender la regla, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
+    <div id="prediceWidget"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ahora aprende la regla!</span><span class="nsb-name">Aprende</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-aprende" role="tabpanel">
   <div class="card ac-teal">
-    <h2>➗ División entre un número decimal</h2>
-    <p>Para dividir cuando el <strong>divisor es un decimal</strong>, el truco principal es convertirlo en un número entero. Esto se logra <strong>moviendo el punto decimal a la derecha</strong> en el divisor y moviéndolo la <em>misma cantidad de espacios</em> en el dividendo.</p>
+    <h2>➗ ¿Qué hacemos realmente al dividir decimales?</h2>
+    <p style="margin-bottom:0.7rem;">Para dividir cuando el <strong>divisor es un decimal</strong>, lo convertimos en número entero <strong>moviendo el punto decimal a la derecha</strong>. Pero atención: debemos mover el mismo número de espacios en el dividendo.</p>
     <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Idea clave:</strong> No estamos cambiando la división; estamos convirtiendo los números a una forma más fácil, <strong>multiplicando el dividendo y el divisor por la misma cantidad</strong>. El cociente no cambia.</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
       <span class="ti">⚡</span>
-      <div><strong>La Regla de Oro:</strong> Lo que le haces al divisor, debes hacérselo al dividendo. Si mueves el punto un espacio en el divisor (multiplicas por 10), también lo mueves un espacio en el dividendo.</div>
+      <div><strong>La Regla de Oro:</strong> Lo que le haces al divisor, debes hacérselo al dividendo. Si mueves el punto 1 espacio en el divisor (×10), también lo mueves 1 espacio en el dividendo (×10).</div>
+    </div>
+    <div class="demo-visual">
+      <div class="demo-title">🔬 Mini-demostración</div>
+      <div class="demo-steps">
+        <div class="demo-step ds-start"><span class="ds-label">Original</span><span class="ds-val">1.2 ÷ 0.4</span></div>
+        <div class="demo-arrow">× 10 en ambos ↓</div>
+        <div class="demo-step ds-mid"><span class="ds-label">Equivalente</span><span class="ds-val">12 ÷ 4</span></div>
+        <div class="demo-arrow">= </div>
+        <div class="demo-step ds-end"><span class="ds-label">Resultado</span><span class="ds-val">3</span></div>
+      </div>
+      <p class="demo-note">✅ El cociente es <strong>3</strong> en ambas divisiones. ¡El valor no cambió!</p>
     </div>
   </div>
 
   <div class="card ac-gold">
-    <h2>0️⃣ Agregando Ceros (Dividendo y Cociente)</h2>
+    <h2>📦 Bloque 1: Mover el punto decimal</h2>
+    <p style="margin-bottom:0.6rem;">Cuantos decimales tenga el divisor, esos espacios debes mover el punto en ambos números.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">4.5 ÷ 0.5</span>
+      <span class="ae-flecha">→ mover 1 espacio →</span>
+      <span class="ae-res">45 ÷ 5 = <strong>9</strong></span>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock1">
+      <p class="mq-pregunta">🤔 ¿Cuántos espacios debes mover el punto para resolver 3.6 ÷ 0.09?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'0.09 tiene 2 decimales → mueve 2 espacios: 360 ÷ 9 = 40.')">1 espacio</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! 0.09 tiene 2 decimales. Mueves 2 espacios en ambos: 360 ÷ 9 = 40.')">2 espacios</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'0.09 tiene 2 decimales, no 3.')">3 espacios</button>
+      </div>
+      <div class="mq-fb" id="mqBlock1-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 2: Agregar ceros cuando faltan cifras</h2>
+    <p style="margin-bottom:0.6rem;">Si el dividendo ya no tiene cifras para "recibir" el movimiento del punto, <strong>agrega ceros a la derecha</strong>.</p>
     <div class="vs-grid">
       <div class="vs-box vs-a">
         <h4>⬅️ Ceros en el Dividendo</h4>
-        <p>Si necesitas mover el punto en el dividendo pero ya no hay más cifras, <strong>debes agregar ceros</strong>.</p>
-        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: <strong>15 ÷ 0.5</strong> → Mueves el punto 1 vez: <strong>150 ÷ 5 = 30</strong>.</p>
+        <p>Cuando debes mover el punto pero ya no hay cifras.</p>
+        <div class="aprende-ejemplo" style="flex-wrap:wrap;gap:0.3rem;justify-content:flex-start;">
+          <span class="ae-op">15 ÷ 0.5</span><span class="ae-flecha">→ agrega 0 al 15 →</span><span class="ae-res">150 ÷ 5 = <strong>30</strong></span>
+        </div>
       </div>
       <div class="vs-box vs-b">
         <h4>➡️ Ceros en el Cociente</h4>
-        <p>Si al bajar una cifra, el número formado es menor que el divisor, se coloca un <strong>cero en el cociente</strong> antes de seguir.</p>
-        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: Al dividir <strong>4.16 ÷ 4</strong>, al llegar al 1 (1 &lt; 4), pones 0 en el cociente y bajas el 6.</p>
+        <p>Si al bajar una cifra no alcanza para dividir, pon <strong>0</strong> en el cociente y baja la siguiente.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">En 4.16 ÷ 4: al llegar al 1 (1 &lt; 4), pones <strong>0</strong> en el cociente y bajas el 6.</p>
       </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock2">
+      <p class="mq-pregunta">🤔 Para resolver 2 ÷ 0.25, ¿cuántos ceros agregas al dividendo?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'0.25 tiene 2 decimales, debes agregar 2 ceros: 200 ÷ 25 = 8.')">1 cero</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! 0.25 tiene 2 decimales. El 2 → 200. 200 ÷ 25 = 8.')">2 ceros</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Solo necesitas 2 ceros para igualar los 2 decimales de 0.25.')">3 ceros</button>
+      </div>
+      <div class="mq-fb" id="mqBlock2-fb"></div>
     </div>
   </div>
 
   <div class="card ac-jade">
-    <h2>⚖️ Relación entre Dividendo y Cociente</h2>
-    <p style="margin-bottom:0.8rem;">¡Algo sorprendente ocurre al dividir con decimales! El tamaño del divisor cambia el tamaño de tu respuesta (cociente).</p>
+    <h2>📦 Bloque 3: ¿El cociente aumenta, disminuye o queda igual?</h2>
+    <p style="margin-bottom:0.7rem;">El tamaño del <strong>divisor</strong> determina qué le pasa al resultado (cociente).</p>
     <div class="vs-grid">
       <div class="vs-box vs-c">
-        <h4>🔵 Divisor MENOR que 1</h4>
-        <p>Si divides entre un número menor que 1 (ej. 0.5), el resultado será <strong>MAYOR</strong> que el número original.</p>
-        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: <strong>10 ÷ 0.5 = 20</strong> (¡20 &gt; 10!)</p>
+        <h4>🔵 Divisor &lt; 1 → Cociente MAYOR</h4>
+        <p><strong>10 ÷ 0.5 = 20</strong></p>
+        <p style="font-size:0.82rem;">Si tienes 10 lempiras y los repartes en monedas de 0.50, ¡tendrás 20 monedas! Por eso el resultado aumenta.</p>
       </div>
       <div class="vs-box vs-d">
-        <h4>🟠 Divisor MAYOR que 1</h4>
-        <p>Si divides entre un número mayor que 1 (ej. 2.5), el resultado será <strong>MENOR</strong> que el número original.</p>
-        <p style="font-size:0.85rem;margin-top:0.3rem;">Ejemplo: <strong>10 ÷ 2.5 = 4</strong> (4 &lt; 10)</p>
+        <h4>🟠 Divisor &gt; 1 → Cociente MENOR</h4>
+        <p><strong>10 ÷ 2.5 = 4</strong></p>
+        <p style="font-size:0.82rem;">Repartes en porciones grandes, así que obtienes pocas. El cociente disminuye.</p>
       </div>
     </div>
-    <div class="ex-box">
-      <span class="ex-tag ex-d">💡 Reflexión</span><br>
-      <span>Piénsalo así: Si tienes 10 lempiras y los repartes en monedas de 0.50 (50 centavos), ¡tendrás 20 monedas! Por eso el resultado aumenta.</span>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">⚖️</span>
+      <div><strong>Divisor = 1 → Cociente IGUAL al dividendo.</strong> Ejemplo: 8 ÷ 1 = 8.</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock3">
+      <p class="mq-pregunta">🤔 ¿Qué pasa con el cociente en 8 ÷ 0.1?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Exacto! 0.1 &lt; 1. El cociente es MAYOR: 8 ÷ 0.1 = 80.')">Aumenta (es mayor que 8)</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'0.1 es menor que 1, así que el cociente AUMENTA, no disminuye.')">Disminuye</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Solo sería igual si el divisor fuera 1. Aquí el divisor es 0.1.')">Queda igual</button>
+      </div>
+      <div class="mq-fb" id="mqBlock3-fb"></div>
     </div>
   </div>
 
@@ -105,8 +174,69 @@
       <div class="type-chip tc-blue"><div class="t-art">0.8 ÷ 0.2</div><div class="t-info">Mueve 1 espacio: 8 ÷ 2 = 4</div></div>
     </div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+  <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
+    <span class="nsb-icon">⚠️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Evita los tropiezos!</span><span class="nsb-name">Errores Comunes</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-errores" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>⚠️ Errores Comunes — ¡No caigas en ellos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Estos son los errores que más cometen los estudiantes. Léelos, entiéndelos y ¡evítalos!</p>
+    <div class="error-cards">
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 1: Mover el punto solo en el divisor</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>3 ÷ 0.5 → "Convierto 0.5 en 5 y hago 3 ÷ 5 = 0.6"</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Al mover solo el punto del divisor, cambias la proporción de la división. El resultado ya no es el mismo.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>Mueve el punto en <strong>ambos</strong>: 30 ÷ 5 = <strong>6</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 2: Olvidar agregar ceros al dividendo</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>2 ÷ 0.25 → "Muevo el punto: 2.00 ÷ 0.25... no sé cómo seguir."</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El dividendo (2) no tiene cifras decimales para mover. Se deben agregar ceros para poder mover el punto.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>2 → 200, y 0.25 → 25. Entonces: 200 ÷ 25 = <strong>8</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 3: Creer que "dividir siempre hace más pequeño"</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"10 ÷ 0.5 debe ser menor que 10 porque estoy dividiendo."</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Eso solo aplica cuando el divisor es mayor que 1. Si el divisor es menor que 1, el cociente es MAYOR que el dividendo.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>10 ÷ 0.5 = <strong>20</strong> (¡más grande que 10!) ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 4: Confundir dividendo, divisor y cociente</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"El divisor es el número que se va a repartir (adentro de la casita)."</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El dividendo es el que va adentro (la cantidad a repartir). El divisor indica en cuántas partes. El cociente es el resultado.</span></div>
+          <div class="error-row"><span class="er-label correct">Recuerda:</span><span><strong>dividendo</strong> ÷ <strong>divisor</strong> = <strong>cociente</strong> · En 12 ÷ 4 = 3: dividendo=12, divisor=4, cociente=3 ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 5: Poner ceros en el cociente sin analizar si alcanza</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"Cuando no sé qué poner en el cociente, pongo un cero."</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El cero en el cociente solo va cuando la cifra bajada es MENOR que el divisor. Si alcanza para dividir, no va cero.</span></div>
+          <div class="error-row"><span class="er-label correct">Regla:</span><span>Analiza: ¿el número bajado es menor que el divisor? Solo entonces escribe <strong>0</strong> en el cociente y baja la siguiente cifra. ✔</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio" onclick="go('s-lab')">
     <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica lo aprendido!</span><span class="nsb-name">Laboratorio</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
@@ -231,23 +361,40 @@
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">¿Qué pasa con el resultado cuando divides entre decimales pequeños? ¡Descúbrelo moviendo el divisor!</p>
     <div id="widget-cociente-interactive"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+  <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
+    <span class="nsb-icon">💬</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra que entendiste!</span><span class="nsb-name">Explica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-explica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>💬 Explica con tus palabras</h2>
+    <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
+    <div id="explicaContainer"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
     <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Hora del reto!</span><span class="nsb-name">Reto Final</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
 <div class="sec" id="s-reto" role="tabpanel">
   <div class="card ac-purple">
-    <h2>🏆 Reto Final — ¡Mayor o Menor! (30 seg)</h2>
-    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Decide rápido si el cociente será mayor o menor que el dividendo original basándote en el divisor.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <h2>🏆 Reto Final — Mayor, Igual o Menor (30 seg)</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Decide rápido si el cociente será mayor, igual o menor que el dividendo original según el divisor.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">💡 Divisor &lt;1 → mayor · Divisor =1 → igual · Divisor &gt;1 → menor</p>
     <div class="game" id="gameBox" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
       <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
       <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
       <div class="reto-btns">
         <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('mayor')">↑ MAYOR</button>
+        <button class="btn btn-g" id="retoBtn-c" onclick="ansReto('igual')">= IGUAL</button>
         <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('menor')">↓ MENOR</button>
       </div>
       <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
@@ -290,9 +437,10 @@
     <div class="tg-controls">
       <select class="tg-sel" id="tgType">
         <option value="identify">🔍 Identificar</option>
-        <option value="classify">🗂️ Clasificar (Mayor/Menor)</option>
+        <option value="classify">🗂️ Clasificar (Mayor/Menor/Igual)</option>
         <option value="complete">✏️ Completar oraciones</option>
         <option value="explain">💡 Explicar proceso</option>
+        <option value="pensamiento">🧠 Pensamiento matemático</option>
       </select>
       <select class="tg-sel" id="tgCount">
         <option value="5">5 tareas</option>
@@ -316,10 +464,10 @@
       <h2>Evaluación Final de Misión División de Decimales · II y III Ciclo · Matemática</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
       <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
-      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones × 4 preguntas × 5 pts c/u</p>
     </div>
     <h2 id="eval-screen-title">📝 Evaluación Final</h2>
-    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno, resuélvelo aplicando los movimientos del punto decimal y luego selecciona <strong>Ver Pauta</strong> para autoevaluarte.</p>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">5 secciones de 20 pts c/u. Copia el examen en tu cuaderno, resuélvelo y selecciona <strong>Ver Pauta</strong> para autoevaluarte. La sección V evalúa pensamiento crítico.</p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
       <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
@@ -387,8 +535,10 @@
 </div>
 
 <nav class="nav" role="tablist" aria-label="Secciones de la misión">
-  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Tipos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
@@ -396,6 +546,7 @@
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-explica" data-s="s-explica" onclick="go('s-explica')"><span class="ico">💬</span> Explica</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
