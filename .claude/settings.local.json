@@ -32,10 +32,18 @@
       "Bash(pkill -f \"serve -l 8123\")",
       "Bash(node --check \"misiones/2y3ciclo-acentuacion/js/acentuacion.js\")",
       "Bash(node verify-acentuacion.js)",
-      "Bash(pkill -f \"serve -l 8124\")"
+      "Bash(pkill -f \"serve -l 8124\")",
+      "Bash(mkdir -p 2y3ciclo-sistema-endocrino/js 2y3ciclo-sistema-endocrino/css 2y3ciclo-sistema-endocrino/img)",
+      "Bash(cp 2y3ciclo-sistema-nervioso/js/html2canvas.min.js 2y3ciclo-sistema-endocrino/js/html2canvas.min.js)",
+      "Bash(cd \"c:/Desarrollo/misiones-educativas_a-policastsapien.com/misiones\" && cp 2y3ciclo-sistema-nervioso/css/sistema-nervioso.css 2y3ciclo-sistema-endocrino/css/sistema-endocrino.css && echo OK)",
+      "Bash(node --check sistema-endocrino.js)",
+      "Bash(node -e \"try{require.resolve\\('jsdom'\\);console.log\\('jsdom available'\\)}catch\\(e\\){console.log\\('no jsdom'\\)}\")",
+      "Bash(sed -i \"s|querySelectorAll\\(sel\\){return \\\\[\\\\];}|querySelectorAll\\(sel\\){return [mkEl\\(\\),mkEl\\(\\),mkEl\\(\\)];}|; s|querySelectorAll\\(\\){return \\\\[\\\\];}|querySelectorAll\\(\\){return [mkEl\\(\\),mkEl\\(\\),mkEl\\(\\)];}|\" /tmp/harness.js)",
+      "Bash(node /tmp/harness.js)"
     ],
     "additionalDirectories": [
-      "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios"
+      "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
+      "c:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-sistema-nervioso\\css"
     ]
   }
 }
