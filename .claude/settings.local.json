@@ -52,7 +52,8 @@
       "Bash(git commit -m ' *)",
       "Bash(git merge *)",
       "Bash(git push *)",
-      "Bash(git branch *)"
+      "Bash(git branch *)",
+      "Bash(node --check misiones/2y3ciclo-fracciones/js/fracciones.js)"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",

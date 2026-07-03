@@ -47,7 +47,13 @@
       "Bash(node --check js/fracciones.js)",
       "Bash(node validate_fracciones.js \"C:\\\\Desarrollo\\\\misiones-educativas_a-policastsapien.com\\\\misiones\\\\2y3ciclo-fracciones\\\\fracciones.html\" \"C:\\\\Desarrollo\\\\misiones-educativas_a-policastsapien.com\\\\misiones\\\\2y3ciclo-fracciones\\\\js\\\\fracciones.js\")",
       "Bash(node --check js/data/misiones.js)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git merge *)",
+      "Bash(git push *)",
+      "Bash(git branch *)",
+      "Bash(node --check misiones/2y3ciclo-fracciones/js/fracciones.js)"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
