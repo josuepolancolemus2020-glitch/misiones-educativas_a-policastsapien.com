@@ -21,4 +21,5 @@ const MISSIONS = [
   { id: 18, title: 'La Acentuación',                           subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 35, icon: '🔤', url: 'misiones/2y3ciclo-acentuacion/acentuacion-II-III-ciclo-basica.html' },
   { id: 21, title: 'Los Tipos de Textos',                      subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '📚', url: 'misiones/2y3ciclo-tipos-de-textos/tipos-de-textos.html' },
   { id: 22, title: 'Marcadores Textuales',                     subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🔗', url: 'misiones/2y3ciclo-marcadores-textuales/marcadores-textuales.html' },
+  { id: 23, title: 'Las Fracciones',                           subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🍕', url: 'misiones/2y3ciclo-fracciones/fracciones.html' },
 ];
