@@ -11,7 +11,7 @@ function fb(id,msg,isOk){const el=document.getElementById(id);if(el){el.textCont
 const SAVE_KEY='fracciones_v1';
 let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
 let evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;
-let evalCritFormNum=1,evalCritAnsVisible=false;
+let evalOpFormNum=1,evalOpAnsVisible=false;
 const TOTAL_SECTIONS=13;
 const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set(),wgt:new Set()};
 
@@ -26,8 +26,8 @@ function toggleTheme(){darkMode=!darkMode;document.documentElement.setAttribute(
 function initTheme(){const s=localStorage.getItem(SAVE_KEY+'_theme');const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;darkMode=(s==='dark')||(s===null&&sys);if(darkMode){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeBtn').textContent='☀️ Tema';}}
 
 // ===================== LOCALSTORAGE =====================
-function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSections:Array.from(done),unlockedAch,evalFormNum,evalCritFormNum,xp}));}catch(e){}}
-function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalCritFormNum)evalCritFormNum=s.evalCritFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
+function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSections:Array.from(done),unlockedAch,evalFormNum,evalOpFormNum,xp}));}catch(e){}}
+function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalOpFormNum)evalOpFormNum=s.evalOpFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
 
 // ===================== ACHIEVEMENTS =====================
 const ACHIEVEMENTS={
@@ -405,176 +405,240 @@ function setEvalFeedback(id,ok,msg){const el=document.getElementById(id);if(!el)
 function gradeEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const d=window._evalPrintData;let total=0;const detail={cp:0,tf:0,mc:0,pr:0};d.cp.forEach((it,i)=>{const input=document.querySelector(`[data-cp="${i}"]`);const ok=isCpCorrect(input?input.value:'',it.a);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.cp++;total+=5;}setEvalFeedback('evalFbCp'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.a);});d.tf.forEach((it,i)=>{const selected=document.querySelector(`input[name="tf${i}"]:checked`);const ok=!!selected&&(selected.value==='true')===it.a;if(ok){detail.tf++;total+=5;}setEvalFeedback('evalFbTf'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+(it.a?'Verdadero':'Falso'));});d.mc.forEach((it,i)=>{const selected=document.querySelector(`input[name="mc${i}"]:checked`);const ok=!!selected&&Number(selected.value)===it.a;if(ok){detail.mc++;total+=5;}setEvalFeedback('evalFbMc'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.o[it.a]);});const expectedLetters=d.pr.terms.map(it=>d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]);expectedLetters.forEach((letter,i)=>{const sel=document.querySelector(`[data-pr="${i}"]`);const ok=!!sel&&sel.value===letter;if(sel){sel.classList.toggle('eval-input-ok',ok);sel.classList.toggle('eval-input-no',!ok);}if(ok){detail.pr++;total+=5;}});const prMsg=`Pareados: ${detail.pr}/5 correctos. ${detail.pr===5?'Excelente. +25 pts':'Clave: '+expectedLetters.map((l,i)=>(i+16)+'→'+l).join(' · ')}`;setEvalFeedback('evalFbPr',detail.pr===5,prMsg);const result=document.getElementById('evalAutoResult');if(result){result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Completar: ${detail.cp*5}/25 · V/F: ${detail.tf*5}/25 · Selección: ${detail.mc*5}/25 · Pareados: ${detail.pr*5}/25</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`;}if(total>=70){pts(8);showToast('🎯 Evaluación calificada: '+total+'/100');}else showToast('🧮 Evaluación calificada: '+total+'/100. Revisa las respuestas marcadas.');}
 function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const forma=window._currentEvalForm||1;const d=window._evalPrintData;let s1=`<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;d.cp.forEach((it,i)=>{const q=it.q.replace('___','<span class="cp-blank"></span>');s1+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text">${q}</span></div>`;});let s2=`<div class="sec-title"><span>II. Verdadero o Falso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;d.tf.forEach((it,i)=>{s2+=`<div class="tf-row"><span class="qn">${i+6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`;});let s3=`<div class="sec-title"><span>III. Selección Múltiple</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="mc-grid">`;d.mc.forEach((it,i)=>{const opts=it.o.map((op,oi)=>`<label class="mc-opt"><input type="radio" name="mcp${i}"> ${op}</label>`).join('');s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+11}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`;});s3+=`</div>`;let colL='<div class="pr-col"><div class="pr-head">📌 Términos</div>';d.pr.terms.forEach((it,i)=>{colL+=`<div class="pr-item"><span class="pr-num">${i+16}.</span><span class="pr-line"></span>${it.term}</div>`;});colL+='</div>';let colR='<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';d.pr.shuffledDefs.forEach((it,i)=>{colR+=`<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`;});colR+='</div>';let s4=`<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;let pR='';pR+=`<div class="p-sec"><div class="p-ttl">I. Completar</div><table class="p-tbl">`;d.cp.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${it.a}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. V o F</div><table class="p-tbl">`;d.tf.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+6}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">III. Selección</div><table class="p-tbl">`;d.mc.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${it.o[it.a]}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;d.pr.terms.forEach((it,i)=>{const l=d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)];pR+=`<tr><td class="pn">${i+16}.</td><td class="pa">${i+16}→${l}</td></tr>`;});pR+=`</table></div>`;const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Fracciones · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c2255c;background:#fbe4ee;color:#8a1a44;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#8a1a44;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #8a1a44;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#fbe4ee;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#8a1a44;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#8a1a44;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #8a1a44;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.25rem 0.4rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#555;}.pa{color:#8a1a44;font-weight:600;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:12.7mm;}}</style></head><body><div class="ph"><h2>Evaluación Final · Fracciones · II y III Ciclo · Matemáticas</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Fracciones · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
 
-// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+// ===================== PRUEBA OPERATIVA (FRACCIONES) =====================
 function evalSwitchMode(mode){
   sfx('click');
-  const cWrap=document.getElementById('evalConceptWrap'),critWrap=document.getElementById('evalCritWrap');
-  const cBtn=document.getElementById('evalModeBtnConcept'),critBtn=document.getElementById('evalModeBtnCrit');
-  if(mode==='crit'){
-    cWrap.style.display='none';critWrap.style.display='block';
+  const cWrap=document.getElementById('evalConceptWrap'),oWrap=document.getElementById('evalOpWrap');
+  const cBtn=document.getElementById('evalModeBtnConcept'),oBtn=document.getElementById('evalModeBtnOp');
+  if(mode==='op'){
+    cWrap.style.display='none';oWrap.style.display='block';
     cBtn.classList.remove('active');cBtn.setAttribute('aria-selected','false');
-    critBtn.classList.add('active');critBtn.setAttribute('aria-selected','true');
-    if(!window._evalCritData)genEvalCrit();
+    oBtn.classList.add('active');oBtn.setAttribute('aria-selected','true');
   }else{
-    critWrap.style.display='none';cWrap.style.display='block';
-    critBtn.classList.remove('active');critBtn.setAttribute('aria-selected','false');
+    oWrap.style.display='none';cWrap.style.display='block';
+    oBtn.classList.remove('active');oBtn.setAttribute('aria-selected','false');
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
 
-const critCaseBank=[
-  {txt:'"Ana comió 2/8 de una pizza y su hermano comió 3/8 de la misma pizza. Entre los dos, ¿qué fracción de la pizza comieron?"'},
-  {txt:'"Un jarro contenía 7/8 de litro de jugo. Durante el almuerzo se sirvieron 3/8 de litro. ¿Cuánto jugo quedó en el jarro?"'},
-  {txt:'"Luis caminó 1/2 kilómetro en la mañana y 1/4 de kilómetro en la tarde. ¿Cuánto caminó en total durante el día?"'},
-  {txt:'"Una tela mide 3/4 de metro. Se cortó un pedazo de 1/2 metro para hacer un mantel. ¿Cuánta tela quedó?"'},
-  {txt:'"María preparó una receta con 1/3 de taza de azúcar y 1/6 de taza de miel. ¿Cuánta cantidad de endulzante usó en total?"'},
-  {txt:'"Un terreno se dividió en 6 partes iguales. Se sembraron 5/6 con maíz y el resto quedó libre. ¿Qué fracción del terreno quedó libre?"'},
-];
-const critCaseQuestions=[
-  '1. Identifica todas las fracciones que aparecen en el problema.',
-  '2. Indica si cada fracción es propia, impropia o mixta.',
-  '3. Resuelve la operación (suma o resta) que se pide en el problema.',
-  '4. Explica con tus palabras qué representa el resultado en la situación.',
-];
-const critCaseGuides=[
-  'Debe copiar cada fracción tal como aparece en el texto (por ejemplo 1/4, 3/4).',
-  'Debe clasificar correctamente comparando numerador y denominador, o si hay parte entera (mixta).',
-  'Debe aplicar la regla correcta: igual denominador → sumar/restar numeradores; distinto denominador → buscar denominador común primero.',
-  'Debe explicar el resultado en el contexto de la situación (ej. cuánta pizza comieron en total).',
-];
+// ---- Aritmética de fracciones exacta (sin coma flotante para valores enteros) ----
+function _rint(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+const _fracDenomPool=[2,3,4,5,6,8,10,12];
+function _gcdFrac(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=b;b=a%b;a=t;}return a||1;}
+function _simplifyFrac(n,d){const g=_gcdFrac(n,d);return{n:n/g,d:d/g};}
+function _fracStr(n,d){const s=_simplifyFrac(n,d);return s.d===1?String(s.n):s.n+'/'+s.d;}
+function _fracVal(n,d){return n/d;}
+function _randSimpleFrac(){const d=_fracDenomPool[_rint(0,_fracDenomPool.length-1)];const n=_rint(1,d-1);return{n,d};}
+function _parseFrac(str){
+  if(str===null||str===undefined)return null;
+  str=str.toString().trim();
+  if(str==='')return null;
+  if(str.includes('/')){
+    const parts=str.split('/');
+    if(parts.length!==2)return null;
+    const n=parseFloat(parts[0]),d=parseFloat(parts[1]);
+    if(isNaN(n)||isNaN(d)||d===0)return null;
+    return{n,d};
+  }
+  const v=parseFloat(str.replace(',','.'));
+  if(isNaN(v))return null;
+  return{n:v,d:1};
+}
+function isFracCorrect(student,expectedStr){
+  const s=_parseFrac(student),e=_parseFrac(expectedStr);
+  if(!s||!e)return false;
+  return Math.abs(s.n*e.d-e.n*s.d)<1e-6;
+}
+function isSimplifyCorrect(student,expectedStr){
+  const s=_parseFrac(student),e=_parseFrac(expectedStr);
+  if(!s||!e)return false;
+  const sr=_simplifyFrac(s.n,s.d),er=_simplifyFrac(e.n,e.d);
+  return sr.n===s.n&&sr.d===s.d&&sr.n===er.n&&sr.d===er.d;
+}
+function isOpNumCorrect(student,expectedStr){
+  if(student===undefined||student===null)return false;
+  const s=student.toString().trim().replace(',','.');
+  if(s==='')return false;
+  const sn=parseFloat(s),en=parseFloat(expectedStr);
+  if(isNaN(sn)||isNaN(en))return false;
+  return Math.abs(sn-en)<1e-6;
+}
 
-const critErrorBank=[
-  {txt:'"Para sumar 1/2 + 1/4 sumo los numeradores y los denominadores: 1+1=2 y 2+4=6, entonces el resultado es 2/6."',
-   g1:'No se suman los denominadores; primero hay que buscar un denominador común (aquí 4).',
-   g2:'Lo correcto es convertir 1/2 en 2/4 y sumar: 2/4 + 1/4 = 3/4.'},
-  {txt:'"7/4 es una fracción propia porque el 4 es más grande que el 7... espera, el 7 es más grande, así que de todos modos es propia."',
-   g1:'7/4 es una fracción impropia porque el numerador (7) es mayor que el denominador (4).',
-   g2:'Las fracciones propias tienen el numerador MENOR que el denominador, como 3/4.'},
-  {txt:'"2/4 y 1/2 no son equivalentes porque tienen números diferentes."',
-   g1:'2/4 y 1/2 sí son equivalentes: representan la misma parte del entero.',
-   g2:'Se puede comprobar dividiendo 2/4 entre 2 arriba y abajo: se obtiene 1/2.'},
-  {txt:'"Para simplificar 6/8 multiplico el numerador y el denominador por 2, y obtengo 12/16."',
-   g1:'Simplificar significa dividir, no multiplicar, entre un divisor común.',
-   g2:'6/8 ÷ 2 = 3/4, esa es la fracción simplificada.'},
-  {txt:'"El denominador de una fracción indica cuántas partes se tomaron del entero."',
-   g1:'El denominador indica en cuántas partes iguales se dividió el entero completo.',
-   g2:'El numerador es el que indica cuántas partes se tomaron.'},
-];
+function genFracOpItems(){
+  const items=[];
+  for(let i=0;i<5;i++){
+    const sameDen=Math.random()<0.5;
+    let a,b;
+    if(sameDen){
+      const d=_fracDenomPool[_rint(0,_fracDenomPool.length-1)];
+      a={n:_rint(1,d-1),d};b={n:_rint(1,d-1),d};
+    }else{
+      const pool=_shuffle(_fracDenomPool).slice(0,2);
+      a={n:_rint(1,pool[0]-1),d:pool[0]};b={n:_rint(1,pool[1]-1),d:pool[1]};
+    }
+    let isAdd=Math.random()<0.6;let op=isAdd?'+':'-';
+    if(!isAdd){
+      if(_fracVal(a.n,a.d)<_fracVal(b.n,b.d)){const t=a;a=b;b=t;}
+      if(_fracVal(a.n,a.d)===_fracVal(b.n,b.d))op='+';
+    }
+    const commonD=sameDen?a.d:(a.d*b.d)/_gcdFrac(a.d,b.d);
+    const an=a.n*(commonD/a.d),bn=b.n*(commonD/b.d);
+    const resultN=op==='+'?an+bn:an-bn;
+    items.push({a:_fracStr(a.n,a.d),b:_fracStr(b.n,b.d),op,ans:_fracStr(resultN,commonD)});
+  }
+  return items;
+}
+function genSimplifyItems(){
+  const items=[];
+  for(let i=0;i<10;i++){
+    let baseD=_fracDenomPool[_rint(0,_fracDenomPool.length-1)];
+    let baseN=_rint(1,baseD-1);
+    const s=_simplifyFrac(baseN,baseD);baseN=s.n;baseD=s.d;
+    const factor=_rint(2,6);
+    items.push({q:(baseN*factor)+'/'+(baseD*factor),ans:baseD===1?String(baseN):baseN+'/'+baseD});
+  }
+  return items;
+}
+function genFracCmpItems(){
+  const items=[];
+  for(let i=0;i<10;i++){
+    let a=_randSimpleFrac(),b;
+    const forceEq=Math.random()<0.2;
+    if(forceEq){const k=_rint(2,4);b={n:a.n*k,d:a.d*k};}
+    else{b=_randSimpleFrac();if(_fracVal(a.n,a.d)===_fracVal(b.n,b.d))b={n:b.n+1,d:b.d};}
+    const av=_fracVal(a.n,a.d),bv=_fracVal(b.n,b.d);
+    items.push({a:_fracStr(a.n,a.d),b:_fracStr(b.n,b.d),rel:av===bv?'eq':(av>bv?'gt':'lt')});
+  }
+  return items;
+}
+function genEquivItems(){
+  const items=[];
+  for(let i=0;i<10;i++){
+    const base=_randSimpleFrac(),k=_rint(2,6);
+    const hideNum=Math.random()<0.5;
+    const N=base.n*k,D=base.d*k;
+    if(hideNum)items.push({q:`${base.n}/${base.d} = ___/${D}`,ans:String(N)});
+    else items.push({q:`${base.n}/${base.d} = ${N}/___`,ans:String(D)});
+  }
+  return items;
+}
+function genFracOrdItems(){
+  const groups=[];
+  for(let g=0;g<4;g++){
+    const dir=Math.random()<0.5?'mayor':'menor';
+    const nums=[];let tries=0;
+    while(nums.length<5&&tries<300){
+      tries++;const cand=_randSimpleFrac();
+      if(!nums.some(n=>_fracVal(n.n,n.d)===_fracVal(cand.n,cand.d)))nums.push(cand);
+    }
+    const sortedAsc=[...nums].sort((x,y)=>_fracVal(x.n,x.d)-_fracVal(y.n,y.d));
+    const correctOrder=(dir==='mayor'?[...sortedAsc].reverse():sortedAsc).map(n=>_fracStr(n.n,n.d));
+    groups.push({dir,display:_shuffle(nums).map(n=>_fracStr(n.n,n.d)),correctOrder});
+  }
+  return groups;
+}
 
-const critDecisionBank=[
-  'Tienes que sumar 3/8 + 2/8 (mismo denominador). ¿Qué pasos sigues?',
-  'Tienes que sumar 1/3 + 1/6 (distinto denominador). ¿Qué pasos sigues?',
-  'Tienes la fracción 8/6 y quieres saber si es mixta o no. ¿Qué haces?',
-  'Tienes 9/12 y quieres simplificarla. ¿Qué pasos sigues?',
-  'Quieres comparar 3/4 y 5/8 para saber cuál es mayor. ¿Qué haces?',
-];
-const critDecisionGuide='Debe explicar el procedimiento correcto paso a paso: igual denominador → sumar/restar numeradores directamente; distinto denominador → buscar equivalentes con denominador común primero; para saber si es mixta, comparar numerador y denominador (si el numerador es mayor, se puede convertir a mixta dividiendo); para simplificar, dividir entre el MCD; para comparar, buscar un denominador común y comparar los numeradores.';
-
-const critCompareBank=[
-  {a:'"3/4 de una pizza"',b:'"6/8 de la misma pizza"',
-   ga:'3/4 representa 3 partes de 4 partes iguales del total.',
-   gb:'6/8 representa 6 partes de 8 partes iguales del total.',
-   gr:'Ambas representan la misma cantidad de pizza porque 3/4 y 6/8 son fracciones equivalentes (6/8 se simplifica a 3/4).'},
-  {a:'"1/2 + 1/2"',b:'"3/2"',
-   ga:'1/2 + 1/2 = 2/2, que es igual a 1 entero.',
-   gb:'3/2 es una fracción impropia igual a 1 entero y 1/2 más (1 1/2).',
-   gr:'No son iguales: 1/2+1/2 = 1 entero completo, mientras que 3/2 es mayor que 1 (equivale a 1 1/2).'},
-  {a:'"5/6 − 1/6"',b:'"4/6"',
-   ga:'5/6 − 1/6 se resuelve restando los numeradores porque el denominador es igual: 5−1=4, resultado 4/6.',
-   gb:'4/6 ya es el resultado, simplificable a 2/3.',
-   gr:'Sí son iguales: 5/6 − 1/6 = 4/6, que es la misma cantidad que 4/6 (y equivale a 2/3 simplificada).'},
-  {a:'"2/3"',b:'"0.5"',
-   ga:'2/3 es una fracción que equivale aproximadamente a 0.67 en decimal.',
-   gb:'0.5 es un número decimal que equivale a 1/2.',
-   gr:'No son iguales: 2/3 no equivale a 0.5; 2/3 equivale a 0.666..., mientras que 0.5 equivale a 1/2.'},
-];
-
-const critCauseBank=[
-  {cause:'Quieres sumar 3/4 y 1/4, que ya tienen el mismo denominador.',guide:'Sumas directamente los numeradores: 3+1=4, y el resultado es 4/4 (un entero).'},
-  {cause:'Quieres sumar 1/2 y 1/3, que tienen distinto denominador.',guide:'Buscas un denominador común (6): 3/6 + 2/6 = 5/6.'},
-  {cause:'Tienes la fracción 10/15 y quieres reducirla.',guide:'Divides numerador y denominador entre su MCD (5): 10/15 = 2/3.'},
-  {cause:'Quieres saber si 4/8 y 1/2 representan lo mismo.',guide:'Compruebas si son equivalentes simplificando 4/8 entre 4, obteniendo 1/2: sí son iguales.'},
-];
-const critEffectBank=[
-  {effect:'El resultado de la operación fue una fracción con el mismo denominador que las fracciones originales.',guide:'Se sumaron o restaron fracciones con el mismo denominador (solo se operan los numeradores).'},
-  {effect:'Hubo que convertir las fracciones antes de sumarlas porque tenían denominadores diferentes.',guide:'Se sumaron o restaron fracciones con distinto denominador (se buscó un denominador común).'},
-  {effect:'La fracción quedó con números más pequeños pero representando la misma cantidad.',guide:'Se simplificó la fracción dividiendo entre el MCD.'},
-  {effect:'Dos fracciones distintas resultaron representar exactamente la misma parte del entero.',guide:'Son fracciones equivalentes.'},
-];
-
-function genEvalCrit(){
+function genEvalOp(){
   sfx('click');
-  const cf=evalCritFormNum;window._currentEvalCritForm=cf;evalCritFormNum=(evalCritFormNum%10)+1;saveProgress();
-  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · Fracciones`;
-  evalCritAnsVisible=false;
-  const out=document.getElementById('evalCritOut');out.innerHTML='';
+  const cf=evalOpFormNum;window._currentEvalOpForm=cf;evalOpFormNum=(evalOpFormNum%10)+1;saveProgress();
+  document.getElementById('evalop-screen-title').textContent=`📐 Prueba Operativa · Forma ${cf} · Fracciones`;
+  evalOpAnsVisible=false;
+  const out=document.getElementById('evalOpOut');out.innerHTML='';
 
-  const kase=_pick(critCaseBank,1)[0];
-  const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: fracciones en un problema <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  const opItems=genFracOpItems();
+  const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Operaciones (suma y resta de fracciones) <span class="eval-pts">50 pts · 10 pts c/u</span></div>';
+  opItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.a} ${it.op} ${it.b} =</span><input class="eval-cp-input" type="text" data-opx="${i}" autocomplete="off" placeholder="ej. 3/4"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbOpx${i}" aria-live="polite"></div>`;s1.appendChild(d);});
   out.appendChild(s1);
 
-  const err=_pick(critErrorBank,1)[0];
-  const s2=document.createElement('div');
-  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  const simpItems=genSimplifyItems();
+  const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Simplifica a su mínima expresión <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
+  simpItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.q} =</span><input class="eval-cp-input" type="text" data-simp="${i}" autocomplete="off" placeholder="ej. 3/4"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbSimp${i}" aria-live="polite"></div>`;s2.appendChild(d);});
   out.appendChild(s2);
 
-  const dec=_pick(critDecisionBank,1)[0];
-  const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: elige el procedimiento <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué procedimiento usarías? Explica paso a paso y resuelve un ejemplo.</div><textarea class="crit-textarea" rows="4" aria-label="Procedimiento elegido y justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  const cmpItems=genFracCmpItems();
+  const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Compara: ¿mayor, menor o igual? <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
+  cmpItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text opx-expr">${it.a} ___ ${it.b}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="fcmp${i}" value="gt"> Mayor que (&gt;)</label><label class="eval-cmp-opt"><input type="radio" name="fcmp${i}" value="lt"> Menor que (&lt;)</label><label class="eval-cmp-opt"><input type="radio" name="fcmp${i}" value="eq"> Igual (=)</label></div><div class="eval-answer">${it.rel==='gt'?'Mayor que':it.rel==='lt'?'Menor que':'Igual'}</div><div class="eval-item-feedback" id="evalFbCmp${i}" aria-live="polite"></div>`;s3.appendChild(d);});
   out.appendChild(s3);
 
-  const cmp=_pick(critCompareBank,1)[0];
-  const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Expresión A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Expresión B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué representa cada expresión? 2. ¿Son iguales o diferentes? 3. Explica por qué.</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de las expresiones A y B"></textarea><div class="crit-pauta">Expresión A: ${cmp.ga} · Expresión B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  const equivItems=genEquivItems();
+  const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Completa la fracción equivalente <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
+  equivItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.q}</span><input class="eval-cp-input" type="text" data-equiv="${i}" autocomplete="off" style="width:70px;" placeholder="?"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbEquiv${i}" aria-live="polite"></div>`;s4.appendChild(d);});
   out.appendChild(s4);
 
-  const causes=_pick(critCauseBank,2),effects=_pick(critEffectBank,3);
-  let ceRows='';
-  causes.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Quieres...</span>${it.cause}</div><div class="crit-ce-cell"><span class="crit-ce-tag">¿Qué haces?</span><textarea class="crit-textarea" rows="2" aria-label="Procedimiento para: ${it.cause}" placeholder="Escribe el procedimiento..."></textarea></div></div><div class="crit-pauta">${it.guide}</div></div>`;});
-  effects.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell"><span class="crit-ce-tag">¿Qué se hizo?</span><textarea class="crit-textarea" rows="2" aria-label="Procedimiento que produce: ${it.effect}" placeholder="Escribe el procedimiento..."></textarea></div><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Efecto observado</span>${it.effect}</div></div><div class="crit-pauta">${it.guide}</div></div>`;});
-  const s5=document.createElement('div');
-  s5.innerHTML=`<div class="eval-section-title">V. Relaciona la situación con el procedimiento <span class="eval-pts">20 pts</span></div><div class="eval-item">${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  const ordGroups=genFracOrdItems();
+  const s5=document.createElement('div');s5.innerHTML='<div class="eval-section-title">V. Ordena cada grupo de fracciones <span class="eval-pts">20 pts · 5 pts c/u</span></div>';
+  ordGroups.forEach((g,gi)=>{
+    const d=document.createElement('div');d.className='eval-item eval-auto-item evord-group';
+    d.innerHTML=`<div class="evord-dir">${gi+1}. Ordena de ${g.dir==='mayor'?'MAYOR a menor':'MENOR a mayor'}:</div><div class="evord-list" id="evordList${gi}"></div><div class="eval-answer">${g.correctOrder.join(' · ')}</div><div class="eval-item-feedback" id="evalFbOrd${gi}" aria-live="polite"></div>`;
+    s5.appendChild(d);
+  });
   out.appendChild(s5);
 
-  window._evalCritData={kase,err,dec,cmp,causes,effects};
-  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje (0–20) en cada casilla. Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
+  window._evalOpData={ops:opItems,simp:simpItems,cmp:cmpItems,equiv:equivItems,ord:ordGroups.map(g=>({dir:g.dir,current:[...g.display],correctOrder:g.correctOrder}))};
+  ordGroups.forEach((g,gi)=>_renderOrdGroup(gi));
+  const autoPanel=document.createElement('div');autoPanel.id='evalOpAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original para resolver en papel.';out.appendChild(autoPanel);
   fin('s-evaluacion');
 }
-function toggleEvalCritAns(){evalCritAnsVisible=!evalCritAnsVisible;document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');sfx('click');}
-function calcCritTotal(){
-  if(!window._evalCritData){showToast('⚠️ Genera una prueba primero');return;}
-  sfx('click');
-  let total=0;
-  document.querySelectorAll('#evalCritOut .crit-score-input').forEach(inp=>{let v=parseInt(inp.value)||0;v=Math.max(0,Math.min(20,v));inp.value=v;total+=v;});
-  const panel=document.getElementById('evalCritTotalResult');
-  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara siempre tus respuestas con la Pauta antes de anotar el puntaje de cada sección.</em>`;}
-  const formKey='crit_'+(window._currentEvalCritForm||1);
-  if(total>=70){if(!xpTracker.wgt.has(formKey)){xpTracker.wgt.add(formKey);pts(8);}showToast('🎯 Pensamiento crítico: '+total+'/100');}
-  else showToast('🧮 Puntaje registrado: '+total+'/100. ¡Sigue practicando!');
+
+function _renderOrdGroup(gi){
+  const data=window._evalOpData.ord[gi];
+  const list=document.getElementById('evordList'+gi);if(!list)return;
+  list.innerHTML='';
+  data.current.forEach((label,i)=>{
+    const div=document.createElement('div');div.className='evord-item';
+    div.innerHTML=`<div class="evord-arrows"><button class="sort-arrow" onclick="evordMove(${gi},${i},-1)"${i===0?' disabled':''}>▲</button><button class="sort-arrow" onclick="evordMove(${gi},${i},1)"${i===data.current.length-1?' disabled':''}>▼</button></div><div class="evord-num">${label}</div>`;
+    list.appendChild(div);
+  });
 }
-function printEvalCrit(){
-  if(!window._evalCritData){showToast('⚠️ Genera una prueba primero');return;}
+function evordMove(gi,idx,dir){
   sfx('click');
-  const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
-  const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: fracciones en un problema</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
-  critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
-  let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: elige el procedimiento</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué procedimiento usarías? Explica paso a paso y resuelve un ejemplo.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Expresión A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Expresión B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué representa cada expresión? 2. ¿Son iguales o diferentes? 3. Explica por qué.</p>${lines(2)}`;
-  let ceTbl='<table class="crit-print-tbl"><tr><th>Situación</th><th>Procedimiento</th></tr>';
-  d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
-  d.effects.forEach(it=>{ceTbl+=`<tr><td>${it.effect}</td><td></td></tr>`;});
-  ceTbl+='</table>';
-  let s5=`<div class="sec-title"><span>V. Relaciona la situación con el procedimiento</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div>${ceTbl}`;
+  const data=window._evalOpData.ord[gi];const ni=idx+dir;
+  if(ni<0||ni>=data.current.length)return;
+  [data.current[idx],data.current[ni]]=[data.current[ni],data.current[idx]];
+  _renderOrdGroup(gi);
+}
+
+function toggleEvalOpAns(){evalOpAnsVisible=!evalOpAnsVisible;document.querySelectorAll('#evalOpOut .eval-answer').forEach(el=>el.style.display=evalOpAnsVisible?'block':'none');sfx('click');}
+
+function gradeEvalOp(){
+  if(!window._evalOpData){showToast('⚠️ Genera una prueba operativa primero');return;}
+  sfx('click');
+  const d=window._evalOpData;
+  let total=0;const detail={ops:0,simp:0,cmp:0,equiv:0,ord:0};
+  d.ops.forEach((it,i)=>{const input=document.querySelector(`[data-opx="${i}"]`);const ok=isFracCorrect(input?input.value:'',it.ans);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.ops++;total+=10;}setEvalFeedback('evalFbOpx'+i,ok,ok?'Correcto. +10 pts':'Revisar. Respuesta esperada: '+it.ans);});
+  d.simp.forEach((it,i)=>{const input=document.querySelector(`[data-simp="${i}"]`);const ok=isSimplifyCorrect(input?input.value:'',it.ans);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.simp++;total+=1;}setEvalFeedback('evalFbSimp'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+it.ans);});
+  d.cmp.forEach((it,i)=>{const selected=document.querySelector(`input[name="fcmp${i}"]:checked`);const ok=!!selected&&selected.value===it.rel;if(ok){detail.cmp++;total+=1;}setEvalFeedback('evalFbCmp'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+(it.rel==='gt'?'Mayor que':it.rel==='lt'?'Menor que':'Igual'));});
+  d.equiv.forEach((it,i)=>{const input=document.querySelector(`[data-equiv="${i}"]`);const ok=isOpNumCorrect(input?input.value:'',it.ans);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.equiv++;total+=1;}setEvalFeedback('evalFbEquiv'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+it.ans);});
+  d.ord.forEach((g,gi)=>{const ok=g.current.every((v,i)=>v===g.correctOrder[i]);if(ok){detail.ord++;total+=5;}setEvalFeedback('evalFbOrd'+gi,ok,ok?'¡Orden correcto! +5 pts':'Orden incorrecto. Clave: '+g.correctOrder.join(' · '));});
+  const result=document.getElementById('evalOpAutoResult');
+  if(result){result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Operaciones: ${detail.ops*10}/50 · Simplificar: ${detail.simp}/10 · Comparar: ${detail.cmp}/10 · Equivalente: ${detail.equiv}/10 · Ordenar: ${detail.ord*5}/20</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`;}
+  if(total>=70){pts(8);showToast('🎯 Prueba operativa calificada: '+total+'/100');}
+  else showToast('🧮 Prueba operativa calificada: '+total+'/100. Revisa las respuestas marcadas.');
+}
+
+function printEvalOp(){
+  if(!window._evalOpData){showToast('⚠️ Genera una prueba operativa primero');return;}
+  sfx('click');
+  const forma=window._currentEvalOpForm||1;const d=window._evalOpData;
+  let s1=`<div class="sec-title"><span>I. Operaciones (suma y resta de fracciones)</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 50%</span></div></div><p class="opx-instr">Resuelve cada operación con lápiz (trabaja el procedimiento en el reverso de esta hoja) y coloca la respuesta final en la línea. Valor 10% c/u.</p>`;
+  d.ops.forEach((it,i)=>{s1+=`<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="opx-print-expr">${it.a} ${it.op} ${it.b} =</span><span class="opx-blank"></span></div>`;});
+  const simpTbl=(items)=>`<table class="rnd-tbl"><tr><th>Fracción</th><th>Simplificada</th></tr>${items.map(it=>`<tr><td>${it.q}</td><td></td></tr>`).join('')}</table>`;
+  const simpHalf=Math.ceil(d.simp.length/2);
+  let s2=`<div class="sec-title"><span>II. Simplifica a su mínima expresión</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="rnd-print-grid">${simpTbl(d.simp.slice(0,simpHalf))}${simpTbl(d.simp.slice(simpHalf))}</div>`;
+  const cmpHalf=Math.ceil(d.cmp.length/2);
+  const cmpRow=(it)=>`<div class="cmp-print-row"><span class="cmp-print-num">${it.a}</span><span class="cmp-box">&nbsp;</span><span class="cmp-print-num">${it.b}</span></div>`;
+  let s3=`<div class="sec-title"><span>III. Compara: ¿mayor, menor o igual?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="cmp-print-grid"><div>${d.cmp.slice(0,cmpHalf).map(cmpRow).join('')}</div><div>${d.cmp.slice(cmpHalf).map(cmpRow).join('')}</div></div>`;
+  const equivTbl=(items)=>`<table class="rnd-tbl"><tr><th>Completa</th><th>Respuesta</th></tr>${items.map(it=>`<tr><td>${it.q}</td><td></td></tr>`).join('')}</table>`;
+  const equivHalf=Math.ceil(d.equiv.length/2);
+  let s4=`<div class="sec-title"><span>IV. Completa la fracción equivalente</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="rnd-print-grid">${equivTbl(d.equiv.slice(0,equivHalf))}${equivTbl(d.equiv.slice(equivHalf))}</div>`;
+  let s5=`<div class="sec-title"><span>V. Ordena cada grupo de fracciones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20%</span></div></div><div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordene de ${g.dir==='mayor'?'Mayor a Menor':'Menor a Mayor'}.</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${v}</td>`).join('')}</tr><tr>${g.current.map(()=>'<td class="ord-print-cell"></td>').join('')}</tr></table></div>`).join('')}</div>`;
   let pR='';
-  pR+=`<div class="p-sec"><div class="p-ttl">I. Caso</div>${critCaseQuestions.map((q,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${critCaseGuides[i]}</div>`).join('')}</div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">II. Corrige el error</div><div class="p-crit-line"><strong>Error 1:</strong> ${d.err.g1}</div><div class="p-crit-line"><strong>Error 2:</strong> ${d.err.g2}</div></div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Expresión A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Expresión B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
-  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Situación y procedimiento</div>${d.causes.map(it=>`<div class="p-crit-line"><strong>Quieres:</strong> ${it.cause} → ${it.guide}</div>`).join('')}${d.effects.map(it=>`<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → ${it.guide}</div>`).join('')}</div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Fracciones · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c2255c;background:#fbe4ee;color:#8a1a44;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#8a1a44;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #8a1a44;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#fbe4ee;border-left:3px solid #c2255c;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#fbe4ee;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#fbe4ee;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:7.5pt;color:#8a1a44;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#8a1a44;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #8a1a44;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:12.7mm;}}</style></head><body><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Fracciones · II y III Ciclo · Matemáticas</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Fracciones · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Operaciones</div><table class="p-tbl">${d.ops.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Simplificar</div><table class="p-tbl">${d.simp.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III. Comparar</div><table class="p-tbl">${d.cmp.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.rel==='gt'?'&gt;':it.rel==='lt'?'&lt;':'='}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">IV. Equivalente</div><table class="p-tbl">${d.equiv.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Ordenar</div>${d.ord.map((g,gi)=>`<div class="p-ord-line"><strong>${gi+1}.</strong> ${g.correctOrder.join(' · ')}</div>`).join('')}</div>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Fracciones · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#555;margin-top:0.15rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.4rem 0 0.2rem;border-left:4px solid #c2255c;background:#fbe4ee;color:#8a1a44;display:flex;justify-content:space-between;align-items:center;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#8a1a44;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #8a1a44;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.18rem 0.2rem;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:160px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #999;padding:0.12rem 0.4rem;text-align:left;}.cmp-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.cmp-print-row{display:flex;align-items:center;gap:0.4rem;font-size:11pt;padding:0.2rem 0;}.cmp-box{display:inline-block;width:22px;height:18px;border:1.5px solid #111;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;}.ord-print-dir{font-size:9.5pt;font-weight:700;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #999;padding:0.15rem 0.3rem;text-align:center;}.ord-print-cell{height:16px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.28rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#555;}.pa{color:#8a1a44;font-weight:600;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:10mm;}}</style></head><body><div class="ph"><h2>Examen de Matemáticas — Actividades Operativas · Fracciones · II y III Ciclo</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Operaciones 50% · Simplificar 10% · Comparar 10% · Equivalente 10% · Ordenar 20%</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row" style="margin-top:0.4rem;font-weight:700;color:#8a1a44;">Total obtenido: <span class="obt-line" style="min-width:80px;border-bottom:1.5px solid #8a1a44;"></span> de 100%</div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Fracciones · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
