@@ -1,0 +1,110 @@
+# 🧩 PLANTILLA DE MISIONES — Guía rápida (M.E.T.A.S)
+
+Receta para crear una **misión nueva** rápido y **ahorrando tokens**.
+En una sesión nueva basta con decir: **"Sigue PLANTILLA-MISIONES para una misión de [materia], tema [X]"**.
+
+---
+
+## ⭐ Prompt de arranque (copia y pega en una sesión NUEVA)
+
+```
+Sigue PLANTILLA-MISIONES.
+
+Nueva misión:
+- Materia: (español / matemáticas / naturales / sociales)
+- Tema: ______
+- Grado: II y III Ciclo (o el que sea)
+- Debe incluir (opcional): ______
+
+Reglas de ahorro:
+- Usa la MISMA plantilla de las últimas misiones; NO releas los archivos de referencia.
+- Sin capturas de pantalla (solo validación automática).
+- NO revises el despliegue en vivo; solo haz push a main.
+- Al final NO instales en el teléfono (lo haré yo por lotes con el .bat).
+```
+
+> Ajusta las reglas si quieres capturas o instalación; por defecto, así es lo más económico.
+
+---
+
+## 🔁 Qué hace el asistente (pasos internos)
+
+1. **Carpeta**: `misiones/2y3ciclo-<slug-del-tema>/` con `js/` y `css/`.
+2. **Copiar assets** desde una misión reciente: `html2canvas.min.js` y el `.css`.
+3. **Re-tematizar CSS** (solo 4-5 ediciones): `--bg`, `--border`, `--pri`, `--sec`,
+   los dos overrides de `--pri-gl/--sec-gl` en modo oscuro, el gradiente del `.hero`
+   y la marquesina `.hero::before`.
+4. **Escribir el JS** (`<slug>.js`): misma lógica; solo cambian los **bancos de datos**
+   (fcData, qzData, classGroups, idData, cmpData, widgets, retoPairs, sopaSets, eval*,
+   task*, crit*, parteData del Lab) + títulos, niveles, logros y `SAVE_KEY`.
+5. **Escribir el HTML** (`<slug>.html`): mismas 13 secciones e IDs; solo cambia el
+   contenido de Aprende / Tipos / Lab y los textos visibles. **Los IDs y las funciones
+   onclick NO se cambian** (el JS depende de ellos).
+6. **Registrar** en `js/data/misiones.js` con el **siguiente id libre** (revisar el
+   archivo; NO asumir count+1).
+7. **Validar** (barato y confiable):
+   - `node --check js/<slug>.js`
+   - sopas: que cada palabra coincida con su grid
+   - que todas las funciones `onclick` e `id` del HTML existan en el JS
+8. **Propagar** a `www/`, `android/app/src/main/assets/public/` y
+   `android/app/build/intermediates/assets/debug/mergeDebugAssets/public/`
+   (la carpeta de la misión + `js/data/misiones.js`).
+9. **Commit** en rama nueva → `git checkout main` → `git merge --ff-only` → `git push origin main`.
+
+---
+
+## ✅ Checklist de la misión (13 secciones, "tier completo")
+
+- [ ] Aprende (3 tarjetas: intro + comparativa + mapa de tipos)
+- [ ] Sección de detalle (estructura / tabla comparativa / chips)
+- [ ] Lab interactivo (4 "partes" × 4 "aspectos")
+- [ ] Flashcards (14) · Quiz (9)
+- [ ] Clasifica (4 grupos) · Identifica (8) · Completa (8)
+- [ ] Widgets (Ordena, Identifica, Empareja, Situación→respuesta)
+- [ ] Reto (3 parejas) · Sopa (2 grids válidos)
+- [ ] Generador de Tareas (identify/classify/complete/explain)
+- [ ] Evaluación Conceptual (TF15/MC15/CP15/PR15) + Pensamiento Crítico (5×20)
+- [ ] Constancia + Recursos + footer estándar
+- [ ] Registrada en `misiones.js` con id libre · propagada · commit/push a main
+
+---
+
+## 📱 Instalar en el teléfono (hazlo por LOTES, no por misión)
+
+1. Conecta el teléfono por USB con **Depuración USB autorizada**
+   (verifica: `adb devices` debe mostrar `device`, no `unauthorized`).
+2. Doble clic en **`sincronizar-e-instalar.bat`** (raíz del proyecto)
+   o en terminal: `npm run install:android`.
+3. Espera **"LISTO: la app se instaló en el teléfono"**.
+
+Notas:
+- El `java` del sistema es Java 8 (insuficiente). Ya está fijado el JDK 21 de
+  Android Studio en `android/gradle.properties` (`org.gradle.java.home`).
+- Si aparece `AccessDeniedException` en `mergeDebugAssets`: borra
+  `android/app/build/intermediates/assets` y reintenta.
+
+---
+
+## 🌐 Despliegue web (GitHub Pages)
+
+- El sitio se publica desde `main`:
+  https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/
+- Tras el `push` tarda **~1-15 min** (a veces la cola de Pages va lenta).
+- Para confirmar sin gastar en la sesión: revisa el sitio tú mismo y **recarga
+  forzada** (el service worker es "red primero", así que una recarga normal basta).
+- El código correcto se puede verificar en el contenido crudo (no depende del build):
+  `raw.githubusercontent.com/.../main/js/data/misiones.js`.
+
+---
+
+## 💸 Consejos para que rindan los tokens
+
+1. **Sesión nueva por misión (o cada 2-3).** Un chat largo re-cobra todo el historial
+   en cada mensaje: arrancar fresco es el mayor ahorro.
+2. **No revisar el despliegue en vivo dentro de la sesión.**
+3. **Sin capturas** salvo que dudes del diseño.
+4. **Especificación completa en el primer mensaje** (materia, tema, grado, incluir X).
+5. **Instalar en Android por lotes**, no tras cada misión.
+6. **Modelo:** para misiones de patrón repetido, `/model` a **Sonnet** (más económico);
+   reserva **Opus** para temas difíciles o contenido delicado.
+```
