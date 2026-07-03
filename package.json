@@ -6,6 +6,7 @@
   "scripts": {
     "build:www": "robocopy . www /E /XD android node_modules .git www _dev /XF *.md package.json package-lock.json capacitor.config.json .gitignore /NFL /NDL /NJH /NJS /NC /NS & exit 0",
     "sync": "npm run build:www && npx cap sync",
+    "install:android": "npm run build:www && npx cap sync && cd android && gradlew.bat installDebug",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
