@@ -265,6 +265,11 @@
     <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Predice y luego desliza para construir la cuadrícula de n×n y observar cómo crece el cuadrado perfecto.</p>
     <div id="widget-cuadrados-interactive"></div>
   </div>
+  <div class="card ac-jade">
+    <h2>🪜 Laboratorio 2: La Escalera de los Impares</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Un secreto matemático: si sumas los números impares en orden (1+3+5+…), ¡siempre obtienes un cuadrado perfecto! Agrega capas y descúbrelo.</p>
+    <div id="widget-impares-interactive"></div>
+  </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
     <span class="nsb-icon">🃏</span>
     <span class="nsb-arrow">→</span>
@@ -378,6 +383,16 @@
     <h2>📊 Explorador de Potencia y Raíz</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">¿Cómo crece un cuadrado perfecto? ¡Descúbrelo moviendo el número base!</p>
     <div id="widget-potencia-interactive"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>🎯 ¿Entre qué cuadrados está?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">No todos los números son cuadrados perfectos. Estima entre qué dos cuadrados queda cada número. ¡Acierta 3 seguidos para subir de nivel! ⭐ +2 XP por acierto (primera vez)</p>
+    <div id="widget-estimacion-interactive"></div>
+  </div>
+  <div class="card ac-gold">
+    <h2>🔁 La Máquina Inversa</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Mete un número a la máquina x², predice qué saldrá de la máquina √ y comprueba que la raíz cuadrada deshace la potencia. ⭐ +2 XP por predicción correcta (primera vez)</p>
+    <div id="widget-maquina-interactive"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
     <span class="nsb-icon">💬</span>
@@ -620,6 +635,9 @@
 
   <script src="js/interaccion_cuadrados.js"></script>
   <script src="js/interaccion_potencia.js"></script>
+  <script src="js/interaccion_impares.js"></script>
+  <script src="js/interaccion_estimacion.js"></script>
+  <script src="js/interaccion_maquina.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -628,6 +646,15 @@
       }
       if (window.WidgetPotenciaJSON) {
         window.WidgetPotenciaJSON.mount('widget-potencia-interactive');
+      }
+      if (window.WidgetImparesJSON) {
+        window.WidgetImparesJSON.mount('widget-impares-interactive');
+      }
+      if (window.WidgetEstimacionJSON) {
+        window.WidgetEstimacionJSON.mount('widget-estimacion-interactive');
+      }
+      if (window.WidgetMaquinaJSON) {
+        window.WidgetMaquinaJSON.mount('widget-maquina-interactive');
       }
     });
   </script>
