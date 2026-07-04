@@ -1,8 +1,10 @@
-﻿// Compartir misión por WhatsApp
+﻿// En escritorio (Windows) la app de WhatsApp corrompe los emojis recibidos vía wa.me; WhatsApp Web los conserva
+function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);window.open(esMovil?'https://wa.me/?text='+enc:'https://web.whatsapp.com/send?text='+enc,'_blank');}
+// Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Ciencias Naturales._ ✍️\n\n🔗 *Enlace:* ${url}`;
-    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Ciencias Naturales._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    _waShare(texto);
 }
 
 function toggleLetra(){
@@ -1199,7 +1201,7 @@ function shareWA(){
   const name=document.getElementById('diplName').textContent||'Estudiante';
   const pct = _diplPct();
   const msg=`🌲 ¡${name} completó la Misión "El Bosque y las Áreas Protegidas de Honduras"! 🏅 Progreso: ${pct}% · 🌿 policastsapien.com`;
-  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+  _waShare(msg);
 }
 
 async function captureDiploma() {

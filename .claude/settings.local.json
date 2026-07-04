@@ -72,7 +72,8 @@
       "Bash(node --check js/interaccion_x10.js)",
       "PowerShell(npm run build:www)",
       "PowerShell(node --check js\\\\app.js)",
-      "PowerShell(node --check www\\\\js\\\\app.js)"
+      "PowerShell(node --check www\\\\js\\\\app.js)",
+      "Bash(grep -rhoE \".{12}\\\\*Enlace:\\\\* \\\\\\\\$\\\\{url\\\\}\" misiones --include=*.js)"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",

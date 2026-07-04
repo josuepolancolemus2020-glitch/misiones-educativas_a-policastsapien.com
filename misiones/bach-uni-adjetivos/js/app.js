@@ -1,8 +1,10 @@
-﻿// Compartir misión por WhatsApp
+﻿// En escritorio (Windows) la app de WhatsApp corrompe los emojis recibidos vía wa.me; WhatsApp Web los conserva
+function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);window.open(esMovil?'https://wa.me/?text='+enc:'https://web.whatsapp.com/send?text='+enc,'_blank');}
+// Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Gramática Española._ ✍️\n\n🔗 *Enlace:* ${url}`;
-    window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Gramática Española._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    _waShare(texto);
 }
 
 // ===================== UTILIDADES =====================
@@ -1088,7 +1090,7 @@ function shareWA(){
   const date = document.getElementById('diplDate').textContent;
   const achText = unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join('\n');
   const txt = `${stars} CERTIFICACIÓN ACADÉMICA ${stars}\n\n📝 Módulo: El Adjetivo (Avanzado - NGLE)\n👤 Académico: ${name}\n📊 Progreso: ${pct}% de análisis completado\n⭐ Créditos XP: ${xp} de ${MXP}${achText?'\n\n🏅 Logros Alcanzados:\n'+achText:''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com`;
-  window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
+  _waShare(txt);
 }
 
 async function captureDiploma() {
