@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Potencias y Raíces Cuadradas | policastsapien.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/potencias-raices.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=matemáticas" class="xp-back-btn" title="Regresar a misiones de Matemáticas">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
+</div>
+
+<header class="hero" role="banner" style="background:linear-gradient(90deg,#7c3aed 0%,#f59e0b 50%,#00b894 100%);">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🔲</div>
+      <div class="mascot-tooltip">¡Hola! Soy Cuadri. ¡Vamos a descubrir potencias y raíces cuadradas!</div>
+    </div>
+    <div class="hero-text">
+      <h1>Misión <span>Potencias y Raíces</span></h1>
+      <p class="sub">¡Domina las potencias y la raíz cuadrada de los cuadrados perfectos menores que 200! 🎯</p>
+      <div class="badge">🔲 II Ciclo · Matemática</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<div class="sec active" id="s-predice" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔮 Predice antes de resolver</h2>
+    <p style="margin-bottom:0.5rem;">Antes de aprender la regla, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
+    <div id="prediceWidget"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ahora aprende la regla!</span><span class="nsb-name">Aprende</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔲 ¿Qué es una potencia?</h2>
+    <p style="margin-bottom:0.7rem;">Una <strong>potencia</strong> representa una multiplicación repetida de un mismo número. Se escribe con una <strong>base</strong> (el número que se repite) y un <strong>exponente</strong> (cuántas veces se repite).</p>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Idea clave:</strong> En 6², el 6 es la <strong>base</strong> y el 2 es el <strong>exponente</strong>. Se lee "seis al cuadrado" y significa 6×6, <strong>no</strong> 6×2.</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">⚡</span>
+      <div><strong>La Regla de Oro:</strong> El exponente 2 indica que la base se multiplica por sí misma <strong>una sola vez más</strong> (dos factores en total). No se multiplica por el exponente.</div>
+    </div>
+    <div class="demo-visual">
+      <div class="demo-title">🔬 Mini-demostración</div>
+      <div class="demo-steps">
+        <div class="demo-step ds-start"><span class="ds-label">Potencia</span><span class="ds-val">4²</span></div>
+        <div class="demo-arrow">significa ↓</div>
+        <div class="demo-step ds-mid"><span class="ds-label">Multiplicación</span><span class="ds-val">4 × 4</span></div>
+        <div class="demo-arrow">= </div>
+        <div class="demo-step ds-end"><span class="ds-label">Resultado</span><span class="ds-val">16</span></div>
+      </div>
+      <p class="demo-note">✅ 4² = 16, un <strong>cuadrado perfecto</strong>. La raíz cuadrada de 16 es 4.</p>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 1: Elevar al cuadrado</h2>
+    <p style="margin-bottom:0.6rem;">Elevar un número al cuadrado significa multiplicarlo por sí mismo (exponente 2).</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">7²</span>
+      <span class="ae-flecha">→ 7 × 7 →</span>
+      <span class="ae-res">= <strong>49</strong></span>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock1">
+      <p class="mq-pregunta">🤔 ¿Cuánto es 7²?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'7² significa 7×7, no 7+7.')">14</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! 7²=7×7=49.')">49</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'7² no es 7×2. Es 7×7=49.')">77</button>
+      </div>
+      <div class="mq-fb" id="mqBlock1-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 2: La raíz cuadrada</h2>
+    <p style="margin-bottom:0.6rem;">La <strong>raíz cuadrada</strong> (√) es la operación inversa de elevar al cuadrado: te dice qué número, multiplicado por sí mismo, da el resultado.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">√64</span>
+      <span class="ae-flecha">→ ¿qué número × sí mismo = 64? →</span>
+      <span class="ae-res">= <strong>8</strong> (porque 8²=64)</span>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock2">
+      <p class="mq-pregunta">🤔 ¿Cuál es la raíz cuadrada de 121?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! 11×11=121, así que √121=11.')">11</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'60.5×2 no es una raíz cuadrada. Piensa: ¿qué número × sí mismo = 121?')">60.5</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'121 es el número dentro de la raíz, no la respuesta.')">121</button>
+      </div>
+      <div class="mq-fb" id="mqBlock2-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📦 Bloque 3: Cuadrados perfectos menores que 200</h2>
+    <p style="margin-bottom:0.7rem;">Un <strong>cuadrado perfecto</strong> es el resultado de elevar un número entero al cuadrado. Estos son todos los cuadrados perfectos menores que 200:</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;text-align:center;font-family:'Fredoka',sans-serif;margin:0.6rem 0;font-size:0.85rem;">
+        <thead><tr style="background:var(--pri-gl);">
+          <th style="padding:0.3rem;border:1px solid var(--border);">n</th><th style="padding:0.3rem;border:1px solid var(--border);">1</th><th style="padding:0.3rem;border:1px solid var(--border);">2</th><th style="padding:0.3rem;border:1px solid var(--border);">3</th><th style="padding:0.3rem;border:1px solid var(--border);">4</th><th style="padding:0.3rem;border:1px solid var(--border);">5</th><th style="padding:0.3rem;border:1px solid var(--border);">6</th><th style="padding:0.3rem;border:1px solid var(--border);">7</th><th style="padding:0.3rem;border:1px solid var(--border);">8</th><th style="padding:0.3rem;border:1px solid var(--border);">9</th><th style="padding:0.3rem;border:1px solid var(--border);">10</th><th style="padding:0.3rem;border:1px solid var(--border);">11</th><th style="padding:0.3rem;border:1px solid var(--border);">12</th><th style="padding:0.3rem;border:1px solid var(--border);">13</th><th style="padding:0.3rem;border:1px solid var(--border);">14</th>
+        </tr></thead>
+        <tbody><tr>
+          <td style="padding:0.3rem;border:1px solid var(--border);font-weight:700;">n²</td>
+          <td style="padding:0.3rem;border:1px solid var(--border);">1</td><td style="padding:0.3rem;border:1px solid var(--border);">4</td><td style="padding:0.3rem;border:1px solid var(--border);">9</td><td style="padding:0.3rem;border:1px solid var(--border);">16</td><td style="padding:0.3rem;border:1px solid var(--border);">25</td><td style="padding:0.3rem;border:1px solid var(--border);">36</td><td style="padding:0.3rem;border:1px solid var(--border);">49</td><td style="padding:0.3rem;border:1px solid var(--border);">64</td><td style="padding:0.3rem;border:1px solid var(--border);">81</td><td style="padding:0.3rem;border:1px solid var(--border);">100</td><td style="padding:0.3rem;border:1px solid var(--border);">121</td><td style="padding:0.3rem;border:1px solid var(--border);">144</td><td style="padding:0.3rem;border:1px solid var(--border);">169</td><td style="padding:0.3rem;border:1px solid var(--border);color:var(--jade);font-weight:700;">196</td>
+        </tr></tbody>
+      </table>
+    </div>
+    <p style="font-size:0.82rem;color:var(--gray);">196 (14²) es el mayor cuadrado perfecto menor que 200, ya que 15²=225 ya lo supera.</p>
+    <div class="mini-quiz-wrap" id="mqBlock3">
+      <p class="mq-pregunta">🤔 ¿Cuál de estos NO es un cuadrado perfecto?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'144 sí es un cuadrado perfecto: 12²=144.')">144</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! 150 está entre 144 (12²) y 169 (13²), no tiene raíz cuadrada exacta.')">150</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'169 sí es un cuadrado perfecto: 13²=169.')">169</button>
+      </div>
+      <div class="mq-fb" id="mqBlock3-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>📦 Bloque 4: Suma y resta con potencias y raíces</h2>
+    <p style="margin-bottom:0.6rem;">Para combinar potencias y raíces con sumas o restas, primero <strong>resuelve la potencia y la raíz</strong>, y luego suma o resta.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">√25 + 3²</span>
+      <span class="ae-flecha">→ 5 + 9 →</span>
+      <span class="ae-res">= <strong>14</strong></span>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock4">
+      <p class="mq-pregunta">🤔 ¿Cuánto es √36 + 4²?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,true,'¡Correcto! √36=6, 4²=16, 6+16=22.')">22</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'Revisa: √36=6 (no 3) y 4²=16 (no 4).')">10</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'Eso sería si multiplicaras en vez de sumar.')">40</button>
+      </div>
+      <div class="mq-fb" id="mqBlock4-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>📦 Bloque 5: Representación gráfica de un cuadrado perfecto</h2>
+    <p style="margin-bottom:0.6rem;">Un cuadrado perfecto se puede dibujar como una <strong>cuadrícula de n filas por n columnas</strong>. Ejemplo: 4² = 16 se representa como una cuadrícula de 4×4.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,28px);grid-template-rows:repeat(4,28px);gap:3px;justify-content:center;margin:0.8rem 0;">
+      <div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div>
+      <div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div>
+      <div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div>
+      <div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div><div style="background:var(--pri);border-radius:4px;"></div>
+    </div>
+    <p style="font-size:0.82rem;color:var(--gray);text-align:center;">4 filas × 4 columnas = 16 cuadritos → 4²=16</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">📊</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📊 Casos Comunes</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">6² = 36</div><div class="t-info">Cuadrado exacto de un número de una cifra</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">√196 = 14</div><div class="t-info">Raíz exacta del mayor cuadrado perfecto bajo 200</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">150</div><div class="t-info">No es cuadrado perfecto (entre 12² y 13²)</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">10² = 100</div><div class="t-info">Cuadrado perfecto redondo</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">√1 = 1</div><div class="t-info">El cuadrado perfecto más pequeño (mayor que 0)</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">√64 + 3²</div><div class="t-info">Combinación de raíz y potencia</div></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
+    <span class="nsb-icon">⚠️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Evita los tropiezos!</span><span class="nsb-name">Errores Comunes</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-errores" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>⚠️ Errores Comunes — ¡No caigas en ellos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Estos son los errores que más cometen los estudiantes. Léelos, entiéndelos y ¡evítalos!</p>
+    <div class="error-cards">
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 1: Confundir n² con n×2</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>5² = 5×2 = 10</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El exponente indica cuántas veces se multiplica el número por sí mismo, no por 2.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>5² = 5×5 = <strong>25</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 2: Creer que todo número tiene raíz cuadrada exacta</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"La raíz cuadrada de 50 es un número entero."</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>50 no es un cuadrado perfecto: está entre 49 (7²) y 64 (8²).</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>50 <strong>no tiene</strong> raíz cuadrada exacta ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 3: Multiplicar de más al elevar al cuadrado</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>4² = 4×4×4 = 64</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El exponente 2 significa dos factores en total (4×4), no tres.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>4² = 4×4 = <strong>16</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 4: Olvidar el orden de operaciones</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>3 + 2² → sumo primero: (3+2)² = 25</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Las potencias se resuelven antes que las sumas.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>3 + 2² = 3 + 4 = <strong>7</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 5: Confundir base y exponente</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"En 8², el exponente es 8."</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>La base es el número grande (8), el exponente es el número pequeño arriba (2).</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>En 8²: <strong>base=8, exponente=2</strong> ✔</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica lo aprendido!</span><span class="nsb-name">Laboratorio</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>🧪 Laboratorio: Constructor de Cuadrados</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Predice y luego desliza para construir la cuadrícula de n×n y observar cómo crece el cuadrado perfecto.</p>
+    <div id="widget-cuadrados-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fa" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Números</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Arrastra cada número a la columna que corresponda.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-widgets" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>📊 Explorador de Potencia y Raíz</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">¿Cómo crece un cuadrado perfecto? ¡Descúbrelo moviendo el número base!</p>
+    <div id="widget-potencia-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
+    <span class="nsb-icon">💬</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra que entendiste!</span><span class="nsb-name">Explica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-explica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>💬 Explica con tus palabras</h2>
+    <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
+    <div id="explicaContainer"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Hora del reto!</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🏆 Reto Final — ¿La raíz es Mayor, Igual o Menor que 10? (30 seg)</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Decide rápido si la raíz cuadrada del número mostrado es mayor, igual o menor que 10.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">💡 √100=10 · números menores a 100 → raíz menor que 10 · mayores a 100 → raíz mayor que 10</p>
+    <div class="game" id="gameBox" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('mayor')">↑ MAYOR</button>
+        <button class="btn btn-g" id="retoBtn-c" onclick="ansReto('igual')">= IGUAL</button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('menor')">↓ MENOR</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar (Cuadrados perfectos)</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar proceso</option>
+        <option value="pensamiento">🧠 Pensamiento matemático</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Prueba Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-blue">
+    <div class="eval-print-header">
+      <h2>Evaluación Final de Misión Potencias y Raíces Cuadradas · II Ciclo · Matemática</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación Final</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">4 secciones de 25 pts c/u. Copia el examen en tu cuaderno, resuélvelo y selecciona <strong>Ver Pauta</strong> para autoevaluarte.</p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Matemáticas — Prueba Operativa · Potencias y Raíces Cuadradas · II Ciclo</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 50 pts · II: 10 pts · III: 10 pts · IV: 10 pts · V: 20 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">📐 Prueba Operativa — Potencias y Raíces</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Resuelve cada ítem en tu cuaderno y escribe la respuesta en la casilla. Presiona <strong>Calificar prueba</strong> para autoevaluarte en pantalla. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>📁 Recursos del Tema</h2>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo sobre potencias, raíces cuadradas y cuadrados perfectos.</p>
+    <a href="https://drive.google.com/drive/folders/1vUVVqFSWv-I-b_2E_e-GudZ6qjkjD8se?usp=sharing"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+  </div>
+</div>
+
+</main>
+
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Potencias y Raíces Cuadradas</div>
+    <div class="diploma-mascot" aria-hidden="true">🔲</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Tipos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-explica" data-s="s-explica" onclick="go('s-explica')"><span class="ico">💬</span> Explica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje...» 🌱</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/potencias-raices.js"></script>
+
+  <script src="js/interaccion_cuadrados.js"></script>
+  <script src="js/interaccion_potencia.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetCuadradosJSON) {
+        window.WidgetCuadradosJSON.mount('widget-cuadrados-interactive');
+      }
+      if (window.WidgetPotenciaJSON) {
+        window.WidgetPotenciaJSON.mount('widget-potencia-interactive');
+      }
+    });
+  </script>
+
+</body>
+</html>
