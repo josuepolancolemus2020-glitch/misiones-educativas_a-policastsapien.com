@@ -57,7 +57,13 @@
       "Bash(node --check js/valor-posicional.js)",
       "Bash(node --check js/interaccion_construccion.js)",
       "Bash(node --check js/interaccion_expansion.js)",
-      "Bash(node --check \"js/data/misiones.js\")"
+      "Bash(node --check \"js/data/misiones.js\")",
+      "Bash(cp \"misiones/2ciclo-valor-posicional/css/valor-posicional.css\" \"misiones/2ciclo-potencias-raices/css/potencias-raices.css\")",
+      "Bash(sed -i -e s/1565c0/7c3aed/g -e s/5e92f3/a78bfa/g -e s/21,101,192/124,58,237/g -e s/00897b/f59e0b/g -e s/4ebaaa/fbbf24/g -e s/0,137,123/245,158,11/g misiones/2ciclo-potencias-raices/css/potencias-raices.css)",
+      "Bash(cp \"misiones/2ciclo-valor-posicional/js/html2canvas.min.js\" \"misiones/2ciclo-potencias-raices/js/html2canvas.min.js\")",
+      "Bash(node --check \"misiones/2ciclo-potencias-raices/js/potencias-raices.js\")",
+      "Bash(node --check \"misiones/2ciclo-potencias-raices/js/interaccion_cuadrados.js\")",
+      "Bash(node --check \"misiones/2ciclo-potencias-raices/js/interaccion_potencia.js\")"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
