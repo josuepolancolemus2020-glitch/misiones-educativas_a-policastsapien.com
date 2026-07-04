@@ -53,7 +53,11 @@
       "Bash(git merge *)",
       "Bash(git push *)",
       "Bash(git branch *)",
-      "Bash(node --check misiones/2y3ciclo-fracciones/js/fracciones.js)"
+      "Bash(node --check misiones/2y3ciclo-fracciones/js/fracciones.js)",
+      "Bash(node --check js/valor-posicional.js)",
+      "Bash(node --check js/interaccion_construccion.js)",
+      "Bash(node --check js/interaccion_expansion.js)",
+      "Bash(node --check \"js/data/misiones.js\")"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
