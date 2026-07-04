@@ -66,7 +66,10 @@
       "Bash(node --check \"misiones/2ciclo-potencias-raices/js/interaccion_potencia.js\")",
       "Bash(node --check \"misiones/2ciclo-potencias-raices/js/interaccion_impares.js\")",
       "Bash(node --check \"misiones/2ciclo-potencias-raices/js/interaccion_estimacion.js\")",
-      "Bash(node --check \"misiones/2ciclo-potencias-raices/js/interaccion_maquina.js\")"
+      "Bash(node --check \"misiones/2ciclo-potencias-raices/js/interaccion_maquina.js\")",
+      "Bash(node --check js/interaccion_lector.js)",
+      "Bash(node --check js/interaccion_escritura.js)",
+      "Bash(node --check js/interaccion_x10.js)"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
