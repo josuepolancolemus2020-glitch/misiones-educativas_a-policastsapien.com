@@ -290,6 +290,11 @@
     <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Predice cuál cifra vale más y luego desliza para explorar el valor real de cada posición.</p>
     <div id="widget-constructor-interactive"></div>
   </div>
+  <div class="card ac-teal">
+    <h2>📖 Laboratorio 2: El Gran Lector</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Arma cualquier número con las flechas y mira en vivo cómo se lee en palabras. Las casillas anaranjadas te muestran los ceros de relleno.</p>
+    <div id="widget-lector-interactive"></div>
+  </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
     <span class="nsb-icon">🃏</span>
     <span class="nsb-arrow">→</span>
@@ -403,6 +408,16 @@
     <h2>📊 Explorador de la Forma Expandida</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">¿Cuánto crece un número cuando cambias solo una cifra? ¡Descúbrelo moviendo el dígito!</p>
     <div id="widget-expansion-interactive"></div>
+  </div>
+  <div class="card ac-blue">
+    <h2>✍️ Escribe el Número</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Lee el número en palabras y elige las cifras correctas. ¡Cuidado con las trampas de ceros! Acierta 3 seguidos para subir de nivel. ⭐ +2 XP por acierto (primera vez)</p>
+    <div id="widget-escritura-interactive"></div>
+  </div>
+  <div class="card ac-gold">
+    <h2>⚙️ La Máquina ×10</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Predice qué pasa al multiplicar por 10 y mira cómo las cifras se deslizan una posición a la izquierda en la tabla posicional. ÷10 lo deshace. ⭐ +2 XP por predicción correcta (primera vez)</p>
+    <div id="widget-x10-interactive"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
     <span class="nsb-icon">💬</span>
@@ -645,6 +660,9 @@
 
   <script src="js/interaccion_construccion.js"></script>
   <script src="js/interaccion_expansion.js"></script>
+  <script src="js/interaccion_lector.js"></script>
+  <script src="js/interaccion_escritura.js"></script>
+  <script src="js/interaccion_x10.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -653,6 +671,15 @@
       }
       if (window.WidgetExpansionJSON) {
         window.WidgetExpansionJSON.mount('widget-expansion-interactive');
+      }
+      if (window.WidgetLectorJSON) {
+        window.WidgetLectorJSON.mount('widget-lector-interactive');
+      }
+      if (window.WidgetEscrituraJSON) {
+        window.WidgetEscrituraJSON.mount('widget-escritura-interactive');
+      }
+      if (window.WidgetX10JSON) {
+        window.WidgetX10JSON.mount('widget-x10-interactive');
       }
     });
   </script>
