@@ -69,7 +69,10 @@
       "Bash(node --check \"misiones/2ciclo-potencias-raices/js/interaccion_maquina.js\")",
       "Bash(node --check js/interaccion_lector.js)",
       "Bash(node --check js/interaccion_escritura.js)",
-      "Bash(node --check js/interaccion_x10.js)"
+      "Bash(node --check js/interaccion_x10.js)",
+      "PowerShell(npm run build:www)",
+      "PowerShell(node --check js\\\\app.js)",
+      "PowerShell(node --check www\\\\js\\\\app.js)"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",

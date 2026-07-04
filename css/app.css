@@ -49,6 +49,7 @@ a { text-decoration: none; color: inherit; }
   padding: 16px 20px 90px;
   padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain; /* el rebote en los límites no se encadena al body */
 }
 
 /* ====== HEADER ====== */

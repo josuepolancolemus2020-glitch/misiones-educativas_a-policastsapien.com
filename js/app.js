@@ -804,12 +804,19 @@ document.addEventListener('DOMContentLoaded', () => {
     toast('Sin notificaciones nuevas por ahora');
   });
 
-  // ── Header oculto al hacer scroll (acumulador anti-tembladera) ──
+  // ── Header oculto al hacer scroll ──
+  // Ocultar/mostrar el header cambia la altura del contenedor de scroll, y el
+  // navegador re-ajusta scrollTop (clamp) cerca del límite inferior. Esos
+  // deltas artificiales retro-alimentaban el acumulador y el header entraba
+  // en un bucle ocultar/mostrar (temblor). Por eso: no ocultar en la zona
+  // final del scroll y descartar los deltas mientras la animación se asienta.
   document.querySelectorAll('.view-scroll').forEach(scroll => {
     let lastY = 0;
     let accumulated = 0;
     let ticking = false;
+    let settleUntil = 0;
     const HIDE_THRESHOLD = 22;
+    const SETTLE_MS = 380; // transición del header (280ms) + margen
 
     scroll.addEventListener('scroll', () => {
       if (ticking) return;
@@ -817,34 +824,40 @@ document.addEventListener('DOMContentLoaded', () => {
       if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) return;
       ticking = true;
       requestAnimationFrame(() => {
+        ticking = false;
         const header = scroll.closest('.view') && scroll.closest('.view').querySelector('.app-header');
         // Solo ocultar header en vistas principales (hamburguesa), nunca en vistas secundarias (botón atrás)
-        if (!header || !header.querySelector('.hamburger-btn')) { ticking = false; return; }
-        const y = Math.max(0, scroll.scrollTop);
+        if (!header || !header.querySelector('.hamburger-btn')) return;
+        const h = header.offsetHeight;
+        const maxScroll = Math.max(0, scroll.scrollHeight - scroll.clientHeight);
+        // Clamp en ambos extremos: el rebote (overscroll) genera valores fuera de rango
+        const y = Math.min(Math.max(0, scroll.scrollTop), maxScroll);
 
         if (y <= 4) {
           header.style.transform = '';
           header.style.marginBottom = '';
           lastY = 0; accumulated = 0;
-          ticking = false;
           return;
         }
 
         const delta = y - lastY;
         lastY = y;
+
+        if (performance.now() < settleUntil) { accumulated = 0; return; }
+
         accumulated += delta;
 
-        if (accumulated > HIDE_THRESHOLD && y > 56) {
-          const h = header.offsetHeight;
+        if (accumulated > HIDE_THRESHOLD && y > 56 && maxScroll - y > h + HIDE_THRESHOLD) {
           header.style.transform = `translateY(-${h}px)`;
           header.style.marginBottom = `-${h}px`;
           accumulated = 0;
+          settleUntil = performance.now() + SETTLE_MS;
         } else if (accumulated < -HIDE_THRESHOLD) {
           header.style.transform = '';
           header.style.marginBottom = '';
           accumulated = 0;
+          settleUntil = performance.now() + SETTLE_MS;
         }
-        ticking = false;
       });
     }, { passive: true });
   });
