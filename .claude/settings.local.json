@@ -73,7 +73,21 @@
       "PowerShell(npm run build:www)",
       "PowerShell(node --check js\\\\app.js)",
       "PowerShell(node --check www\\\\js\\\\app.js)",
-      "Bash(grep -rhoE \".{12}\\\\*Enlace:\\\\* \\\\\\\\$\\\\{url\\\\}\" misiones --include=*.js)"
+      "Bash(grep -rhoE \".{12}\\\\*Enlace:\\\\* \\\\\\\\$\\\\{url\\\\}\" misiones --include=*.js)",
+      "Bash(curl -s \"https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2y3ciclo-sustantivos/js/sustantivos.js\" -o /tmp/deployed-sustantivos.js)",
+      "Bash(curl -sI \"https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2y3ciclo-sustantivos/js/sustantivos.js\")",
+      "Bash(curl -s \"https://api.github.com/repos/josuepolancolemus2020-glitch/misiones-educativas_a-policastsapien.com/deployments?per_page=2\")",
+      "Bash(curl -s \"https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2y3ciclo-sustantivos/js/sustantivos.js\")",
+      "Bash(curl -s \"https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2y3ciclo-sustantivos/js/sustantivos.js?v=nuevo\")",
+      "Bash(gh run *)",
+      "Bash(curl -s \"https://api.github.com/repos/josuepolancolemus2020-glitch/misiones-educativas_a-policastsapien.com/actions/runs?per_page=4\")",
+      "Bash(curl -s \"https://api.github.com/repos/josuepolancolemus2020-glitch/misiones-educativas_a-policastsapien.com/actions/runs/28711759291/jobs\")",
+      "Bash(curl -s \"https://api.github.com/repos/josuepolancolemus2020-glitch/misiones-educativas_a-policastsapien.com/actions/runs/28711759291/jobs\" -o /c/Users/Dell/AppData/Local/Temp/claude/jobs.json)",
+      "Bash(node -e \"const j=require\\('C:/Users/Dell/AppData/Local/Temp/claude/jobs.json'\\);for\\(const job of j.jobs\\){console.log\\('JOB:',job.name,'=>',job.conclusion\\);for\\(const s of job.steps\\)if\\(s.conclusion!=='success'&&s.conclusion!=='skipped'\\)console.log\\('  step FAIL:',s.name,s.conclusion\\)}\")",
+      "Bash(git commit --allow-empty -m 'Relanzar despliegue de GitHub Pages *)",
+      "Bash(curl -s \"https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2y3ciclo-sustantivos/js/sustantivos.js?v=$\\(date +%s\\)\")",
+      "Bash(curl -s \"https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2y3ciclo-marcadores-textuales/marcadores-textuales.html?v=$\\(date +%s\\)\")",
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\183d87dc-4f70-4aa0-8e0e-90e51d7680ab\\\\scratchpad\\\\validate-mision.js\")"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
