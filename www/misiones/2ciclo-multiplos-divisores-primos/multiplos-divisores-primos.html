@@ -333,6 +333,17 @@
     </div>
     <div id="fbFlash" class="fb" role="alert"></div>
   </div>
+  <div class="card ac-purple">
+    <h2>🧠 Juego: Memoria de los Números</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
+    <div class="memo-stats" id="memoStats" aria-live="polite"></div>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
     <span class="nsb-icon">🧠</span>
     <span class="nsb-arrow">→</span>
@@ -549,10 +560,11 @@
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u</p>
     </div>
     <h2 id="eval-screen-title">📝 Evaluación Final</h2>
-    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">4 secciones de 25 pts c/u. Copia el examen en tu cuaderno, resuélvelo y selecciona <strong>Ver Pauta</strong> para autoevaluarte.</p>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">4 secciones de 25 pts c/u. Resuélvela <strong>en línea</strong> (escribe, marca y selecciona) y presiona <strong>Calificar prueba</strong>, o imprímela para resolverla en papel. <strong>Genera una nueva evaluación cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
       <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
       <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
     </div>
     <div id="evalOut"></div>

@@ -17,8 +17,10 @@ Nueva misión:
 - Debe incluir: juegos lúdicos interactivos (+ lo que quieras agregar)
 
 Reglas de ahorro y calidad:
-- Usa como plantilla la misión RECTA NUMÉRICA (misiones/2ciclo-recta-numerica,
-  id 27): ya trae TODOS los estándares de UX aprobados. NO releas misiones más viejas.
+- Usa como plantilla la misión MÚLTIPLOS, DIVISORES Y PRIMOS
+  (misiones/2ciclo-multiplos-divisores-primos, id 28): ya trae TODOS los
+  estándares de UX aprobados (incluye memorama y evaluación conceptual
+  calificable en línea). NO releas misiones más viejas.
 - Aplica completo el checklist "Estándares de UX aprobados" de esta plantilla.
 - Varía los widgets (2 del Lab + 3 de la sección Widgets): crea 5 nuevos
   adecuados al contenido de la misión.
@@ -40,13 +42,18 @@ Reglas de ahorro y calidad:
 2. **Predice** (primera impresión, debe encantar): cada predicción lleva su
    explorador interactivo ("🔍 Explorar la pista") que induce a la respuesta
    jugando: medir distancias, animaciones, tocar y descubrir.
-3. **Flashcards**: reverso en minúscula + refuerzo CSS
-   `.fc-back .fa{text-transform:lowercase;}`.
+3. **Flashcards**: reverso en minúscula + refuerzo CSS **blindado**
+   `.fc-back .fa, #fcA{text-transform:lowercase !important;}` (el `!important`
+   es OBLIGATORIO: Font Awesome también define la clase `.fa` y puede pisar
+   la regla; sin él el reverso sale en mayúscula).
 4. **Clasifica**: seleccionar y colocar (SIN arrastre). Si hay un elemento
    seleccionado y se toca uno ya colocado, se INSERTA el seleccionado en esa
    caja (no se saca el tocado); solo sin selección el toque devuelve al banco.
 5. **Reto final**: botón "🔀 Variar pareja" con varios pools de ejercicios
    (`retoPairs`) + etiqueta `retoPairLbl`; resultados verificados por script.
+   En el TEXTO de los ejercicios usar solo caracteres seguros: **"vs"** para
+   comparar (NUNCA ⚖ u otros emojis exóticos: en varios teléfonos se ven como
+   símbolos rotos/incomprensibles).
 6. **Sopa de letras**: palabras en 8 direcciones (incluidas inversas),
    generadas y validadas con script Node; botón "🔦 Linterna (-2 XP)" que
    ilumina 3 s las palabras pendientes y avisa que usarla cuesta puntos.
@@ -62,8 +69,25 @@ Reglas de ahorro y calidad:
    espacios en blanco).
 9. **Pautas de todas las pruebas**: letra grande (tablas ≈11pt, título ≈13pt)
    para docentes con problemas de vista; solo se amplía la pauta, el examen no.
+10. **Juego de memoria (memorama)**: OBLIGATORIO en la sección Flashcards, como
+    segunda tarjeta. Parejas concepto↔pista/ejemplo (6 pares), +1 XP por pareja
+    (primera vez) y +2 XP al completar, con confeti. Copiar el patrón `memoPairs`
+    / `buildMemo` / `flipMemo` + CSS `.memo-*` de la misión id 28.
+11. **Evaluación conceptual TAMBIÉN interactiva**: además de imprimir, debe
+    poder resolverse EN LÍNEA y calificarse igual que la operativa: inputs de
+    texto en Completar (con lista `acc` de respuestas aceptadas y normalización
+    sin tildes), radios con `value` en V/F y Selección, `<select>` de letras en
+    Pareados, botón "🧮 Calificar prueba" (`gradeEval()`) y panel de resultado
+    /100 con desglose. Referencia: misión id 28.
+12. **Juegos lúdicos en TODAS las secciones**: cada sección debe sentirse como
+    juego (exploradores en Predice, mini-quiz en cada bloque de Aprende,
+    widgets con racha/puntaje/confeti, memorama, reto contra reloj, sopa con
+    linterna). El estudiante debe sentir "placer de aprender": feedback
+    inmediato, animaciones y recompensas visibles.
 
-> Implementación de referencia completa: `misiones/2ciclo-recta-numerica/` (id 27).
+> Implementación de referencia completa: `misiones/2ciclo-multiplos-divisores-primos/`
+> (id 28, incluye TODOS los estándares 1-12). La id 27 (recta numérica) es la
+> referencia anterior y NO trae memorama ni evaluación conceptual calificable.
 
 ---
 
