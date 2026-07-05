@@ -95,7 +95,8 @@
       "PowerShell($src=\"misiones\\\\2y3ciclo-division-decimales\"; $targets=@\\(\"www\\\\misiones\\\\2y3ciclo-division-decimales\",\"android\\\\app\\\\src\\\\main\\\\assets\\\\public\\\\misiones\\\\2y3ciclo-division-decimales\",\"android\\\\app\\\\build\\\\intermediates\\\\assets\\\\debug\\\\mergeDebugAssets\\\\public\\\\misiones\\\\2y3ciclo-division-decimales\"\\); foreach\\($t in $targets\\){ robocopy $src $t /E /NFL /NDL /NJH /NJS | Out-Null; Write-Host \"$t -> exit $LASTEXITCODE\" })",
       "Bash(xargs wc -l)",
       "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\5c632fe5-5630-47ea-a047-94dae1ef2494\\\\scratchpad\\\\gensopa.js\")",
-      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\5c632fe5-5630-47ea-a047-94dae1ef2494\\\\scratchpad\\\\retheme.js\")"
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\5c632fe5-5630-47ea-a047-94dae1ef2494\\\\scratchpad\\\\retheme.js\")",
+      "Bash(echo \"exit:$? \\(1 = sin restos\\)\")"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
