@@ -42,10 +42,14 @@ Reglas de ahorro y calidad:
 2. **Predice** (primera impresión, debe encantar): cada predicción lleva su
    explorador interactivo ("🔍 Explorar la pista") que induce a la respuesta
    jugando: medir distancias, animaciones, tocar y descubrir.
-3. **Flashcards**: reverso en minúscula + refuerzo CSS **blindado**
-   `.fc-back .fa, #fcA{text-transform:lowercase !important;}` (el `!important`
-   es OBLIGATORIO: Font Awesome también define la clase `.fa` y puede pisar
-   la regla; sin él el reverso sale en mayúscula).
+3. **Flashcards**: reverso en minúscula. ⚠️ CAUSA RAÍZ del bug histórico:
+   NUNCA usar `class="fa"` en el div del reverso — Font Awesome 6 mapea las
+   letras a-z y los dígitos 0-9 a ICONOS con forma de MAYÚSCULA e impone su
+   fuente (ninguna regla `text-transform` puede arreglarlo porque el glifo
+   mismo es mayúsculo; las tildes ú/á delatan el bug al caer a la fuente
+   normal). La clase correcta es `fca` y el CSS blindado obligatorio:
+   `#fcA{font-family:'Nunito','Fredoka',sans-serif !important;font-weight:600 !important;font-style:normal !important;text-transform:lowercase !important;}`
+   (corregido en las 28 misiones el 2026-07-05, commit c8e995f).
 4. **Clasifica**: seleccionar y colocar (SIN arrastre). Si hay un elemento
    seleccionado y se toca uno ya colocado, se INSERTA el seleccionado en esa
    caja (no se saca el tocado); solo sin selección el toque devuelve al banco.
