@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Múltiplos, Divisores y Primos | policastsapien.com</title>
+<meta name="description" content="Misión Múltiplos, Divisores y Primos: identifica múltiplos, divisores, pares, impares y primos, y descompón en factores primos con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión Múltiplos, Divisores y Primos">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2ciclo-multiplos-divisores-primos/multiplos-divisores-primos.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/multiplos-divisores-primos.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=matemáticas" class="xp-back-btn" title="Regresar a misiones de Matemáticas">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
+</div>
+
+<header class="hero" role="banner" style="background:linear-gradient(90deg,#1565c0 0%,#00838f 50%,#6c5ce7 100%);">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🤖</div>
+      <div class="mascot-tooltip">¡Hola! Soy Facto, el robot de la fábrica de números. ¡Descubramos los secretos de los primos!</div>
+    </div>
+    <div class="hero-text">
+      <h1>Misión <span>Múltiplos, Divisores y Primos</span></h1>
+      <p class="sub">¡Identifica múltiplos, divisores, pares, impares y primos, y descompón números en factores! 🎯</p>
+      <div class="badge">🔑 II Ciclo · Matemática</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<div class="sec active" id="s-predice" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔮 Predice antes de resolver</h2>
+    <p style="margin-bottom:0.5rem;">Antes de aprender la regla, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
+    <div id="prediceWidget"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ahora aprende la regla!</span><span class="nsb-name">Aprende</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔑 El mundo secreto de los números</h2>
+    <p style="margin-bottom:0.7rem;">Cada número guarda secretos: tiene su familia de <strong>múltiplos</strong>, su equipo de <strong>divisores</strong>, y puede ser <strong>par o impar</strong>, <strong>primo o compuesto</strong>. ¡En esta misión aprenderás a descubrirlos todos!</p>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Las dos preguntas clave:</strong> ¿en qué tablas de multiplicar APARECE este número? (sus múltiplos lo delatan) y ¿qué números lo dividen EXACTO? (esos son sus divisores).</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">⚡</span>
+      <div><strong>La Regla de Oro:</strong> divisor y múltiplo son parejas: si 12 ÷ 3 = 4 exacto, entonces <strong>3 es divisor de 12</strong> y <strong>12 es múltiplo de 3</strong>. ¡Son las dos caras de la misma moneda!</div>
+    </div>
+    <div class="demo-visual">
+      <div class="demo-title">🔬 Mini-demostración</div>
+      <div class="demo-steps">
+        <div class="demo-step ds-start"><span class="ds-label">Número</span><span class="ds-val">18</span></div>
+        <div class="demo-arrow">¿quiénes lo dividen exacto? ↓</div>
+        <div class="demo-step ds-mid"><span class="ds-label">Divisores</span><span class="ds-val">1 · 2 · 3 · 6 · 9 · 18</span></div>
+        <div class="demo-arrow">= </div>
+        <div class="demo-step ds-end"><span class="ds-label">Veredicto</span><span class="ds-val" style="font-size:1rem;">6 divisores → es COMPUESTO</span></div>
+      </div>
+      <p class="demo-note">✅ Los divisores se buscan en <strong>parejas</strong>: 1×18, 2×9 y 3×6. ¡Cada pareja regala dos divisores!</p>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 1: Los múltiplos, la familia sin fin</h2>
+    <p style="margin-bottom:0.6rem;">Los múltiplos de un número se obtienen <strong>multiplicándolo por 1, 2, 3, 4…</strong> Son los resultados de su tabla de multiplicar, ¡y nunca se acaban!</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Múltiplos de 7</span>
+      <span class="ae-flecha">→ 7×1, 7×2, 7×3, 7×4… →</span>
+      <span class="ae-res"><strong>7, 14, 21, 28, 35…</strong> ♾️</span>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock1">
+      <p class="mq-pregunta">🤔 ¿Cuál de estos números NO es múltiplo de 6?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'24 sí es múltiplo: 6×4=24.')">24</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! 32 no aparece en la tabla del 6: 6×5=30 y 6×6=36; el 32 queda en medio.')">32</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'18 sí es múltiplo: 6×3=18.')">18</button>
+      </div>
+      <div class="mq-fb" id="mqBlock1-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 2: Los divisores, el equipo que reparte exacto</h2>
+    <p style="margin-bottom:0.6rem;">Un <strong>divisor</strong> divide a un número en forma exacta, con <strong>residuo 0</strong>. Para encontrarlos todos, búscalos en parejas que multiplicadas den el número.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>✏️ Divisores de 20</h4>
+        <p>1×20 · 2×10 · 4×5</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">Divisores: <strong>1, 2, 4, 5, 10 y 20</strong>. ¡Seis en total, ni uno más!</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>⚠️ Cuidado</h4>
+        <p>El 3 <strong>no</strong> es divisor de 20</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">20 ÷ 3 = 6 y sobran 2. Si hay residuo, no hay divisor.</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock2">
+      <p class="mq-pregunta">🤔 ¿Cuál de estos números SÍ es divisor de 18?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'18 ÷ 4 = 4 y sobran 2: no es exacta.')">4</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'18 ÷ 5 = 3 y sobran 3: no es exacta.')">5</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! 18 ÷ 6 = 3 exacto. La pareja del 6 es el 3.')">6</button>
+      </div>
+      <div class="mq-fb" id="mqBlock2-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📦 Bloque 3: Pares e impares, la última cifra manda</h2>
+    <p style="margin-bottom:0.7rem;">Un número es <strong>par</strong> si termina en <strong>0, 2, 4, 6 u 8</strong> (se reparte en parejas sin sobrar) e <strong>impar</strong> si termina en <strong>1, 3, 5, 7 o 9</strong> (siempre sobra uno).</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">¿3,45<u>8</u> es par?</span>
+      <span class="ae-flecha">→ solo miro la última cifra: 8 →</span>
+      <span class="ae-res">¡es <strong>PAR</strong>! No importa lo grande que sea</span>
+    </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">2️⃣</span>
+      <div><strong>Secreto:</strong> los pares son exactamente los múltiplos de 2. Por eso el criterio funciona: la última cifra dice si el 2 lo divide exacto.</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock3">
+      <p class="mq-pregunta">🤔 Sin dividir: ¿el número 7,061 es par o impar?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! Termina en 1, que es cifra impar: 7,061 es impar.')">Impar</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Mira la última cifra: es 1, cifra impar. El 0 y el 6 del medio no deciden.')">Par</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'¡Sí se puede saber! Basta mirar la última cifra: 1 es impar.')">No se puede saber</button>
+      </div>
+      <div class="mq-fb" id="mqBlock3-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>📦 Bloque 4: Primos y compuestos, cuestión de divisores</h2>
+    <p style="margin-bottom:0.6rem;">Un número es <strong>primo</strong> si tiene exactamente <strong>dos divisores</strong> (1 y él mismo) y <strong>compuesto</strong> si tiene <strong>más de dos</strong>. El 1 es especial: no es primo ni compuesto.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>💎 Primos hasta 30</h4>
+        <p><strong>2, 3, 5, 7, 11, 13, 17, 19, 23, 29</strong></p>
+        <p style="font-size:0.82rem;">El 2 es el único primo par.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🧱 Compuestos con disfraz</h4>
+        <p><strong>9, 15, 21, 27, 51…</strong></p>
+        <p style="font-size:0.82rem;">Parecen primos por ser impares, ¡pero el 3 los divide! No todo impar es primo.</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock4">
+      <p class="mq-pregunta">🤔 ¿Cuál de estos números es primo?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'21 = 3 × 7: tiene cuatro divisores, es compuesto.')">21</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,true,'¡Correcto! 23 solo se divide exacto entre 1 y 23.')">23</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'25 = 5 × 5: el 5 lo divide, es compuesto.')">25</button>
+      </div>
+      <div class="mq-fb" id="mqBlock4-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>📦 Bloque 5: La descomposición en factores primos</h2>
+    <p style="margin-bottom:0.6rem;">Todo número compuesto se puede escribir como <strong>producto de factores primos</strong>. Con el <strong>árbol de factores</strong>: divide entre el menor primo posible (2, 3, 5, 7…) hasta llegar a 1. Ejemplo: 36 → 36÷2=18 → 18÷2=9 → 9÷3=3 → 3÷3=1, así que <strong>36 = 2 × 2 × 3 × 3</strong>.</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;text-align:center;font-family:'Fredoka',sans-serif;margin:0.6rem 0;">
+        <thead><tr style="background:var(--pri-gl);">
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">🔍 Criterio</th>
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">✅ Un número es divisible entre…</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">2</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);">si termina en cifra par: 0, 2, 4, 6, 8</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">3</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);">si la suma de sus cifras es múltiplo de 3</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">5</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);">si termina en 0 o en 5</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">10</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);">si termina en 0</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.78rem;color:var(--gray);">⚠️ Comprueba siempre tu árbol: al multiplicar todos los factores primos debe salir el número original.</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">📊</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📊 Casos Comunes</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">7·14·21·28</div><div class="t-info">Múltiplos: la tabla del número, sin fin</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">20÷4=5 ✔</div><div class="t-info">Divisor: divide exacto, con residuo 0</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">…0·2·4·6·8</div><div class="t-info">Pares: la última cifra es par</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">…1·3·5·7·9</div><div class="t-info">Impares: al repartir en parejas sobra 1</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">💎 2·3·5·7·11</div><div class="t-info">Primos: exactamente dos divisores</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">36=2×2×3×3</div><div class="t-info">Factorización: producto de primos</div></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
+    <span class="nsb-icon">⚠️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Evita los tropiezos!</span><span class="nsb-name">Errores Comunes</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-errores" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>⚠️ Errores Comunes — ¡No caigas en ellos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Estos son los errores que más cometen los estudiantes. Léelos, entiéndelos y ¡evítalos!</p>
+    <div class="error-cards">
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Confundir múltiplo con divisor</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"El 24 es divisor de 6".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Es al revés: el pequeño divide y el grande es múltiplo. 6 divide a 24, así que 6 es divisor de 24 y 24 es múltiplo de 6.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>El 6 es <strong>divisor</strong> de 24 · el 24 es <strong>múltiplo</strong> de 6 ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Creer que todos los impares son primos</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"El 9, el 15 y el 21 son primos porque son impares".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Ser impar no garantiza nada: 9=3×3, 15=3×5 y 21=3×7. Tienen más de dos divisores.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>9, 15 y 21 son <strong>compuestos</strong>. Primo es el que tiene exactamente 2 divisores ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: Decir que el 1 es primo</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"El 1 es primo porque solo se divide entre 1".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Un primo necesita DOS divisores diferentes. El 1 tiene un solo divisor, así que no cumple.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>El 1 <strong>no es primo ni compuesto</strong>: es un número especial ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Descartar al 2 como primo "por ser par"</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"El 2 no puede ser primo porque es par".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>La definición solo pide dos divisores, y el 2 los tiene: 1 y 2. Es par Y primo a la vez.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>El 2 es el <strong>único primo par</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 5: Dejar factores compuestos en la factorización</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"La descomposición de 60 es 6 × 10, ¡listo!".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>6 y 10 no son primos: hay que seguir descomponiendo. 6=2×3 y 10=2×5.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>60 = <strong>2 × 2 × 3 × 5</strong>, todos primos ✔</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica lo aprendido!</span><span class="nsb-name">Laboratorio</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>🧪 Laboratorio: La Criba Caza-Múltiplos</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Como Eratóstenes hace 2,200 años: caza en la tabla todos los múltiplos del número pedido. ⭐ +2 XP por ronda completa (primeras 5)</p>
+    <div id="widget-criba-interactive"></div>
+  </div>
+  <div class="card ac-teal">
+    <h2>🏭 Laboratorio 2: La Fábrica de Factores Primos</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Golpea cada pieza con los martillos primos (÷2, ÷3, ÷5, ÷7) hasta dejarla en 1: la máquina anota la factorización. ⭐ +2 XP por pieza terminada (primeras 5)</p>
+    <div id="widget-fabrica-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fa" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un elemento para <strong>seleccionarlo</strong> y luego toca la caja donde quieras colocarlo. Toca un elemento ya colocado para devolverlo al banco.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez) · Usa 🔄 Variar grupo: ¡hay 4 desafíos!</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-widgets" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>📡 Radar Par-Impar</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Aparece un número grande: decide si es par o impar sin dividir. El radar te muestra la cifra que manda. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-radar-interactive"></div>
+  </div>
+  <div class="card ac-blue">
+    <h2>🕵️ Detective de Primos</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">¿Primo o compuesto? ¡Cuidado con los impares tramposos como el 51! El feedback muestra todos los divisores. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-primo-interactive"></div>
+  </div>
+  <div class="card ac-gold">
+    <h2>🏹 Cazador de Divisores</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Atrapa en el tablero del 1 al 12 todos los divisores del número. Búscalos en parejas. ⭐ +2 XP por cacería completa (primeras 5)</p>
+    <div id="widget-cazador-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
+    <span class="nsb-icon">💬</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra que entendiste!</span><span class="nsb-name">Explica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-explica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>💬 Explica con tus palabras</h2>
+    <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
+    <div id="explicaContainer"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Hora del reto!</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🏆 Reto Final — ¿A es Mayor, Igual o Menor que B? (30 seg)</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.4rem;">Compara rápidamente A con B. Usa 🔀 para cambiar el tipo de ejercicios.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;" id="retoPairLbl">🎯 Pareja actual: Cuenta divisores 🔑</p>
+    <div class="game" id="gameBox" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('mayor')">↑ A ES MAYOR</button>
+        <button class="btn btn-g" id="retoBtn-c" onclick="ansReto('igual')">= SON IGUALES</button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('menor')">↓ A ES MENOR</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-amber" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada · Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés!</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">Genera ejercicios nuevos cada vez: autóasignate práctica desde casa o cópialos en el pizarrón del aula. Las respuestas se muestran con 👁.</p>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="multiplos">✖️ Escribir múltiplos</option>
+        <option value="divisores">🔑 Encontrar todos los divisores</option>
+        <option value="parimpar">2️⃣ Clasificar pares e impares</option>
+        <option value="primos">💎 ¿Primo o compuesto?</option>
+        <option value="factorizar">🌳 Descomponer en factores primos</option>
+        <option value="pensamiento">🧠 Pensamiento matemático</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Prueba Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-blue">
+    <div class="eval-print-header">
+      <h2>Evaluación Final de Misión Múltiplos, Divisores y Primos · II Ciclo · Matemática</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación Final</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">4 secciones de 25 pts c/u. Copia el examen en tu cuaderno, resuélvelo y selecciona <strong>Ver Pauta</strong> para autoevaluarte.</p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Matemáticas — Prueba Operativa · Múltiplos, Divisores y Primos · II Ciclo</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 50 pts · II: 20 pts · III: 10 pts · IV: 10 pts · V: 10 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">📐 Prueba Operativa — Múltiplos, Divisores y Primos</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Resuelve cada ítem en tu cuaderno y escribe la respuesta en la casilla. Presiona <strong>Calificar prueba</strong> para autoevaluarte en pantalla. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>📁 Recursos del Tema</h2>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo sobre múltiplos, divisores, números primos y la descomposición en factores primos.</p>
+    <a href="https://drive.google.com/drive/folders/1vUVVqFSWv-I-b_2E_e-GudZ6qjkjD8se?usp=sharing"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+  </div>
+</div>
+
+</main>
+
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Múltiplos, Divisores y Primos</div>
+    <div class="diploma-mascot" aria-hidden="true">🤖</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Tipos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-explica" data-s="s-explica" onclick="go('s-explica')"><span class="ico">💬</span> Explica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje...» 🌱</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/multiplos-divisores-primos.js"></script>
+
+  <script src="js/interaccion_criba.js"></script>
+  <script src="js/interaccion_fabrica.js"></script>
+  <script src="js/interaccion_radar.js"></script>
+  <script src="js/interaccion_primo.js"></script>
+  <script src="js/interaccion_cazador.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetCribaJSON) {
+        window.WidgetCribaJSON.mount('widget-criba-interactive');
+      }
+      if (window.WidgetFabricaJSON) {
+        window.WidgetFabricaJSON.mount('widget-fabrica-interactive');
+      }
+      if (window.WidgetRadarJSON) {
+        window.WidgetRadarJSON.mount('widget-radar-interactive');
+      }
+      if (window.WidgetPrimoJSON) {
+        window.WidgetPrimoJSON.mount('widget-primo-interactive');
+      }
+      if (window.WidgetCazadorJSON) {
+        window.WidgetCazadorJSON.mount('widget-cazador-interactive');
+      }
+    });
+  </script>
+
+</body>
+</html>

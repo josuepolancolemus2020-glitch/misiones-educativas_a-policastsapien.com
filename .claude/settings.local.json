@@ -96,7 +96,8 @@
       "Bash(xargs wc -l)",
       "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\5c632fe5-5630-47ea-a047-94dae1ef2494\\\\scratchpad\\\\gensopa.js\")",
       "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\5c632fe5-5630-47ea-a047-94dae1ef2494\\\\scratchpad\\\\retheme.js\")",
-      "Bash(echo \"exit:$? \\(1 = sin restos\\)\")"
+      "Bash(echo \"exit:$? \\(1 = sin restos\\)\")",
+      "Bash(node \"C:/Users/Dell/AppData/Local/Temp/claude/C--Desarrollo-misiones-educativas-a-policastsapien-com/8ffd8df7-c93d-4616-bf1c-0cf768fb8580/scratchpad/validate-mission.js\")"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
