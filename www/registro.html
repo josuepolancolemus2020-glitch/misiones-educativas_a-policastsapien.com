@@ -86,7 +86,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <div class="tabla-wrap">
   <table>
-    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Misión</th><th>Evento</th><th>Detalle</th><th>Nota</th><th>XP</th><th>Min</th></tr></thead>
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Grado</th><th>Misión</th><th>Evento</th><th>Detalle</th><th>Nota</th><th>XP</th><th>Min</th></tr></thead>
     <tbody id="tbody"></tbody>
   </table>
   <div class="vacio" id="vacio" style="display:none;">
@@ -141,7 +141,8 @@ function pintar(){
       nota = '<span class="'+cls+'">'+ev.nota+'/'+(ev.base||100)+'</span>';
     }
     const tr=document.createElement('tr');
-    tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(ev.alumno||'—')+'</td><td>'+esc(ev.mision||'—')+
+    const gradoTxt = (ev.grado||'') + (ev.docente ? (ev.grado?' · ':'') + ev.docente : '');
+    tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(ev.alumno||'—')+'</td><td>'+esc(gradoTxt||'—')+'</td><td>'+esc(ev.mision||'—')+
       '</td><td><span class="badge b-'+esc(ev.tipo)+'">'+(NOMBRE_TIPO[ev.tipo]||esc(ev.tipo))+'</span></td><td>'+esc(detalle)+
       '</td><td>'+nota+'</td><td>'+esc(ev.xp==null?'':ev.xp)+'</td><td>'+esc(ev.min==null?'':ev.min)+'</td>';
     tb.appendChild(tr);

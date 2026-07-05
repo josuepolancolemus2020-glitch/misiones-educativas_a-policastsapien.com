@@ -117,7 +117,11 @@ Reglas de ahorro y calidad:
    No requiere ningún cambio en el JS de la misión: se engancha solo a las funciones
    estándar `fin`, `gradeEval` y `gradeEvalOp`, y lee la nota del panel
    `#evalAutoResult` / `#evalOpAutoResult` — por eso el texto "Resultado: X/100 pts"
-   de esos paneles NO debe cambiar de formato).
+   de esos paneles NO debe cambiar de formato. Además inyecta solo: el modal de
+   identificación del alumno (nombre/código + grado + código del maestro, 1 sola vez
+   por dispositivo) y el botón "📤 Enviar resultados" dentro de `.diploma-actions`
+   de la constancia — por eso ese div y el input `.diploma-input` deben conservar
+   sus clases estándar).
 6. **Registrar** en `js/data/misiones.js` con el **siguiente id libre** (revisar el
    archivo; NO asumir count+1).
 7. **Validar** (barato y confiable):

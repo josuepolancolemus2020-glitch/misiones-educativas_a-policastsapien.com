@@ -17,6 +17,7 @@
 
   var CLAVE = 'METAS_REGISTRO_V1';
   var CLAVE_DISP = 'METAS_DISPOSITIVO';
+  var CLAVE_ALUMNO = 'METAS_ALUMNO_V1';
   var MAX_EVENTOS = 4000; // tope de seguridad para no llenar localStorage
 
   // ---------- almacenamiento ----------
@@ -33,6 +34,16 @@
     }
   }
   function borrar() { try { localStorage.removeItem(CLAVE); } catch (e) {} }
+
+  // Identificación "lite" del estudiante (sin contraseña, sin servidor):
+  // { nombre, grado, docente } — viaja pegada a cada evento
+  function identificacion() {
+    try { var o = JSON.parse(localStorage.getItem(CLAVE_ALUMNO)); return (o && typeof o === 'object') ? o : null; }
+    catch (e) { return null; }
+  }
+  function guardarIdentificacion(datos) {
+    try { localStorage.setItem(CLAVE_ALUMNO, JSON.stringify(datos)); } catch (e) {}
+  }
 
   // Identificador anónimo del dispositivo (se crea una sola vez)
   function idDispositivo() {
@@ -51,6 +62,8 @@
     return m ? decodeURIComponent(m[1]) : null;
   }
   function alumnoActual() {
+    var id = identificacion();
+    if (id && id.nombre) return String(id.nombre).slice(0, 60);
     var inp = document.querySelector('.diploma-input');
     var v = inp && inp.value ? inp.value.trim() : '';
     return v.slice(0, 60);
@@ -70,11 +83,14 @@
 
   // ---------- registro de eventos ----------
   function registrar(tipo, datos) {
+    var id = identificacion() || {};
     var ev = {
       t: new Date().toISOString(),
       tipo: tipo,
       mision: idMision(),
       alumno: alumnoActual(),
+      grado: id.grado || '',
+      docente: id.docente || '',
       xp: xpActual(),
       min: minActivos(),
       ses: sesId,
@@ -171,10 +187,10 @@
   }
   function csv(eventos) {
     eventos = eventos || leer();
-    var filas = ['fecha,hora,mision,alumno,tipo,seccion,forma,nota,base,xp,min,sesion,dispositivo'];
+    var filas = ['fecha,hora,mision,alumno,grado,docente,tipo,seccion,forma,nota,base,xp,min,sesion,dispositivo'];
     eventos.forEach(function (ev) {
       var fl = fechaLocal(ev.t);
-      filas.push([fl.fecha, fl.hora, ev.mision, ev.alumno, ev.tipo, ev.seccion, ev.forma,
+      filas.push([fl.fecha, fl.hora, ev.mision, ev.alumno, ev.grado, ev.docente, ev.tipo, ev.seccion, ev.forma,
         ev.nota, ev.base, ev.xp, ev.min, ev.ses, ev.disp].map(celda).join(','));
     });
     return '﻿' + filas.join('\r\n'); // BOM para que Excel abra bien las tildes
@@ -226,21 +242,164 @@
     };
   }
 
+  // ---------- reporte del estudiante (WhatsApp al maestro) ----------
+  function tituloMision() {
+    var t = (document.title || '').replace(/^[^\wÁÉÍÓÚÑáéíóúñ]+/, '').trim();
+    return t || idMision() || 'Misión';
+  }
+  function textoReporte() {
+    var id = identificacion() || {};
+    var nombre = id.nombre || alumnoActual() || 'Estudiante';
+    var mid = idMision();
+    var evs = leer().filter(function (e) {
+      return e.mision === mid && (!e.alumno || e.alumno === nombre);
+    });
+    // secciones completadas: lo que muestra la propia misión en su navegación
+    var tabs = document.querySelectorAll('[data-s]');
+    var hechas = 0;
+    for (var i = 0; i < tabs.length; i++) { if (tabs[i].classList.contains('done')) hechas++; }
+    // tiempo: suma del máximo por sesión (la sesión actual usa el contador vivo)
+    var porSes = {};
+    evs.forEach(function (e) { if (e.ses && typeof e.min === 'number') porSes[e.ses] = Math.max(porSes[e.ses] || 0, e.min); });
+    porSes[sesId] = Math.max(porSes[sesId] || 0, minActivos());
+    var minutos = 0; for (var s in porSes) minutos += porSes[s];
+    // última nota e intentos por tipo de prueba
+    var linea = function (tipo, etiqueta) {
+      var lista = evs.filter(function (e) { return e.tipo === tipo && typeof e.nota === 'number'; });
+      if (!lista.length) return etiqueta + ': aún sin calificar';
+      var u = lista[lista.length - 1];
+      var fl = fechaLocal(u.t);
+      return etiqueta + ': *' + u.nota + '/' + (u.base || 100) + '*' +
+        (u.forma ? ' · Forma ' + u.forma : '') +
+        ' · ' + lista.length + ' intento' + (lista.length === 1 ? '' : 's') +
+        ' · ' + fl.fecha + ' ' + fl.hora;
+    };
+    var hoy = fechaLocal(new Date().toISOString());
+    return '📤 *REPORTE DE RESULTADOS · M.E.T.A.S*\n\n' +
+      '👤 Alumno: ' + nombre + '\n' +
+      (id.grado ? '🏫 Grado y sección: ' + id.grado + '\n' : '') +
+      (id.docente ? '🧑‍🏫 Código del maestro: ' + id.docente + '\n' : '') +
+      '🚀 Misión: ' + tituloMision() + '\n' +
+      '📅 Enviado: ' + hoy.fecha + ' ' + hoy.hora + '\n\n' +
+      '✅ Secciones completadas: ' + hechas + (tabs.length ? ' de ' + tabs.length : '') + '\n' +
+      '⭐ XP: ' + (xpActual() === null ? '—' : xpActual()) + '\n' +
+      '⏱️ Tiempo activo: ' + Math.round(minutos) + ' min\n' +
+      '📋 ' + linea('evaluacion', 'Evaluación conceptual') + '\n' +
+      '🧮 ' + linea('prueba_operativa', 'Prueba operativa') + '\n\n' +
+      '🔎 Verificable en el Registro Docente del dispositivo ' + idDispositivo() + '\n\n' +
+      '🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com';
+  }
+  function abrirWA(texto) {
+    var enc = encodeURIComponent(texto);
+    var esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    window.open(esMovil ? 'https://wa.me/?text=' + enc : 'https://web.whatsapp.com/send?text=' + enc, '_blank');
+  }
+  function enviarResultados() {
+    if (!identificacion() && !alumnoActual()) { abrirIdentificacion(enviarResultados); return; }
+    abrirWA(textoReporte());
+  }
+
+  // ---------- identificación: modal "lite" (sin contraseña) ----------
+  var ID_CSS = '.metas-id-overlay{position:fixed;inset:0;background:rgba(20,30,48,0.72);display:flex;align-items:center;justify-content:center;z-index:99999;padding:1rem;}' +
+    '.metas-id-card{background:#ffffff;color:#2d3436;border-radius:18px;max-width:400px;width:100%;padding:1.3rem 1.4rem;box-shadow:0 12px 40px rgba(0,0,0,0.35);font-family:inherit;}' +
+    '.metas-id-card h3{color:#1565c0;font-size:1.15rem;margin:0 0 0.3rem;}' +
+    '.metas-id-card p{font-size:0.82rem;color:#636e72;margin:0 0 0.9rem;line-height:1.45;}' +
+    '.metas-id-card label{display:block;font-size:0.78rem;font-weight:700;color:#1565c0;margin:0.6rem 0 0.2rem;}' +
+    '.metas-id-card input{width:100%;box-sizing:border-box;padding:0.55rem 0.7rem;border:2px solid #cfd8e3;border-radius:10px;font-size:0.95rem;background:#f7fafd;color:#2d3436;}' +
+    '.metas-id-card input:focus{outline:none;border-color:#1565c0;}' +
+    '.metas-id-acciones{display:flex;gap:0.5rem;margin-top:1.1rem;}' +
+    '.metas-id-btn{flex:1;border:none;border-radius:10px;padding:0.65rem;font-size:0.9rem;font-weight:700;cursor:pointer;}' +
+    '.metas-id-guardar{background:#1565c0;color:#fff;}' +
+    '.metas-id-luego{background:#eef2f7;color:#636e72;}';
+
+  function abrirIdentificacion(alGuardar) {
+    if (document.getElementById('metasIdModal')) return;
+    var st = document.createElement('style'); st.textContent = ID_CSS; document.head.appendChild(st);
+    var id = identificacion() || {};
+    var ov = document.createElement('div');
+    ov.className = 'metas-id-overlay'; ov.id = 'metasIdModal';
+    ov.innerHTML = '<div class="metas-id-card" role="dialog" aria-modal="true" aria-label="Identifícate">' +
+      '<h3>👋 ¡Hola, explorador!</h3>' +
+      '<p>Escribe tus datos <strong>una sola vez</strong> para que tu maestro sepa que estos logros son tuyos.</p>' +
+      '<label for="metasIdNombre">👤 Tu nombre o código de alumno</label>' +
+      '<input id="metasIdNombre" type="text" maxlength="60" autocomplete="off" placeholder="Ej: Ana López o A07">' +
+      '<label for="metasIdGrado">🏫 Grado y sección</label>' +
+      '<input id="metasIdGrado" type="text" maxlength="30" autocomplete="off" placeholder="Ej: 6to A">' +
+      '<label for="metasIdDocente">🧑‍🏫 Código de tu maestro <span style="font-weight:400;color:#636e72;">(si te dieron uno)</span></label>' +
+      '<input id="metasIdDocente" type="text" maxlength="30" autocomplete="off" placeholder="Ej: PROF-JP">' +
+      '<div class="metas-id-acciones">' +
+      '<button type="button" class="metas-id-btn metas-id-luego" id="metasIdLuego">Ahora no</button>' +
+      '<button type="button" class="metas-id-btn metas-id-guardar" id="metasIdGuardar">✅ Guardar</button>' +
+      '</div></div>';
+    document.body.appendChild(ov);
+    document.getElementById('metasIdNombre').value = id.nombre || '';
+    document.getElementById('metasIdGrado').value = id.grado || '';
+    document.getElementById('metasIdDocente').value = id.docente || '';
+    function cerrar() { ov.remove(); st.remove(); }
+    document.getElementById('metasIdLuego').addEventListener('click', function () {
+      try { sessionStorage.setItem('METAS_ID_OMITIDA', '1'); } catch (e) {}
+      cerrar();
+    });
+    document.getElementById('metasIdGuardar').addEventListener('click', function () {
+      var nombre = document.getElementById('metasIdNombre').value.trim();
+      if (!nombre) { document.getElementById('metasIdNombre').focus(); return; }
+      var datos = {
+        nombre: nombre.slice(0, 60),
+        grado: document.getElementById('metasIdGrado').value.trim().slice(0, 30),
+        docente: document.getElementById('metasIdDocente').value.trim().slice(0, 30)
+      };
+      guardarIdentificacion(datos);
+      // sincronizar con el nombre de la constancia de la misión
+      var inp = document.querySelector('.diploma-input');
+      if (inp && !inp.value) {
+        inp.value = datos.nombre;
+        try { inp.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+        if (typeof window.updateDiplomaName === 'function') window.updateDiplomaName(datos.nombre);
+      }
+      cerrar();
+      if (typeof alGuardar === 'function') alGuardar();
+    });
+  }
+
+  function idOmitidaEstaSesion() {
+    try { return sessionStorage.getItem('METAS_ID_OMITIDA') === '1'; } catch (e) { return false; }
+  }
+
+  // Botón "Enviar resultados" junto a los de la constancia
+  function inyectarBotonEnviar() {
+    var acciones = document.querySelector('.diploma-actions');
+    if (!acciones || document.getElementById('metasBtnEnviar')) return;
+    var btn = document.createElement('button');
+    btn.id = 'metasBtnEnviar';
+    btn.className = 'btn btn-wa';
+    btn.textContent = '📤 Enviar resultados';
+    btn.addEventListener('click', enviarResultados);
+    acciones.insertBefore(btn, acciones.firstChild);
+  }
+
   // ---------- API pública ----------
   window.METAS = {
-    version: 1,
+    version: 2,
     registrar: registrar,
     eventos: leer,
     csv: csv,
     exportarCSV: exportarCSV,
     resumen: resumen,
     borrar: borrar,
-    dispositivo: idDispositivo
+    dispositivo: idDispositivo,
+    identificacion: identificacion,
+    identificar: abrirIdentificacion,
+    textoReporte: textoReporte,
+    enviarResultados: enviarResultados
   };
 
   function iniciar() {
     instalarGanchos();
-    if (idMision()) registrar('sesion', {});
+    if (idMision()) {
+      registrar('sesion', {});
+      inyectarBotonEnviar();
+      if (!identificacion() && !idOmitidaEstaSesion()) abrirIdentificacion();
+    }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
   else iniciar();
