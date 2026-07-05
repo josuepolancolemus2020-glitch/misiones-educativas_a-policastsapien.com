@@ -88,6 +88,47 @@
     </div>
   </div>
 
+  <div class="card ac-blue">
+    <h2>🏠 Las partes de la división: horizontal y modo USA</h2>
+    <p style="margin-bottom:0.6rem;">Una misma división puede escribirse de dos formas. Las partes <strong>no cambian de nombre</strong>, solo cambian de lugar.</p>
+    <div class="anat-legend">
+      <span class="anat-chip ch-dividendo">🔵 Dividendo: lo que se reparte</span>
+      <span class="anat-chip ch-divisor">🟠 Divisor: en cuántas partes</span>
+      <span class="anat-chip ch-cociente">🟢 Cociente: el resultado</span>
+    </div>
+    <div class="anatomia-grid">
+      <div class="anat-box">
+        <h4>➡️ Formato horizontal</h4>
+        <div class="horiz-div">
+          <span class="hz-part"><b class="hz-num c-dividendo">4.5</b><i class="anat-tag tg-dividendo">dividendo</i></span>
+          <span class="hz-op">÷</span>
+          <span class="hz-part"><b class="hz-num c-divisor">0.5</b><i class="anat-tag tg-divisor">divisor</i></span>
+          <span class="hz-op">=</span>
+          <span class="hz-part"><b class="hz-num c-cociente">9</b><i class="anat-tag tg-cociente">cociente</i></span>
+        </div>
+        <p class="anat-note">Se lee en orden: <strong>dividendo ÷ divisor = cociente</strong>.</p>
+      </div>
+      <div class="anat-box">
+        <h4>🏠 Modo USA (casita): para el procedimiento</h4>
+        <div class="casita">
+          <div class="cs-coc"><b class="hz-num c-cociente">9</b><i class="anat-tag tg-cociente">cociente</i></div>
+          <div class="cs-divisor"><b class="hz-num c-divisor">0.5</b><i class="anat-tag tg-divisor">divisor</i></div>
+          <div class="cs-dividendo"><b class="hz-num c-dividendo">4.5</b><i class="anat-tag tg-dividendo">dividendo</i></div>
+        </div>
+        <p class="anat-note">El <strong>dividendo va adentro</strong> de la casita, el <strong>divisor afuera</strong> a la izquierda y el <strong>cociente arriba</strong>. Si la división no es exacta, lo que sobra se llama <strong>residuo</strong>.</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock0">
+      <p class="mq-pregunta">🤔 En el modo USA (casita), ¿qué número se escribe adentro de la casita?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock0',this,true,'¡Correcto! El dividendo (lo que se reparte) va adentro; el divisor afuera y el cociente arriba.')">El dividendo</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock0',this,false,'El divisor va afuera, a la izquierda de la casita. Adentro va el dividendo.')">El divisor</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock0',this,false,'El cociente se escribe arriba de la casita. Adentro va el dividendo.')">El cociente</button>
+      </div>
+      <div class="mq-fb" id="mqBlock0-fb"></div>
+    </div>
+  </div>
+
   <div class="card ac-gold">
     <h2>📦 Bloque 1: Mover el punto decimal</h2>
     <p style="margin-bottom:0.6rem;">Cuantos decimales tenga el divisor, esos espacios debes mover el punto en ambos números.</p>
@@ -274,10 +315,21 @@
     </div>
     <div class="fc-nav">
       <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
-      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 15</span>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 12</span>
       <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
     </div>
     <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>🧠 Juego: Memoria de la División</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada parte de la división con su función y su lugar en la casita.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
+    <div class="memo-stats" id="memoStats" aria-live="polite"></div>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
     <span class="nsb-icon">🧠</span>
@@ -342,6 +394,18 @@
     </div>
     <div id="fbId" class="fb" role="alert"></div>
   </div>
+  <div class="card ac-blue">
+    <h2>🎯 Juego: Radar de las Partes</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Observa la división —a veces horizontal, a veces en casita (modo USA)— y toca la parte que se te pide.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +2 XP por acierto al primer toque (primera vez por ronda)</p>
+    <div class="radar-prompt" id="radarPrompt" aria-live="polite"></div>
+    <div class="radar-stage" id="radarStage"></div>
+    <div class="radar-score" id="radarScore" aria-live="polite"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetRadar()">🔄 Reiniciar juego</button>
+    </div>
+    <div id="fbRadar" class="fb" role="alert"></div>
+  </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
     <span class="nsb-icon">✏️</span>
     <span class="nsb-arrow">→</span>
@@ -369,6 +433,21 @@
     <h2>📊 Explorador del Cociente</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">¿Qué pasa con el resultado cuando divides entre decimales pequeños? ¡Descúbrelo moviendo el divisor!</p>
     <div id="widget-cociente-interactive"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>🏗️ Juego: Construye la Casita</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Lee la división horizontal y arma el modo USA: toca un número y luego la casilla donde va.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por casita correcta (primera vez) · Completa las 5 para el logro 🏗️</p>
+    <p class="build-prog" id="buildProg" aria-live="polite"></p>
+    <div class="build-horiz" id="buildHoriz"></div>
+    <div class="build-bank" id="buildBank" aria-label="Números disponibles"></div>
+    <div class="build-stage" id="buildStage"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkBuild()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextBuild()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetBuild()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbBuild" class="fb" role="alert"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
     <span class="nsb-icon">💬</span>

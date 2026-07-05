@@ -87,7 +87,12 @@
       "Bash(git commit --allow-empty -m 'Relanzar despliegue de GitHub Pages *)",
       "Bash(curl -s \"https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2y3ciclo-sustantivos/js/sustantivos.js?v=$\\(date +%s\\)\")",
       "Bash(curl -s \"https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2y3ciclo-marcadores-textuales/marcadores-textuales.html?v=$\\(date +%s\\)\")",
-      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\183d87dc-4f70-4aa0-8e0e-90e51d7680ab\\\\scratchpad\\\\validate-mision.js\")"
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\183d87dc-4f70-4aa0-8e0e-90e51d7680ab\\\\scratchpad\\\\validate-mision.js\")",
+      "Bash(node --check \"misiones/2y3ciclo-division-decimales/js/division-decimales.js\")",
+      "Bash(node -e \"try{require.resolve\\('jsdom'\\);console.log\\('jsdom OK'\\)}catch\\(e\\){console.log\\('no jsdom'\\)}\")",
+      "Bash(npm i *)",
+      "Bash(node \"C:/Users/Dell/AppData/Local/Temp/claude/C--Desarrollo-misiones-educativas-a-policastsapien-com/16623d29-85c4-4df3-98a3-f7049601b231/scratchpad/smoke-test.js\")",
+      "PowerShell($src=\"misiones\\\\2y3ciclo-division-decimales\"; $targets=@\\(\"www\\\\misiones\\\\2y3ciclo-division-decimales\",\"android\\\\app\\\\src\\\\main\\\\assets\\\\public\\\\misiones\\\\2y3ciclo-division-decimales\",\"android\\\\app\\\\build\\\\intermediates\\\\assets\\\\debug\\\\mergeDebugAssets\\\\public\\\\misiones\\\\2y3ciclo-division-decimales\"\\); foreach\\($t in $targets\\){ robocopy $src $t /E /NFL /NDL /NJH /NJS | Out-Null; Write-Host \"$t -> exit $LASTEXITCODE\" })"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",

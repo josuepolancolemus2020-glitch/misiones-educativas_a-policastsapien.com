@@ -30,7 +30,7 @@ const SAVE_KEY = 'matematica_div_decimales_v1';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1, evalOpFormNum = 1, evalOpAnsVisible = false, unlockedAch = [], darkMode = false, prevLevel = 0;
 const TOTAL_SECTIONS = 16;
-const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), sopa: new Set(), equiv: new Set(), predice: new Set(), explica: new Set() };
+const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), sopa: new Set(), equiv: new Set(), predice: new Set(), explica: new Set(), partes: new Set(), casita: new Set(), memo: new Set() };
 
 // ===================== SONIDO =====================
 let sndOn = true; let AC = null;
@@ -80,6 +80,8 @@ const ACHIEVEMENTS = {
   clasif_pro:{icon:'🏷️',label:'Clasificador experto'},
   id_master:{icon:'🔍',label:'Identificador maestro'},
   reto_hero:{icon:'🏆',label:'Héroe del reto final'},
+  radar_pro:{icon:'🎯',label:'Radar de partes perfecto'},
+  casita_pro:{icon:'🏗️',label:'Arquitecto de la casita'},
   nivel3:{icon:'🔭',label:'¡Explorador alcanzado! Nivel 3'},
   nivel5:{icon:'🔥',label:'¡Campeón alcanzado! Nivel 6'}
 };
@@ -101,10 +103,10 @@ function go(id){ sfx('click'); document.querySelectorAll('.sec').forEach(s=>s.cl
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Divisor Decimal',a:'Para dividir, se debe convertir en <strong>entero</strong> moviendo el punto a la derecha.'},
-  {w:'Regla del Movimiento',a:'Los espacios que muevas el punto en el divisor, <strong>debes moverlos</strong> en el dividendo.'},
-  {w:'Agregar Ceros',a:'Si en el dividendo ya no hay cifras para mover el punto, <strong>se agregan ceros</strong> a la derecha.'},
-  {w:'Cero al Cociente',a:'Se usa cuando bajas una cifra y el número formado es <strong>menor</strong> que el divisor.'},
+  {w:'Divisor decimal',a:'Para dividir, se debe convertir en <strong>entero</strong> moviendo el punto a la derecha.'},
+  {w:'Regla del movimiento',a:'Los espacios que muevas el punto en el divisor, <strong>debes moverlos</strong> en el dividendo.'},
+  {w:'Agregar ceros',a:'Si en el dividendo ya no hay cifras para mover el punto, <strong>se agregan ceros</strong> a la derecha.'},
+  {w:'Cero al cociente',a:'Se usa cuando bajas una cifra y el número formado es <strong>menor</strong> que el divisor.'},
   {w:'Divisor > 1',a:'Si divides entre un número mayor que 1, el cociente será <strong>menor</strong> que el dividendo. Ej: 10 ÷ 2 = 5.'},
   {w:'Divisor < 1',a:'Si divides entre un número menor que 1 (como 0.5), el cociente será <strong>mayor</strong>. Ej: 10 ÷ 0.5 = 20.'},
   {w:'Dividendo',a:'Es el número que <strong>se va a repartir</strong> (adentro de la casita de división).'},
@@ -1020,6 +1022,182 @@ function printEvalOp() {
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
 }
 
+// ===================== JUEGO: RADAR DE LAS PARTES =====================
+const radarPool=[
+  {d:'4.5',r:'0.5',c:'9'},{d:'12',r:'4',c:'3'},{d:'1.2',r:'0.4',c:'3'},{d:'15',r:'0.5',c:'30'},
+  {d:'0.25',r:'0.05',c:'5'},{d:'7.2',r:'2',c:'3.6'},{d:'30',r:'2.5',c:'12'},{d:'0.8',r:'0.2',c:'4'},
+  {d:'5.5',r:'1.1',c:'5'},{d:'2',r:'0.5',c:'4'}
+];
+const RADAR_ROUNDS=10, radarPartes=['dividendo','divisor','cociente'];
+let radarIdx=0,radarHits=0,radarFirstTry=true,radarLocked=false,radarOrder=[],radarTarget='dividendo';
+
+function _casitaHTML(ex,cls){
+  return `<div class="casita ${cls||''}">
+    <div class="cs-coc"><button class="parte-btn" data-p="cociente" aria-label="número escrito arriba de la casita">${ex.c}</button></div>
+    <div class="cs-divisor"><button class="parte-btn" data-p="divisor" aria-label="número escrito afuera de la casita">${ex.r}</button></div>
+    <div class="cs-dividendo"><button class="parte-btn" data-p="dividendo" aria-label="número escrito adentro de la casita">${ex.d}</button></div>
+  </div>`;
+}
+function _horizHTML(ex){
+  return `<div class="horiz-div">
+    <button class="parte-btn" data-p="dividendo">${ex.d}</button><span class="hz-op">÷</span>
+    <button class="parte-btn" data-p="divisor">${ex.r}</button><span class="hz-op">=</span>
+    <button class="parte-btn" data-p="cociente">${ex.c}</button>
+  </div>`;
+}
+function buildRadar(){
+  const stage=document.getElementById('radarStage'); if(!stage) return;
+  radarIdx=0; radarHits=0; radarOrder=_shuffle(radarPool.map((_,i)=>i));
+  const f=document.getElementById('fbRadar'); if(f) f.classList.remove('show');
+  showRadar();
+}
+function showRadar(){
+  const stage=document.getElementById('radarStage'), prompt=document.getElementById('radarPrompt'), score=document.getElementById('radarScore');
+  if(!stage) return;
+  radarLocked=false; radarFirstTry=true;
+  if(radarIdx>=RADAR_ROUNDS){
+    prompt.innerHTML='🏁 ¡Juego terminado!';
+    stage.innerHTML='<div class="radar-fin">🎯</div>';
+    score.textContent=`✅ ${radarHits} de ${RADAR_ROUNDS} al primer toque`;
+    fb('fbRadar',`Aciertos al primer toque: ${radarHits} de ${RADAR_ROUNDS}. ${radarHits===RADAR_ROUNDS?'¡Radar perfecto! 🏆':'Toca Reiniciar juego para mejorar tu marca.'}`,radarHits>=6);
+    if(radarHits===RADAR_ROUNDS) unlockAchievement('radar_pro');
+    sfx('fan'); return;
+  }
+  const ex=radarPool[radarOrder[radarIdx]];
+  const usa=radarIdx%2===1;
+  radarTarget=radarPartes[radarIdx%3];
+  prompt.innerHTML=`Ronda ${radarIdx+1} de ${RADAR_ROUNDS}: toca el <b class="c-${radarTarget}">${radarTarget.toUpperCase()}</b> en el formato <strong>${usa?'casita (modo USA) 🏠':'horizontal ➡️'}</strong>`;
+  stage.innerHTML=usa?_casitaHTML(ex,'casita-play'):_horizHTML(ex);
+  stage.querySelectorAll('.parte-btn').forEach(b=>{ b.onclick=()=>ansRadar(b); });
+  score.textContent=`✅ ${radarHits} aciertos al primer toque`;
+}
+function ansRadar(btn){
+  if(radarLocked) return;
+  if(btn.dataset.p===radarTarget){
+    radarLocked=true; btn.classList.add('rd-ok'); sfx('ok');
+    let msg='¡Correcto!';
+    if(radarFirstTry){ radarHits++; if(!xpTracker.partes.has(radarIdx)){ xpTracker.partes.add(radarIdx); pts(2); msg='¡Correcto al primer toque! +2 XP'; } }
+    fb('fbRadar',msg,true);
+    setTimeout(()=>{ radarIdx++; const f=document.getElementById('fbRadar'); if(f) f.classList.remove('show'); showRadar(); },1100);
+  } else {
+    radarFirstTry=false; btn.classList.add('rd-no'); sfx('no');
+    fb('fbRadar',`Ese es el ${btn.dataset.p}. Busca el ${radarTarget}.`,false);
+    setTimeout(()=>btn.classList.remove('rd-no'),700);
+  }
+}
+function resetRadar(){ sfx('click'); buildRadar(); }
+
+// ===================== JUEGO: CONSTRUYE LA CASITA =====================
+const buildPool=[
+  {d:'45',r:'5',c:'9'},{d:'1.2',r:'0.4',c:'3'},{d:'30',r:'5',c:'6'},{d:'0.25',r:'0.05',c:'5'},{d:'18',r:'0.6',c:'30'}
+];
+let buildIdx=0, buildSel=null, buildPlaced={cociente:null,divisor:null,dividendo:null}, buildChecked=false, buildBankOrder=[];
+function showBuild(){
+  const prog=document.getElementById('buildProg'); if(!prog) return;
+  const ex=buildPool[buildIdx];
+  buildSel=null; buildChecked=false; buildPlaced={cociente:null,divisor:null,dividendo:null};
+  buildBankOrder=_shuffle([ex.d,ex.r,ex.c]);
+  prog.textContent=`Casita ${buildIdx+1} de ${buildPool.length}`;
+  document.getElementById('buildHoriz').innerHTML=`División horizontal: <span class="build-horiz-op">${ex.d} ÷ ${ex.r} = ${ex.c}</span>`;
+  document.getElementById('fbBuild').classList.remove('show');
+  renderBuild();
+}
+function renderBuild(){
+  const bank=document.getElementById('buildBank'), stage=document.getElementById('buildStage');
+  if(!bank||!stage) return;
+  const placed=Object.values(buildPlaced);
+  bank.innerHTML='';
+  buildBankOrder.forEach(v=>{
+    if(placed.includes(v)) return;
+    const b=document.createElement('button');
+    b.className='build-chip'+(buildSel===v?' sel':''); b.textContent=v;
+    b.onclick=()=>{ if(buildChecked) return; buildSel=(buildSel===v?null:v); sfx('click'); renderBuild(); };
+    bank.appendChild(b);
+  });
+  if(!bank.children.length) bank.innerHTML='<span class="build-bank-empty">✔ Números colocados. ¡Presiona Verificar!</span>';
+  const slot=(key,hint)=>`<button class="build-slot${buildPlaced[key]!==null?' filled':''}" data-slot="${key}" aria-label="${hint}">${buildPlaced[key]!==null?buildPlaced[key]:'?'}</button>`;
+  stage.innerHTML=`<div class="casita casita-build">
+    <div class="cs-coc">${slot('cociente','casilla de arriba de la casita')}</div>
+    <div class="cs-divisor">${slot('divisor','casilla de afuera de la casita')}</div>
+    <div class="cs-dividendo">${slot('dividendo','casilla de adentro de la casita')}</div>
+  </div>`;
+  stage.querySelectorAll('.build-slot').forEach(s=>{
+    s.onclick=()=>{
+      if(buildChecked) return;
+      const key=s.dataset.slot;
+      if(buildSel!==null){ buildPlaced[key]=buildSel; buildSel=null; sfx('click'); }
+      else if(buildPlaced[key]!==null){ buildPlaced[key]=null; sfx('click'); }
+      renderBuild();
+    };
+  });
+}
+function checkBuild(){
+  const ex=buildPool[buildIdx];
+  if(Object.values(buildPlaced).some(v=>v===null)){ fb('fbBuild','Coloca los tres números en la casita primero.',false); return; }
+  const okMap={cociente:ex.c,divisor:ex.r,dividendo:ex.d};
+  let all=true;
+  document.querySelectorAll('#buildStage .build-slot').forEach(s=>{
+    const ok=buildPlaced[s.dataset.slot]===okMap[s.dataset.slot];
+    s.classList.add(ok?'slot-ok':'slot-no'); if(!ok) all=false;
+  });
+  if(all){
+    buildChecked=true;
+    if(!xpTracker.casita.has(buildIdx)){ xpTracker.casita.add(buildIdx); pts(3); }
+    fb('fbBuild','¡Casita perfecta! Dividendo adentro, divisor afuera y cociente arriba. +3 XP',true); sfx('fan');
+    if(xpTracker.casita.size===buildPool.length){ fin('s-widgets'); unlockAchievement('casita_pro'); }
+  } else {
+    fb('fbBuild','Hay números mal ubicados (en rojo). Tócalos para devolverlos e intenta de nuevo.',false); sfx('no');
+    setTimeout(()=>document.querySelectorAll('#buildStage .slot-no').forEach(s=>s.classList.remove('slot-no')),1200);
+  }
+}
+function nextBuild(){ sfx('click'); buildIdx=(buildIdx+1)%buildPool.length; showBuild(); }
+function resetBuild(){ sfx('click'); showBuild(); }
+
+// ===================== JUEGO: MEMORIA DE LA DIVISIÓN =====================
+const memoPairs=[
+  {id:'dividendo',t:'Dividendo',d:'📦 Lo que se reparte · va adentro de la casita'},
+  {id:'divisor',t:'Divisor',d:'✂️ En cuántas partes · va afuera de la casita'},
+  {id:'cociente',t:'Cociente',d:'🏆 El resultado · va arriba de la casita'},
+  {id:'punto',t:'Punto decimal',d:'➡️ Se mueve igual en dividendo y divisor'}
+];
+let memoDeck=[],memoOpen=[],memoLock=false,memoMoves=0,memoFound=0;
+function buildMemo(){
+  const grid=document.getElementById('memoGrid'); if(!grid) return;
+  memoDeck=_shuffle(memoPairs.flatMap(p=>[{id:p.id,txt:p.t,kind:'t'},{id:p.id,txt:p.d,kind:'d'}]));
+  memoOpen=[]; memoLock=false; memoMoves=0; memoFound=0;
+  grid.innerHTML='';
+  memoDeck.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.className='memo-card'; b.setAttribute('aria-label','Carta de memoria '+(i+1));
+    b.innerHTML=`<span class="memo-face memo-front">❓</span><span class="memo-face memo-back${c.kind==='t'?' memo-term':''}">${c.txt}</span>`;
+    b.onclick=()=>flipMemo(b,i);
+    grid.appendChild(b);
+  });
+  updateMemoStats();
+  const f=document.getElementById('fbMemo'); if(f) f.classList.remove('show');
+}
+function updateMemoStats(){ const s=document.getElementById('memoStats'); if(s) s.textContent=`🃏 Parejas: ${memoFound} de ${memoPairs.length} · Intentos: ${memoMoves}`; }
+function flipMemo(btn,i){
+  if(memoLock||btn.classList.contains('revealed')||btn.classList.contains('matched')) return;
+  sfx('flip'); btn.classList.add('revealed'); memoOpen.push({btn,i});
+  if(memoOpen.length<2) return;
+  memoMoves++; memoLock=true;
+  const [a,b]=memoOpen;
+  if(memoDeck[a.i].id===memoDeck[b.i].id){
+    setTimeout(()=>{
+      a.btn.classList.add('matched'); b.btn.classList.add('matched');
+      memoFound++; sfx('ok');
+      if(!xpTracker.memo.has(memoDeck[a.i].id)){ xpTracker.memo.add(memoDeck[a.i].id); pts(1); }
+      memoOpen=[]; memoLock=false; updateMemoStats();
+      if(memoFound===memoPairs.length){ pts(2); fb('fbMemo',`¡Memoria completada en ${memoMoves} intentos! +2 XP extra`,true); sfx('fan'); launchConfetti(); }
+    },450);
+  } else {
+    setTimeout(()=>{ a.btn.classList.remove('revealed'); b.btn.classList.remove('revealed'); memoOpen=[]; memoLock=false; sfx('no'); updateMemoStats(); },900);
+  }
+  updateMemoStats();
+}
+function resetMemo(){ sfx('click'); buildMemo(); }
+
 // ===================== DIPLOMA =====================
 function _diplPct() { return xp >= MXP ? 100 : Math.round((xp / MXP) * 100); }
 function openDiploma(){
@@ -1090,6 +1268,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   buildEquiv();
   buildPredice();
   buildExplica();
+  buildRadar();
+  showBuild();
+  buildMemo();
   document.addEventListener('click',function(e){ const panel=document.getElementById('achPanel'); const btn=document.getElementById('achBtn'); if(panel.classList.contains('open')&&!panel.contains(e.target)&&e.target!==btn) panel.classList.remove('open'); });
   document.addEventListener('click',function(e){ if(e.target===document.getElementById('diplomaOverlay')) closeDiploma(); });
   const savedName=localStorage.getItem('nombreEstudianteDivDecimales');
