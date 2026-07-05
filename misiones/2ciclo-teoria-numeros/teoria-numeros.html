@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Teoría de Números: Divisibilidad, m.c.m. y M.C.D. | policastsapien.com</title>
+<meta name="description" content="Misión Teoría de Números: reglas de divisibilidad, Mínimo Común Múltiplo y Máximo Común Divisor con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión Teoría de Números: Divisibilidad, m.c.m. y M.C.D.">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2ciclo-teoria-numeros/teoria-numeros.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/teoria-numeros.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=matemáticas" class="xp-back-btn" title="Regresar a misiones de Matemáticas">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
+</div>
+
+<header class="hero" role="banner" style="background:linear-gradient(90deg,#6c5ce7 0%,#00897b 50%,#1565c0 100%);">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🕵️</div>
+      <div class="mascot-tooltip">¡Hola! Soy Divi, el detective de números. ¡Descubramos sus secretos!</div>
+    </div>
+    <div class="hero-text">
+      <h1>Misión <span>Teoría de Números</span></h1>
+      <p class="sub">¡Domina las reglas de divisibilidad, el m.c.m. y el M.C.D. jugando! 🎯</p>
+      <div class="badge">🧮 II Ciclo · Matemática</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<div class="sec active" id="s-predice" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔮 Predice antes de resolver</h2>
+    <p style="margin-bottom:0.5rem;">Antes de aprender las reglas, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
+    <div id="prediceWidget"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ahora aprende las reglas!</span><span class="nsb-name">Aprende</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🕵️ ¿Qué es la divisibilidad?</h2>
+    <p style="margin-bottom:0.7rem;">Un número es <strong>divisible</strong> entre otro cuando al dividirlos el residuo es <strong>cero</strong> (la división es exacta). Decimos que 12 es divisible entre 3 porque 12 ÷ 3 = 4 con residuo 0.</p>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Idea clave:</strong> Si 12 ÷ 3 es exacta, entonces <strong>3 es divisor de 12</strong> y <strong>12 es múltiplo de 3</strong>. Divisor y múltiplo son las dos caras de la misma moneda.</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">⚡</span>
+      <div><strong>El superpoder:</strong> Las <strong>reglas de divisibilidad</strong> te permiten saber si un número es divisible <strong>sin hacer la división</strong>. ¡Solo observando sus cifras!</div>
+    </div>
+    <div class="demo-visual">
+      <div class="demo-title">🔬 Mini-demostración</div>
+      <div class="demo-steps">
+        <div class="demo-step ds-start"><span class="ds-label">Número</span><span class="ds-val">4,518</span></div>
+        <div class="demo-arrow">sumo sus cifras ↓</div>
+        <div class="demo-step ds-mid"><span class="ds-label">Suma</span><span class="ds-val">4+5+1+8 = 18</span></div>
+        <div class="demo-arrow">18 es múltiplo de 9 ⇒</div>
+        <div class="demo-step ds-end"><span class="ds-label">Conclusión</span><span class="ds-val" style="font-size:1rem;">4,518 SÍ es divisible entre 9 ✔</span></div>
+      </div>
+      <p class="demo-note">✅ Sin dividir nada: 4,518 ÷ 9 = 502 exacto. ¡La regla funcionó!</p>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 1: Reglas del 2, 5 y 10 (mira la última cifra)</h2>
+    <p style="margin-bottom:0.6rem;">Estas tres reglas solo necesitan la <strong>última cifra</strong> del número:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>✌️ Entre 2 y entre 5</h4>
+        <p><strong>Entre 2:</strong> si termina en 0, 2, 4, 6 u 8 (número par).<br><strong>Entre 5:</strong> si termina en 0 o 5.</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">Ej: 736 es divisible entre 2 (termina en 6) · 890 es divisible entre 5 (termina en 0).</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🔟 Entre 10</h4>
+        <p>Si termina en <strong>0</strong>.</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Ej: 4,570 sí · 4,575 no. Ojo: si es divisible entre 10, también lo es entre 2 y entre 5.</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock1">
+      <p class="mq-pregunta">🤔 ¿Cuál de estos números es divisible entre 2 y entre 5 a la vez?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! 340 termina en 0, así que es divisible entre 2, entre 5 y entre 10.')">340</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'345 termina en 5: es divisible entre 5, pero no entre 2 (no es par).')">345</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'342 termina en 2: es divisible entre 2, pero no entre 5 (no termina en 0 ni 5).')">342</button>
+      </div>
+      <div class="mq-fb" id="mqBlock1-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 2: Reglas del 3 y del 9 (suma las cifras)</h2>
+    <p style="margin-bottom:0.6rem;">Un número es divisible entre <strong>3</strong> si la <strong>suma de sus cifras</strong> es múltiplo de 3, y entre <strong>9</strong> si la suma es múltiplo de 9.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">2,835</span>
+      <span class="ae-flecha">→ 2+8+3+5 = 18 →</span>
+      <span class="ae-res">18 es múltiplo de 9 ⇒ <strong>divisible entre 9</strong> (y también entre 3) ✔</span>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">🎯</span>
+      <div><strong>Truco:</strong> Si la suma da un número grande, ¡vuelve a sumar! Para 6,975: 6+9+7+5 = 27 → 2+7 = 9. Como llegas a 9, es divisible entre 9.</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock2">
+      <p class="mq-pregunta">🤔 ¿Es 4,132 divisible entre 9?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! 4+1+3+2 = 10, y 10 no es múltiplo de 9, así que 4,132 NO es divisible entre 9.')">No, porque 4+1+3+2 = 10</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Cuidado: la regla del 9 usa la SUMA de las cifras, no la última cifra.')">Sí, porque termina en 2</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'La suma de las cifras es 10, no 9. Revisa: 4+1+3+2 = 10.')">Sí, porque la suma da 9</button>
+      </div>
+      <div class="mq-fb" id="mqBlock2-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📦 Bloque 3: La regla del 11 (suma alternada)</h2>
+    <p style="margin-bottom:0.7rem;">Para el <strong>11</strong>, resta y suma las cifras de forma <strong>alternada</strong> (de derecha a izquierda: + − + −...). Si el resultado es <strong>0 o múltiplo de 11</strong>, el número es divisible entre 11.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">8,294</span>
+      <span class="ae-flecha">→ (4+2) − (9+8) = 6 − 17 = −11 →</span>
+      <span class="ae-res">−11 es múltiplo de 11 ⇒ <strong>divisible entre 11</strong> ✔ (8,294 ÷ 11 = 754)</span>
+    </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">🪄</span>
+      <div><strong>Paso a paso:</strong> Suma las cifras en posición <strong>impar</strong> (desde la derecha), suma las de posición <strong>par</strong>, y réstalas. En 121: (1+1) − 2 = 0 → divisible entre 11 (121 = 11 × 11).</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock3">
+      <p class="mq-pregunta">🤔 ¿Es 209 divisible entre 11?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Exacto! (9+2) − 0 = 11, que es múltiplo de 11. Comprobación: 209 ÷ 11 = 19.')">Sí, porque (9+2) − 0 = 11</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'La regla del 11 no mira la última cifra, usa la suma alternada: (9+2) − 0 = 11 → sí es divisible.')">No, porque termina en 9</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Esa es la regla del 9. Para el 11 se usa la suma ALTERNADA: (9+2) − 0 = 11 → sí es divisible.')">No, porque 2+0+9 = 11 no es múltiplo de 9</button>
+      </div>
+      <div class="mq-fb" id="mqBlock3-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>📦 Bloque 4: Máximo Común Divisor (M.C.D.)</h2>
+    <p style="margin-bottom:0.6rem;">El <strong>M.C.D.</strong> de dos números es el divisor <strong>más grande</strong> que comparten. Se usa para <strong>repartir o dividir en partes iguales lo más grandes posible</strong>.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">M.C.D.(12, 18)</span>
+      <span class="ae-flecha">→ divisores de 12: 1,2,3,4,6,12 · de 18: 1,2,3,6,9,18 →</span>
+      <span class="ae-res">comunes: 1, 2, 3, 6 → el mayor es <strong>6</strong></span>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">🎁</span>
+      <div><strong>¿Cuándo lo uso?</strong> "Tengo 12 dulces y 18 galletas y quiero armar bolsas iguales, lo más grandes posible, sin que sobre nada" → M.C.D.(12,18) = 6 bolsas.</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock4">
+      <p class="mq-pregunta">🤔 ¿Cuál es el M.C.D. de 8 y 20?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,true,'¡Correcto! Divisores de 8: 1,2,4,8 · de 20: 1,2,4,5,10,20. Comunes: 1,2,4. El mayor es 4.')">4</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'2 es un divisor común, pero no el MÁXIMO: el 4 también divide a ambos.')">2</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'40 es un múltiplo común (sirve para el m.c.m.), no un divisor común.')">40</button>
+      </div>
+      <div class="mq-fb" id="mqBlock4-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>📦 Bloque 5: Mínimo Común Múltiplo (m.c.m.)</h2>
+    <p style="margin-bottom:0.6rem;">El <strong>m.c.m.</strong> de dos números es el múltiplo <strong>más pequeño</strong> (distinto de cero) que comparten. Se usa cuando dos cosas <strong>se repiten y quieres saber cuándo coinciden</strong>.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">m.c.m.(4, 6)</span>
+      <span class="ae-flecha">→ múltiplos de 4: 4,8,12,16,20,24... · de 6: 6,12,18,24... →</span>
+      <span class="ae-res">comunes: 12, 24, 36... → el menor es <strong>12</strong></span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;text-align:center;font-family:'Fredoka',sans-serif;margin:0.6rem 0;">
+        <thead><tr style="background:var(--pri-gl);">
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;"></th>
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">M.C.D.</th>
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">m.c.m.</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;">Busca...</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);color:var(--pri);">el DIVISOR común más GRANDE</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);color:var(--sec);">el MÚLTIPLO común más PEQUEÑO</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;">Resultado</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);color:var(--pri);">menor o igual que los números</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);color:var(--sec);">mayor o igual que los números</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;">Sirve para</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);color:var(--pri);">repartir en partes iguales</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);color:var(--sec);">saber cuándo coinciden</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock5">
+      <p class="mq-pregunta">🤔 Un semáforo A cambia cada 4 segundos y otro B cada 10. ¿Cada cuántos segundos cambian juntos?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock5',this,true,'¡Correcto! Es un problema de coincidencia → m.c.m.(4,10) = 20 segundos.')">Cada 20 segundos (m.c.m.)</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock5',this,false,'2 es el M.C.D., que sirve para repartir. Aquí buscamos una COINCIDENCIA → m.c.m.(4,10) = 20.')">Cada 2 segundos (M.C.D.)</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock5',this,false,'40 sí es múltiplo común, pero no el MÍNIMO: coinciden antes, a los 20 segundos.')">Cada 40 segundos</button>
+      </div>
+      <div class="mq-fb" id="mqBlock5-fb"></div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">📊</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📊 Casos Comunes</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">4,518</div><div class="t-info">Suma de cifras 18 → divisible entre 9 y entre 3</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">121</div><div class="t-info">(1+1) − 2 = 0 → divisible entre 11</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">7,890</div><div class="t-info">Termina en 0 → divisible entre 2, 5 y 10</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">m.c.m.(4,6) = 12</div><div class="t-info">El múltiplo común más pequeño</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">M.C.D.(12,18) = 6</div><div class="t-info">El divisor común más grande</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">13</div><div class="t-info">Número primo: solo divisible entre 1 y 13</div></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
+    <span class="nsb-icon">⚠️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Evita los tropiezos!</span><span class="nsb-name">Errores Comunes</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-errores" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>⚠️ Errores Comunes — ¡No caigas en ellos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Estos son los errores que más cometen los estudiantes. Léelos, entiéndelos y ¡evítalos!</p>
+    <div class="error-cards">
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 1: Confundir m.c.m. con M.C.D.</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"El m.c.m. de 12 y 18 es 6."</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>6 es el M.C.D. (divisor común más grande). El m.c.m. es el múltiplo común más pequeño y siempre es mayor o igual que los números.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>m.c.m.(12,18) = <strong>36</strong> y M.C.D.(12,18) = <strong>6</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 2: Aplicar la regla del 9 al 11</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"209 no es divisible entre 11 porque 2+0+9 = 11 y... ¿eso qué?"</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Sumar TODAS las cifras es la regla del 3 y del 9. Para el 11 la suma es ALTERNADA: se restan las sumas de posiciones pares e impares.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>En 209: (9+2) − 0 = 11 → <strong>sí es divisible entre 11</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 3: Creer que el m.c.m. siempre es el producto</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"m.c.m.(4,6) = 4 × 6 = 24."</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>24 es múltiplo común, pero no el MÍNIMO. Como 4 y 6 comparten el divisor 2, coinciden antes: en 12.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>m.c.m.(4,6) = <strong>12</strong> ✔ (el producto solo funciona si no comparten divisores, como 3 y 5)</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 4: Mirar la última cifra para el 3 o el 9</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"423 no es divisible entre 3 porque no termina en 3, 6 ni 9."</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>La última cifra solo sirve para 2, 5 y 10. Para 3 y 9 se usa la SUMA de todas las cifras.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>4+2+3 = 9 → <strong>423 sí es divisible entre 3 (y entre 9)</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 5: Olvidar que el M.C.D. puede ser 1</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"8 y 15 no tienen M.C.D. porque no comparten divisores."</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>TODOS los números tienen al 1 como divisor. Cuando el único divisor común es 1, los números se llaman "primos entre sí".</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>M.C.D.(8,15) = <strong>1</strong> ✔</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica lo aprendido!</span><span class="nsb-name">Laboratorio</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>🧪 Laboratorio: Detector de Divisibilidad</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Predice si el número es divisible y luego mira cómo el detector aplica la regla paso a paso: última cifra, suma de cifras o suma alternada.</p>
+    <div id="widget-divisibilidad-interactive"></div>
+  </div>
+  <div class="card ac-teal">
+    <h2>🐸 Laboratorio 2: La Carrera al m.c.m.</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">La rana y el conejo saltan sobre la recta numérica. Predice en qué casilla caerán JUNTOS por primera vez: ¡ese es el m.c.m.!</p>
+    <div id="widget-mcm-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fa" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Números</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Arrastra cada número a la columna que corresponda.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-widgets" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏭 La Fábrica de Divisores (M.C.D.)</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Toca todos los divisores COMUNES de los dos números y luego corona 👑 al más grande: ¡ese es el M.C.D.! ⭐ +3 XP por ronda perfecta (primera vez)</p>
+    <div id="widget-mcd-interactive"></div>
+  </div>
+  <div class="card ac-gold">
+    <h2>🎯 Cazador de Múltiplos</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">¡Juego relámpago! Tienes 30 segundos para cazar todos los múltiplos del número indicado. Los intrusos te restan puntos. ⭐ hasta +8 XP según tu puntaje (primera vez)</p>
+    <div id="widget-cazador-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
+    <span class="nsb-icon">💬</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra que entendiste!</span><span class="nsb-name">Explica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-explica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>💬 Explica con tus palabras</h2>
+    <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
+    <div id="explicaContainer"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Hora del reto!</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🏆 Reto Final — ¿Es divisible o no? (30 seg)</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Decide rápidamente si el número ES o NO ES divisible entre el divisor indicado.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">💡 Recuerda: 2, 5 y 10 → última cifra · 3 y 9 → suma de cifras · 11 → suma alternada</p>
+    <div class="game" id="gameBox" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-g" id="retoBtn-a" onclick="ansReto('si')">✔ SÍ ES DIVISIBLE</button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('no')">✘ NO ES DIVISIBLE</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar (Divisibilidad, m.c.m. y M.C.D.)</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar proceso</option>
+        <option value="pensamiento">🧠 Pensamiento matemático</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Prueba Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-blue">
+    <div class="eval-print-header">
+      <h2>Evaluación Final de Misión Teoría de Números · II Ciclo · Matemática</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación Final</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">4 secciones de 25 pts c/u. Copia el examen en tu cuaderno, resuélvelo y selecciona <strong>Ver Pauta</strong> para autoevaluarte.</p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Matemáticas — Prueba Operativa · Teoría de Números · II Ciclo</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 50 pts · II: 10 pts · III: 10 pts · IV: 10 pts · V: 20 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">📐 Prueba Operativa — Teoría de Números</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Resuelve cada ítem en tu cuaderno y escribe la respuesta en la casilla. Presiona <strong>Calificar prueba</strong> para autoevaluarte en pantalla. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>📁 Recursos del Tema</h2>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo sobre divisibilidad, múltiplos, divisores, m.c.m. y M.C.D.</p>
+    <a href="https://drive.google.com/drive/folders/1vUVVqFSWv-I-b_2E_e-GudZ6qjkjD8se?usp=sharing"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+  </div>
+</div>
+
+</main>
+
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Teoría de Números: Divisibilidad, m.c.m. y M.C.D.</div>
+    <div class="diploma-mascot" aria-hidden="true">🕵️</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Tipos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-explica" data-s="s-explica" onclick="go('s-explica')"><span class="ico">💬</span> Explica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje...» 🌱</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/teoria-numeros.js"></script>
+
+  <script src="js/interaccion_divisibilidad.js"></script>
+  <script src="js/interaccion_mcm.js"></script>
+  <script src="js/interaccion_mcd.js"></script>
+  <script src="js/interaccion_cazador.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetDivisibilidadJSON) {
+        window.WidgetDivisibilidadJSON.mount('widget-divisibilidad-interactive');
+      }
+      if (window.WidgetMcmJSON) {
+        window.WidgetMcmJSON.mount('widget-mcm-interactive');
+      }
+      if (window.WidgetMcdJSON) {
+        window.WidgetMcdJSON.mount('widget-mcd-interactive');
+      }
+      if (window.WidgetCazadorJSON) {
+        window.WidgetCazadorJSON.mount('widget-cazador-interactive');
+      }
+    });
+  </script>
+
+</body>
+</html>
