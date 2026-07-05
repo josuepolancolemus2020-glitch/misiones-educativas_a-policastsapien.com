@@ -97,7 +97,18 @@
       "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\5c632fe5-5630-47ea-a047-94dae1ef2494\\\\scratchpad\\\\gensopa.js\")",
       "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\5c632fe5-5630-47ea-a047-94dae1ef2494\\\\scratchpad\\\\retheme.js\")",
       "Bash(echo \"exit:$? \\(1 = sin restos\\)\")",
-      "Bash(node \"C:/Users/Dell/AppData/Local/Temp/claude/C--Desarrollo-misiones-educativas-a-policastsapien-com/8ffd8df7-c93d-4616-bf1c-0cf768fb8580/scratchpad/validate-mission.js\")"
+      "Bash(node \"C:/Users/Dell/AppData/Local/Temp/claude/C--Desarrollo-misiones-educativas-a-policastsapien-com/8ffd8df7-c93d-4616-bf1c-0cf768fb8580/scratchpad/validate-mission.js\")",
+      "Bash(node \"C:/Users/Dell/AppData/Local/Temp/claude/C--Desarrollo-misiones-educativas-a-policastsapien-com/8ffd8df7-c93d-4616-bf1c-0cf768fb8580/scratchpad/patch-js.js\")",
+      "Bash(node --check misiones/2ciclo-multiplos-divisores-primos/js/multiplos-divisores-primos.js)",
+      "Bash(sed -i \"s/ ⚖ B: / vs B: /g; s/'evalOpAutoResult'/'evalOpAutoResult', 'evalAutoResult'/\" validate-mission.js)",
+      "Bash(node validate-mission.js)",
+      "Bash(node --check js/metas-registro.js)",
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\test-metas-registro.js\")",
+      "Bash(npx cap *)",
+      "Bash(sed -e 's|history.replaceState.*||' -e 's|src=\"js/metas-registro.js\"|src=\"../../js/metas-registro.js\"|' 'C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad/test-browser.html')",
+      "Bash(sed -i 's|mision-de-prueba.*fallos.push..mision..;|mision-de-prueba\"\\) fallos.push\\(\"mision\"\\);|' 'C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad/sitio/misiones/mision-de-prueba/index.html')",
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\servidor.js\")",
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\servidor-real.js\")"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
