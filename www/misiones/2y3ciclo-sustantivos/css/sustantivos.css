@@ -2482,3 +2482,8 @@ body.letra-grande button {
 .maq-end-pct    { font-size: 2.8rem; font-weight: 800; color: var(--jade); line-height: 1; margin-bottom: 0.25rem; }
 .maq-end-msg    { font-size: 0.92rem; color: var(--gray); margin-bottom: 0.4rem; font-style: italic; }
 .maq-end-detail { font-size: 0.78rem; color: var(--gray); margin-bottom: 1rem; }
+
+/* ===== ESTÁNDAR M.E.T.A.S: reverso de flashcards SIEMPRE en minúscula.
+   Nunca usar class="fa" en texto: Font Awesome 6 dibuja a-z y 0-9 como iconos
+   con forma de MAYÚSCULA (por eso se veía el reverso en mayúsculas). ===== */
+#fcA{font-family:'Nunito','Fredoka',sans-serif !important;font-weight:600 !important;font-style:normal !important;text-transform:lowercase !important;}

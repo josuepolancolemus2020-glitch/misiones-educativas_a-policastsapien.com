@@ -169,8 +169,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .fc-back{background:#1b2838;color:#e0e0e0;transform:rotateY(180deg);}
 .fc-front .fw{font-family:'Fredoka',sans-serif;font-size:1.8rem;text-align:center;color:white;}
 .fc-front .fhint{font-size:0.78rem;opacity:0.8;margin-top:0.5rem;color:white;}
-.fc-back .fa{font-size:1.1rem;text-align:center;line-height:1.5;color:#e0e0e0;}
-.fc-back .fa strong{color:var(--yellow-br);}
+.fc-back .fca{font-size:1.1rem;text-align:center;line-height:1.5;color:#e0e0e0;}
+.fc-back .fca strong{color:var(--yellow-br);}
 .fc-nav{display:flex;justify-content:center;align-items:center;gap:1rem;margin-top:0.8rem;}
 .fc-ctr{font-family:'Fredoka',sans-serif;font-size:0.85rem;color:var(--gray);}
 
@@ -476,3 +476,9 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
     padding: 2px;
     border: 1.5px solid var(--pri);
 }
+
+
+/* ===== ESTÁNDAR M.E.T.A.S: reverso de flashcards SIEMPRE en minúscula.
+   Nunca usar class="fa" en texto: Font Awesome 6 dibuja a-z y 0-9 como iconos
+   con forma de MAYÚSCULA (por eso se veía el reverso en mayúsculas). ===== */
+#fcA{font-family:'Nunito','Fredoka',sans-serif !important;font-weight:600 !important;font-style:normal !important;text-transform:lowercase !important;}
