@@ -11,10 +11,10 @@ window.WidgetFaltanteJSON = {
       <style>
         .wf-container { background: #ffffff; border: 2px solid #e2ddd4; border-radius: 16px; padding: 1.3rem; font-family: 'Nunito', sans-serif; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin: 1rem 0; }
         .wf-eq { font-family: 'Fira Code', monospace; font-size: 1.5rem; font-weight: 700; color: #1b2838; text-align: center; margin-bottom: 0.9rem; letter-spacing: 0.05em; }
-        .wf-eq .wf-box { color: #d84315; }
+        .wf-eq .wf-box { color: #1565c0; }
         .wf-opts { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
-        .wf-opt { font-family: 'Fredoka', sans-serif; font-size: 1rem; padding: 0.5rem 1.2rem; border: 2px solid #d84315; border-radius: 20px; background: white; color: #d84315; cursor: pointer; transition: all 0.2s; font-weight: 700; }
-        .wf-opt:hover:not(:disabled) { background: #d84315; color: white; }
+        .wf-opt { font-family: 'Fredoka', sans-serif; font-size: 1rem; padding: 0.5rem 1.2rem; border: 2px solid #1565c0; border-radius: 20px; background: white; color: #1565c0; cursor: pointer; transition: all 0.2s; font-weight: 700; }
+        .wf-opt:hover:not(:disabled) { background: #1565c0; color: white; }
         .wf-opt.wf-ok { background: #00b894; border-color: #00b894; color: white; }
         .wf-opt.wf-no { background: #d63031; border-color: #d63031; color: white; }
         .wf-msg { font-size: 0.88rem; text-align: center; color: #636e72; min-height: 2.4rem; padding: 0.4rem 0.6rem; border-radius: 8px; margin-top: 0.7rem; line-height: 1.45; }

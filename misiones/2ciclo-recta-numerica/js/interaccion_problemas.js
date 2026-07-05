@@ -21,7 +21,7 @@ window.WidgetProblemasJSON = {
         .wq-input { font-family: 'Fira Code', monospace; font-size: 1.05rem; padding: 0.45rem 0.7rem; border: 2px solid #e2ddd4; border-radius: 10px; width: 130px; background: #fff; color: #1b2838; }
         .wq-input.wq-in-ok { border-color: #00b894; background: rgba(0,184,148,0.10); }
         .wq-input.wq-in-no { border-color: #d63031; background: rgba(214,48,49,0.08); }
-        .wq-btn { font-family: 'Fredoka', sans-serif; background: #d84315; color: white; border: none; padding: 0.55rem 1.1rem; border-radius: 12px; cursor: pointer; font-size: 0.88rem; transition: transform 0.2s; }
+        .wq-btn { font-family: 'Fredoka', sans-serif; background: #1565c0; color: white; border: none; padding: 0.55rem 1.1rem; border-radius: 12px; cursor: pointer; font-size: 0.88rem; transition: transform 0.2s; }
         .wq-btn:hover:not(:disabled) { transform: translateY(-2px); }
         .wq-btn:disabled { opacity: 0.45; cursor: default; }
         .wq-btn.wq-btn-teal { background: #00838f; }

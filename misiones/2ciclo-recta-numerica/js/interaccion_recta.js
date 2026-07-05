@@ -11,13 +11,13 @@ window.WidgetRectaJSON = {
       <style>
         .wr-container { background: #ffffff; border: 2px solid #e2ddd4; border-radius: 16px; padding: 1.3rem; font-family: 'Nunito', sans-serif; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin: 1rem 0; }
         .wr-goal { font-family: 'Fredoka', sans-serif; font-size: 1.05rem; text-align: center; color: #1b2838; margin-bottom: 0.3rem; }
-        .wr-goal strong { color: #d84315; font-size: 1.3rem; }
+        .wr-goal strong { color: #1565c0; font-size: 1.3rem; }
         .wr-esc { font-size: 0.8rem; text-align: center; color: #636e72; margin-bottom: 0.9rem; }
         .wr-line { display: flex; align-items: flex-end; margin: 0.4rem 0 0.9rem; }
         .wr-tick { flex: 1; text-align: center; cursor: pointer; position: relative; padding-top: 4px; }
         .wr-rail { height: 3px; background: #1b2838; position: absolute; left: 0; right: 0; top: 18px; }
         .wr-dot { width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid #1b2838; background: #fff; margin: 8px auto 4px; position: relative; z-index: 1; transition: all 0.2s; }
-        .wr-tick:hover .wr-dot { transform: scale(1.3); border-color: #d84315; }
+        .wr-tick:hover .wr-dot { transform: scale(1.3); border-color: #1565c0; }
         .wr-tick.wr-ok .wr-dot { background: #00b894; border-color: #00b894; transform: scale(1.35); }
         .wr-tick.wr-no .wr-dot { background: #d63031; border-color: #d63031; }
         .wr-tick.wr-show .wr-dot { background: #fdcb6e; border-color: #e17055; transform: scale(1.35); }
@@ -26,7 +26,7 @@ window.WidgetRectaJSON = {
         .wr-msg.ok { background: rgba(0,184,148,0.12); color: #006d4e; }
         .wr-msg.err { background: rgba(214,48,49,0.10); color: #a00; }
         .wr-btn-row { display: flex; gap: 0.6rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
-        .wr-btn { font-family: 'Fredoka', sans-serif; background: #d84315; color: white; border: none; padding: 0.55rem 1.1rem; border-radius: 12px; cursor: pointer; font-size: 0.88rem; transition: transform 0.2s; }
+        .wr-btn { font-family: 'Fredoka', sans-serif; background: #1565c0; color: white; border: none; padding: 0.55rem 1.1rem; border-radius: 12px; cursor: pointer; font-size: 0.88rem; transition: transform 0.2s; }
         .wr-btn:hover { transform: translateY(-2px); }
         .wr-score { font-family: 'Fredoka', sans-serif; font-size: 0.78rem; text-align: center; color: #636e72; margin-top: 0.4rem; }
         [data-theme="dark"] .wr-container { background: #1e2130; border-color: #2d3450; }

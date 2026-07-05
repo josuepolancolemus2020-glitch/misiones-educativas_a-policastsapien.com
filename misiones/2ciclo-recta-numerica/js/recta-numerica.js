@@ -87,7 +87,7 @@ function unlockAchievement(id){ if(unlockedAch.includes(id)) return; unlockedAch
 function renderAchPanel(){ const list=document.getElementById('achList'); list.innerHTML=''; Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{ const div=document.createElement('div'); div.className='ach-item'+(unlockedAch.includes(id)?'':' locked'); div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`; list.appendChild(div); }); }
 function toggleAchPanel(){ sfx('click'); document.getElementById('achPanel').classList.toggle('open'); }
 function showToast(msg){ let t=document.querySelector('.toast'); if(!t){ t=document.createElement('div'); t.className='toast'; document.body.appendChild(t); } t.textContent=msg; t.style.display='block'; clearTimeout(t._tid); t._tid=setTimeout(()=>t.style.display='none',3200); }
-function launchConfetti(){ const colors=['#d84315','#00838f','#00b894','#fdcb6e','#6c5ce7']; for(let i=0;i<60;i++){ const c=document.createElement('div'); c.className='confetti-piece'; c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`; document.body.appendChild(c); c.addEventListener('animationend',()=>c.remove()); } }
+function launchConfetti(){ const colors=['#1565c0','#00838f','#00b894','#fdcb6e','#6c5ce7']; for(let i=0;i<60;i++){ const c=document.createElement('div'); c.className='confetti-piece'; c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`; document.body.appendChild(c); c.addEventListener('animationend',()=>c.remove()); } }
 
 // ===================== XP =====================
 const lvls=[{t:0,n:'Novato ✏️'},{t:25,n:'Aprendiz 📐'},{t:55,n:'Explorador 🔭'},{t:90,n:'Detective 🔍'},{t:130,n:'Experto 📊'},{t:165,n:'Campeón 🔥'},{t:190,n:'Maestro 🎓'}];
@@ -195,7 +195,16 @@ function buildClass(){
   }
   function _mkDropItem(text,type){
     const el=document.createElement('div'); el.className='drop-item'; el.textContent=text; el.dataset.t=type;
-    el.onclick=(ev)=>{ ev.stopPropagation(); el.remove(); bank.appendChild(_mkBankItem(text,type)); sfx('click'); };
+    el.onclick=(ev)=>{
+      ev.stopPropagation();
+      if(clsSelected){ // hay un elemento del banco seleccionado: se inserta en esta caja, sin sacar el tocado
+        const listEl=el.parentElement;
+        const selText=clsSelected.textContent, selType=clsSelected.dataset.t;
+        clsSelected.remove(); clsSelected=null; _clsUpdateReady();
+        listEl.appendChild(_mkDropItem(selText,selType)); sfx('click'); return;
+      }
+      el.remove(); bank.appendChild(_mkBankItem(text,type)); sfx('click');
+    };
     return el;
   }
   function _colClick(listId){
@@ -309,21 +318,24 @@ const prediceData = [
     opts: ['45', '50', '55'],
     correct: 1,
     feedback: '¡Correcto! 50 está a 10 saltos de 40 y a 10 saltos de 60: es el punto medio.',
-    wrongFeedback: 'La respuesta es 50: está a la misma distancia (10) de 40 y de 60. ¡Aprenderás el truco en la sección Aprende!'
+    wrongFeedback: 'La respuesta es 50: está a la misma distancia (10) de 40 y de 60. ¡Aprenderás el truco en la sección Aprende!',
+    explore: 'medio'
   },
   {
     q: 'En una recta de 0 a 100 con marcas cada 10, ¿entre qué marcas queda el 75?',
     opts: ['Entre 70 y 80', 'Entre 60 y 70', 'Entre 80 y 90'],
     correct: 0,
     feedback: '¡Excelente! 75 es mayor que 70 y menor que 80, así que queda entre esas dos marcas.',
-    wrongFeedback: 'La respuesta es: entre 70 y 80. El 75 es mayor que 70 pero todavía no llega a 80.'
+    wrongFeedback: 'La respuesta es: entre 70 y 80. El 75 es mayor que 70 pero todavía no llega a 80.',
+    explore: 'entre'
   },
   {
     q: 'María tenía 350 lempiras y gastó 120. ¿Le queda más o menos que 200?',
     opts: ['Menos que 200', 'Exactamente 200', 'Más que 200'],
     correct: 2,
     feedback: '¡Muy bien! 350 − 120 = 230, y 230 es más que 200.',
-    wrongFeedback: 'La respuesta es: más que 200. Al restar 350 − 120 quedan 230 lempiras.'
+    wrongFeedback: 'La respuesta es: más que 200. Al restar 350 − 120 quedan 230 lempiras.',
+    explore: 'saltos'
   }
 ];
 let prediceAnswered = new Set();
@@ -338,6 +350,8 @@ function buildPredice() {
     card.innerHTML = `
       <div class="predice-num">Predicción ${i + 1} de ${prediceData.length}</div>
       <div class="predice-q">${item.q}</div>
+      <button class="pd-explore-btn" onclick="togglePredExplore(${i})" id="pd-btn-${i}">🔍 Explorar la pista</button>
+      <div class="pd-explore" id="pd-explore-${i}" style="display:none;"></div>
       <div class="predice-opts" id="predice-opts-${i}">
         ${item.opts.map((o, j) => `<button class="predice-btn" onclick="answerPredice(${i},${j})" id="pb-${i}-${j}">${o}</button>`).join('')}
       </div>
@@ -367,6 +381,52 @@ function answerPredice(qi, ai) {
   }
   prediceAnswered.add(qi);
   if (prediceAnswered.size === prediceData.length) { fin('s-predice'); sfx('fan'); showToast('🔮 ¡Predicciones completadas! Ahora a aprender.'); }
+}
+
+// --- Exploradores interactivos de la sección Predice ---
+function togglePredExplore(i){
+  sfx('click');
+  const box=document.getElementById('pd-explore-'+i); if(!box) return;
+  const btn=document.getElementById('pd-btn-'+i);
+  if(box.style.display==='none'){
+    if(!box.dataset.built){ _buildPredExplore(i,box); box.dataset.built='1'; }
+    box.style.display='block'; if(btn) btn.textContent='🔽 Ocultar la pista';
+  } else { box.style.display='none'; if(btn) btn.textContent='🔍 Explorar la pista'; }
+}
+function _pdTick(lbl){ const t=document.createElement('div'); t.className='pd-tick'; t.innerHTML=`<div class="pd-rail"></div><div class="pd-dot"></div><div class="pd-lbl">${lbl}</div>`; return t; }
+function _buildPredExplore(i,box){
+  const type=prediceData[i].explore;
+  if(type==='medio'){
+    box.innerHTML=`<p class="pd-tip">Toca cualquier marca y mide sus distancias a 40 y a 60:</p><div class="pd-line" id="pd-line-${i}"></div><div class="pd-msg" id="pd-msg-${i}">👆 prueba varias marcas hasta encontrar distancias iguales</div>`;
+    const line=document.getElementById('pd-line-'+i);
+    for(let v=40;v<=60;v+=5){
+      const t=_pdTick(v);
+      t.onclick=()=>{ sfx('click'); line.querySelectorAll('.pd-tick').forEach(x=>x.classList.remove('pd-on','pd-win'));
+        const dA=v-40,dB=60-v; const msg=document.getElementById('pd-msg-'+i);
+        if(dA===dB&&dA>0){ t.classList.add('pd-win'); msg.innerHTML=`⚖ <strong>${v}</strong> está a ${dA} de 40 y a ${dB} de 60. ¡Distancias iguales: ese es el punto medio! 🎯 Ahora responde abajo.`; sfx('ok'); }
+        else{ t.classList.add('pd-on'); msg.innerHTML=`📏 <strong>${v}</strong> está a <strong>${dA}</strong> de 40 y a <strong>${dB}</strong> de 60. ¿Habrá una marca con distancias iguales?`; } };
+      line.appendChild(t);
+    }
+  } else if(type==='entre'){
+    box.innerHTML=`<p class="pd-tip">La estrella es el 75. Toca las marcas para descubrir cuáles la encierran:</p><div class="pd-line" id="pd-line-${i}"><span class="pd-star">⭐</span></div><div class="pd-msg" id="pd-msg-${i}">👆 toca una marca</div>`;
+    const line=document.getElementById('pd-line-'+i);
+    for(let k=0;k<=10;k++){
+      const v=k*10; const t=_pdTick(v);
+      t.onclick=()=>{ sfx('click'); const msg=document.getElementById('pd-msg-'+i);
+        if(v===70||v===80){ t.classList.add('pd-win'); msg.innerHTML=`✔ ¡Sí! El 75 es mayor que <strong>70</strong> y menor que <strong>80</strong>: la estrella vive entre esas dos marcas. Ahora responde abajo.`; sfx('ok'); }
+        else{ t.classList.add('pd-on'); setTimeout(()=>t.classList.remove('pd-on'),700); msg.innerHTML=`🤔 Tocaste el <strong>${v}</strong>. La estrella queda más ${v<75?'a la derecha':'a la izquierda'}. ¡Sigue buscando!`; } };
+      line.appendChild(t);
+    }
+  } else if(type==='saltos'){
+    box.innerHTML=`<p class="pd-tip">María parte del 350. Mira cómo retrocede 120 en saltos de 10:</p><div class="pd-counter" id="pd-cnt-${i}">350</div><div class="pd-msg" id="pd-msg-${i}">&nbsp;</div><div style="text-align:center;margin-top:0.4rem;"><button class="btn btn-pri" onclick="predSaltosAnim(${i})" id="pd-go-${i}">🐸 Quitar 120 en saltos</button></div>`;
+  }
+}
+function predSaltosAnim(i){
+  const btn=document.getElementById('pd-go-'+i); if(!btn||btn.disabled) return; btn.disabled=true; sfx('click');
+  const cnt=document.getElementById('pd-cnt-'+i); const msg=document.getElementById('pd-msg-'+i);
+  let v=350,steps=0;
+  const int=setInterval(()=>{ v-=10; steps++; cnt.textContent=v; sfx('tick'); msg.innerHTML=`salto ${steps} de 12 · lleva quitados ${steps*10} lempiras`;
+    if(steps>=12){ clearInterval(int); cnt.textContent='350 − 120 = '+v; msg.innerHTML='🏁 Llegó al <strong>230</strong>. Compáralo con 200 y responde abajo.'; sfx('fan'); btn.disabled=false; btn.textContent='🔄 Ver otra vez'; } },260);
 }
 
 // ===================== RETO FINAL (con parejas variables) =====================
@@ -433,33 +493,12 @@ function endReto(){ retoRunning=false; document.getElementById('retoWord').textC
 function resetReto(){ sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0; document.getElementById('retoTimer').textContent='⏱ 30'; document.getElementById('retoTimer').style.color='var(--pri)'; document.getElementById('retoWord').textContent='¡Prepárate!'; document.getElementById('retoScore').textContent='✔ 0 correctas | ✗ 0 errores'; document.getElementById('fbReto').classList.remove('show'); }
 
 // ===================== GENERADOR DE TAREAS =====================
-const identifyTaskDB=[
-  {s:'El cero es el punto de partida de la recta numérica.',type:'Concepto: Origen'},
-  {s:'En una recta de 10 en 10, cada salto vale diez.',type:'Concepto: Escala'},
-  {s:'En 720−245=475, el número 475 es el resultado.',type:'Concepto: Diferencia'},
-  {s:'En 46+38=84, los números 46 y 38 se juntan.',type:'Concepto: Sumandos'},
-  {s:'Entre 40 y 60, el número 50 está exactamente al centro.',type:'Concepto: Punto medio'},
-  {s:'Sustraendo + diferencia = minuendo.',type:'Concepto: Prueba de la resta'}
-];
-const classifyTaskDB=[
-  {w:'Ana tiene 250 láminas y compra 180 más. ¿Cuántas tiene?',pos:'Suma',val:'250+180',equiv:'430 láminas'},
-  {w:'Luis tenía 500 lempiras y gastó 235. ¿Cuánto le queda?',pos:'Resta',val:'500−235',equiv:'265 lempiras'},
-  {w:'¿Cuánto le falta a 380 para llegar a 600?',pos:'Resta',val:'600−380',equiv:'220'},
-  {w:'Un bus lleva 46 pasajeros y suben 28. ¿Cuántos lleva ahora?',pos:'Suma',val:'46+28',equiv:'74 pasajeros'},
-  {w:'Marta tiene 95 mangos y José 58. ¿Cuántos más tiene Marta?',pos:'Resta',val:'95−58',equiv:'37 mangos'}
-];
-const completeTaskDB=[
-  {s:'El punto de partida de la recta numérica se llama ___.',opts:['origen','final','escala'],ans:'origen'},
-  {s:'El valor de cada salto entre marcas se llama ___.',opts:['origen','escala','total'],ans:'escala'},
-  {s:'En 90−35=55, el número 35 es el ___.',opts:['minuendo','sustraendo','total'],ans:'sustraendo'},
-  {s:'El resultado de la adición se llama suma o ___.',opts:['total','diferencia','resto'],ans:'total'},
-  {s:'El punto medio entre 100 y 200 es ___.',opts:['120','150','180'],ans:'150'}
-];
-const explainQuestions=[
-  {q:'Explica cómo ubicas el número 70 en una recta de 0 a 100 con marcas cada 10.',ans:'Cada salto vale 10. Parto del 0 y cuento 7 saltos: 10, 20, 30, 40, 50, 60, 70. El 70 está en la séptima marca después del origen.'},
-  {q:'Explica por qué "cuánto le falta a 40 para llegar a 90" se resuelve con una resta.',ans:'Porque busco la distancia entre 40 y 90 en la recta. Esa distancia se calcula restando: 90−40=50. Le faltan 50.'},
-  {q:'Explica cómo compruebas que 500−137=363 está bien hecha.',ans:'Con la prueba de la resta: sustraendo + diferencia = minuendo. 137+363=500 ✔, así que la resta es correcta.'}
-];
+// Tareas autogeneradas: el estudiante se autoasigna práctica desde casa o el
+// docente las copia en el pizarrón. Cada "⚡ Generar" crea ejercicios nuevos
+// y las respuestas quedan ocultas hasta presionar "👁 Respuestas".
+function _tgRint(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function _tgLines(n){ let s=''; for(let i=0;i<n;i++) s+='<div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.4rem;height:1.3rem;">&nbsp;</div>'; return s; }
+function _tgTask(out,i,inner){ const div=document.createElement('div'); div.className='tg-task'; div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content">${inner}</div>`; out.appendChild(div); }
 const pensamientoTaskDB=[
   {q:'Un saltamontes parte del 14 y da 5 saltos iguales hasta llegar al 44. ¿Cuánto mide cada salto?',ans:'Del 14 al 44 hay 44−14=30. Como dio 5 saltos iguales, cada salto mide 30÷5=6.',type:'🦗 Saltos iguales'},
   {q:'Encuentra el error: "El punto medio entre 30 y 50 es 35".',ans:'El error es que 35 está a 5 de 30 pero a 15 de 50. El punto medio es 40: está a 10 de cada uno.',type:'🔎 Detectar error'},
@@ -478,12 +517,67 @@ function genPensamientoTask(out,count){
   }
 }
 let ansVisible=false;
-function genTask(){ sfx('click'); const type=document.getElementById('tgType').value; const count=parseInt(document.getElementById('tgCount').value); ansVisible=false; const out=document.getElementById('tgOut'); out.innerHTML=''; if(type==='identify') genIdentifyTask(out,count); else if(type==='classify') genClassifyTask(out,count); else if(type==='complete') genCompleteTask(out,count); else if(type==='explain') genExplainTask(out,count); else if(type==='pensamiento') genPensamientoTask(out,count); fin('s-tareas'); }
+function genTask(){ sfx('click'); const type=document.getElementById('tgType').value; const count=parseInt(document.getElementById('tgCount').value); ansVisible=false; const out=document.getElementById('tgOut'); out.innerHTML=''; if(type==='recta') genRectaTask(out,count); else if(type==='operaciones') genOperacionesTask(out,count); else if(type==='problemas') genProblemasTask(out,count); else if(type==='escondido') genEscondidoTask(out,count); else if(type==='piramide') genPiramideTask(out,count); else if(type==='pensamiento') genPensamientoTask(out,count); fin('s-tareas'); }
 function _instrBlock(out,title,lines){ const ib=document.createElement('div'); ib.className='tg-instruction-block'; ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join(''); out.appendChild(ib); }
-function genIdentifyTask(out,count){ _instrBlock(out,'Instrucción',['Copia en tu cuaderno; escribe el concepto matemático que describe cada oración.','<strong>Ejemplo:</strong> El resultado de la resta. → <span style="color:var(--jade);font-weight:700;">Concepto: Diferencia</span>']); _pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{ const div=document.createElement('div'); div.className='tg-task'; div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✔ ${item.type}</div></div>`; out.appendChild(div); }); }
-function genClassifyTask(out,count){ _instrBlock(out,'Instrucción',['Copia la tabla. Para cada problema escribe si se resuelve con Suma o Resta, la operación y la respuesta.']); const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length)); const wrap=document.createElement('div'); wrap.style.overflowX='auto'; const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`; let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:480px;"><thead><tr style="background:var(--pri-gl);">${th('Problema','text-align:left;')}${th('¿Suma o Resta?')}${th('Operación')}${th('Respuesta')}</tr></thead><tbody>`; items.forEach(it=>{ html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(3).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>'; }); html+='</tbody></table>'; wrap.innerHTML=html; out.appendChild(wrap); const ans=document.createElement('div'); ans.className='tg-answer'; ans.style.marginTop='0.8rem'; ans.innerHTML='<strong>✔ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}</strong> → ${it.pos} | Operación: ${it.val} | R: ${it.equiv}`).join('<br>'); out.appendChild(ans); }
-function genCompleteTask(out,count){ _instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Elige la opción correcta para el espacio ___.']); const pool=_shuffle([...completeTaskDB]); for(let i=0;i<count;i++){ const item=pool[i%pool.length]; const div=document.createElement('div'); div.className='tg-task'; const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'); div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">💡 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✔ ${item.ans}</div></div>`; out.appendChild(div); } }
-function genExplainTask(out,count){ _instrBlock(out,'Instrucción',['Copia las preguntas en tu cuaderno y responde de forma clara.']); const pool=_shuffle([...explainQuestions]); for(let i=0;i<count;i++){ const item=pool[i%pool.length]; const div=document.createElement('div'); div.className='tg-task'; div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✔ ${item.ans}</div></div>`; out.appendChild(div); } }
+// 📏 Dibujar rectas y ubicar números (aleatorio: nunca se repite)
+function genRectaTask(out,count){
+  _instrBlock(out,'Instrucción — Ubicar en la recta',['En tu cuaderno dibuja UNA recta por ejercicio: escribe el número inicial y el final, divide en 8 saltos iguales y ubica los números pedidos.','<strong>Pista:</strong> antes de ubicar, pregúntate: ¿cuánto vale cada salto?']);
+  const steps=[5,10,20,25,50,100];
+  for(let i=0;i<count;i++){
+    const step=steps[_tgRint(0,steps.length-1)]; const start=step*_tgRint(0,6); const end=start+8*step;
+    const ks=[]; while(ks.length<3){ const k=_tgRint(1,7); if(!ks.includes(k)) ks.push(k); } ks.sort((a,b)=>a-b);
+    _tgTask(out,i,`<strong>Dibuja una recta de ${_fmtNum(start)} a ${_fmtNum(end)} con escala de ${step} en ${step} y ubica: ${ks.map(k=>'<strong>'+_fmtNum(start+k*step)+'</strong>').join(' · ')}</strong>${_tgLines(2)}<div class="tg-answer">✔ ${ks.map(k=>_fmtNum(start+k*step)+' → a '+k+' saltos del '+_fmtNum(start)).join(' · ')}</div>`);
+  }
+}
+// ➕➖ Operaciones en columna
+function genOperacionesTask(out,count){
+  _instrBlock(out,'Instrucción — Sumas y restas en columna',['Copia cada operación EN COLUMNA (unidades bajo unidades, decenas bajo decenas) y resuelve.','<strong>Recuerda:</strong> en la suma se lleva; en la resta se pide prestado. Comprueba cada resta con: sustraendo + diferencia = minuendo.']);
+  for(let i=0;i<count;i++){
+    const esSuma=i%2===0; let a,b,ans,expr,prueba='';
+    if(esSuma){ a=_tgRint(146,4980); b=_tgRint(138,4900); ans=a+b; expr=`${_fmtNum(a)} + ${_fmtNum(b)} =`; }
+    else{ a=_tgRint(500,9800); b=_tgRint(120,a-80); ans=a-b; expr=`${_fmtNum(a)} − ${_fmtNum(b)} =`; prueba=` (prueba: ${_fmtNum(b)} + ${_fmtNum(ans)} = ${_fmtNum(a)})`; }
+    _tgTask(out,i,`<strong style="font-family:'Fira Code',monospace;">${expr}</strong>${_tgLines(1)}<div class="tg-answer">✔ ${_fmtNum(ans)}${prueba}</div>`);
+  }
+}
+// 📖 Problemas con la ruta de 4 pasos
+function _tgProblema(){
+  const NAMES=['Ana','Luis','Marta','José','Carmen','Pedro','Sofía','Iván'];
+  const OBJS=['mangos','libros','canicas','boletos','lápices','naranjas'];
+  const n1=NAMES[_tgRint(0,NAMES.length-1)]; let n2=NAMES[_tgRint(0,NAMES.length-1)]; while(n2===n1) n2=NAMES[_tgRint(0,NAMES.length-1)];
+  const obj=OBJS[_tgRint(0,OBJS.length-1)]; const tp=_tgRint(0,4);
+  if(tp===0){ const a=_tgRint(150,850),b=_tgRint(120,850); return {text:`${n1} tiene ${_fmtNum(a)} ${obj} y consigue ${_fmtNum(b)} más. ¿Cuántos ${obj} tiene ahora?`,op:'Suma',expr:`${_fmtNum(a)} + ${_fmtNum(b)}`,ans:a+b}; }
+  if(tp===1){ const a=_tgRint(400,950),b=_tgRint(120,a-50); return {text:`${n1} tenía ${_fmtNum(a)} ${obj} y regaló ${_fmtNum(b)}. ¿Cuántos ${obj} le quedan?`,op:'Resta',expr:`${_fmtNum(a)} − ${_fmtNum(b)}`,ans:a-b}; }
+  if(tp===2){ const a=_tgRint(500,980),b=_tgRint(120,a-60); return {text:`${n1} quiere reunir ${_fmtNum(a)} lempiras y ya tiene ${_fmtNum(b)}. ¿Cuántos lempiras le faltan?`,op:'Resta',expr:`${_fmtNum(a)} − ${_fmtNum(b)}`,ans:a-b}; }
+  if(tp===3){ const a=_tgRint(500,950),b=_tgRint(120,a-40); return {text:`${n1} recorrió ${_fmtNum(a)} metros y ${n2} recorrió ${_fmtNum(b)}. ¿Cuántos metros más recorrió ${n1}?`,op:'Resta',expr:`${_fmtNum(a)} − ${_fmtNum(b)}`,ans:a-b}; }
+  const a=_tgRint(150,480),b=_tgRint(150,480); return {text:`En la escuela hay ${_fmtNum(a)} niñas y ${_fmtNum(b)} niños. ¿Cuántos estudiantes hay en total?`,op:'Suma',expr:`${_fmtNum(a)} + ${_fmtNum(b)}`,ans:a+b};
+}
+function genProblemasTask(out,count){
+  _instrBlock(out,'Instrucción — Problemas de la vida real',['Sigue la ruta de 4 pasos con cada problema: 1) léelo dos veces, 2) anota los datos, 3) decide si es suma o resta, 4) resuelve y responde con la unidad.']);
+  for(let i=0;i<count;i++){
+    const p=_tgProblema();
+    _tgTask(out,i,`<strong>${p.text}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">Datos: __________ · Operación: __________ · Respuesta: __________</div>${_tgLines(2)}<div class="tg-answer">✔ ${p.op}: ${p.expr} = ${_fmtNum(p.ans)}</div>`);
+  }
+}
+// ▢ Número escondido (operación inversa)
+function genEscondidoTask(out,count){
+  _instrBlock(out,'Instrucción — El número escondido',['Descubre el número que se esconde en la casilla ▢ usando la operación inversa y comprueba tu respuesta.','<strong>Ejemplo:</strong> ▢ + 20 = 50 → hago 50 − 20 = 30 → compruebo: 30 + 20 = 50 ✔']);
+  for(let i=0;i<count;i++){
+    const f=i%4; let expr,ans,how;
+    if(f===0){ const x=_tgRint(15,480),a=_tgRint(15,480); expr=`▢ + ${_fmtNum(a)} = ${_fmtNum(x+a)}`; ans=x; how=`${_fmtNum(x+a)} − ${_fmtNum(a)}`; }
+    else if(f===1){ const x=_tgRint(15,480),a=_tgRint(15,480); expr=`${_fmtNum(a)} + ▢ = ${_fmtNum(x+a)}`; ans=x; how=`${_fmtNum(x+a)} − ${_fmtNum(a)}`; }
+    else if(f===2){ const c=_tgRint(200,980),x=_tgRint(50,c-60); expr=`${_fmtNum(c)} − ▢ = ${_fmtNum(c-x)}`; ans=x; how=`${_fmtNum(c)} − ${_fmtNum(c-x)}`; }
+    else{ const a=_tgRint(50,400),d=_tgRint(50,500); expr=`▢ − ${_fmtNum(a)} = ${_fmtNum(d)}`; ans=a+d; how=`${_fmtNum(d)} + ${_fmtNum(a)}`; }
+    _tgTask(out,i,`<strong style="font-family:'Fira Code',monospace;">${expr}</strong>${_tgLines(1)}<div class="tg-answer">✔ ▢ = ${_fmtNum(ans)} (inversa: ${how})</div>`);
+  }
+}
+// 🔺 Pirámides numéricas
+function genPiramideTask(out,count){
+  _instrBlock(out,'Instrucción — Pirámides numéricas',['Copia cada pirámide en tu cuaderno. Cada casilla es la SUMA de las dos casillas de abajo. Completa la fila del medio y la cúspide.']);
+  for(let i=0;i<count;i++){
+    const b=[_tgRint(11,49),_tgRint(11,49),_tgRint(11,49)]; const m1=b[0]+b[1],m2=b[1]+b[2];
+    _tgTask(out,i,`<div class="op-pira"><div class="op-pira-row"><div class="op-pira-cell op-pira-empty">?</div></div><div class="op-pira-row"><div class="op-pira-cell op-pira-empty">&nbsp;</div><div class="op-pira-cell op-pira-empty">&nbsp;</div></div><div class="op-pira-row"><div class="op-pira-cell">${b[0]}</div><div class="op-pira-cell">${b[1]}</div><div class="op-pira-cell">${b[2]}</div></div></div><div class="tg-answer">✔ fila del medio: ${m1} y ${m2} · cúspide: ${m1+m2}</div>`);
+  }
+}
 function toggleAns(){ ansVisible=!ansVisible; document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none'); sfx('click'); }
 
 // ===================== SOPA DE LETRAS (multidireccional, con inversas) =====================
@@ -672,7 +766,7 @@ function printEval(){
   pR+=`</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;
   d.pr.terms.forEach((it,i)=>{ const l=d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]; pR+=`<tr><td class="pn">${i+16}.</td><td class="pa">${i+16}→${l}</td></tr>`; });
   pR+=`</table></div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Recta Numérica · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#d84315;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#d84315;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.25rem;border-left:4px solid #d84315;background:#fbe9e7;display:flex;justify-content:space-between;align-items:center;color:#d84315;}.qn{font-weight:700;min-width:22px;flex-shrink:0;color:#d84315;}.tf-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.25rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;margin-top:0.2rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}.mc-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-opt input{width:12px;height:12px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:9pt;font-weight:700;color:#d84315;margin-bottom:0.2rem;}.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:#fbe9e7;border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:#d84315;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #d84315;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#d84315;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #f5c8b8;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#d84315;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#d84315;}.pa{color:#007a00;font-weight:700;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#d84315;font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #d84315;height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#d84315;font-weight:700;font-style:italic;margin-top:0.4rem;padding:0.2rem 0.5rem;background:#fbe9e7;border-radius:4px;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #d84315;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{margin:5mm 7mm;}}</style></head><body><div class="ph"><h2>Evaluación Final · Misión Recta Numérica, Suma y Resta · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE — Evaluación Final · Recta Numérica · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas II Ciclo</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Recta Numérica · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.25rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.qn{font-weight:700;min-width:22px;flex-shrink:0;color:#1565c0;}.tf-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.25rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;margin-top:0.2rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}.mc-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-opt input{width:12px;height:12px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:#e3f2fd;border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:#1565c0;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.4rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #1565c0;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{margin:5mm 7mm;}}</style></head><body><div class="ph"><h2>Evaluación Final · Misión Recta Numérica, Suma y Resta · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE — Evaluación Final · Recta Numérica · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas II Ciclo</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
@@ -800,7 +894,7 @@ function genUbicaItems() {
 function _rectaHTML(it) {
   let cells = '';
   for (let t = 0; t <= 8; t++) {
-    const lbl = t === 0 ? _fmtNum(it.start) : t === 8 ? _fmtNum(it.end) : '&nbsp;';
+    const lbl = t === 0 ? _fmtNum(it.start) : t === 8 ? _fmtNum(it.end) : '•';
     cells += `<div class="op-tick"><div class="op-arrow">${t === it.k ? '🔻' : '&nbsp;'}</div><div class="op-line"></div><div class="op-bar"></div><div class="op-lbl">${lbl}</div></div>`;
   }
   return `<div class="op-recta-wrap"><div class="op-recta">${cells}</div></div>`;
@@ -969,7 +1063,7 @@ function printEvalOp() {
   const _prRecta = (it) => {
     let cells = '';
     for (let t = 0; t <= 8; t++) {
-      const lbl = t === 0 ? _fmtNum(it.start) : t === 8 ? _fmtNum(it.end) : '&nbsp;';
+      const lbl = t === 0 ? _fmtNum(it.start) : t === 8 ? _fmtNum(it.end) : '•';
       cells += `<div class="pr-tick"><div class="pr-arr">${t === it.k ? '▼' : '&nbsp;'}</div><div class="pr-lin"></div><div class="pr-tlbl">${lbl}</div></div>`;
     }
     return `<div class="pr-recta">${cells}</div>`;
@@ -990,7 +1084,7 @@ function printEvalOp() {
   pR += `<div class="p-sec"><div class="p-ttl">III. Cadena de saltos</div><table class="p-tbl">${d.caItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">IV. Número escondido</div><table class="p-tbl">${d.faItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Pirámides numéricas</div><table class="p-tbl">${d.piItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">Cúspide: ${_fmtNum(it.ansNum)} (fila del medio: ${it.m1} y ${it.m2})</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Recta Numérica · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#d84315;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#d84315;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #d84315;background:#fbe9e7;display:flex;justify-content:space-between;align-items:center;color:#d84315;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#d84315;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #d84315;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#d84315;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.ub-row{display:flex;align-items:center;gap:0.5rem;padding:0.18rem 0.1rem;border-bottom:1px dotted #ddd;}.ub-esc{font-size:9pt;color:#555;white-space:nowrap;min-width:64px;}.pr-recta{display:flex;flex:1;max-width:95mm;align-items:flex-end;}.pr-tick{flex:1;text-align:center;position:relative;}.pr-arr{font-size:8pt;color:#c00;line-height:1;height:10px;}.pr-lin{border-bottom:2px solid #111;height:5px;position:relative;}.pr-lin::after{content:'';position:absolute;left:50%;bottom:-3px;width:1.5px;height:8px;background:#111;}.pr-tlbl{font-size:7.5pt;min-height:10px;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#fbe9e7;color:#d84315;font-size:8.5pt;}.pp-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;margin-top:0.2rem;}.pp-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;text-align:center;}.pp-dir{font-size:8.5pt;font-weight:700;color:#d84315;margin-bottom:0.2rem;text-align:left;}.pp-row{margin-bottom:2px;}.pp-cell{display:inline-block;min-width:34px;border:1.2px solid #111;border-radius:3px;padding:1px 6px;font-size:9.5pt;font-weight:700;margin:0 1px;}.pp-empty{border-style:dashed;color:#999;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#d84315;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#fbe9e7;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #d84315;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#d84315;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #f5c8b8;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#d84315;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#d84315;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:8mm 10mm;}}</style></head><body><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Recta Numérica, Suma y Resta · II Ciclo</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 50 · II: 20 · III: 10 · IV: 10 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Recta Numérica, Suma y Resta · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas II Ciclo</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Recta Numérica · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.ub-row{display:flex;align-items:center;gap:0.5rem;padding:0.18rem 0.1rem;border-bottom:1px dotted #ddd;}.ub-esc{font-size:9pt;color:#555;white-space:nowrap;min-width:64px;}.pr-recta{display:flex;flex:1;max-width:95mm;align-items:flex-end;}.pr-tick{flex:1;text-align:center;position:relative;}.pr-arr{font-size:8pt;color:#1565c0;line-height:1;height:10px;}.pr-lin{border-bottom:2px solid #111;height:5px;position:relative;}.pr-lin::after{content:'';position:absolute;left:50%;bottom:-3px;width:1.5px;height:8px;background:#111;}.pr-tlbl{font-size:7.5pt;min-height:10px;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.pp-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;margin-top:0.2rem;}.pp-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;text-align:center;}.pp-dir{font-size:8.5pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;text-align:left;}.pp-row{margin-bottom:2px;}.pp-cell{display:inline-block;min-width:34px;border:1.2px solid #111;border-radius:3px;padding:1px 6px;font-size:9.5pt;font-weight:700;margin:0 1px;}.pp-empty{border-style:dashed;color:#999;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:8mm 10mm;}}</style></head><body><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Recta Numérica, Suma y Resta · II Ciclo</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 50 · II: 20 · III: 10 · IV: 10 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Recta Numérica, Suma y Resta · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas II Ciclo</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);

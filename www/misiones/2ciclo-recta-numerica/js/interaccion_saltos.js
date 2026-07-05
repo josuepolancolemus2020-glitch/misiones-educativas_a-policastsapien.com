@@ -11,7 +11,7 @@ window.WidgetSaltosJSON = {
     container.innerHTML = `
       <style>
         .ws-container { background: #ffffff; border: 2px solid #e2ddd4; border-radius: 16px; padding: 1.3rem; font-family: 'Nunito', sans-serif; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin: 1rem 0; }
-        .ws-op { font-family: 'Fira Code', monospace; font-size: 1.4rem; font-weight: 700; color: #d84315; text-align: center; margin-bottom: 0.8rem; }
+        .ws-op { font-family: 'Fira Code', monospace; font-size: 1.4rem; font-weight: 700; color: #1565c0; text-align: center; margin-bottom: 0.8rem; }
         .ws-line { display: flex; align-items: flex-end; margin: 1.4rem 0 0.9rem; }
         .ws-tick { flex: 1; text-align: center; position: relative; }
         .ws-rail { height: 3px; background: #1b2838; position: absolute; left: 0; right: 0; top: 24px; }
@@ -20,7 +20,7 @@ window.WidgetSaltosJSON = {
         .ws-tick.ws-visited .ws-dot { background: #00838f; border-color: #00838f; }
         .ws-tick.ws-final .ws-dot { background: #00b894; border-color: #00b894; transform: scale(1.4); }
         .ws-lbl { font-family: 'Fredoka', sans-serif; font-size: 0.68rem; color: #1b2838; }
-        .ws-pred { background: linear-gradient(135deg, rgba(108,92,231,0.08), rgba(216,67,21,0.08)); border: 2px solid #6c5ce7; border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1rem; }
+        .ws-pred { background: linear-gradient(135deg, rgba(108,92,231,0.08), rgba(21,101,192,0.08)); border: 2px solid #6c5ce7; border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1rem; }
         .ws-pred-q { font-family: 'Fredoka', sans-serif; font-size: 0.95rem; color: #1b2838; margin-bottom: 0.6rem; font-weight: 600; }
         .ws-pred-opts { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .ws-pred-btn { font-family: 'Fredoka', sans-serif; font-size: 0.9rem; padding: 0.45rem 1rem; border: 2px solid #6c5ce7; border-radius: 20px; background: white; color: #6c5ce7; cursor: pointer; transition: all 0.2s; }
@@ -31,7 +31,7 @@ window.WidgetSaltosJSON = {
         .ws-msg.ok { background: rgba(0,184,148,0.12); color: #006d4e; }
         .ws-msg.err { background: rgba(214,48,49,0.10); color: #a00; }
         .ws-btn-row { display: flex; gap: 0.6rem; justify-content: center; margin-top: 0.8rem; flex-wrap: wrap; }
-        .ws-btn { font-family: 'Fredoka', sans-serif; background: #d84315; color: white; border: none; padding: 0.55rem 1.1rem; border-radius: 12px; cursor: pointer; font-size: 0.88rem; transition: transform 0.2s; }
+        .ws-btn { font-family: 'Fredoka', sans-serif; background: #1565c0; color: white; border: none; padding: 0.55rem 1.1rem; border-radius: 12px; cursor: pointer; font-size: 0.88rem; transition: transform 0.2s; }
         .ws-btn:hover:not(:disabled) { transform: translateY(-2px); }
         .ws-btn:disabled { opacity: 0.45; cursor: default; }
         .ws-btn.ws-btn-teal { background: #00838f; }

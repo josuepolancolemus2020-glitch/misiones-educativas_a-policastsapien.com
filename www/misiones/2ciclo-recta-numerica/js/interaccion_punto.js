@@ -12,7 +12,7 @@ window.WidgetPuntoJSON = {
       <style>
         .wp-container { background: #ffffff; border: 2px solid #e2ddd4; border-radius: 16px; padding: 1.3rem; font-family: 'Nunito', sans-serif; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin: 1rem 0; }
         .wp-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.6rem; }
-        .wp-lvl { font-family: 'Fredoka', sans-serif; font-size: 0.8rem; background: rgba(216,67,21,0.12); color: #d84315; border-radius: 14px; padding: 0.2rem 0.7rem; font-weight: 700; }
+        .wp-lvl { font-family: 'Fredoka', sans-serif; font-size: 0.8rem; background: rgba(21,101,192,0.12); color: #1565c0; border-radius: 14px; padding: 0.2rem 0.7rem; font-weight: 700; }
         .wp-streak { font-family: 'Fredoka', sans-serif; font-size: 0.8rem; color: #636e72; }
         .wp-line { display: flex; align-items: flex-end; margin: 1.2rem 0 0.9rem; }
         .wp-tick { flex: 1; text-align: center; position: relative; }
@@ -22,8 +22,8 @@ window.WidgetPuntoJSON = {
         .wp-lbl { font-family: 'Fredoka', sans-serif; font-size: 0.68rem; color: #1b2838; min-height: 1rem; }
         .wp-q { font-family: 'Fredoka', sans-serif; font-size: 0.95rem; text-align: center; color: #1b2838; margin-bottom: 0.6rem; font-weight: 600; }
         .wp-opts { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
-        .wp-opt { font-family: 'Fredoka', sans-serif; font-size: 1rem; padding: 0.5rem 1.2rem; border: 2px solid #d84315; border-radius: 20px; background: white; color: #d84315; cursor: pointer; transition: all 0.2s; font-weight: 700; }
-        .wp-opt:hover:not(:disabled) { background: #d84315; color: white; }
+        .wp-opt { font-family: 'Fredoka', sans-serif; font-size: 1rem; padding: 0.5rem 1.2rem; border: 2px solid #1565c0; border-radius: 20px; background: white; color: #1565c0; cursor: pointer; transition: all 0.2s; font-weight: 700; }
+        .wp-opt:hover:not(:disabled) { background: #1565c0; color: white; }
         .wp-opt.wp-ok { background: #00b894; border-color: #00b894; color: white; }
         .wp-opt.wp-no { background: #d63031; border-color: #d63031; color: white; }
         .wp-msg { font-size: 0.88rem; text-align: center; color: #636e72; min-height: 2.2rem; padding: 0.4rem 0.6rem; border-radius: 8px; margin-top: 0.6rem; line-height: 1.45; }

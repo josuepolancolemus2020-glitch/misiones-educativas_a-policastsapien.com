@@ -33,7 +33,7 @@
   <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
 </div>
 
-<header class="hero" role="banner" style="background:linear-gradient(90deg,#d84315 0%,#00838f 50%,#6c5ce7 100%);">
+<header class="hero" role="banner" style="background:linear-gradient(90deg,#1565c0 0%,#00838f 50%,#6c5ce7 100%);">
   <div class="hero-inner">
     <div class="hero-mascot-wrap">
       <div class="hero-mascot" aria-hidden="true">🐸</div>
@@ -238,7 +238,7 @@
     <div class="error-cards">
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 1: Contar las marcas en vez de los saltos</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Contar las marcas en vez de los saltos</span></div>
         <div class="error-body">
           <div class="error-row"><span class="er-label wrong">Mal:</span><span>"Del 0 al 30 con escala de 10 hay 4 saltos" (contó también la marca del 0).</span></div>
           <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se cuentan los espacios (saltos) entre marcas, no las rayitas. La marca del 0 es el punto de partida, no un salto.</span></div>
@@ -247,7 +247,7 @@
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 2: Ignorar la escala de la recta</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Ignorar la escala de la recta</span></div>
         <div class="error-body">
           <div class="error-row"><span class="er-label wrong">Mal:</span><span>"El punto que está 3 marcas después del 0 siempre es el 3".</span></div>
           <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Depende de la escala: si cada salto vale 10, la tercera marca es el 30; si vale 100, es el 300.</span></div>
@@ -256,7 +256,7 @@
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 3: Restar cifra a cifra "la menor a la mayor"</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: Restar cifra a cifra "la menor a la mayor"</span></div>
         <div class="error-body">
           <div class="error-row"><span class="er-label wrong">Mal:</span><span>En 52 − 38, hacer 8−2=6 en las unidades "porque 8 es mayor".</span></div>
           <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El orden importa: es 2−8, y como no alcanza, se <strong>pide prestado</strong> una decena: 12−8=4.</span></div>
@@ -265,7 +265,7 @@
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 4: Sumar cuando piden la diferencia</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Sumar cuando piden la diferencia</span></div>
         <div class="error-body">
           <div class="error-row"><span class="er-label wrong">Mal:</span><span>"Pedro tiene 95 y Ana 58. ¿Cuántos más tiene Pedro?" → 95+58=153.</span></div>
           <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Aunque el problema dice "más", pide <strong>comparar</strong>: la distancia entre 95 y 58 en la recta.</span></div>
@@ -274,7 +274,7 @@
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 5: Olvidar llevar en la suma</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 5: Olvidar llevar en la suma</span></div>
         <div class="error-body">
           <div class="error-row"><span class="er-label wrong">Mal:</span><span>358 + 236 = 584 (sumó 8+6=14 pero escribió el 4 sin llevar el 1).</span></div>
           <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Cuando una columna da 10 o más, se escribe la cifra de las unidades y se lleva 1 a la siguiente columna.</span></div>
@@ -501,12 +501,14 @@
 <div class="sec" id="s-tareas" role="tabpanel">
   <div class="card ac-gold">
     <h2>📋 Generador de Tareas</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">Genera ejercicios nuevos cada vez: autóasignate práctica desde casa o cópialos en el pizarrón del aula. Las respuestas se muestran con 👁.</p>
     <div class="tg-controls">
       <select class="tg-sel" id="tgType">
-        <option value="identify">🔍 Identificar conceptos</option>
-        <option value="classify">🗂️ Clasificar (¿Suma o resta?)</option>
-        <option value="complete">✏️ Completar oraciones</option>
-        <option value="explain">💡 Explicar proceso</option>
+        <option value="recta">📏 Ubicar en la recta</option>
+        <option value="operaciones">➕➖ Sumas y restas en columna</option>
+        <option value="problemas">📖 Problemas de la vida real</option>
+        <option value="escondido">▢ El número escondido</option>
+        <option value="piramide">🔺 Pirámides numéricas</option>
         <option value="pensamiento">🧠 Pensamiento matemático</option>
       </select>
       <select class="tg-sel" id="tgCount">
