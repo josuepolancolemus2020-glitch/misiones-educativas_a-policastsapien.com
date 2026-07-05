@@ -109,7 +109,15 @@ Reglas de ahorro y calidad:
    task*, crit*, parteData del Lab) + títulos, niveles, logros y `SAVE_KEY`.
 5. **Escribir el HTML** (`<slug>.html`): mismas 13 secciones e IDs; solo cambia el
    contenido de Aprende / Tipos / Lab y los textos visibles. **Los IDs y las funciones
-   onclick NO se cambian** (el JS depende de ellos).
+   onclick NO se cambian** (el JS depende de ellos). Incluir SIEMPRE, después de los
+   scripts propios de la misión:
+   `<script src="../../js/metas-registro.js"></script>`
+   (capa de registro local de evidencia: sesiones, secciones y notas de gradeEval /
+   gradeEvalOp quedan en localStorage y el docente las exporta desde `registro.html`.
+   No requiere ningún cambio en el JS de la misión: se engancha solo a las funciones
+   estándar `fin`, `gradeEval` y `gradeEvalOp`, y lee la nota del panel
+   `#evalAutoResult` / `#evalOpAutoResult` — por eso el texto "Resultado: X/100 pts"
+   de esos paneles NO debe cambiar de formato).
 6. **Registrar** en `js/data/misiones.js` con el **siguiente id libre** (revisar el
    archivo; NO asumir count+1).
 7. **Validar** (barato y confiable):
@@ -135,6 +143,7 @@ Reglas de ahorro y calidad:
 - [ ] Generador de Tareas (identify/classify/complete/explain)
 - [ ] Evaluación Conceptual (TF15/MC15/CP15/PR15) + Pensamiento Crítico (5×20)
 - [ ] Constancia + Recursos + footer estándar
+- [ ] `<script src="../../js/metas-registro.js"></script>` al final del HTML (registro de evidencia)
 - [ ] Registrada en `misiones.js` con id libre · propagada · commit/push a main
 
 ---

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 Registro Docente — M.E.T.A.S</title>
+<style>
+:root{
+  --pri:#1565c0; --pri-gl:#e3f2fd; --jade:#00b894; --amber:#fdcb6e; --rojo:#d63031;
+  --bg:#f4f7fb; --card:#ffffff; --texto:#2d3436; --gray:#636e72; --border:#dfe6ee;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --pri:#64b5f6; --pri-gl:#0d2a4a; --bg:#12181f; --card:#1b2430; --texto:#eceff4; --gray:#9aa7b4; --border:#2c3947; }
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--texto);padding:1rem;max-width:1100px;margin:0 auto;}
+header{background:linear-gradient(135deg,#1565c0,#00838f);color:#fff;border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1rem;}
+header h1{font-size:1.35rem;margin-bottom:0.3rem;}
+header p{font-size:0.85rem;opacity:0.92;line-height:1.45;}
+.top-links{display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem;}
+.btn{border:none;border-radius:10px;padding:0.55rem 0.95rem;font-size:0.85rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem;}
+.btn-blanco{background:rgba(255,255,255,0.92);color:#1565c0;}
+.btn-pri{background:var(--pri);color:#fff;}
+.btn-jade{background:var(--jade);color:#fff;}
+.btn-rojo{background:transparent;color:var(--rojo);border:1.5px solid var(--rojo);}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.6rem;margin-bottom:1rem;}
+.stat{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.7rem 0.85rem;}
+.stat .n{font-size:1.45rem;font-weight:800;color:var(--pri);}
+.stat .l{font-size:0.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.4px;}
+.filtros{display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.7rem 0.85rem;margin-bottom:0.8rem;}
+.filtros label{font-size:0.78rem;color:var(--gray);font-weight:700;}
+.filtros select{padding:0.4rem 0.5rem;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--texto);font-size:0.82rem;max-width:230px;}
+.acciones{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;}
+.tabla-wrap{background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:0.82rem;min-width:720px;}
+th{background:var(--pri-gl);color:var(--pri);text-align:left;padding:0.55rem 0.6rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.4px;position:sticky;top:0;}
+td{padding:0.5rem 0.6rem;border-top:1px solid var(--border);vertical-align:top;}
+tr:hover td{background:var(--pri-gl);}
+.badge{display:inline-block;padding:0.15rem 0.5rem;border-radius:8px;font-size:0.72rem;font-weight:700;white-space:nowrap;}
+.b-sesion{background:var(--pri-gl);color:var(--pri);}
+.b-seccion{background:#e8f8f2;color:#00875f;}
+.b-evaluacion{background:#fff3d6;color:#9a6b00;}
+.b-prueba_operativa{background:#f0e8ff;color:#6c5ce7;}
+@media (prefers-color-scheme: dark){
+  .b-seccion{background:#0d3327;color:#5fd3ab;}
+  .b-evaluacion{background:#3a2f10;color:#f3c96b;}
+  .b-prueba_operativa{background:#241b45;color:#a99af0;}
+}
+.nota-ok{color:var(--jade);font-weight:800;}
+.nota-media{color:#b8860b;font-weight:800;}
+.nota-baja{color:var(--rojo);font-weight:800;}
+.vacio{text-align:center;padding:2.2rem 1rem;color:var(--gray);font-size:0.9rem;line-height:1.6;}
+.nota-etica{margin-top:1rem;background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:8px;padding:0.7rem 0.9rem;font-size:0.78rem;color:var(--texto);line-height:1.55;}
+footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📊 Registro Docente — M.E.T.A.S</h1>
+  <p>Evidencia de aprendizaje guardada <strong>en este dispositivo</strong>: sesiones de trabajo, secciones completadas y evaluaciones calificadas por las misiones. Exporta el CSV para consolidar los datos de tu aula.</p>
+  <div class="top-links">
+    <a class="btn btn-blanco" href="index.html">🏠 Volver al inicio</a>
+  </div>
+</header>
+
+<div class="stats" id="stats"></div>
+
+<div class="filtros">
+  <label>🚀 Misión <select id="fMision"><option value="">Todas</option></select></label>
+  <label>👤 Alumno <select id="fAlumno"><option value="">Todos</option></select></label>
+  <label>🗂️ Evento <select id="fTipo">
+    <option value="">Todos</option>
+    <option value="sesion">📱 Sesión</option>
+    <option value="seccion">✅ Sección</option>
+    <option value="evaluacion">📋 Evaluación</option>
+    <option value="prueba_operativa">🧮 Prueba operativa</option>
+  </select></label>
+</div>
+
+<div class="acciones">
+  <button class="btn btn-pri" onclick="exportar()">📥 Exportar CSV</button>
+  <button class="btn btn-jade" onclick="resumenWA()">📤 Resumen por WhatsApp</button>
+  <button class="btn btn-rojo" onclick="borrarTodo()">🗑️ Borrar registros</button>
+</div>
+
+<div class="tabla-wrap">
+  <table>
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Misión</th><th>Evento</th><th>Detalle</th><th>Nota</th><th>XP</th><th>Min</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="vacio" id="vacio" style="display:none;">
+    📭 Aún no hay registros en este dispositivo.<br>
+    Los eventos aparecen automáticamente cuando los estudiantes trabajan en las misiones que incluyen la capa de registro.
+  </div>
+</div>
+
+<div class="nota-etica">
+  🔒 <strong>Privacidad:</strong> estos datos nunca salen del dispositivo por sí solos; solo tú decides exportarlos o compartirlos.
+  Para estudios formales se recomienda usar un <strong>código de alumno</strong> (ej. A07-M) en lugar del nombre completo, y contar con el
+  consentimiento informado de madres, padres o tutores.
+</div>
+
+<footer>🏠 Proyecto Educativo M.E.T.A.S · 🌐 policastsapien.com</footer>
+
+<script src="js/metas-registro.js"></script>
+<script>
+'use strict';
+const NOMBRE_TIPO = { sesion:'📱 Sesión', seccion:'✅ Sección', evaluacion:'📋 Evaluación', prueba_operativa:'🧮 Prueba operativa' };
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const p=n=>(n<10?'0':'')+n; return {f:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()), h:p(d.getHours())+':'+p(d.getMinutes())}; };
+
+function filtrados(){
+  const m=document.getElementById('fMision').value, a=document.getElementById('fAlumno').value, t=document.getElementById('fTipo').value;
+  return METAS.eventos().filter(ev => (!m||ev.mision===m) && (!a||ev.alumno===a) && (!t||ev.tipo===t));
+}
+
+function llenarFiltros(){
+  const evs=METAS.eventos();
+  const opciones=(id,vals)=>{ const sel=document.getElementById(id); const actual=sel.value;
+    while(sel.options.length>((id==='fTipo')?5:1)) sel.remove(sel.options.length-1);
+    if(id!=='fTipo') vals.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
+    sel.value=actual; };
+  opciones('fMision',[...new Set(evs.map(e=>e.mision).filter(Boolean))].sort());
+  opciones('fAlumno',[...new Set(evs.map(e=>e.alumno).filter(Boolean))].sort());
+}
+
+function pintar(){
+  llenarFiltros();
+  const evs=filtrados().slice().reverse(); // más recientes primero
+  const tb=document.getElementById('tbody'); tb.innerHTML='';
+  document.getElementById('vacio').style.display = evs.length?'none':'block';
+  evs.forEach(ev=>{
+    const {f,h}=fmtF(ev.t);
+    const detalle = ev.tipo==='seccion' ? (ev.seccion||'').replace(/^s-/,'')
+      : (ev.tipo==='evaluacion'||ev.tipo==='prueba_operativa') ? (ev.forma?('Forma '+ev.forma):'')
+      : '';
+    let nota='';
+    if(typeof ev.nota==='number'){
+      const cls = ev.nota>=70?'nota-ok':ev.nota>=40?'nota-media':'nota-baja';
+      nota = '<span class="'+cls+'">'+ev.nota+'/'+(ev.base||100)+'</span>';
+    }
+    const tr=document.createElement('tr');
+    tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(ev.alumno||'—')+'</td><td>'+esc(ev.mision||'—')+
+      '</td><td><span class="badge b-'+esc(ev.tipo)+'">'+(NOMBRE_TIPO[ev.tipo]||esc(ev.tipo))+'</span></td><td>'+esc(detalle)+
+      '</td><td>'+nota+'</td><td>'+esc(ev.xp==null?'':ev.xp)+'</td><td>'+esc(ev.min==null?'':ev.min)+'</td>';
+    tb.appendChild(tr);
+  });
+  const r=METAS.resumen();
+  const stat=(n,l)=>'<div class="stat"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';
+  document.getElementById('stats').innerHTML =
+    stat(r.eventos,'Eventos') + stat(r.alumnos.length,'Alumnos') + stat(r.misiones.length,'Misiones') +
+    stat(r.evaluaciones + r.pruebasOperativas,'Eval. calificadas') +
+    stat(r.promedioEval!=null?r.promedioEval:'—','Promedio conceptual') +
+    stat(r.promedioOp!=null?r.promedioOp:'—','Promedio operativa') +
+    stat(r.minutos,'Minutos activos');
+}
+
+function exportar(){
+  if(!METAS.eventos().length){ alert('No hay registros para exportar.'); return; }
+  METAS.exportarCSV().catch(()=>alert('⚠️ No se pudo exportar el archivo.'));
+}
+
+function resumenWA(){
+  const r=METAS.resumen();
+  if(!r.eventos){ alert('No hay registros para resumir.'); return; }
+  const txt = '📊 *REGISTRO DOCENTE M.E.T.A.S*\n\n'+
+    '📅 Período: '+(r.desde||'—')+' a '+(r.hasta||'—')+'\n'+
+    '📱 Dispositivo: '+METAS.dispositivo()+'\n\n'+
+    '👥 Alumnos activos: '+r.alumnos.length+'\n'+
+    '🚀 Misiones trabajadas: '+r.misiones.length+'\n'+
+    '📋 Evaluaciones conceptuales: '+r.evaluaciones+(r.promedioEval!=null?' (promedio '+r.promedioEval+'/100)':'')+'\n'+
+    '🧮 Pruebas operativas: '+r.pruebasOperativas+(r.promedioOp!=null?' (promedio '+r.promedioOp+'/100)':'')+'\n'+
+    '⏱️ Tiempo activo total: '+r.minutos+' min\n\n'+
+    '🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com';
+  const enc=encodeURIComponent(txt);
+  const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  window.open(esMovil?'https://wa.me/?text='+enc:'https://web.whatsapp.com/send?text='+enc,'_blank');
+}
+
+function borrarTodo(){
+  const n=METAS.eventos().length;
+  if(!n){ alert('No hay registros que borrar.'); return; }
+  if(!confirm('Vas a borrar '+n+' registros de este dispositivo.\n\n¿Ya exportaste el CSV? Esta acción no se puede deshacer.')) return;
+  if(!confirm('Confirmación final: ¿borrar TODOS los registros?')) return;
+  METAS.borrar();
+  pintar();
+}
+
+['fMision','fAlumno','fTipo'].forEach(id=>document.getElementById(id).addEventListener('change',pintar));
+pintar();
+</script>
+</body>
+</html>
