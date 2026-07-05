@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Recta Numérica, Suma y Resta | policastsapien.com</title>
+<meta name="description" content="Misión Recta Numérica: ubica puntos en la recta y resuelve problemas de adición y sustracción con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión Recta Numérica, Suma y Resta">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2ciclo-recta-numerica/recta-numerica.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/recta-numerica.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=matemáticas" class="xp-back-btn" title="Regresar a misiones de Matemáticas">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
+</div>
+
+<header class="hero" role="banner" style="background:linear-gradient(90deg,#d84315 0%,#00838f 50%,#6c5ce7 100%);">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🐸</div>
+      <div class="mascot-tooltip">¡Hola! Soy Salta. ¡Recorramos juntos la recta numérica!</div>
+    </div>
+    <div class="hero-text">
+      <h1>Misión <span>Recta Numérica</span></h1>
+      <p class="sub">¡Ubica puntos en la recta y domina los problemas de suma y resta! 🎯</p>
+      <div class="badge">📏 II Ciclo · Matemática</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<div class="sec active" id="s-predice" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔮 Predice antes de resolver</h2>
+    <p style="margin-bottom:0.5rem;">Antes de aprender la regla, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
+    <div id="prediceWidget"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ahora aprende la regla!</span><span class="nsb-name">Aprende</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>📏 ¿Qué es la Recta Numérica?</h2>
+    <p style="margin-bottom:0.7rem;">Es una línea recta donde cada punto representa un número. Los números se ordenan de <strong>menor a mayor hacia la derecha</strong> y nos ayuda a ubicar, comparar, sumar y restar.</p>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Sus partes:</strong> el <strong>origen</strong> (punto de partida, casi siempre el 0), las <strong>marcas</strong> (rayitas) y la <strong>escala</strong> (el valor de cada salto entre marcas).</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">⚡</span>
+      <div><strong>La Regla de Oro:</strong> antes de ubicar un punto, descubre la escala: puede ser de <strong>1 en 1, de 5 en 5, de 10 en 10, de 100 en 100</strong>… ¡No todas las rectas saltan igual!</div>
+    </div>
+    <div class="demo-visual">
+      <div class="demo-title">🔬 Mini-demostración</div>
+      <div class="demo-steps">
+        <div class="demo-step ds-start"><span class="ds-label">Recta</span><span class="ds-val">0 ─ 10 ─ 20 ─ 30 ─ 40 ─ 50</span></div>
+        <div class="demo-arrow">¿dónde está el 40? ↓</div>
+        <div class="demo-step ds-mid"><span class="ds-label">Escala</span><span class="ds-val">cada salto vale 10</span></div>
+        <div class="demo-arrow">= </div>
+        <div class="demo-step ds-end"><span class="ds-label">Respuesta</span><span class="ds-val" style="font-size:1rem;">4 saltos desde el 0: 4 × 10 = 40</span></div>
+      </div>
+      <p class="demo-note">✅ Se cuentan los <strong>saltos</strong>, no las marcas: del 0 al 40 hay 4 saltos de 10.</p>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 1: Ubicar puntos en la recta</h2>
+    <p style="margin-bottom:0.6rem;">Para ubicar un número: 1) mira el origen, 2) descubre la escala, 3) cuenta los saltos necesarios.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Ubicar 60 en una recta de 0 a 100</span>
+      <span class="ae-flecha">→ escala de 10 →</span>
+      <span class="ae-res">cuento <strong>6 saltos</strong> desde el 0 y ahí vive el 60</span>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock1">
+      <p class="mq-pregunta">🤔 En una recta con escala de 10 en 10, ¿cuántos saltos das desde el 0 para llegar al 60?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! 6 saltos × 10 = 60.')">6 saltos</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'Cada salto vale 10, no 1: con 60 saltos llegarías al 600.')">60 saltos</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'Con 5 saltos de 10 llegas al 50, te falta uno.')">5 saltos</button>
+      </div>
+      <div class="mq-fb" id="mqBlock1-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 2: Números entre marcas y punto medio</h2>
+    <p style="margin-bottom:0.6rem;">No todos los números caen sobre una marca. El <strong>punto medio</strong> entre dos números está a la <strong>misma distancia</strong> de ambos.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>✏️ Ejemplo correcto</h4>
+        <p>El punto medio entre 40 y 60 es <strong>50</strong></p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">50 está a 10 de 40 y a 10 de 60: distancias iguales.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>⚠️ Cuidado</h4>
+        <p>El 75 en una recta de 10 en 10 <strong>no cae en una marca</strong></p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Queda entre el 70 y el 80, justo a la mitad del salto.</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock2">
+      <p class="mq-pregunta">🤔 ¿Qué número está en el punto medio entre 200 y 300?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! 250 está a 50 de 200 y a 50 de 300.')">250</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'205 está muy cerca de 200 (a solo 5) y lejos de 300 (a 95).')">205</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'230 está a 30 de 200 pero a 70 de 300: no es el centro.')">230</button>
+      </div>
+      <div class="mq-fb" id="mqBlock2-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📦 Bloque 3: La adición es avanzar</h2>
+    <p style="margin-bottom:0.7rem;">Sumar es <strong>avanzar hacia la derecha</strong> en la recta. Los números que se juntan son los <strong>sumandos</strong> y el resultado es la <strong>suma o total</strong>.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">46 + 38</span>
+      <span class="ae-flecha">→ parto del 46 y avanzo 38 (30 y luego 8) →</span>
+      <span class="ae-res">= <strong>84</strong></span>
+    </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">➕</span>
+      <div><strong>Al sumar en columnas:</strong> alinea unidades con unidades y decenas con decenas. Si una columna da 10 o más, escribe la cifra de las unidades y <strong>lleva 1</strong> a la columna siguiente.</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock3">
+      <p class="mq-pregunta">🤔 Si estás en el 75 de la recta y avanzas 25, ¿a qué número llegas?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! 75+25=100: avanzo 25 hacia la derecha.')">100</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'90 sería avanzar solo 15. Avanza 25 completos: 75+25=100.')">90</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'50 sería RETROCEDER 25. Avanzar es sumar: 75+25=100.')">50</button>
+      </div>
+      <div class="mq-fb" id="mqBlock3-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>📦 Bloque 4: La sustracción es retroceder</h2>
+    <p style="margin-bottom:0.6rem;">Restar es <strong>retroceder hacia la izquierda</strong>. Sus términos: <strong>minuendo</strong> (al que se le quita) − <strong>sustraendo</strong> (lo que se quita) = <strong>diferencia</strong> (resultado).</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>➖ Ejemplo</h4>
+        <p><strong>90 − 35 = 55</strong></p>
+        <p style="font-size:0.82rem;">minuendo: 90 · sustraendo: 35 · diferencia: 55</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🔍 Prueba de la resta</h4>
+        <p><strong>35 + 55 = 90 ✔</strong></p>
+        <p style="font-size:0.82rem;">sustraendo + diferencia = minuendo. ¡Así compruebas tu resta!</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock4">
+      <p class="mq-pregunta">🤔 ¿Cuál operación responde "cuánto le falta a 38 para llegar a 52"?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,true,'¡Correcto! La distancia de 38 a 52 en la recta es 52−38=14.')">52 − 38</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'Sumar daría 90, pero el problema pide la distancia entre 38 y 52.')">38 + 52</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'No puedes quitarle 52 a 38 con números cardinales; invierte el orden: 52−38.')">38 − 52</button>
+      </div>
+      <div class="mq-fb" id="mqBlock4-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>📦 Bloque 5: Palabras clave en los problemas</h2>
+    <p style="margin-bottom:0.6rem;">Para resolver un problema: 1) léelo dos veces, 2) anota los datos, 3) decide la operación con las palabras clave, 4) resuelve y responde con la unidad.</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;text-align:center;font-family:'Fredoka',sans-serif;margin:0.6rem 0;">
+        <thead><tr style="background:var(--pri-gl);">
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">➕ Pistas de SUMA</th>
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">➖ Pistas de RESTA</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">juntar · agregar · reunir</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">quitar · gastar · perder</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">en total · ganar · avanzar</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">¿cuánto falta? · ¿cuántos más? · retroceder</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.78rem;color:var(--gray);">⚠️ Las palabras ayudan, pero lo importante es entender la situación: "¿cuántos más tiene?" se resuelve con RESTA aunque diga "más".</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">📊</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📊 Casos Comunes</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">0·1·2·3·4</div><div class="t-info">Escala de 1 en 1: cada salto vale 1</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">0·10·20·30</div><div class="t-info">Escala de 10 en 10: cada salto vale 10</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">0·100·200</div><div class="t-info">Escala de 100 en 100: para números grandes</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">40 ⇠50⇢ 60</div><div class="t-info">Punto medio: misma distancia a los dos lados</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">46 +38 ➡</div><div class="t-info">Sumar: avanzar hacia la derecha</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">⬅ 90 −35</div><div class="t-info">Restar: retroceder hacia la izquierda</div></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
+    <span class="nsb-icon">⚠️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Evita los tropiezos!</span><span class="nsb-name">Errores Comunes</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-errores" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>⚠️ Errores Comunes — ¡No caigas en ellos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Estos son los errores que más cometen los estudiantes. Léelos, entiéndelos y ¡evítalos!</p>
+    <div class="error-cards">
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 1: Contar las marcas en vez de los saltos</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"Del 0 al 30 con escala de 10 hay 4 saltos" (contó también la marca del 0).</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se cuentan los espacios (saltos) entre marcas, no las rayitas. La marca del 0 es el punto de partida, no un salto.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>Del 0 al 30 hay <strong>3 saltos</strong> de 10 ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 2: Ignorar la escala de la recta</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"El punto que está 3 marcas después del 0 siempre es el 3".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Depende de la escala: si cada salto vale 10, la tercera marca es el 30; si vale 100, es el 300.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>Primero descubre la escala y luego multiplica: 3 saltos × 10 = <strong>30</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 3: Restar cifra a cifra "la menor a la mayor"</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>En 52 − 38, hacer 8−2=6 en las unidades "porque 8 es mayor".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El orden importa: es 2−8, y como no alcanza, se <strong>pide prestado</strong> una decena: 12−8=4.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>52 − 38 = <strong>14</strong> ✔ (prueba: 38+14=52)</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 4: Sumar cuando piden la diferencia</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"Pedro tiene 95 y Ana 58. ¿Cuántos más tiene Pedro?" → 95+58=153.</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Aunque el problema dice "más", pide <strong>comparar</strong>: la distancia entre 95 y 58 en la recta.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>95 − 58 = <strong>37</strong> más ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">❌</span><span class="error-title">Error 5: Olvidar llevar en la suma</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>358 + 236 = 584 (sumó 8+6=14 pero escribió el 4 sin llevar el 1).</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Cuando una columna da 10 o más, se escribe la cifra de las unidades y se lleva 1 a la siguiente columna.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>358 + 236 = <strong>594</strong> ✔</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica lo aprendido!</span><span class="nsb-name">Laboratorio</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>🧪 Laboratorio: Explorador de la Recta</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Toca la marca donde vive el número pedido. ¡Cuidado: la escala cambia en cada ronda! ⭐ +2 XP por acierto (primeros 5)</p>
+    <div id="widget-recta-interactive"></div>
+  </div>
+  <div class="card ac-teal">
+    <h2>🐸 Laboratorio 2: La Rana Saltarina</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Predice dónde caerá la rana y luego mira sus saltos: sumar avanza y restar retrocede. ⭐ +2 XP por predicción correcta (primeras 5)</p>
+    <div id="widget-saltos-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fa" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un elemento para <strong>seleccionarlo</strong> y luego toca la caja donde quieras colocarlo. Toca un elemento ya colocado para devolverlo al banco.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-widgets" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🕵️ El Punto Misterioso</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Un punto rojo marca una posición: descubre qué número es. Acierta 3 seguidos para subir de nivel. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-punto-interactive"></div>
+  </div>
+  <div class="card ac-blue">
+    <h2>🏭 Máquina de Problemas</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Primero decide si es suma o resta y luego resuelve. ⭐ +1 XP por operación correcta y +2 XP por resultado correcto</p>
+    <div id="widget-problemas-interactive"></div>
+  </div>
+  <div class="card ac-gold">
+    <h2>🎭 El Número Escondido</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Descubre qué número se esconde en la casilla ▢ usando la operación inversa, como en las olimpiadas. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-faltante-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
+    <span class="nsb-icon">💬</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra que entendiste!</span><span class="nsb-name">Explica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-explica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>💬 Explica con tus palabras</h2>
+    <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
+    <div id="explicaContainer"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Hora del reto!</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🏆 Reto Final — ¿A es Mayor, Igual o Menor que B? (30 seg)</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.4rem;">Compara rápidamente A con B. Usa 🔀 para cambiar el tipo de ejercicios.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;" id="retoPairLbl">🎯 Pareja actual: Operaciones ⚙️</p>
+    <div class="game" id="gameBox" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('mayor')">↑ A ES MAYOR</button>
+        <button class="btn btn-g" id="retoBtn-c" onclick="ansReto('igual')">= SON IGUALES</button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('menor')">↓ A ES MENOR</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-amber" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada · Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés!</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar conceptos</option>
+        <option value="classify">🗂️ Clasificar (¿Suma o resta?)</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar proceso</option>
+        <option value="pensamiento">🧠 Pensamiento matemático</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Prueba Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-blue">
+    <div class="eval-print-header">
+      <h2>Evaluación Final de Misión Recta Numérica, Suma y Resta · II Ciclo · Matemática</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación Final</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">4 secciones de 25 pts c/u. Copia el examen en tu cuaderno, resuélvelo y selecciona <strong>Ver Pauta</strong> para autoevaluarte.</p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Matemáticas — Prueba Operativa · Recta Numérica, Suma y Resta · II Ciclo</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 50 pts · II: 20 pts · III: 10 pts · IV: 10 pts · V: 10 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">📐 Prueba Operativa — Recta Numérica y Problemas</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Resuelve cada ítem en tu cuaderno y escribe la respuesta en la casilla. Presiona <strong>Calificar prueba</strong> para autoevaluarte en pantalla. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>📁 Recursos del Tema</h2>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo sobre la recta numérica y los problemas de adición y sustracción.</p>
+    <a href="https://drive.google.com/drive/folders/1vUVVqFSWv-I-b_2E_e-GudZ6qjkjD8se?usp=sharing"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+  </div>
+</div>
+
+</main>
+
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Recta Numérica, Suma y Resta</div>
+    <div class="diploma-mascot" aria-hidden="true">🐸</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Tipos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-explica" data-s="s-explica" onclick="go('s-explica')"><span class="ico">💬</span> Explica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje...» 🌱</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/recta-numerica.js"></script>
+
+  <script src="js/interaccion_recta.js"></script>
+  <script src="js/interaccion_saltos.js"></script>
+  <script src="js/interaccion_punto.js"></script>
+  <script src="js/interaccion_problemas.js"></script>
+  <script src="js/interaccion_faltante.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetRectaJSON) {
+        window.WidgetRectaJSON.mount('widget-recta-interactive');
+      }
+      if (window.WidgetSaltosJSON) {
+        window.WidgetSaltosJSON.mount('widget-saltos-interactive');
+      }
+      if (window.WidgetPuntoJSON) {
+        window.WidgetPuntoJSON.mount('widget-punto-interactive');
+      }
+      if (window.WidgetProblemasJSON) {
+        window.WidgetProblemasJSON.mount('widget-problemas-interactive');
+      }
+      if (window.WidgetFaltanteJSON) {
+        window.WidgetFaltanteJSON.mount('widget-faltante-interactive');
+      }
+    });
+  </script>
+
+</body>
+</html>

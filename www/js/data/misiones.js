@@ -24,4 +24,6 @@ const MISSIONS = [
   { id: 23, title: 'Las Fracciones',                           subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🍕', url: 'misiones/2y3ciclo-fracciones/fracciones.html' },
   { id: 24, title: 'Valor Posicional hasta el Millón',         subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   xp: 30, icon: '🔢', url: 'misiones/2ciclo-valor-posicional/valor-posicional.html' },
   { id: 25, title: 'Potencias y Raíces Cuadradas',              subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   xp: 30, icon: '🔲', url: 'misiones/2ciclo-potencias-raices/potencias-raices.html' },
+  { id: 26, title: 'Teoría de Números: Divisibilidad, m.c.m. y M.C.D.', subject: 'matemáticas', color: 'mat', grade: 'II Ciclo', cycle: '2ciclo', xp: 30, icon: '🕵️', url: 'misiones/2ciclo-teoria-numeros/teoria-numeros.html' },
+  { id: 27, title: 'Recta Numérica, Suma y Resta',                       subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   xp: 30, icon: '📏', url: 'misiones/2ciclo-recta-numerica/recta-numerica.html' },
 ];
