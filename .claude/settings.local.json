@@ -92,7 +92,10 @@
       "Bash(node -e \"try{require.resolve\\('jsdom'\\);console.log\\('jsdom OK'\\)}catch\\(e\\){console.log\\('no jsdom'\\)}\")",
       "Bash(npm i *)",
       "Bash(node \"C:/Users/Dell/AppData/Local/Temp/claude/C--Desarrollo-misiones-educativas-a-policastsapien-com/16623d29-85c4-4df3-98a3-f7049601b231/scratchpad/smoke-test.js\")",
-      "PowerShell($src=\"misiones\\\\2y3ciclo-division-decimales\"; $targets=@\\(\"www\\\\misiones\\\\2y3ciclo-division-decimales\",\"android\\\\app\\\\src\\\\main\\\\assets\\\\public\\\\misiones\\\\2y3ciclo-division-decimales\",\"android\\\\app\\\\build\\\\intermediates\\\\assets\\\\debug\\\\mergeDebugAssets\\\\public\\\\misiones\\\\2y3ciclo-division-decimales\"\\); foreach\\($t in $targets\\){ robocopy $src $t /E /NFL /NDL /NJH /NJS | Out-Null; Write-Host \"$t -> exit $LASTEXITCODE\" })"
+      "PowerShell($src=\"misiones\\\\2y3ciclo-division-decimales\"; $targets=@\\(\"www\\\\misiones\\\\2y3ciclo-division-decimales\",\"android\\\\app\\\\src\\\\main\\\\assets\\\\public\\\\misiones\\\\2y3ciclo-division-decimales\",\"android\\\\app\\\\build\\\\intermediates\\\\assets\\\\debug\\\\mergeDebugAssets\\\\public\\\\misiones\\\\2y3ciclo-division-decimales\"\\); foreach\\($t in $targets\\){ robocopy $src $t /E /NFL /NDL /NJH /NJS | Out-Null; Write-Host \"$t -> exit $LASTEXITCODE\" })",
+      "Bash(xargs wc -l)",
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\5c632fe5-5630-47ea-a047-94dae1ef2494\\\\scratchpad\\\\gensopa.js\")",
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\5c632fe5-5630-47ea-a047-94dae1ef2494\\\\scratchpad\\\\retheme.js\")"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
