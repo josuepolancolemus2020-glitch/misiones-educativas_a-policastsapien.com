@@ -109,7 +109,9 @@
       "Bash(sed -i 's|mision-de-prueba.*fallos.push..mision..;|mision-de-prueba\"\\) fallos.push\\(\"mision\"\\);|' 'C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad/sitio/misiones/mision-de-prueba/index.html')",
       "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\servidor.js\")",
       "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\servidor-real.js\")",
-      "Bash(node --check \"C:\\\\Desarrollo\\\\misiones-educativas_a-policastsapien.com\\\\js\\\\metas-registro.js\")"
+      "Bash(node --check \"C:\\\\Desarrollo\\\\misiones-educativas_a-policastsapien.com\\\\js\\\\metas-registro.js\")",
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\retroinstalar.js\")",
+      "Bash(git reset *)"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
