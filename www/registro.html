@@ -81,6 +81,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 <div class="acciones">
   <button class="btn btn-pri" onclick="exportar()">📥 Exportar CSV</button>
   <button class="btn btn-jade" onclick="resumenWA()">📤 Resumen por WhatsApp</button>
+  <button class="btn btn-jade" id="btnSync" onclick="sincronizarAhora()" style="display:none;">☁️ Sincronizar ahora</button>
   <button class="btn btn-rojo" onclick="borrarTodo()">🗑️ Borrar registros</button>
 </div>
 
@@ -154,7 +155,19 @@ function pintar(){
     stat(r.evaluaciones + r.pruebasOperativas,'Eval. calificadas') +
     stat(r.promedioEval!=null?r.promedioEval:'—','Promedio conceptual') +
     stat(r.promedioOp!=null?r.promedioOp:'—','Promedio operativa') +
-    stat(r.minutos,'Minutos activos');
+    stat(r.minutos,'Minutos activos') +
+    (METAS.urlSincronizacion() ? stat(METAS.pendientes(),'Por sincronizar') : '');
+  document.getElementById('btnSync').style.display = METAS.urlSincronizacion() ? '' : 'none';
+}
+
+function sincronizarAhora(){
+  const btn=document.getElementById('btnSync');
+  btn.disabled=true; btn.textContent='⏳ Sincronizando...';
+  METAS.sincronizar().then(r=>{
+    btn.disabled=false; btn.textContent='☁️ Sincronizar ahora';
+    alert(r.enviados+' eventos enviados a la hoja central.\nPendientes: '+r.pendientes);
+    pintar();
+  });
 }
 
 function exportar(){
