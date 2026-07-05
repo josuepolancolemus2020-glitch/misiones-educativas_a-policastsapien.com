@@ -14,10 +14,14 @@ Nueva misión:
 - Materia: (español / matemáticas / naturales / sociales)
 - Tema: ______
 - Grado: II y III Ciclo (o el que sea)
-- Debe incluir (opcional): ______
+- Debe incluir: juegos lúdicos interactivos (+ lo que quieras agregar)
 
-Reglas de ahorro:
-- Usa la MISMA plantilla de las últimas misiones; NO releas los archivos de referencia.
+Reglas de ahorro y calidad:
+- Usa como plantilla la misión RECTA NUMÉRICA (misiones/2ciclo-recta-numerica,
+  id 27): ya trae TODOS los estándares de UX aprobados. NO releas misiones más viejas.
+- Aplica completo el checklist "Estándares de UX aprobados" de esta plantilla.
+- Varía los widgets (2 del Lab + 3 de la sección Widgets): crea 5 nuevos
+  adecuados al contenido de la misión.
 - Sin capturas de pantalla (solo validación automática).
 - NO revises el despliegue en vivo; solo haz push a main.
 - Al final NO instales en el teléfono (lo haré yo por lotes con el .bat).
@@ -27,10 +31,48 @@ Reglas de ahorro:
 
 ---
 
+## 🎨 Estándares de UX aprobados (obligatorios en TODA misión nueva)
+
+1. **Colores por materia**: matemáticas = AZUL (#1565c0); el ROJO es de Ciencias
+   Sociales. Nada de acentos rojos en misiones de mate, tampoco al imprimir:
+   los elementos paralingüísticos de las pruebas (títulos de sección, líneas,
+   "Obtenido de…", encabezado de la pauta) van en el color de la materia.
+2. **Predice** (primera impresión, debe encantar): cada predicción lleva su
+   explorador interactivo ("🔍 Explorar la pista") que induce a la respuesta
+   jugando: medir distancias, animaciones, tocar y descubrir.
+3. **Flashcards**: reverso en minúscula + refuerzo CSS
+   `.fc-back .fa{text-transform:lowercase;}`.
+4. **Clasifica**: seleccionar y colocar (SIN arrastre). Si hay un elemento
+   seleccionado y se toca uno ya colocado, se INSERTA el seleccionado en esa
+   caja (no se saca el tocado); solo sin selección el toque devuelve al banco.
+5. **Reto final**: botón "🔀 Variar pareja" con varios pools de ejercicios
+   (`retoPairs`) + etiqueta `retoPairLbl`; resultados verificados por script.
+6. **Sopa de letras**: palabras en 8 direcciones (incluidas inversas),
+   generadas y validadas con script Node; botón "🔦 Linterna (-2 XP)" que
+   ilumina 3 s las palabras pendientes y avisa que usarla cuesta puntos.
+7. **Tareas**: generadores ALEATORIOS e infinitos (no bancos fijos) con
+   instrucción clara por tipo, para que el alumno se autoasigne práctica en
+   casa o el docente las copie en el pizarrón. Tipos probados: ubicar en la
+   recta / operaciones en columna / problemas con ruta de 4 pasos / número
+   escondido ▢ / pirámides numéricas / pensamiento matemático (adaptar al tema).
+8. **Prueba operativa**: ejercicios tipo olimpiada matemática (problemas
+   breves, cadenas de operaciones, número escondido, pirámides…); el examen
+   cabe en UNA página y la pauta va en la siguiente (`page-break-before`).
+   En rectas o figuras impresas, las marcas sin número llevan "•" (nunca
+   espacios en blanco).
+9. **Pautas de todas las pruebas**: letra grande (tablas ≈11pt, título ≈13pt)
+   para docentes con problemas de vista; solo se amplía la pauta, el examen no.
+
+> Implementación de referencia completa: `misiones/2ciclo-recta-numerica/` (id 27).
+
+---
+
 ## 🔁 Qué hace el asistente (pasos internos)
 
 1. **Carpeta**: `misiones/2y3ciclo-<slug-del-tema>/` con `js/` y `css/`.
-2. **Copiar assets** desde una misión reciente: `html2canvas.min.js` y el `.css`.
+2. **Copiar assets** desde `misiones/2ciclo-recta-numerica/`: `html2canvas.min.js`
+   y el `.css` (ya incluye los estilos de los estándares: clasifica por selección,
+   linterna de sopa, exploradores de predice, rectas y pirámides).
 3. **Re-tematizar CSS** (solo 4-5 ediciones): `--bg`, `--border`, `--pri`, `--sec`,
    los dos overrides de `--pri-gl/--sec-gl` en modo oscuro, el gradiente del `.hero`
    y la marquesina `.hero::before`.
