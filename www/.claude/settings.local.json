@@ -110,7 +110,22 @@
       "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\servidor.js\")",
       "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\servidor-real.js\")",
       "Bash(node --check \"C:\\\\Desarrollo\\\\misiones-educativas_a-policastsapien.com\\\\js\\\\metas-registro.js\")",
-      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\retroinstalar.js\")"
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\retroinstalar.js\")",
+      "Bash(git reset *)",
+      "Bash(curl -s \"https://raw.githubusercontent.com/josuepolancolemus2020-glitch/misiones-educativas_a-policastsapien.com/main/misiones/2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/josuepolancolemus2020-glitch/misiones-educativas_a-policastsapien.com/main/js/metas-registro.js\")",
+      "Bash(curl -s \"https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html\")",
+      "Bash(git commit --allow-empty -m ' *)",
+      "Bash(node --check 'C:\\\\Desarrollo\\\\misiones-educativas_a-policastsapien.com\\\\js\\\\metas-registro.js')",
+      "Bash(node 'C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad/test-metas-registro.js')",
+      "Bash(curl -sL https://script.google.com/macros/s/AKfycbyqNT70fya4SoqZALnsAD2SFPHurKcv5h3Id29WYlHA02wjR_bXsYyCh2W5lHWr7Egl/exec)",
+      "Bash(curl -sL -X POST -H 'Content-Type: text/plain;charset=utf-8' -d '{\"eventos\":[{\"id\":\"E-prueba001\",\"t\":\"2026-07-05T23:00:00.000Z\",\"tipo\":\"evaluacion\",\"mision\":\"prueba-de-conexion\",\"alumno\":\"PRUEBA CLAUDE \\(borrar esta fila\\)\",\"grado\":\"6to\",\"docente\":\"PROF-JP\",\"forma\":1,\"nota\":100,\"base\":100,\"xp\":10,\"min\":5,\"ses\":\"S-prueba\",\"disp\":\"D-PRUEBA\"}]}' https://script.google.com/macros/s/AKfycbyqNT70fya4SoqZALnsAD2SFPHurKcv5h3Id29WYlHA02wjR_bXsYyCh2W5lHWr7Egl/exec)",
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\prueba-post.js\")",
+      "Bash(curl -sL \"https://script.google.com/macros/s/AKfycbz8BHb5vXr4fZKsDprO2Q0kL7zKRL4pfMjo-HzgK28hLkncI0EyYOSHdKDft_vPfPRq/exec\")",
+      "Bash(sed -i 's|AKfycbyqNT70fya4SoqZALnsAD2SFPHurKcv5h3Id29WYlHA02wjR_bXsYyCh2W5lHWr7Egl|AKfycbz8BHb5vXr4fZKsDprO2Q0kL7zKRL4pfMjo-HzgK28hLkncI0EyYOSHdKDft_vPfPRq|; s|E-prueba001|E-prueba002|; s|PRUEBA CLAUDE \\(puedes borrar esta fila\\)|PRUEBA ESCUELA \\(borrar esta fila\\)|' 'C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad/prueba-post.js')",
+      "Bash(node 'C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad/prueba-post.js')",
+      "Bash(node \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad\\\\test-dashboard.js\")",
+      "Bash(node 'C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\ef237c2f-44a8-4aa7-8357-f3ea35b500c8\\\\scratchpad/test-dashboard.js')"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
