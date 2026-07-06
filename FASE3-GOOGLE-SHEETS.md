@@ -19,7 +19,8 @@ Costo: **cero**. Solo necesitas una cuenta de Google.
 2. Borra lo que aparezca en `Código.gs` y pega **todo** este código:
 
 ```javascript
-// M.E.T.A.S — Receptor de eventos de aprendizaje → Google Sheets (v2: + escuela)
+// M.E.T.A.S — Receptor de eventos de aprendizaje → Google Sheets
+// v3: + escuela + crearDashboard() (ejecutar una vez desde el editor)
 const HOJA = 'Registros';
 const COLUMNAS = ['recibido', 'fecha_utc', 'mision', 'alumno', 'grado', 'docente',
   'tipo', 'seccion', 'forma', 'nota', 'base', 'xp', 'min', 'sesion', 'dispositivo',
@@ -65,6 +66,103 @@ function doGet() {
   return ContentService.createTextOutput(JSON.stringify({ ok: true, servicio: 'M.E.T.A.S registro' }))
     .setMimeType(ContentService.MimeType.JSON);
 }
+
+// ============================================================
+// DASHBOARD — ejecutar UNA VEZ desde el editor:
+// selecciona "crearDashboard" arriba y presiona ▶ Ejecutar.
+// Crea las pestañas "Dashboard" (gráficos) y "DashDatos" (oculta,
+// con las fórmulas que alimentan los gráficos). Todo se actualiza
+// solo cuando llegan filas nuevas a Registros.
+// Se puede volver a ejecutar cuando se quiera: la reconstruye.
+// ============================================================
+const AZUL = '#1565c0';
+const AZUL_CLARO = '#e3f2fd';
+
+function crearDashboard() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss.getSheetByName(HOJA)) throw new Error('No existe la pestaña "' + HOJA + '". Envía al menos un evento primero.');
+
+  // recrear pestañas desde cero
+  ['Dashboard', 'DashDatos'].forEach(function (n) {
+    const viejo = ss.getSheetByName(n);
+    if (viejo) ss.deleteSheet(viejo);
+  });
+  const datos = ss.insertSheet('DashDatos');
+  const dash = ss.insertSheet('Dashboard', 0); // primera pestaña
+
+  // ---------- DashDatos: tablas que alimentan los gráficos ----------
+  const R = HOJA;
+  // A:B promedio de nota por misión
+  datos.getRange('A1').setFormula(
+    '=IFERROR(QUERY(' + R + '!A:Q,"select C, avg(J) where J is not null and C<>\'\' group by C order by avg(J) desc label C \'Misión\', avg(J) \'Promedio\'",1),{"Misión","Promedio"})');
+  // D:E actividad por día
+  datos.getRange('D1').setFormula(
+    '=IFERROR(QUERY(' + R + '!A:Q,"select toDate(A), count(P) where A is not null group by toDate(A) label toDate(A) \'Día\', count(P) \'Eventos\'",1),{"Día","Eventos"})');
+  // G:H distribución de notas (histograma por rangos)
+  datos.getRange('G1:H1').setValues([['Rango de nota', 'Cantidad']]);
+  const rangos = [['0-39', 0, 39], ['40-59', 40, 59], ['60-69', 60, 69], ['70-79', 70, 79], ['80-89', 80, 89], ['90-100', 90, 100]];
+  rangos.forEach(function (r, i) {
+    datos.getRange(i + 2, 7).setValue(r[0]);
+    datos.getRange(i + 2, 8).setFormula('=COUNTIFS(' + R + '!J:J,">=' + r[1] + '",' + R + '!J:J,"<=' + r[2] + '")');
+  });
+  // J:K alumnos únicos por escuela
+  datos.getRange('J1').setFormula(
+    '=IFERROR(QUERY(UNIQUE({' + R + '!Q2:Q,' + R + '!D2:D}),"select Col1, count(Col2) where Col1<>\'\' and Col2<>\'\' group by Col1 order by count(Col2) desc label Col1 \'Escuela\', count(Col2) \'Alumnos\'",0),{"Escuela","Alumnos"})');
+  // M:N misiones más trabajadas (sesiones)
+  datos.getRange('M1').setFormula(
+    '=IFERROR(QUERY(' + R + '!A:Q,"select C, count(P) where G=\'sesion\' and C<>\'\' group by C order by count(P) desc label C \'Misión\', count(P) \'Sesiones\'",1),{"Misión","Sesiones"})');
+  // S:U auxiliar minutos por sesión → P:Q minutos por misión
+  datos.getRange('S1').setFormula(
+    '=IFERROR(QUERY(' + R + '!A:Q,"select C, N, max(M) where N<>\'\' and C<>\'\' group by C, N",1),{"Misión","Sesión","Min"})');
+  datos.getRange('P1').setFormula(
+    '=IFERROR(QUERY(S1:U10000,"select Col1, sum(Col3) group by Col1 order by sum(Col3) desc label Col1 \'Misión\', sum(Col3) \'Minutos\'",1),{"Misión","Minutos"})');
+
+  // ---------- Dashboard: título y tarjetas KPI ----------
+  dash.setHiddenGridlines(true);
+  dash.getRange('B1').setValue('📊 M.E.T.A.S — Dashboard de aprendizaje')
+    .setFontSize(20).setFontWeight('bold').setFontColor(AZUL);
+  dash.getRange('B2').setValue('Se actualiza solo con cada dato que llega a "Registros"')
+    .setFontSize(10).setFontColor('#636e72');
+
+  const kpis = [
+    ['👥 Alumnos', '=IFERROR(COUNTUNIQUE(FILTER(' + R + '!D2:D,' + R + '!D2:D<>"")),0)'],
+    ['🏫 Escuelas', '=IFERROR(COUNTUNIQUE(FILTER(' + R + '!Q2:Q,' + R + '!Q2:Q<>"")),0)'],
+    ['🚀 Misiones', '=IFERROR(COUNTUNIQUE(FILTER(' + R + '!C2:C,' + R + '!C2:C<>"")),0)'],
+    ['📋 Eval. calificadas', '=COUNTIF(' + R + '!G2:G,"evaluacion")+COUNTIF(' + R + '!G2:G,"prueba_operativa")'],
+    ['📈 Promedio', '=IFERROR(ROUND(AVERAGE(' + R + '!J2:J),1),"—")'],
+    ['✅ Aprobación ≥70', '=IFERROR(ROUND(COUNTIF(' + R + '!J2:J,">=70")/COUNT(' + R + '!J2:J)*100,0)&"%","—")'],
+    ['⏱️ Minutos totales', '=IFERROR(ROUND(SUM(QUERY(' + R + '!A:Q,"select max(M) where N<>\'\' group by N label max(M) \'\'",1)),0),0)']
+  ];
+  kpis.forEach(function (k, i) {
+    const col = 2 + i * 2; // B, D, F, H, J, L, N
+    dash.getRange(4, col).setValue(k[0]).setFontSize(9).setFontColor(AZUL)
+      .setBackground(AZUL_CLARO).setFontWeight('bold').setHorizontalAlignment('center');
+    dash.getRange(5, col).setFormula(k[1]).setFontSize(22).setFontWeight('bold')
+      .setFontColor(AZUL).setBackground(AZUL_CLARO).setHorizontalAlignment('center');
+  });
+
+  // ---------- gráficos ----------
+  function grafico(tipo, rango, titulo, fila, columna, extra) {
+    let b = dash.newChart().setChartType(tipo)
+      .addRange(datos.getRange(rango))
+      .setPosition(fila, columna, 0, 0)
+      .setOption('title', titulo)
+      .setOption('width', 520).setOption('height', 320)
+      .setOption('colors', [AZUL, '#00b894'])
+      .setOption('legend', { position: 'none' });
+    if (extra) Object.keys(extra).forEach(function (k) { b = b.setOption(k, extra[k]); });
+    dash.insertChart(b.build());
+  }
+  grafico(Charts.ChartType.BAR,    'A1:B30',  '📈 Promedio de nota por misión', 8, 2);
+  grafico(Charts.ChartType.LINE,   'D1:E120', '📅 Actividad por día (eventos)', 8, 8);
+  grafico(Charts.ChartType.COLUMN, 'G1:H7',   '🔔 Distribución de notas', 26, 2);
+  grafico(Charts.ChartType.BAR,    'J1:K30',  '🏫 Alumnos por escuela', 26, 8);
+  grafico(Charts.ChartType.BAR,    'M1:N30',  '🚀 Misiones más trabajadas (sesiones)', 44, 2);
+  grafico(Charts.ChartType.BAR,    'P1:Q30',  '⏱️ Minutos de trabajo por misión', 44, 8);
+
+  datos.hideSheet();
+  ss.setActiveSheet(dash);
+}
 ```
 
 3. Guarda (💾 o Ctrl+S).
@@ -94,6 +192,24 @@ function doGet() {
    ```
 3. Propaga y publica como siempre (`npm run build:www`, commit, push, y el
    `.bat` para los teléfonos).
+
+## Paso 5 — Dashboard con gráficos (una sola vez)
+
+Con el código v3 ya pegado y guardado:
+
+1. En el editor de Apps Script, arriba, donde dice el nombre de la función,
+   selecciona **crearDashboard** en el menú desplegable.
+2. Presiona **▶ Ejecutar** y autoriza los permisos si los pide.
+3. Abre tu hoja de cálculo: aparece la pestaña **Dashboard** como primera
+   pestaña, con 7 tarjetas resumen (alumnos, escuelas, misiones, evaluaciones,
+   promedio, % de aprobación, minutos) y 6 gráficos: promedio por misión,
+   actividad por día, distribución de notas, alumnos por escuela, misiones más
+   trabajadas y minutos por misión.
+4. **No hay que volver a ejecutarlo**: todo son fórmulas y gráficos vivos que
+   se recalculan solos con cada fila nueva. (Si algún día quieres regenerarlo
+   desde cero, vuelve a ejecutar `crearDashboard` — borra y reconstruye.)
+5. La pestaña oculta **DashDatos** contiene las tablas que alimentan los
+   gráficos; no la borres (puedes verla con Ver → Hojas ocultas).
 
 ## Actualizar el código del Apps Script (cuando cambie la versión)
 
