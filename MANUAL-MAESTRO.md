@@ -175,7 +175,20 @@ celebración del esfuerzo, y a las familias les encanta recibirla.
 
 ---
 
-## 8. Buenas prácticas
+## 8. El buzón de sugerencias
+
+En la barra de identidad de toda misión está el botón **"💬 Sugerencias"**:
+cualquier usuario (alumno o docente) puede reportar un error de contenido,
+un problema técnico, una idea o una felicitación. El mensaje viaja
+automáticamente al equipo del proyecto **junto con la misión y la sección
+exacta** donde estaba el usuario — funciona incluso sin internet (se envía
+cuando hay conexión).
+
+Anime a sus alumnos a usarlo: cada reporte mejora el material para todos.
+
+[IMAGEN: el formulario del buzón de sugerencias abierto]
+
+## 9. Buenas prácticas
 
 - ✅ Dicte la convención exacta de escuela y maestro (regla de oro).
 - ✅ Asigne la misión unos días antes de la prueba en papel: la app es el
@@ -190,7 +203,7 @@ celebración del esfuerzo, y a las familias les encanta recibirla.
 
 ---
 
-## 9. Preguntas frecuentes
+## 10. Preguntas frecuentes
 
 **"A un alumno no le aparece la pantalla de datos."**
 Ya se identificó antes en ese dispositivo. Verifíquelo en la constancia con

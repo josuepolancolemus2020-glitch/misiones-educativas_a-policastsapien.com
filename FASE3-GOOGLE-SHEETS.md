@@ -20,11 +20,25 @@ Costo: **cero**. Solo necesitas una cuenta de Google.
 
 ```javascript
 // M.E.T.A.S — Receptor de eventos de aprendizaje → Google Sheets
-// v3: + escuela + crearDashboard() (ejecutar una vez desde el editor)
+// v4: + escuela + buzón de sugerencias (pestaña aparte) + crearDashboard()
 const HOJA = 'Registros';
 const COLUMNAS = ['recibido', 'fecha_utc', 'mision', 'alumno', 'grado', 'docente',
   'tipo', 'seccion', 'forma', 'nota', 'base', 'xp', 'min', 'sesion', 'dispositivo',
   'id_evento', 'escuela']; // escuela va al final para no desordenar filas antiguas
+const HOJA_SUG = 'Sugerencias';
+const COLUMNAS_SUG = ['recibido', 'fecha_utc', 'mision', 'seccion', 'categoria',
+  'texto', 'alumno', 'grado', 'escuela', 'docente', 'dispositivo', 'id_evento'];
+
+function hojaLista(ss, nombre, columnas) {
+  let h = ss.getSheetByName(nombre);
+  if (!h) h = ss.insertSheet(nombre);
+  if (h.getLastRow() === 0) h.appendRow(columnas);
+  else if (h.getLastColumn() < columnas.length) {
+    // hoja creada con una versión anterior: completar el encabezado
+    h.getRange(1, 1, 1, columnas.length).setValues([columnas]);
+  }
+  return h;
+}
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
@@ -33,25 +47,31 @@ function doPost(e) {
     const datos = JSON.parse(e.postData.contents);
     const eventos = (datos && datos.eventos) || [];
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let h = ss.getSheetByName(HOJA);
-    if (!h) h = ss.insertSheet(HOJA);
-    if (h.getLastRow() === 0) h.appendRow(COLUMNAS);
-    else if (h.getLastColumn() < COLUMNAS.length) {
-      // hoja creada con una versión anterior: completar el encabezado
-      h.getRange(1, 1, 1, COLUMNAS.length).setValues([COLUMNAS]);
-    }
     const ahora = new Date();
-    const filas = eventos.map(function (ev) {
-      return [ahora, ev.t || '', ev.mision || '', ev.alumno || '', ev.grado || '',
-        ev.docente || '', ev.tipo || '', ev.seccion || '', ev.forma || '',
-        (ev.nota === 0 || ev.nota) ? ev.nota : '', (ev.base === 0 || ev.base) ? ev.base : '',
-        (ev.xp === 0 || ev.xp) ? ev.xp : '', (ev.min === 0 || ev.min) ? ev.min : '',
-        ev.ses || '', ev.disp || '', ev.id || '', ev.escuela || ''];
-    });
-    if (filas.length) {
+    // las sugerencias van a su propia pestaña; el resto a Registros
+    const sugerencias = eventos.filter(function (ev) { return ev.tipo === 'sugerencia'; });
+    const registros = eventos.filter(function (ev) { return ev.tipo !== 'sugerencia'; });
+    if (registros.length) {
+      const h = hojaLista(ss, HOJA, COLUMNAS);
+      const filas = registros.map(function (ev) {
+        return [ahora, ev.t || '', ev.mision || '', ev.alumno || '', ev.grado || '',
+          ev.docente || '', ev.tipo || '', ev.seccion || '', ev.forma || '',
+          (ev.nota === 0 || ev.nota) ? ev.nota : '', (ev.base === 0 || ev.base) ? ev.base : '',
+          (ev.xp === 0 || ev.xp) ? ev.xp : '', (ev.min === 0 || ev.min) ? ev.min : '',
+          ev.ses || '', ev.disp || '', ev.id || '', ev.escuela || ''];
+      });
       h.getRange(h.getLastRow() + 1, 1, filas.length, COLUMNAS.length).setValues(filas);
     }
-    return ContentService.createTextOutput(JSON.stringify({ ok: true, recibidos: filas.length }))
+    if (sugerencias.length) {
+      const hs = hojaLista(ss, HOJA_SUG, COLUMNAS_SUG);
+      const filasSug = sugerencias.map(function (ev) {
+        return [ahora, ev.t || '', ev.mision || '', ev.seccion || '', ev.categoria || '',
+          ev.texto || '', ev.alumno || '', ev.grado || '', ev.escuela || '',
+          ev.docente || '', ev.disp || '', ev.id || ''];
+      });
+      hs.getRange(hs.getLastRow() + 1, 1, filasSug.length, COLUMNAS_SUG.length).setValues(filasSug);
+    }
+    return ContentService.createTextOutput(JSON.stringify({ ok: true, recibidos: eventos.length }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
@@ -153,7 +173,8 @@ function crearDashboard() {
     ['📋 Eval. calificadas', '=COUNTIF(' + R + '!G2:G¦"evaluacion")+COUNTIF(' + R + '!G2:G¦"prueba_operativa")'],
     ['📈 Promedio', '=IFERROR(ROUND(AVERAGE(' + R + '!J2:J)¦1)¦"—")'],
     ['✅ Aprobación ≥70', '=IFERROR(ROUND(COUNTIF(' + R + '!J2:J¦">=70")/COUNT(' + R + '!J2:J)*100¦0)&"%"¦"—")'],
-    ['⏱️ Minutos totales', '=IFERROR(ROUND(SUM(QUERY(' + R + '!A:Q¦"select max(M) where N<>\'\' group by N label max(M) \'\'"¦1))¦0)¦0)']
+    ['⏱️ Minutos totales', '=IFERROR(ROUND(SUM(QUERY(' + R + '!A:Q¦"select max(M) where N<>\'\' group by N label max(M) \'\'"¦1))¦0)¦0)'],
+    ['💬 Sugerencias', '=IFERROR(COUNTA(Sugerencias!A2:A)¦0)']
   ];
   kpis.forEach(function (k, i) {
     const col = 2 + i * 2; // B, D, F, H, J, L, N

@@ -112,7 +112,17 @@ notas — listo para enviárselo a tu maestro. Es tu forma de decir:
 
 ---
 
-## 8. Preguntas de explorador 🤔
+## 8. ¿Encontraste un error? ¡Avísanos! 💬
+
+¿Viste una respuesta que parece mala? ¿Algo no funciona? ¿Tienes una idea
+genial? En la barra donde aparece tu nombre está el botón **"💬 Sugerencias"**:
+elige el tipo de mensaje, escribe con tus palabras y toca **Enviar**. Tu
+mensaje llega al equipo de M.E.T.A.S con la misión y la sección exacta donde
+estabas — ¡eres parte del equipo que mejora la app! 🛠️
+
+[IMAGEN: el buzón de sugerencias abierto]
+
+## 9. Preguntas de explorador 🤔
 
 **"¿Y si no tengo internet en casa?"**
 ¡No importa! Trabaja normal. Tus resultados se guardan en el teléfono y se

@@ -193,11 +193,11 @@
   }
   function csv(eventos) {
     eventos = eventos || leer();
-    var filas = ['fecha,hora,mision,alumno,grado,docente,escuela,tipo,seccion,forma,nota,base,xp,min,sesion,dispositivo'];
+    var filas = ['fecha,hora,mision,alumno,grado,docente,escuela,tipo,seccion,forma,nota,base,xp,min,sesion,dispositivo,categoria,texto'];
     eventos.forEach(function (ev) {
       var fl = fechaLocal(ev.t);
       filas.push([fl.fecha, fl.hora, ev.mision, ev.alumno, ev.grado, ev.docente, ev.escuela, ev.tipo, ev.seccion, ev.forma,
-        ev.nota, ev.base, ev.xp, ev.min, ev.ses, ev.disp].map(celda).join(','));
+        ev.nota, ev.base, ev.xp, ev.min, ev.ses, ev.disp, ev.categoria, ev.texto].map(celda).join(','));
     });
     return '﻿' + filas.join('\r\n'); // BOM para que Excel abra bien las tildes
   }
@@ -368,8 +368,9 @@
     '.metas-id-card h3{color:#1565c0;font-size:1.15rem;margin:0 0 0.3rem;}' +
     '.metas-id-card p{font-size:0.82rem;color:#636e72;margin:0 0 0.9rem;line-height:1.45;}' +
     '.metas-id-card label{display:block;font-size:0.78rem;font-weight:700;color:#1565c0;margin:0.6rem 0 0.2rem;}' +
-    '.metas-id-card input{width:100%;box-sizing:border-box;padding:0.55rem 0.7rem;border:2px solid #cfd8e3;border-radius:10px;font-size:0.95rem;background:#f7fafd;color:#2d3436;}' +
-    '.metas-id-card input:focus{outline:none;border-color:#1565c0;}' +
+    '.metas-id-card input,.metas-id-card select,.metas-id-card textarea{width:100%;box-sizing:border-box;padding:0.55rem 0.7rem;border:2px solid #cfd8e3;border-radius:10px;font-size:0.95rem;background:#f7fafd;color:#2d3436;font-family:inherit;}' +
+    '.metas-id-card input:focus,.metas-id-card select:focus,.metas-id-card textarea:focus{outline:none;border-color:#1565c0;}' +
+    '.metas-id-card textarea{resize:vertical;min-height:90px;}' +
     '.metas-id-acciones{display:flex;gap:0.5rem;margin-top:1.1rem;}' +
     '.metas-id-btn{flex:1;border:none;border-radius:10px;padding:0.65rem;font-size:0.9rem;font-weight:700;cursor:pointer;}' +
     '.metas-id-guardar{background:#1565c0;color:#fff;}' +
@@ -434,6 +435,48 @@
     try { return sessionStorage.getItem('METAS_ID_OMITIDA') === '1'; } catch (e) { return false; }
   }
 
+  // ---------- buzón de sugerencias ----------
+  function seccionActiva() {
+    var t = document.querySelector('.nav-t.active[data-s]');
+    return t ? t.getAttribute('data-s') : '';
+  }
+  function abrirSugerencias() {
+    if (document.getElementById('metasSugModal')) return;
+    var st = document.createElement('style'); st.textContent = ID_CSS; document.head.appendChild(st);
+    var ov = document.createElement('div');
+    ov.className = 'metas-id-overlay'; ov.id = 'metasSugModal';
+    ov.innerHTML = '<div class="metas-id-card" role="dialog" aria-modal="true" aria-label="Sugerencias">' +
+      '<h3>💬 Buzón de sugerencias</h3>' +
+      '<p>¿Encontraste un error o tienes una idea? Tu mensaje ayuda a mejorar M.E.T.A.S. Se envía junto con la misión y la sección donde estás.</p>' +
+      '<label for="metasSugCat">🏷️ Tipo de mensaje</label>' +
+      '<select id="metasSugCat">' +
+      '<option value="error_contenido">📚 Encontré un error en el contenido</option>' +
+      '<option value="error_tecnico">🔧 Algo no funciona bien</option>' +
+      '<option value="idea">💡 Tengo una idea</option>' +
+      '<option value="felicitacion">🎉 Quiero felicitar al equipo</option>' +
+      '</select>' +
+      '<label for="metasSugTexto">✍️ Tu mensaje</label>' +
+      '<textarea id="metasSugTexto" maxlength="500" placeholder="Escribe aquí con tus palabras..."></textarea>' +
+      '<div class="metas-id-acciones">' +
+      '<button type="button" class="metas-id-btn metas-id-luego" id="metasSugCancelar">Cancelar</button>' +
+      '<button type="button" class="metas-id-btn metas-id-guardar" id="metasSugEnviar">📤 Enviar</button>' +
+      '</div></div>';
+    document.body.appendChild(ov);
+    function cerrar() { ov.remove(); st.remove(); }
+    document.getElementById('metasSugCancelar').addEventListener('click', cerrar);
+    document.getElementById('metasSugEnviar').addEventListener('click', function () {
+      var texto = document.getElementById('metasSugTexto').value.trim();
+      if (!texto) { document.getElementById('metasSugTexto').focus(); return; }
+      registrar('sugerencia', {
+        categoria: document.getElementById('metasSugCat').value,
+        texto: texto.slice(0, 500),
+        seccion: seccionActiva()
+      });
+      cerrar();
+      if (typeof window.showToast === 'function') window.showToast('💬 ¡Gracias! Tu mensaje fue registrado y se enviará al equipo.');
+    });
+  }
+
   // Barra de identidad permanente sobre la navegación de la misión:
   // muestra quién está trabajando y permite cambiar de alumno sin ir a la constancia
   var BARRA_CSS = '#metasBarraAlumno{display:flex;align-items:center;justify-content:center;gap:0.6rem;flex-wrap:wrap;margin:0.9rem auto 0.4rem;padding:0.45rem 0.9rem;max-width:640px;border-radius:14px;background:var(--pri-gl,#e3f2fd);border:1.5px dashed var(--pri,#1565c0);font-size:0.85rem;color:var(--pri,#1565c0);font-weight:600;}' +
@@ -465,8 +508,15 @@
     btn.className = 'metas-ba-btn';
     btn.type = 'button';
     btn.addEventListener('click', function () { abrirIdentificacion(); });
+    var btnSug = document.createElement('button');
+    btnSug.className = 'metas-ba-btn';
+    btnSug.id = 'metasBtnSug';
+    btnSug.type = 'button';
+    btnSug.textContent = '💬 Sugerencias';
+    btnSug.addEventListener('click', abrirSugerencias);
     barra.appendChild(txt);
     barra.appendChild(btn);
+    barra.appendChild(btnSug);
     var nav = (primerTab.closest && primerTab.closest('nav')) || primerTab;
     nav.parentNode.insertBefore(barra, nav);
     actualizarBarraAlumno();
@@ -505,6 +555,7 @@
     identificar: abrirIdentificacion,
     textoReporte: textoReporte,
     enviarResultados: enviarResultados,
+    sugerir: abrirSugerencias,
     sincronizar: sincronizar,
     pendientes: function () { return pendientes(true).length; },
     urlSincronizacion: urlSync
