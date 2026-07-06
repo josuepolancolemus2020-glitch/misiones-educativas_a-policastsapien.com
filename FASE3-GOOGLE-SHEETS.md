@@ -19,10 +19,11 @@ Costo: **cero**. Solo necesitas una cuenta de Google.
 2. Borra lo que aparezca en `Código.gs` y pega **todo** este código:
 
 ```javascript
-// M.E.T.A.S — Receptor de eventos de aprendizaje → Google Sheets
+// M.E.T.A.S — Receptor de eventos de aprendizaje → Google Sheets (v2: + escuela)
 const HOJA = 'Registros';
 const COLUMNAS = ['recibido', 'fecha_utc', 'mision', 'alumno', 'grado', 'docente',
-  'tipo', 'seccion', 'forma', 'nota', 'base', 'xp', 'min', 'sesion', 'dispositivo', 'id_evento'];
+  'tipo', 'seccion', 'forma', 'nota', 'base', 'xp', 'min', 'sesion', 'dispositivo',
+  'id_evento', 'escuela']; // escuela va al final para no desordenar filas antiguas
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
@@ -34,13 +35,17 @@ function doPost(e) {
     let h = ss.getSheetByName(HOJA);
     if (!h) h = ss.insertSheet(HOJA);
     if (h.getLastRow() === 0) h.appendRow(COLUMNAS);
+    else if (h.getLastColumn() < COLUMNAS.length) {
+      // hoja creada con una versión anterior: completar el encabezado
+      h.getRange(1, 1, 1, COLUMNAS.length).setValues([COLUMNAS]);
+    }
     const ahora = new Date();
     const filas = eventos.map(function (ev) {
       return [ahora, ev.t || '', ev.mision || '', ev.alumno || '', ev.grado || '',
         ev.docente || '', ev.tipo || '', ev.seccion || '', ev.forma || '',
         (ev.nota === 0 || ev.nota) ? ev.nota : '', (ev.base === 0 || ev.base) ? ev.base : '',
         (ev.xp === 0 || ev.xp) ? ev.xp : '', (ev.min === 0 || ev.min) ? ev.min : '',
-        ev.ses || '', ev.disp || '', ev.id || ''];
+        ev.ses || '', ev.disp || '', ev.id || '', ev.escuela || ''];
     });
     if (filas.length) {
       h.getRange(h.getLastRow() + 1, 1, filas.length, COLUMNAS.length).setValues(filas);
@@ -89,6 +94,13 @@ function doGet() {
    ```
 3. Propaga y publica como siempre (`npm run build:www`, commit, push, y el
    `.bat` para los teléfonos).
+
+## Actualizar el código del Apps Script (cuando cambie la versión)
+
+Guardar el archivo **no basta**: la URL `/exec` sigue sirviendo la versión
+publicada. Después de reemplazar el código: **Implementar → Administrar
+implementaciones → ✏️ lápiz → Versión: Nueva versión → Implementar**.
+La URL no cambia, así que no hay que tocar la app.
 
 ## ¿Cómo funciona después?
 

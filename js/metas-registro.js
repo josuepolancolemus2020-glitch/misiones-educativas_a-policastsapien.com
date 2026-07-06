@@ -36,7 +36,7 @@
   function borrar() { try { localStorage.removeItem(CLAVE); } catch (e) {} }
 
   // Identificación "lite" del estudiante (sin contraseña, sin servidor):
-  // { nombre, grado, docente } — viaja pegada a cada evento
+  // { nombre, escuela, grado, docente } — viaja pegada a cada evento
   function identificacion() {
     try { var o = JSON.parse(localStorage.getItem(CLAVE_ALUMNO)); return (o && typeof o === 'object') ? o : null; }
     catch (e) { return null; }
@@ -92,6 +92,7 @@
       alumno: alumnoActual(),
       grado: id.grado || '',
       docente: id.docente || '',
+      escuela: id.escuela || '',
       xp: xpActual(),
       min: minActivos(),
       ses: sesId,
@@ -192,10 +193,10 @@
   }
   function csv(eventos) {
     eventos = eventos || leer();
-    var filas = ['fecha,hora,mision,alumno,grado,docente,tipo,seccion,forma,nota,base,xp,min,sesion,dispositivo'];
+    var filas = ['fecha,hora,mision,alumno,grado,docente,escuela,tipo,seccion,forma,nota,base,xp,min,sesion,dispositivo'];
     eventos.forEach(function (ev) {
       var fl = fechaLocal(ev.t);
-      filas.push([fl.fecha, fl.hora, ev.mision, ev.alumno, ev.grado, ev.docente, ev.tipo, ev.seccion, ev.forma,
+      filas.push([fl.fecha, fl.hora, ev.mision, ev.alumno, ev.grado, ev.docente, ev.escuela, ev.tipo, ev.seccion, ev.forma,
         ev.nota, ev.base, ev.xp, ev.min, ev.ses, ev.disp].map(celda).join(','));
     });
     return '﻿' + filas.join('\r\n'); // BOM para que Excel abra bien las tildes
@@ -338,7 +339,8 @@
     var hoy = fechaLocal(new Date().toISOString());
     return '📤 *REPORTE DE RESULTADOS · M.E.T.A.S*\n\n' +
       '👤 Alumno: ' + nombre + '\n' +
-      (id.grado ? '🏫 Grado y sección: ' + id.grado + '\n' : '') +
+      (id.escuela ? '🏫 Escuela: ' + id.escuela + '\n' : '') +
+      (id.grado ? '📚 Grado y sección: ' + id.grado + '\n' : '') +
       (id.docente ? '🧑‍🏫 Código del maestro: ' + id.docente + '\n' : '') +
       '🚀 Misión: ' + tituloMision() + '\n' +
       '📅 Enviado: ' + hoy.fecha + ' ' + hoy.hora + '\n\n' +
@@ -384,7 +386,9 @@
       '<p>Escribe tus datos <strong>una sola vez</strong> para que tu maestro sepa que estos logros son tuyos.</p>' +
       '<label for="metasIdNombre">👤 Tu nombre o código de alumno</label>' +
       '<input id="metasIdNombre" type="text" maxlength="60" autocomplete="off" placeholder="Ej: Ana López o A07">' +
-      '<label for="metasIdGrado">🏫 Grado y sección</label>' +
+      '<label for="metasIdEscuela">🏫 Tu escuela o centro educativo</label>' +
+      '<input id="metasIdEscuela" type="text" maxlength="80" autocomplete="off" placeholder="Ej: Esc. Francisco Morazán">' +
+      '<label for="metasIdGrado">📚 Grado y sección</label>' +
       '<input id="metasIdGrado" type="text" maxlength="30" autocomplete="off" placeholder="Ej: 6to A">' +
       '<label for="metasIdDocente">🧑‍🏫 Código de tu maestro <span style="font-weight:400;color:#636e72;">(si te dieron uno)</span></label>' +
       '<input id="metasIdDocente" type="text" maxlength="30" autocomplete="off" placeholder="Ej: PROF-JP">' +
@@ -394,6 +398,7 @@
       '</div></div>';
     document.body.appendChild(ov);
     document.getElementById('metasIdNombre').value = id.nombre || '';
+    document.getElementById('metasIdEscuela').value = id.escuela || '';
     document.getElementById('metasIdGrado').value = id.grado || '';
     document.getElementById('metasIdDocente').value = id.docente || '';
     function cerrar() { ov.remove(); st.remove(); }
@@ -406,6 +411,7 @@
       if (!nombre) { document.getElementById('metasIdNombre').focus(); return; }
       var datos = {
         nombre: nombre.slice(0, 60),
+        escuela: document.getElementById('metasIdEscuela').value.trim().slice(0, 80),
         grado: document.getElementById('metasIdGrado').value.trim().slice(0, 30),
         docente: document.getElementById('metasIdDocente').value.trim().slice(0, 30)
       };
