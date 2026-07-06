@@ -90,32 +90,46 @@ function crearDashboard() {
   const datos = ss.insertSheet('DashDatos');
   const dash = ss.insertSheet('Dashboard', 0); // primera pestaña
 
+  // Detectar el separador de argumentos de la configuración regional de la
+  // hoja (con separador decimal coma, los argumentos van con ";" y una
+  // fórmula escrita con "," da #ERROR!). Se prueba con =SUM(1,2):
+  const sonda = datos.getRange('Z1');
+  sonda.setFormula('=SUM(1,2)');
+  SpreadsheetApp.flush();
+  const SEP = (sonda.getValue() === 3) ? ',' : ';';
+  sonda.clearContent();
+  // Las plantillas usan ¦ donde va el separador de argumentos y § donde va
+  // el separador de columnas de una matriz {a§b} (en región con ";" es "\").
+  // (Las comas DENTRO de los textos de QUERY no cambian con la región.)
+  const SEPM = (SEP === ',') ? ',' : '\\';
+  const F = function (p) { return p.replace(/¦/g, SEP).replace(/§/g, SEPM); };
+
   // ---------- DashDatos: tablas que alimentan los gráficos ----------
   const R = HOJA;
   // A:B promedio de nota por misión
-  datos.getRange('A1').setFormula(
-    '=IFERROR(QUERY(' + R + '!A:Q,"select C, avg(J) where J is not null and C<>\'\' group by C order by avg(J) desc label C \'Misión\', avg(J) \'Promedio\'",1),{"Misión","Promedio"})');
+  datos.getRange('A1').setFormula(F(
+    '=IFERROR(QUERY(' + R + '!A:Q¦"select C, avg(J) where J is not null and C<>\'\' group by C order by avg(J) desc label C \'Misión\', avg(J) \'Promedio\'"¦1)¦"sin datos")'));
   // D:E actividad por día
-  datos.getRange('D1').setFormula(
-    '=IFERROR(QUERY(' + R + '!A:Q,"select toDate(A), count(P) where A is not null group by toDate(A) label toDate(A) \'Día\', count(P) \'Eventos\'",1),{"Día","Eventos"})');
+  datos.getRange('D1').setFormula(F(
+    '=IFERROR(QUERY(' + R + '!A:Q¦"select toDate(A), count(P) where A is not null group by toDate(A) label toDate(A) \'Día\', count(P) \'Eventos\'"¦1)¦"sin datos")'));
   // G:H distribución de notas (histograma por rangos)
   datos.getRange('G1:H1').setValues([['Rango de nota', 'Cantidad']]);
   const rangos = [['0-39', 0, 39], ['40-59', 40, 59], ['60-69', 60, 69], ['70-79', 70, 79], ['80-89', 80, 89], ['90-100', 90, 100]];
   rangos.forEach(function (r, i) {
     datos.getRange(i + 2, 7).setValue(r[0]);
-    datos.getRange(i + 2, 8).setFormula('=COUNTIFS(' + R + '!J:J,">=' + r[1] + '",' + R + '!J:J,"<=' + r[2] + '")');
+    datos.getRange(i + 2, 8).setFormula(F('=COUNTIFS(' + R + '!J:J¦">=' + r[1] + '"¦' + R + '!J:J¦"<=' + r[2] + '")'));
   });
-  // J:K alumnos únicos por escuela
-  datos.getRange('J1').setFormula(
-    '=IFERROR(QUERY(UNIQUE({' + R + '!Q2:Q,' + R + '!D2:D}),"select Col1, count(Col2) where Col1<>\'\' and Col2<>\'\' group by Col1 order by count(Col2) desc label Col1 \'Escuela\', count(Col2) \'Alumnos\'",0),{"Escuela","Alumnos"})');
+  // J:K alumnos únicos por escuela (pares únicos escuela+alumno)
+  datos.getRange('J1').setFormula(F(
+    '=IFERROR(QUERY(UNIQUE(FILTER({' + R + '!Q2:Q§' + R + '!D2:D}¦' + R + '!D2:D<>""¦' + R + '!Q2:Q<>""))¦"select Col1, count(Col2) group by Col1 order by count(Col2) desc label Col1 \'Escuela\', count(Col2) \'Alumnos\'"¦0)¦"sin datos")'));
   // M:N misiones más trabajadas (sesiones)
-  datos.getRange('M1').setFormula(
-    '=IFERROR(QUERY(' + R + '!A:Q,"select C, count(P) where G=\'sesion\' and C<>\'\' group by C order by count(P) desc label C \'Misión\', count(P) \'Sesiones\'",1),{"Misión","Sesiones"})');
+  datos.getRange('M1').setFormula(F(
+    '=IFERROR(QUERY(' + R + '!A:Q¦"select C, count(P) where G=\'sesion\' and C<>\'\' group by C order by count(P) desc label C \'Misión\', count(P) \'Sesiones\'"¦1)¦"sin datos")'));
   // S:U auxiliar minutos por sesión → P:Q minutos por misión
-  datos.getRange('S1').setFormula(
-    '=IFERROR(QUERY(' + R + '!A:Q,"select C, N, max(M) where N<>\'\' and C<>\'\' group by C, N",1),{"Misión","Sesión","Min"})');
-  datos.getRange('P1').setFormula(
-    '=IFERROR(QUERY(S1:U10000,"select Col1, sum(Col3) group by Col1 order by sum(Col3) desc label Col1 \'Misión\', sum(Col3) \'Minutos\'",1),{"Misión","Minutos"})');
+  datos.getRange('S1').setFormula(F(
+    '=IFERROR(QUERY(' + R + '!A:Q¦"select C, N, max(M) where N<>\'\' and C<>\'\' group by C, N"¦1)¦"sin datos")'));
+  datos.getRange('P1').setFormula(F(
+    '=IFERROR(QUERY(S1:U10000¦"select Col1, sum(Col3) group by Col1 order by sum(Col3) desc label Col1 \'Misión\', sum(Col3) \'Minutos\'"¦1)¦"sin datos")'));
 
   // ---------- Dashboard: título y tarjetas KPI ----------
   dash.setHiddenGridlines(true);
@@ -125,19 +139,19 @@ function crearDashboard() {
     .setFontSize(10).setFontColor('#636e72');
 
   const kpis = [
-    ['👥 Alumnos', '=IFERROR(COUNTUNIQUE(FILTER(' + R + '!D2:D,' + R + '!D2:D<>"")),0)'],
-    ['🏫 Escuelas', '=IFERROR(COUNTUNIQUE(FILTER(' + R + '!Q2:Q,' + R + '!Q2:Q<>"")),0)'],
-    ['🚀 Misiones', '=IFERROR(COUNTUNIQUE(FILTER(' + R + '!C2:C,' + R + '!C2:C<>"")),0)'],
-    ['📋 Eval. calificadas', '=COUNTIF(' + R + '!G2:G,"evaluacion")+COUNTIF(' + R + '!G2:G,"prueba_operativa")'],
-    ['📈 Promedio', '=IFERROR(ROUND(AVERAGE(' + R + '!J2:J),1),"—")'],
-    ['✅ Aprobación ≥70', '=IFERROR(ROUND(COUNTIF(' + R + '!J2:J,">=70")/COUNT(' + R + '!J2:J)*100,0)&"%","—")'],
-    ['⏱️ Minutos totales', '=IFERROR(ROUND(SUM(QUERY(' + R + '!A:Q,"select max(M) where N<>\'\' group by N label max(M) \'\'",1)),0),0)']
+    ['👥 Alumnos', '=IFERROR(COUNTUNIQUE(FILTER(' + R + '!D2:D¦' + R + '!D2:D<>""))¦0)'],
+    ['🏫 Escuelas', '=IFERROR(COUNTUNIQUE(FILTER(' + R + '!Q2:Q¦' + R + '!Q2:Q<>""))¦0)'],
+    ['🚀 Misiones', '=IFERROR(COUNTUNIQUE(FILTER(' + R + '!C2:C¦' + R + '!C2:C<>""))¦0)'],
+    ['📋 Eval. calificadas', '=COUNTIF(' + R + '!G2:G¦"evaluacion")+COUNTIF(' + R + '!G2:G¦"prueba_operativa")'],
+    ['📈 Promedio', '=IFERROR(ROUND(AVERAGE(' + R + '!J2:J)¦1)¦"—")'],
+    ['✅ Aprobación ≥70', '=IFERROR(ROUND(COUNTIF(' + R + '!J2:J¦">=70")/COUNT(' + R + '!J2:J)*100¦0)&"%"¦"—")'],
+    ['⏱️ Minutos totales', '=IFERROR(ROUND(SUM(QUERY(' + R + '!A:Q¦"select max(M) where N<>\'\' group by N label max(M) \'\'"¦1))¦0)¦0)']
   ];
   kpis.forEach(function (k, i) {
     const col = 2 + i * 2; // B, D, F, H, J, L, N
     dash.getRange(4, col).setValue(k[0]).setFontSize(9).setFontColor(AZUL)
       .setBackground(AZUL_CLARO).setFontWeight('bold').setHorizontalAlignment('center');
-    dash.getRange(5, col).setFormula(k[1]).setFontSize(22).setFontWeight('bold')
+    dash.getRange(5, col).setFormula(F(k[1])).setFontSize(22).setFontWeight('bold')
       .setFontColor(AZUL).setBackground(AZUL_CLARO).setHorizontalAlignment('center');
   });
 
