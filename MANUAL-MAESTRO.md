@@ -92,11 +92,13 @@ permiten a usted saber de quién es cada resultado.
 
 [IMAGEN: el modal "¡Hola, explorador!" con los cuatro campos]
 
-**¿Tablets o teléfonos compartidos?** En la pantalla de la constancia está el
-botón **"👤 Cambiar alumno"**: cada alumno lo toca al iniciar su turno y
-escribe sus datos. Desde ese momento, todo queda registrado a su nombre.
+**¿Quién está trabajando?** Justo arriba del menú de secciones, cada misión
+muestra siempre una barra con el alumno activo — **"👤 Nombre · grado"** — y el
+botón **"✏️ Cambiar alumno"**. En tablets o teléfonos compartidos, cada alumno
+lo toca al iniciar su turno y escribe sus datos: desde ese momento todo queda
+registrado a su nombre. (El botón también está junto a la constancia.)
 
-[IMAGEN: botón "Cambiar alumno" junto a la constancia]
+[IMAGEN: la barra "👤 Alumno · grado · Cambiar alumno" sobre el menú de secciones]
 
 ---
 

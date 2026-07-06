@@ -49,9 +49,10 @@ Escribe:
 Toca **✅ Guardar** y listo: **solo se pregunta una vez**. Estos datos le
 dicen a tu maestro que tus logros son TUYOS.
 
-> ⚠️ Si compartes la tablet con otros compañeros, al empezar tu turno busca el
-> botón **"👤 Cambiar alumno"** en la pantalla de la constancia y pon tus
-> datos. ¡Que no se lleven tus puntos! 😄
+> ⚠️ Arriba del menú de secciones siempre verás una barra que dice **quién
+> está trabajando** (👤 nombre y grado). Si compartes la tablet con otros
+> compañeros, al empezar tu turno toca **"✏️ Cambiar alumno"** en esa barra y
+> pon tus datos. ¡Que no se lleven tus puntos! 😄
 
 ---
 
@@ -121,7 +122,8 @@ envían solos cuando haya conexión.
 ¡Claro! Repetir es entrenar. Tus puntos y logros se quedan contigo.
 
 **"Me equivoqué al escribir mis datos."**
-Ve a la constancia, toca **"👤 Cambiar alumno"** y corrígelos.
+Toca **"✏️ Cambiar alumno"** en la barra que está arriba del menú de secciones
+y corrígelos.
 
 **"¿Mi maestro de verdad ve lo que hago?"**
 Sí: ve tus notas, tu tiempo y tus secciones completadas. Así que cuando
