@@ -130,6 +130,14 @@ function crearDashboard() {
     '=IFERROR(QUERY(' + R + '!A:Q¦"select C, N, max(M) where N<>\'\' and C<>\'\' group by C, N"¦1)¦"sin datos")'));
   datos.getRange('P1').setFormula(F(
     '=IFERROR(QUERY(S1:U10000¦"select Col1, sum(Col3) group by Col1 order by sum(Col3) desc label Col1 \'Misión\', sum(Col3) \'Minutos\'"¦1)¦"sin datos")'));
+  // W:X aprobados vs por mejorar (para la dona)
+  datos.getRange('W1:X1').setValues([['Estado', 'Pruebas']]);
+  datos.getRange('W2').setValue('Aprobadas (≥70)');
+  datos.getRange('X2').setFormula(F('=COUNTIF(' + R + '!J:J¦">=70")'));
+  datos.getRange('W3').setValue('Por mejorar (<70)');
+  datos.getRange('X3').setFormula(F('=COUNTIF(' + R + '!J:J¦"<70")'));
+  // fechas legibles en la actividad por día
+  datos.getRange('D2:D400').setNumberFormat('dd mmm');
 
   // ---------- Dashboard: título y tarjetas KPI ----------
   dash.setHiddenGridlines(true);
@@ -168,11 +176,13 @@ function crearDashboard() {
     dash.insertChart(b.build());
   }
   grafico(Charts.ChartType.BAR,    'A1:B30',  '📈 Promedio de nota por misión', 8, 2);
-  grafico(Charts.ChartType.LINE,   'D1:E120', '📅 Actividad por día (eventos)', 8, 8);
+  grafico(Charts.ChartType.COLUMN, 'D1:E120', '📅 Actividad por día (eventos)', 8, 8);
   grafico(Charts.ChartType.COLUMN, 'G1:H7',   '🔔 Distribución de notas', 26, 2);
-  grafico(Charts.ChartType.BAR,    'J1:K30',  '🏫 Alumnos por escuela', 26, 8);
+  grafico(Charts.ChartType.PIE,    'W1:X3',   '✅ Pruebas aprobadas vs por mejorar', 26, 8,
+    { pieHole: 0.55, legend: { position: 'right' }, colors: ['#00b894', '#d63031'] });
   grafico(Charts.ChartType.BAR,    'M1:N30',  '🚀 Misiones más trabajadas (sesiones)', 44, 2);
   grafico(Charts.ChartType.BAR,    'P1:Q30',  '⏱️ Minutos de trabajo por misión', 44, 8);
+  grafico(Charts.ChartType.BAR,    'J1:K30',  '🏫 Alumnos por escuela', 62, 2);
 
   datos.hideSheet();
   ss.setActiveSheet(dash);
