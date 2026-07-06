@@ -425,12 +425,51 @@
         if (typeof window.updateDiplomaName === 'function') window.updateDiplomaName(datos.nombre);
       }
       cerrar();
+      actualizarBarraAlumno();
       if (typeof alGuardar === 'function') alGuardar();
     });
   }
 
   function idOmitidaEstaSesion() {
     try { return sessionStorage.getItem('METAS_ID_OMITIDA') === '1'; } catch (e) { return false; }
+  }
+
+  // Barra de identidad permanente sobre la navegación de la misión:
+  // muestra quién está trabajando y permite cambiar de alumno sin ir a la constancia
+  var BARRA_CSS = '#metasBarraAlumno{display:flex;align-items:center;justify-content:center;gap:0.6rem;flex-wrap:wrap;margin:0.9rem auto 0.4rem;padding:0.45rem 0.9rem;max-width:640px;border-radius:14px;background:var(--pri-gl,#e3f2fd);border:1.5px dashed var(--pri,#1565c0);font-size:0.85rem;color:var(--pri,#1565c0);font-weight:600;}' +
+    '#metasBarraAlumno .metas-ba-btn{border:none;border-radius:10px;padding:0.35rem 0.8rem;background:var(--pri,#1565c0);color:#fff;font-weight:700;font-size:0.8rem;cursor:pointer;font-family:inherit;}';
+
+  function actualizarBarraAlumno() {
+    var barra = document.getElementById('metasBarraAlumno');
+    if (!barra) return;
+    var id = identificacion();
+    var conNombre = !!(id && id.nombre);
+    barra.querySelector('.metas-ba-txt').textContent = conNombre
+      ? '👤 ' + id.nombre + (id.grado ? ' · ' + id.grado : '')
+      : '👤 Aún no te has identificado';
+    barra.querySelector('.metas-ba-btn').textContent = conNombre ? '✏️ Cambiar alumno' : '✍️ Escribir mis datos';
+  }
+
+  function inyectarBarraAlumno() {
+    if (document.getElementById('metasBarraAlumno')) return;
+    var primerTab = document.querySelector('[data-s]');
+    if (!primerTab || !primerTab.parentNode) return;
+    var st = document.createElement('style');
+    st.textContent = BARRA_CSS;
+    document.head.appendChild(st);
+    var barra = document.createElement('div');
+    barra.id = 'metasBarraAlumno';
+    var txt = document.createElement('span');
+    txt.className = 'metas-ba-txt';
+    var btn = document.createElement('button');
+    btn.className = 'metas-ba-btn';
+    btn.type = 'button';
+    btn.addEventListener('click', function () { abrirIdentificacion(); });
+    barra.appendChild(txt);
+    barra.appendChild(btn);
+    var nav = (primerTab.closest && primerTab.closest('nav')) || primerTab;
+    nav.parentNode.insertBefore(barra, nav);
+    actualizarBarraAlumno();
   }
 
   // Botones "Enviar resultados" y "Cambiar alumno" junto a los de la constancia
@@ -476,6 +515,7 @@
     if (idMision()) {
       registrar('sesion', {});
       inyectarBotonEnviar();
+      inyectarBarraAlumno();
       if (!identificacion() && !idOmitidaEstaSesion()) abrirIdentificacion();
     }
     if (urlSync()) {
