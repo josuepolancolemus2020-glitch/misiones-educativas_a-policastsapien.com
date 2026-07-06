@@ -250,7 +250,7 @@
   // ---------- sincronización opcional a Google Sheets (fase 3) ----------
   // Pega aquí la URL del despliegue del Apps Script (ver FASE3-GOOGLE-SHEETS.md).
   // Mientras esté vacía, la app funciona igual pero solo con registro local.
-  var URL_SINCRONIZACION = '';
+  var URL_SINCRONIZACION = 'https://script.google.com/macros/s/AKfycbyqNT70fya4SoqZALnsAD2SFPHurKcv5h3Id29WYlHA02wjR_bXsYyCh2W5lHWr7Egl/exec';
   function urlSync() {
     try { return localStorage.getItem('METAS_SYNC_URL') || URL_SINCRONIZACION; }
     catch (e) { return URL_SINCRONIZACION; }
