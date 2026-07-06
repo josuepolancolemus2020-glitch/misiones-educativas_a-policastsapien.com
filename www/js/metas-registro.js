@@ -341,7 +341,7 @@
       '👤 Alumno: ' + nombre + '\n' +
       (id.escuela ? '🏫 Escuela: ' + id.escuela + '\n' : '') +
       (id.grado ? '📚 Grado y sección: ' + id.grado + '\n' : '') +
-      (id.docente ? '🧑‍🏫 Código del maestro: ' + id.docente + '\n' : '') +
+      (id.docente ? '🧑‍🏫 Maestro: ' + id.docente + '\n' : '') +
       '🚀 Misión: ' + tituloMision() + '\n' +
       '📅 Enviado: ' + hoy.fecha + ' ' + hoy.hora + '\n\n' +
       '✅ Secciones completadas: ' + hechas + (tabs.length ? ' de ' + tabs.length : '') + '\n' +
@@ -390,8 +390,8 @@
       '<input id="metasIdEscuela" type="text" maxlength="80" autocomplete="off" placeholder="Ej: Esc. Francisco Morazán">' +
       '<label for="metasIdGrado">📚 Grado y sección</label>' +
       '<input id="metasIdGrado" type="text" maxlength="30" autocomplete="off" placeholder="Ej: 6to A">' +
-      '<label for="metasIdDocente">🧑‍🏫 Código de tu maestro <span style="font-weight:400;color:#636e72;">(si te dieron uno)</span></label>' +
-      '<input id="metasIdDocente" type="text" maxlength="30" autocomplete="off" placeholder="Ej: PROF-JP">' +
+      '<label for="metasIdDocente">🧑‍🏫 Nombre de tu maestro o código</label>' +
+      '<input id="metasIdDocente" type="text" maxlength="40" autocomplete="off" placeholder="Ej: Prof. Josué o PROF-JP">' +
       '<div class="metas-id-acciones">' +
       '<button type="button" class="metas-id-btn metas-id-luego" id="metasIdLuego">Ahora no</button>' +
       '<button type="button" class="metas-id-btn metas-id-guardar" id="metasIdGuardar">✅ Guardar</button>' +
@@ -413,7 +413,7 @@
         nombre: nombre.slice(0, 60),
         escuela: document.getElementById('metasIdEscuela').value.trim().slice(0, 80),
         grado: document.getElementById('metasIdGrado').value.trim().slice(0, 30),
-        docente: document.getElementById('metasIdDocente').value.trim().slice(0, 30)
+        docente: document.getElementById('metasIdDocente').value.trim().slice(0, 40)
       };
       guardarIdentificacion(datos);
       // sincronizar con el nombre de la constancia de la misión
