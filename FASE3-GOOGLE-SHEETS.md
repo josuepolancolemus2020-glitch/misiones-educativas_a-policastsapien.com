@@ -258,6 +258,39 @@ La URL no cambia, así que no hay que tocar la app.
   `localStorage.setItem('METAS_SYNC_URL','https://...tu url.../exec')`
   y recarga. Para quitarla: `localStorage.removeItem('METAS_SYNC_URL')`.
 
+## Archivo espejo para una escuela (su propio dashboard, solo sus alumnos)
+
+El archivo central es privado del proyecto: **nunca se comparte** porque
+contiene datos de todas las escuelas. Cuando una escuela quiera ver sus
+datos, se le crea un **archivo espejo**:
+
+1. Crea una hoja de cálculo nueva: `M.E.T.A.S — <Nombre de la escuela>`.
+2. Renombra su primera pestaña a `Registros` (exactamente así).
+3. En la celda **A1** pega esta fórmula (una sola línea), cambiando la URL
+   por la del archivo central y el nombre por el de la escuela **tal como
+   lo escriben los alumnos al identificarse**:
+   ```
+   =QUERY(IMPORTRANGE("https://docs.google.com/spreadsheets/d/XXXX/edit","Registros!A:Q"),"select * where Col17 = 'Esc. Francisco Morazán'",1)
+   ```
+   - Si da error de fórmula, tu región usa punto y coma: cambia las `,`
+     que están FUERA de los textos por `;`.
+   - La primera vez aparece `#REF!` con un botón **"Permitir acceso"** —
+     acéptalo (autoriza a este archivo a leer el central).
+4. (Opcional pero recomendado) Extensiones → Apps Script del archivo
+   espejo → pega el MISMO código de esta guía → ejecuta `crearDashboard`.
+   La escuela obtiene su propio dashboard con solo sus alumnos.
+   (No hay que implementar nada como aplicación web en el espejo: solo se
+   usa la función del dashboard.)
+5. Comparte el archivo espejo con la dirección de la escuela como
+   **Lector**. Se actualiza solo cada pocos minutos.
+
+**Clave para que esto funcione: el nombre de la escuela debe escribirse
+IGUAL en todos los dispositivos.** Lo más seguro es que cada maestro
+dicte a sus alumnos el nombre o código exacto de la escuela (igual que el
+código del maestro), p. ej. `ESC-MORAZAN-TELA`. Si unos escriben
+"Esc. Morazán" y otros "Escuela Francisco Morazán", para el filtro son
+escuelas distintas.
+
 ## Consejos para el estudio (tesis)
 
 - Crea una hoja por año escolar; Google Sheets aguanta ~10 millones de celdas
