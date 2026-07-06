@@ -119,9 +119,9 @@ Reglas de ahorro y calidad:
    `#evalAutoResult` / `#evalOpAutoResult` — por eso el texto "Resultado: X/100 pts"
    de esos paneles NO debe cambiar de formato. Además inyecta solo: el modal de
    identificación del alumno (nombre/código + grado + código del maestro, 1 sola vez
-   por dispositivo) y el botón "📤 Enviar resultados" dentro de `.diploma-actions`
-   de la constancia — por eso ese div y el input `.diploma-input` deben conservar
-   sus clases estándar).
+   por dispositivo) y los botones "📤 Enviar resultados" y "👤 Cambiar alumno"
+   (para dispositivos compartidos) dentro de `.diploma-actions` de la constancia —
+   por eso ese div y el input `.diploma-input` deben conservar sus clases estándar).
 6. **Registrar** en `js/data/misiones.js` con el **siguiente id libre** (revisar el
    archivo; NO asumir count+1).
 7. **Validar** (barato y confiable):

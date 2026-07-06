@@ -411,8 +411,9 @@
       };
       guardarIdentificacion(datos);
       // sincronizar con el nombre de la constancia de la misión
+      // (siempre: al cambiar de alumno la constancia debe cambiar de dueño)
       var inp = document.querySelector('.diploma-input');
-      if (inp && !inp.value) {
+      if (inp) {
         inp.value = datos.nombre;
         try { inp.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
         if (typeof window.updateDiplomaName === 'function') window.updateDiplomaName(datos.nombre);
@@ -426,7 +427,7 @@
     try { return sessionStorage.getItem('METAS_ID_OMITIDA') === '1'; } catch (e) { return false; }
   }
 
-  // Botón "Enviar resultados" junto a los de la constancia
+  // Botones "Enviar resultados" y "Cambiar alumno" junto a los de la constancia
   function inyectarBotonEnviar() {
     var acciones = document.querySelector('.diploma-actions');
     if (!acciones || document.getElementById('metasBtnEnviar')) return;
@@ -436,6 +437,13 @@
     btn.textContent = '📤 Enviar resultados';
     btn.addEventListener('click', enviarResultados);
     acciones.insertBefore(btn, acciones.firstChild);
+    // para dispositivos compartidos: reabre el modal de identificación
+    var btnCambiar = document.createElement('button');
+    btnCambiar.id = 'metasBtnCambiar';
+    btnCambiar.className = 'btn btn-d';
+    btnCambiar.textContent = '👤 Cambiar alumno';
+    btnCambiar.addEventListener('click', function () { abrirIdentificacion(); });
+    acciones.appendChild(btnCambiar);
   }
 
   // ---------- API pública ----------
