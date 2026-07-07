@@ -149,6 +149,15 @@ Reglas de ahorro y calidad:
    - Si nace una **ruta nueva**, añadirla a `RUTAS` en `js/data/misiones.js` y a
      `RUTAS_ORDEN` en `js/app.js`. (El mapa, "Tu siguiente paso" e insignias no
      necesitan más cambios: todo se deriva de `ruta`/`etapa` y del registro.)
+   - **Campeonísimo**: toda misión nueva DEBE alimentar el torneo. El botón
+     «🔄 Actualizar banco» del Campeonísimo lee automáticamente el `evalMCBank`
+     de las misiones registradas en `js/data/misiones.js` (también soporta
+     `QUIZ_QS` con `{q, opts, ans}`), así que basta con que la misión tenga su
+     `evalMCBank` estándar. Requisito: mantener el nombre `evalMCBank` y el
+     formato `{q, o:[...], a: índice}`. Opcionalmente, copiar 8-9 preguntas
+     curadas a `js/data/campeonismo-bank.js` (formato `{q, o, c, mision:
+     'Título EXACTO del registro'}`) para que estén disponibles sin pulsar el
+     botón; el título debe coincidir con el del catálogo para la cobertura.
 7. **Validar** (barato y confiable):
    - `node --check js/<slug>.js`
    - sopas: que cada palabra coincida con su grid

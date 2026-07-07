@@ -119,9 +119,145 @@ const $id = id => document.getElementById(id);
 function _stopTimer() { clearInterval(_timerInt); _timerInt = null; }
 
 function _missionsBySubject(subjectKey) {
-  const bank = (typeof CAMP_BANK !== 'undefined' && CAMP_BANK[subjectKey]) || [];
+  const bank = _bank()[subjectKey] || [];
   const seen = new Set();
   return bank.map(q => q.mision).filter(m => { if (seen.has(m)) return false; seen.add(m); return true; });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BANCO DINÁMICO — preguntas extraídas de las misiones
+   El botón "🔄 Actualizar banco" lee el evalMCBank de cada misión
+   del catálogo que aún no esté cubierta y lo guarda en
+   localStorage (METAS_CAMP_BANK_EXTRA_V1). El juego usa siempre
+   el banco fusionado: CAMP_BANK (estático) + extra (dinámico).
+══════════════════════════════════════════════════════════════ */
+const CAMP_EXTRA_KEY = 'METAS_CAMP_BANK_EXTRA_V1';
+let _bankFullCache = null;
+
+function _extraLoad() {
+  try {
+    const o = JSON.parse(localStorage.getItem(CAMP_EXTRA_KEY));
+    return (o && typeof o === 'object') ? o : {};
+  } catch (_) { return {}; }
+}
+function _extraSave(o) {
+  try { localStorage.setItem(CAMP_EXTRA_KEY, JSON.stringify(o)); } catch (_) {}
+}
+
+function _bank() {
+  if (_bankFullCache) return _bankFullCache;
+  const extra  = _extraLoad();
+  const merged = {};
+  CAMP_SUBJECTS.forEach(s => {
+    const base   = (typeof CAMP_BANK !== 'undefined' && CAMP_BANK[s.key]) || [];
+    const vistos = new Set(base.map(q => _campNorm(q.q)));
+    const add    = (extra[s.key] || []).filter(q =>
+      q && q.q && Array.isArray(q.o) && typeof q.c === 'number' && !vistos.has(_campNorm(q.q)));
+    merged[s.key] = base.concat(add);
+  });
+  _bankFullCache = merged;
+  return merged;
+}
+
+/* Extrae un banco de opción múltiple de un texto JS (escáner con soporte
+   de cadenas). Prueba evalMCBank ({q,o,a|c}) y como respaldo QUIZ_QS
+   ({q,opts,ans}, formato de las misiones de primer ciclo). */
+function _extraerMCBank(txt) {
+  return _extraerArray(txt, 'evalMCBank') || _extraerArray(txt, 'QUIZ_QS');
+}
+
+function _extraerArray(txt, nombre) {
+  const m = txt.match(new RegExp('(?:const|var|let)\\s+' + nombre + '\\s*=\\s*\\['));
+  if (!m) return null;
+  const start = txt.indexOf('[', m.index);
+  let depth = 0, inStr = null, i = start;
+  for (; i < txt.length; i++) {
+    const ch = txt[i];
+    if (inStr) {
+      if (ch === '\\') { i++; continue; }
+      if (ch === inStr) inStr = null;
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === '`') { inStr = ch; continue; }
+    if (ch === '[') depth++;
+    else if (ch === ']') { depth--; if (depth === 0) break; }
+  }
+  if (depth !== 0) return null;
+  let arr;
+  try { arr = new Function('return ' + txt.slice(start, i + 1))(); }
+  catch (_) { return null; }
+  if (!Array.isArray(arr)) return null;
+  return arr
+    .map(it => {
+      if (!it || typeof it.q !== 'string') return null;
+      const o = Array.isArray(it.o) ? it.o : it.opts;       /* QUIZ_QS usa opts/ans */
+      if (!Array.isArray(o) || o.length < 2) return null;
+      let c = (typeof it.c === 'number') ? it.c : (typeof it.a === 'number') ? it.a : it.ans;
+      return { q: it.q, o: o.map(op => String(op).replace(/^[a-dA-D]\)\s*/, '')), c };
+    })
+    .filter(it => it && typeof it.c === 'number' && it.c >= 0 && it.c < it.o.length);
+}
+
+/* Cobertura: cuántas misiones del catálogo tienen preguntas en el banco */
+function _coberturaBanco() {
+  const bank = _bank();
+  let preguntas = 0;
+  const cubiertas = new Set();
+  CAMP_SUBJECTS.forEach(s => (bank[s.key] || []).forEach(q => {
+    preguntas++;
+    const m = _findMissionByTitle(q.mision);
+    if (m) cubiertas.add(m.id);
+  }));
+  const total = (typeof MISSIONS !== 'undefined') ? MISSIONS.length : 0;
+  return { preguntas, cubiertas: cubiertas.size, total };
+}
+
+/* Descarga y agrega los bancos de las misiones que faltan */
+async function actualizarBanco(status) {
+  if (typeof MISSIONS === 'undefined') return { nuevasMisiones: 0, nuevasPreguntas: 0, errores: 0, pendientes: 0 };
+  const bank = _bank();
+
+  const cubiertas = new Set();
+  CAMP_SUBJECTS.forEach(s => (bank[s.key] || []).forEach(q => {
+    const m = _findMissionByTitle(q.mision);
+    if (m) cubiertas.add(m.id);
+  }));
+  const subjOk = new Set(CAMP_SUBJECTS.map(s => s.key));
+  const pendientes = MISSIONS.filter(m => !cubiertas.has(m.id));
+
+  const extra = _extraLoad();
+  let nuevasMisiones = 0, nuevasPreguntas = 0, errores = 0;
+
+  for (let k = 0; k < pendientes.length; k++) {
+    const m = pendientes[k];
+    if (status) status(`Leyendo ${k + 1}/${pendientes.length}: ${m.title}…`);
+    try {
+      const html = await fetch(encodeURI(m.url)).then(r => r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status)));
+      const dir  = m.url.slice(0, m.url.lastIndexOf('/') + 1);
+      const srcs = [...html.matchAll(/<script[^>]+src=["'](js\/[^"']+)["']/g)]
+        .map(x => x[1]).filter(s => !/html2canvas/i.test(s));
+      let items = null;
+      for (const s of srcs) {
+        const js = await fetch(encodeURI(dir + s)).then(r => r.ok ? r.text() : null).catch(() => null);
+        if (!js) continue;
+        items = _extraerMCBank(js);
+        if (items && items.length) break;
+      }
+      if (items && items.length) {
+        const subjKey = subjOk.has(m.subject) ? m.subject : 'español';   /* bach → español */
+        extra[subjKey] = (extra[subjKey] || []).concat(
+          items.map(it => ({ q: it.q, o: it.o, c: it.c, mision: m.title })));
+        nuevasMisiones++;
+        nuevasPreguntas += items.length;
+      } else {
+        errores++;
+      }
+    } catch (_) { errores++; }
+  }
+
+  _extraSave(extra);
+  _bankFullCache = null;
+  return { nuevasMisiones, nuevasPreguntas, errores, pendientes: pendientes.length };
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -202,12 +338,45 @@ function renderCampHome() {
         </span>
         <i class="fa-solid fa-chevron-right"></i>
       </button>
+
+      <div class="camp-card camp-bank-card">
+        <div class="camp-card-label">🧠 Banco de preguntas</div>
+        <p class="camp-bank-status" id="camp-bank-status">${_bankStatusTxt()}</p>
+        <button class="camp-bank-btn" id="camp-bank-update">🔄 Actualizar banco con las misiones nuevas</button>
+        <p class="camp-bank-hint">Lee las evaluaciones de las misiones que aún no están en el banco y agrega sus preguntas al torneo y a la práctica.</p>
+      </div>
     </div>`;
 
   $id('camp-h-torneo').addEventListener('click',   () => { _sfx('click'); renderSetup(); });
   $id('camp-h-practica').addEventListener('click', () => { _sfx('click'); renderPracticeSetup(); });
   $id('camp-h-fama').addEventListener('click',     () => { _sfx('click'); renderFame(); });
   $id('camp-h-normas').addEventListener('click',   () => { _sfx('click'); _showNormas(null); });
+
+  $id('camp-bank-update').addEventListener('click', async () => {
+    _sfx('click');
+    const btn = $id('camp-bank-update');
+    const st  = $id('camp-bank-status');
+    btn.disabled = true;
+    btn.textContent = '⏳ Actualizando…';
+    try {
+      const r = await actualizarBanco(msg => { if (st) st.textContent = msg; });
+      _sfx(r.nuevasPreguntas ? 'pts' : 'click');
+      if (st) {
+        if (!r.pendientes)            st.textContent = '✅ El banco ya cubre todas las misiones. ' + _bankStatusTxt();
+        else if (r.nuevasPreguntas)   st.textContent = `✅ ¡Listo! +${r.nuevasPreguntas} preguntas de ${r.nuevasMisiones} misión${r.nuevasMisiones > 1 ? 'es' : ''}. ${_bankStatusTxt()}`;
+        else                          st.textContent = '⚠️ No se pudieron leer las misiones pendientes. Revisa la conexión e intenta de nuevo.';
+      }
+    } catch (_) {
+      if (st) st.textContent = '⚠️ Ocurrió un error al actualizar. Intenta de nuevo con conexión.';
+    }
+    btn.disabled = false;
+    btn.textContent = '🔄 Actualizar banco con las misiones nuevas';
+  });
+}
+
+function _bankStatusTxt() {
+  const c = _coberturaBanco();
+  return `${c.preguntas} preguntas · cubre ${c.cubiertas} de ${c.total} misiones`;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -671,7 +840,7 @@ function _subjectBtnsHTML() {
 
 function _hayPreguntas(subjectKey) {
   const T = CAMP.T;
-  const bank = CAMP_BANK[subjectKey] || [];
+  const bank = _bank()[subjectKey] || [];
   if (!bank.length) return false;
   if (!T || !T.selectedMissions) return true;
   return bank.some(q => T.selectedMissions.has(q.mision));
@@ -754,7 +923,7 @@ function spinWheel() {
 ══════════════════════════════════════════════════════════════ */
 function _pickQuestion(subjectKey) {
   const T    = CAMP.T;
-  const bank = CAMP_BANK[subjectKey];
+  const bank = _bank()[subjectKey];
   if (!bank || !bank.length) return null;
 
   let pool = bank;
@@ -1416,7 +1585,7 @@ function startPractice() {
 
   let pool = [];
   CAMP_SUBJECTS.forEach(s => {
-    (CAMP_BANK[s.key] || []).forEach(q => {
+    (_bank()[s.key] || []).forEach(q => {
       if (!sel || sel.has(q.mision)) pool.push({ ...q, subj: s.key });
     });
   });
