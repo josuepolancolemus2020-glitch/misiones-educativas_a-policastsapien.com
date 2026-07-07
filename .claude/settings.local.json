@@ -139,7 +139,8 @@
       "Bash(rm -rf www/.claude)",
       "Bash(git rm *)",
       "Bash(git commit -q -m ' *)",
-      "Bash(cat __TRACKED_VAR__/css-eval.css)"
+      "Bash(cat __TRACKED_VAR__/css-eval.css)",
+      "Bash(curl -s https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/misiones/2y3ciclo-verbos/verbos.html?vv=__TRACKED_VAR__)"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
