@@ -131,7 +131,15 @@
       "Bash(curl -sL -X POST \"https://script.google.com/macros/s/AKfycbz8BHb5vXr4fZKsDprO2Q0kL7zKRL4pfMjo-HzgK28hLkncI0EyYOSHdKDft_vPfPRq/exec\" -H \"Content-Type: text/plain;charset=utf-8\" --data '{\"eventos\":[{\"id\":\"E-DIAG0001\",\"t\":\"2026-07-06T12:00:00.000Z\",\"tipo\":\"evaluacion\",\"mision\":\"PRUEBA-DIAGNOSTICO\",\"alumno\":\"PRUEBA-DIAGNOSTICO\",\"grado\":\"5to\",\"docente\":\"DIAG\",\"escuela\":\"DIAG\",\"seccion\":\"\",\"forma\":3,\"nota\":85,\"base\":100,\"xp\":10,\"min\":1,\"ses\":\"S-DIAG\",\"disp\":\"D-DIAG\"}]}')",
       "Bash(curl -sL \"https://script.google.com/macros/s/AKfycbyqNT70fya4SoqZALnsAD2SFPHurKcv5h3Id29WYlHA02wjR_bXsYyCh2W5lHWr7Egl/exec\")",
       "Bash(curl -s \"https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/js/metas-registro.js\" -o /tmp/live-metas.js)",
-      "Bash(node test-live.js)"
+      "Bash(node test-live.js)",
+      "Bash(node test-fix.js)",
+      "Bash(node test-todas.js)",
+      "Bash(node test-op.js)",
+      "Bash(sed -i 's#/https:\\\\\\\\/\\\\\\\\/\\(fonts|cdnjs|cdn\\)/#/https:\\\\\\\\/\\\\\\\\/\\(fonts|cdnjs|cdn|polyfill\\)/#' test-op.js)",
+      "Bash(rm -rf www/.claude)",
+      "Bash(git rm *)",
+      "Bash(git commit -q -m ' *)",
+      "Bash(cat __TRACKED_VAR__/css-eval.css)"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
