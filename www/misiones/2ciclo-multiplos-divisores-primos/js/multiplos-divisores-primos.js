@@ -21,6 +21,8 @@ window.addEventListener('DOMContentLoaded', () => {
 // Escala toda la misión desde la raíz (el CSS usa rem) y encaja el contenido
 // a la proporción elegida. Se combina con el botón "Letra".
 const PRESENTA_KEY = 'prefPresentaMultiplosDivisores';
+const PRESENTA_ZOOM_KEY = 'prefPresentaZoomMultiplosDivisores';
+let presentaZoom = (function () { try { const z = parseInt(localStorage.getItem(PRESENTA_ZOOM_KEY), 10); return (z >= 120 && z <= 220) ? z : 150; } catch (e) { return 150; } })();
 const PRESENTA_MODOS = [
   ['',    '🖥️ Normal'],
   ['169', '📽️ Panorámico 16:9'],
@@ -29,9 +31,22 @@ const PRESENTA_MODOS = [
   ['34',  '📱 Vertical 3:4'],
   ['916', '📲 Historia 9:16']
 ];
+function aplicarPresentaZoom() {
+  const activo = document.documentElement.hasAttribute('data-presenta');
+  document.documentElement.style.fontSize = activo ? presentaZoom + '%' : '';
+  const lbl = document.getElementById('presentaZoomLbl');
+  if (lbl) lbl.textContent = presentaZoom + '%';
+}
+function cambiarPresentaZoom(delta) {
+  presentaZoom = Math.min(220, Math.max(120, presentaZoom + delta));
+  try { localStorage.setItem(PRESENTA_ZOOM_KEY, presentaZoom); } catch (e) {}
+  aplicarPresentaZoom();
+  if (typeof sfx === 'function') sfx('click');
+}
 function setPresenta(modo) {
   if (modo) document.documentElement.setAttribute('data-presenta', modo);
   else document.documentElement.removeAttribute('data-presenta');
+  aplicarPresentaZoom();
   try { localStorage.setItem(PRESENTA_KEY, modo); } catch (e) {}
   const menu = document.getElementById('presentaMenu');
   if (menu) {
@@ -63,6 +78,19 @@ function togglePresenta() {
       b.addEventListener('click', () => setPresenta(modo));
       menu.appendChild(b);
     });
+    // control de tamaño de letra del modo presentación
+    const zoomRow = document.createElement('div');
+    zoomRow.className = 'presenta-zoom';
+    const menos = document.createElement('button');
+    menos.type = 'button'; menos.textContent = 'A−'; menos.setAttribute('aria-label', 'Letra más pequeña');
+    menos.addEventListener('click', () => cambiarPresentaZoom(-15));
+    const lbl = document.createElement('span');
+    lbl.id = 'presentaZoomLbl'; lbl.textContent = presentaZoom + '%';
+    const mas = document.createElement('button');
+    mas.type = 'button'; mas.textContent = 'A+'; mas.setAttribute('aria-label', 'Letra más grande');
+    mas.addEventListener('click', () => cambiarPresentaZoom(15));
+    zoomRow.appendChild(menos); zoomRow.appendChild(lbl); zoomRow.appendChild(mas);
+    menu.appendChild(zoomRow);
     document.body.appendChild(menu);
   }
   menu.classList.toggle('open');
@@ -70,7 +98,7 @@ function togglePresenta() {
 }
 window.addEventListener('DOMContentLoaded', () => {
   // restaura proporción y escala (la pantalla completa requiere un toque del usuario)
-  try { const m = localStorage.getItem(PRESENTA_KEY); if (m) document.documentElement.setAttribute('data-presenta', m); } catch (e) {}
+  try { const m = localStorage.getItem(PRESENTA_KEY); if (m) { document.documentElement.setAttribute('data-presenta', m); aplicarPresentaZoom(); } } catch (e) {}
 });
 
 // ===================== UTILIDADES =====================

@@ -588,3 +588,6 @@ html[data-presenta="916"] .main{max-width:min(96vw,calc(100vh*9/16));}
 .presenta-menu.open{display:flex;}
 .presenta-menu button{border:none;border-radius:9px;padding:0.5rem 0.9rem;background:var(--pri-gl);color:var(--pri);font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;text-align:left;}
 .presenta-menu button:hover,.presenta-menu button.active{background:var(--pri);color:#fff;}
+.presenta-zoom{display:flex;align-items:center;justify-content:space-between;gap:0.4rem;margin-top:0.3rem;padding-top:0.4rem;border-top:1.5px dashed var(--border);}
+.presenta-zoom button{border:none;border-radius:9px;padding:0.45rem 0.8rem;background:var(--pri);color:#fff;font-family:inherit;font-size:0.95rem;font-weight:800;cursor:pointer;}
+.presenta-zoom span{font-size:0.85rem;font-weight:700;color:var(--pri);min-width:3.2rem;text-align:center;}
