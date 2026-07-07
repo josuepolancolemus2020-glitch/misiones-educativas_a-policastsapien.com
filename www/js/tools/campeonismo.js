@@ -393,8 +393,8 @@ function _normasHTML(cfg) {
       <li><strong>📚 Ronda 1 — Conocimiento.</strong> ${c.vueltasR1} vuelta${c.vueltasR1 > 1 ? 's' : ''} completa${c.vueltasR1 > 1 ? 's' : ''}. Cada acierto vale <strong>${c.basePts} pts</strong>. Tiempo por pregunta: ${c.timerSecs}s.</li>
       ${c.reboteOn ? `<li><strong>🔁 Rebote.</strong> Si el grupo en turno falla, otro grupo puede robar la pregunta y ganar <strong>la mitad de los puntos</strong>.</li>` : ''}
       <li><strong>⚡ Ronda 2 — Relámpago.</strong> Una vuelta con la <strong>mitad de tiempo</strong> y puntos <strong>DOBLES</strong>.</li>
-      <li><strong>🏆 Ronda 3 — La Gran Final.</strong> Clasifican los <strong>${c.finalistas} mejores</strong>. Cada finalista elige tema y <strong>apuesta</strong> sus puntos antes de ver la pregunta: si acierta los gana, si falla los pierde.</li>
-      <li><strong>⚔️ Desempate.</strong> Si hay empate en el primer lugar, se juega <strong>muerte súbita</strong>: pregunta por pregunta hasta que uno gane.</li>
+      <li><strong>🏆 Ronda 3 — La Gran Final.</strong> Clasifican los <strong>${c.finalistas} mejores</strong>. Si hay empate en el corte, los grupos empatados juegan <strong>muerte súbita</strong> por los lugares: nadie queda fuera sin competir. Cada finalista elige tema y <strong>apuesta</strong> sus puntos antes de ver la pregunta: si acierta los gana, si falla los pierde.</li>
+      <li><strong>⚔️ Muerte súbita.</strong> Cada grupo empatado responde <strong>su propia pregunta</strong> por turnos. Al completar la ronda: quien acierta sigue, quien falla queda fuera. Si todos aciertan o todos fallan, se juega otra ronda. Se usa para el empate en el corte a la final y para el empate por el campeonato.</li>
       <li><strong>🎖️ Insignias.</strong> Al final se otorgan insignias (Campeón, Racha de Fuego, Rey Relámpago, Remontada…) que quedan en el Salón de la Fama.</li>
       <li><strong>👨‍🏫 El jurado.</strong> La palabra del docente-presentador es definitiva. ¡Juego limpio siempre!</li>
     </ol>`;
@@ -656,7 +656,7 @@ function startTorneo() {
     currentSubject: null, currentQ: null,
     fase: 'turno',            /* turno | pregunta | apuesta | muerte */
     apuesta: 0,
-    muerte: null,             /* { vivos:[gi...] } en muerte súbita */
+    muerte: null,             /* estado de muerte súbita (ver sección MUERTE SÚBITA) */
     insignias: [],
   };
 
@@ -962,7 +962,7 @@ function _renderPreguntaScreen(q, subjectKey) {
   const T = CAMP.T;
   const R = _rondasDef(T.cfg)[T.rondaIdx] || { n: 0, mult: 1, timerFactor: 1, final: false };
   const muerte = T.fase === 'muerte-pregunta';
-  const g = _turnGroup();
+  const g = muerte && T.muerte ? T.groups[T.muerte.vivos[T.muerte.pos]] : _turnGroup();
   const subject = CAMP_SUBJECTS.find(s => s.key === subjectKey);
   const secs    = Math.max(8, Math.round(T.cfg.timerSecs * R.timerFactor));
   const pts     = R.final ? T.apuesta : T.cfg.basePts * R.mult;
@@ -974,8 +974,9 @@ function _renderPreguntaScreen(q, subjectKey) {
     <div class="camp-question-screen">
 
       ${muerte ? `
-      <div class="camp-turno-mini" style="--gc:#b91c1c">
-        ⚔️ <strong>MUERTE SÚBITA</strong> — responden los empatados
+      <div class="camp-turno-mini" style="--gc:${g.color}">
+        ⚔️ <strong>MUERTE SÚBITA</strong> — responde ${g.mascota} <strong>${g.name}</strong>
+        <span class="camp-tm-pts">Turno ${T.muerte ? T.muerte.pos + 1 : 1}/${T.muerte ? T.muerte.vivos.length : 1} · Ronda ${T.muerte ? T.muerte.ronda : 1}</span>
       </div>` : `
       <div class="camp-turno-mini" style="--gc:${g.color}">
         ${g.mascota} <strong>${g.name}</strong> responde
@@ -1173,9 +1174,21 @@ function _finDeRonda() {
   if (T.rondaIdx >= rondas.length) { _irAlPodio(); return; }
 
   if (rondas[T.rondaIdx].final) {
-    /* Clasificación: los mejores avanzan */
+    /* Clasificación: los mejores avanzan. Un empate en el corte se
+       resuelve con muerte súbita, nunca eliminando por orden arbitrario. */
     const sorted = T.groups.map((g, i) => ({ g, i })).sort((a, b) => b.g.score - a.g.score);
-    const finalistas = sorted.slice(0, T.cfg.finalistas).map(x => x.i);
+    const nFin   = Math.min(T.cfg.finalistas, sorted.length);
+    const corte  = sorted[nFin - 1].g.score;
+    const directos  = sorted.filter(x => x.g.score > corte).map(x => x.i);
+    const empatados = sorted.filter(x => x.g.score === corte).map(x => x.i);
+
+    if (directos.length + empatados.length > nFin) {
+      T.muerte = { modo: 'clasif', vivos: empatados, slots: nFin - directos.length,
+                   clasificados: directos, ronda: 1, pos: 0, resultados: {} };
+      renderMuerteSubita();
+      return;
+    }
+    const finalistas = sorted.slice(0, nFin).map(x => x.i);
     T.groups.forEach((g, i) => { g.eliminado = !finalistas.includes(i); });
     T.order = finalistas;
   }
@@ -1235,7 +1248,12 @@ function renderApuesta(subjectKey) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   TORNEO — MUERTE SÚBITA (desempate del 1er lugar)
+   TORNEO — MUERTE SÚBITA (desempates por conocimiento)
+   Cada grupo empatado responde SU propia pregunta por turnos.
+   Al completar la ronda: quien acierta sigue, quien falla queda
+   fuera. Si todos aciertan o todos fallan, otra ronda. Nadie es
+   eliminado sin haber respondido.
+   T.muerte = { modo:'clasif'|'final', vivos:[gi], slots, clasificados:[gi], ronda, pos, resultados:{gi:bool} }
 ══════════════════════════════════════════════════════════════ */
 function _empatePrimero() {
   const T = CAMP.T;
@@ -1246,59 +1264,164 @@ function _empatePrimero() {
 }
 
 function renderMuerteSubita() {
-  const T = CAMP.T;
+  const T = CAMP.T, M = T.muerte;
   _sfx('drum');
   T.fase = 'muerte';
+
+  const esFinal = M.modo === 'final';
+  const desc = esFinal
+    ? 'Empate en el primer lugar. Cada grupo responde <strong>su propia pregunta</strong> por turnos. Al completar la ronda: quien acierta sigue, quien falla queda fuera. Si todos aciertan o todos fallan, se juega otra ronda. ¡El último grupo en pie se corona campeón!'
+    : `Empate en la clasificación a la Gran Final: <strong>${M.vivos.length} grupos</strong> pelean por <strong>${M.slots} lugar${M.slots > 1 ? 'es' : ''}</strong>. Cada grupo responde <strong>su propia pregunta</strong> por turnos: quien acierta avanza y quien falla sigue luchando por los lugares que queden. ¡Nadie queda fuera sin competir!`;
 
   _container.innerHTML = `
     <div class="camp-ronda-intro camp-ri-muerte">
       <div class="camp-ri-icon">⚔️</div>
       <h2 class="camp-ri-nombre">¡MUERTE SÚBITA!</h2>
-      <p class="camp-ri-desc">Empate en el primer lugar. Una pregunta para todos los empatados:
-        el primer grupo en responder correctamente (decide el jurado) se corona campeón.</p>
+      <p class="camp-ri-desc">${desc}</p>
       <div class="camp-ri-clasif">
-        ${T.muerte.vivos.map(i => { const g = T.groups[i]; return `
+        <div class="camp-ri-clasif-title">${esFinal ? 'Duelo por el campeonato:' : 'Duelo por la clasificación:'}</div>
+        ${M.vivos.map(i => { const g = T.groups[i]; return `
           <div class="camp-ri-fin"><span class="camp-ms-dot" style="background:${g.color}"></span> ${g.mascota} <strong>${g.name}</strong> — ${g.score} pts</div>`; }).join('')}
       </div>
-      <button class="camp-start-btn" id="camp-md-go">⚔️ Pregunta de desempate</button>
+      <button class="camp-start-btn" id="camp-md-go">⚔️ Comenzar la muerte súbita</button>
     </div>`;
 
-  $id('camp-md-go').addEventListener('click', () => {
-    _sfx('start');
-    const subjects = CAMP_SUBJECTS.filter(s => _hayPreguntas(s.key));
-    const s = subjects[Math.floor(Math.random() * subjects.length)];
-    const q = _pickQuestion(s.key);
-    if (!q) { _irAlPodio(true); return; }
-    T.currentQ = q;
-    T.fase = 'muerte-pregunta';
-    _renderPreguntaScreen(q, s.key);
-    T.fase = 'muerte-pregunta';
-  });
+  $id('camp-md-go').addEventListener('click', () => { _sfx('start'); _muerteEmpiezaRonda(); });
+}
+
+function _muerteEmpiezaRonda() {
+  const M = CAMP.T.muerte;
+  M.pos = 0;
+  M.resultados = {};
+  _muertePregunta();
+}
+
+function _muertePregunta() {
+  const T = CAMP.T, M = T.muerte;
+  const subjects = CAMP_SUBJECTS.filter(s => _hayPreguntas(s.key));
+  const s = subjects.length ? subjects[Math.floor(Math.random() * subjects.length)] : null;
+  const q = s ? _pickQuestion(s.key) : null;
+  if (!q) {   /* sin banco disponible: resolver sin bloquear el torneo */
+    if (M.modo === 'clasif') { M.clasificados.push(...M.vivos.slice(0, M.slots)); _muerteFinClasif(); }
+    else _irAlPodio(true);
+    return;
+  }
+  T.currentQ = q;
+  T.currentSubject = s.key;
+  T.fase = 'muerte-pregunta';
+  _renderPreguntaScreen(q, s.key);
+  T.fase = 'muerte-pregunta';
 }
 
 function _revelarMuerte(actions, timeout) {
-  const T = CAMP.T;
+  const T = CAMP.T, M = T.muerte;
+  const gi = M.vivos[M.pos];
+  const g  = T.groups[gi];
+
   actions.innerHTML = `
+    ${timeout ? `<p class="camp-timeout-msg">⏰ ¡Tiempo agotado!</p>` : ''}
     <div class="camp-veredicto">
-      <p class="camp-award-label">⚔️ ¿Quién respondió bien PRIMERO?</p>
-      <div class="camp-award-groups">
-        ${T.muerte.vivos.map(i => { const g = T.groups[i]; return `
-          <button class="camp-award-btn" data-gi="${i}" style="--gc:${g.color}">
-            <span class="camp-ag-dot" style="background:${g.color}"></span>${g.mascota} ${g.name}
-          </button>`; }).join('')}
+      <p class="camp-award-label">⚔️ ¿${g.mascota} ${g.name} respondió bien?</p>
+      <div class="camp-veredicto-btns">
+        <button class="camp-vd-ok" id="camp-md-ok" ${timeout ? 'disabled' : ''}>✔ ¡Acertó!</button>
+        <button class="camp-vd-no" id="camp-md-no">✘ Falló</button>
       </div>
-      <button class="camp-next-q-btn" id="camp-md-nadie">Nadie — otra pregunta</button>
     </div>`;
 
-  actions.querySelectorAll('.camp-award-btn').forEach(btn =>
-    btn.addEventListener('click', () => {
-      _sfx('fanfare');
-      const gi = +btn.dataset.gi;
-      T.groups[gi].score += 1;   /* +1 simbólico: rompe el empate */
-      _irAlPodio(true);
-    })
-  );
-  $id('camp-md-nadie').addEventListener('click', () => { _sfx('click'); renderMuerteSubita(); });
+  const registrar = ok => {
+    M.resultados[gi] = ok;
+    M.pos++;
+    setTimeout(M.pos < M.vivos.length ? _muertePregunta : _muerteEvaluarRonda, 1000);
+  };
+  $id('camp-md-ok').addEventListener('click', () => { _sfx('pts'); registrar(true); });
+  $id('camp-md-no').addEventListener('click', () => { _sfx('wrong'); registrar(false); });
+}
+
+function _muerteEvaluarRonda() {
+  const T = CAMP.T, M = T.muerte;
+  const aciertos = M.vivos.filter(gi => M.resultados[gi]);
+  const fallos   = M.vivos.filter(gi => !M.resultados[gi]);
+
+  /* Todos igual → el empate persiste: otra ronda con los mismos grupos */
+  if (!aciertos.length || !fallos.length) {
+    M.ronda++;
+    _muerteInterludio(
+      aciertos.length ? '🤝 ¡Todos acertaron!' : '🤝 Todos fallaron',
+      'El empate sigue vivo. Se juega otra ronda con los mismos grupos.',
+      [], M.vivos);
+    return;
+  }
+
+  if (M.modo === 'final') {
+    aciertos.forEach(gi => { T.groups[gi].score += 1; });   /* +1 simbólico por ronda superada */
+    M.vivos = aciertos;
+    if (M.vivos.length === 1) { _sfx('fanfare'); _irAlPodio(true); return; }
+    M.ronda++;
+    _muerteInterludio('⚔️ ¡El duelo continúa!',
+      'Quien falló queda fuera del desempate. Los demás siguen luchando por el campeonato.',
+      fallos, M.vivos);
+    return;
+  }
+
+  /* modo clasif: se pelean M.slots lugares para la Gran Final */
+  if (aciertos.length === M.slots) {
+    M.clasificados.push(...aciertos);
+    _muerteFinClasif();
+    return;
+  }
+  if (aciertos.length > M.slots) {
+    M.vivos = aciertos;
+    M.ronda++;
+    _muerteInterludio('⚔️ ¡Siguen empatados!',
+      `Quien falló queda fuera. Los que acertaron siguen peleando por ${M.slots} lugar${M.slots > 1 ? 'es' : ''}.`,
+      fallos, M.vivos);
+    return;
+  }
+  /* menos aciertos que lugares: los que acertaron clasifican y el resto pelea lo que queda */
+  M.clasificados.push(...aciertos);
+  M.slots -= aciertos.length;
+  M.vivos = fallos;
+  if (M.vivos.length <= M.slots) { M.clasificados.push(...M.vivos); _muerteFinClasif(); return; }
+  M.ronda++;
+  _muerteInterludio('🎫 ¡Hay clasificados!',
+    `${aciertos.map(gi => `${T.groups[gi].mascota} ${T.groups[gi].name}`).join(', ')} ya ${aciertos.length > 1 ? 'están' : 'está'} en la Gran Final. Quedan ${M.slots} lugar${M.slots > 1 ? 'es' : ''} en juego.`,
+    [], M.vivos);
+}
+
+function _muerteInterludio(titulo, desc, eliminados, vivos) {
+  const T = CAMP.T, M = T.muerte;
+  _sfx('drum');
+  const fila = i => { const g = T.groups[i]; return `
+    <div class="camp-ri-fin"><span class="camp-ms-dot" style="background:${g.color}"></span> ${g.mascota} <strong>${g.name}</strong></div>`; };
+
+  _container.innerHTML = `
+    <div class="camp-ronda-intro camp-ri-muerte">
+      <div class="camp-ri-icon">⚔️</div>
+      <h2 class="camp-ri-nombre">${titulo}</h2>
+      <p class="camp-ri-desc">${desc}</p>
+      ${eliminados.length ? `
+      <div class="camp-ri-clasif" style="opacity:.6">
+        <div class="camp-ri-clasif-title">Fuera del desempate (¡gran torneo!):</div>
+        ${eliminados.map(fila).join('')}
+      </div>` : ''}
+      <div class="camp-ri-clasif">
+        <div class="camp-ri-clasif-title">Siguen en el duelo:</div>
+        ${vivos.map(fila).join('')}
+      </div>
+      <button class="camp-start-btn" id="camp-md-next">⚔️ Ronda ${M.ronda} de muerte súbita</button>
+    </div>`;
+
+  $id('camp-md-next').addEventListener('click', () => { _sfx('start'); _muerteEmpiezaRonda(); });
+}
+
+function _muerteFinClasif() {
+  const T = CAMP.T, M = T.muerte;
+  const finalistas = [...M.clasificados].sort((a, b) => T.groups[b].score - T.groups[a].score);
+  T.groups.forEach((g, i) => { g.eliminado = !finalistas.includes(i); });
+  T.order = finalistas;
+  T.muerte = null;
+  _sfx('fanfare');
+  renderRondaIntro();
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1310,7 +1433,11 @@ function _irAlPodio(sinDesempate) {
 
   if (!sinDesempate) {
     const empate = _empatePrimero();
-    if (empate) { T.muerte = { vivos: empate }; renderMuerteSubita(); return; }
+    if (empate) {
+      T.muerte = { modo: 'final', vivos: empate, slots: 1, clasificados: [], ronda: 1, pos: 0, resultados: {} };
+      renderMuerteSubita();
+      return;
+    }
   }
   renderPodio();
 }
