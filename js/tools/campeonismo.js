@@ -1,7 +1,17 @@
 'use strict';
 
 /* ============================================================
-   CAMPEONÍSIMO — Módulo de Juego para el Aula
+   CAMPEONÍSIMO — Torneo académico estilo programa de TV
+   ------------------------------------------------------------
+   Modos:
+   · Torneo  — 3 rondas (Conocimiento, Relámpago ×2, Gran Final ×3
+               con Apuesta Final), turnos rotativos, rebote,
+               muerte súbita, normativas, podio e insignias.
+   · Práctica — preguntas individuales con retroalimentación
+               inmediata y sugerencia de misiones a repasar.
+   · Salón de la Fama — historial persistente de torneos e
+               insignias (localStorage METAS_CAMP_V1).
+   Banco de preguntas: CAMP_BANK (js/data/campeonismo-bank.js).
    ============================================================ */
 
 /* ── Materias y colores ── */
@@ -12,10 +22,8 @@ const CAMP_SUBJECTS = [
   { key: 'sociales',    label: 'C. Sociales',   short: 'SOC', icon: '🌍', color: '#dc2626', bg: '#fee2e2', cls: 'csoc' },
 ];
 
-const CAMP_COLORS = [
-  '#6366f1','#f59e0b','#10b981','#ef4444',
-  '#8b5cf6','#06b6d4','#84cc16','#f97316',
-];
+const CAMP_COLORS   = ['#6366f1','#f59e0b','#10b981','#ef4444','#8b5cf6','#06b6d4','#84cc16','#f97316'];
+const CAMP_MASCOTAS = ['🦅','🐆','🦈','🐺','🦁','🐉','🐢','🐍'];
 
 /* ══════════════════════════════════════════════════════════════
    AUDIO — Web Audio API (sin archivos externos)
@@ -47,69 +55,68 @@ function _tone(freq, type, dur, vol, t0) {
 
 function _sfx(name) {
   switch (name) {
-    case 'click':
-      _tone(700, 'sine', 0.06, 0.18);
-      break;
-    case 'spin':
-      /* Barrido ascendente que simula la aceleración */
-      for (let i = 0; i < 10; i++) _tone(180 + i * 55, 'sawtooth', 0.08, 0.12, i * 0.045);
-      break;
-    case 'spin_end':
-      _tone(880, 'sine', 0.12, 0.28, 0);
-      _tone(1100, 'sine', 0.12, 0.32, 0.12);
-      _tone(660,  'sine', 0.18, 0.4,  0.26);
-      break;
-    case 'reveal':
-      _tone(523, 'sine', 0.14, 0.32, 0);
-      _tone(659, 'sine', 0.14, 0.32, 0.10);
-      _tone(784, 'sine', 0.16, 0.36, 0.20);
-      break;
-    case 'pts':
-      /* Fanfarria corta */
-      [523, 659, 784, 1047].forEach((f, i) => _tone(f, 'sine', 0.12, 0.32, i * 0.07));
-      break;
-    case 'timeout':
-      _tone(400, 'sawtooth', 0.18, 0.3,  0);
-      _tone(300, 'sawtooth', 0.18, 0.3,  0.22);
-      _tone(180, 'sawtooth', 0.25, 0.32, 0.44);
-      break;
-    case 'tick':
-      _tone(900, 'square', 0.03, 0.08);
-      break;
-    case 'urgent':
-      _tone(1400, 'square', 0.04, 0.18);
-      break;
-    case 'start':
-      _tone(392, 'sine', 0.12, 0.3, 0);
-      _tone(523, 'sine', 0.12, 0.3, 0.13);
-      _tone(659, 'sine', 0.16, 0.4, 0.26);
-      _tone(784, 'sine', 0.20, 0.5, 0.39);
+    case 'click':    _tone(700, 'sine', 0.06, 0.18); break;
+    case 'spin':     for (let i = 0; i < 10; i++) _tone(180 + i * 55, 'sawtooth', 0.08, 0.12, i * 0.045); break;
+    case 'spin_end': _tone(880, 'sine', 0.12, 0.28, 0); _tone(1100, 'sine', 0.12, 0.32, 0.12); _tone(660, 'sine', 0.18, 0.4, 0.26); break;
+    case 'reveal':   _tone(523, 'sine', 0.14, 0.32, 0); _tone(659, 'sine', 0.14, 0.32, 0.10); _tone(784, 'sine', 0.16, 0.36, 0.20); break;
+    case 'pts':      [523, 659, 784, 1047].forEach((f, i) => _tone(f, 'sine', 0.12, 0.32, i * 0.07)); break;
+    case 'wrong':    _tone(220, 'sawtooth', 0.28, 0.30, 0); _tone(180, 'sawtooth', 0.34, 0.30, 0.10); break;
+    case 'steal':    [392, 523, 392, 659].forEach((f, i) => _tone(f, 'square', 0.08, 0.16, i * 0.09)); break;
+    case 'timeout':  _tone(400, 'sawtooth', 0.18, 0.3, 0); _tone(300, 'sawtooth', 0.18, 0.3, 0.22); _tone(180, 'sawtooth', 0.25, 0.32, 0.44); break;
+    case 'tick':     _tone(900, 'square', 0.03, 0.08); break;
+    case 'urgent':   _tone(1400, 'square', 0.04, 0.18); break;
+    case 'drum':     for (let i = 0; i < 14; i++) _tone(120 + Math.random() * 40, 'triangle', 0.05, 0.20, i * 0.09); break;
+    case 'start':    _tone(392, 'sine', 0.12, 0.3, 0); _tone(523, 'sine', 0.12, 0.3, 0.13); _tone(659, 'sine', 0.16, 0.4, 0.26); _tone(784, 'sine', 0.20, 0.5, 0.39); break;
+    case 'fanfare':
+      [392, 392, 392, 523, 659, 523, 784].forEach((f, i) => _tone(f, 'sine', i === 6 ? 0.5 : 0.14, 0.4, i * 0.14));
+      [196, 262, 330, 392].forEach((f, i) => _tone(f, 'triangle', 0.4, 0.18, 0.98 + i * 0.02));
       break;
   }
 }
 
 /* ══════════════════════════════════════════════════════════════
-   ESTADO
+   PERSISTENCIA — Salón de la Fama (METAS_CAMP_V1)
 ══════════════════════════════════════════════════════════════ */
-let campState = {
-  phase:            'setup',
-  groups:           [],
-  timerSecs:        30,
-  timerInterval:    null,
-  timerRemaining:   30,
-  currentSubject:   null,
-  currentQuestion:  null,
-  usedQs:           { español: [], 'matemáticas': [], naturales: [], sociales: [] },
-  wheelRotation:    0,
-  round:            0,
-  pointsPerQ:       10,
-  selectedGroups:   new Set(),
-  selectedMissions: null,   /* null = todas; o Set con nombres de misión */
+const CAMP_KEY = 'METAS_CAMP_V1';
+
+function _campLoad() {
+  try {
+    const o = JSON.parse(localStorage.getItem(CAMP_KEY));
+    return (o && typeof o === 'object' && Array.isArray(o.historial)) ? o : { historial: [] };
+  } catch (_) { return { historial: [] }; }
+}
+function _campSave(data) {
+  try { localStorage.setItem(CAMP_KEY, JSON.stringify(data)); } catch (_) {}
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DEFINICIÓN DE RONDAS (formato TV)
+══════════════════════════════════════════════════════════════ */
+function _rondasDef(cfg) {
+  return [
+    { n: 1, nombre: 'Ronda de Conocimiento', icon: '📚', mult: 1, vueltas: cfg.vueltasR1, timerFactor: 1,
+      desc: 'Turnos rotativos. Cada acierto vale los puntos base.' },
+    { n: 2, nombre: 'Ronda Relámpago',       icon: '⚡', mult: 2, vueltas: 1, timerFactor: 0.5,
+      desc: '¡La mitad de tiempo y puntos DOBLES!' },
+    { n: 3, nombre: 'La Gran Final',         icon: '🏆', mult: 3, vueltas: 1, timerFactor: 1, final: true,
+      desc: 'Solo los mejores. Cada finalista APUESTA sus puntos: si acierta los gana, si falla los pierde.' },
+  ];
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ESTADO GLOBAL
+══════════════════════════════════════════════════════════════ */
+let CAMP = {
+  screen: 'home',            /* home | setup | play | practice | fame */
+  T: null,                   /* estado del torneo activo */
+  P: null,                   /* estado de la práctica activa */
 };
 
-/* ── Helpers ── */
 let _container = null;
+let _timerInt  = null;
 const $id = id => document.getElementById(id);
+
+function _stopTimer() { clearInterval(_timerInt); _timerInt = null; }
 
 function _missionsBySubject(subjectKey) {
   const bank = (typeof CAMP_BANK !== 'undefined' && CAMP_BANK[subjectKey]) || [];
@@ -123,7 +130,6 @@ function _missionsBySubject(subjectKey) {
 function initCampeonismo() {
   _container = $id('camp-content');
   if (!_container) return;
-  /* Verificar que el banco de preguntas esté disponible */
   if (typeof CAMP_BANK === 'undefined') {
     _container.innerHTML = `
       <div class="camp-error-msg">
@@ -132,18 +138,124 @@ function initCampeonismo() {
       </div>`;
     return;
   }
-  if (campState.phase === 'setup') renderSetup();
-  else renderHub();
+  switch (CAMP.screen) {
+    case 'setup':    renderSetup();       break;
+    case 'play':     renderTurno();       break;
+    case 'practice': renderPractice();    break;
+    case 'fame':     renderFame();        break;
+    default:         renderCampHome();
+  }
 }
 window.initCampeonismo = initCampeonismo;
 
 /* ══════════════════════════════════════════════════════════════
-   FASE 1 — CONFIGURACIÓN
+   PANTALLA DE INICIO DE LA HERRAMIENTA
+══════════════════════════════════════════════════════════════ */
+function renderCampHome() {
+  CAMP.screen = 'home';
+  _stopTimer();
+  const data   = _campLoad();
+  const total  = data.historial.length;
+  const ultimo = total ? data.historial[total - 1] : null;
+
+  _container.innerHTML = `
+    <div class="camp-setup">
+      <div class="camp-setup-hero">
+        <div class="camp-trophy">🏆</div>
+        <h2 class="camp-setup-title">Campeonísimo</h2>
+        <p class="camp-setup-sub">El torneo académico del aula, estilo programa de TV</p>
+        ${ultimo ? `<p class="camp-home-last">Último campeón: <strong>${ultimo.mascota || ''} ${ultimo.campeon}</strong>${ultimo.lugar ? ' · ' + ultimo.lugar : ''}</p>` : ''}
+      </div>
+
+      <button class="camp-home-card ch-torneo" id="camp-h-torneo">
+        <span class="camp-hc-icon">🎬</span>
+        <span class="camp-hc-info">
+          <strong>Modo Torneo</strong>
+          <em>3 rondas, apuesta final, insignias y podio</em>
+        </span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
+      <button class="camp-home-card ch-practica" id="camp-h-practica">
+        <span class="camp-hc-icon">🎯</span>
+        <span class="camp-hc-info">
+          <strong>Modo Práctica</strong>
+          <em>Entrena con los temas que quieras, a tu ritmo</em>
+        </span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
+      <button class="camp-home-card ch-fama" id="camp-h-fama">
+        <span class="camp-hc-icon">🏅</span>
+        <span class="camp-hc-info">
+          <strong>Salón de la Fama</strong>
+          <em>${total ? total + ' torneo' + (total > 1 ? 's' : '') + ' jugado' + (total > 1 ? 's' : '') + ' e insignias' : 'Aquí quedará la historia de tus torneos'}</em>
+        </span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
+      <button class="camp-home-card ch-normas" id="camp-h-normas">
+        <span class="camp-hc-icon">📜</span>
+        <span class="camp-hc-info">
+          <strong>Normas del juego</strong>
+          <em>Las reglas oficiales, como en la televisión</em>
+        </span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>`;
+
+  $id('camp-h-torneo').addEventListener('click',   () => { _sfx('click'); renderSetup(); });
+  $id('camp-h-practica').addEventListener('click', () => { _sfx('click'); renderPracticeSetup(); });
+  $id('camp-h-fama').addEventListener('click',     () => { _sfx('click'); renderFame(); });
+  $id('camp-h-normas').addEventListener('click',   () => { _sfx('click'); _showNormas(null); });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   NORMAS (modal) — generadas según la configuración
+══════════════════════════════════════════════════════════════ */
+function _normasHTML(cfg) {
+  const c = cfg || { vueltasR1: 2, basePts: 10, reboteOn: true, finalistas: 2, timerSecs: 30, temaMode: 'ruleta', comodines: 1 };
+  const temaTxt = c.temaMode === 'ruleta'   ? 'La ruleta decide el tema de cada turno.'
+                : c.temaMode === 'eleccion' ? 'El grupo en turno elige el tema de su pregunta.'
+                : `La ruleta decide el tema, pero cada grupo tiene ${c.comodines} comodín${c.comodines > 1 ? 'es' : ''} «Yo elijo» para escoger tema.`;
+  return `
+    <ol class="camp-normas-list">
+      <li><strong>Turnos.</strong> Los grupos participan en orden. En su turno, solo el grupo en turno responde primero. ${temaTxt}</li>
+      <li><strong>📚 Ronda 1 — Conocimiento.</strong> ${c.vueltasR1} vuelta${c.vueltasR1 > 1 ? 's' : ''} completa${c.vueltasR1 > 1 ? 's' : ''}. Cada acierto vale <strong>${c.basePts} pts</strong>. Tiempo por pregunta: ${c.timerSecs}s.</li>
+      ${c.reboteOn ? `<li><strong>🔁 Rebote.</strong> Si el grupo en turno falla, otro grupo puede robar la pregunta y ganar <strong>la mitad de los puntos</strong>.</li>` : ''}
+      <li><strong>⚡ Ronda 2 — Relámpago.</strong> Una vuelta con la <strong>mitad de tiempo</strong> y puntos <strong>DOBLES</strong>.</li>
+      <li><strong>🏆 Ronda 3 — La Gran Final.</strong> Clasifican los <strong>${c.finalistas} mejores</strong>. Cada finalista elige tema y <strong>apuesta</strong> sus puntos antes de ver la pregunta: si acierta los gana, si falla los pierde.</li>
+      <li><strong>⚔️ Desempate.</strong> Si hay empate en el primer lugar, se juega <strong>muerte súbita</strong>: pregunta por pregunta hasta que uno gane.</li>
+      <li><strong>🎖️ Insignias.</strong> Al final se otorgan insignias (Campeón, Racha de Fuego, Rey Relámpago, Remontada…) que quedan en el Salón de la Fama.</li>
+      <li><strong>👨‍🏫 El jurado.</strong> La palabra del docente-presentador es definitiva. ¡Juego limpio siempre!</li>
+    </ol>`;
+}
+
+function _showNormas(cfg) {
+  const back = document.createElement('div');
+  back.className = 'camp-modal-backdrop';
+  back.innerHTML = `
+    <div class="camp-modal">
+      <div class="camp-modal-head">
+        <span>📜 Normas del Campeonísimo</span>
+        <button class="camp-modal-close" aria-label="Cerrar">✕</button>
+      </div>
+      ${_normasHTML(cfg)}
+      <button class="camp-start-btn camp-modal-ok">¡Entendido!</button>
+    </div>`;
+  back.querySelector('.camp-modal-close').addEventListener('click', () => back.remove());
+  back.querySelector('.camp-modal-ok').addEventListener('click', () => { _sfx('click'); back.remove(); });
+  back.addEventListener('click', e => { if (e.target === back) back.remove(); });
+  document.body.appendChild(back);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TORNEO — CONFIGURACIÓN
 ══════════════════════════════════════════════════════════════ */
 function renderSetup() {
-  campState.phase = 'setup';
+  CAMP.screen = 'setup';
+  _stopTimer();
 
-  /* ── Selector de misiones ── */
   const misionHTML = CAMP_SUBJECTS.map(s => {
     const missions = _missionsBySubject(s.key);
     return `
@@ -167,12 +279,17 @@ function renderSetup() {
     <div class="camp-setup">
 
       <div class="camp-setup-hero">
-        <div class="camp-trophy">🏆</div>
-        <h2 class="camp-setup-title">Campeonísimo</h2>
-        <p class="camp-setup-sub">Configura el juego antes de comenzar</p>
+        <div class="camp-trophy">🎬</div>
+        <h2 class="camp-setup-title">Nuevo Torneo</h2>
+        <p class="camp-setup-sub">Configura el torneo antes de salir al aire</p>
       </div>
 
-      <!-- Grupos -->
+      <div class="camp-card">
+        <div class="camp-card-label">📍 Lugar o evento (opcional)</div>
+        <input type="text" class="camp-gi-input camp-lugar-input" id="camp-lugar"
+          placeholder="Ej.: Gira — Instituto San José" maxlength="48" autocomplete="off">
+      </div>
+
       <div class="camp-card">
         <div class="camp-card-label">Número de Grupos</div>
         <div class="camp-num-btns">
@@ -187,7 +304,27 @@ function renderSetup() {
         <div id="camp-group-names">${_genGroupInputs(4)}</div>
       </div>
 
-      <!-- Tiempo -->
+      <div class="camp-card">
+        <div class="camp-card-label">🎲 ¿Quién decide el tema?</div>
+        <div class="camp-tema-btns">
+          <button class="camp-tema-btn" data-tm="ruleta">🎡 La ruleta</button>
+          <button class="camp-tema-btn" data-tm="eleccion">🙋 El grupo elige</button>
+          <button class="camp-tema-btn active" data-tm="mixto">🎡+🙋 Mixto</button>
+        </div>
+        <p class="camp-cfg-hint" id="camp-tema-hint">Mixto: gira la ruleta, pero cada grupo tiene comodines «Yo elijo».</p>
+        <div class="camp-timer-row" id="camp-comodin-row">
+          <span class="camp-cfg-mini">Comodines:</span>
+          ${[1,2,3].map(k => `<button class="camp-com-btn${k===1?' active':''}" data-k="${k}">${k}</button>`).join('')}
+        </div>
+      </div>
+
+      <div class="camp-card">
+        <div class="camp-card-label">📚 Vueltas de la Ronda 1</div>
+        <div class="camp-timer-row">
+          ${[1,2,3].map(v => `<button class="camp-vuelta-btn${v===2?' active':''}" data-v="${v}">${v} vuelta${v>1?'s':''}</button>`).join('')}
+        </div>
+      </div>
+
       <div class="camp-card">
         <div class="camp-card-label">Tiempo por pregunta</div>
         <div class="camp-timer-row">
@@ -197,9 +334,8 @@ function renderSetup() {
         </div>
       </div>
 
-      <!-- Puntos -->
       <div class="camp-card">
-        <div class="camp-card-label">Puntos por respuesta correcta</div>
+        <div class="camp-card-label">Puntos base por acierto</div>
         <div class="camp-timer-row">
           ${[5,10,15,20].map(p =>
             `<button class="camp-pts-btn${p===10?' active':''}" data-p="${p}">${p} pts</button>`
@@ -207,7 +343,21 @@ function renderSetup() {
         </div>
       </div>
 
-      <!-- Selector de misiones -->
+      <div class="camp-card">
+        <div class="camp-card-label">🔁 Rebote (robo de pregunta)</div>
+        <div class="camp-timer-row">
+          <button class="camp-reb-btn active" data-r="1">Sí, por mitad de puntos</button>
+          <button class="camp-reb-btn" data-r="0">No</button>
+        </div>
+      </div>
+
+      <div class="camp-card">
+        <div class="camp-card-label">🏆 Finalistas de la Gran Final</div>
+        <div class="camp-timer-row">
+          ${[2,3].map(f => `<button class="camp-fin-btn${f===2?' active':''}" data-f="${f}">${f} grupos</button>`).join('')}
+        </div>
+      </div>
+
       <div class="camp-card">
         <div class="camp-card-label camp-ms-header-row">
           <span>Misiones incluidas</span>
@@ -219,41 +369,39 @@ function renderSetup() {
         <div class="camp-ms-blocks">${misionHTML}</div>
       </div>
 
-      <button class="camp-start-btn" id="camp-start-btn">🚀 ¡Comenzar Campeonísimo!</button>
+      <button class="camp-action-btn camp-ver-normas" id="camp-ver-normas">📜 Ver normas con esta configuración</button>
+      <button class="camp-start-btn" id="camp-start-btn">🎬 ¡Al aire! Comenzar torneo</button>
+      <button class="camp-action-btn" id="camp-setup-back">← Volver</button>
     </div>
   `;
 
-  /* Número de grupos */
-  _container.querySelectorAll('.camp-num-btn').forEach(btn =>
+  const activate = (sel, cb) => _container.querySelectorAll(sel).forEach(btn =>
     btn.addEventListener('click', () => {
       _sfx('click');
-      _container.querySelectorAll('.camp-num-btn').forEach(b => b.classList.remove('active'));
+      _container.querySelectorAll(sel).forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      $id('camp-group-names').innerHTML = _genGroupInputs(+btn.dataset.n);
+      if (cb) cb(btn);
     })
   );
 
-  /* Timer */
-  _container.querySelectorAll('.camp-timer-btn').forEach(btn =>
-    btn.addEventListener('click', () => {
-      _sfx('click');
-      _container.querySelectorAll('.camp-timer-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      campState.timerSecs = +btn.dataset.t;
-    })
-  );
+  activate('.camp-num-btn', btn => { $id('camp-group-names').innerHTML = _genGroupInputs(+btn.dataset.n); });
+  activate('.camp-timer-btn');
+  activate('.camp-pts-btn');
+  activate('.camp-vuelta-btn');
+  activate('.camp-reb-btn');
+  activate('.camp-fin-btn');
+  activate('.camp-com-btn');
+  activate('.camp-tema-btn', btn => {
+    const tm   = btn.dataset.tm;
+    const hint = $id('camp-tema-hint');
+    const row  = $id('camp-comodin-row');
+    if (hint) hint.textContent =
+      tm === 'ruleta'   ? 'La ruleta manda: el azar decide el tema de cada turno.'
+    : tm === 'eleccion' ? 'Cada grupo elige el tema de su pregunta en su turno.'
+    : 'Mixto: gira la ruleta, pero cada grupo tiene comodines «Yo elijo».';
+    if (row) row.style.display = tm === 'mixto' ? '' : 'none';
+  });
 
-  /* Puntos */
-  _container.querySelectorAll('.camp-pts-btn').forEach(btn =>
-    btn.addEventListener('click', () => {
-      _sfx('click');
-      _container.querySelectorAll('.camp-pts-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      campState.pointsPerQ = +btn.dataset.p;
-    })
-  );
-
-  /* Toggle por materia */
   _container.querySelectorAll('.camp-ms-tog').forEach(btn => {
     btn.addEventListener('click', () => {
       _sfx('click');
@@ -263,7 +411,6 @@ function renderSetup() {
       btn.textContent = allOn ? 'Todas ○' : 'Todas ✓';
     });
   });
-
   $id('camp-ms-all').addEventListener('click', () => {
     _sfx('click');
     _container.querySelectorAll('.camp-ms-ck').forEach(c => c.checked = true);
@@ -275,165 +422,316 @@ function renderSetup() {
     _container.querySelectorAll('.camp-ms-tog').forEach(b => b.textContent = 'Todas ○');
   });
 
-  $id('camp-start-btn').addEventListener('click', () => { _sfx('click'); startGame(); });
+  $id('camp-ver-normas').addEventListener('click', () => { _sfx('click'); _showNormas(_readSetupCfg()); });
+  $id('camp-start-btn').addEventListener('click', () => { _sfx('click'); startTorneo(); });
+  $id('camp-setup-back').addEventListener('click', () => { _sfx('click'); renderCampHome(); });
 }
 
 function _genGroupInputs(n) {
   return Array.from({ length: n }, (_, i) => `
     <div class="camp-group-input-row">
-      <span class="camp-gi-badge" style="background:${CAMP_COLORS[i]}">G${i+1}</span>
+      <span class="camp-gi-badge" style="background:${CAMP_COLORS[i]}">${CAMP_MASCOTAS[i]}</span>
       <input type="text" class="camp-gi-input" id="camp-gi-${i}"
         placeholder="Grupo ${i+1}" maxlength="18" autocomplete="off">
     </div>`
   ).join('');
 }
 
-function startGame() {
-  const numBtn = _container.querySelector('.camp-num-btn.active');
-  const n = numBtn ? +numBtn.dataset.n : 4;
+function _readSetupCfg() {
+  const pick = (sel, attr, def) => {
+    const b = _container.querySelector(sel + '.active');
+    return b ? +b.dataset[attr] : def;
+  };
+  const temaBtn = _container.querySelector('.camp-tema-btn.active');
+  return {
+    n:          pick('.camp-num-btn', 'n', 4),
+    timerSecs:  pick('.camp-timer-btn', 't', 30),
+    basePts:    pick('.camp-pts-btn', 'p', 10),
+    vueltasR1:  pick('.camp-vuelta-btn', 'v', 2),
+    reboteOn:   pick('.camp-reb-btn', 'r', 1) === 1,
+    finalistas: pick('.camp-fin-btn', 'f', 2),
+    comodines:  pick('.camp-com-btn', 'k', 1),
+    temaMode:   temaBtn ? temaBtn.dataset.tm : 'mixto',
+    lugar:      ($id('camp-lugar') && $id('camp-lugar').value.trim()) || '',
+  };
+}
 
-  campState.groups = Array.from({ length: n }, (_, i) => {
+function startTorneo() {
+  const cfg = _readSetupCfg();
+  const n   = cfg.n;
+
+  const groups = Array.from({ length: n }, (_, i) => {
     const inp = $id(`camp-gi-${i}`);
-    return { name: (inp && inp.value.trim()) || `Grupo ${i+1}`, score: 0, color: CAMP_COLORS[i] };
+    return {
+      name: (inp && inp.value.trim()) || `Grupo ${i+1}`,
+      color: CAMP_COLORS[i], mascota: CAMP_MASCOTAS[i],
+      score: 0, streak: 0, bestStreak: 0,
+      aciertos: 0, fallos: 0, robos: 0, ptsR2: 0,
+      comodines: cfg.temaMode === 'mixto' ? cfg.comodines : 0,
+      posR1: 0, apostoTodo: false, eliminado: false,
+    };
   });
 
-  /* Recopilar misiones seleccionadas */
-  const checked = [..._container.querySelectorAll('.camp-ms-ck:checked')];
-  campState.selectedMissions = checked.length ? new Set(checked.map(c => c.value)) : null;
+  cfg.finalistas = Math.min(cfg.finalistas, n);
 
-  campState.usedQs = { español: [], 'matemáticas': [], naturales: [], sociales: [] };
-  campState.round  = 0;
-  campState.wheelRotation = 0;
-  campState.phase = 'hub';
+  const checked = [..._container.querySelectorAll('.camp-ms-ck:checked')];
+
+  CAMP.T = {
+    cfg,
+    groups,
+    selectedMissions: checked.length ? new Set(checked.map(c => c.value)) : null,
+    usedQs: { español: [], 'matemáticas': [], naturales: [], sociales: [] },
+    rondaIdx: 0, vuelta: 1, turnIdx: 0,
+    order: groups.map((_, i) => i),
+    wheelRotation: 0,
+    currentSubject: null, currentQ: null,
+    fase: 'turno',            /* turno | pregunta | apuesta | muerte */
+    apuesta: 0,
+    muerte: null,             /* { vivos:[gi...] } en muerte súbita */
+    insignias: [],
+  };
+
+  CAMP.screen = 'play';
   _sfx('start');
-  renderHub();
+  _showNormas(cfg);
+  renderRondaIntro();
 }
 
 /* ══════════════════════════════════════════════════════════════
-   FASE 2 — HUB (Ruleta + Marcador)
+   TORNEO — INTRO DE RONDA
 ══════════════════════════════════════════════════════════════ */
-function renderHub() {
-  campState.phase = 'hub';
-  campState.currentSubject = null;
-  campState.selectedGroups = new Set();
+function renderRondaIntro() {
+  const T = CAMP.T; if (!T) { renderCampHome(); return; }
+  const R = _rondasDef(T.cfg)[T.rondaIdx];
   _stopTimer();
+  _sfx('drum');
+
+  _container.innerHTML = `
+    <div class="camp-ronda-intro camp-ri-${R.n}">
+      <div class="camp-ri-num">RONDA ${R.n}</div>
+      <div class="camp-ri-icon">${R.icon}</div>
+      <h2 class="camp-ri-nombre">${R.nombre}</h2>
+      <p class="camp-ri-desc">${R.desc}</p>
+      <div class="camp-ri-datos">
+        <span>✖️ Puntos ×${R.mult}</span>
+        <span>⏱ ${Math.max(8, Math.round(T.cfg.timerSecs * R.timerFactor))}s</span>
+        ${R.final ? `<span>🎲 Apuesta libre</span>` : `<span>🔄 ${R.vueltas} vuelta${R.vueltas > 1 ? 's' : ''}</span>`}
+      </div>
+      ${R.final ? _clasificadosHTML() : ''}
+      <button class="camp-start-btn" id="camp-ri-go">${R.final ? '🎰 Comenzar la Gran Final' : '▶ Comenzar ronda'}</button>
+    </div>`;
+
+  $id('camp-ri-go').addEventListener('click', () => { _sfx('start'); renderTurno(); });
+}
+
+function _clasificadosHTML() {
+  const T = CAMP.T;
+  return `
+    <div class="camp-ri-clasif">
+      <div class="camp-ri-clasif-title">Clasifican a la final:</div>
+      ${T.order.map(gi => {
+        const g = T.groups[gi];
+        return `<div class="camp-ri-fin"><span class="camp-ms-dot" style="background:${g.color}"></span> ${g.mascota} <strong>${g.name}</strong> — ${g.score} pts</div>`;
+      }).join('')}
+      ${T.groups.some(g => g.eliminado) ? `<p class="camp-ri-elim">Los demás grupos siguen sumando su experiencia desde la banca. 👏</p>` : ''}
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TORNEO — PANTALLA DE TURNO (ruleta / elección de tema)
+══════════════════════════════════════════════════════════════ */
+function _turnGroup() {
+  const T = CAMP.T;
+  return T.groups[T.order[T.turnIdx]];
+}
+
+function renderTurno() {
+  const T = CAMP.T; if (!T) { renderCampHome(); return; }
+  CAMP.screen = 'play';
+  T.fase = 'turno';
+  T.currentSubject = null;
+  _stopTimer();
+
+  const R = _rondasDef(T.cfg)[T.rondaIdx];
+  const g = _turnGroup();
+  const puedeElegir = T.cfg.temaMode === 'eleccion' || R.final ||
+                      (T.cfg.temaMode === 'mixto' && g.comodines > 0);
+  const soloElige   = T.cfg.temaMode === 'eleccion' || R.final;
 
   _container.innerHTML = `
     <div class="camp-hub">
 
-      <div class="camp-scoreboard">
-        ${campState.groups.map((g, i) => {
-          const sorted = [...campState.groups].sort((a,b) => b.score - a.score);
-          const rank   = sorted.findIndex(x => x === g) + 1;
-          const medal  = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
-          return `
-            <div class="camp-score-row">
-              <div class="camp-score-color" style="background:${g.color}"></div>
-              <span class="camp-score-name">${g.name}</span>
-              <span class="camp-score-pts">${g.score}</span>
-              <span class="camp-score-medal">${medal}</span>
-            </div>`;
-        }).join('')}
+      <div class="camp-ronda-banner camp-rb-${R.n}">
+        <span>${R.icon} ${R.nombre}</span>
+        <span class="camp-rb-detalle">×${R.mult} pts${R.final ? '' : ` · Vuelta ${T.vuelta}/${R.vueltas}`}</span>
+      </div>
+
+      ${_scoreboardHTML()}
+
+      <div class="camp-turno-banner" style="--gc:${g.color}">
+        <span class="camp-tb-label">Turno de</span>
+        <span class="camp-tb-name">${g.mascota} ${g.name}</span>
+        ${T.cfg.temaMode === 'mixto' && !R.final ? `<span class="camp-tb-com">🃏 ${g.comodines}</span>` : ''}
       </div>
 
       <div class="camp-wheel-section">
-        <div class="camp-round-badge">Ronda ${campState.round}</div>
-
-        <div class="camp-wheel-wrap">
+        ${soloElige ? '' : `
+        <div class="camp-w2-wrap">
           <div class="camp-pointer-arrow"></div>
-          <div class="camp-wheel" id="camp-wheel">
-            ${CAMP_SUBJECTS.map(s => `
-              <div class="camp-wsector camp-ws-${s.cls}">
-                <span class="camp-ws-icon">${s.icon}</span>
-                <span class="camp-ws-short">${s.short}</span>
-              </div>`).join('')}
+          <div class="camp-w2-lights" id="camp-w2-lights">
+            ${Array.from({ length: 12 }, (_, i) => `<span class="camp-w2-bulb" style="transform: rotate(${i * 30}deg) translateY(-124px)"></span>`).join('')}
+          </div>
+          <div class="camp-w2" id="camp-wheel">
+            ${Array.from({ length: 8 }, (_, i) => {
+              const s = CAMP_SUBJECTS[i % 4];
+              const a = i * 45 + 22.5;
+              return `<span class="camp-w2-seg" style="transform: translate(-50%,-50%) rotate(${a}deg) translateY(-82px) rotate(${-a}deg)">${s.icon}</span>`;
+            }).join('')}
+            <div class="camp-w2-hub">🏆</div>
           </div>
         </div>
-
         <div class="camp-subject-announce" id="camp-subject-announce"></div>
-        <button class="camp-spin-btn" id="camp-spin-btn">🎯 Girar Ruleta</button>
+        <button class="camp-spin-btn" id="camp-spin-btn">🎡 Girar la ruleta</button>
+        ${puedeElegir && T.cfg.temaMode === 'mixto' ? `<button class="camp-elegir-btn" id="camp-elegir-btn">🃏 Usar comodín «Yo elijo» (${g.comodines})</button>` : ''}
+        `}
+        ${soloElige ? `
+          <div class="camp-elegir-panel">
+            <p class="camp-elegir-label">${R.final ? '🏆 Finalista: elige tu tema' : '🙋 El grupo elige su tema'}</p>
+            <div class="camp-elegir-grid">${_subjectBtnsHTML()}</div>
+          </div>
+        ` : ''}
       </div>
 
       <div class="camp-hub-actions">
-        <button class="camp-action-btn" id="camp-reset-btn">↺ Reiniciar</button>
-        <button class="camp-action-btn" id="camp-cfg-btn">⚙ Config.</button>
+        <button class="camp-action-btn" id="camp-normas-btn">📜 Normas</button>
+        <button class="camp-action-btn" id="camp-salir-btn">🚪 Terminar</button>
       </div>
+    </div>`;
 
-    </div>
-  `;
-
-  /* Restaurar ángulo */
   const wheel = $id('camp-wheel');
   if (wheel) {
     wheel.style.transition = 'none';
-    wheel.style.transform  = `rotate(${campState.wheelRotation % 360}deg)`;
+    wheel.style.transform  = `rotate(${T.wheelRotation % 360}deg)`;
   }
 
-  $id('camp-spin-btn').addEventListener('click', spinWheel);
+  const spinBtn = $id('camp-spin-btn');
+  if (spinBtn) spinBtn.addEventListener('click', spinWheel);
 
-  $id('camp-reset-btn').addEventListener('click', () => {
+  const elegirBtn = $id('camp-elegir-btn');
+  if (elegirBtn) elegirBtn.addEventListener('click', () => {
     _sfx('click');
-    if (!confirm('¿Reiniciar el marcador?')) return;
-    campState.groups.forEach(g => g.score = 0);
-    campState.round = 0;
-    campState.usedQs = { español: [], 'matemáticas': [], naturales: [], sociales: [] };
-    campState.wheelRotation = 0;
-    renderHub();
+    g.comodines--;
+    _mostrarEleccionTema();
   });
 
-  $id('camp-cfg-btn').addEventListener('click', () => {
+  _container.querySelectorAll('.camp-subj-pick').forEach(b =>
+    b.addEventListener('click', () => {
+      _sfx('reveal');
+      _empezarPregunta(b.dataset.subj);
+    })
+  );
+
+  $id('camp-normas-btn').addEventListener('click', () => { _sfx('click'); _showNormas(T.cfg); });
+  $id('camp-salir-btn').addEventListener('click', () => {
     _sfx('click');
-    if (!confirm('¿Volver a la configuración?')) return;
-    campState.phase = 'setup';
-    renderSetup();
+    if (!confirm('¿Terminar el torneo? Se irá directo al podio con el marcador actual.')) return;
+    _irAlPodio();
   });
 }
 
-/* ── Animación de ruleta ── */
+function _scoreboardHTML() {
+  const T = CAMP.T;
+  const max = Math.max(1, ...T.groups.map(g => g.score));
+  const sorted = [...T.groups].sort((a, b) => b.score - a.score);
+  const turnG = _turnGroup();
+  return `
+    <div class="camp-scoreboard">
+      ${sorted.map(g => {
+        const rank  = sorted.indexOf(g) + 1;
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+        return `
+          <div class="camp-score-row ${g === turnG ? 'camp-sr-turn' : ''} ${g.eliminado ? 'camp-sr-out' : ''}">
+            <div class="camp-score-color" style="background:${g.color}"></div>
+            <span class="camp-score-name">${g.mascota} ${g.name}${g.streak >= 3 ? ' 🔥' : ''}</span>
+            <div class="camp-score-barwrap"><div class="camp-score-bar" style="width:${Math.round(g.score / max * 100)}%; background:${g.color}"></div></div>
+            <span class="camp-score-pts">${g.score}</span>
+            <span class="camp-score-medal">${medal}</span>
+          </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function _subjectBtnsHTML() {
+  const T = CAMP.T;
+  return CAMP_SUBJECTS.filter(s => _hayPreguntas(s.key)).map(s => `
+    <button class="camp-subj-pick camp-sp-${s.cls}" data-subj="${s.key}">
+      <span class="camp-sp-icon">${s.icon}</span>${s.label}
+    </button>`).join('');
+}
+
+function _hayPreguntas(subjectKey) {
+  const T = CAMP.T;
+  const bank = CAMP_BANK[subjectKey] || [];
+  if (!bank.length) return false;
+  if (!T || !T.selectedMissions) return true;
+  return bank.some(q => T.selectedMissions.has(q.mision));
+}
+
+function _mostrarEleccionTema() {
+  const section = _container.querySelector('.camp-wheel-section');
+  if (!section) return;
+  section.innerHTML = `
+    <div class="camp-elegir-panel">
+      <p class="camp-elegir-label">🃏 Comodín usado — elige tu tema</p>
+      <div class="camp-elegir-grid">${_subjectBtnsHTML()}</div>
+    </div>`;
+  section.querySelectorAll('.camp-subj-pick').forEach(b =>
+    b.addEventListener('click', () => { _sfx('reveal'); _empezarPregunta(b.dataset.subj); })
+  );
+}
+
+/* ── Ruleta ── */
 function spinWheel() {
+  const T   = CAMP.T;
   const btn = $id('camp-spin-btn');
   if (!btn || btn.disabled) return;
   btn.disabled = true;
+  const elegirBtn = $id('camp-elegir-btn');
+  if (elegirBtn) elegirBtn.disabled = true;
   _sfx('spin');
 
-  /* Quitar botón de pregunta anterior */
-  const old = $id('camp-go-question-btn');
-  if (old) old.remove();
-
-  const wheel    = $id('camp-wheel');
+  const wheel  = $id('camp-wheel');
+  const lights = $id('camp-w2-lights');
   const announce = $id('camp-subject-announce');
   if (!wheel) return;
+  if (lights) lights.classList.add('camp-w2-spinning');
 
-  /* Filtrar materias que tengan preguntas en las misiones seleccionadas */
-  const validSubjects = CAMP_SUBJECTS.filter(s => {
-    if (!campState.selectedMissions) return true;
-    return (CAMP_BANK[s.key] || []).some(q => campState.selectedMissions.has(q.mision));
-  });
+  const validSubjects = CAMP_SUBJECTS.filter(s => _hayPreguntas(s.key));
   if (!validSubjects.length) { btn.disabled = false; alert('Sin misiones seleccionadas.'); return; }
-
   const subject = validSubjects[Math.floor(Math.random() * validSubjects.length)];
-  const idx     = CAMP_SUBJECTS.indexOf(subject);
+  const subjIdx = CAMP_SUBJECTS.indexOf(subject);
 
-  /* Para que el sector quede bajo la flecha (tope = 0°), necesitamos que
-     rotate(θ) lleve ese sector al tope: θ = 360 - centro_original.
-     Centros: ESP=45 MAT=135 NAT=225 SOC=315 → targets: 315 225 135 45 */
-  const sectorCenter = [315, 225, 135, 45][idx];
-  const curAngle     = campState.wheelRotation % 360;
-  let   extra        = sectorCenter - curAngle;
+  /* 8 gajos de 45°; los gajos del tema elegido son subjIdx y subjIdx+4.
+     Centro del gajo i = i·45 + 22.5 (desde arriba, horario).
+     rotate(θ) lleva el centro a la flecha cuando θ ≡ 360 − centro. */
+  const gajo   = subjIdx + (Math.random() < 0.5 ? 0 : 4);
+  const centro = gajo * 45 + 22.5;
+  const target = (360 - centro) % 360;
+  const cur    = T.wheelRotation % 360;
+  let   extra  = target - cur;
   if (extra <= 0) extra += 360;
-  campState.wheelRotation += 5 * 360 + extra;
+  T.wheelRotation += 5 * 360 + extra;
 
   wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-  wheel.style.transform  = `rotate(${campState.wheelRotation}deg)`;
+  wheel.style.transform  = `rotate(${T.wheelRotation}deg)`;
 
   if (announce) { announce.textContent = ''; announce.className = 'camp-subject-announce'; }
 
-  /* Sonido continuo de ruleta girando */
   let tick = 0;
   const spinInterval = setInterval(() => {
     tick++;
-    const pct = Math.min(1, tick / 55); /* 55 ticks × ~70ms ≈ 3.85s */
-    const freq = 300 - pct * 100;       /* baja velocidad al frenar */
+    const pct  = Math.min(1, tick / 55);
+    const freq = 300 - pct * 100;
     _tone(freq + Math.random() * 80, 'sine', 0.06, 0.07);
     if (tick >= 55) clearInterval(spinInterval);
   }, 70);
@@ -441,79 +739,94 @@ function spinWheel() {
   setTimeout(() => {
     clearInterval(spinInterval);
     _sfx('spin_end');
-    campState.currentSubject = subject.key;
-    campState.round++;
+    if (lights) lights.classList.remove('camp-w2-spinning');
 
     if (announce) {
       announce.className = `camp-subject-announce camp-sa-${subject.cls}`;
       announce.innerHTML = `${subject.icon} <strong>${subject.label}</strong>`;
     }
-
-    const badge = _container.querySelector('.camp-round-badge');
-    if (badge) badge.textContent = `Ronda ${campState.round}`;
-
-    setTimeout(() => {
-      btn.disabled = false;
-      const hub = _container.querySelector('.camp-hub');
-      if (!hub) return;
-      let qBtn = $id('camp-go-question-btn');
-      if (!qBtn) {
-        qBtn = document.createElement('button');
-        qBtn.id        = 'camp-go-question-btn';
-        qBtn.className = 'camp-start-btn';
-        qBtn.style.marginTop = '12px';
-        const actions = hub.querySelector('.camp-hub-actions');
-        if (actions) hub.insertBefore(qBtn, actions);
-        else hub.appendChild(qBtn);
-      }
-      qBtn.textContent = `📋 Ver Pregunta de ${subject.label}`;
-      qBtn.onclick     = () => { _sfx('click'); renderQuestion(subject.key); };
-    }, 400);
+    setTimeout(() => _empezarPregunta(subject.key), 900);
   }, 4300);
 }
 
 /* ══════════════════════════════════════════════════════════════
-   FASE 3 — PREGUNTA
+   TORNEO — PREGUNTA
 ══════════════════════════════════════════════════════════════ */
-function renderQuestion(subjectKey) {
-  const subject = CAMP_SUBJECTS.find(s => s.key === subjectKey);
-  if (!subject) return;
+function _pickQuestion(subjectKey) {
+  const T    = CAMP.T;
+  const bank = CAMP_BANK[subjectKey];
+  if (!bank || !bank.length) return null;
 
-  let q = _pickQuestion(subjectKey);
-  if (!q) {
-    /* Banco agotado: reiniciar preguntas de esta materia */
-    campState.usedQs[subjectKey] = [];
-    q = _pickQuestion(subjectKey);
+  let pool = bank;
+  if (T.selectedMissions && T.selectedMissions.size) {
+    const filtered = bank.filter(q => T.selectedMissions.has(q.mision));
+    if (filtered.length) pool = filtered;
   }
-  if (!q) { alert('No hay preguntas disponibles para las misiones seleccionadas.'); return; }
+  const used      = T.usedQs[subjectKey];
+  const poolIdxs  = pool.map(q => bank.indexOf(q));
+  let   available = poolIdxs.filter(i => !used.includes(i));
+  if (!available.length) {         /* banco agotado: reciclar materia */
+    T.usedQs[subjectKey] = [];
+    available = poolIdxs;
+  }
+  const bankIdx = available[Math.floor(Math.random() * available.length)];
+  T.usedQs[subjectKey].push(bankIdx);
+  return bank[bankIdx];
+}
 
-  campState.currentQuestion = q;
-  campState.phase = 'question';
-  campState.selectedGroups = new Set();
+function _empezarPregunta(subjectKey) {
+  const T = CAMP.T; if (!T) return;
+  const R = _rondasDef(T.cfg)[T.rondaIdx];
+
+  if (R.final && T.fase !== 'apuesta-hecha') { renderApuesta(subjectKey); return; }
+
+  const q = _pickQuestion(subjectKey);
+  if (!q) { alert('No hay preguntas disponibles para las misiones seleccionadas.'); renderTurno(); return; }
+
+  T.currentSubject = subjectKey;
+  T.currentQ = q;
+  T.fase = 'pregunta';
+  _renderPreguntaScreen(q, subjectKey);
+}
+
+function _renderPreguntaScreen(q, subjectKey) {
+  const T = CAMP.T;
+  const R = _rondasDef(T.cfg)[T.rondaIdx] || { n: 0, mult: 1, timerFactor: 1, final: false };
+  const muerte = T.fase === 'muerte-pregunta';
+  const g = _turnGroup();
+  const subject = CAMP_SUBJECTS.find(s => s.key === subjectKey);
+  const secs    = Math.max(8, Math.round(T.cfg.timerSecs * R.timerFactor));
+  const pts     = R.final ? T.apuesta : T.cfg.basePts * R.mult;
+  const CIRCUM  = 107;
+
   _stopTimer();
-  campState.timerRemaining = campState.timerSecs;
-
-  const CIRCUM = 107; /* 2π × 17 ≈ 106.8 */
 
   _container.innerHTML = `
     <div class="camp-question-screen">
 
+      ${muerte ? `
+      <div class="camp-turno-mini" style="--gc:#b91c1c">
+        ⚔️ <strong>MUERTE SÚBITA</strong> — responden los empatados
+      </div>` : `
+      <div class="camp-turno-mini" style="--gc:${g.color}">
+        ${g.mascota} <strong>${g.name}</strong> responde
+        <span class="camp-tm-pts">${R.final ? `🎰 Apostó ${T.apuesta}` : `+${pts} pts`}</span>
+      </div>`}
+
       <div class="camp-q-header camp-q-header-${subject.cls}">
         <span class="camp-q-subj-icon">${subject.icon}</span>
         <div class="camp-q-subj-info">
-          <span class="camp-q-subj-label">${subject.label}</span>
+          <span class="camp-q-subj-label">${subject.label} ${R.n === 2 ? '⚡×2' : R.final ? '🏆' : ''}</span>
           <span class="camp-q-mision">${q.mision}</span>
         </div>
         <div class="camp-q-timer-wrap" id="camp-q-timer">
           <svg class="camp-timer-svg" viewBox="0 0 44 44">
-            <circle cx="22" cy="22" r="18" fill="none"
-              stroke="rgba(0,0,0,.12)" stroke-width="3.5"/>
+            <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(0,0,0,.12)" stroke-width="3.5"/>
             <circle id="camp-timer-arc" cx="22" cy="22" r="18" fill="none"
               stroke="${subject.color}" stroke-width="3.5" stroke-linecap="round"
-              stroke-dasharray="${CIRCUM}" stroke-dashoffset="0"
-              transform="rotate(-90 22 22)"/>
+              stroke-dasharray="${CIRCUM}" stroke-dashoffset="0" transform="rotate(-90 22 22)"/>
           </svg>
-          <span class="camp-q-timer-num" id="camp-q-timer-num">${campState.timerSecs}</span>
+          <span class="camp-q-timer-num" id="camp-q-timer-num">${secs}</span>
         </div>
       </div>
 
@@ -528,20 +841,18 @@ function renderQuestion(subjectKey) {
       </div>
 
       <div class="camp-q-actions" id="camp-q-actions">
-        <button class="camp-reveal-btn" id="camp-reveal-btn">✅ Revelar Respuesta</button>
-        <button class="camp-skip-btn"   id="camp-skip-btn">⏭ Saltar</button>
+        <button class="camp-reveal-btn" id="camp-reveal-btn">✅ Revelar respuesta</button>
       </div>
 
       <div class="camp-mini-score">
-        ${campState.groups.map((g, i) => `
+        ${T.groups.map((gr, i) => `
           <div class="camp-ms-item">
-            <span class="camp-ms-dot" style="background:${g.color}"></span>
-            <span class="camp-ms-name">${g.name}</span>
-            <span class="camp-ms-pts" id="camp-mini-pts-${i}">${g.score}</span>
+            <span class="camp-ms-dot" style="background:${gr.color}"></span>
+            <span class="camp-ms-name">${gr.name}</span>
+            <span class="camp-ms-pts" id="camp-mini-pts-${i}">${gr.score}</span>
           </div>`).join('')}
       </div>
-    </div>
-  `;
+    </div>`;
 
   _container.querySelectorAll('.camp-q-opt').forEach(btn =>
     btn.addEventListener('click', () => {
@@ -551,139 +862,719 @@ function renderQuestion(subjectKey) {
     })
   );
 
-  $id('camp-reveal-btn').addEventListener('click', () => { _sfx('reveal'); revealAnswer(false); });
-  $id('camp-skip-btn').addEventListener('click',   () => revealAnswer(true));
+  $id('camp-reveal-btn').addEventListener('click', () => { _sfx('reveal'); _revelar(false); });
 
-  _startTimer(CIRCUM);
-}
-
-function _pickQuestion(subjectKey) {
-  const bank = CAMP_BANK[subjectKey];
-  if (!bank || !bank.length) return null;
-
-  let pool = bank;
-  if (campState.selectedMissions && campState.selectedMissions.size) {
-    const filtered = bank.filter(q => campState.selectedMissions.has(q.mision));
-    if (filtered.length) pool = filtered;
-  }
-
-  const used      = campState.usedQs[subjectKey];
-  const poolIdxs  = pool.map(q => bank.indexOf(q));
-  const available = poolIdxs.filter(i => !used.includes(i));
-  if (!available.length) return null;
-
-  const bankIdx = available[Math.floor(Math.random() * available.length)];
-  used.push(bankIdx);
-  return bank[bankIdx];
-}
-
-/* ── Temporizador circular ── */
-function _startTimer(circum) {
+  /* Temporizador */
+  let remaining = secs;
   const numEl  = $id('camp-q-timer-num');
   const arcEl  = $id('camp-timer-arc');
   const wrapEl = $id('camp-q-timer');
-  if (!numEl) return;
-  _stopTimer();
-  const total = campState.timerSecs;
-  const C     = circum || 107;
-
-  campState.timerInterval = setInterval(() => {
-    campState.timerRemaining--;
-    const rem = Math.max(0, campState.timerRemaining);
+  _timerInt = setInterval(() => {
+    remaining--;
+    const rem = Math.max(0, remaining);
     if (numEl) numEl.textContent = rem;
-    if (arcEl) arcEl.style.strokeDashoffset = C * (1 - rem / total);
-    const urgent = rem <= 10;
+    if (arcEl) arcEl.style.strokeDashoffset = CIRCUM * (1 - rem / secs);
+    const urgent = rem <= Math.min(10, Math.ceil(secs / 3));
     if (wrapEl) wrapEl.classList.toggle('camp-timer-urgent', urgent);
     if (rem > 0) _sfx(urgent ? 'urgent' : 'tick');
-    if (rem <= 0) { _stopTimer(); _sfx('timeout'); revealAnswer(false, true); }
+    if (rem <= 0) { _stopTimer(); _sfx('timeout'); _revelar(true); }
   }, 1000);
 }
 
-function _stopTimer() {
-  clearInterval(campState.timerInterval);
-  campState.timerInterval = null;
-}
-
-/* ══════════════════════════════════════════════════════════════
-   FASE 4 — REVELAR RESPUESTA
-══════════════════════════════════════════════════════════════ */
-function revealAnswer(skip, timeout) {
+/* ── Revelación y asignación de puntos por turno ── */
+function _revelar(timeout) {
   _stopTimer();
-  campState.phase = 'reveal';
-
-  const q = campState.currentQuestion;
-  if (!q) { renderHub(); return; }
+  const T = CAMP.T; if (!T) return;
+  const R = _rondasDef(T.cfg)[T.rondaIdx] || { n: 0, mult: 1, timerFactor: 1, final: false };
+  const q = T.currentQ;
+  const g = _turnGroup();
+  const gi = T.order[T.turnIdx];
+  const pts = R.final ? T.apuesta : T.cfg.basePts * R.mult;
 
   _container.querySelectorAll('.camp-q-opt').forEach((btn, i) => {
     btn.disabled = true;
-    if (i === q.c)                           btn.classList.add('correct');
+    if (i === q.c) btn.classList.add('correct');
     else if (btn.classList.contains('selected')) btn.classList.add('wrong');
   });
 
   const actions = $id('camp-q-actions');
   if (!actions) return;
 
-  actions.innerHTML = `
-    <div class="camp-award-section">
-      ${(timeout || skip) ? `<p class="camp-timeout-msg">${timeout ? '⏰ Tiempo agotado' : '⏭ Pregunta saltada'}</p>` : ''}
-      ${!skip ? `
-        <p class="camp-award-label">¿Quién respondió correctamente?</p>
-        <div class="camp-award-groups">
-          ${campState.groups.map((g, i) => `
-            <button class="camp-award-btn" data-gi="${i}" style="--gc:${g.color}">
-              <span class="camp-ag-dot" style="background:${g.color}"></span>
-              ${g.name}
-            </button>`).join('')}
-        </div>
-        <button class="camp-confirm-pts-btn" id="camp-confirm-pts-btn" disabled>
-          + ${campState.pointsPerQ} pts — Selecciona un grupo
-        </button>
-      ` : ''}
-      <button class="camp-next-q-btn" id="camp-next-q-btn">
-        ${skip ? '▶ Continuar' : 'Sin puntos — Continuar'}
-      </button>
-    </div>
-  `;
+  if (T.fase === 'muerte-pregunta') { _revelarMuerte(actions, timeout); return; }
 
-  _container.querySelectorAll('.camp-award-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      _sfx('click');
-      const gi = +btn.dataset.gi;
-      if (campState.selectedGroups.has(gi)) {
-        campState.selectedGroups.delete(gi);
-        btn.classList.remove('selected');
-      } else {
-        campState.selectedGroups.add(gi);
-        btn.classList.add('selected');
-      }
-      const cb = $id('camp-confirm-pts-btn');
-      if (!cb) return;
-      const n = campState.selectedGroups.size;
-      cb.disabled    = n === 0;
-      cb.textContent = n ? `+ ${campState.pointsPerQ} pts — Asignar a ${n} grupo${n>1?'s':''}` : `+ ${campState.pointsPerQ} pts — Selecciona un grupo`;
-    });
+  actions.innerHTML = `
+    ${timeout ? `<p class="camp-timeout-msg">⏰ ¡Tiempo agotado!</p>` : ''}
+    <div class="camp-veredicto">
+      <p class="camp-award-label">¿${g.mascota} ${g.name} respondió bien?</p>
+      <div class="camp-veredicto-btns">
+        <button class="camp-vd-ok" id="camp-vd-ok" ${timeout ? 'disabled' : ''}>✔ ¡Acertó! ${R.final ? `+${pts}` : `+${pts} pts`}</button>
+        <button class="camp-vd-no" id="camp-vd-no">✘ Falló${R.final ? ` −${pts}` : ''}</button>
+      </div>
+    </div>`;
+
+  $id('camp-vd-ok').addEventListener('click', () => {
+    _sfx('pts');
+    g.score += pts;
+    g.aciertos++; g.streak++;
+    if (g.streak > g.bestStreak) g.bestStreak = g.streak;
+    if (R.n === 2) g.ptsR2 += pts;
+    _bump(gi, g.score);
+    setTimeout(_siguienteTurno, 1200);
   });
 
-  const cb = $id('camp-confirm-pts-btn');
-  if (cb) {
-    cb.addEventListener('click', () => {
-      campState.selectedGroups.forEach(gi => {
-        campState.groups[gi].score += campState.pointsPerQ;
-        const el = $id(`camp-mini-pts-${gi}`);
-        if (el) { el.textContent = campState.groups[gi].score; el.classList.add('camp-pts-bump'); setTimeout(() => el.classList.remove('camp-pts-bump'), 600); }
-      });
-      _sfx('pts');
-      setTimeout(returnToHub, 1400);
-    });
-  }
-
-  $id('camp-next-q-btn')?.addEventListener('click', returnToHub);
+  $id('camp-vd-no').addEventListener('click', () => {
+    _sfx('wrong');
+    g.fallos++; g.streak = 0;
+    if (R.final) {
+      g.score = Math.max(0, g.score - pts);
+      _bump(gi, g.score);
+      setTimeout(_siguienteTurno, 1400);
+      return;
+    }
+    if (T.cfg.reboteOn && T.order.length > 1) { _mostrarRebote(actions); return; }
+    setTimeout(_siguienteTurno, 900);
+  });
 }
 
-function returnToHub() {
+function _bump(gi, score) {
+  const el = $id(`camp-mini-pts-${gi}`);
+  if (el) { el.textContent = score; el.classList.add('camp-pts-bump'); setTimeout(() => el.classList.remove('camp-pts-bump'), 600); }
+}
+
+function _mostrarRebote(actions) {
+  const T = CAMP.T;
+  const R = _rondasDef(T.cfg)[T.rondaIdx];
+  const stealPts = Math.max(1, Math.floor((T.cfg.basePts * R.mult) / 2));
+  const gi = T.order[T.turnIdx];
+
+  actions.innerHTML = `
+    <div class="camp-veredicto">
+      <p class="camp-award-label">🔁 ¡REBOTE! ¿Algún grupo roba la pregunta? (+${stealPts} pts)</p>
+      <div class="camp-award-groups">
+        ${T.groups.map((gr, i) => (i === gi || gr.eliminado) ? '' : `
+          <button class="camp-award-btn" data-gi="${i}" style="--gc:${gr.color}">
+            <span class="camp-ag-dot" style="background:${gr.color}"></span>${gr.mascota} ${gr.name}
+          </button>`).join('')}
+      </div>
+      <button class="camp-next-q-btn" id="camp-no-rebote">Nadie robó — continuar</button>
+    </div>`;
+
+  actions.querySelectorAll('.camp-award-btn').forEach(btn =>
+    btn.addEventListener('click', () => {
+      _sfx('steal');
+      const i = +btn.dataset.gi;
+      const gr = T.groups[i];
+      gr.score += stealPts;
+      gr.robos++;
+      _bump(i, gr.score);
+      setTimeout(_siguienteTurno, 1200);
+    })
+  );
+  $id('camp-no-rebote').addEventListener('click', () => { _sfx('click'); _siguienteTurno(); });
+}
+
+/* ── Avance de turno / vuelta / ronda ── */
+function _siguienteTurno() {
+  const T = CAMP.T; if (!T) return;
+  const R = _rondasDef(T.cfg)[T.rondaIdx];
+
+  T.turnIdx++;
+  if (T.turnIdx >= T.order.length) {
+    T.turnIdx = 0;
+    T.vuelta++;
+    if (T.vuelta > R.vueltas) { _finDeRonda(); return; }
+  }
+  renderTurno();
+}
+
+function _finDeRonda() {
+  const T = CAMP.T;
+  const rondas = _rondasDef(T.cfg);
+
+  if (T.rondaIdx === 0) {
+    /* checkpoint para la insignia Remontada */
+    const sorted = [...T.groups].sort((a, b) => b.score - a.score);
+    T.groups.forEach(g => { g.posR1 = sorted.indexOf(g) + 1; });
+  }
+
+  T.rondaIdx++;
+  T.vuelta = 1;
+  T.turnIdx = 0;
+
+  if (T.rondaIdx >= rondas.length) { _irAlPodio(); return; }
+
+  if (rondas[T.rondaIdx].final) {
+    /* Clasificación: los mejores avanzan */
+    const sorted = T.groups.map((g, i) => ({ g, i })).sort((a, b) => b.g.score - a.g.score);
+    const finalistas = sorted.slice(0, T.cfg.finalistas).map(x => x.i);
+    T.groups.forEach((g, i) => { g.eliminado = !finalistas.includes(i); });
+    T.order = finalistas;
+  }
+
+  renderRondaIntro();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TORNEO — LA APUESTA FINAL
+══════════════════════════════════════════════════════════════ */
+function renderApuesta(subjectKey) {
+  const T = CAMP.T;
+  const g = _turnGroup();
+  const subject = CAMP_SUBJECTS.find(s => s.key === subjectKey);
+  const maxBet  = Math.max(0, g.score);
+  T.apuesta = Math.min(Math.max(T.cfg.basePts, Math.round(maxBet / 2 / 5) * 5), maxBet) || T.cfg.basePts;
+  _sfx('drum');
+
+  _container.innerHTML = `
+    <div class="camp-apuesta-screen">
+      <div class="camp-turno-banner" style="--gc:${g.color}">
+        <span class="camp-tb-label">La Apuesta Final de</span>
+        <span class="camp-tb-name">${g.mascota} ${g.name}</span>
+      </div>
+      <p class="camp-ap-tema">Tema elegido: <strong style="color:${subject.color}">${subject.icon} ${subject.label}</strong></p>
+      <p class="camp-ap-saldo">Puntos disponibles: <strong>${g.score}</strong></p>
+
+      <div class="camp-ap-monto" id="camp-ap-monto">${T.apuesta}</div>
+      <div class="camp-ap-controls">
+        <button class="camp-ap-btn" data-d="-10">−10</button>
+        <button class="camp-ap-btn" data-d="-5">−5</button>
+        <button class="camp-ap-btn" data-d="5">+5</button>
+        <button class="camp-ap-btn" data-d="10">+10</button>
+      </div>
+      <button class="camp-ap-todo" id="camp-ap-todo">🦁 ¡APOSTARLO TODO! (${maxBet})</button>
+
+      <p class="camp-ap-regla">Si acierta: <strong style="color:#15803d">gana su apuesta</strong> · Si falla: <strong style="color:#b91c1c">la pierde</strong></p>
+      <button class="camp-start-btn" id="camp-ap-go">🎬 ¡Ver la pregunta!</button>
+    </div>`;
+
+  const montoEl = $id('camp-ap-monto');
+  const setMonto = v => {
+    T.apuesta = Math.min(maxBet || T.cfg.basePts, Math.max(0, v));
+    montoEl.textContent = T.apuesta;
+  };
+  _container.querySelectorAll('.camp-ap-btn').forEach(b =>
+    b.addEventListener('click', () => { _sfx('click'); setMonto(T.apuesta + (+b.dataset.d)); })
+  );
+  $id('camp-ap-todo').addEventListener('click', () => { _sfx('drum'); setMonto(maxBet); });
+  $id('camp-ap-go').addEventListener('click', () => {
+    _sfx('start');
+    if (T.apuesta === maxBet && maxBet > 0) g.apostoTodo = true;
+    T.fase = 'apuesta-hecha';
+    _empezarPregunta(subjectKey);
+    T.fase = 'pregunta';
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TORNEO — MUERTE SÚBITA (desempate del 1er lugar)
+══════════════════════════════════════════════════════════════ */
+function _empatePrimero() {
+  const T = CAMP.T;
+  const sorted = [...T.groups].sort((a, b) => b.score - a.score);
+  const top = sorted[0].score;
+  const empatados = T.groups.map((g, i) => ({ g, i })).filter(x => x.g.score === top);
+  return empatados.length > 1 ? empatados.map(x => x.i) : null;
+}
+
+function renderMuerteSubita() {
+  const T = CAMP.T;
+  _sfx('drum');
+  T.fase = 'muerte';
+
+  _container.innerHTML = `
+    <div class="camp-ronda-intro camp-ri-muerte">
+      <div class="camp-ri-icon">⚔️</div>
+      <h2 class="camp-ri-nombre">¡MUERTE SÚBITA!</h2>
+      <p class="camp-ri-desc">Empate en el primer lugar. Una pregunta para todos los empatados:
+        el primer grupo en responder correctamente (decide el jurado) se corona campeón.</p>
+      <div class="camp-ri-clasif">
+        ${T.muerte.vivos.map(i => { const g = T.groups[i]; return `
+          <div class="camp-ri-fin"><span class="camp-ms-dot" style="background:${g.color}"></span> ${g.mascota} <strong>${g.name}</strong> — ${g.score} pts</div>`; }).join('')}
+      </div>
+      <button class="camp-start-btn" id="camp-md-go">⚔️ Pregunta de desempate</button>
+    </div>`;
+
+  $id('camp-md-go').addEventListener('click', () => {
+    _sfx('start');
+    const subjects = CAMP_SUBJECTS.filter(s => _hayPreguntas(s.key));
+    const s = subjects[Math.floor(Math.random() * subjects.length)];
+    const q = _pickQuestion(s.key);
+    if (!q) { _irAlPodio(true); return; }
+    T.currentQ = q;
+    T.fase = 'muerte-pregunta';
+    _renderPreguntaScreen(q, s.key);
+    T.fase = 'muerte-pregunta';
+  });
+}
+
+function _revelarMuerte(actions, timeout) {
+  const T = CAMP.T;
+  actions.innerHTML = `
+    <div class="camp-veredicto">
+      <p class="camp-award-label">⚔️ ¿Quién respondió bien PRIMERO?</p>
+      <div class="camp-award-groups">
+        ${T.muerte.vivos.map(i => { const g = T.groups[i]; return `
+          <button class="camp-award-btn" data-gi="${i}" style="--gc:${g.color}">
+            <span class="camp-ag-dot" style="background:${g.color}"></span>${g.mascota} ${g.name}
+          </button>`; }).join('')}
+      </div>
+      <button class="camp-next-q-btn" id="camp-md-nadie">Nadie — otra pregunta</button>
+    </div>`;
+
+  actions.querySelectorAll('.camp-award-btn').forEach(btn =>
+    btn.addEventListener('click', () => {
+      _sfx('fanfare');
+      const gi = +btn.dataset.gi;
+      T.groups[gi].score += 1;   /* +1 simbólico: rompe el empate */
+      _irAlPodio(true);
+    })
+  );
+  $id('camp-md-nadie').addEventListener('click', () => { _sfx('click'); renderMuerteSubita(); });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TORNEO — PODIO, INSIGNIAS Y GUARDADO
+══════════════════════════════════════════════════════════════ */
+function _irAlPodio(sinDesempate) {
+  const T = CAMP.T; if (!T) return;
   _stopTimer();
-  campState.phase = 'hub';
-  renderHub();
+
+  if (!sinDesempate) {
+    const empate = _empatePrimero();
+    if (empate) { T.muerte = { vivos: empate }; renderMuerteSubita(); return; }
+  }
+  renderPodio();
+}
+
+function _calcularInsignias() {
+  const T = CAMP.T;
+  const sorted = [...T.groups].sort((a, b) => b.score - a.score);
+  const ins = [];
+  const add = (g, icon, nombre, detalle) => ins.push({ grupo: g.name, mascota: g.mascota, icon, nombre, detalle });
+
+  if (sorted[0]) add(sorted[0], '🏆', 'Campeón', `${sorted[0].score} pts`);
+  if (sorted[1]) add(sorted[1], '🥈', 'Subcampeón', `${sorted[1].score} pts`);
+
+  T.groups.forEach(g => {
+    if (g.bestStreak >= 3) add(g, '🔥', 'Racha de Fuego', `${g.bestStreak} aciertos seguidos`);
+    if (g.aciertos >= 3 && g.fallos === 0) add(g, '🎯', 'Puntería Perfecta', 'sin fallar ninguna');
+    if (g.robos >= 2) add(g, '🦊', 'Rey del Rebote', `${g.robos} robos`);
+    if (g.apostoTodo) add(g, '🦁', 'Corazón Valiente', 'apostó todo en la final');
+  });
+
+  const reyR2 = T.groups.reduce((a, b) => (b.ptsR2 > (a ? a.ptsR2 : 0) ? b : a), null);
+  if (reyR2 && reyR2.ptsR2 > 0) add(reyR2, '⚡', 'Rey Relámpago', `${reyR2.ptsR2} pts en la Ronda 2`);
+
+  const remo = T.groups.find(g => g.posR1 === T.groups.length && T.groups.length >= 3 && sorted.indexOf(g) <= 1);
+  if (remo) add(remo, '💪', 'Gran Remontada', 'de último a lo más alto');
+
+  return ins;
+}
+
+function renderPodio() {
+  const T = CAMP.T; if (!T) return;
+  const sorted = [...T.groups].sort((a, b) => b.score - a.score);
+  const insignias = _calcularInsignias();
+  T.insignias = insignias;
+  _sfx('fanfare');
+
+  /* Guardar en el Salón de la Fama */
+  const data = _campLoad();
+  data.historial.push({
+    t: new Date().toISOString(),
+    lugar: T.cfg.lugar || '',
+    campeon: sorted[0] ? sorted[0].name : '',
+    mascota: sorted[0] ? sorted[0].mascota : '',
+    grupos: sorted.map(g => ({ name: g.name, mascota: g.mascota, score: g.score })),
+    insignias: insignias.map(i => ({ grupo: i.grupo, icon: i.icon, nombre: i.nombre })),
+  });
+  if (data.historial.length > 60) data.historial = data.historial.slice(-60);
+  _campSave(data);
+
+  const podio3 = [sorted[1], sorted[0], sorted[2]].filter(Boolean);
+  const alturas = sorted.length >= 3 ? ['camp-pd-2', 'camp-pd-1', 'camp-pd-3'] : ['camp-pd-2', 'camp-pd-1'];
+
+  _container.innerHTML = `
+    <div class="camp-podio-screen">
+      <div class="camp-confetti" id="camp-confetti"></div>
+      <h2 class="camp-podio-title">🎉 ¡Tenemos resultados! 🎉</h2>
+      ${T.cfg.lugar ? `<p class="camp-podio-lugar">📍 ${T.cfg.lugar}</p>` : ''}
+
+      <div class="camp-podio">
+        ${podio3.map((g, i) => `
+          <div class="camp-pd-col ${alturas[i]}">
+            <div class="camp-pd-mascota">${g.mascota}</div>
+            <div class="camp-pd-name">${g.name}</div>
+            <div class="camp-pd-block" style="background:${g.color}">
+              <span class="camp-pd-medal">${alturas[i] === 'camp-pd-1' ? '🥇' : alturas[i] === 'camp-pd-2' ? '🥈' : '🥉'}</span>
+              <span class="camp-pd-pts">${g.score}</span>
+            </div>
+          </div>`).join('')}
+      </div>
+
+      ${sorted.length > 3 ? `
+        <div class="camp-podio-resto">
+          ${sorted.slice(3).map((g, i) => `<div class="camp-pr-row">${i + 4}º · ${g.mascota} ${g.name} — ${g.score} pts</div>`).join('')}
+        </div>` : ''}
+
+      <div class="camp-podio-ins">
+        <div class="camp-podio-ins-title">🎖️ Insignias del torneo</div>
+        ${insignias.map(i => `
+          <div class="camp-pi-row">
+            <span class="camp-pi-icon">${i.icon}</span>
+            <span class="camp-pi-nombre">${i.nombre}</span>
+            <span class="camp-pi-grupo">${i.mascota} ${i.grupo}</span>
+            <span class="camp-pi-det">${i.detalle || ''}</span>
+          </div>`).join('')}
+        <p class="camp-pi-nota">Guardadas en el 🏅 Salón de la Fama</p>
+      </div>
+
+      <button class="camp-start-btn" id="camp-pd-nuevo">🎬 Nuevo torneo</button>
+      <button class="camp-action-btn" id="camp-pd-fama">🏅 Ver Salón de la Fama</button>
+      <button class="camp-action-btn" id="camp-pd-home">← Menú del Campeonísimo</button>
+    </div>`;
+
+  _lanzarConfetti();
+
+  $id('camp-pd-nuevo').addEventListener('click', () => { _sfx('click'); CAMP.T = null; renderSetup(); });
+  $id('camp-pd-fama').addEventListener('click',  () => { _sfx('click'); CAMP.T = null; renderFame(); });
+  $id('camp-pd-home').addEventListener('click',  () => { _sfx('click'); CAMP.T = null; renderCampHome(); });
+}
+
+function _lanzarConfetti() {
+  const box = $id('camp-confetti');
+  if (!box) return;
+  const piezas = ['🎉', '⭐', '🎊', '✨', '🏆'];
+  for (let i = 0; i < 26; i++) {
+    const s = document.createElement('span');
+    s.className = 'camp-cf';
+    s.textContent = piezas[i % piezas.length];
+    s.style.left = (Math.random() * 96) + '%';
+    s.style.animationDelay = (Math.random() * 2.2) + 's';
+    s.style.fontSize = (14 + Math.random() * 14) + 'px';
+    box.appendChild(s);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SALÓN DE LA FAMA
+══════════════════════════════════════════════════════════════ */
+function renderFame() {
+  CAMP.screen = 'fame';
+  _stopTimer();
+  const data = _campLoad();
+  const hist = [...data.historial].reverse();
+
+  /* Insignias acumuladas por grupo */
+  const totales = {};
+  data.historial.forEach(h => (h.insignias || []).forEach(i => {
+    const k = i.grupo;
+    totales[k] = totales[k] || { grupo: k, n: 0, iconos: [] };
+    totales[k].n++;
+    if (totales[k].iconos.length < 8) totales[k].iconos.push(i.icon);
+  }));
+  const ranking = Object.values(totales).sort((a, b) => b.n - a.n).slice(0, 8);
+
+  _container.innerHTML = `
+    <div class="camp-setup">
+      <div class="camp-setup-hero">
+        <div class="camp-trophy">🏅</div>
+        <h2 class="camp-setup-title">Salón de la Fama</h2>
+        <p class="camp-setup-sub">${hist.length ? 'La historia del Campeonísimo' : 'Aún no hay torneos jugados. ¡El primero hará historia!'}</p>
+      </div>
+
+      ${ranking.length ? `
+        <div class="camp-card">
+          <div class="camp-card-label">🎖️ Insignias acumuladas</div>
+          ${ranking.map(r => `
+            <div class="camp-fame-total">
+              <span class="camp-ft-grupo">${r.grupo}</span>
+              <span class="camp-ft-iconos">${r.iconos.join('')}</span>
+              <span class="camp-ft-n">${r.n}</span>
+            </div>`).join('')}
+        </div>` : ''}
+
+      ${hist.map(h => {
+        const fecha = (h.t || '').slice(0, 10);
+        return `
+        <div class="camp-card camp-fame-card">
+          <div class="camp-fame-head">
+            <span class="camp-fame-campeon">🏆 ${h.mascota || ''} ${h.campeon}</span>
+            <span class="camp-fame-fecha">${fecha}</span>
+          </div>
+          ${h.lugar ? `<div class="camp-fame-lugar">📍 ${h.lugar}</div>` : ''}
+          <div class="camp-fame-grupos">${(h.grupos || []).map(g => `${g.mascota || ''} ${g.name}: <strong>${g.score}</strong>`).join(' · ')}</div>
+          ${(h.insignias || []).length ? `<div class="camp-fame-ins">${h.insignias.map(i => `<span title="${i.nombre}">${i.icon}</span>`).join(' ')}</div>` : ''}
+        </div>`;
+      }).join('')}
+
+      ${hist.length ? `<button class="camp-action-btn camp-fame-borrar" id="camp-fame-clear">🗑 Borrar historial</button>` : ''}
+      <button class="camp-action-btn" id="camp-fame-back">← Menú del Campeonísimo</button>
+    </div>`;
+
+  const clearBtn = $id('camp-fame-clear');
+  if (clearBtn) clearBtn.addEventListener('click', () => {
+    if (!confirm('¿Borrar TODO el historial del Salón de la Fama? Esta acción no se puede deshacer.')) return;
+    _campSave({ historial: [] });
+    renderFame();
+  });
+  $id('camp-fame-back').addEventListener('click', () => { _sfx('click'); renderCampHome(); });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODO PRÁCTICA
+══════════════════════════════════════════════════════════════ */
+function renderPracticeSetup() {
+  CAMP.screen = 'practice';
+  CAMP.P = null;
+  _stopTimer();
+
+  const misionHTML = CAMP_SUBJECTS.map(s => {
+    const missions = _missionsBySubject(s.key);
+    return `
+      <div class="camp-ms-block">
+        <div class="camp-ms-bhead camp-ms-bh-${s.cls}">
+          <span>${s.icon} ${s.label}</span>
+          <button class="camp-ms-tog" data-subj="${s.key}">Todas ✓</button>
+        </div>
+        <div class="camp-ms-blist">
+          ${missions.map(m => `
+            <label class="camp-ms-blbl">
+              <input type="checkbox" class="camp-ms-ck" data-subj="${s.key}" value="${m}" checked>
+              <span>${m}</span>
+            </label>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  _container.innerHTML = `
+    <div class="camp-setup">
+      <div class="camp-setup-hero">
+        <div class="camp-trophy">🎯</div>
+        <h2 class="camp-setup-title">Modo Práctica</h2>
+        <p class="camp-setup-sub">Entrena a tu ritmo con los temas que elijas</p>
+      </div>
+
+      <div class="camp-card">
+        <div class="camp-card-label">Número de preguntas</div>
+        <div class="camp-timer-row">
+          ${[10,15,20].map(n => `<button class="camp-pn-btn${n===10?' active':''}" data-n="${n}">${n}</button>`).join('')}
+        </div>
+      </div>
+
+      <div class="camp-card">
+        <div class="camp-card-label camp-ms-header-row">
+          <span>Temas para practicar</span>
+          <div>
+            <button class="camp-ms-global" id="camp-ms-all">Todas ✓</button>
+            <button class="camp-ms-global camp-ms-none" id="camp-ms-none">Ninguna ○</button>
+          </div>
+        </div>
+        <div class="camp-ms-blocks">${misionHTML}</div>
+      </div>
+
+      <button class="camp-start-btn" id="camp-pr-start">🎯 ¡A practicar!</button>
+      <button class="camp-action-btn" id="camp-pr-back">← Volver</button>
+    </div>`;
+
+  _container.querySelectorAll('.camp-pn-btn').forEach(btn =>
+    btn.addEventListener('click', () => {
+      _sfx('click');
+      _container.querySelectorAll('.camp-pn-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    })
+  );
+  _container.querySelectorAll('.camp-ms-tog').forEach(btn => {
+    btn.addEventListener('click', () => {
+      _sfx('click');
+      const cks = _container.querySelectorAll(`.camp-ms-ck[data-subj="${btn.dataset.subj}"]`);
+      const allOn = [...cks].every(c => c.checked);
+      cks.forEach(c => c.checked = !allOn);
+      btn.textContent = allOn ? 'Todas ○' : 'Todas ✓';
+    });
+  });
+  $id('camp-ms-all').addEventListener('click', () => {
+    _sfx('click');
+    _container.querySelectorAll('.camp-ms-ck').forEach(c => c.checked = true);
+    _container.querySelectorAll('.camp-ms-tog').forEach(b => b.textContent = 'Todas ✓');
+  });
+  $id('camp-ms-none').addEventListener('click', () => {
+    _sfx('click');
+    _container.querySelectorAll('.camp-ms-ck').forEach(c => c.checked = false);
+    _container.querySelectorAll('.camp-ms-tog').forEach(b => b.textContent = 'Todas ○');
+  });
+
+  $id('camp-pr-start').addEventListener('click', () => { _sfx('start'); startPractice(); });
+  $id('camp-pr-back').addEventListener('click', () => { _sfx('click'); renderCampHome(); });
+}
+
+function startPractice() {
+  const nBtn = _container.querySelector('.camp-pn-btn.active');
+  const n    = nBtn ? +nBtn.dataset.n : 10;
+  const checked = [..._container.querySelectorAll('.camp-ms-ck:checked')].map(c => c.value);
+  const sel = checked.length ? new Set(checked) : null;
+
+  let pool = [];
+  CAMP_SUBJECTS.forEach(s => {
+    (CAMP_BANK[s.key] || []).forEach(q => {
+      if (!sel || sel.has(q.mision)) pool.push({ ...q, subj: s.key });
+    });
+  });
+  if (!pool.length) { alert('Selecciona al menos una misión para practicar.'); return; }
+
+  /* Barajar (Fisher-Yates) y tomar n */
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  CAMP.P = {
+    qs: pool.slice(0, Math.min(n, pool.length)),
+    idx: 0, aciertos: 0, streak: 0, bestStreak: 0,
+    errores: {},     /* mision → nº errores */
+  };
+  renderPractice();
+}
+
+function renderPractice() {
+  const P = CAMP.P;
+  if (!P) { renderPracticeSetup(); return; }
+  if (P.idx >= P.qs.length) { renderPracticeEnd(); return; }
+
+  CAMP.screen = 'practice';
+  const q = P.qs[P.idx];
+  const subject = CAMP_SUBJECTS.find(s => s.key === q.subj);
+
+  _container.innerHTML = `
+    <div class="camp-question-screen">
+      <div class="camp-pr-top">
+        <span class="camp-pr-prog">Pregunta ${P.idx + 1} de ${P.qs.length}</span>
+        <span class="camp-pr-score">✔ ${P.aciertos}</span>
+        <span class="camp-pr-streak">${P.streak >= 3 ? '🔥 ' + P.streak : ''}</span>
+      </div>
+      <div class="diag-bar"><div class="diag-bar-fill" style="width:${Math.round(P.idx / P.qs.length * 100)}%"></div></div>
+
+      <div class="camp-q-header camp-q-header-${subject.cls}">
+        <span class="camp-q-subj-icon">${subject.icon}</span>
+        <div class="camp-q-subj-info">
+          <span class="camp-q-subj-label">${subject.label}</span>
+          <span class="camp-q-mision">${q.mision}</span>
+        </div>
+      </div>
+
+      <p class="camp-q-text">${q.q}</p>
+
+      <div class="camp-q-opts">
+        ${q.o.map((opt, i) => `
+          <button class="camp-q-opt" data-i="${i}">
+            <span class="camp-q-letter">${'ABCD'[i]}</span>
+            <span class="camp-q-opt-text">${opt}</span>
+          </button>`).join('')}
+      </div>
+
+      <div class="camp-q-actions" id="camp-pr-actions">
+        <button class="camp-action-btn" id="camp-pr-salir">🚪 Terminar práctica</button>
+      </div>
+    </div>`;
+
+  _container.querySelectorAll('.camp-q-opt').forEach(btn =>
+    btn.addEventListener('click', () => {
+      const i = +btn.dataset.i;
+      const ok = i === q.c;
+      _container.querySelectorAll('.camp-q-opt').forEach((b, bi) => {
+        b.disabled = true;
+        if (bi === q.c) b.classList.add('correct');
+        else if (bi === i) b.classList.add('wrong');
+      });
+      if (ok) {
+        _sfx('pts');
+        P.aciertos++; P.streak++;
+        if (P.streak > P.bestStreak) P.bestStreak = P.streak;
+      } else {
+        _sfx('wrong');
+        P.streak = 0;
+        P.errores[q.mision] = (P.errores[q.mision] || 0) + 1;
+      }
+      const actions = $id('camp-pr-actions');
+      actions.innerHTML = `
+        <p class="camp-pr-fb ${ok ? 'ok' : 'no'}">${ok ? '✔ ¡Correcto!' : '✘ La respuesta era: ' + q.o[q.c]}</p>
+        <button class="camp-start-btn" id="camp-pr-next">${P.idx + 1 >= P.qs.length ? '🏁 Ver mi resultado' : '▶ Siguiente pregunta'}</button>`;
+      $id('camp-pr-next').addEventListener('click', () => { _sfx('click'); P.idx++; renderPractice(); });
+    })
+  );
+
+  $id('camp-pr-salir').addEventListener('click', () => {
+    if (!confirm('¿Terminar la práctica y ver tu resultado?')) return;
+    P.qs = P.qs.slice(0, P.idx);  /* solo cuenta lo respondido */
+    renderPracticeEnd();
+  });
+}
+
+/* Emparejar el nombre de misión del banco con el catálogo (para "Repasar") */
+function _campNorm(s) {
+  s = String(s || '').toLowerCase();
+  try { s = s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (_) {}
+  return s.replace(/[^a-z0-9ñ ]/g, ' ');
+}
+function _findMissionByTitle(title) {
+  if (typeof MISSIONS === 'undefined') return null;
+  const words = _campNorm(title).split(/\s+/).filter(w => w.length > 3);
+  let best = null, bestN = 0;
+  MISSIONS.forEach(m => {
+    const mw = new Set(_campNorm(m.title).split(/\s+/).filter(w => w.length > 3));
+    const n  = words.filter(w => mw.has(w)).length;
+    if (n > bestN) { bestN = n; best = m; }
+  });
+  return bestN >= Math.min(2, words.length) ? best : null;
+}
+
+function renderPracticeEnd() {
+  const P = CAMP.P;
+  const total = P.qs.length;
+  const pct   = total ? Math.round(P.aciertos / total * 100) : 0;
+  const emoji = pct >= 90 ? '🌟' : pct >= 70 ? '💪' : pct >= 50 ? '📚' : '🌱';
+  const msg   = pct >= 90 ? '¡Nivel Campeonísimo! Estás listo para el torneo.'
+              : pct >= 70 ? '¡Muy bien! Un repaso más y llegas al oro.'
+              : pct >= 50 ? 'Buen esfuerzo. Repasa los temas sugeridos y vuelve a intentarlo.'
+              : 'Todo campeón empieza practicando. ¡Explora las misiones y vuelve!';
+
+  const repasar = Object.keys(P.errores).map(mision => {
+    const m = _findMissionByTitle(mision);
+    return { mision, fallos: P.errores[mision], m };
+  }).sort((a, b) => b.fallos - a.fallos);
+
+  _sfx(pct >= 70 ? 'fanfare' : 'reveal');
+
+  _container.innerHTML = `
+    <div class="camp-setup">
+      <div class="camp-setup-hero">
+        <div class="camp-trophy">${emoji}</div>
+        <h2 class="camp-setup-title">${pct}%</h2>
+        <p class="camp-setup-sub">${P.aciertos} de ${total} correctas · Mejor racha: ${P.bestStreak} ${P.bestStreak >= 3 ? '🔥' : ''}</p>
+        <p class="camp-pr-msg">${msg}</p>
+      </div>
+
+      ${repasar.length ? `
+        <div class="camp-card">
+          <div class="camp-card-label">📚 Temas para repasar</div>
+          ${repasar.map(r => `
+            <div class="camp-rep-row">
+              <span class="camp-rep-tema">${r.mision}</span>
+              <span class="camp-rep-fallos">${r.fallos} error${r.fallos > 1 ? 'es' : ''}</span>
+              ${r.m ? `<button class="camp-rep-btn" onclick="visitMission(${r.m.id})">Repasar →</button>` : ''}
+            </div>`).join('')}
+        </div>` : (total ? `
+        <div class="camp-card">
+          <div class="camp-card-label">🎯 ¡Sin errores!</div>
+          <p class="camp-pr-msg" style="margin:4px 0 2px;">Dominaste todos los temas de esta práctica.</p>
+        </div>` : '')}
+
+      <button class="camp-start-btn" id="camp-pr-otra">🎯 Practicar de nuevo</button>
+      <button class="camp-action-btn" id="camp-pr-home">← Menú del Campeonísimo</button>
+    </div>`;
+
+  $id('camp-pr-otra').addEventListener('click', () => { _sfx('click'); renderPracticeSetup(); });
+  $id('camp-pr-home').addEventListener('click', () => { _sfx('click'); CAMP.P = null; renderCampHome(); });
 }
 
 /* ── Registro de navegación (llamado por app.js al cargar) ── */
