@@ -513,6 +513,27 @@
       <!-- Dashboard (se genera dinámicamente) -->
       <div id="pa-dashboard" style="display:none;"></div>
 
+      <!-- Historial de análisis guardados -->
+      <div class="pa-card" id="pa-historial-card" style="display:none;">
+        <div class="pa-card-title">🗂️ Análisis guardados</div>
+        <p class="pa-optional-hint">Cada análisis se guarda solo en este dispositivo. Ábrelo para revisarlo, compararlo o reenviar mensajes.</p>
+        <div id="pa-historial-list"></div>
+      </div>
+
+      <!-- Sincronización con la hoja de Google del maestro -->
+      <div class="pa-card" id="pa-sync-card">
+        <div class="pa-card-title">☁️ Mi hoja de Google</div>
+        <p class="pa-optional-hint">Pega la URL de tu Apps Script (la misma del Registro Docente, ver guía FASE 3).
+          Tus notas y los mensajes a padres se guardarán en la pestaña <strong>PlanAccion</strong> de tu propia hoja, en tu Drive.
+          Trata la URL como una llave privada.</p>
+        <input type="text" id="pa-sync-url" class="pa-inp-field" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
+        <div class="pa-sync-btns">
+          <button class="pa-add-btn" id="pa-sync-save"><i class="fa-solid fa-plug-circle-check"></i> Guardar y probar</button>
+          <button class="pa-add-btn" id="pa-sync-now"><i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar ahora</button>
+        </div>
+        <p class="pa-sync-status" id="pa-sync-status"></p>
+      </div>
+
     </div>
   </div>
 

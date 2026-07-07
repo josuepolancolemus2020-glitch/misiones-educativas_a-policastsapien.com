@@ -110,6 +110,7 @@ function paGenerate() {
     <div class="pa-tabs-out">
       <button class="pa-otab pa-otab-active" data-otab="overview">📊 Dashboard</button>
       <button class="pa-otab" data-otab="planilla">📋 Planilla</button>
+      <button class="pa-otab" data-otab="padres">👨‍👩‍👧 Padres</button>
     </div>
 
     <div id="pa-out-overview">
@@ -178,6 +179,8 @@ function paGenerate() {
       </div>
     </div>
 
+    <div id="pa-out-padres" style="display:none;"></div>
+
     <div id="pa-out-planilla" style="display:none;">
       <div class="pa-card" style="padding:0;overflow:hidden;">
         <table class="pa-table">
@@ -203,8 +206,16 @@ function paGenerate() {
       tab.classList.add('pa-otab-active');
       document.getElementById('pa-out-overview').style.display  = tab.dataset.otab === 'overview'  ? '' : 'none';
       document.getElementById('pa-out-planilla').style.display  = tab.dataset.otab === 'planilla'  ? '' : 'none';
+      document.getElementById('pa-out-padres').style.display    = tab.dataset.otab === 'padres'    ? '' : 'none';
     });
   });
+
+  // Persistencia local + mensajes a padres + sincronización
+  paPersistCurrent(students, { grado, seccion, docente, evaluacion });
+  paRenderPadres();
+  paRenderHistorial();
+  paSyncRefresh();
+  setTimeout(() => paSincronizar(false), 1500);
 
   dash.style.display = '';
   dash.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -380,10 +391,341 @@ async function paCaptureGrilla() {
 }
 window.paCaptureGrilla = paCaptureGrilla;
 
+/* ─────────────────────────────────────────────
+   PERSISTENCIA + MENSAJES A PADRES + SINCRONIZACIÓN
+   Los análisis se guardan en METAS_PLANACCION_V1 (local) y se
+   sincronizan a la hoja de Google del maestro (Apps Script,
+   misma URL que el Registro: METAS_SYNC_URL). Cada alumno lleva
+   un mensaje para su padre/madre generado según su categoría,
+   editable, que también viaja a la hoja (pestaña PlanAccion) —
+   la base de datos que un chatbot consultará por código de lista.
+───────────────────────────────────────────── */
+
+const PA_KEY  = 'METAS_PLANACCION_V1';
+const PA_LAST = 'METAS_PA_LASTSYNC';
+const PA_SITE = 'https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/';
+let _paCurrentId = null;
+let _paMsgTimer  = null;
+
+function paLoadData() {
+  try {
+    const o = JSON.parse(localStorage.getItem(PA_KEY));
+    return (o && Array.isArray(o.analisis)) ? o : { analisis: [] };
+  } catch (_) { return { analisis: [] }; }
+}
+function paSaveData(d) { try { localStorage.setItem(PA_KEY, JSON.stringify(d)); } catch (_) {} }
+function paEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+function paCatKey(grade) {
+  if (grade === 'NSP') return 'nsp';
+  if (typeof grade !== 'number') return null;
+  const c = PA_CATS.find(x => grade >= x.min && grade <= x.max);
+  return c ? c.key : null;
+}
+
+/* Mensajes para padres por categoría — borradores que el maestro puede editar */
+const PA_MSG_PADRES = {
+  avanzado: (n, g, t) =>
+    `🌟 ¡Excelentes noticias! ${n} obtuvo ${g}/100 en «${t}». Su dedicación está dando frutos: felicítele en casa, ese reconocimiento vale oro. Está en el nivel Avanzado y puede retarse con temas superiores.`,
+  muyBueno: (n, g, t) =>
+    `💪 ¡Muy buen trabajo! ${n} obtuvo ${g}/100 en «${t}» (nivel Muy Bueno). Domina el tema; con un poco de práctica adicional puede alcanzar la excelencia. Anímele a seguir así.`,
+  satisfactorio: (n, g, t) =>
+    `📘 ${n} obtuvo ${g}/100 en «${t}» (nivel Satisfactorio). Aprobó, pero conviene afianzar lo aprendido: 15 minutos de repaso al día esta semana harán una gran diferencia. Su apoyo en casa es clave.`,
+  debeMejorar: (n, g, t) =>
+    `⚠️ ${n} obtuvo ${g}/100 en «${t}» y necesita reforzar el tema esta semana (irá a recuperación). No es motivo de castigo sino de acompañamiento: pregúntele qué aprendió hoy y ayúdele a practicar un poco cada día.`,
+  insatisfactorio: (n, g, t) =>
+    `🚨 IMPORTANTE: ${n} obtuvo ${g}/100 en «${t}» y necesita apoyo inmediato; irá a recuperación. Le invito a conversar conmigo para acordar juntos un plan de apoyo. Con su ayuda en casa, ${n} puede lograrlo — nadie aprende sin acompañamiento.`,
+  nsp: (n, g, t) =>
+    `📋 ${n} no se presentó a la evaluación «${t}» (NSP). Podrá hacerla el día programado para pruebas pendientes. Por favor asegúrese de que asista; si hubo una causa de fuerza mayor, comuníquemela.`,
+};
+
+function paMsgPadre(name, grade, tema) {
+  const k = paCatKey(grade);
+  if (!k) return '';
+  /* sin nombre: referirse por código de lista (privacidad y claridad) */
+  const quien = /^#\d+$/.test(name) ? `Su hijo/a (código ${name})` : name;
+  let msg = PA_MSG_PADRES[k](quien, grade, tema || 'la evaluación');
+  /* Si el tema coincide con una misión del catálogo, sugerir repaso con enlace */
+  if (typeof _findMissionByTitle === 'function' && k !== 'avanzado') {
+    const m = _findMissionByTitle(tema || '');
+    if (m) msg += `\n📱 Puede repasar gratis en M.E.T.A.S: «${m.title}» → ${PA_SITE}${encodeURI(m.url)}`;
+  }
+  return msg;
+}
+
+/* Guarda (o actualiza) el análisis actual; conserva mensajes editados y estado de envío */
+function paPersistCurrent(students, meta) {
+  const d = paLoadData();
+  let a = _paCurrentId ? d.analisis.find(x => x.id === _paCurrentId) : null;
+  if (!a) {
+    /* mismo grupo y misma evaluación → actualizar, no duplicar */
+    a = d.analisis.find(x =>
+      (x.evaluacion || '') === (meta.evaluacion || '') &&
+      (x.grado || '') === (meta.grado || '') &&
+      (x.seccion || '') === (meta.seccion || ''));
+    if (a) _paCurrentId = a.id;
+  }
+  const prev = a ? (a.students || []) : [];
+
+  const rows = students.map(s => {
+    const k    = paCatKey(s.grade);
+    const cat  = PA_CATS.find(c => c.key === k);
+    const same = prev.find(p => p.num === s.id && String(p.nota) === String(s.grade));
+    const msg  = (same && same.msgEdit) ? same.msg : paMsgPadre(s.name, s.grade, meta.evaluacion);
+    return {
+      num: s.id, nombre: s.name, nota: s.grade,
+      categoria: k === 'nsp' ? 'NSP' : (cat ? cat.label : ''),
+      sugerencia: (k && k !== 'nsp') ? PA_SUGS[k] : (k === 'nsp' ? 'Programar prueba pendiente.' : ''),
+      msg,
+      msgEdit: !!(same && same.msgEdit),
+      env: (same && same.msg === msg) ? (same.env || 0) : 0,
+    };
+  });
+
+  if (!a) {
+    a = { id: 'A' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), t: new Date().toISOString() };
+    d.analisis.push(a);
+    _paCurrentId = a.id;
+  }
+  Object.assign(a, meta, { students: rows });
+  if (d.analisis.length > 40) d.analisis = d.analisis.slice(-40);
+  paSaveData(d);
+  return a;
+}
+
+/* ── Pestaña Padres ── */
+function paRenderPadres() {
+  const cont = document.getElementById('pa-out-padres');
+  if (!cont) return;
+  const d = paLoadData();
+  const a = d.analisis.find(x => x.id === _paCurrentId);
+  if (!a) { cont.innerHTML = ''; return; }
+
+  cont.innerHTML = `
+    <div class="pa-card">
+      <div class="pa-card-title">👨‍👩‍👧 Mensajes para padres — ${paEsc(a.evaluacion)}</div>
+      <p class="pa-optional-hint">Generados según la categoría de cada alumno. Edite el que quiera (se guarda solo)
+        y envíelo por WhatsApp, o sincronice todo a su hoja de Google para el futuro chatbot de padres.</p>
+      ${a.students.map(s => {
+        const c = paGradeColors(typeof s.nota === 'number' ? s.nota : undefined);
+        return `
+        <div class="pa-pad-row">
+          <div class="pa-pad-head">
+            <span class="pa-pad-num">#${s.num}</span>
+            <span class="pa-pad-name">${paEsc(s.nombre)}</span>
+            <span class="pa-grade-chip" style="background:${s.nota === 'NSP' ? '#d1d5db' : c.bg};color:${s.nota === 'NSP' ? '#374151' : c.txt}">${paEsc(s.nota)}</span>
+            <span class="pa-pad-env">${s.env ? '☁️' : ''}</span>
+          </div>
+          <textarea class="pa-pad-ta" data-num="${s.num}" rows="4">${paEsc(s.msg)}</textarea>
+          <div class="pa-pad-actions">
+            <button class="pa-wa-btn" data-num="${s.num}"><i class="fa-brands fa-whatsapp"></i> WhatsApp al padre</button>
+            <button class="pa-copy-btn" data-num="${s.num}"><i class="fa-regular fa-copy"></i> Copiar</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  const getStudent = num => {
+    const dd = paLoadData();
+    const aa = dd.analisis.find(x => x.id === _paCurrentId);
+    return { d: dd, a: aa, s: aa && aa.students.find(x => x.num === num) };
+  };
+
+  cont.querySelectorAll('.pa-pad-ta').forEach(ta => {
+    ta.addEventListener('input', () => {
+      clearTimeout(_paMsgTimer);
+      _paMsgTimer = setTimeout(() => {
+        const { d: dd, s } = getStudent(+ta.dataset.num);
+        if (!s) return;
+        s.msg = ta.value; s.msgEdit = true; s.env = 0;
+        paSaveData(dd);
+      }, 400);
+    });
+  });
+
+  cont.querySelectorAll('.pa-wa-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const { a: aa, s } = getStudent(+btn.dataset.num);
+      if (!s) return;
+      const texto = `👨‍🏫 *Mensaje del docente ${aa.docente || ''}* · ${aa.evaluacion || ''}\n\n${s.msg}\n\n_M.E.T.A.S — Misiones Educativas_`;
+      window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+    });
+  });
+
+  cont.querySelectorAll('.pa-copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const { s } = getStudent(+btn.dataset.num);
+      if (!s) return;
+      try { navigator.clipboard.writeText(s.msg); toast('📋 Mensaje copiado'); } catch (_) {}
+    });
+  });
+}
+
+/* ── Historial de análisis ── */
+function paRenderHistorial() {
+  const card = document.getElementById('pa-historial-card');
+  const list = document.getElementById('pa-historial-list');
+  if (!card || !list) return;
+  const d = paLoadData();
+  if (!d.analisis.length) { card.style.display = 'none'; return; }
+  card.style.display = '';
+
+  list.innerHTML = [...d.analisis].reverse().map(a => {
+    const nums = a.students.filter(s => typeof s.nota === 'number');
+    const avg  = nums.length ? (nums.reduce((x, s) => x + s.nota, 0) / nums.length).toFixed(1) : '—';
+    const pend = a.students.filter(s => !s.env).length;
+    return `
+      <div class="pa-hist-row">
+        <div class="pa-hist-info">
+          <span class="pa-hist-titulo">${paEsc(a.evaluacion || 'Evaluación')}</span>
+          <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(a.grado || '')} ${paEsc(a.seccion || '')} · ${a.students.length} alumnos · prom. ${avg}${pend ? ` · ⏳ ${pend} sin enviar` : ' · ☁️'}</span>
+        </div>
+        <button class="pa-hist-abrir" data-id="${a.id}">Abrir</button>
+        <button class="pa-hist-borrar" data-id="${a.id}" aria-label="Eliminar">🗑</button>
+      </div>`;
+  }).join('');
+
+  list.querySelectorAll('.pa-hist-abrir').forEach(b =>
+    b.addEventListener('click', () => paAbrirAnalisis(b.dataset.id)));
+  list.querySelectorAll('.pa-hist-borrar').forEach(b =>
+    b.addEventListener('click', () => {
+      if (!confirm('¿Eliminar este análisis guardado?')) return;
+      const d2 = paLoadData();
+      d2.analisis = d2.analisis.filter(x => x.id !== b.dataset.id);
+      paSaveData(d2);
+      if (_paCurrentId === b.dataset.id) _paCurrentId = null;
+      paRenderHistorial();
+      paSyncRefresh();
+    }));
+}
+
+function paAbrirAnalisis(id) {
+  const d = paLoadData();
+  const a = d.analisis.find(x => x.id === id);
+  if (!a) return;
+  _paCurrentId = id;
+  const set = (elId, v) => { const el = document.getElementById(elId); if (el) el.value = v || ''; };
+  set('pa-grado', a.grado); set('pa-seccion', a.seccion);
+  set('pa-docente', a.docente); set('pa-evaluacion', a.evaluacion);
+  const list = document.getElementById('pa-students-list');
+  if (list) {
+    list.innerHTML = '';
+    a.students.forEach(s => paAddRow(s.num, s.nombre.startsWith('#') ? '' : s.nombre, String(s.nota)));
+  }
+  paGenerate();
+}
+
+/* ── Sincronización a la hoja del maestro ── */
+function paSyncUrlGet() {
+  try { return (localStorage.getItem('METAS_SYNC_URL') || '').trim(); } catch (_) { return ''; }
+}
+
+function paEventosPendientes(d) {
+  const evs = [];
+  d.analisis.forEach(a => (a.students || []).forEach(s => {
+    if (s.env) return;
+    evs.push({
+      id: 'PA-' + a.id + '-' + s.num + '-' + String(s.nota),
+      t: a.t, tipo: 'plan_accion',
+      evaluacion: a.evaluacion || '', mision: a.evaluacion || '',
+      grado: ((a.grado || '') + ' ' + (a.seccion || '')).trim(), seccion: a.seccion || '',
+      docente: a.docente || '',
+      codigo: s.num, alumno: s.nombre,
+      nota: (typeof s.nota === 'number') ? s.nota : '', base: 100,
+      nsp: s.nota === 'NSP' ? 1 : '',
+      categoria: s.categoria || '', sugerencia: s.sugerencia || '', mensaje: s.msg || '',
+    });
+  }));
+  return evs;
+}
+
+let _paSyncBusy = false;
+async function paSincronizar(manual) {
+  if (_paSyncBusy) return;
+  const url = paSyncUrlGet();
+  if (!url) { if (manual) toast('⚙️ Configura primero la URL de tu hoja (tarjeta ☁️)'); paSyncRefresh(); return; }
+  const d = paLoadData();
+  const evs = paEventosPendientes(d);
+  if (!evs.length) { paSyncRefresh(); if (manual) toast('✅ Todo está sincronizado'); return; }
+  if (navigator.onLine === false) { paSyncRefresh('📴 Sin conexión — se enviará al haber internet.'); return; }
+
+  _paSyncBusy = true;
+  const st = document.getElementById('pa-sync-status');
+  if (st) st.textContent = `⏳ Enviando ${Math.min(evs.length, 200)} registro${evs.length > 1 ? 's' : ''}…`;
+  try {
+    const lote = evs.slice(0, 200);
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ eventos: lote }),
+    }).then(x => x.json());
+    if (!r || r.ok !== true) throw new Error('respuesta no ok');
+
+    const ids = new Set(lote.map(e => e.id));
+    d.analisis.forEach(a => (a.students || []).forEach(s => {
+      if (ids.has('PA-' + a.id + '-' + s.num + '-' + String(s.nota))) s.env = 1;
+    }));
+    paSaveData(d);
+    try { localStorage.setItem(PA_LAST, new Date().toISOString()); } catch (_) {}
+    _paSyncBusy = false;
+
+    if (paEventosPendientes(paLoadData()).length) return paSincronizar(manual);
+    paSyncRefresh();
+    paRenderPadres();
+    paRenderHistorial();
+    if (manual) toast('☁️ Notas y mensajes sincronizados a tu hoja');
+  } catch (_) {
+    _paSyncBusy = false;
+    paSyncRefresh('⚠️ No se pudo conectar con la hoja. Revisa la URL o la conexión.');
+  }
+}
+
+function paSyncRefresh(msgOverride) {
+  const st  = document.getElementById('pa-sync-status');
+  const inp = document.getElementById('pa-sync-url');
+  if (inp && !inp.value) inp.value = paSyncUrlGet();
+  if (!st) return;
+  if (msgOverride) { st.textContent = msgOverride; return; }
+  const url  = paSyncUrlGet();
+  const pend = paEventosPendientes(paLoadData()).length;
+  let last = '';
+  try { last = localStorage.getItem(PA_LAST) || ''; } catch (_) {}
+  const lastTxt = last ? ` · Última sincronización: ${last.slice(0, 10)} ${last.slice(11, 16)}` : '';
+  st.textContent = !url
+    ? '⚙️ Aún sin configurar: pega la URL de tu Apps Script y presiona «Guardar y probar».'
+    : (pend ? `⏳ ${pend} registro${pend > 1 ? 's' : ''} pendiente${pend > 1 ? 's' : ''} de enviar${lastTxt}` : `✅ Todo sincronizado${lastTxt}`);
+}
+
+async function paProbarConexion() {
+  const inp = document.getElementById('pa-sync-url');
+  const url = (inp && inp.value.trim()) || '';
+  if (!url) { toast('Pega primero la URL de tu Apps Script'); return; }
+  if (!/^https:\/\/script\.google\.com\//.test(url)) { toast('⚠️ La URL debe ser de script.google.com'); return; }
+  try { localStorage.setItem('METAS_SYNC_URL', url); } catch (_) {}
+  paSyncRefresh('⏳ Probando conexión…');
+  try {
+    const r = await fetch(url).then(x => x.json());
+    if (r && r.ok === true) {
+      toast('✅ Conexión correcta con tu hoja');
+      paSincronizar(false);
+    } else {
+      paSyncRefresh('⚠️ La hoja respondió, pero con un formato inesperado. Revisa el código del Apps Script.');
+    }
+  } catch (_) {
+    paSyncRefresh('⚠️ No se pudo conectar. Verifica la URL (debe terminar en /exec) y que el despliegue sea «Cualquier persona».');
+  }
+}
+
 function paInit() {
-  if (_paInitDone) return;
+  if (_paInitDone) {
+    paRenderHistorial();
+    paSyncRefresh();
+    return;
+  }
   _paInitDone = true;
   for (let i = 1; i <= 20; i++) paAddRow(i);
+  paRenderHistorial();
+  paSyncRefresh();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -394,7 +736,12 @@ document.addEventListener('DOMContentLoaded', () => {
     paAddRow(document.querySelectorAll('.pa-student-row').length + 1);
   });
 
-  document.getElementById('pa-generate-btn')?.addEventListener('click', paGenerate);
+  document.getElementById('pa-generate-btn')?.addEventListener('click', () => { _paCurrentId = null; paGenerate(); });
+
+  // Sincronización con la hoja del maestro
+  document.getElementById('pa-sync-save')?.addEventListener('click', paProbarConexion);
+  document.getElementById('pa-sync-now')?.addEventListener('click', () => paSincronizar(true));
+  window.addEventListener('online', () => paSincronizar(false));
 
   // Entry tab switching
   document.querySelectorAll('.pa-etab').forEach(tab => {

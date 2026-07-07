@@ -20,7 +20,9 @@ Costo: **cero**. Solo necesitas una cuenta de Google.
 
 ```javascript
 // M.E.T.A.S — Receptor de eventos de aprendizaje → Google Sheets
-// v4: + escuela + buzón de sugerencias (pestaña aparte) + crearDashboard()
+// v5: + pestaña PlanAccion (notas por nº de lista y mensajes a padres,
+//     enviados desde la herramienta Plan de Acción; base del futuro
+//     chatbot de padres que consulta por código de lista)
 const HOJA = 'Registros';
 const COLUMNAS = ['recibido', 'fecha_utc', 'mision', 'alumno', 'grado', 'docente',
   'tipo', 'seccion', 'forma', 'nota', 'base', 'xp', 'min', 'sesion', 'dispositivo',
@@ -28,6 +30,10 @@ const COLUMNAS = ['recibido', 'fecha_utc', 'mision', 'alumno', 'grado', 'docente
 const HOJA_SUG = 'Sugerencias';
 const COLUMNAS_SUG = ['recibido', 'fecha_utc', 'mision', 'seccion', 'categoria',
   'texto', 'alumno', 'grado', 'escuela', 'docente', 'dispositivo', 'id_evento'];
+const HOJA_PA = 'PlanAccion';
+const COLUMNAS_PA = ['recibido', 'fecha', 'evaluacion', 'grado', 'seccion', 'docente',
+  'codigo_lista', 'alumno', 'nota', 'nsp', 'categoria', 'sugerencia_docente',
+  'mensaje_padres', 'id_evento'];
 
 function hojaLista(ss, nombre, columnas) {
   let h = ss.getSheetByName(nombre);
@@ -48,9 +54,10 @@ function doPost(e) {
     const eventos = (datos && datos.eventos) || [];
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const ahora = new Date();
-    // las sugerencias van a su propia pestaña; el resto a Registros
+    // sugerencias y plan de acción van a sus propias pestañas; el resto a Registros
     const sugerencias = eventos.filter(function (ev) { return ev.tipo === 'sugerencia'; });
-    const registros = eventos.filter(function (ev) { return ev.tipo !== 'sugerencia'; });
+    const planAccion  = eventos.filter(function (ev) { return ev.tipo === 'plan_accion'; });
+    const registros = eventos.filter(function (ev) { return ev.tipo !== 'sugerencia' && ev.tipo !== 'plan_accion'; });
     if (registros.length) {
       const h = hojaLista(ss, HOJA, COLUMNAS);
       const filas = registros.map(function (ev) {
@@ -61,6 +68,16 @@ function doPost(e) {
           ev.ses || '', ev.disp || '', ev.id || '', ev.escuela || ''];
       });
       h.getRange(h.getLastRow() + 1, 1, filas.length, COLUMNAS.length).setValues(filas);
+    }
+    if (planAccion.length) {
+      const hp = hojaLista(ss, HOJA_PA, COLUMNAS_PA);
+      const filasPA = planAccion.map(function (ev) {
+        return [ahora, ev.t || '', ev.evaluacion || ev.mision || '', ev.grado || '',
+          ev.seccion || '', ev.docente || '', (ev.codigo === 0 || ev.codigo) ? ev.codigo : '',
+          ev.alumno || '', (ev.nota === 0 || ev.nota) ? ev.nota : '', ev.nsp || '',
+          ev.categoria || '', ev.sugerencia || '', ev.mensaje || '', ev.id || ''];
+      });
+      hp.getRange(hp.getLastRow() + 1, 1, filasPA.length, COLUMNAS_PA.length).setValues(filasPA);
     }
     if (sugerencias.length) {
       const hs = hojaLista(ss, HOJA_SUG, COLUMNAS_SUG);
@@ -255,6 +272,25 @@ Con el código v3 ya pegado y guardado:
    desde cero, vuelve a ejecutar `crearDashboard` — borra y reconstruye.)
 5. La pestaña oculta **DashDatos** contiene las tablas que alimentan los
    gráficos; no la borres (puedes verla con Ver → Hojas ocultas).
+
+## Pestaña PlanAccion — notas y mensajes a padres (v5)
+
+La herramienta **Plan de Acción** del índice sincroniza a esta misma hoja
+(la misma URL) las calificaciones que el docente digita por número de lista,
+junto con la categoría, la sugerencia pedagógica y el **mensaje para el padre
+de familia** de cada alumno. Todo cae en la pestaña `PlanAccion` con columnas:
+
+`recibido · fecha · evaluacion · grado · seccion · docente · codigo_lista ·
+alumno · nota · nsp · categoria · sugerencia_docente · mensaje_padres · id_evento`
+
+- El docente pega la URL del despliegue en la tarjeta **☁️ Mi hoja de Google**
+  del Plan de Acción (si ya configuró el Registro, es la misma URL).
+- La columna `codigo_lista` es la clave pensada para el **futuro chatbot de
+  padres**: el padre consultará por el código de su hijo (nunca por nombre) y
+  el bot leerá de esta pestaña la nota, el mensaje y la recomendación.
+- Si tu hoja tiene el código v4 o anterior, actualízalo con la sección
+  siguiente para que aparezca la pestaña `PlanAccion` (con el código viejo los
+  datos llegan igual, pero mezclados en `Registros` y sin el mensaje).
 
 ## Actualizar el código del Apps Script (cuando cambie la versión)
 
