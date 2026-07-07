@@ -178,8 +178,30 @@
           <button class="pill" data-filter="sociales">C. Sociales</button>
         </div>
       </div>
+      <button class="rutas-banner" onclick="switchView('view-rutas')">
+        <span class="rutas-banner-icon">🧭</span>
+        <span class="rutas-banner-text">
+          <strong>Rutas de Aprendizaje</strong>
+          <em>Avanza etapa por etapa y mira tu progreso</em>
+        </span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
       <div id="proceres-section"></div>
       <div id="missions-container" class="missions-list"></div>
+    </div>
+  </div>
+
+  <!-- ========== RUTAS DE APRENDIZAJE ========== -->
+  <div id="view-rutas" class="view">
+    <header class="app-header compact">
+      <button class="hamburger-btn" aria-label="Abrir menú"><i class="fa-solid fa-bars"></i></button>
+      <h1 class="view-title">Rutas de Aprendizaje</h1>
+      <div></div>
+    </header>
+    <div class="view-scroll">
+      <p class="rutas-intro">Cada ruta es un camino de etapas. Domina una etapa con nota de 70 o más,
+        y asegura las anteriores cuando lo necesites: repasar también es avanzar. 💪</p>
+      <div id="rutas-container"></div>
     </div>
   </div>
 
@@ -754,6 +776,9 @@
       </button>
       <button class="drawer-item" data-view="view-misiones">
         <i class="fa-solid fa-rocket"></i><span>Misiones</span>
+      </button>
+      <button class="drawer-item" data-view="view-rutas">
+        <i class="fa-solid fa-route"></i><span>Rutas de Aprendizaje</span>
       </button>
       <button class="drawer-item" data-view="view-progreso">
         <i class="fa-solid fa-chart-line"></i><span>Mi Progreso</span>

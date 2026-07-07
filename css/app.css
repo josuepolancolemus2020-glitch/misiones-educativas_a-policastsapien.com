@@ -2445,3 +2445,168 @@ a { text-decoration: none; color: inherit; }
   flex-shrink: 0;
   cursor: pointer;
 }
+
+/* ─────────────────────────────────────────────
+   RUTAS DE APRENDIZAJE (mapa tipo línea de metro)
+───────────────────────────────────────────── */
+
+.rutas-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--brand-light);
+  border-radius: var(--r);
+  background: linear-gradient(120deg, #eff6ff, #ffffff);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+.rutas-banner-icon { font-size: 26px; }
+.rutas-banner-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.rutas-banner-text strong { font-size: 14px; color: var(--brand); }
+.rutas-banner-text em { font-style: normal; font-size: 12px; color: var(--muted); }
+.rutas-banner > i { color: var(--brand-light); }
+
+.rutas-intro {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: var(--r);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.ruta-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.ruta-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 14px 10px;
+}
+.ruta-emoji { font-size: 26px; }
+.ruta-head-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.ruta-nombre { font-size: 15px; font-weight: 800; color: var(--text); }
+.ruta-avance { font-size: 12px; color: var(--muted); }
+.ruta-pct {
+  font-size: 14px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bg);
+}
+.ruta-pct.mat  { color: var(--mat);  background: var(--mat-bg);  }
+.ruta-pct.esp  { color: var(--esp);  background: var(--esp-bg);  }
+.ruta-pct.cnat { color: var(--cnat); background: var(--cnat-bg); }
+.ruta-pct.csoc { color: var(--csoc); background: var(--csoc-bg); }
+
+.ruta-bar {
+  height: 6px;
+  margin: 0 14px 6px;
+  border-radius: 999px;
+  background: var(--bg);
+  overflow: hidden;
+}
+.ruta-bar-fill { height: 100%; border-radius: 999px; transition: width .4s ease; }
+.ruta-bar-fill.mat  { background: var(--mat);  }
+.ruta-bar-fill.esp  { background: var(--esp);  }
+.ruta-bar-fill.cnat { background: var(--cnat); }
+.ruta-bar-fill.csoc { background: var(--csoc); }
+
+.ruta-mapa { padding: 4px 14px 12px; }
+
+.ruta-etapa {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+.re-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40px;
+  flex-shrink: 0;
+}
+.re-line {
+  width: 3px;
+  flex: 1;
+  min-height: 8px;
+  background: var(--border);
+}
+.re-line.hide { background: transparent; }
+.ruta-etapa.dominada .re-line { background: #86efac; }
+.re-nodo {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  background: var(--bg);
+  border: 2.5px solid var(--border);
+  flex-shrink: 0;
+}
+.ruta-etapa.dominada .re-nodo {
+  background: #dcfce7;
+  border-color: #22c55e;
+  color: #15803d;
+  font-weight: 900;
+}
+.ruta-etapa.progreso .re-nodo {
+  border-color: var(--accent);
+  background: #fffbeb;
+}
+.ruta-etapa.pendiente .re-nodo { filter: grayscale(.35); }
+
+.re-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border);
+  min-width: 0;
+}
+.ruta-etapa:last-child .re-info { border-bottom: none; }
+.re-etapa {
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--faint);
+}
+.re-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.re-chip {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-top: 2px;
+}
+.re-chip.ok   { background: #dcfce7; color: #15803d; }
+.re-chip.prog { background: #fef3c7; color: #b45309; }
+.re-chip.pend { background: var(--bg); color: var(--muted); }
+.re-chip.ok i { font-size: 10px; }
+.re-arrow {
+  align-self: center;
+  color: var(--faint);
+  font-size: 12px;
+  padding-left: 4px;
+}

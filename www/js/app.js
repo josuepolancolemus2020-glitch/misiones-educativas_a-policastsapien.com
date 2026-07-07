@@ -309,7 +309,7 @@ function renderHome() {
     <div class="feat-label">★ Misión destacada</div>
     <div class="feat-subj">${m.icon} ${SUBJECT_LABELS[m.subject] || m.subject}</div>
     <div class="feat-title">${m.title}</div>
-    <div class="feat-grade">${m.grade}</div>
+    <div class="feat-grade">${rutaLabel(m)}</div>
     <div class="feat-actions">
       <div class="feat-xp">
         <i class="fa-solid fa-star"></i>
@@ -338,7 +338,7 @@ function renderHome() {
         <div class="small-icon ${m.color}">${m.icon}</div>
         <div class="small-info">
           <div class="small-title">${m.title}</div>
-          <div class="small-meta">${SUBJECT_LABELS[m.subject] || m.subject} · ${m.grade}</div>
+          <div class="small-meta">${SUBJECT_LABELS[m.subject] || m.subject} · ${rutaLabel(m)}</div>
         </div>
         <i class="fa-solid fa-chevron-right small-arrow"></i>
       </a>
@@ -452,7 +452,7 @@ function renderMissions(filter, query) {
     list = list.filter(m =>
       m.title.toLowerCase().includes(q) ||
       (SUBJECT_LABELS[m.subject] || '').toLowerCase().includes(q) ||
-      m.grade.toLowerCase().includes(q)
+      rutaLabel(m).toLowerCase().includes(q)
     );
   }
 
@@ -477,7 +477,7 @@ function renderMissions(filter, query) {
           <div class="mc-title">${m.title}</div>
           <div class="mc-meta">
             <span class="mc-subj ${m.color}">${SUBJECT_LABELS[m.subject] || m.subject}</span>
-            <span class="mc-grade">${m.grade}</span>
+            <span class="mc-grade">${rutaLabel(m)}</span>
             ${visited
               ? `<span class="mc-done"><i class="fa-solid fa-check"></i> Visitada</span>`
               : `<span class="mc-xp"><i class="fa-solid fa-star"></i> +${m.xp} XP</span>`}
@@ -485,6 +485,118 @@ function renderMissions(filter, query) {
         </div>
         <i class="fa-solid fa-chevron-right mc-arrow"></i>
       </a>`;
+  }).join('');
+}
+
+/* ─────────────────────────────────────────────
+   RENDER — RUTAS DE APRENDIZAJE
+   Mapa tipo línea de metro con progreso real leído de
+   METAS_REGISTRO_V1 (mismo origen que las misiones):
+   nota ≥ 70 = etapa dominada · intentada = en progreso.
+───────────────────────────────────────────── */
+
+const REGISTRO_KEY = 'METAS_REGISTRO_V1';
+const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo'];
+
+function _rNorm(s) {
+  s = String(s || '').toLowerCase();
+  try { return s.normalize('NFC'); } catch (_) { return s; }
+}
+
+function missionFolder(m) {
+  const seg = (m.url || '').split('/')[1] || '';
+  try { return _rNorm(decodeURIComponent(seg)); } catch (_) { return _rNorm(seg); }
+}
+
+function readRegistro() {
+  try {
+    const a = JSON.parse(localStorage.getItem(REGISTRO_KEY));
+    return Array.isArray(a) ? a : [];
+  } catch (_) { return []; }
+}
+
+// Mapa carpeta-de-misión → { tried, best } (mejor nota sobre 100)
+function rutasProgress() {
+  const prog = {};
+  readRegistro().forEach(ev => {
+    if (!ev || !ev.mision) return;
+    const f = _rNorm(ev.mision);
+    const p = prog[f] || (prog[f] = { tried: false, best: null });
+    p.tried = true;
+    if ((ev.tipo === 'evaluacion' || ev.tipo === 'prueba_operativa') && typeof ev.nota === 'number') {
+      const base = (typeof ev.base === 'number' && ev.base > 0) ? ev.base : 100;
+      const pct  = Math.round((ev.nota / base) * 100);
+      if (p.best === null || pct > p.best) p.best = pct;
+    }
+  });
+  return prog;
+}
+
+function etapaEstado(m, prog) {
+  const p = prog[missionFolder(m)];
+  if (!p) return 'pendiente';
+  if (p.best !== null && p.best >= 70) return 'dominada';
+  return 'progreso';
+}
+
+function renderRutas() {
+  const container = document.getElementById('rutas-container');
+  if (!container) return;
+
+  const prog = rutasProgress();
+
+  container.innerHTML = RUTAS_ORDEN.map(key => {
+    const r      = RUTAS[key];
+    const etapas = rutaEtapas(key);
+    if (!r || !etapas.length) return '';
+
+    const dominadas = etapas.filter(m => etapaEstado(m, prog) === 'dominada').length;
+    const pct       = Math.round((dominadas / etapas.length) * 100);
+
+    const filas = etapas.map((m, i) => {
+      const estado = etapaEstado(m, prog);
+      const p      = prog[missionFolder(m)];
+      const etiquetaEtapa = m.etapa === 0 ? 'Punto de partida' : `Etapa ${m.etapa}`;
+
+      let chip;
+      if (estado === 'dominada') {
+        chip = `<span class="re-chip ok"><i class="fa-solid fa-check"></i> Dominada · ${p.best}</span>`;
+      } else if (estado === 'progreso') {
+        chip = `<span class="re-chip prog">En progreso${p && p.best !== null ? ' · Mejor nota ' + p.best : ''}</span>`;
+      } else {
+        chip = `<span class="re-chip pend">Por explorar · +${m.xp} XP</span>`;
+      }
+
+      return `
+        <a class="ruta-etapa ${estado}" href="${m.url}"
+           onclick="visitMission(${m.id}); return false;">
+          <span class="re-rail">
+            <span class="re-line ${i === 0 ? 'hide' : ''}"></span>
+            <span class="re-nodo ${r.color}">${estado === 'dominada' ? '✔' : m.icon}</span>
+            <span class="re-line ${i === etapas.length - 1 ? 'hide' : ''}"></span>
+          </span>
+          <span class="re-info">
+            <span class="re-etapa">${etiquetaEtapa}</span>
+            <span class="re-title">${m.title}</span>
+            ${chip}
+          </span>
+          <i class="fa-solid fa-chevron-right re-arrow"></i>
+        </a>`;
+    }).join('');
+
+    return `
+      <section class="ruta-card">
+        <header class="ruta-head">
+          <span class="ruta-emoji">${r.emoji}</span>
+          <span class="ruta-head-info">
+            <span class="ruta-nombre">${r.nombre}</span>
+            <span class="ruta-avance">${dominadas} de ${etapas.length} etapas dominadas</span>
+          </span>
+          <span class="ruta-pct ${r.color}">${pct}%</span>
+        </header>
+        <div class="ruta-bar"><div class="ruta-bar-fill ${r.color}" style="width:${pct}%"></div></div>
+        <div class="ruta-mapa">${filas}</div>
+      </section>`;
   }).join('');
 }
 
@@ -558,7 +670,7 @@ function renderProgress() {
                <div class="mc-title">${m.title}</div>
                <div class="mc-meta">
                  <span class="mc-subj ${m.color}">${SUBJECT_LABELS[m.subject] || m.subject}</span>
-                 <span class="mc-grade">${m.grade}</span>
+                 <span class="mc-grade">${rutaLabel(m)}</span>
                  <span class="mc-done"><i class="fa-solid fa-check"></i> Visitada</span>
                </div>
              </div>
@@ -613,6 +725,7 @@ function switchView(id) {
 
   if (id === 'view-inicio')   renderHome();
   if (id === 'view-misiones') renderMissions(currentFilter, currentQuery);
+  if (id === 'view-rutas')    renderRutas();
   if (id === 'view-progreso') renderProgress();
   if (id === 'view-perfil')   renderProfile();
   if (id === 'view-gobierno')       renderGobiernoEscolar();
@@ -677,6 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     switchView('view-misiones');
   }
+  if (_urlParams.get('view') === 'rutas') switchView('view-rutas');
 
   // Cambio de país
   if (countryEl) {

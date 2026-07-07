@@ -1,30 +1,57 @@
+/* Rutas de aprendizaje: el alumno navega por rutas secuenciales (etapas),
+   nunca por ciclos/grados. El ciclo (campo grade/cycle) se conserva SOLO
+   como metadato docente (Registro Docente, manuales, mapeo DCNB). */
+const RUTAS = {
+  numero:  { nombre: 'Ruta del Número',   emoji: '🧭', color: 'mat'  },
+  forma:   { nombre: 'Ruta de la Forma',  emoji: '📐', color: 'mat'  },
+  palabra: { nombre: 'Ruta de la Palabra', emoji: '✍️', color: 'esp'  },
+  planeta: { nombre: 'Ruta del Planeta',  emoji: '🌎', color: 'csoc' },
+  cuerpo:  { nombre: 'Ruta del Cuerpo',   emoji: '🧠', color: 'cnat' },
+};
+
 const MISSIONS = [
-  { id:  1, title: 'Los Adjetivos',                             subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '📝', url: 'misiones/2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html' },
-  { id:  2, title: 'Los Verbos',                                subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '✍️', url: 'misiones/2y3ciclo-verbos/verbos-II-III-ciclo-basica.html' },
-  { id:  3, title: 'Los Sustantivos',                           subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '📖', url: 'misiones/2y3ciclo-sustantivos/sustantivos-II-III-ciclo-basica.html' },
-  { id:  4, title: 'Los Pronombres',                            subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '💬', url: 'misiones/2y3ciclo-pronombres/pronombres-II-III-ciclo-basica.html' },
-  { id:  5, title: 'El Adjetivo Avanzado',                      subject: 'español',     color: 'bach', grade: 'Bachillerato',   cycle: 'bach',     xp: 40, icon: '🎓', url: 'misiones/bach-uni-adjetivos/adjetivos-avanzado.html' },
-  { id:  6, title: 'Números de Tres Cifras',                    subject: 'matemáticas', color: 'mat',  grade: '2° Grado',       cycle: '1ciclo',   xp: 20, icon: '🔢', url: 'misiones/1ciclo-2º-grado/numeros-hasta-999.html' },
-  { id:  7, title: 'Ángulos y Bisectriz',                       subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '📐', url: 'misiones/2y3ciclo-angulo-bisectriz/angulos-bisectriz_II y III-Ciclo_Básica.html' },
-  { id:  8, title: 'Números Decimales',                         subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '🔢', url: 'misiones/2y3ciclo-numeros-decimales/2y3ciclo-numeros-decimales.html' },
-  { id: 15, title: 'División de Decimales',                     subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '➗', url: 'misiones/2y3ciclo-division-decimales/division-decimales.html' },
-  { id: 16, title: 'Área de Círculos y Polígonos',             subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '⭕', url: 'misiones/mat-2y3ciclo-area-circulo-y-poligonos-regulares/circulos-poligonos.html' },
-  { id:  9, title: 'Las Eras Geológicas',                       subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 35, icon: '🦕', url: 'misiones/2y3ciclo-eras-geológicas/eras_geológicas.html' },
-  { id: 10, title: 'Áreas Protegidas de Honduras',              subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🌿', url: 'misiones/2y3ciclo-áreas-protegidas-de-honduras/2y3ciclo-áreas-protegidas-de-Honduras.html' },
-  { id: 14, title: 'El Sistema Nervioso',                        subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 35, icon: '🧠', url: 'misiones/2y3ciclo-sistema-nervioso/sistema-nervioso.html' },
-  { id: 19, title: 'El Sistema Endocrino',                       subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 35, icon: '⚗️', url: 'misiones/2y3ciclo-sistema-endocrino/sistema-endocrino.html' },
-  { id: 20, title: 'Desastres Naturales y el Huracán Mitch',     subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 35, icon: '🌀', url: 'misiones/2y3ciclo-desastres-naturales/desastres-naturales.html' },
-  { id: 11, title: 'Geografía y Coordenadas',                   subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '🗺️', url: 'misiones/2y3ciclo-geografía-coordenadas/2y3ciclo_geografia-coordenadas.html' },
-  { id: 12, title: 'Continentes: Europa, Asia y África',        subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🌍', url: 'misiones/2y3ciclo-los-Continentes-Europa-Asia-y-Africa/2y3ciclo_geografia-continentes-eas.html' },
-  { id: 13, title: 'Continentes: América, Oceanía y Antártida', subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🌎', url: 'misiones/2y3ciclo-los-continentes-América-Oceanía-Antártida/2y3ciclo-los-continentes-América-Oceanía-Antártida.html' },
-  { id: 17, title: 'Los Adverbios',                            subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 25, icon: '🧭', url: 'misiones/2y3ciclo-adverbios/adverbios-II-III-ciclo-basica.html' },
-  { id: 18, title: 'La Acentuación',                           subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 35, icon: '🔤', url: 'misiones/2y3ciclo-acentuacion/acentuacion-II-III-ciclo-basica.html' },
-  { id: 21, title: 'Los Tipos de Textos',                      subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '📚', url: 'misiones/2y3ciclo-tipos-de-textos/tipos-de-textos.html' },
-  { id: 22, title: 'Marcadores Textuales',                     subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🔗', url: 'misiones/2y3ciclo-marcadores-textuales/marcadores-textuales.html' },
-  { id: 23, title: 'Las Fracciones',                           subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', xp: 30, icon: '🍕', url: 'misiones/2y3ciclo-fracciones/fracciones.html' },
-  { id: 24, title: 'Valor Posicional hasta el Millón',         subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   xp: 30, icon: '🔢', url: 'misiones/2ciclo-valor-posicional/valor-posicional.html' },
-  { id: 25, title: 'Potencias y Raíces Cuadradas',              subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   xp: 30, icon: '🔲', url: 'misiones/2ciclo-potencias-raices/potencias-raices.html' },
-  { id: 26, title: 'Teoría de Números: Divisibilidad, m.c.m. y M.C.D.', subject: 'matemáticas', color: 'mat', grade: 'II Ciclo', cycle: '2ciclo', xp: 30, icon: '🕵️', url: 'misiones/2ciclo-teoria-numeros/teoria-numeros.html' },
-  { id: 27, title: 'Recta Numérica, Suma y Resta',                       subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   xp: 30, icon: '📏', url: 'misiones/2ciclo-recta-numerica/recta-numerica.html' },
-  { id: 28, title: 'Múltiplos, Divisores y Primos',                      subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   xp: 30, icon: '🧮', url: 'misiones/2ciclo-multiplos-divisores-primos/multiplos-divisores-primos.html' },
+  { id:  1, title: 'Los Adjetivos',                             subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'palabra', etapa: 2, xp: 25, icon: '📝', url: 'misiones/2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html' },
+  { id:  2, title: 'Los Verbos',                                subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'palabra', etapa: 3, xp: 25, icon: '✍️', url: 'misiones/2y3ciclo-verbos/verbos-II-III-ciclo-basica.html' },
+  { id:  3, title: 'Los Sustantivos',                           subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'palabra', etapa: 1, xp: 25, icon: '📖', url: 'misiones/2y3ciclo-sustantivos/sustantivos-II-III-ciclo-basica.html' },
+  { id:  4, title: 'Los Pronombres',                            subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'palabra', etapa: 5, xp: 25, icon: '💬', url: 'misiones/2y3ciclo-pronombres/pronombres-II-III-ciclo-basica.html' },
+  { id:  5, title: 'El Adjetivo Avanzado',                      subject: 'español',     color: 'bach', grade: 'Bachillerato',   cycle: 'bach',     ruta: 'palabra', etapa: 9, xp: 40, icon: '🎓', url: 'misiones/bach-uni-adjetivos/adjetivos-avanzado.html' },
+  { id:  6, title: 'Números de Tres Cifras',                    subject: 'matemáticas', color: 'mat',  grade: '2° Grado',       cycle: '1ciclo',   ruta: 'numero',  etapa: 0, xp: 20, icon: '🔢', url: 'misiones/1ciclo-2º-grado/numeros-hasta-999.html' },
+  { id:  7, title: 'Ángulos y Bisectriz',                       subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'forma',   etapa: 1, xp: 30, icon: '📐', url: 'misiones/2y3ciclo-angulo-bisectriz/angulos-bisectriz_II y III-Ciclo_Básica.html' },
+  { id:  8, title: 'Números Decimales',                         subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'numero',  etapa: 7, xp: 25, icon: '🔢', url: 'misiones/2y3ciclo-numeros-decimales/2y3ciclo-numeros-decimales.html' },
+  { id: 15, title: 'División de Decimales',                     subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'numero',  etapa: 8, xp: 30, icon: '➗', url: 'misiones/2y3ciclo-division-decimales/division-decimales.html' },
+  { id: 16, title: 'Área de Círculos y Polígonos',             subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'forma',   etapa: 2, xp: 30, icon: '⭕', url: 'misiones/mat-2y3ciclo-area-circulo-y-poligonos-regulares/circulos-poligonos.html' },
+  { id:  9, title: 'Las Eras Geológicas',                       subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'planeta', etapa: 5, xp: 35, icon: '🦕', url: 'misiones/2y3ciclo-eras-geológicas/eras_geológicas.html' },
+  { id: 10, title: 'Áreas Protegidas de Honduras',              subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'planeta', etapa: 6, xp: 30, icon: '🌿', url: 'misiones/2y3ciclo-áreas-protegidas-de-honduras/2y3ciclo-áreas-protegidas-de-Honduras.html' },
+  { id: 14, title: 'El Sistema Nervioso',                        subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'cuerpo',  etapa: 1, xp: 35, icon: '🧠', url: 'misiones/2y3ciclo-sistema-nervioso/sistema-nervioso.html' },
+  { id: 19, title: 'El Sistema Endocrino',                       subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'cuerpo',  etapa: 2, xp: 35, icon: '⚗️', url: 'misiones/2y3ciclo-sistema-endocrino/sistema-endocrino.html' },
+  { id: 20, title: 'Desastres Naturales y el Huracán Mitch',     subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'planeta', etapa: 4, xp: 35, icon: '🌀', url: 'misiones/2y3ciclo-desastres-naturales/desastres-naturales.html' },
+  { id: 11, title: 'Geografía y Coordenadas',                   subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'planeta', etapa: 1, xp: 25, icon: '🗺️', url: 'misiones/2y3ciclo-geografía-coordenadas/2y3ciclo_geografia-coordenadas.html' },
+  { id: 12, title: 'Continentes: Europa, Asia y África',        subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'planeta', etapa: 3, xp: 30, icon: '🌍', url: 'misiones/2y3ciclo-los-Continentes-Europa-Asia-y-Africa/2y3ciclo_geografia-continentes-eas.html' },
+  { id: 13, title: 'Continentes: América, Oceanía y Antártida', subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'planeta', etapa: 2, xp: 30, icon: '🌎', url: 'misiones/2y3ciclo-los-continentes-América-Oceanía-Antártida/2y3ciclo-los-continentes-América-Oceanía-Antártida.html' },
+  { id: 17, title: 'Los Adverbios',                            subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'palabra', etapa: 4, xp: 25, icon: '🧭', url: 'misiones/2y3ciclo-adverbios/adverbios-II-III-ciclo-basica.html' },
+  { id: 18, title: 'La Acentuación',                           subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'palabra', etapa: 6, xp: 35, icon: '🔤', url: 'misiones/2y3ciclo-acentuacion/acentuacion-II-III-ciclo-basica.html' },
+  { id: 21, title: 'Los Tipos de Textos',                      subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'palabra', etapa: 8, xp: 30, icon: '📚', url: 'misiones/2y3ciclo-tipos-de-textos/tipos-de-textos.html' },
+  { id: 22, title: 'Marcadores Textuales',                     subject: 'español',     color: 'esp',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'palabra', etapa: 7, xp: 30, icon: '🔗', url: 'misiones/2y3ciclo-marcadores-textuales/marcadores-textuales.html' },
+  { id: 23, title: 'Las Fracciones',                           subject: 'matemáticas', color: 'mat',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'numero',  etapa: 6, xp: 30, icon: '🍕', url: 'misiones/2y3ciclo-fracciones/fracciones.html' },
+  { id: 24, title: 'Valor Posicional hasta el Millón',         subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'numero',  etapa: 1, xp: 30, icon: '🔢', url: 'misiones/2ciclo-valor-posicional/valor-posicional.html' },
+  { id: 25, title: 'Potencias y Raíces Cuadradas',              subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'numero',  etapa: 5, xp: 30, icon: '🔲', url: 'misiones/2ciclo-potencias-raices/potencias-raices.html' },
+  { id: 26, title: 'Teoría de Números: Divisibilidad, m.c.m. y M.C.D.', subject: 'matemáticas', color: 'mat', grade: 'II Ciclo', cycle: '2ciclo', ruta: 'numero', etapa: 3, xp: 30, icon: '🕵️', url: 'misiones/2ciclo-teoria-numeros/teoria-numeros.html' },
+  { id: 27, title: 'Recta Numérica, Suma y Resta',                       subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'numero',  etapa: 2, xp: 30, icon: '📏', url: 'misiones/2ciclo-recta-numerica/recta-numerica.html' },
+  { id: 28, title: 'Múltiplos, Divisores y Primos',                      subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'numero',  etapa: 4, xp: 30, icon: '🧮', url: 'misiones/2ciclo-multiplos-divisores-primos/multiplos-divisores-primos.html' },
 ];
+
+/* Helpers de rutas (globales: index los usa en app.js) */
+function rutaEtapas(rutaKey) {
+  return MISSIONS.filter(m => m.ruta === rutaKey).sort((a, b) => a.etapa - b.etapa);
+}
+function rutaMaxEtapa(rutaKey) {
+  return rutaEtapas(rutaKey).reduce((mx, m) => Math.max(mx, m.etapa), 0);
+}
+/* Etiqueta visible del alumno: "🧭 Ruta del Número · Etapa 4 de 8".
+   La etapa 0 se muestra como "Punto de partida" (nunca "nivel bajo"). */
+function rutaLabel(m) {
+  const r = m && RUTAS[m.ruta];
+  if (!r) return m ? m.grade : '';
+  const etapaTxt = m.etapa === 0 ? 'Punto de partida' : `Etapa ${m.etapa} de ${rutaMaxEtapa(m.ruta)}`;
+  return `${r.emoji} ${r.nombre} · ${etapaTxt}`;
+}
