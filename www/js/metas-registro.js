@@ -126,12 +126,13 @@
   document.addEventListener('visibilitychange', function () { if (document.hidden) cerrarSesion(); });
 
   // ---------- ganchos sobre la plantilla de misiones ----------
-  // La nota se lee del panel de resultado que pinta la propia misión:
-  // "Resultado: 85/100 pts"
+  // La nota se lee del panel de resultado que pinta la propia misión.
+  // Hay dos formatos según la generación de la misión:
+  // "Resultado: 85/100 pts" y "Resultado automático: 85/100 puntos"
   function notaDePanel(idPanel) {
     var el = document.getElementById(idPanel);
     if (!el) return null;
-    var m = (el.textContent || '').match(/Resultado:\s*(\d+)\s*\/\s*(\d+)/);
+    var m = (el.textContent || '').match(/Resultado[^:]*:\s*(\d+)\s*\/\s*(\d+)/);
     return m ? { nota: parseInt(m[1], 10), base: parseInt(m[2], 10) } : null;
   }
 
@@ -155,7 +156,8 @@
       var geOrig = window.gradeEval;
       window.gradeEval = function () {
         var r = geOrig.apply(this, arguments);
-        if (window._evalGradeData) {
+        // misiones nuevas guardan _evalGradeData; las anteriores solo _evalPrintData
+        if (window._evalGradeData || window._evalPrintData) {
           var res = notaDePanel('evalAutoResult');
           if (res) registrar('evaluacion', { forma: window._currentEvalForm || null, nota: res.nota, base: res.base });
         }
