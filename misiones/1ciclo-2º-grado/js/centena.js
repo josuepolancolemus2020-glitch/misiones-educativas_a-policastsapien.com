@@ -671,6 +671,7 @@ function toggleAns() {
 // ===== EVALUACIÓN =====
 function genEval() {
   evalFormNum++;
+  window._currentEvalForm = evalFormNum;
   const evalNums = () => Array.from({ length: 4 }, () => Math.floor(Math.random() * 900) + 100);
   let html = `<div class="eval-score-bar"><span class="esb-title">📝 Evaluación N° ${evalFormNum}</span><div><span class="eval-score-pill esp-tf">V/F</span> <span class="eval-score-pill esp-mc">Selección</span> <span class="eval-score-pill esp-cp">Completar</span></div></div>`;
 
@@ -684,31 +685,32 @@ function genEval() {
     { q: '¿Cuál es el MAYOR número de tres cifras?', opts: ['A. 900', 'B. 990', 'C. 998', 'D. 999'], ans: 'D' },
   ];
   secI.forEach((item, i) => {
-    html += `<div class="eval-item"><div class="eval-q"><span class="eval-num">${i + 1}</span><div class="eval-q-text">${item.q}<div class="eval-mc-opts">`;
-    item.opts.forEach(o => { html += `<div class="eval-mc-opt"><input type="radio" name="si${i}"> ${o}</div>`; });
-    html += `</div><div class="eval-answer">${item.ans}</div></div></div></div>`;
+    html += `<div class="eval-item eval-auto-item"><div class="eval-q"><span class="eval-num">${i + 1}</span><div class="eval-q-text">${item.q}<div class="eval-mc-opts">`;
+    item.opts.forEach(o => { html += `<div class="eval-mc-opt"><label><input type="radio" name="si${i}" value="${o[0]}"> ${o}</label></div>`; });
+    html += `</div><div class="eval-answer">${item.ans}</div><div class="eval-item-feedback" id="evalFbSi${i}" aria-live="polite"></div></div></div></div>`;
   });
 
   // Sección II: Lectura y escritura (5 preguntas)
   html += `<div class="eval-section-title">✏️ II. Lee y escribe <span class="eval-pts">25 pts (5 c/u)</span></div>`;
-  const secIInums = evalNums().concat([Math.floor(Math.random() * 900) + 100]);
-  secIInums.slice(0, 3).forEach((n, i) => {
-    html += `<div class="eval-item"><div class="eval-q"><span class="eval-num">${i + 6}</span><div class="eval-q-text">Escribe con letras: <strong>${n}</strong> = <span class="eval-blank"></span><div class="eval-answer">${numToWords(n)}</div></div></div></div>`;
+  const wNums = evalNums().slice(0, 3);
+  wNums.forEach((n, i) => {
+    html += `<div class="eval-item eval-auto-item"><div class="eval-q"><span class="eval-num">${i + 6}</span><div class="eval-q-text">Escribe con letras: <strong>${n}</strong> = <input class="eval-cp-input" type="text" data-w="${i}" autocomplete="off" style="min-width:220px;"><div class="eval-answer">${numToWords(n)}</div><div class="eval-item-feedback" id="evalFbW${i}" aria-live="polite"></div></div></div></div>`;
   });
   const wordExamples = [{ n: 425, w: 'cuatrocientos veinticinco' }, { n: 308, w: 'trescientos ocho' }];
   wordExamples.forEach((ex, i) => {
-    html += `<div class="eval-item"><div class="eval-q"><span class="eval-num">${i + 9}</span><div class="eval-q-text">Escribe el número: "${ex.w}" = <span class="eval-blank"></span><div class="eval-answer">${ex.n}</div></div></div></div>`;
+    html += `<div class="eval-item eval-auto-item"><div class="eval-q"><span class="eval-num">${i + 9}</span><div class="eval-q-text">Escribe el número: "${ex.w}" = <input class="eval-cp-input" type="text" data-wn="${i}" autocomplete="off" inputmode="numeric" style="width:90px;"><div class="eval-answer">${ex.n}</div><div class="eval-item-feedback" id="evalFbWn${i}" aria-live="polite"></div></div></div></div>`;
   });
 
   // Sección III: Composición y descomposición (5 preguntas)
   html += `<div class="eval-section-title">🔢 III. Composición y descomposición <span class="eval-pts">25 pts (5 c/u)</span></div>`;
-  const secIIInums = evalNums();
-  secIIInums.slice(0, 3).forEach((n, i) => {
+  const dcNums = evalNums().slice(0, 3);
+  dcNums.forEach((n, i) => {
     const c = Math.floor(n / 100), d = Math.floor((n % 100) / 10), u = n % 10;
-    html += `<div class="eval-item"><div class="eval-q"><span class="eval-num">${i + 11}</span><div class="eval-q-text">Descompón: <strong>${n}</strong> = <span class="eval-blank"></span> + <span class="eval-blank"></span> + <span class="eval-blank"></span><div class="eval-answer">${c * 100} + ${d * 10} + ${u}</div></div></div></div>`;
+    html += `<div class="eval-item eval-auto-item"><div class="eval-q"><span class="eval-num">${i + 11}</span><div class="eval-q-text">Descompón: <strong>${n}</strong> = <input class="eval-cp-input" type="text" data-dc="${i}-0" autocomplete="off" inputmode="numeric" style="width:70px;"> + <input class="eval-cp-input" type="text" data-dc="${i}-1" autocomplete="off" inputmode="numeric" style="width:60px;"> + <input class="eval-cp-input" type="text" data-dc="${i}-2" autocomplete="off" inputmode="numeric" style="width:50px;"><div class="eval-answer">${c * 100} + ${d * 10} + ${u}</div><div class="eval-item-feedback" id="evalFbDc${i}" aria-live="polite"></div></div></div></div>`;
   });
-  [{ c: 4, d: 5, u: 3 }, { c: 7, d: 0, u: 8 }].forEach((p, i) => {
-    html += `<div class="eval-item"><div class="eval-q"><span class="eval-num">${i + 14}</span><div class="eval-q-text">Compón: ${p.c * 100} + ${p.d * 10} + ${p.u} = <span class="eval-blank"></span><div class="eval-answer">${p.c * 100 + p.d * 10 + p.u}</div></div></div></div>`;
+  const cmPairs = [{ c: 4, d: 5, u: 3 }, { c: 7, d: 0, u: 8 }];
+  cmPairs.forEach((p, i) => {
+    html += `<div class="eval-item eval-auto-item"><div class="eval-q"><span class="eval-num">${i + 14}</span><div class="eval-q-text">Compón: ${p.c * 100} + ${p.d * 10} + ${p.u} = <input class="eval-cp-input" type="text" data-cm="${i}" autocomplete="off" inputmode="numeric" style="width:90px;"><div class="eval-answer">${p.c * 100 + p.d * 10 + p.u}</div><div class="eval-item-feedback" id="evalFbCm${i}" aria-live="polite"></div></div></div></div>`;
   });
 
   // Sección IV: Verdadero / Falso (5 preguntas)
@@ -721,13 +723,81 @@ function genEval() {
     { q: 'La descomposición de 206 es: 200 + 60 + 0', ans: 'Falso (es 200 + 0 + 6)' },
   ];
   vf.forEach((item, i) => {
-    html += `<div class="eval-item"><div class="eval-q"><span class="eval-num">${i + 16}</span><div class="eval-q-text">${item.q}<div style="display:flex;gap:1.5rem;margin-top:0.5rem;margin-left:1.7rem;"><label><input type="radio" name="vf${i}"> Verdadero</label><label><input type="radio" name="vf${i}"> Falso</label></div><div class="eval-answer">${item.ans}</div></div></div></div>`;
+    html += `<div class="eval-item eval-auto-item"><div class="eval-q"><span class="eval-num">${i + 16}</span><div class="eval-q-text">${item.q}<div style="display:flex;gap:1.5rem;margin-top:0.5rem;margin-left:1.7rem;"><label><input type="radio" name="vf${i}" value="V"> Verdadero</label><label><input type="radio" name="vf${i}" value="F"> Falso</label></div><div class="eval-answer">${item.ans}</div><div class="eval-item-feedback" id="evalFbVf${i}" aria-live="polite"></div></div></div></div>`;
   });
 
+  html += `<div id="evalAutoResult" class="eval-auto-result"><strong>🧮 Prueba interactiva:</strong> escribe, marca y responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.</div>`;
+
   document.getElementById('evalOut').innerHTML = html;
+  window._evalGradeData = { mc: secI, w: wNums, wn: wordExamples, dc: dcNums, cm: cmPairs, vf: vf };
   evalAnsVisible = false;
   document.querySelectorAll('.eval-answer').forEach(el => el.style.display = 'none');
   saveProgress(); sfx('click');
+}
+// Normaliza texto del estudiante: minúsculas, sin tildes ni signos
+function _normTxt(s) { return (s || '').toString().trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9ñ ]/gi, '').replace(/\s+/g, ' ').trim(); }
+// Número escrito por el estudiante: quita comas, puntos y espacios
+function _normNum(s) { const t = (s || '').toString().replace(/[.,\s]/g, ''); return t === '' ? NaN : parseInt(t, 10); }
+function setEvalFeedback(id, ok, msg) {
+  const el = document.getElementById(id); if (!el) return;
+  el.textContent = msg; el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
+}
+function gradeEval() {
+  if (!window._evalGradeData) { showToast('⚠️ Genera una evaluación primero'); return; }
+  sfx('click');
+  const d = window._evalGradeData; let total = 0; const det = { mc: 0, le: 0, cd: 0, vf: 0 };
+  d.mc.forEach((it, i) => {
+    const sel = document.querySelector(`#evalOut input[name="si${i}"]:checked`);
+    const ok = !!sel && sel.value === it.ans;
+    if (ok) { det.mc++; total += 5; }
+    setEvalFeedback('evalFbSi' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + it.ans);
+  });
+  d.w.forEach((n, i) => {
+    const el = document.querySelector(`[data-w="${i}"]`);
+    const ok = !!el && _normTxt(el.value) !== '' && _normTxt(el.value) === _normTxt(numToWords(n));
+    if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); }
+    if (ok) { det.le++; total += 5; }
+    setEvalFeedback('evalFbW' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + numToWords(n));
+  });
+  d.wn.forEach((ex, i) => {
+    const el = document.querySelector(`[data-wn="${i}"]`);
+    const ok = !!el && _normNum(el.value) === ex.n;
+    if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); }
+    if (ok) { det.le++; total += 5; }
+    setEvalFeedback('evalFbWn' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + ex.n);
+  });
+  d.dc.forEach((n, i) => {
+    const c = Math.floor(n / 100), dd = Math.floor((n % 100) / 10), u = n % 10;
+    const esperado = [c * 100, dd * 10, u];
+    let okTodos = true;
+    esperado.forEach((v, k) => {
+      const el = document.querySelector(`[data-dc="${i}-${k}"]`);
+      const ok = !!el && _normNum(el.value) === v;
+      if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); }
+      if (!ok) okTodos = false;
+    });
+    if (okTodos) { det.cd++; total += 5; }
+    setEvalFeedback('evalFbDc' + i, okTodos, okTodos ? 'Correcto. +5 pts' : `Revisar. R/ ${c * 100} + ${dd * 10} + ${u}`);
+  });
+  d.cm.forEach((p, i) => {
+    const el = document.querySelector(`[data-cm="${i}"]`);
+    const esperado = p.c * 100 + p.d * 10 + p.u;
+    const ok = !!el && _normNum(el.value) === esperado;
+    if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); }
+    if (ok) { det.cd++; total += 5; }
+    setEvalFeedback('evalFbCm' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + esperado);
+  });
+  d.vf.forEach((item, i) => {
+    const sel = document.querySelector(`#evalOut input[name="vf${i}"]:checked`);
+    const correcta = item.ans.indexOf('Verdadero') === 0 ? 'V' : 'F';
+    const ok = !!sel && sel.value === correcta;
+    if (ok) { det.vf++; total += 5; }
+    setEvalFeedback('evalFbVf' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + item.ans);
+  });
+  const res = document.getElementById('evalAutoResult');
+  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Selección: ${det.mc * 5}/25 · Lee y escribe: ${det.le * 5}/25 · Compón/Descompón: ${det.cd * 5}/25 · V/F: ${det.vf * 5}/25</span>`; }
+  if (total >= 70) { addXP(8); showToast('🎯 Evaluación calificada: ' + total + '/100'); }
+  else showToast('🧮 Evaluación: ' + total + '/100. Revisa los ítems marcados.');
 }
 function toggleEvalAns() {
   evalAnsVisible = !evalAnsVisible;
