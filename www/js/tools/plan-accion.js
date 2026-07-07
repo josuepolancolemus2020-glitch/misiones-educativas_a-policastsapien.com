@@ -616,8 +616,11 @@ function paAbrirAnalisis(id) {
 }
 
 /* ── Sincronización a la hoja del maestro ── */
+/* Misma URL predeterminada que metas-registro.js (URL_SINCRONIZACION);
+   otro maestro solo pega la suya en la tarjeta ☁️ y queda guardada. */
+const PA_SYNC_DEFAULT = 'https://script.google.com/macros/s/AKfycbz8BHb5vXr4fZKsDprO2Q0kL7zKRL4pfMjo-HzgK28hLkncI0EyYOSHdKDft_vPfPRq/exec';
 function paSyncUrlGet() {
-  try { return (localStorage.getItem('METAS_SYNC_URL') || '').trim(); } catch (_) { return ''; }
+  try { return (localStorage.getItem('METAS_SYNC_URL') || PA_SYNC_DEFAULT).trim(); } catch (_) { return PA_SYNC_DEFAULT; }
 }
 
 function paEventosPendientes(d) {

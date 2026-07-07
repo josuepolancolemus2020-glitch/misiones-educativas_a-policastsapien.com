@@ -161,7 +161,8 @@
       "Bash(node --check js/tools/plan-accion.js)",
       "Bash(node \"C:/Users/Dell/AppData/Local/Temp/claude/C--Desarrollo-misiones-educativas-a-policastsapien-com/a28fd1a5-3fcf-4d3e-af8b-457b461dd74c/scratchpad/test-pa.js\")",
       "Bash(printf '%s\\\\n' '- [Plan de Acción padres]\\(plan-accion-padres.md\\) — jul 2026: persistencia METAS_PLANACCION_V1 + pestaña Padres \\(mensajes por categoría + WhatsApp\\) + sync a hoja del maestro \\(METAS_SYNC_URL compartida, Apps Script v5 pestaña PlanAccion\\); codigo_lista = clave del futuro chatbot de padres')",
-      "Bash(cat \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\76430c08-0526-45ab-b1bf-73a18e07af68\\\\tasks\\\\bndbgh3a6.output\")"
+      "Bash(cat \"C:\\\\Users\\\\Dell\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Desarrollo-misiones-educativas-a-policastsapien-com\\\\76430c08-0526-45ab-b1bf-73a18e07af68\\\\tasks\\\\bndbgh3a6.output\")",
+      "Bash(grep -n '```' FASE3-GOOGLE-SHEETS.md)"
     ],
     "additionalDirectories": [
       "C:\\Desarrollo\\misiones-educativas_a-policastsapien.com\\misiones\\2y3ciclo-adverbios",
