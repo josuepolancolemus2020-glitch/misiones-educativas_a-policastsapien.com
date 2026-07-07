@@ -573,37 +573,3 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
 .eval-pr-sel{font-family:'Fredoka',sans-serif;font-size:0.85rem;padding:0.25rem 0.4rem;border:2px solid var(--border);border-radius:8px;background:var(--card);color:var(--dark);margin-right:0.3rem;cursor:pointer;}
 .eval-pr-sel.eval-input-ok{border-color:var(--jade);background:var(--jade-gl);}
 .eval-pr-sel.eval-input-no{border-color:var(--red);background:rgba(214,48,49,0.08);}
-
-/* ==== modo presentación (proyector) ==== */
-/* Escala todo desde la raíz (el resto del CSS usa rem) y encaja el
-   contenido a la proporción elegida: ancho = alto de pantalla × proporción */
-html[data-presenta]{font-size:135%;}
-html[data-presenta] .main{transition:max-width 0.3s ease;}
-html[data-presenta="169"] .main{max-width:min(96vw,calc(100vh*16/9));}
-html[data-presenta="43"] .main{max-width:min(96vw,calc(100vh*4/3));}
-html[data-presenta="11"] .main{max-width:min(96vw,100vh);}
-html[data-presenta="34"] .main{max-width:min(96vw,calc(100vh*3/4));}
-html[data-presenta="916"] .main{max-width:min(96vw,calc(100vh*9/16));}
-.presenta-menu{position:fixed;right:0.8rem;bottom:3.4rem;z-index:1200;display:none;flex-direction:column;gap:0.3rem;background:var(--card);border:2px solid var(--pri);border-radius:14px;padding:0.5rem;box-shadow:0 8px 24px rgba(0,0,0,0.25);}
-.presenta-menu.open{display:flex;}
-.presenta-menu button{border:none;border-radius:9px;padding:0.5rem 0.9rem;background:var(--pri-gl);color:var(--pri);font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;text-align:left;}
-.presenta-menu button:hover,.presenta-menu button.active{background:var(--pri);color:#fff;}
-.presenta-zoom{display:flex;align-items:center;justify-content:space-between;gap:0.4rem;margin-top:0.3rem;padding-top:0.4rem;border-top:1.5px dashed var(--border);}
-.presenta-zoom button{border:none;border-radius:9px;padding:0.45rem 0.8rem;background:var(--pri);color:#fff;font-family:inherit;font-size:0.95rem;font-weight:800;cursor:pointer;}
-.presenta-zoom span{font-size:0.85rem;font-weight:700;color:var(--pri);min-width:3.2rem;text-align:center;}
-
-/* ==== modo libro (una tarjeta por página) ==== */
-.modo-libro .card.libro-oculta{display:none!important;}
-.libro-entra-der{animation:libroDer 0.35s ease;}
-.libro-entra-izq{animation:libroIzq 0.35s ease;}
-@keyframes libroDer{from{opacity:0;transform:translateX(60px);}to{opacity:1;transform:none;}}
-@keyframes libroIzq{from{opacity:0;transform:translateX(-60px);}to{opacity:1;transform:none;}}
-/* barra discreta al pie: ⟨ contador ⟩ (se aviva al pasar el mouse) */
-.libro-barra{position:fixed;bottom:0.5rem;left:50%;transform:translateX(-50%);z-index:1100;display:flex;align-items:center;gap:0.05rem;background:var(--pri);border-radius:999px;padding:0.08rem 0.22rem;opacity:0.35;transition:opacity 0.4s;box-shadow:0 2px 8px rgba(0,0,0,0.18);}
-.libro-barra:hover,.libro-barra:focus-within{opacity:1;}
-.libro-barra.libro-escondida{opacity:0;pointer-events:none;}
-.libro-paso{border:none;background:transparent;color:#fff;font-size:0.9rem;font-weight:800;cursor:pointer;padding:0.12rem 0.5rem;border-radius:999px;line-height:1;}
-.libro-paso:hover{background:rgba(255,255,255,0.18);}
-.libro-contador{color:#fff;font-size:0.7rem;font-weight:700;padding:0 0.25rem;pointer-events:none;white-space:nowrap;}
-.modo-libro nav.nav{margin-bottom:2.8rem;} /* aire para la barrita del libro */
-.modo-libro footer{padding-bottom:2.8rem;}

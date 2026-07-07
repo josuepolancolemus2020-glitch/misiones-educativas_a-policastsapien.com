@@ -122,6 +122,14 @@ Reglas de ahorro y calidad:
    por dispositivo) y los botones "📤 Enviar resultados" y "👤 Cambiar alumno"
    (para dispositivos compartidos) dentro de `.diploma-actions` de la constancia —
    por eso ese div y el input `.diploma-input` deben conservar sus clases estándar).
+   E inmediatamente antes de esa línea, incluir también:
+   `<script src="../../js/metas-presentacion.js"></script>`
+   (accesibilidad de aula compartida: letra grande predeterminada — el botón
+   "🔎 Letra" la vuelve pequeña —, botón "📽️ Presentación" con proporciones para
+   proyector + escala A−/A+, y modo 📖 Libro por tarjetas. Se engancha solo: usa
+   `.cred-tools` del pie, `.main`, las secciones `.sec` con tarjetas `.card` hijas
+   directas y la función `go()` — por eso esas clases y esa función deben conservar
+   sus nombres estándar).
 6. **Registrar** en `js/data/misiones.js` con el **siguiente id libre** (revisar el
    archivo; NO asumir count+1).
 7. **Validar** (barato y confiable):
@@ -147,6 +155,7 @@ Reglas de ahorro y calidad:
 - [ ] Generador de Tareas (identify/classify/complete/explain)
 - [ ] Evaluación Conceptual (TF15/MC15/CP15/PR15) + Pensamiento Crítico (5×20)
 - [ ] Constancia + Recursos + footer estándar
+- [ ] `<script src="../../js/metas-presentacion.js"></script>` al final del HTML (letra grande predeterminada + modo presentación + modo libro)
 - [ ] `<script src="../../js/metas-registro.js"></script>` al final del HTML (registro de evidencia)
 - [ ] Registrada en `misiones.js` con id libre · propagada · commit/push a main
 
