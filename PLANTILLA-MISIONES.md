@@ -131,7 +131,24 @@ Reglas de ahorro y calidad:
    directas y la función `go()` — por eso esas clases y esa función deben conservar
    sus nombres estándar).
 6. **Registrar** en `js/data/misiones.js` con el **siguiente id libre** (revisar el
-   archivo; NO asumir count+1).
+   archivo; NO asumir count+1) y con su **Ruta de Aprendizaje**: campos `ruta`
+   (numero | forma | palabra | planeta | cuerpo) y `etapa` (posición en la
+   secuencia de esa ruta). El alumno nunca ve "Ciclo/Grado": eso queda solo como
+   metadato docente en `grade`/`cycle` y en los encabezados imprimibles de las
+   evaluaciones. Integración completa con las 3 fases de rutas:
+   - **Badge del héroe** de la misión: `EMOJI-RUTA Ruta … · Etapa n de N · Materia`
+     (ej. `🧭 Ruta del Número · Etapa 4 de 8 · Matemática`; la etapa 0 se escribe
+     "Punto de partida"). Emojis de ruta: 🧭 Número, 📐 Forma, ✍️ Palabra,
+     🌎 Planeta, 🧠 Cuerpo.
+   - Si la misión se inserta **entre** etapas existentes, renumerar `etapa` en las
+     misiones siguientes de esa ruta y actualizar el "de N" en los badges de TODA
+     la ruta (el catálogo y el mapa se actualizan solos porque usan `rutaLabel()`).
+   - **Diagnóstico**: añadir 1 pregunta representativa del `evalMCBank` nuevo a
+     `js/data/diagnosticos.js` en la ruta correspondiente, con su campo `etapa`,
+     manteniendo el orden de básico → avanzado.
+   - Si nace una **ruta nueva**, añadirla a `RUTAS` en `js/data/misiones.js` y a
+     `RUTAS_ORDEN` en `js/app.js`. (El mapa, "Tu siguiente paso" e insignias no
+     necesitan más cambios: todo se deriva de `ruta`/`etapa` y del registro.)
 7. **Validar** (barato y confiable):
    - `node --check js/<slug>.js`
    - sopas: que cada palabra coincida con su grid
