@@ -147,7 +147,7 @@
       libroBtn.type = 'button'; libroBtn.id = 'libroBtnMenu';
       libroBtn.textContent = '📖 Libro (deslizar páginas)';
       libroBtn.classList.toggle('active', libroActivo());
-      libroBtn.addEventListener('click', toggleLibro);
+      libroBtn.addEventListener('click', function () { toggleLibro(); menu.classList.remove('open'); });
       menu.appendChild(libroBtn);
       var fila = document.createElement('div');
       fila.className = 'presenta-zoom';
@@ -166,6 +166,15 @@
     menu.classList.toggle('open');
     suena();
   }
+  // el menú se cierra al tocar en cualquier parte fuera de él
+  document.addEventListener('click', function (e) {
+    var menu = document.getElementById('presentaMenu');
+    if (!menu || !menu.classList.contains('open')) return;
+    if (menu.contains(e.target)) return;
+    var btn = document.getElementById('presentaBtn');
+    if (btn && btn.contains(e.target)) return; // el propio botón ya alterna
+    menu.classList.remove('open');
+  });
 
   // ---------- modo libro ----------
   var libroPag = 0;
