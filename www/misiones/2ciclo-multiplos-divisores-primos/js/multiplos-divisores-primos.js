@@ -78,6 +78,13 @@ function togglePresenta() {
       b.addEventListener('click', () => setPresenta(modo));
       menu.appendChild(b);
     });
+    // modo libro: una tarjeta por página, se pasa deslizando o con flechas
+    const libroBtn = document.createElement('button');
+    libroBtn.type = 'button'; libroBtn.id = 'libroBtnMenu';
+    libroBtn.textContent = '📖 Libro (deslizar páginas)';
+    libroBtn.classList.toggle('active', libroActivo());
+    libroBtn.addEventListener('click', () => toggleLibro());
+    menu.appendChild(libroBtn);
     // control de tamaño de letra del modo presentación
     const zoomRow = document.createElement('div');
     zoomRow.className = 'presenta-zoom';
@@ -99,6 +106,115 @@ function togglePresenta() {
 window.addEventListener('DOMContentLoaded', () => {
   // restaura proporción y escala (la pantalla completa requiere un toque del usuario)
   try { const m = localStorage.getItem(PRESENTA_KEY); if (m) { document.documentElement.setAttribute('data-presenta', m); aplicarPresentaZoom(); } } catch (e) {}
+});
+
+// ===================== MODO LIBRO (una tarjeta por página) =====================
+// Las tarjetas de la sección activa se ven una a la vez y se pasan deslizando
+// (teléfono), con las flechas ⟨ ⟩ (proyector + mouse) o con el teclado.
+// Al pasar de la última página se salta a la siguiente sección: toda la
+// misión se recorre de lado a lado como un libro.
+const LIBRO_KEY = 'prefLibroMultiplosDivisores';
+let libroPag = 0;
+let libroEntrarPorElFinal = false; // al retroceder de sección, caer en su última página
+function libroActivo() { return document.body.classList.contains('modo-libro'); }
+function libroCartas() {
+  const sec = document.querySelector('.sec.active');
+  return sec ? Array.from(sec.querySelectorAll(':scope > .card')) : [];
+}
+function libroPinta(dir) {
+  const cartas = libroCartas();
+  if (!cartas.length) { const lbl = document.getElementById('libroContador'); if (lbl) lbl.textContent = ''; return; }
+  libroPag = Math.min(Math.max(libroPag, 0), cartas.length - 1);
+  cartas.forEach((c, i) => {
+    c.classList.toggle('libro-oculta', i !== libroPag);
+    c.classList.remove('libro-entra-der', 'libro-entra-izq');
+  });
+  if (dir) { void cartas[libroPag].offsetWidth; cartas[libroPag].classList.add(dir > 0 ? 'libro-entra-der' : 'libro-entra-izq'); }
+  const tab = document.querySelector('.nav-t.active[data-s]');
+  const lbl = document.getElementById('libroContador');
+  if (lbl) lbl.textContent = (tab ? tab.textContent.trim() + ' · ' : '') + (libroPag + 1) + '/' + cartas.length;
+  // widgets que se miden al mostrarse (sopa, gráficos) recalculan
+  window.dispatchEvent(new Event('resize'));
+}
+function libroMueve(delta) {
+  if (!libroActivo()) return;
+  const cartas = libroCartas();
+  const destino = libroPag + delta;
+  if (destino >= 0 && destino < cartas.length) {
+    libroPag = destino;
+    libroPinta(delta);
+    window.scrollTo({ top: 0 });
+  } else {
+    const secs = Array.from(document.querySelectorAll('.nav-t[data-s]')).map(b => b.getAttribute('data-s'));
+    const activa = document.querySelector('.sec.active');
+    const idx = secs.indexOf(activa ? activa.id : '');
+    const sig = idx + (delta > 0 ? 1 : -1);
+    if (sig < 0 || sig >= secs.length) return; // portada o contraportada del libro
+    libroEntrarPorElFinal = delta < 0;
+    go(secs[sig]);
+  }
+  if (typeof sfx === 'function') sfx('click');
+}
+function toggleLibro() {
+  const on = !libroActivo();
+  document.body.classList.toggle('modo-libro', on);
+  try { localStorage.setItem(LIBRO_KEY, on); } catch (e) {}
+  let ui = document.getElementById('libroUI');
+  if (on) {
+    if (!ui) {
+      ui = document.createElement('div');
+      ui.id = 'libroUI';
+      ui.innerHTML = '<button type="button" class="libro-flecha libro-izq" aria-label="Página anterior">⟨</button>' +
+        '<span id="libroContador" class="libro-contador" aria-live="polite"></span>' +
+        '<button type="button" class="libro-flecha libro-der" aria-label="Página siguiente">⟩</button>';
+      document.body.appendChild(ui);
+      ui.querySelector('.libro-izq').addEventListener('click', () => libroMueve(-1));
+      ui.querySelector('.libro-der').addEventListener('click', () => libroMueve(1));
+    }
+    ui.style.display = '';
+    libroPag = 0;
+    libroPinta(0);
+  } else {
+    if (ui) ui.style.display = 'none';
+    document.querySelectorAll('.card.libro-oculta').forEach(c => c.classList.remove('libro-oculta', 'libro-entra-der', 'libro-entra-izq'));
+  }
+  const mb = document.getElementById('libroBtnMenu');
+  if (mb) mb.classList.toggle('active', on);
+  if (typeof sfx === 'function') sfx('click');
+}
+// al cambiar de sección (nav, botones "siguiente", etc.) se repagina
+const _goSinLibro = go;
+go = function (id) {
+  const r = _goSinLibro.apply(this, arguments);
+  if (libroActivo()) {
+    libroPag = libroEntrarPorElFinal ? 1e9 : 0;
+    libroEntrarPorElFinal = false;
+    libroPinta(0);
+  }
+  return r;
+};
+// deslizar de lado a lado (se ignora sobre la sopa y los campos de texto)
+let _libroTX = null, _libroTY = null;
+document.addEventListener('touchstart', e => {
+  if (!libroActivo()) return;
+  const t = e.touches[0]; _libroTX = t.clientX; _libroTY = t.clientY;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  if (!libroActivo() || _libroTX === null) return;
+  if (e.target.closest('.sopa-grid, input, textarea, select, canvas, .libro-flecha')) { _libroTX = null; return; }
+  const t = e.changedTouches[0];
+  const dx = t.clientX - _libroTX, dy = t.clientY - _libroTY;
+  _libroTX = null;
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) libroMueve(dx < 0 ? 1 : -1);
+}, { passive: true });
+document.addEventListener('keydown', e => {
+  if (!libroActivo()) return;
+  if (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
+  if (e.key === 'ArrowRight') libroMueve(1);
+  else if (e.key === 'ArrowLeft') libroMueve(-1);
+});
+window.addEventListener('DOMContentLoaded', () => {
+  try { if (localStorage.getItem(LIBRO_KEY) === 'true') toggleLibro(); } catch (e) {}
 });
 
 // ===================== UTILIDADES =====================
