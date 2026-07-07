@@ -117,6 +117,20 @@ const LIBRO_KEY = 'prefLibroMultiplosDivisores';
 let libroPag = 0;
 let libroEntrarPorElFinal = false; // al retroceder de sección, caer en su última página
 function libroActivo() { return document.body.classList.contains('modo-libro'); }
+// la barrita se esconde sola y reaparece al tocar la pantalla o mover el mouse
+let _libroBarraTimer = null;
+function libroBarraAsoma() {
+  const ui = document.getElementById('libroUI');
+  if (!ui || !libroActivo()) return;
+  ui.classList.remove('libro-escondida');
+  clearTimeout(_libroBarraTimer);
+  _libroBarraTimer = setTimeout(() => {
+    if (ui.matches(':hover')) { libroBarraAsoma(); return; }
+    ui.classList.add('libro-escondida');
+  }, 3000);
+}
+['touchstart', 'mousemove', 'scroll', 'keydown'].forEach(ev =>
+  document.addEventListener(ev, () => { if (libroActivo()) libroBarraAsoma(); }, { passive: true }));
 function libroCartas() {
   const sec = document.querySelector('.sec.active');
   return sec ? Array.from(sec.querySelectorAll(':scope > .card')) : [];
@@ -133,6 +147,7 @@ function libroPinta(dir) {
   const tab = document.querySelector('.nav-t.active[data-s]');
   const lbl = document.getElementById('libroContador');
   if (lbl) lbl.textContent = (tab ? tab.textContent.trim() + ' · ' : '') + (libroPag + 1) + '/' + cartas.length;
+  libroBarraAsoma();
   // widgets que se miden al mostrarse (sopa, gráficos) recalculan
   window.dispatchEvent(new Event('resize'));
 }
@@ -197,12 +212,12 @@ go = function (id) {
 // deslizar de lado a lado (se ignora sobre la sopa y los campos de texto)
 let _libroTX = null, _libroTY = null;
 document.addEventListener('touchstart', e => {
-  if (!libroActivo()) return;
+  if (!libroActivo() || !e.touches || !e.touches.length) return;
   const t = e.touches[0]; _libroTX = t.clientX; _libroTY = t.clientY;
 }, { passive: true });
 document.addEventListener('touchend', e => {
-  if (!libroActivo() || _libroTX === null) return;
-  if (e.target.closest('.sopa-grid, input, textarea, select, canvas, .libro-flecha')) { _libroTX = null; return; }
+  if (!libroActivo() || _libroTX === null || !e.changedTouches || !e.changedTouches.length) return;
+  if (e.target && e.target.closest && e.target.closest('.sopa-grid, input, textarea, select, canvas, .libro-paso')) { _libroTX = null; return; }
   const t = e.changedTouches[0];
   const dx = t.clientX - _libroTX, dy = t.clientY - _libroTY;
   _libroTX = null;

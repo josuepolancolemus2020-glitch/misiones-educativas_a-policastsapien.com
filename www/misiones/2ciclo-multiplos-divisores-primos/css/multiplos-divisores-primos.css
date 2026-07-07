@@ -599,10 +599,11 @@ html[data-presenta="916"] .main{max-width:min(96vw,calc(100vh*9/16));}
 @keyframes libroDer{from{opacity:0;transform:translateX(60px);}to{opacity:1;transform:none;}}
 @keyframes libroIzq{from{opacity:0;transform:translateX(-60px);}to{opacity:1;transform:none;}}
 /* barra discreta al pie: ⟨ contador ⟩ (se aviva al pasar el mouse) */
-.libro-barra{position:fixed;bottom:0.55rem;left:50%;transform:translateX(-50%);z-index:1100;display:flex;align-items:center;gap:0.1rem;background:var(--pri);border-radius:999px;padding:0.12rem 0.3rem;opacity:0.45;transition:opacity 0.25s;box-shadow:0 3px 10px rgba(0,0,0,0.2);}
+.libro-barra{position:fixed;bottom:0.5rem;left:50%;transform:translateX(-50%);z-index:1100;display:flex;align-items:center;gap:0.05rem;background:var(--pri);border-radius:999px;padding:0.08rem 0.22rem;opacity:0.35;transition:opacity 0.4s;box-shadow:0 2px 8px rgba(0,0,0,0.18);}
 .libro-barra:hover,.libro-barra:focus-within{opacity:1;}
-.libro-paso{border:none;background:transparent;color:#fff;font-size:1rem;font-weight:800;cursor:pointer;padding:0.15rem 0.6rem;border-radius:999px;line-height:1;}
+.libro-barra.libro-escondida{opacity:0;pointer-events:none;}
+.libro-paso{border:none;background:transparent;color:#fff;font-size:0.9rem;font-weight:800;cursor:pointer;padding:0.12rem 0.5rem;border-radius:999px;line-height:1;}
 .libro-paso:hover{background:rgba(255,255,255,0.18);}
-.libro-contador{color:#fff;font-size:0.75rem;font-weight:700;padding:0 0.3rem;pointer-events:none;white-space:nowrap;}
+.libro-contador{color:#fff;font-size:0.7rem;font-weight:700;padding:0 0.25rem;pointer-events:none;white-space:nowrap;}
 .modo-libro nav.nav{margin-bottom:2.8rem;} /* aire para la barrita del libro */
 .modo-libro footer{padding-bottom:2.8rem;}
