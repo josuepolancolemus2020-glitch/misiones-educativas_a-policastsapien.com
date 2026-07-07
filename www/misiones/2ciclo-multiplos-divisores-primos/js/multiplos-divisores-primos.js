@@ -164,9 +164,10 @@ function toggleLibro() {
     if (!ui) {
       ui = document.createElement('div');
       ui.id = 'libroUI';
-      ui.innerHTML = '<button type="button" class="libro-flecha libro-izq" aria-label="Página anterior">⟨</button>' +
+      ui.className = 'libro-barra';
+      ui.innerHTML = '<button type="button" class="libro-paso libro-izq" aria-label="Página anterior">⟨</button>' +
         '<span id="libroContador" class="libro-contador" aria-live="polite"></span>' +
-        '<button type="button" class="libro-flecha libro-der" aria-label="Página siguiente">⟩</button>';
+        '<button type="button" class="libro-paso libro-der" aria-label="Página siguiente">⟩</button>';
       document.body.appendChild(ui);
       ui.querySelector('.libro-izq').addEventListener('click', () => libroMueve(-1));
       ui.querySelector('.libro-der').addEventListener('click', () => libroMueve(1));
