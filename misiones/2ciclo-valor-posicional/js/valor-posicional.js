@@ -534,7 +534,7 @@ const evalTFBank=[
   {q:'999,999 es el número más grande de 6 cifras.',a:true}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es el valor del dígito 4 en 573,204?',o:['a) 4','b) 400','c) 4,000','d) 40,000'],a:1},
+  {q:'¿Cuál es el valor del dígito 4 en 573,420?',o:['a) 4','b) 400','c) 4,000','d) 40,000'],a:1},
   {q:'¿Cómo se lee el número 908,050?',o:['a) Noventa mil ochocientos cincuenta','b) Novecientos ocho mil cincuenta','c) Nueve mil ochenta y cinco','d) Novecientos ochenta mil cinco'],a:1},
   {q:'¿Cuántas cifras tiene un millón (1,000,000)?',o:['a) 5','b) 6','c) 7','d) 8'],a:2},
   {q:'¿Cuál número es mayor: 87,340 o 9,500?',o:['a) 9,500','b) 87,340','c) Son iguales','d) No se puede saber'],a:1},

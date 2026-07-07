@@ -539,13 +539,234 @@ function etapaEstado(m, prog) {
   return 'progreso';
 }
 
+/* ── Fase 3: diagnóstico por ruta, "Tu siguiente paso" e insignias ── */
+
+const DIAG_KEY = 'METAS_DIAG_V1';
+
+function readDiag() {
+  try {
+    const o = JSON.parse(localStorage.getItem(DIAG_KEY));
+    return (o && typeof o === 'object') ? o : {};
+  } catch (_) { return {}; }
+}
+function saveDiag(d) {
+  try { localStorage.setItem(DIAG_KEY, JSON.stringify(d)); } catch (_) {}
+}
+
+function insigniasDeRuta(key, prog) {
+  const etapas = rutaEtapas(key);
+  const dom = etapas.filter(m => etapaEstado(m, prog) === 'dominada').length;
+  const list = [];
+  if (dom >= 1) list.push({ icon: '⭐', nombre: 'En marcha' });
+  if (dom >= Math.ceil(etapas.length / 2)) list.push({ icon: '🏅', nombre: 'Media ruta' });
+  if (dom === etapas.length) list.push({ icon: '🏆', nombre: 'Ruta completa' });
+  return list;
+}
+
+// Última misión con ruta que aparece en el registro (el evento más reciente)
+function ultimaMisionActiva() {
+  const evs = readRegistro();
+  for (let i = evs.length - 1; i >= 0; i--) {
+    const ev = evs[i];
+    if (!ev || !ev.mision) continue;
+    const f = _rNorm(ev.mision);
+    const m = MISSIONS.find(x => x.ruta && missionFolder(x) === f);
+    if (m) return m;
+  }
+  return null;
+}
+
+// Reglas Fase 3: nota <70 → asegurar la etapa anterior; ≥90 → invitar a la siguiente
+function sugerenciaSiguiente(prog) {
+  const last = ultimaMisionActiva();
+  if (last) {
+    const etapas = rutaEtapas(last.ruta);
+    const p = prog[missionFolder(last)] || {};
+    const best = (typeof p.best === 'number') ? p.best : null;
+
+    if (best !== null && best < 70) {
+      const prev = etapas.filter(x => x.etapa < last.etapa).pop();
+      if (prev) return { m: prev, titulo: 'Asegura tu base', razon: `Tu nota en «${last.title}» fue ${best}. Refuerza primero la etapa anterior y vuelve con más fuerza: repasar también es avanzar. 💪` };
+      return { m: last, titulo: 'Vuelve a intentarlo', razon: `Tu mejor nota en «${last.title}» fue ${best}. Ya conoces el camino: esta vez la dominas. 💪` };
+    }
+
+    if (best !== null) {
+      const next = etapas.find(x => x.etapa > last.etapa && etapaEstado(x, prog) !== 'dominada')
+                || etapas.find(x => etapaEstado(x, prog) !== 'dominada');
+      if (next) {
+        if (best >= 90) return { m: next, titulo: '¡Sigue avanzando!', razon: `¡Excelente! Dominaste «${last.title}» con ${best}. Estás más que listo para la siguiente etapa. 🚀` };
+        return { m: next, titulo: 'Tu siguiente etapa', razon: `Dominaste «${last.title}» con ${best}. Puedes avanzar, o repetirla si quieres subir tu nota a 90 o más.` };
+      }
+      for (let i = 0; i < RUTAS_ORDEN.length; i++) {
+        const k = RUTAS_ORDEN[i];
+        const otra = rutaEtapas(k).find(x => etapaEstado(x, prog) !== 'dominada');
+        if (otra) return { m: otra, titulo: 'Una nueva ruta te espera', razon: `¡Completaste la ${RUTAS[last.ruta].nombre}! 🏆 Es momento de explorar la ${RUTAS[k].nombre}.` };
+      }
+      return null; // todas las rutas dominadas
+    }
+
+    return { m: last, titulo: 'Continúa donde quedaste', razon: `Ya exploraste «${last.title}». Complétala y califica su evaluación para dominar la etapa.` };
+  }
+
+  // Sin actividad registrada: usar el diagnóstico más reciente
+  const diag = readDiag();
+  let mejorRuta = null, mejorT = '';
+  Object.keys(diag).forEach(k => {
+    if (RUTAS[k] && diag[k] && diag[k].t > mejorT) { mejorT = diag[k].t; mejorRuta = k; }
+  });
+  if (mejorRuta) {
+    const etapas = rutaEtapas(mejorRuta);
+    const m = etapas.find(x => x.etapa === diag[mejorRuta].etapa) || etapas[0];
+    return { m, titulo: 'Tu punto de partida', razon: `Según tu diagnóstico de la ${RUTAS[mejorRuta].nombre}, este es tu punto de partida ideal.` };
+  }
+  return { m: null, titulo: '¿Por dónde empiezo?', razon: 'Toca «📍 ¿Dónde empiezo?» en una ruta para hacer un diagnóstico rápido, o comienza por el Punto de partida de la Ruta del Número.' };
+}
+
+/* Diagnóstico de entrada: cuestionario corto en un modal, sin tocar las misiones */
+
+let _diagState = null;
+
+function abrirDiagnostico(rutaKey) {
+  const r = RUTAS[rutaKey];
+  const banco = (typeof DIAGNOSTICOS !== 'undefined' && DIAGNOSTICOS[rutaKey]) || [];
+  if (!r || !banco.length) { toast('Diagnóstico no disponible todavía'); return; }
+  _diagState = { ruta: rutaKey, idx: 0, errores: [], aciertos: 0 };
+  let b = document.getElementById('diag-backdrop');
+  if (!b) {
+    b = document.createElement('div');
+    b.id = 'diag-backdrop';
+    b.className = 'diag-backdrop';
+    document.body.appendChild(b);
+  }
+  _diagPintarPregunta();
+}
+window.abrirDiagnostico = abrirDiagnostico;
+
+function _diagCerrar() {
+  const b = document.getElementById('diag-backdrop');
+  if (b) b.remove();
+  _diagState = null;
+}
+window._diagCerrar = _diagCerrar;
+
+function _diagPintarPregunta() {
+  const st = _diagState;
+  const b = document.getElementById('diag-backdrop');
+  if (!st || !b) return;
+  const banco = DIAGNOSTICOS[st.ruta];
+  const r = RUTAS[st.ruta];
+  const item = banco[st.idx];
+  b.innerHTML = `
+    <div class="diag-modal">
+      <div class="diag-head">
+        <span class="diag-ruta">${r.emoji} ${r.nombre}</span>
+        <button class="diag-close" onclick="_diagCerrar()" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="diag-progress">Pregunta ${st.idx + 1} de ${banco.length}</div>
+      <div class="diag-bar"><div class="diag-bar-fill" style="width:${Math.round((st.idx / banco.length) * 100)}%"></div></div>
+      <div class="diag-q">${item.q}</div>
+      <div class="diag-opts">
+        ${item.o.map((op, i) => `<button class="diag-opt" onclick="_diagResponder(${i})">${op}</button>`).join('')}
+      </div>
+      <p class="diag-nota">Responde tranquilo: esto no es un examen, es una brújula. 🧭</p>
+    </div>`;
+}
+
+function _diagResponder(i) {
+  const st = _diagState;
+  if (!st) return;
+  const banco = DIAGNOSTICOS[st.ruta];
+  const item = banco[st.idx];
+  if (i === item.a) st.aciertos++; else st.errores.push(item.etapa);
+  st.idx++;
+  if (st.idx < banco.length) { _diagPintarPregunta(); return; }
+  _diagResultado();
+}
+window._diagResponder = _diagResponder;
+
+function _diagResultado() {
+  const st = _diagState;
+  const b = document.getElementById('diag-backdrop');
+  if (!st || !b) return;
+  const banco  = DIAGNOSTICOS[st.ruta];
+  const r      = RUTAS[st.ruta];
+  const etapas = rutaEtapas(st.ruta);
+
+  // Primera etapa con error = punto de partida; todo correcto = última etapa
+  const etapaSug = st.errores.length ? Math.min.apply(null, st.errores) : rutaMaxEtapa(st.ruta);
+  const m = etapas.find(x => x.etapa === etapaSug) || etapas[0];
+
+  const d = readDiag();
+  d[st.ruta] = { t: new Date().toISOString(), etapa: m.etapa, aciertos: st.aciertos, total: banco.length };
+  saveDiag(d);
+
+  const etiqueta = m.etapa === 0 ? 'Punto de partida' : 'Etapa ' + m.etapa;
+  b.innerHTML = `
+    <div class="diag-modal">
+      <div class="diag-head">
+        <span class="diag-ruta">${r.emoji} ${r.nombre}</span>
+        <button class="diag-close" onclick="_diagCerrar(); renderRutas();" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="diag-result">
+        <div class="diag-result-emoji">${st.errores.length ? '📍' : '🌟'}</div>
+        <div class="diag-result-score">${st.aciertos} de ${banco.length} correctas</div>
+        <div class="diag-result-label">Tu punto de partida sugerido:</div>
+        <div class="diag-result-etapa">${etiqueta} · ${m.title}</div>
+        ${st.errores.length ? '' : '<p class="diag-result-msg">¡Dominas toda la ruta! Confírmalo con la última etapa. 🏆</p>'}
+        <button class="diag-go" onclick="_diagCerrar(); visitMission(${m.id});">🚀 Ir a la misión</button>
+        <button class="diag-later" onclick="_diagCerrar(); renderRutas();">Verlo en el mapa</button>
+      </div>
+    </div>`;
+}
+
 function renderRutas() {
   const container = document.getElementById('rutas-container');
   if (!container) return;
 
   const prog = rutasProgress();
+  const diag = readDiag();
 
-  container.innerHTML = RUTAS_ORDEN.map(key => {
+  // Tarjeta "Tu siguiente paso"
+  const sug = sugerenciaSiguiente(prog);
+  let pasoHTML;
+  if (sug) {
+    pasoHTML = `
+      <div class="paso-card">
+        <div class="paso-label">🧭 Tu siguiente paso</div>
+        <div class="paso-title">${sug.titulo}</div>
+        <p class="paso-razon">${sug.razon}</p>
+        ${sug.m ? `
+          <button class="paso-btn" onclick="visitMission(${sug.m.id})">
+            <span class="paso-btn-icon">${sug.m.icon}</span>
+            <span class="paso-btn-info">
+              <span class="paso-btn-ruta">${rutaLabel(sug.m)}</span>
+              <span class="paso-btn-title">${sug.m.title}</span>
+            </span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>` : ''}
+      </div>`;
+  } else {
+    pasoHTML = `
+      <div class="paso-card">
+        <div class="paso-label">🧭 Tu siguiente paso</div>
+        <div class="paso-title">¡Increíble! Dominaste todas las etapas 🏆</div>
+        <p class="paso-razon">Completaste todas las rutas de aprendizaje. Sigue practicando para mantener tus notas de campeón.</p>
+      </div>`;
+  }
+
+  // Insignias ganadas en todas las rutas
+  const ganadas = [];
+  RUTAS_ORDEN.forEach(k => insigniasDeRuta(k, prog).forEach(ins => ganadas.push({ r: RUTAS[k], ins })));
+  const insigniasHTML = `
+    <div class="insignias-strip">
+      <div class="insignias-title">🎖️ Tus insignias</div>
+      ${ganadas.length
+        ? `<div class="insignias-list">${ganadas.map(g =>
+            `<span class="ins-chip">${g.ins.icon}<em>${g.r.emoji} ${g.ins.nombre}</em></span>`).join('')}</div>`
+        : `<p class="insignias-empty">Domina tu primera etapa con nota de 70 o más y gana la insignia ⭐ En marcha.</p>`}
+    </div>`;
+
+  container.innerHTML = pasoHTML + insigniasHTML + RUTAS_ORDEN.map(key => {
     const r      = RUTAS[key];
     const etapas = rutaEtapas(key);
     if (!r || !etapas.length) return '';
@@ -584,6 +805,15 @@ function renderRutas() {
         </a>`;
     }).join('');
 
+    const insRuta   = insigniasDeRuta(key, prog);
+    const tieneDiag = typeof DIAGNOSTICOS !== 'undefined' && (DIAGNOSTICOS[key] || []).length;
+    const dg        = diag[key];
+    const diagRow = tieneDiag ? `
+        <div class="ruta-diag-row">
+          <button class="ruta-diag-btn" onclick="abrirDiagnostico('${key}')">📍 ${dg ? 'Repetir diagnóstico' : '¿Dónde empiezo?'}</button>
+          ${dg ? `<span class="ruta-diag-info">Sugerido: ${dg.etapa === 0 ? 'Punto de partida' : 'Etapa ' + dg.etapa}</span>` : ''}
+        </div>` : '';
+
     return `
       <section class="ruta-card">
         <header class="ruta-head">
@@ -592,9 +822,11 @@ function renderRutas() {
             <span class="ruta-nombre">${r.nombre}</span>
             <span class="ruta-avance">${dominadas} de ${etapas.length} etapas dominadas</span>
           </span>
+          ${insRuta.length ? `<span class="ruta-ins">${insRuta.map(x => x.icon).join('')}</span>` : ''}
           <span class="ruta-pct ${r.color}">${pct}%</span>
         </header>
         <div class="ruta-bar"><div class="ruta-bar-fill ${r.color}" style="width:${pct}%"></div></div>
+        ${diagRow}
         <div class="ruta-mapa">${filas}</div>
       </section>`;
   }).join('');
