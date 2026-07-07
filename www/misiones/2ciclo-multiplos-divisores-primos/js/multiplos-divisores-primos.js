@@ -17,6 +17,62 @@ window.addEventListener('DOMContentLoaded', () => {
   if(localStorage.getItem('prefLetraMultiplosDivisores') === 'true') document.body.classList.add('letra-grande');
 });
 
+// ===================== MODO PRESENTACIÓN (proyector) =====================
+// Escala toda la misión desde la raíz (el CSS usa rem) y encaja el contenido
+// a la proporción elegida. Se combina con el botón "Letra".
+const PRESENTA_KEY = 'prefPresentaMultiplosDivisores';
+const PRESENTA_MODOS = [
+  ['',    '🖥️ Normal'],
+  ['169', '📽️ Panorámico 16:9'],
+  ['43',  '🖥️ Horizontal 4:3'],
+  ['11',  '⬜ Cuadrado 1:1'],
+  ['34',  '📱 Vertical 3:4'],
+  ['916', '📲 Historia 9:16']
+];
+function setPresenta(modo) {
+  if (modo) document.documentElement.setAttribute('data-presenta', modo);
+  else document.documentElement.removeAttribute('data-presenta');
+  try { localStorage.setItem(PRESENTA_KEY, modo); } catch (e) {}
+  const menu = document.getElementById('presentaMenu');
+  if (menu) {
+    menu.classList.remove('open');
+    menu.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.modo === modo));
+  }
+  // Los modos horizontales aprovechan el proyector a pantalla completa
+  if (modo === '169' || modo === '43') {
+    if (document.documentElement.requestFullscreen && !document.fullscreenElement)
+      document.documentElement.requestFullscreen().catch(() => {});
+  } else if (!modo && document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  }
+  if (typeof sfx === 'function') sfx('click');
+}
+function togglePresenta() {
+  let menu = document.getElementById('presentaMenu');
+  if (!menu) {
+    menu = document.createElement('div');
+    menu.id = 'presentaMenu';
+    menu.className = 'presenta-menu';
+    menu.setAttribute('role', 'menu');
+    menu.setAttribute('aria-label', 'Modo presentación');
+    const actual = document.documentElement.getAttribute('data-presenta') || '';
+    PRESENTA_MODOS.forEach(([modo, txt]) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.textContent = txt; b.dataset.modo = modo;
+      if (modo === actual) b.classList.add('active');
+      b.addEventListener('click', () => setPresenta(modo));
+      menu.appendChild(b);
+    });
+    document.body.appendChild(menu);
+  }
+  menu.classList.toggle('open');
+  if (typeof sfx === 'function') sfx('click');
+}
+window.addEventListener('DOMContentLoaded', () => {
+  // restaura proporción y escala (la pantalla completa requiere un toque del usuario)
+  try { const m = localStorage.getItem(PRESENTA_KEY); if (m) document.documentElement.setAttribute('data-presenta', m); } catch (e) {}
+});
+
 // ===================== UTILIDADES =====================
 const _pick = (arr, n) => [...arr].sort(() => Math.random() - 0.5).slice(0, n);
 const _shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
