@@ -407,3 +407,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .eval-pr-sel{font-family:inherit;font-size:0.85rem;padding:0.25rem 0.4rem;border:2px solid var(--border,#dfe6e9);border-radius:8px;background:var(--card,#fff);color:var(--dark,#2d3436);margin-right:0.3rem;cursor:pointer;}
 .eval-pr-sel.eval-input-ok{border-color:var(--jade,#00b894);background:rgba(0,184,148,0.1);}
 .eval-pr-sel.eval-input-no{border-color:#d63031;background:rgba(214,48,49,0.08);}
+
+/* ===== Ajustes de legibilidad jul-2026: contraste predice/mini-quiz/memorama + flashcards mayúscula inicial y letra mayor ===== */
+/* Flashcards: mayúscula inicial + letra más grande sin desbordar
+   (se conserva el text-transform:lowercase blindado; ::first-letter lo corrige al inicio) */
+.fc-back{overflow-y:auto;}
+#fcA{font-size:1.28rem;line-height:1.5;}
+#fcA::first-letter{text-transform:uppercase !important;}

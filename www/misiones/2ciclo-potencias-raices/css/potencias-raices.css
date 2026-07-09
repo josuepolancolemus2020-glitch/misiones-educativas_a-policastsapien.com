@@ -512,3 +512,19 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
 .eval-pr-sel{font-family:inherit;font-size:0.85rem;padding:0.25rem 0.4rem;border:2px solid var(--border);border-radius:8px;background:var(--card);color:var(--dark);margin-right:0.3rem;cursor:pointer;}
 .eval-pr-sel.eval-input-ok{border-color:var(--jade);background:var(--jade-gl);}
 .eval-pr-sel.eval-input-no{border-color:var(--red);background:rgba(214,48,49,0.08);}
+
+/* ===== Ajustes de legibilidad jul-2026: contraste predice/mini-quiz/memorama + flashcards mayúscula inicial y letra mayor ===== */
+/* Contraste del feedback correcto/incorrecto (Predice y mini-quiz) */
+.predice-fb.ok{background:rgba(0,184,148,0.14);color:#075e44;border:1.5px solid #00b894;font-weight:700;}
+.predice-fb.err{background:rgba(214,48,49,0.10);color:#8f1d1d;border:1.5px solid #d63031;font-weight:700;}
+[data-theme="dark"] .predice-fb.ok{background:rgba(0,184,148,0.16);color:#7dedc9;}
+[data-theme="dark"] .predice-fb.err{background:rgba(214,48,49,0.18);color:#ffb3b3;}
+.mq-fb.ok{background:rgba(0,184,148,0.14);color:#075e44;font-weight:700;}
+.mq-fb.err{background:rgba(214,48,49,0.10);color:#8f1d1d;font-weight:700;}
+[data-theme="dark"] .mq-fb.ok{color:#7dedc9;}
+[data-theme="dark"] .mq-fb.err{color:#ffb3b3;}
+/* Flashcards: mayúscula inicial + letra más grande sin desbordar
+   (se conserva el text-transform:lowercase blindado; ::first-letter lo corrige al inicio) */
+.fc-back{overflow-y:auto;}
+#fcA{font-size:1.28rem;line-height:1.5;}
+#fcA::first-letter{text-transform:uppercase !important;}

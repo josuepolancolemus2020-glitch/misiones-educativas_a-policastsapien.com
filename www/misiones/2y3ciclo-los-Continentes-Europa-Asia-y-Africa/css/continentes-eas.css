@@ -654,3 +654,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
    Nunca usar class="fa" en texto: Font Awesome 6 dibuja a-z y 0-9 como iconos
    con forma de MAYÚSCULA (por eso se veía el reverso en mayúsculas). ===== */
 #fcA{font-family:'Nunito','Fredoka',sans-serif !important;font-weight:600 !important;font-style:normal !important;text-transform:lowercase !important;}
+
+/* ===== Ajustes de legibilidad jul-2026: contraste predice/mini-quiz/memorama + flashcards mayúscula inicial y letra mayor ===== */
+/* Flashcards: mayúscula inicial + letra más grande sin desbordar
+   (se conserva el text-transform:lowercase blindado; ::first-letter lo corrige al inicio) */
+.fc-back{overflow-y:auto;}
+#fcA{font-size:1.28rem;line-height:1.5;}
+#fcA::first-letter{text-transform:uppercase !important;}

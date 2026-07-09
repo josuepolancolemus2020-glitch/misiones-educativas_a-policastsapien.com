@@ -2645,3 +2645,17 @@ body.letra-grande .sopa-cell {
    Nunca usar class="fa" en texto: Font Awesome 6 dibuja a-z y 0-9 como iconos
    con forma de MAYÚSCULA (por eso se veía el reverso en mayúsculas). ===== */
 #fcA{font-family:'Nunito','Fredoka',sans-serif !important;font-weight:600 !important;font-style:normal !important;text-transform:lowercase !important;}
+
+/* ===== Ajustes de legibilidad jul-2026: contraste predice/mini-quiz/memorama + flashcards mayúscula inicial y letra mayor ===== */
+/* Memorama: reverso legible con fondo sólido y letra mayor */
+.memo-back{background:#ffffff;color:#1b2838;font-size:0.9rem;font-weight:600;}
+.memo-back.memo-term{background:#1565c0;color:#ffffff;}
+.memo-card.matched .memo-back{background:#d9f5ec;color:#075e44;}
+[data-theme="dark"] .memo-back{background:#242a3d;color:#e8f0fe;}
+[data-theme="dark"] .memo-back.memo-term{background:#1565c0;color:#ffffff;}
+[data-theme="dark"] .memo-card.matched .memo-back{background:rgba(0,184,148,0.18);color:#7dedc9;}
+/* Flashcards: mayúscula inicial + letra más grande sin desbordar
+   (se conserva el text-transform:lowercase blindado; ::first-letter lo corrige al inicio) */
+.fc-back{overflow-y:auto;}
+#fcA{font-size:1.28rem;line-height:1.5;}
+#fcA::first-letter{text-transform:uppercase !important;}

@@ -42,14 +42,18 @@ Reglas de ahorro y calidad:
 2. **Predice** (primera impresión, debe encantar): cada predicción lleva su
    explorador interactivo ("🔍 Explorar la pista") que induce a la respuesta
    jugando: medir distancias, animaciones, tocar y descubrir.
-3. **Flashcards**: reverso en minúscula. ⚠️ CAUSA RAÍZ del bug histórico:
-   NUNCA usar `class="fa"` en el div del reverso — Font Awesome 6 mapea las
-   letras a-z y los dígitos 0-9 a ICONOS con forma de MAYÚSCULA e impone su
-   fuente (ninguna regla `text-transform` puede arreglarlo porque el glifo
-   mismo es mayúsculo; las tildes ú/á delatan el bug al caer a la fuente
-   normal). La clase correcta es `fca` y el CSS blindado obligatorio:
+3. **Flashcards**: reverso en minúscula PERO con **mayúscula inicial**
+   (ortografía: todo texto comienza en mayúscula) y **letra grande sin
+   desbordes**. ⚠️ CAUSA RAÍZ del bug histórico: NUNCA usar `class="fa"` en el
+   div del reverso — Font Awesome 6 mapea las letras a-z y los dígitos 0-9 a
+   ICONOS con forma de MAYÚSCULA e impone su fuente (ninguna regla
+   `text-transform` puede arreglarlo porque el glifo mismo es mayúsculo; las
+   tildes ú/á delatan el bug al caer a la fuente normal). La clase correcta es
+   `fca` y el CSS blindado obligatorio:
    `#fcA{font-family:'Nunito','Fredoka',sans-serif !important;font-weight:600 !important;font-style:normal !important;text-transform:lowercase !important;}`
-   (corregido en las 28 misiones el 2026-07-05, commit c8e995f).
+   (corregido en las 28 misiones el 2026-07-05, commit c8e995f) + el ajuste de
+   legibilidad jul-2026 (aplicado a las 28):
+   `.fc-back{overflow-y:auto;} #fcA{font-size:1.28rem;line-height:1.5;} #fcA::first-letter{text-transform:uppercase !important;}`
 4. **Clasifica**: seleccionar y colocar (SIN arrastre). Si hay un elemento
    seleccionado y se toca uno ya colocado, se INSERTA el seleccionado en esa
    caja (no se saca el tocado); solo sin selección el toque devuelve al banco.
@@ -88,6 +92,16 @@ Reglas de ahorro y calidad:
     widgets con racha/puntaje/confeti, memorama, reto contra reloj, sopa con
     linterna). El estudiante debe sentir "placer de aprender": feedback
     inmediato, animaciones y recompensas visibles.
+13. **Contraste legible en los feedback y el memorama** (ajuste jul-2026,
+    aplicado a las 28): NUNCA texto jade sobre fondo jade translúcido. El
+    feedback correcto usa verde oscuro `#075e44` (claro) / `#7dedc9` (oscuro)
+    y el incorrecto rojo oscuro `#8f1d1d` / `#ffb3b3`, en `.predice-fb` y
+    `.mq-fb`, con `font-weight:700`. El memorama lleva reverso con fondo
+    SÓLIDO: pista en `#fff` con texto `#1b2838` a `0.9rem`, término en blanco
+    sobre azul `#1565c0`, y pareja lograda en `#d9f5ec` con `#075e44`
+    (overrides `[data-theme="dark"]` incluidos). El bloque estándar está al
+    final de cualquier CSS parchado bajo el marcador
+    «Ajustes de legibilidad jul-2026».
 
 > Implementación de referencia completa: `misiones/2ciclo-multiplos-divisores-primos/`
 > (id 28, incluye TODOS los estándares 1-12). La id 27 (recta numérica) es la
