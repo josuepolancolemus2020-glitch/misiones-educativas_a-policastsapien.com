@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Misión: Números de Tres Cifras | 2° Grado | policastsapien.com</title>
-<meta name="description" content="Misión: Números de Tres Cifras: misión educativa interactiva con juegos, retos y logros. PolicastSapien.">
-<meta property="og:title" content="Misión: Números de Tres Cifras">
+<title>Misión Números Grandes: del Cien al Millón | policastsapien.com</title>
+<meta name="description" content="Misión Números Grandes: sube la escalera del valor posicional, aprende a leer, escribir y comparar números hasta el millón y más allá, con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión Números Grandes: del Cien al Millón">
 <meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Misiones PolicastSapien">
@@ -14,8 +14,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="css/centena.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
@@ -33,15 +33,15 @@
   <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
 </div>
 
-<header class="hero" role="banner">
+<header class="hero" role="banner" style="background:linear-gradient(90deg,#1565c0 0%,#00838f 50%,#6c5ce7 100%);">
   <div class="hero-inner">
     <div class="hero-mascot-wrap">
-      <div class="hero-mascot" aria-hidden="true">🔢</div>
-      <div class="mascot-tooltip">¡Hola! Soy Centi. ¡Contamos juntos! 🚀</div>
+      <div class="hero-mascot" aria-hidden="true">🚀</div>
+      <div class="mascot-tooltip">¡Hola! Soy Milo. ¡Subamos juntos la escalera de los números hasta el millón!</div>
     </div>
     <div class="hero-text">
-      <h1>Misión <span>Números de Tres Cifras</span></h1>
-      <p class="sub">¡Aprende a contar, leer y escribir números hasta el 999! 🎯</p>
+      <h1>Misión <span>Números Grandes: del Cien al Millón</span></h1>
+      <p class="sub">¡Aprende a leer, escribir y comparar números gigantes, del cien hasta el millón y más allá! 🎯</p>
       <div class="badge">🧭 Ruta del Número · Punto de partida · Matemática</div>
     </div>
   </div>
@@ -49,280 +49,309 @@
 
 <main class="main" id="main-content">
 
-<!-- ==================== APRENDE ==================== -->
-<div class="sec active" id="s-aprende" role="tabpanel">
+<div class="sec active" id="s-predice" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔮 Predice antes de resolver</h2>
+    <p style="margin-bottom:0.5rem;">Antes de aprender las reglas, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
+    <div id="prediceWidget"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ahora aprende las reglas!</span><span class="nsb-name">Aprende</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
 
+<div class="sec" id="s-aprende" role="tabpanel">
   <div class="card ac-teal">
-    <h2>🧱 ¿Qué es una Centena?</h2>
-    <p><strong>Una centena</strong> es un grupo de <strong>100 unidades</strong>. Si tienes 10 grupos de 10, ya tienes una centena.</p>
-    <div class="vs-grid" style="margin-top:1rem;">
-      <div class="vs-box vs-a">
-        <h4>🟢 10 decenas = 1 centena</h4>
-        <p>10 grupos de 10 unidades forman <strong>100 unidades</strong> (una centena).</p>
-        <p style="font-size:1.3rem;font-family:'Fredoka',sans-serif;margin-top:0.5rem;">10 × 10 = <strong>100</strong></p>
-      </div>
-      <div class="vs-box vs-b">
-        <h4>🔵 Así contamos centenas:</h4>
-        <p style="font-family:'Fredoka',sans-serif;font-size:1rem;line-height:2;">
-          1 centena = <strong>100</strong><br>
-          2 centenas = <strong>200</strong><br>
-          3 centenas = <strong>300</strong><br>
-          …<br>
-          9 centenas = <strong>900</strong>
-        </p>
-      </div>
-    </div>
+    <h2>🪜 La escalera de los números</h2>
+    <p style="margin-bottom:0.7rem;">Los números crecen subiendo una escalera mágica: cada peldaño vale <strong>10 veces más</strong> que el anterior. Empezamos en las <strong>unidades</strong> y, peldaño a peldaño, ¡llegamos hasta el <strong>millón</strong> y más allá!</p>
     <div class="tip">
       <span class="ti">💡</span>
-      <div>Los números de <strong>tres cifras</strong> van del <strong>100</strong> (cien) al <strong>999</strong> (novecientos noventa y nueve). ¡Son 900 números en total!</div>
+      <div><strong>La regla de la escalera:</strong> 10 unidades = 1 decena · 10 decenas = 1 centena · 10 centenas = 1 millar · … · 1,000 millares = ¡1 millón!</div>
     </div>
-  </div>
-
-  <div class="card ac-blue">
-    <h2>🏠 Los Tres Lugares: C · D · U</h2>
-    <p style="margin-bottom:1rem;">Todo número de tres cifras tiene tres posiciones. Cada posición tiene un valor diferente:</p>
-    <table class="cdu-table">
-      <thead>
-        <tr>
-          <th class="cdu-h-c">C<br><small>Centenas</small></th>
-          <th class="cdu-h-d">D<br><small>Decenas</small></th>
-          <th class="cdu-h-u">U<br><small>Unidades</small></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="cdu-cell-c">3</td>
-          <td class="cdu-cell-d">4</td>
-          <td class="cdu-cell-u">7</td>
-        </tr>
-        <tr class="cdu-row-read">
-          <td>Vale 300</td>
-          <td>Vale 40</td>
-          <td>Vale 7</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="ex-box">
-      <span class="ex-tag ex-f">📖 El número 347</span><br>
-      <span>El <span class="hl">3</span> está en las <strong>centenas</strong> → vale <span class="hl">300</span><br>
-      El <span class="hl">4</span> está en las <strong>decenas</strong> → vale <span class="hl">40</span><br>
-      El <span class="hl">7</span> está en las <strong>unidades</strong> → vale <span class="hl">7</span></span>
+    <div class="demo-visual">
+      <div class="demo-title">🔬 Mini-demostración: subamos desde 1</div>
+      <div class="demo-steps">
+        <div class="demo-step ds-start"><span class="ds-label">Salida</span><span class="ds-val">1</span></div>
+        <div class="demo-arrow">×10 → 10 · ×10 → 100 · ×10 → 1,000 · ×10 → 10,000 · ×10 → 100,000 · ×10 ↓</div>
+        <div class="demo-step ds-end"><span class="ds-label">Meta</span><span class="ds-val">1,000,000</span></div>
+      </div>
+      <p class="demo-note">✅ Seis saltos ×10 llevan del 1 al millón: por eso 1,000,000 tiene <strong>seis ceros</strong>.</p>
     </div>
   </div>
 
   <div class="card ac-gold">
-    <h2>📖 Cómo se Leen los Números</h2>
-    <p style="margin-bottom:0.8rem;">Para leer un número de tres cifras, empezamos por las centenas:</p>
-    <div class="type-grid">
-      <div class="type-chip tc-teal"><div class="t-art">100</div><div class="t-info">cien</div></div>
-      <div class="type-chip tc-gold"><div class="t-art">200</div><div class="t-info">doscientos</div></div>
-      <div class="type-chip tc-blue"><div class="t-art">300</div><div class="t-info">trescientos</div></div>
-      <div class="type-chip tc-purple"><div class="t-art">400</div><div class="t-info">cuatrocientos</div></div>
-      <div class="type-chip tc-teal"><div class="t-art">500</div><div class="t-info">quinientos</div></div>
-      <div class="type-chip tc-gold"><div class="t-art">600</div><div class="t-info">seiscientos</div></div>
-      <div class="type-chip tc-blue"><div class="t-art">700</div><div class="t-info">setecientos</div></div>
-      <div class="type-chip tc-purple"><div class="t-art">800</div><div class="t-info">ochocientos</div></div>
-      <div class="type-chip tc-teal"><div class="t-art">900</div><div class="t-info">novecientos</div></div>
+    <h2>📦 Bloque 1: El punto de partida — U, D y C</h2>
+    <p style="margin-bottom:0.6rem;">Todo número de tres cifras tiene <strong>centenas, decenas y unidades</strong>. Cada cifra vale según su lugar: en <strong>347</strong>, el 3 vale 300, el 4 vale 40 y el 7 vale 7.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">347</span>
+      <span class="ae-flecha">→ 300 + 40 + 7 →</span>
+      <span class="ae-res"><strong>trescientos cuarenta y siete</strong></span>
     </div>
-    <div class="ex-box" style="margin-top:0.8rem;">
-      <span class="ex-tag ex-m">✏️ Ejemplos</span><br>
-      <span><span class="hl">528</span> → quinientos veintiocho<br>
-      <span class="hl">703</span> → setecientos tres<br>
-      <span class="hl">100</span> → cien<br>
-      <span class="hl">215</span> → doscientos quince</span>
+    <div class="mini-quiz-wrap" id="mqBlock1">
+      <p class="mq-pregunta">🤔 ¿Cuánto vale el 5 en el número 582?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'El 5 no vale 5: está en las centenas, no en las unidades.')">5</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! El 5 está en las centenas: vale 5 × 100 = 500.')">500</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'50 sería si estuviera en las decenas, pero está un peldaño más arriba.')">50</button>
+      </div>
+      <div class="mq-fb" id="mqBlock1-fb"></div>
     </div>
   </div>
 
-  <div class="card ac-amber">
-    <h2>🔧 Composición y Descomposición</h2>
+  <div class="card ac-gold">
+    <h2>📦 Bloque 2: El período de los MILES y la coma</h2>
+    <p style="margin-bottom:0.6rem;">Después del 999 se estrena la <strong>unidad de millar (1,000)</strong>. Para no perdernos, escribimos una <strong>coma cada 3 cifras</strong>, contando desde la derecha. Cada bloque de 3 se llama <strong>período</strong>.</p>
     <div class="vs-grid">
       <div class="vs-box vs-a">
-        <h4>🔨 Composición</h4>
-        <p>Unir las partes para formar el número:</p>
-        <p style="font-size:1.1rem;font-family:'Fredoka',sans-serif;margin-top:0.5rem;text-align:center;">
-          300 + 40 + 5 = <strong>345</strong>
-        </p>
+        <h4>✏️ 45,203</h4>
+        <p>[45] período de los miles · [203] período de las unidades</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">Se lee: <strong>cuarenta y cinco mil doscientos tres</strong></p>
       </div>
-      <div class="vs-box vs-c">
-        <h4>✂️ Descomposición</h4>
-        <p>Separar el número en sus partes:</p>
-        <p style="font-size:1.1rem;font-family:'Fredoka',sans-serif;margin-top:0.5rem;text-align:center;">
-          <strong>562</strong> = 500 + 60 + 2
-        </p>
+      <div class="vs-box vs-b">
+        <h4>🪜 Los nuevos peldaños</h4>
+        <p>UM = 1,000 · DM = 10,000 · CM = 100,000</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">unidad, decena y centena… ¡pero de millar!</p>
       </div>
     </div>
-    <div class="tip">
-      <span class="ti">🎯</span>
-      <div><strong>Truco:</strong> Para descomponer un número, mira cada dígito en su posición.<br>
-      En <strong>847</strong>: el 8 vale <strong>800</strong> (centenas), el 4 vale <strong>40</strong> (decenas), el 7 vale <strong>7</strong> (unidades).<br>
-      847 = <strong>800 + 40 + 7</strong></div>
+    <div class="mini-quiz-wrap" id="mqBlock2">
+      <p class="mq-pregunta">🤔 ¿Dónde va la coma en el número 68000?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Cuenta 3 cifras desde la DERECHA: 680,00 no deja un bloque de 3.')">680,00</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! Tres cifras desde la derecha: 68,000 — sesenta y ocho mil.')">68,000</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'6,8000 deja 4 cifras a la derecha; la coma va cada 3.')">6,8000</button>
+      </div>
+      <div class="mq-fb" id="mqBlock2-fb"></div>
     </div>
   </div>
 
-  <button class="next-sec-btn" aria-label="Ir a la tabla CDU" onclick="go('s-tabla')">
-    <span class="nsb-icon">📊</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Muy bien!</span><span class="nsb-name">Ver la Tabla CDU</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== TABLA ==================== -->
-<div class="sec" id="s-tabla" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>📊 Tabla de Valor Posicional</h2>
-    <p style="margin-bottom:1rem;">Cada dígito tiene un valor según su posición. Observa estos ejemplos:</p>
-    <table class="cdu-table">
-      <thead>
-        <tr>
-          <th class="cdu-h-c">C · Centenas</th>
-          <th class="cdu-h-d">D · Decenas</th>
-          <th class="cdu-h-u">U · Unidades</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="cdu-cell-c">4</td><td class="cdu-cell-d">5</td><td class="cdu-cell-u">6</td>
-        </tr>
-        <tr class="cdu-row-read">
-          <td>4 centenas = 400</td><td>5 decenas = 50</td><td>6 unidades = 6</td>
-        </tr>
-        <tr>
-          <td class="cdu-cell-c">7</td><td class="cdu-cell-d">0</td><td class="cdu-cell-u">3</td>
-        </tr>
-        <tr class="cdu-row-read">
-          <td>7 centenas = 700</td><td>0 decenas = 0</td><td>3 unidades = 3</td>
-        </tr>
-        <tr>
-          <td class="cdu-cell-c">1</td><td class="cdu-cell-d">2</td><td class="cdu-cell-u">0</td>
-        </tr>
-        <tr class="cdu-row-read">
-          <td>1 centena = 100</td><td>2 decenas = 20</td><td>0 unidades = 0</td>
-        </tr>
-        <tr>
-          <td class="cdu-cell-c">9</td><td class="cdu-cell-d">9</td><td class="cdu-cell-u">9</td>
-        </tr>
-        <tr class="cdu-row-read">
-          <td>9 centenas = 900</td><td>9 decenas = 90</td><td>9 unidades = 9</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="card ac-blue">
-    <h2>🎨 Los Colores de CDU</h2>
-    <div class="type-grid">
-      <div class="type-chip tc-teal">
-        <div class="t-art" style="color:var(--cen);">🟢 C</div>
-        <div class="t-info"><strong>Centenas</strong><br>Tercer lugar desde la derecha<br>Cada 1 vale 100</div>
-      </div>
-      <div class="type-chip tc-blue">
-        <div class="t-art" style="color:var(--dec);">🔵 D</div>
-        <div class="t-info"><strong>Decenas</strong><br>Segundo lugar desde la derecha<br>Cada 1 vale 10</div>
-      </div>
-      <div class="type-chip tc-amber">
-        <div class="t-art" style="color:var(--uni);">🟠 U</div>
-        <div class="t-info"><strong>Unidades</strong><br>Primer lugar desde la derecha<br>Cada 1 vale 1</div>
-      </div>
-    </div>
-    <div class="ex-box">
-      <span class="ex-tag ex-d">📌 Regla importante</span><br>
-      <span>El <span class="hl">0</span> en cualquier posición significa que <strong>no hay</strong> ningún grupo en esa posición.<br>
-      En <span class="hl">504</span>: hay 5 centenas, <strong>ninguna decena</strong> (0 decenas), y 4 unidades.<br>
-      504 = 500 + <strong>0</strong> + 4</span>
-    </div>
-  </div>
-  <button class="next-sec-btn" aria-label="Ir al laboratorio" onclick="go('s-lab')">
-    <span class="nsb-icon">🧪</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Vamos a explorar!</span><span class="nsb-name">Laboratorio CDU</span></span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
-
-<!-- ==================== LAB ==================== -->
-<div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
-    <h2>🧪 Laboratorio: Construye tu Número</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Usa los botones ▲▼ para cambiar las centenas, decenas y unidades. ¡Observa cómo cambia el número!</p>
-
-    <!-- Visual blocks -->
-    <div class="lab-visual" id="labVis"></div>
-
-    <!-- Number display -->
-    <div class="lab-number-display">
-      <div class="lab-number-big" id="labNum">235</div>
-      <div class="lab-number-words" id="labWords">doscientos treinta y cinco</div>
-      <div class="lab-number-decomp" id="labDecomp">200 + 30 + 5 = 235</div>
+    <h2>📦 Bloque 3: Cómo se LEEN los números grandes</h2>
+    <p style="margin-bottom:0.6rem;">Se lee <strong>por bloques</strong>, de izquierda a derecha: el bloque se lee como un número normal y se le agrega su "apellido": <strong>mil</strong> o <strong>millones</strong>. El bloque de unidades no lleva apellido.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">245,300</span>
+      <span class="ae-flecha">→ [245]+"mil" [300] →</span>
+      <span class="ae-res"><strong>doscientos cuarenta y cinco mil trescientos</strong></span>
     </div>
-
-    <!-- CDU buttons -->
-    <div class="lab-cdu-btns">
-      <div class="lab-cdu-slot lab-cdu-slot-c">
-        <span class="lab-cdu-slot-lbl">C · Centenas</span>
-        <div class="lab-cdu-btn" onclick="changeC(1)">▲</div>
-        <div class="lab-cdu-digit" id="labC">2</div>
-        <div class="lab-cdu-btn" onclick="changeC(-1)">▼</div>
-      </div>
-      <div style="font-family:'Fredoka',sans-serif;font-size:2rem;color:var(--gray);align-self:center;">·</div>
-      <div class="lab-cdu-slot lab-cdu-slot-d">
-        <span class="lab-cdu-slot-lbl">D · Decenas</span>
-        <div class="lab-cdu-btn" onclick="changeD(1)">▲</div>
-        <div class="lab-cdu-digit" id="labD">3</div>
-        <div class="lab-cdu-btn" onclick="changeD(-1)">▼</div>
-      </div>
-      <div style="font-family:'Fredoka',sans-serif;font-size:2rem;color:var(--gray);align-self:center;">·</div>
-      <div class="lab-cdu-slot lab-cdu-slot-u">
-        <span class="lab-cdu-slot-lbl">U · Unidades</span>
-        <div class="lab-cdu-btn" onclick="changeU(1)">▲</div>
-        <div class="lab-cdu-digit" id="labU">5</div>
-        <div class="lab-cdu-btn" onclick="changeU(-1)">▼</div>
-      </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">🗣️</span>
+      <div><strong>Ojo con estos:</strong> 100 = "cien", pero 105 = "<strong>ciento</strong> cinco" · 1,000 = "mil" (nunca "un mil") · 1,000,000 = "<strong>un</strong> millón".</div>
     </div>
-
-    <!-- Challenge -->
-    <div style="margin-top:1.2rem;text-align:center;background:var(--sec-gl);border:2px solid var(--sec);border-radius:12px;padding:0.8rem;">
-      <p style="font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--dark);margin-bottom:0.5rem;">🎯 Reto: <strong id="labChallengeText">¡Forma el número 456!</strong></p>
-      <button class="btn btn-sec" onclick="checkLabChallenge()">✅ ¡Lo formé!</button>
-      <button class="btn btn-d" onclick="newLabChallenge()" style="margin-left:0.5rem;">🔀 Nuevo reto</button>
+    <div class="mini-quiz-wrap" id="mqBlock3">
+      <p class="mq-pregunta">🤔 ¿Cómo se lee 78,050?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! [78]+"mil" y [050]=cincuenta: setenta y ocho mil cincuenta.')">setenta y ocho mil cincuenta</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Ese sería 78,500. El bloque de unidades es 050 = cincuenta.')">setenta y ocho mil quinientos</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Ese sería 7,850. ¡La coma te dice que hay 78 miles!')">siete mil ochocientos cincuenta</button>
+      </div>
+      <div class="mq-fb" id="mqBlock3-fb"></div>
     </div>
-    <div id="fbLab" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a flashcards" onclick="go('s-flash')">
-    <span class="nsb-icon">🃏</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Memoriza!</span><span class="nsb-name">Flashcards</span></span>
+
+  <div class="card ac-blue">
+    <h2>📦 Bloque 4: ¡Llegamos al MILLÓN!</h2>
+    <p style="margin-bottom:0.6rem;">Mil millares forman <strong>un millón: 1,000,000</strong>, un 1 con seis ceros y DOS comas. Su período se lee con el apellido <strong>"millón"</strong> (si es 1) o <strong>"millones"</strong> (si son más).</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>💰 4,250,000</h4>
+        <p>[4] millones · [250] mil · [000]</p>
+        <p style="font-size:0.82rem;">cuatro millones doscientos cincuenta mil</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🌎 ¿Y más allá?</h4>
+        <p>25,000,000 = veinticinco millones</p>
+        <p style="font-size:0.82rem;">308,000,000 = trescientos ocho millones. ¡La regla de los períodos funciona siempre!</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock4">
+      <p class="mq-pregunta">🤔 ¿Cómo se escribe "tres millones cuarenta mil"?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'3,400,000 sería tres millones CUATROCIENTOS mil. Cuarenta = 040.')">3,400,000</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,true,'¡Correcto! [3] millones + [040] mil + [000]: los ceros de relleno guardan el lugar.')">3,040,000</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'340,000 solo tiene 6 cifras: ahí no hay millones.')">340,000</button>
+      </div>
+      <div class="mq-fb" id="mqBlock4-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>📦 Bloque 5: La tabla de las 9 posiciones</h2>
+    <p style="margin-bottom:0.6rem;">Esta es la escalera completa. El número de ejemplo es <strong>456,789,123</strong>:</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;text-align:center;font-family:'Fredoka',sans-serif;margin:0.6rem 0;min-width:520px;">
+        <thead>
+        <tr style="background:var(--pri-gl);">
+          <th colspan="3" style="padding:0.35rem;border:1px solid var(--border);font-size:0.72rem;color:var(--purple);">PERÍODO DE LOS MILLONES</th>
+          <th colspan="3" style="padding:0.35rem;border:1px solid var(--border);font-size:0.72rem;color:var(--sec);">PERÍODO DE LOS MILES</th>
+          <th colspan="3" style="padding:0.35rem;border:1px solid var(--border);font-size:0.72rem;color:var(--pri);">PERÍODO DE LAS UNIDADES</th>
+        </tr>
+        <tr style="background:var(--pri-gl);">
+          <th style="padding:0.3rem;border:1px solid var(--border);font-size:0.68rem;">C</th><th style="padding:0.3rem;border:1px solid var(--border);font-size:0.68rem;">D</th><th style="padding:0.3rem;border:1px solid var(--border);font-size:0.68rem;">U</th>
+          <th style="padding:0.3rem;border:1px solid var(--border);font-size:0.68rem;">C</th><th style="padding:0.3rem;border:1px solid var(--border);font-size:0.68rem;">D</th><th style="padding:0.3rem;border:1px solid var(--border);font-size:0.68rem;">U</th>
+          <th style="padding:0.3rem;border:1px solid var(--border);font-size:0.68rem;">C</th><th style="padding:0.3rem;border:1px solid var(--border);font-size:0.68rem;">D</th><th style="padding:0.3rem;border:1px solid var(--border);font-size:0.68rem;">U</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td style="padding:0.4rem;border:1px solid var(--border);font-weight:700;color:var(--purple);font-size:1.05rem;">4</td><td style="padding:0.4rem;border:1px solid var(--border);font-weight:700;color:var(--purple);font-size:1.05rem;">5</td><td style="padding:0.4rem;border:1px solid var(--border);font-weight:700;color:var(--purple);font-size:1.05rem;">6</td>
+          <td style="padding:0.4rem;border:1px solid var(--border);font-weight:700;color:var(--sec);font-size:1.05rem;">7</td><td style="padding:0.4rem;border:1px solid var(--border);font-weight:700;color:var(--sec);font-size:1.05rem;">8</td><td style="padding:0.4rem;border:1px solid var(--border);font-weight:700;color:var(--sec);font-size:1.05rem;">9</td>
+          <td style="padding:0.4rem;border:1px solid var(--border);font-weight:700;color:var(--pri);font-size:1.05rem;">1</td><td style="padding:0.4rem;border:1px solid var(--border);font-weight:700;color:var(--pri);font-size:1.05rem;">2</td><td style="padding:0.4rem;border:1px solid var(--border);font-weight:700;color:var(--pri);font-size:1.05rem;">3</td>
+        </tr>
+        <tr style="font-size:0.62rem;color:var(--gray);">
+          <td style="padding:0.25rem;border:1px solid var(--border);">100,000,000</td><td style="padding:0.25rem;border:1px solid var(--border);">10,000,000</td><td style="padding:0.25rem;border:1px solid var(--border);">1,000,000</td>
+          <td style="padding:0.25rem;border:1px solid var(--border);">100,000</td><td style="padding:0.25rem;border:1px solid var(--border);">10,000</td><td style="padding:0.25rem;border:1px solid var(--border);">1,000</td>
+          <td style="padding:0.25rem;border:1px solid var(--border);">100</td><td style="padding:0.25rem;border:1px solid var(--border);">10</td><td style="padding:0.25rem;border:1px solid var(--border);">1</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.82rem;margin-bottom:0.4rem;">Se lee: <strong>cuatrocientos cincuenta y seis millones setecientos ochenta y nueve mil ciento veintitrés</strong>.</p>
+    <p style="font-size:0.78rem;color:var(--gray);">⚠️ El mismo patrón C-D-U se repite en cada período: por eso la escalera nunca te falla, por grande que sea el número.</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">📊</span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
-<!-- ==================== FLASHCARDS ==================== -->
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📊 Casos Comunes</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">×10 🪜</div><div class="t-info">La escalera: cada peldaño vale 10 veces más</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">45,203</div><div class="t-info">La coma: cada 3 cifras desde la derecha</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">cien / ciento</div><div class="t-info">100 = cien · 105 = ciento cinco</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">1,000 = mil</div><div class="t-info">Nunca "un mil"… pero sí "un millón"</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">1,000,000</div><div class="t-info">El millón: un 1 con seis ceros y dos comas</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">304,000</div><div class="t-info">Ceros de relleno: guardan el lugar vacío</div></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
+    <span class="nsb-icon">⚠️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Evita los tropiezos!</span><span class="nsb-name">Errores Comunes</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-errores" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>⚠️ Errores Comunes — ¡No caigas en ellos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Estos son los errores que más cometen los estudiantes con los números grandes. Léelos, entiéndelos y ¡evítalos!</p>
+    <div class="error-cards">
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Ignorar los ceros al leer</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"205,000 se lee dos mil cincuenta".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El bloque antes de la coma es 205 completo, no un 2 y un 5 sueltos. La coma dice que son MILES.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>205,000 = <strong>doscientos cinco mil</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Decir "un mil"</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"1,000 se lee un mil".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>En español, 1,000 se dice solo "mil". El "un" sí se usa con el millón: "un millón".</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>1,000 = <strong>mil</strong> · 1,000,000 = <strong>un millón</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: Comparar sin contar cifras</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"99,999 es mayor que 100,000 porque el 9 es más grande que el 1".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Primero se cuentan las cifras: 100,000 tiene 6 y 99,999 solo 5. Más cifras = número mayor, siempre.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>100,000 &gt; 99,999: <strong>gana el de más cifras</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Olvidar los ceros de relleno al escribir</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"Trescientos cuatro mil se escribe 34,000".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Sin el cero, el 3 baja de peldaño: 34,000 es treinta y cuatro mil. El cero guarda el lugar de las decenas de millar.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>Trescientos cuatro mil = <strong>304,000</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 5: Confundir la cifra con su valor</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"En 456,000 el 4 vale 4".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El 4 vive en las centenas de millar: su valor es 4 × 100,000. La posición multiplica.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>En 456,000 el 4 vale <strong>400,000</strong> (cuatrocientos mil) ✔</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica lo aprendido!</span><span class="nsb-name">Laboratorio</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>🧪 Laboratorio: La Escalera Mágica</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">El reto llega escrito en LETRAS: ármalo con los botones ▲▼ de las 9 posiciones. ¡Cuidado con los ceros de relleno! ⭐ +2 XP por reto logrado (primeros 5)</p>
+    <div id="widget-constructor-interactive"></div>
+  </div>
+  <div class="card ac-teal">
+    <h2>📖 Laboratorio 2: El Gran Lector por Períodos</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Toca los bloques de izquierda a derecha y descubre cómo se lee el número por partes. ⭐ +2 XP por número leído completo (primeros 5)</p>
+    <div id="widget-lector-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
     <h2>🃏 Flashcards — Toca para voltear</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
     <div class="fc-wrap">
-      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
         <div class="fc-back"><div class="fca" id="fcA"></div></div>
       </div>
     </div>
     <div class="fc-nav">
       <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
-      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 16</span>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
       <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
     </div>
     <div id="fbFlash" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir al quiz" onclick="go('s-quiz')">
+  <div class="card ac-purple">
+    <h2>🧠 Juego: Memoria de los Números</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
+    <div class="memo-stats" id="memoStats" aria-live="polite"></div>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
     <span class="nsb-icon">🧠</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Prueba tus conocimientos!</span><span class="nsb-name">Quiz</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
-<!-- ==================== QUIZ ==================== -->
 <div class="sec" id="s-quiz" role="tabpanel">
   <div class="card ac-gold">
     <h2>🧠 Quiz de Comprensión</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
-    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 12</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
     <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
     <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
     <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
@@ -332,285 +361,203 @@
     </div>
     <div id="fbQz" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a clasificar" onclick="go('s-clasifica')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
     <span class="nsb-icon">🗂️</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Ordena y clasifica!</span><span class="nsb-name">Clasifica</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
-<!-- ==================== CLASIFICA ==================== -->
 <div class="sec" id="s-clasifica" role="tabpanel">
   <div class="card ac-jade">
-    <h2>🗂️ Clasifica los Números</h2>
-    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un número del banco y luego toca la columna donde pertenece.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
-    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Usa "Variar grupo" para practicar con diferentes categorías.</p>
+    <h2>🗂️ Clasifica</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un elemento para <strong>seleccionarlo</strong> y luego toca la caja donde quieras colocarlo. Toca un elemento ya colocado para devolverlo al banco.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez) · Usa 🔄 Variar grupo: ¡hay 4 desafíos!</p>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
-      <div class="drop-col" id="col-left" role="list" onclick="placeInCol('left')"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
-      <div class="drop-col" id="col-right" role="list" onclick="placeInCol('right')"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
     </div>
     <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
       <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
       <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
-      <button class="btn btn-d" onclick="resetClass()">↺ Reiniciar</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
     </div>
     <div id="fbCls" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a identifica" onclick="go('s-identifica')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
     <span class="nsb-icon">🔍</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Encuentra la respuesta!</span><span class="nsb-name">Identifica</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
-<!-- ==================== IDENTIFICA ==================== -->
 <div class="sec" id="s-identifica" role="tabpanel">
   <div class="card ac-purple">
-    <h2>🔍 Identifica el Concepto</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
-    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 10</p>
-    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Toca la palabra o número que se pide:</p>
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
     <div class="id-sent" id="idSent" role="group"></div>
-    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.85rem;color:var(--gray);font-style:italic;margin-top:0.4rem;font-family:'Fredoka',sans-serif;"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
     <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
       <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
       <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
     </div>
     <div id="fbId" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a completar oraciones" onclick="go('s-completa')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
     <span class="nsb-icon">✏️</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Llena los espacios!</span><span class="nsb-name">Completa</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
-<!-- ==================== COMPLETA ==================== -->
 <div class="sec" id="s-completa" role="tabpanel">
   <div class="card ac-amber">
-    <h2>✏️ Completa la Oración</h2>
+    <h2>✏️ Completa la oración</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
-    <p style="font-family:'Fredoka',sans-serif;font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
     <div class="cmp-sent" id="cmpSent"></div>
     <div class="cmp-opts" id="cmpOpts" role="group"></div>
     <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
     <div id="fbCmp" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a widgets" onclick="go('s-widgets')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
     <span class="nsb-icon">🎮</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Juega y practica!</span><span class="nsb-name">Widgets</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
-<!-- ==================== WIDGETS ==================== -->
 <div class="sec" id="s-widgets" role="tabpanel">
-
-  <!-- Widget 1: Recta Numérica -->
   <div class="card ac-teal">
-    <h2>📏 Ubica en la Recta Numérica</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP al ubicar correctamente (primera vez)</p>
-    <div class="nl-challenge">Ubica el número: <strong id="nlTarget" class="nl-num">150</strong></div>
-    <div class="nl-container">
-      <svg id="nlSvg" viewBox="0 0 400 80" width="100%" xmlns="http://www.w3.org/2000/svg" style="cursor:crosshair;display:block;" onclick="nlClick(event)"></svg>
-    </div>
-    <p style="font-size:0.75rem;color:var(--gray);text-align:center;margin-top:0.2rem;">↑ Haz clic en la posición correcta del número</p>
-    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
-      <button class="btn btn-pri" onclick="nlNext()">▶ Siguiente</button>
-      <button class="btn btn-d" onclick="nlReset()">🔄 Reiniciar</button>
-    </div>
-    <div id="fbNl" class="fb" role="alert"></div>
+    <h2>🕵️ Detective de Posiciones</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Una cifra se resalta dentro de un número grande: descubre cuánto VALE según su posición. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-posicion-interactive"></div>
   </div>
-
-  <!-- Widget 2: Constructor CDU -->
-  <div class="card ac-jade">
-    <h2>🔧 Constructor de Números</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por número construido correctamente</p>
-    <div class="bldr-challenge">Forma el número: <strong id="bldrTarget" class="bldr-num">235</strong></div>
-    <div class="bldr-display" id="bldrDisplay">000</div>
-    <div class="bldr-slots">
-      <div class="bldr-slot">
-        <div class="bldr-label" style="color:var(--cen);font-weight:700;">Centenas</div>
-        <div class="bldr-controls">
-          <button class="bldr-btn" style="background:var(--cen);" onclick="bldrChange('c',1)">▲</button>
-          <div class="bldr-digit" style="color:var(--cen);border-color:var(--cen);" id="bldrDC">0</div>
-          <button class="bldr-btn" style="background:var(--cen);" onclick="bldrChange('c',-1)">▼</button>
-        </div>
-        <div class="bldr-pos">×100</div>
-      </div>
-      <div class="bldr-slot">
-        <div class="bldr-label" style="color:var(--dec);font-weight:700;">Decenas</div>
-        <div class="bldr-controls">
-          <button class="bldr-btn" style="background:var(--dec);" onclick="bldrChange('d',1)">▲</button>
-          <div class="bldr-digit" style="color:var(--dec);border-color:var(--dec);" id="bldrDD">0</div>
-          <button class="bldr-btn" style="background:var(--dec);" onclick="bldrChange('d',-1)">▼</button>
-        </div>
-        <div class="bldr-pos">×10</div>
-      </div>
-      <div class="bldr-slot">
-        <div class="bldr-label" style="color:var(--uni);font-weight:700;">Unidades</div>
-        <div class="bldr-controls">
-          <button class="bldr-btn" style="background:var(--uni);" onclick="bldrChange('u',1)">▲</button>
-          <div class="bldr-digit" style="color:var(--uni);border-color:var(--uni);" id="bldrDU">0</div>
-          <button class="bldr-btn" style="background:var(--uni);" onclick="bldrChange('u',-1)">▼</button>
-        </div>
-        <div class="bldr-pos">×1</div>
-      </div>
-    </div>
-    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
-      <button class="btn btn-g" onclick="checkBldr()">✅ Verificar</button>
-      <button class="btn btn-pri" onclick="nextBldr()">▶ Siguiente</button>
-      <button class="btn btn-d" onclick="resetBldr()">🔄 Reiniciar</button>
-    </div>
-    <div id="fbBldr" class="fb" role="alert"></div>
+  <div class="card ac-blue">
+    <h2>⚔️ Duelo de Gigantes</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">¿A es mayor, igual o menor que B? Cuenta las cifras primero: ¡es la pista secreta! ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-duelo-interactive"></div>
   </div>
-
-  <!-- Widget 3: Ordenar -->
   <div class="card ac-gold">
-    <h2>↕️ Ordena de Menor a Mayor</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez)</p>
-    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ordenar los números de <strong>menor a mayor</strong>:</p>
-    <div class="sort-list" id="sortList"></div>
-    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
-      <button class="btn btn-g" onclick="checkSort()">✅ Verificar orden</button>
-      <button class="btn btn-pri" onclick="nextSort()">🔄 Nuevo grupo</button>
-    </div>
-    <div id="fbSort" class="fb" role="alert"></div>
+    <h2>💱 El Cambista ×10</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">¿Cuántas decenas caben en 1,000? ¿Cuántos miles en un millón? Domina los canjes de la escalera. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-cambista-interactive"></div>
   </div>
-
-  <!-- Widget 4: Comparar -->
-  <div class="card ac-purple">
-    <h2>⚖️ Compara los Números</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por comparación correcta</p>
-    <p style="font-size:0.88rem;margin-bottom:0.8rem;">El número <strong>A</strong> (izquierda) comparado con <strong>B</strong> (derecha):</p>
-    <div class="cmp-vis-wrap">
-      <div class="cmp-vis-side">
-        <div class="cmp-vis-label">A</div>
-        <div class="cmp-vis-num" id="cmpVisA">345</div>
-        <div class="cmp-vis-bar-wrap"><div class="cmp-vis-bar" id="cmpVisBarA"></div></div>
-        <div class="cmp-vis-pct" id="cmpVisPctA">345 / 999</div>
-      </div>
-      <div class="cmp-vis-btns">
-        <button class="cmp-sym-btn" data-rel="gt" onclick="ansComp('gt')">A es mayor ›</button>
-        <button class="cmp-sym-btn" data-rel="eq" onclick="ansComp('eq')">=  Son iguales</button>
-        <button class="cmp-sym-btn" data-rel="lt" onclick="ansComp('lt')">‹ A es menor</button>
-      </div>
-      <div class="cmp-vis-side">
-        <div class="cmp-vis-label">B</div>
-        <div class="cmp-vis-num" id="cmpVisB">543</div>
-        <div class="cmp-vis-bar-wrap"><div class="cmp-vis-bar cmp-vis-bar-b" id="cmpVisBarB"></div></div>
-        <div class="cmp-vis-pct" id="cmpVisPctB">543 / 999</div>
-      </div>
-    </div>
-    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;justify-content:center;">
-      <button class="btn btn-pri" onclick="nextComp()">▶ Siguiente par</button>
-    </div>
-    <div id="fbComp" class="fb" role="alert"></div>
-  </div>
-
-  <button class="next-sec-btn" aria-label="Ir al reto final" onclick="go('s-reto')">
-    <span class="nsb-icon">🏆</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Demuestra tu velocidad!</span><span class="nsb-name">Reto Final</span></span>
+  <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
+    <span class="nsb-icon">💬</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra que entendiste!</span><span class="nsb-name">Explica</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
-<!-- ==================== RETO ==================== -->
+<div class="sec" id="s-explica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>💬 Explica con tus palabras</h2>
+    <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
+    <div id="explicaContainer"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Hora del reto!</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
 <div class="sec" id="s-reto" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>🏆 Reto Final — ¡30 segundos!</h2>
-    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el número rápidamente. ¡Toca la categoría correcta!</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
-    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Usa "Variar pareja" para jugar con otras categorías.</p>
+  <div class="card ac-purple">
+    <h2>🏆 Reto Final — ¿A es Mayor, Igual o Menor que B? (30 seg)</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.4rem;">Compara rápidamente A con B. Usa 🔀 para cambiar el tipo de ejercicios.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;" id="retoPairLbl">🎯 Pareja actual: Duelo de números 🔢</p>
     <div class="game" id="gameBox" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
       <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
       <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
       <div class="reto-btns">
-        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('a')">Opción A</button>
-        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('b')">Opción B</button>
+        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('mayor')">↑ A ES MAYOR</button>
+        <button class="btn btn-g" id="retoBtn-c" onclick="ansReto('igual')">= SON IGUALES</button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('menor')">↓ A ES MENOR</button>
       </div>
-      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 | ❌ 0</div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
     </div>
     <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
       <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
-      <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-amber" onclick="nextRetoPair()">🔀 Variar pareja</button>
       <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
     </div>
     <div id="fbReto" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a sopa de letras" onclick="go('s-sopa')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
     <span class="nsb-icon">🔤</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Busca las palabras!</span><span class="nsb-name">Sopa de Letras</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
-<!-- ==================== SOPA DE LETRAS ==================== -->
 <div class="sec" id="s-sopa" role="tabpanel">
   <div class="card ac-teal">
     <h2>🔤 Sopa de Letras</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada · Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés!</p>
     <div class="sopa-words" id="sopaWords"></div>
-    <p class="sopa-hint" id="sopaHint">🖱️ Toca la primera letra y luego la última de cada palabra</p>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
     <div class="sopa-container">
       <div class="sopa-grid" id="sopaGrid"></div>
     </div>
     <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
       <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
     </div>
     <div id="fbSopa" class="fb" role="alert"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir al generador de tareas" onclick="go('s-tareas')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
     <span class="nsb-icon">📋</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Practica en casa!</span><span class="nsb-name">Tareas</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
-<!-- ==================== TAREAS ==================== -->
 <div class="sec" id="s-tareas" role="tabpanel">
   <div class="card ac-gold">
     <h2>📋 Generador de Tareas</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">Genera ejercicios nuevos cada vez: autoasígnate práctica desde casa o cópialos en el pizarrón del aula. Las respuestas se muestran con 👁.</p>
     <div class="tg-controls">
       <select class="tg-sel" id="tgType">
-        <option value="identify">🔍 Identificar CDU</option>
-        <option value="write">✏️ Leer y escribir</option>
-        <option value="decompose">➕ Descomponer</option>
-        <option value="compose">🔧 Componer</option>
-        <option value="order">↕️ Ordenar números</option>
+        <option value="leer">📖 Leer: escribir con letras</option>
+        <option value="escribir">✍️ Escribir en cifras</option>
+        <option value="valor">💎 ¿Cuánto vale la cifra?</option>
+        <option value="descomponer">➕ Forma expandida</option>
+        <option value="ordenar">↕️ Ordenar números grandes</option>
+        <option value="pensamiento">🧠 Pensamiento matemático</option>
       </select>
       <select class="tg-sel" id="tgCount">
-        <option value="5">5 ejercicios</option>
-        <option value="8" selected>8 ejercicios</option>
-        <option value="10">10 ejercicios</option>
-        <option value="15">15 ejercicios</option>
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
       </select>
       <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
-      <button class="btn btn-d" onclick="toggleAns()">👁 Ver respuestas</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
     </div>
     <div id="tgOut"></div>
   </div>
-  <button class="next-sec-btn" aria-label="Ir a la evaluación" onclick="go('s-evaluacion')">
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
     <span class="nsb-icon">📝</span>
-    <span class="nsb-label"><span class="nsb-hint">¡Demuestra todo lo que aprendiste!</span><span class="nsb-name">Evaluación</span></span>
     <span class="nsb-arrow">→</span>
   </button>
 </div>
 
-<!-- ==================== EVALUACIÓN ==================== -->
 <div class="sec" id="s-evaluacion" role="tabpanel">
-  <div class="card ac-purple">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Prueba Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-blue">
     <div class="eval-print-header">
-      <h2 style="font-family:'Fredoka',sans-serif;font-size:1.2rem;text-align:center;margin-bottom:0.5rem;">Evaluación — Números de Tres Cifras · 2° Grado · Matemática</h2>
-      <div style="display:flex;gap:1rem;font-size:0.85rem;margin-bottom:0.3rem;"><strong>Nombre:</strong><span style="flex:1;border-bottom:1px solid #000;">&nbsp;</span><strong>Fecha:</strong><span style="min-width:80px;border-bottom:1px solid #000;">&nbsp;</span></div>
-      <div style="display:flex;gap:1rem;font-size:0.85rem;"><strong>Centro Educativo:</strong><span style="flex:1;border-bottom:1px solid #000;">&nbsp;</span><strong>Sección:</strong><span style="min-width:60px;border-bottom:1px solid #000;">&nbsp;</span></div>
-      <p style="font-size:0.72rem;margin-top:0.3rem;text-align:center;">Valor total: 100 puntos · Valor de cada respuesta indicado por sección</p>
+      <h2>Evaluación Final de Misión Números Grandes: del Cien al Millón · Matemática</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u</p>
     </div>
-    <h2 id="eval-screen-title">📝 Evaluación Final — Números de Tres Cifras</h2>
-    <p style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde. Usa <strong>Ver Pauta</strong> para autoevaluarte. Puedes generar nuevas preguntas.</p>
+    <h2 id="eval-screen-title">📝 Evaluación Final</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">4 secciones de 25 pts c/u. Resuélvela <strong>en línea</strong> (escribe, marca y selecciona) y presiona <strong>Calificar prueba</strong>, o imprímela para resolverla en papel. <strong>Genera una nueva evaluación cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
       <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
@@ -619,6 +566,27 @@
     </div>
     <div id="evalOut"></div>
   </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Matemáticas — Prueba Operativa · Números Grandes: del Cien al Millón</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 50 pts · II: 20 pts · III: 10 pts · IV: 10 pts · V: 10 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">📐 Prueba Operativa — Números Grandes</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Resuelve cada ítem en tu cuaderno y escribe la respuesta en la casilla. Presiona <strong>Calificar prueba</strong> para autoevaluarte en pantalla. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
   <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
     <span class="nsb-icon">🎓</span>
     <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
@@ -627,9 +595,9 @@
 </div>
 
 <div class="sec" id="s-recursos" role="tabpanel">
-  <div class="card ac-blue">
+  <div class="card ac-jade">
     <h2>📁 Recursos del Tema</h2>
-    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo sobre lectura, escritura y comparación de números grandes y el valor posicional hasta el millón.</p>
     <a href="https://drive.google.com/drive/folders/1WRz_53gpKThPM-H1B5-w4BIdeJ8-oHA7?usp=sharing"
        target="_blank" rel="noopener noreferrer"
        class="btn btn-pri"
@@ -644,24 +612,19 @@
       </svg>
       Abrir carpeta en Google Drive
     </a>
-    <div class="tip" style="margin-top:1.2rem;">
-      <span class="ti">💡</span>
-      <div>Los archivos se abren directamente en el navegador. Puedes descargarlos o verlos sin necesidad de una cuenta de Google.</div>
-    </div>
   </div>
 </div>
 
 </main>
 
-<!-- ==================== DIPLOMA ==================== -->
 <div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
   <div class="diploma-card">
     <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
     <div class="diploma-title">CONSTANCIA DE LOGRO</div>
-    <div class="diploma-sub">Misión: Números de Tres Cifras · 2° Grado</div>
-    <div class="diploma-mascot" aria-hidden="true">🔢</div>
+    <div class="diploma-sub">Misión Números Grandes: del Cien al Millón</div>
+    <div class="diploma-mascot" aria-hidden="true">🚀</div>
     <div class="diploma-name" id="diplName">Estudiante</div>
-    <div class="diploma-pct" id="diplPct" style="color:var(--pri)">0%</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
     <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
     <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
     <div class="diploma-date" id="diplDate"></div>
@@ -671,22 +634,22 @@
     <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
     <div class="diploma-actions">
       <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
-        <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
       <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
     </div>
   </div>
 </div>
 
-<!-- ==================== LOGROS ==================== -->
 <div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
   <h4>🏅 Mis Logros</h4>
   <div id="achList"></div>
 </div>
 
-<!-- ==================== NAVEGACIÓN ==================== -->
 <nav class="nav" role="tablist" aria-label="Secciones de la misión">
-  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tabla" data-s="s-tabla" onclick="go('s-tabla')"><span class="ico">📊</span> Tabla CDU</button>
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Casos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
@@ -694,19 +657,19 @@
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-explica" data-s="s-explica" onclick="go('s-explica')"><span class="ico">💬</span> Explica</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
-  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--pri);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
 </nav>
 
-<!-- ==================== FOOTER ==================== -->
 <footer class="credits">
   <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
   <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
-  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje...» 🌱</div>
   <div class="cred-contact">
     <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
     <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
@@ -716,13 +679,41 @@
     <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
     <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
     <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
   </div>
 </footer>
 
   <script src="js/html2canvas.min.js"></script>
   <script src="js/centena.js"></script>
+
+  <script src="js/interaccion_constructor.js"></script>
+  <script src="js/interaccion_lector.js"></script>
+  <script src="js/interaccion_posicion.js"></script>
+  <script src="js/interaccion_duelo.js"></script>
+  <script src="js/interaccion_cambista.js"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetConstructorJSON) {
+        window.WidgetConstructorJSON.mount('widget-constructor-interactive');
+      }
+      if (window.WidgetLectorJSON) {
+        window.WidgetLectorJSON.mount('widget-lector-interactive');
+      }
+      if (window.WidgetPosicionJSON) {
+        window.WidgetPosicionJSON.mount('widget-posicion-interactive');
+      }
+      if (window.WidgetDueloJSON) {
+        window.WidgetDueloJSON.mount('widget-duelo-interactive');
+      }
+      if (window.WidgetCambistaJSON) {
+        window.WidgetCambistaJSON.mount('widget-cambista-interactive');
+      }
+    });
+  </script>
+
 </body>
 </html>

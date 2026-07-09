@@ -6,7 +6,7 @@
    partida sugerido; sin errores → la última etapa de la ruta. */
 const DIAGNOSTICOS = {
   numero: [
-    { etapa: 0, q: '¿Cuántas unidades hay en 1 centena?', o: ['10 unidades', '50 unidades', '100 unidades', '1,000 unidades'], a: 2 },
+    { etapa: 0, q: '¿Cómo se lee el número 45,000?', o: ['Cuatro mil quinientos', 'Cuarenta y cinco mil', 'Cuatrocientos cincuenta mil', 'Cuarenta y cinco millones'], a: 1 },
     { etapa: 1, q: '¿Cuál es el valor del dígito 4 en 573,420?', o: ['4', '400', '4,000', '40,000'], a: 1 },
     { etapa: 2, q: '¿Cuál es el punto medio entre 200 y 300?', o: ['205', '250', '230', '295'], a: 1 },
     { etapa: 3, q: '¿Cuál es el m.c.m. de 4 y 10?', o: ['40', '2', '20', '14'], a: 2 },
