@@ -2849,7 +2849,7 @@ a { text-decoration: none; color: inherit; }
 .camp-normas-list li { font-size: 13.5px; line-height: 1.5; }
 
 /* Botones de configuración nuevos (mismo look que los timer) */
-.camp-tema-btn, .camp-vuelta-btn, .camp-reb-btn, .camp-fin-btn, .camp-com-btn, .camp-pn-btn {
+.camp-tema-btn, .camp-vuelta-btn, .camp-reb-btn, .camp-fin-btn, .camp-com-btn, .camp-pn-btn, .camp-var-btn {
   border: 1.5px solid var(--border);
   background: var(--bg);
   border-radius: 999px;
@@ -2861,7 +2861,7 @@ a { text-decoration: none; color: inherit; }
   color: var(--text);
 }
 .camp-tema-btn.active, .camp-vuelta-btn.active, .camp-reb-btn.active,
-.camp-fin-btn.active, .camp-com-btn.active, .camp-pn-btn.active {
+.camp-fin-btn.active, .camp-com-btn.active, .camp-pn-btn.active, .camp-var-btn.active {
   background: var(--brand-mid);
   border-color: var(--brand-mid);
   color: #fff;
@@ -3171,3 +3171,25 @@ a { text-decoration: none; color: inherit; }
 .pa-hist-meta { font-size: 11.5px; color: var(--muted); }
 .pa-hist-abrir { border: none; background: var(--brand-mid); color: #fff; font-family: inherit; font-size: 12px; font-weight: 800; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
 .pa-hist-borrar { border: none; background: transparent; font-size: 14px; cursor: pointer; padding: 4px; }
+
+/* ── Campeonísimo: corrección del jurado y preguntas variadas (jul 2026) ── */
+.camp-edit-hint { font-size: 12.5px; color: var(--muted); margin: 4px 0 10px; line-height: 1.45; }
+.camp-edit-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 7px 9px; border: 1.5px solid var(--border); border-left: 5px solid var(--gc, var(--brand-mid));
+  border-radius: 10px; margin-bottom: 7px; flex-wrap: wrap;
+}
+.camp-edit-name { font-size: 13.5px; font-weight: 800; }
+.camp-edit-name small { font-weight: 600; color: var(--muted); }
+.camp-edit-ctrl { display: flex; align-items: center; gap: 5px; }
+.camp-edit-btn {
+  border: 1.5px solid var(--border); background: var(--bg); color: var(--text);
+  border-radius: 8px; padding: 5px 9px; font-family: inherit; font-size: 12.5px;
+  font-weight: 800; cursor: pointer; min-width: 40px;
+}
+.camp-edit-btn:active { transform: scale(0.94); }
+.camp-edit-pts {
+  min-width: 44px; text-align: center; font-size: 16px; font-weight: 900;
+  font-variant-numeric: tabular-nums; color: var(--gc, var(--text));
+}
+.camp-q-vf { display: block; margin-top: 8px; font-size: 0.92em; color: var(--brand-mid); font-weight: 700; }

@@ -395,8 +395,9 @@ function _normasHTML(cfg) {
       <li><strong>⚡ Ronda 2 — Relámpago.</strong> Una vuelta con la <strong>mitad de tiempo</strong> y puntos <strong>DOBLES</strong>.</li>
       <li><strong>🏆 Ronda 3 — La Gran Final.</strong> Clasifican los <strong>${c.finalistas} mejores</strong>. Si hay empate en el corte, los grupos empatados juegan <strong>muerte súbita</strong> por los lugares: nadie queda fuera sin competir. Cada finalista elige tema y <strong>apuesta</strong> sus puntos antes de ver la pregunta: si acierta los gana, si falla los pierde.</li>
       <li><strong>⚔️ Muerte súbita.</strong> Cada grupo empatado responde <strong>su propia pregunta</strong> por turnos. Al completar la ronda: quien acierta sigue, quien falla queda fuera. Si todos aciertan o todos fallan, se juega otra ronda. Se usa para el empate en el corte a la final y para el empate por el campeonato.</li>
+      ${c.variar === false ? '' : `<li><strong>🔀 Preguntas variadas.</strong> Las opciones cambian de orden, algunas preguntas se replantean («¿es correcta esta respuesta?») y se evita repetir las de torneos recientes: aquí se gana con conocimiento, no de memoria.</li>`}
       <li><strong>🎖️ Insignias.</strong> Al final se otorgan insignias (Campeón, Racha de Fuego, Rey Relámpago, Remontada…) que quedan en el Salón de la Fama.</li>
-      <li><strong>👨‍🏫 El jurado.</strong> La palabra del docente-presentador es definitiva. ¡Juego limpio siempre!</li>
+      <li><strong>👨‍🏫 El jurado.</strong> La palabra del docente-presentador es definitiva: si el tiempo se agota por descuido puede validar la respuesta, y con <strong>✏️ Editar puntos</strong> corrige el marcador para que el grupo que acertó siga participando. ¡Juego limpio siempre!</li>
     </ol>`;
 }
 
@@ -528,6 +529,15 @@ function renderSetup() {
       </div>
 
       <div class="camp-card">
+        <div class="camp-card-label">🔀 Variar las preguntas</div>
+        <div class="camp-timer-row">
+          <button class="camp-var-btn active" data-x="1">Sí, variadas</button>
+          <button class="camp-var-btn" data-x="0">No, tal cual</button>
+        </div>
+        <p class="camp-cfg-hint">Baraja el orden de las opciones, replantea preguntas («¿es correcta esta respuesta?») y evita repetir las de torneos recientes — para que nadie gane de memoria.</p>
+      </div>
+
+      <div class="camp-card">
         <div class="camp-card-label camp-ms-header-row">
           <span>Misiones incluidas</span>
           <div>
@@ -560,6 +570,7 @@ function renderSetup() {
   activate('.camp-reb-btn');
   activate('.camp-fin-btn');
   activate('.camp-com-btn');
+  activate('.camp-var-btn');
   activate('.camp-tema-btn', btn => {
     const tm   = btn.dataset.tm;
     const hint = $id('camp-tema-hint');
@@ -620,6 +631,7 @@ function _readSetupCfg() {
     reboteOn:   pick('.camp-reb-btn', 'r', 1) === 1,
     finalistas: pick('.camp-fin-btn', 'f', 2),
     comodines:  pick('.camp-com-btn', 'k', 1),
+    variar:     pick('.camp-var-btn', 'x', 1) === 1,
     temaMode:   temaBtn ? temaBtn.dataset.tm : 'mixto',
     lugar:      ($id('camp-lugar') && $id('camp-lugar').value.trim()) || '',
   };
@@ -773,6 +785,7 @@ function renderTurno() {
 
       <div class="camp-hub-actions">
         <button class="camp-action-btn" id="camp-normas-btn">📜 Normas</button>
+        <button class="camp-action-btn" id="camp-editar-btn">✏️ Editar puntos</button>
         <button class="camp-action-btn" id="camp-salir-btn">🚪 Terminar</button>
       </div>
     </div>`;
@@ -801,11 +814,57 @@ function renderTurno() {
   );
 
   $id('camp-normas-btn').addEventListener('click', () => { _sfx('click'); _showNormas(T.cfg); });
+  $id('camp-editar-btn').addEventListener('click', () => { _sfx('click'); _showEditarPuntos(() => renderTurno()); });
   $id('camp-salir-btn').addEventListener('click', () => {
     _sfx('click');
     if (!confirm('¿Terminar el torneo? Se irá directo al podio con el marcador actual.')) return;
     _irAlPodio();
   });
+}
+
+/* ── Corrección del jurado: editar puntos de cualquier grupo ──
+   Para cuando el moderador se equivoca de botón o se le pasa el
+   tiempo: ajusta el marcador y el grupo sigue participando. */
+function _showEditarPuntos(onClose) {
+  const T = CAMP.T; if (!T) return;
+  const paso = Math.max(1, T.cfg.basePts);
+  const back = document.createElement('div');
+  back.className = 'camp-modal-backdrop';
+  back.innerHTML = `
+    <div class="camp-modal">
+      <div class="camp-modal-head">
+        <span>✏️ Corrección del jurado</span>
+        <button class="camp-modal-close" aria-label="Cerrar">✕</button>
+      </div>
+      <p class="camp-edit-hint">¿El moderador se equivocó o se pasó el tiempo? Ajusta aquí los puntos del grupo que acertó: sigue participando con su marcador corregido.</p>
+      ${T.groups.map((g, i) => `
+        <div class="camp-edit-row" style="--gc:${g.color}">
+          <span class="camp-edit-name">${g.mascota} ${g.name}${g.eliminado ? ' <small>(banca)</small>' : ''}</span>
+          <div class="camp-edit-ctrl">
+            <button class="camp-edit-btn" data-gi="${i}" data-d="${-paso}">−${paso}</button>
+            <button class="camp-edit-btn" data-gi="${i}" data-d="-1">−1</button>
+            <span class="camp-edit-pts" id="camp-edit-pts-${i}">${g.score}</span>
+            <button class="camp-edit-btn" data-gi="${i}" data-d="1">+1</button>
+            <button class="camp-edit-btn" data-gi="${i}" data-d="${paso}">+${paso}</button>
+          </div>
+        </div>`).join('')}
+      <button class="camp-start-btn camp-modal-ok">✔ Listo, marcador corregido</button>
+    </div>`;
+
+  const cerrar = () => { back.remove(); if (onClose) onClose(); };
+  back.querySelector('.camp-modal-close').addEventListener('click', cerrar);
+  back.querySelector('.camp-modal-ok').addEventListener('click', () => { _sfx('pts'); cerrar(); });
+  back.addEventListener('click', e => { if (e.target === back) cerrar(); });
+  back.querySelectorAll('.camp-edit-btn').forEach(b =>
+    b.addEventListener('click', () => {
+      _sfx('click');
+      const g = T.groups[+b.dataset.gi];
+      g.score = Math.max(0, g.score + (+b.dataset.d));
+      const el = $id('camp-edit-pts-' + b.dataset.gi);
+      if (el) { el.textContent = g.score; el.classList.add('camp-pts-bump'); setTimeout(() => el.classList.remove('camp-pts-bump'), 500); }
+    })
+  );
+  document.body.appendChild(back);
 }
 
 function _scoreboardHTML() {
@@ -921,6 +980,54 @@ function spinWheel() {
 /* ══════════════════════════════════════════════════════════════
    TORNEO — PREGUNTA
 ══════════════════════════════════════════════════════════════ */
+
+/* ── Variación de preguntas (cfg.variar) ──
+   Con «🔀 Variar preguntas» activado:
+   · las opciones se barajan (la letra correcta cambia cada vez),
+   · 1 de cada 3 preguntas se replantea como «¿es correcta esta
+     respuesta?» (mismo tema, planteamiento distinto),
+   · se evita repetir preguntas de torneos RECIENTES (historial
+     persistente METAS_CAMP_USED_V1) mientras haya alternativas.
+   Así el torneo no se memoriza ni termina siempre en empates. */
+const CAMP_USED_KEY = 'METAS_CAMP_USED_V1';
+
+function _usedHistLoad() {
+  try { const a = JSON.parse(localStorage.getItem(CAMP_USED_KEY)); return Array.isArray(a) ? a : []; }
+  catch (_) { return []; }
+}
+function _usedHistAdd(q) {
+  try {
+    const a = _usedHistLoad();
+    a.push(_campNorm(q.q));
+    localStorage.setItem(CAMP_USED_KEY, JSON.stringify(a.slice(-300)));
+  } catch (_) {}
+}
+
+function _shuffleOpciones(q) {
+  const idx = q.o.map((_, i) => i);
+  for (let i = idx.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [idx[i], idx[j]] = [idx[j], idx[i]];
+  }
+  return { ...q, o: idx.map(i => q.o[i]), c: idx.indexOf(q.c) };
+}
+
+function _variarPregunta(q) {
+  /* Replanteo «¿es correcta esta respuesta?» (1 de cada 3, si hay 3+ opciones) */
+  if (q.o.length >= 3 && Math.random() < 0.34) {
+    const usarCorrecta = Math.random() < 0.5;
+    let oi = q.c;
+    if (!usarCorrecta) { do { oi = Math.floor(Math.random() * q.o.length); } while (oi === q.c); }
+    return {
+      ...q,
+      q: `${q.q}<br><span class="camp-q-vf">🎤 Un concursante respondió: «<strong>${q.o[oi]}</strong>». ¿Es la respuesta correcta?</span>`,
+      o: ['✅ Sí, es la correcta', `❌ No — la correcta es otra`],
+      c: usarCorrecta ? 0 : 1,
+    };
+  }
+  return _shuffleOpciones(q);
+}
+
 function _pickQuestion(subjectKey) {
   const T    = CAMP.T;
   const bank = _bank()[subjectKey];
@@ -938,9 +1045,16 @@ function _pickQuestion(subjectKey) {
     T.usedQs[subjectKey] = [];
     available = poolIdxs;
   }
+  if (T.cfg.variar) {              /* preferir preguntas que no salieron en torneos recientes */
+    const recientes = new Set(_usedHistLoad());
+    const frescas   = available.filter(i => !recientes.has(_campNorm(bank[i].q)));
+    if (frescas.length) available = frescas;
+  }
   const bankIdx = available[Math.floor(Math.random() * available.length)];
   T.usedQs[subjectKey].push(bankIdx);
-  return bank[bankIdx];
+  let q = bank[bankIdx];
+  if (T.cfg.variar) { _usedHistAdd(q); q = _variarPregunta(q); }
+  return q;
 }
 
 function _empezarPregunta(subjectKey) {
@@ -1073,11 +1187,11 @@ function _revelar(timeout) {
   if (T.fase === 'muerte-pregunta') { _revelarMuerte(actions, timeout); return; }
 
   actions.innerHTML = `
-    ${timeout ? `<p class="camp-timeout-msg">⏰ ¡Tiempo agotado!</p>` : ''}
+    ${timeout ? `<p class="camp-timeout-msg">⏰ ¡Tiempo agotado! El jurado decide: si el grupo respondió antes de que sonara la alarma, puede validar el acierto.</p>` : ''}
     <div class="camp-veredicto">
       <p class="camp-award-label">¿${g.mascota} ${g.name} respondió bien?</p>
       <div class="camp-veredicto-btns">
-        <button class="camp-vd-ok" id="camp-vd-ok" ${timeout ? 'disabled' : ''}>✔ ¡Acertó! ${R.final ? `+${pts}` : `+${pts} pts`}</button>
+        <button class="camp-vd-ok" id="camp-vd-ok">✔ ¡Acertó! ${R.final ? `+${pts}` : `+${pts} pts`}</button>
         <button class="camp-vd-no" id="camp-vd-no">✘ Falló${R.final ? ` −${pts}` : ''}</button>
       </div>
     </div>`;
@@ -1319,11 +1433,11 @@ function _revelarMuerte(actions, timeout) {
   const g  = T.groups[gi];
 
   actions.innerHTML = `
-    ${timeout ? `<p class="camp-timeout-msg">⏰ ¡Tiempo agotado!</p>` : ''}
+    ${timeout ? `<p class="camp-timeout-msg">⏰ ¡Tiempo agotado! El jurado decide: si el grupo respondió antes de que sonara la alarma, puede validar el acierto.</p>` : ''}
     <div class="camp-veredicto">
       <p class="camp-award-label">⚔️ ¿${g.mascota} ${g.name} respondió bien?</p>
       <div class="camp-veredicto-btns">
-        <button class="camp-vd-ok" id="camp-md-ok" ${timeout ? 'disabled' : ''}>✔ ¡Acertó!</button>
+        <button class="camp-vd-ok" id="camp-md-ok">✔ ¡Acertó!</button>
         <button class="camp-vd-no" id="camp-md-no">✘ Falló</button>
       </div>
     </div>`;
@@ -1713,7 +1827,8 @@ function startPractice() {
   let pool = [];
   CAMP_SUBJECTS.forEach(s => {
     (_bank()[s.key] || []).forEach(q => {
-      if (!sel || sel.has(q.mision)) pool.push({ ...q, subj: s.key });
+      /* barajar opciones también en la práctica: que no se memorice la letra */
+      if (!sel || sel.has(q.mision)) pool.push({ ..._shuffleOpciones(q), subj: s.key });
     });
   });
   if (!pool.length) { alert('Selecciona al menos una misión para practicar.'); return; }
