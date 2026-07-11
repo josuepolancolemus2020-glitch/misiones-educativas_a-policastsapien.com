@@ -1084,22 +1084,26 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 .total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c49000;}
 .pauta-wrap{page-break-before:always;padding-top:0.4rem;}
 .p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
-.p-main{font-size:9.5pt;font-weight:700;}
-.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}
-.p-meta{font-size:7pt;color:#555;}
-.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
-.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.25rem 0.4rem;}
-.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;}
-.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}
+.p-main{font-size:13pt;font-weight:700;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}
+.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}
+.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}
 .p-tbl tr{border-bottom:1px dotted #ddd;}
-.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}
-.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}
-.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}
-@media print{@page{size:letter portrait;margin:12.7mm;}}
+.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}
+.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
 </style></head><body>
 <div class="ph">
   <h2>Evaluación Final de Misión Los Verbos — Español — Lengua</h2>
-  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
   <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
@@ -1113,7 +1117,7 @@ ${s1}${s2}${s3}${s4}
   </div>
   <div class="p-grid">${pR}</div>
 </div>
-<div class="forma-tag">Forma ${forma}</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación Temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 </body></html>`;
 
     const win = window.open('', '_blank', '');
