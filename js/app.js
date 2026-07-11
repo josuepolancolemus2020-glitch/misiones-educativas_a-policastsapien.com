@@ -1119,16 +1119,98 @@ function renderPadre() {
         </div>`}
     </div>`;
 
+  /* ── Consulta en la nube por código de lista (desde cualquier lugar) ── */
+  const codigoIni = String(_padreCfg().codigo || _padreCodigoSugerido(ident) || '');
+  const nubeHTML = `
+    <div class="padre-sec padre-nube">
+      <div class="padre-sec-title">🔑 Notas desde cualquier lugar</div>
+      <p class="padre-hint">Escriba el <strong>código de lista</strong> de su hijo o hija:
+        grado + sección + número de lista (ej. <strong>6A12</strong>). Si tiene duda, pídalo al maestro.</p>
+      <div class="padre-tel-row">
+        <input id="padre-codigo" class="pa-inp-field padre-codigo-inp" maxlength="8"
+               autocomplete="off" autocapitalize="characters" placeholder="ej: 6A12" value="${_pEsc(codigoIni)}">
+        <button class="padre-wa-btn" onclick="padreConsultarNube()">Consultar</button>
+      </div>
+      <div id="padre-nube-out"></div>
+    </div>`;
+
   const avisoHTML = `
-    <p class="padre-aviso">⚠️ Este resumen vive en el teléfono donde ${quien} estudia y practica.
-      Si estudia en otro equipo, consulte en ese equipo o pregunte al maestro.</p>
-    <div class="padre-pronto">🔑 <strong>Pronto:</strong> podrá consultar desde su casa con el
-      <em>código de lista</em> de su hijo o hija.</div>`;
+    <p class="padre-aviso">⚠️ El resumen de arriba vive en el teléfono donde ${quien} estudia y practica.
+      Las notas por <strong>código de lista</strong> sí se ven desde cualquier equipo con internet.</p>`;
 
   cont.innerHTML =
     (nombre ? `<h2 class="padre-titulo">El avance de ${_pEsc(nombre)}</h2>` : '') +
-    semanaHTML + paHTML + pasoHTML + consejoHTML + waHTML + avisoHTML;
+    semanaHTML + paHTML + nubeHTML + pasoHTML + consejoHTML + waHTML + avisoHTML;
 }
+
+/* Código de lista sugerido desde la identidad local: dígitos del grado +
+   letra de sección (si hay) + número de lista */
+function _padreCodigoSugerido(ident) {
+  const g = String(ident.grado || '').replace(/\D/g, '');
+  const sec = _padreSeccion(ident.grado);
+  const n = String(ident.num || '').replace(/\D/g, '');
+  return (g && n) ? (g + sec + n) : '';
+}
+
+function _padreSbCfg() {
+  let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+  let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+  try {
+    url = localStorage.getItem('METAS_SB_URL') || url;
+    key = localStorage.getItem('METAS_SB_KEY') || key;
+  } catch (_) {}
+  return { url, key };
+}
+
+async function padreConsultarNube() {
+  const inp = document.getElementById('padre-codigo');
+  const out = document.getElementById('padre-nube-out');
+  if (!inp || !out) return;
+  const codigo = String(inp.value || '').replace(/\s/g, '').toUpperCase();
+  if (codigo.length < 2) { toast('Escriba el código de lista (ej. 6A12)'); return; }
+  const c = _padreCfg(); c.codigo = codigo; _padreSaveCfg(c);
+  if (navigator.onLine === false) {
+    out.innerHTML = '<p class="padre-hint">📴 La consulta necesita internet. Intente cuando tenga conexión.</p>';
+    return;
+  }
+  out.innerHTML = '<p class="padre-hint">⏳ Consultando la nube…</p>';
+  try {
+    const { url, key } = _padreSbCfg();
+    const r = await fetch(url + '/rest/v1/rpc/metas_consultar_plan_padre', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: codigo }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    let rows = await r.json();
+    if (!Array.isArray(rows)) rows = [];
+    if (!rows.length) {
+      out.innerHTML = `<p class="padre-hint">Aún no hay notas para el código <strong>${_pEsc(codigo)}</strong>.
+        Verifique el código con el maestro, o espere a que él suba las notas.</p>`;
+      return;
+    }
+    out.innerHTML = rows.slice(0, 8).map(row => {
+      const esNSP = !!row.nsp;
+      const nota = esNSP ? 'NSP' : (row.nota == null ? '—' : row.nota + '/' + (row.base || 100));
+      const aprobo = !esNSP && typeof row.nota === 'number' && row.nota >= 70;
+      const formaTxt = (row.forma && !String(row.evaluacion || '').includes('Forma'))
+        ? ' · Forma ' + _pEsc(row.forma) : '';
+      const f = String(row.fecha || '').slice(0, 10);
+      return `
+        <div class="padre-nota">
+          <div class="padre-nota-top">
+            <strong>${_pEsc(row.evaluacion || 'Evaluación')}</strong>
+            <span class="padre-nota-val ${aprobo ? 'ok' : 'baja'}">${nota}</span>
+          </div>
+          <div class="padre-nota-meta">${_pEsc(row.categoria || '')}${formaTxt}${f ? ' · ' + f : ''}${row.docente ? ' · ' + _pEsc(row.docente) : ''}</div>
+        </div>`;
+    }).join('') +
+    (rows[0].mensaje ? `<div class="padre-msg">💬 <em>Mensaje del maestro:</em><br>${_pEsc(rows[0].mensaje)}</div>` : '');
+  } catch (_) {
+    out.innerHTML = '<p class="padre-hint">⚠️ No se pudo consultar en este momento. Intente de nuevo en unos minutos.</p>';
+  }
+}
+window.padreConsultarNube = padreConsultarNube;
 
 function padreGuardarTel(cambiar) {
   if (cambiar) {
