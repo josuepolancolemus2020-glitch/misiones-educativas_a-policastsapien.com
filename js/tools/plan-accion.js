@@ -798,12 +798,99 @@ function paSbCfg() {
   return { url, key };
 }
 
-function paCodigoLista(a, s) {
-  const g = String(a.grado || '').replace(/\D/g, '');
-  const mSec = String(a.seccion || '').trim().match(/([a-zA-Z0-9])\s*$/);
+/* ── Claves de familia (códigos secretos por alumno) ──
+   Un código tipo «6A15» es adivinable (el compañero prueba 6A16).
+   Por eso cada alumno recibe: número de lista + 4 letras ALEATORIAS
+   (ej. 15K7QM). Se generan solas en el teléfono del maestro, quedan
+   guardadas en METAS_CODIGOS_V1 (mismo alumno = mismo código siempre)
+   y se entregan a cada familia con tiras imprimibles. Alfabeto sin
+   caracteres confusos (sin 0/O ni 1/I/L). */
+const PA_CODES_KEY = 'METAS_CODIGOS_V1';
+const PA_COD_ALFA  = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
+function paCodesLoad() {
+  try { const o = JSON.parse(localStorage.getItem(PA_CODES_KEY)); return (o && typeof o === 'object') ? o : {}; }
+  catch (_) { return {}; }
+}
+function paCodesSave(c) { try { localStorage.setItem(PA_CODES_KEY, JSON.stringify(c)); } catch (_) {} }
+
+function paCodigoAlumno(grado, seccion, num) {
+  const g = String(grado || '').replace(/\D/g, '');
+  const mSec = String(seccion || '').trim().match(/([a-zA-Z0-9])\s*$/);
   const sec = mSec ? mSec[1].toUpperCase() : '';
-  const n = String(s.num || '').replace(/\D/g, '');
-  return (g && n) ? (g + sec + n) : '';
+  const n = String(num || '').replace(/\D/g, '');
+  if (!g || !n) return '';
+  const codes = paCodesLoad();
+  const key = g + '|' + sec;
+  const grupo = codes[key] || (codes[key] = {});
+  if (!grupo[n]) {
+    let suf = '';
+    for (let i = 0; i < 4; i++) suf += PA_COD_ALFA[Math.floor(Math.random() * PA_COD_ALFA.length)];
+    grupo[n] = n + suf;
+    paCodesSave(codes);
+  }
+  return grupo[n];
+}
+
+/* Con guion para leerse fácil: 15K7QM → 15-K7QM (la consulta ignora el guion) */
+function paCodigoBonito(c) { return String(c || '').replace(/^(\d+)/, '$1-'); }
+
+function paCodigoLista(a, s) {
+  return paCodigoAlumno(a.grado, a.seccion, s.num);
+}
+
+/* Tiras imprimibles con la clave de cada familia (una por alumno) */
+function paMostrarCodigos() {
+  const grado   = document.getElementById('pa-grado')?.value || '';
+  const seccion = document.getElementById('pa-seccion')?.value || '';
+  if (!String(grado).replace(/\D/g, '')) { toast('Escribe primero el Grado (tarjeta de arriba)'); return; }
+  const rows = Array.from(document.querySelectorAll('.pa-student-row'));
+  if (!rows.length) { toast('Agrega la lista de estudiantes primero'); return; }
+  const filas = rows.map((row, i) => ({
+    num: i + 1,
+    nombre: row.querySelector('.pa-inp-name')?.value.trim() || '',
+    codigo: paCodigoAlumno(grado, seccion, i + 1),
+  })).filter(f => f.codigo);
+
+  const grupoTxt = paEsc(grado) + (seccion ? ' ' + paEsc(seccion) : '');
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Claves de familia — ${grupoTxt}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;color:#111;background:#fff;padding:10mm;}
+h1{font-size:15px;margin-bottom:2mm;}
+p.intro{font-size:11px;color:#444;margin-bottom:5mm;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm;}
+.tira{border:1.5px dashed #888;border-radius:6px;padding:4mm;page-break-inside:avoid;}
+.t1{font-size:10px;font-weight:bold;color:#1e3a7c;}
+.t2{font-size:11px;margin-top:1.5mm;}
+.cod{font-size:20px;font-weight:900;letter-spacing:2px;margin:2mm 0;font-family:'Courier New',monospace;}
+.t3{font-size:9px;color:#333;line-height:1.45;}
+.noprint{margin-bottom:6mm;}
+.noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">🖨️ Imprimir tiras</button></div>
+<h1>🔑 Claves de familia — ${grupoTxt}</h1>
+<p class="intro">Recorte cada tira y entréguela EN PRIVADO a la familia de cada estudiante (reunión de padres o cuaderno).
+La clave es secreta: con ella el padre ve las notas de su hijo/a desde cualquier teléfono con internet.</p>
+<div class="grid">
+${filas.map(f => `
+  <div class="tira">
+    <div class="t1">🔑 M.E.T.A.S — Clave de la familia</div>
+    <div class="t2">Alumno/a <strong>#${f.num}</strong> · ${grupoTxt}${f.nombre ? ' · ' + paEsc(f.nombre) : ''}</div>
+    <div class="cod">${paCodigoBonito(f.codigo)}</div>
+    <div class="t3">📱 En cualquier teléfono con internet entre a:<br><strong>${PA_SITE}</strong><br>
+    Toque la tarjeta verde <strong>«Para madres y padres»</strong>, escriba esta clave y toque <strong>Consultar</strong>.
+    Guárdela como una llave: es solo para su familia.</div>
+  </div>`).join('')}
+</div>
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
+  w.document.write(html);
+  w.document.close();
 }
 
 function paSbFirma(s) { return String(s.nota) + '|' + (s.msg || ''); }
@@ -896,6 +983,9 @@ document.addEventListener('DOMContentLoaded', () => {
   ['pa-mision', 'pa-forma', 'pa-tipo'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', paAutoNombre);
   });
+
+  // Claves de familia: tiras imprimibles para entregar a cada padre
+  document.getElementById('pa-codigos-btn')?.addEventListener('click', paMostrarCodigos);
 
   // Sincronización con la hoja del maestro
   document.getElementById('pa-sync-save')?.addEventListener('click', paProbarConexion);

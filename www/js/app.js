@@ -1119,16 +1119,16 @@ function renderPadre() {
         </div>`}
     </div>`;
 
-  /* ── Consulta en la nube por código de lista (desde cualquier lugar) ── */
-  const codigoIni = String(_padreCfg().codigo || _padreCodigoSugerido(ident) || '');
+  /* ── Consulta en la nube con la clave de la familia (desde cualquier lugar) ── */
+  const codigoIni = String(_padreCfg().codigo || '');
   const nubeHTML = `
     <div class="padre-sec padre-nube">
       <div class="padre-sec-title">🔑 Notas desde cualquier lugar</div>
-      <p class="padre-hint">Escriba el <strong>código de lista</strong> de su hijo o hija:
-        grado + sección + número de lista (ej. <strong>6A12</strong>). Si tiene duda, pídalo al maestro.</p>
+      <p class="padre-hint">Escriba la <strong>clave de la familia</strong> que le entregó el maestro
+        (empieza con el número de lista, ej. <strong>15-K7QM</strong>). Es secreta: solo su familia la conoce.</p>
       <div class="padre-tel-row">
-        <input id="padre-codigo" class="pa-inp-field padre-codigo-inp" maxlength="8"
-               autocomplete="off" autocapitalize="characters" placeholder="ej: 6A12" value="${_pEsc(codigoIni)}">
+        <input id="padre-codigo" class="pa-inp-field padre-codigo-inp" maxlength="12"
+               autocomplete="off" autocapitalize="characters" placeholder="ej: 15-K7QM" value="${_pEsc(codigoIni)}">
         <button class="padre-wa-btn" onclick="padreConsultarNube()">Consultar</button>
       </div>
       <div id="padre-nube-out"></div>
@@ -1136,20 +1136,11 @@ function renderPadre() {
 
   const avisoHTML = `
     <p class="padre-aviso">⚠️ El resumen de arriba vive en el teléfono donde ${quien} estudia y practica.
-      Las notas por <strong>código de lista</strong> sí se ven desde cualquier equipo con internet.</p>`;
+      Las notas con la <strong>clave de la familia</strong> sí se ven desde cualquier equipo con internet.</p>`;
 
   cont.innerHTML =
     (nombre ? `<h2 class="padre-titulo">El avance de ${_pEsc(nombre)}</h2>` : '') +
     semanaHTML + paHTML + nubeHTML + pasoHTML + consejoHTML + waHTML + avisoHTML;
-}
-
-/* Código de lista sugerido desde la identidad local: dígitos del grado +
-   letra de sección (si hay) + número de lista */
-function _padreCodigoSugerido(ident) {
-  const g = String(ident.grado || '').replace(/\D/g, '');
-  const sec = _padreSeccion(ident.grado);
-  const n = String(ident.num || '').replace(/\D/g, '');
-  return (g && n) ? (g + sec + n) : '';
 }
 
 function _padreSbCfg() {
@@ -1166,8 +1157,9 @@ async function padreConsultarNube() {
   const inp = document.getElementById('padre-codigo');
   const out = document.getElementById('padre-nube-out');
   if (!inp || !out) return;
-  const codigo = String(inp.value || '').replace(/\s/g, '').toUpperCase();
-  if (codigo.length < 2) { toast('Escriba el código de lista (ej. 6A12)'); return; }
+  // La clave se escribe con o sin guion/espacios: 15-K7QM = 15K7QM
+  const codigo = String(inp.value || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  if (codigo.length < 4) { toast('Escriba la clave completa (ej. 15-K7QM)'); return; }
   const c = _padreCfg(); c.codigo = codigo; _padreSaveCfg(c);
   if (navigator.onLine === false) {
     out.innerHTML = '<p class="padre-hint">📴 La consulta necesita internet. Intente cuando tenga conexión.</p>';
