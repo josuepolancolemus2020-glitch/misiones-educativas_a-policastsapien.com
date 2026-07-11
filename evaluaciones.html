@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🖨️ Banco de Evaluaciones — M.E.T.A.S</title>
+<style>
+:root{
+  --esp:#c49000; --mat:#1565c0; --cnat:#27ae60; --csoc:#c0392b;
+  --bg:#f4f7fb; --card:#ffffff; --texto:#2d3436; --gray:#636e72; --border:#dfe6ee; --pri:#1565c0; --pri-gl:#e3f2fd;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#12181f; --card:#1b2430; --texto:#eceff4; --gray:#9aa7b4; --border:#2c3947; --pri:#64b5f6; --pri-gl:#0d2a4a; }
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--texto);padding:1rem;max-width:1100px;margin:0 auto;}
+header{background:linear-gradient(135deg,#1565c0,#00838f);color:#fff;border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1rem;}
+header h1{font-size:1.35rem;margin-bottom:0.3rem;}
+header p{font-size:0.85rem;opacity:0.92;line-height:1.45;}
+.top-links{display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem;}
+.btn{border:none;border-radius:10px;padding:0.55rem 0.95rem;font-size:0.85rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem;}
+.btn-blanco{background:rgba(255,255,255,0.92);color:#1565c0;}
+.pasos{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.9rem 1rem;margin-bottom:1rem;font-size:0.88rem;line-height:1.7;}
+.pasos strong{color:var(--pri);}
+.pasos .chip{display:inline-block;background:var(--pri-gl);color:var(--pri);border-radius:8px;padding:0.05rem 0.5rem;font-weight:700;white-space:nowrap;}
+.materia{margin-bottom:1.2rem;}
+.materia h2{font-size:1rem;margin-bottom:0.6rem;display:flex;align-items:center;gap:0.5rem;}
+.materia h2::before{content:'';width:5px;height:18px;border-radius:3px;background:var(--mcolor);display:inline-block;}
+.materia h2 .cnt{font-size:0.75rem;color:var(--gray);font-weight:600;}
+.lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0.6rem;}
+.mision{background:var(--card);border:1.5px solid var(--border);border-left:5px solid var(--mcolor);border-radius:12px;padding:0.75rem 0.9rem;text-decoration:none;color:var(--texto);display:flex;align-items:center;gap:0.6rem;transition:transform .12s;}
+.mision:active{transform:scale(.98);}
+.mision .ico{font-size:1.4rem;flex-shrink:0;}
+.mision .tit{font-size:0.88rem;font-weight:700;line-height:1.3;}
+.mision .sub{font-size:0.72rem;color:var(--gray);margin-top:0.15rem;}
+.mision .go{margin-left:auto;color:var(--mcolor);font-weight:800;flex-shrink:0;}
+.esp{--mcolor:var(--esp);} .mat{--mcolor:var(--mat);} .cnat{--mcolor:var(--cnat);} .csoc{--mcolor:var(--csoc);}
+.nota-etica{margin-top:1rem;background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:8px;padding:0.7rem 0.9rem;font-size:0.78rem;line-height:1.55;}
+footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🖨️ Banco de Evaluaciones — M.E.T.A.S</h1>
+  <p>Las <strong id="totalMisiones">28</strong> misiones con evaluación imprimible en carta, con pauta de corrección y clave ZipGrade.
+     Cada <strong>Forma (1 a 30)</strong> genera <strong>siempre el mismo examen</strong>: imprime la Forma 3 hoy y la pauta de la Forma 3 seguirá siendo válida mañana.</p>
+  <div class="top-links">
+    <a class="btn btn-blanco" href="index.html">🏠 Volver al inicio</a>
+    <a class="btn btn-blanco" href="registro.html">📊 Registro de clase</a>
+  </div>
+</header>
+
+<div class="pasos">
+  <strong>¿Cómo imprimir una evaluación?</strong><br>
+  1️⃣ Toca la misión que necesitas &nbsp;→&nbsp; 2️⃣ dentro de la misión abre <span class="chip">📝 Evaluación</span>
+  &nbsp;→&nbsp; 3️⃣ elige la <span class="chip">Forma</span> (1-30) &nbsp;→&nbsp; 4️⃣ toca <span class="chip">🖨️ Imprimir</span>.
+  La pauta con la clave sale junto al examen.
+</div>
+
+<div id="banco"></div>
+
+<div class="nota-etica">
+  💡 <strong>Consejo:</strong> usa Formas distintas por fila de pupitres (ej. Formas 1, 2 y 3) para evaluar con tranquilidad.
+  El pie de página de cada examen indica la Forma para calificar con su pauta exacta.
+</div>
+
+<footer>🏠 Proyecto Educativo M.E.T.A.S · 🌐 policastsapien.com</footer>
+
+<script src="js/data/misiones.js"></script>
+<script>
+'use strict';
+const ORDEN = [
+  { key: 'español',     label: '📖 Español',     cls: 'esp'  },
+  { key: 'matemáticas', label: '🔢 Matemáticas', cls: 'mat'  },
+  { key: 'naturales',   label: '🌱 Ciencias Naturales', cls: 'cnat' },
+  { key: 'sociales',    label: '🌎 Ciencias Sociales',  cls: 'csoc' },
+];
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+document.getElementById('totalMisiones').textContent = MISSIONS.length;
+document.getElementById('banco').innerHTML = ORDEN.map(o => {
+  const lista = MISSIONS.filter(m => m.subject === o.key);
+  if (!lista.length) return '';
+  return `
+  <section class="materia ${o.cls}">
+    <h2>${o.label} <span class="cnt">· ${lista.length} evaluaciones</span></h2>
+    <div class="lista">
+      ${lista.map(m => `
+        <a class="mision ${o.cls}" href="${esc(m.url)}">
+          <span class="ico">${m.icon}</span>
+          <span>
+            <span class="tit">${esc(m.title)}</span>
+            <div class="sub">${esc(m.grade || '')}</div>
+          </span>
+          <span class="go">🖨️ ›</span>
+        </a>`).join('')}
+    </div>
+  </section>`;
+}).join('');
+</script>
+</body>
+</html>
