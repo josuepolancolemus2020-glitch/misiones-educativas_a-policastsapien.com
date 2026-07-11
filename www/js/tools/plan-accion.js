@@ -219,6 +219,7 @@ function paGenerate() {
   paRenderPadres();
   paRenderHistorial();
   paSyncRefresh();
+  paSincronizarNube(false); // nube de padres (código de lista)
   setTimeout(() => paSincronizar(false), 1500);
 
   dash.style.display = '';
@@ -631,18 +632,22 @@ function paSyncUrlGet() {
   try { return (localStorage.getItem('METAS_SYNC_URL') || PA_SYNC_DEFAULT).trim(); } catch (_) { return PA_SYNC_DEFAULT; }
 }
 
+/* Carpeta canónica de la misión (la misma que usa el registro) cuando el
+   análisis quedó amarrado a una misión del banco */
+function paMisionCanon(a) {
+  let canon = a.evaluacion || '';
+  if (a.misionId && typeof MISSIONS !== 'undefined') {
+    const m = MISSIONS.find(x => x.id === a.misionId);
+    if (m) { try { canon = decodeURIComponent((m.url || '').split('/')[1] || '') || canon; } catch (_) {} }
+  }
+  return canon;
+}
+
 function paEventosPendientes(d) {
   const evs = [];
   d.analisis.forEach(a => (a.students || []).forEach(s => {
     if (s.env) return;
-    // Si el análisis quedó amarrado a una misión del banco, viaja la carpeta
-    // canónica de la misión (misma que usa el registro) + la Forma impresa:
-    // la base que el chatbot cruzará por código de lista.
-    let misionCanon = a.evaluacion || '';
-    if (a.misionId && typeof MISSIONS !== 'undefined') {
-      const m = MISSIONS.find(x => x.id === a.misionId);
-      if (m) { try { misionCanon = decodeURIComponent((m.url || '').split('/')[1] || '') || misionCanon; } catch (_) {} }
-    }
+    const misionCanon = paMisionCanon(a);
     evs.push({
       id: 'PA-' + a.id + '-' + s.num + '-' + String(s.nota),
       t: a.t, tipo: 'plan_accion',
@@ -778,6 +783,91 @@ function paAutoNombre() {
     (forma ? ' — Forma ' + forma : '');
 }
 
+/* ── Nube M.E.T.A.S (Supabase): consulta de padres por código de lista ──
+   Cada fila del análisis sube con su código (grado+sección+número, ej. 6A12).
+   Firma nota|mensaje: si el maestro corrige, la fila se reenvía y la nube
+   se ACTUALIZA (upsert por evento_id en metas_guardar_plan). Offline-first:
+   sin internet no se bloquea nada; se reintenta al volver la conexión. */
+function paSbCfg() {
+  let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+  let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+  try {
+    url = localStorage.getItem('METAS_SB_URL') || url;
+    key = localStorage.getItem('METAS_SB_KEY') || key;
+  } catch (_) {}
+  return { url, key };
+}
+
+function paCodigoLista(a, s) {
+  const g = String(a.grado || '').replace(/\D/g, '');
+  const mSec = String(a.seccion || '').trim().match(/([a-zA-Z0-9])\s*$/);
+  const sec = mSec ? mSec[1].toUpperCase() : '';
+  const n = String(s.num || '').replace(/\D/g, '');
+  return (g && n) ? (g + sec + n) : '';
+}
+
+function paSbFirma(s) { return String(s.nota) + '|' + (s.msg || ''); }
+
+function paSbPendientes(d) {
+  const filas = [];
+  d.analisis.forEach(a => (a.students || []).forEach(s => {
+    const codigo = paCodigoLista(a, s);
+    if (!codigo) return;
+    if (s.sb === paSbFirma(s)) return; // ya está en la nube tal cual
+    filas.push({
+      evento_id: 'PASB-' + a.id + '-' + s.num,
+      codigo,
+      num: String(s.num || ''), alumno: s.nombre || '',
+      grado: a.grado || '', seccion: a.seccion || '', docente: a.docente || '',
+      evaluacion: a.evaluacion || '', mision: paMisionCanon(a),
+      forma: String(a.forma || ''), tipo: a.tipoEval || '',
+      nota: (typeof s.nota === 'number') ? s.nota : '', base: 100,
+      nsp: s.nota === 'NSP',
+      categoria: s.categoria || '', mensaje: s.msg || '',
+      fecha_analisis: a.t || '',
+    });
+  }));
+  return filas;
+}
+
+let _paSbBusy = false;
+async function paSincronizarNube(manual) {
+  if (_paSbBusy) return;
+  const st = document.getElementById('pa-sb-status');
+  const d = paLoadData();
+  const filas = paSbPendientes(d);
+  if (!filas.length) {
+    if (st) st.textContent = '🔑 Nube de padres: al día.';
+    return;
+  }
+  if (navigator.onLine === false) {
+    if (st) st.textContent = '🔑 Nube de padres: 📴 sin conexión, se enviará al haber internet (' + filas.length + ' pendientes).';
+    return;
+  }
+  _paSbBusy = true;
+  if (st) st.textContent = '🔑 Nube de padres: ⏳ enviando ' + Math.min(filas.length, 200) + '…';
+  try {
+    const lote = filas.slice(0, 200);
+    const { url, key } = paSbCfg();
+    const r = await fetch(url + '/rest/v1/rpc/metas_guardar_plan', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filas: lote }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const enviados = new Set(lote.map(f => f.evento_id));
+    d.analisis.forEach(a => (a.students || []).forEach(s => {
+      if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(s);
+    }));
+    paSaveData(d);
+    if (st) st.textContent = '🔑 Nube de padres: ✅ ' + lote.length + ' nota' + (lote.length !== 1 ? 's' : '') + ' disponibles por código de lista.';
+    if (manual) toast('✅ Notas enviadas a la nube de padres');
+  } catch (_) {
+    if (st) st.textContent = '🔑 Nube de padres: ⚠️ no se pudo enviar; se reintentará.';
+  }
+  _paSbBusy = false;
+}
+
 function paInit() {
   paPoblarMisiones();
   if (_paInitDone) {
@@ -789,6 +879,7 @@ function paInit() {
   for (let i = 1; i <= 20; i++) paAddRow(i);
   paRenderHistorial();
   paSyncRefresh();
+  paSincronizarNube(false);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -808,8 +899,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Sincronización con la hoja del maestro
   document.getElementById('pa-sync-save')?.addEventListener('click', paProbarConexion);
-  document.getElementById('pa-sync-now')?.addEventListener('click', () => paSincronizar(true));
-  window.addEventListener('online', () => paSincronizar(false));
+  document.getElementById('pa-sync-now')?.addEventListener('click', () => { paSincronizar(true); paSincronizarNube(true); });
+  window.addEventListener('online', () => { paSincronizar(false); paSincronizarNube(false); });
 
   // Entry tab switching
   document.querySelectorAll('.pa-etab').forEach(tab => {
