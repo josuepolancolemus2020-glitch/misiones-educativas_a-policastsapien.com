@@ -1166,7 +1166,21 @@ function printEval() {
     d.pr.terms.forEach((it, i) => { const l = d.pr.letters[d.pr.shuffledDefs.findIndex(df => df.def === it.def)]; pR += `<tr><td class="pn">${i + 16}.</td><td class="pa">${i + 16}→${l}</td></tr>`; });
     pR += `</table></div>`;
 
-    const doc = `<!DOCTYPE html><html lang="es"><head>
+    
+    // ── Clave rápida estilo ZipGrade (círculos rellenados automáticamente con la pauta)
+    const zgKey = [];
+    d.cp.forEach((it, i) => zgKey.push({ n: i + 1, fill: 0, labels: ['✓', '✗', '', '', ''] }));
+    d.tf.forEach((it, i) => zgKey.push({ n: i + 6, fill: it.a ? 0 : 1, labels: ['V', 'F', '', '', ''] }));
+    d.mc.forEach((it, i) => zgKey.push({ n: i + 11, fill: it.a, labels: ['', '', '', '', ''] }));
+    d.pr.terms.forEach((it, i) => { const l = d.pr.letters[d.pr.shuffledDefs.findIndex(df => df.def === it.def)]; zgKey.push({ n: i + 16, fill: 'ABCDE'.indexOf(l), labels: ['', '', '', '', ''] }); });
+    const zgRow = r => `<div class="zg-row"><span class="zg-n">${r.n}</span>${r.labels.map((lb, ci) => ci === r.fill ? `<span class="zg-c zg-fill">${lb || '●'}</span>` : `<span class="zg-c">${lb}</span>`).join('')}</div>`;
+    const zgHead = '<div class="zg-head"><span class="zg-n"></span><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span></div>';
+    const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
+    const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
+    const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+
+const doc = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Evaluación Las Eras Geológicas · Forma ${forma}</title>
 <style>
@@ -1208,22 +1222,37 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 .total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}
 .pauta-wrap{page-break-before:always;padding-top:0.4rem;}
 .p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
-.p-main{font-size:9.5pt;font-weight:700;}
-.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}
-.p-meta{font-size:7pt;color:#555;}
-.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
-.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.25rem 0.4rem;}
-.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;}
-.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}
+.p-main{font-size:13pt;font-weight:700;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}
+.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}
+.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}
 .p-tbl tr{border-bottom:1px dotted #ddd;}
-.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}
-.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}
-.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}
-@media print{@page{size:letter portrait;margin:12.7mm;}}
+.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}
+.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}
+.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
+.zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
+.zg-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem;}
+.zg-head{display:flex;gap:5px;align-items:center;font-weight:700;font-size:10pt;letter-spacing:1px;}
+.zg-head span:not(.zg-n){width:17px;text-align:center;}
+.zg-row{display:flex;gap:5px;align-items:center;margin-top:3px;}
+.zg-n{width:22px;text-align:right;font-weight:700;font-size:10.5pt;margin-right:5px;flex-shrink:0;}
+.zg-c{width:17px;height:17px;border:1.4px solid #555;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8pt;color:#666;background:#fff;flex-shrink:0;}
+.zg-fill{background:#111;color:#fff;border-color:#111;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.zg-ver{margin-top:0.3rem;display:flex;gap:5px;align-items:center;font-size:8.5pt;font-weight:700;}
+.zg-note{font-size:7pt;color:#555;margin-top:0.22rem;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
 </style></head><body>
 <div class="ph">
   <h2>Evaluación Final · Misión Las Eras Geológicas · CC.NN.</h2>
-  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
   <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
@@ -1236,8 +1265,9 @@ ${s1}${s2}${s3}${s4}
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
+  ${zgBlock}
 </div>
-<div class="forma-tag">Forma ${forma}</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 </body></html>`;
 
     const win = window.open('', '_blank', '');
