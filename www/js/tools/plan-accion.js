@@ -211,7 +211,11 @@ function paGenerate() {
   });
 
   // Persistencia local + mensajes a padres + sincronización
-  paPersistCurrent(students, { grado, seccion, docente, evaluacion });
+  // (misionId/forma/tipoEval amarran la nota a la evaluación exacta del banco)
+  const misionId = parseInt(document.getElementById('pa-mision')?.value, 10) || null;
+  const formaEv  = document.getElementById('pa-forma')?.value || '';
+  const tipoEval = document.getElementById('pa-tipo')?.value || 'conceptual';
+  paPersistCurrent(students, { grado, seccion, docente, evaluacion, misionId, forma: formaEv, tipoEval });
   paRenderPadres();
   paRenderHistorial();
   paSyncRefresh();
@@ -458,9 +462,10 @@ function paPersistCurrent(students, meta) {
   const d = paLoadData();
   let a = _paCurrentId ? d.analisis.find(x => x.id === _paCurrentId) : null;
   if (!a) {
-    /* mismo grupo y misma evaluación → actualizar, no duplicar */
+    /* mismo grupo y misma evaluación (incluida la Forma) → actualizar, no duplicar */
     a = d.analisis.find(x =>
       (x.evaluacion || '') === (meta.evaluacion || '') &&
+      String(x.forma || '') === String(meta.forma || '') &&
       (x.grado || '') === (meta.grado || '') &&
       (x.seccion || '') === (meta.seccion || ''));
     if (a) _paCurrentId = a.id;
@@ -607,6 +612,9 @@ function paAbrirAnalisis(id) {
   const set = (elId, v) => { const el = document.getElementById(elId); if (el) el.value = v || ''; };
   set('pa-grado', a.grado); set('pa-seccion', a.seccion);
   set('pa-docente', a.docente); set('pa-evaluacion', a.evaluacion);
+  paPoblarMisiones(); // por si el historial se abre antes de entrar a la vista
+  set('pa-mision', a.misionId || ''); set('pa-forma', a.forma || '');
+  set('pa-tipo', a.tipoEval || 'conceptual');
   const list = document.getElementById('pa-students-list');
   if (list) {
     list.innerHTML = '';
@@ -627,10 +635,19 @@ function paEventosPendientes(d) {
   const evs = [];
   d.analisis.forEach(a => (a.students || []).forEach(s => {
     if (s.env) return;
+    // Si el análisis quedó amarrado a una misión del banco, viaja la carpeta
+    // canónica de la misión (misma que usa el registro) + la Forma impresa:
+    // la base que el chatbot cruzará por código de lista.
+    let misionCanon = a.evaluacion || '';
+    if (a.misionId && typeof MISSIONS !== 'undefined') {
+      const m = MISSIONS.find(x => x.id === a.misionId);
+      if (m) { try { misionCanon = decodeURIComponent((m.url || '').split('/')[1] || '') || misionCanon; } catch (_) {} }
+    }
     evs.push({
       id: 'PA-' + a.id + '-' + s.num + '-' + String(s.nota),
       t: a.t, tipo: 'plan_accion',
-      evaluacion: a.evaluacion || '', mision: a.evaluacion || '',
+      evaluacion: a.evaluacion || '', mision: misionCanon,
+      forma: a.forma || '',
       grado: ((a.grado || '') + ' ' + (a.seccion || '')).trim(), seccion: a.seccion || '',
       docente: a.docente || '',
       codigo: s.num, alumno: s.nombre,
@@ -719,7 +736,50 @@ async function paProbarConexion() {
   }
 }
 
+/* ── Selector estructurado de evaluación (banco M.E.T.A.S) ──
+   El maestro elige la misión exacta + Forma impresa (1-30) + tipo;
+   el nombre se autollena y el análisis guarda misionId/forma/tipoEval
+   para que la vista Padre cruce la nota con la evaluación precisa. */
+function paPoblarMisiones() {
+  const sel = document.getElementById('pa-mision');
+  if (!sel || sel.options.length > 1 || typeof MISSIONS === 'undefined') return;
+  [['español', '📖 Español'], ['matemáticas', '🔢 Matemáticas'],
+   ['naturales', '🌱 C. Naturales'], ['sociales', '🌎 C. Sociales']].forEach(([key, label]) => {
+    const og = document.createElement('optgroup');
+    og.label = label;
+    MISSIONS.filter(m => m.subject === key).forEach(m => {
+      const op = document.createElement('option');
+      op.value = m.id;
+      op.textContent = m.title;
+      og.appendChild(op);
+    });
+    sel.appendChild(og);
+  });
+  const sf = document.getElementById('pa-forma');
+  if (sf && sf.options.length <= 1) {
+    for (let i = 1; i <= 30; i++) {
+      const o = document.createElement('option');
+      o.value = i;
+      o.textContent = 'Forma ' + i;
+      sf.appendChild(o);
+    }
+  }
+}
+
+function paAutoNombre() {
+  const id = parseInt(document.getElementById('pa-mision')?.value, 10);
+  const m  = (id && typeof MISSIONS !== 'undefined') ? MISSIONS.find(x => x.id === id) : null;
+  if (!m) return; // «Otra evaluación»: se respeta lo escrito a mano
+  const forma = document.getElementById('pa-forma')?.value || '';
+  const tipo  = document.getElementById('pa-tipo')?.value || 'conceptual';
+  const inp = document.getElementById('pa-evaluacion');
+  if (inp) inp.value = m.title +
+    (tipo === 'operativa' ? ' · Prueba operativa' : '') +
+    (forma ? ' — Forma ' + forma : '');
+}
+
 function paInit() {
+  paPoblarMisiones();
   if (_paInitDone) {
     paRenderHistorial();
     paSyncRefresh();
@@ -740,6 +800,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('pa-generate-btn')?.addEventListener('click', () => { _paCurrentId = null; paGenerate(); });
+
+  // Selector de evaluación del banco: autollenar el nombre al cambiar
+  ['pa-mision', 'pa-forma', 'pa-tipo'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', paAutoNombre);
+  });
 
   // Sincronización con la hoja del maestro
   document.getElementById('pa-sync-save')?.addEventListener('click', paProbarConexion);

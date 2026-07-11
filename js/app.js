@@ -990,9 +990,16 @@ function _pEsc(s) {
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+/* Sección del alumno: letra final de textos como «6to A», «6-B» o «B» */
+function _padreSeccion(txt) {
+  const m = String(txt || '').trim().match(/([a-fA-F])$/);
+  return m ? m[1].toUpperCase() : '';
+}
+
 /* Notas del alumno registradas por el maestro en el Plan de Acción.
-   Coincidencia por nombre normalizado, por número de lista (si el
-   grado del análisis no contradice al del alumno) o por código #num. */
+   El cruce exacto es Nº de lista + grado + sección (el 4A nunca se
+   mezcla con el 4B); el nombre normalizado y el código «#num» siguen
+   valiendo como identificación directa. */
 function _padreNotasPA(ident) {
   let pa = null;
   try { pa = JSON.parse(localStorage.getItem('METAS_PLANACCION_V1')); } catch (_) {}
@@ -1000,14 +1007,19 @@ function _padreNotasPA(ident) {
   const num  = String(ident.num || '').replace(/\D/g, '');
   const nomN = _rNorm(ident.nombre || '');
   const gradoAl = String(ident.grado || '').replace(/\D/g, '');
+  const secAl   = _padreSeccion(ident.grado); // el modal guarda «Grado y sección» juntos
   const filas = [];
   pa.analisis.slice().reverse().forEach(a => {
     const gradoPA = String(a.grado || '').replace(/\D/g, '');
+    const secPA   = _padreSeccion(a.seccion);
+    // Solo se exige coincidencia cuando ambos lados tienen sección con letra
+    const okSec   = !secAl || !secPA || secAl === secPA;
     (a.students || []).forEach(st => {
       const okNombre = nomN && _rNorm(st.nombre || '') === nomN;
-      const okCodigo = num && String(st.nombre || '').trim() === ('#' + num);
+      const okCodigo = num && String(st.nombre || '').trim() === ('#' + num) &&
+                       (!gradoAl || !gradoPA || gradoAl === gradoPA) && okSec;
       const okNum = num && String(st.num || '').replace(/\D/g, '') === num &&
-                    (!gradoAl || !gradoPA || gradoAl === gradoPA);
+                    (!gradoAl || !gradoPA || gradoAl === gradoPA) && okSec;
       if (okNombre || okCodigo || okNum) filas.push({ a, st });
     });
   });
@@ -1062,13 +1074,15 @@ function renderPadre() {
         const f = (a.t || '').slice(0, 10);
         const esNSP = st.nota === 'NSP';
         const aprobo = !esNSP && typeof st.nota === 'number' && st.nota >= 70;
+        const formaTxt = (a.forma && !String(a.evaluacion || '').includes('Forma'))
+          ? ' · Forma ' + _pEsc(a.forma) : '';
         return `
         <div class="padre-nota">
           <div class="padre-nota-top">
             <strong>${_pEsc(a.evaluacion || 'Evaluación')}</strong>
             <span class="padre-nota-val ${aprobo ? 'ok' : 'baja'}">${esNSP ? 'NSP' : _pEsc(st.nota) + '/100'}</span>
           </div>
-          <div class="padre-nota-meta">${_pEsc(st.categoria || '')}${f ? ' · ' + f : ''}</div>
+          <div class="padre-nota-meta">${_pEsc(st.categoria || '')}${formaTxt}${f ? ' · ' + f : ''}</div>
         </div>`;
       }).join('')}
       ${filasPA[0].st.msg ? `<div class="padre-msg">💬 <em>Mensaje del maestro:</em><br>${_pEsc(filasPA[0].st.msg)}</div>` : ''}
