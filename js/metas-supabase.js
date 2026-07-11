@@ -6,9 +6,9 @@
    - Cada evaluación calificada (conceptual u operativa) se copia a una
      cola local (METAS_SB_OUTBOX_V1) y se envía a la tabla `resultados`
      cuando hay internet. Sin conexión NADA se bloquea ni se pierde.
-   - Deduplicación en el servidor por evento_id (índice único +
-     Prefer: resolution=ignore-duplicates), así los reintentos tras un
-     corte de luz nunca duplican filas.
+   - Deduplicación en el servidor por evento_id (índice único; la función
+     metas_guardar hace ON CONFLICT DO NOTHING), así los reintentos tras
+     un corte de luz nunca duplican filas.
    - Este archivo lo carga automáticamente metas-registro.js; las
      misiones NO necesitan incluirlo a mano.
 
@@ -112,18 +112,20 @@
     var lote = leerCola().slice(0, opciones.keepalive ? LOTE_CIERRE : LOTE_MAX);
     if (!lote.length) return Promise.resolve(quedan());
     enCurso = true;
+    // Se envía a la función metas_guardar (no a la tabla directo): ella
+    // deduplica por evento_id en el servidor, cosa que RLS de solo-insertar
+    // no permite hacer vía on_conflict del API REST.
     var conf = {
       method: 'POST',
       headers: {
         'apikey': SB_KEY,
         'Authorization': 'Bearer ' + SB_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=ignore-duplicates,return=minimal'
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(lote)
+      body: JSON.stringify({ filas: lote })
     };
     if (opciones.keepalive) conf.keepalive = true;
-    return fetch(SB_URL + '/rest/v1/resultados?on_conflict=evento_id', conf)
+    return fetch(SB_URL + '/rest/v1/rpc/metas_guardar', conf)
       .then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         var ids = {};

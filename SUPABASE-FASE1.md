@@ -90,7 +90,41 @@ create policy resultados_insertar on public.resultados
 create index if not exists resultados_mision_idx on public.resultados (mision);
 create index if not exists resultados_fecha_idx on public.resultados (fecha desc);
 
--- 3) Consulta del maestro (exige la clave del punto 1)
+-- 3) Guardado con deduplicación (la app llama esta función, no la tabla).
+--    Necesaria porque RLS de solo-insertar no permite usar on_conflict
+--    del API REST (requiere leer la fila existente).
+create or replace function public.metas_guardar(filas jsonb)
+returns int
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare n int;
+begin
+  if filas is null or jsonb_typeof(filas) <> 'array' or jsonb_array_length(filas) > 500 then
+    return 0;
+  end if;
+  insert into public.resultados
+    (evento_id, tipo, mision, forma, nota, base, alumno, codigo_lista,
+     grado, docente, escuela, dispositivo, xp, fecha)
+  select f.evento_id, f.tipo, f.mision, f.forma, f.nota, f.base, f.alumno, f.codigo_lista,
+         f.grado, f.docente, f.escuela, f.dispositivo, f.xp, f.fecha
+  from jsonb_to_recordset(filas) as f(
+    evento_id text, tipo text, mision text, forma int, nota int, base int,
+    alumno text, codigo_lista text, grado text, docente text, escuela text,
+    dispositivo text, xp int, fecha timestamptz)
+  where f.evento_id is not null
+    and f.tipo in ('evaluacion','prueba_operativa')
+  on conflict (evento_id) do nothing;
+  get diagnostics n = row_count;
+  return n;
+end;
+$$;
+
+revoke all on function public.metas_guardar(jsonb) from public;
+grant execute on function public.metas_guardar(jsonb) to anon, authenticated;
+
+-- 4) Consulta del maestro (exige la clave del punto 1)
 create or replace function public.metas_consultar(p_clave text)
 returns setof public.resultados
 language sql
