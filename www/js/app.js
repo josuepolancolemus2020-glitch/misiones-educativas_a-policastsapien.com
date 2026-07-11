@@ -1122,6 +1122,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Rejilla «¿Qué quieres hacer hoy?» → vista correspondiente
+  document.querySelectorAll('.home-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchView(btn.dataset.view));
+  });
+
   // Chips de materias → misiones filtradas
   document.querySelectorAll('.subj-chip').forEach(chip => {
     chip.addEventListener('click', () => {

@@ -350,6 +350,34 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ====== SELECTORES DE CONTEXTO (País y Grado) ====== */
+/* ── Rejilla «¿Qué quieres hacer hoy?» (navegación principal) ── */
+.home-nav-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.home-nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 96px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.home-nav-btn:active { transform: scale(.96); box-shadow: none; }
+.hnb-emoji { font-size: 2.1rem; line-height: 1; }
+.hnb-label { font-size: .95rem; font-weight: 700; color: var(--text); }
+.home-nav-btn.hnb-docente { background: linear-gradient(135deg, #f8fafc, #eef4ff); border-color: rgba(30,58,124,.25); }
+.home-nav-btn.hnb-docente .hnb-label { color: var(--brand); }
+
 .selectors-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
