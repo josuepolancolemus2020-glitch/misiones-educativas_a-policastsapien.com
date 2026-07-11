@@ -1163,9 +1163,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Notificaciones
+  // Botón 🏅 Premios: abre Rutas y muestra la tira de insignias
   document.getElementById('notif-btn').addEventListener('click', () => {
-    toast('Sin notificaciones nuevas por ahora');
+    switchView('view-rutas');
+    const strip = document.querySelector('#view-rutas .insignias-strip');
+    if (strip) strip.scrollIntoView({ block: 'start', behavior: 'smooth' });
   });
 
   // ── Header oculto al hacer scroll ──
