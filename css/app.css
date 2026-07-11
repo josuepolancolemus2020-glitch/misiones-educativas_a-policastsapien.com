@@ -330,6 +330,10 @@ a { text-decoration: none; color: inherit; }
   border-bottom: none;
 }
 
+/* Nota pequeña de la tarjeta «Tu siguiente paso» en la portada
+   (la tarjeta es azul degradado: blanco translúcido para buen contraste) */
+.paso-nota { font-size: 10px; color: rgba(255,255,255,.78); margin-top: 8px; text-align: right; }
+
 /* ── Pensador del día + frase motivacional, plegados al final ── */
 .pensador-details { margin-bottom: 24px; }
 .pensador-summary {

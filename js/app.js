@@ -290,6 +290,14 @@ function renderHome() {
   applyCountryTheme(country);
   renderCountryCard(country);
 
+  // «Tu siguiente paso» directo en la portada (guiado por notas).
+  // Sin actividad ni diagnóstico aún: se oculta y manda la Misión destacada.
+  const pasoEl = document.getElementById('home-paso');
+  if (pasoEl) {
+    const rd = _rutasDatos();
+    pasoEl.innerHTML = (rd.sug && !rd.sug.m) ? '' : pasoCardHTML(rd.sug, true);
+  }
+
   // Chips de materia: misiones o "Próximamente" según país
   document.querySelectorAll('.subj-chip').forEach(chip => {
     const em = chip.querySelector('em');
@@ -557,6 +565,7 @@ function readDiag() {
 }
 function saveDiag(d) {
   try { localStorage.setItem(DIAG_KEY, JSON.stringify(d)); } catch (_) {}
+  _rdCache = null; // el diagnóstico cambió: invalidar la caché de rutas
 }
 
 function insigniasDeRuta(key, prog) {
@@ -626,6 +635,53 @@ function sugerenciaSiguiente(prog) {
     return { m, titulo: 'Tu punto de partida', razon: `Según tu diagnóstico de la ${RUTAS[mejorRuta].nombre}, este es tu punto de partida ideal.` };
   }
   return { m: null, titulo: '¿Por dónde empiezo?', razon: 'Toca «📍 ¿Dónde empiezo?» en una ruta para hacer un diagnóstico rápido, o comienza por el Punto de partida de la Ruta del Número.' };
+}
+
+/* ── Datos de rutas con caché por sesión ──
+   rutasProgress() + sugerenciaSiguiente() recorren TODO el registro; en
+   teléfonos de gama baja con años de eventos eso pesa. Se recalcula solo
+   si el registro o el diagnóstico cambiaron (firma por longitud). */
+let _rdCache = null;
+
+function _rutasDatos() {
+  let firma = '';
+  try {
+    firma = ((localStorage.getItem(REGISTRO_KEY) || '').length) + ':' +
+            ((localStorage.getItem(DIAG_KEY) || '').length);
+  } catch (_) {}
+  if (_rdCache && _rdCache.firma === firma) return _rdCache;
+  const prog = rutasProgress();
+  _rdCache = { firma, prog, sug: sugerenciaSiguiente(prog) };
+  return _rdCache;
+}
+
+/* Tarjeta «Tu siguiente paso» reutilizable (Rutas y portada).
+   sug === null significa: todas las rutas dominadas. */
+function pasoCardHTML(sug, enPortada) {
+  if (!sug) {
+    return `
+      <div class="paso-card">
+        <div class="paso-label">🧭 Tu siguiente paso</div>
+        <div class="paso-title">¡Increíble! Dominaste todas las etapas 🏆</div>
+        <p class="paso-razon">Completaste todas las rutas de aprendizaje. Sigue practicando para mantener tus notas de campeón.</p>
+      </div>`;
+  }
+  return `
+    <div class="paso-card">
+      <div class="paso-label">🧭 Tu siguiente paso</div>
+      <div class="paso-title">${sug.titulo}</div>
+      <p class="paso-razon">${sug.razon}</p>
+      ${sug.m ? `
+        <button class="paso-btn" onclick="visitMission(${sug.m.id})">
+          <span class="paso-btn-icon">${sug.m.icon}</span>
+          <span class="paso-btn-info">
+            <span class="paso-btn-ruta">${rutaLabel(sug.m)}</span>
+            <span class="paso-btn-title">${sug.m.title}</span>
+          </span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>` : ''}
+      ${enPortada ? `<p class="paso-nota">Sugerido según lo trabajado en este dispositivo.</p>` : ''}
+    </div>`;
 }
 
 /* Diagnóstico de entrada: cuestionario corto en un modal, sin tocar las misiones */
@@ -729,36 +785,11 @@ function renderRutas() {
   const container = document.getElementById('rutas-container');
   if (!container) return;
 
-  const prog = rutasProgress();
+  const { prog, sug } = _rutasDatos();
   const diag = readDiag();
 
-  // Tarjeta "Tu siguiente paso"
-  const sug = sugerenciaSiguiente(prog);
-  let pasoHTML;
-  if (sug) {
-    pasoHTML = `
-      <div class="paso-card">
-        <div class="paso-label">🧭 Tu siguiente paso</div>
-        <div class="paso-title">${sug.titulo}</div>
-        <p class="paso-razon">${sug.razon}</p>
-        ${sug.m ? `
-          <button class="paso-btn" onclick="visitMission(${sug.m.id})">
-            <span class="paso-btn-icon">${sug.m.icon}</span>
-            <span class="paso-btn-info">
-              <span class="paso-btn-ruta">${rutaLabel(sug.m)}</span>
-              <span class="paso-btn-title">${sug.m.title}</span>
-            </span>
-            <i class="fa-solid fa-chevron-right"></i>
-          </button>` : ''}
-      </div>`;
-  } else {
-    pasoHTML = `
-      <div class="paso-card">
-        <div class="paso-label">🧭 Tu siguiente paso</div>
-        <div class="paso-title">¡Increíble! Dominaste todas las etapas 🏆</div>
-        <p class="paso-razon">Completaste todas las rutas de aprendizaje. Sigue practicando para mantener tus notas de campeón.</p>
-      </div>`;
-  }
+  // Tarjeta "Tu siguiente paso" (la misma tarjeta que en la portada)
+  const pasoHTML = pasoCardHTML(sug, false);
 
   // Insignias ganadas en todas las rutas
   const ganadas = [];
