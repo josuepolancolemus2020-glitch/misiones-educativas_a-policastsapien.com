@@ -69,9 +69,12 @@ create or replace function public.metas_consultar_docente(p_codigo text, p_clave
 returns setof public.resultados
 language sql security definer stable set search_path = public
 as $$
+  -- coincidencia tolerante: mayúsculas/minúsculas, guiones y espacios dan igual
+  -- (el niño puede escribir «prof k7q2» y cuenta como PROF-K7Q2)
   select r.* from public.resultados r
   where public._metas_docente_ok(p_codigo, p_clave)
-    and r.docente ilike '%' || upper(trim(p_codigo)) || '%'
+    and regexp_replace(upper(coalesce(r.docente,'')), '[^A-Z0-9]', '', 'g')
+        like '%' || regexp_replace(upper(coalesce(p_codigo,'')), '[^A-Z0-9]', '', 'g') || '%'
   order by r.creado_en desc
   limit 2000
 $$;
@@ -85,7 +88,8 @@ language sql security definer stable set search_path = public
 as $$
   select p.* from public.progreso p
   where public._metas_docente_ok(p_codigo, p_clave)
-    and p.docente ilike '%' || upper(trim(p_codigo)) || '%'
+    and regexp_replace(upper(coalesce(p.docente,'')), '[^A-Z0-9]', '', 'g')
+        like '%' || regexp_replace(upper(coalesce(p_codigo,'')), '[^A-Z0-9]', '', 'g') || '%'
   order by p.actualizado_en desc
   limit 1000
 $$;
