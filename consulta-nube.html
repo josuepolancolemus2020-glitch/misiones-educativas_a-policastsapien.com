@@ -106,6 +106,20 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
   </div>
 </div>
 
+<div id="progSeccion" style="display:none;">
+  <h2 style="font-size:1.05rem;margin:1.4rem 0 0.6rem;color:var(--pri);">🎖️ Progreso por alumno (XP, insignias y diagnósticos)</h2>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Alumno</th><th>Nº lista</th><th>Grado</th><th>XP</th><th>Dominadas</th><th>Secciones</th><th>Min</th><th>Diagnósticos</th><th>Torneos</th><th>Insignias 🏆</th><th>Actualizado</th><th>Dispositivo</th></tr></thead>
+      <tbody id="progBody"></tbody>
+    </table>
+    <div class="vacio" id="progVacio" style="display:none;">
+      📭 Aún no hay fotos de progreso en la nube.<br>
+      Se generan solas cuando los estudiantes trabajan en las misiones con internet.
+    </div>
+  </div>
+</div>
+
 <div class="nota-etica">
   🔒 <strong>Privacidad:</strong> la tabla de la nube solo puede leerse con la clave del docente; los dispositivos de los
   estudiantes únicamente pueden <em>agregar</em> resultados, nunca ver los de otros. Se recomienda identificar a los
@@ -151,12 +165,23 @@ async function consultar(){
     DATOS = await r.json();
     if (!Array.isArray(DATOS)) DATOS = [];
     try { localStorage.setItem('METAS_SB_CLAVE', clave); } catch(e) {}
-    estado.textContent = DATOS.length
-      ? '✅ ' + DATOS.length + ' resultados recibidos de la nube.'
+    let PROG = [];
+    try {
+      const rp = await fetch(SB_URL + '/rest/v1/rpc/metas_consultar_progreso', {
+        method: 'POST',
+        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_clave: clave })
+      });
+      if (rp.ok) PROG = await rp.json();
+      if (!Array.isArray(PROG)) PROG = [];
+    } catch(e) {}
+    estado.textContent = (DATOS.length || PROG.length)
+      ? '✅ ' + DATOS.length + ' resultados y ' + PROG.length + ' fotos de progreso recibidos de la nube.'
       : '📭 La nube respondió sin resultados. Si esperabas datos, revisa que la clave sea la correcta.';
-    ['stats','filtros','acciones','tablaWrap'].forEach(id => document.getElementById(id).style.display = '');
+    ['stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = '');
     llenarFiltros();
     pintar();
+    pintarProgreso(PROG);
   } catch (err) {
     estado.textContent = '⚠️ No se pudo consultar (' + err.message + '). Revisa tu internet e intenta de nuevo.';
   }
@@ -210,6 +235,28 @@ function pintar(){
     stat(prom(evals)!=null?prom(evals):'—','Promedio conceptual') +
     stat(prom(ops)!=null?prom(ops):'—','Promedio operativa') +
     stat(pend,'Por subir (este equipo)');
+}
+
+function pintarProgreso(prog){
+  const tb=document.getElementById('progBody'); tb.innerHTML='';
+  document.getElementById('progVacio').style.display = prog.length?'none':'block';
+  prog.forEach(p=>{
+    const r=p.resumen||{};
+    const {f,h}=fmtF(p.actualizado_en);
+    const dom=Array.isArray(r.dominadas)?r.dominadas:[];
+    const diag=r.diag&&typeof r.diag==='object'
+      ? Object.keys(r.diag).map(k=>k+(r.diag[k]&&r.diag[k].etapa?(' → '+r.diag[k].etapa):'')).join(', ')
+      : '';
+    const camp=r.camp||{};
+    const ins=Array.isArray(camp.insignias)?[...new Set(camp.insignias)].slice(0,6).join(' · '):'';
+    const tr=document.createElement('tr');
+    tr.innerHTML = '<td>'+esc(p.alumno||'—')+'</td><td>'+esc(p.codigo_lista||'—')+'</td><td>'+esc(p.grado||'—')+
+      '</td><td>'+esc(r.xp_index==null?'—':r.xp_index)+'</td><td title="'+esc(dom.join(', '))+'">'+dom.length+
+      '</td><td>'+esc(r.secciones==null?'—':r.secciones)+'</td><td>'+esc(r.minutos==null?'—':r.minutos)+
+      '</td><td>'+esc(diag||'—')+'</td><td>'+esc(camp.torneos==null?'—':camp.torneos)+
+      '</td><td>'+esc(ins||'—')+'</td><td>'+esc(f+' '+h)+'</td><td>'+esc(p.dispositivo||'')+'</td>';
+    tb.appendChild(tr);
+  });
 }
 
 function exportarCSV(){

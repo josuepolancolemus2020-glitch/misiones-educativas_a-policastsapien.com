@@ -143,6 +143,95 @@ revoke all on function public.metas_consultar(text) from public;
 grant execute on function public.metas_consultar(text) to anon, authenticated;
 ```
 
+## ☁️ Fase 2: espejo de progreso (XP, insignias, diagnósticos)
+
+Además de los resultados (Fase 1), cada dispositivo sube una **foto del
+avance** del alumno actual: XP del index (`meta_v2`), secciones completadas,
+mejor nota por misión, misiones dominadas (≥70), minutos activos,
+diagnósticos de rutas (`METAS_DIAG_V1`) e insignias del Campeonísimo
+(`METAS_CAMP_V1`). Es un **upsert** (una fila por dispositivo+alumno que se
+actualiza, no se acumula) y solo se envía cuando el resumen cambió desde el
+último envío exitoso (`METAS_SB_PROG_V1` guarda el último enviado).
+El maestro lo ve en `consulta-nube.html`, sección "🎖️ Progreso por alumno".
+
+### Script SQL de la Fase 2 (pegar en SQL Editor → Run)
+
+```sql
+-- ============================================================
+-- M.E.T.A.S — Supabase Fase 2: espejo de progreso
+-- ============================================================
+
+create table if not exists public.progreso (
+  id bigint generated always as identity primary key,
+  dispositivo text not null,
+  alumno text not null default '',
+  codigo_lista text,
+  grado text,
+  docente text,
+  escuela text,
+  resumen jsonb,
+  actualizado_en timestamptz not null default now(),
+  unique (dispositivo, alumno)
+);
+alter table public.progreso enable row level security;
+-- sin políticas: todo pasa por las funciones de abajo
+
+-- Guardado (upsert por dispositivo+alumno)
+create or replace function public.metas_guardar_progreso(fila jsonb)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if fila is null or jsonb_typeof(fila) <> 'object' then return false; end if;
+  if coalesce(fila->>'dispositivo','') = '' then return false; end if;
+  if pg_column_size(fila) > 100000 then return false; end if;
+  insert into public.progreso
+    (dispositivo, alumno, codigo_lista, grado, docente, escuela, resumen, actualizado_en)
+  values (
+    fila->>'dispositivo',
+    coalesce(fila->>'alumno',''),
+    fila->>'codigo_lista',
+    fila->>'grado',
+    fila->>'docente',
+    fila->>'escuela',
+    fila->'resumen',
+    now()
+  )
+  on conflict (dispositivo, alumno) do update
+    set codigo_lista  = excluded.codigo_lista,
+        grado         = excluded.grado,
+        docente       = excluded.docente,
+        escuela       = excluded.escuela,
+        resumen       = excluded.resumen,
+        actualizado_en = now();
+  return true;
+end;
+$$;
+
+revoke all on function public.metas_guardar_progreso(jsonb) from public;
+grant execute on function public.metas_guardar_progreso(jsonb) to anon, authenticated;
+
+-- Consulta del maestro (exige la clave del docente)
+create or replace function public.metas_consultar_progreso(p_clave text)
+returns setof public.progreso
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select p.*
+  from public.progreso p
+  where exists (select 1 from public.metas_config c where c.clave_docente = p_clave)
+  order by p.actualizado_en desc
+  limit 2000;
+$$;
+
+revoke all on function public.metas_consultar_progreso(text) from public;
+grant execute on function public.metas_consultar_progreso(text) to anon, authenticated;
+```
+
 ## Advertencias vigentes
 
 - **Plan Free**: Supabase pausa el proyecto tras ~1 semana sin uso (típico en

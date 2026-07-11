@@ -148,23 +148,138 @@
     timer = setTimeout(function () { timer = null; sincronizar(); }, 6000);
   }
 
+  // ---------- Fase 2: espejo de progreso ----------
+  // Una "foto" del avance del alumno actual en este dispositivo (XP del
+  // index, secciones, mejores notas por misión, diagnósticos de rutas,
+  // insignias del Campeonísimo). Se envía a la tabla `progreso` vía la
+  // función metas_guardar_progreso (upsert por dispositivo+alumno) y solo
+  // cuando el resumen cambió desde el último envío.
+  var CLAVE_PROG = 'METAS_SB_PROG_V1'; // último resumen enviado con éxito
+
+  function leerJSON(clave, respaldo) {
+    try { var v = JSON.parse(localStorage.getItem(clave)); return (v === null || v === undefined) ? respaldo : v; }
+    catch (e) { return respaldo; }
+  }
+
+  function snapshotProgreso() {
+    var disp = '';
+    try { disp = localStorage.getItem('METAS_DISPOSITIVO') || ''; } catch (e) {}
+    if (!disp) return null;
+    var id = leerJSON('METAS_ALUMNO_V1', {}) || {};
+    var nombre = id.nombre || '';
+    var eventos = leerJSON('METAS_REGISTRO_V1', []);
+    if (!Array.isArray(eventos)) eventos = [];
+    var misiones = {}, porSesion = {}, secciones = 0;
+    eventos.forEach(function (ev) {
+      if (!ev || !ev.mision) return;
+      // en dispositivos compartidos, cuenta solo lo del alumno actual
+      if (ev.alumno && nombre && ev.alumno !== nombre) return;
+      var m = misiones[ev.mision] || (misiones[ev.mision] = { sec: 0, best: null, intentos: 0 });
+      if (ev.tipo === 'seccion') { m.sec++; secciones++; }
+      if ((ev.tipo === 'evaluacion' || ev.tipo === 'prueba_operativa') && typeof ev.nota === 'number') {
+        m.intentos++;
+        var base = (typeof ev.base === 'number' && ev.base > 0) ? ev.base : 100;
+        var pct = Math.round((ev.nota / base) * 100);
+        if (m.best === null || pct > m.best) m.best = pct;
+      }
+      if (ev.ses && typeof ev.min === 'number') porSesion[ev.ses] = Math.max(porSesion[ev.ses] || 0, ev.min);
+    });
+    var minutos = 0; for (var s in porSesion) minutos += porSesion[s];
+    var dominadas = [];
+    for (var f in misiones) { if (misiones[f].best !== null && misiones[f].best >= 70) dominadas.push(f); }
+    var meta = leerJSON('meta_v2', {}) || {};
+    var diag = leerJSON('METAS_DIAG_V1', {}) || {};
+    var camp = null;
+    var c = leerJSON('METAS_CAMP_V1', null);
+    if (c && Array.isArray(c.historial) && c.historial.length) {
+      var ins = [];
+      c.historial.forEach(function (h) {
+        (h.insignias || []).forEach(function (i) { ins.push((i.icon || '') + ' ' + (i.nombre || '')); });
+      });
+      camp = { torneos: c.historial.length, insignias: ins.slice(0, 40) };
+    }
+    return {
+      dispositivo: disp,
+      alumno: nombre,
+      codigo_lista: id.num || '',
+      grado: id.grado || '',
+      docente: id.docente || '',
+      escuela: id.escuela || '',
+      resumen: {
+        xp_index: (typeof meta.xp === 'number') ? meta.xp : null,
+        visitadas: Array.isArray(meta.visited) ? meta.visited.length : null,
+        secciones: secciones,
+        minutos: Math.round(minutos),
+        dominadas: dominadas.sort(),
+        misiones: misiones,
+        diag: diag,
+        camp: camp
+      }
+    };
+  }
+
+  var progEnCurso = false;
+  function sincronizarProgreso(opciones) {
+    opciones = opciones || {};
+    if (progEnCurso || !SB_URL || !SB_KEY || typeof fetch !== 'function') return Promise.resolve(false);
+    if (navigator.onLine === false) return Promise.resolve(false);
+    var snap = snapshotProgreso();
+    if (!snap) return Promise.resolve(false);
+    var cuerpo = JSON.stringify({ fila: snap });
+    try { if (localStorage.getItem(CLAVE_PROG) === cuerpo) return Promise.resolve(false); } catch (e) {}
+    progEnCurso = true;
+    var conf = {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: cuerpo
+    };
+    if (opciones.keepalive) conf.keepalive = true;
+    return fetch(SB_URL + '/rest/v1/rpc/metas_guardar_progreso', conf)
+      .then(function (r) {
+        progEnCurso = false;
+        if (!r.ok) return false;
+        try { localStorage.setItem(CLAVE_PROG, cuerpo); } catch (e) {}
+        return true;
+      })
+      .catch(function () { progEnCurso = false; return false; });
+  }
+
+  var progTimer = null;
+  function programarProgreso() {
+    if (progTimer) clearTimeout(progTimer);
+    progTimer = setTimeout(function () { progTimer = null; sincronizarProgreso(); }, 12000);
+  }
+
   // ---------- conexiones ----------
   // metas-registro.js emite este evento por cada registro nuevo
-  document.addEventListener('metas:registro', function (e) { encolar(e.detail); });
-  window.addEventListener('online', function () { sincronizar(); });
-  window.addEventListener('pagehide', function () { sincronizar({ keepalive: true }); });
+  document.addEventListener('metas:registro', function (e) {
+    encolar(e.detail);
+    programarProgreso();
+  });
+  window.addEventListener('online', function () { sincronizar(); sincronizarProgreso(); });
+  window.addEventListener('pagehide', function () {
+    sincronizar({ keepalive: true });
+    sincronizarProgreso({ keepalive: true });
+  });
   document.addEventListener('visibilitychange', function () {
-    if (document.hidden) sincronizar({ keepalive: true });
+    if (document.hidden) { sincronizar({ keepalive: true }); sincronizarProgreso({ keepalive: true }); }
   });
 
   // ---------- API pública ----------
   window.METAS_SB = {
-    version: 1,
+    version: 2,
     url: SB_URL,
     pendientes: function () { return leerCola().length; },
-    sincronizar: sincronizar
+    sincronizar: sincronizar,
+    progreso: snapshotProgreso,
+    sincronizarProgreso: sincronizarProgreso
   };
 
   backfill();
   setTimeout(function () { sincronizar(); }, 5000);
+  setTimeout(function () { sincronizarProgreso(); }, 9000);
 })();
