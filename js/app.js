@@ -863,6 +863,22 @@ function renderProgress() {
       </div>
     </div>`;
 
+  // Premios por notas de evaluación (mismas insignias que en Rutas)
+  const insEl = document.getElementById('progress-insignias');
+  if (insEl) {
+    const progR = rutasProgress();
+    const ganadas = [];
+    RUTAS_ORDEN.forEach(k => insigniasDeRuta(k, progR).forEach(ins => ganadas.push({ r: RUTAS[k], ins })));
+    insEl.innerHTML = `
+      <div class="insignias-strip">
+        <div class="insignias-title">🎖️ Premios por notas de evaluación</div>
+        ${ganadas.length
+          ? `<div class="insignias-list">${ganadas.map(g =>
+              `<span class="ins-chip">${g.ins.icon}<em>${g.r.emoji} ${g.ins.nombre}</em></span>`).join('')}</div>`
+          : `<p class="insignias-empty">Domina tu primera etapa con nota de 70 o más y gana la insignia ⭐ En marcha.</p>`}
+      </div>`;
+  }
+
   const subjects = [
     { key: 'español',     label: 'Español',     color: 'var(--esp)'  },
     { key: 'matemáticas', label: 'Matemáticas',  color: 'var(--mat)'  },
