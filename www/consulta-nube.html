@@ -148,6 +148,8 @@ let DATOS = [];
 
 try { document.getElementById('clave').value = localStorage.getItem('METAS_SB_CLAVE') || ''; } catch(e) {}
 document.getElementById('clave').addEventListener('keydown', e => { if (e.key === 'Enter') consultar(); });
+// Si la clave ya quedó guardada de una visita anterior, consulta sola al abrir
+if (document.getElementById('clave').value.trim() && navigator.onLine !== false) consultar();
 
 async function consultar(){
   const clave = document.getElementById('clave').value.trim();
