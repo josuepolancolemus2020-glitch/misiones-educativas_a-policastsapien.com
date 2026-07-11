@@ -322,6 +322,43 @@ a { text-decoration: none; color: inherit; }
   text-align: right;
 }
 
+/* Saludo compacto (sin cita): el divisor inferior del greeting sobra */
+.motivacion-card.motiv-solo { padding: 14px 20px; }
+.motivacion-card.motiv-solo .motiv-greeting {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* ── Pensador del día + frase motivacional, plegados al final ── */
+.pensador-details { margin-bottom: 24px; }
+.pensador-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pensador-summary::-webkit-details-marker { display: none; }
+.pensador-summary::after { content: '▾'; color: var(--muted); }
+.pensador-details[open] .pensador-summary { margin-bottom: 12px; }
+.pensador-details[open] .pensador-summary::after { content: '▴'; }
+.motiv-cita-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  padding: 16px 18px 16px 32px;
+}
+.motiv-cita-card::before { left: 12px; top: 6px; }
+
 /* ====== STATS STRIP ====== */
 .stats-strip {
   background: var(--surface);

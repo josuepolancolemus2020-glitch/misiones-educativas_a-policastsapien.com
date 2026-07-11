@@ -31,29 +31,14 @@
     </header>
     <div class="view-scroll">
 
-      <!-- Pensador del día -->
-      <div class="pensador-card">
-        <div class="pensador-foto-wrap">
-          <img src="img/jose-cecilio-del-valle-edit.webp" alt="José Cecilio del Valle" class="pensador-foto">
-        </div>
-        <div class="pensador-cita">
-          <p class="pensador-text">América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.</p>
-          <span class="pensador-autor">— José Cecilio del Valle</span>
-        </div>
-      </div>
-
-      <!-- Saludo y Motivación -->
-      <div class="motivacion-card">
+      <!-- Saludo compacto -->
+      <div class="motivacion-card motiv-solo">
         <div class="motiv-greeting">
           <span class="motiv-avatar">🎓</span>
           <div>
             <div class="motiv-saludo">¡Hola,</div>
             <div class="motiv-nombre" id="home-name">estudiante americano:</div>
           </div>
-        </div>
-        <div class="motiv-cita">
-          <p class="motiv-text" id="motiv-text"></p>
-          <span class="motiv-autor" id="motiv-autor"></span>
         </div>
       </div>
 
@@ -76,6 +61,43 @@
           <span class="hnb-emoji">🏫</span>
           <span class="hnb-label">Zona Docente</span>
         </button>
+      </div>
+
+      <!-- Subjects -->
+      <h2 class="section-title">Explorar por materia</h2>
+      <div class="subjects-row">
+        <button class="subj-chip esp" data-subject="español">
+          <i class="fa-solid fa-book-open"></i>
+          <span>Español</span>
+          <em>9 misiones</em>
+        </button>
+        <button class="subj-chip mat" data-subject="matemáticas">
+          <i class="fa-solid fa-superscript"></i>
+          <span>Matemáticas</span>
+          <em>11 misiones</em>
+        </button>
+        <button class="subj-chip cnat" data-subject="naturales">
+          <i class="fa-solid fa-seedling"></i>
+          <span>C. Naturales</span>
+          <em>5 misiones</em>
+        </button>
+        <button class="subj-chip csoc" data-subject="sociales">
+          <i class="fa-solid fa-earth-americas"></i>
+          <span>C. Sociales</span>
+          <em>3 misiones</em>
+          <!-- los conteos los recalcula renderHome() desde MISSIONS; estos son el respaldo estático -->
+        </button>
+      </div>
+
+      <!-- Featured + Recent (solo Honduras) -->
+      <div id="featured-section">
+        <h2 class="section-title">Misión destacada</h2>
+        <div id="featured-card" class="featured-card"></div>
+
+        <div id="recent-wrap" hidden>
+          <h2 class="section-title">Continúa explorando</h2>
+          <div id="recent-list" class="small-list"></div>
+        </div>
       </div>
 
     <div class="selectors-container" id="selectors-container">
@@ -138,42 +160,23 @@
 
       </div>
 
-      <!-- Subjects -->
-      <h2 class="section-title">Explorar por materia</h2>
-      <div class="subjects-row">
-        <button class="subj-chip esp" data-subject="español">
-          <i class="fa-solid fa-book-open"></i>
-          <span>Español</span>
-          <em>9 misiones</em>
-        </button>
-        <button class="subj-chip mat" data-subject="matemáticas">
-          <i class="fa-solid fa-superscript"></i>
-          <span>Matemáticas</span>
-          <em>11 misiones</em>
-        </button>
-        <button class="subj-chip cnat" data-subject="naturales">
-          <i class="fa-solid fa-seedling"></i>
-          <span>C. Naturales</span>
-          <em>5 misiones</em>
-        </button>
-        <button class="subj-chip csoc" data-subject="sociales">
-          <i class="fa-solid fa-earth-americas"></i>
-          <span>C. Sociales</span>
-          <em>3 misiones</em>
-          <!-- los conteos los recalcula renderHome() desde MISSIONS; estos son el respaldo estático -->
-        </button>
-      </div>
-
-      <!-- Featured + Recent (solo Honduras) -->
-      <div id="featured-section">
-        <h2 class="section-title">Misión destacada</h2>
-        <div id="featured-card" class="featured-card"></div>
-
-        <div id="recent-wrap" hidden>
-          <h2 class="section-title">Continúa explorando</h2>
-          <div id="recent-list" class="small-list"></div>
+      <!-- Pensador del día + frase motivacional (plegados al final) -->
+      <details class="pensador-details">
+        <summary class="pensador-summary">💭 Pensador del día</summary>
+        <div class="pensador-card">
+          <div class="pensador-foto-wrap">
+            <img src="img/jose-cecilio-del-valle-edit.webp" alt="José Cecilio del Valle" class="pensador-foto">
+          </div>
+          <div class="pensador-cita">
+            <p class="pensador-text">América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.</p>
+            <span class="pensador-autor">— José Cecilio del Valle</span>
+          </div>
         </div>
-      </div>
+        <div class="motiv-cita motiv-cita-card">
+          <p class="motiv-text" id="motiv-text"></p>
+          <span class="motiv-autor" id="motiv-autor"></span>
+        </div>
+      </details>
 
     </div>
   </div>
