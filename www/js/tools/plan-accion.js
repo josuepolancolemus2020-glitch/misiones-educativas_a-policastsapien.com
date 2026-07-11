@@ -969,8 +969,53 @@ function paInit() {
   paSincronizarNube(false);
 }
 
+/* ── Candado del maestro ──
+   El Plan de Acción guarda notas de TODOS los alumnos y las claves de
+   familia: si un alumno agarra el teléfono del maestro no debe poder
+   abrirlo. Clave local de 4-8 dígitos (hash djb2 en METAS_PIN_MAESTRO_V1),
+   se pide UNA vez por sesión (sessionStorage). 100% offline. */
+const PA_PIN_KEY = 'METAS_PIN_MAESTRO_V1';
+
+function paPinHash(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  return 'v1:' + h;
+}
+
+function paAbrirPlan() {
+  let pin = null;
+  try { pin = localStorage.getItem(PA_PIN_KEY); } catch (_) {}
+
+  if (!pin) {
+    const p1 = prompt('🔒 Primera vez: crea la CLAVE DEL MAESTRO para este teléfono (4 a 8 dígitos).\n\nProtege el Plan de Acción y los códigos de los padres si un alumno toma tu teléfono. Apúntala en un lugar seguro.');
+    if (p1 === null) return;
+    const pp = String(p1).trim();
+    if (!/^\d{4,8}$/.test(pp)) { toast('La clave debe ser de 4 a 8 dígitos'); return; }
+    const p2 = prompt('Escríbela otra vez para confirmar:');
+    if (p2 === null || String(p2).trim() !== pp) { toast('No coincidió — intenta de nuevo'); return; }
+    try { localStorage.setItem(PA_PIN_KEY, paPinHash(pp)); } catch (_) {}
+    try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
+    toast('🔒 Clave del maestro creada');
+    switchView('view-plan-accion'); paInit();
+    return;
+  }
+
+  let ok = false;
+  try { ok = sessionStorage.getItem('METAS_PIN_OK') === '1'; } catch (_) {}
+  if (ok) { switchView('view-plan-accion'); paInit(); return; }
+
+  const intento = prompt('🔒 Clave del maestro:');
+  if (intento === null) return;
+  if (paPinHash(String(intento).trim()) === pin) {
+    try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
+    switchView('view-plan-accion'); paInit();
+  } else {
+    toast('Clave incorrecta');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('goto-plan-btn')?.addEventListener('click', () => { switchView('view-plan-accion'); paInit(); });
+  document.getElementById('goto-plan-btn')?.addEventListener('click', paAbrirPlan);
   document.getElementById('plan-back-btn')?.addEventListener('click', () => switchView('view-perfil'));
 
   document.getElementById('pa-add-student-btn')?.addEventListener('click', () => {
