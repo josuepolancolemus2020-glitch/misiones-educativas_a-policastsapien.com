@@ -90,6 +90,7 @@
       tipo: tipo,
       mision: idMision(),
       alumno: alumnoActual(),
+      num: id.num || '',
       grado: id.grado || '',
       docente: id.docente || '',
       escuela: id.escuela || '',
@@ -104,6 +105,8 @@
     if (eventos.length > MAX_EVENTOS) eventos = eventos.slice(eventos.length - MAX_EVENTOS);
     escribir(eventos);
     programarSync();
+    // aviso a capas externas (metas-supabase.js escucha este evento)
+    try { document.dispatchEvent(new CustomEvent('metas:registro', { detail: ev })); } catch (e) {}
     return ev;
   }
 
@@ -389,6 +392,8 @@
       '<p>Escribe tus datos <strong>una sola vez</strong> para que tu maestro sepa que estos logros son tuyos.</p>' +
       '<label for="metasIdNombre">👤 Tu nombre o código de alumno</label>' +
       '<input id="metasIdNombre" type="text" maxlength="60" autocomplete="off" placeholder="Ej: Ana López o A07">' +
+      '<label for="metasIdNum">🔢 Tu número de lista (opcional)</label>' +
+      '<input id="metasIdNum" type="text" maxlength="10" inputmode="numeric" autocomplete="off" placeholder="Ej: 7">' +
       '<label for="metasIdEscuela">🏫 Tu escuela o centro educativo</label>' +
       '<input id="metasIdEscuela" type="text" maxlength="80" autocomplete="off" placeholder="Ej: Esc. Francisco Morazán">' +
       '<label for="metasIdGrado">📚 Grado y sección</label>' +
@@ -401,6 +406,7 @@
       '</div></div>';
     document.body.appendChild(ov);
     document.getElementById('metasIdNombre').value = id.nombre || '';
+    document.getElementById('metasIdNum').value = id.num || '';
     document.getElementById('metasIdEscuela').value = id.escuela || '';
     document.getElementById('metasIdGrado').value = id.grado || '';
     document.getElementById('metasIdDocente').value = id.docente || '';
@@ -414,6 +420,7 @@
       if (!nombre) { document.getElementById('metasIdNombre').focus(); return; }
       var datos = {
         nombre: nombre.slice(0, 60),
+        num: document.getElementById('metasIdNum').value.trim().slice(0, 10),
         escuela: document.getElementById('metasIdEscuela').value.trim().slice(0, 80),
         grado: document.getElementById('metasIdGrado').value.trim().slice(0, 30),
         docente: document.getElementById('metasIdDocente').value.trim().slice(0, 40)
@@ -542,6 +549,19 @@
     btnCambiar.addEventListener('click', function () { abrirIdentificacion(); });
     acciones.appendChild(btnCambiar);
   }
+
+  // ---------- capa de nube (Supabase, Fase 1) ----------
+  // Se carga sola desde la misma carpeta que este archivo; las misiones
+  // no necesitan incluirla. Si el archivo no existe, no pasa nada.
+  try {
+    var scriptPropio = document.currentScript && document.currentScript.src;
+    if (scriptPropio && /metas-registro\.js/.test(scriptPropio)) {
+      var sbTag = document.createElement('script');
+      sbTag.src = scriptPropio.replace(/metas-registro\.js([?#].*)?$/, 'metas-supabase.js');
+      sbTag.defer = true;
+      document.head.appendChild(sbTag);
+    }
+  } catch (e) {}
 
   // ---------- API pública ----------
   window.METAS = {

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>☁️ Consulta en la Nube — M.E.T.A.S</title>
+<style>
+:root{
+  --pri:#1565c0; --pri-gl:#e3f2fd; --jade:#00b894; --amber:#fdcb6e; --rojo:#d63031;
+  --bg:#f4f7fb; --card:#ffffff; --texto:#2d3436; --gray:#636e72; --border:#dfe6ee;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --pri:#64b5f6; --pri-gl:#0d2a4a; --bg:#12181f; --card:#1b2430; --texto:#eceff4; --gray:#9aa7b4; --border:#2c3947; }
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--texto);padding:1rem;max-width:1100px;margin:0 auto;}
+header{background:linear-gradient(135deg,#1565c0,#00838f);color:#fff;border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1rem;}
+header h1{font-size:1.35rem;margin-bottom:0.3rem;}
+header p{font-size:0.85rem;opacity:0.92;line-height:1.45;}
+.top-links{display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem;}
+.btn{border:none;border-radius:10px;padding:0.55rem 0.95rem;font-size:0.85rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem;}
+.btn-blanco{background:rgba(255,255,255,0.92);color:#1565c0;}
+.btn-pri{background:var(--pri);color:#fff;}
+.btn-jade{background:var(--jade);color:#fff;}
+.btn:disabled{opacity:0.6;cursor:wait;}
+.clave-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.85rem 1rem;margin-bottom:1rem;display:flex;gap:0.6rem;flex-wrap:wrap;align-items:end;}
+.clave-card label{display:block;font-size:0.78rem;color:var(--gray);font-weight:700;margin-bottom:0.25rem;}
+.clave-card input{padding:0.5rem 0.7rem;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--texto);font-size:0.9rem;min-width:220px;}
+.clave-card input:focus{outline:none;border-color:var(--pri);}
+#estado{font-size:0.82rem;color:var(--gray);width:100%;line-height:1.5;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.6rem;margin-bottom:1rem;}
+.stat{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.7rem 0.85rem;}
+.stat .n{font-size:1.45rem;font-weight:800;color:var(--pri);}
+.stat .l{font-size:0.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.4px;}
+.filtros{display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.7rem 0.85rem;margin-bottom:0.8rem;}
+.filtros label{font-size:0.78rem;color:var(--gray);font-weight:700;}
+.filtros select{padding:0.4rem 0.5rem;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--texto);font-size:0.82rem;max-width:230px;}
+.acciones{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;}
+.tabla-wrap{background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:0.82rem;min-width:760px;}
+th{background:var(--pri-gl);color:var(--pri);text-align:left;padding:0.55rem 0.6rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.4px;position:sticky;top:0;}
+td{padding:0.5rem 0.6rem;border-top:1px solid var(--border);vertical-align:top;}
+tr:hover td{background:var(--pri-gl);}
+.badge{display:inline-block;padding:0.15rem 0.5rem;border-radius:8px;font-size:0.72rem;font-weight:700;white-space:nowrap;}
+.b-evaluacion{background:#fff3d6;color:#9a6b00;}
+.b-prueba_operativa{background:#f0e8ff;color:#6c5ce7;}
+@media (prefers-color-scheme: dark){
+  .b-evaluacion{background:#3a2f10;color:#f3c96b;}
+  .b-prueba_operativa{background:#241b45;color:#a99af0;}
+}
+.nota-ok{color:var(--jade);font-weight:800;}
+.nota-media{color:#b8860b;font-weight:800;}
+.nota-baja{color:var(--rojo);font-weight:800;}
+.vacio{text-align:center;padding:2.2rem 1rem;color:var(--gray);font-size:0.9rem;line-height:1.6;}
+.nota-etica{margin-top:1rem;background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:8px;padding:0.7rem 0.9rem;font-size:0.78rem;color:var(--texto);line-height:1.55;}
+footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>☁️ Consulta en la Nube — M.E.T.A.S</h1>
+  <p>Resultados de evaluaciones de <strong>todos los dispositivos</strong> de tu aula, sincronizados a Supabase.
+  Cada teléfono o tablet sube sus notas automáticamente cuando tiene internet; aquí las ves reunidas.</p>
+  <div class="top-links">
+    <a class="btn btn-blanco" href="index.html">🏠 Volver al inicio</a>
+    <a class="btn btn-blanco" href="registro.html">📊 Registro de este dispositivo</a>
+  </div>
+</header>
+
+<div class="clave-card">
+  <div>
+    <label for="clave">🔑 Clave del docente</label>
+    <input id="clave" type="password" autocomplete="off" placeholder="Tu clave de consulta">
+  </div>
+  <button class="btn btn-pri" id="btnConsultar" onclick="consultar()">🔎 Consultar</button>
+  <div id="estado">Escribe tu clave y pulsa Consultar. La clave se recuerda en este dispositivo.</div>
+</div>
+
+<div class="stats" id="stats" style="display:none;"></div>
+
+<div class="filtros" id="filtros" style="display:none;">
+  <label>🚀 Misión <select id="fMision"><option value="">Todas</option></select></label>
+  <label>📚 Grado <select id="fGrado"><option value="">Todos</option></select></label>
+  <label>👤 Alumno <select id="fAlumno"><option value="">Todos</option></select></label>
+  <label>🗂️ Tipo <select id="fTipo">
+    <option value="">Todos</option>
+    <option value="evaluacion">📋 Evaluación</option>
+    <option value="prueba_operativa">🧮 Prueba operativa</option>
+  </select></label>
+</div>
+
+<div class="acciones" id="acciones" style="display:none;">
+  <button class="btn btn-pri" onclick="exportarCSV()">📥 Exportar CSV</button>
+  <button class="btn btn-jade" onclick="subirPendientes()">☁️ Subir pendientes de este dispositivo</button>
+</div>
+
+<div class="tabla-wrap" id="tablaWrap" style="display:none;">
+  <table>
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Nº lista</th><th>Grado</th><th>Misión</th><th>Tipo</th><th>Forma</th><th>Nota</th><th>Dispositivo</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="vacio" id="vacio" style="display:none;">
+    📭 No hay resultados con estos filtros.<br>
+    Si esperabas datos, verifica tu clave del docente o que los dispositivos hayan tenido internet para sincronizar.
+  </div>
+</div>
+
+<div class="nota-etica">
+  🔒 <strong>Privacidad:</strong> la tabla de la nube solo puede leerse con la clave del docente; los dispositivos de los
+  estudiantes únicamente pueden <em>agregar</em> resultados, nunca ver los de otros. Se recomienda identificar a los
+  estudiantes con su <strong>número de lista o código</strong> en lugar del nombre completo.
+</div>
+
+<footer>🏠 Proyecto Educativo M.E.T.A.S · 🌐 policastsapien.com</footer>
+
+<script src="js/metas-registro.js"></script>
+<script>
+'use strict';
+/* Misma configuración predeterminada que js/metas-supabase.js */
+let SB_URL = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+let SB_KEY = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+try {
+  SB_URL = localStorage.getItem('METAS_SB_URL') || SB_URL;
+  SB_KEY = localStorage.getItem('METAS_SB_KEY') || SB_KEY;
+} catch (e) {}
+
+const NOMBRE_TIPO = { evaluacion:'📋 Evaluación', prueba_operativa:'🧮 Prueba op.' };
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const p=n=>(n<10?'0':'')+n; return {f:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()), h:p(d.getHours())+':'+p(d.getMinutes())}; };
+
+let DATOS = [];
+
+try { document.getElementById('clave').value = localStorage.getItem('METAS_SB_CLAVE') || ''; } catch(e) {}
+document.getElementById('clave').addEventListener('keydown', e => { if (e.key === 'Enter') consultar(); });
+
+async function consultar(){
+  const clave = document.getElementById('clave').value.trim();
+  const estado = document.getElementById('estado');
+  if (!clave) { estado.textContent = '⚠️ Escribe primero tu clave del docente.'; return; }
+  if (navigator.onLine === false) { estado.textContent = '📴 Sin conexión: la consulta a la nube necesita internet.'; return; }
+  const btn = document.getElementById('btnConsultar');
+  btn.disabled = true; estado.textContent = '⏳ Consultando la nube...';
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/metas_consultar', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_clave: clave })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    DATOS = await r.json();
+    if (!Array.isArray(DATOS)) DATOS = [];
+    try { localStorage.setItem('METAS_SB_CLAVE', clave); } catch(e) {}
+    estado.textContent = DATOS.length
+      ? '✅ ' + DATOS.length + ' resultados recibidos de la nube.'
+      : '📭 La nube respondió sin resultados. Si esperabas datos, revisa que la clave sea la correcta.';
+    ['stats','filtros','acciones','tablaWrap'].forEach(id => document.getElementById(id).style.display = '');
+    llenarFiltros();
+    pintar();
+  } catch (err) {
+    estado.textContent = '⚠️ No se pudo consultar (' + err.message + '). Revisa tu internet e intenta de nuevo.';
+  }
+  btn.disabled = false;
+}
+
+function filtrados(){
+  const m=document.getElementById('fMision').value, g=document.getElementById('fGrado').value,
+        a=document.getElementById('fAlumno').value, t=document.getElementById('fTipo').value;
+  return DATOS.filter(r => (!m||r.mision===m) && (!g||r.grado===g) && (!a||r.alumno===a) && (!t||r.tipo===t));
+}
+
+function llenarFiltros(){
+  const opciones=(id,vals)=>{ const sel=document.getElementById(id); const actual=sel.value;
+    while(sel.options.length>((id==='fTipo')?3:1)) sel.remove(sel.options.length-1);
+    if(id!=='fTipo') vals.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
+    sel.value=actual; };
+  opciones('fMision',[...new Set(DATOS.map(r=>r.mision).filter(Boolean))].sort());
+  opciones('fGrado',[...new Set(DATOS.map(r=>r.grado).filter(Boolean))].sort());
+  opciones('fAlumno',[...new Set(DATOS.map(r=>r.alumno).filter(Boolean))].sort());
+}
+
+function pintar(){
+  const rs=filtrados();
+  const tb=document.getElementById('tbody'); tb.innerHTML='';
+  document.getElementById('vacio').style.display = rs.length?'none':'block';
+  rs.forEach(r=>{
+    const {f,h}=fmtF(r.fecha||r.creado_en);
+    let nota='';
+    if(typeof r.nota==='number'){
+      const cls = r.nota>=70?'nota-ok':r.nota>=40?'nota-media':'nota-baja';
+      nota = '<span class="'+cls+'">'+r.nota+'/'+(r.base||100)+'</span>';
+    }
+    const tr=document.createElement('tr');
+    tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(r.alumno||'—')+'</td><td>'+esc(r.codigo_lista||'—')+
+      '</td><td>'+esc(r.grado||'—')+'</td><td>'+esc(r.mision||'—')+
+      '</td><td><span class="badge b-'+esc(r.tipo)+'">'+(NOMBRE_TIPO[r.tipo]||esc(r.tipo))+'</span></td><td>'+esc(r.forma||'')+
+      '</td><td>'+nota+'</td><td>'+esc(r.dispositivo||'')+'</td>';
+    tb.appendChild(tr);
+  });
+  const evals=rs.filter(r=>r.tipo==='evaluacion'&&typeof r.nota==='number').map(r=>r.nota);
+  const ops=rs.filter(r=>r.tipo==='prueba_operativa'&&typeof r.nota==='number').map(r=>r.nota);
+  const prom=a=>a.length?Math.round(a.reduce((s,n)=>s+n,0)/a.length):null;
+  const stat=(n,l)=>'<div class="stat"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';
+  const pend = (window.METAS_SB && METAS_SB.pendientes()) || 0;
+  document.getElementById('stats').innerHTML =
+    stat(rs.length,'Resultados') +
+    stat([...new Set(rs.map(r=>r.alumno).filter(Boolean))].length,'Alumnos') +
+    stat([...new Set(rs.map(r=>r.mision).filter(Boolean))].length,'Misiones') +
+    stat([...new Set(rs.map(r=>r.dispositivo).filter(Boolean))].length,'Dispositivos') +
+    stat(prom(evals)!=null?prom(evals):'—','Promedio conceptual') +
+    stat(prom(ops)!=null?prom(ops):'—','Promedio operativa') +
+    stat(pend,'Por subir (este equipo)');
+}
+
+function exportarCSV(){
+  const rs=filtrados();
+  if(!rs.length){ alert('No hay resultados para exportar.'); return; }
+  const celda=v=>{ if(v==null) return ''; v=String(v); return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
+  const filas=['fecha,hora,alumno,codigo_lista,grado,docente,escuela,mision,tipo,forma,nota,base,xp,dispositivo'];
+  rs.forEach(r=>{ const {f,h}=fmtF(r.fecha||r.creado_en);
+    filas.push([f,h,r.alumno,r.codigo_lista,r.grado,r.docente,r.escuela,r.mision,r.tipo,r.forma,r.nota,r.base,r.xp,r.dispositivo].map(celda).join(',')); });
+  const blob=new Blob(['﻿'+filas.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const hoy=fmtF(new Date().toISOString()).f;
+  a.download='metas-nube-'+hoy+'.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+
+function subirPendientes(){
+  if(!window.METAS_SB){ alert('La capa de nube aún no carga en esta página.'); return; }
+  METAS_SB.sincronizar().then(r=>{
+    alert(r.enviados+' resultados subidos a la nube.\nPendientes: '+r.pendientes);
+    if(DATOS.length) consultar();
+  });
+}
+
+['fMision','fGrado','fAlumno','fTipo'].forEach(id=>document.getElementById(id).addEventListener('change',pintar));
+</script>
+</body>
+</html>
