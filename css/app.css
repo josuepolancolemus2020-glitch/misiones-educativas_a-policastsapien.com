@@ -1483,6 +1483,21 @@ a { text-decoration: none; color: inherit; }
 .teacher-ge-btn i:first-child { font-size: 18px; }
 .teacher-ge-arrow { margin-left: auto; opacity: .7; }
 
+/* Zona Docente: accesos principales (registros del maestro) */
+.teacher-links-list { display: flex; flex-direction: column; gap: 10px; }
+.teacher-link-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg); border: 1.5px solid var(--brand);
+  border-radius: var(--r-sm); padding: 13px 14px;
+  transition: transform .15s;
+}
+.teacher-link-item:active { transform: scale(.97); }
+.teacher-link-item > i { font-size: 20px; color: var(--brand); width: 26px; text-align: center; }
+.tli-info { display: flex; flex-direction: column; min-width: 0; }
+.tli-title { font-size: 14px; font-weight: 700; color: var(--brand); }
+.tli-sub { font-size: 11px; color: var(--muted); }
+.teacher-link-item .fa-chevron-right { margin-left: auto; font-size: 13px; color: var(--muted); width: auto; }
+
 .teacher-panel-group { border-left: 4px solid var(--accent) !important; }
 .teacher-panel-head {
   display: flex; align-items: center; gap: 10px; margin-bottom: 6px;

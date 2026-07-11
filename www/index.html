@@ -245,66 +245,83 @@
     </div>
   </div>
 
-  <!-- ========== PERFIL ========== -->
+  <!-- ========== ZONA DOCENTE ========== -->
   <div id="view-perfil" class="view">
     <header class="app-header compact">
       <button class="hamburger-btn" aria-label="Abrir menú"><i class="fa-solid fa-bars"></i></button>
-      <h1 class="view-title">Mi Perfil</h1>
+      <h1 class="view-title">Zona Docente</h1>
       <div></div>
     </header>
     <div class="view-scroll">
 
-      <!-- Herramientas del Docente -->
+      <!-- Mis registros: lo que el maestro usa a diario -->
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-clipboard-list teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">Mis registros</label>
+        </div>
+        <p class="teacher-panel-desc">Los resultados de tus estudiantes: en este equipo y en la nube.</p>
+        <div class="teacher-links-list">
+          <a class="teacher-link-item" href="registro.html">
+            <i class="fa-solid fa-clipboard-list"></i>
+            <span class="tli-info">
+              <span class="tli-title">📋 Registro de clase</span>
+              <span class="tli-sub">Resultados guardados en este equipo</span>
+            </span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </a>
+          <a class="teacher-link-item" href="consulta-nube.html">
+            <i class="fa-solid fa-cloud"></i>
+            <span class="tli-info">
+              <span class="tli-title">☁️ Consulta en la nube</span>
+              <span class="tli-sub">Entra con tu clave del docente</span>
+            </span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </a>
+          <a class="teacher-link-item" href="panel-docente.html">
+            <i class="fa-solid fa-user-lock"></i>
+            <span class="tli-info">
+              <span class="tli-title">🔐 Panel docente</span>
+              <span class="tli-sub">Entra con tu correo y contraseña</span>
+            </span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Herramientas del aula -->
       <div class="setting-group teacher-panel-group">
         <div class="teacher-panel-head">
           <i class="fa-solid fa-chalkboard-user teacher-panel-icon"></i>
-          <label class="setting-label" style="margin-bottom:0;">Herramientas del Docente</label>
+          <label class="setting-label" style="margin-bottom:0;">Herramientas del aula</label>
         </div>
         <p class="teacher-panel-desc">Recursos y herramientas para el aula.</p>
 
-        <button class="teacher-ge-btn" id="goto-gobierno-btn">
-          <i class="fa-solid fa-check-to-slot"></i>
-          <span>🗳️ Gobierno Escolar 2026</span>
-          <i class="fa-solid fa-chevron-right teacher-ge-arrow"></i>
-        </button>
-
         <div class="teacher-tools-grid">
-          <div class="teacher-tool-item">
-            <i class="fa-solid fa-list-check"></i>
-            <span>Rúbricas</span>
-          </div>
-          <button class="teacher-tool-item teacher-tool-active" id="goto-parte-btn">
-            <i class="fa-solid fa-calendar-check"></i>
-            <span>Parte Mensual</span>
-          </button>
-          <div class="teacher-tool-item">
-            <i class="fa-solid fa-stopwatch"></i>
-            <span>Cronómetro</span>
-          </div>
-          <div class="teacher-tool-item">
-            <i class="fa-solid fa-file-pen"></i>
-            <span>Evaluaciones</span>
-          </div>
           <button class="teacher-tool-item teacher-tool-active" id="goto-plan-btn">
             <i class="fa-solid fa-chart-column"></i>
             <span>Plan de Acción</span>
-          </button>
-          <div class="teacher-tool-item">
-            <i class="fa-solid fa-clipboard-question"></i>
-            <span>Prueba Formativa</span>
-          </div>
-          <div class="teacher-tool-item">
-            <i class="fa-solid fa-stethoscope"></i>
-            <span>Eval. Diagnóstica</span>
-          </div>
-          <button class="teacher-tool-item teacher-tool-active" id="goto-collage-btn">
-            <i class="fa-solid fa-images"></i>
-            <span>Collage</span>
           </button>
           <button class="teacher-tool-item teacher-tool-active" id="goto-camp-btn">
             <i class="fa-solid fa-trophy"></i>
             <span>Campeonísimo</span>
           </button>
+          <button class="teacher-tool-item teacher-tool-active" id="goto-parte-btn">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Parte Mensual</span>
+          </button>
+          <button class="teacher-tool-item teacher-tool-active" id="goto-collage-btn">
+            <i class="fa-solid fa-images"></i>
+            <span>Collage</span>
+          </button>
+          <button class="teacher-tool-item teacher-tool-active" id="goto-gobierno-btn">
+            <i class="fa-solid fa-check-to-slot"></i>
+            <span>Gobierno Escolar</span>
+          </button>
+          <div class="teacher-tool-item">
+            <i class="fa-solid fa-file-pen"></i>
+            <span>Evaluaciones</span>
+          </div>
         </div>
       </div>
 
