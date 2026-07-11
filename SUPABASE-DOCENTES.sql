@@ -9,7 +9,7 @@
 -- Nadie puede secuestrar un código ya existente (llave primaria).
 -- ============================================================
 
-create extension if not exists pgcrypto;
+create extension if not exists pgcrypto with schema extensions;
 
 create table if not exists public.docentes (
   codigo text primary key,                  -- PROF-XXXX (único)
@@ -35,7 +35,7 @@ begin
   insert into public.docentes (codigo, clave_hash, nombre, contacto)
   values (
     upper(trim(p_codigo)),
-    encode(digest(trim(p_clave), 'sha256'), 'hex'),
+    encode(extensions.digest(trim(p_clave), 'sha256'), 'hex'),
     left(coalesce(p_nombre,''), 80),
     left(coalesce(p_contacto,''), 120)
   );
@@ -55,7 +55,7 @@ as $$
   select exists (
     select 1 from public.docentes d
     where d.codigo = upper(trim(coalesce(p_codigo,'')))
-      and d.clave_hash = encode(digest(trim(coalesce(p_clave,'')), 'sha256'), 'hex')
+      and d.clave_hash = encode(extensions.digest(trim(coalesce(p_clave,'')), 'sha256'), 'hex')
   )
 $$;
 revoke all on function public._metas_docente_ok(text,text) from public;
@@ -98,9 +98,9 @@ as $$
 begin
   if length(trim(coalesce(p_nueva,''))) < 4 then return false; end if;
   update public.docentes
-     set clave_hash = encode(digest(trim(p_nueva), 'sha256'), 'hex')
+     set clave_hash = encode(extensions.digest(trim(p_nueva), 'sha256'), 'hex')
    where codigo = upper(trim(coalesce(p_codigo,'')))
-     and clave_hash = encode(digest(trim(coalesce(p_actual,'')), 'sha256'), 'hex');
+     and clave_hash = encode(extensions.digest(trim(coalesce(p_actual,'')), 'sha256'), 'hex');
   return found;
 end
 $$;
