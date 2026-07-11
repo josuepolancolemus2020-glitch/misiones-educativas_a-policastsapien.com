@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>☁️ Consulta en la Nube — M.E.T.A.S</title>
+<title>🔐 Panel Docente — M.E.T.A.S</title>
 <style>
 :root{
   --pri:#1565c0; --pri-gl:#e3f2fd; --jade:#00b894; --amber:#fdcb6e; --rojo:#d63031;
@@ -14,20 +14,22 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--texto);padding:1rem;max-width:1100px;margin:0 auto;}
-header{background:linear-gradient(135deg,#1565c0,#00838f);color:#fff;border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1rem;}
+header{background:linear-gradient(135deg,#0d47a1,#00695c);color:#fff;border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1rem;}
 header h1{font-size:1.35rem;margin-bottom:0.3rem;}
 header p{font-size:0.85rem;opacity:0.92;line-height:1.45;}
 .top-links{display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem;}
 .btn{border:none;border-radius:10px;padding:0.55rem 0.95rem;font-size:0.85rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem;}
-.btn-blanco{background:rgba(255,255,255,0.92);color:#1565c0;}
+.btn-blanco{background:rgba(255,255,255,0.92);color:#0d47a1;}
 .btn-pri{background:var(--pri);color:#fff;}
 .btn-jade{background:var(--jade);color:#fff;}
+.btn-rojo{background:transparent;color:var(--rojo);border:1.5px solid var(--rojo);}
 .btn:disabled{opacity:0.6;cursor:wait;}
-.clave-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.85rem 1rem;margin-bottom:1rem;display:flex;gap:0.6rem;flex-wrap:wrap;align-items:end;}
-.clave-card label{display:block;font-size:0.78rem;color:var(--gray);font-weight:700;margin-bottom:0.25rem;}
-.clave-card input{padding:0.5rem 0.7rem;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--texto);font-size:0.9rem;min-width:220px;}
-.clave-card input:focus{outline:none;border-color:var(--pri);}
-#estado{font-size:0.82rem;color:var(--gray);width:100%;line-height:1.5;}
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.85rem 1rem;margin-bottom:1rem;}
+.card label{display:block;font-size:0.78rem;color:var(--gray);font-weight:700;margin:0.5rem 0 0.25rem;}
+.card input{width:100%;max-width:340px;padding:0.55rem 0.7rem;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--texto);font-size:0.92rem;}
+.card input:focus{outline:none;border-color:var(--pri);}
+#loginEstado,#sesionInfo{font-size:0.82rem;color:var(--gray);margin-top:0.6rem;line-height:1.5;}
+.sesion-barra{display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center;justify-content:space-between;}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.6rem;margin-bottom:1rem;}
 .stat{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.7rem 0.85rem;}
 .stat .n{font-size:1.45rem;font-weight:800;color:var(--pri);}
@@ -54,28 +56,40 @@ tr:hover td{background:var(--pri-gl);}
 .vacio{text-align:center;padding:2.2rem 1rem;color:var(--gray);font-size:0.9rem;line-height:1.6;}
 .nota-etica{margin-top:1rem;background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:8px;padding:0.7rem 0.9rem;font-size:0.78rem;color:var(--texto);line-height:1.55;}
 footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5rem;}
+h2.seccion{font-size:1.05rem;margin:1.4rem 0 0.6rem;color:var(--pri);}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>☁️ Consulta en la Nube — M.E.T.A.S</h1>
-  <p>Resultados de evaluaciones de <strong>todos los dispositivos</strong> de tu aula, sincronizados a Supabase.
-  Cada teléfono o tablet sube sus notas automáticamente cuando tiene internet; aquí las ves reunidas.</p>
+  <h1>🔐 Panel Docente — M.E.T.A.S</h1>
+  <p>Acceso <strong>con cuenta de maestro</strong>. La base de datos solo te entrega los resultados y el progreso
+  de <strong>tu alcance</strong> (tu escuela, tus grados), protegido con seguridad a nivel de fila (RLS).</p>
   <div class="top-links">
     <a class="btn btn-blanco" href="index.html">🏠 Volver al inicio</a>
     <a class="btn btn-blanco" href="registro.html">📊 Registro de este dispositivo</a>
-    <a class="btn btn-blanco" href="panel-docente.html">🔐 Panel docente (con cuenta)</a>
+    <a class="btn btn-blanco" href="consulta-nube.html">☁️ Consulta rápida con clave</a>
   </div>
 </header>
 
-<div class="clave-card">
-  <div>
-    <label for="clave">🔑 Clave del docente</label>
-    <input id="clave" type="password" autocomplete="off" placeholder="Tu clave de consulta">
+<div class="card" id="loginCard">
+  <strong style="color:var(--pri);">Iniciar sesión</strong>
+  <label for="email">📧 Correo</label>
+  <input id="email" type="email" autocomplete="username" placeholder="maestro@ejemplo.com">
+  <label for="password">🔒 Contraseña</label>
+  <input id="password" type="password" autocomplete="current-password" placeholder="Tu contraseña">
+  <div style="margin-top:0.8rem;">
+    <button class="btn btn-pri" id="btnEntrar" onclick="entrar()">🔓 Entrar</button>
   </div>
-  <button class="btn btn-pri" id="btnConsultar" onclick="consultar()">🔎 Consultar</button>
-  <div id="estado">Escribe tu clave y pulsa Consultar. La clave se recuerda en este dispositivo.</div>
+  <div id="loginEstado">Las cuentas de maestro las crea el administrador del proyecto; no hay auto-registro.</div>
+</div>
+
+<div class="card sesion-barra" id="sesionCard" style="display:none;">
+  <div id="sesionInfo"></div>
+  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+    <button class="btn btn-pri" onclick="cargar()">🔄 Actualizar</button>
+    <button class="btn btn-rojo" onclick="salir()">🚪 Cerrar sesión</button>
+  </div>
 </div>
 
 <div class="stats" id="stats" style="display:none;"></div>
@@ -93,7 +107,6 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <div class="acciones" id="acciones" style="display:none;">
   <button class="btn btn-pri" onclick="exportarCSV()">📥 Exportar CSV</button>
-  <button class="btn btn-jade" onclick="subirPendientes()">☁️ Subir pendientes de este dispositivo</button>
 </div>
 
 <div class="tabla-wrap" id="tablaWrap" style="display:none;">
@@ -101,38 +114,29 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
     <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Nº lista</th><th>Grado</th><th>Misión</th><th>Tipo</th><th>Forma</th><th>Nota</th><th>Dispositivo</th></tr></thead>
     <tbody id="tbody"></tbody>
   </table>
-  <div class="vacio" id="vacio" style="display:none;">
-    📭 No hay resultados con estos filtros.<br>
-    Si esperabas datos, verifica tu clave del docente o que los dispositivos hayan tenido internet para sincronizar.
-  </div>
+  <div class="vacio" id="vacio" style="display:none;">📭 No hay resultados en tu alcance con estos filtros.</div>
 </div>
 
 <div id="progSeccion" style="display:none;">
-  <h2 style="font-size:1.05rem;margin:1.4rem 0 0.6rem;color:var(--pri);">🎖️ Progreso por alumno (XP, insignias y diagnósticos)</h2>
+  <h2 class="seccion">🎖️ Progreso por alumno (XP, insignias y diagnósticos)</h2>
   <div class="tabla-wrap">
     <table>
       <thead><tr><th>Alumno</th><th>Nº lista</th><th>Grado</th><th>XP</th><th>Dominadas</th><th>Secciones</th><th>Min</th><th>Diagnósticos</th><th>Torneos</th><th>Insignias 🏆</th><th>Actualizado</th><th>Dispositivo</th></tr></thead>
       <tbody id="progBody"></tbody>
     </table>
-    <div class="vacio" id="progVacio" style="display:none;">
-      📭 Aún no hay fotos de progreso en la nube.<br>
-      Se generan solas cuando los estudiantes trabajan en las misiones con internet.
-    </div>
+    <div class="vacio" id="progVacio" style="display:none;">📭 Aún no hay fotos de progreso en tu alcance.</div>
   </div>
 </div>
 
 <div class="nota-etica">
-  🔒 <strong>Privacidad:</strong> la tabla de la nube solo puede leerse con la clave del docente; los dispositivos de los
-  estudiantes únicamente pueden <em>agregar</em> resultados, nunca ver los de otros. Se recomienda identificar a los
-  estudiantes con su <strong>número de lista o código</strong> en lugar del nombre completo.
+  🔒 <strong>Privacidad:</strong> cada maestro solo ve las filas de su alcance (escuela/grados asignados por el
+  administrador). Los dispositivos de estudiantes únicamente pueden <em>agregar</em> datos, nunca leerlos.
 </div>
 
 <footer>🏠 Proyecto Educativo M.E.T.A.S · 🌐 policastsapien.com</footer>
 
-<script src="js/metas-registro.js"></script>
 <script>
 'use strict';
-/* Misma configuración predeterminada que js/metas-supabase.js */
 let SB_URL = 'https://uljjgrikyigdrkbikcxo.supabase.co';
 let SB_KEY = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
 try {
@@ -140,53 +144,133 @@ try {
   SB_KEY = localStorage.getItem('METAS_SB_KEY') || SB_KEY;
 } catch (e) {}
 
+const SES_KEY = 'METAS_PANEL_SESION_V1';
 const NOMBRE_TIPO = { evaluacion:'📋 Evaluación', prueba_operativa:'🧮 Prueba op.' };
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const p=n=>(n<10?'0':'')+n; return {f:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()), h:p(d.getHours())+':'+p(d.getMinutes())}; };
 
-let DATOS = [];
+let SESION = null, DATOS = [], PROG = [], MAESTRO = null;
+try { SESION = JSON.parse(localStorage.getItem(SES_KEY)); } catch(e) {}
 
-try { document.getElementById('clave').value = localStorage.getItem('METAS_SB_CLAVE') || ''; } catch(e) {}
-document.getElementById('clave').addEventListener('keydown', e => { if (e.key === 'Enter') consultar(); });
+function guardarSesion(s){
+  SESION = s;
+  try { s ? localStorage.setItem(SES_KEY, JSON.stringify(s)) : localStorage.removeItem(SES_KEY); } catch(e) {}
+}
 
-async function consultar(){
-  const clave = document.getElementById('clave').value.trim();
-  const estado = document.getElementById('estado');
-  if (!clave) { estado.textContent = '⚠️ Escribe primero tu clave del docente.'; return; }
-  if (navigator.onLine === false) { estado.textContent = '📴 Sin conexión: la consulta a la nube necesita internet.'; return; }
-  const btn = document.getElementById('btnConsultar');
-  btn.disabled = true; estado.textContent = '⏳ Consultando la nube...';
+async function entrar(){
+  const email = document.getElementById('email').value.trim();
+  const pass = document.getElementById('password').value;
+  const est = document.getElementById('loginEstado');
+  if (!email || !pass) { est.textContent = '⚠️ Escribe tu correo y tu contraseña.'; return; }
+  const btn = document.getElementById('btnEntrar');
+  btn.disabled = true; est.textContent = '⏳ Verificando...';
   try {
-    const r = await fetch(SB_URL + '/rest/v1/rpc/metas_consultar', {
+    const r = await fetch(SB_URL + '/auth/v1/token?grant_type=password', {
       method: 'POST',
-      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_clave: clave })
+      headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
     });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    DATOS = await r.json();
-    if (!Array.isArray(DATOS)) DATOS = [];
-    try { localStorage.setItem('METAS_SB_CLAVE', clave); } catch(e) {}
-    let PROG = [];
-    try {
-      const rp = await fetch(SB_URL + '/rest/v1/rpc/metas_consultar_progreso', {
-        method: 'POST',
-        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ p_clave: clave })
-      });
-      if (rp.ok) PROG = await rp.json();
-      if (!Array.isArray(PROG)) PROG = [];
-    } catch(e) {}
-    estado.textContent = (DATOS.length || PROG.length)
-      ? '✅ ' + DATOS.length + ' resultados y ' + PROG.length + ' fotos de progreso recibidos de la nube.'
-      : '📭 La nube respondió sin resultados. Si esperabas datos, revisa que la clave sea la correcta.';
-    ['stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = '');
-    llenarFiltros();
-    pintar();
-    pintarProgreso(PROG);
+    const j = await r.json();
+    if (!r.ok || !j.access_token) {
+      est.textContent = '❌ Correo o contraseña incorrectos.';
+      btn.disabled = false; return;
+    }
+    guardarSesion({
+      access_token: j.access_token,
+      refresh_token: j.refresh_token,
+      expira: Date.now() + ((j.expires_in || 3600) - 60) * 1000,
+      email: (j.user && j.user.email) || email
+    });
+    document.getElementById('password').value = '';
+    btn.disabled = false;
+    await cargar();
   } catch (err) {
-    estado.textContent = '⚠️ No se pudo consultar (' + err.message + '). Revisa tu internet e intenta de nuevo.';
+    est.textContent = '⚠️ No se pudo conectar (' + err.message + '). Revisa tu internet.';
+    btn.disabled = false;
   }
-  btn.disabled = false;
+}
+
+async function refrescar(){
+  if (!SESION || !SESION.refresh_token) return false;
+  try {
+    const r = await fetch(SB_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: SESION.refresh_token })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.access_token) return false;
+    guardarSesion({
+      access_token: j.access_token,
+      refresh_token: j.refresh_token || SESION.refresh_token,
+      expira: Date.now() + ((j.expires_in || 3600) - 60) * 1000,
+      email: SESION.email
+    });
+    return true;
+  } catch (e) { return false; }
+}
+
+async function api(ruta){
+  if (!SESION) return null;
+  if (Date.now() > (SESION.expira || 0)) { if (!await refrescar()) return null; }
+  const pedir = () => fetch(SB_URL + ruta, {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SESION.access_token }
+  });
+  let r = await pedir();
+  if (r.status === 401 && await refrescar()) r = await pedir();
+  return r;
+}
+
+function salir(){
+  const tk = SESION && SESION.access_token;
+  guardarSesion(null);
+  if (tk) fetch(SB_URL + '/auth/v1/logout', { method:'POST', headers:{ 'apikey': SB_KEY, 'Authorization':'Bearer '+tk } }).catch(()=>{});
+  mostrarLogin('Sesión cerrada.');
+}
+
+function mostrarLogin(msj){
+  ['sesionCard','stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById('loginCard').style.display = '';
+  if (msj) document.getElementById('loginEstado').textContent = msj;
+}
+
+async function cargar(){
+  if (!SESION) { mostrarLogin(); return; }
+  const est = document.getElementById('loginEstado');
+  est.textContent = '⏳ Cargando datos...';
+  // 1) ¿Esta cuenta está autorizada como maestro?
+  const rm = await api('/rest/v1/maestros?select=nombre,escuela,grados,docente,activo');
+  if (!rm) { mostrarLogin('⚠️ Tu sesión expiró. Vuelve a entrar.'); return; }
+  const maestros = rm.ok ? await rm.json() : [];
+  MAESTRO = (Array.isArray(maestros) && maestros.length) ? maestros[0] : null;
+  if (!MAESTRO || MAESTRO.activo === false) {
+    mostrarLogin('🚫 Tu cuenta existe pero aún no está autorizada como maestro. Pide al administrador que te agregue a la tabla "maestros".');
+    guardarSesion(SESION); // la sesión sigue viva, solo falta autorización
+    return;
+  }
+  // 2) Datos del alcance (RLS filtra en el servidor)
+  const [rr, rp] = await Promise.all([
+    api('/rest/v1/resultados?select=*&order=fecha.desc.nullslast&limit=5000'),
+    api('/rest/v1/progreso?select=*&order=actualizado_en.desc&limit=2000')
+  ]);
+  DATOS = (rr && rr.ok) ? await rr.json() : [];
+  PROG = (rp && rp.ok) ? await rp.json() : [];
+  if (!Array.isArray(DATOS)) DATOS = [];
+  if (!Array.isArray(PROG)) PROG = [];
+  // 3) Pintar
+  document.getElementById('loginCard').style.display = 'none';
+  ['sesionCard','stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = '');
+  const alcance = [];
+  if (MAESTRO.escuela) alcance.push('🏫 ' + MAESTRO.escuela);
+  if (MAESTRO.grados && MAESTRO.grados.length) alcance.push('📚 ' + MAESTRO.grados.join(', '));
+  if (MAESTRO.docente) alcance.push('🧑‍🏫 ' + MAESTRO.docente);
+  document.getElementById('sesionInfo').innerHTML =
+    '✅ <strong>' + esc(MAESTRO.nombre || SESION.email) + '</strong> (' + esc(SESION.email) + ')<br>' +
+    'Alcance: ' + (alcance.length ? esc(alcance.join(' · ')) : 'todo el proyecto') +
+    ' · ' + DATOS.length + ' resultados · ' + PROG.length + ' fotos de progreso';
+  llenarFiltros();
+  pintar();
+  pintarProgreso();
 }
 
 function filtrados(){
@@ -227,21 +311,19 @@ function pintar(){
   const ops=rs.filter(r=>r.tipo==='prueba_operativa'&&typeof r.nota==='number').map(r=>r.nota);
   const prom=a=>a.length?Math.round(a.reduce((s,n)=>s+n,0)/a.length):null;
   const stat=(n,l)=>'<div class="stat"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';
-  const pend = (window.METAS_SB && METAS_SB.pendientes()) || 0;
   document.getElementById('stats').innerHTML =
     stat(rs.length,'Resultados') +
     stat([...new Set(rs.map(r=>r.alumno).filter(Boolean))].length,'Alumnos') +
     stat([...new Set(rs.map(r=>r.mision).filter(Boolean))].length,'Misiones') +
     stat([...new Set(rs.map(r=>r.dispositivo).filter(Boolean))].length,'Dispositivos') +
     stat(prom(evals)!=null?prom(evals):'—','Promedio conceptual') +
-    stat(prom(ops)!=null?prom(ops):'—','Promedio operativa') +
-    stat(pend,'Por subir (este equipo)');
+    stat(prom(ops)!=null?prom(ops):'—','Promedio operativa');
 }
 
-function pintarProgreso(prog){
+function pintarProgreso(){
   const tb=document.getElementById('progBody'); tb.innerHTML='';
-  document.getElementById('progVacio').style.display = prog.length?'none':'block';
-  prog.forEach(p=>{
+  document.getElementById('progVacio').style.display = PROG.length?'none':'block';
+  PROG.forEach(p=>{
     const r=p.resumen||{};
     const {f,h}=fmtF(p.actualizado_en);
     const dom=Array.isArray(r.dominadas)?r.dominadas:[];
@@ -271,20 +353,15 @@ function exportarCSV(){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   const hoy=fmtF(new Date().toISOString()).f;
-  a.download='metas-nube-'+hoy+'.csv';
+  a.download='metas-panel-'+hoy+'.csv';
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),2000);
 }
 
-function subirPendientes(){
-  if(!window.METAS_SB){ alert('La capa de nube aún no carga en esta página.'); return; }
-  METAS_SB.sincronizar().then(r=>{
-    alert(r.enviados+' resultados subidos a la nube.\nPendientes: '+r.pendientes);
-    if(DATOS.length) consultar();
-  });
-}
+document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); });
+['fMision','fGrado','fAlumno','fTipo'].forEach(id=>document.getElementById(id).addEventListener('change',()=>{pintar();}));
 
-['fMision','fGrado','fAlumno','fTipo'].forEach(id=>document.getElementById(id).addEventListener('change',pintar));
+if (SESION) cargar();
 </script>
 </body>
 </html>

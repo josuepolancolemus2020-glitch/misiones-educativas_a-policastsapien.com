@@ -232,6 +232,87 @@ revoke all on function public.metas_consultar_progreso(text) from public;
 grant execute on function public.metas_consultar_progreso(text) to anon, authenticated;
 ```
 
+## 🔐 Fase 3: panel docente con login de maestros
+
+`panel-docente.html`: los maestros entran con **correo y contraseña** y la
+base de datos les entrega solo las filas de **su alcance** (RLS por
+escuela/grados/docente). Los estudiantes siguen sin cuentas.
+
+- Las cuentas las crea el administrador en el dashboard (Authentication →
+  Users → **Add user** → email + password + ✅ Auto Confirm). No hay
+  auto-registro útil: una cuenta sin fila en `maestros` no ve nada.
+- Recomendado: Authentication → Sign In / Providers → desactivar
+  **Allow new users to sign up**.
+- La tabla `maestros` define el alcance de cada cuenta. Filtros en NULL =
+  ve todo el proyecto (administrador). `escuela`/`docente` comparan por
+  "contiene" (ilike) porque los alumnos los escriben a mano; `grados` es
+  lista exacta.
+- Autorizar a un maestro (después de crear su cuenta):
+  ```sql
+  insert into public.maestros (id, nombre)
+  select id, 'Prof. Josué' from auth.users where email = 'CORREO@DEL.MAESTRO';
+  ```
+  Con alcance limitado:
+  ```sql
+  insert into public.maestros (id, nombre, escuela, grados)
+  select id, 'Prof. Ana', 'Francisco Morazán', array['6to A','6to B']
+  from auth.users where email = 'ana@ejemplo.com';
+  ```
+- Sesión del panel en `METAS_PANEL_SESION_V1` (token + refresh automático).
+
+### Script SQL de la Fase 3 (pegar en SQL Editor → Run)
+
+```sql
+-- ============================================================
+-- M.E.T.A.S — Supabase Fase 3: maestros con login y RLS por alcance
+-- ============================================================
+
+create table if not exists public.maestros (
+  id uuid primary key references auth.users(id) on delete cascade,
+  nombre text not null default '',
+  escuela text,      -- NULL = sin filtro (ve todas las escuelas)
+  grados text[],     -- NULL = sin filtro; ej: array['6to A','6to B']
+  docente text,      -- NULL = sin filtro; compara "contiene" con el campo docente
+  activo boolean not null default true,
+  creado_en timestamptz not null default now()
+);
+alter table public.maestros enable row level security;
+
+-- cada maestro puede ver SOLO su propia fila (para saber su alcance)
+drop policy if exists maestros_propio on public.maestros;
+create policy maestros_propio on public.maestros
+  for select to authenticated
+  using (id = auth.uid());
+
+-- lectura de resultados para maestros activos, limitada a su alcance
+drop policy if exists resultados_maestros_leen on public.resultados;
+create policy resultados_maestros_leen on public.resultados
+  for select to authenticated
+  using (
+    exists (
+      select 1 from public.maestros m
+      where m.id = auth.uid() and m.activo
+        and (m.escuela is null or resultados.escuela ilike '%' || m.escuela || '%')
+        and (m.grados  is null or resultados.grado = any (m.grados))
+        and (m.docente is null or resultados.docente ilike '%' || m.docente || '%')
+    )
+  );
+
+-- lo mismo para el espejo de progreso
+drop policy if exists progreso_maestros_leen on public.progreso;
+create policy progreso_maestros_leen on public.progreso
+  for select to authenticated
+  using (
+    exists (
+      select 1 from public.maestros m
+      where m.id = auth.uid() and m.activo
+        and (m.escuela is null or progreso.escuela ilike '%' || m.escuela || '%')
+        and (m.grados  is null or progreso.grado = any (m.grados))
+        and (m.docente is null or progreso.docente ilike '%' || m.docente || '%')
+    )
+  );
+```
+
 ## Advertencias vigentes
 
 - **Plan Free**: Supabase pausa el proyecto tras ~1 semana sin uso (típico en
