@@ -123,6 +123,34 @@ Reglas de ahorro y calidad:
    - Probar con el harness (Node extrae `printEval()`, la ejecuta con datos
      cortos Y largos, Chrome headless imprime a PDF y se cuentan las páginas:
      deben ser exactamente 2 en ambos casos).
+9-bis. **⚠️ NORMATIVA DE FORMAS DETERMINISTAS — «bucle exacto» (jul 2026,
+   obligatoria en TODA prueba imprimible)**: hay **30 formas** (`EVAL_FORMAS = 30`)
+   y la **Forma N genera SIEMPRE exactamente el mismo examen y la misma pauta**,
+   en cualquier navegador y aunque se cierre el programa. Caso de uso que la
+   motiva: el docente imprimió la Forma 15, perdió la pauta o se fue la luz —
+   al volver a la misión elige «Forma 15» en el selector y obtiene tal cual
+   el examen y la pauta que repartió. Piezas del estándar (bloque «Formas
+   deterministas v1» antes de `genEval`):
+   - `_evalRng(forma)`: PRNG **mulberry32** sembrado con el número de forma
+     (aritmética entera exacta → misma secuencia en todo motor JS).
+   - `_shuffleF(arr, rng)` (**Fisher-Yates**) y `_pickF(arr, n, rng)`.
+     🚫 PROHIBIDO barajar con `sort(() => rng() - 0.5)`: el resultado depende
+     del motor del navegador y rompe el bucle exacto.
+   - `_injectFormaSel(fnName, selId, actual, onPick)`: selector visible
+     «📋 Forma N» junto al botón de generar, para pedir una forma EXACTA.
+   - Semillas por tipo de prueba: conceptual `_evalRng(cf)` · operativa
+     `_evalRng(100000 + cf)` con `_opRnd` · pensamiento crítico
+     `_evalRng(200000 + cf)` — así la Forma 5 conceptual ≠ Forma 5 operativa.
+   - Ciclo: `evalFormNum = (evalFormNum % EVAL_FORMAS) + 1` (ídem
+     `evalOpFormNum`, `evalCritFormNum`).
+   - El orden de consumo del rng dentro del generador es parte del contrato:
+     NO reordenar secciones sin asumir que cambian todas las formas. Editar
+     los BANCOS de preguntas también cambia el contenido de las formas.
+   - Lo que NO se siembra: memorama, clasificador, reto, sopa y tareas
+     autogeneradas siguen con `Math.random` (la variedad ahí es deseable).
+   - Prueba obligatoria (harness `test-determinismo.js`): misma forma en dos
+     ejecuciones independientes → JSON idéntico; formas distintas → distinto;
+     tras la Forma 30 sigue la 1.
 10. **Juego de memoria (memorama)**: OBLIGATORIO en la sección Flashcards, como
     segunda tarjeta. Parejas concepto↔pista/ejemplo (6 pares), +1 XP por pareja
     (primera vez) y +2 XP al completar, con confeti. Copiar el patrón `memoPairs`

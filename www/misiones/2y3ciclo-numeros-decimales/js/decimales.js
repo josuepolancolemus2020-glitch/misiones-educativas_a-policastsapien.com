@@ -709,28 +709,65 @@ const evalPRBank=[
   {term:'Truncar',def:'Eliminar dígitos sin redondear'},
 ];
 
+// ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
+// La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
+// en cualquier navegador y aunque se cierre el programa. PRNG mulberry32
+// (aritmética entera exacta) + barajado Fisher-Yates. ⚠️ NO usar
+// sort(() => rng() - 0.5): el resultado depende del motor del navegador.
+// ⚠️ Editar los bancos de preguntas CAMBIA el contenido de todas las formas.
+const EVAL_FORMAS = 30;
+function _evalRng(forma) {
+    let s = (forma * 2654435761 + 909090909) >>> 0;
+    return function () {
+        s = (s + 0x6D2B79F5) >>> 0;
+        let t = s;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+const _shuffleF = (arr, rng) => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); const tmp = a[i]; a[i] = a[j]; a[j] = tmp; } return a; };
+const _pickF = (arr, n, rng) => _shuffleF(arr, rng).slice(0, n);
+// Selector «Forma exacta»: el docente elige qué forma generar (p.ej. para
+// reimprimir la pauta de la Forma 15 que ya repartió a los alumnos).
+function _injectFormaSel(fnName, selId, actual, onPick) {
+    const ya = document.getElementById(selId);
+    if (ya) { ya.value = String(actual); return; }
+    const btn = document.querySelector('[onclick*="' + fnName + '()"]');
+    if (!btn || !btn.parentNode) return;
+    const wrap = document.createElement('label');
+    wrap.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin:0 8px 6px 0;font-weight:700;font-size:0.95rem;';
+    let ops = '';
+    for (let i = 1; i <= EVAL_FORMAS; i++) ops += '<option value="' + i + '"' + (i === actual ? ' selected' : '') + '>Forma ' + i + '</option>';
+    wrap.innerHTML = '📋 <select id="' + selId + '" style="padding:6px 10px;border-radius:8px;border:2px solid #888;font-weight:700;font-size:0.95rem;background:#fff;color:#222;" aria-label="Elegir número de forma exacta (1 a ' + EVAL_FORMAS + ')">' + ops + '</select>';
+    btn.parentNode.insertBefore(wrap, btn);
+    const sel = wrap.querySelector('select');
+    if (sel) sel.addEventListener('change', function () { onPick(parseInt(this.value, 10) || 1); try { saveProgress(); } catch (e) { } });
+}
+function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
+
 function genEval(){
   sfx('click');
-  const cf=evalFormNum; window._currentEvalForm=cf; evalFormNum=(evalFormNum%10)+1; saveProgress();
+  _evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); /* la Forma cf siembra TODO el azar de esta evaluación */ window._currentEvalForm=cf; evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector(); saveProgress();
   document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final — Forma ${cf} · Números Decimales`;
   evalAnsVisible=false;
   const out=document.getElementById('evalOut'); out.innerHTML='';
   const bar=document.createElement('div'); bar.className='eval-score-bar';
   bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
   out.appendChild(bar);
-  const cpItems=_pick(evalCPBank,5);
+  const cpItems=_pickF(evalCPBank,5, rng);
   const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   cpItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.dataset.evalType='cp'; d.dataset.evalIndex=i; const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`; s1.appendChild(d); });
   out.appendChild(s1);
-  const tfItems=_pick(evalTFBank,5);
+  const tfItems=_pickF(evalTFBank,5, rng);
   const s2=document.createElement('div'); s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   tfItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.dataset.evalType='tf'; d.dataset.evalIndex=i; d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`; s2.appendChild(d); });
   out.appendChild(s2);
-  const mcItems=_pick(evalMCBank,5);
+  const mcItems=_pickF(evalMCBank,5, rng);
   const s3=document.createElement('div'); s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   mcItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.dataset.evalType='mc'; d.dataset.evalIndex=i; const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join(''); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`; s3.appendChild(d); });
   out.appendChild(s3);
-  const prItems=_pick(evalPRBank,5); const shuffledDefs=[...prItems].sort(()=>Math.random()-0.5); const letters=['A','B','C','D','E'];
+  const prItems=_pickF(evalPRBank,5, rng); const shuffledDefs=_shuffleF(prItems, rng); const letters=['A','B','C','D','E'];
   const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item';
   let colLeft='<div class="eval-match-col"><h4>📘 Términos</h4>';
@@ -842,7 +879,8 @@ function evalSwitchMode(mode){
 }
 
 // ---- Aritmética decimal exacta: value = v / 10^s (evita errores de coma flotante) ----
-function _rint(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+let _opRnd = Math.random; /* fuente de azar de la prueba operativa; genEvalOp la siembra con _evalRng(100000+forma) */
+function _rint(min,max){ return Math.floor(_opRnd()*(max-min+1))+min; }
 function _decFmt(d,fixed=false){
   let v=d.v,s=d.s; const neg=v<0; v=Math.abs(v);
   let str=String(v).padStart(s+1,'0');
@@ -863,7 +901,7 @@ function _randDec(maxIntDigits,scale){ const intDigits=_rint(1,maxIntDigits); co
 function genOpItems(){
   const items=[];
   for(let i=0;i<5;i++){
-    const isAdd=Math.random()<0.55;
+    const isAdd=_opRnd()<0.55;
     let a,b;
     do{ a=_randDec(_rint(1,3),_rint(0,3)); b=_randDec(_rint(1,3),_rint(0,3)); }while(!_decFmt(a).includes('.')&&!_decFmt(b).includes('.'));
     let op=isAdd?'+':'-';
@@ -876,7 +914,7 @@ function genOpItems(){
 function genRoundItems(){
   const items=[];
   for(let i=0;i<10;i++){
-    const trick=Math.random()<0.15;
+    const trick=_opRnd()<0.15;
     const num=_randDec(_rint(1,2),trick?2:3);
     const rounded=_decRoundTo(num,2);
     items.push({q:_decFmt(num,true),ans:_decFmt(rounded,true)});
@@ -886,9 +924,9 @@ function genRoundItems(){
 function genCmpItems(){
   const items=[];
   for(let i=0;i<10;i++){
-    const forceEq=Math.random()<0.2;
+    const forceEq=_opRnd()<0.2;
     let a=_randDec(_rint(1,2),_rint(1,3)), b;
-    if(forceEq){ b=Math.random()<0.5?{v:a.v*10,s:a.s+1}:{v:a.v,s:a.s}; }
+    if(forceEq){ b=_opRnd()<0.5?{v:a.v*10,s:a.s+1}:{v:a.v,s:a.s}; }
     else{ b=_randDec(_rint(1,2),_rint(1,3)); if(_decCmp(a,b)===0) b=_decAdd(b,{v:1,s:b.s}); }
     const c=_decCmp(a,b);
     items.push({a:_decFmt(a),b:_decFmt(b),rel:c===0?'eq':(c>0?'gt':'lt')});
@@ -909,19 +947,22 @@ function genPowItems(){
 function genOrdItems(){
   const groups=[];
   for(let g=0;g<4;g++){
-    const dir=Math.random()<0.5?'mayor':'menor';
+    const dir=_opRnd()<0.5?'mayor':'menor';
     const nums=[]; let tries=0;
     while(nums.length<5&&tries<300){ tries++; const cand=_randDec(1,_rint(2,3)); if(!nums.some(n=>_decCmp(n,cand)===0)) nums.push(cand); }
     const sortedAsc=[...nums].sort((x,y)=>_decCmp(x,y));
     const correctOrder=(dir==='mayor'?[...sortedAsc].reverse():sortedAsc).map(n=>_decFmt(n));
-    groups.push({dir,display:_shuffle(nums).map(n=>_decFmt(n)),correctOrder});
+    groups.push({dir,display:_shuffleF(nums, _opRnd).map(n=>_decFmt(n)),correctOrder});
   }
   return groups;
 }
 
 function genEvalOp(){
   sfx('click');
-  const cf=evalOpFormNum; window._currentEvalOpForm=cf; evalOpFormNum=(evalOpFormNum%10)+1; saveProgress();
+  _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
+  const _sO = document.getElementById('evalOpFormaSel');
+  if (_sO && parseInt(_sO.value, 10)) evalOpFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sO.value, 10)));
+  const cf=evalOpFormNum; window._currentEvalOpForm=cf; _opRnd = _evalRng(100000 + cf); /* la Forma cf siembra TODO el azar de esta prueba operativa */ evalOpFormNum=(evalOpFormNum%EVAL_FORMAS)+1; _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; }); saveProgress();
   document.getElementById('evalop-screen-title').textContent=`📐 Prueba Operativa — Forma ${cf} · Números Decimales`;
   evalOpAnsVisible=false;
   const out=document.getElementById('evalOpOut'); out.innerHTML='';
@@ -1111,3 +1152,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   fin('s-aprende',false);
   fin('s-tipos',false);
 });
+
+// Formas deterministas v1: selectores de forma visibles desde la carga de la página
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
