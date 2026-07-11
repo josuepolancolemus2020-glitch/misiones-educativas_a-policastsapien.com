@@ -58,8 +58,11 @@ as $$
       and d.clave_hash = encode(extensions.digest(trim(coalesce(p_clave,'')), 'sha256'), 'hex')
   )
 $$;
-revoke all on function public._metas_docente_ok(text,text) from public;
--- (interna: no se otorga a anon; la usan las funciones de abajo)
+-- interna: la usan las funciones de abajo (security definer), NO se
+-- expone a los clientes. En Supabase EXECUTE se concede por defecto a
+-- public/anon/authenticated, así que hay que revocarlo explícitamente
+-- para que nadie pueda probar claves por fuerza bruta contra ella.
+revoke all on function public._metas_docente_ok(text,text) from public, anon, authenticated;
 
 -- Resultados SOLO de los alumnos que llevan su código en el campo docente
 create or replace function public.metas_consultar_docente(p_codigo text, p_clave text)
