@@ -70,7 +70,13 @@ function blank() {
 function load() {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return Object.assign(blank(), JSON.parse(raw));
+    if (raw) {
+      const st = Object.assign(blank(), JSON.parse(raw));
+      // Países en standby: mientras la bandera esté apagada todos exploran
+      // Honduras (rescata sin perder XP a quien tenía otro país guardado).
+      if (!window.METAS_PAISES_ON) st.country = 'HN';
+      return st;
+    }
   } catch (_) {}
   return blank();
 }
@@ -1005,6 +1011,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Sincronizar selector de país con el estado guardado
   const countryEl = document.getElementById('country-select');
   if (countryEl) countryEl.value = country0;
+
+  // Países en standby: ocultar el bloque de selectores completo.
+  // El código de países queda dormido y listo (ver bandera en index.html).
+  if (!window.METAS_PAISES_ON) {
+    const selWrap = document.getElementById('selectors-container');
+    if (selWrap) selWrap.style.display = 'none';
+  }
 
   // Render inicial
   renderHome();

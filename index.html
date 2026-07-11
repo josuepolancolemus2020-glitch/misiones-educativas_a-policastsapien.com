@@ -56,7 +56,7 @@
           <span class="motiv-autor" id="motiv-autor"></span>
         </div>
       </div>
-    <div class="selectors-container">
+    <div class="selectors-container" id="selectors-container">
         
         <div class="selector-group">
           <label><i class="fa-solid fa-earth-americas"></i> Elige tu País</label>
@@ -847,6 +847,11 @@
   <script src="js/tools/collage-maker.js"></script>
   <script src="js/data/campeonismo-bank.js"></script>
   <script src="js/tools/campeonismo.js"></script>
+  <script>
+    /* Países en STANDBY: el selector queda oculto y todos exploran Honduras.
+       Cuando haya misiones de otros países, reactivar cambiando false → true. */
+    window.METAS_PAISES_ON = false;
+  </script>
   <script src="js/app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
