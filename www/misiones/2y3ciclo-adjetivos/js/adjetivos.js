@@ -1076,7 +1076,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head>
 <title>Evaluación Los Adjetivos · Forma ${forma}</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:2mm 6mm;}
+body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:2mm 6mm;width:201.9mm;margin:0 auto;}
 .ph{margin-bottom:0.55rem;}
 .ph h2{font-size:12pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}
 .ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:5px;}
@@ -1140,7 +1140,7 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
 .forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
 @media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
-</style></head><body>
+</style></head><body><div id="evalPage">
 <div class="ph">
   <h2>Evaluación Final de Misión Los Adjetivos — Español — Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
@@ -1149,7 +1149,7 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 </div>
 ${s1}${s2}${s3}${s4}
 <div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
-<div class="pauta-wrap">
+</div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
     <div class="p-main">✅ PAUTA — Evaluación Final · Misión Los Adjetivos · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
@@ -1159,7 +1159,7 @@ ${s1}${s2}${s3}${s4}
   ${zgBlock}
 </div>
 <div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
-</body></html>`;
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
   const win=window.open('','_blank','');
   if(!win){ showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }

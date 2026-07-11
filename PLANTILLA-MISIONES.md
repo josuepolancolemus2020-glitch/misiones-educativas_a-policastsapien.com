@@ -77,6 +77,30 @@ Reglas de ahorro y calidad:
    espacios en blanco).
 9. **Pautas de todas las pruebas**: letra grande (tablas ≈11pt, título ≈13pt)
    para docentes con problemas de vista; solo se amplía la pauta, el examen no.
+   ⚠️ **NORMATIVA DE IMPRESIÓN DE EVALUACIÓN (jul 2026, obligatoria, misma
+   jerarquía que la regla de colores)**: al imprimir `printEval()` el documento
+   sale SIEMPRE en exactamente **2 páginas carta**: página 1 = examen del alumno,
+   página 2 = pauta del docente (con clave ZipGrade). Nunca 3 ni 4 páginas,
+   sin importar cuánto contenido tenga la evaluación. Se logra con el
+   **auto-ajuste de escala** incluido en el documento impreso: el examen vive en
+   `<div id="evalPage">` y la pauta en `#pautaPage`; un script hace búsqueda
+   binaria del mayor `zoom` cuya altura quepa en la página (252mm útiles) —
+   si el contenido es poco AGRANDA la letra hasta llenar la hoja (máx 1.45×);
+   si es mucho la REDUCE hasta que quepa (mín 0.55×). Requisitos técnicos que
+   NO deben romperse al crear/editar misiones:
+   - `body{width:201.9mm;margin:0 auto;}` (ancho imprimible carta con márgenes
+     mínimos; hace que la medición en pantalla coincida con la impresión).
+   - `@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}`
+     (impresión: carta, 100 %, márgenes mínimos).
+   - Usar SOLO `zoom` para escalar (Chrome reajusta las líneas al ancho
+     completo automáticamente y lo respeta al imprimir). PROHIBIDO
+     `transform:scale` (la impresión lo ignora para paginar) y PROHIBIDO
+     compensar con `width:(100/z)%` (la medición miente y desborda).
+   - La búsqueda debe ser BINARIA, no multiplicativa: la altura salta de golpe
+     en los reacomodos de línea y una iteración proporcional oscila sin converger.
+   - Probar con el harness (Node extrae `printEval()`, la ejecuta con datos
+     cortos Y largos, Chrome headless imprime a PDF y se cuentan las páginas:
+     deben ser exactamente 2 en ambos casos).
 10. **Juego de memoria (memorama)**: OBLIGATORIO en la sección Flashcards, como
     segunda tarjeta. Parejas concepto↔pista/ejemplo (6 pares), +1 XP por pareja
     (primera vez) y +2 XP al completar, con confeti. Copiar el patrón `memoPairs`
