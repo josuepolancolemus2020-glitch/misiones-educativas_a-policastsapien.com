@@ -1038,8 +1038,8 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 .ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
 .ph-crit{font-size:11pt;text-align:center;color:#555;margin-top:0.15rem;}
 /* SECCIONES */
-.sec-title{font-size:9pt;font-weight:700;padding:0.2rem 0.45rem;margin:0.38rem 0 0.18rem;border-left:4px solid #419b88;background:#e5f2ef;display:flex;justify-content:space-between;align-items:center;}
-.pts-pill{font-size:7.5pt;background:#419b88;color:white;padding:0.08rem 0.35rem;border-radius:8px;}
+.sec-title{font-size:9pt;font-weight:700;padding:0.2rem 0.45rem;margin:0.38rem 0 0.18rem;border-left:4px solid #c49000;background:#fef9e7;display:flex;justify-content:space-between;align-items:center;}
+.pts-pill{font-size:7.5pt;background:#c49000;color:white;padding:0.08rem 0.35rem;border-radius:8px;}
 .qn{font-weight:700;min-width:20px;flex-shrink:0;}
 /* V/F */
 .tf-row{display:flex;align-items:baseline;gap:0.25rem;font-size:9pt;line-height:1.32;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
@@ -1059,8 +1059,8 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 /* Pareados */
 .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.25rem 0.5rem;margin-top:0.15rem;}
 .pr-head{font-size:8pt;font-weight:700;color:#555;margin-bottom:0.18rem;}
-.pr-item{font-size:8.5pt;padding:0.28rem 0.3rem;background:#e5f2ef;border-radius:3px;margin-bottom:0.18rem;display:flex;align-items:center;gap:0.2rem;line-height:1.6;}
-.pr-num{font-weight:700;color:#419b88;min-width:17px;flex-shrink:0;}
+.pr-item{font-size:8.5pt;padding:0.28rem 0.3rem;background:#fef9e7;border-radius:3px;margin-bottom:0.18rem;display:flex;align-items:center;gap:0.2rem;line-height:1.6;}
+.pr-num{font-weight:700;color:#c49000;min-width:17px;flex-shrink:0;}
 .pr-line{display:inline-block;min-width:17px;border-bottom:1.5px solid #111;margin-right:0.12rem;flex-shrink:0;}
 /* Pauta */
 .pauta-wrap{page-break-before:always;padding-top:0.4rem;}

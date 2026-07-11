@@ -1061,7 +1061,7 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;backgroun
 .ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
 .ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
 .ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}
-.sec-title {font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f5e9;color:#27ae60;}
+.sec-title {font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}
 .obt-row {display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}
 .obt-lbl{white-space:nowrap;}
 .obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #27ae60;height:12px;}
@@ -1082,7 +1082,7 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;backgroun
 .pr-section{margin-top:0.1rem;}
 .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}
 .pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}
-.pr-item {font-size:10.5pt;padding:0.1rem 0.28rem;background:#e8f5e9;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}
+.pr-item {font-size:10.5pt;padding:0.1rem 0.28rem;background:#e8f8f5;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}
 .pr-num {font-weight:700;color:#27ae60;min-width:19px;flex-shrink:0;}
 .pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}
 .total-row {display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#27ae60;}

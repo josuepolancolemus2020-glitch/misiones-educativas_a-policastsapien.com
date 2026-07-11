@@ -35,10 +35,32 @@ Reglas de ahorro y calidad:
 
 ## 🎨 Estándares de UX aprobados (obligatorios en TODA misión nueva)
 
-1. **Colores por materia**: matemáticas = AZUL (#1565c0); el ROJO es de Ciencias
-   Sociales. Nada de acentos rojos en misiones de mate, tampoco al imprimir:
-   los elementos paralingüísticos de las pruebas (títulos de sección, líneas,
-   "Obtenido de…", encabezado de la pauta) van en el color de la materia.
+1. **⚠️ NORMATIVA DE COLORES POR MATERIA (obligatoria e inviolable)**: el
+   maestro debe saber de qué materia es el examen CON SOLO VER EL COLOR.
+   Códigos oficiales únicos (auditados y normalizados en las 28 misiones el
+   11 jul 2026 — se corrigieron 10 misiones desviadas que usaban morado,
+   rosa, turquesa, naranja…):
+
+   | Materia | Acento (títulos, líneas, «Obtenido», números) | Fondo claro (franjas, cajas) |
+   |---|---|---|
+   | **Español** | `#c49000` (dorado / amarillo oscuro) | `#fef9e7` |
+   | **Matemáticas** | `#1565c0` (azul) | `#e3f2fd` (+ borde pauta `#cce0ff`) |
+   | **Ciencias Naturales** | `#27ae60` (verde) | `#e8f8f5` |
+   | **Ciencias Sociales** | `#c0392b` (rojo) | `#fbe9e7` |
+
+   Reglas duras:
+   - Aplica a TODOS los documentos imprimibles: `printEval` (evaluación
+     conceptual), `printEvalOp` (prueba operativa) y `printEvalCrit`
+     (pensamiento crítico). Un solo acento por documento — sin variantes
+     oscuras ni paletas "del tema de la misión".
+   - Las respuestas de la pauta (clase `.pa`) van SIEMPRE en verde `#007a00`
+     ("respuesta correcta"), independiente de la materia.
+   - PROHIBIDO inventar paletas por misión en los imprimibles: nada de
+     morados, rosas, turquesas o naranjas aunque la misión los use en
+     pantalla. El ROJO es exclusivo de Sociales — nada de acentos rojos en
+     mate, tampoco al imprimir.
+   - Al crear una misión nueva, copiar la paleta EXACTA de la tabla según la
+     materia declarada en el encabezado de la evaluación.
 2. **Predice** (primera impresión, debe encantar): cada predicción lleva su
    explorador interactivo ("🔍 Explorar la pista") que induce a la respuesta
    jugando: medir distancias, animaciones, tocar y descubrir.
