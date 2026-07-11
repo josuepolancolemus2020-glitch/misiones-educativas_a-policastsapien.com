@@ -1,9 +1,12 @@
-const CACHE_NAME = 'meta-app-v14';
+const CACHE_NAME = 'meta-app-v15';
 const STATIC_ASSETS = [
   './img/logo.png',
   './img/icon-192.png',
   './img/icon-512.png',
   './img/jose-cecilio-del-valle-edit.webp',
+  './css/vendor/fontawesome/css/all.min.css',
+  './css/vendor/fontawesome/webfonts/fa-solid-900.woff2',
+  './css/vendor/fontawesome/webfonts/fa-regular-400.woff2',
   'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
