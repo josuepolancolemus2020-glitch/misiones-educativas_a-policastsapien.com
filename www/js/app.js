@@ -965,6 +965,183 @@ function renderProgress() {
 }
 
 /* ─────────────────────────────────────────────
+   RENDER — VISTA PADRE (Fase 2)
+   Resumen para madres y padres, todo guiado por NOTAS (el XP es
+   decoración lúdica): semana, notas registradas por el maestro en
+   el Plan de Acción (METAS_PLANACCION_V1), siguiente paso, consejo
+   del día y WhatsApp al maestro (METAS_PADRE_V1).
+───────────────────────────────────────────── */
+
+const PADRE_KEY = 'METAS_PADRE_V1';
+
+function _padreCfg() {
+  try { const o = JSON.parse(localStorage.getItem(PADRE_KEY)); return (o && typeof o === 'object') ? o : {}; }
+  catch (_) { return {}; }
+}
+function _padreSaveCfg(c) { try { localStorage.setItem(PADRE_KEY, JSON.stringify(c)); } catch (_) {} }
+
+function _alumnoIdent() {
+  try { const o = JSON.parse(localStorage.getItem('METAS_ALUMNO_V1')); return (o && typeof o === 'object') ? o : {}; }
+  catch (_) { return {}; }
+}
+
+function _pEsc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/* Notas del alumno registradas por el maestro en el Plan de Acción.
+   Coincidencia por nombre normalizado, por número de lista (si el
+   grado del análisis no contradice al del alumno) o por código #num. */
+function _padreNotasPA(ident) {
+  let pa = null;
+  try { pa = JSON.parse(localStorage.getItem('METAS_PLANACCION_V1')); } catch (_) {}
+  if (!pa || !Array.isArray(pa.analisis)) return [];
+  const num  = String(ident.num || '').replace(/\D/g, '');
+  const nomN = _rNorm(ident.nombre || '');
+  const gradoAl = String(ident.grado || '').replace(/\D/g, '');
+  const filas = [];
+  pa.analisis.slice().reverse().forEach(a => {
+    const gradoPA = String(a.grado || '').replace(/\D/g, '');
+    (a.students || []).forEach(st => {
+      const okNombre = nomN && _rNorm(st.nombre || '') === nomN;
+      const okCodigo = num && String(st.nombre || '').trim() === ('#' + num);
+      const okNum = num && String(st.num || '').replace(/\D/g, '') === num &&
+                    (!gradoAl || !gradoPA || gradoAl === gradoPA);
+      if (okNombre || okCodigo || okNum) filas.push({ a, st });
+    });
+  });
+  return filas;
+}
+
+function renderPadre() {
+  const cont = document.getElementById('padre-content');
+  if (!cont) return;
+
+  const ident  = _alumnoIdent();
+  const s      = load();
+  const nombre = String(ident.nombre || s.name || '').trim();
+  const quien  = nombre ? _pEsc(nombre) : 'su hijo o hija';
+
+  /* ── Resumen de la semana (últimos 7 días de METAS_REGISTRO_V1) ── */
+  const hace7  = Date.now() - 7 * 86400000;
+  const misSem = new Set();
+  let mejor = null;
+  readRegistro().forEach(ev => {
+    if (!ev || !ev.mision) return;
+    if (nombre && ev.alumno && ev.alumno !== nombre) return; // dispositivo compartido
+    const t = Date.parse(ev.t || '') || 0;
+    if (t < hace7) return;
+    misSem.add(_rNorm(ev.mision));
+    if ((ev.tipo === 'evaluacion' || ev.tipo === 'prueba_operativa') && typeof ev.nota === 'number') {
+      const base = (typeof ev.base === 'number' && ev.base > 0) ? ev.base : 100;
+      const pct  = Math.round((ev.nota / base) * 100);
+      if (!mejor || pct > mejor.pct) mejor = { pct, mision: ev.mision };
+    }
+  });
+  let mejorTitulo = '';
+  if (mejor) {
+    const m = MISSIONS.find(x => missionFolder(x) === _rNorm(mejor.mision));
+    mejorTitulo = m ? m.title : mejor.mision;
+  }
+  const semanaHTML = `
+    <div class="padre-sec">
+      <div class="padre-sec-title">📈 Esta semana</div>
+      ${misSem.size
+        ? `<p class="padre-big">${quien} trabajó en <strong>${misSem.size} misión${misSem.size !== 1 ? 'es' : ''}</strong>${mejor
+            ? ` y su mejor nota fue <strong>${mejor.pct}</strong> en «${_pEsc(mejorTitulo)}»${mejor.pct >= 70 ? ' ✔' : ''}` : ''}.</p>`
+        : `<p class="padre-big">Esta semana aún no hay actividad registrada en este teléfono. Anime a ${quien} a entrar a su siguiente misión. 💪</p>`}
+    </div>`;
+
+  /* ── Notas que registró el maestro (Plan de Acción) ── */
+  const filasPA = _padreNotasPA(ident);
+  const paHTML = filasPA.length ? `
+    <div class="padre-sec">
+      <div class="padre-sec-title">📝 Notas registradas por el maestro</div>
+      ${filasPA.slice(0, 4).map(({ a, st }) => {
+        const f = (a.t || '').slice(0, 10);
+        const esNSP = st.nota === 'NSP';
+        const aprobo = !esNSP && typeof st.nota === 'number' && st.nota >= 70;
+        return `
+        <div class="padre-nota">
+          <div class="padre-nota-top">
+            <strong>${_pEsc(a.evaluacion || 'Evaluación')}</strong>
+            <span class="padre-nota-val ${aprobo ? 'ok' : 'baja'}">${esNSP ? 'NSP' : _pEsc(st.nota) + '/100'}</span>
+          </div>
+          <div class="padre-nota-meta">${_pEsc(st.categoria || '')}${f ? ' · ' + f : ''}</div>
+        </div>`;
+      }).join('')}
+      ${filasPA[0].st.msg ? `<div class="padre-msg">💬 <em>Mensaje del maestro:</em><br>${_pEsc(filasPA[0].st.msg)}</div>` : ''}
+    </div>` : '';
+
+  /* ── Qué le toca ahora (misma tarjeta guiada por notas) ── */
+  const rd = _rutasDatos();
+  const pasoHTML = (rd.sug && !rd.sug.m) ? '' : pasoCardHTML(rd.sug, false);
+
+  /* ── Consejo del día ── */
+  let consejoHTML = '';
+  if (typeof CONSEJOS_PADRES !== 'undefined' && CONSEJOS_PADRES.length) {
+    const dia = Math.floor(Date.now() / 86400000) % CONSEJOS_PADRES.length;
+    consejoHTML = `
+      <div class="padre-sec padre-consejo">
+        <div class="padre-sec-title">💡 Consejo de hoy para apoyar en casa</div>
+        <p class="padre-big">${CONSEJOS_PADRES[dia]}</p>
+      </div>`;
+  }
+
+  /* ── WhatsApp al maestro ── */
+  const tel = String(_padreCfg().telMaestro || '').replace(/\D/g, '');
+  const waHTML = `
+    <div class="padre-sec">
+      <div class="padre-sec-title">💬 Escribir al maestro</div>
+      ${tel ? `
+        <button class="padre-wa-btn" onclick="padreEscribirMaestro()">💬 Enviar WhatsApp al maestro</button>
+        <button class="padre-wa-cambiar" onclick="padreGuardarTel(true)">✏️ Cambiar número</button>`
+      : `
+        <p class="padre-hint">Guarde una sola vez el número de WhatsApp del maestro:</p>
+        <div class="padre-tel-row">
+          <input id="padre-tel" class="pa-inp-field" type="tel" inputmode="tel" placeholder="ej: 9999-9999" autocomplete="off">
+          <button class="padre-wa-btn" onclick="padreGuardarTel()">Guardar</button>
+        </div>`}
+    </div>`;
+
+  const avisoHTML = `
+    <p class="padre-aviso">⚠️ Este resumen vive en el teléfono donde ${quien} estudia y practica.
+      Si estudia en otro equipo, consulte en ese equipo o pregunte al maestro.</p>
+    <div class="padre-pronto">🔑 <strong>Pronto:</strong> podrá consultar desde su casa con el
+      <em>código de lista</em> de su hijo o hija.</div>`;
+
+  cont.innerHTML =
+    (nombre ? `<h2 class="padre-titulo">El avance de ${_pEsc(nombre)}</h2>` : '') +
+    semanaHTML + paHTML + pasoHTML + consejoHTML + waHTML + avisoHTML;
+}
+
+function padreGuardarTel(cambiar) {
+  if (cambiar) {
+    const c = _padreCfg(); delete c.telMaestro; _padreSaveCfg(c);
+    renderPadre(); return;
+  }
+  const inp = document.getElementById('padre-tel');
+  let tel = inp && inp.value ? inp.value.replace(/\D/g, '') : '';
+  if (tel.length === 8) tel = '504' + tel; // Honduras por defecto
+  if (tel.length < 10) { toast('Escribe un número válido (8 dígitos)'); return; }
+  const c = _padreCfg(); c.telMaestro = tel; _padreSaveCfg(c);
+  renderPadre();
+  toast('Número guardado ✔');
+}
+window.padreGuardarTel = padreGuardarTel;
+
+function padreEscribirMaestro() {
+  const tel = String(_padreCfg().telMaestro || '').replace(/\D/g, '');
+  if (!tel) { renderPadre(); return; }
+  const ident  = _alumnoIdent();
+  const nombre = String(ident.nombre || load().name || '').trim();
+  const txt = `Hola, le saluda la familia de ${nombre || 'mi hijo/a'}. Vimos su avance en M.E.T.A.S y queremos saber cómo apoyarle mejor en casa. ¡Gracias por su dedicación! 🙏`;
+  window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent(txt), '_blank');
+}
+window.padreEscribirMaestro = padreEscribirMaestro;
+
+/* ─────────────────────────────────────────────
    RENDER — PROFILE
 ───────────────────────────────────────────── */
 
@@ -1012,6 +1189,7 @@ function switchView(id) {
   if (id === 'view-misiones') renderMissions(currentFilter, currentQuery);
   if (id === 'view-rutas')    renderRutas();
   if (id === 'view-progreso') renderProgress();
+  if (id === 'view-padre')    renderPadre();
   if (id === 'view-perfil')   renderProfile();
   if (id === 'view-gobierno')       renderGobiernoEscolar();
   if (id === 'view-plan-accion')    paInit();
@@ -1173,6 +1351,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.home-nav-btn').forEach(btn => {
     btn.addEventListener('click', () => switchView(btn.dataset.view));
   });
+
+  // Vista Padre: botón volver
+  document.getElementById('padre-back-btn')?.addEventListener('click', () => switchView('view-inicio'));
 
   // Chips de materias → misiones filtradas
   document.querySelectorAll('.subj-chip').forEach(chip => {

@@ -102,8 +102,8 @@
         </div>
       </div>
 
-      <!-- Puerta para madres y padres (Fase 2: tendrá su propia vista) -->
-      <button class="padres-card" onclick="switchView('view-progreso')">
+      <!-- Puerta para madres y padres -->
+      <button class="padres-card" onclick="switchView('view-padre')">
         <span class="padres-emoji">👪</span>
         <span class="padres-info">
           <strong>Para madres y padres</strong>
@@ -255,6 +255,20 @@
       <div id="progress-insignias"></div>
       <div id="progress-subjects"></div>
       <div id="visited-missions"></div>
+    </div>
+  </div>
+
+  <!-- ========== PARA MADRES Y PADRES ========== -->
+  <div id="view-padre" class="view">
+    <header class="app-header compact">
+      <button class="back-icon-btn" id="padre-back-btn" aria-label="Volver al inicio">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h1 class="view-title">Para madres y padres</h1>
+      <div></div>
+    </header>
+    <div class="view-scroll">
+      <div id="padre-content"></div>
     </div>
   </div>
 
@@ -872,6 +886,11 @@
       <a class="drawer-item" href="registro.html">
         <i class="fa-solid fa-clipboard-list"></i><span>Registro de clase</span>
       </a>
+      <div class="drawer-divider"></div>
+      <div class="drawer-section-label">Para la familia</div>
+      <button class="drawer-item" data-view="view-padre">
+        <i class="fa-solid fa-people-roof"></i><span>Avance de mi hijo/a</span>
+      </button>
     </nav>
   </aside>
 
