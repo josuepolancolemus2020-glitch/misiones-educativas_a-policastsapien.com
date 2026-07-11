@@ -407,6 +407,24 @@ a { text-decoration: none; color: inherit; }
   padding: 0 4px; margin-bottom: 12px;
 }
 .padre-nube { border-left: 4px solid var(--accent); }
+
+/* ── Acceso del maestro (suscripción y llaves) ── */
+.doc-btn-brand { background: var(--brand) !important; }
+.doc-admin-link { color: var(--muted); text-decoration: underline; }
+.doc-cred {
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); padding: 4px 12px;
+}
+.doc-cred-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid var(--border);
+}
+.doc-cred-row:last-child { border-bottom: none; }
+.doc-cred-row span { font-size: 12px; color: var(--muted); }
+.doc-cred-row strong {
+  font-size: 16px; font-weight: 900; letter-spacing: 1.5px;
+  color: var(--brand); font-family: 'Courier New', monospace;
+}
 .padre-codigo-inp { text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
 #padre-nube-out { margin-top: 10px; }
 

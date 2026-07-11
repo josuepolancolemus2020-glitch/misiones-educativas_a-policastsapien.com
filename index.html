@@ -281,40 +281,9 @@
     </header>
     <div class="view-scroll">
 
-      <!-- Mis registros: lo que el maestro usa a diario -->
-      <div class="setting-group teacher-panel-group">
-        <div class="teacher-panel-head">
-          <i class="fa-solid fa-clipboard-list teacher-panel-icon"></i>
-          <label class="setting-label" style="margin-bottom:0;">Mis registros</label>
-        </div>
-        <p class="teacher-panel-desc">Los resultados de tus estudiantes: en este equipo y en la nube.</p>
-        <div class="teacher-links-list">
-          <a class="teacher-link-item" href="registro.html">
-            <i class="fa-solid fa-clipboard-list"></i>
-            <span class="tli-info">
-              <span class="tli-title">📋 Registro de clase</span>
-              <span class="tli-sub">Resultados guardados en este equipo</span>
-            </span>
-            <i class="fa-solid fa-chevron-right"></i>
-          </a>
-          <a class="teacher-link-item" href="consulta-nube.html">
-            <i class="fa-solid fa-cloud"></i>
-            <span class="tli-info">
-              <span class="tli-title">☁️ Consulta en la nube</span>
-              <span class="tli-sub">Entra con tu clave del docente</span>
-            </span>
-            <i class="fa-solid fa-chevron-right"></i>
-          </a>
-          <a class="teacher-link-item" href="panel-docente.html">
-            <i class="fa-solid fa-user-lock"></i>
-            <span class="tli-info">
-              <span class="tli-title">🔐 Panel docente</span>
-              <span class="tli-sub">Entra con tu correo y contraseña</span>
-            </span>
-            <i class="fa-solid fa-chevron-right"></i>
-          </a>
-        </div>
-      </div>
+      <!-- Acceso del maestro: suscripción instantánea o su tarjeta de acceso
+           (lo pinta renderProfile() según METAS_DOCENTE_V1) -->
+      <div id="docente-acceso"></div>
 
       <!-- Herramientas del aula -->
       <div class="setting-group teacher-panel-group">
