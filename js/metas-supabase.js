@@ -32,7 +32,7 @@
   var MAX_OUTBOX = 1000;   // tope de seguridad para no llenar localStorage
   var LOTE_MAX = 200;      // filas por envío normal
   var LOTE_CIERRE = 50;    // filas al cerrar la página (límite de keepalive)
-  var TIPOS = { evaluacion: 1, prueba_operativa: 1 };
+  var TIPOS = { evaluacion: 1, prueba_operativa: 1, pauta_vista: 1 };
 
   // ---------- cola local (outbox) ----------
   function leerCola() {

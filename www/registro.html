@@ -42,11 +42,14 @@ tr:hover td{background:var(--pri-gl);}
 .b-evaluacion{background:#fff3d6;color:#9a6b00;}
 .b-prueba_operativa{background:#f0e8ff;color:#6c5ce7;}
 .b-sugerencia{background:#ffe8f0;color:#c2185b;}
+.b-pauta_vista{background:#ffe3e3;color:#c0392b;}
+.pauta-warn{cursor:help;font-size:1rem;}
 @media (prefers-color-scheme: dark){
   .b-seccion{background:#0d3327;color:#5fd3ab;}
   .b-evaluacion{background:#3a2f10;color:#f3c96b;}
   .b-prueba_operativa{background:#241b45;color:#a99af0;}
   .b-sugerencia{background:#42152a;color:#f48fb1;}
+  .b-pauta_vista{background:#421515;color:#f4a09a;}
 }
 .nota-ok{color:var(--jade);font-weight:800;}
 .nota-media{color:#b8860b;font-weight:800;}
@@ -79,6 +82,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
     <option value="seccion">✅ Sección</option>
     <option value="evaluacion">📋 Evaluación</option>
     <option value="prueba_operativa">🧮 Prueba operativa</option>
+    <option value="pauta_vista">🔍 Vio pauta</option>
     <option value="sugerencia">💬 Sugerencia</option>
   </select></label>
 </div>
@@ -112,7 +116,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 <script src="js/metas-registro.js"></script>
 <script>
 'use strict';
-const NOMBRE_TIPO = { sesion:'📱 Sesión', seccion:'✅ Sección', evaluacion:'📋 Evaluación', prueba_operativa:'🧮 Prueba operativa', sugerencia:'💬 Sugerencia' };
+const NOMBRE_TIPO = { sesion:'📱 Sesión', seccion:'✅ Sección', evaluacion:'📋 Evaluación', prueba_operativa:'🧮 Prueba operativa', pauta_vista:'🔍 Vio pauta', sugerencia:'💬 Sugerencia' };
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const p=n=>(n<10?'0':'')+n; return {f:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()), h:p(d.getHours())+':'+p(d.getMinutes())}; };
 
@@ -124,7 +128,7 @@ function filtrados(){
 function llenarFiltros(){
   const evs=METAS.eventos();
   const opciones=(id,vals)=>{ const sel=document.getElementById(id); const actual=sel.value;
-    while(sel.options.length>((id==='fTipo')?6:1)) sel.remove(sel.options.length-1);
+    while(sel.options.length>((id==='fTipo')?7:1)) sel.remove(sel.options.length-1);
     if(id!=='fTipo') vals.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
     sel.value=actual; };
   opciones('fMision',[...new Set(evs.map(e=>e.mision).filter(Boolean))].sort());
@@ -134,18 +138,24 @@ function llenarFiltros(){
 function pintar(){
   llenarFiltros();
   const evs=filtrados().slice().reverse(); // más recientes primero
+  // Anti-trampa: momentos en que se abrió la pauta (respuestas) en este equipo
+  const pautas=METAS.eventos().filter(e=>e.tipo==='pauta_vista');
   const tb=document.getElementById('tbody'); tb.innerHTML='';
   document.getElementById('vacio').style.display = evs.length?'none':'block';
   evs.forEach(ev=>{
     const {f,h}=fmtF(ev.t);
     const detalle = ev.tipo==='seccion' ? (ev.seccion||'').replace(/^s-/,'')
-      : (ev.tipo==='evaluacion'||ev.tipo==='prueba_operativa') ? (ev.forma?('Forma '+ev.forma):'')
+      : (ev.tipo==='evaluacion'||ev.tipo==='prueba_operativa'||ev.tipo==='pauta_vista') ? (ev.forma?('Forma '+ev.forma):'')
       : ev.tipo==='sugerencia' ? ((ev.categoria||'')+(ev.texto?': '+ev.texto:''))
       : '';
     let nota='';
     if(typeof ev.nota==='number'){
       const cls = ev.nota>=70?'nota-ok':ev.nota>=40?'nota-media':'nota-baja';
       nota = '<span class="'+cls+'">'+ev.nota+'/'+(ev.base||100)+'</span>';
+      if(ev.tipo==='evaluacion'||ev.tipo==='prueba_operativa'){
+        const vio=pautas.find(p=>p.mision===ev.mision && p.t<ev.t && fmtF(p.t).f===f);
+        if(vio) nota += ' <span class="pauta-warn" title="⚠️ La pauta (respuestas) se abrió en este dispositivo a las '+esc(fmtF(vio.t).h)+', ANTES de calificar esta evaluación. La nota podría no ser confiable.">⚠️</span>';
+      }
     }
     const tr=document.createElement('tr');
     const gradoTxt = (ev.grado||'') + (ev.docente ? (ev.grado?' · ':'') + ev.docente : '');

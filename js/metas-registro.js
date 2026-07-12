@@ -179,6 +179,30 @@
         return r;
       };
     }
+    // Pauta vista (anti-trampa): imprimir/previsualizar el examen muestra la
+    // pauta con las respuestas. Se registra el momento para que el maestro
+    // vea un aviso ⚠️ en toda evaluación calificada DESPUÉS en este equipo.
+    var _pautaUltimo = 0;
+    function registrarPauta(forma) {
+      var ahora = Date.now();
+      if (ahora - _pautaUltimo < 60000) return; // máximo 1 registro por minuto
+      _pautaUltimo = ahora;
+      registrar('pauta_vista', { forma: forma || null });
+    }
+    if (typeof window.printEval === 'function') {
+      var peOrig = window.printEval;
+      window.printEval = function () {
+        registrarPauta(window._currentEvalForm || null);
+        return peOrig.apply(this, arguments);
+      };
+    }
+    if (typeof window.printEvalOp === 'function') {
+      var poOrig = window.printEvalOp;
+      window.printEvalOp = function () {
+        registrarPauta(window._currentEvalOpForm || null);
+        return poOrig.apply(this, arguments);
+      };
+    }
   }
 
   // ---------- exportación ----------

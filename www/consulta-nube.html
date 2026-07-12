@@ -44,9 +44,12 @@ tr:hover td{background:var(--pri-gl);}
 .badge{display:inline-block;padding:0.15rem 0.5rem;border-radius:8px;font-size:0.72rem;font-weight:700;white-space:nowrap;}
 .b-evaluacion{background:#fff3d6;color:#9a6b00;}
 .b-prueba_operativa{background:#f0e8ff;color:#6c5ce7;}
+.b-pauta_vista{background:#ffe3e3;color:#c0392b;}
+.pauta-warn{cursor:help;font-size:1rem;}
 @media (prefers-color-scheme: dark){
   .b-evaluacion{background:#3a2f10;color:#f3c96b;}
   .b-prueba_operativa{background:#241b45;color:#a99af0;}
+  .b-pauta_vista{background:#421515;color:#f4a09a;}
 }
 .nota-ok{color:var(--jade);font-weight:800;}
 .nota-media{color:#b8860b;font-weight:800;}
@@ -88,6 +91,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
     <option value="">Todos</option>
     <option value="evaluacion">📋 Evaluación</option>
     <option value="prueba_operativa">🧮 Prueba operativa</option>
+    <option value="pauta_vista">🔍 Vio pauta</option>
   </select></label>
 </div>
 
@@ -140,7 +144,7 @@ try {
   SB_KEY = localStorage.getItem('METAS_SB_KEY') || SB_KEY;
 } catch (e) {}
 
-const NOMBRE_TIPO = { evaluacion:'📋 Evaluación', prueba_operativa:'🧮 Prueba op.' };
+const NOMBRE_TIPO = { evaluacion:'📋 Evaluación', prueba_operativa:'🧮 Prueba op.', pauta_vista:'🔍 Vio pauta' };
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const p=n=>(n<10?'0':'')+n; return {f:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()), h:p(d.getHours())+':'+p(d.getMinutes())}; };
 
@@ -227,7 +231,7 @@ function filtrados(){
 
 function llenarFiltros(){
   const opciones=(id,vals)=>{ const sel=document.getElementById(id); const actual=sel.value;
-    while(sel.options.length>((id==='fTipo')?3:1)) sel.remove(sel.options.length-1);
+    while(sel.options.length>((id==='fTipo')?4:1)) sel.remove(sel.options.length-1);
     if(id!=='fTipo') vals.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
     sel.value=actual; };
   opciones('fMision',[...new Set(DATOS.map(r=>r.mision).filter(Boolean))].sort());
@@ -237,6 +241,8 @@ function llenarFiltros(){
 
 function pintar(){
   const rs=filtrados();
+  // Anti-trampa: aperturas de pauta (respuestas) por dispositivo y misión
+  const pautas=DATOS.filter(r=>r.tipo==='pauta_vista');
   const tb=document.getElementById('tbody'); tb.innerHTML='';
   document.getElementById('vacio').style.display = rs.length?'none':'block';
   rs.forEach(r=>{
@@ -245,6 +251,12 @@ function pintar(){
     if(typeof r.nota==='number'){
       const cls = r.nota>=70?'nota-ok':r.nota>=40?'nota-media':'nota-baja';
       nota = '<span class="'+cls+'">'+r.nota+'/'+(r.base||100)+'</span>';
+      if(r.tipo==='evaluacion'||r.tipo==='prueba_operativa'){
+        const tEv=r.fecha||r.creado_en;
+        const vio=pautas.find(p=>p.mision===r.mision && p.dispositivo===r.dispositivo &&
+          (p.fecha||p.creado_en)<tEv && fmtF(p.fecha||p.creado_en).f===f);
+        if(vio) nota += ' <span class="pauta-warn" title="⚠️ La pauta (respuestas) se abrió en ese dispositivo a las '+esc(fmtF(vio.fecha||vio.creado_en).h)+', ANTES de calificar. La nota podría no ser confiable.">⚠️</span>';
+      }
     }
     const tr=document.createElement('tr');
     tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(r.alumno||'—')+'</td><td>'+esc(r.codigo_lista||'—')+
