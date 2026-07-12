@@ -79,6 +79,7 @@ function paGenerate() {
   const docente   = document.getElementById('pa-docente')?.value  || '—';
   const evaluacion= document.getElementById('pa-evaluacion')?.value || 'Evaluación';
   const parcial   = document.getElementById('pa-parcial')?.value  || '';
+  const fechaPrueba = document.getElementById('pa-fecha')?.value  || '';
 
   const avgColor = avg >= 70 ? '#16a34a' : avg >= 60 ? '#d97706' : '#dc2626';
 
@@ -105,6 +106,7 @@ function paGenerate() {
         <span><b>Grado:</b> ${grado}</span>
         <span><b>Sección:</b> ${seccion}</span>
         ${parcial ? `<span><b>Parcial:</b> ${parcial}</span>` : ''}
+        ${fechaPrueba ? `<span><b>Fecha de la prueba:</b> ${paFechaBonita(fechaPrueba)}</span>` : ''}
         <span><b>Docente:</b> ${docente}</span>
       </div>
     </div>
@@ -217,7 +219,7 @@ function paGenerate() {
   const misionId = parseInt(document.getElementById('pa-mision')?.value, 10) || null;
   const formaEv  = document.getElementById('pa-forma')?.value || '';
   const tipoEval = document.getElementById('pa-tipo')?.value || 'conceptual';
-  paPersistCurrent(students, { grado, seccion, docente, evaluacion, misionId, forma: formaEv, tipoEval, parcial });
+  paPersistCurrent(students, { grado, seccion, docente, evaluacion, misionId, forma: formaEv, tipoEval, parcial, fechaPrueba });
   paRenderPadres();
   paRenderHistorial();
   paSyncRefresh();
@@ -247,6 +249,7 @@ function paPrint() {
   const docente    = document.getElementById('pa-docente')?.value   || '—';
   const evaluacion = document.getElementById('pa-evaluacion')?.value || 'Evaluación';
   const parcial    = document.getElementById('pa-parcial')?.value   || '';
+  const fechaPrueba= document.getElementById('pa-fecha')?.value     || '';
   const fecha      = new Date().toLocaleDateString('es-HN', { year:'numeric', month:'long', day:'numeric' });
 
   const avgColor   = avg >= 70 ? '#16a34a' : avg >= 60 ? '#d97706' : '#dc2626';
@@ -300,7 +303,7 @@ tbody tr:nth-child(even){background:#f8fafc;}
 
 <div class="head">
   <div class="head-title">ANÁLISIS Y PLAN DE ACCIÓN</div>
-  <div class="head-sub">📌 ${evaluacion}${parcial ? ' · Parcial ' + parcial : ''}</div>
+  <div class="head-sub">📌 ${evaluacion}${parcial ? ' · Parcial ' + parcial : ''}${fechaPrueba ? ' · Realizada el ' + paFechaBonita(fechaPrueba) : ''}</div>
   <div class="head-meta">
     <span><b>Grado:</b> ${grado}</span><span><b>Sección:</b> ${seccion}</span>
     <span><b>Docente:</b> ${docente}</span><span><b>Fecha:</b> ${fecha}</span>
@@ -627,6 +630,7 @@ function paAbrirAnalisis(id) {
   paFiltrarMisiones(materiaA, a.misionId || '');
   set('pa-mision', a.misionId || ''); set('pa-forma', a.forma || '');
   set('pa-tipo', a.tipoEval || 'conceptual'); set('pa-parcial', a.parcial || '');
+  set('pa-fecha', a.fechaPrueba || '');
   const list = document.getElementById('pa-students-list');
   if (list) {
     list.innerHTML = '';
@@ -663,7 +667,7 @@ function paEventosPendientes(d) {
       id: 'PA-' + a.id + '-' + s.num + '-' + String(s.nota),
       t: a.t, tipo: 'plan_accion',
       evaluacion: a.evaluacion || '', mision: misionCanon,
-      forma: a.forma || '', parcial: a.parcial || '',
+      forma: a.forma || '', parcial: a.parcial || '', fecha_prueba: a.fechaPrueba || '',
       grado: ((a.grado || '') + ' ' + (a.seccion || '')).trim(), seccion: a.seccion || '',
       docente: a.docente || '',
       codigo: s.num, alumno: s.nombre,
@@ -853,6 +857,12 @@ function paCodigoAlumno(grado, seccion, num) {
 /* Con guion para leerse fácil: 15K7QM → 15-K7QM (la consulta ignora el guion) */
 function paCodigoBonito(c) { return String(c || '').replace(/^(\d+)/, '$1-'); }
 
+/* 2026-07-11 → 11/07/2026 (la fecha que el alumno escribió en su prueba) */
+function paFechaBonita(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? m[3] + '/' + m[2] + '/' + m[1] : String(iso || '');
+}
+
 function paCodigoLista(a, s) {
   return paCodigoAlumno(a.grado, a.seccion, s.num);
 }
@@ -926,6 +936,7 @@ function paSbPendientes(d) {
       grado: a.grado || '', seccion: a.seccion || '', docente: a.docente || '',
       evaluacion: a.evaluacion || '', mision: paMisionCanon(a),
       forma: String(a.forma || ''), tipo: a.tipoEval || '', parcial: a.parcial || '',
+      fecha_prueba: a.fechaPrueba || '',
       nota: (typeof s.nota === 'number') ? s.nota : '', base: 100,
       nsp: s.nota === 'NSP',
       categoria: s.categoria || '', mensaje: s.msg || '',

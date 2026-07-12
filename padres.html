@@ -181,6 +181,10 @@ function norm(s) {
     .replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 function fmtFecha(iso) {
+  /* fecha pura (2026-07-11): NO pasarla por Date — en Honduras (UTC-6)
+     mostraría el día anterior */
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return m[3] + '/' + m[2] + '/' + m[1];
   const d = new Date(iso);
   if (isNaN(d)) return '';
   return String(d.getDate()).padStart(2, '0') + '/' +
@@ -269,7 +273,8 @@ function notaCardHTML(r) {
   const ok = p !== null && p >= 70;
   const formaTxt = (r.forma && !String(r.evaluacion || '').includes('Forma')) ? ' · Forma ' + esc(r.forma) : '';
   const parcialTxt = r.parcial ? ' · Parcial ' + esc(r.parcial) : '';
-  const f = fmtFecha(r.fecha);
+  /* la fecha que importa es la de la prueba (la escribió el alumno); si no vino, la del análisis */
+  const f = r.fecha_prueba ? '📅 Prueba: ' + fmtFecha(r.fecha_prueba) : fmtFecha(r.fecha);
   return '<div class="nota-card">' +
     '<div class="nc-top"><span class="nc-eval">' + esc(r.evaluacion || 'Evaluación') + '</span>' +
     '<span class="nc-val ' + (esNSP || !ok ? 'baja' : 'ok') + '">' + val + (ok ? ' ✔' : '') + '</span></div>' +

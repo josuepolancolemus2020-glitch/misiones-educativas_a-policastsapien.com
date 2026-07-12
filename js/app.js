@@ -1072,7 +1072,9 @@ function renderPadre() {
     <div class="padre-sec">
       <div class="padre-sec-title">📝 Notas registradas por el maestro</div>
       ${filasPA.slice(0, 4).map(({ a, st }) => {
-        const f = (a.t || '').slice(0, 10);
+        const f = a.fechaPrueba
+          ? '📅 Prueba: ' + String(a.fechaPrueba).slice(0, 10).split('-').reverse().join('/')
+          : (a.t || '').slice(0, 10);
         const esNSP = st.nota === 'NSP';
         const aprobo = !esNSP && typeof st.nota === 'number' && st.nota >= 70;
         const formaTxt = (a.forma && !String(a.evaluacion || '').includes('Forma'))
@@ -1177,7 +1179,9 @@ async function padreConsultarNube() {
       const formaTxt = (row.forma && !String(row.evaluacion || '').includes('Forma'))
         ? ' · Forma ' + _pEsc(row.forma) : '';
       const parcialTxt = row.parcial ? ' · Parcial ' + _pEsc(row.parcial) : '';
-      const f = String(row.fecha || '').slice(0, 10);
+      const f = row.fecha_prueba
+        ? '📅 Prueba: ' + String(row.fecha_prueba).slice(0, 10).split('-').reverse().join('/')
+        : String(row.fecha || '').slice(0, 10);
       return `
         <div class="padre-nota">
           <div class="padre-nota-top">
