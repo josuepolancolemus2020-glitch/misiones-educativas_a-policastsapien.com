@@ -3420,3 +3420,13 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 }
 .camp-vivo-sug.ok  { background: rgba(21,128,61,.12); color: #15803d; }
 .camp-vivo-sug.mal { background: rgba(185,28,28,.10); color: #b91c1c; }
+
+/* ── Clave secreta del docente oculta tras el candado ── */
+.doc-clave-wrap { display: inline-flex; align-items: center; gap: 8px; }
+.doc-ver-btn {
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 999px; padding: 4px 10px;
+  font-size: 12px; font-weight: 800; color: var(--brand);
+  cursor: pointer;
+}
+.doc-ver-btn:active { transform: scale(.95); }

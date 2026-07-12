@@ -1029,6 +1029,35 @@ async function paAbrirPlan() {
   paRecuperarPin();
 }
 
+/* Barrera reutilizable: pide la clave del candado (si existe) antes
+   de una acción sensible fuera del Plan de Acción — p. ej. ver o
+   compartir la clave secreta del docente en la Zona Docente. El
+   desbloqueo por sesión (METAS_PIN_OK) es el mismo del Plan. */
+async function paVerificarPin(motivo) {
+  let pin = null;
+  try { pin = localStorage.getItem(PA_PIN_KEY); } catch (_) {}
+  if (!pin) return true;   /* sin candado creado no hay barrera */
+  let ok = false;
+  try { ok = sessionStorage.getItem('METAS_PIN_OK') === '1'; } catch (_) {}
+  if (ok) return true;
+  for (let i = 1; i <= 3; i++) {
+    const v = await metasPrompt((motivo ? motivo + '\n\n' : '') + (i === 1
+      ? 'Escribe la **clave del maestro** de este teléfono:'
+      : 'Clave incorrecta. Intento ' + i + ' de 3:'), {
+      icono: '🔒', titulo: 'Candado del maestro',
+      type: 'password', inputmode: 'numeric', maxlength: 8, okTxt: 'Continuar',
+    });
+    if (v === null) return false;
+    if (paPinHash(String(v).trim()) === pin) {
+      try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
+      return true;
+    }
+  }
+  toast('Sin acceso. Si olvidaste la clave, recupérala desde Plan de Acción.');
+  return false;
+}
+window.paVerificarPin = paVerificarPin;
+
 /* Recuperación segura del candado: SOLO con la clave secreta del
    docente suscrito (el alumno tampoco la conoce; funciona offline
    porque METAS_DOCENTE_V1 vive en este teléfono). Sin suscripción

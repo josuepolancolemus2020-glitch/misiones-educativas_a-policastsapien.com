@@ -1251,7 +1251,9 @@ function renderProfile() {
       </div>
       <div class="doc-cred">
         <div class="doc-cred-row"><span>📢 Código para tus alumnos</span><strong>${_pEsc(d.codigo)}</strong></div>
-        <div class="doc-cred-row"><span>🔑 Tu clave secreta</span><strong>${_pEsc(d.clave || '')}</strong></div>
+        <div class="doc-cred-row"><span>🔑 Tu clave secreta</span>
+          <span class="doc-clave-wrap"><strong id="doc-clave-txt">••••••</strong>
+          <button class="doc-ver-btn" id="doc-ver-clave" onclick="docenteVerClave()">👁 Ver</button></span></div>
       </div>
       <p class="teacher-panel-desc" style="margin:10px 0 12px;">Tus alumnos escriben <strong>${_pEsc(d.codigo)}</strong>
         en el campo «Docente» al identificarse en una misión: así sus resultados llegan a tu nube.</p>
@@ -1312,9 +1314,24 @@ async function docenteSuscribir() {
 }
 window.docenteSuscribir = docenteSuscribir;
 
-function docenteCompartir() {
+/* La clave secreta permite recuperar el candado del maestro, así que
+   verla/compartirla/cambiarla pide el candado si existe (una vez por
+   sesión) — si no, un alumno con el teléfono la leería en pantalla. */
+async function docenteVerClave() {
   const d = _docenteCfg();
   if (!d.codigo) return;
+  if (typeof paVerificarPin === 'function' && !(await paVerificarPin('Para ver tu clave secreta:'))) return;
+  const el = document.getElementById('doc-clave-txt');
+  if (el) el.textContent = d.clave || '';
+  const btn = document.getElementById('doc-ver-clave');
+  if (btn) btn.remove();
+}
+window.docenteVerClave = docenteVerClave;
+
+async function docenteCompartir() {
+  const d = _docenteCfg();
+  if (!d.codigo) return;
+  if (typeof paVerificarPin === 'function' && !(await paVerificarPin('Para compartir tus llaves:'))) return;
   const txt = '🎓 Mis llaves de M.E.T.A.S\n' +
     '📢 Código para mis alumnos (campo Docente): ' + d.codigo + '\n' +
     '🔑 Mi clave secreta: ' + d.clave + '\n' +
@@ -1326,6 +1343,7 @@ window.docenteCompartir = docenteCompartir;
 async function docenteCambiarClave() {
   const d = _docenteCfg();
   if (!d.codigo) return;
+  if (typeof paVerificarPin === 'function' && !(await paVerificarPin('Para cambiar tu clave secreta:'))) return;
   const nueva = await metasPrompt('Escribe tu **clave nueva** (mínimo 4 letras o números):', {
     icono: '✏️', titulo: 'Zona Docente', okTxt: 'Cambiar clave',
     valida: v => String(v).trim().length >= 4 ? '' : 'Muy corta: usa al menos 4 letras o números.',
