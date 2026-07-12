@@ -3376,3 +3376,47 @@ a.padre-asistente-btn {
   font-variant-numeric: tabular-nums; color: var(--gc, var(--text));
 }
 .camp-q-vf { display: block; margin-top: 8px; font-size: 0.92em; color: var(--brand-mid); font-weight: 700; }
+
+/* ══════════════════════════════════════════════════════════════
+   CAMPEONÍSIMO EN VIVO (jul 2026) — transmisión y respuestas 📡
+══════════════════════════════════════════════════════════════ */
+a.camp-home-card { text-decoration: none; color: inherit; }
+
+.camp-vivo-bar {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: #1a1240; color: #ffd54a;
+  border-radius: var(--r-sm); padding: 7px 12px; margin-bottom: 10px;
+  font-size: 13px; font-weight: 800; letter-spacing: .5px;
+}
+.camp-vivo-bar strong { font-size: 15px; letter-spacing: 3px; }
+
+.camp-vivo-join {
+  background: #1a1240; color: #fff;
+  border-radius: var(--r-md); padding: 14px; margin: 12px 0;
+  text-align: center;
+}
+.camp-vj-t { font-size: 12px; font-weight: 900; letter-spacing: 2px; color: #ffd54a; }
+.camp-vj-code {
+  font-size: 44px; font-weight: 900; letter-spacing: 8px;
+  margin: 4px 0; font-family: 'Courier New', monospace; color: #fff;
+}
+.camp-vj-d { font-size: 12.5px; color: #b9b3e0; line-height: 1.5; margin: 0; }
+.camp-vj-d strong { color: #ffd54a; }
+
+.camp-vivo-resp {
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  margin: 2px 0 8px;
+}
+.camp-vr-chip {
+  background: var(--bg); border: 2px solid var(--gc, var(--border));
+  border-radius: 999px; padding: 4px 12px;
+  font-size: 12.5px; font-weight: 800;
+}
+.camp-vr-mano { font-size: 15px; }
+
+.camp-vivo-sug {
+  text-align: center; font-size: 14px; font-weight: 800;
+  border-radius: var(--r-sm); padding: 8px 12px; margin-bottom: 8px;
+}
+.camp-vivo-sug.ok  { background: rgba(21,128,61,.12); color: #15803d; }
+.camp-vivo-sug.mal { background: rgba(185,28,28,.10); color: #b91c1c; }

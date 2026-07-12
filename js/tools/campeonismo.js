@@ -321,6 +321,15 @@ function renderCampHome() {
         <i class="fa-solid fa-chevron-right"></i>
       </button>
 
+      <a class="camp-home-card ch-vivo" href="camp-vivo.html">
+        <span class="camp-hc-icon">📡</span>
+        <span class="camp-hc-info">
+          <strong>Ver un torneo en vivo</strong>
+          <em>Marcador en directo con el código del jurado — o responder desde su teléfono</em>
+        </span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </a>
+
       <button class="camp-home-card ch-fama" id="camp-h-fama">
         <span class="camp-hc-icon">🏅</span>
         <span class="camp-hc-info">
@@ -538,6 +547,16 @@ function renderSetup() {
       </div>
 
       <div class="camp-card">
+        <div class="camp-card-label">📡 Transmisión en vivo (necesita internet)</div>
+        <div class="camp-timer-row">
+          <button class="camp-vivo-btn active" data-vv="no">No</button>
+          <button class="camp-vivo-btn" data-vv="ver">📺 Marcador</button>
+          <button class="camp-vivo-btn" data-vv="resp">📺+🎮 Respuestas</button>
+        </div>
+        <p class="camp-cfg-hint" id="camp-vivo-hint">El torneo se juega igual sin internet. Con transmisión, el público ve el marcador en vivo con un código.</p>
+      </div>
+
+      <div class="camp-card">
         <div class="camp-card-label camp-ms-header-row">
           <span>Misiones incluidas</span>
           <div>
@@ -571,6 +590,13 @@ function renderSetup() {
   activate('.camp-fin-btn');
   activate('.camp-com-btn');
   activate('.camp-var-btn');
+  activate('.camp-vivo-btn', btn => {
+    const h = $id('camp-vivo-hint');
+    if (h) h.textContent =
+      btn.dataset.vv === 'no'   ? 'El torneo se juega igual sin internet. Con transmisión, el público ve el marcador en vivo con un código.'
+    : btn.dataset.vv === 'ver'  ? 'Proyector, público y familias ven el marcador, el turno y la pregunta en vivo con el código del torneo.'
+    : 'Además del marcador, cada grupo responde desde SU teléfono cuando es su turno (y pide robar en el rebote). El jurado siempre valida.';
+  });
   activate('.camp-tema-btn', btn => {
     const tm   = btn.dataset.tm;
     const hint = $id('camp-tema-hint');
@@ -633,6 +659,7 @@ function _readSetupCfg() {
     comodines:  pick('.camp-com-btn', 'k', 1),
     variar:     pick('.camp-var-btn', 'x', 1) === 1,
     temaMode:   temaBtn ? temaBtn.dataset.tm : 'mixto',
+    vivo:       (_container.querySelector('.camp-vivo-btn.active') || { dataset: { vv: 'no' } }).dataset.vv,
     lugar:      ($id('camp-lugar') && $id('camp-lugar').value.trim()) || '',
   };
 }
@@ -670,10 +697,13 @@ function startTorneo() {
     apuesta: 0,
     muerte: null,             /* estado de muerte súbita (ver sección MUERTE SÚBITA) */
     insignias: [],
+    qn: 0,                    /* nº de pregunta (para la transmisión en vivo) */
+    vivo: null, vivoErr: false,
   };
 
   CAMP.screen = 'play';
   _sfx('start');
+  if (cfg.vivo && cfg.vivo !== 'no') _vivoIniciar();
   _showNormas(cfg);
   renderRondaIntro();
 }
@@ -699,10 +729,12 @@ function renderRondaIntro() {
         ${R.final ? `<span>🎲 Apuesta libre</span>` : `<span>🔄 ${R.vueltas} vuelta${R.vueltas > 1 ? 's' : ''}</span>`}
       </div>
       ${R.final ? _clasificadosHTML() : ''}
+      ${_vivoIntroHTML()}
       <button class="camp-start-btn" id="camp-ri-go">${R.final ? '🎰 Comenzar la Gran Final' : '▶ Comenzar ronda'}</button>
     </div>`;
 
   $id('camp-ri-go').addEventListener('click', () => { _sfx('start'); renderTurno(); });
+  _vivoPublicar('intro');
 }
 
 function _clasificadosHTML() {
@@ -746,6 +778,7 @@ function renderTurno() {
         <span>${R.icon} ${R.nombre}</span>
         <span class="camp-rb-detalle">×${R.mult} pts${R.final ? '' : ` · Vuelta ${T.vuelta}/${R.vueltas}`}</span>
       </div>
+      ${_vivoBarHTML()}
 
       ${_scoreboardHTML()}
 
@@ -820,6 +853,7 @@ function renderTurno() {
     if (!confirm('¿Terminar el torneo? Se irá directo al podio con el marcador actual.')) return;
     _irAlPodio();
   });
+  _vivoPublicar('turno');
 }
 
 /* ── Corrección del jurado: editar puntos de cualquier grupo ──
@@ -1083,6 +1117,8 @@ function _renderPreguntaScreen(q, subjectKey) {
   const CIRCUM  = 107;
 
   _stopTimer();
+  T.qn = (T.qn || 0) + 1;
+  if (T.vivo) { T.vivo.resp = {}; T.vivo.robos = []; }
 
   _container.innerHTML = `
     <div class="camp-question-screen">
@@ -1124,6 +1160,8 @@ function _renderPreguntaScreen(q, subjectKey) {
           </button>`).join('')}
       </div>
 
+      <div class="camp-vivo-resp" id="camp-vivo-resp"></div>
+
       <div class="camp-q-actions" id="camp-q-actions">
         <button class="camp-reveal-btn" id="camp-reveal-btn">✅ Revelar respuesta</button>
       </div>
@@ -1163,6 +1201,14 @@ function _renderPreguntaScreen(q, subjectKey) {
     if (rem > 0) _sfx(urgent ? 'urgent' : 'tick');
     if (rem <= 0) { _stopTimer(); _sfx('timeout'); _revelar(true); }
   }, 1000);
+
+  /* Transmisión: la pregunta sale al aire SIN la respuesta correcta */
+  _vivoPublicar('pregunta', { preg: {
+    q: q.q, o: q.o, mision: q.mision || '',
+    subj: subject.label, sicon: subject.icon,
+    hasta: Date.now() + secs * 1000, pts,
+    muerte: muerte ? 1 : 0, apuesta: R.final ? T.apuesta : 0,
+  }});
 }
 
 /* ── Revelación y asignación de puntos por turno ── */
@@ -1184,10 +1230,14 @@ function _revelar(timeout) {
   const actions = $id('camp-q-actions');
   if (!actions) return;
 
+  /* Transmisión: ahora sí se revela la correcta a todas las pantallas */
+  _vivoPublicar('revelado', Object.assign({}, (T.vivo && T.vivo.extra) || {}, { rev: { c: q.c } }));
+
   if (T.fase === 'muerte-pregunta') { _revelarMuerte(actions, timeout); return; }
 
   actions.innerHTML = `
     ${timeout ? `<p class="camp-timeout-msg">⏰ ¡Tiempo agotado! El jurado decide: si el grupo respondió antes de que sonara la alarma, puede validar el acierto.</p>` : ''}
+    ${_vivoSugerenciaHTML(gi)}
     <div class="camp-veredicto">
       <p class="camp-award-label">¿${g.mascota} ${g.name} respondió bien?</p>
       <div class="camp-veredicto-btns">
@@ -1223,6 +1273,7 @@ function _revelar(timeout) {
 function _bump(gi, score) {
   const el = $id(`camp-mini-pts-${gi}`);
   if (el) { el.textContent = score; el.classList.add('camp-pts-bump'); setTimeout(() => el.classList.remove('camp-pts-bump'), 600); }
+  _vivoPublicar();   /* marcador actualizado al aire */
 }
 
 function _mostrarRebote(actions) {
@@ -1230,6 +1281,9 @@ function _mostrarRebote(actions) {
   const R = _rondasDef(T.cfg)[T.rondaIdx];
   const stealPts = Math.max(1, Math.floor((T.cfg.basePts * R.mult) / 2));
   const gi = T.order[T.turnIdx];
+
+  if (T.vivo) T.vivo.robos = [];
+  _vivoPublicar('rebote', { rebote: { pts: stealPts, robos: [] } });
 
   actions.innerHTML = `
     <div class="camp-veredicto">
@@ -1352,6 +1406,7 @@ function renderApuesta(subjectKey) {
     b.addEventListener('click', () => { _sfx('click'); setMonto(T.apuesta + (+b.dataset.d)); })
   );
   $id('camp-ap-todo').addEventListener('click', () => { _sfx('drum'); setMonto(maxBet); });
+  _vivoPublicar('apuesta');
   $id('camp-ap-go').addEventListener('click', () => {
     _sfx('start');
     if (T.apuesta === maxBet && maxBet > 0) g.apostoTodo = true;
@@ -1401,6 +1456,9 @@ function renderMuerteSubita() {
     </div>`;
 
   $id('camp-md-go').addEventListener('click', () => { _sfx('start'); _muerteEmpiezaRonda(); });
+  _vivoPublicar('muerte', { muerteTxt: esFinal
+    ? 'Empate en el primer lugar: cada grupo responde su propia pregunta por turnos. ¡El último en pie se corona!'
+    : `Empate en la clasificación: ${M.vivos.length} grupos pelean por ${M.slots} lugar${M.slots > 1 ? 'es' : ''} en la Gran Final.` });
 }
 
 function _muerteEmpiezaRonda() {
@@ -1434,6 +1492,7 @@ function _revelarMuerte(actions, timeout) {
 
   actions.innerHTML = `
     ${timeout ? `<p class="camp-timeout-msg">⏰ ¡Tiempo agotado! El jurado decide: si el grupo respondió antes de que sonara la alarma, puede validar el acierto.</p>` : ''}
+    ${_vivoSugerenciaHTML(gi)}
     <div class="camp-veredicto">
       <p class="camp-award-label">⚔️ ¿${g.mascota} ${g.name} respondió bien?</p>
       <div class="camp-veredicto-btns">
@@ -1526,6 +1585,7 @@ function _muerteInterludio(titulo, desc, eliminados, vivos) {
     </div>`;
 
   $id('camp-md-next').addEventListener('click', () => { _sfx('start'); _muerteEmpiezaRonda(); });
+  _vivoPublicar('muerte', { muerteTxt: titulo + ' — ' + String(desc).replace(/<[^>]+>/g, '') });
 }
 
 function _muerteFinClasif() {
@@ -1600,6 +1660,8 @@ function renderPodio() {
   });
   if (data.historial.length > 60) data.historial = data.historial.slice(-60);
   _campSave(data);
+
+  _vivoPodioPublicar(insignias);   /* el podio sale al aire y la transmisión se cierra */
 
   const podio3 = [sorted[1], sorted[0], sorted[2]].filter(Boolean);
   const alturas = sorted.length >= 3 ? ['camp-pd-2', 'camp-pd-1', 'camp-pd-3'] : ['camp-pd-2', 'camp-pd-1'];
@@ -1986,6 +2048,195 @@ function renderPracticeEnd() {
 
   $id('camp-pr-otra').addEventListener('click', () => { _sfx('click'); renderPracticeSetup(); });
   $id('camp-pr-home').addEventListener('click', () => { _sfx('click'); CAMP.P = null; renderCampHome(); });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CAMPEONÍSIMO EN VIVO — transmisión opcional por Supabase.
+   El torneo corre COMPLETO en este equipo (offline-first); si el
+   jurado activa la transmisión, se publica el estado público bajo
+   un código corto (camp-vivo.html lo lee cada 2 s) y, si activó
+   las respuestas, los grupos contestan desde sus teléfonos y el
+   jurado ve la sugerencia — pero el jurado SIEMPRE valida.
+   Nunca se publica la respuesta correcta antes de revelarla.
+══════════════════════════════════════════════════════════════ */
+const CAMP_VIVO_ALFA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+let _vivoPollT = null;
+
+function _vivoAzar(n) {
+  let s = '';
+  for (let i = 0; i < n; i++) s += CAMP_VIVO_ALFA[Math.floor(Math.random() * CAMP_VIVO_ALFA.length)];
+  return s;
+}
+
+function _vivoSb() {
+  let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+  let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+  try {
+    url = localStorage.getItem('METAS_SB_URL') || url;
+    key = localStorage.getItem('METAS_SB_KEY') || key;
+  } catch (_) {}
+  return { url, key };
+}
+
+async function _vivoRPC(fn, body) {
+  if (navigator.onLine === false) return null;
+  try {
+    const { url, key } = _vivoSb();
+    const r = await fetch(url + '/rest/v1/rpc/' + fn, {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch (_) { return null; }
+}
+
+async function _vivoIniciar() {
+  const T = CAMP.T; if (!T) return;
+  for (let i = 0; i < 3; i++) {
+    const codigo = _vivoAzar(4);
+    const pin    = _vivoAzar(6);
+    const ok = await _vivoRPC('metas_camp_crear', { p_codigo: codigo, p_pin: pin });
+    if (ok === true) {
+      T.vivo = { codigo, pin, on: true, fase: 'espera', extra: {}, resp: {}, robos: [], lastJson: '' };
+      clearInterval(_vivoPollT);
+      _vivoPollT = setInterval(_vivoPoll, 2000);
+      _vivoRefrescarUI();
+      _vivoPublicar('intro');
+      return;
+    }
+  }
+  T.vivoErr = true;   /* sin internet o sin SQL: el torneo sigue normal */
+  _vivoRefrescarUI();
+}
+
+function _vivoTerminar() {
+  clearInterval(_vivoPollT); _vivoPollT = null;
+  const T = CAMP.T;
+  if (T && T.vivo) T.vivo.on = false;
+}
+
+function _vivoSnapshot() {
+  const T = CAMP.T;
+  const R = _rondasDef(T.cfg)[T.rondaIdx] || null;
+  let turno = null;
+  if (T.fase === 'muerte-pregunta' && T.muerte && T.muerte.vivos[T.muerte.pos] != null) {
+    turno = T.muerte.vivos[T.muerte.pos];
+  } else if (T.order && T.order.length) {
+    turno = T.order[Math.min(T.turnIdx, T.order.length - 1)];
+  }
+  const est = {
+    v: 1, fase: T.vivo.fase, qn: T.qn || 0,
+    vr: T.cfg.vivo === 'resp' ? 1 : 0,
+    lugar: T.cfg.lugar || '',
+    grupos: T.groups.map(g => ({ n: g.name, m: g.mascota, c: g.color, s: g.score, e: g.eliminado ? 1 : 0 })),
+    turno,
+    ronda: R ? { n: R.n, nombre: R.nombre, icon: R.icon, mult: R.mult, vuelta: T.vuelta, vueltas: R.vueltas, final: !!R.final } : null,
+  };
+  Object.assign(est, T.vivo.extra || {});
+  if (T.vivo.resp && Object.keys(T.vivo.resp).length) est.resp = T.vivo.resp;
+  return est;
+}
+
+function _vivoPublicar(fase, extra) {
+  const T = CAMP.T; if (!T || !T.vivo || !T.vivo.on) return;
+  if (fase) { T.vivo.fase = fase; T.vivo.extra = extra || {}; }
+  const est = _vivoSnapshot();
+  const j = JSON.stringify(est);
+  if (j === T.vivo.lastJson) return;
+  T.vivo.lastJson = j;
+  _vivoRPC('metas_camp_publicar', { p_codigo: T.vivo.codigo, p_pin: T.vivo.pin, p_estado: est });
+}
+
+/* Sondeo de acciones de los grupos (solo en modo respuestas) */
+async function _vivoPoll() {
+  const T = CAMP.T;
+  if (!T || !T.vivo || !T.vivo.on) { clearInterval(_vivoPollT); _vivoPollT = null; return; }
+  if (T.cfg.vivo !== 'resp') return;
+  const fase = T.vivo.fase;
+  if (fase !== 'pregunta' && fase !== 'rebote') return;
+  const rows = await _vivoRPC('metas_camp_acciones', { p_codigo: T.vivo.codigo, p_pin: T.vivo.pin, p_qn: T.qn || 0 });
+  if (!Array.isArray(rows)) return;
+  let cambio = false;
+  rows.forEach(a => {
+    if (a.tipo === 'respuesta' && T.vivo.resp[String(a.gi)] == null) { T.vivo.resp[String(a.gi)] = a.opcion; cambio = true; }
+    if (a.tipo === 'robo' && !T.vivo.robos.includes(a.gi)) { T.vivo.robos.push(a.gi); cambio = true; }
+  });
+  if (!cambio) return;
+  if (T.vivo.fase === 'rebote' && T.vivo.extra && T.vivo.extra.rebote) {
+    T.vivo.extra.rebote.robos = T.vivo.robos.slice();
+  }
+  _vivoRespPintar();
+  _vivoPublicar();
+}
+
+/* Chips «📱 Grupo X respondió: B» en la pantalla del jurado */
+function _vivoRespPintar() {
+  const T = CAMP.T; if (!T || !T.vivo) return;
+  const box = $id('camp-vivo-resp');
+  if (box) {
+    box.innerHTML = Object.keys(T.vivo.resp).map(k => {
+      const g = T.groups[+k]; if (!g) return '';
+      return `<span class="camp-vr-chip" style="--gc:${g.color}">📱 ${g.mascota} ${g.name}: <strong>${'ABCD'[T.vivo.resp[k]] || '?'}</strong></span>`;
+    }).join('');
+  }
+  T.vivo.robos.forEach(gi => {
+    const btn = _container.querySelector(`.camp-award-btn[data-gi="${gi}"]`);
+    if (btn && !btn.querySelector('.camp-vr-mano')) {
+      btn.insertAdjacentHTML('beforeend', ' <span class="camp-vr-mano">🖐</span>');
+    }
+  });
+}
+
+/* Sugerencia para el jurado al revelar: qué marcó el grupo en su teléfono */
+function _vivoSugerenciaHTML(gi) {
+  const T = CAMP.T;
+  if (!T || !T.vivo || !T.vivo.on || T.cfg.vivo !== 'resp' || !T.currentQ) return '';
+  const op = T.vivo.resp ? T.vivo.resp[String(gi)] : null;
+  if (op == null) return '';
+  const bien = +op === T.currentQ.c;
+  return `<p class="camp-vivo-sug ${bien ? 'ok' : 'mal'}">📱 Respondió desde su teléfono: <strong>${'ABCD'[op]}</strong> — ${bien ? '✔ es la correcta' : '✘ no es la correcta'}</p>`;
+}
+
+/* Barrita y tarjeta con el código para que el público se conecte */
+function _vivoBarHTML() {
+  const T = CAMP.T; if (!T || !T.cfg.vivo || T.cfg.vivo === 'no') return '';
+  const c = T.vivo && T.vivo.codigo;
+  return `<div class="camp-vivo-bar">${c
+    ? `📡 EN VIVO · Código <strong>${c}</strong>`
+    : (T.vivoErr ? '📡 ⚠️ Sin transmisión (falta internet) — el torneo sigue normal' : '📡 Conectando la transmisión…')}</div>`;
+}
+
+function _vivoIntroHTML() {
+  const T = CAMP.T; if (!T || !T.cfg.vivo || T.cfg.vivo === 'no') return '';
+  const c = T.vivo && T.vivo.codigo;
+  return `<div class="camp-vivo-join" id="camp-vivo-join">
+    <div class="camp-vj-t">📡 TORNEO EN VIVO</div>
+    ${c ? `<div class="camp-vj-code">${c}</div>
+    <p class="camp-vj-d">En cualquier teléfono: abrir <strong>camp-vivo.html</strong> del sitio de M.E.T.A.S
+    (o Campeonísimo → 📡 Ver un torneo en vivo) y escribir este código.${T.cfg.vivo === 'resp' ? ' Los grupos responden desde su teléfono. 🎮' : ''}</p>`
+    : `<p class="camp-vj-d">${T.vivoErr ? '⚠️ No se pudo abrir la transmisión. El torneo sigue normal.' : '⏳ Abriendo la transmisión…'}</p>`}
+  </div>`;
+}
+
+function _vivoRefrescarUI() {
+  const j = $id('camp-vivo-join');
+  if (j) j.outerHTML = _vivoIntroHTML();
+  const b = _container && _container.querySelector('.camp-vivo-bar');
+  if (b) b.outerHTML = _vivoBarHTML();
+}
+
+function _vivoPodioPublicar(insignias) {
+  const T = CAMP.T; if (!T || !T.vivo || !T.vivo.on) return;
+  const podio = T.groups.map((g, i) => i).sort((a, b) => T.groups[b].score - T.groups[a].score);
+  const insig = {};
+  (insignias || []).forEach(x => {
+    const gi = T.groups.findIndex(g => g.name === x.grupo);
+    if (gi >= 0) (insig[gi] = insig[gi] || []).push(x.icon);
+  });
+  _vivoPublicar('podio', { podio, insig });
+  _vivoTerminar();   /* el podio queda publicado; se corta el sondeo */
 }
 
 /* ── Registro de navegación (llamado por app.js al cargar) ── */
