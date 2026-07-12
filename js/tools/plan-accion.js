@@ -594,8 +594,8 @@ function paRenderHistorial() {
   list.querySelectorAll('.pa-hist-abrir').forEach(b =>
     b.addEventListener('click', () => paAbrirAnalisis(b.dataset.id)));
   list.querySelectorAll('.pa-hist-borrar').forEach(b =>
-    b.addEventListener('click', () => {
-      if (!confirm('¿Eliminar este análisis guardado?')) return;
+    b.addEventListener('click', async () => {
+      if (!await metasConfirm('¿Eliminar este análisis guardado?', { icono: '🗑', titulo: 'Plan de Acción', okTxt: 'Sí, eliminar' })) return;
       const d2 = paLoadData();
       d2.analisis = d2.analisis.filter(x => x.id !== b.dataset.id);
       paSaveData(d2);
@@ -982,17 +982,25 @@ function paPinHash(s) {
   return 'v1:' + h;
 }
 
-function paAbrirPlan() {
+async function paAbrirPlan() {
   let pin = null;
   try { pin = localStorage.getItem(PA_PIN_KEY); } catch (_) {}
 
   if (!pin) {
-    const p1 = prompt('🔒 Primera vez: crea la CLAVE DEL MAESTRO para este teléfono (4 a 8 dígitos).\n\nProtege el Plan de Acción y los códigos de los padres si un alumno toma tu teléfono. Apúntala en un lugar seguro.');
+    const p1 = await metasPrompt('Primera vez: crea la **CLAVE DEL MAESTRO** para este teléfono (4 a 8 dígitos).\n\nProtege el Plan de Acción y los códigos de los padres si un alumno toma tu teléfono. Apúntala en un lugar seguro.', {
+      icono: '🔒', titulo: 'Candado del maestro',
+      type: 'password', inputmode: 'numeric', maxlength: 8,
+      placeholder: '4 a 8 dígitos', okTxt: 'Crear clave',
+      valida: v => /^\d{4,8}$/.test(String(v).trim()) ? '' : 'Debe ser de 4 a 8 dígitos (solo números).',
+    });
     if (p1 === null) return;
     const pp = String(p1).trim();
-    if (!/^\d{4,8}$/.test(pp)) { toast('La clave debe ser de 4 a 8 dígitos'); return; }
-    const p2 = prompt('Escríbela otra vez para confirmar:');
-    if (p2 === null || String(p2).trim() !== pp) { toast('No coincidió — intenta de nuevo'); return; }
+    const p2 = await metasPrompt('Escríbela otra vez para confirmar:', {
+      icono: '🔒', titulo: 'Candado del maestro',
+      type: 'password', inputmode: 'numeric', maxlength: 8, okTxt: 'Confirmar',
+      valida: v => String(v).trim() === pp ? '' : 'No coincide con la primera — revísala.',
+    });
+    if (p2 === null) return;
     try { localStorage.setItem(PA_PIN_KEY, paPinHash(pp)); } catch (_) {}
     try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
     toast('🔒 Clave del maestro creada');
@@ -1004,14 +1012,50 @@ function paAbrirPlan() {
   try { ok = sessionStorage.getItem('METAS_PIN_OK') === '1'; } catch (_) {}
   if (ok) { switchView('view-plan-accion'); paInit(); return; }
 
-  const intento = prompt('🔒 Clave del maestro:');
-  if (intento === null) return;
-  if (paPinHash(String(intento).trim()) === pin) {
-    try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
-    switchView('view-plan-accion'); paInit();
-  } else {
-    toast('Clave incorrecta');
+  for (let i = 1; i <= 3; i++) {
+    const v = await metasPrompt(i === 1
+      ? 'Escribe la **clave del maestro** de este teléfono:'
+      : 'Clave incorrecta. Intento ' + i + ' de 3:', {
+      icono: '🔒', titulo: 'Candado del maestro',
+      type: 'password', inputmode: 'numeric', maxlength: 8, okTxt: 'Entrar',
+    });
+    if (v === null) return;
+    if (paPinHash(String(v).trim()) === pin) {
+      try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
+      switchView('view-plan-accion'); paInit();
+      return;
+    }
   }
+  paRecuperarPin();
+}
+
+/* Recuperación segura del candado: SOLO con la clave secreta del
+   docente suscrito (el alumno tampoco la conoce; funciona offline
+   porque METAS_DOCENTE_V1 vive en este teléfono). Sin suscripción
+   queda la vía manual: borrar METAS_PIN_MAESTRO_V1 de los datos
+   del sitio en el navegador. */
+async function paRecuperarPin() {
+  let doc = null;
+  try { doc = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')); } catch (_) {}
+  if (!doc || !doc.clave) {
+    await metasAlert('Tras 3 intentos, por seguridad no hay atajo.\n\nSi olvidaste la clave, borra el dato **METAS_PIN_MAESTRO_V1** en los datos del sitio de tu navegador (las notas NO se pierden), o suscríbete en la Zona Docente: los docentes suscritos recuperan el candado con su clave secreta.', {
+      icono: '🔒', titulo: 'Candado del maestro',
+    });
+    return;
+  }
+  const v = await metasPrompt('¿Olvidaste la clave del candado?\n\nEscribe tu **clave secreta de docente** (la de ' + doc.codigo + ') para crear una nueva:', {
+    icono: '🆘', titulo: 'Recuperar candado',
+    type: 'password', okTxt: 'Verificar',
+  });
+  if (v === null) return;
+  if (String(v).trim().toUpperCase() !== String(doc.clave).trim().toUpperCase()) {
+    toast('Clave de docente incorrecta');
+    return;
+  }
+  try { localStorage.removeItem(PA_PIN_KEY); } catch (_) {}
+  try { sessionStorage.removeItem('METAS_PIN_OK'); } catch (_) {}
+  toast('✅ Candado reiniciado');
+  paAbrirPlan();   /* crea la clave nueva de una vez */
 }
 
 document.addEventListener('DOMContentLoaded', () => {

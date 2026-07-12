@@ -1326,10 +1326,12 @@ window.docenteCompartir = docenteCompartir;
 async function docenteCambiarClave() {
   const d = _docenteCfg();
   if (!d.codigo) return;
-  const nueva = prompt('✏️ Escribe tu clave nueva (mínimo 4 letras o números):');
+  const nueva = await metasPrompt('Escribe tu **clave nueva** (mínimo 4 letras o números):', {
+    icono: '✏️', titulo: 'Zona Docente', okTxt: 'Cambiar clave',
+    valida: v => String(v).trim().length >= 4 ? '' : 'Muy corta: usa al menos 4 letras o números.',
+  });
   if (nueva === null) return;
   const np = String(nueva).trim().toUpperCase();
-  if (np.length < 4) { toast('Muy corta: usa al menos 4 letras o números'); return; }
   if (navigator.onLine === false) { toast('📴 Cambiar la clave necesita internet'); return; }
   try {
     const { url, key } = _padreSbCfg();

@@ -848,9 +848,9 @@ function renderTurno() {
 
   $id('camp-normas-btn').addEventListener('click', () => { _sfx('click'); _showNormas(T.cfg); });
   $id('camp-editar-btn').addEventListener('click', () => { _sfx('click'); _showEditarPuntos(() => renderTurno()); });
-  $id('camp-salir-btn').addEventListener('click', () => {
+  $id('camp-salir-btn').addEventListener('click', async () => {
     _sfx('click');
-    if (!confirm('¿Terminar el torneo? Se irá directo al podio con el marcador actual.')) return;
+    if (!await metasConfirm('¿Terminar el torneo?\nSe irá directo al podio con el marcador actual.', { icono: '🚪', titulo: 'Campeonísimo', okTxt: 'Sí, terminar' })) return;
     _irAlPodio();
   });
   _vivoPublicar('turno');
@@ -969,7 +969,7 @@ function spinWheel() {
   if (lights) lights.classList.add('camp-w2-spinning');
 
   const validSubjects = CAMP_SUBJECTS.filter(s => _hayPreguntas(s.key));
-  if (!validSubjects.length) { btn.disabled = false; alert('Sin misiones seleccionadas.'); return; }
+  if (!validSubjects.length) { btn.disabled = false; metasAlert('Sin misiones seleccionadas.', { icono: '🎡', titulo: 'Campeonísimo' }); return; }
   const subject = validSubjects[Math.floor(Math.random() * validSubjects.length)];
   const subjIdx = CAMP_SUBJECTS.indexOf(subject);
 
@@ -1098,7 +1098,7 @@ function _empezarPregunta(subjectKey) {
   if (R.final && T.fase !== 'apuesta-hecha') { renderApuesta(subjectKey); return; }
 
   const q = _pickQuestion(subjectKey);
-  if (!q) { alert('No hay preguntas disponibles para las misiones seleccionadas.'); renderTurno(); return; }
+  if (!q) { metasAlert('No hay preguntas disponibles para las misiones seleccionadas.', { icono: '📚', titulo: 'Campeonísimo' }); renderTurno(); return; }
 
   T.currentSubject = subjectKey;
   T.currentQ = q;
@@ -1785,8 +1785,8 @@ function renderFame() {
     </div>`;
 
   const clearBtn = $id('camp-fame-clear');
-  if (clearBtn) clearBtn.addEventListener('click', () => {
-    if (!confirm('¿Borrar TODO el historial del Salón de la Fama? Esta acción no se puede deshacer.')) return;
+  if (clearBtn) clearBtn.addEventListener('click', async () => {
+    if (!await metasConfirm('¿Borrar TODO el historial del Salón de la Fama?\nEsta acción no se puede deshacer.', { icono: '🗑', titulo: 'Salón de la Fama', okTxt: 'Sí, borrar' })) return;
     _campSave({ historial: [] });
     renderFame();
   });
@@ -1893,7 +1893,7 @@ function startPractice() {
       if (!sel || sel.has(q.mision)) pool.push({ ..._shuffleOpciones(q), subj: s.key });
     });
   });
-  if (!pool.length) { alert('Selecciona al menos una misión para practicar.'); return; }
+  if (!pool.length) { metasAlert('Selecciona al menos una misión para practicar.', { icono: '🎯', titulo: 'Modo Práctica' }); return; }
 
   /* Barajar (Fisher-Yates) y tomar n */
   for (let i = pool.length - 1; i > 0; i--) {
@@ -1976,8 +1976,8 @@ function renderPractice() {
     })
   );
 
-  $id('camp-pr-salir').addEventListener('click', () => {
-    if (!confirm('¿Terminar la práctica y ver tu resultado?')) return;
+  $id('camp-pr-salir').addEventListener('click', async () => {
+    if (!await metasConfirm('¿Terminar la práctica y ver tu resultado?', { icono: '🎯', titulo: 'Modo Práctica', okTxt: 'Sí, terminar' })) return;
     P.qs = P.qs.slice(0, P.idx);  /* solo cuenta lo respondido */
     renderPracticeEnd();
   });

@@ -277,8 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ── FINALIZAR VOTACIÓN (secretario) ── */
-  document.getElementById('ge-end-voting-btn')?.addEventListener('click', () => {
-    const pin = prompt('PIN del secretario de mesa para cerrar la urna (por defecto: 1234):');
+  document.getElementById('ge-end-voting-btn')?.addEventListener('click', async () => {
+    const pin = await metasPrompt('PIN del secretario de mesa para cerrar la urna (por defecto: **1234**):', {
+      icono: '🗳️', titulo: 'Gobierno Escolar',
+      type: 'password', inputmode: 'numeric', maxlength: 8, okTxt: 'Cerrar urna',
+    });
     if (pin === '1234') {
       _GE.mode = 'results';
       geSave();
@@ -293,8 +296,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('ge-vote-2')?.addEventListener('click', () => geRecordVote(2));
 
   /* ── REINICIAR ── */
-  document.getElementById('ge-reset-btn')?.addEventListener('click', () => {
-    if (confirm('¿Reiniciar la elección? Se borrarán todos los votos y la configuración.')) {
+  document.getElementById('ge-reset-btn')?.addEventListener('click', async () => {
+    if (await metasConfirm('¿Reiniciar la elección?\nSe borrarán todos los votos y la configuración.', { icono: '🗳️', titulo: 'Gobierno Escolar', okTxt: 'Sí, reiniciar' })) {
       localStorage.removeItem(KEY_GE);
       _GE = { mode: 'config', p1: { planilla:'', name:'', img:'', votes:0 }, p2: { planilla:'', name:'', img:'', votes:0 }, usedCodes:[] };
       renderGobiernoEscolar();
