@@ -107,9 +107,14 @@ function adRenderLista(body, d) {
           </div>`).join('')}
       </div>
       <div class="ad-btn-row">
-        <button class="pa-generate-btn ad-btn-sec" id="ad-add-al">➕ Agregar alumno</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-add-al">➕ Agregar al final</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-insertar-al">🧑‍🎓 Alumno nuevo en su lugar</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-traer-pa">📥 Traer del Plan de Acción</button>
       </div>
+      <p class="pa-optional-hint" style="margin-top:8px">🧑‍🎓 Si llega un alumno a mitad de año y toma un
+        lugar del orden alfabético, usa «Alumno nuevo en su lugar»: los números se recorren, pero la
+        <strong>clave de familia viaja con cada niño</strong> — las tiras ya entregadas siguen valiendo
+        y solo imprimes la del nuevo.</p>
     </div>
 
     <div class="pa-card">
@@ -147,6 +152,7 @@ function adRenderLista(body, d) {
     dd.lista.push({ num: sig, nombre: '' });
     adSave(dd); renderAdmin();
   });
+  document.getElementById('ad-insertar-al').addEventListener('click', adInsertarAlumno);
   document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
   adSincronizarNube(false);   /* refresca el estado al entrar */
   document.getElementById('ad-traer-pa').addEventListener('click', async () => {
@@ -167,6 +173,112 @@ function adRenderLista(body, d) {
     adSave(dd); renderAdmin();
     toast('👥 Lista traída del Plan de Acción');
   });
+}
+
+/* ── Alumno nuevo a mitad de año ──
+   El número de lista es el ORDEN (examen, SACE); la clave de familia
+   es la IDENTIDAD del niño. Al insertar, los números >= posición se
+   recorren +1 y el mapa de claves (METAS_CODIGOS_V1) se recorre igual:
+   cada clave sigue a su niño. Las tiras impresas no cambian; la nube
+   tampoco (los evento_id van por clave, no por número). */
+function adShiftNums(obj, pos) {
+  const out = {};
+  Object.keys(obj || {}).forEach(n => { out[+n >= pos ? +n + 1 : +n] = obj[n]; });
+  return out;
+}
+function adRemapCodigos(d, pos) {
+  try {
+    const codes = JSON.parse(localStorage.getItem('METAS_CODIGOS_V1')) || {};
+    /* misma llave de grupo que usa paCodigoAlumno */
+    const g = String(d.grado || '').replace(/\D/g, '');
+    const mSec = String(d.seccion || '').trim().match(/([a-zA-Z0-9])\s*$/);
+    const key = g + '|' + (mSec ? mSec[1].toUpperCase() : '');
+    if (!codes[key]) return;
+    const nuevo = {};
+    Object.keys(codes[key]).forEach(n => { nuevo[+n >= pos ? +n + 1 : +n] = codes[key][n]; });
+    codes[key] = nuevo;
+    localStorage.setItem('METAS_CODIGOS_V1', JSON.stringify(codes));
+  } catch (_) {}
+}
+async function adInsertarAlumno() {
+  const d = adLoad();
+  if (!String(d.grado).replace(/\D/g, '')) {
+    await metasAlert('Escribe primero el **Grado** (arriba): de él dependen las claves de familia.', { icono: '🧑‍🎓', titulo: 'Alumno nuevo' });
+    return;
+  }
+  const nombre = await metasPrompt('Nombre del alumno nuevo:', {
+    icono: '🧑‍🎓', titulo: 'Alumno nuevo', okTxt: 'Siguiente',
+    valida: v => String(v).trim().length >= 3 ? '' : 'Escribe el nombre.',
+  });
+  if (nombre === null) return;
+  const max = d.lista.length ? Math.max(...d.lista.map(a => a.num)) : 0;
+  const posTxt = await metasPrompt('¿Qué **número de lista** le corresponde por orden alfabético? (1 a ' + (max + 1) + ')', {
+    icono: '🧑‍🎓', titulo: 'Alumno nuevo', inputmode: 'numeric', okTxt: 'Siguiente',
+    valida: v => { const n = +String(v).trim(); return (n >= 1 && n <= max + 1) ? '' : 'Debe ser un número entre 1 y ' + (max + 1) + '.'; },
+  });
+  if (posTxt === null) return;
+  const pos = +String(posTxt).trim();
+  const afectados = d.lista.filter(a => a.num >= pos).length;
+  if (!await metasConfirm('**' + String(nombre).trim() + '** será el **#' + pos + '**.\n\n' +
+    (afectados ? afectados + ' alumno(s) se recorren un número (del #' + pos + ' al #' + (max) + ' pasan a ser #' + (pos + 1) + '–#' + (max + 1) + ').\n\n' : '') +
+    'Las claves de familia viajan con cada niño: las tiras ya entregadas SIGUEN VALIENDO. ' +
+    'Solo imprime la tira del nuevo. ¿Continuar?', { icono: '🧑‍🎓', titulo: 'Alumno nuevo', okTxt: 'Sí, insertar' })) return;
+
+  /* 1) claves de familia siguen a su niño */
+  adRemapCodigos(d, pos);
+  /* 2) registros locales se recorren con sus niños */
+  d.asistencia.forEach(r => { r.aus = adShiftNums(r.aus, pos); });
+  Object.keys(d.notas || {}).forEach(p =>
+    Object.keys(d.notas[p] || {}).forEach(m => { d.notas[p][m] = adShiftNums(d.notas[p][m], pos); }));
+  d.colectas.forEach(c => { c.pagos = adShiftNums(c.pagos, pos); });
+  /* 3) la lista misma */
+  d.lista.forEach(a => { if (a.num >= pos) a.num++; });
+  d.lista.push({ num: pos, nombre: String(nombre).trim() });
+  d.lista.sort((a, b) => a.num - b.num);
+  adSave(d);
+  renderAdmin();
+  toast('🧑‍🎓 ' + String(nombre).trim() + ' es el #' + pos);
+  /* 4) su tira de clave de familia, lista para entregar */
+  if (await metasConfirm('¿Imprimir ahora la **tira con la clave de familia** del alumno nuevo?', { icono: '🔑', titulo: 'Alumno nuevo', okTxt: 'Sí, imprimir' })) {
+    adTiraUno(adLoad(), pos);
+  }
+}
+
+function adTiraUno(d, num) {
+  if (typeof paCodigoAlumno !== 'function') return;
+  const codigo = paCodigoAlumno(d.grado, d.seccion, num);
+  if (!codigo) { toast('Escribe el Grado primero'); return; }
+  const a = d.lista.find(x => x.num === num) || { nombre: '' };
+  const bonito = codigo.replace(/^(\d+)/, '$1-');
+  const grupo = adGrupoTxt(d);
+  const sitio = (typeof PA_SITE !== 'undefined') ? PA_SITE
+    : 'https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/';
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Clave de familia — #${num}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;color:#111;background:#fff;padding:10mm;}
+.tira{border:1.5px dashed #888;border-radius:6px;padding:4mm;max-width:95mm;}
+.t1{font-size:10px;font-weight:bold;color:#1e3a7c;}
+.t2{font-size:11px;margin-top:1.5mm;}
+.cod{font-size:20px;font-weight:900;letter-spacing:2px;margin:2mm 0;font-family:'Courier New',monospace;}
+.t3{font-size:9px;color:#333;line-height:1.45;}
+.noprint{margin-bottom:6mm;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir tira</button></div>
+<div class="tira">
+  <div class="t1">🔑 M.E.T.A.S — Clave de la familia</div>
+  <div class="t2">Alumno/a <strong>#${num}</strong>${grupo ? ' · ' + adEsc(grupo) : ''}${a.nombre ? ' · ' + adEsc(a.nombre) : ''}</div>
+  <div class="cod">${bonito}</div>
+  <div class="t3">📱 En cualquier teléfono con internet entre a:<br><strong>${sitio}padres.html</strong><br>
+  El 🤖 asistente le pedirá esta clave y le contará cómo va su hijo/a: notas, asistencia, mensajes del maestro
+  y cómo apoyar en casa. Guárdela como una llave: es solo para su familia.</div>
+</div>
+</body></html>`;
+  const w = window.open('', '_blank');
+  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
+  w.document.write(html); w.document.close();
 }
 
 function adSinLista(body, quePara) {
