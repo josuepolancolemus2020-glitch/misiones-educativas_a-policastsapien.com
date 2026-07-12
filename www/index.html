@@ -314,6 +314,10 @@
             <i class="fa-solid fa-check-to-slot"></i>
             <span>Gobierno Escolar</span>
           </button>
+          <button class="teacher-tool-item teacher-tool-active" id="goto-admin-btn">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>Registros Admin</span>
+          </button>
           <a class="teacher-tool-item teacher-tool-active" href="evaluaciones.html">
             <i class="fa-solid fa-print"></i>
             <span>Evaluaciones</span>
@@ -322,6 +326,18 @@
       </div>
 
     </div>
+  </div>
+
+  <!-- ========== REGISTROS ADMINISTRATIVOS (Zona Docente) ========== -->
+  <div id="view-admin" class="view">
+    <header class="app-header compact">
+      <button class="back-icon-btn" id="admin-back-btn" aria-label="Volver a la Zona Docente">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h1 class="view-title">Registros administrativos</h1>
+      <div></div>
+    </header>
+    <div class="view-scroll"><div id="admin-content"></div></div>
   </div>
 
   <!-- ========== GOBIERNO ESCOLAR ========== -->
@@ -923,6 +939,7 @@
   <script src="js/data/consejos-padres.js"></script>
   <script src="js/tools/gobierno-escolar.js"></script>
   <script src="js/tools/plan-accion.js"></script>
+  <script src="js/tools/registros-admin.js"></script>
   <script src="js/tools/parte-mensual.js"></script>
   <script src="js/tools/collage-maker.js"></script>
   <script src="js/data/campeonismo-bank.js"></script>

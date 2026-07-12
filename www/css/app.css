@@ -3433,3 +3433,72 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 
 /* Fila de 3 campos (Forma · Parcial · Tipo) del Plan de Acción */
 .pa-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+/* ══════════════════════════════════════════════════════════════
+   REGISTROS ADMINISTRATIVOS (jul 2026) — Economía · Asistencia · SACE
+══════════════════════════════════════════════════════════════ */
+.ad-tabs { margin: 12px 0; }
+.ad-btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.ad-btn-row .pa-generate-btn { flex: 1 1 auto; width: auto; margin: 0; }
+.ad-btn-sec { background: var(--bg) !important; color: var(--brand) !important; border: 1.5px solid var(--border) !important; }
+.ad-btn-peligro { color: #b91c1c !important; border-color: rgba(185,28,28,.35) !important; }
+
+/* lista de alumnos */
+.ad-al-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.ad-al-num { flex: 0 0 44px; font-weight: 900; color: var(--brand); }
+.ad-al-row .pa-inp-field { flex: 1; margin: 0; }
+.ad-al-del {
+  flex: 0 0 auto; background: none; border: none; cursor: pointer;
+  color: #b91c1c; font-size: 15px; font-weight: 900; padding: 4px 8px;
+}
+
+/* chips táctiles (pagos y asistencia) */
+.ad-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.ad-chip {
+  min-width: 56px; padding: 10px 8px;
+  background: var(--bg); border: 2px solid var(--border); border-radius: 12px;
+  font-size: 14px; font-weight: 800; color: var(--text); cursor: pointer;
+  transition: transform .1s;
+}
+.ad-chip:active { transform: scale(.93); }
+.ad-chip-on  { background: rgba(22,163,74,.14); border-color: #16a34a; color: #15803d; }
+.ad-chip-aus { background: rgba(185,28,28,.12); border-color: #dc2626; color: #b91c1c; }
+.ad-chip-exc { background: rgba(217,119,6,.12); border-color: #d97706; color: #b45309; }
+
+/* economía */
+.ad-resumen {
+  display: flex; flex-wrap: wrap; gap: 8px 16px;
+  background: var(--bg); border-radius: var(--r-sm);
+  padding: 10px 12px; margin-top: 8px; font-size: 13px;
+}
+.ad-ok  strong { color: #15803d; }
+.ad-mal strong { color: #b91c1c; }
+.ad-colecta-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; text-align: left; cursor: pointer;
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  padding: 10px 12px; margin-bottom: 8px; color: var(--text); font-size: 14px;
+}
+.ad-cr-txt small { color: var(--muted); }
+.ad-cr-arrow { font-size: 20px; color: var(--muted); }
+.ad-gasto-row {
+  display: flex; justify-content: space-between; gap: 8px;
+  padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px;
+}
+.ad-volver {
+  background: none; border: none; cursor: pointer;
+  color: var(--brand); font-size: 13px; font-weight: 800;
+  padding: 0 0 8px; text-align: left;
+}
+
+/* tablas y notas SACE */
+.ad-tabla { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 10px; }
+.ad-tabla th, .ad-tabla td { border: 1px solid var(--border); padding: 5px 8px; text-align: left; }
+.ad-tabla th { background: var(--bg); }
+.ad-notas-grid { margin-top: 10px; }
+.ad-nota-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.ad-nota-nombre {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; font-size: 13.5px;
+}
+.ad-nota-inp { flex: 0 0 84px; margin: 0 !important; text-align: center; font-weight: 800; }
