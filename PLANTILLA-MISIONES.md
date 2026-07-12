@@ -294,7 +294,7 @@ Notas:
 ## 🌐 Despliegue web (GitHub Pages)
 
 - El sitio se publica desde `main`:
-  https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/
+  https://metas.policastsapien.com/
 - Tras el `push` tarda **~1-15 min** (a veces la cola de Pages va lenta).
 - Para confirmar sin gastar en la sesión: revisa el sitio tú mismo y **recarga
   forzada** (el service worker es "red primero", así que una recarga normal basta).

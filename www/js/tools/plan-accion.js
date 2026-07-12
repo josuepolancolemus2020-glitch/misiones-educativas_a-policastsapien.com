@@ -414,7 +414,7 @@ window.paCaptureGrilla = paCaptureGrilla;
 
 const PA_KEY  = 'METAS_PLANACCION_V1';
 const PA_LAST = 'METAS_PA_LASTSYNC';
-const PA_SITE = 'https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/';
+const PA_SITE = 'https://metas.policastsapien.com/';
 let _paCurrentId = null;
 let _paMsgTimer  = null;
 

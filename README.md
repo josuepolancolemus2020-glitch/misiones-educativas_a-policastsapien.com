@@ -6,7 +6,7 @@ Bienvenido a mi colección de actividades interactivas HTML para enseñar gramá
 
 Para ver todas las misiones disponibles y comenzar a jugar, visita nuestro portal web interactivo:
 
-👉 **[Entrar al Menú Principal de Misiones](https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/)**
+👉 **[Entrar al Menú Principal de Misiones](https://metas.policastsapien.com/)**
 
 ---
 

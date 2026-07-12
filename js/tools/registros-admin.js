@@ -252,7 +252,7 @@ function adTiraUno(d, num) {
   const bonito = codigo.replace(/^(\d+)/, '$1-');
   const grupo = adGrupoTxt(d);
   const sitio = (typeof PA_SITE !== 'undefined') ? PA_SITE
-    : 'https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/';
+    : 'https://metas.policastsapien.com/';
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <title>Clave de familia — #${num}</title>
 <style>
