@@ -107,6 +107,7 @@ h2.seccion{font-size:1.05rem;margin:1.4rem 0 0.6rem;color:var(--pri);}
 
 <div class="acciones" id="acciones" style="display:none;">
   <button class="btn btn-pri" onclick="exportarCSV()">📥 Exportar CSV</button>
+  <button class="btn btn-jade" id="btnRestaurar" onclick="restaurarCodigos(this)">🔑 Restaurar claves de familia</button>
 </div>
 
 <div class="tabla-wrap" id="tablaWrap" style="display:none;">
@@ -340,6 +341,42 @@ function pintarProgreso(){
       '</td><td>'+esc(ins||'—')+'</td><td>'+esc(f+' '+h)+'</td><td>'+esc(p.dispositivo||'')+'</td>';
     tb.appendChild(tr);
   });
+}
+
+async function restaurarCodigos(btn) {
+  if (!SESION) return;
+  btn.disabled = true; btn.textContent = '⏳ Consultando nube...';
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/metas_restaurar_codigos', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SESION.access_token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const filas = await r.json();
+    if (!filas.length) {
+      btn.textContent = '⚠️ Sin claves en la nube aún';
+      setTimeout(() => { btn.textContent = '🔑 Restaurar claves de familia'; btn.disabled = false; }, 3000);
+      return;
+    }
+    const codigos = {};
+    filas.forEach(({ grado, seccion, num, codigo }) => {
+      const g = String(grado || '').replace(/\D/g, '');
+      const mSec = String(seccion || '').trim().match(/([a-zA-Z0-9])\s*$/);
+      const sec = mSec ? mSec[1].toUpperCase() : '';
+      const n = String(num || '').replace(/\D/g, '');
+      if (!g || !sec || !n || !codigo) return;
+      const key = g + '|' + sec;
+      if (!codigos[key]) codigos[key] = {};
+      codigos[key][n] = codigo;
+    });
+    localStorage.setItem('METAS_CODIGOS_V1', JSON.stringify(codigos));
+    btn.textContent = '✅ ' + filas.length + ' claves restauradas';
+    setTimeout(() => { btn.textContent = '🔑 Restaurar claves de familia'; btn.disabled = false; }, 4000);
+  } catch (e) {
+    btn.textContent = '❌ ' + e.message;
+    setTimeout(() => { btn.textContent = '🔑 Restaurar claves de familia'; btn.disabled = false; }, 4000);
+  }
 }
 
 function exportarCSV(){
