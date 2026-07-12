@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#14833b">
+  <title>Asistente para madres y padres — M.E.T.A.S</title>
+  <meta name="description" content="Consulte con la clave de su familia cómo va su hijo o hija: notas, mensajes del maestro y consejos para apoyar en casa.">
+  <meta property="og:title" content="🤖 Asistente M.E.T.A.S para madres y padres">
+  <meta property="og:description" content="Escriba la clave de su familia y pregunte: ¿cómo va mi hijo?, ¿qué sacó?, ¿cómo lo ayudo en casa?">
+  <meta property="og:image" content="https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/img/icon-512.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
+  <style>
+    :root {
+      --verde: #14833b;
+      --verde-osc: #0d5f2a;
+      --verde-claro: #e6f6ec;
+      --tinta: #1c2733;
+      --muted: #5b6b7b;
+      --fondo: #eef3ee;
+      --blanco: #ffffff;
+      --burbuja-padre: #d7f0dd;
+      --ok: #1e8e3e;
+      --baja: #c0392b;
+      --borde: #d5dfd8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--fondo);
+      color: var(--tinta);
+      display: flex; flex-direction: column;
+      height: 100dvh;
+    }
+    /* ── Encabezado ── */
+    header {
+      background: var(--verde); color: #fff;
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
+      flex: 0 0 auto;
+    }
+    .h-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex: 0 0 auto;
+    }
+    .h-txt { min-width: 0; }
+    .h-t1 { font-size: 16px; font-weight: 800; line-height: 1.2; }
+    .h-t2 { font-size: 12px; opacity: .92; }
+    .h-inicio {
+      margin-left: auto; flex: 0 0 auto;
+      color: #fff; text-decoration: none; font-size: 12px; font-weight: 700;
+      background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.45);
+      padding: 7px 10px; border-radius: 999px;
+    }
+    /* ── Zona de chat ── */
+    #chat {
+      flex: 1 1 auto; overflow-y: auto;
+      padding: 14px 12px 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .msg { display: flex; margin-bottom: 10px; }
+    .msg.bot { justify-content: flex-start; }
+    .msg.yo  { justify-content: flex-end; }
+    .bub {
+      max-width: 86%;
+      padding: 11px 14px;
+      border-radius: 16px;
+      font-size: 16px; line-height: 1.5;
+      box-shadow: 0 1px 2px rgba(0,0,0,.08);
+      word-wrap: break-word; overflow-wrap: break-word;
+    }
+    .bot .bub { background: var(--blanco); border-bottom-left-radius: 5px; }
+    .yo  .bub { background: var(--burbuja-padre); border-bottom-right-radius: 5px; }
+    .bub a { color: var(--verde-osc); font-weight: 700; word-break: break-all; }
+    .bub strong { color: var(--verde-osc); }
+    /* Tarjeta de nota dentro de una burbuja */
+    .nota-card {
+      background: var(--verde-claro); border: 1px solid var(--borde);
+      border-radius: 10px; padding: 8px 10px; margin-top: 8px;
+      font-size: 15px;
+    }
+    .nota-card .nc-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+    .nota-card .nc-eval { font-weight: 700; }
+    .nota-card .nc-val { font-weight: 900; white-space: nowrap; }
+    .nota-card .nc-val.ok  { color: var(--ok); }
+    .nota-card .nc-val.baja{ color: var(--baja); }
+    .nota-card .nc-meta { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+    .msj-maestro {
+      background: #fff8e6; border-left: 4px solid #e6a817;
+      border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 15px;
+    }
+    /* «Escribiendo…» */
+    .typing .bub { color: var(--muted); font-style: italic; }
+    /* ── Chips de respuesta rápida ── */
+    #chips {
+      flex: 0 0 auto;
+      display: flex; flex-wrap: wrap; gap: 7px;
+      padding: 6px 12px 8px;
+    }
+    .chip {
+      background: var(--blanco); color: var(--verde-osc);
+      border: 1.6px solid var(--verde);
+      border-radius: 999px; padding: 9px 13px;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: transform .12s;
+    }
+    .chip:active { transform: scale(.95); background: var(--verde-claro); }
+    /* ── Entrada ── */
+    #barra {
+      flex: 0 0 auto;
+      display: flex; gap: 8px;
+      padding: 8px 12px calc(10px + env(safe-area-inset-bottom));
+      background: var(--blanco); border-top: 1px solid var(--borde);
+    }
+    #inp {
+      flex: 1; border: 1.6px solid var(--borde); border-radius: 999px;
+      padding: 12px 16px; font-size: 16px; outline: none; min-width: 0;
+    }
+    #inp:focus { border-color: var(--verde); }
+    #enviar {
+      flex: 0 0 auto; width: 50px; height: 50px; border-radius: 50%;
+      background: var(--verde); color: #fff; border: none;
+      font-size: 20px; cursor: pointer;
+    }
+    #enviar:active { background: var(--verde-osc); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="h-avatar">🤖</div>
+    <div class="h-txt">
+      <div class="h-t1">Asistente para madres y padres</div>
+      <div class="h-t2">M.E.T.A.S — responde con las notas reales de su hijo/a</div>
+    </div>
+    <a class="h-inicio" href="index.html">Inicio</a>
+  </header>
+
+  <div id="chat" aria-live="polite"></div>
+  <div id="chips"></div>
+  <div id="barra">
+    <input id="inp" type="text" autocomplete="off" placeholder="Escriba su pregunta o la clave…">
+    <button id="enviar" aria-label="Enviar">➤</button>
+  </div>
+
+<script>
+/* ============================================================
+   ASISTENTE DE PADRES — bot de reglas, sin costo y sin cuentas.
+   Lee la nube con la RPC metas_consultar_plan_padre usando la
+   clave de la familia (nº de lista + 4 letras, ej. 15-K7QM) que
+   entrega el maestro en tiras impresas. Guarda la última consulta
+   en el teléfono para poder releerla sin internet.
+   ============================================================ */
+
+const SB_URL_DEF = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+const SB_KEY_DEF = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+const PADRE_KEY  = 'METAS_PADRE_V1';        // misma clave que usa la vista Padre del index
+const CACHE_KEY  = 'METAS_PADRE_CACHE_V1';  // última consulta exitosa (para releer offline)
+
+const $chat  = document.getElementById('chat');
+const $chips = document.getElementById('chips');
+const $inp   = document.getElementById('inp');
+
+let ROWS = null;          // filas de la última consulta (o null)
+let ROWS_FECHA = null;    // cuándo se consultaron
+let ROWS_CACHE = false;   // true si vienen del respaldo local
+
+/* ── utilidades ── */
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function norm(s) {
+  return String(s || '').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function fmtFecha(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  return String(d.getDate()).padStart(2, '0') + '/' +
+         String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+}
+function pctDe(r) {
+  if (r.nsp || typeof r.nota !== 'number') return null;
+  const base = (typeof r.base === 'number' && r.base > 0) ? r.base : 100;
+  return Math.round((r.nota / base) * 100);
+}
+/* Convierte URLs del mensaje del maestro en enlaces tocables */
+function linkify(txtEscapado) {
+  return txtEscapado.replace(/(https?:\/\/[^\s<]+)/g,
+    '<a href="$1" target="_blank" rel="noopener">$1</a>');
+}
+function cfgLoad() {
+  try { const o = JSON.parse(localStorage.getItem(PADRE_KEY)); return (o && typeof o === 'object') ? o : {}; }
+  catch (_) { return {}; }
+}
+function cfgSave(c) { try { localStorage.setItem(PADRE_KEY, JSON.stringify(c)); } catch (_) {} }
+function cacheLoad() {
+  try { const o = JSON.parse(localStorage.getItem(CACHE_KEY)); return (o && typeof o === 'object') ? o : null; }
+  catch (_) { return null; }
+}
+function cacheSave(codigo, rows) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ codigo, t: new Date().toISOString(), rows })); } catch (_) {}
+}
+function claveGuardada() { return String(cfgLoad().codigo || ''); }
+function claveBonita(c)  { return String(c || '').replace(/^(\d+)/, '$1-'); }
+/* ¿El texto parece una clave de familia? (nº de lista + 4 letras/números) */
+function pareceClave(txt) {
+  const limpio = String(txt || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  return /^\d{1,3}[A-Z2-9]{4}$/.test(limpio) ? limpio : '';
+}
+
+/* ── burbujas ── */
+function userSay(txt) {
+  const div = document.createElement('div');
+  div.className = 'msg yo';
+  div.innerHTML = '<div class="bub">' + esc(txt) + '</div>';
+  $chat.appendChild(div);
+  $chat.scrollTop = $chat.scrollHeight;
+}
+let _typingEl = null;
+function botTyping() {
+  _typingEl = document.createElement('div');
+  _typingEl.className = 'msg bot typing';
+  _typingEl.innerHTML = '<div class="bub">escribiendo…</div>';
+  $chat.appendChild(_typingEl);
+  $chat.scrollTop = $chat.scrollHeight;
+}
+function botSay(html, chips) {
+  return new Promise(res => {
+    botTyping();
+    setTimeout(() => {
+      if (_typingEl) { _typingEl.remove(); _typingEl = null; }
+      const div = document.createElement('div');
+      div.className = 'msg bot';
+      div.innerHTML = '<div class="bub">' + html + '</div>';
+      $chat.appendChild(div);
+      if (chips) pintarChips(chips);
+      $chat.scrollTop = $chat.scrollHeight;
+      res();
+    }, 420);
+  });
+}
+function pintarChips(lista) {
+  $chips.innerHTML = '';
+  (lista || []).forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = c;
+    b.addEventListener('click', () => { userSay(c); manejar(c); });
+    $chips.appendChild(b);
+  });
+}
+const CHIPS_MENU = ['📊 ¿Cómo va?', '📝 Última nota', '📚 Todas las notas',
+                    '🏠 ¿Cómo ayudo en casa?', '💡 Consejo de hoy',
+                    '🔄 Actualizar', '🔑 Cambiar clave'];
+
+/* ── tarjetas de nota ── */
+function notaCardHTML(r) {
+  const esNSP = !!r.nsp;
+  const p = pctDe(r);
+  const val = esNSP ? 'NSP' : (r.nota == null ? '—' : r.nota + '/' + (r.base || 100));
+  const ok = p !== null && p >= 70;
+  const formaTxt = (r.forma && !String(r.evaluacion || '').includes('Forma')) ? ' · Forma ' + esc(r.forma) : '';
+  const f = fmtFecha(r.fecha);
+  return '<div class="nota-card">' +
+    '<div class="nc-top"><span class="nc-eval">' + esc(r.evaluacion || 'Evaluación') + '</span>' +
+    '<span class="nc-val ' + (esNSP || !ok ? 'baja' : 'ok') + '">' + val + (ok ? ' ✔' : '') + '</span></div>' +
+    '<div class="nc-meta">' + esc(r.categoria || '') + formaTxt + (f ? ' · ' + f : '') +
+    (r.docente ? ' · ' + esc(r.docente) : '') + '</div></div>';
+}
+function msjMaestroHTML(r) {
+  if (!r || !r.mensaje) return '';
+  return '<div class="msj-maestro">💬 <em>Mensaje del maestro:</em><br>' + linkify(esc(r.mensaje)) + '</div>';
+}
+function avisoCache() {
+  return ROWS_CACHE && ROWS_FECHA
+    ? '<br><small>📴 (datos guardados el ' + fmtFecha(ROWS_FECHA) + ' — toque «🔄 Actualizar» con internet)</small>'
+    : '';
+}
+
+/* ── consulta a la nube ── */
+async function consultar(codigo) {
+  ROWS = null; ROWS_CACHE = false; ROWS_FECHA = null;
+  if (navigator.onLine === false) {
+    const c = cacheLoad();
+    if (c && c.codigo === codigo && Array.isArray(c.rows) && c.rows.length) {
+      ROWS = c.rows; ROWS_FECHA = c.t; ROWS_CACHE = true;
+      return 'cache';
+    }
+    return 'offline';
+  }
+  try {
+    let url = SB_URL_DEF, key = SB_KEY_DEF;
+    try {
+      url = localStorage.getItem('METAS_SB_URL') || url;
+      key = localStorage.getItem('METAS_SB_KEY') || key;
+    } catch (_) {}
+    const r = await fetch(url + '/rest/v1/rpc/metas_consultar_plan_padre', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: codigo }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    let rows = await r.json();
+    if (!Array.isArray(rows)) rows = [];
+    if (!rows.length) return 'vacio';
+    ROWS = rows; ROWS_FECHA = new Date().toISOString();
+    cacheSave(codigo, rows);
+    return 'ok';
+  } catch (_) {
+    const c = cacheLoad();
+    if (c && c.codigo === codigo && Array.isArray(c.rows) && c.rows.length) {
+      ROWS = c.rows; ROWS_FECHA = c.t; ROWS_CACHE = true;
+      return 'cache';
+    }
+    return 'error';
+  }
+}
+
+/* Asegura que hay datos antes de responder; devuelve true si los hay */
+async function conDatos() {
+  const codigo = claveGuardada();
+  if (!codigo) {
+    await botSay('Primero necesito la <strong>clave de la familia</strong> 🔑 (la tira que le entregó el maestro, ej. <strong>15-K7QM</strong>). Escríbala aquí abajo.',
+      ['❓ ¿Qué es la clave?']);
+    return false;
+  }
+  if (ROWS && ROWS.length) return true;
+  await botSay('⏳ Un momento, consulto las notas de la clave <strong>' + esc(claveBonita(codigo)) + '</strong>…');
+  const st = await consultar(codigo);
+  if (st === 'ok' || st === 'cache') return true;
+  if (st === 'vacio') {
+    await botSay('Aún no hay notas guardadas para la clave <strong>' + esc(claveBonita(codigo)) + '</strong>. ' +
+      'Puede ser que el maestro todavía no las suba, o que la clave tenga un error. ' +
+      'Verifíquela con la tira impresa o pregunte al maestro. 🙏',
+      ['🔄 Actualizar', '🔑 Cambiar clave', '❓ ¿Qué es la clave?']);
+    return false;
+  }
+  if (st === 'offline') {
+    await botSay('📴 Ahorita no hay internet y todavía no tengo notas guardadas en este teléfono. ' +
+      'Intente de nuevo cuando tenga conexión.', ['🔄 Actualizar']);
+    return false;
+  }
+  await botSay('⚠️ No pude consultar la nube en este momento. Intente de nuevo en unos minutos.', ['🔄 Actualizar']);
+  return false;
+}
+
+/* ── respuestas ── */
+async function respResumen() {
+  if (!await conDatos()) return;
+  const conNota = ROWS.filter(r => pctDe(r) !== null);
+  const nsp = ROWS.filter(r => r.nsp).length;
+  const aprob = conNota.filter(r => pctDe(r) >= 70).length;
+  let html = '';
+  if (!conNota.length) {
+    html = 'Por ahora hay <strong>' + ROWS.length + '</strong> registro(s), pero sin nota numérica' +
+      (nsp ? ' (' + nsp + ' con <strong>NSP</strong>: no se presentó)' : '') + '.';
+  } else {
+    const prom = Math.round(conNota.reduce((s, r) => s + pctDe(r), 0) / conNota.length);
+    let veredicto;
+    if (prom >= 90)      veredicto = '¡Va <strong>excelente</strong>! 🌟 Felicítenlo/a en casa.';
+    else if (prom >= 80) veredicto = 'Va <strong>muy bien</strong> 💪 ¡Sigan así!';
+    else if (prom >= 70) veredicto = 'Va <strong>bien</strong> ✔ — con apoyo en casa puede subir aún más.';
+    else if (prom >= 60) veredicto = 'Necesita <strong>refuerzo</strong> ⚠️ — el repaso diario en casa hace la diferencia.';
+    else                 veredicto = 'Necesita <strong>mucho apoyo</strong> ❗ Les recomiendo hablar con el maestro esta semana.';
+    html = '📊 Tengo <strong>' + ROWS.length + '</strong> evaluación(es) registrada(s). ' +
+      'Promedio: <strong>' + prom + '/100</strong>. Aprobadas: <strong>' + aprob + ' de ' + conNota.length + '</strong>' +
+      (nsp ? ' · NSP: ' + nsp : '') + '.<br>' + veredicto;
+  }
+  html += notaCardHTML(ROWS[0]) + avisoCache();
+  await botSay(html, CHIPS_MENU);
+}
+
+async function respUltima() {
+  if (!await conDatos()) return;
+  const r = ROWS[0];
+  const p = pctDe(r);
+  let intro;
+  if (r.nsp) intro = 'En la última evaluación aparece <strong>NSP</strong> (no se presentó). Pregunte al maestro cómo puede reponerla. 🙏';
+  else if (p === null) intro = 'Esta es la última evaluación registrada:';
+  else if (p >= 90) intro = '¡Su última nota fue <strong>excelente</strong>! 🌟';
+  else if (p >= 70) intro = 'Su última nota está <strong>aprobada</strong> ✔ ¡Bien hecho!';
+  else intro = 'La última nota quedó <strong>baja</strong> ⚠️ — abajo le digo cómo apoyar en casa.';
+  await botSay(intro + notaCardHTML(r) + msjMaestroHTML(r) + avisoCache(), CHIPS_MENU);
+}
+
+async function respTodas() {
+  if (!await conDatos()) return;
+  const html = '📚 Estas son las últimas <strong>' + Math.min(ROWS.length, 10) + '</strong> evaluaciones (de la más nueva a la más vieja):' +
+    ROWS.slice(0, 10).map(notaCardHTML).join('') + avisoCache();
+  await botSay(html, CHIPS_MENU);
+}
+
+const TIPS_CATEGORIA = {
+  'insatisfactorio': ['Repasen <strong>15 minutos cada día</strong> el tema de la evaluación (poco y seguido vale más que mucho una sola vez).',
+                      'Pidan al maestro la <strong>misión de M.E.T.A.S</strong> del tema para practicar gratis en el teléfono.',
+                      'Acompañe a su hijo/a mientras practica: que le explique a usted lo que va entendiendo.'],
+  'debe mejorar':    ['Repasen el tema <strong>3 veces por semana</strong>, 15 minutos por vez.',
+                      'En la misión del tema, que repita la <strong>práctica</strong> hasta sacar 70 o más.',
+                      'Celebre cada avance pequeño: la confianza también se entrena. 💪'],
+  'satisfactorio':   ['Va aprobando: ahora el reto es <strong>subir la nota</strong>. Practique el tema 2 veces por semana.',
+                      'Pregúntele qué parte le costó más y repasen justo esa.'],
+  'muy bueno':       ['¡Muy buen camino! Manténganlo con un <strong>repaso corto semanal</strong>.',
+                      'Anímelo/a a explicarle el tema a alguien de la casa: enseñar es la mejor forma de aprender.'],
+  'avanzado':        ['¡Felicidades! 🌟 Su hijo/a domina el tema.',
+                      'Puede retarlo/a con la <strong>práctica del Campeonísimo</strong> en la app, o con la siguiente misión de la ruta.'],
+  'nsp':             ['Aparece <strong>NSP</strong> (no se presentó). Hable con el maestro para saber cómo reponer la evaluación.'],
+};
+function tipsDeCategoria(cat) {
+  const c = norm(cat);
+  for (const k in TIPS_CATEGORIA) if (c.includes(norm(k))) return TIPS_CATEGORIA[k];
+  return ['Repasen el tema en casa 15 minutos al día y pregunten al maestro qué reforzar.'];
+}
+
+async function respAyudarCasa() {
+  if (!await conDatos()) return;
+  const r = ROWS[0];
+  const tips = tipsDeCategoria(r.nsp ? 'nsp' : (r.categoria || ''));
+  const html = '🏠 Según la última evaluación (<strong>' + esc(r.evaluacion || '') + '</strong>' +
+    (r.categoria ? ', categoría <strong>' + esc(r.categoria) + '</strong>' : '') + '), esto es lo que más ayuda:' +
+    '<br>• ' + tips.join('<br>• ') +
+    msjMaestroHTML(r) + avisoCache();
+  await botSay(html, CHIPS_MENU);
+}
+
+const CONSEJOS = [
+  'Pregunte cada día: «¿Qué aprendiste hoy?» y escuche con atención. Interesarse ya es apoyar. ❤️',
+  'Un lugar fijo y tranquilo para estudiar (aunque sea pequeño) mejora la concentración.',
+  '15 minutos de repaso diario valen más que 2 horas el día antes del examen.',
+  'Celebre el esfuerzo, no solo la nota: «vi que practicaste mucho» motiva más que «sacaste 90».',
+  'Que su hijo/a le explique el tema a usted: si lo puede explicar, lo aprendió.',
+  'Dormir bien la noche antes de una evaluación ayuda más que desvelarse estudiando.',
+  'Si una nota sale baja, evite el regaño en caliente: pregunten juntos «¿qué hacemos diferente?».',
+  'La lectura en voz alta 10 minutos al día mejora TODAS las materias.',
+  'Ponga las operaciones en la vida real: que calcule el vuelto en la pulpería. 🛒',
+  'Hable bien de la escuela y del maestro delante de su hijo/a: la confianza se contagia.',
+  'Las misiones de M.E.T.A.S son gratis y funcionan sin internet: aproveche el teléfono para practicar.',
+  'Un abrazo antes de un examen baja los nervios. No es broma: pruébelo. 🤗',
+];
+async function respConsejo() {
+  const dia = Math.floor(Date.now() / 86400000) % CONSEJOS.length;
+  await botSay('💡 <strong>Consejo de hoy:</strong><br>' + CONSEJOS[dia], CHIPS_MENU);
+}
+
+async function respMaestro() {
+  if (!await conDatos()) return;
+  const conDoc = ROWS.find(r => r.docente);
+  const r = ROWS[0];
+  const grupo = [r.grado, r.seccion].filter(Boolean).join(' ');
+  let html = conDoc
+    ? '👨‍🏫 Las notas las registró <strong>' + esc(conDoc.docente) + '</strong>' + (grupo ? ' (' + esc(grupo) + ')' : '') + '.'
+    : '👨‍🏫 En las notas no aparece el nombre del docente' + (grupo ? ', pero el grupo es <strong>' + esc(grupo) + '</strong>' : '') + '.';
+  const tel = String(cfgLoad().telMaestro || '').replace(/\D/g, '');
+  if (tel) {
+    html += '<br>💬 Tiene guardado su número: <a href="https://wa.me/504' + tel.slice(-8) + '" target="_blank" rel="noopener">escribirle por WhatsApp</a>.';
+  } else {
+    html += '<br>Para dudas sobre una nota, lo mejor es escribirle o visitarlo en la escuela. 🙏';
+  }
+  await botSay(html + avisoCache(), CHIPS_MENU);
+}
+
+async function respAprobo() {
+  if (!await conDatos()) return;
+  const conNota = ROWS.filter(r => pctDe(r) !== null);
+  if (!conNota.length) { await respResumen(); return; }
+  const ult = conNota[0]; const p = pctDe(ult);
+  const aprob = conNota.filter(r => pctDe(r) >= 70).length;
+  const html = (p >= 70
+    ? '✅ Sí: la última nota con calificación fue <strong>' + p + '/100</strong> (se aprueba con 70).'
+    : '❌ La última nota con calificación fue <strong>' + p + '/100</strong> y se aprueba con <strong>70</strong>. Con repaso en casa se puede recuperar 💪.') +
+    '<br>En total lleva <strong>' + aprob + ' de ' + conNota.length + '</strong> evaluaciones aprobadas.' +
+    notaCardHTML(ult) + avisoCache();
+  await botSay(html, CHIPS_MENU);
+}
+
+/* Palabras clave por materia: se emparejan al INICIO de palabra
+   («mate» exacta cuenta, «materia» no) */
+const MATERIAS = {
+  'matemáticas': ['matematic', 'numero', 'multiplic', 'divis', 'fraccion', 'geometr', 'suma', 'resta', 'decimal', 'algebra'],
+  'español':     ['espanol', 'lengua', 'lectura', 'ortografia', 'gramatica', 'verbo', 'sustantivo', 'comprension'],
+  'ciencias naturales': ['naturales', 'ciencia', 'ecosistema', 'planta', 'animal'],
+  'ciencias sociales':  ['sociales', 'historia', 'geografia', 'civica'],
+  'inglés':      ['ingles', 'english'],
+};
+function materiaEn(txt) {
+  const t = norm(txt);
+  if (/\bmate\b/.test(t)) return 'matemáticas';
+  for (const m in MATERIAS) {
+    if (MATERIAS[m].some(k => new RegExp('\\b' + k).test(t))) return m;
+  }
+  return '';
+}
+async function respMateria(txt) {
+  if (!await conDatos()) return;
+  const nombre = materiaEn(txt);
+  const claves = nombre ? MATERIAS[nombre] : null;
+  if (!claves) return false;
+  const filas = ROWS.filter(r => {
+    const e = norm(r.evaluacion || '');
+    return claves.some(k => e.includes(k)) || e.includes(norm(nombre));
+  });
+  if (!filas.length) {
+    await botSay('No encuentro evaluaciones de <strong>' + esc(nombre) + '</strong> entre las notas registradas. ' +
+      'Puede ver todas con «📚 Todas las notas».', CHIPS_MENU);
+  } else {
+    await botSay('Esto tengo de <strong>' + esc(nombre) + '</strong>:' +
+      filas.slice(0, 6).map(notaCardHTML).join('') + avisoCache(), CHIPS_MENU);
+  }
+  return true;
+}
+
+async function respQueEsClave() {
+  await botSay('🔑 La <strong>clave de la familia</strong> es un código secreto (ej. <strong>15-K7QM</strong>) que el maestro ' +
+    'entrega impreso en una tira de papel, una por estudiante. Con ella usted ve las notas de su hijo/a desde ' +
+    'cualquier teléfono con internet — sin nombres y sin cuentas.<br>' +
+    'Si no la tiene, pídala al maestro <strong>en privado</strong>. Cuando la tenga, escríbala aquí abajo. 👇',
+    claveGuardada() ? CHIPS_MENU : []);
+}
+
+async function respCambiarClave() {
+  const c = cfgLoad(); delete c.codigo; cfgSave(c);
+  ROWS = null; ROWS_CACHE = false;
+  await botSay('Listo, borré la clave guardada. Escriba la nueva clave de la familia (ej. <strong>15-K7QM</strong>). 🔑',
+    ['❓ ¿Qué es la clave?']);
+}
+
+async function usarClave(codigo) {
+  const c = cfgLoad(); c.codigo = codigo; cfgSave(c);
+  ROWS = null;
+  await botSay('🔑 Clave <strong>' + esc(claveBonita(codigo)) + '</strong> guardada. Consultando la nube…');
+  const st = await consultar(codigo);
+  if (st === 'ok' || st === 'cache') { await respResumen(); return; }
+  if (st === 'vacio') {
+    await botSay('La clave quedó guardada, pero <strong>aún no hay notas</strong> para ella. ' +
+      'Puede ser que el maestro no las haya subido todavía, o que un carácter esté equivocado — compare con la tira impresa. ' +
+      'Toque «🔄 Actualizar» más tarde.', ['🔄 Actualizar', '🔑 Cambiar clave']);
+  } else if (st === 'offline') {
+    await botSay('📴 No hay internet en este momento. La clave quedó guardada; toque «🔄 Actualizar» cuando tenga conexión.',
+      ['🔄 Actualizar']);
+  } else {
+    await botSay('⚠️ No pude consultar la nube. Intente «🔄 Actualizar» en unos minutos.', ['🔄 Actualizar']);
+  }
+}
+
+/* ── cerebro: decide qué responder ── */
+async function manejar(txtOriginal) {
+  const clave = pareceClave(txtOriginal);
+  if (clave) { await usarClave(clave); return; }
+
+  const t = norm(txtOriginal);
+  if (!t) return;
+
+  if (/(cambiar|otra|nueva|borrar).*(clave|codigo)|cambiar clave/.test(t)) { await respCambiarClave(); return; }
+  if (/(que es|donde|cual|como consigo|no tengo).*(clave|codigo)/.test(t) || t === 'clave' || t === 'codigo') { await respQueEsClave(); return; }
+  if (/actualizar|refrescar|consultar|de nuevo|recargar/.test(t)) {
+    ROWS = null;
+    if (await conDatos()) await respResumen();
+    return;
+  }
+  if (materiaEn(t)) { await respMateria(t); return; }
+  if (/ultima|ultimo|reciente|que saco|cuanto saco|nota nueva/.test(t)) { await respUltima(); return; }
+  if (/como va|como esta|como le va|resumen|avance|progreso|rendimiento|promedio/.test(t)) { await respResumen(); return; }
+  if (/todas|historial|lista de notas|calificaciones|ver notas|las notas|notas/.test(t)) { await respTodas(); return; }
+  if (/aprobo|aprobado|paso o no|reprobo|perdio|gano la/.test(t)) { await respAprobo(); return; }
+  if (/consejo|tip|recomendacion/.test(t)) { await respConsejo(); return; }
+  if (/ayud|apoyar|en casa|reforzar|practicar|repasar|mejorar|que hacer|que hago/.test(t)) { await respAyudarCasa(); return; }
+  if (/maestro|maestra|profesor|profesora|profe|docente|quien califica/.test(t)) { await respMaestro(); return; }
+  if (/\bnsp\b|no se presento/.test(t)) {
+    await botSay('<strong>NSP</strong> significa «No Se Presentó»: el estudiante no hizo esa evaluación. ' +
+      'Hable con el maestro para ver cómo reponerla. 🙏', CHIPS_MENU);
+    return;
+  }
+  if (/que es metas|que es m e t a s|que es esta pagina|que es la app/.test(t)) {
+    await botSay('📚 <strong>M.E.T.A.S</strong> son misiones educativas gratuitas alineadas al currículo de Honduras: ' +
+      'su hijo/a estudia, practica y se evalúa desde cualquier teléfono, incluso sin internet. ' +
+      'Este asistente le muestra a usted las notas que registra el maestro. ' +
+      '<a href="index.html">Abrir la app</a> 🚀', CHIPS_MENU);
+    return;
+  }
+  if (/hola|buenas|buenos dias|buenas tardes|buenas noches|saludos/.test(t)) {
+    await botSay('¡Hola! 👋 Estoy para servirle. Puede tocar un botón o escribir su pregunta.', CHIPS_MENU);
+    return;
+  }
+  if (/gracias|muy amable|excelente|perfecto|ok|vale|adios|hasta luego/.test(t)) {
+    await botSay('¡Con mucho gusto! 🤗 Su acompañamiento en casa es la mitad del éxito. Aquí estaré cuando me necesite.', CHIPS_MENU);
+    return;
+  }
+  /* ¿pregunta por una materia? */
+  if (ROWS || claveGuardada()) {
+    const fue = await respMateria(txtOriginal);
+    if (fue) return;
+  }
+  /* no entendido */
+  if (!claveGuardada()) {
+    await botSay('No entendí 😅. Si ya tiene la <strong>clave de la familia</strong> (ej. 15-K7QM), escríbala tal cual. ' +
+      'Si no la tiene, toque el botón de abajo.', ['❓ ¿Qué es la clave?']);
+  } else {
+    await botSay('No entendí esa pregunta 😅, pero puedo ayudarle con esto:', CHIPS_MENU);
+  }
+}
+
+/* ── envío ── */
+function enviar() {
+  const v = $inp.value.trim();
+  if (!v) return;
+  $inp.value = '';
+  userSay(v);
+  manejar(v);
+}
+document.getElementById('enviar').addEventListener('click', enviar);
+$inp.addEventListener('keydown', e => { if (e.key === 'Enter') enviar(); });
+
+/* ── arranque ── */
+(async function inicio() {
+  const codigo = claveGuardada();
+  await botSay('¡Hola! 👋 Soy el <strong>asistente de M.E.T.A.S</strong> para madres y padres. ' +
+    'Le cuento cómo va su hijo/a en la escuela: notas, mensajes del maestro y consejos para apoyar en casa.');
+  if (codigo) {
+    await botSay('Tengo guardada la clave <strong>' + esc(claveBonita(codigo)) + '</strong>. Consultando las notas…');
+    const st = await consultar(codigo);
+    if (st === 'ok' || st === 'cache') { await respResumen(); }
+    else if (st === 'vacio') {
+      await botSay('Aún no hay notas para esa clave. Toque «🔄 Actualizar» más tarde, o cambie la clave si no es la correcta.',
+        ['🔄 Actualizar', '🔑 Cambiar clave', '❓ ¿Qué es la clave?']);
+    } else if (st === 'offline') {
+      await botSay('📴 No hay internet ahorita y no tengo notas guardadas. Vuelva a intentarlo con conexión.',
+        ['🔄 Actualizar', '💡 Consejo de hoy']);
+    } else {
+      await botSay('⚠️ No pude consultar la nube. Intente «🔄 Actualizar» en unos minutos.',
+        ['🔄 Actualizar', '💡 Consejo de hoy']);
+    }
+  } else {
+    await botSay('Para empezar, escriba la <strong>clave de la familia</strong> que le entregó el maestro en una tira de papel ' +
+      '(empieza con el número de lista, ej. <strong>15-K7QM</strong>). Es secreta: solo su familia la conoce. 🔑',
+      ['❓ ¿Qué es la clave?']);
+  }
+})();
+</script>
+</body>
+</html>
