@@ -20,6 +20,9 @@ Costo: **cero**. Solo necesitas una cuenta de Google.
 
 ```javascript
 // M.E.T.A.S — Receptor de eventos de aprendizaje → Google Sheets
+// v6: + columnas forma y parcial en PlanAccion (el parcial que el
+//     alumno escribe en la evaluación ahora queda registrado; van al
+//     final para no desordenar las filas antiguas)
 // v5: + pestaña PlanAccion (notas por nº de lista y mensajes a padres,
 //     enviados desde la herramienta Plan de Acción; base del futuro
 //     chatbot de padres que consulta por código de lista)
@@ -33,7 +36,7 @@ const COLUMNAS_SUG = ['recibido', 'fecha_utc', 'mision', 'seccion', 'categoria',
 const HOJA_PA = 'PlanAccion';
 const COLUMNAS_PA = ['recibido', 'fecha', 'evaluacion', 'grado', 'seccion', 'docente',
   'codigo_lista', 'alumno', 'nota', 'nsp', 'categoria', 'sugerencia_docente',
-  'mensaje_padres', 'id_evento'];
+  'mensaje_padres', 'id_evento', 'forma', 'parcial'];
 
 function hojaLista(ss, nombre, columnas) {
   let h = ss.getSheetByName(nombre);
@@ -75,7 +78,8 @@ function doPost(e) {
         return [ahora, ev.t || '', ev.evaluacion || ev.mision || '', ev.grado || '',
           ev.seccion || '', ev.docente || '', (ev.codigo === 0 || ev.codigo) ? ev.codigo : '',
           ev.alumno || '', (ev.nota === 0 || ev.nota) ? ev.nota : '', ev.nsp || '',
-          ev.categoria || '', ev.sugerencia || '', ev.mensaje || '', ev.id || ''];
+          ev.categoria || '', ev.sugerencia || '', ev.mensaje || '', ev.id || '',
+          ev.forma || '', ev.parcial || ''];
       });
       hp.getRange(hp.getLastRow() + 1, 1, filasPA.length, COLUMNAS_PA.length).setValues(filasPA);
     }
@@ -273,7 +277,7 @@ Con el código v3 ya pegado y guardado:
 5. La pestaña oculta **DashDatos** contiene las tablas que alimentan los
    gráficos; no la borres (puedes verla con Ver → Hojas ocultas).
 
-## Pestaña PlanAccion — notas y mensajes a padres (v5)
+## Pestaña PlanAccion — notas y mensajes a padres (v6)
 
 La herramienta **Plan de Acción** del índice sincroniza a esta misma hoja
 (la misma URL) las calificaciones que el docente digita por número de lista,
@@ -281,7 +285,12 @@ junto con la categoría, la sugerencia pedagógica y el **mensaje para el padre
 de familia** de cada alumno. Todo cae en la pestaña `PlanAccion` con columnas:
 
 `recibido · fecha · evaluacion · grado · seccion · docente · codigo_lista ·
-alumno · nota · nsp · categoria · sugerencia_docente · mensaje_padres · id_evento`
+alumno · nota · nsp · categoria · sugerencia_docente · mensaje_padres ·
+id_evento · forma · parcial`
+
+- **v6** agrega `forma` y `parcial` al final (el parcial I-IV que el alumno
+  escribe en su evaluación). Si tu pestaña ya existía, el script completa el
+  encabezado solo; las filas viejas quedan con esas celdas vacías.
 
 - El docente pega la URL del despliegue en la tarjeta **☁️ Mi hoja de Google**
   del Plan de Acción (si ya configuró el Registro, es la misma URL).
