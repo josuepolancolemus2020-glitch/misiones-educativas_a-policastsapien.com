@@ -1277,6 +1277,19 @@ function renderProfile() {
           <button id="doc-tipo-pub" class="doc-tipo-btn doc-tipo-sel" onclick="docenteTipo('Pública')">🏫 Pública</button>
           <button id="doc-tipo-pri" class="doc-tipo-btn" onclick="docenteTipo('Privada')">🏛 Privada</button>
         </div>
+        <select id="doc-departamento" class="pa-inp-field" style="margin-bottom:8px;">
+          <option value="">Departamento</option>
+          <option>Atlántida</option><option>Choluteca</option><option>Colón</option>
+          <option>Comayagua</option><option>Copán</option><option>Cortés</option>
+          <option>El Paraíso</option><option>Francisco Morazán</option><option>Gracias a Dios</option>
+          <option>Intibucá</option><option>Islas de la Bahía</option><option>La Paz</option>
+          <option>Lempira</option><option>Ocotepeque</option><option>Olancho</option>
+          <option>Santa Bárbara</option><option>Valle</option><option>Yoro</option>
+        </select>
+        <input id="doc-municipio" class="pa-inp-field" maxlength="80" autocomplete="off"
+               placeholder="Municipio" style="margin-bottom:8px;">
+        <input id="doc-lugar" class="pa-inp-field" maxlength="200" autocomplete="off"
+               placeholder="Lugar / dirección o referencia de la escuela" style="margin-bottom:8px;">
         <input id="doc-telefono" class="pa-inp-field" maxlength="40" autocomplete="tel" type="tel"
                placeholder="Teléfono / WhatsApp (opcional)" style="margin-bottom:12px;">
         <button class="padre-wa-btn doc-btn-brand" onclick="docenteSuscribir()">🎓 Registrarme gratis</button>
@@ -1347,10 +1360,13 @@ function docenteTipo(t) {
 }
 
 async function docenteSuscribir() {
-  const nombre   = (document.getElementById('doc-nombre')?.value || '').trim();
-  const correo   = (document.getElementById('doc-correo')?.value || '').trim().toLowerCase();
-  const escuela  = (document.getElementById('doc-escuela')?.value || '').trim();
-  const telefono = (document.getElementById('doc-telefono')?.value || '').trim();
+  const nombre        = (document.getElementById('doc-nombre')?.value || '').trim();
+  const correo        = (document.getElementById('doc-correo')?.value || '').trim().toLowerCase();
+  const escuela       = (document.getElementById('doc-escuela')?.value || '').trim();
+  const telefono      = (document.getElementById('doc-telefono')?.value || '').trim();
+  const departamento  = (document.getElementById('doc-departamento')?.value || '').trim();
+  const municipio     = (document.getElementById('doc-municipio')?.value || '').trim();
+  const lugar         = (document.getElementById('doc-lugar')?.value || '').trim();
   if (nombre.length < 3) { toast('Escribe tu nombre completo'); return; }
   if (!correo.includes('@') || correo.length < 5) { toast('Escribe un correo válido — lo necesitarás para recuperar tu cuenta'); return; }
   if (navigator.onLine === false) { toast('📴 El registro necesita internet (solo esta vez)'); return; }
@@ -1364,17 +1380,18 @@ async function docenteSuscribir() {
         method: 'POST',
         headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
         body: JSON.stringify({ p_codigo: codigo, p_clave: clave, p_nombre: nombre,
-          p_correo: correo, p_escuela: escuela, p_tipo: _docTipo, p_telefono: telefono }),
+          p_correo: correo, p_escuela: escuela, p_tipo: _docTipo, p_telefono: telefono,
+          p_departamento: departamento, p_municipio: municipio, p_lugar: lugar }),
       });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const ok = await r.json();
       if (ok === true) {
-        _docenteSave({ codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono, t: new Date().toISOString() });
+        _docenteSave({ codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono,
+          departamento, municipio, lugar, t: new Date().toISOString() });
         renderProfile();
         toast('🎉 ¡Listo, ' + nombre.split(' ')[0] + '! Guarda tus llaves');
         return;
       }
-      // código ocupado (rarísimo): reintenta con otro código
     } catch (_) {
       toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
       return;
