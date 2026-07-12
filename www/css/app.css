@@ -3430,6 +3430,12 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   cursor: pointer;
 }
 .doc-ver-btn:active { transform: scale(.95); }
+.doc-tipo-btn {
+  flex: 1; padding: 8px; border-radius: var(--r-sm);
+  border: 1.5px solid var(--border); background: var(--bg);
+  font-size: 0.82rem; font-weight: 700; color: var(--muted); cursor: pointer;
+}
+.doc-tipo-btn.doc-tipo-sel { border-color: var(--brand); background: var(--brand); color: #fff; }
 
 /* Fila de 3 campos (Forma · Parcial · Tipo) del Plan de Acción */
 .pa-row-3 { grid-template-columns: 1fr 1fr 1fr; }

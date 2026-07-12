@@ -1223,24 +1223,24 @@ function docenteMostrarRecuperar() {
 }
 
 async function docenteRecuperar() {
-  const nombre = (document.getElementById('doc-rec-nombre')?.value || '').trim();
+  const correo = (document.getElementById('doc-rec-correo')?.value || '').trim().toLowerCase();
   const clave  = (document.getElementById('doc-rec-clave')?.value || '').trim();
-  if (!nombre || !clave) { toast('Escribe tu nombre y tu clave'); return; }
+  if (!correo.includes('@') || !clave) { toast('Escribe tu correo y tu clave'); return; }
   toast('⏳ Verificando…');
   const { url, key } = _padreSbCfg();
   try {
     const r = await fetch(url + '/rest/v1/rpc/metas_recuperar_docente', {
       method: 'POST',
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_nombre: nombre, p_clave: clave }),
+      body: JSON.stringify({ p_correo: correo, p_clave: clave }),
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const filas = await r.json();
-    if (!filas.length) { toast('❌ Nombre o clave incorrectos'); return; }
+    if (!filas.length) { toast('❌ Correo o clave incorrectos'); return; }
     const f = filas[0];
-    _docenteSave({ codigo: f.codigo, clave, nombre: f.nombre || nombre, contacto: f.contacto || '', t: new Date().toISOString() });
+    _docenteSave({ codigo: f.codigo, clave, nombre: f.nombre || '', correo, t: new Date().toISOString() });
     renderProfile();
-    toast('✅ ¡Bienvenido de vuelta, ' + (f.nombre || nombre).split(' ')[0] + '!');
+    toast('✅ ¡Bienvenido de vuelta, ' + (f.nombre || '').split(' ')[0] + '!');
   } catch (e) {
     toast('⚠️ ' + e.message);
   }
@@ -1258,36 +1258,44 @@ function renderProfile() {
   const d = _docenteCfg();
 
   if (!d.codigo) {
-    // Visitante: una sola tarjeta, un solo paso
+    // Visitante: formulario de suscripción
     cont.innerHTML = `
       <div class="setting-group teacher-panel-group">
         <div class="teacher-panel-head">
           <i class="fa-solid fa-user-plus teacher-panel-icon"></i>
           <label class="setting-label" style="margin-bottom:0;">¿Eres maestro o maestra?</label>
         </div>
-        <p class="teacher-panel-desc">Suscríbete gratis en un paso. Recibirás <strong>al instante</strong> tu
+        <p class="teacher-panel-desc">Regístrate gratis. Recibirás <strong>al instante</strong> tu
           código de docente y tu clave para ver los resultados de tus alumnos en la nube.</p>
-        <input id="doc-nombre" class="pa-inp-field" maxlength="60" autocomplete="off"
-               placeholder="Tu nombre (ej: Prof. Ana Díaz)" style="margin-bottom:8px;">
-        <input id="doc-contacto" class="pa-inp-field" maxlength="80" autocomplete="off"
-               placeholder="Correo o WhatsApp (opcional)" style="margin-bottom:12px;">
-        <button class="padre-wa-btn doc-btn-brand" onclick="docenteSuscribir()">🎓 Suscribirme gratis</button>
+        <input id="doc-nombre" class="pa-inp-field" maxlength="60" autocomplete="name"
+               placeholder="Nombre completo *" style="margin-bottom:8px;">
+        <input id="doc-correo" class="pa-inp-field" maxlength="100" autocomplete="email" type="email"
+               placeholder="Correo electrónico * (para recuperar tu cuenta)" style="margin-bottom:8px;">
+        <input id="doc-escuela" class="pa-inp-field" maxlength="120" autocomplete="off"
+               placeholder="Nombre de tu escuela" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <button id="doc-tipo-pub" class="doc-tipo-btn doc-tipo-sel" onclick="docenteTipo('Pública')">🏫 Pública</button>
+          <button id="doc-tipo-pri" class="doc-tipo-btn" onclick="docenteTipo('Privada')">🏛 Privada</button>
+        </div>
+        <input id="doc-telefono" class="pa-inp-field" maxlength="40" autocomplete="tel" type="tel"
+               placeholder="Teléfono / WhatsApp (opcional)" style="margin-bottom:12px;">
+        <button class="padre-wa-btn doc-btn-brand" onclick="docenteSuscribir()">🎓 Registrarme gratis</button>
         <p class="padre-hint" style="margin-top:8px;">Solo este paso necesita internet.
           <a href="panel-docente.html" class="doc-admin-link">¿Administrador del proyecto?</a></p>
         <div style="margin-top:10px;text-align:center;">
           <button class="doc-ver-btn" onclick="docenteMostrarRecuperar()" style="font-size:0.82rem;padding:6px 12px;">
-            🔑 ¿Ya tienes código? Entrar
+            🔑 ¿Ya tienes cuenta? Entrar
           </button>
         </div>
         <div id="doc-recuperar-form" style="display:none;margin-top:10px;border-top:1px solid #e0e0e0;padding-top:12px;">
-          <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">Escribe como te registraste:</p>
-          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">👤 TU NOMBRE</label>
-          <input id="doc-rec-nombre" class="pa-inp-field" maxlength="60" autocomplete="name"
-                 placeholder="Ej: Prof. Ana Díaz" style="margin-bottom:10px;">
+          <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">Ingresa tus datos de registro:</p>
+          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">📧 TU CORREO</label>
+          <input id="doc-rec-correo" class="pa-inp-field" maxlength="100" autocomplete="email" type="email"
+                 placeholder="El correo con que te registraste" style="margin-bottom:10px;">
           <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">🔒 TU CLAVE SECRETA</label>
           <input id="doc-rec-clave" class="pa-inp-field" type="password" maxlength="20" autocomplete="off"
                  placeholder="La clave que guardaste" style="margin-bottom:14px;">
-          <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar con mi nombre</button>
+          <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar con mi correo</button>
         </div>
       </div>`;
     return;
@@ -1331,11 +1339,21 @@ function renderProfile() {
     </div>`;
 }
 
+let _docTipo = 'Pública';
+function docenteTipo(t) {
+  _docTipo = t;
+  document.getElementById('doc-tipo-pub')?.classList.toggle('doc-tipo-sel', t === 'Pública');
+  document.getElementById('doc-tipo-pri')?.classList.toggle('doc-tipo-sel', t === 'Privada');
+}
+
 async function docenteSuscribir() {
-  const nombre = (document.getElementById('doc-nombre')?.value || '').trim();
-  const contacto = (document.getElementById('doc-contacto')?.value || '').trim();
-  if (nombre.length < 3) { toast('Escribe tu nombre primero'); return; }
-  if (navigator.onLine === false) { toast('📴 La suscripción necesita internet (solo esta vez)'); return; }
+  const nombre   = (document.getElementById('doc-nombre')?.value || '').trim();
+  const correo   = (document.getElementById('doc-correo')?.value || '').trim().toLowerCase();
+  const escuela  = (document.getElementById('doc-escuela')?.value || '').trim();
+  const telefono = (document.getElementById('doc-telefono')?.value || '').trim();
+  if (nombre.length < 3) { toast('Escribe tu nombre completo'); return; }
+  if (!correo.includes('@') || correo.length < 5) { toast('Escribe un correo válido — lo necesitarás para recuperar tu cuenta'); return; }
+  if (navigator.onLine === false) { toast('📴 El registro necesita internet (solo esta vez)'); return; }
   toast('⏳ Creando tu acceso…');
   const { url, key } = _padreSbCfg();
   for (let intento = 0; intento < 3; intento++) {
@@ -1345,17 +1363,18 @@ async function docenteSuscribir() {
       const r = await fetch(url + '/rest/v1/rpc/metas_suscribir_docente', {
         method: 'POST',
         headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ p_codigo: codigo, p_clave: clave, p_nombre: nombre, p_contacto: contacto }),
+        body: JSON.stringify({ p_codigo: codigo, p_clave: clave, p_nombre: nombre,
+          p_correo: correo, p_escuela: escuela, p_tipo: _docTipo, p_telefono: telefono }),
       });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const ok = await r.json();
       if (ok === true) {
-        _docenteSave({ codigo, clave, nombre, contacto, t: new Date().toISOString() });
+        _docenteSave({ codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono, t: new Date().toISOString() });
         renderProfile();
-        toast('🎉 ¡Listo, ' + nombre + '! Guarda tus llaves');
+        toast('🎉 ¡Listo, ' + nombre.split(' ')[0] + '! Guarda tus llaves');
         return;
       }
-      // código ocupado (rarísimo): se genera otro y se reintenta
+      // código ocupado (rarísimo): reintenta con otro código
     } catch (_) {
       toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
       return;
