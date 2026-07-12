@@ -37,7 +37,10 @@ function adLoad() {
   return { grado: '', seccion: '', lista: [], colectas: [], asistencia: [],
            materias: AD_MATERIAS_DEF.slice(), notas: {} };
 }
-function adSave(d) { try { localStorage.setItem(ADMIN_KEY, JSON.stringify(d)); } catch (_) {} }
+function adSave(d) {
+  try { localStorage.setItem(ADMIN_KEY, JSON.stringify(d)); } catch (_) {}
+  adSyncProgramar();   /* la nube del chatbot se actualiza sola, con calma */
+}
 
 function adEsc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
@@ -107,6 +110,16 @@ function adRenderLista(body, d) {
         <button class="pa-generate-btn ad-btn-sec" id="ad-add-al">➕ Agregar alumno</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-traer-pa">📥 Traer del Plan de Acción</button>
       </div>
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">☁️ Nube del chatbot de padres</div>
+      <p class="pa-optional-hint">La asistencia, las notas finales y las colaboraciones suben con la
+        <strong>clave de familia</strong> de cada alumno (la misma del Plan de Acción) para que el chatbot
+        les responda a los padres. Sube solo lo que cambia; sin internet, espera y reintenta.
+        Necesita el <strong>Grado</strong> escrito arriba.</p>
+      <button class="pa-generate-btn ad-btn-sec" id="ad-sb-sync">☁️ Sincronizar ahora</button>
+      <p class="pa-optional-hint" id="ad-sb-status" style="margin-top:8px"></p>
     </div>`;
 
   const persist = () => {
@@ -134,6 +147,8 @@ function adRenderLista(body, d) {
     dd.lista.push({ num: sig, nombre: '' });
     adSave(dd); renderAdmin();
   });
+  document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
+  adSincronizarNube(false);   /* refresca el estado al entrar */
   document.getElementById('ad-traer-pa').addEventListener('click', async () => {
     let pa = null;
     try { pa = JSON.parse(localStorage.getItem('METAS_PLANACCION_V1')); } catch (_) {}
@@ -631,6 +646,154 @@ ${d.lista.map(a => `<tr><td>${a.num}</td><td>${adEsc(a.nombre) || '—'}</td>
   if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
   w.document.write(html); w.document.close();
 }
+
+/* ══════════════ ☁️ NUBE DEL CHATBOT (Supabase) ══════════════
+   Cada dato administrativo sube por CLAVE DE FAMILIA (la misma
+   15-K7QM del Plan de Acción, vía paCodigoAlumno) para que el
+   chatbot de padres responda asistencia, notas finales y
+   colaboraciones. Sincronización DIFERENCIAL: firma por fila en
+   METAS_ADMIN_SB_V1 — solo sube lo que cambió; lo borrado se
+   anula en la nube (presente / nota null / eliminada).
+   Offline-first: sin internet no pasa nada; reintenta al volver. */
+const ADMIN_SB_KEY = 'METAS_ADMIN_SB_V1';
+let _adSyncT = null;
+let _adSyncBusy = false;
+
+function adSbMapLoad() {
+  try { const o = JSON.parse(localStorage.getItem(ADMIN_SB_KEY)); return (o && typeof o === 'object') ? o : {}; }
+  catch (_) { return {}; }
+}
+function adSbMapSave(m) { try { localStorage.setItem(ADMIN_SB_KEY, JSON.stringify(m)); } catch (_) {} }
+
+function adDocenteTxt() {
+  try {
+    const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1'));
+    if (d && (d.nombre || d.codigo)) return [d.nombre, d.codigo].filter(Boolean).join(' · ');
+  } catch (_) {}
+  return '';
+}
+function adMateriaSlug(m) {
+  return String(m || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24);
+}
+
+/* Filas actuales que deberían existir en la nube */
+function adFilasNube(d) {
+  if (typeof paCodigoAlumno !== 'function') return [];
+  const gs = (String(d.grado).replace(/\D/g, '') || 'X') + (String(d.seccion).trim().slice(-1).toUpperCase() || 'X');
+  const doc = adDocenteTxt();
+  const base = { grado: d.grado || '', seccion: d.seccion || '', docente: doc };
+  const cod = {};
+  d.lista.forEach(a => { cod[a.num] = paCodigoAlumno(d.grado, d.seccion, a.num); });
+  const filas = [];
+
+  d.asistencia.forEach(r => Object.keys(r.aus || {}).forEach(num => {
+    if (!cod[num]) return;
+    filas.push(Object.assign({
+      evento_id: 'ADA-' + r.f + '-' + gs + '-' + num, codigo: cod[num],
+      tipo: 'asistencia', fecha: r.f,
+      estado: r.aus[num] === 'A' ? 'ausente' : 'excusa',
+    }, base));
+  }));
+
+  Object.keys(d.notas || {}).forEach(parcial =>
+    Object.keys(d.notas[parcial] || {}).forEach(materia =>
+      Object.keys(d.notas[parcial][materia] || {}).forEach(num => {
+        if (!cod[num]) return;
+        filas.push(Object.assign({
+          evento_id: 'ADN-' + parcial + '-' + adMateriaSlug(materia) + '-' + gs + '-' + num,
+          codigo: cod[num], tipo: 'nota_final',
+          parcial, materia, nota: d.notas[parcial][materia][num],
+        }, base));
+      })));
+
+  d.colectas.forEach(c => d.lista.forEach(a => {
+    if (!cod[a.num]) return;
+    const pagado = c.pagos && c.pagos[a.num] != null;
+    filas.push(Object.assign({
+      evento_id: 'ADE-' + c.id + '-' + a.num, codigo: cod[a.num],
+      tipo: 'economia', fecha: c.fecha, concepto: c.concepto,
+      monto: pagado ? c.pagos[a.num] : c.montoAlumno,
+      estado: pagado ? 'pago' : 'pendiente',
+    }, base));
+  }));
+
+  return filas;
+}
+
+function adFirma(f) {
+  return [f.codigo, f.fecha || '', f.estado || '', f.parcial || '', f.materia || '',
+          f.nota != null ? f.nota : '', f.concepto || '', f.monto != null ? f.monto : ''].join('|');
+}
+
+/* Fila de anulación para un evento que ya no existe localmente */
+function adFilaAnulada(eventoId, guardado) {
+  const b = { evento_id: eventoId, codigo: guardado.c, grado: '', seccion: '', docente: adDocenteTxt() };
+  if (eventoId.startsWith('ADA-')) return Object.assign(b, { tipo: 'asistencia', estado: 'presente' });
+  if (eventoId.startsWith('ADN-')) return Object.assign(b, { tipo: 'nota_final', nota: '' });
+  return Object.assign(b, { tipo: 'economia', estado: 'eliminada' });
+}
+
+function adSyncProgramar() {
+  clearTimeout(_adSyncT);
+  _adSyncT = setTimeout(() => adSincronizarNube(false), 4000);
+}
+
+async function adSincronizarNube(manual) {
+  if (_adSyncBusy) return;
+  const st = document.getElementById('ad-sb-status');
+  const d = adLoad();
+  const filas = adFilasNube(d);
+  const mapa = adSbMapLoad();
+  const actuales = new Set(filas.map(f => f.evento_id));
+
+  const pendientes = filas.filter(f => !mapa[f.evento_id] || mapa[f.evento_id].f !== adFirma(f));
+  Object.keys(mapa).forEach(id => {
+    if (!actuales.has(id) && !mapa[id].x) pendientes.push(adFilaAnulada(id, mapa[id]));
+  });
+
+  if (!pendientes.length) {
+    if (st) st.textContent = '☁️ Nube del chatbot: al día.';
+    return;
+  }
+  if (navigator.onLine === false) {
+    if (st) st.textContent = '📴 ' + pendientes.length + ' cambio(s) esperando internet.';
+    return;
+  }
+  _adSyncBusy = true;
+  if (st) st.textContent = '⏳ Subiendo ' + pendientes.length + ' cambio(s)…';
+  try {
+    let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+    let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+    try {
+      url = localStorage.getItem('METAS_SB_URL') || url;
+      key = localStorage.getItem('METAS_SB_KEY') || key;
+    } catch (_) {}
+    for (let i = 0; i < pendientes.length; i += 250) {
+      const lote = pendientes.slice(i, i + 250);
+      const r = await fetch(url + '/rest/v1/rpc/metas_guardar_admin', {
+        method: 'POST',
+        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filas: lote }),
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const n = await r.json();
+      if (typeof n !== 'number') throw new Error('respuesta inesperada');
+      /* marcar el lote como sincronizado */
+      lote.forEach(f => {
+        if (actuales.has(f.evento_id)) mapa[f.evento_id] = { f: adFirma(f), c: f.codigo };
+        else mapa[f.evento_id] = { f: 'x', c: f.codigo, x: 1 };   /* anulada: no reenviar */
+      });
+      adSbMapSave(mapa);
+    }
+    if (st) st.textContent = '✅ Nube del chatbot al día (' + new Date().toLocaleTimeString('es-HN') + ').';
+    if (manual) toast('☁️ Registros sincronizados');
+  } catch (_) {
+    if (st) st.textContent = '⚠️ No se pudo subir ahora; se reintenta solo.';
+  }
+  _adSyncBusy = false;
+}
+window.addEventListener('online', () => adSyncProgramar());
 
 /* ── Navegación (mismo patrón que las demás herramientas) ── */
 document.addEventListener('DOMContentLoaded', () => {
