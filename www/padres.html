@@ -457,12 +457,8 @@ async function respMaestro() {
   let html = conDoc
     ? '👨‍🏫 Las notas las registró <strong>' + esc(conDoc.docente) + '</strong>' + (grupo ? ' (' + esc(grupo) + ')' : '') + '.'
     : '👨‍🏫 En las notas no aparece el nombre del docente' + (grupo ? ', pero el grupo es <strong>' + esc(grupo) + '</strong>' : '') + '.';
-  const tel = String(cfgLoad().telMaestro || '').replace(/\D/g, '');
-  if (tel) {
-    html += '<br>💬 Tiene guardado su número: <a href="https://wa.me/504' + tel.slice(-8) + '" target="_blank" rel="noopener">escribirle por WhatsApp</a>.';
-  } else {
-    html += '<br>Para dudas sobre una nota, lo mejor es escribirle o visitarlo en la escuela. 🙏';
-  }
+  html += '<br>Yo estoy aquí justamente para responderle sin molestar al maestro 🤗. ' +
+    'Si necesita tratar algo personal sobre su hijo/a, lo mejor es buscarlo en la escuela en el horario de atención.';
   await botSay(html + avisoCache(), CHIPS_MENU);
 }
 
