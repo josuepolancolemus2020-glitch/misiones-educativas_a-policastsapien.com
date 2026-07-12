@@ -1216,6 +1216,35 @@ function _docenteCfg() {
   catch (_) { return {}; }
 }
 function _docenteSave(c) { try { localStorage.setItem(DOCENTE_KEY, JSON.stringify(c)); } catch (_) {} }
+
+function docenteMostrarRecuperar() {
+  const f = document.getElementById('doc-recuperar-form');
+  if (f) f.style.display = f.style.display === 'none' ? '' : 'none';
+}
+
+async function docenteRecuperar() {
+  const rawCod = (document.getElementById('doc-rec-codigo')?.value || '').trim().toUpperCase().replace(/\s/g, '');
+  const clave  = (document.getElementById('doc-rec-clave')?.value || '').trim();
+  if (!rawCod || !clave) { toast('Escribe tu código y tu clave'); return; }
+  toast('⏳ Verificando…');
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_recuperar_docente', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: rawCod, p_clave: clave }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const filas = await r.json();
+    if (!filas.length) { toast('❌ Código o clave incorrectos'); return; }
+    _docenteSave({ codigo: rawCod, clave, nombre: filas[0].nombre || '', contacto: filas[0].contacto || '', t: new Date().toISOString() });
+    renderProfile();
+    toast('✅ ¡Bienvenido de vuelta!');
+  } catch (e) {
+    toast('⚠️ ' + e.message);
+  }
+}
+
 function _docAzar(n) {
   let s = '';
   for (let i = 0; i < n; i++) s += DOC_ALFA[Math.floor(Math.random() * DOC_ALFA.length)];
@@ -1244,6 +1273,18 @@ function renderProfile() {
         <button class="padre-wa-btn doc-btn-brand" onclick="docenteSuscribir()">🎓 Suscribirme gratis</button>
         <p class="padre-hint" style="margin-top:8px;">Solo este paso necesita internet.
           <a href="panel-docente.html" class="doc-admin-link">¿Administrador del proyecto?</a></p>
+        <div style="margin-top:10px;text-align:center;">
+          <button class="doc-ver-btn" onclick="docenteMostrarRecuperar()" style="font-size:0.82rem;padding:6px 12px;">
+            🔑 ¿Ya tienes código? Entrar
+          </button>
+        </div>
+        <div id="doc-recuperar-form" style="display:none;margin-top:10px;">
+          <input id="doc-rec-codigo" class="pa-inp-field" maxlength="12" autocomplete="off"
+                 placeholder="Tu código (ej: PROF-AB2C)" style="margin-bottom:8px;text-transform:uppercase;">
+          <input id="doc-rec-clave" class="pa-inp-field" type="password" maxlength="20" autocomplete="off"
+                 placeholder="Tu clave secreta" style="margin-bottom:12px;">
+          <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar con mi código</button>
+        </div>
       </div>`;
     return;
   }
