@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a1240">
+  <title>Campeonísimo EN VIVO — M.E.T.A.S</title>
+  <meta name="description" content="Mira el marcador del torneo Campeonísimo en vivo, o responde desde el teléfono de tu grupo.">
+  <meta property="og:title" content="📡 Campeonísimo EN VIVO — M.E.T.A.S">
+  <meta property="og:description" content="Escribe el código del torneo y mira el marcador en vivo, ¡o juega desde el teléfono de tu grupo!">
+  <meta property="og:image" content="https://josuepolancolemus2020-glitch.github.io/misiones-educativas_a-policastsapien.com/img/icon-512.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
+  <style>
+    :root {
+      --fondo1: #1a1240; --fondo2: #2b1b6b;
+      --oro: #ffd54a; --oro2: #ffb300;
+      --tinta: #ffffff; --muted: #b9b3e0;
+      --panel: rgba(255,255,255,.08);
+      --panel2: rgba(255,255,255,.14);
+      --ok: #34d399; --mal: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at 50% -10%, var(--fondo2), var(--fondo1) 70%);
+      color: var(--tinta);
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+    }
+    header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      background: rgba(0,0,0,.25);
+    }
+    .h-logo { font-size: 22px; }
+    .h-t1 { font-weight: 900; font-size: 15px; letter-spacing: .5px; }
+    .h-t2 { font-size: 11px; color: var(--muted); }
+    .h-estado {
+      margin-left: auto; font-size: 11px; font-weight: 800;
+      padding: 5px 10px; border-radius: 999px;
+      background: rgba(52,211,153,.18); color: var(--ok);
+      border: 1px solid rgba(52,211,153,.4);
+    }
+    .h-estado.off { background: rgba(248,113,113,.15); color: var(--mal); border-color: rgba(248,113,113,.4); }
+    #app { flex: 1; padding: 14px 12px 24px; max-width: 720px; width: 100%; margin: 0 auto; }
+
+    /* ── Entrada ── */
+    .join { text-align: center; padding-top: 6vh; }
+    .join-icon { font-size: 56px; }
+    .join h1 { font-size: 24px; margin: 8px 0 4px; }
+    .join p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+    .join-row { display: flex; gap: 8px; max-width: 340px; margin: 0 auto; }
+    .join-inp {
+      flex: 1; min-width: 0; padding: 14px; font-size: 22px; font-weight: 900;
+      text-align: center; letter-spacing: 4px; text-transform: uppercase;
+      border-radius: 12px; border: 2px solid var(--panel2);
+      background: var(--panel); color: var(--tinta); outline: none;
+    }
+    .join-inp:focus { border-color: var(--oro); }
+    .btn {
+      border: none; border-radius: 12px; cursor: pointer;
+      font-weight: 900; font-size: 16px; padding: 14px 18px;
+      background: linear-gradient(180deg, var(--oro), var(--oro2));
+      color: #3b2b00;
+      transition: transform .12s;
+    }
+    .btn:active { transform: scale(.96); }
+    .btn-sec {
+      background: var(--panel2); color: var(--tinta);
+      border: 1px solid rgba(255,255,255,.25);
+    }
+    .join-err { color: var(--mal); font-size: 13px; margin-top: 10px; min-height: 18px; }
+
+    /* ── Elegir modo / grupo ── */
+    .modo-grid { display: grid; gap: 10px; max-width: 380px; margin: 16px auto 0; }
+    .modo-btn {
+      display: flex; align-items: center; gap: 12px; text-align: left;
+      background: var(--panel); border: 2px solid var(--panel2);
+      border-radius: 14px; padding: 14px; cursor: pointer; color: var(--tinta);
+    }
+    .modo-btn:active { border-color: var(--oro); }
+    .modo-emoji { font-size: 30px; }
+    .modo-t { font-weight: 900; font-size: 16px; }
+    .modo-d { font-size: 12.5px; color: var(--muted); }
+    .grupo-pick {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      background: var(--panel); border: 2px solid var(--panel2);
+      border-radius: 12px; padding: 12px 14px; margin-top: 8px;
+      color: var(--tinta); font-weight: 800; font-size: 16px; cursor: pointer;
+    }
+    .grupo-dot { width: 14px; height: 14px; border-radius: 50%; flex: 0 0 auto; }
+
+    /* ── Barra superior del torneo ── */
+    .ronda-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--panel); border-radius: 12px;
+      padding: 8px 12px; margin-bottom: 10px; font-size: 13px; font-weight: 800;
+    }
+    .ronda-bar .rb-d { color: var(--muted); font-weight: 600; }
+    .lugar-txt { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+
+    /* ── Marcador ── */
+    .score { display: grid; gap: 8px; margin-bottom: 12px; }
+    .sc-row {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--panel); border-radius: 12px; padding: 10px 12px;
+      border-left: 6px solid var(--gc, #888);
+      transition: transform .3s;
+    }
+    .sc-row.turno-act { border-color: var(--oro); background: rgba(255,213,74,.12); }
+    .sc-row.elim { opacity: .45; }
+    .sc-row.yo { outline: 2px solid var(--oro); }
+    .sc-m { font-size: 22px; }
+    .sc-n { font-weight: 800; font-size: 15px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sc-tag { font-size: 10px; color: var(--muted); }
+    .sc-pts { font-size: 22px; font-weight: 900; color: var(--oro); }
+
+    /* ── Escenas ── */
+    .escena { text-align: center; padding: 12px 0; }
+    .esc-big { font-size: 54px; }
+    .esc-t { font-size: 22px; font-weight: 900; margin: 6px 0; }
+    .esc-d { color: var(--muted); font-size: 14px; }
+    .turno-caja {
+      margin: 10px auto; max-width: 420px;
+      background: var(--panel); border: 2px solid var(--gc, var(--oro));
+      border-radius: 16px; padding: 14px;
+    }
+    .turno-lbl { font-size: 12px; color: var(--muted); letter-spacing: 2px; }
+    .turno-nom { font-size: 26px; font-weight: 900; }
+
+    /* ── Pregunta ── */
+    .preg-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      background: var(--panel); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px;
+    }
+    .preg-subj { font-weight: 900; font-size: 14px; }
+    .preg-mision { font-size: 11px; color: var(--muted); }
+    .preg-timer {
+      font-size: 26px; font-weight: 900; color: var(--oro);
+      min-width: 56px; text-align: center;
+    }
+    .preg-timer.urg { color: var(--mal); animation: parp .5s infinite alternate; }
+    @keyframes parp { from { opacity: 1; } to { opacity: .45; } }
+    .preg-q {
+      font-size: clamp(18px, 4.6vw, 26px); font-weight: 800; line-height: 1.35;
+      background: var(--panel); border-radius: 14px; padding: 16px; margin-bottom: 12px;
+    }
+    .opts { display: grid; gap: 10px; }
+    @media (min-width: 560px) { .opts { grid-template-columns: 1fr 1fr; } }
+    .opt {
+      display: flex; align-items: center; gap: 10px; text-align: left;
+      background: var(--panel); border: 2px solid var(--panel2);
+      border-radius: 14px; padding: 14px; color: var(--tinta);
+      font-size: 16px; font-weight: 700; width: 100%;
+    }
+    button.opt { cursor: pointer; }
+    button.opt:active { border-color: var(--oro); }
+    .opt.sel { border-color: var(--oro); background: rgba(255,213,74,.14); }
+    .opt.ok { border-color: var(--ok); background: rgba(52,211,153,.18); }
+    .opt.mal { border-color: var(--mal); background: rgba(248,113,113,.14); }
+    .opt-letra {
+      flex: 0 0 34px; height: 34px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,.14); font-weight: 900;
+    }
+    .aviso-resp {
+      text-align: center; margin-top: 12px; font-weight: 800;
+      color: var(--ok); font-size: 15px; min-height: 22px;
+    }
+    .respondieron { text-align: center; color: var(--muted); font-size: 13px; margin-top: 8px; }
+
+    /* ── Robo ── */
+    .robo-btn {
+      display: block; width: 100%; max-width: 380px; margin: 14px auto 0;
+      padding: 18px; font-size: 22px; font-weight: 900; border-radius: 16px;
+      border: none; cursor: pointer;
+      background: linear-gradient(180deg, #ff8a5c, #f4511e); color: #fff;
+      animation: pulso 1s infinite alternate;
+    }
+    @keyframes pulso { from { transform: scale(1); } to { transform: scale(1.04); } }
+
+    /* ── Podio ── */
+    .podio { display: flex; align-items: flex-end; justify-content: center; gap: 10px; margin: 18px 0 8px; }
+    .pod-col { text-align: center; flex: 1; max-width: 130px; }
+    .pod-m { font-size: 34px; }
+    .pod-n { font-weight: 900; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pod-base {
+      margin-top: 6px; border-radius: 10px 10px 0 0;
+      background: linear-gradient(180deg, var(--oro), var(--oro2));
+      color: #3b2b00; font-weight: 900; font-size: 22px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pod-1 .pod-base { height: 90px; }
+    .pod-2 .pod-base { height: 64px; background: linear-gradient(180deg, #e2e8f0, #94a3b8); color: #1e293b; }
+    .pod-3 .pod-base { height: 46px; background: linear-gradient(180deg, #f6ad7b, #c05621); color: #fff; }
+    .insig-row { text-align: center; font-size: 13px; color: var(--muted); margin-top: 10px; line-height: 1.8; }
+
+    .conf { position: fixed; top: -12px; font-size: 18px; animation: caer linear forwards; z-index: 50; pointer-events: none; }
+    @keyframes caer { to { transform: translateY(110vh) rotate(720deg); } }
+
+    .pie {
+      text-align: center; font-size: 11px; color: var(--muted);
+      padding: 10px; background: rgba(0,0,0,.2);
+    }
+    .pie a { color: var(--oro); text-decoration: none; font-weight: 700; }
+    .salir-btn { margin-top: 16px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span class="h-logo">🏆</span>
+    <div>
+      <div class="h-t1">CAMPEONÍSIMO <span style="color:var(--oro)">EN VIVO</span></div>
+      <div class="h-t2">M.E.T.A.S — torneo de conocimiento</div>
+    </div>
+    <span class="h-estado" id="estado-badge" style="display:none">● EN VIVO</span>
+  </header>
+
+  <div id="app"></div>
+  <div class="pie">Las misiones y torneos son de <a href="index.html">M.E.T.A.S</a> 🚀 — aprende gratis, incluso sin internet.</div>
+
+<script>
+/* ============================================================
+   CAMPEONÍSIMO EN VIVO — pantalla de espectadores y de grupos.
+   El torneo corre COMPLETO en el equipo del jurado; esta página
+   solo lee el estado público (metas_camp_ver, sondeo cada 2 s)
+   y, en modo grupo, envía la respuesta (metas_camp_responder).
+   El jurado siempre valida: aquí nada asigna puntos.
+   ============================================================ */
+
+const SB_URL_DEF = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+const SB_KEY_DEF = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+const VIVO_KEY   = 'METAS_CAMPVIVO_V1';
+
+const $app   = document.getElementById('app');
+const $badge = document.getElementById('estado-badge');
+
+let CODIGO = '';
+let MI_GI  = null;          /* null = espectador; número = índice de mi grupo */
+let EST    = null;          /* último estado recibido */
+let _pollT = null;
+let _timerT = null;
+let _enviadaQn = 0;         /* qn de la última respuesta que mandó este teléfono */
+let _roboQn = 0;
+let _confettiHecho = 0;
+let _fallosSeguidos = 0;
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function sbCfg() {
+  let url = SB_URL_DEF, key = SB_KEY_DEF;
+  try {
+    url = localStorage.getItem('METAS_SB_URL') || url;
+    key = localStorage.getItem('METAS_SB_KEY') || key;
+  } catch (_) {}
+  return { url, key };
+}
+async function rpc(fn, body) {
+  const { url, key } = sbCfg();
+  const r = await fetch(url + '/rest/v1/rpc/' + fn, {
+    method: 'POST',
+    headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+function saveCfg() {
+  try { localStorage.setItem(VIVO_KEY, JSON.stringify({ codigo: CODIGO, gi: MI_GI })); } catch (_) {}
+}
+function loadCfg() {
+  try { const o = JSON.parse(localStorage.getItem(VIVO_KEY)); return (o && typeof o === 'object') ? o : {}; }
+  catch (_) { return {}; }
+}
+function limpiarCodigo(v) { return String(v || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase(); }
+
+/* ── PANTALLA: entrar con código ── */
+function renderJoin(err) {
+  detenerTodo();
+  const urlC = limpiarCodigo(new URLSearchParams(location.search).get('c') || '');
+  const prev = limpiarCodigo(loadCfg().codigo || '');
+  $badge.style.display = 'none';
+  $app.innerHTML = `
+    <div class="join">
+      <div class="join-icon">📡</div>
+      <h1>¡Bienvenidos al torneo!</h1>
+      <p>Escriban el <strong>código del torneo</strong> que muestra el jurado en su pantalla.</p>
+      <div class="join-row">
+        <input class="join-inp" id="j-cod" maxlength="8" placeholder="QK7M"
+          autocomplete="off" autocapitalize="characters" value="${esc(urlC || prev)}">
+        <button class="btn" id="j-go">Entrar</button>
+      </div>
+      <div class="join-err">${esc(err || '')}</div>
+    </div>`;
+  const go = async () => {
+    const cod = limpiarCodigo(document.getElementById('j-cod').value);
+    if (cod.length < 4) { renderJoin('El código tiene al menos 4 letras o números.'); return; }
+    document.getElementById('j-go').textContent = '⏳';
+    try {
+      const rows = await rpc('metas_camp_ver', { p_codigo: cod });
+      if (!Array.isArray(rows) || !rows.length) {
+        renderJoin('No encontré un torneo con ese código. Revísenlo con el jurado.');
+        return;
+      }
+      CODIGO = cod;
+      EST = rows[0].estado || {};
+      renderModo();
+    } catch (_) {
+      renderJoin('No se pudo consultar. Revisen el internet e intenten de nuevo.');
+    }
+  };
+  document.getElementById('j-go').addEventListener('click', go);
+  document.getElementById('j-cod').addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+}
+
+/* ── PANTALLA: elegir modo (ver / grupo) ── */
+function renderModo() {
+  detenerTodo();
+  const grupos = (EST && EST.grupos) || [];
+  const permite = EST && EST.vr === 1 && grupos.length;
+  $app.innerHTML = `
+    <div class="join">
+      <div class="join-icon">🎬</div>
+      <h1>Torneo <span style="color:var(--oro)">${esc(CODIGO)}</span></h1>
+      <p>${esc((EST && EST.lugar) || '')}</p>
+      <div class="modo-grid">
+        <button class="modo-btn" id="m-ver">
+          <span class="modo-emoji">📺</span>
+          <span><span class="modo-t">Solo ver el marcador</span><br>
+          <span class="modo-d">Para el proyector, el público y las familias.</span></span>
+        </button>
+        ${permite ? `
+        <button class="modo-btn" id="m-grupo">
+          <span class="modo-emoji">🎮</span>
+          <span><span class="modo-t">Somos un grupo</span><br>
+          <span class="modo-d">Respondan desde este teléfono cuando sea su turno.</span></span>
+        </button>` : `
+        <p class="modo-d" style="margin-top:6px">🎮 El jurado no activó las respuestas por teléfono en este torneo.</p>`}
+      </div>
+      <div id="m-grupos"></div>
+      <button class="btn btn-sec salir-btn" id="m-back">← Cambiar código</button>
+    </div>`;
+  document.getElementById('m-ver').addEventListener('click', () => { MI_GI = null; saveCfg(); iniciarVivo(); });
+  document.getElementById('m-back').addEventListener('click', () => renderJoin());
+  const mg = document.getElementById('m-grupo');
+  if (mg) mg.addEventListener('click', () => {
+    document.getElementById('m-grupos').innerHTML =
+      '<p class="modo-d" style="margin:14px 0 4px">¿Cuál es su grupo?</p>' +
+      grupos.map((g, i) => `
+        <button class="grupo-pick" data-gi="${i}">
+          <span class="grupo-dot" style="background:${esc(g.c)}"></span>
+          ${esc(g.m)} ${esc(g.n)}
+        </button>`).join('');
+    document.querySelectorAll('.grupo-pick').forEach(b =>
+      b.addEventListener('click', () => { MI_GI = +b.dataset.gi; saveCfg(); iniciarVivo(); }));
+  });
+}
+
+/* ── BUCLE EN VIVO ── */
+function iniciarVivo() {
+  detenerTodo();
+  $badge.style.display = '';
+  _confettiHecho = 0;
+  tick();
+  _pollT = setInterval(tick, 2000);
+}
+function detenerTodo() {
+  clearInterval(_pollT); _pollT = null;
+  clearInterval(_timerT); _timerT = null;
+}
+async function tick() {
+  if (document.hidden) return;
+  try {
+    const rows = await rpc('metas_camp_ver', { p_codigo: CODIGO });
+    _fallosSeguidos = 0;
+    $badge.classList.remove('off');
+    $badge.textContent = '● EN VIVO';
+    if (!Array.isArray(rows) || !rows.length) { renderEscena({ fase: 'sin-torneo' }); return; }
+    const est = rows[0].estado || {};
+    const antes = JSON.stringify(EST);
+    EST = est;
+    if (JSON.stringify(est) !== antes) renderEscena(est);
+  } catch (_) {
+    _fallosSeguidos++;
+    $badge.classList.add('off');
+    $badge.textContent = '⟳ reconectando…';
+    if (_fallosSeguidos === 5) $badge.textContent = '📴 sin conexión';
+  }
+}
+
+/* ── RENDER POR FASE ── */
+function rondaBarHTML(e) {
+  if (!e.ronda) return '';
+  const r = e.ronda;
+  return `<div class="ronda-bar">
+    <span>${esc(r.icon || '')} ${esc(r.nombre || '')}</span>
+    <span class="rb-d">×${esc(r.mult)} pts${r.final ? ' · FINAL' : (r.vueltas ? ` · Vuelta ${esc(r.vuelta)}/${esc(r.vueltas)}` : '')}</span>
+  </div>` + (e.lugar ? `<div class="lugar-txt">📍 ${esc(e.lugar)}</div>` : '');
+}
+function scoreHTML(e, opts) {
+  const grupos = e.grupos || [];
+  const orden = grupos.map((g, i) => i).sort((a, b) => (grupos[b].s || 0) - (grupos[a].s || 0));
+  return `<div class="score">` + orden.map(i => {
+    const g = grupos[i];
+    const clases = ['sc-row',
+      (opts && opts.turno === i) ? 'turno-act' : '',
+      g.e ? 'elim' : '',
+      (MI_GI === i) ? 'yo' : ''].filter(Boolean).join(' ');
+    return `<div class="${clases}" style="--gc:${esc(g.c)}">
+      <span class="sc-m">${esc(g.m)}</span>
+      <span class="sc-n">${esc(g.n)}${MI_GI === i ? ' <span class="sc-tag">(nosotros)</span>' : ''}${g.e ? ' <span class="sc-tag">banca</span>' : ''}</span>
+      <span class="sc-pts">${esc(g.s || 0)}</span>
+    </div>`;
+  }).join('') + `</div>`;
+}
+function timerStart(hasta) {
+  clearInterval(_timerT);
+  const el = () => document.getElementById('preg-timer');
+  const paint = () => {
+    const t = el(); if (!t) { clearInterval(_timerT); return; }
+    const rem = Math.max(0, Math.ceil((hasta - Date.now()) / 1000));
+    t.textContent = rem + 's';
+    t.classList.toggle('urg', rem <= 10 && rem > 0);
+    if (rem <= 0) { t.textContent = '⏰'; clearInterval(_timerT); }
+  };
+  paint();
+  _timerT = setInterval(paint, 500);
+}
+
+function renderEscena(e) {
+  clearInterval(_timerT);
+  const fase = e.fase || 'espera';
+
+  if (fase === 'sin-torneo') {
+    $app.innerHTML = `<div class="escena"><div class="esc-big">🕐</div>
+      <div class="esc-t">El torneo terminó o el código venció</div>
+      <p class="esc-d">Pidan el código nuevo al jurado.</p>
+      <button class="btn btn-sec salir-btn" onclick="location.reload()">← Entrar con otro código</button></div>`;
+    detenerTodo();
+    return;
+  }
+
+  if (fase === 'espera' || fase === 'intro') {
+    $app.innerHTML = rondaBarHTML(e) + `
+      <div class="escena">
+        <div class="esc-big">${fase === 'intro' ? esc((e.ronda && e.ronda.icon) || '🎬') : '🎬'}</div>
+        <div class="esc-t">${fase === 'intro' ? esc((e.ronda && e.ronda.nombre) || 'El torneo va a comenzar') : '¡El torneo va a comenzar!'}</div>
+        <p class="esc-d">${MI_GI !== null ? 'Estén atentos: cuando sea su turno, este teléfono se los avisará. 🎮' : 'Pantalla de marcador en vivo. 📺'}</p>
+      </div>` + scoreHTML(e, {});
+    return;
+  }
+
+  if (fase === 'turno') {
+    const g = (e.grupos || [])[e.turno];
+    $app.innerHTML = rondaBarHTML(e) + (g ? `
+      <div class="escena">
+        <div class="turno-caja" style="--gc:${esc(g.c)}">
+          <div class="turno-lbl">TURNO DE</div>
+          <div class="turno-nom">${esc(g.m)} ${esc(g.n)}</div>
+          <p class="esc-d">${MI_GI === e.turno ? '¡Son ustedes! El jurado está eligiendo el tema…' : 'Eligiendo el tema…'}</p>
+        </div>
+      </div>` : '') + scoreHTML(e, { turno: e.turno });
+    return;
+  }
+
+  if (fase === 'pregunta' || fase === 'revelado') {
+    const p = e.preg || {};
+    const rev = fase === 'revelado' ? (e.rev || {}) : null;
+    const soyTurno = MI_GI !== null && MI_GI === e.turno;
+    const puedoResponder = fase === 'pregunta' && soyTurno && e.vr === 1 && _enviadaQn !== e.qn;
+    const miResp = (e.resp && e.resp[String(MI_GI)] != null) ? +e.resp[String(MI_GI)] : null;
+    const g = (e.grupos || [])[e.turno];
+    const cuantasResp = e.resp ? Object.keys(e.resp).length : 0;
+
+    $app.innerHTML = rondaBarHTML(e) + `
+      ${g ? `<div class="turno-caja" style="--gc:${esc(g.c)};padding:8px 14px;margin-top:0">
+        <span style="font-size:14px">${p.muerte ? '⚔️ MUERTE SÚBITA — ' : ''}${esc(g.m)} <strong>${esc(g.n)}</strong> responde
+        ${p.apuesta ? ` · 🎰 apostó ${esc(p.apuesta)}` : (p.pts ? ` · +${esc(p.pts)} pts` : '')}</span>
+      </div>` : ''}
+      <div class="preg-head">
+        <div>
+          <div class="preg-subj">${esc(p.sicon || '')} ${esc(p.subj || '')}</div>
+          <div class="preg-mision">${esc(p.mision || '')}</div>
+        </div>
+        <div class="preg-timer" id="preg-timer">–</div>
+      </div>
+      <div class="preg-q">${esc(p.q || '')}</div>
+      <div class="opts">
+        ${(p.o || []).map((o, i) => {
+          const cls = ['opt'];
+          if (rev && i === rev.c) cls.push('ok');
+          else if (rev && miResp === i) cls.push('mal');
+          else if (!rev && (miResp === i || (_enviadaQn === e.qn && _miOpcion === i))) cls.push('sel');
+          const tag = puedoResponder ? 'button' : 'div';
+          return `<${tag} class="${cls.join(' ')}" ${puedoResponder ? `data-i="${i}"` : ''}>
+            <span class="opt-letra">${'ABCD'[i]}</span><span>${esc(o)}</span></${tag}>`;
+        }).join('')}
+      </div>
+      <div class="aviso-resp" id="aviso-resp">
+        ${rev ? (soyTurno ? (miResp === rev.c ? '🎉 ¡Respondieron BIEN!' : (miResp != null ? 'La correcta era la ' + 'ABCD'[rev.c] : '')) : '✅ Respuesta correcta: ' + 'ABCD'[rev.c]) : ''}
+        ${!rev && _enviadaQn === e.qn && soyTurno ? '📨 Respuesta enviada — el jurado la valida' : ''}
+        ${!rev && !soyTurno && MI_GI !== null ? '👀 Turno de otro grupo — atentos al rebote' : ''}
+      </div>
+      ${!rev && e.vr === 1 && cuantasResp ? `<div class="respondieron">📱 ${cuantasResp} grupo(s) ya respondieron</div>` : ''}
+    ` + scoreHTML(e, { turno: e.turno });
+
+    if (fase === 'pregunta' && p.hasta) timerStart(p.hasta);
+    else { const t = document.getElementById('preg-timer'); if (t) t.textContent = rev ? '✔' : '–'; }
+
+    if (puedoResponder) {
+      document.querySelectorAll('button.opt').forEach(b =>
+        b.addEventListener('click', async () => {
+          if (_enviadaQn === e.qn) return;
+          _enviadaQn = e.qn; _miOpcion = +b.dataset.i;
+          document.querySelectorAll('button.opt').forEach(x => { x.disabled = true; });
+          b.classList.add('sel');
+          const av = document.getElementById('aviso-resp');
+          if (av) av.textContent = '📨 Enviando…';
+          try {
+            await rpc('metas_camp_responder', { p_codigo: CODIGO, p_gi: MI_GI, p_qn: e.qn, p_tipo: 'respuesta', p_opcion: _miOpcion });
+            if (av) av.textContent = '📨 Respuesta enviada — el jurado la valida';
+          } catch (_) {
+            _enviadaQn = 0;
+            if (av) av.textContent = '⚠️ No se envió. Toquen de nuevo su opción.';
+            document.querySelectorAll('button.opt').forEach(x => { x.disabled = false; });
+          }
+        }));
+    }
+    return;
+  }
+
+  if (fase === 'rebote') {
+    const puedoRobar = MI_GI !== null && e.vr === 1 && MI_GI !== e.turno &&
+      !((e.grupos || [])[MI_GI] || {}).e && _roboQn !== e.qn;
+    const pidieron = (e.rebote && e.rebote.robos) || [];
+    $app.innerHTML = rondaBarHTML(e) + `
+      <div class="escena">
+        <div class="esc-big">🔁</div>
+        <div class="esc-t">¡REBOTE!</div>
+        <p class="esc-d">El grupo falló. ${e.rebote && e.rebote.pts ? `Robar vale +${esc(e.rebote.pts)} pts.` : ''}</p>
+        ${pidieron.length ? `<p class="esc-d">🖐 Quieren robar: ${pidieron.map(gi => {
+          const g = (e.grupos || [])[gi]; return g ? esc(g.m + ' ' + g.n) : '';
+        }).filter(Boolean).join(', ')}</p>` : ''}
+        ${puedoRobar ? `<button class="robo-btn" id="robo-btn">🖐 ¡ROBAMOS!</button>` : ''}
+        ${_roboQn === e.qn ? `<p class="aviso-resp">🖐 Pedido enviado — el jurado decide</p>` : ''}
+      </div>` + scoreHTML(e, { turno: e.turno });
+    const rb = document.getElementById('robo-btn');
+    if (rb) rb.addEventListener('click', async () => {
+      _roboQn = e.qn; rb.disabled = true; rb.textContent = '📨 Enviado…';
+      try { await rpc('metas_camp_responder', { p_codigo: CODIGO, p_gi: MI_GI, p_qn: e.qn, p_tipo: 'robo', p_opcion: null }); }
+      catch (_) { _roboQn = 0; }
+      renderEscena(EST);
+    });
+    return;
+  }
+
+  if (fase === 'apuesta') {
+    const g = (e.grupos || [])[e.turno];
+    $app.innerHTML = rondaBarHTML(e) + `
+      <div class="escena">
+        <div class="esc-big">🎰</div>
+        <div class="esc-t">${g ? esc(g.m + ' ' + g.n) : ''} está apostando…</div>
+        <p class="esc-d">Si acierta gana la apuesta; si falla, la pierde. ¡Silencio en el estudio!</p>
+      </div>` + scoreHTML(e, { turno: e.turno });
+    return;
+  }
+
+  if (fase === 'muerte') {
+    $app.innerHTML = rondaBarHTML(e) + `
+      <div class="escena">
+        <div class="esc-big">⚔️</div>
+        <div class="esc-t">¡MUERTE SÚBITA!</div>
+        <p class="esc-d">${esc(e.muerteTxt || 'Empate: se resuelve compitiendo en conocimiento, por turnos.')}</p>
+      </div>` + scoreHTML(e, { turno: e.turno });
+    return;
+  }
+
+  if (fase === 'podio') {
+    const grupos = e.grupos || [];
+    const orden = (e.podio && e.podio.length) ? e.podio
+      : grupos.map((g, i) => i).sort((a, b) => (grupos[b].s || 0) - (grupos[a].s || 0));
+    const top = orden.slice(0, 3);
+    const col = (pos, gi) => {
+      const g = grupos[gi]; if (!g) return '';
+      return `<div class="pod-col pod-${pos}">
+        <div class="pod-m">${esc(g.m)}</div>
+        <div class="pod-n">${esc(g.n)}</div>
+        <div class="pod-base">${pos}º</div>
+      </div>`;
+    };
+    $app.innerHTML = rondaBarHTML(e) + `
+      <div class="escena">
+        <div class="esc-t">🏆 ¡TENEMOS ${top.length > 1 ? 'PODIO' : 'CAMPEÓN'}!</div>
+        <div class="podio">
+          ${top[1] != null ? col(2, top[1]) : ''}
+          ${top[0] != null ? col(1, top[0]) : ''}
+          ${top[2] != null ? col(3, top[2]) : ''}
+        </div>
+        ${e.insig ? `<div class="insig-row">${Object.keys(e.insig).map(gi => {
+          const g = grupos[+gi]; const b = e.insig[gi];
+          return (g && b && b.length) ? `${esc(g.m)} <strong>${esc(g.n)}</strong>: ${esc(b.join(' '))}` : '';
+        }).filter(Boolean).join('<br>')}</div>` : ''}
+      </div>` + scoreHTML(e, {});
+    if (_confettiHecho !== 1) { _confettiHecho = 1; confetti(); }
+    return;
+  }
+
+  /* fase desconocida: solo marcador */
+  $app.innerHTML = rondaBarHTML(e) + scoreHTML(e, { turno: e.turno });
+}
+
+let _miOpcion = null;
+
+function confetti() {
+  const em = ['🎉', '✨', '🎊', '⭐', '🏆'];
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('span');
+    s.className = 'conf';
+    s.textContent = em[i % em.length];
+    s.style.left = (Math.random() * 100) + 'vw';
+    s.style.animationDuration = (2.2 + Math.random() * 2.5) + 's';
+    s.style.animationDelay = (Math.random() * 1.2) + 's';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 6000);
+  }
+}
+
+/* ── arranque ── */
+(function inicio() {
+  const urlC = limpiarCodigo(new URLSearchParams(location.search).get('c') || '');
+  const prev = loadCfg();
+  if (urlC && prev.codigo === urlC && (prev.gi === null || typeof prev.gi === 'number')) {
+    /* mismo torneo de antes: entra directo con el rol guardado */
+    CODIGO = urlC; MI_GI = (typeof prev.gi === 'number') ? prev.gi : null;
+    iniciarVivo();
+    return;
+  }
+  renderJoin();
+})();
+</script>
+</body>
+</html>
