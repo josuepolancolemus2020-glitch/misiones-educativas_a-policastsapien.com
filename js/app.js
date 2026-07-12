@@ -969,7 +969,8 @@ function renderProgress() {
    Resumen para madres y padres, todo guiado por NOTAS (el XP es
    decoración lúdica): semana, notas registradas por el maestro en
    el Plan de Acción (METAS_PLANACCION_V1), siguiente paso, consejo
-   del día y WhatsApp al maestro (METAS_PADRE_V1).
+   del día y asistente/consulta con clave de familia (METAS_PADRE_V1).
+   Sin WhatsApp al maestro: el asistente responde para no interrumpirlo.
 ───────────────────────────────────────────── */
 
 const PADRE_KEY = 'METAS_PADRE_V1';
@@ -1103,22 +1104,6 @@ function renderPadre() {
       </div>`;
   }
 
-  /* ── WhatsApp al maestro ── */
-  const tel = String(_padreCfg().telMaestro || '').replace(/\D/g, '');
-  const waHTML = `
-    <div class="padre-sec">
-      <div class="padre-sec-title">💬 Escribir al maestro</div>
-      ${tel ? `
-        <button class="padre-wa-btn" onclick="padreEscribirMaestro()">💬 Enviar WhatsApp al maestro</button>
-        <button class="padre-wa-cambiar" onclick="padreGuardarTel(true)">✏️ Cambiar número</button>`
-      : `
-        <p class="padre-hint">Guarde una sola vez el número de WhatsApp del maestro:</p>
-        <div class="padre-tel-row">
-          <input id="padre-tel" class="pa-inp-field" type="tel" inputmode="tel" placeholder="ej: 9999-9999" autocomplete="off">
-          <button class="padre-wa-btn" onclick="padreGuardarTel()">Guardar</button>
-        </div>`}
-    </div>`;
-
   /* ── Consulta en la nube con la clave de la familia (desde cualquier lugar) ── */
   const codigoIni = String(_padreCfg().codigo || '');
   const nubeHTML = `
@@ -1143,7 +1128,7 @@ function renderPadre() {
 
   cont.innerHTML =
     (nombre ? `<h2 class="padre-titulo">El avance de ${_pEsc(nombre)}</h2>` : '') +
-    semanaHTML + paHTML + nubeHTML + pasoHTML + consejoHTML + waHTML + avisoHTML;
+    semanaHTML + paHTML + nubeHTML + pasoHTML + consejoHTML + avisoHTML;
 }
 
 function _padreSbCfg() {
@@ -1206,31 +1191,6 @@ async function padreConsultarNube() {
   }
 }
 window.padreConsultarNube = padreConsultarNube;
-
-function padreGuardarTel(cambiar) {
-  if (cambiar) {
-    const c = _padreCfg(); delete c.telMaestro; _padreSaveCfg(c);
-    renderPadre(); return;
-  }
-  const inp = document.getElementById('padre-tel');
-  let tel = inp && inp.value ? inp.value.replace(/\D/g, '') : '';
-  if (tel.length === 8) tel = '504' + tel; // Honduras por defecto
-  if (tel.length < 10) { toast('Escribe un número válido (8 dígitos)'); return; }
-  const c = _padreCfg(); c.telMaestro = tel; _padreSaveCfg(c);
-  renderPadre();
-  toast('Número guardado ✔');
-}
-window.padreGuardarTel = padreGuardarTel;
-
-function padreEscribirMaestro() {
-  const tel = String(_padreCfg().telMaestro || '').replace(/\D/g, '');
-  if (!tel) { renderPadre(); return; }
-  const ident  = _alumnoIdent();
-  const nombre = String(ident.nombre || load().name || '').trim();
-  const txt = `Hola, le saluda la familia de ${nombre || 'mi hijo/a'}. Vimos su avance en M.E.T.A.S y queremos saber cómo apoyarle mejor en casa. ¡Gracias por su dedicación! 🙏`;
-  window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent(txt), '_blank');
-}
-window.padreEscribirMaestro = padreEscribirMaestro;
 
 /* ─────────────────────────────────────────────
    RENDER — PROFILE
