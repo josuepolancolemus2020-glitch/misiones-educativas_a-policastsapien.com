@@ -15,12 +15,15 @@ const DIAGNOSTICOS = {
     { etapa: 6, q: '¿Qué indica el numerador de una fracción?', o: ['En cuántas partes se divide el entero', 'Cuántas partes se toman del entero', 'El resultado de una suma', 'El nombre de la fracción'], a: 1 },
     { etapa: 7, q: '¿Cuál fracción es equivalente a 0.75?', o: ['7/5', '1/4', '7/10', '3/4'], a: 3 },
     { etapa: 8, q: '¿A qué división entera equivale 1.5 ÷ 0.3?', o: ['150 ÷ 3', '15 ÷ 30', '15 ÷ 3'], a: 2 },
+    { etapa: 9, q: '¿Cuánto es 23 × 4?', o: ['82', '92', '812', '96'], a: 1 },
   ],
   forma: [
     { etapa: 1, q: '¿Cuánto mide un ángulo recto?', o: ['45°', '90°', '180°', '360°'], a: 1 },
     { etapa: 1, q: '¿Qué hace la bisectriz de un ángulo?', o: ['Lo elimina', 'Lo duplica', 'Lo divide en dos partes iguales', 'Lo convierte en recto'], a: 2 },
     { etapa: 2, q: '¿Cuál es la fórmula para calcular el área de un círculo?', o: ['A = π · d', 'A = π · r²', 'A = (P · a) / 2', 'A = 2 · π · r'], a: 1 },
-    { etapa: 2, q: '¿Qué es la apotema de un polígono regular?', o: ['El lado más largo', 'La distancia de vértice a vértice', 'Distancia del centro al punto medio del lado', 'La suma de todos los lados'], a: 2 },
+    { etapa: 3, q: '¿Cómo se llama un ángulo que mide 130°?', o: ['Agudo', 'Recto', 'Obtuso', 'Llano'], a: 2 },
+    { etapa: 4, q: '¿Cuál es el área de un rectángulo de 6 × 4?', o: ['20 cm²', '24 cm²', '10 cm²', '48 cm²'], a: 1 },
+    { etapa: 5, q: '¿Cuál es la fórmula del área de un polígono regular?', o: ['lado × lado', 'base × altura', '(P × apotema) ÷ 2', '4 × lado'], a: 2 },
   ],
   palabra: [
     { etapa: 1, q: '¿Qué es un sustantivo?', o: ['Palabra que indica acción', 'Palabra que nombra seres y cosas', 'Palabra que describe cualidades', 'Palabra que une oraciones'], a: 1 },

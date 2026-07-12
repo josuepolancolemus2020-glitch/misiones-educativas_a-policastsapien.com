@@ -38,6 +38,10 @@ const MISSIONS = [
   { id: 26, title: 'Teoría de Números: Divisibilidad, m.c.m. y M.C.D.', subject: 'matemáticas', color: 'mat', grade: 'II Ciclo', cycle: '2ciclo', ruta: 'numero', etapa: 3, xp: 30, icon: '🕵️', pais: 'HN', url: 'misiones/2ciclo-teoria-numeros/teoria-numeros.html' },
   { id: 27, title: 'Recta Numérica, Suma y Resta',                       subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'numero',  etapa: 2, xp: 30, icon: '📏', pais: 'HN', url: 'misiones/2ciclo-recta-numerica/recta-numerica.html' },
   { id: 28, title: 'Múltiplos, Divisores y Primos',                      subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'numero',  etapa: 4, xp: 30, icon: '🧮', pais: 'HN', url: 'misiones/2ciclo-multiplos-divisores-primos/multiplos-divisores-primos.html' },
+  { id: 29, title: 'Ángulos: Tipos y Transportador',                     subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'forma',   etapa: 3, xp: 30, icon: '📐', pais: 'HN', url: 'misiones/2ciclo-angulos-basicos/angulos-basicos.html' },
+  { id: 30, title: 'Multiplicación Vertical',                            subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'numero',  etapa: 9, xp: 30, icon: '✖️', pais: 'HN', url: 'misiones/2ciclo-multiplicacion-vertical/multiplicacion-vertical.html' },
+  { id: 31, title: 'Perímetro y Área de Cuadriláteros',                  subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'forma',   etapa: 4, xp: 30, icon: '🔲', pais: 'HN', url: 'misiones/2ciclo-perimetro-cuadrilateros/perimetro-cuadrilateros.html' },
+  { id: 32, title: 'Área de Polígonos Regulares',                        subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'forma',   etapa: 5, xp: 30, icon: '🔷', pais: 'HN', url: 'misiones/2ciclo-area-poligonos-regulares/area-poligonos-regulares.html' },
 ];
 
 /* Helpers de rutas (globales: index los usa en app.js) */
