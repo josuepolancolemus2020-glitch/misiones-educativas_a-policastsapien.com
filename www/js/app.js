@@ -1278,11 +1278,14 @@ function renderProfile() {
             🔑 ¿Ya tienes código? Entrar
           </button>
         </div>
-        <div id="doc-recuperar-form" style="display:none;margin-top:10px;">
+        <div id="doc-recuperar-form" style="display:none;margin-top:10px;border-top:1px solid #e0e0e0;padding-top:12px;">
+          <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">Ingresa los datos que recibiste al suscribirte:</p>
+          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">👤 TU CÓDIGO DE DOCENTE</label>
           <input id="doc-rec-codigo" class="pa-inp-field" maxlength="12" autocomplete="off"
-                 placeholder="Tu código (ej: PROF-AB2C)" style="margin-bottom:8px;text-transform:uppercase;">
+                 placeholder="Ej: PROF-AB2C" style="margin-bottom:10px;text-transform:uppercase;">
+          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">🔒 TU CLAVE SECRETA</label>
           <input id="doc-rec-clave" class="pa-inp-field" type="password" maxlength="20" autocomplete="off"
-                 placeholder="Tu clave secreta" style="margin-bottom:12px;">
+                 placeholder="La clave que guardaste" style="margin-bottom:14px;">
           <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar con mi código</button>
         </div>
       </div>`;
