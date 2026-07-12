@@ -1349,6 +1349,7 @@ function renderProfile() {
       </div>
       <button class="padre-wa-btn" style="margin-top:12px;" onclick="docenteCompartir()">📤 Guardar mis llaves en WhatsApp</button>
       <button class="padre-wa-cambiar" onclick="docenteCambiarClave()">✏️ Cambiar mi clave secreta</button>
+      <button class="padre-wa-cambiar" style="color:#c0392b;border-color:#c0392b;margin-top:6px;" onclick="docenteCerrarSesion()">🚪 Cerrar sesión</button>
     </div>`;
 }
 
@@ -1426,6 +1427,14 @@ async function docenteCompartir() {
   window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
 }
 window.docenteCompartir = docenteCompartir;
+
+function docenteCerrarSesion() {
+  _docenteSave(null);
+  try { localStorage.removeItem(DOCENTE_KEY); } catch (_) {}
+  renderProfile();
+  toast('Sesión cerrada');
+}
+window.docenteCerrarSesion = docenteCerrarSesion;
 
 async function docenteCambiarClave() {
   const d = _docenteCfg();
