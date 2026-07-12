@@ -1223,23 +1223,24 @@ function docenteMostrarRecuperar() {
 }
 
 async function docenteRecuperar() {
-  const rawCod = (document.getElementById('doc-rec-codigo')?.value || '').trim().toUpperCase().replace(/\s/g, '');
+  const nombre = (document.getElementById('doc-rec-nombre')?.value || '').trim();
   const clave  = (document.getElementById('doc-rec-clave')?.value || '').trim();
-  if (!rawCod || !clave) { toast('Escribe tu código y tu clave'); return; }
+  if (!nombre || !clave) { toast('Escribe tu nombre y tu clave'); return; }
   toast('⏳ Verificando…');
   const { url, key } = _padreSbCfg();
   try {
     const r = await fetch(url + '/rest/v1/rpc/metas_recuperar_docente', {
       method: 'POST',
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_codigo: rawCod, p_clave: clave }),
+      body: JSON.stringify({ p_nombre: nombre, p_clave: clave }),
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const filas = await r.json();
-    if (!filas.length) { toast('❌ Código o clave incorrectos'); return; }
-    _docenteSave({ codigo: rawCod, clave, nombre: filas[0].nombre || '', contacto: filas[0].contacto || '', t: new Date().toISOString() });
+    if (!filas.length) { toast('❌ Nombre o clave incorrectos'); return; }
+    const f = filas[0];
+    _docenteSave({ codigo: f.codigo, clave, nombre: f.nombre || nombre, contacto: f.contacto || '', t: new Date().toISOString() });
     renderProfile();
-    toast('✅ ¡Bienvenido de vuelta!');
+    toast('✅ ¡Bienvenido de vuelta, ' + (f.nombre || nombre).split(' ')[0] + '!');
   } catch (e) {
     toast('⚠️ ' + e.message);
   }
@@ -1279,14 +1280,14 @@ function renderProfile() {
           </button>
         </div>
         <div id="doc-recuperar-form" style="display:none;margin-top:10px;border-top:1px solid #e0e0e0;padding-top:12px;">
-          <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">Ingresa los datos que recibiste al suscribirte:</p>
-          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">👤 TU CÓDIGO DE DOCENTE</label>
-          <input id="doc-rec-codigo" class="pa-inp-field" maxlength="12" autocomplete="off"
-                 placeholder="Ej: PROF-AB2C" style="margin-bottom:10px;text-transform:uppercase;">
+          <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">Escribe como te registraste:</p>
+          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">👤 TU NOMBRE</label>
+          <input id="doc-rec-nombre" class="pa-inp-field" maxlength="60" autocomplete="name"
+                 placeholder="Ej: Prof. Ana Díaz" style="margin-bottom:10px;">
           <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">🔒 TU CLAVE SECRETA</label>
           <input id="doc-rec-clave" class="pa-inp-field" type="password" maxlength="20" autocomplete="off"
                  placeholder="La clave que guardaste" style="margin-bottom:14px;">
-          <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar con mi código</button>
+          <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar con mi nombre</button>
         </div>
       </div>`;
     return;
