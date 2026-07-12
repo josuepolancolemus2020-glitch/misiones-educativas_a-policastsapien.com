@@ -1132,6 +1132,9 @@ function renderPadre() {
         <button class="padre-wa-btn" onclick="padreConsultarNube()">Consultar</button>
       </div>
       <div id="padre-nube-out"></div>
+      <a class="padre-wa-btn padre-asistente-btn" href="padres.html">🤖 Abrir el asistente de padres</a>
+      <p class="padre-hint padre-asistente-hint">El asistente responde preguntas como
+        «¿cómo va?», «¿qué sacó?» y «¿cómo lo ayudo en casa?» con la misma clave.</p>
     </div>`;
 
   const avisoHTML = `

@@ -880,9 +880,9 @@ ${filas.map(f => `
     <div class="t1">🔑 M.E.T.A.S — Clave de la familia</div>
     <div class="t2">Alumno/a <strong>#${f.num}</strong> · ${grupoTxt}${f.nombre ? ' · ' + paEsc(f.nombre) : ''}</div>
     <div class="cod">${paCodigoBonito(f.codigo)}</div>
-    <div class="t3">📱 En cualquier teléfono con internet entre a:<br><strong>${PA_SITE}</strong><br>
-    Toque la tarjeta verde <strong>«Para madres y padres»</strong>, escriba esta clave y toque <strong>Consultar</strong>.
-    Guárdela como una llave: es solo para su familia.</div>
+    <div class="t3">📱 En cualquier teléfono con internet entre a:<br><strong>${PA_SITE}padres.html</strong><br>
+    El 🤖 asistente le pedirá esta clave y le contará cómo va su hijo/a: notas, mensajes del maestro
+    y cómo apoyar en casa. Guárdela como una llave: es solo para su familia.</div>
   </div>`).join('')}
 </div>
 </body></html>`;
