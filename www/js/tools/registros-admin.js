@@ -225,7 +225,7 @@ function adRenderEco(body, d) {
     if (monto === null) return;
     const dd = adLoad();
     dd.colectas.push({
-      id: 'C' + Date.now().toString(36),
+      id: 'C' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
       concepto: String(concepto).trim(),
       montoAlumno: Number(String(monto).replace(',', '.')),
       fecha: adHoy(), pagos: {}, gastos: [],
@@ -677,10 +677,12 @@ function adMateriaSlug(m) {
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24);
 }
 
-/* Filas actuales que deberían existir en la nube */
+/* Filas actuales que deberían existir en la nube.
+   El evento_id lleva la CLAVE DE FAMILIA (única entre maestros gracias
+   a sus 4 letras aleatorias) — nunca grado+número, que se repetiría
+   entre las aulas «6A #15» de mil maestros suscritos y pisaría datos. */
 function adFilasNube(d) {
   if (typeof paCodigoAlumno !== 'function') return [];
-  const gs = (String(d.grado).replace(/\D/g, '') || 'X') + (String(d.seccion).trim().slice(-1).toUpperCase() || 'X');
   const doc = adDocenteTxt();
   const base = { grado: d.grado || '', seccion: d.seccion || '', docente: doc };
   const cod = {};
@@ -690,7 +692,7 @@ function adFilasNube(d) {
   d.asistencia.forEach(r => Object.keys(r.aus || {}).forEach(num => {
     if (!cod[num]) return;
     filas.push(Object.assign({
-      evento_id: 'ADA-' + r.f + '-' + gs + '-' + num, codigo: cod[num],
+      evento_id: 'ADA-' + r.f + '-' + cod[num], codigo: cod[num],
       tipo: 'asistencia', fecha: r.f,
       estado: r.aus[num] === 'A' ? 'ausente' : 'excusa',
     }, base));
@@ -701,7 +703,7 @@ function adFilasNube(d) {
       Object.keys(d.notas[parcial][materia] || {}).forEach(num => {
         if (!cod[num]) return;
         filas.push(Object.assign({
-          evento_id: 'ADN-' + parcial + '-' + adMateriaSlug(materia) + '-' + gs + '-' + num,
+          evento_id: 'ADN-' + parcial + '-' + adMateriaSlug(materia) + '-' + cod[num],
           codigo: cod[num], tipo: 'nota_final',
           parcial, materia, nota: d.notas[parcial][materia][num],
         }, base));
@@ -711,7 +713,7 @@ function adFilasNube(d) {
     if (!cod[a.num]) return;
     const pagado = c.pagos && c.pagos[a.num] != null;
     filas.push(Object.assign({
-      evento_id: 'ADE-' + c.id + '-' + a.num, codigo: cod[a.num],
+      evento_id: 'ADE-' + c.id + '-' + cod[a.num], codigo: cod[a.num],
       tipo: 'economia', fecha: c.fecha, concepto: c.concepto,
       monto: pagado ? c.pagos[a.num] : c.montoAlumno,
       estado: pagado ? 'pago' : 'pendiente',
