@@ -268,11 +268,12 @@ function notaCardHTML(r) {
   const val = esNSP ? 'NSP' : (r.nota == null ? '—' : r.nota + '/' + (r.base || 100));
   const ok = p !== null && p >= 70;
   const formaTxt = (r.forma && !String(r.evaluacion || '').includes('Forma')) ? ' · Forma ' + esc(r.forma) : '';
+  const parcialTxt = r.parcial ? ' · Parcial ' + esc(r.parcial) : '';
   const f = fmtFecha(r.fecha);
   return '<div class="nota-card">' +
     '<div class="nc-top"><span class="nc-eval">' + esc(r.evaluacion || 'Evaluación') + '</span>' +
     '<span class="nc-val ' + (esNSP || !ok ? 'baja' : 'ok') + '">' + val + (ok ? ' ✔' : '') + '</span></div>' +
-    '<div class="nc-meta">' + esc(r.categoria || '') + formaTxt + (f ? ' · ' + f : '') +
+    '<div class="nc-meta">' + esc(r.categoria || '') + parcialTxt + formaTxt + (f ? ' · ' + f : '') +
     (r.docente ? ' · ' + esc(r.docente) : '') + '</div></div>';
 }
 function msjMaestroHTML(r) {

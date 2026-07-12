@@ -1077,13 +1077,14 @@ function renderPadre() {
         const aprobo = !esNSP && typeof st.nota === 'number' && st.nota >= 70;
         const formaTxt = (a.forma && !String(a.evaluacion || '').includes('Forma'))
           ? ' · Forma ' + _pEsc(a.forma) : '';
+        const parcialTxt = a.parcial ? ' · Parcial ' + _pEsc(a.parcial) : '';
         return `
         <div class="padre-nota">
           <div class="padre-nota-top">
             <strong>${_pEsc(a.evaluacion || 'Evaluación')}</strong>
             <span class="padre-nota-val ${aprobo ? 'ok' : 'baja'}">${esNSP ? 'NSP' : _pEsc(st.nota) + '/100'}</span>
           </div>
-          <div class="padre-nota-meta">${_pEsc(st.categoria || '')}${formaTxt}${f ? ' · ' + f : ''}</div>
+          <div class="padre-nota-meta">${_pEsc(st.categoria || '')}${parcialTxt}${formaTxt}${f ? ' · ' + f : ''}</div>
         </div>`;
       }).join('')}
       ${filasPA[0].st.msg ? `<div class="padre-msg">💬 <em>Mensaje del maestro:</em><br>${_pEsc(filasPA[0].st.msg)}</div>` : ''}
@@ -1175,6 +1176,7 @@ async function padreConsultarNube() {
       const aprobo = !esNSP && typeof row.nota === 'number' && row.nota >= 70;
       const formaTxt = (row.forma && !String(row.evaluacion || '').includes('Forma'))
         ? ' · Forma ' + _pEsc(row.forma) : '';
+      const parcialTxt = row.parcial ? ' · Parcial ' + _pEsc(row.parcial) : '';
       const f = String(row.fecha || '').slice(0, 10);
       return `
         <div class="padre-nota">
@@ -1182,7 +1184,7 @@ async function padreConsultarNube() {
             <strong>${_pEsc(row.evaluacion || 'Evaluación')}</strong>
             <span class="padre-nota-val ${aprobo ? 'ok' : 'baja'}">${nota}</span>
           </div>
-          <div class="padre-nota-meta">${_pEsc(row.categoria || '')}${formaTxt}${f ? ' · ' + f : ''}${row.docente ? ' · ' + _pEsc(row.docente) : ''}</div>
+          <div class="padre-nota-meta">${_pEsc(row.categoria || '')}${parcialTxt}${formaTxt}${f ? ' · ' + f : ''}${row.docente ? ' · ' + _pEsc(row.docente) : ''}</div>
         </div>`;
     }).join('') +
     (rows[0].mensaje ? `<div class="padre-msg">💬 <em>Mensaje del maestro:</em><br>${_pEsc(rows[0].mensaje)}</div>` : '');

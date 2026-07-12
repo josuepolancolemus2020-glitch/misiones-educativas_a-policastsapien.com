@@ -78,6 +78,7 @@ function paGenerate() {
   const seccion   = document.getElementById('pa-seccion')?.value  || '—';
   const docente   = document.getElementById('pa-docente')?.value  || '—';
   const evaluacion= document.getElementById('pa-evaluacion')?.value || 'Evaluación';
+  const parcial   = document.getElementById('pa-parcial')?.value  || '';
 
   const avgColor = avg >= 70 ? '#16a34a' : avg >= 60 ? '#d97706' : '#dc2626';
 
@@ -98,11 +99,12 @@ function paGenerate() {
     <div class="pa-dash-head">
       <div>
         <div class="pa-dash-title">ANÁLISIS Y PLAN DE ACCIÓN</div>
-        <div class="pa-dash-sub">📌 ${evaluacion}</div>
+        <div class="pa-dash-sub">📌 ${evaluacion}${parcial ? ' · Parcial ' + parcial : ''}</div>
       </div>
       <div class="pa-dash-meta">
         <span><b>Grado:</b> ${grado}</span>
         <span><b>Sección:</b> ${seccion}</span>
+        ${parcial ? `<span><b>Parcial:</b> ${parcial}</span>` : ''}
         <span><b>Docente:</b> ${docente}</span>
       </div>
     </div>
@@ -215,7 +217,7 @@ function paGenerate() {
   const misionId = parseInt(document.getElementById('pa-mision')?.value, 10) || null;
   const formaEv  = document.getElementById('pa-forma')?.value || '';
   const tipoEval = document.getElementById('pa-tipo')?.value || 'conceptual';
-  paPersistCurrent(students, { grado, seccion, docente, evaluacion, misionId, forma: formaEv, tipoEval });
+  paPersistCurrent(students, { grado, seccion, docente, evaluacion, misionId, forma: formaEv, tipoEval, parcial });
   paRenderPadres();
   paRenderHistorial();
   paSyncRefresh();
@@ -244,6 +246,7 @@ function paPrint() {
   const seccion    = document.getElementById('pa-seccion')?.value   || '—';
   const docente    = document.getElementById('pa-docente')?.value   || '—';
   const evaluacion = document.getElementById('pa-evaluacion')?.value || 'Evaluación';
+  const parcial    = document.getElementById('pa-parcial')?.value   || '';
   const fecha      = new Date().toLocaleDateString('es-HN', { year:'numeric', month:'long', day:'numeric' });
 
   const avgColor   = avg >= 70 ? '#16a34a' : avg >= 60 ? '#d97706' : '#dc2626';
@@ -297,7 +300,7 @@ tbody tr:nth-child(even){background:#f8fafc;}
 
 <div class="head">
   <div class="head-title">ANÁLISIS Y PLAN DE ACCIÓN</div>
-  <div class="head-sub">📌 ${evaluacion}</div>
+  <div class="head-sub">📌 ${evaluacion}${parcial ? ' · Parcial ' + parcial : ''}</div>
   <div class="head-meta">
     <span><b>Grado:</b> ${grado}</span><span><b>Sección:</b> ${seccion}</span>
     <span><b>Docente:</b> ${docente}</span><span><b>Fecha:</b> ${fecha}</span>
@@ -583,7 +586,7 @@ function paRenderHistorial() {
     return `
       <div class="pa-hist-row">
         <div class="pa-hist-info">
-          <span class="pa-hist-titulo">${paEsc(a.evaluacion || 'Evaluación')}</span>
+          <span class="pa-hist-titulo">${paEsc(a.evaluacion || 'Evaluación')}${a.parcial ? ' · P-' + paEsc(a.parcial) : ''}</span>
           <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(a.grado || '')} ${paEsc(a.seccion || '')} · ${a.students.length} alumnos · prom. ${avg}${pend ? ` · ⏳ ${pend} sin enviar` : ' · ☁️'}</span>
         </div>
         <button class="pa-hist-abrir" data-id="${a.id}">Abrir</button>
@@ -614,8 +617,16 @@ function paAbrirAnalisis(id) {
   set('pa-grado', a.grado); set('pa-seccion', a.seccion);
   set('pa-docente', a.docente); set('pa-evaluacion', a.evaluacion);
   paPoblarMisiones(); // por si el historial se abre antes de entrar a la vista
+  /* la materia del análisis manda el filtro para que su misión aparezca */
+  let materiaA = '';
+  if (a.misionId && typeof MISSIONS !== 'undefined') {
+    const m = MISSIONS.find(x => x.id === a.misionId);
+    if (m) materiaA = m.subject || '';
+  }
+  set('pa-materia', materiaA);
+  paFiltrarMisiones(materiaA, a.misionId || '');
   set('pa-mision', a.misionId || ''); set('pa-forma', a.forma || '');
-  set('pa-tipo', a.tipoEval || 'conceptual');
+  set('pa-tipo', a.tipoEval || 'conceptual'); set('pa-parcial', a.parcial || '');
   const list = document.getElementById('pa-students-list');
   if (list) {
     list.innerHTML = '';
@@ -652,7 +663,7 @@ function paEventosPendientes(d) {
       id: 'PA-' + a.id + '-' + s.num + '-' + String(s.nota),
       t: a.t, tipo: 'plan_accion',
       evaluacion: a.evaluacion || '', mision: misionCanon,
-      forma: a.forma || '',
+      forma: a.forma || '', parcial: a.parcial || '',
       grado: ((a.grado || '') + ' ' + (a.seccion || '')).trim(), seccion: a.seccion || '',
       docente: a.docente || '',
       codigo: s.num, alumno: s.nombre,
@@ -746,20 +757,7 @@ async function paProbarConexion() {
    el nombre se autollena y el análisis guarda misionId/forma/tipoEval
    para que la vista Padre cruce la nota con la evaluación precisa. */
 function paPoblarMisiones() {
-  const sel = document.getElementById('pa-mision');
-  if (!sel || sel.options.length > 1 || typeof MISSIONS === 'undefined') return;
-  [['español', '📖 Español'], ['matemáticas', '🔢 Matemáticas'],
-   ['naturales', '🌱 C. Naturales'], ['sociales', '🌎 C. Sociales']].forEach(([key, label]) => {
-    const og = document.createElement('optgroup');
-    og.label = label;
-    MISSIONS.filter(m => m.subject === key).forEach(m => {
-      const op = document.createElement('option');
-      op.value = m.id;
-      op.textContent = m.title;
-      og.appendChild(op);
-    });
-    sel.appendChild(og);
-  });
+  paFiltrarMisiones(document.getElementById('pa-materia')?.value || '');
   const sf = document.getElementById('pa-forma');
   if (sf && sf.options.length <= 1) {
     for (let i = 1; i <= 30; i++) {
@@ -769,6 +767,26 @@ function paPoblarMisiones() {
       sf.appendChild(o);
     }
   }
+}
+
+/* El listado de evaluaciones se filtra por materia: con 28 misiones ya
+   era largo y con 200 sería inmanejable. Sin materia elegida solo queda
+   «Otra evaluación» (escribir a mano sigue siendo posible siempre). */
+function paFiltrarMisiones(materia, valorMantener) {
+  const sel = document.getElementById('pa-mision');
+  if (!sel || typeof MISSIONS === 'undefined') return;
+  const actual = valorMantener != null ? String(valorMantener) : sel.value;
+  sel.innerHTML = '<option value="">✏️ Otra evaluación (escribir el nombre abajo)</option>';
+  if (materia) {
+    MISSIONS.filter(m => m.subject === materia).forEach(m => {
+      const op = document.createElement('option');
+      op.value = m.id;
+      op.textContent = m.title;
+      sel.appendChild(op);
+    });
+  }
+  /* conservar la selección si sigue disponible en el filtro nuevo */
+  if (actual && [...sel.options].some(o => String(o.value) === actual)) sel.value = actual;
 }
 
 function paAutoNombre() {
@@ -907,7 +925,7 @@ function paSbPendientes(d) {
       num: String(s.num || ''), alumno: s.nombre || '',
       grado: a.grado || '', seccion: a.seccion || '', docente: a.docente || '',
       evaluacion: a.evaluacion || '', mision: paMisionCanon(a),
-      forma: String(a.forma || ''), tipo: a.tipoEval || '',
+      forma: String(a.forma || ''), tipo: a.tipoEval || '', parcial: a.parcial || '',
       nota: (typeof s.nota === 'number') ? s.nota : '', base: 100,
       nsp: s.nota === 'NSP',
       categoria: s.categoria || '', mensaje: s.msg || '',
@@ -1100,6 +1118,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Selector de evaluación del banco: autollenar el nombre al cambiar
   ['pa-mision', 'pa-forma', 'pa-tipo'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', paAutoNombre);
+  });
+  // Filtro por materia: repobla el listado de evaluaciones
+  document.getElementById('pa-materia')?.addEventListener('change', e => {
+    paFiltrarMisiones(e.target.value);
+    paAutoNombre();
   });
 
   // Claves de familia: tiras imprimibles para entregar a cada padre

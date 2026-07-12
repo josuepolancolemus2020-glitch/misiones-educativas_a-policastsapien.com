@@ -3430,3 +3430,6 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   cursor: pointer;
 }
 .doc-ver-btn:active { transform: scale(.95); }
+
+/* Fila de 3 campos (Forma · Parcial · Tipo) del Plan de Acción */
+.pa-row-3 { grid-template-columns: 1fr 1fr 1fr; }
