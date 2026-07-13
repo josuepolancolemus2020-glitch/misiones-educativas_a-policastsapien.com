@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada: Recta Numérica, Suma y Resta* 🚀\n\nUbica puntos en la recta numérica y resuelve problemas de adición y sustracción de números cardinales. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada: Recta Numérica, Suma y Resta* 🚀\n\nUbica puntos en la recta numérica y resuelve problemas de adición y sustracción de números cardinales. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 

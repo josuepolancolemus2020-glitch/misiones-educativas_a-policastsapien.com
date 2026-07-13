@@ -2,7 +2,7 @@
 function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);window.open(esMovil?'https://wa.me/?text='+enc:'https://web.whatsapp.com/send?text='+enc,'_blank');}
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada: Área de Polígonos Regulares* 🚀\n\nAprende a calcular el área de hexágonos y pentágonos regulares usando el perímetro y la apotema: A = (P × apotema) ÷ 2. 🔷\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada: Área de Polígonos Regulares* 🚀\n\nAprende a calcular el área de hexágonos y pentágonos regulares usando el perímetro y la apotema: A = (P × apotema) ÷ 2. 🔷\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 

@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada: Teoría de Números — Divisibilidad, m.c.m. y M.C.D.* 🚀\n\nDescubre las reglas de divisibilidad (2, 3, 5, 9, 10 y 11) y domina el Mínimo Común Múltiplo y el Máximo Común Divisor con juegos. 🏆\n\nDesbloquea *todos los logros* y envía a tu maestro la *constancia de logro* cuando hayas culminado. 📋\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada: Teoría de Números — Divisibilidad, m.c.m. y M.C.D.* 🚀\n\nDescubre las reglas de divisibilidad (2, 3, 5, 9, 10 y 11) y domina el Mínimo Común Múltiplo y el Máximo Común Divisor con juegos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
