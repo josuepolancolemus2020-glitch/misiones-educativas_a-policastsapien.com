@@ -220,6 +220,10 @@ function renderAdmin() {
       <button class="pa-otab ${_adTab === 'asis'  ? 'pa-otab-active' : ''}" data-adtab="asis">📋 Asistencia</button>
       <button class="pa-otab ${_adTab === 'sace'  ? 'pa-otab-active' : ''}" data-adtab="sace">🧮 Notas SACE</button>
       <button class="pa-otab ${_adTab === 'com'   ? 'pa-otab-active' : ''}" data-adtab="com">📣 Comunicados</button>
+      <button class="pa-otab" id="ad-nube-chip" title="Nube del chatbot de padres — toca para sincronizar ahora">${(() => {
+        const n = adPendientesTotal();
+        return n ? '⏳ ' + n + ' por subir' : '☁️ al día';
+      })()}</button>
     </div>
     <div id="ad-tab-body"></div>`;
   cont.querySelectorAll('[data-gid]').forEach(b =>
@@ -238,6 +242,13 @@ function renderAdmin() {
   });
   cont.querySelectorAll('[data-adtab]').forEach(b =>
     b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; renderAdmin(); }));
+  /* chip de nube: visible en TODAS las pestañas (antes solo en Alumnos
+     se sabía si lo publicado ya subió); tocarlo sincroniza ya */
+  document.getElementById('ad-nube-chip').addEventListener('click', async () => {
+    await adSincronizarNube(true);
+    const chip = document.getElementById('ad-nube-chip');
+    if (chip) { const n = adPendientesTotal(); chip.textContent = n ? '⏳ ' + n + ' por subir' : '☁️ al día'; }
+  });
   const body = document.getElementById('ad-tab-body');
   if (_adTab === 'lista') adRenderLista(body, d);
   else if (_adTab === 'eco') adRenderEco(body, d);
@@ -1946,6 +1957,24 @@ function adFilaAnulada(eventoId, guardado) {
 function adSyncProgramar() {
   clearTimeout(_adSyncT);
   _adSyncT = setTimeout(() => adSincronizarNube(false), 4000);
+}
+
+/* Cambios que aún no llegan a la nube (registros + comunicados) — para
+   el chip de estado visible junto a las pestañas de Mi aula */
+function adPendientesTotal() {
+  try {
+    const st = adState();
+    let n = 0;
+    const fa = adFilasNube(st), ma = adSbMapLoad();
+    n += fa.filter(f => !ma[f.evento_id] || ma[f.evento_id].f !== adFirma(f)).length;
+    const act1 = new Set(fa.map(f => f.evento_id));
+    Object.keys(ma).forEach(id => { if (!act1.has(id) && !ma[id].x) n++; });
+    const fv = avFilasNube(st), mv = avSbMapLoad();
+    n += fv.filter(f => !mv[f.evento_id] || mv[f.evento_id].f !== avFirma(f)).length;
+    const act2 = new Set(fv.map(f => f.evento_id));
+    Object.keys(mv).forEach(id => { if (!act2.has(id) && !mv[id].x) n++; });
+    return n;
+  } catch (_) { return 0; }
 }
 
 async function adSincronizarNube(manual) {

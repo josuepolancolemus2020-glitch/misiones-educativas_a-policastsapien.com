@@ -551,6 +551,7 @@ function paRenderPadres() {
         if (!s) return;
         s.msg = ta.value; s.msgEdit = true; s.env = 0;
         paSaveData(dd);
+        paNubeProgramar();   /* el mensaje corregido llega solo al chatbot */
       }, 400);
     });
   });
@@ -964,6 +965,13 @@ function paSbPendientes(d) {
 }
 
 let _paSbBusy = false;
+/* Editar un mensaje ya publicado también debe llegar a la nube: mismo
+   auto-publish con calma (4 s) que usa Mi aula (adSyncProgramar) */
+let _paNubeT = null;
+function paNubeProgramar() {
+  clearTimeout(_paNubeT);
+  _paNubeT = setTimeout(() => paSincronizarNube(false), 4000);
+}
 async function paSincronizarNube(manual) {
   if (_paSbBusy) return;
   const st = document.getElementById('pa-sb-status');

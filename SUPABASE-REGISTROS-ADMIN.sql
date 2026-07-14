@@ -93,6 +93,8 @@ revoke all on function public.metas_guardar_admin(jsonb) from public;
 grant execute on function public.metas_guardar_admin(jsonb) to anon, authenticated;
 
 -- Consulta del padre/chatbot por clave de familia
+-- (14 jul 2026: limit 150 → 400 para que las faltas de fin de año no
+--  se trunquen; si ya lo habías corrido, vuelve a correr este archivo)
 create or replace function public.metas_consultar_admin_padre(p_codigo text)
 returns table (
   tipo text, fecha date, estado text,
@@ -108,7 +110,7 @@ as $$
   where length(regexp_replace(coalesce(p_codigo,''), '\s', '', 'g')) >= 2
     and codigo = upper(regexp_replace(coalesce(p_codigo,''), '\s', '', 'g'))
   order by actualizado_en desc
-  limit 150
+  limit 400
 $$;
 revoke all on function public.metas_consultar_admin_padre(text) from public;
 grant execute on function public.metas_consultar_admin_padre(text) to anon, authenticated;
