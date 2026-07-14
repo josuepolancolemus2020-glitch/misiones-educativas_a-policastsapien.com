@@ -12,6 +12,7 @@
   <meta property="og:type" content="website">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
   <link rel="apple-touch-icon" href="img/icon-192.png">
+  <link rel="manifest" href="manifest-padres.json">
   <style>
     :root {
       --verde: #14833b;
@@ -827,7 +828,7 @@ async function usarClave(codigo) {
   ROWS = null;
   await botSay('🔑 Clave <strong>' + esc(claveBonita(codigo)) + '</strong> guardada. Consultando la nube…');
   const st = await consultar(codigo);
-  if (st === 'ok' || st === 'cache') { await respResumen(); return; }
+  if (st === 'ok' || st === 'cache') { await respResumen(); await sugerirInstalar(); return; }
   if (st === 'vacio') {
     await botSay('La clave quedó guardada, pero <strong>aún no hay notas</strong> para ella. ' +
       'Puede ser que el maestro no las haya subido todavía, o que un carácter esté equivocado — compare con la tira impresa. ' +
@@ -882,6 +883,17 @@ async function manejar(txtOriginal) {
   /* respuesta con número del menú (1-9) */
   if (/^[1-9]$/.test(t)) { await MENU_NUM[+t - 1](t); return; }
 
+  if (/instalar|pantalla de inicio|dejar como app/.test(t)) {
+    if (_pwaPrompt) {
+      const p = _pwaPrompt; _pwaPrompt = null;
+      p.prompt();
+      await botSay('📲 Siga las instrucciones de su teléfono y el asistente quedará en su pantalla de inicio.', CHIPS_MENU);
+    } else {
+      await botSay('📲 En el menú del navegador (⋮) toque «<strong>Agregar a pantalla de inicio</strong>». ' +
+        'Si ya lo instaló, ¡no necesita nada más! 🤗', CHIPS_MENU);
+    }
+    return;
+  }
   if (/(cambiar|otra|nueva|borrar).*(clave|codigo)|cambiar clave/.test(t)) { await respCambiarClave(); return; }
   if (/(que es|donde|cual|como consigo|no tengo).*(clave|codigo)/.test(t) || t === 'clave' || t === 'codigo') { await respQueEsClave(); return; }
   if (/actualizar|refrescar|consultar|de nuevo|recargar/.test(t)) {
@@ -965,6 +977,30 @@ async function manejar(txtOriginal) {
   }
 }
 
+/* ── PWA: instalable y abre sin señal (mismo sw.js del index) ── */
+let _pwaPrompt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); _pwaPrompt = e; });
+if ('serviceWorker' in navigator) {
+  try { navigator.serviceWorker.register('sw.js'); } catch (_) {}
+}
+/* Tras la primera consulta con éxito se sugiere UNA vez dejar el
+   asistente como app en la pantalla de inicio */
+async function sugerirInstalar() {
+  try {
+    if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return;
+  } catch (_) {}
+  const c = cfgLoad();
+  if (c.pwaHint) return;
+  c.pwaHint = 1; cfgSave(c);
+  if (_pwaPrompt) {
+    await botSay('📲 ¿Quiere dejar este asistente como una <strong>app</strong> en su teléfono, ' +
+      'para abrirlo con un toque? Toque el botón:', ['📲 Instalar el asistente'].concat(CHIPS_MENU));
+  } else {
+    await botSay('📲 <strong>Consejo:</strong> en el menú del navegador (⋮) toque ' +
+      '«<strong>Agregar a pantalla de inicio</strong>» y este asistente le quedará como una app.', CHIPS_MENU);
+  }
+}
+
 /* ── envío ── */
 function enviar() {
   const v = $inp.value.trim();
@@ -984,7 +1020,7 @@ $inp.addEventListener('keydown', e => { if (e.key === 'Enter') enviar(); });
   if (codigo) {
     await botSay('Tengo guardada la clave <strong>' + esc(claveBonita(codigo)) + '</strong>. Consultando las notas…');
     const st = await consultar(codigo);
-    if (st === 'ok' || st === 'cache') { await respResumen(); }
+    if (st === 'ok' || st === 'cache') { await respResumen(); await sugerirInstalar(); }
     else if (st === 'vacio') {
       await botSay('Aún no hay notas para esa clave. Toque «🔄 Actualizar» más tarde, o cambie la clave si no es la correcta.',
         ['🔄 Actualizar', '🔑 Cambiar clave', '❓ ¿Qué es la clave?']);
