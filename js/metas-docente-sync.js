@@ -14,11 +14,11 @@
    • Al abrir la Zona Docente / al volver internet / con la app visible,
      baja lo más nuevo de la nube y repinta la vista activa.
    • Conflicto automático: gana el cambio más reciente (last-write-wins).
+     El maestro NO decide nada: la nube manda y todo converge solo.
    • Botón «🔄 Sincronizar ahora»: dispara una sync normal a pedido
      (tranquilidad del usuario; no fuerza nada).
-   • Reconciliación manual escondida (caso raro, un equipo con datos
-     viejos): «⬆️ Este equipo es el bueno» / «⬇️ La nube es la buena»
-     fuerzan la dirección elegida.
+   • «🗑️ Empezar de nuevo» (dsReset): único escape; borra el aula aquí
+     y sube el vacío a la nube para limpiar todos los equipos.
    • Offline-first: sin internet no pasa nada; reintenta al volver.
 
    Solo sincroniza las claves del maestro (abajo). NO toca los
@@ -269,54 +269,40 @@
     });
   }
 
-  /* Abre/cierra la caja discreta de arreglo (equipo con datos viejos). */
-  function mostrarArreglo(link) {
-    try {
-      var box = link && link.parentElement && link.parentElement.querySelector('.doc-sync-fix-box');
-      if (!box) return;
-      var abrir = box.style.display === 'none' || !box.style.display;
-      box.style.display = abrir ? 'block' : 'none';
-      link.textContent = abrir ? 'Ocultar' : '¿Un equipo con datos viejos?';
-    } catch (_) {}
-  }
-
-  /* ── Reconciliación manual (solo confirma; sin candado extra) ── */
-  function forcePush() {
+  /* ── Empezar de nuevo ──
+     Único escape que necesita el maestro: borra TODOS los datos del aula
+     (lista, claves de familia, Plan de Acción, economía, notas, torneo,
+     gobierno) para reiniciar. Los borra aquí y sube el vacío a la nube
+     (force) para que sus demás equipos también queden limpios. */
+  function reset() {
     if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
     var ask = (typeof metasConfirm === 'function')
-      ? metasConfirm('La nube y tus demás equipos usarán los datos de **ESTE equipo** (lista, economía, asistencia, notas, Plan de Acción…). ¿Es este el equipo con los datos buenos?',
-          { icono: '⬆️', titulo: 'Este equipo es el bueno', okTxt: 'Sí, usar este' })
+      ? metasConfirm('Vas a **borrar todos los datos de tu aula** (lista de alumnos, claves de familia, Plan de Acción, economía, notas…) para empezar de cero. También se borran de la nube y de tus otros equipos. **No se puede deshacer.**',
+          { icono: '🗑️', titulo: 'Empezar de nuevo', okTxt: 'Sí, borrar todo' })
       : Promise.resolve(true);
     Promise.resolve(ask).then(function (ok) {
       if (!ok) return;
-      estado('⏳ Subiendo todo…');
-      return push(true).then(function (r) {
-        if (typeof toast === 'function') toast(r ? '☁️ Este equipo quedó como la copia buena' : '⚠️ No se pudo subir ahora');
-        estado();
+      // borra local
+      DS_KEYS.forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} });
+      // reinicia el mapa de versiones con marca nueva (para pisar la nube)
+      var m = {}, t = ahora();
+      DS_KEYS.forEach(function (k) { m[k] = { v: t, h: hash(null), sv: 0 }; });
+      metaSave(m);
+      repaint();
+      // sube el vacío con force → los demás equipos se limpian al bajar
+      push(true).then(function (r) {
+        if (typeof toast === 'function') {
+          toast(r ? '🗑️ Aula vacía. Empieza de nuevo cuando quieras.'
+                  : '🗑️ Borrado aquí; la nube se limpiará al reconectar.');
+        }
       });
     });
   }
 
-  function forcePull() {
-    if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
-    var ask = (typeof metasConfirm === 'function')
-      ? metasConfirm('Los datos de la Zona Docente de **este equipo** se **reemplazarán** con los de la nube. Úsalo en el equipo que tiene datos viejos o de prueba. ¿Continuar?',
-          { icono: '⬇️', titulo: 'La nube es la buena', okTxt: 'Sí, traer la nube' })
-      : Promise.resolve(true);
-    Promise.resolve(ask).then(function (ok) {
-      if (!ok) return;
-      estado('⏳ Trayendo de la nube…');
-      return pull(true).then(function (r) {
-        if (typeof toast === 'function') toast(r && r.ok ? '⬇️ Este equipo quedó igual que la nube' : '⚠️ No se pudo traer ahora');
-        repaint(); estado();
-      });
-    });
-  }
-
-  /* Se llama desde renderProfile() cuando se muestra el panel del maestro */
+  /* Se llama desde renderProfile() cuando se muestra el panel del maestro.
+     Sincroniza en silencio: la nube manda, el maestro no decide nada. */
   function onProfile() {
     if (!creds()) return;
-    estado('☁️ Revisando la nube del aula…');
     sync();
   }
 
@@ -335,10 +321,8 @@
   document.addEventListener('visibilitychange', function () { if (!document.hidden && creds()) autoSync(); });
 
   /* API pública mínima */
-  window.dsForcePush = forcePush;
-  window.dsForcePull = forcePull;
   window.dsOnProfile = onProfile;
   window.dsSync = sync;
   window.dsSyncNow = syncNow;
-  window.dsMostrarArreglo = mostrarArreglo;
+  window.dsReset = reset;
 })();

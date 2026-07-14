@@ -1336,19 +1336,10 @@ function renderProfile() {
         <strong>${_pEsc(d.nombre || '')}</strong> — en el campo «Docente» al empezar una misión.
         Así su avance llega solo a tu cuenta.</div>
       <a class="doc-avance-btn" href="consulta-nube.html">📊 Ver el avance de mis alumnos</a>
-      <a class="doc-offline-link" href="registro.html">📴 ¿Sin internet? Mira lo trabajado en este equipo</a>
-      <div class="doc-sync-box">
-        <div class="doc-sync-status" id="doc-sync-status">☁️ Revisando la nube del aula…</div>
-        <button class="doc-sync-now" id="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
-        <a class="doc-sync-fix-link" onclick="dsMostrarArreglo(this)">¿Un equipo con datos viejos?</a>
-        <div class="doc-sync-fix-box" style="display:none;">
-          <p class="doc-sync-hint">Si un equipo (viejo o de prueba) tiene datos distintos, dime cuál es el bueno:</p>
-          <button class="doc-sync-btn" onclick="dsForcePush()">⬆️ Este equipo es el bueno</button>
-          <button class="doc-sync-btn" onclick="dsForcePull()">⬇️ La nube es la buena</button>
-        </div>
-      </div>
+      <button class="doc-sync-now" id="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
       <button class="padre-wa-cambiar" onclick="docenteCambiarClave()">✏️ Cambiar mi contraseña</button>
       <button class="padre-wa-cambiar" style="color:#c0392b;margin-top:6px;" onclick="docenteCerrarSesion()">🚪 Cerrar sesión</button>
+      <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
     </div>`;
   if (typeof dsOnProfile === 'function') dsOnProfile();
 }
