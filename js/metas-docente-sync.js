@@ -36,8 +36,10 @@
     'METAS_CAMP_V1',             // Campeonísimo (torneo)
     'METAS_CAMP_BANK_EXTRA_V1',  // banco de preguntas extra
     'METAS_CAMP_USED_V1',        // anti-repetición del torneo
-    'meta_ge_v2',                // Gobierno Escolar
-    'METAS_PIN_MAESTRO_V1'       // candado del maestro (mismo PIN en todo equipo)
+    'meta_ge_v2'                 // Gobierno Escolar
+    // OJO: METAS_PIN_MAESTRO_V1 NO se sincroniza a propósito. El candado
+    // es «de este teléfono»: sincronizarlo hacía que un equipo sin clave
+    // empezara a pedirla de la nada. Cada equipo maneja su propio candado.
   ];
 
   var META_KEY = 'METAS_DOCSYNC_V1';   // { [k]: {v:version, h:hash, sv:sentVersion} }
@@ -231,14 +233,7 @@
                           : '✅ Datos del aula sincronizados en todos tus equipos.';
   }
 
-  /* ── Reconciliación manual (detrás del candado del maestro) ── */
-  function guardar(fn, msg) {
-    if (typeof paVerificarPin === 'function') {
-      return Promise.resolve(paVerificarPin(msg)).then(function (ok) { return ok ? fn() : false; });
-    }
-    return Promise.resolve(fn());
-  }
-
+  /* ── Reconciliación manual (solo confirma; sin candado extra) ── */
   function forcePush() {
     if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
     var ask = (typeof metasConfirm === 'function')
@@ -247,13 +242,11 @@
       : Promise.resolve(true);
     Promise.resolve(ask).then(function (ok) {
       if (!ok) return;
-      return guardar(function () {
-        estado('⏳ Subiendo todo…');
-        return push(true).then(function (r) {
-          if (typeof toast === 'function') toast(r ? '☁️ Este equipo quedó como la copia buena' : '⚠️ No se pudo subir ahora');
-          estado();
-        });
-      }, 'Para subir los datos de este equipo:');
+      estado('⏳ Subiendo todo…');
+      return push(true).then(function (r) {
+        if (typeof toast === 'function') toast(r ? '☁️ Este equipo quedó como la copia buena' : '⚠️ No se pudo subir ahora');
+        estado();
+      });
     });
   }
 
@@ -265,13 +258,11 @@
       : Promise.resolve(true);
     Promise.resolve(ask).then(function (ok) {
       if (!ok) return;
-      return guardar(function () {
-        estado('⏳ Trayendo de la nube…');
-        return pull(true).then(function (r) {
-          if (typeof toast === 'function') toast(r && r.ok ? '⬇️ Este equipo quedó igual que la nube' : '⚠️ No se pudo traer ahora');
-          repaint(); estado();
-        });
-      }, 'Para traer los datos de la nube:');
+      estado('⏳ Trayendo de la nube…');
+      return pull(true).then(function (r) {
+        if (typeof toast === 'function') toast(r && r.ok ? '⬇️ Este equipo quedó igual que la nube' : '⚠️ No se pudo traer ahora');
+        repaint(); estado();
+      });
     });
   }
 
