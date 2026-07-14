@@ -3649,3 +3649,5 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-pers-val:active { background: #1565c0; color: #fff; }
 .ad-pers-borrar { border-color: #c0392b; color: #c0392b; }
 .ad-pers-edit { border: none; background: transparent; color: var(--muted); text-decoration: underline; font-size: 12px; cursor: pointer; }
+.ad-pers-leyenda { font-size: 11.5px; color: var(--muted); margin: 2px 0 4px; line-height: 1.5; }
+.ad-pers-leyenda b { color: var(--text); }

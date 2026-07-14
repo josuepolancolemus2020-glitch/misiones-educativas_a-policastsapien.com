@@ -20,10 +20,14 @@
 const ADMIN_KEY = 'METAS_ADMIN_V1';
 const AD_MATERIAS_DEF = ['Español', 'Inglés', 'Educación Artística', 'Matemáticas',
                          'Ciencias Sociales', 'Ciencias Naturales', 'Educación Física', 'Educación Cívica'];
-/* Rasgos de PERSONALIDAD de la boleta (nota en letra: E, MB, B, R… o la
-   escala que use el centro). Van por parcial igual que las materias. */
+/* Rasgos de PERSONALIDAD de la boleta (nota cualitativa en letra). Van por
+   parcial igual que las materias. Escala estándar Honduras: S, MB, B. */
 const AD_PERSONALIDAD = ['Puntualidad', 'Espíritu de trabajo', 'Orden y presentación',
                          'Sociabilidad', 'Moralidad'];
+const AD_PERS_ESCALA_DEF = ['S', 'MB', 'B'];
+const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
+                         E: 'Excelente', R: 'Regular', D: 'Deficiente',
+                         NS: 'No Satisfactorio', PS: 'Poco Satisfactorio' };
 
 let _adTab = 'lista';        /* lista | eco | asis | sace */
 let _adColectaId = null;     /* colecta abierta en Economía */
@@ -45,7 +49,7 @@ function adBoletaDef() {
   let doc = '';
   try { const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')); if (d && d.nombre) doc = d.nombre; } catch (_) {}
   return { director: '', docente: doc, lugar: '', municipio: '', departamento: '',
-    anio: String(new Date().getFullYear()), escalaPers: ['E', 'MB', 'B', 'R'] };
+    anio: String(new Date().getFullYear()), escalaPers: AD_PERS_ESCALA_DEF.slice(), parcialFechas: {} };
 }
 
 function adGrupoNuevo(props) {
@@ -62,7 +66,8 @@ function adNormGrupo(g) {
   g.seccion = g.seccion || '';
   g.logo = typeof g.logo === 'string' ? g.logo : '';
   g.boleta = Object.assign(adBoletaDef(), (g.boleta && typeof g.boleta === 'object') ? g.boleta : {});
-  if (!Array.isArray(g.boleta.escalaPers) || !g.boleta.escalaPers.length) g.boleta.escalaPers = ['E', 'MB', 'B', 'R'];
+  if (!Array.isArray(g.boleta.escalaPers) || !g.boleta.escalaPers.length) g.boleta.escalaPers = AD_PERS_ESCALA_DEF.slice();
+  if (!g.boleta.parcialFechas || typeof g.boleta.parcialFechas !== 'object') g.boleta.parcialFechas = {};
   g.lista = Array.isArray(g.lista) ? g.lista : [];
   g.colectas = Array.isArray(g.colectas) ? g.colectas : [];
   g.asistencia = Array.isArray(g.asistencia) ? g.asistencia : [];
@@ -954,6 +959,11 @@ function adRenderSace(body, d) {
   const esInasis = vista === 'inasis';
   const cols = esLetra ? AD_PERSONALIDAD.slice() : esInasis ? ['Inasistencias'] : d.materias.slice();
   const valOf = (c, num) => { const v = (((d.notas[parcial] || {})[c]) || {})[num]; return (v == null || v === '') ? '' : v; };
+  // rango de fechas para traer faltas del pase de lista (por parcial)
+  const _fAsis = (d.asistencia || []).map(r => r.f).filter(Boolean).sort();
+  const _rango = (d.boleta.parcialFechas && d.boleta.parcialFechas[parcial]) || {};
+  const desdeDef = _rango.desde || _fAsis[0] || '';
+  const hastaDef = _rango.hasta || _fAsis[_fAsis.length - 1] || '';
 
   body.innerHTML = `
     <div class="pa-card">
@@ -1026,6 +1036,19 @@ function adRenderSace(body, d) {
         ${d.boleta.escalaPers.map(v => `<button class="ad-pers-val" data-v="${adEsc(v)}">${adEsc(v)}</button>`).join('')}
         <button class="ad-pers-val ad-pers-borrar" data-v="">✕</button>
         <button class="ad-pers-edit" id="ad-pers-editescala">✏️ Editar escala</button>
+      </div>
+      <p class="ad-pers-leyenda">${d.boleta.escalaPers.map(v => AD_PERS_SIGNIF[v]
+        ? '<b>' + adEsc(v) + '</b> = ' + adEsc(AD_PERS_SIGNIF[v]) : '<b>' + adEsc(v) + '</b>').join(' · ')}</p>` : ''}
+
+      ${esInasis ? `
+      <div class="ad-inasis-bar">
+        <div class="pa-row-2">
+          <div class="pa-field"><label>Desde</label><input type="date" id="ad-inasis-desde" class="pa-inp-field" value="${desdeDef}"></div>
+          <div class="pa-field"><label>Hasta</label><input type="date" id="ad-inasis-hasta" class="pa-inp-field" value="${hastaDef}"></div>
+        </div>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-inasis-traer">📅 Traer faltas del pase de lista</button>
+        <p class="pa-optional-hint">Cuenta las faltas (ausentes y con excusa) registradas en <strong>Asistencia</strong>
+          dentro de ese rango y las pone en el <strong>Parcial ${parcial}</strong>. Puedes ajustar a mano después.</p>
       </div>` : ''}
 
       <div class="ad-mx-wrap">
@@ -1168,20 +1191,48 @@ function adRenderSace(body, d) {
     });
     document.getElementById('ad-pers-editescala')?.addEventListener('click', async () => {
       const dd = adLoad();
-      const actual = (dd.boleta.escalaPers || ['E', 'MB', 'B', 'R']).join(', ');
-      const nueva = await metasPrompt('Valores de la escala de personalidad, separados por coma.\nEj.: E, MB, B, R  ·  o  ·  S, NS', {
+      const actual = (dd.boleta.escalaPers || AD_PERS_ESCALA_DEF).join(', ');
+      const nueva = await metasPrompt('Valores de la escala de personalidad, separados por coma.\nEstándar Honduras: S, MB, B (Sobresaliente, Muy Bueno, Bueno).', {
         icono: '🙂', titulo: 'Escala de personalidad', value: actual, okTxt: 'Guardar',
         valida: v => String(v).trim() ? '' : 'Escribe al menos un valor.',
       });
       if (nueva === null) return;
       dd.boleta = dd.boleta || adBoletaDef();
       dd.boleta.escalaPers = String(nueva).split(',').map(s => s.trim().toUpperCase()).filter(Boolean).slice(0, 8);
-      if (!dd.boleta.escalaPers.length) dd.boleta.escalaPers = ['E', 'MB', 'B', 'R'];
+      if (!dd.boleta.escalaPers.length) dd.boleta.escalaPers = AD_PERS_ESCALA_DEF.slice();
       adSave(dd); adRenderSace(body, adLoad());
     });
   }
 
   document.getElementById('ad-sace-boletas').addEventListener('click', () => adPrintBoletas(adLoad()));
+
+  // Traer faltas del pase de lista → Inasistencias del parcial
+  document.getElementById('ad-inasis-traer')?.addEventListener('click', () => {
+    const desde = document.getElementById('ad-inasis-desde').value;
+    const hasta = document.getElementById('ad-inasis-hasta').value;
+    if (!desde || !hasta) { estado('⚠️ Elige las fechas «Desde» y «Hasta».'); return; }
+    if (desde > hasta) { estado('⚠️ «Desde» no puede ser después de «Hasta».'); return; }
+    const dd = adLoad();
+    dd.boleta = dd.boleta || adBoletaDef();
+    dd.boleta.parcialFechas = dd.boleta.parcialFechas || {};
+    dd.boleta.parcialFechas[parcial] = { desde, hasta };
+    const cuenta = {};
+    (dd.asistencia || []).forEach(r => {
+      if (r && r.f >= desde && r.f <= hasta && r.aus) {
+        Object.keys(r.aus).forEach(num => { cuenta[num] = (cuenta[num] || 0) + 1; });
+      }
+    });
+    dd.notas[parcial] = dd.notas[parcial] || {};
+    dd.notas[parcial]['Inasistencias'] = dd.notas[parcial]['Inasistencias'] || {};
+    let total = 0, conFaltas = 0;
+    dd.lista.forEach(a => {
+      const c = cuenta[a.num] || 0;
+      if (c > 0) { dd.notas[parcial]['Inasistencias'][a.num] = c; total += c; conFaltas++; }
+      else delete dd.notas[parcial]['Inasistencias'][a.num];
+    });
+    adSave(dd); adRenderSace(body, adLoad());
+    if (typeof toast === 'function') toast('📅 Parcial ' + parcial + ': ' + total + ' faltas (' + conFaltas + ' alumnos)');
+  });
 
   // Copiar UNA columna (materia/rasgo) para SACE — botón 📋 en su cabecera
   body.querySelectorAll('.ad-mx-copy').forEach(btn => btn.addEventListener('click', () => {
@@ -1254,8 +1305,10 @@ function adPrintBoletas(d) {
     const xs = parciales.map(p => val(p, 'Inasistencias', num)).filter(x => x !== '' && !isNaN(Number(x))).map(Number);
     return xs.length ? xs.reduce((a, b) => a + b, 0) : '';
   };
+  const bol = d.boleta || {};
   const thV = t => `<th class="v"><span>${adEsc(t)}</span></th>`;
-  const boleta = a => {
+  // Frente: calificaciones
+  const cal = a => {
     const filas = parciales.map(p => `
       <tr>
         <td class="pa">${p} PARCIAL</td>
@@ -1271,7 +1324,6 @@ function adPrintBoletas(d) {
         <td>${sumInasis(a.num)}</td>
       </tr>`;
     return `
-    <section class="boleta">
       <header>
         ${d.logo ? `<img class="logo" src="${d.logo}">` : '<div class="logo"></div>'}
         <div class="titulo">
@@ -1282,7 +1334,7 @@ function adPrintBoletas(d) {
       </header>
       <div class="alumno">
         <span><b>Alumno(a):</b> ${adEsc(a.nombre) || '________________________'}</span>
-        <span><b>Nº lista:</b> ${a.num}</span>
+        <span><b>Nº:</b> ${a.num}</span>
         <span><b>Grado:</b> ${adEsc(grado) || '______'}</span>
       </div>
       <table>
@@ -1296,20 +1348,10 @@ function adPrintBoletas(d) {
           <tr>${pers.map(thV).join('')}${mats.map(thV).join('')}</tr>
         </thead>
         <tbody>${filas}${prom}</tbody>
-      </table>
-      <footer>
-        <div class="indice">ÍNDICE ACADÉMICO: ____________</div>
-        <div class="firmas">
-          <div>______________________<br>Profesor(a) de Grado</div>
-          <div>______________________<br>Director(a) del Centro Educativo</div>
-        </div>
-      </footer>
-    </section>`;
+      </table>`;
   };
-
-  // ── REVERSO oficial (SEDUC): observaciones por parcial + portada ──
-  const bol = d.boleta || {};
-  const reverso = a => {
+  // Reverso: observaciones por parcial + portada oficial, ABAJO en la misma hoja
+  const rev = a => {
     const obs = parciales.map(p => `
       <div class="rev-parcial">
         <div class="rev-obs-head"><span>Observaciones del maestro:</span><b>${p} PARCIAL</b></div>
@@ -1319,76 +1361,71 @@ function adPrintBoletas(d) {
         <div class="rev-firma">______________________<br>Firma del padre de familia</div>
       </div>`).join('');
     return `
-    <section class="reverso">
       <div class="rev-cols">
         <div class="rev-obs">${obs}</div>
         <div class="rev-portada">
           ${d.logo ? `<div class="rev-escudo"><img src="${d.logo}"></div>` : ''}
-          <h1>SECRETARÍA DE EDUCACIÓN</h1>
-          <h1>REPÚBLICA DE HONDURAS</h1>
+          <h1>SECRETARÍA DE EDUCACIÓN · REPÚBLICA DE HONDURAS</h1>
           <p>Subsecretaría de Asuntos Técnicos Pedagógicos</p>
           <p>Dirección General de Evaluación de la Calidad de la Educación</p>
           <p>Dirección Departamental de Educación de ${adEsc(bol.departamento) || '____________'}</p>
-          <h2>BOLETA DE CALIFICACIONES</h2>
-          <div class="rev-campo"><div class="rev-val">${adEsc(centro)}</div><div class="rev-cap">Nombre del Centro Educativo</div></div>
           <div class="rev-campo"><div class="rev-val">${adEsc(bol.director) || '&nbsp;'}</div><div class="rev-cap">Nombre del Director</div></div>
           <div class="rev-campo"><div class="rev-val">${adEsc(bol.docente) || '&nbsp;'}</div><div class="rev-cap">Nombre del Docente de grado</div></div>
-          <div class="rev-campo"><div class="rev-val">${adEsc(a.nombre) || '&nbsp;'}</div><div class="rev-cap">Nombre del Alumno</div></div>
           <div class="rev-gs">
             <span>Grado: <span class="rev-inp">${adEsc(d.grado)}</span></span>
-            <span>Sección: <span class="rev-inp">${adEsc(d.seccion)}</span></span>
+            <span>Secc.: <span class="rev-inp">${adEsc(d.seccion)}</span></span>
           </div>
-          <p class="rev-lugar"><b>Lugar:</b> ${adEsc(bol.lugar)}</p>
-          <p class="rev-lugar"><b>Municipio:</b> ${adEsc(bol.municipio)}</p>
-          <p class="rev-lugar"><b>Depto.</b> ${adEsc(bol.departamento)} &nbsp;&nbsp; <b>Año:</b> ${adEsc(bol.anio)}</p>
+          <p class="rev-lugar"><b>Lugar:</b> ${adEsc(bol.lugar)} &nbsp; <b>Municipio:</b> ${adEsc(bol.municipio)}</p>
+          <p class="rev-lugar"><b>Depto.</b> ${adEsc(bol.departamento)} &nbsp; <b>Año:</b> ${adEsc(bol.anio)}</p>
+          <div class="rev-firmas">
+            <div>______________________<br>Profesor(a) de Grado</div>
+            <div>______________________<br>Director(a)</div>
+          </div>
         </div>
-      </div>
-    </section>`;
+      </div>`;
   };
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <title>Boletas — ${adEsc(grado)}</title>
 <style>
-  @page { size: letter landscape; margin: 8mm; }
+  @page { size: letter portrait; margin: 7mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
   body { color: #111; }
-  .boleta, .reverso { page-break-after: always; padding: 8px 6px; }
-  .reverso:last-child { page-break-after: auto; }
-  header { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #111; padding-bottom: 8px; }
-  header .logo { width: 72px; height: 72px; object-fit: contain; flex: 0 0 72px; }
+  .hoja { page-break-after: always; }
+  .hoja:last-child { page-break-after: auto; }
+  header { display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #111; padding-bottom: 6px; }
+  header .logo { width: 58px; height: 58px; object-fit: contain; flex: 0 0 58px; }
   header .titulo { flex: 1; text-align: center; }
-  header h1 { font-size: 17px; font-weight: 800; }
-  header h2 { font-size: 12px; font-weight: 600; letter-spacing: 1px; margin-top: 3px; }
-  .alumno { display: flex; gap: 20px; flex-wrap: wrap; font-size: 12px; margin: 9px 2px; }
+  header h1 { font-size: 15px; font-weight: 800; }
+  header h2 { font-size: 11px; font-weight: 600; letter-spacing: 1px; margin-top: 2px; }
+  .alumno { display: flex; gap: 16px; flex-wrap: wrap; font-size: 11px; margin: 6px 2px; }
   table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  th, td { border: 1px solid #333; text-align: center; font-size: 11px; padding: 3px 2px; }
-  th { background: #f0f0f0; font-size: 10px; }
-  th.v { height: 118px; vertical-align: bottom; }
-  th.v span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-size: 10px; font-weight: 600; display: inline-block; }
-  td.pa, th.pa { font-weight: 700; text-align: left; padding-left: 6px; white-space: nowrap; background: #f7f7f7; width: 92px; }
+  th, td { border: 1px solid #333; text-align: center; font-size: 10px; padding: 2px 1px; }
+  th { background: #f0f0f0; font-size: 9px; }
+  th.v { height: 92px; vertical-align: bottom; }
+  th.v span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-size: 9px; font-weight: 600; display: inline-block; }
+  td.pa, th.pa { font-weight: 700; text-align: left; padding-left: 4px; white-space: nowrap; background: #f7f7f7; width: 74px; }
   tr.prom td { font-weight: 800; background: #eef; }
-  footer { margin-top: 10px; font-size: 12px; }
-  footer .firmas { display: flex; justify-content: space-around; margin-top: 40px; text-align: center; }
-  /* Reverso oficial */
-  .rev-cols { display: flex; gap: 16px; }
-  .rev-obs { flex: 1; }
-  .rev-portada { flex: 1; text-align: center; border-left: 1px solid #bbb; padding-left: 14px; }
-  .rev-parcial { margin-bottom: 6px; }
-  .rev-obs-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; font-weight: 700; }
-  .rev-lbl { font-size: 11px; margin-top: 4px; font-weight: 600; }
-  .rev-box { border: 1px solid #333; height: 46px; margin-top: 2px; background: #fffdf5; }
-  .rev-firma { text-align: center; font-size: 9.5px; margin-top: 2px; line-height: 1.3; }
-  .rev-escudo img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 4px; }
-  .rev-portada h1 { font-size: 14px; font-weight: 800; line-height: 1.25; }
-  .rev-portada h2 { font-size: 13px; font-weight: 800; margin: 9px 0; }
-  .rev-portada p { font-size: 11px; line-height: 1.3; }
-  .rev-campo { margin: 8px 0; }
-  .rev-campo .rev-val { border: 1px solid #333; padding: 4px 6px; font-weight: 700; background: #fffdf5; min-height: 22px; }
-  .rev-campo .rev-cap { font-size: 11px; font-weight: 700; margin-top: 1px; }
-  .rev-gs { display: flex; justify-content: center; gap: 22px; font-weight: 700; font-size: 12px; margin: 10px 0; }
-  .rev-gs .rev-inp { display: inline-block; min-width: 52px; border: 1px solid #333; padding: 2px 8px; background: #fffdf5; }
-  .rev-lugar { font-size: 12px; margin-top: 3px; }
+  /* Reverso oficial, ABAJO en la misma hoja */
+  .rev-cols { display: flex; gap: 14px; margin-top: 12px; padding-top: 8px; border-top: 1.5px dashed #999; }
+  .rev-obs { flex: 1.05; }
+  .rev-portada { flex: 1; text-align: center; border-left: 1px solid #bbb; padding-left: 12px; }
+  .rev-parcial { margin-bottom: 5px; }
+  .rev-obs-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 10.5px; font-weight: 700; }
+  .rev-lbl { font-size: 10.5px; margin-top: 3px; font-weight: 600; }
+  .rev-box { border: 1px solid #333; height: 34px; margin-top: 2px; background: #fffdf5; }
+  .rev-firma { text-align: center; font-size: 9px; margin-top: 2px; line-height: 1.25; }
+  .rev-escudo img { width: 46px; height: 46px; object-fit: contain; margin-bottom: 3px; }
+  .rev-portada h1 { font-size: 12px; font-weight: 800; line-height: 1.2; }
+  .rev-portada p { font-size: 10px; line-height: 1.3; }
+  .rev-campo { margin: 6px 0; }
+  .rev-campo .rev-val { border: 1px solid #333; padding: 3px 5px; font-weight: 700; background: #fffdf5; min-height: 19px; font-size: 11px; }
+  .rev-campo .rev-cap { font-size: 10px; font-weight: 700; margin-top: 1px; }
+  .rev-gs { display: flex; justify-content: center; gap: 16px; font-weight: 700; font-size: 11px; margin: 8px 0; }
+  .rev-gs .rev-inp { display: inline-block; min-width: 44px; border: 1px solid #333; padding: 2px 6px; background: #fffdf5; }
+  .rev-lugar { font-size: 10.5px; margin-top: 3px; }
+  .rev-firmas { display: flex; justify-content: space-around; gap: 8px; margin-top: 26px; font-size: 10px; }
 </style></head><body>
-${d.lista.map(a => boleta(a) + reverso(a)).join('')}
+${d.lista.map(a => `<section class="hoja">${cal(a)}${rev(a)}</section>`).join('')}
 <script>window.onload=function(){setTimeout(function(){window.print();},250);}<\/script>
 </body></html>`;
   const w = window.open('', '_blank');
