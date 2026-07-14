@@ -1056,7 +1056,11 @@ function adRenderSace(body, d) {
           <thead><tr>
             <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
             ${cols.map((c, ci) => `<th><div class="ad-mx-h">${adEsc(c)}</div>
-              <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}» para SACE">📋</button></th>`).join('')}
+              <div class="ad-mx-hbtns">
+                ${(!esLetra && !esInasis) ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
+                <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}» para SACE">📋</button>
+                ${(!esLetra && !esInasis) ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="1" title="Mover a la derecha"${ci === cols.length - 1 ? ' disabled' : ''}>▶</button>` : ''}
+              </div></th>`).join('')}
           </tr></thead>
           <tbody>
             ${d.lista.map((a, ri) => `<tr>
@@ -1233,6 +1237,16 @@ function adRenderSace(body, d) {
     adSave(dd); adRenderSace(body, adLoad());
     if (typeof toast === 'function') toast('📅 Parcial ' + parcial + ': ' + total + ' faltas (' + conFaltas + ' alumnos)');
   });
+
+  // Mover una materia de posición (◀ ▶) — reordena d.materias (afecta tabla,
+  // boleta y CSV; NO afecta las notas del chatbot, que van por nombre).
+  body.querySelectorAll('.ad-mx-mv').forEach(btn => btn.addEventListener('click', () => {
+    const dd = adLoad();
+    const i = +btn.dataset.col, j = i + (+btn.dataset.dir);
+    if (j < 0 || j >= dd.materias.length) return;
+    const t = dd.materias[i]; dd.materias[i] = dd.materias[j]; dd.materias[j] = t;
+    adSave(dd); adRenderSace(body, adLoad());
+  }));
 
   // Copiar UNA columna (materia/rasgo) para SACE — botón 📋 en su cabecera
   body.querySelectorAll('.ad-mx-copy').forEach(btn => btn.addEventListener('click', () => {
@@ -1541,10 +1555,16 @@ function adFilasNube(st) {
       Object.keys(d.notas[parcial] || {}).forEach(materia =>
         Object.keys(d.notas[parcial][materia] || {}).forEach(num => {
           if (!cod[num]) return;
+          const valor = d.notas[parcial][materia][num];
+          // La nube guarda `nota` como NÚMERO. Lo cualitativo (personalidad:
+          // S, MB, B…) viaja como texto en `estado` para no romper el envío;
+          // así el asistente de padres también recibe la conducta.
+          const esNum = valor !== '' && valor != null && !isNaN(Number(valor));
           filas.push(Object.assign({
             evento_id: 'ADN-' + parcial + '-' + adMateriaSlug(materia) + '-' + cod[num],
-            codigo: cod[num], tipo: 'nota_final',
-            parcial, materia, nota: d.notas[parcial][materia][num],
+            codigo: cod[num], tipo: 'nota_final', parcial, materia,
+            nota: esNum ? Number(valor) : null,
+            estado: esNum ? '' : String(valor),
           }, base));
         })));
 

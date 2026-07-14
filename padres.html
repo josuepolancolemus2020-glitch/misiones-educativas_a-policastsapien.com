@@ -558,9 +558,14 @@ async function respAsistencia() {
     avisoCache(), CHIPS_MENU);
 }
 
+const PA_PERSONALIDAD = ['Puntualidad', 'Espíritu de trabajo', 'Orden y presentación', 'Sociabilidad', 'Moralidad'];
+function esPersonalidad(m) { return PA_PERSONALIDAD.some(x => norm(x) === norm(m || '')); }
+function esInasistencias(m) { return norm(m || '') === norm('Inasistencias'); }
+
 async function respFinales(txt) {
   if (!await conDatos()) return;
-  const rs = adFilas('nota_final').filter(r => typeof r.nota === 'number');
+  // Incluye académico (número), conducta (letra en `estado`) e inasistencias.
+  const rs = adFilas('nota_final').filter(r => (typeof r.nota === 'number') || (r.estado && String(r.estado).trim()));
   if (!rs.length) {
     await botSay('🧮 El maestro todavía no sube <strong>notas finales de parcial</strong> para esta clave. ' +
       'Las notas de evaluaciones sueltas están en «📚 Todas las notas».', CHIPS_MENU);
@@ -583,14 +588,25 @@ async function respFinales(txt) {
       'Parciales con notas: ' + Object.keys(porParcial).join(', ') + '.', CHIPS_MENU);
     return;
   }
+  const byMat = (a, b) => String(a.materia).localeCompare(String(b.materia));
+  const linea = (nom, val, color) => '<div class="nc-meta" style="font-size:14px;margin-top:4px">' +
+    esc(nom) + ': <strong style="color:' + color + '">' + esc(String(val)) + '</strong></div>';
   const html = parciales.map(p => {
-    const filas = porParcial[p].sort((a, b) => String(a.materia).localeCompare(String(b.materia)));
-    return '<div class="nota-card"><div class="nc-top"><span class="nc-eval">🧮 Parcial ' + esc(p) + '</span></div>' +
-      filas.map(r => {
-        const ok = r.nota >= 70;
-        return '<div class="nc-meta" style="font-size:14px;margin-top:4px">' + esc(r.materia || 'Materia') +
-          ': <strong style="color:' + (ok ? '#1e8e3e' : '#c0392b') + '">' + r.nota + '</strong>' + (ok ? ' ✔' : ' ⚠️') + '</div>';
-      }).join('') + '</div>';
+    const filas = porParcial[p];
+    const acad = filas.filter(r => typeof r.nota === 'number' && !esPersonalidad(r.materia) && !esInasistencias(r.materia)).sort(byMat);
+    const cond = filas.filter(r => esPersonalidad(r.materia)).sort(byMat);
+    const ina = filas.filter(r => esInasistencias(r.materia));
+    let cuerpo = '';
+    acad.forEach(r => { const ok = r.nota >= 70; cuerpo += linea(r.materia || 'Materia', r.nota + (ok ? ' ✔' : ' ⚠️'), ok ? '#1e8e3e' : '#c0392b'); });
+    if (cond.length) {
+      cuerpo += '<div class="nc-meta" style="font-size:12.5px;margin-top:6px;font-weight:800">🙂 Conducta</div>';
+      cond.forEach(r => cuerpo += linea(r.materia, r.estado || r.nota || '—', '#1e3a7c'));
+    }
+    if (ina.length) {
+      const tot = ina.reduce((s, r) => s + (typeof r.nota === 'number' ? r.nota : 0), 0);
+      cuerpo += linea('📅 Inasistencias', tot + ' día(s)', '#8a6d00');
+    }
+    return '<div class="nota-card"><div class="nc-top"><span class="nc-eval">🧮 Parcial ' + esc(p) + '</span></div>' + cuerpo + '</div>';
   }).join('');
   await botSay('Estas son las <strong>notas finales</strong> registradas (se aprueba con 70):' + html + avisoCache(), CHIPS_MENU);
 }

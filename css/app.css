@@ -3618,8 +3618,12 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-mx th, .ad-mx td { border: 1px solid var(--border); padding: 0; text-align: center; }
 .ad-mx thead th { background: var(--bg); padding: 5px 4px; vertical-align: bottom; }
 .ad-mx-h { font-size: 11px; font-weight: 800; color: var(--text); min-width: 54px; max-width: 90px; line-height: 1.15; }
-.ad-mx-copy { display: block; margin: 3px auto 0; border: none; background: transparent; cursor: pointer; font-size: 12px; opacity: .6; }
+.ad-mx-hbtns { display: flex; justify-content: center; align-items: center; gap: 1px; margin-top: 3px; }
+.ad-mx-copy { border: none; background: transparent; cursor: pointer; font-size: 12px; opacity: .6; padding: 2px; }
 .ad-mx-copy:active { opacity: 1; }
+.ad-mx-mv { border: none; background: transparent; cursor: pointer; font-size: 13px; color: #1565c0; padding: 3px 4px; font-weight: 900; }
+.ad-mx-mv:disabled { color: #cbd5e1; cursor: default; }
+.ad-mx-mv:active:not(:disabled) { background: #eef4ff; border-radius: 6px; }
 .ad-mx-sticky {
   position: sticky; left: 0; z-index: 2; background: #fff; text-align: left;
   padding: 4px 8px; white-space: nowrap; min-width: 128px; max-width: 150px;
