@@ -1347,10 +1347,20 @@ function renderProfile() {
           <i class="fa-solid fa-chevron-right"></i>
         </a>
       </div>
+      <div class="doc-sync-box">
+        <div class="doc-sync-status" id="doc-sync-status">☁️ Revisando la nube del aula…</div>
+        <p class="doc-sync-hint">Tus datos del aula (lista, economía, asistencia, notas, Plan de Acción…)
+          se guardan igual en todos tus equipos. Si un equipo tiene datos viejos o de prueba, usa estos botones una vez:</p>
+        <div class="doc-sync-btns">
+          <button class="doc-sync-btn" onclick="dsForcePush()">⬆️ Subir lo de este equipo</button>
+          <button class="doc-sync-btn" onclick="dsForcePull()">⬇️ Traer lo de la nube</button>
+        </div>
+      </div>
       <button class="padre-wa-btn" style="margin-top:12px;" onclick="docenteCompartir()">📤 Guardar mis llaves en WhatsApp</button>
       <button class="padre-wa-cambiar" onclick="docenteCambiarClave()">✏️ Cambiar mi clave secreta</button>
       <button class="padre-wa-cambiar" style="color:#c0392b;border-color:#c0392b;margin-top:6px;" onclick="docenteCerrarSesion()">🚪 Cerrar sesión</button>
     </div>`;
+  if (typeof dsOnProfile === 'function') dsOnProfile();
 }
 
 let _docTipo = 'Pública';
