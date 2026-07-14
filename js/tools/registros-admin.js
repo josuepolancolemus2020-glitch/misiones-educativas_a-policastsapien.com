@@ -2084,23 +2084,55 @@ async function avBuzonCargar(d) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const rows = await r.json();
     if (!Array.isArray(rows) || !rows.length) { cont.innerHTML = hint('Buzón vacío: sin mensajes de las familias.'); return; }
-    const quien = {};
+    const quien = {}, numDe = {};
     d.lista.forEach(a => {
       const c = adClaveFamilia(d.id, a.num, false);
-      if (c) quien[c] = '#' + a.num + (a.nombre ? ' ' + adPrimerNombre(a.nombre) : '');
+      if (c) { quien[c] = '#' + a.num + (a.nombre ? ' ' + adPrimerNombre(a.nombre) : ''); numDe[c] = a.num; }
     });
     let vistos = [];
     try { vistos = JSON.parse(localStorage.getItem(BUZON_VISTO_KEY)) || []; } catch (_) {}
     const vSet = new Set(vistos);
+    /* ¿ya está marcada esa fecha en el pase de lista? */
+    const yaMarcada = (fecha, num) => {
+      const r = (adLoad().asistencia || []).find(x => x.f === fecha);
+      return !!(r && r.aus && r.aus[num]);
+    };
     cont.innerHTML = rows.map(m => {
       const id = m.codigo + '|' + m.creado_en;
       const nuevo = !vSet.has(id);
+      /* excusa estructurada del asistente: [EXCUSA YYYY-MM-DD] razón */
+      const mEx = String(m.texto || '').match(/^\[EXCUSA (\d{4}-\d{2}-\d{2})\]\s*([\s\S]*)$/);
+      if (mEx && numDe[m.codigo]) {
+        const fecha = mEx[1], razon = mEx[2] || 'Sin razón', num = numDe[m.codigo];
+        const marcada = yaMarcada(fecha, num);
+        return `<div class="ad-gasto-row" style="align-items:flex-start${nuevo ? '' : ';opacity:.75'}">
+          <span style="flex:1">${nuevo ? '🔵 ' : ''}🤒 <strong>${adEsc(quien[m.codigo])}</strong> — excusa para el
+            <strong>${adFechaBonita(fecha)}</strong><br><small>${adEsc(razon)}</small><br>
+            ${marcada ? '<small style="color:#1e8e3e">📝 Ya está en el pase de lista de ese día.</small>'
+              : `<button class="pa-generate-btn ad-btn-sec av-excusa-ok" data-num="${num}" data-fecha="${fecha}"
+                   style="margin-top:6px">✔ Marcar con excusa en asistencia</button>`}
+          </span>
+        </div>`;
+      }
       return `<div class="ad-gasto-row" style="align-items:flex-start${nuevo ? '' : ';opacity:.6'}">
         <span style="flex:1">${nuevo ? '🔵 ' : ''}<strong>${adEsc(quien[m.codigo] || m.codigo)}</strong>
           <small>· ${adFechaBonita(String(m.creado_en).slice(0, 10))}</small><br>
           <small>${adEsc(m.texto)}</small></span>
       </div>`;
     }).join('');
+    /* un toque: la excusa queda 'E' en el pase de lista de ese día y
+       sube sola a la nube — el padre la ve como «con excusa» */
+    cont.querySelectorAll('.av-excusa-ok').forEach(b => b.addEventListener('click', () => {
+      const num = +b.dataset.num, fecha = b.dataset.fecha;
+      const dd = adLoad();
+      let reg = dd.asistencia.find(r => r.f === fecha);
+      if (!reg) { reg = { f: fecha, aus: {} }; dd.asistencia.push(reg); }
+      reg.aus = reg.aus || {};
+      reg.aus[num] = 'E';
+      adSave(dd);
+      toast('📝 #' + num + ' con excusa el ' + adFechaBonita(fecha));
+      avBuzonCargar(adLoad());
+    }));
     /* lo mostrado queda marcado como visto (el 🔵 sale solo una vez) */
     try {
       const todos = Array.from(new Set(vistos.concat(rows.map(m => m.codigo + '|' + m.creado_en))));

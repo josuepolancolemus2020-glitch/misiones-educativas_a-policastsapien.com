@@ -98,14 +98,13 @@
     /* «Escribiendo…» */
     .typing .bub { color: var(--muted); font-style: italic; }
     /* ── Chips de respuesta rápida ── */
+    /* Los chips se ENVUELVEN en filas: ningún botón queda escondido
+       fuera de la pantalla (nada de deslizar a ciegas) */
     #chips {
       flex: 0 0 auto;
-      display: flex; flex-wrap: nowrap; gap: 7px;
+      display: flex; flex-wrap: wrap; gap: 6px;
       padding: 6px 12px 8px;
-      overflow-x: auto; -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
     }
-    #chips::-webkit-scrollbar { display: none; }
     /* 🔊 escuchar el mensaje (accesibilidad) */
     .bub-oir {
       background: none; border: none; cursor: pointer;
@@ -118,8 +117,8 @@
       flex: 0 0 auto; white-space: nowrap;
       background: var(--blanco); color: var(--verde-osc);
       border: 1.6px solid var(--verde);
-      border-radius: 999px; padding: 9px 13px;
-      font-size: 14px; font-weight: 700; cursor: pointer;
+      border-radius: 999px; padding: 7px 10px;
+      font-size: 13px; font-weight: 700; cursor: pointer;
       transition: transform .12s;
     }
     .chip:active { transform: scale(.95); background: var(--verde-claro); }
@@ -329,9 +328,9 @@ function pintarChips(lista) {
   });
 }
 const CHIPS_BASE = ['📊 ¿Cómo va?', '📣 Avisos', '📝 Última nota', '📚 Todas las notas',
-                    '🗓 ¿Faltó a clases?', '🧮 Boleta del parcial', '💰 Pagos y colectas',
-                    '🙂 Conducta', '🏠 ¿Cómo ayudo en casa?', '💡 Consejo de hoy',
-                    '🔄 Actualizar', '🔑 Cambiar clave'];
+                    '🗓 ¿Faltó a clases?', '🤒 Avisar falta', '🧮 Boleta del parcial',
+                    '💰 Pagos y colectas', '🙂 Conducta', '🏠 ¿Cómo ayudo en casa?',
+                    '💡 Consejo de hoy', '🔄 Actualizar', '🔑 Cambiar clave'];
 /* Con más de una clave guardada aparece el conmutador de hijos */
 function chipsMenu() {
   return cfgCodigos().length > 1 ? ['👧 Cambiar de hijo'].concat(CHIPS_BASE) : CHIPS_BASE;
@@ -657,7 +656,9 @@ async function respAsistencia() {
     const f = fechaCorte();
     await botSay('🗓 <strong>No tengo faltas registradas</strong>' +
       (f ? ' hasta el <strong>' + fmtFecha(f) + '</strong> (última publicación del maestro)' : ' por ahora') +
-      '. El maestro anota solo las ausencias, así que eso es buena señal. 🎉' + selloDatos(), chipsMenu());
+      '. El maestro anota solo las ausencias, así que eso es buena señal. 🎉' +
+      '<br><small>Si su hijo/a faltó o va a faltar, toque «🤒 Avisar falta» y le aviso al maestro con día y razón.</small>' +
+      selloDatos(), chipsMenu());
     return;
   }
   const aus = rs.filter(r => r.estado === 'ausente').length;
@@ -667,7 +668,7 @@ async function respAsistencia() {
   await botSay('🗓 Registro de faltas: <strong>' + aus + '</strong> ausencia(s)' +
     (exc ? ' y <strong>' + exc + '</strong> con excusa' : '') + '.<br>' + lineas +
     (rs.length > 8 ? '<br><small>(mostrando las 8 más recientes)</small>' : '') +
-    '<br>Si una falta tiene justificación, envíela con su hijo/a o preséntela en la escuela. 🙏' +
+    '<br>Si una falta tiene justificación, toque <strong>«🤒 Avisar falta»</strong> y se la anoto al maestro con día y razón. 🙏' +
     selloDatos(), chipsMenu());
 }
 
@@ -872,7 +873,7 @@ function avMarcarVistos(avs) {
 /* ── buzón padre → maestro (excusas y recados, con tope diario) ── */
 let _buzonPendiente = null;    /* texto listo para enviar con un toque */
 let _buzonEsperando = false;   /* el siguiente mensaje del padre ES el recado */
-async function buzonEnviar(texto) {
+async function buzonEnviar(texto, vista) {
   const codigo = claveGuardada();
   const limpio = String(texto || '').trim().slice(0, 300);
   if (!codigo) {
@@ -900,13 +901,72 @@ async function buzonEnviar(texto) {
   _buzonPendiente = null;
   if (v === 'ok') {
     await botSay('📨 <strong>Anotado.</strong> El maestro verá su mensaje en la bandeja de su aula:<br>' +
-      '<em>«' + esc(limpio) + '»</em><br><small>Si necesita respuesta, el maestro puede contestarle con un aviso.</small>', chipsMenu());
+      '<em>«' + esc(vista || limpio) + '»</em><br><small>Si necesita respuesta, el maestro puede contestarle con un aviso.</small>', chipsMenu());
   } else if (v === 'tope') {
     await botSay('✋ Ya se enviaron <strong>5 mensajes hoy</strong> con esta clave (es el máximo diario). ' +
       'Mañana puede enviar más; si es urgente, busque al maestro en la escuela.', chipsMenu());
   } else {
     await botSay('⚠️ No pude entregar el recado en este momento. Inténtelo de nuevo en unos minutos.', chipsMenu());
   }
+}
+
+/* ── excusa guiada: día + razón → el maestro la marca con UN toque ──
+   El mensaje viaja con el marcador [EXCUSA YYYY-MM-DD] para que la
+   bandeja de Mi aula ofrezca «✔ Marcar con excusa» en el pase de lista
+   del alumno de ESTA clave. */
+let _excusa = null;   /* { paso: 'dia'|'razon', dia: 'YYYY-MM-DD' } */
+function _fechaISO(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' +
+         String(d.getDate()).padStart(2, '0');
+}
+function excusaParseDia(t) {
+  const hoy = new Date();
+  if (/manana/.test(t)) { const d = new Date(hoy); d.setDate(d.getDate() + 1); return _fechaISO(d); }
+  if (/ayer/.test(t))   { const d = new Date(hoy); d.setDate(d.getDate() - 1); return _fechaISO(d); }
+  if (/hoy/.test(t))    return _fechaISO(hoy);
+  const m = String(t).match(/(\d{1,2})[\/\- ](\d{1,2})(?:[\/\- ](\d{2,4}))?/);
+  if (m) {
+    let y = m[3] ? +m[3] : hoy.getFullYear();
+    if (y < 100) y += 2000;
+    const d = new Date(y, +m[2] - 1, +m[1]);
+    if (!isNaN(d) && +m[1] >= 1 && +m[1] <= 31 && +m[2] >= 1 && +m[2] <= 12) return _fechaISO(d);
+  }
+  return '';
+}
+async function excusaIniciar() {
+  if (!claveGuardada()) {
+    await botSay('Para avisar una falta primero necesito la <strong>clave de la familia</strong> 🔑 (así sé de qué alumno/a se trata).', ['❓ ¿Qué es la clave?']);
+    return;
+  }
+  _excusa = { paso: 'dia', dia: '' };
+  await botSay('🤒 Vamos a avisarle la falta al maestro. <strong>¿Qué día</strong> faltó o va a faltar su hijo/a?<br>' +
+    '<small>Toque un botón o escriba la fecha (ej. 15/07).</small>',
+    ['📅 Hoy', '📅 Ayer', '📅 Mañana', '🚫 Cancelar']);
+}
+async function excusaPaso(txtOriginal) {
+  const t = expand(norm(txtOriginal));
+  if (/cancelar|ya no|mejor no/.test(t)) {
+    _excusa = null;
+    await botSay('De acuerdo 👍 No se avisó nada.', chipsMenu());
+    return;
+  }
+  if (_excusa.paso === 'dia') {
+    const dia = excusaParseDia(t);
+    if (!dia) {
+      await botSay('No entendí el día 😅. Toque un botón o escriba la fecha como <strong>15/07</strong>.',
+        ['📅 Hoy', '📅 Ayer', '📅 Mañana', '🚫 Cancelar']);
+      return;
+    }
+    _excusa.dia = dia; _excusa.paso = 'razon';
+    await botSay('📅 <strong>' + fmtFecha(dia) + '</strong>. ¿Y <strong>cuál es la razón</strong>? Toque una o escríbala:',
+      ['🤒 Enfermedad', '🩺 Cita médica', '👨‍👩‍👧 Asunto familiar', '🚫 Cancelar']);
+    return;
+  }
+  const razon = String(txtOriginal).replace(/^[^0-9A-Za-zÁ-úá-ú]+/, '').trim().slice(0, 200) || 'Sin razón indicada';
+  const dia = _excusa.dia;
+  _excusa = null;
+  await buzonEnviar('[EXCUSA ' + dia + '] ' + razon,
+    '🤒 Falta del ' + fmtFecha(dia) + ' — ' + razon);
 }
 
 /* ── accesibilidad: leer en voz alta y modo corto ── */
@@ -1048,6 +1108,8 @@ function guardarNoEntendida(txt) {
 }
 
 async function manejar(txtOriginal) {
+  /* ¿vamos a la mitad del aviso de falta? (día → razón) */
+  if (_excusa) { await excusaPaso(txtOriginal); return; }
   /* ¿estamos esperando el texto de un recado para el maestro? */
   if (_buzonEsperando) {
     _buzonEsperando = false;
@@ -1139,11 +1201,16 @@ async function manejar(txtOriginal) {
     return;
   }
   /* REPORTE de ausencia (el padre avisa) va ANTES que la CONSULTA de
-     faltas: «falto ayer xq estaba enfermo» no es una pregunta */
+     faltas: «falto ayer xq estaba enfermo» no es una pregunta.
+     Se abre el aviso guiado: día + razón → el maestro la marca con un
+     toque como CON EXCUSA en su pase de lista. */
+  if (/avisar (la |una )?falta|avisar (la |una )?ausencia|reportar (falta|ausencia)|justificar|mandar (la )?excusa|dar excusa/.test(t)) {
+    await excusaIniciar(); return;
+  }
   if (/(esta|anda|amanecio) enferm|no (va a|pudo|puede|podra) (ir|venir|llegar|asistir)|no fue (hoy|ayer|a clases?)|falto (hoy|ayer)|va a faltar|no asistira|no ira (hoy|manana)|tiene (cita|consulta) (medica|con el doctor)/.test(t)) {
-    _buzonPendiente = txtOriginal;
-    await botSay('Entiendo 🙏 Que se recupere pronto. ¿Le dejo <strong>anotada la excusa</strong> al maestro para que la vea en su bandeja?',
-      ['📨 Sí, dejársela al maestro', '🚫 No, gracias']);
+    await botSay('Entiendo 🙏 Que se mejore pronto. ¿Quiere <strong>avisarle la falta</strong> al maestro, ' +
+      'para que quede <strong>con excusa</strong> en su pase de lista?',
+      ['🤒 Sí, avisar la falta', '🚫 No, gracias']);
     return;
   }
   if (/falto|falta|asisten|ausen|inasist|llego a clase/.test(t)) { await respAsistencia(); return; }
