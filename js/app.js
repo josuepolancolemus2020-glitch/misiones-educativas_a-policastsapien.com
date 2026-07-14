@@ -1337,10 +1337,6 @@ function renderProfile() {
         <div class="doc-saludo-hola">👋 ¡Hola, ${_pEsc(primerNombre)}!</div>
         <div class="doc-saludo-sub">${_pEsc(d.nombre || '')}${d.escuela ? ' · ' + _pEsc(d.escuela) : ''}</div>
       </div>
-      <div class="doc-aviso-alumnos">📣 Dile a tus alumnos que escriban tu nombre —
-        <strong>${_pEsc(d.nombre || '')}</strong> — en el campo «Docente» al empezar una misión.
-        Así su avance llega solo a tu cuenta.</div>
-      <a class="doc-avance-btn" href="consulta-nube.html">📊 Ver el avance de mis alumnos</a>
       <div class="doc-sync-hint2">☁️ Tus datos se guardan y sincronizan solos en todos tus equipos.</div>
       <button class="doc-sync-now" id="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
       ${recuperarLink}
@@ -1348,6 +1344,11 @@ function renderProfile() {
       <button class="padre-wa-cambiar" style="color:#c0392b;margin-top:6px;" onclick="docenteCerrarSesion()">🚪 Cerrar sesión</button>
       <a class="doc-usar-este-link" onclick="dsUsarEste()">✅ Este equipo tiene los datos correctos → usarlo en todos</a>
       <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
+
+      <div class="doc-aviso-alumnos" style="margin-top:18px;">📣 Dile a tus alumnos que escriban tu nombre —
+        <strong>${_pEsc(d.nombre || '')}</strong> — en el campo «Docente» al empezar una misión.
+        Así su avance llega solo a tu cuenta.</div>
+      <a class="doc-avance-btn" href="consulta-nube.html">📊 Ver el avance de mis alumnos</a>
     </div>`;
   if (typeof dsOnProfile === 'function') dsOnProfile();
 }

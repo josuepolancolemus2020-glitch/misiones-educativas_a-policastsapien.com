@@ -281,11 +281,7 @@
     </header>
     <div class="view-scroll">
 
-      <!-- Acceso del maestro: suscripción instantánea o su tarjeta de acceso
-           (lo pinta renderProfile() según METAS_DOCENTE_V1) -->
-      <div id="docente-acceso"></div>
-
-      <!-- Herramientas del aula — solo visibles con sesión docente
+      <!-- Herramientas del aula ARRIBA — solo visibles con sesión docente
            (renderProfile las muestra/oculta según METAS_DOCENTE_V1) -->
       <div class="setting-group teacher-panel-group" id="teacher-tools-group" style="display:none;">
         <div class="teacher-panel-head">
@@ -295,6 +291,13 @@
         <p class="teacher-panel-desc">Todo lo del aula en un toque — sin papeleo.</p>
 
         <div class="teacher-tools-grid">
+          <button class="teacher-tool-item teacher-tool-active" id="goto-admin-btn">
+            <i class="fa-solid fa-briefcase"></i>
+            <span class="tt-info">
+              <span class="tt-title">Mi aula</span>
+              <span class="tt-sub">Alumnos, claves de familia y notas</span>
+            </span>
+          </button>
           <button class="teacher-tool-item teacher-tool-active" id="goto-plan-btn">
             <i class="fa-solid fa-chart-column"></i>
             <span class="tt-info">
@@ -302,6 +305,13 @@
               <span class="tt-sub">Notas y avisos para los padres</span>
             </span>
           </button>
+          <a class="teacher-tool-item teacher-tool-active" href="evaluaciones.html">
+            <i class="fa-solid fa-print"></i>
+            <span class="tt-info">
+              <span class="tt-title">Evaluaciones</span>
+              <span class="tt-sub">Pruebas listas para imprimir</span>
+            </span>
+          </a>
           <button class="teacher-tool-item teacher-tool-active" id="goto-camp-btn">
             <i class="fa-solid fa-trophy"></i>
             <span class="tt-info">
@@ -330,22 +340,12 @@
               <span class="tt-sub">Elecciones estudiantiles</span>
             </span>
           </button>
-          <button class="teacher-tool-item teacher-tool-active" id="goto-admin-btn">
-            <i class="fa-solid fa-briefcase"></i>
-            <span class="tt-info">
-              <span class="tt-title">Mi aula</span>
-              <span class="tt-sub">Alumnos, claves de familia y notas</span>
-            </span>
-          </button>
-          <a class="teacher-tool-item teacher-tool-active" href="evaluaciones.html">
-            <i class="fa-solid fa-print"></i>
-            <span class="tt-info">
-              <span class="tt-title">Evaluaciones</span>
-              <span class="tt-sub">Pruebas listas para imprimir</span>
-            </span>
-          </a>
         </div>
       </div>
+
+      <!-- Acceso del maestro (saludo, sync, cuenta) + al final el aviso a los
+           alumnos y «Ver el avance» — lo pinta renderProfile() -->
+      <div id="docente-acceso"></div>
 
     </div>
   </div>
