@@ -460,6 +460,15 @@ a.padre-asistente-btn {
   font-size: 11.5px; font-weight: 700; color: var(--muted);
   text-decoration: underline; text-underline-offset: 2px;
 }
+/* Red de seguridad: aparece solo si hay un borrado reciente. Verde y
+   con recuadro para que salte a la vista si el borrado fue sin querer. */
+.doc-recuperar-link {
+  display: block; text-align: center; margin-top: 10px; cursor: pointer;
+  font-size: 13px; font-weight: 800; color: #1e7d34;
+  background: #eafbef; border: 1.5px solid #b6e6c4;
+  border-radius: var(--r-sm); padding: 10px 12px;
+}
+.doc-recuperar-link:active { background: #d7f4e1; }
 
 /* ── Pensador del día + frase motivacional, plegados al final ── */
 .pensador-details { margin-bottom: 24px; }

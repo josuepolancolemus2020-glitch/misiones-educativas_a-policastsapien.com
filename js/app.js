@@ -1326,6 +1326,11 @@ function renderProfile() {
 
   // Maestro con sesión: saludo, aviso del nombre y SU botón principal
   const primerNombre = String(d.nombre || '').trim().split(/\s+/)[0] || 'colega';
+  // Red de seguridad: si hay una copia de un borrado reciente, ofrecer recuperarla
+  const hayRespaldo = (typeof dsTieneRespaldo === 'function') && dsTieneRespaldo();
+  const recuperarLink = hayRespaldo
+    ? `<a class="doc-recuperar-link" onclick="dsRecuperar()">↩️ Recuperar lo que borré</a>`
+    : '';
   cont.innerHTML = `
     <div class="setting-group teacher-panel-group">
       <div class="doc-saludo">
@@ -1340,6 +1345,7 @@ function renderProfile() {
       <button class="padre-wa-cambiar" onclick="docenteCambiarClave()">✏️ Cambiar mi contraseña</button>
       <button class="padre-wa-cambiar" style="color:#c0392b;margin-top:6px;" onclick="docenteCerrarSesion()">🚪 Cerrar sesión</button>
       <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
+      ${recuperarLink}
     </div>`;
   if (typeof dsOnProfile === 'function') dsOnProfile();
 }
