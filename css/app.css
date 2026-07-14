@@ -130,7 +130,21 @@ a { text-decoration: none; color: inherit; }
 /* medalla + actualizar, juntos a la derecha del encabezado */
 .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
 .header-actions .notif-btn { margin-left: 0; }
-#refresh-btn.spin { animation: refreshSpin .6s ease; }
+
+/* Botón Actualizar — estilo navegador: transparente, ícono monocromo.
+   Se inyecta en TODOS los encabezados (ver app.js) para no ir al inicio. */
+.refresh-btn {
+  background: none; border: none; cursor: pointer;
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--text);
+  transition: background .15s, color .15s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.refresh-btn:active { background: var(--bg); }
+@media (hover: hover) { .refresh-btn:hover { background: var(--bg); } }
+.app-header > .refresh-btn { justify-self: end; }   /* pegado a la derecha */
+.refresh-btn i.spin { animation: refreshSpin .6s ease; }
 @keyframes refreshSpin { to { transform: rotate(360deg); } }
 
 .notif-dot {
@@ -3666,10 +3680,17 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px;
 }
 .ad-volver {
-  background: none; border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 999px; cursor: pointer; font-family: inherit;
   color: var(--brand); font-size: 13px; font-weight: 800;
-  padding: 0 0 8px; text-align: left;
+  padding: 8px 15px; margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(15,23,42,.07);
+  transition: transform .13s cubic-bezier(.34,1.56,.64,1), box-shadow .18s, border-color .18s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
+@media (hover: hover) { .ad-volver:hover { border-color: var(--brand-light); box-shadow: 0 5px 14px rgba(30,58,124,.16); } }
+.ad-volver:active { transform: scale(.96); }
 
 /* tablas y notas SACE */
 .ad-tabla { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 10px; }

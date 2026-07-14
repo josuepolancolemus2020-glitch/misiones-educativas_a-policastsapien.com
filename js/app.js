@@ -1726,27 +1726,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ── Botón 🔄 Actualizar: fuerza traer la última versión y regresa a
-  //    donde estaba el usuario (limpia cachés/SW por si acaso). ──
-  const refreshBtn = document.getElementById('refresh-btn');
-  if (refreshBtn) {
-    refreshBtn.addEventListener('click', async () => {
-      refreshBtn.classList.remove('spin'); void refreshBtn.offsetWidth; refreshBtn.classList.add('spin');
-      metasSaveNav({}); // la vista actual ya quedó guardada por switchView
-      try {
-        if ('serviceWorker' in navigator) {
-          const regs = await navigator.serviceWorker.getRegistrations();
-          await Promise.all(regs.map(r => r.unregister()));
-        }
-        if (window.caches && caches.keys) {
-          const keys = await caches.keys();
-          await Promise.all(keys.map(k => caches.delete(k)));
-        }
-      } catch (_) {}
-      toast('🔄 Actualizando…');
-      setTimeout(() => location.reload(), 250);
-    });
+  // ── Botón 🔄 Actualizar (estilo navegador): fuerza traer la última
+  //    versión y regresa a donde estaba el usuario (limpia cachés/SW).
+  //    Se muestra en TODOS los encabezados para no ir al inicio. ──
+  async function metasForzarActualizacion(btn) {
+    const ic = btn && btn.querySelector ? (btn.querySelector('i') || btn) : null;
+    if (ic) { ic.classList.remove('spin'); void ic.offsetWidth; ic.classList.add('spin'); }
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
+      }
+      if (window.caches && caches.keys) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+    } catch (_) {}
+    toast('🔄 Actualizando…');
+    setTimeout(() => location.reload(), 250);
   }
+
+  // Inyectar el botón en cada encabezado que aún no lo tenga (el inicio ya
+  // lo trae dentro de .header-actions, junto a la medalla).
+  document.querySelectorAll('.app-header').forEach(h => {
+    if (h.querySelector('.refresh-btn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'refresh-btn';
+    btn.setAttribute('aria-label', 'Actualizar');
+    btn.title = 'Actualizar (traer lo último y quedarte donde estás)';
+    btn.innerHTML = '<i class="fa-solid fa-arrow-rotate-right"></i>';
+    const actions = h.querySelector('.header-actions');
+    if (actions) {
+      actions.insertBefore(btn, actions.firstChild);
+    } else {
+      const right = h.lastElementChild;   // en los compactos: <div></div> vacío
+      if (right && right.tagName === 'DIV' && !right.children.length && !right.textContent.trim()) right.replaceWith(btn);
+      else h.appendChild(btn);
+    }
+  });
+
+  document.querySelectorAll('.refresh-btn').forEach(b =>
+    b.addEventListener('click', () => metasForzarActualizacion(b)));
 
   // Cambio de país
   if (countryEl) {
