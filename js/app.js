@@ -1203,13 +1203,13 @@ window.padreConsultarNube = padreConsultarNube;
 ───────────────────────────────────────────── */
 
 /* ── Acceso del maestro (Zona Docente) ──
-   Sin vueltas: el maestro visitante se suscribe en UN paso (solo su
-   nombre) y recibe AL INSTANTE su código docente (PROF-XXXX, para que
-   sus alumnos lo escriban al identificarse) y su clave secreta (para
-   ver en la nube SOLO a sus alumnos). Guardado en METAS_DOCENTE_V1. */
+   El maestro crea su cuenta con su nombre completo, su correo y una
+   contraseña que él elige. El código técnico lo genera EL SERVIDOR y
+   nunca se muestra en la pantalla: los alumnos solo escriben el NOMBRE
+   del maestro en el campo «Docente» de las misiones.
+   Guardado en METAS_DOCENTE_V1 {codigo, clave, nombre, correo, …}. */
 
 const DOCENTE_KEY = 'METAS_DOCENTE_V1';
-const DOC_ALFA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // sin 0/O ni 1/I/L
 
 function _docenteCfg() {
   try { const o = JSON.parse(localStorage.getItem(DOCENTE_KEY)); return (o && typeof o === 'object') ? o : {}; }
@@ -1224,32 +1224,33 @@ function docenteMostrarRecuperar() {
 
 async function docenteRecuperar() {
   const correo = (document.getElementById('doc-rec-correo')?.value || '').trim().toLowerCase();
-  const clave  = (document.getElementById('doc-rec-clave')?.value || '').trim();
-  if (!correo.includes('@') || !clave) { toast('Escribe tu correo y tu clave'); return; }
+  const clave  = (document.getElementById('doc-rec-clave')?.value || '');
+  if (!correo.includes('@')) { toast('Escribe el correo con que te registraste'); return; }
+  if (!clave) { toast('Escribe tu contraseña'); return; }
+  if (navigator.onLine === false) { toast('📴 Entrar necesita internet'); return; }
   toast('⏳ Verificando…');
   const { url, key } = _padreSbCfg();
   try {
-    const r = await fetch(url + '/rest/v1/rpc/metas_recuperar_docente', {
+    const r = await fetch(url + '/rest/v1/rpc/metas_entrar_docente_v2', {
       method: 'POST',
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
       body: JSON.stringify({ p_correo: correo, p_clave: clave }),
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
-    const filas = await r.json();
-    if (!filas.length) { toast('❌ Correo o clave incorrectos'); return; }
-    const f = filas[0];
-    _docenteSave({ codigo: f.codigo, clave, nombre: f.nombre || '', correo, t: new Date().toISOString() });
-    renderProfile();
-    toast('✅ ¡Bienvenido de vuelta, ' + (f.nombre || '').split(' ')[0] + '!');
-  } catch (e) {
-    toast('⚠️ ' + e.message);
+    const resp = await r.json();
+    if (resp && resp.ok && resp.codigo) {
+      _docenteSave({ codigo: resp.codigo, clave, nombre: resp.nombre || '', correo, t: new Date().toISOString() });
+      renderProfile();
+      toast('✅ ¡Bienvenido de vuelta, ' + String(resp.nombre || 'colega').split(' ')[0] + '!');
+    } else if (resp && resp.motivo === 'espera') {
+      await metasAlert('Demasiados intentos. Por seguridad espera 10 minutos y vuelve a intentar.',
+        { icono: '⏳', titulo: 'Zona Docente' });
+    } else {
+      toast('Correo o contraseña incorrectos');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
   }
-}
-
-function _docAzar(n) {
-  let s = '';
-  for (let i = 0; i < n; i++) s += DOC_ALFA[Math.floor(Math.random() * DOC_ALFA.length)];
-  return s;
 }
 
 function renderProfile() {
@@ -1270,12 +1271,15 @@ function renderProfile() {
           <i class="fa-solid fa-user-plus teacher-panel-icon"></i>
           <label class="setting-label" style="margin-bottom:0;">¿Eres maestro o maestra?</label>
         </div>
-        <p class="teacher-panel-desc">Regístrate gratis. Recibirás <strong>al instante</strong> tu
-          código de docente y tu clave para ver los resultados de tus alumnos en la nube.</p>
+        <p class="teacher-panel-desc">Crea tu cuenta gratis. Tus alumnos escribirán tu
+          <strong>nombre</strong> al empezar una misión y su avance llegará solo a tu cuenta.</p>
         <input id="doc-nombre" class="pa-inp-field" maxlength="60" autocomplete="name"
-               placeholder="Nombre completo *" style="margin-bottom:8px;">
+               placeholder="Nombre completo *" style="margin-bottom:4px;">
+        <p class="doc-campo-hint">Nombre y apellidos — tus alumnos lo escribirán para que te llegue su avance.</p>
         <input id="doc-correo" class="pa-inp-field" maxlength="100" autocomplete="email" type="email"
-               placeholder="Correo electrónico * (para recuperar tu cuenta)" style="margin-bottom:8px;">
+               placeholder="Correo electrónico *" style="margin-bottom:8px;">
+        <input id="doc-clave" class="pa-inp-field" maxlength="40" autocomplete="new-password" type="password"
+               placeholder="Elige una contraseña fácil de recordar *" style="margin-bottom:8px;">
         <input id="doc-escuela" class="pa-inp-field" maxlength="120" autocomplete="off"
                placeholder="Nombre de tu escuela" style="margin-bottom:8px;">
         <div style="display:flex;gap:8px;margin-bottom:8px;">
@@ -1297,7 +1301,7 @@ function renderProfile() {
                placeholder="Lugar / dirección o referencia de la escuela" style="margin-bottom:8px;">
         <input id="doc-telefono" class="pa-inp-field" maxlength="40" autocomplete="tel" type="tel"
                placeholder="Teléfono / WhatsApp (opcional)" style="margin-bottom:12px;">
-        <button class="padre-wa-btn doc-btn-brand" onclick="docenteSuscribir()">🎓 Registrarme gratis</button>
+        <button class="padre-wa-btn doc-btn-brand" onclick="docenteSuscribir()">🎓 Crear mi cuenta gratis</button>
         <p class="padre-hint" style="margin-top:8px;">Solo este paso necesita internet.
           <a href="panel-docente.html" class="doc-admin-link">¿Administrador del proyecto?</a></p>
         <div style="margin-top:10px;text-align:center;">
@@ -1306,64 +1310,43 @@ function renderProfile() {
           </button>
         </div>
         <div id="doc-recuperar-form" style="display:none;margin-top:10px;border-top:1px solid #e0e0e0;padding-top:12px;">
-          <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">Ingresa tus datos de registro:</p>
+          <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">Entra con tu correo y tu contraseña:</p>
           <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">📧 TU CORREO</label>
           <input id="doc-rec-correo" class="pa-inp-field" maxlength="100" autocomplete="email" type="email"
                  placeholder="El correo con que te registraste" style="margin-bottom:10px;">
-          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">🔒 TU CLAVE SECRETA</label>
-          <input id="doc-rec-clave" class="pa-inp-field" type="password" maxlength="20" autocomplete="off"
-                 placeholder="La clave que guardaste" style="margin-bottom:14px;">
-          <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar con mi correo</button>
+          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">🔒 TU CONTRASEÑA</label>
+          <input id="doc-rec-clave" class="pa-inp-field" type="password" maxlength="40" autocomplete="current-password"
+                 placeholder="La contraseña que elegiste" style="margin-bottom:14px;">
+          <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar</button>
         </div>
       </div>`;
     return;
   }
 
-  // Maestro suscrito: sus llaves y sus accesos
+  // Maestro con sesión: saludo, aviso del nombre y SU botón principal
+  const primerNombre = String(d.nombre || '').trim().split(/\s+/)[0] || 'colega';
   cont.innerHTML = `
     <div class="setting-group teacher-panel-group">
-      <div class="teacher-panel-head">
-        <i class="fa-solid fa-id-card teacher-panel-icon"></i>
-        <label class="setting-label" style="margin-bottom:0;">${_pEsc(d.nombre || 'Docente')} — tu acceso</label>
+      <div class="doc-saludo">
+        <div class="doc-saludo-hola">👋 ¡Hola, ${_pEsc(primerNombre)}!</div>
+        <div class="doc-saludo-sub">${_pEsc(d.nombre || '')}${d.escuela ? ' · ' + _pEsc(d.escuela) : ''}</div>
       </div>
-      <div class="doc-cred">
-        <div class="doc-cred-row"><span>📢 Código para tus alumnos</span><strong>${_pEsc(d.codigo)}</strong></div>
-        <div class="doc-cred-row"><span>🔑 Tu clave secreta</span>
-          <span class="doc-clave-wrap"><strong id="doc-clave-txt">••••••</strong>
-          <button class="doc-ver-btn" id="doc-ver-clave" onclick="docenteVerClave()">👁 Ver</button></span></div>
-      </div>
-      <p class="teacher-panel-desc" style="margin:10px 0 12px;">Tus alumnos escriben <strong>${_pEsc(d.codigo)}</strong>
-        en el campo «Docente» al identificarse en una misión: así sus resultados llegan a tu nube.</p>
-      <div class="teacher-links-list">
-        <a class="teacher-link-item" href="registro.html">
-          <i class="fa-solid fa-clipboard-list"></i>
-          <span class="tli-info">
-            <span class="tli-title">📋 Registro de clase</span>
-            <span class="tli-sub">Lo trabajado en este equipo</span>
-          </span>
-          <i class="fa-solid fa-chevron-right"></i>
-        </a>
-        <a class="teacher-link-item" href="consulta-nube.html">
-          <i class="fa-solid fa-cloud"></i>
-          <span class="tli-info">
-            <span class="tli-title">☁️ Mis alumnos en la nube</span>
-            <span class="tli-sub">Entra directo, sin escribir claves</span>
-          </span>
-          <i class="fa-solid fa-chevron-right"></i>
-        </a>
-      </div>
+      <div class="doc-aviso-alumnos">📣 Dile a tus alumnos que escriban tu nombre —
+        <strong>${_pEsc(d.nombre || '')}</strong> — en el campo «Docente» al empezar una misión.
+        Así su avance llega solo a tu cuenta.</div>
+      <a class="doc-avance-btn" href="consulta-nube.html">📊 Ver el avance de mis alumnos</a>
+      <a class="doc-offline-link" href="registro.html">📴 ¿Sin internet? Mira lo trabajado en este equipo</a>
       <div class="doc-sync-box">
+        <div class="doc-sync-title">🔄 Tus datos, iguales en todos tus equipos</div>
         <div class="doc-sync-status" id="doc-sync-status">☁️ Revisando la nube del aula…</div>
-        <p class="doc-sync-hint">Tus datos del aula (lista, economía, asistencia, notas, Plan de Acción…)
-          se guardan igual en todos tus equipos. Si un equipo tiene datos viejos o de prueba, usa estos botones una vez:</p>
+        <p class="doc-sync-hint">Si un equipo tiene datos viejos o de prueba, usa estos botones una vez:</p>
         <div class="doc-sync-btns">
           <button class="doc-sync-btn" onclick="dsForcePush()">⬆️ Subir lo de este equipo</button>
           <button class="doc-sync-btn" onclick="dsForcePull()">⬇️ Traer lo de la nube</button>
         </div>
       </div>
-      <button class="padre-wa-btn" style="margin-top:12px;" onclick="docenteCompartir()">📤 Guardar mis llaves en WhatsApp</button>
-      <button class="padre-wa-cambiar" onclick="docenteCambiarClave()">✏️ Cambiar mi clave secreta</button>
-      <button class="padre-wa-cambiar" style="color:#c0392b;border-color:#c0392b;margin-top:6px;" onclick="docenteCerrarSesion()">🚪 Cerrar sesión</button>
+      <button class="padre-wa-cambiar" onclick="docenteCambiarClave()">✏️ Cambiar mi contraseña</button>
+      <button class="padre-wa-cambiar" style="color:#c0392b;margin-top:6px;" onclick="docenteCerrarSesion()">🚪 Cerrar sesión</button>
     </div>`;
   if (typeof dsOnProfile === 'function') dsOnProfile();
 }
@@ -1376,75 +1359,58 @@ function docenteTipo(t) {
 }
 
 async function docenteSuscribir() {
-  const nombre        = (document.getElementById('doc-nombre')?.value || '').trim();
+  const nombre        = (document.getElementById('doc-nombre')?.value || '').trim().replace(/\s+/g, ' ');
   const correo        = (document.getElementById('doc-correo')?.value || '').trim().toLowerCase();
+  const clave         = (document.getElementById('doc-clave')?.value || '');
   const escuela       = (document.getElementById('doc-escuela')?.value || '').trim();
   const telefono      = (document.getElementById('doc-telefono')?.value || '').trim();
   const departamento  = (document.getElementById('doc-departamento')?.value || '').trim();
   const municipio     = (document.getElementById('doc-municipio')?.value || '').trim();
   const lugar         = (document.getElementById('doc-lugar')?.value || '').trim();
-  if (nombre.length < 3) { toast('Escribe tu nombre completo'); return; }
-  if (!correo.includes('@') || correo.length < 5) { toast('Escribe un correo válido — lo necesitarás para recuperar tu cuenta'); return; }
-  if (navigator.onLine === false) { toast('📴 El registro necesita internet (solo esta vez)'); return; }
-  toast('⏳ Creando tu acceso…');
+  if (nombre.split(' ').length < 2) { toast('Escribe tu nombre y al menos un apellido'); return; }
+  if (!correo.includes('@') || correo.length < 5) { toast('Escribe un correo válido — con él entrarás a tu cuenta'); return; }
+  if (clave.length < 6) { toast('La contraseña debe tener al menos 6 letras o números'); return; }
+  if (navigator.onLine === false) { toast('📴 Crear la cuenta necesita internet (solo esta vez)'); return; }
+  toast('⏳ Creando tu cuenta…');
   const { url, key } = _padreSbCfg();
-  for (let intento = 0; intento < 3; intento++) {
-    // 5 caracteres (30^5 ≈ 24 millones): headroom para decenas de miles de
-    // maestros sin colisiones al registrar. Los códigos de 4 ya emitidos
-    // siguen siendo válidos (la clave primaria es texto de largo variable).
-    const codigo = 'PROF-' + _docAzar(5);
-    const clave  = _docAzar(6);
-    try {
-      const r = await fetch(url + '/rest/v1/rpc/metas_suscribir_docente', {
-        method: 'POST',
-        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ p_codigo: codigo, p_clave: clave, p_nombre: nombre,
-          p_correo: correo, p_escuela: escuela, p_tipo: _docTipo, p_telefono: telefono,
-          p_departamento: departamento, p_municipio: municipio, p_lugar: lugar }),
-      });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const ok = await r.json();
-      if (ok === true) {
-        _docenteSave({ codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono,
-          departamento, municipio, lugar, t: new Date().toISOString() });
-        renderProfile();
-        toast('🎉 ¡Listo, ' + nombre.split(' ')[0] + '! Guarda tus llaves');
-        return;
-      }
-    } catch (_) {
-      toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
+  try {
+    // El código técnico del docente lo genera el servidor (nunca se muestra)
+    const r = await fetch(url + '/rest/v1/rpc/metas_docente_alta_v2', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_nombre: nombre, p_correo: correo, p_clave: clave,
+        p_escuela: escuela, p_tipo: _docTipo, p_telefono: telefono,
+        p_departamento: departamento, p_municipio: municipio, p_lugar: lugar }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const resp = await r.json();
+    if (resp && resp.ok && resp.codigo) {
+      _docenteSave({ codigo: resp.codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono,
+        departamento, municipio, lugar, t: new Date().toISOString() });
+      renderProfile();
+      toast('🎉 ¡Bienvenido, ' + nombre.split(' ')[0] + '! Tu cuenta está lista');
       return;
     }
+    const motivo = resp && resp.motivo;
+    if (motivo === 'nombre') {
+      await metasAlert('Ya hay un maestro registrado con ese nombre. Agrega tu segundo apellido para diferenciarte (ej.: Josué Polanco Lemus).',
+        { icono: '👤', titulo: 'Zona Docente' });
+    } else if (motivo === 'correo') {
+      toast('Ese correo ya tiene cuenta — usa «¿Ya tienes cuenta? Entrar»');
+    } else if (motivo === 'nombre_corto') {
+      toast('Escribe tu nombre y apellidos completos');
+    } else if (motivo === 'correo_malo') {
+      toast('Revisa el correo: parece incompleto');
+    } else if (motivo === 'clave_corta') {
+      toast('La contraseña debe tener al menos 6 letras o números');
+    } else {
+      toast('⚠️ No se pudo crear la cuenta. Intenta de nuevo.');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
   }
-  toast('⚠️ Intenta de nuevo, por favor');
 }
 window.docenteSuscribir = docenteSuscribir;
-
-/* La clave secreta permite recuperar el candado del maestro, así que
-   verla/compartirla/cambiarla pide el candado si existe (una vez por
-   sesión) — si no, un alumno con el teléfono la leería en pantalla. */
-async function docenteVerClave() {
-  const d = _docenteCfg();
-  if (!d.codigo) return;
-  if (typeof paVerificarPin === 'function' && !(await paVerificarPin('Para ver tu clave secreta:'))) return;
-  const el = document.getElementById('doc-clave-txt');
-  if (el) el.textContent = d.clave || '';
-  const btn = document.getElementById('doc-ver-clave');
-  if (btn) btn.remove();
-}
-window.docenteVerClave = docenteVerClave;
-
-async function docenteCompartir() {
-  const d = _docenteCfg();
-  if (!d.codigo) return;
-  if (typeof paVerificarPin === 'function' && !(await paVerificarPin('Para compartir tus llaves:'))) return;
-  const txt = '🎓 Mis llaves de M.E.T.A.S\n' +
-    '📢 Código para mis alumnos (campo Docente): ' + d.codigo + '\n' +
-    '🔑 Mi clave secreta: ' + d.clave + '\n' +
-    '☁️ Consulto a mis alumnos en: ' + location.origin + location.pathname.replace(/index\.html$/, '') + 'consulta-nube.html';
-  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
-}
-window.docenteCompartir = docenteCompartir;
 
 function docenteCerrarSesion() {
   _docenteSave(null);
@@ -1457,27 +1423,30 @@ window.docenteCerrarSesion = docenteCerrarSesion;
 async function docenteCambiarClave() {
   const d = _docenteCfg();
   if (!d.codigo) return;
-  if (typeof paVerificarPin === 'function' && !(await paVerificarPin('Para cambiar tu clave secreta:'))) return;
-  const nueva = await metasPrompt('Escribe tu **clave nueva** (mínimo 4 letras o números):', {
-    icono: '✏️', titulo: 'Zona Docente', okTxt: 'Cambiar clave',
-    valida: v => String(v).trim().length >= 4 ? '' : 'Muy corta: usa al menos 4 letras o números.',
+  if (navigator.onLine === false) { toast('📴 Cambiar la contraseña necesita internet'); return; }
+  const actual = await metasPrompt('Escribe tu contraseña **actual**:', {
+    icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Continuar',
+    valida: v => String(v).length ? '' : 'Escribe tu contraseña actual.',
+  });
+  if (actual === null) return;
+  const nueva = await metasPrompt('Ahora escribe tu contraseña **nueva** (mínimo 6 letras o números).\nGuárdala bien: con ella entrarás en todos tus equipos.', {
+    icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Cambiar contraseña',
+    valida: v => String(v).length >= 6 ? '' : 'Muy corta: usa al menos 6 letras o números.',
   });
   if (nueva === null) return;
-  const np = String(nueva).trim().toUpperCase();
-  if (navigator.onLine === false) { toast('📴 Cambiar la clave necesita internet'); return; }
   try {
     const { url, key } = _padreSbCfg();
     const r = await fetch(url + '/rest/v1/rpc/metas_cambiar_clave_docente', {
       method: 'POST',
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_codigo: d.codigo, p_actual: d.clave, p_nueva: np }),
+      body: JSON.stringify({ p_codigo: d.codigo, p_actual: actual, p_nueva: nueva }),
     });
     const ok = r.ok ? await r.json() : false;
     if (ok === true) {
-      d.clave = np; _docenteSave(d); renderProfile();
-      toast('✅ Clave actualizada');
+      d.clave = nueva; _docenteSave(d);
+      toast('✅ Contraseña actualizada');
     } else {
-      toast('⚠️ No se pudo cambiar la clave');
+      toast('⚠️ No se pudo cambiar. Revisa que la contraseña actual sea la correcta.');
     }
   } catch (_) { toast('⚠️ Sin conexión con la nube'); }
 }

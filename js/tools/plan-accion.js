@@ -998,72 +998,31 @@ function paInit() {
   paSincronizarNube(false);
 }
 
-/* ── Candado del maestro ──
-   El Plan de Acción guarda notas de TODOS los alumnos y las claves de
-   familia: si un alumno agarra el teléfono del maestro no debe poder
-   abrirlo. Clave local de 4-8 dígitos (hash djb2 en METAS_PIN_MAESTRO_V1),
-   se pide UNA vez por sesión (sessionStorage). 100% offline. */
-const PA_PIN_KEY = 'METAS_PIN_MAESTRO_V1';
-
-function paPinHash(s) {
-  let h = 5381;
-  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
-  return 'v1:' + h;
-}
-
-/* El candado numérico «clave del maestro» se ELIMINÓ (jul 2026): pedía
+/* ── Acceso a las herramientas del maestro ──
+   El candado numérico «clave del maestro» se ELIMINÓ (jul 2026): pedía
    la clave a cada rato y era horrible para el maestro. Ahora la Zona
-   Docente y sus herramientas se protegen SOLO con el REGISTRO DOCENTE
-   (el alumno no tiene la cuenta del maestro, y sin sesión las
-   herramientas ni se muestran). */
+   Docente y sus herramientas se protegen SOLO con la CUENTA DE MAESTRO
+   (el alumno no tiene la contraseña, y sin sesión las herramientas ni
+   se muestran). */
 function _paLogged() {
   try { const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')); return !!(d && d.codigo); }
   catch (_) { return false; }
 }
 
 async function paAbrirPlan() {
-  if (!_paLogged()) { toast('Entra con tu registro docente en la Zona Docente para usar el Plan de Acción'); return; }
+  if (!_paLogged()) { toast('Entra con tu cuenta de maestro en la Zona Docente para usar el Plan de Acción'); return; }
   switchView('view-plan-accion'); paInit();
 }
 
 /* Barrera reutilizable (se conserva por compatibilidad con los llamados
    existentes): antes pedía la clave del candado; ahora solo confirma que
-   hay sesión docente. Sin clave numérica que memorizar. */
+   hay sesión de maestro. Sin clave numérica que memorizar. */
 async function paVerificarPin(motivo) {
   if (_paLogged()) return true;
-  toast('Entra con tu registro docente en la Zona Docente');
+  toast('Entra con tu cuenta de maestro en la Zona Docente');
   return false;
 }
 window.paVerificarPin = paVerificarPin;
-
-/* Recuperación segura del candado: SOLO con la clave secreta del
-   docente suscrito (el alumno tampoco la conoce; funciona offline
-   porque METAS_DOCENTE_V1 vive en este teléfono). Sin suscripción
-   queda la vía manual: borrar METAS_PIN_MAESTRO_V1 de los datos
-   del sitio en el navegador. */
-async function paRecuperarPin() {
-  let doc = null;
-  try { doc = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')); } catch (_) {}
-  if (!doc || !doc.clave) {
-    await metasAlert('Tras 3 intentos, por seguridad no hay atajo.\n\nSi olvidaste la clave, borra el dato **METAS_PIN_MAESTRO_V1** en los datos del sitio de tu navegador (las notas NO se pierden), o suscríbete en la Zona Docente: los docentes suscritos recuperan el candado con su clave secreta.', {
-      icono: '🔒', titulo: 'Candado del maestro',
-    });
-    return;
-  }
-  const v = await metasPrompt('¿Olvidaste la clave del candado?\n\nEscribe tu **clave secreta de docente** (la de ' + doc.codigo + ') para crear una nueva:', {
-    icono: '🆘', titulo: 'Recuperar candado',
-    type: 'password', okTxt: 'Verificar',
-  });
-  if (v === null) return;
-  if (String(v).trim().toUpperCase() !== String(doc.clave).trim().toUpperCase()) {
-    toast('Clave de docente incorrecta');
-    return;
-  }
-  try { localStorage.removeItem(PA_PIN_KEY); } catch (_) {}
-  try { sessionStorage.removeItem('METAS_PIN_OK'); } catch (_) {}
-  toast('✅ Candado reiniciado');
-  paAbrirPlan();   /* crea la clave nueva de una vez */
-}
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('goto-plan-btn')?.addEventListener('click', paAbrirPlan);

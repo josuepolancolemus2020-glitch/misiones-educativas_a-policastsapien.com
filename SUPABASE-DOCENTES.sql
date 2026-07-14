@@ -1,6 +1,14 @@
 -- ============================================================
+-- ⚠️⚠️ OBSOLETO — NO VOLVER A CORRER ESTE ARCHIVO ⚠️⚠️
+-- Reemplazado por SUPABASE-DOCENTES-V2.sql (cuenta con correo +
+-- contraseña y emparejamiento por NOMBRE del maestro).
+-- Correr esto DESPUÉS de V2 ROMPE las cuentas nuevas: revierte
+-- _metas_docente_ok, metas_consultar_docente, metas_consultar_
+-- progreso_docente y metas_cambiar_clave_docente al modelo viejo.
+-- Se conserva solo como referencia histórica.
+-- ============================================================
 -- M.E.T.A.S — Suscripción de docentes (autoservicio, sin correo)
--- Pegar COMPLETO en supabase.com → tu proyecto → SQL Editor → Run
+-- (histórico) Pegar COMPLETO en supabase.com → SQL Editor → Run
 --
 -- Flujo: el maestro toca «Suscribirme» en la app → su teléfono
 -- genera un CÓDIGO DOCENTE (PROF-XXXX, para que sus alumnos lo

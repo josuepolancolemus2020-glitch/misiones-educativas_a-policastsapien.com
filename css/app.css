@@ -413,22 +413,39 @@ a.padre-asistente-btn {
 }
 .padre-nube { border-left: 4px solid var(--accent); }
 
-/* ── Acceso del maestro (suscripción y llaves) ── */
+/* ── Acceso del maestro (cuenta con correo y contraseña) ── */
 .doc-btn-brand { background: var(--brand) !important; }
 .doc-admin-link { color: var(--muted); text-decoration: underline; }
-.doc-cred {
-  background: var(--bg); border: 1.5px solid var(--border);
-  border-radius: var(--r-sm); padding: 4px 12px;
+.doc-campo-hint {
+  font-size: 11px; color: var(--muted);
+  line-height: 1.4; margin: 0 2px 8px;
 }
-.doc-cred-row {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  padding: 9px 0; border-bottom: 1px solid var(--border);
+/* Tarjeta del maestro con sesión: saludo + aviso + botón protagonista */
+.doc-saludo { margin-bottom: 10px; }
+.doc-saludo-hola { font-size: 20px; font-weight: 900; color: var(--text); }
+.doc-saludo-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.doc-aviso-alumnos {
+  background: #eff6ff; border: 1.5px solid #bfdbfe;
+  border-radius: var(--r-sm); padding: 10px 12px;
+  font-size: 12.5px; line-height: 1.55; color: var(--text);
+  margin-bottom: 14px;
 }
-.doc-cred-row:last-child { border-bottom: none; }
-.doc-cred-row span { font-size: 12px; color: var(--muted); }
-.doc-cred-row strong {
-  font-size: 16px; font-weight: 900; letter-spacing: 1.5px;
-  color: var(--brand); font-family: 'Courier New', monospace;
+.doc-aviso-alumnos strong { color: var(--brand); }
+.doc-avance-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; box-sizing: border-box;
+  background: linear-gradient(135deg, var(--brand), var(--brand-mid));
+  color: #fff; text-decoration: none;
+  border-radius: 16px; padding: 18px 16px;
+  font-size: 16px; font-weight: 900; letter-spacing: .2px;
+  box-shadow: 0 6px 18px rgba(30,58,124,.35);
+  transition: transform .15s, box-shadow .15s;
+}
+.doc-avance-btn:active { transform: scale(.97); box-shadow: 0 3px 10px rgba(30,58,124,.3); }
+.doc-offline-link {
+  display: block; text-align: center;
+  font-size: 12px; color: var(--muted); text-decoration: underline;
+  margin: 10px 0 2px;
 }
 .padre-codigo-inp { text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
 #padre-nube-out { margin-top: 10px; }
@@ -439,6 +456,7 @@ a.padre-asistente-btn {
   background: var(--bg); border: 1.5px solid var(--border);
   border-radius: var(--r-sm);
 }
+.doc-sync-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
 .doc-sync-status { font-size: 13px; font-weight: 700; color: var(--brand); }
 .doc-sync-hint { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin: 6px 0 10px; }
 .doc-sync-btns { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -1571,12 +1589,13 @@ a.padre-asistente-btn {
 /* Herramienta activa en grid docente */
 .teacher-tool-item.teacher-tool-active {
   background: #eff6ff; border-color: var(--brand);
-  cursor: pointer; transition: transform .15s, box-shadow .15s;
+  cursor: pointer; transition: transform .15s, box-shadow .15s, background .15s;
 }
 .teacher-tool-item.teacher-tool-active i  { color: var(--brand); }
-.teacher-tool-item.teacher-tool-active span { color: var(--brand); font-weight: 700; }
+.teacher-tool-item.teacher-tool-active .tt-title { color: var(--brand); }
 .teacher-tool-item.teacher-tool-active::after { display: none; }
-.teacher-tool-item.teacher-tool-active:active { transform: scale(.95); }
+.teacher-tool-item.teacher-tool-active:hover { box-shadow: 0 2px 8px rgba(30,58,124,.15); }
+.teacher-tool-item.teacher-tool-active:active { transform: scale(.97); background: #e0ecff; }
 
 /* Botón volver en vistas secundarias */
 .back-icon-btn {
@@ -1602,36 +1621,25 @@ a.padre-asistente-btn {
 .teacher-ge-btn i:first-child { font-size: 18px; }
 .teacher-ge-arrow { margin-left: auto; opacity: .7; }
 
-/* Zona Docente: accesos principales (registros del maestro) */
-.teacher-links-list { display: flex; flex-direction: column; gap: 10px; }
-.teacher-link-item {
-  display: flex; align-items: center; gap: 12px;
-  background: var(--bg); border: 1.5px solid var(--brand);
-  border-radius: var(--r-sm); padding: 13px 14px;
-  transition: transform .15s;
-}
-.teacher-link-item:active { transform: scale(.97); }
-.teacher-link-item > i { font-size: 20px; color: var(--brand); width: 26px; text-align: center; }
-.tli-info { display: flex; flex-direction: column; min-width: 0; }
-.tli-title { font-size: 14px; font-weight: 700; color: var(--brand); }
-.tli-sub { font-size: 11px; color: var(--muted); }
-.teacher-link-item .fa-chevron-right { margin-left: auto; font-size: 13px; color: var(--muted); width: auto; }
-
 .teacher-panel-group { border-left: 4px solid var(--accent) !important; }
 .teacher-panel-head {
   display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
 }
 .teacher-panel-icon { font-size: 22px; color: var(--accent); }
 .teacher-panel-desc { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.4; }
-.teacher-tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.teacher-tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
 .teacher-tool-item {
   background: var(--bg); border: 1.5px solid var(--border);
-  border-radius: var(--r-sm); padding: 14px 8px;
-  display: flex; flex-direction: column; align-items: center; gap: 7px;
-  text-align: center; position: relative; cursor: default;
+  border-radius: var(--r-sm); padding: 10px 12px;
+  min-height: 64px; box-sizing: border-box; width: 100%;
+  display: flex; align-items: center; gap: 10px;
+  text-align: left; position: relative; cursor: default;
+  text-decoration: none; font-family: inherit;
 }
-.teacher-tool-item i  { font-size: 22px; color: var(--brand); }
-.teacher-tool-item span { font-size: 11px; font-weight: 600; color: var(--text); }
+.teacher-tool-item i  { font-size: 20px; color: var(--brand); width: 24px; text-align: center; flex-shrink: 0; }
+.tt-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tt-title { font-size: 12.5px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.tt-sub { font-size: 0.72rem; font-weight: 500; color: var(--muted); line-height: 1.25; }
 .teacher-tool-item::after {
   content: 'Pronto';
   position: absolute; top: 4px; right: 4px;
@@ -3437,8 +3445,7 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .camp-vivo-sug.ok  { background: rgba(21,128,61,.12); color: #15803d; }
 .camp-vivo-sug.mal { background: rgba(185,28,28,.10); color: #b91c1c; }
 
-/* ── Clave secreta del docente oculta tras el candado ── */
-.doc-clave-wrap { display: inline-flex; align-items: center; gap: 8px; }
+/* ── Botones redondos pequeños de la Zona Docente ── */
 .doc-ver-btn {
   background: var(--bg); border: 1.5px solid var(--border);
   border-radius: 999px; padding: 4px 10px;

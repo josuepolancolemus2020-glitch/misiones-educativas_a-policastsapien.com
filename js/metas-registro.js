@@ -422,8 +422,8 @@
       '<input id="metasIdEscuela" type="text" maxlength="80" autocomplete="off" placeholder="Ej: Esc. Francisco Morazán">' +
       '<label for="metasIdGrado">📚 Grado y sección</label>' +
       '<input id="metasIdGrado" type="text" maxlength="30" autocomplete="off" placeholder="Ej: 6to A">' +
-      '<label for="metasIdDocente">🧑‍🏫 Nombre de tu maestro o código</label>' +
-      '<input id="metasIdDocente" type="text" maxlength="40" autocomplete="off" placeholder="Ej: Prof. Josué o PROF-JP">' +
+      '<label for="metasIdDocente">🧑‍🏫 Nombre de tu maestro(a)</label>' +
+      '<input id="metasIdDocente" type="text" maxlength="60" autocomplete="off" placeholder="Escríbelo tal como te lo dio (ej.: Josué Polanco)">' +
       '<div class="metas-id-acciones">' +
       '<button type="button" class="metas-id-btn metas-id-luego" id="metasIdLuego">Ahora no</button>' +
       '<button type="button" class="metas-id-btn metas-id-guardar" id="metasIdGuardar">✅ Guardar</button>' +
@@ -447,7 +447,9 @@
         num: document.getElementById('metasIdNum').value.trim().slice(0, 10),
         escuela: document.getElementById('metasIdEscuela').value.trim().slice(0, 80),
         grado: document.getElementById('metasIdGrado').value.trim().slice(0, 30),
-        docente: document.getElementById('metasIdDocente').value.trim().slice(0, 40)
+        // 60 = mismo tope que el nombre del maestro al registrarse: si
+        // difirieran, un nombre largo jamás emparejaría en la nube.
+        docente: document.getElementById('metasIdDocente').value.trim().slice(0, 60)
       };
       guardarIdentificacion(datos);
       // sincronizar con el nombre de la constancia de la misión

@@ -6,6 +6,13 @@ plan Free, región East US). **Fase 1**: cada evaluación calificada
 tabla `resultados` en la nube, y el maestro las consulta reunidas en
 `consulta-nube.html`.
 
+> 📌 **Nota (jul 2026):** este documento describe la Fase 1 histórica, cuando
+> se consultaba con una "clave del docente" suelta. Hoy el maestro entra a
+> `consulta-nube.html` con el **correo y la contraseña de su cuenta de
+> maestro**, y sus alumnos lo identifican escribiendo **su nombre** en el
+> campo «Docente». El código interno de docente lo genera el servidor y ya no
+> se muestra en la interfaz. Lo de abajo se conserva como referencia técnica.
+
 ## Cómo funciona (offline-first, innegociable)
 
 1. Las misiones siguen guardando TODO en el dispositivo (localStorage),
