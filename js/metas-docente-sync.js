@@ -14,8 +14,11 @@
    • Al abrir la Zona Docente / al volver internet / con la app visible,
      baja lo más nuevo de la nube y repinta la vista activa.
    • Conflicto automático: gana el cambio más reciente (last-write-wins).
-   • Reconciliación manual (una sola vez): «⬆️ Subir lo de este equipo»
-     y «⬇️ Traer lo de la nube» fuerzan la dirección elegida.
+   • Botón «🔄 Sincronizar ahora»: dispara una sync normal a pedido
+     (tranquilidad del usuario; no fuerza nada).
+   • Reconciliación manual escondida (caso raro, un equipo con datos
+     viejos): «⬆️ Este equipo es el bueno» / «⬇️ La nube es la buena»
+     fuerzan la dirección elegida.
    • Offline-first: sin internet no pasa nada; reintenta al volver.
 
    Solo sincroniza las claves del maestro (abajo). NO toca los
@@ -245,12 +248,44 @@
                           : '✅ Datos del aula sincronizados en todos tus equipos.';
   }
 
+  /* ── Sincronizar ahora (botón único, tranquilidad del usuario) ──
+     Hace una sync normal (baja lo nuevo, sube lo cambiado). No fuerza
+     nada: es el mismo camino automático, pero a pedido. */
+  function syncNow(btn) {
+    if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
+    if (btn) { btn.disabled = true; btn.dataset.txt = btn.textContent; btn.textContent = '⏳ Sincronizando…'; }
+    estado('☁️ Sincronizando con la nube…');
+    _lastAuto = ahora();
+    // sync() se salta si _busy; forzamos un pull+push directo para el botón
+    var p = _busy ? Promise.resolve(false)
+                  : (function () { _busy = true;
+                      return pull(false).then(function (res) { return push(false, res.cloudKeys); })
+                        .then(function (r) { _busy = false; return r; })
+                        .catch(function () { _busy = false; return false; }); })();
+    return Promise.resolve(p).then(function (r) {
+      if (btn) { btn.disabled = false; if (btn.dataset.txt) btn.textContent = btn.dataset.txt; }
+      if (typeof toast === 'function') toast(r !== false ? '✅ Todo al día' : '⚠️ No se pudo ahora, reintenta');
+      estado();
+    });
+  }
+
+  /* Abre/cierra la caja discreta de arreglo (equipo con datos viejos). */
+  function mostrarArreglo(link) {
+    try {
+      var box = link && link.parentElement && link.parentElement.querySelector('.doc-sync-fix-box');
+      if (!box) return;
+      var abrir = box.style.display === 'none' || !box.style.display;
+      box.style.display = abrir ? 'block' : 'none';
+      link.textContent = abrir ? 'Ocultar' : '¿Un equipo con datos viejos?';
+    } catch (_) {}
+  }
+
   /* ── Reconciliación manual (solo confirma; sin candado extra) ── */
   function forcePush() {
     if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
     var ask = (typeof metasConfirm === 'function')
-      ? metasConfirm('Esto hará que la nube y tus demás equipos usen los datos de **ESTE equipo** (lista, economía, asistencia, notas, Plan de Acción…). ¿Continuar?',
-          { icono: '⬆️', titulo: 'Subir lo de este equipo', okTxt: 'Sí, subir' })
+      ? metasConfirm('La nube y tus demás equipos usarán los datos de **ESTE equipo** (lista, economía, asistencia, notas, Plan de Acción…). ¿Es este el equipo con los datos buenos?',
+          { icono: '⬆️', titulo: 'Este equipo es el bueno', okTxt: 'Sí, usar este' })
       : Promise.resolve(true);
     Promise.resolve(ask).then(function (ok) {
       if (!ok) return;
@@ -265,8 +300,8 @@
   function forcePull() {
     if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
     var ask = (typeof metasConfirm === 'function')
-      ? metasConfirm('Esto **reemplazará** los datos de la Zona Docente de este equipo con los de la nube. Úsalo en el equipo que tiene datos viejos o de prueba. ¿Continuar?',
-          { icono: '⬇️', titulo: 'Traer lo de la nube', okTxt: 'Sí, traer' })
+      ? metasConfirm('Los datos de la Zona Docente de **este equipo** se **reemplazarán** con los de la nube. Úsalo en el equipo que tiene datos viejos o de prueba. ¿Continuar?',
+          { icono: '⬇️', titulo: 'La nube es la buena', okTxt: 'Sí, traer la nube' })
       : Promise.resolve(true);
     Promise.resolve(ask).then(function (ok) {
       if (!ok) return;
@@ -304,4 +339,6 @@
   window.dsForcePull = forcePull;
   window.dsOnProfile = onProfile;
   window.dsSync = sync;
+  window.dsSyncNow = syncNow;
+  window.dsMostrarArreglo = mostrarArreglo;
 })();

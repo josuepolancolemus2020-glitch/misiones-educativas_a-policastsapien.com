@@ -1338,12 +1338,13 @@ function renderProfile() {
       <a class="doc-avance-btn" href="consulta-nube.html">📊 Ver el avance de mis alumnos</a>
       <a class="doc-offline-link" href="registro.html">📴 ¿Sin internet? Mira lo trabajado en este equipo</a>
       <div class="doc-sync-box">
-        <div class="doc-sync-title">🔄 Tus datos, iguales en todos tus equipos</div>
         <div class="doc-sync-status" id="doc-sync-status">☁️ Revisando la nube del aula…</div>
-        <p class="doc-sync-hint">Si un equipo tiene datos viejos o de prueba, usa estos botones una vez:</p>
-        <div class="doc-sync-btns">
-          <button class="doc-sync-btn" onclick="dsForcePush()">⬆️ Subir lo de este equipo</button>
-          <button class="doc-sync-btn" onclick="dsForcePull()">⬇️ Traer lo de la nube</button>
+        <button class="doc-sync-now" id="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
+        <a class="doc-sync-fix-link" onclick="dsMostrarArreglo(this)">¿Un equipo con datos viejos?</a>
+        <div class="doc-sync-fix-box" style="display:none;">
+          <p class="doc-sync-hint">Si un equipo (viejo o de prueba) tiene datos distintos, dime cuál es el bueno:</p>
+          <button class="doc-sync-btn" onclick="dsForcePush()">⬆️ Este equipo es el bueno</button>
+          <button class="doc-sync-btn" onclick="dsForcePull()">⬇️ La nube es la buena</button>
         </div>
       </div>
       <button class="padre-wa-cambiar" onclick="docenteCambiarClave()">✏️ Cambiar mi contraseña</button>
