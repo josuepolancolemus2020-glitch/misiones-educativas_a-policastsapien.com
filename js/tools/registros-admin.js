@@ -389,6 +389,7 @@ function adRenderLista(body, d) {
     const dd = adLoad();
     if (!await metasConfirm('Se eliminará el grupo **' + (adGrupoTxt(dd) || 'sin nombre') + '** con su lista, economía, asistencia y notas de este equipo. Las claves de familia entregadas dejan de usarse.\n\n¿Eliminar?',
       { icono: '🗑', titulo: 'Eliminar grupo', okTxt: 'Sí, eliminar' })) return;
+    if (!await adPedirContrasena('Eliminar grupo')) return;
     const s2 = adState();
     s2.grupos = s2.grupos.filter(g => g.id !== dd.id);
     s2.activo = s2.grupos[0].id;
@@ -1607,6 +1608,47 @@ function adClavesDelGrupo(d) {
   });
   return out;
 }
+
+/* Acciones destructivas: no basta la sesión abierta — se pide la
+   CONTRASEÑA de la cuenta de maestro (un alumno con el teléfono en la
+   mano no la sabe). Se compara con la guardada; si este equipo no la
+   tiene, se verifica contra el login de la nube (que ya trae freno
+   anti fuerza bruta: 5 fallos → 10 minutos). */
+async function adPedirContrasena(titulo) {
+  let doc = {};
+  try { doc = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')) || {}; } catch (_) {}
+  if (!doc.codigo) {
+    await metasAlert('Entra primero con tu cuenta de maestro en la Zona Docente.', { icono: '🔒', titulo });
+    return false;
+  }
+  const pw = await metasPrompt('Confirma que eres tú: escribe la **contraseña de tu cuenta de maestro**' +
+    (doc.correo ? '\n(' + doc.correo + ')' : '') + ':', {
+    icono: '🔒', titulo, type: 'password', okTxt: 'Verificar',
+    valida: v => String(v).trim() ? '' : 'Escribe tu contraseña.',
+  });
+  if (pw === null) return false;
+  const intento = String(pw).trim();
+  let ok = false;
+  if (doc.clave) {
+    ok = intento === String(doc.clave).trim();
+  } else if (doc.correo && navigator.onLine !== false) {
+    try {
+      const { url, key } = _avSbConexion();
+      const r = await fetch(url + '/rest/v1/rpc/metas_entrar_docente_v2', {
+        method: 'POST',
+        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_correo: doc.correo, p_clave: intento }),
+      });
+      const j = r.ok ? await r.json() : null;
+      ok = !!(j && j.ok);
+    } catch (_) {}
+  }
+  if (!ok) {
+    await metasAlert('❌ Contraseña incorrecta. Por seguridad, no se hace nada.', { icono: '🔒', titulo });
+    return false;
+  }
+  return true;
+}
 async function adCerrarAnio() {
   const d = adLoad();
   const anio = adAnioDe(d);
@@ -1623,6 +1665,8 @@ async function adCerrarAnio() {
     '• La ficha del aula (horario, uniforme…) se conserva\n\n' +
     'Hazlo solo cuando el año esté ENTREGADO (boletas impresas). ¿Continuar?',
     { icono: '🎓', titulo: 'Cerrar el año', okTxt: 'Sí, continuar' })) return;
+  /* identidad real, no solo la sesión abierta */
+  if (!await adPedirContrasena('Cerrar el año')) return;
   const conf = await metasPrompt('Esta acción no se puede deshacer. Para confirmar, escribe **CERRAR**:', {
     icono: '🎓', titulo: 'Cerrar el año', okTxt: 'Confirmar',
     valida: v => String(v).trim().toUpperCase() === 'CERRAR' ? '' : 'Escribe CERRAR (o cancela).',
