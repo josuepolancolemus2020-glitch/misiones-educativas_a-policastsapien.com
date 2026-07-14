@@ -39,10 +39,18 @@ let _adColectaId = null;     /* colecta abierta en Economía */
    chocan entre sí. */
 const AD_ID_ALFA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
+/* Datos oficiales del REVERSO de la boleta (portada SEDUC Honduras).
+   El docente se prellena con el nombre de la cuenta del maestro si existe. */
+function adBoletaDef() {
+  let doc = '';
+  try { const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')); if (d && d.nombre) doc = d.nombre; } catch (_) {}
+  return { director: '', docente: doc, lugar: '', municipio: '', departamento: '', anio: String(new Date().getFullYear()) };
+}
+
 function adGrupoNuevo(props) {
   let id = 'G';
   for (let i = 0; i < 5; i++) id += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
-  return Object.assign({ id, escuela: '', grado: '', seccion: '', logo: '',
+  return Object.assign({ id, escuela: '', grado: '', seccion: '', logo: '', boleta: adBoletaDef(),
     materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {} }, props || {});
 }
 
@@ -52,6 +60,7 @@ function adNormGrupo(g) {
   g.grado = g.grado || '';
   g.seccion = g.seccion || '';
   g.logo = typeof g.logo === 'string' ? g.logo : '';
+  g.boleta = Object.assign(adBoletaDef(), (g.boleta && typeof g.boleta === 'object') ? g.boleta : {});
   g.lista = Array.isArray(g.lista) ? g.lista : [];
   g.colectas = Array.isArray(g.colectas) ? g.colectas : [];
   g.asistencia = Array.isArray(g.asistencia) ? g.asistencia : [];
@@ -961,9 +970,28 @@ function adRenderSace(body, d) {
           </div>
           <div class="pa-field"><label>Nombre del centro educativo</label>
             <input id="ad-boleta-centro" class="pa-inp-field" value="${adEsc(d.escuela)}"
-                   placeholder="Ej: Centro de Educación Básica John Arnold Cook"></div>
-          <p class="pa-optional-hint">El logo y el nombre salen en la boleta impresa. Se guardan y
-            sincronizan con tus equipos.</p>
+                   placeholder="Ej: John Arnold Cook"></div>
+          <div class="pa-row-2">
+            <div class="pa-field"><label>Nombre del director(a)</label>
+              <input id="ad-bol-director" class="pa-inp-field" value="${adEsc(d.boleta.director)}" placeholder="Director(a)"></div>
+            <div class="pa-field"><label>Docente de grado</label>
+              <input id="ad-bol-docente" class="pa-inp-field" value="${adEsc(d.boleta.docente)}" placeholder="Tu nombre"></div>
+          </div>
+          <div class="pa-row-2">
+            <div class="pa-field"><label>Lugar (aldea/colonia)</label>
+              <input id="ad-bol-lugar" class="pa-inp-field" value="${adEsc(d.boleta.lugar)}" placeholder="Ej: Col. Colinas de Suiza"></div>
+            <div class="pa-field"><label>Municipio</label>
+              <input id="ad-bol-municipio" class="pa-inp-field" value="${adEsc(d.boleta.municipio)}" placeholder="Ej: Villanueva"></div>
+          </div>
+          <div class="pa-row-2">
+            <div class="pa-field"><label>Departamento</label>
+              <input id="ad-bol-depto" class="pa-inp-field" value="${adEsc(d.boleta.departamento)}" placeholder="Ej: Cortés"></div>
+            <div class="pa-field"><label>Año lectivo</label>
+              <input id="ad-bol-anio" class="pa-inp-field" inputmode="numeric" maxlength="4" value="${adEsc(d.boleta.anio)}" placeholder="${new Date().getFullYear()}"></div>
+          </div>
+          <p class="pa-optional-hint">El logo, el nombre y estos datos salen en la boleta impresa (frente y
+            <strong>reverso oficial</strong>). Se guardan y sincronizan con tus equipos. El grado y la sección
+            se toman de la pestaña <strong>Alumnos</strong>.</p>
         </div>
       </details>
 
@@ -1031,9 +1059,19 @@ function adRenderSace(body, d) {
     setSel('campo', nom);
   });
 
-  // Encabezado del centro: logo + nombre
+  // Encabezado del centro: logo + nombre + datos oficiales del reverso
   document.getElementById('ad-boleta-centro').addEventListener('input', e => {
     const dd = adLoad(); dd.escuela = e.target.value.trim(); adSave(dd);
+  });
+  const bolCampos = { 'ad-bol-director': 'director', 'ad-bol-docente': 'docente',
+    'ad-bol-lugar': 'lugar', 'ad-bol-municipio': 'municipio',
+    'ad-bol-depto': 'departamento', 'ad-bol-anio': 'anio' };
+  Object.keys(bolCampos).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => {
+      const dd = adLoad(); dd.boleta = dd.boleta || adBoletaDef();
+      dd.boleta[bolCampos[id]] = el.value.trim(); adSave(dd);
+    });
   });
   document.getElementById('ad-logo-file').addEventListener('change', e => {
     const f = e.target.files && e.target.files[0];
@@ -1210,14 +1248,53 @@ function adPrintBoletas(d) {
       </footer>
     </section>`;
   };
+
+  // ── REVERSO oficial (SEDUC): observaciones por parcial + portada ──
+  const bol = d.boleta || {};
+  const reverso = a => {
+    const obs = parciales.map(p => `
+      <div class="rev-parcial">
+        <div class="rev-obs-head"><span>Observaciones del maestro:</span><b>${p} PARCIAL</b></div>
+        <div class="rev-box"></div>
+        <div class="rev-lbl">Observaciones del padre de familia:</div>
+        <div class="rev-box"></div>
+        <div class="rev-firma">______________________<br>Firma del padre de familia</div>
+      </div>`).join('');
+    return `
+    <section class="reverso">
+      <div class="rev-cols">
+        <div class="rev-obs">${obs}</div>
+        <div class="rev-portada">
+          ${d.logo ? `<div class="rev-escudo"><img src="${d.logo}"></div>` : ''}
+          <h1>SECRETARÍA DE EDUCACIÓN</h1>
+          <h1>REPÚBLICA DE HONDURAS</h1>
+          <p>Subsecretaría de Asuntos Técnicos Pedagógicos</p>
+          <p>Dirección General de Evaluación de la Calidad de la Educación</p>
+          <p>Dirección Departamental de Educación de ${adEsc(bol.departamento) || '____________'}</p>
+          <h2>BOLETA DE CALIFICACIONES</h2>
+          <div class="rev-campo"><div class="rev-val">${adEsc(centro)}</div><div class="rev-cap">Nombre del Centro Educativo</div></div>
+          <div class="rev-campo"><div class="rev-val">${adEsc(bol.director) || '&nbsp;'}</div><div class="rev-cap">Nombre del Director</div></div>
+          <div class="rev-campo"><div class="rev-val">${adEsc(bol.docente) || '&nbsp;'}</div><div class="rev-cap">Nombre del Docente de grado</div></div>
+          <div class="rev-campo"><div class="rev-val">${adEsc(a.nombre) || '&nbsp;'}</div><div class="rev-cap">Nombre del Alumno</div></div>
+          <div class="rev-gs">
+            <span>Grado: <span class="rev-inp">${adEsc(d.grado)}</span></span>
+            <span>Sección: <span class="rev-inp">${adEsc(d.seccion)}</span></span>
+          </div>
+          <p class="rev-lugar"><b>Lugar:</b> ${adEsc(bol.lugar)}</p>
+          <p class="rev-lugar"><b>Municipio:</b> ${adEsc(bol.municipio)}</p>
+          <p class="rev-lugar"><b>Depto.</b> ${adEsc(bol.departamento)} &nbsp;&nbsp; <b>Año:</b> ${adEsc(bol.anio)}</p>
+        </div>
+      </div>
+    </section>`;
+  };
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <title>Boletas — ${adEsc(grado)}</title>
 <style>
-  @page { size: landscape; margin: 8mm; }
+  @page { size: letter landscape; margin: 8mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
   body { color: #111; }
-  .boleta { page-break-after: always; padding: 8px 6px; }
-  .boleta:last-child { page-break-after: auto; }
+  .boleta, .reverso { page-break-after: always; padding: 8px 6px; }
+  .reverso:last-child { page-break-after: auto; }
   header { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #111; padding-bottom: 8px; }
   header .logo { width: 72px; height: 72px; object-fit: contain; flex: 0 0 72px; }
   header .titulo { flex: 1; text-align: center; }
@@ -1233,8 +1310,27 @@ function adPrintBoletas(d) {
   tr.prom td { font-weight: 800; background: #eef; }
   footer { margin-top: 10px; font-size: 12px; }
   footer .firmas { display: flex; justify-content: space-around; margin-top: 40px; text-align: center; }
+  /* Reverso oficial */
+  .rev-cols { display: flex; gap: 16px; }
+  .rev-obs { flex: 1; }
+  .rev-portada { flex: 1; text-align: center; border-left: 1px solid #bbb; padding-left: 14px; }
+  .rev-parcial { margin-bottom: 6px; }
+  .rev-obs-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; font-weight: 700; }
+  .rev-lbl { font-size: 11px; margin-top: 4px; font-weight: 600; }
+  .rev-box { border: 1px solid #333; height: 46px; margin-top: 2px; background: #fffdf5; }
+  .rev-firma { text-align: center; font-size: 9.5px; margin-top: 2px; line-height: 1.3; }
+  .rev-escudo img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 4px; }
+  .rev-portada h1 { font-size: 14px; font-weight: 800; line-height: 1.25; }
+  .rev-portada h2 { font-size: 13px; font-weight: 800; margin: 9px 0; }
+  .rev-portada p { font-size: 11px; line-height: 1.3; }
+  .rev-campo { margin: 8px 0; }
+  .rev-campo .rev-val { border: 1px solid #333; padding: 4px 6px; font-weight: 700; background: #fffdf5; min-height: 22px; }
+  .rev-campo .rev-cap { font-size: 11px; font-weight: 700; margin-top: 1px; }
+  .rev-gs { display: flex; justify-content: center; gap: 22px; font-weight: 700; font-size: 12px; margin: 10px 0; }
+  .rev-gs .rev-inp { display: inline-block; min-width: 52px; border: 1px solid #333; padding: 2px 8px; background: #fffdf5; }
+  .rev-lugar { font-size: 12px; margin-top: 3px; }
 </style></head><body>
-${d.lista.map(boleta).join('')}
+${d.lista.map(a => boleta(a) + reverso(a)).join('')}
 <script>window.onload=function(){setTimeout(function(){window.print();},250);}<\/script>
 </body></html>`;
   const w = window.open('', '_blank');
