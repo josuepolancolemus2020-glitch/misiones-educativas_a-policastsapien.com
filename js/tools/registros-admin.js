@@ -1025,7 +1025,7 @@ function adRenderSace(body, d) {
       </div>
       <p class="pa-optional-hint" style="margin-top:2px">
         ${esLetra
-          ? 'La conducta es <strong>cualitativa</strong>: toca la celda del alumno y luego el <strong>valor</strong> — se llena y avanza solo.'
+          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — se llena y avanza solo.'
           : esInasis
             ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar.'
             : 'Escribe la <strong>nota (1-100)</strong>. Las de 2+ cifras saltan solas; con Enter también. Desliza la tabla → para ver todas las materias.'}</p>
@@ -1066,8 +1066,8 @@ function adRenderSace(body, d) {
             ${d.lista.map((a, ri) => `<tr>
               <td class="ad-mx-sticky" title="${adEsc(a.nombre)}"><b>#${a.num}</b> <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
               ${cols.map((c, ci) => `<td><input class="ad-mx-inp" data-idx="${ri * cols.length + ci}"
-                data-num="${a.num}" data-campo="${adEsc(c)}" type="text" inputmode="${esLetra ? 'none' : 'numeric'}"
-                maxlength="3" ${esLetra ? 'readonly style="text-transform:uppercase;"' : ''}
+                data-num="${a.num}" data-campo="${adEsc(c)}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
+                maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
                 value="${valOf(c, a.num) !== '' ? adEsc(String(valOf(c, a.num))) : ''}" placeholder="·"></td>`).join('')}
             </tr>`).join('')}
           </tbody>
