@@ -939,14 +939,17 @@ ${filas.map(f => `
   w.document.close();
 }
 
-function paSbFirma(s) { return String(s.nota) + '|' + (s.msg || ''); }
+/* La firma incluye el CÓDIGO: si el maestro regenera la clave de una
+   familia (tira filtrada, cierre de año), la fila se re-publica con la
+   clave nueva y la vieja deja de ver los mensajes. */
+function paSbFirma(s, codigo) { return String(s.nota) + '|' + (s.msg || '') + '|' + (codigo || ''); }
 
 function paSbPendientes(d) {
   const filas = [];
   d.analisis.forEach(a => (a.students || []).forEach(s => {
     const codigo = paCodigoLista(a, s);
     if (!codigo) return;
-    if (s.sb === paSbFirma(s)) return; // ya está en la nube tal cual
+    if (s.sb === paSbFirma(s, codigo)) return; // ya está en la nube tal cual
     filas.push({
       evento_id: 'PASB-' + a.id + '-' + s.num,
       codigo,
@@ -998,7 +1001,7 @@ async function paSincronizarNube(manual) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const enviados = new Set(lote.map(f => f.evento_id));
     d.analisis.forEach(a => (a.students || []).forEach(s => {
-      if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(s);
+      if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(s, paCodigoLista(a, s));
     }));
     paSaveData(d);
     if (st) st.textContent = '🔑 Nube de padres: ✅ ' + lote.length + ' nota' + (lote.length !== 1 ? 's' : '') + ' disponibles por código de lista.';

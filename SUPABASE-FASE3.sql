@@ -75,6 +75,43 @@ $$;
 revoke all on function public.metas_guardar_admin(jsonb) from public;
 grant execute on function public.metas_guardar_admin(jsonb) to anon, authenticated;
 
+-- Cerrar el año: borra DE VERDAD lo de las claves entregadas (registros,
+-- avisos, plan, buzón y vistos). Lo llama «Mi aula» con las claves viejas
+-- del grupo justo antes de regenerarlas. Quien tenga una clave solo puede
+-- borrar lo de esa familia, y el teléfono del maestro (fuente de la
+-- verdad) lo re-publica todo si hiciera falta.
+create or replace function public.metas_cerrar_familias(p_codigos jsonb)
+returns integer
+language plpgsql security definer set search_path = public
+as $$
+declare
+  total integer := 0;
+  k integer;
+begin
+  if jsonb_typeof(p_codigos) <> 'array' or jsonb_array_length(p_codigos) > 100 then
+    return 0;
+  end if;
+  create temporary table if not exists _cods (cod text) on commit drop;
+  delete from _cods;
+  insert into _cods select distinct upper(regexp_replace(v, '\s', '', 'g'))
+    from jsonb_array_elements_text(p_codigos) v;
+
+  delete from public.plan_accion where codigo in (select cod from _cods);
+  get diagnostics k = row_count; total := total + k;
+  delete from public.registro_admin where codigo in (select cod from _cods);
+  get diagnostics k = row_count; total := total + k;
+  delete from public.mensajes_docente where codigo in (select cod from _cods);
+  get diagnostics k = row_count; total := total + k;
+  delete from public.mensajes_padre where codigo in (select cod from _cods);
+  get diagnostics k = row_count; total := total + k;
+  delete from public.aviso_visto where codigo in (select cod from _cods);
+  get diagnostics k = row_count; total := total + k;
+  return total;
+end
+$$;
+revoke all on function public.metas_cerrar_familias(jsonb) from public;
+grant execute on function public.metas_cerrar_familias(jsonb) to anon, authenticated;
+
 -- ── 2) CANDADO DE VELOCIDAD ─────────────────────────────────
 create table if not exists public.metas_intentos (
   ip text not null,

@@ -324,7 +324,18 @@ function adRenderLista(body, d) {
         Sube solo lo que cambia; sin internet, espera y reintenta.</p>
       <button class="pa-generate-btn ad-btn-sec" id="ad-sb-sync">☁️ Sincronizar ahora</button>
       <p class="pa-optional-hint" id="ad-sb-status" style="margin-top:8px"></p>
-      ${puedeBorrarGrupo ? `<button class="ad-grupo-del" id="ad-grupo-del">🗑 Eliminar este grupo</button>` : ''}
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">🎓 Fin del año escolar</div>
+      <p class="pa-optional-hint">Cuando el año esté <strong>entregado</strong> (boletas impresas), cierra el
+        ciclo: se limpian registros y avisos, la nube del chatbot se borra y las
+        <strong>claves de familia se regeneran</strong> — así la tira del año pasado no le muestra a
+        nadie los datos del niño nuevo que tome ese número de lista. La ficha del aula se conserva.</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-cerrar-anio">🎓 Cerrar el año escolar</button>
+        ${puedeBorrarGrupo ? `<button class="ad-grupo-del" id="ad-grupo-del">🗑 Eliminar este grupo</button>` : ''}
+      </div>
     </div>`;
 
   const persist = () => {
@@ -372,6 +383,7 @@ function adRenderLista(body, d) {
   document.getElementById('ad-insertar-al').addEventListener('click', adInsertarAlumno);
   document.getElementById('ad-tiras-todas').addEventListener('click', () => adTirasTodas(adLoad()));
   document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
+  document.getElementById('ad-cerrar-anio').addEventListener('click', adCerrarAnio);
   adSincronizarNube(false);   /* refresca el estado al entrar */
   document.getElementById('ad-grupo-del')?.addEventListener('click', async () => {
     const dd = adLoad();
@@ -451,7 +463,10 @@ async function adEditarClave(num) {
   const v = await metasPrompt('Clave de familia de **' + quien + '**:\n\n' +
     '• Déjala igual y toca «Imprimir tira», o\n' +
     '• Escribe una clave nueva (número + 4 a 6 letras/números, ej. ' + num + '-K7QM), o\n' +
-    '• Escribe **nueva** para generar otra al azar.\n\n⚠️ Si la cambias, la tira entregada antes deja de valer.', {
+    '• Escribe **nueva** para generar otra al azar.\n\n' +
+    '🔒 Si la clave se **filtró** (alguien más la conoce), escribe **nueva**: ' +
+    'al sincronizar, la vieja deja de funcionar y solo imprimes la tira nueva para esa familia.\n\n' +
+    '⚠️ Si la cambias, la tira entregada antes deja de valer.', {
     icono: '🔑', titulo: 'Clave de familia', value: bonito, okTxt: 'Guardar',
     valida: t => {
       const s = String(t).trim().toUpperCase();
@@ -1574,6 +1589,130 @@ ${d.lista.map(a => `<tr><td>${a.num}</td><td>${adEsc(a.nombre) || '—'}</td>
   w.document.write(html); w.document.close();
 }
 
+/* ══════════════ 🎓 CERRAR EL AÑO ESCOLAR ══════════════
+   El peligro del año nuevo: la clave del niño #15 del año pasado
+   mostraría los datos del niño #15 nuevo. Cerrar el año lo evita:
+   1) borra DE VERDAD la nube de las claves viejas (metas_cerrar_familias),
+   2) limpia registros/avisos locales del grupo (la ficha FAQ se queda),
+   3) REGENERA las claves de familia (las tiras viejas mueren),
+   4) archiva los análisis del Plan de Acción de este grado/sección
+      (si siguieran, se re-publicarían con las claves nuevas y una
+      familia nueva vería mensajes del niño anterior),
+   5) sube el año de la boleta. */
+function adClavesDelGrupo(d) {
+  const out = [];
+  (d.lista || []).forEach(a => {
+    const c = adClaveFamilia(d.id, a.num, false);
+    if (c) out.push(c);
+  });
+  return out;
+}
+async function adCerrarAnio() {
+  const d = adLoad();
+  const anio = adAnioDe(d);
+  const nombre = adGrupoTxt(d) || 'este grupo';
+  if (navigator.onLine === false) {
+    await metasAlert('Para cerrar el año se necesita internet (hay que limpiar la nube del chatbot). Inténtalo con conexión.', { icono: '🎓', titulo: 'Cerrar el año' });
+    return;
+  }
+  if (!await metasConfirm('Vas a cerrar el año **' + anio + '** de **' + nombre + '**:\n\n' +
+    '• Se borran de este teléfono la asistencia, notas, colectas y avisos del grupo\n' +
+    '• La nube del chatbot se limpia (los padres dejan de ver datos del año viejo)\n' +
+    '• Las **claves de familia se regeneran**: las tiras entregadas DEJAN de valer\n' +
+    '• Los análisis del Plan de Acción de este grado se archivan\n' +
+    '• La ficha del aula (horario, uniforme…) se conserva\n\n' +
+    'Hazlo solo cuando el año esté ENTREGADO (boletas impresas). ¿Continuar?',
+    { icono: '🎓', titulo: 'Cerrar el año', okTxt: 'Sí, continuar' })) return;
+  const conf = await metasPrompt('Esta acción no se puede deshacer. Para confirmar, escribe **CERRAR**:', {
+    icono: '🎓', titulo: 'Cerrar el año', okTxt: 'Confirmar',
+    valida: v => String(v).trim().toUpperCase() === 'CERRAR' ? '' : 'Escribe CERRAR (o cancela).',
+  });
+  if (conf === null) return;
+  const conservarLista = await metasConfirm('¿Conservar la **lista de alumnos**?\n\nElige «Sí» si el año nuevo sigues con los MISMOS niños (solo cambian de grado contigo). Si te llega un grupo nuevo, elige cancelar y la lista se vacía.',
+    { icono: '👥', titulo: 'Cerrar el año', okTxt: 'Sí, conservar' });
+
+  const clavesViejas = adClavesDelGrupo(d);
+
+  /* 1) limpiar la nube de verdad (registros, avisos, plan, buzón, vistos) */
+  let nubeOk = false;
+  try {
+    let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+    let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+    try {
+      url = localStorage.getItem('METAS_SB_URL') || url;
+      key = localStorage.getItem('METAS_SB_KEY') || key;
+    } catch (_) {}
+    const r = await fetch(url + '/rest/v1/rpc/metas_cerrar_familias', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigos: clavesViejas }),
+    });
+    nubeOk = r.ok;
+  } catch (_) {}
+  if (!nubeOk) {
+    if (!await metasConfirm('⚠️ No pude limpiar la nube en este momento (¿corriste ya SUPABASE-FASE3.sql?).\n\n¿Cerrar el año de todos modos? (Las claves se regeneran igual, así que nadie nuevo verá datos viejos, pero quedarán filas muertas en la nube.)',
+      { icono: '🎓', titulo: 'Cerrar el año', okTxt: 'Cerrar igual' })) return;
+  }
+
+  const dd = adLoad();
+  /* 2) limpiar lo local del grupo (la ficha del aula se conserva) */
+  dd.asistencia = []; dd.notas = {}; dd.colectas = [];
+  dd.boleta = dd.boleta || adBoletaDef();
+  dd.boleta.parcialFechas = {};
+  const gg = avGrupo(dd.id); gg.avisos = []; avGrupoSave(dd.id, gg);
+  /* 3) regenerar claves de familia */
+  try {
+    const codes = paCodesLoad();
+    const key = 'G:' + dd.id;
+    if (conservarLista) {
+      const cg = codes[key] || {};
+      Object.keys(cg).forEach(n => {
+        let suf = '';
+        for (let i = 0; i < 4; i++) suf += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
+        cg[n] = n + suf;
+      });
+      codes[key] = cg;
+    } else {
+      delete codes[key];
+      dd.lista = [];
+    }
+    paCodesSave(codes);
+  } catch (_) {}
+  /* 4) archivar análisis del Plan de Acción de este grado/sección */
+  try {
+    const pa = JSON.parse(localStorage.getItem('METAS_PLANACCION_V1'));
+    if (pa && Array.isArray(pa.analisis)) {
+      const gNum = String(dd.grado || '').replace(/\D/g, '');
+      const mS = String(dd.seccion || '').trim().match(/([a-zA-Z0-9])\s*$/);
+      const gSec = mS ? mS[1].toUpperCase() : '';
+      pa.analisis = pa.analisis.filter(a => {
+        const aNum = String(a.grado || '').replace(/\D/g, '');
+        const mA = String(a.seccion || '').trim().match(/([a-zA-Z0-9])\s*$/);
+        return !(aNum === gNum && (mA ? mA[1].toUpperCase() : '') === gSec);
+      });
+      localStorage.setItem('METAS_PLANACCION_V1', JSON.stringify(pa));
+    }
+  } catch (_) {}
+  /* 5) año nuevo en la boleta + olvidar las firmas de sync de ESTE grupo
+        (nada que anular: la nube ya quedó limpia; los otros grupos del
+        maestro no se tocan) */
+  dd.boleta.anio = String((+anio || new Date().getFullYear()) + 1);
+  const viejas = new Set(clavesViejas);
+  const ma = adSbMapLoad();
+  Object.keys(ma).forEach(id => { if (viejas.has(ma[id].c)) delete ma[id]; });
+  adSbMapSave(ma);
+  const mv = avSbMapLoad();
+  Object.keys(mv).forEach(id => { if (viejas.has(mv[id].c)) delete mv[id]; });
+  avSbMapSave(mv);
+  adSave(dd);
+  renderAdmin();
+  await metasAlert('🎓 Año **' + anio + '** cerrado' + (nubeOk ? ' y nube limpia' : ' (nube pendiente)') + '.\n\n' +
+    'Boleta lista para el **' + dd.boleta.anio + '**. ' +
+    (conservarLista ? 'Imprime las **tiras nuevas** de claves para entregarlas a las familias.' :
+      'Cuando tengas la lista nueva de alumnos, cada niño nacerá con su clave — imprime las tiras y entrégalas.'),
+    { icono: '🎓', titulo: 'Cerrar el año' });
+}
+
 /* ══════════════ 📣 COMUNICADOS — la ventana del maestro ══════════════
    Lo que se publica aquí llega al chatbot de padres: avisos, eventos
    con fecha (reunión, acto cívico), materiales y la FICHA DEL AULA
@@ -1893,11 +2032,18 @@ function adMateriaSlug(m) {
    El evento_id lleva la CLAVE DE FAMILIA (única entre maestros gracias
    a sus letras aleatorias y a la llave por grupo) — nunca grado+número,
    que se repetiría entre las aulas «6A #15» de mil maestros suscritos. */
+/* Año lectivo del grupo (la boleta ya lo guarda). Va en cada fila y
+   DENTRO del evento_id de las notas: las de 2027 no pisan las de 2026. */
+function adAnioDe(d) {
+  return String((d.boleta && d.boleta.anio) || new Date().getFullYear());
+}
+
 function adFilasNube(st) {
   const doc = adDocenteTxt();
   const filas = [];
   (st.grupos || []).forEach(d => {
-    const base = { grado: d.grado || '', seccion: d.seccion || '', docente: doc };
+    const anio = adAnioDe(d);
+    const base = { grado: d.grado || '', seccion: d.seccion || '', docente: doc, anio_lectivo: anio };
     const cod = {};
     d.lista.forEach(a => { cod[a.num] = adClaveFamilia(d.id, a.num); });
 
@@ -1920,7 +2066,7 @@ function adFilasNube(st) {
           // así el asistente de padres también recibe la conducta.
           const esNum = valor !== '' && valor != null && !isNaN(Number(valor));
           filas.push(Object.assign({
-            evento_id: 'ADN-' + parcial + '-' + adMateriaSlug(materia) + '-' + cod[num],
+            evento_id: 'ADN-' + anio + '-' + parcial + '-' + adMateriaSlug(materia) + '-' + cod[num],
             codigo: cod[num], tipo: 'nota_final', parcial, materia,
             nota: esNum ? Number(valor) : null,
             estado: esNum ? '' : String(valor),
@@ -2051,10 +2197,10 @@ function avSbMapSave(m) { try { localStorage.setItem(AVISOS_SB_KEY, JSON.stringi
 
 function avFilasNube(st) {
   const doc = adDocenteTxt();
-  const anio = String(new Date().getFullYear());
   const filas = [];
   const av = avLoad();
   (st.grupos || []).forEach(d => {
+    const anio = adAnioDe(d);
     const base = { grado: d.grado || '', seccion: d.seccion || '', docente: doc, anio_lectivo: anio };
     const claves = (d.lista || []).map(a => ({ num: a.num, cod: adClaveFamilia(d.id, a.num, false) }))
       .filter(x => x.cod);
