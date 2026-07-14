@@ -472,6 +472,14 @@ async function adEditarClave(num) {
 }
 
 /* Tiras de TODO el grupo, listas para recortar y entregar en reunión */
+/* QR de las tiras: la URL es la misma para todas las familias, así que
+   basta UN PNG estático del repo (img/qr-padres.png → …/padres.html).
+   Se resuelve contra la página actual para que funcione también
+   impreso desde la app instalada. */
+function adQrSrc() {
+  try { return new URL('img/qr-padres.png', location.href).href; } catch (_) { return 'img/qr-padres.png'; }
+}
+
 function adTirasTodas(d) {
   if (!d.lista.length) { toast('Agrega alumnos primero'); return; }
   const grupoTxt = adGrupoTxt(d);
@@ -487,11 +495,13 @@ body{font-family:Arial,sans-serif;color:#111;background:#fff;padding:10mm;}
 h1{font-size:15px;margin-bottom:2mm;}
 p.intro{font-size:11px;color:#444;margin-bottom:5mm;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm;}
-.tira{border:1.5px dashed #888;border-radius:6px;padding:4mm;page-break-inside:avoid;}
+.tira{border:1.5px dashed #888;border-radius:6px;padding:4mm;page-break-inside:avoid;position:relative;padding-right:25mm;}
 .t1{font-size:10px;font-weight:bold;color:#1e3a7c;}
 .t2{font-size:11px;margin-top:1.5mm;}
 .cod{font-size:20px;font-weight:900;letter-spacing:2px;margin:2mm 0;font-family:'Courier New',monospace;}
 .t3{font-size:9px;color:#333;line-height:1.45;}
+.qr{position:absolute;top:4mm;right:3mm;width:20mm;height:20mm;}
+.qrtxt{position:absolute;top:24.5mm;right:3mm;width:20mm;font-size:7px;text-align:center;color:#333;line-height:1.2;}
 .noprint{margin-bottom:6mm;}
 .noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;}
 @media print{.noprint{display:none;}}
@@ -503,10 +513,12 @@ La clave es secreta: con ella el padre ve las notas de su hijo/a desde cualquier
 <div class="grid">
 ${filas.map(f => `
   <div class="tira">
+    <img class="qr" src="${adQrSrc()}" alt="QR">
+    <div class="qrtxt">📷 Apunte la cámara a este cuadro</div>
     <div class="t1">🔑 M.E.T.A.S — Clave de la familia</div>
     <div class="t2">Alumno/a <strong>#${f.num}</strong>${grupoTxt ? ' · ' + adEsc(grupoTxt) : ''}${f.nombre ? ' · ' + adEsc(f.nombre) : ''}</div>
     <div class="cod">${adEsc(f.codigo.replace(/^(\d+)/, '$1-'))}</div>
-    <div class="t3">📱 En cualquier teléfono con internet entre a:<br><strong>${sitio}padres.html</strong><br>
+    <div class="t3">📱 Apunte la cámara del teléfono al cuadro, o entre a:<br><strong>${sitio}padres.html</strong><br>
     El 🤖 asistente le pedirá esta clave y le contará cómo va su hijo/a: notas, asistencia, mensajes del maestro
     y cómo apoyar en casa. Guárdela como una llave: es solo para su familia.</div>
   </div>`).join('')}
@@ -592,20 +604,24 @@ function adTiraUno(d, num) {
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:Arial,sans-serif;color:#111;background:#fff;padding:10mm;}
-.tira{border:1.5px dashed #888;border-radius:6px;padding:4mm;max-width:95mm;}
+.tira{border:1.5px dashed #888;border-radius:6px;padding:4mm;max-width:95mm;position:relative;padding-right:25mm;}
 .t1{font-size:10px;font-weight:bold;color:#1e3a7c;}
 .t2{font-size:11px;margin-top:1.5mm;}
 .cod{font-size:20px;font-weight:900;letter-spacing:2px;margin:2mm 0;font-family:'Courier New',monospace;}
 .t3{font-size:9px;color:#333;line-height:1.45;}
+.qr{position:absolute;top:4mm;right:3mm;width:20mm;height:20mm;}
+.qrtxt{position:absolute;top:24.5mm;right:3mm;width:20mm;font-size:7px;text-align:center;color:#333;line-height:1.2;}
 .noprint{margin-bottom:6mm;}
 @media print{.noprint{display:none;}}
 </style></head><body>
 <div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir tira</button></div>
 <div class="tira">
+  <img class="qr" src="${adQrSrc()}" alt="QR">
+  <div class="qrtxt">📷 Apunte la cámara a este cuadro</div>
   <div class="t1">🔑 M.E.T.A.S — Clave de la familia</div>
   <div class="t2">Alumno/a <strong>#${num}</strong>${grupo ? ' · ' + adEsc(grupo) : ''}${a.nombre ? ' · ' + adEsc(a.nombre) : ''}</div>
   <div class="cod">${bonito}</div>
-  <div class="t3">📱 En cualquier teléfono con internet entre a:<br><strong>${sitio}padres.html</strong><br>
+  <div class="t3">📱 Apunte la cámara del teléfono al cuadro, o entre a:<br><strong>${sitio}padres.html</strong><br>
   El 🤖 asistente le pedirá esta clave y le contará cómo va su hijo/a: notas, asistencia, mensajes del maestro
   y cómo apoyar en casa. Guárdela como una llave: es solo para su familia.</div>
 </div>
