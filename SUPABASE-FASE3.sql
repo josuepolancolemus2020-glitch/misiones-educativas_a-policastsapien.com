@@ -85,26 +85,28 @@ returns integer
 language plpgsql security definer set search_path = public
 as $$
 declare
+  cods text[];
   total integer := 0;
   k integer;
 begin
   if jsonb_typeof(p_codigos) <> 'array' or jsonb_array_length(p_codigos) > 100 then
     return 0;
   end if;
-  create temporary table if not exists _cods (cod text) on commit drop;
-  delete from _cods;
-  insert into _cods select distinct upper(regexp_replace(v, '\s', '', 'g'))
-    from jsonb_array_elements_text(p_codigos) v;
+  select array_agg(distinct upper(regexp_replace(v, '\s', '', 'g')))
+    into cods
+  from jsonb_array_elements_text(p_codigos) v
+  where length(regexp_replace(v, '\s', '', 'g')) >= 2;
+  if cods is null or array_length(cods, 1) = 0 then return 0; end if;
 
-  delete from public.plan_accion where codigo in (select cod from _cods);
+  delete from public.plan_accion where codigo = any(cods);
   get diagnostics k = row_count; total := total + k;
-  delete from public.registro_admin where codigo in (select cod from _cods);
+  delete from public.registro_admin where codigo = any(cods);
   get diagnostics k = row_count; total := total + k;
-  delete from public.mensajes_docente where codigo in (select cod from _cods);
+  delete from public.mensajes_docente where codigo = any(cods);
   get diagnostics k = row_count; total := total + k;
-  delete from public.mensajes_padre where codigo in (select cod from _cods);
+  delete from public.mensajes_padre where codigo = any(cods);
   get diagnostics k = row_count; total := total + k;
-  delete from public.aviso_visto where codigo in (select cod from _cods);
+  delete from public.aviso_visto where codigo = any(cods);
   get diagnostics k = row_count; total := total + k;
   return total;
 end
