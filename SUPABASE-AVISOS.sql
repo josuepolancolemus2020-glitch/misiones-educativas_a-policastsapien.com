@@ -30,7 +30,7 @@ create table if not exists public.mensajes_docente (
   evento_id text not null unique,
   codigo text not null,                 -- clave de familia (15K7QM)
   subtipo text not null check (subtipo in
-    ('aviso','evento','material','individual','cuentas','faq')),
+    ('aviso','evento','material','individual','cuentas','faq','conducta')),
   prioridad text,                       -- 'urgente' | 'normal'
   titulo text,
   texto text,

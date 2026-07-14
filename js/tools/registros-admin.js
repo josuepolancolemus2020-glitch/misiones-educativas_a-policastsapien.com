@@ -1793,8 +1793,16 @@ function avSaveAll(o) {
 function avGrupo(gid) {
   const g = avLoad().grupos[gid];
   return { avisos: (g && Array.isArray(g.avisos)) ? g.avisos : [],
-           faqs: (g && Array.isArray(g.faqs)) ? g.faqs : [] };
+           faqs: (g && Array.isArray(g.faqs)) ? g.faqs : [],
+           conducta: (g && Array.isArray(g.conducta)) ? g.conducta : [] };
 }
+/* Reportes de conducta por alumno: solo los ve SU familia (van con la
+   clave de ese niño). También sirven para felicitar. */
+const AV_CONDUCTA_TIPOS = {
+  llamado: '⚠️ Llamado de atención',
+  leve: '📋 Falta leve',
+  felicitacion: '⭐ Felicitación',
+};
 function avGrupoSave(gid, g) {
   const o = avLoad(); o.grupos[gid] = g; avSaveAll(o);
 }
@@ -1891,6 +1899,32 @@ function adRenderCom(body, d) {
       <div style="margin-top:10px">
         ${g.avisos.length ? g.avisos.slice().sort((a, b) => (avVigente(b) - avVigente(a)) || (String(a.hasta) < String(b.hasta) ? -1 : 1)).map(filaAviso).join('')
           : '<p class="pa-optional-hint">Sin avisos todavía. Usa una plantilla de arriba: dos toques y queda publicado.</p>'}
+      </div>
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">🙂 Reportes de conducta</div>
+      <p class="pa-optional-hint">Llamados de atención, faltas leves o <strong>felicitaciones</strong> de un
+        alumno: solo los ve <strong>su familia</strong> cuando pregunta por la conducta en el asistente.
+        Cada reporte deja de mostrarse a los 45 días.</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec av-cond-add" data-ctipo="llamado">⚠️ Llamado de atención</button>
+        <button class="pa-generate-btn ad-btn-sec av-cond-add" data-ctipo="leve">📋 Falta leve</button>
+        <button class="pa-generate-btn ad-btn-sec av-cond-add" data-ctipo="felicitacion">⭐ Felicitación</button>
+      </div>
+      <div style="margin-top:10px">
+        ${g.conducta.length ? g.conducta.slice().reverse().map(c => {
+          const al = d.lista.find(a => a.num === c.num) || {};
+          const vive = avVigente(c);
+          return `<div class="ad-gasto-row" style="align-items:flex-start${vive ? '' : ';opacity:.55'}">
+            <span style="flex:1">${(AV_CONDUCTA_TIPOS[c.tipo] || '📋').split(' ')[0]}
+              <strong>#${c.num}${al.nombre ? ' ' + adEsc(adPrimerNombre(al.nombre)) : ''}</strong>
+              · <small>${adFechaBonita(c.fecha)}</small><br>
+              <small>${adEsc(c.texto)}</small><br>
+              <small style="color:#666">${vive ? 'la familia lo ve hasta el ' + adFechaBonita(c.hasta) : 'VENCIDO (ya no se muestra)'}</small></span>
+            <button class="ad-al-del av-cond-del" data-cid="${c.id}" aria-label="Borrar">✕</button>
+          </div>`;
+        }).join('') : '<p class="pa-optional-hint">Sin reportes. Toca un botón de arriba: alumno + descripción y listo.</p>'}
       </div>
     </div>
 
@@ -2050,6 +2084,35 @@ function adRenderCom(body, d) {
     toast('📖 Pregunta agregada a la ficha');
   });
 
+  /* reportes de conducta: alumno + descripción, dos toques */
+  body.querySelectorAll('.av-cond-add').forEach(b => b.addEventListener('click', async () => {
+    const tipo = b.dataset.ctipo;
+    const numTxt = await metasPrompt('**' + AV_CONDUCTA_TIPOS[tipo] + '**\n\n¿Número de lista del alumno/a?', {
+      icono: '🙂', titulo: 'Reporte de conducta', inputmode: 'numeric', okTxt: 'Siguiente',
+      valida: v => d.lista.some(a => a.num === +String(v).trim()) ? '' : 'No hay alumno con ese número en la lista.',
+    });
+    if (numTxt === null) return;
+    const num = +String(numTxt).trim();
+    const al = d.lista.find(a => a.num === num) || {};
+    const texto = await metasPrompt('Describe brevemente lo sucedido con **#' + num +
+      (al.nombre ? ' ' + adPrimerNombre(al.nombre) : '') + '** (lo leerá su familia en el asistente):', {
+      icono: AV_CONDUCTA_TIPOS[tipo].split(' ')[0], titulo: 'Reporte de conducta', okTxt: 'Publicar',
+      valida: v => String(v).trim().length >= 5 ? '' : 'Describe qué pasó (mínimo 5 letras).',
+    });
+    if (texto === null) return;
+    const gg = avGrupo(d.id);
+    gg.conducta.push({ id: 'CD' + Date.now().toString(36), num, tipo,
+      texto: String(texto).trim().slice(0, 500), fecha: adHoy(), hasta: avFechaMas(adHoy(), 45) });
+    avGrupoSave(d.id, gg);
+    renderAdmin();
+    toast('🙂 Reporte publicado: lo verá la familia de #' + num);
+  }));
+  body.querySelectorAll('.av-cond-del').forEach(b => b.addEventListener('click', async () => {
+    if (!await metasConfirm('¿Borrar este reporte? La familia dejará de verlo.', { icono: '🙂', titulo: 'Reporte de conducta', okTxt: 'Sí, borrar' })) return;
+    const gg = avGrupo(d.id);
+    gg.conducta = gg.conducta.filter(c => c.id !== b.dataset.cid);
+    avGrupoSave(d.id, gg); renderAdmin();
+  }));
   document.getElementById('av-buzon-ver').addEventListener('click', () => avBuzonCargar(adLoad()));
   avSincronizarNube(false);   /* refresca el estado al entrar */
   avBuzonCargar(d);           /* bandeja padre→maestro */
@@ -2385,6 +2448,18 @@ function avFilasNube(st) {
         titulo: a.titulo, texto: a.texto,
         fecha_evento: a.fechaEvento || '', vigente_hasta: a.hasta,
       }, base)));
+    });
+
+    /* reportes de conducta: SOLO a la clave del alumno reportado */
+    (g.conducta || []).filter(avVigente).forEach(c => {
+      const x = claves.find(k => k.num === c.num);
+      if (!x) return;
+      filas.push(Object.assign({
+        evento_id: 'AVD-' + c.id + '-' + x.cod, codigo: x.cod,
+        subtipo: 'conducta', prioridad: 'normal',
+        titulo: AV_CONDUCTA_TIPOS[c.tipo] || '📋 Reporte',
+        texto: c.texto, fecha_evento: c.fecha, vigente_hasta: c.hasta,
+      }, base));
     });
 
     /* ficha del aula (vigente todo el año lectivo) */

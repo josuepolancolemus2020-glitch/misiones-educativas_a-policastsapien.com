@@ -499,6 +499,8 @@ async function respResumen() {
   }
   const nAvisos = avDe(['aviso', 'evento', 'material', 'individual']).length;
   if (nAvisos) html += '<br>📣 Tiene <strong>' + nAvisos + '</strong> aviso(s) del maestro — toque «📣 Avisos».';
+  const nCond = avDe(['conducta']).length;
+  if (nCond) html += '<br>📋 Tiene <strong>' + nCond + '</strong> reporte(s) de conducta — toque «🙂 Conducta».';
   html += notaCardHTML(ROWS[0]) + selloDatos();
   await botSay(html, chipsMenu());
 }
@@ -733,8 +735,18 @@ function escalaTxt(v) {
 }
 async function respConducta(txt) {
   if (!await conDatos()) return;
+  /* reportes puntuales del maestro (llamado de atención, falta leve,
+     felicitación) publicados desde Comunicados — van PRIMERO */
+  const reps = avDe(['conducta']);
+  let repsHtml = '';
+  if (reps.length) {
+    repsHtml = '📋 <strong>Reportes del maestro:</strong>' + reps.slice(0, 5).map(avisoCardHTML).join('') +
+      (reps.length > 5 ? '<br><small>(mostrando los 5 más recientes)</small>' : '') + '<br>';
+    avMarcarVistos(reps.slice(0, 5));
+  }
   const rs = adFilas('nota_final').filter(r => esPersonalidad(r.materia) && ((r.estado && String(r.estado).trim()) || r.nota != null));
   if (!rs.length) {
+    if (repsHtml) { await botSay(repsHtml + selloDatos(), chipsMenu()); return; }
     await botSay('🙂 El maestro todavía no sube la <strong>conducta</strong> (rasgos de personalidad de la boleta) para esta clave. ' +
       'Cuando la registre, aquí se la muestro por parcial.', chipsMenu());
     return;
@@ -758,7 +770,8 @@ async function respConducta(txt) {
   const html = parciales.map(p =>
     '<div class="nota-card"><div class="nc-top"><span class="nc-eval">🙂 Conducta — Parcial ' + esc(p) + '</span></div>' +
     porParcial[p].map(r => linea(r.materia || 'Rasgo', r.estado || r.nota)).join('') + '</div>').join('');
-  await botSay('Así evalúa el maestro la <strong>conducta</strong> (rasgos de personalidad de la boleta):' + html +
+  await botSay(repsHtml +
+    'Así evalúa el maestro la <strong>conducta</strong> (rasgos de personalidad de la boleta):' + html +
     '<br><small>Escala: <strong>S</strong> = Sobresaliente · <strong>MB</strong> = Muy Bueno · <strong>B</strong> = Bueno</small>' +
     selloDatos(), chipsMenu());
 }
@@ -1289,7 +1302,9 @@ async function novedadesDesde(prev) {
     (r.estado === 'ausente' || r.estado === 'excusa') && !vA.has(sigA(r)));
   const otrosAd = (ROWS_AD || []).filter(r => r.tipo !== 'asistencia' && !vA.has(sigA(r)));
   const avisos = avDe(['aviso', 'evento', 'material', 'individual']).filter(r => !vV.has(sigV(r)));
+  const conducta = avDe(['conducta']).filter(r => !vV.has(sigV(r)));
   const partes = [];
+  if (conducta.length) partes.push(conducta.length + ' reporte(s) de conducta');
   if (notas.length) {
     const mats = notas.map(r => r.materia).filter(Boolean)
       .filter((m, i, a) => a.indexOf(m) === i).slice(0, 2);
