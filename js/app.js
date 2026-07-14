@@ -1609,11 +1609,29 @@ window.visitMission = visitMission;
 let currentFilter = 'all';
 let currentQuery  = '';
 
+/* ─────────────────────────────────────────────
+   MEMORIA DE NAVEGACIÓN — para que al recargar (F5, Ctrl+Shift+R o el
+   botón 🔄) la app regrese a donde estaba el usuario, no al inicio.
+───────────────────────────────────────────── */
+const METAS_NAV_KEY = 'METAS_NAV_V1';
+function metasSaveNav(patch) {
+  try {
+    const cur = JSON.parse(localStorage.getItem(METAS_NAV_KEY) || '{}');
+    localStorage.setItem(METAS_NAV_KEY, JSON.stringify(Object.assign(cur, patch)));
+  } catch (_) {}
+}
+function metasLoadNav() {
+  try { return JSON.parse(localStorage.getItem(METAS_NAV_KEY) || '{}'); } catch (_) { return {}; }
+}
+window.metasSaveNav = metasSaveNav;
+window.metasLoadNav = metasLoadNav;
+
 function switchView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.drawer-item').forEach(b => b.classList.remove('active'));
   const view = document.getElementById(id);
   if (view) view.classList.add('active');
+  metasSaveNav({ view: id });
   const item = document.querySelector(`.drawer-item[data-view="${id}"]`);
   if (item) item.classList.add('active');
 
@@ -1693,6 +1711,42 @@ document.addEventListener('DOMContentLoaded', () => {
     switchView('view-misiones');
   }
   if (_urlParams.get('view') === 'rutas') switchView('view-rutas');
+
+  // Restaurar la última vista (recarga con F5 / Ctrl+Shift+R / botón 🔄).
+  // El parámetro ?view= (regreso desde una misión) tiene prioridad.
+  if (!_urlParams.get('view')) {
+    const _nav = metasLoadNav();
+    if (_nav.view && _nav.view !== 'view-inicio' && document.getElementById(_nav.view)) {
+      if (_nav.view === 'view-admin' && typeof adRestoreState === 'function') {
+        // Mi aula está tras el candado del maestro: adRestoreState re-pide el PIN
+        adRestoreState(_nav.adTab, _nav.adColecta);
+      } else {
+        switchView(_nav.view);
+      }
+    }
+  }
+
+  // ── Botón 🔄 Actualizar: fuerza traer la última versión y regresa a
+  //    donde estaba el usuario (limpia cachés/SW por si acaso). ──
+  const refreshBtn = document.getElementById('refresh-btn');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', async () => {
+      refreshBtn.classList.remove('spin'); void refreshBtn.offsetWidth; refreshBtn.classList.add('spin');
+      metasSaveNav({}); // la vista actual ya quedó guardada por switchView
+      try {
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(r => r.unregister()));
+        }
+        if (window.caches && caches.keys) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        }
+      } catch (_) {}
+      toast('🔄 Actualizando…');
+      setTimeout(() => location.reload(), 250);
+    });
+  }
 
   // Cambio de país
   if (countryEl) {

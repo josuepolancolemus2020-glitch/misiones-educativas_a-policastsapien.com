@@ -127,6 +127,12 @@ a { text-decoration: none; color: inherit; }
 }
 .notif-btn:active { background: var(--bg); }
 
+/* medalla + actualizar, juntos a la derecha del encabezado */
+.header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
+.header-actions .notif-btn { margin-left: 0; }
+#refresh-btn.spin { animation: refreshSpin .6s ease; }
+@keyframes refreshSpin { to { transform: rotate(360deg); } }
+
 .notif-dot {
   position: absolute; top: 6px; right: 6px;
   width: 8px; height: 8px;
@@ -3612,6 +3618,9 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   font-size: 11px; font-weight: 700; opacity: .78; line-height: 1.1;
   max-width: 84px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+/* monto aportado por el alumno dentro del chip de una colecta */
+.ad-chip-monto { font-size: 10.5px; font-weight: 900; line-height: 1; color: #15803d; }
+.ad-chip-monto-esp { color: #b45309; }   /* monto distinto al sugerido (hermanos, becados) */
 /* Estado marcado = recompensa visual: relleno de color, aro y "pop" */
 .ad-chip-on  { background: rgba(22,163,74,.15); border-color: #16a34a; color: #15803d; box-shadow: 0 3px 10px rgba(22,163,74,.25); animation: adPop .28s cubic-bezier(.34,1.56,.64,1); }
 .ad-chip-aus { background: rgba(220,38,38,.15); border-color: #dc2626; color: #b91c1c; box-shadow: 0 3px 10px rgba(220,38,38,.25); animation: adPop .28s cubic-bezier(.34,1.56,.64,1); }

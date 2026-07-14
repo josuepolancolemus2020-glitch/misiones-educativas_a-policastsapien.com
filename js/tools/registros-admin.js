@@ -197,6 +197,8 @@ function adGrupoChipTxt(g) {
 function renderAdmin() {
   const cont = document.getElementById('admin-content');
   if (!cont) return;
+  /* recordar dónde está el docente para restaurarlo al recargar */
+  if (window.metasSaveNav) window.metasSaveNav({ view: 'view-admin', adTab: _adTab, adColecta: _adColectaId });
   const st = adState();
   const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
   /* Barra de grupos: el maestro puede tener varios (incluso en dos
@@ -660,7 +662,7 @@ function adRenderEco(body, d) {
       valida: v => String(v).trim().length >= 3 ? '' : 'Escribe el concepto (mínimo 3 letras).',
     });
     if (concepto === null) return;
-    const monto = await metasPrompt('¿Cuánto aporta cada alumno? (en Lempiras; puede ajustarse por alumno al marcar)', {
+    const monto = await metasPrompt('¿Cuál es el aporte **sugerido** por alumno? (en Lempiras)\nEs solo el valor por defecto: al marcar puedes ponerle otro monto a quien pague distinto (hermanos, becados, abonos).', {
       icono: '💰', titulo: 'Nueva colecta', inputmode: 'decimal', okTxt: 'Crear',
       valida: v => (Number(String(v).replace(',', '.')) > 0) ? '' : 'Escribe un monto mayor que cero.',
     });
@@ -690,8 +692,10 @@ function adRenderColecta(body, d) {
     <div class="pa-card">
       <button class="ad-volver" id="ad-eco-volver">← Todas las colectas</button>
       <div class="pa-card-title">💰 ${adEsc(c.concepto)}</div>
-      <p class="pa-optional-hint">${adFechaBonita(c.fecha)} · aporte por alumno: <strong>${adLps(c.montoAlumno)}</strong>
-        · toca un alumno para marcar que dio (vuelve a tocar para quitar; mantén la idea simple: lo marcado = dinero en mano).</p>
+      <p class="pa-optional-hint">${adFechaBonita(c.fecha)} · aporte sugerido: <strong>${adLps(c.montoAlumno)}</strong><br>
+        <strong>Toca</strong> un alumno para marcar que dio el aporte sugerido.
+        <strong>Toca de nuevo</strong> a quien pagó para <strong>cambiar su monto</strong>
+        (hermanos, becados, abonos) o quitarlo. Lo marcado = dinero en mano.</p>
       <div class="ad-resumen">
         <span>✅ Dieron: <strong>${pagaron}/${d.lista.length}</strong></span>
         <span>💵 Recaudado: <strong>${adLps(t.rec)}</strong></span>
@@ -702,10 +706,12 @@ function adRenderColecta(body, d) {
         ${d.lista.map(a => {
           const pagado = c.pagos && c.pagos[a.num] != null;
           const nom = adPrimerNombre(a.nombre);
+          const especial = pagado && Number(c.pagos[a.num]) !== Number(c.montoAlumno);
           return `<button class="ad-chip ${pagado ? 'ad-chip-on' : ''}" data-num="${a.num}"
             title="${adEsc(a.nombre)}">
             <span class="ad-chip-num">#${a.num}${pagado ? ' ✓' : ''}</span>
-            ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}</button>`;
+            ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}
+            ${pagado ? `<span class="ad-chip-monto${especial ? ' ad-chip-monto-esp' : ''}">${adLps(c.pagos[a.num])}</span>` : ''}</button>`;
         }).join('')}
       </div>
     </div>
@@ -731,10 +737,26 @@ function adRenderColecta(body, d) {
       const num = ch.dataset.num;
       const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
       cc.pagos = cc.pagos || {};
-      if (cc.pagos[num] != null) { delete cc.pagos[num]; }
-      else {
-        /* aporte distinto al acordado: mantener tocado el chip 1 segundo abre monto — versión simple: monto acordado; editar con toque largo sería frágil en aula. Para casos especiales: */
-        cc.pagos[num] = cc.montoAlumno;
+      if (cc.pagos[num] != null) {
+        /* ya pagó → editar su monto (hermanos/becados/abonos) o quitar */
+        const al = dd.lista.find(a => String(a.num) === String(num)) || {};
+        const quien = '#' + num + (al.nombre ? ' ' + adPrimerNombre(al.nombre) : '');
+        const r = await metasPrompt('¿Cuánto aportó **' + quien + '**? (Lempiras)\nEscribe **0** o déjalo vacío para quitar la marca.', {
+          icono: '💰', titulo: 'Aporte del alumno', inputmode: 'decimal',
+          value: String(cc.pagos[num]), okTxt: 'Guardar',
+          valida: v => {
+            const s = String(v).trim();
+            if (s === '') return '';
+            return isNaN(Number(s.replace(',', '.'))) ? 'Escribe un número (o vacío para quitar).' : '';
+          },
+        });
+        if (r === null) return;   // canceló: no cambia nada
+        const s = String(r).trim();
+        const n = s === '' ? 0 : Number(s.replace(',', '.'));
+        if (!(n > 0)) delete cc.pagos[num];
+        else cc.pagos[num] = n;
+      } else {
+        cc.pagos[num] = cc.montoAlumno;   // aporte sugerido (marca rápida)
       }
       adSave(dd); renderAdmin();
     }));
@@ -797,7 +819,7 @@ th{background:#e8eef9;font-size:11px;}
 <div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
 <h1>💰 Informe económico — ${adEsc(c.concepto)}</h1>
 <div class="sub">${grupo ? 'Grupo ' + adEsc(grupo) + ' · ' : ''}Acordado el ${adFechaBonita(c.fecha)} ·
-Aporte por alumno: ${adLps(c.montoAlumno)} · Generado con M.E.T.A.S el ${adFechaBonita(adHoy())}</div>
+Aporte sugerido: ${adLps(c.montoAlumno)} (cada aporte real se detalla abajo) · Generado con M.E.T.A.S el ${adFechaBonita(adHoy())}</div>
 <table>
 <thead><tr><th>#</th><th>Alumno/a</th><th>Aportó</th><th>Monto</th></tr></thead>
 <tbody>
@@ -1678,6 +1700,21 @@ async function adSincronizarNube(manual) {
   _adSyncBusy = false;
 }
 window.addEventListener('online', () => adSyncProgramar());
+
+/* Restaurar «Mi aula» tras recargar: re-pide el candado del maestro y
+   vuelve a la pestaña/colecta donde estaba. Si no pasa el PIN, va a la
+   Zona Docente en vez de exponer el dinero. */
+window.adRestoreState = async function (tab, colectaId) {
+  if (tab) _adTab = tab;
+  _adColectaId = colectaId || null;
+  if (typeof paVerificarPin === 'function' &&
+      !(await paVerificarPin('Los registros administrativos guardan **dinero y notas finales**:'))) {
+    switchView('view-perfil');
+    return;
+  }
+  switchView('view-admin');
+  renderAdmin();
+};
 
 /* ── Navegación (mismo patrón que las demás herramientas) ── */
 document.addEventListener('DOMContentLoaded', () => {
