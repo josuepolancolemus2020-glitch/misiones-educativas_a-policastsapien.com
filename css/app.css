@@ -454,9 +454,19 @@ a.padre-asistente-btn {
 }
 .doc-sync-now:active { background: var(--brand); color: #fff; }
 .doc-sync-now:disabled { opacity: .6; cursor: default; }
-/* Enlace discreto «Empezar de nuevo» (único escape, en gris al fondo) */
-.doc-reset-link {
+/* Aviso de que todo se sincroniza solo (tranquilidad tipo Drive) */
+.doc-sync-hint2 {
+  text-align: center; margin-top: 12px;
+  font-size: 12px; font-weight: 700; color: #1e7d34;
+}
+/* Enlaces discretos de recuperación / reinicio (en gris al fondo) */
+.doc-usar-este-link {
   display: block; text-align: center; margin-top: 14px; cursor: pointer;
+  font-size: 11.5px; font-weight: 700; color: var(--muted);
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.doc-reset-link {
+  display: block; text-align: center; margin-top: 8px; cursor: pointer;
   font-size: 11.5px; font-weight: 700; color: var(--muted);
   text-decoration: underline; text-underline-offset: 2px;
 }

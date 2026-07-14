@@ -94,6 +94,50 @@
   }
   function ahora() { return Date.now(); }
 
+  /* «Peso» de un valor: cuántos DATOS reales tiene. Sirve para no dejar
+     que una copia casi vacía pise a una llena (la causa de la pérdida).
+     Para las claves conocidas cuenta alumnos/claves/análisis; para el
+     resto usa el tamaño del texto. */
+  function peso(k, raw) {
+    if (raw == null || raw === '') return 0;
+    var base = raw.length;
+    try {
+      var o = JSON.parse(raw);
+      if (k === 'METAS_ADMIN_V1' && o && Array.isArray(o.grupos)) {
+        var n = 0;
+        o.grupos.forEach(function (g) {
+          (g && g.lista || []).forEach(function (a) {
+            if (a && (String(a.nombre || '').trim() || a.num)) n++;
+          });
+        });
+        return n * 1000 + base;
+      }
+      if (k === 'METAS_CODIGOS_V1' && o && typeof o === 'object') {
+        var c = 0;
+        Object.keys(o).forEach(function (gk) { c += Object.keys(o[gk] || {}).length; });
+        return c * 1000 + base;
+      }
+      if (k === 'METAS_PLANACCION_V1' && o && Array.isArray(o.analisis)) {
+        return o.analisis.length * 1000 + base;
+      }
+    } catch (_) {}
+    return base;
+  }
+
+  /* Respaldo automático (acumulativo por clave) de lo que se va a PISAR.
+     Se guarda en RESPALDO_KEY para que «↩️ Recuperar lo que borré» pueda
+     devolverlo, incluso si la pérdida vino de una sincronización. */
+  function backupLocal(k, raw) {
+    if (raw == null || raw === '') return;
+    var o;
+    try { o = JSON.parse(ls(RESPALDO_KEY)); } catch (_) {}
+    if (!o || typeof o !== 'object' || !o.datos) o = { fecha: null, datos: {} };
+    o.datos[k] = raw;
+    o.fecha = new Date().toISOString();
+    try { localStorage.setItem(RESPALDO_KEY, JSON.stringify(o)); } catch (_) {}
+    _papeleraFecha = o.fecha;
+  }
+
   /* Refresca el mapa: marca con versión nueva SOLO las claves que el
      maestro editó de verdad desde la última vez que las vimos (por hash).
      La PRIMERA vez que vemos datos ya existentes NO se marcan como cambio
@@ -176,18 +220,33 @@
     }).then(function (rows) {
       var cloudKeys = new Set();
       if (!Array.isArray(rows)) return { ok: false, cloudKeys: cloudKeys };
-      var m = scanLocal(), cambio = false;
+      var m = scanLocal(), cambio = false, protegido = false;
       rows.forEach(function (row) {
         if (!row || DS_KEYS.indexOf(row.k) === -1) return;
         cloudKeys.add(row.k);
         if (!row.valor || typeof row.valor.raw === 'undefined') return;
+        var raw = row.valor.raw;
+        var localRaw = ls(row.k);
         var local = (m[row.k] && m[row.k].v) || 0;
         var remota = Number(row.version) || 0;
-        if (!force && remota <= local) return;             // lo local es igual o más nuevo
-        var raw = row.valor.raw;
-        if (m[row.k] && m[row.k].h === hash(raw)) {         // mismo contenido: solo alinear versión
-          m[row.k].v = remota; m[row.k].sv = remota; return;
+        // mismo contenido: solo alinear versión (sin pisar)
+        if (m[row.k] && m[row.k].h === hash(raw)) {
+          m[row.k].v = Math.max(m[row.k].v || 0, remota); m[row.k].sv = m[row.k].v; return;
         }
+        var lp = peso(row.k, localRaw), rp = peso(row.k, raw);
+        // GUARDA ANTI-PÉRDIDA: la nube viene MUCHO más vacía que lo local con
+        // datos → NO pisar. Conservar lo local y re-subirlo GANANDO versión,
+        // para que la nube y el otro equipo se curen solos con la copia buena.
+        if (!force && lp >= 300 && rp * 2 < lp) {
+          var winV = Math.max(remota, local, ahora()) + 1;
+          m[row.k] = { v: winV, h: hash(localRaw), sv: 0 };   // pendiente, con versión que gana
+          protegido = true;
+          return;
+        }
+        // aplicar la nube solo si es más nueva (o si aquí no hay nada)
+        if (!force && remota <= local && lp > 0) return;
+        // RESPALDO antes de pisar algo con contenido (recuperable después)
+        if (lp > 0 && localRaw != null) backupLocal(row.k, localRaw);
         _applying = true;
         try { if (raw == null) localStorage.removeItem(row.k); else localStorage.setItem(row.k, raw); }
         catch (_) {}
@@ -196,7 +255,8 @@
         cambio = true;
       });
       metaSave(m);
-      if (cambio) repaint();
+      if (cambio || protegido) repaint();
+      if (protegido) schedulePush();       // sube pronto la copia buena protegida
       return { ok: true, cloudKeys: cloudKeys };
     }).catch(function () { return { ok: false, cloudKeys: new Set() }; });
   }
@@ -435,6 +495,23 @@
     });
   }
 
+  /* ── «Este equipo tiene los datos correctos» (recuperación) ──
+     Si un equipo aún conserva la copia buena, la impone en la nube y en los
+     demás equipos (force). Salvavidas si algo se desincronizó. */
+  function usarEste() {
+    if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
+    var ask = (typeof metasConfirm === 'function')
+      ? metasConfirm('Se usarán los datos de **ESTE equipo** (lista de alumnos, claves de familia, economía, asistencia, notas, Plan de Acción) en la nube y en todos tus equipos, reemplazando lo que haya. Úsalo en el equipo que tiene la copia buena. ¿Continuar?',
+          { icono: '✅', titulo: 'Usar los datos de este equipo', okTxt: 'Sí, usar este' })
+      : Promise.resolve(true);
+    Promise.resolve(ask).then(function (ok) {
+      if (!ok) return;
+      push(true).then(function (r) {
+        if (typeof toast === 'function') toast(r ? '✅ Listo: este equipo es ahora la copia buena en todos.' : '⚠️ No se pudo ahora, reintenta con internet.');
+      });
+    });
+  }
+
   /* Revisa si la nube tiene papelera; si cambia el estado, repinta para
      mostrar/ocultar «Recuperar» (así aparece aun en un equipo sin copia). */
   function checkPapelera() {
@@ -457,16 +534,22 @@
     sync();
   }
 
-  /* ── disparadores automáticos ── */
+  /* ── disparadores automáticos (sincronización continua tipo Drive) ── */
   document.addEventListener('DOMContentLoaded', function () {
     if (creds()) setTimeout(autoSync, 1500);
-    // vigía suave: sube cambios locales sin depender de cada herramienta
+    // vigía: sube cambios locales sin depender de cada herramienta
     setInterval(function () {
       if (document.hidden || !creds() || _applying) return;
       var m = scanLocal(), pend = false;
       DS_KEYS.forEach(function (k) { var e = m[k]; if (e && e.v !== e.sv) pend = true; });
       if (pend) { schedulePush(); estado(); }
-    }, 10000);
+    }, 8000);
+    // late de fondo: baja lo nuevo de la nube cada ~20 s aunque nadie toque
+    // nada, para que los equipos converjan solos (el freno AUTO_MIN evita saturar).
+    setInterval(function () {
+      if (document.hidden || !creds() || _applying) return;
+      autoSync();
+    }, 20000);
   });
   window.addEventListener('online', function () { if (creds()) autoSync(); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden && creds()) autoSync(); });
@@ -477,5 +560,6 @@
   window.dsSyncNow = syncNow;
   window.dsReset = reset;
   window.dsRecuperar = recuperar;
+  window.dsUsarEste = usarEste;
   window.dsTieneRespaldo = function () { var b = respaldo(); return (b && (b.fecha || true)) || _papeleraFecha; };
 })();
