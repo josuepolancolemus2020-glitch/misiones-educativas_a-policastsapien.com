@@ -741,7 +741,7 @@ function adRenderColecta(body, d) {
         /* ya pagó → editar su monto (hermanos/becados/abonos) o quitar */
         const al = dd.lista.find(a => String(a.num) === String(num)) || {};
         const quien = '#' + num + (al.nombre ? ' ' + adPrimerNombre(al.nombre) : '');
-        const r = await metasPrompt('¿Cuánto aportó **' + quien + '**? (Lempiras)\nEscribe **0** o déjalo vacío para quitar la marca.', {
+        const r = await metasPrompt('¿Cuánto aportó **' + quien + '**? (Lempiras)\nEscribe la cantidad real (ej. **500**). El **0** o vacío quita la marca.', {
           icono: '💰', titulo: 'Aporte del alumno', inputmode: 'decimal',
           value: String(cc.pagos[num]), okTxt: 'Guardar',
           valida: v => {
