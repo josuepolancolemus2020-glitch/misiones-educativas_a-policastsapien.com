@@ -3519,6 +3519,13 @@ a.camp-home-card { text-decoration: none; color: inherit; }
    REGISTROS ADMINISTRATIVOS (jul 2026) — Economía · Asistencia · SACE
 ══════════════════════════════════════════════════════════════ */
 .ad-tabs { margin: 12px 0; }
+/* Mi aula en teléfono: 5 pestañas + chip de nube no caben — se compactan
+   y la fila se desliza de lado (mismo patrón que los chips del asistente) */
+@media (max-width: 640px) {
+  .ad-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .ad-tabs::-webkit-scrollbar { display: none; }
+  .ad-tabs .pa-otab { flex: 0 0 auto; padding: 9px 10px; font-size: 12px; white-space: nowrap; }
+}
 .ad-btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .ad-btn-row .pa-generate-btn { flex: 1 1 auto; width: auto; margin: 0; }
 

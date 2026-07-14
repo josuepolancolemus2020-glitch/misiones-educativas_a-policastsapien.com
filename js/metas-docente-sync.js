@@ -37,6 +37,7 @@
      preferencias de presentación por equipo, ni datos de alumno. */
   var DS_KEYS = [
     'METAS_ADMIN_V1',            // Registros Admin (lista, economía, asistencia, notas SACE)
+    'METAS_AVISOS_V1',           // Comunicados (avisos + ficha del aula) — el aviso publicado en la PC debe verse en el teléfono
     'METAS_PLANACCION_V1',       // Plan de Acción
     'METAS_CODIGOS_V1',          // claves de familia (deben calzar entre equipos)
     'METAS_CAMP_V1',             // Campeonísimo (torneo)
