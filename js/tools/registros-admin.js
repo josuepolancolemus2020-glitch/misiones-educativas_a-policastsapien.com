@@ -259,9 +259,17 @@ function adRenderLista(body, d) {
       </div>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-add-al">➕ Agregar al final</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-pegar">📋 Pegar lista</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-insertar-al">🧑‍🎓 Alumno nuevo en su lugar</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-traer-pa">📥 Traer del Plan de Acción</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-tiras-todas">🖨️ Tiras de claves (todas)</button>
+      </div>
+      <div id="ad-pegar-box" style="display:none;margin-top:10px;">
+        <p class="pa-paste-hint">Pega la lista, <strong>un alumno por línea</strong>. Si la línea empieza
+          con su número de lista (ej. <em>7 Ada Sarai</em> o <em>7. Ada Sarai</em>), se respeta ese número;
+          si no, se numeran en orden. Se agregan al final de la lista actual.</p>
+        <textarea id="ad-paste-area" class="pa-paste-area" placeholder="Ada Sarai Sevilla&#10;Ashly Belén Miranda&#10;Brianna Monserrath López&#10;..."></textarea>
+        <button class="pa-add-btn" id="ad-import-btn"><i class="fa-solid fa-file-import"></i> Importar a la lista</button>
       </div>
       <p class="pa-optional-hint" style="margin-top:8px">🧑‍🎓 Si llega un alumno a mitad de año y toma un
         lugar del orden alfabético, usa «Alumno nuevo en su lugar»: los números se recorren, pero la
@@ -313,6 +321,14 @@ function adRenderLista(body, d) {
     adClaveFamilia(dd.id, sig);          /* su clave de familia nace con él */
     adSave(dd); renderAdmin();
   });
+  /* Pegar lista: muestra/oculta el panel de pegado */
+  document.getElementById('ad-pegar').addEventListener('click', () => {
+    const box = document.getElementById('ad-pegar-box');
+    const abrir = box.style.display === 'none';
+    box.style.display = abrir ? 'block' : 'none';
+    if (abrir) document.getElementById('ad-paste-area').focus();
+  });
+  document.getElementById('ad-import-btn').addEventListener('click', adImportarPegado);
   document.getElementById('ad-insertar-al').addEventListener('click', adInsertarAlumno);
   document.getElementById('ad-tiras-todas').addEventListener('click', () => adTirasTodas(adLoad()));
   document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
@@ -345,6 +361,44 @@ function adRenderLista(body, d) {
     adSave(dd); renderAdmin();
     toast('👥 Lista traída del Plan de Acción');
   });
+}
+
+/* ── Pegar lista: importa muchos alumnos de una sola vez ──
+   Un alumno por línea. Si la línea empieza con un número (7, 7., 7), 7-),
+   se toma como su nº de lista oficial; si no, se numeran en orden. Tolera
+   listas de calificaciones: quita una nota final tipo «, 100» o «, NSP». */
+async function adImportarPegado() {
+  const ta = document.getElementById('ad-paste-area');
+  const text = (ta ? ta.value : '').trim();
+  if (!text) { toast('Pega la lista primero'); return; }
+  const parsed = text.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+    const m = line.match(/^(\d{1,3})\s*[.)\-–:]?\s+(.+)$/);
+    let num = null, nombre = line;
+    if (m && m[2]) { num = +m[1]; nombre = m[2].trim(); }
+    nombre = nombre.replace(/\s*,\s*(\d{1,3}|nsp?|ns)\s*$/i, '').trim();  // quita nota si la pegaron
+    return { num, nombre };
+  }).filter(p => p.nombre);
+  if (!parsed.length) { toast('No encontré nombres para importar'); return; }
+
+  const dd = adLoad();
+  const conNombre = dd.lista.filter(a => (a.nombre || '').trim()).length;
+  if (conNombre) {
+    if (!await metasConfirm('Se agregarán **' + parsed.length + '** alumno(s) al final de la lista actual (que ya tiene ' + conNombre + '). ¿Continuar?',
+        { icono: '📋', titulo: 'Pegar lista', okTxt: 'Sí, agregar' })) return;
+  }
+  const usados = new Set(dd.lista.map(a => a.num));
+  let maxNum = dd.lista.length ? Math.max(...dd.lista.map(a => a.num)) : 0;
+  parsed.forEach(p => {
+    let num = p.num;
+    if (!num || usados.has(num)) { do { num = ++maxNum; } while (usados.has(num)); }
+    else { maxNum = Math.max(maxNum, num); }
+    usados.add(num);
+    dd.lista.push({ num, nombre: p.nombre });
+    adClaveFamilia(dd.id, num);          /* cada alumno recibe su clave de familia */
+  });
+  dd.lista.sort((a, b) => a.num - b.num);
+  adSave(dd); renderAdmin();
+  toast('👥 ' + parsed.length + ' alumno(s) importado(s)');
 }
 
 /* ── Editar / regenerar / imprimir la clave de familia de UN alumno ── */
