@@ -146,6 +146,10 @@ function adEsc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+/* Primer nombre del alumno (para las fichas de pago/asistencia) */
+function adPrimerNombre(nombre) {
+  return String(nombre || '').trim().split(/\s+/)[0] || '';
+}
 function adHoy() {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' +
@@ -676,8 +680,11 @@ function adRenderColecta(body, d) {
       <div class="ad-chips">
         ${d.lista.map(a => {
           const pagado = c.pagos && c.pagos[a.num] != null;
+          const nom = adPrimerNombre(a.nombre);
           return `<button class="ad-chip ${pagado ? 'ad-chip-on' : ''}" data-num="${a.num}"
-            title="${adEsc(a.nombre)}">#${a.num}${pagado ? ' ✓' : ''}</button>`;
+            title="${adEsc(a.nombre)}">
+            <span class="ad-chip-num">#${a.num}${pagado ? ' ✓' : ''}</span>
+            ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}</button>`;
         }).join('')}
       </div>
     </div>
@@ -827,7 +834,10 @@ function adRenderAsis(body, d) {
           const st = reg.aus[a.num] || '';
           const cls = st === 'A' ? 'ad-chip-aus' : st === 'E' ? 'ad-chip-exc' : '';
           const ico = st === 'A' ? ' 🚫' : st === 'E' ? ' 📝' : '';
-          return `<button class="ad-chip ${cls}" data-num="${a.num}" title="${adEsc(a.nombre)}">#${a.num}${ico}</button>`;
+          const nom = adPrimerNombre(a.nombre);
+          return `<button class="ad-chip ${cls}" data-num="${a.num}" title="${adEsc(a.nombre)}">
+            <span class="ad-chip-num">#${a.num}${ico}</span>
+            ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}</button>`;
         }).join('')}
       </div>
       <p class="pa-optional-hint" style="margin-top:8px">

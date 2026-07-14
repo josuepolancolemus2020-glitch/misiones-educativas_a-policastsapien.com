@@ -3515,12 +3515,18 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 /* chips táctiles (pagos y asistencia) */
 .ad-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
 .ad-chip {
-  min-width: 56px; padding: 10px 8px;
+  min-width: 62px; max-width: 96px; padding: 8px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
   background: var(--bg); border: 2px solid var(--border); border-radius: 12px;
   font-size: 14px; font-weight: 800; color: var(--text); cursor: pointer;
   transition: transform .1s;
 }
 .ad-chip:active { transform: scale(.93); }
+.ad-chip-num { line-height: 1.1; }
+.ad-chip-nom {
+  font-size: 11px; font-weight: 700; opacity: .78; line-height: 1.1;
+  max-width: 84px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .ad-chip-on  { background: rgba(22,163,74,.14); border-color: #16a34a; color: #15803d; }
 .ad-chip-aus { background: rgba(185,28,28,.12); border-color: #dc2626; color: #b91c1c; }
 .ad-chip-exc { background: rgba(217,119,6,.12); border-color: #d97706; color: #b45309; }
