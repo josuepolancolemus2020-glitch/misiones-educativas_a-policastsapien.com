@@ -1413,33 +1413,65 @@ async function docenteSuscribir() {
 }
 window.docenteSuscribir = docenteSuscribir;
 
-/* ── ¿Olvidaste tu contraseña? ──
-   Camino 1 (autoservicio): cualquier equipo con la sesión abierta puede
-   ponerte contraseña nueva sin la anterior (docenteCambiarClave).
-   Camino 2: WhatsApp del proyecto — el administrador verifica tus datos
-   registrados (nombre, escuela, teléfono) y te la restablece. */
-const DOC_SOPORTE_WA = '';   /* nº WhatsApp de soporte, ej. '50499999999' (vacío = solo camino 1) */
-
+/* ── ¿Olvidaste tu contraseña? — reset AUTOMÁTICO por correo ──
+   Camino 1 (el más rápido): cualquier equipo con la sesión abierta pone
+   contraseña nueva sin la anterior (docenteCambiarClave).
+   Camino 2: código de 6 dígitos al correo registrado — lo envía la Edge
+   Function reset-clave (ver GUIA-RESET-CORREO.md) y lo verifica
+   metas_reset_confirmar. El servidor NUNCA revela si un correo existe. */
 async function docenteOlvide() {
-  const correo = (document.getElementById('doc-rec-correo')?.value || '').trim();
-  const msj = '💡 **¿Tienes otro equipo con tu sesión abierta?** (tu PC o tu teléfono donde la Zona Docente ya te saluda)\n\n' +
-    'Entra ahí y toca «✏️ Cambiar mi contraseña»: te deja poner una nueva SIN saber la anterior. Es el camino más rápido.\n\n' +
-    (DOC_SOPORTE_WA
-      ? '🆘 **¿No tienes ninguno?** Escríbenos por WhatsApp: verificamos tus datos registrados y te la restablecemos.'
-      : '🆘 **¿No tienes ninguno?** Escríbele al administrador del proyecto (quien te invitó a M.E.T.A.S): verifica tus datos registrados y te la restablece.');
-  if (!DOC_SOPORTE_WA) {
-    await metasAlert(msj, { icono: '🆘', titulo: 'Recuperar contraseña' });
-    return;
-  }
-  const ir = await metasConfirm(msj, {
+  const pre = (document.getElementById('doc-rec-correo')?.value || '').trim();
+  const seguir = await metasConfirm('💡 **¿Tienes otro equipo con tu sesión abierta?** (tu PC o tu teléfono donde la Zona Docente ya te saluda)\n\nEntra ahí y toca «✏️ Cambiar mi contraseña»: te deja poner una nueva SIN saber la anterior. Es lo más rápido.\n\n📧 Si no tienes ninguno, te enviamos un **código a tu correo registrado** para crear una contraseña nueva.', {
     icono: '🆘', titulo: 'Recuperar contraseña',
-    okTxt: '💬 Escribir por WhatsApp', cancelTxt: 'Entendido',
+    okTxt: '📧 Enviarme el código', cancelTxt: 'Entendido',
   });
-  if (!ir) return;
-  const txt = 'Hola 👋 Olvidé la contraseña de mi cuenta de maestro en M.E.T.A.S.\n' +
-    (correo ? '📧 Mi correo registrado: ' + correo + '\n' : '📧 Mi correo registrado: \n') +
-    '👤 Mi nombre completo: \n🏫 Mi escuela: \n📱 Mi teléfono registrado: ';
-  window.open('https://wa.me/' + DOC_SOPORTE_WA + '?text=' + encodeURIComponent(txt), '_blank');
+  if (!seguir) return;
+  if (navigator.onLine === false) { toast('📴 Necesitas internet para recibir el código'); return; }
+  const correo = await metasPrompt('Escribe el **correo** con el que te registraste:', {
+    icono: '📧', titulo: 'Recuperar contraseña', value: pre, okTxt: 'Enviar código',
+    valida: v => String(v).trim().includes('@') ? '' : 'Escribe un correo válido.',
+  });
+  if (correo === null) return;
+  const c = String(correo).trim().toLowerCase();
+  toast('⏳ Enviando código…');
+  const { url, key } = _padreSbCfg();
+  try {
+    await fetch(url + '/functions/v1/reset-clave', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': key },
+      body: JSON.stringify({ correo: c }),
+    });
+  } catch (_) { /* la respuesta es genérica a propósito: no revela nada */ }
+  const cod = await metasPrompt('Si **' + c + '** está registrado, le llegará un **código de 6 dígitos** (revisa también «no deseado»). Escríbelo aquí:', {
+    icono: '🔢', titulo: 'Recuperar contraseña', inputmode: 'numeric', maxlength: 6, okTxt: 'Continuar',
+    valida: v => /^\d{6}$/.test(String(v).trim()) ? '' : 'Son 6 números.',
+  });
+  if (cod === null) return;
+  const nueva = await metasPrompt('Escribe tu contraseña **nueva** (mínimo 6 letras o números).\nGuárdala bien: con ella entrarás en todos tus equipos.', {
+    icono: '✏️', titulo: 'Recuperar contraseña', type: 'password', okTxt: 'Guardar contraseña',
+    valida: v => String(v).trim().length >= 6 ? '' : 'Muy corta: usa al menos 6 letras o números.',
+  });
+  if (nueva === null) return;
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_reset_confirmar', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_correo: c, p_codigo: String(cod).trim(), p_nueva: String(nueva).trim() }),
+    });
+    const resp = r.ok ? await r.json() : null;
+    if (resp && resp.ok) {
+      toast('✅ ¡Contraseña nueva lista! Ya puedes entrar');
+      const ic = document.getElementById('doc-rec-correo');
+      if (ic) ic.value = c;
+      document.getElementById('doc-rec-clave')?.focus();
+    } else if (resp && resp.motivo === 'codigo') {
+      await metasAlert('El código no coincide. Revisa el **correo más reciente** que te llegó e inténtalo otra vez desde «¿Olvidaste tu contraseña?».', { icono: '🔢', titulo: 'Recuperar contraseña' });
+    } else if (resp && resp.motivo === 'vencido') {
+      await metasAlert('El código ya **venció** (dura 15 minutos) o se agotaron los intentos. Pide uno nuevo desde «¿Olvidaste tu contraseña?».', { icono: '⏳', titulo: 'Recuperar contraseña' });
+    } else {
+      toast('⚠️ No se pudo cambiar. Intenta de nuevo.');
+    }
+  } catch (_) { toast('⚠️ Sin conexión. Intenta de nuevo.'); }
 }
 window.docenteOlvide = docenteOlvide;
 
