@@ -9,10 +9,12 @@
    🧮 Notas SACE — notas finales por parcial y materia, con columna
                    lista para copiar y pegar en el archivo de SACE.
 
-   Todo es offline-first en METAS_ADMIN_V1 (localStorage). La lista de
-   alumnos se comparte entre los tres registros y puede traerse del
-   Plan de Acción. Protegido por el candado del maestro (paVerificarPin).
-   Sincronización a la nube/chatbot: fase futura.
+   Todo es offline-first en METAS_ADMIN_V1 (localStorage, estado v2 con
+   GRUPOS: un maestro puede atender varios grados/secciones, incluso en
+   dos colegios). La lista de alumnos del grupo activo alimenta los tres
+   registros Y el Plan de Acción; las claves de familia nacen aquí
+   (llave 'G:<id>' en METAS_CODIGOS_V1). Se sincroniza entre equipos con
+   el espejo del maestro (metas-docente-sync) y a la nube del chatbot.
 ══════════════════════════════════════════════════════════════ */
 
 const ADMIN_KEY = 'METAS_ADMIN_V1';
@@ -22,25 +24,123 @@ const AD_MATERIAS_DEF = ['Español', 'Matemáticas', 'Ciencias Naturales', 'Cien
 let _adTab = 'lista';        /* lista | eco | asis | sace */
 let _adColectaId = null;     /* colecta abierta en Economía */
 
-function adLoad() {
+/* ── Estado v2: GRUPOS (multi-aula) ──
+   Un maestro puede atender varios grupos, incluso en DOS colegios.
+   { v:2, activo:'GXXXXX', grupos:[{ id, escuela, grado, seccion,
+     materias, lista, colectas, asistencia, notas }] }
+   adLoad()/adSave() conservan su contrato de siempre pero operan sobre
+   el GRUPO ACTIVO: Economía/Asistencia/SACE no necesitan cambios.
+   El id del grupo es la llave de las claves de familia
+   (METAS_CODIGOS_V1, llave 'G:<id>'): dos colegios con «6º 1» ya no
+   chocan entre sí. */
+const AD_ID_ALFA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
+function adGrupoNuevo(props) {
+  let id = 'G';
+  for (let i = 0; i < 5; i++) id += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
+  return Object.assign({ id, escuela: '', grado: '', seccion: '',
+    materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {} }, props || {});
+}
+
+function adNormGrupo(g) {
+  g.id = g.id || adGrupoNuevo().id;
+  g.escuela = g.escuela || '';
+  g.grado = g.grado || '';
+  g.seccion = g.seccion || '';
+  g.lista = Array.isArray(g.lista) ? g.lista : [];
+  g.colectas = Array.isArray(g.colectas) ? g.colectas : [];
+  g.asistencia = Array.isArray(g.asistencia) ? g.asistencia : [];
+  g.materias = Array.isArray(g.materias) && g.materias.length ? g.materias : AD_MATERIAS_DEF.slice();
+  g.notas = (g.notas && typeof g.notas === 'object') ? g.notas : {};
+  return g;
+}
+
+/* Al migrar de v1, las claves de familia ya emitidas (llave 'grado|sec')
+   se mueven a la llave del grupo nuevo: las tiras entregadas siguen valiendo. */
+function adMigrarCodigos(g) {
   try {
-    const o = JSON.parse(localStorage.getItem(ADMIN_KEY));
-    if (o && typeof o === 'object') {
-      o.lista = Array.isArray(o.lista) ? o.lista : [];
-      o.colectas = Array.isArray(o.colectas) ? o.colectas : [];
-      o.asistencia = Array.isArray(o.asistencia) ? o.asistencia : [];
-      o.materias = Array.isArray(o.materias) && o.materias.length ? o.materias : AD_MATERIAS_DEF.slice();
-      o.notas = (o.notas && typeof o.notas === 'object') ? o.notas : {};
-      return o;
+    const codes = JSON.parse(localStorage.getItem('METAS_CODIGOS_V1')) || {};
+    const gg = String(g.grado || '').replace(/\D/g, '');
+    const mSec = String(g.seccion || '').trim().match(/([a-zA-Z0-9])\s*$/);
+    const vieja = gg + '|' + (mSec ? mSec[1].toUpperCase() : '');
+    if (codes[vieja] && !codes['G:' + g.id]) {
+      codes['G:' + g.id] = codes[vieja];
+      delete codes[vieja];
+      localStorage.setItem('METAS_CODIGOS_V1', JSON.stringify(codes));
     }
   } catch (_) {}
-  return { grado: '', seccion: '', lista: [], colectas: [], asistencia: [],
-           materias: AD_MATERIAS_DEF.slice(), notas: {} };
 }
-function adSave(d) {
-  try { localStorage.setItem(ADMIN_KEY, JSON.stringify(d)); } catch (_) {}
+
+function adState() {
+  let st = null;
+  try { st = JSON.parse(localStorage.getItem(ADMIN_KEY)); } catch (_) {}
+  if (st && st.v === 2 && Array.isArray(st.grupos) && st.grupos.length) {
+    st.grupos.forEach(adNormGrupo);
+    if (!st.grupos.some(g => g.id === st.activo)) st.activo = st.grupos[0].id;
+    return st;
+  }
+  /* migración desde v1 (objeto plano) o inicio en blanco */
+  const g = adGrupoNuevo();
+  if (st && typeof st === 'object' && !st.v) {
+    g.grado = st.grado || ''; g.seccion = st.seccion || '';
+    g.lista = Array.isArray(st.lista) ? st.lista : [];
+    g.colectas = Array.isArray(st.colectas) ? st.colectas : [];
+    g.asistencia = Array.isArray(st.asistencia) ? st.asistencia : [];
+    g.materias = Array.isArray(st.materias) && st.materias.length ? st.materias : AD_MATERIAS_DEF.slice();
+    g.notas = (st.notas && typeof st.notas === 'object') ? st.notas : {};
+    adMigrarCodigos(g);
+  }
+  const nuevo = { v: 2, activo: g.id, grupos: [adNormGrupo(g)] };
+  try { localStorage.setItem(ADMIN_KEY, JSON.stringify(nuevo)); } catch (_) {}
+  return nuevo;
+}
+function adStateSave(st) {
+  try { localStorage.setItem(ADMIN_KEY, JSON.stringify(st)); } catch (_) {}
   adSyncProgramar();   /* la nube del chatbot se actualiza sola, con calma */
 }
+
+function adLoad() {
+  const st = adState();
+  return st.grupos.find(g => g.id === st.activo) || st.grupos[0];
+}
+function adSave(d) {
+  const st = adState();
+  const i = st.grupos.findIndex(x => x.id === d.id);
+  if (i >= 0) st.grupos[i] = d; else st.grupos.push(adNormGrupo(d));
+  adStateSave(st);
+}
+
+/* ── Claves de familia por GRUPO ──
+   La clave (ej. 15-K7QM) es la IDENTIDAD del niño ante la nube y el
+   chatbot de padres. Vive en METAS_CODIGOS_V1 bajo la llave del grupo
+   ('G:<id>'), se genera sola la primera vez y NO cambia aunque el
+   maestro corrija grado/sección/colegio. */
+function adClaveFamilia(grupoId, num, crear) {
+  const n = String(num || '').replace(/\D/g, '');
+  if (!grupoId || !n || typeof paCodesLoad !== 'function') return '';
+  const codes = paCodesLoad();
+  const key = 'G:' + grupoId;
+  const cg = codes[key] || (codes[key] = {});
+  if (!cg[n]) {
+    if (crear === false) return '';
+    let suf = '';
+    for (let i = 0; i < 4; i++) suf += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
+    cg[n] = n + suf;
+    paCodesSave(codes);
+  }
+  return cg[n];
+}
+function adClaveFamiliaSet(grupoId, num, clave) {
+  const n = String(num || '').replace(/\D/g, '');
+  if (!grupoId || !n || typeof paCodesLoad !== 'function') return '';
+  const codes = paCodesLoad();
+  const key = 'G:' + grupoId;
+  const cg = codes[key] || (codes[key] = {});
+  cg[n] = clave;
+  paCodesSave(codes);
+  return clave;
+}
+window.adClaveFamilia = adClaveFamilia;
 
 function adEsc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
@@ -60,22 +160,54 @@ function adLps(n) {
   return 'L ' + v.toLocaleString('es-HN');
 }
 function adGrupoTxt(d) {
-  return [(d.grado || '').trim(), (d.seccion || '').trim()].filter(Boolean).join(' ');
+  const gs = [(d.grado || '').trim(), (d.seccion || '').trim()].filter(Boolean).join(' ');
+  return gs + (d.escuela ? (gs ? ' · ' : '') + String(d.escuela).trim() : '');
+}
+function adGrupoChipTxt(g) {
+  const gs = [(g.grado || '').trim(), (g.seccion || '').trim()].filter(Boolean).join(' ');
+  return gs || 'Nuevo grupo';
 }
 
 /* ── RENDER PRINCIPAL ── */
 function renderAdmin() {
   const cont = document.getElementById('admin-content');
   if (!cont) return;
-  const d = adLoad();
+  const st = adState();
+  const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
+  /* Barra de grupos: el maestro puede tener varios (incluso en dos
+     colegios); todo lo de abajo (lista, economía, asistencia, notas)
+     es DEL GRUPO ACTIVO. */
+  const chips = st.grupos.map(g => `
+    <button class="ad-gr-chip ${g.id === st.activo ? 'ad-gr-on' : ''}" data-gid="${g.id}">
+      <span class="ad-gr-gs">${adEsc(adGrupoChipTxt(g))}</span>
+      ${g.escuela ? `<span class="ad-gr-esc">${adEsc(g.escuela)}</span>` : ''}
+    </button>`).join('');
   cont.innerHTML = `
+    <div class="ad-gr-bar">
+      ${chips}
+      <button class="ad-gr-chip ad-gr-add" id="ad-gr-add" title="Agregar otro grado o colegio">➕ Otro grupo</button>
+    </div>
     <div class="pa-tabs-out ad-tabs">
-      <button class="pa-otab ${_adTab === 'lista' ? 'pa-otab-active' : ''}" data-adtab="lista">👥 Lista</button>
+      <button class="pa-otab ${_adTab === 'lista' ? 'pa-otab-active' : ''}" data-adtab="lista">👥 Alumnos</button>
       <button class="pa-otab ${_adTab === 'eco'   ? 'pa-otab-active' : ''}" data-adtab="eco">💰 Economía</button>
       <button class="pa-otab ${_adTab === 'asis'  ? 'pa-otab-active' : ''}" data-adtab="asis">📋 Asistencia</button>
       <button class="pa-otab ${_adTab === 'sace'  ? 'pa-otab-active' : ''}" data-adtab="sace">🧮 Notas SACE</button>
     </div>
     <div id="ad-tab-body"></div>`;
+  cont.querySelectorAll('[data-gid]').forEach(b =>
+    b.addEventListener('click', () => {
+      const s2 = adState(); s2.activo = b.dataset.gid; adStateSave(s2);
+      _adColectaId = null; renderAdmin();
+    }));
+  document.getElementById('ad-gr-add').addEventListener('click', async () => {
+    if (!await metasConfirm('Un grupo nuevo tiene su PROPIA lista de alumnos, claves de familia, economía, asistencia y notas.\n\nÚsalo si atiendes **otro grado/sección** o trabajas en **otro colegio**. ¿Crear el grupo?',
+      { icono: '🏫', titulo: 'Otro grupo', okTxt: 'Sí, crear' })) return;
+    const s2 = adState();
+    const g = adGrupoNuevo();
+    s2.grupos.push(g); s2.activo = g.id; adStateSave(s2);
+    _adTab = 'lista'; renderAdmin();
+    toast('🏫 Grupo nuevo: escribe su grado, sección y colegio');
+  });
   cont.querySelectorAll('[data-adtab]').forEach(b =>
     b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; renderAdmin(); }));
   const body = document.getElementById('ad-tab-body');
@@ -85,31 +217,51 @@ function renderAdmin() {
   else adRenderSace(body, d);
 }
 
-/* ══════════════ 👥 LISTA (la comparten los 3 registros) ══════════════ */
+/* ══════════════ 👥 ALUMNOS (el corazón: alimenta TODO) ══════════════ */
 function adRenderLista(body, d) {
+  const puedeBorrarGrupo = adState().grupos.length > 1;
   body.innerHTML = `
     <div class="pa-card">
-      <div class="pa-card-title">👥 Mi lista de alumnos</div>
-      <p class="pa-optional-hint">Esta lista alimenta Economía, Asistencia y Notas SACE.
-        El número es el <strong>nº de lista oficial</strong> (el mismo de SACE y del Plan de Acción).</p>
+      <div class="pa-card-title">🏫 Mi grupo</div>
       <div class="pa-row-2">
         <div class="pa-field"><label>Grado</label>
           <input id="ad-grado" class="pa-inp-field" value="${adEsc(d.grado)}" placeholder="ej: 6º"></div>
         <div class="pa-field"><label>Sección</label>
           <input id="ad-seccion" class="pa-inp-field" value="${adEsc(d.seccion)}" placeholder="ej: A"></div>
       </div>
+      <div class="pa-field"><label>Colegio / escuela</label>
+        <input id="ad-escuela" class="pa-inp-field" value="${adEsc(d.escuela)}"
+               placeholder="ej: Esc. Francisco Morazán (útil si trabajas en dos)"></div>
+      <div class="pa-field"><label>Clases que le das a este grupo</label>
+        <input id="ad-materias" class="pa-inp-field" value="${adEsc(d.materias.join(', '))}"
+               placeholder="Separadas por coma"></div>
+      <p class="pa-optional-hint">Las clases se usan en <strong>Notas SACE</strong>. Si cambias el
+        nombre de una clase, las notas ya guardadas quedan bajo el nombre anterior.</p>
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">👥 Mis alumnos</div>
+      <p class="pa-optional-hint">Esta lista alimenta <strong>todo</strong>: Economía, Asistencia,
+        Notas SACE y el Plan de Acción. El número es el <strong>nº de lista oficial</strong> (SACE).
+        Cada alumno recibe su <strong>🔑 clave de familia</strong>: con ella el padre o la madre
+        consulta al asistente desde su casa. Tócala para cambiarla o imprimirla.</p>
       <div id="ad-lista-rows">
-        ${d.lista.map(a => `
+        ${d.lista.map(a => {
+          const cl = adClaveFamilia(d.id, a.num, false);
+          return `
           <div class="ad-al-row" data-num="${a.num}">
             <span class="ad-al-num">#${a.num}</span>
             <input class="pa-inp-field ad-al-nombre" value="${adEsc(a.nombre)}" placeholder="Nombre (opcional)">
+            <button class="ad-al-code" data-cnum="${a.num}" title="Clave de familia — tócala para editar o imprimir">
+              🔑 ${cl ? adEsc(cl.replace(/^(\d+)/, '$1-')) : 'crear'}</button>
             <button class="ad-al-del" aria-label="Quitar">✕</button>
-          </div>`).join('')}
+          </div>`; }).join('')}
       </div>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-add-al">➕ Agregar al final</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-insertar-al">🧑‍🎓 Alumno nuevo en su lugar</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-traer-pa">📥 Traer del Plan de Acción</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-tiras-todas">🖨️ Tiras de claves (todas)</button>
       </div>
       <p class="pa-optional-hint" style="margin-top:8px">🧑‍🎓 Si llega un alumno a mitad de año y toma un
         lugar del orden alfabético, usa «Alumno nuevo en su lugar»: los números se recorren, pero la
@@ -120,26 +272,34 @@ function adRenderLista(body, d) {
     <div class="pa-card">
       <div class="pa-card-title">☁️ Nube del chatbot de padres</div>
       <p class="pa-optional-hint">La asistencia, las notas finales y las colaboraciones suben con la
-        <strong>clave de familia</strong> de cada alumno (la misma del Plan de Acción) para que el chatbot
-        les responda a los padres. Sube solo lo que cambia; sin internet, espera y reintenta.
-        Necesita el <strong>Grado</strong> escrito arriba.</p>
+        <strong>clave de familia</strong> de cada alumno para que el asistente les responda a los padres.
+        Sube solo lo que cambia; sin internet, espera y reintenta.</p>
       <button class="pa-generate-btn ad-btn-sec" id="ad-sb-sync">☁️ Sincronizar ahora</button>
       <p class="pa-optional-hint" id="ad-sb-status" style="margin-top:8px"></p>
+      ${puedeBorrarGrupo ? `<button class="ad-grupo-del" id="ad-grupo-del">🗑 Eliminar este grupo</button>` : ''}
     </div>`;
 
   const persist = () => {
     const dd = adLoad();
     dd.grado = document.getElementById('ad-grado').value;
     dd.seccion = document.getElementById('ad-seccion').value;
+    dd.escuela = document.getElementById('ad-escuela').value.trim();
+    const mats = document.getElementById('ad-materias').value.split(',').map(s => s.trim()).filter(Boolean);
+    if (mats.length) dd.materias = mats;
     dd.lista = [...body.querySelectorAll('.ad-al-row')].map(r => ({
       num: +r.dataset.num,
       nombre: r.querySelector('.ad-al-nombre').value.trim(),
     }));
     adSave(dd);
   };
-  ['ad-grado', 'ad-seccion'].forEach(id =>
+  ['ad-grado', 'ad-seccion', 'ad-escuela', 'ad-materias'].forEach(id =>
     document.getElementById(id).addEventListener('input', persist));
+  /* al salir del campo grado/sección/colegio, refresca la barra de grupos */
+  ['ad-grado', 'ad-seccion', 'ad-escuela'].forEach(id =>
+    document.getElementById(id).addEventListener('change', () => renderAdmin()));
   body.querySelectorAll('.ad-al-nombre').forEach(i => i.addEventListener('input', persist));
+  body.querySelectorAll('.ad-al-code').forEach(b =>
+    b.addEventListener('click', () => adEditarClave(+b.dataset.cnum)));
   body.querySelectorAll('.ad-al-del').forEach(b =>
     b.addEventListener('click', async () => {
       if (!await metasConfirm('¿Quitar a este alumno de la lista?\nSus pagos, asistencias y notas guardadas no se borran.', { icono: '👥', titulo: 'Lista de alumnos', okTxt: 'Sí, quitar' })) return;
@@ -150,17 +310,29 @@ function adRenderLista(body, d) {
     const dd = adLoad();
     const sig = dd.lista.length ? Math.max(...dd.lista.map(a => a.num)) + 1 : 1;
     dd.lista.push({ num: sig, nombre: '' });
+    adClaveFamilia(dd.id, sig);          /* su clave de familia nace con él */
     adSave(dd); renderAdmin();
   });
   document.getElementById('ad-insertar-al').addEventListener('click', adInsertarAlumno);
+  document.getElementById('ad-tiras-todas').addEventListener('click', () => adTirasTodas(adLoad()));
   document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
   adSincronizarNube(false);   /* refresca el estado al entrar */
+  document.getElementById('ad-grupo-del')?.addEventListener('click', async () => {
+    const dd = adLoad();
+    if (!await metasConfirm('Se eliminará el grupo **' + (adGrupoTxt(dd) || 'sin nombre') + '** con su lista, economía, asistencia y notas de este equipo. Las claves de familia entregadas dejan de usarse.\n\n¿Eliminar?',
+      { icono: '🗑', titulo: 'Eliminar grupo', okTxt: 'Sí, eliminar' })) return;
+    const s2 = adState();
+    s2.grupos = s2.grupos.filter(g => g.id !== dd.id);
+    s2.activo = s2.grupos[0].id;
+    adStateSave(s2); renderAdmin();
+    toast('🗑 Grupo eliminado');
+  });
   document.getElementById('ad-traer-pa').addEventListener('click', async () => {
     let pa = null;
     try { pa = JSON.parse(localStorage.getItem('METAS_PLANACCION_V1')); } catch (_) {}
     const ana = pa && Array.isArray(pa.analisis) && pa.analisis.length ? pa.analisis[pa.analisis.length - 1] : null;
     if (!ana || !Array.isArray(ana.students) || !ana.students.length) {
-      await metasAlert('No encontré análisis guardados en el Plan de Acción de este teléfono. Agrega la lista a mano con «➕ Agregar alumno».', { icono: '📥', titulo: 'Lista de alumnos' });
+      await metasAlert('No encontré análisis guardados en el Plan de Acción de este teléfono. Agrega la lista a mano con «➕ Agregar al final».', { icono: '📥', titulo: 'Lista de alumnos' });
       return;
     }
     if (!await metasConfirm('Se traerá la lista del análisis más reciente (**' + (ana.evaluacion || 'Evaluación') + '**, ' + ana.students.length + ' alumnos). ¿Reemplazar la lista actual?', { icono: '📥', titulo: 'Lista de alumnos', okTxt: 'Sí, traer' })) return;
@@ -173,6 +345,93 @@ function adRenderLista(body, d) {
     adSave(dd); renderAdmin();
     toast('👥 Lista traída del Plan de Acción');
   });
+}
+
+/* ── Editar / regenerar / imprimir la clave de familia de UN alumno ── */
+async function adEditarClave(num) {
+  const d = adLoad();
+  const a = d.lista.find(x => x.num === num) || { nombre: '' };
+  const quien = (a.nombre ? a.nombre : 'alumno/a') + ' (#' + num + ')';
+  const actual = adClaveFamilia(d.id, num);          /* crea si no existía */
+  const bonito = actual.replace(/^(\d+)/, '$1-');
+  const v = await metasPrompt('Clave de familia de **' + quien + '**:\n\n' +
+    '• Déjala igual y toca «Imprimir tira», o\n' +
+    '• Escribe una clave nueva (número + 4 a 6 letras/números, ej. ' + num + '-K7QM), o\n' +
+    '• Escribe **nueva** para generar otra al azar.\n\n⚠️ Si la cambias, la tira entregada antes deja de valer.', {
+    icono: '🔑', titulo: 'Clave de familia', value: bonito, okTxt: 'Guardar',
+    valida: t => {
+      const s = String(t).trim().toUpperCase();
+      if (s === 'NUEVA') return '';
+      const limpio = s.replace(/[^A-Z0-9]/g, '');
+      return new RegExp('^' + num + '[A-Z0-9]{4,6}$').test(limpio)
+        ? '' : 'Debe empezar con ' + num + ' y seguir con 4 a 6 letras o números (ej. ' + num + '-K7QM).';
+    },
+  });
+  if (v === null) return;
+  const s = String(v).trim().toUpperCase();
+  let clave = actual;
+  if (s === 'NUEVA') {
+    let suf = '';
+    for (let i = 0; i < 4; i++) suf += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
+    clave = adClaveFamiliaSet(d.id, num, String(num) + suf);
+  } else {
+    const limpio = s.replace(/[^A-Z0-9]/g, '');
+    if (limpio !== actual) clave = adClaveFamiliaSet(d.id, num, limpio);
+  }
+  if (clave !== actual) {
+    toast('🔑 Clave nueva: ' + clave.replace(/^(\d+)/, '$1-'));
+    renderAdmin();
+  }
+  if (await metasConfirm('¿Imprimir la **tira** con esta clave para entregarla a la familia?',
+    { icono: '🖨️', titulo: 'Clave de familia', okTxt: 'Sí, imprimir' })) {
+    adTiraUno(adLoad(), num);
+  }
+}
+
+/* Tiras de TODO el grupo, listas para recortar y entregar en reunión */
+function adTirasTodas(d) {
+  if (!d.lista.length) { toast('Agrega alumnos primero'); return; }
+  const grupoTxt = adGrupoTxt(d);
+  const sitio = (typeof PA_SITE !== 'undefined') ? PA_SITE : 'https://metas.policastsapien.com/';
+  const filas = d.lista.slice().sort((a, b) => a.num - b.num)
+    .map(a => ({ num: a.num, nombre: a.nombre || '', codigo: adClaveFamilia(d.id, a.num) }))
+    .filter(f => f.codigo);
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Claves de familia — ${adEsc(grupoTxt)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;color:#111;background:#fff;padding:10mm;}
+h1{font-size:15px;margin-bottom:2mm;}
+p.intro{font-size:11px;color:#444;margin-bottom:5mm;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm;}
+.tira{border:1.5px dashed #888;border-radius:6px;padding:4mm;page-break-inside:avoid;}
+.t1{font-size:10px;font-weight:bold;color:#1e3a7c;}
+.t2{font-size:11px;margin-top:1.5mm;}
+.cod{font-size:20px;font-weight:900;letter-spacing:2px;margin:2mm 0;font-family:'Courier New',monospace;}
+.t3{font-size:9px;color:#333;line-height:1.45;}
+.noprint{margin-bottom:6mm;}
+.noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">🖨️ Imprimir tiras</button></div>
+<h1>🔑 Claves de familia — ${adEsc(grupoTxt)}</h1>
+<p class="intro">Recorte cada tira y entréguela EN PRIVADO a la familia de cada estudiante (reunión de padres o cuaderno).
+La clave es secreta: con ella el padre ve las notas de su hijo/a desde cualquier teléfono con internet.</p>
+<div class="grid">
+${filas.map(f => `
+  <div class="tira">
+    <div class="t1">🔑 M.E.T.A.S — Clave de la familia</div>
+    <div class="t2">Alumno/a <strong>#${f.num}</strong>${grupoTxt ? ' · ' + adEsc(grupoTxt) : ''}${f.nombre ? ' · ' + adEsc(f.nombre) : ''}</div>
+    <div class="cod">${adEsc(f.codigo.replace(/^(\d+)/, '$1-'))}</div>
+    <div class="t3">📱 En cualquier teléfono con internet entre a:<br><strong>${sitio}padres.html</strong><br>
+    El 🤖 asistente le pedirá esta clave y le contará cómo va su hijo/a: notas, asistencia, mensajes del maestro
+    y cómo apoyar en casa. Guárdela como una llave: es solo para su familia.</div>
+  </div>`).join('')}
+</div>
+</body></html>`;
+  const w = window.open('', '_blank');
+  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
+  w.document.write(html); w.document.close();
 }
 
 /* ── Alumno nuevo a mitad de año ──
@@ -189,10 +448,7 @@ function adShiftNums(obj, pos) {
 function adRemapCodigos(d, pos) {
   try {
     const codes = JSON.parse(localStorage.getItem('METAS_CODIGOS_V1')) || {};
-    /* misma llave de grupo que usa paCodigoAlumno */
-    const g = String(d.grado || '').replace(/\D/g, '');
-    const mSec = String(d.seccion || '').trim().match(/([a-zA-Z0-9])\s*$/);
-    const key = g + '|' + (mSec ? mSec[1].toUpperCase() : '');
+    const key = 'G:' + d.id;      /* la llave del grupo (multi-colegio) */
     if (!codes[key]) return;
     const nuevo = {};
     Object.keys(codes[key]).forEach(n => { nuevo[+n >= pos ? +n + 1 : +n] = codes[key][n]; });
@@ -202,10 +458,6 @@ function adRemapCodigos(d, pos) {
 }
 async function adInsertarAlumno() {
   const d = adLoad();
-  if (!String(d.grado).replace(/\D/g, '')) {
-    await metasAlert('Escribe primero el **Grado** (arriba): de él dependen las claves de familia.', { icono: '🧑‍🎓', titulo: 'Alumno nuevo' });
-    return;
-  }
   const nombre = await metasPrompt('Nombre del alumno nuevo:', {
     icono: '🧑‍🎓', titulo: 'Alumno nuevo', okTxt: 'Siguiente',
     valida: v => String(v).trim().length >= 3 ? '' : 'Escribe el nombre.',
@@ -245,9 +497,8 @@ async function adInsertarAlumno() {
 }
 
 function adTiraUno(d, num) {
-  if (typeof paCodigoAlumno !== 'function') return;
-  const codigo = paCodigoAlumno(d.grado, d.seccion, num);
-  if (!codigo) { toast('Escribe el Grado primero'); return; }
+  const codigo = adClaveFamilia(d.id, num);
+  if (!codigo) { toast('No se pudo generar la clave'); return; }
   const a = d.lista.find(x => x.num === num) || { nombre: '' };
   const bonito = codigo.replace(/^(\d+)/, '$1-');
   const grupo = adGrupoTxt(d);
@@ -789,49 +1040,50 @@ function adMateriaSlug(m) {
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24);
 }
 
-/* Filas actuales que deberían existir en la nube.
+/* Filas actuales que deberían existir en la nube — de TODOS los grupos
+   (el maestro puede tener dos colegios; el chatbot atiende a todos).
    El evento_id lleva la CLAVE DE FAMILIA (única entre maestros gracias
-   a sus 4 letras aleatorias) — nunca grado+número, que se repetiría
-   entre las aulas «6A #15» de mil maestros suscritos y pisaría datos. */
-function adFilasNube(d) {
-  if (typeof paCodigoAlumno !== 'function') return [];
+   a sus letras aleatorias y a la llave por grupo) — nunca grado+número,
+   que se repetiría entre las aulas «6A #15» de mil maestros suscritos. */
+function adFilasNube(st) {
   const doc = adDocenteTxt();
-  const base = { grado: d.grado || '', seccion: d.seccion || '', docente: doc };
-  const cod = {};
-  d.lista.forEach(a => { cod[a.num] = paCodigoAlumno(d.grado, d.seccion, a.num); });
   const filas = [];
+  (st.grupos || []).forEach(d => {
+    const base = { grado: d.grado || '', seccion: d.seccion || '', docente: doc };
+    const cod = {};
+    d.lista.forEach(a => { cod[a.num] = adClaveFamilia(d.id, a.num); });
 
-  d.asistencia.forEach(r => Object.keys(r.aus || {}).forEach(num => {
-    if (!cod[num]) return;
-    filas.push(Object.assign({
-      evento_id: 'ADA-' + r.f + '-' + cod[num], codigo: cod[num],
-      tipo: 'asistencia', fecha: r.f,
-      estado: r.aus[num] === 'A' ? 'ausente' : 'excusa',
-    }, base));
-  }));
+    d.asistencia.forEach(r => Object.keys(r.aus || {}).forEach(num => {
+      if (!cod[num]) return;
+      filas.push(Object.assign({
+        evento_id: 'ADA-' + r.f + '-' + cod[num], codigo: cod[num],
+        tipo: 'asistencia', fecha: r.f,
+        estado: r.aus[num] === 'A' ? 'ausente' : 'excusa',
+      }, base));
+    }));
 
-  Object.keys(d.notas || {}).forEach(parcial =>
-    Object.keys(d.notas[parcial] || {}).forEach(materia =>
-      Object.keys(d.notas[parcial][materia] || {}).forEach(num => {
-        if (!cod[num]) return;
-        filas.push(Object.assign({
-          evento_id: 'ADN-' + parcial + '-' + adMateriaSlug(materia) + '-' + cod[num],
-          codigo: cod[num], tipo: 'nota_final',
-          parcial, materia, nota: d.notas[parcial][materia][num],
-        }, base));
-      })));
+    Object.keys(d.notas || {}).forEach(parcial =>
+      Object.keys(d.notas[parcial] || {}).forEach(materia =>
+        Object.keys(d.notas[parcial][materia] || {}).forEach(num => {
+          if (!cod[num]) return;
+          filas.push(Object.assign({
+            evento_id: 'ADN-' + parcial + '-' + adMateriaSlug(materia) + '-' + cod[num],
+            codigo: cod[num], tipo: 'nota_final',
+            parcial, materia, nota: d.notas[parcial][materia][num],
+          }, base));
+        })));
 
-  d.colectas.forEach(c => d.lista.forEach(a => {
-    if (!cod[a.num]) return;
-    const pagado = c.pagos && c.pagos[a.num] != null;
-    filas.push(Object.assign({
-      evento_id: 'ADE-' + c.id + '-' + cod[a.num], codigo: cod[a.num],
-      tipo: 'economia', fecha: c.fecha, concepto: c.concepto,
-      monto: pagado ? c.pagos[a.num] : c.montoAlumno,
-      estado: pagado ? 'pago' : 'pendiente',
-    }, base));
-  }));
-
+    d.colectas.forEach(c => d.lista.forEach(a => {
+      if (!cod[a.num]) return;
+      const pagado = c.pagos && c.pagos[a.num] != null;
+      filas.push(Object.assign({
+        evento_id: 'ADE-' + c.id + '-' + cod[a.num], codigo: cod[a.num],
+        tipo: 'economia', fecha: c.fecha, concepto: c.concepto,
+        monto: pagado ? c.pagos[a.num] : c.montoAlumno,
+        estado: pagado ? 'pago' : 'pendiente',
+      }, base));
+    }));
+  });
   return filas;
 }
 
@@ -856,8 +1108,7 @@ function adSyncProgramar() {
 async function adSincronizarNube(manual) {
   if (_adSyncBusy) return;
   const st = document.getElementById('ad-sb-status');
-  const d = adLoad();
-  const filas = adFilasNube(d);
+  const filas = adFilasNube(adState());   /* TODOS los grupos */
   const mapa = adSbMapLoad();
   const actuales = new Set(filas.map(f => f.evento_id));
 

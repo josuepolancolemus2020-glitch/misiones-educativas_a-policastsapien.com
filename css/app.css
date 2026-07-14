@@ -3473,12 +3473,40 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-btn-peligro { color: #b91c1c !important; border-color: rgba(185,28,28,.35) !important; }
 
 /* lista de alumnos */
-.ad-al-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.ad-al-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
 .ad-al-num { flex: 0 0 44px; font-weight: 900; color: var(--brand); }
-.ad-al-row .pa-inp-field { flex: 1; margin: 0; }
+.ad-al-row .pa-inp-field { flex: 1; min-width: 120px; margin: 0; }
 .ad-al-del {
   flex: 0 0 auto; background: none; border: none; cursor: pointer;
   color: #b91c1c; font-size: 15px; font-weight: 900; padding: 4px 8px;
+}
+/* clave de familia de cada alumno (tocable) */
+.ad-al-code {
+  flex: 0 0 auto; cursor: pointer;
+  background: var(--bg); border: 1.5px dashed var(--brand); color: var(--brand);
+  border-radius: 8px; padding: 5px 8px; font-size: 12px; font-weight: 800;
+  font-family: 'Courier New', monospace; letter-spacing: 0.5px;
+}
+.ad-al-code:active { background: var(--brand); color: #fff; }
+
+/* barra de grupos (multi-aula / dos colegios) */
+.ad-gr-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.ad-gr-chip {
+  cursor: pointer; text-align: left;
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 7px 12px;
+  display: flex; flex-direction: column; gap: 1px;
+}
+.ad-gr-chip .ad-gr-gs { font-weight: 900; font-size: 13px; color: var(--text); }
+.ad-gr-chip .ad-gr-esc { font-size: 10.5px; color: var(--muted); }
+.ad-gr-on { border-color: var(--brand); background: var(--bg); box-shadow: 0 0 0 1.5px var(--brand) inset; }
+.ad-gr-on .ad-gr-gs { color: var(--brand); }
+.ad-gr-add { justify-content: center; color: var(--brand); font-weight: 800; font-size: 12.5px; border-style: dashed; }
+
+/* eliminar grupo (discreto, al fondo) */
+.ad-grupo-del {
+  display: block; margin: 14px auto 0; background: none; border: none; cursor: pointer;
+  color: #b91c1c; font-size: 12px; text-decoration: underline;
 }
 
 /* chips táctiles (pagos y asistencia) */

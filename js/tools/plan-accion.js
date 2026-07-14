@@ -842,6 +842,19 @@ function paCodigoAlumno(grado, seccion, num) {
   const sec = mSec ? mSec[1].toUpperCase() : '';
   const n = String(num || '').replace(/\D/g, '');
   if (!g || !n) return '';
+  /* Si «Mi aula» tiene un grupo con este grado y sección, la clave vive
+     con ESE grupo (llave 'G:<id>'): así el maestro que trabaja en dos
+     colegios nunca mezcla claves. Se prefiere el grupo activo. */
+  try {
+    const st = JSON.parse(localStorage.getItem('METAS_ADMIN_V1'));
+    if (st && st.v === 2 && Array.isArray(st.grupos) && typeof adClaveFamilia === 'function') {
+      const calza = gr => String(gr.grado || '').replace(/\D/g, '') === g &&
+        (((String(gr.seccion || '').trim().match(/([a-zA-Z0-9])\s*$/) || [])[1] || '').toUpperCase() === sec);
+      const gr = st.grupos.find(x => x.id === st.activo && calza(x)) || st.grupos.find(calza);
+      if (gr) return adClaveFamilia(gr.id, n);
+    }
+  } catch (_) {}
+  /* sin grupo en Mi aula: comportamiento clásico (llave 'grado|sección') */
   const codes = paCodesLoad();
   const key = g + '|' + sec;
   const grupo = codes[key] || (codes[key] = {});
@@ -1030,6 +1043,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('pa-add-student-btn')?.addEventListener('click', () => {
     paAddRow(document.querySelectorAll('.pa-student-row').length + 1);
+  });
+
+  /* La lista maestra vive en «Mi aula»: aquí solo se trae con un toque */
+  document.getElementById('pa-traer-aula')?.addEventListener('click', async () => {
+    let st = null;
+    try { st = JSON.parse(localStorage.getItem('METAS_ADMIN_V1')); } catch (_) {}
+    const g = (st && st.v === 2 && Array.isArray(st.grupos))
+      ? (st.grupos.find(x => x.id === st.activo) || st.grupos[0]) : null;
+    if (!g || !g.lista.length) {
+      await metasAlert('Primero registra tus alumnos en **Mi aula** (Zona Docente → Mi aula): ahí armas la lista UNA vez y todas las herramientas la usan.',
+        { icono: '👥', titulo: 'Traer mi lista' });
+      return;
+    }
+    const hayFilas = document.querySelectorAll('.pa-student-row').length > 0;
+    if (hayFilas && !await metasConfirm('Se reemplazarán las filas actuales con la lista de **' +
+      ((g.grado || '') + ' ' + (g.seccion || '')).trim() + (g.escuela ? ' · ' + g.escuela : '') +
+      '** (' + g.lista.length + ' alumnos). ¿Continuar?',
+      { icono: '👥', titulo: 'Traer mi lista', okTxt: 'Sí, traer' })) return;
+    const gradoInp = document.getElementById('pa-grado');
+    const secInp = document.getElementById('pa-seccion');
+    if (gradoInp) gradoInp.value = g.grado || '';
+    if (secInp) secInp.value = g.seccion || '';
+    const list = document.getElementById('pa-students-list');
+    if (list) list.innerHTML = '';
+    const orden = g.lista.slice().sort((a, b) => a.num - b.num);
+    orden.forEach((a, i) => {
+      paAddRow(i + 1);
+      const rows = document.querySelectorAll('.pa-student-row');
+      const inp = rows[rows.length - 1]?.querySelector('.pa-inp-name');
+      if (inp) inp.value = a.nombre || '';
+    });
+    toast('👥 ' + orden.length + ' alumno(s) traídos de Mi aula');
   });
 
   document.getElementById('pa-generate-btn')?.addEventListener('click', () => { _paCurrentId = null; paGenerate(); });
