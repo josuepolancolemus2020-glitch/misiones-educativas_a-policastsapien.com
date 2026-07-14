@@ -29,7 +29,7 @@ const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
                          E: 'Excelente', R: 'Regular', D: 'Deficiente',
                          NS: 'No Satisfactorio', PS: 'Poco Satisfactorio' };
 
-let _adTab = 'lista';        /* lista | eco | asis | sace */
+let _adTab = 'lista';        /* lista | eco | asis | sace | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
 
 /* ── Estado v2: GRUPOS (multi-aula) ──
@@ -219,6 +219,7 @@ function renderAdmin() {
       <button class="pa-otab ${_adTab === 'eco'   ? 'pa-otab-active' : ''}" data-adtab="eco">💰 Economía</button>
       <button class="pa-otab ${_adTab === 'asis'  ? 'pa-otab-active' : ''}" data-adtab="asis">📋 Asistencia</button>
       <button class="pa-otab ${_adTab === 'sace'  ? 'pa-otab-active' : ''}" data-adtab="sace">🧮 Notas SACE</button>
+      <button class="pa-otab ${_adTab === 'com'   ? 'pa-otab-active' : ''}" data-adtab="com">📣 Comunicados</button>
     </div>
     <div id="ad-tab-body"></div>`;
   cont.querySelectorAll('[data-gid]').forEach(b =>
@@ -241,6 +242,7 @@ function renderAdmin() {
   if (_adTab === 'lista') adRenderLista(body, d);
   else if (_adTab === 'eco') adRenderEco(body, d);
   else if (_adTab === 'asis') adRenderAsis(body, d);
+  else if (_adTab === 'com') adRenderCom(body, d);
   else adRenderSace(body, d);
 }
 
@@ -1545,6 +1547,290 @@ ${d.lista.map(a => `<tr><td>${a.num}</td><td>${adEsc(a.nombre) || '—'}</td>
   w.document.write(html); w.document.close();
 }
 
+/* ══════════════ 📣 COMUNICADOS — la ventana del maestro ══════════════
+   Lo que se publica aquí llega al chatbot de padres: avisos, eventos
+   con fecha (reunión, acto cívico), materiales y la FICHA DEL AULA
+   (respuestas fijas: horario, uniforme, útiles, matrícula, NSP…).
+   Gobernanza: todo aviso VENCE (14 días por defecto) y hay tope de
+   10 activos — un canal saturado deja de leerse. Sube a la nube con
+   el mismo motor diferencial de Mi aula (SUPABASE-AVISOS.sql). */
+const AVISOS_KEY = 'METAS_AVISOS_V1';
+const AV_MAX_ACTIVOS = 10;
+const AV_TIPOS = { aviso: '📣 Aviso', evento: '🗓 Evento con fecha',
+                   material: '🎒 Materiales', individual: '👤 Solo algunas familias' };
+/* Ficha del aula: preguntas que TODA familia hace tarde o temprano.
+   El maestro las responde UNA vez y el bot las contesta mil veces. */
+const AV_FAQ_BASE = [
+  { id: 'horario',  pregunta: '¿A qué hora entra y a qué hora sale?', claves: 'horario entrada salida hora clases' },
+  { id: 'uniforme', pregunta: '¿Cómo es el uniforme?', claves: 'uniforme camisa falda zapatos vestir' },
+  { id: 'utiles',   pregunta: '¿Cuáles son los útiles del año?', claves: 'utiles lista cuadernos materiales año' },
+  { id: 'matricula', pregunta: '¿Cómo se hace la matrícula o un traslado?', claves: 'matricula matricular traslado inscribir requisitos papeles' },
+  { id: 'atencion', pregunta: '¿Cuándo atiende el maestro a los padres?', claves: 'atencion cita hablar consulta visitar' },
+  { id: 'nsp',      pregunta: '¿Cómo se repone una evaluación NSP?', claves: 'nsp reponer reposicion no se presento recuperar' },
+];
+
+function avLoad() {
+  try {
+    const o = JSON.parse(localStorage.getItem(AVISOS_KEY));
+    if (o && o.v === 1 && o.grupos && typeof o.grupos === 'object') return o;
+  } catch (_) {}
+  return { v: 1, grupos: {} };
+}
+function avSaveAll(o) {
+  try { localStorage.setItem(AVISOS_KEY, JSON.stringify(o)); } catch (_) {}
+  adSyncProgramar();   /* hereda el auto-publish de 4 s de Mi aula */
+}
+function avGrupo(gid) {
+  const g = avLoad().grupos[gid];
+  return { avisos: (g && Array.isArray(g.avisos)) ? g.avisos : [],
+           faqs: (g && Array.isArray(g.faqs)) ? g.faqs : [] };
+}
+function avGrupoSave(gid, g) {
+  const o = avLoad(); o.grupos[gid] = g; avSaveAll(o);
+}
+function avFechaMas(iso, dias) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  const d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date();
+  d.setDate(d.getDate() + (dias || 0));
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' +
+         String(d.getDate()).padStart(2, '0');
+}
+function avVigente(a) { return String(a.hasta || '') >= adHoy(); }
+/* FAQs del grupo = base (siempre visibles) + las propias del maestro */
+function avFaqsDe(gid) {
+  const propias = avGrupo(gid).faqs;
+  const porId = {};
+  propias.forEach(f => { porId[f.id] = f; });
+  const base = AV_FAQ_BASE.map(b => porId[b.id] ||
+    { id: b.id, pregunta: b.pregunta, claves: b.claves, respuesta: '', activa: false });
+  return base.concat(propias.filter(f => !AV_FAQ_BASE.some(b => b.id === f.id)));
+}
+
+let _avEditId = null;   /* aviso en edición en el formulario */
+
+function adRenderCom(body, d) {
+  if (!d.lista.length) { adSinLista(body, 'los comunicados'); return; }
+  const g = avGrupo(d.id);
+  const vigentes = g.avisos.filter(avVigente);
+  const faqs = avFaqsDe(d.id);
+  const conFechas = Object.keys((d.boleta || {}).parcialFechas || {}).length;
+  const edit = _avEditId ? g.avisos.find(a => a.id === _avEditId) : null;
+
+  const filaAviso = a => {
+    const vive = avVigente(a);
+    return `
+    <div class="ad-gasto-row" style="align-items:flex-start${vive ? '' : ';opacity:.55'}">
+      <span style="flex:1">${a.prioridad === 'urgente' ? '🔴 ' : ''}${AV_TIPOS[a.tipo] ? AV_TIPOS[a.tipo].split(' ')[0] : '📣'}
+        <strong>${adEsc(a.titulo)}</strong><br>
+        <small>${adEsc(a.texto)}</small><br>
+        <small style="color:#666">${a.fechaEvento ? '📅 ' + adFechaBonita(a.fechaEvento) + ' · ' : ''}${vive ? 'se muestra hasta el ' + adFechaBonita(a.hasta) : 'VENCIDO (ya no se muestra)'}${a.tipo === 'individual' && a.alumnos ? ' · solo #' + a.alumnos.join(', #') : ''}</small></span>
+      <span style="white-space:nowrap">
+        <button class="ad-al-del av-edit" data-avid="${a.id}" aria-label="Editar" style="color:#1e3a7c">✏️</button>
+        <button class="ad-al-del av-del" data-avid="${a.id}" aria-label="Borrar">✕</button></span>
+    </div>`;
+  };
+  const filaFaq = f => `
+    <div class="ad-gasto-row" style="align-items:flex-start">
+      <span style="flex:1">${f.respuesta ? (f.activa !== false ? '✅' : '⏸') : '⚪'} <strong>${adEsc(f.pregunta)}</strong><br>
+        <small>${f.respuesta ? adEsc(f.respuesta) : 'Sin respuesta todavía — tócala para responderla'}</small></span>
+      <button class="ad-al-del av-faq-edit" data-fid="${f.id}" aria-label="Responder" style="color:#1e3a7c">✏️</button>
+    </div>`;
+
+  body.innerHTML = `
+    <div class="pa-card">
+      <div class="pa-card-title">📣 Avisos para las familias</div>
+      <p class="pa-optional-hint">Lo que publiques aquí lo responde el <strong>asistente de padres</strong>
+        («¿cuándo es la reunión?», «¿qué lleva mañana?»). Cada aviso <strong>vence solo</strong> para
+        que el canal no se sature (máximo ${AV_MAX_ACTIVOS} activos).</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec av-tpl" data-tpl="noclases">🚫 No hay clases</button>
+        <button class="pa-generate-btn ad-btn-sec av-tpl" data-tpl="reunion">👨‍👩‍👧 Reunión de padres</button>
+        <button class="pa-generate-btn ad-btn-sec av-tpl" data-tpl="material">🎒 Traer materiales</button>
+        <button class="pa-generate-btn ad-btn-sec av-tpl" data-tpl="aporte">💰 Recordar aporte</button>
+        <button class="pa-generate-btn ad-btn-sec" id="av-nuevo">➕ Aviso nuevo</button>
+      </div>
+      <div id="av-form" style="display:${edit ? 'block' : 'none'};margin-top:10px;border-top:1px dashed #ccc;padding-top:10px">
+        <div class="pa-field"><label>Título del aviso</label>
+          <input id="av-titulo" class="pa-inp-field" maxlength="120" value="${edit ? adEsc(edit.titulo) : ''}" placeholder="ej: Reunión de padres"></div>
+        <div class="pa-field"><label>Detalle (lo que leerá la familia)</label>
+          <textarea id="av-texto" class="pa-paste-area" rows="3" maxlength="1200" placeholder="ej: Este viernes 18 a las 3:00 pm en el aula. Traer lápiz.">${edit ? adEsc(edit.texto) : ''}</textarea></div>
+        <div class="pa-row-2">
+          <div class="pa-field"><label>Tipo</label>
+            <select id="av-tipo" class="pa-inp-field">
+              ${Object.keys(AV_TIPOS).map(t => `<option value="${t}" ${edit && edit.tipo === t ? 'selected' : ''}>${AV_TIPOS[t]}</option>`).join('')}
+            </select></div>
+          <div class="pa-field"><label>Fecha del evento (si aplica)</label>
+            <input id="av-fecha" type="date" class="pa-inp-field" value="${edit && edit.fechaEvento ? adEsc(edit.fechaEvento) : ''}"></div>
+        </div>
+        <div class="pa-row-2">
+          <div class="pa-field"><label>Se muestra hasta</label>
+            <input id="av-hasta" type="date" class="pa-inp-field" value="${edit ? adEsc(edit.hasta) : avFechaMas(adHoy(), 14)}"></div>
+          <div class="pa-field"><label>&nbsp;</label>
+            <label style="display:flex;align-items:center;gap:6px;font-weight:600">
+              <input id="av-urgente" type="checkbox" ${edit && edit.prioridad === 'urgente' ? 'checked' : ''}> 🔴 Urgente (va de primero)</label></div>
+        </div>
+        <div class="pa-field" id="av-alumnos-box" style="display:${edit && edit.tipo === 'individual' ? 'block' : 'none'}">
+          <label>Números de lista (separados por coma)</label>
+          <input id="av-alumnos" class="pa-inp-field" inputmode="numeric" value="${edit && edit.alumnos ? edit.alumnos.join(', ') : ''}" placeholder="ej: 3, 15, 22"></div>
+        <div class="ad-btn-row">
+          <button class="pa-add-btn" id="av-publicar">${edit ? '💾 Guardar cambios' : '📣 Publicar aviso'}</button>
+          <button class="pa-generate-btn ad-btn-sec" id="av-cancelar">Cancelar</button>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        ${g.avisos.length ? g.avisos.slice().sort((a, b) => (avVigente(b) - avVigente(a)) || (String(a.hasta) < String(b.hasta) ? -1 : 1)).map(filaAviso).join('')
+          : '<p class="pa-optional-hint">Sin avisos todavía. Usa una plantilla de arriba: dos toques y queda publicado.</p>'}
+      </div>
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">📖 Ficha del aula (preguntas de siempre)</div>
+      <p class="pa-optional-hint">Respóndelas <strong>una sola vez</strong> y el asistente se las contesta
+        a todas las familias, todo el año: horario, uniforme, útiles, matrícula, NSP…
+        Toca ✏️ para responder o corregir; deja vacía la respuesta para apagarla.</p>
+      ${faqs.map(filaFaq).join('')}
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="av-faq-add">➕ Otra pregunta del aula</button>
+      </div>
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">🤖 Se publican solos</div>
+      <p class="pa-optional-hint">Al sincronizar, el asistente también recibe —sin que escribas nada—:<br>
+        📅 las <strong>fechas de los parciales</strong> que marcas en Notas SACE
+        (${conFechas ? conFechas + ' parcial(es) con fechas' : 'aún sin fechas marcadas'}) y<br>
+        💰 las <strong>cuentas claras de cada colecta</strong>: recaudado, gastado y saldo
+        (${d.colectas.length ? d.colectas.length + ' colecta(s)' : 'aún sin colectas'}).</p>
+      <p class="pa-optional-hint" id="av-sb-status"></p>
+    </div>`;
+
+  const form = document.getElementById('av-form');
+  const abrirForm = (prefill) => {
+    _avEditId = null;
+    form.style.display = 'block';
+    if (prefill) {
+      document.getElementById('av-titulo').value = prefill.titulo || '';
+      document.getElementById('av-texto').value = prefill.texto || '';
+      document.getElementById('av-tipo').value = prefill.tipo || 'aviso';
+      document.getElementById('av-fecha').value = prefill.fechaEvento || '';
+      document.getElementById('av-hasta').value = prefill.hasta || avFechaMas(adHoy(), 14);
+      document.getElementById('av-urgente').checked = prefill.prioridad === 'urgente';
+    }
+    document.getElementById('av-alumnos-box').style.display =
+      document.getElementById('av-tipo').value === 'individual' ? 'block' : 'none';
+    document.getElementById('av-titulo').focus();
+  };
+
+  document.getElementById('av-nuevo').addEventListener('click', () => abrirForm({}));
+  document.getElementById('av-cancelar').addEventListener('click', () => { _avEditId = null; renderAdmin(); });
+  document.getElementById('av-tipo').addEventListener('change', e => {
+    document.getElementById('av-alumnos-box').style.display = e.target.value === 'individual' ? 'block' : 'none';
+  });
+
+  /* Plantillas de 1 toque: prellenan el formulario; solo falta «Publicar» */
+  body.querySelectorAll('.av-tpl').forEach(b => b.addEventListener('click', () => {
+    const t = b.dataset.tpl;
+    if (t === 'noclases') abrirForm({ titulo: 'Mañana no hay clases', prioridad: 'urgente',
+      texto: 'Mañana ' + adFechaBonita(avFechaMas(adHoy(), 1)) + ' no habrá clases. Nos vemos el siguiente día hábil.',
+      hasta: avFechaMas(adHoy(), 2) });
+    else if (t === 'reunion') abrirForm({ tipo: 'evento', titulo: 'Reunión de padres',
+      texto: 'Reunión de padres y madres en el aula. Día: ____. Hora: ____. Su asistencia es muy importante.',
+      fechaEvento: avFechaMas(adHoy(), 3) });
+    else if (t === 'material') abrirForm({ tipo: 'material', titulo: 'Traer materiales',
+      texto: 'Para la clase se necesita traer: ____.', hasta: avFechaMas(adHoy(), 7) });
+    else if (t === 'aporte') {
+      const c = d.colectas.length ? d.colectas[d.colectas.length - 1] : null;
+      abrirForm({ titulo: 'Recordatorio de aporte',
+        texto: c ? 'Recuerde el aporte «' + c.concepto + '» (' + adLps(c.montoAlumno) + ' sugerido por alumno). Se entrega al maestro en el aula.'
+                 : 'Recuerde el aporte acordado en reunión. Se entrega al maestro en el aula.' });
+    }
+  }));
+
+  document.getElementById('av-publicar').addEventListener('click', async () => {
+    const titulo = document.getElementById('av-titulo').value.trim();
+    const texto = document.getElementById('av-texto').value.trim();
+    const tipo = document.getElementById('av-tipo').value;
+    const fechaEvento = document.getElementById('av-fecha').value || '';
+    const hasta = document.getElementById('av-hasta').value || avFechaMas(adHoy(), 14);
+    const urgente = document.getElementById('av-urgente').checked;
+    const nums = document.getElementById('av-alumnos').value.split(',').map(s => +s.trim()).filter(n => n > 0);
+    if (titulo.length < 3 || texto.length < 3) {
+      await metasAlert('Escribe el título y el detalle del aviso (la familia leerá ambos).', { icono: '📣', titulo: 'Comunicados' });
+      return;
+    }
+    if (texto.indexOf('____') >= 0) {
+      await metasAlert('El texto todavía tiene espacios «____» sin llenar. Complétalos antes de publicar.', { icono: '📣', titulo: 'Comunicados' });
+      return;
+    }
+    if (tipo === 'individual' && !nums.length) {
+      await metasAlert('Para un aviso individual, escribe los números de lista (ej: 3, 15).', { icono: '👤', titulo: 'Comunicados' });
+      return;
+    }
+    const gg = avGrupo(d.id);
+    const activos = gg.avisos.filter(a => avVigente(a) && a.id !== _avEditId).length;
+    if (activos >= AV_MAX_ACTIVOS) {
+      await metasAlert('Ya hay ' + AV_MAX_ACTIVOS + ' avisos activos. Borra o deja vencer alguno: si el canal se satura, los padres dejan de leerlo.', { icono: '📣', titulo: 'Comunicados' });
+      return;
+    }
+    const nuevo = { id: _avEditId || ('AV' + Date.now().toString(36)), tipo,
+      prioridad: urgente ? 'urgente' : 'normal', titulo, texto,
+      fechaEvento: tipo === 'evento' ? fechaEvento : (fechaEvento || null),
+      hasta: (tipo === 'evento' && fechaEvento && fechaEvento > hasta) ? avFechaMas(fechaEvento, 1) : hasta,
+      alumnos: tipo === 'individual' ? nums : null, mod: new Date().toISOString() };
+    if (!nuevo.fechaEvento) nuevo.fechaEvento = null;
+    const i = gg.avisos.findIndex(a => a.id === nuevo.id);
+    if (i >= 0) gg.avisos[i] = nuevo; else gg.avisos.push(nuevo);
+    avGrupoSave(d.id, gg);
+    _avEditId = null;
+    renderAdmin();
+    toast('📣 Aviso publicado: llega al asistente en unos segundos');
+  });
+
+  body.querySelectorAll('.av-edit').forEach(b => b.addEventListener('click', () => {
+    _avEditId = b.dataset.avid; renderAdmin();
+  }));
+  body.querySelectorAll('.av-del').forEach(b => b.addEventListener('click', async () => {
+    if (!await metasConfirm('¿Borrar este aviso? Dejará de mostrarse a las familias.', { icono: '📣', titulo: 'Comunicados', okTxt: 'Sí, borrar' })) return;
+    const gg = avGrupo(d.id);
+    gg.avisos = gg.avisos.filter(a => a.id !== b.dataset.avid);
+    avGrupoSave(d.id, gg); renderAdmin();
+  }));
+
+  /* Ficha del aula: responder/corregir una pregunta */
+  body.querySelectorAll('.av-faq-edit').forEach(b => b.addEventListener('click', async () => {
+    const fid = b.dataset.fid;
+    const f = avFaqsDe(d.id).find(x => x.id === fid);
+    if (!f) return;
+    const r = await metasPrompt('**' + f.pregunta + '**\n\nEscribe la respuesta que el asistente dará a las familias (vacía = apagar la pregunta):', {
+      icono: '📖', titulo: 'Ficha del aula', value: f.respuesta || '', okTxt: 'Guardar' });
+    if (r === null) return;
+    const gg = avGrupo(d.id);
+    const nueva = { id: f.id, pregunta: f.pregunta, claves: f.claves || '',
+      respuesta: String(r).trim(), activa: !!String(r).trim() };
+    const i = gg.faqs.findIndex(x => x.id === fid);
+    if (i >= 0) gg.faqs[i] = nueva; else gg.faqs.push(nueva);
+    avGrupoSave(d.id, gg); renderAdmin();
+    toast(nueva.activa ? '📖 Respuesta guardada' : '📖 Pregunta apagada');
+  }));
+  document.getElementById('av-faq-add').addEventListener('click', async () => {
+    const p = await metasPrompt('¿Qué pregunta hacen las familias? (ej: **¿Hay clases de refuerzo?**)', {
+      icono: '📖', titulo: 'Ficha del aula', okTxt: 'Siguiente',
+      valida: v => String(v).trim().length >= 5 ? '' : 'Escribe la pregunta completa.' });
+    if (p === null) return;
+    const r = await metasPrompt('¿Y qué debe responder el asistente?', {
+      icono: '📖', titulo: 'Ficha del aula', okTxt: 'Guardar',
+      valida: v => String(v).trim().length >= 3 ? '' : 'Escribe la respuesta.' });
+    if (r === null) return;
+    const gg = avGrupo(d.id);
+    gg.faqs.push({ id: 'F' + Date.now().toString(36), pregunta: String(p).trim(),
+      claves: '', respuesta: String(r).trim(), activa: true });
+    avGrupoSave(d.id, gg); renderAdmin();
+    toast('📖 Pregunta agregada a la ficha');
+  });
+
+  avSincronizarNube(false);   /* refresca el estado al entrar */
+}
+
 /* ══════════════ ☁️ NUBE DEL CHATBOT (Supabase) ══════════════
    Cada dato administrativo sube por CLAVE DE FAMILIA (la misma
    15-K7QM del Plan de Acción, vía paCodigoAlumno) para que el
@@ -1647,6 +1933,7 @@ function adSyncProgramar() {
 }
 
 async function adSincronizarNube(manual) {
+  avSincronizarNube(manual);   /* los comunicados viajan con el mismo tren */
   if (_adSyncBusy) return;
   const st = document.getElementById('ad-sb-status');
   const filas = adFilasNube(adState());   /* TODOS los grupos */
@@ -1700,6 +1987,147 @@ async function adSincronizarNube(manual) {
   _adSyncBusy = false;
 }
 window.addEventListener('online', () => adSyncProgramar());
+
+/* ── Nube de COMUNICADOS (mensajes_docente, SUPABASE-AVISOS.sql) ──
+   Mismo patrón diferencial que los registros: firma por fila en
+   METAS_AVISOS_SB_V1, fan-out por clave de familia, y lo que ya no
+   existe localmente se anula reenviándolo vencido (vigente_hasta
+   2000-01-01: el bot solo muestra lo vigente). Además de los avisos
+   del maestro, se emiten AUTOMÁTICOS: fechas de parciales (Notas
+   SACE) y cuentas claras de cada colecta (Economía). */
+const AVISOS_SB_KEY = 'METAS_AVISOS_SB_V1';
+let _avSyncBusy = false;
+
+function avSbMapLoad() {
+  try { const o = JSON.parse(localStorage.getItem(AVISOS_SB_KEY)); return (o && typeof o === 'object') ? o : {}; }
+  catch (_) { return {}; }
+}
+function avSbMapSave(m) { try { localStorage.setItem(AVISOS_SB_KEY, JSON.stringify(m)); } catch (_) {} }
+
+function avFilasNube(st) {
+  const doc = adDocenteTxt();
+  const anio = String(new Date().getFullYear());
+  const filas = [];
+  const av = avLoad();
+  (st.grupos || []).forEach(d => {
+    const base = { grado: d.grado || '', seccion: d.seccion || '', docente: doc, anio_lectivo: anio };
+    const claves = (d.lista || []).map(a => ({ num: a.num, cod: adClaveFamilia(d.id, a.num, false) }))
+      .filter(x => x.cod);
+    if (!claves.length) return;
+    const g = av.grupos[d.id] || { avisos: [], faqs: [] };
+
+    /* avisos del maestro (los vencidos no viajan: el vencimiento ya
+       pasó en la nube o la anulación de abajo los apaga) */
+    (g.avisos || []).filter(avVigente).forEach(a => {
+      const destino = (a.tipo === 'individual' && Array.isArray(a.alumnos) && a.alumnos.length)
+        ? claves.filter(x => a.alumnos.indexOf(x.num) >= 0) : claves;
+      destino.forEach(x => filas.push(Object.assign({
+        evento_id: 'AVI-' + a.id + '-' + x.cod, codigo: x.cod,
+        subtipo: a.tipo, prioridad: a.prioridad || 'normal',
+        titulo: a.titulo, texto: a.texto,
+        fecha_evento: a.fechaEvento || '', vigente_hasta: a.hasta,
+      }, base)));
+    });
+
+    /* ficha del aula (vigente todo el año lectivo) */
+    (g.faqs || []).filter(f => f.activa !== false && f.respuesta).forEach(f =>
+      claves.forEach(x => filas.push(Object.assign({
+        evento_id: 'AVF-' + f.id + '-' + x.cod, codigo: x.cod,
+        subtipo: 'faq', pregunta: f.pregunta, claves: f.claves || '',
+        texto: f.respuesta, vigente_hasta: anio + '-12-31',
+      }, base))));
+
+    /* AUTOMÁTICO: fechas de parciales marcadas en Notas SACE */
+    const pf = (d.boleta || {}).parcialFechas || {};
+    Object.keys(pf).forEach(p => {
+      const r = pf[p];
+      if (!r || !r.desde || !r.hasta) return;
+      claves.forEach(x => filas.push(Object.assign({
+        evento_id: 'AVP-' + p + '-' + x.cod, codigo: x.cod,
+        subtipo: 'evento', titulo: 'Parcial ' + p,
+        texto: 'Evaluaciones del Parcial ' + p + ': del ' + adFechaBonita(r.desde) +
+               ' al ' + adFechaBonita(r.hasta) + '. Apoye el repaso en casa esos días.',
+        fecha_evento: r.desde, vigente_hasta: avFechaMas(r.hasta, 7),
+      }, base)));
+    });
+
+    /* AUTOMÁTICO: cuentas claras de cada colecta (rendición) */
+    (d.colectas || []).forEach(c => {
+      const t = adColectaTotales(c);
+      const gastos = (c.gastos || []).map(gx => gx.d + ' ' + adLps(gx.m)).join(', ');
+      claves.forEach(x => filas.push(Object.assign({
+        evento_id: 'AVC-' + c.id + '-' + x.cod, codigo: x.cod,
+        subtipo: 'cuentas', titulo: 'Cuentas claras — ' + c.concepto,
+        texto: 'Recaudado: ' + adLps(t.rec) + ' · Gastado: ' + adLps(t.gas) +
+               (gastos ? ' (' + gastos + ')' : '') + ' · Saldo: ' + adLps(t.saldo) + '.',
+        vigente_hasta: avFechaMas(c.fecha, 200),
+      }, base)));
+    });
+  });
+  return filas;
+}
+
+function avFirma(f) {
+  return [f.codigo, f.subtipo, f.prioridad || '', f.titulo || '', f.texto || '',
+          f.pregunta || '', f.claves || '', f.fecha_evento || '', f.vigente_hasta || ''].join('|');
+}
+
+async function avSincronizarNube(manual) {
+  if (_avSyncBusy) return;
+  const st = document.getElementById('av-sb-status');
+  const filas = avFilasNube(adState());
+  const mapa = avSbMapLoad();
+  const actuales = new Set(filas.map(f => f.evento_id));
+
+  const pendientes = filas.filter(f => !mapa[f.evento_id] || mapa[f.evento_id].f !== avFirma(f));
+  Object.keys(mapa).forEach(id => {
+    if (!actuales.has(id) && !mapa[id].x) pendientes.push({
+      evento_id: id, codigo: mapa[id].c, subtipo: 'aviso',
+      titulo: '', texto: '', vigente_hasta: '2000-01-01',
+      grado: '', seccion: '', docente: adDocenteTxt(),
+    });
+  });
+
+  if (!pendientes.length) {
+    if (st) st.textContent = '☁️ Comunicados: al día.';
+    return;
+  }
+  if (navigator.onLine === false) {
+    if (st) st.textContent = '📴 ' + pendientes.length + ' comunicado(s) esperando internet.';
+    return;
+  }
+  _avSyncBusy = true;
+  if (st) st.textContent = '⏳ Publicando ' + pendientes.length + ' comunicado(s)…';
+  try {
+    let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+    let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+    try {
+      url = localStorage.getItem('METAS_SB_URL') || url;
+      key = localStorage.getItem('METAS_SB_KEY') || key;
+    } catch (_) {}
+    for (let i = 0; i < pendientes.length; i += 250) {
+      const lote = pendientes.slice(i, i + 250);
+      const r = await fetch(url + '/rest/v1/rpc/metas_guardar_avisos', {
+        method: 'POST',
+        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filas: lote }),
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const n = await r.json();
+      if (typeof n !== 'number') throw new Error('respuesta inesperada');
+      lote.forEach(f => {
+        if (actuales.has(f.evento_id)) mapa[f.evento_id] = { f: avFirma(f), c: f.codigo };
+        else mapa[f.evento_id] = { f: 'x', c: f.codigo, x: 1 };   /* anulado: no reenviar */
+      });
+      avSbMapSave(mapa);
+    }
+    if (st) st.textContent = '✅ Comunicados al día (' + new Date().toLocaleTimeString('es-HN') + ').';
+    if (manual) toast('📣 Comunicados publicados');
+  } catch (_) {
+    if (st) st.textContent = '⚠️ No se pudieron publicar ahora; se reintenta solo.';
+  }
+  _avSyncBusy = false;
+}
 
 /* Restaurar «Mi aula» tras recargar: re-pide el candado del maestro y
    vuelve a la pestaña/colecta donde estaba. Si no pasa el PIN, va a la
