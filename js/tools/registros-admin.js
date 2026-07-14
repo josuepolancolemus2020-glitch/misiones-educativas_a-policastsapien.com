@@ -827,15 +827,26 @@ ${c.gastos.map(g => `<tr><td>${adFechaBonita(g.f)}</td><td>${adEsc(g.d)}</td><td
 }
 
 /* ══════════════ 📋 ASISTENCIA — solo lo excepcional ══════════════ */
+const AD_MESES_ES = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.',
+  'jul.', 'ago.', 'sep.', 'oct.', 'nov.', 'dic.'];
+/* 'YYYY-MM' → 'jul. 2026' */
+function adMesLabel(m) {
+  const p = String(m || '').split('-');
+  return (AD_MESES_ES[(+p[1]) - 1] || m) + ' ' + (p[0] || '');
+}
+
 function adRenderAsis(body, d) {
   if (!d.lista.length) { adSinLista(body, 'el pase de lista'); return; }
   const hoy = adHoy();
   const fechaSel = body.dataset.fecha || hoy;
   const reg = d.asistencia.find(r => r.f === fechaSel) || { f: fechaSel, aus: {} };
 
-  /* resumen del mes de la fecha seleccionada */
-  const mes = fechaSel.slice(0, 7);
-  const delMes = d.asistencia.filter(r => r.f.startsWith(mes));
+  /* resumen navegable por meses: los que tienen datos + el mes actual */
+  const mesSel = body.dataset.mes || fechaSel.slice(0, 7);
+  const mesesDisp = [...new Set(
+    d.asistencia.map(r => r.f.slice(0, 7)).concat([hoy.slice(0, 7), mesSel])
+  )].filter(Boolean).sort().reverse();
+  const delMes = d.asistencia.filter(r => r.f.startsWith(mesSel));
   const resumen = {};
   delMes.forEach(r => Object.keys(r.aus || {}).forEach(n => {
     resumen[n] = resumen[n] || { A: 0, E: 0 };
@@ -870,7 +881,11 @@ function adRenderAsis(body, d) {
     </div>
 
     <div class="pa-card">
-      <div class="pa-card-title">📊 Resumen del mes (${mes.split('-').reverse().join('/')})</div>
+      <div class="pa-card-title">📊 Ausencias por mes</div>
+      <p class="pa-optional-hint" style="margin-top:-2px">Toca un mes para ver quién faltó. Aparecen los meses con registro y el mes actual.</p>
+      <div class="ad-meses">
+        ${mesesDisp.map(m => `<button class="ad-mes-btn ${m === mesSel ? 'ad-mes-on' : ''}" data-mes="${m}">${adMesLabel(m)}</button>`).join('')}
+      </div>
       ${Object.keys(resumen).length ? `
       <table class="ad-tabla">
         <thead><tr><th>#</th><th>Alumno/a</th><th>🚫 Ausencias</th><th>📝 Excusas</th></tr></thead>
@@ -880,14 +895,21 @@ function adRenderAsis(body, d) {
           <td>${resumen[a.num].A || 0}</td><td>${resumen[a.num].E || 0}</td></tr>`).join('')}
         </tbody>
       </table>
-      <button class="pa-generate-btn ad-btn-sec" id="ad-asis-print">🖨️ Imprimir resumen del mes</button>`
-      : '<p class="pa-optional-hint">Sin ausencias registradas este mes. 🎉</p>'}
+      <button class="pa-generate-btn ad-btn-sec" id="ad-asis-print">🖨️ Imprimir resumen (${adMesLabel(mesSel)})</button>`
+      : `<p class="pa-optional-hint">Sin ausencias registradas en <strong>${adMesLabel(mesSel)}</strong>. 🎉</p>`}
     </div>`;
 
   document.getElementById('ad-asis-fecha').addEventListener('change', e => {
-    body.dataset.fecha = e.target.value || hoy;
+    const f = e.target.value || hoy;
+    body.dataset.fecha = f;
+    body.dataset.mes = f.slice(0, 7);   // el resumen sigue al mes de la fecha elegida
     adRenderAsis(body, adLoad());
   });
+
+  body.querySelectorAll('.ad-mes-btn').forEach(b => b.addEventListener('click', () => {
+    body.dataset.mes = b.dataset.mes;
+    adRenderAsis(body, adLoad());
+  }));
 
   body.querySelectorAll('.ad-chip').forEach(ch =>
     ch.addEventListener('click', () => {
@@ -908,7 +930,7 @@ function adRenderAsis(body, d) {
     }));
 
   const pr = document.getElementById('ad-asis-print');
-  if (pr) pr.addEventListener('click', () => adPrintAsis(adLoad(), mes));
+  if (pr) pr.addEventListener('click', () => adPrintAsis(adLoad(), mesSel));
 }
 
 function adPrintAsis(d, mes) {
@@ -1189,6 +1211,8 @@ function adRenderSace(body, d) {
         if (!inp) return;
         inp.value = btn.dataset.v || '';
         guardar(inp);
+        // destello de recompensa en la celda recién llenada
+        inp.classList.remove('ad-mx-hit'); void inp.offsetWidth; inp.classList.add('ad-mx-hit');
         _activoIdx = Math.min(_activoIdx + 1, inputs.length - 1);
         focar(_activoIdx); marcarActivo(_activoIdx);
       });

@@ -1484,8 +1484,10 @@ a.padre-asistente-btn {
 
 /* Output tabs */
 .pa-tabs-out { display:flex;gap:0;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden; }
-.pa-otab { flex:1;background:none;border:none;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s; }
-.pa-otab.pa-otab-active { background:var(--brand);color:#fff; }
+.pa-otab { flex:1;position:relative;background:none;border:none;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--muted);transition:color .18s,background .18s;-webkit-tap-highlight-color:transparent;touch-action:manipulation; }
+@media (hover:hover){ .pa-otab:hover:not(.pa-otab-active){ color:var(--brand);background:rgba(30,58,124,.06); } }
+.pa-otab:active { transform:scale(.97); }
+.pa-otab.pa-otab-active { background:linear-gradient(135deg,var(--brand-mid),var(--brand-light));color:#fff;box-shadow:0 2px 10px rgba(30,58,124,.28); }
 
 /* Stats grid */
 .pa-stats-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px; }
@@ -3499,8 +3501,61 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-tabs { margin: 12px 0; }
 .ad-btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .ad-btn-row .pa-generate-btn { flex: 1 1 auto; width: auto; margin: 0; }
-.ad-btn-sec { background: var(--bg) !important; color: var(--brand) !important; border: 1.5px solid var(--border) !important; }
-.ad-btn-peligro { color: #b91c1c !important; border-color: rgba(185,28,28,.35) !important; }
+
+/* ── Botones de la Zona Docente: tacto tipo app (neuro-UX) ──
+   Afford: se ven elevados y tocables · Anticipación: se levantan al pasar/
+   enfocar · Recompensa: se "hunden" con un rebote satisfactorio al pulsar. */
+.pa-generate-btn {
+  appearance: none; -webkit-appearance: none;
+  position: relative; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  border: none; border-radius: 12px; padding: 12px 16px;
+  font-family: inherit; font-size: 13.5px; font-weight: 800; letter-spacing: .2px;
+  color: #fff; cursor: pointer;
+  background: linear-gradient(135deg, var(--brand-mid), var(--brand-light));
+  box-shadow: 0 3px 10px rgba(30,58,124,.28), inset 0 1px 0 rgba(255,255,255,.28);
+  transition: transform .13s cubic-bezier(.34,1.56,.64,1), box-shadow .2s, filter .2s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+/* barrido de brillo al pasar el cursor */
+.pa-generate-btn::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(120deg, transparent 32%, rgba(255,255,255,.38) 50%, transparent 68%);
+  transform: translateX(-120%); transition: transform .6s ease;
+}
+@media (hover: hover) {
+  .pa-generate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(30,58,124,.34), inset 0 1px 0 rgba(255,255,255,.32);
+    filter: saturate(1.07);
+  }
+  .pa-generate-btn:hover::after { transform: translateX(120%); }
+}
+.pa-generate-btn:active {
+  transform: translateY(0) scale(.955);
+  box-shadow: 0 2px 6px rgba(30,58,124,.25);
+  transition-duration: .05s;
+}
+.pa-generate-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.5), 0 3px 10px rgba(30,58,124,.28);
+}
+/* Secundario: limpio, marca sobre superficie, se ilumina al pasar */
+.ad-btn-sec {
+  color: var(--brand) !important;
+  background: var(--surface) !important;
+  border: 1.5px solid var(--border) !important;
+  box-shadow: 0 1px 3px rgba(15,23,42,.07) !important;
+}
+@media (hover: hover) {
+  .ad-btn-sec:hover {
+    border-color: var(--brand-light) !important;
+    box-shadow: 0 5px 14px rgba(30,58,124,.16) !important;
+    filter: none;
+  }
+}
+.ad-btn-peligro { color: #b91c1c !important; border-color: rgba(185,28,28,.4) !important; }
+@media (hover: hover) { .ad-btn-peligro:hover { background: #fdecea !important; border-color: #dc2626 !important; box-shadow: 0 5px 14px rgba(220,38,38,.18) !important; } }
 
 /* lista de alumnos */
 .ad-al-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
@@ -3544,19 +3599,42 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-chip {
   min-width: 62px; max-width: 96px; padding: 8px 8px;
   display: flex; flex-direction: column; align-items: center; gap: 2px;
-  background: var(--bg); border: 2px solid var(--border); border-radius: 12px;
+  background: var(--surface); border: 2px solid var(--border); border-radius: 12px;
   font-size: 14px; font-weight: 800; color: var(--text); cursor: pointer;
-  transition: transform .1s;
+  box-shadow: 0 1px 2px rgba(15,23,42,.05);
+  transition: transform .13s cubic-bezier(.34,1.56,.64,1), box-shadow .18s, border-color .18s, background .18s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
-.ad-chip:active { transform: scale(.93); }
+@media (hover: hover) { .ad-chip:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(15,23,42,.13); border-color: var(--brand-light); } }
+.ad-chip:active { transform: scale(.9); }
 .ad-chip-num { line-height: 1.1; }
 .ad-chip-nom {
   font-size: 11px; font-weight: 700; opacity: .78; line-height: 1.1;
   max-width: 84px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.ad-chip-on  { background: rgba(22,163,74,.14); border-color: #16a34a; color: #15803d; }
-.ad-chip-aus { background: rgba(185,28,28,.12); border-color: #dc2626; color: #b91c1c; }
-.ad-chip-exc { background: rgba(217,119,6,.12); border-color: #d97706; color: #b45309; }
+/* Estado marcado = recompensa visual: relleno de color, aro y "pop" */
+.ad-chip-on  { background: rgba(22,163,74,.15); border-color: #16a34a; color: #15803d; box-shadow: 0 3px 10px rgba(22,163,74,.25); animation: adPop .28s cubic-bezier(.34,1.56,.64,1); }
+.ad-chip-aus { background: rgba(220,38,38,.15); border-color: #dc2626; color: #b91c1c; box-shadow: 0 3px 10px rgba(220,38,38,.25); animation: adPop .28s cubic-bezier(.34,1.56,.64,1); }
+.ad-chip-exc { background: rgba(217,119,6,.16); border-color: #d97706; color: #b45309; box-shadow: 0 3px 10px rgba(217,119,6,.25); animation: adPop .28s cubic-bezier(.34,1.56,.64,1); }
+@keyframes adPop { 0% { transform: scale(.82); } 60% { transform: scale(1.09); } 100% { transform: scale(1); } }
+
+/* selector de meses de la asistencia (píldoras) */
+.ad-meses { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+.ad-mes-btn {
+  border: 1.5px solid var(--border); background: var(--surface); color: var(--muted);
+  border-radius: 999px; padding: 7px 14px; font-size: 12.5px; font-weight: 800;
+  font-family: inherit; cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15,23,42,.05);
+  transition: transform .13s cubic-bezier(.34,1.56,.64,1), background .18s, color .18s, box-shadow .18s, border-color .18s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+@media (hover: hover) { .ad-mes-btn:hover { transform: translateY(-1px); border-color: var(--brand-light); color: var(--brand); box-shadow: 0 4px 12px rgba(30,58,124,.14); } }
+.ad-mes-btn:active { transform: scale(.94); }
+.ad-mes-on {
+  background: linear-gradient(135deg, var(--brand-mid), var(--brand-light));
+  color: #fff; border-color: transparent;
+  box-shadow: 0 4px 12px rgba(30,58,124,.3);
+}
 
 /* economía */
 .ad-resumen {
@@ -3647,11 +3725,23 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-pers-kp-lbl { font-size: 12px; font-weight: 800; color: var(--muted); }
 .ad-pers-val {
   min-width: 46px; padding: 10px 14px; cursor: pointer;
-  border: 1.5px solid #1565c0; background: #fff; color: #1565c0;
+  border: 1.5px solid #1565c0; background: var(--surface); color: #1565c0;
   border-radius: 10px; font-size: 15px; font-weight: 800;
+  box-shadow: 0 1px 3px rgba(21,101,192,.16);
+  transition: transform .13s cubic-bezier(.34,1.56,.64,1), background .15s, color .15s, box-shadow .18s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
-.ad-pers-val:active { background: #1565c0; color: #fff; }
-.ad-pers-borrar { border-color: #c0392b; color: #c0392b; }
+@media (hover: hover) { .ad-pers-val:hover { transform: translateY(-2px); background: #eaf2ff; box-shadow: 0 6px 14px rgba(21,101,192,.22); } }
+.ad-pers-val:active { background: #1565c0; color: #fff; transform: scale(.93); }
+.ad-pers-borrar { border-color: #c0392b; color: #c0392b; box-shadow: 0 1px 3px rgba(192,57,43,.16); }
+@media (hover: hover) { .ad-pers-borrar:hover { background: #fdece9; box-shadow: 0 6px 14px rgba(192,57,43,.2); } }
+.ad-pers-borrar:active { background: #c0392b; color: #fff; }
+/* destello de recompensa al aplicar un valor de personalidad en la celda */
+.ad-mx-inp.ad-mx-hit { animation: adCellHit .5s ease; }
+@keyframes adCellHit {
+  0%   { background: #dff5e3; box-shadow: inset 0 0 0 2px #16a34a; }
+  100% { background: transparent; box-shadow: inset 0 0 0 0 rgba(22,163,74,0); }
+}
 .ad-pers-edit { border: none; background: transparent; color: var(--muted); text-decoration: underline; font-size: 12px; cursor: pointer; }
 .ad-pers-leyenda { font-size: 11.5px; color: var(--muted); margin: 2px 0 4px; line-height: 1.5; }
 .ad-pers-leyenda b { color: var(--text); }
