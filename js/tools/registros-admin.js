@@ -44,7 +44,8 @@ const AD_ID_ALFA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 function adBoletaDef() {
   let doc = '';
   try { const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')); if (d && d.nombre) doc = d.nombre; } catch (_) {}
-  return { director: '', docente: doc, lugar: '', municipio: '', departamento: '', anio: String(new Date().getFullYear()) };
+  return { director: '', docente: doc, lugar: '', municipio: '', departamento: '',
+    anio: String(new Date().getFullYear()), escalaPers: ['E', 'MB', 'B', 'R'] };
 }
 
 function adGrupoNuevo(props) {
@@ -61,6 +62,7 @@ function adNormGrupo(g) {
   g.seccion = g.seccion || '';
   g.logo = typeof g.logo === 'string' ? g.logo : '';
   g.boleta = Object.assign(adBoletaDef(), (g.boleta && typeof g.boleta === 'object') ? g.boleta : {});
+  if (!Array.isArray(g.boleta.escalaPers) || !g.boleta.escalaPers.length) g.boleta.escalaPers = ['E', 'MB', 'B', 'R'];
   g.lista = Array.isArray(g.lista) ? g.lista : [];
   g.colectas = Array.isArray(g.colectas) ? g.colectas : [];
   g.asistencia = Array.isArray(g.asistencia) ? g.asistencia : [];
@@ -1013,10 +1015,18 @@ function adRenderSace(body, d) {
       </div>
       <p class="pa-optional-hint" style="margin-top:2px">
         ${esLetra
-          ? 'Escribe la <strong>letra</strong> de conducta (ej. E, MB, B, R…). Salta sola tras escribir.'
+          ? 'La conducta es <strong>cualitativa</strong>: toca la celda del alumno y luego el <strong>valor</strong> — se llena y avanza solo.'
           : esInasis
             ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar.'
             : 'Escribe la <strong>nota (1-100)</strong>. Las de 2+ cifras saltan solas; con Enter también. Desliza la tabla → para ver todas las materias.'}</p>
+
+      ${esLetra ? `
+      <div class="ad-pers-kp">
+        <span class="ad-pers-kp-lbl">Valor:</span>
+        ${d.boleta.escalaPers.map(v => `<button class="ad-pers-val" data-v="${adEsc(v)}">${adEsc(v)}</button>`).join('')}
+        <button class="ad-pers-val ad-pers-borrar" data-v="">✕</button>
+        <button class="ad-pers-edit" id="ad-pers-editescala">✏️ Editar escala</button>
+      </div>` : ''}
 
       <div class="ad-mx-wrap">
         <table class="ad-mx">
@@ -1029,8 +1039,8 @@ function adRenderSace(body, d) {
             ${d.lista.map((a, ri) => `<tr>
               <td class="ad-mx-sticky" title="${adEsc(a.nombre)}"><b>#${a.num}</b> <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
               ${cols.map((c, ci) => `<td><input class="ad-mx-inp" data-idx="${ri * cols.length + ci}"
-                data-num="${a.num}" data-campo="${adEsc(c)}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
-                maxlength="3" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
+                data-num="${a.num}" data-campo="${adEsc(c)}" type="text" inputmode="${esLetra ? 'none' : 'numeric'}"
+                maxlength="3" ${esLetra ? 'readonly style="text-transform:uppercase;"' : ''}
                 value="${valOf(c, a.num) !== '' ? adEsc(String(valOf(c, a.num))) : ''}" placeholder="·"></td>`).join('')}
             </tr>`).join('')}
           </tbody>
@@ -1116,9 +1126,13 @@ function adRenderSace(body, d) {
     }
     adSave(dd);
   };
+  // Celda activa (para el teclado cualitativo de personalidad)
+  let _activoIdx = 0;
+  const marcarActivo = i => { inputs.forEach(x => x.classList.remove('ad-mx-activo')); if (inputs[i]) inputs[i].classList.add('ad-mx-activo'); };
   let _letraT = null;
   inputs.forEach(inp => {
     const idx = +inp.dataset.idx;
+    inp.addEventListener('focus', () => { _activoIdx = idx; marcarActivo(idx); });
     inp.addEventListener('input', () => {
       guardar(inp);
       const v = inp.value;
@@ -1137,6 +1151,35 @@ function adRenderSace(body, d) {
       else if (ev.key === 'ArrowUp') { ev.preventDefault(); focar(idx - ncols); }
     });
   });
+
+  // ── Teclado cualitativo de PERSONALIDAD ──
+  if (esLetra) {
+    marcarActivo(0);
+    body.querySelectorAll('.ad-pers-val').forEach(btn => {
+      btn.addEventListener('mousedown', e => e.preventDefault());   // no robar el foco/selección
+      btn.addEventListener('click', () => {
+        const inp = inputs[_activoIdx];
+        if (!inp) return;
+        inp.value = btn.dataset.v || '';
+        guardar(inp);
+        _activoIdx = Math.min(_activoIdx + 1, inputs.length - 1);
+        focar(_activoIdx); marcarActivo(_activoIdx);
+      });
+    });
+    document.getElementById('ad-pers-editescala')?.addEventListener('click', async () => {
+      const dd = adLoad();
+      const actual = (dd.boleta.escalaPers || ['E', 'MB', 'B', 'R']).join(', ');
+      const nueva = await metasPrompt('Valores de la escala de personalidad, separados por coma.\nEj.: E, MB, B, R  ·  o  ·  S, NS', {
+        icono: '🙂', titulo: 'Escala de personalidad', value: actual, okTxt: 'Guardar',
+        valida: v => String(v).trim() ? '' : 'Escribe al menos un valor.',
+      });
+      if (nueva === null) return;
+      dd.boleta = dd.boleta || adBoletaDef();
+      dd.boleta.escalaPers = String(nueva).split(',').map(s => s.trim().toUpperCase()).filter(Boolean).slice(0, 8);
+      if (!dd.boleta.escalaPers.length) dd.boleta.escalaPers = ['E', 'MB', 'B', 'R'];
+      adSave(dd); adRenderSace(body, adLoad());
+    });
+  }
 
   document.getElementById('ad-sace-boletas').addEventListener('click', () => adPrintBoletas(adLoad()));
 

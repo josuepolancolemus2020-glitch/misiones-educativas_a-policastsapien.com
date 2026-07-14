@@ -3634,4 +3634,18 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 }
 .ad-mx-inp:focus { background: #eef4ff; box-shadow: inset 0 0 0 2px #1565c0; }
 :root[data-theme="dark"] .ad-mx-inp:focus { background: rgba(21,101,192,.25); }
+.ad-mx-inp.ad-mx-activo { background: #fff7e0; box-shadow: inset 0 0 0 2px #d9a400; }
+:root[data-theme="dark"] .ad-mx-inp.ad-mx-activo { background: rgba(217,164,0,.22); }
+.ad-mx-inp[readonly] { cursor: pointer; }
 .ad-mx-addmat { margin-top: 8px; }
+/* Teclado cualitativo de personalidad */
+.ad-pers-kp { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; margin: 10px 0 2px; }
+.ad-pers-kp-lbl { font-size: 12px; font-weight: 800; color: var(--muted); }
+.ad-pers-val {
+  min-width: 46px; padding: 10px 14px; cursor: pointer;
+  border: 1.5px solid #1565c0; background: #fff; color: #1565c0;
+  border-radius: 10px; font-size: 15px; font-weight: 800;
+}
+.ad-pers-val:active { background: #1565c0; color: #fff; }
+.ad-pers-borrar { border-color: #c0392b; color: #c0392b; }
+.ad-pers-edit { border: none; background: transparent; color: var(--muted); text-decoration: underline; font-size: 12px; cursor: pointer; }
