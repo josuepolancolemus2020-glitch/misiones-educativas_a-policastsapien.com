@@ -93,6 +93,7 @@
       num: id.num || '',
       grado: id.grado || '',
       docente: id.docente || '',
+      codigo_aula: id.codigo_aula || '',
       escuela: id.escuela || '',
       xp: xpActual(),
       min: minActivos(),
@@ -403,7 +404,10 @@
     '.metas-id-acciones{display:flex;gap:0.5rem;margin-top:1.1rem;}' +
     '.metas-id-btn{flex:1;border:none;border-radius:10px;padding:0.65rem;font-size:0.9rem;font-weight:700;cursor:pointer;}' +
     '.metas-id-guardar{background:#1565c0;color:#fff;}' +
-    '.metas-id-luego{background:#eef2f7;color:#636e72;}';
+    '.metas-id-luego{background:#eef2f7;color:#636e72;}' +
+    '.metas-id-aulamsg{font-size:0.8rem;font-weight:700;color:#636e72;margin:0.3rem 0 0;min-height:1rem;}' +
+    '.metas-id-aulaok{color:#1e7d34;}' +
+    '.metas-id-aulaerr{color:#c0392b;}';
 
   function abrirIdentificacion(alGuardar) {
     if (document.getElementById('metasIdModal')) return;
@@ -422,8 +426,9 @@
       '<input id="metasIdEscuela" type="text" maxlength="80" autocomplete="off" placeholder="Ej: Esc. Francisco Morazán">' +
       '<label for="metasIdGrado">📚 Grado y sección</label>' +
       '<input id="metasIdGrado" type="text" maxlength="30" autocomplete="off" placeholder="Ej: 6to A">' +
-      '<label for="metasIdDocente">🧑‍🏫 Nombre de tu maestro(a)</label>' +
-      '<input id="metasIdDocente" type="text" maxlength="60" autocomplete="off" placeholder="Escríbelo tal como te lo dio (ej.: Josué Polanco)">' +
+      '<label for="metasIdAula">🔑 Código de aula (te lo da tu maestro)</label>' +
+      '<input id="metasIdAula" type="text" maxlength="8" autocomplete="off" placeholder="Ej: K2M9P" style="text-transform:uppercase;letter-spacing:3px;font-weight:800;">' +
+      '<div id="metasIdAulaMsg" class="metas-id-aulamsg"></div>' +
       '<div class="metas-id-acciones">' +
       '<button type="button" class="metas-id-btn metas-id-luego" id="metasIdLuego">Ahora no</button>' +
       '<button type="button" class="metas-id-btn metas-id-guardar" id="metasIdGuardar">✅ Guardar</button>' +
@@ -433,7 +438,47 @@
     document.getElementById('metasIdNum').value = id.num || '';
     document.getElementById('metasIdEscuela').value = id.escuela || '';
     document.getElementById('metasIdGrado').value = id.grado || '';
-    document.getElementById('metasIdDocente').value = id.docente || '';
+    document.getElementById('metasIdAula').value = id.codigo_aula || '';
+
+    // Resolución en vivo: al teclear el código, confirma el nombre del maestro.
+    var _aulaNombre = id.docente || '';        // nombre resuelto del maestro (para emparejar)
+    var _aulaTimer = null;
+    var aulaInp = document.getElementById('metasIdAula');
+    var aulaMsg = document.getElementById('metasIdAulaMsg');
+    function resolverAula() {
+      var cod = aulaInp.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (cod.length < 5) { aulaMsg.textContent = ''; aulaMsg.className = 'metas-id-aulamsg'; return; }
+      if (navigator.onLine === false) {
+        aulaMsg.textContent = '📴 Sin internet: se confirmará al reconectar.';
+        aulaMsg.className = 'metas-id-aulamsg';
+        return;
+      }
+      aulaMsg.textContent = '⏳ Buscando…'; aulaMsg.className = 'metas-id-aulamsg';
+      var url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+      var key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+      try { url = localStorage.getItem('METAS_SB_URL') || url; key = localStorage.getItem('METAS_SB_KEY') || key; } catch (e) {}
+      fetch(url + '/rest/v1/rpc/metas_aula_resolver', {
+        method: 'POST',
+        headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_codigo_aula: cod })
+      }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+        if (aulaInp.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '') !== cod) return;  // cambió
+        if (j && j.ok && j.nombre) {
+          _aulaNombre = j.nombre;
+          aulaMsg.textContent = '✅ Maestro(a): ' + j.nombre;
+          aulaMsg.className = 'metas-id-aulamsg metas-id-aulaok';
+        } else {
+          _aulaNombre = '';
+          aulaMsg.textContent = '❌ Código no encontrado. Pídeselo de nuevo a tu maestro.';
+          aulaMsg.className = 'metas-id-aulamsg metas-id-aulaerr';
+        }
+      }).catch(function () { aulaMsg.textContent = ''; });
+    }
+    aulaInp.addEventListener('input', function () {
+      clearTimeout(_aulaTimer); _aulaTimer = setTimeout(resolverAula, 450);
+    });
+    if ((id.codigo_aula || '').length >= 5) resolverAula();
+
     function cerrar() { ov.remove(); st.remove(); }
     document.getElementById('metasIdLuego').addEventListener('click', function () {
       try { sessionStorage.setItem('METAS_ID_OMITIDA', '1'); } catch (e) {}
@@ -442,14 +487,17 @@
     document.getElementById('metasIdGuardar').addEventListener('click', function () {
       var nombre = document.getElementById('metasIdNombre').value.trim();
       if (!nombre) { document.getElementById('metasIdNombre').focus(); return; }
+      var codAula = document.getElementById('metasIdAula').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
       var datos = {
         nombre: nombre.slice(0, 60),
         num: document.getElementById('metasIdNum').value.trim().slice(0, 10),
         escuela: document.getElementById('metasIdEscuela').value.trim().slice(0, 80),
         grado: document.getElementById('metasIdGrado').value.trim().slice(0, 30),
-        // 60 = mismo tope que el nombre del maestro al registrarse: si
-        // difirieran, un nombre largo jamás emparejaría en la nube.
-        docente: document.getElementById('metasIdDocente').value.trim().slice(0, 60)
+        // Código de aula: el servidor lo resuelve al nombre EXACTO del maestro
+        // al subir (metas_guardar). Guardamos también el nombre ya resuelto
+        // (si lo confirmamos con internet) para emparejar sin depender del server.
+        codigo_aula: codAula,
+        docente: (_aulaNombre || '').slice(0, 60)
       };
       guardarIdentificacion(datos);
       // sincronizar con el nombre de la constancia de la misión

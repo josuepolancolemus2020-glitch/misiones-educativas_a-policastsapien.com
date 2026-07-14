@@ -1345,12 +1345,55 @@ function renderProfile() {
       <a class="doc-usar-este-link" onclick="dsUsarEste()">✅ Este equipo tiene los datos correctos → usarlo en todos</a>
       <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
 
-      <div class="doc-aviso-alumnos" style="margin-top:18px;">📣 Dile a tus alumnos que escriban tu nombre —
-        <strong>${_pEsc(d.nombre || '')}</strong> — en el campo «Docente» al empezar una misión.
-        Así su avance llega solo a tu cuenta.</div>
+      <div class="doc-aviso-alumnos" style="margin-top:18px;">📣 Dale a tus alumnos tu <strong>código de aula</strong>:
+        lo escriben <strong>una sola vez</strong> al empezar una misión y su avance llega solo a tu cuenta.
+        Escríbelo en la pizarra.</div>
+      <div class="doc-codigo-aula">
+        <span class="doc-cod-label">🔑 Tu código de aula</span>
+        <span class="doc-cod-val" id="doc-cod-val">${d.codigoAula ? _pEsc(d.codigoAula) : '· · · · ·'}</span>
+        <button class="doc-cod-copy" onclick="docenteCopiarCodigo()">📋 Copiar</button>
+      </div>
       <a class="doc-avance-btn" href="consulta-nube.html">📊 Ver el avance de mis alumnos</a>
     </div>`;
   if (typeof dsOnProfile === 'function') dsOnProfile();
+  docenteCargarCodigoAula();
+}
+
+/* Trae (o genera) el código de aula del maestro desde la nube y lo muestra.
+   Se cachea en METAS_DOCENTE_V1.codigoAula para mostrarlo sin internet. */
+async function docenteCargarCodigoAula() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  if (navigator.onLine === false) return;
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_aula_mi_codigo', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave })
+    });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (j && j.ok && j.codigo_aula) {
+      const cur = _docenteCfg();
+      if (cur.codigoAula !== j.codigo_aula) {
+        cur.codigoAula = j.codigo_aula;
+        try { localStorage.setItem(DOCENTE_KEY, JSON.stringify(cur)); } catch (_) {}
+      }
+      const el = document.getElementById('doc-cod-val');
+      if (el) el.textContent = j.codigo_aula;
+    }
+  } catch (_) {}
+}
+
+function docenteCopiarCodigo() {
+  const d = _docenteCfg();
+  const cod = d.codigoAula || (document.getElementById('doc-cod-val')?.textContent || '').replace(/[·\s]/g, '');
+  if (!cod) { toast('Aún no hay código; conéctate a internet un momento y vuelve a entrar'); return; }
+  try {
+    navigator.clipboard.writeText(cod);
+    toast('📋 Código de aula copiado: ' + cod);
+  } catch (_) { toast('Tu código de aula es: ' + cod); }
 }
 
 let _docTipo = 'Pública';

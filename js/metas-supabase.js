@@ -66,6 +66,7 @@
       codigo_lista: ev.num || '',
       grado: ev.grado || '',
       docente: ev.docente || '',
+      codigo_aula: ev.codigo_aula || '',
       escuela: ev.escuela || '',
       dispositivo: ev.disp || '',
       xp: entero(ev.xp),

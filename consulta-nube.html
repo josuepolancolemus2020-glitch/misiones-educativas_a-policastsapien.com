@@ -244,7 +244,7 @@ async function consultar(){
     } catch(e) {}
     estado.textContent = (DATOS.length || PROG.length)
       ? '✅ ' + DATOS.length + ' resultados y ' + PROG.length + ' fotos de progreso recibidos de la nube.'
-      : '📭 Aún no hay resultados. Pide a tus alumnos escribir tu nombre —' + (DOCENTE.nombre || '') + '— en el campo «Docente» al identificarse.';
+      : '📭 Aún no hay resultados. Dales a tus alumnos tu código de aula (lo ves en la Zona Docente) para que lo escriban al identificarse.';
     ['stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = '');
     llenarFiltros();
     pintar();

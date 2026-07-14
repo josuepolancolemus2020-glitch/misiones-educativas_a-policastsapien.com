@@ -454,6 +454,23 @@ a.padre-asistente-btn {
 }
 .doc-sync-now:active { background: var(--brand); color: #fff; }
 .doc-sync-now:disabled { opacity: .6; cursor: default; }
+/* Código de aula: grande y visible para dictarlo/escribirlo en la pizarra */
+.doc-codigo-aula {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  margin-top: 10px; padding: 12px 14px;
+  background: #eef4ff; border: 2px dashed #1e3a7c; border-radius: 14px;
+}
+.doc-cod-label { font-size: 12px; font-weight: 800; color: #1e3a7c; }
+.doc-cod-val {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 30px; font-weight: 900; letter-spacing: 5px; color: #1e3a7c;
+  margin-left: auto;
+}
+.doc-cod-copy {
+  cursor: pointer; border: 1.5px solid #1e3a7c; background: #fff; color: #1e3a7c;
+  border-radius: 10px; padding: 8px 12px; font-size: 12.5px; font-weight: 800;
+}
+.doc-cod-copy:active { background: #1e3a7c; color: #fff; }
 /* Aviso de que todo se sincroniza solo (tranquilidad tipo Drive) */
 .doc-sync-hint2 {
   text-align: center; margin-top: 12px;
