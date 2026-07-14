@@ -1011,78 +1011,27 @@ function paPinHash(s) {
   return 'v1:' + h;
 }
 
-async function paAbrirPlan() {
-  let pin = null;
-  try { pin = localStorage.getItem(PA_PIN_KEY); } catch (_) {}
-
-  if (!pin) {
-    const p1 = await metasPrompt('Primera vez: crea la **CLAVE DEL MAESTRO** para este teléfono (4 a 8 dígitos).\n\nProtege el Plan de Acción y los códigos de los padres si un alumno toma tu teléfono. Apúntala en un lugar seguro.', {
-      icono: '🔒', titulo: 'Candado del maestro',
-      type: 'password', inputmode: 'numeric', maxlength: 8,
-      placeholder: '4 a 8 dígitos', okTxt: 'Crear clave',
-      valida: v => /^\d{4,8}$/.test(String(v).trim()) ? '' : 'Debe ser de 4 a 8 dígitos (solo números).',
-    });
-    if (p1 === null) return;
-    const pp = String(p1).trim();
-    const p2 = await metasPrompt('Escríbela otra vez para confirmar:', {
-      icono: '🔒', titulo: 'Candado del maestro',
-      type: 'password', inputmode: 'numeric', maxlength: 8, okTxt: 'Confirmar',
-      valida: v => String(v).trim() === pp ? '' : 'No coincide con la primera — revísala.',
-    });
-    if (p2 === null) return;
-    try { localStorage.setItem(PA_PIN_KEY, paPinHash(pp)); } catch (_) {}
-    try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
-    toast('🔒 Clave del maestro creada');
-    switchView('view-plan-accion'); paInit();
-    return;
-  }
-
-  let ok = false;
-  try { ok = sessionStorage.getItem('METAS_PIN_OK') === '1'; } catch (_) {}
-  if (ok) { switchView('view-plan-accion'); paInit(); return; }
-
-  for (let i = 1; i <= 3; i++) {
-    const v = await metasPrompt(i === 1
-      ? 'Escribe la **clave del maestro** de este teléfono:'
-      : 'Clave incorrecta. Intento ' + i + ' de 3:', {
-      icono: '🔒', titulo: 'Candado del maestro',
-      type: 'password', inputmode: 'numeric', maxlength: 8, okTxt: 'Entrar',
-    });
-    if (v === null) return;
-    if (paPinHash(String(v).trim()) === pin) {
-      try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
-      switchView('view-plan-accion'); paInit();
-      return;
-    }
-  }
-  paRecuperarPin();
+/* El candado numérico «clave del maestro» se ELIMINÓ (jul 2026): pedía
+   la clave a cada rato y era horrible para el maestro. Ahora la Zona
+   Docente y sus herramientas se protegen SOLO con el REGISTRO DOCENTE
+   (el alumno no tiene la cuenta del maestro, y sin sesión las
+   herramientas ni se muestran). */
+function _paLogged() {
+  try { const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')); return !!(d && d.codigo); }
+  catch (_) { return false; }
 }
 
-/* Barrera reutilizable: pide la clave del candado (si existe) antes
-   de una acción sensible fuera del Plan de Acción — p. ej. ver o
-   compartir la clave secreta del docente en la Zona Docente. El
-   desbloqueo por sesión (METAS_PIN_OK) es el mismo del Plan. */
+async function paAbrirPlan() {
+  if (!_paLogged()) { toast('Entra con tu registro docente en la Zona Docente para usar el Plan de Acción'); return; }
+  switchView('view-plan-accion'); paInit();
+}
+
+/* Barrera reutilizable (se conserva por compatibilidad con los llamados
+   existentes): antes pedía la clave del candado; ahora solo confirma que
+   hay sesión docente. Sin clave numérica que memorizar. */
 async function paVerificarPin(motivo) {
-  let pin = null;
-  try { pin = localStorage.getItem(PA_PIN_KEY); } catch (_) {}
-  if (!pin) return true;   /* sin candado creado no hay barrera */
-  let ok = false;
-  try { ok = sessionStorage.getItem('METAS_PIN_OK') === '1'; } catch (_) {}
-  if (ok) return true;
-  for (let i = 1; i <= 3; i++) {
-    const v = await metasPrompt((motivo ? motivo + '\n\n' : '') + (i === 1
-      ? 'Escribe la **clave del maestro** de este teléfono:'
-      : 'Clave incorrecta. Intento ' + i + ' de 3:'), {
-      icono: '🔒', titulo: 'Candado del maestro',
-      type: 'password', inputmode: 'numeric', maxlength: 8, okTxt: 'Continuar',
-    });
-    if (v === null) return false;
-    if (paPinHash(String(v).trim()) === pin) {
-      try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
-      return true;
-    }
-  }
-  toast('Sin acceso. Si olvidaste la clave, recupérala desde Plan de Acción.');
+  if (_paLogged()) return true;
+  toast('Entra con tu registro docente en la Zona Docente');
   return false;
 }
 window.paVerificarPin = paVerificarPin;

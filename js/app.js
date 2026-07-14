@@ -1257,6 +1257,11 @@ function renderProfile() {
   if (!cont) return;
   const d = _docenteCfg();
 
+  // Las herramientas del aula solo existen para el maestro registrado:
+  // sin sesión no se muestran (el alumno no tiene la cuenta del maestro).
+  const _tg = document.getElementById('teacher-tools-group');
+  if (_tg) _tg.style.display = d.codigo ? '' : 'none';
+
   if (!d.codigo) {
     // Visitante: formulario de suscripción
     cont.innerHTML = `

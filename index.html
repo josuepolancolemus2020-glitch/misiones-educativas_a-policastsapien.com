@@ -285,8 +285,9 @@
            (lo pinta renderProfile() según METAS_DOCENTE_V1) -->
       <div id="docente-acceso"></div>
 
-      <!-- Herramientas del aula -->
-      <div class="setting-group teacher-panel-group">
+      <!-- Herramientas del aula — solo visibles con sesión docente
+           (renderProfile las muestra/oculta según METAS_DOCENTE_V1) -->
+      <div class="setting-group teacher-panel-group" id="teacher-tools-group" style="display:none;">
         <div class="teacher-panel-head">
           <i class="fa-solid fa-chalkboard-user teacher-panel-icon"></i>
           <label class="setting-label" style="margin-bottom:0;">Herramientas del aula</label>
