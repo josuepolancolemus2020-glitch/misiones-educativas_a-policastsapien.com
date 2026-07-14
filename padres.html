@@ -172,6 +172,7 @@ const $inp   = document.getElementById('inp');
 
 let ROWS = null;          // filas del plan de acción (o null)
 let ROWS_AD = null;       // filas administrativas: asistencia/notas finales/economía
+let ROWS_AV = null;       // comunicados del maestro: avisos/eventos/materiales/cuentas/faq
 let ROWS_FECHA = null;    // cuándo se consultaron
 let ROWS_CACHE = false;   // true si vienen del respaldo local
 
@@ -231,8 +232,8 @@ function cacheLoad() {
   try { const o = JSON.parse(localStorage.getItem(CACHE_KEY)); return (o && typeof o === 'object') ? o : null; }
   catch (_) { return null; }
 }
-function cacheSave(codigo, rows, admin) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ codigo, t: new Date().toISOString(), rows, admin })); } catch (_) {}
+function cacheSave(codigo, rows, admin, avisos) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ codigo, t: new Date().toISOString(), rows, admin, avisos })); } catch (_) {}
 }
 function claveGuardada() { return String(cfgLoad().codigo || ''); }
 function claveBonita(c)  { return String(c || '').replace(/^(\d+)/, '$1-'); }
@@ -283,7 +284,7 @@ function pintarChips(lista) {
     $chips.appendChild(b);
   });
 }
-const CHIPS_MENU = ['📊 ¿Cómo va?', '📝 Última nota', '📚 Todas las notas',
+const CHIPS_MENU = ['📊 ¿Cómo va?', '📣 Avisos', '📝 Última nota', '📚 Todas las notas',
                     '🗓 ¿Faltó a clases?', '🧮 Boleta del parcial', '💰 Pagos y colectas',
                     '🙂 Conducta', '🏠 ¿Cómo ayudo en casa?', '💡 Consejo de hoy',
                     '🔄 Actualizar', '🔑 Cambiar clave'];
@@ -317,7 +318,7 @@ function avisoCache() {
    actualizado_en en lo administrativo, fecha en el plan) */
 function fechaCorte() {
   let max = '';
-  (ROWS || []).concat(ROWS_AD || []).forEach(r => {
+  (ROWS || []).concat(ROWS_AD || [], ROWS_AV || []).forEach(r => {
     const f = String(r.actualizado_en || r.fecha || '');
     if (f && f > max) max = f;
   });
@@ -343,13 +344,14 @@ function _desdeCache(codigo) {
       ((Array.isArray(c.rows) && c.rows.length) || (Array.isArray(c.admin) && c.admin.length))) {
     ROWS = Array.isArray(c.rows) ? c.rows : [];
     ROWS_AD = Array.isArray(c.admin) ? c.admin : [];
+    ROWS_AV = Array.isArray(c.avisos) ? c.avisos : [];
     ROWS_FECHA = c.t; ROWS_CACHE = true;
     return true;
   }
   return false;
 }
 async function consultar(codigo) {
-  ROWS = null; ROWS_AD = null; ROWS_CACHE = false; ROWS_FECHA = null;
+  ROWS = null; ROWS_AD = null; ROWS_AV = null; ROWS_CACHE = false; ROWS_FECHA = null;
   if (navigator.onLine === false) return _desdeCache(codigo) ? 'cache' : 'offline';
   try {
     let url = SB_URL_DEF, key = SB_KEY_DEF;
@@ -365,18 +367,20 @@ async function consultar(codigo) {
       body: JSON.stringify({ p_codigo: codigo }),
     }).then(r => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); });
     const seguro = p => p.then(v => ({ ok: true, v })).catch(() => ({ ok: false, v: [] }));
-    const [plan, admin] = await Promise.all([
+    const [plan, admin, avisos] = await Promise.all([
       seguro(pide('metas_consultar_plan_padre')),
       seguro(pide('metas_consultar_admin_padre')),
+      seguro(pide('metas_consultar_avisos_padre')),   /* si aún no existe en la nube, se tolera */
     ]);
     const rows = Array.isArray(plan.v) ? plan.v : [];
     const adm  = Array.isArray(admin.v) ? admin.v : [];
-    if (!rows.length && !adm.length) {
+    const avs  = Array.isArray(avisos.v) ? avisos.v : [];
+    if (!rows.length && !adm.length && !avs.length) {
       if (!plan.ok || !admin.ok) return _desdeCache(codigo) ? 'cache' : 'error';
       return 'vacio';
     }
-    ROWS = rows; ROWS_AD = adm; ROWS_FECHA = new Date().toISOString();
-    cacheSave(codigo, rows, adm);
+    ROWS = rows; ROWS_AD = adm; ROWS_AV = avs; ROWS_FECHA = new Date().toISOString();
+    cacheSave(codigo, rows, adm, avs);
     return 'ok';
   } catch (_) {
     return _desdeCache(codigo) ? 'cache' : 'error';
@@ -391,7 +395,7 @@ async function conDatos() {
       ['❓ ¿Qué es la clave?']);
     return false;
   }
-  if (ROWS !== null && (ROWS.length || (ROWS_AD && ROWS_AD.length))) return true;
+  if (ROWS !== null && (ROWS.length || (ROWS_AD && ROWS_AD.length) || (ROWS_AV && ROWS_AV.length))) return true;
   await botSay('⏳ Un momento, consulto las notas de la clave <strong>' + esc(claveBonita(codigo)) + '</strong>…');
   const st = await consultar(codigo);
   if (st === 'ok' || st === 'cache') return true;
@@ -416,7 +420,7 @@ async function conDatos() {
    administrativos, se orienta al padre a lo que sí puedo contarle */
 async function _sinPlan() {
   await botSay('El maestro aún no sube evaluaciones del Plan de Acción para esta clave, ' +
-    'pero sí puedo contarle otras cosas: 👇', ['🗓 ¿Faltó a clases?', '🧮 Boleta del parcial', '💰 Pagos y colectas', '🙂 Conducta', '💡 Consejo de hoy']);
+    'pero sí puedo contarle otras cosas: 👇', ['📣 Avisos', '🗓 ¿Faltó a clases?', '🧮 Boleta del parcial', '💰 Pagos y colectas', '🙂 Conducta', '💡 Consejo de hoy']);
 }
 
 async function respResumen() {
@@ -441,6 +445,8 @@ async function respResumen() {
       'Promedio: <strong>' + prom + '/100</strong>. Aprobadas: <strong>' + aprob + ' de ' + conNota.length + '</strong>' +
       (nsp ? ' · NSP: ' + nsp : '') + '.<br>' + veredicto;
   }
+  const nAvisos = avDe(['aviso', 'evento', 'material', 'individual']).length;
+  if (nAvisos) html += '<br>📣 Tiene <strong>' + nAvisos + '</strong> aviso(s) del maestro — toque «📣 Avisos».';
   html += notaCardHTML(ROWS[0]) + selloDatos();
   await botSay(html, CHIPS_MENU);
 }
@@ -529,7 +535,10 @@ async function respMaestro() {
     ? '👨‍🏫 Las notas las registró <strong>' + esc(conDoc.docente) + '</strong>' + (grupo ? ' (' + esc(grupo) + ')' : '') + '.'
     : '👨‍🏫 En las notas no aparece el nombre del docente' + (grupo ? ', pero el grupo es <strong>' + esc(grupo) + '</strong>' : '') + '.';
   html += '<br>Yo estoy aquí justamente para responderle sin molestar al maestro 🤗. ' +
-    'Si necesita tratar algo personal sobre su hijo/a, lo mejor es buscarlo en la escuela en el horario de atención.';
+    'Sus avisos al grupo los ve tocando «📣 Avisos».';
+  const fAt = avDe(['faq']).find(f => /atencion|atiende/.test(norm((f.pregunta || '') + ' ' + (f.claves || ''))));
+  html += fAt ? '<br>📖 ' + esc(fAt.texto)
+    : ' Si necesita tratar algo personal sobre su hijo/a, lo mejor es buscarlo en la escuela.';
   await botSay(html + selloDatos(), CHIPS_MENU);
 }
 
@@ -721,7 +730,81 @@ async function respEconomia() {
   }
   if (!pend.length) html += '<br><br>🎉 No tienen aportes pendientes.';
   else html += '<br><br><small>El aporte se entrega al maestro; él lo marca recibido y aquí se actualiza.</small>';
+  /* rendición de cuentas: llega sola desde la Economía de Mi aula */
+  const cuentas = avDe(['cuentas']);
+  if (cuentas.length) {
+    html += '<br><br>🧾 <strong>Cuentas claras del grupo:</strong>' +
+      cuentas.map(c => '<br>• <strong>' + esc(String(c.titulo || '').replace(/^Cuentas claras — /, '')) +
+        '</strong>: ' + esc(c.texto || '')).join('');
+  }
   await botSay(html + selloDatos(), CHIPS_MENU);
+}
+
+/* ── comunicados del maestro (avisos, eventos, materiales, ficha del aula) ── */
+const AV_ICONO = { aviso: '📣', evento: '🗓', material: '🎒', individual: '👤', cuentas: '💰' };
+function avDe(subtipos) {
+  return (ROWS_AV || []).filter(r => subtipos.indexOf(r.subtipo) >= 0);
+}
+function avisoCardHTML(r) {
+  return '<div class="nota-card"><div class="nc-top"><span class="nc-eval">' +
+    (r.prioridad === 'urgente' ? '🔴 ' : '') + (AV_ICONO[r.subtipo] || '📣') + ' ' +
+    esc(r.titulo || 'Aviso del maestro') + '</span></div>' +
+    '<div class="nc-meta" style="font-size:14px;margin-top:4px">' + linkify(esc(r.texto || '')) + '</div>' +
+    (r.fecha_evento ? '<div class="nc-meta" style="margin-top:4px">📅 <strong>' + fmtFecha(r.fecha_evento) + '</strong></div>' : '') +
+    '</div>';
+}
+async function respAvisos() {
+  if (!await conDatos()) return;
+  const avs = avDe(['aviso', 'evento', 'material', 'individual']);
+  if (!avs.length) {
+    await botSay('📣 Por ahora no hay avisos del maestro. Cuando publique uno (reunión, materiales, ' +
+      'suspensión de clases…), aquí se lo muestro.' + selloDatos(), CHIPS_MENU);
+    return;
+  }
+  await botSay('📣 <strong>Avisos del maestro</strong> (lo urgente va primero):' +
+    avs.slice(0, 8).map(avisoCardHTML).join('') +
+    (avs.length > 8 ? '<br><small>(mostrando los 8 más importantes)</small>' : '') +
+    selloDatos(), CHIPS_MENU);
+}
+async function respMateriales() {
+  if (!await conDatos()) return;
+  const avs = avDe(['material']);
+  const futiles = avDe(['faq']).find(f => /utiles/.test(norm((f.pregunta || '') + ' ' + (f.claves || ''))));
+  if (!avs.length && !futiles) {
+    await botSay('🎒 No hay avisos de materiales por ahora. Cuando el maestro pida traer algo, ' +
+      'aquí se lo digo.' + selloDatos(), CHIPS_MENU);
+    return;
+  }
+  let html = '';
+  if (avs.length) html += '🎒 <strong>Materiales pedidos por el maestro:</strong>' + avs.map(avisoCardHTML).join('');
+  if (futiles) html += (html ? '<br>' : '') + '📖 <strong>' + esc(futiles.pregunta) + '</strong><br>' + linkify(esc(futiles.texto || ''));
+  await botSay(html + selloDatos(), CHIPS_MENU);
+}
+/* Ficha del aula: busca la pregunta del maestro que más se parece a la
+   del padre (≥2 palabras en común de 4+ letras, o 1 palabra larga) */
+const FAQ_STOP = ['como', 'cuando', 'donde', 'cual', 'cuales', 'para', 'porque',
+                  'hijo', 'hija', 'nino', 'nina', 'debe', 'hace', 'esta', 'este', 'tiene'];
+function faqMatch(t) {
+  const faqs = avDe(['faq']);
+  if (!faqs.length) return null;
+  const palabras = String(t || '').split(' ').filter(w => w.length >= 4 && FAQ_STOP.indexOf(w) < 0);
+  let mejor = null, mejorScore = 0;
+  faqs.forEach(f => {
+    const bolsa = norm((f.pregunta || '') + ' ' + (f.claves || ''));
+    let score = 0, larga = false;
+    palabras.forEach(w => { if (bolsa.indexOf(w) >= 0) { score++; if (w.length >= 6) larga = true; } });
+    if ((score >= 2 || (score >= 1 && larga)) && score > mejorScore) { mejor = f; mejorScore = score; }
+  });
+  return mejor;
+}
+/* Responde con la ficha del aula si puede; devuelve true si ya contestó */
+async function respFicha(t) {
+  if (!claveGuardada()) return false;
+  if (ROWS_AV === null && !await conDatos()) return true;   /* conDatos ya explicó el problema */
+  const f = faqMatch(t);
+  if (!f) return false;
+  await botSay('📖 <strong>' + esc(f.pregunta) + '</strong><br>' + linkify(esc(f.texto || '')) + selloDatos(), CHIPS_MENU);
+  return true;
 }
 
 async function respQueEsClave() {
@@ -760,16 +843,18 @@ async function usarClave(codigo) {
 /* ── cerebro: decide qué responder ── */
 /* Menú numerado del fallback: el padre puede contestar solo con el número */
 const MENU_NUM = [respResumen, respUltima, respTodas, respAsistencia,
-                  respFinales, respEconomia, respConducta, respAyudarCasa];
+                  respFinales, respEconomia, respConducta, respAyudarCasa, respAvisos];
 const MENU_TXT = 'Escriba el <strong>número</strong> de lo que necesita:<br>' +
   '1️⃣ Cómo va (resumen) · 2️⃣ Última nota<br>' +
   '3️⃣ Todas las notas · 4️⃣ Faltas<br>' +
   '5️⃣ Boleta del parcial · 6️⃣ Pagos y colectas<br>' +
-  '7️⃣ Conducta · 8️⃣ Cómo ayudar en casa';
+  '7️⃣ Conducta · 8️⃣ Cómo ayudar en casa<br>' +
+  '9️⃣ Avisos del maestro';
 /* Pistas parciales: si la frase no entendida trae un fragmento reconocible
    («pagand», «faltas de mi niña»…), se sugiere el chip probable antes del menú */
 const PISTAS = [
   [/pag|deb|cuot|colect|aport|diner|pisto|lempir|cobr/, '💰 Pagos y colectas'],
+  [/avis|reunion|junta|comunicad|acto|event/, '📣 Avisos'],
   [/falt|asist|ausen|llego/, '🗓 ¿Faltó a clases?'],
   [/conduct|porta|disciplin/, '🙂 Conducta'],
   [/boleta|parcial|final|sace/, '🧮 Boleta del parcial'],
@@ -794,8 +879,8 @@ async function manejar(txtOriginal) {
   const t = expand(norm(txtOriginal));
   if (!t) return;
 
-  /* respuesta con número del menú (1-8) */
-  if (/^[1-8]$/.test(t)) { await MENU_NUM[+t - 1](t); return; }
+  /* respuesta con número del menú (1-9) */
+  if (/^[1-9]$/.test(t)) { await MENU_NUM[+t - 1](t); return; }
 
   if (/(cambiar|otra|nueva|borrar).*(clave|codigo)|cambiar clave/.test(t)) { await respCambiarClave(); return; }
   if (/(que es|donde|cual|como consigo|no tengo).*(clave|codigo)/.test(t) || t === 'clave' || t === 'codigo') { await respQueEsClave(); return; }
@@ -811,6 +896,16 @@ async function manejar(txtOriginal) {
       /colaboracion|aporte|cuota|colecta|deuda|dinero|pisto|lempira|cobr|\bpag(o|ar|ue|os|amos)\b|\bdeb(o|e|en|emos)\b(?! mejorar)|cuanto (hay que pagar|se paga|es|cuesta)|pendiente/.test(t)) {
     await respEconomia(); return;
   }
+  /* comunicados del maestro: avisos y eventos, materiales, ficha del aula */
+  if (/aviso|comunicad|anuncio|reunion|junta|convocatoria|evento|acto civico|suspend/.test(t)) { await respAvisos(); return; }
+  if (/material|utiles|mochila|\bque lleva\b|que hay que (llevar|traer)|\btraer\b|\bllevar\b/.test(t)) { await respMateriales(); return; }
+  if (/horario|hora de (salida|entrada)|a que hora (entra|sale)|uniforme|matricul|traslado|reposicion|\brepone/.test(t)) {
+    if (await respFicha(t)) return;
+    guardarNoEntendida(txtOriginal);
+    await botSay('Esa pregunta se responde con la <strong>ficha del aula</strong> que llena el maestro, ' +
+      'y la de su grupo todavía no tiene esa respuesta. Puedo ayudarle con esto: 👇', CHIPS_MENU);
+    return;
+  }
   if (/falto|falta|asisten|ausen|inasist|llego a clase/.test(t)) { await respAsistencia(); return; }
   if (/nota.? final|finales|sace|boleta|\bparcial\b/.test(t)) { await respFinales(t); return; }
   if (materiaEn(t)) { await respMateria(t); return; }
@@ -822,8 +917,10 @@ async function manejar(txtOriginal) {
   if (/ayud|apoyar|en casa|reforzar|practicar|repasar|mejorar|que hacer|que hago/.test(t)) { await respAyudarCasa(); return; }
   if (/maestro|maestra|profesor|profesora|profe|docente|quien califica/.test(t)) { await respMaestro(); return; }
   if (/\bnsp\b|no se presento/.test(t)) {
+    const fNsp = avDe(['faq']).find(f => /nsp|repone/.test(norm((f.pregunta || '') + ' ' + (f.claves || ''))));
     await botSay('<strong>NSP</strong> significa «No Se Presentó»: el estudiante no hizo esa evaluación. ' +
-      'Hable con el maestro para ver cómo reponerla. 🙏', CHIPS_MENU);
+      (fNsp ? '<br>📖 <strong>Para reponerla:</strong> ' + esc(fNsp.texto)
+            : 'Hable con el maestro para ver cómo reponerla. 🙏'), CHIPS_MENU);
     return;
   }
   if (/que es metas|que es m e t a s|que es esta pagina|que es la app/.test(t)) {
@@ -840,6 +937,15 @@ async function manejar(txtOriginal) {
   if (/gracias|muy amable|excelente|perfecto|ok|vale|adios|hasta luego/.test(t)) {
     await botSay('¡Con mucho gusto! 🤗 Su acompañamiento en casa es la mitad del éxito. Aquí estaré cuando me necesite.', CHIPS_MENU);
     return;
+  }
+  /* ¿la ficha del aula responde esto? (solo con datos ya cargados:
+     no se consulta la nube nada más para decir «No entendí») */
+  if (ROWS_AV && ROWS_AV.length) {
+    const f = faqMatch(t);
+    if (f) {
+      await botSay('📖 <strong>' + esc(f.pregunta) + '</strong><br>' + linkify(esc(f.texto || '')) + selloDatos(), CHIPS_MENU);
+      return;
+    }
   }
   /* no entendido: se guarda la pregunta y se ofrece el menú numerado */
   guardarNoEntendida(txtOriginal);
