@@ -1389,7 +1389,10 @@ async function docenteSuscribir() {
   toast('⏳ Creando tu acceso…');
   const { url, key } = _padreSbCfg();
   for (let intento = 0; intento < 3; intento++) {
-    const codigo = 'PROF-' + _docAzar(4);
+    // 5 caracteres (30^5 ≈ 24 millones): headroom para decenas de miles de
+    // maestros sin colisiones al registrar. Los códigos de 4 ya emitidos
+    // siguen siendo válidos (la clave primaria es texto de largo variable).
+    const codigo = 'PROF-' + _docAzar(5);
     const clave  = _docAzar(6);
     try {
       const r = await fetch(url + '/rest/v1/rpc/metas_suscribir_docente', {

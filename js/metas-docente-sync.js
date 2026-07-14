@@ -49,6 +49,8 @@
   var _applying = false;   // true mientras aplicamos datos bajados (no re-estampar)
   var _busy = false;       // una operación de red a la vez
   var _pushT = null;       // debounce de subida
+  var _lastAuto = 0;       // última sync automática (para no saturar a escala)
+  var AUTO_MIN = 15000;    // no más de una sync automática cada 15 s por equipo
 
   /* ── util ── */
   function ls(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }
@@ -209,10 +211,20 @@
   /* ── Sincronización normal: baja lo nuevo y sube lo cambiado ── */
   function sync() {
     if (_busy || !creds()) return Promise.resolve(false);
+    _lastAuto = ahora();
     _busy = true;
     return pull(false).then(function (res) { return push(false, res.cloudKeys); })
       .then(function (r) { _busy = false; estado(); return r; })
       .catch(function () { _busy = false; return false; });
+  }
+
+  /* sync automática con freno: como muchos eventos (foco de pestaña,
+     volver de suspensión) pueden dispararla, se limita a una cada
+     AUTO_MIN por equipo. A escala evita lecturas repetidas innecesarias.
+     Las acciones del usuario (onProfile, botones ⬆️/⬇️) NO pasan por aquí. */
+  function autoSync() {
+    if (ahora() - _lastAuto < AUTO_MIN) return Promise.resolve(false);
+    return sync();
   }
 
   function schedulePush() {
@@ -275,7 +287,7 @@
 
   /* ── disparadores automáticos ── */
   document.addEventListener('DOMContentLoaded', function () {
-    if (creds()) setTimeout(sync, 1500);
+    if (creds()) setTimeout(autoSync, 1500);
     // vigía suave: sube cambios locales sin depender de cada herramienta
     setInterval(function () {
       if (document.hidden || !creds() || _applying) return;
@@ -284,8 +296,8 @@
       if (pend) { schedulePush(); estado(); }
     }, 10000);
   });
-  window.addEventListener('online', function () { if (creds()) sync(); });
-  document.addEventListener('visibilitychange', function () { if (!document.hidden && creds()) sync(); });
+  window.addEventListener('online', function () { if (creds()) autoSync(); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && creds()) autoSync(); });
 
   /* API pública mínima */
   window.dsForcePush = forcePush;
