@@ -1318,6 +1318,7 @@ function renderProfile() {
           <input id="doc-rec-clave" class="pa-inp-field" type="password" maxlength="40" autocomplete="current-password"
                  placeholder="La contraseña que elegiste" style="margin-bottom:14px;">
           <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar</button>
+          <button class="padre-wa-cambiar" onclick="docenteOlvide()">🆘 ¿Olvidaste tu contraseña?</button>
         </div>
       </div>`;
     return;
@@ -1412,6 +1413,36 @@ async function docenteSuscribir() {
 }
 window.docenteSuscribir = docenteSuscribir;
 
+/* ── ¿Olvidaste tu contraseña? ──
+   Camino 1 (autoservicio): cualquier equipo con la sesión abierta puede
+   ponerte contraseña nueva sin la anterior (docenteCambiarClave).
+   Camino 2: WhatsApp del proyecto — el administrador verifica tus datos
+   registrados (nombre, escuela, teléfono) y te la restablece. */
+const DOC_SOPORTE_WA = '';   /* nº WhatsApp de soporte, ej. '50499999999' (vacío = solo camino 1) */
+
+async function docenteOlvide() {
+  const correo = (document.getElementById('doc-rec-correo')?.value || '').trim();
+  const msj = '💡 **¿Tienes otro equipo con tu sesión abierta?** (tu PC o tu teléfono donde la Zona Docente ya te saluda)\n\n' +
+    'Entra ahí y toca «✏️ Cambiar mi contraseña»: te deja poner una nueva SIN saber la anterior. Es el camino más rápido.\n\n' +
+    (DOC_SOPORTE_WA
+      ? '🆘 **¿No tienes ninguno?** Escríbenos por WhatsApp: verificamos tus datos registrados y te la restablecemos.'
+      : '🆘 **¿No tienes ninguno?** Escríbele al administrador del proyecto (quien te invitó a M.E.T.A.S): verifica tus datos registrados y te la restablece.');
+  if (!DOC_SOPORTE_WA) {
+    await metasAlert(msj, { icono: '🆘', titulo: 'Recuperar contraseña' });
+    return;
+  }
+  const ir = await metasConfirm(msj, {
+    icono: '🆘', titulo: 'Recuperar contraseña',
+    okTxt: '💬 Escribir por WhatsApp', cancelTxt: 'Entendido',
+  });
+  if (!ir) return;
+  const txt = 'Hola 👋 Olvidé la contraseña de mi cuenta de maestro en M.E.T.A.S.\n' +
+    (correo ? '📧 Mi correo registrado: ' + correo + '\n' : '📧 Mi correo registrado: \n') +
+    '👤 Mi nombre completo: \n🏫 Mi escuela: \n📱 Mi teléfono registrado: ';
+  window.open('https://wa.me/' + DOC_SOPORTE_WA + '?text=' + encodeURIComponent(txt), '_blank');
+}
+window.docenteOlvide = docenteOlvide;
+
 function docenteCerrarSesion() {
   _docenteSave(null);
   try { localStorage.removeItem(DOCENTE_KEY); } catch (_) {}
@@ -1420,33 +1451,55 @@ function docenteCerrarSesion() {
 }
 window.docenteCerrarSesion = docenteCerrarSesion;
 
+/* Cambiar contraseña SIN pedir la actual: este equipo ya tiene la sesión
+   del maestro (la cuenta guardada conoce su contraseña), así que también
+   sirve de RESCATE cuando la olvidó — basta un equipo con sesión abierta. */
 async function docenteCambiarClave() {
   const d = _docenteCfg();
   if (!d.codigo) return;
   if (navigator.onLine === false) { toast('📴 Cambiar la contraseña necesita internet'); return; }
-  const actual = await metasPrompt('Escribe tu contraseña **actual**:', {
-    icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Continuar',
-    valida: v => String(v).length ? '' : 'Escribe tu contraseña actual.',
-  });
-  if (actual === null) return;
-  const nueva = await metasPrompt('Ahora escribe tu contraseña **nueva** (mínimo 6 letras o números).\nGuárdala bien: con ella entrarás en todos tus equipos.', {
-    icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Cambiar contraseña',
-    valida: v => String(v).length >= 6 ? '' : 'Muy corta: usa al menos 6 letras o números.',
+  const nueva = await metasPrompt('Escribe tu contraseña **nueva** (mínimo 6 letras o números).\nNo necesitas la anterior: este equipo ya tiene tu sesión.', {
+    icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Siguiente',
+    valida: v => String(v).trim().length >= 6 ? '' : 'Muy corta: usa al menos 6 letras o números.',
   });
   if (nueva === null) return;
+  const np = String(nueva).trim();
+  const conf = await metasPrompt('Escríbela otra vez para confirmar.\nGuárdala bien: con ella entrarás en todos tus equipos.', {
+    icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Cambiar contraseña',
+    valida: v => String(v).trim() === np ? '' : 'No coincide con la primera — revísala.',
+  });
+  if (conf === null) return;
   try {
     const { url, key } = _padreSbCfg();
     const r = await fetch(url + '/rest/v1/rpc/metas_cambiar_clave_docente', {
       method: 'POST',
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_codigo: d.codigo, p_actual: actual, p_nueva: nueva }),
+      body: JSON.stringify({ p_codigo: d.codigo, p_actual: d.clave || '', p_nueva: np }),
     });
     const ok = r.ok ? await r.json() : false;
     if (ok === true) {
-      d.clave = nueva; _docenteSave(d);
+      d.clave = np; _docenteSave(d);
+      toast('✅ Contraseña actualizada');
+      return;
+    }
+    /* La guardada no sirvió (quizá ya la cambiaste en otro equipo):
+       último intento pidiéndola a mano. */
+    const actual = await metasPrompt('La contraseña guardada en este equipo ya no es la vigente.\nEscribe tu contraseña **actual** para confirmar el cambio:', {
+      icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Confirmar',
+      valida: v => String(v).length ? '' : 'Escribe tu contraseña actual.',
+    });
+    if (actual === null) return;
+    const r2 = await fetch(url + '/rest/v1/rpc/metas_cambiar_clave_docente', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_actual: String(actual), p_nueva: np }),
+    });
+    const ok2 = r2.ok ? await r2.json() : false;
+    if (ok2 === true) {
+      d.clave = np; _docenteSave(d);
       toast('✅ Contraseña actualizada');
     } else {
-      toast('⚠️ No se pudo cambiar. Revisa que la contraseña actual sea la correcta.');
+      toast('⚠️ No se pudo cambiar. Si la olvidaste por completo, usa «¿Olvidaste tu contraseña?» al entrar.');
     }
   } catch (_) { toast('⚠️ Sin conexión con la nube'); }
 }
