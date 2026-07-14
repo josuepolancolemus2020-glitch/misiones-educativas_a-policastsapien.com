@@ -1789,7 +1789,8 @@ function adRenderCom(body, d) {
       <span style="flex:1">${a.prioridad === 'urgente' ? '🔴 ' : ''}${AV_TIPOS[a.tipo] ? AV_TIPOS[a.tipo].split(' ')[0] : '📣'}
         <strong>${adEsc(a.titulo)}</strong><br>
         <small>${adEsc(a.texto)}</small><br>
-        <small style="color:#666">${a.fechaEvento ? '📅 ' + adFechaBonita(a.fechaEvento) + ' · ' : ''}${vive ? 'se muestra hasta el ' + adFechaBonita(a.hasta) : 'VENCIDO (ya no se muestra)'}${a.tipo === 'individual' && a.alumnos ? ' · solo #' + a.alumnos.join(', #') : ''}</small></span>
+        <small style="color:#666">${a.fechaEvento ? '📅 ' + adFechaBonita(a.fechaEvento) + ' · ' : ''}${vive ? 'se muestra hasta el ' + adFechaBonita(a.hasta) : 'VENCIDO (ya no se muestra)'}${a.tipo === 'individual' && a.alumnos ? ' · solo #' + a.alumnos.join(', #') : ''}
+      <span data-vistos="AVI-${a.id}" style="color:#1e8e3e"></span></small></span>
       <span style="white-space:nowrap">
         <button class="ad-al-del av-edit" data-avid="${a.id}" aria-label="Editar" style="color:#1e3a7c">✏️</button>
         <button class="ad-al-del av-del" data-avid="${a.id}" aria-label="Borrar">✕</button></span>
@@ -1846,6 +1847,17 @@ function adRenderCom(body, d) {
       <div style="margin-top:10px">
         ${g.avisos.length ? g.avisos.slice().sort((a, b) => (avVigente(b) - avVigente(a)) || (String(a.hasta) < String(b.hasta) ? -1 : 1)).map(filaAviso).join('')
           : '<p class="pa-optional-hint">Sin avisos todavía. Usa una plantilla de arriba: dos toques y queda publicado.</p>'}
+      </div>
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">📨 Buzón de las familias</div>
+      <p class="pa-optional-hint">Excusas y recados que los padres dejan en el asistente
+        (máximo 5 al día por familia). Para responder a una familia, usa un
+        <strong>aviso individual</strong> con su número de lista.</p>
+      <div id="av-buzon"><p class="pa-optional-hint">⏳ Revisando el buzón…</p></div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="av-buzon-ver">🔄 Revisar buzón</button>
       </div>
     </div>
 
@@ -1994,7 +2006,86 @@ function adRenderCom(body, d) {
     toast('📖 Pregunta agregada a la ficha');
   });
 
+  document.getElementById('av-buzon-ver').addEventListener('click', () => avBuzonCargar(adLoad()));
   avSincronizarNube(false);   /* refresca el estado al entrar */
+  avBuzonCargar(d);           /* bandeja padre→maestro */
+  avVistosCargar(d, g);       /* «visto por N de M familias» por aviso */
+}
+
+/* ── Buzón de las familias (mensajes_padre, SUPABASE-FASE3.sql) ── */
+const BUZON_VISTO_KEY = 'METAS_BUZON_VISTO_V1';
+function _avSbConexion() {
+  let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+  let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+  try {
+    url = localStorage.getItem('METAS_SB_URL') || url;
+    key = localStorage.getItem('METAS_SB_KEY') || key;
+  } catch (_) {}
+  return { url, key };
+}
+async function avBuzonCargar(d) {
+  const cont = document.getElementById('av-buzon');
+  if (!cont) return;
+  const hint = t => '<p class="pa-optional-hint">' + t + '</p>';
+  const claves = adClavesDelGrupo(d);
+  if (!claves.length) { cont.innerHTML = hint('Aún no hay claves de familia en este grupo.'); return; }
+  if (navigator.onLine === false) { cont.innerHTML = hint('📴 Sin internet: el buzón se revisa con conexión.'); return; }
+  try {
+    const { url, key } = _avSbConexion();
+    const r = await fetch(url + '/rest/v1/rpc/metas_buzon_docente', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigos: claves }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const rows = await r.json();
+    if (!Array.isArray(rows) || !rows.length) { cont.innerHTML = hint('Buzón vacío: sin mensajes de las familias.'); return; }
+    const quien = {};
+    d.lista.forEach(a => {
+      const c = adClaveFamilia(d.id, a.num, false);
+      if (c) quien[c] = '#' + a.num + (a.nombre ? ' ' + adPrimerNombre(a.nombre) : '');
+    });
+    let vistos = [];
+    try { vistos = JSON.parse(localStorage.getItem(BUZON_VISTO_KEY)) || []; } catch (_) {}
+    const vSet = new Set(vistos);
+    cont.innerHTML = rows.map(m => {
+      const id = m.codigo + '|' + m.creado_en;
+      const nuevo = !vSet.has(id);
+      return `<div class="ad-gasto-row" style="align-items:flex-start${nuevo ? '' : ';opacity:.6'}">
+        <span style="flex:1">${nuevo ? '🔵 ' : ''}<strong>${adEsc(quien[m.codigo] || m.codigo)}</strong>
+          <small>· ${adFechaBonita(String(m.creado_en).slice(0, 10))}</small><br>
+          <small>${adEsc(m.texto)}</small></span>
+      </div>`;
+    }).join('');
+    /* lo mostrado queda marcado como visto (el 🔵 sale solo una vez) */
+    try {
+      const todos = Array.from(new Set(vistos.concat(rows.map(m => m.codigo + '|' + m.creado_en))));
+      localStorage.setItem(BUZON_VISTO_KEY, JSON.stringify(todos.slice(-400)));
+    } catch (_) {}
+  } catch (_) {
+    cont.innerHTML = hint('⚠️ No se pudo revisar el buzón (¿ya corriste SUPABASE-FASE3.sql?). Toca «🔄 Revisar buzón» para reintentar.');
+  }
+}
+
+/* «Visto por N de M familias»: cuántas familias abrieron cada aviso */
+async function avVistosCargar(d, g) {
+  const bases = (g.avisos || []).filter(avVigente).map(a => 'AVI-' + a.id);
+  if (!bases.length || navigator.onLine === false) return;
+  try {
+    const { url, key } = _avSbConexion();
+    const r = await fetch(url + '/rest/v1/rpc/metas_avisos_vistos', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_bases: bases }),
+    });
+    if (!r.ok) return;
+    const rows = await r.json();
+    const total = adClavesDelGrupo(d).length;
+    (Array.isArray(rows) ? rows : []).forEach(v => {
+      const el = document.querySelector('[data-vistos="' + v.base + '"]');
+      if (el) el.textContent = ' · 👁 visto por ' + v.n + ' de ' + total + ' familias';
+    });
+  } catch (_) {}
 }
 
 /* ══════════════ ☁️ NUBE DEL CHATBOT (Supabase) ══════════════

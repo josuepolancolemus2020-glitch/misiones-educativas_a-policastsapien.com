@@ -106,6 +106,14 @@
       scrollbar-width: none;
     }
     #chips::-webkit-scrollbar { display: none; }
+    /* 🔊 escuchar el mensaje (accesibilidad) */
+    .bub-oir {
+      background: none; border: none; cursor: pointer;
+      font-size: 15px; padding: 2px 4px; opacity: .55; vertical-align: middle;
+    }
+    .bub-oir:active { opacity: 1; }
+    /* ✂️ modo de respuestas cortas: se ocultan pistas y sellos */
+    body.corto .bub small { display: none; }
     .chip {
       flex: 0 0 auto; white-space: nowrap;
       background: var(--blanco); color: var(--verde-osc);
@@ -299,7 +307,10 @@ function botSay(html, chips) {
       if (_typingEl) { _typingEl.remove(); _typingEl = null; }
       const div = document.createElement('div');
       div.className = 'msg bot';
-      div.innerHTML = '<div class="bub">' + html + '</div>';
+      /* 🔊 leer en voz alta: gratis y local (speechSynthesis del navegador) */
+      const oir = (typeof window !== 'undefined' && window.speechSynthesis)
+        ? ' <button class="bub-oir" onclick="leerBurbuja(this)" title="Escuchar" aria-label="Escuchar este mensaje">🔊</button>' : '';
+      div.innerHTML = '<div class="bub">' + html + oir + '</div>';
       $chat.appendChild(div);
       if (chips) pintarChips(chips);
       $chat.scrollTop = $chat.scrollHeight;
@@ -374,6 +385,15 @@ function selloDatos() {
   return sello.concat(avisoCache());
 }
 
+function sbCfg() {
+  let url = SB_URL_DEF, key = SB_KEY_DEF;
+  try {
+    url = localStorage.getItem('METAS_SB_URL') || url;
+    key = localStorage.getItem('METAS_SB_KEY') || key;
+  } catch (_) {}
+  return { url, key };
+}
+
 /* ── consulta a la nube (plan de acción + registros administrativos) ── */
 function _desdeCache(codigo) {
   const c = cacheLoad(codigo);
@@ -391,11 +411,7 @@ async function consultar(codigo) {
   ROWS = null; ROWS_AD = null; ROWS_AV = null; ROWS_CACHE = false; ROWS_FECHA = null;
   if (navigator.onLine === false) return _desdeCache(codigo) ? 'cache' : 'offline';
   try {
-    let url = SB_URL_DEF, key = SB_KEY_DEF;
-    try {
-      url = localStorage.getItem('METAS_SB_URL') || url;
-      key = localStorage.getItem('METAS_SB_KEY') || key;
-    } catch (_) {}
+    const { url, key } = sbCfg();
     /* Si el servidor falla (r.ok false) NO se disfraza de «sin datos»:
        así el bot no le echa la culpa a la clave del padre. */
     const pide = fn => fetch(url + '/rest/v1/rpc/' + fn, {
@@ -802,6 +818,7 @@ async function respAvisos() {
     avs.slice(0, 8).map(avisoCardHTML).join('') +
     (avs.length > 8 ? '<br><small>(mostrando los 8 más importantes)</small>' : '') +
     selloDatos(), chipsMenu());
+  avMarcarVistos(avs.slice(0, 8));   /* el maestro ve «visto por N familias» */
 }
 async function respMateriales() {
   if (!await conDatos()) return;
@@ -834,6 +851,76 @@ function faqMatch(t) {
   });
   return mejor;
 }
+/* Marca (sin esperar respuesta) qué avisos vio esta familia: el maestro
+   ve «visto por N familias» en su pestaña Comunicados */
+function avMarcarVistos(avs) {
+  const codigo = claveGuardada();
+  if (!codigo || ROWS_CACHE || navigator.onLine === false) return;
+  const { url, key } = sbCfg();
+  (avs || []).forEach(a => {
+    if (!a.evento_id) return;
+    try {
+      fetch(url + '/rest/v1/rpc/metas_aviso_visto', {
+        method: 'POST',
+        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_codigo: codigo, p_evento_id: a.evento_id }),
+      }).catch(() => {});
+    } catch (_) {}
+  });
+}
+
+/* ── buzón padre → maestro (excusas y recados, con tope diario) ── */
+let _buzonPendiente = null;    /* texto listo para enviar con un toque */
+let _buzonEsperando = false;   /* el siguiente mensaje del padre ES el recado */
+async function buzonEnviar(texto) {
+  const codigo = claveGuardada();
+  const limpio = String(texto || '').trim().slice(0, 300);
+  if (!codigo) {
+    await botSay('Primero necesito la <strong>clave de la familia</strong> 🔑 para saber a qué maestro dejarle el recado.', ['❓ ¿Qué es la clave?']);
+    return;
+  }
+  if (!limpio || limpio.length < 3) {
+    await botSay('El mensaje quedó vacío 😅. Escríbalo de nuevo, por favor.', chipsMenu());
+    return;
+  }
+  if (navigator.onLine === false) {
+    await botSay('📴 Ahorita no hay internet, así que no puedo entregar el recado. Inténtelo cuando tenga conexión. 🙏', chipsMenu());
+    return;
+  }
+  const { url, key } = sbCfg();
+  let v = 'error';
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_mensaje_padre', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: codigo, p_texto: limpio }),
+    });
+    if (r.ok) v = await r.json();
+  } catch (_) {}
+  _buzonPendiente = null;
+  if (v === 'ok') {
+    await botSay('📨 <strong>Anotado.</strong> El maestro verá su mensaje en la bandeja de su aula:<br>' +
+      '<em>«' + esc(limpio) + '»</em><br><small>Si necesita respuesta, el maestro puede contestarle con un aviso.</small>', chipsMenu());
+  } else if (v === 'tope') {
+    await botSay('✋ Ya se enviaron <strong>5 mensajes hoy</strong> con esta clave (es el máximo diario). ' +
+      'Mañana puede enviar más; si es urgente, busque al maestro en la escuela.', chipsMenu());
+  } else {
+    await botSay('⚠️ No pude entregar el recado en este momento. Inténtelo de nuevo en unos minutos.', chipsMenu());
+  }
+}
+
+/* ── accesibilidad: leer en voz alta y modo corto ── */
+function leerBurbuja(btn) {
+  try {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const texto = (btn.parentNode.textContent || '').replace(/🔊/g, ' ').trim();
+    const u = new SpeechSynthesisUtterance(texto);
+    u.lang = 'es-MX'; u.rate = 0.95;
+    window.speechSynthesis.speak(u);
+  } catch (_) {}
+}
+
 /* Responde con la ficha del aula si puede; devuelve true si ya contestó */
 async function respFicha(t) {
   if (!claveGuardada()) return false;
@@ -961,6 +1048,16 @@ function guardarNoEntendida(txt) {
 }
 
 async function manejar(txtOriginal) {
+  /* ¿estamos esperando el texto de un recado para el maestro? */
+  if (_buzonEsperando) {
+    _buzonEsperando = false;
+    if (/cancelar|🚫|ya no|mejor no/i.test(txtOriginal)) {
+      await botSay('De acuerdo 👍 No se envió nada.', chipsMenu());
+      return;
+    }
+    await buzonEnviar(txtOriginal);
+    return;
+  }
   const clave = pareceClave(txtOriginal);
   if (clave) { await usarClave(clave); return; }
   /* casi-clave: trae 0, 1, I, L u O — caracteres que nunca usamos */
@@ -980,6 +1077,19 @@ async function manejar(txtOriginal) {
   /* respuesta con número del menú (1-9) */
   if (/^[1-9]$/.test(t)) { await MENU_NUM[+t - 1](t); return; }
 
+  if (/respuestas cortas|modo corto|mas corto|muy largo/.test(t)) {
+    const c = cfgLoad(); c.corto = 1; cfgSave(c);
+    try { document.body.classList.add('corto'); } catch (_) {}
+    await botSay('✂️ Listo: desde ahora las respuestas van <strong>más cortas</strong> (sin letra pequeña). ' +
+      'Escriba «respuestas completas» para volver.', chipsMenu());
+    return;
+  }
+  if (/respuestas completas|modo completo|respuestas largas/.test(t)) {
+    const c = cfgLoad(); delete c.corto; cfgSave(c);
+    try { document.body.classList.remove('corto'); } catch (_) {}
+    await botSay('📄 Listo: respuestas completas de nuevo.', chipsMenu());
+    return;
+  }
   if (/instalar|pantalla de inicio|dejar como app/.test(t)) {
     if (_pwaPrompt) {
       const p = _pwaPrompt; _pwaPrompt = null;
@@ -989,6 +1099,18 @@ async function manejar(txtOriginal) {
       await botSay('📲 En el menú del navegador (⋮) toque «<strong>Agregar a pantalla de inicio</strong>». ' +
         'Si ya lo instaló, ¡no necesita nada más! 🤗', chipsMenu());
     }
+    return;
+  }
+  /* buzón: enviar lo pendiente con un toque, o componer un recado */
+  if (/dejarsela al maestro|dejarselo al maestro|si dejar|anotar la excusa/.test(t)) {
+    if (_buzonPendiente) { await buzonEnviar(_buzonPendiente); return; }
+    _buzonEsperando = true;
+    await botSay('Claro 📨. Escriba el mensaje para el maestro (máximo 300 letras):', ['🚫 Cancelar']);
+    return;
+  }
+  if (/dile al maestro|digale al maestro|mensaje (para|al) maestr|dejar(le)? (un )?(mensaje|recado)|recado|avisarle al maestro|avisale al maestro/.test(t)) {
+    _buzonEsperando = true;
+    await botSay('Claro 📨. Escriba el mensaje que quiere dejarle al maestro (máximo 300 letras) y yo se lo anoto en su bandeja:', ['🚫 Cancelar']);
     return;
   }
   if (/cambiar de (hijo|hija|nino|nina)|otro hijo|otra hija|mis hijos|el otro nino|la otra nina/.test(t)) { await respCambiarHijo(); return; }
@@ -1014,6 +1136,14 @@ async function manejar(txtOriginal) {
     guardarNoEntendida(txtOriginal);
     await botSay('Esa pregunta se responde con la <strong>ficha del aula</strong> que llena el maestro, ' +
       'y la de su grupo todavía no tiene esa respuesta. Puedo ayudarle con esto: 👇', chipsMenu());
+    return;
+  }
+  /* REPORTE de ausencia (el padre avisa) va ANTES que la CONSULTA de
+     faltas: «falto ayer xq estaba enfermo» no es una pregunta */
+  if (/(esta|anda|amanecio) enferm|no (va a|pudo|puede|podra) (ir|venir|llegar|asistir)|no fue (hoy|ayer|a clases?)|falto (hoy|ayer)|va a faltar|no asistira|no ira (hoy|manana)|tiene (cita|consulta) (medica|con el doctor)/.test(t)) {
+    _buzonPendiente = txtOriginal;
+    await botSay('Entiendo 🙏 Que se recupere pronto. ¿Le dejo <strong>anotada la excusa</strong> al maestro para que la vea en su bandeja?',
+      ['📨 Sí, dejársela al maestro', '🚫 No, gracias']);
     return;
   }
   if (/falto|falta|asisten|ausen|inasist|llego a clase/.test(t)) { await respAsistencia(); return; }
@@ -1057,20 +1187,24 @@ async function manejar(txtOriginal) {
       return;
     }
   }
-  /* no entendido: se guarda la pregunta y se ofrece el menú numerado */
+  /* no entendido: se guarda la pregunta, se ofrece el menú numerado y
+     el botón de dejársela anotada al maestro (nada se pierde) */
   guardarNoEntendida(txtOriginal);
   if (!claveGuardada()) {
     await botSay('No entendí 😅. Si ya tiene la <strong>clave de la familia</strong> (ej. 15-K7QM), escríbala tal cual. ' +
       'Si no la tiene, toque el botón de abajo.', ['❓ ¿Qué es la clave?']);
   } else {
+    _buzonPendiente = txtOriginal;
     const pista = PISTAS.find(p => p[0].test(t));
     if (pista) {
       await botSay('No entendí bien 😅, pero creo que pregunta por <strong>' +
         esc(pista[1].replace(/^\S+\s/, '')) + '</strong> — toque el primer botón si es así. ' +
         'También puede escribir el número:<br>' + MENU_TXT,
-        [pista[1]].concat(chipsMenu().filter(c => c !== pista[1])));
+        [pista[1], '📨 Dejársela al maestro'].concat(chipsMenu().filter(c => c !== pista[1])));
     } else {
-      await botSay('No entendí esa pregunta 😅. ' + MENU_TXT, chipsMenu());
+      await botSay('No entendí esa pregunta 😅. ' + MENU_TXT +
+        '<br>O toque «📨 Dejársela al maestro» y él la verá en su bandeja.',
+        ['📨 Dejársela al maestro'].concat(chipsMenu()));
     }
   }
 }
@@ -1140,6 +1274,7 @@ $inp.addEventListener('keydown', e => { if (e.key === 'Enter') enviar(); });
 
 /* ── arranque ── */
 (async function inicio() {
+  try { if (cfgLoad().corto) document.body.classList.add('corto'); } catch (_) {}
   const codigo = claveGuardada();
   await botSay('¡Hola! 👋 Soy el <strong>asistente de M.E.T.A.S</strong> para madres y padres. ' +
     'Le cuento cómo va su hijo/a en la escuela: notas, mensajes del maestro y consejos para apoyar en casa.');
