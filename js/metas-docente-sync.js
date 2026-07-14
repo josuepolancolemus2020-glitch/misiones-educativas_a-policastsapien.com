@@ -18,7 +18,10 @@
    • Botón «🔄 Sincronizar ahora»: dispara una sync normal a pedido
      (tranquilidad del usuario; no fuerza nada).
    • «🗑️ Empezar de nuevo» (dsReset): único escape; borra el aula aquí
-     y sube el vacío a la nube para limpiar todos los equipos.
+     y ARCHIVA el estado en una papelera en la nube (no lo destruye) para
+     limpiar todos los equipos. «↩️ Recuperar lo que borré» (dsRecuperar)
+     lo restaura desde la nube — incluso en otro equipo o tras reinstalar
+     (SUPABASE-DOCENTE-PAPELERA.sql). Copia local además, por si no hay red.
    • Offline-first: sin internet no pasa nada; reintenta al volver.
 
    Solo sincroniza las claves del maestro (abajo). NO toca los
@@ -46,7 +49,8 @@
   ];
 
   var META_KEY = 'METAS_DOCSYNC_V1';   // { [k]: {v:version, h:hash, sv:sentVersion} }
-  var RESPALDO_KEY = 'METAS_AULA_RESPALDO_V1';  // copia de seguridad antes de «Empezar de nuevo»
+  var RESPALDO_KEY = 'METAS_AULA_RESPALDO_V1';  // copia de seguridad local antes de «Empezar de nuevo»
+  var RESET_PEND_KEY = 'METAS_AULA_RESET_PEND'; // '1' = falta archivar+vaciar la nube (borrado sin red)
   var SB_URL_DEF = 'https://uljjgrikyigdrkbikcxo.supabase.co';
   var SB_KEY_DEF = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
 
@@ -55,6 +59,7 @@
   var _pushT = null;       // debounce de subida
   var _lastAuto = 0;       // última sync automática (para no saturar a escala)
   var AUTO_MIN = 15000;    // no más de una sync automática cada 15 s por equipo
+  var _papeleraFecha = null; // fecha de la papelera en la nube (para mostrar «Recuperar» aun sin copia local)
 
   /* ── util ── */
   function ls(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }
@@ -212,12 +217,27 @@
     } catch (_) {}
   }
 
+  /* Si un «Empezar de nuevo» se hizo sin red, completa en la nube el
+     archivado+vaciado al reconectar (nunca vacía sin archivar primero). */
+  function flushPendingReset() {
+    if (ls(RESET_PEND_KEY) !== '1' || !creds() || navigator.onLine === false) return Promise.resolve();
+    var c = creds();
+    return rpc('metas_docente_reset', { p_codigo: c.codigo, p_clave: c.clave }).then(function (res) {
+      if (res && res.ok) {
+        try { localStorage.removeItem(RESET_PEND_KEY); } catch (_) {}
+        if (res.fecha) _papeleraFecha = res.fecha;
+      }
+    });
+  }
+
   /* ── Sincronización normal: baja lo nuevo y sube lo cambiado ── */
   function sync() {
     if (_busy || !creds()) return Promise.resolve(false);
     _lastAuto = ahora();
     _busy = true;
-    return pull(false).then(function (res) { return push(false, res.cloudKeys); })
+    return flushPendingReset()
+      .then(function () { return pull(false); })
+      .then(function (res) { return push(false, res.cloudKeys); })
       .then(function (r) { _busy = false; estado(); return r; })
       .catch(function () { _busy = false; return false; });
   }
@@ -277,38 +297,58 @@
      (force) para que sus demás equipos también queden limpios.
      RED DE SEGURIDAD: antes de borrar guarda una copia en ESTE equipo, y
      luego aparece «↩️ Recuperar lo que borré» por si fue sin querer. */
+  /* Llama una RPC de Supabase; resuelve el JSON o null si falla/sin red. */
+  function rpc(nombre, cuerpo) {
+    if (navigator.onLine === false) return Promise.resolve(null);
+    var cfg = sbCfg();
+    return fetch(cfg.url + '/rest/v1/rpc/' + nombre, {
+      method: 'POST',
+      headers: { apikey: cfg.key, Authorization: 'Bearer ' + cfg.key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(cuerpo)
+    }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+  }
+
   function reset() {
     if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
     var ask = (typeof metasConfirm === 'function')
-      ? metasConfirm('Vas a **borrar todos los datos de tu aula** (lista de alumnos, claves de familia, Plan de Acción, economía, notas…) para empezar de cero. También se borran de la nube y de tus otros equipos.\n\nSi fue sin querer, en este mismo equipo podrás usar **«↩️ Recuperar lo que borré»**.',
+      ? metasConfirm('Vas a **borrar todos los datos de tu aula** (lista de alumnos, claves de familia, Plan de Acción, economía, notas…) para empezar de cero. También se borran de la nube y de tus otros equipos.\n\nSi fue sin querer, podrás usar **«↩️ Recuperar lo que borré»** — incluso desde otro equipo.',
           { icono: '🗑️', titulo: 'Empezar de nuevo', okTxt: 'Sí, borrar todo' })
       : Promise.resolve(true);
     Promise.resolve(ask).then(function (ok) {
       if (!ok) return;
-      // 1) copia de seguridad en ESTE equipo (antes de tocar nada)
+      var c = creds();
+      // 1) copia de seguridad en ESTE equipo (respaldo inmediato aunque no haya red)
       var snap = {};
       DS_KEYS.forEach(function (k) { var v = ls(k); if (v != null) snap[k] = v; });
       try {
         localStorage.setItem(RESPALDO_KEY, JSON.stringify({ fecha: new Date().toISOString(), datos: snap }));
       } catch (_) {}
-      // 2) borra local
+      // 2) borra local. Marca sv=v (NO pendiente): la nube la limpia el RPC
+      //    de reset (que archiva primero), no el vigía de subida. Así nunca
+      //    se vacía la nube sin haber archivado antes.
       DS_KEYS.forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} });
-      // 3) reinicia el mapa de versiones con marca nueva (para pisar la nube)
       var m = {}, t = ahora();
-      DS_KEYS.forEach(function (k) { m[k] = { v: t, h: hash(null), sv: 0 }; });
+      DS_KEYS.forEach(function (k) { m[k] = { v: t, h: hash(null), sv: t }; });
       metaSave(m);
+      try { localStorage.setItem(RESET_PEND_KEY, '1'); } catch (_) {}   // falta archivar+vaciar la nube
+      _papeleraFecha = new Date().toISOString();   // ya hay algo que recuperar
       repaint();
-      // 4) sube el vacío con force → los demás equipos se limpian al bajar
-      push(true).then(function (r) {
-        if (typeof toast === 'function') {
-          toast(r ? '🗑️ Aula vacía. Si fue por error, usa «Recuperar lo que borré».'
-                  : '🗑️ Borrado aquí; la nube se limpiará al reconectar.');
+      // 3) archiva + vacía en la nube (papelera server-side → recuperable desde cualquier equipo)
+      rpc('metas_docente_reset', { p_codigo: c.codigo, p_clave: c.clave }).then(function (res) {
+        if (res && res.ok) {
+          try { localStorage.removeItem(RESET_PEND_KEY); } catch (_) {}
+          if (res.fecha) _papeleraFecha = res.fecha;
+          if (typeof toast === 'function') toast('🗑️ Aula vacía. Si fue por error, usa «Recuperar lo que borré».');
+        } else {
+          // sin red: queda pendiente; la copia local cubre el deshacer aquí y
+          //          el archivado en la nube se hará al reconectar (flushPendingReset)
+          if (typeof toast === 'function') toast('🗑️ Borrado. Se archivará y limpiará la nube al reconectar.');
         }
       });
     });
   }
 
-  /* Lee la copia de seguridad si existe y tiene contenido. */
+  /* Lee la copia de seguridad LOCAL si existe y tiene contenido. */
   function respaldo() {
     try {
       var o = JSON.parse(ls(RESPALDO_KEY));
@@ -317,16 +357,43 @@
     return null;
   }
 
+  /* Aplica filas {k,valor,version} al localStorage (usado al recuperar de la nube). */
+  function aplicarRows(rows) {
+    if (!Array.isArray(rows)) return false;
+    var m = metaLoad(), cambio = false;
+    rows.forEach(function (row) {
+      if (!row || DS_KEYS.indexOf(row.k) === -1) return;
+      if (!row.valor || row.valor.raw == null) return;
+      var raw = row.valor.raw;
+      _applying = true;
+      try { localStorage.setItem(row.k, raw); } catch (_) {}
+      _applying = false;
+      var rem = Number(row.version) || ahora();
+      m[row.k] = { v: rem, h: hash(raw), sv: rem };    // sv=v → ya está en la nube, no re-subir
+      cambio = true;
+    });
+    metaSave(m);
+    if (cambio) repaint();
+    return cambio;
+  }
+
+  function limpiarRespaldos() {
+    try { localStorage.removeItem(RESPALDO_KEY); } catch (_) {}
+    _papeleraFecha = null;
+  }
+
   /* ── Recuperar lo que borré ──
-     Restaura la última copia hecha por reset() en este equipo y la vuelve
-     a subir a la nube (force) para que todos los equipos la recuperen. */
+     Prioriza la NUBE (sobrevive a reinstalar / otro equipo). Si la nube no
+     tiene nada, usa la copia local de este equipo. */
   function recuperar() {
     var b = respaldo();
-    if (!b) { if (typeof toast === 'function') toast('No hay nada que recuperar en este equipo'); return; }
+    var c = creds();
+    if (!b && !c) { if (typeof toast === 'function') toast('No hay nada que recuperar'); return; }
+    var fuente = (b && b.fecha) || _papeleraFecha;
     var cuando = '';
     try {
-      var f = new Date(b.fecha);
-      if (!isNaN(f)) cuando = ' (borrados el ' + f.toLocaleDateString() + ' a las ' +
+      var f = new Date(fuente);
+      if (fuente && !isNaN(f)) cuando = ' (borrados el ' + f.toLocaleDateString() + ' a las ' +
         f.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ')';
     } catch (_) {}
     var ask = (typeof metasConfirm === 'function')
@@ -335,21 +402,50 @@
       : Promise.resolve(true);
     Promise.resolve(ask).then(function (ok) {
       if (!ok) return;
-      var m = metaLoad(), t = ahora();
-      Object.keys(b.datos).forEach(function (k) {
-        if (DS_KEYS.indexOf(k) === -1) return;
-        try { localStorage.setItem(k, b.datos[k]); } catch (_) {}
-        m[k] = { v: t, h: hash(b.datos[k]), sv: 0 };   // marca para re-subir
-      });
-      metaSave(m);
-      try { localStorage.removeItem(RESPALDO_KEY); } catch (_) {}
-      repaint();
-      push(true).then(function (r) {
-        if (typeof toast === 'function') {
-          toast(r ? '↩️ Datos recuperados en todos tus equipos.'
-                  : '↩️ Recuperado aquí; se subirá al reconectar.');
+      // 1) intenta la nube primero
+      var pNube = c ? rpc('metas_docente_reset_deshacer', { p_codigo: c.codigo, p_clave: c.clave })
+                    : Promise.resolve(null);
+      pNube.then(function (rows) {
+        if (Array.isArray(rows) && rows.length && aplicarRows(rows)) {
+          limpiarRespaldos();
+          if (typeof toast === 'function') toast('↩️ Datos recuperados en todos tus equipos.');
+          return;
+        }
+        // 2) la nube no tenía nada → usa la copia local
+        if (b) {
+          var m = metaLoad(), t = ahora();
+          Object.keys(b.datos).forEach(function (k) {
+            if (DS_KEYS.indexOf(k) === -1) return;
+            try { localStorage.setItem(k, b.datos[k]); } catch (_) {}
+            m[k] = { v: t, h: hash(b.datos[k]), sv: 0 };   // marca para re-subir
+          });
+          metaSave(m);
+          limpiarRespaldos();
+          repaint();
+          push(true).then(function (r) {
+            if (typeof toast === 'function') {
+              toast(r ? '↩️ Datos recuperados en todos tus equipos.'
+                      : '↩️ Recuperado aquí; se subirá al reconectar.');
+            }
+          });
+        } else if (typeof toast === 'function') {
+          toast('No se pudo recuperar ahora, reintenta con internet');
         }
       });
+    });
+  }
+
+  /* Revisa si la nube tiene papelera; si cambia el estado, repinta para
+     mostrar/ocultar «Recuperar» (así aparece aun en un equipo sin copia). */
+  function checkPapelera() {
+    var c = creds();
+    if (!c) return Promise.resolve();
+    return rpc('metas_docente_papelera', { p_codigo: c.codigo, p_clave: c.clave }).then(function (res) {
+      var antes = !!_papeleraFecha;
+      // no pisar una copia local recién hecha con un "no hay" de la nube
+      if (res && res.hay) _papeleraFecha = res.fecha || true;
+      else if (!respaldo()) _papeleraFecha = null;
+      if (antes !== !!_papeleraFecha) repaint();
     });
   }
 
@@ -357,6 +453,7 @@
      Sincroniza en silencio: la nube manda, el maestro no decide nada. */
   function onProfile() {
     if (!creds()) return;
+    checkPapelera();
     sync();
   }
 
@@ -380,5 +477,5 @@
   window.dsSyncNow = syncNow;
   window.dsReset = reset;
   window.dsRecuperar = recuperar;
-  window.dsTieneRespaldo = function () { var b = respaldo(); return b ? (b.fecha || true) : null; };
+  window.dsTieneRespaldo = function () { var b = respaldo(); return (b && (b.fecha || true)) || _papeleraFecha; };
 })();
