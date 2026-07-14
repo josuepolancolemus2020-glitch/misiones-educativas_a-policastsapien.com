@@ -947,10 +947,11 @@ ${d.lista.filter(a => resumen[a.num]).map(a => `
 function adRenderSace(body, d) {
   if (!d.lista.length) { adSinLista(body, 'la boleta'); return; }
   const parcial = body.dataset.parcial || 'I';
-  const campo = body.dataset.campo || d.materias[0] || AD_PERSONALIDAD[0];
-  const esLetra = AD_PERSONALIDAD.indexOf(campo) !== -1;
-  const esInasis = campo === 'Inasistencias';
-  const notas = ((d.notas[parcial] || {})[campo]) || {};
+  const vista = body.dataset.vista || 'aprov';   // aprov | pers | inasis
+  const esLetra = vista === 'pers';
+  const esInasis = vista === 'inasis';
+  const cols = esLetra ? AD_PERSONALIDAD.slice() : esInasis ? ['Inasistencias'] : d.materias.slice();
+  const valOf = (c, num) => { const v = (((d.notas[parcial] || {})[c]) || {})[num]; return (v == null || v === '') ? '' : v; };
 
   body.innerHTML = `
     <div class="pa-card">
@@ -995,68 +996,68 @@ function adRenderSace(body, d) {
         </div>
       </details>
 
-      <p class="pa-optional-hint">Elige <strong>parcial</strong> y <strong>campo</strong>, y llena la
-        columna: al escribir, el cursor <strong>baja solo</strong> al siguiente alumno. Las notas van a
-        <strong>SACE</strong> y a la <strong>boleta</strong>.</p>
+      <p class="pa-optional-hint">Elige el <strong>parcial</strong> y llena cada alumno <strong>a lo ancho</strong>,
+        en el orden de la boleta: al escribir una nota, el cursor <strong>salta solo</strong> a la siguiente
+        materia y, al terminar la fila, baja al siguiente alumno. Las notas van a <strong>SACE</strong> y a la <strong>boleta</strong>.</p>
       <div class="pa-row-2">
         <div class="pa-field"><label>Parcial</label>
           <select id="ad-sace-parcial" class="pa-inp-field">
             ${['I', 'II', 'III', 'IV'].map(p => `<option value="${p}" ${p === parcial ? 'selected' : ''}>Parcial ${p}</option>`).join('')}
           </select></div>
-        <div class="pa-field"><label>Campo a llenar</label>
-          <select id="ad-sace-campo" class="pa-inp-field">
-            <optgroup label="Personalidad (en letra)">
-              ${AD_PERSONALIDAD.map(c => `<option ${c === campo ? 'selected' : ''}>${adEsc(c)}</option>`).join('')}
-            </optgroup>
-            <optgroup label="Aprovechamiento (1-100)">
-              ${d.materias.map(c => `<option ${c === campo ? 'selected' : ''}>${adEsc(c)}</option>`).join('')}
-            </optgroup>
-            <optgroup label="Otros">
-              <option ${campo === 'Inasistencias' ? 'selected' : ''}>Inasistencias</option>
-            </optgroup>
-            <option value="__otra__">➕ Otra materia…</option>
+        <div class="pa-field"><label>Sección a llenar</label>
+          <select id="ad-sace-vista" class="pa-inp-field">
+            <option value="aprov" ${vista === 'aprov' ? 'selected' : ''}>📚 Aprovechamiento (todas las materias)</option>
+            <option value="pers" ${vista === 'pers' ? 'selected' : ''}>🙂 Personalidad (en letra)</option>
+            <option value="inasis" ${vista === 'inasis' ? 'selected' : ''}>📅 Inasistencias</option>
           </select></div>
       </div>
       <p class="pa-optional-hint" style="margin-top:2px">
         ${esLetra
-          ? 'Escribe la <strong>letra</strong> de conducta (ej. E, MB, B, R o la escala de tu centro). Baja sola tras escribir.'
+          ? 'Escribe la <strong>letra</strong> de conducta (ej. E, MB, B, R…). Salta sola tras escribir.'
           : esInasis
-            ? 'Escribe el <strong>número de inasistencias</strong> del parcial. Enter o «Siguiente» para bajar.'
-            : 'Escribe la <strong>nota (1-100)</strong>. Las de 2+ cifras bajan solas; con Enter también.'}</p>
+            ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar.'
+            : 'Escribe la <strong>nota (1-100)</strong>. Las de 2+ cifras saltan solas; con Enter también. Desliza la tabla → para ver todas las materias.'}</p>
 
-      <div class="ad-notas-grid">
-        ${d.lista.map((a, i) => `
-          <div class="ad-nota-row">
-            <span class="ad-al-num">#${a.num}</span>
-            <span class="ad-nota-nombre">${adEsc(a.nombre) || '—'}</span>
-            <input class="pa-inp-field ad-nota-inp" data-num="${a.num}" data-idx="${i}"
-              type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
-              ${esLetra ? 'maxlength="3" style="text-transform:uppercase;"' : 'maxlength="3"'}
-              value="${notas[a.num] != null ? adEsc(String(notas[a.num])) : ''}" placeholder="—">
-          </div>`).join('')}
+      <div class="ad-mx-wrap">
+        <table class="ad-mx">
+          <thead><tr>
+            <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
+            ${cols.map((c, ci) => `<th><div class="ad-mx-h">${adEsc(c)}</div>
+              <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}» para SACE">📋</button></th>`).join('')}
+          </tr></thead>
+          <tbody>
+            ${d.lista.map((a, ri) => `<tr>
+              <td class="ad-mx-sticky" title="${adEsc(a.nombre)}"><b>#${a.num}</b> <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
+              ${cols.map((c, ci) => `<td><input class="ad-mx-inp" data-idx="${ri * cols.length + ci}"
+                data-num="${a.num}" data-campo="${adEsc(c)}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
+                maxlength="3" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
+                value="${valOf(c, a.num) !== '' ? adEsc(String(valOf(c, a.num))) : ''}" placeholder="·"></td>`).join('')}
+            </tr>`).join('')}
+          </tbody>
+        </table>
       </div>
-      <div class="ad-btn-row">
+      ${!esLetra && !esInasis ? '<button class="pa-generate-btn ad-btn-sec ad-mx-addmat" id="ad-sace-addmat">➕ Agregar materia</button>' : ''}
+      <div class="ad-btn-row" style="margin-top:8px">
         <button class="pa-generate-btn" id="ad-sace-boletas">🧾 Imprimir boletas (todas)</button>
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-copiar">📋 Copiar columna para SACE</button>
-        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">⬇ Copiar CSV completo</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">⬇ Copiar CSV (todas las materias)</button>
       </div>
       <p class="pa-optional-hint" id="ad-sace-estado" style="margin-top:8px"></p>
     </div>`;
 
   const setSel = (k, v) => { body.dataset[k] = v; adRenderSace(body, adLoad()); };
   document.getElementById('ad-sace-parcial').addEventListener('change', e => setSel('parcial', e.target.value));
-  document.getElementById('ad-sace-campo').addEventListener('change', async e => {
-    if (e.target.value !== '__otra__') { setSel('campo', e.target.value); return; }
+  document.getElementById('ad-sace-vista').addEventListener('change', e => setSel('vista', e.target.value));
+  document.getElementById('ad-sace-addmat')?.addEventListener('click', async () => {
     const nueva = await metasPrompt('Nombre de la materia nueva:', {
       icono: '📚', titulo: 'Materias', okTxt: 'Agregar',
       valida: v => String(v).trim().length >= 3 ? '' : 'Escribe el nombre completo.',
     });
-    if (nueva === null) { adRenderSace(body, adLoad()); return; }
+    if (nueva === null) return;
     const dd = adLoad();
     const nom = String(nueva).trim();
     if (!dd.materias.includes(nom)) dd.materias.push(nom);
     adSave(dd);
-    setSel('campo', nom);
+    adRenderSace(body, adLoad());
   });
 
   // Encabezado del centro: logo + nombre + datos oficiales del reverso
@@ -1081,11 +1082,20 @@ function adRenderSace(body, d) {
     const dd = adLoad(); dd.logo = ''; adSave(dd); adRenderSace(body, dd);
   });
 
-  // ── Entrada con AUTO-AVANCE ──
-  const inputs = [...body.querySelectorAll('.ad-nota-inp')];
-  const focar = i => { if (i >= 0 && i < inputs.length) { inputs[i].focus(); inputs[i].select(); } };
+  const estado = txt => { const e = document.getElementById('ad-sace-estado'); if (e) e.textContent = txt; };
+
+  // ── Entrada con AUTO-AVANCE (a lo ancho, en el orden de la boleta) ──
+  const inputs = [...body.querySelectorAll('.ad-mx-inp')];
+  const ncols = cols.length;
+  const focar = i => {
+    if (i >= 0 && i < inputs.length) {
+      inputs[i].focus(); inputs[i].select();
+      try { inputs[i].scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (_) {}
+    }
+  };
   const guardar = inp => {
     const dd = adLoad();
+    const campo = inp.dataset.campo;
     dd.notas[parcial] = dd.notas[parcial] || {};
     dd.notas[parcial][campo] = dd.notas[parcial][campo] || {};
     let raw = inp.value.trim();
@@ -1111,42 +1121,47 @@ function adRenderSace(body, d) {
     const idx = +inp.dataset.idx;
     inp.addEventListener('input', () => {
       guardar(inp);
-      const val = inp.value;
+      const v = inp.value;
       if (esLetra) {
         clearTimeout(_letraT);
         _letraT = setTimeout(() => { if (document.activeElement === inp) focar(idx + 1); }, 550);
       } else if (!esInasis) {
-        // nota 1-100: baja sola cuando ya no puede crecer (3 cifras o 2 cifras > 10)
-        if (val.length >= 3 || (val.length === 2 && Number(val) > 10)) focar(idx + 1);
+        // nota 1-100: salta cuando ya no puede crecer (3 cifras o 2 cifras > 10)
+        if (v.length >= 3 || (v.length === 2 && Number(v) > 10)) focar(idx + 1);
       }
     });
     inp.addEventListener('keydown', ev => {
-      if (ev.key === 'Enter' || ev.key === 'ArrowDown') { ev.preventDefault(); focar(idx + 1); }
-      else if (ev.key === 'ArrowUp') { ev.preventDefault(); focar(idx - 1); }
+      if (ev.key === 'Enter' || ev.key === 'ArrowRight') { ev.preventDefault(); focar(idx + 1); }
+      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); focar(idx - 1); }
+      else if (ev.key === 'ArrowDown') { ev.preventDefault(); focar(idx + ncols); }
+      else if (ev.key === 'ArrowUp') { ev.preventDefault(); focar(idx - ncols); }
     });
   });
 
-  const estado = txt => { const e = document.getElementById('ad-sace-estado'); if (e) e.textContent = txt; };
-
   document.getElementById('ad-sace-boletas').addEventListener('click', () => adPrintBoletas(adLoad()));
 
-  document.getElementById('ad-sace-copiar').addEventListener('click', () => {
+  // Copiar UNA columna (materia/rasgo) para SACE — botón 📋 en su cabecera
+  body.querySelectorAll('.ad-mx-copy').forEach(btn => btn.addEventListener('click', () => {
     const dd = adLoad();
-    const ns = ((dd.notas[parcial] || {})[campo]) || {};
+    const c = cols[+btn.dataset.col];
+    const ns = ((dd.notas[parcial] || {})[c]) || {};
     const col = dd.lista.map(a => ns[a.num] != null ? ns[a.num] : '').join('\n');
     adCopiar(col,
-      () => estado('✅ Columna de «' + campo + '» copiada (' + dd.lista.length + ' filas, orden de lista). Pégala en SACE.'),
+      () => estado('✅ Columna «' + c + '» copiada (' + dd.lista.length + ' filas, orden de lista). Pégala en SACE.'),
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
-  });
+  }));
 
   document.getElementById('ad-sace-csv').addEventListener('click', () => {
     const dd = adLoad();
-    const ns = ((dd.notas[parcial] || {})[campo]) || {};
-    const csv = 'numero_lista,alumno,campo,parcial,valor\n' + dd.lista.map(a =>
-      [a.num, '"' + String(a.nombre || '').replace(/"/g, '""') + '"', '"' + campo + '"', parcial,
-       ns[a.num] != null ? ns[a.num] : ''].join(',')).join('\n');
-    adCopiar(csv,
-      () => estado('✅ CSV copiado: pégalo en un archivo .csv o en una hoja de cálculo.'),
+    const cs = esLetra ? AD_PERSONALIDAD.slice() : esInasis ? ['Inasistencias'] : dd.materias.slice();
+    const cab = ['numero_lista', 'alumno'].concat(cs.map(c => '"' + c + '"')).join(',');
+    const filas = dd.lista.map(a => {
+      const base = [a.num, '"' + String(a.nombre || '').replace(/"/g, '""') + '"'];
+      const vals = cs.map(c => { const v = (((dd.notas[parcial] || {})[c]) || {})[a.num]; return v != null ? v : ''; });
+      return base.concat(vals).join(',');
+    });
+    adCopiar(cab + '\n' + filas.join('\n'),
+      () => estado('✅ CSV del Parcial ' + parcial + ' copiado (todas las columnas). Pégalo en una hoja de cálculo.'),
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
   });
 }
