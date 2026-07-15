@@ -249,6 +249,49 @@ grant execute on function public.metas_rol_listar(text,text) to anon, authentica
 
 
 -- ────────────────────────────────────────────────────────────
+-- 5-bis) RESUMEN DE ALTAS — SOLO el admin: cuántas cuentas se
+--    registraron por día (31 días), por mes (24 meses) y por año.
+--    El conteo lo hace el servidor sobre TODA la tabla (no depende
+--    del límite de la lista), así sirve aunque haya miles.
+-- ────────────────────────────────────────────────────────────
+create or replace function public.metas_registros_resumen(p_codigo text, p_clave text)
+returns jsonb
+language plpgsql security definer stable set search_path = public
+as $$
+declare
+  yo record;
+begin
+  if not public._metas_docente_ok(p_codigo, p_clave) then
+    return jsonb_build_object('ok', false, 'motivo', 'clave');
+  end if;
+  select * into yo from public.docentes t
+  where t.codigo = upper(trim(coalesce(p_codigo,'')));
+  if coalesce(yo.rol,'docente') <> 'admin' then
+    return jsonb_build_object('ok', false, 'motivo', 'rol');
+  end if;
+  return jsonb_build_object(
+    'ok', true,
+    'total', (select count(*) from public.docentes),
+    'por_dia', (
+      select coalesce(jsonb_agg(jsonb_build_object('f', f, 'n', n) order by f desc), '[]'::jsonb)
+      from (select to_char(d.creado_en, 'YYYY-MM-DD') f, count(*) n
+            from public.docentes d group by 1 order by 1 desc limit 31) t),
+    'por_mes', (
+      select coalesce(jsonb_agg(jsonb_build_object('f', f, 'n', n) order by f desc), '[]'::jsonb)
+      from (select to_char(d.creado_en, 'YYYY-MM') f, count(*) n
+            from public.docentes d group by 1 order by 1 desc limit 24) t),
+    'por_anio', (
+      select coalesce(jsonb_agg(jsonb_build_object('f', f, 'n', n) order by f desc), '[]'::jsonb)
+      from (select to_char(d.creado_en, 'YYYY') f, count(*) n
+            from public.docentes d group by 1 order by 1 desc limit 10) t)
+  );
+end
+$$;
+revoke all on function public.metas_registros_resumen(text,text) from public;
+grant execute on function public.metas_registros_resumen(text,text) to anon, authenticated;
+
+
+-- ────────────────────────────────────────────────────────────
 -- 6) CAMBIAR ROL — SOLO el admin. Reglas duras del servidor:
 --    • solo asigna 'docente' | 'director' | 'rector' (admin JAMÁS
 --      por RPC: únicamente con el UPDATE manual del final),

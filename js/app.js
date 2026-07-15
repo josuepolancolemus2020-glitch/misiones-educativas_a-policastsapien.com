@@ -1818,6 +1818,8 @@ function renderAjustes() {
         <input id="aj-buscar" class="pa-inp-field" maxlength="80" placeholder="🔎 Buscar por nombre, correo o escuela…"
                oninput="ajPintarLista()" style="margin-bottom:8px;">
         <button class="padre-wa-btn" onclick="ajCargarEquipo()">🔄 Cargar los registros</button>
+        <button class="aj-altas-btn" onclick="ajCargarResumen()">📈 Altas por día · mes · año</button>
+        <div id="aj-resumen"></div>
         <div id="aj-lista" class="aj-lista"></div>
       </div>
       <div class="setting-group teacher-panel-group">
@@ -1995,33 +1997,93 @@ function ajPintarLista() {
     cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">Sin registros que mostrar' + (q ? ' con esa búsqueda' : '') + '.</p>';
     return;
   }
+  // Filas CONTRAÍDAS por defecto (con miles de registros el scroll sería
+  // eterno): en la línea solo nombre + rol; el detalle se abre al tocar.
   cont.innerHTML = `
-    <p class="padre-hint" style="margin:10px 0 6px;">${filas.length} registro${filas.length === 1 ? '' : 's'}</p>
+    <p class="padre-hint" style="margin:10px 0 6px;">${filas.length} registro${filas.length === 1 ? '' : 's'} · toca un nombre para ver el detalle</p>
     ${filas.map(x => {
       const rx = AJ_ROLES[x.rol] ? x.rol : 'docente';
       const lugar = [x.escuela, [x.municipio, x.departamento].filter(Boolean).join(', ')].filter(Boolean).join(' · ');
       // Solo el admin puede cambiar roles y contraseñas, y NUNCA a otro admin
       const control = (esAdmin && rx !== 'admin')
-        ? `<select class="aj-rol-sel" data-correo="${_pEsc(x.correo || '')}" data-prev="${rx}"
-                   onchange="ajCambiarRol(this)">
-             <option value="docente"${rx === 'docente' ? ' selected' : ''}>🧑‍🏫 Docente</option>
-             <option value="director"${rx === 'director' ? ' selected' : ''}>🏫 Director/a</option>
-             <option value="rector"${rx === 'rector' ? ' selected' : ''}>🎓 Rector/a</option>
-           </select>
-           <button class="aj-reset-btn" data-correo="${_pEsc(x.correo || '')}" data-nombre="${_pEsc(x.nombre || '')}"
-                   data-telefono="${_pEsc(x.telefono || '')}" onclick="ajResetClave(this)">🔑 Nueva contraseña</button>`
-        : `<span class="aj-rol-badge aj-rol-${rx}">${AJ_ROLES[rx].ic} ${AJ_ROLES[rx].n}</span>`;
+        ? `<div class="aj-fila-rol">
+             <select class="aj-rol-sel" data-correo="${_pEsc(x.correo || '')}" data-prev="${rx}"
+                     onchange="ajCambiarRol(this)">
+               <option value="docente"${rx === 'docente' ? ' selected' : ''}>🧑‍🏫 Docente</option>
+               <option value="director"${rx === 'director' ? ' selected' : ''}>🏫 Director/a</option>
+               <option value="rector"${rx === 'rector' ? ' selected' : ''}>🎓 Rector/a</option>
+             </select>
+             <button class="aj-reset-btn" data-correo="${_pEsc(x.correo || '')}" data-nombre="${_pEsc(x.nombre || '')}"
+                     data-telefono="${_pEsc(x.telefono || '')}" onclick="ajResetClave(this)">🔑 Nueva contraseña</button>
+           </div>`
+        : '';
       return `
-        <div class="aj-fila">
-          <div class="aj-fila-info">
-            <div class="aj-fila-nombre">${_pEsc(x.nombre || '')}</div>
+        <details class="aj-reg">
+          <summary class="aj-reg-sum">
+            <span class="aj-reg-nombre">${_pEsc(x.nombre || '')}</span>
+            <span class="aj-rol-badge aj-rol-${rx} aj-reg-chip">${AJ_ROLES[rx].ic} ${AJ_ROLES[rx].n}</span>
+          </summary>
+          <div class="aj-reg-body">
             ${esAdmin && x.correo ? `<div class="aj-fila-det">📧 ${_pEsc(x.correo)}${x.telefono ? ' · 📱 ' + _pEsc(x.telefono) : ''}</div>` : ''}
             ${lugar ? `<div class="aj-fila-det">🏫 ${_pEsc(lugar)}</div>` : ''}
             ${x.creado ? `<div class="aj-fila-det">🗓️ Se registró el ${_ajFecha(x.creado)}</div>` : ''}
+            ${control}
           </div>
-          <div class="aj-fila-rol">${control}</div>
-        </div>`;
+        </details>`;
     }).join('')}`;
+}
+
+/* ── Altas por día / mes / año (solo admin) ──
+   El conteo lo hace el SERVIDOR sobre toda la tabla: sirve igual con
+   20 cuentas que con miles. Aquí solo se pintan barras. */
+let _ajResumen = null;
+
+async function ajCargarResumen() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  if (navigator.onLine === false) { toast('📴 Ver las altas necesita internet'); return; }
+  const cont = document.getElementById('aj-resumen');
+  if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⏳ Contando…</p>';
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_registros_resumen', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) { _ajResumen = j; ajPintarResumen('mes'); }
+    else if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo cargar.</p>';
+  } catch (_) {
+    if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo conectar. Intenta de nuevo en un momento.</p>';
+  }
+}
+
+function ajPintarResumen(modo) {
+  const cont = document.getElementById('aj-resumen');
+  if (!cont || !_ajResumen) return;
+  const MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  const datos = _ajResumen['por_' + modo] || [];
+  const max = Math.max(1, ...datos.map(x => Number(x.n) || 0));
+  const et = f => {
+    const p = String(f).split('-');
+    if (modo === 'dia') return `${Number(p[2])} ${MES[Number(p[1]) - 1]} ${p[0]}`;
+    if (modo === 'mes') return `${MES[Number(p[1]) - 1]} ${p[0]}`;
+    return p[0];
+  };
+  const chip = (m, txt) => `<button class="aj-res-chip${modo === m ? ' aj-res-sel' : ''}" onclick="ajPintarResumen('${m}')">${txt}</button>`;
+  cont.innerHTML = `
+    <div class="aj-res-head">
+      <span class="aj-res-total">👥 ${Number(_ajResumen.total) || 0} cuentas en total</span>
+      <div class="aj-res-chips">${chip('dia', 'Día')}${chip('mes', 'Mes')}${chip('anio', 'Año')}</div>
+    </div>
+    ${datos.length ? datos.map(x => `
+      <div class="aj-res-fila">
+        <span class="aj-res-et">${et(x.f)}</span>
+        <span class="aj-res-barra"><span style="width:${Math.round((Number(x.n) || 0) / max * 100)}%"></span></span>
+        <span class="aj-res-n">${Number(x.n) || 0}</span>
+      </div>`).join('') : '<p class="padre-hint">Sin datos aún.</p>'}`;
 }
 
 /* Cambio de rol — SOLO admin; el servidor lo re-verifica todo */
@@ -2254,6 +2316,8 @@ window.ajCerrarSesion  = ajCerrarSesion;
 window.ajEnviarSugerencia = ajEnviarSugerencia;
 window.ajCargarBuzon   = ajCargarBuzon;
 window.ajSugLeida      = ajSugLeida;
+window.ajCargarResumen = ajCargarResumen;
+window.ajPintarResumen = ajPintarResumen;
 
 /* ─────────────────────────────────────────────
    TOAST

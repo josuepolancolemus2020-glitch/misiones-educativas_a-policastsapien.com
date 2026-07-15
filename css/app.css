@@ -3984,3 +3984,49 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   border: 1.5px solid #bfe6cd; background: #e8f7ee; color: #1c7c43;
 }
 .aj-buzon-leida:active { transform: scale(0.97); }
+
+/* Registros contraíbles + altas por fecha (jul-2026) */
+.aj-reg { border-top: 1px solid #eceff3; }
+.aj-reg-sum {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 11px 2px; cursor: pointer; list-style: none;
+}
+.aj-reg-sum::-webkit-details-marker { display: none; }
+.aj-reg-sum::after {
+  content: '▸'; color: #8a94a3; font-size: 0.9rem; flex: 0 0 auto;
+  transition: transform 0.15s ease;
+}
+.aj-reg[open] .aj-reg-sum::after { transform: rotate(90deg); }
+.aj-reg-nombre {
+  font-weight: 700; font-size: 0.9rem; color: var(--text);
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.aj-reg-chip { white-space: nowrap; flex: 0 0 auto; margin: 0; }
+.aj-reg-body { padding: 0 2px 12px; }
+.aj-reg-body .aj-fila-rol { margin-top: 8px; }
+
+.aj-altas-btn {
+  width: 100%; margin-top: 8px; padding: 12px 14px; cursor: pointer;
+  border-radius: 14px; border: 1.5px solid #d5e4f5; background: #f4f8fd;
+  color: #1565c0; font-weight: 800; font-size: 0.9rem;
+}
+.aj-altas-btn:active { transform: scale(0.98); }
+.aj-res-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; margin: 12px 0 8px; flex-wrap: wrap;
+}
+.aj-res-total { font-weight: 800; font-size: 0.85rem; color: var(--text); }
+.aj-res-chips { display: flex; gap: 6px; }
+.aj-res-chip {
+  border: 1.5px solid #d5e4f5; background: #fff; color: #1565c0; cursor: pointer;
+  font-weight: 700; font-size: 0.78rem; padding: 5px 12px; border-radius: 999px;
+}
+.aj-res-chip.aj-res-sel { background: #1565c0; color: #fff; border-color: #1565c0; }
+.aj-res-fila { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 0.8rem; }
+.aj-res-et { flex: 0 0 92px; color: var(--muted); }
+.aj-res-barra { flex: 1; height: 10px; background: #eef2f7; border-radius: 999px; overflow: hidden; }
+.aj-res-barra span {
+  display: block; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #1565c0, #7b2ff7);
+}
+.aj-res-n { flex: 0 0 34px; text-align: right; font-weight: 800; color: var(--text); }
