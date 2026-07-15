@@ -370,6 +370,124 @@ grant execute on function public.metas_rol_clave_reset(text,text,text,text) to a
 
 
 -- ────────────────────────────────────────────────────────────
+-- 6-ter) BUZÓN DE SUGERENCIAS — cualquier cuenta le escribe al
+--    administrador del proyecto desde Ajustes; solo el admin lee.
+--    Anti-spam: máximo 10 mensajes por cuenta por día + candado de
+--    velocidad por IP. Snapshot de quién envía (nombre/correo/rol al
+--    momento de enviar), para que el buzón se entienda solo.
+-- ────────────────────────────────────────────────────────────
+create table if not exists public.sugerencias (
+  id bigint generated always as identity primary key,
+  codigo text not null,              -- PROF del remitente
+  nombre text,                       -- snapshot al enviar
+  correo text,
+  rol text,
+  texto text not null,
+  leido boolean not null default false,
+  creado_en timestamptz not null default now()
+);
+alter table public.sugerencias enable row level security;
+-- sin políticas: nadie la lee ni escribe directo, solo las funciones
+create index if not exists idx_sugerencias_id on public.sugerencias (id desc);
+
+create or replace function public.metas_sugerencia_enviar(
+  p_codigo text, p_clave text, p_texto text
+) returns jsonb
+language plpgsql security definer set search_path = public
+as $$
+declare
+  d record;
+  v_texto text := trim(coalesce(p_texto,''));
+begin
+  begin
+    if not public.metas_rate_ok() then
+      return jsonb_build_object('ok', false, 'motivo', 'espera');
+    end if;
+  exception when undefined_function then
+    null;
+  end;
+
+  if not public._metas_docente_ok(p_codigo, p_clave) then
+    return jsonb_build_object('ok', false, 'motivo', 'clave');
+  end if;
+  if length(v_texto) < 5 then
+    return jsonb_build_object('ok', false, 'motivo', 'texto_corto');
+  end if;
+
+  select * into d from public.docentes t
+  where t.codigo = upper(trim(coalesce(p_codigo,'')));
+
+  -- anti-spam: 10 mensajes por cuenta por día
+  if (select count(*) from public.sugerencias s
+      where s.codigo = d.codigo and s.creado_en > now() - interval '1 day') >= 10 then
+    return jsonb_build_object('ok', false, 'motivo', 'espera');
+  end if;
+
+  insert into public.sugerencias (codigo, nombre, correo, rol, texto)
+  values (d.codigo, d.nombre, d.correo, coalesce(d.rol,'docente'), left(v_texto, 1000));
+  return jsonb_build_object('ok', true);
+end
+$$;
+revoke all on function public.metas_sugerencia_enviar(text,text,text) from public;
+grant execute on function public.metas_sugerencia_enviar(text,text,text) to anon, authenticated;
+
+create or replace function public.metas_sugerencias_listar(p_codigo text, p_clave text)
+returns jsonb
+language plpgsql security definer stable set search_path = public
+as $$
+declare
+  yo record;
+  v_lista jsonb;
+begin
+  if not public._metas_docente_ok(p_codigo, p_clave) then
+    return jsonb_build_object('ok', false, 'motivo', 'clave');
+  end if;
+  select * into yo from public.docentes t
+  where t.codigo = upper(trim(coalesce(p_codigo,'')));
+  if coalesce(yo.rol,'docente') <> 'admin' then
+    return jsonb_build_object('ok', false, 'motivo', 'rol');
+  end if;
+  select jsonb_agg(fila order by (fila->>'id')::bigint desc) into v_lista
+  from (
+    select jsonb_build_object(
+      'id', s.id, 'nombre', s.nombre, 'correo', s.correo,
+      'rol', coalesce(s.rol,'docente'), 'texto', s.texto,
+      'leido', s.leido, 'creado', s.creado_en) as fila
+    from public.sugerencias s
+    order by s.id desc
+    limit 200
+  ) t;
+  return jsonb_build_object('ok', true, 'sugerencias', coalesce(v_lista, '[]'::jsonb));
+end
+$$;
+revoke all on function public.metas_sugerencias_listar(text,text) from public;
+grant execute on function public.metas_sugerencias_listar(text,text) to anon, authenticated;
+
+create or replace function public.metas_sugerencia_leida(
+  p_codigo text, p_clave text, p_id bigint
+) returns jsonb
+language plpgsql security definer set search_path = public
+as $$
+declare
+  yo record;
+begin
+  if not public._metas_docente_ok(p_codigo, p_clave) then
+    return jsonb_build_object('ok', false, 'motivo', 'clave');
+  end if;
+  select * into yo from public.docentes t
+  where t.codigo = upper(trim(coalesce(p_codigo,'')));
+  if coalesce(yo.rol,'docente') <> 'admin' then
+    return jsonb_build_object('ok', false, 'motivo', 'rol');
+  end if;
+  update public.sugerencias set leido = true where id = p_id;
+  return jsonb_build_object('ok', found);
+end
+$$;
+revoke all on function public.metas_sugerencia_leida(text,text,bigint) from public;
+grant execute on function public.metas_sugerencia_leida(text,text,bigint) to anon, authenticated;
+
+
+-- ────────────────────────────────────────────────────────────
 -- 7) HACERTE ADMIN (una sola vez, a mano — quita los guiones):
 --    Reemplaza el correo por EL TUYO (el de tu cuenta docente V2)
 --    y corre SOLO esa línea. Ningún RPC puede otorgar 'admin'.

@@ -1368,21 +1368,6 @@ function renderProfile() {
           <span class="doc-cuenta-ic">🚪</span><span>Cerrar sesión</span>
         </button>
       </div>
-      <details class="doc-mant">
-        <summary class="doc-mant-sum">🚑 Rescate de datos (casi nunca se necesita)</summary>
-        <div class="doc-mant-body">
-          <p class="doc-mant-hint">Tu aula se guarda <strong>sola</strong> en la nube de tu cuenta
-            (${_pEsc(d.correo || '')}) y se ve igual en todos tus equipos, automáticamente.
-            Estas herramientas son solo para emergencias:</p>
-          <button class="doc-sync-now" id="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
-          <p class="doc-mant-exp">Revisa la nube en este momento. Normalmente no hace falta: es automático.</p>
-          <a class="doc-usar-este-link" onclick="dsUsarEste()">🚑 Imponer la copia de ESTE equipo en todos</a>
-          <p class="doc-mant-exp">Solo si aquí ves tu aula correcta y en tus otros equipos aparece mal o vacía.</p>
-          <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
-          <p class="doc-mant-exp">Vacía tu aula en todos tus equipos, con recuperación si fue un error.</p>
-        </div>
-      </details>
-
       <div class="doc-aviso-alumnos" style="margin-top:18px;">📣 Dale a tus alumnos tu <strong>código de aula</strong>:
         lo escriben <strong>una sola vez</strong> al empezar una misión y su avance llega solo a tu cuenta.
         Escríbelo en la pizarra.</div>
@@ -1803,6 +1788,24 @@ function renderAjustes() {
     </div>`;
 
   // ── Tarjeta 2: lo que el ROL permite ver (el servidor decide) ──
+  // ── Tarjeta: escribirle al administrador del proyecto (todos menos él) ──
+  if (rol !== 'admin') {
+    html += `
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-paper-plane teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">Escríbele al creador del proyecto</label>
+        </div>
+        <p class="teacher-panel-desc">¿Una idea, algo que no funciona o algo que te encantó?
+          Tu mensaje le llega <strong>directo</strong> al administrador de M.E.T.A.S.</p>
+        <textarea id="aj-sug-txt" class="pa-inp-field aj-sug-txt" maxlength="1000" rows="4"
+                  placeholder="Escribe aquí tu sugerencia o mensaje…"></textarea>
+        <button class="aj-sug-btn" onclick="ajEnviarSugerencia(this)">
+          <i class="fa-solid fa-paper-plane"></i> Enviar mi mensaje
+        </button>
+      </div>`;
+  }
+
   if (rol === 'admin') {
     html += `
       <div class="setting-group teacher-panel-group">
@@ -1816,6 +1819,16 @@ function renderAjustes() {
                oninput="ajPintarLista()" style="margin-bottom:8px;">
         <button class="padre-wa-btn" onclick="ajCargarEquipo()">🔄 Cargar los registros</button>
         <div id="aj-lista" class="aj-lista"></div>
+      </div>
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-envelope-open-text teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">Buzón de sugerencias</label>
+        </div>
+        <p class="teacher-panel-desc">Los mensajes que los usuarios te envían desde sus Ajustes,
+          del más nuevo al más viejo.</p>
+        <button class="padre-wa-btn" onclick="ajCargarBuzon()">📬 Abrir el buzón</button>
+        <div id="aj-buzon" class="aj-lista"></div>
       </div>`;
   } else if (rol === 'rector' || rol === 'director') {
     html += `
@@ -1831,6 +1844,26 @@ function renderAjustes() {
         <div id="aj-lista" class="aj-lista"></div>
       </div>`;
   }
+
+  // ── Tarjeta: rescate de datos (vive AQUÍ y no en la Zona Docente, para
+  //    que la curiosidad no lo toque en el día a día) ──
+  html += `
+    <div class="setting-group teacher-panel-group">
+      <details class="doc-mant">
+        <summary class="doc-mant-sum">🚑 Rescate de datos (casi nunca se necesita)</summary>
+        <div class="doc-mant-body">
+          <p class="doc-mant-hint">Tu aula se guarda <strong>sola</strong> en la nube de tu cuenta
+            (${_pEsc(d.correo || '')}) y se ve igual en todos tus equipos, automáticamente.
+            Estas herramientas son solo para emergencias:</p>
+          <button class="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
+          <p class="doc-mant-exp">Revisa la nube en este momento. Normalmente no hace falta: es automático.</p>
+          <a class="doc-usar-este-link" onclick="dsUsarEste()">🚑 Imponer la copia de ESTE equipo en todos</a>
+          <p class="doc-mant-exp">Solo si aquí ves tu aula correcta y en tus otros equipos aparece mal o vacía.</p>
+          <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
+          <p class="doc-mant-exp">Vacía tu aula en todos tus equipos, con recuperación si fue un error.</p>
+        </div>
+      </details>
+    </div>`;
 
   cont.innerHTML = html;
   if (_ajLista) ajPintarLista();
@@ -2100,6 +2133,109 @@ function ajClaveWhatsApp(nombre, correo, clave, telefono) {
   window.open(link, '_blank');
 }
 
+/* ── Buzón de sugerencias ──
+   Cualquier cuenta escribe desde Ajustes; SOLO el admin lee (el
+   servidor verifica el rol). Anti-spam: 10 por cuenta al día. */
+async function ajEnviarSugerencia(btn) {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  const el = document.getElementById('aj-sug-txt');
+  const texto = (el?.value || '').trim();
+  if (texto.length < 5) { toast('Escribe tu mensaje primero ✏️'); return; }
+  if (navigator.onLine === false) { toast('📴 Enviar el mensaje necesita internet'); return; }
+  if (btn) { btn.disabled = true; }
+  toast('⏳ Enviando…');
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_sugerencia_enviar', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave, p_texto: texto })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      if (el) el.value = '';
+      await metasAlert('💌 ¡Mensaje enviado! El administrador del proyecto lo leerá pronto.\n\n¡Gracias por ayudar a que M.E.T.A.S sea mejor!',
+        { icono: '💌', titulo: 'Sugerencias' });
+    } else if (j && j.motivo === 'espera') {
+      toast('⏳ Ya enviaste varios mensajes hoy. Intenta mañana.');
+    } else {
+      toast('⚠️ No se pudo enviar. Intenta de nuevo.');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
+  }
+  if (btn) { btn.disabled = false; }
+}
+
+async function ajCargarBuzon() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  if (navigator.onLine === false) { toast('📴 El buzón necesita internet'); return; }
+  const cont = document.getElementById('aj-buzon');
+  if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⏳ Cargando…</p>';
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_sugerencias_listar', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (!j || !j.ok) {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo cargar el buzón.</p>';
+      return;
+    }
+    const lista = Array.isArray(j.sugerencias) ? j.sugerencias : [];
+    if (!lista.length) {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">📭 Buzón vacío por ahora.</p>';
+      return;
+    }
+    const nuevas = lista.filter(s => !s.leido).length;
+    if (cont) cont.innerHTML = `
+      <p class="padre-hint" style="margin:10px 0 6px;">${lista.length} mensaje${lista.length === 1 ? '' : 's'}${nuevas ? ` · <strong>${nuevas} sin leer</strong>` : ''}</p>
+      ${lista.map(s => {
+        const rx = AJ_ROLES[s.rol] ? s.rol : 'docente';
+        return `
+        <div class="aj-buzon-item${s.leido ? '' : ' aj-buzon-nueva'}">
+          <div class="aj-fila-nombre">${s.leido ? '' : '🔵 '}${_pEsc(s.nombre || '')}
+            <span class="aj-rol-badge aj-rol-${rx}" style="font-size:0.68rem;padding:2px 8px;">${AJ_ROLES[rx].ic} ${AJ_ROLES[rx].n}</span></div>
+          <div class="aj-fila-det">📧 ${_pEsc(s.correo || '')}${s.creado ? ' · 🗓️ ' + _ajFecha(s.creado) : ''}</div>
+          <div class="aj-buzon-txt">${_pEsc(s.texto || '')}</div>
+          ${s.leido ? '' : `<button class="aj-buzon-leida" onclick="ajSugLeida(${Number(s.id) || 0}, this)">✓ Marcar como leída</button>`}
+        </div>`;
+      }).join('')}`;
+  } catch (_) {
+    if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo conectar. Intenta de nuevo en un momento.</p>';
+  }
+}
+
+async function ajSugLeida(id, btn) {
+  if (!id) return;
+  const d = _docenteCfg();
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_sugerencia_leida', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave, p_id: id })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      const item = btn?.closest('.aj-buzon-item');
+      if (item) item.classList.remove('aj-buzon-nueva');
+      if (btn) btn.remove();
+    } else {
+      toast('⚠️ No se pudo marcar.');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar.');
+  }
+}
+
 async function ajCerrarSesion() {
   await docenteCerrarSesion();
   _ajLista = null;
@@ -2115,6 +2251,9 @@ window.ajPintarLista   = ajPintarLista;
 window.ajCambiarRol    = ajCambiarRol;
 window.ajResetClave    = ajResetClave;
 window.ajCerrarSesion  = ajCerrarSesion;
+window.ajEnviarSugerencia = ajEnviarSugerencia;
+window.ajCargarBuzon   = ajCargarBuzon;
+window.ajSugLeida      = ajSugLeida;
 
 /* ─────────────────────────────────────────────
    TOAST

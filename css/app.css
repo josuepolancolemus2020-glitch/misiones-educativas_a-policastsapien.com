@@ -3947,3 +3947,40 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 /* Rescate de datos: explicaciones cortas bajo cada opción (jul-2026) */
 .doc-mant-hint { font-size: 0.8rem; color: #555; margin: 2px 0 10px; line-height: 1.45; }
 .doc-mant-exp  { font-size: 0.72rem; color: #8a94a3; margin: 2px 0 10px; line-height: 1.35; }
+
+/* Buzón de sugerencias (jul-2026): botón vivo + mensajes del admin */
+.aj-sug-txt {
+  width: 100%; resize: vertical; min-height: 96px;
+  line-height: 1.45; margin-bottom: 4px;
+}
+.aj-sug-btn {
+  width: 100%; border: none; cursor: pointer; margin-top: 8px;
+  padding: 14px 16px; border-radius: 14px;
+  font-weight: 800; font-size: 0.95rem; letter-spacing: 0.2px;
+  color: #fff; background: linear-gradient(135deg, #1565c0 0%, #7b2ff7 100%);
+  box-shadow: 0 6px 18px rgba(21, 101, 192, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.aj-sug-btn:hover { box-shadow: 0 8px 22px rgba(123, 47, 247, 0.4); transform: translateY(-1px); }
+.aj-sug-btn:active { transform: scale(0.97); }
+.aj-sug-btn:disabled { opacity: 0.6; transform: none; }
+.aj-sug-btn i { margin-right: 6px; }
+
+.aj-buzon-item {
+  border: 1px solid #eceff3; border-radius: 14px;
+  padding: 12px 14px; margin-top: 10px; background: #fff;
+}
+.aj-buzon-item.aj-buzon-nueva {
+  border-color: #1565c0; background: #f4f8fd;
+  box-shadow: 0 2px 10px rgba(21, 101, 192, 0.12);
+}
+.aj-buzon-txt {
+  font-size: 0.88rem; color: var(--text); line-height: 1.5;
+  margin: 8px 0 4px; white-space: pre-wrap; word-break: break-word;
+}
+.aj-buzon-leida {
+  font-size: 0.76rem; font-weight: 700; cursor: pointer; margin-top: 6px;
+  padding: 6px 12px; border-radius: 999px;
+  border: 1.5px solid #bfe6cd; background: #e8f7ee; color: #1c7c43;
+}
+.aj-buzon-leida:active { transform: scale(0.97); }
