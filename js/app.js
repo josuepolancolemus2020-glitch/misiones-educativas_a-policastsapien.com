@@ -1239,6 +1239,8 @@ async function docenteRecuperar() {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const resp = await r.json();
     if (resp && resp.ok && resp.codigo) {
+      // Si en este equipo quedaron datos de OTRA cuenta, se descartan antes de entrar.
+      if (typeof dsClaim === 'function') dsClaim(resp.codigo);
       _docenteSave({ codigo: resp.codigo, clave, nombre: resp.nombre || '', correo, t: new Date().toISOString() });
       renderProfile();
       toast('✅ ¡Bienvenido de vuelta, ' + String(resp.nombre || 'colega').split(' ')[0] + '!');
@@ -1456,6 +1458,8 @@ async function docenteSuscribir() {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const resp = await r.json();
     if (resp && resp.ok && resp.codigo) {
+      // Si en este equipo quedaron datos de OTRA cuenta, se descartan antes de entrar.
+      if (typeof dsClaim === 'function') dsClaim(resp.codigo);
       _docenteSave({ codigo: resp.codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono,
         departamento, municipio, lugar, t: new Date().toISOString() });
       renderProfile();
@@ -1545,11 +1549,19 @@ async function docenteOlvide() {
 }
 window.docenteOlvide = docenteOlvide;
 
-function docenteCerrarSesion() {
+async function docenteCerrarSesion() {
+  const ok = (typeof metasConfirm === 'function')
+    ? await metasConfirm('Se cerrará tu sesión y se quitarán los datos del aula **de este equipo**.\n\nTranquilo: todo está guardado en la nube de tu cuenta y volverá al iniciar sesión de nuevo. Así, si alguien más usa este equipo, no verá tu información.',
+        { icono: '🚪', titulo: 'Cerrar sesión', okTxt: 'Sí, cerrar sesión' })
+    : true;
+  if (!ok) return;
+  // 1) sube lo pendiente y limpia el aula de este equipo (privacidad multi-cuenta)
+  if (typeof dsLogout === 'function') dsLogout();
+  // 2) quita la sesión
   _docenteSave(null);
   try { localStorage.removeItem(DOCENTE_KEY); } catch (_) {}
   renderProfile();
-  toast('Sesión cerrada');
+  toast('Sesión cerrada · datos del aula a salvo en tu nube');
 }
 window.docenteCerrarSesion = docenteCerrarSesion;
 

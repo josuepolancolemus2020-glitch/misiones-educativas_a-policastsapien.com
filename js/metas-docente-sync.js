@@ -52,6 +52,7 @@
   var META_KEY = 'METAS_DOCSYNC_V1';   // { [k]: {v:version, h:hash, sv:sentVersion} }
   var RESPALDO_KEY = 'METAS_AULA_RESPALDO_V1';  // copia de seguridad local antes de «Empezar de nuevo»
   var RESET_PEND_KEY = 'METAS_AULA_RESET_PEND'; // '1' = falta archivar+vaciar la nube (borrado sin red)
+  var OWNER_KEY = 'METAS_DS_OWNER';    // PROF-XXXX dueño de los datos del aula guardados en ESTE equipo
   var SB_URL_DEF = 'https://uljjgrikyigdrkbikcxo.supabase.co';
   var SB_KEY_DEF = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
 
@@ -170,6 +171,10 @@
   function push(force, cloudKeys) {
     var c = creds();
     if (!c) return Promise.resolve(false);
+    // Blindaje: nunca subir datos que pertenecen a OTRA cuenta docente (evita
+    // que el aula de A termine en la nube de B si quedaron datos locales).
+    var owner = ls(OWNER_KEY);
+    if (owner && owner !== c.codigo) return Promise.resolve(false);
     var m = scanLocal();
     var t = ahora();
     var entradas = [];
@@ -568,6 +573,45 @@
   document.addEventListener('visibilitychange', function () { if (!document.hidden && creds()) autoSync(); });
 
   /* API pública mínima */
+  /* Borra TODOS los datos del aula de ESTE equipo (roster, claves de familia,
+     Plan de Acción, economía, notas, torneo, gobierno) + metadatos de sync +
+     respaldos + dueño. Los datos siguen a salvo en la nube por PROF: al volver
+     a entrar con esa cuenta se descargan solos. */
+  function dsWipeLocal() {
+    DS_KEYS.forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} });
+    [META_KEY, RESPALDO_KEY, RESET_PEND_KEY, OWNER_KEY].forEach(function (k) {
+      try { localStorage.removeItem(k); } catch (_) {}
+    });
+    _papeleraFecha = null;
+  }
+
+  /* Reclama el equipo para una cuenta docente al INICIAR sesión (antes de
+     cualquier sincronización). El aula local es un CACHÉ de UNA sola cuenta:
+     la nube manda. Si el caché es de la MISMA cuenta, se conserva (offline-
+     first). Si es de otra cuenta —o de dueño desconocido (datos previos a este
+     blindaje, que no podemos garantizar sean de quien entra)— se limpia; los
+     datos de la cuenta que entra se descargarán de SU nube en la sincronización
+     que sigue. Así nunca se ven ni se suben datos de otra cuenta. */
+  function dsClaimFor(codigo) {
+    codigo = String(codigo || '').trim();
+    if (!codigo) return false;
+    if (ls(OWNER_KEY) === codigo) return false;   // misma cuenta: conservar caché
+    dsWipeLocal();                                 // ajeno o ambiguo: partir de cero
+    try { localStorage.setItem(OWNER_KEY, codigo); } catch (_) {}
+    return true;
+  }
+
+  /* Cierre de sesión: sube lo pendiente (la petición ya lleva los datos aunque
+     limpiemos enseguida) y borra el aula de este equipo, para que nadie que
+     entre después con otra cuenta —o sin cuenta— vea estos datos. */
+  function dsLogout() {
+    try { if (creds() && navigator.onLine !== false) push(false); } catch (_) {}
+    dsWipeLocal();
+  }
+
+  window.dsWipeLocal = dsWipeLocal;
+  window.dsClaim = dsClaimFor;
+  window.dsLogout = dsLogout;
   window.dsOnProfile = onProfile;
   window.dsSync = sync;
   window.dsSyncNow = syncNow;
