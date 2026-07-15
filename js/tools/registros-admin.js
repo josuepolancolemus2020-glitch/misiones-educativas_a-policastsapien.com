@@ -92,6 +92,58 @@ function adMigrarCodigos(g) {
   } catch (_) {}
 }
 
+/* ── 🕘 PAPELERA DE ACCIDENTES ──
+   Antes de CADA acción que borra o reemplaza datos se guarda una foto
+   (admin + claves + comunicados + plan). «Restaurar» vuelve exacto a
+   ese momento y la nube se corrige sola con el sync diferencial. */
+const AD_UNDO_KEY = 'METAS_ADMIN_UNDO_V1';
+const AD_UNDO_MAX = 4;
+function adUndoLista() {
+  try { const a = JSON.parse(localStorage.getItem(AD_UNDO_KEY)); return Array.isArray(a) ? a : []; }
+  catch (_) { return []; }
+}
+function adUndoGuardar(etiqueta) {
+  try {
+    const foto = {
+      t: new Date().toISOString(), e: String(etiqueta || 'Cambio'),
+      admin: localStorage.getItem(ADMIN_KEY),
+      codes: localStorage.getItem('METAS_CODIGOS_V1'),
+      avisos: localStorage.getItem('METAS_AVISOS_V1'),
+      plan: localStorage.getItem('METAS_PLANACCION_V1'),
+    };
+    let arr = adUndoLista();
+    arr.push(foto);
+    arr = arr.slice(-AD_UNDO_MAX);
+    /* si no cabe (fotos muy grandes), se sueltan las más viejas */
+    while (arr.length) {
+      try { localStorage.setItem(AD_UNDO_KEY, JSON.stringify(arr)); return; }
+      catch (_) { arr.shift(); }
+    }
+  } catch (_) {}
+}
+async function adUndoRestaurar(i) {
+  const arr = adUndoLista();
+  const f = arr[i];
+  if (!f) return;
+  if (!await metasConfirm('Se restaurará <strong>todo Mi aula</strong> exactamente a como estaba ' +
+    '<strong>antes de: ' + adEsc(f.e) + '</strong> (' + adFechaBonita(f.t.slice(0, 10)) + ' ' +
+    f.t.slice(11, 16) + ').\n\n⚠️ Lo que hayas cambiado en Mi aula DESPUÉS de ese momento se pierde. ' +
+    'La nube del chatbot se corrige sola al sincronizar. ¿Restaurar?',
+    { icono: '🕘', titulo: 'Deshacer accidente', okTxt: 'Sí, restaurar' })) return;
+  try {
+    const pares = [[ADMIN_KEY, f.admin], ['METAS_CODIGOS_V1', f.codes],
+                   ['METAS_AVISOS_V1', f.avisos], ['METAS_PLANACCION_V1', f.plan]];
+    pares.forEach(([k, v]) => {
+      if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v);
+    });
+    /* esta foto y las posteriores ya no aplican */
+    localStorage.setItem(AD_UNDO_KEY, JSON.stringify(arr.slice(0, i)));
+  } catch (_) {}
+  adSyncProgramar();
+  renderAdmin();
+  toast('🕘 Restaurado: ' + f.e);
+}
+
 function adState() {
   let st = null;
   try { st = JSON.parse(localStorage.getItem(ADMIN_KEY)); } catch (_) {}
@@ -136,6 +188,21 @@ function adSave(d) {
    chatbot de padres. Vive en METAS_CODIGOS_V1 bajo la llave del grupo
    ('G:<id>'), se genera sola la primera vez y NO cambia aunque el
    maestro corrija grado/sección/colegio. */
+/* El sufijo EMPIEZA con letra: así «5-6YF7» nunca se confunde con
+   «56-YF7» en la tira ni en el chatbot (el nº de lista queda claro). */
+const AD_ID_LETRAS = 'ABCDEFGHJKMNPQRSTUVWXYZ';
+function adSufijoClave() {
+  let suf = AD_ID_LETRAS[Math.floor(Math.random() * AD_ID_LETRAS.length)];
+  for (let i = 0; i < 3; i++) suf += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
+  return suf;
+}
+/* Bonita con el nº de lista conocido: 5 + 6YF7 → «5-6YF7» (el replace
+   ciego de dígitos mostraría «56-YF7», que confunde a la familia) */
+function adClaveBonita(clave, num) {
+  const c = String(clave || ''), n = String(num || '');
+  if (n && c.indexOf(n) === 0) return n + '-' + c.slice(n.length);
+  return c.replace(/^(\d+)/, '$1-');
+}
 function adClaveFamilia(grupoId, num, crear) {
   const n = String(num || '').replace(/\D/g, '');
   if (!grupoId || !n || typeof paCodesLoad !== 'function') return '';
@@ -144,9 +211,7 @@ function adClaveFamilia(grupoId, num, crear) {
   const cg = codes[key] || (codes[key] = {});
   if (!cg[n]) {
     if (crear === false) return '';
-    let suf = '';
-    for (let i = 0; i < 4; i++) suf += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
-    cg[n] = n + suf;
+    cg[n] = n + adSufijoClave();
     paCodesSave(codes);
   }
   return cg[n];
@@ -293,7 +358,7 @@ function adRenderLista(body, d) {
             <span class="ad-al-num">#${a.num}</span>
             <input class="pa-inp-field ad-al-nombre" value="${adEsc(a.nombre)}" placeholder="Nombre (opcional)">
             <button class="ad-al-code" data-cnum="${a.num}" title="Clave de familia — tócala para editar o imprimir">
-              🔑 ${cl ? adEsc(cl.replace(/^(\d+)/, '$1-')) : 'crear'}</button>
+              🔑 ${cl ? adEsc(adClaveBonita(cl, a.num)) : 'crear'}</button>
             <button class="ad-al-del" aria-label="Quitar">✕</button>
           </div>`; }).join('')}
       </div>
@@ -336,7 +401,21 @@ function adRenderLista(body, d) {
         <button class="pa-generate-btn ad-btn-sec" id="ad-cerrar-anio">🎓 Cerrar el año escolar</button>
         ${puedeBorrarGrupo ? `<button class="ad-grupo-del" id="ad-grupo-del">🗑 Eliminar este grupo</button>` : ''}
       </div>
-    </div>`;
+    </div>
+
+    ${adUndoLista().length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">🕘 Deshacer un accidente</div>
+      <p class="pa-optional-hint">Antes de cada borrado se guarda una foto de Mi aula. Si quitaste un
+        alumno, una colecta o una clave <strong>por error</strong>, restaura aquí (lo cambiado
+        después de esa foto se pierde).</p>
+      ${adUndoLista().map((f, i) => `
+        <div class="ad-gasto-row" style="align-items:center">
+          <span style="flex:1"><strong>Antes de: ${adEsc(f.e)}</strong><br>
+            <small>${adFechaBonita(String(f.t).slice(0, 10))} · ${String(f.t).slice(11, 16)}</small></span>
+          <button class="pa-generate-btn ad-btn-sec ad-undo-btn" data-ui="${i}">↩️ Restaurar</button>
+        </div>`).reverse().join('')}
+    </div>` : ''}`;
 
   const persist = () => {
     const dd = adLoad();
@@ -362,8 +441,11 @@ function adRenderLista(body, d) {
   body.querySelectorAll('.ad-al-del').forEach(b =>
     b.addEventListener('click', async () => {
       if (!await metasConfirm('¿Quitar a este alumno de la lista?\nSus pagos, asistencias y notas guardadas no se borran.', { icono: '👥', titulo: 'Lista de alumnos', okTxt: 'Sí, quitar' })) return;
-      b.closest('.ad-al-row').remove();
+      const fila = b.closest('.ad-al-row');
+      adUndoGuardar('Quitar alumno #' + fila.dataset.num);
+      fila.remove();
       persist(); renderAdmin();
+      toast('👥 Alumno quitado — si fue un error, restaura en 🕘');
     }));
   document.getElementById('ad-add-al').addEventListener('click', () => {
     const dd = adLoad();
@@ -384,12 +466,15 @@ function adRenderLista(body, d) {
   document.getElementById('ad-tiras-todas').addEventListener('click', () => adTirasTodas(adLoad()));
   document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
   document.getElementById('ad-cerrar-anio').addEventListener('click', adCerrarAnio);
+  body.querySelectorAll('.ad-undo-btn').forEach(b =>
+    b.addEventListener('click', () => adUndoRestaurar(+b.dataset.ui)));
   adSincronizarNube(false);   /* refresca el estado al entrar */
   document.getElementById('ad-grupo-del')?.addEventListener('click', async () => {
     const dd = adLoad();
     if (!await metasConfirm('Se eliminará el grupo **' + (adGrupoTxt(dd) || 'sin nombre') + '** con su lista, economía, asistencia y notas de este equipo. Las claves de familia entregadas dejan de usarse.\n\n¿Eliminar?',
       { icono: '🗑', titulo: 'Eliminar grupo', okTxt: 'Sí, eliminar' })) return;
     if (!await adPedirContrasena('Eliminar grupo')) return;
+    adUndoGuardar('Eliminar grupo «' + (adGrupoTxt(dd) || 'sin nombre') + '»');
     const s2 = adState();
     s2.grupos = s2.grupos.filter(g => g.id !== dd.id);
     s2.activo = s2.grupos[0].id;
@@ -405,6 +490,7 @@ function adRenderLista(body, d) {
       return;
     }
     if (!await metasConfirm('Se traerá la lista del análisis más reciente (**' + (ana.evaluacion || 'Evaluación') + '**, ' + ana.students.length + ' alumnos). ¿Reemplazar la lista actual?', { icono: '📥', titulo: 'Lista de alumnos', okTxt: 'Sí, traer' })) return;
+    adUndoGuardar('Traer lista del Plan de Acción');
     const dd = adLoad();
     dd.lista = ana.students.map(s => ({
       num: +s.num, nombre: String(s.nombre || '').startsWith('#') ? '' : (s.nombre || ''),
@@ -439,6 +525,7 @@ async function adImportarPegado() {
     if (!await metasConfirm('Se agregarán **' + parsed.length + '** alumno(s) al final de la lista actual (que ya tiene ' + conNombre + '). ¿Continuar?',
         { icono: '📋', titulo: 'Pegar lista', okTxt: 'Sí, agregar' })) return;
   }
+  adUndoGuardar('Pegar lista (' + parsed.length + ' alumnos)');
   const usados = new Set(dd.lista.map(a => a.num));
   let maxNum = dd.lista.length ? Math.max(...dd.lista.map(a => a.num)) : 0;
   parsed.forEach(p => {
@@ -460,7 +547,7 @@ async function adEditarClave(num) {
   const a = d.lista.find(x => x.num === num) || { nombre: '' };
   const quien = (a.nombre ? a.nombre : 'alumno/a') + ' (#' + num + ')';
   const actual = adClaveFamilia(d.id, num);          /* crea si no existía */
-  const bonito = actual.replace(/^(\d+)/, '$1-');
+  const bonito = adClaveBonita(actual, num);
   const v = await metasPrompt('Clave de familia de **' + quien + '**:\n\n' +
     '• Déjala igual y toca «Imprimir tira», o\n' +
     '• Escribe una clave nueva (número + 4 a 6 letras/números, ej. ' + num + '-K7QM), o\n' +
@@ -480,16 +567,15 @@ async function adEditarClave(num) {
   if (v === null) return;
   const s = String(v).trim().toUpperCase();
   let clave = actual;
+  if (s === 'NUEVA' || s.replace(/[^A-Z0-9]/g, '') !== actual) adUndoGuardar('Cambiar clave de #' + num);
   if (s === 'NUEVA') {
-    let suf = '';
-    for (let i = 0; i < 4; i++) suf += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
-    clave = adClaveFamiliaSet(d.id, num, String(num) + suf);
+    clave = adClaveFamiliaSet(d.id, num, String(num) + adSufijoClave());
   } else {
     const limpio = s.replace(/[^A-Z0-9]/g, '');
     if (limpio !== actual) clave = adClaveFamiliaSet(d.id, num, limpio);
   }
   if (clave !== actual) {
-    toast('🔑 Clave nueva: ' + clave.replace(/^(\d+)/, '$1-'));
+    toast('🔑 Clave nueva: ' + adClaveBonita(clave, num));
     renderAdmin();
   }
   if (await metasConfirm('¿Imprimir la **tira** con esta clave para entregarla a la familia?',
@@ -544,7 +630,7 @@ ${filas.map(f => `
     <div class="qrtxt">📷 Apunte la cámara a este cuadro</div>
     <div class="t1">🔑 M.E.T.A.S — Clave de la familia</div>
     <div class="t2">Alumno/a <strong>#${f.num}</strong>${grupoTxt ? ' · ' + adEsc(grupoTxt) : ''}${f.nombre ? ' · ' + adEsc(f.nombre) : ''}</div>
-    <div class="cod">${adEsc(f.codigo.replace(/^(\d+)/, '$1-'))}</div>
+    <div class="cod">${adEsc(adClaveBonita(f.codigo, f.num))}</div>
     <div class="t3">📱 Apunte la cámara del teléfono al cuadro, o entre a:<br><strong>${sitio}padres.html</strong><br>
     El 🤖 asistente le pedirá esta clave y le contará cómo va su hijo/a: notas, asistencia, mensajes del maestro
     y cómo apoyar en casa. Guárdela como una llave: es solo para su familia.</div>
@@ -598,6 +684,7 @@ async function adInsertarAlumno() {
     'Las claves de familia viajan con cada niño: las tiras ya entregadas SIGUEN VALIENDO. ' +
     'Solo imprime la tira del nuevo. ¿Continuar?', { icono: '🧑‍🎓', titulo: 'Alumno nuevo', okTxt: 'Sí, insertar' })) return;
 
+  adUndoGuardar('Insertar alumno «' + String(nombre).trim() + '» como #' + pos);
   /* 1) claves de familia siguen a su niño */
   adRemapCodigos(d, pos);
   /* 2) registros locales se recorren con sus niños */
@@ -622,7 +709,7 @@ function adTiraUno(d, num) {
   const codigo = adClaveFamilia(d.id, num);
   if (!codigo) { toast('No se pudo generar la clave'); return; }
   const a = d.lista.find(x => x.num === num) || { nombre: '' };
-  const bonito = codigo.replace(/^(\d+)/, '$1-');
+  const bonito = adClaveBonita(codigo, num);
   const grupo = adGrupoTxt(d);
   const sitio = (typeof PA_SITE !== 'undefined') ? PA_SITE
     : 'https://metas.policastsapien.com/';
@@ -827,15 +914,18 @@ function adRenderColecta(body, d) {
     b.addEventListener('click', async () => {
       if (!await metasConfirm('¿Borrar este gasto?', { icono: '🧾', titulo: 'Gastos', okTxt: 'Sí, borrar' })) return;
       const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
+      adUndoGuardar('Borrar gasto de «' + cc.concepto + '»');
       cc.gastos.splice(+b.dataset.gi, 1);
       adSave(dd); renderAdmin();
     }));
 
   document.getElementById('ad-borrar-colecta').addEventListener('click', async () => {
-    if (!await metasConfirm('¿Eliminar la colecta **' + c.concepto + '** con todos sus pagos y gastos?\nEsta acción no se puede deshacer.', { icono: '🗑', titulo: 'Economía', okTxt: 'Sí, eliminar' })) return;
+    if (!await metasConfirm('¿Eliminar la colecta **' + c.concepto + '** con todos sus pagos y gastos?', { icono: '🗑', titulo: 'Economía', okTxt: 'Sí, eliminar' })) return;
     const dd = adLoad();
+    adUndoGuardar('Eliminar colecta «' + c.concepto + '»');
     dd.colectas = dd.colectas.filter(x => x.id !== _adColectaId);
     adSave(dd); _adColectaId = null; renderAdmin();
+    toast('🗑 Colecta eliminada — si fue un error, restaura en 🕘 (pestaña Alumnos)');
   });
 
   document.getElementById('ad-informe').addEventListener('click', () => adInformeColecta(d, c));
@@ -1676,6 +1766,7 @@ async function adCerrarAnio() {
     { icono: '👥', titulo: 'Cerrar el año', okTxt: 'Sí, conservar' });
 
   const clavesViejas = adClavesDelGrupo(d);
+  adUndoGuardar('Cerrar el año ' + anio + ' de «' + nombre + '»');
 
   /* 1) limpiar la nube de verdad (registros, avisos, plan, buzón, vistos) */
   let nubeOk = false;
@@ -1710,11 +1801,7 @@ async function adCerrarAnio() {
     const key = 'G:' + dd.id;
     if (conservarLista) {
       const cg = codes[key] || {};
-      Object.keys(cg).forEach(n => {
-        let suf = '';
-        for (let i = 0; i < 4; i++) suf += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
-        cg[n] = n + suf;
-      });
+      Object.keys(cg).forEach(n => { cg[n] = n + adSufijoClave(); });
       codes[key] = cg;
     } else {
       delete codes[key];
@@ -2048,6 +2135,8 @@ function adRenderCom(body, d) {
   body.querySelectorAll('.av-del').forEach(b => b.addEventListener('click', async () => {
     if (!await metasConfirm('¿Borrar este aviso? Dejará de mostrarse a las familias.', { icono: '📣', titulo: 'Comunicados', okTxt: 'Sí, borrar' })) return;
     const gg = avGrupo(d.id);
+    const av = gg.avisos.find(a => a.id === b.dataset.avid);
+    adUndoGuardar('Borrar aviso «' + ((av && av.titulo) || 'sin título') + '»');
     gg.avisos = gg.avisos.filter(a => a.id !== b.dataset.avid);
     avGrupoSave(d.id, gg); renderAdmin();
   }));
@@ -2110,6 +2199,8 @@ function adRenderCom(body, d) {
   body.querySelectorAll('.av-cond-del').forEach(b => b.addEventListener('click', async () => {
     if (!await metasConfirm('¿Borrar este reporte? La familia dejará de verlo.', { icono: '🙂', titulo: 'Reporte de conducta', okTxt: 'Sí, borrar' })) return;
     const gg = avGrupo(d.id);
+    const rc = gg.conducta.find(c => c.id === b.dataset.cid);
+    adUndoGuardar('Borrar reporte de conducta de #' + ((rc && rc.num) || '?'));
     gg.conducta = gg.conducta.filter(c => c.id !== b.dataset.cid);
     avGrupoSave(d.id, gg); renderAdmin();
   }));
