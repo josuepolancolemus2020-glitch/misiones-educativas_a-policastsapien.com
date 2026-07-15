@@ -1963,3 +1963,36 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+/* ══════════════ ⚡ ACCESO RÁPIDO DE LA ZONA DOCENTE ══════════════
+   El mosaico de herramientas se ORDENA SOLO por uso real: cada toque
+   suma un punto a esa herramienta (METAS_ZD_USO_V1, por equipo) y al
+   volver a la Zona Docente la más usada aparece de primera. Empates:
+   se respeta el orden original del HTML. El reordenado se hace con un
+   retraso corto para que los botones no salten bajo el dedo. */
+const ZD_USO_KEY = 'METAS_ZD_USO_V1';
+function zdUsoOrdenar() {
+  const grid = document.getElementById('zd-grid');
+  if (!grid) return;
+  let uso = {};
+  try { uso = JSON.parse(localStorage.getItem(ZD_USO_KEY)) || {}; } catch (_) {}
+  Array.from(grid.children)
+    .map((el, i) => ({ el, i, n: Number(uso[el.dataset.tool]) || 0 }))
+    .sort((a, b) => (b.n - a.n) || (a.i - b.i))
+    .forEach(x => grid.appendChild(x.el));
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const grid = document.getElementById('zd-grid');
+  if (!grid) return;
+  grid.addEventListener('click', e => {
+    const t = e.target.closest('[data-tool]');
+    if (!t) return;
+    try {
+      const uso = JSON.parse(localStorage.getItem(ZD_USO_KEY) || '{}');
+      uso[t.dataset.tool] = (Number(uso[t.dataset.tool]) || 0) + 1;
+      localStorage.setItem(ZD_USO_KEY, JSON.stringify(uso));
+    } catch (_) {}
+    setTimeout(zdUsoOrdenar, 450);   /* reordena cuando ya salió de la vista */
+  });
+  zdUsoOrdenar();
+});
