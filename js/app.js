@@ -1956,14 +1956,16 @@ function ajPintarLista() {
     ${filas.map(x => {
       const rx = AJ_ROLES[x.rol] ? x.rol : 'docente';
       const lugar = [x.escuela, [x.municipio, x.departamento].filter(Boolean).join(', ')].filter(Boolean).join(' · ');
-      // Solo el admin puede cambiar roles, y NUNCA el de otro admin
+      // Solo el admin puede cambiar roles y contraseñas, y NUNCA a otro admin
       const control = (esAdmin && rx !== 'admin')
         ? `<select class="aj-rol-sel" data-correo="${_pEsc(x.correo || '')}" data-prev="${rx}"
                    onchange="ajCambiarRol(this)">
              <option value="docente"${rx === 'docente' ? ' selected' : ''}>🧑‍🏫 Docente</option>
              <option value="director"${rx === 'director' ? ' selected' : ''}>🏫 Director/a</option>
              <option value="rector"${rx === 'rector' ? ' selected' : ''}>🎓 Rector/a</option>
-           </select>`
+           </select>
+           <button class="aj-reset-btn" data-correo="${_pEsc(x.correo || '')}" data-nombre="${_pEsc(x.nombre || '')}"
+                   onclick="ajResetClave(this)">🔑 Nueva contraseña</button>`
         : `<span class="aj-rol-badge aj-rol-${rx}">${AJ_ROLES[rx].ic} ${AJ_ROLES[rx].n}</span>`;
       return `
         <div class="aj-fila">
@@ -2015,6 +2017,52 @@ async function ajCambiarRol(sel) {
   }
 }
 
+/* Nueva contraseña para un usuario — SOLO admin (auxilio de soporte).
+   Las contraseñas NO se pueden VER (solo existe su hash irreversible):
+   ayudar al usuario = asignarle una nueva y pasársela por WhatsApp. */
+async function ajResetClave(btn) {
+  const correo = btn.dataset.correo || '';
+  const nombre = btn.dataset.nombre || correo;
+  if (!correo) return;
+  if (navigator.onLine === false) { toast('📴 Cambiar la contraseña necesita internet'); return; }
+  // Sugerencia fácil de dictar por teléfono; el admin puede escribir otra
+  const sugerida = 'metas' + Math.floor(1000 + Math.random() * 9000);
+  const nueva = await metasPrompt(
+    `Se asignará una contraseña **nueva** a la cuenta de **${nombre}**.\n` +
+    'La anterior dejará de servir en ese momento. Puedes usar la sugerida o escribir otra (mínimo 6).',
+    { icono: '🔑', titulo: 'Nueva contraseña', value: sugerida, maxlength: 40, okTxt: 'Asignar',
+      valida: v => String(v).trim().length >= 6 ? '' : 'Muy corta: usa al menos 6 letras o números.' });
+  if (nueva === null) return;
+  const np = String(nueva).trim();
+  const d = _docenteCfg();
+  const { url, key } = _padreSbCfg();
+  toast('⏳ Asignando…');
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_rol_clave_reset', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave, p_correo: correo, p_nueva: np })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      await metasAlert(
+        `✅ Listo. La cuenta **${correo}** ahora entra con:\n\n**${np}**\n\n` +
+        'Pásasela al usuario (WhatsApp o en persona) y recomiéndale cambiarla en ' +
+        'Ajustes → «Cambiar mi contraseña» cuando entre.',
+        { icono: '🔑', titulo: 'Nueva contraseña' });
+    } else if (j && j.motivo === 'espera') {
+      toast('⏳ Demasiados cambios seguidos. Espera un momento.');
+    } else if (j && j.motivo === 'propio') {
+      toast('Para tu propia cuenta usa «Cambiar mi contraseña».');
+    } else {
+      toast('⚠️ No se pudo asignar la contraseña.');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
+  }
+}
+
 async function ajCerrarSesion() {
   await docenteCerrarSesion();
   _ajLista = null;
@@ -2028,6 +2076,7 @@ window.ajGuardarPerfil = ajGuardarPerfil;
 window.ajCargarEquipo  = ajCargarEquipo;
 window.ajPintarLista   = ajPintarLista;
 window.ajCambiarRol    = ajCambiarRol;
+window.ajResetClave    = ajResetClave;
 window.ajCerrarSesion  = ajCerrarSesion;
 
 /* ─────────────────────────────────────────────

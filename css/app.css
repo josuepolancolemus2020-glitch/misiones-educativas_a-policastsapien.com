@@ -3934,3 +3934,12 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 @media (max-width: 560px) {
   .aj-fila { flex-direction: column; align-items: flex-start; gap: 6px; }
 }
+
+/* Nueva contraseña (solo admin) — jul-2026 */
+.aj-fila-rol { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+.aj-reset-btn {
+  font-size: 0.76rem; font-weight: 700; padding: 6px 8px; cursor: pointer;
+  border-radius: 10px; border: 1.5px solid #f3ddb3; background: #fdf8ee; color: #b26a00;
+  white-space: nowrap;
+}
+.aj-reset-btn:active { transform: scale(0.97); }

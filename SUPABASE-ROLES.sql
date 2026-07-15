@@ -304,6 +304,72 @@ grant execute on function public.metas_rol_cambiar(text,text,text,text) to anon,
 
 
 -- ────────────────────────────────────────────────────────────
+-- 6-bis) NUEVA CONTRASEÑA para un usuario — SOLO el admin.
+--    Las contraseñas NUNCA se pueden VER (solo se guarda su hash
+--    irreversible): auxiliar al usuario = ASIGNARLE una nueva.
+--    Reglas duras del servidor:
+--      • solo una cuenta con rol admin puede llamarla,
+--      • no toca cuentas admin (ni la propia: usa «Cambiar mi
+--        contraseña» normal),
+--      • mínimo 6 caracteres, se guarda en formato v2 salado,
+--      • desbloquea el freno de intentos de ese correo (si el usuario
+--        se bloqueó probando, con la nueva entra de inmediato),
+--      • pasa por el candado de velocidad por IP (metas_rate_ok).
+-- ────────────────────────────────────────────────────────────
+create or replace function public.metas_rol_clave_reset(
+  p_codigo text, p_clave text, p_correo text, p_nueva text
+) returns jsonb
+language plpgsql security definer set search_path = public
+as $$
+declare
+  yo record;
+  v_correo text := lower(trim(coalesce(p_correo,'')));
+  v_nueva  text := trim(coalesce(p_nueva,''));
+begin
+  begin
+    if not public.metas_rate_ok() then
+      return jsonb_build_object('ok', false, 'motivo', 'espera');
+    end if;
+  exception when undefined_function then
+    null;
+  end;
+
+  if not public._metas_docente_ok(p_codigo, p_clave) then
+    return jsonb_build_object('ok', false, 'motivo', 'clave');
+  end if;
+  select * into yo from public.docentes t
+  where t.codigo = upper(trim(coalesce(p_codigo,'')));
+  if coalesce(yo.rol,'docente') <> 'admin' then
+    return jsonb_build_object('ok', false, 'motivo', 'rol');
+  end if;
+
+  if length(v_nueva) < 6 then
+    return jsonb_build_object('ok', false, 'motivo', 'clave_corta');
+  end if;
+  if v_correo = lower(coalesce(yo.correo,'')) then
+    return jsonb_build_object('ok', false, 'motivo', 'propio');
+  end if;
+
+  update public.docentes d
+     set clave_hash = 'v2:' || encode(extensions.digest(v_nueva || d.codigo, 'sha256'), 'hex')
+   where lower(d.correo) = v_correo
+     and d.correo is not null and d.correo <> ''
+     and coalesce(d.rol,'docente') <> 'admin';   -- a otro admin nadie lo toca
+  if not found then
+    return jsonb_build_object('ok', false, 'motivo', 'no_existe');
+  end if;
+
+  -- desbloquear el freno anti fuerza bruta de ese correo
+  delete from public.docente_intentos where correo = v_correo;
+
+  return jsonb_build_object('ok', true);
+end
+$$;
+revoke all on function public.metas_rol_clave_reset(text,text,text,text) from public;
+grant execute on function public.metas_rol_clave_reset(text,text,text,text) to anon, authenticated;
+
+
+-- ────────────────────────────────────────────────────────────
 -- 7) HACERTE ADMIN (una sola vez, a mano — quita los guiones):
 --    Reemplaza el correo por EL TUYO (el de tu cuenta docente V2)
 --    y corre SOLO esa línea. Ningún RPC puede otorgar 'admin'.
