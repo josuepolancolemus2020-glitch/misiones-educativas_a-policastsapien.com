@@ -1166,9 +1166,9 @@ function adRenderSace(body, d) {
             <div class="ad-logo-fila" style="flex:1;min-width:180px;">
               <div class="ad-logo-prev" id="ad-logosec-prev">${d.logoSec
                 ? `<img src="${d.logoSec}" alt="logo Secretaría">`
-                : '<span>Sin logo</span>'}</div>
+                : '<img src="img/logo-secretaria.png" alt="logo oficial (por defecto)">'}</div>
               <div class="ad-logo-btns">
-                <span style="font-size:11px;font-weight:800;color:#1e3a7c;">Logo de la Secretaría</span>
+                <span style="font-size:11px;font-weight:800;color:#1e3a7c;">Logo de la Secretaría${d.logoSec ? '' : ' <small style="font-weight:600;color:#7286a8;">(oficial, ya incluido)</small>'}</span>
                 <label class="pa-generate-btn ad-btn-sec ad-logo-lbl">🏛️ Subir
                   <input type="file" id="ad-logosec-file" accept="image/*" style="display:none;"></label>
                 ${d.logoSec ? '<button class="pa-generate-btn ad-btn-sec" id="ad-logosec-quitar">Quitar</button>' : ''}
@@ -1587,6 +1587,34 @@ function adPrintBoletas(d) {
   const thV = t => `<th class="v"><span>${adEsc(t)}</span></th>`;
   const primer = nom => String(nom || '').trim().split(/\s+/)[0] || '';
 
+  // Logo oficial de la Secretaría: SIEMPRE aparece. Si el maestro sube el
+  // suyo (d.logoSec) se usa ese; si no, el que viene con la plataforma.
+  // URL absoluta porque la boleta se imprime en una ventana about:blank.
+  let logoSecSrc = d.logoSec || '';
+  if (!logoSecSrc) {
+    try { logoSecSrc = new URL('img/logo-secretaria.png', location.href).href; }
+    catch (_) { logoSecSrc = 'img/logo-secretaria.png'; }
+  }
+
+  // Cita de valores (perseverancia, disciplina, esfuerzo): cada alumno
+  // recibe una según su número de lista — estable entre impresiones.
+  const CITAS = [
+    { t: 'La disciplina es el puente entre las metas y los logros.', a: 'Jim Rohn' },
+    { t: 'El éxito es la suma de pequeños esfuerzos repetidos día tras día.', a: 'Robert Collier' },
+    { t: 'Nuestra mayor gloria no está en no caer nunca, sino en levantarnos cada vez que caemos.', a: 'Confucio' },
+    { t: 'La educación es el arma más poderosa que puedes usar para cambiar el mundo.', a: 'Nelson Mandela' },
+    { t: 'El genio se hace con un 1% de talento y un 99% de trabajo.', a: 'Albert Einstein' },
+    { t: 'No cuentes los días, haz que los días cuenten.', a: 'Muhammad Ali' },
+    { t: 'La constancia es la virtud por la cual todas las demás dan su fruto.', a: 'Arturo Graf' },
+    { t: 'Siembra un hábito y cosecharás un carácter; siembra un carácter y cosecharás un destino.', a: 'Proverbio' },
+    { t: 'El respeto por nosotros mismos guía nuestra moral; el respeto por los demás guía nuestros modales.', a: 'Laurence Sterne' },
+    { t: 'Cae siete veces, levántate ocho.', a: 'Proverbio japonés' },
+    { t: 'La paciencia, la persistencia y el sudor hacen una combinación invencible para el éxito.', a: 'Napoleon Hill' },
+    { t: 'Los sueños no funcionan a menos que tú trabajes por ellos.', a: 'John C. Maxwell' },
+    { t: 'La honestidad es el primer capítulo del libro de la sabiduría.', a: 'Thomas Jefferson' },
+    { t: 'Nunca es demasiado tarde para ser lo que podrías haber sido.', a: 'George Eliot' },
+  ];
+
   const hoja = a => {
     // Datos del gráfico: promedio anual por materia
     const datos = mats.map(c => ({ mat: c, val: promMat(c, a.num) }))
@@ -1621,15 +1649,27 @@ function adPrintBoletas(d) {
         ${chip('Inasistencias', inasis !== '' ? inasis : '0')}
       </div>`;
 
+    const cita = CITAS[(Number(a.num) || String(a.nombre || '').length || 0) % CITAS.length];
+
     return `<section class="hoja">
       <header class="bl-head">
-        <div class="bl-logo">${d.logo ? `<img src="${d.logo}" alt="">` : ''}</div>
-        <div class="bl-title">
+        <div class="bl-col">
+          <div class="bl-logo">${d.logo ? `<img src="${d.logo}" alt="">` : ''}</div>
           <div class="bl-centro">${adEsc(centro.toUpperCase())}</div>
-          <div class="bl-doc">Boleta de Calificaciones</div>
+          <div class="bl-doc">BOLETA DE CALIFICACIONES</div>
+          <div class="bl-lugar">${adEsc(bol.municipio)}${bol.municipio && bol.departamento ? ' ' : ''}${adEsc(bol.departamento)}</div>
+          ${bol.lugar ? `<div class="bl-lugar">${adEsc(bol.lugar)}</div>` : ''}
           <div class="bl-anio">Año lectivo ${adEsc(bol.anio) || new Date().getFullYear()}</div>
         </div>
-        <div class="bl-logo">${d.logoSec ? `<img src="${d.logoSec}" alt="">` : ''}</div>
+        <div class="bl-col der">
+          <div class="bl-logo-sec"><img src="${logoSecSrc}" alt="Secretaría de Educación"></div>
+          <div class="bl-oficial-t">
+            <b>Secretaría de Educación</b>
+            <span>Subsecretaría de Asuntos Técnicos Pedagógicos</span>
+            <span>Dirección General de Evaluación de la Calidad de la Educación</span>
+            <span>Dirección Departamental de Educación de ${adEsc(bol.departamento) || '—'}</span>
+          </div>
+        </div>
       </header>
 
       <div class="bl-alumno">
@@ -1639,18 +1679,24 @@ function adPrintBoletas(d) {
         <div><span>Sección</span><b>${adEsc(d.seccion) || '—'}</b></div>
       </div>
 
-      <table class="bl-notas">
-        <thead>
-          <tr>
-            <th rowspan="2" class="pa">Parcial</th>
-            <th colspan="${pers.length}" class="grp">Personalidad</th>
-            <th colspan="${mats.length}" class="grp">Aprovechamiento académico</th>
-            <th rowspan="2" class="v"><span>Inasistencias</span></th>
-          </tr>
-          <tr>${pers.map(thV).join('')}${mats.map(thV).join('')}</tr>
-        </thead>
-        <tbody>${filas}${promRow}</tbody>
-      </table>
+      <div class="bl-cuerpo">
+        <aside class="bl-firmapadre">
+          <div class="fp-t">Firma del padre de familia</div>
+          ${parciales.map(p => `<div class="fp-slot"><i></i><span>${p}-Parcial</span></div>`).join('')}
+        </aside>
+        <table class="bl-notas">
+          <thead>
+            <tr>
+              <th rowspan="2" class="pa">Parcial</th>
+              <th colspan="${pers.length}" class="grp">Personalidad</th>
+              <th colspan="${mats.length}" class="grp">Aprovechamiento académico</th>
+              <th rowspan="2" class="v"><span>Inasistencias</span></th>
+            </tr>
+            <tr>${pers.map(thV).join('')}${mats.map(thV).join('')}</tr>
+          </thead>
+          <tbody>${filas}${promRow}</tbody>
+        </table>
+      </div>
 
       <div class="bl-grid2">
         <div class="bl-card">
@@ -1670,16 +1716,15 @@ function adPrintBoletas(d) {
         </div>
       </div>
 
+      <div class="bl-cita">
+        <p>&ldquo;${adEsc(cita.t)}&rdquo;</p>
+        <span>— ${adEsc(cita.a)}</span>
+      </div>
+
       <footer class="bl-foot">
-        <div class="bl-oficial">
-          <b>SECRETARÍA DE EDUCACIÓN · REPÚBLICA DE HONDURAS</b>
-          <span>Dirección Departamental de Educación de ${adEsc(bol.departamento) || '—'}</span>
-          <span>${adEsc(bol.lugar)}${bol.lugar && bol.municipio ? ', ' : ''}${adEsc(bol.municipio)}${(bol.lugar || bol.municipio) && bol.departamento ? ' · ' : ''}${adEsc(bol.departamento)}</span>
-        </div>
         <div class="bl-firmas">
           <div><i></i><b>${adEsc(bol.docente) || '&nbsp;'}</b><span>Profesor(a) de Grado</span></div>
           <div><i></i><b>${adEsc(bol.director) || '&nbsp;'}</b><span>Director(a)</span></div>
-          <div><i></i><b>&nbsp;</b><span>Padre, Madre o Tutor(a)</span></div>
         </div>
       </footer>
     </section>`;
@@ -1695,13 +1740,32 @@ function adPrintBoletas(d) {
   .hoja { page-break-after: always; }
   .hoja:last-child { page-break-after: auto; }
 
-  .bl-head { display: flex; align-items: center; gap: 14px; padding-bottom: 8px; border-bottom: 2.5px solid var(--azul); }
-  .bl-head .bl-logo { width: 62px; height: 62px; flex: 0 0 62px; display: flex; align-items: center; justify-content: center; }
-  .bl-head .bl-logo img { max-width: 62px; max-height: 62px; object-fit: contain; }
-  .bl-title { flex: 1; text-align: center; }
-  .bl-centro { font-family: Georgia, 'Times New Roman', serif; font-size: 17px; font-weight: 700; color: var(--tinta); letter-spacing: .3px; line-height: 1.15; }
-  .bl-doc { font-family: Georgia, serif; font-size: 12px; font-style: italic; color: var(--oro); margin-top: 2px; }
-  .bl-anio { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--azul); margin-top: 2px; }
+  .bl-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding-bottom: 8px; border-bottom: 2.5px solid var(--azul); }
+  .bl-col { flex: 1; text-align: center; }
+  .bl-col.der { flex: 1.15; }
+  .bl-head .bl-logo { height: 58px; display: flex; align-items: center; justify-content: center; margin-bottom: 3px; }
+  .bl-head .bl-logo img { max-width: 120px; max-height: 58px; object-fit: contain; }
+  .bl-logo-sec { height: 44px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+  .bl-logo-sec img { max-width: 230px; max-height: 44px; object-fit: contain; }
+  .bl-centro { font-family: Georgia, 'Times New Roman', serif; font-size: 13.5px; font-weight: 700; color: var(--tinta); letter-spacing: .3px; line-height: 1.15; }
+  .bl-doc { font-family: Georgia, serif; font-size: 11px; font-weight: 700; color: var(--oro); margin-top: 2px; letter-spacing: .6px; }
+  .bl-lugar { font-size: 9.5px; color: #55637d; margin-top: 1px; }
+  .bl-anio { font-size: 8.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--azul); margin-top: 3px; }
+  .bl-oficial-t { line-height: 1.35; }
+  .bl-oficial-t b { display: block; font-family: Georgia, serif; font-size: 11px; color: var(--tinta); }
+  .bl-oficial-t span { display: block; font-size: 9px; color: #33415c; }
+
+  .bl-cuerpo { display: flex; gap: 8px; align-items: stretch; }
+  .bl-firmapadre { flex: 0 0 96px; border: 1px solid var(--linea); border-radius: 8px; padding: 6px 7px; background: var(--suave); display: flex; flex-direction: column; }
+  .fp-t { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--azul); text-align: center; line-height: 1.25; margin-bottom: 2px; }
+  .fp-slot { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 2px; }
+  .fp-slot i { display: block; border-top: 1px solid #55637d; margin-bottom: 2px; }
+  .fp-slot span { font-size: 7.5px; color: #55637d; text-align: center; }
+  .bl-cuerpo .bl-notas { flex: 1; }
+
+  .bl-cita { margin-top: 11px; text-align: center; padding: 8px 26px; border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); break-inside: avoid; }
+  .bl-cita p { font-family: Georgia, 'Times New Roman', serif; font-size: 12.5px; font-style: italic; color: var(--tinta); line-height: 1.45; }
+  .bl-cita span { display: inline-block; margin-top: 3px; font-size: 9.5px; letter-spacing: 1px; color: var(--oro); font-weight: 700; }
 
   .bl-alumno { display: flex; gap: 8px; margin: 9px 0; }
   .bl-alumno > div { flex: 1; background: var(--suave); border: 1px solid var(--linea); border-radius: 6px; padding: 4px 8px; }
@@ -1739,7 +1803,7 @@ function adPrintBoletas(d) {
   .chip.good { background: #eef7ee; border-color: #cfe6cf; } .chip.good b { color: #2e7d32; }
   .chip.low { background: #fdf3e5; border-color: #ecdcbf; } .chip.low b { color: #c8730a; }
 
-  .bl-foot { margin-top: 12px; padding-top: 8px; border-top: 1.5px solid var(--linea); }
+  .bl-foot { margin-top: 12px; }
   .bl-oficial { text-align: center; line-height: 1.35; }
   .bl-oficial b { font-size: 9.5px; letter-spacing: .3px; color: var(--tinta); display: block; }
   .bl-oficial span { display: block; font-size: 9px; color: #55637d; }
