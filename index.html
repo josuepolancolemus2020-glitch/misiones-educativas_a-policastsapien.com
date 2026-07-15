@@ -264,6 +264,18 @@
   </div>
 
   <!-- ========== PARA MADRES Y PADRES ========== -->
+  <!-- VISTA: AJUSTES — perfiles y roles (docente/director/rector/admin) -->
+  <div id="view-ajustes" class="view">
+    <header class="app-header compact">
+      <button class="hamburger-btn" aria-label="Abrir menú"><i class="fa-solid fa-bars"></i></button>
+      <h1 class="view-title">Ajustes</h1>
+      <div></div>
+    </header>
+    <div class="view-scroll">
+      <div id="ajustes-cont"></div>
+    </div>
+  </div>
+
   <div id="view-padre" class="view">
     <header class="app-header compact">
       <button class="back-icon-btn" id="padre-back-btn" aria-label="Volver al inicio">
@@ -928,6 +940,11 @@
       <div class="drawer-section-label">Para la familia</div>
       <button class="drawer-item" data-view="view-padre">
         <i class="fa-solid fa-people-roof"></i><span>Avance de mi hijo/a</span>
+      </button>
+      <div class="drawer-divider"></div>
+      <div class="drawer-section-label">Cuenta</div>
+      <button class="drawer-item" data-view="view-ajustes">
+        <i class="fa-solid fa-gear"></i><span>Ajustes</span>
       </button>
     </nav>
   </aside>

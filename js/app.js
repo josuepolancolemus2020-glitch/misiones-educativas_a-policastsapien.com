@@ -1241,7 +1241,8 @@ async function docenteRecuperar() {
     if (resp && resp.ok && resp.codigo) {
       // Si en este equipo quedaron datos de OTRA cuenta, se descartan antes de entrar.
       if (typeof dsClaim === 'function') dsClaim(resp.codigo);
-      _docenteSave({ codigo: resp.codigo, clave, nombre: resp.nombre || '', correo, t: new Date().toISOString() });
+      _docenteSave({ codigo: resp.codigo, clave, nombre: resp.nombre || '', correo,
+        rol: resp.rol || 'docente', t: new Date().toISOString() });
       renderProfile();
       toast('✅ ¡Bienvenido de vuelta, ' + String(resp.nombre || 'colega').split(' ')[0] + '!');
     } else if (resp && resp.motivo === 'espera') {
@@ -1461,7 +1462,7 @@ async function docenteSuscribir() {
       // Si en este equipo quedaron datos de OTRA cuenta, se descartan antes de entrar.
       if (typeof dsClaim === 'function') dsClaim(resp.codigo);
       _docenteSave({ codigo: resp.codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono,
-        departamento, municipio, lugar, t: new Date().toISOString() });
+        departamento, municipio, lugar, rol: 'docente', t: new Date().toISOString() });
       renderProfile();
       toast('🎉 ¡Bienvenido, ' + nombre.split(' ')[0] + '! Tu cuenta está lista');
       return;
@@ -1679,6 +1680,7 @@ function switchView(id) {
   if (id === 'view-progreso') renderProgress();
   if (id === 'view-padre')    renderPadre();
   if (id === 'view-perfil')   renderProfile();
+  if (id === 'view-ajustes')  renderAjustes();
   if (id === 'view-gobierno')       renderGobiernoEscolar();
   if (id === 'view-plan-accion')    paInit();
   if (id === 'view-parte-mensual')  { /* la UI se recalcula en tiempo real con inputs */ }
@@ -1688,6 +1690,345 @@ function switchView(id) {
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
 }
+
+/* ─────────────────────────────────────────────
+   AJUSTES — perfiles y roles
+   (docente · director · rector · administrador del proyecto)
+   El rol vive en la nube (docentes.rol, SUPABASE-ROLES.sql) y TODA la
+   verificación real la hace el servidor: aquí solo se pinta lo que el
+   servidor devuelve según quién llama. Padres y alumnos NO tienen
+   cuenta: el padre entra con la clave de familia y el alumno solo
+   escribe el código de aula.
+───────────────────────────────────────────── */
+
+const AJ_ROLES = {
+  docente:  { ic: '🧑‍🏫', n: 'Docente',  d: 'Tu aula, tus alumnos y tus herramientas.' },
+  director: { ic: '🏫', n: 'Director/a', d: 'Además de tu aula, ves los docentes registrados de tu escuela.' },
+  rector:   { ic: '🎓', n: 'Rector/a',   d: 'Ves los docentes registrados de todas las escuelas.' },
+  admin:    { ic: '🛡️', n: 'Administrador del proyecto', d: 'Acceso completo: quién se registra, roles y todos los datos.' },
+};
+function _ajRol(d) { return AJ_ROLES[d.rol] ? d.rol : 'docente'; }
+
+let _ajLista = null;  // última lista traída de la nube (se limpia al salir)
+
+function renderAjustes() {
+  const cont = document.getElementById('ajustes-cont');
+  if (!cont) return;
+  const d = _docenteCfg();
+
+  if (!d.codigo) {
+    _ajLista = null;
+    cont.innerHTML = `
+      <div class="setting-group teacher-panel-group">
+        <div class="aj-head">
+          <span class="aj-avatar">⚙️</span>
+          <div>
+            <div class="aj-nombre">Ajustes</div>
+            <div class="aj-sub">Perfiles de usuario</div>
+          </div>
+        </div>
+        <p class="teacher-panel-desc">Aquí vive tu <strong>perfil de usuario</strong> (docente, director/a,
+          rector/a o administración del proyecto). Inicia sesión en la Zona Docente para verlo.</p>
+        <button class="padre-wa-btn doc-btn-brand" onclick="switchView('view-perfil')">🧑‍🏫 Ir a la Zona Docente</button>
+        <p class="padre-hint" style="margin-top:10px;">Las familias y los alumnos <strong>no necesitan cuenta</strong>:
+          el padre entra con su clave de familia y el alumno solo escribe el código de aula.</p>
+      </div>`;
+    return;
+  }
+
+  const rol = _ajRol(d);
+  const R = AJ_ROLES[rol];
+  const fila = (et, val) => val
+    ? `<div class="aj-dato"><span class="aj-dato-et">${et}</span><span class="aj-dato-v">${_pEsc(val)}</span></div>` : '';
+
+  // ── Tarjeta 1: Mi perfil (todos los roles) ──
+  let html = `
+    <div class="setting-group teacher-panel-group">
+      <div class="aj-head">
+        <span class="aj-avatar">${R.ic}</span>
+        <div>
+          <div class="aj-nombre">${_pEsc(d.nombre || '')}</div>
+          <div class="aj-sub">${_pEsc(d.correo || '')}</div>
+        </div>
+      </div>
+      <div class="aj-rol-badge aj-rol-${rol}">${R.ic} ${R.n}</div>
+      <p class="aj-rol-desc">${R.d}</p>
+      <div class="aj-datos">
+        ${fila('🏫 Escuela', d.escuela ? d.escuela + (d.tipo ? ' · ' + d.tipo : '') : '')}
+        ${fila('📍 Lugar', [d.municipio, d.departamento].filter(Boolean).join(', '))}
+        ${fila('🧭 Referencia', d.lugar)}
+        ${fila('📱 Teléfono', d.telefono)}
+      </div>
+      <div class="doc-cuenta">
+        <button class="doc-cuenta-btn" onclick="ajToggleEditar()">
+          <span class="doc-cuenta-ic">✏️</span><span>Editar mi perfil</span>
+        </button>
+        <button class="doc-cuenta-btn" onclick="docenteCambiarClave()">
+          <span class="doc-cuenta-ic">🔑</span><span>Cambiar mi contraseña</span>
+        </button>
+        <button class="doc-cuenta-btn doc-salir-btn" onclick="ajCerrarSesion()">
+          <span class="doc-cuenta-ic">🚪</span><span>Cerrar sesión</span>
+        </button>
+      </div>
+      <div id="aj-edit-form" style="display:none;margin-top:12px;border-top:1px solid #e0e0e0;padding-top:12px;">
+        <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">El <strong>nombre</strong> y el <strong>correo</strong>
+          no se cambian aquí: son las llaves de tu cuenta y del avance de tus alumnos.</p>
+        <input id="aj-ed-escuela" class="pa-inp-field" maxlength="120" placeholder="Nombre de tu escuela"
+               value="${_pEsc(d.escuela || '')}" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <button id="aj-tipo-pub" class="doc-tipo-btn${(d.tipo || 'Pública') === 'Pública' ? ' doc-tipo-sel' : ''}" onclick="ajTipo('Pública')">🏫 Pública</button>
+          <button id="aj-tipo-pri" class="doc-tipo-btn${d.tipo === 'Privada' ? ' doc-tipo-sel' : ''}" onclick="ajTipo('Privada')">🏛 Privada</button>
+        </div>
+        <input id="aj-ed-departamento" class="pa-inp-field" maxlength="60" placeholder="Departamento"
+               value="${_pEsc(d.departamento || '')}" style="margin-bottom:8px;">
+        <input id="aj-ed-municipio" class="pa-inp-field" maxlength="80" placeholder="Municipio"
+               value="${_pEsc(d.municipio || '')}" style="margin-bottom:8px;">
+        <input id="aj-ed-lugar" class="pa-inp-field" maxlength="200" placeholder="Lugar / referencia de la escuela"
+               value="${_pEsc(d.lugar || '')}" style="margin-bottom:8px;">
+        <input id="aj-ed-telefono" class="pa-inp-field" maxlength="40" type="tel" placeholder="Teléfono / WhatsApp"
+               value="${_pEsc(d.telefono || '')}" style="margin-bottom:12px;">
+        <button class="padre-wa-btn doc-btn-brand" onclick="ajGuardarPerfil()">💾 Guardar mi perfil</button>
+      </div>
+    </div>`;
+
+  // ── Tarjeta 2: lo que el ROL permite ver (el servidor decide) ──
+  if (rol === 'admin') {
+    html += `
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-shield-halved teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">Registros del proyecto</label>
+        </div>
+        <p class="teacher-panel-desc">Todas las cuentas registradas, de la más nueva a la más vieja.
+          Desde aquí promueves a <strong>director/a</strong> o <strong>rector/a</strong>.</p>
+        <input id="aj-buscar" class="pa-inp-field" maxlength="80" placeholder="🔎 Buscar por nombre, correo o escuela…"
+               oninput="ajPintarLista()" style="margin-bottom:8px;">
+        <button class="padre-wa-btn" onclick="ajCargarEquipo()">🔄 Cargar los registros</button>
+        <div id="aj-lista" class="aj-lista"></div>
+      </div>`;
+  } else if (rol === 'rector' || rol === 'director') {
+    html += `
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-users teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">${rol === 'rector' ? 'Docentes de todas las escuelas' : 'Docentes de mi escuela'}</label>
+        </div>
+        <p class="teacher-panel-desc">${rol === 'rector'
+          ? 'Los docentes registrados en la plataforma, agrupables por escuela (sin datos de contacto).'
+          : 'Los docentes registrados con el mismo nombre de escuela que el tuyo (sin datos de contacto).'}</p>
+        <button class="padre-wa-btn" onclick="ajCargarEquipo()">🔄 Cargar la lista</button>
+        <div id="aj-lista" class="aj-lista"></div>
+      </div>`;
+  }
+
+  cont.innerHTML = html;
+  if (_ajLista) ajPintarLista();
+  ajRefrescarPerfil();
+}
+
+/* Trae el perfil fresco de la nube (incluido el ROL): si el admin te
+   promovió, se ve sin cerrar sesión. Solo re-pinta si algo cambió. */
+async function ajRefrescarPerfil() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave || navigator.onLine === false) return;
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_perfil_leer', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave })
+    });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (!j || !j.ok) return;
+    const cur = _docenteCfg();
+    let cambio = false;
+    ['nombre', 'correo', 'escuela', 'tipo', 'telefono', 'departamento', 'municipio', 'lugar', 'rol'].forEach(k => {
+      const v = j[k] == null ? '' : String(j[k]);
+      if (v !== String(cur[k] == null ? '' : cur[k])) { cur[k] = v; cambio = true; }
+    });
+    if (cambio) {
+      _docenteSave(cur);
+      const vista = document.getElementById('view-ajustes');
+      if (vista && vista.classList.contains('active')) renderAjustes();
+    }
+  } catch (_) {}
+}
+
+function ajToggleEditar() {
+  const f = document.getElementById('aj-edit-form');
+  if (f) f.style.display = f.style.display === 'none' ? '' : 'none';
+}
+
+let _ajTipoSel = '';
+function ajTipo(t) {
+  _ajTipoSel = t;
+  const pub = document.getElementById('aj-tipo-pub'), pri = document.getElementById('aj-tipo-pri');
+  if (pub) pub.classList.toggle('doc-tipo-sel', t === 'Pública');
+  if (pri) pri.classList.toggle('doc-tipo-sel', t === 'Privada');
+}
+
+async function ajGuardarPerfil() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  if (navigator.onLine === false) { toast('📴 Guardar el perfil necesita internet'); return; }
+  const val = id => (document.getElementById(id)?.value || '').trim();
+  const cuerpo = {
+    p_codigo: d.codigo, p_clave: d.clave,
+    p_escuela: val('aj-ed-escuela'), p_tipo: _ajTipoSel || d.tipo || 'Pública',
+    p_telefono: val('aj-ed-telefono'), p_departamento: val('aj-ed-departamento'),
+    p_municipio: val('aj-ed-municipio'), p_lugar: val('aj-ed-lugar'),
+  };
+  toast('⏳ Guardando…');
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_perfil_editar', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(cuerpo)
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      const cur = _docenteCfg();
+      cur.escuela = cuerpo.p_escuela; cur.tipo = cuerpo.p_tipo; cur.telefono = cuerpo.p_telefono;
+      cur.departamento = cuerpo.p_departamento; cur.municipio = cuerpo.p_municipio; cur.lugar = cuerpo.p_lugar;
+      _docenteSave(cur);
+      toast('✅ Perfil guardado');
+      renderAjustes();
+    } else {
+      toast('⚠️ No se pudo guardar. Intenta de nuevo.');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
+  }
+}
+
+/* Trae la lista que el ROL permite (el servidor decide filas y columnas) */
+async function ajCargarEquipo() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  if (navigator.onLine === false) { toast('📴 Ver los registros necesita internet'); return; }
+  const cont = document.getElementById('aj-lista');
+  if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⏳ Cargando…</p>';
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_rol_listar', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      _ajLista = { rol: j.rol, docentes: Array.isArray(j.docentes) ? j.docentes : [] };
+      ajPintarLista();
+    } else if (j && j.motivo === 'escuela') {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">🏫 Primero escribe el nombre de tu escuela en «Editar mi perfil»: la lista se arma emparejando ese nombre.</p>';
+    } else if (j && j.motivo === 'rol') {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">Tu perfil actual no tiene acceso a esta lista.</p>';
+    } else {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo cargar. Intenta de nuevo.</p>';
+    }
+  } catch (_) {
+    if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo conectar. Intenta de nuevo en un momento.</p>';
+  }
+}
+
+function _ajFecha(iso) {
+  const f = new Date(iso);
+  return isNaN(f) ? '' : f.toLocaleDateString('es-HN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function ajPintarLista() {
+  const cont = document.getElementById('aj-lista');
+  if (!cont || !_ajLista) return;
+  const q = ((document.getElementById('aj-buscar')?.value || '').trim().toLowerCase());
+  const esAdmin = _ajLista.rol === 'admin';
+  const filas = _ajLista.docentes.filter(x => !q ||
+    [x.nombre, x.correo, x.escuela, x.municipio, x.departamento].join(' ').toLowerCase().includes(q));
+  if (!filas.length) {
+    cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">Sin registros que mostrar' + (q ? ' con esa búsqueda' : '') + '.</p>';
+    return;
+  }
+  cont.innerHTML = `
+    <p class="padre-hint" style="margin:10px 0 6px;">${filas.length} registro${filas.length === 1 ? '' : 's'}</p>
+    ${filas.map(x => {
+      const rx = AJ_ROLES[x.rol] ? x.rol : 'docente';
+      const lugar = [x.escuela, [x.municipio, x.departamento].filter(Boolean).join(', ')].filter(Boolean).join(' · ');
+      // Solo el admin puede cambiar roles, y NUNCA el de otro admin
+      const control = (esAdmin && rx !== 'admin')
+        ? `<select class="aj-rol-sel" data-correo="${_pEsc(x.correo || '')}" data-prev="${rx}"
+                   onchange="ajCambiarRol(this)">
+             <option value="docente"${rx === 'docente' ? ' selected' : ''}>🧑‍🏫 Docente</option>
+             <option value="director"${rx === 'director' ? ' selected' : ''}>🏫 Director/a</option>
+             <option value="rector"${rx === 'rector' ? ' selected' : ''}>🎓 Rector/a</option>
+           </select>`
+        : `<span class="aj-rol-badge aj-rol-${rx}">${AJ_ROLES[rx].ic} ${AJ_ROLES[rx].n}</span>`;
+      return `
+        <div class="aj-fila">
+          <div class="aj-fila-info">
+            <div class="aj-fila-nombre">${_pEsc(x.nombre || '')}</div>
+            ${esAdmin && x.correo ? `<div class="aj-fila-det">📧 ${_pEsc(x.correo)}${x.telefono ? ' · 📱 ' + _pEsc(x.telefono) : ''}</div>` : ''}
+            ${lugar ? `<div class="aj-fila-det">🏫 ${_pEsc(lugar)}</div>` : ''}
+            ${x.creado ? `<div class="aj-fila-det">🗓️ Se registró el ${_ajFecha(x.creado)}</div>` : ''}
+          </div>
+          <div class="aj-fila-rol">${control}</div>
+        </div>`;
+    }).join('')}`;
+}
+
+/* Cambio de rol — SOLO admin; el servidor lo re-verifica todo */
+async function ajCambiarRol(sel) {
+  const correo = sel.dataset.correo || '';
+  const prev = sel.dataset.prev || 'docente';
+  const nuevo = sel.value;
+  if (!correo || nuevo === prev) return;
+  const R = AJ_ROLES[nuevo] || AJ_ROLES.docente;
+  const ok = await metasConfirm(`La cuenta **${correo}** pasará a ser **${R.n}**.\n\n${R.d}`,
+    { icono: R.ic, titulo: 'Cambiar rol', okTxt: 'Sí, cambiar' });
+  if (!ok) { sel.value = prev; return; }
+  const d = _docenteCfg();
+  const { url, key } = _padreSbCfg();
+  toast('⏳ Cambiando rol…');
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_rol_cambiar', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave, p_correo: correo, p_rol: nuevo })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      sel.dataset.prev = nuevo;
+      const fila = (_ajLista?.docentes || []).find(x => (x.correo || '') === correo);
+      if (fila) fila.rol = nuevo;
+      toast(`✅ ${R.ic} Ahora es ${R.n}`);
+    } else {
+      sel.value = prev;
+      toast(j && j.motivo === 'espera' ? '⏳ Demasiados cambios seguidos. Espera un momento.'
+                                       : '⚠️ No se pudo cambiar el rol.');
+    }
+  } catch (_) {
+    sel.value = prev;
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
+  }
+}
+
+async function ajCerrarSesion() {
+  await docenteCerrarSesion();
+  _ajLista = null;
+  renderAjustes();
+}
+
+window.renderAjustes   = renderAjustes;
+window.ajToggleEditar  = ajToggleEditar;
+window.ajTipo          = ajTipo;
+window.ajGuardarPerfil = ajGuardarPerfil;
+window.ajCargarEquipo  = ajCargarEquipo;
+window.ajPintarLista   = ajPintarLista;
+window.ajCambiarRol    = ajCambiarRol;
+window.ajCerrarSesion  = ajCerrarSesion;
 
 /* ─────────────────────────────────────────────
    TOAST
