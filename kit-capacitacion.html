@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit de Capacitación · M.E.T.A.S</title>
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --azul: #1565c0; --azul-osc: #0d417e; --dorado: #c49000;
+    --texto: #22303f; --gris: #5b6773; --linea: #dbe4ee; --fondo: #f4f8fd;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--texto); background: #eef2f7; line-height: 1.5;
+  }
+  .hoja {
+    max-width: 8.5in; margin: 0 auto; background: #fff;
+    padding: 34px 44px;
+  }
+
+  /* ── encabezado ── */
+  .cabecera {
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 4px solid var(--azul); padding-bottom: 14px; margin-bottom: 18px;
+  }
+  .marca { font-size: 1.9rem; font-weight: 900; color: var(--azul); letter-spacing: 2px; }
+  .marca small { display: block; font-size: 0.72rem; font-weight: 700; color: var(--gris); letter-spacing: 0.5px; }
+  .kit-titulo { text-align: right; }
+  .kit-titulo .t1 { font-size: 1.15rem; font-weight: 900; color: var(--azul-osc); }
+  .kit-titulo .t2 { font-size: 0.78rem; color: var(--gris); }
+
+  h2 {
+    font-size: 1.02rem; color: #fff; background: var(--azul);
+    padding: 8px 14px; border-radius: 10px; margin: 22px 0 12px;
+  }
+  h2 .num {
+    display: inline-block; background: #fff; color: var(--azul);
+    width: 24px; height: 24px; border-radius: 50%; text-align: center;
+    line-height: 24px; font-size: 0.85rem; margin-right: 8px; font-weight: 900;
+  }
+  p { font-size: 0.9rem; margin-bottom: 8px; }
+  .nota {
+    background: #fdf8ee; border: 1px solid #f3ddb3; border-radius: 10px;
+    padding: 10px 14px; font-size: 0.84rem; margin: 10px 0;
+  }
+  .nota b { color: var(--dorado); }
+
+  /* ── paso con QR ── */
+  .paso { display: flex; gap: 18px; align-items: flex-start; margin: 12px 0 16px; }
+  .paso-txt { flex: 1; }
+  .paso-txt ol { margin: 6px 0 6px 20px; font-size: 0.88rem; }
+  .paso-txt ol li { margin-bottom: 5px; }
+  .paso-txt ul { margin: 6px 0 6px 20px; font-size: 0.88rem; }
+  .paso-txt ul li { margin-bottom: 4px; }
+  .qr-caja { flex: 0 0 130px; text-align: center; }
+  .qr-caja img {
+    width: 120px; height: 120px; border: 2px solid var(--linea); border-radius: 12px; padding: 5px;
+  }
+  .qr-caja .qr-et { font-size: 0.7rem; color: var(--gris); margin-top: 4px; line-height: 1.3; }
+  .enlace { font-weight: 700; color: var(--azul); white-space: nowrap; font-size: 0.68rem; }
+
+  .destacado {
+    background: var(--fondo); border: 2px dashed var(--azul); border-radius: 12px;
+    padding: 12px 16px; text-align: center; margin: 10px 0;
+    font-size: 1rem; font-weight: 800; color: var(--azul-osc);
+  }
+
+  /* ── guión del facilitador ── */
+  table.guion { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 8px 0; }
+  table.guion th {
+    background: var(--azul); color: #fff; padding: 6px 10px; text-align: left; font-size: 0.8rem;
+  }
+  table.guion td { border: 1px solid var(--linea); padding: 6px 10px; vertical-align: top; }
+  table.guion td:first-child { white-space: nowrap; font-weight: 800; color: var(--azul); }
+
+  /* ── checklist ── */
+  .check { list-style: none; margin: 8px 0; }
+  .check li {
+    font-size: 0.92rem; padding: 7px 0 7px 34px; position: relative;
+    border-bottom: 1px dashed var(--linea);
+  }
+  .check li::before {
+    content: ''; position: absolute; left: 4px; top: 8px;
+    width: 16px; height: 16px; border: 2px solid var(--azul); border-radius: 5px;
+  }
+
+  .pie {
+    margin-top: 26px; padding-top: 12px; border-top: 2px solid var(--linea);
+    font-size: 0.76rem; color: var(--gris); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+  }
+
+  /* ── botón imprimir (solo pantalla) ── */
+  .imprimir-btn {
+    position: fixed; right: 18px; bottom: 18px; z-index: 5;
+    border: none; cursor: pointer; padding: 14px 22px; border-radius: 999px;
+    font-size: 1rem; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, #1565c0, #7b2ff7);
+    box-shadow: 0 6px 18px rgba(21,101,192,.4);
+  }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  .salto { page-break-before: always; }
+  @page { size: letter; margin: 10mm 9mm; }
+  @media print {
+    body { background: #fff; }
+    .hoja { max-width: none; padding: 0; }
+    .imprimir-btn { display: none; }
+    h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 14px 0 9px; }
+    table.guion th, .destacado, .nota { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .paso { margin: 8px 0 10px; }
+    .check li { padding: 5px 0 5px 34px; }
+    .check li::before { top: 6px; }
+    .pie { margin-top: 14px; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir el kit</button>
+
+<div class="hoja">
+
+  <!-- ════════ PÁGINA 1: PORTADA + GUIÓN (para quien conduce) ════════ -->
+  <div class="cabecera">
+    <div class="marca">M.E.T.A.S.<small>Misiones Educativas · metas.policastsapien.com</small></div>
+    <div class="kit-titulo">
+      <div class="t1">🎒 Kit de Capacitación Docente</div>
+      <div class="t2">Sesión práctica de 60 minutos · cada maestro sale usando la plataforma</div>
+    </div>
+  </div>
+
+  <p><strong>M.E.T.A.S</strong> es una plataforma educativa hondureña con misiones interactivas alineadas al
+  DCNB: los alumnos aprenden jugando en cualquier teléfono <strong>(incluso sin internet)</strong> y el avance
+  llega solo a la cuenta del maestro. Además automatiza el papeleo del aula: asistencia, economía,
+  notas SACE, boleta, Plan de Acción y comunicación con las familias por WhatsApp.</p>
+
+  <div class="nota"><b>Lo único que necesita cada participante:</b> su teléfono con WhatsApp, internet
+  durante la sesión (solo para crear la cuenta) y su correo electrónico a la mano.</div>
+
+  <h2>📋 Guión de la sesión (para quien conduce)</h2>
+  <table class="guion">
+    <tr><th>Tiempo</th><th>Momento</th><th>Qué pasa</th></tr>
+    <tr><td>0–5 min</td><td>Bienvenida</td><td>Reparta esta hoja. Mensaje clave: <em>«hoy no vienen a escuchar, vienen a usar»</em>.</td></tr>
+    <tr><td>5–20 min</td><td>🚀 Vívelo como alumno</td><td>Todos escanean el QR de la <strong>misión de prueba</strong> (Paso 1) y la resuelven desde su teléfono. La plataforma se explica sola.</td></tr>
+    <tr><td>20–30 min</td><td>🎓 Crea tu cuenta</td><td>Siguen el Paso 2 de esta hoja. Apoye a quien se atore con el correo.</td></tr>
+    <tr><td>30–40 min</td><td>🔑 Código de aula</td><td>Paso 3: cada maestro encuentra SU código y entiende que sus alumnos lo escriben una sola vez.</td></tr>
+    <tr><td>40–50 min</td><td>🏫 Mi aula y familias</td><td>Pasos 4 y 5: cargar 3 alumnos de prueba y ver las claves de familia.</td></tr>
+    <tr><td>50–60 min</td><td>✅ Cierre</td><td>Checklist final (Paso 7) + dónde resolver dudas después (Paso 6). Nadie se va sin su cuenta creada.</td></tr>
+  </table>
+
+  <div class="nota">💡 <b>Regla de oro del facilitador:</b> no proyecte pantallas ni dé discursos —
+  camine entre los participantes mientras ELLOS tocan su teléfono. La mejor capacitación de M.E.T.A.S
+  es usarla.</div>
+
+  <!-- ════════ PÁGINA 2: PASOS 1-3 ════════ -->
+  <div class="salto"></div>
+
+  <h2><span class="num">1</span>🚀 Vívelo como alumno (15 min)</h2>
+  <div class="paso">
+    <div class="paso-txt">
+      <ol>
+        <li>Abre la <strong>cámara</strong> de tu teléfono y apúntala al cuadro de la derecha.</li>
+        <li>Toca el enlace que aparece: se abre la misión <strong>«Múltiplos, Divisores y Primos»</strong>.</li>
+        <li>Resuélvela como si fueras tu alumno: flashcards, memorama, retos, sopa de letras…</li>
+        <li>Fíjate cómo <strong>todo se califica solo</strong> y cómo el niño gana XP e insignias.</li>
+      </ol>
+      <p class="nota" style="margin-top:8px;">Así se ve <b>cada una</b> de las misiones: español, matemáticas,
+      ciencias naturales y sociales, organizadas por ciclo y por rutas de aprendizaje.</p>
+    </div>
+    <div class="qr-caja">
+      <img src="img/qr-mision-demo.png" alt="QR misión de prueba">
+      <div class="qr-et">📷 Misión de prueba</div>
+    </div>
+  </div>
+
+  <h2><span class="num">2</span>🎓 Crea tu cuenta docente gratis (10 min)</h2>
+  <div class="paso">
+    <div class="paso-txt">
+      <ol>
+        <li>Escanea el QR de la derecha para abrir la plataforma completa.</li>
+        <li>Toca el menú <strong>☰</strong> (arriba a la izquierda) → <strong>Zona Docente</strong>.</li>
+        <li>Llena el formulario: <strong>nombre completo</strong> (con tus dos apellidos), <strong>correo</strong>,
+            una <strong>contraseña</strong> fácil de recordar y tu <strong>escuela</strong>.</li>
+        <li>Toca <strong>«🎓 Crear mi cuenta gratis»</strong>. ¡Listo! Verás tu tarjeta de bienvenida.</li>
+      </ol>
+      <ul>
+        <li>💡 En tu teléfono, el navegador te ofrecerá <strong>«Añadir a pantalla de inicio»</strong>: acéptalo
+        y M.E.T.A.S quedará instalada como una app.</li>
+      </ul>
+    </div>
+    <div class="qr-caja">
+      <img src="img/qr-app.png" alt="QR de la plataforma">
+      <div class="qr-et">📷 Plataforma M.E.T.A.S<br><span class="enlace">metas.policastsapien.com</span></div>
+    </div>
+  </div>
+
+  <h2><span class="num">3</span>🔑 Tu código de aula: el corazón de todo (10 min)</h2>
+  <div class="paso-txt">
+    <p>En tu tarjeta de la <strong>Zona Docente</strong> aparece <strong>tu código de aula</strong>
+    (5 letras, ej. <strong>KQAZF</strong>). Funciona así:</p>
+    <div class="destacado">Escribes el código en la pizarra → tus alumnos lo escriben UNA sola vez
+    al empezar una misión → su avance llega solo a tu cuenta.</div>
+    <ul>
+      <li>Los alumnos <strong>no crean cuentas ni contraseñas</strong>: solo el código.</li>
+      <li>Sirve igual en el teléfono de la casa, la tablet prestada o el celular del hermano.</li>
+      <li>Para verlo después: Zona Docente → tarjeta con tu nombre → <strong>«Tu código de aula»</strong>.</li>
+    </ul>
+  </div>
+
+  <!-- ════════ PÁGINA 3: PASOS 4-7 ════════ -->
+  <div class="salto"></div>
+
+  <h2><span class="num">4</span>🏫 Mi aula: tu lista de alumnos manda (10 min)</h2>
+  <div class="paso-txt">
+    <ol>
+      <li>Zona Docente → <strong>Herramientas del aula</strong> → <strong>«Mi aula»</strong>.</li>
+      <li>Escribe grado, sección y escuela, y carga <strong>3 alumnos de prueba</strong> con su número de lista.</li>
+      <li>Esa lista alimenta <strong>todo</strong>: economía de colectas, asistencia, notas SACE,
+          boleta imprimible y Plan de Acción — sin volver a escribir nombres.</li>
+    </ol>
+    <p>Explora las pestañas: <strong>💰 Economía</strong> (colectas con informe y firmas),
+    <strong>📋 Asistencia</strong> (pase de lista de excepciones: solo marcas quién faltó),
+    <strong>🧮 Notas SACE</strong> (boleta por parcial, lista para imprimir).</p>
+  </div>
+
+  <h2><span class="num">5</span>👨‍👩‍👧 Las familias, sin cuentas ni complicaciones</h2>
+  <div class="paso">
+    <div class="paso-txt">
+      <ol>
+        <li>En <strong>Mi aula</strong>, cada alumno tiene su <strong>🔑 clave de familia</strong> (ej. <strong>7-3TQE</strong>).</li>
+        <li>Imprimes las <strong>tiras</strong> con la clave y las mandas en el cuaderno.</li>
+        <li>El padre o la madre escanea el QR de la derecha, escribe la clave… y ve el avance de su hijo,
+            los comunicados del aula y hasta puede escribirle al maestro.</li>
+      </ol>
+      <p class="nota"><b>Sin apps que instalar, sin correos, sin contraseñas para el padre.</b>
+      Solo la clave de su hijo. La privacidad queda protegida: cada clave abre únicamente a ese alumno.</p>
+    </div>
+    <div class="qr-caja">
+      <img src="img/qr-padres.png" alt="QR para las familias">
+      <div class="qr-et">📷 Portal de las familias</div>
+    </div>
+  </div>
+
+  <h2><span class="num">6</span>🆘 ¿Dudas después de hoy?</h2>
+  <div class="paso">
+    <div class="paso-txt">
+      <ul>
+        <li><strong>Guías ilustradas paso a paso</strong>: escanea el QR de la derecha.</li>
+        <li><strong>Buzón directo al creador</strong>: en la app, menú ☰ → <strong>Ajustes</strong> →
+            «Escríbele al creador del proyecto». Tu mensaje le llega de verdad.</li>
+        <li><strong>¿Olvidaste tu contraseña?</strong> En la pantalla de entrada de la Zona Docente
+            está el botón para recuperarla con tu correo.</li>
+      </ul>
+    </div>
+    <div class="qr-caja">
+      <img src="img/qr-guias.png" alt="QR de las guías">
+      <div class="qr-et">📷 Guías y manuales</div>
+    </div>
+  </div>
+
+  <h2><span class="num">7</span>✅ Salgo de esta capacitación con…</h2>
+  <ul class="check">
+    <li>Resolví una misión completa como alumno y vi cómo se califica sola.</li>
+    <li>Mi cuenta docente creada (correo + contraseña que recuerdo).</li>
+    <li>M.E.T.A.S instalada en la pantalla de inicio de mi teléfono.</li>
+    <li>Sé dónde está mi código de aula y cómo lo usarán mis alumnos.</li>
+    <li>Cargué alumnos de prueba en «Mi aula» y encontré las claves de familia.</li>
+    <li>Sé dónde están las guías y cómo escribirle al creador si me atoro.</li>
+  </ul>
+
+  <div class="pie">
+    <span>🎒 Kit de Capacitación M.E.T.A.S · Proyecto Educativo policastsapien.com</span>
+    <span>Se imprime una hoja por participante · versión julio 2026</span>
+  </div>
+
+</div>
+</body>
+</html>
