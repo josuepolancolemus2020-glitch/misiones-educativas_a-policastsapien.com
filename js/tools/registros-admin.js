@@ -1517,41 +1517,96 @@ function adMsgMotiva(nombre, prom, mejor) {
   return `${n}, todo gran logro comienza con pequeños pasos. Con acompañamiento en casa, esfuerzo diario y una actitud positiva mejorarás parcial a parcial. ¡Confiamos en ti!`;
 }
 
-/* Consejo para la FAMILIA, derivado del gráfico. Maneja EMPATES con
-   honestidad: si varias materias comparten la nota más alta (o la más
-   baja) se nombran juntas; si todas son iguales, se celebra la
-   constancia — nunca se corona una sola materia por accidente. */
+/* ── Código de colores OFICIAL de calificaciones — el MISMO del Plan
+   de Acción (PA_CATS en plan-accion.js): la boleta y el plan hablan
+   el mismo idioma de colores y etiquetas. ── */
+const AD_NOTA_CATS = [
+  { min: 95, label: 'Avanzado',        color: '#16a34a' },
+  { min: 80, label: 'Muy Bueno',       color: '#0891b2' },
+  { min: 70, label: 'Satisfactorio',   color: '#a16207' },
+  { min: 60, label: 'Debe Mejorar',    color: '#ea580c' },
+  { min: 0,  label: 'Insatisfactorio', color: '#dc2626' },
+];
+function adNotaCat(v) {
+  const n = Number(v);
+  return AD_NOTA_CATS.find(c => n >= c.min) || AD_NOTA_CATS[AD_NOTA_CATS.length - 1];
+}
+
+/* Consejo concreto por rasgo de personalidad bajo (observación del docente) */
+const AD_RASGO_TIP = {
+  'Puntualidad': 'ayude a que llegue a tiempo cada día',
+  'Espíritu de trabajo': 'anímele a terminar sus tareas y trabajos en clase',
+  'Orden y presentación': 'revisen juntos los cuadernos y la presentación de los trabajos',
+  'Sociabilidad': 'refuerce la convivencia y el trabajo en equipo',
+  'Moralidad': 'conversen en casa sobre el respeto a las normas del aula',
+};
+
 function adNombresMats(arr, max) {
   const ns = (arr || []).map(x => x.mat);
   const m = max || 2;
   if (ns.length <= m) return ns.join(' y ');
   return ns.slice(0, m).join(', ') + ' y ' + (ns.length - m) + ' más';
 }
-function adConsejoFamilia(nombre, mejores, peores) {
+
+/* Consejo para la FAMILIA basado en los DATOS del aula, no en plantilla:
+   celebra lo mejor (con empates honestos), diagnostica CAUSAS visibles
+   (inasistencias, rasgos de personalidad bajos, tendencia entre
+   parciales) y da la acción con la etiqueta oficial de la nota. */
+function adConsejoFamilia(nombre, ctx) {
   const n = nombre || 'su hijo(a)';
+  const c = ctx || {};
+  const mejores = c.mejores || [], peores = c.peores || [];
   const partes = [];
-  const hayMejor = mejores && mejores.length;
-  const hayPeor = peores && peores.length;
-  if (hayMejor && !hayPeor) {
-    // todas las materias comparten la misma nota
-    partes.push(`El rendimiento de ${n} es parejo (${mejores[0].val}) en todas las materias: celebre esa constancia, que es la base de todo progreso, y anímele a subir un escalón en la que más disfrute.`);
-  } else if (hayMejor && mejores.length > 1) {
-    partes.push(`Reconozca y celebre que ${n} comparte su mejor nota (${mejores[0].val}) en ${adNombresMats(mejores)}: el elogio sincero fortalece la confianza y la motivación.`);
-  } else if (hayMejor) {
-    partes.push(`Reconozca y celebre el logro de ${n} en ${mejores[0].mat} (${mejores[0].val}): el elogio sincero fortalece la confianza y la motivación.`);
+
+  // 1) Celebrar lo real
+  if (mejores.length && !peores.length) {
+    partes.push(`El rendimiento de ${n} es parejo (${c.maxV}) en todas las materias: celebre esa constancia, que es la base de todo progreso.`);
+  } else if (mejores.length > 1) {
+    partes.push(`Celebre que ${n} logra su mejor nota (${c.maxV}) en ${adNombresMats(mejores)}: el elogio sincero motiva.`);
+  } else if (mejores.length) {
+    partes.push(`Celebre el logro de ${n} en ${mejores[0].mat} (${c.maxV}): el elogio sincero motiva.`);
   }
-  if (hayPeor) {
-    partes.push(`En ${adNombresMats(peores)} (${peores[0].val}) hay margen de mejora: acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
+  if (c.tendencia && c.tendencia.tipo === 'sube') {
+    partes.push(`Además viene mejorando: pasó de ${c.tendencia.ini.prom} a ${c.tendencia.fin.prom} entre parciales — ese rumbo es el correcto.`);
   }
-  if (!partes.length) partes.push(`Mantenga una rutina de estudio en casa y comunicación cercana con el centro educativo.`);
-  partes.push(`Una lectura compartida cada día y el descanso adecuado potencian todo el aprendizaje.`);
+
+  // 2) Diagnóstico: qué DICEN los datos sobre el porqué
+  const causas = [];
+  if ((c.inasis || 0) >= 3) {
+    causas.push(`las ${c.inasis} inasistencias pesan en el resultado (cada día recuperado se nota)`);
+  }
+  if (c.rasgosBajos && c.rasgosBajos.length) {
+    const tip = AD_RASGO_TIP[c.rasgosBajos[0]] || 'refuércenlo juntos en casa';
+    causas.push(`el docente observa margen en ${c.rasgosBajos.slice(0, 2).join(' y ')} — ${tip}`);
+  }
+  if (c.tendencia && c.tendencia.tipo === 'baja') {
+    causas.push(`el promedio bajó de ${c.tendencia.ini.prom} (parcial ${c.tendencia.ini.p}) a ${c.tendencia.fin.prom} (parcial ${c.tendencia.fin.p}) — conviene retomar la rutina que funcionaba`);
+  }
+  if (causas.length) {
+    partes.push(`Los datos del aula señalan por dónde empezar: ${causas.join('; ')}.`);
+  } else if (peores.length && (c.inasis || 0) === 0) {
+    partes.push(`Sin faltas ni observaciones de conducta, el reto es de práctica: más ejercicios guiados harán la diferencia.`);
+  }
+
+  // 3) Acción sobre lo bajo, con la etiqueta oficial de la nota
+  if (peores.length) {
+    const et = adNotaCat(c.minV).label;
+    if (Number(c.minV) < 60) {
+      partes.push(`En ${adNombresMats(peores)} (${c.minV} · «${et}») se necesita refuerzo urgente: coordine con el docente un plan de recuperación esta misma semana.`);
+    } else {
+      partes.push(`En ${adNombresMats(peores)} (${c.minV} · «${et}») acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
+    }
+  }
+
+  if (!partes.length) partes.push('Mantenga una rutina de estudio en casa y comunicación cercana con el centro educativo.');
+  if (partes.join(' ').length < 320) partes.push('Una lectura compartida cada día y el descanso adecuado potencian todo el aprendizaje.');
   return partes.join(' ');
 }
 
 /* Gráfico de barras horizontales (SVG: los fill SÍ imprimen, a diferencia de
    los fondos CSS). Verde = materia más alta, ámbar = más baja, azul = resto;
    línea roja punteada en 70 (nota de aprobación). */
-function adBoletaGrafico(datos, mejores, peores) {
+function adBoletaGrafico(datos) {
   if (!datos.length) return '';
   const rowH = 18, gap = 4, padT = 6, padB = 12;
   const labelW = 104, barX = labelW + 4, W = 320;
@@ -1559,24 +1614,26 @@ function adBoletaGrafico(datos, mejores, peores) {
   const H = padT + datos.length * (rowH + gap) - gap + padB;
   const x70 = barX + barMax * 0.7;
   const gridBot = padT + datos.length * (rowH + gap) - gap;
-  const enSet = (arr, mat) => (arr || []).some(x => x.mat === mat);
   const bars = datos.map((it, i) => {
     const y = padT + i * (rowH + gap);
     const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
-    let color = '#3b5bdb';
-    if (enSet(mejores, it.mat)) color = '#2e7d32';   // TODAS las empatadas arriba en verde
-    if (enSet(peores, it.mat)) color = '#e08a00';    // y TODAS las empatadas abajo en ámbar
+    // Cada barra con el color OFICIAL de su calificación (el mismo del
+    // Plan de Acción): verde=Avanzado, cian=Muy Bueno, amarillo=
+    // Satisfactorio, naranja=Debe Mejorar, rojo=Insatisfactorio.
+    const color = adNotaCat(it.val).color;
     const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
     return `<text x="${labelW}" y="${(y + rowH * 0.72).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#334155">${adEsc(lbl)}</text>
       <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
       <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="${rowH - 4}" rx="2.5" fill="${color}"/>
       <text x="${(barX + w + 3).toFixed(1)}" y="${(y + rowH * 0.72).toFixed(1)}" font-size="8.5" font-weight="bold" fill="${color}">${it.val}</text>`;
   }).join('');
+  const leyenda = `<div class="bl-leyenda">${AD_NOTA_CATS.map(c =>
+    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}</div>`;
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
     <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
     <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
     ${bars}
-  </svg>`;
+  </svg>${leyenda}`;
 }
 
 /* Imprime una BOLETA elegante por alumno: encabezado con dos logos (centro y
@@ -1648,6 +1705,36 @@ function adPrintBoletas(d) {
     const mejores = datos.filter(x => x.val === maxV);
     const peores = todasIguales ? [] : datos.filter(x => x.val === minV);
     const inasis = sumInasis(a.num);
+
+    // ── SEÑALES para el consejo (patrones reales del aula) ──
+    // Tendencia: promedio general de cada parcial con datos; si entre el
+    // primero y el último hay ±5 puntos, es un patrón que vale contar.
+    const promsParc = parciales.map(p => {
+      const xs = mats.map(cc => val(p, cc, a.num)).filter(x => x !== '' && !isNaN(Number(x))).map(Number);
+      return xs.length ? { p, prom: Math.round(xs.reduce((s, x) => s + x, 0) / xs.length) } : null;
+    }).filter(Boolean);
+    let tendencia = null;
+    if (promsParc.length >= 2) {
+      const ini = promsParc[0], fin = promsParc[promsParc.length - 1];
+      if (fin.prom <= ini.prom - 5) tendencia = { tipo: 'baja', ini, fin };
+      else if (fin.prom >= ini.prom + 5) tendencia = { tipo: 'sube', ini, fin };
+    }
+    // Personalidad: rasgos marcados con lo MÁS BAJO de la escala del centro
+    // (último valor de escalaPers). Solo si NO todos están abajo — si todos,
+    // es el criterio general del docente, no un patrón del alumno.
+    const escalaP = ((bol.escalaPers && bol.escalaPers.length) ? bol.escalaPers : AD_PERS_ESCALA_DEF)
+      .map(s => String(s).toUpperCase());
+    const bajoP = escalaP[escalaP.length - 1];
+    const rasgoUlt = cc => {
+      for (let i = parciales.length - 1; i >= 0; i--) {
+        const v = val(parciales[i], cc, a.num);
+        if (v !== '') return String(v).toUpperCase();
+      }
+      return '';
+    };
+    const persVals = pers.map(cc => ({ c: cc, v: rasgoUlt(cc) })).filter(x => x.v);
+    const rasgosBajosTodos = persVals.filter(x => x.v === bajoP).map(x => x.c);
+    const rasgosBajos = (persVals.length && rasgosBajosTodos.length === persVals.length) ? [] : rasgosBajosTodos;
 
     const filas = parciales.map(p => `
       <tr>
@@ -1733,7 +1820,7 @@ function adPrintBoletas(d) {
       <div class="bl-grid2">
         <div class="bl-card">
           <div class="bl-h">Rendimiento por materia <small>(promedio del año)</small></div>
-          ${adBoletaGrafico(datos, todasIguales ? [] : mejores, peores) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
+          ${adBoletaGrafico(datos) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
           ${resumen}
         </div>
         <div class="bl-msgs">
@@ -1743,7 +1830,11 @@ function adPrintBoletas(d) {
           </div>
           <div class="bl-card consejo">
             <div class="bl-h">✿ Consejo para la familia</div>
-            <p>${adEsc(adConsejoFamilia(primer(a.nombre), mejores, peores))}</p>
+            <p>${adEsc(adConsejoFamilia(primer(a.nombre), {
+              mejores, peores, maxV, minV,
+              inasis: Number(inasis) || 0,
+              tendencia, rasgosBajos,
+            }))}</p>
           </div>
         </div>
       </div>
@@ -1829,6 +1920,8 @@ function adPrintBoletas(d) {
   .bl-card.consejo { background: linear-gradient(180deg, #fdf7ee, #fff); border-color: #ecdcbf; }
   .bl-card.consejo .bl-h { color: var(--oro); border-color: #ecdcbf; }
   .bl-nada { font-size: 10px; color: #7286a8; font-style: italic; }
+  .bl-leyenda { display: flex; flex-wrap: wrap; gap: 2px 9px; justify-content: center; margin-top: 4px; font-size: 6.8px; color: #55637d; }
+  .bl-leyenda i { display: inline-block; width: 7px; height: 7px; border-radius: 2px; margin-right: 3px; vertical-align: -1px; }
 
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .chip { flex: 1 1 44%; border: 1px solid var(--linea); border-radius: 7px; padding: 4px 8px; background: var(--suave); }
