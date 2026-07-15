@@ -1203,13 +1203,13 @@ window.padreConsultarNube = padreConsultarNube;
 ───────────────────────────────────────────── */
 
 /* ── Acceso del maestro (Zona Docente) ──
-   Sin vueltas: el maestro visitante se suscribe en UN paso (solo su
-   nombre) y recibe AL INSTANTE su código docente (PROF-XXXX, para que
-   sus alumnos lo escriban al identificarse) y su clave secreta (para
-   ver en la nube SOLO a sus alumnos). Guardado en METAS_DOCENTE_V1. */
+   El maestro crea su cuenta con su nombre completo, su correo y una
+   contraseña que él elige. El código técnico lo genera EL SERVIDOR y
+   nunca se muestra en la pantalla: los alumnos solo escriben el NOMBRE
+   del maestro en el campo «Docente» de las misiones.
+   Guardado en METAS_DOCENTE_V1 {codigo, clave, nombre, correo, …}. */
 
 const DOCENTE_KEY = 'METAS_DOCENTE_V1';
-const DOC_ALFA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // sin 0/O ni 1/I/L
 
 function _docenteCfg() {
   try { const o = JSON.parse(localStorage.getItem(DOCENTE_KEY)); return (o && typeof o === 'object') ? o : {}; }
@@ -1224,38 +1224,44 @@ function docenteMostrarRecuperar() {
 
 async function docenteRecuperar() {
   const correo = (document.getElementById('doc-rec-correo')?.value || '').trim().toLowerCase();
-  const clave  = (document.getElementById('doc-rec-clave')?.value || '').trim();
-  if (!correo.includes('@') || !clave) { toast('Escribe tu correo y tu clave'); return; }
+  const clave  = (document.getElementById('doc-rec-clave')?.value || '');
+  if (!correo.includes('@')) { toast('Escribe el correo con que te registraste'); return; }
+  if (!clave) { toast('Escribe tu contraseña'); return; }
+  if (navigator.onLine === false) { toast('📴 Entrar necesita internet'); return; }
   toast('⏳ Verificando…');
   const { url, key } = _padreSbCfg();
   try {
-    const r = await fetch(url + '/rest/v1/rpc/metas_recuperar_docente', {
+    const r = await fetch(url + '/rest/v1/rpc/metas_entrar_docente_v2', {
       method: 'POST',
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
       body: JSON.stringify({ p_correo: correo, p_clave: clave }),
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
-    const filas = await r.json();
-    if (!filas.length) { toast('❌ Correo o clave incorrectos'); return; }
-    const f = filas[0];
-    _docenteSave({ codigo: f.codigo, clave, nombre: f.nombre || '', correo, t: new Date().toISOString() });
-    renderProfile();
-    toast('✅ ¡Bienvenido de vuelta, ' + (f.nombre || '').split(' ')[0] + '!');
-  } catch (e) {
-    toast('⚠️ ' + e.message);
+    const resp = await r.json();
+    if (resp && resp.ok && resp.codigo) {
+      _docenteSave({ codigo: resp.codigo, clave, nombre: resp.nombre || '', correo, t: new Date().toISOString() });
+      renderProfile();
+      toast('✅ ¡Bienvenido de vuelta, ' + String(resp.nombre || 'colega').split(' ')[0] + '!');
+    } else if (resp && resp.motivo === 'espera') {
+      await metasAlert('Demasiados intentos. Por seguridad espera 10 minutos y vuelve a intentar.',
+        { icono: '⏳', titulo: 'Zona Docente' });
+    } else {
+      toast('Correo o contraseña incorrectos');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
   }
-}
-
-function _docAzar(n) {
-  let s = '';
-  for (let i = 0; i < n; i++) s += DOC_ALFA[Math.floor(Math.random() * DOC_ALFA.length)];
-  return s;
 }
 
 function renderProfile() {
   const cont = document.getElementById('docente-acceso');
   if (!cont) return;
   const d = _docenteCfg();
+
+  // Las herramientas del aula solo existen para el maestro registrado:
+  // sin sesión no se muestran (el alumno no tiene la cuenta del maestro).
+  const _tg = document.getElementById('teacher-tools-group');
+  if (_tg) _tg.style.display = d.codigo ? '' : 'none';
 
   if (!d.codigo) {
     // Visitante: formulario de suscripción
@@ -1265,12 +1271,15 @@ function renderProfile() {
           <i class="fa-solid fa-user-plus teacher-panel-icon"></i>
           <label class="setting-label" style="margin-bottom:0;">¿Eres maestro o maestra?</label>
         </div>
-        <p class="teacher-panel-desc">Regístrate gratis. Recibirás <strong>al instante</strong> tu
-          código de docente y tu clave para ver los resultados de tus alumnos en la nube.</p>
+        <p class="teacher-panel-desc">Crea tu cuenta gratis. Tus alumnos escribirán tu
+          <strong>nombre</strong> al empezar una misión y su avance llegará solo a tu cuenta.</p>
         <input id="doc-nombre" class="pa-inp-field" maxlength="60" autocomplete="name"
-               placeholder="Nombre completo *" style="margin-bottom:8px;">
+               placeholder="Nombre completo *" style="margin-bottom:4px;">
+        <p class="doc-campo-hint">Nombre y apellidos — tus alumnos lo escribirán para que te llegue su avance.</p>
         <input id="doc-correo" class="pa-inp-field" maxlength="100" autocomplete="email" type="email"
-               placeholder="Correo electrónico * (para recuperar tu cuenta)" style="margin-bottom:8px;">
+               placeholder="Correo electrónico *" style="margin-bottom:8px;">
+        <input id="doc-clave" class="pa-inp-field" maxlength="40" autocomplete="new-password" type="password"
+               placeholder="Elige una contraseña fácil de recordar *" style="margin-bottom:8px;">
         <input id="doc-escuela" class="pa-inp-field" maxlength="120" autocomplete="off"
                placeholder="Nombre de tu escuela" style="margin-bottom:8px;">
         <div style="display:flex;gap:8px;margin-bottom:8px;">
@@ -1292,7 +1301,7 @@ function renderProfile() {
                placeholder="Lugar / dirección o referencia de la escuela" style="margin-bottom:8px;">
         <input id="doc-telefono" class="pa-inp-field" maxlength="40" autocomplete="tel" type="tel"
                placeholder="Teléfono / WhatsApp (opcional)" style="margin-bottom:12px;">
-        <button class="padre-wa-btn doc-btn-brand" onclick="docenteSuscribir()">🎓 Registrarme gratis</button>
+        <button class="padre-wa-btn doc-btn-brand" onclick="docenteSuscribir()">🎓 Crear mi cuenta gratis</button>
         <p class="padre-hint" style="margin-top:8px;">Solo este paso necesita internet.
           <a href="panel-docente.html" class="doc-admin-link">¿Administrador del proyecto?</a></p>
         <div style="margin-top:10px;text-align:center;">
@@ -1301,56 +1310,90 @@ function renderProfile() {
           </button>
         </div>
         <div id="doc-recuperar-form" style="display:none;margin-top:10px;border-top:1px solid #e0e0e0;padding-top:12px;">
-          <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">Ingresa tus datos de registro:</p>
+          <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">Entra con tu correo y tu contraseña:</p>
           <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">📧 TU CORREO</label>
           <input id="doc-rec-correo" class="pa-inp-field" maxlength="100" autocomplete="email" type="email"
                  placeholder="El correo con que te registraste" style="margin-bottom:10px;">
-          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">🔒 TU CLAVE SECRETA</label>
-          <input id="doc-rec-clave" class="pa-inp-field" type="password" maxlength="20" autocomplete="off"
-                 placeholder="La clave que guardaste" style="margin-bottom:14px;">
-          <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar con mi correo</button>
+          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">🔒 TU CONTRASEÑA</label>
+          <input id="doc-rec-clave" class="pa-inp-field" type="password" maxlength="40" autocomplete="current-password"
+                 placeholder="La contraseña que elegiste" style="margin-bottom:14px;">
+          <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar</button>
+          <button class="padre-wa-cambiar" onclick="docenteOlvide()">🆘 ¿Olvidaste tu contraseña?</button>
         </div>
       </div>`;
     return;
   }
 
-  // Maestro suscrito: sus llaves y sus accesos
+  // Maestro con sesión: saludo, aviso del nombre y SU botón principal
+  const primerNombre = String(d.nombre || '').trim().split(/\s+/)[0] || 'colega';
+  // Red de seguridad: si hay una copia de un borrado reciente, ofrecer recuperarla
+  const hayRespaldo = (typeof dsTieneRespaldo === 'function') && dsTieneRespaldo();
+  const recuperarLink = hayRespaldo
+    ? `<a class="doc-recuperar-link" onclick="dsRecuperar()">↩️ Recuperar lo que borré</a>`
+    : '';
   cont.innerHTML = `
     <div class="setting-group teacher-panel-group">
-      <div class="teacher-panel-head">
-        <i class="fa-solid fa-id-card teacher-panel-icon"></i>
-        <label class="setting-label" style="margin-bottom:0;">${_pEsc(d.nombre || 'Docente')} — tu acceso</label>
+      <div class="doc-saludo">
+        <div class="doc-saludo-hola">👋 ¡Hola, ${_pEsc(primerNombre)}!</div>
+        <div class="doc-saludo-sub">${_pEsc(d.nombre || '')}${d.escuela ? ' · ' + _pEsc(d.escuela) : ''}</div>
       </div>
-      <div class="doc-cred">
-        <div class="doc-cred-row"><span>📢 Código para tus alumnos</span><strong>${_pEsc(d.codigo)}</strong></div>
-        <div class="doc-cred-row"><span>🔑 Tu clave secreta</span>
-          <span class="doc-clave-wrap"><strong id="doc-clave-txt">••••••</strong>
-          <button class="doc-ver-btn" id="doc-ver-clave" onclick="docenteVerClave()">👁 Ver</button></span></div>
+      <div class="doc-sync-hint2">☁️ Tus datos se guardan y sincronizan solos en todos tus equipos.</div>
+      <button class="doc-sync-now" id="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
+      ${recuperarLink}
+      <button class="padre-wa-cambiar" onclick="docenteCambiarClave()">✏️ Cambiar mi contraseña</button>
+      <button class="padre-wa-cambiar" style="color:#c0392b;margin-top:6px;" onclick="docenteCerrarSesion()">🚪 Cerrar sesión</button>
+      <a class="doc-usar-este-link" onclick="dsUsarEste()">✅ Este equipo tiene los datos correctos → usarlo en todos</a>
+      <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
+
+      <div class="doc-aviso-alumnos" style="margin-top:18px;">📣 Dale a tus alumnos tu <strong>código de aula</strong>:
+        lo escriben <strong>una sola vez</strong> al empezar una misión y su avance llega solo a tu cuenta.
+        Escríbelo en la pizarra.</div>
+      <div class="doc-codigo-aula">
+        <span class="doc-cod-label">🔑 Tu código de aula</span>
+        <span class="doc-cod-val" id="doc-cod-val">${d.codigoAula ? _pEsc(d.codigoAula) : '· · · · ·'}</span>
+        <button class="doc-cod-copy" onclick="docenteCopiarCodigo()">📋 Copiar</button>
       </div>
-      <p class="teacher-panel-desc" style="margin:10px 0 12px;">Tus alumnos escriben <strong>${_pEsc(d.codigo)}</strong>
-        en el campo «Docente» al identificarse en una misión: así sus resultados llegan a tu nube.</p>
-      <div class="teacher-links-list">
-        <a class="teacher-link-item" href="registro.html">
-          <i class="fa-solid fa-clipboard-list"></i>
-          <span class="tli-info">
-            <span class="tli-title">📋 Registro de clase</span>
-            <span class="tli-sub">Lo trabajado en este equipo</span>
-          </span>
-          <i class="fa-solid fa-chevron-right"></i>
-        </a>
-        <a class="teacher-link-item" href="consulta-nube.html">
-          <i class="fa-solid fa-cloud"></i>
-          <span class="tli-info">
-            <span class="tli-title">☁️ Mis alumnos en la nube</span>
-            <span class="tli-sub">Entra directo, sin escribir claves</span>
-          </span>
-          <i class="fa-solid fa-chevron-right"></i>
-        </a>
-      </div>
-      <button class="padre-wa-btn" style="margin-top:12px;" onclick="docenteCompartir()">📤 Guardar mis llaves en WhatsApp</button>
-      <button class="padre-wa-cambiar" onclick="docenteCambiarClave()">✏️ Cambiar mi clave secreta</button>
-      <button class="padre-wa-cambiar" style="color:#c0392b;border-color:#c0392b;margin-top:6px;" onclick="docenteCerrarSesion()">🚪 Cerrar sesión</button>
+      <a class="doc-avance-btn" href="consulta-nube.html">📊 Ver el avance de mis alumnos</a>
     </div>`;
+  if (typeof dsOnProfile === 'function') dsOnProfile();
+  docenteCargarCodigoAula();
+}
+
+/* Trae (o genera) el código de aula del maestro desde la nube y lo muestra.
+   Se cachea en METAS_DOCENTE_V1.codigoAula para mostrarlo sin internet. */
+async function docenteCargarCodigoAula() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  if (navigator.onLine === false) return;
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_aula_mi_codigo', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave })
+    });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (j && j.ok && j.codigo_aula) {
+      const cur = _docenteCfg();
+      if (cur.codigoAula !== j.codigo_aula) {
+        cur.codigoAula = j.codigo_aula;
+        try { localStorage.setItem(DOCENTE_KEY, JSON.stringify(cur)); } catch (_) {}
+      }
+      const el = document.getElementById('doc-cod-val');
+      if (el) el.textContent = j.codigo_aula;
+    }
+  } catch (_) {}
+}
+
+function docenteCopiarCodigo() {
+  const d = _docenteCfg();
+  const cod = d.codigoAula || (document.getElementById('doc-cod-val')?.textContent || '').replace(/[·\s]/g, '');
+  if (!cod) { toast('Aún no hay código; conéctate a internet un momento y vuelve a entrar'); return; }
+  try {
+    navigator.clipboard.writeText(cod);
+    toast('📋 Código de aula copiado: ' + cod);
+  } catch (_) { toast('Tu código de aula es: ' + cod); }
 }
 
 let _docTipo = 'Pública';
@@ -1361,72 +1404,120 @@ function docenteTipo(t) {
 }
 
 async function docenteSuscribir() {
-  const nombre        = (document.getElementById('doc-nombre')?.value || '').trim();
+  const nombre        = (document.getElementById('doc-nombre')?.value || '').trim().replace(/\s+/g, ' ');
   const correo        = (document.getElementById('doc-correo')?.value || '').trim().toLowerCase();
+  const clave         = (document.getElementById('doc-clave')?.value || '');
   const escuela       = (document.getElementById('doc-escuela')?.value || '').trim();
   const telefono      = (document.getElementById('doc-telefono')?.value || '').trim();
   const departamento  = (document.getElementById('doc-departamento')?.value || '').trim();
   const municipio     = (document.getElementById('doc-municipio')?.value || '').trim();
   const lugar         = (document.getElementById('doc-lugar')?.value || '').trim();
-  if (nombre.length < 3) { toast('Escribe tu nombre completo'); return; }
-  if (!correo.includes('@') || correo.length < 5) { toast('Escribe un correo válido — lo necesitarás para recuperar tu cuenta'); return; }
-  if (navigator.onLine === false) { toast('📴 El registro necesita internet (solo esta vez)'); return; }
-  toast('⏳ Creando tu acceso…');
+  if (nombre.split(' ').length < 2) { toast('Escribe tu nombre y al menos un apellido'); return; }
+  if (!correo.includes('@') || correo.length < 5) { toast('Escribe un correo válido — con él entrarás a tu cuenta'); return; }
+  if (clave.length < 6) { toast('La contraseña debe tener al menos 6 letras o números'); return; }
+  if (navigator.onLine === false) { toast('📴 Crear la cuenta necesita internet (solo esta vez)'); return; }
+  toast('⏳ Creando tu cuenta…');
   const { url, key } = _padreSbCfg();
-  for (let intento = 0; intento < 3; intento++) {
-    const codigo = 'PROF-' + _docAzar(4);
-    const clave  = _docAzar(6);
-    try {
-      const r = await fetch(url + '/rest/v1/rpc/metas_suscribir_docente', {
-        method: 'POST',
-        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ p_codigo: codigo, p_clave: clave, p_nombre: nombre,
-          p_correo: correo, p_escuela: escuela, p_tipo: _docTipo, p_telefono: telefono,
-          p_departamento: departamento, p_municipio: municipio, p_lugar: lugar }),
-      });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const ok = await r.json();
-      if (ok === true) {
-        _docenteSave({ codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono,
-          departamento, municipio, lugar, t: new Date().toISOString() });
-        renderProfile();
-        toast('🎉 ¡Listo, ' + nombre.split(' ')[0] + '! Guarda tus llaves');
-        return;
-      }
-    } catch (_) {
-      toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
+  try {
+    // El código técnico del docente lo genera el servidor (nunca se muestra)
+    const r = await fetch(url + '/rest/v1/rpc/metas_docente_alta_v2', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_nombre: nombre, p_correo: correo, p_clave: clave,
+        p_escuela: escuela, p_tipo: _docTipo, p_telefono: telefono,
+        p_departamento: departamento, p_municipio: municipio, p_lugar: lugar }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const resp = await r.json();
+    if (resp && resp.ok && resp.codigo) {
+      _docenteSave({ codigo: resp.codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono,
+        departamento, municipio, lugar, t: new Date().toISOString() });
+      renderProfile();
+      toast('🎉 ¡Bienvenido, ' + nombre.split(' ')[0] + '! Tu cuenta está lista');
       return;
     }
+    const motivo = resp && resp.motivo;
+    if (motivo === 'nombre') {
+      await metasAlert('Ya hay un maestro registrado con ese nombre. Agrega tu segundo apellido para diferenciarte (ej.: Josué Polanco Lemus).',
+        { icono: '👤', titulo: 'Zona Docente' });
+    } else if (motivo === 'correo') {
+      toast('Ese correo ya tiene cuenta — usa «¿Ya tienes cuenta? Entrar»');
+    } else if (motivo === 'nombre_corto') {
+      toast('Escribe tu nombre y apellidos completos');
+    } else if (motivo === 'correo_malo') {
+      toast('Revisa el correo: parece incompleto');
+    } else if (motivo === 'clave_corta') {
+      toast('La contraseña debe tener al menos 6 letras o números');
+    } else {
+      toast('⚠️ No se pudo crear la cuenta. Intenta de nuevo.');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
   }
-  toast('⚠️ Intenta de nuevo, por favor');
 }
 window.docenteSuscribir = docenteSuscribir;
 
-/* La clave secreta permite recuperar el candado del maestro, así que
-   verla/compartirla/cambiarla pide el candado si existe (una vez por
-   sesión) — si no, un alumno con el teléfono la leería en pantalla. */
-async function docenteVerClave() {
-  const d = _docenteCfg();
-  if (!d.codigo) return;
-  if (typeof paVerificarPin === 'function' && !(await paVerificarPin('Para ver tu clave secreta:'))) return;
-  const el = document.getElementById('doc-clave-txt');
-  if (el) el.textContent = d.clave || '';
-  const btn = document.getElementById('doc-ver-clave');
-  if (btn) btn.remove();
+/* ── ¿Olvidaste tu contraseña? — reset AUTOMÁTICO por correo ──
+   Camino 1 (el más rápido): cualquier equipo con la sesión abierta pone
+   contraseña nueva sin la anterior (docenteCambiarClave).
+   Camino 2: código de 6 dígitos al correo registrado — lo envía la Edge
+   Function reset-clave (ver GUIA-RESET-CORREO.md) y lo verifica
+   metas_reset_confirmar. El servidor NUNCA revela si un correo existe. */
+async function docenteOlvide() {
+  const pre = (document.getElementById('doc-rec-correo')?.value || '').trim();
+  const seguir = await metasConfirm('💡 **¿Tienes otro equipo con tu sesión abierta?** (tu PC o tu teléfono donde la Zona Docente ya te saluda)\n\nEntra ahí y toca «✏️ Cambiar mi contraseña»: te deja poner una nueva SIN saber la anterior. Es lo más rápido.\n\n📧 Si no tienes ninguno, te enviamos un **código a tu correo registrado** para crear una contraseña nueva.', {
+    icono: '🆘', titulo: 'Recuperar contraseña',
+    okTxt: '📧 Enviarme el código', cancelTxt: 'Entendido',
+  });
+  if (!seguir) return;
+  if (navigator.onLine === false) { toast('📴 Necesitas internet para recibir el código'); return; }
+  const correo = await metasPrompt('Escribe el **correo** con el que te registraste:', {
+    icono: '📧', titulo: 'Recuperar contraseña', value: pre, okTxt: 'Enviar código',
+    valida: v => String(v).trim().includes('@') ? '' : 'Escribe un correo válido.',
+  });
+  if (correo === null) return;
+  const c = String(correo).trim().toLowerCase();
+  toast('⏳ Enviando código…');
+  const { url, key } = _padreSbCfg();
+  try {
+    await fetch(url + '/functions/v1/reset-clave', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': key },
+      body: JSON.stringify({ correo: c }),
+    });
+  } catch (_) { /* la respuesta es genérica a propósito: no revela nada */ }
+  const cod = await metasPrompt('Si **' + c + '** está registrado, le llegará un **código de 6 dígitos** (revisa también «no deseado»). Escríbelo aquí:', {
+    icono: '🔢', titulo: 'Recuperar contraseña', inputmode: 'numeric', maxlength: 6, okTxt: 'Continuar',
+    valida: v => /^\d{6}$/.test(String(v).trim()) ? '' : 'Son 6 números.',
+  });
+  if (cod === null) return;
+  const nueva = await metasPrompt('Escribe tu contraseña **nueva** (mínimo 6 letras o números).\nGuárdala bien: con ella entrarás en todos tus equipos.', {
+    icono: '✏️', titulo: 'Recuperar contraseña', type: 'password', okTxt: 'Guardar contraseña',
+    valida: v => String(v).trim().length >= 6 ? '' : 'Muy corta: usa al menos 6 letras o números.',
+  });
+  if (nueva === null) return;
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_reset_confirmar', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_correo: c, p_codigo: String(cod).trim(), p_nueva: String(nueva).trim() }),
+    });
+    const resp = r.ok ? await r.json() : null;
+    if (resp && resp.ok) {
+      toast('✅ ¡Contraseña nueva lista! Ya puedes entrar');
+      const ic = document.getElementById('doc-rec-correo');
+      if (ic) ic.value = c;
+      document.getElementById('doc-rec-clave')?.focus();
+    } else if (resp && resp.motivo === 'codigo') {
+      await metasAlert('El código no coincide. Revisa el **correo más reciente** que te llegó e inténtalo otra vez desde «¿Olvidaste tu contraseña?».', { icono: '🔢', titulo: 'Recuperar contraseña' });
+    } else if (resp && resp.motivo === 'vencido') {
+      await metasAlert('El código ya **venció** (dura 15 minutos) o se agotaron los intentos. Pide uno nuevo desde «¿Olvidaste tu contraseña?».', { icono: '⏳', titulo: 'Recuperar contraseña' });
+    } else {
+      toast('⚠️ No se pudo cambiar. Intenta de nuevo.');
+    }
+  } catch (_) { toast('⚠️ Sin conexión. Intenta de nuevo.'); }
 }
-window.docenteVerClave = docenteVerClave;
-
-async function docenteCompartir() {
-  const d = _docenteCfg();
-  if (!d.codigo) return;
-  if (typeof paVerificarPin === 'function' && !(await paVerificarPin('Para compartir tus llaves:'))) return;
-  const txt = '🎓 Mis llaves de M.E.T.A.S\n' +
-    '📢 Código para mis alumnos (campo Docente): ' + d.codigo + '\n' +
-    '🔑 Mi clave secreta: ' + d.clave + '\n' +
-    '☁️ Consulto a mis alumnos en: ' + location.origin + location.pathname.replace(/index\.html$/, '') + 'consulta-nube.html';
-  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
-}
-window.docenteCompartir = docenteCompartir;
+window.docenteOlvide = docenteOlvide;
 
 function docenteCerrarSesion() {
   _docenteSave(null);
@@ -1436,30 +1527,55 @@ function docenteCerrarSesion() {
 }
 window.docenteCerrarSesion = docenteCerrarSesion;
 
+/* Cambiar contraseña SIN pedir la actual: este equipo ya tiene la sesión
+   del maestro (la cuenta guardada conoce su contraseña), así que también
+   sirve de RESCATE cuando la olvidó — basta un equipo con sesión abierta. */
 async function docenteCambiarClave() {
   const d = _docenteCfg();
   if (!d.codigo) return;
-  if (typeof paVerificarPin === 'function' && !(await paVerificarPin('Para cambiar tu clave secreta:'))) return;
-  const nueva = await metasPrompt('Escribe tu **clave nueva** (mínimo 4 letras o números):', {
-    icono: '✏️', titulo: 'Zona Docente', okTxt: 'Cambiar clave',
-    valida: v => String(v).trim().length >= 4 ? '' : 'Muy corta: usa al menos 4 letras o números.',
+  if (navigator.onLine === false) { toast('📴 Cambiar la contraseña necesita internet'); return; }
+  const nueva = await metasPrompt('Escribe tu contraseña **nueva** (mínimo 6 letras o números).\nNo necesitas la anterior: este equipo ya tiene tu sesión.', {
+    icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Siguiente',
+    valida: v => String(v).trim().length >= 6 ? '' : 'Muy corta: usa al menos 6 letras o números.',
   });
   if (nueva === null) return;
-  const np = String(nueva).trim().toUpperCase();
-  if (navigator.onLine === false) { toast('📴 Cambiar la clave necesita internet'); return; }
+  const np = String(nueva).trim();
+  const conf = await metasPrompt('Escríbela otra vez para confirmar.\nGuárdala bien: con ella entrarás en todos tus equipos.', {
+    icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Cambiar contraseña',
+    valida: v => String(v).trim() === np ? '' : 'No coincide con la primera — revísala.',
+  });
+  if (conf === null) return;
   try {
     const { url, key } = _padreSbCfg();
     const r = await fetch(url + '/rest/v1/rpc/metas_cambiar_clave_docente', {
       method: 'POST',
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_codigo: d.codigo, p_actual: d.clave, p_nueva: np }),
+      body: JSON.stringify({ p_codigo: d.codigo, p_actual: d.clave || '', p_nueva: np }),
     });
     const ok = r.ok ? await r.json() : false;
     if (ok === true) {
-      d.clave = np; _docenteSave(d); renderProfile();
-      toast('✅ Clave actualizada');
+      d.clave = np; _docenteSave(d);
+      toast('✅ Contraseña actualizada');
+      return;
+    }
+    /* La guardada no sirvió (quizá ya la cambiaste en otro equipo):
+       último intento pidiéndola a mano. */
+    const actual = await metasPrompt('La contraseña guardada en este equipo ya no es la vigente.\nEscribe tu contraseña **actual** para confirmar el cambio:', {
+      icono: '✏️', titulo: 'Zona Docente', type: 'password', okTxt: 'Confirmar',
+      valida: v => String(v).length ? '' : 'Escribe tu contraseña actual.',
+    });
+    if (actual === null) return;
+    const r2 = await fetch(url + '/rest/v1/rpc/metas_cambiar_clave_docente', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_actual: String(actual), p_nueva: np }),
+    });
+    const ok2 = r2.ok ? await r2.json() : false;
+    if (ok2 === true) {
+      d.clave = np; _docenteSave(d);
+      toast('✅ Contraseña actualizada');
     } else {
-      toast('⚠️ No se pudo cambiar la clave');
+      toast('⚠️ No se pudo cambiar. Si la olvidaste por completo, usa «¿Olvidaste tu contraseña?» al entrar.');
     }
   } catch (_) { toast('⚠️ Sin conexión con la nube'); }
 }
@@ -1493,11 +1609,29 @@ window.visitMission = visitMission;
 let currentFilter = 'all';
 let currentQuery  = '';
 
+/* ─────────────────────────────────────────────
+   MEMORIA DE NAVEGACIÓN — para que al recargar (F5, Ctrl+Shift+R o el
+   botón 🔄) la app regrese a donde estaba el usuario, no al inicio.
+───────────────────────────────────────────── */
+const METAS_NAV_KEY = 'METAS_NAV_V1';
+function metasSaveNav(patch) {
+  try {
+    const cur = JSON.parse(localStorage.getItem(METAS_NAV_KEY) || '{}');
+    localStorage.setItem(METAS_NAV_KEY, JSON.stringify(Object.assign(cur, patch)));
+  } catch (_) {}
+}
+function metasLoadNav() {
+  try { return JSON.parse(localStorage.getItem(METAS_NAV_KEY) || '{}'); } catch (_) { return {}; }
+}
+window.metasSaveNav = metasSaveNav;
+window.metasLoadNav = metasLoadNav;
+
 function switchView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.drawer-item').forEach(b => b.classList.remove('active'));
   const view = document.getElementById(id);
   if (view) view.classList.add('active');
+  metasSaveNav({ view: id });
   const item = document.querySelector(`.drawer-item[data-view="${id}"]`);
   if (item) item.classList.add('active');
 
@@ -1577,6 +1711,62 @@ document.addEventListener('DOMContentLoaded', () => {
     switchView('view-misiones');
   }
   if (_urlParams.get('view') === 'rutas') switchView('view-rutas');
+
+  // Restaurar la última vista (recarga con F5 / Ctrl+Shift+R / botón 🔄).
+  // El parámetro ?view= (regreso desde una misión) tiene prioridad.
+  if (!_urlParams.get('view')) {
+    const _nav = metasLoadNav();
+    if (_nav.view && _nav.view !== 'view-inicio' && document.getElementById(_nav.view)) {
+      if (_nav.view === 'view-admin' && typeof adRestoreState === 'function') {
+        // Mi aula está tras el candado del maestro: adRestoreState re-pide el PIN
+        adRestoreState(_nav.adTab, _nav.adColecta);
+      } else {
+        switchView(_nav.view);
+      }
+    }
+  }
+
+  // ── Botón 🔄 Actualizar (estilo navegador): fuerza traer la última
+  //    versión y regresa a donde estaba el usuario (limpia cachés/SW).
+  //    Se muestra en TODOS los encabezados para no ir al inicio. ──
+  async function metasForzarActualizacion(btn) {
+    const ic = btn && btn.querySelector ? (btn.querySelector('i') || btn) : null;
+    if (ic) { ic.classList.remove('spin'); void ic.offsetWidth; ic.classList.add('spin'); }
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
+      }
+      if (window.caches && caches.keys) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+    } catch (_) {}
+    toast('🔄 Actualizando…');
+    setTimeout(() => location.reload(), 250);
+  }
+
+  // Inyectar el botón en cada encabezado que aún no lo tenga (el inicio ya
+  // lo trae dentro de .header-actions, junto a la medalla).
+  document.querySelectorAll('.app-header').forEach(h => {
+    if (h.querySelector('.refresh-btn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'refresh-btn';
+    btn.setAttribute('aria-label', 'Actualizar');
+    btn.title = 'Actualizar (traer lo último y quedarte donde estás)';
+    btn.innerHTML = '<i class="fa-solid fa-arrow-rotate-right"></i>';
+    const actions = h.querySelector('.header-actions');
+    if (actions) {
+      actions.insertBefore(btn, actions.firstChild);
+    } else {
+      const right = h.lastElementChild;   // en los compactos: <div></div> vacío
+      if (right && right.tagName === 'DIV' && !right.children.length && !right.textContent.trim()) right.replaceWith(btn);
+      else h.appendChild(btn);
+    }
+  });
+
+  document.querySelectorAll('.refresh-btn').forEach(b =>
+    b.addEventListener('click', () => metasForzarActualizacion(b)));
 
   // Cambio de país
   if (countryEl) {
@@ -1772,4 +1962,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
   });
 
+});
+
+/* ══════════════ ⚡ ACCESO RÁPIDO DE LA ZONA DOCENTE ══════════════
+   El mosaico de herramientas se ORDENA SOLO por uso real: cada toque
+   suma un punto a esa herramienta (METAS_ZD_USO_V1, por equipo) y al
+   volver a la Zona Docente la más usada aparece de primera. Empates:
+   se respeta el orden original del HTML. El reordenado se hace con un
+   retraso corto para que los botones no salten bajo el dedo. */
+const ZD_USO_KEY = 'METAS_ZD_USO_V1';
+function zdUsoOrdenar() {
+  const grid = document.getElementById('zd-grid');
+  if (!grid) return;
+  let uso = {};
+  try { uso = JSON.parse(localStorage.getItem(ZD_USO_KEY)) || {}; } catch (_) {}
+  Array.from(grid.children)
+    .map((el, i) => ({ el, i, n: Number(uso[el.dataset.tool]) || 0 }))
+    .sort((a, b) => (b.n - a.n) || (a.i - b.i))
+    .forEach(x => grid.appendChild(x.el));
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const grid = document.getElementById('zd-grid');
+  if (!grid) return;
+  grid.addEventListener('click', e => {
+    const t = e.target.closest('[data-tool]');
+    if (!t) return;
+    try {
+      const uso = JSON.parse(localStorage.getItem(ZD_USO_KEY) || '{}');
+      uso[t.dataset.tool] = (Number(uso[t.dataset.tool]) || 0) + 1;
+      localStorage.setItem(ZD_USO_KEY, JSON.stringify(uso));
+    } catch (_) {}
+    setTimeout(zdUsoOrdenar, 450);   /* reordena cuando ya salió de la vista */
+  });
+  zdUsoOrdenar();
 });

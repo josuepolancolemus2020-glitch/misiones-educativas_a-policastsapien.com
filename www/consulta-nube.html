@@ -74,11 +74,15 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <div class="clave-card">
   <div>
-    <label for="clave">🔑 Clave del docente</label>
-    <input id="clave" type="password" autocomplete="off" placeholder="Tu clave de consulta">
+    <label for="correo">📧 Correo de tu cuenta de maestro</label>
+    <input id="correo" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
   </div>
-  <button class="btn btn-pri" id="btnConsultar" onclick="consultar()">🔎 Consultar</button>
-  <div id="estado">Escribe tu clave y pulsa Consultar. La clave se recuerda en este dispositivo.</div>
+  <div>
+    <label for="clave">🔑 Contraseña</label>
+    <input id="clave" type="password" autocomplete="current-password" placeholder="Tu contraseña">
+  </div>
+  <button class="btn btn-pri" id="btnConsultar" onclick="entrar()">🔎 Entrar y consultar</button>
+  <div id="estado">Entra con el correo y la contraseña de tu cuenta de maestro. La sesión se recuerda en este dispositivo.</div>
 </div>
 
 <div class="stats" id="stats" style="display:none;"></div>
@@ -107,7 +111,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
   </table>
   <div class="vacio" id="vacio" style="display:none;">
     📭 No hay resultados con estos filtros.<br>
-    Si esperabas datos, verifica tu clave del docente o que los dispositivos hayan tenido internet para sincronizar.
+    Si esperabas datos, verifica que tus alumnos escribieran tu nombre en el campo «Docente» y que los dispositivos hayan tenido internet para sincronizar.
   </div>
 </div>
 
@@ -126,7 +130,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 </div>
 
 <div class="nota-etica">
-  🔒 <strong>Privacidad:</strong> la tabla de la nube solo puede leerse con la clave del docente; los dispositivos de los
+  🔒 <strong>Privacidad:</strong> la tabla de la nube solo puede leerse desde <strong>tu cuenta de maestro</strong>; los dispositivos de los
   estudiantes únicamente pueden <em>agregar</em> resultados, nunca ver los de otros. Se recomienda identificar a los
   estudiantes con su <strong>número de lista o código</strong> en lugar del nombre completo.
 </div>
@@ -150,40 +154,71 @@ const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const 
 
 let DATOS = [];
 
-/* Docente suscrito (METAS_DOCENTE_V1): entra directo, sin escribir claves,
-   y la nube le devuelve SOLO los alumnos con su código */
+/* Maestro con sesión (METAS_DOCENTE_V1): entra directo, sin escribir nada,
+   y la nube le devuelve SOLO los resultados de sus alumnos */
 let DOCENTE = null;
 try {
   const _d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1'));
   if (_d && _d.codigo && _d.clave) DOCENTE = _d;
 } catch(e) {}
+try { localStorage.removeItem('METAS_SB_CLAVE'); } catch(e) {} // limpieza del flujo antiguo
 
 if (DOCENTE) {
   const cc = document.querySelector('.clave-card');
-  if (cc) cc.innerHTML = '<div id="estado">👩‍🏫 <strong>' + esc(DOCENTE.nombre || DOCENTE.codigo) +
-    '</strong> — mostrando solo tus alumnos (código <strong>' + esc(DOCENTE.codigo) + '</strong>).</div>';
+  if (cc) cc.innerHTML = '<div id="estado">👩‍🏫 <strong>' + esc(DOCENTE.nombre || DOCENTE.correo || '') +
+    '</strong> — mostrando solo a tus alumnos.</div>';
   consultar(); // maneja solo el caso sin internet
 } else {
-  try { document.getElementById('clave').value = localStorage.getItem('METAS_SB_CLAVE') || ''; } catch(e) {}
-  document.getElementById('clave').addEventListener('keydown', e => { if (e.key === 'Enter') consultar(); });
-  // Si la clave ya quedó guardada de una visita anterior, consulta sola al abrir
-  if (document.getElementById('clave').value.trim() && navigator.onLine !== false) consultar();
+  ['correo','clave'].forEach(id => document.getElementById(id)
+    .addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); }));
+}
+
+/* Entrar con la cuenta de maestro (correo + contraseña) */
+async function entrar(){
+  const estado = document.getElementById('estado');
+  const correo = document.getElementById('correo').value.trim();
+  const clave = document.getElementById('clave').value;
+  if (!correo || !clave) { estado.textContent = '⚠️ Escribe tu correo y tu contraseña.'; return; }
+  if (navigator.onLine === false) { estado.textContent = '📴 Sin conexión: entrar necesita internet.'; return; }
+  const btn = document.getElementById('btnConsultar');
+  if (btn) btn.disabled = true;
+  estado.textContent = '⏳ Entrando a tu cuenta...';
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/metas_entrar_docente_v2', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_correo: correo, p_clave: clave })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    let j = await r.json();
+    if (Array.isArray(j)) j = j[0] || {};
+    if (j && j.ok) {
+      DOCENTE = { codigo: j.codigo, clave: clave, nombre: j.nombre || '', correo: correo };
+      try { localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify(DOCENTE)); } catch(e) {}
+      const cc = document.querySelector('.clave-card');
+      if (cc) cc.innerHTML = '<div id="estado">👩‍🏫 <strong>' + esc(DOCENTE.nombre || DOCENTE.correo) +
+        '</strong> — mostrando solo a tus alumnos.</div>';
+      consultar();
+      return;
+    }
+    const motivo = j && j.motivo;
+    if (motivo === 'espera') {
+      estado.textContent = '⏳ Por seguridad, espera unos 10 minutos antes de intentar de nuevo.';
+    } else {
+      estado.textContent = '⚠️ Correo o contraseña incorrectos. Revísalos e intenta de nuevo.';
+    }
+  } catch (err) {
+    estado.textContent = '⚠️ No se pudo entrar (' + err.message + '). Revisa tu internet e intenta de nuevo.';
+  }
+  if (btn) btn.disabled = false;
 }
 
 async function consultar(){
   const estado = document.getElementById('estado');
-  let rpc1, rpc2, body;
-  if (DOCENTE) {
-    rpc1 = 'metas_consultar_docente';
-    rpc2 = 'metas_consultar_progreso_docente';
-    body = { p_codigo: DOCENTE.codigo, p_clave: DOCENTE.clave };
-  } else {
-    const clave = document.getElementById('clave').value.trim();
-    if (!clave) { estado.textContent = '⚠️ Escribe primero tu clave del docente.'; return; }
-    rpc1 = 'metas_consultar';
-    rpc2 = 'metas_consultar_progreso';
-    body = { p_clave: clave };
-  }
+  if (!DOCENTE) { estado.textContent = '⚠️ Entra primero con tu correo y contraseña.'; return; }
+  const rpc1 = 'metas_consultar_docente';
+  const rpc2 = 'metas_consultar_progreso_docente';
+  const body = { p_codigo: DOCENTE.codigo, p_clave: DOCENTE.clave };
   if (navigator.onLine === false) { estado.textContent = '📴 Sin conexión: la consulta a la nube necesita internet.'; return; }
   const btn = document.getElementById('btnConsultar');
   if (btn) btn.disabled = true;
@@ -197,7 +232,6 @@ async function consultar(){
     if (!r.ok) throw new Error('HTTP ' + r.status);
     DATOS = await r.json();
     if (!Array.isArray(DATOS)) DATOS = [];
-    if (!DOCENTE) { try { localStorage.setItem('METAS_SB_CLAVE', body.p_clave); } catch(e) {} }
     let PROG = [];
     try {
       const rp = await fetch(SB_URL + '/rest/v1/rpc/' + rpc2, {
@@ -210,9 +244,7 @@ async function consultar(){
     } catch(e) {}
     estado.textContent = (DATOS.length || PROG.length)
       ? '✅ ' + DATOS.length + ' resultados y ' + PROG.length + ' fotos de progreso recibidos de la nube.'
-      : (DOCENTE
-        ? '📭 Aún no hay resultados con tu código ' + DOCENTE.codigo + '. Pide a tus alumnos escribirlo en el campo «Docente» al identificarse.'
-        : '📭 La nube respondió sin resultados. Si esperabas datos, revisa que la clave sea la correcta.');
+      : '📭 Aún no hay resultados. Dales a tus alumnos tu código de aula (lo ves en la Zona Docente) para que lo escriban al identificarse.';
     ['stats','filtros','acciones','tablaWrap','progSeccion'].forEach(id => document.getElementById(id).style.display = '');
     llenarFiltros();
     pintar();

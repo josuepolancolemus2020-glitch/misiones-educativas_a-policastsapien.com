@@ -551,6 +551,7 @@ function paRenderPadres() {
         if (!s) return;
         s.msg = ta.value; s.msgEdit = true; s.env = 0;
         paSaveData(dd);
+        paNubeProgramar();   /* el mensaje corregido llega solo al chatbot */
       }, 400);
     });
   });
@@ -842,6 +843,19 @@ function paCodigoAlumno(grado, seccion, num) {
   const sec = mSec ? mSec[1].toUpperCase() : '';
   const n = String(num || '').replace(/\D/g, '');
   if (!g || !n) return '';
+  /* Si «Mi aula» tiene un grupo con este grado y sección, la clave vive
+     con ESE grupo (llave 'G:<id>'): así el maestro que trabaja en dos
+     colegios nunca mezcla claves. Se prefiere el grupo activo. */
+  try {
+    const st = JSON.parse(localStorage.getItem('METAS_ADMIN_V1'));
+    if (st && st.v === 2 && Array.isArray(st.grupos) && typeof adClaveFamilia === 'function') {
+      const calza = gr => String(gr.grado || '').replace(/\D/g, '') === g &&
+        (((String(gr.seccion || '').trim().match(/([a-zA-Z0-9])\s*$/) || [])[1] || '').toUpperCase() === sec);
+      const gr = st.grupos.find(x => x.id === st.activo && calza(x)) || st.grupos.find(calza);
+      if (gr) return adClaveFamilia(gr.id, n);
+    }
+  } catch (_) {}
+  /* sin grupo en Mi aula: comportamiento clásico (llave 'grado|sección') */
   const codes = paCodesLoad();
   const key = g + '|' + sec;
   const grupo = codes[key] || (codes[key] = {});
@@ -889,11 +903,13 @@ body{font-family:Arial,sans-serif;color:#111;background:#fff;padding:10mm;}
 h1{font-size:15px;margin-bottom:2mm;}
 p.intro{font-size:11px;color:#444;margin-bottom:5mm;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm;}
-.tira{border:1.5px dashed #888;border-radius:6px;padding:4mm;page-break-inside:avoid;}
+.tira{border:1.5px dashed #888;border-radius:6px;padding:4mm;page-break-inside:avoid;position:relative;padding-right:25mm;}
 .t1{font-size:10px;font-weight:bold;color:#1e3a7c;}
 .t2{font-size:11px;margin-top:1.5mm;}
 .cod{font-size:20px;font-weight:900;letter-spacing:2px;margin:2mm 0;font-family:'Courier New',monospace;}
 .t3{font-size:9px;color:#333;line-height:1.45;}
+.qr{position:absolute;top:4mm;right:3mm;width:20mm;height:20mm;}
+.qrtxt{position:absolute;top:24.5mm;right:3mm;width:20mm;font-size:7px;text-align:center;color:#333;line-height:1.2;}
 .noprint{margin-bottom:6mm;}
 .noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;}
 @media print{.noprint{display:none;}}
@@ -905,10 +921,12 @@ La clave es secreta: con ella el padre ve las notas de su hijo/a desde cualquier
 <div class="grid">
 ${filas.map(f => `
   <div class="tira">
+    <img class="qr" src="${(() => { try { return new URL('img/qr-padres.png', location.href).href; } catch (_) { return 'img/qr-padres.png'; } })()}" alt="QR">
+    <div class="qrtxt">📷 Apunte la cámara a este cuadro</div>
     <div class="t1">🔑 M.E.T.A.S — Clave de la familia</div>
     <div class="t2">Alumno/a <strong>#${f.num}</strong> · ${grupoTxt}${f.nombre ? ' · ' + paEsc(f.nombre) : ''}</div>
     <div class="cod">${paCodigoBonito(f.codigo)}</div>
-    <div class="t3">📱 En cualquier teléfono con internet entre a:<br><strong>${PA_SITE}padres.html</strong><br>
+    <div class="t3">📱 Apunte la cámara del teléfono al cuadro, o entre a:<br><strong>${PA_SITE}padres.html</strong><br>
     El 🤖 asistente le pedirá esta clave y le contará cómo va su hijo/a: notas, mensajes del maestro
     y cómo apoyar en casa. Guárdela como una llave: es solo para su familia.</div>
   </div>`).join('')}
@@ -921,14 +939,17 @@ ${filas.map(f => `
   w.document.close();
 }
 
-function paSbFirma(s) { return String(s.nota) + '|' + (s.msg || ''); }
+/* La firma incluye el CÓDIGO: si el maestro regenera la clave de una
+   familia (tira filtrada, cierre de año), la fila se re-publica con la
+   clave nueva y la vieja deja de ver los mensajes. */
+function paSbFirma(s, codigo) { return String(s.nota) + '|' + (s.msg || '') + '|' + (codigo || ''); }
 
 function paSbPendientes(d) {
   const filas = [];
   d.analisis.forEach(a => (a.students || []).forEach(s => {
     const codigo = paCodigoLista(a, s);
     if (!codigo) return;
-    if (s.sb === paSbFirma(s)) return; // ya está en la nube tal cual
+    if (s.sb === paSbFirma(s, codigo)) return; // ya está en la nube tal cual
     filas.push({
       evento_id: 'PASB-' + a.id + '-' + s.num,
       codigo,
@@ -947,6 +968,13 @@ function paSbPendientes(d) {
 }
 
 let _paSbBusy = false;
+/* Editar un mensaje ya publicado también debe llegar a la nube: mismo
+   auto-publish con calma (4 s) que usa Mi aula (adSyncProgramar) */
+let _paNubeT = null;
+function paNubeProgramar() {
+  clearTimeout(_paNubeT);
+  _paNubeT = setTimeout(() => paSincronizarNube(false), 4000);
+}
 async function paSincronizarNube(manual) {
   if (_paSbBusy) return;
   const st = document.getElementById('pa-sb-status');
@@ -973,7 +1001,7 @@ async function paSincronizarNube(manual) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const enviados = new Set(lote.map(f => f.evento_id));
     d.analisis.forEach(a => (a.students || []).forEach(s => {
-      if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(s);
+      if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(s, paCodigoLista(a, s));
     }));
     paSaveData(d);
     if (st) st.textContent = '🔑 Nube de padres: ✅ ' + lote.length + ' nota' + (lote.length !== 1 ? 's' : '') + ' disponibles por código de lista.';
@@ -998,123 +1026,31 @@ function paInit() {
   paSincronizarNube(false);
 }
 
-/* ── Candado del maestro ──
-   El Plan de Acción guarda notas de TODOS los alumnos y las claves de
-   familia: si un alumno agarra el teléfono del maestro no debe poder
-   abrirlo. Clave local de 4-8 dígitos (hash djb2 en METAS_PIN_MAESTRO_V1),
-   se pide UNA vez por sesión (sessionStorage). 100% offline. */
-const PA_PIN_KEY = 'METAS_PIN_MAESTRO_V1';
-
-function paPinHash(s) {
-  let h = 5381;
-  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
-  return 'v1:' + h;
+/* ── Acceso a las herramientas del maestro ──
+   El candado numérico «clave del maestro» se ELIMINÓ (jul 2026): pedía
+   la clave a cada rato y era horrible para el maestro. Ahora la Zona
+   Docente y sus herramientas se protegen SOLO con la CUENTA DE MAESTRO
+   (el alumno no tiene la contraseña, y sin sesión las herramientas ni
+   se muestran). */
+function _paLogged() {
+  try { const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')); return !!(d && d.codigo); }
+  catch (_) { return false; }
 }
 
 async function paAbrirPlan() {
-  let pin = null;
-  try { pin = localStorage.getItem(PA_PIN_KEY); } catch (_) {}
-
-  if (!pin) {
-    const p1 = await metasPrompt('Primera vez: crea la **CLAVE DEL MAESTRO** para este teléfono (4 a 8 dígitos).\n\nProtege el Plan de Acción y los códigos de los padres si un alumno toma tu teléfono. Apúntala en un lugar seguro.', {
-      icono: '🔒', titulo: 'Candado del maestro',
-      type: 'password', inputmode: 'numeric', maxlength: 8,
-      placeholder: '4 a 8 dígitos', okTxt: 'Crear clave',
-      valida: v => /^\d{4,8}$/.test(String(v).trim()) ? '' : 'Debe ser de 4 a 8 dígitos (solo números).',
-    });
-    if (p1 === null) return;
-    const pp = String(p1).trim();
-    const p2 = await metasPrompt('Escríbela otra vez para confirmar:', {
-      icono: '🔒', titulo: 'Candado del maestro',
-      type: 'password', inputmode: 'numeric', maxlength: 8, okTxt: 'Confirmar',
-      valida: v => String(v).trim() === pp ? '' : 'No coincide con la primera — revísala.',
-    });
-    if (p2 === null) return;
-    try { localStorage.setItem(PA_PIN_KEY, paPinHash(pp)); } catch (_) {}
-    try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
-    toast('🔒 Clave del maestro creada');
-    switchView('view-plan-accion'); paInit();
-    return;
-  }
-
-  let ok = false;
-  try { ok = sessionStorage.getItem('METAS_PIN_OK') === '1'; } catch (_) {}
-  if (ok) { switchView('view-plan-accion'); paInit(); return; }
-
-  for (let i = 1; i <= 3; i++) {
-    const v = await metasPrompt(i === 1
-      ? 'Escribe la **clave del maestro** de este teléfono:'
-      : 'Clave incorrecta. Intento ' + i + ' de 3:', {
-      icono: '🔒', titulo: 'Candado del maestro',
-      type: 'password', inputmode: 'numeric', maxlength: 8, okTxt: 'Entrar',
-    });
-    if (v === null) return;
-    if (paPinHash(String(v).trim()) === pin) {
-      try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
-      switchView('view-plan-accion'); paInit();
-      return;
-    }
-  }
-  paRecuperarPin();
+  if (!_paLogged()) { toast('Entra con tu cuenta de maestro en la Zona Docente para usar el Plan de Acción'); return; }
+  switchView('view-plan-accion'); paInit();
 }
 
-/* Barrera reutilizable: pide la clave del candado (si existe) antes
-   de una acción sensible fuera del Plan de Acción — p. ej. ver o
-   compartir la clave secreta del docente en la Zona Docente. El
-   desbloqueo por sesión (METAS_PIN_OK) es el mismo del Plan. */
+/* Barrera reutilizable (se conserva por compatibilidad con los llamados
+   existentes): antes pedía la clave del candado; ahora solo confirma que
+   hay sesión de maestro. Sin clave numérica que memorizar. */
 async function paVerificarPin(motivo) {
-  let pin = null;
-  try { pin = localStorage.getItem(PA_PIN_KEY); } catch (_) {}
-  if (!pin) return true;   /* sin candado creado no hay barrera */
-  let ok = false;
-  try { ok = sessionStorage.getItem('METAS_PIN_OK') === '1'; } catch (_) {}
-  if (ok) return true;
-  for (let i = 1; i <= 3; i++) {
-    const v = await metasPrompt((motivo ? motivo + '\n\n' : '') + (i === 1
-      ? 'Escribe la **clave del maestro** de este teléfono:'
-      : 'Clave incorrecta. Intento ' + i + ' de 3:'), {
-      icono: '🔒', titulo: 'Candado del maestro',
-      type: 'password', inputmode: 'numeric', maxlength: 8, okTxt: 'Continuar',
-    });
-    if (v === null) return false;
-    if (paPinHash(String(v).trim()) === pin) {
-      try { sessionStorage.setItem('METAS_PIN_OK', '1'); } catch (_) {}
-      return true;
-    }
-  }
-  toast('Sin acceso. Si olvidaste la clave, recupérala desde Plan de Acción.');
+  if (_paLogged()) return true;
+  toast('Entra con tu cuenta de maestro en la Zona Docente');
   return false;
 }
 window.paVerificarPin = paVerificarPin;
-
-/* Recuperación segura del candado: SOLO con la clave secreta del
-   docente suscrito (el alumno tampoco la conoce; funciona offline
-   porque METAS_DOCENTE_V1 vive en este teléfono). Sin suscripción
-   queda la vía manual: borrar METAS_PIN_MAESTRO_V1 de los datos
-   del sitio en el navegador. */
-async function paRecuperarPin() {
-  let doc = null;
-  try { doc = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')); } catch (_) {}
-  if (!doc || !doc.clave) {
-    await metasAlert('Tras 3 intentos, por seguridad no hay atajo.\n\nSi olvidaste la clave, borra el dato **METAS_PIN_MAESTRO_V1** en los datos del sitio de tu navegador (las notas NO se pierden), o suscríbete en la Zona Docente: los docentes suscritos recuperan el candado con su clave secreta.', {
-      icono: '🔒', titulo: 'Candado del maestro',
-    });
-    return;
-  }
-  const v = await metasPrompt('¿Olvidaste la clave del candado?\n\nEscribe tu **clave secreta de docente** (la de ' + doc.codigo + ') para crear una nueva:', {
-    icono: '🆘', titulo: 'Recuperar candado',
-    type: 'password', okTxt: 'Verificar',
-  });
-  if (v === null) return;
-  if (String(v).trim().toUpperCase() !== String(doc.clave).trim().toUpperCase()) {
-    toast('Clave de docente incorrecta');
-    return;
-  }
-  try { localStorage.removeItem(PA_PIN_KEY); } catch (_) {}
-  try { sessionStorage.removeItem('METAS_PIN_OK'); } catch (_) {}
-  toast('✅ Candado reiniciado');
-  paAbrirPlan();   /* crea la clave nueva de una vez */
-}
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('goto-plan-btn')?.addEventListener('click', paAbrirPlan);
@@ -1122,6 +1058,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('pa-add-student-btn')?.addEventListener('click', () => {
     paAddRow(document.querySelectorAll('.pa-student-row').length + 1);
+  });
+
+  /* La lista maestra vive en «Mi aula»: aquí solo se trae con un toque */
+  document.getElementById('pa-traer-aula')?.addEventListener('click', async () => {
+    let st = null;
+    try { st = JSON.parse(localStorage.getItem('METAS_ADMIN_V1')); } catch (_) {}
+    const g = (st && st.v === 2 && Array.isArray(st.grupos))
+      ? (st.grupos.find(x => x.id === st.activo) || st.grupos[0]) : null;
+    if (!g || !g.lista.length) {
+      await metasAlert('Primero registra tus alumnos en **Mi aula** (Zona Docente → Mi aula): ahí armas la lista UNA vez y todas las herramientas la usan.',
+        { icono: '👥', titulo: 'Traer mi lista' });
+      return;
+    }
+    const hayFilas = document.querySelectorAll('.pa-student-row').length > 0;
+    if (hayFilas && !await metasConfirm('Se reemplazarán las filas actuales con la lista de **' +
+      ((g.grado || '') + ' ' + (g.seccion || '')).trim() + (g.escuela ? ' · ' + g.escuela : '') +
+      '** (' + g.lista.length + ' alumnos). ¿Continuar?',
+      { icono: '👥', titulo: 'Traer mi lista', okTxt: 'Sí, traer' })) return;
+    const gradoInp = document.getElementById('pa-grado');
+    const secInp = document.getElementById('pa-seccion');
+    if (gradoInp) gradoInp.value = g.grado || '';
+    if (secInp) secInp.value = g.seccion || '';
+    const list = document.getElementById('pa-students-list');
+    if (list) list.innerHTML = '';
+    const orden = g.lista.slice().sort((a, b) => a.num - b.num);
+    orden.forEach((a, i) => {
+      paAddRow(i + 1);
+      const rows = document.querySelectorAll('.pa-student-row');
+      const inp = rows[rows.length - 1]?.querySelector('.pa-inp-name');
+      if (inp) inp.value = a.nombre || '';
+    });
+    toast('👥 ' + orden.length + ' alumno(s) traídos de Mi aula');
   });
 
   document.getElementById('pa-generate-btn')?.addEventListener('click', () => { _paCurrentId = null; paGenerate(); });

@@ -1,5 +1,8 @@
-const CACHE_NAME = 'meta-app-v15';
+const CACHE_NAME = 'meta-app-v16';
 const STATIC_ASSETS = [
+  './padres.html',
+  './manifest-padres.json',
+  './img/qr-padres.png',
   './img/logo.png',
   './img/icon-192.png',
   './img/icon-512.png',

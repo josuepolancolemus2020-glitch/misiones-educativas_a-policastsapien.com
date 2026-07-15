@@ -157,7 +157,14 @@
       };
       document.addEventListener('keydown', onKey, true);
 
-      setTimeout(() => { if (inp) inp.focus(); }, 60);
+      // Al abrir, enfocar y SELECCIONAR el texto precargado: así, si el
+      // campo ya trae un valor (p. ej. el monto 600), escribir lo reemplaza
+      // de una en el teléfono, en vez de acumularse ("600500") o costar borrar.
+      setTimeout(() => {
+        if (!inp) return;
+        inp.focus();
+        try { if (inp.value) inp.select(); } catch (_) {}
+      }, 60);
     });
   }
 

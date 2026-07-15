@@ -1,5 +1,16 @@
 apply plugin: 'com.android.application'
 
+/* Firma de RELEASE: el keystore y sus claves viven FUERA del repo en
+   C:\Users\Dell\.metas-android-key.properties (mismo patrón que las
+   credenciales de WordPress). Sin ese archivo, el release sale sin
+   firmar (y no instala): no perder ese archivo NI el .keystore —
+   son la identidad de la app para siempre (Play Store incluida). */
+def keyPropsFile = file(System.getProperty('user.home') + '/.metas-android-key.properties')
+def keyProps = new Properties()
+if (keyPropsFile.exists()) {
+    keyPropsFile.withInputStream { keyProps.load(it) }
+}
+
 android {
     namespace = "com.policastsapien.metas"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +18,8 @@ android {
         applicationId "com.policastsapien.metas"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,10 +27,23 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (keyPropsFile.exists()) {
+                storeFile file(keyProps['storeFile'])
+                storePassword keyProps['storePassword']
+                keyAlias keyProps['keyAlias']
+                keyPassword keyProps['keyPassword']
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (keyPropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
