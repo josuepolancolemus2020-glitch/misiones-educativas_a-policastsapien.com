@@ -1326,11 +1326,26 @@ function renderProfile() {
 
   // Maestro con sesión: saludo, aviso del nombre y SU botón principal
   const primerNombre = String(d.nombre || '').trim().split(/\s+/)[0] || 'colega';
-  // Red de seguridad: si hay una copia de un borrado reciente, ofrecer recuperarla
-  const hayRespaldo = (typeof dsTieneRespaldo === 'function') && dsTieneRespaldo();
-  const recuperarLink = hayRespaldo
-    ? `<a class="doc-recuperar-link" onclick="dsRecuperar()">↩️ Recuperar lo que borré</a>`
-    : '';
+  // Red de seguridad: solo cuando el aula está vacía y hay algo que restaurar
+  // (dsTieneRespaldo ya lo condiciona). Banner claro y con fecha, no un enlace
+  // suelto: aparece justo tras «Empezar de nuevo» o al abrir un equipo vacío.
+  const respaldoInfo = (typeof dsTieneRespaldo === 'function') && dsTieneRespaldo();
+  let recuperarLink = '';
+  if (respaldoInfo) {
+    let cuando = '';
+    if (respaldoInfo !== true) {
+      const f = new Date(respaldoInfo);
+      if (!isNaN(f)) cuando = ' el ' + f.toLocaleDateString('es-HN', { day: 'numeric', month: 'long' });
+    }
+    recuperarLink = `
+      <button class="doc-recuperar-banner" onclick="dsRecuperar()">
+        <span class="doc-rec-emoji">↩️</span>
+        <span class="doc-rec-txt">
+          <span class="doc-rec-t">Recuperar los datos de mi aula</span>
+          <span class="doc-rec-s">Tu aula está vacía. Si borraste todo${cuando} por error, restáuralo aquí.</span>
+        </span>
+      </button>`;
+  }
   cont.innerHTML = `
     <div class="setting-group teacher-panel-group">
       <div class="doc-saludo">

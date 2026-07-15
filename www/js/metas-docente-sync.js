@@ -371,12 +371,24 @@
 
   function reset() {
     if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
-    var ask = (typeof metasConfirm === 'function')
-      ? metasConfirm('Vas a **borrar todos los datos de tu aula** (lista de alumnos, claves de familia, Plan de Acción, economía, notas…) para empezar de cero. También se borran de la nube y de tus otros equipos.\n\nSi fue sin querer, podrás usar **«↩️ Recuperar lo que borré»** — incluso desde otro equipo.',
-          { icono: '🗑️', titulo: 'Empezar de nuevo', okTxt: 'Sí, borrar todo' })
-      : Promise.resolve(true);
-    Promise.resolve(ask).then(function (ok) {
-      if (!ok) return;
+    // Sin los diálogos seguros de la app NO borramos (nunca con prompt nativo).
+    if (typeof metasConfirm !== 'function' || typeof metasPrompt !== 'function') {
+      if (typeof toast === 'function') toast('No se puede borrar ahora, reintenta');
+      return;
+    }
+    metasConfirm('Vas a **borrar todos los datos de tu aula** (lista de alumnos, claves de familia, Plan de Acción, economía, notas…) para empezar de cero. También se borran de la nube y de tus otros equipos.\n\nSi fue sin querer, en cuanto termine aparecerá **«↩️ Recuperar»** aquí mismo — incluso desde otro equipo.',
+        { icono: '🗑️', titulo: 'Empezar de nuevo', okTxt: 'Continuar' })
+    .then(function (ok) {
+      if (!ok) return null;
+      // Barrera contra el toque accidental o la curiosidad: hay que ESCRIBIR
+      // la palabra (igual que «Cerrar el año»). Un «Sí» de un solo toque no basta.
+      return metasPrompt('Para confirmar el borrado total, escribe **BORRAR** en mayúsculas:', {
+        icono: '🗑️', titulo: 'Empezar de nuevo', okTxt: 'Borrar todo',
+        valida: function (v) { return String(v).trim().toUpperCase() === 'BORRAR' ? '' : 'Escribe BORRAR (o cancela).'; }
+      });
+    })
+    .then(function (conf) {
+      if (conf === null || conf === false || String(conf).trim().toUpperCase() !== 'BORRAR') return;
       var c = creds();
       // 1) copia de seguridad en ESTE equipo (respaldo inmediato aunque no haya red)
       var snap = {};
@@ -399,7 +411,7 @@
         if (res && res.ok) {
           try { localStorage.removeItem(RESET_PEND_KEY); } catch (_) {}
           if (res.fecha) _papeleraFecha = res.fecha;
-          if (typeof toast === 'function') toast('🗑️ Aula vacía. Si fue por error, usa «Recuperar lo que borré».');
+          if (typeof toast === 'function') toast('🗑️ Aula vacía. Si fue un error, toca «↩️ Recuperar» aquí arriba.');
         } else {
           // sin red: queda pendiente; la copia local cubre el deshacer aquí y
           //          el archivado en la nube se hará al reconectar (flushPendingReset)
@@ -562,5 +574,22 @@
   window.dsReset = reset;
   window.dsRecuperar = recuperar;
   window.dsUsarEste = usarEste;
-  window.dsTieneRespaldo = function () { var b = respaldo(); return (b && (b.fecha || true)) || _papeleraFecha; };
+  /* ¿El aula local está prácticamente vacía? Solo entonces tiene sentido
+     ofrecer «Recuperar»: si hay alumnos/análisis/claves cargados, la papelera
+     no aplica y un botón de recuperar en el panel solo confunde (el usuario
+     borró algo puntual en una sección, no todo el aula). Umbral igual al de
+     la guarda anti-pérdida de pull(). */
+  function aulaVacia() {
+    var total = 0;
+    ['METAS_ADMIN_V1', 'METAS_PLANACCION_V1', 'METAS_CODIGOS_V1'].forEach(function (k) {
+      total += peso(k, ls(k));
+    });
+    return total < 300;
+  }
+
+  window.dsTieneRespaldo = function () {
+    if (!aulaVacia()) return false;                 // con datos cargados no aplica
+    var b = respaldo();
+    return (b && (b.fecha || true)) || _papeleraFecha;
+  };
 })();

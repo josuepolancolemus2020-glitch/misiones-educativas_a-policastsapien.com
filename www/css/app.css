@@ -516,6 +516,21 @@ a.padre-asistente-btn {
   border-radius: var(--r-sm); padding: 10px 12px;
 }
 .doc-recuperar-link:active { background: #d7f4e1; }
+/* Banner de recuperación: aparece solo con el aula vacía y algo que restaurar.
+   Título + explicación con fecha, para que nunca sea un botón misterioso. */
+.doc-recuperar-banner {
+  display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box;
+  text-align: left; cursor: pointer; margin-top: 12px;
+  background: linear-gradient(135deg, #eafbef, #dff5e6);
+  border: 1.5px solid #9fdcb4; border-radius: 14px; padding: 12px 14px;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.doc-recuperar-banner:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(20,131,59,.18); }
+.doc-recuperar-banner:active { transform: scale(.98); background: linear-gradient(135deg, #d7f4e1, #c8efd5); }
+.doc-rec-emoji { font-size: 22px; line-height: 1; flex-shrink: 0; }
+.doc-rec-txt { display: flex; flex-direction: column; gap: 2px; }
+.doc-rec-t { font-size: 14px; font-weight: 800; color: #14833b; }
+.doc-rec-s { font-size: 11.5px; font-weight: 600; color: #2f7a49; line-height: 1.4; }
 
 /* ── Acciones de cuenta: par de botones limpios (contraseña + salir) ──
    Molde moderno: pastilla suave de ancho completo, ícono + texto centrados,
