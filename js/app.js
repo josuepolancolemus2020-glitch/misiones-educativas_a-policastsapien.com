@@ -1965,7 +1965,7 @@ function ajPintarLista() {
              <option value="rector"${rx === 'rector' ? ' selected' : ''}>🎓 Rector/a</option>
            </select>
            <button class="aj-reset-btn" data-correo="${_pEsc(x.correo || '')}" data-nombre="${_pEsc(x.nombre || '')}"
-                   onclick="ajResetClave(this)">🔑 Nueva contraseña</button>`
+                   data-telefono="${_pEsc(x.telefono || '')}" onclick="ajResetClave(this)">🔑 Nueva contraseña</button>`
         : `<span class="aj-rol-badge aj-rol-${rx}">${AJ_ROLES[rx].ic} ${AJ_ROLES[rx].n}</span>`;
       return `
         <div class="aj-fila">
@@ -2023,6 +2023,7 @@ async function ajCambiarRol(sel) {
 async function ajResetClave(btn) {
   const correo = btn.dataset.correo || '';
   const nombre = btn.dataset.nombre || correo;
+  const telefono = btn.dataset.telefono || '';
   if (!correo) return;
   if (navigator.onLine === false) { toast('📴 Cambiar la contraseña necesita internet'); return; }
   // Sugerencia fácil de dictar por teléfono; el admin puede escribir otra
@@ -2046,11 +2047,12 @@ async function ajResetClave(btn) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const j = await r.json();
     if (j && j.ok) {
-      await metasAlert(
+      // Mismo formato de compartir que las misiones: mensaje listo + wa.me
+      const enviar = await metasConfirm(
         `✅ Listo. La cuenta **${correo}** ahora entra con:\n\n**${np}**\n\n` +
-        'Pásasela al usuario (WhatsApp o en persona) y recomiéndale cambiarla en ' +
-        'Ajustes → «Cambiar mi contraseña» cuando entre.',
-        { icono: '🔑', titulo: 'Nueva contraseña' });
+        'Puedes enviársela ya mismo por WhatsApp con el mensaje preparado.',
+        { icono: '🔑', titulo: 'Nueva contraseña', okTxt: '📲 Enviar por WhatsApp', cancelTxt: 'Listo' });
+      if (enviar) ajClaveWhatsApp(nombre, correo, np, telefono);
     } else if (j && j.motivo === 'espera') {
       toast('⏳ Demasiados cambios seguidos. Espera un momento.');
     } else if (j && j.motivo === 'propio') {
@@ -2061,6 +2063,30 @@ async function ajResetClave(btn) {
   } catch (_) {
     toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
   }
+}
+
+/* Abre WhatsApp con el mensaje de la contraseña nueva ya escrito.
+   Si la cuenta tiene teléfono registrado, va DIRECTO a ese chat
+   (wa.me/504XXXXXXXX); si no, WhatsApp pide elegir el contacto. */
+function ajClaveWhatsApp(nombre, correo, clave, telefono) {
+  const sitio = (typeof PA_SITE !== 'undefined') ? PA_SITE : 'https://metas.policastsapien.com/';
+  const primer = String(nombre || '').trim().split(/\s+/)[0] || 'colega';
+  const texto =
+    `👋 Hola, ${primer}. Te asigné una contraseña nueva para tu cuenta del Proyecto M.E.T.A.S:\n\n` +
+    `🔑 *${clave}*\n\n` +
+    `Entra aquí:\n${sitio}\n` +
+    `☰ Menú → Zona Docente → «¿Ya tienes cuenta? Entrar»\n` +
+    `📧 Tu correo: ${correo}\n\n` +
+    `Cuando entres, te recomiendo cambiarla en ☰ → Ajustes → «Cambiar mi contraseña».\n\n` +
+    `🏠 Proyecto Educativo M.E.T.A.S`;
+  const enc = encodeURIComponent(texto);
+  // Teléfono registrado → chat directo (8 dígitos de Honduras = anteponer 504)
+  let num = String(telefono || '').replace(/\D/g, '');
+  if (num.length === 8) num = '504' + num;
+  const esMovil = /android|iphone|ipad|mobile/i.test(navigator.userAgent);
+  const link = num.length >= 11 ? `https://wa.me/${num}?text=${enc}`
+    : (esMovil ? 'https://wa.me/?text=' + enc : 'https://web.whatsapp.com/send?text=' + enc);
+  window.open(link, '_blank');
 }
 
 async function ajCerrarSesion() {
