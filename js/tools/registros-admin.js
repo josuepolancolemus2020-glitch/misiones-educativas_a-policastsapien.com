@@ -55,7 +55,7 @@ function adBoletaDef() {
 function adGrupoNuevo(props) {
   let id = 'G';
   for (let i = 0; i < 5; i++) id += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
-  return Object.assign({ id, escuela: '', grado: '', seccion: '', logo: '', boleta: adBoletaDef(),
+  return Object.assign({ id, escuela: '', grado: '', seccion: '', logo: '', logoSec: '', boleta: adBoletaDef(),
     materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {} }, props || {});
 }
 
@@ -65,6 +65,7 @@ function adNormGrupo(g) {
   g.grado = g.grado || '';
   g.seccion = g.seccion || '';
   g.logo = typeof g.logo === 'string' ? g.logo : '';
+  g.logoSec = typeof g.logoSec === 'string' ? g.logoSec : '';
   g.boleta = Object.assign(adBoletaDef(), (g.boleta && typeof g.boleta === 'object') ? g.boleta : {});
   if (!Array.isArray(g.boleta.escalaPers) || !g.boleta.escalaPers.length) g.boleta.escalaPers = AD_PERS_ESCALA_DEF.slice();
   if (!g.boleta.parcialFechas || typeof g.boleta.parcialFechas !== 'object') g.boleta.parcialFechas = {};
@@ -1148,16 +1149,30 @@ function adRenderSace(body, d) {
     <div class="pa-card">
       <div class="pa-card-title">🧾 Boleta de calificaciones</div>
       <details class="ad-boleta-cfg">
-        <summary>🏫 Encabezado del centro (logo y nombre)</summary>
+        <summary>🏫 Encabezado (logos y datos oficiales)</summary>
         <div class="ad-boleta-cfg-body">
-          <div class="ad-logo-fila">
-            <div class="ad-logo-prev" id="ad-logo-prev">${d.logo
-              ? `<img src="${d.logo}" alt="logo">`
-              : '<span>Sin logo</span>'}</div>
-            <div class="ad-logo-btns">
-              <label class="pa-generate-btn ad-btn-sec ad-logo-lbl">📷 Subir logo
-                <input type="file" id="ad-logo-file" accept="image/*" style="display:none;"></label>
-              ${d.logo ? '<button class="pa-generate-btn ad-btn-sec" id="ad-logo-quitar">Quitar</button>' : ''}
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div class="ad-logo-fila" style="flex:1;min-width:180px;">
+              <div class="ad-logo-prev" id="ad-logo-prev">${d.logo
+                ? `<img src="${d.logo}" alt="logo">`
+                : '<span>Sin logo</span>'}</div>
+              <div class="ad-logo-btns">
+                <span style="font-size:11px;font-weight:800;color:#1e3a7c;">Logo del centro</span>
+                <label class="pa-generate-btn ad-btn-sec ad-logo-lbl">📷 Subir
+                  <input type="file" id="ad-logo-file" accept="image/*" style="display:none;"></label>
+                ${d.logo ? '<button class="pa-generate-btn ad-btn-sec" id="ad-logo-quitar">Quitar</button>' : ''}
+              </div>
+            </div>
+            <div class="ad-logo-fila" style="flex:1;min-width:180px;">
+              <div class="ad-logo-prev" id="ad-logosec-prev">${d.logoSec
+                ? `<img src="${d.logoSec}" alt="logo Secretaría">`
+                : '<span>Sin logo</span>'}</div>
+              <div class="ad-logo-btns">
+                <span style="font-size:11px;font-weight:800;color:#1e3a7c;">Logo de la Secretaría</span>
+                <label class="pa-generate-btn ad-btn-sec ad-logo-lbl">🏛️ Subir
+                  <input type="file" id="ad-logosec-file" accept="image/*" style="display:none;"></label>
+                ${d.logoSec ? '<button class="pa-generate-btn ad-btn-sec" id="ad-logosec-quitar">Quitar</button>' : ''}
+              </div>
             </div>
           </div>
           <div class="pa-field"><label>Nombre del centro educativo</label>
@@ -1292,10 +1307,17 @@ function adRenderSace(body, d) {
   });
   document.getElementById('ad-logo-file').addEventListener('change', e => {
     const f = e.target.files && e.target.files[0];
-    if (f) adSubirLogo(f, () => { const dd = adLoad(); adRenderSace(body, dd); });
+    if (f) adSubirLogo(f, () => { const dd = adLoad(); adRenderSace(body, dd); }, 'logo');
   });
   document.getElementById('ad-logo-quitar')?.addEventListener('click', () => {
     const dd = adLoad(); dd.logo = ''; adSave(dd); adRenderSace(body, dd);
+  });
+  document.getElementById('ad-logosec-file').addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0];
+    if (f) adSubirLogo(f, () => { const dd = adLoad(); adRenderSace(body, dd); }, 'logoSec');
+  });
+  document.getElementById('ad-logosec-quitar')?.addEventListener('click', () => {
+    const dd = adLoad(); dd.logoSec = ''; adSave(dd); adRenderSace(body, dd);
   });
 
   const estado = txt => { const e = document.getElementById('ad-sace-estado'); if (e) e.textContent = txt; };
@@ -1455,8 +1477,10 @@ function adRenderSace(body, d) {
   });
 }
 
-/* Redimensiona el logo a máx 260px y lo guarda como dataURL en el grupo. */
-function adSubirLogo(file, listo) {
+/* Redimensiona un logo a máx 260px y lo guarda como dataURL en el grupo.
+   `cual` = 'logo' (centro, por defecto) | 'logoSec' (Secretaría de Educación). */
+function adSubirLogo(file, listo, cual) {
+  const clave = (cual === 'logoSec') ? 'logoSec' : 'logo';
   const rd = new FileReader();
   rd.onload = e => {
     const img = new Image();
@@ -1469,8 +1493,8 @@ function adSubirLogo(file, listo) {
       cv.getContext('2d').drawImage(img, 0, 0, w, h);
       let url;
       try { url = cv.toDataURL('image/jpeg', 0.72); } catch (_) { url = e.target.result; }
-      const dd = adLoad(); dd.logo = url; adSave(dd);
-      if (typeof toast === 'function') toast('🏫 Logo guardado');
+      const dd = adLoad(); dd[clave] = url; adSave(dd);
+      if (typeof toast === 'function') toast(clave === 'logoSec' ? '🏛️ Logo de la Secretaría guardado' : '🏫 Logo guardado');
       if (typeof listo === 'function') listo();
     };
     img.onerror = () => { if (typeof toast === 'function') toast('No se pudo leer la imagen'); };
@@ -1479,8 +1503,67 @@ function adSubirLogo(file, listo) {
   rd.readAsDataURL(file);
 }
 
-/* Imprime la BOLETA de cada alumno (igual a la física: personalidad +
-   aprovechamiento, I-IV parcial + promedio, con logo y nombre del centro). */
+/* Mensaje FORMAL de motivación derivado del promedio general (sin juicios
+   subjetivos del maestro: sale de las notas). */
+function adMsgMotiva(nombre, prom, mejor) {
+  const n = nombre || 'Estimado(a) estudiante';
+  if (prom == null || isNaN(prom)) {
+    return `${n}, cada parcial es una nueva oportunidad para crecer. Con dedicación constante y el acompañamiento de tu familia, alcanzarás tus metas.`;
+  }
+  const p = Math.round(prom);
+  if (p >= 90) return `¡Felicitaciones, ${n}! Tu desempeño académico es sobresaliente y refleja esfuerzo, responsabilidad y amor por el aprendizaje. Sigue cultivando esa excelencia: eres ejemplo para tus compañeros.`;
+  if (p >= 80) return `¡Muy bien, ${n}! Has demostrado un desempeño destacado${mejor ? `, en especial en ${mejor}` : ''}. Con la misma constancia y un poco más de práctica, la excelencia está a tu alcance.`;
+  if (p >= 70) return `${n}, has alcanzado los aprendizajes esperados de este período. Confía en tus capacidades: con estudio diario y buenos hábitos darás el siguiente paso. ¡Vamos, tú puedes lograrlo!`;
+  return `${n}, todo gran logro comienza con pequeños pasos. Con acompañamiento en casa, esfuerzo diario y una actitud positiva mejorarás parcial a parcial. ¡Confiamos en ti!`;
+}
+
+/* Consejo para la FAMILIA, derivado del gráfico (materia más alta y más baja).
+   Concreto y accionable; sin juzgar al niño. */
+function adConsejoFamilia(nombre, mejor, peor) {
+  const n = nombre || 'su hijo(a)';
+  const partes = [];
+  if (mejor) partes.push(`Reconozca y celebre el logro de ${n} en ${mejor.mat} (${mejor.val}): el elogio sincero fortalece la confianza y la motivación.`);
+  if (peor && (!mejor || peor.mat !== mejor.mat)) {
+    partes.push(`En ${peor.mat} (${peor.val}) hay margen de mejora: acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
+  }
+  if (!partes.length) partes.push(`Mantenga una rutina de estudio en casa y comunicación cercana con el centro educativo.`);
+  partes.push(`Una lectura compartida cada día y el descanso adecuado potencian todo el aprendizaje.`);
+  return partes.join(' ');
+}
+
+/* Gráfico de barras horizontales (SVG: los fill SÍ imprimen, a diferencia de
+   los fondos CSS). Verde = materia más alta, ámbar = más baja, azul = resto;
+   línea roja punteada en 70 (nota de aprobación). */
+function adBoletaGrafico(datos, mejor, peor) {
+  if (!datos.length) return '';
+  const rowH = 18, gap = 4, padT = 6, padB = 12;
+  const labelW = 104, barX = labelW + 4, W = 320;
+  const barMax = W - barX - 26;
+  const H = padT + datos.length * (rowH + gap) - gap + padB;
+  const x70 = barX + barMax * 0.7;
+  const gridBot = padT + datos.length * (rowH + gap) - gap;
+  const bars = datos.map((it, i) => {
+    const y = padT + i * (rowH + gap);
+    const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
+    let color = '#3b5bdb';
+    if (mejor && it.mat === mejor.mat) color = '#2e7d32';
+    if (peor && it.mat === peor.mat && (!mejor || peor.mat !== mejor.mat)) color = '#e08a00';
+    const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
+    return `<text x="${labelW}" y="${(y + rowH * 0.72).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#334155">${adEsc(lbl)}</text>
+      <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
+      <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="${rowH - 4}" rx="2.5" fill="${color}"/>
+      <text x="${(barX + w + 3).toFixed(1)}" y="${(y + rowH * 0.72).toFixed(1)}" font-size="8.5" font-weight="bold" fill="${color}">${it.val}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
+    <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
+    <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
+    ${bars}
+  </svg>`;
+}
+
+/* Imprime una BOLETA elegante por alumno: encabezado con dos logos (centro y
+   Secretaría), tabla compacta de personalidad + aprovechamiento, gráfico de
+   rendimiento, mensaje formal de motivación y consejo para la familia. */
 function adPrintBoletas(d) {
   if (!d.lista || !d.lista.length) { if (typeof toast === 'function') toast('No hay alumnos'); return; }
   const centro = (d.escuela || '').trim() || 'Centro Educativo';
@@ -1488,6 +1571,7 @@ function adPrintBoletas(d) {
   const pers = AD_PERSONALIDAD.slice();
   const mats = d.materias.slice();
   const parciales = ['I', 'II', 'III', 'IV'];
+  const bol = d.boleta || {};
   const val = (p, c, num) => {
     const v = (((d.notas[p] || {})[c]) || {})[num];
     return (v == null || v === '') ? '' : v;
@@ -1500,128 +1584,173 @@ function adPrintBoletas(d) {
     const xs = parciales.map(p => val(p, 'Inasistencias', num)).filter(x => x !== '' && !isNaN(Number(x))).map(Number);
     return xs.length ? xs.reduce((a, b) => a + b, 0) : '';
   };
-  const bol = d.boleta || {};
   const thV = t => `<th class="v"><span>${adEsc(t)}</span></th>`;
-  // Frente: calificaciones
-  const cal = a => {
+  const primer = nom => String(nom || '').trim().split(/\s+/)[0] || '';
+
+  const hoja = a => {
+    // Datos del gráfico: promedio anual por materia
+    const datos = mats.map(c => ({ mat: c, val: promMat(c, a.num) }))
+      .filter(x => x.val !== '' && !isNaN(Number(x.val)))
+      .map(x => ({ mat: x.mat, val: Number(x.val) }));
+    const promGen = datos.length ? Math.round(datos.reduce((s, x) => s + x.val, 0) / datos.length) : null;
+    let mejor = null, peor = null;
+    datos.forEach(x => { if (!mejor || x.val > mejor.val) mejor = x; if (!peor || x.val < peor.val) peor = x; });
+    const inasis = sumInasis(a.num);
+
     const filas = parciales.map(p => `
       <tr>
-        <td class="pa">${p} PARCIAL</td>
+        <td class="pa">${p}</td>
         ${pers.map(c => `<td>${adEsc(String(val(p, c, a.num)))}</td>`).join('')}
         ${mats.map(c => `<td>${adEsc(String(val(p, c, a.num)))}</td>`).join('')}
         <td>${adEsc(String(val(p, 'Inasistencias', a.num)))}</td>
       </tr>`).join('');
-    const prom = `
+    const promRow = `
       <tr class="prom">
-        <td class="pa">PROMEDIO</td>
-        ${pers.map(() => '<td></td>').join('')}
+        <td class="pa">PROM.</td>
+        ${pers.map(() => '<td>—</td>').join('')}
         ${mats.map(c => `<td>${promMat(c, a.num)}</td>`).join('')}
-        <td>${sumInasis(a.num)}</td>
+        <td>${inasis}</td>
       </tr>`;
-    return `
-      <header>
-        ${d.logo ? `<img class="logo" src="${d.logo}">` : '<div class="logo"></div>'}
-        <div class="titulo">
-          <h1>${adEsc(centro.toUpperCase())}</h1>
-          <h2>BOLETA DE CALIFICACIONES</h2>
+
+    const chip = (lbl, valTxt, cls) => `<div class="chip ${cls || ''}"><span>${lbl}</span><b>${valTxt}</b></div>`;
+    const resumen = `
+      <div class="chips">
+        ${chip('Promedio general', promGen != null ? promGen : '—')}
+        ${mejor ? chip('Materia más alta', adEsc(mejor.mat) + ' · ' + mejor.val, 'good') : ''}
+        ${peor && (!mejor || peor.mat !== mejor.mat) ? chip('A reforzar', adEsc(peor.mat) + ' · ' + peor.val, 'low') : ''}
+        ${chip('Inasistencias', inasis !== '' ? inasis : '0')}
+      </div>`;
+
+    return `<section class="hoja">
+      <header class="bl-head">
+        <div class="bl-logo">${d.logo ? `<img src="${d.logo}" alt="">` : ''}</div>
+        <div class="bl-title">
+          <div class="bl-centro">${adEsc(centro.toUpperCase())}</div>
+          <div class="bl-doc">Boleta de Calificaciones</div>
+          <div class="bl-anio">Año lectivo ${adEsc(bol.anio) || new Date().getFullYear()}</div>
         </div>
-        <div class="logo"></div>
+        <div class="bl-logo">${d.logoSec ? `<img src="${d.logoSec}" alt="">` : ''}</div>
       </header>
-      <div class="alumno">
-        <span><b>Alumno(a):</b> ${adEsc(a.nombre) || '________________________'}</span>
-        <span><b>Nº:</b> ${a.num}</span>
-        <span><b>Grado:</b> ${adEsc(grado) || '______'}</span>
+
+      <div class="bl-alumno">
+        <div><span>Alumno(a)</span><b>${adEsc(a.nombre) || '—'}</b></div>
+        <div><span>N°</span><b>${a.num}</b></div>
+        <div><span>Grado</span><b>${adEsc(d.grado) || adEsc(grado) || '—'}</b></div>
+        <div><span>Sección</span><b>${adEsc(d.seccion) || '—'}</b></div>
       </div>
-      <table>
+
+      <table class="bl-notas">
         <thead>
           <tr>
-            <th rowspan="2" class="pa">PARCIALES</th>
-            <th colspan="${pers.length}">PERSONALIDAD</th>
-            <th colspan="${mats.length}">APROVECHAMIENTO ACADÉMICO</th>
+            <th rowspan="2" class="pa">Parcial</th>
+            <th colspan="${pers.length}" class="grp">Personalidad</th>
+            <th colspan="${mats.length}" class="grp">Aprovechamiento académico</th>
             <th rowspan="2" class="v"><span>Inasistencias</span></th>
           </tr>
           <tr>${pers.map(thV).join('')}${mats.map(thV).join('')}</tr>
         </thead>
-        <tbody>${filas}${prom}</tbody>
-      </table>`;
-  };
-  // Reverso: observaciones por parcial + portada oficial, ABAJO en la misma hoja
-  const rev = a => {
-    const obs = parciales.map(p => `
-      <div class="rev-parcial">
-        <div class="rev-obs-head"><span>Observaciones del maestro:</span><b>${p} PARCIAL</b></div>
-        <div class="rev-box"></div>
-        <div class="rev-lbl">Observaciones del padre de familia:</div>
-        <div class="rev-box"></div>
-        <div class="rev-firma">______________________<br>Firma del padre de familia</div>
-      </div>`).join('');
-    return `
-      <div class="rev-cols">
-        <div class="rev-obs">${obs}</div>
-        <div class="rev-portada">
-          ${d.logo ? `<div class="rev-escudo"><img src="${d.logo}"></div>` : ''}
-          <h1>SECRETARÍA DE EDUCACIÓN · REPÚBLICA DE HONDURAS</h1>
-          <p>Subsecretaría de Asuntos Técnicos Pedagógicos</p>
-          <p>Dirección General de Evaluación de la Calidad de la Educación</p>
-          <p>Dirección Departamental de Educación de ${adEsc(bol.departamento) || '____________'}</p>
-          <div class="rev-campo"><div class="rev-val">${adEsc(bol.director) || '&nbsp;'}</div><div class="rev-cap">Nombre del Director</div></div>
-          <div class="rev-campo"><div class="rev-val">${adEsc(bol.docente) || '&nbsp;'}</div><div class="rev-cap">Nombre del Docente de grado</div></div>
-          <div class="rev-gs">
-            <span>Grado: <span class="rev-inp">${adEsc(d.grado)}</span></span>
-            <span>Secc.: <span class="rev-inp">${adEsc(d.seccion)}</span></span>
+        <tbody>${filas}${promRow}</tbody>
+      </table>
+
+      <div class="bl-grid2">
+        <div class="bl-card">
+          <div class="bl-h">Rendimiento por materia <small>(promedio del año)</small></div>
+          ${adBoletaGrafico(datos, mejor, peor) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
+          ${resumen}
+        </div>
+        <div class="bl-msgs">
+          <div class="bl-card motiva">
+            <div class="bl-h">✦ Mensaje de motivación</div>
+            <p>${adEsc(adMsgMotiva(primer(a.nombre), promGen, mejor && mejor.mat))}</p>
           </div>
-          <p class="rev-lugar"><b>Lugar:</b> ${adEsc(bol.lugar)} &nbsp; <b>Municipio:</b> ${adEsc(bol.municipio)}</p>
-          <p class="rev-lugar"><b>Depto.</b> ${adEsc(bol.departamento)} &nbsp; <b>Año:</b> ${adEsc(bol.anio)}</p>
-          <div class="rev-firmas">
-            <div>______________________<br>Profesor(a) de Grado</div>
-            <div>______________________<br>Director(a)</div>
+          <div class="bl-card consejo">
+            <div class="bl-h">✿ Consejo para la familia</div>
+            <p>${adEsc(adConsejoFamilia(primer(a.nombre), mejor, peor))}</p>
           </div>
         </div>
-      </div>`;
+      </div>
+
+      <footer class="bl-foot">
+        <div class="bl-oficial">
+          <b>SECRETARÍA DE EDUCACIÓN · REPÚBLICA DE HONDURAS</b>
+          <span>Dirección Departamental de Educación de ${adEsc(bol.departamento) || '—'}</span>
+          <span>${adEsc(bol.lugar)}${bol.lugar && bol.municipio ? ', ' : ''}${adEsc(bol.municipio)}${(bol.lugar || bol.municipio) && bol.departamento ? ' · ' : ''}${adEsc(bol.departamento)}</span>
+        </div>
+        <div class="bl-firmas">
+          <div><i></i><b>${adEsc(bol.docente) || '&nbsp;'}</b><span>Profesor(a) de Grado</span></div>
+          <div><i></i><b>${adEsc(bol.director) || '&nbsp;'}</b><span>Director(a)</span></div>
+          <div><i></i><b>&nbsp;</b><span>Padre, Madre o Tutor(a)</span></div>
+        </div>
+      </footer>
+    </section>`;
   };
+
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <title>Boletas — ${adEsc(grado)}</title>
 <style>
-  @page { size: letter portrait; margin: 7mm; }
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
-  body { color: #111; }
+  @page { size: letter portrait; margin: 10mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  :root { --tinta:#0f2350; --azul:#1e3a7c; --oro:#a8791a; --linea:#d4dbe6; --suave:#f4f7fc; }
+  body { color: var(--tinta); font-family: Arial, Helvetica, sans-serif; }
   .hoja { page-break-after: always; }
   .hoja:last-child { page-break-after: auto; }
-  header { display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #111; padding-bottom: 6px; }
-  header .logo { width: 58px; height: 58px; object-fit: contain; flex: 0 0 58px; }
-  header .titulo { flex: 1; text-align: center; }
-  header h1 { font-size: 15px; font-weight: 800; }
-  header h2 { font-size: 11px; font-weight: 600; letter-spacing: 1px; margin-top: 2px; }
-  .alumno { display: flex; gap: 16px; flex-wrap: wrap; font-size: 11px; margin: 6px 2px; }
-  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  th, td { border: 1px solid #333; text-align: center; font-size: 10px; padding: 2px 1px; }
-  th { background: #f0f0f0; font-size: 9px; }
-  th.v { height: 92px; vertical-align: bottom; }
-  th.v span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-size: 9px; font-weight: 600; display: inline-block; }
-  td.pa, th.pa { font-weight: 700; text-align: left; padding-left: 4px; white-space: nowrap; background: #f7f7f7; width: 74px; }
-  tr.prom td { font-weight: 800; background: #eef; }
-  /* Reverso oficial, ABAJO en la misma hoja */
-  .rev-cols { display: flex; gap: 14px; margin-top: 12px; padding-top: 8px; border-top: 1.5px dashed #999; }
-  .rev-obs { flex: 1.05; }
-  .rev-portada { flex: 1; text-align: center; border-left: 1px solid #bbb; padding-left: 12px; }
-  .rev-parcial { margin-bottom: 5px; }
-  .rev-obs-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 10.5px; font-weight: 700; }
-  .rev-lbl { font-size: 10.5px; margin-top: 3px; font-weight: 600; }
-  .rev-box { border: 1px solid #333; height: 34px; margin-top: 2px; background: #fffdf5; }
-  .rev-firma { text-align: center; font-size: 9px; margin-top: 2px; line-height: 1.25; }
-  .rev-escudo img { width: 46px; height: 46px; object-fit: contain; margin-bottom: 3px; }
-  .rev-portada h1 { font-size: 12px; font-weight: 800; line-height: 1.2; }
-  .rev-portada p { font-size: 10px; line-height: 1.3; }
-  .rev-campo { margin: 6px 0; }
-  .rev-campo .rev-val { border: 1px solid #333; padding: 3px 5px; font-weight: 700; background: #fffdf5; min-height: 19px; font-size: 11px; }
-  .rev-campo .rev-cap { font-size: 10px; font-weight: 700; margin-top: 1px; }
-  .rev-gs { display: flex; justify-content: center; gap: 16px; font-weight: 700; font-size: 11px; margin: 8px 0; }
-  .rev-gs .rev-inp { display: inline-block; min-width: 44px; border: 1px solid #333; padding: 2px 6px; background: #fffdf5; }
-  .rev-lugar { font-size: 10.5px; margin-top: 3px; }
-  .rev-firmas { display: flex; justify-content: space-around; gap: 8px; margin-top: 26px; font-size: 10px; }
+
+  .bl-head { display: flex; align-items: center; gap: 14px; padding-bottom: 8px; border-bottom: 2.5px solid var(--azul); }
+  .bl-head .bl-logo { width: 62px; height: 62px; flex: 0 0 62px; display: flex; align-items: center; justify-content: center; }
+  .bl-head .bl-logo img { max-width: 62px; max-height: 62px; object-fit: contain; }
+  .bl-title { flex: 1; text-align: center; }
+  .bl-centro { font-family: Georgia, 'Times New Roman', serif; font-size: 17px; font-weight: 700; color: var(--tinta); letter-spacing: .3px; line-height: 1.15; }
+  .bl-doc { font-family: Georgia, serif; font-size: 12px; font-style: italic; color: var(--oro); margin-top: 2px; }
+  .bl-anio { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--azul); margin-top: 2px; }
+
+  .bl-alumno { display: flex; gap: 8px; margin: 9px 0; }
+  .bl-alumno > div { flex: 1; background: var(--suave); border: 1px solid var(--linea); border-radius: 6px; padding: 4px 8px; }
+  .bl-alumno > div:first-child { flex: 3; }
+  .bl-alumno span { display: block; font-size: 7.5px; letter-spacing: .5px; text-transform: uppercase; color: #7286a8; }
+  .bl-alumno b { font-size: 11.5px; color: var(--tinta); }
+
+  .bl-notas { border-collapse: collapse; margin: 0 auto; table-layout: auto; }
+  .bl-notas th, .bl-notas td { border: 1px solid #c7cfdd; text-align: center; font-size: 10px; padding: 2px 5px; }
+  .bl-notas thead .grp { background: var(--azul); color: #fff; font-size: 8.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; padding: 3px 4px; }
+  .bl-notas th.v { background: #eaf0fa; height: 74px; vertical-align: bottom; padding: 0 0 4px; }
+  .bl-notas th.v span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-size: 8.5px; font-weight: 700; color: var(--tinta); display: inline-block; }
+  .bl-notas td.pa, .bl-notas th.pa { font-weight: 700; background: #eaf0fa; color: var(--tinta); font-size: 9px; white-space: nowrap; }
+  .bl-notas tbody td { font-weight: 600; }
+  .bl-notas tr.prom td { font-weight: 800; background: #fdf6e3; color: #8a5a00; }
+  .bl-notas tr.prom td.pa { background: #f7edc9; }
+
+  .bl-grid2 { display: flex; gap: 10px; margin-top: 11px; align-items: stretch; }
+  .bl-grid2 > .bl-card { flex: 1; }
+  .bl-msgs { flex: 1.02; display: flex; flex-direction: column; gap: 10px; }
+  .bl-card { border: 1px solid var(--linea); border-radius: 9px; padding: 9px 11px; break-inside: avoid; }
+  .bl-h { font-family: Georgia, serif; font-size: 11px; font-weight: 700; color: var(--azul); margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--linea); }
+  .bl-h small { font-weight: 400; font-style: italic; color: #7286a8; font-size: 9px; }
+  .bl-card p { font-size: 10.5px; line-height: 1.5; color: #223; text-align: justify; }
+  .bl-card.motiva { background: linear-gradient(180deg, #f2f8f2, #fff); border-color: #cfe6cf; }
+  .bl-card.motiva .bl-h { color: #2e7d32; border-color: #cfe6cf; }
+  .bl-card.consejo { background: linear-gradient(180deg, #fdf7ee, #fff); border-color: #ecdcbf; }
+  .bl-card.consejo .bl-h { color: var(--oro); border-color: #ecdcbf; }
+  .bl-nada { font-size: 10px; color: #7286a8; font-style: italic; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { flex: 1 1 44%; border: 1px solid var(--linea); border-radius: 7px; padding: 4px 8px; background: var(--suave); }
+  .chip span { display: block; font-size: 7.5px; text-transform: uppercase; letter-spacing: .4px; color: #7286a8; }
+  .chip b { font-size: 11px; color: var(--tinta); }
+  .chip.good { background: #eef7ee; border-color: #cfe6cf; } .chip.good b { color: #2e7d32; }
+  .chip.low { background: #fdf3e5; border-color: #ecdcbf; } .chip.low b { color: #c8730a; }
+
+  .bl-foot { margin-top: 12px; padding-top: 8px; border-top: 1.5px solid var(--linea); }
+  .bl-oficial { text-align: center; line-height: 1.35; }
+  .bl-oficial b { font-size: 9.5px; letter-spacing: .3px; color: var(--tinta); display: block; }
+  .bl-oficial span { display: block; font-size: 9px; color: #55637d; }
+  .bl-firmas { display: flex; justify-content: space-around; gap: 12px; margin-top: 30px; }
+  .bl-firmas > div { flex: 1; text-align: center; }
+  .bl-firmas i { display: block; border-top: 1px solid #55637d; margin: 0 8px 3px; }
+  .bl-firmas b { font-size: 10px; color: var(--tinta); font-weight: 700; }
+  .bl-firmas span { display: block; font-size: 8.5px; color: #55637d; }
 </style></head><body>
-${d.lista.map(a => `<section class="hoja">${cal(a)}${rev(a)}</section>`).join('')}
-<script>window.onload=function(){setTimeout(function(){window.print();},250);}<\/script>
+${d.lista.map(a => hoja(a)).join('')}
+<script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script>
 </body></html>`;
   const w = window.open('', '_blank');
   if (!w) { if (typeof toast === 'function') toast('Permite las ventanas emergentes para imprimir'); return; }
