@@ -1517,14 +1517,31 @@ function adMsgMotiva(nombre, prom, mejor) {
   return `${n}, todo gran logro comienza con pequeños pasos. Con acompañamiento en casa, esfuerzo diario y una actitud positiva mejorarás parcial a parcial. ¡Confiamos en ti!`;
 }
 
-/* Consejo para la FAMILIA, derivado del gráfico (materia más alta y más baja).
-   Concreto y accionable; sin juzgar al niño. */
-function adConsejoFamilia(nombre, mejor, peor) {
+/* Consejo para la FAMILIA, derivado del gráfico. Maneja EMPATES con
+   honestidad: si varias materias comparten la nota más alta (o la más
+   baja) se nombran juntas; si todas son iguales, se celebra la
+   constancia — nunca se corona una sola materia por accidente. */
+function adNombresMats(arr, max) {
+  const ns = (arr || []).map(x => x.mat);
+  const m = max || 2;
+  if (ns.length <= m) return ns.join(' y ');
+  return ns.slice(0, m).join(', ') + ' y ' + (ns.length - m) + ' más';
+}
+function adConsejoFamilia(nombre, mejores, peores) {
   const n = nombre || 'su hijo(a)';
   const partes = [];
-  if (mejor) partes.push(`Reconozca y celebre el logro de ${n} en ${mejor.mat} (${mejor.val}): el elogio sincero fortalece la confianza y la motivación.`);
-  if (peor && (!mejor || peor.mat !== mejor.mat)) {
-    partes.push(`En ${peor.mat} (${peor.val}) hay margen de mejora: acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
+  const hayMejor = mejores && mejores.length;
+  const hayPeor = peores && peores.length;
+  if (hayMejor && !hayPeor) {
+    // todas las materias comparten la misma nota
+    partes.push(`El rendimiento de ${n} es parejo (${mejores[0].val}) en todas las materias: celebre esa constancia, que es la base de todo progreso, y anímele a subir un escalón en la que más disfrute.`);
+  } else if (hayMejor && mejores.length > 1) {
+    partes.push(`Reconozca y celebre que ${n} comparte su mejor nota (${mejores[0].val}) en ${adNombresMats(mejores)}: el elogio sincero fortalece la confianza y la motivación.`);
+  } else if (hayMejor) {
+    partes.push(`Reconozca y celebre el logro de ${n} en ${mejores[0].mat} (${mejores[0].val}): el elogio sincero fortalece la confianza y la motivación.`);
+  }
+  if (hayPeor) {
+    partes.push(`En ${adNombresMats(peores)} (${peores[0].val}) hay margen de mejora: acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
   }
   if (!partes.length) partes.push(`Mantenga una rutina de estudio en casa y comunicación cercana con el centro educativo.`);
   partes.push(`Una lectura compartida cada día y el descanso adecuado potencian todo el aprendizaje.`);
@@ -1534,7 +1551,7 @@ function adConsejoFamilia(nombre, mejor, peor) {
 /* Gráfico de barras horizontales (SVG: los fill SÍ imprimen, a diferencia de
    los fondos CSS). Verde = materia más alta, ámbar = más baja, azul = resto;
    línea roja punteada en 70 (nota de aprobación). */
-function adBoletaGrafico(datos, mejor, peor) {
+function adBoletaGrafico(datos, mejores, peores) {
   if (!datos.length) return '';
   const rowH = 18, gap = 4, padT = 6, padB = 12;
   const labelW = 104, barX = labelW + 4, W = 320;
@@ -1542,12 +1559,13 @@ function adBoletaGrafico(datos, mejor, peor) {
   const H = padT + datos.length * (rowH + gap) - gap + padB;
   const x70 = barX + barMax * 0.7;
   const gridBot = padT + datos.length * (rowH + gap) - gap;
+  const enSet = (arr, mat) => (arr || []).some(x => x.mat === mat);
   const bars = datos.map((it, i) => {
     const y = padT + i * (rowH + gap);
     const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
     let color = '#3b5bdb';
-    if (mejor && it.mat === mejor.mat) color = '#2e7d32';
-    if (peor && it.mat === peor.mat && (!mejor || peor.mat !== mejor.mat)) color = '#e08a00';
+    if (enSet(mejores, it.mat)) color = '#2e7d32';   // TODAS las empatadas arriba en verde
+    if (enSet(peores, it.mat)) color = '#e08a00';    // y TODAS las empatadas abajo en ámbar
     const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
     return `<text x="${labelW}" y="${(y + rowH * 0.72).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#334155">${adEsc(lbl)}</text>
       <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
@@ -1621,8 +1639,14 @@ function adPrintBoletas(d) {
       .filter(x => x.val !== '' && !isNaN(Number(x.val)))
       .map(x => ({ mat: x.mat, val: Number(x.val) }));
     const promGen = datos.length ? Math.round(datos.reduce((s, x) => s + x.val, 0) / datos.length) : null;
-    let mejor = null, peor = null;
-    datos.forEach(x => { if (!mejor || x.val > mejor.val) mejor = x; if (!peor || x.val < peor.val) peor = x; });
+    // EMPATES con honestidad: «la más alta» son TODAS las que comparten la
+    // nota máxima; «a reforzar», todas las de la mínima. Si todas las
+    // materias tienen la misma nota, no se corona ninguna.
+    const maxV = datos.length ? Math.max.apply(null, datos.map(x => x.val)) : null;
+    const minV = datos.length ? Math.min.apply(null, datos.map(x => x.val)) : null;
+    const todasIguales = datos.length > 0 && maxV === minV;
+    const mejores = datos.filter(x => x.val === maxV);
+    const peores = todasIguales ? [] : datos.filter(x => x.val === minV);
     const inasis = sumInasis(a.num);
 
     const filas = parciales.map(p => `
@@ -1641,11 +1665,19 @@ function adPrintBoletas(d) {
       </tr>`;
 
     const chip = (lbl, valTxt, cls) => `<div class="chip ${cls || ''}"><span>${lbl}</span><b>${valTxt}</b></div>`;
+    const chipAlta = todasIguales
+      ? chip('Rendimiento', 'Parejo · ' + maxV + ' en todo', 'good')
+      : (mejores.length > 1
+        ? chip('Materias más altas', adEsc(adNombresMats(mejores, mejores.length === 2 ? 2 : 1)) + ' · ' + maxV, 'good')
+        : (mejores.length ? chip('Materia más alta', adEsc(mejores[0].mat) + ' · ' + maxV, 'good') : ''));
+    const chipBaja = peores.length
+      ? chip('A reforzar', adEsc(adNombresMats(peores, peores.length === 2 ? 2 : 1)) + ' · ' + minV, 'low')
+      : '';
     const resumen = `
       <div class="chips">
         ${chip('Promedio general', promGen != null ? promGen : '—')}
-        ${mejor ? chip('Materia más alta', adEsc(mejor.mat) + ' · ' + mejor.val, 'good') : ''}
-        ${peor && (!mejor || peor.mat !== mejor.mat) ? chip('A reforzar', adEsc(peor.mat) + ' · ' + peor.val, 'low') : ''}
+        ${chipAlta}
+        ${chipBaja}
         ${chip('Inasistencias', inasis !== '' ? inasis : '0')}
       </div>`;
 
@@ -1701,17 +1733,17 @@ function adPrintBoletas(d) {
       <div class="bl-grid2">
         <div class="bl-card">
           <div class="bl-h">Rendimiento por materia <small>(promedio del año)</small></div>
-          ${adBoletaGrafico(datos, mejor, peor) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
+          ${adBoletaGrafico(datos, todasIguales ? [] : mejores, peores) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
           ${resumen}
         </div>
         <div class="bl-msgs">
           <div class="bl-card motiva">
             <div class="bl-h">✦ Mensaje de motivación</div>
-            <p>${adEsc(adMsgMotiva(primer(a.nombre), promGen, mejor && mejor.mat))}</p>
+            <p>${adEsc(adMsgMotiva(primer(a.nombre), promGen, mejores.length === 1 ? mejores[0].mat : ''))}</p>
           </div>
           <div class="bl-card consejo">
             <div class="bl-h">✿ Consejo para la familia</div>
-            <p>${adEsc(adConsejoFamilia(primer(a.nombre), mejor, peor))}</p>
+            <p>${adEsc(adConsejoFamilia(primer(a.nombre), mejores, peores))}</p>
           </div>
         </div>
       </div>
@@ -1737,7 +1769,9 @@ function adPrintBoletas(d) {
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   :root { --tinta:#0f2350; --azul:#1e3a7c; --oro:#a8791a; --linea:#d4dbe6; --suave:#f4f7fc; }
   body { color: var(--tinta); font-family: Arial, Helvetica, sans-serif; }
-  .hoja { page-break-after: always; }
+  /* La hoja ocupa TODA la página carta: el pie de firmas se ancla abajo
+     (margin-top:auto) y no queda un vacío grande al final. */
+  .hoja { page-break-after: always; min-height: 256mm; display: flex; flex-direction: column; }
   .hoja:last-child { page-break-after: auto; }
 
   .bl-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding-bottom: 8px; border-bottom: 2.5px solid var(--azul); }
@@ -1756,10 +1790,10 @@ function adPrintBoletas(d) {
   .bl-oficial-t span { display: block; font-size: 9px; color: #33415c; }
 
   .bl-cuerpo { display: flex; gap: 8px; align-items: stretch; }
-  .bl-firmapadre { flex: 0 0 96px; border: 1px solid var(--linea); border-radius: 8px; padding: 6px 7px; background: var(--suave); display: flex; flex-direction: column; }
+  .bl-firmapadre { flex: 0 0 132px; border: 1px solid var(--linea); border-radius: 8px; padding: 6px 6px; background: var(--suave); display: flex; flex-direction: column; }
   .fp-t { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--azul); text-align: center; line-height: 1.25; margin-bottom: 2px; }
   .fp-slot { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 2px; }
-  .fp-slot i { display: block; border-top: 1px solid #55637d; margin-bottom: 2px; }
+  .fp-slot i { display: block; border-top: 1px solid #55637d; margin: 0 1px 2px; }
   .fp-slot span { font-size: 7.5px; color: #55637d; text-align: center; }
   .bl-cuerpo .bl-notas { flex: 1; }
 
@@ -1774,7 +1808,7 @@ function adPrintBoletas(d) {
   .bl-alumno b { font-size: 11.5px; color: var(--tinta); }
 
   .bl-notas { border-collapse: collapse; margin: 0 auto; table-layout: auto; }
-  .bl-notas th, .bl-notas td { border: 1px solid #c7cfdd; text-align: center; font-size: 10px; padding: 2px 5px; }
+  .bl-notas th, .bl-notas td { border: 1px solid #c7cfdd; text-align: center; font-size: 10px; padding: 2px 2px; }
   .bl-notas thead .grp { background: var(--azul); color: #fff; font-size: 8.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; padding: 3px 4px; }
   .bl-notas th.v { background: #eaf0fa; height: 74px; vertical-align: bottom; padding: 0 0 4px; }
   .bl-notas th.v span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-size: 8.5px; font-weight: 700; color: var(--tinta); display: inline-block; }
@@ -1803,7 +1837,7 @@ function adPrintBoletas(d) {
   .chip.good { background: #eef7ee; border-color: #cfe6cf; } .chip.good b { color: #2e7d32; }
   .chip.low { background: #fdf3e5; border-color: #ecdcbf; } .chip.low b { color: #c8730a; }
 
-  .bl-foot { margin-top: 12px; }
+  .bl-foot { margin-top: auto; padding-top: 14px; padding-bottom: 4mm; }
   .bl-oficial { text-align: center; line-height: 1.35; }
   .bl-oficial b { font-size: 9.5px; letter-spacing: .3px; color: var(--tinta); display: block; }
   .bl-oficial span { display: block; font-size: 9px; color: #55637d; }
