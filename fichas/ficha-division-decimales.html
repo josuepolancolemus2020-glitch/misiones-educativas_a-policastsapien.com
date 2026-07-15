@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión División de Decimales</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ─── Código de color por materia · MATEMÁTICAS = AZUL ─── */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --azul-bloque: #1e3a7c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Calibri, system-ui, sans-serif; color: var(--tinta); background: #eef2f7; line-height: 1.5; }
+  .hoja { max-width: 8.5in; margin: 0 auto; background: #fff; padding: 30px 46px 40px; }
+
+  /* Línea de identificación */
+  .idline { font-size: 0.92rem; font-weight: 600; margin-bottom: 14px; }
+  .idline b { font-weight: 700; }
+
+  /* Encabezado de la ficha */
+  .fh { border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+  .fh .f-badge { font-size: 1.15rem; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 0.86rem; color: var(--tinta); margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+
+  h2 { font-size: 1.02rem; color: #fff; background: var(--mat); padding: 7px 13px; border-radius: 8px; margin: 20px 0 11px; }
+  h3 { font-size: 0.95rem; color: var(--mat-osc); margin: 14px 0 7px; }
+  p { font-size: 0.9rem; margin-bottom: 8px; text-align: justify; }
+  ul, ol { margin: 6px 0 8px 22px; font-size: 0.9rem; }
+  li { margin-bottom: 4px; }
+
+  .objetivos { margin: 4px 0 6px 0; }
+  .objetivos li { margin-bottom: 5px; }
+
+  /* Cajas destacadas */
+  .caja { border-radius: 9px; padding: 10px 14px; margin: 10px 0; font-size: 0.87rem; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+
+  /* Tablas */
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.84rem; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 6px 9px; font-size: 0.8rem; }
+  td { border: 1px solid var(--linea); padding: 5px 9px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td:first-child { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* ─── ILUSTRACIONES (widgets recreados de la misión) ─── */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 10px; padding: 14px; margin: 12px 0; text-align: center; background: #fbfdff; }
+  .ilus-t { font-size: 0.8rem; font-weight: 700; color: var(--mat-osc); margin-bottom: 10px; }
+
+  /* Formato horizontal */
+  .horiz { display: inline-flex; align-items: flex-start; gap: 8px; font-family: 'Cambria Math', Georgia, serif; }
+  .horiz .term { text-align: center; }
+  .horiz .num { font-size: 1.6rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; }
+  .horiz .num.dvd { background: #dbeafe; color: #1e40af; }
+  .horiz .num.dvs { background: #ffedd5; color: #c2410c; }
+  .horiz .num.coc { background: #dcfce7; color: #15803d; }
+  .horiz .op { font-size: 1.5rem; font-weight: 800; color: var(--gris); align-self: center; }
+  .horiz .lbl { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; margin-top: 3px; }
+  .horiz .lbl.dvd { color: #1e40af; } .horiz .lbl.dvs { color: #c2410c; } .horiz .lbl.coc { color: #15803d; }
+
+  /* Casita (modo USA) */
+  .casita { display: inline-block; font-family: 'Cambria Math', Georgia, serif; text-align: left; }
+  .casita .fila { display: flex; align-items: flex-end; }
+  .casita .divisor { font-size: 1.5rem; font-weight: 800; color: #c2410c; padding: 0 8px 4px 0; }
+  .casita .caja-int { border-top: 2.5px solid var(--tinta); border-left: 2.5px solid var(--tinta); border-top-left-radius: 12px; padding: 4px 16px 4px 12px; }
+  .casita .cociente { font-size: 1.5rem; font-weight: 800; color: #15803d; padding-left: 12px; }
+  .casita .dividendo { font-size: 1.5rem; font-weight: 800; color: #1e40af; }
+  .casita-legend { font-size: 0.7rem; color: var(--gris); margin-top: 8px; }
+  .casita-legend b.dvd { color: #1e40af; } .casita-legend b.dvs { color: #c2410c; } .casita-legend b.coc { color: #15803d; }
+
+  /* Mover el punto */
+  .mover { display: inline-flex; align-items: center; gap: 14px; font-family: 'Cambria Math', Georgia, serif; font-size: 1.15rem; font-weight: 700; flex-wrap: wrap; justify-content: center; }
+  .mover .paso { background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 6px 12px; }
+  .mover .flecha { color: var(--mat); font-weight: 800; font-size: 0.8rem; }
+  .mover .res { color: #15803d; }
+  .mover em { color: #c2410c; font-style: normal; font-weight: 800; }
+
+  /* Comportamiento del cociente */
+  .tri { display: flex; gap: 8px; margin: 10px 0; }
+  .tri > div { flex: 1; border-radius: 9px; padding: 9px 11px; font-size: 0.82rem; }
+  .tri .mayor { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .menor { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .igual { background: #ede9fe; border: 1px solid #d3c9f5; }
+  .tri b { display: block; font-size: 0.86rem; margin-bottom: 3px; }
+  .tri .mayor b { color: #1e40af; } .tri .menor b { color: #c2410c; } .tri .igual b { color: #6b21a8; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 4px; }
+  .acts ol { margin-left: 20px; }
+  .acts .val { font-size: 0.78rem; font-weight: 400; color: var(--gris); }
+  .linea-resp { display: inline-block; min-width: 90px; border-bottom: 1px solid #9aa7b5; }
+  .op-mult { font-size: 0.88rem; margin: 2px 0 8px; }
+
+  /* Espacio para imagen (pendiente que el usuario pidió NO hacer aún, se deja marcado) */
+  .img-slot { border: 2px dashed #c9b16a; background: #fffdf5; border-radius: 10px; padding: 22px; text-align: center; color: #9a8446; font-size: 0.8rem; margin: 12px 0; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 10px; padding: 12px 16px; margin: 14px 0; }
+  .felic b { color: var(--mat-osc); }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 10px; font-size: 0.86rem; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .nota-doc { font-size: 0.82rem; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 16px; padding-top: 10px; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 12mm 12mm; }
+  @media print {
+    body { background: #fff; }
+    .hoja { max-width: none; padding: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .caja, .tri > div, .horiz .num, .ilus, .felic, .pauta { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h2 { margin: 14px 0 8px; }
+    table { break-inside: auto; }
+    tr, .ilus, .caja, .tri { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="hoja">
+
+  <div class="idline">Nombre: <b>_______________________________________________________________</b> &nbsp; Nº-Lista: <b>______</b></div>
+
+  <div class="fh">
+    <div class="f-badge">📄 Ficha Didáctica: Misión División de Decimales</div>
+    <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> II y III Ciclo de Educación Básica</div>
+    <div class="f-meta"><b>Tema:</b> División con decimales: mover el punto, agregar ceros, partes de la división y tamaño del cociente</div>
+  </div>
+
+  <h2>🎯 Objetivos de Aprendizaje</h2>
+  <ol class="objetivos">
+    <li>Comprender que al dividir por un decimal convertimos el divisor en número entero moviendo el punto decimal.</li>
+    <li>Aplicar la <strong>regla de oro</strong>: lo que le haces al divisor, debes hacérselo al dividendo.</li>
+    <li>Identificar las partes de la división —dividendo, divisor, cociente y residuo— en formato horizontal y en modo casita.</li>
+    <li>Agregar ceros correctamente en el dividendo y en el cociente cuando faltan cifras.</li>
+    <li>Predecir si el cociente aumenta, disminuye o queda igual según el tamaño del divisor.</li>
+    <li>Resolver divisiones con decimales y reconocer los errores más comunes para evitarlos.</li>
+  </ol>
+
+  <h2>📖 1. ¿Qué es dividir decimales?</h2>
+  <p>Para dividir cuando el <strong>divisor es un decimal</strong>, lo convertimos en un número <strong>entero</strong>
+  moviendo el punto decimal hacia la derecha. La clave está en mover el punto <strong>el mismo número de espacios en el dividendo</strong>.</p>
+  <div class="caja idea">💡 <b>Idea clave:</b> No estamos cambiando la división; estamos escribiendo los mismos números de una forma
+  más fácil. Multiplicamos el dividendo y el divisor por la misma cantidad (×10, ×100…), así que <strong>el cociente no cambia</strong>.</div>
+  <div class="caja regla">⚡ <b>La Regla de Oro:</b> lo que le haces al divisor, debes hacérselo al dividendo. Si mueves el punto
+  1 espacio en el divisor (×10), también lo mueves 1 espacio en el dividendo (×10).</div>
+
+  <h3>🔬 Mini-demostración</h3>
+  <div class="ilus">
+    <div class="ilus-t">El cociente no cambia al mover el punto en ambos números</div>
+    <div class="mover">
+      <span class="paso">1.2 ÷ 0.4</span>
+      <span class="flecha">× 10 EN AMBOS →</span>
+      <span class="paso">12 ÷ 4 = <span class="res">3</span></span>
+    </div>
+    <p style="font-size:0.8rem;color:var(--gris);margin-top:8px;text-align:center;">✅ El cociente es <strong>3</strong> en las dos divisiones. ¡El valor no cambió!</p>
+  </div>
+
+  <h2>🏠 2. Las partes de la división</h2>
+  <p>Una misma división puede escribirse de dos formas. Las partes <strong>no cambian de nombre</strong>, solo cambian de lugar.</p>
+
+  <div class="ilus">
+    <div class="ilus-t">➡️ Formato horizontal &nbsp;—&nbsp; se lee: dividendo ÷ divisor = cociente</div>
+    <div class="horiz">
+      <div class="term"><div class="num dvd">4.5</div><div class="lbl dvd">dividendo</div></div>
+      <div class="op">÷</div>
+      <div class="term"><div class="num dvs">0.5</div><div class="lbl dvs">divisor</div></div>
+      <div class="op">=</div>
+      <div class="term"><div class="num coc">9</div><div class="lbl coc">cociente</div></div>
+    </div>
+  </div>
+
+  <div class="ilus">
+    <div class="ilus-t">🏠 Modo USA (casita) &nbsp;—&nbsp; el formato del procedimiento</div>
+    <div class="casita">
+      <div class="fila"><span class="divisor">&nbsp;</span><span class="cociente">9</span></div>
+      <div class="fila"><span class="divisor">0.5</span><div class="caja-int"><span class="dividendo">4.5</span></div></div>
+    </div>
+    <div class="casita-legend">El <b class="dvd">dividendo (4.5)</b> va <strong>adentro</strong> de la casita, el <b class="dvs">divisor (0.5)</b>
+    <strong>afuera</strong> a la izquierda y el <b class="coc">cociente (9)</b> <strong>arriba</strong>. Si la división no es exacta,
+    lo que sobra se llama <strong>residuo</strong>.</div>
+  </div>
+
+  <table>
+    <tr><th>Parte</th><th>¿Qué es?</th><th>Ejemplo en 12 ÷ 4 = 3</th></tr>
+    <tr><td>🔵 Dividendo</td><td>La cantidad que se reparte (va adentro de la casita).</td><td>12</td></tr>
+    <tr><td>🟠 Divisor</td><td>Indica en cuántas partes se reparte.</td><td>4</td></tr>
+    <tr><td>🟢 Cociente</td><td>El resultado de la división.</td><td>3</td></tr>
+    <tr><td>⚪ Residuo</td><td>Lo que sobra cuando la división no es exacta.</td><td>0 (es exacta)</td></tr>
+  </table>
+
+  <h2>🔧 3. Mover el punto y agregar ceros</h2>
+  <h3>📦 Regla del movimiento</h3>
+  <p>Cuantos decimales tenga el <strong>divisor</strong>, esos espacios debes mover el punto en <strong>ambos</strong> números.</p>
+  <div class="ilus">
+    <div class="mover">
+      <span class="paso">4.5 ÷ 0.5</span>
+      <span class="flecha">MUEVE <em>1</em> ESPACIO →</span>
+      <span class="paso">45 ÷ 5 = <span class="res">9</span></span>
+    </div>
+  </div>
+
+  <h3>➕ Agregar ceros cuando faltan cifras</h3>
+  <table>
+    <tr><th>Situación</th><th>Qué hacer</th><th>Ejemplo</th></tr>
+    <tr><td>⬅️ Ceros en el dividendo</td><td>Cuando debes mover el punto pero al dividendo ya no le quedan cifras, agrega ceros a la derecha.</td><td>15 ÷ 0.5 → 150 ÷ 5 = 30</td></tr>
+    <tr><td>➡️ Ceros en el cociente</td><td>Si al bajar una cifra no alcanza para dividir, pon un 0 en el cociente y baja la siguiente.</td><td>4.16 ÷ 4: al llegar al 1, pones 0 y bajas el 6</td></tr>
+  </table>
+
+  <h2>📊 4. ¿El cociente aumenta, disminuye o queda igual?</h2>
+  <p>El tamaño del <strong>divisor</strong> decide qué le pasa al resultado.</p>
+  <div class="tri">
+    <div class="mayor"><b>🔵 Divisor &lt; 1 → cociente MAYOR</b>10 ÷ 0.5 = 20. Si tienes 10 lempiras en monedas de L 0.50, ¡te salen 20 monedas!</div>
+    <div class="menor"><b>🟠 Divisor &gt; 1 → cociente MENOR</b>10 ÷ 2.5 = 4. Repartes en porciones grandes, así que obtienes pocas.</div>
+    <div class="igual"><b>⚖️ Divisor = 1 → cociente IGUAL</b>8 ÷ 1 = 8. El cociente es igual al dividendo.</div>
+  </div>
+
+  <h3>📋 Casos comunes de división</h3>
+  <table>
+    <tr><th>División</th><th>Procedimiento</th><th>Resultado</th></tr>
+    <tr><td>1.2 ÷ 0.4</td><td>Mueve 1 espacio: 12 ÷ 4</td><td>3</td></tr>
+    <tr><td>3 ÷ 0.5</td><td>Agrega cero: 30 ÷ 5</td><td>6</td></tr>
+    <tr><td>0.25 ÷ 0.05</td><td>Mueve 2 espacios: 25 ÷ 5</td><td>5</td></tr>
+    <tr><td>2 ÷ 0.25</td><td>Agrega dos ceros: 200 ÷ 25</td><td>8</td></tr>
+    <tr><td>10 ÷ 2.5</td><td>Agrega cero: 100 ÷ 25</td><td>4</td></tr>
+    <tr><td>0.8 ÷ 0.2</td><td>Mueve 1 espacio: 8 ÷ 2</td><td>4</td></tr>
+  </table>
+
+  <h2>⚠️ 5. Errores comunes — ¡no caigas en ellos!</h2>
+  <table>
+    <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+    <tr><td>Mover el punto solo en el divisor</td><td>3 ÷ 0.5 → “0.5 se vuelve 5 y hago 3 ÷ 5”. Cambias la proporción y el resultado ya no es el mismo.</td><td>Muévelo en ambos: 30 ÷ 5 = 6 ✔</td></tr>
+    <tr><td>Olvidar agregar ceros al dividendo</td><td>2 ÷ 0.25 → “no tengo cifras para mover”. Al 2 le faltan cifras decimales.</td><td>2 → 200 y 0.25 → 25: 200 ÷ 25 = 8 ✔</td></tr>
+    <tr><td>Creer que dividir siempre achica</td><td>“10 ÷ 0.5 debe ser menor que 10”. Solo achica si el divisor es mayor que 1.</td><td>10 ÷ 0.5 = 20 (¡más grande!) ✔</td></tr>
+    <tr><td>Confundir las partes</td><td>“El divisor va adentro de la casita”. El que va adentro es el dividendo.</td><td>dividendo ÷ divisor = cociente ✔</td></tr>
+  </table>
+
+  <div class="caja hn">🇭🇳 <b>En Honduras:</b> dividimos decimales todos los días con el lempira. Si una bolsa de 2.5 libras de frijoles
+  cuesta L 37.50, el precio por libra es 37.50 ÷ 2.5 = <strong>L 15.00</strong>. ¡La división de decimales vive en la pulpería!</div>
+
+  <!-- Espacio de imagen que el usuario agregará después -->
+  <div class="img-slot">🖼️ [ Espacio reservado para ilustración — se agregará después ]</div>
+
+  <h2 class="acts-h">✍️ 6. ¡Ponte a Prueba! Actividades</h2>
+  <div class="acts">
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Para dividir cuando el divisor es decimal, lo convertimos en número <span class="linea-resp"></span> moviendo el punto.</li>
+      <li>La regla de oro dice: lo que le haces al divisor, se lo haces al <span class="linea-resp"></span>.</li>
+      <li>En el modo casita, el dividendo va <span class="linea-resp"></span> de la casita.</li>
+      <li>Si el divisor es menor que 1, el cociente es <span class="linea-resp"></span> que el dividendo.</li>
+      <li>Cuando faltan cifras para mover el punto, se agregan <span class="linea-resp"></span> a la derecha del dividendo.</li>
+      <li>En 12 ÷ 4 = 3, el número 3 se llama <span class="linea-resp"></span>.</li>
+      <li>Lo que sobra cuando la división no es exacta se llama <span class="linea-resp"></span>.</li>
+      <li>Para resolver 3.6 ÷ 0.09 hay que mover el punto <span class="linea-resp"></span> espacios.</li>
+      <li>Si el divisor es igual a 1, el cociente es <span class="linea-resp"></span> al dividendo.</li>
+      <li>En 4.5 ÷ 0.5, el número 4.5 es el <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Al dividir decimales, movemos el punto solo en el divisor.</li>
+      <li>____ Mover el punto la misma cantidad en dividendo y divisor no cambia el cociente.</li>
+      <li>____ En el modo casita, el dividendo va afuera de la casita.</li>
+      <li>____ Si el divisor es menor que 1, el cociente aumenta.</li>
+      <li>____ 10 ÷ 0.5 = 20.</li>
+      <li>____ Cuando faltan cifras en el dividendo, se agregan ceros a la derecha.</li>
+      <li>____ Dividir siempre da un resultado más pequeño.</li>
+      <li>____ En 12 ÷ 4 = 3, el 4 es el divisor.</li>
+      <li>____ El cociente es el número que se reparte.</li>
+      <li>____ 3 ÷ 0.5 = 6.</li>
+    </ol>
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Para dividir por un divisor decimal, lo convertimos en:<div class="op-mult">a) el cociente &nbsp; b) número entero moviendo el punto &nbsp; c) un residuo &nbsp; d) cero</div></li>
+      <li>En el modo casita, ¿qué número va adentro?<div class="op-mult">a) el divisor &nbsp; b) el cociente &nbsp; c) el dividendo &nbsp; d) el residuo</div></li>
+      <li>¿Cuántos espacios mueves el punto en 3.6 ÷ 0.09?<div class="op-mult">a) 1 &nbsp; b) 2 &nbsp; c) 3 &nbsp; d) 0</div></li>
+      <li>10 ÷ 0.5 = ?<div class="op-mult">a) 5 &nbsp; b) 2 &nbsp; c) 20 &nbsp; d) 0.2</div></li>
+      <li>Si el divisor es menor que 1, el cociente:<div class="op-mult">a) disminuye &nbsp; b) aumenta &nbsp; c) queda igual &nbsp; d) desaparece</div></li>
+      <li>Para resolver 2 ÷ 0.25, ¿cuántos ceros agregas al dividendo?<div class="op-mult">a) 1 &nbsp; b) 2 &nbsp; c) 3 &nbsp; d) 0</div></li>
+      <li>En 12 ÷ 4 = 3, ¿cuál es el dividendo?<div class="op-mult">a) 12 &nbsp; b) 4 &nbsp; c) 3 &nbsp; d) ninguno</div></li>
+      <li>3 ÷ 0.5 = ?<div class="op-mult">a) 0.6 &nbsp; b) 6 &nbsp; c) 1.5 &nbsp; d) 15</div></li>
+      <li>Si el divisor es igual a 1, el cociente es:<div class="op-mult">a) mayor &nbsp; b) menor &nbsp; c) igual al dividendo &nbsp; d) cero</div></li>
+      <li>¿Cuál es un error común al dividir decimales?<div class="op-mult">a) mover el punto en ambos &nbsp; b) agregar ceros &nbsp; c) mover el punto solo en el divisor &nbsp; d) revisar el resultado</div></li>
+    </ol>
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <p style="font-size:0.85rem;">Escribe en la línea de la Columna A la letra de la Columna B que le corresponde.</p>
+    <table>
+      <tr><th style="width:44%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td style="font-weight:400;color:var(--tinta);">1. ____ Dividendo</td><td>A. Número que se reparte (va adentro de la casita)</td></tr>
+      <tr><td style="font-weight:400;color:var(--tinta);">2. ____ Divisor</td><td>B. Indica en cuántas partes se reparte</td></tr>
+      <tr><td style="font-weight:400;color:var(--tinta);">3. ____ Cociente</td><td>C. El resultado de la división</td></tr>
+      <tr><td style="font-weight:400;color:var(--tinta);">4. ____ Residuo</td><td>D. Lo que sobra cuando la división no es exacta</td></tr>
+      <tr><td style="font-weight:400;color:var(--tinta);">5. ____ Regla de oro</td><td>E. Lo que le haces al divisor, se lo haces al dividendo</td></tr>
+      <tr><td style="font-weight:400;color:var(--tinta);">6. ____ Modo casita</td><td>F. Dividendo adentro, divisor afuera, cociente arriba</td></tr>
+      <tr><td style="font-weight:400;color:var(--tinta);">7. ____ Divisor &lt; 1</td><td>G. El cociente es mayor que el dividendo</td></tr>
+      <tr><td style="font-weight:400;color:var(--tinta);">8. ____ Divisor &gt; 1</td><td>H. El cociente es menor que el dividendo</td></tr>
+      <tr><td style="font-weight:400;color:var(--tinta);">9. ____ Divisor = 1</td><td>I. El cociente es igual al dividendo</td></tr>
+      <tr><td style="font-weight:400;color:var(--tinta);">10. ____ Agregar ceros</td><td>J. Se hace en el dividendo cuando faltan cifras para mover el punto</td></tr>
+    </table>
+  </div>
+
+  <div class="felic">
+    🏅 <b>¡Felicidades! Has completado la Misión División de Decimales.</b> Ahora sabes que dividir por un decimal es
+    tan fácil como moverle el punto a los dos números por igual. Reconoces el dividendo, el divisor, el cociente y el
+    residuo, sabes cuándo agregar ceros y puedes predecir si el resultado será mayor o menor. ¡Con esta destreza
+    resolverás precios, medidas y repartos de la vida diaria en Honduras! ➗✨
+  </div>
+
+  <h2>Rúbrica de Evaluación</h2>
+  <table>
+    <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+    <tr><td style="font-weight:400;">Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td>Tarea en el hogar.</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td style="font-weight:400;">Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td>Tarea en el aula, un día antes del examen.</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td style="font-weight:400;">Resolvió divisiones de práctica en su cuaderno con el procedimiento completo.</td><td>Tarea en el aula.</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td style="font-weight:400;">Prueba impresa realizada en el aula.</td><td>Evaluación en el aula.</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td colspan="2" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="3">&nbsp; %</td></tr>
+  </table>
+  <p style="font-size:0.8rem;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro. El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  <div class="pauta">
+    <div style="font-weight:800;color:var(--mat-osc);margin-bottom:4px;">✅ PAUTA DE RESPUESTAS (solo para el docente o autoevaluación)</div>
+    <div><span class="pt">I. Completar:</span> 1. entero &nbsp; 2. dividendo &nbsp; 3. adentro &nbsp; 4. mayor &nbsp; 5. ceros &nbsp; 6. cociente &nbsp; 7. residuo &nbsp; 8. 2 (dos) &nbsp; 9. igual &nbsp; 10. dividendo</div>
+    <div><span class="pt">II. Verdadero o Falso:</span> 1F, 2V, 3F, 4V, 5V, 6V, 7F, 8V, 9F, 10V</div>
+    <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3b, 4c, 5b, 6b, 7a, 8b, 9c, 10c</div>
+    <div><span class="pt">IV. Pareados:</span> 1A, 2B, 3C, 4D, 5E, 6F, 7G, 8H, 9I, 10J</div>
+  </div>
+
+  <div class="nota-doc">
+    <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+    «Misión División de Decimales». Puede utilizarse como guía de estudio impresa o digital antes de la evaluación final.
+    Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple, pareados) y puede
+    complementarse con divisiones de práctica, problemas con el lempira y el uso del modo casita en el cuaderno.
+  </div>
+
+</div>
+</body>
+</html>
