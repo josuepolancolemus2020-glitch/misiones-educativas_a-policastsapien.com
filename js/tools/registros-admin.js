@@ -1532,6 +1532,15 @@ function adNotaCat(v) {
   return AD_NOTA_CATS.find(c => n >= c.min) || AD_NOTA_CATS[AD_NOTA_CATS.length - 1];
 }
 
+/* MATERIAS BÁSICAS: donde más pruebas se hacen — el elogio del consejo
+   se ancla en ellas; las demás solo se mencionan si un DATO lo amerita
+   (sobresalen de verdad). Comparación sin acentos ni mayúsculas. */
+const AD_MATS_BASICAS = ['matematicas', 'espanol', 'ciencias naturales', 'ciencias sociales'];
+function adEsBasica(mat) {
+  const n = String(mat || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+  return AD_MATS_BASICAS.indexOf(n) !== -1;
+}
+
 /* Consejo concreto por rasgo de personalidad bajo (observación del docente) */
 const AD_RASGO_TIP = {
   'Puntualidad': 'ayude a que llegue a tiempo cada día',
@@ -1558,9 +1567,18 @@ function adConsejoFamilia(nombre, ctx) {
   const mejores = c.mejores || [], peores = c.peores || [];
   const partes = [];
 
-  // 1) Celebrar lo real
+  // 1) Celebrar lo real — anclado en las MATERIAS BÁSICAS (Matemáticas,
+  //    Español, CC.NN. y CC.SS.), donde más pruebas alimenta el aula.
+  //    Una materia no básica solo se menciona si el dato lo amerita.
+  const elogBas = c.mejoresBas || [];
+  const extra = c.extraDestacada
+    ? `; también sobresale en ${c.extraDestacada.mat} (${c.extraDestacada.val})` : '';
   if (mejores.length && !peores.length) {
     partes.push(`El rendimiento de ${n} es parejo (${c.maxV}) en todas las materias: celebre esa constancia, que es la base de todo progreso.`);
+  } else if (elogBas.length > 1) {
+    partes.push(`Celebre que ${n} logra su mejor nota de las materias básicas (${c.maxB}) en ${adNombresMats(elogBas)}${extra}: el elogio sincero motiva.`);
+  } else if (elogBas.length) {
+    partes.push(`Celebre el logro de ${n} en ${elogBas[0].mat} (${c.maxB}), su mejor materia básica${extra}: el elogio sincero motiva.`);
   } else if (mejores.length > 1) {
     partes.push(`Celebre que ${n} logra su mejor nota (${c.maxV}) en ${adNombresMats(mejores)}: el elogio sincero motiva.`);
   } else if (mejores.length) {
@@ -1735,6 +1753,15 @@ function adPrintBoletas(d) {
     const persVals = pers.map(cc => ({ c: cc, v: rasgoUlt(cc) })).filter(x => x.v);
     const rasgosBajosTodos = persVals.filter(x => x.v === bajoP).map(x => x.c);
     const rasgosBajos = (persVals.length && rasgosBajosTodos.length === persVals.length) ? [] : rasgosBajosTodos;
+    // Elogio anclado en las MATERIAS BÁSICAS: la(s) mejor(es) entre
+    // Matemáticas/Español/CC.NN./CC.SS. Una no básica solo se suma si el
+    // dato lo amerita: llega a 90+ o supera a la mejor básica por 8+.
+    const basicas = datos.filter(x => adEsBasica(x.mat));
+    const maxB = basicas.length ? Math.max.apply(null, basicas.map(x => x.val)) : null;
+    const mejoresBas = basicas.filter(x => x.val === maxB);
+    const extraDestacada = datos
+      .filter(x => !adEsBasica(x.mat) && (x.val >= 90 || (maxB != null && x.val >= maxB + 8)))
+      .sort((x, y) => y.val - x.val)[0] || null;
 
     const filas = parciales.map(p => `
       <tr>
@@ -1832,6 +1859,7 @@ function adPrintBoletas(d) {
             <div class="bl-h">✿ Consejo para la familia</div>
             <p>${adEsc(adConsejoFamilia(primer(a.nombre), {
               mejores, peores, maxV, minV,
+              mejoresBas, maxB, extraDestacada,
               inasis: Number(inasis) || 0,
               tendencia, rasgosBajos,
             }))}</p>
