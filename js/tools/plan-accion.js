@@ -222,9 +222,7 @@ function paGenerate() {
   paPersistCurrent(students, { grado, seccion, docente, evaluacion, misionId, forma: formaEv, tipoEval, parcial, fechaPrueba });
   paRenderPadres();
   paRenderHistorial();
-  paSyncRefresh();
   paSincronizarNube(false); // nube de padres (código de lista)
-  setTimeout(() => paSincronizar(false), 1500);
 
   dash.style.display = '';
   dash.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -405,15 +403,13 @@ window.paCaptureGrilla = paCaptureGrilla;
 /* ─────────────────────────────────────────────
    PERSISTENCIA + MENSAJES A PADRES + SINCRONIZACIÓN
    Los análisis se guardan en METAS_PLANACCION_V1 (local) y se
-   sincronizan a la hoja de Google del maestro (Apps Script,
-   misma URL que el Registro: METAS_SYNC_URL). Cada alumno lleva
-   un mensaje para su padre/madre generado según su categoría,
-   editable, que también viaja a la hoja (pestaña PlanAccion) —
-   la base de datos que un chatbot consultará por código de lista.
+   sincronizan a la nube de padres de Supabase (metas_guardar_plan,
+   por código de lista). Cada alumno lleva un mensaje para su
+   padre/madre generado según su categoría, editable, que también
+   viaja a la nube — la base que el chatbot de padres consulta.
 ───────────────────────────────────────────── */
 
 const PA_KEY  = 'METAS_PLANACCION_V1';
-const PA_LAST = 'METAS_PA_LASTSYNC';
 const PA_SITE = 'https://metas.policastsapien.com/';
 let _paCurrentId = null;
 let _paMsgTimer  = null;
@@ -517,7 +513,7 @@ function paRenderPadres() {
     <div class="pa-card">
       <div class="pa-card-title">👨‍👩‍👧 Mensajes para padres — ${paEsc(a.evaluacion)}</div>
       <p class="pa-optional-hint">Generados según la categoría de cada alumno. Edite el que quiera (se guarda solo)
-        y envíelo por WhatsApp, o sincronice todo a su hoja de Google para el futuro chatbot de padres.</p>
+        y envíelo por WhatsApp. Todo viaja además a la nube de padres para que la familia lo consulte con su clave.</p>
       ${a.students.map(s => {
         const c = paGradeColors(typeof s.nota === 'number' ? s.nota : undefined);
         return `
@@ -608,7 +604,7 @@ function paRenderHistorial() {
       paSaveData(d2);
       if (_paCurrentId === b.dataset.id) _paCurrentId = null;
       paRenderHistorial();
-      paSyncRefresh();
+      paSincronizarNube(false);
     }));
 }
 
@@ -640,14 +636,6 @@ function paAbrirAnalisis(id) {
   paGenerate();
 }
 
-/* ── Sincronización a la hoja del maestro ── */
-/* Misma URL predeterminada que metas-registro.js (URL_SINCRONIZACION);
-   otro maestro solo pega la suya en la tarjeta ☁️ y queda guardada. */
-const PA_SYNC_DEFAULT = 'https://script.google.com/macros/s/AKfycbz8BHb5vXr4fZKsDprO2Q0kL7zKRL4pfMjo-HzgK28hLkncI0EyYOSHdKDft_vPfPRq/exec';
-function paSyncUrlGet() {
-  try { return (localStorage.getItem('METAS_SYNC_URL') || PA_SYNC_DEFAULT).trim(); } catch (_) { return PA_SYNC_DEFAULT; }
-}
-
 /* Carpeta canónica de la misión (la misma que usa el registro) cuando el
    análisis quedó amarrado a una misión del banco */
 function paMisionCanon(a) {
@@ -657,104 +645,6 @@ function paMisionCanon(a) {
     if (m) { try { canon = decodeURIComponent((m.url || '').split('/')[1] || '') || canon; } catch (_) {} }
   }
   return canon;
-}
-
-function paEventosPendientes(d) {
-  const evs = [];
-  d.analisis.forEach(a => (a.students || []).forEach(s => {
-    if (s.env) return;
-    const misionCanon = paMisionCanon(a);
-    evs.push({
-      id: 'PA-' + a.id + '-' + s.num + '-' + String(s.nota),
-      t: a.t, tipo: 'plan_accion',
-      evaluacion: a.evaluacion || '', mision: misionCanon,
-      forma: a.forma || '', parcial: a.parcial || '', fecha_prueba: a.fechaPrueba || '',
-      grado: ((a.grado || '') + ' ' + (a.seccion || '')).trim(), seccion: a.seccion || '',
-      docente: a.docente || '',
-      codigo: s.num, alumno: s.nombre,
-      nota: (typeof s.nota === 'number') ? s.nota : '', base: 100,
-      nsp: s.nota === 'NSP' ? 1 : '',
-      categoria: s.categoria || '', sugerencia: s.sugerencia || '', mensaje: s.msg || '',
-    });
-  }));
-  return evs;
-}
-
-let _paSyncBusy = false;
-async function paSincronizar(manual) {
-  if (_paSyncBusy) return;
-  const url = paSyncUrlGet();
-  if (!url) { if (manual) toast('⚙️ Configura primero la URL de tu hoja (tarjeta ☁️)'); paSyncRefresh(); return; }
-  const d = paLoadData();
-  const evs = paEventosPendientes(d);
-  if (!evs.length) { paSyncRefresh(); if (manual) toast('✅ Todo está sincronizado'); return; }
-  if (navigator.onLine === false) { paSyncRefresh('📴 Sin conexión — se enviará al haber internet.'); return; }
-
-  _paSyncBusy = true;
-  const st = document.getElementById('pa-sync-status');
-  if (st) st.textContent = `⏳ Enviando ${Math.min(evs.length, 200)} registro${evs.length > 1 ? 's' : ''}…`;
-  try {
-    const lote = evs.slice(0, 200);
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ eventos: lote }),
-    }).then(x => x.json());
-    if (!r || r.ok !== true) throw new Error('respuesta no ok');
-
-    const ids = new Set(lote.map(e => e.id));
-    d.analisis.forEach(a => (a.students || []).forEach(s => {
-      if (ids.has('PA-' + a.id + '-' + s.num + '-' + String(s.nota))) s.env = 1;
-    }));
-    paSaveData(d);
-    try { localStorage.setItem(PA_LAST, new Date().toISOString()); } catch (_) {}
-    _paSyncBusy = false;
-
-    if (paEventosPendientes(paLoadData()).length) return paSincronizar(manual);
-    paSyncRefresh();
-    paRenderPadres();
-    paRenderHistorial();
-    if (manual) toast('☁️ Notas y mensajes sincronizados a tu hoja');
-  } catch (_) {
-    _paSyncBusy = false;
-    paSyncRefresh('⚠️ No se pudo conectar con la hoja. Revisa la URL o la conexión.');
-  }
-}
-
-function paSyncRefresh(msgOverride) {
-  const st  = document.getElementById('pa-sync-status');
-  const inp = document.getElementById('pa-sync-url');
-  if (inp && !inp.value) inp.value = paSyncUrlGet();
-  if (!st) return;
-  if (msgOverride) { st.textContent = msgOverride; return; }
-  const url  = paSyncUrlGet();
-  const pend = paEventosPendientes(paLoadData()).length;
-  let last = '';
-  try { last = localStorage.getItem(PA_LAST) || ''; } catch (_) {}
-  const lastTxt = last ? ` · Última sincronización: ${last.slice(0, 10)} ${last.slice(11, 16)}` : '';
-  st.textContent = !url
-    ? '⚙️ Aún sin configurar: pega la URL de tu Apps Script y presiona «Guardar y probar».'
-    : (pend ? `⏳ ${pend} registro${pend > 1 ? 's' : ''} pendiente${pend > 1 ? 's' : ''} de enviar${lastTxt}` : `✅ Todo sincronizado${lastTxt}`);
-}
-
-async function paProbarConexion() {
-  const inp = document.getElementById('pa-sync-url');
-  const url = (inp && inp.value.trim()) || '';
-  if (!url) { toast('Pega primero la URL de tu Apps Script'); return; }
-  if (!/^https:\/\/script\.google\.com\//.test(url)) { toast('⚠️ La URL debe ser de script.google.com'); return; }
-  try { localStorage.setItem('METAS_SYNC_URL', url); } catch (_) {}
-  paSyncRefresh('⏳ Probando conexión…');
-  try {
-    const r = await fetch(url).then(x => x.json());
-    if (r && r.ok === true) {
-      toast('✅ Conexión correcta con tu hoja');
-      paSincronizar(false);
-    } else {
-      paSyncRefresh('⚠️ La hoja respondió, pero con un formato inesperado. Revisa el código del Apps Script.');
-    }
-  } catch (_) {
-    paSyncRefresh('⚠️ No se pudo conectar. Verifica la URL (debe terminar en /exec) y que el despliegue sea «Cualquier persona».');
-  }
 }
 
 /* ── Selector estructurado de evaluación (banco M.E.T.A.S) ──
@@ -1027,13 +917,12 @@ function paInit() {
   paPoblarMisiones();
   if (_paInitDone) {
     paRenderHistorial();
-    paSyncRefresh();
+    paSincronizarNube(false);
     return;
   }
   _paInitDone = true;
   for (let i = 1; i <= 20; i++) paAddRow(i);
   paRenderHistorial();
-  paSyncRefresh();
   paSincronizarNube(false);
 }
 
@@ -1118,10 +1007,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Claves de familia: tiras imprimibles para entregar a cada padre
   document.getElementById('pa-codigos-btn')?.addEventListener('click', paMostrarCodigos);
 
-  // Sincronización con la hoja del maestro
-  document.getElementById('pa-sync-save')?.addEventListener('click', paProbarConexion);
-  document.getElementById('pa-sync-now')?.addEventListener('click', () => { paSincronizar(true); paSincronizarNube(true); });
-  window.addEventListener('online', () => { paSincronizar(false); paSincronizarNube(false); });
+  // Nube de padres (Supabase): reintenta al volver la conexión
+  window.addEventListener('online', () => paSincronizarNube(false));
 
   // Entry tab switching
   document.querySelectorAll('.pa-etab').forEach(tab => {

@@ -105,7 +105,6 @@
     eventos.push(ev);
     if (eventos.length > MAX_EVENTOS) eventos = eventos.slice(eventos.length - MAX_EVENTOS);
     escribir(eventos);
-    programarSync();
     // aviso a capas externas (metas-supabase.js escucha este evento)
     try { document.dispatchEvent(new CustomEvent('metas:registro', { detail: ev })); } catch (e) {}
     return ev;
@@ -124,7 +123,6 @@
         break;
       }
     }
-    sincronizar({ keepalive: true, incluirSesionActual: true });
   }
   window.addEventListener('pagehide', cerrarSesion);
   document.addEventListener('visibilitychange', function () { if (document.hidden) cerrarSesion(); });
@@ -276,62 +274,6 @@
       desde: minT ? fechaLocal(minT).fecha : null,
       hasta: maxT ? fechaLocal(maxT).fecha : null
     };
-  }
-
-  // ---------- sincronización opcional a Google Sheets (fase 3) ----------
-  // Pega aquí la URL del despliegue del Apps Script (ver FASE3-GOOGLE-SHEETS.md).
-  // Mientras esté vacía, la app funciona igual pero solo con registro local.
-  var URL_SINCRONIZACION = 'https://script.google.com/macros/s/AKfycbz8BHb5vXr4fZKsDprO2Q0kL7zKRL4pfMjo-HzgK28hLkncI0EyYOSHdKDft_vPfPRq/exec';
-  function urlSync() {
-    try { return localStorage.getItem('METAS_SYNC_URL') || URL_SINCRONIZACION; }
-    catch (e) { return URL_SINCRONIZACION; }
-  }
-  // La sesión actual no se envía hasta que la página se oculta,
-  // para que llegue con sus minutos de trabajo y no con 0.
-  function pendientes(incluirSesionActual) {
-    return leer().filter(function (ev) {
-      if (ev.env) return false;
-      if (!incluirSesionActual && ev.tipo === 'sesion' && ev.ses === sesId) return false;
-      return true;
-    });
-  }
-  var syncEnCurso = false;
-  function sincronizar(opciones) {
-    opciones = opciones || {};
-    var url = urlSync();
-    var quedan = function () { return { enviados: 0, pendientes: pendientes(true).length }; };
-    if (!url || typeof fetch !== 'function' || syncEnCurso) return Promise.resolve(quedan());
-    if (navigator.onLine === false) return Promise.resolve(quedan());
-    var lote = pendientes(opciones.incluirSesionActual).slice(0, 200);
-    if (!lote.length) return Promise.resolve(quedan());
-    syncEnCurso = true;
-    var conf = { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ eventos: lote }) };
-    if (opciones.keepalive) conf.keepalive = true;
-    return fetch(url, conf)
-      .then(function (r) { return r.json(); })
-      .then(function (r) {
-        if (!r || r.ok !== true) throw new Error('respuesta no ok');
-        var ids = {};
-        lote.forEach(function (ev) { ids[ev.id] = true; });
-        var eventos = leer();
-        eventos.forEach(function (ev) { if (ids[ev.id]) ev.env = 1; });
-        escribir(eventos);
-        syncEnCurso = false;
-        // si quedaron más lotes, seguir enviando (salvo en el cierre de página)
-        if (!opciones.keepalive && pendientes(opciones.incluirSesionActual).length) {
-          return sincronizar(opciones).then(function (r2) {
-            return { enviados: lote.length + r2.enviados, pendientes: r2.pendientes };
-          });
-        }
-        return { enviados: lote.length, pendientes: pendientes(true).length };
-      })
-      .catch(function () { syncEnCurso = false; return quedan(); });
-  }
-  var syncTimer = null;
-  function programarSync() {
-    if (!urlSync()) return;
-    if (syncTimer) clearTimeout(syncTimer);
-    syncTimer = setTimeout(function () { syncTimer = null; sincronizar(); }, 8000);
   }
 
   // ---------- reporte del estudiante (WhatsApp al maestro) ----------
@@ -651,10 +593,7 @@
     identificar: abrirIdentificacion,
     textoReporte: textoReporte,
     enviarResultados: enviarResultados,
-    sugerir: abrirSugerencias,
-    sincronizar: sincronizar,
-    pendientes: function () { return pendientes(true).length; },
-    urlSincronizacion: urlSync
+    sugerir: abrirSugerencias
   };
 
   function iniciar() {
@@ -664,10 +603,6 @@
       inyectarBotonEnviar();
       inyectarBarraAlumno();
       if (!identificacion() && !idOmitidaEstaSesion()) abrirIdentificacion();
-    }
-    if (urlSync()) {
-      setTimeout(function () { sincronizar(); }, 4000);
-      window.addEventListener('online', function () { sincronizar(); });
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
