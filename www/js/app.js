@@ -1337,13 +1337,24 @@ function renderProfile() {
         <div class="doc-saludo-hola">👋 ¡Hola, ${_pEsc(primerNombre)}!</div>
         <div class="doc-saludo-sub">${_pEsc(d.nombre || '')}${d.escuela ? ' · ' + _pEsc(d.escuela) : ''}</div>
       </div>
-      <div class="doc-sync-hint2">☁️ Tus datos se guardan y sincronizan solos en todos tus equipos.</div>
-      <button class="doc-sync-now" id="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
+      <div class="doc-sync-hint2" id="doc-sync-status">✅ Tus datos se guardan y sincronizan solos en todos tus equipos.</div>
       ${recuperarLink}
-      <button class="padre-wa-cambiar" onclick="docenteCambiarClave()">✏️ Cambiar mi contraseña</button>
-      <button class="padre-wa-cambiar" style="color:#c0392b;margin-top:6px;" onclick="docenteCerrarSesion()">🚪 Cerrar sesión</button>
-      <a class="doc-usar-este-link" onclick="dsUsarEste()">✅ Este equipo tiene los datos correctos → usarlo en todos</a>
-      <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
+      <div class="doc-cuenta">
+        <button class="doc-cuenta-btn" onclick="docenteCambiarClave()">
+          <span class="doc-cuenta-ic">🔑</span><span>Cambiar mi contraseña</span>
+        </button>
+        <button class="doc-cuenta-btn doc-salir-btn" onclick="docenteCerrarSesion()">
+          <span class="doc-cuenta-ic">🚪</span><span>Cerrar sesión</span>
+        </button>
+      </div>
+      <details class="doc-mant">
+        <summary class="doc-mant-sum">⚙️ Mantenimiento de datos</summary>
+        <div class="doc-mant-body">
+          <button class="doc-sync-now" id="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
+          <a class="doc-usar-este-link" onclick="dsUsarEste()">✅ Este equipo tiene los datos correctos → usarlo en todos</a>
+          <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
+        </div>
+      </details>
 
       <div class="doc-aviso-alumnos" style="margin-top:18px;">📣 Dale a tus alumnos tu <strong>código de aula</strong>:
         lo escriben <strong>una sola vez</strong> al empezar una misión y su avance llega solo a tu cuenta.

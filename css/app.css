@@ -517,6 +517,56 @@ a.padre-asistente-btn {
 }
 .doc-recuperar-link:active { background: #d7f4e1; }
 
+/* ── Acciones de cuenta: par de botones limpios (contraseña + salir) ──
+   Molde moderno: pastilla suave de ancho completo, ícono + texto centrados,
+   micro-elevación al tocar. «Cerrar sesión» comparte el molde pero en un
+   rojo cálido que se rellena al interactuar: se siente intencional y
+   agradable, no una alarma. */
+.doc-cuenta {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 14px;
+}
+.doc-cuenta-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; box-sizing: border-box;
+  background: var(--surface); color: var(--text);
+  border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 13px 14px; font-size: 14px; font-weight: 800; cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease,
+              background .15s ease, border-color .15s ease, color .15s ease;
+}
+.doc-cuenta-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(30,58,124,.12); }
+.doc-cuenta-btn:active { transform: scale(.97); }
+.doc-cuenta-ic { font-size: 16px; line-height: 1; }
+.doc-salir-btn {
+  color: #c0392b; border-color: #f2cdca;
+  background: linear-gradient(135deg, #ffffff, #fdf4f3);
+}
+.doc-salir-btn:hover {
+  color: #fff; border-color: #c0392b;
+  background: linear-gradient(135deg, #e2554d, #c0392b);
+  box-shadow: 0 6px 18px rgba(192,57,43,.28);
+}
+.doc-salir-btn:active {
+  color: #fff; border-color: #a93226;
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  transform: scale(.97);
+}
+
+/* ── Mantenimiento de datos: opciones avanzadas plegadas (sincronizar a
+   pedido, imponer este equipo, empezar de nuevo). Fuera de la vista para
+   no confundir; a un toque cuando de verdad se necesitan. */
+.doc-mant { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 6px; }
+.doc-mant-sum {
+  list-style: none; cursor: pointer; user-select: none;
+  text-align: center; padding: 8px; border-radius: 10px;
+  font-size: 12px; font-weight: 800; color: var(--muted);
+  transition: background .15s ease, color .15s ease;
+}
+.doc-mant-sum::-webkit-details-marker { display: none; }
+.doc-mant-sum:hover { background: rgba(30,58,124,.05); color: var(--text); }
+.doc-mant[open] .doc-mant-sum { color: var(--text); }
+.doc-mant-body { padding: 0 2px 4px; }
+
 /* ── Pensador del día + frase motivacional, plegados al final ── */
 .pensador-details { margin-bottom: 24px; }
 .pensador-summary {
