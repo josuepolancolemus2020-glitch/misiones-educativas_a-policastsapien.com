@@ -2,6 +2,12 @@
 -- M.E.T.A.S — Supabase: AVISOS DEL MAESTRO (la ventana del aula)
 -- Pegar COMPLETO en supabase.com → tu proyecto → SQL Editor → Run
 --
+-- ⚠️ SOLO PARA INSTALACIONES DESDE CERO. Si ya corriste este archivo
+-- y después SUPABASE-FASE3.sql, NO lo vuelvas a correr: FASE3
+-- redefinió metas_consultar_avisos_padre (evento_id para el «visto»
+-- + candado de velocidad) y este archivo la pisaría con la versión
+-- vieja. El subtipo 'conducta' se agrega con SUPABASE-CONDUCTA.sql.
+--
 -- Qué hace:
 --   1) Tabla mensajes_docente: avisos, eventos con fecha, listas de
 --      materiales y la FICHA DEL AULA (preguntas frecuentes: horario,
