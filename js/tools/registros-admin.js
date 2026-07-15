@@ -1587,8 +1587,12 @@ function adConsejoFamilia(nombre, ctx) {
   if (c.tendencia && c.tendencia.tipo === 'sube') {
     partes.push(`Además viene mejorando: pasó de ${c.tendencia.ini.prom} a ${c.tendencia.fin.prom} entre parciales — ese rumbo es el correcto.`);
   }
+  if (c.mejoraMax) {
+    partes.push(`Su mayor avance de este parcial fue en ${c.mejoraMax.mat}: de ${c.mejoraMax.de} a ${c.mejoraMax.a} (+${c.mejoraMax.d}) — reconózcalo, eso consolida el hábito.`);
+  }
 
-  // 2) Diagnóstico: qué DICEN los datos sobre el porqué
+  // 2) Diagnóstico: qué DICEN los datos sobre el porqué (máx. 3 causas
+  //    para que el consejo quepa y se entienda — primero lo más accionable)
   const causas = [];
   if ((c.inasis || 0) >= 3) {
     causas.push(`las ${c.inasis} inasistencias pesan en el resultado (cada día recuperado se nota)`);
@@ -1597,11 +1601,14 @@ function adConsejoFamilia(nombre, ctx) {
     const tip = AD_RASGO_TIP[c.rasgosBajos[0]] || 'refuércenlo juntos en casa';
     causas.push(`el docente observa margen en ${c.rasgosBajos.slice(0, 2).join(' y ')} — ${tip}`);
   }
+  if (c.caidaMax) {
+    causas.push(`la mayor caída fue en ${c.caidaMax.mat} (de ${c.caidaMax.de} a ${c.caidaMax.a}): pregunte al docente qué cambió en esa asignatura`);
+  }
   if (c.tendencia && c.tendencia.tipo === 'baja') {
-    causas.push(`el promedio bajó de ${c.tendencia.ini.prom} (parcial ${c.tendencia.ini.p}) a ${c.tendencia.fin.prom} (parcial ${c.tendencia.fin.p}) — conviene retomar la rutina que funcionaba`);
+    causas.push(`el promedio general bajó de ${c.tendencia.ini.prom} (parcial ${c.tendencia.ini.p}) a ${c.tendencia.fin.prom} (parcial ${c.tendencia.fin.p}) — conviene retomar la rutina que funcionaba`);
   }
   if (causas.length) {
-    partes.push(`Los datos del aula señalan por dónde empezar: ${causas.join('; ')}.`);
+    partes.push(`Los datos del aula señalan por dónde empezar: ${causas.slice(0, 3).join('; ')}.`);
   } else if (peores.length && (c.inasis || 0) === 0) {
     partes.push(`Sin faltas ni observaciones de conducta, el reto es de práctica: más ejercicios guiados harán la diferencia.`);
   }
@@ -1647,6 +1654,43 @@ function adBoletaGrafico(datos) {
   }).join('');
   const leyenda = `<div class="bl-leyenda">${AD_NOTA_CATS.map(c =>
     `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}</div>`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
+    <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
+    <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
+    ${bars}
+  </svg>${leyenda}`;
+}
+
+/* Gráfico de EVOLUCIÓN (2+ parciales): la barra es la nota del ÚLTIMO
+   parcial con su color oficial (el estado real de hoy — el promedio del
+   año disimula las caídas), la marca | señala dónde estaba el parcial
+   anterior, y a la derecha va el delta ▲/▼ por materia. */
+function adBoletaGraficoEvo(filas) {
+  if (!filas.length) return '';
+  const rowH = 18, gap = 4, padT = 6, padB = 12;
+  const labelW = 104, barX = labelW + 4, W = 320;
+  const barMax = W - barX - 42;
+  const H = padT + filas.length * (rowH + gap) - gap + padB;
+  const x70 = barX + barMax * 0.7;
+  const gridBot = padT + filas.length * (rowH + gap) - gap;
+  const bars = filas.map((it, i) => {
+    const y = padT + i * (rowH + gap);
+    const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
+    const xp = barX + barMax * (Math.min(100, Math.max(0, it.prev)) / 100);
+    const color = adNotaCat(it.val).color;
+    const d = it.val - it.prev;
+    const dTxt = d > 0 ? '▲+' + d : (d < 0 ? '▼' + d : '· igual');
+    const dCol = d > 0 ? '#16a34a' : (d < 0 ? '#dc2626' : '#7286a8');
+    const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
+    return `<text x="${labelW}" y="${(y + rowH * 0.72).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#334155">${adEsc(lbl)}</text>
+      <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
+      <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="${rowH - 4}" rx="2.5" fill="${color}"/>
+      <rect x="${(xp - 0.7).toFixed(1)}" y="${y + 1}" width="1.4" height="${rowH - 2}" fill="#0f2350" opacity="0.6"/>
+      <text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.52).toFixed(1)}" font-size="8.5" font-weight="bold" fill="${color}">${it.val}</text>
+      <text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.98).toFixed(1)}" font-size="6.3" font-weight="bold" fill="${dCol}">${dTxt}</text>`;
+  }).join('');
+  const leyenda = `<div class="bl-leyenda">${AD_NOTA_CATS.map(c =>
+    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}<span><i style="background:#0f2350"></i>| parcial anterior</span></div>`;
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
     <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
     <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
@@ -1762,6 +1806,24 @@ function adPrintBoletas(d) {
     const extraDestacada = datos
       .filter(x => !adEsBasica(x.mat) && (x.val >= 90 || (maxB != null && x.val >= maxB + 8)))
       .sort((x, y) => y.val - x.val)[0] || null;
+    // EVOLUCIÓN por materia (2+ parciales): último parcial vs el anterior.
+    // Alimenta el gráfico de evolución, los chips y el consejo con la
+    // mayor mejora y la mayor caída (umbral ±5 para no leer ruido).
+    const valNum = (p, cc) => { const v = val(p, cc, a.num); return (v === '' || isNaN(Number(v))) ? null : Number(v); };
+    const parcConDatos = parciales.filter(p => mats.some(cc => valNum(p, cc) != null));
+    const pUlt = parcConDatos[parcConDatos.length - 1] || null;
+    const pPrev = parcConDatos.length >= 2 ? parcConDatos[parcConDatos.length - 2] : null;
+    const filasEvo = pPrev
+      ? mats.map(cc => ({ mat: cc, prev: valNum(pPrev, cc), val: valNum(pUlt, cc) }))
+          .filter(x => x.val != null && x.prev != null)
+      : [];
+    const evoOK = filasEvo.length >= 2;
+    let mejoraMax = null, caidaMax = null;
+    filasEvo.forEach(x => {
+      const dd = x.val - x.prev;
+      if (dd >= 5 && (!mejoraMax || dd > mejoraMax.d)) mejoraMax = { mat: x.mat, de: x.prev, a: x.val, d: dd };
+      if (dd <= -5 && (!caidaMax || dd < caidaMax.d)) caidaMax = { mat: x.mat, de: x.prev, a: x.val, d: dd };
+    });
 
     const filas = parciales.map(p => `
       <tr>
@@ -1792,6 +1854,8 @@ function adPrintBoletas(d) {
         ${chip('Promedio general', promGen != null ? promGen : '—')}
         ${chipAlta}
         ${chipBaja}
+        ${mejoraMax ? chip('Mayor avance', adEsc(mejoraMax.mat) + ' ▲ +' + mejoraMax.d, 'good') : ''}
+        ${caidaMax ? chip('Mayor caída', adEsc(caidaMax.mat) + ' ▼ ' + caidaMax.d, 'low') : ''}
         ${chip('Inasistencias', inasis !== '' ? inasis : '0')}
       </div>`;
 
@@ -1846,8 +1910,10 @@ function adPrintBoletas(d) {
 
       <div class="bl-grid2">
         <div class="bl-card">
-          <div class="bl-h">Rendimiento por materia <small>(promedio del año)</small></div>
-          ${adBoletaGrafico(datos) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
+          <div class="bl-h">${evoOK
+            ? `Evolución por materia <small>(parcial ${pPrev} → ${pUlt})</small>`
+            : 'Rendimiento por materia <small>(promedio del año)</small>'}</div>
+          ${(evoOK ? adBoletaGraficoEvo(filasEvo) : adBoletaGrafico(datos)) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
           ${resumen}
         </div>
         <div class="bl-msgs">
@@ -1862,6 +1928,7 @@ function adPrintBoletas(d) {
               mejoresBas, maxB, extraDestacada,
               inasis: Number(inasis) || 0,
               tendencia, rasgosBajos,
+              mejoraMax, caidaMax,
             }))}</p>
           </div>
         </div>
