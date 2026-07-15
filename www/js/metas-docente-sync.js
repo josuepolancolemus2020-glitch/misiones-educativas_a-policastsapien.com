@@ -547,13 +547,22 @@
   /* Se llama desde renderProfile() cuando se muestra el panel del maestro.
      Sincroniza en silencio: la nube manda, el maestro no decide nada. */
   function onProfile() {
-    if (!creds()) return;
+    var c = creds();
+    if (!c) return;
+    // Blindaje multi-cuenta: si el aula de este equipo es de OTRA cuenta (o de
+    // dueño desconocido), dsClaimFor la limpia y baja la nube de la cuenta
+    // activa. En ese caso ya trae los datos correctos; no seguimos con sync.
+    if (dsClaimFor(c.codigo)) return;
     checkPapelera();
     sync();
   }
 
   /* ── disparadores automáticos (sincronización continua tipo Drive) ── */
   document.addEventListener('DOMContentLoaded', function () {
+    var c0 = creds();
+    // Al arrancar con sesión: asegurar que el aula local pertenece a ESTA cuenta
+    // (corrige un equipo ya contaminado con solo abrir/actualizar la app).
+    if (c0) dsClaimFor(c0.codigo);
     if (creds()) setTimeout(autoSync, 1500);
     // vigía: sube cambios locales sin depender de cada herramienta
     setInterval(function () {
@@ -585,19 +594,35 @@
     _papeleraFecha = null;
   }
 
-  /* Reclama el equipo para una cuenta docente al INICIAR sesión (antes de
-     cualquier sincronización). El aula local es un CACHÉ de UNA sola cuenta:
-     la nube manda. Si el caché es de la MISMA cuenta, se conserva (offline-
-     first). Si es de otra cuenta —o de dueño desconocido (datos previos a este
-     blindaje, que no podemos garantizar sean de quien entra)— se limpia; los
-     datos de la cuenta que entra se descargarán de SU nube en la sincronización
-     que sigue. Así nunca se ven ni se suben datos de otra cuenta. */
+  /* Reclama el equipo para una cuenta docente. El aula local es un CACHÉ de UNA
+     sola cuenta: la nube manda. Si el caché ya es de la MISMA cuenta, se conserva
+     (offline-first). Si es de otra cuenta —o de dueño desconocido (datos previos
+     a este blindaje, que no podemos garantizar sean de quien entra)— se limpia y
+     se DESCARGA la nube de la cuenta activa, para reflejar SOLO sus datos. Así
+     nunca se ven ni se suben datos de otra cuenta.
+     Se llama al iniciar sesión, al ARRANCAR la app y al abrir la Zona Docente,
+     así que corrige un equipo ya contaminado sin necesidad de re-loguear.
+     Devuelve true si hubo que limpiar (cambió el dueño). */
   function dsClaimFor(codigo) {
     codigo = String(codigo || '').trim();
     if (!codigo) return false;
-    if (ls(OWNER_KEY) === codigo) return false;   // misma cuenta: conservar caché
-    dsWipeLocal();                                 // ajeno o ambiguo: partir de cero
+    var owner = ls(OWNER_KEY);
+    if (owner === codigo) return false;            // misma cuenta: conservar caché
+    if (navigator.onLine === false) {
+      // Sin internet no podemos traer la nube de esta cuenta. Si el dueño es
+      // OTRA cuenta conocida, limpiamos igual (esos datos están a salvo en SU
+      // nube). Si el dueño es DESCONOCIDO (posible caché legítimo del usuario de
+      // siempre), NO borramos a ciegas: esperamos a tener conexión para verificar.
+      if (!owner) return false;
+      dsWipeLocal();
+      try { localStorage.setItem(OWNER_KEY, codigo); } catch (_) {}
+      repaint();
+      return true;
+    }
+    dsWipeLocal();                                 // con red: partir de cero…
     try { localStorage.setItem(OWNER_KEY, codigo); } catch (_) {}
+    repaint();                                     // vaciar la vista de inmediato
+    pull(true).then(function () { repaint(); estado(); });   // …y traer la nube de ESTA cuenta
     return true;
   }
 
