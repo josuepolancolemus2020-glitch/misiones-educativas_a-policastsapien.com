@@ -701,7 +701,7 @@ async function respFinales(txt) {
   const parciales = ['I', 'II', 'III', 'IV'].filter(p => porParcial[p] && (!pedido || p === pedido));
   if (!parciales.length) {
     await botSay('🧮 Aún no hay notas finales del <strong>Parcial ' + esc(pedido) + '</strong>. ' +
-      'Parciales con notas: ' + Object.keys(porParcial).join(', ') + '.', chipsMenu());
+      'Parciales con notas: ' + esc(Object.keys(porParcial).join(', ')) + '.', chipsMenu());
     return;
   }
   const byMat = (a, b) => String(a.materia).localeCompare(String(b.materia));
@@ -762,7 +762,7 @@ async function respConducta(txt) {
   const parciales = ['I', 'II', 'III', 'IV'].filter(p => porParcial[p] && (!pedido || p === pedido));
   if (!parciales.length) {
     await botSay('🙂 Aún no hay conducta del <strong>Parcial ' + esc(pedido) + '</strong>. ' +
-      'Parciales con registro: ' + Object.keys(porParcial).join(', ') + '.', chipsMenu());
+      'Parciales con registro: ' + esc(Object.keys(porParcial).join(', ')) + '.', chipsMenu());
     return;
   }
   const linea = (nom, val) => '<div class="nc-meta" style="font-size:14px;margin-top:4px">' +

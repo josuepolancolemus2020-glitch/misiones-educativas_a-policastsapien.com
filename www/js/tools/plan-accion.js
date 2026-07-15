@@ -988,6 +988,15 @@ async function paSincronizarNube(manual) {
     if (st) st.textContent = '🔑 Nube de padres: 📴 sin conexión, se enviará al haber internet (' + filas.length + ' pendientes).';
     return;
   }
+  let paCred = null;
+  try {
+    const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1'));
+    if (d && d.codigo && d.clave) paCred = { prof: d.codigo, clave: d.clave };
+  } catch (_) {}
+  if (!paCred) {
+    if (st) st.textContent = '🔒 Entra a tu cuenta docente para publicar las notas en la nube de padres.';
+    return;
+  }
   _paSbBusy = true;
   if (st) st.textContent = '🔑 Nube de padres: ⏳ enviando ' + Math.min(filas.length, 200) + '…';
   try {
@@ -996,9 +1005,11 @@ async function paSincronizarNube(manual) {
     const r = await fetch(url + '/rest/v1/rpc/metas_guardar_plan', {
       method: 'POST',
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filas: lote }),
+      body: JSON.stringify({ p_prof: paCred.prof, p_clave: paCred.clave, filas: lote }),
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
+    const _n = await r.clone().json().catch(() => 0);
+    if (typeof _n === 'number' && _n < 0) throw new Error('cuenta docente rechazada');
     const enviados = new Set(lote.map(f => f.evento_id));
     d.analisis.forEach(a => (a.students || []).forEach(s => {
       if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(s, paCodigoLista(a, s));

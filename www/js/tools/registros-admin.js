@@ -1737,7 +1737,7 @@ async function adPedirContrasena(titulo) {
     await metasAlert('❌ Contraseña incorrecta. Por seguridad, no se hace nada.', { icono: '🔒', titulo });
     return false;
   }
-  return true;
+  return intento;   // contraseña verificada (para reautenticar en el servidor)
 }
 async function adCerrarAnio() {
   const d = adLoad();
@@ -1756,7 +1756,10 @@ async function adCerrarAnio() {
     'Hazlo solo cuando el año esté ENTREGADO (boletas impresas). ¿Continuar?',
     { icono: '🎓', titulo: 'Cerrar el año', okTxt: 'Sí, continuar' })) return;
   /* identidad real, no solo la sesión abierta */
-  if (!await adPedirContrasena('Cerrar el año')) return;
+  const claveMaestro = await adPedirContrasena('Cerrar el año');
+  if (!claveMaestro) return;
+  let profCod = '';
+  try { profCod = (JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')) || {}).codigo || ''; } catch (_) {}
   const conf = await metasPrompt('Esta acción no se puede deshacer. Para confirmar, escribe **CERRAR**:', {
     icono: '🎓', titulo: 'Cerrar el año', okTxt: 'Confirmar',
     valida: v => String(v).trim().toUpperCase() === 'CERRAR' ? '' : 'Escribe CERRAR (o cancela).',
@@ -1780,9 +1783,9 @@ async function adCerrarAnio() {
     const r = await fetch(url + '/rest/v1/rpc/metas_cerrar_familias', {
       method: 'POST',
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_codigos: clavesViejas }),
+      body: JSON.stringify({ p_prof: profCod, p_clave: claveMaestro, p_codigos: clavesViejas }),
     });
-    nubeOk = r.ok;
+    nubeOk = r.ok && (await r.json()) >= 0;   // -1 = el servidor rechazó la cuenta docente
   } catch (_) {}
   if (!nubeOk) {
     if (!await metasConfirm('⚠️ No pude limpiar la nube en este momento (¿corriste ya SUPABASE-FASE3.sql?).\n\n¿Cerrar el año de todos modos? (Las claves se regeneran igual, así que nadie nuevo verá datos viejos, pero quedarán filas muertas en la nube.)',
@@ -2343,6 +2346,15 @@ function adDocenteTxt() {
   } catch (_) {}
   return '';
 }
+/* Credenciales del maestro (PROF + contraseña) para reautenticar las
+   escrituras a la nube del chatbot. Sin cuenta docente no se publica. */
+function adDocenteCreds() {
+  try {
+    const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1'));
+    if (d && d.codigo && d.clave) return { prof: d.codigo, clave: d.clave };
+  } catch (_) {}
+  return null;
+}
 function adMateriaSlug(m) {
   return String(m || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24);
@@ -2465,6 +2477,11 @@ async function adSincronizarNube(manual) {
     if (st) st.textContent = '📴 ' + pendientes.length + ' cambio(s) esperando internet.';
     return;
   }
+  const cred = adDocenteCreds();
+  if (!cred) {
+    if (st) st.textContent = '🔒 Entra a tu cuenta docente para publicar en la nube del chatbot.';
+    return;
+  }
   _adSyncBusy = true;
   if (st) st.textContent = '⏳ Subiendo ' + pendientes.length + ' cambio(s)…';
   try {
@@ -2479,11 +2496,12 @@ async function adSincronizarNube(manual) {
       const r = await fetch(url + '/rest/v1/rpc/metas_guardar_admin', {
         method: 'POST',
         headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filas: lote }),
+        body: JSON.stringify({ p_prof: cred.prof, p_clave: cred.clave, filas: lote }),
       });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const n = await r.json();
       if (typeof n !== 'number') throw new Error('respuesta inesperada');
+      if (n < 0) throw new Error('cuenta docente rechazada');
       /* marcar el lote como sincronizado */
       lote.forEach(f => {
         if (actuales.has(f.evento_id)) mapa[f.evento_id] = { f: adFirma(f), c: f.codigo };
@@ -2620,6 +2638,11 @@ async function avSincronizarNube(manual) {
     if (st) st.textContent = '📴 ' + pendientes.length + ' comunicado(s) esperando internet.';
     return;
   }
+  const cred = adDocenteCreds();
+  if (!cred) {
+    if (st) st.textContent = '🔒 Entra a tu cuenta docente para publicar comunicados.';
+    return;
+  }
   _avSyncBusy = true;
   if (st) st.textContent = '⏳ Publicando ' + pendientes.length + ' comunicado(s)…';
   try {
@@ -2634,11 +2657,12 @@ async function avSincronizarNube(manual) {
       const r = await fetch(url + '/rest/v1/rpc/metas_guardar_avisos', {
         method: 'POST',
         headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filas: lote }),
+        body: JSON.stringify({ p_prof: cred.prof, p_clave: cred.clave, filas: lote }),
       });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const n = await r.json();
       if (typeof n !== 'number') throw new Error('respuesta inesperada');
+      if (n < 0) throw new Error('cuenta docente rechazada');
       lote.forEach(f => {
         if (actuales.has(f.evento_id)) mapa[f.evento_id] = { f: avFirma(f), c: f.codigo };
         else mapa[f.evento_id] = { f: 'x', c: f.codigo, x: 1 };   /* anulado: no reenviar */
