@@ -1239,10 +1239,13 @@ async function docenteRecuperar() {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const resp = await r.json();
     if (resp && resp.ok && resp.codigo) {
-      // Si en este equipo quedaron datos de OTRA cuenta, se descartan antes de entrar.
-      if (typeof dsClaim === 'function') dsClaim(resp.codigo);
+      // ORDEN CRÍTICO: primero se guarda la sesión NUEVA y después se reclama
+      // el equipo. dsClaim descarga la nube con la sesión guardada: si se
+      // reclamara antes, bajaría la nube de la cuenta ANTERIOR (cruce de datos).
       _docenteSave({ codigo: resp.codigo, clave, nombre: resp.nombre || '', correo,
         rol: resp.rol || 'docente', t: new Date().toISOString() });
+      // Si en este equipo quedaron datos de OTRA cuenta, se descartan aquí.
+      if (typeof dsClaim === 'function') dsClaim(resp.codigo);
       renderProfile();
       toast('✅ ¡Bienvenido de vuelta, ' + String(resp.nombre || 'colega').split(' ')[0] + '!');
     } else if (resp && resp.motivo === 'espera') {
@@ -1366,11 +1369,17 @@ function renderProfile() {
         </button>
       </div>
       <details class="doc-mant">
-        <summary class="doc-mant-sum">⚙️ Mantenimiento de datos</summary>
+        <summary class="doc-mant-sum">🚑 Rescate de datos (casi nunca se necesita)</summary>
         <div class="doc-mant-body">
+          <p class="doc-mant-hint">Tu aula se guarda <strong>sola</strong> en la nube de tu cuenta
+            (${_pEsc(d.correo || '')}) y se ve igual en todos tus equipos, automáticamente.
+            Estas herramientas son solo para emergencias:</p>
           <button class="doc-sync-now" id="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
-          <a class="doc-usar-este-link" onclick="dsUsarEste()">✅ Este equipo tiene los datos correctos → usarlo en todos</a>
+          <p class="doc-mant-exp">Revisa la nube en este momento. Normalmente no hace falta: es automático.</p>
+          <a class="doc-usar-este-link" onclick="dsUsarEste()">🚑 Imponer la copia de ESTE equipo en todos</a>
+          <p class="doc-mant-exp">Solo si aquí ves tu aula correcta y en tus otros equipos aparece mal o vacía.</p>
           <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
+          <p class="doc-mant-exp">Vacía tu aula en todos tus equipos, con recuperación si fue un error.</p>
         </div>
       </details>
 
@@ -1459,10 +1468,12 @@ async function docenteSuscribir() {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const resp = await r.json();
     if (resp && resp.ok && resp.codigo) {
-      // Si en este equipo quedaron datos de OTRA cuenta, se descartan antes de entrar.
-      if (typeof dsClaim === 'function') dsClaim(resp.codigo);
+      // ORDEN CRÍTICO: sesión nueva PRIMERO, reclamo del equipo DESPUÉS
+      // (dsClaim usa la sesión guardada para hablar con la nube).
       _docenteSave({ codigo: resp.codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono,
         departamento, municipio, lugar, rol: 'docente', t: new Date().toISOString() });
+      // Si en este equipo quedaron datos de OTRA cuenta, se descartan aquí.
+      if (typeof dsClaim === 'function') dsClaim(resp.codigo);
       renderProfile();
       toast('🎉 ¡Bienvenido, ' + nombre.split(' ')[0] + '! Tu cuenta está lista');
       return;

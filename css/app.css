@@ -3943,3 +3943,7 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   white-space: nowrap;
 }
 .aj-reset-btn:active { transform: scale(0.97); }
+
+/* Rescate de datos: explicaciones cortas bajo cada opción (jul-2026) */
+.doc-mant-hint { font-size: 0.8rem; color: #555; margin: 2px 0 10px; line-height: 1.45; }
+.doc-mant-exp  { font-size: 0.72rem; color: #8a94a3; margin: 2px 0 10px; line-height: 1.35; }
