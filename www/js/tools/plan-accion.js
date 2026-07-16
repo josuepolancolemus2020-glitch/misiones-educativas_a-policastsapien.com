@@ -29,37 +29,59 @@ function paGradeColors(g) {
   return { bg:'#ef4444', txt:'#fff' };
 }
 
+/* El Nº de LISTA es EDITABLE: es la identidad del alumno (de él nace la
+   clave de familia), así que NUNCA se renumera solo. Al actualizar un
+   análisis con huecos (1,2,3,5…) el maestro puede escribir el 4 que falta. */
 function paAddRow(num, name = '', grade = '') {
   const list = document.getElementById('pa-students-list');
   if (!list) return;
   const row = document.createElement('div');
   row.className = 'pa-student-row';
   row.innerHTML = `
-    <span class="pa-row-num">${num}</span>
+    <input type="text" class="pa-inp-num" inputmode="numeric" maxlength="2" value="${num}" title="Nº de lista (editable)">
     <input type="text" class="pa-inp-field pa-inp-name" placeholder="Nombre…" value="${name}">
     <input type="text" class="pa-inp-grade-cell" placeholder="0-100 / NSP" value="${grade}" maxlength="3">
     <button class="pa-del-row" title="Eliminar"><i class="fa-solid fa-xmark"></i></button>`;
-  row.querySelector('.pa-del-row').addEventListener('click', () => {
-    row.remove();
-    document.querySelectorAll('.pa-student-row').forEach((r, i) => {
-      const n = r.querySelector('.pa-row-num'); if (n) n.textContent = i + 1;
-    });
-  });
+  // Eliminar una fila NO renumera las demás: cada número es del alumno.
+  row.querySelector('.pa-del-row').addEventListener('click', () => row.remove());
   list.appendChild(row);
+}
+
+/* Números de lista ya escritos en la cuadrícula */
+function paNumsUsados() {
+  return Array.from(document.querySelectorAll('.pa-student-row .pa-inp-num'))
+    .map(inp => parseInt(inp.value, 10)).filter(n => n > 0);
+}
+/* El número que FALTA más pequeño (para «Agregar estudiante»): si están
+   1,2,3,5 sugiere el 4; si está corrido 1..26, sugiere el 27. */
+function paSiguienteNum() {
+  const usados = new Set(paNumsUsados());
+  let n = 1;
+  while (usados.has(n)) n++;
+  return n;
 }
 
 function paCollect() {
   return Array.from(document.querySelectorAll('.pa-student-row')).map((row, i) => {
-    const name  = row.querySelector('.pa-inp-name')?.value.trim() || `#${i + 1}`;
+    const id    = parseInt(row.querySelector('.pa-inp-num')?.value, 10) || (i + 1);
+    const name  = row.querySelector('.pa-inp-name')?.value.trim() || `#${id}`;
     const raw   = row.querySelector('.pa-inp-grade-cell')?.value.trim().toUpperCase() || '';
     const grade = raw === 'NSP' ? 'NSP' : (raw === '' ? null : (parseFloat(raw) || 0));
-    return { id: i + 1, name, grade };
-  }).filter(s => s.grade !== null);
+    return { id, name, grade };
+  }).filter(s => s.grade !== null)
+    .sort((a, b) => a.id - b.id);
 }
 
 function paGenerate() {
   const students = paCollect();
   if (!students.length) { toast('Agrega al menos un estudiante con nombre'); return; }
+  // CANDADO: números de lista repetidos cruzarían las claves de familia.
+  const vistos = new Set(), repes = new Set();
+  students.forEach(s => { if (vistos.has(s.id)) repes.add(s.id); vistos.add(s.id); });
+  if (repes.size) {
+    toast('⚠️ Nº de lista repetido: ' + [...repes].join(', ') + ' — corrígelo antes de generar (cada alumno tiene SU número).');
+    return;
+  }
   _paStudents = students;
 
   const numeric   = students.filter(s => typeof s.grade === 'number');
@@ -522,7 +544,7 @@ function paRenderPadres() {
             <span class="pa-pad-num">#${s.num}</span>
             <span class="pa-pad-name">${paEsc(s.nombre)}</span>
             <span class="pa-grade-chip" style="background:${s.nota === 'NSP' ? '#d1d5db' : c.bg};color:${s.nota === 'NSP' ? '#374151' : c.txt}">${paEsc(s.nota)}</span>
-            <span class="pa-pad-env">${s.env ? '☁️' : ''}</span>
+            <span class="pa-pad-env" title="Avisado por WhatsApp">${s.env ? '📱✅' : ''}</span>
           </div>
           <textarea class="pa-pad-ta" data-num="${s.num}" rows="4">${paEsc(s.msg)}</textarea>
           <div class="pa-pad-actions">
@@ -558,6 +580,13 @@ function paRenderPadres() {
       if (!s) return;
       const texto = `👨‍🏫 *Mensaje del docente ${aa.docente || ''}* · ${aa.evaluacion || ''}\n\n${s.msg}\n\n_M.E.T.A.S — Misiones Educativas_`;
       window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+      // Marca «avisado por WhatsApp»: se ve en esta fila (📱✅) y en el
+      // resumen del historial. Editar el mensaje la reinicia (hay que
+      // volver a avisar si cambió el texto).
+      const { d: dd2, s: s2 } = getStudent(+btn.dataset.num);
+      if (s2) { s2.env = 1; paSaveData(dd2); }
+      const chip = btn.closest('.pa-pad-row') && btn.closest('.pa-pad-row').querySelector('.pa-pad-env');
+      if (chip) chip.textContent = '📱✅';
     });
   });
 
@@ -579,20 +608,44 @@ function paRenderHistorial() {
   if (!d.analisis.length) { card.style.display = 'none'; return; }
   card.style.display = '';
 
+  let hayPendNube = false;
   list.innerHTML = [...d.analisis].reverse().map(a => {
     const nums = a.students.filter(s => typeof s.nota === 'number');
     const avg  = nums.length ? (nums.reduce((x, s) => x + s.nota, 0) / nums.length).toFixed(1) : '—';
-    const pend = a.students.filter(s => !s.env).length;
+    // Estado REAL del asistente de padres: cuenta lo que aún no está en la
+    // nube (firma sb desactualizada). La subida es AUTOMÁTICA; aquí solo se
+    // muestra con claridad y, si hay pendientes, se ofrece subir al toque.
+    const pendNube = a.students.filter(s => {
+      const codigo = paCodigoLista(a, s);
+      return codigo && s.sb !== paSbFirma(a, s, codigo);
+    }).length;
+    if (pendNube) hayPendNube = true;
+    const waEnv = a.students.filter(s => s.env).length;
+    const nube = pendNube
+      ? `<span class="pa-hist-nube pend">☁️ ${pendNube} por subir al asistente</span>`
+      : `<span class="pa-hist-nube ok">☁️ En el asistente de padres ✅</span>`;
+    const wa = waEnv ? ` <span class="pa-hist-wa">📱 ${waEnv}/${a.students.length} avisados por WhatsApp</span>` : '';
     return `
       <div class="pa-hist-row">
         <div class="pa-hist-info">
           <span class="pa-hist-titulo">${paEsc(a.evaluacion || 'Evaluación')}${a.parcial ? ' · P-' + paEsc(a.parcial) : ''}</span>
-          <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(a.grado || '')} ${paEsc(a.seccion || '')} · ${a.students.length} alumnos · prom. ${avg}${pend ? ` · ⏳ ${pend} sin enviar` : ' · ☁️'}</span>
+          <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(a.grado || '')} ${paEsc(a.seccion || '')} · ${a.students.length} alumnos · prom. ${avg}</span>
+          <span class="pa-hist-meta">${nube}${wa}</span>
         </div>
+        ${pendNube ? `<button class="pa-hist-subir" data-id="${a.id}">☁️ Subir ahora</button>` : ''}
         <button class="pa-hist-abrir" data-id="${a.id}">Abrir</button>
         <button class="pa-hist-borrar" data-id="${a.id}" aria-label="Eliminar">🗑</button>
       </div>`;
   }).join('');
+
+  // «Subir ahora»: dispara la misma sincronización automática, a pedido.
+  // El análisis QUEDA guardado (subir nunca lo borra: sirve para actualizar).
+  list.querySelectorAll('.pa-hist-subir').forEach(b =>
+    b.addEventListener('click', async () => {
+      b.disabled = true; b.textContent = '⏳ Subiendo…';
+      await paSincronizarNube(true);
+      paRenderHistorial();
+    }));
 
   list.querySelectorAll('.pa-hist-abrir').forEach(b =>
     b.addEventListener('click', () => paAbrirAnalisis(b.dataset.id)));
@@ -831,15 +884,21 @@ ${filas.map(f => `
 
 /* La firma incluye el CÓDIGO: si el maestro regenera la clave de una
    familia (tira filtrada, cierre de año), la fila se re-publica con la
-   clave nueva y la vieja deja de ver los mensajes. */
-function paSbFirma(s, codigo) { return String(s.nota) + '|' + (s.msg || '') + '|' + (codigo || ''); }
+   clave nueva y la vieja deja de ver los mensajes. Incluye también el
+   parcial y la fecha de la prueba: si el maestro los corrige (o si la
+   nube los perdió, como pasó con el blindaje del 14 jul), la fila se
+   re-publica sola en la siguiente sincronización. */
+function paSbFirma(a, s, codigo) {
+  return String(s.nota) + '|' + (s.msg || '') + '|' + (codigo || '') + '|' +
+         (a.parcial || '') + '|' + (a.fechaPrueba || '');
+}
 
 function paSbPendientes(d) {
   const filas = [];
   d.analisis.forEach(a => (a.students || []).forEach(s => {
     const codigo = paCodigoLista(a, s);
     if (!codigo) return;
-    if (s.sb === paSbFirma(s, codigo)) return; // ya está en la nube tal cual
+    if (s.sb === paSbFirma(a, s, codigo)) return; // ya está en la nube tal cual
     filas.push({
       evento_id: 'PASB-' + a.id + '-' + s.num,
       codigo,
@@ -902,11 +961,13 @@ async function paSincronizarNube(manual) {
     if (typeof _n === 'number' && _n < 0) throw new Error('cuenta docente rechazada');
     const enviados = new Set(lote.map(f => f.evento_id));
     d.analisis.forEach(a => (a.students || []).forEach(s => {
-      if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(s, paCodigoLista(a, s));
+      if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(a, s, paCodigoLista(a, s));
     }));
     paSaveData(d);
     if (st) st.textContent = '🔑 Nube de padres: ✅ ' + lote.length + ' nota' + (lote.length !== 1 ? 's' : '') + ' disponibles por código de lista.';
     if (manual) toast('✅ Notas enviadas a la nube de padres');
+    /* quedaron más de 200 pendientes (re-publicación masiva): siguiente lote solo */
+    if (filas.length > lote.length) paNubeProgramar();
   } catch (_) {
     if (st) st.textContent = '🔑 Nube de padres: ⚠️ no se pudo enviar; se reintentará.';
   }
@@ -957,7 +1018,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('plan-back-btn')?.addEventListener('click', () => switchView('view-perfil'));
 
   document.getElementById('pa-add-student-btn')?.addEventListener('click', () => {
-    paAddRow(document.querySelectorAll('.pa-student-row').length + 1);
+    // Sugiere el número que FALTA (rellena huecos: 1,2,3,5 → propone el 4);
+    // con la lista corrida propone el siguiente. Siempre editable.
+    paAddRow(paSiguienteNum());
   });
 
   /* La lista maestra vive en «Mi aula»: aquí solo se trae con un toque */

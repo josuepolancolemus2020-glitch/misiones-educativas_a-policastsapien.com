@@ -394,11 +394,27 @@ function sbCfg() {
 }
 
 /* ── consulta a la nube (plan de acción + registros administrativos) ── */
+/* Si el maestro corrigió un análisis (lo rehizo o cambió un nº de lista),
+   la nube puede traer la misma evaluación dos veces. Aquí se queda solo
+   la versión MÁS RECIENTE de cada una (evaluación + tipo + parcial) para
+   no confundir al padre. La nube ya deduplica; esto cubre datos viejos
+   guardados en el teléfono. */
+function dedupePlan(rows) {
+  const orden = (Array.isArray(rows) ? rows.slice() : [])
+    .sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
+  const vistas = new Set();
+  return orden.filter(r => {
+    const k = [norm(r.evaluacion || ''), norm(r.tipo || ''), norm(r.parcial || '')].join('|');
+    if (vistas.has(k)) return false;
+    vistas.add(k);
+    return true;
+  });
+}
 function _desdeCache(codigo) {
   const c = cacheLoad(codigo);
   if (c && ((Array.isArray(c.rows) && c.rows.length) || (Array.isArray(c.admin) && c.admin.length) ||
             (Array.isArray(c.avisos) && c.avisos.length))) {
-    ROWS = Array.isArray(c.rows) ? c.rows : [];
+    ROWS = dedupePlan(c.rows);
     ROWS_AD = Array.isArray(c.admin) ? c.admin : [];
     ROWS_AV = Array.isArray(c.avisos) ? c.avisos : [];
     ROWS_FECHA = c.t; ROWS_CACHE = true;
@@ -424,7 +440,7 @@ async function consultar(codigo) {
       seguro(pide('metas_consultar_admin_padre')),
       seguro(pide('metas_consultar_avisos_padre')),   /* si aún no existe en la nube, se tolera */
     ]);
-    const rows = Array.isArray(plan.v) ? plan.v : [];
+    const rows = dedupePlan(plan.v);
     const adm  = Array.isArray(admin.v) ? admin.v : [];
     const avs  = Array.isArray(avisos.v) ? avisos.v : [];
     if (!rows.length && !adm.length && !avs.length) {

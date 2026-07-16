@@ -617,7 +617,7 @@ function paRenderHistorial() {
     // muestra con claridad y, si hay pendientes, se ofrece subir al toque.
     const pendNube = a.students.filter(s => {
       const codigo = paCodigoLista(a, s);
-      return codigo && s.sb !== paSbFirma(s, codigo);
+      return codigo && s.sb !== paSbFirma(a, s, codigo);
     }).length;
     if (pendNube) hayPendNube = true;
     const waEnv = a.students.filter(s => s.env).length;
@@ -884,15 +884,21 @@ ${filas.map(f => `
 
 /* La firma incluye el CÓDIGO: si el maestro regenera la clave de una
    familia (tira filtrada, cierre de año), la fila se re-publica con la
-   clave nueva y la vieja deja de ver los mensajes. */
-function paSbFirma(s, codigo) { return String(s.nota) + '|' + (s.msg || '') + '|' + (codigo || ''); }
+   clave nueva y la vieja deja de ver los mensajes. Incluye también el
+   parcial y la fecha de la prueba: si el maestro los corrige (o si la
+   nube los perdió, como pasó con el blindaje del 14 jul), la fila se
+   re-publica sola en la siguiente sincronización. */
+function paSbFirma(a, s, codigo) {
+  return String(s.nota) + '|' + (s.msg || '') + '|' + (codigo || '') + '|' +
+         (a.parcial || '') + '|' + (a.fechaPrueba || '');
+}
 
 function paSbPendientes(d) {
   const filas = [];
   d.analisis.forEach(a => (a.students || []).forEach(s => {
     const codigo = paCodigoLista(a, s);
     if (!codigo) return;
-    if (s.sb === paSbFirma(s, codigo)) return; // ya está en la nube tal cual
+    if (s.sb === paSbFirma(a, s, codigo)) return; // ya está en la nube tal cual
     filas.push({
       evento_id: 'PASB-' + a.id + '-' + s.num,
       codigo,
@@ -955,11 +961,13 @@ async function paSincronizarNube(manual) {
     if (typeof _n === 'number' && _n < 0) throw new Error('cuenta docente rechazada');
     const enviados = new Set(lote.map(f => f.evento_id));
     d.analisis.forEach(a => (a.students || []).forEach(s => {
-      if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(s, paCodigoLista(a, s));
+      if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(a, s, paCodigoLista(a, s));
     }));
     paSaveData(d);
     if (st) st.textContent = '🔑 Nube de padres: ✅ ' + lote.length + ' nota' + (lote.length !== 1 ? 's' : '') + ' disponibles por código de lista.';
     if (manual) toast('✅ Notas enviadas a la nube de padres');
+    /* quedaron más de 200 pendientes (re-publicación masiva): siguiente lote solo */
+    if (filas.length > lote.length) paNubeProgramar();
   } catch (_) {
     if (st) st.textContent = '🔑 Nube de padres: ⚠️ no se pudo enviar; se reintentará.';
   }
