@@ -119,9 +119,30 @@
   .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
   .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
   .acts ol { margin-left: 24px; }
-  .acts ol li { margin-bottom: 5px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
   .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
-  .op-mult { font-size: 10pt; margin: 1px 0 5px; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras en círculo
+     (listas para ENCERRAR) · opciones en 2 columnas con aire */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 18px; width: 18px; height: 18px;
+    border: 1.5px solid var(--mat); border-radius: 50%;
+    text-align: center; line-height: 16px; font-size: 9.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op.full { grid-column: 1 / -1; }
 
   .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
   .felic b { color: var(--mat-osc); }
@@ -362,18 +383,97 @@
   <div class="contenido acts">
 
     <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
-    <ol>
-      <li>Para dividir por un divisor decimal, lo convertimos en:<div class="op-mult">a) el cociente &nbsp; b) número entero moviendo el punto &nbsp; c) un residuo &nbsp; d) cero</div></li>
-      <li>En el modo casita, ¿qué número va adentro?<div class="op-mult">a) el divisor &nbsp; b) el cociente &nbsp; c) el dividendo &nbsp; d) el residuo</div></li>
-      <li>¿Cuántos espacios mueves el punto en 3.6 ÷ 0.09?<div class="op-mult">a) 1 &nbsp; b) 2 &nbsp; c) 3 &nbsp; d) 0</div></li>
-      <li>10 ÷ 0.5 = ?<div class="op-mult">a) 5 &nbsp; b) 2 &nbsp; c) 20 &nbsp; d) 0.2</div></li>
-      <li>Si el divisor es menor que 1, el cociente:<div class="op-mult">a) disminuye &nbsp; b) aumenta &nbsp; c) queda igual &nbsp; d) desaparece</div></li>
-      <li>Para resolver 2 ÷ 0.25, ¿cuántos ceros agregas al dividendo?<div class="op-mult">a) 1 &nbsp; b) 2 &nbsp; c) 3 &nbsp; d) 0</div></li>
-      <li>En 12 ÷ 4 = 3, ¿cuál es el dividendo?<div class="op-mult">a) 12 &nbsp; b) 4 &nbsp; c) 3 &nbsp; d) ninguno</div></li>
-      <li>3 ÷ 0.5 = ?<div class="op-mult">a) 0.6 &nbsp; b) 6 &nbsp; c) 1.5 &nbsp; d) 15</div></li>
-      <li>Si el divisor es igual a 1, el cociente es:<div class="op-mult">a) mayor &nbsp; b) menor &nbsp; c) igual al dividendo &nbsp; d) cero</div></li>
-      <li>¿Cuál es un error común al dividir decimales?<div class="op-mult">a) mover el punto en ambos &nbsp; b) agregar ceros &nbsp; c) mover el punto solo en el divisor &nbsp; d) revisar el resultado</div></li>
-    </ol>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>Para dividir por un divisor decimal, lo convertimos en:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el cociente</span>
+        <span class="op"><i>b</i> número entero moviendo el punto</span>
+        <span class="op"><i>c</i> un residuo</span>
+        <span class="op"><i>d</i> cero</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>En el modo casita, ¿qué número va adentro?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el divisor</span>
+        <span class="op"><i>b</i> el cociente</span>
+        <span class="op"><i>c</i> el dividendo</span>
+        <span class="op"><i>d</i> el residuo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuántos espacios mueves el punto en 3.6 ÷ 0.09?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 1 espacio</span>
+        <span class="op"><i>b</i> 2 espacios</span>
+        <span class="op"><i>c</i> 3 espacios</span>
+        <span class="op"><i>d</i> ninguno</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>10 ÷ 0.5 = ?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 5</span>
+        <span class="op"><i>b</i> 2</span>
+        <span class="op"><i>c</i> 20</span>
+        <span class="op"><i>d</i> 0.2</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>Si el divisor es menor que 1, el cociente:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> disminuye</span>
+        <span class="op"><i>b</i> aumenta</span>
+        <span class="op"><i>c</i> queda igual</span>
+        <span class="op"><i>d</i> desaparece</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>Para resolver 2 ÷ 0.25, ¿cuántos ceros agregas al dividendo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 1 cero</span>
+        <span class="op"><i>b</i> 2 ceros</span>
+        <span class="op"><i>c</i> 3 ceros</span>
+        <span class="op"><i>d</i> ninguno</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>En 12 ÷ 4 = 3, ¿cuál es el dividendo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 12</span>
+        <span class="op"><i>b</i> 4</span>
+        <span class="op"><i>c</i> 3</span>
+        <span class="op"><i>d</i> ninguno</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>3 ÷ 0.5 = ?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 0.6</span>
+        <span class="op"><i>b</i> 6</span>
+        <span class="op"><i>c</i> 1.5</span>
+        <span class="op"><i>d</i> 15</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>Si el divisor es igual a 1, el cociente es:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> mayor</span>
+        <span class="op"><i>b</i> menor</span>
+        <span class="op"><i>c</i> igual al dividendo</span>
+        <span class="op"><i>d</i> cero</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál es un error común al dividir decimales?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> mover el punto en ambos</span>
+        <span class="op"><i>b</i> agregar ceros cuando faltan cifras</span>
+        <span class="op"><i>c</i> mover el punto solo en el divisor</span>
+        <span class="op"><i>d</i> revisar el resultado al terminar</span>
+      </div>
+    </div>
 
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · División de Decimales</span><span>Página 5</span></div>
