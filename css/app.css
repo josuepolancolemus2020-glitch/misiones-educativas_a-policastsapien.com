@@ -4030,3 +4030,15 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   background: linear-gradient(90deg, #1565c0, #7b2ff7);
 }
 .aj-res-n { flex: 0 0 34px; text-align: right; font-weight: 800; color: var(--text); }
+
+/* Plan de Acción: estado claro del asistente de padres en el historial (jul-2026) */
+.pa-hist-nube { font-weight: 700; font-size: 0.78rem; padding: 1px 8px; border-radius: 999px; }
+.pa-hist-nube.ok   { background: #e8f7ee; color: #1c7c43; border: 1px solid #bfe6cd; }
+.pa-hist-nube.pend { background: #fdf3e5; color: #b26a00; border: 1px solid #f3ddb3; }
+.pa-hist-wa { font-size: 0.76rem; color: #128c7e; font-weight: 700; }
+.pa-hist-subir {
+  border: 1.5px solid #1565c0; background: #eef4fb; color: #1565c0; cursor: pointer;
+  font-weight: 800; font-size: 0.78rem; padding: 6px 10px; border-radius: 10px; white-space: nowrap;
+}
+.pa-hist-subir:active { transform: scale(0.97); }
+.pa-hist-subir:disabled { opacity: 0.6; }

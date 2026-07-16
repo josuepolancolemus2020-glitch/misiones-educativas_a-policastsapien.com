@@ -522,7 +522,7 @@ function paRenderPadres() {
             <span class="pa-pad-num">#${s.num}</span>
             <span class="pa-pad-name">${paEsc(s.nombre)}</span>
             <span class="pa-grade-chip" style="background:${s.nota === 'NSP' ? '#d1d5db' : c.bg};color:${s.nota === 'NSP' ? '#374151' : c.txt}">${paEsc(s.nota)}</span>
-            <span class="pa-pad-env">${s.env ? '☁️' : ''}</span>
+            <span class="pa-pad-env" title="Avisado por WhatsApp">${s.env ? '📱✅' : ''}</span>
           </div>
           <textarea class="pa-pad-ta" data-num="${s.num}" rows="4">${paEsc(s.msg)}</textarea>
           <div class="pa-pad-actions">
@@ -558,6 +558,13 @@ function paRenderPadres() {
       if (!s) return;
       const texto = `👨‍🏫 *Mensaje del docente ${aa.docente || ''}* · ${aa.evaluacion || ''}\n\n${s.msg}\n\n_M.E.T.A.S — Misiones Educativas_`;
       window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+      // Marca «avisado por WhatsApp»: se ve en esta fila (📱✅) y en el
+      // resumen del historial. Editar el mensaje la reinicia (hay que
+      // volver a avisar si cambió el texto).
+      const { d: dd2, s: s2 } = getStudent(+btn.dataset.num);
+      if (s2) { s2.env = 1; paSaveData(dd2); }
+      const chip = btn.closest('.pa-pad-row') && btn.closest('.pa-pad-row').querySelector('.pa-pad-env');
+      if (chip) chip.textContent = '📱✅';
     });
   });
 
@@ -579,20 +586,44 @@ function paRenderHistorial() {
   if (!d.analisis.length) { card.style.display = 'none'; return; }
   card.style.display = '';
 
+  let hayPendNube = false;
   list.innerHTML = [...d.analisis].reverse().map(a => {
     const nums = a.students.filter(s => typeof s.nota === 'number');
     const avg  = nums.length ? (nums.reduce((x, s) => x + s.nota, 0) / nums.length).toFixed(1) : '—';
-    const pend = a.students.filter(s => !s.env).length;
+    // Estado REAL del asistente de padres: cuenta lo que aún no está en la
+    // nube (firma sb desactualizada). La subida es AUTOMÁTICA; aquí solo se
+    // muestra con claridad y, si hay pendientes, se ofrece subir al toque.
+    const pendNube = a.students.filter(s => {
+      const codigo = paCodigoLista(a, s);
+      return codigo && s.sb !== paSbFirma(s, codigo);
+    }).length;
+    if (pendNube) hayPendNube = true;
+    const waEnv = a.students.filter(s => s.env).length;
+    const nube = pendNube
+      ? `<span class="pa-hist-nube pend">☁️ ${pendNube} por subir al asistente</span>`
+      : `<span class="pa-hist-nube ok">☁️ En el asistente de padres ✅</span>`;
+    const wa = waEnv ? ` <span class="pa-hist-wa">📱 ${waEnv}/${a.students.length} avisados por WhatsApp</span>` : '';
     return `
       <div class="pa-hist-row">
         <div class="pa-hist-info">
           <span class="pa-hist-titulo">${paEsc(a.evaluacion || 'Evaluación')}${a.parcial ? ' · P-' + paEsc(a.parcial) : ''}</span>
-          <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(a.grado || '')} ${paEsc(a.seccion || '')} · ${a.students.length} alumnos · prom. ${avg}${pend ? ` · ⏳ ${pend} sin enviar` : ' · ☁️'}</span>
+          <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(a.grado || '')} ${paEsc(a.seccion || '')} · ${a.students.length} alumnos · prom. ${avg}</span>
+          <span class="pa-hist-meta">${nube}${wa}</span>
         </div>
+        ${pendNube ? `<button class="pa-hist-subir" data-id="${a.id}">☁️ Subir ahora</button>` : ''}
         <button class="pa-hist-abrir" data-id="${a.id}">Abrir</button>
         <button class="pa-hist-borrar" data-id="${a.id}" aria-label="Eliminar">🗑</button>
       </div>`;
   }).join('');
+
+  // «Subir ahora»: dispara la misma sincronización automática, a pedido.
+  // El análisis QUEDA guardado (subir nunca lo borra: sirve para actualizar).
+  list.querySelectorAll('.pa-hist-subir').forEach(b =>
+    b.addEventListener('click', async () => {
+      b.disabled = true; b.textContent = '⏳ Subiendo…';
+      await paSincronizarNube(true);
+      paRenderHistorial();
+    }));
 
   list.querySelectorAll('.pa-hist-abrir').forEach(b =>
     b.addEventListener('click', () => paAbrirAnalisis(b.dataset.id)));
