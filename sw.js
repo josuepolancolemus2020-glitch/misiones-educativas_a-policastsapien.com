@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meta-app-v24';
+const CACHE_NAME = 'meta-app-v25';
 const STATIC_ASSETS = [
   './padres.html',
   './manifest-padres.json',

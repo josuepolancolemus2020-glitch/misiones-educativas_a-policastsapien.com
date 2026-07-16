@@ -4042,3 +4042,12 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 }
 .pa-hist-subir:active { transform: scale(0.97); }
 .pa-hist-subir:disabled { opacity: 0.6; }
+
+/* Plan de Acción: Nº de lista EDITABLE en la entrada manual (jul-2026) */
+.pa-student-row { grid-template-columns: 40px 1fr 72px 28px; }
+.pa-inp-num {
+  width: 100%; text-align: center; font-size: 13px; font-weight: 800;
+  color: #1565c0; background: #eef4fb; border: 1.5px solid #d5e4f5;
+  border-radius: 8px; padding: 8px 2px;
+}
+.pa-inp-num:focus { outline: 2px solid #1565c0; background: #fff; }

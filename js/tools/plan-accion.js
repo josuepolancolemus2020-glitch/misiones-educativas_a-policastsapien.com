@@ -29,37 +29,59 @@ function paGradeColors(g) {
   return { bg:'#ef4444', txt:'#fff' };
 }
 
+/* El Nº de LISTA es EDITABLE: es la identidad del alumno (de él nace la
+   clave de familia), así que NUNCA se renumera solo. Al actualizar un
+   análisis con huecos (1,2,3,5…) el maestro puede escribir el 4 que falta. */
 function paAddRow(num, name = '', grade = '') {
   const list = document.getElementById('pa-students-list');
   if (!list) return;
   const row = document.createElement('div');
   row.className = 'pa-student-row';
   row.innerHTML = `
-    <span class="pa-row-num">${num}</span>
+    <input type="text" class="pa-inp-num" inputmode="numeric" maxlength="2" value="${num}" title="Nº de lista (editable)">
     <input type="text" class="pa-inp-field pa-inp-name" placeholder="Nombre…" value="${name}">
     <input type="text" class="pa-inp-grade-cell" placeholder="0-100 / NSP" value="${grade}" maxlength="3">
     <button class="pa-del-row" title="Eliminar"><i class="fa-solid fa-xmark"></i></button>`;
-  row.querySelector('.pa-del-row').addEventListener('click', () => {
-    row.remove();
-    document.querySelectorAll('.pa-student-row').forEach((r, i) => {
-      const n = r.querySelector('.pa-row-num'); if (n) n.textContent = i + 1;
-    });
-  });
+  // Eliminar una fila NO renumera las demás: cada número es del alumno.
+  row.querySelector('.pa-del-row').addEventListener('click', () => row.remove());
   list.appendChild(row);
+}
+
+/* Números de lista ya escritos en la cuadrícula */
+function paNumsUsados() {
+  return Array.from(document.querySelectorAll('.pa-student-row .pa-inp-num'))
+    .map(inp => parseInt(inp.value, 10)).filter(n => n > 0);
+}
+/* El número que FALTA más pequeño (para «Agregar estudiante»): si están
+   1,2,3,5 sugiere el 4; si está corrido 1..26, sugiere el 27. */
+function paSiguienteNum() {
+  const usados = new Set(paNumsUsados());
+  let n = 1;
+  while (usados.has(n)) n++;
+  return n;
 }
 
 function paCollect() {
   return Array.from(document.querySelectorAll('.pa-student-row')).map((row, i) => {
-    const name  = row.querySelector('.pa-inp-name')?.value.trim() || `#${i + 1}`;
+    const id    = parseInt(row.querySelector('.pa-inp-num')?.value, 10) || (i + 1);
+    const name  = row.querySelector('.pa-inp-name')?.value.trim() || `#${id}`;
     const raw   = row.querySelector('.pa-inp-grade-cell')?.value.trim().toUpperCase() || '';
     const grade = raw === 'NSP' ? 'NSP' : (raw === '' ? null : (parseFloat(raw) || 0));
-    return { id: i + 1, name, grade };
-  }).filter(s => s.grade !== null);
+    return { id, name, grade };
+  }).filter(s => s.grade !== null)
+    .sort((a, b) => a.id - b.id);
 }
 
 function paGenerate() {
   const students = paCollect();
   if (!students.length) { toast('Agrega al menos un estudiante con nombre'); return; }
+  // CANDADO: números de lista repetidos cruzarían las claves de familia.
+  const vistos = new Set(), repes = new Set();
+  students.forEach(s => { if (vistos.has(s.id)) repes.add(s.id); vistos.add(s.id); });
+  if (repes.size) {
+    toast('⚠️ Nº de lista repetido: ' + [...repes].join(', ') + ' — corrígelo antes de generar (cada alumno tiene SU número).');
+    return;
+  }
   _paStudents = students;
 
   const numeric   = students.filter(s => typeof s.grade === 'number');
@@ -988,7 +1010,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('plan-back-btn')?.addEventListener('click', () => switchView('view-perfil'));
 
   document.getElementById('pa-add-student-btn')?.addEventListener('click', () => {
-    paAddRow(document.querySelectorAll('.pa-student-row').length + 1);
+    // Sugiere el número que FALTA (rellena huecos: 1,2,3,5 → propone el 4);
+    // con la lista corrida propone el siguiente. Siempre editable.
+    paAddRow(paSiguienteNum());
   });
 
   /* La lista maestra vive en «Mi aula»: aquí solo se trae con un toque */
