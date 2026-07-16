@@ -137,11 +137,13 @@
   }
   .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
   .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* Letra de opción SIN círculo impreso: el niño debe poder ENCERRARLA
+     él mismo y que su trazo se vea. Se diferencia por negrita + azul. */
   .preg-ops .op i {
-    font-style: normal; flex: 0 0 18px; width: 18px; height: 18px;
-    border: 1.5px solid var(--mat); border-radius: 50%;
-    text-align: center; line-height: 16px; font-size: 9.5pt; font-weight: 800; color: var(--mat-osc);
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
   }
+  .preg-ops .op i::after { content: ')'; }
   .preg-ops .op.full { grid-column: 1 / -1; }
 
   .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
