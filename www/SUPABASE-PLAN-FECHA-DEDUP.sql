@@ -18,6 +18,10 @@
 --   3) metas_consultar_plan_padre devuelve SOLO la versión más reciente
 --      de cada evaluación (evaluación + tipo + parcial): las correcciones
 --      del maestro REEMPLAZAN a la fila vieja, nunca la duplican.
+--   4) (17 jul) Una fila VIEJA guardada SIN parcial (antes de este
+--      arreglo) también cede ante la versión corregida CON parcial de la
+--      misma evaluación — antes contaban como evaluaciones distintas y
+--      el padre veía la prueba dos veces (caso real: clave 26-9GW3).
 --
 -- Requiere haber corrido antes SUPABASE-SEGURIDAD.sql (las funciones
 -- _metas_docente_ok y metas_rate_ok ya viven en la nube).
@@ -117,6 +121,16 @@ begin
     from public.plan_accion p
     where length(regexp_replace(coalesce(p_codigo,''), '\s', '', 'g')) >= 2
       and p.codigo = upper(regexp_replace(coalesce(p_codigo,''), '\s', '', 'g'))
+      -- Fila vieja SIN parcial: si ya existe la misma evaluación CON
+      -- parcial (la corrección re-publicada), la vieja cede y no se
+      -- muestra. Si la evaluación solo existe sin parcial, sí se muestra.
+      and not (coalesce(p.parcial,'') = '' and exists (
+            select 1 from public.plan_accion p2
+            where p2.codigo = p.codigo
+              and coalesce(nullif(p2.mision,''), p2.evaluacion)
+                  = coalesce(nullif(p.mision,''), p.evaluacion)
+              and coalesce(p2.tipo,'') = coalesce(p.tipo,'')
+              and coalesce(p2.parcial,'') <> ''))
     order by coalesce(nullif(p.mision,''), p.evaluacion),
              coalesce(p.tipo,''), coalesce(p.parcial,''),
              coalesce(p.fecha_analisis, p.creado_en) desc, p.id desc
@@ -134,9 +148,10 @@ grant execute on function public.metas_consultar_plan_padre(text) to anon, authe
 --   select public.metas_guardar_plan('PROF-NADA','malo','[]'::jsonb);
 --     → espera -1 (cuenta docente sigue siendo obligatoria)
 --
---   select * from public.metas_consultar_plan_padre('15K7QM');
+--   select * from public.metas_consultar_plan_padre('269GW3');
 --     → (con una clave real) cada evaluación aparece UNA sola vez
---       y trae fecha_prueba cuando el maestro la registró.
+--       y trae fecha_prueba cuando el maestro la registró; las filas
+--       viejas sin parcial ya no duplican a su versión corregida.
 --
 -- En la app: Plan de Acción → al abrir, el teléfono del maestro
 -- re-publica solo (la firma ahora incluye parcial y fecha) y el

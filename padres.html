@@ -402,9 +402,18 @@ function sbCfg() {
 function dedupePlan(rows) {
   const orden = (Array.isArray(rows) ? rows.slice() : [])
     .sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
+  /* Una fila vieja SIN parcial (guardada antes del arreglo del 16 jul)
+     es la MISMA evaluación que su corrección con parcial: debe ceder,
+     no sumarse como prueba aparte. */
+  const conParcial = new Set();
+  orden.forEach(r => {
+    if (norm(r.parcial || '')) conParcial.add([norm(r.evaluacion || ''), norm(r.tipo || '')].join('|'));
+  });
   const vistas = new Set();
   return orden.filter(r => {
-    const k = [norm(r.evaluacion || ''), norm(r.tipo || ''), norm(r.parcial || '')].join('|');
+    const base = [norm(r.evaluacion || ''), norm(r.tipo || '')].join('|');
+    if (!norm(r.parcial || '') && conParcial.has(base)) return false;
+    const k = base + '|' + norm(r.parcial || '');
     if (vistas.has(k)) return false;
     vistas.add(k);
     return true;
