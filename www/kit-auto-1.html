@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autocapacitación · Módulo 1: Panorama · M.E.T.A.S</title>
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --azul: #1565c0; --azul-osc: #0d417e; --dorado: #c49000;
+    --texto: #22303f; --gris: #5b6773; --linea: #dbe4ee; --fondo: #f4f8fd;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--texto); background: #eef2f7; line-height: 1.5;
+  }
+  .hoja {
+    max-width: 8.5in; margin: 0 auto; background: #fff;
+    padding: 34px 44px;
+  }
+  .cabecera {
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 4px solid var(--azul); padding-bottom: 14px; margin-bottom: 18px;
+  }
+  .marca { font-size: 1.9rem; font-weight: 900; color: var(--azul); letter-spacing: 2px; }
+  .marca small { display: block; font-size: 0.72rem; font-weight: 700; color: var(--gris); letter-spacing: 0.5px; }
+  .kit-titulo { text-align: right; }
+  .kit-titulo .t1 { font-size: 1.15rem; font-weight: 900; color: var(--azul-osc); }
+  .kit-titulo .t2 { font-size: 0.78rem; color: var(--gris); }
+
+  h2 {
+    font-size: 1.02rem; color: #fff; background: var(--azul);
+    padding: 8px 14px; border-radius: 10px; margin: 22px 0 12px;
+  }
+  h2 .num {
+    display: inline-block; background: #fff; color: var(--azul);
+    width: 24px; height: 24px; border-radius: 50%; text-align: center;
+    line-height: 24px; font-size: 0.85rem; margin-right: 8px; font-weight: 900;
+  }
+  p { font-size: 0.9rem; margin-bottom: 8px; }
+  .nota {
+    background: #fdf8ee; border: 1px solid #f3ddb3; border-radius: 10px;
+    padding: 10px 14px; font-size: 0.84rem; margin: 10px 0;
+  }
+  .nota b { color: var(--dorado); }
+  .destacado {
+    background: var(--fondo); border: 2px dashed var(--azul); border-radius: 12px;
+    padding: 12px 16px; text-align: center; margin: 10px 0;
+    font-size: 1rem; font-weight: 800; color: var(--azul-osc);
+  }
+
+  table.guion { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 8px 0; }
+  table.guion th {
+    background: var(--azul); color: #fff; padding: 6px 10px; text-align: left; font-size: 0.8rem;
+  }
+  table.guion td { border: 1px solid var(--linea); padding: 6px 10px; vertical-align: top; }
+  table.guion td:first-child { white-space: nowrap; font-weight: 800; color: var(--azul); }
+
+  /* pregunta de interpelación + respuesta modelo */
+  .interp { border: 1px solid var(--linea); border-radius: 12px; margin: 10px 0; overflow: hidden; }
+  .interp .preg {
+    background: #fbeaea; color: #8f2020; font-weight: 800; font-size: 0.9rem;
+    padding: 8px 14px; border-bottom: 1px solid var(--linea);
+  }
+  .interp .resp { padding: 9px 14px; font-size: 0.87rem; }
+  .interp .resp b { color: var(--azul-osc); }
+
+  .check { list-style: none; margin: 8px 0; }
+  .check li {
+    font-size: 0.92rem; padding: 7px 0 7px 34px; position: relative;
+    border-bottom: 1px dashed var(--linea);
+  }
+  .check li::before {
+    content: ''; position: absolute; left: 4px; top: 8px;
+    width: 16px; height: 16px; border: 2px solid var(--azul); border-radius: 5px;
+  }
+  .diagrama { margin: 12px 0; text-align: center; }
+  .diagrama svg { width: 100%; height: auto; max-width: 720px; }
+  .diagrama .cap { font-size: 0.76rem; color: var(--gris); margin-top: 4px; }
+
+  code {
+    background: var(--fondo); border: 1px solid var(--linea); border-radius: 5px;
+    padding: 1px 5px; font-size: 0.82em; font-family: Consolas, monospace;
+  }
+
+  .pie {
+    margin-top: 26px; padding-top: 12px; border-top: 2px solid var(--linea);
+    font-size: 0.76rem; color: var(--gris); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+  }
+  .imprimir-btn {
+    position: fixed; right: 18px; bottom: 18px; z-index: 5;
+    border: none; cursor: pointer; padding: 14px 22px; border-radius: 999px;
+    font-size: 1rem; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, #1565c0, #7b2ff7);
+    box-shadow: 0 6px 18px rgba(21,101,192,.4);
+  }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  .salto { page-break-before: always; }
+  @page { size: letter; margin: 10mm 9mm; }
+  @media print {
+    body { background: #fff; }
+    .hoja { max-width: none; padding: 0; }
+    .imprimir-btn { display: none; }
+    h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 14px 0 9px; }
+    table.guion th, .destacado, .nota, .interp .preg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .check li { padding: 5px 0 5px 34px; }
+    .check li::before { top: 6px; }
+    .pie { margin-top: 14px; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir el módulo</button>
+<div class="hoja">
+
+  <div class="cabecera">
+    <div class="marca">M.E.T.A.S<small>Kit de Autocapacitación Técnica</small></div>
+    <div class="kit-titulo">
+      <div class="t1">Módulo 1 · Panorama</div>
+      <div class="t2">¿Qué es M.E.T.A.S técnicamente? · 1 de 8</div>
+    </div>
+  </div>
+
+  <div class="nota"><b>Cómo usar este módulo:</b> léelo completo una vez; después haz la
+  <b>lectura guiada</b> (sección 6) con los archivos abiertos en tu computadora; cierra con la
+  <b>actividad metalingüística</b> (sección 7) y el simulacro de interpelación (sección 8).
+  Dominado = puedes marcar toda la lista final sin mirar el papel.</div>
+
+  <h2><span class="num">1</span>La frase maestra (apréndela con tus palabras)</h2>
+  <div class="destacado">«M.E.T.A.S es una aplicación web estática y <i>offline-first</i>,<br>
+  que se distribuye por tres frentes —web, PWA y APK Android— desde un mismo código,<br>
+  y usa Supabase como nube para lo único que necesita servidor.»</div>
+  <p>Cada término de esa frase tiene un significado preciso que debes poder desglosar:</p>
+  <table class="guion">
+    <tr><th>Término</th><th>Qué significa aquí</th></tr>
+    <tr><td>web estática</td><td>El sitio son archivos HTML, CSS y JavaScript tal cual — no hay un programa corriendo en un servidor que "arme" las páginas. GitHub Pages solo los entrega.</td></tr>
+    <tr><td>offline-first</td><td>La app se diseñó para funcionar SIN internet primero: los datos viven en el dispositivo (localStorage) y la nube es una copia/extensión, nunca un requisito.</td></tr>
+    <tr><td>PWA</td><td><i>Progressive Web App</i>: la misma página web, pero instalable con ícono propio y capaz de abrir sin conexión gracias a un <i>service worker</i> que guarda una copia local.</td></tr>
+    <tr><td>APK Android</td><td>La app nativa para Android. No se reescribió nada: Capacitor envuelve el MISMO código web dentro de una app instalable (id <code>com.policastsapien.metas</code>).</td></tr>
+    <tr><td>un mismo código</td><td>Un solo repositorio Git. Publicar en la web es <code>git push</code>; llevarlo al APK es <code>npm run sync</code> (copia el código a <code>www/</code> y Capacitor lo empaqueta).</td></tr>
+    <tr><td>Supabase</td><td>"Backend como servicio": una base de datos PostgreSQL en la nube con funciones y reglas de seguridad. Solo se usa para lo que exige servidor: sincronizar entre dispositivos y alimentar el asistente de padres.</td></tr>
+  </table>
+
+  <h2><span class="num">2</span>El diagrama maestro: un código, cuatro frentes</h2>
+  <div class="diagrama">
+  <svg viewBox="0 0 760 400" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+    <!-- código fuente -->
+    <rect x="255" y="10" width="250" height="62" rx="12" fill="#0d417e"/>
+    <text x="380" y="36" text-anchor="middle" fill="#fff" font-size="15" font-weight="800">📁 CÓDIGO FUENTE (GitHub)</text>
+    <text x="380" y="56" text-anchor="middle" fill="#cfe0f5" font-size="11">HTML + CSS + JS puros · sin compilación</text>
+    <!-- flechas del código a los 3 frentes -->
+    <line x1="300" y1="72" x2="130" y2="130" stroke="#1565c0" stroke-width="3"/>
+    <line x1="380" y1="72" x2="380" y2="130" stroke="#1565c0" stroke-width="3"/>
+    <line x1="460" y1="72" x2="630" y2="130" stroke="#1565c0" stroke-width="3"/>
+    <text x="180" y="105" fill="#5b6773" font-size="10" text-anchor="middle">git push</text>
+    <text x="415" y="105" fill="#5b6773" font-size="10" text-anchor="middle">git push</text>
+    <text x="590" y="105" fill="#5b6773" font-size="10" text-anchor="middle">npm run sync</text>
+    <!-- frente web -->
+    <rect x="20" y="132" width="220" height="88" rx="12" fill="#f4f8fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="130" y="156" text-anchor="middle" fill="#0d417e" font-size="13" font-weight="800">🌐 WEB · GitHub Pages</text>
+    <text x="130" y="176" text-anchor="middle" fill="#22303f" font-size="10.5">metas.policastsapien.com</text>
+    <text x="130" y="192" text-anchor="middle" fill="#5b6773" font-size="10">(dominio propio vía CNAME)</text>
+    <text x="130" y="208" text-anchor="middle" fill="#5b6773" font-size="10">Cualquier navegador, sin instalar</text>
+    <!-- frente pwa -->
+    <rect x="270" y="132" width="220" height="88" rx="12" fill="#f4f8fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="380" y="156" text-anchor="middle" fill="#0d417e" font-size="13" font-weight="800">📱 PWA instalable</text>
+    <text x="380" y="176" text-anchor="middle" fill="#22303f" font-size="10.5">service worker (sw.js) guarda</text>
+    <text x="380" y="192" text-anchor="middle" fill="#22303f" font-size="10.5">copia local → abre SIN internet</text>
+    <text x="380" y="208" text-anchor="middle" fill="#5b6773" font-size="10">2 manifiestos: app + familias</text>
+    <!-- frente apk -->
+    <rect x="520" y="132" width="220" height="88" rx="12" fill="#f4f8fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="630" y="156" text-anchor="middle" fill="#0d417e" font-size="13" font-weight="800">🤖 APK Android</text>
+    <text x="630" y="176" text-anchor="middle" fill="#22303f" font-size="10.5">Capacitor envuelve el mismo</text>
+    <text x="630" y="192" text-anchor="middle" fill="#22303f" font-size="10.5">código web · firmado, Play Store</text>
+    <text x="630" y="208" text-anchor="middle" fill="#5b6773" font-size="10">com.policastsapien.metas</text>
+    <!-- nube supabase -->
+    <rect x="230" y="252" width="300" height="66" rx="12" fill="#fdf8ee" stroke="#c49000" stroke-width="2"/>
+    <text x="380" y="276" text-anchor="middle" fill="#8a6400" font-size="13" font-weight="800">☁️ NUBE · Supabase (PostgreSQL)</text>
+    <text x="380" y="296" text-anchor="middle" fill="#22303f" font-size="10.5">tablas + funciones RPC + reglas RLS · solo lo que exige servidor</text>
+    <!-- lineas punteadas frentes-nube -->
+    <line x1="130" y1="220" x2="300" y2="252" stroke="#c49000" stroke-width="2" stroke-dasharray="6 4"/>
+    <line x1="380" y1="220" x2="380" y2="252" stroke="#c49000" stroke-width="2" stroke-dasharray="6 4"/>
+    <line x1="630" y1="220" x2="460" y2="252" stroke="#c49000" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="380" y="242" text-anchor="middle" fill="#8a6400" font-size="10" font-weight="700">HTTPS · solo cuando HAY internet (offline-first)</text>
+    <!-- usuarios -->
+    <rect x="20" y="344" width="720" height="44" rx="12" fill="#eef2f7"/>
+    <text x="380" y="362" text-anchor="middle" fill="#0d417e" font-size="11.5" font-weight="800">QUIÉN LO USA</text>
+    <text x="380" y="379" text-anchor="middle" fill="#22303f" font-size="11">🧒 Alumno (misiones) · 👨‍🏫 Maestro (Zona Docente) · 👨‍👩‍👧 Familia (asistente padres.html) · 🏫 Dirección (roles y Ajustes)</text>
+    <line x1="380" y1="318" x2="380" y2="344" stroke="#9fb2c8" stroke-width="2"/>
+  </svg>
+  <div class="cap">Diagrama 1 — Un solo código fuente alimenta tres frentes de distribución; la nube es opcional y complementaria.</div>
+  </div>
+
+  <div class="nota"><b>Idea clave para defender:</b> los tres frentes NO son tres desarrollos.
+  Es un solo código que se entrega de tres maneras. Por eso una sola persona puede mantener el sistema.</div>
+
+  <div class="salto"></div>
+
+  <h2><span class="num">3</span>¿Quién usa qué? (actores y puertas de entrada)</h2>
+  <table class="guion">
+    <tr><th>Actor</th><th>Su puerta de entrada</th><th>Qué tecnología lo sostiene</th></tr>
+    <tr><td>🧒 Alumno</td><td>El index («Portada de Tres Puertas») → las 32 misiones interactivas. Se identifica con el CÓDIGO DE AULA, nunca escribe su nombre.</td><td>HTML/JS puro; progreso en localStorage; resultados suben a la nube cuando hay red.</td></tr>
+    <tr><td>👨‍🏫 Maestro</td><td>Zona Docente (dentro del index): Plan de Acción, Mi aula, boleta, Campeonísimo, etc. Entra con cuenta docente (correo + contraseña → PROF-XXXX).</td><td>7 herramientas en <code>js/tools/</code>; estado espejado en la nube para verse igual en PC y teléfono.</td></tr>
+    <tr><td>👨‍👩‍👧 Familia</td><td><code>padres.html</code>: asistente virtual conversacional. Entra con la CLAVE DE FAMILIA de su hijo (ej. 26-9GW3), jamás con nombres.</td><td>PWA propia (manifiesto e ícono aparte); lee la nube por funciones RPC con deduplicación; caché local si no hay señal.</td></tr>
+    <tr><td>🏫 Dirección</td><td>Ajustes con roles (docente / director / rector / admin) y panel docente.</td><td>Roles guardados en la nube; cada rol ve solo lo suyo (reglas RLS).</td></tr>
+  </table>
+
+  <h2><span class="num">4</span>Los números del sistema (memorízalos: dan autoridad)</h2>
+  <table class="guion">
+    <tr><th>Dato</th><th>Valor</th><th>Por qué importa al explicar</th></tr>
+    <tr><td>Misiones educativas</td><td>32 carpetas en <code>misiones/</code></td><td>Cada una con estructura idéntica de 3 archivos (HTML+JS+CSS) y 13 secciones didácticas → replicable hasta 100+.</td></tr>
+    <tr><td>Herramientas docentes</td><td>7 en <code>js/tools/</code></td><td>plan-accion, registros-admin (Mi aula), campeonismo, gobierno-escolar, parte-mensual, collage-maker, pwa-install.</td></tr>
+    <tr><td>Páginas en la raíz</td><td>10 HTML</td><td>index, padres, panel-docente, consulta-nube, registro, evaluaciones, camp-vivo, mision y 2 kits de capacitación.</td></tr>
+    <tr><td>SQL de la nube</td><td>18 archivos <code>SUPABASE-*.sql</code></td><td>Son la HISTORIA documentada de la nube: cada tabla y función tiene su archivo con comentarios de por qué existe.</td></tr>
+    <tr><td>Dependencias</td><td>4 — y las 4 son Capacitor</td><td>En <code>package.json</code> no hay ni un framework, ni librerías de moda: nada que se rompa solo con el tiempo.</td></tr>
+    <tr><td>Compilación</td><td>Ninguna</td><td>No hay <i>build step</i>: lo que está en el repo es lo que corre en el navegador. Depurar = leer el archivo.</td></tr>
+    <tr><td>Costo de infraestructura</td><td>≈ $0 + dominio anual</td><td>GitHub Pages gratis, Supabase plan Free, Cloudflare incluido por Supabase. El dominio es el único gasto fijo.</td></tr>
+    <tr><td>Versión del service worker</td><td>v27 (línea 1 de <code>sw.js</code>)</td><td>Se sube el número en CADA cambio publicado: así los teléfonos sueltan la copia vieja y toman la nueva.</td></tr>
+  </table>
+
+  <h2><span class="num">5</span>Cómo viaja un dato (versión panorámica)</h2>
+  <p>El detalle fino es el Módulo 3; aquí basta el recorrido en 5 pasos, que debes poder narrar de memoria:</p>
+  <table class="guion">
+    <tr><th>Paso</th><th>Qué pasa</th></tr>
+    <tr><td>1. Se genera</td><td>El alumno termina una evaluación (o el maestro genera un análisis). El dato nace en el dispositivo.</td></tr>
+    <tr><td>2. Se guarda local</td><td>Va a localStorage al instante. Si en ese momento se corta la luz o no hay señal, NADA se pierde.</td></tr>
+    <tr><td>3. Entra a la cola</td><td>Una copia entra al <i>outbox</i> (cola de salida) con un identificador único de evento.</td></tr>
+    <tr><td>4. Sube cuando puede</td><td>Con internet, la cola se envía a Supabase por HTTPS. Si se reintenta dos veces, el identificador único evita duplicados.</td></tr>
+    <tr><td>5. Se consulta</td><td>El maestro lo ve en su panel desde cualquier dispositivo; la familia lo consulta en el asistente con su clave.</td></tr>
+  </table>
+
+  <div class="salto"></div>
+
+  <h2><span class="num">6</span>Lectura guiada del código (30-40 min, en la computadora)</h2>
+  <p>Abre cada archivo y comprueba con tus ojos lo que este módulo afirma. Eso es lo metalingüístico: no creerle al kit, verificarlo.</p>
+  <table class="guion">
+    <tr><th>Abre…</th><th>Observa…</th></tr>
+    <tr><td><code>package.json</code></td><td>La sección <code>dependencies</code>: 4 entradas, todas <code>@capacitor/*</code>. El script <code>sync</code>: copia el código a <code>www/</code> y llama a Capacitor. Ahí está TODO el "proceso de build".</td></tr>
+    <tr><td><code>CNAME</code></td><td>Una sola línea: <code>metas.policastsapien.com</code>. Así le dice GitHub Pages a qué dominio responde.</td></tr>
+    <tr><td><code>capacitor.config.json</code></td><td>3 líneas: id de la app, nombre METAS, y <code>webDir: www</code> — la prueba de que el APK envuelve el mismo código web.</td></tr>
+    <tr><td><code>sw.js</code> (línea 1)</td><td><code>CACHE_NAME = 'meta-app-v27'</code> y la lista de archivos que la PWA guarda para funcionar sin internet.</td></tr>
+    <tr><td><code>js/metas-supabase.js</code> (líneas 1-35)</td><td>El comentario de cabecera explica el offline-first y el outbox con tus propias palabras de entonces. La clave que aparece ahí es la PÚBLICA (verás por qué eso es correcto en el Módulo 5).</td></tr>
+    <tr><td>Carpeta <code>misiones/</code></td><td>32 carpetas hermanas con la misma anatomía. Entra a una: HTML + JS + CSS, nada más.</td></tr>
+  </table>
+
+  <h2><span class="num">7</span>Actividad metalingüística de cierre</h2>
+  <ul class="check">
+    <li>Di la <b>frase maestra</b> en voz alta sin leerla, y explica sus 6 términos con ejemplos tuyos.</li>
+    <li>Dibuja el <b>diagrama maestro</b> a mano en una hoja en blanco (cajas y flechas bastan). Compara con el impreso.</li>
+    <li>Explícale el diagrama a alguien no técnico (Evelyn o Jael) en 5 minutos. Si se entendió, lo dominas.</li>
+    <li>Pídele que te haga 2 preguntas sobre lo que explicaste y respóndelas sin abrir la computadora.</li>
+  </ul>
+
+  <h2><span class="num">8</span>Simulacro de interpelación (respuestas modelo)</h2>
+
+  <div class="interp">
+    <div class="preg">«¿Dónde está tu servidor?»</div>
+    <div class="resp">No tengo servidor propio, <b>por diseño</b>. El frontend son archivos estáticos servidos por GitHub Pages, y lo único que necesita servidor —sincronizar dispositivos y atender al asistente de padres— lo hace Supabase, un backend-como-servicio sobre PostgreSQL. Menos piezas propias = menos que se cae, menos que mantener y menos que asegurar.</div>
+  </div>
+  <div class="interp">
+    <div class="preg">«¿Qué stack usas?»</div>
+    <div class="resp">HTML, CSS y JavaScript puros, sin framework y <b>sin paso de compilación</b>; Capacitor para empaquetar el APK Android; Supabase (PostgreSQL + funciones RPC + RLS) como nube; GitHub Pages con dominio propio como hosting; y service worker para que funcione offline e instalable.</div>
+  </div>
+  <div class="interp">
+    <div class="preg">«¿Y si GitHub o Supabase se caen?»</div>
+    <div class="resp">La app sigue funcionando: es <b>offline-first</b>. La PWA tiene copia local del código (service worker) y los datos del usuario viven en su dispositivo; la nube solo sincroniza. Lo pendiente de subir espera en una cola local y sube solo cuando vuelve el servicio — está probado con los cortes de energía reales de Honduras.</div>
+  </div>
+  <div class="interp">
+    <div class="preg">«¿Esto es una página web o una app de verdad?»</div>
+    <div class="resp">Las dos cosas, y esa es la gracia: <b>un mismo código</b> se entrega como sitio web, como PWA instalable con ícono propio, y como APK Android firmado (Capacitor). Tres frentes de distribución sin triplicar el desarrollo.</div>
+  </div>
+  <div class="interp">
+    <div class="preg">«¿Cuánto te cuesta la infraestructura?»</div>
+    <div class="resp">Prácticamente <b>cero</b>: GitHub Pages es gratuito, Supabase corre en plan Free, y el único gasto fijo es el dominio anual. Eso no es una casualidad: es un requisito de diseño, porque el sistema debe ser sostenible para una escuela pública sin presupuesto.</div>
+  </div>
+  <div class="interp">
+    <div class="preg">«¿Y una sola persona mantiene todo esto?»</div>
+    <div class="resp">Sí, y el diseño existe para que eso sea posible: cero frameworks (nada se rompe por dependencias ajenas), cero compilación (depurar es leer el archivo), estructura idéntica en las 32 misiones (arreglar una enseña a arreglar todas), y cada decisión de la nube documentada en su propio archivo SQL comentado.</div>
+  </div>
+
+  <h2><span class="num">✔</span>Lista de dominio del Módulo 1</h2>
+  <ul class="check">
+    <li>Digo la frase maestra completa sin leerla.</li>
+    <li>Nombro los 4 frentes (web, PWA, APK, nube) y qué papel juega cada uno.</li>
+    <li>Explico por qué NO hay servidor propio y por qué eso es una fortaleza.</li>
+    <li>Explico qué es una PWA y qué hace el service worker (y por qué se versiona).</li>
+    <li>Narro de memoria los 5 pasos del viaje de un dato.</li>
+    <li>Respondo las 6 interpelaciones sin ver las respuestas modelo.</li>
+  </ul>
+
+  <div class="pie">
+    <span>M.E.T.A.S · Kit de Autocapacitación Técnica · Módulo 1 de 8</span>
+    <span>Siguiente: Módulo 2 — El frontend y sus piezas</span>
+  </div>
+</div>
+</body>
+</html>

@@ -128,7 +128,7 @@ te interpele o cuestione, con seguridad y con tus propias palabras.
 
 ## 4. Estado
 
-- [ ] Módulo 1 — Panorama
+- [x] Módulo 1 — Panorama → `kit-auto-1.html` (17 jul 2026)
 - [ ] Módulo 2 — Frontend
 - [ ] Módulo 3 — Datos locales
 - [ ] Módulo 4 — Nube Supabase
