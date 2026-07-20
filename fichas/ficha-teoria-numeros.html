@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Teoría de Números: Divisibilidad, m.c.m. y M.C.D.</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=reglas de divisibilidad,
+       naranja=m.c.m. (coincidir), verde=M.C.D. (repartir)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --divi: #1e40af; --mcm: #c2410c; --mcd: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+
+  /* Cadena del detector de divisibilidad */
+  .mover { display: inline-flex; align-items: center; gap: 9px; font-family: 'Cambria Math', Georgia, serif; font-size: 12pt; font-weight: 700; flex-wrap: wrap; justify-content: center; }
+  .mover .paso { background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 4px 10px; }
+  .mover .paso.ok { background: #dcfce7; border-color: #b9e6c6; color: var(--mcd); }
+  .mover .flecha { color: var(--mat); font-weight: 800; font-size: 9pt; }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .coinc { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .repar { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .prim { background: #ede9fe; border: 1px solid #d3c9f5; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .coinc b { color: var(--mcm); } .tri .repar b { color: var(--mcd); } .tri .prim b { color: #6b21a8; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .mover .paso.ok
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Teoría de Números</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> II Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Reglas de divisibilidad (2, 3, 5, 9, 10 y 11), múltiplos y divisores, m.c.m. y M.C.D., primos y compuestos</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-teoria-numeros.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender la <strong>divisibilidad</strong>: la división es exacta cuando el residuo es cero.</li>
+      <li>Distinguir <strong>divisor</strong> y <strong>múltiplo</strong> como las dos caras de la misma división exacta.</li>
+      <li>Aplicar las <strong>reglas de divisibilidad</strong> del 2, 3, 5, 9, 10 y 11 sin hacer la división.</li>
+      <li>Calcular el <strong>m.c.m.</strong> (mínimo común múltiplo) para resolver problemas de coincidencia.</li>
+      <li>Calcular el <strong>M.C.D.</strong> (máximo común divisor) para resolver problemas de reparto en partes iguales.</li>
+      <li>Reconocer los números <strong>primos, compuestos y primos entre sí</strong>.</li>
+    </ol>
+
+    <h2>🕵️ 1. ¿Qué es la divisibilidad?</h2>
+    <p>Un número es <strong>divisible</strong> entre otro cuando al dividirlos el residuo es <strong>cero</strong>
+    (la división es exacta). 12 es divisible entre 3 porque 12 ÷ 3 = 4 con residuo 0.</p>
+    <div class="caja idea">💡 <b>Idea clave:</b> si 12 ÷ 3 es exacta, entonces <strong>3 es divisor de 12</strong>
+    y <strong>12 es múltiplo de 3</strong>. Divisor y múltiplo son las dos caras de la misma moneda.</div>
+    <div class="caja regla">⚡ <b>El superpoder:</b> las reglas de divisibilidad te permiten saberlo
+    <strong>sin hacer la división</strong> — solo observando las cifras del número.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>Si la suma sale grande, vuelve a sumar</b>»:
+    para 6,975 → 6+9+7+5 = 27 → 2+7 = 9. Como llegas a 9, es divisible entre 9 (y entre 3).</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">El detective: ¿4,518 es divisible entre 9? (sin dividir)</div>
+      <div class="mover">
+        <span class="paso">4,518</span>
+        <span class="flecha">SUMA LAS CIFRAS →</span>
+        <span class="paso">4+5+1+8 = 18</span>
+        <span class="flecha">¿MÚLTIPLO DE 9? →</span>
+        <span class="paso ok">SÍ es divisible ✔</span>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ Comprobación: 4,518 ÷ 9 = 502 exacto. ¡La regla funcionó sin dividir!</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Teoría de Números</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>📜 2. Las reglas de divisibilidad</h2>
+    <table>
+      <tr><th>Entre</th><th>Regla</th><th>Ejemplo</th></tr>
+      <tr><td class="k">2</td><td>Termina en 0, 2, 4, 6 u 8 (número par).</td><td>736 ✔ (termina en 6)</td></tr>
+      <tr><td class="k">5</td><td>Termina en 0 o 5.</td><td>890 ✔ · 875 ✔</td></tr>
+      <tr><td class="k">10</td><td>Termina en 0. (Entonces también es divisible entre 2 y 5.)</td><td>4,570 ✔ · 4,575 ✘</td></tr>
+      <tr><td class="k">3</td><td>La SUMA de sus cifras es múltiplo de 3.</td><td>423 → 4+2+3 = 9 ✔</td></tr>
+      <tr><td class="k">9</td><td>La SUMA de sus cifras es múltiplo de 9.</td><td>2,835 → 2+8+3+5 = 18 ✔</td></tr>
+      <tr><td class="k">11</td><td>La suma ALTERNADA de sus cifras da 0 o múltiplo de 11.</td><td>121 → (1+1) − 2 = 0 ✔</td></tr>
+    </table>
+
+    <h2>🪜 3. Los 4 pasos del detective de divisibilidad</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>¿2, 5 o 10?</b>Mira solo la ÚLTIMA cifra del número.</div>
+      <div><span class="pn">2</span><b>¿3 o 9?</b>SUMA todas las cifras y revisa esa suma.</div>
+      <div><span class="pn">3</span><b>¿11?</b>Haz la suma ALTERNADA (+ − + − desde la derecha).</div>
+      <div><span class="pn">4</span><b>Concluye</b>Declara el veredicto sin haber dividido nada.</div>
+    </div>
+
+    <h3>🔢 Primos, compuestos y primos entre sí</h3>
+    <table>
+      <tr><th>Tipo</th><th>¿Cómo es?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">Número primo</td><td>Tiene exactamente DOS divisores: 1 y él mismo.</td><td>2, 3, 5, 7, 11, 13…</td></tr>
+      <tr><td class="k">Número compuesto</td><td>Tiene MÁS de dos divisores.</td><td>12 (tiene seis: 1, 2, 3, 4, 6, 12)</td></tr>
+      <tr><td class="k">Primos entre sí</td><td>Dos números cuyo ÚNICO divisor común es 1.</td><td>8 y 15 → M.C.D. = 1</td></tr>
+    </table>
+
+    <h2>🐸 4. m.c.m. y M.C.D.: los dos ayudantes</h2>
+    <div class="ilus">
+      <div class="ilus-t">La carrera al m.c.m.: la rana salta de 4 en 4 y el conejo de 6 en 6</div>
+      <p style="font-size:11pt;font-family:'Cambria Math',Georgia,serif;margin:0;">
+        Rana: 4, 8, <strong style="color:var(--mcm);">12</strong>, 16, 20, <strong style="color:var(--mcm);">24</strong>… &nbsp;·&nbsp;
+        Conejo: 6, <strong style="color:var(--mcm);">12</strong>, 18, <strong style="color:var(--mcm);">24</strong>…
+      </p>
+      <p style="font-size:9.5pt;margin:6px 0 0;">Caen juntos por primera vez en la casilla <strong style="color:var(--mcm);">12</strong>: ese es el <strong>m.c.m.(4, 6) = 12</strong>.</p>
+    </div>
+    <p><strong>M.C.D.(12, 18):</strong> divisores de 12: 1, 2, 3, 4, 6, 12 · divisores de 18: 1, 2, 3, 6, 9, 18 →
+    comunes: 1, 2, 3, 6 → el mayor es <strong style="color:var(--mcd);">6</strong>.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Teoría de Números</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">⚖️ 5. ¿Cuándo uso cada uno?</h2>
+    <div class="tri">
+      <div class="coinc"><b>🟠 ¿COINCIDEN? → m.c.m.</b>Dos cosas que se repiten y quieres saber cuándo pasan JUNTAS. Buses cada 15 y 20 min → juntos cada 60 min.</div>
+      <div class="repar"><b>🟢 ¿REPARTO? → M.C.D.</b>Dividir en partes iguales lo más GRANDES posible. 24 lápices y 36 borradores → 12 paquetes iguales.</div>
+      <div class="prim"><b>⚖️ ¿Sin divisores comunes? → M.C.D. = 1</b>8 y 15 no comparten nada más que el 1: son primos entre sí.</div>
+    </div>
+
+    <h3>📋 Casos comunes</h3>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">¿736 divisible entre 2?</td><td>Termina en 6 (par)</td><td>Sí ✔</td></tr>
+      <tr><td class="k">¿2,835 divisible entre 9?</td><td>2+8+3+5 = 18, múltiplo de 9</td><td>Sí ✔</td></tr>
+      <tr><td class="k">¿209 divisible entre 11?</td><td>(9+2) − 0 = 11</td><td>Sí ✔ (209 ÷ 11 = 19)</td></tr>
+      <tr><td class="k">m.c.m.(6, 8)</td><td>6, 12, 18, 24… · 8, 16, 24…</td><td>24</td></tr>
+      <tr><td class="k">M.C.D.(24, 36)</td><td>Divisores comunes: 1,2,3,4,6,12</td><td>12</td></tr>
+      <tr><td class="k">Buses cada 15 y 20 min</td><td>Coincidencia → m.c.m.(15, 20)</td><td>Cada 60 minutos</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">«Divisible entre 3 si termina en 3, 6 o 9»</td><td>La regla del 3 no mira la última cifra: mira la SUMA. 13 termina en 3 y no es divisible.</td><td>Sumar las cifras: 423 → 9 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir m.c.m. con M.C.D. en problemas</td><td>Usar el M.C.D. para los buses da «cada 5 min», un disparate.</td><td>Coincidir = m.c.m. · Repartir = M.C.D. ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">«El m.c.m. es el producto»</td><td>m.c.m.(4, 6) no es 24: los múltiplos coinciden antes.</td><td>m.c.m.(4, 6) = 12 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">«El M.C.D. de 8 y 15 no existe»</td><td>Todo par de números comparte al menos el divisor 1.</td><td>M.C.D.(8, 15) = 1: primos entre sí ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir múltiplo con divisor</td><td>«12 es divisor de 3». Es al revés: el pequeño divide, el grande se deja dividir.</td><td>3 es divisor de 12 · 12 es múltiplo de 3 ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> en la terminal, si el bus a La Ceiba sale cada <strong>15
+    minutos</strong> y el de Tela cada <strong>20</strong>, salen juntos cada <strong>60 minutos</strong>
+    (m.c.m.). Y para repartir <strong>24 naranjas y 36 mangos</strong> en canastas iguales lo más grandes
+    posible, el M.C.D. responde: <strong>12 canastas</strong>. ¡Dos ayudantes para dos trabajos distintos!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Teoría de Números</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Un número es divisible entre otro cuando el residuo de la división es <span class="linea-resp"></span>.</li>
+      <li>Si 12 ÷ 3 es exacta, entonces 3 es <span class="linea-resp"></span> de 12 y 12 es múltiplo de 3.</li>
+      <li>Un número es divisible entre 2 si su última cifra es <span class="linea-resp"></span> (0, 2, 4, 6 u 8).</li>
+      <li>Un número es divisible entre 5 si termina en 0 o en <span class="linea-resp"></span>.</li>
+      <li>Para las reglas del 3 y del 9 se revisa la <span class="linea-resp"></span> de las cifras.</li>
+      <li>Para la regla del 11 se usa la suma <span class="linea-resp"></span> de las cifras.</li>
+      <li>El m.c.m. es el múltiplo común más <span class="linea-resp"></span>.</li>
+      <li>El M.C.D. es el divisor común más <span class="linea-resp"></span>.</li>
+      <li>Un número primo tiene exactamente <span class="linea-resp"></span> divisores.</li>
+      <li>Dos números cuyo único divisor común es 1 se llaman primos <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Un número es divisible entre otro cuando el residuo de la división es cero.</li>
+      <li>____ 432 es divisible entre 9 porque 4 + 3 + 2 = 9.</li>
+      <li>____ Un número es divisible entre 3 si termina en 3, 6 o 9.</li>
+      <li>____ 121 es divisible entre 11 porque su suma alternada da 0.</li>
+      <li>____ El m.c.m. de dos números siempre es su producto.</li>
+      <li>____ El M.C.D. de 12 y 18 es 6.</li>
+      <li>____ El m.c.m. se usa para repartir en partes iguales.</li>
+      <li>____ Todo número divisible entre 9 también es divisible entre 3.</li>
+      <li>____ El M.C.D. de 8 y 15 es 1 porque son primos entre sí.</li>
+      <li>____ Un número que termina en 0 es divisible entre 2, 5 y 10.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Teoría de Números</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál de estos números es divisible entre 9?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 4,132</span>
+        <span class="op"><i>b</i> 4,518</span>
+        <span class="op"><i>c</i> 517</span>
+        <span class="op"><i>d</i> 1,234</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Por qué 121 es divisible entre 11?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> porque termina en 1</span>
+        <span class="op"><i>b</i> porque 1 + 2 + 1 = 4</span>
+        <span class="op"><i>c</i> porque (1+1) − 2 = 0</span>
+        <span class="op"><i>d</i> porque es impar</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál es el m.c.m. de 6 y 8?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 48</span>
+        <span class="op"><i>b</i> 2</span>
+        <span class="op"><i>c</i> 24</span>
+        <span class="op"><i>d</i> 14</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es el M.C.D. de 12 y 18?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 6</span>
+        <span class="op"><i>b</i> 36</span>
+        <span class="op"><i>c</i> 2</span>
+        <span class="op"><i>d</i> 3</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>Un número termina en 0. ¿Entre cuáles es SEGURO que es divisible?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> solo entre 10</span>
+        <span class="op"><i>b</i> entre 2, 5 y 10</span>
+        <span class="op"><i>c</i> entre 3 y 9</span>
+        <span class="op"><i>d</i> entre 11</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué regla usas para saber si un número es divisible entre 3?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> mirar la última cifra</span>
+        <span class="op"><i>b</i> sumar todas sus cifras</span>
+        <span class="op"><i>c</i> la suma alternada</span>
+        <span class="op"><i>d</i> contar las cifras</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>Dos buses salen de la terminal: uno cada 15 minutos y otro cada 20. ¿Cada cuánto salen juntos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cada 5 min (M.C.D.)</span>
+        <span class="op"><i>b</i> cada 60 min (m.c.m.)</span>
+        <span class="op"><i>c</i> cada 35 min</span>
+        <span class="op"><i>d</i> cada 300 min</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>Quiero repartir 24 lápices y 36 borradores en paquetes iguales, lo más grandes posible. ¿Cuántos paquetes armo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 72 (m.c.m.)</span>
+        <span class="op"><i>b</i> 6</span>
+        <span class="op"><i>c</i> 12 (M.C.D.)</span>
+        <span class="op"><i>d</i> 4</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál es el M.C.D. de 8 y 15?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 0</span>
+        <span class="op"><i>b</i> no existe</span>
+        <span class="op"><i>c</i> 1</span>
+        <span class="op"><i>d</i> 120</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál de estos números es divisible entre 11?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 209</span>
+        <span class="op"><i>b</i> 123</span>
+        <span class="op"><i>c</i> 456</span>
+        <span class="op"><i>d</i> 87</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Teoría de Números</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Divisibilidad</td><td>A. La división es exacta: el residuo es cero</td></tr>
+      <tr><td>2. ____ Múltiplo</td><td>B. Resultado de multiplicar por 1, 2, 3…: los de 4 son 4, 8, 12…</td></tr>
+      <tr><td>3. ____ Divisor</td><td>C. Número que divide a otro de forma exacta</td></tr>
+      <tr><td>4. ____ Regla del 2</td><td>D. Termina en 0, 2, 4, 6 u 8 (número par)</td></tr>
+      <tr><td>5. ____ Regla del 9</td><td>E. La suma de sus cifras es múltiplo de 9</td></tr>
+      <tr><td>6. ____ Regla del 11</td><td>F. La suma alternada da 0 o múltiplo de 11</td></tr>
+      <tr><td>7. ____ m.c.m.</td><td>G. El múltiplo común más pequeño: dice cuándo COINCIDEN</td></tr>
+      <tr><td>8. ____ M.C.D.</td><td>H. El divisor común más grande: sirve para REPARTIR</td></tr>
+      <tr><td>9. ____ Número primo</td><td>I. Tiene exactamente dos divisores: 1 y él mismo</td></tr>
+      <tr><td>10. ____ Primos entre sí</td><td>J. Su único divisor común es 1, como 8 y 15</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Teoría de Números.</b> Ahora eres un detective: descubres si un
+      número es divisible mirando su última cifra, sumando sus cifras o alternándolas — sin dividir nada. Sabes que
+      el m.c.m. responde «¿cuándo coinciden?» y el M.C.D. «¿cómo reparto en partes iguales?», y reconoces a los
+      primos de un vistazo. ¡De la terminal de buses a las canastas del mercado, los números ya no te esconden
+      secretos! 🕵️✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Aplicó las reglas de divisibilidad y calculó m.c.m. y M.C.D. de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Teoría de Números</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. cero (0) &nbsp; 2. divisor &nbsp; 3. par &nbsp; 4. 5 (cinco) &nbsp; 5. suma &nbsp; 6. alternada &nbsp; 7. pequeño &nbsp; 8. grande &nbsp; 9. dos (2) &nbsp; 10. entre sí</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2V, 3F, 4V, 5F, 6V, 7F, 8V, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3c, 4a, 5b, 6b, 7b, 8c, 9c, 10a</div>
+      <div><span class="pt">IV. Pareados:</span> 1A, 2B, 3C, 4D, 5E, 6F, 7G, 8H, 9I, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Teoría de Números: Divisibilidad, m.c.m. y M.C.D.» (II Ciclo). Puede utilizarse como guía de estudio impresa
+      o digital antes de la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F,
+      selección múltiple, pareados) y puede complementarse con el juego del detective en el pizarrón (números grandes al
+      azar y veredicto sin dividir), la carrera de saltos sobre una recta dibujada en el patio (m.c.m.) y repartos reales
+      con semillas o tapitas (M.C.D.). Etapa 3 de la Ruta del Número del II Ciclo, entre «Recta Numérica» y «Múltiplos,
+      Divisores y Primos». La misión interactiva (código QR de la portada) permite al estudiante practicar con
+      retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Teoría de Números · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
