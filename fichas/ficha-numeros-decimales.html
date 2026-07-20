@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Números Decimales</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=parte entera, naranja=décimas,
+       verde=centésimas, morado=milésimas (los mismos del laboratorio
+       interactivo de la misión)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --ent: #1976d2; --dec: #f57c00; --cen: #388e3c; --mil: #7b1fa2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+
+  /* Tabla de valor posicional del laboratorio (47.368) */
+  table.vp { text-align: center; }
+  table.vp th { text-align: center; padding: 4px 4px; font-size: 8.5pt; }
+  table.vp th.ent { background: var(--ent); }
+  table.vp th.pto { background: #5b6773; }
+  table.vp th.dec { background: var(--dec); }
+  table.vp th.cen { background: var(--cen); }
+  table.vp th.mil { background: var(--mil); }
+  table.vp td { padding: 3px 4px; }
+  table.vp td.cifra { font-size: 16pt; font-weight: 800; }
+  table.vp td.cifra.cent { color: var(--ent); }
+  table.vp td.cifra.cpto { color: var(--tinta); }
+  table.vp td.cifra.cdec { color: var(--dec); }
+  table.vp td.cifra.ccen { color: var(--cen); }
+  table.vp td.cifra.cmil { color: var(--mil); }
+  table.vp td.valorvp { font-size: 8pt; color: var(--gris); }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .mayor { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .menor { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .igual { background: #ede9fe; border: 1px solid #d3c9f5; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .mayor b { color: #1e40af; } .tri .menor b { color: #c2410c; } .tri .igual b { color: #6b21a8; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Números Decimales</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> II y III Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El punto decimal, el valor posicional (décimas, centésimas, milésimas), lectura, comparación, redondeo y operaciones</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-numeros-decimales.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Identificar la <strong>parte entera</strong> y la <strong>parte decimal</strong> de un número, separadas por el punto decimal.</li>
+      <li>Ubicar las posiciones decimales: <strong>décimas (1/10), centésimas (1/100), milésimas (1/1,000)</strong> y diezmilésimas.</li>
+      <li>Leer correctamente un decimal con el nombre de su última posición (4.35 = «cuatro enteros treinta y cinco centésimas»).</li>
+      <li>Comparar decimales <strong>dígito a dígito desde la izquierda</strong> y redondear con la regla del 5.</li>
+      <li>Sumar y restar decimales <strong>alineando los puntos</strong>, y mover el punto al multiplicar o dividir por 10, 100 y 1,000.</li>
+      <li>Reconocer las <strong>fracciones decimales equivalentes</strong> más usadas (1/2 = 0.5, 1/4 = 0.25, 3/4 = 0.75).</li>
+    </ol>
+
+    <h2>🔢 1. ¿Qué es un número decimal?</h2>
+    <p>Un <strong>número decimal</strong> tiene dos partes separadas por un <strong>punto decimal (.)</strong>:
+    la <strong>parte entera</strong> a la izquierda y la <strong>parte decimal</strong> a la derecha.
+    En <strong>47.368</strong>, el 47 es la parte entera y .368 es la parte decimal.</p>
+    <div class="caja regla">⚡ <b>Regla hondureña:</b> Honduras usa el <strong>punto (.)</strong> como separador
+    decimal. La <strong>coma (,)</strong> se usa solo para separar los miles: 1,000 · 10,000 · 1,000,000.
+    Nunca uses coma como decimal.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> a la derecha del punto, cada posición vale <strong>diez veces
+    menos</strong> que la anterior. La escalera de los números sigue bajando: décimas, centésimas, milésimas…</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>Los ceros de la derecha no pesan</b>»:
+    agregar ceros al final de la parte decimal no cambia el valor: 2.5 = 2.50 = 2.500. ¡Úsalo para comparar y restar!</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">El número 47.368 en la tabla de valor posicional (los colores del laboratorio de la misión)</div>
+      <table class="vp">
+        <tr><th class="ent" colspan="2">🔵 PARTE ENTERA</th><th class="pto">PUNTO</th><th class="dec">🟠 DÉCIMAS</th><th class="cen">🟢 CENTÉSIMAS</th><th class="mil">🟣 MILÉSIMAS</th></tr>
+        <tr><th class="ent">Decenas</th><th class="ent">Unidades</th><th class="pto">·</th><th class="dec">1/10</th><th class="cen">1/100</th><th class="mil">1/1,000</th></tr>
+        <tr>
+          <td class="cifra cent">4</td><td class="cifra cent">7</td><td class="cifra cpto">.</td>
+          <td class="cifra cdec">3</td><td class="cifra ccen">6</td><td class="cifra cmil">8</td>
+        </tr>
+        <tr>
+          <td class="valorvp">= 40</td><td class="valorvp">= 7</td><td class="valorvp">&nbsp;</td>
+          <td class="valorvp">= 0.3</td><td class="valorvp">= 0.06</td><td class="valorvp">= 0.008</td>
+        </tr>
+      </table>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ 47.368 = 40 + 7 + <strong style="color:var(--dec);">0.3</strong> + <strong style="color:var(--cen);">0.06</strong> + <strong style="color:var(--mil);">0.008</strong>. ¡Cada dígito vale según su lugar!</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Decimales</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>📖 2. Cómo se LEE un número decimal</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Lee la parte entera</b>El número antes del punto, normal.</div>
+      <div><span class="pn">2</span><b>Di «enteros»</b>Esa palabra marca dónde está el punto.</div>
+      <div><span class="pn">3</span><b>Lee la parte decimal</b>Como si fuera un número normal.</div>
+      <div><span class="pn">4</span><b>Di el apellido</b>El nombre de la ÚLTIMA posición: décimas, centésimas o milésimas.</div>
+    </div>
+    <div class="ilus">
+      <div class="ilus-t">Ejemplo: leamos 4.35</div>
+      <p style="font-size:12pt;margin:0;"><strong>4.35</strong> → «cuatro <strong style="color:var(--ent);">enteros</strong> treinta y cinco <strong style="color:var(--cen);">centésimas</strong>»</p>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;">El 5 (última cifra) cae en las centésimas: por eso el apellido es «centésimas». También se acepta la forma corta: «cuatro punto treinta y cinco».</p>
+    </div>
+
+    <h3>🪜 Las posiciones después del punto</h3>
+    <table>
+      <tr><th>Posición</th><th>Vale</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🟠 Décimas</td><td>1/10 = 0.1 (1.er lugar decimal)</td><td>En 0.7, el 7 vale 7/10.</td></tr>
+      <tr><td class="k">🟢 Centésimas</td><td>1/100 = 0.01 (2.º lugar decimal)</td><td>En 0.04, el 4 vale 4/100.</td></tr>
+      <tr><td class="k">🟣 Milésimas</td><td>1/1,000 = 0.001 (3.er lugar decimal)</td><td>En 0.009, el 9 vale 9/1,000.</td></tr>
+      <tr><td class="k">🟤 Diezmilésimas</td><td>1/10,000 = 0.0001 (4.º lugar decimal)</td><td>En 0.0003, el 3 vale 3/10,000.</td></tr>
+    </table>
+
+    <h2>🔁 3. Fracciones y decimales: la misma cantidad</h2>
+    <p>Una <strong>fracción decimal</strong> tiene denominador 10, 100 o 1,000. Muchas fracciones comunes tienen
+    su «gemelo» decimal — apréndete estas parejas de memoria:</p>
+    <table>
+      <tr><th>Fracción</th><th>Decimal</th><th>Se dice</th><th>Fracción</th><th>Decimal</th><th>Se dice</th></tr>
+      <tr><td class="k">1/2</td><td>0.5</td><td>medio</td><td class="k">1/5</td><td>0.2</td><td>un quinto</td></tr>
+      <tr><td class="k">1/4</td><td>0.25</td><td>un cuarto</td><td class="k">2/5</td><td>0.4</td><td>dos quintos</td></tr>
+      <tr><td class="k">3/4</td><td>0.75</td><td>tres cuartos</td><td class="k">1/10</td><td>0.1</td><td>una décima</td></tr>
+      <tr><td class="k">1/8</td><td>0.125</td><td>un octavo</td><td class="k">1/100</td><td>0.01</td><td>una centésima</td></tr>
+    </table>
+
+    <h2>➕ 4. Operaciones con decimales</h2>
+    <table>
+      <tr><th>Operación</th><th>La clave</th><th>Ejemplo</th></tr>
+      <tr><td class="k">➕ Suma</td><td>Alinea los puntos en columna, uno debajo del otro.</td><td>2.5 + 1.35 = 3.85</td></tr>
+      <tr><td class="k">➖ Resta</td><td>Alinea los puntos y agrega ceros si faltan cifras.</td><td>5.0 − 2.35 = 2.65</td></tr>
+      <tr><td class="k">✖️ Multiplicación</td><td>Multiplica sin punto y luego cuenta los decimales de AMBOS factores.</td><td>0.3 × 0.2 = 0.06</td></tr>
+      <tr><td class="k">➗ División ÷10</td><td>El punto se mueve a la IZQUIERDA.</td><td>4.5 ÷ 10 = 0.45</td></tr>
+      <tr><td class="k">✖️ Multiplicar ×10</td><td>El punto se mueve a la DERECHA.</td><td>4.5 × 10 = 45.0</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Decimales</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">⚖️ 5. Comparar y redondear</h2>
+    <p>Para comparar decimales, revisa <strong>dígito a dígito desde la izquierda</strong>. Si un número tiene
+    menos cifras decimales, agrégale ceros a la derecha para emparejar.</p>
+    <div class="tri">
+      <div class="mayor"><b>🔵 Compara las décimas primero</b>0.8 &gt; 0.75 porque en las décimas 8 &gt; 7. ¡No te dejes engañar por el «75»!</div>
+      <div class="menor"><b>🟠 Empareja con ceros</b>¿0.6 o 0.60? Son IGUALES: 0.60 solo tiene un cero de adorno.</div>
+      <div class="igual"><b>⚖️ Redondea con la regla del 5</b>Si el dígito siguiente es 5 o más, sube 1; si es menor, queda igual. 3.67 → 3.7</div>
+    </div>
+
+    <h3>📋 Casos comunes</h3>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">¿0.8 o 0.75?</td><td>0.80 vs 0.75: décimas 8 &gt; 7</td><td>0.8 es mayor</td></tr>
+      <tr><td class="k">Redondear 4.56 a la décima</td><td>El 6 es ≥ 5: el 5 sube a 6</td><td>4.6</td></tr>
+      <tr><td class="k">1.5 + 2.35</td><td>Alinear puntos: 1.50 + 2.35</td><td>3.85</td></tr>
+      <tr><td class="k">5.0 − 2.35</td><td>Alinear y agregar ceros: 5.00 − 2.35</td><td>2.65</td></tr>
+      <tr><td class="k">0.3 × 0.2</td><td>3 × 2 = 6, con 2 decimales en total</td><td>0.06</td></tr>
+      <tr><td class="k">7/10 como decimal</td><td>7 décimas</td><td>0.70 (= 0.7)</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Usar coma como decimal</td><td>«Tres y medio se escribe 3,5». En Honduras la coma separa MILES, no decimales.</td><td>3.5 con punto ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que más cifras = mayor</td><td>«0.79 &gt; 0.8 porque 79 &gt; 8». Se compara por posición: 0.80 vs 0.79 → décimas 8 = 8, centésimas 0 &gt; ¡no! 0.80 &gt; 0.79.</td><td>0.8 &gt; 0.79 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Sumar sin alinear los puntos</td><td>Pegar los números a la derecha mezcla décimas con centésimas y da cualquier cosa.</td><td>Punto bajo punto: 2.50 + 1.35 = 3.85 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Redondear siempre hacia abajo</td><td>«2.75 a la décima es 2.7». El 5 obliga a subir.</td><td>2.75 → 2.8 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar contar los decimales al multiplicar</td><td>«0.3 × 0.2 = 0.6». Hay DOS cifras decimales en total (una de cada factor).</td><td>0.3 × 0.2 = 0.06 ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> los decimales viven en el lempira. En la pulpería, la libra de
+    frijoles puede costar <strong>L 25.50</strong>; en la báscula pesamos <strong>2.5 libras</strong> de azúcar;
+    y el vuelto de un billete de L 100 por una compra de L 87.25 es <strong>L 12.75</strong>. ¡Quien domina los
+    decimales nunca pierde en el mercado!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Decimales</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Un número decimal tiene parte entera y parte decimal separadas por un <span class="linea-resp"></span>.</li>
+      <li>En Honduras, la coma (,) se usa para separar los <span class="linea-resp"></span>.</li>
+      <li>El primer lugar después del punto son las <span class="linea-resp"></span>.</li>
+      <li>El segundo lugar después del punto son las <span class="linea-resp"></span>.</li>
+      <li>En 5.237, el 7 está en las <span class="linea-resp"></span>.</li>
+      <li>Para sumar o restar decimales se alinean los <span class="linea-resp"></span>.</li>
+      <li>Al multiplicar por 10, el punto se mueve a la <span class="linea-resp"></span>.</li>
+      <li>Al redondear, si el dígito siguiente es 5 o más, se le <span class="linea-resp"></span> 1 al dígito.</li>
+      <li>La fracción 1/2 equivale al decimal <span class="linea-resp"></span>.</li>
+      <li>El número 4.35 se lee: «cuatro enteros treinta y cinco <span class="linea-resp"></span>».</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El punto decimal (.) separa la parte entera de la parte decimal en Honduras.</li>
+      <li>____ 0.9 es menor que 0.89.</li>
+      <li>____ Las décimas representan 1/10 del entero.</li>
+      <li>____ 0.5 es igual a 1/2.</li>
+      <li>____ Para sumar decimales no importa la posición del punto decimal.</li>
+      <li>____ 0.100 es igual a 0.1.</li>
+      <li>____ Al redondear 2.75 a la décima, el resultado es 2.7.</li>
+      <li>____ La fracción 1/4 equivale al decimal 0.25.</li>
+      <li>____ 0.60 es menor que 0.6.</li>
+      <li>____ Las centésimas tienen menor valor que las décimas.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Decimales</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué símbolo se usa en Honduras para separar la parte entera de la decimal?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la coma (,)</span>
+        <span class="op"><i>b</i> el punto (.)</span>
+        <span class="op"><i>c</i> el guion (-)</span>
+        <span class="op"><i>d</i> la barra (/)</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál es el valor posicional del dígito 5 en 0.05?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> décimas</span>
+        <span class="op"><i>b</i> unidades</span>
+        <span class="op"><i>c</i> centésimas</span>
+        <span class="op"><i>d</i> milésimas</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cómo se lee correctamente el número 3.7?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> treinta y siete</span>
+        <span class="op"><i>b</i> tres coma siete</span>
+        <span class="op"><i>c</i> tres enteros siete décimas</span>
+        <span class="op"><i>d</i> tres punto siete centésimas</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál de estos números es el mayor?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 0.75</span>
+        <span class="op"><i>b</i> 0.8</span>
+        <span class="op"><i>c</i> 0.079</span>
+        <span class="op"><i>d</i> 0.7</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>Al redondear 4.56 a la décima más cercana, ¿cuál es el resultado?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 4.5</span>
+        <span class="op"><i>b</i> 5.0</span>
+        <span class="op"><i>c</i> 4.6</span>
+        <span class="op"><i>d</i> 4.55</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuánto es 1.5 + 2.35?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 3.80</span>
+        <span class="op"><i>b</i> 3.85</span>
+        <span class="op"><i>c</i> 3.90</span>
+        <span class="op"><i>d</i> 4.85</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>En el número 7.843, ¿qué dígito está en las milésimas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 7</span>
+        <span class="op"><i>b</i> 8</span>
+        <span class="op"><i>c</i> 4</span>
+        <span class="op"><i>d</i> 3</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cuál es la fracción equivalente a 0.25?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 2/5</span>
+        <span class="op"><i>b</i> 1/4</span>
+        <span class="op"><i>c</i> 1/2</span>
+        <span class="op"><i>d</i> 25/10</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuánto es 5.0 − 2.35?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 3.65</span>
+        <span class="op"><i>b</i> 2.75</span>
+        <span class="op"><i>c</i> 2.65</span>
+        <span class="op"><i>d</i> 3.75</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuánto es 4.5 × 10?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 4.50</span>
+        <span class="op"><i>b</i> 45.0</span>
+        <span class="op"><i>c</i> 0.45</span>
+        <span class="op"><i>d</i> 450</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Decimales</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Número decimal</td><td>A. Tiene parte entera y parte decimal separadas por un punto</td></tr>
+      <tr><td>2. ____ Punto decimal</td><td>B. En Honduras separa la parte entera de la decimal</td></tr>
+      <tr><td>3. ____ Décimas</td><td>C. Primer lugar después del punto: vale 1/10</td></tr>
+      <tr><td>4. ____ Centésimas</td><td>D. Segundo lugar después del punto: vale 1/100</td></tr>
+      <tr><td>5. ____ Milésimas</td><td>E. Tercer lugar después del punto: vale 1/1,000</td></tr>
+      <tr><td>6. ____ Valor posicional</td><td>F. El valor de un dígito según el lugar que ocupa</td></tr>
+      <tr><td>7. ____ Redondear</td><td>G. Si el dígito siguiente es 5 o más, se suma 1</td></tr>
+      <tr><td>8. ____ Comparar decimales</td><td>H. Se revisa dígito a dígito desde la izquierda</td></tr>
+      <tr><td>9. ____ Suma de decimales</td><td>I. Se alinean los puntos decimales en columna</td></tr>
+      <tr><td>10. ____ Fracción decimal</td><td>J. Fracción con denominador 10, 100 o 1,000</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Números Decimales.</b> Ahora dominas el punto decimal y su
+      escalera descendente de décimas, centésimas y milésimas; sabes leer, comparar, redondear y operar decimales
+      alineando los puntos; y reconoces las fracciones gemelas como 1/2 = 0.5. ¡Con esta destreza el vuelto de la
+      pulpería, la báscula y los precios del mercado ya no tienen secretos para ti! 🔢✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió sumas, restas y redondeos de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Decimales</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. punto decimal &nbsp; 2. miles (millares) &nbsp; 3. décimas &nbsp; 4. centésimas &nbsp; 5. milésimas &nbsp; 6. puntos decimales &nbsp; 7. derecha &nbsp; 8. suma &nbsp; 9. 0.5 &nbsp; 10. centésimas</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7F, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3c, 4b, 5c, 6b, 7d, 8b, 9c, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1A, 2B, 3C, 4D, 5E, 6F, 7G, 8H, 9I, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Números Decimales». Puede utilizarse como guía de estudio impresa o digital antes de la evaluación final.
+      Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple, pareados) y puede
+      complementarse con dictados de decimales, problemas de compras con lempiras (precios y vuelto) y la tabla de
+      valor posicional en el pizarrón. Esta misión es la etapa previa a «División de Decimales» en la Ruta del Número:
+      dominar el valor posicional aquí facilita mover el punto allá. La misión interactiva (código QR de la portada)
+      permite al estudiante practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Decimales · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
