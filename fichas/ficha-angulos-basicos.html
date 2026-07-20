@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Ángulos: Tipos y Transportador</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=lados, naranja=vértice, verde=medida
+       (los mismos de la ficha Ángulos y Bisectriz, su misión hermana)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --lado: #1e40af; --vert: #c2410c; --med: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .ilus svg { max-width: 100%; height: auto; }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .compl { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .suple { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .refle { background: #ede9fe; border: 1px solid #d3c9f5; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .compl b { color: var(--lado); } .tri .suple b { color: var(--vert); } .tri .refle b { color: #6b21a8; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Ángulos: Tipos y Transportador</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> II Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Partes del ángulo, los siete tipos (del nulo al completo), el uso correcto del transportador, y complementarios y suplementarios</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-angulos-basicos.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Identificar las <strong>partes del ángulo</strong>: vértice, lados y abertura medida en grados (°).</li>
+      <li>Clasificar los ángulos en sus <strong>siete tipos</strong>: nulo, agudo, recto, obtuso, llano, reflejo y completo.</li>
+      <li>Medir ángulos con el <strong>transportador</strong> siguiendo los pasos correctos.</li>
+      <li>Identificar tipos de ángulo <strong>sin transportador</strong>, comparando con 90° y 180°.</li>
+      <li>Calcular el <strong>complemento</strong> (suman 90°) y el <strong>suplemento</strong> (suman 180°) de un ángulo.</li>
+      <li>Reconocer los ángulos en los objetos del aula y del hogar.</li>
+    </ol>
+
+    <h2>📐 1. Las partes del ángulo</h2>
+    <p>Un <strong>ángulo</strong> es la figura formada por dos <strong>rayos que comparten un punto</strong>
+    llamado <strong>vértice</strong>. La <strong>abertura</strong> entre los lados se mide en
+    <strong>grados (°)</strong>, y el transportador nos ayuda a medirla con precisión.</p>
+    <div class="caja regla">⚡ <b>La pregunta clave:</b> ¿cuánto mide la abertura entre los dos lados?
+    Compárala con 90° y con 180°: agudo &lt; 90° · recto = 90° · obtuso entre 90° y 180° · llano = 180°.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> en el ángulo ABC, el vértice está en <strong>B</strong> (la
+    letra del medio) y los lados son los rayos BA y BC. La abertura no depende del largo de los lados.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>La esquina del cuaderno es tu medidor de
+    bolsillo</b>»: mide exactamente 90°. Si el ángulo cabe dentro de la esquina → agudo; si sobresale → obtuso.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">Medir con el transportador: centro en el vértice, cero en un lado, leer el otro</div>
+      <svg viewBox="0 0 340 135" width="340" height="135" role="img" aria-label="Transportador midiendo un ángulo de 60 grados">
+        <path d="M 85 115 A 85 85 0 0 1 255 115" fill="#eef2f7" stroke="#5b6773" stroke-width="2"/>
+        <line x1="85" y1="115" x2="255" y2="115" stroke="#5b6773" stroke-width="2"/>
+        <g stroke="#9aa7b5" stroke-width="1.4">
+          <line x1="243" y1="72" x2="251" y2="68"/>
+          <line x1="212" y1="41" x2="218" y2="34"/>
+          <line x1="170" y1="30" x2="170" y2="22"/>
+          <line x1="128" y1="41" x2="122" y2="34"/>
+          <line x1="97" y1="72" x2="89" y2="68"/>
+        </g>
+        <line x1="170" y1="115" x2="290" y2="115" stroke="#1e40af" stroke-width="3.2" stroke-linecap="round"/>
+        <line x1="170" y1="115" x2="228" y2="14" stroke="#1e40af" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M 208 115 A 38 38 0 0 0 189 82" fill="none" stroke="#15803d" stroke-width="2.4"/>
+        <circle cx="170" cy="115" r="5" fill="#c2410c"/>
+        <text x="222" y="98" font-family="Arial" font-size="12" font-weight="bold" fill="#15803d">60°</text>
+        <text x="294" y="119" font-family="Arial" font-size="9" font-weight="bold" fill="#1e40af">0°</text>
+        <text x="152" y="132" font-family="Arial" font-size="9" font-weight="bold" fill="#c2410c">vértice</text>
+      </svg>
+      <p style="font-size:9pt;color:var(--gris);margin:5px 0 0;text-align:center;">✅ El <strong style="color:var(--vert);">centro sobre el vértice</strong>, el <strong style="color:var(--lado);">cero alineado con un lado</strong>, y se lee donde cruza el otro: <strong style="color:var(--med);">60°</strong> (agudo).</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos: Tipos y Transportador</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🏷️ 2. Los siete tipos de ángulos</h2>
+    <table>
+      <tr><th>Tipo</th><th>Medida</th><th>¿Cómo reconocerlo?</th></tr>
+      <tr><td class="k">⭕ Nulo</td><td><strong>= 0°</strong></td><td>Los dos lados están superpuestos: no hay abertura.</td></tr>
+      <tr><td class="k">📐 Agudo</td><td><strong>Más de 0° y menos de 90°</strong></td><td>Cabe dentro de la esquina del cuaderno: 30°, 45°, 75°.</td></tr>
+      <tr><td class="k">🔲 Recto</td><td><strong>= 90°</strong></td><td>La esquina exacta del cuaderno: se marca con un cuadradito.</td></tr>
+      <tr><td class="k">📏 Obtuso</td><td><strong>Más de 90° y menos de 180°</strong></td><td>Sobresale de la esquina: 120°, 150°.</td></tr>
+      <tr><td class="k">➖ Llano</td><td><strong>= 180°</strong></td><td>Los lados forman una línea recta.</td></tr>
+      <tr><td class="k">🌙 Reflejo</td><td><strong>Más de 180° y menos de 360°</strong></td><td>Ya dio vuelta más allá del llano: 200°, 270°.</td></tr>
+      <tr><td class="k">🔄 Completo</td><td><strong>= 360°</strong></td><td>La vuelta entera alrededor del vértice.</td></tr>
+    </table>
+
+    <h2>🪜 3. Los 4 pasos para medir con el transportador</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Centra</b>El centro del transportador va SOBRE el vértice del ángulo.</div>
+      <div><span class="pn">2</span><b>Alinea el cero</b>El 0° debe coincidir con uno de los lados.</div>
+      <div><span class="pn">3</span><b>Sigue la escala</b>Cuenta desde ese 0° (no desde el otro extremo).</div>
+      <div><span class="pn">4</span><b>Lee</b>El grado donde pasa el otro lado es la medida.</div>
+    </div>
+    <div class="caja idea">💡 <b>Ojo con la doble escala:</b> el transportador trae dos filas de números
+    (0→180 y 180→0). Usa la que <strong>empieza en 0 sobre el lado alineado</strong>: así nunca confundirás
+    60° con 120°.</div>
+
+    <h2>🤝 4. Complementarios, suplementarios y reflejos</h2>
+    <div class="tri">
+      <div class="compl"><b>🧩 Complementarios → suman 90°</b>30° + 60° = 90°. Complemento de 60° = 90° − 60° = 30°.</div>
+      <div class="suple"><b>🔗 Suplementarios → suman 180°</b>110° + 70° = 180°. Suplemento de 110° = 180° − 110° = 70°.</div>
+      <div class="refle"><b>🌙 Reflejo → pasa del llano</b>Mide más de 180° sin llegar a 360°: la vuelta casi completa.</div>
+    </div>
+    <div class="caja truco">🧠 <b>Truco:</b> «<b>La C llega a la esquina y la S se estira</b>»: los
+    <strong>C</strong>omplementarios completan la esquina (90°) y los <strong>S</strong>uplementarios se
+    estiran hasta la línea recta (180°).</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos: Tipos y Transportador</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📋 5. Casos comunes</h2>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">¿Qué tipo es 45°?</td><td>45 &lt; 90</td><td>Agudo</td></tr>
+      <tr><td class="k">¿Qué tipo es 130°?</td><td>90 &lt; 130 &lt; 180</td><td>Obtuso</td></tr>
+      <tr><td class="k">¿Qué tipo es 200°?</td><td>180 &lt; 200 &lt; 360</td><td>Reflejo</td></tr>
+      <tr><td class="k">Complemento de 60°</td><td>90 − 60</td><td>30°</td></tr>
+      <tr><td class="k">Suplemento de 110°</td><td>180 − 110</td><td>70°</td></tr>
+      <tr><td class="k">Esquina del cuaderno</td><td>Medidor de bolsillo</td><td>Recto · 90°</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">No centrar el transportador</td><td>Ponerlo «donde caiga» sin ubicar el centro en el vértice da cualquier medida.</td><td>Centro SOBRE el vértice, siempre ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Leer la escala equivocada</td><td>«Medí 120°» cuando el ángulo es de 60°: se leyó la fila que empieza en 180.</td><td>Contar desde el 0 del lado alineado ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que agudo = grande</td><td>«Agudo suena fuerte, será el grande». Agudo significa afilado: es el MENOR de 90°.</td><td>Agudo &lt; 90° · obtuso &gt; 90° ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir llano con completo</td><td>«360° es un ángulo llano». El llano es la línea recta (180°).</td><td>180° = llano · 360° = completo ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir complementarios con suplementarios</td><td>«120° y 60° son complementarios». Esa pareja suma 180°.</td><td>C = 90° · S = 180° ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> los ángulos sostienen nuestras casas. Los <strong>techos de dos
+    aguas</strong> se abren en ángulos obtusos para que corra la lluvia, el <strong>carpintero</strong> revisa
+    los 90° exactos de puertas y ventanas con su escuadra, y la <strong>rampa de acceso</strong> de la escuela
+    sube con un ángulo agudo suave. ¡Con tu transportador puedes comprobarlos todos!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos: Tipos y Transportador</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Un ángulo está formado por dos rayos que comparten un punto llamado <span class="linea-resp"></span>.</li>
+      <li>La abertura de un ángulo se mide en <span class="linea-resp"></span>.</li>
+      <li>El instrumento semicircular que sirve para medir ángulos es el <span class="linea-resp"></span>.</li>
+      <li>Un ángulo recto mide exactamente <span class="linea-resp"></span>.</li>
+      <li>Un ángulo llano mide 180° y sus lados forman una línea <span class="linea-resp"></span>.</li>
+      <li>Un ángulo que mide entre 90° y 180° se llama <span class="linea-resp"></span>.</li>
+      <li>Un ángulo completo mide <span class="linea-resp"></span>.</li>
+      <li>Dos ángulos complementarios suman <span class="linea-resp"></span>.</li>
+      <li>Dos ángulos suplementarios suman <span class="linea-resp"></span>.</li>
+      <li>Al medir, el centro del transportador se coloca en el <span class="linea-resp"></span> del ángulo.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Un ángulo recto mide exactamente 90°.</li>
+      <li>____ Un ángulo agudo mide más de 90°.</li>
+      <li>____ El ángulo llano mide 180° y forma una línea recta.</li>
+      <li>____ El transportador sirve para medir longitudes.</li>
+      <li>____ Dos ángulos complementarios suman 90°.</li>
+      <li>____ Un ángulo obtuso mide menos de 90°.</li>
+      <li>____ El vértice es el punto donde se unen los lados de un ángulo.</li>
+      <li>____ Un ángulo completo mide 180°.</li>
+      <li>____ Dos ángulos suplementarios suman 180°.</li>
+      <li>____ La bisectriz divide un ángulo en dos partes iguales.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos: Tipos y Transportador</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuánto mide un ángulo recto?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 45°</span>
+        <span class="op"><i>b</i> 90°</span>
+        <span class="op"><i>c</i> 180°</span>
+        <span class="op"><i>d</i> 360°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cómo se llama un ángulo que mide 130°?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> agudo</span>
+        <span class="op"><i>b</i> recto</span>
+        <span class="op"><i>c</i> obtuso</span>
+        <span class="op"><i>d</i> llano</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuánto mide un ángulo llano?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 90°</span>
+        <span class="op"><i>b</i> 120°</span>
+        <span class="op"><i>c</i> 180°</span>
+        <span class="op"><i>d</i> 200°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cómo se llama un ángulo de 45°?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> agudo</span>
+        <span class="op"><i>b</i> obtuso</span>
+        <span class="op"><i>c</i> recto</span>
+        <span class="op"><i>d</i> completo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué instrumento se usa para medir ángulos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la regla</span>
+        <span class="op"><i>b</i> el compás</span>
+        <span class="op"><i>c</i> el transportador</span>
+        <span class="op"><i>d</i> la balanza</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuál es el complemento de un ángulo de 60°?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 120°</span>
+        <span class="op"><i>b</i> 30°</span>
+        <span class="op"><i>c</i> 40°</span>
+        <span class="op"><i>d</i> 60°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuál es el suplemento de un ángulo de 110°?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 70°</span>
+        <span class="op"><i>b</i> 90°</span>
+        <span class="op"><i>c</i> 80°</span>
+        <span class="op"><i>d</i> 250°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>El punto donde se unen los dos lados de un ángulo se llama:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> grado</span>
+        <span class="op"><i>b</i> vértice</span>
+        <span class="op"><i>c</i> lado</span>
+        <span class="op"><i>d</i> arco</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>Un ángulo que mide más de 180° y menos de 360° se llama:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> llano</span>
+        <span class="op"><i>b</i> completo</span>
+        <span class="op"><i>c</i> reflejo</span>
+        <span class="op"><i>d</i> obtuso</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Al medir con el transportador, el cero (0°) se alinea con:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el vértice</span>
+        <span class="op"><i>b</i> uno de los lados</span>
+        <span class="op"><i>c</i> el punto más alto</span>
+        <span class="op"><i>d</i> el número 90</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos: Tipos y Transportador</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Vértice</td><td>A. Punto donde se unen los dos lados del ángulo</td></tr>
+      <tr><td>2. ____ Lados</td><td>B. Los dos rayos que salen del vértice</td></tr>
+      <tr><td>3. ____ Ángulo nulo</td><td>C. Mide 0°: sus lados están superpuestos</td></tr>
+      <tr><td>4. ____ Ángulo agudo</td><td>D. Mayor que 0° y menor que 90°</td></tr>
+      <tr><td>5. ____ Ángulo recto</td><td>E. Mide exactamente 90°, como la esquina del cuaderno</td></tr>
+      <tr><td>6. ____ Ángulo obtuso</td><td>F. Mide entre 90° y 180°</td></tr>
+      <tr><td>7. ____ Ángulo llano</td><td>G. Mide 180°: sus lados forman una línea recta</td></tr>
+      <tr><td>8. ____ Ángulo reflejo</td><td>H. Más de 180° y menos de 360°</td></tr>
+      <tr><td>9. ____ Transportador</td><td>I. Instrumento semicircular con escala de 0° a 180°</td></tr>
+      <tr><td>10. ____ Complementarios</td><td>J. Dos ángulos cuya suma es 90°</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Ángulos: Tipos y Transportador.</b> Ahora reconoces las partes
+      de todo ángulo, clasificas los siete tipos del nulo al completo, mides con el transportador centrando el
+      vértice y alineando el cero como un profesional, y calculas complementos y suplementos sin dudar. ¡Del
+      techo de tu casa a la esquina de tu cuaderno, todos los ángulos ya tienen nombre! 📐✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Midió y clasificó ángulos con el transportador en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos: Tipos y Transportador</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. vértice &nbsp; 2. grados (°) &nbsp; 3. transportador &nbsp; 4. 90° &nbsp; 5. recta &nbsp; 6. obtuso &nbsp; 7. 360° &nbsp; 8. 90° &nbsp; 9. 180° &nbsp; 10. vértice</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6F, 7V, 8F, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3c, 4a, 5c, 6b, 7a, 8b, 9c, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1A, 2B, 3C, 4D, 5E, 6F, 7G, 8H, 9I, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Ángulos: Tipos y Transportador» (II Ciclo). Puede utilizarse como guía de estudio impresa o digital antes de
+      la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con la medición de ángulos reales del aula con transportador, la cacería de tipos
+      de ángulo por la escuela y ejercicios de complementos y suplementos en el cuaderno. Etapa 3 de la Ruta de la Forma;
+      su misión hermana del II-III Ciclo, «Ángulos y Bisectriz», ya cuenta con su propia ficha y profundiza en la
+      bisectriz. La misión interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación
+      inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos: Tipos y Transportador · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
