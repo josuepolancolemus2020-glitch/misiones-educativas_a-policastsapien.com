@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Multiplicación Vertical</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=factores, naranja=acarreo,
+       verde=producto
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --fac: #1e40af; --aca: #c2410c; --pro: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .ilus-par { display: flex; gap: 26px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
+
+  /* Cálculo vertical con acarreo */
+  .vert { display: inline-block; font-family: 'Cambria Math', Georgia, serif; font-size: 14pt; font-weight: 800; text-align: right; line-height: 1.45; }
+  .vert .lleva { font-size: 9pt; color: var(--aca); display: block; text-align: right; letter-spacing: 6px; min-height: 12pt; }
+  .vert .fila-f { color: var(--fac); display: block; }
+  .vert .linea-op { border-top: 2.5px solid var(--tinta); display: block; margin: 2px 0; }
+  .vert .parcial { color: var(--tinta); display: block; }
+  .vert .resultado { color: var(--pro); display: block; }
+  .vert-nota { font-size: 8.5pt; color: var(--gris); text-align: left; }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .p1 { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .p2 { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .pf { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .p1 b { color: var(--fac); } .tri .p2 b { color: var(--aca); } .tri .pf b { color: var(--pro); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Multiplicación Vertical</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> II Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El método vertical: alinear por posición, multiplicar con acarreo y sumar los productos parciales</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-multiplicacion-vertical.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender la multiplicación como una <strong>suma abreviada</strong>, nombrando factores y producto.</li>
+      <li>Identificar el <strong>multiplicando</strong> (arriba) y el <strong>multiplicador</strong> (abajo) en el cálculo vertical.</li>
+      <li>Multiplicar en vertical <strong>de derecha a izquierda</strong>, empezando por las unidades.</li>
+      <li>Aplicar el <strong>acarreo</strong>: una cifra por columna y el resto viaja a la siguiente.</li>
+      <li>Multiplicar por dos cifras usando <strong>productos parciales</strong>, desplazando el segundo un lugar a la izquierda.</li>
+      <li>Usar los atajos de los <strong>casos especiales</strong>: multiplicar por 0, por 1, por 10 y por 100.</li>
+    </ol>
+
+    <h2>✖️ 1. ¿Qué es multiplicar?</h2>
+    <p>Multiplicar es una <strong>suma abreviada</strong>: en lugar de sumar 24 + 24 + 24, escribimos
+    <strong>24 × 3</strong>. Los números que se multiplican se llaman <strong>factores</strong> y el resultado
+    es el <strong>producto</strong>. El cálculo vertical ordena todo para multiplicar números grandes sin errores.</p>
+    <div class="caja regla">⚡ <b>La Regla de Oro:</b> en el método vertical se multiplica <strong>de derecha a
+    izquierda</strong>, empezando SIEMPRE por la columna de las unidades.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> el <strong>multiplicando</strong> va arriba y el
+    <strong>multiplicador</strong> abajo, alineados por posición: unidades bajo unidades, decenas bajo decenas.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>Una cifra por columna: el resto viaja</b>»: si
+    una columna da 12, escribo el 2 y el 1 viaja (se lleva) a la siguiente columna, donde se suma.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">24 × 3 paso a paso, con su acarreo en naranja</div>
+      <div class="ilus-par">
+        <div class="vert">
+          <span class="lleva">1&nbsp;&nbsp;&nbsp;</span>
+          <span class="fila-f">24</span>
+          <span class="fila-f">×&nbsp;&nbsp;3</span>
+          <span class="linea-op"></span>
+          <span class="resultado">72</span>
+        </div>
+        <div class="vert-nota" style="align-self:center;">
+          <p style="margin-bottom:4px;font-size:10pt;">1.º Unidades: 3 × 4 = 12 → <strong>escribo 2, llevo 1</strong></p>
+          <p style="margin-bottom:4px;font-size:10pt;">2.º Decenas: 3 × 2 = 6, <strong>+ 1</strong> que llevé = 7</p>
+          <p style="margin-bottom:0;font-size:10pt;">Producto: <strong style="color:var(--pro);">72</strong> ✅ (24 + 24 + 24 = 72)</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación Vertical</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🪜 2. Los 4 pasos del método vertical</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Alinea</b>Por posición: unidades bajo unidades, decenas bajo decenas.</div>
+      <div><span class="pn">2</span><b>Multiplica las unidades</b>37 × 4: el 4 × 7 = 28 → escribo 8, llevo 2.</div>
+      <div><span class="pn">3</span><b>Multiplica las decenas</b>4 × 3 = 12, + 2 que llevaba = 14.</div>
+      <div><span class="pn">4</span><b>Escribe el producto</b>37 × 4 = 148. ¡Listo!</div>
+    </div>
+
+    <h2>🎒 3. El acarreo: lo que «se lleva»</h2>
+    <p>Cuando el producto de una columna es <strong>mayor que 9</strong>, escribo la cifra de las unidades y
+    <strong>llevo</strong> la de las decenas a la siguiente columna, donde la sumo. Ejemplo: 6 × 8 = 48 →
+    escribo <strong>8</strong>, llevo <strong style="color:var(--aca);">4</strong>.</p>
+
+    <h2>2️⃣ 4. Multiplicar por dos cifras: productos parciales</h2>
+    <p>Cuando el multiplicador tiene <strong>dos cifras</strong>, multiplico por cada cifra por separado.
+    El segundo parcial se <strong>desplaza un lugar a la izquierda</strong> porque multiplica decenas.</p>
+
+    <div class="ilus">
+      <div class="ilus-t">23 × 14 con sus dos productos parciales</div>
+      <div class="ilus-par">
+        <div class="vert">
+          <span class="lleva">&nbsp;</span>
+          <span class="fila-f">&nbsp;&nbsp;23</span>
+          <span class="fila-f">×&nbsp;14</span>
+          <span class="linea-op"></span>
+          <span class="parcial">&nbsp;&nbsp;92</span>
+          <span class="parcial">230</span>
+          <span class="linea-op"></span>
+          <span class="resultado">322</span>
+        </div>
+        <div class="vert-nota" style="align-self:center;">
+          <p style="margin-bottom:4px;font-size:10pt;">1.er parcial: 23 × <strong>4</strong> (unidades) = 92</p>
+          <p style="margin-bottom:4px;font-size:10pt;">2.º parcial: 23 × <strong>1</strong> (decena) = 23 → <strong style="color:var(--aca);">230</strong> (desplazado)</p>
+          <p style="margin-bottom:0;font-size:10pt;">Sumo los parciales: 92 + 230 = <strong style="color:var(--pro);">322</strong> ✅</p>
+        </div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ El segundo parcial siempre lleva su <strong>0</strong> (o un espacio) al final: ¡multiplica decenas!</p>
+    </div>
+
+    <div class="tri">
+      <div class="p1"><b>🔵 1.er parcial → por las unidades</b>Multiplica todo el multiplicando por la cifra de las unidades del multiplicador.</div>
+      <div class="p2"><b>🟠 2.º parcial → por las decenas</b>Multiplica por la cifra de las decenas y desplázalo un lugar a la izquierda.</div>
+      <div class="pf"><b>🟢 Suma final → el producto</b>Suma los parciales alineados y obtén el resultado completo.</div>
+    </div>
+
+    <h3>⚡ Casos especiales: los atajos</h3>
+    <table>
+      <tr><th>Caso</th><th>Atajo</th><th>Ejemplo</th></tr>
+      <tr><td class="k">× 0</td><td>El producto siempre es 0.</td><td>58 × 0 = 0</td></tr>
+      <tr><td class="k">× 1</td><td>El producto es el mismo número.</td><td>58 × 1 = 58</td></tr>
+      <tr><td class="k">× 10, × 100…</td><td>Agrego uno, dos… ceros a la derecha.</td><td>45 × 10 = 450 · 45 × 100 = 4,500</td></tr>
+      <tr><td class="k">Orden de factores</td><td>NO altera el producto (conmutativa).</td><td>24 × 3 = 3 × 24 = 72</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación Vertical</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📋 5. Casos comunes</h2>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">37 × 4</td><td>4×7 = 28 (escribo 8, llevo 2) · 4×3 = 12 + 2 = 14</td><td>148</td></tr>
+      <tr><td class="k">23 × 4</td><td>4×3 = 12 (escribo 2, llevo 1) · 4×2 = 8 + 1 = 9</td><td>92</td></tr>
+      <tr><td class="k">23 × 14</td><td>Parciales: 92 y 230</td><td>322</td></tr>
+      <tr><td class="k">6 × 8 en una columna</td><td>= 48</td><td>Escribo 8, llevo 4</td></tr>
+      <tr><td class="k">58 × 0</td><td>Atajo del cero</td><td>0</td></tr>
+      <tr><td class="k">45 × 10</td><td>Agrego un cero</td><td>450</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Escribir el número completo en la columna</td><td>«3 × 4 = 12, escribo 12». Solo cabe UNA cifra por columna.</td><td>Escribo 2 y llevo 1 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar sumar el acarreo</td><td>«4 × 3 = 12 y escribo 12» cuando llevaba 2 de la columna anterior.</td><td>4 × 3 = 12, + 2 = 14 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">No desplazar el segundo parcial</td><td>«23 × 14 = 92 + 23 = 115». El 1 multiplica DECENAS.</td><td>92 + 230 = 322 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Empezar por la izquierda</td><td>Multiplicar primero las decenas desordena los acarreos.</td><td>Siempre de derecha a izquierda ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que el orden cambia el producto</td><td>«24 × 3 y 3 × 24 dan distinto». La multiplicación es conmutativa.</td><td>24 × 3 = 3 × 24 = 72 ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> la multiplicación trabaja en el mercado: 3 bolsas de
+    <strong>24 tortillas</strong> son 24 × 3 = <strong>72 tortillas</strong>; un camión con 14 cajas de
+    <strong>23 naranjas</strong> carga 23 × 14 = <strong>322 naranjas</strong>; y si la libra de café vale
+    <strong>L 45</strong>, diez libras cuestan 45 × 10 = <strong>L 450</strong>. ¡Multiplicar es contar de prisa!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación Vertical</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Multiplicar es una suma <span class="linea-resp"></span>.</li>
+      <li>Los números que se multiplican se llaman <span class="linea-resp"></span>.</li>
+      <li>El resultado de la multiplicación se llama <span class="linea-resp"></span>.</li>
+      <li>El número de arriba es el multiplicando y el de abajo es el <span class="linea-resp"></span>.</li>
+      <li>En el cálculo vertical se empieza por la columna de las <span class="linea-resp"></span>.</li>
+      <li>Cuando el producto de una columna pasa de 9, la cifra que se lleva se llama <span class="linea-resp"></span>.</li>
+      <li>Multiplicar por 0 siempre da <span class="linea-resp"></span>.</li>
+      <li>Multiplicar por 1 da el <span class="linea-resp"></span> número.</li>
+      <li>Multiplicar por 10 agrega un <span class="linea-resp"></span> a la derecha.</li>
+      <li>El segundo producto parcial se desplaza un lugar a la <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El resultado de una multiplicación se llama producto.</li>
+      <li>____ Multiplicar por cero da el mismo número.</li>
+      <li>____ En el cálculo vertical se empieza por las unidades.</li>
+      <li>____ El acarreo es la cifra que se lleva a la siguiente columna.</li>
+      <li>____ El orden de los factores cambia el producto.</li>
+      <li>____ Multiplicar por 10 agrega un cero a la derecha.</li>
+      <li>____ El segundo producto parcial se escribe sin desplazar.</li>
+      <li>____ Los números que se multiplican se llaman factores.</li>
+      <li>____ 6 × 8 = 48.</li>
+      <li>____ 7 × 9 = 61.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación Vertical</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cómo se llama el resultado de una multiplicación?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la suma</span>
+        <span class="op"><i>b</i> el producto</span>
+        <span class="op"><i>c</i> el factor</span>
+        <span class="op"><i>d</i> el cociente</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>En 24 × 3, al multiplicar 3 × 4 = 12, ¿qué haces?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> escribo 12</span>
+        <span class="op"><i>b</i> escribo 2 y llevo 1</span>
+        <span class="op"><i>c</i> escribo 1 y llevo 2</span>
+        <span class="op"><i>d</i> escribo 21</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuánto es 6 × 7?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 42</span>
+        <span class="op"><i>b</i> 48</span>
+        <span class="op"><i>c</i> 36</span>
+        <span class="op"><i>d</i> 49</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuánto es 58 × 0?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 58</span>
+        <span class="op"><i>b</i> 0</span>
+        <span class="op"><i>c</i> 580</span>
+        <span class="op"><i>d</i> 1</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuánto es 45 × 10?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 450</span>
+        <span class="op"><i>b</i> 45</span>
+        <span class="op"><i>c</i> 405</span>
+        <span class="op"><i>d</i> 4,500</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>En una multiplicación por 2 cifras, el segundo producto parcial se corre un lugar hacia:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la derecha</span>
+        <span class="op"><i>b</i> la izquierda</span>
+        <span class="op"><i>c</i> arriba</span>
+        <span class="op"><i>d</i> abajo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuánto es 23 × 4?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 92</span>
+        <span class="op"><i>b</i> 82</span>
+        <span class="op"><i>c</i> 812</span>
+        <span class="op"><i>d</i> 96</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>Los números que se multiplican se llaman:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> sumandos</span>
+        <span class="op"><i>b</i> factores</span>
+        <span class="op"><i>c</i> términos</span>
+        <span class="op"><i>d</i> divisores</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>En 7 × 8 = 56 (unidades), ¿qué escribes y qué llevas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 56 y 0</span>
+        <span class="op"><i>b</i> 6 y 5</span>
+        <span class="op"><i>c</i> 5 y 6</span>
+        <span class="op"><i>d</i> 5 y 60</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuánto es 23 × 14?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 322</span>
+        <span class="op"><i>b</i> 232</span>
+        <span class="op"><i>c</i> 92</span>
+        <span class="op"><i>d</i> 252</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación Vertical</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Multiplicación</td><td>A. Una suma abreviada: 24 + 24 + 24 = 24 × 3</td></tr>
+      <tr><td>2. ____ Factores</td><td>B. Los números que se multiplican</td></tr>
+      <tr><td>3. ____ Multiplicando</td><td>C. El número de arriba en el cálculo vertical</td></tr>
+      <tr><td>4. ____ Multiplicador</td><td>D. El número de abajo en el cálculo vertical</td></tr>
+      <tr><td>5. ____ Producto</td><td>E. El resultado de la multiplicación</td></tr>
+      <tr><td>6. ____ Acarreo</td><td>F. La cifra que se lleva a la siguiente columna</td></tr>
+      <tr><td>7. ____ Multiplicar por 0</td><td>G. El producto siempre es 0</td></tr>
+      <tr><td>8. ____ Multiplicar por 10</td><td>H. Se agrega un cero a la derecha</td></tr>
+      <tr><td>9. ____ Productos parciales</td><td>I. Resultados de multiplicar por cada cifra del multiplicador</td></tr>
+      <tr><td>10. ____ Segundo parcial</td><td>J. Se desplaza un lugar a la izquierda</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Multiplicación Vertical.</b> Ahora alineas por posición,
+      multiplicas de derecha a izquierda respetando la regla de «una cifra por columna», llevas el acarreo sin
+      perderlo en el camino, desplazas el segundo parcial con su cero y usas los atajos del 0, el 1 y el 10.
+      ¡De las bolsas de tortillas al camión de naranjas, ya multiplicas como un profesional! ✖️✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió multiplicaciones verticales de práctica (1 y 2 cifras) en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación Vertical</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. abreviada &nbsp; 2. factores &nbsp; 3. producto &nbsp; 4. multiplicador &nbsp; 5. unidades &nbsp; 6. acarreo &nbsp; 7. cero (0) &nbsp; 8. mismo &nbsp; 9. cero &nbsp; 10. izquierda</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7F, 8V, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2b, 3a, 4b, 5a, 6b, 7a, 8b, 9b, 10a</div>
+      <div><span class="pt">IV. Pareados:</span> 1A, 2B, 3C, 4D, 5E, 6F, 7G, 8H, 9I, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Multiplicación Vertical» (II Ciclo). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con el repaso diario de las tablas de multiplicar, multiplicaciones verticales
+      de una y dos cifras en el cuaderno y problemas del mercado con lempiras. Etapa 9 y cierre de la Ruta del Número
+      del II Ciclo: aquí convergen el valor posicional (alinear), la suma con acarreo (llevar) y las tablas. La misión
+      interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de
+      resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación Vertical · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
