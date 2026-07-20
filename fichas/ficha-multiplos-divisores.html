@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Múltiplos, Divisores y Primos</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=múltiplos, naranja=divisores,
+       verde=números primos
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --mul: #1e40af; --div: #c2410c; --pri: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .ilus svg { max-width: 100%; height: auto; }
+
+  /* Parejas de divisores */
+  .parejas { display: inline-flex; align-items: center; gap: 12px; font-family: 'Cambria Math', Georgia, serif; font-size: 13pt; font-weight: 700; flex-wrap: wrap; justify-content: center; }
+  .parejas .par { background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 5px 11px; color: var(--div); }
+  .parejas .veredicto { background: #dcfce7; border: 1px solid #b9e6c6; border-radius: 8px; padding: 5px 11px; color: var(--pri); font-family: Arial, sans-serif; font-size: 10.5pt; }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .primo { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .compu { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .uno { background: #ede9fe; border: 1px solid #d3c9f5; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .primo b { color: var(--pri); } .tri .compu b { color: var(--div); } .tri .uno b { color: #6b21a8; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .parejas .veredicto
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Múltiplos, Divisores y Primos</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> II Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Múltiplos y divisores, pares e impares, primos y compuestos, y la descomposición en factores primos</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-multiplos-divisores.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Generar los <strong>múltiplos</strong> de un número multiplicándolo por 1, 2, 3… (la familia sin fin).</li>
+      <li>Encontrar TODOS los <strong>divisores</strong> de un número buscándolos en parejas.</li>
+      <li>Clasificar números en <strong>pares e impares</strong> mirando solo la última cifra.</li>
+      <li>Distinguir números <strong>primos</strong> (dos divisores) de <strong>compuestos</strong> (más de dos), y el caso especial del 1.</li>
+      <li>Descomponer números compuestos en <strong>factores primos</strong> con el árbol de factores.</li>
+      <li>Aplicar los criterios de divisibilidad del 2 y del 5 para clasificar sin dividir.</li>
+    </ol>
+
+    <h2>🔑 1. El mundo secreto de los números</h2>
+    <p>Cada número guarda secretos: tiene su familia de <strong>múltiplos</strong>, su equipo de
+    <strong>divisores</strong>, y puede ser <strong>par o impar</strong>, <strong>primo o compuesto</strong>.</p>
+    <div class="caja idea">💡 <b>Las dos preguntas clave:</b> ¿en qué tablas de multiplicar APARECE este número?
+    (sus múltiplos lo delatan) y ¿qué números lo dividen EXACTO? (esos son sus divisores).</div>
+    <div class="caja regla">⚡ <b>La Regla de Oro:</b> divisor y múltiplo son parejas. Si 12 ÷ 3 = 4 exacto,
+    entonces <strong>3 es divisor de 12</strong> y <strong>12 es múltiplo de 3</strong>: las dos caras de la
+    misma moneda.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>Cada pareja regala dos divisores</b>»: busca
+    parejas que multiplicadas den el número. Para el 20: 1×20, 2×10 y 4×5 → seis divisores, ni uno más.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">¿Cuántos divisores tiene el 18? Búscalos en parejas</div>
+      <div class="parejas">
+        <span class="par">1 × 18</span>
+        <span class="par">2 × 9</span>
+        <span class="par">3 × 6</span>
+        <span class="veredicto">6 divisores → es COMPUESTO ✔</span>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ Divisores de 18: <strong>1, 2, 3, 6, 9 y 18</strong>. El 4 no está: 18 ÷ 4 deja residuo.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Múltiplos, Divisores y Primos</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>♾️ 2. Múltiplos, divisores, pares e impares</h2>
+    <table>
+      <tr><th>Concepto</th><th>¿Cómo funciona?</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🔵 Múltiplos</td><td>Multiplica por 1, 2, 3, 4… Son los resultados de su tabla ¡y nunca se acaban!</td><td>De 7: 7, 14, 21, 28, 35… ♾️</td></tr>
+      <tr><td class="k">🟠 Divisores</td><td>Dividen exacto (residuo 0). Se buscan en parejas.</td><td>De 20: 1, 2, 4, 5, 10, 20</td></tr>
+      <tr><td class="k">2️⃣ Pares</td><td>Terminan en 0, 2, 4, 6 u 8: se reparten en parejas sin sobrar.</td><td>3,458 es par (termina en 8)</td></tr>
+      <tr><td class="k">1️⃣ Impares</td><td>Terminan en 1, 3, 5, 7 o 9: siempre sobra uno.</td><td>7,061 es impar (termina en 1)</td></tr>
+    </table>
+    <div class="caja idea">💡 <b>Secreto:</b> los pares son exactamente los <strong>múltiplos de 2</strong>.
+    Por eso basta la última cifra: ella dice si el 2 lo divide exacto. Y si termina en 0 o 5, el 5 lo divide.</div>
+
+    <h2>💎 3. Primos y compuestos: cuestión de divisores</h2>
+    <div class="tri">
+      <div class="primo"><b>🟢 PRIMO → exactamente 2 divisores</b>Solo 1 y él mismo. Hasta 30: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29. ¡El 2 es el único primo par!</div>
+      <div class="compu"><b>🟠 COMPUESTO → más de 2 divisores</b>12 tiene seis: 1, 2, 3, 4, 6, 12. Todo compuesto se arma con factores primos.</div>
+      <div class="uno"><b>⚖️ El 1 → especial</b>Tiene UN solo divisor (él mismo): no es primo ni compuesto.</div>
+    </div>
+
+    <h2>🌳 4. La descomposición en factores primos</h2>
+    <p>Todo número compuesto se puede escribir como <strong>producto de factores primos</strong>. Con el
+    <strong>árbol de factores</strong>: divide entre el menor primo posible (2, 3, 5, 7…) hasta que solo
+    queden primos.</p>
+    <div class="ilus">
+      <div class="ilus-t">El árbol de factores del 36 (los primos, en verde, ya no se dividen)</div>
+      <svg viewBox="0 0 300 150" width="300" height="150" role="img" aria-label="Árbol de factores del 36">
+        <line x1="150" y1="30" x2="95" y2="65" stroke="#5b6773" stroke-width="1.8"/>
+        <line x1="150" y1="30" x2="205" y2="65" stroke="#5b6773" stroke-width="1.8"/>
+        <line x1="205" y1="80" x2="160" y2="110" stroke="#5b6773" stroke-width="1.8"/>
+        <line x1="205" y1="80" x2="250" y2="110" stroke="#5b6773" stroke-width="1.8"/>
+        <circle cx="150" cy="22" r="17" fill="#e8f1fb" stroke="#1565c0" stroke-width="2"/>
+        <text x="150" y="27" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#0d3b7a">36</text>
+        <circle cx="95" cy="76" r="15" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+        <text x="95" y="81" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#15803d">2</text>
+        <circle cx="205" cy="76" r="15" fill="#fff" stroke="#5b6773" stroke-width="1.6"/>
+        <text x="205" y="81" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#1a2733">18</text>
+        <circle cx="160" cy="121" r="15" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+        <text x="160" y="126" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#15803d">2</text>
+        <circle cx="250" cy="121" r="15" fill="#fff" stroke="#5b6773" stroke-width="1.6"/>
+        <text x="250" y="126" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#1a2733">9</text>
+        <line x1="250" y1="136" x2="220" y2="145" stroke="#5b6773" stroke-width="1.5"/>
+        <line x1="250" y1="136" x2="280" y2="145" stroke="#5b6773" stroke-width="1.5"/>
+        <text x="213" y="150" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#15803d">3</text>
+        <text x="287" y="150" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#15803d">3</text>
+        <text x="40" y="145" font-family="Arial" font-size="11" font-weight="bold" fill="#0d3b7a">36 = 2 × 2 × 3 × 3</text>
+      </svg>
+      <p style="font-size:9pt;color:var(--gris);margin:5px 0 0;text-align:center;">✅ 36 = 2 × 18 → 18 = 2 × 9 → 9 = 3 × 3. Solo quedan primos: <strong style="color:var(--pri);">2 × 2 × 3 × 3</strong>.</p>
+    </div>
+
+    <h3>🪜 Los 4 pasos del árbol de factores</h3>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Prueba el 2</b>¿Es par? Divide entre 2 las veces que se pueda.</div>
+      <div><span class="pn">2</span><b>Sigue con 3, 5, 7…</b>Prueba los primos en orden, del menor al mayor.</div>
+      <div><span class="pn">3</span><b>Para en los primos</b>Cuando todas las ramas terminen en primos, el árbol está listo.</div>
+      <div><span class="pn">4</span><b>Comprueba</b>Multiplica los factores: debe devolver el número original.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Múltiplos, Divisores y Primos</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📋 5. Casos comunes</h2>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">Múltiplos de 7</td><td>7×1, 7×2, 7×3…</td><td>7, 14, 21, 28, 35… ♾️</td></tr>
+      <tr><td class="k">Divisores de 20</td><td>Parejas: 1×20, 2×10, 4×5</td><td>1, 2, 4, 5, 10, 20</td></tr>
+      <tr><td class="k">¿3,458 es par?</td><td>Última cifra: 8</td><td>Par ✔</td></tr>
+      <tr><td class="k">¿23 es primo?</td><td>Solo lo dividen 1 y 23</td><td>Primo ✔</td></tr>
+      <tr><td class="k">Árbol del 36</td><td>36 → 2×18 → 2×9 → 3×3</td><td>2 × 2 × 3 × 3</td></tr>
+      <tr><td class="k">¿Qué número es 2 × 2 × 5?</td><td>4 × 5</td><td>20</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">«Todos los impares son primos»</td><td>9, 15, 21 y 27 son impares… y compuestos (9 = 3×3).</td><td>Primo = exactamente DOS divisores ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">«El 1 es primo»</td><td>El 1 tiene UN solo divisor; el primo necesita dos.</td><td>El 1 no es primo ni compuesto ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Parar el árbol antes de tiempo</td><td>«18 = 2 × 9» deja al 9, que NO es primo.</td><td>18 = 2 × 3 × 3 (todas las ramas en primos) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar divisores</td><td>«Los divisores de 20 son 2, 4 y 5» — faltan el 1, el 10 y el 20.</td><td>Buscar en parejas: 1×20, 2×10, 4×5 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir múltiplo con divisor</td><td>«20 es divisor de 4». Es al revés.</td><td>4 es divisor de 20 · 20 es múltiplo de 4 ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> los múltiplos ordenan el mercado: los huevos se venden por
+    docenas (múltiplos de 12: 12, 24, 36…). Los divisores reparten: <strong>20 tortillas entre 4 personas =
+    5 exactas</strong> para cada quien. ¿Y los primos? Si el aula tiene <strong>23 estudiantes</strong>, no hay
+    forma de formar filas iguales: ¡23 es primo y no se deja repartir!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Múltiplos, Divisores y Primos</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Los múltiplos de un número se obtienen multiplicándolo por 1, 2, 3… y nunca se <span class="linea-resp"></span>.</li>
+      <li>Un divisor divide a un número en forma exacta, con residuo <span class="linea-resp"></span>.</li>
+      <li>Si 12 ÷ 3 = 4 exacto, entonces 3 es divisor de 12 y 12 es <span class="linea-resp"></span> de 3.</li>
+      <li>Un número es par si su última cifra es 0, 2, 4, 6 u <span class="linea-resp"></span>.</li>
+      <li>Los números pares son exactamente los múltiplos de <span class="linea-resp"></span>.</li>
+      <li>Un número primo tiene exactamente <span class="linea-resp"></span> divisores.</li>
+      <li>Un número con más de dos divisores se llama <span class="linea-resp"></span>.</li>
+      <li>El único número primo que es par es el <span class="linea-resp"></span>.</li>
+      <li>El número <span class="linea-resp"></span> no es primo ni compuesto.</li>
+      <li>La descomposición en factores primos de 36 es 2 × 2 × 3 × <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Los múltiplos de un número nunca se acaban.</li>
+      <li>____ El 4 es divisor de 18.</li>
+      <li>____ Todo número que termina en 0 es par.</li>
+      <li>____ Todos los números impares son primos.</li>
+      <li>____ El número 2 es el único primo par.</li>
+      <li>____ El número 1 es primo porque solo se divide entre 1.</li>
+      <li>____ Un número compuesto tiene más de dos divisores.</li>
+      <li>____ La descomposición factorial de 18 es 2 × 9.</li>
+      <li>____ Si un número termina en 5, es divisible entre 5.</li>
+      <li>____ El 51 es un número primo.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Múltiplos, Divisores y Primos</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál de estos números es múltiplo de 6?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 32</span>
+        <span class="op"><i>b</i> 42</span>
+        <span class="op"><i>c</i> 26</span>
+        <span class="op"><i>d</i> 40</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál es divisor de 20?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 3</span>
+        <span class="op"><i>b</i> 6</span>
+        <span class="op"><i>c</i> 4</span>
+        <span class="op"><i>d</i> 9</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál de estos números es impar?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 348</span>
+        <span class="op"><i>b</i> 570</span>
+        <span class="op"><i>c</i> 236</span>
+        <span class="op"><i>d</i> 195</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál de estos números es primo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 21</span>
+        <span class="op"><i>b</i> 23</span>
+        <span class="op"><i>c</i> 25</span>
+        <span class="op"><i>d</i> 27</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuántos divisores tiene el número 12?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 4</span>
+        <span class="op"><i>b</i> 5</span>
+        <span class="op"><i>c</i> 6</span>
+        <span class="op"><i>d</i> 2</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>La descomposición en factores primos de 18 es:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 2 × 9</span>
+        <span class="op"><i>b</i> 3 × 6</span>
+        <span class="op"><i>c</i> 2 × 3 × 3</span>
+        <span class="op"><i>d</i> 18 × 1</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Por qué el 1 no es un número primo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> porque es impar</span>
+        <span class="op"><i>b</i> porque tiene un solo divisor</span>
+        <span class="op"><i>c</i> porque es muy pequeño</span>
+        <span class="op"><i>d</i> porque es par</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cuál es el único número primo que es par?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el 4</span>
+        <span class="op"><i>b</i> el 0</span>
+        <span class="op"><i>c</i> el 2</span>
+        <span class="op"><i>d</i> no existe</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál número es divisible entre 5?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 352</span>
+        <span class="op"><i>b</i> 508</span>
+        <span class="op"><i>c</i> 731</span>
+        <span class="op"><i>d</i> 490</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál es el número cuya factorización es 2 × 2 × 5?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 20</span>
+        <span class="op"><i>b</i> 25</span>
+        <span class="op"><i>c</i> 45</span>
+        <span class="op"><i>d</i> 10</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Múltiplos, Divisores y Primos</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Múltiplo</td><td>A. Resultado de multiplicar por 1, 2, 3…: los de 7 son 7, 14, 21…</td></tr>
+      <tr><td>2. ____ Divisor</td><td>B. Divide a un número en forma exacta, con residuo cero</td></tr>
+      <tr><td>3. ____ Número par</td><td>C. Termina en 0, 2, 4, 6 u 8: se reparte en parejas sin sobrar</td></tr>
+      <tr><td>4. ____ Número impar</td><td>D. Termina en 1, 3, 5, 7 o 9: siempre sobra uno</td></tr>
+      <tr><td>5. ____ Número primo</td><td>E. Tiene exactamente dos divisores: 1 y él mismo</td></tr>
+      <tr><td>6. ____ Número compuesto</td><td>F. Tiene más de dos divisores</td></tr>
+      <tr><td>7. ____ El número 1</td><td>G. Caso especial: no es primo ni compuesto</td></tr>
+      <tr><td>8. ____ El número 2</td><td>H. El único primo que es par</td></tr>
+      <tr><td>9. ____ Factores primos</td><td>I. 36 = 2 × 2 × 3 × 3</td></tr>
+      <tr><td>10. ____ Parejas de divisores</td><td>J. 20 = 1×20, 2×10, 4×5: cada pareja regala dos</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Múltiplos, Divisores y Primos.</b> Ahora recitas las familias
+      de múltiplos, cazas divisores en parejas sin que se te escape ninguno, clasificas pares e impares de un
+      vistazo, reconoces a los primos indivisibles y desarmas cualquier número compuesto con el árbol de
+      factores. ¡De las docenas del mercado a las filas del aula, los secretos de los números son tuyos! 🔑✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Buscó divisores en parejas y armó árboles de factores de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Múltiplos, Divisores y Primos</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. acaban &nbsp; 2. cero (0) &nbsp; 3. múltiplo &nbsp; 4. 8 (ocho) &nbsp; 5. 2 (dos) &nbsp; 6. dos (2) &nbsp; 7. compuesto &nbsp; 8. 2 (dos) &nbsp; 9. 1 (uno) &nbsp; 10. 3 (tres)</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6F, 7V, 8F, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3d, 4b, 5c, 6c, 7b, 8c, 9d, 10a</div>
+      <div><span class="pt">IV. Pareados:</span> 1A, 2B, 3C, 4D, 5E, 6F, 7G, 8H, 9I, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Múltiplos, Divisores y Primos» (II Ciclo). Puede utilizarse como guía de estudio impresa o digital antes de
+      la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con la criba de Eratóstenes coloreada hasta el 30, la caza de parejas de divisores
+      con semillas y árboles de factores en el pizarrón. Etapa 4 de la Ruta del Número del II Ciclo, entre «Teoría de
+      Números» y «Potencias y Raíces» — juntas forman el trío de la estructura de los números. La misión interactiva
+      (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Múltiplos, Divisores y Primos · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
