@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Números Grandes: del Cien al Millón</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: morado=millones, naranja=miles, verde=unidades
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --pmm: #7c3aed; --pmil: #c2410c; --puni: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+
+  /* La escalera ×10: cadena de saltos */
+  .mover { display: inline-flex; align-items: center; gap: 9px; font-family: 'Cambria Math', Georgia, serif; font-size: 12pt; font-weight: 700; flex-wrap: wrap; justify-content: center; }
+  .mover .paso { background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 4px 10px; }
+  .mover .paso.meta { background: #f3e8ff; border-color: #ddc9f5; color: var(--pmm); }
+  .mover .flecha { color: var(--mat); font-weight: 800; font-size: 9pt; }
+  .mover em { color: var(--pmil); font-style: normal; font-weight: 800; }
+
+  /* Tabla de las 9 posiciones: períodos con color semántico */
+  table.posiciones { text-align: center; }
+  table.posiciones th { text-align: center; padding: 4px 4px; font-size: 8.5pt; }
+  table.posiciones th.pmm { background: var(--pmm); }
+  table.posiciones th.pmil { background: var(--pmil); }
+  table.posiciones th.puni { background: var(--puni); }
+  table.posiciones td { padding: 4px 4px; font-size: 9pt; }
+  table.posiciones td.cifra { font-size: 14pt; font-weight: 800; }
+  table.posiciones td.cifra.cmm { color: var(--pmm); }
+  table.posiciones td.cifra.cmil { color: var(--pmil); }
+  table.posiciones td.cifra.cuni { color: var(--puni); }
+  table.posiciones td.valorpos { font-size: 7.2pt; color: var(--gris); }
+
+  /* Lectura por bloques */
+  .bloques { display: inline-flex; align-items: flex-start; gap: 8px; font-family: 'Cambria Math', Georgia, serif; flex-wrap: wrap; justify-content: center; }
+  .bloques .term { text-align: center; }
+  .bloques .num { font-size: 16pt; font-weight: 800; padding: 3px 10px; border-radius: 8px; }
+  .bloques .num.bmm { background: #f3e8ff; color: var(--pmm); }
+  .bloques .num.bmil { background: #ffedd5; color: var(--pmil); }
+  .bloques .num.buni { background: #dcfce7; color: var(--puni); }
+  .bloques .op { font-size: 14pt; font-weight: 800; color: var(--gris); align-self: center; }
+  .bloques .lbl { font-size: 7pt; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; margin-top: 2px; }
+  .bloques .lbl.bmm { color: var(--pmm); } .bloques .lbl.bmil { color: var(--pmil); } .bloques .lbl.buni { color: var(--puni); }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .mayor { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .menor { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .igual { background: #ede9fe; border: 1px solid #d3c9f5; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .mayor b { color: #1e40af; } .tri .menor b { color: var(--pmil); } .tri .igual b { color: #6b21a8; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .bloques .num, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .mover .paso.meta
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Números Grandes, del Cien al Millón</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> I y II Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Valor posicional, períodos y la coma; lectura, escritura y comparación de números hasta el millón</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-numeros-grandes.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender la <strong>escalera del valor posicional</strong>: cada peldaño vale 10 veces más que el anterior.</li>
+      <li>Ubicar las <strong>9 posiciones</strong> (de las unidades a las centenas de millón) y los tres <strong>períodos</strong>: unidades, miles y millones.</li>
+      <li>Escribir la <strong>coma cada 3 cifras</strong>, contando desde la derecha, y usarla para leer por bloques.</li>
+      <li>Leer y escribir números hasta el millón aplicando las reglas <strong>cien/ciento</strong> y <strong>mil/un millón</strong>.</li>
+      <li>Usar los <strong>ceros de relleno</strong> para guardar las posiciones vacías al escribir un número.</li>
+      <li>Comparar números grandes <strong>contando primero las cifras</strong> y evitando los errores más comunes.</li>
+    </ol>
+
+    <h2>🪜 1. La escalera de los números</h2>
+    <p>Los números crecen subiendo una escalera mágica: cada peldaño vale <strong>10 veces más</strong> que el
+    anterior. Empezamos en las <strong>unidades</strong> y, peldaño a peldaño, llegamos hasta el
+    <strong>millón</strong> y más allá.</p>
+    <div class="caja regla">⚡ <b>La regla de la escalera:</b> 10 unidades = 1 decena · 10 decenas = 1 centena ·
+    10 centenas = 1 millar · … · 1,000 millares = ¡1 millón!</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> una cifra no vale por su cara, sino por su <strong>lugar</strong>.
+    En 347, el 3 vale 300, el 4 vale 40 y el 7 vale 7. La posición multiplica.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>La coma dice el apellido</b>»: la primera coma
+    (desde la derecha) se lee <strong>mil</strong> y la segunda se lee <strong>millones</strong>.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">Seis saltos ×10 llevan del 1 al millón</div>
+      <div class="mover">
+        <span class="paso">1</span><span class="flecha">×10→</span>
+        <span class="paso">10</span><span class="flecha">×10→</span>
+        <span class="paso">100</span><span class="flecha">×10→</span>
+        <span class="paso">1,000</span><span class="flecha">×10→</span>
+        <span class="paso">10,000</span><span class="flecha">×10→</span>
+        <span class="paso">100,000</span><span class="flecha">×10→</span>
+        <span class="paso meta">1,000,000</span>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ Por eso 1,000,000 tiene <strong>seis ceros</strong> y dos comas. ¡Cuéntalos!</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Grandes</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔢 2. Las 9 posiciones y los tres períodos</h2>
+    <p>Cada bloque de 3 cifras separado por comas se llama <strong>período</strong>. El mismo patrón
+    <strong>C-D-U</strong> (centena, decena, unidad) se repite en cada período: por eso la escalera nunca falla,
+    por grande que sea el número. Ejemplo: <strong>456,789,123</strong>.</p>
+
+    <table class="posiciones">
+      <tr>
+        <th class="pmm" colspan="3">🟣 PERÍODO DE LOS MILLONES</th>
+        <th class="pmil" colspan="3">🟠 PERÍODO DE LOS MILES</th>
+        <th class="puni" colspan="3">🟢 PERÍODO DE LAS UNIDADES</th>
+      </tr>
+      <tr><th class="pmm">C</th><th class="pmm">D</th><th class="pmm">U</th><th class="pmil">C</th><th class="pmil">D</th><th class="pmil">U</th><th class="puni">C</th><th class="puni">D</th><th class="puni">U</th></tr>
+      <tr>
+        <td class="cifra cmm">4</td><td class="cifra cmm">5</td><td class="cifra cmm">6</td>
+        <td class="cifra cmil">7</td><td class="cifra cmil">8</td><td class="cifra cmil">9</td>
+        <td class="cifra cuni">1</td><td class="cifra cuni">2</td><td class="cifra cuni">3</td>
+      </tr>
+      <tr>
+        <td class="valorpos">100,000,000</td><td class="valorpos">10,000,000</td><td class="valorpos">1,000,000</td>
+        <td class="valorpos">100,000</td><td class="valorpos">10,000</td><td class="valorpos">1,000</td>
+        <td class="valorpos">100</td><td class="valorpos">10</td><td class="valorpos">1</td>
+      </tr>
+    </table>
+    <p style="font-size:9.5pt;">Se lee: <strong>cuatrocientos cincuenta y seis millones setecientos ochenta y nueve mil ciento veintitrés</strong>.</p>
+
+    <h2>🪜 3. Los 4 pasos para leer un número grande</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Pon las comas</b>Cada 3 cifras, contando desde la DERECHA.</div>
+      <div><span class="pn">2</span><b>Lee los millones</b>El primer bloque, con su apellido «millones».</div>
+      <div><span class="pn">3</span><b>Lee los miles</b>El siguiente bloque, con su apellido «mil».</div>
+      <div><span class="pn">4</span><b>Lee las unidades</b>El último bloque va solo, sin apellido.</div>
+    </div>
+
+    <h3>📖 Lectura por bloques</h3>
+    <div class="ilus">
+      <div class="ilus-t">Cada bloque se lee como un número normal + su apellido</div>
+      <div class="bloques">
+        <div class="term"><div class="num bmm">4</div><div class="lbl bmm">millones</div></div>
+        <div class="op">,</div>
+        <div class="term"><div class="num bmil">250</div><div class="lbl bmil">mil</div></div>
+        <div class="op">,</div>
+        <div class="term"><div class="num buni">000</div><div class="lbl buni">unidades</div></div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">4,250,000 = <strong>cuatro millones doscientos cincuenta mil</strong>. El bloque de unidades en 000 no se lee.</p>
+    </div>
+
+    <h3>🗣️ Reglas para decirlo bien</h3>
+    <table>
+      <tr><th>Regla</th><th>Ejemplo</th></tr>
+      <tr><td class="k">100 = «cien» · 105 = «ciento cinco»</td><td>«Cien» solo se usa para el 100 exacto; con más cifras se dice «ciento».</td></tr>
+      <tr><td class="k">1,000 = «mil», nunca «un mil»</td><td>Pero sí decimos «<strong>un</strong> millón» para 1,000,000.</td></tr>
+      <tr><td class="k">Ceros de relleno</td><td>Trescientos cuatro mil = 304,000: el cero guarda el lugar de las decenas de millar.</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Grandes</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">⚖️ 4. Comparar números grandes</h2>
+    <p>Para saber cuál número gana, <strong>primero cuenta las cifras</strong>. Solo si tienen las mismas,
+    compara cifra por cifra de izquierda a derecha.</p>
+    <div class="tri">
+      <div class="mayor"><b>🔵 Más cifras → MAYOR</b>100,000 &gt; 99,999. Seis cifras le ganan a cinco, aunque los nueves parezcan grandes.</div>
+      <div class="menor"><b>🟠 Mismas cifras → compara desde la izquierda</b>250,000 &gt; 205,000 porque 5 &gt; 0 en las decenas de millar.</div>
+      <div class="igual"><b>⚖️ Mismas cifras y mismos valores → IGUALES</b>600,600 = 600,600. Cada posición coincide.</div>
+    </div>
+
+    <h3>📋 Casos comunes de lectura y escritura</h3>
+    <table>
+      <tr><th>Número</th><th>Cómo se lee</th><th>La clave</th></tr>
+      <tr><td class="k">4,500</td><td>cuatro mil quinientos</td><td>La coma marca el período de los miles.</td></tr>
+      <tr><td class="k">45,203</td><td>cuarenta y cinco mil doscientos tres</td><td>[45] mil + [203] unidades.</td></tr>
+      <tr><td class="k">205,000</td><td>doscientos cinco mil</td><td>El bloque 205 se lee completo, no cifra por cifra.</td></tr>
+      <tr><td class="k">304,000</td><td>trescientos cuatro mil</td><td>El cero de relleno guarda las decenas de millar.</td></tr>
+      <tr><td class="k">1,000,000</td><td>un millón</td><td>Un 1 con seis ceros y dos comas.</td></tr>
+      <tr><td class="k">3,040,000</td><td>tres millones cuarenta mil</td><td>[3] millones + [040] mil + [000].</td></tr>
+    </table>
+
+    <h2>⚠️ 5. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Ignorar los ceros al leer</td><td>«205,000 se lee dos mil cincuenta». El bloque antes de la coma es 205 completo; la coma dice que son MILES.</td><td>205,000 = doscientos cinco mil ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir «un mil»</td><td>En español, 1,000 se dice solo «mil». El «un» se usa con el millón.</td><td>1,000 = mil · 1,000,000 = un millón ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Comparar sin contar cifras</td><td>«99,999 &gt; 100,000 porque el 9 es más grande que el 1». Primero se cuentan las cifras: 6 le ganan a 5.</td><td>100,000 &gt; 99,999 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar los ceros de relleno</td><td>«Trescientos cuatro mil = 34,000». Sin el cero, el 3 baja de peldaño y se vuelve treinta y cuatro mil.</td><td>Trescientos cuatro mil = 304,000 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir la cifra con su valor</td><td>«En 456,000 el 4 vale 4». El 4 vive en las centenas de millar: la posición multiplica.</td><td>En 456,000 el 4 vale 400,000 ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> los números grandes nos rodean. Honduras tiene más de
+    <strong>9,000,000</strong> de habitantes (¡nueve millones!) y el Estadio Nacional Chelato Uclés recibe a más de
+    <strong>30,000</strong> aficionados (treinta mil). ¡Leer números grandes es leer nuestro país!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Grandes</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 6. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>En la escalera de los números, cada peldaño vale <span class="linea-resp"></span> veces más que el anterior.</li>
+      <li>La coma se escribe cada <span class="linea-resp"></span> cifras, contando desde la derecha.</li>
+      <li>Cada bloque de 3 cifras separado por comas se llama <span class="linea-resp"></span>.</li>
+      <li>Diez centenas forman una <span class="linea-resp"></span> de millar.</li>
+      <li>Un millón se escribe con un 1 seguido de <span class="linea-resp"></span> ceros.</li>
+      <li>El número 100 se lee «cien», pero 105 se lee «<span class="linea-resp"></span> cinco».</li>
+      <li>El número 1,000 se lee «mil», nunca «<span class="linea-resp"></span>».</li>
+      <li>Los ceros de <span class="linea-resp"></span> guardan el lugar de una posición vacía.</li>
+      <li>Al comparar dos números, primero se cuentan las <span class="linea-resp"></span>.</li>
+      <li>En 456,000 la cifra 4 vale <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ La coma se escribe cada tres cifras, contando desde la derecha.</li>
+      <li>____ Un millón tiene 5 ceros.</li>
+      <li>____ El número 1,000 se lee «un mil».</li>
+      <li>____ Diez centenas forman una unidad de millar.</li>
+      <li>____ El número 99,999 es mayor que 100,000.</li>
+      <li>____ En 304,000 el cero que sigue al 3 guarda el lugar de las decenas de millar.</li>
+      <li>____ El número 105 se lee «ciento cinco».</li>
+      <li>____ «Doscientos cinco mil» se escribe 250,000.</li>
+      <li>____ Todos los números de 7 cifras se leen con la palabra «millón» o «millones».</li>
+      <li>____ En el número 582, el 5 vale 500.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Grandes</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cómo se lee el número 4,500?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cuarenta y cinco</span>
+        <span class="op"><i>b</i> cuatro mil quinientos</span>
+        <span class="op"><i>c</i> cuatrocientos cincuenta</span>
+        <span class="op"><i>d</i> cuatro millones quinientos</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuántas cifras tiene un millón (1,000,000)?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 6 cifras</span>
+        <span class="op"><i>b</i> 5 cifras</span>
+        <span class="op"><i>c</i> 7 cifras</span>
+        <span class="op"><i>d</i> 9 cifras</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál es el valor del 8 en 80,000?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 8</span>
+        <span class="op"><i>b</i> 800</span>
+        <span class="op"><i>c</i> 8,000</span>
+        <span class="op"><i>d</i> 80,000</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>«Trescientos cinco mil» se escribe:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 3,005</span>
+        <span class="op"><i>b</i> 305,000</span>
+        <span class="op"><i>c</i> 350,000</span>
+        <span class="op"><i>d</i> 30,500</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué separa la coma en un número grande?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> las decenas</span>
+        <span class="op"><i>b</i> los períodos</span>
+        <span class="op"><i>c</i> los sumandos</span>
+        <span class="op"><i>d</i> las fracciones</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuál de estos números es MAYOR?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 99,999</span>
+        <span class="op"><i>b</i> 100,001</span>
+        <span class="op"><i>c</i> 100,000</span>
+        <span class="op"><i>d</i> 89,999</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuántas centenas forman una unidad de millar?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 100</span>
+        <span class="op"><i>b</i> 1,000</span>
+        <span class="op"><i>c</i> 10</span>
+        <span class="op"><i>d</i> 5</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué número sigue después de 9,999?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 9,100</span>
+        <span class="op"><i>b</i> 10,000</span>
+        <span class="op"><i>c</i> 99,991</span>
+        <span class="op"><i>d</i> 9,000</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuántos miles hay en un millón?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 100</span>
+        <span class="op"><i>b</i> 10</span>
+        <span class="op"><i>c</i> 1,000</span>
+        <span class="op"><i>d</i> 10,000</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>«Dos millones cuarenta mil» se escribe:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 2,400,000</span>
+        <span class="op"><i>b</i> 240,000</span>
+        <span class="op"><i>c</i> 2,004,000</span>
+        <span class="op"><i>d</i> 2,040,000</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Grandes</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Unidad de millar</td><td>A. Vale 1,000: diez centenas juntas</td></tr>
+      <tr><td>2. ____ Centena de millar</td><td>B. Vale 100,000: el peldaño justo antes del millón</td></tr>
+      <tr><td>3. ____ Millón</td><td>C. 1,000,000: un 1 con seis ceros y dos comas</td></tr>
+      <tr><td>4. ____ Período</td><td>D. Bloque de 3 cifras separado por comas</td></tr>
+      <tr><td>5. ____ La coma</td><td>E. Se escribe cada 3 cifras, contando desde la derecha</td></tr>
+      <tr><td>6. ____ Valor posicional</td><td>F. Lo que vale una cifra según su lugar</td></tr>
+      <tr><td>7. ____ Ceros de relleno</td><td>G. Guardan el lugar de una posición vacía</td></tr>
+      <tr><td>8. ____ Cien / ciento</td><td>H. 100 se lee «cien», pero 105 se lee «ciento cinco»</td></tr>
+      <tr><td>9. ____ Comparar números</td><td>I. Primero se cuentan las cifras: más cifras = mayor</td></tr>
+      <tr><td>10. ____ La escalera ×10</td><td>J. Cada peldaño vale 10 veces más que el anterior</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Números Grandes.</b> Ahora sabes subir la escalera del valor
+      posicional desde las unidades hasta el millón, poner la coma en su lugar, leer por bloques con sus apellidos
+      «mil» y «millones», usar los ceros de relleno y comparar cualquier pareja de números gigantes. ¡Con esta
+      destreza leerás poblaciones, precios y distancias de la vida real en Honduras y el mundo! 🚀✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Escribió y leyó números grandes de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Grandes</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. 10 (diez) &nbsp; 2. tres (3) &nbsp; 3. período &nbsp; 4. unidad &nbsp; 5. seis (6) &nbsp; 6. ciento &nbsp; 7. un mil &nbsp; 8. relleno &nbsp; 9. cifras &nbsp; 10. 400,000 (cuatrocientos mil)</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3F, 4V, 5F, 6V, 7V, 8F, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3d, 4b, 5b, 6b, 7c, 8b, 9c, 10d</div>
+      <div><span class="pt">IV. Pareados:</span> 1A, 2B, 3C, 4D, 5E, 6F, 7G, 8H, 9I, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Números Grandes: del Cien al Millón». Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con dictados de números, la tabla de las 9 posiciones en el pizarrón y ejercicios
+      de comparación con datos reales de Honduras. La misión interactiva (código QR de la portada) permite al estudiante
+      practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Números Grandes · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
