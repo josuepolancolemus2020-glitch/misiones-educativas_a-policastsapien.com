@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Valor Posicional hasta el Millón</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: naranja=grupo de los miles y ceros de
+       relleno, verde=grupo de las unidades, azul=cifra destacada
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --gmil: #c2410c; --guni: #15803d; --cif: #1e40af;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+
+  /* Cadena de lectura por grupos */
+  .mover { display: inline-flex; align-items: center; gap: 9px; font-family: 'Cambria Math', Georgia, serif; font-size: 12pt; font-weight: 700; flex-wrap: wrap; justify-content: center; }
+  .mover .paso { background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 4px 10px; }
+  .mover .paso .gm { color: var(--gmil); }
+  .mover .paso .gu { color: var(--guni); }
+  .mover .flecha { color: var(--mat); font-weight: 800; font-size: 9pt; }
+  .mover .lectura { font-family: Arial, sans-serif; font-size: 10pt; font-weight: 700; background: #eef7ee; border: 1px solid #cfe6cf; border-radius: 8px; padding: 5px 10px; }
+
+  /* Tabla de las 6 posiciones (grupo miles naranja · unidades verde) */
+  table.pos { text-align: center; }
+  table.pos th { text-align: center; padding: 4px 4px; font-size: 8.5pt; }
+  table.pos th.gm { background: var(--gmil); }
+  table.pos th.gu { background: var(--guni); }
+  table.pos td { padding: 3px 4px; }
+  table.pos td.cifra { font-size: 15pt; font-weight: 800; }
+  table.pos td.cifra.cm { color: var(--gmil); }
+  table.pos td.cifra.cu { color: var(--guni); }
+  table.pos td.valorpos { font-size: 7.5pt; color: var(--gris); }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .mayor { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .menor { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .igual { background: #ede9fe; border: 1px solid #d3c9f5; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .mayor b { color: var(--cif); } .tri .menor b { color: var(--gmil); } .tri .igual b { color: #6b21a8; }
+
+  /* Suma con acarreo */
+  .acarreo { display: inline-block; font-family: 'Cambria Math', Georgia, serif; font-size: 14pt; font-weight: 800; text-align: right; line-height: 1.5; }
+  .acarreo .lleva { font-size: 9pt; color: var(--gmil); letter-spacing: 8px; display: block; text-align: right; }
+  .acarreo .linea-suma { border-top: 2.5px solid var(--tinta); display: block; }
+  .acarreo .resultado { color: var(--guni); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .mover .lectura
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Valor Posicional hasta el Millón</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> II Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Lectura y escritura de números hasta el millón, forma expandida, ceros de relleno, comparación y suma con acarreo</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-valor-posicional.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender que cada cifra vale distinto <strong>según el lugar</strong> que ocupa en el número.</li>
+      <li>Leer números grandes separándolos en <strong>grupos de tres cifras</strong> desde la derecha.</li>
+      <li>Escribir números en cifras a partir de palabras, usando los <strong>ceros de relleno</strong> correctamente.</li>
+      <li>Descomponer números en su <strong>forma expandida</strong> según el valor real de cada cifra.</li>
+      <li>Comparar números grandes <strong>contando primero las cifras</strong>.</li>
+      <li>Sumar números grandes alineando las posiciones y aplicando el <strong>acarreo</strong> (llevar).</li>
+    </ol>
+
+    <h2>🔢 1. ¿Qué es el valor posicional?</h2>
+    <p>Cada cifra de un número vale distinto <strong>según el lugar</strong> que ocupa. El mismo dígito 5 puede
+    valer 5, 50, 500, 5,000, 50,000 o 500,000, dependiendo de su posición.</p>
+    <div class="caja regla">⚡ <b>La Regla de Oro:</b> cada posición vale <strong>10 veces más</strong> que la
+    posición inmediata a su derecha. Una decena de millar (10,000) vale 10 veces más que una unidad de millar (1,000).</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> para leer o escribir números grandes, los separamos en
+    <strong>grupos de tres cifras</strong> desde la derecha: el grupo de las unidades y el grupo de los miles.
+    La coma marca la frontera.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>El cero guarda la silla</b>»: cuando una posición
+    no tiene valor, el cero de relleno le guarda el lugar a las demás cifras. «Cinco mil seis» = 5,006 — los ceros
+    guardan las sillas de las centenas y las decenas.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">Leer 452,318 separando en grupos de tres</div>
+      <div class="mover">
+        <span class="paso">452,318</span>
+        <span class="flecha">SEPARA →</span>
+        <span class="paso"><span class="gm">452</span> · <span class="gu">318</span></span>
+        <span class="flecha">LEE →</span>
+        <span class="lectura"><span style="color:var(--gmil);">cuatrocientos cincuenta y dos MIL</span> <span style="color:var(--guni);">trescientos dieciocho</span></span>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ El grupo de la izquierda se lee como número y se le agrega «mil»; el grupo de la derecha se lee normal.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Valor Posicional</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🪜 2. Las 6 posiciones hasta el millón</h2>
+    <p>El número <strong>452,318</strong> en la tabla de valor posicional (el millón, con 7 cifras, abriría una
+    columna más a la izquierda):</p>
+    <table class="pos">
+      <tr><th class="gm" colspan="3">🟠 GRUPO DE LOS MILES</th><th class="gu" colspan="3">🟢 GRUPO DE LAS UNIDADES</th></tr>
+      <tr><th class="gm">CM</th><th class="gm">DM</th><th class="gm">UM</th><th class="gu">C</th><th class="gu">D</th><th class="gu">U</th></tr>
+      <tr>
+        <td class="cifra cm">4</td><td class="cifra cm">5</td><td class="cifra cm">2</td>
+        <td class="cifra cu">3</td><td class="cifra cu">1</td><td class="cifra cu">8</td>
+      </tr>
+      <tr>
+        <td class="valorpos">= 400,000</td><td class="valorpos">= 50,000</td><td class="valorpos">= 2,000</td>
+        <td class="valorpos">= 300</td><td class="valorpos">= 10</td><td class="valorpos">= 8</td>
+      </tr>
+    </table>
+
+    <h2>📖 3. Los 4 pasos para leer un número grande</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Pon la coma</b>Cada 3 cifras, contando desde la DERECHA.</div>
+      <div><span class="pn">2</span><b>Lee los miles</b>El grupo de la izquierda + la palabra «mil».</div>
+      <div><span class="pn">3</span><b>Lee las unidades</b>El grupo de la derecha, como número normal.</div>
+      <div><span class="pn">4</span><b>Une todo</b>728,145 = setecientos veintiocho mil ciento cuarenta y cinco.</div>
+    </div>
+
+    <h3>✏️ Escribir números en cifras (¡cuidado con los ceros!)</h3>
+    <table>
+      <tr><th>En palabras</th><th>En cifras</th><th>La clave</th></tr>
+      <tr><td class="k">Doscientos quince mil setenta</td><td><strong>215,070</strong></td><td>Grupo mil: 215 · grupo unidades: 070 (el cero guarda las centenas).</td></tr>
+      <tr><td class="k">Cinco mil seis</td><td><strong>5,006</strong> (no 5,600)</td><td>El 6 va en las unidades; centenas y decenas quedan en cero.</td></tr>
+      <tr><td class="k">Noventa mil ocho</td><td><strong>90,008</strong></td><td>Tres ceros de relleno entre el 90 y el 8.</td></tr>
+    </table>
+
+    <h2>➕ 4. La forma expandida</h2>
+    <p>La <strong>forma expandida</strong> descompone un número según el <strong>valor real</strong> de cada
+    cifra — no según su cara.</p>
+    <div class="ilus">
+      <div class="ilus-t">Forma estándar → forma expandida</div>
+      <p style="font-size:12pt;font-family:'Cambria Math',Georgia,serif;margin:0;">
+        <strong>452,318</strong> = <span style="color:var(--gmil);">400,000 + 50,000 + 2,000</span> + <span style="color:var(--guni);">300 + 10 + 8</span>
+      </p>
+      <p style="font-size:12pt;font-family:'Cambria Math',Georgia,serif;margin:6px 0 0;">
+        <strong>706,040</strong> = <span style="color:var(--gmil);">700,000 + 6,000</span> + <span style="color:var(--guni);">40</span>
+      </p>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;">En 706,040 los ceros de relleno (decenas de millar y unidades) no aparecen como sumandos: no aportan valor, solo guardan el lugar.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Valor Posicional</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🧮 5. Sumar en grande: el acarreo</h2>
+    <p>Al sumar números grandes, alinea las cifras según su posición (unidades con unidades, decenas con
+    decenas…). Si una columna da <strong>10 o más</strong>, escribe la unidad y <strong>lleva 1</strong> a la
+    siguiente posición.</p>
+    <div class="ilus">
+      <div class="ilus-t">128,500 + 64,700 con acarreo</div>
+      <div class="acarreo">
+        <span class="lleva">&nbsp;1&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>128,500</span><br>
+        <span>+&nbsp;64,700</span>
+        <span class="linea-suma"></span>
+        <span class="resultado">193,200</span>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;">Centenas: 5+7 = 12 → escribo 2 y llevo 1. Unidades de millar: 8+4+1 = 13 → escribo 3 y llevo 1. ¡El acarreo viaja a la izquierda!</p>
+    </div>
+
+    <h3>⚖️ Comparar números grandes</h3>
+    <div class="tri">
+      <div class="mayor"><b>🔵 Más cifras → MAYOR</b>87,340 &gt; 9,500: cinco cifras le ganan a cuatro, aunque el 9 parezca grande.</div>
+      <div class="menor"><b>🟠 Mismas cifras → izquierda primero</b>452,318 &gt; 214,763 porque 4 &gt; 2 en las centenas de millar.</div>
+      <div class="igual"><b>⚖️ Todo igual → IGUALES</b>706,040 = 706,040: cada posición coincide.</div>
+    </div>
+
+    <h3>📋 Casos comunes</h3>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">Leer 728,145</td><td>728 | 145</td><td>setecientos veintiocho mil ciento cuarenta y cinco</td></tr>
+      <tr><td class="k">Escribir «noventa mil ocho»</td><td>90 | 008</td><td>90,008</td></tr>
+      <tr><td class="k">Expandir 706,040</td><td>Solo cifras con valor</td><td>700,000 + 6,000 + 40</td></tr>
+      <tr><td class="k">Valor del 5 en 452,318</td><td>Decenas de millar</td><td>50,000</td></tr>
+      <tr><td class="k">¿Qué sigue de 999,999?</td><td>+1: se estrena la 7.ª cifra</td><td>1,000,000</td></tr>
+      <tr><td class="k">128,500 + 64,700</td><td>Alinear y llevar</td><td>193,200</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Escribir 5,600 por «cinco mil seis»</td><td>El 6 son unidades, no centenas. Sin los ceros de relleno, el 6 se sube de silla.</td><td>Cinco mil seis = 5,006 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Comparar por el primer dígito</td><td>«87,340 &lt; 9,500 porque 8 &lt; 9». Primero se cuentan las cifras: 5 le ganan a 4.</td><td>87,340 &gt; 9,500 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Leer sin separar en grupos</td><td>«340,502 = treinta y cuatro mil…». Separar primero: 340 | 502.</td><td>Trescientos cuarenta mil quinientos dos ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar el acarreo</td><td>Columna que da 12 y se escribe «12» completo o se pierde el 1.</td><td>Escribo 2 y LLEVO 1 a la siguiente ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Expandir con la cara de la cifra</td><td>«452,318 = 4+5+2+3+1+8». Cada cifra vale según su posición.</td><td>400,000+50,000+2,000+300+10+8 ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> leer bien las cifras protege tu bolsillo. Una motocicleta puede
+    costar <strong>L 85,000</strong> (ochenta y cinco mil) y un carro usado <strong>L 350,000</strong>
+    (trescientos cincuenta mil). Un cero de más o de menos ¡cambia todo el precio! El valor posicional es el
+    guardián de las cuentas grandes.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Valor Posicional</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Cada cifra vale distinto según el <span class="linea-resp"></span> que ocupa en el número.</li>
+      <li>Para leer números grandes, los separamos en grupos de <span class="linea-resp"></span> cifras desde la derecha.</li>
+      <li>Cada posición vale <span class="linea-resp"></span> veces más que la posición a su derecha.</li>
+      <li>El grupo de la izquierda se lee agregando la palabra <span class="linea-resp"></span>.</li>
+      <li>Descomponer un número según el valor de cada cifra se llama forma <span class="linea-resp"></span>.</li>
+      <li>El cero que ocupa una posición sin valor se llama cero de <span class="linea-resp"></span>.</li>
+      <li>Un millón se escribe con <span class="linea-resp"></span> cifras.</li>
+      <li>Al sumar, si una columna da 10 o más, se escribe la unidad y se <span class="linea-resp"></span> 1.</li>
+      <li>Al comparar dos números, gana el que tiene más <span class="linea-resp"></span>.</li>
+      <li>En 573,204, el dígito 7 vale <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ En el número 452,318, el dígito 5 vale 50,000.</li>
+      <li>____ Un millón se escribe con 6 cifras.</li>
+      <li>____ Los ceros de relleno no tienen ningún propósito en un número.</li>
+      <li>____ 300,040 se lee «trescientos mil cuarenta».</li>
+      <li>____ 87,340 es menor que 9,500 porque el primer dígito (8) es menor que 9.</li>
+      <li>____ Al sumar, si una columna da 10 o más, se lleva 1 a la siguiente posición.</li>
+      <li>____ La forma expandida de 706,040 es 700,000 + 6,000 + 40.</li>
+      <li>____ Para leer un número grande se separa en grupos de tres cifras desde la derecha.</li>
+      <li>____ El número 5,006 es igual al número 5,600.</li>
+      <li>____ 999,999 es el número más grande de 6 cifras.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Valor Posicional</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál es el valor del dígito 7 en el número 573,204?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 7</span>
+        <span class="op"><i>b</i> 70,000</span>
+        <span class="op"><i>c</i> 7,000</span>
+        <span class="op"><i>d</i> 700</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cómo se lee el número 908,050?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> novecientos ocho mil cincuenta</span>
+        <span class="op"><i>b</i> noventa mil ochocientos cincuenta</span>
+        <span class="op"><i>c</i> nueve mil ochenta y cinco</span>
+        <span class="op"><i>d</i> novecientos ochenta mil cinco</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuántas cifras tiene el número 1,000,000?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 6</span>
+        <span class="op"><i>b</i> 7</span>
+        <span class="op"><i>c</i> 8</span>
+        <span class="op"><i>d</i> 5</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es la forma expandida de 340,502?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 300,000 + 40,000 + 500 + 2</span>
+        <span class="op"><i>b</i> 300,000 + 4,000 + 500 + 2</span>
+        <span class="op"><i>c</i> 34,000 + 500 + 2</span>
+        <span class="op"><i>d</i> 300,000 + 40,000 + 50 + 2</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cómo se escribe «doscientos quince mil setenta» en cifras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 21,570</span>
+        <span class="op"><i>b</i> 215,700</span>
+        <span class="op"><i>c</i> 215,070</span>
+        <span class="op"><i>d</i> 2,157</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>En el número 5,006, ¿qué representan los ceros?</div>
+      <div class="preg-ops">
+        <span class="op full"><i>a</i> que no hay centenas ni decenas</span>
+        <span class="op"><i>b</i> que el número es negativo</span>
+        <span class="op"><i>c</i> que el número es decimal</span>
+        <span class="op"><i>d</i> no representan nada</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuál número es mayor: 87,340 o 9,500?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 9,500</span>
+        <span class="op"><i>b</i> 87,340</span>
+        <span class="op"><i>c</i> son iguales</span>
+        <span class="op"><i>d</i> no se puede saber</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>Al sumar 128,500 + 64,700, una columna da 12. ¿Qué haces?</div>
+      <div class="preg-ops">
+        <span class="op full"><i>a</i> escribo el 2 y llevo 1 a la siguiente columna</span>
+        <span class="op"><i>b</i> escribo el 12 completo</span>
+        <span class="op"><i>c</i> resto 10</span>
+        <span class="op"><i>d</i> ignoro el 1</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál es el número que sigue después de 999,999?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 999,1000</span>
+        <span class="op"><i>b</i> 1,000,000</span>
+        <span class="op"><i>c</i> 900,000</span>
+        <span class="op"><i>d</i> 9,999,999</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>El dígito 4 en el número 452,318 está en la posición de:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> centena de millar</span>
+        <span class="op"><i>b</i> decena de millar</span>
+        <span class="op"><i>c</i> unidad de millar</span>
+        <span class="op"><i>d</i> centena</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Valor Posicional</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Valor posicional</td><td>A. El valor de una cifra según el lugar que ocupa</td></tr>
+      <tr><td>2. ____ Unidad de millar</td><td>B. Posición de valor 1,000: abre el grupo de los miles</td></tr>
+      <tr><td>3. ____ Centena de millar</td><td>C. Posición de valor 100,000</td></tr>
+      <tr><td>4. ____ Millón</td><td>D. 1,000,000: se escribe con 7 cifras</td></tr>
+      <tr><td>5. ____ Forma expandida</td><td>E. 452,318 = 400,000 + 50,000 + 2,000 + 300 + 10 + 8</td></tr>
+      <tr><td>6. ____ Cero de relleno</td><td>F. Ocupa una posición sin valor para no perder el lugar</td></tr>
+      <tr><td>7. ____ La coma</td><td>G. Separa los grupos de tres cifras</td></tr>
+      <tr><td>8. ____ Comparar números</td><td>H. Primero se cuentan las cifras: más cifras = mayor</td></tr>
+      <tr><td>9. ____ Acarreo (llevar)</td><td>I. Si la columna da 10 o más, se lleva 1 a la siguiente</td></tr>
+      <tr><td>10. ____ 452,318</td><td>J. Cuatrocientos cincuenta y dos mil trescientos dieciocho</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Valor Posicional.</b> Ahora sabes que cada cifra vale según su
+      silla, lees cualquier número separándolo en grupos de tres, escribes con los ceros de relleno en su lugar,
+      expandes los números según su valor real, comparas contando cifras y sumas en grande llevando el acarreo.
+      ¡De los precios del mercado a las cuentas de la escuela, los números grandes ya son tu territorio! 🔢✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Leyó, escribió y sumó números grandes de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Valor Posicional</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. lugar (posición) &nbsp; 2. tres (3) &nbsp; 3. 10 (diez) &nbsp; 4. mil &nbsp; 5. expandida &nbsp; 6. relleno &nbsp; 7. siete (7) &nbsp; 8. lleva &nbsp; 9. cifras &nbsp; 10. 70,000</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3F, 4V, 5F, 6V, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2a, 3b, 4a, 5c, 6a, 7b, 8a, 9b, 10a</div>
+      <div><span class="pt">IV. Pareados:</span> 1A, 2B, 3C, 4D, 5E, 6F, 7G, 8H, 9I, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Valor Posicional hasta el Millón» (II Ciclo). Puede utilizarse como guía de estudio impresa o digital antes
+      de la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con dictados de números, la tabla posicional en el pizarrón, precios reales en
+      lempiras y sumas con acarreo en el cuaderno. Esta es la etapa 1 de la Ruta del Número del II Ciclo; su versión
+      ampliada para I y II Ciclo es la misión «Números Grandes: del Cien al Millón», que ya cuenta con su propia ficha.
+      La misión interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata
+      antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Valor Posicional · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
