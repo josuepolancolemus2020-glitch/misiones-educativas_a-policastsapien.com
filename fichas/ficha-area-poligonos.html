@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Área de Polígonos Regulares</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=perímetro, verde=apotema,
+       naranja=área (coherentes con la ficha de Círculos y Polígonos)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --per: #1e40af; --apo: #15803d; --are: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .ilus svg { max-width: 100%; height: auto; }
+  .ilus-par { display: flex; gap: 22px; justify-content: center; align-items: center; flex-wrap: wrap; }
+
+  /* Fórmula destacada */
+  .formula { display: inline-block; font-family: 'Cambria Math', Georgia, serif; font-size: 14pt; font-weight: 800; background: var(--mat-claro); border: 1.5px solid var(--linea); border-radius: 8px; padding: 5px 14px; margin: 3px 4px; color: var(--mat-osc); }
+
+  /* Cadena de cálculo */
+  .mover { display: inline-flex; align-items: center; gap: 9px; font-family: 'Cambria Math', Georgia, serif; font-size: 12pt; font-weight: 700; flex-wrap: wrap; justify-content: center; }
+  .mover .paso { background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 4px 10px; }
+  .mover .paso.res { background: #ffedd5; border-color: #f3c99a; color: var(--are); }
+  .mover .flecha { color: var(--mat); font-weight: 800; font-size: 9pt; }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .pperi { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .papot { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .parea { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .pperi b { color: var(--per); } .tri .papot b { color: var(--apo); } .tri .parea b { color: var(--are); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .formula, .mover .paso.res
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Área de Polígonos Regulares</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> II Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Pentágonos y hexágonos regulares: la apotema, el perímetro y la fórmula A = (P × apotema) ÷ 2</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-area-poligonos.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Reconocer los <strong>polígonos regulares</strong> por su número de lados: triángulo, cuadrado, pentágono y hexágono.</li>
+      <li>Identificar la <strong>apotema</strong>: del centro al punto medio de un lado, perpendicular a él.</li>
+      <li>Calcular el <strong>perímetro</strong> con la fórmula rápida: número de lados × longitud del lado.</li>
+      <li>Aplicar la fórmula del área: <strong>A = (Perímetro × apotema) ÷ 2</strong>.</li>
+      <li>Seguir el orden correcto: primero el perímetro, luego multiplicar por la apotema y al final dividir entre 2.</li>
+      <li>Expresar el área siempre en <strong>unidades cuadradas</strong> (cm², m²).</li>
+    </ol>
+
+    <h2>🔷 1. Los polígonos regulares y su fórmula</h2>
+    <p>Un <strong>polígono regular</strong> tiene todos sus <strong>lados y ángulos iguales</strong>. Se nombran
+    por su número de lados: triángulo (3), cuadrado (4), <strong>pentágono (5)</strong> y
+    <strong>hexágono (6)</strong>. Su área se calcula siempre con la misma fórmula:</p>
+    <p style="text-align:center;"><span class="formula">A = (Perímetro × apotema) ÷ 2</span></p>
+    <div class="caja regla">⚡ <b>La pregunta clave:</b> ¿cuánto vale el <strong style="color:var(--per);">perímetro</strong>
+    y cuánto la <strong style="color:var(--apo);">apotema</strong>? Con esos dos datos, el área sale siempre igual,
+    sea pentágono, hexágono u octágono.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> como todos los lados son iguales, el perímetro es rapidísimo:
+    <strong>P = número de lados × lado</strong>. Pentágono de lado 4 → 5 × 4 = 20.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>Pe por a, y a la mitad</b>»: multiplica
+    <strong>P</strong>erímetro por <strong>a</strong>potema… ¡y no te vayas sin dividir entre 2!</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">Hexágono de lado 6 y apotema 5: el cálculo completo</div>
+      <div class="mover">
+        <span class="paso">P = 6 × 6 = <strong style="color:var(--per);">36</strong></span>
+        <span class="flecha">× APOTEMA →</span>
+        <span class="paso">36 × <strong style="color:var(--apo);">5</strong> = 180</span>
+        <span class="flecha">÷ 2 →</span>
+        <span class="paso res">A = 90 cm²</span>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ Primero el perímetro (6 lados × 6), luego × apotema, y al final ÷ 2. ¡Tres jugadas y gol!</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Polígonos Regulares</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>📐 2. La apotema: la llave del área</h2>
+    <p>La <strong>apotema</strong> es la distancia desde el <strong>centro</strong> del polígono hasta el
+    <strong>punto medio de un lado</strong>. Es <strong>perpendicular</strong> al lado (forma 90°) y sin ella
+    no hay fórmula que funcione.</p>
+
+    <div class="ilus">
+      <div class="ilus-t">El hexágono regular: perímetro azul, apotema verde con su ángulo de 90°</div>
+      <svg viewBox="0 0 340 155" width="340" height="155" role="img" aria-label="Hexágono regular con apotema">
+        <polygon points="230,78 200,26 140,26 110,78 140,130 200,130" fill="#fff8e6" stroke="#1e40af" stroke-width="3"/>
+        <line x1="170" y1="78" x2="170" y2="130" stroke="#15803d" stroke-width="3" stroke-linecap="round"/>
+        <rect x="163" y="116" width="7" height="7" fill="none" stroke="#15803d" stroke-width="1.4"/>
+        <circle cx="170" cy="78" r="4.5" fill="#c2410c"/>
+        <text x="176" y="70" font-family="Arial" font-size="9.5" font-weight="bold" fill="#c2410c">centro</text>
+        <text x="122" y="108" font-family="Arial" font-size="10" font-weight="bold" fill="#15803d">apotema</text>
+        <text x="170" y="146" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#1e40af">lado</text>
+        <text x="262" y="50" font-family="Arial" font-size="9" fill="#5b6773">6 lados</text>
+        <text x="262" y="62" font-family="Arial" font-size="9" fill="#5b6773">iguales</text>
+      </svg>
+      <p style="font-size:9pt;color:var(--gris);margin:5px 0 0;text-align:center;">✅ La <strong style="color:var(--apo);">apotema</strong> cae al punto MEDIO del lado con su cuadradito de 90° — no confundirla con la distancia a un vértice.</p>
+    </div>
+
+    <h3>📏 El perímetro exprés</h3>
+    <table>
+      <tr><th>Figura</th><th>Lados</th><th>Fórmula</th><th>Ejemplo (lado 4)</th></tr>
+      <tr><td class="k">🔺 Triángulo</td><td>3</td><td>P = 3 × lado</td><td>3 × 4 = 12</td></tr>
+      <tr><td class="k">🟦 Cuadrado</td><td>4</td><td>P = 4 × lado</td><td>4 × 4 = 16</td></tr>
+      <tr><td class="k">⬠ Pentágono</td><td>5</td><td>P = 5 × lado</td><td>5 × 4 = 20</td></tr>
+      <tr><td class="k">⬡ Hexágono</td><td>6</td><td>P = 6 × lado</td><td>6 × 4 = 24</td></tr>
+    </table>
+
+    <h2>🪜 3. Los 4 pasos para el área</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Halla el perímetro</b>Cuenta los lados y multiplica por la longitud del lado.</div>
+      <div><span class="pn">2</span><b>Multiplica por la apotema</b>P × a. Hexágono: 36 × 5 = 180.</div>
+      <div><span class="pn">3</span><b>Divide entre 2</b>180 ÷ 2 = 90. ¡Sin este paso el área sale doble!</div>
+      <div><span class="pn">4</span><b>Escribe la unidad</b>El área siempre va en cm², m² (cuadradas).</div>
+    </div>
+
+    <div class="tri">
+      <div class="pperi"><b>🔵 Perímetro → el contorno</b>Número de lados × lado. Es el primer dato de la fórmula.</div>
+      <div class="papot"><b>🟢 Apotema → la llave</b>Del centro al punto medio del lado, con 90°. Es el segundo dato.</div>
+      <div class="parea"><b>🟠 Área → el premio</b>(P × a) ÷ 2, en unidades cuadradas. ¡La misma fórmula para todo polígono regular!</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Polígonos Regulares</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📋 4. Casos comunes</h2>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">P del pentágono, lado 4</td><td>5 × 4</td><td>20</td></tr>
+      <tr><td class="k">P del hexágono, lado 5</td><td>6 × 5</td><td>30</td></tr>
+      <tr><td class="k">Hexágono: lado 6, apotema 5</td><td>P = 36 → (36 × 5) ÷ 2</td><td>A = 90 cm²</td></tr>
+      <tr><td class="k">Pentágono: P = 20, apotema 4</td><td>(20 × 4) ÷ 2 = 80 ÷ 2</td><td>A = 40 cm²</td></tr>
+      <tr><td class="k">P del pentágono, lado 6</td><td>5 × 6</td><td>30</td></tr>
+      <tr><td class="k">¿Qué mide la apotema?</td><td>Del centro al punto medio del lado</td><td>Con 90° sobre el lado</td></tr>
+    </table>
+
+    <h2>⚠️ 5. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar dividir entre 2</td><td>«Pentágono P = 20, a = 4 → área 80». Ese es el doble del área real.</td><td>(20 × 4) ÷ 2 = 40 cm² ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Usar el lado en vez de la apotema</td><td>«A = (P × lado) ÷ 2». La fórmula pide la APOTEMA, no el lado.</td><td>A = (P × apotema) ÷ 2 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir la apotema con la diagonal</td><td>La apotema NO va de vértice a vértice ni del centro a la esquina.</td><td>Del centro al punto MEDIO del lado ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Contar mal los lados</td><td>«El pentágono tiene 6 lados». PENTA = 5, HEXA = 6.</td><td>Pentágono 5 · hexágono 6 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar el ² en la unidad</td><td>«El área es 90 cm». El área es superficie: unidad cuadrada.</td><td>90 cm² ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> los polígonos regulares trabajan calladitos: el <strong>panal
+    de abejas</strong> es un mosaico de hexágonos perfectos, las <strong>tuercas</strong> que aprieta el mecánico
+    son hexágonos de acero, y el <strong>kiosco del parque central</strong> de muchos pueblos luce su planta de
+    polígono regular. ¡Con (P × a) ÷ 2 puedes medir el piso de todos!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Polígonos Regulares</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 6. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Un polígono regular tiene todos sus lados y ángulos <span class="linea-resp"></span>.</li>
+      <li>El pentágono tiene <span class="linea-resp"></span> lados.</li>
+      <li>El hexágono tiene <span class="linea-resp"></span> lados.</li>
+      <li>La apotema va del centro al punto <span class="linea-resp"></span> de un lado.</li>
+      <li>La apotema es <span class="linea-resp"></span> al lado (forma un ángulo de 90°).</li>
+      <li>El perímetro de un polígono regular es el número de lados × <span class="linea-resp"></span>.</li>
+      <li>La fórmula del área es A = (Perímetro × apotema) ÷ <span class="linea-resp"></span>.</li>
+      <li>El área se expresa en unidades <span class="linea-resp"></span>.</li>
+      <li>El perímetro de un hexágono de lado 5 es <span class="linea-resp"></span>.</li>
+      <li>Un pentágono con P = 20 y apotema 4 tiene un área de <span class="linea-resp"></span> cm².</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Un polígono regular tiene todos sus lados iguales.</li>
+      <li>____ La apotema es la distancia entre dos vértices.</li>
+      <li>____ El hexágono tiene 6 lados.</li>
+      <li>____ El área de un polígono regular es (P × apotema) ÷ 2.</li>
+      <li>____ El pentágono tiene 6 lados.</li>
+      <li>____ El perímetro es el número de lados por el lado.</li>
+      <li>____ El área se mide en unidades cuadradas (cm²).</li>
+      <li>____ En la fórmula del área se usa el lado en vez de la apotema.</li>
+      <li>____ El perímetro de un hexágono de lado 5 es 30.</li>
+      <li>____ Un pentágono de P = 20 y apotema 4 tiene área 80 cm².</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Polígonos Regulares</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuántos lados tiene un hexágono?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 4</span>
+        <span class="op"><i>b</i> 5</span>
+        <span class="op"><i>c</i> 6</span>
+        <span class="op"><i>d</i> 7</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuántos lados tiene un pentágono?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 5</span>
+        <span class="op"><i>b</i> 6</span>
+        <span class="op"><i>c</i> 7</span>
+        <span class="op"><i>d</i> 4</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué es la apotema?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un lado</span>
+        <span class="op"><i>b</i> la distancia del centro al lado</span>
+        <span class="op"><i>c</i> una diagonal</span>
+        <span class="op"><i>d</i> un vértice</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es la fórmula del área de un polígono regular?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> lado × lado</span>
+        <span class="op"><i>b</i> base × altura</span>
+        <span class="op"><i>c</i> (P × apotema) ÷ 2</span>
+        <span class="op"><i>d</i> 4 × lado</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuál es el perímetro de un hexágono de lado 5?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 25</span>
+        <span class="op"><i>b</i> 30</span>
+        <span class="op"><i>c</i> 35</span>
+        <span class="op"><i>d</i> 11</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>Un pentágono tiene P = 20 y apotema 4. ¿Cuál es su área?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 80 cm²</span>
+        <span class="op"><i>b</i> 40 cm²</span>
+        <span class="op"><i>c</i> 24 cm²</span>
+        <span class="op"><i>d</i> 100 cm²</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>En A = (P × apotema) ÷ 2, ¿qué falta después de multiplicar?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> sumar 2</span>
+        <span class="op"><i>b</i> dividir entre 2</span>
+        <span class="op"><i>c</i> restar 2</span>
+        <span class="op"><i>d</i> nada</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>Un polígono regular tiene todos sus lados:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> distintos</span>
+        <span class="op"><i>b</i> iguales</span>
+        <span class="op"><i>c</i> curvos</span>
+        <span class="op"><i>d</i> dobles</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál es el perímetro de un pentágono de lado 6?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 30</span>
+        <span class="op"><i>b</i> 36</span>
+        <span class="op"><i>c</i> 11</span>
+        <span class="op"><i>d</i> 25</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Un hexágono tiene lado 6 y apotema 5. ¿Cuál es su área?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 90 cm²</span>
+        <span class="op"><i>b</i> 180 cm²</span>
+        <span class="op"><i>c</i> 36 cm²</span>
+        <span class="op"><i>d</i> 45 cm²</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Polígonos Regulares</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Polígono regular</td><td>A. Todos sus lados y ángulos son iguales</td></tr>
+      <tr><td>2. ____ Triángulo</td><td>B. Polígono de 3 lados</td></tr>
+      <tr><td>3. ____ Pentágono</td><td>C. Polígono de 5 lados</td></tr>
+      <tr><td>4. ____ Hexágono</td><td>D. Polígono de 6 lados</td></tr>
+      <tr><td>5. ____ Centro</td><td>E. Punto a la misma distancia de todos los vértices</td></tr>
+      <tr><td>6. ____ Apotema</td><td>F. Del centro al punto medio del lado, formando 90°</td></tr>
+      <tr><td>7. ____ Perímetro</td><td>G. Número de lados × longitud del lado</td></tr>
+      <tr><td>8. ____ Fórmula del área</td><td>H. A = (P × apotema) ÷ 2</td></tr>
+      <tr><td>9. ____ Unidades del área</td><td>I. Cuadradas: cm², m²</td></tr>
+      <tr><td>10. ____ Dividir entre 2</td><td>J. El paso final de la fórmula, después de P × a</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Área de Polígonos Regulares.</b> Ahora nombras los polígonos
+      por sus lados, encuentras la apotema con su cuadradito de 90°, calculas el perímetro exprés y aplicas la
+      fórmula universal «Pe por a, y a la mitad» sin olvidar el ÷ 2 ni el cm². ¡Del panal de abejas al kiosco
+      del parque, todos los polígonos regulares ya te rinden cuentas! 🔷✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Calculó perímetros y áreas de pentágonos y hexágonos en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Polígonos Regulares</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. iguales &nbsp; 2. cinco (5) &nbsp; 3. seis (6) &nbsp; 4. medio &nbsp; 5. perpendicular &nbsp; 6. lado &nbsp; 7. 2 (dos) &nbsp; 8. cuadradas &nbsp; 9. 30 &nbsp; 10. 40</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7V, 8F, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1c, 2a, 3b, 4c, 5b, 6b, 7b, 8b, 9a, 10a</div>
+      <div><span class="pt">IV. Pareados:</span> 1A, 2B, 3C, 4D, 5E, 6F, 7G, 8H, 9I, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Área de Polígonos Regulares» (II Ciclo). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con el trazado de hexágonos con compás, el recorte de polígonos en cartulina para
+      medir su apotema con regla y la búsqueda de polígonos regulares en el entorno (panales, tuercas, kioscos). Etapa 5
+      y cierre de la Ruta de la Forma del II Ciclo; su pareja del II-III Ciclo, «Área de Círculos y Polígonos», ya cuenta
+      con ficha y agrega el círculo y el sector circular. La misión interactiva (código QR de la portada) permite al
+      estudiante practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Polígonos Regulares · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
