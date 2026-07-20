@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Los Pronombres</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: ESPAÑOL = ÁMBAR/DORADO (#b45309)
+     · Colores semánticos fijos: verde=pronombre (sustituye, va solo),
+       azul=determinante (acompaña), naranja=posición átona
+       (proclítico/enclítico)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --esp: #b45309; --esp-osc: #78350f; --esp-claro: #fefce8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #ecdcc0;
+    --pro: #15803d; --det: #1e40af; --pos: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7f3ea; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--esp-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--esp); background: var(--esp-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--esp-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--esp-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--esp); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--esp-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--esp-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--esp-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--esp); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf9f0; }
+  td.k { font-weight: 700; color: var(--esp-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffdf7; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--esp-osc); margin-bottom: 8px; }
+
+  /* Duelo determinante vs pronombre */
+  .duelo { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .duelo .lado { border-radius: 9px; padding: 9px 13px; font-size: 10.5pt; max-width: 46%; min-width: 210px; }
+  .duelo .lado.ldet { background: #dbeafe; border: 1.5px solid #b6d4fb; }
+  .duelo .lado.lpro { background: #dcfce7; border: 1.5px solid #b9e6c6; }
+  .duelo .lado b { display: block; font-size: 10.5pt; margin-bottom: 3px; }
+  .duelo .lado.ldet b { color: var(--det); }
+  .duelo .lado.lpro b { color: var(--pro); }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fffdf7; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--esp); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--esp-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tsolo { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tacom { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .tposi { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tsolo b { color: var(--pro); } .tri .tacom b { color: var(--det); } .tri .tposi b { color: var(--pos); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--esp-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y ámbar */
+  .acts ol li::marker { font-weight: 800; color: var(--esp); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito ámbar · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--esp); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--esp-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--esp-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--esp-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #faf6ec; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--esp-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--esp); box-shadow: 0 6px 16px rgba(180,83,9,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .duelo .lado
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Los Pronombres</div>
+        <div class="f-meta"><b>Asignatura:</b> Español &nbsp;·&nbsp; <b>Nivel:</b> II y III Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El pronombre y sus clases, tónicos y átonos, proclíticos y enclíticos, y el voseo hondureño</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-pronombres.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Definir el <strong>pronombre</strong> como la palabra que sustituye al sustantivo para evitar repeticiones.</li>
+      <li>Distinguir el pronombre (va solo) del <strong>determinante</strong> (acompaña al sustantivo).</li>
+      <li>Clasificar los personales en <strong>tónicos</strong> (yo, tú, nosotros) y <strong>átonos</strong> (me, te, lo, la).</li>
+      <li>Reconocer la posición de los átonos: <strong>proclíticos</strong> (antes del verbo) y <strong>enclíticos</strong> (unidos al final).</li>
+      <li>Identificar demostrativos, posesivos, <strong>relativos, interrogativos e indefinidos</strong>.</li>
+      <li>Valorar el <strong>voseo hondureño</strong> («vos cantás») como forma correcta de la segunda persona.</li>
+    </ol>
+
+    <h2>👤 1. ¿Qué es un pronombre?</h2>
+    <p>El <strong>pronombre</strong> es la palabra que <strong>sustituye al sustantivo</strong> para evitar
+    repeticiones en la oración. Su significado depende completamente del contexto: «ella» puede ser María,
+    la maestra o la luna, según de quién hablemos.</p>
+    <div class="caja regla">⚡ <b>La Regla de Oro:</b> si va SOLO y sustituye, es <strong>pronombre</strong>;
+    si ACOMPAÑA al sustantivo, es <strong>determinante</strong>. «Quiero esa» (pronombre) vs «esa mesa»
+    (determinante).</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> los pronombres son los suplentes del equipo: entran a la
+    cancha cuando el sustantivo sale, para que la oración no repita y repita el mismo nombre.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>PRO-nombre = a favor del nombre</b>»: trabaja
+    EN LUGAR del nombre. Si la palabra aún tiene al sustantivo a la par, todavía no es pronombre.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">El duelo de la misión: ¿determinante o pronombre?</div>
+      <div class="duelo">
+        <div class="lado ldet">
+          <b>🔵 «ESA mesa es cara» → determinante</b>
+          Acompaña al sustantivo «mesa»: aún no sustituye a nadie.
+        </div>
+        <div class="lado lpro">
+          <b>🟢 «Quiero ESA» → pronombre</b>
+          Va solo y sustituye a «mesa»: ¡el suplente entró a la cancha!
+        </div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ La misma palabra cambia de papel según vaya acompañada o sola.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Pronombres</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>👥 2. Los personales: tónicos y átonos</h2>
+    <table>
+      <tr><th>Tipo</th><th>¿Cómo funcionan?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">🗣️ Tónicos</td><td>Independientes: funcionan solos como sujeto o tras preposición.</td><td>yo, tú, él, ella, nosotros, ustedes, mí, ti</td></tr>
+      <tr><td class="k">🔗 Átonos</td><td>Dependientes: acompañan obligatoriamente al verbo.</td><td>me, te, se, nos, lo, la, le, los, las, les</td></tr>
+    </table>
+
+    <h3>📍 La posición de los átonos</h3>
+    <table>
+      <tr><th>Posición</th><th>¿Dónde van?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">◀️ Proclíticos</td><td>SEPARADOS y ANTES del verbo conjugado.</td><td>Él <strong>me lo</strong> dio · Yo <strong>te</strong> llamo</td></tr>
+      <tr><td class="k">▶️ Enclíticos</td><td>UNIDOS al final del verbo (una sola palabra): con infinitivos, gerundios e imperativos.</td><td>Dá<strong>melo</strong> · Lláma<strong>me</strong> · Viéndo<strong>lo</strong></td></tr>
+    </table>
+
+    <h2>🗂️ 3. Las demás clases de pronombres</h2>
+    <table>
+      <tr><th>Clase</th><th>¿Qué hacen?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">👉 Demostrativos</td><td>Sustituyen indicando DISTANCIA; siempre van solos.</td><td><strong>Este</strong> es caro · Quiero <strong>aquel</strong></td></tr>
+      <tr><td class="k">💼 Posesivos</td><td>Sustituyen indicando PERTENENCIA (sin sustantivo al lado).</td><td>Ese libro es <strong>mío</strong> · El <strong>suyo</strong> está allá</td></tr>
+      <tr><td class="k">🔗 Relativos</td><td>Unen oraciones refiriéndose a un nombre ya dicho.</td><td>que, quien, cual: «el coche <strong>que</strong> compré»</td></tr>
+      <tr><td class="k">❓ Interrogativos</td><td>Preguntan; SIEMPRE llevan tilde.</td><td>¿<strong>qué</strong>?, ¿<strong>quién</strong>?, ¿<strong>cuánto</strong>?</td></tr>
+      <tr><td class="k">🌫️ Indefinidos</td><td>Señalan identidad o cantidad vaga.</td><td>alguien, nadie, algo, varios</td></tr>
+    </table>
+
+    <h2>🪜 4. Los 4 pasos para analizar un pronombre</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>¿Va solo?</b>Si acompaña a un sustantivo, es determinante, no pronombre.</div>
+      <div><span class="pn">2</span><b>¿A quién sustituye?</b>Busca el nombre al que reemplaza en el contexto.</div>
+      <div><span class="pn">3</span><b>¿Qué clase es?</b>¿Personal, demostrativo, posesivo, relativo, interrogativo o indefinido?</div>
+      <div><span class="pn">4</span><b>Si es átono, ¿dónde va?</b>Antes y separado = proclítico · pegado al final = enclítico.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Pronombres</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📋 5. Casos comunes</h2>
+    <table>
+      <tr><th>Frase</th><th>Análisis</th><th>Respuesta</th></tr>
+      <tr><td class="k">Quiero esa</td><td>Va sola y sustituye</td><td>Pronombre demostrativo</td></tr>
+      <tr><td class="k">Esa mesa</td><td>Acompaña al sustantivo</td><td>Determinante (no pronombre)</td></tr>
+      <tr><td class="k">Te llamo</td><td>Átono antes del verbo</td><td>Proclítico</td></tr>
+      <tr><td class="k">Llámame</td><td>Átono unido al final</td><td>Enclítico</td></tr>
+      <tr><td class="k">El coche que compré</td><td>Une refiriéndose al coche</td><td>Relativo</td></tr>
+      <tr><td class="k">Vos cantás</td><td>2.ª persona singular en Honduras</td><td>Voseo ✔ correcto</td></tr>
+    </table>
+
+    <div class="tri">
+      <div class="tsolo"><b>🟢 Pronombre → va solo</b>«Quiero esa», «el mío», «aquel». Sustituye al nombre.</div>
+      <div class="tacom"><b>🔵 Determinante → acompaña</b>«Esa mesa», «mi casa». Todavía no sustituye a nadie.</div>
+      <div class="tposi"><b>🟠 Átonos → dos posiciones</b>Proclítico: «te llamo» · Enclítico: «llámame».</div>
+    </div>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Llamar pronombre a «mi» en «mi casa»</td><td>Acompaña al sustantivo: es determinante. El pronombre posesivo es «mío».</td><td>Mi casa (det.) · la casa es mía (pron.) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir proclítico con enclítico</td><td>«Dáselo tiene proclíticos». Los pronombres van PEGADOS al final.</td><td>Dá-se-lo = enclíticos ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que «te» es tónico</td><td>«Te» no funciona solo: siempre necesita al verbo.</td><td>Te, me, lo, la… son átonos ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Relativos que preguntan</td><td>«Que» une oraciones; para preguntar se usa «qué» CON tilde.</td><td>que (relativo) · ¿qué? (interrogativo) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que el voseo es incorrecto</td><td>«Vos cantás» es gramática legítima del español centroamericano.</td><td>El voseo es correcto y nuestro ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> hablamos de <strong>VOS</strong>: «vos cantás», «vos sos mi
+    amigo», «¿y vos qué decís?». El <strong>voseo</strong> es nuestro pronombre de confianza para la segunda
+    persona singular — una herencia del español antiguo que Centroamérica conservó con orgullo. ¡Decile a
+    todos que el voseo también es gramática correcta!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Pronombres</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El pronombre <span class="linea-resp"></span> al sustantivo para evitar repeticiones.</li>
+      <li>«Yo, tú, él y nosotros» son pronombres personales <span class="linea-resp"></span>.</li>
+      <li>«Me, te, se, lo y la» son pronombres personales <span class="linea-resp"></span>.</li>
+      <li>El pronombre que va separado y ANTES del verbo se llama <span class="linea-resp"></span>.</li>
+      <li>El pronombre unido al final del verbo, como en «dámelo», se llama <span class="linea-resp"></span>.</li>
+      <li>«Este es muy caro»: la palabra «este» es un pronombre <span class="linea-resp"></span>.</li>
+      <li>«Ese libro es mío»: la palabra «mío» es un pronombre <span class="linea-resp"></span>.</li>
+      <li>«Alguien» y «nadie» son pronombres <span class="linea-resp"></span>.</li>
+      <li>Los pronombres interrogativos siempre llevan <span class="linea-resp"></span>.</li>
+      <li>En Honduras usamos el pronombre <span class="linea-resp"></span> en lugar de «tú».</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El pronombre sustituye al sustantivo para evitar repeticiones.</li>
+      <li>____ «Nosotros» es un pronombre personal tónico.</li>
+      <li>____ Un pronombre enclítico va escrito después del verbo y unido a él (ej: dímelo).</li>
+      <li>____ Los pronombres relativos (que, quien, cual) sirven para hacer preguntas directas.</li>
+      <li>____ En «Este libro es mío», la palabra «mío» es un pronombre posesivo.</li>
+      <li>____ El pronombre «te» en «te llamo mañana» es un pronombre tónico.</li>
+      <li>____ En «Mi casa», la palabra «mi» es un pronombre posesivo.</li>
+      <li>____ El uso de «vos» en Honduras es un ejemplo de pronombre de segunda persona singular.</li>
+      <li>____ «Dáselo» tiene pronombres proclíticos.</li>
+      <li>____ Los pronombres interrogativos siempre llevan tilde (qué, quién, cuánto).</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Pronombres</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál es la función principal de un pronombre?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> describir cómo es un objeto</span>
+        <span class="op full"><i>b</i> sustituir al sustantivo para no repetirlo</span>
+        <span class="op"><i>c</i> indicar la acción del sujeto</span>
+        <span class="op"><i>d</i> unir dos oraciones</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>«El lápiz es MÍO». ¿Qué clase de pronombre es «mío»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> personal</span>
+        <span class="op"><i>b</i> demostrativo</span>
+        <span class="op"><i>c</i> posesivo</span>
+        <span class="op"><i>d</i> relativo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>«DÁMELO rápido». El pronombre en esta oración es:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> personal tónico</span>
+        <span class="op"><i>b</i> proclítico</span>
+        <span class="op"><i>c</i> enclítico</span>
+        <span class="op"><i>d</i> demostrativo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál de los siguientes es un pronombre personal TÓNICO?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> me</span>
+        <span class="op"><i>b</i> lo</span>
+        <span class="op"><i>c</i> nosotros</span>
+        <span class="op"><i>d</i> te</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>«No vino NADIE a la fiesta». La palabra «nadie» es un pronombre:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> relativo</span>
+        <span class="op"><i>b</i> personal</span>
+        <span class="op"><i>c</i> demostrativo</span>
+        <span class="op"><i>d</i> indefinido</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>En Honduras, el pronombre equivalente al «tú» de España es:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> vosotros</span>
+        <span class="op"><i>b</i> vos</span>
+        <span class="op"><i>c</i> ustedes</span>
+        <span class="op"><i>d</i> os</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>«TE lo advertí». El pronombre «te» está funcionando de forma:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> enclítica</span>
+        <span class="op"><i>b</i> proclítica</span>
+        <span class="op"><i>c</i> posesiva</span>
+        <span class="op"><i>d</i> interrogativa</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>«El coche QUE compré es azul». La palabra «que» es un pronombre:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> relativo</span>
+        <span class="op"><i>b</i> interrogativo</span>
+        <span class="op"><i>c</i> personal</span>
+        <span class="op"><i>d</i> demostrativo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál de estos es un pronombre demostrativo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> suyo</span>
+        <span class="op"><i>b</i> alguien</span>
+        <span class="op"><i>c</i> aquel</span>
+        <span class="op"><i>d</i> yo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué diferencia a «Aquel carro» de «Quiero AQUEL»?</div>
+      <div class="preg-ops">
+        <span class="op full"><i>a</i> ninguna, ambos son pronombres</span>
+        <span class="op full"><i>b</i> el 1.º es determinante (acompaña), el 2.º es pronombre (sustituye)</span>
+        <span class="op full"><i>c</i> el 1.º es pronombre, el 2.º es adjetivo</span>
+        <span class="op full"><i>d</i> ambos son adjetivos</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Pronombres</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Pronombre</td><td>A. Sustituye al sustantivo para evitar repeticiones</td></tr>
+      <tr><td>2. ____ Tónicos</td><td>B. Funcionan solos: yo, tú, él, nosotros</td></tr>
+      <tr><td>3. ____ Átonos</td><td>C. Acompañan al verbo: me, te, se, lo, la, le</td></tr>
+      <tr><td>4. ____ Proclítico</td><td>D. Separado y antes del verbo: «te llamo»</td></tr>
+      <tr><td>5. ____ Enclítico</td><td>E. Unido al final del verbo: «dámelo», «llámame»</td></tr>
+      <tr><td>6. ____ Demostrativos</td><td>F. Indican distancia y van solos: este, ese, aquel</td></tr>
+      <tr><td>7. ____ Posesivos</td><td>G. Indican pertenencia: mío, tuyo, suyo</td></tr>
+      <tr><td>8. ____ Relativos</td><td>H. Unen sin preguntar: que, quien, cual</td></tr>
+      <tr><td>9. ____ Interrogativos</td><td>I. Preguntan con tilde: qué, quién, cuánto</td></tr>
+      <tr><td>10. ____ Indefinidos</td><td>J. Identidad o cantidad vaga: alguien, nadie, algo</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Los Pronombres.</b> Ahora manejas a los suplentes del
+      lenguaje: sabes cuándo una palabra sustituye (pronombre) y cuándo solo acompaña (determinante),
+      distingues tónicos de átonos, colocas proclíticos y enclíticos en su lugar exacto, y defendés con
+      orgullo el voseo catracho. ¡Vos ya dominás los pronombres — decilo sin pena! 👤✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Español.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Sustituyó sustantivos por pronombres y clasificó ejemplos de práctica en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Pronombres</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. sustituye &nbsp; 2. tónicos &nbsp; 3. átonos &nbsp; 4. proclítico &nbsp; 5. enclítico &nbsp; 6. demostrativo &nbsp; 7. posesivo &nbsp; 8. indefinidos &nbsp; 9. tilde &nbsp; 10. vos</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2V, 3V, 4F, 5V, 6F, 7F, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3c, 4c, 5d, 6b, 7b, 8a, 9c, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1A, 2B, 3C, 4D, 5E, 6F, 7G, 8H, 9I, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Los Pronombres» (II y III Ciclo). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con el juego del suplente (reescribir oraciones sustituyendo sustantivos por
+      pronombres), la transformación proclítico↔enclítico («te llamo» ↔ «llámame») y una conversación en voseo escrita
+      con corrección. Etapa 5 de la Ruta de la Palabra, después de «Los Adverbios» y antes de «La Acentuación».
+      La misión interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata
+      antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Pronombres · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
