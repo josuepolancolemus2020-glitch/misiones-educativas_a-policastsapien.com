@@ -462,9 +462,37 @@ a.padre-asistente-btn {
   transition: transform .15s, box-shadow .15s;
 }
 .doc-avance-btn:active { transform: scale(.97); box-shadow: 0 3px 10px rgba(30,58,124,.3); }
-/* Mi Programación DCNB (solo Zona Docente): selector de grado + lista de misiones */
-.doc-prog-grados { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-.doc-prog-grados .doc-tipo-btn { min-width: 46px; }
+/* Mi Programación DCNB (solo Zona Docente): filtros grado + mes + materia */
+.doc-prog-lbl {
+  font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); margin: 12px 0 6px;
+}
+.doc-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+.doc-chips-scroll {
+  flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+}
+.doc-chip {
+  border: 1.5px solid var(--line, #dbe3f0); background: #fff; color: var(--text);
+  border-radius: 999px; padding: 8px 15px;
+  font-size: 13px; font-weight: 800; font-family: inherit;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(15,23,42,.08);
+  transition: transform .12s, box-shadow .12s, background .12s, border-color .12s, color .12s;
+}
+.doc-chip:active { transform: scale(.94); }
+.doc-chip-sel {
+  background: linear-gradient(135deg, var(--brand), var(--brand-mid));
+  border-color: var(--brand); color: #fff;
+  box-shadow: 0 4px 12px rgba(30,58,124,.35);
+}
+/* Materia seleccionada: cada una con su color institucional */
+.doc-chip-mat.doc-chip-sel { background: linear-gradient(135deg, #1d4ed8, #3b82f6); border-color: #1d4ed8; box-shadow: 0 4px 12px rgba(29,78,216,.35); }
+.doc-chip-esp.doc-chip-sel { background: linear-gradient(135deg, #b45309, #f59e0b); border-color: #b45309; box-shadow: 0 4px 12px rgba(180,83,9,.35); }
+.doc-chip-nat.doc-chip-sel { background: linear-gradient(135deg, #0d9488, #2dd4bf); border-color: #0d9488; box-shadow: 0 4px 12px rgba(13,148,136,.35); }
+.doc-chip-soc.doc-chip-sel { background: linear-gradient(135deg, #dc2626, #f87171); border-color: #dc2626; box-shadow: 0 4px 12px rgba(220,38,38,.35); }
+.doc-chip-off { opacity: .55; cursor: default; pointer-events: none; }
+.doc-prog-prox { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 10px; }
 .doc-prog-head { font-size: 13px; font-weight: 900; color: var(--brand); margin: 6px 0 4px; }
 .doc-prog-materia {
   font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px;

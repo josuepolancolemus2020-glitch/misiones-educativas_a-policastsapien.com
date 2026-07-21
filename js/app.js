@@ -1378,10 +1378,14 @@ function renderProfile() {
       </div>
       <a class="doc-avance-btn" href="consulta-nube.html">📊 Ver el avance de mis alumnos</a>
       <div class="doc-prog-sec">
-        <div class="doc-aviso-alumnos" style="margin-top:18px;">📅 <strong>Mi Programación DCNB:</strong> elige el grado que impartes y mira qué
-          misiones cubren sus estándares oficiales. <em>Solo tú ves los grados: tus alumnos navegan
-          por rutas y etapas, sin marcas de grado.</em></div>
-        <div class="doc-prog-grados" id="doc-prog-grados"></div>
+        <div class="doc-aviso-alumnos" style="margin-top:18px;">📅 <strong>Mi Programación DCNB:</strong> elige tu grado y filtra por mes o materia.
+          <em>Solo tú ves los grados: tus alumnos navegan por rutas y etapas, sin marcas de grado.</em></div>
+        <div class="doc-prog-lbl">🎓 Grado que imparto</div>
+        <div class="doc-chips" id="doc-prog-grados"></div>
+        <div class="doc-prog-lbl">🗓️ Mes del año escolar</div>
+        <div class="doc-chips doc-chips-scroll" id="doc-prog-meses"></div>
+        <div class="doc-prog-lbl">📚 Materia</div>
+        <div class="doc-chips" id="doc-prog-materias"></div>
         <div id="doc-prog-out"></div>
       </div>
     </div>`;
@@ -1392,74 +1396,144 @@ function renderProfile() {
 
 /* ── Mi Programación DCNB (exclusivo Zona Docente) ──
    Muestra al maestro qué misiones cubren los estándares del grado que
-   imparte (js/data/dcnb-map.js). El grado elegido se guarda en
-   METAS_DOCENTE_V1.gradoImparte. NUNCA mostrar esto al alumno. */
-function docenteProgInit() {
-  const cont = document.getElementById('doc-prog-grados');
-  if (!cont || typeof DCNB_MAP === 'undefined') return;
-  const sel = _docenteCfg().gradoImparte || 0;
-  cont.innerHTML = [4, 5, 6, 7, 8, 9].map(g =>
-    `<button class="doc-tipo-btn${g === sel ? ' doc-tipo-sel' : ''}" onclick="docenteProgGrado(${g})">${g}º</button>`
-  ).join('');
-  if (sel) docenteProgRender(sel);
-}
+   imparte (js/data/dcnb-map.js), con filtros por MES del año escolar y
+   por MATERIA. Los filtros se recuerdan en METAS_DOCENTE_V1.progFiltros.
+   NUNCA mostrar esto al alumno.
 
-function docenteProgGrado(g) {
+   ► docenteProgDatos(f) es la API base para futuras herramientas del
+     docente (planificación mensual, rúbricas de evaluación…): devuelve
+     las misiones ya filtradas y separadas en «del mes» y «espirales».
+     PENDIENTE: construir esas herramientas sobre esta función. */
+const PROG_MESES = { 2: 'Febrero', 3: 'Marzo', 4: 'Abril', 5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto', 9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre' };
+const PROG_MESES_CORTO = { 2: 'Feb', 3: 'Mar', 4: 'Abr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Ago', 9: 'Sep', 10: 'Oct', 11: 'Nov' };
+const PROG_MATERIAS = [
+  { key: 'matemáticas', chip: '🔵 Matemáticas', cls: 'doc-chip-mat' },
+  { key: 'español',     chip: '🟡 Español',     cls: 'doc-chip-esp' },
+  { key: 'naturales',   chip: '🟢 Naturales',   cls: 'doc-chip-nat' },
+  { key: 'sociales',    chip: '🔴 Sociales',    cls: 'doc-chip-soc' },
+];
+
+function _progFiltros() {
+  const f = _docenteCfg().progFiltros || {};
+  return { grado: f.grado || 0, mes: f.mes || 0, materia: f.materia || '' };
+}
+function _progFiltrosSave(f) {
   const cfg = _docenteCfg();
-  cfg.gradoImparte = g;
+  cfg.progFiltros = f;
+  if (f.grado) cfg.gradoImparte = f.grado; // compat con versión anterior
   _docenteSave(cfg);
+}
+function docenteProgSet(campo, valor) {
+  const f = _progFiltros();
+  f[campo] = (f[campo] === valor && campo !== 'grado') ? (campo === 'mes' ? 0 : '') : valor; // tap de nuevo = quitar filtro
+  _progFiltrosSave(f);
   docenteProgInit();
 }
 
-function docenteProgLista(g) {
-  // [{m, cuando}] de las misiones que cubren estándares del grado g
-  const out = [];
-  (typeof MISSIONS !== 'undefined' ? MISSIONS : []).forEach(m => {
-    const e = DCNB_MAP[m.id];
-    if (e && e.g && (g in e.g)) out.push({ m, cuando: e.g[g] || 'todo el año' });
-  });
-  return out;
+/* Datos filtrados: { delMes:[{m, meses}], espirales:[{m, meses}], total } */
+function docenteProgDatos(f) {
+  const delMes = [], espirales = [];
+  if (f.grado && typeof DCNB_MAP !== 'undefined') {
+    (typeof MISSIONS !== 'undefined' ? MISSIONS : []).forEach(m => {
+      const e = DCNB_MAP[m.id];
+      if (!e || !e.g || !(f.grado in e.g)) return;
+      if (f.materia && m.subject !== f.materia) return;
+      const meses = e.g[f.grado];
+      const esEspiral = !meses.length;
+      if (f.mes && !esEspiral && !meses.includes(f.mes)) return;
+      (esEspiral ? espirales : delMes).push({ m, meses });
+    });
+  }
+  return { delMes, espirales, total: delMes.length + espirales.length };
 }
 
-function docenteProgRender(g) {
+function _progMesesTxt(meses) {
+  return meses.length ? meses.map(n => PROG_MESES_CORTO[n]).join(' · ') : 'todo el año (espiral)';
+}
+
+function docenteProgInit() {
+  const cG = document.getElementById('doc-prog-grados');
+  if (!cG || typeof DCNB_MAP === 'undefined') return;
+  const f = _progFiltros();
+  cG.innerHTML = [4, 5, 6, 7, 8, 9].map(g =>
+    `<button class="doc-chip${g === f.grado ? ' doc-chip-sel' : ''}" onclick="docenteProgSet('grado',${g})">${g}º</button>`
+  ).join('');
+  const cM = document.getElementById('doc-prog-meses');
+  if (cM) cM.innerHTML =
+    `<button class="doc-chip${!f.mes ? ' doc-chip-sel' : ''}" onclick="docenteProgSet('mes',0)">Todos</button>` +
+    Object.keys(PROG_MESES).map(n =>
+      `<button class="doc-chip${+n === f.mes ? ' doc-chip-sel' : ''}" onclick="docenteProgSet('mes',${n})">${PROG_MESES_CORTO[n]}</button>`
+    ).join('');
+  const cS = document.getElementById('doc-prog-materias');
+  if (cS) cS.innerHTML =
+    `<button class="doc-chip${!f.materia ? ' doc-chip-sel' : ''}" onclick="docenteProgSet('materia','')">Todas</button>` +
+    PROG_MATERIAS.map(x =>
+      `<button class="doc-chip ${x.cls}${x.key === f.materia ? ' doc-chip-sel' : ''}" onclick="docenteProgSet('materia','${x.key}')">${x.chip}</button>`
+    ).join('');
+  docenteProgRender(f);
+}
+
+function _progItemHTML({ m, meses }) {
+  return `
+    <a class="doc-prog-item" href="${m.url}">
+      <span class="doc-prog-ico">${m.icon}</span>
+      <span class="doc-prog-txt">
+        <span class="doc-prog-t">${m.title}</span>
+        <span class="doc-prog-s">${SUBJECT_LABELS[m.subject] || m.subject} · ${rutaLabel(m)} · 🗓️ ${_progMesesTxt(meses)}</span>
+      </span>
+      <span class="doc-prog-go">→</span>
+    </a>`;
+}
+
+function docenteProgRender(f) {
   const out = document.getElementById('doc-prog-out');
   if (!out) return;
-  const lista = docenteProgLista(g);
-  if (!lista.length) { out.innerHTML = '<p class="doc-prog-vacio">Aún no hay misiones mapeadas para este grado.</p>'; return; }
-  // Agrupar por materia respetando el orden del catálogo
-  const orden = ['matemáticas', 'español', 'naturales', 'sociales'];
-  const grupos = {};
-  lista.forEach(x => { (grupos[x.m.subject] = grupos[x.m.subject] || []).push(x); });
-  let html = `<div class="doc-prog-head">${lista.length} misiones cubren estándares de ${g}º grado</div>`;
-  orden.filter(s => grupos[s]).forEach(s => {
-    html += `<div class="doc-prog-materia">${SUBJECT_LABELS[s] || s}</div>`;
-    html += grupos[s].map(({ m, cuando }) => `
-      <a class="doc-prog-item" href="${m.url}">
-        <span class="doc-prog-ico">${m.icon}</span>
-        <span class="doc-prog-txt">
-          <span class="doc-prog-t">${m.title}</span>
-          <span class="doc-prog-s">${rutaLabel(m)} · DCNB: ${cuando}</span>
-        </span>
-        <span class="doc-prog-go">→</span>
-      </a>`).join('');
-  });
-  html += `<button class="doc-cuenta-btn" style="margin-top:10px;" onclick="docenteImprimirProg(${g})">
-             <span class="doc-cuenta-ic">🖨️</span><span>Imprimir mi programación de ${g}º</span>
+  if (!f.grado) {
+    out.innerHTML = '<p class="doc-prog-vacio">👆 Elige el grado que impartes para ver tu programación.</p>';
+    return;
+  }
+  const d = docenteProgDatos(f);
+  if (!d.total) {
+    out.innerHTML = `<p class="doc-prog-vacio">Sin misiones para esta combinación de filtros.
+      Prueba con «Todos» los meses o «Todas» las materias.</p>`;
+    return;
+  }
+  const desc = `${f.grado}º grado` + (f.mes ? ` · ${PROG_MESES[f.mes]}` : '') +
+    (f.materia ? ` · ${SUBJECT_LABELS[f.materia] || f.materia}` : '');
+  let html = `<div class="doc-prog-head">${d.total} ${d.total === 1 ? 'misión' : 'misiones'} — ${desc}</div>`;
+  if (d.delMes.length) {
+    if (f.mes) html += `<div class="doc-prog-materia">📌 Programadas para ${PROG_MESES[f.mes].toLowerCase()}</div>`;
+    html += d.delMes.map(_progItemHTML).join('');
+  }
+  if (d.espirales.length) {
+    html += `<div class="doc-prog-materia">🔁 Espirales — el DCNB las retoma todo el año</div>`;
+    html += d.espirales.map(_progItemHTML).join('');
+  }
+  html += `<button class="doc-cuenta-btn" style="margin-top:10px;" onclick="docenteImprimirProg()">
+             <span class="doc-cuenta-ic">🖨️</span><span>Imprimir esta programación</span>
            </button>
+           <div class="doc-prog-prox">
+             <span class="doc-chip doc-chip-off">🗓️ Planificación docente · próximamente</span>
+             <span class="doc-chip doc-chip-off">📋 Rúbricas de evaluación · próximamente</span>
+           </div>
            <p class="doc-prog-nota">💡 En clase asigna cada misión por su <strong>ruta y etapa</strong>
            (p. ej. «esta semana: Ruta del Número, etapa 6»), sin mencionar grados: así un alumno
            que necesita reforzar temas anteriores trabaja sin sentirse señalado.</p>`;
   out.innerHTML = html;
 }
 
-function docenteImprimirProg(g) {
-  const lista = docenteProgLista(g);
-  const d = _docenteCfg();
-  const filas = lista.map(({ m, cuando }) =>
-    `<tr><td>${SUBJECT_LABELS[m.subject] || m.subject}</td><td>${m.icon} ${m.title}</td><td>${rutaLabel(m)}</td><td>${cuando}</td><td></td></tr>`
-  ).join('');
+function docenteImprimirProg() {
+  const f = _progFiltros();
+  if (!f.grado) return;
+  const d = docenteProgDatos(f);
+  const cfg = _docenteCfg();
+  const fila = ({ m, meses }) =>
+    `<tr><td>${SUBJECT_LABELS[m.subject] || m.subject}</td><td>${m.icon} ${m.title}</td><td>${rutaLabel(m)}</td><td>${_progMesesTxt(meses)}</td><td></td></tr>`;
+  const filas = d.delMes.map(fila).join('') + d.espirales.map(fila).join('');
+  const desc = `${f.grado}º grado` + (f.mes ? ` · ${PROG_MESES[f.mes]}` : '') +
+    (f.materia ? ` · ${SUBJECT_LABELS[f.materia] || f.materia}` : '');
   const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-    <title>Programación DCNB ${g}º · M.E.T.A.S</title><style>
+    <title>Programación DCNB ${f.grado}º · M.E.T.A.S</title><style>
     body{font-family:Arial,sans-serif;font-size:11pt;color:#111;padding:8mm;}
     h1{font-size:14pt;margin-bottom:2px;} .sub{font-size:9pt;color:#555;margin-bottom:10px;}
     table{width:100%;border-collapse:collapse;font-size:9.5pt;}
@@ -1467,9 +1541,9 @@ function docenteImprimirProg(g) {
     th{background:#eee;} .pie{margin-top:10px;font-size:8.5pt;color:#555;}
     @media print{@page{size:letter portrait;margin:10mm;}}
     </style></head><body>
-    <h1>📅 Mi Programación DCNB — ${g}º grado</h1>
-    <div class="sub">Plataforma M.E.T.A.S · metas.policastsapien.com · Docente: ${_pEsc(d.nombre || '')}${d.escuela ? ' · ' + _pEsc(d.escuela) : ''} · Documento exclusivo del docente</div>
-    <table><thead><tr><th>Materia</th><th>Misión</th><th>Ruta y etapa (así la ve el alumno)</th><th>Momento DCNB</th><th>✔ Trabajada</th></tr></thead>
+    <h1>📅 Mi Programación DCNB — ${desc}</h1>
+    <div class="sub">Plataforma M.E.T.A.S · metas.policastsapien.com · Docente: ${_pEsc(cfg.nombre || '')}${cfg.escuela ? ' · ' + _pEsc(cfg.escuela) : ''} · Documento exclusivo del docente</div>
+    <table><thead><tr><th>Materia</th><th>Misión</th><th>Ruta y etapa (así la ve el alumno)</th><th>Meses DCNB</th><th>✔ Trabajada</th></tr></thead>
     <tbody>${filas}</tbody></table>
     <p class="pie">Asigne cada misión por su ruta y etapa, sin mencionar grados frente a los alumnos.
     Cada misión incluye su ficha imprimible en la sección «📁 Recursos del Tema».</p>

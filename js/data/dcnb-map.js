@@ -1,53 +1,59 @@
 /* ── Mapa DCNB → Misiones (SOLO Zona Docente) ──────────────────────────
    Relaciona cada misión del catálogo (js/data/misiones.js, por id) con los
-   GRADOS del DCNB de Honduras (4º–9º) cuyos estándares cubre, según el
-   análisis de las Programaciones Educativas Nacionales (Secretaría de
-   Educación / MIDEH) realizado el 21-jul-2026.
+   GRADOS del DCNB de Honduras (4º–9º) y los MESES del año escolar en que
+   la programación oficial trabaja ese contenido, según las Programaciones
+   Educativas Nacionales (Secretaría de Educación / MIDEH), verificado
+   mes a mes el 21-jul-2026.
 
    ⚠️ Este dato es EXCLUSIVO del docente: el alumno navega por rutas y
    etapas, nunca por grados, para evitar el sesgo de "esto es de un grado
    inferior". No usar DCNB_MAP en ninguna vista del estudiante.
 
-   Formato: id → { g: { grado: 'momento del año escolar según DCNB' } }
-   El momento '' significa que el tema es espiral/recurrente en ese grado
-   (se muestra como «todo el año»). */
+   Formato: id → { g: { grado: [meses] } }
+   Meses: números 2–11 (2=febrero … 11=noviembre, año escolar hondureño).
+   Array VACÍO [] = contenido ESPIRAL: el DCNB lo retoma todos los meses
+   (típico de gramática, ortografía y léxico en Español).
+
+   ► Base para futuras herramientas docentes (planificación mensual,
+     rúbricas de evaluación): consumir estos datos vía docenteProgDatos()
+     en js/app.js, que ya filtra por grado + mes + materia. PENDIENTE. */
 const DCNB_MAP = {
-  /* ── Matemáticas ── */
-  6:  { g: { 4: 'feb–mar (refuerzo)' } },                                  // Números Grandes
-  24: { g: { 4: 'inicio de año' } },                                       // Valor Posicional
-  27: { g: { 4: 'inicio de año' } },                                       // Recta Numérica, Suma y Resta
-  30: { g: { 4: 'inicio de año' } },                                       // Multiplicación Vertical
-  28: { g: { 5: 'inicio de año' } },                                       // Múltiplos, Divisores y Primos
-  26: { g: { 5: 'inicio de año', 6: 'inicio de año' } },                   // Teoría de Números
-  25: { g: { 5: '', 7: '' } },                                             // Potencias y Raíces
-  23: { g: { 4: '', 5: '', 6: '', 7: 'inicio de año' } },                  // Fracciones
-  8:  { g: { 4: '', 5: '', 6: '', 7: 'inicio de año' } },                  // Números Decimales
-  15: { g: { 5: '', 6: '' } },                                             // División de Decimales
-  29: { g: { 4: '', 5: '' } },                                             // Ángulos: Tipos y Transportador
-  7:  { g: { 6: '', 7: '' } },                                             // Ángulos y Bisectriz
-  31: { g: { 4: '', 5: '' } },                                             // Perímetro y Área de Cuadriláteros
-  16: { g: { 5: '', 6: '' } },                                             // Área de Círculos y Polígonos
-  32: { g: { 6: '' } },                                                    // Área de Polígonos Regulares
+  /* ── Matemáticas (meses verificados en la programación) ── */
+  6:  { g: { 4: [2] } },                                  // Números Grandes — feb: números hasta 1 000 000
+  24: { g: { 4: [2] } },                                  // Valor Posicional — feb: sistema de valor posicional
+  27: { g: { 4: [3] } },                                  // Recta Numérica, Suma y Resta — mar: recta, adición, sustracción
+  30: { g: { 4: [4, 5] } },                               // Multiplicación Vertical — abr-may: cálculo vertical
+  29: { g: { 4: [3], 5: [2] } },                          // Ángulos: Tipos y Transportador — 4º mar; 5º feb (compl./supl.)
+  28: { g: { 5: [3] } },                                  // Múltiplos, Divisores y Primos — mar
+  26: { g: { 5: [3], 6: [2] } },                          // Teoría de Números: m.c.m./M.C.D. — 5º mar; 6º feb
+  25: { g: { 5: [2], 7: [5, 10] } },                      // Potencias y Raíces — 5º feb; 7º may (leyes exp.) y oct (raíces)
+  23: { g: { 4: [8], 5: [5], 6: [5, 6, 7], 7: [2, 3, 4] } }, // Fracciones — 6º suma/mult/div; 7º dentro de racionales
+  8:  { g: { 4: [6, 7], 5: [6, 7], 6: [3, 4], 7: [2, 3, 4] } }, // Números Decimales
+  15: { g: { 5: [7], 6: [4] } },                          // División de Decimales — 5º entre natural; 6º entre decimal
+  7:  { g: { 6: [2], 7: [9, 10] } },                      // Ángulos y Bisectriz — 6º feb; 7º sep-oct (geometría formal)
+  31: { g: { 4: [6], 5: [4, 8] } },                       // Perímetro y Área de Cuadriláteros — 5º abr (cuadrados/rect.) y ago (rombo/trapecio)
+  16: { g: { 5: [9, 10], 6: [4] } },                      // Área de Círculos y Polígonos — 5º sep-oct; 6º abr
+  32: { g: { 6: [4] } },                                  // Área de Polígonos Regulares — abr (apotema)
 
   /* ── Español (espiral: el DCNB retoma estos ejes cada mes) ── */
-  3:  { g: { 4: '', 5: '', 7: '', 8: '', 9: '' } },                        // Sustantivos
-  1:  { g: { 4: '', 5: '', 6: '', 7: '', 9: '' } },                        // Adjetivos
-  2:  { g: { 4: '', 5: '', 6: '', 7: '', 8: '', 9: '' } },                 // Verbos
-  17: { g: { 4: '', 5: '', 7: '', 8: '', 9: '' } },                        // Adverbios
-  4:  { g: { 4: '', 6: '', 7: '', 8: '', 9: '' } },                        // Pronombres
-  18: { g: { 4: '', 5: '', 6: '', 7: '', 8: '', 9: '' } },                 // Acentuación
-  22: { g: { 4: '', 5: '', 6: '', 7: '', 8: '', 9: '' } },                 // Marcadores Textuales
-  21: { g: { 4: '', 5: '', 6: '', 7: '', 8: '', 9: '' } },                 // Tipos de Textos
+  3:  { g: { 4: [], 5: [], 7: [], 8: [], 9: [] } },       // Sustantivos
+  1:  { g: { 4: [], 5: [], 6: [], 7: [], 9: [] } },       // Adjetivos
+  2:  { g: { 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] } },// Verbos
+  17: { g: { 4: [], 5: [], 7: [], 8: [], 9: [] } },       // Adverbios
+  4:  { g: { 4: [], 6: [], 7: [], 8: [], 9: [] } },       // Pronombres
+  18: { g: { 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] } },// Acentuación
+  22: { g: { 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] } },// Marcadores Textuales
+  21: { g: { 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] } },// Tipos de Textos
 
-  /* ── Ciencias Naturales (meses según programación DCNB) ── */
-  14: { g: { 4: 'mayo', 5: 'mayo', 6: 'mayo', 9: 'mayo' } },               // Sistema Nervioso
-  19: { g: { 5: 'mayo', 6: 'mayo' } },                                     // Sistema Endocrino
-  9:  { g: { 6: 'abril', 7: 'julio' } },                                   // Eras Geológicas
-  20: { g: { 4: 'julio', 6: 'julio', 7: 'junio', 8: 'agosto', 9: 'mayo' } }, // Desastres Naturales y el Mitch (CCNN + CCSS)
-  10: { g: { 6: 'abril', 8: 'mayo' } },                                    // Áreas Protegidas de Honduras
+  /* ── Ciencias Naturales (meses de la programación) ── */
+  14: { g: { 4: [5], 5: [5], 6: [5], 9: [5] } },          // Sistema Nervioso — mayo en los 4 grados
+  19: { g: { 5: [5], 6: [5] } },                          // Sistema Endocrino — mayo
+  9:  { g: { 6: [4], 7: [7] } },                          // Eras Geológicas
+  20: { g: { 4: [7], 6: [5, 7], 7: [6], 8: [8], 9: [5] } }, // Desastres Naturales y el Mitch (CCNN + CCSS)
+  10: { g: { 6: [4], 8: [5] } },                          // Áreas Protegidas de Honduras
 
-  /* ── Ciencias Sociales (meses según programación DCNB) ── */
-  11: { g: { 5: 'feb–mar', 6: 'feb–mar', 7: 'feb–mar' } },                 // Geografía y Coordenadas
-  13: { g: { 5: 'feb–mar', 6: 'feb–mar', 9: 'abril' } },                   // Continentes: América, Oceanía y Antártida
-  12: { g: { 6: 'feb–mar', 9: 'abril' } },                                 // Continentes: Europa, Asia y África
+  /* ── Ciencias Sociales (meses de la programación) ── */
+  11: { g: { 5: [2, 3], 6: [2, 3], 7: [2, 3] } },         // Geografía y Coordenadas — feb-mar
+  13: { g: { 5: [2, 3], 6: [2, 3], 9: [4] } },            // Continentes: América, Oceanía y Antártida
+  12: { g: { 6: [2, 3], 9: [4] } },                       // Continentes: Europa, Asia y África
 };
