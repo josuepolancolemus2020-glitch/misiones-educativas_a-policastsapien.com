@@ -462,6 +462,34 @@ a.padre-asistente-btn {
   transition: transform .15s, box-shadow .15s;
 }
 .doc-avance-btn:active { transform: scale(.97); box-shadow: 0 3px 10px rgba(30,58,124,.3); }
+/* Mi Programación DCNB (solo Zona Docente): selector de grado + lista de misiones */
+.doc-prog-grados { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.doc-prog-grados .doc-tipo-btn { min-width: 46px; }
+.doc-prog-head { font-size: 13px; font-weight: 900; color: var(--brand); margin: 6px 0 4px; }
+.doc-prog-materia {
+  font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); margin: 10px 0 4px; border-bottom: 1px solid var(--line, #e2e8f0);
+  padding-bottom: 2px;
+}
+.doc-prog-item {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff; border: 1.5px solid var(--line, #e2e8f0);
+  border-radius: var(--r-sm); padding: 8px 10px; margin-bottom: 6px;
+  text-decoration: none; color: var(--text);
+  transition: transform .12s, border-color .12s;
+}
+.doc-prog-item:active { transform: scale(.98); border-color: var(--brand); }
+.doc-prog-ico { font-size: 20px; }
+.doc-prog-txt { flex: 1; display: flex; flex-direction: column; }
+.doc-prog-t { font-size: 13.5px; font-weight: 800; }
+.doc-prog-s { font-size: 11px; color: var(--muted); }
+.doc-prog-go { color: var(--brand); font-weight: 900; }
+.doc-prog-vacio { font-size: 12.5px; color: var(--muted); font-style: italic; }
+.doc-prog-nota {
+  font-size: 11.5px; color: var(--muted); line-height: 1.5;
+  background: #fefce8; border: 1px solid #fde68a; border-radius: var(--r-sm);
+  padding: 8px 10px; margin-top: 10px;
+}
 .padre-codigo-inp { text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
 #padre-nube-out { margin-top: 10px; }
 

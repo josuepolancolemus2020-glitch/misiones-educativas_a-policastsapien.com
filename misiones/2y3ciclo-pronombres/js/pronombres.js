@@ -1365,7 +1365,7 @@ function copiarEnlaceAlumno() {
 function asignarEnClassroom() {
     const out = document.getElementById('tgOut');
     const url = encodeURIComponent(window.location.href);
-    const titulo = encodeURIComponent('Misión Los Pronombres | II y III Ciclo – policastsapien.com');
+    const titulo = encodeURIComponent('Misión Los Pronombres | Educación Básica – policastsapien.com');
     const classroomUrl = 'https://classroom.google.com/share?url=' + url + '&title=' + titulo;
 
     if (!out || out.innerHTML.trim() === '') {
@@ -1375,7 +1375,7 @@ function asignarEnClassroom() {
 
     const tipoEl = document.getElementById('tgType');
     const tipoText = tipoEl ? tipoEl.options[tipoEl.selectedIndex].text.replace(/^\S+\s*/, '') : '';
-    let texto = '📚 MISIÓN: LOS PRONOMBRES | II y III Ciclo – Español · Lengua\n';
+    let texto = '📚 MISIÓN: LOS PRONOMBRES | Educación Básica – Español · Lengua\n';
     texto += '🔗 ' + window.location.href + '\n';
     texto += '📋 Tipo de tarea: ' + tipoText + '\n';
     texto += '─'.repeat(45) + '\n\n';

@@ -76,6 +76,41 @@
 </style>
 </head>
 <body>
+<script>
+/* ── Candado docente ─────────────────────────────────────────────
+   Este documento muestra la correspondencia misión↔grado del DCNB,
+   información EXCLUSIVA del docente (el alumno navega por rutas y
+   etapas, sin grados, para evitar el sesgo de nivel). Solo se abre
+   si hay sesión iniciada en la Zona Docente de la app (misma clave
+   METAS_DOCENTE_V1 en localStorage, mismo dominio). */
+(function () {
+  let ok = false;
+  try {
+    const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1') || '{}');
+    ok = !!(d && d.codigo && d.clave);
+  } catch (_) {}
+  if (!ok) {
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.innerHTML = `
+        <div style="max-width:480px;margin:60px auto;background:#fff;border-radius:14px;
+                    padding:34px 30px;text-align:center;font-family:'Segoe UI',Arial,sans-serif;
+                    box-shadow:0 2px 12px rgba(0,0,0,.15);">
+          <div style="font-size:46px;">🔐</div>
+          <h1 style="font-size:19px;color:#0f172a;margin:10px 0 8px;">Documento para docentes</h1>
+          <p style="font-size:14px;color:#475569;line-height:1.6;">
+            El <b>Mapa Curricular DCNB</b> es material de planificación exclusivo del docente.<br>
+            Para verlo, primero inicia sesión en la <b>Zona Docente</b> de M.E.T.A.S
+            (⚙️ Ajustes → Zona Docente) en este mismo dispositivo y vuelve a abrir esta página.
+          </p>
+          <a href="../index.html" style="display:inline-block;margin-top:14px;background:#1e3a7c;
+             color:#fff;text-decoration:none;border-radius:10px;padding:12px 22px;font-weight:700;">
+             🎓 Ir a M.E.T.A.S</a>
+        </div>`;
+      document.body.style.background = '#e2e8f0';
+    });
+  }
+})();
+</script>
 <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir</button>
 <div class="hoja">
 

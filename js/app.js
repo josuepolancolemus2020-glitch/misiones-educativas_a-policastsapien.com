@@ -1377,9 +1377,105 @@ function renderProfile() {
         <button class="doc-cod-copy" onclick="docenteCopiarCodigo()">📋 Copiar</button>
       </div>
       <a class="doc-avance-btn" href="consulta-nube.html">📊 Ver el avance de mis alumnos</a>
+      <div class="doc-prog-sec">
+        <div class="doc-aviso-alumnos" style="margin-top:18px;">📅 <strong>Mi Programación DCNB:</strong> elige el grado que impartes y mira qué
+          misiones cubren sus estándares oficiales. <em>Solo tú ves los grados: tus alumnos navegan
+          por rutas y etapas, sin marcas de grado.</em></div>
+        <div class="doc-prog-grados" id="doc-prog-grados"></div>
+        <div id="doc-prog-out"></div>
+      </div>
     </div>`;
   if (typeof dsOnProfile === 'function') dsOnProfile();
   docenteCargarCodigoAula();
+  docenteProgInit();
+}
+
+/* ── Mi Programación DCNB (exclusivo Zona Docente) ──
+   Muestra al maestro qué misiones cubren los estándares del grado que
+   imparte (js/data/dcnb-map.js). El grado elegido se guarda en
+   METAS_DOCENTE_V1.gradoImparte. NUNCA mostrar esto al alumno. */
+function docenteProgInit() {
+  const cont = document.getElementById('doc-prog-grados');
+  if (!cont || typeof DCNB_MAP === 'undefined') return;
+  const sel = _docenteCfg().gradoImparte || 0;
+  cont.innerHTML = [4, 5, 6, 7, 8, 9].map(g =>
+    `<button class="doc-tipo-btn${g === sel ? ' doc-tipo-sel' : ''}" onclick="docenteProgGrado(${g})">${g}º</button>`
+  ).join('');
+  if (sel) docenteProgRender(sel);
+}
+
+function docenteProgGrado(g) {
+  const cfg = _docenteCfg();
+  cfg.gradoImparte = g;
+  _docenteSave(cfg);
+  docenteProgInit();
+}
+
+function docenteProgLista(g) {
+  // [{m, cuando}] de las misiones que cubren estándares del grado g
+  const out = [];
+  (typeof MISSIONS !== 'undefined' ? MISSIONS : []).forEach(m => {
+    const e = DCNB_MAP[m.id];
+    if (e && e.g && (g in e.g)) out.push({ m, cuando: e.g[g] || 'todo el año' });
+  });
+  return out;
+}
+
+function docenteProgRender(g) {
+  const out = document.getElementById('doc-prog-out');
+  if (!out) return;
+  const lista = docenteProgLista(g);
+  if (!lista.length) { out.innerHTML = '<p class="doc-prog-vacio">Aún no hay misiones mapeadas para este grado.</p>'; return; }
+  // Agrupar por materia respetando el orden del catálogo
+  const orden = ['matemáticas', 'español', 'naturales', 'sociales'];
+  const grupos = {};
+  lista.forEach(x => { (grupos[x.m.subject] = grupos[x.m.subject] || []).push(x); });
+  let html = `<div class="doc-prog-head">${lista.length} misiones cubren estándares de ${g}º grado</div>`;
+  orden.filter(s => grupos[s]).forEach(s => {
+    html += `<div class="doc-prog-materia">${SUBJECT_LABELS[s] || s}</div>`;
+    html += grupos[s].map(({ m, cuando }) => `
+      <a class="doc-prog-item" href="${m.url}">
+        <span class="doc-prog-ico">${m.icon}</span>
+        <span class="doc-prog-txt">
+          <span class="doc-prog-t">${m.title}</span>
+          <span class="doc-prog-s">${rutaLabel(m)} · DCNB: ${cuando}</span>
+        </span>
+        <span class="doc-prog-go">→</span>
+      </a>`).join('');
+  });
+  html += `<button class="doc-cuenta-btn" style="margin-top:10px;" onclick="docenteImprimirProg(${g})">
+             <span class="doc-cuenta-ic">🖨️</span><span>Imprimir mi programación de ${g}º</span>
+           </button>
+           <p class="doc-prog-nota">💡 En clase asigna cada misión por su <strong>ruta y etapa</strong>
+           (p. ej. «esta semana: Ruta del Número, etapa 6»), sin mencionar grados: así un alumno
+           que necesita reforzar temas anteriores trabaja sin sentirse señalado.</p>`;
+  out.innerHTML = html;
+}
+
+function docenteImprimirProg(g) {
+  const lista = docenteProgLista(g);
+  const d = _docenteCfg();
+  const filas = lista.map(({ m, cuando }) =>
+    `<tr><td>${SUBJECT_LABELS[m.subject] || m.subject}</td><td>${m.icon} ${m.title}</td><td>${rutaLabel(m)}</td><td>${cuando}</td><td></td></tr>`
+  ).join('');
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+    <title>Programación DCNB ${g}º · M.E.T.A.S</title><style>
+    body{font-family:Arial,sans-serif;font-size:11pt;color:#111;padding:8mm;}
+    h1{font-size:14pt;margin-bottom:2px;} .sub{font-size:9pt;color:#555;margin-bottom:10px;}
+    table{width:100%;border-collapse:collapse;font-size:9.5pt;}
+    th,td{border:1px solid #999;padding:4px 6px;text-align:left;}
+    th{background:#eee;} .pie{margin-top:10px;font-size:8.5pt;color:#555;}
+    @media print{@page{size:letter portrait;margin:10mm;}}
+    </style></head><body>
+    <h1>📅 Mi Programación DCNB — ${g}º grado</h1>
+    <div class="sub">Plataforma M.E.T.A.S · metas.policastsapien.com · Docente: ${_pEsc(d.nombre || '')}${d.escuela ? ' · ' + _pEsc(d.escuela) : ''} · Documento exclusivo del docente</div>
+    <table><thead><tr><th>Materia</th><th>Misión</th><th>Ruta y etapa (así la ve el alumno)</th><th>Momento DCNB</th><th>✔ Trabajada</th></tr></thead>
+    <tbody>${filas}</tbody></table>
+    <p class="pie">Asigne cada misión por su ruta y etapa, sin mencionar grados frente a los alumnos.
+    Cada misión incluye su ficha imprimible en la sección «📁 Recursos del Tema».</p>
+    <script>window.print();<\/script></body></html>`;
+  const w = window.open('', '_blank');
+  if (w) { w.document.write(doc); w.document.close(); }
 }
 
 /* Trae (o genera) el código de aula del maestro desde la nube y lo muestra.
