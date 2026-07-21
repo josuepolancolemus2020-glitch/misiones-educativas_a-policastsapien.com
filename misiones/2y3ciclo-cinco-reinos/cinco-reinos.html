@@ -222,9 +222,9 @@
 <!-- ===== LAB ===== -->
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
-    <h2>🧪 Laboratorio de la Célula</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Selecciona un organelo y un aspecto para explorar sus características. ¡Combínalos todos para aprender!</p>
-    <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>Núcleo</strong> → <strong>Estructura</strong></div>
+    <h2>🧪 Laboratorio de los Reinos</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Selecciona un reino y un aspecto para explorar sus características. ¡Combínalos todos para aprender!</p>
+    <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>Reino Monera</strong> → <strong>Características</strong></div>
     <div class="lab-stage">
       <div id="lab-display" class="lab-display-box">
         <!-- Rellenado por JS -->
@@ -232,17 +232,18 @@
     </div>
     <div class="lab-controls">
       <div class="lab-group">
-        <span class="lab-group-label">🔬 Organelo:</span>
-        <button class="lab-btn lab-cont-btn" data-parte="nucleo" onclick="labShowParte('nucleo')">🧬 Núcleo</button>
-        <button class="lab-btn lab-cont-btn" data-parte="mitocondria" onclick="labShowParte('mitocondria')">🔋 Mitocondria</button>
-        <button class="lab-btn lab-cont-btn" data-parte="cloroplasto" onclick="labShowParte('cloroplasto')">🌿 Cloroplasto</button>
-        <button class="lab-btn lab-cont-btn" data-parte="membrana" onclick="labShowParte('membrana')">🧴 Membrana</button>
+        <span class="lab-group-label">🌳 Reino:</span>
+        <button class="lab-btn lab-cont-btn" data-parte="monera" onclick="labShowParte('monera')">🦠 Monera</button>
+        <button class="lab-btn lab-cont-btn" data-parte="protista" onclick="labShowParte('protista')">🔬 Protista</button>
+        <button class="lab-btn lab-cont-btn" data-parte="fungi" onclick="labShowParte('fungi')">🍄 Fungi</button>
+        <button class="lab-btn lab-cont-btn" data-parte="plantae" onclick="labShowParte('plantae')">🌿 Plantae</button>
+        <button class="lab-btn lab-cont-btn" data-parte="animalia" onclick="labShowParte('animalia')">🐾 Animalia</button>
       </div>
       <div class="lab-group">
         <span class="lab-group-label">📌 Aspecto:</span>
-        <button class="lab-btn lab-asp-btn" data-aspecto="estructura" onclick="labShowAspecto('estructura')">🔬 Estructura</button>
-        <button class="lab-btn lab-asp-btn" data-aspecto="funcion" onclick="labShowAspecto('funcion')">⚡ Función</button>
-        <button class="lab-btn lab-asp-btn" data-aspecto="ubicacion" onclick="labShowAspecto('ubicacion')">📍 ¿En qué célula?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="estructura" onclick="labShowAspecto('estructura')">🔎 Características</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="funcion" onclick="labShowAspecto('funcion')">🍽️ Nutrición</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="ubicacion" onclick="labShowAspecto('ubicacion')">🌍 Ejemplos</button>
         <button class="lab-btn lab-asp-btn" data-aspecto="dato" onclick="labShowAspecto('dato')">💡 Dato curioso</button>
       </div>
     </div>

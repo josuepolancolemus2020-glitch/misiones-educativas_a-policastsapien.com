@@ -33,14 +33,14 @@ function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));i
 
 // ===================== ACHIEVEMENTS =====================
 const ACHIEVEMENTS={
-  primer_quiz:{icon:'🔬',label:'Primera prueba de la célula superada'},
-  flash_master:{icon:'🃏',label:'Todas las flashcards de la célula exploradas'},
-  clasif_pro:{icon:'🗂️',label:'Clasificador de organelos experto'},
-  id_master:{icon:'🔍',label:'Identificador de estructuras celulares maestro'},
-  reto_hero:{icon:'🏆',label:'Héroe del reto de clasificación celular'},
-  nivel3:{icon:'🧫',label:'¡Citólogo! Nivel 3'},
-  nivel5:{icon:'🥇',label:'¡Maestro de la Célula! Nivel 6'},
-  widgets_master:{icon:'🧩',label:'Widgets de la célula dominados'}
+  primer_quiz:{icon:'🔬',label:'Primera prueba de los reinos superada'},
+  flash_master:{icon:'🃏',label:'Todas las flashcards de los reinos exploradas'},
+  clasif_pro:{icon:'🗂️',label:'Clasificador de seres vivos experto'},
+  id_master:{icon:'🔍',label:'Identificador de reinos maestro'},
+  reto_hero:{icon:'🏆',label:'Héroe del reto de los cinco reinos'},
+  nivel3:{icon:'🧫',label:'¡Naturalista! Nivel 3'},
+  nivel5:{icon:'🥇',label:'¡Maestro de los Reinos! Nivel 6'},
+  widgets_master:{icon:'🧩',label:'Widgets de los reinos dominados'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -49,7 +49,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#16a34a','#4ade80','#0d9488','#5eead4','#00b894'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador 🔬'},{t:55,n:'Citólogo 🧫'},{t:90,n:'Biólogo 🧬'},{t:130,n:'Investigador 🔭'},{t:165,n:'Microbiólogo 🏅'},{t:190,n:'Maestro de la Célula 🏆'}];
+const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador 🔬'},{t:55,n:'Naturalista 🧫'},{t:90,n:'Biólogo 🧬'},{t:130,n:'Investigador 🔭'},{t:165,n:'Taxónomo 🏅'},{t:190,n:'Maestro de los Reinos 🏆'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -61,20 +61,20 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Célula',a:'🔬 <strong>Unidad estructural y funcional</strong> de todos los seres vivos. Es la porción más pequeña con vida propia: nace, se nutre, respira, se reproduce y muere. Todo organismo está formado por una o muchas células.'},
-  {w:'Teoría Celular',a:'📜 Sus tres postulados: <strong>1)</strong> todos los seres vivos están formados por células; <strong>2)</strong> la célula es la unidad de vida; <strong>3)</strong> toda célula proviene de otra célula preexistente (Virchow).'},
-  {w:'Membrana celular',a:'🧴 Capa delgada que <strong>rodea la célula</strong> y controla lo que entra y sale (permeabilidad selectiva). Formada por una <strong>bicapa de lípidos</strong> y proteínas. Presente en TODAS las células.'},
-  {w:'Citoplasma',a:'💧 Medio gelatinoso (<strong>citosol</strong>) entre la membrana y el núcleo. Contiene agua, sales y los <strong>organelos</strong>. Allí ocurren muchas reacciones químicas de la célula.'},
-  {w:'Núcleo',a:'🧠 Organelo que <strong>dirige la célula</strong> y guarda el <strong>ADN</strong>. Está rodeado por la envoltura nuclear. Solo lo tienen las células <strong>eucariotas</strong>. En su interior está el nucléolo.'},
-  {w:'Célula procariota',a:'🦠 Célula <strong>sin núcleo definido</strong>: su ADN está libre en el citoplasma (nucleoide). Es pequeña y sencilla. Ejemplo: las <strong>bacterias</strong>. Fue la primera forma de vida en la Tierra.'},
-  {w:'Célula eucariota',a:'🧬 Célula <strong>con núcleo definido</strong> y organelos rodeados de membrana. Más grande y compleja. Forma a los <strong>protistas, hongos, plantas y animales</strong> (incluido el ser humano).'},
-  {w:'Mitocondria',a:'🔋 Organelo que produce <strong>energía (ATP)</strong> mediante la respiración celular. Se le llama la <strong>"central energética"</strong> de la célula. Abunda en células muy activas como las musculares.'},
-  {w:'Cloroplasto',a:'🌿 Organelo <strong>exclusivo de la célula vegetal</strong>. Contiene <strong>clorofila</strong> (pigmento verde) y realiza la <strong>fotosíntesis</strong>: fabrica alimento a partir de luz, agua y CO₂.'},
-  {w:'Pared celular',a:'🧱 Cubierta <strong>rígida</strong> por fuera de la membrana en células <strong>vegetales, hongos y bacterias</strong>. Da forma y protección. En las plantas está hecha de <strong>celulosa</strong>. La célula animal NO la tiene.'},
-  {w:'Ribosoma',a:'⚙️ Organelo diminuto que <strong>fabrica las proteínas</strong> siguiendo las instrucciones del ADN. Puede estar libre en el citoplasma o pegado al retículo endoplasmático.'},
-  {w:'Vacuola',a:'🫧 Bolsa que <strong>almacena</strong> agua, alimentos o desechos. En la <strong>célula vegetal</strong> es una sola, grande y central; en la animal son pequeñas y varias.'},
-  {w:'ADN',a:'🧬 Molécula que guarda la <strong>información genética</strong> (los "planos" del ser vivo). Se encuentra en el núcleo enrollado formando los <strong>cromosomas</strong>. Determina los caracteres hereditarios.'},
-  {w:'Fotosíntesis',a:'☀️ Proceso por el cual la célula vegetal transforma <strong>luz solar + agua + CO₂</strong> en <strong>glucosa (alimento) y oxígeno</strong>. Ocurre en los cloroplastos. Base de casi todas las cadenas alimenticias.'},
+  {w:'Taxonomía',a:'🌳 Ciencia que <strong>identifica, nombra y clasifica</strong> a los seres vivos, ordenándolos en grupos según las características que comparten.'},
+  {w:'Reino',a:'👑 El grupo <strong>más grande y general</strong> de la clasificación. Reúne a todos los seres vivos con características básicas comunes. Existen <strong>cinco reinos</strong>: Monera, Protista, Fungi, Plantae y Animalia.'},
+  {w:'Especie',a:'🐾 El grupo <strong>más pequeño</strong> de la clasificación. Reúne a seres tan parecidos que pueden <strong>reproducirse entre sí</strong> y tener descendencia fértil.'},
+  {w:'Nombre científico',a:'🏷️ Nombre en <strong>latín</strong> con dos palabras: el <strong>género</strong> y la <strong>especie</strong>. Es igual en todo el mundo. Ejemplo: el ser humano es <em>Homo sapiens</em>.'},
+  {w:'Autótrofo',a:'🌞 Ser vivo que <strong>fabrica su propio alimento</strong>, casi siempre por <strong>fotosíntesis</strong> con la luz del Sol. Ejemplos: las plantas y las algas.'},
+  {w:'Heterótrofo',a:'🍖 Ser vivo que <strong>no fabrica su alimento</strong>: lo obtiene de otros seres vivos. Ejemplos: los animales y los hongos.'},
+  {w:'Procariota / Eucariota',a:'🧬 <strong>Procariota</strong>: célula sin núcleo definido (bacterias). <strong>Eucariota</strong>: célula con núcleo definido (protistas, hongos, plantas y animales).'},
+  {w:'Reino Monera',a:'🦠 Las <strong>bacterias</strong> y cianobacterias. Seres <strong>unicelulares</strong> y <strong>procariotas</strong>. Fueron los primeros seres vivos de la Tierra. Nutrición autótrofa o heterótrofa.'},
+  {w:'Reino Protista',a:'🔬 El reino más <strong>variado</strong>. Seres <strong>eucariotas</strong>, casi todos <strong>unicelulares</strong>, que viven en el agua o en lugares húmedos. Ejemplos: la ameba, el paramecio y las algas.'},
+  {w:'Reino Fungi',a:'🍄 Los <strong>hongos</strong>. Eucariotas, <strong>heterótrofos</strong> (absorben su alimento). Su pared es de <strong>quitina</strong>. Muchos son <strong>descomponedores</strong>. Ejemplos: setas, mohos y levaduras.'},
+  {w:'Reino Plantae',a:'🌿 Las <strong>plantas</strong>. Seres <strong>pluricelulares</strong>, <strong>eucariotas</strong> y <strong>autótrofos</strong> (hacen fotosíntesis con clorofila). Producen el oxígeno del planeta. Ejemplos: musgos, helechos y árboles.'},
+  {w:'Reino Animalia',a:'🐾 Los <strong>animales</strong>, incluido el ser humano. Seres <strong>pluricelulares</strong>, <strong>eucariotas</strong> y <strong>heterótrofos</strong>. La mayoría se desplazan. No tienen pared celular.'},
+  {w:'Vertebrados / Invertebrados',a:'🦴 Los animales <strong>vertebrados</strong> tienen columna vertebral (peces, anfibios, reptiles, aves, mamíferos). Los <strong>invertebrados</strong> no la tienen (insectos, moluscos, gusanos).'},
+  {w:'Descomponedor',a:'♻️ Ser vivo (sobre todo <strong>hongos y bacterias</strong>) que se alimenta de restos de plantas y animales muertos, devolviendo los <strong>nutrientes al suelo</strong>.'},
 ];
 let fcIdx=0;
 function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cuál es la unidad estructural y funcional de todos los seres vivos?',o:['a) El átomo','b) La célula','c) El órgano','d) El tejido'],c:1},
-  {q:'¿Qué organelo produce la energía (ATP) de la célula mediante la respiración celular?',o:['a) Ribosoma','b) Vacuola','c) Mitocondria','d) Núcleo'],c:2},
-  {q:'¿Qué tipo de célula NO tiene núcleo definido?',o:['a) Eucariota','b) Vegetal','c) Animal','d) Procariota'],c:3},
-  {q:'¿Qué organelo, exclusivo de la célula vegetal, realiza la fotosíntesis?',o:['a) Mitocondria','b) Cloroplasto','c) Lisosoma','d) Ribosoma'],c:1},
-  {q:'¿Qué estructura rígida rodea a la célula vegetal por fuera de la membrana?',o:['a) Citoplasma','b) Membrana nuclear','c) Pared celular','d) Vacuola'],c:2},
-  {q:'¿Dónde se guarda el ADN en una célula eucariota?',o:['a) En la mitocondria','b) En el núcleo','c) En el citoplasma libre','d) En la membrana'],c:1},
-  {q:'¿Qué organelo se encarga de fabricar las proteínas?',o:['a) Ribosoma','b) Cloroplasto','c) Vacuola','d) Lisosoma'],c:0},
-  {q:'¿Qué diferencia principal tiene la célula animal respecto a la vegetal?',o:['a) Tiene núcleo','b) No tiene pared celular ni cloroplastos','c) No tiene membrana','d) No tiene mitocondrias'],c:1},
-  {q:'Según la teoría celular, ¿de dónde proviene toda célula?',o:['a) De materia sin vida','b) Del aire','c) De otra célula preexistente','d) Del agua'],c:2},
+  {q:'¿Cómo se llama la ciencia que clasifica y nombra a los seres vivos?',o:['a) Biología','b) Taxonomía','c) Ecología','d) Geología'],c:1},
+  {q:'¿Cuántos reinos propuso Robert Whittaker en 1969?',o:['a) Tres','b) Cuatro','c) Cinco','d) Seis'],c:2},
+  {q:'¿A qué reino pertenecen las bacterias?',o:['a) Protista','b) Monera','c) Fungi','d) Animalia'],c:1},
+  {q:'¿Qué reino reúne a los hongos, como las setas y los mohos?',o:['a) Plantae','b) Monera','c) Fungi','d) Protista'],c:2},
+  {q:'¿Cuál es el grupo MÁS PEQUEÑO de la clasificación?',o:['a) El reino','b) La familia','c) El género','d) La especie'],c:3},
+  {q:'¿Qué reino está formado por seres pluricelulares y autótrofos que hacen fotosíntesis?',o:['a) Plantae','b) Animalia','c) Fungi','d) Monera'],c:0},
+  {q:'La ameba y el paramecio pertenecen al reino…',o:['a) Monera','b) Protista','c) Plantae','d) Fungi'],c:1},
+  {q:'¿Qué significa que un ser vivo sea "autótrofo"?',o:['a) Que se mueve','b) Que fabrica su propio alimento','c) Que come otros seres','d) Que es unicelular'],c:1},
+  {q:'¿A qué reino pertenece el ser humano?',o:['a) Plantae','b) Protista','c) Animalia','d) Fungi'],c:2},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -102,14 +102,14 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Célula Animal','Célula Vegetal'],headA:'🐾 Solo Célula Animal',headB:'🌿 Solo Célula Vegetal',colA:'ani',colB:'veg',
-   words:[{w:'Centriolos',t:'ani'},{w:'Cloroplastos',t:'veg'},{w:'Pared celular',t:'veg'},{w:'Vacuola grande central',t:'veg'},{w:'Muchas vacuolas pequeñas',t:'ani'},{w:'Clorofila',t:'veg'},{w:'Forma irregular',t:'ani'},{w:'Forma rectangular fija',t:'veg'},{w:'Lisosomas abundantes',t:'ani'},{w:'Celulosa',t:'veg'}]},
-  {label:['Procariota','Eucariota'],headA:'🦠 Célula Procariota',headB:'🧬 Célula Eucariota',colA:'pro',colB:'euc',
-   words:[{w:'Sin núcleo definido',t:'pro'},{w:'Con núcleo definido',t:'euc'},{w:'ADN libre (nucleoide)',t:'pro'},{w:'ADN en el núcleo',t:'euc'},{w:'Bacterias',t:'pro'},{w:'Plantas y animales',t:'euc'},{w:'Sin organelos con membrana',t:'pro'},{w:'Con mitocondrias',t:'euc'},{w:'Muy pequeña y simple',t:'pro'},{w:'Grande y compleja',t:'euc'}]},
-  {label:['Da energía','Fabrica/Almacena'],headA:'🔋 Relacionado con Energía',headB:'🏭 Fabrica o Almacena',colA:'ene',colB:'fab',
-   words:[{w:'Mitocondria',t:'ene'},{w:'Ribosoma (proteínas)',t:'fab'},{w:'Cloroplasto',t:'ene'},{w:'Vacuola (almacena)',t:'fab'},{w:'Respiración celular',t:'ene'},{w:'Retículo endoplasmático',t:'fab'},{w:'ATP',t:'ene'},{w:'Aparato de Golgi',t:'fab'},{w:'Fotosíntesis',t:'ene'},{w:'Síntesis de proteínas',t:'fab'}]},
-  {label:['Membrana/Cubierta','Interior'],headA:'🧴 Cubiertas de la célula',headB:'⚙️ Organelos internos',colA:'cub',colB:'org',
-   words:[{w:'Membrana celular',t:'cub'},{w:'Núcleo',t:'org'},{w:'Pared celular',t:'cub'},{w:'Mitocondria',t:'org'},{w:'Envoltura nuclear',t:'cub'},{w:'Ribosoma',t:'org'},{w:'Bicapa de lípidos',t:'cub'},{w:'Aparato de Golgi',t:'org'},{w:'Cápsula bacteriana',t:'cub'},{w:'Vacuola',t:'org'}]},
+  {label:['Autótrofo','Heterótrofo'],headA:'🌞 Autótrofo (fabrica su alimento)',headB:'🍖 Heterótrofo (come otros)',colA:'aut',colB:'het',
+   words:[{w:'Planta',t:'aut'},{w:'Animal',t:'het'},{w:'Alga',t:'aut'},{w:'Hongo',t:'het'},{w:'Hace fotosíntesis',t:'aut'},{w:'Absorbe su alimento',t:'het'},{w:'Fabrica su alimento',t:'aut'},{w:'Come otros seres vivos',t:'het'},{w:'Cianobacteria',t:'aut'},{w:'Descomponedor',t:'het'}]},
+  {label:['Unicelular','Pluricelular'],headA:'🔵 Unicelular (una célula)',headB:'🔶 Pluricelular (muchas células)',colA:'uni',colB:'plu',
+   words:[{w:'Bacteria',t:'uni'},{w:'Árbol',t:'plu'},{w:'Ameba',t:'uni'},{w:'Ser humano',t:'plu'},{w:'Paramecio',t:'uni'},{w:'Perro',t:'plu'},{w:'Una sola célula',t:'uni'},{w:'Muchas células',t:'plu'},{w:'Levadura',t:'uni'},{w:'Helecho',t:'plu'}]},
+  {label:['Procariota','Eucariota'],headA:'🦠 Procariota (sin núcleo)',headB:'🧬 Eucariota (con núcleo)',colA:'pro',colB:'euc',
+   words:[{w:'Bacteria',t:'pro'},{w:'Planta',t:'euc'},{w:'Sin núcleo definido',t:'pro'},{w:'Con núcleo definido',t:'euc'},{w:'Reino Monera',t:'pro'},{w:'Reino Animalia',t:'euc'},{w:'ADN libre',t:'pro'},{w:'ADN en el núcleo',t:'euc'},{w:'Cianobacteria',t:'pro'},{w:'Hongo',t:'euc'}]},
+  {label:['Vertebrado','Invertebrado'],headA:'🦴 Vertebrado (con columna)',headB:'🐛 Invertebrado (sin columna)',colA:'ver',colB:'inv',
+   words:[{w:'Pez',t:'ver'},{w:'Insecto',t:'inv'},{w:'Águila',t:'ver'},{w:'Caracol',t:'inv'},{w:'Rana',t:'ver'},{w:'Lombriz',t:'inv'},{w:'Perro',t:'ver'},{w:'Araña',t:'inv'},{w:'Serpiente',t:'ver'},{w:'Medusa',t:'inv'}]},
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -119,14 +119,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['La','mitocondria','produce','la','energía','de','la','célula.'],c:1,art:'Organelo que produce energía (ATP)'},
-  {s:['El','núcleo','guarda','el','ADN','y','dirige','la','célula.'],c:1,art:'Organelo que dirige la célula y guarda el ADN'},
-  {s:['El','cloroplasto','realiza','la','fotosíntesis','en','la','planta.'],c:1,art:'Organelo verde exclusivo de la célula vegetal'},
-  {s:['La','membrana','controla','lo','que','entra','y','sale.'],c:1,art:'Cubierta que rodea la célula y regula el paso'},
-  {s:['La','pared','celular','da','rigidez','a','la','planta.'],c:1,art:'Cubierta rígida ausente en la célula animal'},
-  {s:['El','ribosoma','fabrica','las','proteínas','celulares.'],c:1,art:'Organelo que fabrica proteínas'},
-  {s:['La','vacuola','almacena','agua','y','sustancias.'],c:1,art:'Bolsa de almacenamiento de la célula'},
-  {s:['El','citoplasma','contiene','los','organelos','de','la','célula.'],c:1,art:'Medio gelatinoso donde flotan los organelos'},
+  {s:['El','reino','Monera','está','formado','por','bacterias.'],c:2,art:'Reino de las bacterias'},
+  {s:['La','taxonomía','clasifica','a','los','seres','vivos.'],c:1,art:'Ciencia que clasifica a los seres vivos'},
+  {s:['Las','plantas','son','autótrofas','y','hacen','fotosíntesis.'],c:3,art:'Tipo de nutrición que fabrica su propio alimento'},
+  {s:['Los','hongos','pertenecen','al','reino','Fungi.'],c:5,art:'Reino de los hongos'},
+  {s:['La','especie','es','el','grupo','más','pequeño.'],c:1,art:'Nivel de clasificación más pequeño'},
+  {s:['La','ameba','es','un','protista','unicelular.'],c:4,art:'Reino de la ameba y el paramecio'},
+  {s:['El','ser','humano','pertenece','al','reino','Animalia.'],c:6,art:'Reino de los animales'},
+  {s:['Una','bacteria','es','un','ser','unicelular.'],c:5,art:'Ser formado por una sola célula'},
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -136,14 +136,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'La ___ es la unidad estructural y funcional de los seres vivos.',opts:['célula','molécula','pared'],c:0},
-  {s:'La ___ produce la energía de la célula (ATP).',opts:['vacuola','mitocondria','membrana'],c:1},
-  {s:'El ___ guarda el ADN y dirige la célula eucariota.',opts:['citoplasma','ribosoma','núcleo'],c:2},
-  {s:'El ___ realiza la fotosíntesis en la célula vegetal.',opts:['cloroplasto','lisosoma','centriolo'],c:0},
-  {s:'La célula ___ no tiene núcleo definido, como las bacterias.',opts:['eucariota','procariota','vegetal'],c:1},
-  {s:'La ___ celular controla lo que entra y sale de la célula.',opts:['pared','vacuola','membrana'],c:2},
-  {s:'Los ___ se encargan de fabricar las proteínas.',opts:['ribosomas','cloroplastos','lisosomas'],c:0},
-  {s:'La pared celular de las plantas está hecha de ___.',opts:['quitina','celulosa','proteína'],c:1},
+  {s:'La ciencia que clasifica y nombra a los seres vivos es la ___.',opts:['taxonomía','geología','astronomía'],c:0},
+  {s:'El reino de las bacterias se llama reino ___.',opts:['Plantae','Monera','Fungi'],c:1},
+  {s:'Un ser vivo ___ fabrica su propio alimento por fotosíntesis.',opts:['heterótrofo','descomponedor','autótrofo'],c:2},
+  {s:'Los hongos pertenecen al reino ___.',opts:['Fungi','Animalia','Protista'],c:0},
+  {s:'El grupo más pequeño de la clasificación es la ___.',opts:['familia','especie','clase'],c:1},
+  {s:'La ameba y el paramecio pertenecen al reino ___.',opts:['Monera','Plantae','Protista'],c:2},
+  {s:'Los animales son seres ___ porque comen otros seres vivos.',opts:['heterótrofos','autótrofos','unicelulares'],c:0},
+  {s:'El ser humano pertenece al reino ___.',opts:['Plantae','Animalia','Fungi'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -627,43 +627,50 @@ function printEvalCrit(){
 
 // ===================== LABORATORIO DE LA CÉLULA =====================
 const parteData={
-  nucleo:{
-    nombre:'Núcleo',icon:'🧬',
-    estructura:{title:'Estructura',info:'• <strong>Envoltura nuclear</strong>: doble membrana con poros que controlan el paso de sustancias<br>• <strong>Nucleoplasma</strong>: medio interno del núcleo<br>• <strong>Cromatina</strong>: ADN enrollado con proteínas; al dividirse forma los <strong>cromosomas</strong><br>• <strong>Nucléolo</strong>: cuerpo denso que fabrica los ribosomas<br>• Solo lo tienen las células <strong>eucariotas</strong>'},
-    funcion:{title:'Función',info:'• <strong>Guarda el ADN</strong>, que contiene toda la información genética<br>• <strong>Dirige</strong> las actividades de la célula (nutrición, crecimiento, reproducción)<br>• Controla la <strong>síntesis de proteínas</strong> enviando instrucciones a los ribosomas<br>• Interviene en la <strong>división celular</strong> (mitosis y meiosis)<br>• El nucléolo produce las piezas de los ribosomas'},
-    ubicacion:{title:'¿En qué célula?',info:'• Presente en <strong>TODAS las células eucariotas</strong>: protistas, hongos, plantas y animales<br>• <strong>Ausente</strong> en las células procariotas (bacterias), que tienen su ADN libre en el citoplasma (nucleoide)<br>• Suele ser el organelo más <strong>visible</strong> al microscopio óptico'},
-    dato:{title:'Dato curioso',info:'• Si desenrolláramos todo el ADN de un solo núcleo humano, mediría cerca de <strong>2 metros</strong> de largo, ¡y cabe en algo microscópico!<br>• Casi todas tus células tienen el mismo ADN, pero cada tipo "lee" solo la parte que necesita<br>• Los glóbulos rojos maduros pierden el núcleo para transportar más oxígeno'}
+  monera:{
+    nombre:'Reino Monera',icon:'🦠',
+    estructura:{title:'Características',info:'• Seres <strong>unicelulares</strong> (una sola célula)<br>• Célula <strong>procariota</strong>: sin núcleo definido, su ADN está libre<br>• Los seres vivos <strong>más pequeños y sencillos</strong><br>• Muchos viven en <strong>colonias</strong><br>• Fueron los <strong>primeros seres vivos</strong> de la Tierra'},
+    funcion:{title:'Nutrición',info:'• Puede ser <strong>autótrofa o heterótrofa</strong><br>• Algunas hacen <strong>fotosíntesis</strong> (cianobacterias)<br>• Otras <strong>descomponen</strong> restos o viven dentro de otros seres<br>• Se reproducen muy rápido por <strong>bipartición</strong> (se parten en dos)'},
+    ubicacion:{title:'Ejemplos',info:'• Las <strong>bacterias</strong> (como <em>Lactobacillus</em>, del yogur)<br>• Las <strong>cianobacterias</strong>, que hacen fotosíntesis<br>• Bacterias que ayudan a la <strong>digestión</strong><br>• Algunas bacterias que causan <strong>enfermedades</strong>'},
+    dato:{title:'Dato curioso',info:'• En tu cuerpo hay <strong>más bacterias que células propias</strong>, ¡y la mayoría te ayudan!<br>• Sin bacterias no habría yogur, queso ni pan<br>• Viven hasta en los lugares más extremos: hielos, volcanes y el fondo del mar'}
   },
-  mitocondria:{
-    nombre:'Mitocondria',icon:'🔋',
-    estructura:{title:'Estructura',info:'• <strong>Doble membrana</strong>: una externa lisa y una interna con pliegues (<strong>crestas</strong>)<br>• Las crestas aumentan la superficie para producir más energía<br>• <strong>Matriz mitocondrial</strong>: espacio interno con enzimas<br>• Tiene su <strong>propio ADN</strong> (¡diferente al del núcleo!)<br>• Forma alargada, como una "salchicha" microscópica'},
-    funcion:{title:'Función',info:'• Realiza la <strong>respiración celular</strong>: combina nutrientes con oxígeno<br>• Produce <strong>energía en forma de ATP</strong>, el "combustible" de la célula<br>• Se le llama la <strong>"central energética"</strong> de la célula<br>• Cuanta más energía necesita una célula, <strong>más mitocondrias</strong> tiene (ej. células musculares)'},
-    ubicacion:{title:'¿En qué célula?',info:'• Presente en <strong>ambas células eucariotas</strong>: animal y vegetal<br>• Una célula puede tener desde <strong>cientos hasta miles</strong> de mitocondrias<br>• Las células muy activas (músculo, hígado) tienen muchísimas<br>• Las bacterias NO tienen mitocondrias'},
-    dato:{title:'Dato curioso',info:'• Las mitocondrias tienen su propio ADN y se cree que fueron <strong>bacterias antiguas</strong> que empezaron a vivir dentro de otras células (teoría endosimbiótica)<br>• Heredas tus mitocondrias <strong>solo de tu madre</strong><br>• ¡Producen energía todo el tiempo, incluso mientras duermes!'}
+  protista:{
+    nombre:'Reino Protista',icon:'🔬',
+    estructura:{title:'Características',info:'• Seres <strong>eucariotas</strong> (con núcleo definido)<br>• Casi todos <strong>unicelulares</strong>; algunos forman colonias<br>• El reino <strong>más variado</strong> de todos<br>• Viven en el <strong>agua o en lugares húmedos</strong>'},
+    funcion:{title:'Nutrición',info:'• Puede ser <strong>autótrofa o heterótrofa</strong><br>• Las <strong>algas</strong> hacen fotosíntesis (autótrofas)<br>• Los <strong>protozoos</strong> capturan su alimento (heterótrofos)<br>• Muchos se mueven con <strong>cilios o flagelos</strong>'},
+    ubicacion:{title:'Ejemplos',info:'• La <strong>ameba</strong>, que se mueve con seudópodos<br>• El <strong>paramecio</strong>, cubierto de cilios<br>• Las <strong>algas</strong> unicelulares del mar<br>• El <em>Plasmodium</em>, que causa el paludismo'},
+    dato:{title:'Dato curioso',info:'• Las <strong>algas del mar producen más oxígeno</strong> que todos los bosques juntos<br>• La ameba cambia de forma constantemente para moverse y comer<br>• A este reino se le llama a veces el "cajón de sastre" porque reúne lo que no encaja en los demás'}
   },
-  cloroplasto:{
-    nombre:'Cloroplasto',icon:'🌿',
-    estructura:{title:'Estructura',info:'• <strong>Doble membrana</strong> que lo rodea<br>• <strong>Tilacoides</strong>: sacos apilados en forma de "monedas" (grana)<br>• <strong>Clorofila</strong>: pigmento verde que capta la luz, dentro de los tilacoides<br>• <strong>Estroma</strong>: líquido interno donde se fabrica la glucosa<br>• Tiene su <strong>propio ADN</strong>, como la mitocondria'},
-    funcion:{title:'Función',info:'• Realiza la <strong>fotosíntesis</strong>: transforma luz + agua + CO₂ en <strong>glucosa y oxígeno</strong><br>• La <strong>clorofila</strong> capta la energía de la luz solar<br>• Fabrica el <strong>alimento</strong> de la planta<br>• Da el <strong>color verde</strong> a hojas y tallos<br>• Base de casi todas las cadenas alimenticias del planeta'},
-    ubicacion:{title:'¿En qué célula?',info:'• <strong>Exclusivo de la célula vegetal</strong> y de las algas<br>• La célula animal <strong>NO</strong> tiene cloroplastos (por eso no hace fotosíntesis)<br>• Abundan en las células de las <strong>hojas</strong>, donde llega más luz'},
-    dato:{title:'Dato curioso',info:'• ¡El <strong>oxígeno que respiras</strong> proviene en gran parte de la fotosíntesis de las plantas y algas!<br>• Una sola célula de hoja puede tener <strong>decenas de cloroplastos</strong><br>• En otoño, la clorofila se degrada y aparecen otros colores (amarillo, rojo) en las hojas'}
+  fungi:{
+    nombre:'Reino Fungi',icon:'🍄',
+    estructura:{title:'Características',info:'• Seres <strong>eucariotas</strong>, uni o pluricelulares<br>• Su pared celular es de <strong>quitina</strong> (no de celulosa)<br>• <strong>No</strong> tienen clorofila ni hacen fotosíntesis<br>• Muchos forman <strong>hifas</strong> (filamentos) que crecen en el suelo'},
+    funcion:{title:'Nutrición',info:'• Siempre <strong>heterótrofa por absorción</strong><br>• Muchos son <strong>descomponedores</strong>: reciclan restos muertos<br>• Otros son <strong>parásitos</strong> (viven sobre otros seres)<br>• Algunos viven en <strong>asociación</strong> con plantas o algas (líquenes)'},
+    ubicacion:{title:'Ejemplos',info:'• Las <strong>setas</strong> y champiñones<br>• Los <strong>mohos</strong> del pan y las frutas<br>• Las <strong>levaduras</strong> del pan, la cerveza y el queso<br>• El hongo del <strong>pie de atleta</strong>'},
+    dato:{title:'Dato curioso',info:'• Del hongo <em>Penicillium</em> se obtiene la <strong>penicilina</strong>, el primer antibiótico<br>• El organismo vivo más grande del mundo es un <strong>hongo</strong> bajo tierra en EE. UU.<br>• Sin los hongos descomponedores, el planeta estaría cubierto de restos muertos'}
   },
-  membrana:{
-    nombre:'Membrana celular',icon:'🧴',
-    estructura:{title:'Estructura',info:'• <strong>Bicapa de lípidos</strong> (grasas) con proteínas incrustadas<br>• Es <strong>delgada, flexible y elástica</strong><br>• Las proteínas funcionan como "puertas" y "canales"<br>• Modelo del <strong>mosaico fluido</strong>: sus componentes se mueven<br>• Presente en <strong>TODAS las células</strong>'},
-    funcion:{title:'Función',info:'• <strong>Rodea y delimita</strong> la célula, separándola del exterior<br>• Controla lo que entra y sale: <strong>permeabilidad selectiva</strong><br>• Deja pasar nutrientes y oxígeno; expulsa desechos<br>• Procesos de transporte: <strong>ósmosis</strong> (agua) y <strong>difusión</strong><br>• Protege el interior y recibe señales del ambiente'},
-    ubicacion:{title:'¿En qué célula?',info:'• Presente en <strong>TODAS las células</strong>: procariotas y eucariotas, animales y vegetales<br>• En la célula vegetal está <strong>por dentro</strong> de la pared celular<br>• En la célula animal es la <strong>capa más externa</strong>'},
-    dato:{title:'Dato curioso',info:'• La membrana es tan delgada que harían falta <strong>miles apiladas</strong> para igualar el grosor de una hoja de papel<br>• Cuando pones una lechuga marchita en agua, recupera su firmeza porque el agua entra por las membranas (ósmosis)<br>• Decide, molécula por molécula, qué entra a tu célula'}
+  plantae:{
+    nombre:'Reino Plantae',icon:'🌿',
+    estructura:{title:'Características',info:'• Seres <strong>pluricelulares</strong> y <strong>eucariotas</strong><br>• Tienen <strong>cloroplastos</strong> con clorofila (color verde)<br>• Pared celular de <strong>celulosa</strong><br>• No se desplazan: viven <strong>fijas</strong> al suelo'},
+    funcion:{title:'Nutrición',info:'• Siempre <strong>autótrofa</strong><br>• Fabrican su alimento por <strong>fotosíntesis</strong>: luz + agua + CO₂ → glucosa y oxígeno<br>• Toman agua y sales minerales por la <strong>raíz</strong><br>• Producen el <strong>oxígeno</strong> del planeta'},
+    ubicacion:{title:'Ejemplos',info:'• Los <strong>musgos</strong> y <strong>helechos</strong> (sin flores)<br>• Los árboles como el <strong>pino</strong> y el <strong>roble</strong><br>• Las plantas con flor: <strong>maíz</strong>, <strong>rosal</strong>, frutales<br>• Todas las hortalizas y cultivos'},
+    dato:{title:'Dato curioso',info:'• Las plantas son la <strong>base de casi todas las cadenas alimenticias</strong><br>• El árbol más alto del mundo (una secuoya) mide más de <strong>115 metros</strong><br>• Sin plantas no existirían el oxígeno ni el alimento de los animales'}
+  },
+  animalia:{
+    nombre:'Reino Animalia',icon:'🐾',
+    estructura:{title:'Características',info:'• Seres <strong>pluricelulares</strong> y <strong>eucariotas</strong><br>• <strong>No</strong> tienen pared celular ni clorofila<br>• La mayoría se <strong>desplazan</strong> para buscar alimento<br>• Tienen <strong>órganos y sistemas</strong> especializados'},
+    funcion:{title:'Nutrición',info:'• Siempre <strong>heterótrofa</strong>: comen otros seres vivos<br>• <strong>Herbívoros</strong> (comen plantas), <strong>carnívoros</strong> (comen animales) y <strong>omnívoros</strong> (ambos)<br>• Digieren el alimento dentro de su cuerpo'},
+    ubicacion:{title:'Ejemplos',info:'• <strong>Invertebrados</strong> (sin columna): insectos, arañas, moluscos, gusanos<br>• <strong>Vertebrados</strong> (con columna): peces, anfibios, reptiles, aves y mamíferos<br>• El <strong>ser humano</strong> es un mamífero de este reino'},
+    dato:{title:'Dato curioso',info:'• Cerca del <strong>95% de los animales son invertebrados</strong> (¡sobre todo insectos!)<br>• El animal más grande de la historia es la <strong>ballena azul</strong><br>• Los animales existen gracias a las plantas: dependen de su oxígeno y su alimento'}
   }
 };
-let labParte='nucleo',labAspecto='estructura';
+let labParte='monera',labAspecto='estructura';
 function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
 function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
 function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAspecto];document.getElementById('lab-sentence').innerHTML=`🔬 Explorando: <strong>${data.nombre}</strong> → <strong>${asp.title}</strong>`;document.getElementById('lab-display').innerHTML=`<div class="lab-cont-header">${data.icon} ${data.nombre}</div><div class="lab-asp-title">${asp.title}</div><div class="lab-asp-info">${asp.info}</div>`;}
 
 // ===================== DIPLOMA =====================
 function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
-function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Excelente citólogo!','¡Eres un experto en la célula!','¡Maestro de la Célula!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Excelente naturalista!','¡Dominas los cinco reinos!','¡Maestro de los Reinos!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
 function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🔬 ¡${name} completó la Misión "Los Cinco Reinos"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
@@ -685,7 +692,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   showNeuro();
   showEnfer();
   updateLabDisplay();
-  document.querySelector('[data-parte="nucleo"]')?.classList.add('active-pri');
+  document.querySelector('[data-parte="monera"]')?.classList.add('active-pri');
   document.querySelector('[data-aspecto="estructura"]')?.classList.add('active-sec');
   renderAchPanel();
 });
