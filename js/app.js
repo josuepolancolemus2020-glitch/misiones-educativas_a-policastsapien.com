@@ -510,7 +510,7 @@ function renderMissions(filter, query) {
 ───────────────────────────────────────────── */
 
 const REGISTRO_KEY = 'METAS_REGISTRO_V1';
-const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo'];
+const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo', 'vida'];
 
 function _rNorm(s) {
   s = String(s || '').toLowerCase();

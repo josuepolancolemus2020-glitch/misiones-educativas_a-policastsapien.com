@@ -46,6 +46,7 @@ const DCNB_MAP = {
   21: { g: { 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] } },// Tipos de Textos
 
   /* ── Ciencias Naturales (meses de la programación) ── */
+  33: { g: { 4: [4], 5: [2, 3], 6: [2, 3], 7: [2, 3], 9: [4] } }, // La Célula — 4º abr; 5º/6º/7º feb-mar; 9º abr
   14: { g: { 4: [5], 5: [5], 6: [5], 9: [5] } },          // Sistema Nervioso — mayo en los 4 grados
   19: { g: { 5: [5], 6: [5] } },                          // Sistema Endocrino — mayo
   9:  { g: { 6: [4], 7: [7] } },                          // Eras Geológicas
