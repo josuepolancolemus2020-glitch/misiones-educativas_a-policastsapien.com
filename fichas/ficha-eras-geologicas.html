@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Las Eras Geológicas</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS NATURALES = VERDE/TEAL (#0d9488)
+     · Colores semánticos fijos: azul=eras antiguas (Pre/Paleo),
+       verde=vida y océanos, naranja=extinciones y catástrofes
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --nat: #0d9488; --nat-osc: #115e59; --nat-claro: #f0fdfa;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfece7;
+    --ant: #1e40af; --vid: #15803d; --ext: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef6f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--nat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--nat); background: var(--nat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--nat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--nat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--nat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--nat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--nat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--nat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--nat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5fbfa; }
+  td.k { font-weight: 700; color: var(--nat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafefd; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--nat-osc); margin-bottom: 8px; }
+
+  /* Línea del tiempo de las 5 eras (mini-demostración) */
+  .linea-t { display: flex; gap: 0; margin: 9px 0; break-inside: avoid; align-items: stretch; }
+  .linea-t > div { flex: 1; border: 1.5px solid var(--linea); border-right: none; padding: 7px 6px; font-size: 8pt; text-align: center; background: #fff; }
+  .linea-t > div:last-child { border-right: 1.5px solid var(--linea); border-radius: 0 8px 8px 0; }
+  .linea-t > div:first-child { border-radius: 8px 0 0 8px; }
+  .linea-t b { display: block; font-size: 8.5pt; margin-bottom: 2px; }
+  .linea-t .lt-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .linea-t .e1 { background: #eef2ff; } .linea-t .e1 b { color: var(--ant); }
+  .linea-t .e2 { background: #eff6ff; } .linea-t .e2 b { color: var(--ant); }
+  .linea-t .e3 { background: #dcfce7; } .linea-t .e3 b { color: var(--vid); }
+  .linea-t .e4 { background: #f0fdfa; } .linea-t .e4 b { color: var(--nat-osc); }
+  .linea-t .e5 { background: #ffedd5; } .linea-t .e5 b { color: var(--ext); }
+
+  /* Las grandes extinciones (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fafefd; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--nat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--nat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tant { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .tri .tvid { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .text { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tant b { color: var(--ant); } .tri .tvid b { color: var(--vid); } .tri .text b { color: var(--ext); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--nat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y verde */
+  .acts ol li::marker { font-weight: 800; color: var(--nat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito verde · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--nat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--nat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--nat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--nat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2faf8; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--nat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--nat); box-shadow: 0 6px 16px rgba(13,148,136,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .linea-t > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Las Eras Geológicas</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Naturales &nbsp;·&nbsp; <b>Nivel:</b> II y III Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> La historia de la Tierra y sus cinco eras geológicas, los fósiles, las grandes extinciones y Pangea</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-eras-geologicas.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender que la Tierra tiene unos <strong>4,600 millones de años</strong> de historia, dividida en <strong>eras geológicas</strong>.</li>
+      <li>Ordenar y describir las cinco eras: <strong>Precámbrica, Paleozoica, Mesozoica, Cenozoica y Cuaternaria</strong>.</li>
+      <li>Reconocer los seres vivos característicos de cada era y sus <strong>fósiles guía</strong>.</li>
+      <li>Explicar qué fue <strong>Pangea</strong> y cómo se fragmentó.</li>
+      <li>Identificar las <strong>grandes extinciones</strong>, especialmente la del Pérmico y la de los dinosaurios.</li>
+      <li>Valorar la importancia de los <strong>fósiles</strong> como testigos de la historia de la vida.</li>
+    </ol>
+
+    <h2>🌋 1. ¿Qué son las eras geológicas?</h2>
+    <p>La Tierra tiene aproximadamente <strong>4,600 millones de años</strong>. Como es tantísimo tiempo, los
+    científicos lo dividen en grandes bloques llamados <strong>eras geológicas</strong>, según los seres vivos
+    que existían y los grandes cambios del planeta. Estudiar las eras es como leer la <strong>biografía de la
+    Tierra</strong>, capítulo por capítulo.</p>
+    <div class="caja regla">⚡ <b>La herramienta del geólogo:</b> el <strong>fósil</strong> es el resto de un
+    ser vivo conservado en la roca. Los fósiles nos dicen qué animales y plantas vivían en cada era; por eso
+    hay <strong>fósiles guía</strong> que identifican una era, como el trilobite del Paleozoico.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> las eras se ordenan de la más <strong>antigua</strong> a la
+    más <strong>reciente</strong>. La vida empezó siendo microscópica (bacterias) y con el tiempo aparecieron
+    peces, reptiles, dinosaurios, mamíferos y, por último, el <strong>ser humano</strong>.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar el orden:</b> «<b>Pre</b>gunta <b>Pale</b>ta <b>Meso</b>
+    <b>Ceno</b> <b>Cua</b>ndo»: <b>Pre</b>cámbrica → <b>Pale</b>ozoica → <b>Meso</b>zoica → <b>Ceno</b>zoica →
+    <b>Cua</b>ternaria. ¡Las primeras sílabas te dan el orden exacto!</div>
+
+    <h3>🔬 Mini-demostración: la línea del tiempo de la Tierra</h3>
+    <div class="ilus">
+      <div class="ilus-t">De la más antigua (izquierda) a la más reciente (derecha)</div>
+      <div class="linea-t">
+        <div class="e1"><span class="lt-emoji">🌋</span><b>Precámbrica</b>Bacterias y océanos</div>
+        <div class="e2"><span class="lt-emoji">🐚</span><b>Paleozoica</b>Peces y trilobites</div>
+        <div class="e3"><span class="lt-emoji">🦖</span><b>Mesozoica</b>Dinosaurios</div>
+        <div class="e4"><span class="lt-emoji">🐘</span><b>Cenozoica</b>Mamíferos gigantes</div>
+        <div class="e5"><span class="lt-emoji">🧑</span><b>Cuaternaria</b>Ser humano</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ ¡La vida fue de lo simple a lo complejo, y nosotros llegamos al final del recorrido!</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Eras Geológicas</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🏷️ 2. Las cinco eras, una por una</h2>
+    <table>
+      <tr><th>Era</th><th>¿Qué pasó?</th><th>Fósiles y seres típicos</th></tr>
+      <tr><td class="k">🌋 Precámbrica</td><td>La era MÁS LARGA. Se formó la Tierra y los océanos. Atmósfera sin oxígeno.</td><td>primeras bacterias, organismos unicelulares</td></tr>
+      <tr><td class="k">🐚 Paleozoica</td><td>«Vida Antigua». Estalló la vida en los mares; salió a tierra firme.</td><td>trilobites, primeros peces, anfibios y reptiles</td></tr>
+      <tr><td class="k">🦖 Mesozoica</td><td>La «Era de los Dinosaurios». Pangea se fragmenta. Nacen aves y flores.</td><td>dinosaurios, primeras aves, plantas con flores</td></tr>
+      <tr><td class="k">🐘 Cenozoica</td><td>Dominio de los MAMÍFEROS. Las aves se diversifican.</td><td>mamut, tigre dientes de sable, megaterio</td></tr>
+      <tr><td class="k">🧑 Cuaternaria</td><td>Edad de Hielo y aparición del SER HUMANO. Es la era en que vivimos.</td><td>Homo sapiens, glaciaciones, agricultura</td></tr>
+    </table>
+    <div class="caja idea">💡 <b>Dato asombroso:</b> los dinosaurios reinaron durante <strong>185 millones de
+    años</strong>. El ser humano moderno lleva apenas unos <strong>300 mil años</strong>: ¡si la historia de la
+    Tierra fuera un día completo, nosotros apareceríamos en los últimos segundos antes de la medianoche!</div>
+
+    <h2>💥 3. Las grandes extinciones</h2>
+    <p>A lo largo de la historia, la vida casi desaparece varias veces. Dos extinciones son clave:</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>☠️ Extinción del Pérmico</b>Al final del Paleozoico. La PEOR de todas: desapareció el <strong>90 %</strong> de las especies.</div>
+      <div><span class="pn">2</span><b>☄️ Extinción del Cretácico</b>Al final del Mesozoico, hace <strong>66 millones de años</strong>: un <strong>meteorito</strong> acabó con los dinosaurios.</div>
+    </div>
+    <div class="caja regla">⚡ <b>Lo bueno de una extinción:</b> cuando desaparecieron los dinosaurios,
+    quedó espacio libre para que los <strong>mamíferos</strong> crecieran y se diversificaran en la era
+    Cenozoica. ¡Sin ese meteorito, quizá los humanos nunca habríamos aparecido!</div>
+
+    <h2>🌍 4. Pangea, el supercontinente</h2>
+    <p>En la era Mesozoica, todos los continentes estaban <strong>unidos en uno solo</strong> llamado
+    <strong>Pangea</strong> (que significa «toda la Tierra»). Con el tiempo, ese gigante se
+    <strong>fragmentó</strong> lentamente y sus pedazos se separaron hasta formar los continentes que conocemos
+    hoy. ¡Por eso las costas de África y Sudamérica encajan como un rompecabezas!</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Eras Geológicas</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🔎 5. Pistas para reconocer cada era</h2>
+    <div class="tri">
+      <div class="tant"><b>🌋 Eras antiguas</b>Si oyes «bacterias», «sin oxígeno» o «se formó la Tierra» → Precámbrica. Si oyes «trilobites» o «primeros peces» → Paleozoica.</div>
+      <div class="tvid"><b>🦖 Era de vida gigante</b>Si oyes «dinosaurios», «Pangea» o «primeras aves y flores» → Mesozoica.</div>
+      <div class="text"><b>🧑 Eras recientes</b>Si oyes «mamuts» o «mamíferos gigantes» → Cenozoica. Si oyes «ser humano», «fuego» o «Edad de Hielo» → Cuaternaria.</div>
+    </div>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que humanos y dinosaurios convivieron</td><td>Los separan más de 60 millones de años.</td><td>Dinosaurios = Mesozoica · Humanos = Cuaternaria ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que la era más larga fue la de los dinosaurios</td><td>La más larga es la Precámbrica (el inicio de todo).</td><td>La más larga = Precámbrica ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que Pangea es un océano</td><td>Pangea fue un supercontinente, no un mar.</td><td>Pangea = supercontinente ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir el trilobite con un dinosaurio</td><td>El trilobite era un pequeño artrópodo marino del Paleozoico.</td><td>Trilobite = fósil guía del Paleozoico ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que la extinción del Pérmico mató a los dinosaurios</td><td>A los dinosaurios los extinguió un meteorito en el Cretácico.</td><td>Pérmico = 90 % de especies · Cretácico = dinosaurios ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> nuestro suelo también guarda historia geológica. En el valle
+    de <strong>Sula</strong> y en <strong>Gracias, Lempira</strong> se han hallado <strong>fósiles</strong> de
+    animales prehistóricos, como restos de <strong>megafauna</strong> (parientes de los mamuts y perezosos
+    gigantes) de la era Cenozoica. ¡La ciencia catracha también excava el pasado de la Tierra!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Eras Geológicas</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>La era geológica más larga de la historia de la Tierra es la <span class="linea-resp"></span>.</li>
+      <li>Los dinosaurios vivieron en la era <span class="linea-resp"></span>.</li>
+      <li>El supercontinente que se fragmentó en la era Mesozoica se llamaba <span class="linea-resp"></span>.</li>
+      <li>El fósil guía de la era Paleozoica es el <span class="linea-resp"></span>.</li>
+      <li>El ser humano apareció en la era <span class="linea-resp"></span>.</li>
+      <li>La Edad de <span class="linea-resp"></span> ocurrió en la era Cuaternaria.</li>
+      <li>Los mamíferos <span class="linea-resp"></span> dominaron la era Cenozoica.</li>
+      <li>Un <span class="linea-resp"></span> causó la extinción de los dinosaurios.</li>
+      <li>Las primeras <span class="linea-resp"></span> surgieron en la era Precámbrica.</li>
+      <li>La Tierra tiene aproximadamente <span class="linea-resp"></span> millones de años.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ La era Precámbrica es la más larga de la historia de la Tierra.</li>
+      <li>____ Los dinosaurios vivieron en la era Cuaternaria.</li>
+      <li>____ Pangea fue un supercontinente de la era Mesozoica.</li>
+      <li>____ Los trilobites son fósiles guía de la era Paleozoica.</li>
+      <li>____ El ser humano apareció en la era Cuaternaria.</li>
+      <li>____ Las glaciaciones ocurrieron en la era Precámbrica.</li>
+      <li>____ Un meteorito causó la extinción de los dinosaurios.</li>
+      <li>____ Los mamíferos gigantes dominaron la era Cenozoica.</li>
+      <li>____ La era Paleozoica se conoce como «Era de los Dinosaurios».</li>
+      <li>____ La Edad de Hielo ocurrió en la era Cuaternaria.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Eras Geológicas</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál es la era geológica más larga?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Paleozoica</span>
+        <span class="op"><i>b</i> Mesozoica</span>
+        <span class="op"><i>c</i> Precámbrica</span>
+        <span class="op"><i>d</i> Cuaternaria</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿En qué era vivieron los dinosaurios?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Precámbrica</span>
+        <span class="op"><i>b</i> Paleozoica</span>
+        <span class="op"><i>c</i> Mesozoica</span>
+        <span class="op"><i>d</i> Cenozoica</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué fue Pangea?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un océano antiguo</span>
+        <span class="op"><i>b</i> un supercontinente</span>
+        <span class="op"><i>c</i> un fósil gigante</span>
+        <span class="op"><i>d</i> una glaciación</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué animal es el fósil guía de la era Paleozoica?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> dinosaurio</span>
+        <span class="op"><i>b</i> mamut</span>
+        <span class="op"><i>c</i> trilobite</span>
+        <span class="op"><i>d</i> tigre dientes de sable</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué causó la extinción de los dinosaurios?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> una glaciación</span>
+        <span class="op"><i>b</i> un terremoto</span>
+        <span class="op"><i>c</i> un meteorito</span>
+        <span class="op"><i>d</i> una erupción volcánica</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿En qué era apareció el ser humano (Homo sapiens)?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Mesozoica</span>
+        <span class="op"><i>b</i> Cenozoica</span>
+        <span class="op"><i>c</i> Cuaternaria</span>
+        <span class="op"><i>d</i> Paleozoica</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué tipo de animales dominaron la era Cenozoica?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> reptiles marinos</span>
+        <span class="op"><i>b</i> mamíferos gigantes</span>
+        <span class="op"><i>c</i> bacterias</span>
+        <span class="op"><i>d</i> dinosaurios</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>La extinción del Pérmico acabó con el ___ de las especies:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 50 %</span>
+        <span class="op"><i>b</i> 70 %</span>
+        <span class="op"><i>c</i> 90 %</span>
+        <span class="op"><i>d</i> 100 %</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué era se conoce como «Vida Antigua»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Mesozoica</span>
+        <span class="op"><i>b</i> Cenozoica</span>
+        <span class="op"><i>c</i> Paleozoica</span>
+        <span class="op"><i>d</i> Cuaternaria</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuántas eras geológicas principales estudiamos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 3</span>
+        <span class="op"><i>b</i> 4</span>
+        <span class="op"><i>c</i> 5</span>
+        <span class="op"><i>d</i> 6</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Eras Geológicas</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Era Precámbrica</td><td>A. Era de los dinosaurios y primeras aves</td></tr>
+      <tr><td>2. ____ Era Paleozoica</td><td>B. Supercontinente que se fragmentó en el Mesozoico</td></tr>
+      <tr><td>3. ____ Era Mesozoica</td><td>C. Formación de la Tierra y primeras bacterias</td></tr>
+      <tr><td>4. ____ Era Cenozoica</td><td>D. Resto de un ser vivo conservado en roca</td></tr>
+      <tr><td>5. ____ Era Cuaternaria</td><td>E. Vida en los mares y primeros vertebrados</td></tr>
+      <tr><td>6. ____ Fósil</td><td>F. Artrópodo fósil guía del Paleozoico</td></tr>
+      <tr><td>7. ____ Pangea</td><td>G. Mamíferos gigantes y diversificación de aves</td></tr>
+      <tr><td>8. ____ Trilobite</td><td>H. Edad de Hielo y aparición del ser humano</td></tr>
+      <tr><td>9. ____ Meteorito</td><td>I. Período de frío extremo con capas de hielo</td></tr>
+      <tr><td>10. ____ Glaciación</td><td>J. Causó la extinción de los dinosaurios</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Las Eras Geológicas.</b> Ahora conoces la biografía completa
+      de nuestro planeta: desde las bacterias de la Precámbrica y los trilobites del Paleozoico, pasando por los
+      dinosaurios de la Mesozoica y Pangea, hasta los mamuts de la Cenozoica y el ser humano de la Cuaternaria.
+      Sabes leer los fósiles y entiendes por qué un meteorito cambió la historia de la vida. ¡Eres todo un
+      paleontólogo catracho! 🦕✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Naturales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó y rotuló la línea del tiempo de las cinco eras en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Eras Geológicas</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Precámbrica &nbsp; 2. Mesozoica &nbsp; 3. Pangea &nbsp; 4. trilobite &nbsp; 5. Cuaternaria &nbsp; 6. Hielo &nbsp; 7. gigantes &nbsp; 8. meteorito &nbsp; 9. bacterias &nbsp; 10. 4,600</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5V, 6F, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1c, 2c, 3b, 4c, 5c, 6c, 7b, 8c, 9c, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2E, 3A, 4G, 5H, 6D, 7B, 8F, 9J, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Las Eras Geológicas» (II y III Ciclo). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con la construcción de una línea del tiempo mural de las cinco eras, el modelado de
+      fósiles en plastilina o yeso, y el recorte del rompecabezas de Pangea para ver cómo encajan los continentes. Etapa 5
+      de la Ruta del Planeta. La misión interactiva (código QR de la portada) permite al estudiante practicar con
+      retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Eras Geológicas · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
