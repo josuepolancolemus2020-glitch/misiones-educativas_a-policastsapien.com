@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Desastres Naturales y el Huracán Mitch</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS NATURALES = VERDE/TEAL (#0d9488)
+     · Colores semánticos fijos: azul=amenaza/fenómeno, verde=prevención
+       (reduce riesgo), naranja=peligro/alerta roja
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --nat: #0d9488; --nat-osc: #115e59; --nat-claro: #f0fdfa;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfece7;
+    --amn: #1e40af; --prev: #15803d; --peli: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef6f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--nat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--nat); background: var(--nat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--nat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--nat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--nat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--nat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--nat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--nat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--nat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5fbfa; }
+  td.k { font-weight: 700; color: var(--nat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafefd; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--nat-osc); margin-bottom: 8px; }
+
+  /* La fórmula del riesgo (mini-demostración) */
+  .formula { display: flex; gap: 8px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .formula > div { flex: 1; max-width: 30%; border-radius: 8px; padding: 8px 10px; font-size: 9pt; border: 1.5px solid var(--linea); background: #fff; text-align: center; }
+  .formula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .formula .f-emoji { font-size: 16pt; display: block; margin-bottom: 3px; }
+  .formula .f-amn { border-color: #c7d2fe; background: #eef2ff; } .formula .f-amn b { color: var(--amn); }
+  .formula .f-vul { border-color: #f3c99a; background: #ffedd5; } .formula .f-vul b { color: var(--peli); }
+  .formula .f-rie { border-color: #cfece7; background: var(--nat-claro); } .formula .f-rie b { color: var(--nat-osc); }
+  .formula .op { flex: 0 0 20px; max-width: 20px; border: none; background: none; display: flex; align-items: center; justify-content: center; font-size: 18pt; font-weight: 900; color: var(--gris); }
+
+  /* Qué hacer ante el desastre (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 8px; font-size: 8.5pt; background: #fafefd; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--nat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--nat-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tverde { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tamar { background: #fef9c3; border: 1px solid #fde68a; }
+  .tri .troja { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tverde b { color: var(--prev); } .tri .tamar b { color: #a16207; } .tri .troja b { color: var(--peli); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--nat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y verde */
+  .acts ol li::marker { font-weight: 800; color: var(--nat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito verde · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--nat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--nat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--nat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--nat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2faf8; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--nat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--nat); box-shadow: 0 6px 16px rgba(13,148,136,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .formula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Desastres Naturales y el Huracán Mitch</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Naturales &nbsp;·&nbsp; <b>Nivel:</b> II y III Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Los desastres naturales, amenaza-vulnerabilidad-riesgo, el huracán Mitch, la gestión del riesgo, las alertas y la prevención</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-desastres-naturales.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender cuándo un fenómeno natural se convierte en <strong>desastre</strong>.</li>
+      <li>Distinguir los conceptos de <strong>amenaza, vulnerabilidad y riesgo</strong>.</li>
+      <li>Conocer el <strong>huracán Mitch</strong> (1998) como el mayor desastre de la historia de Honduras.</li>
+      <li>Clasificar las amenazas en <strong>geológicas</strong> e <strong>hidrometeorológicas</strong>.</li>
+      <li>Diferenciar <strong>prevención</strong> y <strong>mitigación</strong> y valorar la <strong>alerta temprana</strong>.</li>
+      <li>Reconocer el papel de <strong>COPECO</strong> y saber cómo actuar antes, durante y después.</li>
+    </ol>
+
+    <h2>🌍 1. ¿Cuándo un fenómeno se vuelve desastre?</h2>
+    <p>Un <strong>desastre natural</strong> es la gran alteración que ocurre cuando un fenómeno natural (una
+    <strong>amenaza</strong>) afecta a una comunidad <strong>vulnerable</strong> y causa daños que superan su
+    capacidad de responder. ¡Ojo!: el fenómeno solo se vuelve desastre cuando hay <strong>población en
+    riesgo</strong>. Un huracán en medio del océano, sin gente, no es un desastre.</p>
+    <div class="caja regla">⚡ <b>Tres conceptos clave:</b> la <strong>amenaza</strong> es el fenómeno que
+    puede dañar (huracán, sismo); la <strong>vulnerabilidad</strong> es la debilidad de la comunidad (vivir a
+    la orilla de un río); y el <strong>riesgo</strong> es la probabilidad de sufrir daños.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> no podemos evitar un huracán o un terremoto, pero SÍ podemos
+    <strong>reducir la vulnerabilidad</strong>: reforestando, construyendo bien y preparándonos. Así baja el
+    riesgo aunque la amenaza siga existiendo.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar la fórmula:</b> «<b>el Riesgo es una multiplicación</b>»:
+    <b>Riesgo = Amenaza × Vulnerabilidad</b>. Si la vulnerabilidad baja a casi cero (comunidad preparada), ¡el
+    riesgo también baja aunque la amenaza sea grande!</div>
+
+    <h3>🔬 Mini-demostración: la fórmula del riesgo</h3>
+    <div class="ilus">
+      <div class="ilus-t">El riesgo nace del encuentro entre la amenaza y la vulnerabilidad</div>
+      <div class="formula">
+        <div class="f-amn"><span class="f-emoji">🌀</span><b>Amenaza</b>El fenómeno peligroso (huracán, sismo).</div>
+        <div class="op">×</div>
+        <div class="f-vul"><span class="f-emoji">🏚️</span><b>Vulnerabilidad</b>La debilidad de la comunidad expuesta.</div>
+        <div class="op">=</div>
+        <div class="f-rie"><span class="f-emoji">📊</span><b>Riesgo</b>La probabilidad de sufrir daños.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Reduciendo la vulnerabilidad (prevención y preparación), <strong>baja el riesgo</strong>.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Desastres Naturales y el Huracán Mitch</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🌀 2. El huracán Mitch (1998)</h2>
+    <p>El <strong>huracán Mitch</strong> fue un poderoso ciclón de <strong>categoría 5</strong> que en
+    <strong>octubre y noviembre de 1998</strong> golpeó Centroamérica. Fue uno de los <strong>peores desastres
+    de la historia de Honduras</strong>: dejó miles de muertos, inundaciones, deslizamientos y enormes pérdidas
+    en viviendas, cultivos y carreteras.</p>
+    <div class="caja idea">💡 <b>¿Qué es un huracán?</b> Es una enorme tormenta giratoria que se forma sobre el
+    <strong>mar cálido</strong> (más de 26 °C). Tiene un centro tranquilo llamado <strong>ojo</strong>, rodeado
+    por la <strong>pared del ojo</strong> y bandas de nubes con vientos y lluvias muy fuertes. La escala
+    <strong>Saffir-Simpson</strong> los clasifica en 5 categorías según sus vientos.</div>
+
+    <h2>🏷️ 3. Tipos de amenazas</h2>
+    <table>
+      <tr><th>Tipo</th><th>¿De qué depende?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">🏔️ Geológicas</td><td>De la Tierra y sus movimientos internos.</td><td>terremoto, erupción volcánica, tsunami, deslizamiento</td></tr>
+      <tr><td class="k">🌧️ Hidrometeorológicas</td><td>Del agua y el clima.</td><td>huracán, inundación, sequía, tormenta tropical</td></tr>
+    </table>
+    <div class="caja regla">⚡ <b>Los grandes daños del Mitch:</b> la <strong>inundación</strong> (el agua
+    cubre terrenos secos por desbordamiento de ríos) y el <strong>deslizamiento</strong> (tierra, lodo y rocas
+    que bajan por una ladera). La <strong>deforestación</strong> de los cerros empeoró ambos.</div>
+
+    <h2>🛡️ 4. Reducir el riesgo: prevención y mitigación</h2>
+    <div class="tri">
+      <div class="tverde"><b>🛡️ Prevención</b>Acciones ANTES para evitar o reducir daños: reforestar, no construir en zonas de riesgo, plan familiar, simulacros.</div>
+      <div class="tamar"><b>🧱 Mitigación</b>Medidas para disminuir el impacto: muros de contención, drenajes, obras seguras, reforestar laderas.</div>
+      <div class="troja"><b>🚨 Alerta temprana</b>Aviso a tiempo para evacuar. Usa colores: verde (normal), amarilla (atención), roja (peligro, evacuar).</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Desastres Naturales y el Huracán Mitch</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🚨 5. ¿Qué hacer ante un desastre?</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>📝 Antes</b>Plan de emergencia, rutas de evacuación, mochila lista y simulacros.</div>
+      <div><span class="pn">2</span><b>🚶 Durante</b>Mantén la calma, evacúa a la zona segura y sigue la alerta.</div>
+      <div><span class="pn">3</span><b>🩹 Después</b>Ayuda a los heridos, no cruces ríos crecidos y revisa daños con cuidado.</div>
+    </div>
+    <div class="caja regla">⚡ <b>COPECO:</b> el <strong>Comité Permanente de Contingencias</strong> es la
+    institución de Honduras encargada de prevenir, preparar y coordinar la respuesta ante los desastres. Se
+    fortaleció justamente tras el huracán Mitch. Ante un <strong>terremoto</strong>, recuerda: <strong>agáchate,
+    cúbrete y sujétate</strong>.</div>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que todo fenómeno es un desastre</td><td>Solo lo es si afecta a una comunidad vulnerable.</td><td>Fenómeno + vulnerabilidad = desastre ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir amenaza con vulnerabilidad</td><td>La amenaza es el fenómeno; la vulnerabilidad, la debilidad de la gente.</td><td>Amenaza = huracán · Vulnerabilidad = casa mal ubicada ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que el terremoto es hidrometeorológico</td><td>El terremoto es geológico; el huracán es hidrometeorológico.</td><td>Terremoto = geológico ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que la deforestación reduce el riesgo</td><td>Deforestar los cerros AUMENTA los deslizamientos.</td><td>Reforestar reduce el riesgo ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Ignorar la alerta roja</td><td>La alerta roja significa peligro: hay que evacuar.</td><td>Roja = evacuar ya ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> el huracán <strong>Mitch</strong> de 1998 marcó para siempre a
+    nuestro país y nos enseñó que la prevención salva vidas. Por eso hoy existen <strong>COPECO</strong>, los
+    comités de emergencia (CODEL) en cada comunidad y los <strong>simulacros escolares</strong>. Reforestar los
+    cerros, no botar basura en los cauces y tener una mochila de emergencia en casa es honrar la memoria de
+    quienes perdimos y proteger a tu familia catracha. 🌀🛡️</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Desastres Naturales y el Huracán Mitch</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El huracán <span class="linea-resp"></span> golpeó Honduras en 1998.</li>
+      <li>La <span class="linea-resp"></span> es el fenómeno que puede causar daño.</li>
+      <li>La <span class="linea-resp"></span> es la debilidad de la comunidad ante la amenaza.</li>
+      <li>El <span class="linea-resp"></span> es la probabilidad de sufrir daños.</li>
+      <li>Los huracanes se forman sobre el <span class="linea-resp"></span> cálido.</li>
+      <li>La alerta <span class="linea-resp"></span> indica que hay que evacuar.</li>
+      <li>La <span class="linea-resp"></span> son acciones para evitar daños antes del desastre.</li>
+      <li>En Honduras, <span class="linea-resp"></span> coordina la respuesta a los desastres.</li>
+      <li>El centro tranquilo del huracán se llama <span class="linea-resp"></span>.</li>
+      <li>El <span class="linea-resp"></span> es el desplazamiento de tierra y rocas por una ladera.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Un fenómeno natural se vuelve desastre cuando afecta a una comunidad vulnerable.</li>
+      <li>____ El huracán Mitch alcanzó la categoría 1 en la escala Saffir-Simpson.</li>
+      <li>____ El riesgo se calcula como Amenaza × Vulnerabilidad.</li>
+      <li>____ El terremoto es una amenaza hidrometeorológica.</li>
+      <li>____ Los huracanes se forman sobre el mar cálido.</li>
+      <li>____ Reforestar las laderas ayuda a prevenir deslizamientos.</li>
+      <li>____ La alerta roja significa que todo está normal.</li>
+      <li>____ COPECO coordina la respuesta ante desastres en Honduras.</li>
+      <li>____ La prevención se realiza antes de que ocurra el desastre.</li>
+      <li>____ Durante un terremoto conviene agacharse, cubrirse y sujetarse.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Desastres Naturales y el Huracán Mitch</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuándo un fenómeno natural se vuelve desastre?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> siempre</span>
+        <span class="op full"><i>b</i> cuando afecta a una comunidad vulnerable</span>
+        <span class="op"><i>c</i> solo de noche</span>
+        <span class="op"><i>d</i> nunca</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿En qué año ocurrió el huracán Mitch?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 1988</span>
+        <span class="op"><i>b</i> 1998</span>
+        <span class="op"><i>c</i> 2008</span>
+        <span class="op"><i>d</i> 2020</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué categoría alcanzó el huracán Mitch?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> categoría 1</span>
+        <span class="op"><i>b</i> categoría 3</span>
+        <span class="op"><i>c</i> categoría 5</span>
+        <span class="op"><i>d</i> categoría 2</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es la fórmula del riesgo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Amenaza × Vulnerabilidad</span>
+        <span class="op"><i>b</i> Lluvia + Viento</span>
+        <span class="op"><i>c</i> Amenaza − Prevención</span>
+        <span class="op"><i>d</i> solo la amenaza</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuál de estas es una amenaza GEOLÓGICA?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> huracán</span>
+        <span class="op"><i>b</i> sequía</span>
+        <span class="op"><i>c</i> terremoto</span>
+        <span class="op"><i>d</i> inundación</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Sobre qué se forman los huracanes?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> montañas</span>
+        <span class="op"><i>b</i> mar cálido</span>
+        <span class="op"><i>c</i> desiertos</span>
+        <span class="op"><i>d</i> polos</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué acción reduce el riesgo de deslizamiento?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> deforestar</span>
+        <span class="op"><i>b</i> reforestar</span>
+        <span class="op"><i>c</i> botar basura</span>
+        <span class="op"><i>d</i> construir en la ladera</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué significa una alerta ROJA?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> todo normal</span>
+        <span class="op"><i>b</i> hay que estar atentos</span>
+        <span class="op"><i>c</i> peligro: hay que evacuar</span>
+        <span class="op"><i>d</i> ya pasó el peligro</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué es la mitigación?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> provocar el desastre</span>
+        <span class="op full"><i>b</i> disminuir el impacto de la amenaza</span>
+        <span class="op"><i>c</i> ignorar el peligro</span>
+        <span class="op"><i>d</i> aumentar el riesgo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué parte tranquila tiene el huracán en su centro?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la cola</span>
+        <span class="op"><i>b</i> el ojo</span>
+        <span class="op"><i>c</i> la base</span>
+        <span class="op"><i>d</i> la raíz</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Desastres Naturales y el Huracán Mitch</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Amenaza</td><td>A. Debilidad de la comunidad ante la amenaza</td></tr>
+      <tr><td>2. ____ Vulnerabilidad</td><td>B. Desastre categoría 5 que golpeó Honduras en 1998</td></tr>
+      <tr><td>3. ____ Riesgo</td><td>C. Fenómeno que puede causar daño</td></tr>
+      <tr><td>4. ____ Huracán Mitch</td><td>D. Centro tranquilo del huracán</td></tr>
+      <tr><td>5. ____ Inundación</td><td>E. Probabilidad de sufrir daños</td></tr>
+      <tr><td>6. ____ Deslizamiento</td><td>F. Institución hondureña de contingencias</td></tr>
+      <tr><td>7. ____ Prevención</td><td>G. El agua cubre terrenos normalmente secos</td></tr>
+      <tr><td>8. ____ COPECO</td><td>H. Tierra y rocas bajan por una ladera</td></tr>
+      <tr><td>9. ____ Ojo del huracán</td><td>I. Aviso a tiempo para poder evacuar</td></tr>
+      <tr><td>10. ____ Alerta temprana</td><td>J. Acciones para evitar daños antes del desastre</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Desastres Naturales y el Huracán Mitch.</b> Ahora entiendes
+      que un desastre nace cuando una amenaza golpea a una comunidad vulnerable, y que el riesgo se multiplica o
+      se reduce según cómo nos preparemos. Recuerdas el Mitch de 1998, distingues amenazas geológicas de
+      hidrometeorológicas, y sabes prevenir, mitigar y atender las alertas. ¡Eres un guardián de la vida y de tu
+      comunidad catracha! 🌀🛡️
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Naturales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Elaboró un plan de emergencia familiar y una mochila de emergencia.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Desastres Naturales y el Huracán Mitch</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Mitch &nbsp; 2. amenaza &nbsp; 3. vulnerabilidad &nbsp; 4. riesgo &nbsp; 5. mar &nbsp; 6. roja &nbsp; 7. prevención &nbsp; 8. COPECO &nbsp; 9. ojo &nbsp; 10. deslizamiento</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7F, 8V, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2b, 3c, 4a, 5c, 6b, 7b, 8c, 9b, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2A, 3E, 4B, 5G, 6H, 7J, 8F, 9D, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Desastres Naturales y el Huracán Mitch» (II y III Ciclo). Puede utilizarse como guía de estudio impresa o
+      digital antes de la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F,
+      selección múltiple, pareados) y puede complementarse con la elaboración del plan de emergencia familiar y escolar, un
+      simulacro de evacuación con COPECO/CODEL, el armado de la mochila de emergencia y el testimonio de familiares que
+      vivieron el Mitch de 1998. Etapa 4 de la Ruta del Planeta; con ella se completa el bloque de Ciencias Naturales. La
+      misión interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de
+      resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Desastres Naturales y el Huracán Mitch · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
