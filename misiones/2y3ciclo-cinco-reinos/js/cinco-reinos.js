@@ -150,11 +150,11 @@ function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent')
 function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',false);cmpDone=true;const opts=document.querySelectorAll('.cmp-opt');if(cmpSel===cmpData[cmpIdx].c){opts[cmpSel].classList.add('correct');document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`);fb('fbCmp','¡Correcto! +5 XP',true);if(!xpTracker.cmp.has(cmpIdx)){xpTracker.cmp.add(cmpIdx);pts(5);}sfx('ok');}else{opts[cmpSel].classList.add('wrong');opts[cmpData[cmpIdx].c].classList.add('correct');fb('fbCmp','Incorrecto. Revisa bien la respuesta.',false);sfx('no');}setTimeout(()=>{cmpIdx++;document.getElementById('fbCmp').classList.remove('show');showCmp();},1600);}
 
 // ===================== WIDGETS =====================
-// Widget 1: Ordenar procesos celulares
+// Widget 1: Ordenar secuencias de clasificación
 const routeSets=[
-  {label:'Niveles de organización de la vida',steps:['Célula','Tejido','Órgano','Sistema de órganos','Organismo']},
-  {label:'La fotosíntesis paso a paso',steps:['La clorofila capta la luz solar','La planta absorbe agua y CO₂','La energía se procesa en el cloroplasto','Se produce glucosa (alimento)','Se libera oxígeno al ambiente']},
-  {label:'Ciclo celular (mitosis)',steps:['Interfase: la célula crece y duplica su ADN','Profase: se condensan los cromosomas','Metafase: los cromosomas se alinean al centro','Anafase: los cromosomas se separan','Telofase: se forman dos células hijas']},
+  {label:'Niveles de clasificación (del más grande al más pequeño)',steps:['Reino','Filo','Clase','Orden','Familia','Género','Especie']},
+  {label:'Niveles de organización de un ser vivo',steps:['Célula','Tejido','Órgano','Sistema','Organismo']},
+  {label:'Aparición de los reinos en la Tierra (del más antiguo al más reciente)',steps:['Monera (bacterias)','Protista','Fungi (hongos)','Plantae (plantas)','Animalia (animales)']},
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -163,44 +163,44 @@ function routeMove(idx,dir){sfx('click');const ni=idx+dir;if(ni<0||ni>=routeItem
 function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden. Revisa el arreglo.',false);sfx('no');}}
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Secuencia: '+routeSets[currentRouteIdx].label);}
 
-// Widget 2: Identifica el organelo (IDs neuron* reutilizados)
+// Widget 2: Identifica el reino o concepto (IDs neuron* reutilizados)
 const neuronPartes=[
-  {desc:'Guarda el ADN y dirige todas las funciones de la célula',ans:'Núcleo',opts:['Núcleo','Mitocondria','Ribosoma','Vacuola']},
-  {desc:'Produce la energía (ATP) mediante la respiración celular',ans:'Mitocondria',opts:['Núcleo','Mitocondria','Cloroplasto','Membrana']},
-  {desc:'Realiza la fotosíntesis; solo está en la célula vegetal',ans:'Cloroplasto',opts:['Mitocondria','Cloroplasto','Vacuola','Ribosoma']},
-  {desc:'Fabrica las proteínas de la célula',ans:'Ribosoma',opts:['Ribosoma','Cloroplasto','Núcleo','Vacuola']},
-  {desc:'Rodea la célula y controla lo que entra y sale',ans:'Membrana celular',opts:['Pared celular','Membrana celular','Núcleo','Citoplasma']},
-  {desc:'Cubierta rígida de celulosa; da forma a la célula vegetal',ans:'Pared celular',opts:['Membrana celular','Pared celular','Vacuola','Ribosoma']},
-  {desc:'Bolsa que almacena agua, alimentos o desechos',ans:'Vacuola',opts:['Vacuola','Mitocondria','Núcleo','Ribosoma']},
-  {desc:'Medio gelatinoso donde flotan los organelos',ans:'Citoplasma',opts:['Citoplasma','Membrana','Núcleo','Cloroplasto']},
+  {desc:'Reino de las bacterias y cianobacterias (unicelular, procariota)',ans:'Monera',opts:['Monera','Protista','Fungi','Plantae']},
+  {desc:'Reino de la ameba, el paramecio y las algas',ans:'Protista',opts:['Protista','Monera','Fungi','Animalia']},
+  {desc:'Reino de los hongos: setas, mohos y levaduras',ans:'Fungi',opts:['Fungi','Plantae','Monera','Protista']},
+  {desc:'Reino de las plantas, que hacen fotosíntesis',ans:'Plantae',opts:['Plantae','Fungi','Protista','Animalia']},
+  {desc:'Reino de los animales, incluido el ser humano',ans:'Animalia',opts:['Animalia','Plantae','Monera','Fungi']},
+  {desc:'Ciencia que identifica, nombra y clasifica a los seres vivos',ans:'Taxonomía',opts:['Taxonomía','Ecología','Biología','Geología']},
+  {desc:'Grupo más pequeño de la clasificación',ans:'Especie',opts:['Especie','Reino','Familia','Género']},
+  {desc:'Ser vivo que fabrica su propio alimento por fotosíntesis',ans:'Autótrofo',opts:['Autótrofo','Heterótrofo','Descomponedor','Parásito']},
 ];
 let neuronIdx=0,neuronDone=false;
-function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los organelos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Organelo ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los reinos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
 function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
-// Widget 3: Organelo → Función (IDs neuro* reutilizados)
+// Widget 3: Reino → Característica (IDs neuro* reutilizados)
 const neuroPairs=[
-  {trans:'Núcleo',func:'Guarda el ADN y dirige la célula',opts:['Guarda el ADN y dirige la célula','Produce energía (ATP)','Fabrica proteínas','Realiza la fotosíntesis']},
-  {trans:'Mitocondria',func:'Produce energía (ATP)',opts:['Guarda el ADN y dirige la célula','Produce energía (ATP)','Almacena agua y desechos','Da rigidez a la célula']},
-  {trans:'Cloroplasto',func:'Realiza la fotosíntesis',opts:['Realiza la fotosíntesis','Produce energía (ATP)','Guarda el ADN y dirige la célula','Fabrica proteínas']},
-  {trans:'Ribosoma',func:'Fabrica proteínas',opts:['Fabrica proteínas','Realiza la fotosíntesis','Almacena agua y desechos','Guarda el ADN y dirige la célula']},
-  {trans:'Vacuola',func:'Almacena agua, alimentos o desechos',opts:['Almacena agua, alimentos o desechos','Produce energía (ATP)','Realiza la fotosíntesis','Fabrica proteínas']},
+  {trans:'Monera',func:'Unicelular y procariota (bacterias)',opts:['Unicelular y procariota (bacterias)','Pluricelular que hace fotosíntesis','Hongo descomponedor','Animal con columna']},
+  {trans:'Plantae',func:'Pluricelular y autótrofo (fotosíntesis)',opts:['Pluricelular y autótrofo (fotosíntesis)','Unicelular procariota','Heterótrofo por absorción','Protozoo del agua']},
+  {trans:'Fungi',func:'Heterótrofo por absorción (hongos)',opts:['Heterótrofo por absorción (hongos)','Fabrica su alimento con luz','Bacteria sin núcleo','Vertebrado marino']},
+  {trans:'Animalia',func:'Pluricelular y heterótrofo que se mueve',opts:['Pluricelular y heterótrofo que se mueve','Autótrofo con clorofila','Unicelular procariota','Hongo del pan']},
+  {trans:'Protista',func:'Eucariota unicelular (ameba, algas)',opts:['Eucariota unicelular (ameba, algas)','Pluricelular con raíces','Bacteria de la Tierra primitiva','Mamífero terrestre']},
 ];
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.querySelectorAll('#neuroOpts .qz-opt').forEach(b=>{if(b.textContent===d.func)b.classList.add('correct');else if(b===btn&&b.textContent!==d.func)b.classList.add('wrong');});const isOk=opt===d.func;if(isOk){fb('fbNeuro','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuro_'+neuroIdx)){xpTracker.wgt.add('neuro_'+neuroIdx);pts(3);}sfx('ok');}else{fb('fbNeuro','Correcto: '+d.func,false);sfx('no');}setTimeout(()=>{neuroIdx++;showNeuro();},1800);}
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
-// Widget 4: Estructura → ¿En qué célula se encuentra? (IDs enfer* reutilizados)
+// Widget 4: Ser vivo → ¿A qué reino pertenece? (IDs enfer* reutilizados)
 const enfermedadData=[
-  {disease:'Cloroplasto',characteristic:'Solo en la célula vegetal',opts:['Solo en la célula vegetal','Solo en la célula animal','En ambas células','En ninguna célula']},
-  {disease:'Pared celular',characteristic:'En vegetales, hongos y bacterias (no en animales)',opts:['En vegetales, hongos y bacterias (no en animales)','Solo en la célula animal','Solo en células procariotas','En ninguna célula']},
-  {disease:'Mitocondria',characteristic:'En ambas células (animal y vegetal)',opts:['Solo en la célula vegetal','Solo en la célula animal','En ambas células (animal y vegetal)','Solo en bacterias']},
-  {disease:'Centriolos',characteristic:'Principalmente en la célula animal',opts:['Principalmente en la célula animal','Solo en la célula vegetal','Solo en bacterias','En ninguna célula']},
-  {disease:'Núcleo definido',characteristic:'En células eucariotas (no en bacterias)',opts:['En células eucariotas (no en bacterias)','Solo en procariotas','En todas las células','En ninguna célula']},
-  {disease:'Vacuola central grande',characteristic:'Característica de la célula vegetal',opts:['Característica de la célula vegetal','Característica de la célula animal','Solo en bacterias','En ninguna célula']},
+  {disease:'Bacteria del yogur',characteristic:'Reino Monera',opts:['Reino Monera','Reino Fungi','Reino Plantae','Reino Animalia']},
+  {disease:'Champiñón',characteristic:'Reino Fungi',opts:['Reino Fungi','Reino Plantae','Reino Monera','Reino Protista']},
+  {disease:'Pino',characteristic:'Reino Plantae',opts:['Reino Plantae','Reino Animalia','Reino Fungi','Reino Protista']},
+  {disease:'Águila',characteristic:'Reino Animalia',opts:['Reino Animalia','Reino Plantae','Reino Monera','Reino Fungi']},
+  {disease:'Ameba',characteristic:'Reino Protista',opts:['Reino Protista','Reino Monera','Reino Fungi','Reino Plantae']},
+  {disease:'Levadura del pan',characteristic:'Reino Fungi',opts:['Reino Fungi','Reino Monera','Reino Plantae','Reino Animalia']},
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -209,12 +209,12 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Animal','Vegetal'],btnA:'🐾 Animal',btnB:'🌿 Vegetal',colA:'ani',colB:'veg',
-   words:[{w:'Cloroplastos',t:'veg'},{w:'Centriolos',t:'ani'},{w:'Pared celular',t:'veg'},{w:'Sin pared celular',t:'ani'},{w:'Vacuola central grande',t:'veg'},{w:'Muchas vacuolas pequeñas',t:'ani'},{w:'Clorofila',t:'veg'},{w:'Forma irregular',t:'ani'},{w:'Celulosa',t:'veg'},{w:'Lisosomas abundantes',t:'ani'}]},
-  {label:['Procariota','Eucariota'],btnA:'🦠 Procariota',btnB:'🧬 Eucariota',colA:'pro',colB:'euc',
-   words:[{w:'Bacteria',t:'pro'},{w:'Planta',t:'euc'},{w:'Sin núcleo',t:'pro'},{w:'Con núcleo',t:'euc'},{w:'ADN libre',t:'pro'},{w:'ADN en el núcleo',t:'euc'},{w:'Animal',t:'euc'},{w:'Nucleoide',t:'pro'},{w:'Con mitocondrias',t:'euc'},{w:'Muy pequeña',t:'pro'}]},
-  {label:['Cubierta','Organelo'],btnA:'🧴 Cubierta',btnB:'⚙️ Organelo',colA:'cub',colB:'org',
-   words:[{w:'Membrana celular',t:'cub'},{w:'Núcleo',t:'org'},{w:'Pared celular',t:'cub'},{w:'Mitocondria',t:'org'},{w:'Cápsula bacteriana',t:'cub'},{w:'Ribosoma',t:'org'},{w:'Bicapa de lípidos',t:'cub'},{w:'Vacuola',t:'org'},{w:'Envoltura nuclear',t:'cub'},{w:'Cloroplasto',t:'org'}]},
+  {label:['Autótrofo','Heterótrofo'],btnA:'🌞 Autótrofo',btnB:'🍖 Heterótrofo',colA:'aut',colB:'het',
+   words:[{w:'Planta',t:'aut'},{w:'Animal',t:'het'},{w:'Alga',t:'aut'},{w:'Hongo',t:'het'},{w:'Cianobacteria',t:'aut'},{w:'Descomponedor',t:'het'},{w:'Hace fotosíntesis',t:'aut'},{w:'Come otros seres',t:'het'},{w:'Árbol',t:'aut'},{w:'León',t:'het'}]},
+  {label:['Unicelular','Pluricelular'],btnA:'🔵 Unicelular',btnB:'🔶 Pluricelular',colA:'uni',colB:'plu',
+   words:[{w:'Bacteria',t:'uni'},{w:'Árbol',t:'plu'},{w:'Ameba',t:'uni'},{w:'Perro',t:'plu'},{w:'Paramecio',t:'uni'},{w:'Ser humano',t:'plu'},{w:'Levadura',t:'uni'},{w:'Helecho',t:'plu'},{w:'Una sola célula',t:'uni'},{w:'Muchas células',t:'plu'}]},
+  {label:['Vertebrado','Invertebrado'],btnA:'🦴 Vertebrado',btnB:'🐛 Invertebrado',colA:'ver',colB:'inv',
+   words:[{w:'Pez',t:'ver'},{w:'Insecto',t:'inv'},{w:'Rana',t:'ver'},{w:'Caracol',t:'inv'},{w:'Águila',t:'ver'},{w:'Araña',t:'inv'},{w:'Perro',t:'ver'},{w:'Lombriz',t:'inv'},{w:'Serpiente',t:'ver'},{w:'Medusa',t:'inv'}]},
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -227,49 +227,46 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'La célula es la unidad estructural y funcional de todos los seres vivos: la porción más pequeña con vida propia.',type:'Unidad estructural y funcional de la vida'},
-  {s:'El núcleo guarda el ADN y dirige todas las actividades de la célula eucariota.',type:'Núcleo: dirección y ADN'},
-  {s:'La mitocondria produce la energía (ATP) mediante la respiración celular; es la "central energética".',type:'Mitocondria: producción de energía'},
-  {s:'El cloroplasto, con su clorofila, realiza la fotosíntesis; solo existe en la célula vegetal.',type:'Cloroplasto: fotosíntesis'},
-  {s:'La membrana celular rodea la célula y controla, de forma selectiva, lo que entra y sale.',type:'Membrana celular: permeabilidad selectiva'},
-  {s:'La pared celular es una cubierta rígida de celulosa que da forma y protección a la célula vegetal.',type:'Pared celular: rigidez vegetal'},
-  {s:'Los ribosomas son organelos diminutos que fabrican las proteínas siguiendo las instrucciones del ADN.',type:'Ribosoma: síntesis de proteínas'},
-  {s:'La célula procariota no tiene núcleo definido; su ADN está libre en el citoplasma. Ejemplo: las bacterias.',type:'Célula procariota (sin núcleo)'},
-  {s:'La célula eucariota tiene núcleo definido y organelos con membrana. Forma a protistas, hongos, plantas y animales.',type:'Célula eucariota (con núcleo)'},
-  {s:'La teoría celular afirma que toda célula proviene de otra célula preexistente.',type:'Teoría celular (postulado de Virchow)'},
+  {s:'Las bacterias son seres unicelulares y procariotas que forman el reino Monera.',type:'Reino Monera'},
+  {s:'La ameba y el paramecio son protozoos unicelulares del reino Protista.',type:'Reino Protista'},
+  {s:'Las setas, los mohos y las levaduras son hongos del reino Fungi.',type:'Reino Fungi'},
+  {s:'Los musgos, los helechos y los árboles pertenecen al reino Plantae y hacen fotosíntesis.',type:'Reino Plantae'},
+  {s:'Los insectos, peces, aves y mamíferos forman el reino Animalia.',type:'Reino Animalia'},
+  {s:'La taxonomía es la ciencia que identifica, nombra y clasifica a los seres vivos.',type:'Taxonomía'},
+  {s:'Un ser autótrofo fabrica su propio alimento, casi siempre por fotosíntesis.',type:'Nutrición autótrofa'},
+  {s:'Un ser heterótrofo obtiene su alimento de otros seres vivos.',type:'Nutrición heterótrofa'},
+  {s:'La especie es el grupo más pequeño en la clasificación de los seres vivos.',type:'Especie'},
+  {s:'El nombre científico se escribe en latín con el género y la especie, como Homo sapiens.',type:'Nombre científico'},
 ];
 const classifyTaskDB=[
-  {w:'Núcleo',gen:'Organelo de control',n:'Contiene el ADN',g:'Solo eucariotas',t:'Dirige la célula y guarda la información genética'},
-  {w:'Mitocondria',gen:'Organelo energético',n:'Membrana doble',g:'Animal y vegetal',t:'Produce energía (ATP) por respiración celular'},
-  {w:'Cloroplasto',gen:'Organelo energético',n:'Contiene clorofila',g:'Solo vegetal',t:'Realiza la fotosíntesis'},
-  {w:'Membrana celular',gen:'Cubierta',n:'Bicapa de lípidos',g:'Todas las células',t:'Controla lo que entra y sale (permeabilidad selectiva)'},
-  {w:'Pared celular',gen:'Cubierta rígida',n:'De celulosa',g:'Vegetal, hongos, bacterias',t:'Da forma y protección'},
-  {w:'Ribosoma',gen:'Organelo fabricante',n:'Muy pequeño',g:'Todas las células',t:'Fabrica las proteínas'},
-  {w:'Vacuola',gen:'Organelo de almacén',n:'Grande y central en plantas',g:'Animal y vegetal',t:'Almacena agua, alimentos o desechos'},
-  {w:'Citoplasma',gen:'Medio interno',n:'Gelatinoso (citosol)',g:'Todas las células',t:'Contiene los organelos; allí ocurren reacciones químicas'},
+  {w:'Monera',gen:'Unicelular',n:'Procariota',g:'Autótrofa o heterótrofa',t:'Bacterias, cianobacterias'},
+  {w:'Protista',gen:'Unicelular (casi todos)',n:'Eucariota',g:'Autótrofa o heterótrofa',t:'Ameba, paramecio, algas'},
+  {w:'Fungi',gen:'Uni o pluricelular',n:'Eucariota',g:'Heterótrofa (absorción)',t:'Setas, mohos, levaduras'},
+  {w:'Plantae',gen:'Pluricelular',n:'Eucariota',g:'Autótrofa (fotosíntesis)',t:'Musgos, helechos, árboles'},
+  {w:'Animalia',gen:'Pluricelular',n:'Eucariota',g:'Heterótrofa',t:'Insectos, peces, aves, mamíferos'},
 ];
 const completeTaskDB=[
-  {s:'La ___ es la unidad estructural y funcional de los seres vivos.',opts:['pared','célula','molécula'],ans:'célula'},
-  {s:'La ___ produce la energía (ATP) de la célula.',opts:['vacuola','mitocondria','membrana'],ans:'mitocondria'},
-  {s:'El ___ guarda el ADN y dirige la célula.',opts:['núcleo','ribosoma','citoplasma'],ans:'núcleo'},
-  {s:'El ___ realiza la fotosíntesis en la célula vegetal.',opts:['cloroplasto','lisosoma','centriolo'],ans:'cloroplasto'},
-  {s:'La célula ___ no tiene núcleo definido.',opts:['eucariota','procariota','animal'],ans:'procariota'},
-  {s:'La ___ celular controla lo que entra y sale.',opts:['pared','membrana','vacuola'],ans:'membrana'},
-  {s:'Los ___ fabrican las proteínas de la célula.',opts:['ribosomas','cloroplastos','lisosomas'],ans:'ribosomas'},
-  {s:'La pared celular vegetal está hecha de ___.',opts:['quitina','celulosa','proteína'],ans:'celulosa'},
+  {s:'El reino de las bacterias se llama reino ___.',opts:['Plantae','Monera','Fungi'],ans:'Monera'},
+  {s:'Los hongos pertenecen al reino ___.',opts:['Animalia','Fungi','Monera'],ans:'Fungi'},
+  {s:'Un ser ___ fabrica su propio alimento por fotosíntesis.',opts:['heterótrofo','autótrofo','unicelular'],ans:'autótrofo'},
+  {s:'La ciencia que clasifica a los seres vivos es la ___.',opts:['taxonomía','ecología','biología'],ans:'taxonomía'},
+  {s:'El grupo más pequeño de la clasificación es la ___.',opts:['familia','especie','clase'],ans:'especie'},
+  {s:'La ameba pertenece al reino ___.',opts:['Protista','Plantae','Monera'],ans:'Protista'},
+  {s:'El ser humano pertenece al reino ___.',opts:['Fungi','Animalia','Plantae'],ans:'Animalia'},
+  {s:'La pared celular de las plantas está hecha de ___.',opts:['quitina','celulosa','proteína'],ans:'celulosa'},
 ];
 const explainQuestions=[
-  {q:'¿Qué es la célula y por qué se dice que es la unidad de la vida?',ans:'La célula es la porción más pequeña de un ser vivo con vida propia: se nutre, respira, crece, se reproduce y muere. Todos los organismos están formados por una o muchas células.'},
-  {q:'Menciona y explica los tres postulados de la teoría celular.',ans:'1) Todos los seres vivos están formados por células; 2) la célula es la unidad estructural y funcional de la vida; 3) toda célula proviene de otra célula preexistente.'},
-  {q:'¿Cuáles son las principales diferencias entre la célula animal y la vegetal?',ans:'La vegetal tiene pared celular (celulosa), cloroplastos y una vacuola central grande. La animal no tiene pared ni cloroplastos, tiene vacuolas pequeñas y centriolos, y forma irregular.'},
-  {q:'¿Qué diferencia hay entre una célula procariota y una eucariota?',ans:'La procariota no tiene núcleo definido (ADN libre en el citoplasma) ni organelos con membrana; ej. bacterias. La eucariota tiene núcleo definido y organelos con membrana; ej. plantas y animales.'},
-  {q:'Explica la función de la mitocondria y del cloroplasto. ¿En qué se parecen y en qué se diferencian?',ans:'Ambos manejan energía. La mitocondria libera energía (ATP) de los nutrientes (respiración) y está en células animales y vegetales. El cloroplasto fabrica alimento con luz (fotosíntesis) y solo está en la vegetal.'},
+  {q:'¿Qué es la taxonomía y para qué sirve clasificar a los seres vivos?',ans:'La taxonomía es la ciencia que identifica, nombra y clasifica a los seres vivos, ordenándolos en grupos según las características que comparten. Sirve para estudiarlos y comprenderlos mejor.'},
+  {q:'Menciona los cinco reinos y una característica de cada uno.',ans:'Monera (bacterias, unicelular y procariota); Protista (ameba y algas, eucariota unicelular); Fungi (hongos, heterótrofos por absorción); Plantae (plantas, autótrofas por fotosíntesis); Animalia (animales, heterótrofos que se mueven).'},
+  {q:'¿Qué diferencia hay entre un ser autótrofo y uno heterótrofo? Da un ejemplo de cada uno.',ans:'El autótrofo fabrica su propio alimento, casi siempre por fotosíntesis (ejemplo: una planta). El heterótrofo obtiene su alimento de otros seres vivos (ejemplo: un animal o un hongo).'},
+  {q:'¿Cuáles son las tres preguntas clave que se usan para clasificar a un ser vivo en un reino?',ans:'¿Cuántas células tiene? (unicelular o pluricelular); ¿qué tipo de célula tiene? (procariota o eucariota); y ¿cómo se alimenta? (autótrofo o heterótrofo).'},
+  {q:'¿Por qué los hongos NO pertenecen al reino de las plantas?',ans:'Porque los hongos no tienen clorofila ni hacen fotosíntesis: son heterótrofos y absorben su alimento. Además, su pared celular es de quitina y no de celulosa como la de las plantas.'},
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto de la célula indicado en cada oración. Escribe al lado qué tipo de elemento es.','<strong>Ejemplo:</strong> La mitocondria produce energía. → <span style="color:var(--jade);font-weight:700;">Organelo energético</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada estructura de la célula, completa su tipo, características, ubicación y función.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Estructura','text-align:left;')}${th('Tipo')}${th('Características')}${th('Ubicación')}${th('Función')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Tipo: ${it.gen} | Características: ${it.n} | Ubicación: ${it.g} | Función: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué reino o concepto se refiere.','<strong>Ejemplo:</strong> Las bacterias forman el reino Monera. → <span style="color:var(--jade);font-weight:700;">Reino Monera</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada reino, completa el número de células, el tipo de célula, la nutrición y algunos ejemplos.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Reino','text-align:left;')}${th('Nº de células')}${th('Tipo de célula')}${th('Nutrición')}${th('Ejemplos')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Nº de células: ${it.gen} | Tipo de célula: ${it.n} | Nutrición: ${it.g} | Ejemplos: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
@@ -277,42 +274,42 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
   {size:10,grid:[
-    ['C','E','L','U','L','A','X','Y','Z','A'],
-    ['P','Q','R','S','T','U','V','W','Z','D'],
-    ['N','U','C','L','E','O','H','I','J','N'],
-    ['B','C','D','E','F','G','H','I','J','K'],
-    ['M','E','M','B','R','A','N','A','U','V'],
-    ['M','N','O','P','Q','R','S','T','U','V'],
-    ['R','I','B','O','S','O','M','A','G','H'],
-    ['K','L','M','N','O','P','Q','R','S','T'],
-    ['V','A','C','U','O','L','A','U','V','W'],
-    ['A','B','C','D','E','F','G','H','I','J']
+    ['P','L','A','N','T','A','E','X','S','A'],
+    ['I','Z','D','Z','W','S','G','G','D','J'],
+    ['R','V','U','H','C','F','U','N','G','I'],
+    ['E','H','P','R','O','T','I','S','T','A'],
+    ['M','O','N','E','R','A','L','Y','X','G'],
+    ['D','R','E','I','N','O','A','I','R','Q'],
+    ['F','B','A','N','I','M','A','L','I','A'],
+    ['Q','W','M','J','O','S','A','N','L','L'],
+    ['R','Q','I','O','W','B','D','N','W','Z'],
+    ['M','D','W','E','N','P','S','J','G','L']
   ],words:[
-    {w:'CELULA',cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5]]},
-    {w:'ADN',cells:[[0,9],[1,9],[2,9]]},
-    {w:'NUCLEO',cells:[[2,0],[2,1],[2,2],[2,3],[2,4],[2,5]]},
-    {w:'MEMBRANA',cells:[[4,0],[4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[4,7]]},
-    {w:'RIBOSOMA',cells:[[6,0],[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7]]},
-    {w:'VACUOLA',cells:[[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,6]]}
+    {w:'MONERA',cells:[[4,0],[4,1],[4,2],[4,3],[4,4],[4,5]]},
+    {w:'PROTISTA',cells:[[3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[3,8],[3,9]]},
+    {w:'FUNGI',cells:[[2,5],[2,6],[2,7],[2,8],[2,9]]},
+    {w:'PLANTAE',cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]]},
+    {w:'ANIMALIA',cells:[[6,2],[6,3],[6,4],[6,5],[6,6],[6,7],[6,8],[6,9]]},
+    {w:'REINO',cells:[[5,1],[5,2],[5,3],[5,4],[5,5]]}
   ]},
   {size:10,grid:[
-    ['C','I','T','O','P','L','A','S','M','A'],
-    ['B','C','D','E','F','G','H','I','J','K'],
-    ['P','A','R','E','D','L','M','N','O','P'],
-    ['Q','R','S','T','U','V','W','X','Y','Z'],
-    ['M','I','T','O','S','I','S','A','B','C'],
-    ['D','E','F','G','H','I','J','K','L','M'],
-    ['E','N','Z','I','M','A','N','O','P','Q'],
-    ['R','S','T','U','V','W','X','Y','Z','A'],
-    ['C','E','L','U','L','A','B','C','D','E'],
-    ['G','E','N','F','H','I','J','K','L','M']
+    ['A','V','N','A','H','O','N','G','O','U'],
+    ['C','Y','I','O','Z','C','B','F','W','V'],
+    ['H','K','D','S','C','F','W','X','W','R'],
+    ['V','W','J','G','P','L','A','N','T','A'],
+    ['B','E','S','P','E','C','I','E','U','T'],
+    ['L','Z','G','W','M','A','N','E','M','W'],
+    ['L','U','A','N','I','M','A','L','U','N'],
+    ['B','B','A','C','T','E','R','I','A','K'],
+    ['C','C','E','L','U','L','A','C','M','X'],
+    ['O','L','O','G','K','R','B','B','O','E']
   ],words:[
-    {w:'CITOPLASMA',cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]]},
-    {w:'PARED',cells:[[2,0],[2,1],[2,2],[2,3],[2,4]]},
-    {w:'MITOSIS',cells:[[4,0],[4,1],[4,2],[4,3],[4,4],[4,5],[4,6]]},
-    {w:'ENZIMA',cells:[[6,0],[6,1],[6,2],[6,3],[6,4],[6,5]]},
-    {w:'CELULA',cells:[[8,0],[8,1],[8,2],[8,3],[8,4],[8,5]]},
-    {w:'GEN',cells:[[9,0],[9,1],[9,2]]}
+    {w:'CELULA',cells:[[8,1],[8,2],[8,3],[8,4],[8,5],[8,6]]},
+    {w:'ESPECIE',cells:[[4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[4,7]]},
+    {w:'BACTERIA',cells:[[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8]]},
+    {w:'HONGO',cells:[[0,4],[0,5],[0,6],[0,7],[0,8]]},
+    {w:'PLANTA',cells:[[3,4],[3,5],[3,6],[3,7],[3,8],[3,9]]},
+    {w:'ANIMAL',cells:[[6,2],[6,3],[6,4],[6,5],[6,6],[6,7]]}
   ]}
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
