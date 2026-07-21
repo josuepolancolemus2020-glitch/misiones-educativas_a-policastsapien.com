@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Los Tipos de Textos</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: ESPAÑOL = ÁMBAR/DORADO (#b45309)
+     · Colores semánticos fijos: azul=narrativo (contar), verde=expositivo
+       (informar), naranja=argumentativo (convencer)
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --esp: #b45309; --esp-osc: #78350f; --esp-claro: #fefce8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #ecdcc0;
+    --nar: #1e40af; --exp: #15803d; --arg: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7f3ea; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--esp-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--esp); background: var(--esp-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--esp-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--esp-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--esp); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--esp-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--esp-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--esp-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--esp); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf9f0; }
+  td.k { font-weight: 700; color: var(--esp-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffdf7; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--esp-osc); margin-bottom: 8px; }
+
+  /* Un mismo tema en cuatro textos (mini-demostración) */
+  .cuatro { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; text-align: left; }
+  .cuatro > div { border-radius: 8px; padding: 8px 10px; font-size: 9pt; border: 1.5px solid var(--linea); background: #fff; }
+  .cuatro b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .cuatro .c-nar { border-color: #b6d4fb; background: #dbeafe; } .cuatro .c-nar b { color: var(--nar); }
+  .cuatro .c-des { border-color: #f0dca6; background: #fff8e6; } .cuatro .c-des b { color: #b07d00; }
+  .cuatro .c-exp { border-color: #b9e6c6; background: #dcfce7; } .cuatro .c-exp b { color: var(--exp); }
+  .cuatro .c-ins { border-color: #f3c99a; background: #ffedd5; } .cuatro .c-ins b { color: var(--arg); }
+
+  /* Los 3 momentos de la estructura narrativa (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fffdf7; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--esp); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--esp-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnar { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .texp { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .targ { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnar b { color: var(--nar); } .tri .texp b { color: var(--exp); } .tri .targ b { color: var(--arg); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--esp-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y ámbar */
+  .acts ol li::marker { font-weight: 800; color: var(--esp); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito ámbar · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--esp); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--esp-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--esp-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--esp-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #faf6ec; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--esp-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--esp); box-shadow: 0 6px 16px rgba(180,83,9,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .cuatro > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Los Tipos de Textos</div>
+        <div class="f-meta"><b>Asignatura:</b> Español &nbsp;·&nbsp; <b>Nivel:</b> II y III Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Los tipos de textos según su propósito comunicativo, la estructura narrativa, las marcas lingüísticas y los textos literarios y no literarios</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-tipos-de-textos.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Reconocer el <strong>propósito comunicativo</strong> como el criterio que determina el tipo de un texto.</li>
+      <li>Identificar los principales tipos: <strong>narrativo, descriptivo, expositivo, argumentativo, instructivo, dialogado y poético</strong>.</li>
+      <li>Describir la <strong>estructura narrativa</strong> (inicio, nudo y desenlace) y el papel del <strong>narrador</strong>.</li>
+      <li>Distinguir el texto <strong>expositivo</strong> (informa con objetividad) del <strong>argumentativo</strong> (convence con una tesis).</li>
+      <li>Reconocer las <strong>marcas lingüísticas</strong> que delatan a cada tipo de texto.</li>
+      <li>Clasificar los textos en <strong>literarios</strong> y <strong>no literarios</strong> según su intención.</li>
+    </ol>
+
+    <h2>📚 1. ¿Qué son los tipos de textos?</h2>
+    <p>Los <strong>tipos de textos</strong> son las distintas clases de textos que existen según su
+    <strong>propósito comunicativo</strong>, es decir, según <strong>para qué se escriben</strong>. No es lo
+    mismo un texto para <strong>contar</strong> una historia que uno para <strong>explicar</strong> un tema,
+    <strong>convencer</strong> de una idea o <strong>indicar</strong> cómo hacer algo.</p>
+    <div class="caja regla">⚡ <b>El propósito manda:</b> el tipo de texto NO depende del tema, ni del tamaño,
+    ni del autor: depende de la <strong>intención</strong> con la que se escribe. Esa intención se llama
+    <strong>propósito comunicativo</strong>.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> conocer los tipos de texto te ayuda a <strong>comprender
+    mejor</strong> lo que lees y a <strong>escribir</strong> el texto adecuado en cada situación: una carta no
+    se escribe como una receta, ni una noticia como un poema.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> pregúntale al texto «¿<b>para qué naciste</b>?»:
+    ¿para contar? narrativo · ¿para decir cómo es? descriptivo · ¿para informar? expositivo · ¿para
+    convencer? argumentativo · ¿para dar pasos? instructivo.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">Un mismo tema («el perro»), cuatro textos distintos: ¡lo que cambia es el propósito!</div>
+      <div class="cuatro">
+        <div class="c-nar"><b>📖 Narrativo — cuenta</b>«Ayer mi perro Rex se escapó del patio y todos salimos a buscarlo…»</div>
+        <div class="c-des"><b>🖼️ Descriptivo — describe</b>«Rex es grande, de pelo café, orejas caídas y mirada juguetona.»</div>
+        <div class="c-exp"><b>📊 Expositivo — informa</b>«El perro es un mamífero doméstico que convive con el ser humano.»</div>
+        <div class="c-ins"><b>📋 Instructivo — indica pasos</b>«1. Baña a tu perro. 2. Cepilla su pelo. 3. Dale su alimento.»</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tipos de Textos</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🗺️ 2. Los principales tipos de textos</h2>
+    <table>
+      <tr><th>Tipo</th><th>Propósito</th><th>Ejemplos</th></tr>
+      <tr><td class="k">📖 Narrativo</td><td>CONTAR hechos que les pasan a unos personajes en un tiempo y lugar.</td><td>cuento, fábula, leyenda, novela, noticia</td></tr>
+      <tr><td class="k">🖼️ Descriptivo</td><td>DESCRIBIR cómo son personas, animales, lugares u objetos, con muchos adjetivos.</td><td>el retrato, un paisaje</td></tr>
+      <tr><td class="k">📊 Expositivo</td><td>INFORMAR y explicar un tema con claridad y objetividad, sin opinar.</td><td>enciclopedia, texto de ciencias, informe</td></tr>
+      <tr><td class="k">⚖️ Argumentativo</td><td>CONVENCER al lector defendiendo una opinión (tesis) con razones.</td><td>ensayo, artículo de opinión, reseña</td></tr>
+      <tr><td class="k">📋 Instructivo</td><td>INDICAR los pasos para hacer algo, con verbos en imperativo o infinitivo.</td><td>receta, manual, reglas de un juego</td></tr>
+      <tr><td class="k">💬 Dialogado</td><td>REPRODUCIR una conversación, con guiones o rayas de diálogo.</td><td>obra de teatro, entrevista, guion</td></tr>
+      <tr><td class="k">🎭 Poético</td><td>EXPRESAR sentimientos con lenguaje bello, casi siempre en verso.</td><td>el poema</td></tr>
+    </table>
+
+    <h2>🧩 3. La estructura narrativa y el narrador</h2>
+    <p>El texto narrativo es el más conocido y sigue <strong>tres momentos</strong> en orden:</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>🌅 Inicio</b>Se presentan los personajes y el lugar de la historia.</div>
+      <div><span class="pn">2</span><b>⚡ Nudo</b>Surge el conflicto o problema: el momento de mayor tensión.</div>
+      <div><span class="pn">3</span><b>🎯 Desenlace</b>Se resuelve la historia y la situación queda cerrada.</div>
+    </div>
+    <div class="caja idea">💡 <b>El narrador:</b> es la <strong>voz que cuenta</strong> la historia (¡no es lo
+    mismo que el autor!). Puede ser <strong>protagonista</strong> (cuenta en 1.ª persona: «yo caminé…») u
+    <strong>omnisciente</strong> (lo sabe todo y cuenta en 3.ª persona: «ella caminó…»).</div>
+
+    <h3>🧱 Cada texto tiene su propia estructura</h3>
+    <div class="tri">
+      <div class="tnar"><b>📖 Narrativo</b>Inicio → nudo → desenlace. Responde a «¿qué pasó?».</div>
+      <div class="texp"><b>📊 Expositivo</b>Introducción → desarrollo → conclusión. Responde a «¿qué es?, ¿por qué?».</div>
+      <div class="targ"><b>⚖️ Argumentativo</b>Tesis → argumentos → conclusión. Responde a «¿qué opinas y por qué?».</div>
+    </div>
+    <div class="caja regla">⚡ <b>Y el instructivo:</b> va de <strong>materiales → pasos numerados →
+    resultado</strong>. Si una receta desordena sus pasos, ¡el pastel se hornea antes de batirlo!</div>
+    <div class="caja truco">🧠 <b>Truco:</b> «<b>Tesis</b>» suena a «<b>tú opinas</b>»: si el texto presenta
+    una opinión y la defiende con razones (porque, por lo tanto), es argumentativo. Si solo explica datos sin
+    opinar, es expositivo.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tipos de Textos</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🔎 4. Las marcas lingüísticas: pistas para reconocerlos</h2>
+    <table>
+      <tr><th>Si el texto tiene…</th><th>Seguramente es…</th><th>Ejemplo</th></tr>
+      <tr><td class="k" style="white-space:normal;">Muchos adjetivos</td><td>Descriptivo</td><td>«La casa es antigua, blanca y espaciosa.»</td></tr>
+      <tr><td class="k" style="white-space:normal;">Verbos de acción en pasado</td><td>Narrativo</td><td>«Corrió, saltó la cerca y se escondió.»</td></tr>
+      <tr><td class="k" style="white-space:normal;">Verbos en imperativo o infinitivo</td><td>Instructivo</td><td>«Mezcla la harina. Hornear 20 minutos.»</td></tr>
+      <tr><td class="k" style="white-space:normal;">Conectores lógicos y opiniones</td><td>Argumentativo</td><td>«Creo que… porque… por lo tanto…»</td></tr>
+      <tr><td class="k" style="white-space:normal;">Datos objetivos en presente</td><td>Expositivo</td><td>«El agua hierve a 100 °C.»</td></tr>
+      <tr><td class="k" style="white-space:normal;">Rayas de diálogo (—)</td><td>Dialogado</td><td>«—¿Vienes? —Sí, ya voy.»</td></tr>
+    </table>
+    <div class="caja idea">💡 <b>Los conectores</b> unen las ideas de un texto y también son pistas: de
+    <strong>tiempo</strong> (después, luego), de <strong>orden</strong> (primero, finalmente) y de
+    <strong>causa</strong> (porque, por lo tanto). Guían al lector como flechas en el camino.</div>
+
+    <h2>📕 5. Textos literarios y no literarios</h2>
+    <table>
+      <tr><th>Grupo</th><th>Intención</th><th>Ejemplos</th></tr>
+      <tr><td class="k">📕 Literarios</td><td>Crear BELLEZA y despertar emociones con el lenguaje.</td><td>cuento, poema, novela, fábula, obra de teatro</td></tr>
+      <tr><td class="k">📰 No literarios</td><td>Cumplir una FUNCIÓN PRÁCTICA: informar, enseñar o servir en la vida diaria.</td><td>noticia, receta, afiche, manual, informe</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir expositivo con argumentativo</td><td>«El texto de la enciclopedia opina». El expositivo NO opina: solo informa.</td><td>Informa = expositivo · Convence = argumentativo ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir narrar con describir</td><td>«Rex es café y juguetón» no cuenta ninguna historia: dice cómo es.</td><td>Cuenta qué pasó = narrativo · Dice cómo es = descriptivo ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Clasificar por el tema y no por el propósito</td><td>Sobre «el perro» puede haber cuento, retrato, artículo o manual.</td><td>El propósito comunicativo decide el tipo ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que la noticia es literaria</td><td>La noticia informa un hecho real: tiene función práctica.</td><td>Noticia, receta e informe = no literarios ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir autor con narrador</td><td>El autor escribe el libro; el narrador es la voz DENTRO del texto.</td><td>Narrador = voz que cuenta la historia ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> nuestras <strong>leyendas</strong> de La Sucia y El Cadejo son
+    textos narrativos literarios; la <strong>receta de las baleadas</strong> es un texto instructivo; la
+    <strong>noticia</strong> del periódico sobre un huracán es un texto no literario que informa; y los versos
+    de <strong>Juan Ramón Molina</strong>, nuestro gran poeta, son textos poéticos. ¡Todos los tipos de texto
+    viven en nuestra cultura catracha!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tipos de Textos</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El texto que cuenta una historia con personajes es el <span class="linea-resp"></span>.</li>
+      <li>El texto que describe cómo son las personas, los lugares o los objetos es el <span class="linea-resp"></span>.</li>
+      <li>El texto que informa sobre un tema sin dar opiniones es el <span class="linea-resp"></span>.</li>
+      <li>El texto que defiende una opinión para convencer es el <span class="linea-resp"></span>.</li>
+      <li>El texto que indica los pasos para hacer algo es el <span class="linea-resp"></span>.</li>
+      <li>El texto que reproduce una conversación es el <span class="linea-resp"></span>.</li>
+      <li>La voz que cuenta la historia en un texto narrativo es el <span class="linea-resp"></span>.</li>
+      <li>La parte final de la estructura narrativa, donde se resuelve la historia, es el <span class="linea-resp"></span>.</li>
+      <li>La opinión que defiende un texto argumentativo se llama <span class="linea-resp"></span>.</li>
+      <li>El cuento, la novela y el poema son textos <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El tipo de un texto depende de su propósito comunicativo.</li>
+      <li>____ El texto narrativo sirve para dar instrucciones paso a paso.</li>
+      <li>____ La estructura del texto narrativo es inicio, nudo y desenlace.</li>
+      <li>____ El texto descriptivo usa muchos adjetivos para decir cómo es algo.</li>
+      <li>____ El texto expositivo defiende una opinión para convencer.</li>
+      <li>____ Una receta de cocina es un texto instructivo.</li>
+      <li>____ El poema es un texto no literario.</li>
+      <li>____ El texto dialogado se reconoce por las rayas de diálogo.</li>
+      <li>____ La noticia y el informe son textos literarios.</li>
+      <li>____ El texto instructivo suele usar verbos en imperativo o infinitivo.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tipos de Textos</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué determina el tipo de un texto?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> su tamaño</span>
+        <span class="op"><i>b</i> su propósito comunicativo</span>
+        <span class="op"><i>c</i> el autor</span>
+        <span class="op"><i>d</i> el título</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué texto cuenta hechos que les pasan a unos personajes?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> descriptivo</span>
+        <span class="op"><i>b</i> instructivo</span>
+        <span class="op"><i>c</i> narrativo</span>
+        <span class="op"><i>d</i> expositivo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>Una receta de cocina es un texto…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> poético</span>
+        <span class="op"><i>b</i> instructivo</span>
+        <span class="op"><i>c</i> argumentativo</span>
+        <span class="op"><i>d</i> descriptivo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es el propósito del texto argumentativo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> informar sin opinar</span>
+        <span class="op"><i>b</i> convencer con razones</span>
+        <span class="op"><i>c</i> describir un objeto</span>
+        <span class="op"><i>d</i> contar una historia</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué texto usa muchos adjetivos para decir cómo es algo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> narrativo</span>
+        <span class="op"><i>b</i> instructivo</span>
+        <span class="op"><i>c</i> descriptivo</span>
+        <span class="op"><i>d</i> dialogado</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuáles son las partes de la estructura narrativa?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> tesis, argumentos y conclusión</span>
+        <span class="op"><i>b</i> inicio, nudo y desenlace</span>
+        <span class="op"><i>c</i> ingredientes y pasos</span>
+        <span class="op"><i>d</i> introducción y despedida</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>Un artículo de enciclopedia que explica un tema es un texto…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> expositivo</span>
+        <span class="op"><i>b</i> poético</span>
+        <span class="op"><i>c</i> instructivo</span>
+        <span class="op"><i>d</i> argumentativo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué texto expresa sentimientos en verso?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> poético</span>
+        <span class="op"><i>b</i> expositivo</span>
+        <span class="op"><i>c</i> instructivo</span>
+        <span class="op"><i>d</i> narrativo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>La obra de teatro, con sus rayas de diálogo, es un ejemplo de texto…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> expositivo</span>
+        <span class="op"><i>b</i> dialogado</span>
+        <span class="op"><i>c</i> instructivo</span>
+        <span class="op"><i>d</i> descriptivo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál de estos es un texto LITERARIO?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la noticia</span>
+        <span class="op"><i>b</i> la receta</span>
+        <span class="op"><i>c</i> el poema</span>
+        <span class="op"><i>d</i> el manual</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tipos de Textos</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Texto narrativo</td><td>A. Indica los pasos para hacer algo: receta, manual</td></tr>
+      <tr><td>2. ____ Texto descriptivo</td><td>B. La voz que cuenta la historia: protagonista u omnisciente</td></tr>
+      <tr><td>3. ____ Texto expositivo</td><td>C. Cuenta hechos o historias con personajes: cuento, fábula</td></tr>
+      <tr><td>4. ____ Texto argumentativo</td><td>D. Parte de la narración donde surge el conflicto</td></tr>
+      <tr><td>5. ____ Texto instructivo</td><td>E. Informa y explica un tema de forma objetiva: enciclopedia</td></tr>
+      <tr><td>6. ____ Texto dialogado</td><td>F. Dice cómo son las personas, lugares u objetos: el retrato</td></tr>
+      <tr><td>7. ____ Texto poético</td><td>G. La opinión que se defiende en un texto argumentativo</td></tr>
+      <tr><td>8. ____ Narrador</td><td>H. Reproduce una conversación: teatro, entrevista</td></tr>
+      <tr><td>9. ____ Tesis</td><td>I. Defiende una opinión con razones: el ensayo</td></tr>
+      <tr><td>10. ____ Nudo</td><td>J. Expresa sentimientos en verso: el poema</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Los Tipos de Textos.</b> Ahora sabes que el propósito
+      comunicativo manda: reconoces al narrativo que cuenta, al descriptivo que pinta con adjetivos, al
+      expositivo que informa sin opinar, al argumentativo que convence con su tesis, al instructivo que ordena
+      sus pasos, al dialogado con sus rayas y al poético que emociona en verso. ¡De las leyendas de La Sucia a
+      la receta de las baleadas, ningún texto tiene secretos para ti! 📚✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Español.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Escribió y clasificó ejemplos de cada tipo de texto en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tipos de Textos</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. narrativo &nbsp; 2. descriptivo &nbsp; 3. expositivo &nbsp; 4. argumentativo &nbsp; 5. instructivo &nbsp; 6. dialogado &nbsp; 7. narrador &nbsp; 8. desenlace &nbsp; 9. tesis &nbsp; 10. literarios</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7F, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3b, 4b, 5c, 6b, 7a, 8a, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2F, 3E, 4I, 5A, 6H, 7J, 8B, 9G, 10D</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Los Tipos de Textos» (II y III Ciclo). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con el juego «¿Qué texto usarías?» (dar una situación y elegir el tipo adecuado),
+      la escritura de un mismo tema en cuatro textos distintos y la caza de tipos de texto en periódicos, recetarios y
+      libros del rincón de lectura. Etapa 8 de la Ruta de la Palabra, después de «Marcadores Textuales». La misión
+      interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de
+      resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tipos de Textos · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
