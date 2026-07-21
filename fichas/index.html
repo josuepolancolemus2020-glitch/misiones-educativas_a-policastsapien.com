@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Índice de Fichas Didácticas · Proyecto M.E.T.A.S</title>
+<meta name="description" content="Catálogo docente de las 32 fichas didácticas imprimibles del Proyecto Educativo M.E.T.A.S, agrupadas por materia.">
+<style>
+  :root {
+    --mat: #1e40af; --esp: #b45309; --bach: #7c3aed; --nat: #0d9488; --soc: #dc2626;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; color: var(--tinta); background: #f3f4f6; line-height: 1.45; padding: 0 0 40px; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+
+  header.hero {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #fff; padding: 30px 16px 26px; text-align: center; margin-bottom: 22px;
+  }
+  header.hero .mascot { font-size: 2.6rem; }
+  header.hero h1 { font-size: 1.5rem; margin: 6px 0 4px; }
+  header.hero p { font-size: 0.95rem; opacity: 0.85; max-width: 620px; margin: 0 auto; }
+  header.hero .count { display: inline-block; margin-top: 10px; background: rgba(255,255,255,0.14); border-radius: 999px; padding: 4px 14px; font-size: 0.85rem; font-weight: 700; }
+
+  .intro { background: #fff; border: 1px solid var(--linea); border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; font-size: 0.9rem; color: var(--gris); }
+  .intro b { color: var(--tinta); }
+
+  .materia { margin-bottom: 26px; }
+  .materia h2 {
+    font-size: 1.05rem; color: #fff; padding: 8px 14px; border-radius: 9px;
+    display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  }
+  .materia h2 .n { margin-left: auto; font-size: 0.8rem; font-weight: 400; background: rgba(255,255,255,0.2); border-radius: 999px; padding: 2px 10px; }
+  .m-mat h2 { background: var(--mat); } .m-esp h2 { background: var(--esp); }
+  .m-bach h2 { background: var(--bach); } .m-nat h2 { background: var(--nat); }
+  .m-soc h2 { background: var(--soc); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  a.card {
+    display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--tinta);
+    background: #fff; border: 1px solid var(--linea); border-left-width: 5px; border-radius: 10px;
+    padding: 11px 13px; transition: box-shadow .15s, transform .1s;
+  }
+  a.card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.1); transform: translateY(-1px); }
+  a.card .ico { font-size: 1.5rem; flex: 0 0 auto; }
+  a.card .txt { flex: 1; min-width: 0; }
+  a.card .t { font-size: 0.92rem; font-weight: 700; }
+  a.card .sub { font-size: 0.74rem; color: var(--gris); margin-top: 1px; }
+  a.card .go { font-size: 1.1rem; color: var(--gris); flex: 0 0 auto; }
+  .m-mat a.card { border-left-color: var(--mat); }
+  .m-esp a.card { border-left-color: var(--esp); }
+  .m-bach a.card { border-left-color: var(--bach); }
+  .m-nat a.card { border-left-color: var(--nat); }
+  .m-soc a.card { border-left-color: var(--soc); }
+
+  footer { text-align: center; font-size: 0.8rem; color: var(--gris); margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--linea); }
+  footer b { color: var(--tinta); }
+
+  .print-btn {
+    position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer;
+    padding: 12px 18px; border-radius: 999px; font-size: 0.9rem; font-weight: 800; color: #fff;
+    background: #0f172a; box-shadow: 0 6px 16px rgba(0,0,0,.3); font-family: Arial, sans-serif;
+  }
+  @media print {
+    body { background: #fff; }
+    .print-btn { display: none; }
+    a.card:hover { box-shadow: none; transform: none; }
+    header.hero { background: #0f172a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .materia h2, a.card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨️ Imprimir el índice</button>
+
+<header class="hero">
+  <div class="mascot">📚</div>
+  <h1>Índice de Fichas Didácticas</h1>
+  <p>Proyecto Educativo M.E.T.A.S · Guías de estudio imprimibles de 7 páginas (teoría, actividades y evaluación) para repasar antes del examen.</p>
+  <span class="count">32 fichas · 5 materias</span>
+</header>
+
+<div class="wrap">
+
+  <div class="intro">
+    📌 <b>Para el docente:</b> cada tarjeta abre la ficha imprimible de la misión. También puede acceder a la ficha desde la sección <b>«📁 Recursos del Tema»</b> dentro de cada misión interactiva. Use el botón <b>🖨️ Imprimir</b> de cada ficha para llevarla a papel.
+  </div>
+
+  <!-- MATEMÁTICAS -->
+  <section class="materia m-mat">
+    <h2>🔵 Matemáticas <span class="n">15 fichas</span></h2>
+    <div class="grid">
+      <a class="card" href="ficha-numeros-grandes.html"><span class="ico">🔢</span><span class="txt"><span class="t">Números Grandes: del Cien al Millón</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-valor-posicional.html"><span class="ico">🔢</span><span class="txt"><span class="t">Valor Posicional hasta el Millón</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-recta-numerica.html"><span class="ico">📏</span><span class="txt"><span class="t">Recta Numérica, Suma y Resta</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-multiplicacion-vertical.html"><span class="ico">✖️</span><span class="txt"><span class="t">Multiplicación Vertical</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-multiplos-divisores.html"><span class="ico">🧮</span><span class="txt"><span class="t">Múltiplos, Divisores y Primos</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-teoria-numeros.html"><span class="ico">🕵️</span><span class="txt"><span class="t">Teoría de Números: m.c.m. y M.C.D.</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-fracciones.html"><span class="ico">🍕</span><span class="txt"><span class="t">Las Fracciones</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-numeros-decimales.html"><span class="ico">🔢</span><span class="txt"><span class="t">Números Decimales</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-division-decimales.html"><span class="ico">➗</span><span class="txt"><span class="t">División de Decimales</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-potencias-raices.html"><span class="ico">🔲</span><span class="txt"><span class="t">Potencias y Raíces Cuadradas</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-angulos-basicos.html"><span class="ico">📐</span><span class="txt"><span class="t">Ángulos: Tipos y Transportador</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-angulos-bisectriz.html"><span class="ico">📐</span><span class="txt"><span class="t">Ángulos y Bisectriz</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-perimetro-cuadrilateros.html"><span class="ico">🔲</span><span class="txt"><span class="t">Perímetro y Área de Cuadriláteros</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-area-poligonos.html"><span class="ico">🔷</span><span class="txt"><span class="t">Área de Polígonos Regulares</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-circulos-poligonos.html"><span class="ico">⭕</span><span class="txt"><span class="t">Área de Círculos y Polígonos</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
+    </div>
+  </section>
+
+  <!-- ESPAÑOL -->
+  <section class="materia m-esp">
+    <h2>🟡 Español <span class="n">8 fichas</span></h2>
+    <div class="grid">
+      <a class="card" href="ficha-sustantivos.html"><span class="ico">📖</span><span class="txt"><span class="t">Los Sustantivos</span><span class="sub">Ruta de la Palabra</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-adjetivos.html"><span class="ico">📝</span><span class="txt"><span class="t">Los Adjetivos</span><span class="sub">Ruta de la Palabra</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-verbos.html"><span class="ico">✍️</span><span class="txt"><span class="t">Los Verbos</span><span class="sub">Ruta de la Palabra</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-adverbios.html"><span class="ico">🧭</span><span class="txt"><span class="t">Los Adverbios</span><span class="sub">Ruta de la Palabra</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-pronombres.html"><span class="ico">💬</span><span class="txt"><span class="t">Los Pronombres</span><span class="sub">Ruta de la Palabra</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-acentuacion.html"><span class="ico">🔤</span><span class="txt"><span class="t">La Acentuación</span><span class="sub">Ruta de la Palabra</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-marcadores-textuales.html"><span class="ico">🔗</span><span class="txt"><span class="t">Marcadores Textuales</span><span class="sub">Ruta de la Palabra</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-tipos-de-textos.html"><span class="ico">📚</span><span class="txt"><span class="t">Los Tipos de Textos</span><span class="sub">Ruta de la Palabra</span></span><span class="go">→</span></a>
+    </div>
+  </section>
+
+  <!-- BACHILLERATO -->
+  <section class="materia m-bach">
+    <h2>🟣 Bachillerato <span class="n">1 ficha</span></h2>
+    <div class="grid">
+      <a class="card" href="ficha-adjetivo-avanzado.html"><span class="ico">🎓</span><span class="txt"><span class="t">El Adjetivo Avanzado (NGLE)</span><span class="sub">Español · Nivel superior</span></span><span class="go">→</span></a>
+    </div>
+  </section>
+
+  <!-- CIENCIAS NATURALES -->
+  <section class="materia m-nat">
+    <h2>🟢 Ciencias Naturales <span class="n">5 fichas</span></h2>
+    <div class="grid">
+      <a class="card" href="ficha-sistema-nervioso.html"><span class="ico">🧠</span><span class="txt"><span class="t">El Sistema Nervioso</span><span class="sub">Ruta del Cuerpo</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-sistema-endocrino.html"><span class="ico">⚗️</span><span class="txt"><span class="t">El Sistema Endocrino</span><span class="sub">Ruta del Cuerpo</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-eras-geologicas.html"><span class="ico">🦕</span><span class="txt"><span class="t">Las Eras Geológicas</span><span class="sub">Ruta del Planeta</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-areas-protegidas.html"><span class="ico">🌿</span><span class="txt"><span class="t">Áreas Protegidas de Honduras</span><span class="sub">Ruta del Planeta</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-desastres-naturales.html"><span class="ico">🌀</span><span class="txt"><span class="t">Desastres Naturales y el Huracán Mitch</span><span class="sub">Ruta del Planeta</span></span><span class="go">→</span></a>
+    </div>
+  </section>
+
+  <!-- CIENCIAS SOCIALES -->
+  <section class="materia m-soc">
+    <h2>🔴 Ciencias Sociales <span class="n">3 fichas</span></h2>
+    <div class="grid">
+      <a class="card" href="ficha-geografia-coordenadas.html"><span class="ico">🗺️</span><span class="txt"><span class="t">Geografía y Coordenadas</span><span class="sub">Ruta del Planeta</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-continentes-aoa.html"><span class="ico">🌎</span><span class="txt"><span class="t">Continentes: América, Oceanía y Antártida</span><span class="sub">Ruta del Planeta</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-continentes-eaa.html"><span class="ico">🌍</span><span class="txt"><span class="t">Continentes: Europa, Asia y África</span><span class="sub">Ruta del Planeta</span></span><span class="go">→</span></a>
+    </div>
+  </section>
+
+  <footer>
+    🏠 <b>Proyecto Educativo M.E.T.A.S</b> · Fichas didácticas imprimibles<br>
+    Desarrolladores: Josué E. Polanco · Evelyn Castellanos · Jael &amp; Angelly Polanco
+  </footer>
+
+</div>
+</body>
+</html>
