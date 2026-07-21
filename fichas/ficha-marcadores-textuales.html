@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Marcadores Textuales</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: ESPAÑOL = ÁMBAR/DORADO (#b45309)
+     · Colores semánticos fijos: azul=causa (motivo), verde=adición
+       (suma), naranja=contraste (oposición)
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --esp: #b45309; --esp-osc: #78350f; --esp-claro: #fefce8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #ecdcc0;
+    --cau: #1e40af; --adi: #15803d; --con: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7f3ea; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--esp-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--esp); background: var(--esp-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--esp-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--esp-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--esp); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--esp-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--esp-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--esp-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--esp); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf9f0; }
+  td.k { font-weight: 700; color: var(--esp-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffdf7; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--esp-osc); margin-bottom: 8px; }
+
+  /* Un mismo hecho, cuatro marcadores (mini-demostración) */
+  .cuatro { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; text-align: left; }
+  .cuatro > div { border-radius: 8px; padding: 8px 10px; font-size: 9pt; border: 1.5px solid var(--linea); background: #fff; }
+  .cuatro b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .cuatro .c-cau { border-color: #b6d4fb; background: #dbeafe; } .cuatro .c-cau b { color: var(--cau); }
+  .cuatro .c-cse { border-color: #f0dca6; background: #fff8e6; } .cuatro .c-cse b { color: #b07d00; }
+  .cuatro .c-adi { border-color: #b9e6c6; background: #dcfce7; } .cuatro .c-adi b { color: var(--adi); }
+  .cuatro .c-con { border-color: #f3c99a; background: #ffedd5; } .cuatro .c-con b { color: var(--con); }
+
+  /* El recorrido de los marcadores en un párrafo (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fffdf7; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--esp); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--esp-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tcau { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .tadi { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tcon { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tcau b { color: var(--cau); } .tri .tadi b { color: var(--adi); } .tri .tcon b { color: var(--con); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--esp-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y ámbar */
+  .acts ol li::marker { font-weight: 800; color: var(--esp); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito ámbar · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--esp); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--esp-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--esp-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--esp-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #faf6ec; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--esp-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--esp); box-shadow: 0 6px 16px rgba(180,83,9,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .cuatro > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Marcadores Textuales</div>
+        <div class="f-meta"><b>Asignatura:</b> Español &nbsp;·&nbsp; <b>Nivel:</b> II y III Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Los marcadores textuales o conectores: de orden, adición, contraste, causa, consecuencia, ejemplificación, tiempo y cierre; la cohesión y la coherencia</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-marcadores-textuales.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Definir los <strong>marcadores textuales</strong> (conectores) y su función de <strong>enlazar y organizar</strong> las ideas.</li>
+      <li>Clasificar los marcadores según la relación que expresan: <strong>orden, adición, contraste, causa, consecuencia, ejemplificación, tiempo y cierre</strong>.</li>
+      <li>Distinguir los pares que más se confunden: <strong>causa/consecuencia</strong> y <strong>adición/contraste</strong>.</li>
+      <li>Identificar los marcadores dentro de oraciones y párrafos.</li>
+      <li>Usar marcadores para escribir párrafos con <strong>cohesión</strong>.</li>
+      <li>Explicar qué son la <strong>cohesión</strong> y la <strong>coherencia</strong> de un texto.</li>
+    </ol>
+
+    <h2>🔗 1. ¿Qué son los marcadores textuales?</h2>
+    <p>Los <strong>marcadores textuales</strong> son <strong>palabras o expresiones</strong> que sirven para
+    <strong>enlazar y organizar</strong> las ideas de un texto y guiar al lector. También se les llama
+    <strong>conectores</strong>. No cuentan hechos ni describen cosas: su trabajo es <strong>mostrar la
+    relación</strong> entre las ideas, para que el texto tenga <strong>cohesión</strong> y se entienda con
+    facilidad.</p>
+    <div class="caja regla">⚡ <b>Su función:</b> avisan qué viene después: una idea que se <strong>suma</strong>,
+    una que se <strong>opone</strong>, una <strong>causa</strong>, una <strong>consecuencia</strong>, un
+    <strong>ejemplo</strong> o el <strong>cierre</strong> del texto. ¡Son las señales de tránsito de la
+    lectura!</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> lee estas dos versiones: «Estudié. Reprobé.» y «Estudié;
+    <strong>sin embargo</strong>, reprobé». El marcador lo cambia todo: ahora entiendes que hubo un
+    <strong>contraste</strong> inesperado entre estudiar y reprobar.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> antes de elegir un marcador pregúntate:
+    «¿estoy <b>sumando</b> (además), <b>oponiendo</b> (sin embargo), dando el <b>motivo</b> (porque) o el
+    <b>resultado</b> (por lo tanto)?». La pregunta correcta elige el conector correcto.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">Un mismo hecho («perdió el bus»), cuatro relaciones distintas: ¡el marcador decide!</div>
+      <div class="cuatro">
+        <div class="c-cau"><b>⬅️ Causa — da el motivo</b>«Llegó tarde <u>porque</u> perdió el bus.»</div>
+        <div class="c-cse"><b>➡️ Consecuencia — da el resultado</b>«Perdió el bus; <u>por lo tanto</u>, llegó tarde.»</div>
+        <div class="c-adi"><b>➕ Adición — suma otra idea</b>«Perdió el bus; <u>además</u>, olvidó la tarea.»</div>
+        <div class="c-con"><b>↔️ Contraste — opone lo esperado</b>«Perdió el bus; <u>sin embargo</u>, llegó a tiempo.»</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Marcadores Textuales</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🗺️ 2. Los ocho tipos de marcadores textuales</h2>
+    <table>
+      <tr><th>Tipo</th><th>¿Qué indican?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">1️⃣ De orden</td><td>Organizan las ideas en secuencia.</td><td>en primer lugar, a continuación, por último</td></tr>
+      <tr><td class="k">➕ De adición</td><td>Suman o añaden información.</td><td>además, también, asimismo, incluso</td></tr>
+      <tr><td class="k">↔️ De contraste</td><td>Oponen dos ideas (adversativos).</td><td>pero, sin embargo, no obstante, en cambio</td></tr>
+      <tr><td class="k">⬅️ De causa</td><td>Dan el motivo: responden a «¿por qué?».</td><td>porque, ya que, puesto que, dado que</td></tr>
+      <tr><td class="k">➡️ De consecuencia</td><td>Dan el resultado de la idea anterior.</td><td>por lo tanto, por eso, así que</td></tr>
+      <tr><td class="k">💡 De ejemplificación</td><td>Aclaran o dan ejemplos.</td><td>por ejemplo, es decir, o sea</td></tr>
+      <tr><td class="k">⏱️ De tiempo</td><td>Sitúan las ideas en el tiempo.</td><td>antes, después, mientras, más tarde</td></tr>
+      <tr><td class="k">🏁 De cierre</td><td>Cierran o resumen el texto.</td><td>en conclusión, en resumen, finalmente</td></tr>
+    </table>
+
+    <h2>🧩 3. El recorrido de los marcadores en un párrafo</h2>
+    <p>En un párrafo bien escrito, los marcadores marcan el <strong>camino de las ideas</strong> de principio a fin:</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>1️⃣ Orden</b>«En primer lugar…» abre y organiza.</div>
+      <div><span class="pn">2</span><b>➕ Adición</b>«Además…» suma una idea nueva.</div>
+      <div><span class="pn">3</span><b>↔️ Contraste</b>«Sin embargo…» opone una advertencia.</div>
+      <div><span class="pn">4</span><b>🏁 Cierre</b>«En conclusión…» resume y termina.</div>
+    </div>
+    <div class="caja idea">💡 <b>Léelo completo:</b> «<strong>En primer lugar</strong>, leer es entretenido.
+    <strong>Además</strong>, mejora el vocabulario. <strong>Sin embargo</strong>, hay que elegir buenos libros.
+    <strong>En conclusión</strong>, leer es un gran hábito.» ¿Ves cómo los marcadores <strong>guían</strong> la
+    lectura como flechas en el camino?</div>
+
+    <h3>🧵 Cohesión y coherencia: el premio de usar marcadores</h3>
+    <table>
+      <tr><th>Cualidad</th><th>¿Qué es?</th><th>¿Qué aportan los marcadores?</th></tr>
+      <tr><td class="k">🧵 Cohesión</td><td>La UNIÓN entre las partes del texto.</td><td>Enlazan las oraciones y los párrafos para que no queden sueltos.</td></tr>
+      <tr><td class="k">🧠 Coherencia</td><td>Que las ideas tengan SENTIDO y buen orden.</td><td>Muestran cómo se relacionan las ideas, y así el texto se entiende.</td></tr>
+    </table>
+    <div class="caja regla">⚡ <b>Ojo:</b> un párrafo es un <strong>conjunto de oraciones sobre una misma
+    idea</strong>, que empieza con mayúscula y termina en punto y aparte. Los marcadores enlazan las oraciones
+    <strong>dentro</strong> del párrafo y también <strong>entre</strong> los párrafos.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Marcadores Textuales</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🔎 4. Los que más se confunden</h2>
+    <table>
+      <tr><th>Marcador</th><th>Relación que expresa</th><th>Ejemplo</th></tr>
+      <tr><td class="k">además</td><td>Adición (suma)</td><td>Estudio y <strong>además</strong> trabajo.</td></tr>
+      <tr><td class="k">sin embargo</td><td>Contraste (opone)</td><td>Es caro; <strong>sin embargo</strong>, lo compré.</td></tr>
+      <tr><td class="k">porque</td><td>Causa (motivo)</td><td>Falté <strong>porque</strong> estaba enfermo.</td></tr>
+      <tr><td class="k">por lo tanto</td><td>Consecuencia (resultado)</td><td>Llovió, <strong>por lo tanto</strong> no salimos.</td></tr>
+      <tr><td class="k">por ejemplo</td><td>Ejemplificación (aclara)</td><td>Frutas; <strong>por ejemplo</strong>, la pera.</td></tr>
+    </table>
+    <div class="tri">
+      <div class="tcau"><b>⬅️ «porque» mira atrás</b>Señala el MOTIVO de lo que ya pasó: «Llegó tarde porque perdió el bus».</div>
+      <div class="tadi"><b>➕ «además» avanza</b>SUMA una idea en la misma dirección: «Perdió el bus; además, olvidó la tarea».</div>
+      <div class="tcon"><b>↔️ «sin embargo» frena</b>OPONE lo que no se esperaba: «Perdió el bus; sin embargo, llegó a tiempo».</div>
+    </div>
+    <div class="caja truco">🧠 <b>Truco de la flecha:</b> la causa apunta <b>hacia atrás</b> (⬅️ el motivo ya
+    ocurrió: porque, ya que) y la consecuencia apunta <b>hacia adelante</b> (➡️ el resultado viene después: por
+    lo tanto, por eso). ¡Dibuja la flecha y acertarás!</div>
+
+    <h2>⚠️ 5. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir «porque» con «por lo tanto»</td><td>«Estudié por lo tanto quería aprobar». El motivo pide causa.</td><td>Motivo = porque · Resultado = por lo tanto ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir «además» con «sin embargo»</td><td>«Es caro; además, lo compré» suena raro: comprar algo caro es un contraste.</td><td>Suma = además · Oposición = sin embargo ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Escribir sin marcadores</td><td>«Estudié. Reprobé. Lloré.» Las ideas quedan sueltas y sin relación.</td><td>Usar conectores da cohesión al texto ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Abrir el texto con «en conclusión»</td><td>«En conclusión» anuncia el FINAL, no el inicio.</td><td>Abrir con «en primer lugar»; cerrar con «en conclusión» ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Repetir siempre «y… y… y»</td><td>«Fui y comí y jugué y dormí». El texto se vuelve monótono.</td><td>Variar: además, luego, más tarde, finalmente ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> un párrafo catracho bien enlazado: «<strong>En primer
+    lugar</strong>, visita las ruinas de Copán, <strong>porque</strong> guardan la historia maya;
+    <strong>además</strong>, prueba una baleada en La Ceiba; <strong>sin embargo</strong>, no olvides el
+    bloqueador en Roatán; <strong>en conclusión</strong>, Honduras es un tesoro por descubrir». ¡Cuenta los
+    marcadores: orden, causa, adición, contraste y cierre en un solo párrafo!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Marcadores Textuales</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 6. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Las palabras que enlazan las ideas de un texto son los marcadores <span class="linea-resp"></span>.</li>
+      <li>«Además» y «también» son marcadores de <span class="linea-resp"></span>.</li>
+      <li>«Sin embargo» y «pero» son marcadores de <span class="linea-resp"></span>.</li>
+      <li>«Porque» y «ya que» son marcadores de <span class="linea-resp"></span>.</li>
+      <li>«Por lo tanto» y «por eso» son marcadores de <span class="linea-resp"></span>.</li>
+      <li>«En primer lugar» y «a continuación» son marcadores de <span class="linea-resp"></span>.</li>
+      <li>«En conclusión» y «en resumen» son marcadores de <span class="linea-resp"></span>.</li>
+      <li>«Por ejemplo» y «es decir» son marcadores de <span class="linea-resp"></span>.</li>
+      <li>A los marcadores textuales también se les llama <span class="linea-resp"></span>.</li>
+      <li>Los marcadores aportan <span class="linea-resp"></span> al texto porque enlazan sus partes.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Los marcadores textuales enlazan y organizan las ideas de un texto.</li>
+      <li>____ «Sin embargo» es un marcador de adición.</li>
+      <li>____ «Porque» es un marcador de causa.</li>
+      <li>____ «Por lo tanto» es un marcador de consecuencia.</li>
+      <li>____ «En primer lugar» es un marcador de cierre.</li>
+      <li>____ A los marcadores textuales también se les llama conectores.</li>
+      <li>____ «Ya que» y «puesto que» son marcadores de consecuencia.</li>
+      <li>____ «Por ejemplo» es un marcador de ejemplificación.</li>
+      <li>____ Los marcadores textuales cuentan los hechos de la historia.</li>
+      <li>____ «Pero» y «no obstante» expresan contraste.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Marcadores Textuales</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Para qué sirven los marcadores textuales?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> para contar historias</span>
+        <span class="op full"><i>b</i> para enlazar y organizar las ideas de un texto</span>
+        <span class="op"><i>c</i> para describir objetos</span>
+        <span class="op"><i>d</i> para rimar</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>«Sin embargo» es un marcador de…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> adición</span>
+        <span class="op"><i>b</i> causa</span>
+        <span class="op"><i>c</i> contraste</span>
+        <span class="op"><i>d</i> orden</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál de estos es un marcador de consecuencia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> además</span>
+        <span class="op"><i>b</i> por lo tanto</span>
+        <span class="op"><i>c</i> porque</span>
+        <span class="op"><i>d</i> en primer lugar</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>El marcador «porque» indica…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> consecuencia</span>
+        <span class="op"><i>b</i> causa</span>
+        <span class="op"><i>c</i> adición</span>
+        <span class="op"><i>d</i> cierre</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué marcador usarías para AÑADIR una idea?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> sin embargo</span>
+        <span class="op"><i>b</i> por eso</span>
+        <span class="op"><i>c</i> además</span>
+        <span class="op"><i>d</i> porque</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>«En primer lugar, en segundo lugar, por último» son marcadores de…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> orden</span>
+        <span class="op"><i>b</i> contraste</span>
+        <span class="op"><i>c</i> causa</span>
+        <span class="op"><i>d</i> ejemplo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuál es un marcador de cierre o conclusión?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> por ejemplo</span>
+        <span class="op"><i>b</i> en conclusión</span>
+        <span class="op"><i>c</i> también</span>
+        <span class="op"><i>d</i> mientras</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cuál de estas palabras NO es un marcador textual?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> sin embargo</span>
+        <span class="op"><i>b</i> por lo tanto</span>
+        <span class="op"><i>c</i> mesa</span>
+        <span class="op"><i>d</i> además</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>«Más tarde» y «entonces» son marcadores de…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> tiempo</span>
+        <span class="op"><i>b</i> contraste</span>
+        <span class="op"><i>c</i> causa</span>
+        <span class="op"><i>d</i> adición</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>El marcador «es decir» sirve para…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> aclarar o ejemplificar</span>
+        <span class="op"><i>b</i> oponer ideas</span>
+        <span class="op"><i>c</i> dar la causa</span>
+        <span class="op"><i>d</i> cerrar el texto</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Marcadores Textuales</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Marcadores textuales</td><td>A. Dan el motivo: porque, ya que, puesto que</td></tr>
+      <tr><td>2. ____ Adición</td><td>B. Aclaran con ejemplos: por ejemplo, es decir</td></tr>
+      <tr><td>3. ____ Contraste</td><td>C. La unión entre las partes de un texto</td></tr>
+      <tr><td>4. ____ Causa</td><td>D. Suman ideas: además, también, asimismo</td></tr>
+      <tr><td>5. ____ Consecuencia</td><td>E. Conjunto de oraciones sobre una misma idea</td></tr>
+      <tr><td>6. ____ Orden</td><td>F. Palabras que enlazan las ideas de un texto</td></tr>
+      <tr><td>7. ____ Ejemplificación</td><td>G. Oponen ideas: pero, sin embargo, en cambio</td></tr>
+      <tr><td>8. ____ Cierre</td><td>H. Dan el resultado: por lo tanto, por eso</td></tr>
+      <tr><td>9. ____ Cohesión</td><td>I. Concluyen el texto: en conclusión, en resumen</td></tr>
+      <tr><td>10. ____ Párrafo</td><td>J. Organizan en secuencia: en primer lugar, por último</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Marcadores Textuales.</b> Ahora tus textos ya no son ideas
+      sueltas: sabes abrir con «en primer lugar», sumar con «además», oponer con «sin embargo», dar el motivo
+      con «porque», el resultado con «por lo tanto», aclarar con «por ejemplo» y cerrar con broche de oro con
+      «en conclusión». ¡Tus párrafos tienen cohesión y tus lectores nunca se perderán en el camino! 🔗✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Español.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Escribió un párrafo con marcadores de orden, adición, contraste y cierre en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Marcadores Textuales</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. textuales &nbsp; 2. adición &nbsp; 3. contraste &nbsp; 4. causa &nbsp; 5. consecuencia &nbsp; 6. orden &nbsp; 7. cierre &nbsp; 8. ejemplificación &nbsp; 9. conectores &nbsp; 10. cohesión</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7F, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3b, 4b, 5c, 6a, 7b, 8c, 9a, 10a</div>
+      <div><span class="pt">IV. Pareados:</span> 1F, 2D, 3G, 4A, 5H, 6J, 7B, 8I, 9C, 10E</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Marcadores Textuales» (II y III Ciclo). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con la reescritura de un párrafo sin conectores para «repararlo», el semáforo de
+      marcadores (verde=suma, rojo=opone, azul=motivo) y la caza de conectores en periódicos y libros del rincón de
+      lectura. Etapa 7 de la Ruta de la Palabra, después de «La Acentuación» y antes de «Los Tipos de Textos». La misión
+      interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de
+      resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Marcadores Textuales · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
