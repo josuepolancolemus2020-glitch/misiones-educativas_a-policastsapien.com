@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Continentes: Europa, Asia y África</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS SOCIALES = ROJO (#dc2626)
+     · Colores semánticos fijos: azul=Europa, verde=Asia,
+       naranja=África (Sahara)
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --soc: #dc2626; --soc-osc: #991b1b; --soc-claro: #fef2f2;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #f0d4d4;
+    --eur: #1e40af; --asi: #15803d; --afr: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7efef; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--soc-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--soc); background: var(--soc-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--soc-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--soc-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--soc); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--soc-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--soc-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--soc-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .truco b { color: #1e40af; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--soc); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf5f5; }
+  td.k { font-weight: 700; color: var(--soc-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffbfb; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--soc-osc); margin-bottom: 8px; }
+
+  /* Los tres continentes (mini-demostración) */
+  .tres3 { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .tres3 > div { flex: 1; border-radius: 8px; padding: 8px 9px; font-size: 9pt; border: 1.5px solid var(--linea); background: #fff; text-align: center; }
+  .tres3 b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .tres3 .t-emoji { font-size: 18pt; display: block; margin-bottom: 3px; }
+  .tres3 .c-eur { border-color: #c7d2fe; background: #eef2ff; } .tres3 .c-eur b { color: var(--eur); }
+  .tres3 .c-asi { border-color: #b9e6c6; background: #dcfce7; } .tres3 .c-asi b { color: var(--asi); }
+  .tres3 .c-afr { border-color: #f3c99a; background: #ffedd5; } .tres3 .c-afr b { color: var(--afr); }
+
+  /* Chunking pedagógico */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 8px; font-size: 8.5pt; background: #fffbfb; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--soc); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--soc-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .teur { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .tri .tasi { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tafr { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .teur b { color: var(--eur); } .tri .tasi b { color: var(--asi); } .tri .tafr b { color: var(--afr); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--soc-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y rojo */
+  .acts ol li::marker { font-weight: 800; color: var(--soc); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito rojo · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--soc); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--soc-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--soc-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--soc-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #fdf4f4; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--soc-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--soc); box-shadow: 0 6px 16px rgba(220,38,38,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .tres3 > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Continentes — Europa, Asia y África</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Sociales &nbsp;·&nbsp; <b>Nivel:</b> II y III Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Los continentes de Europa, Asia y África: su geografía, culturas, economía, el colonialismo y la conexión de Honduras con el mundo</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-continentes-eaa.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Reconocer a <strong>Asia</strong> como el continente más grande y poblado del mundo.</li>
+      <li>Describir <strong>Europa</strong> y su bloque, la <strong>Unión Europea</strong>.</li>
+      <li>Valorar <strong>África</strong> como cuna de la humanidad y su gran diversidad cultural.</li>
+      <li>Identificar accidentes geográficos: <strong>Everest, Himalaya, Nilo, Sahara, Mediterráneo</strong>.</li>
+      <li>Comprender el <strong>colonialismo</strong> y el fenómeno del <strong>monzón</strong>.</li>
+      <li>Relacionar a Honduras con Europa (<strong>AACUE</strong>) y Asia (<strong>KOICA</strong>).</li>
+    </ol>
+
+    <h2>🌍 1. Tres continentes del Viejo Mundo</h2>
+    <p>Europa, Asia y África forman el llamado «<strong>Viejo Mundo</strong>»: tres continentes vecinos, unidos
+    por tierra y por historia, que fueron cuna de las grandes civilizaciones. En ellos nacieron la escritura,
+    las religiones, la ciencia… y también procesos difíciles como el <strong>colonialismo</strong>.</p>
+    <div class="caja regla">⚡ <b>Dato clave:</b> <strong>Asia</strong> es el continente más grande y más
+    poblado (60 % de la humanidad); <strong>África</strong> es el segundo más grande (54 países); y
+    <strong>Europa</strong>, aunque pequeña, tiene una enorme influencia mundial por su historia y economía.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> Europa y Asia están unidas en la misma masa de tierra
+    (Eurasia), pero se consideran continentes distintos por sus <strong>diferencias culturales e
+    históricas</strong>. África se separa de Europa por el estrecho de Gibraltar y el <strong>Mar
+    Mediterráneo</strong>.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>Asia la más A: Amplia y Abarrotada</b>»: Asia
+    es la más <b>amplia</b> (grande) y <b>abarrotada</b> (poblada). Y para el récord de cada una: el
+    <b>Everest</b> (Asia) es el techo del mundo, el <b>Nilo</b> (África) el río más largo, y la <b>UE</b>
+    (Europa) el bloque de 27 países.</div>
+
+    <h3>🔬 Mini-demostración: los tres continentes de un vistazo</h3>
+    <div class="ilus">
+      <div class="ilus-t">Cada uno con su sello propio</div>
+      <div class="tres3">
+        <div class="c-eur"><span class="t-emoji">🇪🇺</span><b>Europa</b>44 países. Sede de la Unión Europea (27 países, euro €). Principal socio comercial de Honduras.</div>
+        <div class="c-asi"><span class="t-emoji">🌏</span><b>Asia</b>La MÁS grande y poblada. Everest y Himalaya. China e India, potencias económicas.</div>
+        <div class="c-afr"><span class="t-emoji">🌍</span><b>África</b>Cuna de la humanidad. Nilo, Sahara. 54 países y más de 2,000 idiomas.</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: Europa, Asia y África</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🗺️ 2. Geografía récord de cada continente</h2>
+    <table>
+      <tr><th>Accidente</th><th>Continente</th><th>Récord / dato</th></tr>
+      <tr><td class="k">🏔️ Monte Everest</td><td>Asia</td><td>La cumbre más alta del mundo (8,849 m), en el Himalaya (Nepal–China)</td></tr>
+      <tr><td class="k">🌊 Río Nilo</td><td>África</td><td>El río más largo del mundo (6,650 km); cuna de la civilización egipcia</td></tr>
+      <tr><td class="k">🏜️ Desierto del Sahara</td><td>África</td><td>El desierto caluroso más grande del mundo (9.2 millones km²)</td></tr>
+      <tr><td class="k">🌊 Mar Mediterráneo</td><td>Europa–África</td><td>Separa ambos continentes; cuna de la cultura occidental (Grecia, Roma)</td></tr>
+      <tr><td class="k">💨 Monzón</td><td>Asia</td><td>Vientos estacionales con lluvias vitales para el cultivo del arroz</td></tr>
+    </table>
+
+    <h2>🎭 3. Culturas, economía e historia</h2>
+    <div class="tri">
+      <div class="teur"><b>🇪🇺 Europa</b>Cuna del Renacimiento y la Revolución Industrial. La Unión Europea: 27 países con mercado único y el euro.</div>
+      <div class="tasi"><b>📈 Asia</b>China (2.ª economía mundial), Japón (3.ª), India (5.ª). Los «Tigres asiáticos»: desarrollo acelerado.</div>
+      <div class="tafr"><b>🥁 África</b>Cuna de la humanidad; +2,000 idiomas. Raíz de ritmos globales: jazz, blues, reggae, afrobeat.</div>
+    </div>
+    <div class="caja regla">⚡ <b>El colonialismo (ss. XV–XX):</b> Europa dominó y colonizó gran parte de
+    <strong>África, Asia y América</strong>. Dejó herencias lingüísticas (inglés, francés, español) y fronteras
+    artificiales, con impactos económicos y sociales que aún se sienten hoy.</div>
+
+    <h2>🌍 4. Honduras y el Viejo Mundo</h2>
+    <p>Honduras mantiene lazos con los tres continentes: exporta <strong>café, banano, textiles y palma
+    africana</strong> a la <strong>Unión Europea</strong> (el AACUE facilita este comercio); importa
+    <strong>tecnología y manufacturas</strong> de Asia y recibe becas de <strong>KOICA</strong> (Corea del Sur);
+    y con África comparte, a través de la ONU, desafíos de desarrollo y cambio climático.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: Europa, Asia y África</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🤝 5. Honduras en el mundo: comercio y cooperación</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>🇪🇺 Con Europa</b>Exporta café, banano y textiles a la UE (AACUE). Recibe apoyo en salud y educación.</div>
+      <div><span class="pn">2</span><b>🏭 Con Asia</b>Importa tecnología de China; exporta mariscos y café a Japón y Corea; becas de KOICA.</div>
+      <div><span class="pn">3</span><b>🌍 Con África</b>Relaciones por la ONU: cooperación Sur–Sur y desafíos comunes de desarrollo.</div>
+    </div>
+    <div class="caja idea">💡 <b>El mundo en tu mesa:</b> el café que Honduras cultiva se bebe en Europa; la
+    ropa que usamos puede venir de Asia; y los ritmos que bailamos tienen raíz africana. ¡Los continentes están
+    más cerca de lo que parece!</div>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que África es el continente más grande</td><td>El más grande es Asia; África es el segundo.</td><td>Asia = el más grande y poblado ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Ubicar el Nilo en Asia</td><td>El Nilo está en África (noreste).</td><td>Nilo = África (río más largo) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir el río más largo con el más caudaloso</td><td>El Nilo es el más largo; el Amazonas, el más caudaloso.</td><td>Nilo = más largo · Amazonas = más caudaloso ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que el monzón es un huracán</td><td>El monzón es un viento estacional con lluvias, no una tormenta.</td><td>Monzón = vientos y lluvias de temporada ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que la UE tiene 44 países</td><td>Europa tiene 44 países; la Unión Europea son 27.</td><td>Europa 44 países · UE 27 países ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> aunque estamos lejos del Viejo Mundo, sus huellas nos rodean.
+    Hablamos <strong>español</strong> (herencia europea), nuestra fe y muchas tradiciones vienen de Europa,
+    ritmos como la <strong>punta garífuna</strong> tienen raíz <strong>africana</strong>, y buena parte de la
+    tecnología que usamos viene de <strong>Asia</strong>. Conocer estos continentes es entender de dónde venimos
+    y con quién nos conectamos. 🌍🌏❤️</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: Europa, Asia y África</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El continente más grande y más poblado del mundo es <span class="linea-resp"></span>.</li>
+      <li>El río más largo del mundo, en África, es el <span class="linea-resp"></span>.</li>
+      <li>La Unión Europea está formada por <span class="linea-resp"></span> países.</li>
+      <li>El desierto del Sahara está en el <span class="linea-resp"></span> de África.</li>
+      <li>El Monte Everest tiene una altura de <span class="linea-resp"></span> metros.</li>
+      <li>El <span class="linea-resp"></span> es el fenómeno climático de lluvias estacionales en Asia.</li>
+      <li>El Mar <span class="linea-resp"></span> separa Europa de África.</li>
+      <li>KOICA es la agencia de cooperación de <span class="linea-resp"></span> del Sur en Honduras.</li>
+      <li>El Monte Everest está en la cordillera del <span class="linea-resp"></span>.</li>
+      <li>El continente africano tiene <span class="linea-resp"></span> países.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Asia es el continente más grande y más poblado del mundo.</li>
+      <li>____ El Río Nilo es el más largo del mundo y está en Asia.</li>
+      <li>____ La Unión Europea está formada por 27 países.</li>
+      <li>____ El Desierto del Sahara está en el norte de África.</li>
+      <li>____ El Monte Everest mide 8,849 metros y es la cumbre más alta.</li>
+      <li>____ Europa tiene más de 2,000 idiomas distintos.</li>
+      <li>____ Honduras exporta café y banano a la Unión Europea.</li>
+      <li>____ El Mar Mediterráneo separa Europa de África.</li>
+      <li>____ África es el continente más pequeño del mundo.</li>
+      <li>____ China es la segunda economía más grande del mundo.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: Europa, Asia y África</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál es el continente más grande del mundo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Europa</span>
+        <span class="op"><i>b</i> África</span>
+        <span class="op"><i>c</i> Asia</span>
+        <span class="op"><i>d</i> América</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué río es el más largo del mundo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Amazonas</span>
+        <span class="op"><i>b</i> Congo</span>
+        <span class="op"><i>c</i> Ganges</span>
+        <span class="op"><i>d</i> Nilo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuántos países forman la Unión Europea?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 44</span>
+        <span class="op"><i>b</i> 27</span>
+        <span class="op"><i>c</i> 15</span>
+        <span class="op"><i>d</i> 54</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿En qué continente se encuentra el Desierto del Sahara?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Asia</span>
+        <span class="op"><i>b</i> América</span>
+        <span class="op"><i>c</i> Europa</span>
+        <span class="op"><i>d</i> África</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuál es la cumbre más alta del mundo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Mont Blanc</span>
+        <span class="op"><i>b</i> Kilimanjaro</span>
+        <span class="op"><i>c</i> Monte Everest</span>
+        <span class="op"><i>d</i> Aconcagua</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuántos países tiene el continente africano?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 35</span>
+        <span class="op"><i>b</i> 44</span>
+        <span class="op"><i>c</i> 54</span>
+        <span class="op"><i>d</i> 65</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué fenómeno climático caracteriza al sur de Asia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> tifón</span>
+        <span class="op"><i>b</i> huracán</span>
+        <span class="op"><i>c</i> ventisca</span>
+        <span class="op"><i>d</i> monzón</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué mar separa Europa de África?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Mar Caribe</span>
+        <span class="op"><i>b</i> Mar Rojo</span>
+        <span class="op"><i>c</i> Mar Mediterráneo</span>
+        <span class="op"><i>d</i> Mar del Norte</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué proceso histórico explica la influencia europea en África y Asia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Renacimiento</span>
+        <span class="op"><i>b</i> el colonialismo</span>
+        <span class="op"><i>c</i> la globalización</span>
+        <span class="op"><i>d</i> la Revolución Industrial</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué importa Honduras principalmente de Asia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> café</span>
+        <span class="op"><i>b</i> banano</span>
+        <span class="op full"><i>c</i> productos manufacturados y tecnología</span>
+        <span class="op"><i>d</i> petróleo</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: Europa, Asia y África</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Asia</td><td>A. Río más largo del mundo (6,650 km), en África</td></tr>
+      <tr><td>2. ____ Nilo</td><td>B. Cumbre más alta del mundo (8,849 m), en los Himalayas</td></tr>
+      <tr><td>3. ____ Sahara</td><td>C. Continente más grande y más poblado del mundo</td></tr>
+      <tr><td>4. ____ Unión Europea</td><td>D. Vientos estacionales que traen lluvias en Asia del sur</td></tr>
+      <tr><td>5. ____ Everest</td><td>E. Desierto caluroso más grande del mundo, norte de África</td></tr>
+      <tr><td>6. ____ Monzón</td><td>F. Bloque político de 27 países europeos</td></tr>
+      <tr><td>7. ____ Mediterráneo</td><td>G. Dominio europeo sobre África y Asia (ss. XV–XX)</td></tr>
+      <tr><td>8. ____ Colonialismo</td><td>H. Mar que separa Europa de África</td></tr>
+      <tr><td>9. ____ KOICA</td><td>I. Segundo continente más grande; 54 países y 2,000 idiomas</td></tr>
+      <tr><td>10. ____ África</td><td>J. Agencia de cooperación de Corea del Sur en Honduras</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Continentes: Europa, Asia y África.</b> Con ella terminas tu
+      viaje por todos los continentes del planeta: sabes que Asia es la más grande, que el Nilo y el Sahara
+      reinan en África, y que Europa lidera con la Unión Europea. Entiendes el colonialismo, el monzón y cómo
+      Honduras se conecta con el Viejo Mundo por el comercio y la cooperación. ¡Eres un ciudadano del mundo
+      catracho! 🌍🌏🎓
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Sociales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Ubicó en un mapamundi los continentes y sus accidentes geográficos.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: Europa, Asia y África</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Asia &nbsp; 2. Nilo &nbsp; 3. 27 &nbsp; 4. norte &nbsp; 5. 8,849 &nbsp; 6. monzón &nbsp; 7. Mediterráneo &nbsp; 8. Corea &nbsp; 9. Himalaya &nbsp; 10. 54</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5V, 6F, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1c, 2d, 3b, 4d, 5c, 6c, 7d, 8c, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2A, 3E, 4F, 5B, 6D, 7H, 8G, 9J, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Continentes: Europa, Asia y África» (II y III Ciclo). Puede utilizarse como guía de estudio impresa o digital
+      antes de la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección
+      múltiple, pareados) y puede complementarse con la ubicación de los continentes y accidentes en un mapamundi mural, una
+      investigación sobre el colonialismo y sus efectos, un cuadro comparativo de los tres continentes y una charla sobre
+      las raíces africanas y europeas de la cultura hondureña. Etapa 3 de la Ruta del Planeta; con ella se completa el
+      recorrido por todos los continentes. La misión interactiva (código QR de la portada) permite al estudiante practicar
+      con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: Europa, Asia y África · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
