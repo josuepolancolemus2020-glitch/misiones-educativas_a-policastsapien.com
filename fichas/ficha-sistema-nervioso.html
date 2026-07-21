@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión El Sistema Nervioso</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS NATURALES = VERDE/TEAL (#0d9488)
+     · Colores semánticos fijos: azul=SNC (centro), verde=neurona/impulso,
+       naranja=SNP y enfermedades/amenazas
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --nat: #0d9488; --nat-osc: #115e59; --nat-claro: #f0fdfa;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfece7;
+    --snc: #1e40af; --neu: #15803d; --snp: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef6f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--nat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--nat); background: var(--nat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--nat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--nat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--nat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--nat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--nat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--nat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--nat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5fbfa; }
+  td.k { font-weight: 700; color: var(--nat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafefd; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--nat-osc); margin-bottom: 8px; }
+
+  /* Las partes de la neurona (mini-demostración) */
+  .neurona { display: flex; gap: 0; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .neurona > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); padding: 8px 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .neurona > div:first-child { border-radius: 8px 0 0 8px; }
+  .neurona > div:last-child { border-radius: 0 8px 8px 0; }
+  .neurona b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .neurona .n-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .neurona .nd { background: #eef2ff; } .neurona .nd b { color: var(--snc); }
+  .neurona .ns { background: #f0fdfa; } .neurona .ns b { color: var(--nat-osc); }
+  .neurona .na { background: #dcfce7; } .neurona .na b { color: var(--neu); }
+  .neurona .flecha { flex: 0 0 20px; max-width: 20px; border: none; background: none; display: flex; align-items: center; justify-content: center; font-size: 14pt; color: var(--gris); }
+
+  /* Arco reflejo (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 7px; font-size: 8.5pt; background: #fafefd; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--nat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--nat-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tsnc { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .tri .tneu { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tsnp { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tsnc b { color: var(--snc); } .tri .tneu b { color: var(--neu); } .tri .tsnp b { color: var(--snp); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--nat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y verde */
+  .acts ol li::marker { font-weight: 800; color: var(--nat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito verde · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--nat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--nat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--nat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--nat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2faf8; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--nat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--nat); box-shadow: 0 6px 16px rgba(13,148,136,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .neurona > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión El Sistema Nervioso</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Naturales &nbsp;·&nbsp; <b>Nivel:</b> II y III Ciclo de Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El sistema nervioso: la neurona, el SNC y el SNP, la sinapsis, el arco reflejo, los neurotransmisores y las enfermedades neurológicas</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-sistema-nervioso.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Reconocer el sistema nervioso como el sistema de <strong>control y comunicación</strong> del cuerpo.</li>
+      <li>Identificar las partes de la <strong>neurona</strong> (soma, dendritas y axón) y la función de la <strong>mielina</strong>.</li>
+      <li>Distinguir el <strong>Sistema Nervioso Central (SNC)</strong> del <strong>Periférico (SNP)</strong>.</li>
+      <li>Describir las partes del encéfalo: <strong>cerebro, cerebelo y tronco encefálico</strong>.</li>
+      <li>Explicar la <strong>sinapsis</strong>, el <strong>arco reflejo</strong> y el papel de los <strong>neurotransmisores</strong>.</li>
+      <li>Conocer algunas <strong>enfermedades neurológicas</strong> (Parkinson, Alzheimer, esclerosis múltiple).</li>
+    </ol>
+
+    <h2>⚡ 1. ¿Qué es el sistema nervioso?</h2>
+    <p>El <strong>sistema nervioso</strong> es el sistema de <strong>control y comunicación</strong> del cuerpo:
+    recibe los <strong>estímulos</strong> (luz, sonido, dolor), los <strong>procesa</strong> y envía las
+    <strong>respuestas</strong> a los músculos y las glándulas. Trabaja como la <strong>red de internet</strong>
+    del organismo, transmitiendo señales eléctricas a gran velocidad.</p>
+    <div class="caja regla">⚡ <b>Unidad básica:</b> la <strong>neurona</strong> es la célula del sistema
+    nervioso. El cerebro tiene unos <strong>86,000 millones</strong>, y el impulso nervioso puede viajar hasta
+    a <strong>120 metros por segundo</strong> (¡como un carro en carretera!).</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> el sistema nervioso se divide en <strong>central</strong>
+    (SNC: encéfalo y médula espinal, el «centro de mando») y <strong>periférico</strong> (SNP: los nervios que
+    recorren todo el cuerpo, los «cables»).</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>Central = Cráneo y Columna</b>»: todo lo que
+    protege el cráneo (encéfalo) y la columna vertebral (médula) es el <b>SNC</b>. Todo lo que sale de ahí hacia
+    afuera son los nervios del <b>SNP</b>.</div>
+
+    <h3>🔬 Mini-demostración: las tres partes de la neurona</h3>
+    <div class="ilus">
+      <div class="ilus-t">Por dónde entra y por dónde sale el impulso nervioso</div>
+      <div class="neurona">
+        <div class="nd"><span class="n-emoji">🌿</span><b>Dendritas</b>RECIBEN las señales de otras neuronas.</div>
+        <div class="flecha">→</div>
+        <div class="ns"><span class="n-emoji">⭕</span><b>Soma (cuerpo)</b>PROCESA e integra la información.</div>
+        <div class="flecha">→</div>
+        <div class="na"><span class="n-emoji">🔌</span><b>Axón</b>TRANSMITE el impulso a la siguiente célula.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ La <strong>mielina</strong> recubre el axón y acelera la conducción (conducción saltatoria).</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Nervioso</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🧠 2. El Sistema Nervioso Central (SNC)</h2>
+    <p>El SNC es el <strong>centro de procesamiento</strong>. Está protegido por el cráneo y la columna
+    vertebral, y lo forman el <strong>encéfalo</strong> y la <strong>médula espinal</strong>:</p>
+    <table>
+      <tr><th>Parte</th><th>¿Qué controla?</th><th>Dato clave</th></tr>
+      <tr><td class="k">🧠 Cerebro</td><td>Pensamiento, memoria, lenguaje y movimiento voluntario.</td><td>Parte más grande (~1,400 g); dos hemisferios unidos por el cuerpo calloso</td></tr>
+      <tr><td class="k">⚖️ Cerebelo</td><td>Equilibrio, postura y movimientos finos.</td><td>No inicia los movimientos: los afina y corrige</td></tr>
+      <tr><td class="k">🔗 Tronco encefálico</td><td>Funciones vitales: respiración, latido y presión arterial.</td><td>Incluye el bulbo raquídeo; une el cerebro con la médula</td></tr>
+      <tr><td class="k">🦴 Médula espinal</td><td>Conduce impulsos y procesa los reflejos.</td><td>Cordón de ~45 cm dentro de la columna vertebral</td></tr>
+    </table>
+
+    <h2>🔌 3. El Sistema Nervioso Periférico (SNP)</h2>
+    <p>Es la red de nervios que sale del SNC hacia todo el cuerpo: <strong>12 pares de nervios craneales</strong>
+    y <strong>31 pares de nervios espinales</strong>. Según lo que controla, se divide en dos:</p>
+    <div class="tri">
+      <div class="tsnc"><b>✋ Somático (voluntario)</b>Controla los movimientos que decidimos: caminar, escribir, hablar, saltar.</div>
+      <div class="tneu"><b>💓 Autónomo (involuntario)</b>Controla lo que pasa solo: latido del corazón, digestión, respiración automática.</div>
+      <div class="tsnp"><b>⚡ Los dos tipos de neurona</b>La sensorial (aferente) lleva la señal AL cerebro; la motora (eferente) la trae DEL cerebro al músculo.</div>
+    </div>
+    <div class="caja idea">💡 <b>La sinapsis:</b> es el pequeño espacio entre dos neuronas. Allí el botón
+    sináptico libera <strong>neurotransmisores</strong> (mensajeros químicos) que activan la neurona siguiente.
+    ¡Es la base de toda la comunicación nerviosa!</div>
+
+    <h2>⚡ 4. El arco reflejo: respuesta sin pensar</h2>
+    <p>Cuando tocas algo caliente, retiras la mano <strong>antes</strong> de darte cuenta: es un
+    <strong>reflejo</strong>, una respuesta rápida e involuntaria que procesa la <strong>médula</strong> sin
+    esperar al cerebro. Sigue siempre esta ruta:</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>👆 Receptor</b>La piel detecta el calor.</div>
+      <div><span class="pn">2</span><b>👁️ N. sensorial</b>Lleva la señal a la médula.</div>
+      <div><span class="pn">3</span><b>🦴 Médula</b>Procesa y ordena la respuesta.</div>
+      <div><span class="pn">4</span><b>💪 N. motora</b>Lleva la orden al músculo.</div>
+      <div><span class="pn">5</span><b>✋ Efector</b>El músculo retira la mano.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Nervioso</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">💊 5. Neurotransmisores y enfermedades</h2>
+    <table>
+      <tr><th>Neurotransmisor</th><th>¿Para qué sirve?</th><th>Enfermedad relacionada</th></tr>
+      <tr><td class="k">Dopamina</td><td>Movimiento y placer.</td><td>Su pérdida causa Parkinson (temblores)</td></tr>
+      <tr><td class="k">Serotonina</td><td>Estado de ánimo.</td><td>Su baja se asocia a la depresión</td></tr>
+      <tr><td class="k">Acetilcolina</td><td>Activa los músculos.</td><td>Falla en enfermedades musculares</td></tr>
+      <tr><td class="k">GABA</td><td>Inhibe y calma las señales.</td><td>Su falla se asocia a la epilepsia</td></tr>
+    </table>
+    <div class="caja regla">⚡ <b>Enfermedades del sistema nervioso:</b> el <strong>Alzheimer</strong> destruye
+    neuronas y es la principal causa de demencia; el <strong>Parkinson</strong> se debe a la pérdida de
+    dopamina; la <strong>esclerosis múltiple</strong> destruye la vaina de mielina; y la
+    <strong>epilepsia</strong> son descargas eléctricas anormales del cerebro.</div>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que el cerebelo piensa</td><td>El cerebelo coordina el equilibrio; el que piensa es el cerebro.</td><td>Cerebelo = equilibrio · Cerebro = pensamiento ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que el reflejo pasa por el cerebro</td><td>El arco reflejo lo resuelve la médula, por eso es tan rápido.</td><td>Reflejo = médula, sin cerebro ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir dendrita y axón</td><td>La dendrita RECIBE; el axón TRANSMITE la señal.</td><td>Dendrita entra · Axón sale ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que las neuronas sensoriales van al músculo</td><td>Las sensoriales van AL cerebro; las motoras van al músculo.</td><td>Sensorial = aferente · Motora = eferente ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir Alzheimer con Parkinson</td><td>Alzheimer afecta la memoria; Parkinson causa temblores por falta de dopamina.</td><td>Alzheimer = memoria · Parkinson = movimiento ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> cuidar el sistema nervioso empieza con hábitos catrachos
+    sencillos: usar <strong>casco</strong> al andar en moto o bicicleta protege el encéfalo; <strong>dormir
+    bien</strong> consolida la memoria; una buena alimentación con frijoles, plátano y pescado aporta
+    nutrientes al cerebro; y evitar el alcohol y las drogas protege las neuronas. ¡Tu cerebro es tu tesoro más
+    valioso, protégelo! 🧠💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Nervioso</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>La unidad estructural y funcional del sistema nervioso es la <span class="linea-resp"></span>.</li>
+      <li>La vaina de <span class="linea-resp"></span> acelera la conducción del impulso nervioso.</li>
+      <li>El SNP está formado por <span class="linea-resp"></span> pares de nervios craneales.</li>
+      <li>El <span class="linea-resp"></span> coordina el equilibrio y los movimientos finos.</li>
+      <li>La sinapsis química libera <span class="linea-resp"></span> para transmitir el impulso.</li>
+      <li>El arco reflejo es procesado en la <span class="linea-resp"></span> espinal.</li>
+      <li>El <span class="linea-resp"></span> es el neurotransmisor asociado al movimiento y el placer.</li>
+      <li>Las neuronas <span class="linea-resp"></span> llevan información desde los receptores al SNC.</li>
+      <li>El tronco encefálico controla funciones vitales como la <span class="linea-resp"></span>.</li>
+      <li>La neurona tiene tres partes: soma, dendrita y <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ La mielina acelera la conducción del impulso nervioso.</li>
+      <li>____ El cerebelo controla la memoria y el lenguaje.</li>
+      <li>____ El Sistema Nervioso Central está formado por el encéfalo y la médula espinal.</li>
+      <li>____ El arco reflejo pasa siempre por el cerebro antes de responder.</li>
+      <li>____ La dopamina se relaciona con el movimiento y el placer.</li>
+      <li>____ La esclerosis múltiple destruye la vaina de mielina.</li>
+      <li>____ El Alzheimer es la principal causa de demencia a nivel mundial.</li>
+      <li>____ Las dendritas transmiten el impulso hacia otras células.</li>
+      <li>____ El sistema nervioso autónomo controla funciones voluntarias como caminar.</li>
+      <li>____ El cerebro humano tiene aproximadamente 86,000 millones de neuronas.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Nervioso</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué parte del encéfalo controla el equilibrio y la coordinación?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cerebro</span>
+        <span class="op"><i>b</i> médula espinal</span>
+        <span class="op"><i>c</i> cerebelo</span>
+        <span class="op"><i>d</i> tronco encefálico</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cómo se llama la vaina que acelera la conducción del impulso?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> sinapsis</span>
+        <span class="op"><i>b</i> dendrita</span>
+        <span class="op"><i>c</i> axón</span>
+        <span class="op"><i>d</i> mielina</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuántos pares de nervios craneales tiene el SNP?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 8 pares</span>
+        <span class="op"><i>b</i> 10 pares</span>
+        <span class="op"><i>c</i> 12 pares</span>
+        <span class="op"><i>d</i> 31 pares</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué neurotransmisor se relaciona con el movimiento y el placer?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> GABA</span>
+        <span class="op"><i>b</i> serotonina</span>
+        <span class="op"><i>c</i> acetilcolina</span>
+        <span class="op"><i>d</i> dopamina</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué tipo de neurona lleva impulsos del SNC a los músculos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> sensorial</span>
+        <span class="op"><i>b</i> interneurona</span>
+        <span class="op"><i>c</i> motora</span>
+        <span class="op"><i>d</i> aferente</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué enfermedad se caracteriza por pérdida de dopamina y temblores?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Alzheimer</span>
+        <span class="op"><i>b</i> Parkinson</span>
+        <span class="op"><i>c</i> epilepsia</span>
+        <span class="op"><i>d</i> meningitis</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué estructura conecta los dos hemisferios del cerebro?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cerebelo</span>
+        <span class="op"><i>b</i> tronco encefálico</span>
+        <span class="op"><i>c</i> cuerpo calloso</span>
+        <span class="op"><i>d</i> médula espinal</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿A qué velocidad máxima viajan los impulsos en fibras mielinizadas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 30 m/s</span>
+        <span class="op"><i>b</i> 60 m/s</span>
+        <span class="op"><i>c</i> 90 m/s</span>
+        <span class="op"><i>d</i> 120 m/s</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué parte del encéfalo controla la respiración y el latido cardíaco?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cerebro</span>
+        <span class="op"><i>b</i> cerebelo</span>
+        <span class="op"><i>c</i> hipocampo</span>
+        <span class="op"><i>d</i> tronco encefálico</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál es la unidad estructural y funcional del sistema nervioso?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> sinapsis</span>
+        <span class="op"><i>b</i> mielina</span>
+        <span class="op"><i>c</i> neurona</span>
+        <span class="op"><i>d</i> dendrita</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Nervioso</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Neurona</td><td>A. Espacio entre dos neuronas donde se transmite el impulso</td></tr>
+      <tr><td>2. ____ Sinapsis</td><td>B. Coordina el equilibrio, la postura y los movimientos finos</td></tr>
+      <tr><td>3. ____ Mielina</td><td>C. Unidad estructural y funcional del sistema nervioso</td></tr>
+      <tr><td>4. ____ Cerebelo</td><td>D. Respuesta involuntaria rápida procesada en la médula</td></tr>
+      <tr><td>5. ____ Arco reflejo</td><td>E. Vaina lipídica que acelera la conducción del impulso</td></tr>
+      <tr><td>6. ____ Dopamina</td><td>F. Encéfalo más médula espinal (Sistema Nervioso Central)</td></tr>
+      <tr><td>7. ____ SNC</td><td>G. Prolongación de la neurona que transmite el impulso</td></tr>
+      <tr><td>8. ____ Tronco encefálico</td><td>H. Neurotransmisor del movimiento; su pérdida causa Parkinson</td></tr>
+      <tr><td>9. ____ Axón</td><td>I. Enfermedad autoinmune que destruye la vaina de mielina</td></tr>
+      <tr><td>10. ____ Esclerosis múltiple</td><td>J. Controla respiración, latido y presión; une cerebro y médula</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión El Sistema Nervioso.</b> Ahora conoces la red de mando de tu
+      cuerpo: la neurona con sus dendritas, soma y axón; el SNC del cráneo y la columna frente al SNP de los
+      nervios; el cerebro que piensa, el cerebelo que equilibra y el tronco que te mantiene vivo; la sinapsis,
+      los neurotransmisores y el veloz arco reflejo. ¡Cuida tu cerebro, que es tu tesoro más valioso! 🧠⚡
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Naturales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó y rotuló una neurona y el arco reflejo en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Nervioso</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. neurona &nbsp; 2. mielina &nbsp; 3. 12 &nbsp; 4. cerebelo &nbsp; 5. neurotransmisores &nbsp; 6. médula &nbsp; 7. dopamina &nbsp; 8. sensoriales &nbsp; 9. respiración &nbsp; 10. axón</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7V, 8F, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1c, 2d, 3c, 4d, 5c, 6b, 7c, 8d, 9d, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2A, 3E, 4B, 5D, 6H, 7F, 8J, 9G, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión El Sistema Nervioso» (II y III Ciclo). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con el modelado de una neurona en plastilina, la dramatización del arco reflejo por
+      «relevos» en el aula, la prueba del reflejo patelar con una regla y una campaña sobre el uso del casco. Etapa 1 de la
+      Ruta del Cuerpo. La misión interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación
+      inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Nervioso · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
