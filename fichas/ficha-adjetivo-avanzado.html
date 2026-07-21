@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión El Adjetivo Avanzado</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: BACHILLERATO = MORADO (#7c3aed)
+     · Colores semánticos fijos: azul=calificativo (gradable),
+       verde=relacional (clasifica), naranja=adverbial (tiempo/modo)
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --bach: #7c3aed; --bach-osc: #5b21b6; --bach-claro: #f5f3ff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #e2d9f3;
+    --cal: #1e40af; --rel: #15803d; --adv: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f4f2f8; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--bach-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--bach); background: var(--bach-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--bach-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--bach-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--bach); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--bach-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--bach-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--bach-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e0f2fe; border: 1px solid #bae6fd; }
+  .truco b { color: #0369a1; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--bach); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f9f7fd; }
+  td.k { font-weight: 700; color: var(--bach-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fcfbfe; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--bach-osc); margin-bottom: 8px; }
+
+  /* La posición cambia el significado (mini-demostración) */
+  .cuatro { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; text-align: left; }
+  .cuatro > div { border-radius: 8px; padding: 8px 10px; font-size: 9pt; border: 1.5px solid var(--linea); background: #fff; }
+  .cuatro b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .cuatro .c-ant { border-color: #b6d4fb; background: #dbeafe; } .cuatro .c-ant b { color: var(--cal); }
+  .cuatro .c-pos { border-color: #f3c99a; background: #ffedd5; } .cuatro .c-pos b { color: var(--adv); }
+
+  /* Las 3 funciones sintácticas (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fcfbfe; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--bach); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--bach-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tcal { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .trel { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tadv { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tcal b { color: var(--cal); } .tri .trel b { color: var(--rel); } .tri .tadv b { color: var(--adv); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--bach-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y morado */
+  .acts ol li::marker { font-weight: 800; color: var(--bach); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito morado · pregunta en negrita · letras SIN círculo
+     impreso (el alumno debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--bach); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--bach-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--bach-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--bach-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f8f6fc; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--bach-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--bach); box-shadow: 0 6px 16px rgba(124,58,237,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .cuatro > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión El Adjetivo Avanzado</div>
+        <div class="f-meta"><b>Asignatura:</b> Español &nbsp;·&nbsp; <b>Nivel:</b> Bachillerato</div>
+        <div class="f-meta"><b>Tema:</b> Sintaxis, morfología y semántica adjetival según la NGLE: clases, funciones sintácticas, posición, grados del adjetivo y apócope</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-adjetivo-avanzado.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Definir el adjetivo como <strong>núcleo del Sintagma Adjetival (SAdj)</strong> según la Nueva Gramática de la Lengua Española (NGLE).</li>
+      <li>Clasificar semánticamente los adjetivos en <strong>calificativos, relacionales y adverbiales</strong>.</li>
+      <li>Analizar las tres funciones sintácticas: <strong>adyacente, atributo y complemento predicativo</strong>.</li>
+      <li>Interpretar el valor <strong>restrictivo</strong> (especificativo) y <strong>no restrictivo</strong> (explicativo/epíteto) según la posición.</li>
+      <li>Dominar la morfología del grado: <strong>superlativos absolutos, sufijo -érrimo, bases supletivas y elativos léxicos</strong>.</li>
+      <li>Aplicar la <strong>apócope adjetival</strong> en posición prenominal (buen, gran, san).</li>
+    </ol>
+
+    <h2>🎨 1. Definición y naturaleza del adjetivo</h2>
+    <p>Sintácticamente, el <strong>adjetivo</strong> es el <strong>núcleo del Sintagma Adjetival
+    (SAdj)</strong>. Semánticamente, no solo «califica»: expresa <strong>propiedades, relaciones o referencias
+    espaciotemporales</strong> que delimitan o evalúan la extensión del sustantivo al que modifica.</p>
+    <div class="caja regla">⚡ <b>Acuerdo NGLE:</b> los tradicionales «adjetivos determinativos» (mi, este,
+    algún) se clasifican hoy bajo la categoría transversal de <strong>determinantes</strong> y
+    <strong>cuantificadores</strong>. El término «adjetivo» se reserva principalmente para los
+    <strong>calificativos, relacionales y adverbiales</strong>.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> el adjetivo <strong>concuerda</strong> en género y número con
+    el sustantivo al que se refiere, ya sea dentro del sintagma nominal (la casa <em>vieja</em>) o a través de
+    un verbo (la casa está <em>vieja</em>).</div>
+    <div class="caja truco">🧠 <b>Truco del «muy»:</b> si el adjetivo acepta «muy» o «-ísimo», es
+    <b>calificativo</b> (muy inteligente ✔). Si lo rechaza, sospecha de un <b>relacional</b> (*muy solar ✘) o
+    de un <b>elativo</b> que ya trae el grado extremo incluido (*muy enorme ✘).</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">La posición cambia el significado: antepuesto vs. pospuesto</div>
+      <div class="cuatro">
+        <div class="c-ant"><b>📖 Un <u>pobre</u> hombre</b>Antepuesto: digno de lástima (valor subjetivo-afectivo).</div>
+        <div class="c-pos"><b>🛑 Un hombre <u>pobre</u></b>Pospuesto: sin dinero (cualidad objetiva restrictiva).</div>
+        <div class="c-ant"><b>📖 Un <u>viejo</u> amigo</b>Antepuesto: amistad de muchos años (valor temporal).</div>
+        <div class="c-pos"><b>🛑 Un amigo <u>viejo</u></b>Pospuesto: de edad avanzada (cualidad física).</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Adjetivo Avanzado</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🏷️ 2. Clasificación semántica (NGLE)</h2>
+    <div class="tri">
+      <div class="tcal"><b>✨ Calificativos</b>Denotan cualidades graduables (físicas o abstractas): perro <em>grande</em>, solución <em>inteligente</em>. Admiten «muy» y son base de adverbios en -mente.</div>
+      <div class="trel"><b>🔗 Relacionales</b>Clasifican al sustantivo en un ámbito o clase: crisis <em>económica</em>, energía <em>solar</em>. No admiten grado (*muy solar) ni -mente.</div>
+      <div class="tadv"><b>⏱️ Adverbiales</b>Significado temporal o modal, similar a un adverbio: el <em>actual</em> presidente, el <em>presunto</em> culpable, un <em>falso</em> amigo.</div>
+    </div>
+    <div class="caja idea">💡 <b>Prueba del relacional:</b> suele parafrasearse con «de + sustantivo»: crisis
+    económica = crisis <em>de la economía</em>; análisis sintáctico = análisis <em>de la sintaxis</em>. El
+    calificativo no lo permite: *hombre de la pobreza.</div>
+
+    <h2>🧩 3. Las tres funciones sintácticas del adjetivo</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>📖 Adyacente</b>Modifica directamente al núcleo nominal dentro del SN: «La casa <em>vieja</em> se derrumbó».</div>
+      <div><span class="pn">2</span><b>⚓ Atributo</b>Se predica del sujeto con un verbo copulativo (ser, estar, parecer): «La casa está <em>vieja</em>».</div>
+      <div><span class="pn">3</span><b>🎯 C. Predicativo</b>Modifica a la vez a un verbo pleno y a un nombre (Sujeto o CD): «Llegaron <em>cansados</em>».</div>
+    </div>
+    <div class="caja regla">⚡ <b>Clave del predicativo:</b> el verbo NO es copulativo, pero el adjetivo
+    <strong>concuerda</strong> con el sustantivo: «Trajo <em>fría</em> la sopa» (concuerda con «sopa», no con
+    «trajo»). Si el verbo es ser/estar/parecer, es <strong>atributo</strong>.</div>
+    <div class="caja truco">🧠 <b>Truco del sustituto «lo»:</b> el atributo se puede sustituir por
+    <b>«lo»</b>: «El examen parece complejo → El examen <b>lo</b> parece» ✔. El predicativo no admite esa
+    sustitución: «Llegaron cansados → *Lo llegaron» ✘.</div>
+
+    <h2>⚖️ 4. Posición: restrictivos y no restrictivos</h2>
+    <table>
+      <tr><th>Tipo</th><th>Posición típica</th><th>¿Qué hace?</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🛑 Restrictivo (especificativo)</td><td>Pospuesto</td><td>Delimita la extensión del sustantivo: selecciona un subgrupo.</td><td>Me gustan los coches <strong>rojos</strong> (solo los rojos).</td></tr>
+      <tr><td class="k">📖 No restrictivo (explicativo / epíteto)</td><td>Antepuesto</td><td>Añade una nota descriptiva o subjetiva sin limitar el grupo.</td><td>La <strong>blanca</strong> nieve · sus <strong>hermosos</strong> ojos.</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Adjetivo Avanzado</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📉 5. Morfología del grado: superlativos, elativos y apócope</h2>
+    <table>
+      <tr><th>Fenómeno</th><th>¿Qué es?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">📈 Superlativo relativo</td><td>Grado máximo dentro de un conjunto delimitado.</td><td><strong>el más alto</strong> de la clase</td></tr>
+      <tr><td class="k">🏛️ Superlativo absoluto supletivo</td><td>Formas sintéticas herederas del latín: cambia toda la raíz.</td><td>bueno → <strong>óptimo</strong> · malo → <strong>pésimo</strong> · grande → <strong>máximo</strong> · pequeño → <strong>mínimo</strong></td></tr>
+      <tr><td class="k">🧬 Superlativo en -érrimo</td><td>Sufijo culto aplicado a ciertos adjetivos.</td><td>pobre → <strong>paupérrimo</strong> · célebre → <strong>celebérrimo</strong> · libre → <strong>libérrimo</strong></td></tr>
+      <tr><td class="k">🔥 Elativos léxicos</td><td>Llevan implícito el grado extremo: rechazan «muy» y «-ísimo».</td><td><strong>enorme, diminuto, precioso, atroz</strong> (*muy enorme ✘)</td></tr>
+      <tr><td class="k">🔄 Base supletiva</td><td>Cambio de raíz en el comparativo.</td><td>bueno → <strong>mejor</strong> · malo → <strong>peor</strong></td></tr>
+      <tr><td class="k">✂️ Apócope</td><td>Pérdida del sonido final al anteponerse al sustantivo.</td><td>bueno → <strong>buen</strong> tiempo · grande → <strong>gran</strong> rey · santo → <strong>san</strong> Pablo</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Graduar un relacional</td><td>«Una energía muy solar». Los relacionales clasifican, no califican.</td><td>energía solar (sin grado) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Cuantificar un elativo</td><td>«Muy enorme», «enormísimo». El grado extremo ya está en el léxico.</td><td>enorme, atroz, diminuto ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Inventar el -érrimo</td><td>«Grandérrimo», «fuertérrimo». El sufijo culto solo se aplica a ciertas bases latinas.</td><td>paupérrimo, celebérrimo, libérrimo ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir atributo y predicativo</td><td>«Llegaron cansados» no lleva verbo copulativo: no es atributo.</td><td>ser/estar/parecer = atributo · verbo pleno = predicativo ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Ignorar el cambio semántico por posición</td><td>«Un pobre hombre» ≠ «un hombre pobre»: la posición altera el significado.</td><td>Analizar antepuesto vs. pospuesto siempre ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> la gramática avanzada también habla catracho: el
+    <strong>celebérrimo</strong> Morazán (superlativo en -érrimo), nuestro <strong>máximo</strong> héroe
+    Lempira (superlativo supletivo), la <strong>verde</strong> Mosquitia (epíteto antepuesto), la energía
+    <strong>solar</strong> de Nacaome (adjetivo relacional) y el <strong>actual</strong> campeón nacional
+    (adjetivo adverbial). ¡Cinco conceptos de la NGLE en un solo párrafo hondureño!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Adjetivo Avanzado</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Sintácticamente, el adjetivo es el núcleo del Sintagma <span class="linea-resp"></span>.</li>
+      <li>El adjetivo que clasifica al sustantivo y rechaza la gradación es el adjetivo <span class="linea-resp"></span>.</li>
+      <li>La pérdida del sonido final del adjetivo antepuesto (grande → gran) se llama <span class="linea-resp"></span>.</li>
+      <li>La función que modifica a la vez al verbo pleno y al sujeto o CD es el complemento <span class="linea-resp"></span>.</li>
+      <li>Adjetivos como «enorme» o «diminuto» encierran un grado extremo: son <span class="linea-resp"></span> léxicos.</li>
+      <li>«Paupérrimo» es el superlativo culto del adjetivo <span class="linea-resp"></span>.</li>
+      <li>El adjetivo con valor temporal o modal («el actual presidente») es el adjetivo <span class="linea-resp"></span>.</li>
+      <li>El <span class="linea-resp"></span> destaca una cualidad inherente y suele ir antepuesto («la blanca nieve»).</li>
+      <li>«Óptimo» es el superlativo absoluto supletivo del adjetivo <span class="linea-resp"></span>.</li>
+      <li>Un adjetivo <span class="linea-resp"></span> delimita la referencia del sustantivo («los coches rojos»).</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El adjetivo relacional admite «muy» y morfemas de grado.</li>
+      <li>____ La apócope es la pérdida de la terminación fónica al anteponerse al sustantivo.</li>
+      <li>____ «El actual gerente» contiene un adjetivo con valor adverbial temporal.</li>
+      <li>____ El complemento predicativo modifica al verbo y al nombre al mismo tiempo.</li>
+      <li>____ Los adjetivos elativos exigen construcciones con «muy» o «-ísimo».</li>
+      <li>____ «Paupérrimo» es un superlativo absoluto sintético.</li>
+      <li>____ «Óptimo» es el superlativo absoluto supletivo de «grande».</li>
+      <li>____ El epíteto señala una cualidad inherente y suele ir antepuesto.</li>
+      <li>____ «Un pobre hombre» y «un hombre pobre» tienen idéntico significado.</li>
+      <li>____ El superlativo relativo compara dentro de un grupo («el más rápido del equipo»).</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Adjetivo Avanzado</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>Identifica el adjetivo relacional:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> perro enorme</span>
+        <span class="op"><i>b</i> análisis literario</span>
+        <span class="op"><i>c</i> casa hermosísima</span>
+        <span class="op"><i>d</i> llegaron exhaustos</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué función sintáctica ejerce «sucios» en «Trajeron sucios los abrigos»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> adyacente nominal</span>
+        <span class="op"><i>b</i> atributo</span>
+        <span class="op"><i>c</i> complemento predicativo</span>
+        <span class="op"><i>d</i> núcleo del SN</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>Un adjetivo elativo léxico inherente es:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> grandísimo</span>
+        <span class="op"><i>b</i> muy pequeño</span>
+        <span class="op"><i>c</i> diminuto</span>
+        <span class="op"><i>d</i> el más guapo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es el superlativo absoluto supletivo de «malo»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> peor</span>
+        <span class="op"><i>b</i> pésimo</span>
+        <span class="op"><i>c</i> malísimo</span>
+        <span class="op"><i>d</i> el más malo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>El adjetivo «presunto» en «el presunto culpable» se clasifica como:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> adjetivo relacional</span>
+        <span class="op"><i>b</i> calificativo de grado</span>
+        <span class="op"><i>c</i> adjetivo adverbial modal</span>
+        <span class="op"><i>d</i> superlativo relativo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>La concordancia del atributo en «El aula y el patio están…» exige:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> limpios (masculino plural)</span>
+        <span class="op"><i>b</i> limpias (femenino plural)</span>
+        <span class="op"><i>c</i> limpio (masculino singular)</span>
+        <span class="op"><i>d</i> limpia (femenino singular)</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>El sufijo culto «-érrimo» se aplica correctamente en:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> fuertérrimo</span>
+        <span class="op"><i>b</i> celebérrimo</span>
+        <span class="op"><i>c</i> grandérrimo</span>
+        <span class="op"><i>d</i> pobrérrimo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>La pérdida de fonemas al final de un adjetivo antepuesto («gran» por «grande») se denomina:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> elisión</span>
+        <span class="op"><i>b</i> síncopa</span>
+        <span class="op"><i>c</i> metátesis</span>
+        <span class="op"><i>d</i> apócope</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué función tiene el adjetivo en «El examen parece complejo»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> adyacente</span>
+        <span class="op"><i>b</i> atributo</span>
+        <span class="op"><i>c</i> complemento predicativo</span>
+        <span class="op"><i>d</i> núcleo del sujeto</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>«Mejor» es una forma morfológica que corresponde al grado:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> superlativo sintético</span>
+        <span class="op"><i>b</i> positivo elativo</span>
+        <span class="op"><i>c</i> comparativo léxico supletivo</span>
+        <span class="op"><i>d</i> adverbial modal</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Adjetivo Avanzado</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Adjetivo relacional</td><td>A. Modifica a un verbo pleno y al nombre: llegó cansado</td></tr>
+      <tr><td>2. ____ Adjetivo adverbial</td><td>B. Grado máximo léxico inherente: enorme, atroz</td></tr>
+      <tr><td>3. ____ C. Predicativo</td><td>C. Limita la extensión del nombre: los coches rojos</td></tr>
+      <tr><td>4. ____ Atributo</td><td>D. Clasifica y no admite grado: energía solar</td></tr>
+      <tr><td>5. ____ Elativo</td><td>E. Cualidad inherente antepuesta: la blanca nieve</td></tr>
+      <tr><td>6. ____ Apócope</td><td>F. Cambio de raíz en el grado: bueno → mejor</td></tr>
+      <tr><td>7. ____ Epíteto</td><td>G. Valor temporal o modal: el presunto culpable</td></tr>
+      <tr><td>8. ____ Restrictivo</td><td>H. Grado supremo morfológico: -ísimo, óptimo</td></tr>
+      <tr><td>9. ____ Superlativo absoluto</td><td>I. Supresión del fonema final prenominal: gran, buen, san</td></tr>
+      <tr><td>10. ____ Base supletiva</td><td>J. Predicación con verbo copulativo: es feliz</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión El Adjetivo Avanzado.</b> Ahora analizas el adjetivo como
+      todo un lingüista de la NGLE: distingues calificativos, relacionales y adverbiales; separas el adyacente,
+      el atributo y el predicativo; lees el cambio de significado en la posición; y dominas óptimos, pésimos,
+      paupérrimos, elativos y apócopes. ¡Del celebérrimo Morazán a la verde Mosquitia, tu análisis gramatical
+      ya es de nivel superior! 🎓✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Español.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Analizó sintácticamente oraciones con atributo y predicativo en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Adjetivo Avanzado</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. adjetival &nbsp; 2. relacional &nbsp; 3. apócope &nbsp; 4. predicativo &nbsp; 5. elativos &nbsp; 6. pobre &nbsp; 7. adverbial &nbsp; 8. epíteto &nbsp; 9. bueno &nbsp; 10. restrictivo</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1F, 2V, 3V, 4V, 5F, 6V, 7F, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3c, 4b, 5c, 6a, 7b, 8d, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1D, 2G, 3A, 4J, 5B, 6I, 7E, 8C, 9H, 10F</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión El Adjetivo Avanzado» (Bachillerato), fundamentado en la Nueva Gramática de la Lengua Española (NGLE).
+      Puede utilizarse como guía de estudio impresa o digital antes de la evaluación final. Incluye todos los conceptos
+      evaluados en la plataforma (completar, V/F, selección múltiple, pareados) y puede complementarse con el análisis
+      sintáctico de oraciones tomadas de la prensa nacional, el contraste semántico por posición (pobre hombre / hombre
+      pobre) y la prueba del «muy» para separar calificativos, relacionales y elativos. Etapa 9 (final) de la Ruta de la
+      Palabra, culminación del estudio del adjetivo iniciado en II y III Ciclo. La misión interactiva (código QR de la
+      portada) permite al estudiante practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Adjetivo Avanzado · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
