@@ -44,6 +44,7 @@ const MISSIONS = [
   { id: 31, title: 'Perímetro y Área de Cuadriláteros',                  subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'forma',   etapa: 4, xp: 30, icon: '🔲', pais: 'HN', url: 'misiones/2ciclo-perimetro-cuadrilateros/perimetro-cuadrilateros.html' },
   { id: 32, title: 'Área de Polígonos Regulares',                        subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'forma',   etapa: 5, xp: 30, icon: '🔷', pais: 'HN', url: 'misiones/2ciclo-area-poligonos-regulares/area-poligonos-regulares.html' },
   { id: 33, title: 'La Célula',                                          subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'vida',    etapa: 1, xp: 35, icon: '🔬', pais: 'HN', url: 'misiones/2y3ciclo-la-celula/la-celula.html' },
+  { id: 34, title: 'Los Cinco Reinos',                                   subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'vida',    etapa: 2, xp: 35, icon: '🌳', pais: 'HN', url: 'misiones/2y3ciclo-cinco-reinos/cinco-reinos.html' },
 ];
 
 /* Helpers de rutas (globales: index los usa en app.js) */
