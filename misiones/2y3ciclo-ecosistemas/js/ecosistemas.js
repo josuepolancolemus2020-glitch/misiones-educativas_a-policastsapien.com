@@ -33,14 +33,14 @@ function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));i
 
 // ===================== ACHIEVEMENTS =====================
 const ACHIEVEMENTS={
-  primer_quiz:{icon:'🔬',label:'Primera prueba de los reinos superada'},
-  flash_master:{icon:'🃏',label:'Todas las flashcards de los reinos exploradas'},
+  primer_quiz:{icon:'🔬',label:'Primera prueba de los ecosistemas superada'},
+  flash_master:{icon:'🃏',label:'Todas las flashcards de los ecosistemas exploradas'},
   clasif_pro:{icon:'🗂️',label:'Clasificador de seres vivos experto'},
-  id_master:{icon:'🔍',label:'Identificador de reinos maestro'},
-  reto_hero:{icon:'🏆',label:'Héroe del reto de los cinco reinos'},
+  id_master:{icon:'🔍',label:'Identificador de ecosistemas maestro'},
+  reto_hero:{icon:'🏆',label:'Héroe del reto de los ecosistemas'},
   nivel3:{icon:'🧫',label:'¡Naturalista! Nivel 3'},
-  nivel5:{icon:'🥇',label:'¡Maestro de los Reinos! Nivel 6'},
-  widgets_master:{icon:'🧩',label:'Widgets de los reinos dominados'}
+  nivel5:{icon:'🥇',label:'¡Maestro de los Ecosistemas! Nivel 6'},
+  widgets_master:{icon:'🧩',label:'Widgets de los ecosistemas dominados'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -49,7 +49,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#16a34a','#4ade80','#0d9488','#5eead4','#00b894'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador 🔬'},{t:55,n:'Naturalista 🧫'},{t:90,n:'Biólogo 🧬'},{t:130,n:'Investigador 🔭'},{t:165,n:'Taxónomo 🏅'},{t:190,n:'Maestro de los Reinos 🏆'}];
+const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador 🔬'},{t:55,n:'Naturalista 🧫'},{t:90,n:'Biólogo 🧬'},{t:130,n:'Investigador 🔭'},{t:165,n:'Ecólogo 🏅'},{t:190,n:'Maestro de los Ecosistemas 🏆'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -61,20 +61,20 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Taxonomía',a:'🌳 Ciencia que <strong>identifica, nombra y clasifica</strong> a los seres vivos, ordenándolos en grupos según las características que comparten.'},
-  {w:'Reino',a:'👑 El grupo <strong>más grande y general</strong> de la clasificación. Reúne a todos los seres vivos con características básicas comunes. Existen <strong>cinco reinos</strong>: Monera, Protista, Fungi, Plantae y Animalia.'},
-  {w:'Especie',a:'🐾 El grupo <strong>más pequeño</strong> de la clasificación. Reúne a seres tan parecidos que pueden <strong>reproducirse entre sí</strong> y tener descendencia fértil.'},
-  {w:'Nombre científico',a:'🏷️ Nombre en <strong>latín</strong> con dos palabras: el <strong>género</strong> y la <strong>especie</strong>. Es igual en todo el mundo. Ejemplo: el ser humano es <em>Homo sapiens</em>.'},
-  {w:'Autótrofo',a:'🌞 Ser vivo que <strong>fabrica su propio alimento</strong>, casi siempre por <strong>fotosíntesis</strong> con la luz del Sol. Ejemplos: las plantas y las algas.'},
-  {w:'Heterótrofo',a:'🍖 Ser vivo que <strong>no fabrica su alimento</strong>: lo obtiene de otros seres vivos. Ejemplos: los animales y los hongos.'},
-  {w:'Procariota / Eucariota',a:'🧬 <strong>Procariota</strong>: célula sin núcleo definido (bacterias). <strong>Eucariota</strong>: célula con núcleo definido (protistas, hongos, plantas y animales).'},
-  {w:'Reino Monera',a:'🦠 Las <strong>bacterias</strong> y cianobacterias. Seres <strong>unicelulares</strong> y <strong>procariotas</strong>. Fueron los primeros seres vivos de la Tierra. Nutrición autótrofa o heterótrofa.'},
-  {w:'Reino Protista',a:'🔬 El reino más <strong>variado</strong>. Seres <strong>eucariotas</strong>, casi todos <strong>unicelulares</strong>, que viven en el agua o en lugares húmedos. Ejemplos: la ameba, el paramecio y las algas.'},
-  {w:'Reino Fungi',a:'🍄 Los <strong>hongos</strong>. Eucariotas, <strong>heterótrofos</strong> (absorben su alimento). Su pared es de <strong>quitina</strong>. Muchos son <strong>descomponedores</strong>. Ejemplos: setas, mohos y levaduras.'},
-  {w:'Reino Plantae',a:'🌿 Las <strong>plantas</strong>. Seres <strong>pluricelulares</strong>, <strong>eucariotas</strong> y <strong>autótrofos</strong> (hacen fotosíntesis con clorofila). Producen el oxígeno del planeta. Ejemplos: musgos, helechos y árboles.'},
-  {w:'Reino Animalia',a:'🐾 Los <strong>animales</strong>, incluido el ser humano. Seres <strong>pluricelulares</strong>, <strong>eucariotas</strong> y <strong>heterótrofos</strong>. La mayoría se desplazan. No tienen pared celular.'},
-  {w:'Vertebrados / Invertebrados',a:'🦴 Los animales <strong>vertebrados</strong> tienen columna vertebral (peces, anfibios, reptiles, aves, mamíferos). Los <strong>invertebrados</strong> no la tienen (insectos, moluscos, gusanos).'},
-  {w:'Descomponedor',a:'♻️ Ser vivo (sobre todo <strong>hongos y bacterias</strong>) que se alimenta de restos de plantas y animales muertos, devolviendo los <strong>nutrientes al suelo</strong>.'},
+  {w:'Ecosistema',a:'🌍 Conjunto formado por los <strong>seres vivos</strong> de un lugar, su <strong>medio físico</strong> y todas las <strong>relaciones</strong> entre ellos. Ejemplos: un bosque, un río, un arrecife.'},
+  {w:'Factores bióticos',a:'🐾 Los <strong>seres vivos</strong> del ecosistema: plantas, animales, hongos y bacterias.'},
+  {w:'Factores abióticos',a:'💧 Los componentes <strong>sin vida</strong> del ecosistema: el agua, la luz del sol, el aire, el suelo y la temperatura.'},
+  {w:'Biotopo',a:'🏞️ El <strong>medio físico</strong> donde habitan los seres vivos: el lugar y sus factores abióticos.'},
+  {w:'Comunidad',a:'🌐 El conjunto de <strong>todas las poblaciones</strong> de seres vivos que conviven en un lugar. También se llama biocenosis.'},
+  {w:'Población',a:'🐟 Grupo de individuos de la <strong>misma especie</strong> que viven en un mismo lugar (todos los venados de un bosque).'},
+  {w:'Productores',a:'🌿 Seres <strong>autótrofos</strong> (plantas y algas) que fabrican su propio alimento por fotosíntesis. Son la <strong>base</strong> de toda cadena alimenticia.'},
+  {w:'Consumidores',a:'🐾 <strong>Heterótrofos</strong> que comen a otros seres: herbívoros (1º), carnívoros (2º y 3º) y omnívoros.'},
+  {w:'Descomponedores',a:'🍄 <strong>Hongos y bacterias</strong> que reciclan la materia muerta y devuelven los <strong>nutrientes</strong> al suelo. Cierran el ciclo de la materia.'},
+  {w:'Cadena alimenticia',a:'🔗 Serie que muestra <strong>quién se come a quién</strong>. La energía pasa de un ser al siguiente, empezando por el <strong>Sol</strong>.'},
+  {w:'Red alimenticia',a:'🕸️ Varias <strong>cadenas alimenticias conectadas</strong> entre sí, porque un mismo animal come de varias fuentes.'},
+  {w:'Hábitat',a:'🏠 El <strong>lugar</strong> donde vive un ser vivo (su "casa"). El <strong>nicho</strong> es su papel o "trabajo" en el ecosistema.'},
+  {w:'Mutualismo',a:'🐝 Relación entre dos especies en la que <strong>ambas se benefician</strong>. Ejemplo: la abeja se alimenta del néctar y poliniza la flor.'},
+  {w:'Ecología',a:'🌱 Ciencia que estudia los <strong>ecosistemas</strong> y las relaciones de los seres vivos entre sí y con su medio.'},
 ];
 let fcIdx=0;
 function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cómo se llama la ciencia que clasifica y nombra a los seres vivos?',o:['a) Biología','b) Taxonomía','c) Ecología','d) Geología'],c:1},
-  {q:'¿Cuántos reinos propuso Robert Whittaker en 1969?',o:['a) Tres','b) Cuatro','c) Cinco','d) Seis'],c:2},
-  {q:'¿A qué reino pertenecen las bacterias?',o:['a) Protista','b) Monera','c) Fungi','d) Animalia'],c:1},
-  {q:'¿Qué reino reúne a los hongos, como las setas y los mohos?',o:['a) Plantae','b) Monera','c) Fungi','d) Protista'],c:2},
-  {q:'¿Cuál es el grupo MÁS PEQUEÑO de la clasificación?',o:['a) El reino','b) La familia','c) El género','d) La especie'],c:3},
-  {q:'¿Qué reino está formado por seres pluricelulares y autótrofos que hacen fotosíntesis?',o:['a) Plantae','b) Animalia','c) Fungi','d) Monera'],c:0},
-  {q:'La ameba y el paramecio pertenecen al reino…',o:['a) Monera','b) Protista','c) Plantae','d) Fungi'],c:1},
-  {q:'¿Qué significa que un ser vivo sea "autótrofo"?',o:['a) Que se mueve','b) Que fabrica su propio alimento','c) Que come otros seres','d) Que es unicelular'],c:1},
-  {q:'¿A qué reino pertenece el ser humano?',o:['a) Plantae','b) Protista','c) Animalia','d) Fungi'],c:2},
+  {q:'¿Qué es un ecosistema?',o:['a) Solo los animales de un lugar','b) El conjunto de seres vivos, su medio físico y sus relaciones','c) Solo las plantas de un bosque','d) Solo el suelo y el agua'],c:1},
+  {q:'¿Cómo se llaman los factores SIN vida de un ecosistema?',o:['a) Bióticos','b) Abióticos','c) Orgánicos','d) Vivos'],c:1},
+  {q:'¿Qué seres vivos son los productores de un ecosistema?',o:['a) Los animales','b) Los hongos','c) Las plantas','d) Las bacterias'],c:2},
+  {q:'Un animal herbívoro es un consumidor…',o:['a) primario','b) productor','c) descomponedor','d) terciario'],c:0},
+  {q:'¿Quiénes reciclan la materia muerta y devuelven nutrientes al suelo?',o:['a) Los productores','b) Los herbívoros','c) Los descomponedores','d) Los depredadores'],c:2},
+  {q:'En una cadena alimenticia, ¿de dónde viene la energía al inicio?',o:['a) Del suelo','b) Del Sol','c) Del agua','d) Del aire'],c:1},
+  {q:'Un grupo de individuos de la misma especie se llama…',o:['a) comunidad','b) población','c) bioma','d) hábitat'],c:1},
+  {q:'La relación en la que AMBAS especies se benefician se llama…',o:['a) depredación','b) competencia','c) mutualismo','d) parasitismo'],c:2},
+  {q:'¿Cuál de estos es un ejemplo de factor abiótico?',o:['a) Una planta','b) El agua','c) Un pez','d) Una bacteria'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -102,14 +102,14 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Autótrofo','Heterótrofo'],headA:'🌞 Autótrofo (fabrica su alimento)',headB:'🍖 Heterótrofo (come otros)',colA:'aut',colB:'het',
-   words:[{w:'Planta',t:'aut'},{w:'Animal',t:'het'},{w:'Alga',t:'aut'},{w:'Hongo',t:'het'},{w:'Hace fotosíntesis',t:'aut'},{w:'Absorbe su alimento',t:'het'},{w:'Fabrica su alimento',t:'aut'},{w:'Come otros seres vivos',t:'het'},{w:'Cianobacteria',t:'aut'},{w:'Descomponedor',t:'het'}]},
-  {label:['Unicelular','Pluricelular'],headA:'🔵 Unicelular (una célula)',headB:'🔶 Pluricelular (muchas células)',colA:'uni',colB:'plu',
-   words:[{w:'Bacteria',t:'uni'},{w:'Árbol',t:'plu'},{w:'Ameba',t:'uni'},{w:'Ser humano',t:'plu'},{w:'Paramecio',t:'uni'},{w:'Perro',t:'plu'},{w:'Una sola célula',t:'uni'},{w:'Muchas células',t:'plu'},{w:'Levadura',t:'uni'},{w:'Helecho',t:'plu'}]},
-  {label:['Procariota','Eucariota'],headA:'🦠 Procariota (sin núcleo)',headB:'🧬 Eucariota (con núcleo)',colA:'pro',colB:'euc',
-   words:[{w:'Bacteria',t:'pro'},{w:'Planta',t:'euc'},{w:'Sin núcleo definido',t:'pro'},{w:'Con núcleo definido',t:'euc'},{w:'Reino Monera',t:'pro'},{w:'Reino Animalia',t:'euc'},{w:'ADN libre',t:'pro'},{w:'ADN en el núcleo',t:'euc'},{w:'Cianobacteria',t:'pro'},{w:'Hongo',t:'euc'}]},
-  {label:['Vertebrado','Invertebrado'],headA:'🦴 Vertebrado (con columna)',headB:'🐛 Invertebrado (sin columna)',colA:'ver',colB:'inv',
-   words:[{w:'Pez',t:'ver'},{w:'Insecto',t:'inv'},{w:'Águila',t:'ver'},{w:'Caracol',t:'inv'},{w:'Rana',t:'ver'},{w:'Lombriz',t:'inv'},{w:'Perro',t:'ver'},{w:'Araña',t:'inv'},{w:'Serpiente',t:'ver'},{w:'Medusa',t:'inv'}]},
+  {label:['Biótico','Abiótico'],headA:'🐾 Factor biótico (con vida)',headB:'💧 Factor abiótico (sin vida)',colA:'bio',colB:'abio',
+   words:[{w:'Árbol',t:'bio'},{w:'Agua',t:'abio'},{w:'Venado',t:'bio'},{w:'Luz del sol',t:'abio'},{w:'Hongo',t:'bio'},{w:'Temperatura',t:'abio'},{w:'Bacteria',t:'bio'},{w:'Aire',t:'abio'},{w:'Pez',t:'bio'},{w:'Suelo',t:'abio'}]},
+  {label:['Productor','Consumidor'],headA:'🌿 Productor (fabrica alimento)',headB:'🐾 Consumidor (come otros)',colA:'pro',colB:'con',
+   words:[{w:'Pasto',t:'pro'},{w:'Conejo',t:'con'},{w:'Árbol',t:'pro'},{w:'León',t:'con'},{w:'Alga',t:'pro'},{w:'Rana',t:'con'},{w:'Maíz',t:'pro'},{w:'Águila',t:'con'},{w:'Planta',t:'pro'},{w:'Pez',t:'con'}]},
+  {label:['Terrestre','Acuático'],headA:'🌳 Ecosistema terrestre',headB:'🌊 Ecosistema acuático',colA:'ter',colB:'acu',
+   words:[{w:'Bosque',t:'ter'},{w:'Río',t:'acu'},{w:'Desierto',t:'ter'},{w:'Océano',t:'acu'},{w:'Selva',t:'ter'},{w:'Lago',t:'acu'},{w:'Sabana',t:'ter'},{w:'Arrecife',t:'acu'},{w:'Bosque de pino',t:'ter'},{w:'Manglar',t:'acu'}]},
+  {label:['Herbívoro','Carnívoro'],headA:'🌱 Herbívoro (come plantas)',headB:'🥩 Carnívoro (come animales)',colA:'her',colB:'car',
+   words:[{w:'Venado',t:'her'},{w:'Puma',t:'car'},{w:'Conejo',t:'her'},{w:'Águila',t:'car'},{w:'Vaca',t:'her'},{w:'Tiburón',t:'car'},{w:'Saltamontes',t:'her'},{w:'Serpiente',t:'car'},{w:'Oruga',t:'her'},{w:'Zorro',t:'car'}]},
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -119,14 +119,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['El','reino','Monera','está','formado','por','bacterias.'],c:2,art:'Reino de las bacterias'},
-  {s:['La','taxonomía','clasifica','a','los','seres','vivos.'],c:1,art:'Ciencia que clasifica a los seres vivos'},
-  {s:['Las','plantas','son','autótrofas','y','hacen','fotosíntesis.'],c:3,art:'Tipo de nutrición que fabrica su propio alimento'},
-  {s:['Los','hongos','pertenecen','al','reino','Fungi.'],c:5,art:'Reino de los hongos'},
-  {s:['La','especie','es','el','grupo','más','pequeño.'],c:1,art:'Nivel de clasificación más pequeño'},
-  {s:['La','ameba','es','un','protista','unicelular.'],c:4,art:'Reino de la ameba y el paramecio'},
-  {s:['El','ser','humano','pertenece','al','reino','Animalia.'],c:6,art:'Reino de los animales'},
-  {s:['Una','bacteria','es','un','ser','unicelular.'],c:5,art:'Ser formado por una sola célula'},
+  {s:['Los','factores','abióticos','no','tienen','vida.'],c:2,art:'Componentes sin vida del ecosistema'},
+  {s:['Las','plantas','son','los','productores','del','ecosistema.'],c:4,art:'Seres que fabrican su propio alimento'},
+  {s:['Los','hongos','son','descomponedores','del','ecosistema.'],c:3,art:'Reciclan la materia muerta'},
+  {s:['El','venado','es','un','consumidor','herbívoro.'],c:5,art:'Consumidor que se alimenta de plantas'},
+  {s:['Una','población','reúne','individuos','de','la','misma','especie.'],c:1,art:'Grupo de individuos de la misma especie'},
+  {s:['El','mutualismo','beneficia','a','las','dos','especies.'],c:1,art:'Relación en la que ambas especies ganan'},
+  {s:['El','Sol','es','la','fuente','de','energía','del','ecosistema.'],c:1,art:'Fuente inicial de energía de las cadenas'},
+  {s:['El','ecosistema','incluye','seres','vivos','y','su','medio.'],c:1,art:'Seres vivos, su medio físico y sus relaciones'},
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -136,14 +136,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'La ciencia que clasifica y nombra a los seres vivos es la ___.',opts:['taxonomía','geología','astronomía'],c:0},
-  {s:'El reino de las bacterias se llama reino ___.',opts:['Plantae','Monera','Fungi'],c:1},
-  {s:'Un ser vivo ___ fabrica su propio alimento por fotosíntesis.',opts:['heterótrofo','descomponedor','autótrofo'],c:2},
-  {s:'Los hongos pertenecen al reino ___.',opts:['Fungi','Animalia','Protista'],c:0},
-  {s:'El grupo más pequeño de la clasificación es la ___.',opts:['familia','especie','clase'],c:1},
-  {s:'La ameba y el paramecio pertenecen al reino ___.',opts:['Monera','Plantae','Protista'],c:2},
-  {s:'Los animales son seres ___ porque comen otros seres vivos.',opts:['heterótrofos','autótrofos','unicelulares'],c:0},
-  {s:'El ser humano pertenece al reino ___.',opts:['Plantae','Animalia','Fungi'],c:1},
+  {s:'El conjunto de seres vivos, su medio y sus relaciones se llama ___.',opts:['ecosistema','población','bioma'],c:0},
+  {s:'Los factores ___ son los componentes sin vida del ecosistema.',opts:['bióticos','abióticos','orgánicos'],c:1},
+  {s:'Las plantas son los ___ del ecosistema porque fabrican su alimento.',opts:['consumidores','productores','descomponedores'],c:1},
+  {s:'Los ___ reciclan la materia muerta y devuelven nutrientes al suelo.',opts:['herbívoros','descomponedores','depredadores'],c:1},
+  {s:'Un animal herbívoro es un consumidor ___.',opts:['primario','terciario','productor'],c:0},
+  {s:'Un grupo de individuos de la misma especie es una ___.',opts:['comunidad','población','red'],c:1},
+  {s:'En la cadena alimenticia, la energía viene del ___.',opts:['suelo','Sol','agua'],c:1},
+  {s:'La relación donde ambas especies se benefician es el ___.',opts:['parasitismo','mutualismo','depredación'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -624,50 +624,50 @@ function printEvalCrit(){
 
 // ===================== LABORATORIO DE LA CÉLULA =====================
 const parteData={
-  monera:{
-    nombre:'Reino Monera',icon:'🦠',
-    estructura:{title:'Características',info:'• Seres <strong>unicelulares</strong> (una sola célula)<br>• Célula <strong>procariota</strong>: sin núcleo definido, su ADN está libre<br>• Los seres vivos <strong>más pequeños y sencillos</strong><br>• Muchos viven en <strong>colonias</strong><br>• Fueron los <strong>primeros seres vivos</strong> de la Tierra'},
-    funcion:{title:'Nutrición',info:'• Puede ser <strong>autótrofa o heterótrofa</strong><br>• Algunas hacen <strong>fotosíntesis</strong> (cianobacterias)<br>• Otras <strong>descomponen</strong> restos o viven dentro de otros seres<br>• Se reproducen muy rápido por <strong>bipartición</strong> (se parten en dos)'},
-    ubicacion:{title:'Ejemplos',info:'• Las <strong>bacterias</strong> (como <em>Lactobacillus</em>, del yogur)<br>• Las <strong>cianobacterias</strong>, que hacen fotosíntesis<br>• Bacterias que ayudan a la <strong>digestión</strong><br>• Algunas bacterias que causan <strong>enfermedades</strong>'},
-    dato:{title:'Dato curioso',info:'• En tu cuerpo hay <strong>más bacterias que células propias</strong>, ¡y la mayoría te ayudan!<br>• Sin bacterias no habría yogur, queso ni pan<br>• Viven hasta en los lugares más extremos: hielos, volcanes y el fondo del mar'}
+  bosquenublado:{
+    nombre:'Bosque nublado',icon:'🌫️',
+    estructura:{title:'¿Qué es?',info:'• Bosque de <strong>montaña alta</strong> casi siempre cubierto de <strong>niebla</strong><br>• Muy <strong>húmedo</strong> y de gran <strong>biodiversidad</strong><br>• Sus árboles están cubiertos de <strong>musgos, orquídeas y bromelias</strong><br>• Es un ecosistema <strong>terrestre</strong>'},
+    funcion:{title:'¿Dónde está?',info:'• En las <strong>montañas altas</strong> de Honduras (arriba de 1500 m)<br>• Parque Nacional <strong>La Tigra</strong>, <strong>Cusuco</strong> y <strong>Celaque</strong> (el más alto del país)<br>• Zonas frescas y muy lluviosas'},
+    ubicacion:{title:'Seres vivos',info:'• El <strong>quetzal</strong> y el tucán<br>• El <strong>mono</strong>, el jaguar y el puma<br>• Ranas, salamandras y muchos insectos<br>• <strong>Orquídeas</strong>, helechos gigantes y musgos'},
+    dato:{title:'Dato curioso',info:'• La <strong>niebla es su "lluvia"</strong>: el agua se condensa en las hojas<br>• Son <strong>fábricas de agua</strong> que alimentan ríos y abastecen ciudades como Tegucigalpa<br>• Guardan especies que no viven en ningún otro lugar'}
   },
-  protista:{
-    nombre:'Reino Protista',icon:'🔬',
-    estructura:{title:'Características',info:'• Seres <strong>eucariotas</strong> (con núcleo definido)<br>• Casi todos <strong>unicelulares</strong>; algunos forman colonias<br>• El reino <strong>más variado</strong> de todos<br>• Viven en el <strong>agua o en lugares húmedos</strong>'},
-    funcion:{title:'Nutrición',info:'• Puede ser <strong>autótrofa o heterótrofa</strong><br>• Las <strong>algas</strong> hacen fotosíntesis (autótrofas)<br>• Los <strong>protozoos</strong> capturan su alimento (heterótrofos)<br>• Muchos se mueven con <strong>cilios o flagelos</strong>'},
-    ubicacion:{title:'Ejemplos',info:'• La <strong>ameba</strong>, que se mueve con seudópodos<br>• El <strong>paramecio</strong>, cubierto de cilios<br>• Las <strong>algas</strong> unicelulares del mar<br>• El <em>Plasmodium</em>, que causa el paludismo'},
-    dato:{title:'Dato curioso',info:'• Las <strong>algas del mar producen más oxígeno</strong> que todos los bosques juntos<br>• La ameba cambia de forma constantemente para moverse y comer<br>• A este reino se le llama a veces el "cajón de sastre" porque reúne lo que no encaja en los demás'}
+  arrecife:{
+    nombre:'Arrecife de coral',icon:'🐠',
+    estructura:{title:'¿Qué es?',info:'• Ecosistema <strong>marino</strong> construido por los <strong>corales</strong> (animales diminutos)<br>• Estructuras duras de <strong>carbonato de calcio</strong><br>• Una de las mayores <strong>biodiversidades</strong> del planeta: la "selva del mar"'},
+    funcion:{title:'¿Dónde está?',info:'• En el <strong>mar Caribe</strong> hondureño<br>• En las <strong>Islas de la Bahía</strong>: Roatán, Utila y Guanaja<br>• Forma parte del <strong>arrecife Mesoamericano</strong>'},
+    ubicacion:{title:'Seres vivos',info:'• <strong>Corales</strong> de muchas formas y colores<br>• Peces de colores, <strong>tortugas marinas</strong> y langostas<br>• El <strong>tiburón ballena</strong> (que se ve en Utila)<br>• Estrellas de mar y erizos'},
+    dato:{title:'Dato curioso',info:'• El <strong>coral es un animal</strong>, no una planta ni una roca<br>• El arrecife Mesoamericano es el <strong>segundo más grande del mundo</strong>, tras la Gran Barrera de Australia<br>• Un aumento de la temperatura del mar puede "blanquear" y matar los corales'}
   },
-  fungi:{
-    nombre:'Reino Fungi',icon:'🍄',
-    estructura:{title:'Características',info:'• Seres <strong>eucariotas</strong>, uni o pluricelulares<br>• Su pared celular es de <strong>quitina</strong> (no de celulosa)<br>• <strong>No</strong> tienen clorofila ni hacen fotosíntesis<br>• Muchos forman <strong>hifas</strong> (filamentos) que crecen en el suelo'},
-    funcion:{title:'Nutrición',info:'• Siempre <strong>heterótrofa por absorción</strong><br>• Muchos son <strong>descomponedores</strong>: reciclan restos muertos<br>• Otros son <strong>parásitos</strong> (viven sobre otros seres)<br>• Algunos viven en <strong>asociación</strong> con plantas o algas (líquenes)'},
-    ubicacion:{title:'Ejemplos',info:'• Las <strong>setas</strong> y champiñones<br>• Los <strong>mohos</strong> del pan y las frutas<br>• Las <strong>levaduras</strong> del pan, la cerveza y el queso<br>• El hongo del <strong>pie de atleta</strong>'},
-    dato:{title:'Dato curioso',info:'• Del hongo <em>Penicillium</em> se obtiene la <strong>penicilina</strong>, el primer antibiótico<br>• El organismo vivo más grande del mundo es un <strong>hongo</strong> bajo tierra en EE. UU.<br>• Sin los hongos descomponedores, el planeta estaría cubierto de restos muertos'}
+  manglar:{
+    nombre:'Manglar',icon:'🌊',
+    estructura:{title:'¿Qué es?',info:'• Bosque <strong>costero</strong> de árboles (mangles) que viven con las <strong>raíces en agua salada</strong><br>• Está <strong>entre la tierra y el mar</strong><br>• Ecosistema de transición, muy productivo'},
+    funcion:{title:'¿Dónde está?',info:'• En las <strong>costas del Caribe</strong> hondureño<br>• En el <strong>Golfo de Fonseca</strong> (costa del Pacífico)<br>• En desembocaduras de ríos y lagunas costeras'},
+    ubicacion:{title:'Seres vivos',info:'• El <strong>mangle rojo</strong> y otros mangles<br>• <strong>Cangrejos</strong>, camarones y ostras<br>• Aves como <strong>garzas</strong>, pelícanos y espátulas<br>• Muchos <strong>peces jóvenes</strong> que crecen ahí'},
+    dato:{title:'Dato curioso',info:'• Los manglares son las <strong>"guarderías" del mar</strong>: muchos peces nacen y crecen protegidos entre sus raíces<br>• <strong>Protegen la costa</strong> de los huracanes y las marejadas<br>• Guardan enormes cantidades de carbono'}
   },
-  plantae:{
-    nombre:'Reino Plantae',icon:'🌿',
-    estructura:{title:'Características',info:'• Seres <strong>pluricelulares</strong> y <strong>eucariotas</strong><br>• Tienen <strong>cloroplastos</strong> con clorofila (color verde)<br>• Pared celular de <strong>celulosa</strong><br>• No se desplazan: viven <strong>fijas</strong> al suelo'},
-    funcion:{title:'Nutrición',info:'• Siempre <strong>autótrofa</strong><br>• Fabrican su alimento por <strong>fotosíntesis</strong>: luz + agua + CO₂ → glucosa y oxígeno<br>• Toman agua y sales minerales por la <strong>raíz</strong><br>• Producen el <strong>oxígeno</strong> del planeta'},
-    ubicacion:{title:'Ejemplos',info:'• Los <strong>musgos</strong> y <strong>helechos</strong> (sin flores)<br>• Los árboles como el <strong>pino</strong> y el <strong>roble</strong><br>• Las plantas con flor: <strong>maíz</strong>, <strong>rosal</strong>, frutales<br>• Todas las hortalizas y cultivos'},
-    dato:{title:'Dato curioso',info:'• Las plantas son la <strong>base de casi todas las cadenas alimenticias</strong><br>• El árbol más alto del mundo (una secuoya) mide más de <strong>115 metros</strong><br>• Sin plantas no existirían el oxígeno ni el alimento de los animales'}
+  pinar:{
+    nombre:'Bosque de pino',icon:'🌲',
+    estructura:{title:'¿Qué es?',info:'• Bosque <strong>terrestre</strong> dominado por <strong>pinos y ocotes</strong><br>• El bosque <strong>más extenso</strong> de Honduras<br>• Suelos secos y clima templado'},
+    funcion:{title:'¿Dónde está?',info:'• En las <strong>montañas</strong> de casi todo el país<br>• Grandes pinares en <strong>Olancho</strong>, El Paraíso y Francisco Morazán<br>• En tierras altas y medias'},
+    ubicacion:{title:'Seres vivos',info:'• El <strong>pino</strong> y el ocote<br>• El <strong>venado cola blanca</strong> y el coyote<br>• Ardillas, conejos y armadillos<br>• Pájaros <strong>carpinteros</strong> y muchas aves'},
+    dato:{title:'Dato curioso',info:'• El <strong>pino</strong> es uno de los símbolos de los bosques de Honduras<br>• Dos grandes amenazas: los <strong>incendios</strong> y el <strong>gorgojo descortezador</strong> del pino<br>• De los pinos se obtiene madera y resina'}
   },
-  animalia:{
-    nombre:'Reino Animalia',icon:'🐾',
-    estructura:{title:'Características',info:'• Seres <strong>pluricelulares</strong> y <strong>eucariotas</strong><br>• <strong>No</strong> tienen pared celular ni clorofila<br>• La mayoría se <strong>desplazan</strong> para buscar alimento<br>• Tienen <strong>órganos y sistemas</strong> especializados'},
-    funcion:{title:'Nutrición',info:'• Siempre <strong>heterótrofa</strong>: comen otros seres vivos<br>• <strong>Herbívoros</strong> (comen plantas), <strong>carnívoros</strong> (comen animales) y <strong>omnívoros</strong> (ambos)<br>• Digieren el alimento dentro de su cuerpo'},
-    ubicacion:{title:'Ejemplos',info:'• <strong>Invertebrados</strong> (sin columna): insectos, arañas, moluscos, gusanos<br>• <strong>Vertebrados</strong> (con columna): peces, anfibios, reptiles, aves y mamíferos<br>• El <strong>ser humano</strong> es un mamífero de este reino'},
-    dato:{title:'Dato curioso',info:'• Cerca del <strong>95% de los animales son invertebrados</strong> (¡sobre todo insectos!)<br>• El animal más grande de la historia es la <strong>ballena azul</strong><br>• Los animales existen gracias a las plantas: dependen de su oxígeno y su alimento'}
+  rio:{
+    nombre:'Río (agua dulce)',icon:'🏞️',
+    estructura:{title:'¿Qué es?',info:'• Ecosistema <strong>acuático de agua dulce</strong> en movimiento<br>• Conecta las <strong>montañas con el mar</strong><br>• El agua corre y arrastra nutrientes'},
+    funcion:{title:'¿Dónde está?',info:'• En los ríos de Honduras: el <strong>Patuca</strong>, el <strong>Ulúa</strong>, el <strong>Coco</strong> y el <strong>Choluteca</strong><br>• Nacen en las montañas y desembocan en el mar'},
+    ubicacion:{title:'Seres vivos',info:'• Peces como el <strong>cuyamel</strong> y la tilapia<br>• <strong>Camarones</strong> de río, cangrejos y caracoles<br>• <strong>Garzas</strong>, martines pescadores y nutrias<br>• Plantas acuáticas en las orillas'},
+    dato:{title:'Dato curioso',info:'• El <strong>río Patuca</strong> es el más largo de Honduras<br>• Los ríos nos dan <strong>agua, pesca y riego</strong> para los cultivos<br>• La <strong>contaminación</strong> y la basura son su mayor amenaza'}
   }
 };
-let labParte='monera',labAspecto='estructura';
+let labParte='bosquenublado',labAspecto='estructura';
 function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
 function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
 function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAspecto];document.getElementById('lab-sentence').innerHTML=`🔬 Explorando: <strong>${data.nombre}</strong> → <strong>${asp.title}</strong>`;document.getElementById('lab-display').innerHTML=`<div class="lab-cont-header">${data.icon} ${data.nombre}</div><div class="lab-asp-title">${asp.title}</div><div class="lab-asp-info">${asp.info}</div>`;}
 
 // ===================== DIPLOMA =====================
 function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
-function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Excelente naturalista!','¡Dominas los cinco reinos!','¡Maestro de los Reinos!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Excelente naturalista!','¡Dominas los ecosistemas!','¡Maestro de los Ecosistemas!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
 function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🔬 ¡${name} completó la Misión "Los Ecosistemas"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
@@ -689,7 +689,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   showNeuro();
   showEnfer();
   updateLabDisplay();
-  document.querySelector('[data-parte="monera"]')?.classList.add('active-pri');
+  document.querySelector('[data-parte="bosquenublado"]')?.classList.add('active-pri');
   document.querySelector('[data-aspecto="estructura"]')?.classList.add('active-sec');
   renderAchPanel();
 });
