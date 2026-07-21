@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Curricular M.E.T.A.S — DCNB Honduras 4º–9º</title>
+<style>
+  :root{
+    --mat:#1d4ed8; --mat-claro:#eff6ff; --mat-linea:#bfdbfe;
+    --esp:#b45309; --esp-claro:#fffbeb; --esp-linea:#fde68a;
+    --nat:#0d9488; --nat-claro:#f0fdfa; --nat-linea:#cfece7;
+    --soc:#dc2626; --soc-claro:#fef2f2; --soc-linea:#f0d4d4;
+    --gris:#475569; --gris-claro:#f1f5f9;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;font-size:10.5pt;color:#1e293b;background:#e2e8f0;line-height:1.35;}
+  .hoja{max-width:820px;margin:14px auto;background:#fff;padding:34px 40px;box-shadow:0 2px 10px rgba(0,0,0,.15);}
+
+  /* Portada */
+  .portada{text-align:center;border-bottom:4px solid var(--gris);padding-bottom:16px;margin-bottom:18px;}
+  .portada h1{font-size:20pt;color:#0f172a;margin-bottom:4px;}
+  .portada .sub{font-size:11.5pt;color:var(--gris);}
+  .portada .fuente{font-size:9pt;color:#64748b;margin-top:6px;}
+
+  .kpis{display:flex;gap:10px;justify-content:center;margin:16px 0;}
+  .kpi{border:1.5px solid #cbd5e1;border-radius:8px;padding:8px 16px;text-align:center;min-width:110px;background:var(--gris-claro);}
+  .kpi b{display:block;font-size:16pt;color:#0f172a;}
+  .kpi span{font-size:8.5pt;color:var(--gris);}
+
+  h2{font-size:13.5pt;margin:22px 0 8px;padding:6px 10px;border-radius:6px;color:#fff;background:var(--gris);}
+  h2.mat{background:var(--mat);} h2.esp{background:var(--esp);} h2.nat{background:var(--nat);} h2.soc{background:var(--soc);}
+  h3{font-size:11pt;margin:14px 0 5px;color:#0f172a;}
+
+  table{width:100%;border-collapse:collapse;margin:6px 0 12px;font-size:9.3pt;}
+  th{background:var(--gris-claro);border:1px solid #cbd5e1;padding:4px 6px;text-align:left;font-size:8.8pt;text-transform:uppercase;letter-spacing:.3px;color:var(--gris);}
+  td{border:1px solid #cbd5e1;padding:4px 6px;vertical-align:top;}
+  tr{page-break-inside:avoid;}
+  .mat-t th{background:var(--mat-claro);border-color:var(--mat-linea);color:var(--mat);}
+  .mat-t td{border-color:var(--mat-linea);}
+  .esp-t th{background:var(--esp-claro);border-color:var(--esp-linea);color:var(--esp);}
+  .esp-t td{border-color:var(--esp-linea);}
+  .nat-t th{background:var(--nat-claro);border-color:var(--nat-linea);color:var(--nat);}
+  .nat-t td{border-color:var(--nat-linea);}
+  .soc-t th{background:var(--soc-claro);border-color:var(--soc-linea);color:var(--soc);}
+  .soc-t td{border-color:var(--soc-linea);}
+
+  .g{white-space:nowrap;font-weight:600;}
+  .exist{color:#15803d;font-weight:700;}
+  .pA{background:#fef9c3;font-weight:700;text-align:center;border-radius:4px;}
+  .pB{background:#e0f2fe;font-weight:700;text-align:center;}
+  .pC{background:#f3e8ff;font-weight:700;text-align:center;}
+  .nota{font-size:8.8pt;color:#64748b;font-style:italic;margin:4px 0 10px;}
+  .puente{font-size:8.6pt;color:#9333ea;font-weight:600;}
+
+  .leyenda{display:flex;gap:14px;font-size:8.8pt;margin:8px 0;flex-wrap:wrap;}
+  .leyenda span{display:inline-flex;align-items:center;gap:4px;}
+  .cua{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid #94a3b8;}
+
+  .rutas td:first-child{white-space:nowrap;font-weight:700;}
+  .rnueva{color:#9333ea;font-weight:700;font-size:8.3pt;}
+
+  .pie{margin-top:24px;border-top:2px solid #cbd5e1;padding-top:8px;font-size:8.5pt;color:#64748b;display:flex;justify-content:space-between;}
+
+  .btn-imprimir{position:fixed;top:14px;right:14px;background:#0f172a;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:11pt;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+  .btn-imprimir:hover{background:#334155;}
+
+  @media print{
+    body{background:#fff;font-size:9.5pt;}
+    .hoja{box-shadow:none;margin:0;padding:10mm 12mm;max-width:none;}
+    .btn-imprimir{display:none;}
+    h2{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    th,td,.kpi,.pA,.pB,.pC{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .salto{page-break-before:always;}
+    @page{size:A4 portrait;margin:10mm;}
+  }
+</style>
+</head>
+<body>
+<button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir</button>
+<div class="hoja">
+
+  <div class="portada">
+    <h1>🗺️ Mapa Curricular M.E.T.A.S</h1>
+    <div class="sub">Adecuación del DCNB de Honduras (4º–9º grado) a las Misiones y Rutas de Aprendizaje</div>
+    <div class="fuente">Fuente: Programaciones Educativas Nacionales (Secretaría de Educación / Proyecto MIDEH-USAID) — CCNN, CCSS, Español y Matemáticas · Elaborado: 21 de julio de 2026</div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><b>104</b><span>misiones potenciales</span></div>
+    <div class="kpi"><b>31</b><span>ya existen ✅</span></div>
+    <div class="kpi"><b>73</b><span>propuestas nuevas</span></div>
+    <div class="kpi"><b>12</b><span>rutas (5 + 7 nuevas)</span></div>
+    <div class="kpi"><b>~25%</b><span>pensum cubierto hoy</span></div>
+  </div>
+
+  <div class="leyenda">
+    <span><span class="cua" style="background:#fef9c3"></span> <b>Prioridad A</b> — núcleo del espiral (31)</span>
+    <span><span class="cua" style="background:#e0f2fe"></span> <b>Prioridad B</b> — completan bloques (27)</span>
+    <span><span class="cua" style="background:#f3e8ff"></span> <b>Prioridad C</b> — especializadas (15)</span>
+    <span><span class="exist">✅ verde</span> = misión ya publicada</span>
+    <span class="puente">🔗 = misión puente entre materias</span>
+  </div>
+
+  <h2>🧭 Las 12 Rutas de Aprendizaje</h2>
+  <table class="rutas">
+    <thead><tr><th style="width:24%">Ruta</th><th style="width:10%">Estado</th><th>Contenido</th><th style="width:12%">Misiones</th></tr></thead>
+    <tbody>
+      <tr><td>🧭 Ruta del Número</td><td>existe</td><td>Aritmética, medidas y proporcionalidad</td><td>10 → 15</td></tr>
+      <tr><td>📐 Ruta de la Forma</td><td>existe</td><td>Geometría plana y sólidos</td><td>5 → 11</td></tr>
+      <tr><td>🧮 Ruta del Álgebra</td><td class="rnueva">NUEVA</td><td>Enteros → ecuaciones → polinomios → funciones (III Ciclo)</td><td>0 → 8</td></tr>
+      <tr><td>📊 Ruta del Dato</td><td class="rnueva">NUEVA</td><td>Estadística y probabilidad</td><td>0 → 2</td></tr>
+      <tr><td>✍️ Ruta de la Palabra</td><td>existe</td><td>Gramática, ortografía y léxico</td><td>8 → 18</td></tr>
+      <tr><td>📖 Ruta del Relato</td><td class="rnueva">NUEVA</td><td>Tipologías textuales, expresión y literatura</td><td>0 → 9</td></tr>
+      <tr><td>🌱 Ruta de la Vida</td><td class="rnueva">NUEVA</td><td>Célula, reinos, ecosistemas y genética</td><td>0 → 8</td></tr>
+      <tr><td>🧠 Ruta del Cuerpo</td><td>existe</td><td>Cuerpo humano y salud</td><td>2 → 9</td></tr>
+      <tr><td>⚡ Ruta de la Materia</td><td class="rnueva">NUEVA</td><td>Física y química</td><td>0 → 10</td></tr>
+      <tr><td>🌎 Ruta del Planeta</td><td>existe</td><td>Geografía + Tierra y universo (CCNN + CCSS)</td><td>6 → 14</td></tr>
+      <tr><td>🏛️ Ruta del Tiempo</td><td class="rnueva">NUEVA</td><td>Historia — las etapas siguen la línea cronológica</td><td>0 → 7</td></tr>
+      <tr><td>⚖️ Ruta del Ciudadano</td><td class="rnueva">NUEVA</td><td>DDHH, Constitución, cívica y economía</td><td>0 → 8</td></tr>
+    </tbody>
+  </table>
+  <p class="nota">La columna «Misiones» muestra: actuales → totales al completar el mapa. El alumno navega siempre por rutas secuenciales (etapas); el ciclo/grado se conserva solo como metadato docente.</p>
+
+  <!-- ══════════════ MATEMÁTICAS ══════════════ -->
+  <h2 class="mat salto">🔢 Matemáticas — 31 misiones (15 existentes + 16 propuestas)</h2>
+  <p class="nota">II Ciclo: aritmética (~50%), geometría constructiva y medidas. III Ciclo: pivote al álgebra (7º transición, 8º polinomios, 9º funciones) y geometría deductiva con demostraciones. La estadística cierra el año escolar (sep-oct) en los 6 grados. Cobertura actual: ~40% del II Ciclo; el III Ciclo está casi virgen.</p>
+
+  <h3>✅ Misiones existentes (15)</h3>
+  <table class="mat-t">
+    <thead><tr><th>Misión</th><th style="width:14%">Ruta · etapa</th><th style="width:20%">Grados DCNB</th></tr></thead>
+    <tbody>
+      <tr><td class="exist">✅ Números Grandes: del Cien al Millón</td><td>número · 0</td><td class="g">2º–4º</td></tr>
+      <tr><td class="exist">✅ Valor Posicional hasta el Millón</td><td>número · 1</td><td class="g">4º</td></tr>
+      <tr><td class="exist">✅ Recta Numérica, Suma y Resta</td><td>número · 2</td><td class="g">4º</td></tr>
+      <tr><td class="exist">✅ Teoría de Números: Divisibilidad, m.c.m. y M.C.D.</td><td>número · 3</td><td class="g">5º, 6º</td></tr>
+      <tr><td class="exist">✅ Múltiplos, Divisores y Primos</td><td>número · 4</td><td class="g">5º</td></tr>
+      <tr><td class="exist">✅ Potencias y Raíces Cuadradas</td><td>número · 5</td><td class="g">5º, 7º</td></tr>
+      <tr><td class="exist">✅ Las Fracciones</td><td>número · 6</td><td class="g">4º–7º</td></tr>
+      <tr><td class="exist">✅ Números Decimales</td><td>número · 7</td><td class="g">4º–7º</td></tr>
+      <tr><td class="exist">✅ División de Decimales</td><td>número · 8</td><td class="g">5º, 6º</td></tr>
+      <tr><td class="exist">✅ Multiplicación Vertical</td><td>número · 9</td><td class="g">4º</td></tr>
+      <tr><td class="exist">✅ Ángulos: Tipos y Transportador</td><td>forma · 3</td><td class="g">4º, 5º</td></tr>
+      <tr><td class="exist">✅ Ángulos y Bisectriz</td><td>forma · 1</td><td class="g">6º, 7º</td></tr>
+      <tr><td class="exist">✅ Perímetro y Área de Cuadriláteros</td><td>forma · 4</td><td class="g">4º, 5º</td></tr>
+      <tr><td class="exist">✅ Área de Círculos y Polígonos</td><td>forma · 2</td><td class="g">5º, 6º</td></tr>
+      <tr><td class="exist">✅ Área de Polígonos Regulares</td><td>forma · 5</td><td class="g">6º</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Misiones propuestas (16)</h3>
+  <table class="mat-t">
+    <thead><tr><th style="width:6%">Prior.</th><th>Misión propuesta</th><th style="width:14%">Ruta</th><th style="width:12%">Grados</th><th>Contenido DCNB clave</th></tr></thead>
+    <tbody>
+      <tr><td class="pA">A</td><td>Medidas y Conversiones</td><td>🧭 número</td><td class="g">4º–6º</td><td>Sistema métrico e inglés; libra, arroba, quintal, galón; vara² y manzana; moneda nacional y divisas; tiempo</td></tr>
+      <tr><td class="pA">A</td><td>Estadística y Gráficas</td><td>📊 dato</td><td class="g">4º–8º</td><td>Encuestas, tablas, barras, lineales, circulares; histogramas; media, mediana y moda</td></tr>
+      <tr><td class="pA">A</td><td>Proporcionalidad y Porcentaje</td><td>🧭 número</td><td class="g">6º–9º</td><td>Razones, regla de tres, tanto por ciento, descuentos, impuestos, interés simple y compuesto</td></tr>
+      <tr><td class="pA">A</td><td>Números Enteros (con signo)</td><td>🧮 álgebra</td><td class="g">7º</td><td>Orden, valor absoluto, 4 operaciones, operaciones combinadas y jerarquía en racionales</td></tr>
+      <tr><td class="pA">A</td><td>Ecuaciones de Primer Grado</td><td>🧮 álgebra</td><td class="g">7º</td><td>Traducción frase↔expresión, valor numérico, resolución en ℚ y aplicaciones</td></tr>
+      <tr><td class="pA">A</td><td>Polinomios y Productos Notables</td><td>🧮 álgebra</td><td class="g">8º</td><td>Clasificación, 4 operaciones, productos notables, división entre binomio</td></tr>
+      <tr><td class="pA">A</td><td>Teorema de Pitágoras y Semejanza</td><td>📐 forma</td><td class="g">8º</td><td>Semejanza y criterios; Pitágoras con demostración y recíproco; puntos notables del triángulo</td></tr>
+      <tr><td class="pB">B</td><td>Sólidos Geométricos y Volumen</td><td>📐 forma</td><td class="g">4º–6º, 9º</td><td>Prismas, pirámides, cilindros, conos, esferas; modelos; volumen y área superficial</td></tr>
+      <tr><td class="pB">B</td><td>El Triángulo</td><td>📐 forma</td><td class="g">4º, 5º</td><td>Construcción con compás y transportador, clasificación, suma de ángulos internos, área</td></tr>
+      <tr><td class="pB">B</td><td>Números Romanos y Mayas <span class="puente">🔗 CCSS</span></td><td>🧭 número</td><td class="g">5º, 6º</td><td>Romanos hasta 3999; numeración maya hasta 400; calendarios Tzolkín y Haab</td></tr>
+      <tr><td class="pB">B</td><td>Números Reales y Notación Científica</td><td>🧮 álgebra</td><td class="g">8º</td><td>Radicales, raíz cúbica, irracionales, ℝ = ℚ ∪ 𝕀, intervalos, notación científica</td></tr>
+      <tr><td class="pB">B</td><td>Factorización</td><td>🧮 álgebra</td><td class="g">8º</td><td>Factor común, agrupación, tanteo, diferencia de cuadrados; expresiones racionales algebraicas</td></tr>
+      <tr><td class="pB">B</td><td>Funciones Lineales</td><td>🧮 álgebra</td><td class="g">9º</td><td>Pendiente, ordenada al origen, ecuación de la recta, rectas paralelas y perpendiculares</td></tr>
+      <tr><td class="pC">C</td><td>Ecuaciones Cuadráticas y Sistemas</td><td>🧮 álgebra</td><td class="g">9º</td><td>4 métodos de resolución; sistemas 2×2 (sustitución, igualación, reducción); inecuaciones</td></tr>
+      <tr><td class="pC">C</td><td>Probabilidad y Conteo</td><td>📊 dato</td><td class="g">9º</td><td>Principios de suma y producto; probabilidad de eventos simples; rango, varianza, desviación</td></tr>
+      <tr><td class="pC">C</td><td>Geometría del Círculo y Demostraciones</td><td>📐 forma</td><td class="g">9º</td><td>Tangentes, figuras inscritas y circunscritas, ángulos internos de polígonos, demostraciones</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ══════════════ ESPAÑOL ══════════════ -->
+  <h2 class="esp salto">📝 Español — 26 misiones (8 existentes + 18 propuestas)</h2>
+  <p class="nota">Bloques mensuales fijos: Lengua oral, Lectura y Escritura. Espiral fuerte (oración: clases→estructura→simple→compuesta; carta: personal→formal→comercial). El III Ciclo añade figuras literarias, vicios del lenguaje, niveles de lengua y literatura hondureña. Cobertura actual: ~30% — la mejor de las 4 materias. Transversal no misionable: lectura diaria por placer, fluidez (ppm), proceso borrador→versión final.</p>
+
+  <h3>✅ Misiones existentes (8 + 1 Bachillerato)</h3>
+  <table class="esp-t">
+    <thead><tr><th>Misión</th><th style="width:14%">Ruta · etapa</th><th style="width:20%">Grados DCNB</th></tr></thead>
+    <tbody>
+      <tr><td class="exist">✅ Los Sustantivos</td><td>palabra · 1</td><td class="g">4º, 5º, 7º–9º</td></tr>
+      <tr><td class="exist">✅ Los Adjetivos</td><td>palabra · 2</td><td class="g">4º–7º, 9º</td></tr>
+      <tr><td class="exist">✅ Los Verbos</td><td>palabra · 3</td><td class="g">4º–9º</td></tr>
+      <tr><td class="exist">✅ Los Adverbios</td><td>palabra · 4</td><td class="g">4º, 5º, 7º–9º</td></tr>
+      <tr><td class="exist">✅ Los Pronombres</td><td>palabra · 5</td><td class="g">4º, 6º–9º</td></tr>
+      <tr><td class="exist">✅ La Acentuación</td><td>palabra · 6</td><td class="g">4º–9º</td></tr>
+      <tr><td class="exist">✅ Marcadores Textuales</td><td>palabra · 7</td><td class="g">4º–9º</td></tr>
+      <tr><td class="exist">✅ Los Tipos de Textos</td><td>palabra · 8</td><td class="g">4º–9º</td></tr>
+      <tr><td class="exist">✅ El Adjetivo Avanzado (Bachillerato)</td><td>palabra · 9</td><td class="g">Bachillerato</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Misiones propuestas (18)</h3>
+  <table class="esp-t">
+    <thead><tr><th style="width:6%">Prior.</th><th>Misión propuesta</th><th style="width:14%">Ruta</th><th style="width:12%">Grados</th><th>Contenido DCNB clave</th></tr></thead>
+    <tbody>
+      <tr><td class="pA">A</td><td>La Oración</td><td>✍️ palabra</td><td class="g">4º–9º</td><td>Clases → sujeto/predicado, OD/OI → oración simple → compuesta (coordinación y subordinación)</td></tr>
+      <tr><td class="pA">A</td><td>Ortografía de Letras</td><td>✍️ palabra</td><td class="g">4º–9º</td><td>b/v, c/s/z/x, g/j, h, ll/y, r/rr, güe-güi, mayúsculas; seseo y yeísmo</td></tr>
+      <tr><td class="pA">A</td><td>Signos de Puntuación</td><td>✍️ palabra</td><td class="g">4º–6º, 8º, 9º</td><td>Punto, coma, dos puntos, comillas, guión, paréntesis, admiración, diéresis</td></tr>
+      <tr><td class="pA">A</td><td>El Párrafo</td><td>✍️ palabra</td><td class="g">5º–9º</td><td>Estructura, función (intro/transición/conclusión), cohesión-coherencia, reducción y expansión</td></tr>
+      <tr><td class="pA">A</td><td>Géneros Narrativos: Cuento, Leyenda y Fábula</td><td>📖 relato</td><td class="g">4º–9º</td><td>Cuento, leyenda, fábula, mito y anécdota; incluye leyendas y cuentos de autores hondureños</td></tr>
+      <tr><td class="pA">A</td><td>Relaciones Léxicas</td><td>✍️ palabra</td><td class="g">4º–9º</td><td>Sinónimos, antónimos, homófonos, parónimos, polisemia; uso del diccionario y contexto</td></tr>
+      <tr><td class="pA">A</td><td>El Resumen y los Mapas Conceptuales</td><td>📖 relato</td><td class="g">4º–9º</td><td>Cuadro sinóptico y comparativo, esquemas, mapas conceptuales, fichas, técnicas de síntesis</td></tr>
+      <tr><td class="pA">A</td><td>La Carta y los Documentos Funcionales</td><td>📖 relato</td><td class="g">4º–9º</td><td>Carta personal→formal→comercial; recibo, factura, solicitud, formularios, currículum (9º)</td></tr>
+      <tr><td class="pB">B</td><td>Poesía y Métrica</td><td>📖 relato</td><td class="g">5º–9º</td><td>Metro, rima y ritmo; lírica hondureña, hispanoamericana, indígena y universal</td></tr>
+      <tr><td class="pB">B</td><td>Figuras Literarias</td><td>📖 relato</td><td class="g">7º–9º</td><td>Símil, metáfora, prosopopeya, hipérbole, anáfora, antítesis, imágenes sensoriales</td></tr>
+      <tr><td class="pB">B</td><td>El Teatro</td><td>📖 relato</td><td class="g">5º–9º</td><td>Dramatización; tragedia/comedia; acto y escena, diálogo, acotaciones; teatro hondureño</td></tr>
+      <tr><td class="pB">B</td><td>La Noticia y los Medios de Comunicación</td><td>📖 relato</td><td class="g">4º–9º</td><td>Noticia, periódico escolar, guión radial, línea editorial, publicidad y su mensaje, Internet</td></tr>
+      <tr><td class="pB">B</td><td>Formación de Palabras</td><td>✍️ palabra</td><td class="g">4º–9º</td><td>Derivación, composición, prefijos y sufijos (griegos y latinos), lexema/morfema</td></tr>
+      <tr><td class="pB">B</td><td>El Debate y la Expresión Oral</td><td>📖 relato</td><td class="g">4º–9º</td><td>Debate, asamblea, entrevista, foro, mesa redonda, panel, oratoria, discurso</td></tr>
+      <tr><td class="pC">C</td><td>El Español de Honduras y sus Variedades</td><td>✍️ palabra</td><td class="g">6º–9º</td><td>Historia del español, hondureñismos, voces indígenas, americanismos, voseo, jergas</td></tr>
+      <tr><td class="pC">C</td><td>Vicios del Lenguaje y Niveles de Lengua</td><td>✍️ palabra</td><td class="g">7º–9º</td><td>Barbarismos, cacofonía, redundancia, dequeísmo; registro culto/coloquial/técnico</td></tr>
+      <tr><td class="pC">C</td><td>Literatura Hondureña</td><td>📖 relato</td><td class="g">7º–9º</td><td>Autores y obras; literatura prehispánica y colonial; cuento y novela en Honduras</td></tr>
+      <tr><td class="pC">C</td><td>El Ensayo</td><td>📖 relato</td><td class="g">9º</td><td>Ensayo expositivo y literario; el testimonio y la ponencia</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ══════════════ CIENCIAS NATURALES ══════════════ -->
+  <h2 class="nat salto">🔬 Ciencias Naturales — 27 misiones (5 existentes + 22 propuestas)</h2>
+  <p class="nota">Currículo en espiral con 4 bloques: seres vivos · cuerpo humano y salud · Tierra y universo · materia y energía. Los mismos ejes reaparecen cada grado con más profundidad (la célula aparece en 5 grados). Transversal no misionable: método científico y prácticas de laboratorio (mejor como sección dentro de cada misión). Cobertura actual: ~15%.</p>
+
+  <h3>✅ Misiones existentes (5)</h3>
+  <table class="nat-t">
+    <thead><tr><th>Misión</th><th style="width:14%">Ruta · etapa</th><th style="width:24%">Grados DCNB</th></tr></thead>
+    <tbody>
+      <tr><td class="exist">✅ El Sistema Nervioso</td><td>cuerpo · 1</td><td class="g">4º, 5º, 6º, 9º</td></tr>
+      <tr><td class="exist">✅ El Sistema Endocrino</td><td>cuerpo · 2</td><td class="g">5º, 6º</td></tr>
+      <tr><td class="exist">✅ Las Eras Geológicas</td><td>planeta · 5</td><td class="g">6º, 7º</td></tr>
+      <tr><td class="exist">✅ Desastres Naturales y el Huracán Mitch <span class="puente">🔗 CCSS 6º/7º/9º</span></td><td>planeta · 4</td><td class="g">4º, 6º, 8º</td></tr>
+      <tr><td class="exist">✅ Áreas Protegidas de Honduras</td><td>planeta · 6</td><td class="g">6º, 8º</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Misiones propuestas (22)</h3>
+  <table class="nat-t">
+    <thead><tr><th style="width:6%">Prior.</th><th>Misión propuesta</th><th style="width:14%">Ruta</th><th style="width:12%">Grados</th><th>Contenido DCNB clave</th></tr></thead>
+    <tbody>
+      <tr><td class="pA">A</td><td>La Célula: Unidad de la Vida</td><td>🌱 vida</td><td class="g">4º–7º, 9º</td><td>Organelos, teoría celular, eucariota/procariota, funciones, ciclo celular</td></tr>
+      <tr><td class="pA">A</td><td>Los Cinco Reinos</td><td>🌱 vida</td><td class="g">5º–8º</td><td>Mónera, protista, fungi, plantae, animalia; taxonomía y nombres científicos</td></tr>
+      <tr><td class="pA">A</td><td>Ecosistemas y Cadenas Tróficas</td><td>🌱 vida</td><td class="g">4º, 5º, 7º, 8º</td><td>Factores bióticos/abióticos, cadenas y pirámides, equilibrio, ecosistemas de Honduras</td></tr>
+      <tr><td class="pA">A</td><td>Sistema Digestivo y Nutrición</td><td>🧠 cuerpo</td><td class="g">4º, 8º</td><td>Estructura y función; dieta balanceada, macro/micronutrientes, desórdenes nutricionales</td></tr>
+      <tr><td class="pA">A</td><td>Sistemas Respiratorio y Circulatorio</td><td>🧠 cuerpo</td><td class="g">4º, 8º</td><td>Alvéolos, composición de la sangre, higiene y enfermedades comunes</td></tr>
+      <tr><td class="pA">A</td><td>Reproducción y Etapas del Desarrollo</td><td>🧠 cuerpo</td><td class="g">5º–9º</td><td>Sistemas reproductores, pubertad, ciclo menstrual, embarazo y parto, etapas del desarrollo</td></tr>
+      <tr><td class="pA">A</td><td>El Universo y el Sistema Solar</td><td>🌎 planeta</td><td class="g">4º–7º</td><td>Galaxias, estrellas, planetas, la Luna, origen del universo, exploración espacial</td></tr>
+      <tr><td class="pA">A</td><td>La Materia: Estados y Cambios</td><td>⚡ materia</td><td class="g">4º–7º</td><td>Propiedades, estados, cambios físicos y químicos, átomos y moléculas, mezclas</td></tr>
+      <tr><td class="pA">A</td><td>La Energía: Formas, Fuentes y Ahorro</td><td>⚡ materia</td><td class="g">4º–8º</td><td>Fuentes renovables y no renovables, transformaciones, crisis energética, ahorro</td></tr>
+      <tr><td class="pB">B</td><td>Las Plantas</td><td>🌱 vida</td><td class="g">4º, 7º</td><td>Función clorofílica, reproducción, clasificación, fisiología vegetal</td></tr>
+      <tr><td class="pB">B</td><td>Los Animales: Vertebrados e Invertebrados</td><td>🌱 vida</td><td class="g">4º, 7º</td><td>Clasificación, metamorfosis, alimentación, comportamiento y reproducción</td></tr>
+      <tr><td class="pB">B</td><td>Genética y Herencia</td><td>🌱 vida</td><td class="g">5º, 6º, 8º</td><td>Mendel, teoría cromosómica, meiosis, genoma humano, evolución y adaptación</td></tr>
+      <tr><td class="pB">B</td><td>Salud y Enfermedades: Prevención, ITS y VIH</td><td>🧠 cuerpo</td><td class="g">4º, 5º, 7º–9º</td><td>Enfermedades comunes e infectocontagiosas, ITS/VIH-SIDA, vacunas, drogas y adicciones</td></tr>
+      <tr><td class="pB">B</td><td>Sistemas Óseo, Muscular y Locomotor</td><td>🧠 cuerpo</td><td class="g">4º</td><td>Movimiento, mecanismo, energía muscular; sistemas excretor e inmunológico</td></tr>
+      <tr><td class="pB">B</td><td>La Tierra: Capas y Estructura</td><td>🌎 planeta</td><td class="g">4º–7º, 9º</td><td>Atmósfera, hidrosfera, geosfera; movimientos, estaciones; placas tectónicas y sismos (9º)</td></tr>
+      <tr><td class="pB">B</td><td>El Suelo y la Erosión</td><td>🌎 planeta</td><td class="g">4º–8º</td><td>Formación, capas, erosión y control, tipos de suelo de Honduras, huerto escolar</td></tr>
+      <tr><td class="pB">B</td><td>Clima y Fenómenos Atmosféricos</td><td>🌎 planeta</td><td class="g">5º, 7º, 8º</td><td>Tiempo y clima, El Niño y La Niña, lluvia ácida, efecto invernadero, capa de ozono</td></tr>
+      <tr><td class="pC">C</td><td>Átomo y Tabla Periódica</td><td>⚡ materia</td><td class="g">7º, 9º</td><td>Modelos atómicos, elementos, ley periódica, masa atómica, configuración electrónica</td></tr>
+      <tr><td class="pC">C</td><td>Luz y Sonido</td><td>⚡ materia</td><td class="g">6º, 8º</td><td>Movimiento ondulatorio, propagación, fenómenos lumínicos, instrumentos ópticos</td></tr>
+      <tr><td class="pC">C</td><td>Calor, Temperatura y Máquinas</td><td>⚡ materia</td><td class="g">4º–6º, 8º</td><td>Transmisión del calor, escalas termométricas, máquinas simples, compuestas y térmicas</td></tr>
+      <tr><td class="pC">C</td><td>Electricidad: Ley de Ohm y Circuitos</td><td>⚡ materia</td><td class="g">9º</td><td>Cargas, corriente, ley de Ohm, circuitos en serie y paralelo</td></tr>
+      <tr><td class="pC">C</td><td>Movimiento: Cinemática</td><td>⚡ materia</td><td class="g">9º</td><td>MRU y movimiento variado; enlaces y reacciones químicas, química inorgánica (9º)</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ══════════════ CIENCIAS SOCIALES ══════════════ -->
+  <h2 class="soc salto">🌍 Ciencias Sociales — 20 misiones (3 existentes + 17 propuestas)</h2>
+  <p class="nota">Círculos concéntricos: 4º Centroamérica → 5º América → 6º Mundo → 7º Honduras → 8º América (2ª vuelta) → 9º Mundo (2ª vuelta), con 5 ejes por grado: Geografía, Historia, Población/Economía, Cívica y Formación ética (esta última es transversal → se integra como contenido actitudinal, no como misión). Cobertura actual: ~12%; el eje Historia está completamente vacío y es el más extenso.</p>
+
+  <h3>✅ Misiones existentes (3 + 1 compartida)</h3>
+  <table class="soc-t">
+    <thead><tr><th>Misión</th><th style="width:14%">Ruta · etapa</th><th style="width:24%">Grados DCNB</th></tr></thead>
+    <tbody>
+      <tr><td class="exist">✅ Geografía y Coordenadas</td><td>planeta · 1</td><td class="g">5º, 6º, 7º</td></tr>
+      <tr><td class="exist">✅ Continentes: América, Oceanía y Antártida</td><td>planeta · 2</td><td class="g">5º, 6º, 9º</td></tr>
+      <tr><td class="exist">✅ Continentes: Europa, Asia y África</td><td>planeta · 3</td><td class="g">6º, 9º</td></tr>
+      <tr><td class="exist">✅ (Desastres Naturales y el Mitch — de CCNN) <span class="puente">🔗 bicurricular</span></td><td>planeta · 4</td><td class="g">6º, 7º, 9º</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Misiones propuestas (17)</h3>
+  <table class="soc-t">
+    <thead><tr><th style="width:6%">Prior.</th><th>Misión propuesta</th><th style="width:14%">Ruta</th><th style="width:12%">Grados</th><th>Contenido DCNB clave</th></tr></thead>
+    <tbody>
+      <tr><td class="pA">A</td><td>Geografía de Honduras</td><td>🌎 planeta</td><td class="g">7º</td><td>Ubicación, límites, extensión, relieve, regiones, demografía, grupos étnicos</td></tr>
+      <tr><td class="pA">A</td><td>Los Mayas y las Culturas Precolombinas <span class="puente">🔗 Mat 6º</span></td><td>🏛️ tiempo</td><td class="g">4º, 5º, 7º, 8º</td><td>Mayas, aztecas, incas, chibchas; poblamiento de América; legado cultural</td></tr>
+      <tr><td class="pA">A</td><td>Descubrimiento, Conquista y Colonia</td><td>🏛️ tiempo</td><td class="g">4º, 5º, 7º, 8º</td><td>Viajes de Colón, conquista de CA, organización colonial política/económica/social</td></tr>
+      <tr><td class="pA">A</td><td>La Independencia de Centroamérica</td><td>🏛️ tiempo</td><td class="g">4º, 5º, 7º, 8º</td><td>Proceso independentista, Federación Centroamericana, Reforma Liberal</td></tr>
+      <tr><td class="pA">A</td><td>Grupos Étnicos de Honduras</td><td>⚖️ ciudadano</td><td class="g">4º, 7º, 8º</td><td>Lencas, garífunas, misquitos y demás pueblos; costumbres, territorios y defensa cultural</td></tr>
+      <tr><td class="pA">A</td><td>Los Derechos Humanos</td><td>⚖️ ciudadano</td><td class="g">4º–6º, 8º, 9º</td><td>Declaración Universal, derechos civiles/políticos/sociales, organización de DDHH en Honduras</td></tr>
+      <tr><td class="pA">A</td><td>La Constitución y los Poderes del Estado</td><td>⚖️ ciudadano</td><td class="g">4º, 6º, 8º</td><td>Estado de Derecho, poderes Ejecutivo/Legislativo/Judicial, democracia participativa</td></tr>
+      <tr><td class="pB">B</td><td>Cartografía: Mapas, Escalas y Proyecciones</td><td>🌎 planeta</td><td class="g">7º, 8º</td><td>Proyecciones, escalas, simbología, imágenes satelitales, lectura de mapas</td></tr>
+      <tr><td class="pB">B</td><td>Geografía de Centroamérica</td><td>🌎 planeta</td><td class="g">4º</td><td>Espacio y población CA, recursos naturales, comunicaciones y comercio</td></tr>
+      <tr><td class="pB">B</td><td>Geografía de América</td><td>🌎 planeta</td><td class="g">5º, 8º</td><td>División política, orografía, hidrografía, climas y regiones del continente</td></tr>
+      <tr><td class="pB">B</td><td>Grandes Civilizaciones Antiguas</td><td>🏛️ tiempo</td><td class="g">6º, 9º</td><td>Mesopotamia, Egipto, Grecia, Roma, China, India; Edad Media, el Islam</td></tr>
+      <tr><td class="pB">B</td><td>Revoluciones y Guerras Mundiales</td><td>🏛️ tiempo</td><td class="g">6º, 9º</td><td>Revolución Francesa, Industrial y Rusa; I y II Guerra Mundial; Guerra Fría</td></tr>
+      <tr><td class="pB">B</td><td>Símbolos Patrios y Mes de la Patria</td><td>⚖️ ciudadano</td><td class="g">4º, 5º, 7º</td><td>Símbolos, próceres, fiestas cívicas de septiembre, civismo y patriotismo</td></tr>
+      <tr><td class="pB">B</td><td>Honduras en los Siglos XX y XXI</td><td>🏛️ tiempo</td><td class="g">5º, 7º, 8º</td><td>Economías exportadoras, evolución política y social, globalización, bloques económicos</td></tr>
+      <tr><td class="pC">C</td><td>La Población: Demografía e IDH</td><td>⚖️ ciudadano</td><td class="g">4º–9º</td><td>Distribución, natalidad/mortalidad, migración y remesas, Índice de Desarrollo Humano</td></tr>
+      <tr><td class="pC">C</td><td>Economía y Trabajo</td><td>⚖️ ciudadano</td><td class="g">5º–7º, 9º</td><td>Sectores económicos, economía formal/informal, turismo, deuda externa</td></tr>
+      <tr><td class="pC">C</td><td>Organismos Internacionales</td><td>⚖️ ciudadano</td><td class="g">6º, 8º, 9º</td><td>ONU, UNICEF, OMS, bloques de integración, derecho internacional</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ══════════════ CIERRE ══════════════ -->
+  <h2 class="salto">🚀 Orden de producción sugerido — Prioridad A (31 misiones)</h2>
+  <p class="nota">Alternando materias (como en la fase de fichas didácticas) para que las 4 rutas crezcan parejas. Las misiones puente 🔗 conviene producirlas en fechas cercanas.</p>
+  <table>
+    <thead><tr><th style="width:10%">Tanda</th><th>Misiones (una por materia por vuelta)</th></tr></thead>
+    <tbody>
+      <tr><td class="g">1–4</td><td>La Célula 🌱 · La Oración ✍️ · Medidas y Conversiones 🧭 · Geografía de Honduras 🌎</td></tr>
+      <tr><td class="g">5–8</td><td>Los Cinco Reinos 🌱 · Ortografía de Letras ✍️ · Estadística y Gráficas 📊 · Mayas y Precolombinas 🏛️</td></tr>
+      <tr><td class="g">9–12</td><td>Ecosistemas y Cadenas Tróficas 🌱 · El Párrafo ✍️ · Proporcionalidad y Porcentaje 🧭 · Conquista y Colonia 🏛️</td></tr>
+      <tr><td class="g">13–16</td><td>Digestivo y Nutrición 🧠 · Géneros Narrativos 📖 · Números Enteros 🧮 · Independencia de CA 🏛️</td></tr>
+      <tr><td class="g">17–20</td><td>Respiratorio y Circulatorio 🧠 · Relaciones Léxicas ✍️ · Ecuaciones de 1er Grado 🧮 · Grupos Étnicos ⚖️</td></tr>
+      <tr><td class="g">21–24</td><td>Universo y Sistema Solar 🌎 · Signos de Puntuación ✍️ · Polinomios 🧮 · Derechos Humanos ⚖️</td></tr>
+      <tr><td class="g">25–28</td><td>La Materia ⚡ · El Resumen y Mapas Conceptuales 📖 · Pitágoras y Semejanza 📐 · La Constitución ⚖️</td></tr>
+      <tr><td class="g">29–31</td><td>La Energía ⚡ · La Carta y Documentos 📖 · Reproducción y Desarrollo 🧠</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pie">
+    <span>Plataforma M.E.T.A.S · metas.policastsapien.com</span>
+    <span>Mapa curricular DCNB 4º–9º · 21 de julio de 2026</span>
+  </div>
+</div>
+</body>
+</html>
