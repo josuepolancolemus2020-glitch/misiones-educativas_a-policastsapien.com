@@ -33,14 +33,14 @@ function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));i
 
 // ===================== ACHIEVEMENTS =====================
 const ACHIEVEMENTS={
-  primer_quiz:{icon:'🔬',label:'Primera prueba de los ecosistemas superada'},
-  flash_master:{icon:'🃏',label:'Todas las flashcards de los ecosistemas exploradas'},
-  clasif_pro:{icon:'🗂️',label:'Clasificador de seres vivos experto'},
-  id_master:{icon:'🔍',label:'Identificador de ecosistemas maestro'},
-  reto_hero:{icon:'🏆',label:'Héroe del reto de los ecosistemas'},
+  primer_quiz:{icon:'🔬',label:'Primera prueba del sistema digestivo superada'},
+  flash_master:{icon:'🃏',label:'Todas las flashcards del sistema digestivo exploradas'},
+  clasif_pro:{icon:'🗂️',label:'Clasificador de alimentos y órganos experto'},
+  id_master:{icon:'🔍',label:'Identificador de órganos digestivos maestro'},
+  reto_hero:{icon:'🏆',label:'Héroe del reto del sistema digestivo'},
   nivel3:{icon:'🧫',label:'¡Naturalista! Nivel 3'},
-  nivel5:{icon:'🥇',label:'¡Maestro de los Ecosistemas! Nivel 6'},
-  widgets_master:{icon:'🧩',label:'Widgets de los ecosistemas dominados'}
+  nivel5:{icon:'🥇',label:'¡Maestro de la Nutrición! Nivel 6'},
+  widgets_master:{icon:'🧩',label:'Widgets del sistema digestivo dominados'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -49,7 +49,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#16a34a','#4ade80','#0d9488','#5eead4','#00b894'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador 🔬'},{t:55,n:'Naturalista 🧫'},{t:90,n:'Biólogo 🧬'},{t:130,n:'Investigador 🔭'},{t:165,n:'Ecólogo 🏅'},{t:190,n:'Maestro de los Ecosistemas 🏆'}];
+const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador 🔬'},{t:55,n:'Naturalista 🧫'},{t:90,n:'Biólogo 🧬'},{t:130,n:'Investigador 🔭'},{t:165,n:'Nutriólogo 🏅'},{t:190,n:'Maestro de la Nutrición 🏆'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -61,20 +61,20 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Ecosistema',a:'🌍 Conjunto formado por los <strong>seres vivos</strong> de un lugar, su <strong>medio físico</strong> y todas las <strong>relaciones</strong> entre ellos. Ejemplos: un bosque, un río, un arrecife.'},
-  {w:'Factores bióticos',a:'🐾 Los <strong>seres vivos</strong> del ecosistema: plantas, animales, hongos y bacterias.'},
-  {w:'Factores abióticos',a:'💧 Los componentes <strong>sin vida</strong> del ecosistema: el agua, la luz del sol, el aire, el suelo y la temperatura.'},
-  {w:'Biotopo',a:'🏞️ El <strong>medio físico</strong> donde habitan los seres vivos: el lugar y sus factores abióticos.'},
-  {w:'Comunidad',a:'🌐 El conjunto de <strong>todas las poblaciones</strong> de seres vivos que conviven en un lugar. También se llama biocenosis.'},
-  {w:'Población',a:'🐟 Grupo de individuos de la <strong>misma especie</strong> que viven en un mismo lugar (todos los venados de un bosque).'},
-  {w:'Productores',a:'🌿 Seres <strong>autótrofos</strong> (plantas y algas) que fabrican su propio alimento por fotosíntesis. Son la <strong>base</strong> de toda cadena alimenticia.'},
-  {w:'Consumidores',a:'🐾 <strong>Heterótrofos</strong> que comen a otros seres: herbívoros (1º), carnívoros (2º y 3º) y omnívoros.'},
-  {w:'Descomponedores',a:'🍄 <strong>Hongos y bacterias</strong> que reciclan la materia muerta y devuelven los <strong>nutrientes</strong> al suelo. Cierran el ciclo de la materia.'},
-  {w:'Cadena alimenticia',a:'🔗 Serie que muestra <strong>quién se come a quién</strong>. La energía pasa de un ser al siguiente, empezando por el <strong>Sol</strong>.'},
-  {w:'Red alimenticia',a:'🕸️ Varias <strong>cadenas alimenticias conectadas</strong> entre sí, porque un mismo animal come de varias fuentes.'},
-  {w:'Hábitat',a:'🏠 El <strong>lugar</strong> donde vive un ser vivo (su "casa"). El <strong>nicho</strong> es su papel o "trabajo" en el ecosistema.'},
-  {w:'Mutualismo',a:'🐝 Relación entre dos especies en la que <strong>ambas se benefician</strong>. Ejemplo: la abeja se alimenta del néctar y poliniza la flor.'},
-  {w:'Ecología',a:'🌱 Ciencia que estudia los <strong>ecosistemas</strong> y las relaciones de los seres vivos entre sí y con su medio.'},
+  {w:'Nutrición',a:'🍎 Proceso por el que el cuerpo <strong>toma los alimentos</strong>, los transforma y aprovecha para obtener <strong>energía</strong> y materiales para crecer y repararse.'},
+  {w:'Aparato digestivo',a:'🫃 Conjunto de órganos que <strong>digieren el alimento</strong>: boca, esófago, estómago, intestinos y las glándulas anexas.'},
+  {w:'Nutrientes',a:'🥗 Sustancias de los alimentos que el cuerpo aprovecha: <strong>carbohidratos, proteínas, grasas, vitaminas, minerales y agua</strong>.'},
+  {w:'Carbohidratos',a:'⚡ Nutrientes que dan <strong>energía rápida</strong>. Están en el maíz, el arroz, el pan y la tortilla.'},
+  {w:'Proteínas',a:'🧱 Nutrientes que <strong>construyen y reparan</strong> el cuerpo. Están en el frijol, el huevo, la carne y la leche.'},
+  {w:'Digestión',a:'🔄 Proceso de <strong>deshacer el alimento</strong> en partes muy pequeñas (nutrientes) que el cuerpo puede aprovechar.'},
+  {w:'Bolo alimenticio',a:'👄 Masa de alimento <strong>masticado y mezclado con saliva</strong>, lista para ser tragada.'},
+  {w:'Estómago',a:'🫃 Órgano en forma de bolsa que <strong>mezcla el alimento con jugos gástricos</strong> y lo convierte en una papilla (quimo).'},
+  {w:'Intestino delgado',a:'🌀 El órgano más largo (unos <strong>6 metros</strong>). Ahí los <strong>nutrientes pasan a la sangre</strong> (absorción).'},
+  {w:'Intestino grueso',a:'🧻 Absorbe el <strong>agua</strong> que queda y forma las <strong>heces</strong>, que se expulsan por el ano.'},
+  {w:'Absorción',a:'🩸 Paso de los <strong>nutrientes a la sangre</strong> a través de las paredes del intestino delgado.'},
+  {w:'Hígado',a:'🫘 Glándula anexa que fabrica la <strong>bilis</strong>, la cual ayuda a digerir las <strong>grasas</strong>.'},
+  {w:'Saliva',a:'💧 Líquido de la boca que <strong>ablanda el alimento</strong> y empieza la digestión. La producen las glándulas salivales.'},
+  {w:'Alimentación saludable',a:'🥦 Comer <strong>variado y equilibrado</strong>, con higiene, para nutrirse bien: muchas frutas y verduras, y pocas grasas y azúcares.'},
 ];
 let fcIdx=0;
 function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es un ecosistema?',o:['a) Solo los animales de un lugar','b) El conjunto de seres vivos, su medio físico y sus relaciones','c) Solo las plantas de un bosque','d) Solo el suelo y el agua'],c:1},
-  {q:'¿Cómo se llaman los factores SIN vida de un ecosistema?',o:['a) Bióticos','b) Abióticos','c) Orgánicos','d) Vivos'],c:1},
-  {q:'¿Qué seres vivos son los productores de un ecosistema?',o:['a) Los animales','b) Los hongos','c) Las plantas','d) Las bacterias'],c:2},
-  {q:'Un animal herbívoro es un consumidor…',o:['a) primario','b) productor','c) descomponedor','d) terciario'],c:0},
-  {q:'¿Quiénes reciclan la materia muerta y devuelven nutrientes al suelo?',o:['a) Los productores','b) Los herbívoros','c) Los descomponedores','d) Los depredadores'],c:2},
-  {q:'En una cadena alimenticia, ¿de dónde viene la energía al inicio?',o:['a) Del suelo','b) Del Sol','c) Del agua','d) Del aire'],c:1},
-  {q:'Un grupo de individuos de la misma especie se llama…',o:['a) comunidad','b) población','c) bioma','d) hábitat'],c:1},
-  {q:'La relación en la que AMBAS especies se benefician se llama…',o:['a) depredación','b) competencia','c) mutualismo','d) parasitismo'],c:2},
-  {q:'¿Cuál de estos es un ejemplo de factor abiótico?',o:['a) Una planta','b) El agua','c) Un pez','d) Una bacteria'],c:1},
+  {q:'¿Qué sistema del cuerpo se encarga de transformar los alimentos?',o:['a) El nervioso','b) El digestivo','c) El respiratorio','d) El circulatorio'],c:1},
+  {q:'¿Qué nutriente da energía rápida al cuerpo?',o:['a) Las proteínas','b) Las grasas','c) Los carbohidratos','d) El agua'],c:2},
+  {q:'¿En qué órgano se mezcla el alimento con los jugos gástricos?',o:['a) La boca','b) El esófago','c) El estómago','d) El hígado'],c:2},
+  {q:'¿En qué órgano pasan los nutrientes a la sangre?',o:['a) El estómago','b) El intestino delgado','c) El intestino grueso','d) La boca'],c:1},
+  {q:'¿Cuál es la PRIMERA etapa de la digestión?',o:['a) La absorción','b) La digestión','c) La ingestión','d) La egestión'],c:2},
+  {q:'¿Qué glándula fabrica la bilis?',o:['a) El páncreas','b) El hígado','c) El estómago','d) Las salivales'],c:1},
+  {q:'¿Qué nutriente sirve para construir y reparar el cuerpo?',o:['a) Los carbohidratos','b) Las proteínas','c) Las grasas','d) Las vitaminas'],c:1},
+  {q:'¿Qué órgano absorbe el agua y forma las heces?',o:['a) El intestino delgado','b) El estómago','c) El intestino grueso','d) El esófago'],c:2},
+  {q:'¿Qué debemos hacer antes de comer para evitar enfermedades?',o:['a) Correr','b) Lavarnos las manos','c) Dormir','d) Ver televisión'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -102,14 +102,14 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Biótico','Abiótico'],headA:'🐾 Factor biótico (con vida)',headB:'💧 Factor abiótico (sin vida)',colA:'bio',colB:'abio',
-   words:[{w:'Árbol',t:'bio'},{w:'Agua',t:'abio'},{w:'Venado',t:'bio'},{w:'Luz del sol',t:'abio'},{w:'Hongo',t:'bio'},{w:'Temperatura',t:'abio'},{w:'Bacteria',t:'bio'},{w:'Aire',t:'abio'},{w:'Pez',t:'bio'},{w:'Suelo',t:'abio'}]},
-  {label:['Productor','Consumidor'],headA:'🌿 Productor (fabrica alimento)',headB:'🐾 Consumidor (come otros)',colA:'pro',colB:'con',
-   words:[{w:'Pasto',t:'pro'},{w:'Conejo',t:'con'},{w:'Árbol',t:'pro'},{w:'León',t:'con'},{w:'Alga',t:'pro'},{w:'Rana',t:'con'},{w:'Maíz',t:'pro'},{w:'Águila',t:'con'},{w:'Planta',t:'pro'},{w:'Pez',t:'con'}]},
-  {label:['Terrestre','Acuático'],headA:'🌳 Ecosistema terrestre',headB:'🌊 Ecosistema acuático',colA:'ter',colB:'acu',
-   words:[{w:'Bosque',t:'ter'},{w:'Río',t:'acu'},{w:'Desierto',t:'ter'},{w:'Océano',t:'acu'},{w:'Selva',t:'ter'},{w:'Lago',t:'acu'},{w:'Sabana',t:'ter'},{w:'Arrecife',t:'acu'},{w:'Bosque de pino',t:'ter'},{w:'Manglar',t:'acu'}]},
-  {label:['Herbívoro','Carnívoro'],headA:'🌱 Herbívoro (come plantas)',headB:'🥩 Carnívoro (come animales)',colA:'her',colB:'car',
-   words:[{w:'Venado',t:'her'},{w:'Puma',t:'car'},{w:'Conejo',t:'her'},{w:'Águila',t:'car'},{w:'Vaca',t:'her'},{w:'Tiburón',t:'car'},{w:'Saltamontes',t:'her'},{w:'Serpiente',t:'car'},{w:'Oruga',t:'her'},{w:'Zorro',t:'car'}]},
+  {label:['Da energía','Construye'],headA:'⚡ Da energía (carbohidratos/grasas)',headB:'🧱 Construye el cuerpo (proteínas)',colA:'ene',colB:'con',
+   words:[{w:'Carbohidratos',t:'ene'},{w:'Proteínas',t:'con'},{w:'Grasas',t:'ene'},{w:'Frijol',t:'con'},{w:'Arroz',t:'ene'},{w:'Huevo',t:'con'},{w:'Tortilla',t:'ene'},{w:'Carne',t:'con'},{w:'Azúcar',t:'ene'},{w:'Leche',t:'con'}]},
+  {label:['Saludable','Chatarra'],headA:'🥗 Alimento saludable',headB:'🍟 Comida chatarra',colA:'san',colB:'chat',
+   words:[{w:'Fruta',t:'san'},{w:'Refresco',t:'chat'},{w:'Verdura',t:'san'},{w:'Churros',t:'chat'},{w:'Frijol',t:'san'},{w:'Dulces',t:'chat'},{w:'Agua',t:'san'},{w:'Frituras',t:'chat'},{w:'Tortilla',t:'san'},{w:'Comida frita',t:'chat'}]},
+  {label:['Etapa inicial','Etapa final'],headA:'🍽️ Etapa inicial de la digestión',headB:'🩸 Etapa final de la digestión',colA:'ini',colB:'fin',
+   words:[{w:'Ingestión',t:'ini'},{w:'Absorción',t:'fin'},{w:'Masticar',t:'ini'},{w:'Egestión',t:'fin'},{w:'Ensalivar',t:'ini'},{w:'Formar las heces',t:'fin'},{w:'Bolo alimenticio',t:'ini'},{w:'Heces',t:'fin'},{w:'Empieza en la boca',t:'ini'},{w:'Termina en el ano',t:'fin'}]},
+  {label:['Órgano','Nutriente'],headA:'🫃 Órgano digestivo',headB:'🥗 Nutriente',colA:'org',colB:'nut',
+   words:[{w:'Estómago',t:'org'},{w:'Proteína',t:'nut'},{w:'Intestino',t:'org'},{w:'Vitamina',t:'nut'},{w:'Esófago',t:'org'},{w:'Grasa',t:'nut'},{w:'Boca',t:'org'},{w:'Carbohidrato',t:'nut'},{w:'Hígado',t:'org'},{w:'Mineral',t:'nut'}]},
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -119,14 +119,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['Los','factores','abióticos','no','tienen','vida.'],c:2,art:'Componentes sin vida del ecosistema'},
-  {s:['Las','plantas','son','los','productores','del','ecosistema.'],c:4,art:'Seres que fabrican su propio alimento'},
-  {s:['Los','hongos','son','descomponedores','del','ecosistema.'],c:3,art:'Reciclan la materia muerta'},
-  {s:['El','venado','es','un','consumidor','herbívoro.'],c:5,art:'Consumidor que se alimenta de plantas'},
-  {s:['Una','población','reúne','individuos','de','la','misma','especie.'],c:1,art:'Grupo de individuos de la misma especie'},
-  {s:['El','mutualismo','beneficia','a','las','dos','especies.'],c:1,art:'Relación en la que ambas especies ganan'},
-  {s:['El','Sol','es','la','fuente','de','energía','del','ecosistema.'],c:1,art:'Fuente inicial de energía de las cadenas'},
-  {s:['El','ecosistema','incluye','seres','vivos','y','su','medio.'],c:1,art:'Seres vivos, su medio físico y sus relaciones'},
+  {s:['La','boca','mastica','y','ensaliva','el','alimento.'],c:1,art:'Órgano donde empieza la digestión'},
+  {s:['El','hígado','fabrica','la','bilis.'],c:1,art:'Glándula que produce la bilis'},
+  {s:['La','digestión','deshace','el','alimento','en','nutrientes.'],c:1,art:'Proceso que deshace el alimento'},
+  {s:['Los','nutrientes','pasan','a','la','sangre','por','absorción.'],c:7,art:'Paso de los nutrientes a la sangre'},
+  {s:['Las','proteínas','construyen','y','reparan','el','cuerpo.'],c:1,art:'Nutriente que construye y repara'},
+  {s:['Los','carbohidratos','dan','energía','al','cuerpo.'],c:1,art:'Nutriente que da energía rápida'},
+  {s:['El','páncreas','produce','el','jugo','pancreático.'],c:1,art:'Glándula que fabrica el jugo pancreático'},
+  {s:['El','estómago','mezcla','el','alimento','con','jugos.'],c:1,art:'Órgano que mezcla el alimento con jugos gástricos'},
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -136,14 +136,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El conjunto de seres vivos, su medio y sus relaciones se llama ___.',opts:['ecosistema','población','bioma'],c:0},
-  {s:'Los factores ___ son los componentes sin vida del ecosistema.',opts:['bióticos','abióticos','orgánicos'],c:1},
-  {s:'Las plantas son los ___ del ecosistema porque fabrican su alimento.',opts:['consumidores','productores','descomponedores'],c:1},
-  {s:'Los ___ reciclan la materia muerta y devuelven nutrientes al suelo.',opts:['herbívoros','descomponedores','depredadores'],c:1},
-  {s:'Un animal herbívoro es un consumidor ___.',opts:['primario','terciario','productor'],c:0},
-  {s:'Un grupo de individuos de la misma especie es una ___.',opts:['comunidad','población','red'],c:1},
-  {s:'En la cadena alimenticia, la energía viene del ___.',opts:['suelo','Sol','agua'],c:1},
-  {s:'La relación donde ambas especies se benefician es el ___.',opts:['parasitismo','mutualismo','depredación'],c:1},
+  {s:'El sistema ___ transforma los alimentos en nutrientes.',opts:['nervioso','digestivo','óseo'],c:1},
+  {s:'Los ___ dan energía rápida al cuerpo.',opts:['carbohidratos','proteínas','minerales'],c:0},
+  {s:'Las ___ construyen y reparan el cuerpo.',opts:['grasas','proteínas','vitaminas'],c:1},
+  {s:'El ___ mezcla el alimento con jugos gástricos.',opts:['esófago','estómago','hígado'],c:1},
+  {s:'Los nutrientes pasan a la sangre en el intestino ___.',opts:['grueso','delgado','ciego'],c:1},
+  {s:'El ___ fabrica la bilis para digerir las grasas.',opts:['páncreas','hígado','estómago'],c:1},
+  {s:'La primera etapa de la digestión es la ___.',opts:['absorción','ingestión','egestión'],c:1},
+  {s:'Antes de comer debemos ___ las manos.',opts:['lavarnos','pintarnos','secarnos'],c:0},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -624,50 +624,50 @@ function printEvalCrit(){
 
 // ===================== LABORATORIO DE LA CÉLULA =====================
 const parteData={
-  bosquenublado:{
-    nombre:'Bosque nublado',icon:'🌫️',
-    estructura:{title:'¿Qué es?',info:'• Bosque de <strong>montaña alta</strong> casi siempre cubierto de <strong>niebla</strong><br>• Muy <strong>húmedo</strong> y de gran <strong>biodiversidad</strong><br>• Sus árboles están cubiertos de <strong>musgos, orquídeas y bromelias</strong><br>• Es un ecosistema <strong>terrestre</strong>'},
-    funcion:{title:'¿Dónde está?',info:'• En las <strong>montañas altas</strong> de Honduras (arriba de 1500 m)<br>• Parque Nacional <strong>La Tigra</strong>, <strong>Cusuco</strong> y <strong>Celaque</strong> (el más alto del país)<br>• Zonas frescas y muy lluviosas'},
-    ubicacion:{title:'Seres vivos',info:'• El <strong>quetzal</strong> y el tucán<br>• El <strong>mono</strong>, el jaguar y el puma<br>• Ranas, salamandras y muchos insectos<br>• <strong>Orquídeas</strong>, helechos gigantes y musgos'},
-    dato:{title:'Dato curioso',info:'• La <strong>niebla es su "lluvia"</strong>: el agua se condensa en las hojas<br>• Son <strong>fábricas de agua</strong> que alimentan ríos y abastecen ciudades como Tegucigalpa<br>• Guardan especies que no viven en ningún otro lugar'}
+  boca:{
+    nombre:'La boca',icon:'👄',
+    estructura:{title:'¿Qué es?',info:'• Es la <strong>entrada</strong> del aparato digestivo<br>• Contiene los <strong>dientes</strong>, la <strong>lengua</strong> y las <strong>glándulas salivales</strong><br>• Ahí <strong>empieza</strong> la digestión'},
+    funcion:{title:'¿Qué hace?',info:'• Los <strong>dientes</strong> mastican y trituran el alimento<br>• La <strong>saliva</strong> lo ablanda y empieza a digerirlo<br>• La <strong>lengua</strong> forma el <strong>bolo alimenticio</strong> y ayuda a tragar'},
+    ubicacion:{title:'¿Cómo cuidarla?',info:'• <strong>Cepíllate los dientes</strong> después de comer<br>• Evita el <strong>exceso de dulces</strong> (causan caries)<br>• Visita al dentista y <strong>mastica bien</strong> los alimentos'},
+    dato:{title:'Dato curioso',info:'• Producimos cerca de <strong>1.5 litros de saliva</strong> al día<br>• Un adulto tiene <strong>32 dientes</strong><br>• Masticar bien facilita toda la digestión que sigue'}
   },
-  arrecife:{
-    nombre:'Arrecife de coral',icon:'🐠',
-    estructura:{title:'¿Qué es?',info:'• Ecosistema <strong>marino</strong> construido por los <strong>corales</strong> (animales diminutos)<br>• Estructuras duras de <strong>carbonato de calcio</strong><br>• Una de las mayores <strong>biodiversidades</strong> del planeta: la "selva del mar"'},
-    funcion:{title:'¿Dónde está?',info:'• En el <strong>mar Caribe</strong> hondureño<br>• En las <strong>Islas de la Bahía</strong>: Roatán, Utila y Guanaja<br>• Forma parte del <strong>arrecife Mesoamericano</strong>'},
-    ubicacion:{title:'Seres vivos',info:'• <strong>Corales</strong> de muchas formas y colores<br>• Peces de colores, <strong>tortugas marinas</strong> y langostas<br>• El <strong>tiburón ballena</strong> (que se ve en Utila)<br>• Estrellas de mar y erizos'},
-    dato:{title:'Dato curioso',info:'• El <strong>coral es un animal</strong>, no una planta ni una roca<br>• El arrecife Mesoamericano es el <strong>segundo más grande del mundo</strong>, tras la Gran Barrera de Australia<br>• Un aumento de la temperatura del mar puede "blanquear" y matar los corales'}
+  estomago:{
+    nombre:'El estómago',icon:'🫃',
+    estructura:{title:'¿Qué es?',info:'• Órgano en forma de <strong>bolsa</strong> con paredes musculosas<br>• Está después del <strong>esófago</strong><br>• Puede estirarse para guardar el alimento'},
+    funcion:{title:'¿Qué hace?',info:'• <strong>Mezcla</strong> el alimento con los <strong>jugos gástricos</strong><br>• Sus músculos lo baten hasta hacer una papilla (<strong>quimo</strong>)<br>• El ácido del jugo gástrico <strong>mata muchos microbios</strong>'},
+    ubicacion:{title:'¿Cómo cuidarlo?',info:'• Come a <strong>horas regulares</strong> y sin prisa<br>• Evita el exceso de <strong>comida muy grasosa o picante</strong><br>• No comas en exceso: sobrecarga el estómago'},
+    dato:{title:'Dato curioso',info:'• El jugo gástrico es tan <strong>ácido</strong> que podría dañar la piel, ¡pero el estómago se protege con moco!<br>• Los "ruidos" del estómago son gases y líquidos moviéndose<br>• Cabe alrededor de <strong>1 litro</strong> de comida'}
   },
-  manglar:{
-    nombre:'Manglar',icon:'🌊',
-    estructura:{title:'¿Qué es?',info:'• Bosque <strong>costero</strong> de árboles (mangles) que viven con las <strong>raíces en agua salada</strong><br>• Está <strong>entre la tierra y el mar</strong><br>• Ecosistema de transición, muy productivo'},
-    funcion:{title:'¿Dónde está?',info:'• En las <strong>costas del Caribe</strong> hondureño<br>• En el <strong>Golfo de Fonseca</strong> (costa del Pacífico)<br>• En desembocaduras de ríos y lagunas costeras'},
-    ubicacion:{title:'Seres vivos',info:'• El <strong>mangle rojo</strong> y otros mangles<br>• <strong>Cangrejos</strong>, camarones y ostras<br>• Aves como <strong>garzas</strong>, pelícanos y espátulas<br>• Muchos <strong>peces jóvenes</strong> que crecen ahí'},
-    dato:{title:'Dato curioso',info:'• Los manglares son las <strong>"guarderías" del mar</strong>: muchos peces nacen y crecen protegidos entre sus raíces<br>• <strong>Protegen la costa</strong> de los huracanes y las marejadas<br>• Guardan enormes cantidades de carbono'}
+  intestinodelgado:{
+    nombre:'El intestino delgado',icon:'🌀',
+    estructura:{title:'¿Qué es?',info:'• Tubo <strong>largo y estrecho</strong> (unos <strong>6 metros</strong>) muy enrollado<br>• El órgano <strong>más largo</strong> del tubo digestivo<br>• Por dentro tiene <strong>vellosidades</strong> (pequeños "pelitos")'},
+    funcion:{title:'¿Qué hace?',info:'• <strong>Termina la digestión</strong> con la ayuda de la bilis y el jugo pancreático<br>• Realiza la <strong>absorción</strong>: los nutrientes pasan a la <strong>sangre</strong><br>• Las vellosidades aumentan la superficie para absorber más'},
+    ubicacion:{title:'¿Cómo cuidarlo?',info:'• Come <strong>frutas y verduras</strong> con fibra<br>• Bebe <strong>suficiente agua</strong><br>• Cuida la <strong>higiene</strong> para evitar parásitos intestinales'},
+    dato:{title:'Dato curioso',info:'• Si estiráramos todas sus vellosidades, cubrirían el área de <strong>una cancha</strong><br>• Es donde se aprovecha <strong>casi todo el alimento</strong><br>• Mide más de 3 veces la altura de una persona'}
   },
-  pinar:{
-    nombre:'Bosque de pino',icon:'🌲',
-    estructura:{title:'¿Qué es?',info:'• Bosque <strong>terrestre</strong> dominado por <strong>pinos y ocotes</strong><br>• El bosque <strong>más extenso</strong> de Honduras<br>• Suelos secos y clima templado'},
-    funcion:{title:'¿Dónde está?',info:'• En las <strong>montañas</strong> de casi todo el país<br>• Grandes pinares en <strong>Olancho</strong>, El Paraíso y Francisco Morazán<br>• En tierras altas y medias'},
-    ubicacion:{title:'Seres vivos',info:'• El <strong>pino</strong> y el ocote<br>• El <strong>venado cola blanca</strong> y el coyote<br>• Ardillas, conejos y armadillos<br>• Pájaros <strong>carpinteros</strong> y muchas aves'},
-    dato:{title:'Dato curioso',info:'• El <strong>pino</strong> es uno de los símbolos de los bosques de Honduras<br>• Dos grandes amenazas: los <strong>incendios</strong> y el <strong>gorgojo descortezador</strong> del pino<br>• De los pinos se obtiene madera y resina'}
+  higado:{
+    nombre:'El hígado',icon:'🫘',
+    estructura:{title:'¿Qué es?',info:'• Es la <strong>glándula más grande</strong> del cuerpo<br>• Es un órgano <strong>anexo</strong>: el alimento NO pasa por dentro de él<br>• Está al lado derecho del estómago'},
+    funcion:{title:'¿Qué hace?',info:'• Fabrica la <strong>bilis</strong>, que ayuda a digerir las <strong>grasas</strong><br>• La bilis se vierte en el <strong>intestino delgado</strong><br>• También <strong>limpia la sangre</strong> de sustancias dañinas'},
+    ubicacion:{title:'¿Cómo cuidarlo?',info:'• Evita el <strong>exceso de grasas</strong> y de comida chatarra<br>• Nunca consumas <strong>alcohol</strong> (daña mucho el hígado)<br>• Mantén una alimentación equilibrada'},
+    dato:{title:'Dato curioso',info:'• El hígado puede <strong>regenerarse</strong> aunque se dañe una parte<br>• Cumple <strong>más de 500 funciones</strong> en el cuerpo<br>• Guarda energía en forma de reserva'}
   },
-  rio:{
-    nombre:'Río (agua dulce)',icon:'🏞️',
-    estructura:{title:'¿Qué es?',info:'• Ecosistema <strong>acuático de agua dulce</strong> en movimiento<br>• Conecta las <strong>montañas con el mar</strong><br>• El agua corre y arrastra nutrientes'},
-    funcion:{title:'¿Dónde está?',info:'• En los ríos de Honduras: el <strong>Patuca</strong>, el <strong>Ulúa</strong>, el <strong>Coco</strong> y el <strong>Choluteca</strong><br>• Nacen en las montañas y desembocan en el mar'},
-    ubicacion:{title:'Seres vivos',info:'• Peces como el <strong>cuyamel</strong> y la tilapia<br>• <strong>Camarones</strong> de río, cangrejos y caracoles<br>• <strong>Garzas</strong>, martines pescadores y nutrias<br>• Plantas acuáticas en las orillas'},
-    dato:{title:'Dato curioso',info:'• El <strong>río Patuca</strong> es el más largo de Honduras<br>• Los ríos nos dan <strong>agua, pesca y riego</strong> para los cultivos<br>• La <strong>contaminación</strong> y la basura son su mayor amenaza'}
+  intestinogrueso:{
+    nombre:'El intestino grueso',icon:'🧻',
+    estructura:{title:'¿Qué es?',info:'• Tubo <strong>más ancho y más corto</strong> que el delgado<br>• Es la <strong>parte final</strong> del tubo digestivo<br>• Termina en el <strong>ano</strong>'},
+    funcion:{title:'¿Qué hace?',info:'• <strong>Absorbe el agua</strong> que queda del alimento<br>• Forma las <strong>heces</strong> con lo que el cuerpo no aprovecha<br>• Aloja <strong>bacterias buenas</strong> que ayudan a la digestión'},
+    ubicacion:{title:'¿Cómo cuidarlo?',info:'• Come <strong>fibra</strong> (frutas, verduras, frijol) para ir bien al baño<br>• Bebe <strong>agua</strong> para evitar el estreñimiento<br>• Ve al baño cuando el cuerpo lo pida'},
+    dato:{title:'Dato curioso',info:'• En él viven <strong>millones de bacterias buenas</strong> (la flora intestinal)<br>• Recupera gran parte del <strong>agua</strong> para que no la perdamos<br>• Sin él, perderíamos demasiada agua'}
   }
 };
-let labParte='bosquenublado',labAspecto='estructura';
+let labParte='boca',labAspecto='estructura';
 function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
 function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
 function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAspecto];document.getElementById('lab-sentence').innerHTML=`🔬 Explorando: <strong>${data.nombre}</strong> → <strong>${asp.title}</strong>`;document.getElementById('lab-display').innerHTML=`<div class="lab-cont-header">${data.icon} ${data.nombre}</div><div class="lab-asp-title">${asp.title}</div><div class="lab-asp-info">${asp.info}</div>`;}
 
 // ===================== DIPLOMA =====================
 function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
-function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Excelente naturalista!','¡Dominas los ecosistemas!','¡Maestro de los Ecosistemas!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Dominas la digestión!','¡Maestro de la Nutrición!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
 function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🔬 ¡${name} completó la Misión "El Sistema Digestivo"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
@@ -689,7 +689,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   showNeuro();
   showEnfer();
   updateLabDisplay();
-  document.querySelector('[data-parte="bosquenublado"]')?.classList.add('active-pri');
+  document.querySelector('[data-parte="boca"]')?.classList.add('active-pri');
   document.querySelector('[data-aspecto="estructura"]')?.classList.add('active-sec');
   renderAchPanel();
 });
