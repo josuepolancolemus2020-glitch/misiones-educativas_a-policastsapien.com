@@ -152,9 +152,9 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias de clasificación
 const routeSets=[
-  {label:'Niveles de clasificación (del más grande al más pequeño)',steps:['Reino','Filo','Clase','Orden','Familia','Género','Especie']},
-  {label:'Niveles de organización de un ser vivo',steps:['Célula','Tejido','Órgano','Sistema','Organismo']},
-  {label:'Aparición de los reinos en la Tierra (del más antiguo al más reciente)',steps:['Monera (bacterias)','Protista','Fungi (hongos)','Plantae (plantas)','Animalia (animales)']},
+  {label:'Niveles de organización ecológica (del más pequeño al más grande)',steps:['Individuo','Población','Comunidad','Ecosistema','Bioma','Biosfera']},
+  {label:'Cadena alimenticia (por dónde pasa la energía)',steps:['El Sol da la energía','El pasto crece (productor)','El saltamontes come pasto (herbívoro)','La rana come al saltamontes','El halcón come a la rana']},
+  {label:'Niveles de una cadena (según su papel)',steps:['Productores','Consumidores primarios','Consumidores secundarios','Consumidores terciarios','Descomponedores']},
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -165,42 +165,42 @@ function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.
 
 // Widget 2: Identifica el reino o concepto (IDs neuron* reutilizados)
 const neuronPartes=[
-  {desc:'Reino de las bacterias y cianobacterias (unicelular, procariota)',ans:'Monera',opts:['Monera','Protista','Fungi','Plantae']},
-  {desc:'Reino de la ameba, el paramecio y las algas',ans:'Protista',opts:['Protista','Monera','Fungi','Animalia']},
-  {desc:'Reino de los hongos: setas, mohos y levaduras',ans:'Fungi',opts:['Fungi','Plantae','Monera','Protista']},
-  {desc:'Reino de las plantas, que hacen fotosíntesis',ans:'Plantae',opts:['Plantae','Fungi','Protista','Animalia']},
-  {desc:'Reino de los animales, incluido el ser humano',ans:'Animalia',opts:['Animalia','Plantae','Monera','Fungi']},
-  {desc:'Ciencia que identifica, nombra y clasifica a los seres vivos',ans:'Taxonomía',opts:['Taxonomía','Ecología','Biología','Geología']},
-  {desc:'Grupo más pequeño de la clasificación',ans:'Especie',opts:['Especie','Reino','Familia','Género']},
-  {desc:'Ser vivo que fabrica su propio alimento por fotosíntesis',ans:'Autótrofo',opts:['Autótrofo','Heterótrofo','Descomponedor','Parásito']},
+  {desc:'Conjunto de seres vivos, su medio físico y sus relaciones',ans:'Ecosistema',opts:['Ecosistema','Población','Bioma','Hábitat']},
+  {desc:'Los componentes SIN vida del ecosistema (agua, luz, suelo)',ans:'Abióticos',opts:['Abióticos','Bióticos','Orgánicos','Productores']},
+  {desc:'Seres que fabrican su alimento y son la base de la cadena',ans:'Productores',opts:['Productores','Consumidores','Descomponedores','Depredadores']},
+  {desc:'Hongos y bacterias que reciclan la materia muerta',ans:'Descomponedores',opts:['Descomponedores','Productores','Herbívoros','Carnívoros']},
+  {desc:'Grupo de individuos de la misma especie en un lugar',ans:'Población',opts:['Población','Comunidad','Ecosistema','Bioma']},
+  {desc:'Relación en la que AMBAS especies se benefician',ans:'Mutualismo',opts:['Mutualismo','Parasitismo','Depredación','Competencia']},
+  {desc:'El lugar donde vive un ser vivo (su "casa")',ans:'Hábitat',opts:['Hábitat','Nicho','Bioma','Población']},
+  {desc:'Ciencia que estudia los ecosistemas y sus relaciones',ans:'Ecología',opts:['Ecología','Taxonomía','Biología','Geología']},
 ];
 let neuronIdx=0,neuronDone=false;
-function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los reinos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los conceptos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
 function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Reino → Característica (IDs neuro* reutilizados)
 const neuroPairs=[
-  {trans:'Monera',func:'Unicelular y procariota (bacterias)',opts:['Unicelular y procariota (bacterias)','Pluricelular que hace fotosíntesis','Hongo descomponedor','Animal con columna']},
-  {trans:'Plantae',func:'Pluricelular y autótrofo (fotosíntesis)',opts:['Pluricelular y autótrofo (fotosíntesis)','Unicelular procariota','Heterótrofo por absorción','Protozoo del agua']},
-  {trans:'Fungi',func:'Heterótrofo por absorción (hongos)',opts:['Heterótrofo por absorción (hongos)','Fabrica su alimento con luz','Bacteria sin núcleo','Vertebrado marino']},
-  {trans:'Animalia',func:'Pluricelular y heterótrofo que se mueve',opts:['Pluricelular y heterótrofo que se mueve','Autótrofo con clorofila','Unicelular procariota','Hongo del pan']},
-  {trans:'Protista',func:'Eucariota unicelular (ameba, algas)',opts:['Eucariota unicelular (ameba, algas)','Pluricelular con raíces','Bacteria de la Tierra primitiva','Mamífero terrestre']},
+  {trans:'Productores',func:'Fabrican su alimento (plantas y algas)',opts:['Fabrican su alimento (plantas y algas)','Reciclan la materia muerta','Comen otros animales','Componentes sin vida']},
+  {trans:'Consumidores',func:'Comen a otros seres vivos',opts:['Comen a otros seres vivos','Fabrican su alimento con luz','Reciclan restos muertos','El agua y el suelo']},
+  {trans:'Descomponedores',func:'Reciclan la materia muerta (hongos y bacterias)',opts:['Reciclan la materia muerta (hongos y bacterias)','Fabrican su alimento','Cazan a sus presas','La luz y la temperatura']},
+  {trans:'Factores abióticos',func:'Componentes sin vida (agua, luz, suelo)',opts:['Componentes sin vida (agua, luz, suelo)','Los seres vivos del lugar','Fabrican su alimento','Reciclan la materia']},
+  {trans:'Población',func:'Individuos de la misma especie',opts:['Individuos de la misma especie','Todas las especies juntas','El medio físico','La energía del Sol']},
 ];
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.querySelectorAll('#neuroOpts .qz-opt').forEach(b=>{if(b.textContent===d.func)b.classList.add('correct');else if(b===btn&&b.textContent!==d.func)b.classList.add('wrong');});const isOk=opt===d.func;if(isOk){fb('fbNeuro','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuro_'+neuroIdx)){xpTracker.wgt.add('neuro_'+neuroIdx);pts(3);}sfx('ok');}else{fb('fbNeuro','Correcto: '+d.func,false);sfx('no');}setTimeout(()=>{neuroIdx++;showNeuro();},1800);}
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
-// Widget 4: Ser vivo → ¿A qué reino pertenece? (IDs enfer* reutilizados)
+// Widget 4: Ser vivo → ¿Qué papel cumple en el ecosistema? (IDs enfer* reutilizados)
 const enfermedadData=[
-  {disease:'Bacteria del yogur',characteristic:'Reino Monera',opts:['Reino Monera','Reino Fungi','Reino Plantae','Reino Animalia']},
-  {disease:'Champiñón',characteristic:'Reino Fungi',opts:['Reino Fungi','Reino Plantae','Reino Monera','Reino Protista']},
-  {disease:'Pino',characteristic:'Reino Plantae',opts:['Reino Plantae','Reino Animalia','Reino Fungi','Reino Protista']},
-  {disease:'Águila',characteristic:'Reino Animalia',opts:['Reino Animalia','Reino Plantae','Reino Monera','Reino Fungi']},
-  {disease:'Ameba',characteristic:'Reino Protista',opts:['Reino Protista','Reino Monera','Reino Fungi','Reino Plantae']},
-  {disease:'Levadura del pan',characteristic:'Reino Fungi',opts:['Reino Fungi','Reino Monera','Reino Plantae','Reino Animalia']},
+  {disease:'El pasto',characteristic:'Productor',opts:['Productor','Consumidor','Descomponedor','Depredador']},
+  {disease:'El conejo (come plantas)',characteristic:'Consumidor primario',opts:['Consumidor primario','Productor','Descomponedor','Consumidor terciario']},
+  {disease:'El hongo del suelo',characteristic:'Descomponedor',opts:['Descomponedor','Productor','Herbívoro','Carnívoro']},
+  {disease:'El puma (come animales)',characteristic:'Consumidor (carnívoro)',opts:['Consumidor (carnívoro)','Productor','Descomponedor','Herbívoro']},
+  {disease:'El alga del mar',characteristic:'Productor',opts:['Productor','Consumidor','Descomponedor','Depredador']},
+  {disease:'La bacteria que pudre las hojas',characteristic:'Descomponedor',opts:['Descomponedor','Productor','Consumidor','Herbívoro']},
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -209,12 +209,12 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Autótrofo','Heterótrofo'],btnA:'🌞 Autótrofo',btnB:'🍖 Heterótrofo',colA:'aut',colB:'het',
-   words:[{w:'Planta',t:'aut'},{w:'Animal',t:'het'},{w:'Alga',t:'aut'},{w:'Hongo',t:'het'},{w:'Cianobacteria',t:'aut'},{w:'Descomponedor',t:'het'},{w:'Hace fotosíntesis',t:'aut'},{w:'Come otros seres',t:'het'},{w:'Árbol',t:'aut'},{w:'León',t:'het'}]},
-  {label:['Unicelular','Pluricelular'],btnA:'🔵 Unicelular',btnB:'🔶 Pluricelular',colA:'uni',colB:'plu',
-   words:[{w:'Bacteria',t:'uni'},{w:'Árbol',t:'plu'},{w:'Ameba',t:'uni'},{w:'Perro',t:'plu'},{w:'Paramecio',t:'uni'},{w:'Ser humano',t:'plu'},{w:'Levadura',t:'uni'},{w:'Helecho',t:'plu'},{w:'Una sola célula',t:'uni'},{w:'Muchas células',t:'plu'}]},
-  {label:['Vertebrado','Invertebrado'],btnA:'🦴 Vertebrado',btnB:'🐛 Invertebrado',colA:'ver',colB:'inv',
-   words:[{w:'Pez',t:'ver'},{w:'Insecto',t:'inv'},{w:'Rana',t:'ver'},{w:'Caracol',t:'inv'},{w:'Águila',t:'ver'},{w:'Araña',t:'inv'},{w:'Perro',t:'ver'},{w:'Lombriz',t:'inv'},{w:'Serpiente',t:'ver'},{w:'Medusa',t:'inv'}]},
+  {label:['Biótico','Abiótico'],btnA:'🐾 Biótico',btnB:'💧 Abiótico',colA:'bio',colB:'abio',
+   words:[{w:'Árbol',t:'bio'},{w:'Agua',t:'abio'},{w:'Venado',t:'bio'},{w:'Luz del sol',t:'abio'},{w:'Hongo',t:'bio'},{w:'Temperatura',t:'abio'},{w:'Bacteria',t:'bio'},{w:'Aire',t:'abio'},{w:'Pez',t:'bio'},{w:'Suelo',t:'abio'}]},
+  {label:['Productor','Consumidor'],btnA:'🌿 Productor',btnB:'🐾 Consumidor',colA:'pro',colB:'con',
+   words:[{w:'Pasto',t:'pro'},{w:'Conejo',t:'con'},{w:'Árbol',t:'pro'},{w:'León',t:'con'},{w:'Alga',t:'pro'},{w:'Rana',t:'con'},{w:'Maíz',t:'pro'},{w:'Águila',t:'con'},{w:'Planta',t:'pro'},{w:'Pez',t:'con'}]},
+  {label:['Terrestre','Acuático'],btnA:'🌳 Terrestre',btnB:'🌊 Acuático',colA:'ter',colB:'acu',
+   words:[{w:'Bosque',t:'ter'},{w:'Río',t:'acu'},{w:'Desierto',t:'ter'},{w:'Océano',t:'acu'},{w:'Selva',t:'ter'},{w:'Lago',t:'acu'},{w:'Sabana',t:'ter'},{w:'Arrecife',t:'acu'},{w:'Bosque de pino',t:'ter'},{w:'Manglar',t:'acu'}]},
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -227,46 +227,46 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'Las bacterias son seres unicelulares y procariotas que forman el reino Monera.',type:'Reino Monera'},
-  {s:'La ameba y el paramecio son protozoos unicelulares del reino Protista.',type:'Reino Protista'},
-  {s:'Las setas, los mohos y las levaduras son hongos del reino Fungi.',type:'Reino Fungi'},
-  {s:'Los musgos, los helechos y los árboles pertenecen al reino Plantae y hacen fotosíntesis.',type:'Reino Plantae'},
-  {s:'Los insectos, peces, aves y mamíferos forman el reino Animalia.',type:'Reino Animalia'},
-  {s:'La taxonomía es la ciencia que identifica, nombra y clasifica a los seres vivos.',type:'Taxonomía'},
-  {s:'Un ser autótrofo fabrica su propio alimento, casi siempre por fotosíntesis.',type:'Nutrición autótrofa'},
-  {s:'Un ser heterótrofo obtiene su alimento de otros seres vivos.',type:'Nutrición heterótrofa'},
-  {s:'La especie es el grupo más pequeño en la clasificación de los seres vivos.',type:'Especie'},
-  {s:'El nombre científico se escribe en latín con el género y la especie, como Homo sapiens.',type:'Nombre científico'},
+  {s:'El agua, la luz del sol y el suelo son factores abióticos del ecosistema.',type:'Factores abióticos'},
+  {s:'Las plantas y las algas son los productores porque fabrican su propio alimento.',type:'Productores'},
+  {s:'Los hongos y las bacterias descomponedores reciclan la materia muerta.',type:'Descomponedores'},
+  {s:'Un grupo de venados de la misma especie que vive en un bosque forma una población.',type:'Población'},
+  {s:'En el mutualismo, la abeja y la flor se benefician mutuamente.',type:'Mutualismo'},
+  {s:'El arrecife de coral de las Islas de la Bahía es un ecosistema acuático marino.',type:'Ecosistema acuático'},
+  {s:'El bosque nublado de Celaque es un ecosistema terrestre de montaña.',type:'Ecosistema terrestre'},
+  {s:'El Sol es la fuente de energía de todas las cadenas alimenticias.',type:'Fuente de energía'},
+  {s:'El venado es un consumidor primario porque se alimenta de plantas.',type:'Consumidor primario'},
+  {s:'La ecología estudia las relaciones de los seres vivos con su medio.',type:'Ecología'},
 ];
 const classifyTaskDB=[
-  {w:'Monera',gen:'Unicelular',n:'Procariota',g:'Autótrofa o heterótrofa',t:'Bacterias, cianobacterias'},
-  {w:'Protista',gen:'Unicelular (casi todos)',n:'Eucariota',g:'Autótrofa o heterótrofa',t:'Ameba, paramecio, algas'},
-  {w:'Fungi',gen:'Uni o pluricelular',n:'Eucariota',g:'Heterótrofa (absorción)',t:'Setas, mohos, levaduras'},
-  {w:'Plantae',gen:'Pluricelular',n:'Eucariota',g:'Autótrofa (fotosíntesis)',t:'Musgos, helechos, árboles'},
-  {w:'Animalia',gen:'Pluricelular',n:'Eucariota',g:'Heterótrofa',t:'Insectos, peces, aves, mamíferos'},
+  {w:'Bosque nublado',gen:'Terrestre',n:'Montañas altas (Celaque, La Tigra)',g:'Quetzal, jaguar, orquídeas',t:'Deforestación'},
+  {w:'Arrecife de coral',gen:'Acuático (marino)',n:'Islas de la Bahía',g:'Corales, peces, tortugas',t:'Calentamiento del mar'},
+  {w:'Manglar',gen:'Acuático (costero)',n:'Costas y Golfo de Fonseca',g:'Mangle, cangrejos, garzas',t:'Tala y camaroneras'},
+  {w:'Bosque de pino',gen:'Terrestre',n:'Montañas (Olancho)',g:'Pino, venado, carpintero',t:'Incendios y gorgojo'},
+  {w:'Río',gen:'Acuático (agua dulce)',n:'Todo el país (Patuca)',g:'Peces, camarones, nutrias',t:'Contaminación'},
 ];
 const completeTaskDB=[
-  {s:'El reino de las bacterias se llama reino ___.',opts:['Plantae','Monera','Fungi'],ans:'Monera'},
-  {s:'Los hongos pertenecen al reino ___.',opts:['Animalia','Fungi','Monera'],ans:'Fungi'},
-  {s:'Un ser ___ fabrica su propio alimento por fotosíntesis.',opts:['heterótrofo','autótrofo','unicelular'],ans:'autótrofo'},
-  {s:'La ciencia que clasifica a los seres vivos es la ___.',opts:['taxonomía','ecología','biología'],ans:'taxonomía'},
-  {s:'El grupo más pequeño de la clasificación es la ___.',opts:['familia','especie','clase'],ans:'especie'},
-  {s:'La ameba pertenece al reino ___.',opts:['Protista','Plantae','Monera'],ans:'Protista'},
-  {s:'El ser humano pertenece al reino ___.',opts:['Fungi','Animalia','Plantae'],ans:'Animalia'},
-  {s:'La pared celular de las plantas está hecha de ___.',opts:['quitina','celulosa','proteína'],ans:'celulosa'},
+  {s:'El conjunto de seres vivos y su medio físico se llama ___.',opts:['ecosistema','población','bioma'],ans:'ecosistema'},
+  {s:'Los factores ___ son los componentes sin vida del ecosistema.',opts:['bióticos','abióticos','orgánicos'],ans:'abióticos'},
+  {s:'Las plantas son los ___ del ecosistema.',opts:['consumidores','productores','descomponedores'],ans:'productores'},
+  {s:'Los ___ reciclan la materia muerta.',opts:['herbívoros','descomponedores','depredadores'],ans:'descomponedores'},
+  {s:'La energía de la cadena alimenticia viene del ___.',opts:['suelo','Sol','agua'],ans:'Sol'},
+  {s:'Un animal herbívoro es un consumidor ___.',opts:['primario','terciario','productor'],ans:'primario'},
+  {s:'Los individuos de la misma especie forman una ___.',opts:['comunidad','población','red'],ans:'población'},
+  {s:'En el ___ ambas especies se benefician.',opts:['parasitismo','mutualismo','competencia'],ans:'mutualismo'},
 ];
 const explainQuestions=[
-  {q:'¿Qué es la taxonomía y para qué sirve clasificar a los seres vivos?',ans:'La taxonomía es la ciencia que identifica, nombra y clasifica a los seres vivos, ordenándolos en grupos según las características que comparten. Sirve para estudiarlos y comprenderlos mejor.'},
-  {q:'Menciona los cinco reinos y una característica de cada uno.',ans:'Monera (bacterias, unicelular y procariota); Protista (ameba y algas, eucariota unicelular); Fungi (hongos, heterótrofos por absorción); Plantae (plantas, autótrofas por fotosíntesis); Animalia (animales, heterótrofos que se mueven).'},
-  {q:'¿Qué diferencia hay entre un ser autótrofo y uno heterótrofo? Da un ejemplo de cada uno.',ans:'El autótrofo fabrica su propio alimento, casi siempre por fotosíntesis (ejemplo: una planta). El heterótrofo obtiene su alimento de otros seres vivos (ejemplo: un animal o un hongo).'},
-  {q:'¿Cuáles son las tres preguntas clave que se usan para clasificar a un ser vivo en un reino?',ans:'¿Cuántas células tiene? (unicelular o pluricelular); ¿qué tipo de célula tiene? (procariota o eucariota); y ¿cómo se alimenta? (autótrofo o heterótrofo).'},
-  {q:'¿Por qué los hongos NO pertenecen al reino de las plantas?',ans:'Porque los hongos no tienen clorofila ni hacen fotosíntesis: son heterótrofos y absorben su alimento. Además, su pared celular es de quitina y no de celulosa como la de las plantas.'},
+  {q:'¿Qué es un ecosistema y de qué está formado?',ans:'Un ecosistema es el conjunto de los seres vivos de un lugar, su medio físico (factores abióticos) y todas las relaciones que se dan entre ellos.'},
+  {q:'¿Qué diferencia hay entre factores bióticos y abióticos? Da un ejemplo de cada uno.',ans:'Los factores bióticos son los seres vivos (una planta, un animal). Los abióticos son los componentes sin vida (el agua, la luz, el suelo, la temperatura).'},
+  {q:'Explica los tres papeles de un ecosistema: productores, consumidores y descomponedores.',ans:'Los productores (plantas y algas) fabrican su alimento por fotosíntesis; los consumidores (animales) comen a otros seres vivos; los descomponedores (hongos y bacterias) reciclan la materia muerta.'},
+  {q:'¿Qué es una cadena alimenticia y de dónde viene la energía?',ans:'Es una serie que muestra quién se come a quién. La energía viene del Sol, pasa a los productores y luego a los consumidores; disminuye en cada nivel.'},
+  {q:'Menciona dos ecosistemas de Honduras y descríbelos brevemente.',ans:'Por ejemplo: el bosque nublado (montaña con niebla, hogar del quetzal) y el arrecife de coral de las Islas de la Bahía (parte del segundo arrecife más grande del mundo).'},
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué reino o concepto se refiere.','<strong>Ejemplo:</strong> Las bacterias forman el reino Monera. → <span style="color:var(--jade);font-weight:700;">Reino Monera</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada reino, completa el número de células, el tipo de célula, la nutrición y algunos ejemplos.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Reino','text-align:left;')}${th('Nº de células')}${th('Tipo de célula')}${th('Nutrición')}${th('Ejemplos')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Nº de células: ${it.gen} | Tipo de célula: ${it.n} | Nutrición: ${it.g} | Ejemplos: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué concepto del ecosistema se refiere.','<strong>Ejemplo:</strong> Las plantas fabrican su propio alimento. → <span style="color:var(--jade);font-weight:700;">Productores</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada ecosistema de Honduras, completa el tipo, dónde está, sus seres vivos y una amenaza.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Ecosistema','text-align:left;')}${th('Tipo')}${th('Dónde está')}${th('Seres vivos')}${th('Amenaza')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Tipo: ${it.gen} | Dónde está: ${it.n} | Seres vivos: ${it.g} | Amenaza: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
@@ -274,42 +274,42 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
   {size:10,grid:[
-    ['P','L','A','N','T','A','E','X','S','A'],
-    ['I','Z','D','Z','W','S','G','G','D','J'],
-    ['R','V','U','H','C','F','U','N','G','I'],
-    ['E','H','P','R','O','T','I','S','T','A'],
-    ['M','O','N','E','R','A','L','Y','X','G'],
-    ['D','R','E','I','N','O','A','I','R','Q'],
-    ['F','B','A','N','I','M','A','L','I','A'],
-    ['Q','W','M','J','O','S','A','N','L','L'],
-    ['R','Q','I','O','W','B','D','N','W','Z'],
-    ['M','D','W','E','N','P','S','J','G','L']
+    ['H','A','B','I','T','A','T','V','Q','D'],
+    ['C','O','N','S','U','M','I','D','O','R'],
+    ['V','P','M','N','K','J','T','D','U','J'],
+    ['A','G','O','C','A','D','E','N','A','H'],
+    ['U','B','M','R','P','K','V','P','K','X'],
+    ['E','C','O','S','I','S','T','E','M','A'],
+    ['D','C','H','A','L','W','D','C','V','N'],
+    ['O','P','R','O','D','U','C','T','O','R'],
+    ['G','N','Y','H','I','I','Y','P','O','C'],
+    ['X','T','W','E','N','E','R','G','I','A']
   ],words:[
-    {w:'MONERA',cells:[[4,0],[4,1],[4,2],[4,3],[4,4],[4,5]]},
-    {w:'PROTISTA',cells:[[3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[3,8],[3,9]]},
-    {w:'FUNGI',cells:[[2,5],[2,6],[2,7],[2,8],[2,9]]},
-    {w:'PLANTAE',cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]]},
-    {w:'ANIMALIA',cells:[[6,2],[6,3],[6,4],[6,5],[6,6],[6,7],[6,8],[6,9]]},
-    {w:'REINO',cells:[[5,1],[5,2],[5,3],[5,4],[5,5]]}
+    {w:'ECOSISTEMA',cells:[[5,0],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6],[5,7],[5,8],[5,9]]},
+    {w:'PRODUCTOR',cells:[[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8],[7,9]]},
+    {w:'CONSUMIDOR',cells:[[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[1,8],[1,9]]},
+    {w:'CADENA',cells:[[3,3],[3,4],[3,5],[3,6],[3,7],[3,8]]},
+    {w:'HABITAT',cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]]},
+    {w:'ENERGIA',cells:[[9,3],[9,4],[9,5],[9,6],[9,7],[9,8],[9,9]]}
   ]},
   {size:10,grid:[
-    ['A','V','N','A','H','O','N','G','O','U'],
-    ['C','Y','I','O','Z','C','B','F','W','V'],
-    ['H','K','D','S','C','F','W','X','W','R'],
-    ['V','W','J','G','P','L','A','N','T','A'],
-    ['B','E','S','P','E','C','I','E','U','T'],
-    ['L','Z','G','W','M','A','N','E','M','W'],
-    ['L','U','A','N','I','M','A','L','U','N'],
-    ['B','B','A','C','T','E','R','I','A','K'],
-    ['C','C','E','L','U','L','A','C','M','X'],
-    ['O','L','O','G','K','R','B','B','O','E']
+    ['T','A','E','C','O','L','O','G','I','A'],
+    ['M','V','R','U','Y','W','K','R','N','P'],
+    ['B','K','Q','A','H','E','N','N','Y','O'],
+    ['Q','V','B','I','O','T','I','C','O','V'],
+    ['C','Y','A','B','I','O','T','I','C','O'],
+    ['Z','L','P','H','O','D','J','E','Z','X'],
+    ['N','I','C','H','O','R','V','V','J','V'],
+    ['P','O','B','L','A','C','I','O','N','E'],
+    ['C','O','M','U','N','I','D','A','D','I'],
+    ['L','C','V','N','O','X','V','J','R','N']
   ],words:[
-    {w:'CELULA',cells:[[8,1],[8,2],[8,3],[8,4],[8,5],[8,6]]},
-    {w:'ESPECIE',cells:[[4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[4,7]]},
-    {w:'BACTERIA',cells:[[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8]]},
-    {w:'HONGO',cells:[[0,4],[0,5],[0,6],[0,7],[0,8]]},
-    {w:'PLANTA',cells:[[3,4],[3,5],[3,6],[3,7],[3,8],[3,9]]},
-    {w:'ANIMAL',cells:[[6,2],[6,3],[6,4],[6,5],[6,6],[6,7]]}
+    {w:'POBLACION',cells:[[7,0],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8]]},
+    {w:'COMUNIDAD',cells:[[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,6],[8,7],[8,8]]},
+    {w:'BIOTICO',cells:[[3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[3,8]]},
+    {w:'ABIOTICO',cells:[[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8],[4,9]]},
+    {w:'NICHO',cells:[[6,0],[6,1],[6,2],[6,3],[6,4]]},
+    {w:'ECOLOGIA',cells:[[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]]}
   ]}
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
@@ -325,72 +325,72 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'La taxonomía es la ciencia que identifica, nombra y clasifica a los seres vivos.',a:true},
-  {q:'Robert Whittaker propuso los cinco reinos en 1969.',a:true},
-  {q:'Las bacterias pertenecen al reino Protista.',a:false},
-  {q:'Los seres autótrofos fabrican su propio alimento.',a:true},
-  {q:'El reino es el grupo más pequeño de la clasificación.',a:false},
-  {q:'Los hongos, como las setas y los mohos, pertenecen al reino Fungi.',a:true},
-  {q:'Las plantas son seres heterótrofos que comen otros seres vivos.',a:false},
-  {q:'La ameba y el paramecio pertenecen al reino Protista.',a:true},
-  {q:'El ser humano pertenece al reino Animalia.',a:true},
-  {q:'Los seres unicelulares están formados por muchas células.',a:false},
-  {q:'Los hongos fabrican su alimento por fotosíntesis, igual que las plantas.',a:false},
-  {q:'La célula procariota no tiene núcleo definido.',a:true},
-  {q:'Los animales invertebrados tienen columna vertebral.',a:false},
-  {q:'El nombre científico se escribe con el género y la especie, como Homo sapiens.',a:true},
-  {q:'Las plantas producen gran parte del oxígeno que respiramos.',a:true},
+  {q:'Un ecosistema está formado por los seres vivos, su medio físico y sus relaciones.',a:true},
+  {q:'Los factores abióticos son los seres vivos del ecosistema.',a:false},
+  {q:'Las plantas y las algas son los productores del ecosistema.',a:true},
+  {q:'Los descomponedores reciclan la materia muerta y devuelven nutrientes al suelo.',a:true},
+  {q:'Un animal herbívoro es un consumidor primario.',a:true},
+  {q:'La energía de una cadena alimenticia viene del suelo.',a:false},
+  {q:'Una población es un grupo de individuos de la misma especie.',a:true},
+  {q:'En el mutualismo, una especie se beneficia y la otra sale perjudicada.',a:false},
+  {q:'El agua, la luz y la temperatura son factores abióticos.',a:true},
+  {q:'El arrecife de coral es un ecosistema acuático marino.',a:true},
+  {q:'El bosque nublado es un ecosistema acuático.',a:false},
+  {q:'Los descomponedores más comunes son los hongos y las bacterias.',a:true},
+  {q:'En una cadena alimenticia, la energía aumenta de un nivel al siguiente.',a:false},
+  {q:'El hábitat es el lugar donde vive un ser vivo.',a:true},
+  {q:'La ecología es la ciencia que estudia los ecosistemas.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Cómo se llama la ciencia que clasifica y nombra a los seres vivos?',o:['a) Biología','b) Taxonomía','c) Ecología','d) Geología'],a:1},
-  {q:'¿Cuántos reinos propuso Robert Whittaker en 1969?',o:['a) Tres','b) Cuatro','c) Cinco','d) Seis'],a:2},
-  {q:'¿A qué reino pertenecen las bacterias?',o:['a) Protista','b) Monera','c) Fungi','d) Animalia'],a:1},
-  {q:'¿Qué reino reúne a los hongos, las setas y los mohos?',o:['a) Plantae','b) Monera','c) Fungi','d) Protista'],a:2},
-  {q:'¿Cuál es el grupo MÁS PEQUEÑO de la clasificación?',o:['a) El reino','b) La familia','c) El género','d) La especie'],a:3},
-  {q:'¿Qué reino está formado por seres pluricelulares y autótrofos?',o:['a) Plantae','b) Animalia','c) Fungi','d) Monera'],a:0},
-  {q:'La ameba, el paramecio y las algas pertenecen al reino…',o:['a) Monera','b) Protista','c) Plantae','d) Fungi'],a:1},
-  {q:'¿Qué significa que un ser vivo sea "autótrofo"?',o:['a) Que se mueve','b) Que fabrica su propio alimento','c) Que come otros seres','d) Que es unicelular'],a:1},
-  {q:'¿A qué reino pertenece el ser humano?',o:['a) Plantae','b) Protista','c) Animalia','d) Fungi'],a:2},
-  {q:'¿Qué caracteriza a una célula procariota?',o:['a) Tiene muchos organelos','b) No tiene núcleo definido','c) Hace fotosíntesis','d) Es muy grande'],a:1},
-  {q:'¿Cuál de estos seres vivos es un descomponedor típico?',o:['a) El pino','b) El águila','c) El hongo','d) El pez'],a:2},
-  {q:'¿Qué grupo de animales tiene columna vertebral?',o:['a) Invertebrados','b) Vertebrados','c) Insectos','d) Moluscos'],a:1},
-  {q:'¿De qué está hecha la pared celular de los hongos?',o:['a) Celulosa','b) Quitina','c) Proteína','d) Grasa'],a:1},
-  {q:'¿Qué reino fue el primero en aparecer en la Tierra?',o:['a) Animalia','b) Plantae','c) Monera','d) Fungi'],a:2},
-  {q:'¿Cómo se escribe el nombre científico del ser humano?',o:['a) Homo sapiens','b) Ser humano','c) Humano común','d) Persona sapiens'],a:0},
+  {q:'¿Qué es un ecosistema?',o:['a) Solo los animales de un lugar','b) El conjunto de seres vivos, su medio y sus relaciones','c) Solo las plantas','d) Solo el agua y el suelo'],a:1},
+  {q:'¿Cómo se llaman los componentes SIN vida de un ecosistema?',o:['a) Bióticos','b) Abióticos','c) Orgánicos','d) Vivos'],a:1},
+  {q:'¿Qué seres vivos son los productores?',o:['a) Los animales','b) Los hongos','c) Las plantas','d) Las bacterias'],a:2},
+  {q:'Un animal herbívoro es un consumidor…',o:['a) primario','b) productor','c) descomponedor','d) terciario'],a:0},
+  {q:'¿Quiénes reciclan la materia muerta?',o:['a) Los productores','b) Los herbívoros','c) Los descomponedores','d) Los depredadores'],a:2},
+  {q:'En una cadena alimenticia, ¿de dónde viene la energía?',o:['a) Del suelo','b) Del Sol','c) Del agua','d) Del aire'],a:1},
+  {q:'Un grupo de individuos de la misma especie se llama…',o:['a) comunidad','b) población','c) bioma','d) hábitat'],a:1},
+  {q:'La relación en la que AMBAS especies se benefician es el…',o:['a) parasitismo','b) mutualismo','c) depredación','d) competencia'],a:1},
+  {q:'¿Cuál de estos es un factor abiótico?',o:['a) Una planta','b) El agua','c) Un pez','d) Una bacteria'],a:1},
+  {q:'El arrecife de coral de las Islas de la Bahía es un ecosistema…',o:['a) terrestre','b) acuático','c) de desierto','d) de montaña'],a:1},
+  {q:'¿Cuál de estos animales es un consumidor carnívoro?',o:['a) El venado','b) El conejo','c) El puma','d) La vaca'],a:2},
+  {q:'El lugar donde vive un ser vivo se llama…',o:['a) nicho','b) hábitat','c) bioma','d) población'],a:1},
+  {q:'¿Cuál es un ecosistema terrestre de Honduras?',o:['a) El arrecife','b) El bosque nublado','c) El manglar','d) El río Patuca'],a:1},
+  {q:'La ciencia que estudia los ecosistemas se llama…',o:['a) taxonomía','b) ecología','c) geología','d) astronomía'],a:1},
+  {q:'En una cadena, la energía de un nivel al siguiente…',o:['a) aumenta','b) disminuye','c) desaparece','d) se duplica'],a:1},
 ];
 const evalCPBank=[
-  {q:'La ___ es la ciencia que identifica, nombra y clasifica a los seres vivos.',a:'taxonomía'},
-  {q:'El reino de las bacterias se llama reino ___.',a:'Monera'},
-  {q:'Un ser ___ fabrica su propio alimento por fotosíntesis.',a:'autótrofo'},
-  {q:'Un ser ___ obtiene su alimento de otros seres vivos.',a:'heterótrofo'},
-  {q:'Los hongos, las setas y los mohos pertenecen al reino ___.',a:'Fungi'},
-  {q:'El grupo más pequeño de la clasificación es la ___.',a:'especie'},
-  {q:'La ameba y las algas pertenecen al reino ___.',a:'Protista'},
-  {q:'El ser humano pertenece al reino ___.',a:'Animalia'},
-  {q:'Las plantas fabrican su alimento mediante la ___.',a:'fotosíntesis'},
-  {q:'Las bacterias son seres ___ porque tienen una sola célula.',a:'unicelulares'},
-  {q:'Los animales con columna vertebral se llaman ___.',a:'vertebrados'},
-  {q:'La pared celular de los hongos está hecha de ___.',a:'quitina'},
-  {q:'El biólogo ___ propuso los cinco reinos en 1969.',a:'Whittaker'},
-  {q:'El nombre científico de los seres vivos se escribe en ___.',a:'latín'},
-  {q:'Los hongos y bacterias que reciclan restos muertos se llaman ___.',a:'descomponedores'},
+  {q:'El conjunto de seres vivos, su medio físico y sus relaciones es un ___.',a:'ecosistema'},
+  {q:'Los factores ___ son los componentes sin vida del ecosistema.',a:'abióticos'},
+  {q:'Las plantas y las algas son los ___ del ecosistema.',a:'productores'},
+  {q:'Los ___ reciclan la materia muerta y devuelven nutrientes al suelo.',a:'descomponedores'},
+  {q:'Un animal herbívoro es un consumidor ___.',a:'primario'},
+  {q:'En la cadena alimenticia, la energía viene del ___.',a:'Sol'},
+  {q:'Un grupo de individuos de la misma especie es una ___.',a:'población'},
+  {q:'La relación en la que ambas especies se benefician es el ___.',a:'mutualismo'},
+  {q:'El ___ es el lugar donde vive un ser vivo.',a:'hábitat'},
+  {q:'Los seres vivos de un ecosistema son los factores ___.',a:'bióticos'},
+  {q:'La ciencia que estudia los ecosistemas se llama ___.',a:'ecología'},
+  {q:'El bosque nublado y el bosque de pino son ecosistemas ___.',a:'terrestres'},
+  {q:'El arrecife, el manglar y el río son ecosistemas ___.',a:'acuáticos'},
+  {q:'El conjunto de todas las poblaciones de un lugar es la ___.',a:'comunidad'},
+  {q:'Cuando una especie caza y se come a otra, la relación es de ___.',a:'depredación'},
 ];
 const evalPRBank=[
-  {term:'Taxonomía',def:'Ciencia que identifica, nombra y clasifica a los seres vivos'},
-  {term:'Reino',def:'Grupo más grande de la clasificación de los seres vivos'},
-  {term:'Especie',def:'Grupo más pequeño de la clasificación'},
-  {term:'Monera',def:'Reino de las bacterias (unicelular y procariota)'},
-  {term:'Protista',def:'Reino de la ameba, el paramecio y las algas'},
-  {term:'Fungi',def:'Reino de los hongos, las setas y los mohos'},
-  {term:'Plantae',def:'Reino de las plantas, autótrofas por fotosíntesis'},
-  {term:'Animalia',def:'Reino de los animales, incluido el ser humano'},
-  {term:'Autótrofo',def:'Ser vivo que fabrica su propio alimento'},
-  {term:'Heterótrofo',def:'Ser vivo que obtiene su alimento de otros seres'},
-  {term:'Procariota',def:'Célula sin núcleo definido, como las bacterias'},
-  {term:'Eucariota',def:'Célula con núcleo definido'},
-  {term:'Vertebrado',def:'Animal que tiene columna vertebral'},
-  {term:'Descomponedor',def:'Ser vivo que recicla los restos de seres muertos'},
-  {term:'Nombre científico',def:'Nombre en latín formado por el género y la especie'},
+  {term:'Ecosistema',def:'Seres vivos, su medio físico y sus relaciones'},
+  {term:'Factores bióticos',def:'Los seres vivos del ecosistema'},
+  {term:'Factores abióticos',def:'Los componentes sin vida (agua, luz, suelo)'},
+  {term:'Productores',def:'Fabrican su alimento; base de la cadena (plantas)'},
+  {term:'Consumidores',def:'Animales que comen a otros seres vivos'},
+  {term:'Descomponedores',def:'Reciclan la materia muerta (hongos y bacterias)'},
+  {term:'Población',def:'Individuos de la misma especie en un lugar'},
+  {term:'Comunidad',def:'Todas las poblaciones que conviven en un lugar'},
+  {term:'Cadena alimenticia',def:'Muestra quién se come a quién'},
+  {term:'Mutualismo',def:'Relación en la que ambas especies se benefician'},
+  {term:'Depredación',def:'Un ser vivo caza y se come a otro'},
+  {term:'Hábitat',def:'El lugar donde vive un ser vivo'},
+  {term:'Ecosistema terrestre',def:'El que está sobre la tierra (bosque, selva)'},
+  {term:'Ecosistema acuático',def:'El que está en el agua (río, mar, arrecife)'},
+  {term:'Ecología',def:'Ciencia que estudia los ecosistemas'},
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -477,75 +477,75 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Pedro observa un ser vivo que crece sobre un tronco húmedo: no es de color verde, no se mueve y parece alimentarse de la madera muerta que va descomponiendo.'},
-  {txt:'En un pan olvidado aparece una mancha aterciopelada que crece día a día. No tiene hojas ni raíces y se nutre del propio pan.'},
-  {txt:'María encuentra en el bosque unas "sombrillitas" que brotan del suelo tras la lluvia. No son verdes y crecen sobre hojas en descomposición.'},
-  {txt:'Un estudiante examina un ser vivo eucariota, con pared de quitina, que no tiene clorofila y absorbe el alimento del lugar donde vive.'},
-  {txt:'Sobre una fruta podrida se ve crecer una pelusa blanca y esponjosa que se alimenta de la fruta y ayuda a descomponerla.'},
-  {txt:'En un frasco de laboratorio, una levadura se reproduce en la masa del pan y transforma sus azúcares sin usar la luz del sol.'},
+  {txt:'En un bosque cazan a todos los pumas (depredadores). Al poco tiempo, los venados se multiplican tanto que acaban con casi todo el pasto.'},
+  {txt:'En una laguna desaparecen todas las ranas. Los insectos que ellas comían aumentan sin control y dañan las plantas de la orilla.'},
+  {txt:'En un pastizal se eliminan todas las aves. Las orugas y los saltamontes se multiplican y devoran los cultivos.'},
+  {txt:'En un río contaminan el agua y mueren los peces pequeños. Las garzas que se alimentaban de ellos se quedan sin comida.'},
+  {txt:'En un bosque talan todos los árboles (productores). Los herbívoros que comían sus hojas y frutos empiezan a pasar hambre.'},
+  {txt:'A una isla llega una especie nueva que se come todos los huevos de las aves; las poblaciones de aves bajan muchísimo.'},
 ];
 const critCaseQuestions=[
-  '1. ¿A qué reino pertenece este ser vivo? Justifica tu respuesta.',
-  '2. ¿Su nutrición es autótrofa o heterótrofa? ¿Por qué?',
-  '3. ¿Por qué NO pertenece al reino de las plantas?',
-  '4. ¿Qué papel cumple este ser vivo en la naturaleza?',
+  '1. ¿Qué papel cumplía en la cadena la especie que cambió (productor, consumidor o depredador)?',
+  '2. ¿Por qué al alterar UNA especie se afectan las demás?',
+  '3. ¿El equilibrio del ecosistema se mantiene o se rompe? ¿Por qué?',
+  '4. ¿Qué se podría hacer para proteger este ecosistema?',
 ];
 const critCaseGuides=[
-  'Pertenece al reino Fungi (los hongos): es un ser eucariota que no tiene clorofila ni se mueve, y absorbe su alimento.',
-  'Su nutrición es heterótrofa: no fabrica su propio alimento, sino que lo absorbe de la materia orgánica sobre la que crece.',
-  'Porque no tiene clorofila ni hace fotosíntesis, y su pared celular es de quitina y no de celulosa como la de las plantas.',
-  'Es un descomponedor: recicla los restos de seres muertos y devuelve los nutrientes al suelo, manteniendo el equilibrio de la naturaleza.',
+  'Depende del caso: puede ser un depredador (puma, ave, rana) que controlaba a otros, o un productor (los árboles) del que dependían los herbívoros.',
+  'Porque en un ecosistema todos los seres vivos están conectados por cadenas y redes alimenticias: si una especie cambia, las que dependían de ella —o a las que ella controlaba— también cambian.',
+  'Se rompe: el ecosistema pierde su equilibrio. Unas poblaciones crecen sin control y otras se quedan sin alimento, hasta que con el tiempo se degrada o encuentra un nuevo balance.',
+  'Proteger a todas las especies y su hábitat, evitar la caza y la contaminación, y no eliminar a los depredadores ni a los productores, porque cada uno cumple un papel.',
 ];
 const critErrorBank=[
-  {txt:'"Las bacterias pertenecen al reino Fungi porque son muy pequeñas y se ven con el microscopio."',
-   g1:'Las bacterias pertenecen al reino MONERA, no al reino Fungi.',
-   g2:'El tamaño no define el reino: lo definen el tipo de célula (procariota) y la forma de nutrición.'},
-  {txt:'"Los hongos son plantas porque no se mueven y viven fijos sobre el suelo o los troncos."',
-   g1:'Los hongos forman su propio reino, el reino Fungi; no son plantas.',
-   g2:'No hacen fotosíntesis: son heterótrofos y su pared celular es de quitina, no de celulosa.'},
-  {txt:'"Todos los seres del reino Monera son pluricelulares y tienen células eucariotas con núcleo."',
-   g1:'El reino Monera está formado por seres UNIcelulares.',
-   g2:'Sus células son procariotas (sin núcleo definido), no eucariotas.'},
-  {txt:'"Las plantas son heterótrofas porque toman agua y sales minerales del suelo para vivir."',
-   g1:'Las plantas son AUTÓTROFAS: fabrican su propio alimento mediante la fotosíntesis.',
-   g2:'Tomar agua y sales no es alimentarse; su alimento (glucosa) lo fabrican ellas mismas con la luz.'},
-  {txt:'"El ser humano pertenece al reino Plantae porque es un ser vivo grande y complejo."',
-   g1:'El ser humano pertenece al reino ANIMALIA.',
-   g2:'Es pluricelular, heterótrofo y se desplaza; las plantas, en cambio, son autótrofas y viven fijas.'},
+  {txt:'"Los factores abióticos son los seres vivos del ecosistema, como los animales y las plantas."',
+   g1:'Los factores abióticos son los componentes SIN vida: el agua, la luz, el suelo y la temperatura.',
+   g2:'Los seres vivos (animales, plantas, hongos, bacterias) son los factores BIÓTICOS.'},
+  {txt:'"Los animales son productores porque también forman parte del ecosistema."',
+   g1:'Los productores son las plantas y las algas, que fabrican su propio alimento.',
+   g2:'Los animales son consumidores: se alimentan de otros seres vivos.'},
+  {txt:'"En una cadena alimenticia la energía viene del suelo y aumenta en cada nivel."',
+   g1:'La energía viene del SOL, no del suelo.',
+   g2:'La energía DISMINUYE de un nivel al siguiente, no aumenta.'},
+  {txt:'"Los descomponedores no sirven para nada; solo ensucian el ecosistema."',
+   g1:'Los descomponedores (hongos y bacterias) reciclan la materia muerta.',
+   g2:'Devuelven los nutrientes al suelo; sin ellos, los restos se acumularían y las plantas no tendrían de qué alimentarse.'},
+  {txt:'"El arrecife de coral y el manglar son ecosistemas terrestres."',
+   g1:'Son ecosistemas ACUÁTICOS: viven en el agua o entre el agua y la tierra.',
+   g2:'Los ecosistemas terrestres están sobre tierra firme, como el bosque o el pinar.'},
 ];
 const critDecisionBank=[
-  'En un bosque desaparecen todos los hongos y las bacterias descomponedores. Con el tiempo, los restos de plantas y animales muertos empiezan a acumularse en el suelo.',
-  'Un agricultor usa un producto que elimina todos los hongos del suelo. Poco a poco, las hojas caídas dejan de pudrirse y la tierra se vuelve pobre.',
-  'En un terrario cerrado no hay ningún descomponedor. Los restos de comida y de plantas muertas se juntan y no vuelven a convertirse en nutrientes.',
-  'Una comunidad quema toda la materia orgánica y elimina los hongos del terreno; después nota que las plantas de sus cultivos crecen débiles y amarillentas.',
-  'En un experimento se retiran del suelo todas las bacterias y hongos. Las hojas secas permanecen intactas durante meses sin descomponerse.',
+  'Una empresa quiere talar parte del bosque nublado de Celaque para sembrar café. Ese bosque es hogar del quetzal y la fuente del agua de la región.',
+  'En las Islas de la Bahía, algunos turistas rompen pedazos de coral como recuerdo. El arrecife se daña poco a poco.',
+  'En el Golfo de Fonseca cortan manglares para construir estanques de camarón. Con ello desaparecen las "guarderías" de muchos peces.',
+  'En un río cercano a la comunidad tiran basura y aguas sucias; los peces y camarones empiezan a morir.',
+  'En un bosque de pino de Olancho no se controlan los incendios ni el gorgojo; grandes zonas de árboles se secan.',
 ];
-const critDecisionGuide='Los hongos (reino Fungi) y muchas bacterias (reino Monera) son DESCOMPONEDORES: reciclan los restos de seres muertos y devuelven los nutrientes al suelo. Sin ellos, la materia muerta se acumula y las plantas se quedan sin nutrientes. Por eso todos los reinos cumplen un papel en el equilibrio de la naturaleza; conviene cuidarlos y no eliminarlos por completo.';
+const critDecisionGuide='Cada ecosistema de Honduras es único y nos presta servicios importantes: agua, oxígeno, pesca, protección de la costa y biodiversidad. La mejor decisión es CONSERVARLO: usarlo de forma sostenible, evitar la contaminación y la tala, y proteger a las especies. Destruir un ecosistema afecta a todos los seres vivos que dependen de él, incluidas las personas.';
 const critCompareBank=[
-  {a:'Un ser vivo unicelular, sin núcleo definido, con su ADN suelto en el citoplasma.',b:'Un ser vivo pluricelular, con núcleo, que fabrica su alimento con la luz del sol.',
-   ga:'Una bacteria (reino Monera).',
-   gb:'Una planta (reino Plantae).',
-   gr:'Pertenecen a reinos distintos: se diferencian por el nº de células, el tipo de célula y la forma de nutrición.'},
-  {a:'Un ser vivo que absorbe su alimento de la materia muerta y tiene pared de quitina.',b:'Un ser vivo que se desplaza para buscar y comer a otros seres vivos.',
-   ga:'Un hongo (reino Fungi).',
-   gb:'Un animal (reino Animalia).',
-   gr:'Ambos son heterótrofos, pero el hongo absorbe su alimento y el animal lo captura y lo digiere.'},
-  {a:'Un organismo unicelular eucariota que vive en el agua, como la ameba.',b:'Un organismo unicelular procariota, sin núcleo definido, como una bacteria.',
-   ga:'Un protista (reino Protista).',
-   gb:'Una bacteria (reino Monera).',
-   gr:'Los dos son unicelulares, pero el protista es eucariota (con núcleo) y la bacteria es procariota (sin núcleo).'},
+  {a:'Un ser vivo que fabrica su alimento con la luz del sol, como el pasto.',b:'Un animal que se alimenta comiendo ese pasto, como el venado.',
+   ga:'Un productor.',
+   gb:'Un consumidor primario (herbívoro).',
+   gr:'Cumplen papeles distintos: el productor crea el alimento y el consumidor lo aprovecha; ambos son eslabones de la misma cadena.'},
+  {a:'El agua, la luz del sol y la temperatura de un lago.',b:'Los peces, las plantas acuáticas y las garzas de ese mismo lago.',
+   ga:'Factores abióticos.',
+   gb:'Factores bióticos.',
+   gr:'No son lo mismo: unos son componentes sin vida y otros son los seres vivos; juntos forman el ecosistema.'},
+  {a:'El bosque nublado de Celaque, lleno de árboles y niebla en la montaña.',b:'El arrecife de coral de Roatán, bajo el agua del mar.',
+   ga:'Un ecosistema terrestre.',
+   gb:'Un ecosistema acuático (marino).',
+   gr:'Los dos son ecosistemas, pero uno está sobre la tierra y el otro dentro del agua.'},
 ];
 const critCauseBank=[
-  {cause:'Desaparecen todos los hongos y bacterias descomponedores de un ecosistema.',guide:'Los restos de seres muertos se acumulan y los nutrientes no regresan al suelo.'},
-  {cause:'Se extinguen todas las plantas de un lugar.',guide:'Los animales se quedan sin oxígeno ni alimento y las cadenas alimenticias se rompen.'},
-  {cause:'Las algas del reino Protista que viven en el mar desaparecen.',guide:'Se reduce gran parte del oxígeno del planeta, porque esas algas lo producen.'},
-  {cause:'Un animal deja de encontrar otros seres vivos de qué alimentarse.',guide:'Como es heterótrofo y no fabrica su alimento, se debilita y puede morir.'},
+  {cause:'Se talan todos los árboles (productores) de un bosque.',guide:'Los herbívoros se quedan sin alimento y la cadena se rompe; muchos animales emigran o mueren.'},
+  {cause:'Cazan a todos los depredadores (pumas) de un bosque.',guide:'Los herbívoros se multiplican sin control y acaban con las plantas.'},
+  {cause:'Contaminan un río con basura y aguas negras.',guide:'Mueren los peces y otros seres del agua; el ecosistema acuático se degrada.'},
+  {cause:'Desaparecen los descomponedores de un ecosistema.',guide:'Los restos muertos se acumulan y los nutrientes no vuelven al suelo.'},
 ];
 const critEffectBank=[
-  {effect:'En un tronco húmedo crece un ser vivo que no es verde y absorbe la madera muerta.',guide:'Es un hongo (reino Fungi): heterótrofo y descomponedor.'},
-  {effect:'Un ser vivo unicelular sobrevive sin tener un núcleo definido.',guide:'Es una bacteria del reino Monera: su célula es procariota.'},
-  {effect:'Una planta crece sana y bien verde en un jardín soleado.',guide:'Sus cloroplastos hacen fotosíntesis con la luz del sol (nutrición autótrofa).'},
-  {effect:'Una ameba se desplaza en una gota de agua y captura su alimento.',guide:'Es un protista (reino Protista): eucariota, unicelular y heterótrofo.'},
+  {effect:'En un bosque hay demasiados venados y casi no queda pasto.',guide:'Probablemente desaparecieron sus depredadores, que controlaban su número.'},
+  {effect:'Las hojas y los animales muertos de un bosque no se pudren y se acumulan.',guide:'Faltan descomponedores (hongos y bacterias) que reciclen la materia.'},
+  {effect:'En un río mueren los peces y el agua huele mal.',guide:'El río está contaminado con basura o aguas negras.'},
+  {effect:'Muchos peces jóvenes desaparecen de la costa.',guide:'Se destruyeron los manglares, que eran su "guardería".'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -570,7 +570,7 @@ function genEvalCrit(){
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿A qué reino pertenece cada caso? 2. ¿Cómo se alimenta cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué concepto del ecosistema corresponde a cada caso? 2. ¿Qué papel cumple cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -604,7 +604,7 @@ function printEvalCrit(){
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
   let s3=`<div class="sec-title"><span>III. Toma de decisiones: la fotosíntesis</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué recomendarías para que la planta recupere su salud? Explica por qué, relacionándolo con la fotosíntesis.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿A qué reino pertenece cada caso? 2. ¿Cómo se alimenta cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué concepto del ecosistema corresponde a cada caso? 2. ¿Qué papel cumple cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
