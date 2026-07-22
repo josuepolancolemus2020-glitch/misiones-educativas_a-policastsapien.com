@@ -33,14 +33,14 @@ function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));i
 
 // ===================== ACHIEVEMENTS =====================
 const ACHIEVEMENTS={
-  primer_quiz:{icon:'🫁',label:'Primera prueba de respiración y circulación superada'},
-  flash_master:{icon:'🃏',label:'Todas las flashcards de respiración y circulación exploradas'},
-  clasif_pro:{icon:'🗂️',label:'Clasificador de órganos y vasos experto'},
-  id_master:{icon:'🔍',label:'Identificador de órganos respiratorios y circulatorios maestro'},
-  reto_hero:{icon:'🏆',label:'Héroe del reto de respiración y circulación'},
-  nivel3:{icon:'🫀',label:'¡Naturalista! Nivel 3'},
+  primer_quiz:{icon:'🌱',label:'Primera prueba de reproducción y desarrollo superada'},
+  flash_master:{icon:'🃏',label:'Todas las flashcards de reproducción y desarrollo exploradas'},
+  clasif_pro:{icon:'🗂️',label:'Clasificador de órganos y células reproductoras experto'},
+  id_master:{icon:'🔍',label:'Identificador de la reproducción y el desarrollo maestro'},
+  reto_hero:{icon:'🏆',label:'Héroe del reto de reproducción y desarrollo'},
+  nivel3:{icon:'👶',label:'¡Naturalista! Nivel 3'},
   nivel5:{icon:'🥇',label:'¡Maestro del Cuerpo! Nivel 6'},
-  widgets_master:{icon:'🧩',label:'Widgets de respiración y circulación dominados'}
+  widgets_master:{icon:'🧩',label:'Widgets de reproducción y desarrollo dominados'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -61,20 +61,20 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Respiración',a:'🫁 Proceso por el que el cuerpo <strong>toma oxígeno</strong> del aire y <strong>expulsa dióxido de carbono</strong>.'},
-  {w:'Sistema respiratorio',a:'🌬️ Conjunto de órganos por los que <strong>entra y sale el aire</strong> y ocurre el <strong>intercambio de gases</strong>: nariz, tráquea, bronquios y pulmones.'},
-  {w:'Sistema circulatorio',a:'🫀 Formado por el <strong>corazón</strong>, los <strong>vasos sanguíneos</strong> y la <strong>sangre</strong>; transporta sustancias por todo el cuerpo.'},
-  {w:'Pulmones',a:'🫁 Dos órganos <strong>esponjosos</strong> del pecho donde la sangre <strong>toma oxígeno</strong> y suelta <strong>dióxido de carbono</strong>.'},
-  {w:'Alvéolos',a:'🫧 Sacos <strong>diminutos</strong> de los pulmones donde ocurre el <strong>intercambio de gases</strong> con la sangre.'},
-  {w:'Tráquea',a:'🌀 Tubo que lleva el <strong>aire</strong> de la laringe a los <strong>bronquios</strong>. Tiene anillos de cartílago.'},
-  {w:'Diafragma',a:'💪 <strong>Músculo</strong> que está debajo de los pulmones y permite <strong>inspirar y espirar</strong>.'},
-  {w:'Corazón',a:'🫀 Órgano <strong>musculoso</strong> del tamaño de un puño que <strong>bombea la sangre</strong> a todo el cuerpo.'},
-  {w:'Arterias',a:'🔴 Vasos que llevan la sangre <strong>DESDE el corazón</strong> hacia el resto del cuerpo.'},
-  {w:'Venas',a:'🔵 Vasos que traen la sangre <strong>DE VUELTA al corazón</strong>.'},
-  {w:'Capilares',a:'🩸 Vasos <strong>finísimos</strong> donde se intercambian el oxígeno y los nutrientes con las <strong>células</strong>.'},
-  {w:'Glóbulos rojos',a:'🔴 Células de la sangre que <strong>transportan el oxígeno</strong>; tienen hemoglobina y dan el color rojo.'},
-  {w:'Inspiración',a:'⬇️ Movimiento en que <strong>entra aire con oxígeno</strong> a los pulmones. El diafragma baja.'},
-  {w:'Espiración',a:'⬆️ Movimiento en que <strong>sale aire con dióxido de carbono</strong> de los pulmones. El diafragma sube.'},
+  {w:'Reproducción',a:'🌱 Función por la que los seres vivos <strong>dan origen a nuevos seres</strong> de su misma especie. Así continúa la vida.'},
+  {w:'Reproducción sexual',a:'🚹🚺 En el ser humano intervienen <strong>un hombre y una mujer</strong>; se unen dos células reproductoras.'},
+  {w:'Sistema reproductor masculino',a:'🚹 Órganos del varón; su parte principal son los <strong>testículos</strong>, que producen espermatozoides.'},
+  {w:'Sistema reproductor femenino',a:'🚺 Órganos de la mujer; incluye los <strong>ovarios</strong>, el <strong>útero</strong> y las <strong>trompas de Falopio</strong>.'},
+  {w:'Espermatozoide',a:'🔬 Célula reproductora <strong>masculina</strong>. Se produce en los <strong>testículos</strong>.'},
+  {w:'Óvulo',a:'🥚 Célula reproductora <strong>femenina</strong>. Se produce en los <strong>ovarios</strong>.'},
+  {w:'Testículos',a:'🚹 Órganos masculinos que producen los <strong>espermatozoides</strong>.'},
+  {w:'Ovarios',a:'🚺 Órganos femeninos que producen los <strong>óvulos</strong>.'},
+  {w:'Útero',a:'🌸 Órgano femenino donde <strong>crece el bebé</strong> durante el embarazo.'},
+  {w:'Fecundación',a:'⚪ <strong>Unión del espermatozoide con el óvulo</strong>. Ocurre en las trompas de Falopio y forma el cigoto.'},
+  {w:'Cigoto',a:'🔵 <strong>Primera célula</strong> del nuevo ser, formada tras la fecundación.'},
+  {w:'Embarazo',a:'🤰 Etapa en que el bebé <strong>crece dentro del útero</strong> durante unos <strong>9 meses</strong>. También se llama gestación.'},
+  {w:'Pubertad',a:'🌗 Etapa en que el cuerpo <strong>madura</strong> para reproducirse. La dirigen las <strong>hormonas sexuales</strong>.'},
+  {w:'Etapas del desarrollo',a:'📈 El ser humano pasa por <strong>infancia, adolescencia, adultez y vejez</strong>.'},
 ];
 let fcIdx=0;
 function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué gas toma el cuerpo del aire al respirar?',o:['a) El nitrógeno','b) El oxígeno','c) El dióxido de carbono','d) El humo'],c:1},
-  {q:'¿Qué órgano bombea la sangre a todo el cuerpo?',o:['a) Los pulmones','b) El estómago','c) El corazón','d) El hígado'],c:2},
-  {q:'¿Dónde ocurre el intercambio de gases en los pulmones?',o:['a) En la tráquea','b) En los alvéolos','c) En el corazón','d) En las venas'],c:1},
-  {q:'¿Qué vasos llevan la sangre DESDE el corazón al cuerpo?',o:['a) Las venas','b) Los capilares','c) Las arterias','d) Los bronquios'],c:2},
-  {q:'¿Qué músculo permite la respiración?',o:['a) El bíceps','b) El diafragma','c) El corazón','d) La lengua'],c:1},
-  {q:'¿Qué células de la sangre transportan el oxígeno?',o:['a) Los glóbulos blancos','b) Las plaquetas','c) Los glóbulos rojos','d) El plasma'],c:2},
-  {q:'¿Qué gas expulsamos al espirar?',o:['a) El oxígeno','b) El dióxido de carbono','c) El nitrógeno','d) El vapor de agua'],c:1},
-  {q:'¿Qué vasos traen la sangre DE VUELTA al corazón?',o:['a) Las arterias','b) Las venas','c) Los bronquios','d) Los alvéolos'],c:1},
-  {q:'¿Cuántas cavidades tiene el corazón?',o:['a) Dos','b) Tres','c) Cuatro','d) Cinco'],c:2},
+  {q:'¿Qué es la reproducción?',o:['a) Comer alimentos','b) Dar origen a nuevos seres de la misma especie','c) Respirar aire','d) Mover el cuerpo'],c:1},
+  {q:'¿Qué órganos producen los espermatozoides?',o:['a) Los ovarios','b) El útero','c) Los testículos','d) Los pulmones'],c:2},
+  {q:'¿Qué órganos producen los óvulos?',o:['a) Los testículos','b) Los ovarios','c) El corazón','d) El estómago'],c:1},
+  {q:'¿Qué es la fecundación?',o:['a) El nacimiento del bebé','b) La unión del espermatozoide con el óvulo','c) La respiración','d) El crecimiento de los huesos'],c:1},
+  {q:'¿En qué órgano crece el bebé durante el embarazo?',o:['a) En el estómago','b) En los pulmones','c) En el útero','d) En el corazón'],c:2},
+  {q:'¿Cuánto dura aproximadamente el embarazo?',o:['a) 3 meses','b) 6 meses','c) 9 meses','d) 12 meses'],c:2},
+  {q:'¿Cómo se llama la etapa en que el cuerpo madura para reproducirse?',o:['a) La vejez','b) La pubertad','c) La infancia','d) La niñez'],c:1},
+  {q:'¿Cuál es la primera célula del nuevo ser tras la fecundación?',o:['a) El óvulo','b) El espermatozoide','c) El cigoto','d) La neurona'],c:2},
+  {q:'¿Cuál es el orden correcto de las etapas de la vida?',o:['a) Adultez, infancia, vejez','b) Infancia, adolescencia, adultez, vejez','c) Vejez, adultez, infancia','d) Adolescencia, infancia, vejez'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -102,14 +102,14 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Respiratorio','Circulatorio'],headA:'🫁 Sistema respiratorio',headB:'🫀 Sistema circulatorio',colA:'resp',colB:'circ',
-   words:[{w:'Nariz',t:'resp'},{w:'Corazón',t:'circ'},{w:'Tráquea',t:'resp'},{w:'Arterias',t:'circ'},{w:'Pulmones',t:'resp'},{w:'Venas',t:'circ'},{w:'Alvéolos',t:'resp'},{w:'Sangre',t:'circ'},{w:'Bronquios',t:'resp'},{w:'Capilares',t:'circ'}]},
-  {label:['Inspiración','Espiración'],headA:'⬇️ Inspiración (entra aire)',headB:'⬆️ Espiración (sale aire)',colA:'ins',colB:'esp',
-   words:[{w:'Entra oxígeno',t:'ins'},{w:'Sale dióxido de carbono',t:'esp'},{w:'Se hincha el pecho',t:'ins'},{w:'Se desinfla el pecho',t:'esp'},{w:'El diafragma baja',t:'ins'},{w:'El diafragma sube',t:'esp'},{w:'Tomamos aire',t:'ins'},{w:'Botamos aire',t:'esp'},{w:'Aire limpio',t:'ins'},{w:'Aire usado',t:'esp'}]},
-  {label:['Arterias','Venas'],headA:'🔴 Arterias (salen del corazón)',headB:'🔵 Venas (regresan al corazón)',colA:'art',colB:'ven',
-   words:[{w:'Sale del corazón',t:'art'},{w:'Regresa al corazón',t:'ven'},{w:'Lleva sangre al cuerpo',t:'art'},{w:'Trae sangre de vuelta',t:'ven'},{w:'Paredes gruesas',t:'art'},{w:'Paredes delgadas',t:'ven'},{w:'En ellas se siente el pulso',t:'art'},{w:'Tienen válvulas',t:'ven'},{w:'La aorta',t:'art'},{w:'La cava',t:'ven'}]},
-  {label:['Glóbulos rojos','Glóbulos blancos'],headA:'🔴 Glóbulos rojos',headB:'⚪ Glóbulos blancos',colA:'roj',colB:'bla',
-   words:[{w:'Transportan oxígeno',t:'roj'},{w:'Defienden el cuerpo',t:'bla'},{w:'Tienen hemoglobina',t:'roj'},{w:'Combaten los microbios',t:'bla'},{w:'Dan color rojo a la sangre',t:'roj'},{w:'Nos protegen de enfermedades',t:'bla'},{w:'Son los más numerosos',t:'roj'},{w:'Actúan cuando hay infección',t:'bla'},{w:'Llevan O₂ a las células',t:'roj'},{w:'Son parte de las defensas',t:'bla'}]},
+  {label:['Masculino','Femenino'],headA:'🚹 Sistema masculino',headB:'🚺 Sistema femenino',colA:'masc',colB:'fem',
+   words:[{w:'Testículos',t:'masc'},{w:'Ovarios',t:'fem'},{w:'Espermatozoides',t:'masc'},{w:'Óvulos',t:'fem'},{w:'Produce células masculinas',t:'masc'},{w:'Útero',t:'fem'},{w:'Trompas de Falopio',t:'fem'},{w:'Cambia la voz en la pubertad',t:'masc'},{w:'Ciclo menstrual',t:'fem'},{w:'Se desarrollan las mamas',t:'fem'}]},
+  {label:['Antes de nacer','Después de nacer'],headA:'🤰 Antes de nacer',headB:'👶 Después de nacer',colA:'antes',colB:'despues',
+   words:[{w:'Fecundación',t:'antes'},{w:'El bebé respira solo',t:'despues'},{w:'Cigoto',t:'antes'},{w:'Parto',t:'despues'},{w:'Crece en el útero',t:'antes'},{w:'Se alimenta por su boca',t:'despues'},{w:'Recibe alimento por el cordón umbilical',t:'antes'},{w:'Nacimiento',t:'despues'},{w:'Gestación',t:'antes'},{w:'Vive fuera de la madre',t:'despues'}]},
+  {label:['Célula masculina','Célula femenina'],headA:'🔬 Espermatozoide',headB:'🥚 Óvulo',colA:'esp',colB:'ovu',
+   words:[{w:'Célula reproductora masculina',t:'esp'},{w:'Célula reproductora femenina',t:'ovu'},{w:'Se produce en los testículos',t:'esp'},{w:'Se produce en los ovarios',t:'ovu'},{w:'Lo aporta el padre',t:'esp'},{w:'Lo aporta la madre',t:'ovu'},{w:'Es muy pequeño y se mueve',t:'esp'},{w:'Es más grande y redondo',t:'ovu'}]},
+  {label:['Niñez','Adultez'],headA:'🧒 Niñez / adolescencia',headB:'🧑 Adultez / vejez',colA:'joven',colB:'adulto',
+   words:[{w:'Infancia',t:'joven'},{w:'Adultez',t:'adulto'},{w:'Pubertad',t:'joven'},{w:'Vejez',t:'adulto'},{w:'Adolescencia',t:'joven'},{w:'Cuerpo ya maduro',t:'adulto'},{w:'Está creciendo',t:'joven'},{w:'Última etapa de la vida',t:'adulto'}]},
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -119,14 +119,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['Los','pulmones','realizan','el','intercambio','de','gases.'],c:1,art:'Órgano donde se intercambian los gases'},
-  {s:['El','corazón','bombea','la','sangre','a','todo','el','cuerpo.'],c:1,art:'Órgano que bombea la sangre'},
-  {s:['Las','arterias','salen','del','corazón.'],c:1,art:'Vasos que salen del corazón'},
-  {s:['El','diafragma','permite','la','respiración.'],c:1,art:'Músculo de la respiración'},
-  {s:['Los','alvéolos','toman','oxígeno','de','la','sangre.'],c:1,art:'Sacos donde ocurre el intercambio de gases'},
-  {s:['Las','venas','regresan','al','corazón.'],c:1,art:'Vasos que regresan al corazón'},
-  {s:['La','tráquea','conduce','el','aire','a','los','bronquios.'],c:1,art:'Tubo que conduce el aire a los bronquios'},
-  {s:['Los','glóbulos','rojos','transportan','el','oxígeno.'],c:5,art:'Gas que transportan los glóbulos rojos'},
+  {s:['Los','testículos','producen','los','espermatozoides.'],c:1,art:'Órganos que producen espermatozoides'},
+  {s:['Los','ovarios','producen','los','óvulos.'],c:1,art:'Órganos que producen óvulos'},
+  {s:['El','útero','aloja','al','bebé','durante','el','embarazo.'],c:1,art:'Órgano donde crece el bebé'},
+  {s:['La','fecundación','une','el','espermatozoide','y','el','óvulo.'],c:1,art:'Unión del espermatozoide y el óvulo'},
+  {s:['El','cigoto','es','la','primera','célula','del','nuevo','ser.'],c:1,art:'Primera célula del nuevo ser'},
+  {s:['La','pubertad','madura','el','cuerpo','para','reproducirse.'],c:1,art:'Etapa en que el cuerpo madura'},
+  {s:['El','embarazo','dura','unos','nueve','meses.'],c:1,art:'Etapa en que el bebé crece en el útero'},
+  {s:['El','espermatozoide','es','la','célula','reproductora','masculina.'],c:1,art:'Célula reproductora masculina'},
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -136,14 +136,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El sistema ___ toma oxígeno del aire.',opts:['digestivo','respiratorio','óseo'],c:1},
-  {s:'El ___ bombea la sangre a todo el cuerpo.',opts:['pulmón','corazón','estómago'],c:1},
-  {s:'Las ___ salen del corazón hacia el cuerpo.',opts:['venas','arterias','tráqueas'],c:1},
-  {s:'El intercambio de gases ocurre en los ___.',opts:['alvéolos','riñones','huesos'],c:0},
-  {s:'Al inspirar entra ___ a los pulmones.',opts:['dióxido de carbono','oxígeno','humo'],c:1},
-  {s:'El músculo de la respiración es el ___.',opts:['bíceps','diafragma','corazón'],c:1},
-  {s:'Los glóbulos ___ transportan el oxígeno.',opts:['blancos','rojos','azules'],c:1},
-  {s:'Las ___ regresan la sangre al corazón.',opts:['arterias','venas','neuronas'],c:1},
+  {s:'Los ___ producen los espermatozoides.',opts:['ovarios','testículos','pulmones'],c:1},
+  {s:'Los ___ producen los óvulos.',opts:['testículos','ovarios','riñones'],c:1},
+  {s:'La ___ es la unión del espermatozoide y el óvulo.',opts:['respiración','fecundación','digestión'],c:1},
+  {s:'El bebé crece dentro del ___ de la madre.',opts:['estómago','útero','corazón'],c:1},
+  {s:'El embarazo dura unos ___ meses.',opts:['tres','seis','nueve'],c:2},
+  {s:'La ___ es la etapa en que el cuerpo madura para reproducirse.',opts:['vejez','pubertad','infancia'],c:1},
+  {s:'La primera célula del nuevo ser es el ___.',opts:['óvulo','cigoto','glóbulo'],c:1},
+  {s:'El espermatozoide es la célula reproductora ___.',opts:['femenina','masculina','vegetal'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -152,9 +152,9 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
 const routeSets=[
-  {label:'El recorrido del aire (en orden)',steps:['Nariz','Faringe','Laringe','Tráquea','Bronquios','Alvéolos']},
-  {label:'El viaje del oxígeno hasta la célula',steps:['Entra aire por la nariz','Llega a los alvéolos de los pulmones','El oxígeno pasa a la sangre','El corazón bombea la sangre','El oxígeno llega a las células']},
-  {label:'La sangre sale del corazón y regresa',steps:['La sangre llega al corazón','El corazón se contrae (late)','La sangre sale por las arterias','Recorre todo el cuerpo','Regresa al corazón por las venas']},
+  {label:'Las etapas de la vida (en orden)',steps:['Infancia','Adolescencia','Adultez','Vejez']},
+  {label:'De la fecundación al nacimiento',steps:['El óvulo y el espermatozoide se unen (fecundación)','Se forma el cigoto','Se implanta en el útero','El bebé crece 9 meses (embarazo)','Nace el bebé (parto)']},
+  {label:'El comienzo de una nueva vida',steps:['Los testículos producen espermatozoides','Los ovarios producen óvulos','El espermatozoide fecunda al óvulo','Se forma el cigoto en las trompas de Falopio','El nuevo ser crece en el útero']},
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -165,14 +165,14 @@ function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.
 
 // Widget 2: Identifica el órgano o concepto
 const neuronPartes=[
-  {desc:'Órgano musculoso que bombea la sangre a todo el cuerpo',ans:'Corazón',opts:['Corazón','Pulmones','Diafragma','Tráquea']},
-  {desc:'Órganos esponjosos donde se intercambian los gases',ans:'Pulmones',opts:['Pulmones','Corazón','Venas','Estómago']},
-  {desc:'Sacos diminutos donde la sangre toma oxígeno',ans:'Alvéolos',opts:['Alvéolos','Arterias','Bronquios','Corazón']},
-  {desc:'Músculo que permite inspirar y espirar',ans:'Diafragma',opts:['Diafragma','Corazón','Lengua','Pulmón']},
-  {desc:'Vasos que salen del corazón hacia el cuerpo',ans:'Arterias',opts:['Arterias','Venas','Alvéolos','Bronquios']},
-  {desc:'Vasos que regresan la sangre al corazón',ans:'Venas',opts:['Venas','Arterias','Capilares','Tráquea']},
-  {desc:'Células de la sangre que transportan el oxígeno',ans:'Glóbulos rojos',opts:['Glóbulos rojos','Glóbulos blancos','Plaquetas','Plasma']},
-  {desc:'Tubo que lleva el aire hacia los bronquios',ans:'Tráquea',opts:['Tráquea','Vena','Aorta','Alvéolo']},
+  {desc:'Órganos masculinos que producen los espermatozoides',ans:'Testículos',opts:['Testículos','Ovarios','Útero','Pulmones']},
+  {desc:'Órganos femeninos que producen los óvulos',ans:'Ovarios',opts:['Ovarios','Testículos','Corazón','Trompas']},
+  {desc:'Órgano femenino donde crece el bebé',ans:'Útero',opts:['Útero','Estómago','Testículos','Ovario']},
+  {desc:'Célula reproductora masculina',ans:'Espermatozoide',opts:['Espermatozoide','Óvulo','Cigoto','Glóbulo']},
+  {desc:'Célula reproductora femenina',ans:'Óvulo',opts:['Óvulo','Espermatozoide','Cigoto','Neurona']},
+  {desc:'Unión del espermatozoide con el óvulo',ans:'Fecundación',opts:['Fecundación','Respiración','Digestión','Circulación']},
+  {desc:'Primera célula del nuevo ser',ans:'Cigoto',opts:['Cigoto','Óvulo','Espermatozoide','Alvéolo']},
+  {desc:'Etapa en que el cuerpo madura para reproducirse',ans:'Pubertad',opts:['Pubertad','Vejez','Infancia','Adultez']},
 ];
 let neuronIdx=0,neuronDone=false;
 function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los órganos y conceptos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
@@ -182,11 +182,11 @@ function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Órgano → Función
 const neuroPairs=[
-  {trans:'Corazón',func:'Bombea la sangre a todo el cuerpo',opts:['Bombea la sangre a todo el cuerpo','Intercambia los gases','Lleva el aire a los bronquios','Filtra el aire']},
-  {trans:'Pulmones',func:'Intercambian oxígeno y dióxido de carbono',opts:['Intercambian oxígeno y dióxido de carbono','Bombean la sangre','Regresan la sangre al corazón','Producen la saliva']},
-  {trans:'Arterias',func:'Llevan la sangre del corazón al cuerpo',opts:['Llevan la sangre del corazón al cuerpo','Traen la sangre al corazón','Intercambian los gases','Producen glóbulos rojos']},
-  {trans:'Venas',func:'Traen la sangre de vuelta al corazón',opts:['Traen la sangre de vuelta al corazón','Llevan la sangre al cuerpo','Filtran el aire','Bombean la sangre']},
-  {trans:'Diafragma',func:'Permite la entrada y salida del aire',opts:['Permite la entrada y salida del aire','Bombea la sangre','Transporta el oxígeno','Forma las heces']},
+  {trans:'Testículos',func:'Producen los espermatozoides',opts:['Producen los espermatozoides','Producen los óvulos','Alojan al bebé','Bombean la sangre']},
+  {trans:'Ovarios',func:'Producen los óvulos',opts:['Producen los óvulos','Producen espermatozoides','Filtran la sangre','Intercambian gases']},
+  {trans:'Útero',func:'Aloja al bebé durante el embarazo',opts:['Aloja al bebé durante el embarazo','Produce óvulos','Produce espermatozoides','Bombea la sangre']},
+  {trans:'Fecundación',func:'Une el espermatozoide con el óvulo',opts:['Une el espermatozoide con el óvulo','Expulsa el dióxido de carbono','Digiere los alimentos','Bombea la sangre']},
+  {trans:'Cordón umbilical',func:'Lleva alimento y oxígeno al bebé',opts:['Lleva alimento y oxígeno al bebé','Produce óvulos','Fabrica la saliva','Filtra el aire']},
 ];
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
@@ -195,12 +195,12 @@ function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: Órgano → ¿A qué sistema pertenece?
 const enfermedadData=[
-  {disease:'Los pulmones',characteristic:'Respiratorio',opts:['Respiratorio','Circulatorio','Digestivo','Nervioso']},
-  {disease:'El corazón',characteristic:'Circulatorio',opts:['Circulatorio','Respiratorio','Digestivo','Óseo']},
-  {disease:'La tráquea',characteristic:'Respiratorio',opts:['Respiratorio','Circulatorio','Nervioso','Digestivo']},
-  {disease:'Las arterias',characteristic:'Circulatorio',opts:['Circulatorio','Respiratorio','Óseo','Digestivo']},
-  {disease:'Los alvéolos',characteristic:'Respiratorio',opts:['Respiratorio','Circulatorio','Muscular','Nervioso']},
-  {disease:'Las venas',characteristic:'Circulatorio',opts:['Circulatorio','Respiratorio','Digestivo','Óseo']},
+  {disease:'Los testículos',characteristic:'Masculino',opts:['Masculino','Femenino']},
+  {disease:'Los ovarios',characteristic:'Femenino',opts:['Femenino','Masculino']},
+  {disease:'El útero',characteristic:'Femenino',opts:['Femenino','Masculino']},
+  {disease:'Los espermatozoides',characteristic:'Masculino',opts:['Masculino','Femenino']},
+  {disease:'Los óvulos',characteristic:'Femenino',opts:['Femenino','Masculino']},
+  {disease:'Las trompas de Falopio',characteristic:'Femenino',opts:['Femenino','Masculino']},
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -209,12 +209,12 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Respiratorio','Circulatorio'],btnA:'🫁 Respiratorio',btnB:'🫀 Circulatorio',colA:'resp',colB:'circ',
-   words:[{w:'Nariz',t:'resp'},{w:'Corazón',t:'circ'},{w:'Tráquea',t:'resp'},{w:'Arterias',t:'circ'},{w:'Pulmones',t:'resp'},{w:'Venas',t:'circ'},{w:'Alvéolos',t:'resp'},{w:'Sangre',t:'circ'},{w:'Bronquios',t:'resp'},{w:'Capilares',t:'circ'}]},
-  {label:['Arterias','Venas'],btnA:'🔴 Arterias',btnB:'🔵 Venas',colA:'art',colB:'ven',
-   words:[{w:'Sale del corazón',t:'art'},{w:'Regresa al corazón',t:'ven'},{w:'Lleva sangre al cuerpo',t:'art'},{w:'Trae sangre de vuelta',t:'ven'},{w:'Paredes gruesas',t:'art'},{w:'Paredes delgadas',t:'ven'},{w:'Se siente el pulso',t:'art'},{w:'La aorta',t:'art'},{w:'Tienen válvulas',t:'ven'},{w:'La cava',t:'ven'}]},
-  {label:['Inspiración','Espiración'],btnA:'⬇️ Inspiración',btnB:'⬆️ Espiración',colA:'ins',colB:'esp',
-   words:[{w:'Entra oxígeno',t:'ins'},{w:'Sale dióxido de carbono',t:'esp'},{w:'El diafragma baja',t:'ins'},{w:'El diafragma sube',t:'esp'},{w:'Se hincha el pecho',t:'ins'},{w:'Se desinfla el pecho',t:'esp'},{w:'Tomamos aire',t:'ins'},{w:'Botamos aire',t:'esp'},{w:'Aire limpio',t:'ins'},{w:'Aire usado',t:'esp'}]},
+  {label:['Masculino','Femenino'],btnA:'🚹 Masculino',btnB:'🚺 Femenino',colA:'masc',colB:'fem',
+   words:[{w:'Testículos',t:'masc'},{w:'Ovarios',t:'fem'},{w:'Espermatozoides',t:'masc'},{w:'Óvulos',t:'fem'},{w:'Útero',t:'fem'},{w:'Cambia la voz',t:'masc'},{w:'Trompas de Falopio',t:'fem'},{w:'Ciclo menstrual',t:'fem'},{w:'Célula masculina',t:'masc'},{w:'Se desarrollan las mamas',t:'fem'}]},
+  {label:['Antes de nacer','Después de nacer'],btnA:'🤰 Antes',btnB:'👶 Después',colA:'antes',colB:'despues',
+   words:[{w:'Fecundación',t:'antes'},{w:'Parto',t:'despues'},{w:'Cigoto',t:'antes'},{w:'Respira solo',t:'despues'},{w:'Crece en el útero',t:'antes'},{w:'Se alimenta por su boca',t:'despues'},{w:'Gestación',t:'antes'},{w:'Nacimiento',t:'despues'},{w:'Cordón umbilical',t:'antes'},{w:'Vive fuera de la madre',t:'despues'}]},
+  {label:['Célula','Etapa'],btnA:'🔬 Célula/órgano',btnB:'📈 Etapa de la vida',colA:'cel',colB:'eta',
+   words:[{w:'Espermatozoide',t:'cel'},{w:'Infancia',t:'eta'},{w:'Óvulo',t:'cel'},{w:'Adolescencia',t:'eta'},{w:'Testículos',t:'cel'},{w:'Adultez',t:'eta'},{w:'Ovarios',t:'cel'},{w:'Vejez',t:'eta'},{w:'Cigoto',t:'cel'},{w:'Pubertad',t:'eta'}]},
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -227,45 +227,45 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'La respiración toma oxígeno del aire y expulsa dióxido de carbono.',type:'Respiración'},
-  {s:'Los pulmones son dos órganos esponjosos donde se intercambian los gases.',type:'Los pulmones'},
-  {s:'El corazón bombea la sangre a todo el cuerpo.',type:'El corazón'},
-  {s:'Las arterias llevan la sangre del corazón hacia el cuerpo.',type:'Las arterias'},
-  {s:'Las venas traen la sangre de regreso al corazón.',type:'Las venas'},
-  {s:'Los alvéolos son sacos donde la sangre toma oxígeno.',type:'Los alvéolos'},
-  {s:'El diafragma es el músculo que permite respirar.',type:'El diafragma'},
-  {s:'Los glóbulos rojos transportan el oxígeno en la sangre.',type:'Glóbulos rojos'},
-  {s:'La tráquea lleva el aire hacia los bronquios.',type:'La tráquea'},
-  {s:'No fumar y hacer ejercicio cuidan el corazón y los pulmones.',type:'Hábitos saludables'},
+  {s:'La reproducción da origen a nuevos seres de la misma especie.',type:'Reproducción'},
+  {s:'Los testículos producen los espermatozoides.',type:'Los testículos'},
+  {s:'Los ovarios producen los óvulos.',type:'Los ovarios'},
+  {s:'El útero es el órgano donde crece el bebé.',type:'El útero'},
+  {s:'La fecundación es la unión del espermatozoide con el óvulo.',type:'La fecundación'},
+  {s:'El cigoto es la primera célula del nuevo ser.',type:'El cigoto'},
+  {s:'El embarazo dura unos nueve meses.',type:'El embarazo'},
+  {s:'La pubertad es la etapa en que el cuerpo madura.',type:'La pubertad'},
+  {s:'El espermatozoide es la célula reproductora masculina.',type:'Espermatozoide'},
+  {s:'La vida pasa por infancia, adolescencia, adultez y vejez.',type:'Etapas del desarrollo'},
 ];
 const classifyTaskDB=[
-  {w:'Pulmones',gen:'Intercambian los gases',n:'Respiratorio',g:'No fumar; respirar aire limpio',t:'Son dos: derecho e izquierdo'},
-  {w:'Corazón',gen:'Bombea la sangre',n:'Circulatorio',g:'Hacer ejercicio; comer sano',t:'Del tamaño de un puño'},
-  {w:'Tráquea',gen:'Conduce el aire a los bronquios',n:'Respiratorio',g:'Evitar el humo',t:'Tiene anillos de cartílago'},
-  {w:'Arterias',gen:'Llevan la sangre del corazón al cuerpo',n:'Circulatorio',g:'Comer poca grasa',t:'La mayor es la aorta'},
-  {w:'Diafragma',gen:'Permite inspirar y espirar',n:'Respiratorio',g:'Respirar profundo; ejercicio',t:'Está debajo de los pulmones'},
+  {w:'Testículos',gen:'Producen los espermatozoides',n:'Masculino',g:'Higiene diaria; ropa cómoda',t:'Son dos'},
+  {w:'Ovarios',gen:'Producen los óvulos',n:'Femenino',g:'Higiene; controles médicos',t:'Son dos, uno a cada lado'},
+  {w:'Útero',gen:'Aloja al bebé en el embarazo',n:'Femenino',g:'Controles médicos en el embarazo',t:'Puede crecer mucho en la gestación'},
+  {w:'Espermatozoides',gen:'Célula reproductora masculina',n:'Masculino',g:'Buena alimentación e higiene',t:'Son muy pequeños y se mueven'},
+  {w:'Trompas de Falopio',gen:'Lugar donde ocurre la fecundación',n:'Femenino',g:'Higiene y salud reproductiva',t:'Comunican el ovario con el útero'},
 ];
 const completeTaskDB=[
-  {s:'El sistema ___ toma oxígeno del aire.',opts:['nervioso','respiratorio','óseo'],ans:'respiratorio'},
-  {s:'El ___ bombea la sangre a todo el cuerpo.',opts:['pulmón','corazón','estómago'],ans:'corazón'},
-  {s:'Las ___ salen del corazón hacia el cuerpo.',opts:['venas','arterias','tráqueas'],ans:'arterias'},
-  {s:'El intercambio de gases ocurre en los ___.',opts:['riñones','alvéolos','huesos'],ans:'alvéolos'},
-  {s:'El músculo de la respiración es el ___.',opts:['bíceps','diafragma','corazón'],ans:'diafragma'},
-  {s:'Al inspirar entra ___ a los pulmones.',opts:['humo','oxígeno','agua'],ans:'oxígeno'},
-  {s:'Los glóbulos ___ transportan el oxígeno.',opts:['blancos','rojos','azules'],ans:'rojos'},
-  {s:'Las ___ regresan la sangre al corazón.',opts:['arterias','venas','neuronas'],ans:'venas'},
+  {s:'Los ___ producen los espermatozoides.',opts:['ovarios','testículos','pulmones'],ans:'testículos'},
+  {s:'Los ___ producen los óvulos.',opts:['testículos','ovarios','riñones'],ans:'ovarios'},
+  {s:'La ___ une el espermatozoide y el óvulo.',opts:['respiración','fecundación','digestión'],ans:'fecundación'},
+  {s:'El bebé crece dentro del ___.',opts:['estómago','útero','corazón'],ans:'útero'},
+  {s:'El embarazo dura unos ___ meses.',opts:['tres','seis','nueve'],ans:'nueve'},
+  {s:'La ___ es la etapa en que el cuerpo madura.',opts:['vejez','pubertad','infancia'],ans:'pubertad'},
+  {s:'La primera célula del nuevo ser es el ___.',opts:['óvulo','cigoto','glóbulo'],ans:'cigoto'},
+  {s:'El espermatozoide es la célula reproductora ___.',opts:['femenina','masculina','vegetal'],ans:'masculina'},
 ];
 const explainQuestions=[
-  {q:'¿Qué es la respiración y para qué sirve?',ans:'Es el proceso por el que el cuerpo toma oxígeno del aire y expulsa dióxido de carbono. Sirve para llevar oxígeno a las células y sacar los gases de desecho.'},
-  {q:'Menciona en orden los órganos por donde pasa el aire.',ans:'Nariz → faringe → laringe → tráquea → bronquios → alvéolos (en los pulmones).'},
-  {q:'¿Qué hace el corazón y cómo es?',ans:'Es un órgano musculoso del tamaño de un puño, con cuatro cavidades (dos aurículas y dos ventrículos). Bombea la sangre a todo el cuerpo con sus latidos.'},
-  {q:'¿Qué diferencia hay entre las arterias y las venas?',ans:'Las arterias llevan la sangre DESDE el corazón hacia el cuerpo; las venas la traen DE VUELTA al corazón.'},
-  {q:'¿Cómo se relacionan el sistema respiratorio y el circulatorio?',ans:'En los alvéolos de los pulmones la sangre toma oxígeno y suelta dióxido de carbono; luego el corazón bombea esa sangre con oxígeno a todo el cuerpo. Por eso trabajan en equipo.'},
+  {q:'¿Qué es la reproducción y por qué es importante?',ans:'Es la función por la que los seres vivos dan origen a nuevos seres de su especie. Es importante porque gracias a ella la vida continúa de una generación a otra.'},
+  {q:'¿Qué órganos y células tienen el sistema masculino y el femenino?',ans:'El masculino tiene los testículos, que producen espermatozoides. El femenino tiene los ovarios (producen óvulos), las trompas de Falopio y el útero.'},
+  {q:'¿Qué es la fecundación y dónde ocurre?',ans:'Es la unión del espermatozoide con el óvulo. Ocurre en las trompas de Falopio y da origen al cigoto, la primera célula del nuevo ser.'},
+  {q:'¿Qué ocurre durante el embarazo?',ans:'El bebé crece dentro del útero de la madre durante unos 9 meses. Recibe alimento y oxígeno por el cordón umbilical, unido a la placenta.'},
+  {q:'Menciona las etapas del desarrollo humano en orden.',ans:'Infancia, adolescencia, adultez y vejez.'},
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué concepto del sistema respiratorio o circulatorio se refiere.','<strong>Ejemplo:</strong> El corazón bombea la sangre. → <span style="color:var(--jade);font-weight:700;">El corazón</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué concepto de la reproducción o el desarrollo humano se refiere.','<strong>Ejemplo:</strong> Los testículos producen los espermatozoides. → <span style="color:var(--jade);font-weight:700;">Los testículos</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
 function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada órgano, completa su función, a qué sistema pertenece, cómo cuidarlo y un dato.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Órgano','text-align:left;')}${th('Función')}${th('Sistema')}${th('Cómo cuidarlo')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Función: ${it.gen} | Sistema: ${it.n} | Cómo cuidarlo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
@@ -274,42 +274,42 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
   {size:10,grid:[
-    ['P','V','A','U','O','Z','T','E','T','Z'],
-    ['Y','U','N','J','S','Z','G','M','S','H'],
-    ['E','N','B','S','A','N','G','R','E','H'],
-    ['A','O','A','N','E','V','J','O','M','W'],
-    ['I','M','J','D','P','R','D','N','X','C'],
-    ['R','L','T','L','R','Z','C','E','I','P'],
-    ['E','U','H','N','M','W','J','G','X','L'],
-    ['T','P','T','B','U','S','V','I','Y','I'],
-    ['R','G','F','G','P','Y','H','X','Y','Z'],
-    ['A','T','C','O','R','A','Z','O','N','O']
+    ['O','E','M','B','A','R','A','Z','O','E'],
+    ['C','I','G','O','T','O','M','C','F','X'],
+    ['Z','F','L','O','E','S','D','B','F','H'],
+    ['O','W','L','V','Z','G','X','X','B','Z'],
+    ['V','X','Z','A','I','A','R','K','R','X'],
+    ['U','S','R','R','T','X','L','V','B','V'],
+    ['L','F','K','I','J','O','R','E','T','U'],
+    ['O','H','X','O','M','P','A','R','T','O'],
+    ['A','A','T','J','E','H','I','N','E','G'],
+    ['V','D','I','I','T','J','E','X','N','N']
   ],words:[
-    {w:'CORAZON',cells:[[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8]]},
-    {w:'PULMON',cells:[[7,1],[6,1],[5,1],[4,1],[3,1],[2,1]]},
-    {w:'ARTERIA',cells:[[9,0],[8,0],[7,0],[6,0],[5,0],[4,0],[3,0]]},
-    {w:'VENA',cells:[[3,5],[3,4],[3,3],[3,2]]},
-    {w:'SANGRE',cells:[[2,3],[2,4],[2,5],[2,6],[2,7],[2,8]]},
-    {w:'OXIGENO',cells:[[9,7],[8,7],[7,7],[6,7],[5,7],[4,7],[3,7]]}
+    {w:'OVULO',cells:[[3,0],[4,0],[5,0],[6,0],[7,0]]},
+    {w:'UTERO',cells:[[6,9],[6,8],[6,7],[6,6],[6,5]]},
+    {w:'CIGOTO',cells:[[1,0],[1,1],[1,2],[1,3],[1,4],[1,5]]},
+    {w:'OVARIO',cells:[[2,3],[3,3],[4,3],[5,3],[6,3],[7,3]]},
+    {w:'EMBARAZO',cells:[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8]]},
+    {w:'PARTO',cells:[[7,5],[7,6],[7,7],[7,8],[7,9]]}
   ]},
   {size:10,grid:[
-    ['Q','P','U','B','U','N','L','J','H','W'],
-    ['A','A','B','D','J','K','A','N','K','I'],
-    ['M','E','Q','A','Z','G','T','A','O','B'],
-    ['G','U','O','O','W','W','I','R','I','O'],
-    ['A','Q','Y','L','E','Y','D','I','U','N'],
-    ['R','A','K','O','I','M','O','Z','Q','J'],
-    ['F','R','G','E','Y','U','Y','B','N','F'],
-    ['A','T','M','V','Q','Z','X','C','O','X'],
-    ['I','T','N','L','D','T','H','F','R','Z'],
-    ['D','P','K','A','D','S','L','N','B','U']
+    ['B','F','O','T','O','G','I','C','P','C'],
+    ['H','C','M','E','N','A','J','G','U','Z'],
+    ['K','R','K','S','Y','I','D','L','B','U'],
+    ['P','K','U','T','S','W','R','I','E','T'],
+    ['Y','R','J','I','H','E','U','V','R','B'],
+    ['A','I','A','C','B','P','H','P','T','O'],
+    ['F','E','C','U','N','D','A','R','A','L'],
+    ['N','D','T','L','R','H','P','O','D','U'],
+    ['A','R','P','O','X','I','L','I','W','V'],
+    ['G','E','S','T','A','C','I','O','N','O']
   ],words:[
-    {w:'ALVEOLO',cells:[[9,3],[8,3],[7,3],[6,3],[5,3],[4,3],[3,3]]},
-    {w:'TRAQUEA',cells:[[7,1],[6,1],[5,1],[4,1],[3,1],[2,1],[1,1]]},
-    {w:'DIAFRAGMA',cells:[[9,0],[8,0],[7,0],[6,0],[5,0],[4,0],[3,0],[2,0],[1,0]]},
-    {w:'LATIDO',cells:[[0,6],[1,6],[2,6],[3,6],[4,6],[5,6]]},
-    {w:'BRONQUIO',cells:[[9,8],[8,8],[7,8],[6,8],[5,8],[4,8],[3,8],[2,8]]},
-    {w:'NARIZ',cells:[[1,7],[2,7],[3,7],[4,7],[5,7]]}
+    {w:'TESTICULO',cells:[[0,3],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[7,3],[8,3]]},
+    {w:'PUBERTAD',cells:[[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8]]},
+    {w:'FECUNDAR',cells:[[6,0],[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7]]},
+    {w:'GESTACION',cells:[[9,0],[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8]]},
+    {w:'OVULO',cells:[[9,9],[8,9],[7,9],[6,9],[5,9]]},
+    {w:'CIGOTO',cells:[[0,7],[0,6],[0,5],[0,4],[0,3],[0,2]]}
   ]}
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
@@ -325,72 +325,72 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'La respiración toma oxígeno del aire y expulsa dióxido de carbono.',a:true},
-  {q:'Al espirar expulsamos oxígeno.',a:false},
-  {q:'El corazón bombea la sangre a todo el cuerpo.',a:true},
-  {q:'Los pulmones pertenecen al sistema circulatorio.',a:false},
-  {q:'El intercambio de gases ocurre en los alvéolos.',a:true},
-  {q:'Las arterias regresan la sangre al corazón.',a:false},
-  {q:'Las venas traen la sangre de vuelta al corazón.',a:true},
-  {q:'El diafragma es el músculo de la respiración.',a:true},
-  {q:'Los glóbulos rojos transportan el oxígeno.',a:true},
-  {q:'El corazón tiene cuatro cavidades.',a:true},
-  {q:'Fumar es bueno para los pulmones.',a:false},
-  {q:'Los capilares son vasos sanguíneos muy finos.',a:true},
-  {q:'La tráquea lleva el aire hacia los bronquios.',a:true},
-  {q:'El oxígeno pasa a la sangre en el estómago.',a:false},
-  {q:'Hacer ejercicio fortalece el corazón y los pulmones.',a:true},
+  {q:'La reproducción da origen a nuevos seres de la misma especie.',a:true},
+  {q:'Los ovarios producen los espermatozoides.',a:false},
+  {q:'Los testículos producen los espermatozoides.',a:true},
+  {q:'El óvulo es la célula reproductora femenina.',a:true},
+  {q:'La fecundación es la unión del espermatozoide con el óvulo.',a:true},
+  {q:'El bebé crece dentro del estómago de la madre.',a:false},
+  {q:'El útero es el órgano donde crece el bebé.',a:true},
+  {q:'El embarazo dura aproximadamente nueve meses.',a:true},
+  {q:'El cigoto es la primera célula del nuevo ser.',a:true},
+  {q:'La pubertad es la etapa en que el cuerpo madura para reproducirse.',a:true},
+  {q:'La reproducción humana es asexual.',a:false},
+  {q:'La fecundación ocurre en las trompas de Falopio.',a:true},
+  {q:'El bebé recibe alimento por el cordón umbilical.',a:true},
+  {q:'El espermatozoide se produce en los ovarios.',a:false},
+  {q:'La vejez es la última etapa de la vida.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué gas toma el cuerpo del aire al respirar?',o:['a) El nitrógeno','b) El oxígeno','c) El dióxido de carbono','d) El humo'],a:1},
-  {q:'¿Qué gas expulsamos al espirar?',o:['a) El oxígeno','b) El dióxido de carbono','c) El nitrógeno','d) El hidrógeno'],a:1},
-  {q:'¿Qué órgano bombea la sangre?',o:['a) Los pulmones','b) El corazón','c) El estómago','d) El hígado'],a:1},
-  {q:'¿Dónde ocurre el intercambio de gases?',o:['a) En la tráquea','b) En los alvéolos','c) En el corazón','d) En las venas'],a:1},
-  {q:'¿Qué vasos salen del corazón hacia el cuerpo?',o:['a) Las venas','b) Las arterias','c) Los bronquios','d) Los alvéolos'],a:1},
-  {q:'¿Qué vasos regresan la sangre al corazón?',o:['a) Las arterias','b) Las venas','c) Los capilares','d) La tráquea'],a:1},
-  {q:'¿Qué músculo permite la respiración?',o:['a) El bíceps','b) El diafragma','c) El corazón','d) La lengua'],a:1},
-  {q:'¿Qué transportan los glóbulos rojos?',o:['a) Nutrientes','b) Oxígeno','c) Agua','d) Grasa'],a:1},
-  {q:'¿Cuántas cavidades tiene el corazón?',o:['a) Dos','b) Tres','c) Cuatro','d) Cinco'],a:2},
-  {q:'¿A qué sistema pertenecen los pulmones?',o:['a) Circulatorio','b) Respiratorio','c) Digestivo','d) Óseo'],a:1},
-  {q:'¿Qué tubo lleva el aire a los bronquios?',o:['a) La aorta','b) La tráquea','c) La vena','d) El esófago'],a:1},
-  {q:'¿Cómo se llaman los vasos más finos, que llegan a las células?',o:['a) Las arterias','b) Los capilares','c) Las venas','d) Los alvéolos'],a:1},
-  {q:'¿Qué hábito cuida el corazón y los pulmones?',o:['a) Fumar','b) Hacer ejercicio','c) Comer mucha grasa','d) No moverse'],a:1},
-  {q:'Los órganos esponjosos de la respiración son…',o:['a) los riñones','b) los pulmones','c) los huesos','d) las venas'],a:1},
-  {q:'La parte líquida de la sangre se llama…',o:['a) plaquetas','b) plasma','c) hemoglobina','d) linfa'],a:1},
+  {q:'¿Qué es la reproducción?',o:['a) Comer alimentos','b) Dar origen a nuevos seres de la misma especie','c) Respirar aire','d) Mover el cuerpo'],a:1},
+  {q:'¿Qué órganos producen los espermatozoides?',o:['a) Los ovarios','b) Los testículos','c) El útero','d) Los pulmones'],a:1},
+  {q:'¿Qué órganos producen los óvulos?',o:['a) Los testículos','b) Los ovarios','c) El corazón','d) El estómago'],a:1},
+  {q:'¿Qué es la fecundación?',o:['a) El nacimiento','b) La unión del espermatozoide y el óvulo','c) La respiración','d) El crecimiento de los huesos'],a:1},
+  {q:'¿En qué órgano crece el bebé?',o:['a) En el estómago','b) En los pulmones','c) En el útero','d) En el corazón'],a:2},
+  {q:'¿Cuánto dura aproximadamente el embarazo?',o:['a) 3 meses','b) 6 meses','c) 9 meses','d) 12 meses'],a:2},
+  {q:'¿Cómo se llama la célula reproductora masculina?',o:['a) Óvulo','b) Espermatozoide','c) Cigoto','d) Glóbulo'],a:1},
+  {q:'¿Cómo se llama la célula reproductora femenina?',o:['a) Espermatozoide','b) Óvulo','c) Neurona','d) Plaqueta'],a:1},
+  {q:'¿Cuál es la primera célula del nuevo ser?',o:['a) El óvulo','b) El espermatozoide','c) El cigoto','d) La neurona'],a:2},
+  {q:'¿Cómo se llama la etapa en que el cuerpo madura para reproducirse?',o:['a) La vejez','b) La pubertad','c) La infancia','d) La adultez'],a:1},
+  {q:'¿Dónde ocurre la fecundación?',o:['a) En el estómago','b) En las trompas de Falopio','c) En los pulmones','d) En el corazón'],a:1},
+  {q:'¿Por dónde recibe alimento el bebé en el embarazo?',o:['a) Por la boca','b) Por el cordón umbilical','c) Por la nariz','d) Por los oídos'],a:1},
+  {q:'¿Cuál es el orden correcto de las etapas de la vida?',o:['a) Adultez, infancia, vejez','b) Infancia, adolescencia, adultez, vejez','c) Vejez, adultez, infancia','d) Adolescencia, infancia, vejez'],a:1},
+  {q:'El órgano donde crece el bebé pertenece al sistema…',o:['a) masculino','b) femenino','c) digestivo','d) óseo'],a:1},
+  {q:'La reproducción humana es de tipo…',o:['a) asexual','b) sexual','c) por esporas','d) por semillas'],a:1},
 ];
 const evalCPBank=[
-  {q:'El sistema ___ toma oxígeno del aire.',a:'respiratorio'},
-  {q:'El ___ bombea la sangre a todo el cuerpo.',a:'corazón'},
-  {q:'El intercambio de gases ocurre en los ___.',a:'alvéolos'},
-  {q:'Las ___ salen del corazón hacia el cuerpo.',a:'arterias'},
-  {q:'Las ___ regresan la sangre al corazón.',a:'venas'},
-  {q:'El músculo de la respiración es el ___.',a:'diafragma'},
-  {q:'Los glóbulos ___ transportan el oxígeno.',a:'rojos'},
-  {q:'Al espirar expulsamos ___ de carbono.',a:'dióxido'},
-  {q:'El corazón tiene ___ cavidades.',a:'cuatro'},
-  {q:'Los vasos sanguíneos más finos son los ___.',a:'capilares'},
-  {q:'La ___ lleva el aire hacia los bronquios.',a:'tráquea'},
-  {q:'Los pulmones pertenecen al sistema ___.',a:'respiratorio'},
-  {q:'La parte líquida de la sangre es el ___.',a:'plasma'},
-  {q:'Para cuidar el corazón conviene hacer ___.',a:'ejercicio'},
-  {q:'Al inspirar entra ___ a los pulmones.',a:'oxígeno'},
+  {q:'Los ___ producen los espermatozoides.',a:'testículos'},
+  {q:'Los ___ producen los óvulos.',a:'ovarios'},
+  {q:'La ___ une el espermatozoide con el óvulo.',a:'fecundación'},
+  {q:'El bebé crece dentro del ___ de la madre.',a:'útero'},
+  {q:'El embarazo dura unos ___ meses.',a:'nueve'},
+  {q:'La primera célula del nuevo ser es el ___.',a:'cigoto'},
+  {q:'La ___ es la etapa en que el cuerpo madura para reproducirse.',a:'pubertad'},
+  {q:'El espermatozoide es la célula reproductora ___.',a:'masculina'},
+  {q:'El óvulo es la célula reproductora ___.',a:'femenina'},
+  {q:'La fecundación ocurre en las trompas de ___.',a:'Falopio'},
+  {q:'El bebé recibe alimento por el cordón ___.',a:'umbilical'},
+  {q:'La reproducción humana es de tipo ___.',a:'sexual'},
+  {q:'La última etapa de la vida es la ___.',a:'vejez'},
+  {q:'Después del embarazo, el bebé nace en el ___.',a:'parto'},
+  {q:'El embarazo también se llama ___.',a:'gestación'},
 ];
 const evalPRBank=[
-  {term:'Respiración',def:'Tomar oxígeno del aire y expulsar dióxido de carbono'},
-  {term:'Corazón',def:'Órgano musculoso que bombea la sangre'},
-  {term:'Pulmones',def:'Órganos donde se intercambian los gases'},
-  {term:'Alvéolos',def:'Sacos donde la sangre toma oxígeno'},
-  {term:'Arterias',def:'Vasos que salen del corazón'},
-  {term:'Venas',def:'Vasos que regresan la sangre al corazón'},
-  {term:'Capilares',def:'Vasos muy finos que llegan a las células'},
-  {term:'Diafragma',def:'Músculo que permite la respiración'},
-  {term:'Tráquea',def:'Tubo que lleva el aire a los bronquios'},
-  {term:'Glóbulos rojos',def:'Transportan el oxígeno'},
-  {term:'Glóbulos blancos',def:'Defienden el cuerpo de los microbios'},
-  {term:'Plaquetas',def:'Ayudan a coagular la sangre'},
-  {term:'Plasma',def:'Parte líquida de la sangre'},
-  {term:'Inspiración',def:'Entrada de aire con oxígeno'},
-  {term:'Espiración',def:'Salida de aire con dióxido de carbono'},
+  {term:'Reproducción',def:'Dar origen a nuevos seres de la misma especie'},
+  {term:'Testículos',def:'Producen los espermatozoides'},
+  {term:'Ovarios',def:'Producen los óvulos'},
+  {term:'Útero',def:'Órgano donde crece el bebé'},
+  {term:'Espermatozoide',def:'Célula reproductora masculina'},
+  {term:'Óvulo',def:'Célula reproductora femenina'},
+  {term:'Fecundación',def:'Unión del espermatozoide con el óvulo'},
+  {term:'Cigoto',def:'Primera célula del nuevo ser'},
+  {term:'Embarazo',def:'El bebé crece en el útero unos 9 meses'},
+  {term:'Pubertad',def:'Etapa en que el cuerpo madura'},
+  {term:'Parto',def:'Momento en que nace el bebé'},
+  {term:'Trompas de Falopio',def:'Donde ocurre la fecundación'},
+  {term:'Cordón umbilical',def:'Lleva alimento y oxígeno al bebé'},
+  {term:'Infancia',def:'Primera etapa de la vida'},
+  {term:'Vejez',def:'Última etapa de la vida'},
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -423,7 +423,7 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
 }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
-function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · El Sistema Respiratorio y Circulatorio`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · La Reproducción y el Desarrollo Humano`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
 function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
 function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
 function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
@@ -442,7 +442,7 @@ function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una eva
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
     const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
-const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación El Sistema Respiratorio y Circulatorio · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #27ae60;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#e8f8f5;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#27ae60;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#27ae60;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
+const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación La Reproducción y el Desarrollo Humano · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #27ae60;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#e8f8f5;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#27ae60;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#27ae60;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
 .zg-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem;}
 .zg-head{display:flex;gap:5px;align-items:center;font-weight:700;font-size:10pt;letter-spacing:1px;}
@@ -457,7 +457,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · El Sistema Respiratorio y Circulatorio · Educación Básica · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · El Sistema Respiratorio y Circulatorio · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · La Reproducción y el Desarrollo Humano · Educación Básica · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · La Reproducción y el Desarrollo Humano · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
   ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
@@ -477,75 +477,75 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Un joven fuma cigarrillos todos los días y le cuesta respirar cuando corre.'},
-  {txt:'Una persona nunca hace ejercicio, come mucha grasa y se cansa al subir las gradas.'},
-  {txt:'En un cuarto cerrado con mucho humo, varios niños empiezan a toser y les duele la cabeza.'},
-  {txt:'Un niño con anemia (pocos glóbulos rojos) siempre se siente cansado y sin aire.'},
-  {txt:'Una familia vive cerca de una fábrica con mucho humo y a menudo tienen tos.'},
-  {txt:'Una persona pasa todo el día sentada, sin moverse, y su corazón está muy débil.'},
+  {txt:'Un niño de 12 años nota que su voz empieza a cambiar y le crece vello en el cuerpo, y se siente confundido.'},
+  {txt:'Una niña comienza a tener cambios en su cuerpo durante la pubertad y no sabe si es normal.'},
+  {txt:'Una madre embarazada quiere que su bebé nazca sano y pregunta qué debe hacer.'},
+  {txt:'Un grupo de estudiantes se burla de un compañero por los cambios de su cuerpo en la pubertad.'},
+  {txt:'Una familia espera un bebé y los hermanos preguntan cómo se alimenta el bebé dentro de la madre.'},
+  {txt:'Un adolescente cree que todos deben cambiar al mismo tiempo y a la misma edad en la pubertad.'},
 ];
 const critCaseQuestions=[
-  '1. ¿Qué hábito o problema de salud se observa en este caso?',
-  '2. ¿Cómo afecta a la respiración o a la circulación?',
-  '3. ¿Qué consejo darías para mejorar la salud?',
-  '4. ¿Por qué es importante cuidar el corazón y los pulmones?',
+  '1. ¿Qué etapa o situación del desarrollo se observa en este caso?',
+  '2. ¿Por qué ocurre eso en el cuerpo o en la vida de la persona?',
+  '3. ¿Qué consejo darías con respeto y responsabilidad?',
+  '4. ¿Por qué es importante conocer y respetar estos cambios?',
 ];
 const critCaseGuides=[
-  'Se observa un hábito dañino: fumar, respirar humo, no hacer ejercicio, mala alimentación o falta de oxígeno por anemia.',
-  'El cuerpo recibe menos oxígeno o el corazón se debilita: puede causar tos, cansancio, falta de aire o problemas del corazón.',
-  'No fumar, evitar el humo, hacer ejercicio, comer sano (poca grasa) y respirar aire limpio.',
-  'Porque llevan oxígeno a todas las células; sin ellos el cuerpo no podría vivir. Cuidarlos evita enfermedades graves.',
+  'Se observan cambios propios de la pubertad, el embarazo o el desarrollo humano.',
+  'Son cambios normales dirigidos por las hormonas o por el proceso natural de la reproducción y el crecimiento.',
+  'Actuar con respeto e higiene, informarse bien y, si hay dudas de salud, consultar a un adulto de confianza o a un médico.',
+  'Porque son parte natural de la vida; conocerlos y respetarlos ayuda a cuidar la salud y a tratar bien a los demás.',
 ];
 const critErrorBank=[
-  {txt:'"Los pulmones bombean la sangre a todo el cuerpo."',
-   g1:'Quien bombea la sangre es el CORAZÓN.',
-   g2:'Los pulmones sirven para el intercambio de gases, no para bombear.'},
-  {txt:'"Al respirar tomamos dióxido de carbono y expulsamos oxígeno."',
-   g1:'Es al revés: tomamos OXÍGENO del aire.',
-   g2:'Lo que expulsamos es DIÓXIDO DE CARBONO.'},
-  {txt:'"Las venas llevan la sangre del corazón hacia el cuerpo."',
-   g1:'Las que salen del corazón son las ARTERIAS.',
-   g2:'Las venas REGRESAN la sangre al corazón.'},
-  {txt:'"Fumar no daña los pulmones ni el corazón."',
-   g1:'Fumar SÍ daña gravemente los pulmones y el corazón.',
-   g2:'Provoca tos, falta de aire, cáncer y problemas del corazón.'},
-  {txt:'"El intercambio de gases ocurre en el estómago."',
-   g1:'Ocurre en los ALVÉOLOS de los pulmones.',
-   g2:'El estómago pertenece al sistema digestivo, no al respiratorio.'},
+  {txt:'"Los ovarios producen los espermatozoides."',
+   g1:'Los ovarios producen los ÓVULOS.',
+   g2:'Los espermatozoides los producen los TESTÍCULOS.'},
+  {txt:'"El bebé crece dentro del estómago de la madre."',
+   g1:'El bebé crece dentro del ÚTERO.',
+   g2:'El estómago pertenece al sistema digestivo, no al reproductor.'},
+  {txt:'"La fecundación es el momento en que nace el bebé."',
+   g1:'La fecundación es la UNIÓN del espermatozoide con el óvulo.',
+   g2:'El nacimiento ocurre al final del embarazo, en el PARTO.'},
+  {txt:'"Todos los niños y niñas cambian a la misma edad en la pubertad."',
+   g1:'La pubertad ocurre a EDADES DISTINTAS en cada persona.',
+   g2:'Cada cuerpo tiene su propio ritmo; todo es normal.'},
+  {txt:'"El espermatozoide y el óvulo son la misma célula."',
+   g1:'El espermatozoide es la célula MASCULINA.',
+   g2:'El óvulo es la célula FEMENINA; son distintas.'},
 ];
 const critDecisionBank=[
-  'Un joven puede pasar la tarde fumando con amigos, o jugando fútbol al aire libre.',
-  'Una persona quiere mejorar su condición física: puede subir por las gradas o siempre esperar el ascensor.',
-  'Después de clases, un estudiante puede salir a caminar y jugar, o quedarse muchas horas sin moverse.',
-  'Una familia puede cocinar al vapor y comer verduras, o comer frito casi todos los días.',
-  'Un niño con tos puede quedarse en un cuarto lleno de humo, o pedir estar en un lugar ventilado.',
+  'Un adolescente con cambios en la pubertad puede informarse bien con un adulto de confianza, o creer todo lo que escucha en la calle.',
+  'Ante los cambios del cuerpo, una persona puede cuidar su higiene diaria, o descuidarla.',
+  'Al ver a un compañero con cambios distintos, se le puede respetar, o burlarse de él.',
+  'Una futura madre puede acudir a sus controles médicos, o no ir nunca al médico.',
+  'Frente a una duda sobre el cuerpo, un estudiante puede preguntar con respeto a un adulto, o quedarse con información falsa.',
 ];
-const critDecisionGuide='Para cuidar el corazón y los pulmones conviene elegir hábitos saludables: hacer ejercicio, respirar aire limpio, NO fumar y comer sano (poca grasa). Estos hábitos fortalecen el corazón, mejoran la respiración y llevan más oxígeno al cuerpo. La mejor decisión casi siempre es la opción más activa y natural, que evita el humo y la comida chatarra.';
+const critDecisionGuide='Lo más saludable y responsable es informarse bien con adultos de confianza o personal de salud, cuidar la higiene, respetar el cuerpo propio y el de los demás, y acudir al médico cuando hace falta. Los cambios de la pubertad y el embarazo son naturales; conocerlos con información correcta evita miedos y burlas y ayuda a tomar buenas decisiones.';
 const critCompareBank=[
-  {a:'Vasos que salen del corazón y llevan la sangre al cuerpo.',b:'Vasos que regresan la sangre al corazón.',
-   ga:'Las arterias.',
-   gb:'Las venas.',
-   gr:'Las dos transportan sangre, pero las arterias salen del corazón y las venas regresan a él; van en sentidos contrarios.'},
-  {a:'Órgano esponjoso donde la sangre toma oxígeno.',b:'Órgano musculoso que bombea la sangre.',
-   ga:'Los pulmones.',
-   gb:'El corazón.',
-   gr:'Los dos son vitales, pero los pulmones hacen el intercambio de gases y el corazón bombea la sangre; cumplen funciones distintas.'},
-  {a:'Movimiento en que entra aire con oxígeno.',b:'Movimiento en que sale aire con dióxido de carbono.',
-   ga:'La inspiración.',
-   gb:'La espiración.',
-   gr:'Son dos movimientos opuestos de la respiración: en uno entra el aire y en el otro sale.'},
+  {a:'Órganos que producen los espermatozoides.',b:'Órganos que producen los óvulos.',
+   ga:'Los testículos.',
+   gb:'Los ovarios.',
+   gr:'Los dos producen células reproductoras, pero los testículos son del sistema masculino y los ovarios del femenino.'},
+  {a:'Célula reproductora masculina.',b:'Célula reproductora femenina.',
+   ga:'El espermatozoide.',
+   gb:'El óvulo.',
+   gr:'Ambas son células reproductoras y al unirse forman el cigoto, pero una la aporta el padre y la otra la madre.'},
+  {a:'Momento en que se unen el espermatozoide y el óvulo.',b:'Momento en que nace el bebé.',
+   ga:'La fecundación.',
+   gb:'El parto.',
+   gr:'La fecundación es el comienzo de la nueva vida y el parto es el nacimiento; entre ambos ocurre el embarazo.'},
 ];
 const critCauseBank=[
-  {cause:'Una persona fuma cigarrillos todos los días.',guide:'Sus pulmones se dañan; tose, le falta el aire y puede enfermar el corazón.'},
-  {cause:'Alguien nunca hace ejercicio y come mucha grasa.',guide:'Su corazón se debilita y las arterias se pueden tapar con grasa.'},
-  {cause:'Un niño respira mucho humo dentro de su casa.',guide:'Le da tos y le cuesta respirar bien.'},
-  {cause:'Una persona tiene pocos glóbulos rojos (anemia).',guide:'Le llega poco oxígeno a las células y se cansa con facilidad.'},
+  {cause:'El espermatozoide se une con el óvulo.',guide:'Ocurre la fecundación y se forma el cigoto, la primera célula del nuevo ser.'},
+  {cause:'Comienza la pubertad en un adolescente.',guide:'Las hormonas producen cambios físicos y emocionales en su cuerpo.'},
+  {cause:'Una madre embarazada acude a sus controles médicos y se alimenta bien.',guide:'Aumenta la probabilidad de que el bebé nazca sano.'},
+  {cause:'El cigoto se implanta en el útero.',guide:'Comienza el embarazo y el bebé empieza a crecer.'},
 ];
 const critEffectBank=[
-  {effect:'Un joven respira más rápido cuando hace ejercicio.',guide:'Su cuerpo necesita más oxígeno, por eso respira más rápido.'},
-  {effect:'A una persona el corazón le late más rápido al correr.',guide:'El corazón bombea más para llevar oxígeno a los músculos.'},
-  {effect:'Alguien que fuma tiene tos y le falta el aire.',guide:'El humo del cigarrillo dañó sus pulmones.'},
-  {effect:'A una persona con las arterias tapadas le puede fallar el corazón.',guide:'La grasa acumulada impide que la sangre circule bien.'},
+  {effect:'A un adolescente le cambia la voz y le crece vello.',guide:'Es efecto de las hormonas sexuales durante la pubertad.'},
+  {effect:'Un bebé recibe alimento y oxígeno sin comer ni respirar por sí mismo.',guide:'Los recibe por el cordón umbilical, unido a la placenta de la madre.'},
+  {effect:'Después de unos nueve meses, nace un bebé.',guide:'Ha terminado el embarazo y ocurre el parto.'},
+  {effect:'Con los años, una persona pasa de niño a adulto y luego a anciano.',guide:'Es el desarrollo humano: infancia, adolescencia, adultez y vejez.'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -553,12 +553,12 @@ function genEvalCrit(){
   const _sC = document.getElementById('evalCritFormaSel');
   if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
   const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC = _evalRng(200000 + cf);evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;_injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });saveProgress();
-  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · El Sistema Respiratorio y Circulatorio`;
+  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · La Reproducción y el Desarrollo Humano`;
   evalCritAnsVisible=false;
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: respiración y circulación <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: reproducción y desarrollo <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
@@ -566,7 +566,7 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: hábitos saludables <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías para cuidar el corazón y los pulmones? Explica por qué, relacionándolo con la respiración y la circulación.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: salud y responsabilidad <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías con respeto y responsabilidad? Explica por qué, relacionándolo con la reproducción y el desarrollo.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
@@ -600,10 +600,10 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: respiración y circulación</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: reproducción y desarrollo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: hábitos saludables</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías para cuidar el corazón y los pulmones? Explica por qué, relacionándolo con la respiración y la circulación.</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: salud y responsabilidad</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías con respeto y responsabilidad? Explica por qué, relacionándolo con la reproducción y el desarrollo.</p>${lines(2)}`;
   let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué órgano o concepto corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
@@ -616,7 +616,7 @@ function printEvalCrit(){
   pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
   pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it=>`<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it=>`<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico El Sistema Respiratorio y Circulatorio · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #27ae60;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#e8f8f5;border-left:3px solid #27ae60;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#e8f8f5;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#e8f8f5;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:7.5pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#27ae60;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:12.7mm;}}</style></head><body><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · El Sistema Respiratorio y Circulatorio · Educación Básica · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · El Sistema Respiratorio y Circulatorio · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico La Reproducción y el Desarrollo Humano · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #27ae60;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#e8f8f5;border-left:3px solid #27ae60;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#e8f8f5;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#e8f8f5;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:7.5pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#27ae60;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:12.7mm;}}</style></head><body><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · La Reproducción y el Desarrollo Humano · Educación Básica · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · La Reproducción y el Desarrollo Humano · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
@@ -624,43 +624,43 @@ function printEvalCrit(){
 
 // ===================== LABORATORIO DE ÓRGANOS =====================
 const parteData={
-  nariz:{
-    nombre:'La nariz y las vías respiratorias',icon:'👃',
-    estructura:{title:'¿Qué es?',info:'• Es la <strong>entrada</strong> del aire al aparato respiratorio<br>• Por dentro tiene <strong>vellos</strong> y <strong>mocos</strong><br>• Se conecta con la faringe, la laringe y la tráquea'},
-    funcion:{title:'¿Qué hace?',info:'• <strong>Filtra</strong> el aire y atrapa el polvo y los microbios<br>• <strong>Calienta y humedece</strong> el aire que entra<br>• Deja pasar el aire limpio hacia los <strong>pulmones</strong>'},
-    ubicacion:{title:'¿Cómo cuidarla?',info:'• <strong>Suénate</strong> con un pañuelo limpio<br>• No te metas objetos en la nariz<br>• Evita el <strong>humo</strong> y el polvo'},
-    dato:{title:'Dato curioso',info:'• Los <strong>pelitos</strong> y el <strong>moco</strong> atrapan el polvo antes de que llegue a los pulmones<br>• Respirar por la nariz es mejor que por la boca<br>• Es la primera defensa del aparato respiratorio'}
+  masculino:{
+    nombre:'El sistema reproductor masculino',icon:'🚹',
+    estructura:{title:'¿Qué es?',info:'• Conjunto de órganos <strong>reproductores</strong> del varón<br>• Su parte principal son los <strong>testículos</strong><br>• En la pubertad madura y empieza a producir células reproductoras'},
+    funcion:{title:'¿Qué hace?',info:'• Los <strong>testículos</strong> producen los <strong>espermatozoides</strong><br>• Los espermatozoides son las <strong>células reproductoras masculinas</strong><br>• Aportan la mitad de la información para el nuevo ser'},
+    ubicacion:{title:'Cuidado / salud',info:'• Mantener una <strong>higiene diaria</strong><br>• Usar ropa cómoda y limpia<br>• Consultar al <strong>médico</strong> ante cualquier molestia'},
+    dato:{title:'Dato curioso',info:'• Los <strong>testículos</strong> son dos<br>• En la pubertad, las hormonas hacen cambiar la voz y crecer el vello<br>• Cada persona madura a su propio ritmo'}
   },
-  pulmones:{
-    nombre:'Los pulmones',icon:'🫁',
-    estructura:{title:'¿Qué es?',info:'• Dos órganos <strong>esponjosos</strong> ubicados en el pecho<br>• El derecho tiene <strong>3 partes</strong> (lóbulos) y el izquierdo <strong>2</strong><br>• Por dentro tienen millones de <strong>alvéolos</strong>'},
-    funcion:{title:'¿Qué hace?',info:'• Realizan el <strong>intercambio de gases</strong><br>• En los alvéolos la sangre <strong>toma oxígeno</strong><br>• Y suelta el <strong>dióxido de carbono</strong> que expulsamos'},
-    ubicacion:{title:'¿Cómo cuidarlos?',info:'• <strong>No fumar</strong> (el humo los daña mucho)<br>• Respirar <strong>aire limpio</strong> y evitar el humo<br>• Hacer <strong>ejercicio</strong> para fortalecerlos'},
-    dato:{title:'Dato curioso',info:'• Si estiráramos todos los alvéolos cubrirían una <strong>cancha</strong><br>• Tenemos <strong>millones de alvéolos</strong> en cada pulmón<br>• Respiramos unas <strong>20 000 veces</strong> al día'}
+  femenino:{
+    nombre:'El sistema reproductor femenino',icon:'🚺',
+    estructura:{title:'¿Qué es?',info:'• Conjunto de órganos <strong>reproductores</strong> de la mujer<br>• Incluye los <strong>ovarios</strong>, las <strong>trompas de Falopio</strong> y el <strong>útero</strong><br>• En la pubertad madura y comienza el ciclo menstrual'},
+    funcion:{title:'¿Qué hace?',info:'• Los <strong>ovarios</strong> producen los <strong>óvulos</strong><br>• Las <strong>trompas de Falopio</strong> son el lugar de la fecundación<br>• El <strong>útero</strong> aloja al bebé durante el embarazo'},
+    ubicacion:{title:'Cuidado / salud',info:'• Mantener una <strong>higiene diaria</strong><br>• Acudir a los <strong>controles médicos</strong><br>• Informarse bien sobre los cambios del cuerpo'},
+    dato:{title:'Dato curioso',info:'• Los <strong>ovarios</strong> son dos, uno a cada lado<br>• El <strong>útero</strong> puede crecer mucho durante el embarazo<br>• El ciclo menstrual es un proceso natural'}
   },
-  corazon:{
-    nombre:'El corazón',icon:'🫀',
-    estructura:{title:'¿Qué es?',info:'• Órgano <strong>musculoso</strong> del tamaño de un <strong>puño</strong><br>• Está en el centro del pecho, un poco a la izquierda<br>• Tiene <strong>cuatro cavidades</strong>: 2 aurículas (arriba) y 2 ventrículos (abajo)'},
-    funcion:{title:'¿Qué hace?',info:'• <strong>Bombea la sangre</strong> a todo el cuerpo con sus <strong>latidos</strong><br>• Nunca deja de latir, ni siquiera cuando dormimos<br>• Empuja la sangre hacia las <strong>arterias</strong>'},
-    ubicacion:{title:'¿Cómo cuidarlo?',info:'• Hacer <strong>ejercicio</strong> para fortalecerlo<br>• Comer <strong>poca grasa y sal</strong><br>• <strong>No fumar</strong> ni tomar alcohol'},
-    dato:{title:'Dato curioso',info:'• Late unas <strong>100 000 veces al día</strong><br>• El <strong>pulso</strong> que sentimos es su latido<br>• Es un músculo que trabaja toda la vida sin descansar'}
+  celulas:{
+    nombre:'Las células reproductoras',icon:'🔬',
+    estructura:{title:'¿Qué es?',info:'• Son las células que dan origen a un nuevo ser<br>• La masculina es el <strong>espermatozoide</strong><br>• La femenina es el <strong>óvulo</strong>'},
+    funcion:{title:'¿Qué hace?',info:'• Al <strong>unirse</strong> forman el <strong>cigoto</strong><br>• El espermatozoide lo aporta el <strong>padre</strong><br>• El óvulo lo aporta la <strong>madre</strong>'},
+    ubicacion:{title:'Cuidado / salud',info:'• Una buena <strong>alimentación</strong> y la higiene ayudan a la salud reproductiva<br>• Evitar el alcohol y el tabaco<br>• Acudir al médico ante cualquier duda'},
+    dato:{title:'Dato curioso',info:'• El <strong>espermatozoide</strong> es muy pequeño y puede moverse<br>• El <strong>óvulo</strong> es más grande y redondo<br>• De su unión nace toda una nueva vida'}
   },
-  vasos:{
-    nombre:'Los vasos sanguíneos',icon:'🩸',
-    estructura:{title:'¿Qué es?',info:'• Son los "caminos" por donde viaja la sangre<br>• Hay tres tipos: <strong>arterias</strong>, <strong>venas</strong> y <strong>capilares</strong><br>• Recorren todo el cuerpo'},
-    funcion:{title:'¿Qué hace?',info:'• Las <strong>arterias</strong> llevan la sangre del corazón al cuerpo<br>• Las <strong>venas</strong> la traen de regreso al corazón<br>• Los <strong>capilares</strong> la entregan a las <strong>células</strong>'},
-    ubicacion:{title:'¿Cómo cuidarlos?',info:'• Comer <strong>poca grasa</strong> para que no se tapen<br>• Hacer <strong>ejercicio</strong> para una buena circulación<br>• <strong>No fumar</strong>'},
-    dato:{title:'Dato curioso',info:'• Si pusiéramos todos los vasos en fila darían <strong>muchas vueltas</strong> a un campo<br>• Los <strong>capilares</strong> son más finos que un cabello<br>• En ellos la sangre entrega el oxígeno a cada célula'}
+  fecundacion:{
+    nombre:'La fecundación',icon:'⚪',
+    estructura:{title:'¿Qué es?',info:'• Es la <strong>unión del espermatozoide con el óvulo</strong><br>• Ocurre en las <strong>trompas de Falopio</strong><br>• De ella se forma el <strong>cigoto</strong>'},
+    funcion:{title:'¿Qué hace?',info:'• Da comienzo a una <strong>nueva vida</strong><br>• El cigoto se <strong>divide</strong> muchas veces<br>• Baja hasta el <strong>útero</strong> y se implanta'},
+    ubicacion:{title:'Cuidado / salud',info:'• La salud de la madre y del padre influye en el nuevo ser<br>• Buena alimentación e higiene<br>• Ser madre o padre es una gran <strong>responsabilidad</strong>'},
+    dato:{title:'Dato curioso',info:'• El <strong>cigoto</strong> es la primera célula del nuevo ser<br>• De una sola célula se forma todo un cuerpo<br>• La fecundación es el inicio del embarazo'}
   },
-  sangre:{
-    nombre:'La sangre',icon:'🔴',
-    estructura:{title:'¿Qué es?',info:'• Líquido <strong>rojo</strong> que circula por los vasos<br>• Tiene una parte líquida, el <strong>plasma</strong><br>• Y células: <strong>glóbulos rojos</strong>, <strong>glóbulos blancos</strong> y <strong>plaquetas</strong>'},
-    funcion:{title:'¿Qué hace?',info:'• <strong>Transporta</strong> el oxígeno y los nutrientes<br>• Recoge los <strong>desechos</strong> (como el dióxido de carbono)<br>• Las <strong>defensas</strong> combaten los microbios'},
-    ubicacion:{title:'¿Cómo cuidarla?',info:'• Come alimentos con <strong>hierro</strong> (frijol, carnes, verduras verdes)<br>• Bebe suficiente <strong>agua</strong><br>• Así tendrás buenos glóbulos rojos'},
-    dato:{title:'Dato curioso',info:'• Los <strong>glóbulos rojos</strong> tienen hemoglobina y dan el <strong>color rojo</strong><br>• Una sola gota de sangre tiene <strong>millones</strong> de células<br>• Los glóbulos blancos son nuestras defensas'}
+  embarazo:{
+    nombre:'El embarazo y el desarrollo',icon:'🤰',
+    estructura:{title:'¿Qué es?',info:'• Etapa en que el bebé <strong>crece en el útero</strong><br>• Dura unos <strong>9 meses</strong> (gestación)<br>• Termina con el <strong>parto</strong> (el nacimiento)'},
+    funcion:{title:'¿Qué hace?',info:'• El bebé recibe alimento y oxígeno por el <strong>cordón umbilical</strong><br>• El cordón está unido a la <strong>placenta</strong><br>• Después del parto, comienza la <strong>infancia</strong>'},
+    ubicacion:{title:'Cuidado / salud',info:'• La madre debe <strong>alimentarse bien</strong> y descansar<br>• Acudir a los <strong>controles médicos</strong><br>• Evitar el alcohol y el tabaco'},
+    dato:{title:'Dato curioso',info:'• Después del nacimiento, la vida pasa por <strong>infancia, adolescencia, adultez y vejez</strong><br>• El bebé crece muy rápido dentro del útero<br>• Cada etapa de la vida tiene sus propios cambios'}
   }
 };
-let labParte='nariz',labAspecto='estructura';
+let labParte='masculino',labAspecto='estructura';
 function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
 function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
 function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAspecto];document.getElementById('lab-sentence').innerHTML=`🔬 Explorando: <strong>${data.nombre}</strong> → <strong>${asp.title}</strong>`;document.getElementById('lab-display').innerHTML=`<div class="lab-cont-header">${data.icon} ${data.nombre}</div><div class="lab-asp-title">${asp.title}</div><div class="lab-asp-info">${asp.info}</div>`;}
@@ -670,7 +670,7 @@ function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
 function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Dominas la respiración y la circulación!','¡Maestro del Cuerpo!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
-function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🫁 ¡${name} completó la Misión "El Sistema Respiratorio y Circulatorio"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
+function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🫁 ¡${name} completó la Misión "La Reproducción y el Desarrollo Humano"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
 async function captureDiploma(){if(typeof html2canvas==='undefined'){showToast('⚠️ Cargando... intenta de nuevo');return;}sfx('click');const card=document.querySelector('.diploma-card');const btn=document.querySelector('.diploma-actions .btn-pri');const toHide=[card.querySelector('.diploma-input'),card.querySelector('.diploma-actions'),card.querySelector('hr')];if(btn){btn.disabled=true;btn.textContent='⏳ Capturando...';}toHide.forEach(el=>{if(el)el.style.display='none';});let dataUrl='';try{const canvas=await html2canvas(card,{scale:2,useCORS:true,backgroundColor:'#ffffff'});toHide.forEach(el=>{if(el)el.style.display='';});dataUrl=canvas.toDataURL('image/png');const name=(document.getElementById('diplName').textContent||'Estudiante').replace(/\s+/g,'-');const fileName='constancia-'+name+'.png';const cap=window.Capacitor;if(cap&&cap.isNativePlatform&&cap.isNativePlatform()&&cap.Plugins?.Filesystem&&cap.Plugins?.Share){const base64Data=dataUrl.split(',')[1];const result=await cap.Plugins.Filesystem.writeFile({path:fileName,data:base64Data,directory:'CACHE'});await cap.Plugins.Share.share({url:result.uri,dialogTitle:'Guardar / Compartir Constancia'});}else{const a=document.createElement('a');a.href=dataUrl;a.download=fileName;a.click();}}catch(e){toHide.forEach(el=>{if(el)el.style.display='';});if(e.name!=='AbortError')showToast('⚠️ No se pudo guardar la constancia');}finally{if(btn){btn.disabled=false;btn.textContent='📷 Guardar foto';}}}
 
 // ===================== INIT =====================
