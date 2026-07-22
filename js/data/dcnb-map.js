@@ -53,6 +53,7 @@ const DCNB_MAP = {
   37: { g: { 4: [6], 5: [7], 7: [5], 8: [4] } },          // Respiratorio y Circulatorio — 4º jun; 5º jul (enfermedades vía circulatorio); 7º may (IRA); 8º abr (VERIFICADO CCNN)
   38: { g: { 5: [6], 6: [5, 7], 7: [5], 9: [5] } },       // Reproducción y Desarrollo Humano — 5º jun (pubertad/fecundación); 6º may (sist. reproductores, embarazo) + jul (etapas del desarrollo); 7º may; 9º may (VERIFICADO CCNN)
   39: { g: { 4: [8], 5: [8], 6: [8], 7: [7] } },          // El Universo y el Sistema Solar — 4º/5º/6º ago; 7º jul (teorías sobre el universo y el sistema solar) (VERIFICADO CCNN)
+  40: { g: { 4: [9], 5: [9], 6: [8], 7: [8] } },          // La Materia — 4º/5º sep (estados y cambios de estado); 6º/7º ago (propiedades, componentes, mezclas, cambios físicos/químicos) (VERIFICADO CCNN)
   14: { g: { 4: [5], 5: [5], 6: [5], 9: [5] } },          // Sistema Nervioso — mayo en los 4 grados
   19: { g: { 5: [5], 6: [5] } },                          // Sistema Endocrino — mayo
   9:  { g: { 6: [4], 7: [7] } },                          // Eras Geológicas
