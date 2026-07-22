@@ -50,6 +50,7 @@ const DCNB_MAP = {
   34: { g: { 5: [2, 3], 7: [4], 8: [2, 3] } },            // Los Cinco Reinos / clasificación de los seres vivos — 5º feb-mar; 7º abr (reino vegetal); 8º feb-mar (VERIFICADO CCNN)
   35: { g: { 4: [4], 5: [4], 6: [4], 7: [5], 8: [5] } },  // Los Ecosistemas — 4º/5º/6º abr; 7º/8º may (VERIFICADO CCNN)
   36: { g: { 4: [6, 8], 5: [7], 8: [2, 3, 6] } },         // El Sistema Digestivo y la Nutrición — 4º jun+ago; 5º jul; 8º feb-mar+jun (VERIFICADO CCNN)
+  37: { g: { 4: [6], 5: [7], 7: [5], 8: [4] } },          // Respiratorio y Circulatorio — 4º jun; 5º jul (enfermedades vía circulatorio); 7º may (IRA); 8º abr (VERIFICADO CCNN)
   14: { g: { 4: [5], 5: [5], 6: [5], 9: [5] } },          // Sistema Nervioso — mayo en los 4 grados
   19: { g: { 5: [5], 6: [5] } },                          // Sistema Endocrino — mayo
   9:  { g: { 6: [4], 7: [7] } },                          // Eras Geológicas
