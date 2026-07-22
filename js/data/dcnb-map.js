@@ -49,6 +49,7 @@ const DCNB_MAP = {
   33: { g: { 4: [4], 5: [2, 3], 6: [2, 3], 7: [2, 3], 9: [4] } }, // La Célula — 4º abr; 5º/6º/7º feb-mar; 9º abr
   34: { g: { 4: [4], 5: [3], 6: [3], 7: [3] } },          // Los Cinco Reinos — junto al bloque de seres vivos (meses ESTIMADOS, verificar con la programación CCNN)
   35: { g: { 4: [5], 5: [4], 6: [4] } },                  // Los Ecosistemas — bloque de seres vivos/relaciones (meses ESTIMADOS, verificar con la programación CCNN)
+  36: { g: { 4: [3], 5: [3], 6: [3] } },                  // El Sistema Digestivo y la Nutrición — bloque cuerpo humano y salud (meses ESTIMADOS, verificar con la programación CCNN)
   14: { g: { 4: [5], 5: [5], 6: [5], 9: [5] } },          // Sistema Nervioso — mayo en los 4 grados
   19: { g: { 5: [5], 6: [5] } },                          // Sistema Endocrino — mayo
   9:  { g: { 6: [4], 7: [7] } },                          // Eras Geológicas

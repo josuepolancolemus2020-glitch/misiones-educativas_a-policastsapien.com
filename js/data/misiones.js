@@ -46,6 +46,7 @@ const MISSIONS = [
   { id: 33, title: 'La Célula',                                          subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'vida',    etapa: 1, xp: 35, icon: '🔬', pais: 'HN', url: 'misiones/2y3ciclo-la-celula/la-celula.html' },
   { id: 34, title: 'Los Cinco Reinos',                                   subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'vida',    etapa: 2, xp: 35, icon: '🌳', pais: 'HN', url: 'misiones/2y3ciclo-cinco-reinos/cinco-reinos.html' },
   { id: 35, title: 'Los Ecosistemas',                                    subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'vida',    etapa: 3, xp: 35, icon: '🏞️', pais: 'HN', url: 'misiones/2y3ciclo-ecosistemas/ecosistemas.html' },
+  { id: 36, title: 'El Sistema Digestivo',                               subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'cuerpo',  etapa: 3, xp: 35, icon: '🍎', pais: 'HN', url: 'misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html' },
 ];
 
 /* Helpers de rutas (globales: index los usa en app.js) */
