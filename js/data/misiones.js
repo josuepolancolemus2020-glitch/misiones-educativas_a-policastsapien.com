@@ -49,6 +49,7 @@ const MISSIONS = [
   { id: 36, title: 'El Sistema Digestivo',                               subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'cuerpo',  etapa: 3, xp: 35, icon: '🍎', pais: 'HN', url: 'misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html' },
   { id: 37, title: 'El Sistema Respiratorio y Circulatorio',             subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'cuerpo',  etapa: 4, xp: 35, icon: '🫁', pais: 'HN', url: 'misiones/2y3ciclo-respiratorio-circulatorio/respiratorio-circulatorio.html' },
   { id: 38, title: 'La Reproducción y el Desarrollo Humano',              subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'cuerpo',  etapa: 5, xp: 35, icon: '👶', pais: 'HN', url: 'misiones/2y3ciclo-reproduccion-desarrollo/reproduccion-desarrollo.html' },
+  { id: 39, title: 'El Universo y el Sistema Solar',                      subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'planeta', etapa: 7, xp: 35, icon: '🪐', pais: 'HN', url: 'misiones/2y3ciclo-universo-sistema-solar/universo-sistema-solar.html' },
 ];
 
 /* Helpers de rutas (globales: index los usa en app.js) */
