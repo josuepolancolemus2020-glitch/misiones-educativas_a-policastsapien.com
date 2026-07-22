@@ -33,14 +33,14 @@ function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));i
 
 // ===================== ACHIEVEMENTS =====================
 const ACHIEVEMENTS={
-  primer_quiz:{icon:'🌱',label:'Primera prueba de reproducción y desarrollo superada'},
-  flash_master:{icon:'🃏',label:'Todas las flashcards de reproducción y desarrollo exploradas'},
-  clasif_pro:{icon:'🗂️',label:'Clasificador de órganos y células reproductoras experto'},
-  id_master:{icon:'🔍',label:'Identificador de la reproducción y el desarrollo maestro'},
-  reto_hero:{icon:'🏆',label:'Héroe del reto de reproducción y desarrollo'},
-  nivel3:{icon:'👶',label:'¡Naturalista! Nivel 3'},
-  nivel5:{icon:'🥇',label:'¡Maestro del Cuerpo! Nivel 6'},
-  widgets_master:{icon:'🧩',label:'Widgets de reproducción y desarrollo dominados'}
+  primer_quiz:{icon:'🌟',label:'Primera prueba del universo y el sistema solar superada'},
+  flash_master:{icon:'🃏',label:'Todas las flashcards del universo exploradas'},
+  clasif_pro:{icon:'🗂️',label:'Clasificador de astros experto'},
+  id_master:{icon:'🔍',label:'Identificador del universo y el sistema solar maestro'},
+  reto_hero:{icon:'🏆',label:'Héroe del reto del universo y el sistema solar'},
+  nivel3:{icon:'🪐',label:'¡Naturalista! Nivel 3'},
+  nivel5:{icon:'🥇',label:'¡Explorador del Espacio! Nivel 6'},
+  widgets_master:{icon:'🧩',label:'Widgets del universo dominados'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -61,20 +61,20 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Reproducción',a:'🌱 Función por la que los seres vivos <strong>dan origen a nuevos seres</strong> de su misma especie. Así continúa la vida.'},
-  {w:'Reproducción sexual',a:'🚹🚺 En el ser humano intervienen <strong>un hombre y una mujer</strong>; se unen dos células reproductoras.'},
-  {w:'Sistema reproductor masculino',a:'🚹 Órganos del varón; su parte principal son los <strong>testículos</strong>, que producen espermatozoides.'},
-  {w:'Sistema reproductor femenino',a:'🚺 Órganos de la mujer; incluye los <strong>ovarios</strong>, el <strong>útero</strong> y las <strong>trompas de Falopio</strong>.'},
-  {w:'Espermatozoide',a:'🔬 Célula reproductora <strong>masculina</strong>. Se produce en los <strong>testículos</strong>.'},
-  {w:'Óvulo',a:'🥚 Célula reproductora <strong>femenina</strong>. Se produce en los <strong>ovarios</strong>.'},
-  {w:'Testículos',a:'🚹 Órganos masculinos que producen los <strong>espermatozoides</strong>.'},
-  {w:'Ovarios',a:'🚺 Órganos femeninos que producen los <strong>óvulos</strong>.'},
-  {w:'Útero',a:'🌸 Órgano femenino donde <strong>crece el bebé</strong> durante el embarazo.'},
-  {w:'Fecundación',a:'⚪ <strong>Unión del espermatozoide con el óvulo</strong>. Ocurre en las trompas de Falopio y forma el cigoto.'},
-  {w:'Cigoto',a:'🔵 <strong>Primera célula</strong> del nuevo ser, formada tras la fecundación.'},
-  {w:'Embarazo',a:'🤰 Etapa en que el bebé <strong>crece dentro del útero</strong> durante unos <strong>9 meses</strong>. También se llama gestación.'},
-  {w:'Pubertad',a:'🌗 Etapa en que el cuerpo <strong>madura</strong> para reproducirse. La dirigen las <strong>hormonas sexuales</strong>.'},
-  {w:'Etapas del desarrollo',a:'📈 El ser humano pasa por <strong>infancia, adolescencia, adultez y vejez</strong>.'},
+  {w:'Universo',a:'🌌 <strong>Todo lo que existe</strong>: el espacio y todos los astros que hay en él.'},
+  {w:'Astro',a:'✨ Cualquier <strong>cuerpo del espacio</strong>: estrellas, planetas, satélites, cometas…'},
+  {w:'Estrella',a:'⭐ Astro con <strong>luz propia</strong>. El <strong>Sol</strong> es la estrella más cercana.'},
+  {w:'Planeta',a:'🪐 Astro que <strong>gira alrededor de una estrella</strong> y <strong>no tiene luz propia</strong>.'},
+  {w:'Satélite',a:'🌙 Astro que <strong>gira alrededor de un planeta</strong>. La <strong>Luna</strong> es el satélite de la Tierra.'},
+  {w:'Galaxia',a:'🌌 Enorme <strong>grupo de estrellas</strong>. La nuestra es la <strong>Vía Láctea</strong>.'},
+  {w:'Sistema Solar',a:'☀️ El <strong>Sol</strong> y todos los astros que giran a su alrededor: 8 planetas y otros cuerpos.'},
+  {w:'Cometa',a:'☄️ Astro de <strong>hielo y polvo</strong> que forma una <strong>cola</strong> al acercarse al Sol.'},
+  {w:'El Sol',a:'☀️ La <strong>estrella</strong> del centro del sistema solar. Nos da <strong>luz y calor</strong>.'},
+  {w:'La Tierra',a:'🌍 El <strong>tercer planeta</strong> desde el Sol; el único con <strong>vida</strong> conocida.'},
+  {w:'La Luna',a:'🌙 El <strong>satélite</strong> de la Tierra. No tiene luz propia: <strong>refleja</strong> la del Sol.'},
+  {w:'Rotación',a:'🔁 Movimiento de la Tierra <strong>sobre sí misma</strong>. Dura un día y produce el <strong>día y la noche</strong>.'},
+  {w:'Traslación',a:'🔃 Movimiento de la Tierra <strong>alrededor del Sol</strong>. Dura un año y produce las <strong>estaciones</strong>.'},
+  {w:'Eclipse',a:'🌑 Ocurre cuando un astro <strong>tapa</strong> la luz de otro (de Sol o de Luna).'},
 ];
 let fcIdx=0;
 function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es la reproducción?',o:['a) Comer alimentos','b) Dar origen a nuevos seres de la misma especie','c) Respirar aire','d) Mover el cuerpo'],c:1},
-  {q:'¿Qué órganos producen los espermatozoides?',o:['a) Los ovarios','b) El útero','c) Los testículos','d) Los pulmones'],c:2},
-  {q:'¿Qué órganos producen los óvulos?',o:['a) Los testículos','b) Los ovarios','c) El corazón','d) El estómago'],c:1},
-  {q:'¿Qué es la fecundación?',o:['a) El nacimiento del bebé','b) La unión del espermatozoide con el óvulo','c) La respiración','d) El crecimiento de los huesos'],c:1},
-  {q:'¿En qué órgano crece el bebé durante el embarazo?',o:['a) En el estómago','b) En los pulmones','c) En el útero','d) En el corazón'],c:2},
-  {q:'¿Cuánto dura aproximadamente el embarazo?',o:['a) 3 meses','b) 6 meses','c) 9 meses','d) 12 meses'],c:2},
-  {q:'¿Cómo se llama la etapa en que el cuerpo madura para reproducirse?',o:['a) La vejez','b) La pubertad','c) La infancia','d) La niñez'],c:1},
-  {q:'¿Cuál es la primera célula del nuevo ser tras la fecundación?',o:['a) El óvulo','b) El espermatozoide','c) El cigoto','d) La neurona'],c:2},
-  {q:'¿Cuál es el orden correcto de las etapas de la vida?',o:['a) Adultez, infancia, vejez','b) Infancia, adolescencia, adultez, vejez','c) Vejez, adultez, infancia','d) Adolescencia, infancia, vejez'],c:1},
+  {q:'¿Qué es el universo?',o:['a) Solo la Tierra','b) Todo lo que existe: el espacio y los astros','c) Solo el Sol','d) Solo las estrellas'],c:1},
+  {q:'¿Qué astro tiene luz propia?',o:['a) El planeta','b) El satélite','c) La estrella','d) El cometa'],c:2},
+  {q:'¿Qué es un planeta?',o:['a) Un astro con luz propia','b) Un astro que gira alrededor de una estrella','c) Una galaxia','d) Un cometa'],c:1},
+  {q:'¿Cuál es el satélite natural de la Tierra?',o:['a) El Sol','b) Marte','c) La Luna','d) Venus'],c:2},
+  {q:'¿Cuál es la estrella del sistema solar?',o:['a) La Luna','b) El Sol','c) Júpiter','d) La Tierra'],c:1},
+  {q:'¿Cuántos planetas tiene el sistema solar?',o:['a) Seis','b) Siete','c) Ocho','d) Diez'],c:2},
+  {q:'¿Qué movimiento de la Tierra produce el día y la noche?',o:['a) La traslación','b) La rotación','c) El eclipse','d) La fase lunar'],c:1},
+  {q:'¿Qué movimiento de la Tierra dura un año?',o:['a) La rotación','b) La traslación','c) La fase lunar','d) El eclipse'],c:1},
+  {q:'¿Cómo se llama nuestra galaxia?',o:['a) El Sistema Solar','b) La Osa Mayor','c) La Vía Láctea','d) Andrómeda'],c:2},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -102,14 +102,14 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Masculino','Femenino'],headA:'🚹 Sistema masculino',headB:'🚺 Sistema femenino',colA:'masc',colB:'fem',
-   words:[{w:'Testículos',t:'masc'},{w:'Ovarios',t:'fem'},{w:'Espermatozoides',t:'masc'},{w:'Óvulos',t:'fem'},{w:'Produce células masculinas',t:'masc'},{w:'Útero',t:'fem'},{w:'Trompas de Falopio',t:'fem'},{w:'Cambia la voz en la pubertad',t:'masc'},{w:'Ciclo menstrual',t:'fem'},{w:'Se desarrollan las mamas',t:'fem'}]},
-  {label:['Antes de nacer','Después de nacer'],headA:'🤰 Antes de nacer',headB:'👶 Después de nacer',colA:'antes',colB:'despues',
-   words:[{w:'Fecundación',t:'antes'},{w:'El bebé respira solo',t:'despues'},{w:'Cigoto',t:'antes'},{w:'Parto',t:'despues'},{w:'Crece en el útero',t:'antes'},{w:'Se alimenta por su boca',t:'despues'},{w:'Recibe alimento por el cordón umbilical',t:'antes'},{w:'Nacimiento',t:'despues'},{w:'Gestación',t:'antes'},{w:'Vive fuera de la madre',t:'despues'}]},
-  {label:['Célula masculina','Célula femenina'],headA:'🔬 Espermatozoide',headB:'🥚 Óvulo',colA:'esp',colB:'ovu',
-   words:[{w:'Célula reproductora masculina',t:'esp'},{w:'Célula reproductora femenina',t:'ovu'},{w:'Se produce en los testículos',t:'esp'},{w:'Se produce en los ovarios',t:'ovu'},{w:'Lo aporta el padre',t:'esp'},{w:'Lo aporta la madre',t:'ovu'},{w:'Es muy pequeño y se mueve',t:'esp'},{w:'Es más grande y redondo',t:'ovu'}]},
-  {label:['Niñez','Adultez'],headA:'🧒 Niñez / adolescencia',headB:'🧑 Adultez / vejez',colA:'joven',colB:'adulto',
-   words:[{w:'Infancia',t:'joven'},{w:'Adultez',t:'adulto'},{w:'Pubertad',t:'joven'},{w:'Vejez',t:'adulto'},{w:'Adolescencia',t:'joven'},{w:'Cuerpo ya maduro',t:'adulto'},{w:'Está creciendo',t:'joven'},{w:'Última etapa de la vida',t:'adulto'}]},
+  {label:['Con luz propia','Sin luz propia'],headA:'⭐ Con luz propia',headB:'🪐 Sin luz propia',colA:'luz',colB:'sinluz',
+   words:[{w:'El Sol',t:'luz'},{w:'La Luna',t:'sinluz'},{w:'Las estrellas',t:'luz'},{w:'Los planetas',t:'sinluz'},{w:'La Tierra',t:'sinluz'},{w:'Otra estrella lejana',t:'luz'},{w:'Marte',t:'sinluz'},{w:'Un satélite',t:'sinluz'}]},
+  {label:['Rotación','Traslación'],headA:'🔁 Rotación',headB:'🔃 Traslación',colA:'rot',colB:'tras',
+   words:[{w:'Gira sobre sí misma',t:'rot'},{w:'Gira alrededor del Sol',t:'tras'},{w:'Produce el día y la noche',t:'rot'},{w:'Produce las estaciones',t:'tras'},{w:'Dura 24 horas',t:'rot'},{w:'Dura un año',t:'tras'},{w:'Dura un día',t:'rot'},{w:'Dura 365 días',t:'tras'},{w:'Da vueltas sobre su eje',t:'rot'},{w:'Recorre su órbita',t:'tras'}]},
+  {label:['Astro','No es astro'],headA:'✨ Es un astro',headB:'🚫 No es un astro',colA:'astro',colB:'no',
+   words:[{w:'Estrella',t:'astro'},{w:'Nube',t:'no'},{w:'Planeta',t:'astro'},{w:'Montaña',t:'no'},{w:'Satélite',t:'astro'},{w:'Río',t:'no'},{w:'Cometa',t:'astro'},{w:'Árbol',t:'no'},{w:'Galaxia',t:'astro'},{w:'Avión',t:'no'}]},
+  {label:['El Sol','La Luna'],headA:'☀️ El Sol',headB:'🌙 La Luna',colA:'sol',colB:'luna',
+   words:[{w:'Es una estrella',t:'sol'},{w:'Es un satélite',t:'luna'},{w:'Tiene luz propia',t:'sol'},{w:'Refleja la luz del Sol',t:'luna'},{w:'Da calor a la Tierra',t:'sol'},{w:'Tiene fases',t:'luna'},{w:'Está en el centro del sistema solar',t:'sol'},{w:'Gira alrededor de la Tierra',t:'luna'}]},
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -119,14 +119,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['Los','testículos','producen','los','espermatozoides.'],c:1,art:'Órganos que producen espermatozoides'},
-  {s:['Los','ovarios','producen','los','óvulos.'],c:1,art:'Órganos que producen óvulos'},
-  {s:['El','útero','aloja','al','bebé','durante','el','embarazo.'],c:1,art:'Órgano donde crece el bebé'},
-  {s:['La','fecundación','une','el','espermatozoide','y','el','óvulo.'],c:1,art:'Unión del espermatozoide y el óvulo'},
-  {s:['El','cigoto','es','la','primera','célula','del','nuevo','ser.'],c:1,art:'Primera célula del nuevo ser'},
-  {s:['La','pubertad','madura','el','cuerpo','para','reproducirse.'],c:1,art:'Etapa en que el cuerpo madura'},
-  {s:['El','embarazo','dura','unos','nueve','meses.'],c:1,art:'Etapa en que el bebé crece en el útero'},
-  {s:['El','espermatozoide','es','la','célula','reproductora','masculina.'],c:1,art:'Célula reproductora masculina'},
+  {s:['El','Sol','es','la','estrella','del','sistema','solar.'],c:1,art:'La estrella del sistema solar'},
+  {s:['La','Luna','es','el','satélite','de','la','Tierra.'],c:1,art:'El satélite de la Tierra'},
+  {s:['La','rotación','produce','el','día','y','la','noche.'],c:1,art:'Movimiento que produce el día y la noche'},
+  {s:['La','traslación','produce','las','estaciones','del','año.'],c:1,art:'Movimiento que produce las estaciones'},
+  {s:['Las','estrellas','tienen','luz','propia.'],c:1,art:'Astros que tienen luz propia'},
+  {s:['La','Tierra','es','el','tercer','planeta','del','sistema','solar.'],c:1,art:'El planeta donde vivimos'},
+  {s:['Nuestra','galaxia','se','llama','Vía','Láctea.'],c:1,art:'Enorme grupo de estrellas'},
+  {s:['El','cometa','tiene','una','cola','de','hielo','y','polvo.'],c:1,art:'Astro de hielo con cola'},
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -136,14 +136,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Los ___ producen los espermatozoides.',opts:['ovarios','testículos','pulmones'],c:1},
-  {s:'Los ___ producen los óvulos.',opts:['testículos','ovarios','riñones'],c:1},
-  {s:'La ___ es la unión del espermatozoide y el óvulo.',opts:['respiración','fecundación','digestión'],c:1},
-  {s:'El bebé crece dentro del ___ de la madre.',opts:['estómago','útero','corazón'],c:1},
-  {s:'El embarazo dura unos ___ meses.',opts:['tres','seis','nueve'],c:2},
-  {s:'La ___ es la etapa en que el cuerpo madura para reproducirse.',opts:['vejez','pubertad','infancia'],c:1},
-  {s:'La primera célula del nuevo ser es el ___.',opts:['óvulo','cigoto','glóbulo'],c:1},
-  {s:'El espermatozoide es la célula reproductora ___.',opts:['femenina','masculina','vegetal'],c:1},
+  {s:'El ___ es la estrella del sistema solar.',opts:['planeta','Sol','satélite'],c:1},
+  {s:'La ___ es el satélite de la Tierra.',opts:['estrella','Luna','galaxia'],c:1},
+  {s:'La ___ produce el día y la noche.',opts:['traslación','rotación','órbita'],c:1},
+  {s:'La ___ produce las estaciones del año.',opts:['rotación','traslación','fase'],c:1},
+  {s:'El sistema solar tiene ___ planetas.',opts:['seis','siete','ocho'],c:2},
+  {s:'Las ___ tienen luz propia.',opts:['estrellas','planetas','lunas'],c:0},
+  {s:'Nuestra galaxia es la ___.',opts:['Osa Mayor','Vía Láctea','Andrómeda'],c:1},
+  {s:'La Luna no tiene luz propia: ___ la del Sol.',opts:['produce','refleja','apaga'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -152,9 +152,9 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
 const routeSets=[
-  {label:'Las etapas de la vida (en orden)',steps:['Infancia','Adolescencia','Adultez','Vejez']},
-  {label:'De la fecundación al nacimiento',steps:['El óvulo y el espermatozoide se unen (fecundación)','Se forma el cigoto','Se implanta en el útero','El bebé crece 9 meses (embarazo)','Nace el bebé (parto)']},
-  {label:'El comienzo de una nueva vida',steps:['Los testículos producen espermatozoides','Los ovarios producen óvulos','El espermatozoide fecunda al óvulo','Se forma el cigoto en las trompas de Falopio','El nuevo ser crece en el útero']},
+  {label:'Los planetas desde el Sol (en orden)',steps:['Mercurio','Venus','Tierra','Marte','Júpiter','Saturno','Urano','Neptuno']},
+  {label:'De lo pequeño a lo grande',steps:['La Luna','La Tierra','El Sol','El Sistema Solar','La galaxia (Vía Láctea)']},
+  {label:'Las fases de la Luna (en orden)',steps:['Luna nueva','Cuarto creciente','Luna llena','Cuarto menguante']},
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -165,14 +165,14 @@ function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.
 
 // Widget 2: Identifica el órgano o concepto
 const neuronPartes=[
-  {desc:'Órganos masculinos que producen los espermatozoides',ans:'Testículos',opts:['Testículos','Ovarios','Útero','Pulmones']},
-  {desc:'Órganos femeninos que producen los óvulos',ans:'Ovarios',opts:['Ovarios','Testículos','Corazón','Trompas']},
-  {desc:'Órgano femenino donde crece el bebé',ans:'Útero',opts:['Útero','Estómago','Testículos','Ovario']},
-  {desc:'Célula reproductora masculina',ans:'Espermatozoide',opts:['Espermatozoide','Óvulo','Cigoto','Glóbulo']},
-  {desc:'Célula reproductora femenina',ans:'Óvulo',opts:['Óvulo','Espermatozoide','Cigoto','Neurona']},
-  {desc:'Unión del espermatozoide con el óvulo',ans:'Fecundación',opts:['Fecundación','Respiración','Digestión','Circulación']},
-  {desc:'Primera célula del nuevo ser',ans:'Cigoto',opts:['Cigoto','Óvulo','Espermatozoide','Alvéolo']},
-  {desc:'Etapa en que el cuerpo madura para reproducirse',ans:'Pubertad',opts:['Pubertad','Vejez','Infancia','Adultez']},
+  {desc:'La estrella del centro del sistema solar',ans:'El Sol',opts:['El Sol','La Luna','Marte','La Tierra']},
+  {desc:'El satélite natural de la Tierra',ans:'La Luna',opts:['La Luna','El Sol','Venus','Un cometa']},
+  {desc:'El planeta donde vivimos',ans:'La Tierra',opts:['La Tierra','Júpiter','El Sol','La Luna']},
+  {desc:'Astro que tiene luz propia',ans:'Estrella',opts:['Estrella','Planeta','Satélite','Cometa']},
+  {desc:'Astro que gira alrededor de un planeta',ans:'Satélite',opts:['Satélite','Estrella','Galaxia','Sol']},
+  {desc:'Enorme grupo de estrellas',ans:'Galaxia',opts:['Galaxia','Planeta','Cometa','Luna']},
+  {desc:'Astro de hielo y polvo que forma una cola',ans:'Cometa',opts:['Cometa','Estrella','Satélite','Planeta']},
+  {desc:'Movimiento de la Tierra que produce el día y la noche',ans:'Rotación',opts:['Rotación','Traslación','Eclipse','Fase']},
 ];
 let neuronIdx=0,neuronDone=false;
 function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los órganos y conceptos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
@@ -182,11 +182,11 @@ function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Órgano → Función
 const neuroPairs=[
-  {trans:'Testículos',func:'Producen los espermatozoides',opts:['Producen los espermatozoides','Producen los óvulos','Alojan al bebé','Bombean la sangre']},
-  {trans:'Ovarios',func:'Producen los óvulos',opts:['Producen los óvulos','Producen espermatozoides','Filtran la sangre','Intercambian gases']},
-  {trans:'Útero',func:'Aloja al bebé durante el embarazo',opts:['Aloja al bebé durante el embarazo','Produce óvulos','Produce espermatozoides','Bombea la sangre']},
-  {trans:'Fecundación',func:'Une el espermatozoide con el óvulo',opts:['Une el espermatozoide con el óvulo','Expulsa el dióxido de carbono','Digiere los alimentos','Bombea la sangre']},
-  {trans:'Cordón umbilical',func:'Lleva alimento y oxígeno al bebé',opts:['Lleva alimento y oxígeno al bebé','Produce óvulos','Fabrica la saliva','Filtra el aire']},
+  {trans:'El Sol',func:'Da luz y calor a la Tierra',opts:['Da luz y calor a la Tierra','Gira alrededor de la Tierra','No tiene luz propia','Es un satélite']},
+  {trans:'La Luna',func:'Gira alrededor de la Tierra',opts:['Gira alrededor de la Tierra','Da luz propia','Es una estrella','Está en el centro del sistema solar']},
+  {trans:'Rotación',func:'Produce el día y la noche',opts:['Produce el día y la noche','Produce las estaciones','Forma los eclipses','Dura un año']},
+  {trans:'Traslación',func:'Produce las estaciones del año',opts:['Produce las estaciones del año','Produce el día y la noche','Dura 24 horas','Ilumina la Luna']},
+  {trans:'Estrella',func:'Astro que tiene luz propia',opts:['Astro que tiene luz propia','Gira alrededor de un planeta','No tiene luz propia','Es un satélite']},
 ];
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
@@ -195,12 +195,12 @@ function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: Órgano → ¿A qué sistema pertenece?
 const enfermedadData=[
-  {disease:'Los testículos',characteristic:'Masculino',opts:['Masculino','Femenino']},
-  {disease:'Los ovarios',characteristic:'Femenino',opts:['Femenino','Masculino']},
-  {disease:'El útero',characteristic:'Femenino',opts:['Femenino','Masculino']},
-  {disease:'Los espermatozoides',characteristic:'Masculino',opts:['Masculino','Femenino']},
-  {disease:'Los óvulos',characteristic:'Femenino',opts:['Femenino','Masculino']},
-  {disease:'Las trompas de Falopio',characteristic:'Femenino',opts:['Femenino','Masculino']},
+  {disease:'El Sol',characteristic:'Estrella',opts:['Estrella','Planeta','Satélite']},
+  {disease:'La Tierra',characteristic:'Planeta',opts:['Planeta','Estrella','Satélite']},
+  {disease:'La Luna',characteristic:'Satélite',opts:['Satélite','Estrella','Planeta']},
+  {disease:'Marte',characteristic:'Planeta',opts:['Planeta','Estrella','Satélite']},
+  {disease:'Una estrella lejana',characteristic:'Estrella',opts:['Estrella','Planeta','Satélite']},
+  {disease:'Júpiter',characteristic:'Planeta',opts:['Planeta','Estrella','Satélite']},
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -209,12 +209,12 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Masculino','Femenino'],btnA:'🚹 Masculino',btnB:'🚺 Femenino',colA:'masc',colB:'fem',
-   words:[{w:'Testículos',t:'masc'},{w:'Ovarios',t:'fem'},{w:'Espermatozoides',t:'masc'},{w:'Óvulos',t:'fem'},{w:'Útero',t:'fem'},{w:'Cambia la voz',t:'masc'},{w:'Trompas de Falopio',t:'fem'},{w:'Ciclo menstrual',t:'fem'},{w:'Célula masculina',t:'masc'},{w:'Se desarrollan las mamas',t:'fem'}]},
-  {label:['Antes de nacer','Después de nacer'],btnA:'🤰 Antes',btnB:'👶 Después',colA:'antes',colB:'despues',
-   words:[{w:'Fecundación',t:'antes'},{w:'Parto',t:'despues'},{w:'Cigoto',t:'antes'},{w:'Respira solo',t:'despues'},{w:'Crece en el útero',t:'antes'},{w:'Se alimenta por su boca',t:'despues'},{w:'Gestación',t:'antes'},{w:'Nacimiento',t:'despues'},{w:'Cordón umbilical',t:'antes'},{w:'Vive fuera de la madre',t:'despues'}]},
-  {label:['Célula','Etapa'],btnA:'🔬 Célula/órgano',btnB:'📈 Etapa de la vida',colA:'cel',colB:'eta',
-   words:[{w:'Espermatozoide',t:'cel'},{w:'Infancia',t:'eta'},{w:'Óvulo',t:'cel'},{w:'Adolescencia',t:'eta'},{w:'Testículos',t:'cel'},{w:'Adultez',t:'eta'},{w:'Ovarios',t:'cel'},{w:'Vejez',t:'eta'},{w:'Cigoto',t:'cel'},{w:'Pubertad',t:'eta'}]},
+  {label:['Rotación','Traslación'],btnA:'🔁 Rotación',btnB:'🔃 Traslación',colA:'rot',colB:'tras',
+   words:[{w:'Gira sobre sí misma',t:'rot'},{w:'Gira alrededor del Sol',t:'tras'},{w:'Día y noche',t:'rot'},{w:'Las estaciones',t:'tras'},{w:'Dura 24 horas',t:'rot'},{w:'Dura un año',t:'tras'},{w:'Dura un día',t:'rot'},{w:'Dura 365 días',t:'tras'},{w:'Sobre su eje',t:'rot'},{w:'Recorre su órbita',t:'tras'}]},
+  {label:['Con luz propia','Sin luz propia'],btnA:'⭐ Luz propia',btnB:'🪐 Sin luz propia',colA:'luz',colB:'sinluz',
+   words:[{w:'El Sol',t:'luz'},{w:'La Luna',t:'sinluz'},{w:'Las estrellas',t:'luz'},{w:'Los planetas',t:'sinluz'},{w:'La Tierra',t:'sinluz'},{w:'Marte',t:'sinluz'},{w:'Una estrella lejana',t:'luz'},{w:'Un satélite',t:'sinluz'},{w:'Venus',t:'sinluz'},{w:'El astro que nos da calor',t:'luz'}]},
+  {label:['Astro','No es astro'],btnA:'✨ Astro',btnB:'🚫 No es astro',colA:'astro',colB:'no',
+   words:[{w:'Estrella',t:'astro'},{w:'Nube',t:'no'},{w:'Planeta',t:'astro'},{w:'Montaña',t:'no'},{w:'Cometa',t:'astro'},{w:'Río',t:'no'},{w:'Satélite',t:'astro'},{w:'Árbol',t:'no'},{w:'Galaxia',t:'astro'},{w:'Avión',t:'no'}]},
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -227,46 +227,46 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'La reproducción da origen a nuevos seres de la misma especie.',type:'Reproducción'},
-  {s:'Los testículos producen los espermatozoides.',type:'Los testículos'},
-  {s:'Los ovarios producen los óvulos.',type:'Los ovarios'},
-  {s:'El útero es el órgano donde crece el bebé.',type:'El útero'},
-  {s:'La fecundación es la unión del espermatozoide con el óvulo.',type:'La fecundación'},
-  {s:'El cigoto es la primera célula del nuevo ser.',type:'El cigoto'},
-  {s:'El embarazo dura unos nueve meses.',type:'El embarazo'},
-  {s:'La pubertad es la etapa en que el cuerpo madura.',type:'La pubertad'},
-  {s:'El espermatozoide es la célula reproductora masculina.',type:'Espermatozoide'},
-  {s:'La vida pasa por infancia, adolescencia, adultez y vejez.',type:'Etapas del desarrollo'},
+  {s:'El universo es todo lo que existe: el espacio y los astros.',type:'El universo'},
+  {s:'El Sol es la estrella del sistema solar.',type:'El Sol'},
+  {s:'La Luna es el satélite de la Tierra.',type:'La Luna'},
+  {s:'La Tierra es el tercer planeta desde el Sol.',type:'La Tierra'},
+  {s:'La rotación produce el día y la noche.',type:'La rotación'},
+  {s:'La traslación produce las estaciones del año.',type:'La traslación'},
+  {s:'Las estrellas tienen luz propia.',type:'Las estrellas'},
+  {s:'Nuestra galaxia se llama Vía Láctea.',type:'La galaxia'},
+  {s:'El cometa es un astro de hielo y polvo con cola.',type:'El cometa'},
+  {s:'El sistema solar tiene ocho planetas.',type:'El sistema solar'},
 ];
 const classifyTaskDB=[
-  {w:'Testículos',gen:'Producen los espermatozoides',n:'Masculino',g:'Higiene diaria; ropa cómoda',t:'Son dos'},
-  {w:'Ovarios',gen:'Producen los óvulos',n:'Femenino',g:'Higiene; controles médicos',t:'Son dos, uno a cada lado'},
-  {w:'Útero',gen:'Aloja al bebé en el embarazo',n:'Femenino',g:'Controles médicos en el embarazo',t:'Puede crecer mucho en la gestación'},
-  {w:'Espermatozoides',gen:'Célula reproductora masculina',n:'Masculino',g:'Buena alimentación e higiene',t:'Son muy pequeños y se mueven'},
-  {w:'Trompas de Falopio',gen:'Lugar donde ocurre la fecundación',n:'Femenino',g:'Higiene y salud reproductiva',t:'Comunican el ovario con el útero'},
+  {w:'El Sol',gen:'Estrella que da luz y calor',n:'Estrella',g:'Nunca mirarlo directamente',t:'Está en el centro del sistema solar'},
+  {w:'La Tierra',gen:'Planeta donde vivimos',n:'Planeta',g:'Cuidar el planeta y su naturaleza',t:'Es el tercer planeta desde el Sol'},
+  {w:'La Luna',gen:'Satélite de la Tierra',n:'Satélite',g:'Observarla en sus distintas fases',t:'Refleja la luz del Sol'},
+  {w:'Marte',gen:'Planeta rojo del sistema solar',n:'Planeta',g:'Se estudia con sondas espaciales',t:'Es el cuarto planeta desde el Sol'},
+  {w:'La Vía Láctea',gen:'Galaxia donde está el Sol',n:'Galaxia',g:'Se observa en el cielo oscuro',t:'Tiene miles de millones de estrellas'},
 ];
 const completeTaskDB=[
-  {s:'Los ___ producen los espermatozoides.',opts:['ovarios','testículos','pulmones'],ans:'testículos'},
-  {s:'Los ___ producen los óvulos.',opts:['testículos','ovarios','riñones'],ans:'ovarios'},
-  {s:'La ___ une el espermatozoide y el óvulo.',opts:['respiración','fecundación','digestión'],ans:'fecundación'},
-  {s:'El bebé crece dentro del ___.',opts:['estómago','útero','corazón'],ans:'útero'},
-  {s:'El embarazo dura unos ___ meses.',opts:['tres','seis','nueve'],ans:'nueve'},
-  {s:'La ___ es la etapa en que el cuerpo madura.',opts:['vejez','pubertad','infancia'],ans:'pubertad'},
-  {s:'La primera célula del nuevo ser es el ___.',opts:['óvulo','cigoto','glóbulo'],ans:'cigoto'},
-  {s:'El espermatozoide es la célula reproductora ___.',opts:['femenina','masculina','vegetal'],ans:'masculina'},
+  {s:'El ___ es la estrella del sistema solar.',opts:['planeta','Sol','satélite'],ans:'Sol'},
+  {s:'La ___ es el satélite de la Tierra.',opts:['estrella','Luna','galaxia'],ans:'Luna'},
+  {s:'La ___ produce el día y la noche.',opts:['traslación','rotación','órbita'],ans:'rotación'},
+  {s:'La ___ produce las estaciones del año.',opts:['rotación','traslación','fase'],ans:'traslación'},
+  {s:'El sistema solar tiene ___ planetas.',opts:['seis','siete','ocho'],ans:'ocho'},
+  {s:'Las ___ tienen luz propia.',opts:['estrellas','planetas','lunas'],ans:'estrellas'},
+  {s:'Nuestra galaxia es la ___.',opts:['Osa Mayor','Vía Láctea','Andrómeda'],ans:'Vía Láctea'},
+  {s:'La Luna ___ la luz del Sol.',opts:['produce','refleja','apaga'],ans:'refleja'},
 ];
 const explainQuestions=[
-  {q:'¿Qué es la reproducción y por qué es importante?',ans:'Es la función por la que los seres vivos dan origen a nuevos seres de su especie. Es importante porque gracias a ella la vida continúa de una generación a otra.'},
-  {q:'¿Qué órganos y células tienen el sistema masculino y el femenino?',ans:'El masculino tiene los testículos, que producen espermatozoides. El femenino tiene los ovarios (producen óvulos), las trompas de Falopio y el útero.'},
-  {q:'¿Qué es la fecundación y dónde ocurre?',ans:'Es la unión del espermatozoide con el óvulo. Ocurre en las trompas de Falopio y da origen al cigoto, la primera célula del nuevo ser.'},
-  {q:'¿Qué ocurre durante el embarazo?',ans:'El bebé crece dentro del útero de la madre durante unos 9 meses. Recibe alimento y oxígeno por el cordón umbilical, unido a la placenta.'},
-  {q:'Menciona las etapas del desarrollo humano en orden.',ans:'Infancia, adolescencia, adultez y vejez.'},
+  {q:'¿Qué es el universo y qué hay en él?',ans:'El universo es todo lo que existe: el espacio y todos los astros (estrellas, planetas, satélites, galaxias, cometas). Es tan grande que no conocemos sus límites.'},
+  {q:'¿Qué diferencia hay entre una estrella, un planeta y un satélite?',ans:'La estrella tiene luz propia (como el Sol); el planeta gira alrededor de una estrella y no tiene luz propia; el satélite gira alrededor de un planeta (como la Luna).'},
+  {q:'¿Qué es el sistema solar y qué lo forma?',ans:'Es el Sol y todos los astros que giran a su alrededor: ocho planetas, sus satélites y otros cuerpos como asteroides y cometas. El Sol está en el centro.'},
+  {q:'¿Qué diferencia hay entre la rotación y la traslación de la Tierra?',ans:'La rotación es el giro de la Tierra sobre sí misma; dura un día y produce el día y la noche. La traslación es el giro alrededor del Sol; dura un año y produce las estaciones.'},
+  {q:'¿Por qué el Sol es importante para la vida?',ans:'Porque da luz y calor a la Tierra. Sin el Sol no habría vida: las plantas, los animales y las personas lo necesitan.'},
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué concepto de la reproducción o el desarrollo humano se refiere.','<strong>Ejemplo:</strong> Los testículos producen los espermatozoides. → <span style="color:var(--jade);font-weight:700;">Los testículos</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada órgano, completa su función, a qué sistema pertenece, cómo cuidarlo y un dato.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Órgano','text-align:left;')}${th('Función')}${th('Sistema')}${th('Cómo cuidarlo')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Función: ${it.gen} | Sistema: ${it.n} | Cómo cuidarlo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué astro o concepto del universo se refiere.','<strong>Ejemplo:</strong> El Sol es una estrella. → <span style="color:var(--jade);font-weight:700;">El Sol</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada astro, completa su descripción, qué tipo de astro es, una curiosidad y un dato.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Astro','text-align:left;')}${th('Descripción')}${th('Tipo')}${th('Curiosidad')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Descripción: ${it.gen} | Tipo: ${it.n} | Curiosidad: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
@@ -274,42 +274,42 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
   {size:10,grid:[
-    ['O','E','M','B','A','R','A','Z','O','E'],
-    ['C','I','G','O','T','O','M','C','F','X'],
-    ['Z','F','L','O','E','S','D','B','F','H'],
-    ['O','W','L','V','Z','G','X','X','B','Z'],
-    ['V','X','Z','A','I','A','R','K','R','X'],
-    ['U','S','R','R','T','X','L','V','B','V'],
-    ['L','F','K','I','J','O','R','E','T','U'],
-    ['O','H','X','O','M','P','A','R','T','O'],
-    ['A','A','T','J','E','H','I','N','E','G'],
-    ['V','D','I','I','T','J','E','X','N','N']
+    ['C','D','O','N','O','T','R','E','N','O'],
+    ['L','O','S','P','W','D','X','F','X','Z'],
+    ['V','A','I','X','A','L','A','G','Y','T'],
+    ['C','K','O','V','Q','V','E','K','Z','D'],
+    ['H','B','A','P','A','R','R','E','I','T'],
+    ['J','Z','N','L','N','F','R','S','T','T'],
+    ['J','Y','U','A','T','E','N','A','L','P'],
+    ['Z','G','L','Z','C','B','R','D','Z','X'],
+    ['B','Z','V','N','Y','G','G','N','O','T'],
+    ['V','E','S','T','R','E','L','L','A','M']
   ],words:[
-    {w:'OVULO',cells:[[3,0],[4,0],[5,0],[6,0],[7,0]]},
-    {w:'UTERO',cells:[[6,9],[6,8],[6,7],[6,6],[6,5]]},
-    {w:'CIGOTO',cells:[[1,0],[1,1],[1,2],[1,3],[1,4],[1,5]]},
-    {w:'OVARIO',cells:[[2,3],[3,3],[4,3],[5,3],[6,3],[7,3]]},
-    {w:'EMBARAZO',cells:[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8]]},
-    {w:'PARTO',cells:[[7,5],[7,6],[7,7],[7,8],[7,9]]}
+    {w:'SOL',cells:[[1,2],[1,1],[1,0]]},
+    {w:'LUNA',cells:[[7,2],[6,2],[5,2],[4,2]]},
+    {w:'TIERRA',cells:[[4,9],[4,8],[4,7],[4,6],[4,5],[4,4]]},
+    {w:'PLANETA',cells:[[6,9],[6,8],[6,7],[6,6],[6,5],[6,4],[6,3]]},
+    {w:'ESTRELLA',cells:[[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8]]},
+    {w:'GALAXIA',cells:[[2,7],[2,6],[2,5],[2,4],[2,3],[2,2],[2,1]]}
   ]},
   {size:10,grid:[
-    ['B','F','O','T','O','G','I','C','P','C'],
-    ['H','C','M','E','N','A','J','G','U','Z'],
-    ['K','R','K','S','Y','I','D','L','B','U'],
-    ['P','K','U','T','S','W','R','I','E','T'],
-    ['Y','R','J','I','H','E','U','V','R','B'],
-    ['A','I','A','C','B','P','H','P','T','O'],
-    ['F','E','C','U','N','D','A','R','A','L'],
-    ['N','D','T','L','R','H','P','O','D','U'],
-    ['A','R','P','O','X','I','L','I','W','V'],
-    ['G','E','S','T','A','C','I','O','N','O']
+    ['D','T','K','O','X','C','Y','N','E','T'],
+    ['T','D','I','S','V','C','E','K','T','R'],
+    ['N','W','L','R','H','O','T','K','I','A'],
+    ['Z','V','L','E','L','M','R','N','L','S'],
+    ['Y','Y','H','V','F','E','A','K','E','L'],
+    ['H','F','T','I','G','T','M','F','T','A'],
+    ['I','U','Y','N','B','A','L','L','A','C'],
+    ['B','I','R','U','V','V','F','S','S','I'],
+    ['N','O','I','C','A','T','O','R','B','O'],
+    ['H','P','V','N','B','Q','U','L','S','N']
   ],words:[
-    {w:'TESTICULO',cells:[[0,3],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[7,3],[8,3]]},
-    {w:'PUBERTAD',cells:[[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8]]},
-    {w:'FECUNDAR',cells:[[6,0],[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7]]},
-    {w:'GESTACION',cells:[[9,0],[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8]]},
-    {w:'OVULO',cells:[[9,9],[8,9],[7,9],[6,9],[5,9]]},
-    {w:'CIGOTO',cells:[[0,7],[0,6],[0,5],[0,4],[0,3],[0,2]]}
+    {w:'ROTACION',cells:[[8,7],[8,6],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0]]},
+    {w:'TRASLACION',cells:[[0,9],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],[7,9],[8,9],[9,9]]},
+    {w:'COMETA',cells:[[1,5],[2,5],[3,5],[4,5],[5,5],[6,5]]},
+    {w:'SATELITE',cells:[[7,8],[6,8],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8]]},
+    {w:'UNIVERSO',cells:[[7,3],[6,3],[5,3],[4,3],[3,3],[2,3],[1,3],[0,3]]},
+    {w:'MARTE',cells:[[5,6],[4,6],[3,6],[2,6],[1,6]]}
   ]}
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
@@ -325,72 +325,72 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'La reproducción da origen a nuevos seres de la misma especie.',a:true},
-  {q:'Los ovarios producen los espermatozoides.',a:false},
-  {q:'Los testículos producen los espermatozoides.',a:true},
-  {q:'El óvulo es la célula reproductora femenina.',a:true},
-  {q:'La fecundación es la unión del espermatozoide con el óvulo.',a:true},
-  {q:'El bebé crece dentro del estómago de la madre.',a:false},
-  {q:'El útero es el órgano donde crece el bebé.',a:true},
-  {q:'El embarazo dura aproximadamente nueve meses.',a:true},
-  {q:'El cigoto es la primera célula del nuevo ser.',a:true},
-  {q:'La pubertad es la etapa en que el cuerpo madura para reproducirse.',a:true},
-  {q:'La reproducción humana es asexual.',a:false},
-  {q:'La fecundación ocurre en las trompas de Falopio.',a:true},
-  {q:'El bebé recibe alimento por el cordón umbilical.',a:true},
-  {q:'El espermatozoide se produce en los ovarios.',a:false},
-  {q:'La vejez es la última etapa de la vida.',a:true},
+  {q:'El universo es todo lo que existe: el espacio y los astros.',a:true},
+  {q:'Los planetas tienen luz propia.',a:false},
+  {q:'Las estrellas tienen luz propia.',a:true},
+  {q:'El Sol es la estrella del sistema solar.',a:true},
+  {q:'La Luna es un planeta.',a:false},
+  {q:'La Luna es el satélite de la Tierra.',a:true},
+  {q:'El sistema solar tiene ocho planetas.',a:true},
+  {q:'La rotación de la Tierra produce el día y la noche.',a:true},
+  {q:'La traslación de la Tierra produce las estaciones.',a:true},
+  {q:'La Tierra es el tercer planeta desde el Sol.',a:true},
+  {q:'La Luna tiene luz propia.',a:false},
+  {q:'Nuestra galaxia se llama Vía Láctea.',a:true},
+  {q:'Un satélite gira alrededor de un planeta.',a:true},
+  {q:'La rotación de la Tierra dura un año.',a:false},
+  {q:'El cometa es un astro de hielo y polvo con cola.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es la reproducción?',o:['a) Comer alimentos','b) Dar origen a nuevos seres de la misma especie','c) Respirar aire','d) Mover el cuerpo'],a:1},
-  {q:'¿Qué órganos producen los espermatozoides?',o:['a) Los ovarios','b) Los testículos','c) El útero','d) Los pulmones'],a:1},
-  {q:'¿Qué órganos producen los óvulos?',o:['a) Los testículos','b) Los ovarios','c) El corazón','d) El estómago'],a:1},
-  {q:'¿Qué es la fecundación?',o:['a) El nacimiento','b) La unión del espermatozoide y el óvulo','c) La respiración','d) El crecimiento de los huesos'],a:1},
-  {q:'¿En qué órgano crece el bebé?',o:['a) En el estómago','b) En los pulmones','c) En el útero','d) En el corazón'],a:2},
-  {q:'¿Cuánto dura aproximadamente el embarazo?',o:['a) 3 meses','b) 6 meses','c) 9 meses','d) 12 meses'],a:2},
-  {q:'¿Cómo se llama la célula reproductora masculina?',o:['a) Óvulo','b) Espermatozoide','c) Cigoto','d) Glóbulo'],a:1},
-  {q:'¿Cómo se llama la célula reproductora femenina?',o:['a) Espermatozoide','b) Óvulo','c) Neurona','d) Plaqueta'],a:1},
-  {q:'¿Cuál es la primera célula del nuevo ser?',o:['a) El óvulo','b) El espermatozoide','c) El cigoto','d) La neurona'],a:2},
-  {q:'¿Cómo se llama la etapa en que el cuerpo madura para reproducirse?',o:['a) La vejez','b) La pubertad','c) La infancia','d) La adultez'],a:1},
-  {q:'¿Dónde ocurre la fecundación?',o:['a) En el estómago','b) En las trompas de Falopio','c) En los pulmones','d) En el corazón'],a:1},
-  {q:'¿Por dónde recibe alimento el bebé en el embarazo?',o:['a) Por la boca','b) Por el cordón umbilical','c) Por la nariz','d) Por los oídos'],a:1},
-  {q:'¿Cuál es el orden correcto de las etapas de la vida?',o:['a) Adultez, infancia, vejez','b) Infancia, adolescencia, adultez, vejez','c) Vejez, adultez, infancia','d) Adolescencia, infancia, vejez'],a:1},
-  {q:'El órgano donde crece el bebé pertenece al sistema…',o:['a) masculino','b) femenino','c) digestivo','d) óseo'],a:1},
-  {q:'La reproducción humana es de tipo…',o:['a) asexual','b) sexual','c) por esporas','d) por semillas'],a:1},
+  {q:'¿Qué es el universo?',o:['a) Solo la Tierra','b) Todo lo que existe: el espacio y los astros','c) Solo el Sol','d) Solo la Luna'],a:1},
+  {q:'¿Qué astro tiene luz propia?',o:['a) El planeta','b) El satélite','c) La estrella','d) El cometa'],a:2},
+  {q:'¿Qué es un planeta?',o:['a) Un astro con luz propia','b) Un astro que gira alrededor de una estrella','c) Una galaxia','d) Un cometa'],a:1},
+  {q:'¿Cuál es la estrella del sistema solar?',o:['a) La Luna','b) El Sol','c) Marte','d) La Tierra'],a:1},
+  {q:'¿Cuál es el satélite de la Tierra?',o:['a) El Sol','b) Venus','c) La Luna','d) Júpiter'],a:2},
+  {q:'¿Cuántos planetas tiene el sistema solar?',o:['a) Seis','b) Siete','c) Ocho','d) Diez'],a:2},
+  {q:'¿Qué movimiento produce el día y la noche?',o:['a) La traslación','b) La rotación','c) El eclipse','d) La fase lunar'],a:1},
+  {q:'¿Qué movimiento produce las estaciones?',o:['a) La rotación','b) La traslación','c) La fase lunar','d) El eclipse'],a:1},
+  {q:'¿Cómo se llama nuestra galaxia?',o:['a) El Sistema Solar','b) La Osa Mayor','c) La Vía Láctea','d) Andrómeda'],a:2},
+  {q:'¿Qué astro gira alrededor de un planeta?',o:['a) La estrella','b) El satélite','c) La galaxia','d) El Sol'],a:1},
+  {q:'¿Qué planeta es el nuestro?',o:['a) Marte','b) La Tierra','c) Venus','d) Saturno'],a:1},
+  {q:'¿Cuánto dura la rotación de la Tierra?',o:['a) Un año','b) Un día (24 horas)','c) Un mes','d) Una hora'],a:1},
+  {q:'¿Qué astro es de hielo y polvo y forma una cola?',o:['a) La estrella','b) El cometa','c) El planeta','d) El satélite'],a:1},
+  {q:'La Luna no tiene luz propia: ella…',o:['a) produce luz','b) refleja la luz del Sol','c) apaga la luz','d) no se ve nunca'],a:1},
+  {q:'El astro que da luz y calor a la Tierra es…',o:['a) la Luna','b) el Sol','c) Marte','d) una galaxia'],a:1},
 ];
 const evalCPBank=[
-  {q:'Los ___ producen los espermatozoides.',a:'testículos'},
-  {q:'Los ___ producen los óvulos.',a:'ovarios'},
-  {q:'La ___ une el espermatozoide con el óvulo.',a:'fecundación'},
-  {q:'El bebé crece dentro del ___ de la madre.',a:'útero'},
-  {q:'El embarazo dura unos ___ meses.',a:'nueve'},
-  {q:'La primera célula del nuevo ser es el ___.',a:'cigoto'},
-  {q:'La ___ es la etapa en que el cuerpo madura para reproducirse.',a:'pubertad'},
-  {q:'El espermatozoide es la célula reproductora ___.',a:'masculina'},
-  {q:'El óvulo es la célula reproductora ___.',a:'femenina'},
-  {q:'La fecundación ocurre en las trompas de ___.',a:'Falopio'},
-  {q:'El bebé recibe alimento por el cordón ___.',a:'umbilical'},
-  {q:'La reproducción humana es de tipo ___.',a:'sexual'},
-  {q:'La última etapa de la vida es la ___.',a:'vejez'},
-  {q:'Después del embarazo, el bebé nace en el ___.',a:'parto'},
-  {q:'El embarazo también se llama ___.',a:'gestación'},
+  {q:'El ___ es la estrella del sistema solar.',a:'Sol'},
+  {q:'La ___ es el satélite de la Tierra.',a:'Luna'},
+  {q:'La ___ produce el día y la noche.',a:'rotación'},
+  {q:'La ___ produce las estaciones del año.',a:'traslación'},
+  {q:'El sistema solar tiene ___ planetas.',a:'ocho'},
+  {q:'Las ___ tienen luz propia.',a:'estrellas'},
+  {q:'Nuestra galaxia es la ___ Láctea.',a:'Vía'},
+  {q:'La Luna ___ la luz del Sol.',a:'refleja'},
+  {q:'La Tierra es el ___ planeta desde el Sol.',a:'tercer'},
+  {q:'Un ___ gira alrededor de un planeta.',a:'satélite'},
+  {q:'El ___ es un astro de hielo y polvo con cola.',a:'cometa'},
+  {q:'Un enorme grupo de estrellas es una ___.',a:'galaxia'},
+  {q:'La rotación de la Tierra dura un ___.',a:'día'},
+  {q:'La traslación de la Tierra dura un ___.',a:'año'},
+  {q:'El astro que nos da luz y calor es el ___.',a:'Sol'},
 ];
 const evalPRBank=[
-  {term:'Reproducción',def:'Dar origen a nuevos seres de la misma especie'},
-  {term:'Testículos',def:'Producen los espermatozoides'},
-  {term:'Ovarios',def:'Producen los óvulos'},
-  {term:'Útero',def:'Órgano donde crece el bebé'},
-  {term:'Espermatozoide',def:'Célula reproductora masculina'},
-  {term:'Óvulo',def:'Célula reproductora femenina'},
-  {term:'Fecundación',def:'Unión del espermatozoide con el óvulo'},
-  {term:'Cigoto',def:'Primera célula del nuevo ser'},
-  {term:'Embarazo',def:'El bebé crece en el útero unos 9 meses'},
-  {term:'Pubertad',def:'Etapa en que el cuerpo madura'},
-  {term:'Parto',def:'Momento en que nace el bebé'},
-  {term:'Trompas de Falopio',def:'Donde ocurre la fecundación'},
-  {term:'Cordón umbilical',def:'Lleva alimento y oxígeno al bebé'},
-  {term:'Infancia',def:'Primera etapa de la vida'},
-  {term:'Vejez',def:'Última etapa de la vida'},
+  {term:'Universo',def:'Todo lo que existe: el espacio y los astros'},
+  {term:'Estrella',def:'Astro que tiene luz propia'},
+  {term:'Planeta',def:'Gira alrededor de una estrella; sin luz propia'},
+  {term:'Satélite',def:'Gira alrededor de un planeta'},
+  {term:'El Sol',def:'La estrella del sistema solar'},
+  {term:'La Tierra',def:'El planeta donde vivimos'},
+  {term:'La Luna',def:'El satélite de la Tierra'},
+  {term:'Galaxia',def:'Enorme grupo de estrellas'},
+  {term:'Vía Láctea',def:'El nombre de nuestra galaxia'},
+  {term:'Cometa',def:'Astro de hielo y polvo con cola'},
+  {term:'Rotación',def:'Giro de la Tierra sobre sí misma (día y noche)'},
+  {term:'Traslación',def:'Giro de la Tierra alrededor del Sol (un año)'},
+  {term:'Sistema Solar',def:'El Sol y los astros que giran a su alrededor'},
+  {term:'Eclipse',def:'Cuando un astro tapa la luz de otro'},
+  {term:'Fases de la Luna',def:'Los distintos aspectos con que vemos la Luna'},
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -477,75 +477,75 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Un niño de 12 años nota que su voz empieza a cambiar y le crece vello en el cuerpo, y se siente confundido.'},
-  {txt:'Una niña comienza a tener cambios en su cuerpo durante la pubertad y no sabe si es normal.'},
-  {txt:'Una madre embarazada quiere que su bebé nazca sano y pregunta qué debe hacer.'},
-  {txt:'Un grupo de estudiantes se burla de un compañero por los cambios de su cuerpo en la pubertad.'},
-  {txt:'Una familia espera un bebé y los hermanos preguntan cómo se alimenta el bebé dentro de la madre.'},
-  {txt:'Un adolescente cree que todos deben cambiar al mismo tiempo y a la misma edad en la pubertad.'},
+  {txt:'De día no vemos las estrellas, pero de noche el cielo se llena de ellas.'},
+  {txt:'En un lugar de la Tierra es de día mientras que en otro, al mismo tiempo, es de noche.'},
+  {txt:'A lo largo del año, en Honduras hay una época seca y una época lluviosa.'},
+  {txt:'Cada cierto tiempo la Luna se ve completa (llena) y otras veces no se ve (nueva).'},
+  {txt:'Un niño cree que el Sol se mueve alrededor de la Tierra porque lo ve salir y ponerse.'},
+  {txt:'Miramos una estrella muy lejana y la vemos como un puntito, aunque es gigante.'},
 ];
 const critCaseQuestions=[
-  '1. ¿Qué etapa o situación del desarrollo se observa en este caso?',
-  '2. ¿Por qué ocurre eso en el cuerpo o en la vida de la persona?',
-  '3. ¿Qué consejo darías con respeto y responsabilidad?',
-  '4. ¿Por qué es importante conocer y respetar estos cambios?',
+  '1. ¿Qué fenómeno del universo o del sistema solar se observa en este caso?',
+  '2. ¿Por qué ocurre? Relaciónalo con los astros o los movimientos de la Tierra.',
+  '3. ¿Qué astro o movimiento es el responsable?',
+  '4. ¿Por qué es importante observar y conocer el cielo?',
 ];
 const critCaseGuides=[
-  'Se observan cambios propios de la pubertad, el embarazo o el desarrollo humano.',
-  'Son cambios normales dirigidos por las hormonas o por el proceso natural de la reproducción y el crecimiento.',
-  'Actuar con respeto e higiene, informarse bien y, si hay dudas de salud, consultar a un adulto de confianza o a un médico.',
-  'Porque son parte natural de la vida; conocerlos y respetarlos ayuda a cuidar la salud y a tratar bien a los demás.',
+  'Se observa un fenómeno del cielo: las estrellas, el día y la noche, las estaciones o las fases de la Luna.',
+  'Se explica por los movimientos de la Tierra (rotación y traslación), por la luz del Sol o por la enorme distancia de los astros.',
+  'La rotación (día y noche), la traslación (estaciones), la Luna y sus fases, o el Sol como estrella.',
+  'Porque nos ayuda a entender nuestro planeta, medir el tiempo y despertar la curiosidad por la ciencia.',
 ];
 const critErrorBank=[
-  {txt:'"Los ovarios producen los espermatozoides."',
-   g1:'Los ovarios producen los ÓVULOS.',
-   g2:'Los espermatozoides los producen los TESTÍCULOS.'},
-  {txt:'"El bebé crece dentro del estómago de la madre."',
-   g1:'El bebé crece dentro del ÚTERO.',
-   g2:'El estómago pertenece al sistema digestivo, no al reproductor.'},
-  {txt:'"La fecundación es el momento en que nace el bebé."',
-   g1:'La fecundación es la UNIÓN del espermatozoide con el óvulo.',
-   g2:'El nacimiento ocurre al final del embarazo, en el PARTO.'},
-  {txt:'"Todos los niños y niñas cambian a la misma edad en la pubertad."',
-   g1:'La pubertad ocurre a EDADES DISTINTAS en cada persona.',
-   g2:'Cada cuerpo tiene su propio ritmo; todo es normal.'},
-  {txt:'"El espermatozoide y el óvulo son la misma célula."',
-   g1:'El espermatozoide es la célula MASCULINA.',
-   g2:'El óvulo es la célula FEMENINA; son distintas.'},
+  {txt:'"Los planetas tienen luz propia igual que las estrellas."',
+   g1:'Los planetas NO tienen luz propia.',
+   g2:'Solo las ESTRELLAS (como el Sol) tienen luz propia.'},
+  {txt:'"La Luna es un planeta que gira alrededor del Sol."',
+   g1:'La Luna es un SATÉLITE, no un planeta.',
+   g2:'La Luna gira alrededor de la TIERRA, no del Sol.'},
+  {txt:'"La rotación de la Tierra produce las estaciones del año."',
+   g1:'La rotación produce el DÍA Y LA NOCHE.',
+   g2:'Las estaciones las produce la TRASLACIÓN.'},
+  {txt:'"El Sol gira alrededor de la Tierra."',
+   g1:'Es la TIERRA la que gira alrededor del Sol.',
+   g2:'Vemos salir y ponerse el Sol por la ROTACIÓN de la Tierra.'},
+  {txt:'"La Luna tiene luz propia."',
+   g1:'La Luna NO tiene luz propia.',
+   g2:'La Luna REFLEJA la luz del Sol.'},
 ];
 const critDecisionBank=[
-  'Un adolescente con cambios en la pubertad puede informarse bien con un adulto de confianza, o creer todo lo que escucha en la calle.',
-  'Ante los cambios del cuerpo, una persona puede cuidar su higiene diaria, o descuidarla.',
-  'Al ver a un compañero con cambios distintos, se le puede respetar, o burlarse de él.',
-  'Una futura madre puede acudir a sus controles médicos, o no ir nunca al médico.',
-  'Frente a una duda sobre el cuerpo, un estudiante puede preguntar con respeto a un adulto, o quedarse con información falsa.',
+  'Para observar bien las estrellas, es mejor hacerlo en la ciudad con muchas luces, o en el campo con el cielo oscuro.',
+  'Para conocer mejor los planetas lejanos, conviene usar un telescopio, o mirar solo a simple vista.',
+  'Para saber la hora aproximada de día, podemos guiarnos por la posición del Sol, o adivinar sin observar.',
+  'Para cuidar la vista al observar el cielo, nunca debemos mirar directamente al Sol, o podemos mirarlo fijamente.',
+  'Para aprender sobre el universo, conviene leer, observar y preguntar, o quedarse con ideas equivocadas.',
 ];
-const critDecisionGuide='Lo más saludable y responsable es informarse bien con adultos de confianza o personal de salud, cuidar la higiene, respetar el cuerpo propio y el de los demás, y acudir al médico cuando hace falta. Los cambios de la pubertad y el embarazo son naturales; conocerlos con información correcta evita miedos y burlas y ayuda a tomar buenas decisiones.';
+const critDecisionGuide='La mejor decisión es la que se apoya en la observación y la ciencia: mirar el cielo en lugares oscuros, usar telescopios, guiarse por el Sol con cuidado (nunca mirarlo directamente) e informarse leyendo y preguntando. Observar y estudiar el universo con curiosidad nos ayuda a entender mejor nuestro planeta y el cielo.';
 const critCompareBank=[
-  {a:'Órganos que producen los espermatozoides.',b:'Órganos que producen los óvulos.',
-   ga:'Los testículos.',
-   gb:'Los ovarios.',
-   gr:'Los dos producen células reproductoras, pero los testículos son del sistema masculino y los ovarios del femenino.'},
-  {a:'Célula reproductora masculina.',b:'Célula reproductora femenina.',
-   ga:'El espermatozoide.',
-   gb:'El óvulo.',
-   gr:'Ambas son células reproductoras y al unirse forman el cigoto, pero una la aporta el padre y la otra la madre.'},
-  {a:'Momento en que se unen el espermatozoide y el óvulo.',b:'Momento en que nace el bebé.',
-   ga:'La fecundación.',
-   gb:'El parto.',
-   gr:'La fecundación es el comienzo de la nueva vida y el parto es el nacimiento; entre ambos ocurre el embarazo.'},
+  {a:'Astro que tiene luz propia.',b:'Astro que gira alrededor de una estrella y no tiene luz propia.',
+   ga:'La estrella (como el Sol).',
+   gb:'El planeta.',
+   gr:'Los dos son astros, pero la estrella brilla con luz propia y el planeta solo refleja la luz de su estrella.'},
+  {a:'Giro de la Tierra sobre sí misma.',b:'Giro de la Tierra alrededor del Sol.',
+   ga:'La rotación.',
+   gb:'La traslación.',
+   gr:'Los dos son movimientos de la Tierra, pero la rotación produce el día y la noche y la traslación produce las estaciones.'},
+  {a:'El astro que da luz y calor al sistema solar.',b:'El satélite que gira alrededor de la Tierra.',
+   ga:'El Sol.',
+   gb:'La Luna.',
+   gr:'El Sol es una estrella con luz propia y la Luna es un satélite que refleja la luz del Sol; son astros muy diferentes.'},
 ];
 const critCauseBank=[
-  {cause:'El espermatozoide se une con el óvulo.',guide:'Ocurre la fecundación y se forma el cigoto, la primera célula del nuevo ser.'},
-  {cause:'Comienza la pubertad en un adolescente.',guide:'Las hormonas producen cambios físicos y emocionales en su cuerpo.'},
-  {cause:'Una madre embarazada acude a sus controles médicos y se alimenta bien.',guide:'Aumenta la probabilidad de que el bebé nazca sano.'},
-  {cause:'El cigoto se implanta en el útero.',guide:'Comienza el embarazo y el bebé empieza a crecer.'},
+  {cause:'La Tierra gira sobre sí misma (rotación).',guide:'Se produce el día y la noche.'},
+  {cause:'La Tierra gira alrededor del Sol (traslación).',guide:'Se producen las estaciones del año.'},
+  {cause:'La Luna se coloca entre el Sol y la Tierra.',guide:'Ocurre un eclipse de Sol.'},
+  {cause:'El Sol ilumina la Luna desde distintas posiciones.',guide:'Vemos las diferentes fases de la Luna.'},
 ];
 const critEffectBank=[
-  {effect:'A un adolescente le cambia la voz y le crece vello.',guide:'Es efecto de las hormonas sexuales durante la pubertad.'},
-  {effect:'Un bebé recibe alimento y oxígeno sin comer ni respirar por sí mismo.',guide:'Los recibe por el cordón umbilical, unido a la placenta de la madre.'},
-  {effect:'Después de unos nueve meses, nace un bebé.',guide:'Ha terminado el embarazo y ocurre el parto.'},
-  {effect:'Con los años, una persona pasa de niño a adulto y luego a anciano.',guide:'Es el desarrollo humano: infancia, adolescencia, adultez y vejez.'},
+  {effect:'En una parte de la Tierra es de día y en otra es de noche.',guide:'Es efecto de la rotación de la Tierra.'},
+  {effect:'A lo largo del año cambian las estaciones.',guide:'Es efecto de la traslación de la Tierra alrededor del Sol.'},
+  {effect:'De noche vemos las estrellas como puntitos de luz.',guide:'Están tan lejos que se ven pequeñas, aunque muchas son enormes.'},
+  {effect:'La Luna se ve con distintas formas cada semana.',guide:'Son las fases de la Luna, según cómo la ilumina el Sol.'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -558,7 +558,7 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: reproducción y desarrollo <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el universo y el cielo <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
@@ -566,7 +566,7 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: salud y responsabilidad <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías con respeto y responsabilidad? Explica por qué, relacionándolo con la reproducción y el desarrollo.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: observar el cielo <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías para conocer mejor el universo? Explica por qué, relacionándolo con los astros y los movimientos de la Tierra.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
@@ -600,10 +600,10 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: reproducción y desarrollo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: el universo y el cielo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: salud y responsabilidad</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías con respeto y responsabilidad? Explica por qué, relacionándolo con la reproducción y el desarrollo.</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: observar el cielo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías para conocer mejor el universo? Explica por qué, relacionándolo con los astros y los movimientos de la Tierra.</p>${lines(2)}`;
   let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué órgano o concepto corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
@@ -624,43 +624,43 @@ function printEvalCrit(){
 
 // ===================== LABORATORIO DE ÓRGANOS =====================
 const parteData={
-  masculino:{
-    nombre:'El sistema reproductor masculino',icon:'🚹',
-    estructura:{title:'¿Qué es?',info:'• Conjunto de órganos <strong>reproductores</strong> del varón<br>• Su parte principal son los <strong>testículos</strong><br>• En la pubertad madura y empieza a producir células reproductoras'},
-    funcion:{title:'¿Qué hace?',info:'• Los <strong>testículos</strong> producen los <strong>espermatozoides</strong><br>• Los espermatozoides son las <strong>células reproductoras masculinas</strong><br>• Aportan la mitad de la información para el nuevo ser'},
-    ubicacion:{title:'Cuidado / salud',info:'• Mantener una <strong>higiene diaria</strong><br>• Usar ropa cómoda y limpia<br>• Consultar al <strong>médico</strong> ante cualquier molestia'},
-    dato:{title:'Dato curioso',info:'• Los <strong>testículos</strong> son dos<br>• En la pubertad, las hormonas hacen cambiar la voz y crecer el vello<br>• Cada persona madura a su propio ritmo'}
+  sol:{
+    nombre:'El Sol',icon:'☀️',
+    estructura:{title:'¿Qué es?',info:'• Es una <strong>estrella</strong>: una esfera de gas muy caliente<br>• Está en el <strong>centro</strong> del sistema solar<br>• Es la estrella <strong>más cercana</strong> a la Tierra'},
+    funcion:{title:'¿Qué hace?',info:'• Da <strong>luz y calor</strong> a todo el sistema solar<br>• Hace posible la <strong>vida</strong> en la Tierra<br>• Los planetas <strong>giran</strong> a su alrededor'},
+    ubicacion:{title:'Curiosidad',info:'• Cabrían más de un <strong>millón de Tierras</strong> dentro del Sol<br>• Su luz tarda unos <strong>8 minutos</strong> en llegar a la Tierra<br>• Es una estrella de tamaño mediano'},
+    dato:{title:'Dato curioso',info:'• ¡<strong>Nunca</strong> lo mires directamente: puede dañar tus ojos!<br>• La energía del Sol mueve el clima y las plantas<br>• Sin el Sol, la Tierra sería un lugar oscuro y helado'}
   },
-  femenino:{
-    nombre:'El sistema reproductor femenino',icon:'🚺',
-    estructura:{title:'¿Qué es?',info:'• Conjunto de órganos <strong>reproductores</strong> de la mujer<br>• Incluye los <strong>ovarios</strong>, las <strong>trompas de Falopio</strong> y el <strong>útero</strong><br>• En la pubertad madura y comienza el ciclo menstrual'},
-    funcion:{title:'¿Qué hace?',info:'• Los <strong>ovarios</strong> producen los <strong>óvulos</strong><br>• Las <strong>trompas de Falopio</strong> son el lugar de la fecundación<br>• El <strong>útero</strong> aloja al bebé durante el embarazo'},
-    ubicacion:{title:'Cuidado / salud',info:'• Mantener una <strong>higiene diaria</strong><br>• Acudir a los <strong>controles médicos</strong><br>• Informarse bien sobre los cambios del cuerpo'},
-    dato:{title:'Dato curioso',info:'• Los <strong>ovarios</strong> son dos, uno a cada lado<br>• El <strong>útero</strong> puede crecer mucho durante el embarazo<br>• El ciclo menstrual es un proceso natural'}
+  tierra:{
+    nombre:'La Tierra',icon:'🌍',
+    estructura:{title:'¿Qué es?',info:'• Es el <strong>tercer planeta</strong> desde el Sol<br>• Es un planeta <strong>rocoso</strong> con agua y aire<br>• Su satélite es la <strong>Luna</strong>'},
+    funcion:{title:'¿Qué hace?',info:'• <strong>Gira sobre sí misma</strong> (rotación): día y noche<br>• <strong>Gira alrededor del Sol</strong> (traslación): las estaciones<br>• Es el <strong>único</strong> planeta con vida conocida'},
+    ubicacion:{title:'Curiosidad',info:'• Tiene <strong>agua líquida</strong>, algo muy raro en el universo<br>• Su atmósfera nos protege y nos da aire<br>• Da una vuelta al Sol cada <strong>365 días</strong>'},
+    dato:{title:'Dato curioso',info:'• Desde el espacio se ve <strong>azul</strong> por sus océanos<br>• Es nuestro <strong>hogar</strong>: hay que cuidarlo<br>• Gira a gran velocidad, ¡aunque no lo sintamos!'}
   },
-  celulas:{
-    nombre:'Las células reproductoras',icon:'🔬',
-    estructura:{title:'¿Qué es?',info:'• Son las células que dan origen a un nuevo ser<br>• La masculina es el <strong>espermatozoide</strong><br>• La femenina es el <strong>óvulo</strong>'},
-    funcion:{title:'¿Qué hace?',info:'• Al <strong>unirse</strong> forman el <strong>cigoto</strong><br>• El espermatozoide lo aporta el <strong>padre</strong><br>• El óvulo lo aporta la <strong>madre</strong>'},
-    ubicacion:{title:'Cuidado / salud',info:'• Una buena <strong>alimentación</strong> y la higiene ayudan a la salud reproductiva<br>• Evitar el alcohol y el tabaco<br>• Acudir al médico ante cualquier duda'},
-    dato:{title:'Dato curioso',info:'• El <strong>espermatozoide</strong> es muy pequeño y puede moverse<br>• El <strong>óvulo</strong> es más grande y redondo<br>• De su unión nace toda una nueva vida'}
+  luna:{
+    nombre:'La Luna',icon:'🌙',
+    estructura:{title:'¿Qué es?',info:'• Es el <strong>satélite natural</strong> de la Tierra<br>• Es un astro <strong>rocoso</strong> sin aire ni agua<br>• <strong>No tiene luz propia</strong>'},
+    funcion:{title:'¿Qué hace?',info:'• <strong>Gira alrededor de la Tierra</strong><br>• <strong>Refleja</strong> la luz del Sol<br>• Cambia de aspecto: son sus <strong>fases</strong>'},
+    ubicacion:{title:'Curiosidad',info:'• Sus fases son: <strong>nueva, creciente, llena y menguante</strong><br>• Influye en las <strong>mareas</strong> del mar<br>• Es el astro que vemos más grande de noche'},
+    dato:{title:'Dato curioso',info:'• El ser humano <strong>llegó a la Luna</strong> en 1969<br>• En la Luna pesarías <strong>mucho menos</strong> que en la Tierra<br>• Siempre nos muestra la <strong>misma cara</strong>'}
   },
-  fecundacion:{
-    nombre:'La fecundación',icon:'⚪',
-    estructura:{title:'¿Qué es?',info:'• Es la <strong>unión del espermatozoide con el óvulo</strong><br>• Ocurre en las <strong>trompas de Falopio</strong><br>• De ella se forma el <strong>cigoto</strong>'},
-    funcion:{title:'¿Qué hace?',info:'• Da comienzo a una <strong>nueva vida</strong><br>• El cigoto se <strong>divide</strong> muchas veces<br>• Baja hasta el <strong>útero</strong> y se implanta'},
-    ubicacion:{title:'Cuidado / salud',info:'• La salud de la madre y del padre influye en el nuevo ser<br>• Buena alimentación e higiene<br>• Ser madre o padre es una gran <strong>responsabilidad</strong>'},
-    dato:{title:'Dato curioso',info:'• El <strong>cigoto</strong> es la primera célula del nuevo ser<br>• De una sola célula se forma todo un cuerpo<br>• La fecundación es el inicio del embarazo'}
+  planetas:{
+    nombre:'Los planetas',icon:'🪐',
+    estructura:{title:'¿Qué es?',info:'• Astros que <strong>giran alrededor del Sol</strong><br>• <strong>No tienen luz propia</strong><br>• El sistema solar tiene <strong>ocho</strong>'},
+    funcion:{title:'¿Qué hace?',info:'• Cada uno recorre su <strong>órbita</strong> alrededor del Sol<br>• Algunos tienen <strong>satélites</strong> (lunas)<br>• Se dividen en rocosos y gigantes de gas'},
+    ubicacion:{title:'Curiosidad',info:'• En orden: <strong>Mercurio, Venus, Tierra, Marte, Júpiter, Saturno, Urano, Neptuno</strong><br>• <strong>Júpiter</strong> es el más grande<br>• <strong>Saturno</strong> tiene anillos'},
+    dato:{title:'Dato curioso',info:'• <strong>Marte</strong> es el planeta rojo<br>• <strong>Mercurio</strong> es el más cercano al Sol<br>• Se estudian con <strong>telescopios</strong> y sondas espaciales'}
   },
-  embarazo:{
-    nombre:'El embarazo y el desarrollo',icon:'🤰',
-    estructura:{title:'¿Qué es?',info:'• Etapa en que el bebé <strong>crece en el útero</strong><br>• Dura unos <strong>9 meses</strong> (gestación)<br>• Termina con el <strong>parto</strong> (el nacimiento)'},
-    funcion:{title:'¿Qué hace?',info:'• El bebé recibe alimento y oxígeno por el <strong>cordón umbilical</strong><br>• El cordón está unido a la <strong>placenta</strong><br>• Después del parto, comienza la <strong>infancia</strong>'},
-    ubicacion:{title:'Cuidado / salud',info:'• La madre debe <strong>alimentarse bien</strong> y descansar<br>• Acudir a los <strong>controles médicos</strong><br>• Evitar el alcohol y el tabaco'},
-    dato:{title:'Dato curioso',info:'• Después del nacimiento, la vida pasa por <strong>infancia, adolescencia, adultez y vejez</strong><br>• El bebé crece muy rápido dentro del útero<br>• Cada etapa de la vida tiene sus propios cambios'}
+  universo:{
+    nombre:'El universo',icon:'🌌',
+    estructura:{title:'¿Qué es?',info:'• Es <strong>todo lo que existe</strong>: el espacio y los astros<br>• Es tan grande que no conocemos sus <strong>límites</strong><br>• Contiene millones de <strong>galaxias</strong>'},
+    funcion:{title:'¿Qué hace?',info:'• Reúne las <strong>estrellas, planetas, satélites y cometas</strong><br>• Las estrellas se agrupan en <strong>galaxias</strong><br>• Nuestra galaxia es la <strong>Vía Láctea</strong>'},
+    ubicacion:{title:'Curiosidad',info:'• Se observa con <strong>telescopios</strong><br>• Muchas estrellas que ves ya son muy <strong>antiguas</strong><br>• El universo sigue <strong>creciendo</strong>'},
+    dato:{title:'Dato curioso',info:'• Hay <strong>más estrellas</strong> que granos de arena en las playas<br>• La luz de algunas estrellas tarda <strong>años</strong> en llegar<br>• ¡Todavía queda muchísimo por descubrir!'}
   }
 };
-let labParte='masculino',labAspecto='estructura';
+let labParte='sol',labAspecto='estructura';
 function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
 function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
 function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAspecto];document.getElementById('lab-sentence').innerHTML=`🔬 Explorando: <strong>${data.nombre}</strong> → <strong>${asp.title}</strong>`;document.getElementById('lab-display').innerHTML=`<div class="lab-cont-header">${data.icon} ${data.nombre}</div><div class="lab-asp-title">${asp.title}</div><div class="lab-asp-info">${asp.info}</div>`;}
