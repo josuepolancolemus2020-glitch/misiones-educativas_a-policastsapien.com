@@ -152,9 +152,9 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias de clasificación
 const routeSets=[
-  {label:'Niveles de organización ecológica (del más pequeño al más grande)',steps:['Individuo','Población','Comunidad','Ecosistema','Bioma','Biosfera']},
-  {label:'Cadena alimenticia (por dónde pasa la energía)',steps:['El Sol da la energía','El pasto crece (productor)','El saltamontes come pasto (herbívoro)','La rana come al saltamontes','El halcón come a la rana']},
-  {label:'Niveles de una cadena (según su papel)',steps:['Productores','Consumidores primarios','Consumidores secundarios','Consumidores terciarios','Descomponedores']},
+  {label:'El recorrido del alimento (en orden)',steps:['Boca','Esófago','Estómago','Intestino delgado','Intestino grueso','Ano']},
+  {label:'Las cuatro etapas de la digestión',steps:['Ingestión (entra el alimento)','Digestión (se deshace)','Absorción (pasa a la sangre)','Egestión (sale lo que sobra)']},
+  {label:'Del plato a la energía (¿qué pasa primero?)',steps:['Masticamos el alimento en la boca','El estómago lo mezcla con jugos','El intestino delgado absorbe los nutrientes','Los nutrientes viajan por la sangre','Las células obtienen energía']},
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -165,42 +165,42 @@ function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.
 
 // Widget 2: Identifica el reino o concepto (IDs neuron* reutilizados)
 const neuronPartes=[
-  {desc:'Conjunto de seres vivos, su medio físico y sus relaciones',ans:'Ecosistema',opts:['Ecosistema','Población','Bioma','Hábitat']},
-  {desc:'Los componentes SIN vida del ecosistema (agua, luz, suelo)',ans:'Abióticos',opts:['Abióticos','Bióticos','Orgánicos','Productores']},
-  {desc:'Seres que fabrican su alimento y son la base de la cadena',ans:'Productores',opts:['Productores','Consumidores','Descomponedores','Depredadores']},
-  {desc:'Hongos y bacterias que reciclan la materia muerta',ans:'Descomponedores',opts:['Descomponedores','Productores','Herbívoros','Carnívoros']},
-  {desc:'Grupo de individuos de la misma especie en un lugar',ans:'Población',opts:['Población','Comunidad','Ecosistema','Bioma']},
-  {desc:'Relación en la que AMBAS especies se benefician',ans:'Mutualismo',opts:['Mutualismo','Parasitismo','Depredación','Competencia']},
-  {desc:'El lugar donde vive un ser vivo (su "casa")',ans:'Hábitat',opts:['Hábitat','Nicho','Bioma','Población']},
-  {desc:'Ciencia que estudia los ecosistemas y sus relaciones',ans:'Ecología',opts:['Ecología','Taxonomía','Biología','Geología']},
+  {desc:'Órgano donde EMPIEZA la digestión (mastica y ensaliva)',ans:'Boca',opts:['Boca','Estómago','Hígado','Ano']},
+  {desc:'Órgano que mezcla el alimento con jugos gástricos',ans:'Estómago',opts:['Estómago','Boca','Intestino grueso','Esófago']},
+  {desc:'Órgano donde los nutrientes pasan a la sangre',ans:'Intestino delgado',opts:['Intestino delgado','Estómago','Boca','Esófago']},
+  {desc:'Glándula anexa que fabrica la bilis',ans:'Hígado',opts:['Hígado','Páncreas','Estómago','Boca']},
+  {desc:'Nutriente que da energía rápida (maíz, arroz)',ans:'Carbohidratos',opts:['Carbohidratos','Proteínas','Vitaminas','Agua']},
+  {desc:'Nutriente que construye y repara el cuerpo (frijol, huevo)',ans:'Proteínas',opts:['Proteínas','Grasas','Carbohidratos','Minerales']},
+  {desc:'Paso de los nutrientes del intestino a la sangre',ans:'Absorción',opts:['Absorción','Ingestión','Digestión','Egestión']},
+  {desc:'Proceso por el que el cuerpo aprovecha los alimentos',ans:'Nutrición',opts:['Nutrición','Respiración','Circulación','Excreción']},
 ];
 let neuronIdx=0,neuronDone=false;
-function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los conceptos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los órganos y conceptos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
 function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Reino → Característica (IDs neuro* reutilizados)
 const neuroPairs=[
-  {trans:'Productores',func:'Fabrican su alimento (plantas y algas)',opts:['Fabrican su alimento (plantas y algas)','Reciclan la materia muerta','Comen otros animales','Componentes sin vida']},
-  {trans:'Consumidores',func:'Comen a otros seres vivos',opts:['Comen a otros seres vivos','Fabrican su alimento con luz','Reciclan restos muertos','El agua y el suelo']},
-  {trans:'Descomponedores',func:'Reciclan la materia muerta (hongos y bacterias)',opts:['Reciclan la materia muerta (hongos y bacterias)','Fabrican su alimento','Cazan a sus presas','La luz y la temperatura']},
-  {trans:'Factores abióticos',func:'Componentes sin vida (agua, luz, suelo)',opts:['Componentes sin vida (agua, luz, suelo)','Los seres vivos del lugar','Fabrican su alimento','Reciclan la materia']},
-  {trans:'Población',func:'Individuos de la misma especie',opts:['Individuos de la misma especie','Todas las especies juntas','El medio físico','La energía del Sol']},
+  {trans:'Boca',func:'Mastica y ensaliva el alimento',opts:['Mastica y ensaliva el alimento','Mezcla con jugos gástricos','Absorbe los nutrientes','Fabrica la bilis']},
+  {trans:'Estómago',func:'Mezcla el alimento con jugos gástricos',opts:['Mezcla el alimento con jugos gástricos','Mastica el alimento','Absorbe el agua','Fabrica la bilis']},
+  {trans:'Intestino delgado',func:'Absorbe los nutrientes a la sangre',opts:['Absorbe los nutrientes a la sangre','Mastica el alimento','Forma las heces','Produce la saliva']},
+  {trans:'Hígado',func:'Fabrica la bilis para digerir las grasas',opts:['Fabrica la bilis para digerir las grasas','Mastica el alimento','Mezcla con jugos gástricos','Forma las heces']},
+  {trans:'Intestino grueso',func:'Absorbe el agua y forma las heces',opts:['Absorbe el agua y forma las heces','Mastica el alimento','Absorbe los nutrientes','Fabrica la bilis']},
 ];
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.querySelectorAll('#neuroOpts .qz-opt').forEach(b=>{if(b.textContent===d.func)b.classList.add('correct');else if(b===btn&&b.textContent!==d.func)b.classList.add('wrong');});const isOk=opt===d.func;if(isOk){fb('fbNeuro','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuro_'+neuroIdx)){xpTracker.wgt.add('neuro_'+neuroIdx);pts(3);}sfx('ok');}else{fb('fbNeuro','Correcto: '+d.func,false);sfx('no');}setTimeout(()=>{neuroIdx++;showNeuro();},1800);}
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
-// Widget 4: Ser vivo → ¿Qué papel cumple en el ecosistema? (IDs enfer* reutilizados)
+// Widget 4: Alimento → ¿Qué nutriente aporta sobre todo? (IDs enfer* reutilizados)
 const enfermedadData=[
-  {disease:'El pasto',characteristic:'Productor',opts:['Productor','Consumidor','Descomponedor','Depredador']},
-  {disease:'El conejo (come plantas)',characteristic:'Consumidor primario',opts:['Consumidor primario','Productor','Descomponedor','Consumidor terciario']},
-  {disease:'El hongo del suelo',characteristic:'Descomponedor',opts:['Descomponedor','Productor','Herbívoro','Carnívoro']},
-  {disease:'El puma (come animales)',characteristic:'Consumidor (carnívoro)',opts:['Consumidor (carnívoro)','Productor','Descomponedor','Herbívoro']},
-  {disease:'El alga del mar',characteristic:'Productor',opts:['Productor','Consumidor','Descomponedor','Depredador']},
-  {disease:'La bacteria que pudre las hojas',characteristic:'Descomponedor',opts:['Descomponedor','Productor','Consumidor','Herbívoro']},
+  {disease:'La tortilla',characteristic:'Carbohidratos',opts:['Carbohidratos','Proteínas','Grasas','Vitaminas']},
+  {disease:'El frijol',characteristic:'Proteínas',opts:['Proteínas','Grasas','Carbohidratos','Agua']},
+  {disease:'El aguacate',characteristic:'Grasas',opts:['Grasas','Proteínas','Vitaminas','Carbohidratos']},
+  {disease:'La naranja',characteristic:'Vitaminas',opts:['Vitaminas','Grasas','Proteínas','Carbohidratos']},
+  {disease:'El huevo',characteristic:'Proteínas',opts:['Proteínas','Carbohidratos','Grasas','Vitaminas']},
+  {disease:'El arroz',characteristic:'Carbohidratos',opts:['Carbohidratos','Proteínas','Grasas','Minerales']},
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -209,12 +209,12 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Biótico','Abiótico'],btnA:'🐾 Biótico',btnB:'💧 Abiótico',colA:'bio',colB:'abio',
-   words:[{w:'Árbol',t:'bio'},{w:'Agua',t:'abio'},{w:'Venado',t:'bio'},{w:'Luz del sol',t:'abio'},{w:'Hongo',t:'bio'},{w:'Temperatura',t:'abio'},{w:'Bacteria',t:'bio'},{w:'Aire',t:'abio'},{w:'Pez',t:'bio'},{w:'Suelo',t:'abio'}]},
-  {label:['Productor','Consumidor'],btnA:'🌿 Productor',btnB:'🐾 Consumidor',colA:'pro',colB:'con',
-   words:[{w:'Pasto',t:'pro'},{w:'Conejo',t:'con'},{w:'Árbol',t:'pro'},{w:'León',t:'con'},{w:'Alga',t:'pro'},{w:'Rana',t:'con'},{w:'Maíz',t:'pro'},{w:'Águila',t:'con'},{w:'Planta',t:'pro'},{w:'Pez',t:'con'}]},
-  {label:['Terrestre','Acuático'],btnA:'🌳 Terrestre',btnB:'🌊 Acuático',colA:'ter',colB:'acu',
-   words:[{w:'Bosque',t:'ter'},{w:'Río',t:'acu'},{w:'Desierto',t:'ter'},{w:'Océano',t:'acu'},{w:'Selva',t:'ter'},{w:'Lago',t:'acu'},{w:'Sabana',t:'ter'},{w:'Arrecife',t:'acu'},{w:'Bosque de pino',t:'ter'},{w:'Manglar',t:'acu'}]},
+  {label:['Da energía','Construye'],btnA:'⚡ Da energía',btnB:'🧱 Construye',colA:'ene',colB:'con',
+   words:[{w:'Carbohidratos',t:'ene'},{w:'Proteínas',t:'con'},{w:'Grasas',t:'ene'},{w:'Frijol',t:'con'},{w:'Arroz',t:'ene'},{w:'Huevo',t:'con'},{w:'Tortilla',t:'ene'},{w:'Carne',t:'con'},{w:'Azúcar',t:'ene'},{w:'Leche',t:'con'}]},
+  {label:['Saludable','Chatarra'],btnA:'🥗 Saludable',btnB:'🍟 Chatarra',colA:'san',colB:'chat',
+   words:[{w:'Fruta',t:'san'},{w:'Refresco',t:'chat'},{w:'Verdura',t:'san'},{w:'Churros',t:'chat'},{w:'Frijol',t:'san'},{w:'Dulces',t:'chat'},{w:'Agua',t:'san'},{w:'Frituras',t:'chat'},{w:'Tortilla',t:'san'},{w:'Comida frita',t:'chat'}]},
+  {label:['Órgano','Nutriente'],btnA:'🫃 Órgano',btnB:'🥗 Nutriente',colA:'org',colB:'nut',
+   words:[{w:'Estómago',t:'org'},{w:'Proteína',t:'nut'},{w:'Intestino',t:'org'},{w:'Vitamina',t:'nut'},{w:'Esófago',t:'org'},{w:'Grasa',t:'nut'},{w:'Boca',t:'org'},{w:'Carbohidrato',t:'nut'},{w:'Hígado',t:'org'},{w:'Mineral',t:'nut'}]},
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -227,46 +227,46 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'El agua, la luz del sol y el suelo son factores abióticos del ecosistema.',type:'Factores abióticos'},
-  {s:'Las plantas y las algas son los productores porque fabrican su propio alimento.',type:'Productores'},
-  {s:'Los hongos y las bacterias descomponedores reciclan la materia muerta.',type:'Descomponedores'},
-  {s:'Un grupo de venados de la misma especie que vive en un bosque forma una población.',type:'Población'},
-  {s:'En el mutualismo, la abeja y la flor se benefician mutuamente.',type:'Mutualismo'},
-  {s:'El arrecife de coral de las Islas de la Bahía es un ecosistema acuático marino.',type:'Ecosistema acuático'},
-  {s:'El bosque nublado de Celaque es un ecosistema terrestre de montaña.',type:'Ecosistema terrestre'},
-  {s:'El Sol es la fuente de energía de todas las cadenas alimenticias.',type:'Fuente de energía'},
-  {s:'El venado es un consumidor primario porque se alimenta de plantas.',type:'Consumidor primario'},
-  {s:'La ecología estudia las relaciones de los seres vivos con su medio.',type:'Ecología'},
+  {s:'La nutrición es el proceso por el que el cuerpo aprovecha los alimentos.',type:'Nutrición'},
+  {s:'Los carbohidratos, como el maíz y el arroz, dan energía rápida.',type:'Carbohidratos'},
+  {s:'Las proteínas, como el frijol y el huevo, construyen y reparan el cuerpo.',type:'Proteínas'},
+  {s:'La boca mastica y ensaliva el alimento para formar el bolo alimenticio.',type:'La boca'},
+  {s:'El estómago mezcla el alimento con los jugos gástricos.',type:'El estómago'},
+  {s:'En el intestino delgado los nutrientes pasan a la sangre.',type:'Absorción'},
+  {s:'El hígado fabrica la bilis, que ayuda a digerir las grasas.',type:'El hígado'},
+  {s:'El intestino grueso absorbe el agua y forma las heces.',type:'El intestino grueso'},
+  {s:'Lavarse las manos antes de comer evita parásitos y enfermedades.',type:'Higiene'},
+  {s:'La digestión deshace el alimento en nutrientes muy pequeños.',type:'Digestión'},
 ];
 const classifyTaskDB=[
-  {w:'Bosque nublado',gen:'Terrestre',n:'Montañas altas (Celaque, La Tigra)',g:'Quetzal, jaguar, orquídeas',t:'Deforestación'},
-  {w:'Arrecife de coral',gen:'Acuático (marino)',n:'Islas de la Bahía',g:'Corales, peces, tortugas',t:'Calentamiento del mar'},
-  {w:'Manglar',gen:'Acuático (costero)',n:'Costas y Golfo de Fonseca',g:'Mangle, cangrejos, garzas',t:'Tala y camaroneras'},
-  {w:'Bosque de pino',gen:'Terrestre',n:'Montañas (Olancho)',g:'Pino, venado, carpintero',t:'Incendios y gorgojo'},
-  {w:'Río',gen:'Acuático (agua dulce)',n:'Todo el país (Patuca)',g:'Peces, camarones, nutrias',t:'Contaminación'},
+  {w:'Boca',gen:'Mastica y ensaliva',n:'Saliva',g:'Cepillar los dientes',t:'Empieza la digestión'},
+  {w:'Estómago',gen:'Mezcla con jugos',n:'Jugo gástrico',g:'Comer sin prisa',t:'Forma el quimo'},
+  {w:'Intestino delgado',gen:'Absorbe los nutrientes',n:'Recibe bilis y jugo pancreático',g:'Comer fibra e higiene',t:'Mide 6 metros'},
+  {w:'Hígado',gen:'Fabrica la bilis',n:'Bilis',g:'Evitar grasas y alcohol',t:'La glándula más grande'},
+  {w:'Intestino grueso',gen:'Absorbe agua, forma heces',n:'—',g:'Comer fibra y beber agua',t:'Aloja bacterias buenas'},
 ];
 const completeTaskDB=[
-  {s:'El conjunto de seres vivos y su medio físico se llama ___.',opts:['ecosistema','población','bioma'],ans:'ecosistema'},
-  {s:'Los factores ___ son los componentes sin vida del ecosistema.',opts:['bióticos','abióticos','orgánicos'],ans:'abióticos'},
-  {s:'Las plantas son los ___ del ecosistema.',opts:['consumidores','productores','descomponedores'],ans:'productores'},
-  {s:'Los ___ reciclan la materia muerta.',opts:['herbívoros','descomponedores','depredadores'],ans:'descomponedores'},
-  {s:'La energía de la cadena alimenticia viene del ___.',opts:['suelo','Sol','agua'],ans:'Sol'},
-  {s:'Un animal herbívoro es un consumidor ___.',opts:['primario','terciario','productor'],ans:'primario'},
-  {s:'Los individuos de la misma especie forman una ___.',opts:['comunidad','población','red'],ans:'población'},
-  {s:'En el ___ ambas especies se benefician.',opts:['parasitismo','mutualismo','competencia'],ans:'mutualismo'},
+  {s:'El sistema ___ transforma los alimentos en nutrientes.',opts:['nervioso','digestivo','óseo'],ans:'digestivo'},
+  {s:'Los ___ dan energía rápida al cuerpo.',opts:['carbohidratos','proteínas','minerales'],ans:'carbohidratos'},
+  {s:'El ___ mezcla el alimento con jugos gástricos.',opts:['esófago','estómago','hígado'],ans:'estómago'},
+  {s:'Los nutrientes se absorben en el intestino ___.',opts:['grueso','delgado','ciego'],ans:'delgado'},
+  {s:'El ___ fabrica la bilis para digerir las grasas.',opts:['páncreas','hígado','estómago'],ans:'hígado'},
+  {s:'La primera etapa de la digestión es la ___.',opts:['absorción','ingestión','egestión'],ans:'ingestión'},
+  {s:'Antes de comer hay que ___ las manos.',opts:['lavarse','pintarse','secarse'],ans:'lavarse'},
+  {s:'El intestino ___ absorbe el agua y forma las heces.',opts:['delgado','grueso','ciego'],ans:'grueso'},
 ];
 const explainQuestions=[
-  {q:'¿Qué es un ecosistema y de qué está formado?',ans:'Un ecosistema es el conjunto de los seres vivos de un lugar, su medio físico (factores abióticos) y todas las relaciones que se dan entre ellos.'},
-  {q:'¿Qué diferencia hay entre factores bióticos y abióticos? Da un ejemplo de cada uno.',ans:'Los factores bióticos son los seres vivos (una planta, un animal). Los abióticos son los componentes sin vida (el agua, la luz, el suelo, la temperatura).'},
-  {q:'Explica los tres papeles de un ecosistema: productores, consumidores y descomponedores.',ans:'Los productores (plantas y algas) fabrican su alimento por fotosíntesis; los consumidores (animales) comen a otros seres vivos; los descomponedores (hongos y bacterias) reciclan la materia muerta.'},
-  {q:'¿Qué es una cadena alimenticia y de dónde viene la energía?',ans:'Es una serie que muestra quién se come a quién. La energía viene del Sol, pasa a los productores y luego a los consumidores; disminuye en cada nivel.'},
-  {q:'Menciona dos ecosistemas de Honduras y descríbelos brevemente.',ans:'Por ejemplo: el bosque nublado (montaña con niebla, hogar del quetzal) y el arrecife de coral de las Islas de la Bahía (parte del segundo arrecife más grande del mundo).'},
+  {q:'¿Qué es la nutrición y qué sistema del cuerpo se encarga de ella?',ans:'Es el proceso por el que el cuerpo toma, transforma y aprovecha los alimentos para obtener energía y materiales. Se encarga el sistema o aparato digestivo.'},
+  {q:'Menciona los cinco grupos de nutrientes y para qué sirve cada uno.',ans:'Carbohidratos (energía), proteínas (construir y reparar), grasas (energía de reserva), vitaminas y minerales (regular y proteger) y agua.'},
+  {q:'Describe el recorrido del alimento por el tubo digestivo, en orden.',ans:'Boca → esófago → estómago → intestino delgado → intestino grueso → ano.'},
+  {q:'¿Qué son las glándulas anexas y qué hacen?',ans:'Son órganos (glándulas salivales, hígado y páncreas) que fabrican jugos digestivos y los vierten al tubo digestivo; el alimento no pasa por dentro de ellos.'},
+  {q:'Explica las cuatro etapas de la digestión.',ans:'Ingestión (entra el alimento por la boca), digestión (se deshace en nutrientes), absorción (los nutrientes pasan a la sangre) y egestión (sale como heces lo que no se aprovecha).'},
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué concepto del ecosistema se refiere.','<strong>Ejemplo:</strong> Las plantas fabrican su propio alimento. → <span style="color:var(--jade);font-weight:700;">Productores</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada ecosistema de Honduras, completa el tipo, dónde está, sus seres vivos y una amenaza.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Ecosistema','text-align:left;')}${th('Tipo')}${th('Dónde está')}${th('Seres vivos')}${th('Amenaza')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Tipo: ${it.gen} | Dónde está: ${it.n} | Seres vivos: ${it.g} | Amenaza: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué concepto de la nutrición o del sistema digestivo se refiere.','<strong>Ejemplo:</strong> El estómago mezcla el alimento con jugos. → <span style="color:var(--jade);font-weight:700;">El estómago</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada órgano, completa su función, el jugo o sustancia, cómo cuidarlo y un dato.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Órgano','text-align:left;')}${th('Función')}${th('Jugo/sustancia')}${th('Cómo cuidarlo')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Función: ${it.gen} | Jugo/sustancia: ${it.n} | Cómo cuidarlo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
@@ -274,42 +274,42 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
   {size:10,grid:[
-    ['H','A','B','I','T','A','T','V','Q','D'],
-    ['C','O','N','S','U','M','I','D','O','R'],
-    ['V','P','M','N','K','J','T','D','U','J'],
-    ['A','G','O','C','A','D','E','N','A','H'],
-    ['U','B','M','R','P','K','V','P','K','X'],
-    ['E','C','O','S','I','S','T','E','M','A'],
-    ['D','C','H','A','L','W','D','C','V','N'],
-    ['O','P','R','O','D','U','C','T','O','R'],
-    ['G','N','Y','H','I','I','Y','P','O','C'],
-    ['X','T','W','E','N','E','R','G','I','A']
+    ['P','F','I','N','O','O','W','G','D','Q'],
+    ['L','H','I','G','A','D','O','P','P','V'],
+    ['K','V','K','W','U','U','N','Z','A','R'],
+    ['U','I','W','T','S','A','L','I','V','A'],
+    ['D','I','G','E','S','T','I','O','N','O'],
+    ['G','S','A','G','M','W','D','N','K','H'],
+    ['S','E','D','B','O','C','A','G','D','W'],
+    ['A','O','B','O','A','R','E','K','S','X'],
+    ['E','S','T','O','M','A','G','O','P','D'],
+    ['J','I','N','T','E','S','T','I','N','O']
   ],words:[
-    {w:'ECOSISTEMA',cells:[[5,0],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6],[5,7],[5,8],[5,9]]},
-    {w:'PRODUCTOR',cells:[[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8],[7,9]]},
-    {w:'CONSUMIDOR',cells:[[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[1,8],[1,9]]},
-    {w:'CADENA',cells:[[3,3],[3,4],[3,5],[3,6],[3,7],[3,8]]},
-    {w:'HABITAT',cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]]},
-    {w:'ENERGIA',cells:[[9,3],[9,4],[9,5],[9,6],[9,7],[9,8],[9,9]]}
+    {w:'DIGESTION',cells:[[4,0],[4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8]]},
+    {w:'ESTOMAGO',cells:[[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,6],[8,7]]},
+    {w:'INTESTINO',cells:[[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8],[9,9]]},
+    {w:'BOCA',cells:[[6,3],[6,4],[6,5],[6,6]]},
+    {w:'HIGADO',cells:[[1,1],[1,2],[1,3],[1,4],[1,5],[1,6]]},
+    {w:'SALIVA',cells:[[3,4],[3,5],[3,6],[3,7],[3,8],[3,9]]}
   ]},
   {size:10,grid:[
-    ['T','A','E','C','O','L','O','G','I','A'],
-    ['M','V','R','U','Y','W','K','R','N','P'],
-    ['B','K','Q','A','H','E','N','N','Y','O'],
-    ['Q','V','B','I','O','T','I','C','O','V'],
-    ['C','Y','A','B','I','O','T','I','C','O'],
-    ['Z','L','P','H','O','D','J','E','Z','X'],
-    ['N','I','C','H','O','R','V','V','J','V'],
-    ['P','O','B','L','A','C','I','O','N','E'],
-    ['C','O','M','U','N','I','D','A','D','I'],
-    ['L','C','V','N','O','X','V','J','R','N']
+    ['P','N','U','T','R','I','E','N','T','E'],
+    ['N','G','H','O','U','X','J','S','B','W'],
+    ['H','M','A','S','T','I','C','A','R','E'],
+    ['T','K','O','E','E','M','K','D','W','X'],
+    ['E','B','E','S','O','F','A','G','O','C'],
+    ['A','H','V','A','S','B','I','L','I','S'],
+    ['O','Q','P','R','O','T','E','I','N','A'],
+    ['N','E','C','F','C','E','F','Y','K','H'],
+    ['A','N','W','I','B','K','F','H','L','Y'],
+    ['M','E','N','E','R','G','I','A','H','Y']
   ],words:[
-    {w:'POBLACION',cells:[[7,0],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8]]},
-    {w:'COMUNIDAD',cells:[[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,6],[8,7],[8,8]]},
-    {w:'BIOTICO',cells:[[3,2],[3,3],[3,4],[3,5],[3,6],[3,7],[3,8]]},
-    {w:'ABIOTICO',cells:[[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8],[4,9]]},
-    {w:'NICHO',cells:[[6,0],[6,1],[6,2],[6,3],[6,4]]},
-    {w:'ECOLOGIA',cells:[[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]]}
+    {w:'NUTRIENTE',cells:[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]]},
+    {w:'PROTEINA',cells:[[6,2],[6,3],[6,4],[6,5],[6,6],[6,7],[6,8],[6,9]]},
+    {w:'ENERGIA',cells:[[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7]]},
+    {w:'ESOFAGO',cells:[[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8]]},
+    {w:'BILIS',cells:[[5,5],[5,6],[5,7],[5,8],[5,9]]},
+    {w:'MASTICAR',cells:[[2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8]]}
   ]}
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
@@ -325,72 +325,72 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'Un ecosistema está formado por los seres vivos, su medio físico y sus relaciones.',a:true},
-  {q:'Los factores abióticos son los seres vivos del ecosistema.',a:false},
-  {q:'Las plantas y las algas son los productores del ecosistema.',a:true},
-  {q:'Los descomponedores reciclan la materia muerta y devuelven nutrientes al suelo.',a:true},
-  {q:'Un animal herbívoro es un consumidor primario.',a:true},
-  {q:'La energía de una cadena alimenticia viene del suelo.',a:false},
-  {q:'Una población es un grupo de individuos de la misma especie.',a:true},
-  {q:'En el mutualismo, una especie se beneficia y la otra sale perjudicada.',a:false},
-  {q:'El agua, la luz y la temperatura son factores abióticos.',a:true},
-  {q:'El arrecife de coral es un ecosistema acuático marino.',a:true},
-  {q:'El bosque nublado es un ecosistema acuático.',a:false},
-  {q:'Los descomponedores más comunes son los hongos y las bacterias.',a:true},
-  {q:'En una cadena alimenticia, la energía aumenta de un nivel al siguiente.',a:false},
-  {q:'El hábitat es el lugar donde vive un ser vivo.',a:true},
-  {q:'La ecología es la ciencia que estudia los ecosistemas.',a:true},
+  {q:'La nutrición es el proceso por el que el cuerpo aprovecha los alimentos.',a:true},
+  {q:'Los carbohidratos sirven sobre todo para construir el cuerpo.',a:false},
+  {q:'Las proteínas construyen y reparan el cuerpo.',a:true},
+  {q:'La digestión empieza en la boca.',a:true},
+  {q:'El estómago mezcla el alimento con jugos gástricos.',a:true},
+  {q:'Los nutrientes pasan a la sangre en el intestino grueso.',a:false},
+  {q:'El hígado fabrica la bilis, que ayuda a digerir las grasas.',a:true},
+  {q:'El intestino grueso absorbe el agua y forma las heces.',a:true},
+  {q:'La primera etapa de la digestión es la absorción.',a:false},
+  {q:'Lavarse las manos antes de comer ayuda a evitar enfermedades.',a:true},
+  {q:'El aparato digestivo mide alrededor de 9 metros.',a:true},
+  {q:'El hígado y el páncreas son glándulas anexas del aparato digestivo.',a:true},
+  {q:'Las frutas y verduras aportan sobre todo vitaminas y minerales.',a:true},
+  {q:'Comer mucha comida chatarra es bueno para la salud.',a:false},
+  {q:'La saliva ablanda el alimento y empieza la digestión en la boca.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es un ecosistema?',o:['a) Solo los animales de un lugar','b) El conjunto de seres vivos, su medio y sus relaciones','c) Solo las plantas','d) Solo el agua y el suelo'],a:1},
-  {q:'¿Cómo se llaman los componentes SIN vida de un ecosistema?',o:['a) Bióticos','b) Abióticos','c) Orgánicos','d) Vivos'],a:1},
-  {q:'¿Qué seres vivos son los productores?',o:['a) Los animales','b) Los hongos','c) Las plantas','d) Las bacterias'],a:2},
-  {q:'Un animal herbívoro es un consumidor…',o:['a) primario','b) productor','c) descomponedor','d) terciario'],a:0},
-  {q:'¿Quiénes reciclan la materia muerta?',o:['a) Los productores','b) Los herbívoros','c) Los descomponedores','d) Los depredadores'],a:2},
-  {q:'En una cadena alimenticia, ¿de dónde viene la energía?',o:['a) Del suelo','b) Del Sol','c) Del agua','d) Del aire'],a:1},
-  {q:'Un grupo de individuos de la misma especie se llama…',o:['a) comunidad','b) población','c) bioma','d) hábitat'],a:1},
-  {q:'La relación en la que AMBAS especies se benefician es el…',o:['a) parasitismo','b) mutualismo','c) depredación','d) competencia'],a:1},
-  {q:'¿Cuál de estos es un factor abiótico?',o:['a) Una planta','b) El agua','c) Un pez','d) Una bacteria'],a:1},
-  {q:'El arrecife de coral de las Islas de la Bahía es un ecosistema…',o:['a) terrestre','b) acuático','c) de desierto','d) de montaña'],a:1},
-  {q:'¿Cuál de estos animales es un consumidor carnívoro?',o:['a) El venado','b) El conejo','c) El puma','d) La vaca'],a:2},
-  {q:'El lugar donde vive un ser vivo se llama…',o:['a) nicho','b) hábitat','c) bioma','d) población'],a:1},
-  {q:'¿Cuál es un ecosistema terrestre de Honduras?',o:['a) El arrecife','b) El bosque nublado','c) El manglar','d) El río Patuca'],a:1},
-  {q:'La ciencia que estudia los ecosistemas se llama…',o:['a) taxonomía','b) ecología','c) geología','d) astronomía'],a:1},
-  {q:'En una cadena, la energía de un nivel al siguiente…',o:['a) aumenta','b) disminuye','c) desaparece','d) se duplica'],a:1},
+  {q:'¿Qué sistema del cuerpo transforma los alimentos?',o:['a) El nervioso','b) El digestivo','c) El respiratorio','d) El óseo'],a:1},
+  {q:'¿Qué nutriente da energía rápida?',o:['a) Las proteínas','b) Las grasas','c) Los carbohidratos','d) El agua'],a:2},
+  {q:'¿Qué nutriente construye y repara el cuerpo?',o:['a) Los carbohidratos','b) Las proteínas','c) Las grasas','d) Las vitaminas'],a:1},
+  {q:'¿En qué órgano empieza la digestión?',o:['a) El estómago','b) La boca','c) El esófago','d) El hígado'],a:1},
+  {q:'¿En qué órgano se mezcla el alimento con jugos gástricos?',o:['a) La boca','b) El esófago','c) El estómago','d) El hígado'],a:2},
+  {q:'¿En qué órgano pasan los nutrientes a la sangre?',o:['a) El estómago','b) El intestino delgado','c) El intestino grueso','d) La boca'],a:1},
+  {q:'¿Qué glándula fabrica la bilis?',o:['a) El páncreas','b) El hígado','c) El estómago','d) Las salivales'],a:1},
+  {q:'¿Qué órgano absorbe el agua y forma las heces?',o:['a) El intestino delgado','b) El estómago','c) El intestino grueso','d) El esófago'],a:2},
+  {q:'¿Cuál es la primera etapa de la digestión?',o:['a) La absorción','b) La digestión','c) La ingestión','d) La egestión'],a:2},
+  {q:'¿Qué debemos hacer antes de comer?',o:['a) Correr','b) Lavarnos las manos','c) Dormir','d) Ver televisión'],a:1},
+  {q:'¿Cuál de estos alimentos aporta sobre todo proteínas?',o:['a) La tortilla','b) El frijol','c) El azúcar','d) El aguacate'],a:1},
+  {q:'¿Cómo se llama la masa de alimento masticado y ensalivado?',o:['a) Quimo','b) Bolo alimenticio','c) Bilis','d) Heces'],a:1},
+  {q:'Las glándulas salivales, el hígado y el páncreas son…',o:['a) órganos del tubo','b) glándulas anexas','c) nutrientes','d) músculos'],a:1},
+  {q:'¿Qué paso hace que los nutrientes lleguen a la sangre?',o:['a) La ingestión','b) La absorción','c) La egestión','d) La masticación'],a:1},
+  {q:'Para nutrirnos bien debemos comer…',o:['a) solo dulces','b) variado y equilibrado','c) solo carne','d) mucha comida frita'],a:1},
 ];
 const evalCPBank=[
-  {q:'El conjunto de seres vivos, su medio físico y sus relaciones es un ___.',a:'ecosistema'},
-  {q:'Los factores ___ son los componentes sin vida del ecosistema.',a:'abióticos'},
-  {q:'Las plantas y las algas son los ___ del ecosistema.',a:'productores'},
-  {q:'Los ___ reciclan la materia muerta y devuelven nutrientes al suelo.',a:'descomponedores'},
-  {q:'Un animal herbívoro es un consumidor ___.',a:'primario'},
-  {q:'En la cadena alimenticia, la energía viene del ___.',a:'Sol'},
-  {q:'Un grupo de individuos de la misma especie es una ___.',a:'población'},
-  {q:'La relación en la que ambas especies se benefician es el ___.',a:'mutualismo'},
-  {q:'El ___ es el lugar donde vive un ser vivo.',a:'hábitat'},
-  {q:'Los seres vivos de un ecosistema son los factores ___.',a:'bióticos'},
-  {q:'La ciencia que estudia los ecosistemas se llama ___.',a:'ecología'},
-  {q:'El bosque nublado y el bosque de pino son ecosistemas ___.',a:'terrestres'},
-  {q:'El arrecife, el manglar y el río son ecosistemas ___.',a:'acuáticos'},
-  {q:'El conjunto de todas las poblaciones de un lugar es la ___.',a:'comunidad'},
-  {q:'Cuando una especie caza y se come a otra, la relación es de ___.',a:'depredación'},
+  {q:'El sistema ___ transforma los alimentos en nutrientes.',a:'digestivo'},
+  {q:'Los ___ dan energía rápida al cuerpo (maíz, arroz).',a:'carbohidratos'},
+  {q:'Las ___ construyen y reparan el cuerpo (frijol, huevo).',a:'proteínas'},
+  {q:'La digestión empieza en la ___.',a:'boca'},
+  {q:'El ___ mezcla el alimento con jugos gástricos.',a:'estómago'},
+  {q:'Los nutrientes pasan a la sangre en el intestino ___.',a:'delgado'},
+  {q:'El ___ fabrica la bilis para digerir las grasas.',a:'hígado'},
+  {q:'El intestino ___ absorbe el agua y forma las heces.',a:'grueso'},
+  {q:'La primera etapa de la digestión es la ___.',a:'ingestión'},
+  {q:'El paso de los nutrientes a la sangre se llama ___.',a:'absorción'},
+  {q:'Antes de comer debemos ___ las manos.',a:'lavarnos'},
+  {q:'La masa de alimento masticado y ensalivado es el ___ alimenticio.',a:'bolo'},
+  {q:'El líquido de la boca que empieza la digestión es la ___.',a:'saliva'},
+  {q:'El hígado y el páncreas son glándulas ___.',a:'anexas'},
+  {q:'Para nutrirnos bien debemos comer variado y ___.',a:'equilibrado'},
 ];
 const evalPRBank=[
-  {term:'Ecosistema',def:'Seres vivos, su medio físico y sus relaciones'},
-  {term:'Factores bióticos',def:'Los seres vivos del ecosistema'},
-  {term:'Factores abióticos',def:'Los componentes sin vida (agua, luz, suelo)'},
-  {term:'Productores',def:'Fabrican su alimento; base de la cadena (plantas)'},
-  {term:'Consumidores',def:'Animales que comen a otros seres vivos'},
-  {term:'Descomponedores',def:'Reciclan la materia muerta (hongos y bacterias)'},
-  {term:'Población',def:'Individuos de la misma especie en un lugar'},
-  {term:'Comunidad',def:'Todas las poblaciones que conviven en un lugar'},
-  {term:'Cadena alimenticia',def:'Muestra quién se come a quién'},
-  {term:'Mutualismo',def:'Relación en la que ambas especies se benefician'},
-  {term:'Depredación',def:'Un ser vivo caza y se come a otro'},
-  {term:'Hábitat',def:'El lugar donde vive un ser vivo'},
-  {term:'Ecosistema terrestre',def:'El que está sobre la tierra (bosque, selva)'},
-  {term:'Ecosistema acuático',def:'El que está en el agua (río, mar, arrecife)'},
-  {term:'Ecología',def:'Ciencia que estudia los ecosistemas'},
+  {term:'Nutrición',def:'Aprovechar los alimentos para obtener energía y materiales'},
+  {term:'Aparato digestivo',def:'Órganos que digieren el alimento'},
+  {term:'Carbohidratos',def:'Nutriente que da energía rápida (maíz, arroz)'},
+  {term:'Proteínas',def:'Nutriente que construye y repara (frijol, huevo)'},
+  {term:'Boca',def:'Órgano donde empieza la digestión'},
+  {term:'Estómago',def:'Mezcla el alimento con jugos gástricos'},
+  {term:'Intestino delgado',def:'Absorbe los nutrientes a la sangre'},
+  {term:'Intestino grueso',def:'Absorbe el agua y forma las heces'},
+  {term:'Hígado',def:'Glándula que fabrica la bilis'},
+  {term:'Bilis',def:'Sustancia que ayuda a digerir las grasas'},
+  {term:'Absorción',def:'Paso de los nutrientes a la sangre'},
+  {term:'Ingestión',def:'Primera etapa: entra el alimento por la boca'},
+  {term:'Saliva',def:'Líquido de la boca que empieza la digestión'},
+  {term:'Bolo alimenticio',def:'Alimento masticado y mezclado con saliva'},
+  {term:'Glándulas anexas',def:'Salivales, hígado y páncreas; fabrican jugos'},
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -477,75 +477,75 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En un bosque cazan a todos los pumas (depredadores). Al poco tiempo, los venados se multiplican tanto que acaban con casi todo el pasto.'},
-  {txt:'En una laguna desaparecen todas las ranas. Los insectos que ellas comían aumentan sin control y dañan las plantas de la orilla.'},
-  {txt:'En un pastizal se eliminan todas las aves. Las orugas y los saltamontes se multiplican y devoran los cultivos.'},
-  {txt:'En un río contaminan el agua y mueren los peces pequeños. Las garzas que se alimentaban de ellos se quedan sin comida.'},
-  {txt:'En un bosque talan todos los árboles (productores). Los herbívoros que comían sus hojas y frutos empiezan a pasar hambre.'},
-  {txt:'A una isla llega una especie nueva que se come todos los huevos de las aves; las poblaciones de aves bajan muchísimo.'},
+  {txt:'Un niño solo come dulces, frituras y refrescos, y casi nunca frutas ni verduras. Se cansa rápido y se enferma seguido.'},
+  {txt:'Una niña come muy rápido y sin masticar bien; después casi siempre le duele el estómago.'},
+  {txt:'Un joven no se lava las manos antes de comer y a menudo tiene diarrea y parásitos.'},
+  {txt:'En una familia casi no comen frutas, verduras ni frijol; varios sufren de estreñimiento.'},
+  {txt:'Un niño solo desayuna un refresco antes de ir a la escuela y no logra concentrarse en clase.'},
+  {txt:'Una persona come muchísima grasa y comida frita todos los días, y ha subido mucho de peso.'},
 ];
 const critCaseQuestions=[
-  '1. ¿Qué papel cumplía en la cadena la especie que cambió (productor, consumidor o depredador)?',
-  '2. ¿Por qué al alterar UNA especie se afectan las demás?',
-  '3. ¿El equilibrio del ecosistema se mantiene o se rompe? ¿Por qué?',
-  '4. ¿Qué se podría hacer para proteger este ecosistema?',
+  '1. ¿Qué error o hábito de alimentación se observa en este caso?',
+  '2. ¿Cómo afecta ese hábito al cuerpo o a la digestión?',
+  '3. ¿Qué consejo darías para mejorar la alimentación?',
+  '4. ¿Por qué es importante nutrirse bien y con higiene?',
 ];
 const critCaseGuides=[
-  'Depende del caso: puede ser un depredador (puma, ave, rana) que controlaba a otros, o un productor (los árboles) del que dependían los herbívoros.',
-  'Porque en un ecosistema todos los seres vivos están conectados por cadenas y redes alimenticias: si una especie cambia, las que dependían de ella —o a las que ella controlaba— también cambian.',
-  'Se rompe: el ecosistema pierde su equilibrio. Unas poblaciones crecen sin control y otras se quedan sin alimento, hasta que con el tiempo se degrada o encuentra un nuevo balance.',
-  'Proteger a todas las especies y su hábitat, evitar la caza y la contaminación, y no eliminar a los depredadores ni a los productores, porque cada uno cumple un papel.',
+  'Se observa una alimentación poco variada, con exceso de comida chatarra, azúcar o grasa, o comer muy rápido o sin lavarse las manos.',
+  'El cuerpo no recibe todos los nutrientes que necesita, o se enferma: puede causar cansancio, dolor de estómago, parásitos, estreñimiento u obesidad.',
+  'Comer variado y equilibrado (frutas, verduras, frijol, agua), masticar bien, comer sin prisa y lavarse las manos antes de comer.',
+  'Porque la nutrición da al cuerpo la energía y los materiales para crecer, moverse y estar sano; y la higiene evita enfermedades digestivas.',
 ];
 const critErrorBank=[
-  {txt:'"Los factores abióticos son los seres vivos del ecosistema, como los animales y las plantas."',
-   g1:'Los factores abióticos son los componentes SIN vida: el agua, la luz, el suelo y la temperatura.',
-   g2:'Los seres vivos (animales, plantas, hongos, bacterias) son los factores BIÓTICOS.'},
-  {txt:'"Los animales son productores porque también forman parte del ecosistema."',
-   g1:'Los productores son las plantas y las algas, que fabrican su propio alimento.',
-   g2:'Los animales son consumidores: se alimentan de otros seres vivos.'},
-  {txt:'"En una cadena alimenticia la energía viene del suelo y aumenta en cada nivel."',
-   g1:'La energía viene del SOL, no del suelo.',
-   g2:'La energía DISMINUYE de un nivel al siguiente, no aumenta.'},
-  {txt:'"Los descomponedores no sirven para nada; solo ensucian el ecosistema."',
-   g1:'Los descomponedores (hongos y bacterias) reciclan la materia muerta.',
-   g2:'Devuelven los nutrientes al suelo; sin ellos, los restos se acumularían y las plantas no tendrían de qué alimentarse.'},
-  {txt:'"El arrecife de coral y el manglar son ecosistemas terrestres."',
-   g1:'Son ecosistemas ACUÁTICOS: viven en el agua o entre el agua y la tierra.',
-   g2:'Los ecosistemas terrestres están sobre tierra firme, como el bosque o el pinar.'},
+  {txt:'"El estómago es donde los nutrientes pasan a la sangre."',
+   g1:'La absorción de los nutrientes ocurre sobre todo en el INTESTINO DELGADO.',
+   g2:'El estómago mezcla el alimento con jugos gástricos, pero no realiza la absorción principal.'},
+  {txt:'"Los carbohidratos sirven para construir y reparar el cuerpo."',
+   g1:'Los carbohidratos dan ENERGÍA rápida.',
+   g2:'Los que construyen y reparan el cuerpo son las PROTEÍNAS.'},
+  {txt:'"El hígado forma parte del tubo por donde pasa el alimento."',
+   g1:'El hígado es una GLÁNDULA ANEXA: el alimento NO pasa por dentro de él.',
+   g2:'Solo vierte la bilis al intestino delgado para ayudar a digerir las grasas.'},
+  {txt:'"Comer solo dulces y frituras es una alimentación saludable."',
+   g1:'Una alimentación saludable es VARIADA y EQUILIBRADA.',
+   g2:'El exceso de dulces y frituras causa caries, obesidad y otros problemas.'},
+  {txt:'"Da igual comer con las manos sucias."',
+   g1:'NO da igual: comer con las manos sucias causa parásitos y diarrea.',
+   g2:'Lavarse las manos antes de comer protege el aparato digestivo.'},
 ];
 const critDecisionBank=[
-  'Una empresa quiere talar parte del bosque nublado de Celaque para sembrar café. Ese bosque es hogar del quetzal y la fuente del agua de la región.',
-  'En las Islas de la Bahía, algunos turistas rompen pedazos de coral como recuerdo. El arrecife se daña poco a poco.',
-  'En el Golfo de Fonseca cortan manglares para construir estanques de camarón. Con ello desaparecen las "guarderías" de muchos peces.',
-  'En un río cercano a la comunidad tiran basura y aguas sucias; los peces y camarones empiezan a morir.',
-  'En un bosque de pino de Olancho no se controlan los incendios ni el gorgojo; grandes zonas de árboles se secan.',
+  'En el recreo, un niño puede comprar una bolsa de churros con refresco, o una fruta con agua. Duda cuál elegir.',
+  'Una mamá prepara la lonchera de su hijo: puede ponerle frijoles con tortilla y una fruta, o galletas dulces y soda.',
+  'Después de jugar, un joven tiene mucha sed: puede tomar agua, o un refresco azucarado grande.',
+  'Una familia decide qué cenar: verduras con pollo, o comida frita como casi todos los días.',
+  'Un estudiante quiere tener energía para estudiar y piensa qué desayunar antes de la escuela.',
 ];
-const critDecisionGuide='Cada ecosistema de Honduras es único y nos presta servicios importantes: agua, oxígeno, pesca, protección de la costa y biodiversidad. La mejor decisión es CONSERVARLO: usarlo de forma sostenible, evitar la contaminación y la tala, y proteger a las especies. Destruir un ecosistema afecta a todos los seres vivos que dependen de él, incluidas las personas.';
+const critDecisionGuide='Para nutrirnos bien conviene elegir alimentos VARIADOS y NATURALES: frutas, verduras, frijol, tortilla, huevo y agua, y evitar el exceso de azúcar, grasa y comida chatarra. Una buena alimentación, con higiene, nos da energía, nos ayuda a crecer y previene enfermedades. La mejor decisión casi siempre es la opción más natural y equilibrada.';
 const critCompareBank=[
-  {a:'Un ser vivo que fabrica su alimento con la luz del sol, como el pasto.',b:'Un animal que se alimenta comiendo ese pasto, como el venado.',
-   ga:'Un productor.',
-   gb:'Un consumidor primario (herbívoro).',
-   gr:'Cumplen papeles distintos: el productor crea el alimento y el consumidor lo aprovecha; ambos son eslabones de la misma cadena.'},
-  {a:'El agua, la luz del sol y la temperatura de un lago.',b:'Los peces, las plantas acuáticas y las garzas de ese mismo lago.',
-   ga:'Factores abióticos.',
-   gb:'Factores bióticos.',
-   gr:'No son lo mismo: unos son componentes sin vida y otros son los seres vivos; juntos forman el ecosistema.'},
-  {a:'El bosque nublado de Celaque, lleno de árboles y niebla en la montaña.',b:'El arrecife de coral de Roatán, bajo el agua del mar.',
-   ga:'Un ecosistema terrestre.',
-   gb:'Un ecosistema acuático (marino).',
-   gr:'Los dos son ecosistemas, pero uno está sobre la tierra y el otro dentro del agua.'},
+  {a:'Un órgano que mezcla el alimento con jugos gástricos hasta hacer una papilla.',b:'Un órgano largo que absorbe los nutrientes y los pasa a la sangre.',
+   ga:'El estómago.',
+   gb:'El intestino delgado.',
+   gr:'Los dos participan en la digestión, pero el estómago mezcla y el intestino delgado absorbe; cumplen funciones distintas.'},
+  {a:'Un nutriente que da energía rápida, como el de la tortilla y el arroz.',b:'Un nutriente que construye y repara el cuerpo, como el del frijol y el huevo.',
+   ga:'Un carbohidrato.',
+   gb:'Una proteína.',
+   gr:'No son iguales: uno da energía y el otro sirve para crecer y reparar el cuerpo.'},
+  {a:'Un órgano por donde pasa el alimento, como el estómago.',b:'Una glándula que fabrica jugos pero por dentro NO pasa el alimento, como el hígado.',
+   ga:'Un órgano del tubo digestivo.',
+   gb:'Una glándula anexa.',
+   gr:'Ambos ayudan a digerir, pero por el tubo pasa el alimento y la glándula solo vierte sus jugos.'},
 ];
 const critCauseBank=[
-  {cause:'Se talan todos los árboles (productores) de un bosque.',guide:'Los herbívoros se quedan sin alimento y la cadena se rompe; muchos animales emigran o mueren.'},
-  {cause:'Cazan a todos los depredadores (pumas) de un bosque.',guide:'Los herbívoros se multiplican sin control y acaban con las plantas.'},
-  {cause:'Contaminan un río con basura y aguas negras.',guide:'Mueren los peces y otros seres del agua; el ecosistema acuático se degrada.'},
-  {cause:'Desaparecen los descomponedores de un ecosistema.',guide:'Los restos muertos se acumulan y los nutrientes no vuelven al suelo.'},
+  {cause:'Una persona solo come comida chatarra y casi nada de frutas y verduras.',guide:'Su cuerpo no recibe todos los nutrientes: se cansa, se enferma y puede subir de peso.'},
+  {cause:'Un niño no se lava las manos antes de comer.',guide:'Puede contraer parásitos y diarrea.'},
+  {cause:'Alguien come muy rápido y sin masticar bien.',guide:'El estómago trabaja de más y puede doler; la digestión se dificulta.'},
+  {cause:'Una persona casi no come fibra ni bebe suficiente agua.',guide:'Puede sufrir estreñimiento: le cuesta ir al baño.'},
 ];
 const critEffectBank=[
-  {effect:'En un bosque hay demasiados venados y casi no queda pasto.',guide:'Probablemente desaparecieron sus depredadores, que controlaban su número.'},
-  {effect:'Las hojas y los animales muertos de un bosque no se pudren y se acumulan.',guide:'Faltan descomponedores (hongos y bacterias) que reciclen la materia.'},
-  {effect:'En un río mueren los peces y el agua huele mal.',guide:'El río está contaminado con basura o aguas negras.'},
-  {effect:'Muchos peces jóvenes desaparecen de la costa.',guide:'Se destruyeron los manglares, que eran su "guardería".'},
+  {effect:'Un niño se cansa rápido y se enferma seguido.',guide:'Puede deberse a una mala alimentación, sin suficientes nutrientes.'},
+  {effect:'A alguien le da diarrea después de comer en la calle.',guide:'Probablemente comió con las manos o alimentos sucios (falta de higiene).'},
+  {effect:'Una persona sube mucho de peso.',guide:'Come más grasa, azúcar y comida chatarra de lo que su cuerpo gasta.'},
+  {effect:'A un niño le cuesta ir al baño (estreñimiento).',guide:'Le falta fibra (frutas, verduras, frijol) y agua en su alimentación.'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -570,7 +570,7 @@ function genEvalCrit(){
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué concepto del ecosistema corresponde a cada caso? 2. ¿Qué papel cumple cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué órgano o concepto corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -604,7 +604,7 @@ function printEvalCrit(){
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
   let s3=`<div class="sec-title"><span>III. Toma de decisiones: la fotosíntesis</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué recomendarías para que la planta recupere su salud? Explica por qué, relacionándolo con la fotosíntesis.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué concepto del ecosistema corresponde a cada caso? 2. ¿Qué papel cumple cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué órgano o concepto corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
