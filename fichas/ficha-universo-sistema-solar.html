@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión El Universo y el Sistema Solar</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS NATURALES = VERDE/TEAL (#0d9488)
+     · Colores semánticos: dorado=Sol/estrellas, azul=planetas, índigo=Luna/noche
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --nat: #0d9488; --nat-osc: #115e59; --nat-claro: #f0fdfa;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfece7;
+    --sol: #b45309; --plan: #1e40af; --luna: #6d28d9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef6f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--nat-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--nat); background: var(--nat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--nat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--nat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--nat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--nat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--nat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--nat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--nat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5fbfa; }
+  td.k { font-weight: 700; color: var(--nat-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafefd; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--nat-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (estrella / planeta / satélite) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #ede9fe; } .celula .cm b { color: var(--luna); }
+  .celula .cc { background: #dbeafe; } .celula .cc b { color: var(--plan); }
+  .celula .cn { background: #fef3c7; } .celula .cn b { color: var(--sol); }
+
+  /* Secuencia de pasos (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 7px; font-size: 8.5pt; background: #fafefd; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--nat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--nat-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #fef3c7; border: 1px solid #f3d98a; }
+  .tri .torg { background: #dbeafe; border: 1px solid #b6d0f5; }
+  .tri .tcub { background: #ede9fe; border: 1px solid #d3c6f5; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--sol); } .tri .torg b { color: var(--plan); } .tri .tcub b { color: var(--luna); }
+
+  .acts h3 { border-bottom: 2px solid var(--nat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--nat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--nat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--nat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--nat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--nat-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2faf8; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--nat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--nat); box-shadow: 0 6px 16px rgba(13,148,136,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión El Universo y el Sistema Solar</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Naturales &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El universo y sus astros: las estrellas, los planetas y los satélites; el Sol y el Sistema Solar; la Luna y sus fases; los movimientos de la Tierra</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-universo-sistema-solar.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender qué es el <strong>universo</strong> y qué son los astros.</li>
+      <li>Diferenciar <strong>estrellas, planetas y satélites</strong>.</li>
+      <li>Reconocer el <strong>Sol</strong> y los planetas del <strong>Sistema Solar</strong>.</li>
+      <li>Identificar la <strong>Luna</strong> y sus <strong>fases</strong>.</li>
+      <li>Explicar los <strong>movimientos de la Tierra</strong> y sus efectos.</li>
+      <li>Valorar la importancia de <strong>observar y conocer</strong> el cielo.</li>
+    </ol>
+
+    <h2>🌌 1. ¿Qué es el universo?</h2>
+    <p>El <strong>universo</strong> es <strong>todo lo que existe</strong>: el espacio y todos los <strong>astros</strong>
+    que hay en él. Es tan enorme que no conocemos sus límites. Los astros son los cuerpos del espacio, como las
+    estrellas, los planetas y las lunas.</p>
+    <div class="caja regla">🌌 <b>Dato clave:</b> las estrellas se agrupan en <strong>galaxias</strong>. Nuestra
+    galaxia se llama la <strong>Vía Láctea</strong>, y en ella está el Sol con su sistema solar.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> la <strong>estrella</strong> tiene luz propia; el
+    <strong>planeta</strong> gira alrededor de una estrella; el <strong>satélite</strong> gira alrededor de un planeta.</div>
+
+    <h3>✨ Mini-demostración: tres tipos de astros</h3>
+    <div class="ilus">
+      <div class="ilus-t">No todos los astros son iguales</div>
+      <div class="celula">
+        <div class="cn"><span class="c-emoji">⭐</span><b>Estrella</b>Tiene LUZ PROPIA. El Sol es una estrella.</div>
+        <div class="cc"><span class="c-emoji">🪐</span><b>Planeta</b>Gira alrededor de una estrella; NO tiene luz propia.</div>
+        <div class="cm"><span class="c-emoji">🌙</span><b>Satélite</b>Gira alrededor de un planeta. La Luna es un satélite.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ El <strong>Sol</strong> (estrella), la <strong>Tierra</strong> (planeta) y la <strong>Luna</strong> (satélite) son astros distintos.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Universo y el Sistema Solar</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>☀️ 2. El Sistema Solar</h2>
+    <p>El <strong>Sistema Solar</strong> está formado por el <strong>Sol</strong> y todos los astros que giran a su
+    alrededor: <strong>ocho planetas</strong>, sus satélites y otros cuerpos como asteroides y cometas. El Sol está
+    en el <strong>centro</strong>.</p>
+    <div class="caja truco">🧩 <b>Truco para el orden de los planetas:</b> «<b>Me-Ve-Te-Ma-Ju-Sa-U-Ne</b>»:
+    <b>Me</b>rcurio, <b>Ve</b>nus, <b>Te</b> (Tierra), <b>Ma</b>rte, <b>Jú</b>piter, <b>Sa</b>turno, <b>U</b>rano,
+    <b>Ne</b>ptuno.</div>
+    <div class="caja idea">☀️ <b>El Sol da vida:</b> es la <strong>estrella</strong> más cercana. Nos da
+    <strong>luz y calor</strong>. Sin el Sol no habría vida en la Tierra. ¡Nunca lo mires directamente!</div>
+
+    <h2>🌍 3. La Tierra y la Luna</h2>
+    <table>
+      <tr><th>Astro</th><th>¿Qué es?</th></tr>
+      <tr><td class="k">🌍 La Tierra</td><td>El tercer planeta desde el Sol. El único con vida conocida: tiene agua y aire.</td></tr>
+      <tr><td class="k">🌙 La Luna</td><td>El satélite natural de la Tierra. No tiene luz propia: refleja la del Sol.</td></tr>
+    </table>
+
+    <h2>🌗 4. La Luna y sus fases</h2>
+    <p>La Luna cambia de aspecto según cómo la ilumina el Sol. Son sus <strong>fases</strong>, en orden:</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>🌑 Luna nueva</b>No se ve.</div>
+      <div><span class="pn">2</span><b>🌓 Creciente</b>Se ve la mitad.</div>
+      <div><span class="pn">3</span><b>🌕 Luna llena</b>Se ve completa.</div>
+      <div><span class="pn">4</span><b>🌗 Menguante</b>Se ve la otra mitad.</div>
+    </div>
+    <div class="caja regla">🌑 <b>Eclipses:</b> cuando la Luna se pone entre el Sol y la Tierra ocurre un
+    <strong>eclipse de Sol</strong>; cuando la Tierra queda entre el Sol y la Luna, un <strong>eclipse de Luna</strong>.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Universo y el Sistema Solar</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🔄 5. Los movimientos de la Tierra</h2>
+    <p>La Tierra hace dos movimientos importantes:</p>
+    <div class="tri">
+      <div class="torg"><b>🔁 Rotación</b>La Tierra gira <strong>sobre sí misma</strong>. Dura <strong>24 horas</strong> (un día) y produce el <strong>día y la noche</strong>.</div>
+      <div class="tcub"><b>🔃 Traslación</b>La Tierra gira <strong>alrededor del Sol</strong>. Dura <strong>un año</strong> (365 días) y produce las <strong>estaciones</strong>.</div>
+    </div>
+    <div class="caja idea">💡 <b>No los confundas:</b> <strong>Rotación</strong> = sobre sí misma = día y noche.
+    <strong>Traslación</strong> = alrededor del Sol = un año.</div>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que los planetas tienen luz propia</td><td>Solo las estrellas tienen luz propia.</td><td>Luz propia = estrellas ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que la Luna es un planeta</td><td>La Luna es un satélite de la Tierra.</td><td>Luna = satélite ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que la rotación produce las estaciones</td><td>La rotación produce el día y la noche.</td><td>Estaciones = traslación ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que el Sol gira alrededor de la Tierra</td><td>Es la Tierra la que gira alrededor del Sol.</td><td>La Tierra gira ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que la Luna tiene luz propia</td><td>La Luna refleja la luz del Sol.</td><td>La Luna refleja ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>Observa el cielo:</b> en las noches despejadas del campo hondureño, lejos de las
+    luces de la ciudad, se pueden ver <strong>muchísimas estrellas</strong> y hasta la banda de la <strong>Vía
+    Láctea</strong>. Observar la Luna en sus distintas fases, buscar los planetas más brillantes y preguntarte cómo
+    funciona el universo son el comienzo de la <strong>ciencia</strong>. ¡Mira el cielo con curiosidad! 🌟🔭</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Universo y el Sistema Solar</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El <span class="linea-resp"></span> es la estrella del sistema solar.</li>
+      <li>La <span class="linea-resp"></span> es el satélite de la Tierra.</li>
+      <li>La <span class="linea-resp"></span> produce el día y la noche.</li>
+      <li>La <span class="linea-resp"></span> produce las estaciones del año.</li>
+      <li>El sistema solar tiene <span class="linea-resp"></span> planetas.</li>
+      <li>Las <span class="linea-resp"></span> tienen luz propia.</li>
+      <li>Nuestra galaxia es la Vía <span class="linea-resp"></span>.</li>
+      <li>La Luna <span class="linea-resp"></span> la luz del Sol.</li>
+      <li>La Tierra es el <span class="linea-resp"></span> planeta desde el Sol.</li>
+      <li>Un <span class="linea-resp"></span> gira alrededor de un planeta.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El universo es todo lo que existe: el espacio y los astros.</li>
+      <li>____ Los planetas tienen luz propia.</li>
+      <li>____ El Sol es la estrella del sistema solar.</li>
+      <li>____ La Luna es un planeta.</li>
+      <li>____ La Luna es el satélite de la Tierra.</li>
+      <li>____ El sistema solar tiene ocho planetas.</li>
+      <li>____ La rotación de la Tierra produce el día y la noche.</li>
+      <li>____ La traslación de la Tierra produce las estaciones.</li>
+      <li>____ La Luna tiene luz propia.</li>
+      <li>____ Nuestra galaxia se llama Vía Láctea.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Universo y el Sistema Solar</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es el universo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> solo la Tierra</span>
+        <span class="op"><i>b</i> todo lo que existe: el espacio y los astros</span>
+        <span class="op"><i>c</i> solo el Sol</span>
+        <span class="op"><i>d</i> solo la Luna</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué astro tiene luz propia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el planeta</span>
+        <span class="op"><i>b</i> el satélite</span>
+        <span class="op"><i>c</i> la estrella</span>
+        <span class="op"><i>d</i> el cometa</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál es la estrella del sistema solar?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la Luna</span>
+        <span class="op"><i>b</i> el Sol</span>
+        <span class="op"><i>c</i> Marte</span>
+        <span class="op"><i>d</i> la Tierra</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es el satélite de la Tierra?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Sol</span>
+        <span class="op"><i>b</i> Venus</span>
+        <span class="op"><i>c</i> la Luna</span>
+        <span class="op"><i>d</i> Júpiter</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuántos planetas tiene el sistema solar?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> seis</span>
+        <span class="op"><i>b</i> siete</span>
+        <span class="op"><i>c</i> ocho</span>
+        <span class="op"><i>d</i> diez</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué movimiento produce el día y la noche?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la traslación</span>
+        <span class="op"><i>b</i> la rotación</span>
+        <span class="op"><i>c</i> el eclipse</span>
+        <span class="op"><i>d</i> la fase lunar</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué movimiento produce las estaciones?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la rotación</span>
+        <span class="op"><i>b</i> la traslación</span>
+        <span class="op"><i>c</i> la fase lunar</span>
+        <span class="op"><i>d</i> el eclipse</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cómo se llama nuestra galaxia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Sistema Solar</span>
+        <span class="op"><i>b</i> la Osa Mayor</span>
+        <span class="op"><i>c</i> la Vía Láctea</span>
+        <span class="op"><i>d</i> Andrómeda</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué astro gira alrededor de un planeta?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la estrella</span>
+        <span class="op"><i>b</i> el satélite</span>
+        <span class="op"><i>c</i> la galaxia</span>
+        <span class="op"><i>d</i> el Sol</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>La Luna no tiene luz propia: ella…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> produce luz</span>
+        <span class="op"><i>b</i> refleja la luz del Sol</span>
+        <span class="op"><i>c</i> apaga la luz</span>
+        <span class="op"><i>d</i> no se ve nunca</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Universo y el Sistema Solar</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Universo</td><td>A. Giro de la Tierra alrededor del Sol (un año)</td></tr>
+      <tr><td>2. ____ Estrella</td><td>B. Astro que tiene luz propia</td></tr>
+      <tr><td>3. ____ Planeta</td><td>C. El satélite de la Tierra</td></tr>
+      <tr><td>4. ____ Satélite</td><td>D. Todo lo que existe: el espacio y los astros</td></tr>
+      <tr><td>5. ____ El Sol</td><td>E. Enorme grupo de estrellas</td></tr>
+      <tr><td>6. ____ La Luna</td><td>F. Gira alrededor de una estrella; sin luz propia</td></tr>
+      <tr><td>7. ____ Galaxia</td><td>G. La estrella del sistema solar</td></tr>
+      <tr><td>8. ____ Rotación</td><td>H. Giro de la Tierra sobre sí misma (día y noche)</td></tr>
+      <tr><td>9. ____ Traslación</td><td>I. Gira alrededor de un planeta</td></tr>
+      <tr><td>10. ____ Sistema Solar</td><td>J. El Sol y los astros que giran a su alrededor</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión El Universo y el Sistema Solar.</b> Ahora conoces el universo y
+      sus astros: sabes diferenciar las estrellas, los planetas y los satélites, conoces el Sol y los ocho planetas
+      del Sistema Solar, la Luna y sus fases, y entiendes por qué hay día y noche y estaciones. ¡Sigue mirando el
+      cielo con curiosidad! 🪐🌟
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Naturales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó y rotuló el Sistema Solar con sus planetas en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Universo y el Sistema Solar</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Sol &nbsp; 2. Luna &nbsp; 3. rotación &nbsp; 4. traslación &nbsp; 5. ocho &nbsp; 6. estrellas &nbsp; 7. Láctea &nbsp; 8. refleja &nbsp; 9. tercer &nbsp; 10. satélite</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3b, 4c, 5c, 6b, 7b, 8c, 9b, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1D, 2B, 3F, 4I, 5G, 6C, 7E, 8H, 9A, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión El Universo y el Sistema Solar» (Educación Básica), del bloque «La Tierra y el universo» de la programación de
+      Ciencias Naturales del DCNB. Puede utilizarse como guía de estudio impresa o digital antes de la evaluación final.
+      Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple, pareados) y puede
+      complementarse con el dibujo rotulado del Sistema Solar, la construcción de una maqueta o móvil de los planetas, una
+      observación nocturna guiada del cielo y de las fases de la Luna, y la elaboración de una línea de tiempo de la
+      exploración espacial. <strong>Advertencia de seguridad:</strong> recuérdeles nunca mirar directamente al Sol. Etapa 7
+      de la Ruta del Planeta. La misión interactiva (código QR de la portada) permite al estudiante practicar con
+      retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Universo y el Sistema Solar · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
