@@ -8,6 +8,7 @@ const RUTAS = {
   planeta: { nombre: 'Ruta del Planeta',  emoji: '🌎', color: 'csoc' },
   cuerpo:  { nombre: 'Ruta del Cuerpo',   emoji: '🧠', color: 'cnat' },
   vida:    { nombre: 'Ruta de la Vida',   emoji: '🌱', color: 'cnat' },
+  materia: { nombre: 'Ruta de la Materia', emoji: '⚡', color: 'cnat' },
 };
 
 const MISSIONS = [
