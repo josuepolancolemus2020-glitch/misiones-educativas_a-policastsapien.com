@@ -33,14 +33,14 @@ function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));i
 
 // ===================== ACHIEVEMENTS =====================
 const ACHIEVEMENTS={
-  primer_quiz:{icon:'🌟',label:'Primera prueba del universo y el sistema solar superada'},
-  flash_master:{icon:'🃏',label:'Todas las flashcards del universo exploradas'},
-  clasif_pro:{icon:'🗂️',label:'Clasificador de astros experto'},
-  id_master:{icon:'🔍',label:'Identificador del universo y el sistema solar maestro'},
-  reto_hero:{icon:'🏆',label:'Héroe del reto del universo y el sistema solar'},
-  nivel3:{icon:'🪐',label:'¡Naturalista! Nivel 3'},
-  nivel5:{icon:'🥇',label:'¡Explorador del Espacio! Nivel 6'},
-  widgets_master:{icon:'🧩',label:'Widgets del universo dominados'}
+  primer_quiz:{icon:'🧪',label:'Primera prueba de la materia superada'},
+  flash_master:{icon:'🃏',label:'Todas las flashcards de la materia exploradas'},
+  clasif_pro:{icon:'🗂️',label:'Clasificador de la materia experto'},
+  id_master:{icon:'🔍',label:'Identificador de la materia maestro'},
+  reto_hero:{icon:'🏆',label:'Héroe del reto de la materia'},
+  nivel3:{icon:'🧊',label:'¡Naturalista! Nivel 3'},
+  nivel5:{icon:'🥇',label:'¡Científico de la Materia! Nivel 6'},
+  widgets_master:{icon:'🧩',label:'Widgets de la materia dominados'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -61,20 +61,20 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Universo',a:'🌌 <strong>Todo lo que existe</strong>: el espacio y todos los astros que hay en él.'},
-  {w:'Astro',a:'✨ Cualquier <strong>cuerpo del espacio</strong>: estrellas, planetas, satélites, cometas…'},
-  {w:'Estrella',a:'⭐ Astro con <strong>luz propia</strong>. El <strong>Sol</strong> es la estrella más cercana.'},
-  {w:'Planeta',a:'🪐 Astro que <strong>gira alrededor de una estrella</strong> y <strong>no tiene luz propia</strong>.'},
-  {w:'Satélite',a:'🌙 Astro que <strong>gira alrededor de un planeta</strong>. La <strong>Luna</strong> es el satélite de la Tierra.'},
-  {w:'Galaxia',a:'🌌 Enorme <strong>grupo de estrellas</strong>. La nuestra es la <strong>Vía Láctea</strong>.'},
-  {w:'Sistema Solar',a:'☀️ El <strong>Sol</strong> y todos los astros que giran a su alrededor: 8 planetas y otros cuerpos.'},
-  {w:'Cometa',a:'☄️ Astro de <strong>hielo y polvo</strong> que forma una <strong>cola</strong> al acercarse al Sol.'},
-  {w:'El Sol',a:'☀️ La <strong>estrella</strong> del centro del sistema solar. Nos da <strong>luz y calor</strong>.'},
-  {w:'La Tierra',a:'🌍 El <strong>tercer planeta</strong> desde el Sol; el único con <strong>vida</strong> conocida.'},
-  {w:'La Luna',a:'🌙 El <strong>satélite</strong> de la Tierra. No tiene luz propia: <strong>refleja</strong> la del Sol.'},
-  {w:'Rotación',a:'🔁 Movimiento de la Tierra <strong>sobre sí misma</strong>. Dura un día y produce el <strong>día y la noche</strong>.'},
-  {w:'Traslación',a:'🔃 Movimiento de la Tierra <strong>alrededor del Sol</strong>. Dura un año y produce las <strong>estaciones</strong>.'},
-  {w:'Eclipse',a:'🌑 Ocurre cuando un astro <strong>tapa</strong> la luz de otro (de Sol o de Luna).'},
+  {w:'Materia',a:'🧪 <strong>Todo lo que tiene masa y ocupa un lugar</strong> en el espacio.'},
+  {w:'Masa',a:'⚖️ La <strong>cantidad de materia</strong> que tiene un cuerpo. Se mide en gramos y kilogramos.'},
+  {w:'Volumen',a:'📦 El <strong>lugar que ocupa</strong> un cuerpo. Se mide en litros o cm³.'},
+  {w:'Átomo',a:'⚛️ La <strong>partícula más pequeña</strong> que forma la materia.'},
+  {w:'Molécula',a:'🔗 Se forma cuando <strong>se unen varios átomos</strong> (el agua es una molécula).'},
+  {w:'Estado sólido',a:'🧊 La materia tiene <strong>forma y volumen fijos</strong> (una piedra, el hielo).'},
+  {w:'Estado líquido',a:'💧 <strong>Volumen fijo</strong>, pero toma la <strong>forma del recipiente</strong> (el agua).'},
+  {w:'Estado gaseoso',a:'💨 <strong>No tiene forma ni volumen fijos</strong>; ocupa todo el espacio (el aire, el vapor).'},
+  {w:'Fusión',a:'🔥 Cambio de <strong>sólido a líquido</strong> (el hielo se derrite).'},
+  {w:'Solidificación',a:'❄️ Cambio de <strong>líquido a sólido</strong> (el agua se congela).'},
+  {w:'Evaporación',a:'💨 Cambio de <strong>líquido a gas</strong> (el agua hierve).'},
+  {w:'Condensación',a:'💧 Cambio de <strong>gas a líquido</strong> (el vapor se enfría).'},
+  {w:'Mezcla',a:'🥤 Se forma al <strong>juntar dos o más</strong> sustancias (agua con sal, una ensalada).'},
+  {w:'Sustancia pura',a:'💠 Está formada por <strong>un solo tipo</strong> de materia (el oro, la sal, el agua pura).'},
 ];
 let fcIdx=0;
 function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es el universo?',o:['a) Solo la Tierra','b) Todo lo que existe: el espacio y los astros','c) Solo el Sol','d) Solo las estrellas'],c:1},
-  {q:'¿Qué astro tiene luz propia?',o:['a) El planeta','b) El satélite','c) La estrella','d) El cometa'],c:2},
-  {q:'¿Qué es un planeta?',o:['a) Un astro con luz propia','b) Un astro que gira alrededor de una estrella','c) Una galaxia','d) Un cometa'],c:1},
-  {q:'¿Cuál es el satélite natural de la Tierra?',o:['a) El Sol','b) Marte','c) La Luna','d) Venus'],c:2},
-  {q:'¿Cuál es la estrella del sistema solar?',o:['a) La Luna','b) El Sol','c) Júpiter','d) La Tierra'],c:1},
-  {q:'¿Cuántos planetas tiene el sistema solar?',o:['a) Seis','b) Siete','c) Ocho','d) Diez'],c:2},
-  {q:'¿Qué movimiento de la Tierra produce el día y la noche?',o:['a) La traslación','b) La rotación','c) El eclipse','d) La fase lunar'],c:1},
-  {q:'¿Qué movimiento de la Tierra dura un año?',o:['a) La rotación','b) La traslación','c) La fase lunar','d) El eclipse'],c:1},
-  {q:'¿Cómo se llama nuestra galaxia?',o:['a) El Sistema Solar','b) La Osa Mayor','c) La Vía Láctea','d) Andrómeda'],c:2},
+  {q:'¿Qué es la materia?',o:['a) Solo las cosas duras','b) Todo lo que tiene masa y ocupa un lugar','c) Solo el agua','d) Solo el aire'],c:1},
+  {q:'¿Qué es la masa?',o:['a) El espacio que ocupa un cuerpo','b) La cantidad de materia de un cuerpo','c) El color de un cuerpo','d) La temperatura'],c:1},
+  {q:'¿Qué estado tiene forma y volumen fijos?',o:['a) El líquido','b) El gaseoso','c) El sólido','d) Ninguno'],c:2},
+  {q:'¿Qué estado toma la forma del recipiente?',o:['a) El sólido','b) El líquido','c) El gaseoso','d) El átomo'],c:1},
+  {q:'¿Cómo se llama el paso de sólido a líquido?',o:['a) Evaporación','b) Condensación','c) Fusión','d) Solidificación'],c:2},
+  {q:'¿Cómo se llama el paso de líquido a gas?',o:['a) Fusión','b) Evaporación','c) Solidificación','d) Condensación'],c:1},
+  {q:'¿Cuál es la partícula más pequeña que forma la materia?',o:['a) La molécula','b) La mezcla','c) El átomo','d) El volumen'],c:2},
+  {q:'¿Qué es una mezcla?',o:['a) Un solo tipo de materia','b) La unión de dos o más sustancias','c) Un átomo','d) Un estado de la materia'],c:1},
+  {q:'¿Cuáles son las dos propiedades generales de la materia?',o:['a) El color y el olor','b) La masa y el volumen','c) La dureza y el sabor','d) El calor y el frío'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -102,14 +102,14 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Con luz propia','Sin luz propia'],headA:'⭐ Con luz propia',headB:'🪐 Sin luz propia',colA:'luz',colB:'sinluz',
-   words:[{w:'El Sol',t:'luz'},{w:'La Luna',t:'sinluz'},{w:'Las estrellas',t:'luz'},{w:'Los planetas',t:'sinluz'},{w:'La Tierra',t:'sinluz'},{w:'Otra estrella lejana',t:'luz'},{w:'Marte',t:'sinluz'},{w:'Un satélite',t:'sinluz'}]},
-  {label:['Rotación','Traslación'],headA:'🔁 Rotación',headB:'🔃 Traslación',colA:'rot',colB:'tras',
-   words:[{w:'Gira sobre sí misma',t:'rot'},{w:'Gira alrededor del Sol',t:'tras'},{w:'Produce el día y la noche',t:'rot'},{w:'Produce las estaciones',t:'tras'},{w:'Dura 24 horas',t:'rot'},{w:'Dura un año',t:'tras'},{w:'Dura un día',t:'rot'},{w:'Dura 365 días',t:'tras'},{w:'Da vueltas sobre su eje',t:'rot'},{w:'Recorre su órbita',t:'tras'}]},
-  {label:['Astro','No es astro'],headA:'✨ Es un astro',headB:'🚫 No es un astro',colA:'astro',colB:'no',
-   words:[{w:'Estrella',t:'astro'},{w:'Nube',t:'no'},{w:'Planeta',t:'astro'},{w:'Montaña',t:'no'},{w:'Satélite',t:'astro'},{w:'Río',t:'no'},{w:'Cometa',t:'astro'},{w:'Árbol',t:'no'},{w:'Galaxia',t:'astro'},{w:'Avión',t:'no'}]},
-  {label:['El Sol','La Luna'],headA:'☀️ El Sol',headB:'🌙 La Luna',colA:'sol',colB:'luna',
-   words:[{w:'Es una estrella',t:'sol'},{w:'Es un satélite',t:'luna'},{w:'Tiene luz propia',t:'sol'},{w:'Refleja la luz del Sol',t:'luna'},{w:'Da calor a la Tierra',t:'sol'},{w:'Tiene fases',t:'luna'},{w:'Está en el centro del sistema solar',t:'sol'},{w:'Gira alrededor de la Tierra',t:'luna'}]},
+  {label:['Sólido','Líquido'],headA:'🧊 Sólido',headB:'💧 Líquido',colA:'sol',colB:'liq',
+   words:[{w:'El hielo',t:'sol'},{w:'El agua',t:'liq'},{w:'Una piedra',t:'sol'},{w:'La leche',t:'liq'},{w:'Forma fija',t:'sol'},{w:'Toma la forma del recipiente',t:'liq'},{w:'Un lápiz',t:'sol'},{w:'El jugo',t:'liq'},{w:'Un clavo de hierro',t:'sol'},{w:'El aceite',t:'liq'}]},
+  {label:['Con calor','Con frío'],headA:'🔥 Cambios con calor',headB:'❄️ Cambios con frío',colA:'calor',colB:'frio',
+   words:[{w:'Fusión (se derrite)',t:'calor'},{w:'Solidificación (se congela)',t:'frio'},{w:'Evaporación (hierve)',t:'calor'},{w:'Condensación (se enfría el vapor)',t:'frio'},{w:'El hielo se derrite',t:'calor'},{w:'El agua se congela',t:'frio'},{w:'El agua hierve',t:'calor'},{w:'El vapor se vuelve gotas',t:'frio'},{w:'Sólido → líquido',t:'calor'},{w:'Líquido → sólido',t:'frio'}]},
+  {label:['Mezcla','Sustancia pura'],headA:'🥤 Mezcla',headB:'💠 Sustancia pura',colA:'mez',colB:'pura',
+   words:[{w:'Agua con sal',t:'mez'},{w:'El oro',t:'pura'},{w:'Una ensalada',t:'mez'},{w:'El agua pura',t:'pura'},{w:'El aire',t:'mez'},{w:'La sal sola',t:'pura'},{w:'Agua con arena',t:'mez'},{w:'Un solo tipo de materia',t:'pura'},{w:'Dos o más sustancias juntas',t:'mez'},{w:'Solo azúcar',t:'pura'}]},
+  {label:['Propiedad general','Propiedad específica'],headA:'📏 General (toda la materia)',headB:'🎨 Específica (identifica)',colA:'gen',colB:'esp',
+   words:[{w:'La masa',t:'gen'},{w:'El color',t:'esp'},{w:'El volumen',t:'gen'},{w:'El olor',t:'esp'},{w:'La tiene toda la materia',t:'gen'},{w:'La dureza',t:'esp'},{w:'Cantidad de materia',t:'gen'},{w:'La densidad',t:'esp'}]},
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -119,14 +119,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['El','Sol','es','la','estrella','del','sistema','solar.'],c:1,art:'La estrella del sistema solar'},
-  {s:['La','Luna','es','el','satélite','de','la','Tierra.'],c:1,art:'El satélite de la Tierra'},
-  {s:['La','rotación','produce','el','día','y','la','noche.'],c:1,art:'Movimiento que produce el día y la noche'},
-  {s:['La','traslación','produce','las','estaciones','del','año.'],c:1,art:'Movimiento que produce las estaciones'},
-  {s:['Las','estrellas','tienen','luz','propia.'],c:1,art:'Astros que tienen luz propia'},
-  {s:['La','Tierra','es','el','tercer','planeta','del','sistema','solar.'],c:1,art:'El planeta donde vivimos'},
-  {s:['Nuestra','galaxia','se','llama','Vía','Láctea.'],c:1,art:'Enorme grupo de estrellas'},
-  {s:['El','cometa','tiene','una','cola','de','hielo','y','polvo.'],c:1,art:'Astro de hielo con cola'},
+  {s:['La','masa','es','la','cantidad','de','materia.'],c:1,art:'La cantidad de materia de un cuerpo'},
+  {s:['El','volumen','es','el','lugar','que','ocupa','un','cuerpo.'],c:1,art:'El lugar que ocupa un cuerpo'},
+  {s:['El','átomo','es','la','partícula','más','pequeña','de','la','materia.'],c:1,art:'La partícula más pequeña de la materia'},
+  {s:['La','fusión','es','el','paso','de','sólido','a','líquido.'],c:1,art:'El paso de sólido a líquido'},
+  {s:['La','evaporación','es','el','paso','de','líquido','a','gas.'],c:1,art:'El paso de líquido a gas'},
+  {s:['Una','mezcla','junta','dos','o','más','sustancias.'],c:1,art:'Junta dos o más sustancias'},
+  {s:['El','agua','es','una','molécula','de','hidrógeno','y','oxígeno.'],c:4,art:'Unión de varios átomos'},
+  {s:['El','estado','gaseoso','no','tiene','forma','fija.'],c:2,art:'Estado que no tiene forma ni volumen fijos'},
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -136,14 +136,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El ___ es la estrella del sistema solar.',opts:['planeta','Sol','satélite'],c:1},
-  {s:'La ___ es el satélite de la Tierra.',opts:['estrella','Luna','galaxia'],c:1},
-  {s:'La ___ produce el día y la noche.',opts:['traslación','rotación','órbita'],c:1},
-  {s:'La ___ produce las estaciones del año.',opts:['rotación','traslación','fase'],c:1},
-  {s:'El sistema solar tiene ___ planetas.',opts:['seis','siete','ocho'],c:2},
-  {s:'Las ___ tienen luz propia.',opts:['estrellas','planetas','lunas'],c:0},
-  {s:'Nuestra galaxia es la ___.',opts:['Osa Mayor','Vía Láctea','Andrómeda'],c:1},
-  {s:'La Luna no tiene luz propia: ___ la del Sol.',opts:['produce','refleja','apaga'],c:1},
+  {s:'La ___ es la cantidad de materia de un cuerpo.',opts:['masa','forma','luz'],c:0},
+  {s:'El ___ es el lugar que ocupa un cuerpo.',opts:['color','volumen','peso'],c:1},
+  {s:'El estado ___ tiene forma y volumen fijos.',opts:['líquido','sólido','gaseoso'],c:1},
+  {s:'El estado ___ toma la forma del recipiente.',opts:['sólido','líquido','gaseoso'],c:1},
+  {s:'La ___ es el paso de sólido a líquido.',opts:['fusión','evaporación','condensación'],c:0},
+  {s:'La ___ es el paso de líquido a gas.',opts:['fusión','evaporación','solidificación'],c:1},
+  {s:'La partícula más pequeña de la materia es el ___.',opts:['átomo','volumen','estado'],c:0},
+  {s:'Una ___ junta dos o más sustancias.',opts:['sustancia pura','mezcla','molécula'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -152,9 +152,9 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
 const routeSets=[
-  {label:'Los planetas desde el Sol (en orden)',steps:['Mercurio','Venus','Tierra','Marte','Júpiter','Saturno','Urano','Neptuno']},
-  {label:'De lo pequeño a lo grande',steps:['La Luna','La Tierra','El Sol','El Sistema Solar','La galaxia (Vía Láctea)']},
-  {label:'Las fases de la Luna (en orden)',steps:['Luna nueva','Cuarto creciente','Luna llena','Cuarto menguante']},
+  {label:'El agua al calentarse (en orden)',steps:['Hielo (sólido)','Se derrite (fusión)','Agua (líquido)','Hierve (evaporación)','Vapor (gaseoso)']},
+  {label:'De lo pequeño a lo grande',steps:['El átomo','La molécula','Una gota de agua','Un vaso de agua']},
+  {label:'El agua al enfriarse (en orden)',steps:['Vapor (gaseoso)','Se enfría (condensación)','Agua (líquido)','Se congela (solidificación)','Hielo (sólido)']},
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -165,14 +165,14 @@ function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.
 
 // Widget 2: Identifica el órgano o concepto
 const neuronPartes=[
-  {desc:'La estrella del centro del sistema solar',ans:'El Sol',opts:['El Sol','La Luna','Marte','La Tierra']},
-  {desc:'El satélite natural de la Tierra',ans:'La Luna',opts:['La Luna','El Sol','Venus','Un cometa']},
-  {desc:'El planeta donde vivimos',ans:'La Tierra',opts:['La Tierra','Júpiter','El Sol','La Luna']},
-  {desc:'Astro que tiene luz propia',ans:'Estrella',opts:['Estrella','Planeta','Satélite','Cometa']},
-  {desc:'Astro que gira alrededor de un planeta',ans:'Satélite',opts:['Satélite','Estrella','Galaxia','Sol']},
-  {desc:'Enorme grupo de estrellas',ans:'Galaxia',opts:['Galaxia','Planeta','Cometa','Luna']},
-  {desc:'Astro de hielo y polvo que forma una cola',ans:'Cometa',opts:['Cometa','Estrella','Satélite','Planeta']},
-  {desc:'Movimiento de la Tierra que produce el día y la noche',ans:'Rotación',opts:['Rotación','Traslación','Eclipse','Fase']},
+  {desc:'La cantidad de materia de un cuerpo',ans:'Masa',opts:['Masa','Volumen','Color','Átomo']},
+  {desc:'El lugar que ocupa un cuerpo',ans:'Volumen',opts:['Volumen','Masa','Peso','Molécula']},
+  {desc:'La partícula más pequeña de la materia',ans:'Átomo',opts:['Átomo','Molécula','Mezcla','Volumen']},
+  {desc:'Estado con forma y volumen fijos',ans:'Sólido',opts:['Sólido','Líquido','Gaseoso','Mezcla']},
+  {desc:'Estado que toma la forma del recipiente',ans:'Líquido',opts:['Líquido','Sólido','Gaseoso','Átomo']},
+  {desc:'Paso de sólido a líquido',ans:'Fusión',opts:['Fusión','Evaporación','Condensación','Solidificación']},
+  {desc:'Paso de líquido a gas',ans:'Evaporación',opts:['Evaporación','Fusión','Solidificación','Condensación']},
+  {desc:'Unión de dos o más sustancias',ans:'Mezcla',opts:['Mezcla','Sustancia pura','Átomo','Masa']},
 ];
 let neuronIdx=0,neuronDone=false;
 function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los órganos y conceptos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
@@ -182,11 +182,11 @@ function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Órgano → Función
 const neuroPairs=[
-  {trans:'El Sol',func:'Da luz y calor a la Tierra',opts:['Da luz y calor a la Tierra','Gira alrededor de la Tierra','No tiene luz propia','Es un satélite']},
-  {trans:'La Luna',func:'Gira alrededor de la Tierra',opts:['Gira alrededor de la Tierra','Da luz propia','Es una estrella','Está en el centro del sistema solar']},
-  {trans:'Rotación',func:'Produce el día y la noche',opts:['Produce el día y la noche','Produce las estaciones','Forma los eclipses','Dura un año']},
-  {trans:'Traslación',func:'Produce las estaciones del año',opts:['Produce las estaciones del año','Produce el día y la noche','Dura 24 horas','Ilumina la Luna']},
-  {trans:'Estrella',func:'Astro que tiene luz propia',opts:['Astro que tiene luz propia','Gira alrededor de un planeta','No tiene luz propia','Es un satélite']},
+  {trans:'Masa',func:'Cantidad de materia de un cuerpo',opts:['Cantidad de materia de un cuerpo','Lugar que ocupa un cuerpo','El color de un cuerpo','Un estado de la materia']},
+  {trans:'Volumen',func:'Lugar que ocupa un cuerpo',opts:['Lugar que ocupa un cuerpo','Cantidad de materia','La partícula más pequeña','Una mezcla']},
+  {trans:'Sólido',func:'Tiene forma y volumen fijos',opts:['Tiene forma y volumen fijos','Toma la forma del recipiente','No tiene forma fija','Es una mezcla']},
+  {trans:'Fusión',func:'Paso de sólido a líquido',opts:['Paso de sólido a líquido','Paso de líquido a gas','Paso de gas a líquido','Paso de líquido a sólido']},
+  {trans:'Átomo',func:'La partícula más pequeña de la materia',opts:['La partícula más pequeña de la materia','El lugar que ocupa un cuerpo','Una mezcla de sustancias','Un estado de la materia']},
 ];
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
@@ -195,12 +195,12 @@ function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: Órgano → ¿A qué sistema pertenece?
 const enfermedadData=[
-  {disease:'El Sol',characteristic:'Estrella',opts:['Estrella','Planeta','Satélite']},
-  {disease:'La Tierra',characteristic:'Planeta',opts:['Planeta','Estrella','Satélite']},
-  {disease:'La Luna',characteristic:'Satélite',opts:['Satélite','Estrella','Planeta']},
-  {disease:'Marte',characteristic:'Planeta',opts:['Planeta','Estrella','Satélite']},
-  {disease:'Una estrella lejana',characteristic:'Estrella',opts:['Estrella','Planeta','Satélite']},
-  {disease:'Júpiter',characteristic:'Planeta',opts:['Planeta','Estrella','Satélite']},
+  {disease:'Una piedra',characteristic:'Sólido',opts:['Sólido','Líquido','Gaseoso']},
+  {disease:'El agua',characteristic:'Líquido',opts:['Líquido','Sólido','Gaseoso']},
+  {disease:'El aire',characteristic:'Gaseoso',opts:['Gaseoso','Sólido','Líquido']},
+  {disease:'El hielo',characteristic:'Sólido',opts:['Sólido','Líquido','Gaseoso']},
+  {disease:'El vapor de agua',characteristic:'Gaseoso',opts:['Gaseoso','Sólido','Líquido']},
+  {disease:'La leche',characteristic:'Líquido',opts:['Líquido','Sólido','Gaseoso']},
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -209,12 +209,12 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Rotación','Traslación'],btnA:'🔁 Rotación',btnB:'🔃 Traslación',colA:'rot',colB:'tras',
-   words:[{w:'Gira sobre sí misma',t:'rot'},{w:'Gira alrededor del Sol',t:'tras'},{w:'Día y noche',t:'rot'},{w:'Las estaciones',t:'tras'},{w:'Dura 24 horas',t:'rot'},{w:'Dura un año',t:'tras'},{w:'Dura un día',t:'rot'},{w:'Dura 365 días',t:'tras'},{w:'Sobre su eje',t:'rot'},{w:'Recorre su órbita',t:'tras'}]},
-  {label:['Con luz propia','Sin luz propia'],btnA:'⭐ Luz propia',btnB:'🪐 Sin luz propia',colA:'luz',colB:'sinluz',
-   words:[{w:'El Sol',t:'luz'},{w:'La Luna',t:'sinluz'},{w:'Las estrellas',t:'luz'},{w:'Los planetas',t:'sinluz'},{w:'La Tierra',t:'sinluz'},{w:'Marte',t:'sinluz'},{w:'Una estrella lejana',t:'luz'},{w:'Un satélite',t:'sinluz'},{w:'Venus',t:'sinluz'},{w:'El astro que nos da calor',t:'luz'}]},
-  {label:['Astro','No es astro'],btnA:'✨ Astro',btnB:'🚫 No es astro',colA:'astro',colB:'no',
-   words:[{w:'Estrella',t:'astro'},{w:'Nube',t:'no'},{w:'Planeta',t:'astro'},{w:'Montaña',t:'no'},{w:'Cometa',t:'astro'},{w:'Río',t:'no'},{w:'Satélite',t:'astro'},{w:'Árbol',t:'no'},{w:'Galaxia',t:'astro'},{w:'Avión',t:'no'}]},
+  {label:['Sólido','Gaseoso'],btnA:'🧊 Sólido',btnB:'💨 Gaseoso',colA:'sol',colB:'gas',
+   words:[{w:'El hielo',t:'sol'},{w:'El aire',t:'gas'},{w:'Una piedra',t:'sol'},{w:'El vapor',t:'gas'},{w:'Un lápiz',t:'sol'},{w:'El humo',t:'gas'},{w:'Un clavo',t:'sol'},{w:'El oxígeno',t:'gas'},{w:'Una moneda',t:'sol'},{w:'El gas de la estufa',t:'gas'}]},
+  {label:['Con calor','Con frío'],btnA:'🔥 Con calor',btnB:'❄️ Con frío',colA:'calor',colB:'frio',
+   words:[{w:'Fusión',t:'calor'},{w:'Solidificación',t:'frio'},{w:'Evaporación',t:'calor'},{w:'Condensación',t:'frio'},{w:'El hielo se derrite',t:'calor'},{w:'El agua se congela',t:'frio'},{w:'El agua hierve',t:'calor'},{w:'El vapor se vuelve gotas',t:'frio'},{w:'Sólido → líquido',t:'calor'},{w:'Líquido → sólido',t:'frio'}]},
+  {label:['Mezcla','Sustancia pura'],btnA:'🥤 Mezcla',btnB:'💠 Sust. pura',colA:'mez',colB:'pura',
+   words:[{w:'Agua con sal',t:'mez'},{w:'El oro',t:'pura'},{w:'Una ensalada',t:'mez'},{w:'La sal',t:'pura'},{w:'El aire',t:'mez'},{w:'El agua pura',t:'pura'},{w:'Agua con arena',t:'mez'},{w:'Solo azúcar',t:'pura'},{w:'Café con leche',t:'mez'},{w:'El oxígeno puro',t:'pura'}]},
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -227,46 +227,46 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'El universo es todo lo que existe: el espacio y los astros.',type:'El universo'},
-  {s:'El Sol es la estrella del sistema solar.',type:'El Sol'},
-  {s:'La Luna es el satélite de la Tierra.',type:'La Luna'},
-  {s:'La Tierra es el tercer planeta desde el Sol.',type:'La Tierra'},
-  {s:'La rotación produce el día y la noche.',type:'La rotación'},
-  {s:'La traslación produce las estaciones del año.',type:'La traslación'},
-  {s:'Las estrellas tienen luz propia.',type:'Las estrellas'},
-  {s:'Nuestra galaxia se llama Vía Láctea.',type:'La galaxia'},
-  {s:'El cometa es un astro de hielo y polvo con cola.',type:'El cometa'},
-  {s:'El sistema solar tiene ocho planetas.',type:'El sistema solar'},
+  {s:'La materia es todo lo que tiene masa y ocupa un lugar.',type:'La materia'},
+  {s:'La masa es la cantidad de materia de un cuerpo.',type:'La masa'},
+  {s:'El volumen es el lugar que ocupa un cuerpo.',type:'El volumen'},
+  {s:'El átomo es la partícula más pequeña de la materia.',type:'El átomo'},
+  {s:'El estado sólido tiene forma y volumen fijos.',type:'El estado sólido'},
+  {s:'El estado líquido toma la forma del recipiente.',type:'El estado líquido'},
+  {s:'La fusión es el paso de sólido a líquido.',type:'La fusión'},
+  {s:'La evaporación es el paso de líquido a gas.',type:'La evaporación'},
+  {s:'Una mezcla junta dos o más sustancias.',type:'La mezcla'},
+  {s:'Una sustancia pura tiene un solo tipo de materia.',type:'La sustancia pura'},
 ];
 const classifyTaskDB=[
-  {w:'El Sol',gen:'Estrella que da luz y calor',n:'Estrella',g:'Nunca mirarlo directamente',t:'Está en el centro del sistema solar'},
-  {w:'La Tierra',gen:'Planeta donde vivimos',n:'Planeta',g:'Cuidar el planeta y su naturaleza',t:'Es el tercer planeta desde el Sol'},
-  {w:'La Luna',gen:'Satélite de la Tierra',n:'Satélite',g:'Observarla en sus distintas fases',t:'Refleja la luz del Sol'},
-  {w:'Marte',gen:'Planeta rojo del sistema solar',n:'Planeta',g:'Se estudia con sondas espaciales',t:'Es el cuarto planeta desde el Sol'},
-  {w:'La Vía Láctea',gen:'Galaxia donde está el Sol',n:'Galaxia',g:'Se observa en el cielo oscuro',t:'Tiene miles de millones de estrellas'},
+  {w:'El hielo',gen:'Agua en estado sólido',n:'Sólido',g:'Al calentarse se derrite (fusión)',t:'Tiene forma y volumen fijos'},
+  {w:'El agua',gen:'Líquido más común',n:'Líquido',g:'Al hervir se evapora',t:'Toma la forma del recipiente'},
+  {w:'El aire',gen:'Mezcla de gases que respiramos',n:'Gaseoso',g:'No tiene forma ni volumen fijos',t:'Ocupa todo el espacio disponible'},
+  {w:'El vapor de agua',gen:'Agua en estado gaseoso',n:'Gaseoso',g:'Al enfriarse se condensa',t:'Sale del agua al hervir'},
+  {w:'Una piedra',gen:'Material sólido y duro',n:'Sólido',g:'No cambia de forma fácilmente',t:'Mantiene su forma'},
 ];
 const completeTaskDB=[
-  {s:'El ___ es la estrella del sistema solar.',opts:['planeta','Sol','satélite'],ans:'Sol'},
-  {s:'La ___ es el satélite de la Tierra.',opts:['estrella','Luna','galaxia'],ans:'Luna'},
-  {s:'La ___ produce el día y la noche.',opts:['traslación','rotación','órbita'],ans:'rotación'},
-  {s:'La ___ produce las estaciones del año.',opts:['rotación','traslación','fase'],ans:'traslación'},
-  {s:'El sistema solar tiene ___ planetas.',opts:['seis','siete','ocho'],ans:'ocho'},
-  {s:'Las ___ tienen luz propia.',opts:['estrellas','planetas','lunas'],ans:'estrellas'},
-  {s:'Nuestra galaxia es la ___.',opts:['Osa Mayor','Vía Láctea','Andrómeda'],ans:'Vía Láctea'},
-  {s:'La Luna ___ la luz del Sol.',opts:['produce','refleja','apaga'],ans:'refleja'},
+  {s:'La ___ es la cantidad de materia de un cuerpo.',opts:['masa','forma','luz'],ans:'masa'},
+  {s:'El ___ es el lugar que ocupa un cuerpo.',opts:['color','volumen','peso'],ans:'volumen'},
+  {s:'El estado ___ tiene forma y volumen fijos.',opts:['líquido','sólido','gaseoso'],ans:'sólido'},
+  {s:'El estado ___ toma la forma del recipiente.',opts:['sólido','líquido','gaseoso'],ans:'líquido'},
+  {s:'La ___ es el paso de sólido a líquido.',opts:['fusión','evaporación','condensación'],ans:'fusión'},
+  {s:'La ___ es el paso de líquido a gas.',opts:['fusión','evaporación','solidificación'],ans:'evaporación'},
+  {s:'La partícula más pequeña de la materia es el ___.',opts:['átomo','volumen','estado'],ans:'átomo'},
+  {s:'Una ___ junta dos o más sustancias.',opts:['sustancia pura','mezcla','molécula'],ans:'mezcla'},
 ];
 const explainQuestions=[
-  {q:'¿Qué es el universo y qué hay en él?',ans:'El universo es todo lo que existe: el espacio y todos los astros (estrellas, planetas, satélites, galaxias, cometas). Es tan grande que no conocemos sus límites.'},
-  {q:'¿Qué diferencia hay entre una estrella, un planeta y un satélite?',ans:'La estrella tiene luz propia (como el Sol); el planeta gira alrededor de una estrella y no tiene luz propia; el satélite gira alrededor de un planeta (como la Luna).'},
-  {q:'¿Qué es el sistema solar y qué lo forma?',ans:'Es el Sol y todos los astros que giran a su alrededor: ocho planetas, sus satélites y otros cuerpos como asteroides y cometas. El Sol está en el centro.'},
-  {q:'¿Qué diferencia hay entre la rotación y la traslación de la Tierra?',ans:'La rotación es el giro de la Tierra sobre sí misma; dura un día y produce el día y la noche. La traslación es el giro alrededor del Sol; dura un año y produce las estaciones.'},
-  {q:'¿Por qué el Sol es importante para la vida?',ans:'Porque da luz y calor a la Tierra. Sin el Sol no habría vida: las plantas, los animales y las personas lo necesitan.'},
+  {q:'¿Qué es la materia y qué dos propiedades generales tiene?',ans:'La materia es todo lo que tiene masa y ocupa un lugar en el espacio. Sus dos propiedades generales son la masa (cantidad de materia) y el volumen (lugar que ocupa).'},
+  {q:'¿Cuáles son los tres estados de la materia y cómo son?',ans:'Sólido (forma y volumen fijos, como una piedra), líquido (volumen fijo pero toma la forma del recipiente, como el agua) y gaseoso (no tiene forma ni volumen fijos, como el aire).'},
+  {q:'¿Qué es un cambio de estado? Da un ejemplo.',ans:'Es cuando la materia pasa de un estado a otro con el calor o el frío. Por ejemplo, la fusión: el hielo (sólido) se derrite y se vuelve agua (líquido).'},
+  {q:'¿Qué diferencia hay entre una mezcla y una sustancia pura?',ans:'La sustancia pura tiene un solo tipo de materia (el oro, la sal). La mezcla se forma al juntar dos o más sustancias (agua con sal, una ensalada).'},
+  {q:'¿De qué está formada toda la materia?',ans:'De partículas diminutas llamadas átomos. Cuando se unen varios átomos forman moléculas, como la molécula de agua.'},
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué astro o concepto del universo se refiere.','<strong>Ejemplo:</strong> El Sol es una estrella. → <span style="color:var(--jade);font-weight:700;">El Sol</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada astro, completa su descripción, qué tipo de astro es, una curiosidad y un dato.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Astro','text-align:left;')}${th('Descripción')}${th('Tipo')}${th('Curiosidad')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Descripción: ${it.gen} | Tipo: ${it.n} | Curiosidad: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué concepto de la materia se refiere.','<strong>Ejemplo:</strong> La masa es la cantidad de materia. → <span style="color:var(--jade);font-weight:700;">La masa</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada material, completa su descripción, en qué estado está, una nota y un dato.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Material','text-align:left;')}${th('Descripción')}${th('Estado')}${th('Nota')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Descripción: ${it.gen} | Estado: ${it.n} | Nota: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
@@ -274,42 +274,42 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
   {size:10,grid:[
-    ['C','D','O','N','O','T','R','E','N','O'],
-    ['L','O','S','P','W','D','X','F','X','Z'],
-    ['V','A','I','X','A','L','A','G','Y','T'],
-    ['C','K','O','V','Q','V','E','K','Z','D'],
-    ['H','B','A','P','A','R','R','E','I','T'],
-    ['J','Z','N','L','N','F','R','S','T','T'],
-    ['J','Y','U','A','T','E','N','A','L','P'],
-    ['Z','G','L','Z','C','B','R','D','Z','X'],
-    ['B','Z','V','N','Y','G','G','N','O','T'],
-    ['V','E','S','T','R','E','L','L','A','M']
+    ['X','F','C','F','B','U','E','P','V','D'],
+    ['O','C','L','O','X','O','J','U','V','X'],
+    ['D','M','A','T','E','R','I','A','K','J'],
+    ['I','M','A','S','A','F','N','A','R','W'],
+    ['U','D','Z','K','B','K','E','O','O','N'],
+    ['Q','U','H','W','O','A','M','D','Y','R'],
+    ['I','H','Q','P','H','T','U','I','P','X'],
+    ['L','L','X','Z','G','O','L','L','J','S'],
+    ['V','V','T','G','Y','M','O','O','P','E'],
+    ['Z','Z','Y','Q','Y','O','V','S','E','D']
   ],words:[
-    {w:'SOL',cells:[[1,2],[1,1],[1,0]]},
-    {w:'LUNA',cells:[[7,2],[6,2],[5,2],[4,2]]},
-    {w:'TIERRA',cells:[[4,9],[4,8],[4,7],[4,6],[4,5],[4,4]]},
-    {w:'PLANETA',cells:[[6,9],[6,8],[6,7],[6,6],[6,5],[6,4],[6,3]]},
-    {w:'ESTRELLA',cells:[[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8]]},
-    {w:'GALAXIA',cells:[[2,7],[2,6],[2,5],[2,4],[2,3],[2,2],[2,1]]}
+    {w:'MATERIA',cells:[[2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[2,7]]},
+    {w:'MASA',cells:[[3,1],[3,2],[3,3],[3,4]]},
+    {w:'VOLUMEN',cells:[[9,6],[8,6],[7,6],[6,6],[5,6],[4,6],[3,6]]},
+    {w:'ATOMO',cells:[[5,5],[6,5],[7,5],[8,5],[9,5]]},
+    {w:'SOLIDO',cells:[[9,7],[8,7],[7,7],[6,7],[5,7],[4,7]]},
+    {w:'LIQUIDO',cells:[[7,0],[6,0],[5,0],[4,0],[3,0],[2,0],[1,0]]}
   ]},
   {size:10,grid:[
-    ['D','T','K','O','X','C','Y','N','E','T'],
-    ['T','D','I','S','V','C','E','K','T','R'],
-    ['N','W','L','R','H','O','T','K','I','A'],
-    ['Z','V','L','E','L','M','R','N','L','S'],
-    ['Y','Y','H','V','F','E','A','K','E','L'],
-    ['H','F','T','I','G','T','M','F','T','A'],
-    ['I','U','Y','N','B','A','L','L','A','C'],
-    ['B','I','R','U','V','V','F','S','S','I'],
-    ['N','O','I','C','A','T','O','R','B','O'],
-    ['H','P','V','N','B','Q','U','L','S','N']
+    ['T','M','O','L','E','C','U','L','A','T'],
+    ['Y','M','D','G','O','D','A','T','S','E'],
+    ['X','Y','E','O','S','O','E','S','A','G'],
+    ['I','R','N','Z','M','L','F','X','V','F'],
+    ['D','D','S','E','C','A','D','S','D','U'],
+    ['D','I','I','H','V','L','A','F','G','Q'],
+    ['J','K','D','R','C','J','A','J','M','J'],
+    ['M','S','A','Y','K','M','G','L','S','W'],
+    ['X','S','D','B','T','P','D','U','D','M'],
+    ['Y','Q','I','F','U','S','I','O','N','U']
   ],words:[
-    {w:'ROTACION',cells:[[8,7],[8,6],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0]]},
-    {w:'TRASLACION',cells:[[0,9],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],[7,9],[8,9],[9,9]]},
-    {w:'COMETA',cells:[[1,5],[2,5],[3,5],[4,5],[5,5],[6,5]]},
-    {w:'SATELITE',cells:[[7,8],[6,8],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8]]},
-    {w:'UNIVERSO',cells:[[7,3],[6,3],[5,3],[4,3],[3,3],[2,3],[1,3],[0,3]]},
-    {w:'MARTE',cells:[[5,6],[4,6],[3,6],[2,6],[1,6]]}
+    {w:'GASEOSO',cells:[[2,9],[2,8],[2,7],[2,6],[2,5],[2,4],[2,3]]},
+    {w:'FUSION',cells:[[9,3],[9,4],[9,5],[9,6],[9,7],[9,8]]},
+    {w:'MEZCLA',cells:[[1,1],[2,2],[3,3],[4,4],[5,5],[6,6]]},
+    {w:'MOLECULA',cells:[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8]]},
+    {w:'DENSIDAD',cells:[[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],[8,2]]},
+    {w:'ESTADO',cells:[[1,9],[1,8],[1,7],[1,6],[1,5],[1,4]]}
   ]}
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
@@ -325,72 +325,72 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'El universo es todo lo que existe: el espacio y los astros.',a:true},
-  {q:'Los planetas tienen luz propia.',a:false},
-  {q:'Las estrellas tienen luz propia.',a:true},
-  {q:'El Sol es la estrella del sistema solar.',a:true},
-  {q:'La Luna es un planeta.',a:false},
-  {q:'La Luna es el satélite de la Tierra.',a:true},
-  {q:'El sistema solar tiene ocho planetas.',a:true},
-  {q:'La rotación de la Tierra produce el día y la noche.',a:true},
-  {q:'La traslación de la Tierra produce las estaciones.',a:true},
-  {q:'La Tierra es el tercer planeta desde el Sol.',a:true},
-  {q:'La Luna tiene luz propia.',a:false},
-  {q:'Nuestra galaxia se llama Vía Láctea.',a:true},
-  {q:'Un satélite gira alrededor de un planeta.',a:true},
-  {q:'La rotación de la Tierra dura un año.',a:false},
-  {q:'El cometa es un astro de hielo y polvo con cola.',a:true},
+  {q:'La materia es todo lo que tiene masa y ocupa un lugar.',a:true},
+  {q:'La masa es el lugar que ocupa un cuerpo.',a:false},
+  {q:'El volumen es el lugar que ocupa un cuerpo.',a:true},
+  {q:'El estado sólido tiene forma y volumen fijos.',a:true},
+  {q:'El estado líquido toma la forma del recipiente.',a:true},
+  {q:'El estado gaseoso tiene forma fija.',a:false},
+  {q:'La fusión es el paso de sólido a líquido.',a:true},
+  {q:'La evaporación es el paso de líquido a gas.',a:true},
+  {q:'El átomo es la partícula más pequeña de la materia.',a:true},
+  {q:'Una mezcla junta dos o más sustancias.',a:true},
+  {q:'El agua pura es una mezcla.',a:false},
+  {q:'La masa se mide en gramos y kilogramos.',a:true},
+  {q:'La solidificación es el paso de líquido a sólido.',a:true},
+  {q:'El aire es un ejemplo de sólido.',a:false},
+  {q:'Al unirse varios átomos forman una molécula.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es el universo?',o:['a) Solo la Tierra','b) Todo lo que existe: el espacio y los astros','c) Solo el Sol','d) Solo la Luna'],a:1},
-  {q:'¿Qué astro tiene luz propia?',o:['a) El planeta','b) El satélite','c) La estrella','d) El cometa'],a:2},
-  {q:'¿Qué es un planeta?',o:['a) Un astro con luz propia','b) Un astro que gira alrededor de una estrella','c) Una galaxia','d) Un cometa'],a:1},
-  {q:'¿Cuál es la estrella del sistema solar?',o:['a) La Luna','b) El Sol','c) Marte','d) La Tierra'],a:1},
-  {q:'¿Cuál es el satélite de la Tierra?',o:['a) El Sol','b) Venus','c) La Luna','d) Júpiter'],a:2},
-  {q:'¿Cuántos planetas tiene el sistema solar?',o:['a) Seis','b) Siete','c) Ocho','d) Diez'],a:2},
-  {q:'¿Qué movimiento produce el día y la noche?',o:['a) La traslación','b) La rotación','c) El eclipse','d) La fase lunar'],a:1},
-  {q:'¿Qué movimiento produce las estaciones?',o:['a) La rotación','b) La traslación','c) La fase lunar','d) El eclipse'],a:1},
-  {q:'¿Cómo se llama nuestra galaxia?',o:['a) El Sistema Solar','b) La Osa Mayor','c) La Vía Láctea','d) Andrómeda'],a:2},
-  {q:'¿Qué astro gira alrededor de un planeta?',o:['a) La estrella','b) El satélite','c) La galaxia','d) El Sol'],a:1},
-  {q:'¿Qué planeta es el nuestro?',o:['a) Marte','b) La Tierra','c) Venus','d) Saturno'],a:1},
-  {q:'¿Cuánto dura la rotación de la Tierra?',o:['a) Un año','b) Un día (24 horas)','c) Un mes','d) Una hora'],a:1},
-  {q:'¿Qué astro es de hielo y polvo y forma una cola?',o:['a) La estrella','b) El cometa','c) El planeta','d) El satélite'],a:1},
-  {q:'La Luna no tiene luz propia: ella…',o:['a) produce luz','b) refleja la luz del Sol','c) apaga la luz','d) no se ve nunca'],a:1},
-  {q:'El astro que da luz y calor a la Tierra es…',o:['a) la Luna','b) el Sol','c) Marte','d) una galaxia'],a:1},
+  {q:'¿Qué es la materia?',o:['a) Solo las cosas duras','b) Todo lo que tiene masa y ocupa un lugar','c) Solo el agua','d) Solo el aire'],a:1},
+  {q:'¿Qué es la masa?',o:['a) El lugar que ocupa un cuerpo','b) La cantidad de materia de un cuerpo','c) El color','d) La temperatura'],a:1},
+  {q:'¿Qué es el volumen?',o:['a) La cantidad de materia','b) El lugar que ocupa un cuerpo','c) El peso','d) La dureza'],a:1},
+  {q:'¿Qué estado tiene forma y volumen fijos?',o:['a) El líquido','b) El gaseoso','c) El sólido','d) Ninguno'],a:2},
+  {q:'¿Qué estado toma la forma del recipiente?',o:['a) El sólido','b) El líquido','c) El gaseoso','d) El átomo'],a:1},
+  {q:'¿Qué estado no tiene forma ni volumen fijos?',o:['a) El sólido','b) El líquido','c) El gaseoso','d) Ninguno'],a:2},
+  {q:'¿Cómo se llama el paso de sólido a líquido?',o:['a) Evaporación','b) Condensación','c) Fusión','d) Solidificación'],a:2},
+  {q:'¿Cómo se llama el paso de líquido a gas?',o:['a) Fusión','b) Evaporación','c) Solidificación','d) Condensación'],a:1},
+  {q:'¿Cómo se llama el paso de líquido a sólido?',o:['a) Fusión','b) Evaporación','c) Solidificación','d) Condensación'],a:2},
+  {q:'¿Cuál es la partícula más pequeña de la materia?',o:['a) La molécula','b) La mezcla','c) El átomo','d) El volumen'],a:2},
+  {q:'¿Qué es una mezcla?',o:['a) Un solo tipo de materia','b) La unión de dos o más sustancias','c) Un átomo','d) Un estado'],a:1},
+  {q:'¿Cuál es un ejemplo de sustancia pura?',o:['a) Una ensalada','b) El agua con sal','c) El oro','d) El aire'],a:2},
+  {q:'¿Cuáles son las dos propiedades generales de la materia?',o:['a) El color y el olor','b) La masa y el volumen','c) La dureza y el sabor','d) El calor y el frío'],a:1},
+  {q:'¿Cuál es un ejemplo de estado líquido?',o:['a) El hielo','b) El agua','c) El aire','d) Una piedra'],a:1},
+  {q:'¿Qué se forma al unirse varios átomos?',o:['a) Una mezcla','b) Una molécula','c) Un estado','d) Un volumen'],a:1},
 ];
 const evalCPBank=[
-  {q:'El ___ es la estrella del sistema solar.',a:'Sol'},
-  {q:'La ___ es el satélite de la Tierra.',a:'Luna'},
-  {q:'La ___ produce el día y la noche.',a:'rotación'},
-  {q:'La ___ produce las estaciones del año.',a:'traslación'},
-  {q:'El sistema solar tiene ___ planetas.',a:'ocho'},
-  {q:'Las ___ tienen luz propia.',a:'estrellas'},
-  {q:'Nuestra galaxia es la ___ Láctea.',a:'Vía'},
-  {q:'La Luna ___ la luz del Sol.',a:'refleja'},
-  {q:'La Tierra es el ___ planeta desde el Sol.',a:'tercer'},
-  {q:'Un ___ gira alrededor de un planeta.',a:'satélite'},
-  {q:'El ___ es un astro de hielo y polvo con cola.',a:'cometa'},
-  {q:'Un enorme grupo de estrellas es una ___.',a:'galaxia'},
-  {q:'La rotación de la Tierra dura un ___.',a:'día'},
-  {q:'La traslación de la Tierra dura un ___.',a:'año'},
-  {q:'El astro que nos da luz y calor es el ___.',a:'Sol'},
+  {q:'La ___ es la cantidad de materia de un cuerpo.',a:'masa'},
+  {q:'El ___ es el lugar que ocupa un cuerpo.',a:'volumen'},
+  {q:'El estado ___ tiene forma y volumen fijos.',a:'sólido'},
+  {q:'El estado ___ toma la forma del recipiente.',a:'líquido'},
+  {q:'El estado ___ no tiene forma ni volumen fijos.',a:'gaseoso'},
+  {q:'La ___ es el paso de sólido a líquido.',a:'fusión'},
+  {q:'La ___ es el paso de líquido a gas.',a:'evaporación'},
+  {q:'La ___ es el paso de líquido a sólido.',a:'solidificación'},
+  {q:'La partícula más pequeña de la materia es el ___.',a:'átomo'},
+  {q:'Al unirse varios átomos forman una ___.',a:'molécula'},
+  {q:'Una ___ junta dos o más sustancias.',a:'mezcla'},
+  {q:'Una sustancia ___ tiene un solo tipo de materia.',a:'pura'},
+  {q:'El agua en estado sólido es el ___.',a:'hielo'},
+  {q:'El agua en estado gaseoso es el ___.',a:'vapor'},
+  {q:'La masa se mide en gramos y ___.',a:'kilogramos'},
 ];
 const evalPRBank=[
-  {term:'Universo',def:'Todo lo que existe: el espacio y los astros'},
-  {term:'Estrella',def:'Astro que tiene luz propia'},
-  {term:'Planeta',def:'Gira alrededor de una estrella; sin luz propia'},
-  {term:'Satélite',def:'Gira alrededor de un planeta'},
-  {term:'El Sol',def:'La estrella del sistema solar'},
-  {term:'La Tierra',def:'El planeta donde vivimos'},
-  {term:'La Luna',def:'El satélite de la Tierra'},
-  {term:'Galaxia',def:'Enorme grupo de estrellas'},
-  {term:'Vía Láctea',def:'El nombre de nuestra galaxia'},
-  {term:'Cometa',def:'Astro de hielo y polvo con cola'},
-  {term:'Rotación',def:'Giro de la Tierra sobre sí misma (día y noche)'},
-  {term:'Traslación',def:'Giro de la Tierra alrededor del Sol (un año)'},
-  {term:'Sistema Solar',def:'El Sol y los astros que giran a su alrededor'},
-  {term:'Eclipse',def:'Cuando un astro tapa la luz de otro'},
-  {term:'Fases de la Luna',def:'Los distintos aspectos con que vemos la Luna'},
+  {term:'Materia',def:'Todo lo que tiene masa y ocupa un lugar'},
+  {term:'Masa',def:'La cantidad de materia de un cuerpo'},
+  {term:'Volumen',def:'El lugar que ocupa un cuerpo'},
+  {term:'Átomo',def:'La partícula más pequeña de la materia'},
+  {term:'Molécula',def:'Se forma al unirse varios átomos'},
+  {term:'Sólido',def:'Estado con forma y volumen fijos'},
+  {term:'Líquido',def:'Estado que toma la forma del recipiente'},
+  {term:'Gaseoso',def:'Estado sin forma ni volumen fijos'},
+  {term:'Fusión',def:'Paso de sólido a líquido'},
+  {term:'Solidificación',def:'Paso de líquido a sólido'},
+  {term:'Evaporación',def:'Paso de líquido a gas'},
+  {term:'Condensación',def:'Paso de gas a líquido'},
+  {term:'Mezcla',def:'Unión de dos o más sustancias'},
+  {term:'Sustancia pura',def:'Un solo tipo de materia'},
+  {term:'Densidad',def:'Cuánta masa cabe en un volumen'},
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -477,75 +477,75 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'De día no vemos las estrellas, pero de noche el cielo se llena de ellas.'},
-  {txt:'En un lugar de la Tierra es de día mientras que en otro, al mismo tiempo, es de noche.'},
-  {txt:'A lo largo del año, en Honduras hay una época seca y una época lluviosa.'},
-  {txt:'Cada cierto tiempo la Luna se ve completa (llena) y otras veces no se ve (nueva).'},
-  {txt:'Un niño cree que el Sol se mueve alrededor de la Tierra porque lo ve salir y ponerse.'},
-  {txt:'Miramos una estrella muy lejana y la vemos como un puntito, aunque es gigante.'},
+  {txt:'Dejamos un cubo de hielo sobre la mesa y al rato solo queda un charco de agua.'},
+  {txt:'Ponemos agua a hervir y, poco a poco, la olla se va quedando con menos agua.'},
+  {txt:'Un vaso de agua fría "suda" por fuera: aparecen gotitas en la parte de afuera.'},
+  {txt:'Echamos una cucharada de sal en un vaso de agua y la revolvemos hasta que desaparece.'},
+  {txt:'Un globo inflado con aire pesa un poquito más que uno sin inflar.'},
+  {txt:'Un niño cree que el aire no es materia porque no lo puede ver ni agarrar.'},
 ];
 const critCaseQuestions=[
-  '1. ¿Qué fenómeno del universo o del sistema solar se observa en este caso?',
-  '2. ¿Por qué ocurre? Relaciónalo con los astros o los movimientos de la Tierra.',
-  '3. ¿Qué astro o movimiento es el responsable?',
-  '4. ¿Por qué es importante observar y conocer el cielo?',
+  '1. ¿Qué fenómeno de la materia se observa en este caso?',
+  '2. ¿Por qué ocurre? Relaciónalo con los estados o los cambios de la materia.',
+  '3. ¿Qué cambio de estado o propiedad de la materia está presente?',
+  '4. ¿Por qué es importante entender cómo se comporta la materia?',
 ];
 const critCaseGuides=[
-  'Se observa un fenómeno del cielo: las estrellas, el día y la noche, las estaciones o las fases de la Luna.',
-  'Se explica por los movimientos de la Tierra (rotación y traslación), por la luz del Sol o por la enorme distancia de los astros.',
-  'La rotación (día y noche), la traslación (estaciones), la Luna y sus fases, o el Sol como estrella.',
-  'Porque nos ayuda a entender nuestro planeta, medir el tiempo y despertar la curiosidad por la ciencia.',
+  'Se observa un cambio de estado o una propiedad de la materia (fusión, evaporación, condensación, una mezcla o la masa).',
+  'La materia cambia de estado con el calor o el frío, o dos sustancias se mezclan; el aire también es materia porque tiene masa.',
+  'Fusión (hielo→agua), evaporación (agua→vapor), condensación (vapor→gotas), una mezcla (agua con sal) o la masa del aire.',
+  'Porque la materia forma todo lo que nos rodea; entenderla nos ayuda a explicar el mundo y a usar bien los materiales.',
 ];
 const critErrorBank=[
-  {txt:'"Los planetas tienen luz propia igual que las estrellas."',
-   g1:'Los planetas NO tienen luz propia.',
-   g2:'Solo las ESTRELLAS (como el Sol) tienen luz propia.'},
-  {txt:'"La Luna es un planeta que gira alrededor del Sol."',
-   g1:'La Luna es un SATÉLITE, no un planeta.',
-   g2:'La Luna gira alrededor de la TIERRA, no del Sol.'},
-  {txt:'"La rotación de la Tierra produce las estaciones del año."',
-   g1:'La rotación produce el DÍA Y LA NOCHE.',
-   g2:'Las estaciones las produce la TRASLACIÓN.'},
-  {txt:'"El Sol gira alrededor de la Tierra."',
-   g1:'Es la TIERRA la que gira alrededor del Sol.',
-   g2:'Vemos salir y ponerse el Sol por la ROTACIÓN de la Tierra.'},
-  {txt:'"La Luna tiene luz propia."',
-   g1:'La Luna NO tiene luz propia.',
-   g2:'La Luna REFLEJA la luz del Sol.'},
+  {txt:'"El aire no es materia porque no se puede ver ni agarrar."',
+   g1:'El aire SÍ es materia: tiene masa y ocupa un lugar.',
+   g2:'Un globo inflado pesa más y ocupa espacio: eso prueba que el aire es materia.'},
+  {txt:'"La masa y el volumen son lo mismo."',
+   g1:'La MASA es la cantidad de materia.',
+   g2:'El VOLUMEN es el lugar que ocupa; son propiedades distintas.'},
+  {txt:'"La fusión es el paso de líquido a gas."',
+   g1:'La fusión es el paso de SÓLIDO a LÍQUIDO.',
+   g2:'El paso de líquido a gas es la EVAPORACIÓN.'},
+  {txt:'"El agua con sal es una sustancia pura."',
+   g1:'El agua con sal es una MEZCLA.',
+   g2:'Una sustancia pura tiene UN SOLO tipo de materia.'},
+  {txt:'"Un gas tiene forma y volumen fijos igual que un sólido."',
+   g1:'El gas NO tiene forma ni volumen fijos.',
+   g2:'El que tiene forma y volumen fijos es el SÓLIDO.'},
 ];
 const critDecisionBank=[
-  'Para observar bien las estrellas, es mejor hacerlo en la ciudad con muchas luces, o en el campo con el cielo oscuro.',
-  'Para conocer mejor los planetas lejanos, conviene usar un telescopio, o mirar solo a simple vista.',
-  'Para saber la hora aproximada de día, podemos guiarnos por la posición del Sol, o adivinar sin observar.',
-  'Para cuidar la vista al observar el cielo, nunca debemos mirar directamente al Sol, o podemos mirarlo fijamente.',
-  'Para aprender sobre el universo, conviene leer, observar y preguntar, o quedarse con ideas equivocadas.',
+  'Para separar la arena del agua, conviene colarla con un filtro, o dejarla mezclada.',
+  'Para derretir un hielo más rápido, conviene ponerlo al Sol o al calor, o meterlo al congelador.',
+  'Para saber si algo es materia, conviene comprobar si tiene masa y ocupa un lugar, o adivinar por su color.',
+  'Para reducir la basura de materiales, conviene reutilizar y reciclar, o botarlo todo.',
+  'Para medir la masa de un objeto, conviene usar una balanza, o calcularlo a ojo.',
 ];
-const critDecisionGuide='La mejor decisión es la que se apoya en la observación y la ciencia: mirar el cielo en lugares oscuros, usar telescopios, guiarse por el Sol con cuidado (nunca mirarlo directamente) e informarse leyendo y preguntando. Observar y estudiar el universo con curiosidad nos ayuda a entender mejor nuestro planeta y el cielo.';
+const critDecisionGuide='La mejor decisión es la que se apoya en las propiedades de la materia: comprobar si algo tiene masa y ocupa un lugar, usar el calor para fundir o evaporar y el frío para solidificar o condensar, separar las mezclas con filtros o coladores, medir la masa con una balanza y reutilizar o reciclar los materiales para cuidar el ambiente.';
 const critCompareBank=[
-  {a:'Astro que tiene luz propia.',b:'Astro que gira alrededor de una estrella y no tiene luz propia.',
-   ga:'La estrella (como el Sol).',
-   gb:'El planeta.',
-   gr:'Los dos son astros, pero la estrella brilla con luz propia y el planeta solo refleja la luz de su estrella.'},
-  {a:'Giro de la Tierra sobre sí misma.',b:'Giro de la Tierra alrededor del Sol.',
-   ga:'La rotación.',
-   gb:'La traslación.',
-   gr:'Los dos son movimientos de la Tierra, pero la rotación produce el día y la noche y la traslación produce las estaciones.'},
-  {a:'El astro que da luz y calor al sistema solar.',b:'El satélite que gira alrededor de la Tierra.',
-   ga:'El Sol.',
-   gb:'La Luna.',
-   gr:'El Sol es una estrella con luz propia y la Luna es un satélite que refleja la luz del Sol; son astros muy diferentes.'},
+  {a:'La cantidad de materia de un cuerpo.',b:'El lugar que ocupa un cuerpo.',
+   ga:'La masa.',
+   gb:'El volumen.',
+   gr:'Las dos son propiedades generales de la materia, pero la masa es cuánta materia hay y el volumen es cuánto espacio ocupa.'},
+  {a:'Estado con forma y volumen fijos.',b:'Estado que toma la forma del recipiente.',
+   ga:'El sólido.',
+   gb:'El líquido.',
+   gr:'Los dos son estados de la materia, pero el sólido mantiene su forma y el líquido se adapta al recipiente.'},
+  {a:'Materia formada por un solo tipo de sustancia.',b:'Unión de dos o más sustancias.',
+   ga:'La sustancia pura.',
+   gb:'La mezcla.',
+   gr:'Las dos son materia, pero la sustancia pura tiene un solo componente y la mezcla junta varios.'},
 ];
 const critCauseBank=[
-  {cause:'La Tierra gira sobre sí misma (rotación).',guide:'Se produce el día y la noche.'},
-  {cause:'La Tierra gira alrededor del Sol (traslación).',guide:'Se producen las estaciones del año.'},
-  {cause:'La Luna se coloca entre el Sol y la Tierra.',guide:'Ocurre un eclipse de Sol.'},
-  {cause:'El Sol ilumina la Luna desde distintas posiciones.',guide:'Vemos las diferentes fases de la Luna.'},
+  {cause:'Un cubo de hielo recibe calor.',guide:'Se derrite y pasa a líquido: es la fusión.'},
+  {cause:'El agua de una olla hierve mucho tiempo.',guide:'Se evapora y pasa a gas: por eso queda menos agua.'},
+  {cause:'El vapor de agua toca una superficie fría.',guide:'Se condensa y forma gotitas de agua.'},
+  {cause:'Echamos sal en el agua y revolvemos.',guide:'Se forma una mezcla; la sal se disuelve en el agua.'},
 ];
 const critEffectBank=[
-  {effect:'En una parte de la Tierra es de día y en otra es de noche.',guide:'Es efecto de la rotación de la Tierra.'},
-  {effect:'A lo largo del año cambian las estaciones.',guide:'Es efecto de la traslación de la Tierra alrededor del Sol.'},
-  {effect:'De noche vemos las estrellas como puntitos de luz.',guide:'Están tan lejos que se ven pequeñas, aunque muchas son enormes.'},
-  {effect:'La Luna se ve con distintas formas cada semana.',guide:'Son las fases de la Luna, según cómo la ilumina el Sol.'},
+  {effect:'Un charco de agua desaparece con el sol del mediodía.',guide:'El agua se evaporó y pasó al estado gaseoso.'},
+  {effect:'El agua dentro del congelador se vuelve hielo.',guide:'Se solidificó: pasó de líquido a sólido por el frío.'},
+  {effect:'Un globo inflado ocupa espacio y pesa un poco más.',guide:'Porque el aire es materia: tiene masa y volumen.'},
+  {effect:'Al colar el agua con arena, la arena queda en el filtro.',guide:'Se separó la mezcla: la arena no se disuelve en el agua.'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -558,7 +558,7 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el universo y el cielo <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: la materia a tu alrededor <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
@@ -566,7 +566,7 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: observar el cielo <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías para conocer mejor el universo? Explica por qué, relacionándolo con los astros y los movimientos de la Tierra.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: usar la materia <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con las propiedades y los estados de la materia.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
@@ -600,10 +600,10 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: el universo y el cielo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: la materia a tu alrededor</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: observar el cielo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías para conocer mejor el universo? Explica por qué, relacionándolo con los astros y los movimientos de la Tierra.</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: usar la materia</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con las propiedades y los estados de la materia.</p>${lines(2)}`;
   let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué órgano o concepto corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
@@ -624,43 +624,43 @@ function printEvalCrit(){
 
 // ===================== LABORATORIO DE ÓRGANOS =====================
 const parteData={
-  sol:{
-    nombre:'El Sol',icon:'☀️',
-    estructura:{title:'¿Qué es?',info:'• Es una <strong>estrella</strong>: una esfera de gas muy caliente<br>• Está en el <strong>centro</strong> del sistema solar<br>• Es la estrella <strong>más cercana</strong> a la Tierra'},
-    funcion:{title:'¿Qué hace?',info:'• Da <strong>luz y calor</strong> a todo el sistema solar<br>• Hace posible la <strong>vida</strong> en la Tierra<br>• Los planetas <strong>giran</strong> a su alrededor'},
-    ubicacion:{title:'Curiosidad',info:'• Cabrían más de un <strong>millón de Tierras</strong> dentro del Sol<br>• Su luz tarda unos <strong>8 minutos</strong> en llegar a la Tierra<br>• Es una estrella de tamaño mediano'},
-    dato:{title:'Dato curioso',info:'• ¡<strong>Nunca</strong> lo mires directamente: puede dañar tus ojos!<br>• La energía del Sol mueve el clima y las plantas<br>• Sin el Sol, la Tierra sería un lugar oscuro y helado'}
+  solido:{
+    nombre:'El estado sólido',icon:'🧊',
+    estructura:{title:'¿Qué es?',info:'• Estado de la materia con <strong>forma fija</strong><br>• También tiene <strong>volumen fijo</strong><br>• Sus partículas están muy <strong>juntas y ordenadas</strong>'},
+    funcion:{title:'Características',info:'• <strong>Mantiene su forma</strong> aunque lo cambies de lugar<br>• No se puede comprimir fácilmente<br>• Es <strong>duro</strong> o firme al tacto'},
+    ubicacion:{title:'Ejemplos',info:'• El <strong>hielo</strong>, una <strong>piedra</strong>, un <strong>lápiz</strong><br>• Un clavo de hierro, una moneda<br>• La madera de una mesa'},
+    dato:{title:'Dato curioso',info:'• Con <strong>calor</strong>, un sólido puede derretirse (fusión)<br>• El hielo es agua en estado sólido<br>• Los sólidos tienen forma propia'}
   },
-  tierra:{
-    nombre:'La Tierra',icon:'🌍',
-    estructura:{title:'¿Qué es?',info:'• Es el <strong>tercer planeta</strong> desde el Sol<br>• Es un planeta <strong>rocoso</strong> con agua y aire<br>• Su satélite es la <strong>Luna</strong>'},
-    funcion:{title:'¿Qué hace?',info:'• <strong>Gira sobre sí misma</strong> (rotación): día y noche<br>• <strong>Gira alrededor del Sol</strong> (traslación): las estaciones<br>• Es el <strong>único</strong> planeta con vida conocida'},
-    ubicacion:{title:'Curiosidad',info:'• Tiene <strong>agua líquida</strong>, algo muy raro en el universo<br>• Su atmósfera nos protege y nos da aire<br>• Da una vuelta al Sol cada <strong>365 días</strong>'},
-    dato:{title:'Dato curioso',info:'• Desde el espacio se ve <strong>azul</strong> por sus océanos<br>• Es nuestro <strong>hogar</strong>: hay que cuidarlo<br>• Gira a gran velocidad, ¡aunque no lo sintamos!'}
+  liquido:{
+    nombre:'El estado líquido',icon:'💧',
+    estructura:{title:'¿Qué es?',info:'• Estado con <strong>volumen fijo</strong><br>• Pero <strong>no tiene forma fija</strong><br>• Sus partículas están juntas pero se <strong>mueven</strong>'},
+    funcion:{title:'Características',info:'• <strong>Toma la forma del recipiente</strong> que lo contiene<br>• <strong>Fluye</strong> y se puede verter<br>• No se comprime fácilmente'},
+    ubicacion:{title:'Ejemplos',info:'• El <strong>agua</strong>, la <strong>leche</strong>, el <strong>jugo</strong><br>• El aceite, la miel<br>• La gasolina'},
+    dato:{title:'Dato curioso',info:'• Con <strong>calor</strong>, un líquido se evapora (pasa a gas)<br>• Con <strong>frío</strong>, se solidifica (pasa a sólido)<br>• El agua líquida es esencial para la vida'}
   },
-  luna:{
-    nombre:'La Luna',icon:'🌙',
-    estructura:{title:'¿Qué es?',info:'• Es el <strong>satélite natural</strong> de la Tierra<br>• Es un astro <strong>rocoso</strong> sin aire ni agua<br>• <strong>No tiene luz propia</strong>'},
-    funcion:{title:'¿Qué hace?',info:'• <strong>Gira alrededor de la Tierra</strong><br>• <strong>Refleja</strong> la luz del Sol<br>• Cambia de aspecto: son sus <strong>fases</strong>'},
-    ubicacion:{title:'Curiosidad',info:'• Sus fases son: <strong>nueva, creciente, llena y menguante</strong><br>• Influye en las <strong>mareas</strong> del mar<br>• Es el astro que vemos más grande de noche'},
-    dato:{title:'Dato curioso',info:'• El ser humano <strong>llegó a la Luna</strong> en 1969<br>• En la Luna pesarías <strong>mucho menos</strong> que en la Tierra<br>• Siempre nos muestra la <strong>misma cara</strong>'}
+  gaseoso:{
+    nombre:'El estado gaseoso',icon:'💨',
+    estructura:{title:'¿Qué es?',info:'• Estado <strong>sin forma ni volumen fijos</strong><br>• Ocupa <strong>todo el espacio</strong> disponible<br>• Sus partículas están muy <strong>separadas</strong> y se mueven mucho'},
+    funcion:{title:'Características',info:'• Se <strong>expande</strong> y llena el recipiente<br>• Se puede <strong>comprimir</strong><br>• Casi siempre es <strong>invisible</strong>'},
+    ubicacion:{title:'Ejemplos',info:'• El <strong>aire</strong> que respiramos<br>• El <strong>vapor</strong> de agua<br>• El gas de la estufa, el humo'},
+    dato:{title:'Dato curioso',info:'• El aire <strong>es materia</strong>: tiene masa y ocupa un lugar<br>• Un globo inflado lo demuestra<br>• Con <strong>frío</strong>, un gas puede condensarse (pasa a líquido)'}
   },
-  planetas:{
-    nombre:'Los planetas',icon:'🪐',
-    estructura:{title:'¿Qué es?',info:'• Astros que <strong>giran alrededor del Sol</strong><br>• <strong>No tienen luz propia</strong><br>• El sistema solar tiene <strong>ocho</strong>'},
-    funcion:{title:'¿Qué hace?',info:'• Cada uno recorre su <strong>órbita</strong> alrededor del Sol<br>• Algunos tienen <strong>satélites</strong> (lunas)<br>• Se dividen en rocosos y gigantes de gas'},
-    ubicacion:{title:'Curiosidad',info:'• En orden: <strong>Mercurio, Venus, Tierra, Marte, Júpiter, Saturno, Urano, Neptuno</strong><br>• <strong>Júpiter</strong> es el más grande<br>• <strong>Saturno</strong> tiene anillos'},
-    dato:{title:'Dato curioso',info:'• <strong>Marte</strong> es el planeta rojo<br>• <strong>Mercurio</strong> es el más cercano al Sol<br>• Se estudian con <strong>telescopios</strong> y sondas espaciales'}
+  cambios:{
+    nombre:'Los cambios de estado',icon:'🔄',
+    estructura:{title:'¿Qué es?',info:'• Es cuando la materia <strong>pasa de un estado a otro</strong><br>• Ocurre con el <strong>calor</strong> o el <strong>frío</strong><br>• La materia sigue siendo la misma'},
+    funcion:{title:'Características',info:'• <strong>Fusión:</strong> sólido → líquido (se derrite)<br>• <strong>Solidificación:</strong> líquido → sólido (se congela)<br>• <strong>Evaporación:</strong> líquido → gas (hierve)<br>• <strong>Condensación:</strong> gas → líquido (se enfría)'},
+    ubicacion:{title:'Ejemplos',info:'• El <strong>hielo</strong> que se derrite (fusión)<br>• El <strong>agua</strong> que hierve (evaporación)<br>• El <strong>vapor</strong> que empaña un vidrio (condensación)'},
+    dato:{title:'Dato curioso',info:'• Con <strong>calor</strong>: sólido → líquido → gas<br>• Con <strong>frío</strong>: gas → líquido → sólido<br>• ¡El agua puede estar en los tres estados!'}
   },
-  universo:{
-    nombre:'El universo',icon:'🌌',
-    estructura:{title:'¿Qué es?',info:'• Es <strong>todo lo que existe</strong>: el espacio y los astros<br>• Es tan grande que no conocemos sus <strong>límites</strong><br>• Contiene millones de <strong>galaxias</strong>'},
-    funcion:{title:'¿Qué hace?',info:'• Reúne las <strong>estrellas, planetas, satélites y cometas</strong><br>• Las estrellas se agrupan en <strong>galaxias</strong><br>• Nuestra galaxia es la <strong>Vía Láctea</strong>'},
-    ubicacion:{title:'Curiosidad',info:'• Se observa con <strong>telescopios</strong><br>• Muchas estrellas que ves ya son muy <strong>antiguas</strong><br>• El universo sigue <strong>creciendo</strong>'},
-    dato:{title:'Dato curioso',info:'• Hay <strong>más estrellas</strong> que granos de arena en las playas<br>• La luz de algunas estrellas tarda <strong>años</strong> en llegar<br>• ¡Todavía queda muchísimo por descubrir!'}
+  mezclas:{
+    nombre:'Las mezclas',icon:'🥤',
+    estructura:{title:'¿Qué es?',info:'• Se forma al <strong>juntar dos o más</strong> sustancias<br>• Las sustancias <strong>no cambian</strong>, solo se juntan<br>• Se pueden volver a <strong>separar</strong>'},
+    funcion:{title:'Características',info:'• <strong>Homogénea:</strong> no se distinguen los componentes (agua con azúcar)<br>• <strong>Heterogénea:</strong> sí se ven (una ensalada, agua con arena)<br>• Se separan con filtros, coladores o dejando reposar'},
+    ubicacion:{title:'Ejemplos',info:'• El <strong>agua con sal</strong>, el <strong>aire</strong><br>• Una <strong>ensalada</strong>, el café con leche<br>• Agua con arena'},
+    dato:{title:'Dato curioso',info:'• Una <strong>sustancia pura</strong> tiene un solo tipo de materia (el oro)<br>• El agua de mar es una mezcla de agua y sales<br>• Separar mezclas es muy útil en la vida diaria'}
   }
 };
-let labParte='sol',labAspecto='estructura';
+let labParte='solido',labAspecto='estructura';
 function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
 function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
 function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAspecto];document.getElementById('lab-sentence').innerHTML=`🔬 Explorando: <strong>${data.nombre}</strong> → <strong>${asp.title}</strong>`;document.getElementById('lab-display').innerHTML=`<div class="lab-cont-header">${data.icon} ${data.nombre}</div><div class="lab-asp-title">${asp.title}</div><div class="lab-asp-info">${asp.info}</div>`;}
