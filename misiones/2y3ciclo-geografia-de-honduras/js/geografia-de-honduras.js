@@ -46,7 +46,7 @@ function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.pu
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
 function toggleAchPanel(){sfx('click');document.getElementById('achPanel').classList.toggle('open');}
 function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t);}t.textContent=msg;t.style.display='block';clearTimeout(t._tid);t._tid=setTimeout(()=>t.style.display='none',3200);}
-function launchConfetti(){const colors=['#16a34a','#4ade80','#0d9488','#5eead4','#00b894'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
+function launchConfetti(){const colors=['#0369a1','#38bdf8','#15803d','#4ade80','#0ea5e9'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
 const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador 🧭'},{t:55,n:'Viajero 🎒'},{t:90,n:'Cartógrafo 🗺️'},{t:130,n:'Investigador 🔎'},{t:165,n:'Geógrafo 🏅'},{t:190,n:'Maestro de Honduras 🏆'}];
@@ -61,20 +61,20 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Energía',a:'⚡ La <strong>capacidad de producir cambios</strong> o realizar un trabajo.'},
-  {w:'Energía luminosa',a:'💡 La energía de la <strong>luz</strong> (el Sol, una lámpara).'},
-  {w:'Energía calorífica',a:'🔥 La energía del <strong>calor</strong> (una fogata, la estufa).'},
-  {w:'Energía eléctrica',a:'🔌 La energía de la <strong>electricidad</strong>; mueve los aparatos.'},
-  {w:'Energía sonora',a:'🔊 La energía del <strong>sonido</strong> (la música, la voz).'},
-  {w:'Energía mecánica',a:'🏃 La energía del <strong>movimiento</strong> (un carro, el viento).'},
-  {w:'Fuente de energía',a:'🔋 El <strong>recurso</strong> de donde obtenemos la energía.'},
-  {w:'Fuente renovable',a:'♻️ Fuente que <strong>no se agota</strong>: el Sol, el viento, el agua.'},
-  {w:'Fuente no renovable',a:'🛢️ Fuente que <strong>se agota</strong> y contamina: petróleo, carbón, gas.'},
-  {w:'El Sol',a:'☀️ La <strong>principal fuente de energía</strong> de la Tierra; da luz y calor.'},
-  {w:'Transformación',a:'🔄 La energía <strong>no se crea ni se destruye</strong>: solo se transforma de una forma a otra.'},
-  {w:'Energía hidroeléctrica',a:'💧 Electricidad obtenida de la <strong>fuerza del agua</strong> (represa El Cajón).'},
-  {w:'Ahorro de energía',a:'💚 Usar la energía con cuidado: <strong>apagar</strong> luces y aparatos que no se usan.'},
-  {w:'Fotosíntesis',a:'🌱 Las plantas usan la <strong>energía del Sol</strong> para fabricar su alimento.'},
+  {w:'Honduras',a:'🇭🇳 País de <strong>Centroamérica</strong> con unos <strong>112,492 km²</strong>; «el corazón de Centroamérica».'},
+  {w:'Límites',a:'🧭 <strong>Norte:</strong> Mar Caribe · <strong>Sur:</strong> Golfo de Fonseca, Nicaragua y El Salvador · <strong>Este:</strong> Nicaragua · <strong>Oeste:</strong> Guatemala y El Salvador.'},
+  {w:'Relieve',a:'⛰️ Honduras es un país <strong>montañoso</strong>: cerca de las <strong>tres cuartas partes</strong> son montañas.'},
+  {w:'Cerro Las Minas',a:'🏔️ El <strong>punto más alto</strong> del país (2,870 m), en la Montaña de <strong>Celaque</strong>, Lempira.'},
+  {w:'Vertiente del Caribe',a:'🌊 Agrupa los ríos <strong>largos</strong>: Ulúa, Chamelecón, Aguán, Patuca y Coco o Segovia.'},
+  {w:'Vertiente del Pacífico',a:'🌅 Agrupa los ríos <strong>cortos</strong> que llegan al Golfo de Fonseca: Choluteca, Goascorán y Nacaome.'},
+  {w:'Río Coco o Segovia',a:'🏞️ El río <strong>más largo</strong> de Honduras; marca la frontera con Nicaragua.'},
+  {w:'Lago de Yojoa',a:'💧 El <strong>único lago natural</strong> del país; famoso por sus aves y peces.'},
+  {w:'Laguna de Caratasca',a:'🌴 La laguna <strong>más grande</strong>, en La Mosquitia (Gracias a Dios).'},
+  {w:'Clima',a:'🌦️ <strong>Tropical</strong>: cálido en las costas y templado en las montañas; estación lluviosa y seca.'},
+  {w:'Departamentos',a:'🏛️ Honduras se divide en <strong>18 departamentos</strong> y estos en <strong>298 municipios</strong>.'},
+  {w:'Tegucigalpa',a:'🏙️ La <strong>capital</strong>, en el municipio del Distrito Central (con Comayagüela).'},
+  {w:'Islas de la Bahía',a:'🏝️ El departamento <strong>insular</strong>: Roatán, Utila y Guanaja.'},
+  {w:'Golfo de Fonseca',a:'🌅 La entrada del <strong>Océano Pacífico</strong>; compartido con El Salvador y Nicaragua.'},
 ];
 let fcIdx=0;
 function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es la energía?',o:['a) Un tipo de materia','b) La capacidad de producir cambios o realizar un trabajo','c) Un color','d) Un ser vivo'],c:1},
-  {q:'¿Qué forma de energía es la luz?',o:['a) Sonora','b) Mecánica','c) Luminosa','d) Eléctrica'],c:2},
-  {q:'¿Qué forma de energía es el calor?',o:['a) Calorífica','b) Sonora','c) Luminosa','d) Mecánica'],c:0},
-  {q:'¿Qué forma de energía produce movimiento?',o:['a) Sonora','b) Mecánica','c) Luminosa','d) Calorífica'],c:1},
-  {q:'¿Cuál es la principal fuente de energía de la Tierra?',o:['a) El viento','b) El petróleo','c) El Sol','d) El carbón'],c:2},
-  {q:'¿Cuál es una fuente de energía renovable?',o:['a) El petróleo','b) El carbón','c) El viento','d) El gas natural'],c:2},
-  {q:'¿Cuál es una fuente de energía no renovable?',o:['a) El Sol','b) El petróleo','c) El agua','d) El viento'],c:1},
-  {q:'La energía eléctrica de una bombilla se transforma en energía…',o:['a) sonora','b) luminosa','c) mecánica','d) química'],c:1},
-  {q:'¿Por qué debemos ahorrar energía?',o:['a) Porque nunca se acaba','b) Porque muchas fuentes se agotan y contaminan','c) Porque es gratis','d) Porque no sirve'],c:1},
+  {q:'¿En qué región de América está Honduras?',o:['a) Sudamérica','b) Centroamérica','c) Norteamérica','d) El Caribe insular'],c:1},
+  {q:'¿Cuál es el punto más alto de Honduras?',o:['a) El Cerro Las Minas','b) El Pico Bonito','c) El Cerro Azul','d) La Montaña de la Flor'],c:0},
+  {q:'¿Cuál es el río más largo del país?',o:['a) El Ulúa','b) El Choluteca','c) El Coco o Segovia','d) El Aguán'],c:2},
+  {q:'¿Cuál es el único lago natural de Honduras?',o:['a) La Laguna de Caratasca','b) El Cajón','c) El Lago de Yojoa','d) El Golfo de Fonseca'],c:2},
+  {q:'¿En cuántos departamentos se divide Honduras?',o:['a) 15','b) 18','c) 22','d) 298'],c:1},
+  {q:'¿Cuál es la capital de Honduras?',o:['a) San Pedro Sula','b) Comayagua','c) Tegucigalpa','d) Choluteca'],c:2},
+  {q:'¿Con qué mar limita Honduras al norte?',o:['a) El Océano Pacífico','b) El Mar Caribe','c) El Golfo de Fonseca','d) El Mar Mediterráneo'],c:1},
+  {q:'¿Qué río pertenece a la vertiente del Pacífico?',o:['a) El Ulúa','b) El Patuca','c) El Choluteca','d) El Aguán'],c:2},
+  {q:'¿Cuál es el departamento insular de Honduras?',o:['a) Gracias a Dios','b) Islas de la Bahía','c) Atlántida','d) Valle'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -102,14 +102,14 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Renovable','No renovable'],headA:'♻️ Renovable',headB:'🛢️ No renovable',colA:'ren',colB:'noren',
-   words:[{w:'El Sol',t:'ren'},{w:'El petróleo',t:'noren'},{w:'El viento',t:'ren'},{w:'El carbón',t:'noren'},{w:'El agua',t:'ren'},{w:'El gas natural',t:'noren'},{w:'La biomasa',t:'ren'},{w:'Se agota',t:'noren'},{w:'No se agota',t:'ren'},{w:'Contamina más',t:'noren'}]},
-  {label:['Forma de energía','No es energía',],headA:'⚡ Forma de energía',headB:'🚫 No es energía',colA:'ene',colB:'no',
-   words:[{w:'La luz',t:'ene'},{w:'Una piedra',t:'no'},{w:'El calor',t:'ene'},{w:'El agua',t:'no'},{w:'El sonido',t:'ene'},{w:'Una silla',t:'no'},{w:'El movimiento',t:'ene'},{w:'Un árbol',t:'no'},{w:'La electricidad',t:'ene'},{w:'Un libro',t:'no'}]},
-  {label:['Da luz o calor','Da movimiento o sonido'],headA:'💡 Luz / calor',headB:'🏃 Movimiento / sonido',colA:'lc',colB:'ms',
-   words:[{w:'Una lámpara',t:'lc'},{w:'Un carro andando',t:'ms'},{w:'Una fogata',t:'lc'},{w:'Un parlante',t:'ms'},{w:'El Sol',t:'lc'},{w:'El viento',t:'ms'},{w:'La estufa',t:'lc'},{w:'La música',t:'ms'},{w:'Una vela',t:'lc'},{w:'Una pelota rodando',t:'ms'}]},
-  {label:['Ahorra energía','Gasta energía'],headA:'💚 Ahorra energía',headB:'⚠️ Gasta de más',colA:'ahorra',colB:'gasta',
-   words:[{w:'Apagar la luz al salir',t:'ahorra'},{w:'Dejar la tele encendida sin ver',t:'gasta'},{w:'Usar la luz del día',t:'ahorra'},{w:'Dejar el cargador conectado',t:'gasta'},{w:'Usar focos ahorradores',t:'ahorra'},{w:'Abrir el refri muchas veces',t:'gasta'},{w:'Desconectar aparatos que no se usan',t:'ahorra'},{w:'Dejar luces encendidas de día',t:'gasta'}]},
+  {label:['Vertiente del Caribe','Vertiente del Pacífico'],headA:'🌊 Vertiente del Caribe',headB:'🌅 Vertiente del Pacífico',colA:'car',colB:'pac',
+   words:[{w:'Río Ulúa',t:'car'},{w:'Río Choluteca',t:'pac'},{w:'Río Patuca',t:'car'},{w:'Río Goascorán',t:'pac'},{w:'Río Aguán',t:'car'},{w:'Río Nacaome',t:'pac'},{w:'Río Chamelecón',t:'car'},{w:'Río Coco o Segovia',t:'car'}]},
+  {label:['Forma de relieve','Forma de agua'],headA:'⛰️ Relieve',headB:'💧 Aguas',colA:'rel',colB:'agua',
+   words:[{w:'Montaña',t:'rel'},{w:'Río',t:'agua'},{w:'Valle',t:'rel'},{w:'Lago',t:'agua'},{w:'Cordillera',t:'rel'},{w:'Laguna',t:'agua'},{w:'Llanura',t:'rel'},{w:'Golfo',t:'agua'},{w:'Cerro',t:'rel'},{w:'Mar',t:'agua'}]},
+  {label:['Costa Norte (Caribe)','Costa Sur (Pacífico)'],headA:'🌊 Costa Norte',headB:'🌅 Costa Sur',colA:'nor',colB:'sur',
+   words:[{w:'Puerto Cortés',t:'nor'},{w:'San Lorenzo',t:'sur'},{w:'La Ceiba',t:'nor'},{w:'Golfo de Fonseca',t:'sur'},{w:'Trujillo',t:'nor'},{w:'Amapala',t:'sur'},{w:'Tela',t:'nor'},{w:'Isla del Tigre',t:'sur'}]},
+  {label:['Departamento','Ciudad'],headA:'🏛️ Departamento',headB:'🏙️ Ciudad',colA:'dep',colB:'ciu',
+   words:[{w:'Cortés',t:'dep'},{w:'San Pedro Sula',t:'ciu'},{w:'Atlántida',t:'dep'},{w:'La Ceiba',t:'ciu'},{w:'Olancho',t:'dep'},{w:'Juticalpa',t:'ciu'},{w:'Gracias a Dios',t:'dep'},{w:'Puerto Lempira',t:'ciu'}]},
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -119,14 +119,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['La','energía','es','la','capacidad','de','producir','cambios.'],c:1,art:'La capacidad de producir cambios'},
-  {s:['El','Sol','es','la','principal','fuente','de','energía.'],c:1,art:'La principal fuente de energía de la Tierra'},
-  {s:['La','energía','luminosa','es','la','de','la','luz.'],c:2,art:'Forma de energía de la luz'},
-  {s:['El','viento','es','una','fuente','renovable','de','energía.'],c:5,art:'Fuente de energía que no se agota'},
-  {s:['El','petróleo','es','una','fuente','no','renovable.'],c:1,art:'Fuente de energía que se agota'},
-  {s:['La','energía','se','transforma','de','una','forma','a','otra.'],c:3,art:'La energía no se crea ni se destruye, solo se…'},
-  {s:['La','energía','eléctrica','mueve','los','aparatos.'],c:2,art:'Forma de energía de los aparatos'},
-  {s:['Debemos','ahorrar','energía','para','cuidar','el','planeta.'],c:1,art:'Usar la energía con cuidado'},
+  {s:['Honduras','está','en','Centroamérica.'],c:3,art:'La región de América donde está Honduras'},
+  {s:['El','río','Coco','es','el','más','largo','del','país.'],c:2,art:'El río más largo de Honduras'},
+  {s:['El','Lago','de','Yojoa','es','el','único','lago','natural.'],c:3,art:'El único lago natural del país'},
+  {s:['La','capital','de','Honduras','es','Tegucigalpa.'],c:5,art:'La capital del país'},
+  {s:['Honduras','tiene','dieciocho','departamentos.'],c:2,art:'El número de departamentos'},
+  {s:['El','Mar','Caribe','limita','al','norte','del','país.'],c:2,art:'El mar que limita al norte de Honduras'},
+  {s:['Roatán','pertenece','a','las','Islas','de','la','Bahía.'],c:0,art:'La isla más conocida del Caribe hondureño'},
+  {s:['El','clima','de','Honduras','es','tropical.'],c:5,art:'El tipo de clima del país'},
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -136,14 +136,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'La ___ es la capacidad de producir cambios.',opts:['materia','energía','masa'],c:1},
-  {s:'La energía de la luz es la ___.',opts:['sonora','luminosa','mecánica'],c:1},
-  {s:'La energía del calor es la ___.',opts:['calorífica','sonora','eléctrica'],c:0},
-  {s:'La principal fuente de energía de la Tierra es el ___.',opts:['viento','Sol','petróleo'],c:1},
-  {s:'El viento es una fuente ___.',opts:['no renovable','renovable','agotada'],c:1},
-  {s:'El petróleo es una fuente ___.',opts:['renovable','no renovable','limpia'],c:1},
-  {s:'La energía no se crea ni se destruye: solo se ___.',opts:['pierde','transforma','acaba'],c:1},
-  {s:'Debemos ___ energía para cuidar el planeta.',opts:['gastar','ahorrar','perder'],c:1},
+  {s:'Honduras está en ___.',opts:['Sudamérica','Centroamérica','Norteamérica'],c:1},
+  {s:'El punto más alto es el Cerro ___.',opts:['Las Minas','Bonito','Azul'],c:0},
+  {s:'El río más largo es el ___.',opts:['Ulúa','Coco o Segovia','Choluteca'],c:1},
+  {s:'El único lago natural es el Lago de ___.',opts:['Caratasca','Yojoa','Fonseca'],c:1},
+  {s:'Honduras tiene ___ departamentos.',opts:['16','18','20'],c:1},
+  {s:'La capital de Honduras es ___.',opts:['San Pedro Sula','Tegucigalpa','Comayagua'],c:1},
+  {s:'Al norte, Honduras limita con el ___.',opts:['Mar Caribe','Océano Pacífico','Golfo de Fonseca'],c:0},
+  {s:'El río Choluteca pertenece a la vertiente del ___.',opts:['Caribe','Pacífico','Atlántico'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -152,9 +152,9 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
 const routeSets=[
-  {label:'La energía del Sol hasta ti (en orden)',steps:['El Sol da energía','Las plantas la captan (fotosíntesis)','Los animales comen plantas','Las personas comen alimentos','Tu cuerpo se mueve']},
-  {label:'La linterna: transformación (en orden)',steps:['La pila guarda energía química','Se transforma en energía eléctrica','La eléctrica pasa al foco','El foco da energía luminosa (luz)']},
-  {label:'La hidroeléctrica (en orden)',steps:['La lluvia llena la represa','El agua cae con fuerza','El agua mueve una turbina','Se genera energía eléctrica','La electricidad llega a tu casa']},
+  {label:'De la división más grande a la más pequeña',steps:['País (Honduras)','Departamento','Municipio','Aldea','Caserío']},
+  {label:'El viaje de una gota: de la montaña al Caribe',steps:['Llueve en la montaña','El agua baja por las quebradas','Se une al río Ulúa','El río cruza el Valle de Sula','Desemboca en el Mar Caribe']},
+  {label:'La costa norte, de oeste a este',steps:['Puerto Cortés','Tela','La Ceiba','Trujillo','La Mosquitia']},
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -165,28 +165,28 @@ function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.
 
 // Widget 2: Identifica el concepto
 const neuronPartes=[
-  {desc:'La capacidad de producir cambios o realizar un trabajo',ans:'Energía',opts:['Energía','Materia','Masa','Volumen']},
-  {desc:'La forma de energía de la luz',ans:'Luminosa',opts:['Luminosa','Sonora','Mecánica','Eléctrica']},
-  {desc:'La forma de energía del calor',ans:'Calorífica',opts:['Calorífica','Sonora','Luminosa','Mecánica']},
-  {desc:'La forma de energía del movimiento',ans:'Mecánica',opts:['Mecánica','Sonora','Luminosa','Calorífica']},
-  {desc:'La principal fuente de energía de la Tierra',ans:'El Sol',opts:['El Sol','El viento','El petróleo','El carbón']},
-  {desc:'Fuente de energía que no se agota',ans:'Renovable',opts:['Renovable','No renovable','Eléctrica','Química']},
-  {desc:'Fuente de energía que se agota (petróleo, carbón)',ans:'No renovable',opts:['No renovable','Renovable','Solar','Eólica']},
-  {desc:'Usar la energía con cuidado, sin desperdiciarla',ans:'Ahorro',opts:['Ahorro','Gasto','Derroche','Consumo']},
+  {desc:'El punto más alto de Honduras (2,870 m)',ans:'Cerro Las Minas',opts:['Cerro Las Minas','Pico Bonito','Cerro Azul','Montaña de la Flor']},
+  {desc:'El único lago natural del país',ans:'Lago de Yojoa',opts:['Lago de Yojoa','Laguna de Caratasca','El Cajón','Golfo de Fonseca']},
+  {desc:'El río más largo; marca la frontera con Nicaragua',ans:'Río Coco o Segovia',opts:['Río Coco o Segovia','Río Ulúa','Río Choluteca','Río Aguán']},
+  {desc:'La capital de Honduras',ans:'Tegucigalpa',opts:['Tegucigalpa','San Pedro Sula','Comayagua','Choluteca']},
+  {desc:'El departamento insular del Caribe',ans:'Islas de la Bahía',opts:['Islas de la Bahía','Gracias a Dios','Atlántida','Valle']},
+  {desc:'La laguna más grande, en La Mosquitia',ans:'Laguna de Caratasca',opts:['Laguna de Caratasca','Lago de Yojoa','Golfo de Fonseca','Laguna de Alvarado']},
+  {desc:'La entrada del Océano Pacífico, al sur del país',ans:'Golfo de Fonseca',opts:['Golfo de Fonseca','Mar Caribe','Bahía de Trujillo','Lago de Yojoa']},
+  {desc:'El puerto más importante de Honduras, en el Caribe',ans:'Puerto Cortés',opts:['Puerto Cortés','San Lorenzo','Amapala','La Ceiba']},
 ];
 let neuronIdx=0,neuronDone=false;
-function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los conceptos de la energía identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los lugares de Honduras identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
 function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Concepto → Significado
 const neuroPairs=[
-  {trans:'Energía luminosa',func:'La energía de la luz',opts:['La energía de la luz','La energía del calor','La energía del sonido','La energía del movimiento']},
-  {trans:'Energía calorífica',func:'La energía del calor',opts:['La energía del calor','La energía de la luz','La energía del movimiento','La energía del sonido']},
-  {trans:'Energía mecánica',func:'La energía del movimiento',opts:['La energía del movimiento','La energía del calor','La energía de la luz','La energía del sonido']},
-  {trans:'El Sol',func:'La principal fuente de energía de la Tierra',opts:['La principal fuente de energía de la Tierra','Una fuente no renovable','Un tipo de aparato','Una forma de ahorro']},
-  {trans:'El petróleo',func:'Una fuente de energía no renovable',opts:['Una fuente de energía no renovable','Una fuente renovable','Una forma de energía','Un modo de ahorrar']},
+  {trans:'El Lago de Yojoa',func:'El único lago natural de Honduras',opts:['El único lago natural de Honduras','La laguna más grande del país','El punto más alto del país','El río más largo del país']},
+  {trans:'El Cerro Las Minas',func:'El punto más alto del país (2,870 m)',opts:['El punto más alto del país (2,870 m)','El único lago natural','Un puerto del Caribe','La capital de Honduras']},
+  {trans:'El Río Ulúa',func:'Riega el fértil Valle de Sula',opts:['Riega el fértil Valle de Sula','Desemboca en el Golfo de Fonseca','Es el punto más alto','Es una laguna costera']},
+  {trans:'La Mosquitia',func:'La región oriental de grandes bosques, poco poblada',opts:['La región oriental de grandes bosques, poco poblada','La región más poblada del país','Una isla del Caribe','Un volcán del sur']},
+  {trans:'El Distrito Central',func:'El municipio de la capital (Tegucigalpa y Comayagüela)',opts:['El municipio de la capital (Tegucigalpa y Comayagüela)','El departamento insular','El puerto más importante','El lago más grande']},
 ];
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
@@ -195,12 +195,12 @@ function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: Fuente → ¿Renovable o no renovable?
 const enfermedadData=[
-  {disease:'El Sol',characteristic:'Renovable',opts:['Renovable','No renovable']},
-  {disease:'El petróleo',characteristic:'No renovable',opts:['No renovable','Renovable']},
-  {disease:'El viento',characteristic:'Renovable',opts:['Renovable','No renovable']},
-  {disease:'El carbón',characteristic:'No renovable',opts:['No renovable','Renovable']},
-  {disease:'El agua de una represa',characteristic:'Renovable',opts:['Renovable','No renovable']},
-  {disease:'El gas natural',characteristic:'No renovable',opts:['No renovable','Renovable']},
+  {disease:'Río Ulúa',characteristic:'Vertiente del Caribe',opts:['Vertiente del Caribe','Vertiente del Pacífico']},
+  {disease:'Río Choluteca',characteristic:'Vertiente del Pacífico',opts:['Vertiente del Pacífico','Vertiente del Caribe']},
+  {disease:'Río Patuca',characteristic:'Vertiente del Caribe',opts:['Vertiente del Caribe','Vertiente del Pacífico']},
+  {disease:'Río Goascorán',characteristic:'Vertiente del Pacífico',opts:['Vertiente del Pacífico','Vertiente del Caribe']},
+  {disease:'Río Aguán',characteristic:'Vertiente del Caribe',opts:['Vertiente del Caribe','Vertiente del Pacífico']},
+  {disease:'Río Nacaome',characteristic:'Vertiente del Pacífico',opts:['Vertiente del Pacífico','Vertiente del Caribe']},
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -209,12 +209,12 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Renovable','No renovable'],btnA:'♻️ Renovable',btnB:'🛢️ No renovable',colA:'ren',colB:'noren',
-   words:[{w:'El Sol',t:'ren'},{w:'El petróleo',t:'noren'},{w:'El viento',t:'ren'},{w:'El carbón',t:'noren'},{w:'El agua',t:'ren'},{w:'El gas natural',t:'noren'},{w:'La biomasa',t:'ren'},{w:'La gasolina',t:'noren'},{w:'La energía solar',t:'ren'},{w:'El diésel',t:'noren'}]},
-  {label:['Es energía','No es energía'],btnA:'⚡ Es energía',btnB:'🚫 No es energía',colA:'ene',colB:'no',
-   words:[{w:'La luz',t:'ene'},{w:'Una piedra',t:'no'},{w:'El calor',t:'ene'},{w:'El agua',t:'no'},{w:'El sonido',t:'ene'},{w:'Una silla',t:'no'},{w:'El movimiento',t:'ene'},{w:'Un árbol',t:'no'},{w:'La electricidad',t:'ene'},{w:'Un libro',t:'no'}]},
-  {label:['Ahorra','Gasta de más'],btnA:'💚 Ahorra',btnB:'⚠️ Gasta',colA:'ahorra',colB:'gasta',
-   words:[{w:'Apagar la luz al salir',t:'ahorra'},{w:'Dejar la tele encendida sin ver',t:'gasta'},{w:'Usar la luz del día',t:'ahorra'},{w:'Dejar luces prendidas de día',t:'gasta'},{w:'Focos ahorradores',t:'ahorra'},{w:'Abrir el refri a cada rato',t:'gasta'},{w:'Desconectar el cargador',t:'ahorra'},{w:'Dejar el ventilador solo',t:'gasta'},{w:'Aprovechar el viento fresco',t:'ahorra'},{w:'Planchar prenda por prenda',t:'gasta'}]},
+  {label:['Caribe','Pacífico'],btnA:'🌊 Caribe',btnB:'🌅 Pacífico',colA:'car',colB:'pac',
+   words:[{w:'Río Ulúa',t:'car'},{w:'Río Choluteca',t:'pac'},{w:'Río Patuca',t:'car'},{w:'Río Goascorán',t:'pac'},{w:'Río Chamelecón',t:'car'},{w:'Río Nacaome',t:'pac'},{w:'Puerto Cortés',t:'car'},{w:'San Lorenzo',t:'pac'},{w:'La Ceiba',t:'car'},{w:'Amapala',t:'pac'}]},
+  {label:['Relieve','Aguas'],btnA:'⛰️ Relieve',btnB:'💧 Aguas',colA:'rel',colB:'agua',
+   words:[{w:'Montaña',t:'rel'},{w:'Río',t:'agua'},{w:'Valle',t:'rel'},{w:'Lago',t:'agua'},{w:'Cordillera',t:'rel'},{w:'Laguna',t:'agua'},{w:'Llanura',t:'rel'},{w:'Golfo',t:'agua'},{w:'Cerro',t:'rel'},{w:'Mar',t:'agua'}]},
+  {label:['Departamento','Ciudad'],btnA:'🏛️ Departamento',btnB:'🏙️ Ciudad',colA:'dep',colB:'ciu',
+   words:[{w:'Cortés',t:'dep'},{w:'San Pedro Sula',t:'ciu'},{w:'Atlántida',t:'dep'},{w:'La Ceiba',t:'ciu'},{w:'Olancho',t:'dep'},{w:'Juticalpa',t:'ciu'},{w:'Yoro',t:'dep'},{w:'El Progreso',t:'ciu'},{w:'Copán',t:'dep'},{w:'Santa Rosa de Copán',t:'ciu'}]},
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -227,46 +227,46 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'La energía es la capacidad de producir cambios o realizar un trabajo.',type:'La energía'},
-  {s:'La energía luminosa es la de la luz.',type:'Energía luminosa'},
-  {s:'La energía calorífica es la del calor.',type:'Energía calorífica'},
-  {s:'La energía mecánica es la del movimiento.',type:'Energía mecánica'},
-  {s:'El Sol es la principal fuente de energía de la Tierra.',type:'El Sol'},
-  {s:'El viento es una fuente de energía renovable.',type:'Fuente renovable'},
-  {s:'El petróleo es una fuente de energía no renovable.',type:'Fuente no renovable'},
-  {s:'La energía no se crea ni se destruye, solo se transforma.',type:'Transformación'},
-  {s:'La energía eléctrica mueve los aparatos.',type:'Energía eléctrica'},
-  {s:'Debemos ahorrar energía para cuidar el planeta.',type:'El ahorro de energía'},
+  {s:'Honduras está en el centro de América, en Centroamérica.',type:'Ubicación de Honduras'},
+  {s:'El Cerro Las Minas es el punto más alto del país.',type:'Cerro Las Minas'},
+  {s:'El río Coco o Segovia es el más largo de Honduras.',type:'Río Coco o Segovia'},
+  {s:'El Lago de Yojoa es el único lago natural.',type:'Lago de Yojoa'},
+  {s:'Honduras se divide en 18 departamentos.',type:'División política'},
+  {s:'La capital de Honduras es Tegucigalpa.',type:'La capital'},
+  {s:'El Mar Caribe limita al norte de Honduras.',type:'Límite norte'},
+  {s:'El Golfo de Fonseca está al sur del país.',type:'Golfo de Fonseca'},
+  {s:'Las Islas de la Bahía son Roatán, Utila y Guanaja.',type:'Islas de la Bahía'},
+  {s:'El clima de Honduras es tropical.',type:'El clima'},
 ];
 const classifyTaskDB=[
-  {w:'El Sol',gen:'Principal fuente de energía de la Tierra',n:'Renovable',g:'No se agota; es limpia',t:'Da luz y calor'},
-  {w:'El viento',gen:'Fuente que mueve los molinos',n:'Renovable',g:'No se agota',t:'Produce energía eólica'},
-  {w:'El agua',gen:'Fuerza usada en las represas',n:'Renovable',g:'No se agota si se cuida',t:'Produce energía hidroeléctrica'},
-  {w:'El petróleo',gen:'Combustible fósil',n:'No renovable',g:'Se agota y contamina',t:'De él se saca la gasolina'},
-  {w:'El carbón',gen:'Combustible fósil sólido',n:'No renovable',g:'Se agota y contamina',t:'Se quema para producir energía'},
+  {w:'Río Ulúa',gen:'Río caudaloso que riega el Valle de Sula',n:'Río (vertiente del Caribe)',g:'Noroccidente del país',t:'Uno de los más importantes'},
+  {w:'Lago de Yojoa',gen:'El único lago natural de Honduras',n:'Lago',g:'Entre Comayagua, Cortés y Santa Bárbara',t:'Famoso por sus aves y peces'},
+  {w:'Cerro Las Minas',gen:'El punto más alto del país (2,870 m)',n:'Montaña',g:'Montaña de Celaque, Lempira',t:'También se le llama Pico Celaque'},
+  {w:'Golfo de Fonseca',gen:'Entrada del Océano Pacífico',n:'Golfo',g:'Sur del país',t:'Compartido con El Salvador y Nicaragua'},
+  {w:'Islas de la Bahía',gen:'Departamento insular del Caribe',n:'Islas',g:'Frente a la costa norte',t:'Roatán, Utila y Guanaja'},
 ];
 const completeTaskDB=[
-  {s:'La ___ es la capacidad de producir cambios.',opts:['materia','energía','masa'],ans:'energía'},
-  {s:'La energía de la luz es la ___.',opts:['sonora','luminosa','mecánica'],ans:'luminosa'},
-  {s:'La energía del calor es la ___.',opts:['calorífica','sonora','eléctrica'],ans:'calorífica'},
-  {s:'La principal fuente de energía es el ___.',opts:['viento','Sol','petróleo'],ans:'Sol'},
-  {s:'El viento es una fuente ___.',opts:['no renovable','renovable','agotada'],ans:'renovable'},
-  {s:'El petróleo es una fuente ___.',opts:['renovable','no renovable','limpia'],ans:'no renovable'},
-  {s:'La energía solo se ___ de una forma a otra.',opts:['pierde','transforma','acaba'],ans:'transforma'},
-  {s:'Debemos ___ energía para cuidar el planeta.',opts:['gastar','ahorrar','perder'],ans:'ahorrar'},
+  {s:'Honduras está en ___.',opts:['Sudamérica','Centroamérica','Norteamérica'],ans:'Centroamérica'},
+  {s:'El punto más alto es el Cerro ___.',opts:['Las Minas','Bonito','Azul'],ans:'Las Minas'},
+  {s:'El río más largo es el ___.',opts:['Ulúa','Coco o Segovia','Choluteca'],ans:'Coco o Segovia'},
+  {s:'El único lago natural es el Lago de ___.',opts:['Caratasca','Yojoa','Fonseca'],ans:'Yojoa'},
+  {s:'Honduras tiene ___ departamentos.',opts:['16','18','20'],ans:'18'},
+  {s:'La capital de Honduras es ___.',opts:['San Pedro Sula','Tegucigalpa','Comayagua'],ans:'Tegucigalpa'},
+  {s:'Al norte, Honduras limita con el ___.',opts:['Mar Caribe','Océano Pacífico','Golfo de Fonseca'],ans:'Mar Caribe'},
+  {s:'El río Choluteca es de la vertiente del ___.',opts:['Caribe','Pacífico','Atlántico'],ans:'Pacífico'},
 ];
 const explainQuestions=[
-  {q:'¿Qué es la energía? Da un ejemplo de sus efectos.',ans:'La energía es la capacidad de producir cambios o realizar un trabajo. No se ve, pero notamos sus efectos: el calor de una fogata, la luz de una lámpara o el movimiento de un carro.'},
-  {q:'Menciona cinco formas de energía y un ejemplo de cada una.',ans:'Luminosa (la luz del Sol), calorífica (el calor de la estufa), eléctrica (los aparatos), sonora (la música) y mecánica (el movimiento del viento).'},
-  {q:'¿Qué diferencia hay entre una fuente renovable y una no renovable?',ans:'Las renovables no se agotan y son más limpias (el Sol, el viento, el agua). Las no renovables se agotan y contaminan (el petróleo, el carbón, el gas natural).'},
-  {q:'¿Qué significa que la energía se transforma? Da un ejemplo.',ans:'Que la energía no se crea ni se destruye, solo cambia de forma. Por ejemplo, en una linterna la energía eléctrica se transforma en energía luminosa (luz).'},
-  {q:'¿Por qué es importante ahorrar energía y cómo puedes hacerlo?',ans:'Porque muchas fuentes se agotan y contaminan. Puedo ahorrar apagando las luces y aparatos que no uso, aprovechando la luz del día y usando focos ahorradores.'},
+  {q:'¿Dónde está Honduras y cuáles son sus límites?',ans:'Honduras está en Centroamérica. Limita al norte con el Mar Caribe; al sur con el Golfo de Fonseca (Pacífico), Nicaragua y El Salvador; al este con Nicaragua; y al oeste con Guatemala y El Salvador.'},
+  {q:'¿Por qué se dice que Honduras es un país montañoso?',ans:'Porque cerca de las tres cuartas partes de su territorio son montañas y cordilleras. El punto más alto es el Cerro Las Minas (2,870 m), en la Montaña de Celaque.'},
+  {q:'¿Cuáles son las dos vertientes de Honduras y en qué se diferencian?',ans:'La vertiente del Caribe, con ríos largos y caudalosos (Ulúa, Patuca, Coco o Segovia), y la vertiente del Pacífico, con ríos cortos que llegan al Golfo de Fonseca (Choluteca, Goascorán, Nacaome).'},
+  {q:'¿Cómo se divide políticamente Honduras?',ans:'En 18 departamentos, que se dividen en 298 municipios. La capital es Tegucigalpa, en el municipio del Distrito Central, junto con Comayagüela.'},
+  {q:'¿Cómo cambia el clima de Honduras según la altitud?',ans:'El clima es tropical: en las costas y llanuras hace calor todo el año, y en las montañas el clima es templado y fresco. Además hay una estación lluviosa (mayo a octubre) y una seca (noviembre a abril).'},
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué concepto de la energía se refiere.','<strong>Ejemplo:</strong> El Sol es la principal fuente de energía. → <span style="color:var(--jade);font-weight:700;">El Sol</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada fuente, completa su descripción, si es renovable o no, una nota y un dato.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Fuente','text-align:left;')}${th('Descripción')}${th('Tipo')}${th('Nota')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Descripción: ${it.gen} | Tipo: ${it.n} | Nota: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué lugar o concepto de la geografía de Honduras se refiere.','<strong>Ejemplo:</strong> El Lago de Yojoa es el único lago natural. → <span style="color:var(--jade);font-weight:700;">Lago de Yojoa</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada lugar, completa su descripción, qué tipo de lugar es, dónde está y un dato.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Lugar','text-align:left;')}${th('Descripción')}${th('Tipo')}${th('Ubicación')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Descripción: ${it.gen} | Tipo: ${it.n} | Ubicación: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
@@ -274,42 +274,42 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
   {size:10,grid:[
-    ['P','F','L','Q','G','T','H','D','F','Z'],
-    ['Y','I','U','T','O','D','I','N','O','S'],
-    ['P','D','Z','E','N','E','R','G','I','A'],
-    ['W','O','T','D','N','W','G','D','Q','F'],
-    ['Z','R','U','V','Q','T','C','S','N','O'],
-    ['D','O','T','N','Z','K','E','G','E','U'],
-    ['T','E','L','E','C','T','R','I','C','A'],
-    ['U','K','N','F','I','G','Z','D','B','V'],
-    ['F','R','O','L','A','C','E','V','S','U'],
-    ['C','G','P','N','B','I','A','A','L','L']
+    ['K','U','W','Q','M','L','L','R','Z','S'],
+    ['H','L','I','G','P','V','A','L','L','E'],
+    ['S','U','Y','V','F','C','Z','D','W','L'],
+    ['A','A','O','O','W','Y','P','J','Z','C'],
+    ['R','L','J','E','H','B','G','G','Z','N'],
+    ['U','P','O','X','C','A','R','I','B','E'],
+    ['D','U','A','P','N','D','Y','C','M','B'],
+    ['N','L','M','U','A','V','B','A','K','N'],
+    ['O','M','J','X','U','W','M','N','A','F'],
+    ['H','L','I','S','L','A','I','B','S','W']
   ],words:[
-    {w:'ENERGIA',cells:[[2,3],[2,4],[2,5],[2,6],[2,7],[2,8],[2,9]]},
-    {w:'LUZ',cells:[[0,2],[1,2],[2,2]]},
-    {w:'CALOR',cells:[[8,5],[8,4],[8,3],[8,2],[8,1]]},
-    {w:'SONIDO',cells:[[1,9],[1,8],[1,7],[1,6],[1,5],[1,4]]},
-    {w:'ELECTRICA',cells:[[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7],[6,8],[6,9]]},
-    {w:'FUENTE',cells:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]]}
+    {w:'HONDURAS',cells:[[9,0],[8,0],[7,0],[6,0],[5,0],[4,0],[3,0],[2,0]]},
+    {w:'CARIBE',cells:[[5,4],[5,5],[5,6],[5,7],[5,8],[5,9]]},
+    {w:'YOJOA',cells:[[2,2],[3,2],[4,2],[5,2],[6,2]]},
+    {w:'ULUA',cells:[[0,1],[1,1],[2,1],[3,1]]},
+    {w:'VALLE',cells:[[1,5],[1,6],[1,7],[1,8],[1,9]]},
+    {w:'ISLA',cells:[[9,2],[9,3],[9,4],[9,5]]}
   ]},
   {size:10,grid:[
-    ['R','Z','A','G','M','K','Y','S','Y','U'],
-    ['U','E','I','H','O','U','O','Y','P','O'],
-    ['D','S','N','V','O','L','F','B','A','E'],
-    ['F','E','N','O','A','R','C','B','O','L'],
-    ['C','F','P','R','V','U','R','T','C','O'],
-    ['Y','A','P','R','T','A','N','O','N','R'],
-    ['I','Q','R','I','C','E','B','A','B','T'],
-    ['S','W','E','B','I','V','P','L','A','E'],
-    ['F','O','E','V','O','O','Z','D','E','P'],
-    ['T','R','P','D','I','N','B','N','Z','M']
+    ['D','M','N','C','F','P','M','K','Y','M'],
+    ['N','C','U','V','Z','P','Q','S','E','O'],
+    ['R','O','A','T','A','N','O','O','U','N'],
+    ['G','J','D','S','O','G','L','C','Q','T'],
+    ['U','C','P','H','K','N','D','O','A','A'],
+    ['L','O','M','A','I','G','U','C','L','N'],
+    ['C','L','N','O','T','H','R','V','E','A'],
+    ['O','M','E','M','N','U','Z','A','C','K'],
+    ['A','O','C','I','F','I','C','A','P','Y'],
+    ['D','R','D','W','X','O','E','A','J','M']
   ],words:[
-    {w:'RENOVABLE',cells:[[0,0],[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]]},
-    {w:'SOLAR',cells:[[0,7],[1,6],[2,5],[3,4],[4,3]]},
-    {w:'VIENTO',cells:[[8,3],[7,4],[6,5],[5,6],[4,7],[3,8]]},
-    {w:'PETROLEO',cells:[[8,9],[7,9],[6,9],[5,9],[4,9],[3,9],[2,9],[1,9]]},
-    {w:'AHORRO',cells:[[0,2],[1,3],[2,4],[3,5],[4,6],[5,7]]},
-    {w:'CARBON',cells:[[4,0],[5,1],[6,2],[7,3],[8,4],[9,5]]}
+    {w:'PACIFICO',cells:[[8,8],[8,7],[8,6],[8,5],[8,4],[8,3],[8,2],[8,1]]},
+    {w:'PATUCA',cells:[[4,2],[5,3],[6,4],[7,5],[8,6],[9,7]]},
+    {w:'ROATAN',cells:[[2,0],[2,1],[2,2],[2,3],[2,4],[2,5]]},
+    {w:'CELAQUE',cells:[[7,8],[6,8],[5,8],[4,8],[3,8],[2,8],[1,8]]},
+    {w:'MONTANA',cells:[[0,9],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9]]},
+    {w:'COCO',cells:[[5,7],[4,7],[3,7],[2,7]]}
   ]}
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
@@ -325,72 +325,72 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'La energía es la capacidad de producir cambios o realizar un trabajo.',a:true},
-  {q:'La energía luminosa es la energía de la luz.',a:true},
-  {q:'La energía calorífica es la energía del sonido.',a:false},
-  {q:'La energía mecánica es la energía del movimiento.',a:true},
-  {q:'El Sol es la principal fuente de energía de la Tierra.',a:true},
-  {q:'El viento es una fuente de energía renovable.',a:true},
-  {q:'El petróleo es una fuente de energía renovable.',a:false},
-  {q:'Las fuentes no renovables se agotan y contaminan.',a:true},
-  {q:'La energía no se crea ni se destruye, solo se transforma.',a:true},
-  {q:'La energía eléctrica de una bombilla se transforma en luz.',a:true},
-  {q:'La energía sonora es la energía de la luz.',a:false},
-  {q:'Debemos ahorrar energía para cuidar el planeta.',a:true},
-  {q:'La energía hidroeléctrica se obtiene del agua.',a:true},
-  {q:'La energía se puede ver a simple vista.',a:false},
-  {q:'Las plantas usan la energía del Sol en la fotosíntesis.',a:true},
+  {q:'Honduras está ubicada en Centroamérica.',a:true},
+  {q:'El punto más alto de Honduras es el Pico Bonito.',a:false},
+  {q:'El río Coco o Segovia es el más largo del país.',a:true},
+  {q:'El Lago de Yojoa es el único lago natural de Honduras.',a:true},
+  {q:'Honduras se divide en 18 departamentos.',a:true},
+  {q:'La capital de Honduras es San Pedro Sula.',a:false},
+  {q:'El Mar Caribe limita al norte de Honduras.',a:true},
+  {q:'El río Choluteca pertenece a la vertiente del Caribe.',a:false},
+  {q:'Las Islas de la Bahía son Roatán, Utila y Guanaja.',a:true},
+  {q:'La Laguna de Caratasca está en La Mosquitia.',a:true},
+  {q:'Honduras tiene costas en el Mar Caribe y en el Océano Pacífico.',a:true},
+  {q:'En las montañas hace más calor que en las costas.',a:false},
+  {q:'Los departamentos se dividen en municipios.',a:true},
+  {q:'El Golfo de Fonseca está al norte del país.',a:false},
+  {q:'Cerca de las tres cuartas partes de Honduras son montañas.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es la energía?',o:['a) Un tipo de materia','b) La capacidad de producir cambios o realizar un trabajo','c) Un color','d) Un ser vivo'],a:1},
-  {q:'¿Qué forma de energía es la luz?',o:['a) Sonora','b) Mecánica','c) Luminosa','d) Eléctrica'],a:2},
-  {q:'¿Qué forma de energía es el calor?',o:['a) Calorífica','b) Sonora','c) Luminosa','d) Mecánica'],a:0},
-  {q:'¿Qué forma de energía es el sonido?',o:['a) Luminosa','b) Sonora','c) Mecánica','d) Calorífica'],a:1},
-  {q:'¿Qué forma de energía produce movimiento?',o:['a) Sonora','b) Mecánica','c) Luminosa','d) Calorífica'],a:1},
-  {q:'¿Cuál es la principal fuente de energía de la Tierra?',o:['a) El viento','b) El petróleo','c) El Sol','d) El carbón'],a:2},
-  {q:'¿Cuál es una fuente de energía renovable?',o:['a) El petróleo','b) El carbón','c) El viento','d) El gas natural'],a:2},
-  {q:'¿Cuál es una fuente de energía no renovable?',o:['a) El Sol','b) El petróleo','c) El agua','d) El viento'],a:1},
-  {q:'La energía eléctrica de una bombilla se transforma en energía…',o:['a) sonora','b) luminosa','c) mecánica','d) química'],a:1},
-  {q:'La energía eléctrica de una plancha se transforma en energía…',o:['a) luminosa','b) calorífica','c) sonora','d) mecánica'],a:1},
-  {q:'¿Qué le pasa a la energía?',o:['a) Se crea de la nada','b) Solo se transforma','c) Se destruye','d) Desaparece'],a:1},
-  {q:'¿Por qué debemos ahorrar energía?',o:['a) Porque nunca se acaba','b) Porque muchas fuentes se agotan y contaminan','c) Porque es gratis','d) Porque no sirve'],a:1},
-  {q:'La represa El Cajón produce energía…',o:['a) del petróleo','b) hidroeléctrica (del agua)','c) del carbón','d) del gas'],a:1},
-  {q:'¿Qué usan las plantas para fabricar su alimento?',o:['a) La energía del Sol','b) El petróleo','c) El carbón','d) La electricidad'],a:0},
-  {q:'¿Cuál es un buen hábito para ahorrar energía?',o:['a) Dejar luces encendidas','b) Apagar los aparatos que no se usan','c) Abrir el refri seguido','d) No aprovechar el día'],a:1},
+  {q:'¿En qué región de América está Honduras?',o:['a) Sudamérica','b) Centroamérica','c) Norteamérica','d) El Caribe insular'],a:1},
+  {q:'¿Cuál es el punto más alto de Honduras?',o:['a) El Cerro Las Minas','b) El Pico Bonito','c) El Cerro Azul','d) La Montaña de la Flor'],a:0},
+  {q:'¿Cuál es el río más largo del país?',o:['a) El Ulúa','b) El Choluteca','c) El Coco o Segovia','d) El Aguán'],a:2},
+  {q:'¿Cuál es el único lago natural de Honduras?',o:['a) La Laguna de Caratasca','b) El Cajón','c) El Lago de Yojoa','d) El Golfo de Fonseca'],a:2},
+  {q:'¿En cuántos departamentos se divide Honduras?',o:['a) 15','b) 18','c) 22','d) 298'],a:1},
+  {q:'¿Cuál es la capital de Honduras?',o:['a) San Pedro Sula','b) Comayagua','c) Tegucigalpa','d) Choluteca'],a:2},
+  {q:'¿Con qué mar limita Honduras al norte?',o:['a) El Océano Pacífico','b) El Mar Caribe','c) El Golfo de Fonseca','d) El Mar Mediterráneo'],a:1},
+  {q:'¿Qué río pertenece a la vertiente del Pacífico?',o:['a) El Ulúa','b) El Patuca','c) El Choluteca','d) El Aguán'],a:2},
+  {q:'¿Cuál es el departamento insular de Honduras?',o:['a) Gracias a Dios','b) Islas de la Bahía','c) Atlántida','d) Valle'],a:1},
+  {q:'¿Cuál es la laguna más grande del país?',o:['a) La de Yojoa','b) La de Caratasca','c) La de Fonseca','d) La de Alvarado'],a:1},
+  {q:'¿En qué departamento está el Cerro Las Minas?',o:['a) Lempira','b) Cortés','c) Olancho','d) Valle'],a:0},
+  {q:'¿Cuántos municipios tiene Honduras?',o:['a) 100','b) 200','c) 298','d) 350'],a:2},
+  {q:'¿Qué río riega el fértil Valle de Sula?',o:['a) El Ulúa','b) El Choluteca','c) El Coco','d) El Nacaome'],a:0},
+  {q:'¿Cuál es la extensión aproximada de Honduras?',o:['a) 112,492 km²','b) 50,000 km²','c) 200,000 km²','d) 8,000 km²'],a:0},
+  {q:'¿Cómo se llama la región oriental de grandes bosques?',o:['a) La Mosquitia','b) El Merendón','c) El Valle de Sula','d) El Golfo de Fonseca'],a:0},
 ];
 const evalCPBank=[
-  {q:'La ___ es la capacidad de producir cambios.',a:'energía'},
-  {q:'La energía de la luz es la ___.',a:'luminosa'},
-  {q:'La energía del calor es la ___.',a:'calorífica'},
-  {q:'La energía del movimiento es la ___.',a:'mecánica'},
-  {q:'La energía del sonido es la ___.',a:'sonora'},
-  {q:'La principal fuente de energía de la Tierra es el ___.',a:'Sol'},
-  {q:'El viento es una fuente ___ de energía.',a:'renovable'},
-  {q:'El petróleo es una fuente ___ de energía.',a:'no renovable'},
-  {q:'La energía no se crea ni se destruye: solo se ___.',a:'transforma'},
-  {q:'Debemos ___ energía para cuidar el planeta.',a:'ahorrar'},
-  {q:'La energía de los aparatos es la ___.',a:'eléctrica'},
-  {q:'La energía obtenida del agua es la ___.',a:'hidroeléctrica'},
-  {q:'Las plantas usan la energía del Sol en la ___.',a:'fotosíntesis'},
-  {q:'La energía eléctrica en una bombilla se vuelve ___.',a:'luz'},
-  {q:'Las fuentes no renovables se agotan y ___.',a:'contaminan'},
+  {q:'Honduras está en la región de ___.',a:'Centroamérica'},
+  {q:'El punto más alto es el Cerro ___.',a:'Las Minas'},
+  {q:'El río más largo es el ___.',a:'Coco o Segovia'},
+  {q:'El único lago natural es el Lago de ___.',a:'Yojoa'},
+  {q:'Honduras tiene ___ departamentos.',a:'18'},
+  {q:'La capital de Honduras es ___.',a:'Tegucigalpa'},
+  {q:'Al norte, Honduras limita con el Mar ___.',a:'Caribe'},
+  {q:'Al sur del país está el Golfo de ___.',a:'Fonseca'},
+  {q:'Los ríos Choluteca y Nacaome son de la vertiente del ___.',a:'Pacífico'},
+  {q:'Las Islas de la Bahía son Roatán, Utila y ___.',a:'Guanaja'},
+  {q:'La laguna más grande es la de ___.',a:'Caratasca'},
+  {q:'Los departamentos se dividen en ___.',a:'municipios'},
+  {q:'El clima de Honduras es ___.',a:'tropical'},
+  {q:'La región oriental de grandes bosques es La ___.',a:'Mosquitia'},
+  {q:'El río ___ riega el Valle de Sula.',a:'Ulúa'},
 ];
 const evalPRBank=[
-  {term:'Energía',def:'Capacidad de producir cambios o realizar un trabajo'},
-  {term:'Energía luminosa',def:'La energía de la luz'},
-  {term:'Energía calorífica',def:'La energía del calor'},
-  {term:'Energía eléctrica',def:'La energía de los aparatos'},
-  {term:'Energía sonora',def:'La energía del sonido'},
-  {term:'Energía mecánica',def:'La energía del movimiento'},
-  {term:'Fuente renovable',def:'No se agota (Sol, viento, agua)'},
-  {term:'Fuente no renovable',def:'Se agota (petróleo, carbón, gas)'},
-  {term:'El Sol',def:'La principal fuente de energía de la Tierra'},
-  {term:'Transformación',def:'La energía solo cambia de forma'},
-  {term:'Ahorro de energía',def:'Usar la energía sin desperdiciarla'},
-  {term:'Hidroeléctrica',def:'Electricidad obtenida del agua'},
-  {term:'Fotosíntesis',def:'Las plantas usan la energía del Sol'},
-  {term:'Petróleo',def:'Fuente no renovable; de él sale la gasolina'},
-  {term:'Viento',def:'Fuente renovable; produce energía eólica'},
+  {term:'Honduras',def:'País del centro de Centroamérica (112,492 km²)'},
+  {term:'Cerro Las Minas',def:'El punto más alto del país (2,870 m)'},
+  {term:'Río Coco o Segovia',def:'El río más largo de Honduras'},
+  {term:'Lago de Yojoa',def:'El único lago natural'},
+  {term:'Laguna de Caratasca',def:'La laguna más grande, en La Mosquitia'},
+  {term:'Tegucigalpa',def:'La capital de Honduras'},
+  {term:'Mar Caribe',def:'El mar que limita al norte'},
+  {term:'Golfo de Fonseca',def:'La entrada del Pacífico, al sur'},
+  {term:'Islas de la Bahía',def:'Departamento insular: Roatán, Utila y Guanaja'},
+  {term:'Vertiente del Caribe',def:'Agrupa ríos largos como el Ulúa y el Patuca'},
+  {term:'Vertiente del Pacífico',def:'Agrupa ríos cortos como el Choluteca'},
+  {term:'Departamento',def:'División política grande (hay 18)'},
+  {term:'Municipio',def:'División dentro del departamento (hay 298)'},
+  {term:'La Mosquitia',def:'Región oriental de grandes bosques'},
+  {term:'Puerto Cortés',def:'El puerto más importante, en el Caribe'},
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -423,7 +423,7 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
 }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
-function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · La Energía`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · Geografía de Honduras`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
 function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
 function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
 function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
@@ -442,7 +442,7 @@ function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una eva
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
     const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
-const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación La Energía · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #27ae60;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#e8f8f5;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#27ae60;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#27ae60;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
+const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Geografía de Honduras · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #2471a3;background:#eaf2f8;color:#2471a3;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#2471a3;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #2471a3;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#eaf2f8;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#2471a3;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#2471a3;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #2471a3;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
 .zg-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem;}
 .zg-head{display:flex;gap:5px;align-items:center;font-weight:700;font-size:10pt;letter-spacing:1px;}
@@ -457,7 +457,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · La Energía · Educación Básica · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · La Energía · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Geografía de Honduras · Educación Básica · Ciencias Sociales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Geografía de Honduras · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
   ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
@@ -477,75 +477,75 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En una casa dejan todas las luces encendidas de día y la factura de electricidad llega muy alta.'},
-  {txt:'Un pueblo aprovecha el viento fuerte de la zona para instalar molinos que generan electricidad.'},
-  {txt:'Una familia pone paneles solares en el techo y así usa la energía del Sol.'},
-  {txt:'Al encender una linterna, la pila se va gastando hasta que ya no da luz.'},
-  {txt:'Una represa usa la fuerza del agua que cae para producir electricidad para muchas casas.'},
-  {txt:'Un niño deja el ventilador y la tele encendidos aunque salió a jugar afuera.'},
+  {txt:'Una familia de Choluteca viaja de vacaciones a Roatán: sale del calor seco del sur y llega a una isla del Caribe.'},
+  {txt:'En el Valle de Sula, el río Ulúa crece con las lluvias de mayo a octubre y a veces se desborda sobre los cultivos.'},
+  {txt:'Un turista quiere subir al punto más alto de Honduras y pregunta a qué departamento debe viajar.'},
+  {txt:'Un pueblo pesquero del Golfo de Fonseca vive de la pesca y del cultivo de camarón.'},
+  {txt:'Una cooperativa de café busca tierras frescas de montaña para sembrar un cafetal de calidad.'},
+  {txt:'Un barco carga bananos en Puerto Cortés y los lleva a otros países.'},
 ];
 const critCaseQuestions=[
-  '1. ¿Qué situación relacionada con la energía se observa en este caso?',
-  '2. ¿Qué forma o fuente de energía está presente? ¿Es renovable o no?',
-  '3. ¿Se está ahorrando o desperdiciando energía? ¿Por qué?',
-  '4. ¿Qué consejo darías para usar mejor la energía?',
+  '1. ¿Qué lugares o elementos geográficos de Honduras aparecen en este caso?',
+  '2. ¿En qué región o vertiente del país ocurre? ¿Cómo lo sabes?',
+  '3. ¿Cómo influye la geografía (el relieve, el clima o el agua) en lo que ocurre?',
+  '4. ¿Qué recomendación o conclusión puedes dar usando lo que sabes del mapa de Honduras?',
 ];
 const critCaseGuides=[
-  'Se observa el uso de la energía: una fuente (Sol, viento, agua), una transformación, o el ahorro/desperdicio de energía.',
-  'Puede ser energía solar, eólica (viento) o hidroeléctrica (agua) —renovables— o el consumo de electricidad en el hogar.',
-  'Apagar lo que no se usa y aprovechar el Sol y el viento AHORRA; dejar luces y aparatos encendidos DESPERDICIA.',
-  'Apagar luces y aparatos que no se usan, aprovechar la luz del día, usar fuentes renovables y focos ahorradores.',
+  'Pueden aparecer ríos (Ulúa), valles (Sula), montañas (Celaque), costas (Caribe o Golfo de Fonseca), islas (Roatán) o puertos (Puerto Cortés).',
+  'La región se reconoce por sus señas: el Caribe al norte, el Golfo de Fonseca al sur, las montañas en el centro-occidente y La Mosquitia al oriente.',
+  'El relieve y el clima explican lo que pasa: las lluvias crecen los ríos, la altitud refresca el clima, las costas permiten pesca y puertos.',
+  'Una buena recomendación usa la geografía: sembrar café en montaña, construir lejos de ríos que se desbordan, usar el puerto más cercano.',
 ];
 const critErrorBank=[
-  {txt:'"El petróleo es una fuente de energía renovable."',
-   g1:'El petróleo es NO renovable: se agota.',
-   g2:'Las renovables son el Sol, el viento y el agua.'},
-  {txt:'"La energía se crea de la nada cuando enciendes una lámpara."',
-   g1:'La energía NO se crea ni se destruye.',
-   g2:'Solo se TRANSFORMA: la eléctrica se vuelve luminosa.'},
-  {txt:'"La energía del calor es la energía sonora."',
-   g1:'La energía del calor es la CALORÍFICA.',
-   g2:'La energía SONORA es la del sonido.'},
-  {txt:'"Dejar las luces encendidas todo el día ahorra energía."',
-   g1:'Dejar luces encendidas DESPERDICIA energía.',
-   g2:'Para ahorrar hay que APAGAR lo que no se usa.'},
-  {txt:'"El Sol no sirve como fuente de energía."',
-   g1:'El Sol es la PRINCIPAL fuente de energía de la Tierra.',
-   g2:'De él dependen la vida, el viento y la lluvia.'},
+  {txt:'"La capital de Honduras es San Pedro Sula y el país tiene 15 departamentos."',
+   g1:'La capital es TEGUCIGALPA (Distrito Central).',
+   g2:'Honduras tiene 18 departamentos.'},
+  {txt:'"El río más largo de Honduras es el Ulúa y desemboca en el Océano Pacífico."',
+   g1:'El río más largo es el COCO O SEGOVIA.',
+   g2:'El Ulúa desemboca en el MAR CARIBE.'},
+  {txt:'"El Lago de Yojoa es una laguna que está en La Mosquitia."',
+   g1:'El Lago de Yojoa es el ÚNICO LAGO NATURAL, entre Comayagua, Cortés y Santa Bárbara.',
+   g2:'La laguna de La Mosquitia es la de CARATASCA.'},
+  {txt:'"Honduras limita al norte con el Océano Pacífico y al sur con el Mar Caribe."',
+   g1:'Al NORTE está el Mar Caribe.',
+   g2:'Al SUR está el Golfo de Fonseca (Océano Pacífico).'},
+  {txt:'"Honduras es un país plano y su punto más alto es el Pico Bonito."',
+   g1:'Honduras es MONTAÑOSO: unas tres cuartas partes son montañas.',
+   g2:'El punto más alto es el CERRO LAS MINAS (2,870 m), en Celaque.'},
 ];
 const critDecisionBank=[
-  'Para iluminar una casa de día, conviene abrir las cortinas y usar la luz del Sol, o encender todas las lámparas.',
-  'Para producir electricidad más limpia, conviene usar el Sol y el viento, o quemar más carbón y petróleo.',
-  'Al salir de un cuarto, conviene apagar la luz y el ventilador, o dejarlos encendidos.',
-  'Para gastar menos energía al planchar, conviene juntar la ropa y planchar de una vez, o planchar prenda por prenda.',
-  'Para cuidar la energía, conviene desconectar los aparatos que no se usan, o dejarlos siempre conectados.',
+  'Para sembrar café de calidad, conviene elegir tierras frescas de montaña, o las llanuras cálidas de la costa.',
+  'Para exportar bananos del Valle de Sula, conviene usar Puerto Cortés en el Caribe, o el puerto de San Lorenzo en el Pacífico.',
+  'Para conocer arrecifes de coral, conviene viajar a las Islas de la Bahía, o al Lago de Yojoa.',
+  'Si una comunidad vive junto a un río que se desborda cada año, conviene construir las casas en zonas altas, o en la orilla del río.',
+  'Para observar aves y pescar en agua dulce, conviene visitar el Lago de Yojoa, o el Golfo de Fonseca.',
 ];
-const critDecisionGuide='La mejor decisión es la que ahorra energía y usa fuentes limpias: aprovechar la luz del Sol y el viento, apagar y desconectar lo que no se usa, usar focos ahorradores y preferir fuentes renovables. Así cuidamos el ambiente y gastamos menos, porque muchas fuentes se agotan y contaminan.';
+const critDecisionGuide='La mejor decisión aprovecha la geografía: el café se da en montañas frescas; los bananos del Valle de Sula salen por Puerto Cortés porque está cerca y en el Caribe; los arrecifes están en las Islas de la Bahía; junto a un río que se desborda se construye en zonas altas; y el Lago de Yojoa es agua dulce, ideal para aves y pesca.';
 const critCompareBank=[
-  {a:'Fuente de energía que no se agota (Sol, viento, agua).',b:'Fuente de energía que se agota (petróleo, carbón).',
-   ga:'La fuente renovable.',
-   gb:'La fuente no renovable.',
-   gr:'Las dos dan energía, pero la renovable no se acaba y es más limpia, mientras la no renovable se agota y contamina.'},
-  {a:'La energía de la luz.',b:'La energía del movimiento.',
-   ga:'La energía luminosa.',
-   gb:'La energía mecánica.',
-   gr:'Las dos son formas de energía, pero una se manifiesta como luz y la otra como movimiento.'},
-  {a:'Apagar las luces que no se usan.',b:'Dejar los aparatos encendidos sin usarlos.',
-   ga:'Ahorrar energía.',
-   gb:'Desperdiciar energía.',
-   gr:'Las dos son decisiones sobre la energía, pero una la cuida y la otra la malgasta.'},
+  {a:'Agrupa ríos largos y caudalosos que desembocan en el Mar Caribe.',b:'Agrupa ríos cortos que desembocan en el Golfo de Fonseca.',
+   ga:'La vertiente del Caribe.',
+   gb:'La vertiente del Pacífico.',
+   gr:'Las dos agrupan ríos, pero se diferencian por el mar donde desembocan y por el largo de sus ríos.'},
+  {a:'División política grande; Honduras tiene 18.',b:'División más pequeña; Honduras tiene 298.',
+   ga:'El departamento.',
+   gb:'El municipio.',
+   gr:'Los dos organizan el territorio, pero los municipios están dentro de los departamentos.'},
+  {a:'El único lago natural, famoso por sus aves y peces.',b:'La laguna más grande, en La Mosquitia.',
+   ga:'El Lago de Yojoa.',
+   gb:'La Laguna de Caratasca.',
+   gr:'Los dos son cuerpos de agua tranquila, pero uno es un lago del interior y la otra es una laguna costera del oriente.'},
 ];
 const critCauseBank=[
-  {cause:'Una familia instala paneles solares en su techo.',guide:'Aprovecha la energía del Sol, que es renovable y limpia.'},
-  {cause:'En una casa dejan luces y aparatos encendidos sin usarlos.',guide:'Se desperdicia energía y sube la factura de electricidad.'},
-  {cause:'El agua de una represa cae y mueve una turbina.',guide:'Se genera energía eléctrica (hidroeléctrica).'},
-  {cause:'Se quema mucho petróleo y carbón para producir energía.',guide:'Se agotan esas fuentes y se contamina el ambiente.'},
+  {cause:'Honduras tiene montañas altas y frescas.',guide:'En ellas se cultiva café de buena calidad y el clima es templado.'},
+  {cause:'Llueve mucho de mayo a octubre.',guide:'Los ríos crecen y algunos, como el Ulúa, pueden desbordarse.'},
+  {cause:'El Valle de Sula es plano, fértil y regado por el río Ulúa.',guide:'Allí hay grandes cultivos y ciudades como San Pedro Sula.'},
+  {cause:'Honduras tiene costas en el Caribe y en el Pacífico.',guide:'Puede pescar y comerciar por los dos mares con sus puertos.'},
 ];
 const critEffectBank=[
-  {effect:'La factura de electricidad llega muy alta.',guide:'Porque se desperdició energía dejando aparatos encendidos.'},
-  {effect:'Una linterna deja de dar luz.',guide:'Porque la pila gastó su energía química.'},
-  {effect:'Un molino de viento genera electricidad.',guide:'Porque transforma la energía del viento (mecánica) en eléctrica.'},
-  {effect:'Las plantas crecen y fabrican su alimento.',guide:'Porque usan la energía del Sol en la fotosíntesis.'},
+  {effect:'A las Islas de la Bahía llegan muchos turistas.',guide:'Porque tienen playas y arrecifes de coral en el Mar Caribe.'},
+  {effect:'En la costa hace más calor que en la montaña.',guide:'Porque el clima cambia con la altitud: a mayor altura, más fresco.'},
+  {effect:'La Mosquitia tiene pocos habitantes.',guide:'Porque es una región de grandes bosques y ríos, de difícil acceso.'},
+  {effect:'El sur del país produce camarones y melones.',guide:'Porque el Golfo de Fonseca y su llanura cálida lo permiten.'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -553,12 +553,12 @@ function genEvalCrit(){
   const _sC = document.getElementById('evalCritFormaSel');
   if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
   const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC = _evalRng(200000 + cf);evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;_injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });saveProgress();
-  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · La Energía`;
+  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · Geografía de Honduras`;
   evalCritAnsVisible=false;
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: la energía en la vida diaria <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: la geografía en la vida diaria <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
@@ -566,11 +566,11 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: usar la energía <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con las formas y fuentes de energía y su ahorro.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: usar el mapa <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con el relieve, el clima, los ríos y las regiones de Honduras.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué concepto de la energía corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué lugar o concepto de Honduras corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -600,11 +600,11 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: la energía en la vida diaria</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: la geografía en la vida diaria</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: usar la energía</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con las formas y fuentes de energía y su ahorro.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué concepto de la energía corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: usar el mapa</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con el relieve, el clima, los ríos y las regiones de Honduras.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué lugar o concepto de Honduras corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
@@ -616,51 +616,51 @@ function printEvalCrit(){
   pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
   pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it=>`<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it=>`<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico La Energía · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #27ae60;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#e8f8f5;border-left:3px solid #27ae60;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#e8f8f5;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#e8f8f5;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:7.5pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#27ae60;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:12.7mm;}}</style></head><body><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · La Energía · Educación Básica · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · La Energía · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Geografía de Honduras · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #2471a3;background:#eaf2f8;color:#2471a3;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#2471a3;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #2471a3;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#eaf2f8;border-left:3px solid #2471a3;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#eaf2f8;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#eaf2f8;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:7.5pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#2471a3;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #2471a3;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:12.7mm;}}</style></head><body><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Geografía de Honduras · Educación Básica · Ciencias Sociales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Geografía de Honduras · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
-// ===================== LABORATORIO DE LA ENERGÍA =====================
+// ===================== LABORATORIO DE GEOGRAFÍA =====================
 const parteData={
-  formas:{
-    nombre:'Las formas de energía',icon:'🌈',
-    estructura:{title:'¿Qué es?',info:'• La energía se presenta de <strong>muchas formas</strong><br>• Todas pueden <strong>producir cambios</strong><br>• Una forma puede convertirse en otra'},
-    funcion:{title:'Características',info:'• <strong>Luminosa:</strong> la luz<br>• <strong>Calorífica:</strong> el calor<br>• <strong>Eléctrica:</strong> los aparatos<br>• <strong>Sonora:</strong> el sonido<br>• <strong>Mecánica:</strong> el movimiento'},
-    ubicacion:{title:'Ejemplos',info:'• La <strong>luz</strong> de una lámpara (luminosa)<br>• El <strong>calor</strong> de la estufa (calorífica)<br>• La <strong>música</strong> (sonora), un <strong>carro</strong> (mecánica)'},
-    dato:{title:'Dato curioso',info:'• La energía <strong>no se ve</strong>, pero notamos sus efectos<br>• Una forma se transforma en otra<br>• Todo lo que ocurre necesita energía'}
+  ubicacion:{
+    nombre:'Ubicación y límites',icon:'🧭',
+    estructura:{title:'¿Qué es?',info:'• Honduras está en <strong>Centroamérica</strong><br>• Extensión: unos <strong>112,492 km²</strong><br>• Se le llama «el corazón de Centroamérica»'},
+    funcion:{title:'Características',info:'• <strong>Norte:</strong> Mar Caribe<br>• <strong>Sur:</strong> Golfo de Fonseca, Nicaragua y El Salvador<br>• <strong>Este:</strong> Nicaragua<br>• <strong>Oeste:</strong> Guatemala y El Salvador'},
+    ubicacion:{title:'Ejemplos',info:'• Costa <strong>norte</strong>: larga, sobre el Caribe<br>• Costa <strong>sur</strong>: corta, en el Golfo de Fonseca<br>• Fronteras con <strong>3 países</strong> vecinos'},
+    dato:{title:'Dato curioso',info:'• Honduras tiene <strong>dos costas</strong>: puede ver el amanecer en el Caribe y el atardecer en el Pacífico<br>• Sus islas llegan hasta los arrecifes de coral<br>• Es el segundo país más grande de Centroamérica'}
   },
-  fuentes:{
-    nombre:'Las fuentes de energía',icon:'🔋',
-    estructura:{title:'¿Qué es?',info:'• Son los <strong>recursos</strong> de donde sacamos la energía<br>• Se dividen en <strong>renovables</strong> y <strong>no renovables</strong><br>• Unas se agotan y otras no'},
-    funcion:{title:'Características',info:'• <strong>Renovables:</strong> no se agotan (Sol, viento, agua, biomasa)<br>• <strong>No renovables:</strong> se agotan (petróleo, carbón, gas)<br>• Las renovables son más limpias'},
-    ubicacion:{title:'Ejemplos',info:'• <strong>Renovables:</strong> paneles solares, molinos de viento, represas<br>• <strong>No renovables:</strong> la gasolina, el gas de cocina<br>• El <strong>Sol</strong> es la principal fuente'},
-    dato:{title:'Dato curioso',info:'• El <strong>Sol</strong> es la fuente de casi toda la energía<br>• Las no renovables <strong>contaminan</strong> más<br>• Conviene usar más las renovables'}
+  relieve:{
+    nombre:'El relieve',icon:'⛰️',
+    estructura:{title:'¿Qué es?',info:'• Son las <strong>formas del terreno</strong>: montañas, valles y llanuras<br>• Honduras es un país <strong>montañoso</strong><br>• Unas <strong>tres cuartas partes</strong> son montañas'},
+    funcion:{title:'Características',info:'• <strong>Cordilleras</strong> como el Merendón y Nombre de Dios<br>• <strong>Valles</strong> fértiles: Sula, Comayagua, Aguán<br>• <strong>Llanuras</strong> en las costas'},
+    ubicacion:{title:'Ejemplos',info:'• <strong>Cerro Las Minas</strong> (2,870 m): el punto más alto, en Celaque<br>• <strong>Valle de Sula</strong>: el más productivo<br>• Llanura costera del <strong>Caribe</strong>'},
+    dato:{title:'Dato curioso',info:'• Al Cerro Las Minas también se le llama <strong>Pico Celaque</strong><br>• En las montañas altas hace <strong>frío</strong> aunque el país sea tropical<br>• El café hondureño crece en las montañas'}
   },
-  electrica:{
-    nombre:'La energía eléctrica',icon:'🔌',
-    estructura:{title:'¿Qué es?',info:'• Es una de las energías <strong>más usadas</strong><br>• Es <strong>fácil de transportar</strong> por cables<br>• Se convierte en otras formas de energía'},
-    funcion:{title:'Características',info:'• En una <strong>bombilla</strong> → luz<br>• En una <strong>plancha</strong> → calor<br>• En un <strong>parlante</strong> → sonido<br>• En un <strong>ventilador</strong> → movimiento'},
-    ubicacion:{title:'Ejemplos',info:'• Los <strong>aparatos</strong> de la casa<br>• La <strong>luz</strong> de las calles<br>• El <strong>teléfono</strong> y la televisión'},
-    dato:{title:'Dato curioso',info:'• ⚠️ Es <strong>peligrosa</strong>: nunca metas objetos en los enchufes<br>• No toques aparatos con las manos mojadas<br>• Llega a tu casa por cables desde plantas generadoras'}
+  aguas:{
+    nombre:'Ríos, lagos y lagunas',icon:'🏞️',
+    estructura:{title:'¿Qué es?',info:'• Son las <strong>aguas</strong> del país: ríos, lagos y lagunas<br>• Los ríos se agrupan en <strong>dos vertientes</strong><br>• Según el mar donde desembocan'},
+    funcion:{title:'Características',info:'• <strong>Vertiente del Caribe:</strong> ríos largos (Ulúa, Chamelecón, Aguán, Patuca, Coco)<br>• <strong>Vertiente del Pacífico:</strong> ríos cortos (Choluteca, Goascorán, Nacaome)'},
+    ubicacion:{title:'Ejemplos',info:'• <strong>Río Coco o Segovia:</strong> el más largo<br>• <strong>Lago de Yojoa:</strong> el único lago natural<br>• <strong>Laguna de Caratasca:</strong> la más grande, en La Mosquitia'},
+    dato:{title:'Dato curioso',info:'• El río <strong>Choluteca</strong> pasa por Tegucigalpa y desemboca en el Pacífico<br>• En el <strong>Lago de Yojoa</strong> viven cientos de especies de aves<br>• La represa <strong>El Cajón</strong> forma un gran lago artificial'}
   },
-  transforma:{
-    nombre:'La transformación de la energía',icon:'🔄',
-    estructura:{title:'¿Qué es?',info:'• La energía <strong>no se crea ni se destruye</strong><br>• Solo <strong>cambia de una forma a otra</strong><br>• Siempre hay la misma cantidad de energía'},
-    funcion:{title:'Características',info:'• Una <strong>linterna:</strong> eléctrica → luminosa<br>• Una <strong>estufa:</strong> eléctrica → calorífica<br>• El <strong>cuerpo:</strong> química (alimentos) → mecánica (movimiento)'},
-    ubicacion:{title:'Ejemplos',info:'• Un <strong>molino de viento:</strong> mecánica → eléctrica<br>• Una <strong>radio:</strong> eléctrica → sonora<br>• Una <strong>vela:</strong> química → luminosa y calorífica'},
-    dato:{title:'Dato curioso',info:'• En cada transformación, algo de energía se vuelve <strong>calor</strong><br>• El Sol transforma su energía en luz y calor<br>• ¡Tu cuerpo transforma la comida en movimiento!'}
+  clima:{
+    nombre:'El clima',icon:'🌦️',
+    estructura:{title:'¿Qué es?',info:'• Es el estado del tiempo <strong>a lo largo del año</strong><br>• El de Honduras es <strong>tropical</strong><br>• Cambia con la <strong>altitud</strong>'},
+    funcion:{title:'Características',info:'• <strong>Costas y llanuras:</strong> cálidas todo el año<br>• <strong>Montañas:</strong> clima templado y fresco<br>• <strong>Lluviosa:</strong> mayo a octubre · <strong>Seca:</strong> noviembre a abril'},
+    ubicacion:{title:'Ejemplos',info:'• <strong>La Ceiba</strong> (costa): calor y lluvia<br>• <strong>La Esperanza</strong> (montaña): la ciudad más fresca<br>• <strong>Choluteca</strong> (sur): muy calurosa y seca'},
+    dato:{title:'Dato curioso',info:'• A mayor <strong>altura</strong>, más fresco el clima<br>• En Celaque puede bajar cerca de los <strong>0 °C</strong><br>• Las lluvias del Caribe alimentan los grandes ríos'}
   },
-  ahorro:{
-    nombre:'El ahorro de energía',icon:'💚',
-    estructura:{title:'¿Qué es?',info:'• Es <strong>usar la energía con cuidado</strong><br>• Sin <strong>desperdiciarla</strong><br>• Cuida el planeta y la economía familiar'},
-    funcion:{title:'Características',info:'• <strong>Apagar</strong> luces y aparatos que no se usan<br>• Aprovechar la <strong>luz del día</strong><br>• Usar <strong>focos ahorradores</strong> y desconectar cargadores'},
-    ubicacion:{title:'Ejemplos',info:'• Apagar la luz al salir de un cuarto<br>• No dejar la tele encendida sin verla<br>• Usar el <strong>viento fresco</strong> en vez del ventilador'},
-    dato:{title:'Dato curioso',info:'• Ahorrar energía <strong>reduce la contaminación</strong><br>• La mayoría de la energía viene de fuentes que se agotan<br>• Pequeños hábitos hacen una gran diferencia'}
+  division:{
+    nombre:'La división política',icon:'🏛️',
+    estructura:{title:'¿Qué es?',info:'• Es la forma de <strong>organizar el territorio</strong> para gobernarlo<br>• Honduras tiene <strong>18 departamentos</strong><br>• Divididos en <strong>298 municipios</strong>'},
+    funcion:{title:'Características',info:'• Cada departamento tiene su <strong>cabecera</strong><br>• La capital es <strong>Tegucigalpa</strong> (Distrito Central)<br>• <strong>Islas de la Bahía</strong> es el departamento insular'},
+    ubicacion:{title:'Ejemplos',info:'• <strong>Cortés</strong> → San Pedro Sula<br>• <strong>Atlántida</strong> → La Ceiba<br>• <strong>Gracias a Dios</strong> → Puerto Lempira (La Mosquitia)'},
+    dato:{title:'Dato curioso',info:'• El Distrito Central une <strong>dos ciudades</strong>: Tegucigalpa y Comayagüela<br>• <strong>Gracias a Dios</strong> debe su nombre a una frase de Colón<br>• El departamento más pequeño es <strong>Islas de la Bahía</strong>'}
   }
 };
-let labParte='formas',labAspecto='estructura';
+let labParte='ubicacion',labAspecto='estructura';
 function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
 function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
 function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAspecto];document.getElementById('lab-sentence').innerHTML=`🔬 Explorando: <strong>${data.nombre}</strong> → <strong>${asp.title}</strong>`;document.getElementById('lab-display').innerHTML=`<div class="lab-cont-header">${data.icon} ${data.nombre}</div><div class="lab-asp-title">${asp.title}</div><div class="lab-asp-info">${asp.info}</div>`;}
