@@ -46,7 +46,7 @@ function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.pu
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
 function toggleAchPanel(){sfx('click');document.getElementById('achPanel').classList.toggle('open');}
 function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t);}t.textContent=msg;t.style.display='block';clearTimeout(t._tid);t._tid=setTimeout(()=>t.style.display='none',3200);}
-function launchConfetti(){const colors=['#0369a1','#38bdf8','#15803d','#4ade80','#0ea5e9'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
+function launchConfetti(){const colors=['#0f766e','#2dd4bf','#b45309','#f59e0b','#14b8a6'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
 const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador 🧭'},{t:55,n:'Viajero del Tiempo ⏳'},{t:90,n:'Arqueólogo 🗿'},{t:130,n:'Investigador 🔎'},{t:165,n:'Historiador 🏅'},{t:190,n:'Guardián de Copán 🏆'}];
@@ -61,20 +61,20 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Honduras',a:'🇭🇳 País de <strong>Centroamérica</strong> con unos <strong>112,492 km²</strong>; «el corazón de Centroamérica».'},
-  {w:'Límites',a:'🧭 <strong>Norte:</strong> Mar Caribe · <strong>Sur:</strong> Golfo de Fonseca, Nicaragua y El Salvador · <strong>Este:</strong> Nicaragua · <strong>Oeste:</strong> Guatemala y El Salvador.'},
-  {w:'Relieve',a:'⛰️ Honduras es un país <strong>montañoso</strong>: cerca de las <strong>tres cuartas partes</strong> son montañas.'},
-  {w:'Cerro Las Minas',a:'🏔️ El <strong>punto más alto</strong> del país (2,870 m), en la Montaña de <strong>Celaque</strong>, Lempira.'},
-  {w:'Vertiente del Caribe',a:'🌊 Agrupa los ríos <strong>largos</strong>: Ulúa, Chamelecón, Aguán, Patuca y Coco o Segovia.'},
-  {w:'Vertiente del Pacífico',a:'🌅 Agrupa los ríos <strong>cortos</strong> que llegan al Golfo de Fonseca: Choluteca, Goascorán y Nacaome.'},
-  {w:'Río Coco o Segovia',a:'🏞️ El río <strong>más largo</strong> de Honduras; marca la frontera con Nicaragua.'},
-  {w:'Lago de Yojoa',a:'💧 El <strong>único lago natural</strong> del país; famoso por sus aves y peces.'},
-  {w:'Laguna de Caratasca',a:'🌴 La laguna <strong>más grande</strong>, en La Mosquitia (Gracias a Dios).'},
-  {w:'Clima',a:'🌦️ <strong>Tropical</strong>: cálido en las costas y templado en las montañas; estación lluviosa y seca.'},
-  {w:'Departamentos',a:'🏛️ Honduras se divide en <strong>18 departamentos</strong> y estos en <strong>298 municipios</strong>.'},
-  {w:'Tegucigalpa',a:'🏙️ La <strong>capital</strong>, en el municipio del Distrito Central (con Comayagüela).'},
-  {w:'Islas de la Bahía',a:'🏝️ El departamento <strong>insular</strong>: Roatán, Utila y Guanaja.'},
-  {w:'Golfo de Fonseca',a:'🌅 La entrada del <strong>Océano Pacífico</strong>; compartido con El Salvador y Nicaragua.'},
+  {w:'Precolombino',a:'🕰️ Todo lo que existió en América <strong>antes de la llegada de Colón</strong> en <strong>1492</strong>.'},
+  {w:'Los mayas',a:'🏛️ Gran civilización de <strong>Mesoamérica</strong>; en Honduras floreció en <strong>Copán</strong>.'},
+  {w:'Mesoamérica',a:'🗺️ Región cultural: sur de <strong>México</strong>, Guatemala, Belice y el <strong>occidente de Honduras</strong> y El Salvador.'},
+  {w:'Copán',a:'🗿 La gran <strong>ciudad maya de Honduras</strong>; hoy Parque Arqueológico y <strong>Patrimonio de la Humanidad</strong> (UNESCO).'},
+  {w:'Escalinata Jeroglífica',a:'📜 Escalera de Copán con el <strong>texto maya tallado más largo</strong> que se conoce.'},
+  {w:'Estelas',a:'🪨 <strong>Monumentos de piedra tallada</strong> con los retratos de los gobernantes de Copán.'},
+  {w:'Escritura maya',a:'✍️ <strong>Jeroglífica</strong>: la más desarrollada de la América antigua.'},
+  {w:'Numeración maya',a:'🔢 De <strong>20 en 20</strong>, con puntos y barras… ¡y conocían el <strong>CERO</strong>!'},
+  {w:'Calendario maya',a:'📅 Muy <strong>preciso</strong>; guiaba las siembras y las ceremonias.'},
+  {w:'El maíz',a:'🌽 Alimento <strong>sagrado</strong> y base de la agricultura; se cultivaba en la <strong>milpa</strong>.'},
+  {w:'Popol Vuh',a:'📖 <strong>Libro sagrado</strong> de los mayas quichés: cuenta el origen del mundo y del maíz.'},
+  {w:"Yax K'uk' Mo'",a:'👑 <strong>Fundador de la dinastía</strong> de Copán; tuvo 16 gobernantes sucesores.'},
+  {w:'Los lencas',a:'🏞️ El pueblo indígena <strong>más numeroso</strong> de la Honduras precolombina.'},
+  {w:'Aztecas e incas',a:'🌎 Otras grandes civilizaciones: <strong>aztecas</strong> en México y <strong>incas</strong> en los Andes (Perú).'},
 ];
 let fcIdx=0;
 function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿En qué región de América está Honduras?',o:['a) Sudamérica','b) Centroamérica','c) Norteamérica','d) El Caribe insular'],c:1},
-  {q:'¿Cuál es el punto más alto de Honduras?',o:['a) El Cerro Las Minas','b) El Pico Bonito','c) El Cerro Azul','d) La Montaña de la Flor'],c:0},
-  {q:'¿Cuál es el río más largo del país?',o:['a) El Ulúa','b) El Choluteca','c) El Coco o Segovia','d) El Aguán'],c:2},
-  {q:'¿Cuál es el único lago natural de Honduras?',o:['a) La Laguna de Caratasca','b) El Cajón','c) El Lago de Yojoa','d) El Golfo de Fonseca'],c:2},
-  {q:'¿En cuántos departamentos se divide Honduras?',o:['a) 15','b) 18','c) 22','d) 298'],c:1},
-  {q:'¿Cuál es la capital de Honduras?',o:['a) San Pedro Sula','b) Comayagua','c) Tegucigalpa','d) Choluteca'],c:2},
-  {q:'¿Con qué mar limita Honduras al norte?',o:['a) El Océano Pacífico','b) El Mar Caribe','c) El Golfo de Fonseca','d) El Mar Mediterráneo'],c:1},
-  {q:'¿Qué río pertenece a la vertiente del Pacífico?',o:['a) El Ulúa','b) El Patuca','c) El Choluteca','d) El Aguán'],c:2},
-  {q:'¿Cuál es el departamento insular de Honduras?',o:['a) Gracias a Dios','b) Islas de la Bahía','c) Atlántida','d) Valle'],c:1},
+  {q:'¿Qué significa «precolombino»?',o:['a) Después de la independencia','b) Antes de la llegada de Cristóbal Colón','c) De la época colonial','d) Del siglo XX'],c:1},
+  {q:'¿Cuál fue la gran ciudad maya de Honduras?',o:['a) Tikal','b) Tenochtitlan','c) Copán','d) Cusco'],c:2},
+  {q:'¿En qué región cultural vivieron los mayas?',o:['a) Los Andes','b) Mesoamérica','c) La Patagonia','d) El Amazonas'],c:1},
+  {q:'¿Qué número conocían los mayas y fue un gran avance?',o:['a) El cero','b) El millón','c) Los números romanos','d) Las fracciones decimales'],c:0},
+  {q:'¿Cómo era la escritura de los mayas?',o:['a) Con alfabeto latino','b) Jeroglífica','c) No tenían escritura','d) Con números solamente'],c:1},
+  {q:'¿Cuál era el alimento base de los pueblos precolombinos?',o:['a) El trigo','b) El arroz','c) El maíz','d) La papa solamente'],c:2},
+  {q:'¿Cómo se llama el libro sagrado de los mayas quichés?',o:['a) El Popol Vuh','b) El Códice Real','c) El Chilam Balam de Copán','d) La Crónica Maya'],c:0},
+  {q:'¿Cuál era el pueblo indígena más numeroso de Honduras?',o:['a) Los aztecas','b) Los lencas','c) Los incas','d) Los garífunas'],c:1},
+  {q:'¿Dónde crearon su imperio los incas?',o:['a) En México','b) En Honduras','c) En los Andes (Perú)','d) En Guatemala'],c:2},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -102,14 +102,14 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Vertiente del Caribe','Vertiente del Pacífico'],headA:'🌊 Vertiente del Caribe',headB:'🌅 Vertiente del Pacífico',colA:'car',colB:'pac',
-   words:[{w:'Río Ulúa',t:'car'},{w:'Río Choluteca',t:'pac'},{w:'Río Patuca',t:'car'},{w:'Río Goascorán',t:'pac'},{w:'Río Aguán',t:'car'},{w:'Río Nacaome',t:'pac'},{w:'Río Chamelecón',t:'car'},{w:'Río Coco o Segovia',t:'car'}]},
-  {label:['Forma de relieve','Forma de agua'],headA:'⛰️ Relieve',headB:'💧 Aguas',colA:'rel',colB:'agua',
-   words:[{w:'Montaña',t:'rel'},{w:'Río',t:'agua'},{w:'Valle',t:'rel'},{w:'Lago',t:'agua'},{w:'Cordillera',t:'rel'},{w:'Laguna',t:'agua'},{w:'Llanura',t:'rel'},{w:'Golfo',t:'agua'},{w:'Cerro',t:'rel'},{w:'Mar',t:'agua'}]},
-  {label:['Costa Norte (Caribe)','Costa Sur (Pacífico)'],headA:'🌊 Costa Norte',headB:'🌅 Costa Sur',colA:'nor',colB:'sur',
-   words:[{w:'Puerto Cortés',t:'nor'},{w:'San Lorenzo',t:'sur'},{w:'La Ceiba',t:'nor'},{w:'Golfo de Fonseca',t:'sur'},{w:'Trujillo',t:'nor'},{w:'Amapala',t:'sur'},{w:'Tela',t:'nor'},{w:'Isla del Tigre',t:'sur'}]},
-  {label:['Departamento','Ciudad'],headA:'🏛️ Departamento',headB:'🏙️ Ciudad',colA:'dep',colB:'ciu',
-   words:[{w:'Cortés',t:'dep'},{w:'San Pedro Sula',t:'ciu'},{w:'Atlántida',t:'dep'},{w:'La Ceiba',t:'ciu'},{w:'Olancho',t:'dep'},{w:'Juticalpa',t:'ciu'},{w:'Gracias a Dios',t:'dep'},{w:'Puerto Lempira',t:'ciu'}]},
+  {label:['Logro maya','No es maya'],headA:'🗿 Logro maya',headB:'🚫 No es maya',colA:'maya',colB:'no',
+   words:[{w:'Escritura jeroglífica',t:'maya'},{w:'El caballo',t:'no'},{w:'Numeración con cero',t:'maya'},{w:'El hierro',t:'no'},{w:'Calendario preciso',t:'maya'},{w:'La pólvora',t:'no'},{w:'Pirámides y estelas',t:'maya'},{w:'El alfabeto latino',t:'no'},{w:'Juego de pelota',t:'maya'},{w:'El trigo',t:'no'}]},
+  {label:['Pueblo de Honduras','Civilización de otras tierras'],headA:'🇭🇳 Pueblo de Honduras',headB:'🌎 De otras tierras',colA:'hn',colB:'otro',
+   words:[{w:'Lencas',t:'hn'},{w:'Aztecas',t:'otro'},{w:'Chortís',t:'hn'},{w:'Incas',t:'otro'},{w:'Tolupanes',t:'hn'},{w:'Olmecas',t:'otro'},{w:'Pech',t:'hn'},{w:'Mapuches',t:'otro'},{w:'Tawahkas',t:'hn'},{w:'Guaraníes',t:'otro'}]},
+  {label:['Alimento de América','Traído de Europa'],headA:'🌽 De América',headB:'🚢 Traído de Europa',colA:'am',colB:'eu',
+   words:[{w:'El maíz',t:'am'},{w:'El trigo',t:'eu'},{w:'El cacao',t:'am'},{w:'La caña de azúcar',t:'eu'},{w:'El frijol',t:'am'},{w:'El arroz',t:'eu'},{w:'El tomate',t:'am'},{w:'La naranja',t:'eu'},{w:'El aguacate',t:'am'},{w:'La carne de res',t:'eu'}]},
+  {label:['Grupo dirigente','Pueblo trabajador'],headA:'👑 Grupo dirigente',headB:'🌽 Pueblo trabajador',colA:'alta',colB:'pueblo',
+   words:[{w:'El rey',t:'alta'},{w:'Los campesinos',t:'pueblo'},{w:'Los nobles',t:'alta'},{w:'Los artesanos',t:'pueblo'},{w:'Los sacerdotes',t:'alta'},{w:'Los cargadores',t:'pueblo'},{w:'Los jefes guerreros',t:'alta'},{w:'Los pescadores',t:'pueblo'}]},
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -119,14 +119,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['Honduras','está','en','Centroamérica.'],c:3,art:'La región de América donde está Honduras'},
-  {s:['El','río','Coco','es','el','más','largo','del','país.'],c:2,art:'El río más largo de Honduras'},
-  {s:['El','Lago','de','Yojoa','es','el','único','lago','natural.'],c:3,art:'El único lago natural del país'},
-  {s:['La','capital','de','Honduras','es','Tegucigalpa.'],c:5,art:'La capital del país'},
-  {s:['Honduras','tiene','dieciocho','departamentos.'],c:2,art:'El número de departamentos'},
-  {s:['El','Mar','Caribe','limita','al','norte','del','país.'],c:2,art:'El mar que limita al norte de Honduras'},
-  {s:['Roatán','pertenece','a','las','Islas','de','la','Bahía.'],c:0,art:'La isla más conocida del Caribe hondureño'},
-  {s:['El','clima','de','Honduras','es','tropical.'],c:5,art:'El tipo de clima del país'},
+  {s:['Precolombino','significa','antes','de','la','llegada','de','Colón.'],c:0,art:'La palabra que nombra la América anterior a 1492'},
+  {s:['Copán','fue','la','gran','ciudad','maya','de','Honduras.'],c:0,art:'La gran ciudad maya de Honduras'},
+  {s:['Los','mayas','vivieron','en','Mesoamérica.'],c:4,art:'La región cultural de los mayas'},
+  {s:['Los','mayas','conocían','el','cero','en','su','numeración.'],c:4,art:'El gran avance de la numeración maya'},
+  {s:['El','maíz','era','el','alimento','sagrado.'],c:1,art:'El alimento base de los pueblos precolombinos'},
+  {s:['El','Popol','Vuh','es','el','libro','sagrado','maya.'],c:1,art:'El libro sagrado de los mayas quichés (primera palabra)'},
+  {s:['Los','lencas','eran','el','pueblo','más','numeroso.'],c:1,art:'El pueblo indígena más numeroso de Honduras'},
+  {s:['Los','incas','construyeron','Machu','Picchu','en','los','Andes.'],c:1,art:'La civilización de los Andes'},
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -136,14 +136,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Honduras está en ___.',opts:['Sudamérica','Centroamérica','Norteamérica'],c:1},
-  {s:'El punto más alto es el Cerro ___.',opts:['Las Minas','Bonito','Azul'],c:0},
-  {s:'El río más largo es el ___.',opts:['Ulúa','Coco o Segovia','Choluteca'],c:1},
-  {s:'El único lago natural es el Lago de ___.',opts:['Caratasca','Yojoa','Fonseca'],c:1},
-  {s:'Honduras tiene ___ departamentos.',opts:['16','18','20'],c:1},
-  {s:'La capital de Honduras es ___.',opts:['San Pedro Sula','Tegucigalpa','Comayagua'],c:1},
-  {s:'Al norte, Honduras limita con el ___.',opts:['Mar Caribe','Océano Pacífico','Golfo de Fonseca'],c:0},
-  {s:'El río Choluteca pertenece a la vertiente del ___.',opts:['Caribe','Pacífico','Atlántico'],c:1},
+  {s:'Precolombino significa antes de la llegada de ___.',opts:['Colón','los mayas','los lencas'],c:0},
+  {s:'La gran ciudad maya de Honduras fue ___.',opts:['Tikal','Copán','Cusco'],c:1},
+  {s:'Los mayas vivieron en la región llamada ___.',opts:['Mesoamérica','los Andes','La Mosquitia'],c:0},
+  {s:'La numeración maya conocía el ___.',opts:['millón','cero','decimal'],c:1},
+  {s:'El alimento sagrado de los mayas era el ___.',opts:['trigo','arroz','maíz'],c:2},
+  {s:'El libro sagrado maya-quiché es el ___.',opts:['Popol Vuh','Altar Q','Códice Real'],c:0},
+  {s:'El pueblo indígena más numeroso de Honduras eran los ___.',opts:['aztecas','lencas','incas'],c:1},
+  {s:'Colón llegó a América en el año ___.',opts:['1492','1821','1592'],c:0},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -152,9 +152,9 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
 const routeSets=[
-  {label:'De la división más grande a la más pequeña',steps:['País (Honduras)','Departamento','Municipio','Aldea','Caserío']},
-  {label:'El viaje de una gota: de la montaña al Caribe',steps:['Llueve en la montaña','El agua baja por las quebradas','Se une al río Ulúa','El río cruza el Valle de Sula','Desemboca en el Mar Caribe']},
-  {label:'La costa norte, de oeste a este',steps:['Puerto Cortés','Tela','La Ceiba','Trujillo','La Mosquitia']},
+  {label:'La historia de Copán (en orden)',steps:["Yax K'uk' Mo' funda la dinastía",'Copán crece con templos y estelas','Gobierna 18 Conejo, gran constructor','La ciudad decae y es abandonada','Hoy es Parque Arqueológico y Patrimonio de la Humanidad']},
+  {label:'Del maíz a la tortilla (como hace siglos)',steps:['Se siembra el maíz en la milpa','Se cosechan las mazorcas','Se muele el grano en la piedra','Se hacen las tortillas','Se comparten en la comida']},
+  {label:'Grandes épocas de América (en orden)',steps:['Llegan los primeros pobladores a América','Florecen los mayas en Mesoamérica','Florecen aztecas e incas','Llega Cristóbal Colón (1492)','Comienza la época colonial']},
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -165,28 +165,28 @@ function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.
 
 // Widget 2: Identifica el concepto
 const neuronPartes=[
-  {desc:'El punto más alto de Honduras (2,870 m)',ans:'Cerro Las Minas',opts:['Cerro Las Minas','Pico Bonito','Cerro Azul','Montaña de la Flor']},
-  {desc:'El único lago natural del país',ans:'Lago de Yojoa',opts:['Lago de Yojoa','Laguna de Caratasca','El Cajón','Golfo de Fonseca']},
-  {desc:'El río más largo; marca la frontera con Nicaragua',ans:'Río Coco o Segovia',opts:['Río Coco o Segovia','Río Ulúa','Río Choluteca','Río Aguán']},
-  {desc:'La capital de Honduras',ans:'Tegucigalpa',opts:['Tegucigalpa','San Pedro Sula','Comayagua','Choluteca']},
-  {desc:'El departamento insular del Caribe',ans:'Islas de la Bahía',opts:['Islas de la Bahía','Gracias a Dios','Atlántida','Valle']},
-  {desc:'La laguna más grande, en La Mosquitia',ans:'Laguna de Caratasca',opts:['Laguna de Caratasca','Lago de Yojoa','Golfo de Fonseca','Laguna de Alvarado']},
-  {desc:'La entrada del Océano Pacífico, al sur del país',ans:'Golfo de Fonseca',opts:['Golfo de Fonseca','Mar Caribe','Bahía de Trujillo','Lago de Yojoa']},
-  {desc:'El puerto más importante de Honduras, en el Caribe',ans:'Puerto Cortés',opts:['Puerto Cortés','San Lorenzo','Amapala','La Ceiba']},
+  {desc:'La gran ciudad maya de Honduras, Patrimonio de la Humanidad',ans:'Copán',opts:['Copán','Tikal','Tenochtitlan','Cusco']},
+  {desc:'La escalera de Copán con el texto maya más largo',ans:'Escalinata Jeroglífica',opts:['Escalinata Jeroglífica','Altar Q','Estela A','Juego de pelota']},
+  {desc:'El número que los mayas conocían y pocas culturas lograron',ans:'El cero',opts:['El cero','El millón','El número pi','La fracción']},
+  {desc:'El libro sagrado de los mayas quichés',ans:'Popol Vuh',opts:['Popol Vuh','Códice Real','Altar Q','Chilam Balam']},
+  {desc:'El fundador de la dinastía de Copán',ans:"Yax K'uk' Mo'",opts:["Yax K'uk' Mo'",'18 Conejo','Moctezuma','Atahualpa']},
+  {desc:'El pueblo indígena más numeroso de Honduras',ans:'Los lencas',opts:['Los lencas','Los chortís','Los pech','Los tawahkas']},
+  {desc:'La región cultural donde vivieron los mayas',ans:'Mesoamérica',opts:['Mesoamérica','Los Andes','El Amazonas','La Patagonia']},
+  {desc:'La civilización que construyó Machu Picchu en los Andes',ans:'Los incas',opts:['Los incas','Los aztecas','Los mayas','Los olmecas']},
 ];
 let neuronIdx=0,neuronDone=false;
-function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los lugares de Honduras identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todo el mundo precolombino identificado!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
 function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Concepto → Significado
 const neuroPairs=[
-  {trans:'El Lago de Yojoa',func:'El único lago natural de Honduras',opts:['El único lago natural de Honduras','La laguna más grande del país','El punto más alto del país','El río más largo del país']},
-  {trans:'El Cerro Las Minas',func:'El punto más alto del país (2,870 m)',opts:['El punto más alto del país (2,870 m)','El único lago natural','Un puerto del Caribe','La capital de Honduras']},
-  {trans:'El Río Ulúa',func:'Riega el fértil Valle de Sula',opts:['Riega el fértil Valle de Sula','Desemboca en el Golfo de Fonseca','Es el punto más alto','Es una laguna costera']},
-  {trans:'La Mosquitia',func:'La región oriental de grandes bosques, poco poblada',opts:['La región oriental de grandes bosques, poco poblada','La región más poblada del país','Una isla del Caribe','Un volcán del sur']},
-  {trans:'El Distrito Central',func:'El municipio de la capital (Tegucigalpa y Comayagüela)',opts:['El municipio de la capital (Tegucigalpa y Comayagüela)','El departamento insular','El puerto más importante','El lago más grande']},
+  {trans:'Copán',func:'La gran ciudad maya de Honduras',opts:['La gran ciudad maya de Honduras','La capital de los aztecas','La capital de los incas','Un libro sagrado']},
+  {trans:'La estela',func:'Monumento de piedra tallada con retratos de gobernantes',opts:['Monumento de piedra tallada con retratos de gobernantes','Un campo de maíz','Un tipo de calendario','Una canoa maya']},
+  {trans:'El Popol Vuh',func:'El libro sagrado de los mayas quichés',opts:['El libro sagrado de los mayas quichés','El altar de los 16 reyes','La escalera de Copán','La numeración maya']},
+  {trans:'La milpa',func:'El campo donde se cultivaba el maíz',opts:['El campo donde se cultivaba el maíz','Una pirámide maya','Un juego de pelota','Una estela tallada']},
+  {trans:'El Altar Q',func:'El monumento con los 16 gobernantes de Copán',opts:['El monumento con los 16 gobernantes de Copán','El libro sagrado maya','La montaña más alta','El calendario azteca']},
 ];
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
@@ -195,12 +195,12 @@ function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: Fuente → ¿Renovable o no renovable?
 const enfermedadData=[
-  {disease:'Río Ulúa',characteristic:'Vertiente del Caribe',opts:['Vertiente del Caribe','Vertiente del Pacífico']},
-  {disease:'Río Choluteca',characteristic:'Vertiente del Pacífico',opts:['Vertiente del Pacífico','Vertiente del Caribe']},
-  {disease:'Río Patuca',characteristic:'Vertiente del Caribe',opts:['Vertiente del Caribe','Vertiente del Pacífico']},
-  {disease:'Río Goascorán',characteristic:'Vertiente del Pacífico',opts:['Vertiente del Pacífico','Vertiente del Caribe']},
-  {disease:'Río Aguán',characteristic:'Vertiente del Caribe',opts:['Vertiente del Caribe','Vertiente del Pacífico']},
-  {disease:'Río Nacaome',characteristic:'Vertiente del Pacífico',opts:['Vertiente del Pacífico','Vertiente del Caribe']},
+  {disease:'El maíz',characteristic:'Precolombino',opts:['Precolombino','Llegó después']},
+  {disease:'El caballo',characteristic:'Llegó después',opts:['Llegó después','Precolombino']},
+  {disease:'El cacao',characteristic:'Precolombino',opts:['Precolombino','Llegó después']},
+  {disease:'El trigo',characteristic:'Llegó después',opts:['Llegó después','Precolombino']},
+  {disease:'El calendario maya',characteristic:'Precolombino',opts:['Precolombino','Llegó después']},
+  {disease:'La pólvora',characteristic:'Llegó después',opts:['Llegó después','Precolombino']},
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -209,12 +209,12 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Caribe','Pacífico'],btnA:'🌊 Caribe',btnB:'🌅 Pacífico',colA:'car',colB:'pac',
-   words:[{w:'Río Ulúa',t:'car'},{w:'Río Choluteca',t:'pac'},{w:'Río Patuca',t:'car'},{w:'Río Goascorán',t:'pac'},{w:'Río Chamelecón',t:'car'},{w:'Río Nacaome',t:'pac'},{w:'Puerto Cortés',t:'car'},{w:'San Lorenzo',t:'pac'},{w:'La Ceiba',t:'car'},{w:'Amapala',t:'pac'}]},
-  {label:['Relieve','Aguas'],btnA:'⛰️ Relieve',btnB:'💧 Aguas',colA:'rel',colB:'agua',
-   words:[{w:'Montaña',t:'rel'},{w:'Río',t:'agua'},{w:'Valle',t:'rel'},{w:'Lago',t:'agua'},{w:'Cordillera',t:'rel'},{w:'Laguna',t:'agua'},{w:'Llanura',t:'rel'},{w:'Golfo',t:'agua'},{w:'Cerro',t:'rel'},{w:'Mar',t:'agua'}]},
-  {label:['Departamento','Ciudad'],btnA:'🏛️ Departamento',btnB:'🏙️ Ciudad',colA:'dep',colB:'ciu',
-   words:[{w:'Cortés',t:'dep'},{w:'San Pedro Sula',t:'ciu'},{w:'Atlántida',t:'dep'},{w:'La Ceiba',t:'ciu'},{w:'Olancho',t:'dep'},{w:'Juticalpa',t:'ciu'},{w:'Yoro',t:'dep'},{w:'El Progreso',t:'ciu'},{w:'Copán',t:'dep'},{w:'Santa Rosa de Copán',t:'ciu'}]},
+  {label:['Logro maya','No es maya'],btnA:'🗿 Logro maya',btnB:'🚫 No es maya',colA:'maya',colB:'no',
+   words:[{w:'Escritura jeroglífica',t:'maya'},{w:'El caballo',t:'no'},{w:'El cero',t:'maya'},{w:'El hierro',t:'no'},{w:'Calendario',t:'maya'},{w:'La pólvora',t:'no'},{w:'Estelas',t:'maya'},{w:'El alfabeto latino',t:'no'},{w:'Juego de pelota',t:'maya'},{w:'El trigo',t:'no'}]},
+  {label:['Pueblo de Honduras','De otras tierras'],btnA:'🇭🇳 De Honduras',btnB:'🌎 De otras tierras',colA:'hn',colB:'otro',
+   words:[{w:'Lencas',t:'hn'},{w:'Aztecas',t:'otro'},{w:'Chortís',t:'hn'},{w:'Incas',t:'otro'},{w:'Tolupanes',t:'hn'},{w:'Olmecas',t:'otro'},{w:'Pech',t:'hn'},{w:'Mapuches',t:'otro'},{w:'Tawahkas',t:'hn'},{w:'Guaraníes',t:'otro'}]},
+  {label:['De América','Traído de Europa'],btnA:'🌽 De América',btnB:'🚢 De Europa',colA:'am',colB:'eu',
+   words:[{w:'El maíz',t:'am'},{w:'El trigo',t:'eu'},{w:'El cacao',t:'am'},{w:'La caña de azúcar',t:'eu'},{w:'El frijol',t:'am'},{w:'El arroz',t:'eu'},{w:'El tomate',t:'am'},{w:'La naranja',t:'eu'},{w:'El aguacate',t:'am'},{w:'La carne de res',t:'eu'}]},
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -227,45 +227,45 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'Honduras está en el centro de América, en Centroamérica.',type:'Ubicación de Honduras'},
-  {s:'El Cerro Las Minas es el punto más alto del país.',type:'Cerro Las Minas'},
-  {s:'El río Coco o Segovia es el más largo de Honduras.',type:'Río Coco o Segovia'},
-  {s:'El Lago de Yojoa es el único lago natural.',type:'Lago de Yojoa'},
-  {s:'Honduras se divide en 18 departamentos.',type:'División política'},
-  {s:'La capital de Honduras es Tegucigalpa.',type:'La capital'},
-  {s:'El Mar Caribe limita al norte de Honduras.',type:'Límite norte'},
-  {s:'El Golfo de Fonseca está al sur del país.',type:'Golfo de Fonseca'},
-  {s:'Las Islas de la Bahía son Roatán, Utila y Guanaja.',type:'Islas de la Bahía'},
-  {s:'El clima de Honduras es tropical.',type:'El clima'},
+  {s:'Precolombino es lo que existió antes de la llegada de Colón (1492).',type:'Precolombino'},
+  {s:'Copán fue la gran ciudad maya de Honduras.',type:'Copán'},
+  {s:'Los mayas vivieron en Mesoamérica.',type:'Mesoamérica'},
+  {s:'La numeración maya conocía el cero.',type:'El cero'},
+  {s:'La Escalinata Jeroglífica tiene el texto maya más largo.',type:'Escalinata Jeroglífica'},
+  {s:'El maíz era el alimento sagrado y se cultivaba en la milpa.',type:'El maíz'},
+  {s:'El Popol Vuh es el libro sagrado de los mayas quichés.',type:'Popol Vuh'},
+  {s:"Yax K'uk' Mo' fundó la dinastía de Copán.",type:"Yax K'uk' Mo'"},
+  {s:'Los lencas eran el pueblo más numeroso de Honduras.',type:'Los lencas'},
+  {s:'Los incas crearon su imperio en los Andes.',type:'Los incas'},
 ];
 const classifyTaskDB=[
-  {w:'Río Ulúa',gen:'Río caudaloso que riega el Valle de Sula',n:'Río (vertiente del Caribe)',g:'Noroccidente del país',t:'Uno de los más importantes'},
-  {w:'Lago de Yojoa',gen:'El único lago natural de Honduras',n:'Lago',g:'Entre Comayagua, Cortés y Santa Bárbara',t:'Famoso por sus aves y peces'},
-  {w:'Cerro Las Minas',gen:'El punto más alto del país (2,870 m)',n:'Montaña',g:'Montaña de Celaque, Lempira',t:'También se le llama Pico Celaque'},
-  {w:'Golfo de Fonseca',gen:'Entrada del Océano Pacífico',n:'Golfo',g:'Sur del país',t:'Compartido con El Salvador y Nicaragua'},
-  {w:'Islas de la Bahía',gen:'Departamento insular del Caribe',n:'Islas',g:'Frente a la costa norte',t:'Roatán, Utila y Guanaja'},
+  {w:'Copán',gen:'Gran ciudad maya de Honduras',n:'Ciudad-estado maya',g:'Occidente de Honduras (depto. de Copán)',t:'Patrimonio de la Humanidad (UNESCO)'},
+  {w:'Escalinata Jeroglífica',gen:'Escalera con el texto maya más largo',n:'Monumento',g:'Parque Arqueológico de Copán',t:'Cuenta la historia de los reyes'},
+  {w:'Popol Vuh',gen:'Libro sagrado maya-quiché',n:'Libro sagrado',g:'Cultura maya de Guatemala',t:'Dice que las personas fueron hechas de maíz'},
+  {w:'Los lencas',gen:'Pueblo indígena más numeroso de Honduras',n:'Pueblo precolombino',g:'Centro y occidente del país',t:'Su alfarería sigue viva hoy'},
+  {w:'Tenochtitlan',gen:'Capital de los aztecas',n:'Ciudad precolombina',g:'Centro de México',t:'Se construyó sobre un lago'},
 ];
 const completeTaskDB=[
-  {s:'Honduras está en ___.',opts:['Sudamérica','Centroamérica','Norteamérica'],ans:'Centroamérica'},
-  {s:'El punto más alto es el Cerro ___.',opts:['Las Minas','Bonito','Azul'],ans:'Las Minas'},
-  {s:'El río más largo es el ___.',opts:['Ulúa','Coco o Segovia','Choluteca'],ans:'Coco o Segovia'},
-  {s:'El único lago natural es el Lago de ___.',opts:['Caratasca','Yojoa','Fonseca'],ans:'Yojoa'},
-  {s:'Honduras tiene ___ departamentos.',opts:['16','18','20'],ans:'18'},
-  {s:'La capital de Honduras es ___.',opts:['San Pedro Sula','Tegucigalpa','Comayagua'],ans:'Tegucigalpa'},
-  {s:'Al norte, Honduras limita con el ___.',opts:['Mar Caribe','Océano Pacífico','Golfo de Fonseca'],ans:'Mar Caribe'},
-  {s:'El río Choluteca es de la vertiente del ___.',opts:['Caribe','Pacífico','Atlántico'],ans:'Pacífico'},
+  {s:'Precolombino significa antes de la llegada de ___.',opts:['Colón','los mayas','los lencas'],ans:'Colón'},
+  {s:'La gran ciudad maya de Honduras fue ___.',opts:['Tikal','Copán','Cusco'],ans:'Copán'},
+  {s:'Los mayas vivieron en ___.',opts:['Mesoamérica','los Andes','La Mosquitia'],ans:'Mesoamérica'},
+  {s:'La numeración maya conocía el ___.',opts:['millón','cero','decimal'],ans:'cero'},
+  {s:'El alimento sagrado era el ___.',opts:['trigo','arroz','maíz'],ans:'maíz'},
+  {s:'El libro sagrado maya-quiché es el ___.',opts:['Popol Vuh','Altar Q','Códice Real'],ans:'Popol Vuh'},
+  {s:'El pueblo más numeroso de Honduras eran los ___.',opts:['aztecas','lencas','incas'],ans:'lencas'},
+  {s:'Colón llegó a América en ___.',opts:['1492','1821','1592'],ans:'1492'},
 ];
 const explainQuestions=[
-  {q:'¿Dónde está Honduras y cuáles son sus límites?',ans:'Honduras está en Centroamérica. Limita al norte con el Mar Caribe; al sur con el Golfo de Fonseca (Pacífico), Nicaragua y El Salvador; al este con Nicaragua; y al oeste con Guatemala y El Salvador.'},
-  {q:'¿Por qué se dice que Honduras es un país montañoso?',ans:'Porque cerca de las tres cuartas partes de su territorio son montañas y cordilleras. El punto más alto es el Cerro Las Minas (2,870 m), en la Montaña de Celaque.'},
-  {q:'¿Cuáles son las dos vertientes de Honduras y en qué se diferencian?',ans:'La vertiente del Caribe, con ríos largos y caudalosos (Ulúa, Patuca, Coco o Segovia), y la vertiente del Pacífico, con ríos cortos que llegan al Golfo de Fonseca (Choluteca, Goascorán, Nacaome).'},
-  {q:'¿Cómo se divide políticamente Honduras?',ans:'En 18 departamentos, que se dividen en 298 municipios. La capital es Tegucigalpa, en el municipio del Distrito Central, junto con Comayagüela.'},
-  {q:'¿Cómo cambia el clima de Honduras según la altitud?',ans:'El clima es tropical: en las costas y llanuras hace calor todo el año, y en las montañas el clima es templado y fresco. Además hay una estación lluviosa (mayo a octubre) y una seca (noviembre a abril).'},
+  {q:'¿Qué significa «precolombino» y de dónde viene la palabra?',ans:'Es todo lo que existió en América antes de la llegada de Cristóbal Colón en 1492. Viene de «pre» (antes) y «colombino» (de Colón).'},
+  {q:'¿Quiénes fueron los mayas y dónde vivieron?',ans:'Una gran civilización de Mesoamérica (sur de México, Guatemala, Belice y el occidente de Honduras y El Salvador). No fueron un solo reino, sino ciudades-estado como Tikal, Palenque y Copán.'},
+  {q:'¿Por qué Copán es importante para Honduras?',ans:'Porque fue una de las ciudades mayas más brillantes: tiene la Escalinata Jeroglífica, estelas y el Altar Q con sus 16 reyes. Hoy es Parque Arqueológico y Patrimonio de la Humanidad (UNESCO).'},
+  {q:'Menciona tres logros de los mayas y explica uno.',ans:'Escritura jeroglífica, numeración con el cero, calendario preciso, astronomía y arquitectura. Por ejemplo, su numeración usaba puntos y barras y contaba de 20 en 20, e incluía el cero, un avance que pocas culturas lograron.'},
+  {q:'¿Qué pueblos precolombinos habitaban Honduras además de los mayas?',ans:'Los lencas (los más numerosos, en el centro y occidente), los chortís (occidente, emparentados con los mayas), y los tolupanes, pech y tawahkas en los bosques del centro y oriente.'},
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué lugar o concepto de la geografía de Honduras se refiere.','<strong>Ejemplo:</strong> El Lago de Yojoa es el único lago natural. → <span style="color:var(--jade);font-weight:700;">Lago de Yojoa</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué lugar o concepto del mundo precolombino se refiere.','<strong>Ejemplo:</strong> Copán fue la gran ciudad maya de Honduras. → <span style="color:var(--jade);font-weight:700;">Copán</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
 function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada lugar, completa su descripción, qué tipo de lugar es, dónde está y un dato.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Lugar','text-align:left;')}${th('Descripción')}${th('Tipo')}${th('Ubicación')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Descripción: ${it.gen} | Tipo: ${it.n} | Ubicación: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
@@ -274,42 +274,42 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
   {size:10,grid:[
-    ['K','U','W','Q','M','L','L','R','Z','S'],
-    ['H','L','I','G','P','V','A','L','L','E'],
-    ['S','U','Y','V','F','C','Z','D','W','L'],
-    ['A','A','O','O','W','Y','P','J','Z','C'],
-    ['R','L','J','E','H','B','G','G','Z','N'],
-    ['U','P','O','X','C','A','R','I','B','E'],
-    ['D','U','A','P','N','D','Y','C','M','B'],
-    ['N','L','M','U','A','V','B','A','K','N'],
-    ['O','M','J','X','U','W','M','N','A','F'],
-    ['H','L','I','S','L','A','I','B','S','W']
+    ['X','W','U','W','S','D','Z','F','X','B'],
+    ['H','A','K','P','E','P','H','A','Q','N'],
+    ['A','R','Z','B','F','K','C','L','L','B'],
+    ['A','H','I','F','Q','O','O','E','H','F'],
+    ['R','T','A','Z','K','T','P','T','Y','R'],
+    ['L','V','M','B','A','N','A','S','A','X'],
+    ['E','G','X','B','O','Y','N','E','U','U'],
+    ['N','Y','F','R','R','X','A','D','W','K'],
+    ['C','L','D','H','E','U','E','M','U','U'],
+    ['A','W','Q','C','C','J','R','X','X','R']
   ],words:[
-    {w:'HONDURAS',cells:[[9,0],[8,0],[7,0],[6,0],[5,0],[4,0],[3,0],[2,0]]},
-    {w:'CARIBE',cells:[[5,4],[5,5],[5,6],[5,7],[5,8],[5,9]]},
-    {w:'YOJOA',cells:[[2,2],[3,2],[4,2],[5,2],[6,2]]},
-    {w:'ULUA',cells:[[0,1],[1,1],[2,1],[3,1]]},
-    {w:'VALLE',cells:[[1,5],[1,6],[1,7],[1,8],[1,9]]},
-    {w:'ISLA',cells:[[9,2],[9,3],[9,4],[9,5]]}
+    {w:'MAYA',cells:[[8,7],[7,6],[6,5],[5,4]]},
+    {w:'COPAN',cells:[[2,6],[3,6],[4,6],[5,6],[6,6]]},
+    {w:'ESTELA',cells:[[6,7],[5,7],[4,7],[3,7],[2,7],[1,7]]},
+    {w:'MAIZ',cells:[[5,2],[4,2],[3,2],[2,2]]},
+    {w:'CERO',cells:[[9,4],[8,4],[7,4],[6,4]]},
+    {w:'LENCA',cells:[[5,0],[6,0],[7,0],[8,0],[9,0]]}
   ]},
   {size:10,grid:[
-    ['D','M','N','C','F','P','M','K','Y','M'],
-    ['N','C','U','V','Z','P','Q','S','E','O'],
-    ['R','O','A','T','A','N','O','O','U','N'],
-    ['G','J','D','S','O','G','L','C','Q','T'],
-    ['U','C','P','H','K','N','D','O','A','A'],
-    ['L','O','M','A','I','G','U','C','L','N'],
-    ['C','L','N','O','T','H','R','V','E','A'],
-    ['O','M','E','M','N','U','Z','A','C','K'],
-    ['A','O','C','I','F','I','C','A','P','Y'],
-    ['D','R','D','W','X','O','E','A','J','M']
+    ['Q','H','Q','B','N','C','F','F','V','V'],
+    ['G','W','N','G','V','C','N','T','F','K'],
+    ['A','T','N','G','C','O','G','N','I','F'],
+    ['Q','C','K','B','H','I','L','P','M','E'],
+    ['M','X','N','U','O','L','I','Z','A','U'],
+    ['M','A','I','I','R','L','F','A','C','J'],
+    ['I','E','O','R','T','O','O','B','E','Z'],
+    ['L','R','Y','G','I','M','F','L','T','B'],
+    ['P','E','C','H','C','D','T','W','Z','E'],
+    ['A','Y','T','C','C','R','T','K','A','R']
   ],words:[
-    {w:'PACIFICO',cells:[[8,8],[8,7],[8,6],[8,5],[8,4],[8,3],[8,2],[8,1]]},
-    {w:'PATUCA',cells:[[4,2],[5,3],[6,4],[7,5],[8,6],[9,7]]},
-    {w:'ROATAN',cells:[[2,0],[2,1],[2,2],[2,3],[2,4],[2,5]]},
-    {w:'CELAQUE',cells:[[7,8],[6,8],[5,8],[4,8],[3,8],[2,8],[1,8]]},
-    {w:'MONTANA',cells:[[0,9],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9]]},
-    {w:'COCO',cells:[[5,7],[4,7],[3,7],[2,7]]}
+    {w:'AZTECA',cells:[[9,8],[8,8],[7,8],[6,8],[5,8],[4,8]]},
+    {w:'INCA',cells:[[5,3],[4,2],[3,1],[2,0]]},
+    {w:'MILPA',cells:[[5,0],[6,0],[7,0],[8,0],[9,0]]},
+    {w:'CHORTI',cells:[[2,4],[3,4],[4,4],[5,4],[6,4],[7,4]]},
+    {w:'PECH',cells:[[8,0],[8,1],[8,2],[8,3]]},
+    {w:'GLIFO',cells:[[2,6],[3,6],[4,6],[5,6],[6,6]]}
   ]}
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
@@ -325,72 +325,72 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'Honduras está ubicada en Centroamérica.',a:true},
-  {q:'El punto más alto de Honduras es el Pico Bonito.',a:false},
-  {q:'El río Coco o Segovia es el más largo del país.',a:true},
-  {q:'El Lago de Yojoa es el único lago natural de Honduras.',a:true},
-  {q:'Honduras se divide en 18 departamentos.',a:true},
-  {q:'La capital de Honduras es San Pedro Sula.',a:false},
-  {q:'El Mar Caribe limita al norte de Honduras.',a:true},
-  {q:'El río Choluteca pertenece a la vertiente del Caribe.',a:false},
-  {q:'Las Islas de la Bahía son Roatán, Utila y Guanaja.',a:true},
-  {q:'La Laguna de Caratasca está en La Mosquitia.',a:true},
-  {q:'Honduras tiene costas en el Mar Caribe y en el Océano Pacífico.',a:true},
-  {q:'En las montañas hace más calor que en las costas.',a:false},
-  {q:'Los departamentos se dividen en municipios.',a:true},
-  {q:'El Golfo de Fonseca está al norte del país.',a:false},
-  {q:'Cerca de las tres cuartas partes de Honduras son montañas.',a:true},
+  {q:'Precolombino significa antes de la llegada de Cristóbal Colón.',a:true},
+  {q:'La gran ciudad maya de Honduras fue Tikal.',a:false},
+  {q:'Los mayas vivieron en la región llamada Mesoamérica.',a:true},
+  {q:'La numeración maya conocía el cero.',a:true},
+  {q:'La escritura maya era jeroglífica.',a:true},
+  {q:'Los mayas conocieron el caballo antes de 1492.',a:false},
+  {q:'El maíz era el alimento sagrado de los pueblos precolombinos.',a:true},
+  {q:'El Popol Vuh es el libro sagrado de los mayas quichés.',a:true},
+  {q:"Yax K'uk' Mo' fundó la dinastía de Copán.",a:true},
+  {q:'Los lencas eran el pueblo más numeroso de la Honduras precolombina.',a:true},
+  {q:'Los incas crearon su imperio en México.',a:false},
+  {q:'Copán es Patrimonio de la Humanidad (UNESCO).',a:true},
+  {q:'Los mayas fueron un solo reino con una sola capital.',a:false},
+  {q:'Copán fue abandonada siglos antes de la llegada de los españoles.',a:true},
+  {q:'El pueblo garífuna es precolombino.',a:false},
 ];
 const evalMCBank=[
-  {q:'¿En qué región de América está Honduras?',o:['a) Sudamérica','b) Centroamérica','c) Norteamérica','d) El Caribe insular'],a:1},
-  {q:'¿Cuál es el punto más alto de Honduras?',o:['a) El Cerro Las Minas','b) El Pico Bonito','c) El Cerro Azul','d) La Montaña de la Flor'],a:0},
-  {q:'¿Cuál es el río más largo del país?',o:['a) El Ulúa','b) El Choluteca','c) El Coco o Segovia','d) El Aguán'],a:2},
-  {q:'¿Cuál es el único lago natural de Honduras?',o:['a) La Laguna de Caratasca','b) El Cajón','c) El Lago de Yojoa','d) El Golfo de Fonseca'],a:2},
-  {q:'¿En cuántos departamentos se divide Honduras?',o:['a) 15','b) 18','c) 22','d) 298'],a:1},
-  {q:'¿Cuál es la capital de Honduras?',o:['a) San Pedro Sula','b) Comayagua','c) Tegucigalpa','d) Choluteca'],a:2},
-  {q:'¿Con qué mar limita Honduras al norte?',o:['a) El Océano Pacífico','b) El Mar Caribe','c) El Golfo de Fonseca','d) El Mar Mediterráneo'],a:1},
-  {q:'¿Qué río pertenece a la vertiente del Pacífico?',o:['a) El Ulúa','b) El Patuca','c) El Choluteca','d) El Aguán'],a:2},
-  {q:'¿Cuál es el departamento insular de Honduras?',o:['a) Gracias a Dios','b) Islas de la Bahía','c) Atlántida','d) Valle'],a:1},
-  {q:'¿Cuál es la laguna más grande del país?',o:['a) La de Yojoa','b) La de Caratasca','c) La de Fonseca','d) La de Alvarado'],a:1},
-  {q:'¿En qué departamento está el Cerro Las Minas?',o:['a) Lempira','b) Cortés','c) Olancho','d) Valle'],a:0},
-  {q:'¿Cuántos municipios tiene Honduras?',o:['a) 100','b) 200','c) 298','d) 350'],a:2},
-  {q:'¿Qué río riega el fértil Valle de Sula?',o:['a) El Ulúa','b) El Choluteca','c) El Coco','d) El Nacaome'],a:0},
-  {q:'¿Cuál es la extensión aproximada de Honduras?',o:['a) 112,492 km²','b) 50,000 km²','c) 200,000 km²','d) 8,000 km²'],a:0},
-  {q:'¿Cómo se llama la región oriental de grandes bosques?',o:['a) La Mosquitia','b) El Merendón','c) El Valle de Sula','d) El Golfo de Fonseca'],a:0},
+  {q:'¿Qué significa «precolombino»?',o:['a) Después de la independencia','b) Antes de la llegada de Cristóbal Colón','c) De la época colonial','d) Del siglo XX'],a:1},
+  {q:'¿Cuál fue la gran ciudad maya de Honduras?',o:['a) Tikal','b) Tenochtitlan','c) Copán','d) Cusco'],a:2},
+  {q:'¿En qué región cultural vivieron los mayas?',o:['a) Los Andes','b) Mesoamérica','c) La Patagonia','d) El Amazonas'],a:1},
+  {q:'¿Qué gran avance tenía la numeración maya?',o:['a) El cero','b) Las fracciones decimales','c) Los números romanos','d) El signo de porcentaje'],a:0},
+  {q:'¿Cómo era la escritura de los mayas?',o:['a) Con alfabeto latino','b) Jeroglífica','c) No tenían escritura','d) Solo con números'],a:1},
+  {q:'¿Qué monumento de Copán tiene el texto maya más largo?',o:['a) El Altar Q','b) La Escalinata Jeroglífica','c) La Estela A','d) El juego de pelota'],a:1},
+  {q:'¿Qué muestra el Altar Q de Copán?',o:['a) Los 16 gobernantes de la ciudad','b) El calendario solar','c) Un mapa de Mesoamérica','d) La historia del maíz'],a:0},
+  {q:'¿Quién fundó la dinastía de Copán?',o:["a) Yax K'uk' Mo'",'b) 18 Conejo','c) Moctezuma','d) Atahualpa'],a:0},
+  {q:'¿Cuál era el alimento base de los pueblos precolombinos?',o:['a) El trigo','b) El arroz','c) El maíz','d) La cebada'],a:2},
+  {q:'¿Cómo se llama el libro sagrado de los mayas quichés?',o:['a) El Popol Vuh','b) El Códice Real','c) La Crónica Maya','d) El Libro del Consejo Azteca'],a:0},
+  {q:'¿Cuál era el pueblo indígena más numeroso de Honduras?',o:['a) Los aztecas','b) Los lencas','c) Los incas','d) Los olmecas'],a:1},
+  {q:'¿Qué pueblo hondureño estaba emparentado con los mayas?',o:['a) Los chortís','b) Los pech','c) Los tawahkas','d) Los tolupanes'],a:0},
+  {q:'¿Dónde florecieron los aztecas?',o:['a) En el centro de México','b) En los Andes','c) En Honduras','d) En el Amazonas'],a:0},
+  {q:'¿Dónde crearon su imperio los incas?',o:['a) En México','b) En Guatemala','c) En los Andes (Perú)','d) En el Caribe'],a:2},
+  {q:'¿En qué año llegó Cristóbal Colón a América?',o:['a) 1392','b) 1492','c) 1592','d) 1821'],a:1},
 ];
 const evalCPBank=[
-  {q:'Honduras está en la región de ___.',a:'Centroamérica'},
-  {q:'El punto más alto es el Cerro ___.',a:'Las Minas'},
-  {q:'El río más largo es el ___.',a:'Coco o Segovia'},
-  {q:'El único lago natural es el Lago de ___.',a:'Yojoa'},
-  {q:'Honduras tiene ___ departamentos.',a:'18'},
-  {q:'La capital de Honduras es ___.',a:'Tegucigalpa'},
-  {q:'Al norte, Honduras limita con el Mar ___.',a:'Caribe'},
-  {q:'Al sur del país está el Golfo de ___.',a:'Fonseca'},
-  {q:'Los ríos Choluteca y Nacaome son de la vertiente del ___.',a:'Pacífico'},
-  {q:'Las Islas de la Bahía son Roatán, Utila y ___.',a:'Guanaja'},
-  {q:'La laguna más grande es la de ___.',a:'Caratasca'},
-  {q:'Los departamentos se dividen en ___.',a:'municipios'},
-  {q:'El clima de Honduras es ___.',a:'tropical'},
-  {q:'La región oriental de grandes bosques es La ___.',a:'Mosquitia'},
-  {q:'El río ___ riega el Valle de Sula.',a:'Ulúa'},
+  {q:'Precolombino significa antes de la llegada de ___.',a:'Colón'},
+  {q:'La gran ciudad maya de Honduras fue ___.',a:'Copán'},
+  {q:'Los mayas vivieron en la región llamada ___.',a:'Mesoamérica'},
+  {q:'La numeración maya conocía el número ___.',a:'cero'},
+  {q:'La escritura maya era ___.',a:'jeroglífica'},
+  {q:'El alimento sagrado era el ___.',a:'maíz'},
+  {q:'El libro sagrado maya-quiché es el Popol ___.',a:'Vuh'},
+  {q:'La dinastía de Copán la fundó Yax K\'uk\' ___.',a:'Mo\''},
+  {q:'El pueblo más numeroso de Honduras eran los ___.',a:'lencas'},
+  {q:'El maíz se cultivaba en un campo llamado ___.',a:'milpa'},
+  {q:'Las estelas son monumentos de ___ tallada.',a:'piedra'},
+  {q:'Copán fue declarada Patrimonio de la ___.',a:'Humanidad'},
+  {q:'Los aztecas florecieron en el centro de ___.',a:'México'},
+  {q:'Los incas crearon su imperio en los ___.',a:'Andes'},
+  {q:'Colón llegó a América en el año ___.',a:'1492'},
 ];
 const evalPRBank=[
-  {term:'Honduras',def:'País del centro de Centroamérica (112,492 km²)'},
-  {term:'Cerro Las Minas',def:'El punto más alto del país (2,870 m)'},
-  {term:'Río Coco o Segovia',def:'El río más largo de Honduras'},
-  {term:'Lago de Yojoa',def:'El único lago natural'},
-  {term:'Laguna de Caratasca',def:'La laguna más grande, en La Mosquitia'},
-  {term:'Tegucigalpa',def:'La capital de Honduras'},
-  {term:'Mar Caribe',def:'El mar que limita al norte'},
-  {term:'Golfo de Fonseca',def:'La entrada del Pacífico, al sur'},
-  {term:'Islas de la Bahía',def:'Departamento insular: Roatán, Utila y Guanaja'},
-  {term:'Vertiente del Caribe',def:'Agrupa ríos largos como el Ulúa y el Patuca'},
-  {term:'Vertiente del Pacífico',def:'Agrupa ríos cortos como el Choluteca'},
-  {term:'Departamento',def:'División política grande (hay 18)'},
-  {term:'Municipio',def:'División dentro del departamento (hay 298)'},
-  {term:'La Mosquitia',def:'Región oriental de grandes bosques'},
-  {term:'Puerto Cortés',def:'El puerto más importante, en el Caribe'},
+  {term:'Precolombino',def:'Lo anterior a la llegada de Colón (1492)'},
+  {term:'Copán',def:'La gran ciudad maya de Honduras'},
+  {term:'Mesoamérica',def:'Región cultural donde vivieron los mayas'},
+  {term:'Escalinata Jeroglífica',def:'Escalera con el texto maya más largo'},
+  {term:'Estela',def:'Monumento de piedra con retratos de gobernantes'},
+  {term:'Altar Q',def:'Muestra a los 16 reyes de Copán'},
+  {term:'El cero',def:'Gran avance de la numeración maya'},
+  {term:'Popol Vuh',def:'Libro sagrado de los mayas quichés'},
+  {term:"Yax K'uk' Mo'",def:'Fundador de la dinastía de Copán'},
+  {term:'El maíz',def:'Alimento sagrado; se cultivaba en la milpa'},
+  {term:'Los lencas',def:'El pueblo más numeroso de Honduras'},
+  {term:'Los chortís',def:'Pueblo hondureño emparentado con los mayas'},
+  {term:'Los aztecas',def:'Civilización del centro de México'},
+  {term:'Los incas',def:'Civilización de los Andes (Perú)'},
+  {term:'1492',def:'Año de la llegada de Colón a América'},
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -423,7 +423,7 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
 }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
-function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · Geografía de Honduras`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · Los Mayas y las Culturas Precolombinas`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
 function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
 function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
 function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
@@ -442,7 +442,7 @@ function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una eva
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
     const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
-const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Geografía de Honduras · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #2471a3;background:#eaf2f8;color:#2471a3;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#2471a3;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #2471a3;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#eaf2f8;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#2471a3;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#2471a3;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #2471a3;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
+const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Los Mayas y las Culturas Precolombinas · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #0f766e;background:#e9f6f2;color:#0f766e;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#0f766e;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #0f766e;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#e9f6f2;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#0f766e;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#0f766e;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #0f766e;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
 .zg-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem;}
 .zg-head{display:flex;gap:5px;align-items:center;font-weight:700;font-size:10pt;letter-spacing:1px;}
@@ -457,7 +457,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Geografía de Honduras · Educación Básica · Ciencias Sociales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Geografía de Honduras · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Los Mayas y las Culturas Precolombinas · Educación Básica · Ciencias Sociales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Los Mayas y las Culturas Precolombinas · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
   ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
@@ -477,75 +477,75 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Una familia de Choluteca viaja de vacaciones a Roatán: sale del calor seco del sur y llega a una isla del Caribe.'},
-  {txt:'En el Valle de Sula, el río Ulúa crece con las lluvias de mayo a octubre y a veces se desborda sobre los cultivos.'},
-  {txt:'Un turista quiere subir al punto más alto de Honduras y pregunta a qué departamento debe viajar.'},
-  {txt:'Un pueblo pesquero del Golfo de Fonseca vive de la pesca y del cultivo de camarón.'},
-  {txt:'Una cooperativa de café busca tierras frescas de montaña para sembrar un cafetal de calidad.'},
-  {txt:'Un barco carga bananos en Puerto Cortés y los lleva a otros países.'},
+  {txt:'Una escuela visita el Parque Arqueológico de Copán: los estudiantes ven estelas, el juego de pelota y la Escalinata Jeroglífica.'},
+  {txt:'Una familia lenca de La Esperanza elabora ollas y comales de barro con las técnicas heredadas de sus antepasados.'},
+  {txt:'Un estudiante descubre que los mayas escribían el número cinco con una barra y que conocían el cero.'},
+  {txt:'Un campesino siembra su milpa con maíz, frijol y calabaza, igual que se hacía hace siglos.'},
+  {txt:'Un turista pregunta por qué Copán fue abandonada si los españoles todavía no habían llegado a América.'},
+  {txt:'En una feria escolar, un grupo presenta el Popol Vuh y cuenta que las personas fueron hechas de maíz.'},
 ];
 const critCaseQuestions=[
-  '1. ¿Qué lugares o elementos geográficos de Honduras aparecen en este caso?',
-  '2. ¿En qué región o vertiente del país ocurre? ¿Cómo lo sabes?',
-  '3. ¿Cómo influye la geografía (el relieve, el clima o el agua) en lo que ocurre?',
-  '4. ¿Qué recomendación o conclusión puedes dar usando lo que sabes del mapa de Honduras?',
+  '1. ¿Qué elementos del mundo precolombino aparecen en este caso?',
+  '2. ¿A qué cultura o pueblo pertenece lo que se describe? ¿Cómo lo sabes?',
+  '3. ¿Qué nos enseña este caso sobre la vida o los logros de esos pueblos?',
+  '4. ¿Por qué es importante conocer y cuidar esta herencia cultural hoy?',
 ];
 const critCaseGuides=[
-  'Pueden aparecer ríos (Ulúa), valles (Sula), montañas (Celaque), costas (Caribe o Golfo de Fonseca), islas (Roatán) o puertos (Puerto Cortés).',
-  'La región se reconoce por sus señas: el Caribe al norte, el Golfo de Fonseca al sur, las montañas en el centro-occidente y La Mosquitia al oriente.',
-  'El relieve y el clima explican lo que pasa: las lluvias crecen los ríos, la altitud refresca el clima, las costas permiten pesca y puertos.',
-  'Una buena recomendación usa la geografía: sembrar café en montaña, construir lejos de ríos que se desbordan, usar el puerto más cercano.',
+  'Pueden aparecer monumentos (estelas, Escalinata), conocimientos (el cero, el calendario), cultivos (la milpa, el maíz) o libros (Popol Vuh).',
+  'La cultura se reconoce por sus señas: Copán y los glifos son mayas; la alfarería de La Esperanza es lenca; el Popol Vuh es maya-quiché.',
+  'Muestra que esos pueblos tenían ciencia, arte y organización propios, y que parte de su herencia sigue viva en nuestra comida y costumbres.',
+  'Porque es la raíz de nuestra identidad: valorar Copán y las culturas vivas (lencas, chortís, pech…) nos ayuda a conocernos y a proteger ese patrimonio.',
 ];
 const critErrorBank=[
-  {txt:'"La capital de Honduras es San Pedro Sula y el país tiene 15 departamentos."',
-   g1:'La capital es TEGUCIGALPA (Distrito Central).',
-   g2:'Honduras tiene 18 departamentos.'},
-  {txt:'"El río más largo de Honduras es el Ulúa y desemboca en el Océano Pacífico."',
-   g1:'El río más largo es el COCO O SEGOVIA.',
-   g2:'El Ulúa desemboca en el MAR CARIBE.'},
-  {txt:'"El Lago de Yojoa es una laguna que está en La Mosquitia."',
-   g1:'El Lago de Yojoa es el ÚNICO LAGO NATURAL, entre Comayagua, Cortés y Santa Bárbara.',
-   g2:'La laguna de La Mosquitia es la de CARATASCA.'},
-  {txt:'"Honduras limita al norte con el Océano Pacífico y al sur con el Mar Caribe."',
-   g1:'Al NORTE está el Mar Caribe.',
-   g2:'Al SUR está el Golfo de Fonseca (Océano Pacífico).'},
-  {txt:'"Honduras es un país plano y su punto más alto es el Pico Bonito."',
-   g1:'Honduras es MONTAÑOSO: unas tres cuartas partes son montañas.',
-   g2:'El punto más alto es el CERRO LAS MINAS (2,870 m), en Celaque.'},
+  {txt:'"La gran ciudad maya de Honduras fue Tikal y está en el departamento de Olancho."',
+   g1:'La gran ciudad maya de Honduras fue COPÁN (Tikal está en Guatemala).',
+   g2:'Copán está en el occidente, en el departamento de COPÁN.'},
+  {txt:'"Los mayas no tenían escritura y tampoco conocían el cero."',
+   g1:'Los mayas SÍ tenían escritura: la JEROGLÍFICA, la más desarrollada de América.',
+   g2:'Su numeración SÍ conocía el CERO, un gran avance.'},
+  {txt:'"Los mayas montaban a caballo y sembraban trigo en la milpa."',
+   g1:'El CABALLO llegó con los españoles: no existía en la América precolombina.',
+   g2:'En la milpa se sembraba MAÍZ (con frijol y calabaza), no trigo.'},
+  {txt:'"Copán fue abandonada porque los españoles la conquistaron en 1492."',
+   g1:'Copán decayó y fue abandonada hacia el SIGLO IX, siglos ANTES de los españoles.',
+   g2:'En 1492 llegó COLÓN a América; la conquista fue después y no causó el abandono de Copán.'},
+  {txt:'"Los incas vivieron en México y los aztecas en los Andes."',
+   g1:'Es al revés: los AZTECAS florecieron en el centro de MÉXICO.',
+   g2:'Los INCAS crearon su imperio en los ANDES (Perú).'},
 ];
 const critDecisionBank=[
-  'Para sembrar café de calidad, conviene elegir tierras frescas de montaña, o las llanuras cálidas de la costa.',
-  'Para exportar bananos del Valle de Sula, conviene usar Puerto Cortés en el Caribe, o el puerto de San Lorenzo en el Pacífico.',
-  'Para conocer arrecifes de coral, conviene viajar a las Islas de la Bahía, o al Lago de Yojoa.',
-  'Si una comunidad vive junto a un río que se desborda cada año, conviene construir las casas en zonas altas, o en la orilla del río.',
-  'Para observar aves y pescar en agua dulce, conviene visitar el Lago de Yojoa, o el Golfo de Fonseca.',
+  'Para conocer la civilización maya de Honduras, conviene visitar el Parque Arqueológico de Copán, o una playa del Caribe.',
+  'Si encuentras una pieza antigua de barro en el campo, conviene avisar a las autoridades y no moverla, o llevártela de recuerdo.',
+  'Para aprender sobre el origen del mundo según los mayas, conviene leer el Popol Vuh, o un mapa de carreteras.',
+  'Para conocer la cultura lenca viva, conviene visitar los talleres de alfarería de La Esperanza o Lempira, o buscarla en las ruinas de Copán.',
+  'Si quieres explicar la numeración maya en clase, conviene mostrar los puntos, las barras y el cero, o decir que usaban números romanos.',
 ];
-const critDecisionGuide='La mejor decisión aprovecha la geografía: el café se da en montañas frescas; los bananos del Valle de Sula salen por Puerto Cortés porque está cerca y en el Caribe; los arrecifes están en las Islas de la Bahía; junto a un río que se desborda se construye en zonas altas; y el Lago de Yojoa es agua dulce, ideal para aves y pesca.';
+const critDecisionGuide='La mejor decisión valora y protege la herencia precolombina: Copán es el lugar para conocer a los mayas de Honduras; las piezas antiguas son patrimonio y se reportan, no se toman; el Popol Vuh explica las creencias mayas; la cultura lenca sigue viva en su alfarería; y la numeración maya usaba puntos, barras y el cero.';
 const critCompareBank=[
-  {a:'Agrupa ríos largos y caudalosos que desembocan en el Mar Caribe.',b:'Agrupa ríos cortos que desembocan en el Golfo de Fonseca.',
-   ga:'La vertiente del Caribe.',
-   gb:'La vertiente del Pacífico.',
-   gr:'Las dos agrupan ríos, pero se diferencian por el mar donde desembocan y por el largo de sus ríos.'},
-  {a:'División política grande; Honduras tiene 18.',b:'División más pequeña; Honduras tiene 298.',
-   ga:'El departamento.',
-   gb:'El municipio.',
-   gr:'Los dos organizan el territorio, pero los municipios están dentro de los departamentos.'},
-  {a:'El único lago natural, famoso por sus aves y peces.',b:'La laguna más grande, en La Mosquitia.',
-   ga:'El Lago de Yojoa.',
-   gb:'La Laguna de Caratasca.',
-   gr:'Los dos son cuerpos de agua tranquila, pero uno es un lago del interior y la otra es una laguna costera del oriente.'},
+  {a:'Civilización de Mesoamérica; su gran ciudad en Honduras fue Copán.',b:'Pueblo indígena más numeroso de Honduras; su alfarería sigue viva.',
+   ga:'Los mayas.',
+   gb:'Los lencas.',
+   gr:'Los dos son pueblos precolombinos de Honduras, pero los mayas construyeron grandes ciudades de piedra y los lencas destacaron en la vida agrícola y la cerámica.'},
+  {a:'Monumento de piedra tallada con el retrato de un gobernante.',b:'Escalera de Copán con el texto maya tallado más largo.',
+   ga:'La estela.',
+   gb:'La Escalinata Jeroglífica.',
+   gr:'Los dos son monumentos tallados de Copán, pero la estela retrata a un rey y la escalinata cuenta la historia completa de la dinastía.'},
+  {a:'Civilización del centro de México; su capital fue Tenochtitlan.',b:'Civilización de los Andes; construyó Machu Picchu.',
+   ga:'Los aztecas.',
+   gb:'Los incas.',
+   gr:'Las dos fueron grandes civilizaciones precolombinas, pero florecieron en lugares distintos: México y los Andes del Perú.'},
 ];
 const critCauseBank=[
-  {cause:'Honduras tiene montañas altas y frescas.',guide:'En ellas se cultiva café de buena calidad y el clima es templado.'},
-  {cause:'Llueve mucho de mayo a octubre.',guide:'Los ríos crecen y algunos, como el Ulúa, pueden desbordarse.'},
-  {cause:'El Valle de Sula es plano, fértil y regado por el río Ulúa.',guide:'Allí hay grandes cultivos y ciudades como San Pedro Sula.'},
-  {cause:'Honduras tiene costas en el Caribe y en el Pacífico.',guide:'Puede pescar y comerciar por los dos mares con sus puertos.'},
+  {cause:'Los mayas observaban el Sol, la Luna y las estrellas.',guide:'Crearon un calendario muy preciso que guiaba las siembras y ceremonias.'},
+  {cause:'Los mayas dominaban la agricultura del maíz.',guide:'Pudieron alimentar grandes ciudades y el maíz se volvió sagrado en sus creencias.'},
+  {cause:'Copán fue declarada Patrimonio de la Humanidad.',guide:'Llegan visitantes de todo el mundo y sus ruinas se protegen para el futuro.'},
+  {cause:'Los pueblos precolombinos no conocían el caballo ni el hierro.',guide:'Trabajaban con herramientas de piedra y cargaban todo con su propia fuerza.'},
 ];
 const critEffectBank=[
-  {effect:'A las Islas de la Bahía llegan muchos turistas.',guide:'Porque tienen playas y arrecifes de coral en el Mar Caribe.'},
-  {effect:'En la costa hace más calor que en la montaña.',guide:'Porque el clima cambia con la altitud: a mayor altura, más fresco.'},
-  {effect:'La Mosquitia tiene pocos habitantes.',guide:'Porque es una región de grandes bosques y ríos, de difícil acceso.'},
-  {effect:'El sur del país produce camarones y melones.',guide:'Porque el Golfo de Fonseca y su llanura cálida lo permiten.'},
+  {effect:'Hoy podemos leer la historia de los reyes de Copán.',guide:'Porque los mayas la escribieron con jeroglíficos en la Escalinata y las estelas.'},
+  {effect:'Las tortillas y el maíz siguen en la mesa hondureña.',guide:'Porque son herencia de la agricultura precolombina de la milpa.'},
+  {effect:'En La Esperanza y en Lempira se elabora alfarería lenca.',guide:'Porque la cultura lenca sigue viva y transmite sus técnicas de generación en generación.'},
+  {effect:'Sabemos que las personas «fueron hechas de maíz» según los mayas.',guide:'Porque así lo cuenta el Popol Vuh, su libro sagrado.'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -553,12 +553,12 @@ function genEvalCrit(){
   const _sC = document.getElementById('evalCritFormaSel');
   if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
   const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC = _evalRng(200000 + cf);evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;_injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });saveProgress();
-  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · Geografía de Honduras`;
+  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · Los Mayas y las Culturas Precolombinas`;
   evalCritAnsVisible=false;
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: la geografía en la vida diaria <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: la herencia precolombina hoy <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
@@ -566,11 +566,11 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: usar el mapa <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con el relieve, el clima, los ríos y las regiones de Honduras.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: cuidar el patrimonio <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con los mayas, los pueblos de Honduras y el cuidado del patrimonio.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué lugar o concepto de Honduras corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -600,11 +600,11 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: la geografía en la vida diaria</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: la herencia precolombina hoy</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: usar el mapa</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con el relieve, el clima, los ríos y las regiones de Honduras.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué lugar o concepto de Honduras corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: cuidar el patrimonio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con los mayas, los pueblos de Honduras y el cuidado del patrimonio.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
@@ -616,51 +616,51 @@ function printEvalCrit(){
   pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
   pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it=>`<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it=>`<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Geografía de Honduras · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #2471a3;background:#eaf2f8;color:#2471a3;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#2471a3;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #2471a3;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#eaf2f8;border-left:3px solid #2471a3;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#eaf2f8;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#eaf2f8;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:7.5pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#2471a3;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #2471a3;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:12.7mm;}}</style></head><body><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Geografía de Honduras · Educación Básica · Ciencias Sociales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Geografía de Honduras · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Los Mayas y las Culturas Precolombinas · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #0f766e;background:#e9f6f2;color:#0f766e;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#0f766e;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #0f766e;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#e9f6f2;border-left:3px solid #0f766e;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#e9f6f2;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#e9f6f2;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:7.5pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#0f766e;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #0f766e;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:12.7mm;}}</style></head><body><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Los Mayas y las Culturas Precolombinas · Educación Básica · Ciencias Sociales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Mayas y las Culturas Precolombinas · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
-// ===================== LABORATORIO DE GEOGRAFÍA =====================
+// ===================== LABORATORIO DEL MUNDO PRECOLOMBINO =====================
 const parteData={
-  ubicacion:{
-    nombre:'Ubicación y límites',icon:'🧭',
-    estructura:{title:'¿Qué es?',info:'• Honduras está en <strong>Centroamérica</strong><br>• Extensión: unos <strong>112,492 km²</strong><br>• Se le llama «el corazón de Centroamérica»'},
-    funcion:{title:'Características',info:'• <strong>Norte:</strong> Mar Caribe<br>• <strong>Sur:</strong> Golfo de Fonseca, Nicaragua y El Salvador<br>• <strong>Este:</strong> Nicaragua<br>• <strong>Oeste:</strong> Guatemala y El Salvador'},
-    ubicacion:{title:'Ejemplos',info:'• Costa <strong>norte</strong>: larga, sobre el Caribe<br>• Costa <strong>sur</strong>: corta, en el Golfo de Fonseca<br>• Fronteras con <strong>3 países</strong> vecinos'},
-    dato:{title:'Dato curioso',info:'• Honduras tiene <strong>dos costas</strong>: puede ver el amanecer en el Caribe y el atardecer en el Pacífico<br>• Sus islas llegan hasta los arrecifes de coral<br>• Es el segundo país más grande de Centroamérica'}
+  mayas:{
+    nombre:'Los mayas',icon:'🏛️',
+    estructura:{title:'¿Qué es?',info:'• Gran civilización de <strong>Mesoamérica</strong><br>• Vivieron en el sur de México y parte de Centroamérica<br>• En Honduras florecieron en <strong>Copán</strong>'},
+    funcion:{title:'Características',info:'• Organizados en <strong>ciudades-estado</strong> con reyes<br>• Sociedad con <strong>nobles, sacerdotes, campesinos y artesanos</strong><br>• Cultivaban el <strong>maíz</strong> en la milpa'},
+    ubicacion:{title:'Ejemplos',info:'• <strong>Tikal</strong> (Guatemala)<br>• <strong>Palenque</strong> (México)<br>• <strong>Copán</strong> (Honduras)'},
+    dato:{title:'Dato curioso',info:'• El <strong>Popol Vuh</strong> dice que las personas fueron hechas <strong>de maíz</strong><br>• Jugaban el <strong>juego de pelota</strong> con caderas y codos<br>• Sus descendientes viven hoy en Guatemala, México y Honduras'}
   },
-  relieve:{
-    nombre:'El relieve',icon:'⛰️',
-    estructura:{title:'¿Qué es?',info:'• Son las <strong>formas del terreno</strong>: montañas, valles y llanuras<br>• Honduras es un país <strong>montañoso</strong><br>• Unas <strong>tres cuartas partes</strong> son montañas'},
-    funcion:{title:'Características',info:'• <strong>Cordilleras</strong> como el Merendón y Nombre de Dios<br>• <strong>Valles</strong> fértiles: Sula, Comayagua, Aguán<br>• <strong>Llanuras</strong> en las costas'},
-    ubicacion:{title:'Ejemplos',info:'• <strong>Cerro Las Minas</strong> (2,870 m): el punto más alto, en Celaque<br>• <strong>Valle de Sula</strong>: el más productivo<br>• Llanura costera del <strong>Caribe</strong>'},
-    dato:{title:'Dato curioso',info:'• Al Cerro Las Minas también se le llama <strong>Pico Celaque</strong><br>• En las montañas altas hace <strong>frío</strong> aunque el país sea tropical<br>• El café hondureño crece en las montañas'}
+  copan:{
+    nombre:'Copán',icon:'🗿',
+    estructura:{title:'¿Qué es?',info:'• La <strong>gran ciudad maya de Honduras</strong><br>• Hoy es un <strong>Parque Arqueológico</strong><br>• <strong>Patrimonio de la Humanidad</strong> (UNESCO, 1980)'},
+    funcion:{title:'Características',info:'• <strong>Escalinata Jeroglífica:</strong> el texto maya más largo<br>• <strong>Estelas:</strong> retratos de los reyes en piedra<br>• <strong>Altar Q:</strong> los 16 gobernantes de la dinastía'},
+    ubicacion:{title:'Ejemplos',info:'• Fundador: <strong>Yax K\'uk\' Mo\'</strong> (siglo V)<br>• Gran constructor: <strong>18 Conejo</strong><br>• Está en el <strong>occidente</strong> de Honduras (depto. de Copán)'},
+    dato:{title:'Dato curioso',info:'• Copán fue <strong>abandonada</strong> hacia el siglo IX, siglos antes de los españoles<br>• Bajo sus templos hay templos más antiguos, como <strong>Rosalila</strong><br>• Las guacamayas rojas vuelven a volar libres en el parque'}
   },
-  aguas:{
-    nombre:'Ríos, lagos y lagunas',icon:'🏞️',
-    estructura:{title:'¿Qué es?',info:'• Son las <strong>aguas</strong> del país: ríos, lagos y lagunas<br>• Los ríos se agrupan en <strong>dos vertientes</strong><br>• Según el mar donde desembocan'},
-    funcion:{title:'Características',info:'• <strong>Vertiente del Caribe:</strong> ríos largos (Ulúa, Chamelecón, Aguán, Patuca, Coco)<br>• <strong>Vertiente del Pacífico:</strong> ríos cortos (Choluteca, Goascorán, Nacaome)'},
-    ubicacion:{title:'Ejemplos',info:'• <strong>Río Coco o Segovia:</strong> el más largo<br>• <strong>Lago de Yojoa:</strong> el único lago natural<br>• <strong>Laguna de Caratasca:</strong> la más grande, en La Mosquitia'},
-    dato:{title:'Dato curioso',info:'• El río <strong>Choluteca</strong> pasa por Tegucigalpa y desemboca en el Pacífico<br>• En el <strong>Lago de Yojoa</strong> viven cientos de especies de aves<br>• La represa <strong>El Cajón</strong> forma un gran lago artificial'}
+  logros:{
+    nombre:'Los logros mayas',icon:'🧠',
+    estructura:{title:'¿Qué es?',info:'• Los <strong>avances</strong> en ciencia y arte de los mayas<br>• Los más notables de la América antigua<br>• Muchos se conservan tallados en piedra'},
+    funcion:{title:'Características',info:'• <strong>Escritura jeroglífica</strong> (glifos)<br>• <strong>Numeración</strong> de 20 en 20 con el <strong>cero</strong><br>• <strong>Calendario</strong> preciso y <strong>astronomía</strong>'},
+    ubicacion:{title:'Ejemplos',info:'• Escribían con <strong>glifos</strong> en estelas y códices<br>• Números: <strong>punto = 1</strong>, <strong>barra = 5</strong><br>• Pirámides y templos alineados con el Sol'},
+    dato:{title:'Dato curioso',info:'• El <strong>cero</strong> maya se dibujaba como una concha 🐚<br>• Predecían <strong>eclipses</strong> observando el cielo<br>• Su chocolate (del <strong>cacao</strong>) era bebida de reyes'}
   },
-  clima:{
-    nombre:'El clima',icon:'🌦️',
-    estructura:{title:'¿Qué es?',info:'• Es el estado del tiempo <strong>a lo largo del año</strong><br>• El de Honduras es <strong>tropical</strong><br>• Cambia con la <strong>altitud</strong>'},
-    funcion:{title:'Características',info:'• <strong>Costas y llanuras:</strong> cálidas todo el año<br>• <strong>Montañas:</strong> clima templado y fresco<br>• <strong>Lluviosa:</strong> mayo a octubre · <strong>Seca:</strong> noviembre a abril'},
-    ubicacion:{title:'Ejemplos',info:'• <strong>La Ceiba</strong> (costa): calor y lluvia<br>• <strong>La Esperanza</strong> (montaña): la ciudad más fresca<br>• <strong>Choluteca</strong> (sur): muy calurosa y seca'},
-    dato:{title:'Dato curioso',info:'• A mayor <strong>altura</strong>, más fresco el clima<br>• En Celaque puede bajar cerca de los <strong>0 °C</strong><br>• Las lluvias del Caribe alimentan los grandes ríos'}
+  pueblos:{
+    nombre:'Los pueblos de Honduras',icon:'🇭🇳',
+    estructura:{title:'¿Qué es?',info:'• Los <strong>pueblos indígenas</strong> que habitaban Honduras antes de 1492<br>• Cada uno con su lengua y costumbres<br>• Varios siguen <strong>vivos</strong> hoy'},
+    funcion:{title:'Características',info:'• <strong>Lencas:</strong> los más numerosos (centro y occidente)<br>• <strong>Chortís:</strong> emparentados con los mayas<br>• <strong>Tolupanes, pech y tawahkas:</strong> pueblos de los bosques'},
+    ubicacion:{title:'Ejemplos',info:'• Alfarería <strong>lenca</strong> en La Esperanza y Lempira<br>• <strong>Chortís</strong> en Copán y Ocotepeque<br>• <strong>Pech y tawahkas</strong> hacia La Mosquitia'},
+    dato:{title:'Dato curioso',info:'• Muchos nombres de lugares vienen del <strong>lenca</strong> y otras lenguas<br>• El pueblo <strong>garífuna</strong> llegó en 1797: no es precolombino<br>• La comida con <strong>maíz y frijol</strong> es herencia indígena'}
   },
-  division:{
-    nombre:'La división política',icon:'🏛️',
-    estructura:{title:'¿Qué es?',info:'• Es la forma de <strong>organizar el territorio</strong> para gobernarlo<br>• Honduras tiene <strong>18 departamentos</strong><br>• Divididos en <strong>298 municipios</strong>'},
-    funcion:{title:'Características',info:'• Cada departamento tiene su <strong>cabecera</strong><br>• La capital es <strong>Tegucigalpa</strong> (Distrito Central)<br>• <strong>Islas de la Bahía</strong> es el departamento insular'},
-    ubicacion:{title:'Ejemplos',info:'• <strong>Cortés</strong> → San Pedro Sula<br>• <strong>Atlántida</strong> → La Ceiba<br>• <strong>Gracias a Dios</strong> → Puerto Lempira (La Mosquitia)'},
-    dato:{title:'Dato curioso',info:'• El Distrito Central une <strong>dos ciudades</strong>: Tegucigalpa y Comayagüela<br>• <strong>Gracias a Dios</strong> debe su nombre a una frase de Colón<br>• El departamento más pequeño es <strong>Islas de la Bahía</strong>'}
+  america:{
+    nombre:'Las civilizaciones de América',icon:'🌎',
+    estructura:{title:'¿Qué es?',info:'• Las <strong>grandes civilizaciones</strong> precolombinas del continente<br>• Mayas, <strong>aztecas</strong> e <strong>incas</strong> son las más conocidas<br>• Todas florecieron antes de 1492'},
+    funcion:{title:'Características',info:'• <strong>Aztecas:</strong> centro de México, capital Tenochtitlan<br>• <strong>Incas:</strong> los Andes, capital Cusco<br>• <strong>Mayas:</strong> Mesoamérica, ciudades como Copán'},
+    ubicacion:{title:'Ejemplos',info:'• <strong>Tenochtitlan</strong> se construyó sobre un lago<br>• <strong>Machu Picchu</strong>, ciudad inca en la montaña<br>• <strong>Copán</strong>, la joya maya de Honduras'},
+    dato:{title:'Dato curioso',info:'• Los incas construían caminos de <strong>miles de kilómetros</strong><br>• Los aztecas cultivaban en <strong>islas flotantes</strong> (chinampas)<br>• América domesticó el <strong>maíz, el cacao y la papa</strong>'}
   }
 };
-let labParte='ubicacion',labAspecto='estructura';
+let labParte='mayas',labAspecto='estructura';
 function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
 function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
 function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAspecto];document.getElementById('lab-sentence').innerHTML=`🔬 Explorando: <strong>${data.nombre}</strong> → <strong>${asp.title}</strong>`;document.getElementById('lab-display').innerHTML=`<div class="lab-cont-header">${data.icon} ${data.nombre}</div><div class="lab-asp-title">${asp.title}</div><div class="lab-asp-info">${asp.info}</div>`;}
