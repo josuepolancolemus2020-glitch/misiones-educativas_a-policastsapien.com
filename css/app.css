@@ -638,27 +638,9 @@ a.padre-asistente-btn {
 .doc-mant[open] .doc-mant-sum { color: var(--text); }
 .doc-mant-body { padding: 0 2px 4px; }
 
-/* ── Pensador del día + frase motivacional, plegados al final ── */
-.pensador-details { margin-bottom: 24px; }
-.pensador-summary {
-  list-style: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  box-shadow: var(--shadow);
-  font-weight: 700;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.pensador-summary::-webkit-details-marker { display: none; }
-.pensador-summary::after { content: '▾'; color: var(--muted); }
-.pensador-details[open] .pensador-summary { margin-bottom: 12px; }
-.pensador-details[open] .pensador-summary::after { content: '▴'; }
+/* ── Frase motivacional al azar, al final ── */
 .motiv-cita-card {
+  margin-bottom: 24px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r);
