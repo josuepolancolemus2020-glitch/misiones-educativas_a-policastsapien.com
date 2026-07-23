@@ -931,33 +931,62 @@ function genTransformItems() {
   return items;
 }
 
-// III. Compara el cociente (10 × 1 = 10 pts)
-function genCmpCocItems() {
-  const types = _shuffleF(['mayor','mayor','mayor','mayor','menor','menor','menor','menor','igual','igual'], _opRnd);
-  return types.map(type => {
-    let dividend, divisor;
-    if (type === 'mayor') { const opts=[0.2,0.25,0.4,0.5]; divisor=opts[_opRint(0,opts.length-1)]; dividend=_opRint(2,12); }
-    else if (type === 'menor') { divisor=_opRint(2,5); dividend=_opRint(6,20); }
-    else { divisor=1; dividend=_opRint(3,15); }
-    return { expr: `${dividend} ÷ ${_opFmt(divisor)}`, rel: type };
-  });
-}
-
-// IV. División: decimal ÷ decimal (10 × 1 = 10 pts)
-function genDecDecItems() {
+// III. Encuentra el número que falta (10 × 1 = 10 pts)
+// Pensamiento inverso: verifica que dominan la relación dividendo-divisor-cociente
+// y la equivalencia ×10 de la prueba conceptual, no solo el algoritmo.
+function genMissingItems() {
   const items = [];
   for (let i = 0; i < 10; i++) {
-    const quotient = _opRint(2, 9), divisorInt = _opRint(1, 9);
-    const divisor = divisorInt / 10, dividend = quotient * divisorInt / 10;
-    items.push({ a: _opFmt(dividend), b: _opFmt(divisor), ans: quotient.toString() });
+    const dInt = _opRint(2, 9), q = _opRint(2, 9);
+    const divisor = _opFmt(dInt / 10), dividend = _opFmt((q * dInt) / 10);
+    const type = i % 3;
+    if (type === 0) items.push({ expr: `___ ÷ ${divisor} = ${q}`, ans: dividend });
+    else if (type === 1) items.push({ expr: `${dividend} ÷ ___ = ${q}`, ans: divisor });
+    else items.push({ expr: `${dividend} ÷ ${divisor} = ${q * dInt} ÷ ___`, ans: dInt.toString() });
   }
   return items;
 }
 
-// V. Ordena de mayor a menor cociente (4 grupos × 5 pts = 20 pts)
+// IV. Problemas de la vida real (5 × 2 = 10 pts)
+// División "de medida": ¿cuántos grupos de b caben en A? Deriva de los
+// problemas inventados de la prueba conceptual, con respuesta verificable.
+const _opProblemCtx = [
+  { t: (A, b) => `Doña Rosa tiene ${A} litros de jugo de naranja y lo sirve en vasos de ${b} litros. ¿Cuántos vasos llena?`, u: 'vasos', bs: [0.2, 0.25, 0.5] },
+  { t: (A, b) => `Una cinta de ${A} metros se corta en trozos de ${b} metros para hacer lazos. ¿Cuántos trozos salen?`, u: 'trozos', bs: [0.3, 0.4, 0.5, 0.6] },
+  { t: (A, b) => `Don Julio empaca ${A} libras de frijoles en bolsas de ${b} libras. ¿Cuántas bolsas llena?`, u: 'bolsas', bs: [0.5, 1.5, 2.5] },
+  { t: (A, b) => `Un caramelo cuesta ${b} lempiras. ¿Cuántos caramelos se pueden comprar con ${A} lempiras?`, u: 'caramelos', bs: [0.5, 1.5, 2.5] },
+  { t: (A, b) => `Una sastre corta ${A} metros de tela en piezas de ${b} metros. ¿Cuántas piezas obtiene?`, u: 'piezas', bs: [0.4, 0.8, 1.2] },
+  { t: (A, b) => `Una jarra con ${A} litros de fresco se reparte en tazas de ${b} litros. ¿Cuántas tazas se llenan?`, u: 'tazas', bs: [0.2, 0.25, 0.4] },
+  { t: (A, b) => `Un camión reparte ${A} quintales de maíz en sacos de ${b} quintales. ¿Cuántos sacos usa?`, u: 'sacos', bs: [0.5, 1.5, 2.5] }
+];
+function genProblemaItems() {
+  return _shuffleF(_opProblemCtx, _opRnd).slice(0, 5).map(ctx => {
+    const b = ctx.bs[_opRint(0, ctx.bs.length - 1)], q = _opRint(6, 24);
+    const A = _opFmt(q * b);
+    return { text: ctx.t(A, _opFmt(b)), op: `${A} ÷ ${_opFmt(b)}`, ans: q.toString(), u: ctx.u };
+  });
+}
+
+// V. Retos de olimpiada (4 × 5 = 20 pts): 2 ordena + detective del error + punto mágico
+function genRetoErr() {
+  const dInt = _opRint(3, 9), q = _opRint(3, 9);
+  const dividend = _opFmt((q * dInt) / 10), divisor = _opFmt(dInt / 10), wrong = _opFmt(q / 10);
+  return {
+    text: `Un estudiante resolvió ${dividend} ÷ ${divisor} moviendo el punto SOLO en el divisor: hizo ${dividend} ÷ ${dInt} y obtuvo ${wrong}. Aplica la Regla de Oro y escribe el cociente correcto.`,
+    ans: q.toString()
+  };
+}
+function genRetoMagia() {
+  const dInt = _opRint(2, 9), q = _opRint(2, 9), places = _opRint(1, 2);
+  const a = q * dInt, small = _opFmt(dInt / Math.pow(10, places));
+  return {
+    text: `Se sabe que ${a} ÷ ${dInt} = ${q}. SIN resolver la división, usa el movimiento del punto para hallar: ${a} ÷ ${small} = ?`,
+    ans: (q * Math.pow(10, places)).toString()
+  };
+}
 function genOrdDivItems() {
   const groups = [];
-  for (let g = 0; g < 4; g++) {
+  for (let g = 0; g < 2; g++) {
     const opts = [0.5, 1, 2, 4, 5];
     const nums = []; let tries = 0;
     while (nums.length < 4 && tries < 200) {
@@ -1002,37 +1031,44 @@ function genEvalOp() {
   });
   out.appendChild(s2);
 
-  const cmpItems = genCmpCocItems();
+  const mssItems = genMissingItems();
   const s3 = document.createElement('div');
-  s3.innerHTML = '<div class="eval-section-title">III. ¿El cociente es mayor, menor o igual al dividendo? <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
-  cmpItems.forEach((it, i) => {
+  s3.innerHTML = '<div class="eval-section-title">III. Encuentra el número que falta <span class="eval-pts">10 pts · 1 pt c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Escribe el número que hace verdadera cada división. Piensa al revés: ¿qué número falta para que funcione?</p>';
+  mssItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text opx-expr">${it.expr}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="cocp${i}" value="mayor"> Mayor al dividendo</label><label class="eval-cmp-opt"><input type="radio" name="cocp${i}" value="menor"> Menor al dividendo</label><label class="eval-cmp-opt"><input type="radio" name="cocp${i}" value="igual"> Igual al dividendo</label></div><div class="eval-answer">${it.rel==='mayor'?'Mayor al dividendo':it.rel==='menor'?'Menor al dividendo':'Igual al dividendo'}</div><div class="eval-item-feedback" id="evalFbCocp${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.expr}</span><span style="font-size:0.82rem;color:var(--gray);">Falta:</span><input class="eval-cp-input" type="text" data-mss="${i}" autocomplete="off" inputmode="decimal" style="width:70px;"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbMss${i}" aria-live="polite"></div>`;
     s3.appendChild(d);
   });
   out.appendChild(s3);
 
-  const decDecItems = genDecDecItems();
+  const prbItems = genProblemaItems();
   const s4 = document.createElement('div');
-  s4.innerHTML = '<div class="eval-section-title">IV. División: decimal entre decimal <span class="eval-pts">10 pts · 1 pt c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Transforma multiplicando ambos por 10 y resuelve.</p>';
-  decDecItems.forEach((it, i) => {
+  s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Plantea la división en tu cuaderno, resuélvela y escribe la respuesta.</p>';
+  prbItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.a} ÷ ${it.b} =</span><input class="eval-cp-input" type="text" data-ddd="${i}" autocomplete="off" inputmode="decimal" style="width:60px;"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbDdd${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${it.text}</span></div><div class="opx-row" style="margin-left:1.7rem;"><span style="font-size:0.82rem;color:var(--gray);">R/</span><input class="eval-cp-input" type="text" data-prb="${i}" autocomplete="off" inputmode="decimal" style="width:70px;"><span style="font-size:0.82rem;color:var(--gray);">${it.u}</span></div><div class="eval-answer">${it.op} = ${it.ans} ${it.u}</div><div class="eval-item-feedback" id="evalFbPrb${i}" aria-live="polite"></div>`;
     s4.appendChild(d);
   });
   out.appendChild(s4);
 
   const ordGroups = genOrdDivItems();
+  const retoErr = genRetoErr(), retoMag = genRetoMagia();
   const s5 = document.createElement('div');
-  s5.innerHTML = '<div class="eval-section-title">V. Ordena de MAYOR a MENOR cociente <span class="eval-pts">20 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Calcula o estima el cociente de cada división y ordénalas de mayor a menor.</p>';
+  s5.innerHTML = '<div class="eval-section-title">V. Retos de olimpiada <span class="eval-pts">20 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Piensa como matemático: estima, compara y detecta errores sin hacer toda la cuenta.</p>';
   ordGroups.forEach((g, gi) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item evord-group';
-    d.innerHTML = `<div class="evord-dir">${gi+1}. Ordena de MAYOR a menor cociente:</div><div class="evord-list" id="evordDivList${gi}"></div><div class="eval-answer">${g.correctOrder.join(' · ')}</div><div class="eval-item-feedback" id="evalFbOrdDiv${gi}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="evord-dir">${gi+1}. Ordena de MAYOR a menor cociente (estima, no resuelvas todo):</div><div class="evord-list" id="evordDivList${gi}"></div><div class="eval-answer">${g.correctOrder.join(' · ')}</div><div class="eval-item-feedback" id="evalFbOrdDiv${gi}" aria-live="polite"></div>`;
     s5.appendChild(d);
   });
+  const dErr = document.createElement('div'); dErr.className = 'eval-item eval-auto-item';
+  dErr.innerHTML = `<div class="eval-q"><span class="eval-num">3</span><span class="eval-q-text">🔎 <strong>Detective del error:</strong> ${retoErr.text}</span></div><div class="opx-row" style="margin-left:1.7rem;"><span style="font-size:0.82rem;color:var(--gray);">Cociente correcto:</span><input class="eval-cp-input" type="text" data-rerr="0" autocomplete="off" inputmode="decimal" style="width:70px;"></div><div class="eval-answer">${retoErr.ans}</div><div class="eval-item-feedback" id="evalFbRerr" aria-live="polite"></div>`;
+  s5.appendChild(dErr);
+  const dMag = document.createElement('div'); dMag.className = 'eval-item eval-auto-item';
+  dMag.innerHTML = `<div class="eval-q"><span class="eval-num">4</span><span class="eval-q-text">✨ <strong>El punto mágico:</strong> ${retoMag.text}</span></div><div class="opx-row" style="margin-left:1.7rem;"><span style="font-size:0.82rem;color:var(--gray);">Resultado:</span><input class="eval-cp-input" type="text" data-rmag="0" autocomplete="off" inputmode="decimal" style="width:70px;"></div><div class="eval-answer">${retoMag.ans}</div><div class="eval-item-feedback" id="evalFbRmag" aria-live="polite"></div>`;
+  s5.appendChild(dMag);
   out.appendChild(s5);
 
-  window._evalOpData = { denItems, trItems, cmpItems, decDecItems, ord: ordGroups.map(g => ({ current: [...g.display], correctOrder: g.correctOrder })) };
+  window._evalOpData = { denItems, trItems, mssItems, prbItems, retoErr, retoMag, ord: ordGroups.map(g => ({ current: [...g.display], correctOrder: g.correctOrder })) };
   ordGroups.forEach((_, gi) => _renderOrdDivGroup(gi));
   const autoPanel = document.createElement('div'); autoPanel.id = 'evalOpAutoResult'; autoPanel.className = 'eval-auto-result';
   autoPanel.innerHTML = '<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.';
@@ -1075,15 +1111,16 @@ function gradeEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const d = window._evalOpData;
-  let total = 0; const det = { den: 0, trn: 0, cmp: 0, ddd: 0, ord: 0 };
+  let total = 0; const det = { den: 0, trn: 0, mss: 0, prb: 0, reto: 0 };
   d.denItems.forEach((it, i) => { const el = document.querySelector(`[data-den="${i}"]`); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.den++; total += 10; } setEvalFeedback('evalFbDen' + i, ok, ok ? 'Correcto. +10 pts' : 'Revisar. R/ ' + it.ans); });
   d.trItems.forEach((it, i) => { const el = document.querySelector(`[data-trn="${i}"]`); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.trn++; total += 1; } setEvalFeedback('evalFbTrn' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + it.ans); });
-  const rL = { mayor: 'Mayor al dividendo', menor: 'Menor al dividendo', igual: 'Igual al dividendo' };
-  d.cmpItems.forEach((it, i) => { const sel = document.querySelector(`input[name="cocp${i}"]:checked`); const ok = !!sel && sel.value === it.rel; if (ok) { det.cmp++; total += 1; } setEvalFeedback('evalFbCocp' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + rL[it.rel]); });
-  d.decDecItems.forEach((it, i) => { const el = document.querySelector(`[data-ddd="${i}"]`); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.ddd++; total += 1; } setEvalFeedback('evalFbDdd' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + it.ans); });
-  d.ord.forEach((g, gi) => { const ok = g.current.every((v, i) => v === g.correctOrder[i]); if (ok) { det.ord++; total += 5; } setEvalFeedback('evalFbOrdDiv' + gi, ok, ok ? '¡Orden correcto! +5 pts' : 'Orden incorrecto. Clave: ' + g.correctOrder.join(' · ')); });
+  d.mssItems.forEach((it, i) => { const el = document.querySelector(`[data-mss="${i}"]`); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.mss++; total += 1; } setEvalFeedback('evalFbMss' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + it.ans); });
+  d.prbItems.forEach((it, i) => { const el = document.querySelector(`[data-prb="${i}"]`); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.prb++; total += 2; } setEvalFeedback('evalFbPrb' + i, ok, ok ? 'Correcto. +2 pts' : 'Revisar. R/ ' + it.op + ' = ' + it.ans + ' ' + it.u); });
+  d.ord.forEach((g, gi) => { const ok = g.current.every((v, i) => v === g.correctOrder[i]); if (ok) { det.reto++; total += 5; } setEvalFeedback('evalFbOrdDiv' + gi, ok, ok ? '¡Orden correcto! +5 pts' : 'Orden incorrecto. Clave: ' + g.correctOrder.join(' · ')); });
+  { const el = document.querySelector('[data-rerr="0"]'); const ok = _isOpNumOk(el ? el.value : '', d.retoErr.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.reto++; total += 5; } setEvalFeedback('evalFbRerr', ok, ok ? '¡Error detectado! +5 pts' : 'Revisar. R/ ' + d.retoErr.ans); }
+  { const el = document.querySelector('[data-rmag="0"]'); const ok = _isOpNumOk(el ? el.value : '', d.retoMag.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.reto++; total += 5; } setEvalFeedback('evalFbRmag', ok, ok ? '¡Magia del punto dominada! +5 pts' : 'Revisar. R/ ' + d.retoMag.ans); }
   const res = document.getElementById('evalOpAutoResult');
-  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>÷ Entero: ${det.den*10}/50 · Transforma: ${det.trn}/10 · Compara: ${det.cmp}/10 · ÷ Decimal: ${det.ddd}/10 · Ordena: ${det.ord*5}/20</span>`; }
+  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>÷ Entero: ${det.den*10}/50 · Transforma: ${det.trn}/10 · Número que falta: ${det.mss}/10 · Problemas: ${det.prb*2}/10 · Retos: ${det.reto*5}/20</span>`; }
   if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
   else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
 }
@@ -1097,18 +1134,18 @@ function printEvalOp() {
   const trH = Math.ceil(d.trItems.length / 2);
   const trTbl = (items, off) => `<table class="rnd-tbl"><tr><th>#</th><th>División original</th><th>Forma equivalente (×10)</th><th>Cociente</th></tr>${items.map((it, i) => `<tr><td>${off+i+1}</td><td>${it.orig}</td><td class="tr-blank-cell">____ ÷ ____</td><td></td></tr>`).join('')}</table>`;
   let s2 = `<div class="sec-title"><span>II. Transforma el divisor decimal</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Escribe la forma equivalente con divisor entero (×10) y el cociente. 1 pt c/u.</p><div class="rnd-print-grid">${trTbl(d.trItems.slice(0,trH),0)}${trTbl(d.trItems.slice(trH),trH)}</div>`;
-  const cmpH = Math.ceil(d.cmpItems.length / 2);
-  let s3 = `<div class="sec-title"><span>III. ¿Cociente Mayor, menor o igual al dividendo?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Marca con ✔: M = Mayor · m = menor · I = Igual al dividendo. 1 pt c/u.</p><div class="cmp-print-grid"><div>${d.cmpItems.slice(0,cmpH).map((it,i)=>`<div class="cmp-print-row"><span class="cmp-print-num">${i+1}. ${it.expr}</span><div class="cmp-opts-print"><span>M ☐</span><span>m ☐</span><span>I ☐</span></div></div>`).join('')}</div><div>${d.cmpItems.slice(cmpH).map((it,i)=>`<div class="cmp-print-row"><span class="cmp-print-num">${cmpH+i+1}. ${it.expr}</span><div class="cmp-opts-print"><span>M ☐</span><span>m ☐</span><span>I ☐</span></div></div>`).join('')}</div></div>`;
-  const dddH = Math.ceil(d.decDecItems.length / 2);
-  const dddTbl = (items, off) => `<table class="rnd-tbl"><tr><th>#</th><th>Operación</th><th>Cociente</th></tr>${items.map((it,i)=>`<tr><td>${off+i+1}</td><td>${it.a} ÷ ${it.b} =</td><td></td></tr>`).join('')}</table>`;
-  let s4 = `<div class="sec-title"><span>IV. División: decimal entre decimal</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Transforma multiplicando ambos por 10 y resuelve. 1 pt c/u.</p><div class="rnd-print-grid">${dddTbl(d.decDecItems.slice(0,dddH),0)}${dddTbl(d.decDecItems.slice(dddH),dddH)}</div>`;
-  let s5 = `<div class="sec-title"><span>V. Ordena de MAYOR a MENOR cociente</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Calcula o estima el cociente de cada división y escríbelas en orden de mayor a menor. 5 pts c/u.</p><div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordena de Mayor a Menor cociente:</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${v}</td>`).join('')}</tr></table><div style="margin-top:0.3rem;font-size:8.5pt;color:#555;">Escribe en orden: 1. _______ &nbsp; 2. _______ &nbsp; 3. _______ &nbsp; 4. _______</div></div>`).join('')}</div>`;
+  const mssH = Math.ceil(d.mssItems.length / 2);
+  const mssTbl = (items, off) => `<table class="rnd-tbl"><tr><th>#</th><th>División incompleta</th><th>Número que falta</th></tr>${items.map((it, i) => `<tr><td>${off+i+1}</td><td>${it.expr}</td><td></td></tr>`).join('')}</table>`;
+  let s3 = `<div class="sec-title"><span>III. Encuentra el número que falta</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Escribe el número que hace verdadera cada división. Piensa al revés. 1 pt c/u.</p><div class="rnd-print-grid">${mssTbl(d.mssItems.slice(0,mssH),0)}${mssTbl(d.mssItems.slice(mssH),mssH)}</div>`;
+  let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Plantea la división, resuelve el proceso en el reverso de la hoja y escribe la respuesta con su unidad. 2 pts c/u.</p>`;
+  d.prbItems.forEach((it, i) => { s4 += `<div class="opx-print-row" style="align-items:flex-start;"><span class="qn">${i+1}.</span><span style="flex:1;line-height:1.35;">${it.text}<br><span style="font-size:9pt;color:#555;">Planteo: <span style="display:inline-block;min-width:70px;border-bottom:1px solid #555;">&nbsp;</span> ÷ <span style="display:inline-block;min-width:70px;border-bottom:1px solid #555;">&nbsp;</span> &nbsp; R/ <span style="display:inline-block;min-width:60px;border-bottom:1.5px solid #111;">&nbsp;</span> ${it.u}</span></span></div>`; });
+  let s5 = `<div class="sec-title"><span>V. Retos de olimpiada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Piensa como matemático: estima, compara y detecta errores sin hacer toda la cuenta. 5 pts c/u.</p><div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordena de Mayor a Menor cociente (estima, no resuelvas todo):</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${v}</td>`).join('')}</tr></table><div style="margin-top:0.3rem;font-size:8.5pt;color:#555;">Escribe en orden: 1. _______ &nbsp; 2. _______ &nbsp; 3. _______ &nbsp; 4. _______</div></div>`).join('')}<div class="ord-print-box"><div class="ord-print-dir">3. 🔎 Detective del error:</div><div style="font-size:9pt;line-height:1.35;">${d.retoErr.text}</div><div style="margin-top:0.3rem;font-size:9pt;">Cociente correcto: <span style="display:inline-block;min-width:70px;border-bottom:1.5px solid #111;">&nbsp;</span></div></div><div class="ord-print-box"><div class="ord-print-dir">4. ✨ El punto mágico:</div><div style="font-size:9pt;line-height:1.35;">${d.retoMag.text}</div><div style="margin-top:0.3rem;font-size:9pt;">Resultado: <span style="display:inline-block;min-width:70px;border-bottom:1.5px solid #111;">&nbsp;</span></div></div></div>`;
   let pR = '';
   pR += `<div class="p-sec"><div class="p-ttl">I. ÷ decimal ÷ entero</div><table class="p-tbl">${d.denItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">II. Transforma el divisor</div><table class="p-tbl">${d.trItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.tDivd}÷${it.tDivr}=${it.ans}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">III. Compara cociente</div><table class="p-tbl">${d.cmpItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${{mayor:'Mayor',menor:'Menor',igual:'Igual'}[it.rel]}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. ÷ decimal ÷ decimal</div><table class="p-tbl">${d.decDecItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Ordenar de Mayor a Menor cociente</div>${d.ord.map((g,gi)=>`<div class="p-ord-line"><strong>${gi+1}.</strong> ${g.correctOrder.join(' · ')}</div>`).join('')}</div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">III. Número que falta</div><table class="p-tbl">${d.mssItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas</div><table class="p-tbl">${d.prbItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.op} = ${it.ans} ${it.u}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de olimpiada</div>${d.ord.map((g,gi)=>`<div class="p-ord-line"><strong>${gi+1}.</strong> ${g.correctOrder.join(' · ')}</div>`).join('')}<div class="p-ord-line"><strong>3.</strong> Detective del error: ${d.retoErr.ans}</div><div class="p-ord-line"><strong>4.</strong> El punto mágico: ${d.retoMag.ans}</div></div>`;
   const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa División de Decimales · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:140px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.15rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.tr-blank-cell{color:#888;font-style:italic;}.cmp-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.cmp-print-row{display:flex;align-items:center;justify-content:space-between;font-size:10pt;padding:0.18rem 0.1rem;border-bottom:1px dotted #ddd;}.cmp-print-num{font-family:'Courier New',monospace;font-weight:600;flex:1;}.cmp-opts-print{display:flex;gap:0.6rem;font-size:9pt;white-space:nowrap;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.12rem 0.25rem;text-align:center;font-family:'Courier New',monospace;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:9.5pt;font-weight:700;color:#1565c0;}.p-sub{font-size:7pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:7pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.28rem 0.45rem;}.p-ttl{font-size:8pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:7.5pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:8pt;margin-bottom:0.15rem;color:#007a00;}.forma-tag{position:fixed;bottom:5mm;right:6mm;font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;}@media print{@page{size:letter portrait;margin:8mm 10mm;}}</style></head><body><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · División de Decimales · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Institución:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 50 · II: 10 · III: 10 · IV: 10 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div><div class="pauta-wrap"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · División de Decimales · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="forma-tag">Forma ${forma}</div></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
