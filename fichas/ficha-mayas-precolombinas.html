@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Los Mayas y las Culturas Precolombinas</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS SOCIALES = ROJO (#dc2626)
+     · Colores semánticos: jade=maya, dorado=logros, gris=piedra/monumentos
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --soc: #dc2626; --soc-osc: #991b1b; --soc-claro: #fef2f2;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #f0d4d4;
+    --may: #0f766e; --oro: #b45309; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f8efef; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--soc-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--soc); background: var(--soc-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--soc-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--soc-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--soc); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--soc-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--soc-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--soc-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--soc); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fbf5f5; }
+  td.k { font-weight: 700; color: var(--soc-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffafa; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--soc-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (mayas / aztecas / incas) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #d9f2ee; } .celula .cm b { color: var(--may); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--oro); }
+  .celula .cn { background: #eceae8; } .celula .cn b { color: var(--pie); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #d9f2ee; border: 1px solid #b0e0d6; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--may); } .tri .torg b { color: var(--oro); }
+
+  .acts h3 { border-bottom: 2px solid var(--soc-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--soc); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--soc); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--soc-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--soc-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--soc-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #fbf3f3; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--soc-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--soc); box-shadow: 0 6px 16px rgba(220,38,38,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Los Mayas y las Culturas Precolombinas</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Sociales &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El mundo precolombino: los mayas y Copán, sus logros (escritura, numeración, calendario), los pueblos indígenas de Honduras y las grandes civilizaciones de América</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-mayas-precolombinas.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Explicar qué significa <strong>«precolombino»</strong>.</li>
+      <li>Ubicar a los <strong>mayas</strong> en Mesoamérica y a <strong>Copán</strong> en Honduras.</li>
+      <li>Valorar los <strong>logros mayas</strong>: escritura, numeración con cero y calendario.</li>
+      <li>Conocer los monumentos de Copán: <strong>Escalinata, estelas y Altar Q</strong>.</li>
+      <li>Identificar los <strong>pueblos precolombinos de Honduras</strong> (lencas, chortís…).</li>
+      <li>Comparar a los mayas con los <strong>aztecas</strong> y los <strong>incas</strong>.</li>
+    </ol>
+
+    <h2>🕰️ 1. ¿Qué significa «precolombino»?</h2>
+    <p><strong>Precolombino</strong> es todo lo que existió en América <strong>antes de la llegada de Cristóbal
+    Colón</strong> en <strong>1492</strong>. Mucho antes de esa fecha, América ya tenía pueblos y grandes
+    civilizaciones que construyeron ciudades, cultivaron la tierra y crearon arte, escritura y ciencia.</p>
+    <div class="caja truco">💡 <b>Truco:</b> «pre» = <em>antes</em> y «colombino» = <em>de Colón</em>. Precolombino
+    = <strong>antes de Colón</strong>.</div>
+
+    <h3>🏛️🦅🏔️ Mini-demostración: tres grandes civilizaciones</h3>
+    <div class="ilus">
+      <div class="ilus-t">Las civilizaciones más brillantes de la América precolombina</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">🏛️</span><b>Mayas</b>Mesoamérica; en Honduras: COPÁN.</div>
+        <div class="cc"><span class="c-emoji">🦅</span><b>Aztecas</b>Centro de México; capital Tenochtitlan.</div>
+        <div class="cn"><span class="c-emoji">🏔️</span><b>Incas</b>Los Andes (Perú); construyeron Machu Picchu.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ En Honduras también vivían los <strong>lencas, chortís, tolupanes, pech y tawahkas</strong>.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Mayas y Culturas Precolombinas</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🏛️ 2. Los mayas y Mesoamérica</h2>
+    <p>Los <strong>mayas</strong> vivieron en <strong>Mesoamérica</strong>: el sur de México, Guatemala, Belice y el
+    <strong>occidente de Honduras</strong> y El Salvador. No fueron un solo reino: se organizaban en
+    <strong>ciudades-estado</strong>, cada una con su rey, como Tikal, Palenque y <strong>Copán</strong>.</p>
+    <div class="tri">
+      <div class="tnuc"><b>👑 La sociedad</b>Arriba: el rey, los nobles y los sacerdotes. Abajo: los <strong>campesinos y artesanos</strong> que sostenían la ciudad.</div>
+      <div class="torg"><b>🌽 El maíz sagrado</b>Base de la comida y de sus creencias; se cultivaba en la <strong>milpa</strong> con frijol y calabaza.</div>
+    </div>
+    <div class="caja idea">📖 <b>Dato clave:</b> el <strong>Popol Vuh</strong>, libro sagrado de los mayas quichés,
+    cuenta el origen del mundo y dice que las personas fueron hechas <strong>de maíz</strong>.</div>
+
+    <h2>🗿 3. Copán, la joya maya de Honduras</h2>
+    <p>Sus ruinas son hoy un <strong>Parque Arqueológico</strong> declarado <strong>Patrimonio de la
+    Humanidad</strong> por la UNESCO (1980):</p>
+    <table>
+      <tr><th>Monumento</th><th>¿Qué es?</th><th>Dato</th></tr>
+      <tr><td class="k">📜 Escalinata Jeroglífica</td><td>Escalera con textos tallados</td><td>El texto maya más largo que se conoce</td></tr>
+      <tr><td class="k">🪨 Estelas</td><td>Monumentos de piedra tallada</td><td>Retratan a los gobernantes de la ciudad</td></tr>
+      <tr><td class="k">🗿 Altar Q</td><td>Altar con relieves</td><td>Muestra a los 16 reyes de Copán</td></tr>
+      <tr><td class="k">⚽ Juego de pelota</td><td>Cancha ceremonial</td><td>Se jugaba con caderas y codos</td></tr>
+    </table>
+    <div class="caja regla">👑 <b>Recuerda:</b> la dinastía de Copán la fundó <strong>Yax K'uk' Mo'</strong> (siglo V)
+    y su rey más famoso fue <strong>18 Conejo</strong>, gran constructor. Hacia el <strong>siglo IX</strong> la ciudad
+    decayó y fue abandonada… ¡siglos antes de la llegada de los españoles!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Mayas y Culturas Precolombinas</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🧠 4. Los grandes logros mayas</h2>
+    <table>
+      <tr><th>Logro</th><th>¿En qué consistía?</th><th>Dato</th></tr>
+      <tr><td class="k">✍️ Escritura</td><td>Jeroglífica (glifos)</td><td>La más desarrollada de América</td></tr>
+      <tr><td class="k">🔢 Numeración</td><td>De 20 en 20, con puntos y barras</td><td>¡Conocían el CERO! (punto = 1, barra = 5)</td></tr>
+      <tr><td class="k">📅 Calendario</td><td>Muy preciso</td><td>Guiaba las siembras y ceremonias</td></tr>
+      <tr><td class="k">🔭 Astronomía</td><td>Observación del cielo</td><td>Seguían al Sol, la Luna y Venus</td></tr>
+      <tr><td class="k">🏛️ Arquitectura</td><td>Pirámides, templos y plazas</td><td>Bajo los templos hay templos más antiguos</td></tr>
+    </table>
+
+    <h2>🇭🇳 5. Los pueblos precolombinos de Honduras</h2>
+    <table>
+      <tr><th>Pueblo</th><th>¿Dónde vivía?</th><th>Dato</th></tr>
+      <tr><td class="k">🏞️ Lencas</td><td>Centro y occidente</td><td>El pueblo más numeroso; su alfarería sigue viva</td></tr>
+      <tr><td class="k">🌄 Chortís</td><td>Occidente (Copán, Ocotepeque)</td><td>Emparentados con los mayas</td></tr>
+      <tr><td class="k">🌲 Tolupanes</td><td>Bosques del centro (Yoro)</td><td>También llamados xicaques</td></tr>
+      <tr><td class="k">🌴 Pech y tawahkas</td><td>Nororiente y La Mosquitia</td><td>Vivían de la caza, la pesca y la agricultura</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que la ciudad maya de Honduras es Tikal</td><td>Tikal está en Guatemala.</td><td>En Honduras es Copán ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que los mayas montaban a caballo</td><td>El caballo llegó con los españoles.</td><td>No había caballos antes de 1492 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que los mayas no tenían escritura</td><td>Escribían con glifos.</td><td>Escritura jeroglífica ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que los españoles abandonaron Copán</td><td>Copán decayó hacia el siglo IX.</td><td>Fue siglos antes de los españoles ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir aztecas e incas</td><td>Aztecas: México; incas: los Andes.</td><td>Cada uno en su región ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>La herencia precolombina en tu vida:</b> cuando comes <strong>tortillas de maíz</strong>,
+    tomas <strong>chocolate</strong> (del cacao) o ves una olla de barro <strong>lenca</strong>, estás disfrutando la
+    herencia de los pueblos precolombinos. Y en <strong>Copán</strong>, las piedras talladas nos cuentan la historia
+    de los reyes mayas. Ese patrimonio es de todos: conocerlo y cuidarlo es tarea de cada hondureño. 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Mayas y Culturas Precolombinas</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Precolombino significa antes de la llegada de <span class="linea-resp"></span>.</li>
+      <li>La gran ciudad maya de Honduras fue <span class="linea-resp"></span>.</li>
+      <li>Los mayas vivieron en la región llamada <span class="linea-resp"></span>.</li>
+      <li>La numeración maya conocía el número <span class="linea-resp"></span>.</li>
+      <li>La escritura maya era <span class="linea-resp"></span>.</li>
+      <li>El alimento sagrado era el <span class="linea-resp"></span>.</li>
+      <li>El libro sagrado maya-quiché es el Popol <span class="linea-resp"></span>.</li>
+      <li>El pueblo más numeroso de Honduras eran los <span class="linea-resp"></span>.</li>
+      <li>Los incas crearon su imperio en los <span class="linea-resp"></span>.</li>
+      <li>Colón llegó a América en el año <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Precolombino significa antes de la llegada de Cristóbal Colón.</li>
+      <li>____ La gran ciudad maya de Honduras fue Tikal.</li>
+      <li>____ La numeración maya conocía el cero.</li>
+      <li>____ La escritura maya era jeroglífica.</li>
+      <li>____ Los mayas conocieron el caballo antes de 1492.</li>
+      <li>____ El maíz era el alimento sagrado de los pueblos precolombinos.</li>
+      <li>____ El Popol Vuh es el libro sagrado de los mayas quichés.</li>
+      <li>____ Los lencas eran el pueblo más numeroso de Honduras.</li>
+      <li>____ Los incas crearon su imperio en México.</li>
+      <li>____ Copán es Patrimonio de la Humanidad (UNESCO).</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Mayas y Culturas Precolombinas</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué significa «precolombino»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> de la época colonial</span>
+        <span class="op"><i>b</i> antes de la llegada de Colón</span>
+        <span class="op"><i>c</i> después de la independencia</span>
+        <span class="op"><i>d</i> del siglo XX</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál fue la gran ciudad maya de Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Tikal</span>
+        <span class="op"><i>b</i> Cusco</span>
+        <span class="op"><i>c</i> Copán</span>
+        <span class="op"><i>d</i> Tenochtitlan</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿En qué región cultural vivieron los mayas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Mesoamérica</span>
+        <span class="op"><i>b</i> los Andes</span>
+        <span class="op"><i>c</i> el Amazonas</span>
+        <span class="op"><i>d</i> la Patagonia</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué gran avance tenía la numeración maya?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> las fracciones decimales</span>
+        <span class="op"><i>b</i> el cero</span>
+        <span class="op"><i>c</i> los números romanos</span>
+        <span class="op"><i>d</i> los porcentajes</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cómo era la escritura de los mayas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> con alfabeto latino</span>
+        <span class="op"><i>b</i> no tenían escritura</span>
+        <span class="op"><i>c</i> jeroglífica</span>
+        <span class="op"><i>d</i> solo con números</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué monumento muestra a los 16 reyes de Copán?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Altar Q</span>
+        <span class="op"><i>b</i> la Estela A</span>
+        <span class="op"><i>c</i> el juego de pelota</span>
+        <span class="op"><i>d</i> el templo Rosalila</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuál era el alimento base de los pueblos precolombinos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el trigo</span>
+        <span class="op"><i>b</i> el arroz</span>
+        <span class="op"><i>c</i> la cebada</span>
+        <span class="op"><i>d</i> el maíz</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cómo se llama el libro sagrado de los mayas quichés?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Códice Real</span>
+        <span class="op"><i>b</i> el Popol Vuh</span>
+        <span class="op"><i>c</i> el Chilam Balam</span>
+        <span class="op"><i>d</i> la Crónica Maya</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál era el pueblo indígena más numeroso de Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> los aztecas</span>
+        <span class="op"><i>b</i> los incas</span>
+        <span class="op"><i>c</i> los lencas</span>
+        <span class="op"><i>d</i> los olmecas</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Dónde crearon su imperio los incas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> en México</span>
+        <span class="op"><i>b</i> en Guatemala</span>
+        <span class="op"><i>c</i> en el Caribe</span>
+        <span class="op"><i>d</i> en los Andes (Perú)</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Mayas y Culturas Precolombinas</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Precolombino</td><td>A. Libro sagrado de los mayas quichés</td></tr>
+      <tr><td>2. ____ Copán</td><td>B. Lo anterior a la llegada de Colón (1492)</td></tr>
+      <tr><td>3. ____ Mesoamérica</td><td>C. El pueblo más numeroso de Honduras</td></tr>
+      <tr><td>4. ____ Escalinata Jeroglífica</td><td>D. La gran ciudad maya de Honduras</td></tr>
+      <tr><td>5. ____ Popol Vuh</td><td>E. Alimento sagrado cultivado en la milpa</td></tr>
+      <tr><td>6. ____ El cero</td><td>F. Región cultural donde vivieron los mayas</td></tr>
+      <tr><td>7. ____ Los lencas</td><td>G. Civilización de los Andes (Perú)</td></tr>
+      <tr><td>8. ____ Los aztecas</td><td>H. Gran avance de la numeración maya</td></tr>
+      <tr><td>9. ____ Los incas</td><td>I. Civilización del centro de México</td></tr>
+      <tr><td>10. ____ El maíz</td><td>J. Escalera con el texto maya más largo</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Los Mayas y las Culturas Precolombinas.</b> Ahora conoces el mundo
+      anterior a 1492: los mayas y su joya hondureña, Copán; sus logros en escritura, numeración y calendario; los
+      pueblos precolombinos de Honduras; y las grandes civilizaciones azteca e inca. ¡Sigue viajando por la Ruta del
+      Tiempo! 🗿🏛️
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Sociales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó los números mayas del 1 al 10 (puntos, barras y el cero) y una estela o pirámide.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Mayas y Culturas Precolombinas</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Colón &nbsp; 2. Copán &nbsp; 3. Mesoamérica &nbsp; 4. cero &nbsp; 5. jeroglífica &nbsp; 6. maíz &nbsp; 7. Vuh &nbsp; 8. lencas &nbsp; 9. Andes &nbsp; 10. 1492</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3a, 4b, 5c, 6a, 7d, 8b, 9c, 10d</div>
+      <div><span class="pt">IV. Pareados:</span> 1B, 2D, 3F, 4J, 5A, 6H, 7C, 8I, 9G, 10E</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Los Mayas y las Culturas Precolombinas» (Educación Básica), del eje de Historia de la programación de Ciencias
+      Sociales del DCNB (población precolombina de Centroamérica, las culturas maya, azteca e inca, y la población
+      prehispánica de Honduras). Puede utilizarse como guía de estudio impresa o digital antes de la evaluación final.
+      Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple, pareados) y puede
+      complementarse con actividades culturales: escribir números con el sistema maya de puntos y barras, elaborar una
+      línea de tiempo (Copán → llegada de Colón → época colonial), investigar los pueblos indígenas del propio
+      departamento, o leer un fragmento adaptado del Popol Vuh. Etapa 1 de la Ruta del Tiempo (historia en orden
+      cronológico). La misión interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación
+      inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Mayas y Culturas Precolombinas · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
