@@ -55,6 +55,7 @@ const DCNB_MAP = {
   39: { g: { 4: [8], 5: [8], 6: [8], 7: [7] } },          // El Universo y el Sistema Solar — 4º/5º/6º ago; 7º jul (teorías sobre el universo y el sistema solar) (VERIFICADO CCNN)
   40: { g: { 4: [9], 5: [9], 6: [8], 7: [8] } },          // La Materia — 4º/5º sep (estados y cambios de estado); 6º/7º ago (propiedades, componentes, mezclas, cambios físicos/químicos) (VERIFICADO CCNN)
   41: { g: { 4: [10, 11], 5: [10, 11], 6: [9], 7: [10, 11], 8: [10, 11] } }, // La Energía — 4º oct-nov (tipos y fuentes, no renovables); 5º oct-nov (fuentes, formas, usos y transformaciones); 6º sep (manifestaciones, fuentes, crisis energética, ahorro); 7º oct-nov (alternativas, transformaciones, ahorro); 8º oct-nov (propiedades, conservación, degradación, térmica) (VERIFICADO CCNN)
+  42: { g: { 4: [2, 3], 5: [2, 3], 7: [4, 5], 8: [2, 3] } }, // Geografía de Honduras — 4º feb-mar (Honduras en el espacio centroamericano; orografía, hidrografía, clima); 5º feb-mar (Honduras en el Continente Americano); 7º abr-may (comunidad local + Honduras y su espacio geográfico: ubicación, extensión, límites + estudio regional); 8º feb-mar (importancia de la ubicación de Honduras en América) (VERIFICADO CCSS)
   14: { g: { 4: [5], 5: [5], 6: [5], 9: [5] } },          // Sistema Nervioso — mayo en los 4 grados
   19: { g: { 5: [5], 6: [5] } },                          // Sistema Endocrino — mayo
   9:  { g: { 6: [4], 7: [7] } },                          // Eras Geológicas
