@@ -335,8 +335,8 @@
   }
 
   // ---------- identificación: modal "lite" (sin contraseña) ----------
-  var ID_CSS = '.metas-id-overlay{position:fixed;inset:0;background:rgba(20,30,48,0.72);display:flex;align-items:center;justify-content:center;z-index:99999;padding:1rem;}' +
-    '.metas-id-card{background:#ffffff;color:#2d3436;border-radius:18px;max-width:400px;width:100%;padding:1.3rem 1.4rem;box-shadow:0 12px 40px rgba(0,0,0,0.35);font-family:inherit;}' +
+  var ID_CSS = '.metas-id-overlay{position:fixed;inset:0;background:rgba(20,30,48,0.72);display:flex;justify-content:center;z-index:99999;padding:1rem;overflow-y:auto;-webkit-overflow-scrolling:touch;}' +
+    '.metas-id-card{background:#ffffff;color:#2d3436;border-radius:18px;max-width:400px;width:100%;padding:1.3rem 1.4rem;box-shadow:0 12px 40px rgba(0,0,0,0.35);font-family:inherit;margin:auto 0;height:fit-content;}' +
     '.metas-id-card h3{color:#1565c0;font-size:1.15rem;margin:0 0 0.3rem;}' +
     '.metas-id-card p{font-size:0.82rem;color:#636e72;margin:0 0 0.9rem;line-height:1.45;}' +
     '.metas-id-card label{display:block;font-size:0.78rem;font-weight:700;color:#1565c0;margin:0.6rem 0 0.2rem;}' +
