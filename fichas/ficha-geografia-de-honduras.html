@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Geografía de Honduras</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS SOCIALES = ROJO (#dc2626)
+     · Colores semánticos: azul=Caribe, dorado=Pacífico, verde=montaña
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --soc: #dc2626; --soc-osc: #991b1b; --soc-claro: #fef2f2;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #f0d4d4;
+    --car: #0369a1; --pac: #b45309; --mont: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f8efef; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--soc-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--soc); background: var(--soc-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--soc-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--soc-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--soc); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--soc-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--soc-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--soc-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--soc); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fbf5f5; }
+  td.k { font-weight: 700; color: var(--soc-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffafa; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--soc-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (norte / centro / sur) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #dbeafe; } .celula .cm b { color: var(--car); }
+  .celula .cc { background: #dcfce7; } .celula .cc b { color: var(--mont); }
+  .celula .cn { background: #ffedd5; } .celula .cn b { color: var(--pac); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #dbeafe; border: 1px solid #b6ccf5; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--car); } .tri .torg b { color: var(--pac); }
+
+  .acts h3 { border-bottom: 2px solid var(--soc-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--soc); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--soc); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--soc-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--soc-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--soc-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #fbf3f3; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--soc-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--soc); box-shadow: 0 6px 16px rgba(220,38,38,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Geografía de Honduras</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Sociales &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> La geografía de Honduras: ubicación y límites, relieve y montañas, ríos y vertientes, lagos y lagunas, clima, regiones, islas y división política</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-geografia-de-honduras.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Ubicar a <strong>Honduras</strong> en Centroamérica y conocer sus <strong>límites</strong>.</li>
+      <li>Describir el <strong>relieve</strong> montañoso del país.</li>
+      <li>Distinguir las dos <strong>vertientes</strong> y sus ríos principales.</li>
+      <li>Identificar los <strong>lagos, lagunas e islas</strong> de Honduras.</li>
+      <li>Explicar cómo cambia el <strong>clima</strong> según la altitud.</li>
+      <li>Conocer la <strong>división política</strong>: 18 departamentos y 298 municipios.</li>
+    </ol>
+
+    <h2>🗺️ 1. ¿Dónde está Honduras?</h2>
+    <p>Honduras está en el centro de América, en la región llamada <strong>Centroamérica</strong>. Tiene una
+    extensión de unos <strong>112,492 km²</strong> y por su posición se le conoce como <strong>«el corazón de
+    Centroamérica»</strong>.</p>
+    <div class="caja regla">🧭 <b>Límites:</b> al <strong>Norte</strong>, el Mar Caribe; al <strong>Sur</strong>, el
+    Golfo de Fonseca (Océano Pacífico), Nicaragua y El Salvador; al <strong>Este</strong>, Nicaragua; al
+    <strong>Oeste</strong>, Guatemala y El Salvador.</div>
+    <div class="caja truco">💡 <b>Truco:</b> Honduras tiene <strong>dos costas</strong>: la larga mira al
+    <strong>Caribe</strong> (norte) y la corta al <strong>Pacífico</strong> (sur, en el Golfo de Fonseca).</div>
+
+    <h3>🌊⛰️🌅 Mini-demostración: tres franjas del país</h3>
+    <div class="ilus">
+      <div class="ilus-t">De norte a sur, el paisaje cambia</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">🌊</span><b>Norte (Caribe)</b>Llanuras cálidas, bananos y puertos como Puerto Cortés.</div>
+        <div class="cc"><span class="c-emoji">⛰️</span><b>Centro (montañas)</b>Cordilleras, cafetales y ciudades como Tegucigalpa.</div>
+        <div class="cn"><span class="c-emoji">🌅</span><b>Sur (Pacífico)</b>Golfo de Fonseca: camarones, melones y calor.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Al oriente está <strong>La Mosquitia</strong>: grandes bosques y ríos, la zona menos poblada.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía de Honduras</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">⛰️ 2. El relieve: un país de montañas</h2>
+    <p>Cerca de las <strong>tres cuartas partes</strong> del territorio hondureño son montañas:</p>
+    <table>
+      <tr><th>Forma</th><th>¿Qué es?</th><th>Ejemplos en Honduras</th></tr>
+      <tr><td class="k">⛰️ Montañas</td><td>Grandes elevaciones del terreno</td><td>Cordillera del Merendón, Nombre de Dios</td></tr>
+      <tr><td class="k">🏞️ Valles</td><td>Tierras planas entre montañas</td><td>Valle de Sula, Valle de Comayagua</td></tr>
+      <tr><td class="k">🌾 Llanuras</td><td>Tierras bajas de las costas</td><td>Llanura costera del Caribe</td></tr>
+      <tr><td class="k">🏝️ Islas</td><td>Tierras rodeadas de mar</td><td>Roatán, Utila, Guanaja, Islas del Cisne</td></tr>
+    </table>
+    <div class="caja idea">🏔️ <b>Dato clave:</b> el punto más alto es el <strong>Cerro Las Minas</strong>
+    (2,870 m), en la Montaña de <strong>Celaque</strong>, departamento de Lempira. También se le llama Pico Celaque.</div>
+
+    <h2>🏞️ 3. Los ríos: dos vertientes</h2>
+    <p>Los ríos se agrupan según el mar donde <strong>desembocan</strong>:</p>
+    <div class="tri">
+      <div class="tnuc"><b>🌊 Vertiente del Caribe</b>Ríos <strong>largos y caudalosos</strong>: Ulúa, Chamelecón, Aguán, Patuca y <strong>Coco o Segovia</strong> (el más largo).</div>
+      <div class="torg"><b>🌅 Vertiente del Pacífico</b>Ríos <strong>cortos</strong> que llegan al Golfo de Fonseca: Choluteca, Goascorán y Nacaome.</div>
+    </div>
+    <div class="caja regla">🔤 <b>Recuerda:</b> el río <strong>Coco o Segovia</strong> es el más largo (frontera con
+    Nicaragua) y el <strong>Ulúa</strong> riega el fértil <strong>Valle de Sula</strong>. El río
+    <strong>Choluteca</strong> pasa por Tegucigalpa y desemboca en el Pacífico.</div>
+
+    <h2>💧 4. Lagos y lagunas</h2>
+    <table>
+      <tr><th>Cuerpo de agua</th><th>¿Qué es?</th><th>Dato</th></tr>
+      <tr><td class="k">🏞️ Lago de Yojoa</td><td>El único lago natural</td><td>Entre Comayagua, Cortés y Santa Bárbara; famoso por sus aves</td></tr>
+      <tr><td class="k">🌴 Laguna de Caratasca</td><td>La laguna más grande</td><td>En La Mosquitia (Gracias a Dios)</td></tr>
+      <tr><td class="k">💦 Represa El Cajón</td><td>Lago artificial</td><td>Produce energía hidroeléctrica</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía de Honduras</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🌦️ 5. El clima y la división política</h2>
+    <p>El clima de Honduras es <strong>tropical</strong>, pero cambia con la <strong>altitud</strong>: en las
+    <strong>costas</strong> hace calor todo el año y en las <strong>montañas</strong> el clima es templado y fresco.
+    El año tiene una estación <strong>lluviosa</strong> (mayo a octubre) y una <strong>seca</strong> (noviembre a abril).</p>
+    <table>
+      <tr><th>División</th><th>¿Qué es?</th><th>Dato</th></tr>
+      <tr><td class="k">🏛️ Departamento</td><td>División política grande</td><td>Honduras tiene <strong>18</strong></td></tr>
+      <tr><td class="k">🏘️ Municipio</td><td>División dentro del departamento</td><td>Honduras tiene <strong>298</strong></td></tr>
+      <tr><td class="k">🏙️ La capital</td><td>Tegucigalpa, M.D.C.</td><td>En el Distrito Central, con Comayagüela</td></tr>
+      <tr><td class="k">🏝️ Departamento insular</td><td>Islas de la Bahía</td><td>Roatán, Utila y Guanaja</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que la capital es San Pedro Sula</td><td>San Pedro Sula es la ciudad industrial.</td><td>La capital es Tegucigalpa ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que el Ulúa es el río más largo</td><td>El más largo es el Coco o Segovia.</td><td>El Ulúa riega el Valle de Sula ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir el Lago de Yojoa con Caratasca</td><td>Yojoa es lago; Caratasca es laguna.</td><td>Yojoa: único lago natural ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Poner el Caribe al sur y el Pacífico al norte</td><td>Es al revés.</td><td>Norte: Caribe · Sur: Pacífico ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que Honduras es un país plano</td><td>Unas ¾ partes son montañas.</td><td>Es un país montañoso ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>La geografía en tu vida:</b> si tomas café de las montañas de Marcala o Copán,
+    comes plátanos del Valle de Sula, pescado del Caribe o camarones del Golfo de Fonseca, ¡estás disfrutando de la
+    geografía de Honduras! Cada región aporta algo distinto gracias a su relieve, su clima y sus aguas. Conocer el
+    mapa del país te ayuda a entender dónde vives y a valorar y cuidar sus ríos, bosques y costas. 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía de Honduras</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Honduras está en la región de <span class="linea-resp"></span>.</li>
+      <li>El punto más alto es el Cerro <span class="linea-resp"></span>.</li>
+      <li>El río más largo es el <span class="linea-resp"></span>.</li>
+      <li>El único lago natural es el Lago de <span class="linea-resp"></span>.</li>
+      <li>Honduras tiene <span class="linea-resp"></span> departamentos.</li>
+      <li>La capital de Honduras es <span class="linea-resp"></span>.</li>
+      <li>Al norte, Honduras limita con el Mar <span class="linea-resp"></span>.</li>
+      <li>Al sur del país está el Golfo de <span class="linea-resp"></span>.</li>
+      <li>Los departamentos se dividen en <span class="linea-resp"></span>.</li>
+      <li>El clima de Honduras es <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Honduras está ubicada en Centroamérica.</li>
+      <li>____ El punto más alto de Honduras es el Pico Bonito.</li>
+      <li>____ El río Coco o Segovia es el más largo del país.</li>
+      <li>____ El Lago de Yojoa es el único lago natural.</li>
+      <li>____ Honduras se divide en 18 departamentos.</li>
+      <li>____ La capital de Honduras es San Pedro Sula.</li>
+      <li>____ El Mar Caribe limita al norte de Honduras.</li>
+      <li>____ El río Choluteca pertenece a la vertiente del Caribe.</li>
+      <li>____ Las Islas de la Bahía son Roatán, Utila y Guanaja.</li>
+      <li>____ El Golfo de Fonseca está al norte del país.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía de Honduras</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿En qué región de América está Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Sudamérica</span>
+        <span class="op"><i>b</i> Centroamérica</span>
+        <span class="op"><i>c</i> Norteamérica</span>
+        <span class="op"><i>d</i> el Caribe insular</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál es el punto más alto de Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Pico Bonito</span>
+        <span class="op"><i>b</i> el Cerro Azul</span>
+        <span class="op"><i>c</i> el Cerro Las Minas</span>
+        <span class="op"><i>d</i> la Montaña de la Flor</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál es el río más largo del país?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Coco o Segovia</span>
+        <span class="op"><i>b</i> el Ulúa</span>
+        <span class="op"><i>c</i> el Choluteca</span>
+        <span class="op"><i>d</i> el Aguán</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es el único lago natural de Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la Laguna de Caratasca</span>
+        <span class="op"><i>b</i> el Lago de Yojoa</span>
+        <span class="op"><i>c</i> El Cajón</span>
+        <span class="op"><i>d</i> el Golfo de Fonseca</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿En cuántos departamentos se divide Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 15</span>
+        <span class="op"><i>b</i> 22</span>
+        <span class="op"><i>c</i> 18</span>
+        <span class="op"><i>d</i> 298</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuál es la capital de Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Tegucigalpa</span>
+        <span class="op"><i>b</i> San Pedro Sula</span>
+        <span class="op"><i>c</i> Comayagua</span>
+        <span class="op"><i>d</i> La Ceiba</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Con qué mar limita Honduras al norte?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Océano Pacífico</span>
+        <span class="op"><i>b</i> el Golfo de Fonseca</span>
+        <span class="op"><i>c</i> el Mar Mediterráneo</span>
+        <span class="op"><i>d</i> el Mar Caribe</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué río pertenece a la vertiente del Pacífico?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Ulúa</span>
+        <span class="op"><i>b</i> el Choluteca</span>
+        <span class="op"><i>c</i> el Patuca</span>
+        <span class="op"><i>d</i> el Aguán</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál es el departamento insular de Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Atlántida</span>
+        <span class="op"><i>b</i> Gracias a Dios</span>
+        <span class="op"><i>c</i> Islas de la Bahía</span>
+        <span class="op"><i>d</i> Valle</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué río riega el fértil Valle de Sula?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Choluteca</span>
+        <span class="op"><i>b</i> el Coco o Segovia</span>
+        <span class="op"><i>c</i> el Nacaome</span>
+        <span class="op"><i>d</i> el Ulúa</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía de Honduras</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Honduras</td><td>A. El río más largo del país</td></tr>
+      <tr><td>2. ____ Cerro Las Minas</td><td>B. La capital de Honduras</td></tr>
+      <tr><td>3. ____ Río Coco o Segovia</td><td>C. Roatán, Utila y Guanaja</td></tr>
+      <tr><td>4. ____ Lago de Yojoa</td><td>D. El mar que limita al norte</td></tr>
+      <tr><td>5. ____ Tegucigalpa</td><td>E. País del corazón de Centroamérica</td></tr>
+      <tr><td>6. ____ Mar Caribe</td><td>F. Región oriental de grandes bosques</td></tr>
+      <tr><td>7. ____ Golfo de Fonseca</td><td>G. El único lago natural</td></tr>
+      <tr><td>8. ____ Islas de la Bahía</td><td>H. División política grande (hay 18)</td></tr>
+      <tr><td>9. ____ Departamento</td><td>I. El punto más alto (2,870 m)</td></tr>
+      <tr><td>10. ____ La Mosquitia</td><td>J. La entrada del Pacífico, al sur</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Geografía de Honduras.</b> Ahora conoces tu país: su ubicación
+      en el corazón de Centroamérica, sus montañas y valles, sus dos vertientes y sus ríos, el Lago de Yojoa, sus
+      islas del Caribe, su clima y sus 18 departamentos. ¡Sigue explorando el mapa de Honduras! 🇭🇳🗺️
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Sociales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó el mapa de Honduras y marcó sus límites, dos ríos, el Lago de Yojoa y su departamento.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía de Honduras</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Centroamérica &nbsp; 2. Las Minas &nbsp; 3. Coco o Segovia &nbsp; 4. Yojoa &nbsp; 5. 18 (dieciocho) &nbsp; 6. Tegucigalpa &nbsp; 7. Caribe &nbsp; 8. Fonseca &nbsp; 9. municipios &nbsp; 10. tropical</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5V, 6F, 7V, 8F, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3a, 4b, 5c, 6a, 7d, 8b, 9c, 10d</div>
+      <div><span class="pt">IV. Pareados:</span> 1E, 2I, 3A, 4G, 5B, 6D, 7J, 8C, 9H, 10F</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Geografía de Honduras» (Educación Básica), del eje de Geografía de la programación de Ciencias Sociales del
+      DCNB (Honduras en el espacio centroamericano y americano, y Honduras y su espacio geográfico). Puede utilizarse como
+      guía de estudio impresa o digital antes de la evaluación final. Incluye todos los conceptos evaluados en la plataforma
+      (completar, V/F, selección múltiple, pareados) y puede complementarse con actividades con el mapa: dibujar el mapa de
+      Honduras y marcar límites, ríos y vertientes; localizar el propio departamento y su cabecera; trazar la ruta de un
+      producto (café, banano, camarón) desde su región hasta el puerto de salida. Etapa 8 de la Ruta del Planeta. La misión
+      interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de
+      resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía de Honduras · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
