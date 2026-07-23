@@ -304,7 +304,7 @@
       var u = lista[lista.length - 1];
       var fl = fechaLocal(u.t);
       return etiqueta + ': *' + u.nota + '/' + (u.base || 100) + '*' +
-        (u.forma ? ' · Forma ' + u.forma : '') +
+        (u.forma ? ' · Forma ' + (+u.forma > 100 ? 'R-' + (+u.forma - 100) : u.forma) : '') +
         ' · ' + lista.length + ' intento' + (lista.length === 1 ? '' : 's') +
         ' · ' + fl.fecha + ' ' + fl.hora;
     };

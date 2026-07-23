@@ -141,6 +141,15 @@ Reglas de ahorro y calidad:
    - Semillas por tipo de prueba: conceptual `_evalRng(cf)` · operativa
      `_evalRng(100000 + cf)` con `_opRnd` · pensamiento crítico
      `_evalRng(200000 + cf)` — así la Forma 5 conceptual ≠ Forma 5 operativa.
+   - **Forma R (adaptada, piloto en división-decimales)**: semillas reservadas
+     conceptual-R `_evalRng(300000 + cf)` · operativa/crítico-R
+     `_evalRng(400000 + cf)`. Misma competencia y mismos 100 pts con menos
+     ítems y apoyos (banco de palabras, ejemplo resuelto, planteo armado,
+     letra 13pt, sin olimpiada ni selección múltiple). La activa el docente
+     con la casilla «♿ Forma R» (estado `evalReducida` persistido); al
+     registro y a la nube la forma viaja como `100 + N` (entero, sin tocar
+     SQL) y se muestra como «R-N». La pauta R agrega el bloque «Apoyos
+     aplicados» con casillas; el pie imprime «Forma R-N».
    - Ciclo: `evalFormNum = (evalFormNum % EVAL_FORMAS) + 1` (ídem
      `evalOpFormNum`, `evalCritFormNum`).
    - El orden de consumo del rng dentro del generador es parte del contrato:

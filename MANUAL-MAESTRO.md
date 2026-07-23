@@ -125,6 +125,31 @@ Con cada prueba usted puede:
 > 💡 Esto significa que usted ya no redacta exámenes de estos temas: los
 > genera, imprime o califica automáticamente. Ese tiempo es suyo otra vez.
 
+### 5.1 La Forma R (adaptada): para el alumno rezagado ♿
+
+*Disponible por ahora en la misión División de Decimales (piloto).*
+
+Si tiene un alumno con problemas de aprendizaje (dificultad lectora, ritmo
+lento, sobreedad), marque la casilla **♿ Forma R** junto al selector de forma
+antes de Generar o Imprimir. Es una **adecuación curricular no significativa**:
+
+- **Misma competencia y mismos 100 pts** — la nota vale igual en el parcial.
+- **Menos ítems con más valor cada uno** (13 en vez de ~20), solo niveles
+  básico e intermedio, con letra más grande.
+- **Apoyos incluidos**: banco de palabras en Completar, ejemplo resuelto,
+  planteo del problema ya armado; sin retos de olimpiada ni selección múltiple.
+- La hoja impresa se ve **igual que la de los compañeros**; solo el pie dice
+  "Forma R-N". La pauta trae un bloque de **"Apoyos aplicados"** (lectura en
+  voz alta, tiempo extendido, tabla de multiplicar, dos sesiones) para que la
+  adecuación quede documentada ante padres y dirección.
+- Permisos recomendados al aplicarla: lea las instrucciones y el problema en
+  voz alta, dé más tiempo (hasta el doble o en dos momentos), y no penalice
+  la ortografía.
+- **Es un puente, no una etiqueta**: cuando el alumno logre ≥70 en dos
+  evaluaciones seguidas con Forma R, regrese a la forma estándar.
+
+En el Registro y el Panel Docente estas pruebas aparecen como "R-N ♿".
+
 [IMAGEN: la evaluación en pantalla con el botón Calificar y el resultado X/100]
 [IMAGEN: la versión impresa de la prueba con la pauta del docente]
 

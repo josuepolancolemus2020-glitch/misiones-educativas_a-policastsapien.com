@@ -304,7 +304,7 @@ function pintar(){
     const tr=document.createElement('tr');
     tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(r.alumno||'—')+'</td><td>'+esc(r.codigo_lista||'—')+
       '</td><td>'+esc(r.grado||'—')+'</td><td>'+esc(r.mision||'—')+
-      '</td><td><span class="badge b-'+esc(r.tipo)+'">'+(NOMBRE_TIPO[r.tipo]||esc(r.tipo))+'</span></td><td>'+esc(r.forma||'')+
+      '</td><td><span class="badge b-'+esc(r.tipo)+'">'+(NOMBRE_TIPO[r.tipo]||esc(r.tipo))+'</span></td><td>'+esc(+r.forma>100?'R-'+(+r.forma-100)+' ♿':(r.forma||''))+
       '</td><td>'+nota+'</td><td>'+esc(r.dispositivo||'')+'</td>';
     tb.appendChild(tr);
   });
