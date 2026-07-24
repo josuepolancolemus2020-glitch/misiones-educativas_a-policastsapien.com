@@ -7,6 +7,11 @@ const RUTAS = {
   palabra: { nombre: 'Ruta de la Palabra', emoji: '✍️', color: 'esp'  },
   planeta: { nombre: 'Ruta del Planeta',  emoji: '🌎', color: 'csoc' },
   cuerpo:  { nombre: 'Ruta del Cuerpo',   emoji: '🧠', color: 'cnat' },
+  vida:    { nombre: 'Ruta de la Vida',   emoji: '🌱', color: 'cnat' },
+  materia: { nombre: 'Ruta de la Materia', emoji: '⚡', color: 'cnat' },
+  tiempo:  { nombre: 'Ruta del Tiempo',   emoji: '🏛️', color: 'csoc' },
+  codigo:  { nombre: 'Ruta del Código',   emoji: '💻', color: 'tec'  },
+  robots:  { nombre: 'Ruta de los Robots', emoji: '🤖', color: 'tec'  },
 };
 
 const MISSIONS = [
@@ -42,6 +47,17 @@ const MISSIONS = [
   { id: 30, title: 'Multiplicación Vertical',                            subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'numero',  etapa: 9, xp: 30, icon: '✖️', pais: 'HN', url: 'misiones/2ciclo-multiplicacion-vertical/multiplicacion-vertical.html' },
   { id: 31, title: 'Perímetro y Área de Cuadriláteros',                  subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'forma',   etapa: 4, xp: 30, icon: '🔲', pais: 'HN', url: 'misiones/2ciclo-perimetro-cuadrilateros/perimetro-cuadrilateros.html' },
   { id: 32, title: 'Área de Polígonos Regulares',                        subject: 'matemáticas', color: 'mat',  grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'forma',   etapa: 5, xp: 30, icon: '🔷', pais: 'HN', url: 'misiones/2ciclo-area-poligonos-regulares/area-poligonos-regulares.html' },
+  { id: 33, title: 'La Célula',                                          subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'vida',    etapa: 1, xp: 35, icon: '🔬', pais: 'HN', url: 'misiones/2y3ciclo-la-celula/la-celula.html' },
+  { id: 34, title: 'Los Cinco Reinos',                                   subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'vida',    etapa: 2, xp: 35, icon: '🌳', pais: 'HN', url: 'misiones/2y3ciclo-cinco-reinos/cinco-reinos.html' },
+  { id: 35, title: 'Los Ecosistemas',                                    subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'vida',    etapa: 3, xp: 35, icon: '🏞️', pais: 'HN', url: 'misiones/2y3ciclo-ecosistemas/ecosistemas.html' },
+  { id: 36, title: 'El Sistema Digestivo',                               subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'cuerpo',  etapa: 3, xp: 35, icon: '🍎', pais: 'HN', url: 'misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html' },
+  { id: 37, title: 'El Sistema Respiratorio y Circulatorio',             subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'cuerpo',  etapa: 4, xp: 35, icon: '🫁', pais: 'HN', url: 'misiones/2y3ciclo-respiratorio-circulatorio/respiratorio-circulatorio.html' },
+  { id: 38, title: 'La Reproducción y el Desarrollo Humano',              subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'cuerpo',  etapa: 5, xp: 35, icon: '👶', pais: 'HN', url: 'misiones/2y3ciclo-reproduccion-desarrollo/reproduccion-desarrollo.html' },
+  { id: 39, title: 'El Universo y el Sistema Solar',                      subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'planeta', etapa: 7, xp: 35, icon: '🪐', pais: 'HN', url: 'misiones/2y3ciclo-universo-sistema-solar/universo-sistema-solar.html' },
+  { id: 40, title: 'La Materia',                                          subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'materia', etapa: 1, xp: 35, icon: '🧪', pais: 'HN', url: 'misiones/2y3ciclo-la-materia/la-materia.html' },
+  { id: 41, title: 'La Energía',                                          subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'materia', etapa: 2, xp: 35, icon: '⚡', pais: 'HN', url: 'misiones/2y3ciclo-la-energia/la-energia.html' },
+  { id: 42, title: 'Geografía de Honduras',                               subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'planeta', etapa: 8, xp: 35, icon: '🇭🇳', pais: 'HN', url: 'misiones/2y3ciclo-geografia-de-honduras/geografia-de-honduras.html' },
+  { id: 43, title: 'Los Mayas y las Culturas Precolombinas',              subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'tiempo',  etapa: 1, xp: 35, icon: '🗿', pais: 'HN', url: 'misiones/2y3ciclo-mayas-precolombinas/mayas-precolombinas.html' },
 ];
 
 /* Helpers de rutas (globales: index los usa en app.js) */

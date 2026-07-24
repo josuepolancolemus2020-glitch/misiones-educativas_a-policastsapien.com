@@ -10,6 +10,8 @@ const RUTAS = {
   vida:    { nombre: 'Ruta de la Vida',   emoji: '🌱', color: 'cnat' },
   materia: { nombre: 'Ruta de la Materia', emoji: '⚡', color: 'cnat' },
   tiempo:  { nombre: 'Ruta del Tiempo',   emoji: '🏛️', color: 'csoc' },
+  codigo:  { nombre: 'Ruta del Código',   emoji: '💻', color: 'tec'  },
+  robots:  { nombre: 'Ruta de los Robots', emoji: '🤖', color: 'tec'  },
 };
 
 const MISSIONS = [

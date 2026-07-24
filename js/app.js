@@ -7,6 +7,8 @@ const SUBJECT_LABELS = {
   'matemáticas': 'Matemáticas',
   'naturales':   'C. Naturales',
   'sociales':    'C. Sociales',
+  'programación': 'Programación',
+  'robótica':    'Robótica',
 };
 
 const LEVELS = [
@@ -510,7 +512,7 @@ function renderMissions(filter, query) {
 ───────────────────────────────────────────── */
 
 const REGISTRO_KEY = 'METAS_REGISTRO_V1';
-const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo', 'vida'];
+const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo', 'vida', 'materia', 'tiempo', 'codigo', 'robots'];
 
 function _rNorm(s) {
   s = String(s || '').toLowerCase();
@@ -915,6 +917,8 @@ function renderProgress() {
     { key: 'matemáticas', label: 'Matemáticas',  color: 'var(--mat)'  },
     { key: 'naturales',   label: 'C. Naturales', color: 'var(--cnat)' },
     { key: 'sociales',    label: 'C. Sociales',  color: 'var(--csoc)' },
+    { key: 'programación', label: 'Programación', color: 'var(--tec)' },
+    { key: 'robótica',    label: 'Robótica',     color: 'var(--tec)'  },
   ];
 
   document.getElementById('progress-subjects').innerHTML = `

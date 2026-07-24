@@ -11,6 +11,7 @@
   --cnat: #0d9488; --cnat-bg: #f0fdfa; --cnat-border: rgba(13,148,136,.2);
   --csoc: #dc2626; --csoc-bg: #fef2f2; --csoc-border: rgba(220,38,38,.2);
   --bach: #7c3aed; --bach-bg: #faf5ff; --bach-border: rgba(124,58,237,.2);
+  --tec:  #0e7490; --tec-bg:  #ecfeff; --tec-border:  rgba(14,116,144,.2);
 
   --bg:      #f0f4f9;
   --surface: #ffffff;
@@ -783,6 +784,7 @@ a.padre-asistente-btn {
 .subj-chip.mat  { background: var(--mat-bg);  color: var(--mat);  border-color: var(--mat-border); }
 .subj-chip.cnat { background: var(--cnat-bg); color: var(--cnat); border-color: var(--cnat-border); }
 .subj-chip.csoc { background: var(--csoc-bg); color: var(--csoc); border-color: var(--csoc-border); }
+.subj-chip.tec  { background: var(--tec-bg);  color: var(--tec);  border-color: var(--tec-border); }
 
 /* ====== FEATURED CARD ====== */
 .featured-card {
@@ -900,12 +902,14 @@ a.padre-asistente-btn {
 .mc-icon.cnat { background: var(--cnat-bg); color: var(--cnat); }
 .mc-icon.csoc { background: var(--csoc-bg); color: var(--csoc); }
 .mc-icon.bach { background: var(--bach-bg); color: var(--bach); }
+.mc-icon.tec  { background: var(--tec-bg);  color: var(--tec); }
 
 .mc-subj.esp  { background: var(--esp-bg);  color: var(--esp); }
 .mc-subj.mat  { background: var(--mat-bg);  color: var(--mat); }
 .mc-subj.cnat { background: var(--cnat-bg); color: var(--cnat); }
 .mc-subj.csoc { background: var(--csoc-bg); color: var(--csoc); }
 .mc-subj.bach { background: var(--bach-bg); color: var(--bach); }
+.mc-subj.tec  { background: var(--tec-bg);  color: var(--tec); }
 
 /* ====== EMPTY STATE ====== */
 .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
@@ -2914,6 +2918,7 @@ a.padre-asistente-btn {
 .ruta-pct.esp  { color: var(--esp);  background: var(--esp-bg);  }
 .ruta-pct.cnat { color: var(--cnat); background: var(--cnat-bg); }
 .ruta-pct.csoc { color: var(--csoc); background: var(--csoc-bg); }
+.ruta-pct.tec  { color: var(--tec);  background: var(--tec-bg);  }
 
 .ruta-bar {
   height: 6px;
@@ -2927,6 +2932,7 @@ a.padre-asistente-btn {
 .ruta-bar-fill.esp  { background: var(--esp);  }
 .ruta-bar-fill.cnat { background: var(--cnat); }
 .ruta-bar-fill.csoc { background: var(--csoc); }
+.ruta-bar-fill.tec  { background: var(--tec);  }
 
 .ruta-mapa { padding: 4px 14px 12px; }
 

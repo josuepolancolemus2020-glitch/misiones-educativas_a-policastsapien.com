@@ -46,6 +46,17 @@
         </div>
       </div>
 
+      <!-- Pensador: José Cecilio del Valle, siempre visible -->
+      <div class="pensador-card">
+        <div class="pensador-foto-wrap">
+          <img src="img/jose-cecilio-del-valle-edit.webp" alt="José Cecilio del Valle" class="pensador-foto">
+        </div>
+        <div class="pensador-cita">
+          <p class="pensador-text">América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.</p>
+          <span class="pensador-autor">— José Cecilio del Valle</span>
+        </div>
+      </div>
+
       <!-- Tu siguiente paso (se pinta solo cuando hay actividad o diagnóstico) -->
       <div id="home-paso"></div>
 
@@ -93,6 +104,16 @@
           <span>C. Sociales</span>
           <em>3 misiones</em>
           <!-- los conteos los recalcula renderHome() desde MISSIONS; estos son el respaldo estático -->
+        </button>
+        <button class="subj-chip tec" data-subject="programación">
+          <i class="fa-solid fa-code"></i>
+          <span>Programación</span>
+          <em>1 misión</em>
+        </button>
+        <button class="subj-chip tec" data-subject="robótica">
+          <i class="fa-solid fa-robot"></i>
+          <span>Robótica</span>
+          <em>1 misión</em>
         </button>
       </div>
 
@@ -177,23 +198,11 @@
 
       </div>
 
-      <!-- Pensador del día + frase motivacional (plegados al final) -->
-      <details class="pensador-details">
-        <summary class="pensador-summary">💭 Pensador del día</summary>
-        <div class="pensador-card">
-          <div class="pensador-foto-wrap">
-            <img src="img/jose-cecilio-del-valle-edit.webp" alt="José Cecilio del Valle" class="pensador-foto">
-          </div>
-          <div class="pensador-cita">
-            <p class="pensador-text">América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.</p>
-            <span class="pensador-autor">— José Cecilio del Valle</span>
-          </div>
-        </div>
-        <div class="motiv-cita motiv-cita-card">
-          <p class="motiv-text" id="motiv-text"></p>
-          <span class="motiv-autor" id="motiv-autor"></span>
-        </div>
-      </details>
+      <!-- Frase motivacional al azar, siempre visible al final -->
+      <div class="motiv-cita motiv-cita-card">
+        <p class="motiv-text" id="motiv-text"></p>
+        <span class="motiv-autor" id="motiv-autor"></span>
+      </div>
 
     </div>
   </div>
@@ -219,6 +228,10 @@
         <div class="pills-row">
           <button class="pill" data-filter="naturales">C. Naturales</button>
           <button class="pill" data-filter="sociales">C. Sociales</button>
+        </div>
+        <div class="pills-row">
+          <button class="pill" data-filter="programación">Programación</button>
+          <button class="pill" data-filter="robótica">Robótica</button>
         </div>
       </div>
       <button class="rutas-banner" onclick="switchView('view-rutas')">
@@ -264,6 +277,18 @@
   </div>
 
   <!-- ========== PARA MADRES Y PADRES ========== -->
+  <!-- VISTA: AJUSTES — perfiles y roles (docente/director/rector/admin) -->
+  <div id="view-ajustes" class="view">
+    <header class="app-header compact">
+      <button class="hamburger-btn" aria-label="Abrir menú"><i class="fa-solid fa-bars"></i></button>
+      <h1 class="view-title">Ajustes</h1>
+      <div></div>
+    </header>
+    <div class="view-scroll">
+      <div id="ajustes-cont"></div>
+    </div>
+  </div>
+
   <div id="view-padre" class="view">
     <header class="app-header compact">
       <button class="back-icon-btn" id="padre-back-btn" aria-label="Volver al inicio">
@@ -310,6 +335,10 @@
           <a class="zd-tile" href="evaluaciones.html" data-tool="eval" title="Pruebas listas para imprimir">
             <span class="zd-ico" style="--c1:#8b5cf6;--c2:#6d28d9;"><i class="fa-solid fa-print"></i></span>
             <span class="zd-name">Evaluaciones</span>
+          </a>
+          <a class="zd-tile" href="fichas/index.html" data-tool="fichas" title="Fichas didácticas imprimibles de las 32 misiones">
+            <span class="zd-ico" style="--c1:#14b8a6;--c2:#0f766e;"><i class="fa-solid fa-file-lines"></i></span>
+            <span class="zd-name">Fichas didácticas</span>
           </a>
           <button class="zd-tile" id="goto-camp-btn" data-tool="camp" title="Torneo de preguntas para el aula">
             <span class="zd-ico" style="--c1:#10b981;--c2:#047857;"><i class="fa-solid fa-trophy"></i></span>
@@ -539,6 +568,8 @@
             <option value="matemáticas">🔢 Matemáticas</option>
             <option value="naturales">🌱 Ciencias Naturales</option>
             <option value="sociales">🌎 Ciencias Sociales</option>
+            <option value="programación">💻 Programación</option>
+            <option value="robótica">🤖 Robótica</option>
           </select>
           <select id="pa-mision" class="pa-inp-field" style="margin-top:8px;">
             <option value="">✏️ Otra evaluación (escribir el nombre abajo)</option>
@@ -628,7 +659,9 @@
       <!-- Historial de análisis guardados -->
       <div class="pa-card" id="pa-historial-card" style="display:none;">
         <div class="pa-card-title">🗂️ Análisis guardados</div>
-        <p class="pa-optional-hint">Cada análisis se guarda solo en este dispositivo. Ábrelo para revisarlo, compararlo o reenviar mensajes.</p>
+        <p class="pa-optional-hint">Cada análisis queda <strong>guardado</strong> aquí, y sus notas y mensajes
+          <strong>suben solos al asistente de padres</strong> ☁️ (la familia los consulta con su clave).
+          Ábrelo cuando quieras para revisarlo, actualizarlo o reenviar mensajes — actualizar vuelve a subir los cambios.</p>
         <div id="pa-historial-list"></div>
       </div>
 
@@ -929,12 +962,18 @@
       <button class="drawer-item" data-view="view-padre">
         <i class="fa-solid fa-people-roof"></i><span>Avance de mi hijo/a</span>
       </button>
+      <div class="drawer-divider"></div>
+      <div class="drawer-section-label">Cuenta</div>
+      <button class="drawer-item" data-view="view-ajustes">
+        <i class="fa-solid fa-gear"></i><span>Ajustes</span>
+      </button>
     </nav>
   </aside>
 
   <script src="js/metas-dialogos.js"></script>
   <script src="js/html2canvas.min.js"></script>
   <script src="js/data/misiones.js"></script>
+  <script src="js/data/dcnb-map.js"></script>
   <script src="js/data/diagnosticos.js"></script>
   <script src="js/data/proceres.js"></script>
   <script src="js/data/paises.js"></script>

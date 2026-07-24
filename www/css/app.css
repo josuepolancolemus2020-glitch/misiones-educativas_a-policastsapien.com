@@ -11,6 +11,7 @@
   --cnat: #0d9488; --cnat-bg: #f0fdfa; --cnat-border: rgba(13,148,136,.2);
   --csoc: #dc2626; --csoc-bg: #fef2f2; --csoc-border: rgba(220,38,38,.2);
   --bach: #7c3aed; --bach-bg: #faf5ff; --bach-border: rgba(124,58,237,.2);
+  --tec:  #0e7490; --tec-bg:  #ecfeff; --tec-border:  rgba(14,116,144,.2);
 
   --bg:      #f0f4f9;
   --surface: #ffffff;
@@ -462,6 +463,62 @@ a.padre-asistente-btn {
   transition: transform .15s, box-shadow .15s;
 }
 .doc-avance-btn:active { transform: scale(.97); box-shadow: 0 3px 10px rgba(30,58,124,.3); }
+/* Mi Programación DCNB (solo Zona Docente): filtros grado + mes + materia */
+.doc-prog-lbl {
+  font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); margin: 12px 0 6px;
+}
+.doc-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+.doc-chips-scroll {
+  flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+}
+.doc-chip {
+  border: 1.5px solid var(--line, #dbe3f0); background: #fff; color: var(--text);
+  border-radius: 999px; padding: 8px 15px;
+  font-size: 13px; font-weight: 800; font-family: inherit;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(15,23,42,.08);
+  transition: transform .12s, box-shadow .12s, background .12s, border-color .12s, color .12s;
+}
+.doc-chip:active { transform: scale(.94); }
+.doc-chip-sel {
+  background: linear-gradient(135deg, var(--brand), var(--brand-mid));
+  border-color: var(--brand); color: #fff;
+  box-shadow: 0 4px 12px rgba(30,58,124,.35);
+}
+/* Materia seleccionada: cada una con su color institucional */
+.doc-chip-mat.doc-chip-sel { background: linear-gradient(135deg, #1d4ed8, #3b82f6); border-color: #1d4ed8; box-shadow: 0 4px 12px rgba(29,78,216,.35); }
+.doc-chip-esp.doc-chip-sel { background: linear-gradient(135deg, #b45309, #f59e0b); border-color: #b45309; box-shadow: 0 4px 12px rgba(180,83,9,.35); }
+.doc-chip-nat.doc-chip-sel { background: linear-gradient(135deg, #0d9488, #2dd4bf); border-color: #0d9488; box-shadow: 0 4px 12px rgba(13,148,136,.35); }
+.doc-chip-soc.doc-chip-sel { background: linear-gradient(135deg, #dc2626, #f87171); border-color: #dc2626; box-shadow: 0 4px 12px rgba(220,38,38,.35); }
+.doc-chip-off { opacity: .55; cursor: default; pointer-events: none; }
+.doc-prog-prox { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 10px; }
+.doc-prog-head { font-size: 13px; font-weight: 900; color: var(--brand); margin: 6px 0 4px; }
+.doc-prog-materia {
+  font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); margin: 10px 0 4px; border-bottom: 1px solid var(--line, #e2e8f0);
+  padding-bottom: 2px;
+}
+.doc-prog-item {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff; border: 1.5px solid var(--line, #e2e8f0);
+  border-radius: var(--r-sm); padding: 8px 10px; margin-bottom: 6px;
+  text-decoration: none; color: var(--text);
+  transition: transform .12s, border-color .12s;
+}
+.doc-prog-item:active { transform: scale(.98); border-color: var(--brand); }
+.doc-prog-ico { font-size: 20px; }
+.doc-prog-txt { flex: 1; display: flex; flex-direction: column; }
+.doc-prog-t { font-size: 13.5px; font-weight: 800; }
+.doc-prog-s { font-size: 11px; color: var(--muted); }
+.doc-prog-go { color: var(--brand); font-weight: 900; }
+.doc-prog-vacio { font-size: 12.5px; color: var(--muted); font-style: italic; }
+.doc-prog-nota {
+  font-size: 11.5px; color: var(--muted); line-height: 1.5;
+  background: #fefce8; border: 1px solid #fde68a; border-radius: var(--r-sm);
+  padding: 8px 10px; margin-top: 10px;
+}
 .padre-codigo-inp { text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
 #padre-nube-out { margin-top: 10px; }
 
@@ -582,27 +639,9 @@ a.padre-asistente-btn {
 .doc-mant[open] .doc-mant-sum { color: var(--text); }
 .doc-mant-body { padding: 0 2px 4px; }
 
-/* ── Pensador del día + frase motivacional, plegados al final ── */
-.pensador-details { margin-bottom: 24px; }
-.pensador-summary {
-  list-style: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  box-shadow: var(--shadow);
-  font-weight: 700;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.pensador-summary::-webkit-details-marker { display: none; }
-.pensador-summary::after { content: '▾'; color: var(--muted); }
-.pensador-details[open] .pensador-summary { margin-bottom: 12px; }
-.pensador-details[open] .pensador-summary::after { content: '▴'; }
+/* ── Frase motivacional al azar, al final ── */
 .motiv-cita-card {
+  margin-bottom: 24px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r);
@@ -745,6 +784,7 @@ a.padre-asistente-btn {
 .subj-chip.mat  { background: var(--mat-bg);  color: var(--mat);  border-color: var(--mat-border); }
 .subj-chip.cnat { background: var(--cnat-bg); color: var(--cnat); border-color: var(--cnat-border); }
 .subj-chip.csoc { background: var(--csoc-bg); color: var(--csoc); border-color: var(--csoc-border); }
+.subj-chip.tec  { background: var(--tec-bg);  color: var(--tec);  border-color: var(--tec-border); }
 
 /* ====== FEATURED CARD ====== */
 .featured-card {
@@ -862,12 +902,14 @@ a.padre-asistente-btn {
 .mc-icon.cnat { background: var(--cnat-bg); color: var(--cnat); }
 .mc-icon.csoc { background: var(--csoc-bg); color: var(--csoc); }
 .mc-icon.bach { background: var(--bach-bg); color: var(--bach); }
+.mc-icon.tec  { background: var(--tec-bg);  color: var(--tec); }
 
 .mc-subj.esp  { background: var(--esp-bg);  color: var(--esp); }
 .mc-subj.mat  { background: var(--mat-bg);  color: var(--mat); }
 .mc-subj.cnat { background: var(--cnat-bg); color: var(--cnat); }
 .mc-subj.csoc { background: var(--csoc-bg); color: var(--csoc); }
 .mc-subj.bach { background: var(--bach-bg); color: var(--bach); }
+.mc-subj.tec  { background: var(--tec-bg);  color: var(--tec); }
 
 /* ====== EMPTY STATE ====== */
 .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
@@ -2876,6 +2918,7 @@ a.padre-asistente-btn {
 .ruta-pct.esp  { color: var(--esp);  background: var(--esp-bg);  }
 .ruta-pct.cnat { color: var(--cnat); background: var(--cnat-bg); }
 .ruta-pct.csoc { color: var(--csoc); background: var(--csoc-bg); }
+.ruta-pct.tec  { color: var(--tec);  background: var(--tec-bg);  }
 
 .ruta-bar {
   height: 6px;
@@ -2889,6 +2932,7 @@ a.padre-asistente-btn {
 .ruta-bar-fill.esp  { background: var(--esp);  }
 .ruta-bar-fill.cnat { background: var(--cnat); }
 .ruta-bar-fill.csoc { background: var(--csoc); }
+.ruta-bar-fill.tec  { background: var(--tec);  }
 
 .ruta-mapa { padding: 4px 14px 12px; }
 
@@ -3888,3 +3932,166 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-pers-edit { border: none; background: transparent; color: var(--muted); text-decoration: underline; font-size: 12px; cursor: pointer; }
 .ad-pers-leyenda { font-size: 11.5px; color: var(--muted); margin: 2px 0 4px; line-height: 1.5; }
 .ad-pers-leyenda b { color: var(--text); }
+
+/* ══════════════════════════════════════════════
+   AJUSTES — perfiles y roles (jul-2026)
+   docente · director · rector · admin
+══════════════════════════════════════════════ */
+.aj-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.aj-avatar {
+  width: 52px; height: 52px; border-radius: 50%; flex: 0 0 52px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; background: #eef4fb; border: 2px solid #d5e4f5;
+}
+.aj-nombre { font-weight: 800; font-size: 1.05rem; color: var(--text); }
+.aj-sub { font-size: 0.82rem; color: var(--muted); word-break: break-all; }
+
+.aj-rol-badge {
+  display: inline-block; font-size: 0.78rem; font-weight: 800;
+  padding: 4px 12px; border-radius: 999px; margin: 2px 0 4px;
+  background: #eef4fb; color: #1565c0; border: 1px solid #d5e4f5;
+}
+.aj-rol-director { background: #fdf3e3; color: #b26a00; border-color: #f3ddb3; }
+.aj-rol-rector   { background: #f0e9fb; color: #6a3cb5; border-color: #ded0f2; }
+.aj-rol-admin    { background: #e8f7ee; color: #1c7c43; border-color: #bfe6cd; }
+.aj-rol-desc { font-size: 0.82rem; color: var(--muted); margin: 4px 0 10px; }
+
+.aj-datos { margin: 4px 0 12px; }
+.aj-dato { display: flex; gap: 8px; font-size: 0.84rem; padding: 3px 0; }
+.aj-dato-et { color: var(--muted); flex: 0 0 auto; }
+.aj-dato-v { color: var(--text); font-weight: 600; }
+
+.aj-lista { margin-top: 10px; }
+.aj-fila {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 2px; border-top: 1px solid #eceff3;
+}
+.aj-fila-info { min-width: 0; }
+.aj-fila-nombre { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+.aj-fila-det { font-size: 0.76rem; color: var(--muted); word-break: break-word; }
+.aj-fila-rol { flex: 0 0 auto; }
+.aj-fila-rol .aj-rol-badge { white-space: nowrap; }
+.aj-rol-sel {
+  font-size: 0.8rem; font-weight: 700; padding: 6px 8px;
+  border-radius: 10px; border: 1.5px solid #d5e4f5; background: #fff; color: var(--text);
+}
+@media (max-width: 560px) {
+  .aj-fila { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+
+/* Nueva contraseña (solo admin) — jul-2026 */
+.aj-fila-rol { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+.aj-reset-btn {
+  font-size: 0.76rem; font-weight: 700; padding: 6px 8px; cursor: pointer;
+  border-radius: 10px; border: 1.5px solid #f3ddb3; background: #fdf8ee; color: #b26a00;
+  white-space: nowrap;
+}
+.aj-reset-btn:active { transform: scale(0.97); }
+
+/* Rescate de datos: explicaciones cortas bajo cada opción (jul-2026) */
+.doc-mant-hint { font-size: 0.8rem; color: #555; margin: 2px 0 10px; line-height: 1.45; }
+.doc-mant-exp  { font-size: 0.72rem; color: #8a94a3; margin: 2px 0 10px; line-height: 1.35; }
+
+/* Buzón de sugerencias (jul-2026): botón vivo + mensajes del admin */
+.aj-sug-txt {
+  width: 100%; resize: vertical; min-height: 96px;
+  line-height: 1.45; margin-bottom: 4px;
+}
+.aj-sug-btn {
+  width: 100%; border: none; cursor: pointer; margin-top: 8px;
+  padding: 14px 16px; border-radius: 14px;
+  font-weight: 800; font-size: 0.95rem; letter-spacing: 0.2px;
+  color: #fff; background: linear-gradient(135deg, #1565c0 0%, #7b2ff7 100%);
+  box-shadow: 0 6px 18px rgba(21, 101, 192, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.aj-sug-btn:hover { box-shadow: 0 8px 22px rgba(123, 47, 247, 0.4); transform: translateY(-1px); }
+.aj-sug-btn:active { transform: scale(0.97); }
+.aj-sug-btn:disabled { opacity: 0.6; transform: none; }
+.aj-sug-btn i { margin-right: 6px; }
+
+.aj-buzon-item {
+  border: 1px solid #eceff3; border-radius: 14px;
+  padding: 12px 14px; margin-top: 10px; background: #fff;
+}
+.aj-buzon-item.aj-buzon-nueva {
+  border-color: #1565c0; background: #f4f8fd;
+  box-shadow: 0 2px 10px rgba(21, 101, 192, 0.12);
+}
+.aj-buzon-txt {
+  font-size: 0.88rem; color: var(--text); line-height: 1.5;
+  margin: 8px 0 4px; white-space: pre-wrap; word-break: break-word;
+}
+.aj-buzon-leida {
+  font-size: 0.76rem; font-weight: 700; cursor: pointer; margin-top: 6px;
+  padding: 6px 12px; border-radius: 999px;
+  border: 1.5px solid #bfe6cd; background: #e8f7ee; color: #1c7c43;
+}
+.aj-buzon-leida:active { transform: scale(0.97); }
+
+/* Registros contraíbles + altas por fecha (jul-2026) */
+.aj-reg { border-top: 1px solid #eceff3; }
+.aj-reg-sum {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 11px 2px; cursor: pointer; list-style: none;
+}
+.aj-reg-sum::-webkit-details-marker { display: none; }
+.aj-reg-sum::after {
+  content: '▸'; color: #8a94a3; font-size: 0.9rem; flex: 0 0 auto;
+  transition: transform 0.15s ease;
+}
+.aj-reg[open] .aj-reg-sum::after { transform: rotate(90deg); }
+.aj-reg-nombre {
+  font-weight: 700; font-size: 0.9rem; color: var(--text);
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.aj-reg-chip { white-space: nowrap; flex: 0 0 auto; margin: 0; }
+.aj-reg-body { padding: 0 2px 12px; }
+.aj-reg-body .aj-fila-rol { margin-top: 8px; }
+
+.aj-altas-btn {
+  width: 100%; margin-top: 8px; padding: 12px 14px; cursor: pointer;
+  border-radius: 14px; border: 1.5px solid #d5e4f5; background: #f4f8fd;
+  color: #1565c0; font-weight: 800; font-size: 0.9rem;
+}
+.aj-altas-btn:active { transform: scale(0.98); }
+.aj-res-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; margin: 12px 0 8px; flex-wrap: wrap;
+}
+.aj-res-total { font-weight: 800; font-size: 0.85rem; color: var(--text); }
+.aj-res-chips { display: flex; gap: 6px; }
+.aj-res-chip {
+  border: 1.5px solid #d5e4f5; background: #fff; color: #1565c0; cursor: pointer;
+  font-weight: 700; font-size: 0.78rem; padding: 5px 12px; border-radius: 999px;
+}
+.aj-res-chip.aj-res-sel { background: #1565c0; color: #fff; border-color: #1565c0; }
+.aj-res-fila { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 0.8rem; }
+.aj-res-et { flex: 0 0 92px; color: var(--muted); }
+.aj-res-barra { flex: 1; height: 10px; background: #eef2f7; border-radius: 999px; overflow: hidden; }
+.aj-res-barra span {
+  display: block; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #1565c0, #7b2ff7);
+}
+.aj-res-n { flex: 0 0 34px; text-align: right; font-weight: 800; color: var(--text); }
+
+/* Plan de Acción: estado claro del asistente de padres en el historial (jul-2026) */
+.pa-hist-nube { font-weight: 700; font-size: 0.78rem; padding: 1px 8px; border-radius: 999px; }
+.pa-hist-nube.ok   { background: #e8f7ee; color: #1c7c43; border: 1px solid #bfe6cd; }
+.pa-hist-nube.pend { background: #fdf3e5; color: #b26a00; border: 1px solid #f3ddb3; }
+.pa-hist-wa { font-size: 0.76rem; color: #128c7e; font-weight: 700; }
+.pa-hist-subir {
+  border: 1.5px solid #1565c0; background: #eef4fb; color: #1565c0; cursor: pointer;
+  font-weight: 800; font-size: 0.78rem; padding: 6px 10px; border-radius: 10px; white-space: nowrap;
+}
+.pa-hist-subir:active { transform: scale(0.97); }
+.pa-hist-subir:disabled { opacity: 0.6; }
+
+/* Plan de Acción: Nº de lista EDITABLE en la entrada manual (jul-2026) */
+.pa-student-row { grid-template-columns: 40px 1fr 72px 28px; }
+.pa-inp-num {
+  width: 100%; text-align: center; font-size: 13px; font-weight: 800;
+  color: #1565c0; background: #eef4fb; border: 1.5px solid #d5e4f5;
+  border-radius: 8px; padding: 8px 2px;
+}
+.pa-inp-num:focus { outline: 2px solid #1565c0; background: #fff; }

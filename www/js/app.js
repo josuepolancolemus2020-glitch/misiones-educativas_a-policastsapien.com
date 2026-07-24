@@ -7,6 +7,8 @@ const SUBJECT_LABELS = {
   'matemáticas': 'Matemáticas',
   'naturales':   'C. Naturales',
   'sociales':    'C. Sociales',
+  'programación': 'Programación',
+  'robótica':    'Robótica',
 };
 
 const LEVELS = [
@@ -510,7 +512,7 @@ function renderMissions(filter, query) {
 ───────────────────────────────────────────── */
 
 const REGISTRO_KEY = 'METAS_REGISTRO_V1';
-const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo'];
+const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo', 'vida', 'materia', 'tiempo', 'codigo', 'robots'];
 
 function _rNorm(s) {
   s = String(s || '').toLowerCase();
@@ -915,6 +917,8 @@ function renderProgress() {
     { key: 'matemáticas', label: 'Matemáticas',  color: 'var(--mat)'  },
     { key: 'naturales',   label: 'C. Naturales', color: 'var(--cnat)' },
     { key: 'sociales',    label: 'C. Sociales',  color: 'var(--csoc)' },
+    { key: 'programación', label: 'Programación', color: 'var(--tec)' },
+    { key: 'robótica',    label: 'Robótica',     color: 'var(--tec)'  },
   ];
 
   document.getElementById('progress-subjects').innerHTML = `
@@ -1239,9 +1243,13 @@ async function docenteRecuperar() {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const resp = await r.json();
     if (resp && resp.ok && resp.codigo) {
-      // Si en este equipo quedaron datos de OTRA cuenta, se descartan antes de entrar.
+      // ORDEN CRÍTICO: primero se guarda la sesión NUEVA y después se reclama
+      // el equipo. dsClaim descarga la nube con la sesión guardada: si se
+      // reclamara antes, bajaría la nube de la cuenta ANTERIOR (cruce de datos).
+      _docenteSave({ codigo: resp.codigo, clave, nombre: resp.nombre || '', correo,
+        rol: resp.rol || 'docente', t: new Date().toISOString() });
+      // Si en este equipo quedaron datos de OTRA cuenta, se descartan aquí.
       if (typeof dsClaim === 'function') dsClaim(resp.codigo);
-      _docenteSave({ codigo: resp.codigo, clave, nombre: resp.nombre || '', correo, t: new Date().toISOString() });
       renderProfile();
       toast('✅ ¡Bienvenido de vuelta, ' + String(resp.nombre || 'colega').split(' ')[0] + '!');
     } else if (resp && resp.motivo === 'espera') {
@@ -1364,15 +1372,6 @@ function renderProfile() {
           <span class="doc-cuenta-ic">🚪</span><span>Cerrar sesión</span>
         </button>
       </div>
-      <details class="doc-mant">
-        <summary class="doc-mant-sum">⚙️ Mantenimiento de datos</summary>
-        <div class="doc-mant-body">
-          <button class="doc-sync-now" id="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
-          <a class="doc-usar-este-link" onclick="dsUsarEste()">✅ Este equipo tiene los datos correctos → usarlo en todos</a>
-          <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
-        </div>
-      </details>
-
       <div class="doc-aviso-alumnos" style="margin-top:18px;">📣 Dale a tus alumnos tu <strong>código de aula</strong>:
         lo escriben <strong>una sola vez</strong> al empezar una misión y su avance llega solo a tu cuenta.
         Escríbelo en la pizarra.</div>
@@ -1382,9 +1381,179 @@ function renderProfile() {
         <button class="doc-cod-copy" onclick="docenteCopiarCodigo()">📋 Copiar</button>
       </div>
       <a class="doc-avance-btn" href="consulta-nube.html">📊 Ver el avance de mis alumnos</a>
+      <div class="doc-prog-sec">
+        <div class="doc-aviso-alumnos" style="margin-top:18px;">📅 <strong>Mi Programación DCNB:</strong> elige tu grado y filtra por mes o materia.
+          <em>Solo tú ves los grados: tus alumnos navegan por rutas y etapas, sin marcas de grado.</em></div>
+        <div class="doc-prog-lbl">🎓 Grado que imparto</div>
+        <div class="doc-chips" id="doc-prog-grados"></div>
+        <div class="doc-prog-lbl">🗓️ Mes del año escolar</div>
+        <div class="doc-chips doc-chips-scroll" id="doc-prog-meses"></div>
+        <div class="doc-prog-lbl">📚 Materia</div>
+        <div class="doc-chips" id="doc-prog-materias"></div>
+        <div id="doc-prog-out"></div>
+      </div>
     </div>`;
   if (typeof dsOnProfile === 'function') dsOnProfile();
   docenteCargarCodigoAula();
+  docenteProgInit();
+}
+
+/* ── Mi Programación DCNB (exclusivo Zona Docente) ──
+   Muestra al maestro qué misiones cubren los estándares del grado que
+   imparte (js/data/dcnb-map.js), con filtros por MES del año escolar y
+   por MATERIA. Los filtros se recuerdan en METAS_DOCENTE_V1.progFiltros.
+   NUNCA mostrar esto al alumno.
+
+   ► docenteProgDatos(f) es la API base para futuras herramientas del
+     docente (planificación mensual, rúbricas de evaluación…): devuelve
+     las misiones ya filtradas y separadas en «del mes» y «espirales».
+     PENDIENTE: construir esas herramientas sobre esta función. */
+const PROG_MESES = { 2: 'Febrero', 3: 'Marzo', 4: 'Abril', 5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto', 9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre' };
+const PROG_MESES_CORTO = { 2: 'Feb', 3: 'Mar', 4: 'Abr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Ago', 9: 'Sep', 10: 'Oct', 11: 'Nov' };
+const PROG_MATERIAS = [
+  { key: 'matemáticas', chip: '🔵 Matemáticas', cls: 'doc-chip-mat' },
+  { key: 'español',     chip: '🟡 Español',     cls: 'doc-chip-esp' },
+  { key: 'naturales',   chip: '🟢 Naturales',   cls: 'doc-chip-nat' },
+  { key: 'sociales',    chip: '🔴 Sociales',    cls: 'doc-chip-soc' },
+];
+
+function _progFiltros() {
+  const f = _docenteCfg().progFiltros || {};
+  return { grado: f.grado || 0, mes: f.mes || 0, materia: f.materia || '' };
+}
+function _progFiltrosSave(f) {
+  const cfg = _docenteCfg();
+  cfg.progFiltros = f;
+  if (f.grado) cfg.gradoImparte = f.grado; // compat con versión anterior
+  _docenteSave(cfg);
+}
+function docenteProgSet(campo, valor) {
+  const f = _progFiltros();
+  f[campo] = (f[campo] === valor && campo !== 'grado') ? (campo === 'mes' ? 0 : '') : valor; // tap de nuevo = quitar filtro
+  _progFiltrosSave(f);
+  docenteProgInit();
+}
+
+/* Datos filtrados: { delMes:[{m, meses}], espirales:[{m, meses}], total } */
+function docenteProgDatos(f) {
+  const delMes = [], espirales = [];
+  if (f.grado && typeof DCNB_MAP !== 'undefined') {
+    (typeof MISSIONS !== 'undefined' ? MISSIONS : []).forEach(m => {
+      const e = DCNB_MAP[m.id];
+      if (!e || !e.g || !(f.grado in e.g)) return;
+      if (f.materia && m.subject !== f.materia) return;
+      const meses = e.g[f.grado];
+      const esEspiral = !meses.length;
+      if (f.mes && !esEspiral && !meses.includes(f.mes)) return;
+      (esEspiral ? espirales : delMes).push({ m, meses });
+    });
+  }
+  return { delMes, espirales, total: delMes.length + espirales.length };
+}
+
+function _progMesesTxt(meses) {
+  return meses.length ? meses.map(n => PROG_MESES_CORTO[n]).join(' · ') : 'todo el año (espiral)';
+}
+
+function docenteProgInit() {
+  const cG = document.getElementById('doc-prog-grados');
+  if (!cG || typeof DCNB_MAP === 'undefined') return;
+  const f = _progFiltros();
+  cG.innerHTML = [4, 5, 6, 7, 8, 9].map(g =>
+    `<button class="doc-chip${g === f.grado ? ' doc-chip-sel' : ''}" onclick="docenteProgSet('grado',${g})">${g}º</button>`
+  ).join('');
+  const cM = document.getElementById('doc-prog-meses');
+  if (cM) cM.innerHTML =
+    `<button class="doc-chip${!f.mes ? ' doc-chip-sel' : ''}" onclick="docenteProgSet('mes',0)">Todos</button>` +
+    Object.keys(PROG_MESES).map(n =>
+      `<button class="doc-chip${+n === f.mes ? ' doc-chip-sel' : ''}" onclick="docenteProgSet('mes',${n})">${PROG_MESES_CORTO[n]}</button>`
+    ).join('');
+  const cS = document.getElementById('doc-prog-materias');
+  if (cS) cS.innerHTML =
+    `<button class="doc-chip${!f.materia ? ' doc-chip-sel' : ''}" onclick="docenteProgSet('materia','')">Todas</button>` +
+    PROG_MATERIAS.map(x =>
+      `<button class="doc-chip ${x.cls}${x.key === f.materia ? ' doc-chip-sel' : ''}" onclick="docenteProgSet('materia','${x.key}')">${x.chip}</button>`
+    ).join('');
+  docenteProgRender(f);
+}
+
+function _progItemHTML({ m, meses }) {
+  return `
+    <a class="doc-prog-item" href="${m.url}">
+      <span class="doc-prog-ico">${m.icon}</span>
+      <span class="doc-prog-txt">
+        <span class="doc-prog-t">${m.title}</span>
+        <span class="doc-prog-s">${SUBJECT_LABELS[m.subject] || m.subject} · ${rutaLabel(m)} · 🗓️ ${_progMesesTxt(meses)}</span>
+      </span>
+      <span class="doc-prog-go">→</span>
+    </a>`;
+}
+
+function docenteProgRender(f) {
+  const out = document.getElementById('doc-prog-out');
+  if (!out) return;
+  if (!f.grado) {
+    out.innerHTML = '<p class="doc-prog-vacio">👆 Elige el grado que impartes para ver tu programación.</p>';
+    return;
+  }
+  const d = docenteProgDatos(f);
+  if (!d.total) {
+    out.innerHTML = `<p class="doc-prog-vacio">Sin misiones para esta combinación de filtros.
+      Prueba con «Todos» los meses o «Todas» las materias.</p>`;
+    return;
+  }
+  const desc = `${f.grado}º grado` + (f.mes ? ` · ${PROG_MESES[f.mes]}` : '') +
+    (f.materia ? ` · ${SUBJECT_LABELS[f.materia] || f.materia}` : '');
+  let html = `<div class="doc-prog-head">${d.total} ${d.total === 1 ? 'misión' : 'misiones'} — ${desc}</div>`;
+  if (d.delMes.length) {
+    if (f.mes) html += `<div class="doc-prog-materia">📌 Programadas para ${PROG_MESES[f.mes].toLowerCase()}</div>`;
+    html += d.delMes.map(_progItemHTML).join('');
+  }
+  if (d.espirales.length) {
+    html += `<div class="doc-prog-materia">🔁 Espirales — el DCNB las retoma todo el año</div>`;
+    html += d.espirales.map(_progItemHTML).join('');
+  }
+  html += `<button class="doc-cuenta-btn" style="margin-top:10px;" onclick="docenteImprimirProg()">
+             <span class="doc-cuenta-ic">🖨️</span><span>Imprimir esta programación</span>
+           </button>
+           <div class="doc-prog-prox">
+             <span class="doc-chip doc-chip-off">🗓️ Planificación docente · próximamente</span>
+             <span class="doc-chip doc-chip-off">📋 Rúbricas de evaluación · próximamente</span>
+           </div>
+           <p class="doc-prog-nota">💡 En clase asigna cada misión por su <strong>ruta y etapa</strong>
+           (p. ej. «esta semana: Ruta del Número, etapa 6»), sin mencionar grados: así un alumno
+           que necesita reforzar temas anteriores trabaja sin sentirse señalado.</p>`;
+  out.innerHTML = html;
+}
+
+function docenteImprimirProg() {
+  const f = _progFiltros();
+  if (!f.grado) return;
+  const d = docenteProgDatos(f);
+  const cfg = _docenteCfg();
+  const fila = ({ m, meses }) =>
+    `<tr><td>${SUBJECT_LABELS[m.subject] || m.subject}</td><td>${m.icon} ${m.title}</td><td>${rutaLabel(m)}</td><td>${_progMesesTxt(meses)}</td><td></td></tr>`;
+  const filas = d.delMes.map(fila).join('') + d.espirales.map(fila).join('');
+  const desc = `${f.grado}º grado` + (f.mes ? ` · ${PROG_MESES[f.mes]}` : '') +
+    (f.materia ? ` · ${SUBJECT_LABELS[f.materia] || f.materia}` : '');
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+    <title>Programación DCNB ${f.grado}º · M.E.T.A.S</title><style>
+    body{font-family:Arial,sans-serif;font-size:11pt;color:#111;padding:8mm;}
+    h1{font-size:14pt;margin-bottom:2px;} .sub{font-size:9pt;color:#555;margin-bottom:10px;}
+    table{width:100%;border-collapse:collapse;font-size:9.5pt;}
+    th,td{border:1px solid #999;padding:4px 6px;text-align:left;}
+    th{background:#eee;} .pie{margin-top:10px;font-size:8.5pt;color:#555;}
+    @media print{@page{size:letter portrait;margin:10mm;}}
+    </style></head><body>
+    <h1>📅 Mi Programación DCNB — ${desc}</h1>
+    <div class="sub">Plataforma M.E.T.A.S · metas.policastsapien.com · Docente: ${_pEsc(cfg.nombre || '')}${cfg.escuela ? ' · ' + _pEsc(cfg.escuela) : ''} · Documento exclusivo del docente</div>
+    <table><thead><tr><th>Materia</th><th>Misión</th><th>Ruta y etapa (así la ve el alumno)</th><th>Meses DCNB</th><th>✔ Trabajada</th></tr></thead>
+    <tbody>${filas}</tbody></table>
+    <p class="pie">Asigne cada misión por su ruta y etapa, sin mencionar grados frente a los alumnos.
+    Cada misión incluye su ficha imprimible en la sección «📁 Recursos del Tema».</p>
+    <script>window.print();<\/script></body></html>`;
+  const w = window.open('', '_blank');
+  if (w) { w.document.write(doc); w.document.close(); }
 }
 
 /* Trae (o genera) el código de aula del maestro desde la nube y lo muestra.
@@ -1458,10 +1627,12 @@ async function docenteSuscribir() {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const resp = await r.json();
     if (resp && resp.ok && resp.codigo) {
-      // Si en este equipo quedaron datos de OTRA cuenta, se descartan antes de entrar.
-      if (typeof dsClaim === 'function') dsClaim(resp.codigo);
+      // ORDEN CRÍTICO: sesión nueva PRIMERO, reclamo del equipo DESPUÉS
+      // (dsClaim usa la sesión guardada para hablar con la nube).
       _docenteSave({ codigo: resp.codigo, clave, nombre, correo, escuela, tipo: _docTipo, telefono,
-        departamento, municipio, lugar, t: new Date().toISOString() });
+        departamento, municipio, lugar, rol: 'docente', t: new Date().toISOString() });
+      // Si en este equipo quedaron datos de OTRA cuenta, se descartan aquí.
+      if (typeof dsClaim === 'function') dsClaim(resp.codigo);
       renderProfile();
       toast('🎉 ¡Bienvenido, ' + nombre.split(' ')[0] + '! Tu cuenta está lista');
       return;
@@ -1679,6 +1850,7 @@ function switchView(id) {
   if (id === 'view-progreso') renderProgress();
   if (id === 'view-padre')    renderPadre();
   if (id === 'view-perfil')   renderProfile();
+  if (id === 'view-ajustes')  renderAjustes();
   if (id === 'view-gobierno')       renderGobiernoEscolar();
   if (id === 'view-plan-accion')    paInit();
   if (id === 'view-parte-mensual')  { /* la UI se recalcula en tiempo real con inputs */ }
@@ -1688,6 +1860,638 @@ function switchView(id) {
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;
 }
+
+/* ─────────────────────────────────────────────
+   AJUSTES — perfiles y roles
+   (docente · director · rector · administrador del proyecto)
+   El rol vive en la nube (docentes.rol, SUPABASE-ROLES.sql) y TODA la
+   verificación real la hace el servidor: aquí solo se pinta lo que el
+   servidor devuelve según quién llama. Padres y alumnos NO tienen
+   cuenta: el padre entra con la clave de familia y el alumno solo
+   escribe el código de aula.
+───────────────────────────────────────────── */
+
+const AJ_ROLES = {
+  docente:  { ic: '🧑‍🏫', n: 'Docente',  d: 'Tu aula, tus alumnos y tus herramientas.' },
+  director: { ic: '🏫', n: 'Director/a', d: 'Además de tu aula, ves los docentes registrados de tu escuela.' },
+  rector:   { ic: '🎓', n: 'Rector/a',   d: 'Ves los docentes registrados de todas las escuelas.' },
+  admin:    { ic: '🛡️', n: 'Administrador del proyecto', d: 'Acceso completo: quién se registra, roles y todos los datos.' },
+};
+function _ajRol(d) { return AJ_ROLES[d.rol] ? d.rol : 'docente'; }
+
+let _ajLista = null;  // última lista traída de la nube (se limpia al salir)
+
+function renderAjustes() {
+  const cont = document.getElementById('ajustes-cont');
+  if (!cont) return;
+  const d = _docenteCfg();
+
+  if (!d.codigo) {
+    _ajLista = null;
+    cont.innerHTML = `
+      <div class="setting-group teacher-panel-group">
+        <div class="aj-head">
+          <span class="aj-avatar">⚙️</span>
+          <div>
+            <div class="aj-nombre">Ajustes</div>
+            <div class="aj-sub">Perfiles de usuario</div>
+          </div>
+        </div>
+        <p class="teacher-panel-desc">Aquí vive tu <strong>perfil de usuario</strong> (docente, director/a,
+          rector/a o administración del proyecto). Inicia sesión en la Zona Docente para verlo.</p>
+        <button class="padre-wa-btn doc-btn-brand" onclick="switchView('view-perfil')">🧑‍🏫 Ir a la Zona Docente</button>
+        <p class="padre-hint" style="margin-top:10px;">Las familias y los alumnos <strong>no necesitan cuenta</strong>:
+          el padre entra con su clave de familia y el alumno solo escribe el código de aula.</p>
+      </div>`;
+    return;
+  }
+
+  const rol = _ajRol(d);
+  const R = AJ_ROLES[rol];
+  const fila = (et, val) => val
+    ? `<div class="aj-dato"><span class="aj-dato-et">${et}</span><span class="aj-dato-v">${_pEsc(val)}</span></div>` : '';
+
+  // ── Tarjeta 1: Mi perfil (todos los roles) ──
+  let html = `
+    <div class="setting-group teacher-panel-group">
+      <div class="aj-head">
+        <span class="aj-avatar">${R.ic}</span>
+        <div>
+          <div class="aj-nombre">${_pEsc(d.nombre || '')}</div>
+          <div class="aj-sub">${_pEsc(d.correo || '')}</div>
+        </div>
+      </div>
+      <div class="aj-rol-badge aj-rol-${rol}">${R.ic} ${R.n}</div>
+      <p class="aj-rol-desc">${R.d}</p>
+      <div class="aj-datos">
+        ${fila('🏫 Escuela', d.escuela ? d.escuela + (d.tipo ? ' · ' + d.tipo : '') : '')}
+        ${fila('📍 Lugar', [d.municipio, d.departamento].filter(Boolean).join(', '))}
+        ${fila('🧭 Referencia', d.lugar)}
+        ${fila('📱 Teléfono', d.telefono)}
+      </div>
+      <div class="doc-cuenta">
+        <button class="doc-cuenta-btn" onclick="ajToggleEditar()">
+          <span class="doc-cuenta-ic">✏️</span><span>Editar mi perfil</span>
+        </button>
+        <button class="doc-cuenta-btn" onclick="docenteCambiarClave()">
+          <span class="doc-cuenta-ic">🔑</span><span>Cambiar mi contraseña</span>
+        </button>
+        <button class="doc-cuenta-btn doc-salir-btn" onclick="ajCerrarSesion()">
+          <span class="doc-cuenta-ic">🚪</span><span>Cerrar sesión</span>
+        </button>
+      </div>
+      <div id="aj-edit-form" style="display:none;margin-top:12px;border-top:1px solid #e0e0e0;padding-top:12px;">
+        <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">El <strong>nombre</strong> y el <strong>correo</strong>
+          no se cambian aquí: son las llaves de tu cuenta y del avance de tus alumnos.</p>
+        <input id="aj-ed-escuela" class="pa-inp-field" maxlength="120" placeholder="Nombre de tu escuela"
+               value="${_pEsc(d.escuela || '')}" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <button id="aj-tipo-pub" class="doc-tipo-btn${(d.tipo || 'Pública') === 'Pública' ? ' doc-tipo-sel' : ''}" onclick="ajTipo('Pública')">🏫 Pública</button>
+          <button id="aj-tipo-pri" class="doc-tipo-btn${d.tipo === 'Privada' ? ' doc-tipo-sel' : ''}" onclick="ajTipo('Privada')">🏛 Privada</button>
+        </div>
+        <input id="aj-ed-departamento" class="pa-inp-field" maxlength="60" placeholder="Departamento"
+               value="${_pEsc(d.departamento || '')}" style="margin-bottom:8px;">
+        <input id="aj-ed-municipio" class="pa-inp-field" maxlength="80" placeholder="Municipio"
+               value="${_pEsc(d.municipio || '')}" style="margin-bottom:8px;">
+        <input id="aj-ed-lugar" class="pa-inp-field" maxlength="200" placeholder="Lugar / referencia de la escuela"
+               value="${_pEsc(d.lugar || '')}" style="margin-bottom:8px;">
+        <input id="aj-ed-telefono" class="pa-inp-field" maxlength="40" type="tel" placeholder="Teléfono / WhatsApp"
+               value="${_pEsc(d.telefono || '')}" style="margin-bottom:12px;">
+        <button class="padre-wa-btn doc-btn-brand" onclick="ajGuardarPerfil()">💾 Guardar mi perfil</button>
+      </div>
+    </div>`;
+
+  // ── Tarjeta 2: lo que el ROL permite ver (el servidor decide) ──
+  // ── Tarjeta: escribirle al administrador del proyecto (todos menos él) ──
+  if (rol !== 'admin') {
+    html += `
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-paper-plane teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">Escríbele al creador del proyecto</label>
+        </div>
+        <p class="teacher-panel-desc">¿Una idea, algo que no funciona o algo que te encantó?
+          Tu mensaje le llega <strong>directo</strong> al administrador de M.E.T.A.S.</p>
+        <textarea id="aj-sug-txt" class="pa-inp-field aj-sug-txt" maxlength="1000" rows="4"
+                  placeholder="Escribe aquí tu sugerencia o mensaje…"></textarea>
+        <button class="aj-sug-btn" onclick="ajEnviarSugerencia(this)">
+          <i class="fa-solid fa-paper-plane"></i> Enviar mi mensaje
+        </button>
+      </div>`;
+  }
+
+  if (rol === 'admin') {
+    html += `
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-shield-halved teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">Registros del proyecto</label>
+        </div>
+        <p class="teacher-panel-desc">Todas las cuentas registradas, de la más nueva a la más vieja.
+          Desde aquí promueves a <strong>director/a</strong> o <strong>rector/a</strong>.</p>
+        <input id="aj-buscar" class="pa-inp-field" maxlength="80" placeholder="🔎 Buscar por nombre, correo o escuela…"
+               oninput="ajPintarLista()" style="margin-bottom:8px;">
+        <button class="padre-wa-btn" onclick="ajCargarEquipo()">🔄 Cargar los registros</button>
+        <button class="aj-altas-btn" onclick="ajCargarResumen()">📈 Altas por día · mes · año</button>
+        <div id="aj-resumen"></div>
+        <div id="aj-lista" class="aj-lista"></div>
+      </div>
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-envelope-open-text teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">Buzón de sugerencias</label>
+        </div>
+        <p class="teacher-panel-desc">Los mensajes que los usuarios te envían desde sus Ajustes,
+          del más nuevo al más viejo.</p>
+        <button class="padre-wa-btn" onclick="ajCargarBuzon()">📬 Abrir el buzón</button>
+        <div id="aj-buzon" class="aj-lista"></div>
+      </div>`;
+  } else if (rol === 'rector' || rol === 'director') {
+    html += `
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-users teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">${rol === 'rector' ? 'Docentes de todas las escuelas' : 'Docentes de mi escuela'}</label>
+        </div>
+        <p class="teacher-panel-desc">${rol === 'rector'
+          ? 'Los docentes registrados en la plataforma, agrupables por escuela (sin datos de contacto).'
+          : 'Los docentes registrados con el mismo nombre de escuela que el tuyo (sin datos de contacto).'}</p>
+        <button class="padre-wa-btn" onclick="ajCargarEquipo()">🔄 Cargar la lista</button>
+        <div id="aj-lista" class="aj-lista"></div>
+      </div>`;
+  }
+
+  // ── Tarjeta: rescate de datos (vive AQUÍ y no en la Zona Docente, para
+  //    que la curiosidad no lo toque en el día a día) ──
+  html += `
+    <div class="setting-group teacher-panel-group">
+      <details class="doc-mant">
+        <summary class="doc-mant-sum">🚑 Rescate de datos (casi nunca se necesita)</summary>
+        <div class="doc-mant-body">
+          <p class="doc-mant-hint">Tu aula se guarda <strong>sola</strong> en la nube de tu cuenta
+            (${_pEsc(d.correo || '')}) y se ve igual en todos tus equipos, automáticamente.
+            Estas herramientas son solo para emergencias:</p>
+          <button class="doc-sync-now" onclick="dsSyncNow(this)">🔄 Sincronizar ahora</button>
+          <p class="doc-mant-exp">Revisa la nube en este momento. Normalmente no hace falta: es automático.</p>
+          <a class="doc-usar-este-link" onclick="dsUsarEste()">🚑 Imponer la copia de ESTE equipo en todos</a>
+          <p class="doc-mant-exp">Solo si aquí ves tu aula correcta y en tus otros equipos aparece mal o vacía.</p>
+          <a class="doc-reset-link" onclick="dsReset()">🗑️ Empezar de nuevo (borrar mis datos del aula)</a>
+          <p class="doc-mant-exp">Vacía tu aula en todos tus equipos, con recuperación si fue un error.</p>
+        </div>
+      </details>
+    </div>`;
+
+  cont.innerHTML = html;
+  if (_ajLista) ajPintarLista();
+  ajRefrescarPerfil();
+}
+
+/* Trae el perfil fresco de la nube (incluido el ROL): si el admin te
+   promovió, se ve sin cerrar sesión. Solo re-pinta si algo cambió. */
+async function ajRefrescarPerfil() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave || navigator.onLine === false) return;
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_perfil_leer', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave })
+    });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (!j || !j.ok) return;
+    const cur = _docenteCfg();
+    let cambio = false;
+    ['nombre', 'correo', 'escuela', 'tipo', 'telefono', 'departamento', 'municipio', 'lugar', 'rol'].forEach(k => {
+      const v = j[k] == null ? '' : String(j[k]);
+      if (v !== String(cur[k] == null ? '' : cur[k])) { cur[k] = v; cambio = true; }
+    });
+    if (cambio) {
+      _docenteSave(cur);
+      const vista = document.getElementById('view-ajustes');
+      if (vista && vista.classList.contains('active')) renderAjustes();
+    }
+  } catch (_) {}
+}
+
+function ajToggleEditar() {
+  const f = document.getElementById('aj-edit-form');
+  if (f) f.style.display = f.style.display === 'none' ? '' : 'none';
+}
+
+let _ajTipoSel = '';
+function ajTipo(t) {
+  _ajTipoSel = t;
+  const pub = document.getElementById('aj-tipo-pub'), pri = document.getElementById('aj-tipo-pri');
+  if (pub) pub.classList.toggle('doc-tipo-sel', t === 'Pública');
+  if (pri) pri.classList.toggle('doc-tipo-sel', t === 'Privada');
+}
+
+async function ajGuardarPerfil() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  if (navigator.onLine === false) { toast('📴 Guardar el perfil necesita internet'); return; }
+  const val = id => (document.getElementById(id)?.value || '').trim();
+  const cuerpo = {
+    p_codigo: d.codigo, p_clave: d.clave,
+    p_escuela: val('aj-ed-escuela'), p_tipo: _ajTipoSel || d.tipo || 'Pública',
+    p_telefono: val('aj-ed-telefono'), p_departamento: val('aj-ed-departamento'),
+    p_municipio: val('aj-ed-municipio'), p_lugar: val('aj-ed-lugar'),
+  };
+  toast('⏳ Guardando…');
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_perfil_editar', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(cuerpo)
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      const cur = _docenteCfg();
+      cur.escuela = cuerpo.p_escuela; cur.tipo = cuerpo.p_tipo; cur.telefono = cuerpo.p_telefono;
+      cur.departamento = cuerpo.p_departamento; cur.municipio = cuerpo.p_municipio; cur.lugar = cuerpo.p_lugar;
+      _docenteSave(cur);
+      toast('✅ Perfil guardado');
+      renderAjustes();
+    } else {
+      toast('⚠️ No se pudo guardar. Intenta de nuevo.');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
+  }
+}
+
+/* Trae la lista que el ROL permite (el servidor decide filas y columnas) */
+async function ajCargarEquipo() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  if (navigator.onLine === false) { toast('📴 Ver los registros necesita internet'); return; }
+  const cont = document.getElementById('aj-lista');
+  if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⏳ Cargando…</p>';
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_rol_listar', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      _ajLista = { rol: j.rol, docentes: Array.isArray(j.docentes) ? j.docentes : [] };
+      ajPintarLista();
+    } else if (j && j.motivo === 'escuela') {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">🏫 Primero escribe el nombre de tu escuela en «Editar mi perfil»: la lista se arma emparejando ese nombre.</p>';
+    } else if (j && j.motivo === 'rol') {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">Tu perfil actual no tiene acceso a esta lista.</p>';
+    } else {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo cargar. Intenta de nuevo.</p>';
+    }
+  } catch (_) {
+    if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo conectar. Intenta de nuevo en un momento.</p>';
+  }
+}
+
+function _ajFecha(iso) {
+  const f = new Date(iso);
+  return isNaN(f) ? '' : f.toLocaleDateString('es-HN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function ajPintarLista() {
+  const cont = document.getElementById('aj-lista');
+  if (!cont || !_ajLista) return;
+  const q = ((document.getElementById('aj-buscar')?.value || '').trim().toLowerCase());
+  const esAdmin = _ajLista.rol === 'admin';
+  const filas = _ajLista.docentes.filter(x => !q ||
+    [x.nombre, x.correo, x.escuela, x.municipio, x.departamento].join(' ').toLowerCase().includes(q));
+  if (!filas.length) {
+    cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">Sin registros que mostrar' + (q ? ' con esa búsqueda' : '') + '.</p>';
+    return;
+  }
+  // Filas CONTRAÍDAS por defecto (con miles de registros el scroll sería
+  // eterno): en la línea solo nombre + rol; el detalle se abre al tocar.
+  cont.innerHTML = `
+    <p class="padre-hint" style="margin:10px 0 6px;">${filas.length} registro${filas.length === 1 ? '' : 's'} · toca un nombre para ver el detalle</p>
+    ${filas.map(x => {
+      const rx = AJ_ROLES[x.rol] ? x.rol : 'docente';
+      const lugar = [x.escuela, [x.municipio, x.departamento].filter(Boolean).join(', ')].filter(Boolean).join(' · ');
+      // Solo el admin puede cambiar roles y contraseñas, y NUNCA a otro admin
+      const control = (esAdmin && rx !== 'admin')
+        ? `<div class="aj-fila-rol">
+             <select class="aj-rol-sel" data-correo="${_pEsc(x.correo || '')}" data-prev="${rx}"
+                     onchange="ajCambiarRol(this)">
+               <option value="docente"${rx === 'docente' ? ' selected' : ''}>🧑‍🏫 Docente</option>
+               <option value="director"${rx === 'director' ? ' selected' : ''}>🏫 Director/a</option>
+               <option value="rector"${rx === 'rector' ? ' selected' : ''}>🎓 Rector/a</option>
+             </select>
+             <button class="aj-reset-btn" data-correo="${_pEsc(x.correo || '')}" data-nombre="${_pEsc(x.nombre || '')}"
+                     data-telefono="${_pEsc(x.telefono || '')}" onclick="ajResetClave(this)">🔑 Nueva contraseña</button>
+           </div>`
+        : '';
+      return `
+        <details class="aj-reg">
+          <summary class="aj-reg-sum">
+            <span class="aj-reg-nombre">${_pEsc(x.nombre || '')}</span>
+            <span class="aj-rol-badge aj-rol-${rx} aj-reg-chip">${AJ_ROLES[rx].ic} ${AJ_ROLES[rx].n}</span>
+          </summary>
+          <div class="aj-reg-body">
+            ${esAdmin && x.correo ? `<div class="aj-fila-det">📧 ${_pEsc(x.correo)}${x.telefono ? ' · 📱 ' + _pEsc(x.telefono) : ''}</div>` : ''}
+            ${lugar ? `<div class="aj-fila-det">🏫 ${_pEsc(lugar)}</div>` : ''}
+            ${x.creado ? `<div class="aj-fila-det">🗓️ Se registró el ${_ajFecha(x.creado)}</div>` : ''}
+            ${control}
+          </div>
+        </details>`;
+    }).join('')}`;
+}
+
+/* ── Altas por día / mes / año (solo admin) ──
+   El conteo lo hace el SERVIDOR sobre toda la tabla: sirve igual con
+   20 cuentas que con miles. Aquí solo se pintan barras. */
+let _ajResumen = null;
+
+async function ajCargarResumen() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  if (navigator.onLine === false) { toast('📴 Ver las altas necesita internet'); return; }
+  const cont = document.getElementById('aj-resumen');
+  if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⏳ Contando…</p>';
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_registros_resumen', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) { _ajResumen = j; ajPintarResumen('mes'); }
+    else if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo cargar.</p>';
+  } catch (_) {
+    if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo conectar. Intenta de nuevo en un momento.</p>';
+  }
+}
+
+function ajPintarResumen(modo) {
+  const cont = document.getElementById('aj-resumen');
+  if (!cont || !_ajResumen) return;
+  const MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  const datos = _ajResumen['por_' + modo] || [];
+  const max = Math.max(1, ...datos.map(x => Number(x.n) || 0));
+  const et = f => {
+    const p = String(f).split('-');
+    if (modo === 'dia') return `${Number(p[2])} ${MES[Number(p[1]) - 1]} ${p[0]}`;
+    if (modo === 'mes') return `${MES[Number(p[1]) - 1]} ${p[0]}`;
+    return p[0];
+  };
+  const chip = (m, txt) => `<button class="aj-res-chip${modo === m ? ' aj-res-sel' : ''}" onclick="ajPintarResumen('${m}')">${txt}</button>`;
+  cont.innerHTML = `
+    <div class="aj-res-head">
+      <span class="aj-res-total">👥 ${Number(_ajResumen.total) || 0} cuentas en total</span>
+      <div class="aj-res-chips">${chip('dia', 'Día')}${chip('mes', 'Mes')}${chip('anio', 'Año')}</div>
+    </div>
+    ${datos.length ? datos.map(x => `
+      <div class="aj-res-fila">
+        <span class="aj-res-et">${et(x.f)}</span>
+        <span class="aj-res-barra"><span style="width:${Math.round((Number(x.n) || 0) / max * 100)}%"></span></span>
+        <span class="aj-res-n">${Number(x.n) || 0}</span>
+      </div>`).join('') : '<p class="padre-hint">Sin datos aún.</p>'}`;
+}
+
+/* Cambio de rol — SOLO admin; el servidor lo re-verifica todo */
+async function ajCambiarRol(sel) {
+  const correo = sel.dataset.correo || '';
+  const prev = sel.dataset.prev || 'docente';
+  const nuevo = sel.value;
+  if (!correo || nuevo === prev) return;
+  const R = AJ_ROLES[nuevo] || AJ_ROLES.docente;
+  const ok = await metasConfirm(`La cuenta **${correo}** pasará a ser **${R.n}**.\n\n${R.d}`,
+    { icono: R.ic, titulo: 'Cambiar rol', okTxt: 'Sí, cambiar' });
+  if (!ok) { sel.value = prev; return; }
+  const d = _docenteCfg();
+  const { url, key } = _padreSbCfg();
+  toast('⏳ Cambiando rol…');
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_rol_cambiar', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave, p_correo: correo, p_rol: nuevo })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      sel.dataset.prev = nuevo;
+      const fila = (_ajLista?.docentes || []).find(x => (x.correo || '') === correo);
+      if (fila) fila.rol = nuevo;
+      toast(`✅ ${R.ic} Ahora es ${R.n}`);
+    } else {
+      sel.value = prev;
+      toast(j && j.motivo === 'espera' ? '⏳ Demasiados cambios seguidos. Espera un momento.'
+                                       : '⚠️ No se pudo cambiar el rol.');
+    }
+  } catch (_) {
+    sel.value = prev;
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
+  }
+}
+
+/* Nueva contraseña para un usuario — SOLO admin (auxilio de soporte).
+   Las contraseñas NO se pueden VER (solo existe su hash irreversible):
+   ayudar al usuario = asignarle una nueva y pasársela por WhatsApp. */
+async function ajResetClave(btn) {
+  const correo = btn.dataset.correo || '';
+  const nombre = btn.dataset.nombre || correo;
+  const telefono = btn.dataset.telefono || '';
+  if (!correo) return;
+  if (navigator.onLine === false) { toast('📴 Cambiar la contraseña necesita internet'); return; }
+  // Sugerencia fácil de dictar por teléfono; el admin puede escribir otra
+  const sugerida = 'metas' + Math.floor(1000 + Math.random() * 9000);
+  const nueva = await metasPrompt(
+    `Se asignará una contraseña **nueva** a la cuenta de **${nombre}**.\n` +
+    'La anterior dejará de servir en ese momento. Puedes usar la sugerida o escribir otra (mínimo 6).',
+    { icono: '🔑', titulo: 'Nueva contraseña', value: sugerida, maxlength: 40, okTxt: 'Asignar',
+      valida: v => String(v).trim().length >= 6 ? '' : 'Muy corta: usa al menos 6 letras o números.' });
+  if (nueva === null) return;
+  const np = String(nueva).trim();
+  const d = _docenteCfg();
+  const { url, key } = _padreSbCfg();
+  toast('⏳ Asignando…');
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_rol_clave_reset', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave, p_correo: correo, p_nueva: np })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      // Mismo formato de compartir que las misiones: mensaje listo + wa.me
+      const enviar = await metasConfirm(
+        `✅ Listo. La cuenta **${correo}** ahora entra con:\n\n**${np}**\n\n` +
+        'Puedes enviársela ya mismo por WhatsApp con el mensaje preparado.',
+        { icono: '🔑', titulo: 'Nueva contraseña', okTxt: '📲 Enviar por WhatsApp', cancelTxt: 'Listo' });
+      if (enviar) ajClaveWhatsApp(nombre, correo, np, telefono);
+    } else if (j && j.motivo === 'espera') {
+      toast('⏳ Demasiados cambios seguidos. Espera un momento.');
+    } else if (j && j.motivo === 'propio') {
+      toast('Para tu propia cuenta usa «Cambiar mi contraseña».');
+    } else {
+      toast('⚠️ No se pudo asignar la contraseña.');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
+  }
+}
+
+/* Abre WhatsApp con el mensaje de la contraseña nueva ya escrito.
+   Si la cuenta tiene teléfono registrado, va DIRECTO a ese chat
+   (wa.me/504XXXXXXXX); si no, WhatsApp pide elegir el contacto. */
+function ajClaveWhatsApp(nombre, correo, clave, telefono) {
+  const sitio = (typeof PA_SITE !== 'undefined') ? PA_SITE : 'https://metas.policastsapien.com/';
+  const primer = String(nombre || '').trim().split(/\s+/)[0] || 'colega';
+  const texto =
+    `👋 Hola, ${primer}. Te asigné una contraseña nueva para tu cuenta del Proyecto M.E.T.A.S:\n\n` +
+    `🔑 *${clave}*\n\n` +
+    `Entra aquí:\n${sitio}\n` +
+    `☰ Menú → Zona Docente → «¿Ya tienes cuenta? Entrar»\n` +
+    `📧 Tu correo: ${correo}\n\n` +
+    `Cuando entres, te recomiendo cambiarla en ☰ → Ajustes → «Cambiar mi contraseña».\n\n` +
+    `🏠 Proyecto Educativo M.E.T.A.S`;
+  const enc = encodeURIComponent(texto);
+  // Teléfono registrado → chat directo (8 dígitos de Honduras = anteponer 504)
+  let num = String(telefono || '').replace(/\D/g, '');
+  if (num.length === 8) num = '504' + num;
+  const esMovil = /android|iphone|ipad|mobile/i.test(navigator.userAgent);
+  const link = num.length >= 11 ? `https://wa.me/${num}?text=${enc}`
+    : (esMovil ? 'https://wa.me/?text=' + enc : 'https://web.whatsapp.com/send?text=' + enc);
+  window.open(link, '_blank');
+}
+
+/* ── Buzón de sugerencias ──
+   Cualquier cuenta escribe desde Ajustes; SOLO el admin lee (el
+   servidor verifica el rol). Anti-spam: 10 por cuenta al día. */
+async function ajEnviarSugerencia(btn) {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  const el = document.getElementById('aj-sug-txt');
+  const texto = (el?.value || '').trim();
+  if (texto.length < 5) { toast('Escribe tu mensaje primero ✏️'); return; }
+  if (navigator.onLine === false) { toast('📴 Enviar el mensaje necesita internet'); return; }
+  if (btn) { btn.disabled = true; }
+  toast('⏳ Enviando…');
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_sugerencia_enviar', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave, p_texto: texto })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      if (el) el.value = '';
+      await metasAlert('💌 ¡Mensaje enviado! El administrador del proyecto lo leerá pronto.\n\n¡Gracias por ayudar a que M.E.T.A.S sea mejor!',
+        { icono: '💌', titulo: 'Sugerencias' });
+    } else if (j && j.motivo === 'espera') {
+      toast('⏳ Ya enviaste varios mensajes hoy. Intenta mañana.');
+    } else {
+      toast('⚠️ No se pudo enviar. Intenta de nuevo.');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar. Intenta de nuevo en un momento.');
+  }
+  if (btn) { btn.disabled = false; }
+}
+
+async function ajCargarBuzon() {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return;
+  if (navigator.onLine === false) { toast('📴 El buzón necesita internet'); return; }
+  const cont = document.getElementById('aj-buzon');
+  if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⏳ Cargando…</p>';
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_sugerencias_listar', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (!j || !j.ok) {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo cargar el buzón.</p>';
+      return;
+    }
+    const lista = Array.isArray(j.sugerencias) ? j.sugerencias : [];
+    if (!lista.length) {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">📭 Buzón vacío por ahora.</p>';
+      return;
+    }
+    const nuevas = lista.filter(s => !s.leido).length;
+    if (cont) cont.innerHTML = `
+      <p class="padre-hint" style="margin:10px 0 6px;">${lista.length} mensaje${lista.length === 1 ? '' : 's'}${nuevas ? ` · <strong>${nuevas} sin leer</strong>` : ''}</p>
+      ${lista.map(s => {
+        const rx = AJ_ROLES[s.rol] ? s.rol : 'docente';
+        return `
+        <div class="aj-buzon-item${s.leido ? '' : ' aj-buzon-nueva'}">
+          <div class="aj-fila-nombre">${s.leido ? '' : '🔵 '}${_pEsc(s.nombre || '')}
+            <span class="aj-rol-badge aj-rol-${rx}" style="font-size:0.68rem;padding:2px 8px;">${AJ_ROLES[rx].ic} ${AJ_ROLES[rx].n}</span></div>
+          <div class="aj-fila-det">📧 ${_pEsc(s.correo || '')}${s.creado ? ' · 🗓️ ' + _ajFecha(s.creado) : ''}</div>
+          <div class="aj-buzon-txt">${_pEsc(s.texto || '')}</div>
+          ${s.leido ? '' : `<button class="aj-buzon-leida" onclick="ajSugLeida(${Number(s.id) || 0}, this)">✓ Marcar como leída</button>`}
+        </div>`;
+      }).join('')}`;
+  } catch (_) {
+    if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⚠️ No se pudo conectar. Intenta de nuevo en un momento.</p>';
+  }
+}
+
+async function ajSugLeida(id, btn) {
+  if (!id) return;
+  const d = _docenteCfg();
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/metas_sugerencia_leida', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: d.codigo, p_clave: d.clave, p_id: id })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j && j.ok) {
+      const item = btn?.closest('.aj-buzon-item');
+      if (item) item.classList.remove('aj-buzon-nueva');
+      if (btn) btn.remove();
+    } else {
+      toast('⚠️ No se pudo marcar.');
+    }
+  } catch (_) {
+    toast('⚠️ No se pudo conectar.');
+  }
+}
+
+async function ajCerrarSesion() {
+  await docenteCerrarSesion();
+  _ajLista = null;
+  renderAjustes();
+}
+
+window.renderAjustes   = renderAjustes;
+window.ajToggleEditar  = ajToggleEditar;
+window.ajTipo          = ajTipo;
+window.ajGuardarPerfil = ajGuardarPerfil;
+window.ajCargarEquipo  = ajCargarEquipo;
+window.ajPintarLista   = ajPintarLista;
+window.ajCambiarRol    = ajCambiarRol;
+window.ajResetClave    = ajResetClave;
+window.ajCerrarSesion  = ajCerrarSesion;
+window.ajEnviarSugerencia = ajEnviarSugerencia;
+window.ajCargarBuzon   = ajCargarBuzon;
+window.ajSugLeida      = ajSugLeida;
+window.ajCargarResumen = ajCargarResumen;
+window.ajPintarResumen = ajPintarResumen;
 
 /* ─────────────────────────────────────────────
    TOAST

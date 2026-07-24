@@ -105,6 +105,16 @@
           <em>3 misiones</em>
           <!-- los conteos los recalcula renderHome() desde MISSIONS; estos son el respaldo estático -->
         </button>
+        <button class="subj-chip tec" data-subject="programación">
+          <i class="fa-solid fa-code"></i>
+          <span>Programación</span>
+          <em>1 misión</em>
+        </button>
+        <button class="subj-chip tec" data-subject="robótica">
+          <i class="fa-solid fa-robot"></i>
+          <span>Robótica</span>
+          <em>1 misión</em>
+        </button>
       </div>
 
       <!-- Featured + Recent (solo Honduras) -->
@@ -218,6 +228,10 @@
         <div class="pills-row">
           <button class="pill" data-filter="naturales">C. Naturales</button>
           <button class="pill" data-filter="sociales">C. Sociales</button>
+        </div>
+        <div class="pills-row">
+          <button class="pill" data-filter="programación">Programación</button>
+          <button class="pill" data-filter="robótica">Robótica</button>
         </div>
       </div>
       <button class="rutas-banner" onclick="switchView('view-rutas')">
@@ -554,6 +568,8 @@
             <option value="matemáticas">🔢 Matemáticas</option>
             <option value="naturales">🌱 Ciencias Naturales</option>
             <option value="sociales">🌎 Ciencias Sociales</option>
+            <option value="programación">💻 Programación</option>
+            <option value="robótica">🤖 Robótica</option>
           </select>
           <select id="pa-mision" class="pa-inp-field" style="margin-top:8px;">
             <option value="">✏️ Otra evaluación (escribir el nombre abajo)</option>
