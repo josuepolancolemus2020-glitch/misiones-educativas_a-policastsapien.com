@@ -98,14 +98,44 @@ Un secreto que sí funciona: **15 minutos de repaso diario** y preguntar *«¿qu
 
 ---
 
-## 8. Privacidad y sin internet 🔒📴
+## 8. Novedad 2026: programación y robótica 💻🤖
+
+Además de matemáticas, español, ciencias naturales y ciencias sociales, M.E.T.A.S
+tiene desde julio de 2026 **dos materias nuevas** para II y III Ciclo:
+
+- **💻 Programación (Ruta del Código):** 7 etapas en las que su hijo/a aprende a dar
+  instrucciones exactas a un robot de la pantalla — poner los pasos en orden, tomar
+  decisiones («si hay una pared, gira»), repetir sin cansarse, guardar datos y
+  encontrar errores.
+- **🤖 Robótica (Ruta de los Robots):** 6 etapas sobre cómo funciona un robot por
+  dentro — sensores, motores y engranajes, electricidad segura con una pila, y
+  diseñar un robot que resuelva un problema de la comunidad.
+
+Tres cosas que conviene saber:
+
+- **No hay que comprar nada.** No se necesita computadora, ni internet, ni un kit de
+  robots: en la escuela se trabajan con una ficha impresa y juegos con cinta, cartón,
+  una pila y un foquito. Si hay un teléfono en casa, el simulador es un extra.
+- **Son gratis y funcionan sin internet**, igual que todas las misiones.
+- **Las notas se consultan igual** en el asistente, con el nombre de la materia
+  (Programación o Robótica). El maestro decide si esa nota cuenta en el parcial o
+  queda solo como repaso.
+
+> 💡 Cómo apoyar en casa: pídale que le explique **«¿qué le ordenaste hoy al robot?»**
+> o que le enseñe el laberinto que hicieron en el piso. Explicar en voz alta lo
+> aprendido es la práctica que más fija el conocimiento — y aquí usted no necesita
+> saber de computadoras para escucharlo.
+
+---
+
+## 9. Privacidad y sin internet 🔒📴
 
 - El asistente **no pide nombres ni cuentas**: la clave es anónima y secreta.
 - Si consulta y luego se queda **sin internet**, puede volver a leer la última información (aparecerá un aviso de que son *datos guardados*). Para traer lo más reciente, toque **«🔄 Actualizar»** cuando tenga conexión.
 
 ---
 
-## 9. Preguntas frecuentes 🤔
+## 10. Preguntas frecuentes 🤔
 
 **«No aparecen notas para mi clave.»**
 Puede ser que el maestro todavía no las haya subido, o que un carácter de la clave esté equivocado. Compárela con la tira impresa y toque **«🔄 Actualizar»** más tarde.

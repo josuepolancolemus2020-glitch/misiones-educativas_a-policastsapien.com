@@ -22,7 +22,44 @@ demostrar todo lo que sabes!
 
 ---
 
-## 2. Cómo entrar 🔑
+## 2. Las rutas: elige tu aventura 🗺️
+
+Las misiones están ordenadas en **rutas**. Cada ruta tiene etapas, como los
+niveles de un videojuego: terminas una y se abre la siguiente.
+
+- 🧭 Ruta del Número · 📐 Ruta de la Forma → matemáticas
+- ✍️ Ruta de la Palabra → español
+- 🧠 Ruta del Cuerpo · 🌱 Ruta de la Vida · ⚡ Ruta de la Materia → ciencias naturales
+- 🌎 Ruta del Planeta · 🏛️ Ruta del Tiempo → ciencias sociales
+- 💻 **Ruta del Código** → ¡programación! **NUEVA**
+- 🤖 **Ruta de los Robots** → ¡robótica! **NUEVA**
+
+### ¡Lo más nuevo: programación y robótica! 💻🤖
+
+En la **💻 Ruta del Código** aprendes a darle órdenes a un robot en la pantalla,
+etapa por etapa:
+
+1. 🧩 El Pensamiento Computacional — pensar en pasos exactos.
+2. 💻 Secuencias: el Robot Mensajero — AVANZA, GIRA… ¡y llega!
+3. 🚦 Condicionales: el Robot Decide — SI hay pared, ENTONCES gira.
+4. 🔁 Bucles: Repetir sin Cansarse — repetir 4 veces en vez de escribir 4 veces.
+5. 📦 Variables: las Cajitas de Memoria — guardar puntos en una cajita.
+6. 🐞 Detective de Bugs — encontrar el error escondido en un programa.
+7. 🚀 Mi Primer Programa Completo — ¡todo junto en un proyecto!
+
+En la **🤖 Ruta de los Robots** descubres cómo funciona un robot por dentro:
+🤖 ¿Qué es un Robot? → 📡 Sensores (sus sentidos) → ⚙️ Motores y Mecanismos →
+🔌 Electricidad para Robots → 🕹️ Programando un Robot → 🏆 Robots que Resuelven
+Problemas (¡diseñas el tuyo para tu comunidad!).
+
+> 🙌 **¿No tienes computadora ni un robot de verdad?** ¡No los necesitas! Estas
+> misiones también se juegan con cinta en el piso, tarjetas de flechas,
+> engranajes de cartón y una pila con un foquito. Tu maestro tiene la ficha
+> con todos los juegos.
+
+---
+
+## 3. Cómo entrar 🔑
 
 1. Tu maestro te enviará un **enlace por WhatsApp** (o te dirá cuál misión
    abrir en la app).
@@ -32,7 +69,7 @@ demostrar todo lo que sabes!
 
 ---
 
-## 3. La primera vez: tus datos 👋
+## 4. La primera vez: tus datos 👋
 
 La primera vez que abras una misión, aparece esta pantalla:
 
@@ -56,7 +93,7 @@ dicen a tu maestro que tus logros son TUYOS.
 
 ---
 
-## 4. Cómo se juega 🎮
+## 5. Cómo se juega 🎮
 
 - Avanza por las secciones en orden — cada una que completas se marca ✅.
 - Gana **⭐ XP** con cada actividad: subes de nivel de **Novato ✏️** hasta
@@ -74,7 +111,7 @@ dicen a tu maestro que tus logros son TUYOS.
 
 ---
 
-## 5. La prueba final 📋
+## 6. La prueba final 📋
 
 En la sección de **Evaluación**:
 
@@ -89,7 +126,7 @@ En la sección de **Evaluación**:
 
 ---
 
-## 6. Tu constancia 🏅
+## 7. Tu constancia 🏅
 
 Cuando completes la misión:
 
@@ -101,7 +138,7 @@ Cuando completes la misión:
 
 ---
 
-## 7. Envíale tus resultados a tu maestro 📤
+## 8. Envíale tus resultados a tu maestro 📤
 
 Junto a la constancia está el botón **"📤 Enviar resultados"**: arma un mensaje
 de WhatsApp con todo tu trabajo — secciones completadas, XP, tiempo y tus
@@ -112,7 +149,7 @@ notas — listo para enviárselo a tu maestro. Es tu forma de decir:
 
 ---
 
-## 8. ¿Encontraste un error? ¡Avísanos! 💬
+## 9. ¿Encontraste un error? ¡Avísanos! 💬
 
 ¿Viste una respuesta que parece mala? ¿Algo no funciona? ¿Tienes una idea
 genial? En la barra donde aparece tu nombre está el botón **"💬 Sugerencias"**:
@@ -122,7 +159,7 @@ estabas — ¡eres parte del equipo que mejora la app! 🛠️
 
 [IMAGEN: el buzón de sugerencias abierto]
 
-## 9. Preguntas de explorador 🤔
+## 10. Preguntas de explorador 🤔
 
 **"¿Y si no tengo internet en casa?"**
 ¡No importa! Trabaja normal. Tus resultados se guardan en el teléfono y se
@@ -134,6 +171,11 @@ envían solos cuando haya conexión.
 **"Me equivoqué al escribir mis datos."**
 Toca **"✏️ Cambiar alumno"** en la barra que está arriba del menú de secciones
 y corrígelos.
+
+**"Nunca he programado. ¿Es muy difícil?"**
+¡Para nada! Empiezas dándole 3 órdenes a un robot de la pantalla (AVANZA, GIRA,
+AVANZA). Si se equivoca, lo arreglas y vuelves a intentar: eso mismo hacen los
+programadores de verdad. 😎
 
 **"¿Mi maestro de verdad ve lo que hago?"**
 Sí: ve tus notas, tu tiempo y tus secciones completadas. Así que cuando

@@ -201,7 +201,7 @@
   <h2><span class="num">3</span>¿Quién usa qué? (actores y puertas de entrada)</h2>
   <table class="guion">
     <tr><th>Actor</th><th>Su puerta de entrada</th><th>Qué tecnología lo sostiene</th></tr>
-    <tr><td>🧒 Alumno</td><td>El index («Portada de Tres Puertas») → las 32 misiones interactivas. Se identifica con el CÓDIGO DE AULA, nunca escribe su nombre.</td><td>HTML/JS puro; progreso en localStorage; resultados suben a la nube cuando hay red.</td></tr>
+    <tr><td>🧒 Alumno</td><td>El index («Portada de Tres Puertas») → las 55 misiones interactivas. Se identifica con el CÓDIGO DE AULA, nunca escribe su nombre.</td><td>HTML/JS puro; progreso en localStorage; resultados suben a la nube cuando hay red.</td></tr>
     <tr><td>👨‍🏫 Maestro</td><td>Zona Docente (dentro del index): Plan de Acción, Mi aula, boleta, Campeonísimo, etc. Entra con cuenta docente (correo + contraseña → PROF-XXXX).</td><td>7 herramientas en <code>js/tools/</code>; estado espejado en la nube para verse igual en PC y teléfono.</td></tr>
     <tr><td>👨‍👩‍👧 Familia</td><td><code>padres.html</code>: asistente virtual conversacional. Entra con la CLAVE DE FAMILIA de su hijo (ej. 26-9GW3), jamás con nombres.</td><td>PWA propia (manifiesto e ícono aparte); lee la nube por funciones RPC con deduplicación; caché local si no hay señal.</td></tr>
     <tr><td>🏫 Dirección</td><td>Ajustes con roles (docente / director / rector / admin) y panel docente.</td><td>Roles guardados en la nube; cada rol ve solo lo suyo (reglas RLS).</td></tr>
@@ -210,7 +210,8 @@
   <h2><span class="num">4</span>Los números del sistema (memorízalos: dan autoridad)</h2>
   <table class="guion">
     <tr><th>Dato</th><th>Valor</th><th>Por qué importa al explicar</th></tr>
-    <tr><td>Misiones educativas</td><td>32 carpetas en <code>misiones/</code></td><td>Cada una con estructura idéntica de 3 archivos (HTML+JS+CSS) y 13 secciones didácticas → replicable hasta 100+.</td></tr>
+    <tr><td>Misiones educativas</td><td>55 carpetas en <code>misiones/</code></td><td>Cada una con estructura idéntica de 3 archivos (HTML+JS+CSS) y 13 secciones didácticas → replicable hasta 100+.</td></tr>
+    <tr><td>Materias y rutas</td><td>6 materias · 10 rutas</td><td>Matemáticas (15), Ciencias Naturales (14), Español (9), Ciencias Sociales (5) y las dos de 2026: Programación (6) y Robótica (6) — agregar una ruta son 2 líneas en <code>js/data/misiones.js</code> y <code>js/app.js</code>.</td></tr>
     <tr><td>Herramientas docentes</td><td>7 en <code>js/tools/</code></td><td>plan-accion, registros-admin (Mi aula), campeonismo, gobierno-escolar, parte-mensual, collage-maker, pwa-install.</td></tr>
     <tr><td>Páginas en la raíz</td><td>10 HTML</td><td>index, padres, panel-docente, consulta-nube, registro, evaluaciones, camp-vivo, mision y 2 kits de capacitación.</td></tr>
     <tr><td>SQL de la nube</td><td>18 archivos <code>SUPABASE-*.sql</code></td><td>Son la HISTORIA documentada de la nube: cada tabla y función tiene su archivo con comentarios de por qué existe.</td></tr>
@@ -242,7 +243,7 @@
     <tr><td><code>capacitor.config.json</code></td><td>3 líneas: id de la app, nombre METAS, y <code>webDir: www</code> — la prueba de que el APK envuelve el mismo código web.</td></tr>
     <tr><td><code>sw.js</code> (línea 1)</td><td><code>CACHE_NAME = 'meta-app-v27'</code> y la lista de archivos que la PWA guarda para funcionar sin internet.</td></tr>
     <tr><td><code>js/metas-supabase.js</code> (líneas 1-35)</td><td>El comentario de cabecera explica el offline-first y el outbox con tus propias palabras de entonces. La clave que aparece ahí es la PÚBLICA (verás por qué eso es correcto en el Módulo 5).</td></tr>
-    <tr><td>Carpeta <code>misiones/</code></td><td>32 carpetas hermanas con la misma anatomía. Entra a una: HTML + JS + CSS, nada más.</td></tr>
+    <tr><td>Carpeta <code>misiones/</code></td><td>55 carpetas hermanas con la misma anatomía. Entra a una: HTML + JS + CSS, nada más.</td></tr>
   </table>
 
   <h2><span class="num">7</span>Actividad metalingüística de cierre</h2>
@@ -277,7 +278,7 @@
   </div>
   <div class="interp">
     <div class="preg">«¿Y una sola persona mantiene todo esto?»</div>
-    <div class="resp">Sí, y el diseño existe para que eso sea posible: cero frameworks (nada se rompe por dependencias ajenas), cero compilación (depurar es leer el archivo), estructura idéntica en las 32 misiones (arreglar una enseña a arreglar todas), y cada decisión de la nube documentada en su propio archivo SQL comentado.</div>
+    <div class="resp">Sí, y el diseño existe para que eso sea posible: cero frameworks (nada se rompe por dependencias ajenas), cero compilación (depurar es leer el archivo), estructura idéntica en las 55 misiones (arreglar una enseña a arreglar todas), y cada decisión de la nube documentada en su propio archivo SQL comentado.</div>
   </div>
 
   <h2><span class="num">✔</span>Lista de dominio del Módulo 1</h2>
