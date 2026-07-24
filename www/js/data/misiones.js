@@ -58,6 +58,7 @@ const MISSIONS = [
   { id: 41, title: 'La Energía',                                          subject: 'naturales',   color: 'cnat', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'materia', etapa: 2, xp: 35, icon: '⚡', pais: 'HN', url: 'misiones/2y3ciclo-la-energia/la-energia.html' },
   { id: 42, title: 'Geografía de Honduras',                               subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'planeta', etapa: 8, xp: 35, icon: '🇭🇳', pais: 'HN', url: 'misiones/2y3ciclo-geografia-de-honduras/geografia-de-honduras.html' },
   { id: 43, title: 'Los Mayas y las Culturas Precolombinas',              subject: 'sociales',    color: 'csoc', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'tiempo',  etapa: 1, xp: 35, icon: '🗿', pais: 'HN', url: 'misiones/2y3ciclo-mayas-precolombinas/mayas-precolombinas.html' },
+  { id: 44, title: 'Secuencias: el Robot Mensajero',                      subject: 'programación', color: 'tec', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'codigo',  etapa: 2, xp: 35, icon: '💻', pais: 'HN', url: 'misiones/2y3ciclo-robot-mensajero/robot-mensajero.html' },
 ];
 
 /* Helpers de rutas (globales: index los usa en app.js) */

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Secuencias: el Robot Mensajero</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: PROGRAMACIÓN = CIAN TEC (#0e7490)
+     · Colores semánticos: cian=robot/código, ámbar=algoritmos de la vida, gris=errores
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --tec: #0e7490; --tec-osc: #155e75; --tec-claro: #ecfeff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cffafe;
+    --amb: #b45309; --oro: #b45309; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eefafc; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--tec-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--tec); background: var(--tec-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--tec-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--tec-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--tec); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--tec-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--tec-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--tec-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--tec); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4fcfd; }
+  td.k { font-weight: 700; color: var(--tec-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #f8feff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--tec-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (exacta / ambigua / orden) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #d5f4f9; } .celula .cm b { color: var(--tec); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--oro); }
+  .celula .cn { background: #eceae8; } .celula .cn b { color: var(--pie); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #d5f4f9; border: 1px solid #a9e6ef; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--tec); } .tri .torg b { color: var(--oro); }
+
+  .prog-ej { font-family: 'Courier New', monospace; font-weight: 700; font-size: 9.5pt; background: var(--tec-claro); border: 1px solid var(--linea); border-radius: 8px; padding: 8px 12px; margin: 8px 0; text-align: left; break-inside: avoid; }
+
+  .acts h3 { border-bottom: 2px solid var(--tec-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--tec); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--tec); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--tec-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--tec-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--tec-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2fbfd; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--tec-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--tec); box-shadow: 0 6px 16px rgba(14,116,144,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div, .prog-ej
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Secuencias: el Robot Mensajero</div>
+        <div class="f-meta"><b>Asignatura:</b> Programación &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Pensamiento computacional: instrucciones y secuencias, algoritmos de la vida diaria, el robot en la cuadrícula (AVANZA, GIRA DERECHA, GIRA IZQUIERDA, ENTREGA), y cómo encontrar y corregir errores (bugs)</div>
+      </div>
+      <div class="fh-qr">
+        <img src="img/qr-mision-robot-mensajero.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Distinguir una <strong>instrucción exacta</strong> de una <strong>instrucción ambigua</strong>.</li>
+      <li>Explicar qué es una <strong>secuencia</strong> y por qué el <strong>orden</strong> importa.</li>
+      <li>Reconocer <strong>algoritmos de la vida diaria</strong> (como la receta de la baleada).</li>
+      <li>Describir el <strong>estado del robot</strong>: posición en la cuadrícula + orientación (N, E, S, O).</li>
+      <li>Ejecutar y escribir programas con <strong>AVANZA, GIRA DERECHA, GIRA IZQUIERDA y ENTREGA</strong>.</li>
+      <li>Encontrar y corregir <strong>bugs</strong>: leer, trazar y probar programas paso a paso.</li>
+    </ol>
+
+    <h2>🗣️ 1. Instrucción, secuencia y algoritmo</h2>
+    <p>Una <strong>instrucción</strong> es una orden <strong>clara y exacta</strong> que alguien (o un robot) puede
+    ejecutar. Una <strong>secuencia</strong> es una <strong>lista de instrucciones en orden</strong>: se cumplen una
+    por una, de la primera a la última. Los pasos ordenados para lograr una tarea forman un
+    <strong>algoritmo</strong>: la receta de la baleada, izar la bandera o sembrar frijoles son algoritmos.</p>
+    <div class="caja truco">💡 <b>Truco:</b> un robot no adivina. Si la orden es confusa («camina un poquito»),
+    no la puede ejecutar. Si es exacta («AVANZA 3 casillas»), todos los robots del mundo hacen <strong>lo mismo</strong>.</div>
+
+    <h3>🤖🌫️🔢 Mini-demostración: las tres ideas clave</h3>
+    <div class="ilus">
+      <div class="ilus-t">Así piensa un programador</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">✅</span><b>Instrucción exacta</b>«AVANZA 3 casillas»: cualquiera la ejecuta igual.</div>
+        <div class="cc"><span class="c-emoji">🌫️</span><b>Instrucción ambigua</b>«Camina un poquito»: cada quien entiende otra cosa.</div>
+        <div class="cn"><span class="c-emoji">🔢</span><b>El orden importa</b>No puedes doblar la baleada antes de hacer la tortilla.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Secuencia = instrucciones <strong>exactas</strong> + en el <strong>orden</strong> correcto.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Secuencias: el Robot Mensajero</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🤖 2. El robot mensajero y su estado</h2>
+    <p>Nuestro robot vive en una <strong>cuadrícula</strong> que es su aldea: cada casilla tiene un nombre de
+    <strong>letra y número</strong> (columna A, B, C… y fila 1, 2, 3…), como <strong>B3</strong>. El
+    <strong>estado del robot</strong> son dos cosas: su <strong>posición</strong> (la casilla donde está) y su
+    <strong>orientación</strong> (hacia dónde mira: <strong>Norte</strong> arriba, <strong>Este</strong> a la derecha,
+    <strong>Sur</strong> abajo, <strong>Oeste</strong> a la izquierda).</p>
+    <div class="tri">
+      <div class="tnuc"><b>📍 Posición</b>La casilla donde está el robot, por ejemplo B3. Solo cambia con <strong>AVANZA</strong>.</div>
+      <div class="torg"><b>🧭 Orientación</b>Hacia dónde mira (N, E, S, O). Solo cambia con los <strong>GIROS</strong>.</div>
+    </div>
+
+    <h3>📋 Las 4 instrucciones del robot</h3>
+    <table>
+      <tr><th>Instrucción</th><th>¿Qué hace?</th><th>¿Cambia de casilla?</th></tr>
+      <tr><td class="k">👣 AVANZA</td><td>Mueve al robot UNA casilla hacia donde mira</td><td>Sí, una casilla</td></tr>
+      <tr><td class="k">↪️ GIRA DERECHA</td><td>Rota 90° según la derecha DEL ROBOT</td><td>No, solo gira</td></tr>
+      <tr><td class="k">↩️ GIRA IZQUIERDA</td><td>Rota 90° hacia la izquierda DEL ROBOT</td><td>No, solo gira</td></tr>
+      <tr><td class="k">📬 ENTREGA</td><td>Deja el mensaje en la casilla actual</td><td>No; solo sirve sobre la casa 🏠</td></tr>
+    </table>
+    <div class="caja regla">🔄 <b>Trucos de giro:</b> dos GIRA DERECHA = media vuelta (queda mirando al lado contrario)
+    · cuatro giros = vuelta completa · GIRA IZQUIERDA equivale a tres GIRA DERECHA.</div>
+
+    <h3>💾 Ejemplo de programa (léelo y trázalo con el dedo)</h3>
+    <div class="prog-ej">El robot mira al Norte en C5. Programa:<br>
+    1. AVANZA &nbsp; 2. AVANZA &nbsp; 3. GIRA DERECHA &nbsp; 4. AVANZA &nbsp; 5. ENTREGA<br>
+    → Sube dos casillas (C4, C3), voltea al Este, avanza a D3 y deja el mensaje. 📬</div>
+    <div class="caja idea">🧭 <b>Ojo con la derecha:</b> GIRA DERECHA depende de hacia dónde <strong>mira el
+    robot</strong>, no de la derecha del lector. Si el robot mira al Sur, ¡su derecha es el Oeste!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Secuencias: el Robot Mensajero</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🐛 3. Bugs: leer, trazar y depurar</h2>
+    <p>Un <strong>programa</strong> es una secuencia escrita que la máquina ejecuta <strong>tal como está</strong>.
+    Un <strong>bug</strong> es un error escondido que hace que el robot no llegue a la meta.
+    <strong>Depurar</strong> es encontrar y corregir esos errores probando el programa <strong>paso a paso</strong>.</p>
+
+    <h3>⚠️ Errores comunes — ¡no caigas en ellos!</h3>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que girar es avanzar</td><td>Los giros solo cambian la orientación.</td><td>Girar y DESPUÉS avanzar ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Usar la derecha del lector</td><td>La derecha es la del ROBOT.</td><td>Mirar hacia dónde mira el robot ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Cambiar el orden de los pasos</td><td>La secuencia se ejecuta en orden.</td><td>Trazar el programa antes de ejecutar ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar la ENTREGA</td><td>Llegar a la casa no entrega el mensaje.</td><td>Terminar el programa con ENTREGA ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Dar órdenes ambiguas</td><td>El robot no adivina.</td><td>Instrucciones exactas y completas ✔</td></tr>
+    </table>
+
+    <h2>🎲 4. Actividades desconectadas (sin computadora)</h2>
+    <div class="caja regla">🤖 <b>Programa a tu compañero:</b> en parejas. Uno es el «robot» (con los ojos hacia el
+    frente) y el otro el «programador». El programador escribe en tarjetas las instrucciones (⬆ AVANZA, ↪ GIRA
+    DERECHA, ↩ GIRA IZQUIERDA, 📬 ENTREGA) y las muestra UNA por una para guiar al robot desde su pupitre hasta la
+    puerta o el escritorio del docente. Si el robot choca con algo, ¡hay un bug: a depurar el programa! Después
+    cambian de papel.</div>
+    <div class="caja regla">🗺️ <b>El laberinto de cinta:</b> con cinta adhesiva se marca en el piso una cuadrícula
+    de 4×4 o 5×5 (pueden rotularse las columnas A–D y las filas 1–4 con papeles). Se colocan «árboles» (mochilas o
+    sillas) en algunas casillas y una «casa» (una hoja con 🏠) en la meta. Por turnos, cada equipo escribe en el
+    cuaderno el programa completo para cruzar el laberinto y luego un integrante lo ejecuta paso a paso mientras el
+    resto revisa. Gana el equipo con el programa <strong>más corto</strong> que llegue y entregue.</div>
+    <div class="caja hn">🇭🇳 <b>La programación en tu vida:</b> cuando sigues la receta de la baleada, izas la bandera
+    el lunes cívico o siembras frijoles en la huerta, estás ejecutando <strong>algoritmos</strong>. Pensar en pasos
+    ordenados y exactos te ayuda en matemáticas, en la cocina y en cualquier oficio. ¡Ese es el pensamiento
+    computacional! 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Secuencias: el Robot Mensajero</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 5. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Una orden clara y exacta que el robot puede ejecutar se llama <span class="linea-resp"></span>.</li>
+      <li>Una lista de instrucciones en orden se llama <span class="linea-resp"></span>.</li>
+      <li>Los pasos ordenados para lograr una tarea, como una receta, forman un <span class="linea-resp"></span>.</li>
+      <li>La instrucción que mueve al robot una casilla hacia adelante es <span class="linea-resp"></span>.</li>
+      <li>Los giros no cambian la posición del robot: cambian su <span class="linea-resp"></span>.</li>
+      <li>Un error escondido en un programa se llama <span class="linea-resp"></span>.</li>
+      <li>Encontrar y corregir los errores de un programa se llama <span class="linea-resp"></span>.</li>
+      <li>Si el robot mira al Norte y gira a la derecha, queda mirando al <span class="linea-resp"></span>.</li>
+      <li>La instrucción que deja el mensaje en la casa es <span class="linea-resp"></span>.</li>
+      <li>En una secuencia importa mucho el <span class="linea-resp"></span> de las instrucciones.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Una secuencia es una lista de instrucciones en orden.</li>
+      <li>____ El orden de las instrucciones no importa.</li>
+      <li>____ GIRA DERECHA mueve al robot una casilla hacia adelante.</li>
+      <li>____ AVANZA mueve al robot una casilla hacia donde mira.</li>
+      <li>____ GIRA DERECHA depende de hacia dónde mira el robot, no de la derecha del lector.</li>
+      <li>____ Un bug es un premio que gana el programa.</li>
+      <li>____ Un algoritmo es como una receta: pasos en orden.</li>
+      <li>____ «Camina un poquito» es una instrucción exacta.</li>
+      <li>____ El estado del robot es su posición más su orientación.</li>
+      <li>____ Depurar es encontrar y corregir los errores de un programa.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Secuencias: el Robot Mensajero</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es una secuencia en programación?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un dibujo del robot</span>
+        <span class="op"><i>b</i> una lista de instrucciones en orden</span>
+        <span class="op"><i>c</i> una casilla del mapa</span>
+        <span class="op"><i>d</i> un número de la suerte</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué hace la instrucción AVANZA?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> gira al robot 90°</span>
+        <span class="op"><i>b</i> deja el mensaje</span>
+        <span class="op"><i>c</i> mueve al robot una casilla hacia donde mira</span>
+        <span class="op"><i>d</i> apaga al robot</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué es un algoritmo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> los pasos ordenados para lograr una tarea</span>
+        <span class="op"><i>b</i> un tipo de robot</span>
+        <span class="op"><i>c</i> un error del programa</span>
+        <span class="op"><i>d</i> una casilla con árbol</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>Un robot mira hacia arriba (Norte) y ejecuta: AVANZA, GIRA DERECHA, AVANZA. ¿Hacia dónde mira al final?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Norte</span>
+        <span class="op"><i>b</i> Sur</span>
+        <span class="op"><i>c</i> Oeste</span>
+        <span class="op"><i>d</i> Este</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué cambia la instrucción GIRA IZQUIERDA?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la posición del robot</span>
+        <span class="op"><i>b</i> la orientación del robot</span>
+        <span class="op"><i>c</i> el tamaño del mapa</span>
+        <span class="op"><i>d</i> el color del robot</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué es un bug?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un error escondido en el programa</span>
+        <span class="op"><i>b</i> un premio del programa</span>
+        <span class="op"><i>c</i> una instrucción de giro</span>
+        <span class="op"><i>d</i> el motor del robot</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuál de estas es una instrucción EXACTA?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> «camina un poquito»</span>
+        <span class="op"><i>b</i> «ve por allá»</span>
+        <span class="op"><i>c</i> «avanza 3 casillas»</span>
+        <span class="op"><i>d</i> «haz algo útil»</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>El robot llegó a la casa del destino. ¿Qué instrucción deja el mensaje?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> AVANZA</span>
+        <span class="op"><i>b</i> ENTREGA</span>
+        <span class="op"><i>c</i> GIRA DERECHA</span>
+        <span class="op"><i>d</i> GIRA IZQUIERDA</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>El robot mira al Sur y ejecuta GIRA DERECHA. ¿Hacia dónde mira ahora?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Norte</span>
+        <span class="op"><i>b</i> Este</span>
+        <span class="op"><i>c</i> Sur</span>
+        <span class="op"><i>d</i> Oeste</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué es depurar un programa?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> encontrar y corregir sus errores</span>
+        <span class="op"><i>b</i> borrarlo completo</span>
+        <span class="op"><i>c</i> escribirlo más largo</span>
+        <span class="op"><i>d</i> ejecutarlo más rápido</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Secuencias: el Robot Mensajero</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Instrucción</td><td>A. Pasos ordenados para lograr una tarea</td></tr>
+      <tr><td>2. ____ Secuencia</td><td>B. Deja el mensaje en la casilla actual</td></tr>
+      <tr><td>3. ____ Algoritmo</td><td>C. Orden clara y exacta que se puede ejecutar</td></tr>
+      <tr><td>4. ____ AVANZA</td><td>D. Encontrar y corregir los errores</td></tr>
+      <tr><td>5. ____ GIRA DERECHA</td><td>E. Lista de instrucciones en orden</td></tr>
+      <tr><td>6. ____ ENTREGA</td><td>F. Hacia dónde mira el robot (N, E, S, O)</td></tr>
+      <tr><td>7. ____ Bug</td><td>G. La posición del robot más su orientación</td></tr>
+      <tr><td>8. ____ Depurar</td><td>H. Mueve al robot una casilla hacia donde mira</td></tr>
+      <tr><td>9. ____ Orientación</td><td>I. Error escondido en el programa</td></tr>
+      <tr><td>10. ____ Estado del robot</td><td>J. Rota al robot 90° según su propia derecha</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Secuencias: el Robot Mensajero.</b> Ahora sabes dar instrucciones
+      exactas, armar secuencias en orden, guiar al robot por la cuadrícula con AVANZA, GIRA DERECHA, GIRA IZQUIERDA
+      y ENTREGA, y atrapar los bugs como un verdadero programador. ¡Sigue avanzando por la Ruta del Código! 🤖💻
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Programación.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó una cuadrícula de 4×4 con coordenadas (A–D, 1–4) y escribió el programa para llevar al robot de A4 a D1.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Secuencias: el Robot Mensajero</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. instrucción &nbsp; 2. secuencia &nbsp; 3. algoritmo &nbsp; 4. AVANZA &nbsp; 5. orientación &nbsp; 6. bug (error) &nbsp; 7. depurar &nbsp; 8. Este &nbsp; 9. ENTREGA &nbsp; 10. orden</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3F, 4V, 5V, 6F, 7V, 8F, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3a, 4d, 5b, 6a, 7c, 8b, 9d, 10a</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2E, 3A, 4H, 5J, 6B, 7I, 8D, 9F, 10G</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Secuencias: el Robot Mensajero» (Educación Básica), etapa 2 de la Ruta del Código (Programación). Trabaja el
+      pensamiento computacional con enfoque desconectado: instrucciones exactas frente a ambiguas, secuencias y algoritmos
+      de la vida diaria hondureña, el estado del robot (posición + orientación) y la depuración de errores. La misión
+      interactiva (código QR de la portada) incluye un simulador de cuadrícula donde el estudiante arma programas con
+      AVANZA, GIRA DERECHA, GIRA IZQUIERDA y ENTREGA, y recibe retroalimentación inmediata; las actividades desconectadas
+      de la página 3 («Programa a tu compañero» y «El laberinto de cinta») permiten trabajar los mismos conceptos sin
+      ningún dispositivo. Puede complementarse pidiendo a los estudiantes que escriban en el cuaderno el algoritmo de una
+      tarea de su casa (hacer tortillas, alimentar a las gallinas, preparar café) y que un compañero lo «ejecute» buscando
+      pasos ambiguos o fuera de orden. La sección «Ponte a Prueba» replica los formatos de la evaluación imprimible de la
+      plataforma (completar, V/F, selección múltiple y pareados).
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Secuencias: el Robot Mensajero · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
