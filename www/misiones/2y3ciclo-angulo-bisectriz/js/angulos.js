@@ -19,6 +19,7 @@ function fb(id, msg, isOk) {
 const SAVE_KEY = 'angulos_bisectriz_v3';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1;
+let evalOpFormNum = 1, evalOpAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
@@ -74,7 +75,7 @@ function toggleTheme(){ darkMode=!darkMode; document.documentElement.setAttribut
 function initTheme(){ const s=localStorage.getItem(SAVE_KEY+'_theme'); const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches; darkMode=(s==='dark')||(s===null&&sys); if(darkMode){ document.documentElement.setAttribute('data-theme','dark'); document.getElementById('themeBtn').textContent='☀️ Tema'; } }
 
 // ===================== LOCALSTORAGE =====================
-function saveProgress(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, xp})); }catch(e){} }
+function saveProgress(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, evalOpFormNum, xp})); }catch(e){} }
 function loadProgress(){
   try{
     const s = JSON.parse(localStorage.getItem(SAVE_KEY));
@@ -82,6 +83,7 @@ function loadProgress(){
     if(s.doneSections && Array.isArray(s.doneSections)) s.doneSections.forEach(id=>{ done.add(id); const b=document.querySelector(`[data-s="${id}"]`); if(b) b.classList.add('done'); });
     if(s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum) evalFormNum = s.evalFormNum;
+    if(s.evalOpFormNum) evalOpFormNum = s.evalOpFormNum;
     if(s.xp !== undefined) { xp = s.xp; updateXPBar(); }
   }catch(e){}
 }
@@ -751,6 +753,304 @@ ${s1}${s2}${s3}${s4}
   const win=window.open('','_blank',''); if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;} win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
 }
 
+// ===================== PRUEBA OPERATIVA — ÁNGULOS Y BISECTRIZ =====================
+// Segunda prueba imprimible de la misión (matemáticas): 100 pts en 5 secciones
+// ligadas al contenido real (tabla de tipos, fórmula ángulo ÷ 2, complementarios/
+// suplementarios y la sección «Los Ángulos en tu Vida Cotidiana»).
+// Aritmética exacta desde enteros: ángulos pares para bisectrices y pares
+// complementarios/suplementarios construidos por resta.
+
+function evalSwitchMode(mode) {
+  sfx('click');
+  const cWrap = document.getElementById('evalConceptWrap'), oWrap = document.getElementById('evalOpWrap');
+  const cBtn = document.getElementById('evalModeBtnConcept'), oBtn = document.getElementById('evalModeBtnOp');
+  if (mode === 'op') {
+    cWrap.style.display = 'none'; oWrap.style.display = 'block';
+    cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected', 'false');
+    oBtn.classList.add('active'); oBtn.setAttribute('aria-selected', 'true');
+  } else {
+    oWrap.style.display = 'none'; cWrap.style.display = 'block';
+    oBtn.classList.remove('active'); oBtn.setAttribute('aria-selected', 'false');
+    cBtn.classList.add('active'); cBtn.setAttribute('aria-selected', 'true');
+  }
+}
+
+// ---- Helpers aritméticos deterministas (siempre sembrados con _evalRng) ----
+let _opRnd = Math.random;
+function _opRint(min, max) { return Math.floor(_opRnd() * (max - min + 1)) + min; }
+function _opFmt(n) { return parseFloat(n.toFixed(6)).toString(); }
+
+// I. Clasifica el ángulo por su medida (5 × 4 = 20 pts · nivel básico)
+// Un ángulo de cada tipo de la tabla (agudo, recto, obtuso, llano, completo),
+// con medidas controladas lejos de los límites para evitar ambigüedades.
+function genClasifItems() {
+  const tipos = _shuffleF(['agudo', 'recto', 'obtuso', 'llano', 'completo'], _opRnd);
+  return tipos.map(t => {
+    let m;
+    if (t === 'agudo') m = _opRint(5, 85);
+    else if (t === 'recto') m = 90;
+    else if (t === 'obtuso') m = _opRint(95, 175);
+    else if (t === 'llano') m = 180;
+    else m = 360;
+    return { m, ans: t };
+  });
+}
+
+// II. Calcula la bisectriz (5 × 2 = 10 pts · agilidad con la fórmula ángulo ÷ 2)
+// Ángulos siempre pares → mitad exacta, como los ejemplos 80°→40° y 120°→60°.
+function genBisecItems() {
+  const items = []; const usados = {};
+  while (items.length < 5) {
+    const ang = 2 * _opRint(11, 89); // 22°..178°, siempre par
+    if (usados[ang]) continue;
+    usados[ang] = true;
+    items.push({ ang, ans: String(ang / 2) });
+  }
+  return items;
+}
+
+// III. Encuentra el ángulo que falta (5 × 4 = 20 pts · razonamiento inverso)
+// Mezcla de complemento (90° − x), suplemento (180° − x) y bisectriz al revés
+// (cada mitad mide h° → el ángulo completo mide h° × 2).
+function genFaltaItems() {
+  const items = [];
+  for (let i = 0; i < 5; i++) {
+    const tipo = i % 3;
+    if (tipo === 0) { const x = _opRint(10, 80); items.push({ txt: `Dos ángulos son complementarios (suman 90°). Uno mide ${x}°. ¿Cuánto mide el otro?`, op: `90° − ${x}°`, ans: String(90 - x) }); }
+    else if (tipo === 1) { const x = _opRint(20, 160); items.push({ txt: `Dos ángulos son suplementarios (suman 180°). Uno mide ${x}°. ¿Cuánto mide el otro?`, op: `180° − ${x}°`, ans: String(180 - x) }); }
+    else { const h = _opRint(10, 85); items.push({ txt: `La bisectriz de un ángulo creó dos mitades de ${h}° cada una. ¿Cuánto mide el ángulo completo?`, op: `${h}° × 2`, ans: String(h * 2) }); }
+  }
+  return _shuffleF(items, _opRnd);
+}
+
+// IV. Problemas de la vida real (3 × 10 = 30 pts · modelar y aplicar)
+// Contextos hondureños de la sección «Los Ángulos en tu Vida Cotidiana»:
+// reloj a las 3:00 (90°), puerta al abrirse, techo a dos aguas, tijeras cuyo
+// eje es bisectriz y repartir el ángulo de un solar en dos partes iguales.
+const _opCtxAng = [
+  () => { const h = _opRint(1, 5); return { txt: `El reloj de la iglesia del pueblo marca las ${h}:00 en punto. Cada hora completa entre las manecillas equivale a 30° (por eso a las 3:00 forman un ángulo recto de 90°). ¿Cuántos grados mide el ángulo entre las manecillas a las ${h}:00?`, op: `${h} × 30°`, ans: String(h * 30) }; },
+  () => { const a = _opRint(20, 60), b = _opRint(20, 60); return { txt: `La puerta del aula estaba abierta ${a}° y Carlos la empujó ${b}° más para que entrara el aire. ¿Qué ángulo forma ahora la puerta con la pared?`, op: `${a}° + ${b}°`, ans: String(a + b) }; },
+  () => { const t = 2 * _opRint(50, 70); return { txt: `El techo a dos aguas de una casa en La Esperanza forma en la cumbrera un ángulo de ${t}°. La viga central es la bisectriz de ese ángulo. ¿Cuánto mide el ángulo de cada lado del techo?`, op: `${t}° ÷ 2`, ans: String(t / 2) }; },
+  () => { const t = 2 * _opRint(15, 40); return { txt: `Unas tijeras abiertas forman un ángulo de ${t}°. El tornillo del eje actúa como bisectriz: divide la abertura en dos partes iguales. ¿Cuántos grados hay del eje a cada hoja?`, op: `${t}° ÷ 2`, ans: String(t / 2) }; },
+  () => { const t = 2 * _opRint(30, 60); return { txt: `Don Tulio repartirá el solar de la esquina entre sus dos hijos. El terreno forma un ángulo de ${t}° y la cerca nueva será la bisectriz. ¿Qué ángulo del solar le tocará a cada hijo?`, op: `${t}° ÷ 2`, ans: String(t / 2) }; },
+  () => { const x = _opRint(20, 70); return { txt: `Una rampa para sillas de ruedas forma un ángulo de ${x}° con el suelo. ¿Cuántos grados le faltan para llegar al ángulo recto que forma la pared con el piso?`, op: `90° − ${x}°`, ans: String(90 - x) }; }
+];
+function genProblemaAngItems() {
+  return _shuffleF(_opCtxAng, _opRnd).slice(0, 3).map(g => g());
+}
+
+// V. Retos de olimpiada (10 + 5 + 5 = 20 pts · desafío)
+// (a) Ordenar 4 ángulos de MENOR a mayor combinando descripciones sin medirlos
+function genRetoOrden() {
+  const gens = [
+    () => { const x = _opRint(5, 85); return { label: `El complemento de ${x}°`, val: 90 - x }; },
+    () => { const y = _opRint(95, 175); return { label: `El suplemento de ${y}°`, val: 180 - y }; },
+    () => { const a = 2 * _opRint(20, 80); return { label: `Cada mitad de la bisectriz de ${a}°`, val: a / 2 }; },
+    () => ({ label: 'La mitad de un ángulo llano', val: 90 }),
+    () => { const z = _opRint(91, 179); return { label: `Un ángulo que mide ${z}°`, val: z }; }
+  ];
+  const nums = []; let tries = 0;
+  while (nums.length < 4 && tries < 200) {
+    tries++;
+    const cand = gens[_opRint(0, gens.length - 1)]();
+    if (!nums.some(n => Math.abs(n.val - cand.val) < 0.5 || n.label === cand.label)) nums.push(cand);
+  }
+  const sorted = [...nums].sort((a, b) => a.val - b.val);
+  return {
+    display: _shuffleF(nums.map(n => n.label), _opRnd),
+    correctOrder: sorted.map(n => n.label),
+    pauta: sorted.map(n => `${n.label} = ${n.val}°`)
+  };
+}
+// (b) Detective del error: réplica de los errores enseñados en la misión
+// (p.ej. «la bisectriz de 90° crea dos de 50°» o confundir complemento con suplemento)
+function genRetoError() {
+  if (_opRnd() < 0.5) {
+    const a = 2 * _opRint(20, 80); const wrong = a / 2 + _opRint(1, 2) * 5;
+    return { txt: `Una estudiante escribió: «La bisectriz de un ángulo de ${a}° crea dos ángulos de ${wrong}° cada uno». Es el mismo error de la lección («la bisectriz de 90° crea dos de 50°»): las mitades no suman el ángulo. Escribe el valor correcto de cada mitad.`, op: `${a}° ÷ 2`, ans: String(a / 2) };
+  }
+  const x = _opRint(10, 80);
+  return { txt: `Un estudiante escribió: «El complemento de ${x}° es ${180 - x}°». Confundió complemento (suman 90°) con suplemento (suman 180°). Escribe el complemento correcto de ${x}°.`, op: `90° − ${x}°`, ans: String(90 - x) };
+}
+// (c) Bisectriz de la bisectriz: dividir el ángulo en cuatro partes iguales
+function genRetoCuartos() {
+  const a = 4 * _opRint(10, 40); // 40°..160°, divisible entre 4
+  return { txt: `A un ángulo de ${a}° se le traza la bisectriz y luego se traza la bisectriz de cada mitad. ¿Cuánto mide cada uno de los cuatro ángulos que quedan?`, op: `${a}° ÷ 2 ÷ 2`, ans: String(a / 4) };
+}
+
+function genEvalOp() {
+  sfx('click');
+  _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
+  const _sO = document.getElementById('evalOpFormaSel');
+  if (_sO && parseInt(_sO.value, 10)) evalOpFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sO.value, 10)));
+  const cf = evalOpFormNum; window._currentEvalOpForm = cf; _opRnd = _evalRng(100000 + cf); /* la Forma cf siembra TODO el azar de esta prueba */
+  evalOpFormNum = (evalOpFormNum % EVAL_FORMAS) + 1;
+  _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
+  saveProgress();
+  const P = { cls: 4, bis: 2, flt: 4, prb: 10 };
+  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa — Forma ${cf} · Ángulos y Bisectriz`;
+  evalOpAnsVisible = false;
+  const out = document.getElementById('evalOpOut'); out.innerHTML = '';
+
+  const clsItems = genClasifItems();
+  const s1 = document.createElement('div');
+  s1.innerHTML = `<div class="eval-section-title">I. Clasifica el ángulo por su medida <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. Escribe si el ángulo es <strong>agudo, recto, obtuso, llano o completo</strong> según la tabla de tipos.</p>`;
+  clsItems.forEach((it, i) => {
+    const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i + 1}</span><span class="opx-expr">Un ángulo de ${it.m}° es:</span><input class="eval-cp-input" type="text" data-cls="${i}" autocomplete="off" style="min-width:110px;"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbCls${i}" aria-live="polite"></div>`;
+    s1.appendChild(d);
+  });
+  out.appendChild(s1);
+
+  const bisItems = genBisecItems();
+  const s2 = document.createElement('div');
+  s2.innerHTML = `<div class="eval-section-title">II. Calcula la bisectriz <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Agilidad. Aplica la fórmula <strong>ángulo ÷ 2</strong> (como 80° → 40° y 120° → 60°) y escribe cuánto mide cada mitad.</p>`;
+  bisItems.forEach((it, i) => {
+    const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i + 1}</span><span class="opx-expr">Bisectriz de ${it.ang}° → cada mitad mide:</span><input class="eval-cp-input" type="text" data-bis="${i}" autocomplete="off" inputmode="numeric" style="min-width:70px;max-width:90px;"><span style="font-size:0.85rem;color:var(--gray);">°</span></div><div class="eval-answer">${it.ans}°</div><div class="eval-item-feedback" id="evalFbBis${i}" aria-live="polite"></div>`;
+    s2.appendChild(d);
+  });
+  out.appendChild(s2);
+
+  const fltItems = genFaltaItems();
+  const s3 = document.createElement('div');
+  s3.innerHTML = `<div class="eval-section-title">III. Encuentra el ángulo que falta <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel intermedio. Piensa al revés: usa 90°, 180° o la bisectriz para hallar el ángulo que falta.</p>`;
+  fltItems.forEach((it, i) => {
+    const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
+    d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1}</span><span class="eval-q-text">${it.txt}</span></div><div class="opx-row" style="margin-left:1.7rem;"><span style="font-size:0.82rem;color:var(--gray);">R/</span><input class="eval-cp-input" type="text" data-flt="${i}" autocomplete="off" inputmode="numeric" style="min-width:70px;max-width:90px;"><span style="font-size:0.85rem;color:var(--gray);">°</span></div><div class="eval-answer">${it.op} = ${it.ans}°</div><div class="eval-item-feedback" id="evalFbFlt${i}" aria-live="polite"></div>`;
+    s3.appendChild(d);
+  });
+  out.appendChild(s3);
+
+  const prbItems = genProblemaAngItems();
+  const s4 = document.createElement('div');
+  s4.innerHTML = `<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel avanzado. Plantea la operación en tu cuaderno, resuélvela y escribe la respuesta en grados.</p>`;
+  prbItems.forEach((it, i) => {
+    const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
+    d.innerHTML = `<div class="eval-q"><span class="eval-num">${i + 1}</span><span class="eval-q-text">${it.txt}</span></div><div class="opx-row" style="margin-left:1.7rem;"><span style="font-size:0.82rem;color:var(--gray);">R/</span><input class="eval-cp-input" type="text" data-prb="${i}" autocomplete="off" inputmode="numeric" style="min-width:70px;max-width:90px;"><span style="font-size:0.85rem;color:var(--gray);">°</span></div><div class="eval-answer">${it.op} = ${it.ans}°</div><div class="eval-item-feedback" id="evalFbPrb${i}" aria-live="polite"></div>`;
+    s4.appendChild(d);
+  });
+  out.appendChild(s4);
+
+  const retoOrd = genRetoOrden(), retoErr = genRetoError(), retoCua = genRetoCuartos();
+  const s5 = document.createElement('div');
+  s5.innerHTML = '<div class="eval-section-title">V. Retos de olimpiada <span class="eval-pts">20 pts · Reto 1: 10 · Retos 2 y 3: 5 c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Desafío. Piensa como matemático: compara, detecta errores y divide sin medir con transportador.</p>';
+  const dOrd = document.createElement('div'); dOrd.className = 'eval-item eval-auto-item evord-group';
+  dOrd.innerHTML = `<div class="evord-dir">1. Ordena estos ángulos de MENOR a mayor sin medirlos (usa las flechas ▲▼):</div><div class="evord-list" id="evordAngList0"></div><div class="eval-answer">${retoOrd.pauta.join(' · ')}</div><div class="eval-item-feedback" id="evalFbOrdAng0" aria-live="polite"></div>`;
+  s5.appendChild(dOrd);
+  const dErr = document.createElement('div'); dErr.className = 'eval-item eval-auto-item';
+  dErr.innerHTML = `<div class="eval-q"><span class="eval-num">2</span><span class="eval-q-text">🔎 <strong>Detective del error:</strong> ${retoErr.txt}</span></div><div class="opx-row" style="margin-left:1.7rem;"><span style="font-size:0.82rem;color:var(--gray);">Valor correcto:</span><input class="eval-cp-input" type="text" data-rerr="0" autocomplete="off" inputmode="numeric" style="min-width:70px;max-width:90px;"><span style="font-size:0.85rem;color:var(--gray);">°</span></div><div class="eval-answer">${retoErr.op} = ${retoErr.ans}°</div><div class="eval-item-feedback" id="evalFbRerr" aria-live="polite"></div>`;
+  s5.appendChild(dErr);
+  const dCua = document.createElement('div'); dCua.className = 'eval-item eval-auto-item';
+  dCua.innerHTML = `<div class="eval-q"><span class="eval-num">3</span><span class="eval-q-text">✂️ <strong>Bisectriz de la bisectriz:</strong> ${retoCua.txt}</span></div><div class="opx-row" style="margin-left:1.7rem;"><span style="font-size:0.82rem;color:var(--gray);">Cada cuarto mide:</span><input class="eval-cp-input" type="text" data-rcua="0" autocomplete="off" inputmode="numeric" style="min-width:70px;max-width:90px;"><span style="font-size:0.85rem;color:var(--gray);">°</span></div><div class="eval-answer">${retoCua.op} = ${retoCua.ans}°</div><div class="eval-item-feedback" id="evalFbRcua" aria-live="polite"></div>`;
+  s5.appendChild(dCua);
+  out.appendChild(s5);
+
+  window._evalOpData = { clsItems, bisItems, fltItems, prbItems, retoErr, retoCua, ord: [{ current: [...retoOrd.display], correctOrder: retoOrd.correctOrder, pauta: retoOrd.pauta }], P };
+  _renderOrdAngGroup(0);
+  const autoPanel = document.createElement('div'); autoPanel.id = 'evalOpAutoResult'; autoPanel.className = 'eval-auto-result';
+  autoPanel.innerHTML = '<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.';
+  out.appendChild(autoPanel);
+  fin('s-evaluacion');
+}
+
+function _renderOrdAngGroup(gi) {
+  const data = window._evalOpData.ord[gi];
+  const list = document.getElementById('evordAngList' + gi); if (!list) return;
+  list.innerHTML = '';
+  data.current.forEach((label, i) => {
+    const div = document.createElement('div'); div.className = 'evord-item';
+    div.innerHTML = `<div class="evord-arrows"><button class="sort-arrow" onclick="evordAngMove(${gi},${i},-1)"${i === 0 ? ' disabled' : ''}>▲</button><button class="sort-arrow" onclick="evordAngMove(${gi},${i},1)"${i === data.current.length - 1 ? ' disabled' : ''}>▼</button></div><div class="evord-num">${label}</div>`;
+    list.appendChild(div);
+  });
+}
+function evordAngMove(gi, idx, dir) {
+  sfx('click');
+  const data = window._evalOpData.ord[gi]; const ni = idx + dir;
+  if (ni < 0 || ni >= data.current.length) return;
+  const tmp = data.current[idx]; data.current[idx] = data.current[ni]; data.current[ni] = tmp;
+  _renderOrdAngGroup(gi);
+}
+
+function toggleEvalOpAns() {
+  evalOpAnsVisible = !evalOpAnsVisible;
+  document.querySelectorAll('#evalOpOut .eval-answer').forEach(el => el.style.display = evalOpAnsVisible ? 'block' : 'none');
+  sfx('click');
+}
+
+function _isOpNumOk(student, expected) {
+  const s = (student || '').toString().trim().replace(',', '.').replace(/°/g, '');
+  if (!s) return false;
+  const sn = parseFloat(s), en = parseFloat(expected);
+  return !isNaN(sn) && !isNaN(en) && Math.abs(sn - en) < 1e-6;
+}
+// Sección I (única de texto): normaliza con el helper de la misión y acepta
+// variantes («águdo» sin tilde correcta, «ángulo agudo», mayúsculas, «90°»…)
+function _isClaseOk(student, expected) {
+  let s = normalizeEvalAnswer(student);
+  if (!s) return false;
+  s = s.replace(/°/g, '').replace(/^(es )?(un |el )?angulo /, '').trim();
+  return s === normalizeEvalAnswer(expected);
+}
+
+function gradeEvalOp() {
+  if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
+  sfx('click');
+  const d = window._evalOpData; const P = d.P || { cls: 4, bis: 2, flt: 4, prb: 10 };
+  let total = 0; const det = { cls: 0, bis: 0, flt: 0, prb: 0, reto: 0 };
+  d.clsItems.forEach((it, i) => { const el = document.querySelector(`[data-cls="${i}"]`); const ok = _isClaseOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.cls += P.cls; total += P.cls; } setEvalFeedback('evalFbCls' + i, ok, ok ? 'Correcto. +' + P.cls + ' pts' : 'Revisar. R/ ' + it.ans); });
+  d.bisItems.forEach((it, i) => { const el = document.querySelector(`[data-bis="${i}"]`); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.bis += P.bis; total += P.bis; } setEvalFeedback('evalFbBis' + i, ok, ok ? 'Correcto. +' + P.bis + ' pts' : 'Revisar. R/ ' + it.ang + '° ÷ 2 = ' + it.ans + '°'); });
+  d.fltItems.forEach((it, i) => { const el = document.querySelector(`[data-flt="${i}"]`); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.flt += P.flt; total += P.flt; } setEvalFeedback('evalFbFlt' + i, ok, ok ? 'Correcto. +' + P.flt + ' pts' : 'Revisar. R/ ' + it.op + ' = ' + it.ans + '°'); });
+  d.prbItems.forEach((it, i) => { const el = document.querySelector(`[data-prb="${i}"]`); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.prb += P.prb; total += P.prb; } setEvalFeedback('evalFbPrb' + i, ok, ok ? 'Correcto. +' + P.prb + ' pts' : 'Revisar. R/ ' + it.op + ' = ' + it.ans + '°'); });
+  d.ord.forEach((g, gi) => { const ok = g.current.every((v, i) => v === g.correctOrder[i]); if (ok) { det.reto += 10; total += 10; } setEvalFeedback('evalFbOrdAng' + gi, ok, ok ? '¡Orden correcto! +10 pts' : 'Orden incorrecto. Clave: ' + g.pauta.join(' · ')); });
+  if (d.retoErr) { const el = document.querySelector('[data-rerr="0"]'); const ok = _isOpNumOk(el ? el.value : '', d.retoErr.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.reto += 5; total += 5; } setEvalFeedback('evalFbRerr', ok, ok ? '¡Error detectado! +5 pts' : 'Revisar. R/ ' + d.retoErr.op + ' = ' + d.retoErr.ans + '°'); }
+  if (d.retoCua) { const el = document.querySelector('[data-rcua="0"]'); const ok = _isOpNumOk(el ? el.value : '', d.retoCua.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.reto += 5; total += 5; } setEvalFeedback('evalFbRcua', ok, ok ? '¡Cuartos exactos! +5 pts' : 'Revisar. R/ ' + d.retoCua.op + ' = ' + d.retoCua.ans + '°'); }
+  const res = document.getElementById('evalOpAutoResult');
+  const desglose = `Clasifica: ${det.cls}/20 · Bisectriz: ${det.bis}/10 · Ángulo que falta: ${det.flt}/20 · Problemas: ${det.prb}/30 · Retos: ${det.reto}/20`;
+  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>${desglose}</span>`; }
+  if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
+  else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
+}
+
+function printEvalOp() {
+  if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
+  sfx('click');
+  const forma = window._currentEvalOpForm || 1; const d = window._evalOpData;
+
+  // ── I. Clasifica el ángulo (tabla compacta a dos columnas)
+  const clsTbl = (items, off) => items.length ? `<table class="rnd-tbl"><tr><th>#</th><th>Ángulo</th><th>Tipo de ángulo</th></tr>${items.map((it, i) => `<tr><td>${off + i + 1}</td><td class="mono">${it.m}°</td><td></td></tr>`).join('')}</table>` : '';
+  let s1 = `<div class="sec-title"><span>I. Clasifica el ángulo por su medida</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. Escribe si el ángulo es agudo, recto, obtuso, llano o completo. 4 pts c/u.</p><div class="rnd-print-grid">${clsTbl(d.clsItems.slice(0, 3), 0)}${clsTbl(d.clsItems.slice(3), 3)}</div>`;
+
+  // ── II. Calcula la bisectriz
+  let s2 = `<div class="sec-title"><span>II. Calcula la bisectriz</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Agilidad. Aplica la fórmula ángulo ÷ 2 (como 80° → 40°) y escribe cada mitad. 2 pts c/u.</p>`;
+  d.bisItems.forEach((it, i) => { s2 += `<div class="opx-print-row"><span class="qn">${i + 1}.</span><span class="opx-print-expr">Bisectriz de ${it.ang}° → cada mitad mide:</span><span class="opx-blank"></span></div>`; });
+
+  // ── III. Encuentra el ángulo que falta
+  let s3 = `<div class="sec-title"><span>III. Encuentra el ángulo que falta</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel intermedio. Piensa al revés: usa 90°, 180° o la bisectriz para hallar el ángulo. 4 pts c/u.</p>`;
+  d.fltItems.forEach((it, i) => { s3 += `<div class="opx-print-row" style="align-items:flex-start;"><span class="qn">${i + 1}.</span><span style="flex:1;line-height:1.35;">${it.txt} &nbsp; R/ <span class="opx-mini-blank">&nbsp;</span></span></div>`; });
+
+  // ── IV. Problemas de la vida real
+  let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Nivel avanzado. Plantea la operación, resuélvela en el reverso de la hoja y escribe la respuesta en grados. 10 pts c/u.</p>`;
+  d.prbItems.forEach((it, i) => { s4 += `<div class="opx-print-row" style="align-items:flex-start;"><span class="qn">${i + 1}.</span><span style="flex:1;line-height:1.35;">${it.txt}<br><span style="font-size:9pt;color:#555;">Planteo: <span class="opx-mini-blank" style="min-width:90px;">&nbsp;</span> &nbsp; R/ <span class="opx-mini-blank">&nbsp;</span></span></span></div>`; });
+
+  // ── V. Retos de olimpiada
+  const g0 = d.ord[0];
+  let s5 = `<div class="sec-title"><span>V. Retos de olimpiada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Desafío. Compara, detecta errores y divide sin medir con transportador. Reto 1: 10 pts · Retos 2 y 3: 5 pts c/u.</p><div class="ord-print-grid"><div class="ord-print-box" style="grid-column:1/-1;"><div class="ord-print-dir">1. Ordena estos ángulos de MENOR a mayor sin medirlos · 10 pts:</div><table class="ord-print-tbl"><tr>${g0.current.map(v => `<td>${v}</td>`).join('')}</tr></table><div style="margin-top:0.3rem;font-size:8.5pt;color:#555;">Escribe en orden: 1º _______________ &nbsp; 2º _______________ &nbsp; 3º _______________ &nbsp; 4º _______________</div></div><div class="ord-print-box"><div class="ord-print-dir">2. 🔎 Detective del error · 5 pts:</div><div style="font-size:9pt;line-height:1.35;">${d.retoErr.txt}</div><div style="margin-top:0.3rem;font-size:9pt;">Valor correcto: <span class="opx-mini-blank">&nbsp;</span></div></div><div class="ord-print-box"><div class="ord-print-dir">3. ✂️ Bisectriz de la bisectriz · 5 pts:</div><div style="font-size:9pt;line-height:1.35;">${d.retoCua.txt}</div><div style="margin-top:0.3rem;font-size:9pt;">Cada cuarto mide: <span class="opx-mini-blank">&nbsp;</span></div></div></div>`;
+
+  // ── Pauta del docente
+  let pR = '';
+  pR += `<div class="p-sec"><div class="p-ttl">I. Clasifica el ángulo</div><table class="p-tbl">${d.clsItems.map((it, i) => `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.m}° → ${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">II. Bisectriz</div><table class="p-tbl">${d.bisItems.map((it, i) => `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.ang}° ÷ 2 = ${it.ans}°</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">III. Ángulo que falta</div><table class="p-tbl">${d.fltItems.map((it, i) => `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.op} = ${it.ans}°</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas</div><table class="p-tbl">${d.prbItems.map((it, i) => `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.op} = ${it.ans}°</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de olimpiada</div><div class="p-ord-line"><strong>1.</strong> ${g0.pauta.join(' · ')}</div><div class="p-ord-line"><strong>2.</strong> Detective del error: ${d.retoErr.op} = ${d.retoErr.ans}°</div><div class="p-ord-line"><strong>3.</strong> Bisectriz de la bisectriz: ${d.retoCua.op} = ${d.retoCua.ans}°</div></div>`;
+
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Ángulos y Bisectriz · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:110px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.opx-mini-blank{display:inline-block;min-width:60px;border-bottom:1.5px solid #111;}.mono{font-family:'Courier New',monospace;font-weight:700;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:10pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.2rem 0.4rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.rnd-tbl td:last-child{min-width:90px;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.15rem 0.25rem;text-align:center;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Ángulos y Bisectriz · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Ángulos y Bisectriz · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · I: 5×4 · II: 5×2 · III: 5×4 · IV: 3×10 · V: 10+5+5 · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  const win = window.open('', '_blank', '');
+  if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+  win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
+}
+
 // ===================== DIPLOMA =====================
 function _diplPct() { return xp >= MXP ? 100 : Math.round((xp / MXP) * 100); }
 function openDiploma(){
@@ -826,7 +1126,7 @@ async function captureDiploma() {
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme(); initFontSize(); loadProgress();
   initSVGOrgans(); initMetaStars();
-  upFC(); buildQz(); buildClass(); showId(); showCmp(); genTask(); genEval();
+  upFC(); buildQz(); buildClass(); showId(); showCmp(); genTask(); genEval(); genEvalOp();
   updateRetoButtons(); renderAchPanel();
   document.addEventListener('click',function(e){ const panel=document.getElementById('achPanel'); const btn=document.getElementById('achBtn'); if(panel.classList.contains('open')&&!panel.contains(e.target)&&e.target!==btn) panel.classList.remove('open'); });
   document.addEventListener('click',function(e){ if(e.target===document.getElementById('diplomaOverlay')) closeDiploma(); });

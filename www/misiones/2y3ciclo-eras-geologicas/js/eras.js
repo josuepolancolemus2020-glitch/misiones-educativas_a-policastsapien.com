@@ -130,6 +130,7 @@ function fb(id, msg, isOk) {
 const SAVE_KEY = 'eras_geo_v3';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1;
+let evalCritFormNum = 1, evalCritAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
@@ -138,7 +139,7 @@ const TOTAL_SECTIONS = 13;
 const xpTracker = {
     fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(),
     cmp: new Set(), reto: new Set(), sopa: new Set(),
-    asim: new Set(),
+    asim: new Set(), critWin: new Set(),
 };
 
 // ===================== SONIDO =====================
@@ -168,7 +169,7 @@ function initTheme() { const s = localStorage.getItem(SAVE_KEY + '_theme'); cons
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ doneSections: Array.from(done), unlockedAch, evalFormNum, xp })); } catch (e) { }
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ doneSections: Array.from(done), unlockedAch, evalFormNum, evalCritFormNum, xp })); } catch (e) { }
 }
 function loadProgress() {
     try {
@@ -181,6 +182,7 @@ function loadProgress() {
         });
         if (s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id => ACHIEVEMENTS[id] !== undefined);
         if (s.evalFormNum) evalFormNum = s.evalFormNum;
+        if (s.evalCritFormNum) evalCritFormNum = s.evalCritFormNum;
         if (s.xp !== undefined) { xp = s.xp; updateXPBar(); }
     } catch (e) { }
 }
@@ -1307,6 +1309,348 @@ ${s1}${s2}${s3}${s4}
 <div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
+    const win = window.open('', '_blank', '');
+    if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+    win.document.write(doc);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
+}
+
+// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+// Segunda evaluación imprimible de la misión (Ciencias Naturales). Todo el
+// contenido nace de los bancos y tarjetas de ESTA misión (eras, extinciones,
+// línea de tiempo, fósiles). Formas deterministas: semilla _evalRng(200000+cf).
+function evalSwitchMode(mode) {
+    sfx('click');
+    const cWrap = document.getElementById('evalConceptWrap'), critWrap = document.getElementById('evalCritWrap');
+    const cBtn = document.getElementById('evalModeBtnConcept'), critBtn = document.getElementById('evalModeBtnCrit');
+    if (mode === 'crit') {
+        cWrap.style.display = 'none'; critWrap.style.display = 'block';
+        cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected', 'false');
+        critBtn.classList.add('active'); critBtn.setAttribute('aria-selected', 'true');
+        if (!window._evalCritData) genEvalCrit();
+    } else {
+        critWrap.style.display = 'none'; cWrap.style.display = 'block';
+        critBtn.classList.remove('active'); critBtn.setAttribute('aria-selected', 'false');
+        cBtn.classList.add('active'); cBtn.setAttribute('aria-selected', 'true');
+    }
+}
+
+// ── I. Causa y consecuencia (relaciones reales de la misión)
+const critCCBank = [
+    { c: 'La extinción del Pérmico, al final de la era Paleozoica', e: 'Desapareció cerca del 90% de las especies del planeta' },
+    { c: 'El impacto de un meteorito gigante hace 66 millones de años', e: 'Se extinguieron los dinosaurios y terminó la era Mesozoica' },
+    { c: 'La fragmentación del supercontinente Pangea', e: 'Se formaron los continentes que conocemos hoy' },
+    { c: 'La atmósfera sin oxígeno de la era Precámbrica', e: 'La vida solo podía existir en los océanos, no en tierra firme' },
+    { c: 'La extinción de los dinosaurios al final del Cretácico', e: 'Los mamíferos ocuparon los espacios libres y dominaron la era Cenozoica' },
+    { c: 'Las glaciaciones (Edad de Hielo) de la era Cuaternaria', e: 'Humanos y animales tuvieron que adaptarse al frío extremo' },
+    { c: 'El descubrimiento del fuego por el Homo sapiens', e: 'El ser humano pudo cocinar, abrigarse y desarrollar la civilización' },
+    { c: 'La aparición de plantas con flores y primeras aves en el Mesozoico', e: 'Aumentó la diversidad de la vida terrestre' },
+];
+// ── II. Razonamiento cronológico (eventos con su antigüedad en M.a. para ordenar)
+const critTimelineBank = [
+    { ev: 'Formación de la Tierra (4,600 M.a.)', age: 4600 },
+    { ev: 'Primeras bacterias en los océanos (Precámbrica)', age: 3500 },
+    { ev: 'Trilobites dominan los mares (Paleozoica)', age: 500 },
+    { ev: 'Extinción del Pérmico (90% de especies)', age: 250 },
+    { ev: 'Dinosaurios dominan la Tierra (Mesozoica)', age: 150 },
+    { ev: 'Meteorito extingue a los dinosaurios (66 M.a.)', age: 66 },
+    { ev: 'Mamuts y tigres dientes de sable (Cenozoica)', age: 30 },
+    { ev: 'Aparición del Homo sapiens (Cuaternaria)', age: 0.3 },
+];
+// ── III. Detective de fósiles (Observación de Campo → era + rasgo)
+const critFossilBank = [
+    { clue: 'Un trilobite incrustado en una roca formada en el fondo del mar.', era: 'Paleozoica', rasgo: 'El trilobite es el fósil guía de los mares de la era Paleozoica.' },
+    { clue: 'Un mamut lanudo congelado, con una gruesa capa de pelo.', era: 'Cenozoica', rasgo: 'Los mamíferos gigantes y peludos como el mamut dominaron la era Cenozoica.' },
+    { clue: 'La huella de un reptil gigante de más de diez metros de largo.', era: 'Mesozoica', rasgo: 'Los dinosaurios (reptiles gigantes) reinaron en la era Mesozoica.' },
+    { clue: 'Una antigua capa de hielo sobre la cima de las montañas.', era: 'Cuaternaria', rasgo: 'Las glaciaciones o Edad de Hielo ocurrieron en la era Cuaternaria.' },
+    { clue: 'Bacterias simples en rocas muy antiguas, sin señales de oxígeno.', era: 'Precámbrica', rasgo: 'Las primeras bacterias surgieron en la Precámbrica, cuando no había oxígeno.' },
+    { clue: 'El fósil de un pez primitivo, uno de los primeros vertebrados.', era: 'Paleozoica', rasgo: 'Los primeros peces y vertebrados aparecieron en la era Paleozoica.' },
+    { clue: 'Herramientas de piedra junto a restos de una hoguera.', era: 'Cuaternaria', rasgo: 'El Homo sapiens creó herramientas y descubrió el fuego en la Cuaternaria.' },
+    { clue: 'El fósil de un ave primitiva junto a las primeras plantas con flores.', era: 'Mesozoica', rasgo: 'Las primeras aves y las flores aparecieron en la era Mesozoica.' },
+];
+const critEraOptions = ['Precámbrica', 'Paleozoica', 'Mesozoica', 'Cenozoica', 'Cuaternaria'];
+// ── IV. Detecta el error (afirmaciones falsas calcadas del banco V/F)
+const critErrBank = [
+    { bad: 'Los dinosaurios vivieron en la era Cuaternaria.', key: 'Mesozoica', fix: 'Los dinosaurios vivieron en la era Mesozoica.' },
+    { bad: 'Los trilobites son fósiles del Mesozoico.', key: 'Paleozoico', fix: 'Los trilobites son fósiles del Paleozoico (era Paleozoica).' },
+    { bad: 'Las glaciaciones ocurrieron en el Precámbrico.', key: 'Cuaternario', fix: 'Las glaciaciones ocurrieron en el Cuaternario (era Cuaternaria).' },
+    { bad: 'Las primeras bacterias surgieron en la era Paleozoica.', key: 'Precámbrica', fix: 'Las primeras bacterias surgieron en la era Precámbrica.' },
+    { bad: 'La era Paleozoica se conoce como «Era de los Dinosaurios».', key: 'Mesozoica', fix: 'La era Mesozoica se conoce como «Era de los Dinosaurios».' },
+    { bad: 'El ser humano apareció en la era Mesozoica.', key: 'Cuaternaria', fix: 'El ser humano apareció en la era Cuaternaria.' },
+    { bad: 'Pangea existía en la era Cenozoica.', key: 'Mesozoica', fix: 'Pangea existía en la era Mesozoica.' },
+    { bad: 'Un volcán causó la extinción de los dinosaurios.', key: 'meteorito', fix: 'Un meteorito causó la extinción de los dinosaurios.' },
+];
+// ── V. Argumenta y aplica (desarrollo, con respuesta modelo para la pauta)
+const critArgBank = [
+    { q: '¿Por qué la extinción del Cretácico abrió paso al dominio de los mamíferos?', model: 'Al extinguirse los dinosaurios por el meteorito, quedaron libres muchos espacios y recursos; los mamíferos, que antes eran pequeños, crecieron, se diversificaron y llegaron a dominar la era Cenozoica.' },
+    { q: '¿Qué evidencia usan los científicos (fósiles, estratos) para reconstruir las eras aunque no existieran humanos que las observaran?', model: 'Estudian los fósiles conservados en las rocas y el orden de las capas o estratos: las capas más profundas son más antiguas. Comparando fósiles y estratos deducen qué seres vivos existieron y en qué orden.' },
+    { q: 'Explica por qué la vida tardó tanto en salir de los océanos hacia la tierra firme.', model: 'En la era Precámbrica la atmósfera no tenía oxígeno y la tierra era hostil, por eso la vida solo podía sobrevivir en el agua. Solo cuando se formó oxígeno y una atmósfera protectora la vida pudo colonizar la tierra firme.' },
+    { q: '¿Por qué decimos que la era Precámbrica es la más larga, aunque parezca que "no pasó nada"?', model: 'Duró desde hace 4,600 hasta 540 millones de años, miles de millones de años. En ella se formó la Tierra, los océanos, la atmósfera y surgió la primera vida: fueron cambios enormes, pero muy lentos.' },
+    { q: 'La Tierra tiene 4,600 M.a. y el ser humano apareció hace unos 2.6 M.a. ¿Qué te dice esta comparación de magnitudes sobre nuestra historia?', model: 'El ser humano existe hace muy poco comparado con la edad de la Tierra: si los 4,600 M.a. fueran un solo día, el humano aparecería en los últimos segundos. Nuestra historia es diminuta frente a la del planeta.' },
+];
+
+function _critEraSelect(cls, dataAttr, i) {
+    return `<select class="${cls}" ${dataAttr}="${i}" aria-label="Era observada ${i + 1}"><option value="">— elige la era —</option>${critEraOptions.map(e => `<option value="${e}">${e}</option>`).join('')}</select>`;
+}
+
+function genEvalCrit() {
+    sfx('click');
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const _sC = document.getElementById('evalCritFormaSel');
+    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
+    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
+    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    saveProgress();
+    document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Las Eras Geológicas`;
+    evalCritAnsVisible = false;
+    const out = document.getElementById('evalCritOut'); out.innerHTML = '';
+
+    // Barra de distribución + progresión de dificultad
+    const bar = document.createElement('div'); bar.className = 'eval-score-bar';
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: de relacionar y ordenar (I–II) a interpretar evidencia (III), corregir errores (IV) y argumentar (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Causa-efecto 20</span><span class="eval-score-pill esp-tf">II. Cronología 20</span><span class="eval-score-pill esp-mc">III. Fósiles 20</span><span class="eval-score-pill esp-pr">IV. Error 15</span><span class="eval-score-pill esp-cp">V. Argumenta 25</span></div>`;
+    out.appendChild(bar);
+
+    // ── I. Causa y consecuencia (matching, 4×5=20)
+    const ccItems = _pickF(critCCBank, 4, rngC);
+    const ccDefs = _shuffleF(ccItems, rngC);
+    const ccLetters = ['A', 'B', 'C', 'D'];
+    const ccCorrect = ccItems.map(it => ccLetters[ccDefs.findIndex(d => d.e === it.e)]);
+    let ccLeft = '<div class="crit-match-col"><h5>🎯 Causa</h5>';
+    ccItems.forEach((it, i) => { ccLeft += `<div class="crit-match-row"><span class="crit-match-n">${i + 1}.</span> <select class="crit-cc-select" data-cc="${i}" aria-label="Consecuencia de la causa ${i + 1}"><option value="">—</option>${ccLetters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${it.c}</div>`; });
+    ccLeft += '</div>';
+    let ccRight = '<div class="crit-match-col"><h5>💥 Consecuencia</h5>';
+    ccDefs.forEach((it, i) => { ccRight += `<div class="crit-match-row"><span class="crit-match-n">${ccLetters[i]}.</span> ${it.e}</div>`; });
+    ccRight += '</div>';
+    const s1 = document.createElement('div');
+    s1.innerHTML = `<div class="eval-section-title">I. Causa y consecuencia <span class="eval-pts">20 pts · 5 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Une cada causa con su consecuencia real escribiendo la letra correcta. Luego, en tu cuaderno, explica una de las relaciones.</p><div class="crit-match-grid">${ccLeft}${ccRight}</div><div class="crit-pauta">${ccItems.map((it, i) => (i + 1) + '→' + ccCorrect[i]).join(' · ')}</div><div class="eval-item-feedback" id="critFbCc" aria-live="polite"></div></div>`;
+    out.appendChild(s1);
+
+    // ── II. Razonamiento cronológico (ordenar 5 eventos, 20)
+    const tlItems = _pickF(critTimelineBank, 5, rngC);
+    const tlOrder = [...tlItems].sort((a, b) => b.age - a.age); // más antiguo (mayor edad) primero
+    const tlCorrect = tlItems.map(it => tlOrder.indexOf(it) + 1);
+    const posOpts = [1, 2, 3, 4, 5];
+    let tlRows = '';
+    tlItems.forEach((it, i) => { tlRows += `<div class="crit-tl-row"><select class="crit-tl-select" data-tl="${i}" aria-label="Posición cronológica de: ${it.ev}"><option value="">#</option>${posOpts.map(p => `<option value="${p}">${p}</option>`).join('')}</select> <span class="crit-tl-ev">${it.ev}</span></div>`; });
+    const s2 = document.createElement('div');
+    s2.innerHTML = `<div class="eval-section-title">II. Razonamiento cronológico <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Ordena los eventos en la línea del tiempo: escribe 1 al más antiguo y 5 al más reciente. Después justifica en tu cuaderno cuál es el más antiguo y cuál el más reciente, y compara las magnitudes (4,600 M.a. frente a 2.6 M.a.).</p>${tlRows}<div class="crit-pauta">Orden correcto (antiguo → reciente): ${tlOrder.map((it, i) => (i + 1) + '. ' + it.ev).join(' · ')}. La formación de la Tierra (4,600 M.a.) es lo más antiguo; el Homo sapiens, lo más reciente. 4,600 M.a. es casi 1,770 veces más que 2.6 M.a.</div><div class="eval-item-feedback" id="critFbTl" aria-live="polite"></div></div>`;
+    out.appendChild(s2);
+
+    // ── III. Detective de fósiles (4 pistas → era, 4×5=20)
+    const foItems = _pickF(critFossilBank, 4, rngC);
+    let foRows = '';
+    foItems.forEach((it, i) => { foRows += `<div class="crit-fossil-item"><div class="crit-scenario"><strong>🔎 Observación de Campo ${i + 1}:</strong> ${it.clue}</div><div class="crit-q-block"><div class="crit-q-label">Era: ${_critEraSelect('crit-fossil-select', 'data-fossil', i)}</div><textarea class="crit-textarea" rows="2" aria-label="Justifica la era del fósil ${i + 1}" placeholder="Justifica con el rasgo observado..."></textarea><div class="crit-pauta">Era ${it.era}. ${it.rasgo}</div><div class="eval-item-feedback" id="critFbFo${i}" aria-live="polite"></div></div></div>`; });
+    const s3 = document.createElement('div');
+    s3.innerHTML = `<div class="eval-section-title">III. Detective de fósiles: interpreta la evidencia <span class="eval-pts">20 pts · 5 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Cada pista es una evidencia real. Deduce a qué era pertenece y justifica con el rasgo observado.</p>${foRows}</div>`;
+    out.appendChild(s3);
+
+    // ── IV. Detecta el error (3 afirmaciones falsas, 3×5=15)
+    const erItems = _pickF(critErrBank, 3, rngC);
+    let erRows = '';
+    erItems.forEach((it, i) => { erRows += `<div class="crit-q-block"><div class="crit-scenario">❌ ${it.bad}</div><div class="crit-q-label">Corrección:</div><textarea class="crit-textarea" data-err="${i}" rows="2" aria-label="Corrige la afirmación ${i + 1}" placeholder="Reescribe la afirmación correcta..."></textarea><div class="crit-pauta">${it.fix}</div><div class="eval-item-feedback" id="critFbEr${i}" aria-live="polite"></div></div>`; });
+    const s4 = document.createElement('div');
+    s4.innerHTML = `<div class="eval-section-title">IV. Detecta el error <span class="eval-pts">15 pts · 5 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Cada afirmación es falsa. Reescríbela de forma correcta con tus propias palabras.</p>${erRows}</div>`;
+    out.appendChild(s4);
+
+    // ── V. Argumenta y aplica (3 preguntas de desarrollo, autoevaluación 25)
+    const agItems = _pickF(critArgBank, 3, rngC);
+    let agRows = '';
+    agItems.forEach((it, i) => { agRows += `<div class="crit-q-block"><div class="crit-q-label">${i + 1}. ${it.q}</div><textarea class="crit-textarea" rows="3" aria-label="Respuesta de desarrollo ${i + 1}"></textarea><div class="crit-pauta">Respuesta sugerida: ${it.model}</div></div>`; });
+    const s5 = document.createElement('div');
+    s5.innerHTML = `<div class="eval-section-title">V. Argumenta y aplica <span class="eval-pts">25 pts</span></div><div class="eval-item">${agRows}<div class="crit-rubric"><strong>📋 Rúbrica (3 criterios):</strong> claridad de la idea · uso correcto de conceptos de la misión (eras, fósiles, extinciones) · justificación con evidencia. <em>Bien = pts altos; incompleto = pts medios.</em></div><div class="crit-selfscore"><label for="critScoreV">Obtenido (autoevaluación):</label><input type="number" id="critScoreV" class="crit-score-input" min="0" max="25" value="0"> <span>de 25 pts</span></div></div>`;
+    out.appendChild(s5);
+
+    window._evalCritData = {
+        cc: { items: ccItems, defs: ccDefs, letters: ccLetters, correct: ccCorrect },
+        tl: { items: tlItems, order: tlOrder, correct: tlCorrect },
+        fo: foItems, er: erItems, ag: agItems
+    };
+    const totalPanel = document.createElement('div'); totalPanel.id = 'evalCritTotalResult'; totalPanel.className = 'eval-auto-result';
+    totalPanel.innerHTML = '<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve las secciones I–IV en pantalla, autoevalúa la V con la rúbrica y presiona <em>Calificar prueba</em>. La impresión conserva el formato limpio para papel.';
+    out.appendChild(totalPanel);
+    fin('s-evaluacion');
+}
+function toggleEvalCritAns() {
+    evalCritAnsVisible = !evalCritAnsVisible;
+    document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el => el.style.display = evalCritAnsVisible ? 'block' : 'none');
+    sfx('click');
+}
+function _setCritFb(id, ok, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
+}
+function gradeEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const d = window._evalCritData;
+    const detail = { cc: 0, tl: 0, fo: 0, er: 0, ag: 0 };
+
+    // I. Causa y consecuencia (matching, 5 pts c/u)
+    d.cc.correct.forEach((letter, i) => {
+        const sel = document.querySelector(`[data-cc="${i}"]`);
+        const ok = !!sel && sel.value === letter;
+        if (sel) { sel.classList.toggle('eval-input-ok', ok); sel.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.cc += 5;
+    });
+    const ccHits = detail.cc / 5;
+    _setCritFb('critFbCc', ccHits === 4, ccHits === 4 ? 'Correcto. +20 pts' : `${ccHits}/4 correctas. R/ ${d.cc.correct.map((l, i) => (i + 1) + '→' + l).join(' · ')}`);
+
+    // II. Razonamiento cronológico (4 pts por posición correcta)
+    d.tl.correct.forEach((pos, i) => {
+        const sel = document.querySelector(`[data-tl="${i}"]`);
+        const ok = !!sel && Number(sel.value) === pos;
+        if (sel) { sel.classList.toggle('eval-input-ok', ok); sel.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.tl += 4;
+    });
+    const tlHits = detail.tl / 4;
+    _setCritFb('critFbTl', tlHits === 5, tlHits === 5 ? 'Correcto. +20 pts' : `${tlHits}/5 en su lugar. R/ ${d.tl.order.map((it, i) => (i + 1) + '. ' + it.ev).join(' · ')}`);
+
+    // III. Detective de fósiles (5 pts c/u)
+    d.fo.forEach((it, i) => {
+        const sel = document.querySelector(`[data-fossil="${i}"]`);
+        const ok = !!sel && sel.value === it.era;
+        if (sel) { sel.classList.toggle('eval-input-ok', ok); sel.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.fo += 5;
+        _setCritFb('critFbFo' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ Era ' + it.era);
+    });
+
+    // IV. Detecta el error (5 pts c/u; correcto si el texto contiene la palabra clave)
+    d.er.forEach((it, i) => {
+        const ta = document.querySelector(`[data-err="${i}"]`);
+        const student = normalizeEvalAnswer(ta ? ta.value : '');
+        const key = normalizeEvalAnswer(it.key);
+        const ok = !!student && student.includes(key);
+        if (ta) { ta.classList.toggle('eval-input-ok', ok); ta.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.er += 5;
+        _setCritFb('critFbEr' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + it.fix);
+    });
+
+    // V. Argumenta y aplica (autoevaluación 0-25)
+    const inpV = document.getElementById('critScoreV');
+    let vScore = parseInt(inpV ? inpV.value : 0) || 0;
+    vScore = Math.max(0, Math.min(25, vScore));
+    if (inpV) inpV.value = vScore;
+    detail.ag = vScore;
+
+    const total = detail.cc + detail.tl + detail.fo + detail.er + detail.ag;
+    const panel = document.getElementById('evalCritTotalResult');
+    if (panel) {
+        panel.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk');
+        panel.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>I. Causa-efecto: ${detail.cc}/20 · II. Cronología: ${detail.tl}/20 · III. Fósiles: ${detail.fo}/20 · IV. Error: ${detail.er}/15 · V. Argumenta: ${detail.ag}/25</span><br><em>Las secciones I–IV se califican solas; la V la autoevalúas con la rúbrica. Compara siempre con la Pauta.</em>`;
+    }
+    const formKey = 'crit_' + (window._currentEvalCritForm || 1);
+    if (total >= 70) { if (!xpTracker.critWin.has(formKey)) { xpTracker.critWin.add(formKey); pts(8); } showToast('🎯 Pensamiento crítico: ' + total + '/100'); }
+    else showToast('🧮 Prueba calificada: ' + total + '/100. Revisa lo marcado.');
+}
+function printEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const forma = window._currentEvalCritForm || 1;
+    const d = window._evalCritData;
+    const lines = (n) => Array(n).fill('<div class="ln"></div>').join('');
+
+    // I. Causa y consecuencia (dos columnas, línea para la letra)
+    let colL = '<div class="pr-col"><div class="pr-head">🎯 Causa</div>';
+    d.cc.items.forEach((it, i) => { colL += `<div class="pr-item"><span class="pr-num">${i + 1}.</span><span class="pr-line"></span>${it.c}</div>`; });
+    colL += '</div>';
+    let colR = '<div class="pr-col"><div class="pr-head">💥 Consecuencia</div>';
+    d.cc.defs.forEach((it, i) => { colR += `<div class="pr-item"><span class="pr-num">${d.cc.letters[i]}.</span>${it.e}</div>`; });
+    colR += '</div>';
+    let s1 = `<div class="sec-title"><span>I. Causa y consecuencia</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Escribe la letra de la consecuencia que corresponde a cada causa.</p><div class="pr-grid">${colL}${colR}</div>`;
+
+    // II. Razonamiento cronológico
+    let s2 = `<div class="sec-title"><span>II. Razonamiento cronológico</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Escribe 1 (más antiguo) a 5 (más reciente) frente a cada evento. Luego justifica cuál es el más antiguo y el más reciente, y compara 4,600 M.a. con 2.6 M.a.</p>`;
+    d.tl.items.forEach(it => { s2 += `<div class="cp-row"><span class="tf-blank"></span><span class="cp-text">${it.ev}</span></div>`; });
+    s2 += lines(2);
+
+    // III. Detective de fósiles
+    let s3 = `<div class="sec-title"><span>III. Detective de fósiles: interpreta la evidencia</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div>`;
+    d.fo.forEach((it, i) => { s3 += `<p class="crit-print-scenario"><strong>Observación ${i + 1}:</strong> ${it.clue}</p><p class="crit-print-q">Era: <span class="cp-blank"></span> · Justificación:</p>${lines(1)}`; });
+
+    // IV. Detecta el error
+    let s4 = `<div class="sec-title"><span>IV. Detecta el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 15 pts</span></div></div><p class="crit-print-q">Cada afirmación es falsa. Reescríbela de forma correcta.</p>`;
+    d.er.forEach((it, i) => { s4 += `<p class="crit-print-scenario">❌ ${it.bad}</p>${lines(1)}`; });
+
+    // V. Argumenta y aplica
+    let s5 = `<div class="sec-title"><span>V. Argumenta y aplica</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25 pts</span></div></div><p class="crit-print-q">Responde con tus propias palabras. Se evalúa: claridad · uso de conceptos de la misión · justificación.</p>`;
+    d.ag.forEach((it, i) => { s5 += `<p class="crit-print-q"><strong>${i + 1}.</strong> ${it.q}</p>${lines(2)}`; });
+
+    // Pauta
+    let pR = '';
+    pR += `<div class="p-sec"><div class="p-ttl">I. Causa y consecuencia</div>${d.cc.items.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}→${d.cc.correct[i]}:</strong> ${it.c} → ${it.e}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">II. Razonamiento cronológico</div>${d.tl.order.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.ev}</div>`).join('')}<div class="p-crit-line">Más antiguo: formación de la Tierra (4,600 M.a.); más reciente: el evento de menor antigüedad. 4,600 M.a. ≈ 1,770 × 2.6 M.a.</div></div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">III. Detective de fósiles</div>${d.fo.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. Era ${it.era}:</strong> ${it.rasgo}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">IV. Detecta el error</div>${d.er.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.fix}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Argumenta y aplica (respuestas sugeridas)</div>${d.ag.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.model}</div>`).join('')}</div>`;
+
+    const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico Las Eras Geológicas · Forma ${forma}</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 6mm;width:201.9mm;margin:0 auto;}
+.ph{margin-bottom:0.35rem;}
+.ph h2{font-size:11.5pt;font-weight:700;text-align:center;margin-bottom:0.25rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.15rem 0.45rem;margin:0.28rem 0 0.12rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #27ae60;height:12px;}
+.obt-pct{white-space:nowrap;}
+.crit-print-scenario{font-size:10pt;background:#e8f8f5;border-left:3px solid #27ae60;padding:0.18rem 0.5rem;margin:0.12rem 0 0.15rem;line-height:1.3;}
+.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}
+.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:3px;}
+.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-text{flex:1;}
+.cp-blank{display:inline-block;min-width:120px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.12rem;}
+.pr-head{font-size:9.5pt;font-weight:700;color:#555;margin-bottom:0.15rem;}
+.pr-item{font-size:10.5pt;padding:0.18rem 0.35rem;background:#e8f8f5;border-radius:3px;margin-bottom:0.13rem;display:flex;align-items:center;gap:0.2rem;line-height:1.28;break-inside:avoid;page-break-inside:avoid;}
+.pr-num{font-weight:700;color:#27ae60;min-width:19px;flex-shrink:0;}
+.pr-line{display:inline-block;min-width:26px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}
+.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#27ae60;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:13pt;font-weight:700;color:#27ae60;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}
+.p-ttl{font-size:11pt;font-weight:700;color:#27ae60;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-crit-line{font-size:10.5pt;color:#007a00;margin-bottom:0.16rem;line-height:1.35;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
+</style></head><body><div id="evalPage">
+<div class="ph">
+  <h2>Evaluación Competencial · Pensamiento Crítico · Las Eras Geológicas · Educación Básica · Ciencias Naturales</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · I. Causa-efecto 20 · II. Cronología 20 · III. Fósiles 20 · IV. Error 15 · V. Argumenta 25 · Forma ${forma}</p>
+</div>
+${s1}${s2}${s3}${s4}${s5}
+<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
+</div><div class="pauta-wrap" id="pautaPage">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Las Eras Geológicas · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 15 · V 25 — secciones abiertas: usar como guía de corrección</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
     const win = window.open('', '_blank', '');
     if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
     win.document.write(doc);

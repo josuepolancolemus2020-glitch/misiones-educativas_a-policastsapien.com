@@ -19,6 +19,23 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="css/angulos.css">
+  <style>
+    /* Prueba Operativa — toggle de pestañas y estilos propios (patrón división-decimales) */
+    .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+    .eval-mode-btn{flex:1;min-width:160px;font-family:'Fredoka',sans-serif;font-size:0.9rem;padding:0.65rem 1rem;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--gray);cursor:pointer;transition:all 0.2s;}
+    .eval-mode-btn:hover{border-color:var(--pri);}
+    .eval-mode-btn.active{border-color:var(--pri);background:var(--pri-gl);color:var(--pri);font-weight:700;}
+    .opx-row{display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;}
+    .opx-expr{font-family:'Fira Code',monospace;font-weight:600;font-size:1rem;color:var(--dark);}
+    .evord-dir{font-family:'Fredoka',sans-serif;font-size:0.88rem;color:var(--pri);margin-bottom:0.5rem;font-weight:700;}
+    .evord-list{display:flex;flex-direction:column;gap:0.35rem;}
+    .evord-item{display:flex;align-items:center;gap:0.6rem;background:var(--pri-gl);border-radius:8px;padding:0.45rem 0.7rem;}
+    .evord-num{font-family:'Fira Code',monospace;font-weight:700;flex:1;color:var(--dark);}
+    .evord-arrows{display:flex;gap:0.3rem;}
+    .sort-arrow{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:0.15rem 0.4rem;cursor:pointer;font-size:0.75rem;color:var(--pri);}
+    .sort-arrow:hover:not(:disabled){background:var(--pri-gl);}
+    .sort-arrow:disabled{opacity:0.3;cursor:default;}
+  </style>
 </head>
 
 <body>
@@ -491,6 +508,11 @@
         </div>
       </div>
 
+      <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+        <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Prueba Conceptual</button>
+        <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+      </div>
+      <div id="evalConceptWrap">
       <div class="card ac-purple">
         <span class="bloom-badge bl-e">🏆 Nivel Bloom: Evaluar</span>
         <h2 id="eval-screen-title">📝 Evaluación Final — Ángulos y Bisectriz</h2>
@@ -505,6 +527,27 @@
         </div>
         <div id="evalOut"></div>
       </div>
+      </div>
+      <div id="evalOpWrap" style="display:none;">
+      <div class="card ac-amber">
+        <div class="eval-print-header">
+          <h2>Examen de Matemáticas — Prueba Operativa · Ángulos y Bisectriz · Educación Básica</h2>
+          <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+          <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+          <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 20 pts · II: 10 pts · III: 20 pts · IV: 30 pts · V: 20 pts</p>
+        </div>
+        <span class="bloom-badge bl-e">🏆 Nivel Bloom: Aplicar</span>
+        <h2 id="evalop-screen-title">📐 Prueba Operativa — Ángulos y Bisectriz</h2>
+        <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Clasifica, calcula bisectrices y resuelve problemas con ángulos. Responde en las casillas y presiona <strong>Calificar prueba</strong> para autoevaluarte. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+        <div class="eval-controls">
+          <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+          <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+          <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+          <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+        </div>
+        <div id="evalOpOut"></div>
+      </div>
+      </div>
       <button class="next-sec-btn" onclick="openDiploma()"
         style="background:linear-gradient(135deg,var(--pri),var(--sec));">
         <span class="nsb-icon">🎓</span>
@@ -517,6 +560,11 @@
     <div class="sec" id="s-recursos" role="tabpanel">
       <div class="card ac-blue">
         <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas (teoría, actividades y evaluación) para imprimir o resolver antes del examen.</p>
+      <a href="../../fichas/ficha-angulos-bisectriz.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
         <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
         <a href="https://drive.google.com/drive/folders/1E1PrdaFvhQyuyTMxVQvIt6CS1_CNJBi_?usp=sharing"
            target="_blank" rel="noopener noreferrer"

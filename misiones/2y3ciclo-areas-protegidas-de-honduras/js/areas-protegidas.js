@@ -29,6 +29,7 @@ function fb(id,msg,isOk){
 const SAVE_KEY='bosques_areas_protegidas_v1';
 let xp=0, MXP=200, done=new Set(), evalAnsVisible=false;
 let evalFormNum=1;
+let evalCritFormNum=1, evalCritAnsVisible=false;
 let unlockedAch=[];
 let darkMode=false;
 let prevLevel=0;
@@ -66,7 +67,7 @@ function initTheme(){const s=localStorage.getItem(SAVE_KEY+'_theme');const sys=w
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress(){
-  try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSections:Array.from(done),unlockedAch,evalFormNum,xp}));}catch(e){}
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSections:Array.from(done),unlockedAch,evalFormNum,evalCritFormNum,xp}));}catch(e){}
 }
 function loadProgress(){
   try{
@@ -79,6 +80,7 @@ function loadProgress(){
     });
     if(s.unlockedAch&&Array.isArray(s.unlockedAch)) unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum) evalFormNum=s.evalFormNum;
+    if(s.evalCritFormNum) evalCritFormNum=s.evalCritFormNum;
     if(s.xp!==undefined){xp=s.xp;updateXPBar();}
   }catch(e){}
 }
@@ -1179,6 +1181,259 @@ ${s1}${s2}${s3}${s4}
   win.document.write(doc);
   win.document.close();
   setTimeout(()=>win.print(),400);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PRUEBA DE PENSAMIENTO CRÍTICO — El Bosque y las Áreas Protegidas
+// (mismo motor determinista: Forma N ⇒ semilla _evalRng(200000+cf))
+// Secciones: I.20 + II.20 + III.15 + IV.15 + V.30 = 100 pts
+// ═══════════════════════════════════════════════════════════════════
+function evalSwitchMode(mode){
+  sfx('click');
+  const cWrap=document.getElementById('evalConceptWrap'),critWrap=document.getElementById('evalCritWrap');
+  const cBtn=document.getElementById('evalModeBtnConcept'),critBtn=document.getElementById('evalModeBtnCrit');
+  if(mode==='crit'){
+    if(cWrap)cWrap.style.display='none';if(critWrap)critWrap.style.display='block';
+    if(cBtn){cBtn.classList.remove('active');cBtn.setAttribute('aria-selected','false');}
+    if(critBtn){critBtn.classList.add('active');critBtn.setAttribute('aria-selected','true');}
+    if(!window._evalCritData)genEvalCrit();
+  }else{
+    if(critWrap)critWrap.style.display='none';if(cWrap)cWrap.style.display='block';
+    if(critBtn){critBtn.classList.remove('active');critBtn.setAttribute('aria-selected','false');}
+    if(cBtn){cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');}
+  }
+}
+
+// ── I. Causa y consecuencia ecológica (5 × 4 = 20) — hechos reales de la misión
+const critCauseEffectBank=[
+  {c:'Se tala el bosque nublado en la cuenca del Parque Nacional La Tigra, sobre Tegucigalpa.',o:['El agua potable de la capital aumenta','Baja el suministro del 40% del agua potable de Tegucigalpa','El nivel del mar sube en la costa','El bosque de pino crece más rápido'],a:1},
+  {c:'La industria camaronera drena un manglar para construir piscinas de camarón.',o:['Se crea un nuevo bosque nublado','Se pierde el criadero natural de peces y mariscos','El quetzal migra a la zona','Aumentan las orquídeas del manglar'],a:1},
+  {c:'Un incendio forestal avanza sobre un bosque de pino-roble ya debilitado por el gorgojo descortezador.',o:['Se regenera el bosque latifoliado','Mueren grandes extensiones de pino y se pierde fauna y madera','Se protege la costa de huracanes','Aumenta el agua de los manglares'],a:1},
+  {c:'Se deforestan las laderas del bosque nublado que captura la neblina.',o:['Los ríos llevan más agua en verano','Los ríos se secan en verano al perder la captura de niebla','El Cerro Las Minas crece en altura','Aparecen más manglares'],a:1},
+  {c:'La ganadería extensiva reemplaza el bosque en las montañas del interior.',o:['Mejora la biodiversidad del suelo','Se produce erosión del suelo y pérdida de cobertura forestal','Se forma un nuevo corredor biológico','El suelo retiene más agua'],a:1},
+  {c:'El narcotráfico abre pistas clandestinas y coloniza tierras dentro de la Reserva Río Plátano.',o:['La UNESCO amplía el reconocimiento','Se destruye el bosque y la Reserva entra en la Lista de Patrimonio en Peligro','Aumenta la población de jaguares','Se recupera el manglar costero'],a:1},
+  {c:'La caza furtiva persigue al quetzal en los bosques nublados de Celaque.',o:['Sube la población del ave emblema','Disminuye la población del quetzal, ave emblema del bosque nublado','Se protege mejor la orquídea','Se enfría el clima local'],a:1},
+  {c:'Se realiza tala ilegal de caoba y cedro en el bosque latifoliado de La Mosquitia.',o:['Aumenta el dosel del bosque','Se pierden maderas preciosas y el hábitat del jaguar y el tapir','El manglar gana territorio','Crece el bosque de pino'],a:1},
+  {c:'Honduras pierde más del 50% de la cobertura de sus manglares costeros.',o:['La costa queda mejor protegida','Se pierde la barrera contra huracanes y el criadero de peces','Sube la captura de niebla en la montaña','El Cerro Las Minas se erosiona'],a:1},
+  {c:'La agricultura migratoria quema y abandona parcelas dentro de un área protegida.',o:['El suelo se vuelve más fértil de forma permanente','Se degrada el suelo, se fragmenta el hábitat y se pierde biodiversidad','Se forma un bosque nublado nuevo','Aumenta el caudal de los ríos'],a:1},
+];
+
+// ── II. Analiza el caso y decide (2 × 10 = 20) — mini-casos abiertos
+const critCaseBank=[
+  {t:'Río Plátano y la UNESCO',
+   sc:'La Reserva de Biosfera Río Plátano (Patrimonio de la Humanidad desde 1982) estuvo en la Lista del Patrimonio Mundial en Peligro de la UNESCO entre 2011 y 2018, por el avance del narcotráfico, la tala ilegal y la colonización no planificada.',
+   q:'¿Qué medidas ayudaron a que la Reserva fuera retirada de la Lista en Peligro? Propón y justifica al menos dos.',
+   g:'Combatir el narcotráfico y cerrar las pistas clandestinas; frenar la colonización y el avance de la frontera agrícola-ganadera; reforzar la vigilancia del ICF junto con los pueblos indígenas (Pech, Miskitu, Tawahka y Garífuna); aplicar planes de manejo y monitoreo; cooperación internacional. Cada medida ataca una de las causas que pusieron la Reserva en peligro.'},
+  {t:'Camaronera contra manglar',
+   sc:'Una empresa quiere drenar un manglar costero para construir piscinas de camarón. El manglar es criadero de peces y mariscos y protege la costa de los huracanes.',
+   q:'Evalúa estas 3 medidas y elige la mejor, justificando tu decisión: (1) permitir el proyecto sin límites; (2) prohibir toda actividad económica; (3) regular el cultivo fuera del manglar y restaurar las zonas dañadas.',
+   g:'La medida 3 es la más equilibrada: conserva el manglar (criadero del 80% de los peces comerciales y barrera contra huracanes) y a la vez permite actividad económica ordenada. La 1 destruye la seguridad alimentaria y la defensa costera; la 2 ignora el sustento de las comunidades pesqueras. La 3 concilia conservación y economía.'},
+  {t:'Gorgojo en el pino-roble',
+   sc:'En un bosque de pino-roble aparece un brote del gorgojo descortezador, la misma plaga que devastó millones de hectáreas entre 2000 y 2003. El bosque además sufre incendios cada verano.',
+   q:'¿Qué acciones recomendarías para frenar el daño y proteger el bosque? Justifica al menos dos.',
+   g:'Cortar y retirar los árboles infestados para frenar el avance del gorgojo; establecer rondas cortafuego y brigadas contra incendios; monitoreo temprano de la plaga; reforestación de las zonas afectadas; control de la tala y la ganadería que debilitan el bosque. Cada acción reduce una causa concreta de la pérdida del pino.'},
+  {t:'Agua de Tegucigalpa',
+   sc:'El Parque Nacional La Tigra provee cerca del 40% del agua potable de Tegucigalpa. La ciudad crece y algunas urbanizaciones presionan las laderas del parque.',
+   q:'¿Qué decisiones tomarías como autoridad para proteger el agua de la capital? Propón y justifica al menos dos.',
+   g:'Prohibir nuevas construcciones dentro del área protegida y su zona de amortiguamiento; reforestar y proteger el bosque nublado que captura la neblina; vigilar la tala y los incendios; educar a la población sobre el vínculo bosque-agua. Proteger el bosque garantiza el 40% del agua potable de la capital durante todo el año.'},
+];
+
+// ── III. Interpreta datos y mapa (3 × 5 = 15) — lectura de la barra de datos
+const critDataBank=[
+  {q:'La Reserva Río Plátano cubre 832,000 ha y el Parque La Tigra unas 7,571 ha. ¿Cuál área protegida es mayor?',o:['El Parque La Tigra','La Reserva Río Plátano','Ambas son iguales','No se puede saber'],a:1},
+  {q:'Honduras tiene una cobertura forestal de aprox. 45%. Si cayera al 30%, ¿qué se puede inferir?',o:['Habría más agua y menos erosión','Menos agua disponible, más erosión y menos biodiversidad','El nivel del mar bajaría','No cambiaría nada'],a:1},
+  {q:'El Cerro Las Minas mide 2,849 m y es el punto más alto del país. ¿Qué tipo de bosque predomina en sus zonas altas?',o:['Manglar','Bosque nublado','Bosque seco','Bosque de playa'],a:1},
+  {q:'La Tigra provee el 40% del agua potable de Tegucigalpa. Si se deforesta el parque, ¿qué proporción del agua de la capital queda en riesgo?',o:['Casi nada','Cerca de la mitad del agua potable','Solo el 5%','El agua aumentaría'],a:1},
+  {q:'El bosque de pino-roble cubre ~3.5 millones de ha y es el más extenso; el bosque nublado ocupa las cumbres. ¿Cuál es más extenso en Honduras?',o:['El bosque nublado','El bosque de pino-roble','El manglar','Todos por igual'],a:1},
+  {q:'Río Plátano protege 832,000 ha en La Mosquitia y alberga 4 pueblos indígenas. ¿Qué se infiere de este dato?',o:['Es un área pequeña sin importancia','Es la mayor área protegida del país y de gran valor cultural','Solo protege un tipo de árbol','No tiene biodiversidad'],a:1},
+];
+
+// ── IV. Clasifica y justifica (5 × 3 = 15) — clasificar + escribir una razón
+const critClassifyBank=[
+  {catA:'Tipo de bosque',catB:'Área protegida',
+   items:[{el:'Bosque Nublado',cat:'A'},{el:'Manglar',cat:'A'},{el:'Parque Nacional Celaque',cat:'B'},{el:'Reserva Río Plátano',cat:'B'},{el:'Bosque de Pino-Roble',cat:'A'}],
+   reason:'Escribe UNA razón que explique la diferencia entre un tipo de bosque y un área protegida.',
+   g:'Un tipo de bosque es un ecosistema definido por su vegetación y clima (nublado, manglar, pino-roble); un área protegida es un territorio con límites legales que el Estado conserva (Celaque, Río Plátano). Un área protegida puede contener varios tipos de bosque.'},
+  {catA:'Causa de deforestación',catB:'Consecuencia',
+   items:[{el:'Ganadería extensiva',cat:'A'},{el:'Erosión del suelo',cat:'B'},{el:'Tala ilegal',cat:'A'},{el:'Ríos que se secan',cat:'B'},{el:'Incendios forestales',cat:'A'}],
+   reason:'Escribe UNA razón que explique por qué las causas y las consecuencias no son lo mismo.',
+   g:'Las causas (ganadería, tala, incendios) son las acciones que provocan la pérdida del bosque; las consecuencias (erosión, ríos secos) son los efectos que resultan de esa pérdida. La causa ocurre primero y produce la consecuencia.'},
+  {catA:'Fauna',catB:'Flora',
+   items:[{el:'Quetzal',cat:'A'},{el:'Jaguar',cat:'A'},{el:'Orquídea',cat:'B'},{el:'Ceiba',cat:'B'},{el:'Manatí',cat:'A'}],
+   reason:'Escribe UNA razón que explique la diferencia entre la fauna y la flora de un bosque.',
+   g:'La fauna son los animales del ecosistema (quetzal, jaguar, manatí); la flora son las plantas (orquídea, ceiba). Ambas dependen entre sí: la flora da alimento y refugio a la fauna, y la fauna ayuda a polinizar y dispersar las plantas.'},
+];
+
+// ── V. Argumenta tu postura (30 = rúbrica 3 criterios × 10)
+const critArgueBank=[
+  {q:'¿Por qué el Corredor Biológico Mesoamericano es vital para la supervivencia del jaguar frente al cambio climático?',
+   model:'El Corredor Biológico Mesoamericano conecta ecosistemas desde México hasta Colombia y permite que los animales migren. El jaguar necesita grandes territorios; si los bosques se fragmentan, no puede desplazarse ni encontrar pareja o alimento. Frente al cambio climático, el corredor le permite moverse hacia zonas con mejores condiciones. Honduras aporta sus áreas protegidas (Río Plátano, bosque latifoliado) como conexión. Acción: conservar y reconectar los bosques que forman el corredor.'},
+  {q:'Defiende por qué el bosque nublado captura-niebla debe protegerse para asegurar el agua del país.',
+   model:'El bosque nublado captura el agua de la neblina con sus hojas y musgos y la libera poco a poco a los ríos durante todo el año. Por eso el Parque La Tigra provee el 40% del agua de Tegucigalpa. Si se deforesta, los ríos se secan en verano y las ciudades pierden su fuente de agua. Causa-efecto: menos bosque → menos captura de niebla → menos agua. Acción: proteger y reforestar las cumbres como Celaque y La Tigra.'},
+  {q:'Argumenta por qué proteger los manglares es clave para las comunidades pesqueras y la defensa ante huracanes.',
+   model:'El manglar es el criadero natural de peces y mariscos (cerca del 80% de las especies comerciales del litoral), por lo que sostiene la pesca de las comunidades costeras. Además, sus raíces frenan las olas y protegen la costa de huracanes y erosión. Si se drena para camaroneras, se pierde el alimento y la barrera natural. Causa-efecto: sin manglar → menos peces y costas desprotegidas. Acción: prohibir el drenaje y restaurar los manglares dañados.'},
+];
+const critArgueCriteria=['Usa conceptos de la misión','Conecta la causa con el efecto','Propone una acción de conservación'];
+
+const _critScored=new Set();
+
+function _evalCritFormaSelector(){_injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});}
+
+function genEvalCrit(){
+  sfx('click');
+  _evalCritFormaSelector();
+  const _sC=document.getElementById('evalCritFormaSel');
+  if(_sC&&parseInt(_sC.value,10)) evalCritFormNum=Math.min(EVAL_FORMAS,Math.max(1,parseInt(_sC.value,10)));
+  const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC=_evalRng(200000+cf);
+  evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;_evalCritFormaSelector();saveProgress();
+  const titleEl=document.getElementById('evalcrit-screen-title');
+  if(titleEl) titleEl.textContent=`🧠 Pensamiento Crítico · Forma ${cf} · El Bosque y las Áreas Protegidas`;
+  evalCritAnsVisible=false;
+  const out=document.getElementById('evalCritOut');if(!out)return;out.innerHTML='';
+
+  // Barra de distribución de puntaje
+  const bar=document.createElement('div');bar.className='eval-score-bar';
+  bar.innerHTML='<div><div class="esb-title">🧠 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Dificultad creciente: de identificar consecuencias a argumentar una postura</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Causa-efecto 20</span><span class="eval-score-pill esp-tf">II. Casos 20</span><span class="eval-score-pill esp-mc">III. Datos 15</span><span class="eval-score-pill esp-pr">IV. Clasifica 15</span><span class="eval-score-pill esp-arg">V. Argumenta 30</span></div>';
+  out.appendChild(bar);
+
+  // I. Causa y consecuencia ecológica (5 × 4 = 20) — autocalificable
+  const ce=_pickF(critCauseEffectBank,5,rngC);
+  const s1=document.createElement('div');
+  s1.innerHTML='<div class="eval-section-title">I. Causa y consecuencia ecológica <span class="eval-pts">20 pts · 4 pts c/u</span></div><p class="crit-hint">Lee el hecho (la causa) y elige su consecuencia ecológica correcta.</p>';
+  ce.forEach((it,i)=>{
+    const d=document.createElement('div');d.className='eval-item';
+    const opts=it.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="crit1_${i}" value="${oi}"> ${op}</label>`).join('');
+    d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text"><strong>Causa:</strong> ${it.c}</span></div><div class="eval-mc-opts">${opts}</div><div class="eval-answer">${it.o[it.a]}</div><div class="eval-item-feedback" id="critFb1_${i}" aria-live="polite"></div>`;
+    s1.appendChild(d);
+  });
+  out.appendChild(s1);
+
+  // II. Analiza el caso y decide (2 × 10 = 20) — abierta, autoevaluación
+  const cases=_pickF(critCaseBank,2,rngC);
+  const s2=document.createElement('div');
+  s2.innerHTML='<div class="eval-section-title">II. Analiza el caso y decide <span class="eval-pts">20 pts · 10 pts c/u</span></div>';
+  cases.forEach((c,i)=>{
+    const d=document.createElement('div');d.className='eval-item';
+    d.innerHTML=`<div class="crit-scenario"><strong>Caso ${i+1} — ${c.t}:</strong> ${c.sc}</div><div class="crit-q-block"><div class="crit-q-label">${c.q}</div><textarea class="crit-textarea" rows="3" aria-label="Respuesta del caso ${i+1}"></textarea><div class="crit-pauta">${c.g}</div></div><div class="crit-selfscore"><label for="critSelf2_${i}">Obtenido:</label> <input type="number" id="critSelf2_${i}" class="crit-score-input" data-max="10" min="0" max="10" value="0"> <span>de 10 pts</span></div>`;
+    s2.appendChild(d);
+  });
+  out.appendChild(s2);
+
+  // III. Interpreta datos y mapa (3 × 5 = 15) — autocalificable
+  const data=_pickF(critDataBank,3,rngC);
+  const s3=document.createElement('div');
+  s3.innerHTML='<div class="eval-section-title">III. Interpreta datos y mapa <span class="eval-pts">15 pts · 5 pts c/u</span></div><div class="crit-scenario"><strong>📊 Datos de la misión:</strong> Punto más alto: Cerro Las Minas <strong>2,849 m</strong> (Celaque) · Reserva Río Plátano <strong>832,000 ha</strong> · Cobertura forestal <strong>~45%</strong> · La Tigra provee el <strong>40%</strong> del agua de Tegucigalpa · Bosque de pino-roble <strong>~3.5 millones de ha</strong>.</div>';
+  data.forEach((it,i)=>{
+    const d=document.createElement('div');d.className='eval-item';
+    const opts=it.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="crit3_${i}" value="${oi}"> ${op}</label>`).join('');
+    d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${it.q}</span></div><div class="eval-mc-opts">${opts}</div><div class="eval-answer">${it.o[it.a]}</div><div class="eval-item-feedback" id="critFb3_${i}" aria-live="polite"></div>`;
+    s3.appendChild(d);
+  });
+  out.appendChild(s3);
+
+  // IV. Clasifica y justifica (5 × 3 = 15) — abierta, autoevaluación
+  const clsSet=_pickF(critClassifyBank,1,rngC)[0];
+  const clsItems=_shuffleF(clsSet.items,rngC);
+  const s4=document.createElement('div');
+  const rows=clsItems.map((it,i)=>`<div class="crit-ce-item"><div class="crit-classify-row"><span class="crit-classify-el">${it.el}</span><label class="crit-classify-opt"><input type="radio" name="crit4_${i}" value="A"> ${clsSet.catA}</label><label class="crit-classify-opt"><input type="radio" name="crit4_${i}" value="B"> ${clsSet.catB}</label></div></div>`).join('');
+  s4.innerHTML=`<div class="eval-section-title">IV. Clasifica y justifica <span class="eval-pts">15 pts · 3 pts c/u</span></div><p class="crit-hint">Clasifica cada elemento en <strong>${clsSet.catA}</strong> o <strong>${clsSet.catB}</strong> y luego escribe la razón.</p><div class="eval-item">${rows}<div class="crit-q-block" style="margin-top:0.7rem;"><div class="crit-q-label">${clsSet.reason}</div><textarea class="crit-textarea" rows="2" aria-label="Razón de la clasificación"></textarea><div class="crit-pauta">Clasificación correcta: ${clsSet.items.map(it=>it.el+' → '+(it.cat==='A'?clsSet.catA:clsSet.catB)).join(' · ')}. ${clsSet.g}</div></div><div class="crit-selfscore"><label for="critSelf4">Obtenido:</label> <input type="number" id="critSelf4" class="crit-score-input" data-max="15" min="0" max="15" value="0"> <span>de 15 pts</span></div></div>`;
+  out.appendChild(s4);
+
+  // V. Argumenta tu postura (30 = 3 criterios × 10) — abierta, rúbrica
+  const arg=_pickF(critArgueBank,1,rngC)[0];
+  const s5=document.createElement('div');
+  const rubric=critArgueCriteria.map((cr,i)=>`<div class="crit-rubric-row"><span class="crit-rubric-crit">${i+1}. ${cr}</span> <input type="number" id="critSelf5_${i}" class="crit-score-input" data-max="10" min="0" max="10" value="0"> <span>/ 10</span></div>`).join('');
+  s5.innerHTML=`<div class="eval-section-title">V. Argumenta tu postura <span class="eval-pts">30 pts · rúbrica 3 × 10</span></div><div class="eval-item"><div class="crit-scenario"><strong>Pregunta abierta:</strong> ${arg.q}</div><div class="crit-q-block"><div class="crit-q-label">Escribe tu argumento (mínimo 4 líneas):</div><textarea class="crit-textarea" rows="5" aria-label="Argumento"></textarea><div class="crit-pauta"><strong>Respuesta modelo:</strong> ${arg.model}</div></div><div class="crit-rubric"><div class="crit-rubric-title">📋 Rúbrica de autoevaluación (0–10 por criterio):</div>${rubric}</div></div>`;
+  out.appendChild(s5);
+
+  window._evalCritData={ce,cases,data,cls:{set:clsSet,items:clsItems},arg,cf};
+
+  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';
+  totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde en pantalla, compara con la <em>Pauta</em>, anota tu puntaje en las secciones abiertas y presiona <em>Calificar prueba</em>.';
+  out.appendChild(totalPanel);
+  fin('s-evaluacion');
+}
+
+function toggleEvalCritAns(){
+  evalCritAnsVisible=!evalCritAnsVisible;
+  document.querySelectorAll('#evalCritOut .crit-pauta, #evalCritOut .eval-answer').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');
+  sfx('click');
+}
+
+function gradeEvalCrit(){
+  if(!window._evalCritData){showToast('⚠️ Genera una prueba primero');return;}
+  sfx('click');
+  const d=window._evalCritData;
+  // Secciones cerradas autocalificables
+  let ptsI=0;
+  d.ce.forEach((it,i)=>{
+    const sel=document.querySelector(`input[name="crit1_${i}"]:checked`);
+    const ok=!!sel&&Number(sel.value)===it.a;
+    if(ok) ptsI+=4;
+    setEvalFeedback('critFb1_'+i,ok,ok?'Correcto. +4 pts':'Revisar. R/ '+it.o[it.a]);
+  });
+  let ptsIII=0;
+  d.data.forEach((it,i)=>{
+    const sel=document.querySelector(`input[name="crit3_${i}"]:checked`);
+    const ok=!!sel&&Number(sel.value)===it.a;
+    if(ok) ptsIII+=5;
+    setEvalFeedback('critFb3_'+i,ok,ok?'Correcto. +5 pts':'Revisar. R/ '+it.o[it.a]);
+  });
+  // Secciones abiertas: casillas de autoevaluación (clamp a data-max)
+  const readSelf=sel=>{let v=parseInt(sel.value)||0;const mx=parseInt(sel.dataset.max)||0;v=Math.max(0,Math.min(mx,v));sel.value=v;return v;};
+  let ptsII=0;document.querySelectorAll('#evalCritOut [id^="critSelf2_"]').forEach(s=>ptsII+=readSelf(s));
+  let ptsIV=0;const s4=document.getElementById('critSelf4');if(s4)ptsIV=readSelf(s4);
+  let ptsV=0;document.querySelectorAll('#evalCritOut [id^="critSelf5_"]').forEach(s=>ptsV+=readSelf(s));
+  const total=ptsI+ptsII+ptsIII+ptsIV+ptsV;
+  const panel=document.getElementById('evalCritTotalResult');
+  if(panel){
+    panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');
+    panel.innerHTML=`<strong>Resultado: ${total}/100 pts</strong><br><span>I. Causa-efecto: ${ptsI}/20 · II. Casos: ${ptsII}/20 · III. Datos: ${ptsIII}/15 · IV. Clasifica: ${ptsIV}/15 · V. Argumenta: ${ptsV}/30</span><br><em>Las secciones I y III se califican solas; las secciones II, IV y V se autoevalúan comparando con la Pauta.</em>`;
+  }
+  const formKey='crit_'+(window._currentEvalCritForm||1);
+  if(total>=70){if(!_critScored.has(formKey)){_critScored.add(formKey);pts(8);}showToast('🎯 Pensamiento crítico: '+total+'/100 pts');}
+  else showToast('🧮 Prueba calificada: '+total+'/100 pts. Revisa lo marcado.');
+}
+
+function printEvalCrit(){
+  if(!window._evalCritData){showToast('⚠️ Genera una prueba primero');return;}
+  sfx('click');
+  const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
+  const lines=n=>Array(n).fill('<div class="ln"></div>').join('');
+
+  // ── I. Causa y consecuencia (1-5)
+  let s1=`<div class="sec-title"><span>I. Causa y consecuencia ecológica</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-hint">Lee la causa y encierra la consecuencia ecológica correcta.</p>`;
+  d.ce.forEach((it,i)=>{const opts=it.o.map(op=>`<label class="mc-opt"><input type="radio" name="pc1_${i}"> ${op}</label>`).join('');s1+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+1}.</span><span><strong>Causa:</strong> ${it.c}</span></div><div class="mc-opts">${opts}</div></div>`;});
+
+  // ── II. Analiza el caso y decide (6-7)
+  let s2=`<div class="sec-title"><span>II. Analiza el caso y decide</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div>`;
+  d.cases.forEach((c,i)=>{s2+=`<p class="crit-print-scenario"><strong>Caso ${i+1} — ${c.t}:</strong> ${c.sc}</p><p class="crit-print-q">${c.q}</p>${lines(2)}`;});
+
+  // ── III. Interpreta datos y mapa (8-10)
+  let s3=`<div class="sec-title"><span>III. Interpreta datos y mapa</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 15</span></div></div><p class="crit-print-scenario"><strong>Datos:</strong> Cerro Las Minas 2,849 m (Celaque) · Reserva Río Plátano 832,000 ha · Cobertura forestal ~45% · La Tigra = 40% del agua de Tegucigalpa · Pino-roble ~3.5 millones de ha.</p>`;
+  d.data.forEach((it,i)=>{const opts=it.o.map(op=>`<label class="mc-opt"><input type="radio" name="pc3_${i}"> ${op}</label>`).join('');s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+6}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`;});
+
+  // ── IV. Clasifica y justifica
+  let ceTbl=`<table class="crit-print-tbl"><tr><th>Elemento</th><th>${d.cls.set.catA} / ${d.cls.set.catB}</th></tr>`;
+  d.cls.items.forEach(it=>{ceTbl+=`<tr><td>${it.el}</td><td></td></tr>`;});
+  ceTbl+='</table>';
+  let s4=`<div class="sec-title"><span>IV. Clasifica y justifica</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 15</span></div></div><p class="crit-print-hint">Escribe la categoría de cada elemento y luego una razón.</p>${ceTbl}<p class="crit-print-q">${d.cls.set.reason}</p>${lines(2)}`;
+
+  // ── V. Argumenta tu postura
+  let s5=`<div class="sec-title"><span>V. Argumenta tu postura</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30</span></div></div><p class="crit-print-scenario"><strong>Pregunta:</strong> ${d.arg.q}</p><p class="crit-print-q">Redacta tu argumento (se evalúa con la rúbrica: ${critArgueCriteria.map((c,i)=>(i+1)+') '+c).join('; ')}).</p>${lines(5)}`;
+
+  // ── Pauta
+  let pR='';
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Causa y consecuencia</div>${d.ce.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${it.o[it.a]}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III. Interpreta datos</div>${d.data.map((it,i)=>`<div class="p-crit-line"><strong>${i+6}.</strong> ${it.o[it.a]}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Analiza el caso</div>${d.cases.map((c,i)=>`<div class="p-crit-line"><strong>Caso ${i+1}:</strong> ${c.g}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">IV. Clasifica y justifica</div><div class="p-crit-line"><strong>Clasificación:</strong> ${d.cls.set.items.map(it=>it.el+' → '+(it.cat==='A'?d.cls.set.catA:d.cls.set.catB)).join(' · ')}</div><div class="p-crit-line"><strong>Razón:</strong> ${d.cls.set.g}</div></div>`;
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Argumenta tu postura (rúbrica 3 × 10)</div><div class="p-crit-line"><strong>Criterios:</strong> ${critArgueCriteria.map((c,i)=>(i+1)+') '+c+' (10 pts)').join(' · ')}</div><div class="p-crit-line"><strong>Respuesta modelo:</strong> ${d.arg.model}</div></div>`;
+
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico · El Bosque y Áreas Protegidas de Honduras · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.25rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #27ae60;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.crit-print-hint{font-size:9pt;color:#555;font-style:italic;margin:0.1rem 0;}.crit-print-scenario{font-size:10pt;background:#e8f8f5;border-left:3px solid #27ae60;padding:0.2rem 0.5rem;margin:0.12rem 0;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:2px;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-opts{display:grid;grid-template-columns:1fr 1fr;gap:0.04rem 0.4rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:26px;vertical-align:middle;}.crit-print-tbl th{background:#e8f8f5;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#27ae60;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;color:#27ae60;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#27ae60;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · El Bosque y las Áreas Protegidas de Honduras · Educación Básica · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · I. Causa-efecto 20 · II. Casos 20 · III. Datos 15 · IV. Clasifica 15 · V. Argumenta 30 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · El Bosque y las Áreas Protegidas de Honduras · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | I.20 + II.20 + III.15 + IV.15 + V.30 — secciones abiertas: usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  const win=window.open('','_blank','');
+  if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
+  win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
 // ===================== LABORATORIO DE BOSQUES =====================

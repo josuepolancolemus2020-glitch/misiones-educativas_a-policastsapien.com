@@ -403,7 +403,47 @@
 </div>
 
 <!-- ===== EVALUACIÓN ===== -->
+<style>
+/* Toggle de tipo de evaluación + estilos de la Prueba de Pensamiento Crítico */
+.eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+.eval-mode-btn{flex:1;min-width:160px;font-family:'Fredoka',sans-serif;font-size:0.9rem;padding:0.65rem 1rem;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--gray);cursor:pointer;transition:all 0.2s;}
+.eval-mode-btn:hover{border-color:var(--pri);}
+.eval-mode-btn.active{border-color:var(--pri);background:var(--pri-gl);color:var(--pri);font-weight:700;}
+.esp-arg{background:var(--pri);color:white;}
+.eval-auto-result,.crit-total-panel{margin-top:0.8rem;padding:0.8rem 1rem;border-radius:10px;font-size:0.9rem;border:1.5px solid var(--border);background:var(--card);color:var(--dark);}
+.eval-auto-pass{border-color:var(--jade)!important;background:var(--jade-gl)!important;color:var(--jade)!important;}
+.eval-auto-risk{border-color:var(--amber)!important;background:var(--amber-gl)!important;color:var(--amber)!important;}
+.eval-item-feedback{font-size:0.8rem;margin-top:0.3rem;margin-left:1.7rem;font-weight:600;min-height:1.1rem;}
+.eval-item-feedback.eval-ok{color:var(--jade);}
+.eval-item-feedback.eval-no{color:var(--red);}
+.crit-hint{font-size:0.82rem;color:var(--gray);font-style:italic;margin:0 0 0.5rem;}
+.crit-scenario{background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.7rem;font-size:0.88rem;line-height:1.5;color:var(--dark);}
+.crit-q-block{margin-bottom:0.8rem;}
+.crit-q-block:last-of-type{margin-bottom:0;}
+.crit-q-label{font-size:0.86rem;color:var(--dark);font-weight:600;margin-bottom:0.35rem;line-height:1.4;}
+.crit-textarea{width:100%;min-height:58px;font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;background:var(--card);color:var(--dark);resize:vertical;}
+.crit-textarea:focus{outline:none;border-color:var(--pri);}
+.crit-pauta{display:none;margin-top:0.4rem;font-size:0.8rem;color:var(--jade);background:var(--jade-gl);border-radius:8px;padding:0.45rem 0.7rem;line-height:1.5;}
+.crit-pauta::before{content:'📋 Pauta: ';font-weight:700;}
+.crit-ce-item{margin-bottom:0.45rem;}
+.crit-classify-row{display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:0.4rem 0.6rem;}
+.crit-classify-el{font-weight:700;color:var(--dark);flex:1;min-width:120px;font-size:0.86rem;}
+.crit-classify-opt{display:flex;align-items:center;gap:0.3rem;font-size:0.82rem;color:var(--dark);}
+.crit-classify-opt input{accent-color:var(--pri);}
+.crit-selfscore{display:flex;align-items:center;gap:0.5rem;margin-top:0.7rem;padding-top:0.6rem;border-top:1px dashed var(--border);font-size:0.82rem;color:var(--gray);}
+.crit-score-input{width:55px;font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:6px;padding:0.2rem 0.4rem;background:var(--card);color:var(--dark);text-align:center;}
+.crit-rubric{margin-top:0.7rem;padding-top:0.6rem;border-top:1px dashed var(--border);}
+.crit-rubric-title{font-size:0.82rem;font-weight:700;color:var(--pri);margin-bottom:0.4rem;}
+.crit-rubric-row{display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--dark);margin-bottom:0.35rem;}
+.crit-rubric-crit{flex:1;}
+@media (max-width:560px){.crit-classify-row{align-items:flex-start;}}
+</style>
 <div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
   <div class="card ac-purple">
     <div class="eval-print-header">
       <h2>Evaluación Final · El Bosque y las Áreas Protegidas de Honduras · Educación Básica · Ciencias Naturales</h2>
@@ -420,6 +460,26 @@
       <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
     </div>
     <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-green">
+    <div class="eval-print-header">
+      <h2>Evaluación Competencial · Pensamiento Crítico · El Bosque y las Áreas Protegidas de Honduras · Educación Básica · Ciencias Naturales</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · I. 20 · II. 20 · III. 15 · IV. 15 · V. 30 · dificultad creciente</p>
+    </div>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — El Bosque y las Áreas Protegidas de Honduras</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Razona cada sección con tus propias palabras (en pantalla o en tu cuaderno). Las secciones I y III se califican solas; en las abiertas compara con la <strong>Pauta</strong> y anótate el puntaje. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalCrit()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
   </div>
   <div id="eval-pauta-sheet"></div>
   <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">

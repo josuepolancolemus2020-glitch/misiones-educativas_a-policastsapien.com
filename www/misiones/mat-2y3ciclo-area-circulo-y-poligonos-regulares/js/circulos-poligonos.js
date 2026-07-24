@@ -18,7 +18,7 @@ function fb(id, msg, isOk) {
 // ===================== VARIABLES GLOBALES =====================
 const SAVE_KEY = 'circulos_poligonos_v1';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
-let evalFormNum = 1;
+let evalFormNum = 1, evalOpFormNum = 1, evalOpAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
@@ -73,7 +73,7 @@ function toggleTheme(){ darkMode=!darkMode; document.documentElement.setAttribut
 function initTheme(){ const s=localStorage.getItem(SAVE_KEY+'_theme'); const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches; darkMode=(s==='dark')||(s===null&&sys); if(darkMode){ document.documentElement.setAttribute('data-theme','dark'); document.getElementById('themeBtn').textContent='☀️ Tema'; } }
 
 // ===================== LOCALSTORAGE =====================
-function saveProgress(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, xp})); }catch(e){} }
+function saveProgress(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, evalOpFormNum, xp})); }catch(e){} }
 function loadProgress(){
   try{
     const s = JSON.parse(localStorage.getItem(SAVE_KEY));
@@ -81,6 +81,7 @@ function loadProgress(){
     if(s.doneSections && Array.isArray(s.doneSections)) s.doneSections.forEach(id=>{ done.add(id); const b=document.querySelector(`[data-s="${id}"]`); if(b) b.classList.add('done'); });
     if(s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum) evalFormNum = s.evalFormNum;
+    if(s.evalOpFormNum) evalOpFormNum = s.evalOpFormNum;
     if(s.xp !== undefined) { xp = s.xp; updateXPBar(); }
   }catch(e){}
 }
@@ -701,6 +702,294 @@ ${s1}${s2}${s3}${s4}
   const win=window.open('','_blank',''); if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;} win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
 }
 
+// ══════════ PRUEBA OPERATIVA «Calculando Áreas y Perímetros» (Formas deterministas v1) ══════════
+// Segunda prueba imprimible de la misión (matemáticas): cálculo con las fórmulas
+// reales de las tarjetas — A = π · r², d = 2r, P = lado × n, A = (P · a) / 2,
+// A. Sector = (π·r²·α)/360 y P sector = L + 2r. Todos los valores nacen de
+// enteros (r²×314/100, 3·lado·a, r²·α/120…) para que la pauta sea EXACTA.
+// El valor de π (3.14 o 3) se declara SIEMPRE en la instrucción de cada sección.
+function evalSwitchMode(mode) {
+  sfx('click');
+  const cWrap = document.getElementById('evalConceptWrap'), oWrap = document.getElementById('evalOpWrap');
+  const cBtn = document.getElementById('evalModeBtnConcept'), oBtn = document.getElementById('evalModeBtnOp');
+  if (mode === 'op') {
+    cWrap.style.display = 'none'; oWrap.style.display = 'block';
+    cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected', 'false');
+    oBtn.classList.add('active'); oBtn.setAttribute('aria-selected', 'true');
+  } else {
+    oWrap.style.display = 'none'; cWrap.style.display = 'block';
+    oBtn.classList.remove('active'); oBtn.setAttribute('aria-selected', 'false');
+    cBtn.classList.add('active'); cBtn.setAttribute('aria-selected', 'true');
+  }
+}
+
+// ---- Helpers aritméticos (evitan errores de coma flotante) ----
+let _opRnd = Math.random;
+function _opRint(min, max) { return Math.floor(_opRnd() * (max - min + 1)) + min; }
+function _opFmt(n) { return parseFloat(n.toFixed(6)).toString(); }
+
+// I. Área del círculo con π ≈ 3.14 (5 × 4 = 20 pts · nivel básico)
+// r entero 2..9; en 2 ítems se da el DIÁMETRO y hay que hallar r = d ÷ 2 primero
+// (el error típico advertido en la misión). A = r² × 314/100 → pauta exacta.
+function genAreaCircItems() {
+  const dPos = _pickF([0, 1, 2, 3, 4], 2, _opRnd);
+  const radios = _pickF([2, 3, 4, 5, 6, 7, 8, 9], 5, _opRnd);
+  return radios.map((r, i) => {
+    const esD = dPos.indexOf(i) !== -1;
+    return { dato: esD ? 'd = ' + (2 * r) + ' cm' : 'r = ' + r + ' cm', esD, r, ans: _opFmt((r * r * 314) / 100) };
+  });
+}
+
+// II. Del dato al elemento (5 × 2 = 10 pts · agilidad)
+// Conversiones rápidas, eco de las tarjetas: d = 2r y «P = lado × n».
+const _opPoligonos = [{ n: 5, nom: 'pentágono' }, { n: 6, nom: 'hexágono' }, { n: 8, nom: 'octágono' }];
+function genDatoItems() {
+  const tipos = _shuffleF([0, 1, 2, 3, _opRint(0, 3)], _opRnd);
+  return tipos.map(t => {
+    if (t === 0) { const r = _opRint(2, 9); return { q: 'd = ' + (2 * r) + ' cm → r = ?', ans: String(r), u: 'cm' }; }
+    if (t === 1) { const r = _opRint(2, 9); return { q: 'r = ' + r + ' cm → d = ?', ans: String(2 * r), u: 'cm' }; }
+    const p = _opPoligonos[_opRint(0, 2)], lado = _opRint(3, 9);
+    const nomCap = p.nom.charAt(0).toUpperCase() + p.nom.slice(1);
+    if (t === 2) return { q: nomCap + ' regular de lado ' + lado + ' cm → P = ?', ans: String(lado * p.n), u: 'cm' };
+    return { q: nomCap + ' regular con P = ' + (lado * p.n) + ' cm → lado = ?', ans: String(lado), u: 'cm' };
+  });
+}
+
+// III. Encuentra el número que falta (5 × 4 = 20 pts · razonamiento inverso)
+// Dada A con π ≈ 3 hallar r (áreas 12, 27, 48, 75…); en A = (P·a)/2 hallar el
+// dato que falta; en el perímetro del sector P = L + 2r hallar r.
+function genFaltaItems() {
+  const tipos = _shuffleF([0, 0, 1, 2, 3], _opRnd);
+  return tipos.map(t => {
+    if (t === 0) { const r = _opRint(2, 7); return { expr: 'A = π · r² → 3 · r² = ' + (3 * r * r), falta: 'r', ans: String(r) }; }
+    if (t === 1) { const a = _opRint(2, 6), P = 2 * _opRint(8, 20); return { expr: 'A = (P · a) / 2 → (P · ' + a + ') / 2 = ' + ((P * a) / 2), falta: 'P', ans: String(P) }; }
+    if (t === 2) { const a = _opRint(2, 6), P = 2 * _opRint(8, 20); return { expr: 'A = (P · a) / 2 → (' + P + ' · a) / 2 = ' + ((P * a) / 2), falta: 'a', ans: String(a) }; }
+    const r = _opRint(2, 9), L = _opRint(5, 15);
+    return { expr: 'P del sector = L + 2r → ' + (L + 2 * r) + ' = ' + L + ' + 2r', falta: 'r', ans: String(r) };
+  });
+}
+
+// IV. Problemas de la vida real hondureña (3 × 10 = 30 pts · nivel avanzado)
+// Contextos reales de la misión: rebanada de pizza (sector circular), baldosa /
+// kiosco / panal hexagonal (A = (P·a)/2) y pila o rotonda circular con costo en
+// lempiras. Cada problema declara el valor de π que debe usarse.
+function genProblemaOpItems() {
+  const ang = [60, 90, 120][_opRint(0, 2)], rp = 2 * _opRint(2, 5);
+  const ctxP = ['Para el cumpleaños de Sofía compraron una pizza', 'En la pizzería de la colonia preparan una pizza', 'Para la venta del grado donaron una pizza'][_opRint(0, 2)];
+  const p1 = { text: ctxP + ' de radio ' + rp + ' cm, cortada en rebanadas de ' + ang + '°. Usando π ≈ 3 y la fórmula del sector A = (π · r² · α) / 360, ¿cuál es el área de UNA rebanada?', op: '(3 · ' + rp + '² · ' + ang + ') / 360', ans: String((rp * rp * ang) / 120), u: 'cm²' };
+  const lado = _opRint(4, 10), apo = _opRint(3, 8), P2 = 6 * lado;
+  const ctxH = ['Cada baldosa hexagonal del parque central mide', 'El piso del kiosco hexagonal del parque mide', 'Cada celda del panal gigante que pintaron en el mural mide'][_opRint(0, 2)];
+  const p2 = { text: ctxH + ' ' + lado + ' m de lado y ' + apo + ' m de apotema. Con P = lado × 6 y A = (P · a) / 2, ¿cuál es su área?', op: 'P = 6 · ' + lado + ' = ' + P2 + '; (' + P2 + ' · ' + apo + ') / 2', ans: String(3 * lado * apo), u: 'm²' };
+  const rc = _opRint(2, 5), costo = [50, 100][_opRint(0, 1)];
+  const esPila = _opRint(0, 1) === 0;
+  const ctxC = esPila ? 'El fondo de la pila circular de la escuela' : 'La rotonda circular del bulevar';
+  const accion = esPila ? 'pintar' : 'encementar';
+  const area3 = _opFmt((rc * rc * 314) / 100);
+  const p3 = { text: ctxC + ' tiene radio de ' + rc + ' m y se va a ' + accion + ' por completo. Usando π ≈ 3.14, calcula el área y luego el costo total si cada m² cuesta L ' + costo + '.', op: 'A = 3.14 · ' + rc + '² = ' + area3 + ' m²; ' + area3 + ' · ' + costo, ans: String((rc * rc * 314 * costo) / 100), u: 'lempiras' };
+  return [p1, p2, p3];
+}
+
+// V. Retos de olimpiada (10 + 5 + 5 = 20 pts · desafío)
+// (a) ordenar círculos por área SIN calcular (el área crece con r²; radios y
+// diámetros mezclados); (b) detective del error (A = π·d² u olvidar el ÷2 en
+// A = (P·a)/2); (c) fracción del círculo de un sector (1/4, 1/2, 1/3).
+function genOrdCirc() {
+  const radios = _pickF([2, 3, 4, 5, 6, 7, 8, 9], 4, _opRnd);
+  const dPos = _pickF([0, 1, 2, 3], 2, _opRnd);
+  const letras = ['A', 'B', 'C', 'D'];
+  const circ = radios.map((r, i) => ({ label: 'Círculo ' + letras[i] + ': ' + (dPos.indexOf(i) !== -1 ? 'd = ' + (2 * r) : 'r = ' + r) + ' cm', letra: letras[i], r }));
+  const ordenado = [...circ].sort((x, y) => y.r - x.r);
+  return { display: circ.map(c => c.label), correctOrder: ordenado.map(c => c.label), correctLetters: ordenado.map(c => c.letra), correctRadios: ordenado.map(c => c.r) };
+}
+function genRetoErrCirc() {
+  if (_opRint(0, 1) === 0) {
+    const r = _opRint(2, 6);
+    return { text: 'Un estudiante calculó el área de un círculo de radio ' + r + ' cm con la fórmula equivocada A = π · d²: hizo 3 · ' + (2 * r) + '² = ' + (3 * 4 * r * r) + ' cm². Usando π ≈ 3 y la fórmula correcta A = π · r², escribe el área correcta.', ans: String(3 * r * r), u: 'cm²' };
+  }
+  const lado = _opRint(3, 8), apo = _opRint(2, 6), P = 6 * lado;
+  return { text: 'Un estudiante calculó el área de un hexágono regular con P = ' + P + ' cm y apotema ' + apo + ' cm, pero olvidó dividir entre 2: escribió A = ' + (P * apo) + ' cm². Aplica bien A = (P · a) / 2 y escribe el área correcta.', ans: String((P * apo) / 2), u: 'cm²' };
+}
+function genRetoFrac() {
+  const c = [{ ang: 90, num: 1, den: 4, txt: '1/4' }, { ang: 180, num: 1, den: 2, txt: '1/2' }, { ang: 120, num: 1, den: 3, txt: '1/3' }][_opRint(0, 2)];
+  return { text: '¿Qué fracción del círculo completo representa un sector de ' + c.ang + '°?', num: c.num, den: c.den, ansTxt: c.txt };
+}
+
+function genEvalOp() {
+  sfx('click');
+  _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
+  const _sO = document.getElementById('evalOpFormaSel');
+  if (_sO && parseInt(_sO.value, 10)) evalOpFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sO.value, 10)));
+  const cf = evalOpFormNum; window._currentEvalOpForm = cf; _opRnd = _evalRng(100000 + cf); /* la Forma cf siembra TODO el azar de esta prueba */
+  evalOpFormNum = (evalOpFormNum % EVAL_FORMAS) + 1;
+  _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
+  saveProgress();
+  document.getElementById('evalop-screen-title').textContent = '📐 Prueba Operativa — Forma ' + cf + ' · Calculando Áreas y Perímetros';
+  evalOpAnsVisible = false;
+  const out = document.getElementById('evalOpOut'); out.innerHTML = '';
+
+  const areaItems = genAreaCircItems();
+  const s1 = document.createElement('div');
+  s1.innerHTML = '<div class="eval-section-title">I. Área del círculo <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. Usa <strong>π ≈ 3.14</strong> y A = π · r². ⚠️ Si el dato es el diámetro (d), primero halla r = d ÷ 2. Responde en cm².</p>';
+  areaItems.forEach((it, i) => {
+    const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
+    d.innerHTML = '<div class="opx-row"><span class="eval-num">' + (i + 1) + '</span><span class="opx-expr">' + it.dato + ' → A =</span><input class="eval-cp-input" type="text" data-arc="' + i + '" autocomplete="off" inputmode="decimal" style="width:95px;min-width:95px;"><span style="font-size:0.82rem;color:var(--gray);">cm²</span></div><div class="eval-answer">' + it.ans + ' cm²</div><div class="eval-item-feedback" id="evalFbArc' + i + '" aria-live="polite"></div>';
+    s1.appendChild(d);
+  });
+  out.appendChild(s1);
+
+  const datoItems = genDatoItems();
+  const s2 = document.createElement('div');
+  s2.innerHTML = '<div class="eval-section-title">II. Del dato al elemento <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Agilidad. Conversiones rápidas: recuerda que d = 2r y que P = lado × n.</p>';
+  datoItems.forEach((it, i) => {
+    const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
+    d.innerHTML = '<div class="opx-row"><span class="eval-num">' + (i + 1) + '</span><span class="opx-expr">' + it.q + '</span><input class="eval-cp-input" type="text" data-dat="' + i + '" autocomplete="off" inputmode="decimal" style="width:70px;min-width:70px;"><span style="font-size:0.82rem;color:var(--gray);">' + it.u + '</span></div><div class="eval-answer">' + it.ans + ' ' + it.u + '</div><div class="eval-item-feedback" id="evalFbDat' + i + '" aria-live="polite"></div>';
+    s2.appendChild(d);
+  });
+  out.appendChild(s2);
+
+  const faltaItems = genFaltaItems();
+  const s3 = document.createElement('div');
+  s3.innerHTML = '<div class="eval-section-title">III. Encuentra el número que falta <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel intermedio. Usa <strong>π ≈ 3</strong> donde aparezca π. Piensa al revés: ¿qué número hace verdadera la igualdad?</p>';
+  faltaItems.forEach((it, i) => {
+    const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
+    d.innerHTML = '<div class="opx-row"><span class="eval-num">' + (i + 1) + '</span><span class="opx-expr">' + it.expr + '</span><span style="font-size:0.82rem;color:var(--gray);">Falta ' + it.falta + ' =</span><input class="eval-cp-input" type="text" data-mss="' + i + '" autocomplete="off" inputmode="decimal" style="width:70px;min-width:70px;"></div><div class="eval-answer">' + it.falta + ' = ' + it.ans + '</div><div class="eval-item-feedback" id="evalFbMss' + i + '" aria-live="polite"></div>';
+    s3.appendChild(d);
+  });
+  out.appendChild(s3);
+
+  const prbItems = genProblemaOpItems();
+  const s4 = document.createElement('div');
+  s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel avanzado. Cada problema indica el valor de π a usar. Plantea la operación en tu cuaderno, resuélvela y escribe la respuesta.</p>';
+  prbItems.forEach((it, i) => {
+    const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
+    d.innerHTML = '<div class="eval-q"><span class="eval-num">' + (i + 1) + '</span><span class="eval-q-text">' + it.text + '</span></div><div class="opx-row" style="margin-left:1.7rem;"><span style="font-size:0.82rem;color:var(--gray);">R/</span><input class="eval-cp-input" type="text" data-prb="' + i + '" autocomplete="off" inputmode="decimal" style="width:90px;min-width:90px;"><span style="font-size:0.82rem;color:var(--gray);">' + it.u + '</span></div><div class="eval-answer">' + it.op + ' = ' + it.ans + ' ' + it.u + '</div><div class="eval-item-feedback" id="evalFbPrb' + i + '" aria-live="polite"></div>';
+    s4.appendChild(d);
+  });
+  out.appendChild(s4);
+
+  const ord = genOrdCirc(), retoErr = genRetoErrCirc(), retoFrac = genRetoFrac();
+  const s5 = document.createElement('div');
+  s5.innerHTML = '<div class="eval-section-title">V. Retos de olimpiada <span class="eval-pts">20 pts · Reto 1: 10 · Retos 2 y 3: 5 c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Desafío. Piensa como matemático: el área crece con r², así que puedes comparar círculos sin calcular sus áreas.</p>';
+  const dOrd = document.createElement('div'); dOrd.className = 'eval-item eval-auto-item';
+  dOrd.innerHTML = '<div class="evord-dir">1. Ordena los círculos de MAYOR a menor área SIN calcular (ojo: algunos dan el diámetro):</div><div class="evord-list" id="evordCircList"></div><div class="eval-answer">' + ord.correctLetters.join(' → ') + '</div><div class="eval-item-feedback" id="evalFbOrdCirc" aria-live="polite"></div>';
+  s5.appendChild(dOrd);
+  const dErr = document.createElement('div'); dErr.className = 'eval-item eval-auto-item';
+  dErr.innerHTML = '<div class="eval-q"><span class="eval-num">2</span><span class="eval-q-text">🔎 <strong>Detective del error:</strong> ' + retoErr.text + '</span></div><div class="opx-row" style="margin-left:1.7rem;"><span style="font-size:0.82rem;color:var(--gray);">Área correcta:</span><input class="eval-cp-input" type="text" data-rerr="0" autocomplete="off" inputmode="decimal" style="width:80px;min-width:80px;"><span style="font-size:0.82rem;color:var(--gray);">' + retoErr.u + '</span></div><div class="eval-answer">' + retoErr.ans + ' ' + retoErr.u + '</div><div class="eval-item-feedback" id="evalFbRerr" aria-live="polite"></div>';
+  s5.appendChild(dErr);
+  const dFrac = document.createElement('div'); dFrac.className = 'eval-item eval-auto-item';
+  dFrac.innerHTML = '<div class="eval-q"><span class="eval-num">3</span><span class="eval-q-text">🍕 <strong>Fracción del círculo:</strong> ' + retoFrac.text + ' Escribe la fracción (ej.: 1/5) o su valor decimal.</span></div><div class="opx-row" style="margin-left:1.7rem;"><span style="font-size:0.82rem;color:var(--gray);">R/</span><input class="eval-cp-input" type="text" data-rfrac="0" autocomplete="off" style="width:80px;min-width:80px;"><span style="font-size:0.82rem;color:var(--gray);">del círculo</span></div><div class="eval-answer">' + retoFrac.ansTxt + '</div><div class="eval-item-feedback" id="evalFbRfrac" aria-live="polite"></div>';
+  s5.appendChild(dFrac);
+  out.appendChild(s5);
+
+  window._evalOpData = { areaItems, datoItems, faltaItems, prbItems, ord: { display: ord.display, current: [...ord.display], correctOrder: ord.correctOrder, correctLetters: ord.correctLetters, correctRadios: ord.correctRadios }, retoErr, retoFrac };
+  _renderOrdCircGroup();
+  const autoPanel = document.createElement('div'); autoPanel.id = 'evalOpAutoResult'; autoPanel.className = 'eval-auto-result';
+  autoPanel.innerHTML = '<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.';
+  out.appendChild(autoPanel);
+  fin('s-evaluacion');
+}
+
+function _renderOrdCircGroup() {
+  const data = window._evalOpData && window._evalOpData.ord;
+  const list = document.getElementById('evordCircList'); if (!data || !list) return;
+  list.innerHTML = '';
+  data.current.forEach((label, i) => {
+    const div = document.createElement('div'); div.className = 'evord-item';
+    div.innerHTML = '<div class="evord-arrows"><button class="sort-arrow" onclick="evordCircMove(' + i + ',-1)"' + (i === 0 ? ' disabled' : '') + '>▲</button><button class="sort-arrow" onclick="evordCircMove(' + i + ',1)"' + (i === data.current.length - 1 ? ' disabled' : '') + '>▼</button></div><div class="evord-num">' + label + '</div>';
+    list.appendChild(div);
+  });
+}
+function evordCircMove(idx, dir) {
+  sfx('click');
+  const data = window._evalOpData.ord; const ni = idx + dir;
+  if (ni < 0 || ni >= data.current.length) return;
+  const tmp = data.current[idx]; data.current[idx] = data.current[ni]; data.current[ni] = tmp;
+  _renderOrdCircGroup();
+}
+
+function toggleEvalOpAns() {
+  evalOpAnsVisible = !evalOpAnsVisible;
+  document.querySelectorAll('#evalOpOut .eval-answer').forEach(el => el.style.display = evalOpAnsVisible ? 'block' : 'none');
+  sfx('click');
+}
+
+function _isOpNumOk(student, expected) {
+  const s = (student || '').toString().trim().replace(',', '.');
+  if (!s) return false;
+  const sn = parseFloat(s), en = parseFloat(expected);
+  return !isNaN(sn) && !isNaN(en) && Math.abs(sn - en) < 1e-6;
+}
+// Acepta «1/4», «0.25», «0,25» y fracciones equivalentes (p.ej. 90/360)
+function _isFracOk(student, num, den) {
+  const s = (student || '').toString().trim().replace(',', '.').replace(/\s+/g, '');
+  if (!s) return false;
+  const m = s.match(/^(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
+  let v;
+  if (m) { const b = parseFloat(m[2]); if (!b) return false; v = parseFloat(m[1]) / b; }
+  else { v = parseFloat(s); }
+  return !isNaN(v) && Math.abs(v - num / den) < 0.01;
+}
+
+function gradeEvalOp() {
+  if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
+  sfx('click');
+  const d = window._evalOpData;
+  let total = 0; const det = { arc: 0, dat: 0, mss: 0, prb: 0, reto: 0 };
+  d.areaItems.forEach((it, i) => { const el = document.querySelector('[data-arc="' + i + '"]'); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.arc += 4; total += 4; } setEvalFeedback('evalFbArc' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + (it.esD ? 'r = ' + it.r + ' cm → ' : '') + it.ans + ' cm²'); });
+  d.datoItems.forEach((it, i) => { const el = document.querySelector('[data-dat="' + i + '"]'); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.dat += 2; total += 2; } setEvalFeedback('evalFbDat' + i, ok, ok ? 'Correcto. +2 pts' : 'Revisar. R/ ' + it.ans + ' ' + it.u); });
+  d.faltaItems.forEach((it, i) => { const el = document.querySelector('[data-mss="' + i + '"]'); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.mss += 4; total += 4; } setEvalFeedback('evalFbMss' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + it.falta + ' = ' + it.ans); });
+  d.prbItems.forEach((it, i) => { const el = document.querySelector('[data-prb="' + i + '"]'); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.prb += 10; total += 10; } setEvalFeedback('evalFbPrb' + i, ok, ok ? 'Correcto. +10 pts' : 'Revisar. R/ ' + it.op + ' = ' + it.ans + ' ' + it.u); });
+  const g = d.ord; const okOrd = g.current.every((v, i) => v === g.correctOrder[i]);
+  if (okOrd) { det.reto += 10; total += 10; }
+  setEvalFeedback('evalFbOrdCirc', okOrd, okOrd ? '¡Orden correcto! +10 pts' : 'Orden incorrecto. Clave: ' + g.correctLetters.join(' → '));
+  const elE = document.querySelector('[data-rerr="0"]'); const okE = _isOpNumOk(elE ? elE.value : '', d.retoErr.ans);
+  if (elE) { elE.classList.toggle('eval-input-ok', okE); elE.classList.toggle('eval-input-no', !okE); }
+  if (okE) { det.reto += 5; total += 5; }
+  setEvalFeedback('evalFbRerr', okE, okE ? '¡Error detectado! +5 pts' : 'Revisar. R/ ' + d.retoErr.ans + ' ' + d.retoErr.u);
+  const elF = document.querySelector('[data-rfrac="0"]'); const okF = _isFracOk(elF ? elF.value : '', d.retoFrac.num, d.retoFrac.den);
+  if (elF) { elF.classList.toggle('eval-input-ok', okF); elF.classList.toggle('eval-input-no', !okF); }
+  if (okF) { det.reto += 5; total += 5; }
+  setEvalFeedback('evalFbRfrac', okF, okF ? '¡Fracción correcta! +5 pts' : 'Revisar. R/ ' + d.retoFrac.ansTxt);
+  const res = document.getElementById('evalOpAutoResult');
+  const desglose = 'Área círculo: ' + det.arc + '/20 · Del dato: ' + det.dat + '/10 · Número que falta: ' + det.mss + '/20 · Problemas: ' + det.prb + '/30 · Retos: ' + det.reto + '/20';
+  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = '<strong>Resultado: ' + total + '/100 pts</strong><br><span>' + desglose + '</span>'; }
+  if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
+  else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
+}
+
+function printEvalOp() {
+  if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
+  sfx('click');
+  const forma = window._currentEvalOpForm || 1; const d = window._evalOpData;
+
+  let s1 = `<div class="sec-title"><span>I. Área del círculo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. Usa π ≈ 3.14 y A = π · r². Si el dato es el diámetro (d), primero halla r = d ÷ 2. Resuelve el proceso en el reverso de la hoja. 4 pts c/u.</p>`;
+  d.areaItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i + 1}.</span><span class="opx-print-expr">${it.dato} → A =</span><span class="opx-blank"></span><span>cm²</span></div>`; });
+
+  const datTbl = (items, off) => items.length ? `<table class="rnd-tbl"><tr><th>#</th><th>Conversión</th><th>Respuesta</th></tr>${items.map((it, i) => `<tr><td>${off + i + 1}</td><td>${it.q}</td><td></td></tr>`).join('')}</table>` : '';
+  let s2 = `<div class="sec-title"><span>II. Del dato al elemento</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Agilidad. Conversiones rápidas: recuerda que d = 2r y que P = lado × n. 2 pts c/u.</p><div class="rnd-print-grid">${datTbl(d.datoItems.slice(0, 3), 0)}${datTbl(d.datoItems.slice(3), 3)}</div>`;
+
+  const mssTbl = (items, off) => items.length ? `<table class="rnd-tbl"><tr><th>#</th><th>Operación incompleta</th><th>Número que falta</th></tr>${items.map((it, i) => `<tr><td>${off + i + 1}</td><td>${it.expr}</td><td>${it.falta} = </td></tr>`).join('')}</table>` : '';
+  let s3 = `<div class="sec-title"><span>III. Encuentra el número que falta</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel intermedio. Usa π ≈ 3 donde aparezca π. Piensa al revés: ¿qué número hace verdadera la igualdad? 4 pts c/u.</p><div class="rnd-print-grid">${mssTbl(d.faltaItems.slice(0, 3), 0)}${mssTbl(d.faltaItems.slice(3), 3)}</div>`;
+
+  let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Nivel avanzado. Cada problema indica el valor de π a usar. Plantea la operación, resuelve el proceso en el reverso de la hoja y escribe la respuesta con su unidad. 10 pts c/u.</p>`;
+  d.prbItems.forEach((it, i) => { s4 += `<div class="opx-print-row" style="align-items:flex-start;"><span class="qn">${i + 1}.</span><span style="flex:1;line-height:1.35;">${it.text}<br><span style="font-size:9pt;color:#555;">Operación: <span style="display:inline-block;min-width:130px;border-bottom:1px solid #555;">&nbsp;</span> &nbsp; R/ <span style="display:inline-block;min-width:60px;border-bottom:1.5px solid #111;">&nbsp;</span> ${it.u}</span></span></div>`; });
+
+  let s5 = `<div class="sec-title"><span>V. Retos de olimpiada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Desafío. El área crece con r²: puedes comparar sin calcular. Reto 1: 10 pts · Retos 2 y 3: 5 pts c/u.</p><div class="ord-print-grid"><div class="ord-print-box" style="grid-column:1/-1;"><div class="ord-print-dir">1. Ordena los círculos de MAYOR a menor área SIN calcular (ojo: algunos dan el diámetro) · 10 pts:</div><table class="ord-print-tbl"><tr>${d.ord.display.map(v => `<td>${v}</td>`).join('')}</tr></table><div style="margin-top:0.3rem;font-size:8.5pt;color:#555;">Escribe las letras en orden: 1. ______ &nbsp; 2. ______ &nbsp; 3. ______ &nbsp; 4. ______</div></div><div class="ord-print-box"><div class="ord-print-dir">2. 🔎 Detective del error · 5 pts:</div><div style="font-size:9pt;line-height:1.35;">${d.retoErr.text}</div><div style="margin-top:0.3rem;font-size:9pt;">Área correcta: <span style="display:inline-block;min-width:70px;border-bottom:1.5px solid #111;">&nbsp;</span> ${d.retoErr.u}</div></div><div class="ord-print-box"><div class="ord-print-dir">3. 🍕 Fracción del círculo · 5 pts:</div><div style="font-size:9pt;line-height:1.35;">${d.retoFrac.text} Escribe la fracción (ej.: 1/5) o su valor decimal.</div><div style="margin-top:0.3rem;font-size:9pt;">R/ <span style="display:inline-block;min-width:70px;border-bottom:1.5px solid #111;">&nbsp;</span> del círculo</div></div></div>`;
+
+  let pR = '';
+  pR += `<div class="p-sec"><div class="p-ttl">I. Área del círculo (π ≈ 3.14)</div><table class="p-tbl">${d.areaItems.map((it, i) => `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.esD ? 'r = ' + it.r + ' cm → ' : ''}${it.ans} cm²</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">II. Del dato al elemento</div><table class="p-tbl">${d.datoItems.map((it, i) => `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.ans} ${it.u}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">III. Número que falta (π ≈ 3)</div><table class="p-tbl">${d.faltaItems.map((it, i) => `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.falta} = ${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.prbItems.map((it, i) => `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.op} = ${it.ans} ${it.u}</td></tr>`).join('')}</table></div>`;
+  const fracDec = d.retoFrac.den === 3 ? ' (≈ 0.33)' : ' (= ' + _opFmt(d.retoFrac.num / d.retoFrac.den) + ')';
+  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de olimpiada</div><div class="p-ord-line"><strong>1.</strong> ${d.ord.correctLetters.join(' → ')} (radios: ${d.ord.correctRadios.join(', ')} cm)</div><div class="p-ord-line"><strong>2.</strong> Detective del error: ${d.retoErr.ans} ${d.retoErr.u}</div><div class="p-ord-line"><strong>3.</strong> Fracción del círculo: ${d.retoFrac.ansTxt}${fracDec}</div></div>`;
+
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Áreas y Polígonos · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:120px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.15rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.12rem 0.25rem;text-align:center;font-family:'Courier New',monospace;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalOpPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Calculando Áreas y Perímetros · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaOpPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Calculando Áreas y Perímetros · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalOpPage",250,0.55,1.2);fit("pautaOpPage",250,0.55,1.2);})();</` + `script></body></html>`;
+  const win = window.open('', '_blank', '');
+  if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+  win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
+}
+
 // ===================== DIPLOMA =====================
 function _diplPct() { return xp >= MXP ? 100 : Math.round((xp / MXP) * 100); }
 function openDiploma(){
@@ -776,7 +1065,7 @@ async function captureDiploma() {
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme(); initFontSize(); loadProgress();
   initMetaStars();
-  upFC(); buildQz(); buildClass(); showId(); showCmp(); genTask(); genEval();
+  upFC(); buildQz(); buildClass(); showId(); showCmp(); genTask(); genEval(); genEvalOp();
   updateRetoButtons(); renderAchPanel();
   document.addEventListener('click',function(e){ const panel=document.getElementById('achPanel'); const btn=document.getElementById('achBtn'); if(panel.classList.contains('open')&&!panel.contains(e.target)&&e.target!==btn) panel.classList.remove('open'); });
   document.addEventListener('click',function(e){ if(e.target===document.getElementById('diplomaOverlay')) closeDiploma(); });
