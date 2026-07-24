@@ -437,10 +437,34 @@ function _buildProceresHTML(country, data) {
    RENDER — MISSIONS
 ───────────────────────────────────────────── */
 
+/* Contador de cada filtro: solo hay misiones en Honduras, en los demás
+   países los números se ocultan en vez de mostrar ceros. */
+function updatePillCounts(country) {
+  document.querySelectorAll('.pill').forEach(pill => {
+    const b = pill.querySelector('.pill-count');
+    if (!b) return;
+    if (country !== 'HN') { b.textContent = ''; b.hidden = true; return; }
+    const f = pill.dataset.filter;
+    b.textContent = (f === 'all')
+      ? MISSIONS.length
+      : MISSIONS.filter(m => m.subject === f).length;
+    b.hidden = false;
+  });
+}
+
+function setActivePill(filter) {
+  document.querySelectorAll('.pill').forEach(p => {
+    const on = p.dataset.filter === filter;
+    p.classList.toggle('active', on);
+    p.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+
 function renderMissions(filter, query) {
   const s = load();
   const country = s.country || 'HN';
 
+  updatePillCounts(country);
   renderProceres(country);
 
   const container = document.getElementById('missions-container');
@@ -2547,9 +2571,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (_urlParams.get('view') === 'misiones') {
     const _filter = _urlParams.get('filter') || 'all';
     currentFilter = _filter;
-    document.querySelectorAll('.pill').forEach(p =>
-      p.classList.toggle('active', p.dataset.filter === currentFilter)
-    );
+    setActivePill(currentFilter);
     switchView('view-misiones');
   }
   if (_urlParams.get('view') === 'rutas') switchView('view-rutas');
@@ -2709,9 +2731,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentFilter = chip.dataset.subject;
       currentQuery  = '';
 
-      document.querySelectorAll('.pill').forEach(p =>
-        p.classList.toggle('active', p.dataset.filter === currentFilter)
-      );
+      setActivePill(currentFilter);
 
       const si = document.getElementById('search-input');
       if (si) si.value = '';
@@ -2732,9 +2752,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Pills de filtro
   document.querySelectorAll('.pill').forEach(pill => {
     pill.addEventListener('click', () => {
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
       currentFilter = pill.dataset.filter;
+      setActivePill(currentFilter);
       renderMissions(currentFilter, currentQuery);
     });
   });

@@ -197,7 +197,6 @@ a { text-decoration: none; color: inherit; }
 .brand-logo,
 .view-title,
 .level-chip,
-.pill.active,
 .save-btn,
 .featured-card,
 .section-title::before,
@@ -850,19 +849,95 @@ a.padre-asistente-btn {
 .search-box input:focus { border-color: var(--brand-light); }
 .search-box input::placeholder { color: var(--faint); }
 
-/* ====== PILLS ====== */
-.pills-wrap { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-.pills-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
-.pills-row::-webkit-scrollbar { display: none; }
+/* ====== PILLS (filtros de materia) ======
+   Cada filtro lleva implícito el color de su materia: apagado en reposo,
+   encendido con destello al elegirlo. Todo el bloque se pinta desde
+   --pill / --pill-rgb / --pill-bg, así que añadir una materia es una línea. */
+.pills-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+
 .pill {
-  flex-shrink: 0; background: var(--surface);
-  border: 1.5px solid var(--border); color: var(--muted);
-  padding: 6px 16px; border-radius: 24px;
-  font-size: 13px; font-weight: 600; cursor: pointer;
-  white-space: nowrap; transition: all .15s;
+  --pill:     var(--brand);
+  --pill-rgb: 30, 58, 124;
+  --pill-bg:  #eef2fb;
+
+  position: relative; overflow: hidden; flex: 0 0 auto;
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--pill-bg);
+  border: 1.5px solid rgba(var(--pill-rgb), .22);
+  color: var(--pill);
+  padding: 7px 15px; border-radius: 24px;
+  font-size: 13px; font-weight: 700; letter-spacing: .1px;
+  cursor: pointer; white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+  transition: transform .18s cubic-bezier(.34, 1.4, .64, 1),
+              box-shadow .18s ease, background .2s ease,
+              border-color .2s ease, color .2s ease;
 }
-.pill.active { background: var(--brand); border-color: var(--brand); color: #fff; }
-.pill:not(.active):hover { border-color: var(--brand-light); color: var(--brand-light); }
+.pill i { font-size: 13px; opacity: .85; }
+
+/* Contador: cuántas misiones esperan detrás de cada filtro */
+.pill-count {
+  font-size: 11px; font-weight: 800; line-height: 1;
+  padding: 3px 6px; border-radius: 8px;
+  background: rgba(var(--pill-rgb), .13); color: var(--pill);
+  transition: background .2s ease, color .2s ease;
+}
+.pill-count[hidden] { display: none; }
+
+@media (hover: hover) {
+  .pill:hover {
+    transform: translateY(-2px);
+    border-color: rgba(var(--pill-rgb), .45);
+    box-shadow: 0 6px 14px rgba(var(--pill-rgb), .18);
+  }
+}
+.pill:active { transform: scale(.95); }
+.pill:focus-visible { outline: 2px solid var(--pill); outline-offset: 2px; }
+
+/* Encendido: la materia toma el mando */
+.pill.active {
+  background: linear-gradient(135deg, rgba(var(--pill-rgb), 1) 0%, rgba(var(--pill-rgb), .82) 100%);
+  border-color: rgba(var(--pill-rgb), 1);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(var(--pill-rgb), .38), inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+.pill.active i { opacity: 1; }
+.pill.active .pill-count { background: rgba(255, 255, 255, .22); color: #fff; }
+
+/* Destello al elegir: micro-recompensa que confirma el toque */
+.pill.active::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .5) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: pillShine .75s ease-out;
+}
+@keyframes pillShine { to { transform: translateX(120%); } }
+
+/* Código de color por materia (el mismo de las tarjetas y los chips) */
+.pill.esp  { --pill: var(--esp);  --pill-rgb: 180, 83, 9;   --pill-bg: var(--esp-bg);  }
+.pill.mat  { --pill: var(--mat);  --pill-rgb: 37, 99, 235;  --pill-bg: var(--mat-bg);  }
+.pill.cnat { --pill: var(--cnat); --pill-rgb: 13, 148, 136; --pill-bg: var(--cnat-bg); }
+.pill.csoc { --pill: var(--csoc); --pill-rgb: 220, 38, 38;  --pill-bg: var(--csoc-bg); }
+.pill.tec  { --pill: var(--tec);  --pill-rgb: 14, 116, 144; --pill-bg: var(--tec-bg);  }
+
+/* «Todas»: aro con los colores de las seis materias girando alrededor */
+.pill-all {
+  --rainbow: conic-gradient(from 200deg, var(--esp), var(--mat), var(--cnat),
+                            var(--csoc), var(--tec), var(--bach), var(--esp));
+  border: 2px solid transparent;
+  background: linear-gradient(var(--pill-bg), var(--pill-bg)) padding-box,
+              var(--rainbow) border-box;
+}
+.pill-all.active {
+  background: linear-gradient(135deg, rgba(var(--pill-rgb), 1) 0%, rgba(var(--pill-rgb), .82) 100%) padding-box,
+              var(--rainbow) border-box;
+  border-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill { transition: none; }
+  .pill.active::after { animation: none; opacity: 0; }
+}
 
 /* ====== MISSION CARDS ====== */
 .missions-list { display: flex; flex-direction: column; gap: 10px; }
