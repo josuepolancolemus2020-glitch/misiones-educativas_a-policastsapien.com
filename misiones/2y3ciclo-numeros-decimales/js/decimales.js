@@ -911,31 +911,44 @@ function genOpItems(){
   }
   return items;
 }
+// Sección III-A: 5 redondeos, mitad a la décima y mitad a la centésima (3.674 → 3.7 ó 3.67)
 function genRoundItems(){
   const items=[];
-  for(let i=0;i<10;i++){
-    const trick=_opRnd()<0.15;
-    const num=_randDec(_rint(1,2),trick?2:3);
-    const rounded=_decRoundTo(num,2);
-    items.push({q:_decFmt(num,true),ans:_decFmt(rounded,true)});
+  for(let i=0;i<5;i++){
+    const toCent=_opRnd()<0.5;                // ~mitad a la centésima, ~mitad a la décima
+    const targetScale=toCent?2:1;
+    const num=_randDec(_rint(1,2),3);          // 3 decimales para que el redondeo tenga sentido
+    const rounded=_decRoundTo(num,targetScale);
+    items.push({q:_decFmt(num,true),ans:_decFmt(rounded,true),place:toCent?'centésima':'décima'});
   }
   return items;
 }
+// Sección III-B: 5 comparaciones con la «trampa del cero» (0.6 vs 0.60 valen igual)
 function genCmpItems(){
   const items=[];
-  for(let i=0;i<10;i++){
-    const forceEq=_opRnd()<0.2;
-    let a=_randDec(_rint(1,2),_rint(1,3)), b;
-    if(forceEq){ b=_opRnd()<0.5?{v:a.v*10,s:a.s+1}:{v:a.v,s:a.s}; }
-    else{ b=_randDec(_rint(1,2),_rint(1,3)); if(_decCmp(a,b)===0) b=_decAdd(b,{v:1,s:b.s}); }
-    const c=_decCmp(a,b);
-    items.push({a:_decFmt(a),b:_decFmt(b),rel:c===0?'eq':(c>0?'gt':'lt')});
+  for(let i=0;i<5;i++){
+    const trap=_opRnd()<0.4;
+    let aDisp,bDisp,rel;
+    if(trap){
+      const d1=_rint(1,9), intp=_rint(0,3);
+      const base=_decFmt({v:intp*10+d1,s:1});  // termina en dígito 1-9: 0.6, 2.7, ...
+      rel='eq';
+      if(_opRnd()<0.5){ aDisp=base; bDisp=base+'0'; } else { aDisp=base+'0'; bDisp=base; }
+    } else {
+      let a=_randDec(_rint(1,2),_rint(1,3)), b=_randDec(_rint(1,2),_rint(1,3));
+      if(_decCmp(a,b)===0) b=_decAdd(b,{v:1,s:b.s});
+      const c=_decCmp(a,b);
+      rel=c>0?'gt':'lt';
+      aDisp=_decFmt(a); bDisp=_decFmt(b);
+    }
+    items.push({a:aDisp,b:bDisp,rel});
   }
   return items;
 }
+// Sección II: 5 movimientos del punto por 10, 100 ó 1,000 (la «Regla» del ×/÷ potencias de 10)
 function genPowItems(){
   const items=[]; const powers=[10,100,1000]; const ops=['×','÷'];
-  for(let i=0;i<10;i++){
+  for(let i=0;i<5;i++){
     const op=ops[_rint(0,1)]; const power=powers[_rint(0,2)];
     const base=_randDec(_rint(1,3),_rint(1,3));
     const k=Math.log10(power)*(op==='×'?1:-1);
@@ -944,9 +957,10 @@ function genPowItems(){
   }
   return items;
 }
+// Sección V-a: 2 grupos de 5 decimales para ordenar (réplica del widget «Ordena de Menor a Mayor»)
 function genOrdItems(){
   const groups=[];
-  for(let g=0;g<4;g++){
+  for(let g=0;g<2;g++){
     const dir=_opRnd()<0.5?'mayor':'menor';
     const nums=[]; let tries=0;
     while(nums.length<5&&tries<300){ tries++; const cand=_randDec(1,_rint(2,3)); if(!nums.some(n=>_decCmp(n,cand)===0)) nums.push(cand); }
@@ -955,6 +969,41 @@ function genOrdItems(){
     groups.push({dir,display:_shuffleF(nums, _opRnd).map(n=>_decFmt(n)),correctOrder});
   }
   return groups;
+}
+// Sección IV: 3 problemas de la vida real en contexto hondureño (lempiras), aritmética exacta con {v,s}
+function genProblemItems(){
+  const items=[];
+  // P1 — suma de precios en la pulpería
+  { const a={v:_rint(1050,4995),s:2}, b={v:_rint(325,2975),s:2};
+    const total=_decAdd(a,b);
+    items.push({q:`En la pulpería de tu barrio compras pan por L ${_decFmt(a,true)} y queso por L ${_decFmt(b,true)}. ¿Cuánto pagas en total, en lempiras?`, ans:_decFmt(total,true)}); }
+  // P2 — vuelto: resta con billete de L 50.00
+  { const price={v:_rint(1505,4820),s:2};
+    const vuelto=_decSub({v:5000,s:2},price);
+    items.push({q:`Compras un cuaderno y un lápiz que juntos cuestan L ${_decFmt(price,true)} y pagas con un billete de L 50.00. ¿Cuánto vuelto, en lempiras, debes recibir?`, ans:_decFmt(vuelto,true)}); }
+  // P3 — comparar precios por litro y calcular el ahorro
+  { const p1={v:_rint(1850,3600),s:2}; let p2={v:_rint(1850,3600),s:2};
+    if(_decCmp(p1,p2)===0) p2=_decAdd(p2,{v:5,s:2});
+    const hi=_decCmp(p1,p2)>0?p1:p2, lo=_decCmp(p1,p2)>0?p2:p1;
+    const dif=_decSub(hi,lo);
+    items.push({q:`Un litro de leche cuesta L ${_decFmt(p1,true)} en la pulpería y L ${_decFmt(p2,true)} en el supermercado. ¿Cuánto ahorras por litro comprando en el lugar más barato?`, ans:_decFmt(dif,true)}); }
+  return items;
+}
+// Sección V-b: «Detective del error» — suma mal alineada (2.5 + 1.35 = 1.60), el alumno halla el resultado correcto
+function genDetectiveItem(){
+  const a={v:_rint(1,9)*10+_rint(1,9),s:1};      // n.d  (una décima): 2.5
+  const b={v:_rint(1,9)*100+_rint(10,99),s:2};   // n.dd (dos decimales): 1.35
+  const correct=_decAdd(a,b);
+  const wrong={v:a.v+b.v,s:2};                    // error clásico: sumar sin alinear el punto → 1.60
+  return {a:_decFmt(a),b:_decFmt(b),wrong:_decFmt(wrong,true),ans:_decFmt(correct)};
+}
+// Sección V-c: «Trampa del cero» — el número con MENOS dígitos es mayor (0.9 > 0.89)
+function genZeroTrapItem(){
+  const d1=_rint(2,9);                             // décima del número corto
+  const shortNum={v:d1,s:1};                       // 0.d1  (0.9)
+  const c2=_rint(1,9);
+  const longNum={v:(d1-1)*10+c2,s:2};              // 0.(d1-1)c2  (0.89) siempre menor
+  return {a:_decFmt(shortNum),b:_decFmt(longNum,true),rel:'gt'};
 }
 
 function genEvalOp(){
@@ -967,36 +1016,53 @@ function genEvalOp(){
   evalOpAnsVisible=false;
   const out=document.getElementById('evalOpOut'); out.innerHTML='';
 
+  // I. Suma y resta alineando el punto — 5 × 4 = 20 pts
   const opItems=genOpItems();
-  const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Operaciones (suma y resta) <span class="eval-pts">50 pts · 10 pts c/u</span></div>';
+  const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Suma y resta alineando el punto <span class="eval-pts">20 pts · 4 pts c/u</span></div>';
   opItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.a} ${it.op} ${it.b} =</span><input class="eval-cp-input" type="text" data-opx="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbOpx${i}" aria-live="polite"></div>`; s1.appendChild(d); });
   out.appendChild(s1);
 
-  const roundItems=genRoundItems();
-  const s2=document.createElement('div'); s2.innerHTML='<div class="eval-section-title">II. Redondear a la centésima más próxima <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
-  roundItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.q} ≈</span><input class="eval-cp-input" type="text" data-rnd="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbRnd${i}" aria-live="polite"></div>`; s2.appendChild(d); });
+  // II. Mueve el punto: × / ÷ por 10, 100 y 1,000 — 5 × 2 = 10 pts
+  const powItems=genPowItems();
+  const s2=document.createElement('div'); s2.innerHTML='<div class="eval-section-title">II. Mueve el punto: multiplica o divide por 10, 100 y 1,000 <span class="eval-pts">10 pts · 2 pts c/u</span></div>';
+  powItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.base} ${it.op} ${it.power} =</span><input class="eval-cp-input" type="text" data-pow="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbPow${i}" aria-live="polite"></div>`; s2.appendChild(d); });
   out.appendChild(s2);
 
+  // III. Redondea y compara — 5 redondeos + 5 comparaciones × 2 = 20 pts
+  const roundItems=genRoundItems();
   const cmpItems=genCmpItems();
-  const s3=document.createElement('div'); s3.innerHTML='<div class="eval-section-title">III. Compara: ¿mayor, menor o igual? <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
-  cmpItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text opx-expr">${it.a} ___ ${it.b}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="cmp${i}" value="gt"> Mayor que (&gt;)</label><label class="eval-cmp-opt"><input type="radio" name="cmp${i}" value="lt"> Menor que (&lt;)</label><label class="eval-cmp-opt"><input type="radio" name="cmp${i}" value="eq"> Igual (=)</label></div><div class="eval-answer">${it.rel==='gt'?'Mayor que':it.rel==='lt'?'Menor que':'Igual'}</div><div class="eval-item-feedback" id="evalFbCmp${i}" aria-live="polite"></div>`; s3.appendChild(d); });
+  const s3=document.createElement('div'); s3.innerHTML='<div class="eval-section-title">III. Redondea y compara <span class="eval-pts">20 pts · 2 pts c/u</span></div><p class="opx-instr" style="margin:0.2rem 0 0.3rem;">Primero redondea al lugar indicado; luego decide si el primer decimal es mayor, menor o igual (¡ojo con los ceros!).</p>';
+  roundItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">Redondea ${it.q} a la ${it.place} ≈</span><input class="eval-cp-input" type="text" data-rnd="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbRnd${i}" aria-live="polite"></div>`; s3.appendChild(d); });
+  cmpItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text opx-expr">${it.a} ___ ${it.b}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="cmp${i}" value="gt"> Mayor que (&gt;)</label><label class="eval-cmp-opt"><input type="radio" name="cmp${i}" value="lt"> Menor que (&lt;)</label><label class="eval-cmp-opt"><input type="radio" name="cmp${i}" value="eq"> Igual (=)</label></div><div class="eval-answer">${it.rel==='gt'?'Mayor que':it.rel==='lt'?'Menor que':'Igual'}</div><div class="eval-item-feedback" id="evalFbCmp${i}" aria-live="polite"></div>`; s3.appendChild(d); });
   out.appendChild(s3);
 
-  const powItems=genPowItems();
-  const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Multiplica o divide por potencias de 10 <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
-  powItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.base} ${it.op} ${it.power} =</span><input class="eval-cp-input" type="text" data-pow="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbPow${i}" aria-live="polite"></div>`; s4.appendChild(d); });
+  // IV. Problemas de la vida real (contexto hondureño) — 3 × 10 = 30 pts
+  const probItems=genProblemItems();
+  const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div>';
+  probItems.forEach((it,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="opx-row" style="align-items:flex-start;"><span class="eval-num">${i+1}</span><span class="opx-expr" style="font-family:inherit;font-weight:400;flex:1;">${it.q}</span></div><div style="margin-left:2rem;margin-top:0.3rem;display:flex;align-items:center;gap:0.4rem;"><strong>Respuesta:</strong><input class="eval-cp-input" type="text" data-prob="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbProb${i}" aria-live="polite"></div>`; s4.appendChild(d); });
   out.appendChild(s4);
 
+  // V. Retos de pensamiento — ordenar 2×5=10 + detective 5 + trampa del cero 5 = 20 pts
   const ordGroups=genOrdItems();
-  const s5=document.createElement('div'); s5.innerHTML='<div class="eval-section-title">V. Ordena cada grupo de cantidades decimales <span class="eval-pts">20 pts · 5 pts c/u</span></div>';
+  const detItem=genDetectiveItem();
+  const ztItem=genZeroTrapItem();
+  const s5=document.createElement('div'); s5.innerHTML='<div class="eval-section-title">V. Retos de pensamiento <span class="eval-pts">20 pts</span></div>';
+  const s5a=document.createElement('div'); s5a.innerHTML='<p class="opx-instr" style="font-weight:700;margin:0.2rem 0;">a) Ordena cada grupo de decimales (5 pts c/u):</p>';
+  s5.appendChild(s5a);
   ordGroups.forEach((g,gi)=>{
     const d=document.createElement('div'); d.className='eval-item eval-auto-item evord-group';
     d.innerHTML=`<div class="evord-dir">${gi+1}. Ordena de ${g.dir==='mayor'?'MAYOR a menor':'MENOR a mayor'}:</div><div class="evord-list" id="evordList${gi}"></div><div class="eval-answer">${g.correctOrder.join(' · ')}</div><div class="eval-item-feedback" id="evalFbOrd${gi}" aria-live="polite"></div>`;
     s5.appendChild(d);
   });
+  const detDiv=document.createElement('div'); detDiv.className='eval-item eval-auto-item';
+  detDiv.innerHTML=`<p class="opx-instr" style="font-weight:700;margin:0.2rem 0;">b) Detective del error (5 pts):</p><div class="eval-q"><span class="eval-q-text">Un estudiante sumó <strong>${detItem.a} + ${detItem.b}</strong> sin alinear el punto y escribió <strong style="color:var(--red);">${detItem.wrong}</strong>. ¿Cuál es el resultado <u>correcto</u>?</span></div><div style="display:flex;align-items:center;gap:0.4rem;margin-top:0.3rem;"><strong>Correcto:</strong><input class="eval-cp-input" type="text" data-det autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${detItem.ans}</div><div class="eval-item-feedback" id="evalFbDet" aria-live="polite"></div>`;
+  s5.appendChild(detDiv);
+  const ztDiv=document.createElement('div'); ztDiv.className='eval-item eval-auto-item';
+  ztDiv.innerHTML=`<p class="opx-instr" style="font-weight:700;margin:0.2rem 0;">c) Trampa del cero (5 pts):</p><div class="eval-q"><span class="eval-q-text">¿Qué signo va entre <strong>${ztItem.a}</strong> y <strong>${ztItem.b}</strong>? (Recuerda: tener más dígitos no significa ser mayor.)</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="zt" value="gt"> Mayor que (&gt;)</label><label class="eval-cmp-opt"><input type="radio" name="zt" value="lt"> Menor que (&lt;)</label><label class="eval-cmp-opt"><input type="radio" name="zt" value="eq"> Igual (=)</label></div><div class="eval-answer">${ztItem.rel==='gt'?'Mayor que':ztItem.rel==='lt'?'Menor que':'Igual'}</div><div class="eval-item-feedback" id="evalFbZt" aria-live="polite"></div>`;
+  s5.appendChild(ztDiv);
   out.appendChild(s5);
 
-  window._evalOpData={ops:opItems,round:roundItems,cmp:cmpItems,pow:powItems,ord:ordGroups.map(g=>({dir:g.dir,current:[...g.display],correctOrder:g.correctOrder}))};
+  window._evalOpData={ops:opItems,pow:powItems,round:roundItems,cmp:cmpItems,prob:probItems,ord:ordGroups.map(g=>({dir:g.dir,current:[...g.display],correctOrder:g.correctOrder})),det:detItem,zt:ztItem};
   ordGroups.forEach((g,gi)=>_renderOrdGroup(gi));
   const autoPanel=document.createElement('div'); autoPanel.id='evalOpAutoResult'; autoPanel.className='eval-auto-result'; autoPanel.innerHTML='<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original para resolver en papel.'; out.appendChild(autoPanel);
   fin('s-evaluacion');
@@ -1034,14 +1100,17 @@ function gradeEvalOp(){
   if(!window._evalOpData){ showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const d=window._evalOpData;
-  let total=0; const detail={ops:0,round:0,cmp:0,pow:0,ord:0};
-  d.ops.forEach((it,i)=>{ const input=document.querySelector(`[data-opx="${i}"]`); const ok=isOpNumCorrect(input?input.value:'',it.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.ops++; total+=10; } setEvalFeedback('evalFbOpx'+i,ok,ok?'Correcto. +10 pts':'Revisar. Respuesta esperada: '+it.ans); });
-  d.round.forEach((it,i)=>{ const input=document.querySelector(`[data-rnd="${i}"]`); const ok=isOpNumCorrect(input?input.value:'',it.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.round++; total+=1; } setEvalFeedback('evalFbRnd'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+it.ans); });
-  d.cmp.forEach((it,i)=>{ const selected=document.querySelector(`input[name="cmp${i}"]:checked`); const ok=!!selected&&selected.value===it.rel; if(ok){ detail.cmp++; total+=1; } setEvalFeedback('evalFbCmp'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+(it.rel==='gt'?'Mayor que':it.rel==='lt'?'Menor que':'Igual')); });
-  d.pow.forEach((it,i)=>{ const input=document.querySelector(`[data-pow="${i}"]`); const ok=isOpNumCorrect(input?input.value:'',it.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.pow++; total+=1; } setEvalFeedback('evalFbPow'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+it.ans); });
+  let total=0; const detail={ops:0,pow:0,round:0,cmp:0,prob:0,ord:0,det:false,zt:false};
+  d.ops.forEach((it,i)=>{ const input=document.querySelector(`[data-opx="${i}"]`); const ok=isOpNumCorrect(input?input.value:'',it.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.ops++; total+=4; } setEvalFeedback('evalFbOpx'+i,ok,ok?'Correcto. +4 pts':'Revisar. Respuesta esperada: '+it.ans); });
+  d.pow.forEach((it,i)=>{ const input=document.querySelector(`[data-pow="${i}"]`); const ok=isOpNumCorrect(input?input.value:'',it.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.pow++; total+=2; } setEvalFeedback('evalFbPow'+i,ok,ok?'Correcto. +2 pts':'Revisar. Respuesta esperada: '+it.ans); });
+  d.round.forEach((it,i)=>{ const input=document.querySelector(`[data-rnd="${i}"]`); const ok=isOpNumCorrect(input?input.value:'',it.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.round++; total+=2; } setEvalFeedback('evalFbRnd'+i,ok,ok?'Correcto. +2 pts':'Revisar. Respuesta esperada: '+it.ans); });
+  d.cmp.forEach((it,i)=>{ const selected=document.querySelector(`input[name="cmp${i}"]:checked`); const ok=!!selected&&selected.value===it.rel; if(ok){ detail.cmp++; total+=2; } setEvalFeedback('evalFbCmp'+i,ok,ok?'Correcto. +2 pts':'Revisar. Respuesta esperada: '+(it.rel==='gt'?'Mayor que':it.rel==='lt'?'Menor que':'Igual')); });
+  d.prob.forEach((it,i)=>{ const input=document.querySelector(`[data-prob="${i}"]`); const ok=isOpNumCorrect(input?input.value:'',it.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.prob++; total+=10; } setEvalFeedback('evalFbProb'+i,ok,ok?'Correcto. +10 pts':'Revisar. Respuesta esperada: L '+it.ans); });
   d.ord.forEach((g,gi)=>{ const ok=g.current.every((v,i)=>v===g.correctOrder[i]); if(ok){ detail.ord++; total+=5; } setEvalFeedback('evalFbOrd'+gi,ok,ok?'¡Orden correcto! +5 pts':'Orden incorrecto. Clave: '+g.correctOrder.join(' · ')); });
+  { const input=document.querySelector('[data-det]'); const ok=isOpNumCorrect(input?input.value:'',d.det.ans); if(input){ input.classList.toggle('eval-input-ok',ok); input.classList.toggle('eval-input-no',!ok); } if(ok){ detail.det=true; total+=5; } setEvalFeedback('evalFbDet',ok,ok?'¡Detectaste el error! +5 pts':'Revisar. Resultado correcto: '+d.det.ans); }
+  { const selected=document.querySelector('input[name="zt"]:checked'); const ok=!!selected&&selected.value===d.zt.rel; if(ok){ detail.zt=true; total+=5; } setEvalFeedback('evalFbZt',ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+(d.zt.rel==='gt'?'Mayor que':d.zt.rel==='lt'?'Menor que':'Igual')); }
   const result=document.getElementById('evalOpAutoResult');
-  if(result){ result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk'); result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Operaciones: ${detail.ops*10}/50 · Redondeo: ${detail.round}/10 · Comparar: ${detail.cmp}/10 · Pot. de 10: ${detail.pow}/10 · Ordenar: ${detail.ord*5}/20</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`; }
+  if(result){ result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk'); result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Suma/resta: ${detail.ops*4}/20 · Mueve el punto: ${detail.pow*2}/10 · Redondeo: ${detail.round*2}/10 · Comparar: ${detail.cmp*2}/10 · Problemas: ${detail.prob*10}/30 · Ordenar: ${detail.ord*5}/10 · Detective: ${detail.det?5:0}/5 · Trampa del cero: ${detail.zt?5:0}/5</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`; }
   if(total>=70){ pts(8); showToast('🎯 Prueba operativa calificada: '+total+'/100'); }
   else showToast('🧮 Prueba operativa calificada: '+total+'/100. Revisa las respuestas marcadas.');
 }
@@ -1050,25 +1119,35 @@ function printEvalOp(){
   if(!window._evalOpData){ showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const forma=window._currentEvalOpForm||1; const d=window._evalOpData;
-  let s1=`<div class="sec-title"><span>I. Operaciones (suma y resta)</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 50%</span></div></div><p class="opx-instr">Resuelve con lápiz grafito las sumas y restas; trabaja el procedimiento en el reverso de esta hoja y coloca la respuesta final en la línea. Valor 10% c/u.</p>`;
+  // I. Suma y resta alineando el punto — 20%
+  let s1=`<div class="sec-title"><span>I. Suma y resta alineando el punto</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20%</span></div></div><p class="opx-instr">Alinea los puntos decimales en columna en el reverso de esta hoja y coloca la respuesta final en la línea. Valor 4% c/u.</p>`;
   d.ops.forEach((it,i)=>{ s1+=`<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="opx-print-expr">${it.a} ${it.op} ${it.b} =</span><span class="opx-blank"></span></div>`; });
-  const rndTbl=(items)=>`<table class="rnd-tbl"><tr><th>Cantidad</th><th>Respuesta</th></tr>${items.map(it=>`<tr><td>${it.q}</td><td></td></tr>`).join('')}</table>`;
-  const roundHalf=Math.ceil(d.round.length/2);
-  let s2=`<div class="sec-title"><span>II. Redondear a la centésima más próxima</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="rnd-print-grid">${rndTbl(d.round.slice(0,roundHalf))}${rndTbl(d.round.slice(roundHalf))}</div>`;
-  const cmpHalf=Math.ceil(d.cmp.length/2);
-  const cmpRow=(it)=>`<div class="cmp-print-row"><span class="cmp-print-num">${it.a}</span><span class="cmp-box">&nbsp;</span><span class="cmp-print-num">${it.b}</span></div>`;
-  let s3=`<div class="sec-title"><span>III. Compara: ¿mayor, menor o igual?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="cmp-print-grid"><div>${d.cmp.slice(0,cmpHalf).map(cmpRow).join('')}</div><div>${d.cmp.slice(cmpHalf).map(cmpRow).join('')}</div></div>`;
+  // II. Mueve el punto: × / ÷ por 10, 100 y 1,000 — 10%
   const powTbl=(items)=>`<table class="rnd-tbl"><tr><th>Operación</th><th>Respuesta</th></tr>${items.map(it=>`<tr><td>${it.base} ${it.op} ${it.power} =</td><td></td></tr>`).join('')}</table>`;
   const powHalf=Math.ceil(d.pow.length/2);
-  let s4=`<div class="sec-title"><span>IV. Multiplica o divide por potencias de 10</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="rnd-print-grid">${powTbl(d.pow.slice(0,powHalf))}${powTbl(d.pow.slice(powHalf))}</div>`;
-  let s5=`<div class="sec-title"><span>V. Ordena cada grupo de cantidades decimales</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20%</span></div></div><div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordene de ${g.dir==='mayor'?'Mayor a Menor':'Menor a Mayor'}.</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${v}</td>`).join('')}</tr><tr>${g.current.map(()=>'<td class="ord-print-cell"></td>').join('')}</tr></table></div>`).join('')}</div>`;
+  let s2=`<div class="sec-title"><span>II. Mueve el punto: multiplica o divide por 10, 100 y 1,000</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="rnd-print-grid">${powTbl(d.pow.slice(0,powHalf))}${powTbl(d.pow.slice(powHalf))}</div>`;
+  // III. Redondea y compara — 20%
+  const rndTbl=(items)=>`<table class="rnd-tbl"><tr><th>Cantidad</th><th>Redondea a</th><th>Respuesta</th></tr>${items.map(it=>`<tr><td>${it.q}</td><td>${it.place}</td><td></td></tr>`).join('')}</table>`;
+  const roundHalf=Math.ceil(d.round.length/2);
+  const cmpHalf=Math.ceil(d.cmp.length/2);
+  const cmpRow=(it)=>`<div class="cmp-print-row"><span class="cmp-print-num">${it.a}</span><span class="cmp-box">&nbsp;</span><span class="cmp-print-num">${it.b}</span></div>`;
+  let s3=`<div class="sec-title"><span>III. Redondea y compara</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20%</span></div></div><p class="opx-instr">a) Redondea al lugar indicado. b) Escribe &gt;, &lt; ó = en el recuadro (¡ojo con los ceros al final!). Valor 2% c/u.</p><div class="rnd-print-grid">${rndTbl(d.round.slice(0,roundHalf))}${rndTbl(d.round.slice(roundHalf))}</div><div class="cmp-print-grid" style="margin-top:0.3rem;"><div>${d.cmp.slice(0,cmpHalf).map(cmpRow).join('')}</div><div>${d.cmp.slice(cmpHalf).map(cmpRow).join('')}</div></div>`;
+  // IV. Problemas de la vida real — 30%
+  let s4=`<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30%</span></div></div><p class="opx-instr">Lee cada problema, plantea la operación y resuelve. Escribe la respuesta con su unidad. Valor 10% c/u.</p>`;
+  d.prob.forEach((it,i)=>{ s4+=`<div class="prob-print"><div class="prob-q"><span class="qn">${i+1}.</span> ${it.q}</div><div class="prob-ans-line"><strong>R/</strong><span class="prob-blank"></span></div></div>`; });
+  // V. Retos de pensamiento — 20%
+  let s5=`<div class="sec-title"><span>V. Retos de pensamiento</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20%</span></div></div>`;
+  s5+=`<p class="opx-instr" style="font-weight:700;color:#111;">a) Ordena cada grupo de decimales (5% c/u).</p><div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordene de ${g.dir==='mayor'?'Mayor a Menor':'Menor a Mayor'}.</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${v}</td>`).join('')}</tr><tr>${g.current.map(()=>'<td class="ord-print-cell"></td>').join('')}</tr></table></div>`).join('')}</div>`;
+  s5+=`<div class="reto-print"><strong>b) Detective del error (5%).</strong> Un estudiante sumó <strong>${d.det.a} + ${d.det.b}</strong> sin alinear el punto y escribió <strong>${d.det.wrong}</strong>. Escribe el resultado correcto: <span class="reto-blank"></span></div>`;
+  s5+=`<div class="reto-print"><strong>c) Trampa del cero (5%).</strong> Escribe &gt;, &lt; ó = entre <strong>${d.zt.a}</strong> y <strong>${d.zt.b}</strong>: <span class="reto-blank" style="min-width:60px;"></span><br>Justifica con el valor posicional: <span class="reto-just"></span></div>`;
   let pR='';
-  pR+=`<div class="p-sec"><div class="p-ttl">I. Operaciones</div><table class="p-tbl">${d.ops.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">II. Redondeo</div><table class="p-tbl">${d.round.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">III. Comparar</div><table class="p-tbl">${d.cmp.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.rel==='gt'?'&gt;':it.rel==='lt'?'&lt;':'='}</td></tr>`).join('')}</table></div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">IV. Pot. de 10</div><table class="p-tbl">${d.pow.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
-  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Ordenar</div>${d.ord.map((g,gi)=>`<div class="p-ord-line"><strong>${gi+1}.</strong> ${g.correctOrder.join(' · ')}</div>`).join('')}</div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Números Decimales · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#555;margin-top:0.15rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.4rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.18rem 0.2rem;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:160px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #999;padding:0.12rem 0.4rem;text-align:left;}.cmp-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.cmp-print-row{display:flex;align-items:center;gap:0.4rem;font-size:11pt;padding:0.2rem 0;}.cmp-box{display:inline-block;width:22px;height:18px;border:1.5px solid #111;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;}.ord-print-dir{font-size:9.5pt;font-weight:700;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #999;padding:0.15rem 0.3rem;text-align:center;}.ord-print-cell{height:16px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.25rem 0.4rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}.p-ord-line{font-size:10.5pt;margin-bottom:0.15rem;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Actividades Operativas · Números Decimales · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Operaciones 50% · Redondeo 10% · Comparar 10% · Pot. de 10: 10% · Ordenar 20%</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row" style="margin-top:0.4rem;font-weight:700;color:#1565c0;">Total obtenido: <span class="obt-line" style="min-width:80px;border-bottom:1.5px solid #1565c0;"></span> de 100%</div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Números Decimales · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Suma y resta</div><table class="p-tbl">${d.ops.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Mueve el punto</div><table class="p-tbl">${d.pow.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III-a. Redondeo</div><table class="p-tbl">${d.round.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans} <span style="color:#555;font-weight:400;">(${it.place})</span></td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III-b. Comparar</div><table class="p-tbl">${d.cmp.map((it,i)=>`<tr><td class="pn">${i+6}.</td><td class="pa">${it.a} ${it.rel==='gt'?'&gt;':it.rel==='lt'?'&lt;':'='} ${it.b}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">IV. Problemas de la vida real</div>${d.prob.map((it,i)=>`<div class="p-ord-line"><strong>${i+1}.</strong> L ${it.ans}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de pensamiento</div>${d.ord.map((g,gi)=>`<div class="p-ord-line"><strong>a${gi+1}.</strong> ${g.correctOrder.join(' · ')}</div>`).join('')}<div class="p-ord-line"><strong>b.</strong> ${d.det.a} + ${d.det.b} = <span class="pa">${d.det.ans}</span> (el error ${d.det.wrong} nace de no alinear el punto).</div><div class="p-ord-line"><strong>c.</strong> ${d.zt.a} ${d.zt.rel==='gt'?'&gt;':d.zt.rel==='lt'?'&lt;':'='} ${d.zt.b} — se compara décima a décima; más dígitos no significa mayor.</div></div>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Números Decimales · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#555;margin-top:0.15rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.4rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.18rem 0.2rem;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:160px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #999;padding:0.12rem 0.4rem;text-align:left;}.cmp-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.cmp-print-row{display:flex;align-items:center;gap:0.4rem;font-size:11pt;padding:0.2rem 0;}.cmp-box{display:inline-block;width:22px;height:18px;border:1.5px solid #111;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;}.ord-print-dir{font-size:9.5pt;font-weight:700;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #999;padding:0.15rem 0.3rem;text-align:center;}.ord-print-cell{height:16px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.25rem 0.4rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}.p-ord-line{font-size:10.5pt;margin-bottom:0.15rem;}.prob-print{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.5rem;margin-bottom:0.3rem;font-size:10.5pt;break-inside:avoid;}.prob-q{line-height:1.32;}.prob-ans-line{display:flex;align-items:baseline;gap:0.4rem;margin-top:0.35rem;}.prob-blank{flex:1;border-bottom:1.5px solid #111;min-height:14px;}.reto-print{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.5rem;margin-bottom:0.3rem;font-size:10pt;line-height:1.35;break-inside:avoid;}.reto-blank{display:inline-block;min-width:120px;border-bottom:1.5px solid #111;height:13px;margin:0 0.2rem;}.reto-just{display:block;border-bottom:1px solid #111;height:13px;margin-top:0.3rem;}.total-row{display:flex;align-items:baseline;gap:7px;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Actividades Operativas · Números Decimales · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Suma y resta 20% · Mueve el punto 10% · Redondea y compara 20% · Problemas 30% · Retos 20%</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row" style="margin-top:0.4rem;font-weight:700;color:#1565c0;">Total obtenido: <span class="obt-line" style="min-width:80px;border-bottom:1.5px solid #1565c0;"></span> de 100%</div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Números Decimales · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);

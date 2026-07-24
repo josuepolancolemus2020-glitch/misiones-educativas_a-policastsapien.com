@@ -1305,12 +1305,30 @@ function evalSwitchMode(mode) {
 }
 
 const critCaseBank = [
-    { txt: 'Mateo escribió en su cuaderno: "El sabado fui al jardin con mi papá y vimos un arbol muy alto cerca del rio."' },
-    { txt: 'Camila escribió: "Compre un sofa nuevo para la sala y tambien una mesa pequeña de color cafe."' },
-    { txt: 'Luis escribió: "Mi materia favorita es la musica, porque el profesor explica con ejemplos muy practicos."' },
-    { txt: 'Ana escribió: "El no sabe si vendra a la fiesta, pero yo si quiero ir con el este sabado."' },
-    { txt: 'Pedro escribió: "Cuentaselo a tu hermano antes de que se entere por otra persona, el se va a molestar."' },
-    { txt: 'Sofía escribió: "Tuvimos un dia muy especial: vimos un arcoiris despues de la lluvia y comimos un pastel de chocolate."' },
+    { txt: 'Mateo escribió en su cuaderno: "El sabado fui al jardin con mi papá y vimos un arbol muy alto cerca del rio."',
+        palabras: 'sábado, jardín, árbol, río',
+        faltantes: ['«sábado» → esdrújula (SÁ-ba-do): siempre lleva tilde', '«jardín» → aguda terminada en n', '«árbol» → llana terminada en consonante distinta de n/s', '«río» → hiato acentual (í tónica + o): la débil tónica siempre se tilda'],
+        corregida: 'El sábado fui al jardín con mi papá y vimos un árbol muy alto cerca del río.' },
+    { txt: 'Camila escribió: "Compre un sofa nuevo para la sala y tambien una mesa pequeña de color cafe."',
+        palabras: 'compré, sofá, también, café',
+        faltantes: ['«compré» → aguda terminada en vocal', '«sofá» → aguda terminada en vocal', '«también» → aguda terminada en n', '«café» → aguda terminada en vocal'],
+        corregida: 'Compré un sofá nuevo para la sala y también una mesa pequeña de color café.' },
+    { txt: 'Luis escribió: "Mi materia favorita es la musica, porque el profesor explica con ejemplos muy practicos."',
+        palabras: 'música, prácticos',
+        faltantes: ['«música» → esdrújula (MÚ-si-ca): siempre lleva tilde', '«prácticos» → esdrújula (PRÁC-ti-cos): siempre lleva tilde'],
+        corregida: 'Mi materia favorita es la música, porque el profesor explica con ejemplos muy prácticos.' },
+    { txt: 'Ana escribió: "El no sabe si vendra a la fiesta, pero yo si quiero ir con el este sabado."',
+        palabras: 'él (2 veces), vendrá, sí, sábado',
+        faltantes: ['«él» → tilde diacrítica: pronombre personal, aparece 2 veces («Él no sabe», «con él»)', '«vendrá» → aguda terminada en vocal', '«sí» → tilde diacrítica: adverbio de afirmación (el primer «si» condicional va sin tilde)', '«sábado» → esdrújula: siempre lleva tilde'],
+        corregida: 'Él no sabe si vendrá a la fiesta, pero yo sí quiero ir con él este sábado.' },
+    { txt: 'Pedro escribió: "Cuentaselo a tu hermano antes de que se entere por otra persona, el se va a molestar."',
+        palabras: 'cuéntaselo, él',
+        faltantes: ['«cuéntaselo» → sobresdrújula (verbo + pronombres átonos): siempre lleva tilde', '«él» → tilde diacrítica: pronombre personal («tu» posesivo y «se» pronombre átono van sin tilde)'],
+        corregida: 'Cuéntaselo a tu hermano antes de que se entere por otra persona, él se va a molestar.' },
+    { txt: 'Sofía escribió: "Tuvimos un dia muy especial: vimos un arcoiris despues de la lluvia y comimos un pastel de chocolate."',
+        palabras: 'día, arcoíris, después',
+        faltantes: ['«día» → hiato acentual (í tónica + a): la débil tónica siempre se tilda', '«arcoíris» → hiato acentual (o + í tónica)', '«después» → aguda terminada en s'],
+        corregida: 'Tuvimos un día muy especial: vimos un arcoíris después de la lluvia y comimos un pastel de chocolate.' },
 ];
 const critCaseQuestions = [
     '1. Identifica todas las palabras que deberían llevar tilde y no la tienen.',
@@ -1318,12 +1336,15 @@ const critCaseQuestions = [
     '3. Reescribe la oración completa con la acentuación correcta.',
     '4. Explica con tus propias palabras la regla que aplicaste en cada caso.',
 ];
-const critCaseGuides = [
-    'Busca palabras que terminen en vocal, n o s y sean agudas (deben llevar tilde), o que NO terminen en esas letras y sean llanas (deben llevar tilde); las esdrújulas y sobresdrújulas siempre la llevan.',
-    'Clasifica cada palabra corregida según el lugar de su sílaba tónica: última (aguda), penúltima (llana), antepenúltima (esdrújula) o antes (sobresdrújula); o indica si es un caso de tilde diacrítica (pronombres como él/tú/sí, o adverbios interrogativos como dónde/cómo).',
-    'La oración corregida debe colocar la tilde en cada palabra identificada, respetando las reglas de acentuación correspondientes a cada caso.',
-    'La explicación debe mencionar la regla específica aplicada en cada palabra: regla de agudas, de llanas, de esdrújulas/sobresdrújulas, o el uso de la tilde diacrítica.',
-];
+// Pauta específica del caso sorteado: lista sus palabras sin tilde, su clasificación y la oración corregida modelo.
+function critCaseGuidesFor(k) {
+    return [
+        'Palabras sin tilde en el texto (' + k.faltantes.length + '): ' + k.palabras + '.',
+        'Clasificación: ' + k.faltantes.join(' · ') + '.',
+        'Oración corregida modelo: «' + k.corregida + '»',
+        'La explicación debe citar, con sus palabras, la regla aplicada a cada palabra de la pregunta 2 (agudas: tilde si terminan en n, s o vocal; llanas: tilde si NO terminan en n, s o vocal; esdrújulas y sobresdrújulas: siempre; hiato acentual: vocal débil tónica siempre; diacrítica: según la función gramatical).',
+    ];
+}
 
 const critErrorBank = [
     { txt: '"Las palabras agudas siempre llevan tilde, sin importar en qué letra terminen. Por ejemplo, reloj y pared deberían escribirse \'reló\' y \'paréd\'."',
@@ -1347,13 +1368,19 @@ const critErrorBank = [
 ];
 
 const critDecisionBank = [
-    'Un estudiante escribe sus tareas muy rápido, nunca separa las palabras en sílabas y casi nunca revisa lo que escribió. Comete muchos errores de tildes en sus exámenes.',
-    'Una estudiante confunde constantemente "tu" y "tú", "el" y "él", porque no sabe identificar la función gramatical de la palabra en la oración.',
-    'Un estudiante memorizó las reglas de acentuación, pero al escribir un texto no logra identificar la sílaba tónica de las palabras y se equivoca colocando las tildes.',
-    'Una estudiante escribe textos largos sin tildes porque dice que "se entienden igual" y que la tilde no es tan importante.',
-    'Un estudiante confunde diptongo con hiato y por eso no sabe en qué palabras debe poner tilde en la vocal débil (como "día" o "país").',
+    { txt: 'Un estudiante escribe sus tareas muy rápido, nunca separa las palabras en sílabas y casi nunca revisa lo que escribió. Comete muchos errores de tildes en sus exámenes.',
+        guide: 'Estrategias esperadas (mínimo tres, cada una justificada): 1) separar en sílabas las palabras dudosas antes de escribirlas, porque sin sílabas no se puede ubicar la tónica; 2) pronunciar la palabra en voz alta marcando el golpe de voz para encontrar la sílaba tónica; 3) releer el texto al terminar buscando agudas, llanas y esdrújulas sin tilde; 4) escribir más despacio las palabras largas o dudosas.' },
+    { txt: 'Una estudiante confunde constantemente "tu" y "tú", "el" y "él", porque no sabe identificar la función gramatical de la palabra en la oración.',
+        guide: 'Estrategias esperadas (mínimo tres, cada una justificada): 1) identificar la función de la palabra en la oración: «tú» y «él» son pronombres personales y llevan tilde; «tu» (posesivo) y «el» (artículo) no; 2) probar la sustitución: si la palabra puede cambiarse por «usted» o por el nombre de la persona, lleva tilde diacrítica; 3) practicar con pares de oraciones mínimas («Tu cuaderno» / «Tú estudias»); 4) repasar la tabla de tilde diacrítica antes de escribir.' },
+    { txt: 'Un estudiante memorizó las reglas de acentuación, pero al escribir un texto no logra identificar la sílaba tónica de las palabras y se equivoca colocando las tildes.',
+        guide: 'Estrategias esperadas (mínimo tres, cada una justificada): 1) pronunciar la palabra exagerando cada sílaba para sentir el golpe de voz; 2) dar una palmada por sílaba y marcar la más fuerte; 3) comparar con palabras modelo de cada tipo (camión, árbol, música); 4) ubicar primero la sílaba tónica y solo después aplicar la regla memorizada, porque la regla depende de la posición de la tónica.' },
+    { txt: 'Una estudiante escribe textos largos sin tildes porque dice que "se entienden igual" y que la tilde no es tan importante.',
+        guide: 'Estrategias esperadas (mínimo tres, cada una justificada): 1) mostrarle pares donde la tilde cambia el significado (papá/papa, práctico/practicó, él/el) para demostrar que sí importa; 2) hacer dictados cortos con revisión de tildes; 3) crear el hábito de repasar el texto terminado solo para verificar tildes; 4) recordar que la tilde es parte de la escritura correcta de la palabra, no un adorno.' },
+    { txt: 'Un estudiante confunde diptongo con hiato y por eso no sabe en qué palabras debe poner tilde en la vocal débil (como "día" o "país").',
+        guide: 'Estrategias esperadas (mínimo tres, cada una justificada): 1) clasificar las vocales en fuertes (a, e, o) y débiles (i, u); 2) si la vocal débil es tónica junto a una fuerte hay hiato acentual y SIEMPRE se tilda (día, país, baúl); 3) si la débil es átona hay diptongo y se aplican las reglas generales (piano, ciudad); 4) separar la palabra en sílabas en voz alta para comprobar si las vocales quedan juntas o separadas.' },
+    { txt: 'Una estudiante copia correctamente las palabras con tilde del pizarrón, pero cuando escribe dictados o redacciones propias las olvida casi todas.',
+        guide: 'Estrategias esperadas (mínimo tres, cada una justificada): 1) al escuchar o pensar la palabra, marcar mentalmente la sílaba tónica antes de escribirla; 2) silabear en voz baja las palabras largas o dudosas; 3) reservar un minuto final para revisar solo las tildes (agudas en n/s/vocal, llanas en otra consonante, esdrújulas siempre); 4) practicar con dictados cortos de palabras del mismo tipo para automatizar cada regla.' },
 ];
-const critDecisionGuide = 'Debe proponer al menos tres estrategias concretas relacionadas con el proceso de acentuación: separar la palabra en sílabas antes de escribirla, identificar en voz alta cuál es la sílaba tónica, recordar las reglas según el tipo de palabra (aguda/llana/esdrújula/sobresdrújula), distinguir la función gramatical de las palabras con tilde diacrítica, y releer y corregir el texto después de escribirlo. Debe explicar con sus palabras por qué cada estrategia ayuda a mejorar la acentuación.';
 
 const critCompareBank = [
     { a: 'La palabra "música" lleva tilde en la "ú".', b: 'La palabra "compás" lleva tilde en la "á".',
@@ -1372,6 +1399,22 @@ const critCompareBank = [
         ga: '"Cuéntaselo" es sobresdrújula (la tónica está antes de la antepenúltima sílaba, por agregar pronombres al verbo) y siempre lleva tilde.',
         gb: '"Cuenta" es una palabra llana terminada en vocal, por lo que no necesita tilde según la regla de las llanas.',
         gr: 'No siguen la misma regla: al agregar pronombres átonos al verbo, la palabra cambia de categoría (de llana a sobresdrújula) y debe llevar tilde aunque la palabra original no la tuviera.' },
+    { a: 'En la oración "Quiero un té caliente", la palabra "té" lleva tilde.', b: 'En la oración "Te espero mañana", la palabra "te" no lleva tilde.',
+        ga: '"Té" lleva tilde diacrítica porque es un sustantivo: nombra la bebida.',
+        gb: '"Te" es un pronombre personal átono y por eso se escribe sin tilde.',
+        gr: 'Es un caso de tilde diacrítica: los monosílabos normalmente no se tildan, pero cuando dos palabras se escriben igual y cumplen funciones distintas, la tilde diferencia al sustantivo "té" del pronombre "te".' },
+    { a: 'El adverbio "fácilmente" lleva tilde en la "á".', b: 'El adverbio "claramente" no lleva tilde.',
+        ga: '"Fácilmente" conserva la tilde porque el adjetivo del que se forma, "fácil", la lleva (llana terminada en l).',
+        gb: '"Claramente" no lleva tilde porque "clara" tampoco la lleva (llana terminada en vocal).',
+        gr: 'Los adverbios terminados en -mente no siguen las reglas generales de la palabra completa: conservan la tilde solo si el adjetivo original la llevaba.' },
+    { a: 'La palabra "buey" tiene tres vocales juntas y no lleva tilde.', b: 'La palabra "baúl" tiene dos vocales juntas y sí lleva tilde.',
+        ga: '"Buey" tiene un triptongo (débil + fuerte + débil) en una sola sílaba; es aguda terminada en "y", que se comporta como consonante, por eso no se tilda.',
+        gb: '"Baúl" tiene un hiato acentual (a + ú tónica): la vocal débil tónica siempre lleva tilde.',
+        gr: 'No es el mismo caso: en el triptongo las vocales permanecen en una sola sílaba y se aplican las reglas generales; en el hiato acentual la vocal débil tónica se tilda siempre, sin importar otras reglas.' },
+    { a: 'La palabra "examen" no lleva tilde.', b: 'Su plural, "exámenes", sí lleva tilde.',
+        ga: '"Examen" es llana terminada en n (e-XA-men), por eso no lleva tilde.',
+        gb: '"Exámenes" es esdrújula (e-XÁ-me-nes): al agregar la sílaba del plural, la tónica queda en la antepenúltima sílaba, y las esdrújulas siempre se tildan.',
+        gr: 'La sílaba tónica es la misma, pero al añadir una sílaba la palabra cambia de categoría (de llana a esdrújula) y pasa a regirse por otra regla.' },
 ];
 
 const critCauseBank = [
@@ -1401,8 +1444,9 @@ function genEvalCrit() {
     const out = document.getElementById('evalCritOut'); out.innerHTML = '';
 
     const kase = _pickF(critCaseBank, 1, rngC)[0];
+    const kGuides = critCaseGuidesFor(kase);
     const s1 = document.createElement('div');
-    s1.innerHTML = `<div class="eval-section-title">I. Caso de análisis: la tilde olvidada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q, i) => `<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+    s1.innerHTML = `<div class="eval-section-title">I. Caso de análisis: la tilde olvidada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q, i) => `<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${kGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
     out.appendChild(s1);
 
     const err = _pickF(critErrorBank, 1, rngC)[0];
@@ -1412,7 +1456,7 @@ function genEvalCrit() {
 
     const dec = _pickF(critDecisionBank, 1, rngC)[0];
     const s3 = document.createElement('div');
-    s3.innerHTML = `<div class="eval-section-title">III. Toma de decisiones: mejorar la acentuación <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué tres estrategias recomendarías para mejorar su acentuación? Explica por qué ayudaría cada una.</div><textarea class="crit-textarea" rows="4" aria-label="Tres estrategias recomendadas y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+    s3.innerHTML = `<div class="eval-section-title">III. Toma de decisiones: mejorar la acentuación <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec.txt}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué tres estrategias recomendarías para mejorar su acentuación? Explica por qué ayudaría cada una.</div><textarea class="crit-textarea" rows="4" aria-label="Tres estrategias recomendadas y su justificación"></textarea><div class="crit-pauta">${dec.guide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
     out.appendChild(s3);
 
     const cmp = _pickF(critCompareBank, 1, rngC)[0];
@@ -1452,7 +1496,7 @@ function printEvalCrit() {
     let s1 = `<div class="sec-title"><span>I. Caso de análisis: la tilde olvidada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
     critCaseQuestions.forEach(q => { s1 += `<p class="crit-print-q">${q}</p>${lines(1)}`; });
     let s2 = `<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-    let s3 = `<div class="sec-title"><span>III. Toma de decisiones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué tres estrategias recomendarías para mejorar su acentuación? Explica por qué ayudaría cada una.</p>${lines(2)}`;
+    let s3 = `<div class="sec-title"><span>III. Toma de decisiones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec.txt}</p><p class="crit-print-q">¿Qué tres estrategias recomendarías para mejorar su acentuación? Explica por qué ayudaría cada una.</p>${lines(2)}`;
     let s4 = `<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué regla de acentuación se aplica en cada caso? 2. ¿Por qué no son el mismo caso?</p>${lines(2)}`;
     let ceTbl = '<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
     d.causes.forEach(it => { ceTbl += `<tr><td>${it.cause}</td><td></td></tr>`; });
@@ -1460,9 +1504,10 @@ function printEvalCrit() {
     ceTbl += '</table>';
     let s5 = `<div class="sec-title"><span>V. Análisis de causas y efectos</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div>${ceTbl}`;
     let pR = '';
-    pR += `<div class="p-sec"><div class="p-ttl">I. Caso</div>${critCaseQuestions.map((q, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${critCaseGuides[i]}</div>`).join('')}</div>`;
+    const pGuides = critCaseGuidesFor(d.kase);
+    pR += `<div class="p-sec"><div class="p-ttl">I. Caso</div>${critCaseQuestions.map((q, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${pGuides[i]}</div>`).join('')}</div>`;
     pR += `<div class="p-sec"><div class="p-ttl">II. Corrige el error</div><div class="p-crit-line"><strong>Error 1:</strong> ${d.err.g1}</div><div class="p-crit-line"><strong>Error 2:</strong> ${d.err.g2}</div></div>`;
-    pR += `<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${d.dec.guide}</div></div>`;
     pR += `<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
     pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it => `<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it => `<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
     const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico La Acentuación · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c49000;background:#fef9e7;color:#c49000;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c49000;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #c49000;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#fef9e7;border-left:3px solid #c49000;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#fef9e7;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#fef9e7;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#c49000;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#c49000;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c49000;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · La Acentuación · Educación Básica · Español</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · La Acentuación · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;

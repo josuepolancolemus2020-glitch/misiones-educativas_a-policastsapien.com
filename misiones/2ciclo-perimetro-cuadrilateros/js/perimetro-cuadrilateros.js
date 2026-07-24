@@ -956,8 +956,10 @@ function _isIntMatch(student, expectedNum) {
   const n = parseInt(raw, 10);
   return !isNaN(n) && n === expectedNum;
 }
+function _normTxt(s) { return (s || '').toString().trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/²/g, '2').replace(/[.\s]/g, ''); }
+function _isTxtMatch(student, accepted) { const n = _normTxt(student); if (!n) return false; return accepted.some(a => _normTxt(a) === n); }
 function _opFig(){ if(_opRnd()<0.5){ const l=_opRint(3,15); return {tipo:'cuadrado', desc:`cuadrado de lado ${l} cm`, per:_perimCuad(l), area:_areaCuad(l)}; } const b=_opRint(3,15), h=_opRint(2,12); return {tipo:'rectángulo', desc:`rectángulo de ${b} cm × ${h} cm`, per:_perimRect(b,h), area:_areaRect(b,h)}; }
-// I. Perímetro y área (5 × 10 = 50 pts)
+// I. Aplica la fórmula (5 × 4 = 20 pts)
 function genPerAreaItems() {
   const items = [];
   for (let i = 0; i < 5; i++) {
@@ -967,35 +969,21 @@ function genPerAreaItems() {
   }
   return items;
 }
-// II. Problemas (5 × 4 = 20 pts)
-function genProblemaItems() {
-  const items = [];
-  const tipos = _shuffleF([0, 1, 2, 3, 4], _opRnd);
-  const NAMES = ['Ana', 'Luis', 'Marta', 'José', 'Carmen', 'Pedro'];
-  tipos.forEach(tp => {
-    const n = NAMES[_opRint(0, NAMES.length - 1)];
-    let text, ansNum;
-    if (tp === 0) { const l = _opRint(4, 15); text = `${n} cerca un patio cuadrado de lado ${l} m. ¿Cuántos metros de cerca necesita?`; ansNum = _perimCuad(l); }
-    else if (tp === 1) { const b = _opRint(4, 12), h = _opRint(3, 9); text = `Un cuarto rectangular mide ${b} m × ${h} m. ¿Cuántos m² de alfombra lo cubren?`; ansNum = _areaRect(b, h); }
-    else if (tp === 2) { const l = _opRint(3, 12); text = `Una baldosa cuadrada tiene lado ${l} cm. ¿Cuál es su área?`; ansNum = _areaCuad(l); }
-    else if (tp === 3) { const b = _opRint(5, 14), h = _opRint(3, 10); text = `Un jardín rectangular mide ${b} m × ${h} m. ¿Cuántos metros de valla lo rodean?`; ansNum = _perimRect(b, h); }
-    else { const l = _opRint(4, 12); text = `Un mantel cuadrado tiene lado ${l} m. ¿Cuánto encaje se necesita para todo su borde?`; ansNum = _perimCuad(l); }
-    items.push({ text, ansNum });
-  });
-  return items;
+// II. ¿Cerca o pintura? — decisión perímetro/área (5 × 2 = 10 pts)
+function genDecisionItems() {
+  const BANK = [
+    { q: 'poner una cerca de malla alrededor de un terreno', a: 'perímetro' },
+    { q: 'comprar césped para cubrir todo un jardín', a: 'área' },
+    { q: 'colocar un marco de madera al borde de un cuadro', a: 'perímetro' },
+    { q: 'pintar toda la superficie de una pared', a: 'área' },
+    { q: 'poner encaje en la orilla de un mantel', a: 'perímetro' },
+    { q: 'embaldosar el piso de un aula', a: 'área' },
+    { q: 'rodear una cancha con una línea blanca', a: 'perímetro' },
+    { q: 'alfombrar el suelo de una sala', a: 'área' }
+  ];
+  return _pickF(BANK, 5, _opRnd).map(it => ({ text: `Para ${it.q}, ¿debes calcular perímetro o área?`, ans: it.a, accept: [it.a] }));
 }
-// III. Cadena (5 × 2 = 10 pts)
-function genCadenaItems() {
-  const items = [];
-  for (let i = 0; i < 5; i++) {
-    const tp = i % 3;
-    if (tp === 0) { const l = _opRint(3, 9); items.push({ text: `Un cuadrado de lado ${l}: suma su perímetro y su área. ¿Cuánto obtienes?`, ansNum: _perimCuad(l) + _areaCuad(l) }); }
-    else if (tp === 1) { const b = _opRint(4, 10), h = _opRint(3, 8); items.push({ text: `Un rectángulo ${b} × ${h}: al área réstale el perímetro. ¿Cuánto obtienes?`, ansNum: _areaRect(b, h) - _perimRect(b, h) }); }
-    else { const l = _opRint(4, 10); items.push({ text: `Duplica el área de un cuadrado de lado ${l}. ¿Cuánto obtienes?`, ansNum: _areaCuad(l) * 2 }); }
-  }
-  return items;
-}
-// IV. Medida escondida (5 × 2 = 10 pts)
+// III. La medida escondida ▢ — razonamiento inverso (5 × 4 = 20 pts)
 function genFaltanteItems() {
   const items = [];
   const forms = [0, 1, 2, 3, _opRint(0, 3)];
@@ -1010,12 +998,57 @@ function genFaltanteItems() {
   });
   return items;
 }
-// V. Perímetro y área de una figura (2 × 5 = 10 pts)
-function genFiguraItems() {
+// IV. Problemas de la vida real — contexto hondureño, dos pasos (3 × 10 = 30 pts)
+function genVidaItems() {
+  const TPL = [
+    () => { const l = _opRint(6, 15), p = _opRint(8, 20); return { text: `Don José cerca un solar cuadrado de lado ${l} varas. Cada vara de malla cuesta L ${p}. ¿Cuánto pagará por toda la cerca?`, ansNum: _perimCuad(l) * p, extra: `Perímetro = 4 × ${l} = ${_perimCuad(l)} varas → × L ${p} = L ${_perimCuad(l) * p}` }; },
+    () => { const b = _opRint(4, 9), h = _opRint(3, 7), p = _opRint(10, 25); return { text: `El aula mide ${b} m × ${h} m. Cada m² de baldosa cuesta L ${p}. ¿Cuánto cuesta embaldosar todo el piso?`, ansNum: _areaRect(b, h) * p, extra: `Área = ${b} × ${h} = ${_areaRect(b, h)} m² → × L ${p} = L ${_areaRect(b, h) * p}` }; },
+    () => { const l = _opRint(5, 12), p = _opRint(15, 30); return { text: `María rodea un jardín cuadrado de lado ${l} m con una cerca. El metro de cerca cuesta L ${p}. ¿Cuánto pagará en total?`, ansNum: _perimCuad(l) * p, extra: `Perímetro = 4 × ${l} = ${_perimCuad(l)} m → × L ${p} = L ${_perimCuad(l) * p}` }; },
+    () => { const b = _opRint(4, 8), h = _opRint(3, 6), p = _opRint(20, 40); return { text: `Una sala rectangular mide ${b} m × ${h} m. El m² de alfombra cuesta L ${p}. ¿Cuánto costará alfombrarla toda?`, ansNum: _areaRect(b, h) * p, extra: `Área = ${b} × ${h} = ${_areaRect(b, h)} m² → × L ${p} = L ${_areaRect(b, h) * p}` }; },
+    () => { const b = _opRint(6, 14), h = _opRint(4, 10), p = _opRint(12, 25); return { text: `Una cancha rectangular mide ${b} m × ${h} m. Se pintará una línea alrededor y el metro de pintura cuesta L ${p}. ¿Cuánto costará la línea completa?`, ansNum: _perimRect(b, h) * p, extra: `Perímetro = 2 × (${b} + ${h}) = ${_perimRect(b, h)} m → × L ${p} = L ${_perimRect(b, h) * p}` }; }
+  ];
+  return _pickF(TPL, 3, _opRnd).map(fn => fn());
+}
+// V. Retos de pensamiento (10 + 5 + 5 = 20 pts)
+function genRetoItems() {
   const items = [];
-  const b = _opRint(4, 12), h = _opRint(3, 10);
-  items.push({ text: `Un rectángulo mide ${b} cm × ${h} cm. Su perímetro es ▢ cm`, ansNum: _perimRect(b, h), extra: `2 × (${b} + ${h})` });
-  items.push({ text: `El mismo rectángulo de ${b} cm × ${h} cm. Su área es ▢ cm²`, ansNum: _areaRect(b, h), extra: `${b} × ${h}` });
+  // (a) 10 pts — igual perímetro, decidir mayor área SIN calcular todo (el cuadrado siempre gana)
+  const s = _opRint(4, 8), d = _opRint(1, Math.min(3, s - 2)), b = s + d, h = s - d, per = _perimCuad(s);
+  const sqFirst = _opRnd() < 0.5;
+  const A = sqFirst ? `un cuadrado de lado ${s} cm` : `un rectángulo de ${b} cm × ${h} cm`;
+  const B = sqFirst ? `un rectángulo de ${b} cm × ${h} cm` : `un cuadrado de lado ${s} cm`;
+  const letterSq = sqFirst ? 'A' : 'B';
+  items.push({ kind: 'txt', pts: 10, dataKey: 're0',
+    text: `La figura A es ${A} y la figura B es ${B}. Las dos tienen el MISMO perímetro (${per} cm). Sin calcularlo todo, ¿cuál tiene MAYOR área: A o B?`,
+    accept: [letterSq, 'cuadrado'], ans: `${letterSq} (el cuadrado)`,
+    extra: `A igual perímetro, el cuadrado siempre tiene mayor área: ${_areaCuad(s)} cm² > ${_areaRect(b, h)} cm².` });
+  // (b) 5 pts — detective del error (Error 1: perímetro confundido con área · Error 3: sumar solo 2 lados)
+  if (_opRnd() < 0.5) {
+    const l = _opRint(4, 9);
+    items.push({ kind: 'num', pts: 5, dataKey: 're1',
+      text: `Pedro dice que el perímetro de un cuadrado de lado ${l} cm es ${_areaCuad(l)} cm, pero usó la fórmula del área. ¿Cuál es el perímetro correcto?`,
+      ansNum: _perimCuad(l), ans: `${_perimCuad(l)} cm`,
+      extra: `P = 4 × ${l} = ${_perimCuad(l)} cm. Usó lado × lado, que es el ÁREA.` });
+  } else {
+    const b = _opRint(4, 9), h = _opRint(3, 8);
+    items.push({ kind: 'num', pts: 5, dataKey: 're1',
+      text: `Ana calculó el perímetro de un rectángulo de ${b} cm × ${h} cm sumando solo ${b} + ${h} = ${b + h}. ¿Cuál es el perímetro correcto?`,
+      ansNum: _perimRect(b, h), ans: `${_perimRect(b, h)} cm`,
+      extra: `P = 2 × (${b} + ${h}) = ${_perimRect(b, h)} cm. Hay que contar los CUATRO lados.` });
+  }
+  // (c) 5 pts — unidad correcta (Error 2: olvidar el ² del área)
+  const cl = _opRint(4, 10);
+  if (_opRnd() < 0.5) {
+    items.push({ kind: 'txt', pts: 5, dataKey: 're2',
+      text: `El área de un cuadrado de lado ${cl} cm es ${_areaCuad(cl)}. ¿Qué unidad le corresponde: cm o cm²?`,
+      accept: ['cm²', 'cm2'], ans: 'cm²',
+      extra: `cm² — el área es una superficie. Error común: olvidar el ².` });
+  } else {
+    items.push({ kind: 'txt', pts: 5, dataKey: 're2',
+      text: `El perímetro de un cuadrado de lado ${cl} cm es ${_perimCuad(cl)}. ¿Qué unidad le corresponde: cm o cm²?`,
+      accept: ['cm'], ans: 'cm',
+      extra: `cm — el perímetro es una longitud, se mide en cm (no en cm²).` });
+  }
   return items;
 }
 function genEvalOp() {
@@ -1030,35 +1063,35 @@ function genEvalOp() {
 
   const paItems = genPerAreaItems();
   const s1 = document.createElement('div');
-  s1.innerHTML = '<div class="eval-section-title">I. Perímetro y área <span class="eval-pts">50 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Cuadrado: P = 4 × lado, A = lado × lado · Rectángulo: P = 2 × (base + altura), A = base × altura.</p>';
+  s1.innerHTML = '<div class="eval-section-title">I. Aplica la fórmula <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Cuadrado: P = 4 × lado, A = lado × lado · Rectángulo: P = 2 × (base + altura), A = base × altura.</p>';
   paItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pa="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbPa${i}" aria-live="polite"></div>`; s1.appendChild(d); });
   out.appendChild(s1);
 
-  const prItems = genProblemaItems();
+  const deItems = genDecisionItems();
   const s2 = document.createElement('div');
-  s2.innerHTML = '<div class="eval-section-title">II. Problemas breves <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Decide si el problema pide perímetro o área y resuelve.</p>';
-  prItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pr="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbPr${i}" aria-live="polite"></div>`; s2.appendChild(d); });
+  s2.innerHTML = '<div class="eval-section-title">II. ¿Cerca o pintura? <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Escribe <strong>perímetro</strong> (borde/cerca) o <strong>área</strong> (superficie que se cubre).</p>';
+  deItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-de="${i}" autocomplete="off"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbDe${i}" aria-live="polite"></div>`; s2.appendChild(d); });
   out.appendChild(s2);
 
-  const caItems = genCadenaItems();
+  const faItems = genFaltanteItems();
   const s3 = document.createElement('div');
-  s3.innerHTML = '<div class="eval-section-title">III. Cadena de operaciones <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Calcula perímetro y área y luego la operación indicada.</p>';
-  caItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-ca="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbCa${i}" aria-live="polite"></div>`; s3.appendChild(d); });
+  s3.innerHTML = '<div class="eval-section-title">III. La medida escondida ▢ <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Usa las fórmulas al revés (divide o despeja) para hallar el lado o la altura.</p>';
+  faItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.expr}</span><input class="eval-cp-input" type="text" data-fa="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbFa${i}" aria-live="polite"></div>`; s3.appendChild(d); });
   out.appendChild(s3);
 
-  const faItems = genFaltanteItems();
+  const viItems = genVidaItems();
   const s4 = document.createElement('div');
-  s4.innerHTML = '<div class="eval-section-title">IV. ¿Qué medida se esconde en ▢? <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Usa las fórmulas al revés (divide o despeja).</p>';
-  faItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.expr}</span><input class="eval-cp-input" type="text" data-fa="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbFa${i}" aria-live="polite"></div>`; s4.appendChild(d); });
+  s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Dos pasos: primero halla el perímetro o el área, luego multiplica por el precio (en lempiras).</p>';
+  viItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-vi="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">L ${_fmtNum(it.ansNum)} · ${it.extra}</div><div class="eval-item-feedback" id="evalFbVi${i}" aria-live="polite"></div>`; s4.appendChild(d); });
   out.appendChild(s4);
 
-  const fiItems = genFiguraItems();
+  const reItems = genRetoItems();
   const s5 = document.createElement('div');
-  s5.innerHTML = '<div class="eval-section-title">V. Perímetro y área de una figura <span class="eval-pts">10 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Recuerda: el perímetro en cm y el área en cm².</p>';
-  fiItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-fi="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)} (${it.extra})</div><div class="eval-item-feedback" id="evalFbFi${i}" aria-live="polite"></div>`; s5.appendChild(d); });
+  s5.innerHTML = '<div class="eval-section-title">V. Retos de pensamiento <span class="eval-pts">20 pts</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Razona con cuidado: comparar sin calcular, cazar el error y elegir la unidad correcta.</p>';
+  reItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; const numAttr = it.kind === 'num' ? ' inputmode="numeric"' : ''; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text} <span class="eval-pts" style="font-size:0.72rem;">${it.pts} pts</span></span><input class="eval-cp-input" type="text" data-re="${i}" autocomplete="off"${numAttr}></div><div class="eval-answer">${it.ans} — ${it.extra}</div><div class="eval-item-feedback" id="evalFbRe${i}" aria-live="polite"></div>`; s5.appendChild(d); });
   out.appendChild(s5);
 
-  window._evalOpData = { paItems, prItems, caItems, faItems, fiItems };
+  window._evalOpData = { paItems, deItems, faItems, viItems, reItems };
   const autoPanel = document.createElement('div'); autoPanel.id = 'evalOpAutoResult'; autoPanel.className = 'eval-auto-result';
   autoPanel.innerHTML = '<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.';
   out.appendChild(autoPanel);
@@ -1073,21 +1106,28 @@ function gradeEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const d = window._evalOpData;
-  let total = 0; const det = { pa: 0, pr: 0, ca: 0, fa: 0, fi: 0 };
-  const _mark = (sel, it, i, key, ptsEach, fbId) => {
+  let total = 0; const det = { pa: 0, de: 0, fa: 0, vi: 0, re: 0 };
+  const _markNum = (sel, it, i, key, ptsEach, fbId) => {
     const el = document.querySelector(`[data-${sel}="${i}"]`);
     const ok = _isIntMatch(el ? el.value : '', it.ansNum);
     if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); }
-    if (ok) { det[key]++; total += ptsEach; }
+    if (ok) { det[key] += ptsEach; total += ptsEach; }
     setEvalFeedback(fbId + i, ok, ok ? `Correcto. +${ptsEach} pts` : 'Revisar. R/ ' + _fmtNum(it.ansNum));
   };
-  d.paItems.forEach((it, i) => _mark('pa', it, i, 'pa', 10, 'evalFbPa'));
-  d.prItems.forEach((it, i) => _mark('pr', it, i, 'pr', 4, 'evalFbPr'));
-  d.caItems.forEach((it, i) => _mark('ca', it, i, 'ca', 2, 'evalFbCa'));
-  d.faItems.forEach((it, i) => _mark('fa', it, i, 'fa', 2, 'evalFbFa'));
-  d.fiItems.forEach((it, i) => _mark('fi', it, i, 'fi', 5, 'evalFbFi'));
+  const _markTxt = (sel, it, i, key, ptsEach, fbId) => {
+    const el = document.querySelector(`[data-${sel}="${i}"]`);
+    const ok = _isTxtMatch(el ? el.value : '', it.accept);
+    if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); }
+    if (ok) { det[key] += ptsEach; total += ptsEach; }
+    setEvalFeedback(fbId + i, ok, ok ? `Correcto. +${ptsEach} pts` : 'Revisar. R/ ' + it.ans);
+  };
+  d.paItems.forEach((it, i) => _markNum('pa', it, i, 'pa', 4, 'evalFbPa'));
+  d.deItems.forEach((it, i) => _markTxt('de', it, i, 'de', 2, 'evalFbDe'));
+  d.faItems.forEach((it, i) => _markNum('fa', it, i, 'fa', 4, 'evalFbFa'));
+  d.viItems.forEach((it, i) => _markNum('vi', it, i, 'vi', 10, 'evalFbVi'));
+  d.reItems.forEach((it, i) => { if (it.kind === 'num') _markNum('re', it, i, 're', it.pts, 'evalFbRe'); else _markTxt('re', it, i, 're', it.pts, 'evalFbRe'); });
   const res = document.getElementById('evalOpAutoResult');
-  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Perím./Área: ${det.pa*10}/50 · Problemas: ${det.pr*4}/20 · Cadena: ${det.ca*2}/10 · Escondido: ${det.fa*2}/10 · Figura: ${det.fi*5}/10</span>`; }
+  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Fórmula: ${det.pa}/20 · Cerca/pintura: ${det.de}/10 · Escondida: ${det.fa}/20 · Vida real: ${det.vi}/30 · Retos: ${det.re}/20</span>`; }
   if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
   else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
 }
@@ -1095,23 +1135,23 @@ function printEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const forma = window._currentEvalOpForm || 1; const d = window._evalOpData;
-  let s1 = `<div class="sec-title"><span>I. Perímetro y área</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 50 pts</span></div></div><p class="opx-instr">Aplica las fórmulas. 10 pts c/u.</p>`;
+  let s1 = `<div class="sec-title"><span>I. Aplica la fórmula</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Aplica las fórmulas de perímetro y área. 4 pts c/u.</p>`;
   d.paItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
-  let s2 = `<div class="sec-title"><span>II. Problemas breves</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Resuelve y escribe la respuesta. 4 pts c/u.</p>`;
-  d.prItems.forEach((it, i) => { s2 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
-  const caTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Cadena de operaciones</th><th>Resultado</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text.replace(' ¿Cuánto obtienes?','')}</td><td></td></tr>`).join('')}</table>`;
-  let s3 = `<div class="sec-title"><span>III. Cadena de operaciones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Resuelve paso a paso. 2 pts c/u.</p>${caTbl(d.caItems)}`;
+  let s2 = `<div class="sec-title"><span>II. ¿Cerca o pintura?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Escribe <strong>perímetro</strong> (borde) o <strong>área</strong> (superficie). 2 pts c/u.</p>`;
+  d.deItems.forEach((it, i) => { s2 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
   const faTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Enunciado</th><th>▢ =</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.expr}</td><td></td></tr>`).join('')}</table>`;
-  let s4 = `<div class="sec-title"><span>IV. ¿Qué medida se esconde en ▢?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Despeja usando las fórmulas. 2 pts c/u.</p>${faTbl(d.faItems)}`;
-  const fiTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Figura</th><th>Resultado</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text.replace(' es ▢ cm','').replace(' es ▢ cm²','')}</td><td></td></tr>`).join('')}</table>`;
-  let s5 = `<div class="sec-title"><span>V. Perímetro y área de una figura</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Perímetro en cm, área en cm². 5 pts c/u.</p>${fiTbl(d.fiItems)}`;
+  let s3 = `<div class="sec-title"><span>III. La medida escondida ▢</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Despeja usando las fórmulas al revés. 4 pts c/u.</p>${faTbl(d.faItems)}`;
+  let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Dos pasos: halla el perímetro o el área y multiplica por el precio. 10 pts c/u.</p>`;
+  d.viItems.forEach((it, i) => { s4 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
+  let s5 = `<div class="sec-title"><span>V. Retos de pensamiento</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Razona: comparar sin calcular, cazar el error y elegir la unidad correcta.</p>`;
+  d.reItems.forEach((it, i) => { s5 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text} <em>(${it.pts} pts)</em></span><span class="opx-blank"></span></div>`; });
   let pR = '';
-  pR += `<div class="p-sec"><div class="p-ttl">I. Perímetro y área</div><table class="p-tbl">${d.paItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">II. Problemas breves</div><table class="p-tbl">${d.prItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">III. Cadena de operaciones</div><table class="p-tbl">${d.caItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. Medida escondida</div><table class="p-tbl">${d.faItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Perímetro y área de una figura</div><table class="p-tbl">${d.fiItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)} · ${it.extra}</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Perímetro y Área de Cuadriláteros · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Perímetro y Área de Cuadriláteros · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 50 · II: 20 · III: 10 · IV: 10 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Perímetro y Área de Cuadriláteros · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
+  pR += `<div class="p-sec"><div class="p-ttl">I. Aplica la fórmula</div><table class="p-tbl">${d.paItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">II. ¿Cerca o pintura?</div><table class="p-tbl">${d.deItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">III. La medida escondida</div><table class="p-tbl">${d.faItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.viItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">L ${_fmtNum(it.ansNum)}<br><span style="font-weight:400;color:#333;font-family:Arial;">${it.extra}</span></td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de pensamiento</div><table class="p-tbl">${d.reItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}<br><span style="font-weight:400;color:#333;font-family:Arial;">${it.extra}</span></td></tr>`).join('')}</table></div>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Perímetro y Área de Cuadriláteros · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Perímetro y Área de Cuadriláteros · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Perímetro y Área de Cuadriláteros · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);

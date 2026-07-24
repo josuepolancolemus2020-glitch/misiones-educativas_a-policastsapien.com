@@ -483,6 +483,10 @@ const critCaseBank=[
   {txt:'Al encender una linterna, la pila se va gastando hasta que ya no da luz.'},
   {txt:'Una represa usa la fuerza del agua que cae para producir electricidad para muchas casas.'},
   {txt:'Un niño deja el ventilador y la tele encendidos aunque salió a jugar afuera.'},
+  {txt:'En un verano muy seco baja el nivel del agua de la represa El Cajón y hay apagones en varias ciudades de Honduras.'},
+  {txt:'Una familia hondureña pagó 950 lempiras de electricidad; al mes siguiente apagó las luces y desconectó los aparatos que no usaba, y la factura bajó a 600 lempiras.'},
+  {txt:'Un productor de café seca sus granos extendiéndolos al sol en el patio, en vez de usar una secadora que quema combustible.'},
+  {txt:'En el sur de Honduras, un parque eólico usa el viento fuerte de la zona para generar electricidad para miles de casas.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué situación relacionada con la energía se observa en este caso?',
@@ -512,15 +516,34 @@ const critErrorBank=[
   {txt:'"El Sol no sirve como fuente de energía."',
    g1:'El Sol es la PRINCIPAL fuente de energía de la Tierra.',
    g2:'De él dependen la vida, el viento y la lluvia.'},
+  {txt:'"La energía hidroeléctrica de una represa como El Cajón contamina igual que quemar petróleo."',
+   g1:'La hidroeléctrica usa la fuerza del agua, una fuente RENOVABLE y limpia.',
+   g2:'El petróleo es NO renovable: se agota y contamina mucho más al quemarse.'},
+  {txt:'"El Sol es una fuente no renovable porque se apaga de noche."',
+   g1:'El Sol es RENOVABLE: no se agota por usar su energía.',
+   g2:'De noche no lo vemos porque la Tierra gira, pero su energía no se acaba.'},
+  {txt:'"Un ventilador transforma la energía eléctrica en energía luminosa."',
+   g1:'El ventilador transforma la eléctrica en MECÁNICA (movimiento).',
+   g2:'La que se transforma en LUMINOSA (luz) es la de una bombilla.'},
 ];
 const critDecisionBank=[
-  'Para iluminar una casa de día, conviene abrir las cortinas y usar la luz del Sol, o encender todas las lámparas.',
-  'Para producir electricidad más limpia, conviene usar el Sol y el viento, o quemar más carbón y petróleo.',
-  'Al salir de un cuarto, conviene apagar la luz y el ventilador, o dejarlos encendidos.',
-  'Para gastar menos energía al planchar, conviene juntar la ropa y planchar de una vez, o planchar prenda por prenda.',
-  'Para cuidar la energía, conviene desconectar los aparatos que no se usan, o dejarlos siempre conectados.',
+  {txt:'Para iluminar una casa de día, conviene abrir las cortinas y usar la luz del Sol, o encender todas las lámparas.',
+   guide:'Conviene abrir las cortinas: la luz del Sol es energía luminosa gratuita y renovable. Encender lámparas de día desperdicia energía eléctrica y sube la factura.'},
+  {txt:'Para producir electricidad más limpia, conviene usar el Sol y el viento, o quemar más carbón y petróleo.',
+   guide:'Conviene usar el Sol y el viento: son fuentes renovables que no se agotan y no contaminan. El carbón y el petróleo son no renovables: se agotan y contaminan al quemarse.'},
+  {txt:'Al salir de un cuarto, conviene apagar la luz y el ventilador, o dejarlos encendidos.',
+   guide:'Conviene apagarlos: si nadie los usa, la energía eléctrica se desperdicia. Apagar lo que no se usa es el hábito de ahorro más sencillo.'},
+  {txt:'Para gastar menos energía al planchar, conviene juntar la ropa y planchar de una vez, o planchar prenda por prenda.',
+   guide:'Conviene juntar la ropa: la plancha gasta mucha energía eléctrica al calentarse (calorífica). Encenderla varias veces por prenda desperdicia esa energía.'},
+  {txt:'Para cuidar la energía, conviene desconectar los aparatos que no se usan, o dejarlos siempre conectados.',
+   guide:'Conviene desconectarlos: los aparatos y cargadores conectados siguen gastando energía eléctrica aunque no se usen. Desconectar ahorra energía y dinero.'},
+  {txt:'Para secar el café de la cosecha, un productor puede extenderlo al sol en el patio, o comprar una secadora que quema combustible.',
+   guide:'Conviene extenderlo al sol: aprovecha la energía calorífica del Sol, que es gratuita y renovable. La secadora quema combustible no renovable, que se agota, contamina y cuesta dinero.'},
+  {txt:'Para llevar luz a una aldea de Honduras sin tendido eléctrico, conviene instalar paneles solares, o llevar cada semana galones de diésel para un generador.',
+   guide:'Convienen los paneles solares: transforman la energía del Sol (renovable y gratuita) en eléctrica sin contaminar. El diésel viene del petróleo: es no renovable, contamina y hay que comprarlo cada semana.'},
+  {txt:'Para tomar agua fría, conviene sacar del refrigerador todo lo que necesitas de una sola vez, o abrir la puerta muchas veces al día.',
+   guide:'Conviene abrir una sola vez: cada vez que se abre el refrigerador entra calor y el aparato gasta más energía eléctrica para volver a enfriar. Abrirlo a cada rato desperdicia energía.'},
 ];
-const critDecisionGuide='La mejor decisión es la que ahorra energía y usa fuentes limpias: aprovechar la luz del Sol y el viento, apagar y desconectar lo que no se usa, usar focos ahorradores y preferir fuentes renovables. Así cuidamos el ambiente y gastamos menos, porque muchas fuentes se agotan y contaminan.';
 const critCompareBank=[
   {a:'Fuente de energía que no se agota (Sol, viento, agua).',b:'Fuente de energía que se agota (petróleo, carbón).',
    ga:'La fuente renovable.',
@@ -534,18 +557,46 @@ const critCompareBank=[
    ga:'Ahorrar energía.',
    gb:'Desperdiciar energía.',
    gr:'Las dos son decisiones sobre la energía, pero una la cuida y la otra la malgasta.'},
+  {a:'Una bombilla encendida.',b:'Una plancha encendida.',
+   ga:'Transforma la energía eléctrica en luminosa (luz).',
+   gb:'Transforma la energía eléctrica en calorífica (calor).',
+   gr:'Las dos reciben energía eléctrica, pero cada una la transforma en una forma distinta de energía.'},
+  {a:'La represa El Cajón produce electricidad con la fuerza del agua.',b:'Una planta produce electricidad quemando carbón.',
+   ga:'Energía hidroeléctrica, de fuente renovable y limpia.',
+   gb:'Energía de fuente no renovable, que se agota y contamina.',
+   gr:'Las dos generan energía eléctrica, pero una usa una fuente renovable (el agua) y la otra una fuente que se agota y contamina (el carbón).'},
+  {a:'El calor de una fogata.',b:'La música de un parlante.',
+   ga:'Energía calorífica (la del calor).',
+   gb:'Energía sonora (la del sonido).',
+   gr:'Las dos son formas de energía que notamos con los sentidos, pero una se siente como calor y la otra se escucha como sonido.'},
+  {a:'Un panel solar recibe energía del Sol todos los días.',b:'La pila de una linterna se gasta hasta quedar sin energía.',
+   ga:'Aprovecha una fuente renovable que no se agota.',
+   gb:'Guarda energía química que se agota con el uso.',
+   gr:'Los dos dan energía a los aparatos, pero el Sol no se acaba y la pila sí se gasta.'},
+  {a:'Un molino genera electricidad con el viento.',b:'Un carro se mueve quemando gasolina.',
+   ga:'Usa la energía eólica del viento, renovable y limpia.',
+   gb:'Usa gasolina, que viene del petróleo: no renovable y contamina.',
+   gr:'Los dos usan energía para funcionar, pero el viento no se agota y la gasolina viene de una fuente que se agota y contamina.'},
 ];
 const critCauseBank=[
   {cause:'Una familia instala paneles solares en su techo.',guide:'Aprovecha la energía del Sol, que es renovable y limpia.'},
   {cause:'En una casa dejan luces y aparatos encendidos sin usarlos.',guide:'Se desperdicia energía y sube la factura de electricidad.'},
   {cause:'El agua de una represa cae y mueve una turbina.',guide:'Se genera energía eléctrica (hidroeléctrica).'},
   {cause:'Se quema mucho petróleo y carbón para producir energía.',guide:'Se agotan esas fuentes y se contamina el ambiente.'},
+  {cause:'En un verano muy seco baja el nivel del agua de la represa El Cajón.',guide:'Se produce menos energía hidroeléctrica y pueden darse apagones en Honduras.'},
+  {cause:'Una familia apaga las luces y desconecta los aparatos que no usa.',guide:'Ahorra energía y su factura de electricidad baja: paga menos lempiras.'},
+  {cause:'Un productor extiende su café al sol en el patio.',guide:'La energía calorífica del Sol, gratuita y renovable, seca los granos.'},
+  {cause:'El viento fuerte del sur de Honduras mueve las aspas de un parque eólico.',guide:'La energía mecánica del viento se transforma en energía eléctrica.'},
 ];
 const critEffectBank=[
   {effect:'La factura de electricidad llega muy alta.',guide:'Porque se desperdició energía dejando aparatos encendidos.'},
   {effect:'Una linterna deja de dar luz.',guide:'Porque la pila gastó su energía química.'},
   {effect:'Un molino de viento genera electricidad.',guide:'Porque transforma la energía del viento (mecánica) en eléctrica.'},
   {effect:'Las plantas crecen y fabrican su alimento.',guide:'Porque usan la energía del Sol en la fotosíntesis.'},
+  {effect:'En verano hay apagones en varias ciudades de Honduras.',guide:'Porque la sequía baja el agua de las represas (como El Cajón) y se genera menos energía hidroeléctrica.'},
+  {effect:'La factura de electricidad de una familia baja de 950 a 600 lempiras.',guide:'Porque ahorraron energía: apagaron luces y desconectaron los aparatos que no usaban.'},
+  {effect:'Una aldea sin tendido eléctrico tiene luz por las noches.',guide:'Porque instalaron paneles solares que transforman la energía del Sol en eléctrica.'},
+  {effect:'La ropa tendida al aire libre se seca.',guide:'Porque recibe la energía calorífica del Sol y el viento se lleva la humedad.'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -558,7 +609,7 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: la energía en la vida diaria <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: la energía en la vida diaria <span class="eval-pts">20 pts · 4 preguntas × 5 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
@@ -566,7 +617,7 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: usar la energía <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con las formas y fuentes de energía y su ahorro.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: usar la energía <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec.txt}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con las formas y fuentes de energía y su ahorro.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${dec.guide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
@@ -600,10 +651,10 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: la energía en la vida diaria</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: la energía en la vida diaria · 4 preguntas × 5 pts</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: usar la energía</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con las formas y fuentes de energía y su ahorro.</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: usar la energía</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec.txt}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con las formas y fuentes de energía y su ahorro.</p>${lines(2)}`;
   let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué concepto de la energía corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
@@ -613,7 +664,7 @@ function printEvalCrit(){
   let pR='';
   pR+=`<div class="p-sec"><div class="p-ttl">I. Caso</div>${critCaseQuestions.map((q,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${critCaseGuides[i]}</div>`).join('')}</div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">II. Corrige el error</div><div class="p-crit-line"><strong>Error 1:</strong> ${d.err.g1}</div><div class="p-crit-line"><strong>Error 2:</strong> ${d.err.g2}</div></div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${d.dec.guide}</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
   pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it=>`<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it=>`<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
   const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico La Energía · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #27ae60;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#e8f8f5;border-left:3px solid #27ae60;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#e8f8f5;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#e8f8f5;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#27ae60;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · La Energía · Educación Básica · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · La Energía · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;

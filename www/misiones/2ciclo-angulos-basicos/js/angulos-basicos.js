@@ -996,7 +996,39 @@ function _isIntMatch(student, expectedNum) {
   const n = parseInt(raw, 10);
   return !isNaN(n) && n === expectedNum;
 }
-// I. Complemento y suplemento (5 × 10 = 50 pts)
+// Comparación de tipo de ángulo escrito (acepta mayúsculas, tildes y "ángulo X")
+function _normTipoTxt(s) { return (s || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/angulo/g, '').replace(/[^a-z]/g, ''); }
+function _isTipoMatch(student, tipo) { return _normTipoTxt(student) === _normTipoTxt(tipo); }
+// Lectura de transportador con margen de tolerancia (±tol grados)
+function _isNearMatch(student, expectedNum, tol) {
+  const raw = (student || '').toString().trim().replace(/[,\s°]/g, '');
+  if (!raw) return false;
+  const n = parseInt(raw, 10);
+  return !isNaN(n) && Math.abs(n - expectedNum) <= tol;
+}
+// I. Clasifica el ángulo (5 × 4 = 20 pts) — tabla del Bloque 2, incluye reflejo
+function genClasificaOpItems() {
+  const medidas = [
+    _opRint(15, 84),   // agudo
+    90,                // recto
+    _opRint(95, 175),  // obtuso
+    180,               // llano
+    _opRint(185, 340)  // reflejo
+  ];
+  return _shuffleF(medidas, _opRnd).map(g => ({ deg: g, ansTipo: _tipoAngulo(g) }));
+}
+// II. Lee el transportador (5 × 4 = 20 pts) — dibujos con _svgAngle como el Lab 2
+function genTransportadorItems() {
+  const degs = _shuffleF([
+    5 * _opRint(3, 8),    // 15°–40° agudo
+    5 * _opRint(9, 17),   // 45°–85° agudo
+    90,                   // recto
+    5 * _opRint(19, 26),  // 95°–130° obtuso
+    5 * _opRint(27, 35)   // 135°–175° obtuso
+  ], _opRnd);
+  return degs.map(deg => ({ deg, ansNum: deg, tol: 5 }));
+}
+// III. Complemento y suplemento (5 × 4 = 20 pts) — Bloque 4
 function genCompSuplItems() {
   const items = [];
   for (let i = 0; i < 5; i++) {
@@ -1005,55 +1037,31 @@ function genCompSuplItems() {
   }
   return items;
 }
-// II. Problemas breves (5 × 4 = 20 pts)
-function genProblemaItems() {
+// IV. Problemas de la vida real (3 × 10 = 30 pts) — contexto hondureño/escolar
+function genVidaRealItems() {
+  const plantillas = _shuffleF([0, 1, 2, 3, 4], _opRnd).slice(0, 3);
   const items = [];
-  const tipos = _shuffleF([0, 1, 2, 3, 4], _opRnd);
-  const DIV90 = [2, 3, 5, 6, 9, 10], DIV180 = [2, 3, 4, 5, 6];
+  plantillas.forEach(tp => {
+    let text, ansNum, extra;
+    if (tp === 0) { let a = _opRint(35, 80), b = _opRint(35, 80); while (a + b >= 175) b = _opRint(35, 80); text = `El techo a dos aguas de una casa en La Esperanza forma un triángulo. Dos de sus ángulos miden ${a}° y ${b}°. ¿Cuánto mide el tercer ángulo?`; ansNum = 180 - a - b; extra = `${a}° + ${b}° + ${ansNum}° = 180°`; }
+    else if (tp === 1) { const a = _opRint(20, 70); text = `La esquina de tu cuaderno es un ángulo recto (90°). Si trazas una línea que forma ${a}° con un borde, ¿cuánto mide el otro ángulo que se forma?`; ansNum = 90 - a; extra = `90° − ${a}° = ${ansNum}°`; }
+    else if (tp === 2) { const h = _opRint(1, 5); text = `Las manecillas del reloj del aula se abren 30° por cada hora. A las ${h} en punto, ¿qué ángulo forman las manecillas?`; ansNum = 30 * h; extra = `${h} × 30° = ${ansNum}°`; }
+    else if (tp === 3) { const a = _opRint(10, 40); text = `La rampa de acceso de la escuela forma un ángulo de ${a}° con el suelo. ¿Cuántos grados le faltan para llegar a un ángulo recto (90°)?`; ansNum = 90 - a; extra = `90° − ${a}° = ${ansNum}°`; }
+    else { const m = 2 * _opRint(15, 80); text = `Al trazar la bisectriz, un ángulo de ${m}° queda dividido en dos partes iguales. ¿Cuánto mide cada parte?`; ansNum = m / 2; extra = `${m}° ÷ 2 = ${ansNum}°`; }
+    items.push({ text, ansNum, extra });
+  });
+  return items;
+}
+// V. Detective del error (2 × 5 = 10 pts) — replica los Errores Comunes 1, 4 y 5
+function genDetectiveItems() {
+  const tipos = _shuffleF([0, 1, 2, 3], _opRnd).slice(0, 2);
+  const items = [];
   tipos.forEach(tp => {
-    let text, ansNum;
-    if (tp === 0) { const a = _opRint(20, 70); text = `Un ángulo mide ${a}°. ¿Cuánto le falta para ser un ángulo recto (90°)?`; ansNum = 90 - a; }
-    else if (tp === 1) { const a = _opRint(20, 150); text = `Un ángulo mide ${a}°. ¿Cuánto le falta para ser un ángulo llano (180°)?`; ansNum = 180 - a; }
-    else if (tp === 2) { let a = _opRint(30, 80), b = _opRint(30, 80); while (a + b >= 175) b = _opRint(30, 80); text = `Dos ángulos de un triángulo miden ${a}° y ${b}°. ¿Cuánto mide el tercero?`; ansNum = 180 - a - b; }
-    else if (tp === 3) { const n = DIV90[_opRint(0, DIV90.length - 1)]; text = `Un ángulo recto (90°) se divide en ${n} ángulos iguales. ¿Cuánto mide cada uno?`; ansNum = 90 / n; }
-    else { const n = DIV180[_opRint(0, DIV180.length - 1)]; text = `Un ángulo llano (180°) se divide en ${n} ángulos iguales. ¿Cuánto mide cada uno?`; ansNum = 180 / n; }
-    items.push({ text, ansNum });
+    if (tp === 0) { const g = _opRint(95, 175); items.push({ text: `Marcos dice: «El ángulo de ${g}° es agudo porque su número es grande» (Error 1). Está mal: escribe el tipo correcto.`, ansTipo: 'obtuso', pauta: `obtuso (${g}° es mayor que 90° y menor que 180°)` }); }
+    else if (tp === 1) { const g = _opRint(185, 340); items.push({ text: `Katia dice: «El ángulo de ${g}° es obtuso porque pasa de 90°» (Error 1). Está mal: escribe el tipo correcto.`, ansTipo: 'reflejo', pauta: `reflejo (${g}° es mayor que 180° y menor que 360°)` }); }
+    else if (tp === 2) { const a = _opRint(10, 80); items.push({ text: `Ana dice: «El complemento de ${a}° es ${180 - a}°» (Error 4: confundió complemento con suplemento). Escribe el complemento correcto de ${a}°.`, ansNum: 90 - a, pauta: `${90 - a}° (el complemento suma 90°; ${180 - a}° es el suplemento)` }); }
+    else { items.push({ text: 'Luis dice: «El ángulo llano mide 360° porque está completamente abierto» (Error 5). Escribe la medida correcta del ángulo llano.', ansNum: 180, pauta: '180° (el de 360° es el ángulo completo)' }); }
   });
-  return items;
-}
-// III. Cadena de operaciones (5 × 2 = 10 pts)
-function genCadenaItems() {
-  const items = [];
-  for (let i = 0; i < 5; i++) {
-    const tp = i % 3;
-    if (tp === 0) { const a = _opRint(20, 60); items.push({ text: `Suma el complemento de ${a}° más 20°. ¿Cuánto obtienes?`, ansNum: (90 - a) + 20 }); }
-    else if (tp === 1) { const a = _opRint(100, 160); items.push({ text: `Al ángulo de 100° réstale el suplemento de ${a}°. ¿Cuánto obtienes?`, ansNum: 100 - (180 - a) }); }
-    else { const a = _opRint(20, 40); items.push({ text: `El doble de un ángulo de ${a}°, ¿cuánto mide?`, ansNum: a * 2 }); }
-  }
-  return items;
-}
-// IV. ¿Qué ángulo se esconde? (5 × 2 = 10 pts)
-function genFaltanteItems() {
-  const items = [];
-  const DIV90 = [2, 3, 5, 6], DIV180 = [2, 3, 4, 5, 6];
-  const forms = [0, 1, 2, 3, _opRint(0, 3)];
-  forms.forEach(f => {
-    let expr, ansNum;
-    if (f === 0) { const a = _opRint(20, 70); expr = `${a}° + ▢ = 90°`; ansNum = 90 - a; }
-    else if (f === 1) { const a = _opRint(30, 150); expr = `${a}° + ▢ = 180°`; ansNum = 180 - a; }
-    else if (f === 2) { const n = DIV90[_opRint(0, DIV90.length - 1)]; expr = `${n} ángulos iguales forman 90°; cada uno mide ▢`; ansNum = 90 / n; }
-    else { const n = DIV180[_opRint(0, DIV180.length - 1)]; expr = `${n} ángulos iguales forman 180°; cada uno mide ▢`; ansNum = 180 / n; }
-    items.push({ expr, ansNum });
-  });
-  return items;
-}
-// V. Triángulos (2 × 5 = 10 pts)
-function genTrianguloItems() {
-  const items = [];
-  for (let i = 0; i < 2; i++) {
-    let a = _opRint(30, 80), b = _opRint(30, 80); while (a + b >= 175) b = _opRint(30, 80);
-    items.push({ text: `Un triángulo tiene ángulos de ${a}° y ${b}°. El tercero mide ▢`, ansNum: 180 - a - b, extra: `${a}° + ${b}° + ${180 - a - b}° = 180°` });
-  }
   return items;
 }
 function genEvalOp() {
@@ -1066,37 +1074,41 @@ function genEvalOp() {
   evalOpAnsVisible = false;
   const out = document.getElementById('evalOpOut'); out.innerHTML = '';
 
-  const csItems = genCompSuplItems();
+  const bar = document.createElement('div'); bar.className = 'eval-score-bar';
+  bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Progresión: I–II identificar y medir (básico) → III calcular (intermedio) → IV aplicar (avanzado) → V corregir el error (desafío)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Clasifica 20 pts</span><span class="eval-score-pill esp-tf">II. Transportador 20 pts</span><span class="eval-score-pill esp-mc">III. Comp./Supl. 20 pts</span><span class="eval-score-pill esp-pr">IV. Problemas 30 pts</span><span class="eval-score-pill esp-cp">V. Detective 10 pts</span></div>`;
+  out.appendChild(bar);
+
+  const clItems = genClasificaOpItems();
   const s1 = document.createElement('div');
-  s1.innerHTML = '<div class="eval-section-title">I. Complemento y suplemento <span class="eval-pts">50 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Complemento = 90° − ángulo · Suplemento = 180° − ángulo.</p>';
-  csItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-cs="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum}°</div><div class="eval-item-feedback" id="evalFbCs${i}" aria-live="polite"></div>`; s1.appendChild(d); });
+  s1.innerHTML = '<div class="eval-section-title">I. Clasifica el ángulo <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. Escribe el tipo según su medida: agudo, recto, obtuso, llano o reflejo (tabla del Bloque 2).</p>';
+  clItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">El ángulo de <strong>${it.deg}°</strong> es de tipo ▢</span><input class="eval-cp-input" type="text" data-cl="${i}" autocomplete="off"></div><div class="eval-answer">${it.ansTipo}</div><div class="eval-item-feedback" id="evalFbCl${i}" aria-live="polite"></div>`; s1.appendChild(d); });
   out.appendChild(s1);
 
-  const prItems = genProblemaItems();
+  const tpItems = genTransportadorItems();
   const s2 = document.createElement('div');
-  s2.innerHTML = '<div class="eval-section-title">II. Problemas breves <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Piensa si debes restar de 90°, de 180° o repartir en partes iguales.</p>';
-  prItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pr="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum}°</div><div class="eval-item-feedback" id="evalFbPr${i}" aria-live="polite"></div>`; s2.appendChild(d); });
+  s2.innerHTML = '<div class="eval-section-title">II. Lee el transportador <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. Observa cada ángulo dibujado y escribe su medida en grados, como en el Simulador de Transportador. Se acepta un margen de ±5°.</p>';
+  tpItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div style="max-width:200px;margin:0 auto;">${_svgAngle(it.deg)}</div><div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">Este ángulo mide ▢</span><input class="eval-cp-input" type="text" data-tp="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum}° (se acepta ±${it.tol}°)</div><div class="eval-item-feedback" id="evalFbTp${i}" aria-live="polite"></div>`; s2.appendChild(d); });
   out.appendChild(s2);
 
-  const caItems = genCadenaItems();
+  const csItems = genCompSuplItems();
   const s3 = document.createElement('div');
-  s3.innerHTML = '<div class="eval-section-title">III. Cadena de operaciones <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Resuelve paso a paso: primero el complemento o suplemento, luego la operación indicada.</p>';
-  caItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-ca="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum}°</div><div class="eval-item-feedback" id="evalFbCa${i}" aria-live="polite"></div>`; s3.appendChild(d); });
+  s3.innerHTML = '<div class="eval-section-title">III. Complemento y suplemento <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel intermedio. Complemento = 90° − ángulo · Suplemento = 180° − ángulo.</p>';
+  csItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-cs="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum}°</div><div class="eval-item-feedback" id="evalFbCs${i}" aria-live="polite"></div>`; s3.appendChild(d); });
   out.appendChild(s3);
 
-  const faItems = genFaltanteItems();
+  const pvItems = genVidaRealItems();
   const s4 = document.createElement('div');
-  s4.innerHTML = '<div class="eval-section-title">IV. ¿Qué ángulo se esconde en ▢? <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Usa la operación inversa: resta o divide según corresponda.</p>';
-  faItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.expr}</span><input class="eval-cp-input" type="text" data-fa="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum}°</div><div class="eval-item-feedback" id="evalFbFa${i}" aria-live="polite"></div>`; s4.appendChild(d); });
+  s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel avanzado. Lee, decide la operación (restar de 90° o 180°, multiplicar o dividir) y responde en grados.</p>';
+  pvItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pv="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum}° (${it.extra})</div><div class="eval-item-feedback" id="evalFbPv${i}" aria-live="polite"></div>`; s4.appendChild(d); });
   out.appendChild(s4);
 
-  const trItems = genTrianguloItems();
+  const deItems = genDetectiveItems();
   const s5 = document.createElement('div');
-  s5.innerHTML = '<div class="eval-section-title">V. Ángulos de un triángulo <span class="eval-pts">10 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Los tres ángulos internos de un triángulo siempre suman 180°.</p>';
-  trItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-tr="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum}° (${it.extra})</div><div class="eval-item-feedback" id="evalFbTr${i}" aria-live="polite"></div>`; s5.appendChild(d); });
+  s5.innerHTML = '<div class="eval-section-title">V. Detective del error <span class="eval-pts">10 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel desafío. Cada frase repite un Error Común de la misión. Descubre el fallo y escribe la respuesta correcta.</p>';
+  deItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-de="${i}" autocomplete="off"></div><div class="eval-answer">${it.pauta}</div><div class="eval-item-feedback" id="evalFbDe${i}" aria-live="polite"></div>`; s5.appendChild(d); });
   out.appendChild(s5);
 
-  window._evalOpData = { csItems, prItems, caItems, faItems, trItems };
+  window._evalOpData = { clItems, tpItems, csItems, pvItems, deItems };
   const autoPanel = document.createElement('div'); autoPanel.id = 'evalOpAutoResult'; autoPanel.className = 'eval-auto-result';
   autoPanel.innerHTML = '<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.';
   out.appendChild(autoPanel);
@@ -1111,21 +1123,21 @@ function gradeEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const d = window._evalOpData;
-  let total = 0; const det = { cs: 0, pr: 0, ca: 0, fa: 0, tr: 0 };
-  const _mark = (sel, it, i, key, ptsEach, fbId) => {
+  let total = 0; const det = { cl: 0, tp: 0, cs: 0, pv: 0, de: 0 };
+  const _mark = (sel, i, key, ptsEach, fbId, match, ansTxt) => {
     const el = document.querySelector(`[data-${sel}="${i}"]`);
-    const ok = _isIntMatch(el ? el.value : '', it.ansNum);
+    const ok = match(el ? el.value : '');
     if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); }
-    if (ok) { det[key]++; total += ptsEach; }
-    setEvalFeedback(fbId + i, ok, ok ? `Correcto. +${ptsEach} pts` : 'Revisar. R/ ' + it.ansNum + '°');
+    if (ok) { det[key] += ptsEach; total += ptsEach; }
+    setEvalFeedback(fbId + i, ok, ok ? `Correcto. +${ptsEach} pts` : 'Revisar. R/ ' + ansTxt);
   };
-  d.csItems.forEach((it, i) => _mark('cs', it, i, 'cs', 10, 'evalFbCs'));
-  d.prItems.forEach((it, i) => _mark('pr', it, i, 'pr', 4, 'evalFbPr'));
-  d.caItems.forEach((it, i) => _mark('ca', it, i, 'ca', 2, 'evalFbCa'));
-  d.faItems.forEach((it, i) => _mark('fa', it, i, 'fa', 2, 'evalFbFa'));
-  d.trItems.forEach((it, i) => _mark('tr', it, i, 'tr', 5, 'evalFbTr'));
+  d.clItems.forEach((it, i) => _mark('cl', i, 'cl', 4, 'evalFbCl', v => _isTipoMatch(v, it.ansTipo), it.ansTipo));
+  d.tpItems.forEach((it, i) => _mark('tp', i, 'tp', 4, 'evalFbTp', v => _isNearMatch(v, it.ansNum, it.tol), it.ansNum + '° (±' + it.tol + '°)'));
+  d.csItems.forEach((it, i) => _mark('cs', i, 'cs', 4, 'evalFbCs', v => _isIntMatch(v, it.ansNum), it.ansNum + '°'));
+  d.pvItems.forEach((it, i) => _mark('pv', i, 'pv', 10, 'evalFbPv', v => _isIntMatch(v, it.ansNum), it.ansNum + '°'));
+  d.deItems.forEach((it, i) => _mark('de', i, 'de', 5, 'evalFbDe', v => it.ansTipo ? _isTipoMatch(v, it.ansTipo) : _isIntMatch(v, it.ansNum), it.ansTipo ? it.ansTipo : it.ansNum + '°'));
   const res = document.getElementById('evalOpAutoResult');
-  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Comp./Supl.: ${det.cs*10}/50 · Problemas: ${det.pr*4}/20 · Cadena: ${det.ca*2}/10 · Escondido: ${det.fa*2}/10 · Triángulos: ${det.tr*5}/10</span>`; }
+  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Clasifica: ${det.cl}/20 · Transportador: ${det.tp}/20 · Comp./Supl.: ${det.cs}/20 · Problemas: ${det.pv}/30 · Detective: ${det.de}/10</span>`; }
   if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
   else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
 }
@@ -1133,23 +1145,24 @@ function printEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const forma = window._currentEvalOpForm || 1; const d = window._evalOpData;
-  let s1 = `<div class="sec-title"><span>I. Complemento y suplemento</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 50 pts</span></div></div><p class="opx-instr">Complemento = 90° − ángulo · Suplemento = 180° − ángulo. 10 pts c/u.</p>`;
-  d.csItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
-  let s2 = `<div class="sec-title"><span>II. Problemas breves</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Resuelve y escribe la respuesta. 4 pts c/u.</p>`;
-  d.prItems.forEach((it, i) => { s2 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
-  const caTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Cadena de operaciones</th><th>Resultado</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text.replace(' ¿Cuánto obtienes?','').replace(', ¿cuánto mide?','')}</td><td></td></tr>`).join('')}</table>`;
-  let s3 = `<div class="sec-title"><span>III. Cadena de operaciones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Resuelve paso a paso. 2 pts c/u.</p>${caTbl(d.caItems)}`;
-  const faTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Operación</th><th>▢ =</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.expr}</td><td></td></tr>`).join('')}</table>`;
-  let s4 = `<div class="sec-title"><span>IV. ¿Qué ángulo se esconde en ▢?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Usa la operación inversa. 2 pts c/u.</p>${faTbl(d.faItems)}`;
-  const trTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Triángulo</th><th>Tercer ángulo</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text.replace(' El tercero mide ▢','')}</td><td></td></tr>`).join('')}</table>`;
-  let s5 = `<div class="sec-title"><span>V. Ángulos de un triángulo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Los tres ángulos suman 180°. 5 pts c/u.</p>${trTbl(d.trItems)}`;
+  const clTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Medida del ángulo</th><th>Tipo (agudo · recto · obtuso · llano · reflejo)</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td><strong>${it.deg}°</strong></td><td></td></tr>`).join('')}</table>`;
+  let s1 = `<div class="sec-title"><span>I. Clasifica el ángulo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. Escribe el tipo según su medida (compara con 90° y 180°). 4 pts c/u.</p>${clTbl(d.clItems)}`;
+  let s2 = `<div class="sec-title"><span>II. Lee el transportador</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. Escribe la medida de cada ángulo dibujado (se acepta ±5°). 4 pts c/u.</p><div style="display:flex;gap:6px;justify-content:space-between;">`;
+  d.tpItems.forEach((it, i) => { s2 += `<div style="flex:1;text-align:center;"><div style="max-width:105px;margin:0 auto;">${_svgAngle(it.deg)}</div><div style="font-size:10pt;margin-top:2px;"><strong>${i+1}.</strong> <span style="display:inline-block;min-width:44px;border-bottom:1.5px solid #111;height:12px;"></span>°</div></div>`; });
+  s2 += `</div>`;
+  let s3 = `<div class="sec-title"><span>III. Complemento y suplemento</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel intermedio. Complemento = 90° − ángulo · Suplemento = 180° − ángulo. 4 pts c/u.</p>`;
+  d.csItems.forEach((it, i) => { s3 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
+  let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Nivel avanzado. Lee, decide la operación y escribe la respuesta en grados. 10 pts c/u.</p>`;
+  d.pvItems.forEach((it, i) => { s4 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
+  let s5 = `<div class="sec-title"><span>V. Detective del error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Nivel desafío. Cada frase repite un Error Común de la misión: descubre el fallo y escribe la respuesta correcta. 5 pts c/u.</p>`;
+  d.deItems.forEach((it, i) => { s5 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank" style="width:110px;"></span></div>`; });
   let pR = '';
-  pR += `<div class="p-sec"><div class="p-ttl">I. Complemento y suplemento</div><table class="p-tbl">${d.csItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}°</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">II. Problemas breves</div><table class="p-tbl">${d.prItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}°</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">III. Cadena de operaciones</div><table class="p-tbl">${d.caItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}°</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. Ángulo escondido</div><table class="p-tbl">${d.faItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${it.ansNum}°</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Triángulos</div><table class="p-tbl">${d.trItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${it.ansNum}° · ${it.extra}</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Ángulos: Tipos y Transportador · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Ángulos: Tipos y Transportador · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 50 · II: 20 · III: 10 · IV: 10 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Ángulos: Tipos y Transportador · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  pR += `<div class="p-sec"><div class="p-ttl">I. Clasifica el ángulo</div><table class="p-tbl">${d.clItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.deg}° → ${it.ansTipo}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">II. Lee el transportador (±5°)</div><table class="p-tbl">${d.tpItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}° (aceptar ${it.ansNum - it.tol}°–${it.ansNum + it.tol}°)</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">III. Complemento y suplemento</div><table class="p-tbl">${d.csItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}°</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.pvItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}° · ${it.extra}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Detective del error</div><table class="p-tbl">${d.deItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.pauta}</td></tr>`).join('')}</table></div>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Ángulos: Tipos y Transportador · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Ángulos: Tipos y Transportador · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 20 · III: 20 · IV: 30 · V: 10 · Forma ${forma}</p><p class="ph-crit" style="font-weight:400;">Progresión: I–II identificar y medir · III calcular · IV aplicar · V corregir el error</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Ángulos: Tipos y Transportador · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);

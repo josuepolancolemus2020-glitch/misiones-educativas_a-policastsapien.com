@@ -957,45 +957,74 @@ function _isIntMatch(student, expectedNum) {
   return !isNaN(n) && n === expectedNum;
 }
 function _opPoli(){ const p=_polys[_opRint(0,1)]; const lado=[2,4,6,8,10][_opRint(0,4)]; const apotema=_opRint(3,9); return {n:p.n,name:p.name,lado,apotema,per:_perimPoli(p.n,lado),area:_areaPoli(p.n,lado,apotema)}; }
-// I. Perímetro y área (5 × 10 = 50 pts)
-function genPerAreaItems() {
+// I. Perímetro de polígonos regulares (5 × 4 = 20 pts) — mecánica P = n × lado
+function genPerimItems() {
   const items = [];
   for (let i = 0; i < 5; i++) {
     const f = _opPoli();
-    if (i % 2 === 0) items.push({ text: `Perímetro de un ${f.name} de lado ${f.lado}`, ansNum: f.per });
-    else items.push({ text: `Área de un ${f.name}: P = ${f.per}, apotema ${f.apotema}`, ansNum: f.area });
+    const text = (i % 2 === 0)
+      ? `Perímetro de un ${f.name} de lado ${f.lado} cm`
+      : `¿Cuántos cm mide el contorno de un ${f.name} de lado ${f.lado} cm?`;
+    items.push({ text, ansNum: f.per, extra: `${f.n} × ${f.lado} = ${f.per} cm` });
   }
   return items;
 }
-// II. Problemas (5 × 4 = 20 pts)
-function genProblemaItems() {
-  const items = [];
-  const tipos = _shuffleF([0, 1, 2, 3, 4], _opRnd);
-  const NAMES = ['Ana', 'Luis', 'Marta', 'José', 'Carmen', 'Pedro'];
-  tipos.forEach(tp => {
-    const n = NAMES[_opRint(0, NAMES.length - 1)]; const f = _opPoli();
-    let text, ansNum;
-    if (tp === 0) { text = `${n} bordea un ${f.name} de lado ${f.lado} cm con cinta. ¿Cuántos cm de cinta usa?`; ansNum = f.per; }
-    else if (tp === 1) { text = `Un mosaico ${f.name} tiene lado ${f.lado} y apotema ${f.apotema}. ¿Cuál es su área?`; ansNum = f.area; }
-    else if (tp === 2) { text = `Un ${f.name} tiene perímetro ${f.per} y apotema ${f.apotema}. ¿Cuál es su área?`; ansNum = f.area; }
-    else if (tp === 3) { text = `¿Cuál es el perímetro de un ${f.name} de lado ${f.lado} cm?`; ansNum = f.per; }
-    else { text = `Un jardín ${f.name} tiene lado ${f.lado} y apotema ${f.apotema}. ¿Cuántos m² ocupa?`; ansNum = f.area; }
-    items.push({ text, ansNum });
-  });
-  return items;
-}
-// III. Cadena (5 × 2 = 10 pts)
-function genCadenaItems() {
+// II. Área con la fórmula (5 × 6 = 30 pts) — algoritmo completo en dos pasos
+function genAreaItems() {
   const items = [];
   for (let i = 0; i < 5; i++) {
-    const tp = i % 3; const f = _opPoli();
-    if (tp === 0) { items.push({ text: `Calcula el perímetro de un ${f.name} de lado ${f.lado} y súmale 10. ¿Cuánto obtienes?`, ansNum: f.per + 10 }); }
-    else if (tp === 1) { items.push({ text: `Al área de un ${f.name} (P = ${f.per}, apotema ${f.apotema}) réstale 10. ¿Cuánto obtienes?`, ansNum: f.area - 10 }); }
-    else { const l = _opRint(2, 6); items.push({ text: `Duplica el perímetro de un hexágono de lado ${l}. ¿Cuánto obtienes?`, ansNum: _perimPoli(6, l) * 2 }); }
+    const f = _opPoli();
+    if (i % 2 === 0) items.push({ text: `Un ${f.name} tiene lado ${f.lado} cm y apotema ${f.apotema} cm. Calcula primero su perímetro y luego su área (en cm²)`, ansNum: f.area, extra: `P = ${f.n} × ${f.lado} = ${f.per}; A = (${f.per} × ${f.apotema}) ÷ 2 = ${f.area} cm²` });
+    else items.push({ text: `Área de un ${f.name} con P = ${f.per} y apotema ${f.apotema} (en cm²)`, ansNum: f.area, extra: `(${f.per} × ${f.apotema}) ÷ 2 = ${f.area} cm²` });
   }
   return items;
 }
-// IV. Medida escondida (5 × 2 = 10 pts)
+// IV. Problemas del entorno hondureño (2 × 10 = 20 pts) — decidir perímetro vs área y costo en lempiras
+function genProblemaHNItems() {
+  const items = [];
+  const ladoA = [2, 4, 6, 8][_opRint(0, 3)]; const apoA = _opRint(3, 6);
+  const perA = _perimPoli(6, ladoA); const areaA = _areaPoli(6, ladoA, apoA);
+  const costoM2 = [100, 150, 200][_opRint(0, 2)];
+  const ctxA = [
+    `El piso hexagonal del kiosco del parque central tiene lado ${ladoA} m y apotema ${apoA} m. Si el metro cuadrado de baldosa cuesta L ${costoM2}, ¿cuántos lempiras cuesta cubrir todo el piso?`,
+    `La tarima hexagonal de la feria patronal tiene lado ${ladoA} m y apotema ${apoA} m. Pintar cada metro cuadrado cuesta L ${costoM2}. ¿Cuántos lempiras cuesta pintarla completa?`,
+    `El mural hexagonal de la escuela tiene lado ${ladoA} m y apotema ${apoA} m. Cubrirlo con cerámica cuesta L ${costoM2} por m². ¿Cuántos lempiras cuesta cubrirlo?`
+  ];
+  items.push({ text: ctxA[_opRint(0, 2)], ansNum: areaA * costoM2, extra: `P = 6 × ${ladoA} = ${perA} m; A = (${perA} × ${apoA}) ÷ 2 = ${areaA} m²; ${areaA} × L ${costoM2} = L ${_fmtNum(areaA * costoM2)}` });
+  const ladoB = [4, 5, 6, 8][_opRint(0, 3)]; const perB = _perimPoli(5, ladoB);
+  const costoM = [50, 80, 100][_opRint(0, 2)];
+  const ctxB = [
+    `Se va a cercar la jardinera pentagonal de la escuela, de lado ${ladoB} m, con malla que cuesta L ${costoM} el metro. ¿Cuántos lempiras cuesta la malla?`,
+    `Doña Carmen pone un borde de ladrillo a su huerto pentagonal de lado ${ladoB} m. Cada metro de borde cuesta L ${costoM}. ¿Cuántos lempiras gasta?`,
+    `Don José cerca su solar pentagonal de lado ${ladoB} m con alambre que cuesta L ${costoM} el metro. ¿Cuántos lempiras paga por el alambre?`
+  ];
+  items.push({ text: ctxB[_opRint(0, 2)], ansNum: perB * costoM, extra: `P = 5 × ${ladoB} = ${perB} m; ${perB} × L ${costoM} = L ${_fmtNum(perB * costoM)}` });
+  return items;
+}
+// V. Detective del error y comparación (2 × 5 = 10 pts) — réplica de la sección ⚠️ Errores Comunes
+function genPensarItems() {
+  const items = [];
+  const NAMES = ['Ana', 'Luis', 'Marta', 'José', 'Carmen', 'Pedro'];
+  const nom = NAMES[_opRint(0, NAMES.length - 1)];
+  const tp = _opRint(0, 2);
+  if (tp === 0) {
+    const f = _opPoli();
+    items.push({ text: `${nom} calculó el área de un ${f.name} con P = ${f.per} y apotema ${f.apotema} así: ${f.per} × ${f.apotema} = ${f.per * f.apotema} cm². ¿Qué error cometió? Escribe el área correcta`, ansNum: f.area, extra: `${f.area} cm² — olvidó dividir entre 2 (Error 1): A = (${f.per} × ${f.apotema}) ÷ 2` });
+  } else if (tp === 1) {
+    const l = [2, 4, 6, 8, 10][_opRint(0, 4)];
+    items.push({ text: `${nom} calculó el perímetro de un hexágono de lado ${l} así: 5 × ${l} = ${5 * l}. ¿Qué error cometió? Escribe el perímetro correcto`, ansNum: 6 * l, extra: `${6 * l} — contó mal los lados (Error 3): el hexágono tiene 6 lados, P = 6 × ${l}` });
+  } else {
+    const p = _polys[_opRint(0, 1)]; const lado = [2, 4, 6, 8, 10][_opRint(0, 4)];
+    let apo = _opRint(3, 9); if (apo === lado) apo++;
+    const per = _perimPoli(p.n, lado);
+    items.push({ text: `${nom} calculó el área de un ${p.name} de lado ${lado} y apotema ${apo} usando el lado: (${per} × ${lado}) ÷ 2 = ${(per * lado) / 2} cm². ¿Qué error cometió? Escribe el área correcta`, ansNum: (per * apo) / 2, extra: `${(per * apo) / 2} cm² — confundió la apotema con el lado (Error 2): en el área se usa la apotema` });
+  }
+  const lc = [2, 4, 6, 8, 10][_opRint(0, 4)];
+  if (_opRint(0, 1) === 0) items.push({ text: `Un hexágono y un pentágono tienen el mismo lado: ${lc} cm. Sin calcular los dos perímetros completos, ¿cuántos cm más mide el perímetro del hexágono?`, ansNum: lc, extra: `${lc} cm — el hexágono tiene un lado más que el pentágono (6 − 5 = 1 lado de ${lc} cm)` });
+  else items.push({ text: `Un hexágono y un pentágono tienen el mismo lado: ${lc} cm. Sin calcular, decide cuál tiene mayor perímetro y escribe ese perímetro mayor`, ansNum: 6 * lc, extra: `${6 * lc} cm — el del hexágono: con el mismo lado gana el polígono con más lados (6 × ${lc})` });
+  return items;
+}
+// III. Medida escondida (5 × 4 = 20 pts) — razonamiento inverso
 function genFaltanteItems() {
   const items = [];
   const forms = [0, 1, 2, 3, _opRint(0, 3)];
@@ -1009,14 +1038,6 @@ function genFaltanteItems() {
   });
   return items;
 }
-// V. Área completa (2 × 5 = 10 pts)
-function genFiguraItems() {
-  const items = [];
-  const f = _opPoli();
-  items.push({ text: `Un ${f.name} de lado ${f.lado}. Su perímetro es ▢`, ansNum: f.per, extra: `${f.n} × ${f.lado}` });
-  items.push({ text: `El mismo ${f.name} con apotema ${f.apotema}. Su área es ▢`, ansNum: f.area, extra: `(${f.per} × ${f.apotema}) ÷ 2` });
-  return items;
-}
 function genEvalOp() {
   sfx('click');
   _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
@@ -1027,37 +1048,37 @@ function genEvalOp() {
   evalOpAnsVisible = false;
   const out = document.getElementById('evalOpOut'); out.innerHTML = '';
 
-  const paItems = genPerAreaItems();
+  const peItems = genPerimItems();
   const s1 = document.createElement('div');
-  s1.innerHTML = '<div class="eval-section-title">I. Perímetro y área <span class="eval-pts">50 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">P = nº de lados × lado · A = (P × apotema) ÷ 2.</p>';
-  paItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pa="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbPa${i}" aria-live="polite"></div>`; s1.appendChild(d); });
+  s1.innerHTML = '<div class="eval-section-title">I. Perímetro de polígonos regulares <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. P = nº de lados × lado. Pentágono: 5 lados · Hexágono: 6 lados.</p>';
+  peItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pe="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)} (${it.extra})</div><div class="eval-item-feedback" id="evalFbPe${i}" aria-live="polite"></div>`; s1.appendChild(d); });
   out.appendChild(s1);
 
-  const prItems = genProblemaItems();
+  const arItems = genAreaItems();
   const s2 = document.createElement('div');
-  s2.innerHTML = '<div class="eval-section-title">II. Problemas breves <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Decide si el problema pide perímetro o área y resuelve.</p>';
-  prItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pr="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbPr${i}" aria-live="polite"></div>`; s2.appendChild(d); });
+  s2.innerHTML = '<div class="eval-section-title">II. Área con la fórmula <span class="eval-pts">30 pts · 6 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel intermedio. Dos pasos: primero P = nº de lados × lado (si no lo dan) y luego A = (P × apotema) ÷ 2.</p>';
+  arItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-ar="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)} (${it.extra})</div><div class="eval-item-feedback" id="evalFbAr${i}" aria-live="polite"></div>`; s2.appendChild(d); });
   out.appendChild(s2);
 
-  const caItems = genCadenaItems();
+  const faItems = genFaltanteItems();
   const s3 = document.createElement('div');
-  s3.innerHTML = '<div class="eval-section-title">III. Cadena de operaciones <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Calcula el perímetro o el área y luego la operación indicada.</p>';
-  caItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-ca="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbCa${i}" aria-live="polite"></div>`; s3.appendChild(d); });
+  s3.innerHTML = '<div class="eval-section-title">III. ¿Qué medida se esconde en ▢? <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel avanzado. Usa las fórmulas al revés (divide o despeja).</p>';
+  faItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.expr}</span><input class="eval-cp-input" type="text" data-fa="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbFa${i}" aria-live="polite"></div>`; s3.appendChild(d); });
   out.appendChild(s3);
 
-  const faItems = genFaltanteItems();
+  const hnItems = genProblemaHNItems();
   const s4 = document.createElement('div');
-  s4.innerHTML = '<div class="eval-section-title">IV. ¿Qué medida se esconde en ▢? <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Usa las fórmulas al revés (divide o despeja).</p>';
-  faItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.expr}</span><input class="eval-cp-input" type="text" data-fa="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbFa${i}" aria-live="polite"></div>`; s4.appendChild(d); });
+  s4.innerHTML = '<div class="eval-section-title">IV. Problemas del entorno hondureño <span class="eval-pts">20 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Aplicación. Decide si el problema pide perímetro o área, resuelve y calcula el costo en lempiras (escribe solo el número).</p>';
+  hnItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-hn="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">L ${_fmtNum(it.ansNum)} (${it.extra})</div><div class="eval-item-feedback" id="evalFbHn${i}" aria-live="polite"></div>`; s4.appendChild(d); });
   out.appendChild(s4);
 
-  const fiItems = genFiguraItems();
+  const dtItems = genPensarItems();
   const s5 = document.createElement('div');
-  s5.innerHTML = '<div class="eval-section-title">V. Perímetro y área de una figura <span class="eval-pts">10 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Primero el perímetro, luego el área con la apotema.</p>';
-  fiItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-fi="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)} (${it.extra})</div><div class="eval-item-feedback" id="evalFbFi${i}" aria-live="polite"></div>`; s5.appendChild(d); });
+  s5.innerHTML = '<div class="eval-section-title">V. Detective del error y comparación <span class="eval-pts">10 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Desafío. Descubre el error (como en la sección ⚠️ Errores Comunes) o compara sin calcular, y escribe el valor correcto.</p>';
+  dtItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-dt="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.extra}</div><div class="eval-item-feedback" id="evalFbDt${i}" aria-live="polite"></div>`; s5.appendChild(d); });
   out.appendChild(s5);
 
-  window._evalOpData = { paItems, prItems, caItems, faItems, fiItems };
+  window._evalOpData = { peItems, arItems, faItems, hnItems, dtItems };
   const autoPanel = document.createElement('div'); autoPanel.id = 'evalOpAutoResult'; autoPanel.className = 'eval-auto-result';
   autoPanel.innerHTML = '<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.';
   out.appendChild(autoPanel);
@@ -1072,7 +1093,7 @@ function gradeEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const d = window._evalOpData;
-  let total = 0; const det = { pa: 0, pr: 0, ca: 0, fa: 0, fi: 0 };
+  let total = 0; const det = { pe: 0, ar: 0, fa: 0, hn: 0, dt: 0 };
   const _mark = (sel, it, i, key, ptsEach, fbId) => {
     const el = document.querySelector(`[data-${sel}="${i}"]`);
     const ok = _isIntMatch(el ? el.value : '', it.ansNum);
@@ -1080,13 +1101,13 @@ function gradeEvalOp() {
     if (ok) { det[key]++; total += ptsEach; }
     setEvalFeedback(fbId + i, ok, ok ? `Correcto. +${ptsEach} pts` : 'Revisar. R/ ' + _fmtNum(it.ansNum));
   };
-  d.paItems.forEach((it, i) => _mark('pa', it, i, 'pa', 10, 'evalFbPa'));
-  d.prItems.forEach((it, i) => _mark('pr', it, i, 'pr', 4, 'evalFbPr'));
-  d.caItems.forEach((it, i) => _mark('ca', it, i, 'ca', 2, 'evalFbCa'));
-  d.faItems.forEach((it, i) => _mark('fa', it, i, 'fa', 2, 'evalFbFa'));
-  d.fiItems.forEach((it, i) => _mark('fi', it, i, 'fi', 5, 'evalFbFi'));
+  d.peItems.forEach((it, i) => _mark('pe', it, i, 'pe', 4, 'evalFbPe'));
+  d.arItems.forEach((it, i) => _mark('ar', it, i, 'ar', 6, 'evalFbAr'));
+  d.faItems.forEach((it, i) => _mark('fa', it, i, 'fa', 4, 'evalFbFa'));
+  d.hnItems.forEach((it, i) => _mark('hn', it, i, 'hn', 10, 'evalFbHn'));
+  d.dtItems.forEach((it, i) => _mark('dt', it, i, 'dt', 5, 'evalFbDt'));
   const res = document.getElementById('evalOpAutoResult');
-  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Perím./Área: ${det.pa*10}/50 · Problemas: ${det.pr*4}/20 · Cadena: ${det.ca*2}/10 · Escondido: ${det.fa*2}/10 · Figura: ${det.fi*5}/10</span>`; }
+  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Perímetro: ${det.pe*4}/20 · Área: ${det.ar*6}/30 · Escondido: ${det.fa*4}/20 · Problemas: ${det.hn*10}/20 · Detective: ${det.dt*5}/10</span>`; }
   if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
   else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
 }
@@ -1094,23 +1115,23 @@ function printEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const forma = window._currentEvalOpForm || 1; const d = window._evalOpData;
-  let s1 = `<div class="sec-title"><span>I. Perímetro y área</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 50 pts</span></div></div><p class="opx-instr">Aplica las fórmulas. 10 pts c/u.</p>`;
-  d.paItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
-  let s2 = `<div class="sec-title"><span>II. Problemas breves</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Resuelve y escribe la respuesta. 4 pts c/u.</p>`;
-  d.prItems.forEach((it, i) => { s2 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
-  const caTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Cadena de operaciones</th><th>Resultado</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text.replace(' ¿Cuánto obtienes?','')}</td><td></td></tr>`).join('')}</table>`;
-  let s3 = `<div class="sec-title"><span>III. Cadena de operaciones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Resuelve paso a paso. 2 pts c/u.</p>${caTbl(d.caItems)}`;
+  let s1 = `<div class="sec-title"><span>I. Perímetro de polígonos regulares</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. P = nº de lados × lado. 4 pts c/u.</p>`;
+  d.peItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
+  let s2 = `<div class="sec-title"><span>II. Área con la fórmula</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Nivel intermedio. Dos pasos: primero P (si no lo dan) y luego A = (P × apotema) ÷ 2. 6 pts c/u.</p>`;
+  d.arItems.forEach((it, i) => { s2 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
   const faTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Enunciado</th><th>▢ =</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.expr}</td><td></td></tr>`).join('')}</table>`;
-  let s4 = `<div class="sec-title"><span>IV. ¿Qué medida se esconde en ▢?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Despeja usando las fórmulas. 2 pts c/u.</p>${faTbl(d.faItems)}`;
-  const fiTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Figura</th><th>Resultado</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text.replace(' es ▢','')}</td><td></td></tr>`).join('')}</table>`;
-  let s5 = `<div class="sec-title"><span>V. Perímetro y área de una figura</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Perímetro en cm, área en cm². 5 pts c/u.</p>${fiTbl(d.fiItems)}`;
+  let s3 = `<div class="sec-title"><span>III. ¿Qué medida se esconde en ▢?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel avanzado. Despeja usando las fórmulas al revés. 4 pts c/u.</p>${faTbl(d.faItems)}`;
+  const hnTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th style="width:62%">Problema</th><th>Operaciones y respuesta (L)</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text}</td><td style="height:46px"></td></tr>`).join('')}</table>`;
+  let s4 = `<div class="sec-title"><span>IV. Problemas del entorno hondureño</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Aplicación. Decide si el problema pide perímetro o área, resuelve y calcula el costo en lempiras. 10 pts c/u.</p>${hnTbl(d.hnItems)}`;
+  const dtTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th style="width:62%">Reto</th><th>Error encontrado y valor correcto</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text}</td><td style="height:46px"></td></tr>`).join('')}</table>`;
+  let s5 = `<div class="sec-title"><span>V. Detective del error y comparación</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Desafío. Descubre el error (sección Errores Comunes) o compara sin calcular, y escribe el valor correcto. 5 pts c/u.</p>${dtTbl(d.dtItems)}`;
   let pR = '';
-  pR += `<div class="p-sec"><div class="p-ttl">I. Perímetro y área</div><table class="p-tbl">${d.paItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">II. Problemas breves</div><table class="p-tbl">${d.prItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">III. Cadena de operaciones</div><table class="p-tbl">${d.caItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. Medida escondida</div><table class="p-tbl">${d.faItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Perímetro y área de una figura</div><table class="p-tbl">${d.fiItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)} · ${it.extra}</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Área de Polígonos Regulares · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Área de Polígonos Regulares · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 50 · II: 20 · III: 10 · IV: 10 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Área de Polígonos Regulares · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
+  pR += `<div class="p-sec"><div class="p-ttl">I. Perímetro</div><table class="p-tbl">${d.peItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)} (${it.extra})</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">II. Área con la fórmula</div><table class="p-tbl">${d.arItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.extra}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">III. Medida escondida</div><table class="p-tbl">${d.faItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas del entorno hondureño</div><table class="p-tbl">${d.hnItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.extra}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Detective del error y comparación</div><table class="p-tbl">${d.dtItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.extra}</td></tr>`).join('')}</table></div>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Área de Polígonos Regulares · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Área de Polígonos Regulares · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 30 · III: 20 · IV: 20 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Área de Polígonos Regulares · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);

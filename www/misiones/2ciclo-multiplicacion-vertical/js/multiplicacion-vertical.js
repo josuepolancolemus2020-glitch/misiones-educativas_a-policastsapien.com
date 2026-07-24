@@ -953,64 +953,76 @@ function _isIntMatch(student, expectedNum) {
   const n = parseInt(raw, 10);
   return !isNaN(n) && n === expectedNum;
 }
-// I. Multiplica (5 × 10 = 50 pts)
+// I. Multiplica en vertical (5 × 8 = 40 pts) — progresión básico → desafío, siempre con acarreo (Bloques 2 y 4)
 function genMultItems() {
   const items = [];
-  for (let i = 0; i < 5; i++) {
-    if (i % 2 === 0) { const a = _opRint(23, 89), b = _opRint(3, 9); items.push({ text: `${a} × ${b} =`, ansNum: a * b }); }
-    else { const a = _opRint(13, 49), b = _opRint(12, 29); items.push({ text: `${a} × ${b} =`, ansNum: a * b }); }
+  for (let k = 0; k < 2; k++) { // básico: 2 cifras × 1 cifra CON acarreo (tipo 37 × 4)
+    let a, b; do { a = _opRint(24, 89); b = _opRint(3, 9); } while ((a % 10) * b < 10);
+    items.push({ text: `${a} × ${b} =`, ansNum: a * b });
+  }
+  { // intermedio: 3 cifras × 1 cifra CON acarreo
+    let a, b; do { a = _opRint(124, 489); b = _opRint(3, 9); } while ((a % 10) * b < 10);
+    items.push({ text: `${a} × ${b} =`, ansNum: a * b });
+  }
+  for (let k = 0; k < 2; k++) { // desafío: 2 cifras × 2 cifras con productos parciales (tipo 23 × 14)
+    const a = _opRint(13, 49), b = _opRint(12, 29);
+    items.push({ text: `${a} × ${b} =`, ansNum: a * b });
   }
   return items;
 }
-// II. Problemas (5 × 4 = 20 pts)
+// II. ¿Qué escribo y qué llevo? (5 × 2 = 10 pts) — réplica del Lab 2 "Detective del Acarreo" y el widget "¿Cuánto se lleva?" (Bloque 3)
+function genLlevaItems() {
+  const items = []; const seen = {};
+  while (items.length < 5) {
+    const a = _opRint(3, 9), b = _opRint(4, 9); const key = a + 'x' + b;
+    if (a * b < 10 || seen[key]) continue; seen[key] = 1;
+    const p = a * b;
+    items.push({ text: `${a} × ${b} = ${p}`, esc: p % 10, lleva: Math.floor(p / 10) });
+  }
+  return items;
+}
+// III. Casos especiales y factor escondido (5 × 2 = 10 pts) — atajos ×0/×1/×10/×100 (Bloque 5) + razonamiento inverso ▢
+function genCasosItems() {
+  const items = [];
+  const a0 = _opRint(23, 98); items.push({ expr: `${a0} × 0 =`, ansNum: 0 });
+  const a1 = _opRint(23, 98); items.push({ expr: `${a1} × 1 =`, ansNum: a1 });
+  const a2 = _opRint(12, 79); const pow = _opRnd() < 0.5 ? 10 : 100; items.push({ expr: `${a2} × ${pow} =`, ansNum: a2 * pow });
+  const x1 = _opRint(3, 12), f1 = _opRint(3, 9); items.push({ expr: `▢ × ${f1} = ${x1 * f1}`, ansNum: x1 });
+  const x2 = _opRint(12, 40); items.push({ expr: `▢ × 10 = ${x2 * 10}`, ansNum: x2 });
+  return _shuffleF(items, _opRnd);
+}
+// IV. Problemas de la vida real (3 × 10 = 30 pts) — contexto hondureño (lempiras, mangos, pupusas, sillas del aula)
 function genProblemaItems() {
   const items = [];
-  const tipos = _shuffleF([0, 1, 2, 3, 4], _opRnd);
+  const tipos = _pickF([0, 1, 2, 3, 4], 3, _opRnd);
   const NAMES = ['Ana', 'Luis', 'Marta', 'José', 'Carmen', 'Pedro'];
-  const OBJS = ['galletas', 'lápices', 'boletos', 'mangos', 'sillas'];
   tipos.forEach(tp => {
-    const n = NAMES[_opRint(0, NAMES.length - 1)], obj = OBJS[_opRint(0, OBJS.length - 1)];
+    const n = NAMES[_opRint(0, NAMES.length - 1)];
     let text, ansNum;
-    if (tp === 0) { const a = _opRint(4, 9), b = _opRint(6, 20); text = `${n} tiene ${a} cajas con ${b} ${obj} cada una. ¿Cuántas ${obj} hay en total?`; ansNum = a * b; }
-    else if (tp === 1) { const a = _opRint(12, 30); text = `Cada ${obj.slice(0,-1)} cuesta ${a} lempiras. ¿Cuánto cuestan 5 ${obj}?`; ansNum = a * 5; }
-    else if (tp === 2) { const a = _opRint(11, 25); text = `Una fila tiene ${a} sillas. ¿Cuántas sillas hay en 6 filas iguales?`; ansNum = a * 6; }
-    else if (tp === 3) { const a = _opRint(15, 40); text = `${n} camina ${a} metros cada día. ¿Cuántos metros camina en 7 días?`; ansNum = a * 7; }
-    else { const a = _opRint(12, 24); text = `Un paquete trae ${a} ${obj}. ¿Cuántas ${obj} hay en 8 paquetes?`; ansNum = a * 8; }
+    if (tp === 0) { const a = _opRint(12, 25), b = _opRint(4, 9); text = `En el mercado, cada pupusa cuesta ${a} lempiras. ¿Cuántos lempiras cuestan ${b} pupusas?`; ansNum = a * b; }
+    else if (tp === 1) { const a = _opRint(14, 28), b = _opRint(4, 9); text = `${n} vende mangos en cajas de ${a} mangos cada una. ¿Cuántos mangos hay en ${b} cajas?`; ansNum = a * b; }
+    else if (tp === 2) { const a = _opRint(12, 19), b = _opRint(4, 8); text = `El aula de ${n} tiene ${b} filas con ${a} sillas cada una. ¿Cuántas sillas hay en total?`; ansNum = a * b; }
+    else if (tp === 3) { const a = _opRint(15, 30), b = _opRint(5, 9); text = `El pasaje del bus cuesta ${a} lempiras. ¿Cuántos lempiras pagan ${b} estudiantes en total?`; ansNum = a * b; }
+    else { const a = _opRint(15, 40), b = _opRint(4, 9); text = `${n} ahorra ${a} lempiras cada semana. ¿Cuántos lempiras ahorra en ${b} semanas?`; ansNum = a * b; }
     items.push({ text, ansNum });
   });
   return items;
 }
-// III. Cadena (5 × 2 = 10 pts)
-function genCadenaItems() {
+// V. Retos de pensamiento (2 × 5 = 10 pts) — detective del error (Errores 2 y 3) + predicción de la cifra final (Predice)
+function genRetoItems() {
   const items = [];
-  for (let i = 0; i < 5; i++) {
-    const tp = i % 3;
-    if (tp === 0) { const a = _opRint(6, 12), b = _opRint(10, 40); items.push({ text: `Multiplica ${a} × 5 y súmale ${b}. ¿Cuánto obtienes?`, ansNum: a * 5 + b }); }
-    else if (tp === 1) { const a = _opRint(11, 25); items.push({ text: `Calcula el doble de ${a} y multiplícalo por 2. ¿Cuánto obtienes?`, ansNum: a * 2 * 2 }); }
-    else { const a = _opRint(12, 30); items.push({ text: `Multiplica ${a} × 10 y réstale ${a}. ¿Cuánto obtienes?`, ansNum: a * 10 - a }); }
+  if (_opRnd() < 0.5) { // Error 2: olvidar el acarreo
+    let a, b; do { a = _opRint(24, 79); b = _opRint(4, 9); } while ((a % 10) * b < 10);
+    const u = (a % 10) * b, lleva = Math.floor(u / 10);
+    const mal = Math.floor(a / 10) * b * 10 + (u % 10);
+    items.push({ text: `🕵️ Detective del error: al resolver ${a} × ${b}, un estudiante hizo ${a % 10} × ${b} = ${u}, escribió el ${u % 10} pero OLVIDÓ llevar el ${lleva} (Error 2) y obtuvo ${_fmtNum(mal)}. Escribe el producto correcto.`, ansNum: a * b });
+  } else { // Error 3: no desplazar el segundo parcial
+    const a = _opRint(13, 39), b = _opRint(12, 29); const u = b % 10, dec = Math.floor(b / 10);
+    const p1 = a * u, p2 = a * dec; const mal = p1 + p2;
+    items.push({ text: `🕵️ Detective del error: para ${a} × ${b}, un estudiante sumó los parciales ${_fmtNum(p1)} + ${_fmtNum(p2)} SIN correr el segundo un lugar a la izquierda (Error 3) y obtuvo ${_fmtNum(mal)}. Escribe el producto correcto.`, ansNum: a * b });
   }
-  return items;
-}
-// IV. Factor escondido (5 × 2 = 10 pts)
-function genFaltanteItems() {
-  const items = [];
-  const forms = [0, 1, 2, 3, _opRint(0, 3)];
-  forms.forEach(f => {
-    let expr, ansNum;
-    if (f === 0) { const x = _opRint(3, 12), a = _opRint(3, 9); expr = `▢ × ${a} = ${x * a}`; ansNum = x; }
-    else if (f === 1) { const x = _opRint(3, 12), a = _opRint(3, 9); expr = `${a} × ▢ = ${x * a}`; ansNum = x; }
-    else if (f === 2) { const x = _opRint(12, 40); expr = `▢ × 10 = ${x * 10}`; ansNum = x; }
-    else { const x = _opRint(4, 12); expr = `${x} × ▢ = ${x * x}`; ansNum = x; }
-    items.push({ expr, ansNum });
-  });
-  return items;
-}
-// V. Productos parciales (2 × 5 = 10 pts)
-function genParcialItems() {
-  const items = [];
-  const a = _opRint(13, 39), b = _opRint(12, 29); const u = b % 10, d = b - u;
-  items.push({ text: `En ${a} × ${b}, el primer parcial (${a} × ${u}) es ▢`, ansNum: a * u, extra: `${a} × ${u} = ${a * u}` });
-  items.push({ text: `En ${a} × ${b}, el segundo parcial (${a} × ${d}) es ▢`, ansNum: a * d, extra: `${a} × ${d} = ${a * d}` });
+  const a = _opRint(23, 98), b = _opRint(3, 9);
+  items.push({ text: `🔮 Sin resolver toda la operación: ¿en qué cifra termina ${a} × ${b}? (Pista: mira solo las unidades, ${a % 10} × ${b}.)`, ansNum: (a * b) % 10 });
   return items;
 }
 function genEvalOp() {
@@ -1025,35 +1037,35 @@ function genEvalOp() {
 
   const mItems = genMultItems();
   const s1 = document.createElement('div');
-  s1.innerHTML = '<div class="eval-section-title">I. Multiplica (cálculo vertical) <span class="eval-pts">50 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Alinea por posición, multiplica desde las unidades y suma los productos parciales.</p>';
+  s1.innerHTML = '<div class="eval-section-title">I. Multiplica en vertical <span class="eval-pts">40 pts · 8 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Alinea por posición, multiplica desde las unidades y lleva el acarreo. Progresión: 1-2 básico · 3 intermedio · 4-5 desafío (× 2 cifras con productos parciales).</p>';
   mItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-mu="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbMu${i}" aria-live="polite"></div>`; s1.appendChild(d); });
   out.appendChild(s1);
 
-  const prItems = genProblemaItems();
+  const llItems = genLlevaItems();
   const s2 = document.createElement('div');
-  s2.innerHTML = '<div class="eval-section-title">II. Problemas breves <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Decide qué se multiplica, resuelve en tu cuaderno y escribe la respuesta.</p>';
-  prItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pr="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbPr${i}" aria-live="polite"></div>`; s2.appendChild(d); });
+  s2.innerHTML = '<div class="eval-section-title">II. ¿Qué escribo y qué llevo? <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Como en el Detective del Acarreo: del producto de la columna, la cifra de las unidades se escribe y la de las decenas se lleva.</p>';
+  llItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text} →</span> escribo <input class="eval-cp-input" type="text" data-lle="${i}" autocomplete="off" inputmode="numeric" style="max-width:52px;"> llevo <input class="eval-cp-input" type="text" data-llc="${i}" autocomplete="off" inputmode="numeric" style="max-width:52px;"></div><div class="eval-answer">escribo ${it.esc} · llevo ${it.lleva}</div><div class="eval-item-feedback" id="evalFbLl${i}" aria-live="polite"></div>`; s2.appendChild(d); });
   out.appendChild(s2);
 
-  const caItems = genCadenaItems();
+  const ceItems = genCasosItems();
   const s3 = document.createElement('div');
-  s3.innerHTML = '<div class="eval-section-title">III. Cadena de operaciones <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Resuelve paso a paso: primero la multiplicación, luego la operación indicada.</p>';
-  caItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-ca="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbCa${i}" aria-live="polite"></div>`; s3.appendChild(d); });
+  s3.innerHTML = '<div class="eval-section-title">III. Casos especiales y factor escondido <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Aplica los atajos del ×0, ×1 y ×10/×100, y usa la división como operación inversa para hallar ▢.</p>';
+  ceItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.expr}</span><input class="eval-cp-input" type="text" data-ce="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbCe${i}" aria-live="polite"></div>`; s3.appendChild(d); });
   out.appendChild(s3);
 
-  const faItems = genFaltanteItems();
+  const prItems = genProblemaItems();
   const s4 = document.createElement('div');
-  s4.innerHTML = '<div class="eval-section-title">IV. ¿Qué factor se esconde en ▢? <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Usa la división como operación inversa de la multiplicación.</p>';
-  faItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.expr}</span><input class="eval-cp-input" type="text" data-fa="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbFa${i}" aria-live="polite"></div>`; s4.appendChild(d); });
+  s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Decide qué se multiplica, resuelve en vertical en tu cuaderno y escribe la respuesta.</p>';
+  prItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pr="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbPr${i}" aria-live="polite"></div>`; s4.appendChild(d); });
   out.appendChild(s4);
 
-  const paItems = genParcialItems();
+  const reItems = genRetoItems();
   const s5 = document.createElement('div');
-  s5.innerHTML = '<div class="eval-section-title">V. Productos parciales <span class="eval-pts">10 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Recuerda: el segundo parcial multiplica decenas.</p>';
-  paItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pa="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)} (${it.extra})</div><div class="eval-item-feedback" id="evalFbPa${i}" aria-live="polite"></div>`; s5.appendChild(d); });
+  s5.innerHTML = '<div class="eval-section-title">V. Retos de pensamiento <span class="eval-pts">10 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Encuentra el error del estudiante y corrígelo, y predice sin calcular todo.</p>';
+  reItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-re="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbRe${i}" aria-live="polite"></div>`; s5.appendChild(d); });
   out.appendChild(s5);
 
-  window._evalOpData = { mItems, prItems, caItems, faItems, paItems };
+  window._evalOpData = { mItems, llItems, ceItems, prItems, reItems };
   const autoPanel = document.createElement('div'); autoPanel.id = 'evalOpAutoResult'; autoPanel.className = 'eval-auto-result';
   autoPanel.innerHTML = '<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.';
   out.appendChild(autoPanel);
@@ -1068,7 +1080,7 @@ function gradeEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const d = window._evalOpData;
-  let total = 0; const det = { mu: 0, pr: 0, ca: 0, fa: 0, pa: 0 };
+  let total = 0; const det = { mu: 0, ll: 0, ce: 0, pr: 0, re: 0 };
   const _mark = (sel, it, i, key, ptsEach, fbId) => {
     const el = document.querySelector(`[data-${sel}="${i}"]`);
     const ok = _isIntMatch(el ? el.value : '', it.ansNum);
@@ -1076,13 +1088,21 @@ function gradeEvalOp() {
     if (ok) { det[key]++; total += ptsEach; }
     setEvalFeedback(fbId + i, ok, ok ? `Correcto. +${ptsEach} pts` : 'Revisar. R/ ' + _fmtNum(it.ansNum));
   };
-  d.mItems.forEach((it, i) => _mark('mu', it, i, 'mu', 10, 'evalFbMu'));
-  d.prItems.forEach((it, i) => _mark('pr', it, i, 'pr', 4, 'evalFbPr'));
-  d.caItems.forEach((it, i) => _mark('ca', it, i, 'ca', 2, 'evalFbCa'));
-  d.faItems.forEach((it, i) => _mark('fa', it, i, 'fa', 2, 'evalFbFa'));
-  d.paItems.forEach((it, i) => _mark('pa', it, i, 'pa', 5, 'evalFbPa'));
+  d.mItems.forEach((it, i) => _mark('mu', it, i, 'mu', 8, 'evalFbMu'));
+  d.llItems.forEach((it, i) => {
+    const elE = document.querySelector(`[data-lle="${i}"]`), elC = document.querySelector(`[data-llc="${i}"]`);
+    const okE = _isIntMatch(elE ? elE.value : '', it.esc), okC = _isIntMatch(elC ? elC.value : '', it.lleva);
+    if (elE) { elE.classList.toggle('eval-input-ok', okE); elE.classList.toggle('eval-input-no', !okE); }
+    if (elC) { elC.classList.toggle('eval-input-ok', okC); elC.classList.toggle('eval-input-no', !okC); }
+    const ok = okE && okC;
+    if (ok) { det.ll++; total += 2; }
+    setEvalFeedback('evalFbLl' + i, ok, ok ? 'Correcto. +2 pts' : `Revisar. R/ escribo ${it.esc} · llevo ${it.lleva}`);
+  });
+  d.ceItems.forEach((it, i) => _mark('ce', it, i, 'ce', 2, 'evalFbCe'));
+  d.prItems.forEach((it, i) => _mark('pr', it, i, 'pr', 10, 'evalFbPr'));
+  d.reItems.forEach((it, i) => _mark('re', it, i, 're', 5, 'evalFbRe'));
   const res = document.getElementById('evalOpAutoResult');
-  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Multiplica: ${det.mu*10}/50 · Problemas: ${det.pr*4}/20 · Cadena: ${det.ca*2}/10 · Factor: ${det.fa*2}/10 · Parciales: ${det.pa*5}/10</span>`; }
+  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Multiplica: ${det.mu*8}/40 · Acarreo: ${det.ll*2}/10 · Casos: ${det.ce*2}/10 · Problemas: ${det.pr*10}/30 · Retos: ${det.re*5}/10</span>`; }
   if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
   else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
 }
@@ -1090,23 +1110,23 @@ function printEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const forma = window._currentEvalOpForm || 1; const d = window._evalOpData;
-  let s1 = `<div class="sec-title"><span>I. Multiplica (cálculo vertical)</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 50 pts</span></div></div><p class="opx-instr">Resuelve con el método vertical. 10 pts c/u.</p>`;
+  let s1 = `<div class="sec-title"><span>I. Multiplica en vertical</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 40 pts</span></div></div><p class="opx-instr">Resuelve con el método vertical: alinea, multiplica desde las unidades y lleva el acarreo. Progresión: 1-2 básico · 3 intermedio · 4-5 desafío (× 2 cifras). 8 pts c/u.</p>`;
   d.mItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
-  let s2 = `<div class="sec-title"><span>II. Problemas breves</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Resuelve y escribe la respuesta. 4 pts c/u.</p>`;
-  d.prItems.forEach((it, i) => { s2 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
-  const caTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Cadena de operaciones</th><th>Resultado</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text.replace(' ¿Cuánto obtienes?','')}</td><td></td></tr>`).join('')}</table>`;
-  let s3 = `<div class="sec-title"><span>III. Cadena de operaciones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Resuelve paso a paso. 2 pts c/u.</p>${caTbl(d.caItems)}`;
-  const faTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Operación</th><th>▢ =</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.expr}</td><td></td></tr>`).join('')}</table>`;
-  let s4 = `<div class="sec-title"><span>IV. ¿Qué factor se esconde en ▢?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Usa la división como operación inversa. 2 pts c/u.</p>${faTbl(d.faItems)}`;
-  const paTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Producto parcial</th><th>▢ =</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text.replace(' es ▢','')}</td><td></td></tr>`).join('')}</table>`;
-  let s5 = `<div class="sec-title"><span>V. Productos parciales</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">El segundo parcial multiplica decenas. 5 pts c/u.</p>${paTbl(d.paItems)}`;
+  const llTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Producto de la columna</th><th>Escribo</th><th>Llevo</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text}</td><td></td><td></td></tr>`).join('')}</table>`;
+  let s2 = `<div class="sec-title"><span>II. ¿Qué escribo y qué llevo?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Del producto de cada columna, la cifra de las unidades se escribe y la de las decenas se lleva. 2 pts c/u.</p>${llTbl(d.llItems)}`;
+  const ceTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Operación</th><th>Respuesta</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.expr}</td><td></td></tr>`).join('')}</table>`;
+  let s3 = `<div class="sec-title"><span>III. Casos especiales y factor escondido</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Aplica los atajos del ×0, ×1 y ×10/×100, y usa la división para hallar ▢. 2 pts c/u.</p>${ceTbl(d.ceItems)}`;
+  let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Decide qué se multiplica, resuelve en vertical y escribe la respuesta. 10 pts c/u.</p>`;
+  d.prItems.forEach((it, i) => { s4 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
+  let s5 = `<div class="sec-title"><span>V. Retos de pensamiento</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Encuentra el error y corrígelo; predice sin calcular todo. 5 pts c/u.</p>`;
+  d.reItems.forEach((it, i) => { s5 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
   let pR = '';
-  pR += `<div class="p-sec"><div class="p-ttl">I. Multiplica</div><table class="p-tbl">${d.mItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">II. Problemas breves</div><table class="p-tbl">${d.prItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">III. Cadena de operaciones</div><table class="p-tbl">${d.caItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. Factor escondido</div><table class="p-tbl">${d.faItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Productos parciales</div><table class="p-tbl">${d.paItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)} · ${it.extra}</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Multiplicación Vertical · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Multiplicación Vertical · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 50 · II: 20 · III: 10 · IV: 10 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Multiplicación Vertical · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
+  pR += `<div class="p-sec"><div class="p-ttl">I. Multiplica en vertical</div><table class="p-tbl">${d.mItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">II. ¿Qué escribo y qué llevo?</div><table class="p-tbl">${d.llItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">escribo ${it.esc} · llevo ${it.lleva}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">III. Casos especiales y factor escondido</div><table class="p-tbl">${d.ceItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.prItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de pensamiento</div><table class="p-tbl">${d.reItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Multiplicación Vertical · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Multiplicación Vertical · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 40 · II: 10 · III: 10 · IV: 30 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Multiplicación Vertical · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);

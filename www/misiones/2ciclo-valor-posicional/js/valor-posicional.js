@@ -826,7 +826,7 @@ function _isIntMatch(student, expectedNum) {
 const POS_LABELS = ['centena de millar (C.M)', 'decena de millar (D.M)', 'unidad de millar (U.M)', 'centena (C)', 'decena (D)', 'unidad (U)'];
 const POS_VALUES = [100000, 10000, 1000, 100, 10, 1];
 
-// I. Escribe el valor del dígito indicado (5 × 10 = 50 pts)
+// I. Escribe el valor del dígito indicado (5 × 4 = 20 pts) — tabla posicional C.M–U del Bloque 5
 function genValorItems() {
   const items = [];
   for (let i = 0; i < 5; i++) {
@@ -842,16 +842,24 @@ function genValorItems() {
   return items;
 }
 
-// II. Completa la forma expandida (10 × 1 = 10 pts)
+// II. Completa la forma expandida (5 × 2 = 10 pts) — los 2 primeros ítems traen ceros internos tipo 706,040 (Bloque 3: cero de relleno)
 function genExpandeItems() {
   const items = [];
-  for (let i = 0; i < 10; i++) {
+  const zeroPats = [[100000, 1000, 10], [100000, 100, 1], [100000, 10000, 1], [100000, 10000, 100]];
+  for (let i = 0; i < 5; i++) {
     let num, terms;
-    do {
-      num = _opRint(100000, 999999);
+    if (i < 2) {
+      const pat = zeroPats[_opRint(0, zeroPats.length - 1)];
+      num = pat.reduce((acc, p) => acc + _opRint(1, 9) * p, 0);
       const digits = num.toString().split('').map(Number);
       terms = digits.map((dgt, idx) => dgt * POS_VALUES[idx]).filter(v => v > 0);
-    } while (terms.length < 2);
+    } else {
+      do {
+        num = _opRint(100000, 999999);
+        const digits = num.toString().split('').map(Number);
+        terms = digits.map((dgt, idx) => dgt * POS_VALUES[idx]).filter(v => v > 0);
+      } while (terms.length < 2);
+    }
     const blankIdx = _opRint(0, terms.length - 1);
     const display = terms.map((v, idx) => idx === blankIdx ? '____' : _fmtNum(v)).join(' + ');
     items.push({ num: _fmtNum(num), display, ansNum: terms[blankIdx] });
@@ -859,51 +867,110 @@ function genExpandeItems() {
   return items;
 }
 
-// III. ¿A es mayor, menor o igual que B? (10 × 1 = 10 pts)
-function genCmpNumItems() {
-  const types = _shuffleF(['mayor', 'mayor', 'mayor', 'mayor', 'menor', 'menor', 'menor', 'menor', 'igual', 'igual'], _opRnd);
-  return types.map(type => {
-    let a, b;
-    if (type === 'igual') { a = _opRint(10000, 999999); b = a; }
-    else {
-      a = _opRint(1000, 999999); b = _opRint(1000, 999999);
-      while (a === b) { b = _opRint(1000, 999999); }
-      if (type === 'mayor' && a < b) { [a, b] = [b, a]; }
-      if (type === 'menor' && a > b) { [a, b] = [b, a]; }
+// --- Número a palabras (0 a 999,999) — mismo conversor de los widgets Lector/Escritura ---
+const _NUM_UNITS = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve', 'veinte', 'veintiuno', 'veintidós', 'veintitrés', 'veinticuatro', 'veinticinco', 'veintiséis', 'veintisiete', 'veintiocho', 'veintinueve'];
+const _NUM_TENS = ['', '', '', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+const _NUM_HUNDREDS = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
+function _num3Cifras(x, apocope) {
+  if (x === 0) return '';
+  if (x === 100) return 'cien';
+  const out = [];
+  const h = Math.floor(x / 100), rest = x % 100;
+  if (h) out.push(_NUM_HUNDREDS[h]);
+  if (rest) {
+    if (rest < 30) {
+      let w = _NUM_UNITS[rest];
+      if (apocope) { if (rest === 1) w = 'un'; else if (rest === 21) w = 'veintiún'; }
+      out.push(w);
+    } else {
+      const t = Math.floor(rest / 10), u = rest % 10;
+      if (u) {
+        let uw = _NUM_UNITS[u];
+        if (apocope && u === 1) uw = 'un';
+        out.push(_NUM_TENS[t] + ' y ' + uw);
+      } else out.push(_NUM_TENS[t]);
     }
-    const rel = a > b ? 'mayor' : a < b ? 'menor' : 'igual';
-    return { a: _fmtNum(a), b: _fmtNum(b), rel };
+  }
+  return out.join(' ');
+}
+function _numAPalabras(n) {
+  if (n === 0) return 'cero';
+  const miles = Math.floor(n / 1000), resto = n % 1000;
+  const parts = [];
+  if (miles === 1) parts.push('mil');
+  else if (miles > 1) parts.push(_num3Cifras(miles, true) + ' mil');
+  if (resto) parts.push(_num3Cifras(resto, false));
+  return parts.join(' ');
+}
+
+// III. Escribe el número en cifras (5 × 4 = 20 pts) — destreza central de la misión (Bloques 1-2, Errores 2-3):
+// dictado en palabras con trampas de ceros; progresión declarada básico → desafío.
+function genCifrasItems() {
+  const nums = [
+    _opRint(2, 9) * [1000, 10000, 100000][_opRint(0, 2)],   // básico: miles redondos ("setecientos mil")
+    _opRint(10, 999) * 1000 + _opRint(100, 999),            // medio: número completo sin trampa
+    _opRint(9, 99) * 1000 + _opRint(1, 9),                  // trampa: solo unidades ("noventa mil ocho" → 90,008)
+    _opRint(100, 999) * 1000 + _opRint(10, 99),             // trampa: decenas sin centenas ("...mil setenta" → xxx,070)
+    _opRint(5, 9) * 100000 + _opRint(1, 99)                 // trampa doble: "quinientos mil..." → 500,0XX
+  ];
+  return nums.map(n => ({ words: _numAPalabras(n), ansNum: n }));
+}
+
+// IV. Problemas de la vida real (3 × 10 = 30 pts) — contexto hondureño con suma/resta y acarreo (Bloque 4)
+function _hasCarry(a, b) { while (a > 0 && b > 0) { if (a % 10 + b % 10 >= 10) return true; a = Math.floor(a / 10); b = Math.floor(b / 10); } return false; }
+function _hasBorrow(a, b) { while (b > 0) { if (a % 10 < b % 10) return true; a = Math.floor(a / 10); b = Math.floor(b / 10); } return false; }
+const opxProbSumas = [
+  (a, b) => `El municipio de Choloma tiene ${a} habitantes y el municipio de Villanueva tiene ${b} habitantes. ¿Cuántos habitantes tienen entre los dos municipios?`,
+  (a, b) => `En la Feria Juniana de San Pedro Sula se recaudaron L ${a} y en la Feria Agostina de Tegucigalpa se recaudaron L ${b}. ¿Cuántos lempiras se recaudaron entre las dos ferias?`,
+  (a, b) => `Una cooperativa de Marcala exportó ${a} quintales de café y otra de Santa Rosa de Copán exportó ${b} quintales. ¿Cuántos quintales exportaron en total?`
+];
+const opxProbRestas = [
+  (a, b) => `El Estadio Nacional de Tegucigalpa recibió ${a} aficionados este año y ${b} el año pasado. ¿Cuántos aficionados más recibió este año?`,
+  (a, b) => `Una cooperativa cafetalera de Comayagua cosechó ${a} quintales de café este año y ${b} quintales el año pasado. ¿Cuántos quintales más cosechó este año?`,
+  (a, b) => `Para reforestar el parque nacional La Tigra se necesitan ${a} árboles y ya se sembraron ${b}. ¿Cuántos árboles faltan por sembrar?`
+];
+function genProblemaItems() {
+  const sumas = _pickF(opxProbSumas, 2, _opRnd);
+  const restas = _pickF(opxProbRestas, 2, _opRnd);
+  const defs = [{ op: '+', tpl: sumas[0] }, { op: '-', tpl: restas[0] }];
+  defs.push(_opRnd() < 0.5 ? { op: '+', tpl: sumas[1] } : { op: '-', tpl: restas[1] });
+  return _shuffleF(defs, _opRnd).map(def => {
+    let a, b;
+    if (def.op === '+') { do { a = _opRint(50000, 700000); b = _opRint(10000, 299999); } while (!_hasCarry(a, b)); }
+    else { do { a = _opRint(100000, 999999); b = _opRint(10000, 99999); } while (!_hasBorrow(a, b)); }
+    return { text: def.tpl(_fmtNum(a), _fmtNum(b)), op: def.op, ansNum: def.op === '+' ? a + b : a - b };
   });
 }
 
-// IV. Suma y resta de números grandes (10 × 1 = 10 pts)
-function genSumaRestaItems() {
-  const items = [];
-  for (let i = 0; i < 10; i++) {
-    const op = _opRnd() < 0.5 ? '+' : '-';
-    let a = _opRint(10000, 899999), b = _opRint(1000, 99999);
-    if (op === '-' && a < b) { [a, b] = [b, a]; }
-    const ansNum = op === '+' ? a + b : a - b;
-    items.push({ a: _fmtNum(a), b: _fmtNum(b), op, ansNum });
+// V. Retos de pensamiento numérico (4 × 5 = 20 pts) — ordenar, detective del error (Errores 2-3),
+// máquina ×10 (widget Máquina ×10) y comparar contando cifras (Error 4).
+const opxDetectiveBank = [
+  { who: 'Rosa', words: 'cinco mil seis', wrong: '5,600', ansNum: 5006 },
+  { who: 'Carlos', words: 'trescientos mil cuarenta', wrong: '3,004', ansNum: 300040 },
+  { who: 'Ana', words: 'noventa mil ocho', wrong: '9,008', ansNum: 90008 },
+  { who: 'Luis', words: 'setecientos seis mil cuarenta', wrong: '76,040', ansNum: 706040 },
+  { who: 'María', words: 'quinientos seis mil', wrong: '56,000', ansNum: 506000 },
+  { who: 'Pedro', words: 'ocho mil cincuenta', wrong: '8,500', ansNum: 8050 },
+  { who: 'José', words: 'novecientos ocho mil cincuenta', wrong: '98,050', ansNum: 908050 }
+];
+function genRetosItems() {
+  const nums = []; let tries = 0;
+  while (nums.length < 4 && tries < 200) {
+    tries++;
+    const v = _opRint(1000, 999999);
+    if (!nums.some(n => n.v === v)) nums.push({ v, label: _fmtNum(v) });
   }
-  return items;
-}
-
-// V. Ordena de MAYOR a MENOR (4 grupos × 5 pts = 20 pts)
-function genOrdenaItems() {
-  const groups = [];
-  for (let g = 0; g < 4; g++) {
-    const nums = []; let tries = 0;
-    while (nums.length < 4 && tries < 200) {
-      tries++;
-      const v = _opRint(1000, 999999);
-      if (!nums.some(n => n.v === v)) nums.push({ v, label: _fmtNum(v) });
-    }
-    const correctOrder = [...nums].sort((x, y) => y.v - x.v).map(n => n.label);
-    const display = _shuffleF([...nums], _opRnd).map(n => n.label);
-    groups.push({ display, correctOrder });
-  }
-  return groups;
+  const ordGroup = {
+    display: _shuffleF([...nums], _opRnd).map(n => n.label),
+    correctOrder: [...nums].sort((x, y) => y.v - x.v).map(n => n.label)
+  };
+  const det = _pickF(opxDetectiveBank, 1, _opRnd)[0];
+  const mq = _opRint(1000, 99999);
+  const maq = { num: _fmtNum(mq), ansNum: mq * 10 };
+  const big = _opRint(100000, 999999), small = _opRint(1000, 99999);
+  const aFirst = _opRnd() < 0.5;
+  const cmp = { a: _fmtNum(aFirst ? big : small), b: _fmtNum(aFirst ? small : big), ans: aFirst ? 'A' : 'B' };
+  return { ordGroup, det, maq, cmp };
 }
 
 function genEvalOp() {
@@ -918,7 +985,7 @@ function genEvalOp() {
 
   const valItems = genValorItems();
   const s1 = document.createElement('div');
-  s1.innerHTML = '<div class="eval-section-title">I. Escribe el valor del dígito indicado <span class="eval-pts">50 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Escribe el valor total que representa el dígito señalado.</p>';
+  s1.innerHTML = '<div class="eval-section-title">I. Escribe el valor del dígito indicado <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. Usa la tabla posicional (C.M – U) y escribe el valor total que representa el dígito señalado.</p>';
   valItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
     d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">En ${it.num}, ¿cuánto vale el dígito ${it.digit} en la posición ${it.posLabel}?</span><input class="eval-cp-input" type="text" data-val="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbVal${i}" aria-live="polite"></div>`;
@@ -928,7 +995,7 @@ function genEvalOp() {
 
   const expItems = genExpandeItems();
   const s2 = document.createElement('div');
-  s2.innerHTML = '<div class="eval-section-title">II. Completa la forma expandida <span class="eval-pts">10 pts · 1 pt c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Escribe el sumando que falta.</p>';
+  s2.innerHTML = '<div class="eval-section-title">II. Completa la forma expandida <span class="eval-pts">10 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. Escribe el sumando que falta. ¡Atención a los ceros de relleno!</p>';
   expItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
     d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.num} = ${it.display}</span><input class="eval-cp-input" type="text" data-exp="${i}" autocomplete="off" inputmode="numeric" style="width:100px;"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbExp${i}" aria-live="polite"></div>`;
@@ -936,38 +1003,45 @@ function genEvalOp() {
   });
   out.appendChild(s2);
 
-  const cmpItems = genCmpNumItems();
+  const cifItems = genCifrasItems();
   const s3 = document.createElement('div');
-  s3.innerHTML = '<div class="eval-section-title">III. ¿A es mayor, menor o igual que B? <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
-  cmpItems.forEach((it, i) => {
+  s3.innerHTML = '<div class="eval-section-title">III. Escribe el número en cifras <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel medio. Lee el número en palabras y escríbelo en cifras. Los últimos ítems traen trampas de ceros.</p>';
+  cifItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text opx-expr">A: ${it.a} &nbsp;·&nbsp; B: ${it.b}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="cmpn${i}" value="mayor"> A es mayor</label><label class="eval-cmp-opt"><input type="radio" name="cmpn${i}" value="menor"> A es menor</label><label class="eval-cmp-opt"><input type="radio" name="cmpn${i}" value="igual"> Son iguales</label></div><div class="eval-answer">${it.rel==='mayor'?'A es mayor':it.rel==='menor'?'A es menor':'Son iguales'}</div><div class="eval-item-feedback" id="evalFbCmpn${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">«${it.words}»</span><input class="eval-cp-input" type="text" data-cif="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbCif${i}" aria-live="polite"></div>`;
     s3.appendChild(d);
   });
   out.appendChild(s3);
 
-  const srItems = genSumaRestaItems();
+  const probItems = genProblemaItems();
   const s4 = document.createElement('div');
-  s4.innerHTML = '<div class="eval-section-title">IV. Suma y resta de números grandes <span class="eval-pts">10 pts · 1 pt c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Alinea las cifras por su valor posicional y resuelve.</p>';
-  srItems.forEach((it, i) => {
+  s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel avanzado. Resuelve en tu cuaderno alineando las cifras por su valor posicional (¡cuida el acarreo!) y escribe el resultado.</p>';
+  probItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.a} ${it.op} ${it.b} =</span><input class="eval-cp-input" type="text" data-sr="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbSr${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${it.text}</span></div><div class="opx-row" style="margin-left:1.7rem;"><span>R/</span><input class="eval-cp-input" type="text" data-prob="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)}</div><div class="eval-item-feedback" id="evalFbProb${i}" aria-live="polite"></div>`;
     s4.appendChild(d);
   });
   out.appendChild(s4);
 
-  const ordGroups = genOrdenaItems();
+  const retos = genRetosItems();
   const s5 = document.createElement('div');
-  s5.innerHTML = '<div class="eval-section-title">V. Ordena de MAYOR a MENOR <span class="eval-pts">20 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Ordena los números de mayor a menor.</p>';
-  ordGroups.forEach((g, gi) => {
-    const d = document.createElement('div'); d.className = 'eval-item eval-auto-item evord-group';
-    d.innerHTML = `<div class="evord-dir">${gi+1}. Ordena de MAYOR a menor:</div><div class="evord-list" id="evordNumList${gi}"></div><div class="eval-answer">${g.correctOrder.join(' · ')}</div><div class="eval-item-feedback" id="evalFbOrdNum${gi}" aria-live="polite"></div>`;
-    s5.appendChild(d);
-  });
+  s5.innerHTML = '<div class="eval-section-title">V. Retos de pensamiento numérico <span class="eval-pts">20 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel desafío. Cuatro retos que replican los errores comunes y los widgets de la misión.</p>';
+  const dOrd = document.createElement('div'); dOrd.className = 'eval-item eval-auto-item evord-group';
+  dOrd.innerHTML = `<div class="evord-dir">1. Ordena de MAYOR a menor:</div><div class="evord-list" id="evordNumList0"></div><div class="eval-answer">${retos.ordGroup.correctOrder.join(' · ')}</div><div class="eval-item-feedback" id="evalFbOrdNum0" aria-live="polite"></div>`;
+  s5.appendChild(dOrd);
+  const dDet = document.createElement('div'); dDet.className = 'eval-item eval-auto-item';
+  dDet.innerHTML = `<div class="eval-q"><span class="eval-num">2</span><span class="eval-q-text">🔎 Detective del error: ${retos.det.who} escribió «${retos.det.words}» como <strong>${retos.det.wrong}</strong>. Olvidó los ceros de relleno. Escribe el número correcto en cifras.</span></div><div class="opx-row" style="margin-left:1.7rem;"><span>R/</span><input class="eval-cp-input" type="text" data-det="0" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(retos.det.ansNum)}</div><div class="eval-item-feedback" id="evalFbDet" aria-live="polite"></div>`;
+  s5.appendChild(dDet);
+  const dMaq = document.createElement('div'); dMaq.className = 'eval-item eval-auto-item';
+  dMaq.innerHTML = `<div class="eval-q"><span class="eval-num">3</span><span class="eval-q-text">⚙️ Máquina ×10: si el número ${retos.maq.num} entra a la máquina ×10, ¿qué número sale?</span></div><div class="opx-row" style="margin-left:1.7rem;"><span>R/</span><input class="eval-cp-input" type="text" data-maq="0" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(retos.maq.ansNum)}</div><div class="eval-item-feedback" id="evalFbMaq" aria-live="polite"></div>`;
+  s5.appendChild(dMaq);
+  const dCmp = document.createElement('div'); dCmp.className = 'eval-item eval-auto-item';
+  dCmp.innerHTML = `<div class="eval-q"><span class="eval-num">4</span><span class="eval-q-text">⚖️ Sin calcular: cuenta las cifras y decide cuál número es mayor. A: ${retos.cmp.a} &nbsp;·&nbsp; B: ${retos.cmp.b}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="retocmp" value="A"> A es mayor</label><label class="eval-cmp-opt"><input type="radio" name="retocmp" value="B"> B es mayor</label></div><div class="eval-answer">${retos.cmp.ans==='A'?'A es mayor':'B es mayor'}</div><div class="eval-item-feedback" id="evalFbRcmp" aria-live="polite"></div>`;
+  s5.appendChild(dCmp);
   out.appendChild(s5);
 
-  window._evalOpData = { valItems, expItems, cmpItems, srItems, ord: ordGroups.map(g => ({ current: [...g.display], correctOrder: g.correctOrder })) };
-  ordGroups.forEach((_, gi) => _renderOrdNumGroup(gi));
+  window._evalOpData = { valItems, expItems, cifItems, probItems, retos, ord: [{ current: [...retos.ordGroup.display], correctOrder: retos.ordGroup.correctOrder }] };
+  _renderOrdNumGroup(0);
   const autoPanel = document.createElement('div'); autoPanel.id = 'evalOpAutoResult'; autoPanel.className = 'eval-auto-result';
   autoPanel.innerHTML = '<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.';
   out.appendChild(autoPanel);
@@ -1002,15 +1076,31 @@ function gradeEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const d = window._evalOpData;
-  let total = 0; const det = { val: 0, exp: 0, cmp: 0, sr: 0, ord: 0 };
-  d.valItems.forEach((it, i) => { const el = document.querySelector(`[data-val="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.val++; total += 10; } setEvalFeedback('evalFbVal' + i, ok, ok ? 'Correcto. +10 pts' : 'Revisar. R/ ' + _fmtNum(it.ansNum)); });
-  d.expItems.forEach((it, i) => { const el = document.querySelector(`[data-exp="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.exp++; total += 1; } setEvalFeedback('evalFbExp' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + _fmtNum(it.ansNum)); });
-  const rL = { mayor: 'A es mayor', menor: 'A es menor', igual: 'Son iguales' };
-  d.cmpItems.forEach((it, i) => { const sel = document.querySelector(`input[name="cmpn${i}"]:checked`); const ok = !!sel && sel.value === it.rel; if (ok) { det.cmp++; total += 1; } setEvalFeedback('evalFbCmpn' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + rL[it.rel]); });
-  d.srItems.forEach((it, i) => { const el = document.querySelector(`[data-sr="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.sr++; total += 1; } setEvalFeedback('evalFbSr' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + _fmtNum(it.ansNum)); });
-  d.ord.forEach((g, gi) => { const ok = g.current.every((v, i) => v === g.correctOrder[i]); if (ok) { det.ord++; total += 5; } setEvalFeedback('evalFbOrdNum' + gi, ok, ok ? '¡Orden correcto! +5 pts' : 'Orden incorrecto. Clave: ' + g.correctOrder.join(' · ')); });
+  let total = 0; const det = { val: 0, exp: 0, cif: 0, prob: 0, reto: 0 };
+  d.valItems.forEach((it, i) => { const el = document.querySelector(`[data-val="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.val++; total += 4; } setEvalFeedback('evalFbVal' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + _fmtNum(it.ansNum)); });
+  d.expItems.forEach((it, i) => { const el = document.querySelector(`[data-exp="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.exp++; total += 2; } setEvalFeedback('evalFbExp' + i, ok, ok ? 'Correcto. +2 pts' : 'Revisar. R/ ' + _fmtNum(it.ansNum)); });
+  d.cifItems.forEach((it, i) => { const el = document.querySelector(`[data-cif="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.cif++; total += 4; } setEvalFeedback('evalFbCif' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + _fmtNum(it.ansNum)); });
+  d.probItems.forEach((it, i) => { const el = document.querySelector(`[data-prob="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.prob++; total += 10; } setEvalFeedback('evalFbProb' + i, ok, ok ? 'Correcto. +10 pts' : 'Revisar. R/ ' + _fmtNum(it.ansNum)); });
+  const g = d.ord[0];
+  const okOrd = g.current.every((v, i) => v === g.correctOrder[i]);
+  if (okOrd) { det.reto += 5; total += 5; }
+  setEvalFeedback('evalFbOrdNum0', okOrd, okOrd ? '¡Orden correcto! +5 pts' : 'Orden incorrecto. Clave: ' + g.correctOrder.join(' · '));
+  const elDet = document.querySelector('[data-det="0"]');
+  const okDet = _isIntMatch(elDet ? elDet.value : '', d.retos.det.ansNum);
+  if (elDet) { elDet.classList.toggle('eval-input-ok', okDet); elDet.classList.toggle('eval-input-no', !okDet); }
+  if (okDet) { det.reto += 5; total += 5; }
+  setEvalFeedback('evalFbDet', okDet, okDet ? '¡Error detectado! +5 pts' : 'Revisar. R/ ' + _fmtNum(d.retos.det.ansNum));
+  const elMaq = document.querySelector('[data-maq="0"]');
+  const okMaq = _isIntMatch(elMaq ? elMaq.value : '', d.retos.maq.ansNum);
+  if (elMaq) { elMaq.classList.toggle('eval-input-ok', okMaq); elMaq.classList.toggle('eval-input-no', !okMaq); }
+  if (okMaq) { det.reto += 5; total += 5; }
+  setEvalFeedback('evalFbMaq', okMaq, okMaq ? 'Correcto. +5 pts' : 'Revisar. R/ ' + _fmtNum(d.retos.maq.ansNum));
+  const selC = document.querySelector('input[name="retocmp"]:checked');
+  const okCmp = !!selC && selC.value === d.retos.cmp.ans;
+  if (okCmp) { det.reto += 5; total += 5; }
+  setEvalFeedback('evalFbRcmp', okCmp, okCmp ? 'Correcto. +5 pts' : 'Revisar. R/ ' + (d.retos.cmp.ans === 'A' ? 'A es mayor' : 'B es mayor'));
   const res = document.getElementById('evalOpAutoResult');
-  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Valor de dígito: ${det.val*10}/50 · Expandida: ${det.exp}/10 · Compara: ${det.cmp}/10 · Suma/Resta: ${det.sr}/10 · Ordena: ${det.ord*5}/20</span>`; }
+  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Valor del dígito: ${det.val*4}/20 · Expandida: ${det.exp*2}/10 · Cifras: ${det.cif*4}/20 · Problemas: ${det.prob*10}/30 · Retos: ${det.reto}/20</span>`; }
   if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
   else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
 }
@@ -1019,24 +1109,28 @@ function printEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const forma = window._currentEvalOpForm || 1; const d = window._evalOpData;
-  let s1 = `<div class="sec-title"><span>I. Escribe el valor del dígito indicado</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 50 pts</span></div></div><p class="opx-instr">Escribe el valor total que representa el dígito señalado. Valor 10 pts c/u.</p>`;
+  let s1 = `<div class="sec-title"><span>I. Escribe el valor del dígito indicado</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. Escribe el valor total que representa el dígito señalado. 4 pts c/u.</p>`;
   d.valItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="opx-print-expr">En ${it.num}, ¿cuánto vale el dígito ${it.digit} (${it.posLabel})?</span><span class="opx-blank"></span></div>`; });
   const expH = Math.ceil(d.expItems.length / 2);
   const expTbl = (items, off) => `<table class="rnd-tbl"><tr><th>#</th><th>Forma expandida</th><th>Sumando faltante</th></tr>${items.map((it, i) => `<tr><td>${off+i+1}</td><td>${it.num} = ${it.display}</td><td></td></tr>`).join('')}</table>`;
-  let s2 = `<div class="sec-title"><span>II. Completa la forma expandida</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Escribe el sumando que falta. 1 pt c/u.</p><div class="rnd-print-grid">${expTbl(d.expItems.slice(0,expH),0)}${expTbl(d.expItems.slice(expH),expH)}</div>`;
-  const cmpH = Math.ceil(d.cmpItems.length / 2);
-  let s3 = `<div class="sec-title"><span>III. ¿A es mayor, menor o igual que B?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Marca con ✔: M = A es Mayor · m = A es menor · I = Son Iguales. 1 pt c/u.</p><div class="cmp-print-grid"><div>${d.cmpItems.slice(0,cmpH).map((it,i)=>`<div class="cmp-print-row"><span class="cmp-print-num">${i+1}. A:${it.a} · B:${it.b}</span><div class="cmp-opts-print"><span>M ☐</span><span>m ☐</span><span>I ☐</span></div></div>`).join('')}</div><div>${d.cmpItems.slice(cmpH).map((it,i)=>`<div class="cmp-print-row"><span class="cmp-print-num">${cmpH+i+1}. A:${it.a} · B:${it.b}</span><div class="cmp-opts-print"><span>M ☐</span><span>m ☐</span><span>I ☐</span></div></div>`).join('')}</div></div>`;
-  const srH = Math.ceil(d.srItems.length / 2);
-  const srTbl = (items, off) => `<table class="rnd-tbl"><tr><th>#</th><th>Operación</th><th>Resultado</th></tr>${items.map((it,i)=>`<tr><td>${off+i+1}</td><td>${it.a} ${it.op} ${it.b} =</td><td></td></tr>`).join('')}</table>`;
-  let s4 = `<div class="sec-title"><span>IV. Suma y resta de números grandes</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Alinea las cifras por su valor posicional y resuelve. 1 pt c/u.</p><div class="rnd-print-grid">${srTbl(d.srItems.slice(0,srH),0)}${srTbl(d.srItems.slice(srH),srH)}</div>`;
-  let s5 = `<div class="sec-title"><span>V. Ordena de MAYOR a MENOR</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Escribe los números en orden de mayor a menor. 5 pts c/u.</p><div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordena de Mayor a Menor:</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${v}</td>`).join('')}</tr></table><div style="margin-top:0.3rem;font-size:8.5pt;color:#555;">Escribe en orden: 1. _______ &nbsp; 2. _______ &nbsp; 3. _______ &nbsp; 4. _______</div></div>`).join('')}</div>`;
+  let s2 = `<div class="sec-title"><span>II. Completa la forma expandida</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Nivel básico. Escribe el sumando que falta; atención a los ceros de relleno. 2 pts c/u.</p><div class="rnd-print-grid">${expTbl(d.expItems.slice(0,expH),0)}${expTbl(d.expItems.slice(expH),expH)}</div>`;
+  let s3 = `<div class="sec-title"><span>III. Escribe el número en cifras</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel medio. Lee el número en palabras y escríbelo en cifras. ¡Cuidado con las trampas de ceros! 4 pts c/u.</p>`;
+  d.cifItems.forEach((it, i) => { s3 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="opx-print-words">«${it.words}»</span><span class="opx-blank"></span></div>`; });
+  let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Nivel avanzado. Resuelve alineando las cifras por su valor posicional; cuida el acarreo. 10 pts c/u.</p>`;
+  d.probItems.forEach((it, i) => { s4 += `<div class="prob-print-box"><div class="prob-print-text"><span class="qn">${i+1}.</span> ${it.text}</div><div class="prob-op-space"></div><div class="prob-ans">R/ ______________________</div></div>`; });
+  const r = d.retos;
+  let s5 = `<div class="sec-title"><span>V. Retos de pensamiento numérico</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel desafío. 5 pts c/u.</p>`;
+  s5 += `<div class="ord-print-box"><div class="ord-print-dir">1. Ordena de Mayor a Menor:</div><table class="ord-print-tbl"><tr>${d.ord[0].current.map(v=>`<td>${v}</td>`).join('')}</tr></table><div style="margin-top:0.3rem;font-size:8.5pt;color:#555;">Escribe en orden: 1. _______ &nbsp; 2. _______ &nbsp; 3. _______ &nbsp; 4. _______</div></div>`;
+  s5 += `<div class="reto-print-row"><span class="qn">2.</span> 🔎 Detective del error: ${r.det.who} escribió «${r.det.words}» como <strong>${r.det.wrong}</strong>. Olvidó los ceros de relleno. Escribe el número correcto en cifras: <span class="opx-blank"></span></div>`;
+  s5 += `<div class="reto-print-row"><span class="qn">3.</span> ⚙️ Máquina ×10: si el número ${r.maq.num} entra a la máquina ×10, ¿qué número sale? <span class="opx-blank"></span></div>`;
+  s5 += `<div class="reto-print-row"><span class="qn">4.</span> ⚖️ Sin calcular, cuenta las cifras y encierra el número MAYOR: &nbsp; A: ${r.cmp.a} &nbsp;·&nbsp; B: ${r.cmp.b}</div>`;
   let pR = '';
-  pR += `<div class="p-sec"><div class="p-ttl">I. Valor del dígito</div><table class="p-tbl">${d.valItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">II. Forma expandida</div><table class="p-tbl">${d.expItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">III. Compara A y B</div><table class="p-tbl">${d.cmpItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${({mayor:'A mayor',menor:'A menor',igual:'Iguales'})[it.rel]}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. Suma y resta</div><table class="p-tbl">${d.srItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Ordenar de Mayor a Menor</div>${d.ord.map((g,gi)=>`<div class="p-ord-line"><strong>${gi+1}.</strong> ${g.correctOrder.join(' · ')}</div>`).join('')}</div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Valor Posicional · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:140px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.15rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.cmp-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.cmp-print-row{display:flex;align-items:center;justify-content:space-between;font-size:10pt;padding:0.18rem 0.1rem;border-bottom:1px dotted #ddd;}.cmp-print-num{font-family:'Courier New',monospace;font-weight:600;flex:1;}.cmp-opts-print{display:flex;gap:0.6rem;font-size:9pt;white-space:nowrap;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.12rem 0.25rem;text-align:center;font-family:'Courier New',monospace;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Valor Posicional hasta el Millón · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 50 · II: 10 · III: 10 · IV: 10 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Valor Posicional · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
+  pR += `<div class="p-sec"><div class="p-ttl">I. Valor del dígito (4 pts c/u)</div><table class="p-tbl">${d.valItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">II. Forma expandida (2 pts c/u)</div><table class="p-tbl">${d.expItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">III. Número en cifras (4 pts c/u)</div><table class="p-tbl">${d.cifItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas (10 pts c/u)</div><table class="p-tbl">${d.probItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)} (${it.op === '+' ? 'suma' : 'resta'})</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos (5 pts c/u)</div><div class="p-ord-line"><strong>1.</strong> ${d.ord[0].correctOrder.join(' · ')}</div><div class="p-ord-line"><strong>2.</strong> ${_fmtNum(r.det.ansNum)}</div><div class="p-ord-line"><strong>3.</strong> ${_fmtNum(r.maq.ansNum)}</div><div class="p-ord-line"><strong>4.</strong> ${r.cmp.ans === 'A' ? 'A es mayor' : 'B es mayor'} (${r.cmp.ans === 'A' ? r.cmp.a : r.cmp.b})</div></div>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Valor Posicional · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:140px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.15rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.opx-print-words{flex:1;font-style:italic;font-weight:700;}.prob-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;margin-bottom:0.28rem;font-size:10.5pt;line-height:1.45;break-inside:avoid;}.prob-print-text{margin-bottom:0.2rem;}.prob-op-space{min-height:44px;border:1px dashed #bbb;border-radius:3px;margin:0.22rem 0;}.prob-ans{font-weight:700;color:#1565c0;}.reto-print-row{font-size:10.5pt;padding:0.24rem 0.2rem;border-bottom:1px dotted #ddd;line-height:1.5;display:flex;align-items:baseline;gap:0.35rem;flex-wrap:wrap;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.12rem 0.25rem;text-align:center;font-family:'Courier New',monospace;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Valor Posicional hasta el Millón · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Valor Posicional · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);

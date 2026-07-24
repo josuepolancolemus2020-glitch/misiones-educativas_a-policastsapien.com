@@ -822,8 +822,16 @@ function _isIntMatch(student, expectedNum) {
 }
 const PERFECT_SQUARE_BASES = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 const PERFECT_SQUARES = PERFECT_SQUARE_BASES.map(b => b * b);
+// No-cuadrados usados en la misión (Clasifica, Quiz, Generador de Tareas): distractores reconocibles
+const NON_SQUARE_POOL = [30, 50, 90, 110, 130, 150, 180, 190];
+// entre qué dos cuadrados consecutivos cae un número que NO es cuadrado perfecto
+function _entreCuadrados(n) {
+  let lo = 1;
+  while ((lo + 1) * (lo + 1) < n) lo++;
+  return { lo, hi: lo + 1 };
+}
 
-// I. Calcula la potencia (5 × 10 = 50 pts)
+// I. Calcula la potencia (5 × 4 = 20 pts) · nivel básico · Regla de Oro n²=n×n
 function genPotenciaItems() {
   const items = [];
   for (let i = 0; i < 5; i++) {
@@ -833,42 +841,63 @@ function genPotenciaItems() {
   return items;
 }
 
-// II. Calcula la raíz cuadrada (10 × 1 = 10 pts)
+// II. Calcula la raíz cuadrada (10 × 2 = 20 pts) · nivel básico → intermedio · operación inversa
 function genRaizItems() {
   const bases = _pickF(PERFECT_SQUARE_BASES, 10, _opRnd);
   return bases.map(b => ({ square: b * b, ansNum: b }));
 }
 
-// III. ¿Es cuadrado perfecto? Sí o No (10 × 1 = 10 pts)
+// III. ¿Es cuadrado perfecto? Sí o No (10 × 1 = 10 pts) · nivel intermedio · reconocimiento de la tabla de cuadrados
 function genEsCuadradoItems() {
   const chosenSquares = _pickF(PERFECT_SQUARES, 5, _opRnd).map(n => ({ num: n, ansBool: true }));
-  const nonSquares = [];
-  while (nonSquares.length < 5) {
-    const n = _opRint(2, 199);
-    if (!PERFECT_SQUARES.includes(n) && !nonSquares.some(it => it.num === n)) nonSquares.push({ num: n, ansBool: false });
-  }
+  const nonSquares = _pickF(NON_SQUARE_POOL, 5, _opRnd).map(n => {
+    const e = _entreCuadrados(n);
+    return { num: n, ansBool: false, entre: `${e.lo}² y ${e.hi}²` };
+  });
   return _shuffleF([...chosenSquares, ...nonSquares], _opRnd);
 }
 
-// IV. Suma y resta con potencias y raíces (10 × 1 = 10 pts)
-function genPotRaizSumaRestaItems() {
+// IV. Problemas de la vida real (3 × 10 = 30 pts) · nivel avanzado · aplicación en contexto hondureño
+function genProblemaVidaRealItems() {
   const items = [];
-  for (let i = 0; i < 10; i++) {
-    const b1 = PERFECT_SQUARE_BASES[_opRint(0, PERFECT_SQUARE_BASES.length - 1)];
-    const b2 = PERFECT_SQUARE_BASES[_opRint(0, PERFECT_SQUARE_BASES.length - 1)];
-    const op = _opRnd() < 0.5 ? '+' : '-';
-    let valA = b1 * b1, valB = b2, strA = `${b1}²`, strB = `√${b2 * b2}`;
-    if (op === '-' && valA < valB) { [valA, valB] = [valB, valA]; [strA, strB] = [strB, strA]; }
-    const ansNum = op === '+' ? valA + valB : valA - valB;
-    items.push({ expr: `${strA} ${op} ${strB}`, ansNum });
-  }
+  // 1) Mosaico cuadrado de n² baldosas → lado (raíz), como el ejemplo de pensamientoTaskDB
+  const lado1 = _opRint(9, 14);
+  const totalBaldosas = lado1 * lado1;
+  items.push({
+    tipo: 'mosaico',
+    text: `Doña Marta cubrió el piso cuadrado de su cocina con ${totalBaldosas} baldosas en total, acomodadas en un cuadrado (el mismo número de filas y de columnas). ¿Cuántas baldosas hay en cada lado?`,
+    ansNum: lado1,
+    unidad: 'baldosas por lado',
+    proc: `√${totalBaldosas} = ${lado1} (porque ${lado1}² = ${totalBaldosas})`
+  });
+  // 2) Cancha/jardín cuadrado de lado L → área L², como el jardín 8² del contenido
+  const lado2 = _opRint(6, 14);
+  items.push({
+    tipo: 'area',
+    text: `Una cancha cuadrada de fútbol de sala mide ${lado2} metros de lado. ¿Cuál es su área en metros cuadrados?`,
+    ansNum: lado2 * lado2,
+    unidad: 'm²',
+    proc: `${lado2}² = ${lado2} × ${lado2} = ${lado2 * lado2} m²`
+  });
+  // 3) Costo en lempiras → n² baldosas × precio unitario
+  const lado3 = _opRint(7, 12);
+  const precio = _pickF([10, 12, 15, 20, 25], 1, _opRnd)[0];
+  const nBaldosas = lado3 * lado3;
+  items.push({
+    tipo: 'costo',
+    text: `Para embaldosar un patio se necesita un piso cuadrado de ${lado3} × ${lado3} baldosas. Si cada baldosa cuesta L ${precio}, ¿cuánto costará en total el piso?`,
+    ansNum: nBaldosas * precio,
+    unidad: 'lempiras',
+    proc: `${lado3}² = ${nBaldosas} baldosas; ${nBaldosas} × L ${precio} = L ${nBaldosas * precio}`
+  });
   return items;
 }
 
-// V. Ordena de MAYOR a MENOR (4 grupos × 5 pts = 20 pts)
-function genOrdenaPotItems() {
+// V-a. Ordena de MAYOR a MENOR (grupos × 5 pts) · nivel avanzado · estimación sin calcular
+function genOrdenaPotItems(nGroups) {
+  const n = nGroups || 2;
   const groups = [];
-  for (let g = 0; g < 4; g++) {
+  for (let g = 0; g < n; g++) {
     const items = []; let tries = 0;
     while (items.length < 4 && tries < 200) {
       tries++;
@@ -885,6 +914,37 @@ function genOrdenaPotItems() {
   return groups;
 }
 
+// V-b. Detective del error (5 pts) · nivel desafío · replica Error 1 (n²=n×2) o Error 4 (orden de operaciones)
+function genDetectiveErrorItem() {
+  if (_opRnd() < 0.5) {
+    const b = _opRint(3, 9);
+    return {
+      text: `Un estudiante escribió: «${b}² = ${b} × 2 = ${b * 2}». Encuentra el error y escribe el resultado correcto de ${b}².`,
+      ansNum: b * b,
+      proc: `Error: ${b}² NO es ${b}×2. Significa ${b}×${b} = ${b * b}. Correcto: ${b * b}.`
+    };
+  }
+  const a = _opRint(2, 6), b = _opRint(2, 6);
+  return {
+    text: `Un estudiante escribió: «${a} + ${b}² = (${a} + ${b})² = ${(a + b) * (a + b)}». Encuentra el error y escribe el resultado correcto de ${a} + ${b}².`,
+    ansNum: a + b * b,
+    proc: `Error: primero se resuelve la potencia. ${b}² = ${b * b}; luego ${a} + ${b * b} = ${a + b * b}. Correcto: ${a + b * b}.`
+  };
+}
+
+// V-c. Escalera de los Impares (5 pts) · nivel desafío · ligado al Laboratorio 2
+function genEscaleraImparesItem() {
+  const k = _opRint(3, 7);
+  const impares = [];
+  for (let i = 0; i < k; i++) impares.push(2 * i + 1);
+  return {
+    text: `Suma los primeros números impares: ${impares.join(' + ')} = ___ ¿Qué cuadrado perfecto forman?`,
+    impares,
+    ansNum: k * k,
+    proc: `${impares.join(' + ')} = ${k * k} = ${k}² (los primeros ${k} impares forman ${k}²).`
+  };
+}
+
 function genEvalOp() {
   sfx('click');
   _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
@@ -897,7 +957,7 @@ function genEvalOp() {
 
   const potItems = genPotenciaItems();
   const s1 = document.createElement('div');
-  s1.innerHTML = '<div class="eval-section-title">I. Calcula la potencia <span class="eval-pts">50 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Resuelve cada potencia en tu cuaderno y escribe la respuesta.</p>';
+  s1.innerHTML = '<div class="eval-section-title">I. Calcula la potencia <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. Recuerda la Regla de Oro: n² = n × n. Resuelve en tu cuaderno y escribe la respuesta.</p>';
   potItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
     d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.base}² =</span><input class="eval-cp-input" type="text" data-pot="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum}</div><div class="eval-item-feedback" id="evalFbPot${i}" aria-live="polite"></div>`;
@@ -907,7 +967,7 @@ function genEvalOp() {
 
   const raizItems = genRaizItems();
   const s2 = document.createElement('div');
-  s2.innerHTML = '<div class="eval-section-title">II. Calcula la raíz cuadrada <span class="eval-pts">10 pts · 1 pt c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Escribe la raíz cuadrada exacta.</p>';
+  s2.innerHTML = '<div class="eval-section-title">II. Calcula la raíz cuadrada <span class="eval-pts">20 pts · 2 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel intermedio. La raíz es la operación inversa: busca qué número, elevado al cuadrado, da el número de adentro.</p>';
   raizItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
     d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">√${it.square} =</span><input class="eval-cp-input" type="text" data-raiz="${i}" autocomplete="off" inputmode="numeric" style="width:70px;"></div><div class="eval-answer">${it.ansNum}</div><div class="eval-item-feedback" id="evalFbRaiz${i}" aria-live="polite"></div>`;
@@ -917,35 +977,43 @@ function genEvalOp() {
 
   const cuadItems = genEsCuadradoItems();
   const s3 = document.createElement('div');
-  s3.innerHTML = '<div class="eval-section-title">III. ¿Es un cuadrado perfecto? <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
+  s3.innerHTML = '<div class="eval-section-title">III. ¿Es un cuadrado perfecto? <span class="eval-pts">10 pts · 1 pt c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel intermedio. Marca Sí o No. Ojo con el Error 2: no todo número tiene raíz exacta.</p>';
   cuadItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text opx-expr">${it.num}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="cuad${i}" value="si"> Sí</label><label class="eval-cmp-opt"><input type="radio" name="cuad${i}" value="no"> No</label></div><div class="eval-answer">${it.ansBool?'Sí':'No'}</div><div class="eval-item-feedback" id="evalFbCuad${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text opx-expr">${it.num}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="cuad${i}" value="si"> Sí</label><label class="eval-cmp-opt"><input type="radio" name="cuad${i}" value="no"> No</label></div><div class="eval-answer">${it.ansBool ? 'Sí' : 'No · está entre ' + it.entre}</div><div class="eval-item-feedback" id="evalFbCuad${i}" aria-live="polite"></div>`;
     s3.appendChild(d);
   });
   out.appendChild(s3);
 
-  const srItems = genPotRaizSumaRestaItems();
+  const probItems = genProblemaVidaRealItems();
   const s4 = document.createElement('div');
-  s4.innerHTML = '<div class="eval-section-title">IV. Suma y resta con potencias y raíces <span class="eval-pts">10 pts · 1 pt c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Resuelve primero cada potencia y raíz, luego suma o resta.</p>';
-  srItems.forEach((it, i) => {
+  s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel avanzado. Lee cada problema, resuelve el proceso en tu cuaderno y escribe el resultado (solo el número).</p>';
+  probItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.expr} =</span><input class="eval-cp-input" type="text" data-sr="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum}</div><div class="eval-item-feedback" id="evalFbSr${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row" style="align-items:flex-start;flex-wrap:wrap;"><span class="eval-num">${i+1}</span><span class="eval-q-text" style="flex:1;min-width:200px;">${it.text}</span></div><div class="opx-row" style="margin-top:0.35rem;"><span class="opx-expr">Respuesta (${it.unidad}):</span><input class="eval-cp-input" type="text" data-prob="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansNum} ${it.unidad} · ${it.proc}</div><div class="eval-item-feedback" id="evalFbProb${i}" aria-live="polite"></div>`;
     s4.appendChild(d);
   });
   out.appendChild(s4);
 
-  const ordGroups = genOrdenaPotItems();
+  const ordGroups = genOrdenaPotItems(2);
+  const detItem = genDetectiveErrorItem();
+  const escItem = genEscaleraImparesItem();
   const s5 = document.createElement('div');
-  s5.innerHTML = '<div class="eval-section-title">V. Ordena de MAYOR a MENOR <span class="eval-pts">20 pts · 5 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Calcula cada potencia o raíz y ordena los valores de mayor a menor.</p>';
+  s5.innerHTML = '<div class="eval-section-title">V. Retos de pensamiento <span class="eval-pts">20 pts</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel desafío. Ordena estimando, detecta el error y descubre el cuadrado que forman los impares.</p>';
   ordGroups.forEach((g, gi) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item evord-group';
-    d.innerHTML = `<div class="evord-dir">${gi+1}. Ordena de MAYOR a menor:</div><div class="evord-list" id="evordPotList${gi}"></div><div class="eval-answer">${g.correctOrder.join(' · ')}</div><div class="eval-item-feedback" id="evalFbOrdPot${gi}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="evord-dir">${gi+1}. Ordena de MAYOR a menor (sin calcular todo, estima): <span style="color:var(--gray);font-weight:600;">5 pts</span></div><div class="evord-list" id="evordPotList${gi}"></div><div class="eval-answer">${g.correctOrder.join(' · ')}</div><div class="eval-item-feedback" id="evalFbOrdPot${gi}" aria-live="polite"></div>`;
     s5.appendChild(d);
   });
+  const dDet = document.createElement('div'); dDet.className = 'eval-item eval-auto-item';
+  dDet.innerHTML = `<div class="opx-row" style="align-items:flex-start;flex-wrap:wrap;"><span class="eval-num">3</span><span class="eval-q-text" style="flex:1;min-width:200px;">Detective del error: ${detItem.text} <span style="color:var(--gray);font-weight:600;">(5 pts)</span></span></div><div class="opx-row" style="margin-top:0.35rem;"><span class="opx-expr">Resultado correcto =</span><input class="eval-cp-input" type="text" data-det="0" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${detItem.ansNum} · ${detItem.proc}</div><div class="eval-item-feedback" id="evalFbDet0" aria-live="polite"></div>`;
+  s5.appendChild(dDet);
+  const dEsc = document.createElement('div'); dEsc.className = 'eval-item eval-auto-item';
+  dEsc.innerHTML = `<div class="opx-row" style="align-items:flex-start;flex-wrap:wrap;"><span class="eval-num">4</span><span class="eval-q-text" style="flex:1;min-width:200px;">Escalera de los impares: ${escItem.text} <span style="color:var(--gray);font-weight:600;">(5 pts)</span></span></div><div class="opx-row" style="margin-top:0.35rem;"><span class="opx-expr">Cuadrado perfecto =</span><input class="eval-cp-input" type="text" data-esc="0" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${escItem.ansNum} · ${escItem.proc}</div><div class="eval-item-feedback" id="evalFbEsc0" aria-live="polite"></div>`;
+  s5.appendChild(dEsc);
   out.appendChild(s5);
 
-  window._evalOpData = { potItems, raizItems, cuadItems, srItems, ord: ordGroups.map(g => ({ current: [...g.display], correctOrder: g.correctOrder })) };
+  window._evalOpData = { potItems, raizItems, cuadItems, probItems, det: detItem, esc: escItem, ord: ordGroups.map(g => ({ current: [...g.display], correctOrder: g.correctOrder })) };
   ordGroups.forEach((_, gi) => _renderOrdPotGroup(gi));
   const autoPanel = document.createElement('div'); autoPanel.id = 'evalOpAutoResult'; autoPanel.className = 'eval-auto-result';
   autoPanel.innerHTML = '<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.';
@@ -981,14 +1049,16 @@ function gradeEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const d = window._evalOpData;
-  let total = 0; const det = { pot: 0, raiz: 0, cuad: 0, sr: 0, ord: 0 };
-  d.potItems.forEach((it, i) => { const el = document.querySelector(`[data-pot="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.pot++; total += 10; } setEvalFeedback('evalFbPot' + i, ok, ok ? 'Correcto. +10 pts' : 'Revisar. R/ ' + it.ansNum); });
-  d.raizItems.forEach((it, i) => { const el = document.querySelector(`[data-raiz="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.raiz++; total += 1; } setEvalFeedback('evalFbRaiz' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + it.ansNum); });
-  d.cuadItems.forEach((it, i) => { const sel = document.querySelector(`input[name="cuad${i}"]:checked`); const ok = !!sel && (sel.value === 'si') === it.ansBool; if (ok) { det.cuad++; total += 1; } setEvalFeedback('evalFbCuad' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + (it.ansBool ? 'Sí' : 'No')); });
-  d.srItems.forEach((it, i) => { const el = document.querySelector(`[data-sr="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.sr++; total += 1; } setEvalFeedback('evalFbSr' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + it.ansNum); });
+  let total = 0; const det = { pot: 0, raiz: 0, cuad: 0, prob: 0, ord: 0, retoExtra: 0 };
+  d.potItems.forEach((it, i) => { const el = document.querySelector(`[data-pot="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.pot++; total += 4; } setEvalFeedback('evalFbPot' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + it.ansNum); });
+  d.raizItems.forEach((it, i) => { const el = document.querySelector(`[data-raiz="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.raiz++; total += 2; } setEvalFeedback('evalFbRaiz' + i, ok, ok ? 'Correcto. +2 pts' : 'Revisar. R/ ' + it.ansNum); });
+  d.cuadItems.forEach((it, i) => { const sel = document.querySelector(`input[name="cuad${i}"]:checked`); const ok = !!sel && (sel.value === 'si') === it.ansBool; if (ok) { det.cuad++; total += 1; } setEvalFeedback('evalFbCuad' + i, ok, ok ? 'Correcto. +1 pt' : 'Revisar. R/ ' + (it.ansBool ? 'Sí' : 'No · entre ' + it.entre)); });
+  d.probItems.forEach((it, i) => { const el = document.querySelector(`[data-prob="${i}"]`); const ok = _isIntMatch(el ? el.value : '', it.ansNum); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.prob++; total += 10; } setEvalFeedback('evalFbProb' + i, ok, ok ? 'Correcto. +10 pts' : 'Revisar. R/ ' + it.ansNum + ' ' + it.unidad); });
   d.ord.forEach((g, gi) => { const ok = g.current.every((v, i) => v === g.correctOrder[i]); if (ok) { det.ord++; total += 5; } setEvalFeedback('evalFbOrdPot' + gi, ok, ok ? '¡Orden correcto! +5 pts' : 'Orden incorrecto. Clave: ' + g.correctOrder.join(' · ')); });
+  const elDet = document.querySelector('[data-det="0"]'); const okDet = _isIntMatch(elDet ? elDet.value : '', d.det.ansNum); if (elDet) { elDet.classList.toggle('eval-input-ok', okDet); elDet.classList.toggle('eval-input-no', !okDet); } if (okDet) { det.retoExtra += 5; total += 5; } setEvalFeedback('evalFbDet0', okDet, okDet ? 'Correcto. +5 pts' : 'Revisar. R/ ' + d.det.ansNum);
+  const elEsc = document.querySelector('[data-esc="0"]'); const okEsc = _isIntMatch(elEsc ? elEsc.value : '', d.esc.ansNum); if (elEsc) { elEsc.classList.toggle('eval-input-ok', okEsc); elEsc.classList.toggle('eval-input-no', !okEsc); } if (okEsc) { det.retoExtra += 5; total += 5; } setEvalFeedback('evalFbEsc0', okEsc, okEsc ? 'Correcto. +5 pts' : 'Revisar. R/ ' + d.esc.ansNum);
   const res = document.getElementById('evalOpAutoResult');
-  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Potencia: ${det.pot*10}/50 · Raíz: ${det.raiz}/10 · ¿Cuadrado?: ${det.cuad}/10 · Suma/Resta: ${det.sr}/10 · Ordena: ${det.ord*5}/20</span>`; }
+  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>Potencia: ${det.pot*4}/20 · Raíz: ${det.raiz*2}/20 · ¿Cuadrado?: ${det.cuad}/10 · Problemas: ${det.prob*10}/30 · Retos: ${det.ord*5 + det.retoExtra}/20</span>`; }
   if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
   else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
 }
@@ -997,24 +1067,22 @@ function printEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const forma = window._currentEvalOpForm || 1; const d = window._evalOpData;
-  let s1 = `<div class="sec-title"><span>I. Calcula la potencia</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 50 pts</span></div></div><p class="opx-instr">Resuelve el proceso en tu cuaderno y escribe la respuesta en la línea. Valor 10 pts c/u.</p>`;
+  let s1 = `<div class="sec-title"><span>I. Calcula la potencia</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. Recuerda: n² = n × n. Resuelve el proceso en tu cuaderno y escribe la respuesta en la línea. Valor 4 pts c/u.</p>`;
   d.potItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="opx-print-expr">${it.base}² =</span><span class="opx-blank"></span></div>`; });
   const raizH = Math.ceil(d.raizItems.length / 2);
   const raizTbl = (items, off) => `<table class="rnd-tbl"><tr><th>#</th><th>Raíz cuadrada</th><th>Resultado</th></tr>${items.map((it, i) => `<tr><td>${off+i+1}</td><td>√${it.square}</td><td></td></tr>`).join('')}</table>`;
-  let s2 = `<div class="sec-title"><span>II. Calcula la raíz cuadrada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Escribe la raíz cuadrada exacta. 1 pt c/u.</p><div class="rnd-print-grid">${raizTbl(d.raizItems.slice(0,raizH),0)}${raizTbl(d.raizItems.slice(raizH),raizH)}</div>`;
+  let s2 = `<div class="sec-title"><span>II. Calcula la raíz cuadrada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel intermedio. La raíz es la operación inversa: escribe la raíz cuadrada exacta. 2 pts c/u.</p><div class="rnd-print-grid">${raizTbl(d.raizItems.slice(0,raizH),0)}${raizTbl(d.raizItems.slice(raizH),raizH)}</div>`;
   const cuadH = Math.ceil(d.cuadItems.length / 2);
-  let s3 = `<div class="sec-title"><span>III. ¿Es un cuadrado perfecto?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Marca con ✔: S = Sí · N = No. 1 pt c/u.</p><div class="cmp-print-grid"><div>${d.cuadItems.slice(0,cuadH).map((it,i)=>`<div class="cmp-print-row"><span class="cmp-print-num">${i+1}. ${it.num}</span><div class="cmp-opts-print"><span>S ☐</span><span>N ☐</span></div></div>`).join('')}</div><div>${d.cuadItems.slice(cuadH).map((it,i)=>`<div class="cmp-print-row"><span class="cmp-print-num">${cuadH+i+1}. ${it.num}</span><div class="cmp-opts-print"><span>S ☐</span><span>N ☐</span></div></div>`).join('')}</div></div>`;
-  const srH = Math.ceil(d.srItems.length / 2);
-  const srTbl = (items, off) => `<table class="rnd-tbl"><tr><th>#</th><th>Operación</th><th>Resultado</th></tr>${items.map((it,i)=>`<tr><td>${off+i+1}</td><td>${it.expr} =</td><td></td></tr>`).join('')}</table>`;
-  let s4 = `<div class="sec-title"><span>IV. Suma y resta con potencias y raíces</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Resuelve primero cada potencia y raíz, luego suma o resta. 1 pt c/u.</p><div class="rnd-print-grid">${srTbl(d.srItems.slice(0,srH),0)}${srTbl(d.srItems.slice(srH),srH)}</div>`;
-  let s5 = `<div class="sec-title"><span>V. Ordena de MAYOR a MENOR</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Calcula cada potencia o raíz y escríbelas en orden de mayor a menor. 5 pts c/u.</p><div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordena de Mayor a Menor:</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${v}</td>`).join('')}</tr></table><div style="margin-top:0.3rem;font-size:8.5pt;color:#555;">Escribe en orden: 1. _______ &nbsp; 2. _______ &nbsp; 3. _______ &nbsp; 4. _______</div></div>`).join('')}</div>`;
+  let s3 = `<div class="sec-title"><span>III. ¿Es un cuadrado perfecto?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Nivel intermedio. Marca con ✔: S = Sí · N = No. Si es No, escribe entre qué dos cuadrados consecutivos está. 1 pt c/u.</p><div class="cmp-print-grid"><div>${d.cuadItems.slice(0,cuadH).map((it,i)=>`<div class="cmp-print-row"><span class="cmp-print-num">${i+1}. ${it.num}</span><div class="cmp-opts-print"><span>S ☐</span><span>N ☐</span><span>entre __² y __²</span></div></div>`).join('')}</div><div>${d.cuadItems.slice(cuadH).map((it,i)=>`<div class="cmp-print-row"><span class="cmp-print-num">${cuadH+i+1}. ${it.num}</span><div class="cmp-opts-print"><span>S ☐</span><span>N ☐</span><span>entre __² y __²</span></div></div>`).join('')}</div></div>`;
+  let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Nivel avanzado. Lee cada problema, resuelve el proceso en tu cuaderno y escribe el resultado en la línea. 10 pts c/u.</p>${d.probItems.map((it,i)=>`<div class="prob-print-row"><span class="qn">${i+1}.</span><span class="prob-print-text">${it.text}</span></div><div class="prob-print-ans">Respuesta (${it.unidad}): <span class="opx-blank"></span></div>`).join('')}`;
+  let s5 = `<div class="sec-title"><span>V. Retos de pensamiento</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel desafío. Ordena estimando (5 pts c/u), detecta el error (5 pts) y descubre el cuadrado de los impares (5 pts).</p><div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordena de Mayor a Menor:</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${v}</td>`).join('')}</tr></table><div style="margin-top:0.3rem;font-size:8.5pt;color:#555;">Escribe en orden: 1. _______ &nbsp; 2. _______ &nbsp; 3. _______ &nbsp; 4. _______</div></div>`).join('')}</div><div class="prob-print-row"><span class="qn">3.</span><span class="prob-print-text">Detective del error: ${d.det.text}</span></div><div class="prob-print-ans">Resultado correcto = <span class="opx-blank"></span></div><div class="prob-print-row"><span class="qn">4.</span><span class="prob-print-text">Escalera de los impares: ${d.esc.text}</span></div><div class="prob-print-ans">Cuadrado perfecto = <span class="opx-blank"></span></div>`;
   let pR = '';
   pR += `<div class="p-sec"><div class="p-ttl">I. Potencia</div><table class="p-tbl">${d.potItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">II. Raíz cuadrada</div><table class="p-tbl">${d.raizItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">III. ¿Cuadrado perfecto?</div><table class="p-tbl">${d.cuadItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansBool?'Sí':'No'}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. Suma y resta</div><table class="p-tbl">${d.srItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Ordenar de Mayor a Menor</div>${d.ord.map((g,gi)=>`<div class="p-ord-line"><strong>${gi+1}.</strong> ${g.correctOrder.join(' · ')}</div>`).join('')}</div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Potencias y Raíces · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:140px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.15rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.cmp-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.cmp-print-row{display:flex;align-items:center;justify-content:space-between;font-size:10pt;padding:0.18rem 0.1rem;border-bottom:1px dotted #ddd;}.cmp-print-num{font-family:'Courier New',monospace;font-weight:600;flex:1;}.cmp-opts-print{display:flex;gap:0.6rem;font-size:9pt;white-space:nowrap;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.12rem 0.25rem;text-align:center;font-family:'Courier New',monospace;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Potencias y Raíces Cuadradas · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 50 · II: 10 · III: 10 · IV: 10 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Potencias y Raíces Cuadradas · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
+  pR += `<div class="p-sec"><div class="p-ttl">III. ¿Cuadrado perfecto?</div><table class="p-tbl">${d.cuadItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansBool?'Sí':'No · entre '+it.entre}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.probItems.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum} ${it.unidad}<br><span style="font-size:9pt;color:#555;">${it.proc}</span></td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de pensamiento</div>${d.ord.map((g,gi)=>`<div class="p-ord-line"><strong>${gi+1}.</strong> ${g.correctOrder.join(' · ')}</div>`).join('')}<div class="p-ord-line"><strong>3.</strong> ${d.det.proc}</div><div class="p-ord-line"><strong>4.</strong> ${d.esc.proc}</div></div>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Potencias y Raíces · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:140px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.15rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.cmp-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.cmp-print-row{display:flex;align-items:center;justify-content:space-between;font-size:10pt;padding:0.18rem 0.1rem;border-bottom:1px dotted #ddd;}.cmp-print-num{font-family:'Courier New',monospace;font-weight:600;flex:1;}.cmp-opts-print{display:flex;gap:0.6rem;font-size:9pt;white-space:nowrap;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.12rem 0.25rem;text-align:center;font-family:'Courier New',monospace;}.prob-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10.5pt;padding:0.28rem 0.2rem 0.1rem;}.prob-print-text{flex:1;line-height:1.35;}.prob-print-ans{font-size:10.5pt;padding:0.05rem 0.2rem 0.28rem 1.4rem;border-bottom:1px dotted #ddd;}.prob-print-ans .opx-blank{width:120px;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Potencias y Raíces Cuadradas · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 20 · III: 10 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Potencias y Raíces Cuadradas · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);

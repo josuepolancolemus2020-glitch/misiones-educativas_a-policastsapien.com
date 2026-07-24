@@ -163,7 +163,7 @@ function routeMove(idx,dir){sfx('click');const ni=idx+dir;if(ni<0||ni>=routeItem
 function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden. Revisa el arreglo.',false);sfx('no');}}
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Secuencia: '+routeSets[currentRouteIdx].label);}
 
-// Widget 2: Identifica el órgano o concepto
+// Widget 2: Identifica el concepto de la materia
 const neuronPartes=[
   {desc:'La cantidad de materia de un cuerpo',ans:'Masa',opts:['Masa','Volumen','Color','Átomo']},
   {desc:'El lugar que ocupa un cuerpo',ans:'Volumen',opts:['Volumen','Masa','Peso','Molécula']},
@@ -175,12 +175,12 @@ const neuronPartes=[
   {desc:'Unión de dos o más sustancias',ans:'Mezcla',opts:['Mezcla','Sustancia pura','Átomo','Masa']},
 ];
 let neuronIdx=0,neuronDone=false;
-function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los órganos y conceptos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los conceptos de la materia identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
 function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
-// Widget 3: Órgano → Función
+// Widget 3: Concepto → Definición
 const neuroPairs=[
   {trans:'Masa',func:'Cantidad de materia de un cuerpo',opts:['Cantidad de materia de un cuerpo','Lugar que ocupa un cuerpo','El color de un cuerpo','Un estado de la materia']},
   {trans:'Volumen',func:'Lugar que ocupa un cuerpo',opts:['Lugar que ocupa un cuerpo','Cantidad de materia','La partícula más pequeña','Una mezcla']},
@@ -193,7 +193,7 @@ function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=do
 function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.querySelectorAll('#neuroOpts .qz-opt').forEach(b=>{if(b.textContent===d.func)b.classList.add('correct');else if(b===btn&&b.textContent!==d.func)b.classList.add('wrong');});const isOk=opt===d.func;if(isOk){fb('fbNeuro','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuro_'+neuroIdx)){xpTracker.wgt.add('neuro_'+neuroIdx);pts(3);}sfx('ok');}else{fb('fbNeuro','Correcto: '+d.func,false);sfx('no');}setTimeout(()=>{neuroIdx++;showNeuro();},1800);}
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
-// Widget 4: Órgano → ¿A qué sistema pertenece?
+// Widget 4: Material → ¿En qué estado está?
 const enfermedadData=[
   {disease:'Una piedra',characteristic:'Sólido',opts:['Sólido','Líquido','Gaseoso']},
   {disease:'El agua',characteristic:'Líquido',opts:['Líquido','Sólido','Gaseoso']},
@@ -483,6 +483,10 @@ const critCaseBank=[
   {txt:'Echamos una cucharada de sal en un vaso de agua y la revolvemos hasta que desaparece.'},
   {txt:'Un globo inflado con aire pesa un poquito más que uno sin inflar.'},
   {txt:'Un niño cree que el aire no es materia porque no lo puede ver ni agarrar.'},
+  {txt:'Después de la lluvia queda un charco en la calle, pero con el sol del mediodía el charco desaparece.'},
+  {txt:'Al bañarnos con agua caliente, el espejo del baño se empaña y se llena de gotitas.'},
+  {txt:'Una paleta helada empieza a gotear si tardamos mucho en comerla.'},
+  {txt:'En la costa dejan agua de mar en pilas al sol y, cuando el agua desaparece, solo queda la sal.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué fenómeno de la materia se observa en este caso?',
@@ -512,15 +516,28 @@ const critErrorBank=[
   {txt:'"Un gas tiene forma y volumen fijos igual que un sólido."',
    g1:'El gas NO tiene forma ni volumen fijos.',
    g2:'El que tiene forma y volumen fijos es el SÓLIDO.'},
+  {txt:'"La condensación es el paso de líquido a sólido."',
+   g1:'La condensación es el paso de GAS a LÍQUIDO (el vapor se vuelve gotitas).',
+   g2:'El paso de líquido a sólido es la SOLIDIFICACIÓN (el agua se congela).'},
+  {txt:'"Cuando el hielo se derrite, deja de ser agua."',
+   g1:'Un cambio de estado NO cambia la sustancia: el hielo derretido sigue siendo agua.',
+   g2:'Solo pasó de sólido a líquido (fusión); la materia es la misma.'},
+  {txt:'"El color y el olor son propiedades generales de la materia."',
+   g1:'El color y el olor son propiedades ESPECÍFICAS: sirven para identificar cada material.',
+   g2:'Las propiedades GENERALES son la masa y el volumen: las tiene toda la materia.'},
 ];
 const critDecisionBank=[
-  'Para separar la arena del agua, conviene colarla con un filtro, o dejarla mezclada.',
-  'Para derretir un hielo más rápido, conviene ponerlo al Sol o al calor, o meterlo al congelador.',
-  'Para saber si algo es materia, conviene comprobar si tiene masa y ocupa un lugar, o adivinar por su color.',
-  'Para reducir la basura de materiales, conviene reutilizar y reciclar, o botarlo todo.',
-  'Para medir la masa de un objeto, conviene usar una balanza, o calcularlo a ojo.',
+  {txt:'Para separar la arena del agua, conviene colarla con un filtro, o dejarla mezclada.',
+   guide:'Conviene colarla con un filtro: el agua con arena es una mezcla y la arena no se disuelve, así que queda atrapada en el filtro y las dos sustancias se recuperan.'},
+  {txt:'Para derretir un hielo más rápido, conviene ponerlo al Sol o al calor, o meterlo al congelador.',
+   guide:'Conviene ponerlo al Sol o al calor: el calor produce la fusión, el paso de sólido a líquido; el congelador lo mantendría sólido.'},
+  {txt:'Para saber si algo es materia, conviene comprobar si tiene masa y ocupa un lugar, o adivinar por su color.',
+   guide:'Conviene comprobar si tiene masa y ocupa un lugar: esas son las dos propiedades generales de toda la materia; el color es una propiedad específica y no basta.'},
+  {txt:'Para reducir la basura de materiales, conviene reutilizar y reciclar, o botarlo todo.',
+   guide:'Conviene reutilizar y reciclar: los materiales son materia que puede volver a usarse; botarlo todo acumula basura y daña el ambiente.'},
+  {txt:'Para medir la masa de un objeto, conviene usar una balanza, o calcularlo a ojo.',
+   guide:'Conviene usar la balanza: la masa es la cantidad de materia y se mide en gramos y kilogramos con una balanza; a ojo no se puede medir.'},
 ];
-const critDecisionGuide='La mejor decisión es la que se apoya en las propiedades de la materia: comprobar si algo tiene masa y ocupa un lugar, usar el calor para fundir o evaporar y el frío para solidificar o condensar, separar las mezclas con filtros o coladores, medir la masa con una balanza y reutilizar o reciclar los materiales para cuidar el ambiente.';
 const critCompareBank=[
   {a:'La cantidad de materia de un cuerpo.',b:'El lugar que ocupa un cuerpo.',
    ga:'La masa.',
@@ -534,6 +551,18 @@ const critCompareBank=[
    ga:'La sustancia pura.',
    gb:'La mezcla.',
    gr:'Las dos son materia, pero la sustancia pura tiene un solo componente y la mezcla junta varios.'},
+  {a:'Mezcla en la que no se distinguen sus componentes.',b:'Mezcla en la que sí se ven sus componentes.',
+   ga:'La mezcla homogénea (agua con azúcar).',
+   gb:'La mezcla heterogénea (una ensalada, agua con arena).',
+   gr:'Las dos son mezclas de varias sustancias, pero en la homogénea los componentes no se distinguen y en la heterogénea sí se ven.'},
+  {a:'La partícula más pequeña que forma la materia.',b:'Se forma cuando se unen varios átomos.',
+   ga:'El átomo.',
+   gb:'La molécula (como la molécula de agua).',
+   gr:'Los dos forman la materia, pero el átomo es la partícula más pequeña y la molécula es la unión de varios átomos.'},
+  {a:'Cambios de estado que ocurren con el calor.',b:'Cambios de estado que ocurren con el frío.',
+   ga:'La fusión y la evaporación.',
+   gb:'La solidificación y la condensación.',
+   gr:'Los cuatro son cambios de estado, pero con calor el sólido se derrite y el líquido se evapora, y con frío el líquido se congela y el gas se condensa.'},
 ];
 const critCauseBank=[
   {cause:'Un cubo de hielo recibe calor.',guide:'Se derrite y pasa a líquido: es la fusión.'},
@@ -566,11 +595,11 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: usar la materia <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con las propiedades y los estados de la materia.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: usar la materia <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec.txt}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con las propiedades y los estados de la materia.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${dec.guide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué órgano o concepto corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué concepto de la materia corresponde a cada caso? 2. ¿Cómo se define cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -580,7 +609,7 @@ function genEvalCrit(){
   s5.innerHTML=`<div class="eval-section-title">V. Análisis de causas y efectos <span class="eval-pts">20 pts</span></div><div class="eval-item">${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s5);
   window._evalCritData={kase,err,dec,cmp,causes,effects};
-  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje (0–20) en cada casilla. Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
+  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje en cada casilla (20 = completo y justificado · 10 = parcial · 0 = incorrecto). Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
   fin('s-evaluacion');
 }
 function toggleEvalCritAns(){evalCritAnsVisible=!evalCritAnsVisible;document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');sfx('click');}
@@ -603,17 +632,18 @@ function printEvalCrit(){
   let s1=`<div class="sec-title"><span>I. Caso de análisis: la materia a tu alrededor</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: usar la materia</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con las propiedades y los estados de la materia.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué órgano o concepto corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: usar la materia</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec.txt}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con las propiedades y los estados de la materia.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué concepto de la materia corresponde a cada caso? 2. ¿Cómo se define cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
   ceTbl+='</table>';
   let s5=`<div class="sec-title"><span>V. Análisis de causas y efectos</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div>${ceTbl}`;
   let pR='';
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">Rúbrica de corrección (aplicar en cada sección)</div><div class="p-crit-line"><strong>20 pts</strong> = respuesta completa y bien justificada · <strong>10 pts</strong> = respuesta parcial o con justificación incompleta · <strong>0 pts</strong> = respuesta incorrecta o sin justificar.</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">I. Caso</div>${critCaseQuestions.map((q,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${critCaseGuides[i]}</div>`).join('')}</div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">II. Corrige el error</div><div class="p-crit-line"><strong>Error 1:</strong> ${d.err.g1}</div><div class="p-crit-line"><strong>Error 2:</strong> ${d.err.g2}</div></div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${d.dec.guide}</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
   pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it=>`<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it=>`<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
   const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico La Materia · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #27ae60;background:#e8f8f5;color:#27ae60;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#27ae60;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #27ae60;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#e8f8f5;border-left:3px solid #27ae60;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#e8f8f5;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#e8f8f5;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#27ae60;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #27ae60;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · La Materia · Educación Básica · Ciencias Naturales</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · La Materia · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
@@ -622,7 +652,7 @@ function printEvalCrit(){
   win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
-// ===================== LABORATORIO DE ÓRGANOS =====================
+// ===================== LABORATORIO DE LA MATERIA =====================
 const parteData={
   solido:{
     nombre:'El estado sólido',icon:'🧊',

@@ -163,7 +163,7 @@ function routeMove(idx,dir){sfx('click');const ni=idx+dir;if(ni<0||ni>=routeItem
 function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden. Revisa el arreglo.',false);sfx('no');}}
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Secuencia: '+routeSets[currentRouteIdx].label);}
 
-// Widget 2: Identifica el órgano o concepto
+// Widget 2: Identifica el astro o concepto
 const neuronPartes=[
   {desc:'La estrella del centro del sistema solar',ans:'El Sol',opts:['El Sol','La Luna','Marte','La Tierra']},
   {desc:'El satélite natural de la Tierra',ans:'La Luna',opts:['La Luna','El Sol','Venus','Un cometa']},
@@ -175,7 +175,7 @@ const neuronPartes=[
   {desc:'Movimiento de la Tierra que produce el día y la noche',ans:'Rotación',opts:['Rotación','Traslación','Eclipse','Fase']},
 ];
 let neuronIdx=0,neuronDone=false;
-function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los órganos y conceptos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Todos los astros y conceptos identificados!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
 function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
@@ -477,24 +477,42 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'De día no vemos las estrellas, pero de noche el cielo se llena de ellas.'},
-  {txt:'En un lugar de la Tierra es de día mientras que en otro, al mismo tiempo, es de noche.'},
-  {txt:'A lo largo del año, en Honduras hay una época seca y una época lluviosa.'},
-  {txt:'Cada cierto tiempo la Luna se ve completa (llena) y otras veces no se ve (nueva).'},
-  {txt:'Un niño cree que el Sol se mueve alrededor de la Tierra porque lo ve salir y ponerse.'},
-  {txt:'Miramos una estrella muy lejana y la vemos como un puntito, aunque es gigante.'},
+  {txt:'De día no vemos las estrellas, pero de noche el cielo se llena de ellas.',
+   g:['Se observa el paso del día a la noche: de día la luz del Sol nos impide ver las estrellas.',
+      'De día la fuerte luz del Sol tapa la luz débil de las estrellas; de noche nuestro lado de la Tierra mira al espacio oscuro y las vemos.',
+      'El Sol (con su luz) y la rotación de la Tierra.',
+      'Nos ayuda a entender la rotación de la Tierra, medir el tiempo y despertar la curiosidad por la ciencia.']},
+  {txt:'En un lugar de la Tierra es de día mientras que en otro, al mismo tiempo, es de noche.',
+   g:['Se observa el día y la noche ocurriendo a la vez en distintos lugares de la Tierra.',
+      'La Tierra es redonda y gira sobre sí misma; el Sol solo ilumina la mitad que da hacia él, así que una mitad tiene día y la otra, noche.',
+      'La rotación de la Tierra (junto con la luz del Sol).',
+      'Nos ayuda a comprender por qué no amanece a la misma hora en todo el mundo y a medir el tiempo.']},
+  {txt:'A lo largo del año, en Honduras hay una época seca y una época lluviosa.',
+   g:['Se observa el cambio de estaciones (época seca y época lluviosa) a lo largo del año.',
+      'La traslación de la Tierra alrededor del Sol hace que a lo largo del año cambie el clima en cada región.',
+      'La traslación de la Tierra alrededor del Sol.',
+      'Nos ayuda a planificar la siembra y la cosecha, prepararnos para las lluvias y entender el clima de Honduras.']},
+  {txt:'Cada cierto tiempo la Luna se ve completa (llena) y otras veces no se ve (nueva).',
+   g:['Se observan las fases de la Luna.',
+      'La Luna gira alrededor de la Tierra y el Sol la ilumina desde distintas posiciones; según dónde esté, vemos más o menos parte iluminada.',
+      'La Luna (su giro alrededor de la Tierra) y la luz del Sol que la ilumina.',
+      'Nos ayuda a seguir el calendario, entender las mareas y apreciar los movimientos de los astros.']},
+  {txt:'Un niño cree que el Sol se mueve alrededor de la Tierra porque lo ve salir y ponerse.',
+   g:['Se observa el movimiento aparente del Sol: parece salir y ponerse (amanecer y anochecer).',
+      'El Sol no gira alrededor de la Tierra: es la Tierra la que gira sobre sí misma (rotación), y por eso el Sol parece cruzar el cielo.',
+      'La rotación de la Tierra (no el Sol).',
+      'Nos ayuda a corregir ideas equivocadas y a pensar con base científica, no solo con lo que "parece".']},
+  {txt:'Miramos una estrella muy lejana y la vemos como un puntito, aunque es gigante.',
+   g:['Se observa una estrella lejana que se ve como un pequeño puntito de luz.',
+      'La estrella está tan lejos que su luz nos llega muy débil y la vemos pequeña, aunque en realidad es enorme (muchas son más grandes que el Sol).',
+      'La estrella (por su enorme distancia) y su luz propia.',
+      'Nos ayuda a dimensionar el tamaño del universo, valorar las distancias del espacio y usar telescopios para estudiarlo.']},
 ];
 const critCaseQuestions=[
   '1. ¿Qué fenómeno del universo o del sistema solar se observa en este caso?',
   '2. ¿Por qué ocurre? Relaciónalo con los astros o los movimientos de la Tierra.',
   '3. ¿Qué astro o movimiento es el responsable?',
   '4. ¿Por qué es importante observar y conocer el cielo?',
-];
-const critCaseGuides=[
-  'Se observa un fenómeno del cielo: las estrellas, el día y la noche, las estaciones o las fases de la Luna.',
-  'Se explica por los movimientos de la Tierra (rotación y traslación), por la luz del Sol o por la enorme distancia de los astros.',
-  'La rotación (día y noche), la traslación (estaciones), la Luna y sus fases, o el Sol como estrella.',
-  'Porque nos ayuda a entender nuestro planeta, medir el tiempo y despertar la curiosidad por la ciencia.',
 ];
 const critErrorBank=[
   {txt:'"Los planetas tienen luz propia igual que las estrellas."',
@@ -534,6 +552,18 @@ const critCompareBank=[
    ga:'El Sol.',
    gb:'La Luna.',
    gr:'El Sol es una estrella con luz propia y la Luna es un satélite que refleja la luz del Sol; son astros muy diferentes.'},
+  {a:'La Luna se coloca entre el Sol y la Tierra y tapa la luz del Sol.',b:'La Tierra se coloca entre el Sol y la Luna y le tapa la luz.',
+   ga:'El eclipse de Sol.',
+   gb:'El eclipse de Luna.',
+   gr:'En los dos, un astro tapa la luz de otro, pero en el eclipse de Sol la Luna cubre al Sol, y en el de Luna es la sombra de la Tierra la que cubre a la Luna.'},
+  {a:'Planeta pequeño y sólido, como la Tierra o Marte.',b:'Planeta enorme formado sobre todo por gas, como Júpiter o Saturno.',
+   ga:'El planeta rocoso.',
+   gb:'El planeta gigante gaseoso.',
+   gr:'Los dos son planetas que giran alrededor del Sol y no tienen luz propia, pero los rocosos son pequeños y sólidos y los gigantes gaseosos son enormes y de gas.'},
+  {a:'El Sol y todos los astros que giran a su alrededor.',b:'Enorme grupo de millones de estrellas.',
+   ga:'El sistema solar.',
+   gb:'La galaxia (Vía Láctea).',
+   gr:'El sistema solar es solo nuestro Sol con sus planetas; la galaxia es muchísimo más grande y contiene millones de estrellas como el Sol.'},
 ];
 const critCauseBank=[
   {cause:'La Tierra gira sobre sí misma (rotación).',guide:'Se produce el día y la noche.'},
@@ -558,11 +588,11 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el universo y el cielo <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el universo y el cielo <span class="eval-pts">20 pts · 4 preguntas × 5 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${kase.g[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
-  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts · 2 errores × 10 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
@@ -570,14 +600,14 @@ function genEvalCrit(){
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué órgano o concepto corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué astro o concepto corresponde a cada caso? 2. ¿Qué caracteriza a cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
   causes.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Causa</span>${it.cause}</div><div class="crit-ce-cell"><span class="crit-ce-tag">Efecto</span><textarea class="crit-textarea" rows="2" aria-label="Efecto de: ${it.cause}" placeholder="Escribe el efecto..."></textarea></div></div><div class="crit-pauta">${it.guide}</div></div>`;});
   effects.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell"><span class="crit-ce-tag">Causa</span><textarea class="crit-textarea" rows="2" aria-label="Causa de: ${it.effect}" placeholder="Escribe la causa..."></textarea></div><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Efecto</span>${it.effect}</div></div><div class="crit-pauta">${it.guide}</div></div>`;});
   const s5=document.createElement('div');
-  s5.innerHTML=`<div class="eval-section-title">V. Análisis de causas y efectos <span class="eval-pts">20 pts</span></div><div class="eval-item">${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s5.innerHTML=`<div class="eval-section-title">V. Análisis de causas y efectos <span class="eval-pts">20 pts · 5 ítems × 4 pts</span></div><div class="eval-item"><p style="font-size:0.85rem;margin-bottom:0.5rem;">Completa la <strong>causa</strong> o el <strong>efecto</strong> que falta en cada fila (5 ítems × 4 pts).</p>${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s5);
   window._evalCritData={kase,err,dec,cmp,causes,effects};
   const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje (0–20) en cada casilla. Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
@@ -600,18 +630,18 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: el universo y el cielo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: el universo y el cielo (4 preguntas × 5 pts)</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
-  let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
+  let s2=`<div class="sec-title"><span>II. Corrige el error (2 errores × 10 pts)</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
   let s3=`<div class="sec-title"><span>III. Toma de decisiones: observar el cielo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías para conocer mejor el universo? Explica por qué, relacionándolo con los astros y los movimientos de la Tierra.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué órgano o concepto corresponde a cada caso? 2. ¿Qué función cumple cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué astro o concepto corresponde a cada caso? 2. ¿Qué caracteriza a cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
   ceTbl+='</table>';
-  let s5=`<div class="sec-title"><span>V. Análisis de causas y efectos</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div>${ceTbl}`;
+  let s5=`<div class="sec-title"><span>V. Análisis de causas y efectos (5 ítems × 4 pts)</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div>${ceTbl}`;
   let pR='';
-  pR+=`<div class="p-sec"><div class="p-ttl">I. Caso</div>${critCaseQuestions.map((q,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${critCaseGuides[i]}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Caso</div>${critCaseQuestions.map((q,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${d.kase.g[i]}</div>`).join('')}</div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">II. Corrige el error</div><div class="p-crit-line"><strong>Error 1:</strong> ${d.err.g1}</div><div class="p-crit-line"><strong>Error 2:</strong> ${d.err.g2}</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
@@ -622,7 +652,7 @@ function printEvalCrit(){
   win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
-// ===================== LABORATORIO DE ÓRGANOS =====================
+// ===================== LABORATORIO DE ASTROS =====================
 const parteData={
   sol:{
     nombre:'El Sol',icon:'☀️',
