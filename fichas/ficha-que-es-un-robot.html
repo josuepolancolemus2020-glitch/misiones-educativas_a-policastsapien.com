@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión ¿Qué es un Robot?</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: ROBÓTICA = CIAN TEC (#0e7490)
+     · Colores semánticos: cian=sensores/robot, naranja=controlador, verde=actuadores
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --rob: #0e7490; --rob-osc: #155e75; --rob-claro: #ecfeff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cdeef6;
+    --sen: #0891b2; --ctr: #c2410c; --act: #1c7c43; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef8fa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--rob-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--rob); background: var(--rob-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--rob-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--rob-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--rob); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--rob-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--rob-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--rob-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--rob); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4fbfd; }
+  td.k { font-weight: 700; color: var(--rob-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafdfe; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--rob-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (sensores / controlador / actuadores) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #d7f2f8; } .celula .cm b { color: var(--sen); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--ctr); }
+  .celula .cn { background: #e4f4e7; } .celula .cn b { color: var(--act); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #d7f2f8; border: 1px solid #ade0ed; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--sen); } .tri .torg b { color: var(--ctr); }
+
+  .acts h3 { border-bottom: 2px solid var(--rob-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--rob); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--rob); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--rob-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--rob-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--rob-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2fafc; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--rob-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--rob); box-shadow: 0 6px 16px rgba(14,116,144,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión ¿Qué es un Robot?</div>
+        <div class="f-meta"><b>Asignatura:</b> Robótica &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica &nbsp;·&nbsp; <b>Ruta de los Robots · Etapa 1</b></div>
+        <div class="f-meta"><b>Tema:</b> El ciclo percibir → decidir → actuar, las 3 partes del robot (sensores, controlador, actuadores), robot vs máquina simple vs electrodoméstico, y los robots en la vida real de Honduras (robótica desconectada: sin computadora)</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-que-es-un-robot.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Explicar qué es un <strong>robot</strong> con el ciclo <strong>percibir → decidir → actuar</strong>.</li>
+      <li>Nombrar las <strong>3 partes del robot</strong>: sensores, controlador y actuadores.</li>
+      <li>Usar la analogía <strong>cuerpo ↔ robot</strong>: sentidos, cerebro y músculos.</li>
+      <li>Distinguir un robot de una <strong>máquina simple</strong> y de un <strong>electrodoméstico</strong>.</li>
+      <li>Elegir el <strong>sensor adecuado</strong> para una situación (luz, distancia, tacto, temperatura, sonido, humedad).</li>
+      <li>Reconocer robots en la vida real de <strong>Honduras</strong>: maquila, agro y medicina.</li>
+    </ol>
+
+    <h2>🤖 1. ¿Qué es un robot?</h2>
+    <p>Un <strong>robot</strong> es una máquina que <strong>PERCIBE</strong> su entorno con sensores,
+    <strong>DECIDE</strong> qué hacer con su controlador (siguiendo un <strong>programa</strong>) y
+    <strong>ACTÚA</strong> con motores, ruedas o brazos. Ese ciclo se repite una y otra vez:
+    <strong>percibir → decidir → actuar</strong>.</p>
+    <div class="caja truco">💡 <b>Truco:</b> ante cualquier máquina pregúntate tres cosas: ¿percibe?, ¿decide?,
+    ¿actúa? Solo es robot la que cumple <strong>las tres</strong>.</div>
+
+    <h3>📡🧠💪 Mini-demostración: las 3 partes del robot</h3>
+    <div class="ilus">
+      <div class="ilus-t">Las tres partes trabajan en equipo, como tu propio cuerpo</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">📡</span><b>Sensores</b>Los SENTIDOS: captan luz, sonido, distancia, tacto.</div>
+        <div class="cc"><span class="c-emoji">🧠</span><b>Controlador</b>El CEREBRO: decide según su programa.</div>
+        <div class="cn"><span class="c-emoji">💪</span><b>Actuadores</b>Los MÚSCULOS: motores, ruedas y brazos.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Y todo funciona gracias a la <strong>energía</strong> de su batería, como tu cuerpo con el alimento. 🔋</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es un Robot?</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🧩 2. La analogía cuerpo ↔ robot</h2>
+    <p>Cuando esquivas una pelota, tus <strong>ojos</strong> la ven (receptor), tu <strong>cerebro</strong> decide
+    moverte y tus <strong>músculos</strong> te apartan (efector). El robot hace exactamente lo mismo con sus partes:</p>
+    <table>
+      <tr><th>Parte del robot</th><th>En tu cuerpo</th><th>¿Qué hace?</th></tr>
+      <tr><td class="k">📡 Sensores</td><td>Ojos, oídos, piel</td><td>PERCIBEN: luz, sonido, distancia, tacto, temperatura</td></tr>
+      <tr><td class="k">🧠 Controlador</td><td>El cerebro</td><td>DECIDE según las instrucciones de su programa</td></tr>
+      <tr><td class="k">💪 Actuadores</td><td>Los músculos</td><td>ACTÚAN: motores, ruedas, brazos, luces, bocinas</td></tr>
+      <tr><td class="k">🔋 Energía</td><td>El alimento</td><td>Da fuerza a todas las partes (batería o electricidad)</td></tr>
+    </table>
+    <div class="tri">
+      <div class="tnuc"><b>📋 El programa</b>Es la lista de <strong>instrucciones exactas</strong> que el robot obedece paso a paso. Sin programa, el controlador no sabe qué decidir.</div>
+      <div class="torg"><b>🔁 El ciclo</b>Percibir → decidir → actuar, repetido muchas veces por segundo. Ejemplo: «si hay obstáculo, <strong>entonces</strong> gira».</div>
+    </div>
+    <div class="caja idea">📖 <b>Dato clave:</b> los robots <strong>no piensan ni sienten</strong> como las personas:
+    siguen su programa, escrito por personas. Lo «inteligente» del robot es el trabajo de quien lo programó.</div>
+
+    <h2>⚖️ 3. ¿Robot, máquina simple o electrodoméstico?</h2>
+    <table>
+      <tr><th>Máquina</th><th>¿Percibe?</th><th>¿Decide?</th><th>¿Actúa?</th><th>Veredicto</th></tr>
+      <tr><td class="k">🔨 Martillo</td><td>No</td><td>No</td><td>No (lo mueves tú)</td><td>Máquina simple</td></tr>
+      <tr><td class="k">🥤 Licuadora</td><td>No</td><td>No (la enciendes tú)</td><td>Sí</td><td>Electrodoméstico</td></tr>
+      <tr><td class="k">🤖 Aspiradora robot</td><td>Sí: obstáculos</td><td>Sí: elige su ruta</td><td>Sí: ruedas y cepillos</td><td>¡ROBOT!</td></tr>
+    </table>
+    <div class="caja regla">🎯 <b>Regla de oro:</b> moverse no basta. La licuadora <strong>actúa</strong> pero no
+    percibe ni decide sola; el martillo ni siquiera actúa solo. El robot cumple <strong>el ciclo completo</strong>.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es un Robot?</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🗺️ 4. Tipos de robots</h2>
+    <table>
+      <tr><th>Tipo</th><th>¿Cómo es?</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🏭 Industrial</td><td>Brazo fijo en la fábrica</td><td>Brazo que cose y corta en la maquila</td></tr>
+      <tr><td class="k">🛞 Móvil</td><td>Se desplaza con ruedas</td><td>Aspiradora robot; carrito seguidor de línea</td></tr>
+      <tr><td class="k">🚁 Dron</td><td>Vuela con hélices</td><td>Dron que revisa los cultivos de café</td></tr>
+      <tr><td class="k">🦿 Humanoide</td><td>Con forma de persona</td><td>Robots que caminan y mueven los brazos</td></tr>
+      <tr><td class="k">🦾 Brazo robótico</td><td>De gran precisión</td><td>Cirugía asistida en los hospitales</td></tr>
+    </table>
+
+    <h2>🇭🇳 5. Robots en la vida real de Honduras</h2>
+    <table>
+      <tr><th>¿Dónde?</th><th>¿Qué robot trabaja ahí?</th><th>¿Qué hace?</th></tr>
+      <tr><td class="k">🏭 Maquila</td><td>Brazos robóticos</td><td>Cosen y cortan tela siguiendo su programa</td></tr>
+      <tr><td class="k">☕ Agro (café)</td><td>Drones</td><td>Revisan los cafetales desde el aire y detectan zonas enfermas</td></tr>
+      <tr><td class="k">🏥 Medicina</td><td>Robots de cirugía</td><td>Ayudan al médico con movimientos muy precisos</td></tr>
+      <tr><td class="k">🏠 Hogar</td><td>Aspiradora robot</td><td>Limpia sola: detecta obstáculos y decide su ruta</td></tr>
+    </table>
+
+    <h2>🎲 6. Actividades desconectadas (sin computadora)</h2>
+    <ul>
+      <li><strong>🗣️ El compañero robot:</strong> un alumno es el «robot» y otro es el «programador». El programador
+      solo puede dar <strong>instrucciones exactas</strong> («avanza 2 pasos», «gira a la derecha») para llevar al robot
+      de un punto del aula a otro. Si la instrucción es confusa, ¡el robot se queda parado! Luego cambian de papel.</li>
+      <li><strong>🗂️ Cazadores de robots:</strong> haz una lista de 5 máquinas de tu aula o casa y clasifica cada una:
+      ¿robot o no robot? Justifica con las tres preguntas: ¿percibe?, ¿decide?, ¿actúa?</li>
+      <li><strong>🎨 El robot de mi pueblo:</strong> dibuja un robot que resuelva un problema de tu comunidad y señala
+      con flechas sus <strong>sensores</strong>, su <strong>controlador</strong> y sus <strong>actuadores</strong>.</li>
+    </ul>
+
+    <div class="caja hn">🇭🇳 <b>La robótica también es tuya:</b> no necesitas computadora para empezar: la robótica
+    nace de <strong>pensar en pasos exactos</strong>. Quien aprende a dar y seguir instrucciones precisas ya está
+    programando. Los futuros ingenieros que cuidarán el café, la maquila y los hospitales de Honduras pueden empezar
+    hoy… ¡con papel y lápiz! 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es un Robot?</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Un robot percibe, decide y <span class="linea-resp"></span>.</li>
+      <li>Los sensores son los <span class="linea-resp"></span> del robot.</li>
+      <li>El controlador funciona como el <span class="linea-resp"></span> del cuerpo.</li>
+      <li>Los actuadores funcionan como los <span class="linea-resp"></span> del cuerpo.</li>
+      <li>El robot sigue las instrucciones de su <span class="linea-resp"></span>.</li>
+      <li>El <span class="linea-resp"></span> es un robot volador que revisa cultivos.</li>
+      <li>La energía del robot viene de la <span class="linea-resp"></span>.</li>
+      <li>El martillo no es robot: es una máquina <span class="linea-resp"></span>.</li>
+      <li>La cámara del robot es un ejemplo de <span class="linea-resp"></span>.</li>
+      <li>El ciclo del robot es: percibir → <span class="linea-resp"></span> → actuar.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Un robot percibe, decide y actúa.</li>
+      <li>____ La licuadora es un robot porque se mueve.</li>
+      <li>____ Los sensores son los «sentidos» del robot.</li>
+      <li>____ El controlador del robot funciona como el cerebro.</li>
+      <li>____ Los actuadores funcionan como los sentidos del robot.</li>
+      <li>____ Los robots piensan y sienten como las personas.</li>
+      <li>____ Un dron puede revisar cultivos de café desde el aire.</li>
+      <li>____ El martillo tiene sensores y controlador.</li>
+      <li>____ En las maquilas hay brazos robóticos que cosen y cortan.</li>
+      <li>____ El ciclo del robot es: actuar → decidir → percibir.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es un Robot?</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es un robot?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cualquier máquina de metal</span>
+        <span class="op"><i>b</i> una máquina que percibe, decide y actúa</span>
+        <span class="op"><i>c</i> un juguete con luces</span>
+        <span class="op"><i>d</i> una computadora con pantalla</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué parte del robot funciona como sus «sentidos»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> los actuadores</span>
+        <span class="op"><i>b</i> la batería</span>
+        <span class="op"><i>c</i> los sensores</span>
+        <span class="op"><i>d</i> las ruedas</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál de estas máquinas es un robot?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el martillo</span>
+        <span class="op"><i>b</i> la licuadora</span>
+        <span class="op"><i>c</i> la bicicleta</span>
+        <span class="op"><i>d</i> la aspiradora que detecta obstáculos y decide su ruta sola</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué parte del robot decide qué hacer?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el controlador</span>
+        <span class="op"><i>b</i> el motor</span>
+        <span class="op"><i>c</i> la bocina</span>
+        <span class="op"><i>d</i> la rueda</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué parte del robot son sus «músculos»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> los sensores</span>
+        <span class="op"><i>b</i> los actuadores</span>
+        <span class="op"><i>c</i> el programa</span>
+        <span class="op"><i>d</i> la antena</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuál es el orden correcto del ciclo del robot?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> actuar → percibir → decidir</span>
+        <span class="op"><i>b</i> decidir → actuar → percibir</span>
+        <span class="op"><i>c</i> percibir → decidir → actuar</span>
+        <span class="op"><i>d</i> percibir → actuar → decidir</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Por qué la licuadora NO es un robot?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> actúa pero no percibe ni decide sola</span>
+        <span class="op"><i>b</i> porque no gira</span>
+        <span class="op"><i>c</i> porque es de cocina</span>
+        <span class="op"><i>d</i> porque gasta electricidad</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué sensor necesita un robot que se detiene ante un obstáculo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> de temperatura</span>
+        <span class="op"><i>b</i> de sonido</span>
+        <span class="op"><i>c</i> de humedad</span>
+        <span class="op"><i>d</i> de distancia</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué robot revisa los cultivos de café en Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el humanoide</span>
+        <span class="op"><i>b</i> el dron</span>
+        <span class="op"><i>c</i> la aspiradora robot</span>
+        <span class="op"><i>d</i> el robot de cirugía</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cómo «piensan» los robots?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> igual que las personas</span>
+        <span class="op"><i>b</i> adivinan qué hacer</span>
+        <span class="op"><i>c</i> siguen las instrucciones de su programa</span>
+        <span class="op"><i>d</i> sueñan las respuestas</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es un Robot?</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Robot</td><td>A. Robot volador que revisa cultivos desde el aire</td></tr>
+      <tr><td>2. ____ Sensor</td><td>B. Motor, rueda o brazo que ejecuta la acción</td></tr>
+      <tr><td>3. ____ Controlador</td><td>C. Batería o electricidad que hace funcionar al robot</td></tr>
+      <tr><td>4. ____ Actuador</td><td>D. Actúa al encenderlo, pero no decide solo</td></tr>
+      <tr><td>5. ____ Programa</td><td>E. Máquina que percibe, decide y actúa</td></tr>
+      <tr><td>6. ____ Energía</td><td>F. Herramienta que no percibe ni decide (martillo)</td></tr>
+      <tr><td>7. ____ Dron</td><td>G. Parte que capta luz, sonido, distancia o temperatura</td></tr>
+      <tr><td>8. ____ Máquina simple</td><td>H. Lista de instrucciones exactas paso a paso</td></tr>
+      <tr><td>9. ____ Electrodoméstico</td><td>I. Limpia sola: detecta obstáculos y elige su ruta</td></tr>
+      <tr><td>10. ____ Aspiradora robot</td><td>J. El «cerebro» que decide según el programa</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión ¿Qué es un Robot?</b> Ahora sabes que un robot percibe, decide y
+      actúa; que sus sensores son como tus sentidos, su controlador como tu cerebro y sus actuadores como tus
+      músculos; y que los robots ya trabajan en la maquila, el cafetal y el hospital. ¡Sigue avanzando por la Ruta
+      de los Robots! 🤖📡
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Robótica.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó el robot de su pueblo señalando sensores, controlador y actuadores, y jugó al «compañero robot».</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es un Robot?</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. actúa &nbsp; 2. sentidos &nbsp; 3. cerebro &nbsp; 4. músculos &nbsp; 5. programa &nbsp; 6. dron &nbsp; 7. batería &nbsp; 8. simple &nbsp; 9. sensor &nbsp; 10. decidir</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6F, 7V, 8F, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3d, 4a, 5b, 6c, 7a, 8d, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1E, 2G, 3J, 4B, 5H, 6C, 7A, 8F, 9D, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión ¿Qué es un Robot?» (Educación Básica, II y III Ciclo), etapa 1 de la Ruta de los Robots del área de
+      Robótica. El enfoque es de <strong>robótica desconectada</strong>: todos los conceptos (ciclo percibir → decidir →
+      actuar, sensores, controlador, actuadores, energía y programa) se trabajan sin hardware, con papel, juego y
+      lógica, por lo que la ficha puede aplicarse en aulas sin computadoras ni conectividad. Puede utilizarse como guía
+      de estudio impresa o digital antes de la evaluación final. Incluye todos los conceptos evaluados en la plataforma
+      (completar, V/F, selección múltiple, pareados) y las actividades desconectadas de la página 3: el juego «el
+      compañero robot» (dar instrucciones exactas), la clasificación de máquinas del aula o la casa (robot vs no robot
+      con las preguntas ¿percibe?, ¿decide?, ¿actúa?) y el dibujo del robot del pueblo señalando sus tres partes. La
+      analogía cuerpo ↔ robot (sensores = sentidos, controlador = cerebro, actuadores = músculos) enlaza con la Ruta
+      del Cuerpo (receptor → cerebro → efector). La misión interactiva (código QR de la portada) permite al estudiante
+      practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es un Robot? · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

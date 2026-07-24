@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión ¿Qué es un Robot? | policastsapien.com</title>
+<meta name="description" content="Misión ¿Qué es un Robot?: el ciclo percibir-decidir-actuar, las 3 partes del robot (sensores, controlador, actuadores), robot vs máquina simple vs electrodoméstico, y robots en la vida real de Honduras. Robótica desconectada: todo en papel y pantalla. Misión educativa interactiva. PolicastSapien.">
+<meta property="og:title" content="Misión ¿Qué es un Robot?">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-que-es-un-robot/que-es-un-robot.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/que-es-un-robot.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones" class="xp-back-btn" title="Regresar al catálogo de misiones">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🤖</div>
+    <div class="hero-text">
+      <h1>Misión <span>¿Qué es un Robot?</span></h1>
+      <p class="sub">Descubre el ciclo percibir → decidir → actuar y las 3 partes de todo robot. ¡Sin cables y sin computadora! 📡🧠💪</p>
+      <div class="badge">🤖 Ruta de los Robots · Etapa 1 de 6 · Robótica</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤖 ¿Qué es un robot?</h2>
+    <p>Un <strong>robot</strong> es una máquina que <strong>PERCIBE</strong> su entorno con <strong>sensores</strong>,
+    <strong>DECIDE</strong> qué hacer con su <strong>controlador</strong> (siguiendo un <strong>programa</strong>) y
+    <strong>ACTÚA</strong> con sus <strong>actuadores</strong> (motores, ruedas, brazos). Ese es el famoso
+    <strong>ciclo del robot</strong>: percibir → decidir → actuar, una y otra vez.</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">👀 Percibe</div><div class="t-info">Sus sensores captan luz, sonido, distancia, tacto o temperatura</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🧠 Decide</div><div class="t-info">Su controlador elige qué hacer según el programa</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">⚙️ Actúa</div><div class="t-info">Sus motores, ruedas y brazos ejecutan la acción</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🔁 Repite</div><div class="t-info">El ciclo se repite muchas veces por segundo</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Piénsalo así:</strong> el <b>martillo</b> no percibe ni decide (máquina simple); la <b>licuadora</b> actúa pero no decide (electrodoméstico); la <b>aspiradora robot</b> hace las tres cosas: ¡esa sí es un robot!</div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🧩 Las 3 partes del robot y tu cuerpo</h2>
+    <p>Todo robot tiene tres partes que trabajan en equipo, igual que tu cuerpo cuando esquivas una pelota
+    (<strong>receptor → cerebro → efector</strong>, como aprendiste en la Ruta del Cuerpo):</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">📡 Sensores</div><div class="t-info">Son los SENTIDOS: como tus ojos, oídos y piel</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🧠 Controlador</div><div class="t-info">Es el CEREBRO: recibe la información y decide</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">💪 Actuadores</div><div class="t-info">Son los MÚSCULOS: motores y ruedas que se mueven</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🔋 Energía</div><div class="t-info">Es el ALIMENTO: la batería que da vida a todo</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">🔤</span>
+      <div><strong>Recuerda:</strong> sensores = sentidos · controlador = cerebro · actuadores = músculos. ¡Con esa analogía nunca se te olvida!</div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🇭🇳 Robots en la vida real y en Honduras</h2>
+    <p>Los robots ya trabajan cerca de ti, aunque no parezcan «robots de película»:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🏭 Maquila y agro</h4>
+        <p>En las <strong>maquilas</strong>, brazos robóticos <strong>cosen y cortan</strong> tela siguiendo su programa. En el campo, <strong>drones</strong> revisan los <strong>cultivos de café</strong> desde el aire y detectan zonas enfermas.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🏥 Medicina y hogar</h4>
+        <p>En hospitales hay <strong>cirugía asistida por robots</strong> de gran precisión. En las casas, la <strong>aspiradora robot</strong> limpia sola: detecta obstáculos y decide su ruta.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">⚠️</span>
+      <div><strong>Mito vs realidad:</strong> los robots <b>no «piensan» como personas</b>: siguen las instrucciones de su <b>programa</b>, escritas por personas. Sin programa, un robot no sabe qué hacer.</div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== ESTRUCTURA (ROBOT VS OTRAS MÁQUINAS + TIPOS) ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>⚖️ Robot vs máquina simple vs electrodoméstico</h2>
+    <p>La pregunta clave es siempre la misma: <strong>¿percibe?, ¿decide?, ¿actúa?</strong></p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.82rem;min-width:480px;">
+        <thead>
+          <tr style="background:var(--pri-gl);">
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);text-align:left;">Máquina</th>
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);">👀 ¿Percibe?</th>
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);">🧠 ¿Decide?</th>
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);">⚙️ ¿Actúa?</th>
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);">Veredicto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:700;">🔨 Martillo</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">❌</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">❌</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">❌ (lo mueves tú)</td><td style="padding:0.4rem;border:1px solid var(--border);font-weight:600;">Máquina simple</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:700;">🥤 Licuadora</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">❌</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">❌</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">✅</td><td style="padding:0.4rem;border:1px solid var(--border);font-weight:600;">Electrodoméstico</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:700;">🤖 Aspiradora robot</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">✅</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">✅</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">✅</td><td style="padding:0.4rem;border:1px solid var(--border);font-weight:600;">¡ROBOT!</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tip">
+      <span class="ti">🎯</span>
+      <div><strong>Regla de oro:</strong> solo es robot la máquina que cumple <b>las tres</b>: percibir, decidir y actuar.</div>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>⚡ Mini-quiz relámpago</h2>
+    <p style="font-size:0.9rem;margin-bottom:0.5rem;">1) La <strong>plancha</strong> calienta la ropa cuando la enchufas. ¿Qué es?</p>
+    <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq1')">Un robot</button>
+      <button class="cmp-opt" onclick="miniQ(this,true,'fbMq1')">Un electrodoméstico</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq1')">Una máquina simple</button>
+    </div>
+    <div id="fbMq1" class="fb" role="alert"></div>
+    <p style="font-size:0.9rem;margin:0.9rem 0 0.5rem;">2) Una <strong>puerta que se abre sola</strong> cuando te acercas. ¿Qué es?</p>
+    <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
+      <button class="cmp-opt" onclick="miniQ(this,true,'fbMq2')">Un robot sencillo: percibe, decide y actúa</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq2')">Una máquina simple</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq2')">Magia</button>
+    </div>
+    <div id="fbMq2" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🗺️ Tipos de robots</h2>
+    <p>Hay robots de muchas formas; lo importante es que todos cumplen el ciclo:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🏭 Industrial</div><div class="t-info">Brazo fijo que suelda, corta o cose (maquila)</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🛞 Móvil</div><div class="t-info">Se desplaza con ruedas: aspiradora robot, carrito seguidor de línea</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🚁 Dron</div><div class="t-info">Vuela con hélices: revisa cultivos de café</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">🦿 Humanoide</div><div class="t-info">Con forma de persona: camina y mueve los brazos</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🦾 Brazo robótico</div><div class="t-info">Ayuda en cirugías de gran precisión</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">✏️</span>
+      <div><strong>Robótica desconectada:</strong> en esta misión aprendes robótica <b>sin computadora ni cables</b>: con lógica, papel y juegos. ¡Así entrenan también los ingenieros!</div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🔬</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🔬 Laboratorio de las Partes del Robot</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Toca una parte del robot (en el dibujo o en los botones) y un aspecto para explorarlo. ¡Combínalos todos!</p>
+    <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>Los sensores</strong> → <strong>¿Qué es?</strong></div>
+    <div class="lab-stage">
+      <svg class="lab-robot-svg" viewBox="0 0 320 340" role="img" aria-label="Robot amistoso: toca sus partes para explorarlas">
+        <!-- ENERGÍA: mochila-batería -->
+        <g id="svgP-energia" class="lab-svg-part" onclick="labShowParte('energia')" tabindex="0" role="button" aria-label="Explorar la energía">
+          <rect x="18" y="150" width="52" height="80" rx="10" fill="#fde68a" stroke="#b45309" stroke-width="3"/>
+          <rect x="30" y="140" width="28" height="12" rx="4" fill="#b45309"/>
+          <text x="44" y="200" text-anchor="middle" font-size="26">🔋</text>
+          <text x="44" y="248" text-anchor="middle" font-size="11" font-weight="bold" fill="#92400e">ENERGÍA</text>
+          <path d="M70 185 Q95 185 100 190" stroke="#b45309" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </g>
+        <!-- ACTUADORES: brazos y ruedas -->
+        <g id="svgP-actuadores" class="lab-svg-part" onclick="labShowParte('actuadores')" tabindex="0" role="button" aria-label="Explorar los actuadores">
+          <rect x="72" y="168" width="30" height="14" rx="7" fill="#99f6e4" stroke="#0e7490" stroke-width="3"/>
+          <circle cx="66" cy="175" r="12" fill="#a5f3fc" stroke="#0e7490" stroke-width="3"/>
+          <rect x="218" y="168" width="30" height="14" rx="7" fill="#99f6e4" stroke="#0e7490" stroke-width="3"/>
+          <circle cx="254" cy="175" r="12" fill="#a5f3fc" stroke="#0e7490" stroke-width="3"/>
+          <circle cx="128" cy="300" r="22" fill="#67e8f9" stroke="#0e7490" stroke-width="4"/>
+          <circle cx="128" cy="300" r="8" fill="#0e7490"/>
+          <circle cx="192" cy="300" r="22" fill="#67e8f9" stroke="#0e7490" stroke-width="4"/>
+          <circle cx="192" cy="300" r="8" fill="#0e7490"/>
+          <text x="262" y="292" text-anchor="middle" font-size="18">💪</text>
+          <text x="262" y="308" text-anchor="middle" font-size="11" font-weight="bold" fill="#155e75">ACTUADORES</text>
+        </g>
+        <!-- CUERPO / CONTROLADOR: pecho con chip -->
+        <g id="svgP-controlador" class="lab-svg-part" onclick="labShowParte('controlador')" tabindex="0" role="button" aria-label="Explorar el controlador">
+          <rect x="100" y="150" width="120" height="126" rx="18" fill="#cffafe" stroke="#0e7490" stroke-width="4"/>
+          <rect x="126" y="176" width="68" height="52" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+          <rect x="142" y="192" width="36" height="20" rx="3" fill="#c2410c"/>
+          <line x1="126" y1="186" x2="118" y2="186" stroke="#c2410c" stroke-width="3"/>
+          <line x1="126" y1="202" x2="118" y2="202" stroke="#c2410c" stroke-width="3"/>
+          <line x1="194" y1="186" x2="202" y2="186" stroke="#c2410c" stroke-width="3"/>
+          <line x1="194" y1="202" x2="202" y2="202" stroke="#c2410c" stroke-width="3"/>
+          <text x="160" y="252" text-anchor="middle" font-size="12" font-weight="bold" fill="#9a3412">CONTROLADOR 🧠</text>
+        </g>
+        <!-- CABEZA / SENSORES: antena + ojos -->
+        <g id="svgP-sensores" class="lab-svg-part" onclick="labShowParte('sensores')" tabindex="0" role="button" aria-label="Explorar los sensores">
+          <line x1="160" y1="34" x2="160" y2="56" stroke="#0e7490" stroke-width="4"/>
+          <circle cx="160" cy="26" r="9" fill="#fb923c" stroke="#c2410c" stroke-width="3"/>
+          <rect x="112" y="56" width="96" height="76" rx="16" fill="#a5f3fc" stroke="#0e7490" stroke-width="4"/>
+          <circle cx="140" cy="90" r="13" fill="#fff"/>
+          <circle cx="140" cy="90" r="6" fill="#155e75"/>
+          <circle cx="180" cy="90" r="13" fill="#fff"/>
+          <circle cx="180" cy="90" r="6" fill="#155e75"/>
+          <path d="M142 114 Q160 124 178 114" stroke="#155e75" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <rect x="100" y="80" width="8" height="22" rx="4" fill="#0e7490"/>
+          <rect x="212" y="80" width="8" height="22" rx="4" fill="#0e7490"/>
+          <text x="252" y="70" text-anchor="middle" font-size="18">📡</text>
+          <text x="252" y="92" text-anchor="middle" font-size="11" font-weight="bold" fill="#155e75">SENSORES</text>
+        </g>
+      </svg>
+      <div id="lab-display" class="lab-display-box">
+        <!-- Rellenado por JS -->
+      </div>
+    </div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">🤖 Parte:</span>
+        <button class="lab-btn lab-cont-btn" data-parte="sensores" onclick="labShowParte('sensores')">📡 Sensores</button>
+        <button class="lab-btn lab-cont-btn" data-parte="controlador" onclick="labShowParte('controlador')">🧠 Controlador</button>
+        <button class="lab-btn lab-cont-btn" data-parte="actuadores" onclick="labShowParte('actuadores')">💪 Actuadores</button>
+        <button class="lab-btn lab-cont-btn" data-parte="energia" onclick="labShowParte('energia')">🔋 Energía</button>
+      </div>
+      <div class="lab-group">
+        <span class="lab-group-label">📌 Aspecto:</span>
+        <button class="lab-btn lab-asp-btn" data-aspecto="estructura" onclick="labShowAspecto('estructura')">🔎 ¿Qué es?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="funcion" onclick="labShowAspecto('funcion')">🫀 Analogía con tu cuerpo</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="ubicacion" onclick="labShowAspecto('ubicacion')">🌍 Ejemplos</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="dato" onclick="labShowAspecto('dato')">⚠️ ¿Qué pasa si falla?</button>
+      </div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🧠 Memorama del Robot</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja (primera vez) · +2 XP al completar</p>
+    <p class="memo-stats" id="memoStats" aria-live="polite">🃏 Parejas: 0 de 6 · Intentos: 0</p>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Conceptos</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un término del banco y toca la columna donde pertenece.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔁 Percibe → Decide → Actúa: ordena el ciclo</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por secuencia)</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para poner los pasos del robot en el orden correcto:</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nuevo caso</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📡 ¿Qué sensor necesita?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez por pista)</p>
+    <p class="id-prog" id="neuronProg" aria-live="polite">Pista 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la situación y elige el sensor adecuado:</p>
+    <div class="neuron-desc" id="neuronDesc">Cargando...</div>
+    <div class="cmp-opts" id="neuronOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuron" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextNeuron()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetNeuron()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔗 Empareja: Parte → Función</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="neuroProg" aria-live="polite">1 de 5</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Cuál es la función de esta parte del robot?</p>
+    <div class="neuro-trans-display" id="neuroTrans">Sensor</div>
+    <div class="qz-opts" id="neuroOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuro" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetNeuro()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🤖 ¿Robot o no es robot?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="enferProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Pregúntate: ¿percibe?, ¿decide?, ¿actúa? Y responde:</p>
+    <div class="neuro-trans-display" id="enferDisease">La aspiradora robot</div>
+    <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEnfer" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEnfer()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada término lo más rápido que puedas.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">📡 Sensor</button>
+        <button class="btn btn-sec" onclick="">💪 Actuador</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar máquinas</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar y diseñar</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · ¿Qué es un Robot? · Educación Básica · Robótica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final — ¿Qué es un Robot?</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Evaluación Competencial · Pensamiento Crítico · ¿Qué es un Robot? · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
+    </div>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — ¿Qué es un Robot?</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="calcCritTotal()">🧮 Calcular Total</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🤖</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas (teoría, actividades desconectadas y evaluación) para imprimir o resolver antes del examen.</p>
+      <a href="../../fichas/ficha-que-es-un-robot.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
+    <a href="https://drive.google.com/drive/folders/1que_es_un_robot_recursos"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+    <div class="tip" style="margin-top:1.2rem;">
+      <span class="ti">💡</span>
+      <div>Los archivos se abren directamente en el navegador. Puedes descargarlos o verlos sin necesidad de una cuenta de Google.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión ¿Qué es un Robot?</div>
+    <div class="diploma-mascot" aria-hidden="true">🤖</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">🤖</span> Tipos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/que-es-un-robot.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+</body>
+</html>
