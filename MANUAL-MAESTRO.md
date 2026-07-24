@@ -60,7 +60,7 @@ dato del docente (Registro, mapeo DCNB), no como menú del alumno.
 | 🟡 Español | ✍️ Ruta de la Palabra | 9 (una de Bachillerato) |
 | 🟢 Ciencias Naturales | 🧠 Ruta del Cuerpo · 🌱 Ruta de la Vida · ⚡ Ruta de la Materia · 🌎 Ruta del Planeta (etapas 4-7) | 14 |
 | 🔴 Ciencias Sociales | 🌎 Ruta del Planeta (etapas 1-3 y 8) · 🏛️ Ruta del Tiempo | 5 |
-| 🩵 **Programación** *(nueva, 2026)* | 💻 Ruta del Código | 6 publicadas (+ la etapa 7) |
+| 🩵 **Programación** *(nueva, 2026)* | 💻 Ruta del Código | 7 (ruta completa) |
 | 🩵 **Robótica** *(nueva, 2026)* | 🤖 Ruta de los Robots | 6 (ruta completa) |
 
 Cada misión tiene además su **ficha didáctica imprimible de 7 páginas** con código QR;

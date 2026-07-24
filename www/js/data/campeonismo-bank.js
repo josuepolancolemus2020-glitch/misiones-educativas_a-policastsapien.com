@@ -260,6 +260,18 @@ const CAMP_BANK = {
     { q: 'El choque del robot contra la pared es, para el detective…', o: ['una pista de dónde está el bug', 'el final de la misión', 'un premio', 'un adorno del programa'], c: 0, mision: 'Detective de Bugs: la Depuración' },
     { q: 'La «lupa» del detective de bugs significa…', o: ['agrandar la pantalla', 'leer el programa despacio, línea por línea', 'borrar la primera línea', 'ejecutar el programa más rápido'], c: 1, mision: 'Detective de Bugs: la Depuración' },
     { q: 'Un compañero se frustra porque su programa falló tres veces. ¿Qué le dirías?', o: ['Que deje la programación', 'Que copie el de otro equipo', 'Que equivocarse y depurar es parte normal de programar', 'Que borre todo y no lo intente más'], c: 2, mision: 'Detective de Bugs: la Depuración' },
+
+    // Mi Primer Programa Completo
+    { q: 'Doña Marta quiere anotar cómo hace su tamal antes de enseñarlo. Eso, en programación, se parece a…', o: ['depurar', 'escribir el pseudocódigo', 'ejecutar el programa', 'poner una variable'], c: 1, mision: 'Mi Primer Programa Completo' },
+    { q: 'Un proyecto grande se arma mejor si primero se…', o: ['escribe todo de una sola vez', 'parte en trozos pequeños y se resuelve uno por uno', 'copia de un compañero', 'deja para el último día'], c: 1, mision: 'Mi Primer Programa Completo' },
+    { q: 'El robot recolector lleva CUENTA = 0 y recoge tres mazorcas. ¿Cuánto vale CUENTA al final?', o: ['0', '1', '3', 'No se puede saber'], c: 2, mision: 'Mi Primer Programa Completo' },
+    { q: 'En el proyecto del recolector, ¿qué pieza evita escribir AVANZA quince veces seguidas?', o: ['La variable', 'El bucle REPETIR', 'El condicional SI', 'La instrucción TERMINA'], c: 1, mision: 'Mi Primer Programa Completo' },
+    { q: 'El robot debe recoger solo si hay algo en la casilla. ¿Qué pieza necesita?', o: ['Un bucle', 'Un condicional SI-SINO', 'Una variable', 'Un evento'], c: 1, mision: 'Mi Primer Programa Completo' },
+    { q: 'Tu programa recoge los objetos pero nunca se detiene. Lo más probable es que falte…', o: ['la instrucción TERMINA', 'la variable CUENTA', 'el pseudocódigo', 'el título del proyecto'], c: 0, mision: 'Mi Primer Programa Completo' },
+    { q: 'Después de probar el proyecto y ver que falla en una casilla, lo correcto es…', o: ['borrar todo y empezar de cero', 'corregir esa parte y volver a probar', 'entregarlo así', 'cambiar de proyecto'], c: 1, mision: 'Mi Primer Programa Completo' },
+    { q: '¿Qué se necesita para que el robot cuente cuántos objetos lleva recogidos?', o: ['Un bucle solamente', 'Una variable que sume 1 cada vez', 'Un sensor de luz', 'Un condicional solamente'], c: 1, mision: 'Mi Primer Programa Completo' },
+    { q: 'Un programa completo suele empezar con un evento porque el evento…', o: ['adorna la pantalla', 'indica cuándo debe arrancar el programa', 'guarda los datos', 'corrige los errores'], c: 1, mision: 'Mi Primer Programa Completo' },
+    { q: 'Para presentar tu proyecto a la clase sin computadora puedes…', o: ['solo contarlo de memoria', 'dibujar la cuadrícula y el pseudocódigo en papel y explicarlo', 'esperar a tener internet', 'no presentarlo'], c: 1, mision: 'Mi Primer Programa Completo' },
   ],
 
   /* ── ROBÓTICA — 🤖 Ruta de los Robots ─────────────────────── */

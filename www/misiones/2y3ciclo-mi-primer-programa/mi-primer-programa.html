@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Mi Primer Programa Completo | policastsapien.com</title>
+<meta name="description" content="Misión Mi Primer Programa Completo: el proyecto integrador que cierra la Ruta del Código. Eventos («cuando empiece el programa»), pseudocódigo, descomponer el proyecto en partes, probar y mejorar, y un simulador de 6 niveles donde el robot junta secuencia, condicional, bucle y variable a la vez. Misión educativa interactiva de Programación. PolicastSapien.">
+<meta property="og:title" content="Misión Mi Primer Programa Completo">
+<meta property="og:description" content="Junta evento, bucle, condicional y variable en un solo proyecto y cierra la 💻 Ruta del Código. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-mi-primer-programa/mi-primer-programa.html">
+<link rel="canonical" href="https://metas.policastsapien.com/misiones/2y3ciclo-mi-primer-programa/mi-primer-programa.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/mi-primer-programa.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=programacion" class="xp-back-btn" title="Regresar a misiones de Programación">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🚀</div>
+    <div class="hero-text">
+      <h1>Misión <span>Mi Primer Programa Completo</span></h1>
+      <p class="sub">¡La misión FINAL de la Ruta del Código! Junta evento, secuencia, condicional, bucle y variable en un solo proyecto. 🤖🔁🔀🔢</p>
+      <div class="badge">💻 Ruta del Código · Etapa 7 de 7 · Proyecto integrador · Programación</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🚀 ¡Llegaste a la meta de la Ruta del Código!</h2>
+    <p>En las seis etapas anteriores aprendiste las <strong>piezas sueltas</strong>: pensar como computadora,
+    dar instrucciones en <strong>secuencia</strong>, hacer que el robot <strong>decida</strong> con condicionales,
+    <strong>repetir</strong> con bucles, <strong>guardar datos</strong> en variables y <strong>cazar bugs</strong>.
+    Hoy las juntamos todas en un <strong>programa completo</strong>: un proyecto que funciona de principio a fin.</p>
+    <div class="plan-grid">
+      <div class="plan-step ps-evt"><div class="ps-n">Pieza 1</div><div class="ps-t">⚡ Evento</div><div class="ps-d">«Cuando empiece el programa» o «cuando se presione el botón»: lo que <b>dispara</b> el proyecto.</div></div>
+      <div class="plan-step"><div class="ps-n">Pieza 2</div><div class="ps-t">👣 Secuencia</div><div class="ps-d">El <b>orden</b> exacto de las instrucciones (etapa 2).</div></div>
+      <div class="plan-step"><div class="ps-n">Pieza 3</div><div class="ps-t">🔀 Condicional</div><div class="ps-d">SI…ENTONCES…SINO: el programa <b>decide</b> (etapa 3).</div></div>
+      <div class="plan-step ps-loop"><div class="ps-n">Pieza 4</div><div class="ps-t">🔁 Bucle</div><div class="ps-d">REPETIR N VECES [ … ]: <b>repetir</b> sin cansarse (etapa 4).</div></div>
+      <div class="plan-step ps-var"><div class="ps-n">Pieza 5</div><div class="ps-t">🔢 Variable</div><div class="ps-d">La cajita CUENTA que <b>guarda</b> un dato que cambia (etapa 5).</div></div>
+      <div class="plan-step"><div class="ps-n">Pieza 6</div><div class="ps-t">🐛 Depuración</div><div class="ps-d">Probar, encontrar el bug y <b>corregir</b> (etapa 6).</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">🧩</span>
+      <div><strong>La gran idea:</strong> un programa completo no es una pieza más grande, es <b>varias piezas pequeñas trabajando juntas</b>. Igual que una casa: ladrillo, cemento, madera y techo… cada uno hace su parte.</div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: ¿qué hace que un programa <strong>arranque</strong>?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb1')">El bucle</button>
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb1')">El evento ⚡</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb1')">La variable</button>
+      </div>
+      <div class="mq-fb" id="mqFb1" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>⚡ El evento: nada empieza solo</h2>
+    <p>Todo programa necesita un <strong>disparador</strong>. En Scratch se ve como «al presionar 🏳️ la bandera verde»;
+    en un robot puede ser «cuando se presione el botón» o «cuando amanezca». Ese disparador se llama
+    <strong>evento</strong>: no mueve al robot, solo <strong>avisa que ya se puede empezar</strong>.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>⚡ Un evento AVISA</h4>
+        <p>«Cuando empiece el programa», «cuando se presione el botón», «cuando suene el timbre 🔔». Es la <strong>chispa</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>👣 Una instrucción ORDENA</h4>
+        <p>«AVANZA», «RECOGE», «GIRA DERECHA». Es una <strong>acción</strong> que el robot ejecuta.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">⚡ Así se escribe</span><br>
+      <span><span class="hl2">CUANDO EMPIECE EL PROGRAMA</span> → <span class="hl3">GUARDA 0 EN CUENTA</span> → <span class="hl">REPETIR 6 VECES [ … ]</span> → <span class="hl3">TERMINA</span>. El evento va siempre <strong>arriba de todo</strong>. 🚀</span>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: ¿cuál de estos es un EVENTO?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb2')">AVANZA</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb2')">RECOGE</button>
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb2')">Cuando se presione el botón</button>
+      </div>
+      <div class="mq-fb" id="mqFb2" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📝 Pseudocódigo: pensar antes de programar</h2>
+    <p>Un buen programador <strong>no empieza escribiendo código</strong>: primero escribe el plan en
+    <strong>español sencillo</strong>, paso a paso. A eso se le llama <strong>pseudocódigo</strong>, y se puede hacer
+    en el cuaderno, sin computadora. Del <em>problema</em> salen los <em>pasos</em>, y de los pasos sale el programa.</p>
+    <div class="pseudo-box">
+<span class="pb-cmt">// Proyecto: el recolector del patio 🍎</span>
+<span class="pb-evt">CUANDO EMPIECE EL PROGRAMA</span>
+<span class="pb-var">GUARDA 0 EN CUENTA</span>
+<span class="pb-loop">REPETIR 6 VECES [</span>
+   <span class="pb-cond">SI HAY OBJETO AQUÍ → RECOGE (SUMA 1 A CUENTA), SINO → AVANZA</span>
+<span class="pb-loop">]</span>
+<span class="pb-var">MUESTRA CUENTA</span>
+TERMINA
+    </div>
+    <div class="tip">
+      <span class="ti">✏️</span>
+      <div><strong>Del problema al algoritmo:</strong> 1) ¿Qué debe lograr el programa? 2) ¿Qué pasos hacen falta? 3) ¿Qué se repite? → bucle. 4) ¿Qué se decide? → condicional. 5) ¿Qué hay que recordar? → variable.</div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: ¿cuándo se escribe el pseudocódigo?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb3')">Antes de armar el programa</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb3')">Cuando ya funciona perfecto</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb3')">Nunca, es una pérdida de tiempo</button>
+      </div>
+      <div class="mq-fb" id="mqFb3" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EL PROYECTO (DETALLE) ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🧩 Descomponer: partes pequeñas, proyecto grande</h2>
+    <p>Un proyecto entero puede dar miedo. La solución es <strong>descomponerlo</strong>: partirlo en
+    <strong>partes pequeñas</strong> que sí sabes resolver, armarlas una por una y después unirlas.</p>
+    <table class="instr-tbl">
+      <tr><th>Parte del proyecto</th><th>¿Qué pieza usa?</th><th>Ejemplo en pseudocódigo</th></tr>
+      <tr><td class="k">Arrancar</td><td>⚡ Evento</td><td>CUANDO EMPIECE EL PROGRAMA</td></tr>
+      <tr><td class="k">Preparar el contador</td><td>🔢 Variable</td><td>GUARDA 0 EN CUENTA</td></tr>
+      <tr><td class="k">Recorrer el patio</td><td>🔁 Bucle</td><td>REPETIR 6 VECES [ … ]</td></tr>
+      <tr><td class="k">Decidir qué hacer</td><td>🔀 Condicional</td><td>SI HAY OBJETO AQUÍ → RECOGE, SINO → AVANZA</td></tr>
+      <tr><td class="k">Esquivar la pared</td><td>🔀 Condicional</td><td>SI HAY PARED ADELANTE → GIRA DERECHA, SINO → AVANZA</td></tr>
+      <tr><td class="k">Cerrar el proyecto</td><td>👣 Instrucción</td><td>TERMINA</td></tr>
+    </table>
+    <div class="tip">
+      <span class="ti">🪜</span>
+      <div><strong>Truco del programador:</strong> arma y prueba <b>una parte a la vez</b>. Primero que el robot camine; después que recoja; después que cuente. ¡Nunca todo de un solo golpe!</div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: ¿qué significa DESCOMPONER un proyecto?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb4')">Romperlo para que no funcione</button>
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb4')">Partirlo en partes pequeñas y armarlo por pasos</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb4')">Borrarlo y empezar de cero</button>
+      </div>
+      <div class="mq-fb" id="mqFb4" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>🔁 Probar y mejorar: nadie acierta a la primera</h2>
+    <p>Ningún programa sale perfecto de una sola vez. Los programadores <strong>ejecutan</strong>,
+    ven qué falla, <strong>corrigen UNA cosa</strong> y <strong>vuelven a probar</strong>. Cada vuelta deja una
+    <strong>versión</strong> mejor que la anterior.</p>
+    <div class="plan-grid">
+      <div class="plan-step"><div class="ps-n">Paso 1</div><div class="ps-t">▶ Ejecuto</div><div class="ps-d">Corro el programa y observo con cuidado.</div></div>
+      <div class="plan-step"><div class="ps-n">Paso 2</div><div class="ps-t">👀 Observo</div><div class="ps-d">¿Dónde se desvió? ¿En qué instrucción?</div></div>
+      <div class="plan-step"><div class="ps-n">Paso 3</div><div class="ps-t">🐛 Encuentro</div><div class="ps-d">Busco la línea culpable trazando con el dedo.</div></div>
+      <div class="plan-step"><div class="ps-n">Paso 4</div><div class="ps-t">🔧 Corrijo</div><div class="ps-d">Cambio SOLO esa línea, no todo el programa.</div></div>
+      <div class="plan-step"><div class="ps-n">Paso 5</div><div class="ps-t">🔁 Vuelvo a probar</div><div class="ps-d">Ejecuto de nuevo hasta verlo llegar.</div></div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>🚫 Error: borrar todo cuando falla</h4>
+        <p>Si el programa está casi bien, borrarlo es perder el trabajo. <strong>Corrige una cosa</strong> y vuelve a probar.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🚫 Error: no probar nunca</h4>
+        <p>Un programa que nunca se ejecuta no está terminado: está <strong>sin comprobar</strong>. ¡Pruébalo siempre!</p>
+      </div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: tu programa falla. ¿Qué haces primero?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb5')">Borro todo y empiezo de cero</button>
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb5')">Busco la línea culpable y corrijo esa</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb5')">Dejo el proyecto sin terminar</button>
+      </div>
+      <div class="mq-fb" id="mqFb5" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🇭🇳 Ser programador (aunque no tengas computadora)</h2>
+    <p>Un <strong>programador</strong> es quien <strong>piensa el plan</strong>, lo escribe, lo prueba y lo mejora.
+    Eso se puede practicar en el cuaderno, en el patio o en la cocina: donde haya un problema y unos pasos ordenados,
+    hay programación.</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">📓 En el cuaderno</div><div class="t-info">Escribe el pseudocódigo de una tarea de tu casa</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🧍 Con el cuerpo</div><div class="t-info">Un compañero «ejecuta» tus pasos en voz alta</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">🎤 Presentando</div><div class="t-info">Explica en 2 minutos qué hace tu proyecto</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🔁 Mejorando</div><div class="t-info">Haz la versión 2: más corta o más clara</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">🎤</span>
+      <div><strong>Tu reto final:</strong> presenta tu proyecto ante la clase en 2 minutos. Di <b>qué hace</b>, <b>qué piezas usaste</b> (evento, bucle, condicional, variable) y <b>qué bug tuviste que corregir</b>. ¡Así hablan los programadores de verdad! 🚀</div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🔬</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB: SIMULADOR DEL PROYECTO ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🔬 Simulador: arma tu Primer Programa Completo</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Seis niveles que van sumando piezas: secuencia → bucle 🔁 → condicional 🔀 → variable 🔢 → ¡todo junto en el nivel 6! Arma tu programa tocando los botones y presiona <strong>▶ Ejecutar</strong>. El contador <strong>CUENTA</strong> sube solo cada vez que el robot RECOGE una manzana 🍎. ⭐ +5 a +9 XP por nivel resuelto (primera vez).</p>
+    <div id="lab-sentence" class="lab-sentence">🚀 Cargando el patio…</div>
+    <div class="lab-stage">
+      <div id="lab-display" class="lab-display-box">
+        <!-- Rellenado por JS: cuadrícula SVG del patio con paredes, objetos y meta -->
+      </div>
+    </div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">🗺️ Nivel:</span>
+        <button class="lab-btn lab-cont-btn" data-parte="n1" onclick="labShowParte('n1')">1️⃣ Secuencia</button>
+        <button class="lab-btn lab-cont-btn" data-parte="n2" onclick="labShowParte('n2')">2️⃣ Bucle</button>
+        <button class="lab-btn lab-cont-btn" data-parte="n3" onclick="labShowParte('n3')">3️⃣ Condicional</button>
+        <button class="lab-btn lab-cont-btn" data-parte="n4" onclick="labShowParte('n4')">4️⃣ Variable</button>
+        <button class="lab-btn lab-cont-btn" data-parte="n5" onclick="labShowParte('n5')">5️⃣ Bucle+Variable</button>
+        <button class="lab-btn lab-cont-btn lab-asp-btn" data-parte="n6" onclick="labShowParte('n6')">6️⃣ ¡Proyecto completo!</button>
+      </div>
+      <div class="evt-header" style="align-self:center;">⚡ CUANDO EMPIECE EL PROGRAMA</div>
+      <div class="sim-cmd-btns">
+        <button class="sim-cmd" onclick="labAdd('AVANZA')">👣 AVANZA</button>
+        <button class="sim-cmd" onclick="labAdd('GIRA IZQUIERDA')">↩️ GIRA IZQ.</button>
+        <button class="sim-cmd" onclick="labAdd('GIRA DERECHA')">↪️ GIRA DER.</button>
+        <button class="sim-cmd sim-cmd-var" onclick="labAdd('RECOGE')">🍎 RECOGE (+1 CUENTA)</button>
+        <button class="sim-cmd sim-cmd-entrega" onclick="labAdd('TERMINA')">🏁 TERMINA</button>
+      </div>
+      <div class="sim-cmd-btns">
+        <button class="sim-cmd sim-cmd-cond" style="flex:1 1 45%;" onclick="labAdd('C_PARED')">🌳 SI PARED → GIRA DER., SINO → AVANZA</button>
+        <button class="sim-cmd sim-cmd-cond" style="flex:1 1 45%;" onclick="labAdd('C_OBJ')">🍎 SI OBJETO AQUÍ → RECOGE, SINO → AVANZA</button>
+      </div>
+      <div class="lab-group">
+        <span class="lab-group-label">🔁 Bucle:</span>
+        <select class="lab-rep-sel" id="labRepN" aria-label="Número de vueltas del bucle">
+          <option value="2">2 veces</option>
+          <option value="3">3 veces</option>
+          <option value="4" selected>4 veces</option>
+          <option value="5">5 veces</option>
+          <option value="6">6 veces</option>
+          <option value="7">7 veces</option>
+          <option value="8">8 veces</option>
+        </select>
+        <button class="sim-cmd sim-cmd-loop" onclick="labOpenLoop()">🔁 REPETIR [</button>
+        <button class="sim-cmd sim-cmd-loop" onclick="labCloseLoop()">] Cerrar bucle</button>
+      </div>
+      <div class="sim-prog" id="progList" aria-live="polite"></div>
+      <div class="sim-util-btns">
+        <button class="btn btn-g" onclick="labRun()">▶ Ejecutar</button>
+        <button class="btn btn-d" onclick="labDel()">⌫ Borrar última</button>
+        <button class="btn btn-d" onclick="labClear()">🗑️ Limpiar</button>
+        <button class="btn btn-amber" onclick="labPista()">💡 Pista</button>
+      </div>
+      <div id="fbLab" class="fb" role="alert"></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS + MEMORAMA ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>🧠 Juego: Memoria del Código</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada pieza del proyecto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
+    <div class="memo-stats" id="memoStats" aria-live="polite"></div>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Conceptos</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un término del banco y toca la columna donde pertenece.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>📋 Ordena el plan del proyecto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por secuencia)</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para poner los pasos en el orden correcto:</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nueva secuencia</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🤖 ¿Dónde termina el programa?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez por caso)</p>
+    <p class="id-prog" id="neuronProg" aria-live="polite">Recorrido 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Ejecuta el bucle 🔁 vuelta por vuelta (¡evalúa el condicional 🔀!) y elige la casilla donde termina el robot:</p>
+    <div class="neuron-desc" id="neuronDesc">Cargando...</div>
+    <div class="cmp-opts" id="neuronOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuron" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextNeuron()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetNeuron()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🧩 ¿Qué pieza necesita tu proyecto?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="enferProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la situación y elige la pieza correcta (evento ⚡, bucle 🔁, condicional 🔀 o variable 🔢):</p>
+    <div class="neuro-trans-display" id="enferDisease">Cargando...</div>
+    <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEnfer" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEnfer()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🐛 Detective del bug del proyecto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por bug atrapado (primera vez)</p>
+    <p class="id-prog" id="neuroProg" aria-live="polite">1 de 5</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">A cada programa le falta una pieza o la tiene mal puesta. ¿En qué línea está el bug?</p>
+    <div class="neuro-trans-display" id="neuroTrans">Cargando...</div>
+    <div class="qz-opts" id="neuroOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuro" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetNeuro()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada término lo más rápido que puedas.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">🔁 Bucle</button>
+        <button class="btn btn-sec" onclick="">🔀 Condicional</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔄 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="ejecutar">🤖 Ejecutar el programa</option>
+        <option value="traza">🔢 Trazar la variable CUENTA</option>
+        <option value="pseudo">📝 Escribir el pseudocódigo</option>
+        <option value="bug">🐛 Encontrar el error</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">🚀 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Examen de Programación — Evaluación Conceptual · Mi Primer Programa Completo · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Parcial:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final — Mi Primer Programa Completo</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Programación — Prueba Operativa · Mi Primer Programa Completo · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Parcial:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 20 pts · II: 20 pts · III: 10 pts · IV: 20 pts · V: 30 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">🚀 Prueba Operativa — Mi Primer Programa Completo</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Ejecuta programas con bucle y condicional, completa la instrucción que falta, traza la variable CUENTA, corrige bugs y escribe el pseudocódigo de un proyecto. Responde en pantalla y presiona <strong>Calificar prueba</strong> para autoevaluarte. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ruta del Código completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🚀</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas (teoría, actividades desconectadas y evaluación) para imprimir o resolver antes del examen.</p>
+      <a href="../../fichas/ficha-mi-primer-programa.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
+    <a href="https://drive.google.com/drive/folders/1mi_primer_programa_recursos"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+    <div class="tip" style="margin-top:1.2rem;">
+      <span class="ti">💡</span>
+      <div>Los archivos se abren directamente en el navegador. Puedes descargarlos o verlos sin necesidad de una cuenta de Google.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Mi Primer Programa Completo · Cierre de la 💻 Ruta del Código</div>
+    <div class="diploma-mascot" aria-hidden="true">🚀</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">📋</span> El Proyecto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Simulador</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/mi-primer-programa.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+</body>
+</html>
