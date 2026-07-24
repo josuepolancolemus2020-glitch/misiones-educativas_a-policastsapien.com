@@ -29,12 +29,13 @@ function fb(id,msg,isOk){
 const SAVE_KEY='continentes_aoa_v1';
 let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
 let evalFormNum=1;
+let evalCritFormNum=1,evalCritAnsVisible=false;
 let unlockedAch=[];
 let darkMode=false;
 let prevLevel=0;
 const TOTAL_SECTIONS=12;
 
-const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set()};
+const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set(),critWin:new Set()};
 
 // ===================== SONIDO =====================
 let sndOn=true,AC=null;
@@ -63,7 +64,7 @@ function initTheme(){const s=localStorage.getItem(SAVE_KEY+'_theme');const sys=w
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress(){
-  try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSections:Array.from(done),unlockedAch,evalFormNum,xp}));}catch(e){}
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSections:Array.from(done),unlockedAch,evalFormNum,evalCritFormNum,xp}));}catch(e){}
 }
 function loadProgress(){
   try{
@@ -72,6 +73,7 @@ function loadProgress(){
     if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});
     if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum)evalFormNum=s.evalFormNum;
+    if(s.evalCritFormNum)evalCritFormNum=s.evalCritFormNum;
     if(s.xp!==undefined){xp=s.xp;updateXPBar();}
   }catch(e){}
 }
@@ -1036,6 +1038,356 @@ ${s1}${s2}${s3}${s4}
 </div>
 <div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
+  const win=window.open('','_blank','');
+  if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
+  win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
+}
+
+// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+// Segunda evaluación imprimible de la misión (Ciencias Sociales · Geografía).
+// Todo el contenido nace de los bancos, tarjetas, stat-bars y ex-box de ESTA
+// misión (LAB_DATA, fcData, ex-box HN, banco V/F). Formas deterministas:
+// semilla _evalRng(200000 + cf). PRNG mulberry32 + Fisher-Yates (_shuffleF/_pickF).
+function evalSwitchMode(mode){
+  sfx('click');
+  const cWrap=document.getElementById('evalConceptWrap'),critWrap=document.getElementById('evalCritWrap');
+  const cBtn=document.getElementById('evalModeBtnConcept'),critBtn=document.getElementById('evalModeBtnCrit');
+  if(mode==='crit'){
+    cWrap.style.display='none';critWrap.style.display='block';
+    cBtn.classList.remove('active');cBtn.setAttribute('aria-selected','false');
+    critBtn.classList.add('active');critBtn.setAttribute('aria-selected','true');
+    if(!window._evalCritData)genEvalCrit();
+  }else{
+    critWrap.style.display='none';cWrap.style.display='block';
+    critBtn.classList.remove('active');critBtn.setAttribute('aria-selected','false');
+    cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
+  }
+}
+
+// ── I. Comparo los tres continentes (tabla comparativa con datos reales de la misión)
+const critCompBank=[
+  {attr:'Área (millones de km²)',contins:['América','Oceanía','Antártida'],vals:['42.5','8.5','14.2']},
+  {attr:'Punto más alto',contins:['América','Oceanía','Antártida'],vals:['Aconcagua 6,961 m','Kosciuszko 2,228 m','Vinson 4,892 m']},
+  {attr:'Población',contins:['América','Oceanía','Antártida'],vals:['~1,000 millones','~43 millones','Sin población permanente']},
+  {attr:'Dato distintivo',contins:['América','Oceanía','Antártida'],vals:['Río Amazonas, el más caudaloso','Gran Barrera de Coral','70% del agua dulce del planeta']},
+  {attr:'Vínculo con Honduras',contins:['América','Oceanía','Antártida'],vals:['CAFTA-DR y remesas','Modelo de ecoturismo de arrecifes','Deshielo y nivel del mar']},
+];
+// ── II. Interpreto los datos (dato → implicación correcta entre opciones)
+const critInterpBank=[
+  {dato:'La Antártida guarda el 70% del agua dulce del planeta en forma de hielo.',q:'¿Por qué su deshielo amenaza a Honduras?',opts:['Subiría el nivel del mar y amenazaría las costas del norte y las Islas de la Bahía','Honduras tendría más agua potable gratis','No afectaría a Honduras porque está muy lejos','Bajaría el nivel del mar y crecerían las playas'],correct:0,model:'Al derretirse ese hielo, sube el nivel del mar; Honduras, país costero tropical, vería inundadas zonas del norte y las Islas de la Bahía.'},
+  {dato:'Las remesas equivalen a ~25% del PIB de Honduras.',q:'¿Qué implica esto para la economía del país?',opts:['La economía hondureña depende mucho del dinero que envían los emigrantes','Honduras ya no necesita exportar nada','Las remesas casi no influyen en la economía','Significa que el 25% del país es propiedad de EE.UU.'],correct:0,model:'Una cuarta parte de la economía proviene del dinero enviado desde el exterior; es la principal fuente de divisas y sostiene a millones de familias.'},
+  {dato:'EE.UU. recibe más del 50% de las exportaciones hondureñas.',q:'¿Qué implica esta dependencia comercial?',opts:['Un cambio en el mercado de EE.UU. afecta fuertemente la economía de Honduras','Honduras exporta a todos los países por igual','EE.UU. produce la mitad de lo que consume Honduras','Honduras no comercia con Estados Unidos'],correct:0,model:'Al concentrar más de la mitad de las ventas en un solo país, cualquier crisis o cambio de política en EE.UU. golpea directamente la economía hondureña.'},
+  {dato:'Los aborígenes australianos llevan más de 60,000 años en Australia.',q:'¿Qué se puede concluir de este dato?',opts:['Son una de las culturas vivas continuas más antiguas conocidas del mundo','Llegaron a Australia hace muy poco tiempo','Son originarios de Nueva Zelanda','Su cultura ya desapareció por completo'],correct:0,model:'Con 60,000+ años de presencia continua, representan la cultura viva más antigua conocida y guardan el arte rupestre más antiguo del mundo.'},
+  {dato:'El Tratado Antártico (1959) prohíbe la minería y el uso militar.',q:'¿Qué implica para el futuro del continente?',opts:['La Antártida se conserva como zona de paz y ciencia, sin explotación comercial','Cualquier país puede extraer minerales si los necesita','Es territorio militar de una sola potencia','Se pueden construir grandes ciudades allí'],correct:0,model:'El tratado congela los reclamos de soberanía y reserva el continente para la investigación pacífica; nadie puede explotarlo comercialmente.'},
+  {dato:'La Gran Barrera de Coral genera unos 6,000 millones de USD al año por turismo.',q:'¿Qué enseña este dato a un país con arrecifes?',opts:['Proteger un arrecife puede convertirlo en una fuente económica sostenible','Los arrecifes solo sirven para pescar sin límite','El turismo destruye siempre los arrecifes','Un arrecife no tiene ningún valor económico'],correct:0,model:'Conservar el arrecife y ofrecer ecoturismo regulado produce ingresos duraderos sin destruirlo; un modelo útil para el Caribe hondureño.'},
+];
+// ── III. Analizo y justifico (afirmación → válida / no válida + justificación)
+const critAnalizBank=[
+  {af:'Como Honduras está lejos de la Antártida, el deshielo antártico no la afecta.',valida:false,model:'No válida: el deshielo eleva el nivel del mar en todo el planeta; Honduras, país costero, es de los más vulnerables aunque esté lejos.'},
+  {af:'El Tratado Antártico permite la minería si un país la necesita.',valida:false,model:'No válida: el Tratado Antártico prohíbe expresamente la minería y el uso militar; reserva el continente para la ciencia y la paz.'},
+  {af:'El Río Amazonas es el río más largo del mundo.',valida:false,model:'No válida: el Amazonas es el más caudaloso del mundo (mayor volumen de agua), no el más largo.'},
+  {af:'Los maoríes son un pueblo originario de Australia.',valida:false,model:'No válida: los maoríes son originarios de Nueva Zelanda (Oceanía); los pueblos originarios de Australia son los aborígenes.'},
+  {af:'Honduras se ubica en América del Sur.',valida:false,model:'No válida: Honduras está en América Central, no en América del Sur.'},
+  {af:'El CAFTA-DR facilita el comercio de café y textiles entre Honduras y EE.UU.',valida:true,model:'Válida: el CAFTA-DR elimina aranceles y facilita que Honduras exporte café, banano y textiles a Estados Unidos.'},
+  {af:'Oceanía es el continente más pequeño del mundo.',valida:true,model:'Válida: con 8.5 millones de km², Oceanía es el continente más pequeño.'},
+  {af:'La Antártida no tiene población permanente.',valida:true,model:'Válida: solo viven allí científicos de forma temporal; ningún país tiene residentes permanentes.'},
+];
+// ── IV. Casos hondureños (mini-caso de decisión: parte cerrada + justificación con rúbrica)
+const critCasoBank=[
+  {esc:'Un caficultor de Marcala quiere exportar su café a Estados Unidos sin pagar impuestos de aduana.',q:'¿Qué acuerdo le conviene aprovechar?',opts:['CAFTA-DR','MERCOSUR','Tratado Antártico','Acuerdo de París'],ans:'CAFTA-DR',model:'El CAFTA-DR elimina los aranceles entre Honduras y EE.UU., que recibe más del 50% de las exportaciones hondureñas; así su café entra sin impuestos y compite mejor.'},
+  {esc:'La alcaldesa de Islas de la Bahía quiere proteger sus arrecifes de coral y a la vez generar ingresos para la comunidad.',q:'¿De qué modelo de Oceanía puede aprender?',opts:['El ecoturismo de la Gran Barrera de Coral','La minería antártica','El haka maorí','El Tratado Antártico'],ans:'El ecoturismo de la Gran Barrera de Coral',model:'La Gran Barrera de Coral (Australia) genera miles de millones al año con ecoturismo marino regulado; conservar el arrecife y ofrecer visitas controladas protege el recurso y da empleo.'},
+  {esc:'Una familia de Olancho recibe cada mes dinero de un pariente que trabaja en EE.UU. y se pregunta por qué es tan importante para el país.',q:'¿Qué concepto explica ese dinero enviado desde el exterior?',opts:['Las remesas','Las importaciones','El Tratado Antártico','El haka'],ans:'Las remesas',model:'Ese dinero son las remesas, que equivalen a ~25% del PIB y son la principal fuente de divisas de Honduras; sostienen el consumo de muchas familias.'},
+  {esc:'Un pescador de la costa norte nota que el mar sube poco a poco cada año y teme perder su playa.',q:'¿Qué fenómeno global, ligado a la Antártida, está detrás?',opts:['El deshielo por el cambio climático','El Tratado Antártico','El CAFTA-DR','El haka maorí'],ans:'El deshielo por el cambio climático',model:'El deshielo antártico por el cambio climático eleva el nivel del mar; por eso Honduras apoya el Acuerdo de París, que busca frenar ese calentamiento.'},
+];
+// ── V. Detective geográfico (errores sembrados desde los distractores reales)
+const critDetBank=[
+  {bad:'los maoríes son un pueblo originario de Australia',key:'nueva zelanda',wrong:'Australia',fix:'Los maoríes son originarios de Nueva Zelanda.'},
+  {bad:'el Tratado Antártico se firmó en 1972',key:'1959',wrong:'1972',fix:'El Tratado Antártico se firmó en 1959.'},
+  {bad:'el río Amazonas es el más largo del mundo',key:'caudaloso',wrong:'el más largo',fix:'El Amazonas es el río más caudaloso del mundo, no el más largo.'},
+  {bad:'Honduras se encuentra en América del Sur',key:'central',wrong:'América del Sur',fix:'Honduras está en América Central.'},
+  {bad:'la Gran Barrera de Coral está frente a las costas de Nueva Zelanda',key:'australia',wrong:'Nueva Zelanda',fix:'La Gran Barrera de Coral está frente a Australia.'},
+  {bad:'la Antártida contiene el 30% del agua dulce del planeta',key:'70',wrong:'30%',fix:'La Antártida contiene el 70% del agua dulce del planeta.'},
+  {bad:'Oceanía es el continente más grande del mundo',key:'pequeno',wrong:'más grande',fix:'Oceanía es el continente más pequeño del mundo.'},
+];
+
+function genEvalCrit(){
+  sfx('click');
+  _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});
+  const _sC=document.getElementById('evalCritFormaSel');
+  if(_sC&&parseInt(_sC.value,10))evalCritFormNum=Math.min(EVAL_FORMAS,Math.max(1,parseInt(_sC.value,10)));
+  const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC=_evalRng(200000+cf);
+  evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;
+  _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});
+  saveProgress();
+  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · América, Oceanía y la Antártida`;
+  evalCritAnsVisible=false;
+  const out=document.getElementById('evalCritOut');out.innerHTML='';
+
+  const bar=document.createElement('div');bar.className='eval-score-bar';
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: comparar datos (I), interpretarlos (II), evaluarlos con juicio (III), decidir en casos reales (IV) y cazar errores (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Comparo 20</span><span class="eval-score-pill esp-tf">II. Interpreto 20</span><span class="eval-score-pill esp-mc">III. Analizo 20</span><span class="eval-score-pill esp-pr">IV. Casos HN 20</span><span class="eval-score-pill esp-cp">V. Detective 20</span></div>`;
+  out.appendChild(bar);
+
+  // ── I. Comparo los tres continentes (tabla; una celda por fila queda en blanco)
+  const compRows=critCompBank.map(row=>{
+    const blank=Math.floor(rngC()*3);
+    const opts=_shuffleF(row.vals,rngC);
+    return {attr:row.attr,contins:row.contins,vals:row.vals,blank,opts,answer:row.vals[blank]};
+  });
+  let compHtml='<div class="crit-table-wrap"><table class="crit-table"><thead><tr><th>Aspecto</th><th>🌎 América</th><th>🌏 Oceanía</th><th>❄️ Antártida</th></tr></thead><tbody>';
+  compRows.forEach((r,i)=>{
+    compHtml+=`<tr><td class="crit-td-attr">${r.attr}</td>`;
+    for(let c=0;c<3;c++){
+      if(c===r.blank){compHtml+=`<td><select class="crit-comp-select" data-comp="${i}" aria-label="Completa ${r.attr} de ${r.contins[c]}"><option value="">— elige —</option>${r.opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></td>`;}
+      else{compHtml+=`<td>${r.vals[c]}</td>`;}
+    }
+    compHtml+='</tr>';
+  });
+  compHtml+='</tbody></table></div>';
+  const s1=document.createElement('div');
+  s1.innerHTML=`<div class="eval-section-title">I. Comparo los tres continentes <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Completa la celda en blanco de cada fila con el dato correcto de la misión.</p>${compHtml}<div class="crit-pauta">${compRows.map((r,i)=>(i+1)+'. '+r.contins[r.blank]+' → '+r.answer).join(' · ')}</div><div class="eval-item-feedback" id="critFbComp" aria-live="polite"></div></div>`;
+  out.appendChild(s1);
+
+  // ── II. Interpreto los datos (radios: implicación correcta)
+  const inItems=critInterpBank_pick(rngC);
+  let inHtml='';
+  inItems.forEach((it,i)=>{
+    inHtml+=`<div class="crit-q-block"><div class="crit-scenario"><strong>📊 Dato:</strong> ${it.dato}</div><div class="crit-q-label">${it.q}</div><div class="crit-mc-opts">${it.opts.map((o,oi)=>`<label class="crit-mc-opt"><input type="radio" name="interp${i}" value="${oi}"> ${o}</label>`).join('')}</div><div class="crit-pauta">${it.opts[it.correct]} — ${it.model}</div><div class="eval-item-feedback" id="critFbIn${i}" aria-live="polite"></div></div>`;
+  });
+  const s2=document.createElement('div');
+  s2.innerHTML=`<div class="eval-section-title">II. Interpreto los datos <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Marca la implicación correcta de cada dato y, en tu cuaderno, justifica una de tus respuestas.</p>${inHtml}</div>`;
+  out.appendChild(s2);
+
+  // ── III. Analizo y justifico (radios Válida / No válida)
+  const anItems=_pickF(critAnalizBank,5,rngC);
+  let anHtml='';
+  anItems.forEach((it,i)=>{
+    anHtml+=`<div class="crit-q-block"><div class="crit-scenario">📝 ${it.af}</div><div class="crit-tf-opts"><label class="crit-tf-opt"><input type="radio" name="analiz${i}" value="v"> Válida</label><label class="crit-tf-opt"><input type="radio" name="analiz${i}" value="nv"> No válida</label></div><textarea class="crit-textarea" rows="2" aria-label="Justifica la afirmación ${i+1}" placeholder="Justifica tu respuesta..."></textarea><div class="crit-pauta">${it.valida?'Válida':'No válida'}. ${it.model}</div><div class="eval-item-feedback" id="critFbAn${i}" aria-live="polite"></div></div>`;
+  });
+  const s3=document.createElement('div');
+  s3.innerHTML=`<div class="eval-section-title">III. Analizo y justifico <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Decide si cada afirmación es <strong>válida</strong> o <strong>no válida</strong> y justifícala en una línea.</p>${anHtml}</div>`;
+  out.appendChild(s3);
+
+  // ── IV. Casos hondureños (2 mini-casos: select cerrado + justificación)
+  const caItems=_pickF(critCasoBank,2,rngC).map(it=>({...it,opts:_shuffleF(it.opts,rngC)}));
+  let caHtml='';
+  caItems.forEach((it,i)=>{
+    caHtml+=`<div class="crit-fossil-item"><div class="crit-scenario"><strong>🇭🇳 Caso ${i+1}:</strong> ${it.esc}</div><div class="crit-q-label">${it.q}</div><select class="crit-caso-select" data-caso="${i}" aria-label="Respuesta del caso ${i+1}"><option value="">— elige —</option>${it.opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select><textarea class="crit-textarea" rows="2" aria-label="Justifica el caso ${i+1}" placeholder="Explica por qué (¿qué le conviene y por qué?)..."></textarea><div class="crit-pauta">${it.ans} — ${it.model}</div></div>`;
+  });
+  const s4=document.createElement('div');
+  s4.innerHTML=`<div class="eval-section-title">IV. Casos hondureños <span class="eval-pts">20 pts · 10 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Lee cada caso, elige la opción correcta (5 pts) y justifica tu decisión (5 pts).</p>${caHtml}<div class="crit-rubric"><strong>📋 Rúbrica de la justificación (5 pts c/u):</strong> menciona el vínculo real de la misión (CAFTA-DR, ecoturismo, remesas, deshielo) · explica el beneficio o riesgo · redacción clara. <em>Completa = pts altos; incompleta = pts medios.</em></div><div class="crit-selfscore"><label for="critScoreCasos">Obtenido en las justificaciones (autoevaluación):</label><input type="number" id="critScoreCasos" class="crit-score-input" min="0" max="10" value="0"> <span>de 10 pts</span></div></div>`;
+  out.appendChild(s4);
+
+  // ── V. Detective geográfico (párrafo con 5 errores → corregir por palabra clave)
+  const deItems=_pickF(critDetBank,5,rngC);
+  const parrafo=deItems.map((it,i)=>`<span class="crit-det-err">(${i+1}) ${it.bad}</span>`).join('; ')+'.';
+  let deHtml=`<div class="crit-scenario"><strong>🧭 El explorador despistado escribió:</strong> «Queridos amigos: en mi viaje descubrí que ${parrafo}» <em>Contiene 5 errores.</em></div>`;
+  deItems.forEach((it,i)=>{
+    deHtml+=`<div class="crit-det-row"><span class="crit-det-n">${i+1}.</span> Corrige: <input class="crit-det-input" type="text" data-det="${i}" autocomplete="off" aria-label="Corrección del error ${i+1}" placeholder="escribe la palabra correcta"><div class="crit-pauta">${it.fix}</div><div class="eval-item-feedback" id="critFbDe${i}" aria-live="polite"></div></div>`;
+  });
+  const s5=document.createElement('div');
+  s5.innerHTML=`<div class="eval-section-title">V. Detective geográfico <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Cada frase numerada esconde un error. Escribe la palabra o dato correcto de cada una.</p>${deHtml}</div>`;
+  out.appendChild(s5);
+
+  window._evalCritData={comp:compRows,interp:inItems,analiz:anItems,casos:caItems,det:deItems};
+  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='eval-auto-result';
+  totalPanel.innerHTML='<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve en pantalla, autoevalúa las justificaciones del caso con la rúbrica y presiona <em>Calificar prueba</em>. La impresión conserva el formato limpio para papel.';
+  out.appendChild(totalPanel);
+  fin('s-evaluacion');
+}
+function critInterpBank_pick(rngC){
+  return _pickF(critInterpBank,5,rngC).map(it=>{
+    const order=_shuffleF(it.opts.map((o,oi)=>({o,oi})),rngC);
+    const opts=order.map(x=>x.o);
+    const correct=order.findIndex(x=>x.oi===it.correct);
+    return {dato:it.dato,q:it.q,opts,correct,model:it.model};
+  });
+}
+function toggleEvalCritAns(){
+  evalCritAnsVisible=!evalCritAnsVisible;
+  document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');
+  sfx('click');
+}
+function _setCritFb(id,ok,msg){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.textContent=msg;
+  el.className='eval-item-feedback '+(ok?'eval-ok':'eval-no');
+}
+function gradeEvalCrit(){
+  if(!window._evalCritData){showToast('⚠️ Genera una prueba primero');return;}
+  sfx('click');
+  const d=window._evalCritData;
+  const detail={comp:0,interp:0,analiz:0,casos:0,det:0};
+
+  // I. Comparo (4 pts c/u)
+  d.comp.forEach((r,i)=>{
+    const sel=document.querySelector(`[data-comp="${i}"]`);
+    const ok=!!sel&&normalizeEvalAnswer(sel.value)===normalizeEvalAnswer(r.answer);
+    if(sel){sel.classList.toggle('eval-input-ok',ok);sel.classList.toggle('eval-input-no',!ok);}
+    if(ok)detail.comp+=4;
+  });
+  const compHits=detail.comp/4;
+  _setCritFb('critFbComp',compHits===5,compHits===5?'Correcto. +20 pts':`${compHits}/5 correctas. R/ ${d.comp.map((r,i)=>(i+1)+'. '+r.contins[r.blank]+'→'+r.answer).join(' · ')}`);
+
+  // II. Interpreto (radios, 4 pts c/u)
+  d.interp.forEach((it,i)=>{
+    const selected=document.querySelector(`input[name="interp${i}"]:checked`);
+    const ok=!!selected&&Number(selected.value)===it.correct;
+    if(ok)detail.interp+=4;
+    _setCritFb('critFbIn'+i,ok,ok?'Correcto. +4 pts':'Revisar. R/ '+it.opts[it.correct]);
+  });
+
+  // III. Analizo (radios V/NV, 4 pts c/u)
+  d.analiz.forEach((it,i)=>{
+    const selected=document.querySelector(`input[name="analiz${i}"]:checked`);
+    const ok=!!selected&&(selected.value==='v')===it.valida;
+    if(ok)detail.analiz+=4;
+    _setCritFb('critFbAn'+i,ok,ok?'Correcto. +4 pts':'Revisar. R/ '+(it.valida?'Válida':'No válida'));
+  });
+
+  // IV. Casos hondureños (select cerrado 5 pts c/u + autoevaluación 0-10)
+  d.casos.forEach((it,i)=>{
+    const sel=document.querySelector(`[data-caso="${i}"]`);
+    const ok=!!sel&&normalizeEvalAnswer(sel.value)===normalizeEvalAnswer(it.ans);
+    if(sel){sel.classList.toggle('eval-input-ok',ok);sel.classList.toggle('eval-input-no',!ok);}
+    if(ok)detail.casos+=5;
+  });
+  const inpCasos=document.getElementById('critScoreCasos');
+  let casosSelf=parseInt(inpCasos?inpCasos.value:0)||0;
+  casosSelf=Math.max(0,Math.min(10,casosSelf));
+  if(inpCasos)inpCasos.value=casosSelf;
+  detail.casos+=casosSelf;
+
+  // V. Detective (inputs por palabra clave, 4 pts c/u)
+  d.det.forEach((it,i)=>{
+    const inp=document.querySelector(`[data-det="${i}"]`);
+    const student=normalizeEvalAnswer(inp?inp.value:'');
+    const key=normalizeEvalAnswer(it.key);
+    const ok=!!student&&student.includes(key);
+    if(inp){inp.classList.toggle('eval-input-ok',ok);inp.classList.toggle('eval-input-no',!ok);}
+    if(ok)detail.det+=4;
+    _setCritFb('critFbDe'+i,ok,ok?'Correcto. +4 pts':'Revisar. R/ '+it.fix);
+  });
+
+  const total=detail.comp+detail.interp+detail.analiz+detail.casos+detail.det;
+  const panel=document.getElementById('evalCritTotalResult');
+  if(panel){
+    panel.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');
+    panel.innerHTML=`<strong>Resultado: ${total}/100 pts</strong><br><span>I. Comparo: ${detail.comp}/20 · II. Interpreto: ${detail.interp}/20 · III. Analizo: ${detail.analiz}/20 · IV. Casos HN: ${detail.casos}/20 · V. Detective: ${detail.det}/20</span><br><em>Las secciones cerradas se califican solas; las justificaciones del caso IV las autoevalúas con la rúbrica. Compara siempre con la Pauta.</em>`;
+  }
+  const formKey='crit_'+(window._currentEvalCritForm||1);
+  if(total>=70){if(!xpTracker.critWin.has(formKey)){xpTracker.critWin.add(formKey);pts(8);}showToast('🎯 Pensamiento crítico: '+total+'/100');}
+  else showToast('🧮 Prueba calificada: '+total+'/100. Revisa lo marcado.');
+}
+function printEvalCrit(){
+  if(!window._evalCritData){showToast('⚠️ Genera una prueba primero');return;}
+  sfx('click');
+  const forma=window._currentEvalCritForm||1;
+  const d=window._evalCritData;
+  const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
+
+  // I. Comparo (tabla con celda en blanco)
+  let s1=`<div class="sec-title"><span>I. Comparo los tres continentes</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Completa la celda en blanco de cada fila con el dato correcto.</p><table class="cmp-tbl"><thead><tr><th>Aspecto</th><th>América</th><th>Oceanía</th><th>Antártida</th></tr></thead><tbody>`;
+  d.comp.forEach(r=>{s1+=`<tr><td class="cmp-attr">${r.attr}</td>`;for(let c=0;c<3;c++){s1+=c===r.blank?'<td class="cmp-blank"></td>':`<td>${r.vals[c]}</td>`;}s1+='</tr>';});
+  s1+='</tbody></table>';
+
+  // II. Interpreto
+  let s2=`<div class="sec-title"><span>II. Interpreto los datos</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Marca la implicación correcta de cada dato.</p>`;
+  d.interp.forEach((it,i)=>{const opts=it.opts.map((o,oi)=>`<label class="mc-opt"><input type="radio" name="ip${i}"> ${o}</label>`).join('');s2+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+1}.</span><span><strong>Dato:</strong> ${it.dato} <em>${it.q}</em></span></div><div class="mc-opts-col">${opts}</div></div>`;});
+
+  // III. Analizo
+  let s3=`<div class="sec-title"><span>III. Analizo y justifico</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Escribe V (válida) o NV (no válida) y justifica en la línea.</p>`;
+  d.analiz.forEach((it,i)=>{s3+=`<div class="tf-row"><span class="qn">${i+1}.</span><span class="tf-blank"></span><span class="tf-text">${it.af}</span></div>${lines(1)}`;});
+
+  // IV. Casos hondureños
+  let s4=`<div class="sec-title"><span>IV. Casos hondureños</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div>`;
+  d.casos.forEach((it,i)=>{const opts=it.opts.map(o=>`<label class="mc-opt"><input type="radio" name="cs${i}"> ${o}</label>`).join('');s4+=`<p class="crit-print-scenario"><strong>Caso ${i+1}:</strong> ${it.esc}</p><p class="crit-print-q">${it.q}</p><div class="mc-opts-col">${opts}</div><p class="crit-print-q">Justifica tu decisión:</p>${lines(2)}`;});
+
+  // V. Detective geográfico
+  const parrafo=d.det.map((it,i)=>`(${i+1}) ${it.bad}`).join('; ')+'.';
+  let s5=`<div class="sec-title"><span>V. Detective geográfico</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-scenario"><strong>El explorador despistado escribió:</strong> «Queridos amigos: en mi viaje descubrí que ${parrafo}» Subraya y corrige los 5 errores.</p>`;
+  d.det.forEach((it,i)=>{s5+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text">Corrección: <span class="cp-blank"></span></span></div>`;});
+
+  // ── Pauta
+  let pR='';
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Comparo</div>${d.comp.map((r,i)=>`<div class="p-crit-line"><strong>${i+1}. ${r.contins[r.blank]}:</strong> ${r.answer}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Interpreto</div>${d.interp.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${it.opts[it.correct]}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III. Analizo</div>${d.analiz.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}. ${it.valida?'Válida':'No válida'}:</strong> ${it.model}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">IV. Casos hondureños</div>${d.casos.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}. ${it.ans}:</strong> ${it.model}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Detective geográfico (correcciones)</div>${d.det.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${it.fix}</div>`).join('')}</div>`;
+
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico · América, Oceanía y la Antártida · Forma ${forma}</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 6mm;width:201.9mm;margin:0 auto;}
+.ph{margin-bottom:0.35rem;}
+.ph h2{font-size:11.5pt;font-weight:700;text-align:center;margin-bottom:0.25rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.15rem 0.45rem;margin:0.28rem 0 0.12rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c0392b;background:#fbe9e7;color:#c0392b;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c0392b;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #c0392b;height:12px;}
+.obt-pct{white-space:nowrap;}
+.crit-print-scenario{font-size:10pt;background:#fbe9e7;border-left:3px solid #c0392b;padding:0.18rem 0.5rem;margin:0.12rem 0 0.15rem;line-height:1.3;}
+.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}
+.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:3px;}
+.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-text{flex:1;}
+.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.qn{font-weight:700;min-width:22px;flex-shrink:0;}
+.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}
+.tf-text{flex:1;}
+.cmp-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}
+.cmp-tbl th,.cmp-tbl td{border:1px solid #999;padding:0.22rem 0.35rem;text-align:left;vertical-align:middle;}
+.cmp-tbl th{background:#fbe9e7;color:#c0392b;font-size:9pt;}
+.cmp-attr{font-weight:700;}
+.cmp-blank{background:#fff;min-width:90px;}
+.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.22rem 0.42rem;margin-bottom:0.17rem;break-inside:avoid;page-break-inside:avoid;}
+.mc-q{font-size:10pt;line-height:1.35;display:flex;gap:0.28rem;margin-bottom:0.15rem;}
+.mc-opts-col{display:grid;grid-template-columns:1fr;gap:0.05rem;margin-left:1.2rem;}
+.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.25rem;}
+.mc-opt input{width:11px;height:11px;flex-shrink:0;}
+.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#c0392b;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c0392b;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:13pt;font-weight:700;color:#c0392b;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}
+.p-ttl{font-size:11pt;font-weight:700;color:#c0392b;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-crit-line{font-size:10.5pt;color:#007a00;margin-bottom:0.16rem;line-height:1.35;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
+</style></head><body><div id="evalPage">
+<div class="ph">
+  <h2>Evaluación Competencial · Pensamiento Crítico · Los Continentes: América, Oceanía y la Antártida · Educación Básica · Ciencias Sociales</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · I. Comparo 20 · II. Interpreto 20 · III. Analizo 20 · IV. Casos HN 20 · V. Detective 20 · Forma ${forma}</p>
+</div>
+${s1}${s2}${s3}${s4}${s5}
+<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
+</div><div class="pauta-wrap" id="pautaPage">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Pensamiento Crítico · América, Oceanía y la Antártida · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — secciones abiertas: usar como guía de corrección</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);

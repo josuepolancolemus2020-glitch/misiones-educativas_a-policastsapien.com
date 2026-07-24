@@ -33,6 +33,7 @@ function fb(id, msg, isOk) {
 const SAVE_KEY = 'geografia_continentes_eas_v1';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1;
+let evalCritFormNum = 1, evalCritAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
@@ -40,7 +41,7 @@ const TOTAL_SECTIONS = 12;
 
 const xpTracker = {
   fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(),
-  cmp: new Set(), reto: new Set(), sopa: new Set(),
+  cmp: new Set(), reto: new Set(), sopa: new Set(), critWin: new Set(),
 };
 
 // ===================== SONIDO =====================
@@ -70,7 +71,7 @@ function initTheme(){ const s=localStorage.getItem(SAVE_KEY+'_theme'); const sys
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress(){
-  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, xp})); }catch(e){}
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, evalCritFormNum, xp})); }catch(e){}
 }
 function loadProgress(){
   try{
@@ -83,6 +84,7 @@ function loadProgress(){
     });
     if(s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum) evalFormNum = s.evalFormNum;
+    if(s.evalCritFormNum) evalCritFormNum = s.evalCritFormNum;
     if(s.xp !== undefined) { xp = s.xp; updateXPBar(); }
   }catch(e){}
 }
@@ -1210,6 +1212,424 @@ ${s1}${s2}${s3}${s4}
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
   const win = window.open('','_blank','');
+  if(!win){ showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+  win.document.write(doc);
+  win.document.close();
+  setTimeout(()=>win.print(), 400);
+}
+
+// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+// Segunda evaluación imprimible de la misión (Ciencias Sociales · Geografía).
+// Todo el contenido nace de los bancos, tarjetas, stat-bars y ex-box de ESTA
+// misión (continentes, datos de área/países/población, comercio HN–mundo).
+// Formas deterministas: semilla _evalRng(200000 + cf). Acento impreso #c0392b
+// (el mismo de la evaluación conceptual). Barajado SOLO con _shuffleF/_pickF.
+function evalSwitchMode(mode){
+  sfx('click');
+  const cWrap=document.getElementById('evalConceptWrap'), critWrap=document.getElementById('evalCritWrap');
+  const cBtn=document.getElementById('evalModeBtnConcept'), critBtn=document.getElementById('evalModeBtnCrit');
+  if(mode==='crit'){
+    cWrap.style.display='none'; critWrap.style.display='block';
+    cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected','false');
+    critBtn.classList.add('active'); critBtn.setAttribute('aria-selected','true');
+    if(!window._evalCritData) genEvalCrit();
+  } else {
+    critWrap.style.display='none'; cWrap.style.display='block';
+    critBtn.classList.remove('active'); critBtn.setAttribute('aria-selected','false');
+    cBtn.classList.add('active'); cBtn.setAttribute('aria-selected','true');
+  }
+}
+
+// ── I. Compara los continentes (datos reales de los stat-bars de la misión)
+const critContinentBank = [
+  { key:'Europa', icon:'🌍', cells:{
+    area:{print:'10.5 millones km²', digits:'105'},
+    paises:{print:'44 países', num:'44'},
+    relieve:{print:'Alpes / río Danubio', alts:['alpes','danubio','rin','volga','pirineos','urales']},
+    poblacion:{print:'~748 millones', digits:'748'},
+    org:{print:'Unión Europea (UE)', alts:['union europea','ue']}
+  }},
+  { key:'Asia', icon:'🌏', cells:{
+    area:{print:'44.6 millones km²', digits:'446'},
+    paises:{print:'48 países', num:'48'},
+    relieve:{print:'Himalaya – Everest (8,849 m)', alts:['himalaya','everest','ganges','yangtze','gobi']},
+    poblacion:{print:'~4,700 millones (60% humanidad)', digits:'4700'},
+    org:{print:'Tigres asiáticos / ASEAN', alts:['tigres','asean']}
+  }},
+  { key:'África', icon:'🌍', cells:{
+    area:{print:'30.4 millones km²', digits:'304'},
+    paises:{print:'54 países', num:'54'},
+    relieve:{print:'Río Nilo (6,650 km) / Sahara', alts:['nilo','sahara','kilimanjaro','congo']},
+    poblacion:{print:'~1,400 millones', digits:'1400'},
+    org:{print:'Unión Africana (UA)', alts:['union africana','ua']}
+  }}
+];
+const critCriteria = [
+  { key:'area', label:'Área aproximada (millones de km²)' },
+  { key:'paises', label:'Número de países' },
+  { key:'relieve', label:'Relieve o río emblemático' },
+  { key:'poblacion', label:'Población aproximada' },
+  { key:'org', label:'Organización o bloque destacado' }
+];
+// ── II. Interpreta los datos (razonar con cifras de la misión)
+const critInterpBank = [
+  { q:'Ordenados de MAYOR a MENOR extensión, ¿cuál es el continente más grande de los tres?', o:['Europa','África','Asia'], a:2, why:'Asia (44.6M km²) > África (30.4M) > Europa (10.5M).' },
+  { q:'Con cerca del 60% de la humanidad, ¿qué continente concentra la mayor parte de la población mundial?', o:['Europa','Asia','África'], a:1, why:'Asia reúne el 60% de la humanidad (~4,700 millones).' },
+  { q:'Si la edad media de África es de 19 años, ¿qué se deduce de su población?', o:['Es la población más envejecida','Es la población más joven del mundo','Es la población más pequeña'], a:1, why:'Una edad media de 19 años indica que África es el continente más joven.' },
+  { q:'¿Cuál de los tres continentes tiene MÁS países?', o:['Europa (44)','Asia (48)','África (54)'], a:2, why:'África tiene 54 países, la mayor cantidad de los tres.' },
+  { q:'Europa recibe cerca del 50% del turismo mundial. ¿Qué actividad económica es clave para Europa?', o:['La minería','El turismo','La pesca'], a:1, why:'El turismo es una actividad económica clave de Europa.' },
+  { q:'Asia es más de 4 veces mayor que Europa. ¿Qué dato lo confirma?', o:['44.6M km² frente a 10.5M km²','48 frente a 44 países','Everest frente a Alpes'], a:0, why:'44.6M km² es más de 4 veces los 10.5M km² de Europa.' },
+  { q:'Estos 3 continentes reúnen el 80% de la población mundial. ¿Por qué son clave para Honduras?', o:['Concentran sus principales socios comerciales y de cooperación','No tienen relación con Honduras','Solo le venden petróleo'], a:0, why:'En ellos están los principales socios comerciales y de cooperación de Honduras.' }
+];
+// ── III. Causa y consecuencia (relaciones reales de la misión)
+const critCCBank = [
+  { c:'El monzón asiático trae lluvias estacionales', e:'Hace posible la agricultura del arroz en India, China y Bangladés' },
+  { c:'El colonialismo europeo (ss. XV–XX) sobre África', e:'Dejó fronteras artificiales e idiomas francés, inglés y portugués' },
+  { c:'El Mar Mediterráneo comunicó a los pueblos antiguos', e:'Permitió el intercambio entre Grecia, Roma, Egipto y Fenicia' },
+  { c:'La apertura del Canal de Suez', e:'Conectó el Mediterráneo con Asia y acortó las rutas de comercio' },
+  { c:'La Unión Europea creó un mercado único con el euro', e:'Facilitó el comercio y la libre circulación entre 27 países' },
+  { c:'Honduras firmó el acuerdo AACUE con la Unión Europea', e:'Le facilita exportar café, banano y textiles al mercado europeo' },
+  { c:'KOICA, agencia de Corea del Sur, coopera con Honduras', e:'Ofrece becas y formación técnica a jóvenes hondureños' },
+  { c:'El río Nilo atraviesa el noreste de África', e:'Fue el fundamento de la civilización egipcia' }
+];
+// ── IV. Honduras y el mundo (comercio HN real: exporta vs importa)
+const critTradeBank = [
+  { p:'Celulares y tecnología de China', t:'importa' },
+  { p:'Mariscos hacia Japón y Corea del Sur', t:'exporta' },
+  { p:'Banano hacia la Unión Europea', t:'exporta' },
+  { p:'Maquinaria fabricada en China', t:'importa' },
+  { p:'Café hacia Europa', t:'exporta' },
+  { p:'Ropa fabricada en China', t:'importa' },
+  { p:'Palma africana hacia la UE', t:'exporta' },
+  { p:'Autos japoneses', t:'importa' }
+];
+// ── V. Detective geográfico (errores factuales calcados de los bancos)
+const critErrBank = [
+  { bad:'El Nilo, el río más largo del mundo, está en Asia.', key:'africa', fix:'El Nilo, el río más largo del mundo, está en África.' },
+  { bad:'La Unión Europea agrupa 44 países.', key:'27', fix:'La Unión Europea agrupa 27 países (Europa tiene 44 países en total).' },
+  { bad:'El Himalaya y el Monte Everest están en África.', key:'asia', fix:'El Himalaya y el Monte Everest están en Asia.' },
+  { bad:'El desierto del Sahara, el más grande, está en Europa.', key:'africa', fix:'El desierto del Sahara está en el norte de África.' },
+  { bad:'El monzón es un fenómeno climático típico de Europa.', key:'asia', fix:'El monzón es un fenómeno climático típico de Asia.' },
+  { bad:'África tiene 27 países y una sola lengua.', key:'54', fix:'África tiene 54 países y más de 2,000 idiomas.' },
+  { bad:'KOICA es una agencia de cooperación de Japón.', key:'corea', fix:'KOICA es la agencia de cooperación de Corea del Sur.' },
+  { bad:'El Mar Mediterráneo separa Asia de América.', key:'africa', fix:'El Mar Mediterráneo separa Europa de África.' }
+];
+
+function _critAcuSelect(){ return `<select class="crit-cc-select" data-hn-acuerdo aria-label="Acuerdo comercial con Europa"><option value="">— elige —</option>${['AACUE','KOICA','ASEAN','OTAN'].map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`; }
+function _critAgSelect(){ return `<select class="crit-cc-select" data-hn-agencia aria-label="Agencia asiática de cooperación"><option value="">— elige —</option>${['KOICA','AACUE','GIZ','USAID'].map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`; }
+function _critPaisSelect(){ return `<select class="crit-cc-select" data-hn-pais aria-label="País de la agencia KOICA"><option value="">— elige —</option>${['Corea del Sur','Japón','China','Alemania'].map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`; }
+
+function genEvalCrit(){
+  sfx('click');
+  _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});
+  const _sC=document.getElementById('evalCritFormaSel');
+  if(_sC && parseInt(_sC.value,10)) evalCritFormNum=Math.min(EVAL_FORMAS,Math.max(1,parseInt(_sC.value,10)));
+  const cf=evalCritFormNum; window._currentEvalCritForm=cf; const rngC=_evalRng(200000+cf);
+  evalCritFormNum=(evalCritFormNum % EVAL_FORMAS)+1;
+  _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});
+  saveProgress();
+  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · Europa, Asia y África`;
+  evalCritAnsVisible=false;
+  const out=document.getElementById('evalCritOut'); out.innerHTML='';
+
+  // Barra de distribución + progresión de dificultad
+  const bar=document.createElement('div'); bar.className='eval-score-bar';
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: comparar datos (I), interpretar cifras (II), relacionar causas (III), aplicar a Honduras (IV) y detectar errores (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Compara 20</span><span class="eval-score-pill esp-tf">II. Interpreta 20</span><span class="eval-score-pill esp-mc">III. Causa-efecto 20</span><span class="eval-score-pill esp-pr">IV. Honduras 25</span><span class="eval-score-pill esp-cp">V. Detective 15</span></div>`;
+  out.appendChild(bar);
+
+  // ── I. Compara los continentes (tabla 2 continentes × 5 criterios, 2 pts/celda = 20)
+  const contPair=_pickF(critContinentBank,2,rngC);
+  let cmpRows='';
+  critCriteria.forEach((cr,i)=>{
+    cmpRows+=`<tr><td class="cmp-cri">${cr.label}</td>`;
+    contPair.forEach((cont,j)=>{ cmpRows+=`<td><input class="crit-cell-input" type="text" data-cmp="${j}-${i}" autocomplete="off" aria-label="${cr.label} de ${cont.key}"></td>`; });
+    cmpRows+='</tr>';
+  });
+  const s1=document.createElement('div');
+  s1.innerHTML=`<div class="eval-section-title">I. Compara los continentes <span class="eval-pts">20 pts · 2 pts c/celda</span></div><div class="eval-item"><p class="crit-q-label">Completa la tabla con los datos reales de cada continente. Cada celda vale 2 puntos.</p><div style="overflow-x:auto;"><table class="crit-cmp-tbl"><thead><tr><th>Criterio</th><th>${contPair[0].icon} ${contPair[0].key}</th><th>${contPair[1].icon} ${contPair[1].key}</th></tr></thead><tbody>${cmpRows}</tbody></table></div><div class="crit-pauta">${contPair.map(c=>c.key+': '+critCriteria.map(cr=>cr.label.split(' ')[0]+' '+c.cells[cr.key].print).join('; ')).join(' — ')}</div><div class="eval-item-feedback" id="critFbCmp" aria-live="polite"></div></div>`;
+  out.appendChild(s1);
+
+  // ── II. Interpreta los datos (4 selección × 4 + 1 justificación × 4 = 20)
+  const interpItems=_pickF(critInterpBank,4,rngC);
+  let inRows='';
+  interpItems.forEach((it,i)=>{ inRows+=`<div class="crit-q-block"><div class="crit-q-label">${i+1}. ${it.q}</div><div class="crit-mc-opts">${it.o.map((o,oi)=>`<label class="crit-mc-opt"><input type="radio" name="critInterp${i}" value="${oi}"> ${o}</label>`).join('')}</div><div class="eval-item-feedback" id="critFbInterp${i}" aria-live="polite"></div></div>`; });
+  const s2=document.createElement('div');
+  s2.innerHTML=`<div class="eval-section-title">II. Interpreta los datos <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Razona con las cifras de la misión. Elige la opción correcta y justifica la última.</p>${inRows}<div class="crit-q-block"><div class="crit-q-label">5. Justifica: ¿por qué el 80% de la población mundial vive en Europa, Asia y África?</div><textarea class="crit-textarea" data-interp-just rows="2" aria-label="Justificación del 80% de la población"></textarea><div class="crit-pauta">Son los tres continentes más grandes y poblados del planeta; Asia sola reúne el 60% de la humanidad, por eso concentran la mayor parte de la población y de los socios de Honduras.</div><div class="eval-item-feedback" id="critFbInterpJust" aria-live="polite"></div></div></div>`;
+  out.appendChild(s2);
+
+  // ── III. Causa y consecuencia (matching 4×5 = 20)
+  const ccItems=_pickF(critCCBank,4,rngC);
+  const ccDefs=_shuffleF(ccItems,rngC);
+  const ccLetters=['A','B','C','D'];
+  const ccCorrect=ccItems.map(it=>ccLetters[ccDefs.findIndex(d=>d.e===it.e)]);
+  let ccLeft='<div class="crit-match-col"><h5>🎯 Causa</h5>';
+  ccItems.forEach((it,i)=>{ ccLeft+=`<div class="crit-match-row"><span class="crit-match-n">${i+1}.</span> <select class="crit-cc-select" data-cc="${i}" aria-label="Consecuencia de la causa ${i+1}"><option value="">—</option>${ccLetters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${it.c}</div>`; });
+  ccLeft+='</div>';
+  let ccRight='<div class="crit-match-col"><h5>💥 Consecuencia</h5>';
+  ccDefs.forEach((it,i)=>{ ccRight+=`<div class="crit-match-row"><span class="crit-match-n">${ccLetters[i]}.</span> ${it.e}</div>`; });
+  ccRight+='</div>';
+  const s3=document.createElement('div');
+  s3.innerHTML=`<div class="eval-section-title">III. Causa y consecuencia <span class="eval-pts">20 pts · 5 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Une cada causa con su consecuencia real escribiendo la letra correcta.</p><div class="crit-match-grid">${ccLeft}${ccRight}</div><div class="crit-pauta">${ccItems.map((it,i)=>(i+1)+'→'+ccCorrect[i]).join(' · ')}</div><div class="eval-item-feedback" id="critFbCc" aria-live="polite"></div></div>`;
+  out.appendChild(s3);
+
+  // ── IV. Honduras y el mundo (17 pts autocalificables + 8 autoevaluación = 25)
+  const tradeItems=_pickF(critTradeBank,4,rngC);
+  let trRows='';
+  tradeItems.forEach((it,i)=>{ trRows+=`<div class="crit-tl-row"><span class="crit-tl-ev">${it.p}</span> <label class="crit-mc-opt"><input type="radio" name="critTrade${i}" value="exporta"> Exporta</label> <label class="crit-mc-opt"><input type="radio" name="critTrade${i}" value="importa"> Importa</label><div class="eval-item-feedback" id="critFbTr${i}" aria-live="polite"></div></div>`; });
+  const s4=document.createElement('div');
+  s4.innerHTML=`<div class="eval-section-title">IV. Honduras y el mundo <span class="eval-pts">25 pts</span></div><div class="eval-item">`+
+    `<div class="crit-scenario">☕ <strong>Caso 1:</strong> Un caficultor de Marcala quiere vender su café a Europa.</div>`+
+    `<div class="crit-q-label">¿Qué acuerdo facilita ese comercio? ${_critAcuSelect()} <span class="eval-item-feedback" id="critFbAcu" aria-live="polite"></span></div>`+
+    `<div class="crit-scenario">🎓 <strong>Caso 2:</strong> Un joven busca una beca técnica en Asia.</div>`+
+    `<div class="crit-q-label">¿Qué agencia asiática lo apoya? ${_critAgSelect()} · ¿De qué país es? ${_critPaisSelect()} <span class="eval-item-feedback" id="critFbAg" aria-live="polite"></span></div>`+
+    `<div class="crit-scenario">📦 <strong>Caso 3:</strong> Decide si cada producto es exportación o importación de Honduras.</div>${trRows}`+
+    `<div class="crit-q-block" style="margin-top:0.7rem;"><div class="crit-q-label">Justifica (Caso 1): ¿qué productos exporta ya Honduras a la Unión Europea gracias al AACUE?</div><textarea class="crit-textarea" rows="2" aria-label="Justificación de productos exportados a la UE"></textarea><div class="crit-pauta">El acuerdo es el AACUE (Acuerdo de Asociación UE–Centroamérica). Honduras ya exporta a la UE café, banano, textiles y palma africana. La agencia es KOICA, de Corea del Sur.</div></div>`+
+    `<div class="crit-rubric"><strong>📋 Rúbrica de la justificación (0–8 pts):</strong> nombra el acuerdo (AACUE) · menciona productos reales (café, banano, textiles, palma) · redacción clara.</div>`+
+    `<div class="crit-selfscore"><label for="critScoreIV">Obtenido en la justificación (autoevaluación):</label><input type="number" id="critScoreIV" class="crit-score-input" min="0" max="8" value="0"> <span>de 8 pts</span></div>`+
+    `</div>`;
+  out.appendChild(s4);
+
+  // ── V. Detective geográfico (3 correcciones × 5 = 15)
+  const erItems=_pickF(critErrBank,3,rngC);
+  let erRows='';
+  erItems.forEach((it,i)=>{ erRows+=`<div class="crit-q-block"><div class="crit-scenario">❌ ${it.bad}</div><div class="crit-q-label">Corrección:</div><textarea class="crit-textarea" data-err="${i}" rows="2" aria-label="Corrige la afirmación ${i+1}" placeholder="Reescribe la afirmación correcta..."></textarea><div class="crit-pauta">${it.fix}</div><div class="eval-item-feedback" id="critFbEr${i}" aria-live="polite"></div></div>`; });
+  const s5=document.createElement('div');
+  s5.innerHTML=`<div class="eval-section-title">V. Detective geográfico <span class="eval-pts">15 pts · 5 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Cada afirmación tiene un error factual. Detéctalo y reescribe la versión correcta.</p>${erRows}</div>`;
+  out.appendChild(s5);
+
+  window._evalCritData={
+    cmp:{pair:contPair, criteria:critCriteria},
+    interp:{items:interpItems},
+    cc:{items:ccItems, defs:ccDefs, letters:ccLetters, correct:ccCorrect},
+    hn:{trade:tradeItems, acuerdo:'AACUE', agencia:'KOICA', pais:'Corea del Sur'},
+    det:erItems
+  };
+  const totalPanel=document.createElement('div'); totalPanel.id='evalCritTotalResult'; totalPanel.className='eval-auto-result';
+  totalPanel.innerHTML='<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve las secciones cerradas en pantalla, autoevalúa la justificación del Caso 1 con la rúbrica y presiona <em>Calificar prueba</em>. La impresión conserva el formato limpio para papel.';
+  out.appendChild(totalPanel);
+  fin('s-evaluacion');
+}
+function toggleEvalCritAns(){
+  evalCritAnsVisible=!evalCritAnsVisible;
+  document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');
+  sfx('click');
+}
+function _setCritFb(id, ok, msg){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.textContent=msg;
+  el.className='eval-item-feedback '+(ok?'eval-ok':'eval-no');
+}
+function _critCellOk(val, cell){
+  if(cell.alts){ const s=normalizeEvalAnswer(val); return !!s && cell.alts.some(a=>s.includes(a)); }
+  const sd=(String(val).match(/\d/g)||[]).join(''); const ed=cell.digits||cell.num;
+  return !!sd && (sd===ed || sd.includes(ed));
+}
+function gradeEvalCrit(){
+  if(!window._evalCritData){ showToast('⚠️ Genera una prueba primero'); return; }
+  sfx('click');
+  const d=window._evalCritData;
+  const detail={cmp:0, interp:0, cc:0, hn:0, det:0};
+
+  // I. Compara los continentes (2 pts/celda)
+  d.cmp.pair.forEach((cont,j)=>{
+    d.cmp.criteria.forEach((cr,i)=>{
+      const inp=document.querySelector(`[data-cmp="${j}-${i}"]`);
+      const ok=!!inp && _critCellOk(inp.value, cont.cells[cr.key]);
+      if(inp){ inp.classList.toggle('eval-input-ok',ok); inp.classList.toggle('eval-input-no',!ok); }
+      if(ok) detail.cmp+=2;
+    });
+  });
+  _setCritFb('critFbCmp', detail.cmp===20, detail.cmp===20?'Correcto. +20 pts':`${detail.cmp}/20 pts. Revisa las celdas marcadas (compara con la Pauta).`);
+
+  // II. Interpreta los datos (4 pts c/u)
+  d.interp.items.forEach((it,i)=>{
+    const sel=document.querySelector(`input[name="critInterp${i}"]:checked`);
+    const ok=!!sel && Number(sel.value)===it.a;
+    if(ok) detail.interp+=4;
+    _setCritFb('critFbInterp'+i, ok, ok?'Correcto. +4 pts':'Revisar. R/ '+it.o[it.a]);
+  });
+  const jt=document.querySelector('[data-interp-just]');
+  const js=normalizeEvalAnswer(jt?jt.value:'');
+  const jok=!!js && ['asia','pobla','grand','mayor','socio','80'].some(k=>js.includes(k));
+  if(jok) detail.interp+=4;
+  _setCritFb('critFbInterpJust', jok, jok?'Correcto. +4 pts':'Revisar. R/ Son los continentes más grandes y poblados; Asia reúne el 60% de la humanidad.');
+
+  // III. Causa y consecuencia (5 pts c/u)
+  d.cc.correct.forEach((letter,i)=>{
+    const sel=document.querySelector(`[data-cc="${i}"]`);
+    const ok=!!sel && sel.value===letter;
+    if(sel){ sel.classList.toggle('eval-input-ok',ok); sel.classList.toggle('eval-input-no',!ok); }
+    if(ok) detail.cc+=5;
+  });
+  const ccHits=detail.cc/5;
+  _setCritFb('critFbCc', ccHits===4, ccHits===4?'Correcto. +20 pts':`${ccHits}/4 correctas. R/ ${d.cc.correct.map((l,i)=>(i+1)+'→'+l).join(' · ')}`);
+
+  // IV. Honduras y el mundo (acuerdo 3 + agencia 3 + país 3 + comercio 4×2 + justif 0-8)
+  const acuSel=document.querySelector('[data-hn-acuerdo]');
+  const acuOk=!!acuSel && acuSel.value===d.hn.acuerdo;
+  if(acuSel){ acuSel.classList.toggle('eval-input-ok',acuOk); acuSel.classList.toggle('eval-input-no',!acuOk); }
+  if(acuOk) detail.hn+=3;
+  _setCritFb('critFbAcu', acuOk, acuOk?'Correcto. +3 pts':'Revisar. R/ AACUE');
+  const agSel=document.querySelector('[data-hn-agencia]');
+  const paisSel=document.querySelector('[data-hn-pais]');
+  const agOk=!!agSel && agSel.value===d.hn.agencia;
+  const paisOk=!!paisSel && paisSel.value===d.hn.pais;
+  if(agSel){ agSel.classList.toggle('eval-input-ok',agOk); agSel.classList.toggle('eval-input-no',!agOk); }
+  if(paisSel){ paisSel.classList.toggle('eval-input-ok',paisOk); paisSel.classList.toggle('eval-input-no',!paisOk); }
+  if(agOk) detail.hn+=3;
+  if(paisOk) detail.hn+=3;
+  _setCritFb('critFbAg', agOk&&paisOk, (agOk&&paisOk)?'Correcto. +6 pts':'Revisar. R/ KOICA · Corea del Sur');
+  d.hn.trade.forEach((it,i)=>{
+    const sel=document.querySelector(`input[name="critTrade${i}"]:checked`);
+    const ok=!!sel && sel.value===it.t;
+    if(ok) detail.hn+=2;
+    _setCritFb('critFbTr'+i, ok, ok?'Correcto. +2 pts':'Revisar. R/ Honduras '+it.t);
+  });
+  const inpIV=document.getElementById('critScoreIV');
+  let ivScore=parseInt(inpIV?inpIV.value:0)||0;
+  ivScore=Math.max(0,Math.min(8,ivScore));
+  if(inpIV) inpIV.value=ivScore;
+  detail.hn+=ivScore;
+
+  // V. Detective geográfico (5 pts c/u; correcto si el texto contiene la palabra clave)
+  d.det.forEach((it,i)=>{
+    const ta=document.querySelector(`[data-err="${i}"]`);
+    const student=normalizeEvalAnswer(ta?ta.value:'');
+    const key=normalizeEvalAnswer(it.key);
+    const ok=!!student && student.includes(key);
+    if(ta){ ta.classList.toggle('eval-input-ok',ok); ta.classList.toggle('eval-input-no',!ok); }
+    if(ok) detail.det+=5;
+    _setCritFb('critFbEr'+i, ok, ok?'Correcto. +5 pts':'Revisar. R/ '+it.fix);
+  });
+
+  const total=detail.cmp+detail.interp+detail.cc+detail.hn+detail.det;
+  const panel=document.getElementById('evalCritTotalResult');
+  if(panel){
+    panel.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');
+    panel.innerHTML=`<strong>Resultado: ${total}/100 pts</strong><br><span>I. Compara: ${detail.cmp}/20 · II. Interpreta: ${detail.interp}/20 · III. Causa-efecto: ${detail.cc}/20 · IV. Honduras: ${detail.hn}/25 · V. Detective: ${detail.det}/15</span><br><em>Las secciones cerradas se califican solas; la justificación del Caso 1 la autoevalúas con la rúbrica. Compara siempre con la Pauta.</em>`;
+  }
+  const formKey='crit_'+(window._currentEvalCritForm||1);
+  if(total>=70){ if(!xpTracker.critWin.has(formKey)){ xpTracker.critWin.add(formKey); pts(8); } showToast('🎯 Pensamiento crítico: '+total+'/100'); }
+  else showToast('🧮 Prueba calificada: '+total+'/100. Revisa lo marcado.');
+}
+function printEvalCrit(){
+  if(!window._evalCritData){ showToast('⚠️ Genera una prueba primero'); return; }
+  sfx('click');
+  const forma=window._currentEvalCritForm||1;
+  const d=window._evalCritData;
+  const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
+
+  // I. Compara los continentes (tabla vacía)
+  const c0=d.cmp.pair[0], c1=d.cmp.pair[1];
+  let cmpRows='';
+  d.cmp.criteria.forEach(cr=>{ cmpRows+=`<tr><td class="cmp-cri">${cr.label}</td><td></td><td></td></tr>`; });
+  let s1=`<div class="sec-title"><span>I. Compara los continentes</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Completa la tabla con los datos de cada continente (2 pts por celda).</p><table class="cmp-tbl"><thead><tr><th>Criterio</th><th>${c0.icon} ${c0.key}</th><th>${c1.icon} ${c1.key}</th></tr></thead><tbody>${cmpRows}</tbody></table>`;
+
+  // II. Interpreta los datos
+  let s2=`<div class="sec-title"><span>II. Interpreta los datos</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Encierra la opción correcta y justifica la última.</p>`;
+  d.interp.items.forEach((it,i)=>{ s2+=`<p class="crit-print-q">${i+1}. ${it.q}</p><p class="crit-print-opts">${it.o.map((o,oi)=>String.fromCharCode(97+oi)+') '+o).join('&nbsp;&nbsp;&nbsp;')}</p>`; });
+  s2+=`<p class="crit-print-q">5. Justifica: ¿por qué el 80% de la población mundial vive en Europa, Asia y África?</p>${lines(2)}`;
+
+  // III. Causa y consecuencia (dos columnas)
+  let colL='<div class="pr-col"><div class="pr-head">🎯 Causa</div>';
+  d.cc.items.forEach((it,i)=>{ colL+=`<div class="pr-item"><span class="pr-num">${i+1}.</span><span class="pr-line"></span>${it.c}</div>`; });
+  colL+='</div>';
+  let colR='<div class="pr-col"><div class="pr-head">💥 Consecuencia</div>';
+  d.cc.defs.forEach((it,i)=>{ colR+=`<div class="pr-item"><span class="pr-num">${d.cc.letters[i]}.</span>${it.e}</div>`; });
+  colR+='</div>';
+  let s3=`<div class="sec-title"><span>III. Causa y consecuencia</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Escribe la letra de la consecuencia que corresponde a cada causa.</p><div class="pr-grid">${colL}${colR}</div>`;
+
+  // IV. Honduras y el mundo
+  let s4=`<div class="sec-title"><span>IV. Honduras y el mundo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25 pts</span></div></div>`;
+  s4+=`<p class="crit-print-scenario">☕ <strong>Caso 1:</strong> Un caficultor de Marcala quiere vender café a Europa.</p><p class="crit-print-q">¿Qué acuerdo lo facilita? <span class="cp-blank"></span></p>`;
+  s4+=`<p class="crit-print-scenario">🎓 <strong>Caso 2:</strong> Un joven busca una beca técnica en Asia.</p><p class="crit-print-q">¿Qué agencia lo apoya? <span class="cp-blank"></span> · ¿De qué país? <span class="cp-blank"></span></p>`;
+  s4+=`<p class="crit-print-scenario">📦 <strong>Caso 3:</strong> Escribe "Exporta" o "Importa" según corresponda a Honduras.</p>`;
+  d.hn.trade.forEach(it=>{ s4+=`<div class="cp-row"><span class="cp-blank" style="min-width:70px;"></span><span class="cp-text">${it.p}</span></div>`; });
+  s4+=`<p class="crit-print-q">Justifica (Caso 1): ¿qué productos exporta Honduras a la UE gracias al AACUE?</p>${lines(2)}`;
+
+  // V. Detective geográfico
+  let s5=`<div class="sec-title"><span>V. Detective geográfico</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 15 pts</span></div></div><p class="crit-print-q">Cada afirmación tiene un error. Reescríbela de forma correcta.</p>`;
+  d.det.forEach(it=>{ s5+=`<p class="crit-print-scenario">❌ ${it.bad}</p>${lines(1)}`; });
+
+  // Pauta
+  let pR='';
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">I. Compara los continentes</div>${d.cmp.criteria.map(cr=>`<div class="p-crit-line"><strong>${cr.label}:</strong> ${c0.key} → ${c0.cells[cr.key].print} · ${c1.key} → ${c1.cells[cr.key].print}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Interpreta los datos</div>${d.interp.items.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${it.o[it.a]} — ${it.why}</div>`).join('')}<div class="p-crit-line"><strong>5.</strong> Son los continentes más grandes y poblados; Asia reúne el 60% de la humanidad y en ellos están los socios de Honduras.</div></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III. Causa y consecuencia</div>${d.cc.items.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}→${d.cc.correct[i]}:</strong> ${it.c} → ${it.e}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">IV. Honduras y el mundo</div><div class="p-crit-line"><strong>Caso 1:</strong> Acuerdo AACUE. Exporta café, banano, textiles y palma africana a la UE.</div><div class="p-crit-line"><strong>Caso 2:</strong> KOICA, de Corea del Sur.</div>${d.hn.trade.map(it=>`<div class="p-crit-line"><strong>${it.t==='exporta'?'Exporta':'Importa'}:</strong> ${it.p}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">V. Detective geográfico</div>${d.det.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${it.fix}</div>`).join('')}</div>`;
+
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico Europa, Asia y África · Forma ${forma}</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 6mm;width:201.9mm;margin:0 auto;}
+.ph{margin-bottom:0.35rem;}
+.ph h2{font-size:11.5pt;font-weight:700;text-align:center;margin-bottom:0.25rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.15rem 0.45rem;margin:0.28rem 0 0.12rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c0392b;background:#fbe9e7;color:#c0392b;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c0392b;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #c0392b;height:12px;}
+.obt-pct{white-space:nowrap;}
+.crit-print-scenario{font-size:10pt;background:#fbe9e7;border-left:3px solid #c0392b;padding:0.18rem 0.5rem;margin:0.12rem 0 0.15rem;line-height:1.3;}
+.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}
+.crit-print-opts{font-size:10pt;margin:0 0 0.1rem 1.1rem;line-height:1.3;}
+.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:3px;}
+.cmp-tbl{width:100%;border-collapse:collapse;font-size:10pt;margin:0.12rem 0 0.2rem;}
+.cmp-tbl th,.cmp-tbl td{border:1px solid #999;padding:0.28rem 0.4rem;text-align:left;}
+.cmp-tbl th{background:#fbe9e7;color:#c0392b;font-weight:700;}
+.cmp-tbl td{height:24px;}
+.cmp-cri{font-weight:600;background:#faf3f2;}
+.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-text{flex:1;}
+.cp-blank{display:inline-block;min-width:110px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.12rem;}
+.pr-head{font-size:9.5pt;font-weight:700;color:#555;margin-bottom:0.15rem;}
+.pr-item{font-size:10.5pt;padding:0.18rem 0.35rem;background:#fbe9e7;border-radius:3px;margin-bottom:0.13rem;display:flex;align-items:center;gap:0.2rem;line-height:1.28;break-inside:avoid;page-break-inside:avoid;}
+.pr-num{font-weight:700;color:#c0392b;min-width:19px;flex-shrink:0;}
+.pr-line{display:inline-block;min-width:26px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}
+.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#c0392b;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c0392b;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:13pt;font-weight:700;color:#c0392b;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}
+.p-ttl{font-size:11pt;font-weight:700;color:#c0392b;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-crit-line{font-size:10pt;color:#007a00;margin-bottom:0.16rem;line-height:1.35;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
+</style></head><body><div id="evalPage">
+<div class="ph">
+  <h2>Evaluación Competencial · Pensamiento Crítico · Los Continentes: Europa, Asia y África · Educación Básica · Ciencias Sociales</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · I. Compara 20 · II. Interpreta 20 · III. Causa-efecto 20 · IV. Honduras 25 · V. Detective 15 · Forma ${forma}</p>
+</div>
+${s1}${s2}${s3}${s4}${s5}
+<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
+</div><div class="pauta-wrap" id="pautaPage">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Europa, Asia y África · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 25 · V 15 — secciones abiertas: usar como guía de corrección</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.35);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
+  const win=window.open('','_blank','');
   if(!win){ showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc);
   win.document.close();

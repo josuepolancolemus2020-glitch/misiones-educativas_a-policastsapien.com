@@ -16,6 +16,37 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/coordenadas.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- Estilos de la Prueba de Pensamiento Crítico (2ª evaluación de la misión) -->
+<style>
+  .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+  .eval-mode-btn{flex:1;min-width:160px;font-family:'Fredoka',sans-serif;font-size:0.9rem;padding:0.65rem 1rem;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--gray);cursor:pointer;transition:all 0.2s;}
+  .eval-mode-btn:hover{border-color:var(--pri);}
+  .eval-mode-btn.active{border-color:var(--pri);background:var(--pri-gl);color:var(--pri);font-weight:700;}
+  .crit-scenario{background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:0 8px 8px 0;padding:0.6rem 0.9rem;margin-bottom:0.6rem;font-size:0.9rem;line-height:1.5;color:var(--dark);}
+  .crit-q-block{margin-bottom:0.85rem;}
+  .crit-q-block:last-of-type{margin-bottom:0;}
+  .crit-q-label{font-size:0.88rem;color:var(--dark);font-weight:600;margin-bottom:0.4rem;line-height:1.45;}
+  .crit-textarea{width:100%;min-height:56px;font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;background:var(--card);color:var(--dark);resize:vertical;}
+  .crit-textarea:focus{outline:none;border-color:var(--pri);}
+  .crit-pauta{display:none;margin-top:0.4rem;font-size:0.82rem;color:var(--jade);background:var(--jade-gl);border-radius:8px;padding:0.45rem 0.7rem;line-height:1.5;}
+  .crit-pauta::before{content:'📋 Pauta: ';font-weight:700;}
+  .crit-planis-wrap{background:var(--pri-gl);border-radius:10px;padding:0.5rem;margin:0.4rem 0 0.6rem;}
+  .crit-coord-row{display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;background:var(--pri-gl);border-radius:8px;padding:0.4rem 0.55rem;margin-bottom:0.4rem;font-size:0.85rem;color:var(--dark);}
+  .crit-coord-lbl{font-weight:700;color:var(--pri);min-width:20px;}
+  .crit-coord-row label{display:inline-flex;align-items:center;gap:0.2rem;}
+  .crit-num-input{width:56px;font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:6px;padding:0.2rem 0.35rem;background:var(--card);color:var(--dark);text-align:center;}
+  .crit-hemi-select{font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:6px;padding:0.2rem 0.35rem;background:var(--card);color:var(--dark);}
+  .crit-de-item,.crit-hz-item{margin-bottom:0.8rem;}
+  .crit-de-fields{display:flex;flex-wrap:wrap;gap:0.5rem 0.9rem;font-size:0.85rem;color:var(--dark);}
+  .crit-de-fields label{display:inline-flex;align-items:center;gap:0.3rem;}
+  .crit-hz-lbl{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.88rem;font-weight:600;color:var(--dark);}
+  .crit-hz-input{width:90px;}
+  .crit-selfcheck{margin-top:0.5rem;display:flex;flex-direction:column;gap:0.3rem;font-size:0.82rem;color:var(--dark);}
+  .crit-selfcheck-lbl{font-weight:700;color:var(--gray);}
+  .crit-chk-lbl{display:inline-flex;align-items:center;gap:0.4rem;}
+  .crit-rubric{margin-top:0.7rem;font-size:0.82rem;color:var(--dark);background:var(--jade-gl);border-radius:8px;padding:0.5rem 0.75rem;line-height:1.5;}
+  @media (max-width:560px){.crit-de-fields{flex-direction:column;gap:0.35rem;}}
+</style>
 </head>
 <body>
 
@@ -409,9 +440,14 @@
 </div>
 
 <div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
   <div class="card ac-purple">
     <div class="eval-print-header">
-      <h2>Evaluación Final de Misión Coordenadas Geográficas · II y III Ciclo · Geografía · Ciencias Sociales</h2>
+      <h2>Evaluación Final de Misión Coordenadas Geográficas · Educación Básica · Geografía · Ciencias Sociales</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
       <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
@@ -427,6 +463,20 @@
     <div id="evalOut"></div>
   </div>
   <div id="eval-pauta-sheet"></div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Coordenadas Geográficas</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Lee el planisferio, ubícate en la Tierra, aplica la regla de los husos horarios, resuelve casos reales y detecta errores. Responde en pantalla o en tu cuaderno, compara con la <strong>Pauta</strong> y autoevalúa las secciones abiertas. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalCrit()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
   <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
     <span class="nsb-icon">🎓</span>
     <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
@@ -437,6 +487,11 @@
 <div class="sec" id="s-recursos" role="tabpanel">
   <div class="card ac-blue">
     <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas (teoría, actividades y evaluación) para imprimir o resolver antes del examen.</p>
+      <a href="../../fichas/ficha-geografia-coordenadas.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
     <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
     <a href="https://drive.google.com/drive/folders/1sdRE9p_XKesWz88v_fRe8eh_Ufuj4rED?usp=sharing"
        target="_blank" rel="noopener noreferrer"

@@ -16,6 +16,53 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/continentes-aoa.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ===== Prueba de Pensamiento Crítico (segunda evaluación) ===== */
+.eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+.eval-mode-btn{flex:1;min-width:160px;font-family:'Fredoka',sans-serif;font-size:0.9rem;padding:0.65rem 1rem;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--gray);cursor:pointer;transition:all 0.2s;}
+.eval-mode-btn:hover{border-color:var(--pri);}
+.eval-mode-btn.active{border-color:var(--pri);background:var(--pri-gl);color:var(--pri);font-weight:700;}
+.eval-item-feedback{display:none;margin-top:0.4rem;font-size:0.8rem;font-weight:700;border-radius:6px;padding:0.3rem 0.6rem;line-height:1.4;}
+.eval-item-feedback.eval-ok{display:block;color:var(--jade);background:var(--jade-gl);}
+.eval-item-feedback.eval-no{display:block;color:var(--amber);background:var(--amber-gl);}
+.eval-input-ok{border-color:var(--jade)!important;background:var(--jade-gl)!important;}
+.eval-input-no{border-color:var(--amber)!important;background:var(--amber-gl)!important;}
+.eval-auto-result{margin-top:1rem;font-size:0.9rem;line-height:1.5;border-radius:10px;padding:0.8rem 1rem;background:var(--pri-gl);border:1.5px solid var(--pri);color:var(--dark);}
+.eval-auto-result.eval-auto-pass{background:var(--jade-gl);border-color:var(--jade);}
+.eval-auto-result.eval-auto-risk{background:var(--amber-gl);border-color:var(--amber);}
+.crit-scenario{background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:0 8px 8px 0;padding:0.6rem 0.9rem;margin-bottom:0.6rem;font-size:0.9rem;line-height:1.5;color:var(--dark);}
+.crit-q-block{margin-bottom:0.85rem;}
+.crit-q-block:last-of-type{margin-bottom:0;}
+.crit-q-label{font-size:0.88rem;color:var(--dark);font-weight:600;margin-bottom:0.4rem;line-height:1.45;}
+.crit-textarea{width:100%;min-height:52px;font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;background:var(--card);color:var(--dark);resize:vertical;margin-top:0.35rem;}
+.crit-textarea:focus{outline:none;border-color:var(--pri);}
+.crit-pauta{display:none;margin-top:0.4rem;font-size:0.82rem;color:var(--jade);background:var(--jade-gl);border-radius:8px;padding:0.45rem 0.7rem;line-height:1.5;}
+.crit-pauta::before{content:'📋 Pauta: ';font-weight:700;}
+.crit-table-wrap{overflow-x:auto;margin:0.4rem 0 0.2rem;}
+.crit-table{width:100%;border-collapse:collapse;font-size:0.82rem;min-width:520px;}
+.crit-table th,.crit-table td{border:1px solid var(--border);padding:0.4rem 0.5rem;text-align:left;vertical-align:middle;color:var(--dark);}
+.crit-table th{background:var(--pri-gl);color:var(--pri);font-family:'Fredoka',sans-serif;}
+.crit-td-attr{font-weight:700;}
+.crit-comp-select,.crit-caso-select{font-family:'Fredoka',sans-serif;font-size:0.82rem;border:1.5px solid var(--border);border-radius:6px;padding:0.25rem 0.4rem;background:var(--card);color:var(--dark);max-width:100%;}
+.crit-caso-select{margin-top:0.3rem;}
+.crit-mc-opts{display:flex;flex-direction:column;gap:0.3rem;margin:0.3rem 0 0.2rem;}
+.crit-mc-opt{font-size:0.85rem;color:var(--dark);display:flex;align-items:flex-start;gap:0.4rem;line-height:1.4;}
+.crit-mc-opt input{width:15px;height:15px;accent-color:var(--pri);margin-top:0.15rem;flex-shrink:0;}
+.crit-tf-opts{display:flex;gap:1.2rem;margin:0.3rem 0;}
+.crit-tf-opt{display:flex;align-items:center;gap:0.35rem;font-size:0.85rem;color:var(--dark);}
+.crit-tf-opt input{width:15px;height:15px;accent-color:var(--pri);}
+.crit-fossil-item{margin-bottom:1rem;}
+.crit-fossil-item:last-of-type{margin-bottom:0;}
+.crit-rubric{margin-top:0.7rem;font-size:0.82rem;color:var(--dark);background:var(--jade-gl);border-radius:8px;padding:0.5rem 0.75rem;line-height:1.5;}
+.crit-selfscore{display:flex;align-items:center;gap:0.5rem;margin-top:0.7rem;padding-top:0.6rem;border-top:1px dashed var(--border);font-size:0.82rem;color:var(--gray);flex-wrap:wrap;}
+.crit-score-input{width:60px;font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:6px;padding:0.2rem 0.4rem;background:var(--card);color:var(--dark);text-align:center;}
+.crit-det-err{font-weight:700;color:var(--pri);}
+.crit-det-row{display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;background:var(--pri-gl);border-radius:8px;padding:0.4rem 0.55rem;margin-bottom:0.4rem;font-size:0.85rem;color:var(--dark);}
+.crit-det-n{font-weight:700;color:var(--pri);}
+.crit-det-input{font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:6px;padding:0.25rem 0.5rem;background:var(--card);color:var(--dark);min-width:160px;}
+.crit-det-input:focus{outline:none;border-color:var(--pri);}
+@media (max-width:560px){.crit-table{min-width:460px;}}
+</style>
 </head>
 <body>
 
@@ -401,9 +448,14 @@
 
 <!-- ===== EVALUACIÓN ===== -->
 <div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
   <div class="card ac-purple">
     <div class="eval-print-header">
-      <h2>Evaluación Final · Los Continentes: América, Oceanía y Antártida · II y III Ciclo · Geografía · Ciencias Sociales</h2>
+      <h2>Evaluación Final · Los Continentes: América, Oceanía y Antártida · Educación Básica · Geografía · Ciencias Sociales</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
       <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
@@ -419,6 +471,20 @@
     <div id="evalOut"></div>
   </div>
   <div id="eval-pauta-sheet"></div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — América, Oceanía y la Antártida</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Compara datos, interprétalos, evalúalos con juicio, decide en casos hondureños y caza errores. Responde en pantalla o en tu cuaderno, compara con la <strong>Pauta</strong> y autoevalúa las justificaciones. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalCrit()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
   <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
     <span class="nsb-icon">🏅</span>
     <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
@@ -429,6 +495,11 @@
 <div class="sec" id="s-recursos" role="tabpanel">
   <div class="card ac-blue">
     <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas (teoría, actividades y evaluación) para imprimir o resolver antes del examen.</p>
+      <a href="../../fichas/ficha-continentes-aoa.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
     <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
     <a href="https://drive.google.com/drive/folders/1W1ja9R8sg9ywLvWyZ2JUt-wHD3s9h7lZ?usp=sharing"
        target="_blank" rel="noopener noreferrer"

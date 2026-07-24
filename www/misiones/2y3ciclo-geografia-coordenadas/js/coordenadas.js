@@ -37,6 +37,7 @@ function fb(id, msg, isOk) {
 const SAVE_KEY = 'geografia_coordenadas_v1';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1;
+let evalCritFormNum = 1, evalCritAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
@@ -45,7 +46,7 @@ const TOTAL_SECTIONS = 12;
 // XP TRACKER
 const xpTracker = {
   fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(),
-  cmp: new Set(), reto: new Set(), sopa: new Set(),
+  cmp: new Set(), reto: new Set(), sopa: new Set(), critWin: new Set(),
 };
 
 // ===================== SONIDO =====================
@@ -75,7 +76,7 @@ function initTheme(){ const s=localStorage.getItem(SAVE_KEY+'_theme'); const sys
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress(){
-  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, xp})); }catch(e){}
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, evalCritFormNum, xp})); }catch(e){}
 }
 function loadProgress(){
   try{
@@ -88,6 +89,7 @@ function loadProgress(){
     });
     if(s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum) evalFormNum = s.evalFormNum;
+    if(s.evalCritFormNum) evalCritFormNum = s.evalCritFormNum;
     if(s.xp !== undefined) { xp = s.xp; updateXPBar(); }
   }catch(e){}
 }
@@ -1049,6 +1051,446 @@ function toggleEvalAns() {
     evalAnsVisible = !evalAnsVisible;
     document.querySelectorAll('#evalOut .eval-answer').forEach(el => el.style.display = evalAnsVisible ? 'block' : 'none');
     sfx('click');
+}
+
+// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+// Segunda evaluación imprimible de la misión (Ciencias Sociales · Geografía).
+// Todo el contenido nace de los bancos, tarjetas, stat-bars y el planisferio
+// del Laboratorio de ESTA misión (coordenadas, hemisferios, zonas climáticas,
+// husos horarios, antípodas). Formas deterministas: semilla _evalRng(200000+cf).
+// I–III y V.b son 100% verificables algorítmicamente; IV y V.a llevan respuesta
+// modelo + rúbrica. Total 100 pts. ⚠️ NO tocar la evaluación conceptual.
+function evalSwitchMode(mode) {
+    sfx('click');
+    const cWrap = document.getElementById('evalConceptWrap'), critWrap = document.getElementById('evalCritWrap');
+    const cBtn = document.getElementById('evalModeBtnConcept'), critBtn = document.getElementById('evalModeBtnCrit');
+    if (mode === 'crit') {
+        cWrap.style.display = 'none'; critWrap.style.display = 'block';
+        cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected', 'false');
+        critBtn.classList.add('active'); critBtn.setAttribute('aria-selected', 'true');
+        if (!window._evalCritData) genEvalCrit();
+    } else {
+        critWrap.style.display = 'none'; cWrap.style.display = 'block';
+        critBtn.classList.remove('active'); critBtn.setAttribute('aria-selected', 'false');
+        cBtn.classList.add('active'); cBtn.setAttribute('aria-selected', 'true');
+    }
+}
+
+// ── Retícula EXACTA del planisferio del Laboratorio (s-lab). Cada punto se
+// coloca en una intersección real de la red (paralelo × meridiano marcado),
+// para que la pauta sea exacta. Coordenadas de píxel tomadas del SVG del Lab.
+const critPlanisLat = [{ v: 23, H: 'N', y: 55 }, { v: 23, H: 'S', y: 125 }, { v: 66, H: 'N', y: 28 }, { v: 66, H: 'S', y: 152 }];
+const critPlanisLon = [{ v: 45, H: 'O', x: 105 }, { v: 90, H: 'O', x: 70 }, { v: 45, H: 'E', x: 175 }, { v: 90, H: 'E', x: 210 }];
+const critPlanisGrid = (() => { const g = []; critPlanisLat.forEach(la => critPlanisLon.forEach(lo => g.push({ lat: la.v, latH: la.H, lon: lo.v, lonH: lo.H, x: lo.x, y: la.y }))); return g; })();
+
+// ── II. ¿Dónde estoy? — rangos climáticos enseñados en la misión (s-aprende):
+// 0°-23°26' tórrida · 23°26'-66°34' templada · >66°34' polar (valores lejos
+// de los límites para que la clasificación sea inequívoca).
+const critZonas = [{ name: 'Tórrida', lo: 6, hi: 22 }, { name: 'Templada', lo: 27, hi: 63 }, { name: 'Polar', lo: 69, hi: 84 }];
+const critZonaOpts = ['Tórrida', 'Templada', 'Polar'];
+
+// ── IV. Problemas del explorador hondureño (casos contextualizados; abiertos,
+// con respuesta modelo + rúbrica). Derivados del dato clave HN 15°N 87°O.
+const critExpBank = [
+    { case: 'Un barco pesquero hondureño reporta por radio su posición: 15°N, 87°O, y pide auxilio porque se le acabó el combustible cerca de La Ceiba. La estación de guardacostas debe ubicarlo en el mapa para el rescate.', ask: 'Explica en qué hemisferios está el barco (N/S y E/O) y por qué esas coordenadas lo sitúan en el Caribe hondureño, no en otro océano.', model: '15°N indica Hemisferio Norte (al norte del Ecuador) y 87°O indica Hemisferio Occidental (al oeste de Greenwich). Esa combinación cae en el mar Caribe frente a la costa norte de Honduras (La Ceiba está a unos 15°N, 87°O). El guardacostas traza el paralelo 15°N y el meridiano 87°O y su cruce marca el punto exacto del rescate.', crit: ['Identifica ambos hemisferios (N y O) — 5 pts', 'Justifica la ubicación cruzando paralelo y meridiano — 5 pts'] },
+    { case: 'Un avión despega del aeropuerto Toncontín (Tegucigalpa, ≈14°N) con rumbo al sur y su GPS marca que va a cruzar el Ecuador (0°) hacia Sudamérica.', ask: 'Describe qué cambia en la latitud al cruzar el Ecuador y a qué hemisferio pasa el avión. ¿Cambia de zona climática?', model: 'Antes del Ecuador el avión vuela en el Hemisferio Norte con latitud N; al cruzar los 0° pasa al Hemisferio Sur y su latitud empieza a contarse en grados S. Como sale de la zona tórrida hondureña y se mantiene entre los trópicos por un tiempo, sigue en zona tórrida hasta pasar los 23°26\'S. El Ecuador es la línea de 0° que separa ambos hemisferios.', crit: ['Explica el cambio de hemisferio N→S al cruzar el Ecuador — 5 pts', 'Relaciona la latitud con la zona climática (trópicos) — 5 pts'] },
+    { case: 'Un excursionista pierde el sendero en las montañas de Olancho. Su GPS le da la posición 14°N, 86°O y una brújula. Debe caminar hacia el pueblo más cercano, que está al oeste de su posición.', ask: 'Explica cómo usa la latitud y la longitud para saber dónde está y hacia qué dirección (aumentar o disminuir la longitud) debe caminar para ir al oeste.', model: 'La latitud 14°N le dice cuán al norte del Ecuador está y la longitud 86°O cuán al oeste de Greenwich. Para ir hacia el oeste debe moverse hacia longitudes mayores en grados O (de 86°O hacia 87°O, 88°O…), alejándose de Greenwich; su latitud casi no cambia si camina en línea recta al oeste. Con ambas coordenadas ubica su punto y con la brújula mantiene el rumbo oeste.', crit: ['Interpreta latitud y longitud de su posición — 5 pts', 'Deduce que ir al oeste aumenta los grados O de longitud — 5 pts'] },
+    { case: 'Una lancha de investigación marca en su bitácora que pasó del punto 16°N, 87°O al punto 16°N, 88°O en una hora de navegación.', ask: 'Explica en qué dirección (E, O, N o S) navegó la lancha y por qué la latitud no cambió, solo la longitud.', model: 'La latitud se mantuvo en 16°N, así que no subió ni bajó respecto al Ecuador; solo cambió la longitud de 87°O a 88°O, es decir, se alejó más de Greenwich hacia el Oeste. Por lo tanto navegó hacia el Oeste siguiendo el mismo paralelo 16°N. Cambiar solo la longitud significa moverse a lo largo de un paralelo (dirección E-O).', crit: ['Determina que navegó hacia el Oeste — 5 pts', 'Explica que moverse por un paralelo cambia solo la longitud — 5 pts'] }
+];
+
+// ── V.a Detective del error — afirmaciones falsas calcadas de los distractores
+// de los bancos V/F y de Selección Múltiple de la misión (autocalificable por
+// palabra clave, con corrección modelo en la pauta).
+const critErrBank = [
+    { bad: 'El Trópico de Cáncer es un meridiano porque va de polo a polo.', key: 'paralelo', fix: 'El Trópico de Cáncer es un paralelo (línea horizontal que mide latitud); los meridianos son los que van de polo a polo.' },
+    { bad: 'El Meridiano de Greenwich se encuentra a 90° de longitud.', key: '0', fix: 'El Meridiano de Greenwich está a 0° de longitud; es la referencia desde donde se mide la longitud.' },
+    { bad: 'Los paralelos van de polo a polo dividiendo la longitud.', key: 'meridianos', fix: 'Los meridianos van de polo a polo; los paralelos son horizontales y miden la latitud.' },
+    { bad: 'La zona polar es la región más cálida de la Tierra.', key: 'torrida', fix: 'La zona tórrida (entre los trópicos) es la más cálida; la zona polar es la más fría.' },
+    { bad: 'El Círculo Polar Ártico está a 23° de latitud Norte.', key: '66', fix: "El Círculo Polar Ártico está a 66° 34' de latitud Norte; a 23° 26' N está el Trópico de Cáncer." },
+    { bad: 'Honduras se encuentra en el Hemisferio Sur del Ecuador.', key: 'norte', fix: 'Honduras (15°N) está en el Hemisferio Norte, al norte del Ecuador.' },
+    { bad: 'Cada huso horario equivale a 24° de longitud.', key: '15', fix: 'Cada huso horario equivale a 15° de longitud (360° ÷ 24 h = 15°).' },
+    { bad: 'El Trópico de Capricornio está al Norte del Ecuador.', key: 'sur', fix: "El Trópico de Capricornio está a 23° 26' al Sur del Ecuador." }
+];
+
+// ── V.b Antípodas — regla de la flashcard «Antípoda»: misma latitud con signo
+// contrario, longitud ± 180° (invierte hemisferios). Puntos generados.
+const critAntiBank = [
+    { lat: 15, latH: 'N', lon: 87, lonH: 'O', place: 'Honduras' },
+    { lat: 34, latH: 'S', lon: 58, lonH: 'O', place: 'Buenos Aires' },
+    { lat: 40, latH: 'N', lon: 4, lonH: 'E', place: 'Madrid' },
+    { lat: 14, latH: 'N', lon: 87, lonH: 'O', place: 'Tegucigalpa' },
+    { lat: 19, latH: 'N', lon: 99, lonH: 'O', place: 'Ciudad de México' },
+    { lat: 23, latH: 'S', lon: 43, lonH: 'O', place: 'Río de Janeiro' },
+    { lat: 51, latH: 'N', lon: 0, lonH: 'E', place: 'Londres (Greenwich)' },
+    { lat: 35, latH: 'N', lon: 139, lonH: 'E', place: 'Tokio' }
+];
+
+const _flipNS = h => (h === 'N' ? 'S' : 'N');
+const _flipEO = h => (h === 'E' ? 'O' : 'E');
+const _hemNSWord = h => (h === 'N' ? 'Norte' : 'Sur');
+const _hemEOWord = h => (h === 'E' ? 'Este' : 'Oeste');
+// Parser de hora tolerante: acepta "7" o "7:00" → 7 (0–23), coma o dos puntos.
+function _parseHour(v) { const m = (v || '').toString().trim().replace(',', ':').match(/^(\d{1,2})/); if (!m) return null; let h = parseInt(m[1], 10); if (isNaN(h)) return null; return ((h % 24) + 24) % 24; }
+// Parser numérico tolerante (coma decimal aceptada) para grados.
+function _parseNum(v) { const s = (v || '').toString().trim().replace(',', '.').replace(/[^0-9.\-]/g, ''); if (s === '' || s === '-' || s === '.') return null; const n = parseFloat(s); return isNaN(n) ? null : n; }
+
+// Planisferio ESTÁTICO impreso: réplica del SVG del Laboratorio con todas las
+// líneas visibles + 5 puntos marcados A–E en sus intersecciones exactas.
+function _critPlanisSVG(pts) {
+    const markers = pts.map((p, i) => `<circle cx="${p.x}" cy="${p.y}" r="6.5" fill="#c0392b" stroke="#fff" stroke-width="1.6"/><text x="${p.x}" y="${p.y + 3}" font-size="8" font-weight="bold" fill="#fff" text-anchor="middle">${'ABCDE'[i]}</text>`).join('');
+    return `<svg viewBox="0 0 280 180" width="100%" style="max-width:360px;height:auto;display:block;margin:0.3rem auto;" xmlns="http://www.w3.org/2000/svg" aria-label="Planisferio con puntos A a E" role="img">
+<ellipse cx="140" cy="90" rx="136" ry="86" fill="#2980b9" opacity="0.14"/>
+<ellipse cx="140" cy="90" rx="136" ry="86" fill="none" stroke="#2980b9" stroke-width="1.6"/>
+<path d="M 30 30 Q 50 20 70 35 Q 80 55 65 75 Q 50 80 35 65 Z" fill="#27ae60" opacity="0.35"/>
+<path d="M 55 95 Q 70 88 80 100 Q 85 125 70 140 Q 55 145 48 125 Z" fill="#27ae60" opacity="0.35"/>
+<path d="M 118 25 Q 135 20 148 30 Q 150 45 140 50 Q 128 48 118 38 Z" fill="#e67e22" opacity="0.3"/>
+<path d="M 122 55 Q 145 52 155 70 Q 158 100 148 125 Q 130 135 115 115 Q 108 90 112 68 Z" fill="#e67e22" opacity="0.3"/>
+<path d="M 155 22 Q 200 15 230 30 Q 245 50 240 70 Q 220 80 195 72 Q 170 65 158 48 Z" fill="#c0392b" opacity="0.24"/>
+<path d="M 208 112 Q 240 108 250 125 Q 248 145 228 148 Q 210 145 205 130 Z" fill="#8e44ad" opacity="0.28"/>
+<line x1="70" y1="4" x2="70" y2="176" stroke="#7f8c8d" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="105" y1="4" x2="105" y2="176" stroke="#7f8c8d" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="175" y1="4" x2="175" y2="176" stroke="#7f8c8d" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="210" y1="4" x2="210" y2="176" stroke="#7f8c8d" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="68" y="13" font-size="7" fill="#7f8c8d" text-anchor="middle">90°O</text>
+<text x="103" y="13" font-size="7" fill="#7f8c8d" text-anchor="middle">45°O</text>
+<text x="177" y="13" font-size="7" fill="#7f8c8d" text-anchor="middle">45°E</text>
+<text x="212" y="13" font-size="7" fill="#7f8c8d" text-anchor="middle">90°E</text>
+<line x1="140" y1="4" x2="140" y2="176" stroke="#2c3e50" stroke-width="1.5" stroke-dasharray="5,3"/>
+<text x="142" y="13" font-size="7" fill="#2c3e50" font-weight="bold">0° Greenwich</text>
+<line x1="4" y1="28" x2="276" y2="28" stroke="#3498db" stroke-width="1.4" stroke-dasharray="5,3"/>
+<line x1="4" y1="152" x2="276" y2="152" stroke="#3498db" stroke-width="1.4" stroke-dasharray="5,3"/>
+<text x="6" y="26" font-size="7" fill="#3498db" font-weight="600">C.P. Ártico 66°N</text>
+<text x="6" y="163" font-size="7" fill="#3498db" font-weight="600">C.P. Antártico 66°S</text>
+<line x1="4" y1="55" x2="276" y2="55" stroke="#e67e22" stroke-width="1.4" stroke-dasharray="5,3"/>
+<line x1="4" y1="125" x2="276" y2="125" stroke="#e67e22" stroke-width="1.4" stroke-dasharray="5,3"/>
+<text x="6" y="53" font-size="7" fill="#e67e22" font-weight="600">Tr. Cáncer 23°N</text>
+<text x="6" y="137" font-size="7" fill="#e67e22" font-weight="600">Tr. Capricornio 23°S</text>
+<line x1="4" y1="90" x2="276" y2="90" stroke="#e74c3c" stroke-width="2.2"/>
+<text x="6" y="88" font-size="7.5" fill="#e74c3c" font-weight="bold">Ecuador 0°</text>
+<text x="265" y="60" font-size="7.5" fill="#2c3e50" text-anchor="end" opacity="0.7">H. Norte</text>
+<text x="265" y="120" font-size="7.5" fill="#2c3e50" text-anchor="end" opacity="0.7">H. Sur</text>
+${markers}
+</svg>`;
+}
+
+function genEvalCrit() {
+    sfx('click');
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const _sC = document.getElementById('evalCritFormaSel');
+    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
+    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
+    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    saveProgress();
+    const titleEl = document.getElementById('evalcrit-screen-title');
+    if (titleEl) titleEl.textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Coordenadas Geográficas`;
+    evalCritAnsVisible = false;
+    const out = document.getElementById('evalCritOut'); out.innerHTML = '';
+
+    // Barra de distribución + progresión de dificultad declarada
+    const bar = document.createElement('div'); bar.className = 'eval-score-bar';
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: leer el planisferio (I) y ubicarse (II), aplicar la regla horaria (III), resolver casos reales (IV) y detectar errores + calcular antípodas (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Planisferio 20</span><span class="eval-score-pill esp-tf">II. ¿Dónde estoy? 20</span><span class="eval-score-pill esp-mc">III. Husos 20</span><span class="eval-score-pill esp-pr">IV. Explorador 20</span><span class="eval-score-pill esp-cp">V. Error+Antípodas 20</span></div>`;
+    out.appendChild(bar);
+
+    // ── I. Lectura del planisferio (5 puntos × 4 pts = 20)
+    const plItems = _pickF(critPlanisGrid, 5, rngC);
+    let plRows = '';
+    plItems.forEach((p, i) => {
+        plRows += `<div class="crit-coord-row"><span class="crit-coord-lbl">${'ABCDE'[i]}.</span>
+<label>Lat <input class="crit-num-input" type="text" inputmode="numeric" data-pl-lat="${i}" aria-label="Latitud del punto ${'ABCDE'[i]}">°</label>
+<select class="crit-hemi-select" data-pl-lath="${i}" aria-label="Hemisferio N/S del punto ${'ABCDE'[i]}"><option value="">—</option><option value="N">N</option><option value="S">S</option></select>
+<label>Long <input class="crit-num-input" type="text" inputmode="numeric" data-pl-lon="${i}" aria-label="Longitud del punto ${'ABCDE'[i]}">°</label>
+<select class="crit-hemi-select" data-pl-lonh="${i}" aria-label="Hemisferio E/O del punto ${'ABCDE'[i]}"><option value="">—</option><option value="E">E</option><option value="O">O</option></select></div>`;
+    });
+    const plPauta = plItems.map((p, i) => `${'ABCDE'[i]} = ${p.lat}°${p.latH}, ${p.lon}°${p.lonH}`).join(' · ');
+    const s1 = document.createElement('div');
+    s1.innerHTML = `<div class="eval-section-title">I. Lectura del planisferio <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Observa los 5 puntos marcados en el planisferio. Escribe las coordenadas aproximadas (latitud y longitud, con su hemisferio) de cada uno.</p><div class="crit-planis-wrap">${_critPlanisSVG(plItems)}</div>${plRows}<div class="crit-pauta">${plPauta}</div><div class="eval-item-feedback" id="critFbPl" aria-live="polite"></div></div>`;
+    out.appendChild(s1);
+
+    // ── II. ¿Dónde estoy? (5 × 4 pts = 20)
+    const deItems = [];
+    for (let i = 0; i < 5; i++) {
+        const z = critZonas[Math.floor(rngC() * critZonas.length)];
+        const lat = z.lo + Math.floor(rngC() * (z.hi - z.lo + 1));
+        const latH = rngC() < 0.5 ? 'N' : 'S';
+        const lon = 5 + Math.floor(rngC() * 170);
+        const lonH = rngC() < 0.5 ? 'E' : 'O';
+        deItems.push({ lat, latH, lon, lonH, zona: z.name });
+    }
+    let deRows = '';
+    deItems.forEach((it, i) => {
+        deRows += `<div class="crit-de-item"><div class="crit-scenario"><strong>${i + 1}.</strong> Un punto está en <strong>${it.lat}° ${it.latH}, ${it.lon}° ${it.lonH}</strong>.</div><div class="crit-de-fields">
+<label>Hemisferio N/S: <select class="crit-hemi-select" data-de-ns="${i}" aria-label="Hemisferio N/S del punto ${i + 1}"><option value="">—</option><option value="N">Norte</option><option value="S">Sur</option></select></label>
+<label>Hemisferio E/O: <select class="crit-hemi-select" data-de-eo="${i}" aria-label="Hemisferio E/O del punto ${i + 1}"><option value="">—</option><option value="E">Este</option><option value="O">Oeste</option></select></label>
+<label>Zona climática: <select class="crit-hemi-select" data-de-z="${i}" aria-label="Zona climática del punto ${i + 1}"><option value="">—</option>${critZonaOpts.map(z => `<option value="${z}">${z}</option>`).join('')}</select></label>
+</div><div class="crit-pauta">Hemisferios: ${_hemNSWord(it.latH)} y ${_hemEOWord(it.lonH)} · Zona ${it.zona} (latitud ${it.lat}°).</div><div class="eval-item-feedback" id="critFbDe${i}" aria-live="polite"></div></div>`;
+    });
+    const s2 = document.createElement('div');
+    s2.innerHTML = `<div class="eval-section-title">II. ¿Dónde estoy? <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Para cada coordenada, indica el hemisferio Norte/Sur, el hemisferio Este/Oeste y la zona climática. Recuerda: 0°–23°26' tórrida · 23°26'–66°34' templada · más de 66°34' polar.</p>${deRows}</div>`;
+    out.appendChild(s2);
+
+    // ── III. Relojero de husos horarios (5 × 4 pts = 20)
+    const hzItems = [];
+    for (let i = 0; i < 5; i++) {
+        const base = Math.floor(rngC() * 24);
+        const k = 1 + Math.floor(rngC() * 8);     // 1..8 husos
+        const deg = 15 * k;
+        const hemi = rngC() < 0.5 ? 'E' : 'O';
+        const ans = (((base + (hemi === 'E' ? k : -k)) % 24) + 24) % 24; // Este suma, Oeste resta
+        hzItems.push({ base, deg, hemi, ans });
+    }
+    let hzRows = '';
+    hzItems.forEach((it, i) => {
+        hzRows += `<div class="crit-hz-item"><div class="crit-scenario"><strong>${i + 1}.</strong> Si en Greenwich (0°) son las <strong>${it.base}:00</strong>, ¿qué hora es a <strong>${it.deg}° ${_hemEOWord(it.hemi)}</strong>?</div><label class="crit-hz-lbl">Hora: <input class="crit-num-input crit-hz-input" type="text" inputmode="numeric" data-hz="${i}" placeholder="ej. ${it.ans} o ${it.ans}:00" aria-label="Hora en el punto ${i + 1}"></label><div class="crit-pauta">${it.deg}° ÷ 15° = ${it.deg / 15} husos hacia el ${_hemEOWord(it.hemi)} → ${it.base}:00 ${it.hemi === 'E' ? '+' : '−'} ${it.deg / 15} h = ${it.ans}:00.</div><div class="eval-item-feedback" id="critFbHz${i}" aria-live="polite"></div></div>`;
+    });
+    const s3 = document.createElement('div');
+    s3.innerHTML = `<div class="eval-section-title">III. Relojero de husos horarios <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Aplica la regla enseñada: 360° ÷ 24 h = 15° por huso. Al Este se suma la hora; al Oeste se resta. Escribe la hora (formato 7 o 7:00).</p>${hzRows}</div>`;
+    out.appendChild(s3);
+
+    // ── IV. Problemas del explorador hondureño (2 casos × 10 pts = 20; autoevaluación por casillas)
+    const expItems = _pickF(critExpBank, 2, rngC);
+    let expRows = '';
+    expItems.forEach((it, i) => {
+        expRows += `<div class="crit-q-block"><div class="crit-scenario">🧭 <strong>Caso ${i + 1}:</strong> ${it.case}</div><p class="crit-q-label">${it.ask}</p><textarea class="crit-textarea" rows="3" aria-label="Respuesta del caso ${i + 1}" placeholder="Justifica ubicación y ruta..."></textarea><div class="crit-selfcheck"><span class="crit-selfcheck-lbl">Autoevaluación (marca lo que cumpliste):</span>${it.crit.map(c => `<label class="crit-chk-lbl"><input type="checkbox" class="crit-exp-chk"> ${c}</label>`).join('')}</div><div class="crit-pauta">Respuesta modelo: ${it.model}</div></div>`;
+    });
+    const s4 = document.createElement('div');
+    s4.innerHTML = `<div class="eval-section-title">IV. Problemas del explorador hondureño <span class="eval-pts">20 pts · 2 casos × 10 pts</span></div><div class="eval-item">${expRows}<div class="crit-rubric"><strong>📋 Rúbrica:</strong> cada caso vale 10 pts, repartidos en 2 criterios de 5 pts (ubicación correcta con hemisferios y justificación de la ruta con paralelos/meridianos). Marca las casillas que cumpliste y compara con la respuesta modelo de la Pauta.</div></div>`;
+    out.appendChild(s4);
+
+    // ── V. Detective del error (2 × 5 = 10) + Antípodas (10) = 20
+    const erItems = _pickF(critErrBank, 2, rngC);
+    let erRows = '';
+    erItems.forEach((it, i) => {
+        erRows += `<div class="crit-q-block"><div class="crit-scenario">❌ ${it.bad}</div><p class="crit-q-label">Corrige la afirmación (con tus palabras, incluyendo el término correcto):</p><textarea class="crit-textarea" data-err="${i}" rows="2" aria-label="Corrección de la afirmación ${i + 1}" placeholder="Reescríbela de forma correcta..."></textarea><div class="crit-pauta">${it.fix}</div><div class="eval-item-feedback" id="critFbEr${i}" aria-live="polite"></div></div>`;
+    });
+    const an = _pickF(critAntiBank, 1, rngC)[0];
+    const anAns = { lat: an.lat, latH: _flipNS(an.latH), lon: 180 - an.lon, lonH: _flipEO(an.lonH) };
+    const anBlock = `<div class="crit-q-block"><div class="crit-scenario">🌐 Calcula la <strong>antípoda</strong> del punto <strong>${an.lat}°${an.latH}, ${an.lon}°${an.lonH}</strong> (${an.place}). Regla: misma latitud con signo (hemisferio) contrario, y longitud 180° − la longitud dada, invirtiendo E/O.</div><div class="crit-de-fields">
+<label>Lat antípoda: <input class="crit-num-input" type="text" inputmode="numeric" data-anti-lat aria-label="Latitud de la antípoda">°</label>
+<select class="crit-hemi-select" data-anti-lath aria-label="Hemisferio N/S de la antípoda"><option value="">—</option><option value="N">N</option><option value="S">S</option></select>
+<label>Long antípoda: <input class="crit-num-input" type="text" inputmode="numeric" data-anti-lon aria-label="Longitud de la antípoda">°</label>
+<select class="crit-hemi-select" data-anti-lonh aria-label="Hemisferio E/O de la antípoda"><option value="">—</option><option value="E">E</option><option value="O">O</option></select>
+</div><div class="crit-pauta">Antípoda = ${anAns.lat}°${anAns.latH}, ${anAns.lon}°${anAns.lonH}. (Misma latitud ${an.lat}°, hemisferio ${_hemNSWord(anAns.latH)}; longitud 180° − ${an.lon}° = ${anAns.lon}°, hemisferio ${_hemEOWord(anAns.lonH)}.)</div><div class="eval-item-feedback" id="critFbAnti" aria-live="polite"></div></div>`;
+    const s5 = document.createElement('div');
+    s5.innerHTML = `<div class="eval-section-title">V. Detective del error y antípodas <span class="eval-pts">20 pts · (a) 10 · (b) 10</span></div><div class="eval-item"><p class="crit-q-label">(a) Cada afirmación es falsa. Reescríbela correctamente (2 × 5 pts).</p>${erRows}<p class="crit-q-label" style="margin-top:0.7rem;">(b) Calcula la antípoda usando la regla de la flashcard (10 pts).</p>${anBlock}</div>`;
+    out.appendChild(s5);
+
+    window._evalCritData = {
+        pl: plItems.map(p => ({ lat: p.lat, latH: p.latH, lon: p.lon, lonH: p.lonH, x: p.x, y: p.y })),
+        de: deItems, hz: hzItems, exp: expItems, er: erItems,
+        anti: { origin: { lat: an.lat, latH: an.latH, lon: an.lon, lonH: an.lonH, place: an.place }, answer: anAns }
+    };
+    const totalPanel = document.createElement('div'); totalPanel.id = 'evalCritTotalResult'; totalPanel.className = 'eval-auto-result';
+    totalPanel.innerHTML = '<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve I–III y V en pantalla, autoevalúa el IV con la rúbrica y presiona <em>Calificar prueba</em>. La impresión conserva el formato limpio para papel.';
+    out.appendChild(totalPanel);
+    fin('s-evaluacion');
+}
+
+function toggleEvalCritAns() {
+    evalCritAnsVisible = !evalCritAnsVisible;
+    document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el => el.style.display = evalCritAnsVisible ? 'block' : 'none');
+    sfx('click');
+}
+function _setCritFb(id, ok, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
+}
+function gradeEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const d = window._evalCritData;
+    const detail = { pl: 0, de: 0, hz: 0, exp: 0, er: 0, anti: 0 };
+
+    // I. Lectura del planisferio (1 pt lat val · 1 pt lat hemi · 1 pt lon val · 1 pt lon hemi)
+    let plHits = 0;
+    d.pl.forEach((p, i) => {
+        const latV = _parseNum((document.querySelector(`[data-pl-lat="${i}"]`) || {}).value);
+        const latH = (document.querySelector(`[data-pl-lath="${i}"]`) || {}).value;
+        const lonV = _parseNum((document.querySelector(`[data-pl-lon="${i}"]`) || {}).value);
+        const lonH = (document.querySelector(`[data-pl-lonh="${i}"]`) || {}).value;
+        let pt = 0;
+        if (latV !== null && Math.abs(latV - p.lat) <= 3) pt++;
+        if (latH === p.latH) pt++;
+        if (lonV !== null && Math.abs(lonV - p.lon) <= 3) pt++;
+        if (lonH === p.lonH) pt++;
+        detail.pl += pt; plHits += (pt === 4 ? 1 : 0);
+        const inp = document.querySelector(`[data-pl-lat="${i}"]`);
+        if (inp) { inp.classList.toggle('eval-input-ok', pt === 4); inp.classList.toggle('eval-input-no', pt !== 4); }
+    });
+    _setCritFb('critFbPl', plHits === 5, plHits === 5 ? 'Correcto. +20 pts' : `${plHits}/5 puntos exactos. R/ ${d.pl.map((p, i) => 'ABCDE'[i] + '=' + p.lat + '°' + p.latH + ',' + p.lon + '°' + p.lonH).join(' · ')}`);
+
+    // II. ¿Dónde estoy? (hemisferio N/S 1 · hemisferio E/O 1 · zona 2)
+    d.de.forEach((it, i) => {
+        const ns = (document.querySelector(`[data-de-ns="${i}"]`) || {}).value;
+        const eo = (document.querySelector(`[data-de-eo="${i}"]`) || {}).value;
+        const z = (document.querySelector(`[data-de-z="${i}"]`) || {}).value;
+        let pt = 0;
+        const nsOk = ns === it.latH, eoOk = eo === it.lonH, zOk = z === it.zona;
+        if (nsOk) pt += 1; if (eoOk) pt += 1; if (zOk) pt += 2;
+        detail.de += pt;
+        _setCritFb('critFbDe' + i, pt === 4, pt === 4 ? 'Correcto. +4 pts' : `${pt}/4 pts. R/ ${_hemNSWord(it.latH)} · ${_hemEOWord(it.lonH)} · Zona ${it.zona}`);
+    });
+
+    // III. Relojero de husos horarios (4 pts c/u, exacto)
+    d.hz.forEach((it, i) => {
+        const inp = document.querySelector(`[data-hz="${i}"]`);
+        const h = _parseHour(inp ? inp.value : '');
+        const ok = h !== null && h === it.ans;
+        if (inp) { inp.classList.toggle('eval-input-ok', ok); inp.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.hz += 4;
+        _setCritFb('critFbHz' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + it.ans + ':00');
+    });
+
+    // IV. Explorador (autoevaluación por casillas, 5 pts c/u marcada, máx 20)
+    const chk = document.querySelectorAll('#evalCritOut .crit-exp-chk');
+    let expChecked = 0; chk.forEach(c => { if (c.checked) expChecked++; });
+    detail.exp = Math.min(20, expChecked * 5);
+
+    // V.a Detective del error (5 pts c/u; correcto si el texto contiene la palabra clave)
+    d.er.forEach((it, i) => {
+        const ta = document.querySelector(`[data-err="${i}"]`);
+        const student = _normTxt(ta ? ta.value : '');
+        const key = _normTxt(it.key);
+        const ok = !!student && student.indexOf(key) !== -1;
+        if (ta) { ta.classList.toggle('eval-input-ok', ok); ta.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.er += 5;
+        _setCritFb('critFbEr' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + it.fix);
+    });
+
+    // V.b Antípodas (lat val 3 · lat hemi 2 · lon val 3 · lon hemi 2 = 10)
+    const a = d.anti.answer;
+    const aLatV = _parseNum((document.querySelector('[data-anti-lat]') || {}).value);
+    const aLatH = (document.querySelector('[data-anti-lath]') || {}).value;
+    const aLonV = _parseNum((document.querySelector('[data-anti-lon]') || {}).value);
+    const aLonH = (document.querySelector('[data-anti-lonh]') || {}).value;
+    let antiPt = 0;
+    if (aLatV !== null && Math.abs(aLatV - a.lat) <= 2) antiPt += 3;
+    if (aLatH === a.latH) antiPt += 2;
+    if (aLonV !== null && Math.abs(aLonV - a.lon) <= 2) antiPt += 3;
+    if (aLonH === a.lonH) antiPt += 2;
+    detail.anti = antiPt;
+    _setCritFb('critFbAnti', antiPt === 10, antiPt === 10 ? 'Correcto. +10 pts' : `${antiPt}/10 pts. R/ ${a.lat}°${a.latH}, ${a.lon}°${a.lonH}`);
+
+    const total = detail.pl + detail.de + detail.hz + detail.exp + detail.er + detail.anti;
+    const panel = document.getElementById('evalCritTotalResult');
+    if (panel) {
+        panel.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk');
+        panel.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>I. Planisferio: ${detail.pl}/20 · II. ¿Dónde estoy?: ${detail.de}/20 · III. Husos: ${detail.hz}/20 · IV. Explorador: ${detail.exp}/20 · V. Error+Antípodas: ${detail.er + detail.anti}/20</span><br><em>I–III y V.b se califican solas; IV lo autoevalúas con la rúbrica y V.a por palabra clave. Compara siempre con la Pauta.</em>`;
+    }
+    const formKey = 'crit_' + (window._currentEvalCritForm || 1);
+    if (total >= 70) { if (!xpTracker.critWin.has(formKey)) { xpTracker.critWin.add(formKey); pts(8); } showToast('🎯 Pensamiento crítico: ' + total + '/100'); }
+    else showToast('🧮 Prueba calificada: ' + total + '/100. Revisa lo marcado.');
+}
+
+function printEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const forma = window._currentEvalCritForm || 1;
+    const d = window._evalCritData;
+    const lines = (n) => Array(n).fill('<div class="ln"></div>').join('');
+
+    // I. Lectura del planisferio (SVG estático + renglones de coordenadas)
+    let s1 = `<div class="sec-title"><span>I. Lectura del planisferio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Escribe las coordenadas aproximadas (latitud y longitud con su hemisferio) de cada punto marcado.</p>${_critPlanisSVG(d.pl)}<div class="pl-print-grid">`;
+    d.pl.forEach((p, i) => { s1 += `<div class="pl-print-row"><span class="pr-num">${'ABCDE'[i]}.</span> Lat <span class="cp-blank-sm"></span>° <span class="cp-blank-xs"></span> &nbsp; Long <span class="cp-blank-sm"></span>° <span class="cp-blank-xs"></span></div>`; });
+    s1 += `</div>`;
+
+    // II. ¿Dónde estoy?
+    let s2 = `<div class="sec-title"><span>II. ¿Dónde estoy?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Para cada coordenada escribe: hemisferio Norte/Sur, hemisferio Este/Oeste y zona climática (tórrida 0°–23°26' · templada 23°26'–66°34' · polar >66°34').</p>`;
+    d.de.forEach((it, i) => { s2 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text"><strong>${it.lat}° ${it.latH}, ${it.lon}° ${it.lonH}</strong> → N/S: <span class="cp-blank-sm"></span> · E/O: <span class="cp-blank-sm"></span> · Zona: <span class="cp-blank"></span></span></div>`; });
+
+    // III. Husos horarios
+    let s3 = `<div class="sec-title"><span>III. Relojero de husos horarios</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Regla: 360° ÷ 24 h = 15° por huso. Al Este se suma, al Oeste se resta. Escribe la hora resultante.</p>`;
+    d.hz.forEach((it, i) => { s3 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text">Si en Greenwich son las <strong>${it.base}:00</strong>, ¿qué hora es a <strong>${it.deg}° ${_hemEOWord(it.hemi)}</strong>? &nbsp; Hora: <span class="cp-blank"></span></span></div>`; });
+
+    // IV. Explorador
+    let s4 = `<div class="sec-title"><span>IV. Problemas del explorador hondureño</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Resuelve cada caso justificando ubicación y ruta (10 pts c/u).</p>`;
+    d.exp.forEach((it, i) => { s4 += `<p class="crit-print-scenario"><strong>Caso ${i + 1}:</strong> ${it.case}</p><p class="crit-print-q">${it.ask}</p>${lines(2)}`; });
+
+    // V. Error + Antípodas
+    let s5 = `<div class="sec-title"><span>V. Detective del error y antípodas</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">(a) Cada afirmación es falsa. Reescríbela de forma correcta (5 pts c/u).</p>`;
+    d.er.forEach((it, i) => { s5 += `<p class="crit-print-scenario">❌ ${it.bad}</p>${lines(1)}`; });
+    s5 += `<p class="crit-print-q">(b) Calcula la antípoda de <strong>${d.anti.origin.lat}°${d.anti.origin.latH}, ${d.anti.origin.lon}°${d.anti.origin.lonH}</strong> (${d.anti.origin.place}). Regla: misma latitud con hemisferio contrario, longitud 180° − la dada, invirtiendo E/O. (10 pts)</p><div class="cp-row"><span class="cp-text">Antípoda: Lat <span class="cp-blank-sm"></span>° <span class="cp-blank-xs"></span> &nbsp; Long <span class="cp-blank-sm"></span>° <span class="cp-blank-xs"></span></span></div>`;
+
+    // ── Pauta
+    let pR = '';
+    pR += `<div class="p-sec"><div class="p-ttl">I. Lectura del planisferio</div>${d.pl.map((p, i) => `<div class="p-crit-line"><strong>${'ABCDE'[i]}:</strong> ${p.lat}°${p.latH}, ${p.lon}°${p.lonH}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">II. ¿Dónde estoy?</div>${d.de.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${_hemNSWord(it.latH)} · ${_hemEOWord(it.lonH)} · Zona ${it.zona}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">III. Husos horarios</div>${d.hz.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.deg}°÷15 = ${it.deg / 15} husos ${it.hemi === 'E' ? '(+)' : '(−)'} → ${it.ans}:00</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">V.a Detecta el error</div>${d.er.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.fix}</div>`).join('')}<div class="p-crit-line"><strong>V.b Antípoda:</strong> ${d.anti.answer.lat}°${d.anti.answer.latH}, ${d.anti.answer.lon}°${d.anti.answer.lonH}</div></div>`;
+    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">IV. Explorador (respuestas modelo + rúbrica)</div>${d.exp.map((it, i) => `<div class="p-crit-line"><strong>Caso ${i + 1}:</strong> ${it.model} <em>[Criterios: ${it.crit.join(' · ')}]</em></div>`).join('')}</div>`;
+
+    const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico Coordenadas Geográficas · Forma ${forma}</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 6mm;width:201.9mm;margin:0 auto;}
+.ph{margin-bottom:0.35rem;}
+.ph h2{font-size:11.5pt;font-weight:700;text-align:center;margin-bottom:0.25rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.15rem 0.45rem;margin:0.28rem 0 0.12rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c0392b;background:#fbe9e7;color:#c0392b;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c0392b;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #c0392b;height:12px;}
+.obt-pct{white-space:nowrap;}
+.crit-print-scenario{font-size:10pt;background:#fbe9e7;border-left:3px solid #c0392b;padding:0.18rem 0.5rem;margin:0.12rem 0 0.15rem;line-height:1.3;}
+.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}
+.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:3px;}
+.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.5;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-text{flex:1;}
+.qn{font-weight:700;min-width:20px;flex-shrink:0;}
+.cp-blank{display:inline-block;min-width:110px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.cp-blank-sm{display:inline-block;min-width:52px;border-bottom:1.5px solid #111;margin:0 0.1rem;}
+.cp-blank-xs{display:inline-block;min-width:30px;border-bottom:1.5px solid #111;margin:0 0.1rem;}
+.pl-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.8rem;margin-top:0.15rem;}
+.pl-print-row{font-size:10.5pt;padding:0.15rem 0.2rem;}
+.pr-num{font-weight:700;color:#c0392b;}
+.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#c0392b;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c0392b;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:13pt;font-weight:700;color:#c0392b;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}
+.p-ttl{font-size:11pt;font-weight:700;color:#c0392b;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-crit-line{font-size:10.5pt;color:#007a00;margin-bottom:0.16rem;line-height:1.35;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
+</style></head><body><div id="evalPage">
+<div class="ph">
+  <h2>Evaluación Competencial · Pensamiento Crítico · Coordenadas Geográficas · Educación Básica · Ciencias Sociales</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · I. Planisferio 20 · II. ¿Dónde estoy? 20 · III. Husos 20 · IV. Explorador 20 · V. Error+Antípodas 20 · Forma ${forma}</p>
+</div>
+${s1}${s2}${s3}${s4}${s5}
+<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
+</div><div class="pauta-wrap" id="pautaPage">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Coordenadas Geográficas · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — IV y V.a: usar respuesta modelo y rúbrica como guía de corrección</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
+
+    const win = window.open('', '_blank', '');
+    if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+    win.document.write(doc);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
 }
 
 function printEval() {
