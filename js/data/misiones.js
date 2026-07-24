@@ -68,7 +68,8 @@ const MISSIONS = [
   { id: 51, title: 'Sensores: los Sentidos del Robot',                    subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 2, xp: 35, icon: '📡', pais: 'HN', url: 'misiones/2y3ciclo-sensores-robot/sensores-robot.html' },
   { id: 52, title: 'Motores y Mecanismos',                              subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 3, xp: 35, icon: '⚙️', pais: 'HN', url: 'misiones/2y3ciclo-motores-mecanismos/motores-mecanismos.html' },
   { id: 53, title: 'Electricidad para Robots',                            subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 4, xp: 35, icon: '🔌', pais: 'HN', url: 'misiones/2y3ciclo-electricidad-robots/electricidad-robots.html' },
-  { id: 55, title: 'Robots que Resuelven Problemas',                      subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 6, xp: 35, icon: '🏆', pais: 'HN', url: 'misiones/2y3ciclo-robots-problemas/robots-problemas.html' },
+  { id: 54, title: 'Programando un Robot',                                subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 5, xp: 35, icon: '🕹️', pais: 'HN', url: 'misiones/2y3ciclo-programando-robot/programando-robot.html' },
+  { id: 55, title: 'Robots que Resuelven Problemas',                    subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 6, xp: 35, icon: '🏆', pais: 'HN', url: 'misiones/2y3ciclo-robots-problemas/robots-problemas.html' },
 ];
 
 /* Helpers de rutas (globales: index los usa en app.js) */

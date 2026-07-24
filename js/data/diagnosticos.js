@@ -67,6 +67,8 @@ const DIAGNOSTICOS = {
     { etapa: 3, q: 'Un engranaje pequeño mueve a uno grande. El grande gira…', o: ['Más rápido y con menos fuerza', 'Más lento y con más fuerza', 'Igual de rápido', 'Al revés y más rápido'], a: 1 },
     { etapa: 4, q: 'Para que un foquito encienda, el circuito debe estar…', o: ['Abierto', 'Cerrado', 'Cortado', 'Sin pila'], a: 1 },
     { etapa: 4, q: '¿Cuál de estos materiales es un aislante?', o: ['El cobre', 'El aluminio', 'El plástico', 'El agua con sal'], a: 2 },
+    { etapa: 5, q: 'El ciclo de trabajo de un robot es…', o: ['Mover, apagar y guardar', 'Leer sensores, decidir y mover actuadores, y repetir', 'Solo esperar órdenes por control remoto', 'Cargar la batería y detenerse'], a: 1 },
+    { etapa: 5, q: 'Si el sensor detecta una pared adelante, ¿qué instrucción conviene?', o: ['Avanzar más rápido', 'Girar y buscar otro camino', 'Apagar el sensor', 'Repetir avanzar para siempre'], a: 1 },
     { etapa: 6, q: 'En el ciclo de diseño, ¿qué se hace justo después de probar el prototipo?', o: ['Se olvida el proyecto', 'Se mejora con lo aprendido en la prueba', 'Se empieza otro problema distinto', 'Se vende el robot'], a: 1 },
     { etapa: 6, q: 'Antes de diseñar un robot, lo primero es…', o: ['Comprar los materiales', 'Identificar bien el problema y a quién afecta', 'Escribir el programa', 'Pintarlo bonito'], a: 1 },
   ],
