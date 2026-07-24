@@ -65,6 +65,9 @@ const MISSIONS = [
   { id: 49, title: 'Variables: las Cajitas de Memoria',                   subject: 'programación', color: 'tec', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'codigo',  etapa: 5, xp: 35, icon: '📦', pais: 'HN', url: 'misiones/2y3ciclo-variables-cajitas/variables-cajitas.html' },
   { id: 50, title: 'Detective de Bugs: la Depuración',                    subject: 'programación', color: 'tec', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'codigo',  etapa: 6, xp: 35, icon: '🐞', pais: 'HN', url: 'misiones/2y3ciclo-detective-bugs/detective-bugs.html' },
   { id: 45, title: '¿Qué es un Robot?',                                   subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 1, xp: 35, icon: '🤖', pais: 'HN', url: 'misiones/2y3ciclo-que-es-un-robot/que-es-un-robot.html' },
+  { id: 51, title: 'Sensores: los Sentidos del Robot',                    subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 2, xp: 35, icon: '📡', pais: 'HN', url: 'misiones/2y3ciclo-sensores-robot/sensores-robot.html' },
+  { id: 52, title: 'Motores y Mecanismos',                              subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 3, xp: 35, icon: '⚙️', pais: 'HN', url: 'misiones/2y3ciclo-motores-mecanismos/motores-mecanismos.html' },
+  { id: 53, title: 'Electricidad para Robots',                            subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 4, xp: 35, icon: '🔌', pais: 'HN', url: 'misiones/2y3ciclo-electricidad-robots/electricidad-robots.html' },
 ];
 
 /* Helpers de rutas (globales: index los usa en app.js) */

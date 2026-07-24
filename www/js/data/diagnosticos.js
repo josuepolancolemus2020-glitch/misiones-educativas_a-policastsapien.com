@@ -61,5 +61,11 @@ const DIAGNOSTICOS = {
   robots: [
     { etapa: 1, q: '¿Qué parte del robot funciona como sus «sentidos»?', o: ['Los actuadores', 'Los sensores', 'La batería', 'Las ruedas'], a: 1 },
     { etapa: 1, q: '¿Cuál de estas máquinas es un robot?', o: ['Un martillo', 'Una bicicleta', 'Una aspiradora que detecta obstáculos y decide su ruta sola', 'Un ventilador encendido'], a: 2 },
+    { etapa: 2, q: '¿Qué sensor necesita un robot para no chocar con una pared?', o: ['Un sensor de luz', 'Un sensor de distancia', 'Un sensor de temperatura', 'Un sensor de sonido'], a: 1 },
+    { etapa: 2, q: 'En el cuerpo humano, el ojo cumple el mismo papel que…', o: ['Un actuador', 'Un motor', 'Un sensor de luz', 'La batería'], a: 2 },
+    { etapa: 3, q: 'Si dos engranajes están en contacto y el primero gira a la derecha, el segundo gira…', o: ['También a la derecha', 'A la izquierda', 'No gira', 'Al doble de velocidad y a la derecha'], a: 1 },
+    { etapa: 3, q: 'Un engranaje pequeño mueve a uno grande. El grande gira…', o: ['Más rápido y con menos fuerza', 'Más lento y con más fuerza', 'Igual de rápido', 'Al revés y más rápido'], a: 1 },
+    { etapa: 4, q: 'Para que un foquito encienda, el circuito debe estar…', o: ['Abierto', 'Cerrado', 'Cortado', 'Sin pila'], a: 1 },
+    { etapa: 4, q: '¿Cuál de estos materiales es un aislante?', o: ['El cobre', 'El aluminio', 'El plástico', 'El agua con sal'], a: 2 },
   ],
 };

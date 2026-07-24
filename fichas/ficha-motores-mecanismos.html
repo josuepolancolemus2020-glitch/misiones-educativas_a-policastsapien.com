@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Motores y Mecanismos</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: ROBÓTICA = CIAN TEC (#0e7490)
+     · Colores semánticos: cian=motor/entrada, naranja=transmisión, verde=trabajo final
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --rob: #0e7490; --rob-osc: #155e75; --rob-claro: #ecfeff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cdeef6;
+    --mot: #0891b2; --tra: #c2410c; --fin: #1c7c43; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef8fa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--rob-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--rob); background: var(--rob-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--rob-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--rob-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--rob); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--rob-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--rob-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--rob-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--rob); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4fbfd; }
+  td.k { font-weight: 700; color: var(--rob-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafdfe; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--rob-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (motor / transmisión / trabajo final) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #d7f2f8; } .celula .cm b { color: var(--mot); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--tra); }
+  .celula .cn { background: #e4f4e7; } .celula .cn b { color: var(--fin); }
+
+  /* Tren de engranajes dibujado con tres cajas y sus flechas de giro */
+  .tren { display: flex; gap: 10px; justify-content: center; align-items: center; margin: 6px 0 4px; }
+  .tren .eng { border: 2px solid var(--rob); border-radius: 50%; width: 92px; height: 92px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #d7f2f8; }
+  .tren .eng.med { width: 74px; height: 74px; background: #ffedd5; border-color: var(--tra); }
+  .tren .eng.gra { width: 108px; height: 108px; background: #e4f4e7; border-color: var(--fin); }
+  .tren .flecha { font-size: 15pt; font-weight: 900; color: var(--rob-osc); }
+  .tren .giro { font-size: 17pt; font-weight: 900; }
+  .tren .dts { font-size: 8pt; font-weight: 700; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #d7f2f8; border: 1px solid #ade0ed; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--mot); } .tri .torg b { color: var(--tra); }
+
+  .acts h3 { border-bottom: 2px solid var(--rob-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--rob); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--rob); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--rob-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--rob-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--rob-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2fafc; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--rob-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--rob); box-shadow: 0 6px 16px rgba(14,116,144,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div, .tren .eng
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Motores y Mecanismos</div>
+        <div class="f-meta"><b>Asignatura:</b> Robótica &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica &nbsp;·&nbsp; <b>Ruta de los Robots · Etapa 3</b></div>
+        <div class="f-meta"><b>Tema:</b> Cómo se mueve un robot: el motor como actuador (motor DC y servomotor), engranajes y sentido de giro, relación fuerza-velocidad, poleas y correas, palancas, rueda y eje, tornillo sin fin y biela-manivela, con los mecanismos de la vida real de Honduras</div>
+      </div>
+      <div class="fh-qr">
+        <img src="img/qr-mision-motores-mecanismos.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Explicar que el <strong>motor</strong> es el actuador que convierte la energía eléctrica en <strong>giro</strong>.</li>
+      <li>Diferenciar el <strong>motor DC</strong>, el <strong>servomotor</strong> y el <strong>motorreductor</strong>.</li>
+      <li>Aplicar las dos reglas de los <strong>engranajes</strong>: sentido del giro y relación de dientes.</li>
+      <li>Decidir si un montaje da más <strong>fuerza</strong> o más <strong>velocidad</strong>, y explicar el intercambio.</li>
+      <li>Reconocer <strong>poleas y correas</strong>, <strong>palancas</strong>, <strong>rueda y eje</strong>, <strong>tornillo sin fin</strong> y <strong>biela-manivela</strong>.</li>
+      <li>Identificar mecanismos de la vida real de <strong>Honduras</strong>: molino, bicicleta, despulpadora, carretilla y portón.</li>
+    </ol>
+
+    <h2>⚙️ 1. El motor: el actuador que da movimiento</h2>
+    <p>El <strong>motor</strong> es el <strong>actuador</strong> más importante de un robot: convierte la
+    <strong>energía eléctrica</strong> de la batería en <strong>movimiento de giro</strong>. Pero ese giro sale
+    <strong>muy rápido y con poca fuerza</strong>, y casi nunca sirve así. Por eso el motor se conecta a
+    <strong>mecanismos</strong> (engranajes, poleas, palancas) que <strong>transmiten</strong> el movimiento hasta donde
+    hace falta y lo <strong>transforman</strong> en el que se necesita.</p>
+    <div class="caja truco">💡 <b>Truco:</b> el motor es el <strong>músculo</strong> y los mecanismos son los
+    <strong>huesos y las articulaciones</strong>. Un músculo solo no levanta nada: necesita a quién empujar.</div>
+
+    <h3>🔌📐🧰 Los tres motores que debes conocer</h3>
+    <div class="ilus">
+      <div class="ilus-t">De la batería al trabajo: la energía siempre sigue el mismo camino</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">🔌</span><b>Motor DC</b>Gira sin parar mientras haya corriente: mucha velocidad, poca fuerza.</div>
+        <div class="cc"><span class="c-emoji">📐</span><b>Servomotor</b>Gira hasta un ángulo exacto (90°, 180°) y se queda ahí.</div>
+        <div class="cn"><span class="c-emoji">🧰</span><b>Motorreductor</b>Motor + engranajes: gira más lento, pero con mucha más fuerza.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Camino de la energía: 🔋 batería → ⚙️ motor → 🦷 mecanismo → 💪 trabajo final.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Motores y Mecanismos</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🦷 2. Engranajes: dientes que se dan la mano</h2>
+    <p>Un <strong>engranaje</strong> (o piñón) es una rueda con <strong>dientes</strong>. Cuando los dientes de dos
+    engranajes <strong>encajan</strong>, uno arrastra al otro sin resbalar. Hay <strong>dos reglas</strong> que nunca
+    fallan y que debes memorizar:</p>
+    <div class="tri">
+      <div class="tnuc"><b>🔄 Regla 1: el sentido</b>Dos engranajes en contacto giran en <strong>sentidos contrarios</strong>. Con <strong>tres</strong> engranajes, el primero y el tercero giran <strong>igual</strong>: el del medio es el <strong>engranaje loco</strong>.</div>
+      <div class="torg"><b>⚖️ Regla 2: la relación</b><strong>Pequeño mueve a grande</strong> = más <strong>fuerza</strong> y menos velocidad. <strong>Grande mueve a pequeño</strong> = más <strong>velocidad</strong> y menos fuerza.</div>
+    </div>
+
+    <div class="ilus">
+      <div class="ilus-t">Tren de tres engranajes: el sentido se invierte en cada contacto</div>
+      <div class="tren">
+        <div class="eng"><span class="giro">↻</span><span class="dts">10 dientes</span><span class="dts">MOTOR</span></div>
+        <span class="flecha">→</span>
+        <div class="eng med"><span class="giro">↺</span><span class="dts">20 dientes</span><span class="dts">LOCO</span></div>
+        <span class="flecha">→</span>
+        <div class="eng gra"><span class="giro">↻</span><span class="dts">40 dientes</span><span class="dts">SALIDA</span></div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:6px 0 0;text-align:center;">El primero y el tercero giran igual (↻). Como el último tiene 40 dientes y el primero 10, la salida gira <strong>4 veces más lento y con 4 veces más fuerza</strong>. ¡El engranaje del medio no cambia la relación!</p>
+    </div>
+
+    <table>
+      <tr><th>Montaje</th><th>Sentido</th><th>Velocidad</th><th>Fuerza</th><th>¿Para qué sirve?</th></tr>
+      <tr><td class="k">⚙️ Pequeño → grande</td><td>Contrario</td><td>Baja</td><td>Sube</td><td>Levantar y arrastrar peso</td></tr>
+      <tr><td class="k">⚙️ Grande → pequeño</td><td>Contrario</td><td>Sube</td><td>Baja</td><td>Correr rápido, ventiladores</td></tr>
+      <tr><td class="k">⚙️ Iguales (o con loco)</td><td>Contrario / 1º y 3º igual</td><td>Igual</td><td>Igual</td><td>Solo cambiar el sentido</td></tr>
+      <tr><td class="k">🌀 Tornillo sin fin</td><td>Cambia el eje 90°</td><td>Muy baja</td><td>Muy alta</td><td>Molino de maíz, portones</td></tr>
+    </table>
+    <div class="caja regla">🎯 <b>Regla de oro:</b> el mecanismo <strong>no crea energía</strong>: solo la reparte. Más
+    fuerza siempre cuesta velocidad y más velocidad siempre cuesta fuerza. <strong>Nunca se gana todo.</strong></div>
+
+    <h2>🎡 3. Poleas y correas: el giro que viaja lejos</h2>
+    <p>Una <strong>polea</strong> es una rueda con un <strong>canal</strong> por donde pasa una cuerda o una
+    <strong>correa</strong>. Con dos poleas y una correa el giro <strong>viaja a distancia</strong>, sin que las piezas
+    se toquen.</p>
+    <table>
+      <tr><th>Montaje</th><th>¿Qué hace?</th><th>Ejemplo</th></tr>
+      <tr><td class="k">Correa abierta</td><td>Las dos poleas giran en el <strong>mismo sentido</strong></td><td>La faja del molino</td></tr>
+      <tr><td class="k">Correa cruzada</td><td><strong>Invierte</strong> el sentido del giro</td><td>Máquinas de taller</td></tr>
+      <tr><td class="k">Polea fija</td><td>Cambia la <strong>dirección</strong> de la fuerza: jalas hacia abajo</td><td>El balde del pozo</td></tr>
+      <tr><td class="k">Polea móvil</td><td>Ayuda a levantar: hace falta <strong>menos fuerza</strong></td><td>La grúa, el polipasto</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Motores y Mecanismos</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🪝 4. Palancas y los demás mecanismos</h2>
+    <p>Una <strong>palanca</strong> es una <strong>barra rígida</strong> que gira sobre un <strong>punto de
+    apoyo</strong>. Multiplica la fuerza de la persona, pero hay un trato: el extremo donde empujas
+    <strong>recorre más distancia</strong> que la carga que levantas.</p>
+    <table>
+      <tr><th>Mecanismo</th><th>¿Qué hace?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">🪝 Palanca</td><td>Multiplica la fuerza girando sobre el punto de apoyo</td><td>Balancín, carretilla, pinza, tijeras</td></tr>
+      <tr><td class="k">🛞 Rueda y eje</td><td>La rueda gira junto al eje y arrastra la carga con poco esfuerzo</td><td>Carretilla, carreta, carrito robot</td></tr>
+      <tr><td class="k">🌀 Tornillo sin fin</td><td>Un «gusano» roscado mueve una rueda dentada: muchísima fuerza</td><td>Molino de maíz, motor del portón</td></tr>
+      <tr><td class="k">🔁 Biela-manivela</td><td>Transforma el <strong>giro</strong> en <strong>vaivén</strong> (ida y vuelta)</td><td>Máquina de coser, sierra, pistón</td></tr>
+      <tr><td class="k">🚲 Cadena y piñones</td><td>Llevan el giro a distancia sin resbalar</td><td>Bicicleta: plato y piñón</td></tr>
+    </table>
+    <div class="caja idea">📖 <b>Dato clave:</b> el <strong>punto de apoyo</strong> es lo que hace palanca a una barra.
+    Si lo colocas <strong>cerca de la carga</strong>, levantas más peso con menos fuerza.</div>
+
+    <h2>🇭🇳 5. Mecanismos en la vida real de Honduras</h2>
+    <table>
+      <tr><th>¿Dónde?</th><th>¿Qué mecanismo usa?</th><th>¿Fuerza o velocidad?</th></tr>
+      <tr><td class="k">🌽 Molino de maíz</td><td>Manivela y tornillo sin fin</td><td>Fuerza: gira lento y aplasta el grano</td></tr>
+      <tr><td class="k">🚲 Bicicleta</td><td>Plato, cadena y piñones</td><td>Piñón chico = velocidad; piñón grande = fuerza</td></tr>
+      <tr><td class="k">☕ Despulpadora de café</td><td>Manivela y engranajes</td><td>Fuerza para arrancar la cáscara</td></tr>
+      <tr><td class="k">🧱 Carretilla del albañil</td><td>Palanca + rueda y eje</td><td>Fuerza: se mueve mucho peso con poco esfuerzo</td></tr>
+      <tr><td class="k">🚪 Molinete del portón</td><td>Engranajes y tornillo sin fin</td><td>Fuerza: un motor pequeño mueve un portón pesado</td></tr>
+    </table>
+
+    <h2>🎲 6. Actividades desconectadas (sin computadora)</h2>
+    <ul>
+      <li><strong>⚙️ Engranajes de cartón:</strong> recorta <strong>dos ruedas de cartón</strong>, una pequeña y una
+      grande, y hazles dientes iguales con tijeras (por ejemplo 8 y 16). Clávalas con chinches sobre una tabla para que
+      los dientes encajen. Marca un diente con lápiz de color y cuenta: <strong>¿cuántas vueltas da la pequeña mientras
+      la grande da una?</strong> Anota qué rueda gira más lento y cuál necesita más fuerza.</li>
+      <li><strong>🪝 Palanca con regla y lápiz:</strong> pon un <strong>lápiz</strong> debajo de una <strong>regla</strong>
+      (ese es el punto de apoyo) y coloca una piedrita en un extremo. Mueve el lápiz más cerca y más lejos de la piedra y
+      anota <strong>cuándo cuesta menos levantarla</strong> y cuánto sube o baja cada extremo.</li>
+      <li><strong>🎡 Polea con carrete de hilo:</strong> atraviesa un <strong>carrete de hilo</strong> con un lápiz,
+      sostenlo entre dos sillas y pasa un cordel por el canal. Ata una bolsita con piedras y jala hacia abajo:
+      <strong>¿es más cómodo que levantarla con la mano?</strong> Escribe qué cambió: la fuerza o la dirección.</li>
+      <li><strong>➰ Dibuja el sentido del giro:</strong> en tu cuaderno dibuja <strong>tres engranajes en fila</strong> y
+      pinta con <strong>flechas</strong> hacia dónde gira cada uno (↻ ↺ ↻). Repite con dos poleas y una correa
+      <strong>abierta</strong>, y luego con la correa <strong>cruzada</strong>. Explica en una línea qué cambió.</li>
+    </ul>
+
+    <div class="caja hn">🇭🇳 <b>La ingeniería también es tuya:</b> los mecanismos no se inventaron en un laboratorio
+    lejano: están en el molino de la abuela, en la carretilla del albañil y en la bicicleta con la que llegas a la
+    escuela. Quien aprende a mirar <strong>dónde está el punto de apoyo</strong> y <strong>cuál rueda es la grande</strong>
+    ya está pensando como ingeniero. ¡Con cartón y cordel se empieza! 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Motores y Mecanismos</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El motor convierte la energía eléctrica en movimiento de <span class="linea-resp"></span>.</li>
+      <li>Dos engranajes en contacto giran en sentidos <span class="linea-resp"></span>.</li>
+      <li>Si un engranaje pequeño mueve a uno grande, se gana <span class="linea-resp"></span>.</li>
+      <li>Si un engranaje grande mueve a uno pequeño, se gana <span class="linea-resp"></span>.</li>
+      <li>La palanca gira sobre su punto de <span class="linea-resp"></span>.</li>
+      <li>La <span class="linea-resp"></span> une dos poleas y transmite el giro a distancia.</li>
+      <li>Si la correa se coloca cruzada, el giro se <span class="linea-resp"></span>.</li>
+      <li>El tornillo <span class="linea-resp"></span> da mucha fuerza y muy poca velocidad.</li>
+      <li>La biela-manivela transforma el giro en movimiento de <span class="linea-resp"></span>.</li>
+      <li>De tres engranajes en fila, el primero y el tercero giran en el mismo <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El motor convierte la energía eléctrica en movimiento.</li>
+      <li>____ Dos engranajes que encajan sus dientes giran en el mismo sentido.</li>
+      <li>____ Un engranaje pequeño que mueve a uno grande le da más fuerza.</li>
+      <li>____ Con los mecanismos se gana fuerza y velocidad al mismo tiempo.</li>
+      <li>____ En un tren de tres engranajes, el primero y el tercero giran igual.</li>
+      <li>____ La correa cruzada invierte el sentido del giro.</li>
+      <li>____ El tornillo sin fin sirve para ganar muchísima velocidad.</li>
+      <li>____ La palanca necesita un punto de apoyo para funcionar.</li>
+      <li>____ La biela-manivela convierte el movimiento de giro en vaivén.</li>
+      <li>____ El servomotor gira sin parar y nunca se detiene en un ángulo exacto.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Motores y Mecanismos</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué hace el motor de un robot?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> guarda la información del programa</span>
+        <span class="op"><i>b</i> convierte la energía eléctrica en movimiento de giro</span>
+        <span class="op"><i>c</i> enfría la batería</span>
+        <span class="op"><i>d</i> sostiene el punto de apoyo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>Dos engranajes con los dientes encajados, ¿cómo giran?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> en el mismo sentido</span>
+        <span class="op"><i>b</i> uno gira y el otro se queda quieto</span>
+        <span class="op"><i>c</i> en sentidos contrarios</span>
+        <span class="op"><i>d</i> los dos hacia arriba</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>Un engranaje de 10 dientes mueve a uno de 30. ¿Qué le pasa al de 30?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> gira más lento y con más fuerza</span>
+        <span class="op"><i>b</i> gira más rápido y con más fuerza</span>
+        <span class="op"><i>c</i> gira más rápido y con menos fuerza</span>
+        <span class="op"><i>d</i> no gira</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>Una rueda dentada de 40 dientes mueve un piñón de 10. ¿Qué le pasa al piñón?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> gira más lento</span>
+        <span class="op"><i>b</i> gira con más fuerza</span>
+        <span class="op"><i>c</i> gira igual que la rueda</span>
+        <span class="op"><i>d</i> gira más rápido y con menos fuerza</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>En un tren de TRES engranajes, el primero y el tercero…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> giran en sentidos contrarios</span>
+        <span class="op"><i>b</i> giran en el mismo sentido</span>
+        <span class="op"><i>c</i> no giran nunca</span>
+        <span class="op"><i>d</i> giran al doble de velocidad</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué motor gira hasta un ángulo exacto y se queda ahí?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el motor DC</span>
+        <span class="op"><i>b</i> el motorreductor</span>
+        <span class="op"><i>c</i> el servomotor</span>
+        <span class="op"><i>d</i> el tornillo sin fin</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué ocurre si la correa entre dos poleas se coloca cruzada?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el segundo eje gira al revés</span>
+        <span class="op"><i>b</i> la correa se rompe siempre</span>
+        <span class="op"><i>c</i> no pasa nada</span>
+        <span class="op"><i>d</i> la polea se hace más grande</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué necesita una palanca para funcionar?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un motor eléctrico</span>
+        <span class="op"><i>b</i> una batería</span>
+        <span class="op"><i>c</i> una correa</span>
+        <span class="op"><i>d</i> un punto de apoyo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué mecanismo transforma el giro en movimiento de vaivén?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la polea fija</span>
+        <span class="op"><i>b</i> la biela-manivela</span>
+        <span class="op"><i>c</i> la rueda y el eje</span>
+        <span class="op"><i>d</i> el engranaje loco</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Para subir una cuesta empinada en bicicleta conviene usar…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el piñón más pequeño</span>
+        <span class="op"><i>b</i> quitar la cadena</span>
+        <span class="op"><i>c</i> el piñón más grande</span>
+        <span class="op"><i>d</i> una correa cruzada</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Motores y Mecanismos</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Motor</td><td>A. Rueda con dientes que encajan; dos en contacto giran al revés</td></tr>
+      <tr><td>2. ____ Servomotor</td><td>B. Punto fijo sobre el que gira la barra de la palanca</td></tr>
+      <tr><td>3. ____ Engranaje</td><td>C. Cinta que une dos poleas y lleva el giro a distancia</td></tr>
+      <tr><td>4. ____ Polea</td><td>D. Convierte el movimiento de giro en movimiento de vaivén</td></tr>
+      <tr><td>5. ____ Correa</td><td>E. Gusano roscado que da mucha fuerza y muy poca velocidad</td></tr>
+      <tr><td>6. ____ Palanca</td><td>F. Convierte la energía eléctrica en movimiento de giro</td></tr>
+      <tr><td>7. ____ Punto de apoyo</td><td>G. Barra central que gira junto con la rueda y arrastra la carga</td></tr>
+      <tr><td>8. ____ Tornillo sin fin</td><td>H. Barra rígida que gira sobre un apoyo y multiplica la fuerza</td></tr>
+      <tr><td>9. ____ Biela-manivela</td><td>I. Motor que gira hasta un ángulo exacto y se detiene ahí</td></tr>
+      <tr><td>10. ____ Rueda y eje</td><td>J. Rueda con canal por donde pasa una cuerda o una correa</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Motores y Mecanismos.</b> Ahora sabes que el motor convierte la
+      electricidad en giro; que dos engranajes en contacto giran al revés y que con tres el primero y el tercero giran
+      igual; que el engranaje pequeño moviendo al grande da fuerza y el grande moviendo al pequeño da velocidad; y que
+      todo mecanismo hace el mismo trato: <b>lo que se gana en fuerza se pierde en velocidad</b>. ¡Sigue avanzando por la
+      Ruta de los Robots! ⚙️🤖
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Robótica.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Construyó los engranajes de cartón, la palanca con regla y lápiz y la polea con carrete, y dibujó el sentido de giro con flechas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Motores y Mecanismos</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. giro &nbsp; 2. contrarios &nbsp; 3. fuerza &nbsp; 4. velocidad &nbsp; 5. apoyo &nbsp; 6. correa &nbsp; 7. invierte &nbsp; 8. sin fin &nbsp; 9. vaivén &nbsp; 10. sentido</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7F, 8V, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3a, 4d, 5b, 6c, 7a, 8d, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1F &nbsp; 2I &nbsp; 3A &nbsp; 4J &nbsp; 5C &nbsp; 6H &nbsp; 7B &nbsp; 8E &nbsp; 9D &nbsp; 10G</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Motores y Mecanismos» (Educación Básica, II y III Ciclo), etapa 3 de la Ruta de los Robots del área de
+      Robótica. El enfoque es de <strong>robótica desconectada</strong>: todos los conceptos (motor como actuador, motor
+      DC, servomotor y motorreductor, engranajes, sentido de giro, relación fuerza-velocidad, poleas y correas, palancas
+      y punto de apoyo, rueda y eje, tornillo sin fin y biela-manivela) se trabajan sin hardware, con cartón, cordel,
+      regla y lápiz, por lo que la ficha puede aplicarse en aulas sin computadoras ni conectividad. La idea transversal
+      que debe quedar clara es el <strong>intercambio</strong>: todo mecanismo cambia fuerza por velocidad y nunca se gana
+      todo; por eso, antes de elegir un mecanismo, el estudiante debe preguntarse siempre «¿necesito fuerza o necesito
+      velocidad?». Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple y pareados)
+      y las actividades desconectadas de la página 3: los engranajes de cartón recortados (contar vueltas y comparar
+      velocidad y fuerza), la palanca con regla y lápiz (mover el punto de apoyo), la polea con carrete de hilo (cambiar
+      la dirección de la fuerza) y el dibujo del sentido de giro con flechas en trenes de engranajes y en poleas con
+      correa abierta y cruzada. Los ejemplos hondureños (molino de maíz, bicicleta, despulpadora de café, carretilla de
+      albañil y molinete del portón) permiten llevar la clase al patio o a la casa. La misión interactiva (código QR de
+      la portada) incluye un <strong>laboratorio del tren de engranajes</strong> donde el estudiante predice el sentido de
+      giro y la relación velocidad-fuerza con retroalimentación inmediata: conviene usarlo antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Motores y Mecanismos · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
