@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Detective de Bugs: la Depuración</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: PROGRAMACIÓN = CIAN TEC (#0e7490)
+     · Colores semánticos: cian=código/depuración, ámbar=algoritmos de la vida, gris=errores
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --tec: #0e7490; --tec-osc: #155e75; --tec-claro: #ecfeff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cffafe;
+    --amb: #b45309; --oro: #b45309; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eefafc; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--tec-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--tec); background: var(--tec-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--tec-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--tec-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--tec); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--tec-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--tec-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--tec-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--tec); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4fcfd; }
+  td.k { font-weight: 700; color: var(--tec-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #f8feff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--tec-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #d5f4f9; } .celula .cm b { color: var(--tec); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--oro); }
+  .celula .cn { background: #eceae8; } .celula .cn b { color: var(--pie); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #d5f4f9; border: 1px solid #a9e6ef; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--tec); } .tri .torg b { color: var(--oro); }
+
+  .prog-ej { font-family: 'Courier New', monospace; font-weight: 700; font-size: 9.5pt; background: var(--tec-claro); border: 1px solid var(--linea); border-radius: 8px; padding: 8px 12px; margin: 8px 0; text-align: left; break-inside: avoid; }
+
+  .acts h3 { border-bottom: 2px solid var(--tec-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--tec); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--tec); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--tec-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--tec-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--tec-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2fbfd; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--tec-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--tec); box-shadow: 0 6px 16px rgba(14,116,144,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div, .prog-ej
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Detective de Bugs: la Depuración</div>
+        <div class="f-meta"><b>Asignatura:</b> Programación &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica &nbsp;·&nbsp; <b>Ruta del Código:</b> Etapa 6 de 7</div>
+        <div class="f-meta"><b>Tema:</b> Qué es un bug, la anécdota de Grace Hopper (1947), el método del detective en 4 pasos, los tipos de bug y cómo depurar (cazar y corregir errores) los programas del robot</div>
+      </div>
+      <div class="fh-qr">
+        <img src="img/qr-mision-detective-bugs.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Explicar qué es un <strong>bug</strong> y qué significa <strong>depurar</strong> un programa.</li>
+      <li>Conocer la anécdota de la programadora <strong>Grace Hopper</strong> y la polilla de 1947.</li>
+      <li>Aplicar el <strong>método del detective</strong> en 4 pasos para cazar un error.</li>
+      <li>Reconocer los <strong>tipos de bug</strong>: instrucción equivocada, de más o de menos, orden cambiado, N del bucle errada y bug de lógica.</li>
+      <li>Comprender que equivocarse es <strong>normal</strong>: todos los programadores depuran.</li>
+      <li>Corregir <strong>UNA sola cosa a la vez</strong> y <strong>volver a probar</strong>.</li>
+    </ol>
+
+    <h2>🐛 1. ¿Qué es un bug?</h2>
+    <p>Un <strong>bug</strong> es un <strong>error escondido</strong> en un programa: hace que el robot no logre su
+    misión (choca, se desvía o entrega en la casilla equivocada). ¡No es un insecto de verdad!
+    <strong>Depurar</strong> es <strong>encontrar y corregir</strong> esos errores, línea por línea. Equivocarse es
+    parte de programar: hasta los mejores programadores del mundo depuran sus programas todos los días.</p>
+    <div class="caja truco">💡 <b>Truco:</b> si un programa falla, casi nunca es culpa de la computadora: ella solo
+    obedeció una instrucción equivocada, fuera de orden o incompleta. ¡El bug siempre está en el programa!</div>
+
+    <h3>👩‍💻🔍🕵️ Mini-demostración: de la polilla al detective</h3>
+    <div class="ilus">
+      <div class="ilus-t">Así nació la palabra «bug» (y así se caza)</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">🦋</span><b>Grace Hopper, 1947</b>Halló una polilla dentro de una computadora: el primer «bug» real.</div>
+        <div class="cc"><span class="c-emoji">🐛</span><b>Un bug hoy</b>Un error en el programa: el robot choca o entrega donde no debe.</div>
+        <div class="cn"><span class="c-emoji">🕵️</span><b>Depurar</b>Buscar el bug, corregir UNA cosa y volver a probar.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">🐛 Bug = error escondido &nbsp;·&nbsp; 🔍 Depurar = encontrarlo y corregirlo.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Detective de Bugs: la Depuración</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🕵️ 2. El método del detective en 4 pasos</h2>
+    <p>Para cazar un bug no se adivina: se siguen las <strong>pistas</strong>, igual que un detective. Cuando el robot
+    choca o se desvía, esa falla es tu <strong>primera pista</strong>. Estos son los cuatro pasos:</p>
+    <div class="tri">
+      <div class="tnuc"><b>1️⃣ Observar · 2️⃣ Leer con lupa</b>Mira QUÉ hace mal el programa (dónde choca) y luego traza el programa con el dedo, línea por línea, sobre el mapa.</div>
+      <div class="torg"><b>3️⃣ Señalar · 4️⃣ Corregir y probar</b>Encuentra la LÍNEA sospechosa, corrige UNA sola cosa y vuelve a ejecutar para comprobar que el bug se fue.</div>
+    </div>
+    <div class="caja regla">🔧 <b>Regla de oro:</b> corrige <strong>una sola cosa a la vez</strong> y <strong>vuelve a
+    probar</strong>. Si cambias todo de golpe, nunca sabrás cuál era el verdadero bug.</div>
+
+    <h3>🐞 Los tipos de bug</h3>
+    <table>
+      <tr><th>Tipo de bug</th><th>¿Qué pasó?</th><th>Ejemplo hondureño o del robot</th></tr>
+      <tr><td class="k">Instrucción equivocada</td><td>Una orden dice lo contrario de lo que debía</td><td>GIRA IZQUIERDA donde iba GIRA DERECHA</td></tr>
+      <tr><td class="k">De más o de menos</td><td>Sobra un paso o falta uno</td><td>Falta la ENTREGA final; o falta el jabón al lavarse</td></tr>
+      <tr><td class="k">Orden cambiado</td><td>Dos pasos están intercambiados</td><td>Doblar la baleada antes de untar los frijoles</td></tr>
+      <tr><td class="k">N del bucle errada</td><td>El REPITE cuenta de más o de menos</td><td>REPITE 4 cuando debía ser REPITE 3</td></tr>
+      <tr><td class="k">Bug de lógica</td><td>Corre sin chocar… ¡pero hace otra cosa!</td><td>Entrega en la casilla equivocada por buen camino</td></tr>
+    </table>
+    <div class="caja idea">🎭 <b>El más tramposo:</b> el <strong>bug de lógica</strong> no hace chocar al robot, así que
+    parece que todo salió bien… pero el resultado está mal. Por eso el detective <strong>siempre comprueba</strong> que
+    el robot llegó a la casa correcta.</div>
+
+    <h3>💾 Ejemplo de depuración (léelo y cázalo con la mente)</h3>
+    <div class="prog-ej">El robot mira al Norte y debe llegar a la casa 🏠 que está a su derecha.<br>
+    1. AVANZA &nbsp; 2. GIRA IZQUIERDA &nbsp; 3. AVANZA &nbsp; 4. ENTREGA<br>
+    → El robot se aleja de la casa. 🐛 El bug está en la <strong>línea 2</strong>: debía decir <strong>GIRA
+    DERECHA</strong>. Se corrige esa línea y se vuelve a probar. ✅</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Detective de Bugs: la Depuración</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">⚠️ 3. Cómo NO depurar y errores comunes</h2>
+    <p>Un buen detective de bugs tiene calma y método. Estos son los <strong>tropiezos</strong> más comunes al
+    depurar y cómo evitarlos:</p>
+    <table>
+      <tr><th>Error al depurar</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Borrar todo el programa</td><td>El bug casi siempre es UNA línea; no hace falta empezar de cero.</td><td>Buscar y corregir la línea culpable ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Cambiar mil cosas a la vez</td><td>No sabrás cuál era el verdadero bug.</td><td>Corregir UNA sola cosa por vez ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">No volver a probar</td><td>Es cerrar el caso sin revisar.</td><td>Ejecutar de nuevo para confirmar ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Echarle la culpa al robot</td><td>El robot solo obedece las líneas.</td><td>Buscar la pista en el programa ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que «si corre, está bien»</td><td>Puede tener un bug de lógica escondido.</td><td>Comprobar que llegó a la casa correcta ✔</td></tr>
+    </table>
+
+    <h2>🎲 4. Actividades desconectadas (sin computadora)</h2>
+    <div class="caja regla">⚖️ <b>El juicio del bug:</b> en equipos. Un equipo escribe en el pizarrón un algoritmo
+    sencillo (armar la mochila, preparar un fresco, dibujar una casa) pero le <strong>planta un bug a propósito</strong>
+    (un paso cambiado, uno de menos o dos intercambiados). El resto de la clase es el <strong>jurado detective</strong>:
+    aplican los <strong>4 pasos</strong> —observar qué sale mal, leer con lupa, señalar la línea culpable y proponer la
+    corrección— hasta «condenar» al bug. Gana el jurado que encuentra el error y explica <strong>por qué</strong> estaba
+    mal. Después cambian de papel.</div>
+    <div class="caja regla">🃏 <b>Cazabugs en cadena:</b> el docente reparte <strong>tarjetas</strong>; cada una tiene un
+    mini-algoritmo con UN bug (por ejemplo: «REPITE 5: AVANZA» cuando la casa está a 3 casillas). En cadena, cada alumno
+    toma una tarjeta, dice <strong>qué tipo de bug</strong> es y cómo se corrige, y pasa la siguiente al compañero. Si se
+    equivoca, la tarjeta vuelve al montón. ¡El aula entera se convierte en una brigada de detectives de bugs!</div>
+    <div class="caja hn">🇭🇳 <b>Depurar en tu vida:</b> cuando notás que la baleada salió mal porque cambiaste un paso,
+    que quedaron cuadernos sin repartir por dar una vuelta de menos, o que faltó el jabón al lavarte las manos, ya estás
+    <strong>depurando</strong>: encontrás el error, lo corregís y volvés a intentar. ¡Esa es la mente de un programador! 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Detective de Bugs: la Depuración</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 5. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Un error escondido en un programa se llama <span class="linea-resp"></span>.</li>
+      <li>Encontrar y corregir los errores de un programa se llama <span class="linea-resp"></span>.</li>
+      <li>En 1947, la programadora Grace Hopper encontró una <span class="linea-resp"></span> dentro de una computadora.</li>
+      <li>El primer paso del método del detective es <span class="linea-resp"></span> qué hace mal el programa.</li>
+      <li>Después de corregir el bug, siempre hay que volver a <span class="linea-resp"></span>.</li>
+      <li>El buen detective corrige <span class="linea-resp"></span> sola cosa a la vez.</li>
+      <li>La línea que parece culpable del error se llama línea <span class="linea-resp"></span>.</li>
+      <li>El bug de <span class="linea-resp"></span> corre sin chocar, pero hace otra cosa.</li>
+      <li>Si el bucle dice REPITE 4 en vez de 3, el robot da un paso de <span class="linea-resp"></span>.</li>
+      <li>Cuando dos instrucciones están intercambiadas, el bug es de <span class="linea-resp"></span> cambiado.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Un bug es un error del programa, no un insecto de verdad.</li>
+      <li>____ Equivocarse al programar significa que no sirves para programar.</li>
+      <li>____ Depurar es encontrar y corregir los errores de un programa.</li>
+      <li>____ En 1947, Grace Hopper encontró una polilla de verdad dentro de una computadora.</li>
+      <li>____ El primer paso del detective es borrar todo el programa.</li>
+      <li>____ Después de corregir un bug hay que volver a probar el programa.</li>
+      <li>____ El bug de lógica siempre hace que el robot choque y se detenga.</li>
+      <li>____ Un buen detective de bugs corrige UNA sola cosa a la vez.</li>
+      <li>____ Cambiar el orden de dos instrucciones puede cambiar el resultado.</li>
+      <li>____ Si el programa corre sin chocar, seguro no tiene ningún bug.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Detective de Bugs: la Depuración</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es un bug en programación?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un dibujo bonito</span>
+        <span class="op"><i>b</i> un error en el programa</span>
+        <span class="op"><i>c</i> un premio por programar bien</span>
+        <span class="op"><i>d</i> un tipo de robot</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Quién encontró una polilla dentro de una computadora en 1947?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un robot mensajero</span>
+        <span class="op"><i>b</i> el inventor del teléfono</span>
+        <span class="op"><i>c</i> la programadora Grace Hopper</span>
+        <span class="op"><i>d</i> un estudiante de Honduras</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué es depurar un programa?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> borrarlo completo</span>
+        <span class="op"><i>b</i> encontrar y corregir sus errores</span>
+        <span class="op"><i>c</i> hacerlo más largo</span>
+        <span class="op"><i>d</i> ejecutarlo más rápido</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es el PRIMER paso del método del detective?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> observar qué hace mal el programa</span>
+        <span class="op"><i>b</i> borrar el programa</span>
+        <span class="op"><i>c</i> cambiar todas las líneas a la vez</span>
+        <span class="op"><i>d</i> pedir otro robot</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>Después de corregir la línea sospechosa, ¿qué sigue?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> guardar y no tocar nada</span>
+        <span class="op"><i>b</i> volver a probar el programa</span>
+        <span class="op"><i>c</i> cambiar otras cinco líneas</span>
+        <span class="op"><i>d</i> celebrar sin comprobar</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>El programa dice GIRA IZQUIERDA donde iba GIRA DERECHA. ¿Qué tipo de bug es?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> instrucción equivocada</span>
+        <span class="op"><i>b</i> orden cambiado</span>
+        <span class="op"><i>c</i> N del bucle errada</span>
+        <span class="op"><i>d</i> bug de lógica</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>El bucle dice REPITE 5 pero debía repetir solo 3 veces. ¿Qué tipo de bug es?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> instrucción de menos</span>
+        <span class="op"><i>b</i> orden cambiado</span>
+        <span class="op"><i>c</i> N del bucle errada</span>
+        <span class="op"><i>d</i> condición al revés</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>Dos pasos de la receta están intercambiados. ¿Qué tipo de bug es?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> instrucción equivocada</span>
+        <span class="op"><i>b</i> orden cambiado</span>
+        <span class="op"><i>c</i> N del bucle errada</span>
+        <span class="op"><i>d</i> bug de lógica</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>El robot corre sin chocar, pero llega por el camino prohibido. ¿Qué tiene?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> instrucción de más</span>
+        <span class="op"><i>b</i> orden cambiado</span>
+        <span class="op"><i>c</i> condición al revés</span>
+        <span class="op"><i>d</i> un bug de lógica</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué hace un buen detective de bugs al corregir?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cambia UNA sola cosa y vuelve a probar</span>
+        <span class="op"><i>b</i> cambia todo el programa de golpe</span>
+        <span class="op"><i>c</i> borra el programa completo</span>
+        <span class="op"><i>d</i> adivina sin leer las líneas</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Detective de Bugs: la Depuración</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Bug</td><td>A. Corre sin chocar, pero hace otra cosa</td></tr>
+      <tr><td>2. ____ Depurar</td><td>B. Primer paso: ver qué hace mal el programa</td></tr>
+      <tr><td>3. ____ Grace Hopper</td><td>C. Observar, leer, señalar, corregir y volver a probar</td></tr>
+      <tr><td>4. ____ Método del detective</td><td>D. Dos instrucciones intercambiadas</td></tr>
+      <tr><td>5. ____ Observar</td><td>E. Encontrar y corregir los errores del programa</td></tr>
+      <tr><td>6. ____ Línea sospechosa</td><td>F. REPITE 4 cuando debía ser REPITE 3</td></tr>
+      <tr><td>7. ____ Volver a probar</td><td>G. Programadora que halló la polilla en 1947</td></tr>
+      <tr><td>8. ____ Bug de lógica</td><td>H. Ejecutar de nuevo, después de corregir</td></tr>
+      <tr><td>9. ____ Orden cambiado</td><td>I. Error escondido en el programa, no un insecto</td></tr>
+      <tr><td>10. ____ N del bucle errada</td><td>J. La línea señalada como posible culpable del error</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Detective de Bugs: la Depuración.</b> Ahora sabes qué es un bug,
+      conoces la historia de Grace Hopper, aplicas el método del detective en 4 pasos, reconoces los tipos de bug y
+      depuras corrigiendo UNA cosa a la vez y volviendo a probar. ¡Ya cazas bugs como un verdadero detective del código! 🕵️💻
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Programación.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Cazó un bug plantado en un algoritmo (juicio del bug) aplicando los 4 pasos del método.</td><td class="lg">Actividad en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Detective de Bugs: la Depuración</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. bug &nbsp; 2. depurar &nbsp; 3. polilla &nbsp; 4. observar &nbsp; 5. probar &nbsp; 6. una &nbsp; 7. sospechosa &nbsp; 8. lógica &nbsp; 9. más &nbsp; 10. orden</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7F, 8V, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3b, 4a, 5b, 6a, 7c, 8b, 9d, 10a</div>
+      <div><span class="pt">IV. Pareados:</span> 1I, 2E, 3G, 4C, 5B, 6J, 7H, 8A, 9D, 10F</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Detective de Bugs: la Depuración» (Educación Básica), etapa 6 de la Ruta del Código (Programación). Trabaja la
+      <strong>depuración</strong>: qué es un bug, la anécdota de la programadora Grace Hopper y la polilla de 1947, el
+      método del detective en 4 pasos (observar, leer con lupa, señalar la línea sospechosa, corregir y volver a probar) y
+      los tipos de bug (instrucción equivocada, de más o de menos, orden cambiado, N del bucle errada y bug de lógica). La
+      misión interactiva (código QR de la portada) incluye el laboratorio «la escena del crimen», donde el estudiante arma
+      programas del robot y depura los que chocan o entregan mal, además de la prueba operativa (el robot falló, predice el
+      fallo, señala al culpable, corrige algoritmos hondureños y retos de olimpiada). Las actividades desconectadas de la
+      página 3 —«El juicio del bug» y «Cazabugs en cadena»— permiten trabajar los mismos conceptos sin ningún dispositivo:
+      en la primera, un equipo planta un bug en un algoritmo y el resto lo caza con los 4 pasos; en la segunda, cada alumno
+      identifica en cadena el tipo de bug de una tarjeta y su corrección. La sección «Ponte a Prueba» replica los formatos
+      de la evaluación imprimible de la plataforma (completar, V/F, selección múltiple y pareados con la Columna B barajada).
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Detective de Bugs: la Depuración · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

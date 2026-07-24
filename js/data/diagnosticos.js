@@ -55,6 +55,7 @@ const DIAGNOSTICOS = {
     { etapa: 2, q: 'Un robot mira hacia arriba (Norte) y ejecuta: AVANZA, GIRA DERECHA, AVANZA. ¿Hacia dónde mira al final?', o: ['Norte', 'Sur', 'Este', 'Oeste'], a: 2 },
     { etapa: 4, q: 'Para dibujar un cuadrado, el robot ejecuta REPETIR ___ VECES [AVANZA, GIRA DERECHA]. ¿Qué número falta?', o: ['2', '3', '4', '8'], a: 2 },
     { etapa: 5, q: 'Una variable en programación es como…', o: ['Un dibujo del robot', 'Una cajita con nombre que guarda un valor que puede cambiar', 'Un error del programa', 'Un botón de apagado'], a: 1 },
+    { etapa: 6, q: '¿Qué es un «bug» en programación?', o: ['Un insecto que daña la computadora', 'Un error en el programa', 'Un tipo de robot', 'Un premio por programar bien'], a: 1 },
   ],
   robots: [
     { etapa: 1, q: '¿Qué parte del robot funciona como sus «sentidos»?', o: ['Los actuadores', 'Los sensores', 'La batería', 'Las ruedas'], a: 1 },

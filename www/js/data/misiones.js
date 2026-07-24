@@ -62,6 +62,7 @@ const MISSIONS = [
   { id: 46, title: 'El Pensamiento Computacional',                        subject: 'programación', color: 'tec', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'codigo',  etapa: 1, xp: 35, icon: '🧩', pais: 'HN', url: 'misiones/2y3ciclo-pensamiento-computacional/pensamiento-computacional.html' },
   { id: 48, title: 'Bucles: Repetir sin Cansarse',                        subject: 'programación', color: 'tec', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'codigo',  etapa: 4, xp: 35, icon: '🔁', pais: 'HN', url: 'misiones/2y3ciclo-bucles-repetir/bucles-repetir.html' },
   { id: 49, title: 'Variables: las Cajitas de Memoria',                   subject: 'programación', color: 'tec', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'codigo',  etapa: 5, xp: 35, icon: '📦', pais: 'HN', url: 'misiones/2y3ciclo-variables-cajitas/variables-cajitas.html' },
+  { id: 50, title: 'Detective de Bugs: la Depuración',                    subject: 'programación', color: 'tec', grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'codigo',  etapa: 6, xp: 35, icon: '🐞', pais: 'HN', url: 'misiones/2y3ciclo-detective-bugs/detective-bugs.html' },
   { id: 45, title: '¿Qué es un Robot?',                                   subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 1, xp: 35, icon: '🤖', pais: 'HN', url: 'misiones/2y3ciclo-que-es-un-robot/que-es-un-robot.html' },
 ];
 
