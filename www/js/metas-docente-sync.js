@@ -171,10 +171,11 @@
   function push(force, cloudKeys) {
     var c = creds();
     if (!c) return Promise.resolve(false);
-    // Blindaje: nunca subir datos que pertenecen a OTRA cuenta docente (evita
-    // que el aula de A termine en la nube de B si quedaron datos locales).
+    // Blindaje: SOLO se sube cuando este equipo está reclamado por la cuenta
+    // activa (dueño = PROF actual). Dueño DISTINTO o DESCONOCIDO = no subir:
+    // sin esto, la «semilla» podía sembrar el aula de A en la nube de B.
     var owner = ls(OWNER_KEY);
-    if (owner && owner !== c.codigo) return Promise.resolve(false);
+    if (owner !== c.codigo) return Promise.resolve(false);
     var m = scanLocal();
     var t = ahora();
     var entradas = [];
@@ -299,6 +300,12 @@
   /* ── Sincronización normal: baja lo nuevo y sube lo cambiado ── */
   function sync() {
     if (_busy || !creds()) return Promise.resolve(false);
+    // PROPIEDAD PRIMERO: si el aula local no es de esta cuenta —o el dueño es
+    // desconocido (p.ej. la app arrancó sin internet y el reclamo quedó
+    // pendiente)— se reclama el equipo ANTES de sincronizar. Sin esto, al
+    // volver la conexión se podía sincronizar un aula ajena.
+    var cOwn = creds();
+    if (ls(OWNER_KEY) !== cOwn.codigo) { dsClaimFor(cOwn.codigo); return Promise.resolve(false); }
     _lastAuto = ahora();
     _busy = true;
     return flushPendingReset()
@@ -340,6 +347,13 @@
      nada: es el mismo camino automático, pero a pedido. */
   function syncNow(btn) {
     if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
+    // mismo candado de propiedad que sync(): nunca operar un aula ajena
+    var cN = creds();
+    if (ls(OWNER_KEY) !== cN.codigo) {
+      dsClaimFor(cN.codigo);
+      if (typeof toast === 'function') toast('☁️ Trayendo el aula de TU cuenta…');
+      return;
+    }
     if (btn) { btn.disabled = true; btn.dataset.txt = btn.textContent; btn.textContent = '⏳ Sincronizando…'; }
     estado('☁️ Sincronizando con la nube…');
     _lastAuto = ahora();
@@ -518,8 +532,20 @@
      demás equipos (force). Salvavidas si algo se desincronizó. */
   function usarEste() {
     if (!creds()) { if (typeof toast === 'function') toast('Primero entra a tu cuenta docente'); return; }
+    var cU = creds();
+    // Candado de propiedad: si el aula de este equipo no es de la cuenta activa
+    // (o el dueño es desconocido), NO se puede imponer — sería regalar el aula
+    // de otra cuenta. Se reclama el equipo y listo.
+    if (ls(OWNER_KEY) !== cU.codigo) {
+      dsClaimFor(cU.codigo);
+      if (typeof toast === 'function') toast('Este equipo no tenía un aula de TU cuenta. Ya se está trayendo la tuya de la nube.');
+      return;
+    }
+    // El diálogo nombra la CUENTA que va a recibir la copia: nada de sorpresas.
+    var quien = '';
+    try { var dU = JSON.parse(ls('METAS_DOCENTE_V1')); quien = (dU && (dU.correo || dU.nombre)) || ''; } catch (_) {}
     var ask = (typeof metasConfirm === 'function')
-      ? metasConfirm('Se usarán los datos de **ESTE equipo** (lista de alumnos, claves de familia, economía, asistencia, notas, Plan de Acción) en la nube y en todos tus equipos, reemplazando lo que haya. Úsalo en el equipo que tiene la copia buena. ¿Continuar?',
+      ? metasConfirm('Se usarán los datos de **ESTE equipo** (lista de alumnos, claves de familia, economía, asistencia, notas, Plan de Acción) como la copia buena de **tu cuenta' + (quien ? ' ' + quien : '') + '**, reemplazando lo que haya en la nube y en tus demás equipos. ¿Continuar?',
           { icono: '✅', titulo: 'Usar los datos de este equipo', okTxt: 'Sí, usar este' })
       : Promise.resolve(true);
     Promise.resolve(ask).then(function (ok) {

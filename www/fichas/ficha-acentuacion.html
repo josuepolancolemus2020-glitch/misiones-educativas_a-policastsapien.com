@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión La Acentuación</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: ESPAÑOL = ÁMBAR/DORADO (#b45309)
+     · Colores semánticos fijos: azul=sílaba tónica, verde=diptongo
+       (unión), naranja=hiato y tilde (ruptura/marca)
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --esp: #b45309; --esp-osc: #78350f; --esp-claro: #fefce8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #ecdcc0;
+    --ton: #1e40af; --dip: #15803d; --hia: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7f3ea; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--esp-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--esp); background: var(--esp-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--esp-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--esp-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--esp); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--esp-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--esp-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--esp-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--esp); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf9f0; }
+  td.k { font-weight: 700; color: var(--esp-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffdf7; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--esp-osc); margin-bottom: 8px; }
+
+  /* Sílabas separadas */
+  .silabas { display: inline-flex; align-items: center; gap: 6px; font-family: 'Cambria Math', Georgia, serif; font-size: 18pt; font-weight: 800; flex-wrap: wrap; justify-content: center; }
+  .silabas .sil { background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 3px 12px; color: var(--gris); }
+  .silabas .sil.tonica { background: #dbeafe; border-color: #b6d4fb; color: var(--ton); }
+  .silabas .guion { color: var(--gris); font-size: 13pt; }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fffdf7; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--esp); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--esp-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tagu { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .tlla { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tesd { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tagu b { color: var(--ton); } .tri .tlla b { color: var(--dip); } .tri .tesd b { color: var(--hia); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--esp-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y ámbar */
+  .acts ol li::marker { font-weight: 800; color: var(--esp); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito ámbar · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--esp); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--esp-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--esp-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--esp-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #faf6ec; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--esp-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--esp); box-shadow: 0 6px 16px rgba(180,83,9,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .silabas .sil.tonica
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión La Acentuación</div>
+        <div class="f-meta"><b>Asignatura:</b> Español &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> La sílaba tónica, diptongo, triptongo e hiato, las reglas de la tilde (agudas, llanas, esdrújulas) y la tilde diacrítica</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-acentuacion.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Dividir palabras en <strong>sílabas</strong> e identificar la <strong>sílaba tónica</strong>.</li>
+      <li>Distinguir las vocales <strong>fuertes</strong> (a, e, o) de las <strong>débiles</strong> (i, u).</li>
+      <li>Reconocer <strong>diptongos</strong> (misma sílaba), <strong>triptongos</strong> (tres vocales) e <strong>hiatos</strong> (sílabas distintas).</li>
+      <li>Clasificar las palabras en <strong>agudas, llanas, esdrújulas y sobresdrújulas</strong>.</li>
+      <li>Aplicar las <strong>reglas de la tilde</strong> de cada clasificación, incluido el hiato acentual.</li>
+      <li>Usar la <strong>tilde diacrítica</strong> para distinguir él/el, tú/tu, sí/si.</li>
+    </ol>
+
+    <h2>🔤 1. La sílaba y su reina: la tónica</h2>
+    <p>La <strong>sílaba</strong> es la unidad mínima de pronunciación: su núcleo obligatorio es una
+    <strong>vocal</strong>. En toda palabra hay una sílaba que se pronuncia con <strong>mayor
+    intensidad</strong>: la <strong>tónica</strong>; las demás son <strong>átonas</strong>.</p>
+    <div class="caja regla">⚡ <b>Vocales fuertes y débiles:</b> las FUERTES (abiertas) son <strong>a, e, o</strong>;
+    las DÉBILES (cerradas) son <strong>i, u</strong>. De su combinación nacen el diptongo, el triptongo y el hiato.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> acento y tilde no son lo mismo: TODAS las palabras tienen
+    acento (la sílaba tónica), pero solo algunas llevan <strong>tilde</strong> (la rayita escrita), según las
+    reglas.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>Grítala</b>»: di la palabra en voz alta como
+    llamando a alguien lejos — la sílaba que se alarga sola es la tónica: ¡ca-MIIII-no!</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">¿Dónde está la tónica de «camino»?</div>
+      <div class="silabas">
+        <span class="sil">ca</span><span class="guion">–</span>
+        <span class="sil tonica">MI</span><span class="guion">–</span>
+        <span class="sil">no</span>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Tónica en la PENÚLTIMA sílaba → palabra LLANA. Termina en vocal → sin tilde. ¡Dos decisiones en una!</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Acentuación</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔗 2. Diptongo, triptongo e hiato</h2>
+    <table>
+      <tr><th>Fenómeno</th><th>¿Qué pasa?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">🟢 Diptongo</td><td>DOS vocales en la MISMA sílaba: fuerte + débil átona, o dos débiles distintas.</td><td>ai-re, cau-sa, pia-no, fue-go, ciu-dad</td></tr>
+      <tr><td class="k">🔺 Triptongo</td><td>TRES vocales en una sílaba: débil + fuerte + débil.</td><td>buey, U-ru-guay, miau</td></tr>
+      <tr><td class="k">✂️ Hiato simple</td><td>Dos vocales FUERTES juntas se separan en sílabas distintas.</td><td>ca-os, po-e-ta, te-a-tro</td></tr>
+      <tr><td class="k">⚡ Hiato acentual</td><td>Débil TÓNICA junto a fuerte: SIEMPRE tilde en la débil.</td><td>dí-a, ba-úl, pa-ís, ra-íz</td></tr>
+    </table>
+    <div class="caja idea">💡 <b>Clave del hiato acentual:</b> rompe la regla general — la vocal débil tónica
+    SIEMPRE lleva tilde junto a una fuerte, sin importar en qué letra termine la palabra: «día» termina en
+    vocal y es llana… ¡pero el hiato manda!</div>
+
+    <h2>🏷️ 3. Las reglas de la tilde</h2>
+    <div class="tri">
+      <div class="tagu"><b>🔚 Agudas → última sílaba</b>Tilde SI terminan en n, s o vocal: camión, café, compás. Sin tilde: reloj, pared.</div>
+      <div class="tlla"><b>➖ Llanas → penúltima</b>Tilde si NO terminan en n, s o vocal: árbol, lápiz. Sin tilde: casa, cantan.</div>
+      <div class="tesd"><b>🥇 Esdrújulas → antepenúltima</b>SIEMPRE llevan tilde: música, sábado, teléfono. Las sobresdrújulas también: dí-ga-me-lo.</div>
+    </div>
+    <div class="caja truco">🧠 <b>Truco:</b> «<b>N-S-Vocal, el espejo</b>»: las agudas se tildan CON n, s o
+    vocal; las llanas se tildan justo al REVÉS (sin n, s ni vocal). Dos reglas gemelas frente al espejo.</div>
+
+    <h3>✨ La tilde diacrítica</h3>
+    <table>
+      <tr><th>Con tilde</th><th>Sin tilde</th><th>Ejemplo</th></tr>
+      <tr><td class="k">él (pronombre)</td><td>el (artículo)</td><td><strong>Él</strong> trajo <strong>el</strong> libro.</td></tr>
+      <tr><td class="k">tú (pronombre)</td><td>tu (posesivo)</td><td><strong>Tú</strong> olvidaste <strong>tu</strong> cuaderno.</td></tr>
+      <tr><td class="k">sí (afirmación)</td><td>si (condición)</td><td><strong>Sí</strong> voy, <strong>si</strong> no llueve.</td></tr>
+      <tr><td class="k">qué (pregunta)</td><td>que (relativo)</td><td>¿<strong>Qué</strong> dijo? Lo <strong>que</strong> oíste.</td></tr>
+    </table>
+    <div class="caja regla">⚡ <b>Ojo:</b> las MAYÚSCULAS también llevan tilde: ÁRBOL, MÚSICA, Él. La tilde
+    nunca se toma vacaciones por escribir en grande.</div>
+
+    <h2>🪜 4. Los 4 pasos para tildar bien</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Divide en sílabas</b>ca-mi-no · te-lé-fo-no · pa-ís.</div>
+      <div><span class="pn">2</span><b>Grita la tónica</b>¿Última, penúltima o antepenúltima?</div>
+      <div><span class="pn">3</span><b>Clasifica</b>Aguda, llana, esdrújula o sobresdrújula.</div>
+      <div><span class="pn">4</span><b>Aplica la regla</b>¿N-S-Vocal? ¿Hiato acentual? ¿Diacrítica? Decide la tilde.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Acentuación</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📋 5. Casos comunes</h2>
+    <table>
+      <tr><th>Palabra</th><th>Análisis</th><th>¿Tilde?</th></tr>
+      <tr><td class="k">camión</td><td>Aguda terminada en n</td><td>Sí: camión ✔</td></tr>
+      <tr><td class="k">reloj</td><td>Aguda terminada en j</td><td>No: reloj ✔</td></tr>
+      <tr><td class="k">árbol</td><td>Llana terminada en l</td><td>Sí: árbol ✔</td></tr>
+      <tr><td class="k">casa</td><td>Llana terminada en vocal</td><td>No: casa ✔</td></tr>
+      <tr><td class="k">música</td><td>Esdrújula</td><td>Siempre: música ✔</td></tr>
+      <tr><td class="k">día</td><td>Hiato acentual (í débil tónica)</td><td>Sí: dí-a ✔</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Tildar todas las agudas</td><td>«Relój». Solo se tildan las que terminan en n, s o vocal.</td><td>reloj (sin tilde) · camión (con) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Aplicar la regla de agudas a las llanas</td><td>«Cása». Las llanas se tildan AL REVÉS: cuando NO terminan en n, s, vocal.</td><td>casa (sin) · árbol (con) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar a las esdrújulas</td><td>«Musica», «sabado». Ellas no negocian.</td><td>Esdrújula = SIEMPRE tilde ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Ignorar el hiato acentual</td><td>«Dia», «pais». La débil tónica exige su tilde aunque la regla general diga otra cosa.</td><td>día, país, baúl, raíz ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">No tildar mayúsculas</td><td>«ARBOL», «MUSICA». La tilde no desaparece por escribir en grande.</td><td>ÁRBOL, MÚSICA ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> nuestro mapa enseña acentuación: <strong>Copán</strong> es
+    aguda terminada en n (con tilde), <strong>Tegucigalpa</strong> es llana terminada en vocal (sin tilde) y
+    <strong>Atlántida</strong> es esdrújula (¡tilde siempre!). Hasta el <strong>maíz</strong> de nuestras
+    tortillas lleva su tilde de hiato. ¡Acentuar bien es escribir bien el nombre de la patria!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Acentuación</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>La sílaba que se pronuncia con mayor intensidad es la sílaba <span class="linea-resp"></span>.</li>
+      <li>Las vocales fuertes o abiertas son a, e y <span class="linea-resp"></span>.</li>
+      <li>Las vocales débiles o cerradas son la i y la <span class="linea-resp"></span>.</li>
+      <li>La unión de dos vocales en una misma sílaba se llama <span class="linea-resp"></span>.</li>
+      <li>La unión de tres vocales en una misma sílaba, como en «buey», se llama <span class="linea-resp"></span>.</li>
+      <li>Cuando dos vocales juntas se pronuncian en sílabas distintas hay un <span class="linea-resp"></span>.</li>
+      <li>Las palabras agudas llevan tilde cuando terminan en n, s o <span class="linea-resp"></span>.</li>
+      <li>Las palabras esdrújulas <span class="linea-resp"></span> llevan tilde.</li>
+      <li>En el hiato acentual, la tilde va en la vocal <span class="linea-resp"></span> tónica.</li>
+      <li>La tilde que distingue «él» de «el» se llama tilde <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ La sílaba tónica es la que se pronuncia con mayor intensidad.</li>
+      <li>____ Las vocales fuertes son i, u.</li>
+      <li>____ El diptongo une dos vocales en sílabas distintas.</li>
+      <li>____ El hiato acentual siempre lleva tilde en la vocal débil tónica.</li>
+      <li>____ Las palabras agudas llevan tilde si terminan en n, s o vocal.</li>
+      <li>____ Las palabras llanas llevan tilde si terminan en n, s o vocal.</li>
+      <li>____ Las palabras sobresdrújulas siempre llevan tilde.</li>
+      <li>____ «Reloj» es una palabra aguda que lleva tilde.</li>
+      <li>____ Las palabras en mayúscula no necesitan tilde.</li>
+      <li>____ «Música» es una palabra esdrújula.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Acentuación</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál es la sílaba tónica de la palabra «camino»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> ca</span>
+        <span class="op"><i>b</i> mi</span>
+        <span class="op"><i>c</i> no</span>
+        <span class="op"><i>d</i> ninguna</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuáles son las vocales fuertes?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> i, u</span>
+        <span class="op"><i>b</i> a, e, o</span>
+        <span class="op"><i>c</i> a, i, u</span>
+        <span class="op"><i>d</i> todas las vocales</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>«Piano» tiene un diptongo formado por:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> dos vocales fuertes</span>
+        <span class="op"><i>b</i> una débil átona + una fuerte</span>
+        <span class="op"><i>c</i> tres vocales</span>
+        <span class="op"><i>d</i> una fuerte tónica sola</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>«Buey» es un ejemplo de:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> diptongo</span>
+        <span class="op"><i>b</i> hiato</span>
+        <span class="op"><i>c</i> triptongo</span>
+        <span class="op"><i>d</i> sílaba átona</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>«Día» tiene un hiato acentual porque:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> las dos vocales son fuertes</span>
+        <span class="op full"><i>b</i> la vocal débil «i» es tónica junto a una fuerte</span>
+        <span class="op"><i>c</i> no tiene vocales juntas</span>
+        <span class="op"><i>d</i> es una palabra esdrújula</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuándo llevan tilde las palabras agudas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> siempre</span>
+        <span class="op"><i>b</i> cuando terminan en n, s o vocal</span>
+        <span class="op"><i>c</i> nunca</span>
+        <span class="op"><i>d</i> cuando terminan en consonante</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuándo llevan tilde las palabras llanas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cuando terminan en n, s o vocal</span>
+        <span class="op full"><i>b</i> cuando NO terminan en n, s o vocal</span>
+        <span class="op"><i>c</i> siempre</span>
+        <span class="op"><i>d</i> nunca</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>Las palabras esdrújulas y sobresdrújulas:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> nunca llevan tilde</span>
+        <span class="op"><i>b</i> llevan tilde solo a veces</span>
+        <span class="op"><i>c</i> siempre llevan tilde</span>
+        <span class="op full"><i>d</i> solo llevan tilde si terminan en vocal</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>En «Él no sabe si vendrá», la palabra «Él» lleva tilde porque:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> es aguda terminada en vocal</span>
+        <span class="op"><i>b</i> es tilde diacrítica (pronombre)</span>
+        <span class="op"><i>c</i> es esdrújula</span>
+        <span class="op"><i>d</i> es un error</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál de estas palabras es esdrújula?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> camión</span>
+        <span class="op"><i>b</i> árbol</span>
+        <span class="op"><i>c</i> música</span>
+        <span class="op"><i>d</i> compás</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Acentuación</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Sílaba</td><td>A. Tónica en la última sílaba: camión, café</td></tr>
+      <tr><td>2. ____ Sílaba tónica</td><td>B. a, e, o: las vocales abiertas</td></tr>
+      <tr><td>3. ____ Vocales fuertes</td><td>C. Tónica en la antepenúltima: siempre lleva tilde (música)</td></tr>
+      <tr><td>4. ____ Vocales débiles</td><td>D. Unidad mínima de pronunciación: su núcleo es una vocal</td></tr>
+      <tr><td>5. ____ Diptongo</td><td>E. Distingue palabras iguales con distinta función: él/el, tú/tu</td></tr>
+      <tr><td>6. ____ Hiato</td><td>F. i, u: las vocales cerradas</td></tr>
+      <tr><td>7. ____ Agudas</td><td>G. La sílaba que se pronuncia con mayor intensidad</td></tr>
+      <tr><td>8. ____ Llanas</td><td>H. Dos vocales juntas en sílabas DISTINTAS: po-e-ta, dí-a</td></tr>
+      <tr><td>9. ____ Esdrújulas</td><td>I. Tónica en la penúltima sílaba: árbol, casa</td></tr>
+      <tr><td>10. ____ Tilde diacrítica</td><td>J. Dos vocales juntas en la MISMA sílaba: ai-re, fue-go</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión La Acentuación.</b> Ahora divides cualquier palabra en
+      sílabas, gritas la tónica sin dudar, reconoces diptongos, triptongos e hiatos, aplicas las reglas gemelas
+      de agudas y llanas, respetas a las esdrújulas que siempre mandan y usas la tilde diacrítica con precisión
+      de relojero. ¡De Copán a Atlántida, tus tildes ya caen donde deben! 🔤✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Español.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dividió palabras en sílabas y clasificó su acentuación de práctica en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Acentuación</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. tónica &nbsp; 2. o &nbsp; 3. u &nbsp; 4. diptongo &nbsp; 5. triptongo &nbsp; 6. hiato &nbsp; 7. vocal &nbsp; 8. siempre &nbsp; 9. débil &nbsp; 10. diacrítica</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3F, 4V, 5V, 6F, 7V, 8F, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2b, 3b, 4c, 5b, 6b, 7b, 8c, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1D, 2G, 3B, 4F, 5J, 6H, 7A, 8I, 9C, 10E</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión La Acentuación» (Educación Básica). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con el juego de «gritar» la tónica en coro, el dictado de palabras del mapa de
+      Honduras (Copán, Atlántida, Tegucigalpa) y la caza de hiatos en canciones. Etapa 6 de la Ruta de la Palabra,
+      después de «Los Pronombres» y antes de «Marcadores Textuales». La misión interactiva (código QR de la portada)
+      permite al estudiante practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Acentuación · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

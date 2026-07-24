@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión El Sistema Respiratorio y Circulatorio</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS NATURALES = VERDE/TEAL (#0d9488)
+     · Colores semánticos fijos: azul=aire/respiración, rojo=sangre/circulación,
+       naranja=advertencias/hábitos
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --nat: #0d9488; --nat-osc: #115e59; --nat-claro: #f0fdfa;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfece7;
+    --aire: #1e40af; --sangre: #b91c1c; --cub: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef6f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--nat-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--nat); background: var(--nat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--nat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--nat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--nat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--nat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--nat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--nat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--nat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5fbfa; }
+  td.k { font-weight: 700; color: var(--nat-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafefd; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--nat-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (aire / sangre / intercambio) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #ffedd5; } .celula .cm b { color: var(--cub); }
+  .celula .cc { background: #fef2f2; } .celula .cc b { color: var(--sangre); }
+  .celula .cn { background: #eef2ff; } .celula .cn b { color: var(--aire); }
+
+  /* Secuencia de pasos (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 7px; font-size: 8.5pt; background: #fafefd; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--nat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--nat-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .tri .torg { background: #fef2f2; border: 1px solid #f5c9c9; }
+  .tri .tcub { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--aire); } .tri .torg b { color: var(--sangre); } .tri .tcub b { color: var(--cub); }
+
+  .acts h3 { border-bottom: 2px solid var(--nat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--nat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--nat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--nat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--nat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--nat-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2faf8; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--nat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--nat); box-shadow: 0 6px 16px rgba(13,148,136,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión El Sistema Respiratorio y Circulatorio</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Naturales &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> La respiración y la circulación: los órganos del sistema respiratorio, el intercambio de gases, el corazón, los vasos sanguíneos, la sangre y el cuidado de ambos sistemas</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-respiratorio-circulatorio.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender qué es la <strong>respiración</strong> y qué órganos la realizan.</li>
+      <li>Explicar el <strong>intercambio de gases</strong> que ocurre en los alvéolos.</li>
+      <li>Identificar las partes y la función del <strong>sistema circulatorio</strong>.</li>
+      <li>Diferenciar <strong>arterias, venas y capilares</strong>.</li>
+      <li>Reconocer los componentes de la <strong>sangre</strong> y su función.</li>
+      <li>Practicar hábitos para <strong>cuidar el corazón y los pulmones</strong>.</li>
+    </ol>
+
+    <h2>🫁 1. ¿Qué es la respiración?</h2>
+    <p>La <strong>respiración</strong> es el proceso por el que el cuerpo <strong>toma oxígeno</strong> del aire
+    y <strong>expulsa dióxido de carbono</strong>. El oxígeno es necesario para que las células obtengan
+    energía. El encargado de esta tarea es el <strong>sistema respiratorio</strong>: nariz, faringe, laringe,
+    tráquea, bronquios y pulmones.</p>
+    <div class="caja regla">🌬️ <b>Dato clave:</b> respirar tiene dos movimientos. En la <strong>inspiración</strong>
+    entra aire con oxígeno y el diafragma baja; en la <strong>espiración</strong> sale aire con dióxido de
+    carbono y el diafragma sube.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> el <strong>intercambio de gases</strong> ocurre en los
+    <strong>alvéolos</strong>, unos sacos diminutos de los pulmones. Allí la sangre <strong>toma oxígeno</strong>
+    y <strong>suelta dióxido de carbono</strong>.</div>
+    <div class="caja truco">🧩 <b>Truco para el recorrido del aire:</b> «<b>Na-Fa-La-Trá-Bron-Al</b>»:
+    <b>Na</b>riz, <b>Fa</b>ringe, <b>La</b>ringe, <b>Trá</b>quea, <b>Bron</b>quios y <b>Al</b>véolos.</div>
+
+    <h3>🩸 Mini-demostración: dos sistemas que trabajan juntos</h3>
+    <div class="ilus">
+      <div class="ilus-t">El aire y la sangre se encuentran en los pulmones</div>
+      <div class="celula">
+        <div class="cn"><span class="c-emoji">🫁</span><b>Respiratorio</b>Toma el OXÍGENO del aire (nariz, tráquea, pulmones).</div>
+        <div class="cc"><span class="c-emoji">🫀</span><b>Circulatorio</b>REPARTE el oxígeno por la sangre (corazón, vasos, sangre).</div>
+        <div class="cm"><span class="c-emoji">🫧</span><b>Intercambio de gases</b>En los ALVÉOLOS se encuentran el aire y la sangre.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ El oxígeno pasa del aire a la sangre y viaja hasta cada <strong>célula</strong> del cuerpo.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Respiratorio y Circulatorio</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🫀 2. El sistema circulatorio</h2>
+    <p>El <strong>sistema circulatorio</strong> transporta la sangre por todo el cuerpo. Está formado por tres partes:</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>🫀 Corazón</b>Órgano musculoso que bombea la sangre.</div>
+      <div><span class="pn">2</span><b>🩸 Vasos sanguíneos</b>Tubos por donde viaja la sangre.</div>
+      <div><span class="pn">3</span><b>💧 Sangre</b>Líquido que transporta el oxígeno y los nutrientes.</div>
+    </div>
+    <div class="caja idea">💡 <b>Dato:</b> el corazón es del tamaño de tu <strong>puño</strong> y tiene
+    <strong>cuatro cavidades</strong>: dos aurículas (arriba) y dos ventrículos (abajo). Nunca deja de latir.</div>
+
+    <h2>🩸 3. Los vasos sanguíneos</h2>
+    <p>Hay tres clases de vasos, cada uno con su trabajo:</p>
+    <div class="tri">
+      <div class="torg"><b>🔴 Arterias</b>Llevan la sangre DESDE el corazón hacia el cuerpo. La más grande es la <em>aorta</em>.</div>
+      <div class="tnuc"><b>🔵 Venas</b>Traen la sangre DE VUELTA al corazón. La más grande es la <em>cava</em>.</div>
+      <div class="tcub"><b>🩸 Capilares</b>Vasos finísimos que llegan a las células e intercambian oxígeno y nutrientes.</div>
+    </div>
+
+    <h2>💧 4. La sangre</h2>
+    <table>
+      <tr><th>Componente</th><th>¿Qué hace?</th></tr>
+      <tr><td class="k">🔴 Glóbulos rojos</td><td>Transportan el oxígeno; tienen hemoglobina y dan el color rojo.</td></tr>
+      <tr><td class="k">⚪ Glóbulos blancos</td><td>Defienden el cuerpo de los microbios y las enfermedades.</td></tr>
+      <tr><td class="k">🩹 Plaquetas</td><td>Ayudan a coagular la sangre cuando hay una herida.</td></tr>
+      <tr><td class="k">💧 Plasma</td><td>Parte líquida de la sangre; transporta las demás células y los nutrientes.</td></tr>
+    </table>
+    <div class="caja regla">🫀 <b>Recuerda:</b> el sistema respiratorio y el circulatorio <strong>trabajan juntos</strong>:
+    los pulmones toman el oxígeno y la sangre lo reparte a todo el cuerpo.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Respiratorio y Circulatorio</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">💚 5. Cuidar el corazón y los pulmones</h2>
+    <p>Para mantener sanos ambos sistemas debemos cuidar nuestros <strong>hábitos</strong>:</p>
+    <table>
+      <tr><th>Hábito saludable</th><th>¿Por qué?</th></tr>
+      <tr><td class="k">🏃 Haz ejercicio</td><td>Fortalece el corazón y aumenta la capacidad de los pulmones.</td></tr>
+      <tr><td class="k">🚭 No fumes</td><td>El humo del tabaco daña los pulmones y el corazón.</td></tr>
+      <tr><td class="k">🥗 Come sano</td><td>Frutas y verduras cuidan el corazón; evita el exceso de grasa.</td></tr>
+      <tr><td class="k">🌳 Respira aire puro</td><td>Evita el humo y el polvo; ventila los lugares cerrados.</td></tr>
+      <tr><td class="k">💧 Descansa e hidrátate</td><td>El descanso y el agua ayudan a que la sangre circule mejor.</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que al espirar expulsamos oxígeno</td><td>Al espirar sale dióxido de carbono.</td><td>Espirar = sale CO₂ ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que los pulmones son del sistema circulatorio</td><td>Los pulmones son del sistema respiratorio.</td><td>Pulmones = respiratorio ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que las arterias regresan la sangre al corazón</td><td>Las arterias salen del corazón; las venas regresan.</td><td>Arterias salen ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que el intercambio de gases ocurre en el estómago</td><td>Ocurre en los alvéolos de los pulmones.</td><td>Alvéolos ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que fumar no afecta el cuerpo</td><td>El humo daña pulmones y corazón.</td><td>No fumar ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> subir a lugares altos como las montañas de <strong>La Tigra</strong> o
+    <strong>Celaque</strong> hace que respiremos más rápido, porque el cuerpo necesita más oxígeno. Jugar
+    <strong>fútbol</strong>, nadar en un río o caminar al colegio son formas de ejercicio que fortalecen tu
+    corazón y tus pulmones. ¡Muévete, respira aire puro y cuida tu cuerpo! 🏃💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Respiratorio y Circulatorio</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El sistema <span class="linea-resp"></span> toma oxígeno del aire.</li>
+      <li>El <span class="linea-resp"></span> bombea la sangre a todo el cuerpo.</li>
+      <li>El intercambio de gases ocurre en los <span class="linea-resp"></span>.</li>
+      <li>Las <span class="linea-resp"></span> salen del corazón hacia el cuerpo.</li>
+      <li>Las <span class="linea-resp"></span> regresan la sangre al corazón.</li>
+      <li>El músculo de la respiración es el <span class="linea-resp"></span>.</li>
+      <li>Los glóbulos <span class="linea-resp"></span> transportan el oxígeno.</li>
+      <li>Al espirar expulsamos <span class="linea-resp"></span> de carbono.</li>
+      <li>El corazón tiene <span class="linea-resp"></span> cavidades.</li>
+      <li>La <span class="linea-resp"></span> lleva el aire hacia los bronquios.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ La respiración toma oxígeno del aire y expulsa dióxido de carbono.</li>
+      <li>____ Al espirar expulsamos oxígeno.</li>
+      <li>____ El corazón bombea la sangre a todo el cuerpo.</li>
+      <li>____ Los pulmones pertenecen al sistema circulatorio.</li>
+      <li>____ El intercambio de gases ocurre en los alvéolos.</li>
+      <li>____ Las arterias regresan la sangre al corazón.</li>
+      <li>____ El diafragma es el músculo de la respiración.</li>
+      <li>____ Los glóbulos rojos transportan el oxígeno.</li>
+      <li>____ El corazón tiene cuatro cavidades.</li>
+      <li>____ Fumar es bueno para los pulmones.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Respiratorio y Circulatorio</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué gas toma el cuerpo del aire al respirar?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el nitrógeno</span>
+        <span class="op"><i>b</i> el oxígeno</span>
+        <span class="op"><i>c</i> el dióxido de carbono</span>
+        <span class="op"><i>d</i> el humo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué órgano bombea la sangre a todo el cuerpo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> los pulmones</span>
+        <span class="op"><i>b</i> el estómago</span>
+        <span class="op"><i>c</i> el corazón</span>
+        <span class="op"><i>d</i> el hígado</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Dónde ocurre el intercambio de gases?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> en la tráquea</span>
+        <span class="op"><i>b</i> en los alvéolos</span>
+        <span class="op"><i>c</i> en el corazón</span>
+        <span class="op"><i>d</i> en las venas</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué vasos salen del corazón hacia el cuerpo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> las venas</span>
+        <span class="op"><i>b</i> las arterias</span>
+        <span class="op"><i>c</i> los bronquios</span>
+        <span class="op"><i>d</i> los alvéolos</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué vasos regresan la sangre al corazón?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> las arterias</span>
+        <span class="op"><i>b</i> las venas</span>
+        <span class="op"><i>c</i> los capilares</span>
+        <span class="op"><i>d</i> la tráquea</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué músculo permite la respiración?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el bíceps</span>
+        <span class="op"><i>b</i> el diafragma</span>
+        <span class="op"><i>c</i> el corazón</span>
+        <span class="op"><i>d</i> la lengua</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué transportan los glóbulos rojos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> nutrientes</span>
+        <span class="op"><i>b</i> oxígeno</span>
+        <span class="op"><i>c</i> agua</span>
+        <span class="op"><i>d</i> grasa</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cuántas cavidades tiene el corazón?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> dos</span>
+        <span class="op"><i>b</i> tres</span>
+        <span class="op"><i>c</i> cuatro</span>
+        <span class="op"><i>d</i> cinco</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué tubo lleva el aire hacia los bronquios?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la aorta</span>
+        <span class="op"><i>b</i> la tráquea</span>
+        <span class="op"><i>c</i> la vena</span>
+        <span class="op"><i>d</i> el esófago</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué hábito cuida el corazón y los pulmones?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> fumar</span>
+        <span class="op"><i>b</i> hacer ejercicio</span>
+        <span class="op"><i>c</i> comer mucha grasa</span>
+        <span class="op"><i>d</i> no moverse</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Respiratorio y Circulatorio</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Respiración</td><td>A. Vasos que regresan la sangre al corazón</td></tr>
+      <tr><td>2. ____ Corazón</td><td>B. Sacos donde la sangre toma oxígeno</td></tr>
+      <tr><td>3. ____ Pulmones</td><td>C. Órgano musculoso que bombea la sangre</td></tr>
+      <tr><td>4. ____ Alvéolos</td><td>D. Tubo que lleva el aire a los bronquios</td></tr>
+      <tr><td>5. ____ Arterias</td><td>E. Tomar oxígeno del aire y expulsar dióxido de carbono</td></tr>
+      <tr><td>6. ____ Venas</td><td>F. Vasos muy finos que llegan a las células</td></tr>
+      <tr><td>7. ____ Diafragma</td><td>G. Músculo que permite la respiración</td></tr>
+      <tr><td>8. ____ Glóbulos rojos</td><td>H. Órganos donde se intercambian los gases</td></tr>
+      <tr><td>9. ____ Tráquea</td><td>I. Vasos que salen del corazón hacia el cuerpo</td></tr>
+      <tr><td>10. ____ Capilares</td><td>J. Células de la sangre que transportan el oxígeno</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión El Sistema Respiratorio y Circulatorio.</b> Ahora sabes cómo
+      respiras y cómo la sangre lleva el oxígeno a todo tu cuerpo: conoces el recorrido del aire, el intercambio
+      de gases en los alvéolos, el corazón y sus cuatro cavidades, la diferencia entre arterias, venas y
+      capilares, y los componentes de la sangre. Y lo más importante: sabes cómo cuidar tu corazón y tus
+      pulmones. ¡Muévete y respira aire puro! 🫁🫀
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Naturales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó y rotuló el sistema respiratorio y el corazón en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Respiratorio y Circulatorio</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. respiratorio &nbsp; 2. corazón &nbsp; 3. alvéolos &nbsp; 4. arterias &nbsp; 5. venas &nbsp; 6. diafragma &nbsp; 7. rojos &nbsp; 8. dióxido &nbsp; 9. cuatro &nbsp; 10. tráquea</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6F, 7V, 8V, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3b, 4b, 5b, 6b, 7b, 8c, 9b, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1E, 2C, 3H, 4B, 5I, 6A, 7G, 8J, 9D, 10F</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión El Sistema Respiratorio y Circulatorio» (Educación Básica). Puede utilizarse como guía de estudio impresa o
+      digital antes de la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección
+      múltiple, pareados) y puede complementarse con el dibujo rotulado del sistema respiratorio y del corazón, el modelado
+      de los pulmones y el corazón con plastilina, la construcción de un modelo de pulmón con una botella y globos, la toma
+      del pulso antes y después de correr, y un cartel sobre hábitos para cuidar el corazón y los pulmones. Etapa 4 de la
+      Ruta del Cuerpo. La misión interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación
+      inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Respiratorio y Circulatorio · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

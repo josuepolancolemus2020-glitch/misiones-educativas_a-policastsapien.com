@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Recta Numérica, Suma y Resta</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=suma (avanzar), naranja=resta
+       (retroceder), verde=resultado y comprobación
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --avz: #1e40af; --rtc: #c2410c; --res: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .ilus svg { max-width: 100%; height: auto; }
+
+  /* Términos de las operaciones */
+  .terminos { display: inline-flex; align-items: flex-start; gap: 8px; font-family: 'Cambria Math', Georgia, serif; flex-wrap: wrap; justify-content: center; }
+  .terminos .term { text-align: center; }
+  .terminos .num { font-size: 16pt; font-weight: 800; padding: 3px 10px; border-radius: 8px; }
+  .terminos .num.tmin { background: #dbeafe; color: var(--avz); }
+  .terminos .num.tsus { background: #ffedd5; color: var(--rtc); }
+  .terminos .num.tres { background: #dcfce7; color: var(--res); }
+  .terminos .op { font-size: 14pt; font-weight: 800; color: var(--gris); align-self: center; }
+  .terminos .lbl { font-size: 7pt; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; margin-top: 2px; }
+  .terminos .lbl.tmin { color: var(--avz); } .terminos .lbl.tsus { color: var(--rtc); } .terminos .lbl.tres { color: var(--res); }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .avanza { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .retro { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .prueba { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .avanza b { color: var(--avz); } .tri .retro b { color: var(--rtc); } .tri .prueba b { color: var(--res); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .terminos .num
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Recta Numérica, Suma y Resta</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> La recta numérica (origen, marcas, escala), punto medio, y los términos y problemas de la suma y la resta</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-recta-numerica.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Identificar las partes de la <strong>recta numérica</strong>: origen, marcas y escala.</li>
+      <li>Ubicar puntos en la recta <strong>descubriendo primero la escala</strong> (de 1 en 1, de 10 en 10, de 25 en 25…).</li>
+      <li>Encontrar el <strong>punto medio</strong> entre dos números.</li>
+      <li>Comprender la suma como <strong>avanzar</strong> y la resta como <strong>retroceder</strong> en la recta.</li>
+      <li>Nombrar los términos: <strong>sumandos y total</strong>; <strong>minuendo, sustraendo y diferencia</strong>.</li>
+      <li>Resolver problemas eligiendo la operación correcta y <strong>comprobando la resta</strong>.</li>
+    </ol>
+
+    <h2>📏 1. ¿Qué es la recta numérica?</h2>
+    <p>Es una línea recta donde cada punto representa un número. Los números se ordenan de <strong>menor a
+    mayor hacia la derecha</strong>, y la recta nos ayuda a ubicar, comparar, sumar y restar.</p>
+    <div class="caja idea">💡 <b>Sus partes:</b> el <strong>origen</strong> (punto de partida, casi siempre el 0),
+    las <strong>marcas</strong> (las rayitas) y la <strong>escala</strong> (el valor de cada salto entre marcas).</div>
+    <div class="caja regla">⚡ <b>La Regla de Oro:</b> antes de ubicar un punto, descubre la <strong>escala</strong>:
+    puede ser de 1 en 1, de 5 en 5, de 10 en 10, de 25 en 25 o de 100 en 100… ¡No todas las rectas saltan igual!</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>Se cuentan los saltos, no las rayitas</b>»:
+    del 0 al 40 (escala de 10) hay <strong>4 saltos</strong> — la marca del 40 es la 4.ª después del 0.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">¿Dónde vive el 40 en una recta con escala de 10 en 10?</div>
+      <svg viewBox="0 0 340 105" width="340" height="105" role="img" aria-label="Recta numérica de 0 a 50 con cuatro saltos hasta el 40">
+        <line x1="20" y1="70" x2="325" y2="70" stroke="#1a2733" stroke-width="2.5"/>
+        <polygon points="325,70 317,66 317,74" fill="#1a2733"/>
+        <g stroke="#1a2733" stroke-width="2">
+          <line x1="30" y1="63" x2="30" y2="77"/><line x1="86" y1="63" x2="86" y2="77"/><line x1="142" y1="63" x2="142" y2="77"/>
+          <line x1="198" y1="63" x2="198" y2="77"/><line x1="254" y1="63" x2="254" y2="77"/><line x1="310" y1="63" x2="310" y2="77"/>
+        </g>
+        <g font-family="Arial" font-size="11" font-weight="bold" fill="#1a2733" text-anchor="middle">
+          <text x="30" y="93">0</text><text x="86" y="93">10</text><text x="142" y="93">20</text>
+          <text x="198" y="93">30</text><text x="254" y="93">40</text><text x="310" y="93">50</text>
+        </g>
+        <g fill="none" stroke="#1e40af" stroke-width="2.2">
+          <path d="M 33 66 Q 58 38 83 66"/><path d="M 89 66 Q 114 38 139 66"/>
+          <path d="M 145 66 Q 170 38 195 66"/><path d="M 201 66 Q 226 38 251 66"/>
+        </g>
+        <g font-family="Arial" font-size="9" font-weight="bold" fill="#1e40af" text-anchor="middle">
+          <text x="58" y="36">+10</text><text x="114" y="36">+10</text><text x="170" y="36">+10</text><text x="226" y="36">+10</text>
+        </g>
+        <circle cx="254" cy="70" r="6" fill="#15803d"/>
+      </svg>
+      <p style="font-size:9pt;color:var(--gris);margin:5px 0 0;text-align:center;">✅ <strong style="color:var(--avz);">4 saltos</strong> de 10 desde el origen: 4 × 10 = <strong style="color:var(--res);">40</strong>.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Recta Numérica, Suma y Resta</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🎯 2. Ubicar puntos y el punto medio</h2>
+    <p>Para ubicar un número: 1) mira el <strong>origen</strong>, 2) descubre la <strong>escala</strong>,
+    3) cuenta los <strong>saltos</strong> necesarios. Ejemplo: para ubicar el 60 en una recta de 0 a 100 con
+    escala de 10, cuento 6 saltos desde el 0.</p>
+    <table>
+      <tr><th>Situación</th><th>La clave</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🎯 Punto medio</td><td>Está a la MISMA distancia de ambos números.</td><td>Entre 40 y 60 es 50 · entre 200 y 300 es 250</td></tr>
+      <tr><td class="k">⚠️ Entre marcas</td><td>No todos los números caen sobre una rayita.</td><td>El 75 (escala de 10) queda a la mitad entre 70 y 80</td></tr>
+      <tr><td class="k">🔍 Escala escondida</td><td>Léela de las marcas rotuladas.</td><td>0, 25, 50, 75… → escala de 25: sigue el 100</td></tr>
+    </table>
+
+    <h2>➕ 3. Sumar es avanzar · restar es retroceder</h2>
+    <p>En la recta, la <strong>adición</strong> avanza hacia la derecha (juntar, agregar) y la
+    <strong>sustracción</strong> retrocede hacia la izquierda (quitar, comparar). Cada operación tiene sus
+    términos con nombre propio:</p>
+
+    <div class="ilus">
+      <div class="ilus-t">Los términos de la resta: 90 − 35 = 55</div>
+      <div class="terminos">
+        <div class="term"><div class="num tmin">90</div><div class="lbl tmin">minuendo</div></div>
+        <div class="op">−</div>
+        <div class="term"><div class="num tsus">35</div><div class="lbl tsus">sustraendo</div></div>
+        <div class="op">=</div>
+        <div class="term"><div class="num tres">55</div><div class="lbl tres">diferencia</div></div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">En la suma 46 + 38 = 84: los <strong>sumandos</strong> son 46 y 38, y el <strong>total</strong> es 84.</p>
+    </div>
+
+    <div class="tri">
+      <div class="avanza"><b>🔵 Sumar → AVANZA a la derecha</b>Parto del 46 y avanzo 38 (primero 30, luego 8): llego al 84.</div>
+      <div class="retro"><b>🟠 Restar → RETROCEDE a la izquierda</b>Parto del 90 y retrocedo 35: caigo en el 55.</div>
+      <div class="prueba"><b>🟢 Prueba de la resta</b>Sustraendo + diferencia = minuendo. 35 + 55 = 90 ✔ ¡Resta comprobada!</div>
+    </div>
+
+    <h2>🪜 4. Los 4 pasos para resolver un problema</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Lee y decide</b>¿Se junta o agrega (suma)? ¿Se quita, falta o compara (resta)?</div>
+      <div><span class="pn">2</span><b>Ubica el inicio</b>El número del que partes en la recta.</div>
+      <div><span class="pn">3</span><b>Avanza o retrocede</b>Opera en columnas: unidades con unidades, llevando o prestando.</div>
+      <div><span class="pn">4</span><b>Comprueba</b>En la resta: sustraendo + diferencia = minuendo.</div>
+    </div>
+
+    <h3>🗝️ Palabras clave de los problemas</h3>
+    <table>
+      <tr><th>Dicen…</th><th>Operación</th><th>Dicen…</th><th>Operación</th></tr>
+      <tr><td class="k">«me regalan», «junto», «agrego»</td><td>➕ Suma</td><td class="k">«gasté», «retrocedo», «me quitan»</td><td>➖ Resta</td></tr>
+      <tr><td class="k">«reúno», «avanzo», «recibo»</td><td>➕ Suma</td><td class="k">«¿cuánto falta?», «la diferencia», «¿cuántos más?»</td><td>➖ Resta</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Recta Numérica, Suma y Resta</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📋 5. Casos comunes</h2>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">Ubicar 60 (escala de 10)</td><td>6 saltos desde el 0</td><td>6.ª marca</td></tr>
+      <tr><td class="k">Punto medio entre 200 y 300</td><td>Misma distancia de ambos</td><td>250</td></tr>
+      <tr><td class="k">46 + 38</td><td>Avanzo 30 y luego 8 desde el 46</td><td>84</td></tr>
+      <tr><td class="k">90 − 35</td><td>Retrocedo 35 desde el 90</td><td>55 (prueba: 35 + 55 = 90 ✔)</td></tr>
+      <tr><td class="k">Ana: L 385 y recibe L 150</td><td>Juntar → suma</td><td>L 535</td></tr>
+      <tr><td class="k">¿Cuánto le falta a 65 para 100?</td><td>Faltar → resta: 100 − 65</td><td>35</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Contar marcas en vez de saltos</td><td>«La 4.ª marca es el 30 porque cuento desde la primera rayita». El 0 no se cuenta como salto.</td><td>4 saltos de 10 desde el 0 = 40 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que toda recta va de 1 en 1</td><td>«Después del 70 viene el 71» en una recta de 10 en 10. La escala manda.</td><td>Con escala de 10: después del 70 viene el 80 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir minuendo con sustraendo</td><td>«En 90 − 35, el sustraendo es 90». Al grande le quitan; el que quita es el pequeño.</td><td>Minuendo 90 · sustraendo 35 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Resolver «¿cuánto falta?» con suma</td><td>«A 65 le falta 165 para 100» (sumó en vez de restar).</td><td>100 − 65 = 35 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">No comprobar la resta</td><td>Un error de préstamo pasa inadvertido sin la prueba.</td><td>Sustraendo + diferencia = minuendo ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> la recta numérica viaja con nosotros: los <strong>kilómetros de
+    la carretera CA-5</strong> son marcas de una recta gigante entre Tegucigalpa y San Pedro Sula. Y en el
+    mercado, Ana avanza y retrocede con sus lempiras: tiene <strong>L 385</strong>, le pagan <strong>L 150</strong>
+    (avanza a L 535) y gasta <strong>L 137</strong> (retrocede a L 398). ¡Sumar y restar es caminar por la recta!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Recta Numérica, Suma y Resta</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>En la recta numérica los números se ordenan de menor a mayor hacia la <span class="linea-resp"></span>.</li>
+      <li>El punto de partida de la recta, casi siempre el 0, se llama <span class="linea-resp"></span>.</li>
+      <li>El valor de cada salto entre marcas se llama <span class="linea-resp"></span>.</li>
+      <li>El número que está exactamente al centro de otros dos es el punto <span class="linea-resp"></span>.</li>
+      <li>En la recta, sumar es <span class="linea-resp"></span> hacia la derecha.</li>
+      <li>Los números que se juntan en una adición se llaman <span class="linea-resp"></span>.</li>
+      <li>En una resta, el número al que se le quita se llama <span class="linea-resp"></span>.</li>
+      <li>El resultado de la sustracción se llama <span class="linea-resp"></span>.</li>
+      <li>La prueba de la resta dice: sustraendo + diferencia = <span class="linea-resp"></span>.</li>
+      <li>Para saber cuánto le falta a 65 para llegar a 100 se usa la <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El origen de la recta numérica es el cero.</li>
+      <li>____ En la recta numérica los números crecen hacia la izquierda.</li>
+      <li>____ El punto medio entre 40 y 60 es 50.</li>
+      <li>____ En 90 − 35 = 55, el sustraendo es 90.</li>
+      <li>____ Los sumandos son los números que se juntan en una adición.</li>
+      <li>____ Si la escala es de 10 en 10, después del 70 viene el 71.</li>
+      <li>____ Sumar es avanzar hacia la derecha en la recta numérica.</li>
+      <li>____ La diferencia es el resultado de la sustracción.</li>
+      <li>____ Para saber cuánto le falta a 65 para llegar a 100 se usa la suma.</li>
+      <li>____ La prueba de la resta dice: sustraendo + diferencia = minuendo.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Recta Numérica, Suma y Resta</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>En una recta de 0 a 100 con marcas cada 10, ¿qué número está en la 4.ª marca después del 0?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 4</span>
+        <span class="op"><i>b</i> 40</span>
+        <span class="op"><i>c</i> 44</span>
+        <span class="op"><i>d</i> 100</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál es el punto medio entre 30 y 50?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 35</span>
+        <span class="op"><i>b</i> 45</span>
+        <span class="op"><i>c</i> 40</span>
+        <span class="op"><i>d</i> 80</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>Una recta muestra 0, 25, 50, 75… ¿qué número sigue?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 76</span>
+        <span class="op"><i>b</i> 80</span>
+        <span class="op"><i>c</i> 95</span>
+        <span class="op"><i>d</i> 100</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>En 358 + 236 = 594, los números 358 y 236 se llaman:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> diferencias</span>
+        <span class="op"><i>b</i> sumandos</span>
+        <span class="op"><i>c</i> totales</span>
+        <span class="op"><i>d</i> minuendos</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>En la resta 720 − 245, ¿cuál es el minuendo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 245</span>
+        <span class="op"><i>b</i> 475</span>
+        <span class="op"><i>c</i> 720</span>
+        <span class="op"><i>d</i> 965</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>Ana tiene 385 lempiras y recibe 150 más. ¿Cuánto tiene ahora?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> L 435</span>
+        <span class="op"><i>b</i> L 535</span>
+        <span class="op"><i>c</i> L 235</span>
+        <span class="op"><i>d</i> L 545</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuánto le falta a 65 para llegar a 100?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 45</span>
+        <span class="op"><i>b</i> 35</span>
+        <span class="op"><i>c</i> 165</span>
+        <span class="op"><i>d</i> 25</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>En la recta numérica, sumar significa moverse hacia:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la izquierda</span>
+        <span class="op"><i>b</i> la derecha</span>
+        <span class="op"><i>c</i> abajo</span>
+        <span class="op"><i>d</i> el origen</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>Un punto está entre 70 y 80, más cerca del 80. ¿Cuál puede ser?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 71</span>
+        <span class="op"><i>b</i> 78</span>
+        <span class="op"><i>c</i> 85</span>
+        <span class="op"><i>d</i> 70</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál es el resultado de 500 − 137?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 363</span>
+        <span class="op"><i>b</i> 373</span>
+        <span class="op"><i>c</i> 463</span>
+        <span class="op"><i>d</i> 437</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Recta Numérica, Suma y Resta</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Recta numérica</td><td>A. El punto de partida: casi siempre el cero</td></tr>
+      <tr><td>2. ____ Origen</td><td>B. Quitar o comparar: retroceder hacia la izquierda</td></tr>
+      <tr><td>3. ____ Escala</td><td>C. El resultado de la resta: en 90 − 35, el 55</td></tr>
+      <tr><td>4. ____ Punto medio</td><td>D. Juntar o agregar: avanzar hacia la derecha</td></tr>
+      <tr><td>5. ____ Adición</td><td>E. Los números que se juntan: en 46 + 38, el 46 y el 38</td></tr>
+      <tr><td>6. ____ Sumandos</td><td>F. El número al que se le quita: en 90 − 35, el 90</td></tr>
+      <tr><td>7. ____ Sustracción</td><td>G. El valor de cada salto entre marcas</td></tr>
+      <tr><td>8. ____ Minuendo</td><td>H. Línea donde cada punto representa un número</td></tr>
+      <tr><td>9. ____ Diferencia</td><td>I. Sustraendo + diferencia = minuendo</td></tr>
+      <tr><td>10. ____ Prueba de la resta</td><td>J. Está a la misma distancia de dos números</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Recta Numérica, Suma y Resta.</b> Ahora descubres la escala de
+      cualquier recta antes de saltar, encuentras el punto medio, avanzas con la suma y retrocedes con la resta
+      llamando a cada término por su nombre, y compruebas tus restas como todo un profesional. ¡De los kilómetros
+      de la carretera a los lempiras del mercado, la recta numérica ya es tu camino! 📏✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó rectas numéricas y resolvió sumas y restas de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Recta Numérica, Suma y Resta</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. derecha &nbsp; 2. origen &nbsp; 3. escala &nbsp; 4. medio &nbsp; 5. avanzar &nbsp; 6. sumandos &nbsp; 7. minuendo &nbsp; 8. diferencia &nbsp; 9. minuendo &nbsp; 10. resta</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6F, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3d, 4b, 5c, 6b, 7b, 8b, 9b, 10a</div>
+      <div><span class="pt">IV. Pareados:</span> 1H, 2A, 3G, 4J, 5D, 6E, 7B, 8F, 9C, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Recta Numérica, Suma y Resta» (Educación Básica). Puede utilizarse como guía de estudio impresa o digital antes de
+      la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con una recta numérica dibujada con yeso en el patio (los estudiantes saltan las
+      sumas y restas con el cuerpo), rectas con escalas variadas en el pizarrón y problemas con lempiras del mercado.
+      Etapa 2 de la Ruta del Número del Educación Básica, entre «Valor Posicional» y «Teoría de Números». La misión interactiva
+      (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Recta Numérica, Suma y Resta · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

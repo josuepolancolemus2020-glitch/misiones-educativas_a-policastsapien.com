@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Perímetro y Área de Cuadriláteros</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=perímetro (la cerca),
+       naranja=área (la alfombra), verde=resultado
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --per: #1e40af; --are: #c2410c; --res: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .ilus svg { max-width: 100%; height: auto; }
+  .ilus-par { display: flex; gap: 22px; justify-content: center; align-items: center; flex-wrap: wrap; }
+
+  /* Fórmulas destacadas */
+  .formula { display: inline-block; font-family: 'Cambria Math', Georgia, serif; font-size: 13pt; font-weight: 800; background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 4px 12px; margin: 3px 4px; }
+  .formula.fper { color: var(--per); }
+  .formula.fare { color: var(--are); }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .cerc { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .alfo { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .comp { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .cerc b { color: var(--per); } .tri .alfo b { color: var(--are); } .tri .comp b { color: var(--res); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .formula
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Perímetro y Área de Cuadriláteros</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El perímetro (contorno) y el área (superficie) del cuadrado y el rectángulo, con sus fórmulas y unidades</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-perimetro-cuadrilateros.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Distinguir el <strong>perímetro</strong> (el contorno) del <strong>área</strong> (la superficie) de una figura.</li>
+      <li>Reconocer los <strong>cuadriláteros</strong>: 4 lados, con el cuadrado (lados iguales) y el rectángulo (base y altura).</li>
+      <li>Calcular perímetros con las fórmulas <strong>P = 4 × lado</strong> y <strong>P = 2 × (base + altura)</strong>.</li>
+      <li>Calcular áreas con las fórmulas <strong>A = lado × lado</strong> y <strong>A = base × altura</strong>.</li>
+      <li>Usar las unidades correctas: <strong>lineales</strong> para el perímetro (cm, m) y <strong>cuadradas</strong> para el área (cm², m²).</li>
+      <li>Elegir la medida correcta en problemas reales: cercar → perímetro, cubrir → área.</li>
+    </ol>
+
+    <h2>🔲 1. Perímetro y área: contorno y superficie</h2>
+    <p>El <strong>perímetro</strong> es la medida del <strong>contorno</strong> de una figura: se obtiene
+    <strong>sumando todos sus lados</strong>. El <strong>área</strong> es la <strong>superficie</strong> que
+    cubre: se cuenta como los cuadraditos de 1 × 1 que caben adentro.</p>
+    <div class="caja regla">⚡ <b>La pregunta clave:</b> ¿mido el borde o lo de adentro? El perímetro RODEA la
+    figura (cm, m); el área LLENA la figura (cm², m²).</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> un <strong>cuadrilátero</strong> es un polígono de 4 lados.
+    El <strong>cuadrado</strong> tiene los 4 iguales; el <strong>rectángulo</strong> los tiene iguales dos a
+    dos: base y altura.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>La cerca y la alfombra</b>»: la cerca rodea el
+    terreno (perímetro, en metros); la alfombra cubre el piso (área, en metros cuadrados).</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">El rectángulo de 6 × 4: la cerca azul y los 24 cuadritos de adentro</div>
+      <div class="ilus-par">
+        <svg viewBox="0 0 220 150" width="220" height="150" role="img" aria-label="Rectángulo de seis por cuatro con cuadrícula">
+          <g fill="#ffedd5" stroke="#f3c99a" stroke-width="1">
+            <rect x="20" y="20" width="30" height="25"/><rect x="50" y="20" width="30" height="25"/><rect x="80" y="20" width="30" height="25"/><rect x="110" y="20" width="30" height="25"/><rect x="140" y="20" width="30" height="25"/><rect x="170" y="20" width="30" height="25"/>
+            <rect x="20" y="45" width="30" height="25"/><rect x="50" y="45" width="30" height="25"/><rect x="80" y="45" width="30" height="25"/><rect x="110" y="45" width="30" height="25"/><rect x="140" y="45" width="30" height="25"/><rect x="170" y="45" width="30" height="25"/>
+            <rect x="20" y="70" width="30" height="25"/><rect x="50" y="70" width="30" height="25"/><rect x="80" y="70" width="30" height="25"/><rect x="110" y="70" width="30" height="25"/><rect x="140" y="70" width="30" height="25"/><rect x="170" y="70" width="30" height="25"/>
+            <rect x="20" y="95" width="30" height="25"/><rect x="50" y="95" width="30" height="25"/><rect x="80" y="95" width="30" height="25"/><rect x="110" y="95" width="30" height="25"/><rect x="140" y="95" width="30" height="25"/><rect x="170" y="95" width="30" height="25"/>
+          </g>
+          <rect x="20" y="20" width="180" height="100" fill="none" stroke="#1e40af" stroke-width="4"/>
+          <text x="110" y="137" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#1a2733">base = 6</text>
+          <text x="10" y="74" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold" fill="#1a2733" transform="rotate(-90 10 74)">altura = 4</text>
+        </svg>
+        <div style="text-align:left;font-size:10.5pt;">
+          <p style="margin-bottom:5px;"><strong style="color:var(--per);">Perímetro (la cerca azul):</strong><br>P = 2 × (6 + 4) = 2 × 10 = <strong>20 cm</strong></p>
+          <p style="margin-bottom:0;"><strong style="color:var(--are);">Área (los cuadritos):</strong><br>A = 6 × 4 = <strong>24 cm²</strong> — ¡cuéntalos!</p>
+        </div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ El perímetro SUMA los lados (cm); el área MULTIPLICA base por altura (cm²).</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Perímetro y Área de Cuadriláteros</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>📏 2. Las fórmulas del perímetro</h2>
+    <table>
+      <tr><th>Figura</th><th>Fórmula</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🟦 Cuadrado</td><td><span class="formula fper">P = 4 × lado</span></td><td>lado 5 → 4 × 5 = 20 cm</td></tr>
+      <tr><td class="k">▭ Rectángulo</td><td><span class="formula fper">P = 2 × (base + altura)</span></td><td>6 y 4 → 2 × 10 = 20 cm</td></tr>
+    </table>
+
+    <h2>🟧 3. Las fórmulas del área</h2>
+    <table>
+      <tr><th>Figura</th><th>Fórmula</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🟦 Cuadrado</td><td><span class="formula fare">A = lado × lado</span></td><td>lado 5 → 5 × 5 = 25 cm²</td></tr>
+      <tr><td class="k">▭ Rectángulo</td><td><span class="formula fare">A = base × altura</span></td><td>6 y 4 → 6 × 4 = 24 cm²</td></tr>
+    </table>
+
+    <h2>🪜 4. Los 4 pasos para resolver</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Identifica la figura</b>¿Cuadrado (4 lados iguales) o rectángulo (base y altura)?</div>
+      <div><span class="pn">2</span><b>Decide qué piden</b>¿La cerca (perímetro) o la alfombra (área)?</div>
+      <div><span class="pn">3</span><b>Aplica la fórmula</b>Suma para el perímetro; multiplica para el área.</div>
+      <div><span class="pn">4</span><b>Escribe la unidad</b>cm para el perímetro · cm² para el área.</div>
+    </div>
+
+    <h3>⚖️ Unidades y decisiones</h3>
+    <div class="tri">
+      <div class="cerc"><b>🔵 Perímetro → unidades LINEALES</b>cm, m, km. Cercar el terreno, enmarcar el cuadro, bordear la cancha.</div>
+      <div class="alfo"><b>🟠 Área → unidades CUADRADAS</b>cm², m², km². Engramar la cancha, alfombrar el piso, pintar la pared.</div>
+      <div class="comp"><b>🟢 Comprueba con la figura</b>Rectángulo 6×4: P = 20 cm y A = 24 cm². Dos números distintos ¡porque miden cosas distintas!</div>
+    </div>
+
+    <div class="caja idea">💡 <b>Dato curioso:</b> dos figuras pueden tener la MISMA área y DISTINTO perímetro.
+    El rectángulo de 8 × 3 y el de 6 × 4 tienen ambos 24 cm² de área… pero sus perímetros son 22 cm y 20 cm.
+    ¡El área no manda sobre la cerca!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Perímetro y Área de Cuadriláteros</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📋 5. Casos comunes</h2>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">P del cuadrado, lado 5</td><td>4 × 5</td><td>20 cm</td></tr>
+      <tr><td class="k">A del cuadrado, lado 5</td><td>5 × 5</td><td>25 cm²</td></tr>
+      <tr><td class="k">P del rectángulo 6 × 4</td><td>2 × (6 + 4)</td><td>20 cm</td></tr>
+      <tr><td class="k">A del rectángulo 6 × 4</td><td>6 × 4</td><td>24 cm²</td></tr>
+      <tr><td class="k">P del rectángulo 8 × 3</td><td>2 × (8 + 3)</td><td>22 cm</td></tr>
+      <tr><td class="k">A del rectángulo 8 × 3</td><td>8 × 3</td><td>24 cm²</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir perímetro con área</td><td>«Para cercar el terreno calculo el área». La cerca va por el BORDE.</td><td>Cercar → perímetro · cubrir → área ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Sumar en el área</td><td>«A = 6 + 4 = 10 cm²». El área multiplica, no suma.</td><td>A = 6 × 4 = 24 cm² ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar el ² en el área</td><td>«El área es 24 cm». Sin el cuadradito, la unidad queda lineal.</td><td>24 cm² (unidades cuadradas) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Multiplicar mal el perímetro del rectángulo</td><td>«P = 2 × 6 + 4 = 16». El paréntesis manda: primero se suma.</td><td>P = 2 × (6 + 4) = 20 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">«Misma área = mismo perímetro»</td><td>8 × 3 y 6 × 4 tienen 24 cm²… pero P = 22 y P = 20.</td><td>Son medidas independientes ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> la cancha de la escuela lo explica todo: para
+    <strong>cercarla</strong> con malla se mide el perímetro (metros de malla), pero para
+    <strong>engramarla</strong> se calcula el área (metros cuadrados de grama). Y en el solar de la casa:
+    un terreno de <strong>10 × 8 varas</strong> necesita 36 varas de cerco (perímetro) y tiene 80 varas
+    cuadradas de tierra para sembrar (área). ¡Dos preguntas, dos fórmulas!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Perímetro y Área de Cuadriláteros</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El perímetro es la medida del <span class="linea-resp"></span> de una figura.</li>
+      <li>El perímetro se obtiene <span class="linea-resp"></span> todos los lados.</li>
+      <li>El área es la <span class="linea-resp"></span> que cubre una figura.</li>
+      <li>El área se mide en unidades <span class="linea-resp"></span>.</li>
+      <li>Un cuadrilátero es un polígono de <span class="linea-resp"></span> lados.</li>
+      <li>El cuadrado tiene sus cuatro lados <span class="linea-resp"></span>.</li>
+      <li>El perímetro del cuadrado se calcula con la fórmula P = 4 × <span class="linea-resp"></span>.</li>
+      <li>El área del rectángulo se calcula con base × <span class="linea-resp"></span>.</li>
+      <li>Para cercar un terreno se calcula el <span class="linea-resp"></span>.</li>
+      <li>El perímetro del rectángulo es P = 2 × (base + <span class="linea-resp"></span>).</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El perímetro es la suma de todos los lados.</li>
+      <li>____ El área se mide en centímetros lineales (cm).</li>
+      <li>____ El perímetro de un cuadrado es 4 × lado.</li>
+      <li>____ El área de un rectángulo es base × altura.</li>
+      <li>____ Un cuadrilátero tiene cinco lados.</li>
+      <li>____ El cuadrado tiene sus cuatro lados iguales.</li>
+      <li>____ El área se expresa en unidades cuadradas (cm²).</li>
+      <li>____ Para cercar un terreno se calcula el área.</li>
+      <li>____ El perímetro de un rectángulo de 6 × 4 es 20 cm.</li>
+      <li>____ El área de un cuadrado de lado 5 es 20 cm².</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Perímetro y Área de Cuadriláteros</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué mide el perímetro de una figura?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la superficie</span>
+        <span class="op"><i>b</i> el contorno</span>
+        <span class="op"><i>c</i> el volumen</span>
+        <span class="op"><i>d</i> los ángulos</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál es el perímetro de un cuadrado de lado 6 cm?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 36 cm</span>
+        <span class="op"><i>b</i> 24 cm</span>
+        <span class="op"><i>c</i> 12 cm</span>
+        <span class="op"><i>d</i> 18 cm</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál es el área de un cuadrado de lado 6 cm?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 24 cm²</span>
+        <span class="op"><i>b</i> 12 cm²</span>
+        <span class="op"><i>c</i> 36 cm²</span>
+        <span class="op"><i>d</i> 30 cm²</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es el área de un rectángulo de 8 × 3?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 24 cm²</span>
+        <span class="op"><i>b</i> 22 cm²</span>
+        <span class="op"><i>c</i> 11 cm²</span>
+        <span class="op"><i>d</i> 16 cm²</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuál es el perímetro de un rectángulo de 8 × 3?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 24 cm</span>
+        <span class="op"><i>b</i> 22 cm</span>
+        <span class="op"><i>c</i> 11 cm</span>
+        <span class="op"><i>d</i> 16 cm</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿En qué unidad se mide el área?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> en cm</span>
+        <span class="op"><i>b</i> en cm²</span>
+        <span class="op"><i>c</i> en litros</span>
+        <span class="op"><i>d</i> en grados</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>Para cercar un terreno cuadrado, ¿qué calculo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el área</span>
+        <span class="op"><i>b</i> el perímetro</span>
+        <span class="op"><i>c</i> el volumen</span>
+        <span class="op"><i>d</i> la altura</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>Un cuadrilátero tiene:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 3 lados</span>
+        <span class="op"><i>b</i> 4 lados</span>
+        <span class="op"><i>c</i> 5 lados</span>
+        <span class="op"><i>d</i> 6 lados</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál fórmula es la del área del rectángulo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 4 × lado</span>
+        <span class="op"><i>b</i> base × altura</span>
+        <span class="op"><i>c</i> 2 × (base + altura)</span>
+        <span class="op"><i>d</i> lado + lado</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál es el área de un cuadrado de lado 5 cm?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 20 cm²</span>
+        <span class="op"><i>b</i> 25 cm²</span>
+        <span class="op"><i>c</i> 10 cm²</span>
+        <span class="op"><i>d</i> 15 cm²</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Perímetro y Área de Cuadriláteros</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Cuadrilátero</td><td>A. La medida del contorno: la suma de los lados</td></tr>
+      <tr><td>2. ____ Cuadrado</td><td>B. A = base × altura</td></tr>
+      <tr><td>3. ____ Rectángulo</td><td>C. A = lado × lado</td></tr>
+      <tr><td>4. ____ Perímetro</td><td>D. P = 4 × lado</td></tr>
+      <tr><td>5. ____ Área</td><td>E. Polígono de 4 lados</td></tr>
+      <tr><td>6. ____ Perímetro del cuadrado</td><td>F. cm², m²: en ellas se expresa el área</td></tr>
+      <tr><td>7. ____ Perímetro del rectángulo</td><td>G. Lados iguales dos a dos: base y altura</td></tr>
+      <tr><td>8. ____ Área del cuadrado</td><td>H. Sus cuatro lados son iguales</td></tr>
+      <tr><td>9. ____ Área del rectángulo</td><td>I. P = 2 × (base + altura)</td></tr>
+      <tr><td>10. ____ Unidades cuadradas</td><td>J. La superficie que cubre la figura</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Perímetro y Área de Cuadriláteros.</b> Ahora sabes cuándo
+      medir la cerca y cuándo la alfombra: sumas los lados para el perímetro, multiplicas base por altura para
+      el área, escribes siempre la unidad correcta y hasta sabes que dos figuras con la misma área pueden tener
+      cercas distintas. ¡De la cancha de la escuela al solar de tu casa, ya mides como agrimensor! 🔲✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Calculó perímetros y áreas de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Perímetro y Área de Cuadriláteros</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. contorno &nbsp; 2. sumando &nbsp; 3. superficie &nbsp; 4. cuadradas &nbsp; 5. cuatro (4) &nbsp; 6. iguales &nbsp; 7. lado &nbsp; 8. altura &nbsp; 9. perímetro &nbsp; 10. altura</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7V, 8F, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2b, 3c, 4a, 5b, 6b, 7b, 8b, 9b, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1E, 2H, 3G, 4A, 5J, 6D, 7I, 8C, 9B, 10F</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Perímetro y Área de Cuadriláteros» (Educación Básica). Puede utilizarse como guía de estudio impresa o digital antes
+      de la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse midiendo con cinta métrica el aula, el pizarrón y la cancha (¿cerca o alfombra?),
+      y dibujando rectángulos distintos con la misma área en papel cuadriculado. Etapa 4 de la Ruta de la Forma del II
+      Ciclo, antes de «Área de Polígonos Regulares», donde la fórmula (P · a) / 2 aprovechará lo aprendido aquí. La misión
+      interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de
+      resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Perímetro y Área de Cuadriláteros · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

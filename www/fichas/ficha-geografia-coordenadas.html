@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Geografía y Coordenadas</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS SOCIALES = ROJO (#dc2626)
+     · Colores semánticos fijos: azul=latitud/paralelos (horizontal),
+       verde=longitud/meridianos (vertical), naranja=zonas/trópicos
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --soc: #dc2626; --soc-osc: #991b1b; --soc-claro: #fef2f2;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #f0d4d4;
+    --lat: #1e40af; --lon: #15803d; --zon: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7efef; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--soc-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--soc); background: var(--soc-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--soc-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--soc-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--soc); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--soc-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--soc-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--soc-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .truco b { color: #1e40af; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--soc); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf5f5; }
+  td.k { font-weight: 700; color: var(--soc-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffbfb; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--soc-osc); margin-bottom: 8px; }
+
+  /* Latitud vs longitud (mini-demostración) */
+  .cuatro { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; text-align: left; }
+  .cuatro > div { border-radius: 8px; padding: 8px 10px; font-size: 9pt; border: 1.5px solid var(--linea); background: #fff; }
+  .cuatro b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .cuatro .c-lat { border-color: #c7d2fe; background: #eef2ff; } .cuatro .c-lat b { color: var(--lat); }
+  .cuatro .c-lon { border-color: #b9e6c6; background: #dcfce7; } .cuatro .c-lon b { color: var(--lon); }
+
+  /* Cómo leer una coordenada (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 8px; font-size: 8.5pt; background: #fffbfb; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--soc); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--soc-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .ttor { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .ttem { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tpol { background: #e0f2fe; border: 1px solid #bae6fd; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .ttor b { color: var(--zon); } .tri .ttem b { color: var(--lon); } .tri .tpol b { color: #0369a1; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--soc-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y rojo */
+  .acts ol li::marker { font-weight: 800; color: var(--soc); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito rojo · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--soc); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--soc-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--soc-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--soc-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #fdf4f4; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--soc-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--soc); box-shadow: 0 6px 16px rgba(220,38,38,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .cuatro > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Geografía y Coordenadas</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Sociales &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Las coordenadas geográficas: latitud y longitud, paralelos y meridianos, el Ecuador y Greenwich, los trópicos, las zonas climáticas y los husos horarios</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-geografia-coordenadas.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Definir la <strong>latitud</strong> y la <strong>longitud</strong> como las dos coordenadas geográficas.</li>
+      <li>Distinguir los <strong>paralelos</strong> (horizontales) de los <strong>meridianos</strong> (verticales).</li>
+      <li>Reconocer el <strong>Ecuador</strong> (0° latitud) y el <strong>Meridiano de Greenwich</strong> (0° longitud).</li>
+      <li>Ubicar los <strong>trópicos</strong> y los <strong>círculos polares</strong> en el globo.</li>
+      <li>Identificar las <strong>zonas climáticas</strong> (tórrida, templada, polar) y ubicar Honduras.</li>
+      <li>Comprender los <strong>husos horarios</strong> y leer coordenadas de un punto.</li>
+    </ol>
+
+    <h2>🗺️ 1. ¿Qué son las coordenadas geográficas?</h2>
+    <p>Las <strong>coordenadas geográficas</strong> son un sistema formado por dos medidas —<strong>latitud y
+    longitud</strong>— que permiten ubicar <strong>cualquier punto exacto</strong> sobre la superficie de la
+    Tierra. Funcionan como la «dirección» del planeta: con dos números puedes encontrar una ciudad, un barco o
+    una isla en medio del océano.</p>
+    <div class="caja regla">⚡ <b>Las dos líneas base:</b> el <strong>Ecuador</strong> es el paralelo de
+    <strong>0° de latitud</strong> (divide Norte y Sur) y el <strong>Meridiano de Greenwich</strong> es el de
+    <strong>0° de longitud</strong> (divide Este y Oeste). Todo se mide a partir de ellos.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> los <strong>paralelos</strong> son líneas
+    <strong>horizontales</strong> (como los peldaños de una escalera) que miden la <strong>latitud</strong>; los
+    <strong>meridianos</strong> son líneas <strong>verticales</strong> (de polo a polo) que miden la
+    <strong>longitud</strong>.</div>
+    <div class="caja truco">🧠 <b>Truco para no confundirlas:</b> «<b>la latitud te aco<u>ST</u>a, la longitud
+    te para</b>»: la la<b>t</b>itud son líneas aco<b>st</b>adas (horizontales, el Ecuador); la lon<b>g</b>itud
+    va de arriba abajo (vertical). O recuerda: la <b>escaLERA</b> de paraLElos sube por la latitud.</div>
+
+    <h3>🔬 Mini-demostración: las dos coordenadas</h3>
+    <div class="ilus">
+      <div class="ilus-t">Toda ubicación necesita las dos medidas: latitud Y longitud</div>
+      <div class="cuatro">
+        <div class="c-lat"><b>📐 Latitud (paralelos)</b>Distancia desde el ECUADOR hacia los polos. Va de 0° a 90°, Norte o Sur. Líneas HORIZONTALES.</div>
+        <div class="c-lon"><b>🧭 Longitud (meridianos)</b>Distancia desde GREENWICH al este u oeste. Va de 0° a 180°, Este u Oeste. Líneas VERTICALES.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Ejemplo: Tegucigalpa está en <strong>14° N, 87° O</strong> → al norte del Ecuador y al oeste de Greenwich.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía y Coordenadas</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🌐 2. Paralelos y meridianos importantes</h2>
+    <table>
+      <tr><th>Línea</th><th>Tipo</th><th>Ubicación y función</th></tr>
+      <tr><td class="k">🌍 Ecuador</td><td>Paralelo</td><td>0° latitud. Divide Hemisferio Norte y Sur</td></tr>
+      <tr><td class="k">🏴 Meridiano de Greenwich</td><td>Meridiano</td><td>0° longitud. Divide Hemisferio Oriental y Occidental; pasa por el Reino Unido</td></tr>
+      <tr><td class="k">☀️ Trópico de Cáncer</td><td>Paralelo</td><td>23° 26′ NORTE. Límite norte de la zona tropical</td></tr>
+      <tr><td class="k">🌞 Trópico de Capricornio</td><td>Paralelo</td><td>23° 26′ SUR. Límite sur de la zona tropical</td></tr>
+      <tr><td class="k">🧊 Círculo Polar Ártico</td><td>Paralelo</td><td>66° 34′ NORTE. Límite de la zona polar norte (sol de medianoche)</td></tr>
+      <tr><td class="k">🐧 Círculo Polar Antártico</td><td>Paralelo</td><td>66° 34′ SUR. Límite de la zona polar sur</td></tr>
+    </table>
+
+    <h2>🌡️ 3. Las zonas climáticas de la Tierra</h2>
+    <div class="tri">
+      <div class="ttor"><b>🔥 Zona Tórrida</b>Entre los dos trópicos. La más CÁLIDA de la Tierra. ¡Honduras está aquí!</div>
+      <div class="ttem"><b>🍃 Zonas Templadas</b>Entre los trópicos y los círculos polares (Norte y Sur). Clima moderado, con estaciones.</div>
+      <div class="tpol"><b>❄️ Zonas Polares</b>Desde los círculos polares hasta los polos. Las más FRÍAS; hielo casi todo el año.</div>
+    </div>
+    <div class="caja idea">💡 <b>¿Por qué Honduras es tan cálida?</b> Porque está en la <strong>zona
+    tórrida</strong>, entre los trópicos, donde los rayos del Sol caen casi perpendiculares todo el año. Por eso
+    tenemos calor y solo dos estaciones: seca y lluviosa (¡no cuatro como en Europa!).</div>
+
+    <h2>🕐 4. Los husos horarios</h2>
+    <p>La Tierra gira 360° en 24 horas, así que se divide en <strong>24 husos horarios</strong>, uno por cada
+    hora. Cada huso equivale a <strong>15° de longitud</strong> (360° ÷ 24 = 15°). Por eso, cuando en Honduras
+    es mediodía, en otras partes del mundo es de noche: ¡la hora depende de la longitud!</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía y Coordenadas</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📍 5. Cómo leer las coordenadas de un punto</h2>
+    <p>Para ubicar un lugar siempre se dan <strong>dos datos</strong>, primero la latitud y luego la longitud:</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>📐 Lee la latitud</b>¿Cuántos grados y hacia dónde? Ej: 14° <strong>Norte</strong>.</div>
+      <div><span class="pn">2</span><b>🧭 Lee la longitud</b>¿Cuántos grados y hacia dónde? Ej: 87° <strong>Oeste</strong>.</div>
+      <div><span class="pn">3</span><b>📍 Une las dos</b>Cruza el paralelo y el meridiano: ¡ahí está Tegucigalpa!</div>
+    </div>
+    <div class="caja regla">⚡ <b>El punto 0°, 0°:</b> donde se cruzan el Ecuador y el Meridiano de Greenwich
+    hay un punto especial en el <strong>Golfo de Guinea</strong> (frente a África). Y el <strong>antípoda</strong>
+    de un lugar es su punto opuesto exacto en la Tierra: misma latitud con signo contrario y longitud ±180°.</div>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir latitud con longitud</td><td>La latitud parte del Ecuador; la longitud, de Greenwich.</td><td>Latitud = N/S · Longitud = E/O ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que los meridianos son horizontales</td><td>Los meridianos van de polo a polo (verticales); los paralelos son horizontales.</td><td>Paralelo horizontal · Meridiano vertical ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que el Ecuador está a 90°</td><td>El Ecuador está a 0°; los polos a 90°.</td><td>Ecuador = 0° latitud ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Ubicar el Trópico de Cáncer al Sur</td><td>El de Cáncer va al Norte; el de Capricornio al Sur.</td><td>Cáncer = Norte · Capricornio = Sur ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que la zona polar es la más cálida</td><td>La más cálida es la tórrida; la polar es la más fría.</td><td>Tórrida = caliente · Polar = fría ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> nuestro país se ubica aproximadamente entre los
+    <strong>13° y 16° de latitud Norte</strong> y entre los <strong>83° y 89° de longitud Oeste</strong>. Eso
+    nos coloca en el <strong>Hemisferio Norte</strong>, en el <strong>Hemisferio Occidental</strong> y dentro de
+    la <strong>zona tórrida</strong>. Por eso tenemos clima cálido, playas en dos océanos y una posición
+    privilegiada en el corazón de América Central. 🗺️❤️</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía y Coordenadas</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>La línea imaginaria que divide la Tierra en Norte y Sur se llama <span class="linea-resp"></span>.</li>
+      <li>La distancia angular medida desde el Ecuador hacia los polos se llama <span class="linea-resp"></span>.</li>
+      <li>El meridiano de referencia, ubicado a 0° de longitud, es el Meridiano de <span class="linea-resp"></span>.</li>
+      <li>La zona climática entre los dos trópicos es la zona <span class="linea-resp"></span>.</li>
+      <li>El Trópico de Cáncer está a 23° 26′ al <span class="linea-resp"></span> del Ecuador.</li>
+      <li>Cada huso horario equivale a <span class="linea-resp"></span> grados de longitud.</li>
+      <li>Las líneas horizontales que miden la latitud se llaman <span class="linea-resp"></span>.</li>
+      <li>Las líneas verticales que miden la longitud se llaman <span class="linea-resp"></span>.</li>
+      <li>Honduras está en el Hemisferio <span class="linea-resp"></span> respecto al Ecuador.</li>
+      <li>La Tierra tiene <span class="linea-resp"></span> husos horarios en total.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ La latitud mide la distancia angular desde el Ecuador hacia los polos.</li>
+      <li>____ El Meridiano de Greenwich se encuentra a 90° de longitud.</li>
+      <li>____ El Ecuador está ubicado a 0° de latitud.</li>
+      <li>____ La zona tórrida se encuentra entre los dos trópicos.</li>
+      <li>____ Los paralelos van de polo a polo dividiendo la longitud.</li>
+      <li>____ Honduras se encuentra en el Hemisferio Norte.</li>
+      <li>____ Los husos horarios se organizan cada 15° de longitud.</li>
+      <li>____ El Trópico de Cáncer está al Sur del Ecuador.</li>
+      <li>____ El Meridiano de Greenwich divide la Tierra en Oriental y Occidental.</li>
+      <li>____ La zona polar es la región más cálida de la Tierra.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía y Coordenadas</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál es la latitud del Ecuador?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 90°</span>
+        <span class="op"><i>b</i> 45°</span>
+        <span class="op"><i>c</i> 0°</span>
+        <span class="op"><i>d</i> 23°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué línea divide la Tierra en Hemisferio Oriental y Occidental?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Ecuador</span>
+        <span class="op"><i>b</i> el Trópico de Cáncer</span>
+        <span class="op"><i>c</i> el Círculo Polar</span>
+        <span class="op"><i>d</i> el Meridiano de Greenwich</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cómo se llama la zona climática entre los dos trópicos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> zona polar</span>
+        <span class="op"><i>b</i> zona tórrida</span>
+        <span class="op"><i>c</i> zona templada</span>
+        <span class="op"><i>d</i> zona boreal</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuántos grados de longitud corresponden a cada huso horario?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 10°</span>
+        <span class="op"><i>b</i> 24°</span>
+        <span class="op"><i>c</i> 15°</span>
+        <span class="op"><i>d</i> 30°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿En qué hemisferio se encuentra Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Hemisferio Sur</span>
+        <span class="op"><i>b</i> Hemisferio Oriental</span>
+        <span class="op"><i>c</i> Hemisferio Norte</span>
+        <span class="op"><i>d</i> Hemisferio Polar</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuál es la latitud del Trópico de Capricornio?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 23° 26′ Norte</span>
+        <span class="op"><i>b</i> 66° 34′ Norte</span>
+        <span class="op"><i>c</i> 0° Sur</span>
+        <span class="op"><i>d</i> 23° 26′ Sur</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>Un punto con coordenadas 0°, 0° se encuentra en:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Polo Norte</span>
+        <span class="op full"><i>b</i> el cruce del Ecuador y el Meridiano de Greenwich</span>
+        <span class="op"><i>c</i> el centro de Asia</span>
+        <span class="op"><i>d</i> el Trópico de Cáncer</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué tipo de línea es el Trópico de Capricornio?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> meridiano</span>
+        <span class="op"><i>b</i> huso horario</span>
+        <span class="op"><i>c</i> paralelo</span>
+        <span class="op"><i>d</i> coordenada</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Desde dónde se mide la longitud?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Ecuador</span>
+        <span class="op"><i>b</i> el Trópico de Cáncer</span>
+        <span class="op"><i>c</i> el Polo Norte</span>
+        <span class="op"><i>d</i> el Meridiano de Greenwich</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Las coordenadas 14° N, 87° O corresponden aproximadamente a:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Madrid, España</span>
+        <span class="op"><i>b</i> Buenos Aires, Argentina</span>
+        <span class="op"><i>c</i> Tegucigalpa, Honduras</span>
+        <span class="op"><i>d</i> Ciudad de México</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía y Coordenadas</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Latitud</td><td>A. Meridiano de 0° que divide Este y Oeste</td></tr>
+      <tr><td>2. ____ Longitud</td><td>B. Línea vertical que mide la longitud</td></tr>
+      <tr><td>3. ____ Ecuador</td><td>C. Distancia angular desde el Ecuador (Norte o Sur)</td></tr>
+      <tr><td>4. ____ Meridiano de Greenwich</td><td>D. Zona entre los dos trópicos, la más caliente</td></tr>
+      <tr><td>5. ____ Paralelo</td><td>E. Distancia angular desde Greenwich (Este u Oeste)</td></tr>
+      <tr><td>6. ____ Meridiano</td><td>F. Paralelo de 0° que divide Norte y Sur</td></tr>
+      <tr><td>7. ____ Zona Tórrida</td><td>G. Línea horizontal que mide la latitud</td></tr>
+      <tr><td>8. ____ Huso Horario</td><td>H. Paralelo a 23° 26′ Norte</td></tr>
+      <tr><td>9. ____ Trópico de Cáncer</td><td>I. Punto opuesto en la Tierra (±180° longitud)</td></tr>
+      <tr><td>10. ____ Antípoda</td><td>J. Franja de 15° de longitud para organizar la hora</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Geografía y Coordenadas.</b> Ahora dominas la «dirección» del
+      planeta: distingues la latitud de la longitud, los paralelos de los meridianos, y ubicas el Ecuador,
+      Greenwich, los trópicos y los círculos polares. Sabes leer las coordenadas de cualquier punto y entiendes
+      por qué Honduras, en la zona tórrida del Hemisferio Norte, es cálida y hermosa. ¡Eres un cartógrafo
+      catracho! 🗺️🧭
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Sociales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó un globo terráqueo con el Ecuador, Greenwich y los trópicos en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía y Coordenadas</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Ecuador &nbsp; 2. latitud &nbsp; 3. Greenwich &nbsp; 4. tórrida &nbsp; 5. Norte &nbsp; 6. 15 &nbsp; 7. paralelos &nbsp; 8. meridianos &nbsp; 9. Norte &nbsp; 10. 24</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7V, 8F, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1c, 2d, 3b, 4c, 5c, 6d, 7b, 8c, 9d, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2E, 3F, 4A, 5G, 6B, 7D, 8J, 9H, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Geografía y Coordenadas» (Educación Básica). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con el trazado de paralelos y meridianos en un mapamundi, la ubicación de Honduras y
+      otras ciudades por sus coordenadas, el uso de un globo terráqueo y una actividad con husos horarios («¿qué hora es en
+      España cuando aquí es mediodía?»). Etapa 1 de la Ruta del Planeta, inicio del bloque de Ciencias Sociales. La misión
+      interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de
+      resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Geografía y Coordenadas · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

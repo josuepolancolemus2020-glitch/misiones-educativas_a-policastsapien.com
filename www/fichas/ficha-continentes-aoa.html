@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Continentes: América, Oceanía y Antártida</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS SOCIALES = ROJO (#dc2626)
+     · Colores semánticos fijos: azul=América, verde=Oceanía,
+       celeste/naranja=Antártida (hielo)
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --soc: #dc2626; --soc-osc: #991b1b; --soc-claro: #fef2f2;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #f0d4d4;
+    --ame: #1e40af; --oce: #15803d; --ant: #0369a1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7efef; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--soc-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--soc); background: var(--soc-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--soc-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--soc-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--soc); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--soc-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--soc-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--soc-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .truco b { color: #1e40af; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--soc); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf5f5; }
+  td.k { font-weight: 700; color: var(--soc-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffbfb; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--soc-osc); margin-bottom: 8px; }
+
+  /* Los tres continentes (mini-demostración) */
+  .tres3 { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .tres3 > div { flex: 1; border-radius: 8px; padding: 8px 9px; font-size: 9pt; border: 1.5px solid var(--linea); background: #fff; text-align: center; }
+  .tres3 b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .tres3 .t-emoji { font-size: 18pt; display: block; margin-bottom: 3px; }
+  .tres3 .c-ame { border-color: #c7d2fe; background: #eef2ff; } .tres3 .c-ame b { color: var(--ame); }
+  .tres3 .c-oce { border-color: #b9e6c6; background: #dcfce7; } .tres3 .c-oce b { color: var(--oce); }
+  .tres3 .c-ant { border-color: #bae6fd; background: #e0f2fe; } .tres3 .c-ant b { color: var(--ant); }
+
+  /* Chunking pedagógico */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 8px; font-size: 8.5pt; background: #fffbfb; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--soc); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--soc-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tame { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .tri .toce { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tant { background: #e0f2fe; border: 1px solid #bae6fd; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tame b { color: var(--ame); } .tri .toce b { color: var(--oce); } .tri .tant b { color: var(--ant); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--soc-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y rojo */
+  .acts ol li::marker { font-weight: 800; color: var(--soc); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito rojo · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--soc); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--soc-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--soc-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--soc-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #fdf4f4; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--soc-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--soc); box-shadow: 0 6px 16px rgba(220,38,38,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .tres3 > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Continentes — América, Oceanía y Antártida</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Sociales &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Los continentes de América, Oceanía y Antártida: su geografía, culturas, economía y la conexión de Honduras con el mundo</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-continentes-aoa.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Describir el continente <strong>americano</strong> y ubicar a Honduras en América Central.</li>
+      <li>Reconocer <strong>Oceanía</strong> como el continente más pequeño y a Australia como país-continente.</li>
+      <li>Comprender por qué la <strong>Antártida</strong> es el continente más frío y su protección internacional.</li>
+      <li>Identificar accidentes geográficos: <strong>Amazonas, Andes, Gran Barrera de Coral</strong>.</li>
+      <li>Conocer culturas originarias: <strong>maya, aborígenes australianos y maoríes</strong>.</li>
+      <li>Relacionar a Honduras con el mundo mediante <strong>CAFTA-DR</strong> y las <strong>remesas</strong>.</li>
+    </ol>
+
+    <h2>🌎 1. Tres continentes muy distintos</h2>
+    <p>En esta misión conocerás tres continentes con caras muy diferentes: <strong>América</strong>, donde
+    vivimos; <strong>Oceanía</strong>, el más pequeño y lejano; y la <strong>Antártida</strong>, un desierto de
+    hielo casi deshabitado. Juntos nos enseñan la enorme <strong>diversidad</strong> de nuestro planeta.</p>
+    <div class="caja regla">⚡ <b>Dato clave:</b> América es donde está <strong>Honduras</strong>, en la
+    subregión de <strong>América Central</strong>. Nuestro país no está aislado: se conecta con el mundo por el
+    comercio (café, banano, textiles) y por los hondureños que viven en el exterior.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> un continente no es solo geografía: también son sus
+    <strong>culturas</strong>. América tiene a los mayas, Oceanía a los aborígenes y maoríes, y la Antártida
+    pertenece a toda la humanidad como zona de ciencia y paz.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>A-O-A: Ancha, Ocho, Aislada</b>»:
+    <b>A</b>mérica es la más <b>ancha</b> (de norte a sur ~15,000 km); <b>O</b>ceanía cabe en «<b>ocho</b>»
+    (8.5 millones km², la más pequeña); <b>A</b>ntártida es la <b>aislada</b> (fría y sin habitantes).</div>
+
+    <h3>🔬 Mini-demostración: los tres continentes de un vistazo</h3>
+    <div class="ilus">
+      <div class="ilus-t">Cada uno tiene un récord mundial</div>
+      <div class="tres3">
+        <div class="c-ame"><span class="t-emoji">🌎</span><b>América</b>Río más caudaloso (Amazonas) y cordillera más larga (Andes). 35 países.</div>
+        <div class="c-oce"><span class="t-emoji">🌏</span><b>Oceanía</b>El continente MÁS PEQUEÑO. Australia es país y continente. Gran Barrera de Coral.</div>
+        <div class="c-ant"><span class="t-emoji">❄️</span><b>Antártida</b>El más FRÍO (−89 °C). Sin población fija. 70 % del agua dulce del planeta.</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: América, Oceanía y Antártida</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🌎 2. América: nuestro continente</h2>
+    <p>América se extiende unos <strong>15,000 km</strong> de norte a sur y tiene <strong>35 países</strong>
+    en tres subregiones: América del Norte, Central y del Sur. Honduras está en <strong>América Central</strong>.</p>
+    <table>
+      <tr><th>Elemento</th><th>Dato</th></tr>
+      <tr><td class="k">💧 Río Amazonas</td><td>El más caudaloso del mundo (7,062 km); mayor bosque tropical del planeta</td></tr>
+      <tr><td class="k">⛰️ Los Andes</td><td>La cordillera más larga del mundo (~7,000 km); cima: Aconcagua (6,961 m)</td></tr>
+      <tr><td class="k">🏛️ Civilización Maya</td><td>Floreció en Honduras, México, Guatemala, Belice y El Salvador; Copán es su joya en Honduras</td></tr>
+      <tr><td class="k">🤝 OEA</td><td>Organización de Estados Americanos: reúne a los 35 países del continente</td></tr>
+    </table>
+
+    <h2>🌏 3. Oceanía: el continente más pequeño</h2>
+    <div class="tri">
+      <div class="toce"><b>🦘 Australia</b>El único país que es a la vez un continente. Alberga la Gran Barrera de Coral, el mayor arrecife del mundo (2,300 km).</div>
+      <div class="toce"><b>🪃 Aborígenes</b>Los pueblos más antiguos del mundo: más de 60,000 años en Australia. Cultura del «Tiempo del Sueño».</div>
+      <div class="toce"><b>🌺 Maoríes</b>Pueblo originario de Nueva Zelanda, famoso por el haka (danza guerrera).</div>
+    </div>
+    <div class="caja idea">💡 <b>¿Sabías que…?</b> Oceanía está formada por Australia, Nueva Zelanda, Papúa
+    Nueva Guinea y <strong>miles de islas</strong> del Pacífico (Melanesia, Micronesia, Polinesia). Aunque es la
+    más pequeña en tierra, ¡se reparte por un océano inmenso!</div>
+
+    <h2>❄️ 4. Antártida: el desierto de hielo</h2>
+    <p>La Antártida es el continente <strong>más frío, seco y ventoso</strong> del mundo (mínima: −89.2 °C).
+    <strong>No tiene población permanente</strong>, solo científicos, y guarda el <strong>70 % del agua dulce</strong>
+    del planeta en forma de hielo. Su fauna símbolo son los <strong>pingüinos</strong>.</p>
+    <div class="caja regla">⚡ <b>Tratado Antártico (1959):</b> firmado por 12 países (hoy 54), declara la
+    Antártida <strong>zona de paz y ciencia</strong>. Prohíbe actividades militares y la minería comercial, y
+    ningún país puede reclamarla como suya.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: América, Oceanía y Antártida</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🌍 5. Honduras y el mundo</h2>
+    <p>Aunque Honduras es un país pequeño de América Central, está muy conectado con otros continentes:</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>📋 CAFTA-DR</b>Acuerdo de libre comercio con EE.UU.: exporta café, banano y textiles sin aranceles.</div>
+      <div><span class="pn">2</span><b>💵 Remesas</b>El dinero que envían los hondureños del exterior es ~25 % del PIB; la principal fuente de divisas.</div>
+      <div><span class="pn">3</span><b>🌡️ Clima global</b>El deshielo de la Antártida sube el mar; Honduras, país costero, es vulnerable.</div>
+    </div>
+    <div class="caja idea">💡 <b>Todo está conectado:</b> lo que pasa en la Antártida (deshielo) afecta a las
+    costas de Honduras; lo que se decide en EE.UU. (comercio) afecta a nuestros agricultores. Por eso estudiar
+    el mundo es entender nuestro propio país.</div>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Ubicar Honduras en América del Sur</td><td>Honduras está en América Central.</td><td>Honduras = América Central ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que Oceanía es el continente más grande</td><td>Oceanía es el MÁS PEQUEÑO; el más grande es Asia.</td><td>Oceanía = más pequeño ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que la Antártida tiene ciudades</td><td>Solo hay bases científicas; no hay población permanente.</td><td>Antártida = sin residentes fijos ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir aborígenes con maoríes</td><td>Los aborígenes son de Australia; los maoríes de Nueva Zelanda.</td><td>Aborígenes = Australia · Maoríes = N. Zelanda ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que el Nilo es el más caudaloso</td><td>El más caudaloso es el Amazonas; el Nilo es el más largo.</td><td>Amazonas = más caudaloso ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> somos parte del continente americano y herederos de la gran
+    <strong>civilización maya</strong>, cuya joya es <strong>Copán</strong>, Patrimonio de la Humanidad. Nuestro
+    café ☕ y banano 🍌 viajan al mundo por el CAFTA-DR, y las remesas de nuestros hermanos migrantes sostienen
+    miles de hogares. Conocer los continentes nos ayuda a valorar el lugar de Honduras en un planeta
+    interconectado. 🌎❤️</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: América, Oceanía y Antártida</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El continente más pequeño del mundo es <span class="linea-resp"></span>.</li>
+      <li>El río más caudaloso del mundo es el <span class="linea-resp"></span>.</li>
+      <li>Honduras está en América <span class="linea-resp"></span>.</li>
+      <li>La cordillera más larga del mundo son los <span class="linea-resp"></span>.</li>
+      <li>El Tratado Antártico fue firmado en el año <span class="linea-resp"></span>.</li>
+      <li>El acuerdo que facilita el comercio entre Honduras y EE.UU. es el <span class="linea-resp"></span>.</li>
+      <li>La Antártida contiene el <span class="linea-resp"></span> del agua dulce del planeta.</li>
+      <li>Los pueblos originarios más antiguos del mundo, de Australia, son los <span class="linea-resp"></span>.</li>
+      <li>El punto más alto de América es el <span class="linea-resp"></span> (6,961 m).</li>
+      <li>Australia es el único país que es también un <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El Río Amazonas es el río más caudaloso del mundo.</li>
+      <li>____ Honduras está ubicada en América del Sur.</li>
+      <li>____ Oceanía es el continente más pequeño del mundo.</li>
+      <li>____ Australia es a la vez un país y un continente.</li>
+      <li>____ La Antártida tiene una población permanente de más de un millón de personas.</li>
+      <li>____ El Tratado Antártico fue firmado en 1959.</li>
+      <li>____ Los Andes son la cordillera más larga del mundo.</li>
+      <li>____ Las remesas representan cerca del 25 % del PIB de Honduras.</li>
+      <li>____ Los maoríes son originarios de Australia.</li>
+      <li>____ La Antártida contiene el 70 % del agua dulce del planeta.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: América, Oceanía y Antártida</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál es el río más caudaloso del mundo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Nilo</span>
+        <span class="op"><i>b</i> Congo</span>
+        <span class="op"><i>c</i> Amazonas</span>
+        <span class="op"><i>d</i> Mississippi</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿En qué región se ubica Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> América del Norte</span>
+        <span class="op"><i>b</i> América del Sur</span>
+        <span class="op"><i>c</i> América Central</span>
+        <span class="op"><i>d</i> el Caribe</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál es el continente más pequeño del mundo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Europa</span>
+        <span class="op"><i>b</i> Antártida</span>
+        <span class="op"><i>c</i> Oceanía</span>
+        <span class="op"><i>d</i> América del Sur</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cómo se llama el acuerdo comercial entre Honduras y EE.UU.?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> MERCOSUR</span>
+        <span class="op"><i>b</i> NAFTA</span>
+        <span class="op"><i>c</i> AACUE</span>
+        <span class="op"><i>d</i> CAFTA-DR</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuál es la cordillera más larga del mundo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el Himalaya</span>
+        <span class="op"><i>b</i> los Alpes</span>
+        <span class="op"><i>c</i> los Andes</span>
+        <span class="op"><i>d</i> las Rocosas</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuántos países tiene el continente americano?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 25</span>
+        <span class="op"><i>b</i> 35</span>
+        <span class="op"><i>c</i> 44</span>
+        <span class="op"><i>d</i> 54</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué pueblo originario de Nueva Zelanda es famoso por el haka?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> aborígenes</span>
+        <span class="op"><i>b</i> incas</span>
+        <span class="op"><i>c</i> maoríes</span>
+        <span class="op"><i>d</i> polinesios</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿En qué año se firmó el Tratado Antártico?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 1945</span>
+        <span class="op"><i>b</i> 1959</span>
+        <span class="op"><i>c</i> 1972</span>
+        <span class="op"><i>d</i> 1991</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál es el arrecife de coral más grande del mundo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Barrera de Mesoamérica</span>
+        <span class="op"><i>b</i> Gran Barrera de Coral</span>
+        <span class="op"><i>c</i> Arrecife del Caribe</span>
+        <span class="op"><i>d</i> Barrera de Belice</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál es la principal fuente de divisas de Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> exportaciones de café</span>
+        <span class="op"><i>b</i> turismo</span>
+        <span class="op"><i>c</i> remesas</span>
+        <span class="op"><i>d</i> petróleo</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: América, Oceanía y Antártida</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Amazonas</td><td>A. Cordillera más larga del mundo, en América del Sur</td></tr>
+      <tr><td>2. ____ Los Andes</td><td>B. Acuerdo de libre comercio entre Honduras y EE.UU.</td></tr>
+      <tr><td>3. ____ CAFTA-DR</td><td>C. Río más caudaloso del mundo, en América del Sur</td></tr>
+      <tr><td>4. ____ Australia</td><td>D. Arrecife más grande del mundo (2,300 km)</td></tr>
+      <tr><td>5. ____ Gran Barrera de Coral</td><td>E. País que a la vez es un continente (Oceanía)</td></tr>
+      <tr><td>6. ____ Antártida</td><td>F. Pueblo originario de Nueva Zelanda, famoso por el haka</td></tr>
+      <tr><td>7. ____ Tratado Antártico</td><td>G. Continente más frío, con el 70 % del agua dulce</td></tr>
+      <tr><td>8. ____ Maoríes</td><td>H. Dinero enviado por hondureños del exterior (~25 % del PIB)</td></tr>
+      <tr><td>9. ____ Remesas</td><td>I. Sitio arqueológico maya en Honduras, Patrimonio UNESCO</td></tr>
+      <tr><td>10. ____ Copán</td><td>J. Acuerdo de 1959 que protege la Antártida como zona de paz</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Continentes: América, Oceanía y Antártida.</b> Ahora
+      recorres el planeta con seguridad: ubicas Honduras en América Central, conoces el Amazonas y los Andes,
+      sabes que Oceanía es la más pequeña y Australia un país-continente, y entiendes por qué la Antártida es un
+      tesoro de hielo protegido por el mundo. ¡Y descubriste cómo Honduras se conecta con todos los continentes!
+      🌎🌏❄️
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Sociales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Ubicó en un mapamundi los tres continentes y sus accidentes geográficos.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: América, Oceanía y Antártida</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Oceanía &nbsp; 2. Amazonas &nbsp; 3. Central &nbsp; 4. Andes &nbsp; 5. 1959 &nbsp; 6. CAFTA-DR &nbsp; 7. 70% &nbsp; 8. aborígenes &nbsp; 9. Aconcagua &nbsp; 10. continente</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1c, 2c, 3c, 4d, 5c, 6b, 7c, 8b, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2A, 3B, 4E, 5D, 6G, 7J, 8F, 9H, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Continentes: América, Oceanía y Antártida» (Educación Básica). Puede utilizarse como guía de estudio impresa o
+      digital antes de la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F,
+      selección múltiple, pareados) y puede complementarse con la ubicación de los continentes y sus accidentes en un
+      mapamundi mural, una investigación sobre Copán y la cultura maya, un cuadro comparativo de los tres continentes y una
+      conversación sobre las remesas familiares. Etapa 2 de la Ruta del Planeta. La misión interactiva (código QR de la
+      portada) permite al estudiante practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Continentes: América, Oceanía y Antártida · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

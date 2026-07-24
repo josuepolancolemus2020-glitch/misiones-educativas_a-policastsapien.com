@@ -1166,9 +1166,9 @@ function adRenderSace(body, d) {
             <div class="ad-logo-fila" style="flex:1;min-width:180px;">
               <div class="ad-logo-prev" id="ad-logosec-prev">${d.logoSec
                 ? `<img src="${d.logoSec}" alt="logo Secretaría">`
-                : '<span>Sin logo</span>'}</div>
+                : '<img src="img/logo-secretaria.png" alt="logo oficial (por defecto)">'}</div>
               <div class="ad-logo-btns">
-                <span style="font-size:11px;font-weight:800;color:#1e3a7c;">Logo de la Secretaría</span>
+                <span style="font-size:11px;font-weight:800;color:#1e3a7c;">Logo de la Secretaría${d.logoSec ? '' : ' <small style="font-weight:600;color:#7286a8;">(oficial, ya incluido)</small>'}</span>
                 <label class="pa-generate-btn ad-btn-sec ad-logo-lbl">🏛️ Subir
                   <input type="file" id="ad-logosec-file" accept="image/*" style="display:none;"></label>
                 ${d.logoSec ? '<button class="pa-generate-btn ad-btn-sec" id="ad-logosec-quitar">Quitar</button>' : ''}
@@ -1517,24 +1517,121 @@ function adMsgMotiva(nombre, prom, mejor) {
   return `${n}, todo gran logro comienza con pequeños pasos. Con acompañamiento en casa, esfuerzo diario y una actitud positiva mejorarás parcial a parcial. ¡Confiamos en ti!`;
 }
 
-/* Consejo para la FAMILIA, derivado del gráfico (materia más alta y más baja).
-   Concreto y accionable; sin juzgar al niño. */
-function adConsejoFamilia(nombre, mejor, peor) {
+/* ── Código de colores OFICIAL de calificaciones — el MISMO del Plan
+   de Acción (PA_CATS en plan-accion.js): la boleta y el plan hablan
+   el mismo idioma de colores y etiquetas. ── */
+const AD_NOTA_CATS = [
+  { min: 95, label: 'Avanzado',        color: '#16a34a' },
+  { min: 80, label: 'Muy Bueno',       color: '#0891b2' },
+  { min: 70, label: 'Satisfactorio',   color: '#a16207' },
+  { min: 60, label: 'Debe Mejorar',    color: '#ea580c' },
+  { min: 0,  label: 'Insatisfactorio', color: '#dc2626' },
+];
+function adNotaCat(v) {
+  const n = Number(v);
+  return AD_NOTA_CATS.find(c => n >= c.min) || AD_NOTA_CATS[AD_NOTA_CATS.length - 1];
+}
+
+/* MATERIAS BÁSICAS: donde más pruebas se hacen — el elogio del consejo
+   se ancla en ellas; las demás solo se mencionan si un DATO lo amerita
+   (sobresalen de verdad). Comparación sin acentos ni mayúsculas. */
+const AD_MATS_BASICAS = ['matematicas', 'espanol', 'ciencias naturales', 'ciencias sociales'];
+function adEsBasica(mat) {
+  const n = String(mat || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+  return AD_MATS_BASICAS.indexOf(n) !== -1;
+}
+
+/* Consejo concreto por rasgo de personalidad bajo (observación del docente) */
+const AD_RASGO_TIP = {
+  'Puntualidad': 'ayude a que llegue a tiempo cada día',
+  'Espíritu de trabajo': 'anímele a terminar sus tareas y trabajos en clase',
+  'Orden y presentación': 'revisen juntos los cuadernos y la presentación de los trabajos',
+  'Sociabilidad': 'refuerce la convivencia y el trabajo en equipo',
+  'Moralidad': 'conversen en casa sobre el respeto a las normas del aula',
+};
+
+function adNombresMats(arr, max) {
+  const ns = (arr || []).map(x => x.mat);
+  const m = max || 2;
+  if (ns.length <= m) return ns.join(' y ');
+  return ns.slice(0, m).join(', ') + ' y ' + (ns.length - m) + ' más';
+}
+
+/* Consejo para la FAMILIA basado en los DATOS del aula, no en plantilla:
+   celebra lo mejor (con empates honestos), diagnostica CAUSAS visibles
+   (inasistencias, rasgos de personalidad bajos, tendencia entre
+   parciales) y da la acción con la etiqueta oficial de la nota. */
+function adConsejoFamilia(nombre, ctx) {
   const n = nombre || 'su hijo(a)';
+  const c = ctx || {};
+  const mejores = c.mejores || [], peores = c.peores || [];
   const partes = [];
-  if (mejor) partes.push(`Reconozca y celebre el logro de ${n} en ${mejor.mat} (${mejor.val}): el elogio sincero fortalece la confianza y la motivación.`);
-  if (peor && (!mejor || peor.mat !== mejor.mat)) {
-    partes.push(`En ${peor.mat} (${peor.val}) hay margen de mejora: acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
+
+  // 1) Celebrar lo real — anclado en las MATERIAS BÁSICAS (Matemáticas,
+  //    Español, CC.NN. y CC.SS.), donde más pruebas alimenta el aula.
+  //    Una materia no básica solo se menciona si el dato lo amerita.
+  const elogBas = c.mejoresBas || [];
+  const extra = c.extraDestacada
+    ? `; también sobresale en ${c.extraDestacada.mat} (${c.extraDestacada.val})` : '';
+  if (mejores.length && !peores.length) {
+    partes.push(`El rendimiento de ${n} es parejo (${c.maxV}) en todas las materias: celebre esa constancia, que es la base de todo progreso.`);
+  } else if (elogBas.length > 1) {
+    partes.push(`Celebre que ${n} logra su mejor nota de las materias básicas (${c.maxB}) en ${adNombresMats(elogBas)}${extra}: el elogio sincero motiva.`);
+  } else if (elogBas.length) {
+    partes.push(`Celebre el logro de ${n} en ${elogBas[0].mat} (${c.maxB}), su mejor materia básica${extra}: el elogio sincero motiva.`);
+  } else if (mejores.length > 1) {
+    partes.push(`Celebre que ${n} logra su mejor nota (${c.maxV}) en ${adNombresMats(mejores)}: el elogio sincero motiva.`);
+  } else if (mejores.length) {
+    partes.push(`Celebre el logro de ${n} en ${mejores[0].mat} (${c.maxV}): el elogio sincero motiva.`);
   }
-  if (!partes.length) partes.push(`Mantenga una rutina de estudio en casa y comunicación cercana con el centro educativo.`);
-  partes.push(`Una lectura compartida cada día y el descanso adecuado potencian todo el aprendizaje.`);
+  if (c.tendencia && c.tendencia.tipo === 'sube') {
+    partes.push(`Además viene mejorando: pasó de ${c.tendencia.ini.prom} a ${c.tendencia.fin.prom} entre parciales — ese rumbo es el correcto.`);
+  }
+  if (c.mejoraMax) {
+    partes.push(`Su mayor avance de este parcial fue en ${c.mejoraMax.mat}: de ${c.mejoraMax.de} a ${c.mejoraMax.a} (+${c.mejoraMax.d}) — reconózcalo, eso consolida el hábito.`);
+  }
+
+  // 2) Diagnóstico: qué DICEN los datos sobre el porqué (máx. 3 causas
+  //    para que el consejo quepa y se entienda — primero lo más accionable)
+  const causas = [];
+  if ((c.inasis || 0) >= 3) {
+    causas.push(`las ${c.inasis} inasistencias pesan en el resultado (cada día recuperado se nota)`);
+  }
+  if (c.rasgosBajos && c.rasgosBajos.length) {
+    const tip = AD_RASGO_TIP[c.rasgosBajos[0]] || 'refuércenlo juntos en casa';
+    causas.push(`el docente observa margen en ${c.rasgosBajos.slice(0, 2).join(' y ')} — ${tip}`);
+  }
+  if (c.caidaMax) {
+    causas.push(`la mayor caída fue en ${c.caidaMax.mat} (de ${c.caidaMax.de} a ${c.caidaMax.a}): pregunte al docente qué cambió en esa asignatura`);
+  }
+  if (c.tendencia && c.tendencia.tipo === 'baja') {
+    causas.push(`el promedio general bajó de ${c.tendencia.ini.prom} (parcial ${c.tendencia.ini.p}) a ${c.tendencia.fin.prom} (parcial ${c.tendencia.fin.p}) — conviene retomar la rutina que funcionaba`);
+  }
+  if (causas.length) {
+    partes.push(`Los datos del aula señalan por dónde empezar: ${causas.slice(0, 3).join('; ')}.`);
+  } else if (peores.length && (c.inasis || 0) === 0) {
+    partes.push(`Sin faltas ni observaciones de conducta, el reto es de práctica: más ejercicios guiados harán la diferencia.`);
+  }
+
+  // 3) Acción sobre lo bajo, con la etiqueta oficial de la nota
+  if (peores.length) {
+    const et = adNotaCat(c.minV).label;
+    if (Number(c.minV) < 60) {
+      partes.push(`En ${adNombresMats(peores)} (${c.minV} · «${et}») se necesita refuerzo urgente: coordine con el docente un plan de recuperación esta misma semana.`);
+    } else {
+      partes.push(`En ${adNombresMats(peores)} (${c.minV} · «${et}») acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
+    }
+  }
+
+  if (!partes.length) partes.push('Mantenga una rutina de estudio en casa y comunicación cercana con el centro educativo.');
+  if (partes.join(' ').length < 320) partes.push('Una lectura compartida cada día y el descanso adecuado potencian todo el aprendizaje.');
   return partes.join(' ');
 }
 
 /* Gráfico de barras horizontales (SVG: los fill SÍ imprimen, a diferencia de
    los fondos CSS). Verde = materia más alta, ámbar = más baja, azul = resto;
    línea roja punteada en 70 (nota de aprobación). */
-function adBoletaGrafico(datos, mejor, peor) {
+function adBoletaGrafico(datos) {
   if (!datos.length) return '';
   const rowH = 18, gap = 4, padT = 6, padB = 12;
   const labelW = 104, barX = labelW + 4, W = 320;
@@ -1545,20 +1642,60 @@ function adBoletaGrafico(datos, mejor, peor) {
   const bars = datos.map((it, i) => {
     const y = padT + i * (rowH + gap);
     const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
-    let color = '#3b5bdb';
-    if (mejor && it.mat === mejor.mat) color = '#2e7d32';
-    if (peor && it.mat === peor.mat && (!mejor || peor.mat !== mejor.mat)) color = '#e08a00';
+    // Cada barra con el color OFICIAL de su calificación (el mismo del
+    // Plan de Acción): verde=Avanzado, cian=Muy Bueno, amarillo=
+    // Satisfactorio, naranja=Debe Mejorar, rojo=Insatisfactorio.
+    const color = adNotaCat(it.val).color;
     const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
     return `<text x="${labelW}" y="${(y + rowH * 0.72).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#334155">${adEsc(lbl)}</text>
       <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
       <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="${rowH - 4}" rx="2.5" fill="${color}"/>
       <text x="${(barX + w + 3).toFixed(1)}" y="${(y + rowH * 0.72).toFixed(1)}" font-size="8.5" font-weight="bold" fill="${color}">${it.val}</text>`;
   }).join('');
+  const leyenda = `<div class="bl-leyenda">${AD_NOTA_CATS.map(c =>
+    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}</div>`;
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
     <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
     <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
     ${bars}
-  </svg>`;
+  </svg>${leyenda}`;
+}
+
+/* Gráfico de EVOLUCIÓN (2+ parciales): la barra es la nota del ÚLTIMO
+   parcial con su color oficial (el estado real de hoy — el promedio del
+   año disimula las caídas), la marca | señala dónde estaba el parcial
+   anterior, y a la derecha va el delta ▲/▼ por materia. */
+function adBoletaGraficoEvo(filas) {
+  if (!filas.length) return '';
+  const rowH = 18, gap = 4, padT = 6, padB = 12;
+  const labelW = 104, barX = labelW + 4, W = 320;
+  const barMax = W - barX - 42;
+  const H = padT + filas.length * (rowH + gap) - gap + padB;
+  const x70 = barX + barMax * 0.7;
+  const gridBot = padT + filas.length * (rowH + gap) - gap;
+  const bars = filas.map((it, i) => {
+    const y = padT + i * (rowH + gap);
+    const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
+    const xp = barX + barMax * (Math.min(100, Math.max(0, it.prev)) / 100);
+    const color = adNotaCat(it.val).color;
+    const d = it.val - it.prev;
+    const dTxt = d > 0 ? '▲+' + d : (d < 0 ? '▼' + d : '· igual');
+    const dCol = d > 0 ? '#16a34a' : (d < 0 ? '#dc2626' : '#7286a8');
+    const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
+    return `<text x="${labelW}" y="${(y + rowH * 0.72).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#334155">${adEsc(lbl)}</text>
+      <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
+      <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="${rowH - 4}" rx="2.5" fill="${color}"/>
+      <rect x="${(xp - 0.7).toFixed(1)}" y="${y + 1}" width="1.4" height="${rowH - 2}" fill="#0f2350" opacity="0.6"/>
+      <text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.52).toFixed(1)}" font-size="8.5" font-weight="bold" fill="${color}">${it.val}</text>
+      <text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.98).toFixed(1)}" font-size="6.3" font-weight="bold" fill="${dCol}">${dTxt}</text>`;
+  }).join('');
+  const leyenda = `<div class="bl-leyenda">${AD_NOTA_CATS.map(c =>
+    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}<span><i style="background:#0f2350"></i>| parcial anterior</span></div>`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
+    <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
+    <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
+    ${bars}
+  </svg>${leyenda}`;
 }
 
 /* Imprime una BOLETA elegante por alumno: encabezado con dos logos (centro y
@@ -1587,15 +1724,106 @@ function adPrintBoletas(d) {
   const thV = t => `<th class="v"><span>${adEsc(t)}</span></th>`;
   const primer = nom => String(nom || '').trim().split(/\s+/)[0] || '';
 
+  // Logo oficial de la Secretaría: SIEMPRE aparece. Si el maestro sube el
+  // suyo (d.logoSec) se usa ese; si no, el que viene con la plataforma.
+  // URL absoluta porque la boleta se imprime en una ventana about:blank.
+  let logoSecSrc = d.logoSec || '';
+  if (!logoSecSrc) {
+    try { logoSecSrc = new URL('img/logo-secretaria.png', location.href).href; }
+    catch (_) { logoSecSrc = 'img/logo-secretaria.png'; }
+  }
+
+  // Cita de valores (perseverancia, disciplina, esfuerzo): cada alumno
+  // recibe una según su número de lista — estable entre impresiones.
+  const CITAS = [
+    { t: 'La disciplina es el puente entre las metas y los logros.', a: 'Jim Rohn' },
+    { t: 'El éxito es la suma de pequeños esfuerzos repetidos día tras día.', a: 'Robert Collier' },
+    { t: 'Nuestra mayor gloria no está en no caer nunca, sino en levantarnos cada vez que caemos.', a: 'Confucio' },
+    { t: 'La educación es el arma más poderosa que puedes usar para cambiar el mundo.', a: 'Nelson Mandela' },
+    { t: 'El genio se hace con un 1% de talento y un 99% de trabajo.', a: 'Albert Einstein' },
+    { t: 'No cuentes los días, haz que los días cuenten.', a: 'Muhammad Ali' },
+    { t: 'La constancia es la virtud por la cual todas las demás dan su fruto.', a: 'Arturo Graf' },
+    { t: 'Siembra un hábito y cosecharás un carácter; siembra un carácter y cosecharás un destino.', a: 'Proverbio' },
+    { t: 'El respeto por nosotros mismos guía nuestra moral; el respeto por los demás guía nuestros modales.', a: 'Laurence Sterne' },
+    { t: 'Cae siete veces, levántate ocho.', a: 'Proverbio japonés' },
+    { t: 'La paciencia, la persistencia y el sudor hacen una combinación invencible para el éxito.', a: 'Napoleon Hill' },
+    { t: 'Los sueños no funcionan a menos que tú trabajes por ellos.', a: 'John C. Maxwell' },
+    { t: 'La honestidad es el primer capítulo del libro de la sabiduría.', a: 'Thomas Jefferson' },
+    { t: 'Nunca es demasiado tarde para ser lo que podrías haber sido.', a: 'George Eliot' },
+  ];
+
   const hoja = a => {
     // Datos del gráfico: promedio anual por materia
     const datos = mats.map(c => ({ mat: c, val: promMat(c, a.num) }))
       .filter(x => x.val !== '' && !isNaN(Number(x.val)))
       .map(x => ({ mat: x.mat, val: Number(x.val) }));
     const promGen = datos.length ? Math.round(datos.reduce((s, x) => s + x.val, 0) / datos.length) : null;
-    let mejor = null, peor = null;
-    datos.forEach(x => { if (!mejor || x.val > mejor.val) mejor = x; if (!peor || x.val < peor.val) peor = x; });
+    // EMPATES con honestidad: «la más alta» son TODAS las que comparten la
+    // nota máxima; «a reforzar», todas las de la mínima. Si todas las
+    // materias tienen la misma nota, no se corona ninguna.
+    const maxV = datos.length ? Math.max.apply(null, datos.map(x => x.val)) : null;
+    const minV = datos.length ? Math.min.apply(null, datos.map(x => x.val)) : null;
+    const todasIguales = datos.length > 0 && maxV === minV;
+    const mejores = datos.filter(x => x.val === maxV);
+    const peores = todasIguales ? [] : datos.filter(x => x.val === minV);
     const inasis = sumInasis(a.num);
+
+    // ── SEÑALES para el consejo (patrones reales del aula) ──
+    // Tendencia: promedio general de cada parcial con datos; si entre el
+    // primero y el último hay ±5 puntos, es un patrón que vale contar.
+    const promsParc = parciales.map(p => {
+      const xs = mats.map(cc => val(p, cc, a.num)).filter(x => x !== '' && !isNaN(Number(x))).map(Number);
+      return xs.length ? { p, prom: Math.round(xs.reduce((s, x) => s + x, 0) / xs.length) } : null;
+    }).filter(Boolean);
+    let tendencia = null;
+    if (promsParc.length >= 2) {
+      const ini = promsParc[0], fin = promsParc[promsParc.length - 1];
+      if (fin.prom <= ini.prom - 5) tendencia = { tipo: 'baja', ini, fin };
+      else if (fin.prom >= ini.prom + 5) tendencia = { tipo: 'sube', ini, fin };
+    }
+    // Personalidad: rasgos marcados con lo MÁS BAJO de la escala del centro
+    // (último valor de escalaPers). Solo si NO todos están abajo — si todos,
+    // es el criterio general del docente, no un patrón del alumno.
+    const escalaP = ((bol.escalaPers && bol.escalaPers.length) ? bol.escalaPers : AD_PERS_ESCALA_DEF)
+      .map(s => String(s).toUpperCase());
+    const bajoP = escalaP[escalaP.length - 1];
+    const rasgoUlt = cc => {
+      for (let i = parciales.length - 1; i >= 0; i--) {
+        const v = val(parciales[i], cc, a.num);
+        if (v !== '') return String(v).toUpperCase();
+      }
+      return '';
+    };
+    const persVals = pers.map(cc => ({ c: cc, v: rasgoUlt(cc) })).filter(x => x.v);
+    const rasgosBajosTodos = persVals.filter(x => x.v === bajoP).map(x => x.c);
+    const rasgosBajos = (persVals.length && rasgosBajosTodos.length === persVals.length) ? [] : rasgosBajosTodos;
+    // Elogio anclado en las MATERIAS BÁSICAS: la(s) mejor(es) entre
+    // Matemáticas/Español/CC.NN./CC.SS. Una no básica solo se suma si el
+    // dato lo amerita: llega a 90+ o supera a la mejor básica por 8+.
+    const basicas = datos.filter(x => adEsBasica(x.mat));
+    const maxB = basicas.length ? Math.max.apply(null, basicas.map(x => x.val)) : null;
+    const mejoresBas = basicas.filter(x => x.val === maxB);
+    const extraDestacada = datos
+      .filter(x => !adEsBasica(x.mat) && (x.val >= 90 || (maxB != null && x.val >= maxB + 8)))
+      .sort((x, y) => y.val - x.val)[0] || null;
+    // EVOLUCIÓN por materia (2+ parciales): último parcial vs el anterior.
+    // Alimenta el gráfico de evolución, los chips y el consejo con la
+    // mayor mejora y la mayor caída (umbral ±5 para no leer ruido).
+    const valNum = (p, cc) => { const v = val(p, cc, a.num); return (v === '' || isNaN(Number(v))) ? null : Number(v); };
+    const parcConDatos = parciales.filter(p => mats.some(cc => valNum(p, cc) != null));
+    const pUlt = parcConDatos[parcConDatos.length - 1] || null;
+    const pPrev = parcConDatos.length >= 2 ? parcConDatos[parcConDatos.length - 2] : null;
+    const filasEvo = pPrev
+      ? mats.map(cc => ({ mat: cc, prev: valNum(pPrev, cc), val: valNum(pUlt, cc) }))
+          .filter(x => x.val != null && x.prev != null)
+      : [];
+    const evoOK = filasEvo.length >= 2;
+    let mejoraMax = null, caidaMax = null;
+    filasEvo.forEach(x => {
+      const dd = x.val - x.prev;
+      if (dd >= 5 && (!mejoraMax || dd > mejoraMax.d)) mejoraMax = { mat: x.mat, de: x.prev, a: x.val, d: dd };
+      if (dd <= -5 && (!caidaMax || dd < caidaMax.d)) caidaMax = { mat: x.mat, de: x.prev, a: x.val, d: dd };
+    });
 
     const filas = parciales.map(p => `
       <tr>
@@ -1613,23 +1841,45 @@ function adPrintBoletas(d) {
       </tr>`;
 
     const chip = (lbl, valTxt, cls) => `<div class="chip ${cls || ''}"><span>${lbl}</span><b>${valTxt}</b></div>`;
+    const chipAlta = todasIguales
+      ? chip('Rendimiento', 'Parejo · ' + maxV + ' en todo', 'good')
+      : (mejores.length > 1
+        ? chip('Materias más altas', adEsc(adNombresMats(mejores, mejores.length === 2 ? 2 : 1)) + ' · ' + maxV, 'good')
+        : (mejores.length ? chip('Materia más alta', adEsc(mejores[0].mat) + ' · ' + maxV, 'good') : ''));
+    const chipBaja = peores.length
+      ? chip('A reforzar', adEsc(adNombresMats(peores, peores.length === 2 ? 2 : 1)) + ' · ' + minV, 'low')
+      : '';
     const resumen = `
       <div class="chips">
         ${chip('Promedio general', promGen != null ? promGen : '—')}
-        ${mejor ? chip('Materia más alta', adEsc(mejor.mat) + ' · ' + mejor.val, 'good') : ''}
-        ${peor && (!mejor || peor.mat !== mejor.mat) ? chip('A reforzar', adEsc(peor.mat) + ' · ' + peor.val, 'low') : ''}
+        ${chipAlta}
+        ${chipBaja}
+        ${mejoraMax ? chip('Mayor avance', adEsc(mejoraMax.mat) + ' ▲ +' + mejoraMax.d, 'good') : ''}
+        ${caidaMax ? chip('Mayor caída', adEsc(caidaMax.mat) + ' ▼ ' + caidaMax.d, 'low') : ''}
         ${chip('Inasistencias', inasis !== '' ? inasis : '0')}
       </div>`;
 
+    const cita = CITAS[(Number(a.num) || String(a.nombre || '').length || 0) % CITAS.length];
+
     return `<section class="hoja">
       <header class="bl-head">
-        <div class="bl-logo">${d.logo ? `<img src="${d.logo}" alt="">` : ''}</div>
-        <div class="bl-title">
+        <div class="bl-col">
+          <div class="bl-logo">${d.logo ? `<img src="${d.logo}" alt="">` : ''}</div>
           <div class="bl-centro">${adEsc(centro.toUpperCase())}</div>
-          <div class="bl-doc">Boleta de Calificaciones</div>
+          <div class="bl-doc">BOLETA DE CALIFICACIONES</div>
+          <div class="bl-lugar">${adEsc(bol.municipio)}${bol.municipio && bol.departamento ? ' ' : ''}${adEsc(bol.departamento)}</div>
+          ${bol.lugar ? `<div class="bl-lugar">${adEsc(bol.lugar)}</div>` : ''}
           <div class="bl-anio">Año lectivo ${adEsc(bol.anio) || new Date().getFullYear()}</div>
         </div>
-        <div class="bl-logo">${d.logoSec ? `<img src="${d.logoSec}" alt="">` : ''}</div>
+        <div class="bl-col der">
+          <div class="bl-logo-sec"><img src="${logoSecSrc}" alt="Secretaría de Educación"></div>
+          <div class="bl-oficial-t">
+            <b>Secretaría de Educación</b>
+            <span>Subsecretaría de Asuntos Técnicos Pedagógicos</span>
+            <span>Dirección General de Evaluación de la Calidad de la Educación</span>
+            <span>Dirección Departamental de Educación de ${adEsc(bol.departamento) || '—'}</span>
+          </div>
+        </div>
       </header>
 
       <div class="bl-alumno">
@@ -1639,47 +1889,60 @@ function adPrintBoletas(d) {
         <div><span>Sección</span><b>${adEsc(d.seccion) || '—'}</b></div>
       </div>
 
-      <table class="bl-notas">
-        <thead>
-          <tr>
-            <th rowspan="2" class="pa">Parcial</th>
-            <th colspan="${pers.length}" class="grp">Personalidad</th>
-            <th colspan="${mats.length}" class="grp">Aprovechamiento académico</th>
-            <th rowspan="2" class="v"><span>Inasistencias</span></th>
-          </tr>
-          <tr>${pers.map(thV).join('')}${mats.map(thV).join('')}</tr>
-        </thead>
-        <tbody>${filas}${promRow}</tbody>
-      </table>
+      <div class="bl-cuerpo">
+        <aside class="bl-firmapadre">
+          <div class="fp-t">Firma del padre de familia</div>
+          ${parciales.map(p => `<div class="fp-slot"><i></i><span>${p}-Parcial</span></div>`).join('')}
+        </aside>
+        <table class="bl-notas">
+          <thead>
+            <tr>
+              <th rowspan="2" class="pa">Parcial</th>
+              <th colspan="${pers.length}" class="grp">Personalidad</th>
+              <th colspan="${mats.length}" class="grp">Aprovechamiento académico</th>
+              <th rowspan="2" class="v"><span>Inasistencias</span></th>
+            </tr>
+            <tr>${pers.map(thV).join('')}${mats.map(thV).join('')}</tr>
+          </thead>
+          <tbody>${filas}${promRow}</tbody>
+        </table>
+      </div>
 
       <div class="bl-grid2">
         <div class="bl-card">
-          <div class="bl-h">Rendimiento por materia <small>(promedio del año)</small></div>
-          ${adBoletaGrafico(datos, mejor, peor) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
+          <div class="bl-h">${evoOK
+            ? `Evolución por materia <small>(parcial ${pPrev} → ${pUlt})</small>`
+            : 'Rendimiento por materia <small>(promedio del año)</small>'}</div>
+          ${(evoOK ? adBoletaGraficoEvo(filasEvo) : adBoletaGrafico(datos)) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
           ${resumen}
         </div>
         <div class="bl-msgs">
           <div class="bl-card motiva">
             <div class="bl-h">✦ Mensaje de motivación</div>
-            <p>${adEsc(adMsgMotiva(primer(a.nombre), promGen, mejor && mejor.mat))}</p>
+            <p>${adEsc(adMsgMotiva(primer(a.nombre), promGen, mejores.length === 1 ? mejores[0].mat : ''))}</p>
           </div>
           <div class="bl-card consejo">
             <div class="bl-h">✿ Consejo para la familia</div>
-            <p>${adEsc(adConsejoFamilia(primer(a.nombre), mejor, peor))}</p>
+            <p>${adEsc(adConsejoFamilia(primer(a.nombre), {
+              mejores, peores, maxV, minV,
+              mejoresBas, maxB, extraDestacada,
+              inasis: Number(inasis) || 0,
+              tendencia, rasgosBajos,
+              mejoraMax, caidaMax,
+            }))}</p>
           </div>
         </div>
       </div>
 
+      <div class="bl-cita">
+        <p>&ldquo;${adEsc(cita.t)}&rdquo;</p>
+        <span>— ${adEsc(cita.a)}</span>
+      </div>
+
       <footer class="bl-foot">
-        <div class="bl-oficial">
-          <b>SECRETARÍA DE EDUCACIÓN · REPÚBLICA DE HONDURAS</b>
-          <span>Dirección Departamental de Educación de ${adEsc(bol.departamento) || '—'}</span>
-          <span>${adEsc(bol.lugar)}${bol.lugar && bol.municipio ? ', ' : ''}${adEsc(bol.municipio)}${(bol.lugar || bol.municipio) && bol.departamento ? ' · ' : ''}${adEsc(bol.departamento)}</span>
-        </div>
         <div class="bl-firmas">
           <div><i></i><b>${adEsc(bol.docente) || '&nbsp;'}</b><span>Profesor(a) de Grado</span></div>
           <div><i></i><b>${adEsc(bol.director) || '&nbsp;'}</b><span>Director(a)</span></div>
-          <div><i></i><b>&nbsp;</b><span>Padre, Madre o Tutor(a)</span></div>
         </div>
       </footer>
     </section>`;
@@ -1692,16 +1955,37 @@ function adPrintBoletas(d) {
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   :root { --tinta:#0f2350; --azul:#1e3a7c; --oro:#a8791a; --linea:#d4dbe6; --suave:#f4f7fc; }
   body { color: var(--tinta); font-family: Arial, Helvetica, sans-serif; }
-  .hoja { page-break-after: always; }
+  /* La hoja ocupa TODA la página carta: el pie de firmas se ancla abajo
+     (margin-top:auto) y no queda un vacío grande al final. */
+  .hoja { page-break-after: always; min-height: 256mm; display: flex; flex-direction: column; }
   .hoja:last-child { page-break-after: auto; }
 
-  .bl-head { display: flex; align-items: center; gap: 14px; padding-bottom: 8px; border-bottom: 2.5px solid var(--azul); }
-  .bl-head .bl-logo { width: 62px; height: 62px; flex: 0 0 62px; display: flex; align-items: center; justify-content: center; }
-  .bl-head .bl-logo img { max-width: 62px; max-height: 62px; object-fit: contain; }
-  .bl-title { flex: 1; text-align: center; }
-  .bl-centro { font-family: Georgia, 'Times New Roman', serif; font-size: 17px; font-weight: 700; color: var(--tinta); letter-spacing: .3px; line-height: 1.15; }
-  .bl-doc { font-family: Georgia, serif; font-size: 12px; font-style: italic; color: var(--oro); margin-top: 2px; }
-  .bl-anio { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--azul); margin-top: 2px; }
+  .bl-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding-bottom: 8px; border-bottom: 2.5px solid var(--azul); }
+  .bl-col { flex: 1; text-align: center; }
+  .bl-col.der { flex: 1.15; }
+  .bl-head .bl-logo { height: 58px; display: flex; align-items: center; justify-content: center; margin-bottom: 3px; }
+  .bl-head .bl-logo img { max-width: 120px; max-height: 58px; object-fit: contain; }
+  .bl-logo-sec { height: 44px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+  .bl-logo-sec img { max-width: 230px; max-height: 44px; object-fit: contain; }
+  .bl-centro { font-family: Georgia, 'Times New Roman', serif; font-size: 13.5px; font-weight: 700; color: var(--tinta); letter-spacing: .3px; line-height: 1.15; }
+  .bl-doc { font-family: Georgia, serif; font-size: 11px; font-weight: 700; color: var(--oro); margin-top: 2px; letter-spacing: .6px; }
+  .bl-lugar { font-size: 9.5px; color: #55637d; margin-top: 1px; }
+  .bl-anio { font-size: 8.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--azul); margin-top: 3px; }
+  .bl-oficial-t { line-height: 1.35; }
+  .bl-oficial-t b { display: block; font-family: Georgia, serif; font-size: 11px; color: var(--tinta); }
+  .bl-oficial-t span { display: block; font-size: 9px; color: #33415c; }
+
+  .bl-cuerpo { display: flex; gap: 8px; align-items: stretch; }
+  .bl-firmapadre { flex: 0 0 132px; border: 1px solid var(--linea); border-radius: 8px; padding: 6px 6px; background: var(--suave); display: flex; flex-direction: column; }
+  .fp-t { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--azul); text-align: center; line-height: 1.25; margin-bottom: 2px; }
+  .fp-slot { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 2px; }
+  .fp-slot i { display: block; border-top: 1px solid #55637d; margin: 0 1px 2px; }
+  .fp-slot span { font-size: 7.5px; color: #55637d; text-align: center; }
+  .bl-cuerpo .bl-notas { flex: 1; }
+
+  .bl-cita { margin-top: 11px; text-align: center; padding: 8px 26px; border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); break-inside: avoid; }
+  .bl-cita p { font-family: Georgia, 'Times New Roman', serif; font-size: 12.5px; font-style: italic; color: var(--tinta); line-height: 1.45; }
+  .bl-cita span { display: inline-block; margin-top: 3px; font-size: 9.5px; letter-spacing: 1px; color: var(--oro); font-weight: 700; }
 
   .bl-alumno { display: flex; gap: 8px; margin: 9px 0; }
   .bl-alumno > div { flex: 1; background: var(--suave); border: 1px solid var(--linea); border-radius: 6px; padding: 4px 8px; }
@@ -1710,7 +1994,7 @@ function adPrintBoletas(d) {
   .bl-alumno b { font-size: 11.5px; color: var(--tinta); }
 
   .bl-notas { border-collapse: collapse; margin: 0 auto; table-layout: auto; }
-  .bl-notas th, .bl-notas td { border: 1px solid #c7cfdd; text-align: center; font-size: 10px; padding: 2px 5px; }
+  .bl-notas th, .bl-notas td { border: 1px solid #c7cfdd; text-align: center; font-size: 10px; padding: 2px 2px; }
   .bl-notas thead .grp { background: var(--azul); color: #fff; font-size: 8.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; padding: 3px 4px; }
   .bl-notas th.v { background: #eaf0fa; height: 74px; vertical-align: bottom; padding: 0 0 4px; }
   .bl-notas th.v span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-size: 8.5px; font-weight: 700; color: var(--tinta); display: inline-block; }
@@ -1731,6 +2015,8 @@ function adPrintBoletas(d) {
   .bl-card.consejo { background: linear-gradient(180deg, #fdf7ee, #fff); border-color: #ecdcbf; }
   .bl-card.consejo .bl-h { color: var(--oro); border-color: #ecdcbf; }
   .bl-nada { font-size: 10px; color: #7286a8; font-style: italic; }
+  .bl-leyenda { display: flex; flex-wrap: wrap; gap: 2px 9px; justify-content: center; margin-top: 4px; font-size: 6.8px; color: #55637d; }
+  .bl-leyenda i { display: inline-block; width: 7px; height: 7px; border-radius: 2px; margin-right: 3px; vertical-align: -1px; }
 
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .chip { flex: 1 1 44%; border: 1px solid var(--linea); border-radius: 7px; padding: 4px 8px; background: var(--suave); }
@@ -1739,7 +2025,7 @@ function adPrintBoletas(d) {
   .chip.good { background: #eef7ee; border-color: #cfe6cf; } .chip.good b { color: #2e7d32; }
   .chip.low { background: #fdf3e5; border-color: #ecdcbf; } .chip.low b { color: #c8730a; }
 
-  .bl-foot { margin-top: 12px; padding-top: 8px; border-top: 1.5px solid var(--linea); }
+  .bl-foot { margin-top: auto; padding-top: 14px; padding-bottom: 4mm; }
   .bl-oficial { text-align: center; line-height: 1.35; }
   .bl-oficial b { font-size: 9.5px; letter-spacing: .3px; color: var(--tinta); display: block; }
   .bl-oficial span { display: block; font-size: 9px; color: #55637d; }

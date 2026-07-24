@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión El Sistema Endocrino</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS NATURALES = VERDE/TEAL (#0d9488)
+     · Colores semánticos fijos: azul=glándula/estructura, verde=hormona
+       que baja/equilibra, naranja=estrés/enfermedad
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --nat: #0d9488; --nat-osc: #115e59; --nat-claro: #f0fdfa;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfece7;
+    --gland: #1e40af; --horm: #15803d; --enf: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef6f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--nat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--nat); background: var(--nat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--nat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--nat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--nat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--nat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--nat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--nat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--nat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5fbfa; }
+  td.k { font-weight: 700; color: var(--nat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafefd; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--nat-osc); margin-bottom: 8px; }
+
+  /* Nervioso vs endocrino (mini-demostración) */
+  .cuatro { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; text-align: left; }
+  .cuatro > div { border-radius: 8px; padding: 8px 10px; font-size: 9pt; border: 1.5px solid var(--linea); background: #fff; }
+  .cuatro b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .cuatro .c-ner { border-color: #c7d2fe; background: #eef2ff; } .cuatro .c-ner b { color: var(--gland); }
+  .cuatro .c-end { border-color: #b9e6c6; background: #dcfce7; } .cuatro .c-end b { color: var(--horm); }
+
+  /* La retroalimentación negativa como termostato (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 8px; font-size: 8.5pt; background: #fafefd; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--nat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--nat-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tgland { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .tri .thorm { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tenf { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tgland b { color: var(--gland); } .tri .thorm b { color: var(--horm); } .tri .tenf b { color: var(--enf); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--nat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y verde */
+  .acts ol li::marker { font-weight: 800; color: var(--nat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito verde · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--nat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--nat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--nat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--nat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2faf8; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--nat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--nat); box-shadow: 0 6px 16px rgba(13,148,136,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .cuatro > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión El Sistema Endocrino</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Naturales &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El sistema endocrino: las hormonas, las glándulas, la hipófisis, la tiroides, el páncreas, las suprarrenales, la homeostasis y la diabetes</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-sistema-endocrino.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Reconocer el sistema endocrino como sistema de control que usa <strong>hormonas</strong> por la sangre.</li>
+      <li>Distinguir las glándulas <strong>endocrinas</strong> de las <strong>exocrinas</strong>.</li>
+      <li>Identificar las principales glándulas: <strong>hipófisis, tiroides, páncreas, suprarrenales y pineal</strong>.</li>
+      <li>Relacionar cada hormona con su función: <strong>insulina, glucagón, tiroxina, adrenalina, melatonina</strong>.</li>
+      <li>Explicar la <strong>homeostasis</strong> y la <strong>retroalimentación negativa</strong>.</li>
+      <li>Comparar el sistema endocrino con el nervioso y conocer la <strong>diabetes</strong>.</li>
+    </ol>
+
+    <h2>⚗️ 1. ¿Qué es el sistema endocrino?</h2>
+    <p>El <strong>sistema endocrino</strong> es, junto al nervioso, el sistema de <strong>control y
+    comunicación</strong> del cuerpo. Pero en vez de impulsos eléctricos usa <strong>mensajeros químicos
+    llamados hormonas</strong>, que viajan por la <strong>sangre</strong>. Regula el crecimiento, el
+    metabolismo, la reproducción y el <strong>equilibrio interno (homeostasis)</strong>.</p>
+    <div class="caja regla">⚡ <b>La hormona:</b> es un mensajero químico que fabrica una glándula. Viaja por
+    la sangre y solo actúa sobre las <strong>células blanco</strong> que tienen su <strong>receptor</strong>.
+    ¡Basta una cantidad diminuta para producir grandes efectos!</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> una glándula <strong>endocrina</strong> libera hormonas
+    <strong>directo a la sangre, sin conductos</strong> (tiroides, páncreas). Una glándula
+    <strong>exocrina</strong> usa conductos y NO produce hormonas (el sudor, la saliva, las lágrimas).</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>Endo = dentro (a la sangre)</b>»: las
+    <b>endo</b>crinas vierten sus hormonas hacia <b>dentro</b> del cuerpo (la sangre). Las <b>exo</b>crinas las
+    vierten hacia <b>afuera</b> por un conducto (piel, boca, ojos).</div>
+
+    <h3>🔬 Mini-demostración: dos sistemas de mensajería</h3>
+    <div class="ilus">
+      <div class="ilus-t">El nervioso y el endocrino trabajan juntos, pero son diferentes</div>
+      <div class="cuatro">
+        <div class="c-ner"><b>🧠 Sistema Nervioso</b>Mensajero: impulso ELÉCTRICO. Viaja por neuronas. Respuesta RÁPIDA y breve. Ej: retirar la mano.</div>
+        <div class="c-end"><b>⚗️ Sistema Endocrino</b>Mensajero: HORMONA química. Viaja por la sangre. Respuesta LENTA y duradera. Ej: crecer, madurar.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ El <strong>hipotálamo</strong> es el puente que une los dos sistemas: recibe señales nerviosas y da órdenes hormonales.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Endocrino</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>⚗️ 2. Las glándulas y sus hormonas</h2>
+    <table>
+      <tr><th>Glándula</th><th>Hormona principal</th><th>¿Qué hace?</th></tr>
+      <tr><td class="k">👑 Hipófisis</td><td>Hormona del crecimiento (GH)</td><td>La «glándula maestra»: dirige a las demás y regula el crecimiento</td></tr>
+      <tr><td class="k">🦋 Tiroides</td><td>Tiroxina (necesita yodo)</td><td>Regula el metabolismo y la producción de energía</td></tr>
+      <tr><td class="k">🍬 Páncreas</td><td>Insulina y glucagón</td><td>Controla el nivel de azúcar (glucosa) en la sangre</td></tr>
+      <tr><td class="k">⚡ Suprarrenales</td><td>Adrenalina y cortisol</td><td>Responden al peligro y al estrés («lucha o huye»)</td></tr>
+      <tr><td class="k">🌙 Pineal</td><td>Melatonina</td><td>Regula el ciclo de sueño y vigilia</td></tr>
+    </table>
+    <div class="caja idea">💡 <b>El hipotálamo y la hipófisis:</b> el hipotálamo (parte del cerebro) recibe las
+    señales nerviosas y ordena a la hipófisis; esta, como «glándula maestra», manda hormonas a la tiroides, las
+    suprarrenales y las gónadas. ¡Es una cadena de mando química!</div>
+
+    <h2>🍬 3. Insulina y glucagón: la balanza del azúcar</h2>
+    <p>El páncreas mantiene el azúcar en su punto justo con <strong>dos hormonas opuestas</strong>:</p>
+    <div class="tri">
+      <div class="thorm"><b>⬇️ Insulina — baja</b>Después de comer. Ordena a las células que CAPTEN y guarden la glucosa. Reduce la glucemia.</div>
+      <div class="tgland"><b>⬆️ Glucagón — sube</b>Durante el ayuno. LIBERA a la sangre la glucosa almacenada. Aumenta la glucemia.</div>
+      <div class="tenf"><b>🩸 Diabetes</b>Cuando falta insulina o no funciona, el azúcar se acumula en la sangre. Da sed, orina frecuente y cansancio.</div>
+    </div>
+    <div class="caja regla">⚡ <b>Homeostasis:</b> es el <strong>equilibrio interno</strong> del cuerpo. El
+    sistema endocrino la mantiene ajustando el azúcar, el agua y la temperatura mediante hormonas y
+    <strong>retroalimentación</strong>.</div>
+
+    <h2>🔁 4. La retroalimentación negativa: un termostato</h2>
+    <p>¿Cómo sabe una glándula cuándo parar? Con la <strong>retroalimentación negativa</strong>, igual que un
+    termostato apaga la calefacción al llegar a la temperatura deseada:</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>📉 Falta hormona</b>El nivel baja demasiado en la sangre.</div>
+      <div><span class="pn">2</span><b>⚗️ La glándula produce</b>Fabrica y libera más hormona.</div>
+      <div><span class="pn">3</span><b>📈 Nivel correcto</b>La hormona llega al valor adecuado.</div>
+      <div><span class="pn">4</span><b>🛑 Se frena</b>La hormona avisa a la glándula que deje de producir.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Endocrino</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">⚡ 5. Las hormonas del día a día</h2>
+    <table>
+      <tr><th>Hormona</th><th>Glándula</th><th>¿Cuándo actúa?</th></tr>
+      <tr><td class="k">Adrenalina</td><td>Suprarrenales</td><td>Ante un susto o peligro: acelera el corazón, dilata pupilas, sube el azúcar</td></tr>
+      <tr><td class="k">Cortisol</td><td>Suprarrenales</td><td>En el estrés; en exceso crónico daña el sueño, el ánimo y las defensas</td></tr>
+      <tr><td class="k">Melatonina</td><td>Pineal</td><td>De noche, para darnos sueño; las pantallas la reducen</td></tr>
+      <tr><td class="k">Tiroxina</td><td>Tiroides</td><td>Todo el tiempo, regulando el metabolismo; necesita yodo</td></tr>
+    </table>
+    <div class="caja regla">⚡ <b>El yodo y el bocio:</b> la tiroides necesita <strong>yodo</strong> para
+    fabricar tiroxina. Si falta yodo en la dieta, la tiroides se agranda formando un <strong>bocio</strong>.
+    Por eso a la sal de mesa se le añade yodo («sal yodada»).</div>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que la insulina sube el azúcar</td><td>La insulina lo BAJA; el glucagón lo sube.</td><td>Insulina baja · Glucagón sube ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir hormona con glándula</td><td>La glándula PRODUCE; la hormona es el MENSAJE.</td><td>Páncreas (glándula) → insulina (hormona) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que el endocrino es más rápido que el nervioso</td><td>El endocrino es lento y duradero; el nervioso es veloz.</td><td>Nervioso = rápido · Endocrino = lento ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que el sudor es una hormona</td><td>El sudor lo produce una glándula exocrina, por conducto.</td><td>Sudor y saliva = exocrino, no hormonal ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir melatonina con tiroxina</td><td>La melatonina regula el sueño; la tiroxina, el metabolismo.</td><td>Melatonina = sueño · Tiroxina = metabolismo ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> cuidar el sistema endocrino es cuidar la salud. La
+    <strong>sal yodada</strong> previene el bocio en las zonas del interior; una alimentación equilibrada con
+    frijoles, tortilla y frutas ayuda a controlar el azúcar y prevenir la <strong>diabetes</strong>, una
+    enfermedad frecuente en el país; y dormir sin pantallas favorece la melatonina. ¡Pequeños hábitos
+    catrachos, grandes efectos en tus hormonas! ⚗️💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Endocrino</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>La hormona que baja el azúcar en la sangre es la <span class="linea-resp"></span>.</li>
+      <li>La glándula maestra del sistema endocrino es la <span class="linea-resp"></span>.</li>
+      <li>La tiroides regula el metabolismo mediante la <span class="linea-resp"></span>.</li>
+      <li>Las hormonas viajan por el cuerpo a través de la <span class="linea-resp"></span>.</li>
+      <li>El <span class="linea-resp"></span> une el sistema nervioso con el sistema endocrino.</li>
+      <li>La <span class="linea-resp"></span> prepara el cuerpo ante el peligro (lucha o huye).</li>
+      <li>El equilibrio interno del cuerpo se llama <span class="linea-resp"></span>.</li>
+      <li>La enfermedad por falta o mal uso de la insulina es la <span class="linea-resp"></span>.</li>
+      <li>El <span class="linea-resp"></span> sube el azúcar en la sangre durante el ayuno.</li>
+      <li>Las glándulas <span class="linea-resp"></span> producen adrenalina y cortisol.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El sistema endocrino usa hormonas que viajan por la sangre.</li>
+      <li>____ La insulina sube el nivel de azúcar en la sangre.</li>
+      <li>____ La hipófisis es la glándula maestra del sistema endocrino.</li>
+      <li>____ Las glándulas exocrinas liberan hormonas directamente a la sangre.</li>
+      <li>____ El hipotálamo une el sistema nervioso con el endocrino.</li>
+      <li>____ La adrenalina prepara el cuerpo ante el peligro.</li>
+      <li>____ El sistema endocrino responde más rápido que el nervioso.</li>
+      <li>____ La diabetes se produce por falta o mal uso de la insulina.</li>
+      <li>____ La falta de yodo puede provocar bocio en la tiroides.</li>
+      <li>____ El páncreas produce insulina y glucagón.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Endocrino</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué mensajero químico usa el sistema endocrino?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> impulso eléctrico</span>
+        <span class="op"><i>b</i> neurotransmisor</span>
+        <span class="op"><i>c</i> hormona</span>
+        <span class="op"><i>d</i> enzima</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál es la glándula maestra?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> tiroides</span>
+        <span class="op"><i>b</i> hipófisis</span>
+        <span class="op"><i>c</i> páncreas</span>
+        <span class="op"><i>d</i> pineal</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué hormona baja el azúcar en la sangre?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> glucagón</span>
+        <span class="op"><i>b</i> adrenalina</span>
+        <span class="op"><i>c</i> insulina</span>
+        <span class="op"><i>d</i> cortisol</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué glándula regula el metabolismo con la tiroxina?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> suprarrenal</span>
+        <span class="op"><i>b</i> tiroides</span>
+        <span class="op"><i>c</i> timo</span>
+        <span class="op"><i>d</i> hipófisis</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Por dónde viajan las hormonas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> nervios</span>
+        <span class="op"><i>b</i> linfa</span>
+        <span class="op"><i>c</i> sangre</span>
+        <span class="op"><i>d</i> médula</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué estructura une el sistema nervioso y el endocrino?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cerebelo</span>
+        <span class="op"><i>b</i> hipotálamo</span>
+        <span class="op"><i>c</i> timo</span>
+        <span class="op"><i>d</i> médula</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué hormona prepara el cuerpo ante el peligro?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> melatonina</span>
+        <span class="op"><i>b</i> insulina</span>
+        <span class="op"><i>c</i> tiroxina</span>
+        <span class="op"><i>d</i> adrenalina</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cómo se llama el equilibrio interno del cuerpo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> metabolismo</span>
+        <span class="op"><i>b</i> homeostasis</span>
+        <span class="op"><i>c</i> sinapsis</span>
+        <span class="op"><i>d</i> digestión</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué mineral necesita la tiroides para producir tiroxina?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> hierro</span>
+        <span class="op"><i>b</i> calcio</span>
+        <span class="op"><i>c</i> yodo</span>
+        <span class="op"><i>d</i> sodio</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué enfermedad causa la falta o mal uso de la insulina?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> bocio</span>
+        <span class="op"><i>b</i> gigantismo</span>
+        <span class="op"><i>c</i> diabetes</span>
+        <span class="op"><i>d</i> Cushing</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Endocrino</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Hormona</td><td>A. Glándula maestra que dirige a las demás</td></tr>
+      <tr><td>2. ____ Hipófisis</td><td>B. Hormona que sube el azúcar en la sangre</td></tr>
+      <tr><td>3. ____ Tiroides</td><td>C. Mensajero químico que viaja por la sangre</td></tr>
+      <tr><td>4. ____ Insulina</td><td>D. Une el sistema nervioso con el endocrino</td></tr>
+      <tr><td>5. ____ Glucagón</td><td>E. Regula el metabolismo con la tiroxina</td></tr>
+      <tr><td>6. ____ Adrenalina</td><td>F. Hormona que baja el azúcar en la sangre</td></tr>
+      <tr><td>7. ____ Hipotálamo</td><td>G. Equilibrio interno que mantiene el cuerpo</td></tr>
+      <tr><td>8. ____ Homeostasis</td><td>H. Prepara el cuerpo ante el peligro (lucha o huye)</td></tr>
+      <tr><td>9. ____ Diabetes</td><td>I. Agrandamiento de la tiroides por falta de yodo</td></tr>
+      <tr><td>10. ____ Bocio</td><td>J. Enfermedad por falta o mal uso de la insulina</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión El Sistema Endocrino.</b> Ahora entiendes la mensajería
+      química de tu cuerpo: las hormonas que viajan por la sangre, la hipófisis que manda, la tiroides que da
+      energía, el páncreas que equilibra el azúcar con insulina y glucagón, las suprarrenales del susto y la
+      pineal del sueño. ¡Conoces la homeostasis y sabes cuidar tus hormonas como un verdadero científico
+      catracho! ⚗️🧬
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Naturales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó y rotuló las glándulas del cuerpo con sus hormonas en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Endocrino</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. insulina &nbsp; 2. hipófisis &nbsp; 3. tiroxina &nbsp; 4. sangre &nbsp; 5. hipotálamo &nbsp; 6. adrenalina &nbsp; 7. homeostasis &nbsp; 8. diabetes &nbsp; 9. glucagón &nbsp; 10. suprarrenales</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7F, 8V, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1c, 2b, 3c, 4b, 5c, 6b, 7d, 8b, 9c, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2A, 3E, 4F, 5B, 6H, 7D, 8G, 9J, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión El Sistema Endocrino» (Educación Básica). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con el dibujo del cuerpo humano rotulando las glándulas, la dramatización de la
+      «balanza del azúcar» (insulina/glucagón), la investigación sobre la sal yodada y una charla sobre la prevención de la
+      diabetes. Etapa 2 de la Ruta del Cuerpo, después de «El Sistema Nervioso». La misión interactiva (código QR de la
+      portada) permite al estudiante practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Endocrino · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

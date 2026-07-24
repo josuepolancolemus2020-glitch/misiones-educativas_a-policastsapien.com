@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Los Sustantivos</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: ESPAÑOL = ÁMBAR/DORADO (#b45309)
+     · Colores semánticos fijos: verde=propios (mayúscula), azul=comunes,
+       naranja=colectivos
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --esp: #b45309; --esp-osc: #78350f; --esp-claro: #fefce8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #ecdcc0;
+    --pro: #15803d; --com: #1e40af; --col: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7f3ea; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--esp-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--esp); background: var(--esp-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--esp-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--esp-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--esp); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--esp-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--esp-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--esp-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--esp); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf9f0; }
+  td.k { font-weight: 700; color: var(--esp-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffdf7; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--esp-osc); margin-bottom: 8px; }
+
+  /* Cadena de la prueba del artículo */
+  .mover { display: inline-flex; align-items: center; gap: 9px; font-size: 11.5pt; font-weight: 700; flex-wrap: wrap; justify-content: center; }
+  .mover .paso { background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 5px 11px; }
+  .mover .paso.ok { background: #dcfce7; border-color: #b9e6c6; color: var(--pro); }
+  .mover .flecha { color: var(--esp); font-weight: 800; font-size: 9pt; }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fffdf7; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--esp); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--esp-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tpro { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tcom { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .tcol { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tpro b { color: var(--pro); } .tri .tcom b { color: var(--com); } .tri .tcol b { color: var(--col); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--esp-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y ámbar */
+  .acts ol li::marker { font-weight: 800; color: var(--esp); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito ámbar · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--esp); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--esp-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--esp-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--esp-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #faf6ec; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--esp-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--esp); box-shadow: 0 6px 16px rgba(180,83,9,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .mover .paso.ok
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Los Sustantivos</div>
+        <div class="f-meta"><b>Asignatura:</b> Español &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El sustantivo y sus clases: propios y comunes, concretos y abstractos, individuales y colectivos, género y número</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-sustantivos.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Definir el <strong>sustantivo</strong> como la palabra que nombra personas, animales, cosas, lugares, sentimientos e ideas.</li>
+      <li>Distinguir los sustantivos <strong>propios</strong> (con mayúscula) de los <strong>comunes</strong>.</li>
+      <li>Clasificar sustantivos en <strong>concretos</strong> (se perciben) y <strong>abstractos</strong> (no se perciben).</li>
+      <li>Reconocer los <strong>individuales</strong> y los <strong>colectivos</strong> (grupo en singular).</li>
+      <li>Identificar el <strong>género</strong> (masculino/femenino) y formar el <strong>número</strong> plural con -s o -es.</li>
+      <li>Diferenciar <strong>primitivos y derivados</strong>, <strong>contables e incontables</strong>, y los diminutivos.</li>
+    </ol>
+
+    <h2>📝 1. ¿Qué es un sustantivo?</h2>
+    <p>El <strong>sustantivo</strong> es la palabra que usamos para <strong>nombrar</strong> a las personas,
+    animales, cosas, lugares, sentimientos e ideas. Sin sustantivos, ¡no podríamos hablar de nada!</p>
+    <div class="caja regla">⚡ <b>La prueba del «el/la»:</b> si puedes decir «el» o «la» antes de una palabra,
+    es un sustantivo: <strong>el</strong> perro, <strong>la</strong> mesa… ¡y hasta <strong>la</strong> alegría!</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> los sustantivos se clasifican en <strong>parejas</strong>:
+    propio/común, concreto/abstracto, individual/colectivo, primitivo/derivado, contable/incontable. Cada
+    sustantivo pertenece a varias parejas a la vez.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>El propio presume su mayúscula</b>»: si nombra
+    a un ser único (Honduras, María, Copán), va con mayúscula inicial. Si nombra en general (país, niña,
+    ruina), va con minúscula.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">La prueba del artículo en acción</div>
+      <div class="mover">
+        <span class="paso">perro</span>
+        <span class="flecha">¿EL/LA? →</span>
+        <span class="paso ok">el perro ✔ sustantivo</span>
+        <span class="paso">alegría</span>
+        <span class="flecha">¿EL/LA? →</span>
+        <span class="paso ok">la alegría ✔ sustantivo</span>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ ¡Hasta los sentimientos son sustantivos! «La alegría» pasa la prueba aunque no se pueda tocar.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Sustantivos</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🏷️ 2. Las parejas de clasificación</h2>
+    <table>
+      <tr><th>Pareja</th><th>¿Cómo se distinguen?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">👤 Propio</td><td>Nombra a un ser o lugar ÚNICO; siempre con MAYÚSCULA inicial.</td><td>Honduras, María, Tegucigalpa, Copán</td></tr>
+      <tr><td class="k">🏠 Común</td><td>Nombra a cualquier ser de su clase, sin distinguirlo.</td><td>perro, ciudad, río, escuela</td></tr>
+      <tr><td class="k">🪨 Concreto</td><td>Se percibe con los CINCO SENTIDOS: ver, oír, tocar, oler, saborear.</td><td>mesa, música, perfume, chocolate</td></tr>
+      <tr><td class="k">💭 Abstracto</td><td>NO se percibe con los sentidos: sentimientos, ideas, valores.</td><td>amor, libertad, valentía, tristeza</td></tr>
+      <tr><td class="k">🐕 Individual</td><td>Nombra a UN solo ser u objeto.</td><td>árbol, soldado, abeja, estrella</td></tr>
+      <tr><td class="k">🌳 Colectivo</td><td>Nombra a un GRUPO aunque esté en singular.</td><td>bosque, ejército, enjambre</td></tr>
+    </table>
+
+    <h3>⚧ Género y número</h3>
+    <table>
+      <tr><th>Accidente</th><th>Opciones</th><th>Ejemplos</th></tr>
+      <tr><td class="k">Género</td><td>Masculino (el/los) · Femenino (la/las)</td><td>el niño, la gata, los libros</td></tr>
+      <tr><td class="k">Número</td><td>Singular (uno) · Plural (con -s o -es)</td><td>casa → casas · flor → flores · lápiz → lápices</td></tr>
+    </table>
+
+    <h3>🌱 Otras parejas que la misión practica</h3>
+    <table>
+      <tr><th>Pareja</th><th>¿Cómo se distinguen?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">🌱 Primitivo / Derivado</td><td>El primitivo no nace de otra palabra; el derivado sí.</td><td>pan → panadería · flor → florero</td></tr>
+      <tr><td class="k">🔢 Contable / Incontable</td><td>El contable se cuenta por unidades; el incontable no.</td><td>libro, gato (contables) · agua, arena (incontables)</td></tr>
+      <tr><td class="k">🤏 Diminutivo / Aumentativo</td><td>Achican o agrandan el sustantivo.</td><td>casita · casona</td></tr>
+    </table>
+
+    <h2>🪜 3. Los 4 pasos para clasificar un sustantivo</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Haz la prueba</b>¿Acepta «el» o «la»? Entonces es sustantivo.</div>
+      <div><span class="pn">2</span><b>¿Único o general?</b>Único con mayúscula → propio · general → común.</div>
+      <div><span class="pn">3</span><b>¿Se percibe?</b>Con los sentidos → concreto · sin ellos → abstracto.</div>
+      <div><span class="pn">4</span><b>¿Uno o grupo?</b>Un ser → individual · grupo en singular → colectivo.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Sustantivos</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📋 4. Casos comunes</h2>
+    <table>
+      <tr><th>Sustantivo</th><th>Análisis</th><th>Respuesta</th></tr>
+      <tr><td class="k">Honduras</td><td>Nombra un país único, con mayúscula</td><td>Propio</td></tr>
+      <tr><td class="k">perro</td><td>Nombra en general</td><td>Común</td></tr>
+      <tr><td class="k">chocolate</td><td>Se ve, se toca y se saborea</td><td>Concreto</td></tr>
+      <tr><td class="k">libertad</td><td>No se percibe con los sentidos</td><td>Abstracto</td></tr>
+      <tr><td class="k">ejército</td><td>Grupo de soldados en singular</td><td>Colectivo</td></tr>
+      <tr><td class="k">lápiz → lápices</td><td>La z se vuelve c en el plural</td><td>Plural en -ces</td></tr>
+    </table>
+
+    <div class="tri">
+      <div class="tpro"><b>🟢 Propio → presume mayúscula</b>María, Copán, Comayagua: seres y lugares únicos.</div>
+      <div class="tcom"><b>🔵 Común → nombra en general</b>niña, ruina, ciudad: cualquiera de su clase.</div>
+      <div class="tcol"><b>🟠 Colectivo → grupo en singular</b>bosque = muchos árboles · enjambre = muchas abejas.</div>
+    </div>
+
+    <h2>⚠️ 5. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Propios con minúscula</td><td>«tegucigalpa», «maría». Los nombres únicos presumen su mayúscula.</td><td>Tegucigalpa, María ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que «música» es abstracto</td><td>La música SE OYE y el perfume SE HUELE: los perciben los sentidos.</td><td>Música y perfume son concretos ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir colectivo con plural</td><td>«Bosque es plural porque son muchos árboles». Bosque está en singular.</td><td>Bosque = colectivo singular · árboles = plural ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Plural «lápizes»</td><td>Las palabras en -z cambian a -c en el plural.</td><td>lápiz → lápices ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Contar lo incontable</td><td>«Tres aguas, dos arenas». El agua y la arena no se cuentan por unidades.</td><td>Un vaso de agua, un poco de arena ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> nuestros sustantivos saben a casa: los propios
+    <strong>Copán, Comayagua y Lempira</strong> (¡con mayúscula!) y los comunes <strong>baleada, pupusa y
+    lempira</strong> (la moneda, con minúscula). Fíjate: <strong>Lempira</strong> el héroe es propio, pero el
+    <strong>lempira</strong> que pagas en la pulpería es común. ¡La mayúscula hace la diferencia!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Sustantivos</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 6. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El sustantivo es la palabra que sirve para <span class="linea-resp"></span> personas, animales, cosas e ideas.</li>
+      <li>Los sustantivos propios se escriben con <span class="linea-resp"></span> inicial.</li>
+      <li>Los sustantivos que nombran sin distinguir se llaman <span class="linea-resp"></span>.</li>
+      <li>Los sustantivos <span class="linea-resp"></span> se perciben con los cinco sentidos.</li>
+      <li>Los sentimientos e ideas, como el amor, son sustantivos <span class="linea-resp"></span>.</li>
+      <li>«Enjambre» nombra un grupo de abejas: es un sustantivo <span class="linea-resp"></span>.</li>
+      <li>Los sustantivos masculinos llevan el artículo «el» o <span class="linea-resp"></span>.</li>
+      <li>El plural de «lápiz» es <span class="linea-resp"></span>.</li>
+      <li>«Panadería» viene de «pan»: es un sustantivo <span class="linea-resp"></span>.</li>
+      <li>«Casita» es un sustantivo en forma <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El sustantivo es la palabra que nombra personas, animales, cosas, lugares e ideas.</li>
+      <li>____ Los sustantivos propios se escriben siempre con minúscula.</li>
+      <li>____ «Ejército» es un sustantivo colectivo porque nombra un grupo de soldados.</li>
+      <li>____ Los sustantivos abstractos se pueden percibir con los cinco sentidos.</li>
+      <li>____ «Agua» es un sustantivo contable.</li>
+      <li>____ El plural de «lápiz» es «lápices».</li>
+      <li>____ Los sustantivos concretos se pueden ver, oír, tocar, oler o saborear.</li>
+      <li>____ «Perro» es un sustantivo propio.</li>
+      <li>____ «Valentía» es un sustantivo concreto.</li>
+      <li>____ «Flor» es un sustantivo primitivo.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Sustantivos</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es un sustantivo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> una palabra que indica acción</span>
+        <span class="op full"><i>b</i> una palabra que nombra seres, cosas o ideas</span>
+        <span class="op"><i>c</i> una palabra que describe cualidades</span>
+        <span class="op"><i>d</i> una palabra que une oraciones</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál de estos es un sustantivo propio?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> perro</span>
+        <span class="op"><i>b</i> ciudad</span>
+        <span class="op"><i>c</i> Honduras</span>
+        <span class="op"><i>d</i> alegría</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué tipo de sustantivo es «amor»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> concreto</span>
+        <span class="op"><i>b</i> colectivo</span>
+        <span class="op"><i>c</i> propio</span>
+        <span class="op"><i>d</i> abstracto</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál es un sustantivo colectivo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> soldado</span>
+        <span class="op"><i>b</i> ejército</span>
+        <span class="op"><i>c</i> casa</span>
+        <span class="op"><i>d</i> libertad</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué sustantivo es incontable?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> libro</span>
+        <span class="op"><i>b</i> gato</span>
+        <span class="op"><i>c</i> agua</span>
+        <span class="op"><i>d</i> mesa</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>Si «pan» es un sustantivo primitivo, ¿cuál es su derivado?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> pantalón</span>
+        <span class="op"><i>b</i> panadería</span>
+        <span class="op"><i>c</i> pandilla</span>
+        <span class="op"><i>d</i> panorama</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cómo se forma el plural de «lápiz»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> lápizs</span>
+        <span class="op"><i>b</i> lápizes</span>
+        <span class="op"><i>c</i> lápices</span>
+        <span class="op"><i>d</i> lápizces</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué tipo de sustantivo es «bosque»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> individual</span>
+        <span class="op"><i>b</i> abstracto</span>
+        <span class="op"><i>c</i> propio</span>
+        <span class="op"><i>d</i> colectivo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál de estos sustantivos es concreto?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> valentía</span>
+        <span class="op"><i>b</i> tristeza</span>
+        <span class="op"><i>c</i> chocolate</span>
+        <span class="op"><i>d</i> esperanza</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>«Casita» es un sustantivo en forma:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> aumentativa</span>
+        <span class="op"><i>b</i> diminutiva</span>
+        <span class="op"><i>c</i> plural</span>
+        <span class="op"><i>d</i> propia</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Sustantivos</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Sustantivo</td><td>A. Nombra sin distinguir: perro, ciudad, río</td></tr>
+      <tr><td>2. ____ Propio</td><td>B. Nace de un primitivo: de pan, panadería</td></tr>
+      <tr><td>3. ____ Común</td><td>C. Palabra que nombra seres, cosas, lugares e ideas</td></tr>
+      <tr><td>4. ____ Concreto</td><td>D. Singular o plural (se forma con -s o -es)</td></tr>
+      <tr><td>5. ____ Abstracto</td><td>E. Se percibe con los sentidos: mesa, música, chocolate</td></tr>
+      <tr><td>6. ____ Individual</td><td>F. Nombra un grupo en singular: bosque, ejército, enjambre</td></tr>
+      <tr><td>7. ____ Colectivo</td><td>G. No se percibe: amor, libertad, tristeza</td></tr>
+      <tr><td>8. ____ Género</td><td>H. Nombra un ser único y va con mayúscula: Honduras, María</td></tr>
+      <tr><td>9. ____ Número</td><td>I. Masculino (el/los) o femenino (la/las)</td></tr>
+      <tr><td>10. ____ Derivado</td><td>J. Nombra un solo ser: árbol, soldado, abeja</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Los Sustantivos.</b> Ahora nombras el mundo entero con
+      precisión: aplicas la prueba del «el/la», distingues a los propios que presumen mayúscula, percibes los
+      concretos y sueñas con los abstractos, agrupas colectivos, formas plurales sin miedo a la z y hasta
+      derivas palabras nuevas. ¡De Copán a la baleada, todo lo que existe ya tiene su nombre en tu voz! 📝✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Español.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Clasificó sustantivos y formó plurales de práctica en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Sustantivos</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. nombrar &nbsp; 2. mayúscula &nbsp; 3. comunes &nbsp; 4. concretos &nbsp; 5. abstractos &nbsp; 6. colectivo &nbsp; 7. los &nbsp; 8. lápices &nbsp; 9. derivado &nbsp; 10. diminutiva</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5F, 6V, 7V, 8F, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3d, 4b, 5c, 6b, 7c, 8d, 9c, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2H, 3A, 4E, 5G, 6J, 7F, 8I, 9D, 10B</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Los Sustantivos» (Educación Básica). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con la caza de sustantivos en el aula (¿propio o común?, ¿concreto o abstracto?),
+      la fábrica de derivados (pan → panadería → panadero) y la lista de colectivos hondureños. Etapa 1 y punto de
+      partida de la Ruta de la Palabra, antes de «Los Adjetivos» y «Los Verbos», que ya cuentan con sus fichas. La misión
+      interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de
+      resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Sustantivos · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

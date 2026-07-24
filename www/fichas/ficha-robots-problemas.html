@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión 🏆 Robots que Resuelven Problemas</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: ROBÓTICA = CIAN TEC (#0e7490)
+     · Colores semánticos: cian=problema/identificar, naranja=diseño, verde=prueba y mejora
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --rob: #0e7490; --rob-osc: #155e75; --rob-claro: #ecfeff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cdeef6;
+    --sen: #0891b2; --ctr: #c2410c; --act: #1c7c43; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef8fa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--rob-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--rob); background: var(--rob-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--rob-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--rob-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--rob); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--rob-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--rob-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--rob-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--rob); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4fbfd; }
+  td.k { font-weight: 700; color: var(--rob-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafdfe; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--rob-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (problema / diseño / prueba y mejora) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #d7f2f8; } .celula .cm b { color: var(--sen); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--ctr); }
+  .celula .cn { background: #e4f4e7; } .celula .cn b { color: var(--act); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #d7f2f8; border: 1px solid #ade0ed; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--sen); } .tri .torg b { color: var(--ctr); }
+
+  /* Rueda del ciclo de diseño: 7 pasos */
+  .ciclo { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin: 8px 0; break-inside: avoid; }
+  .ciclo div { flex: 0 0 auto; border: 1.5px solid var(--linea); border-radius: 999px; padding: 5px 11px; font-size: 9pt; background: #fff; }
+  .ciclo div b { color: var(--rob-osc); }
+
+  .acts h3 { border-bottom: 2px solid var(--rob-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--rob); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--rob); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--rob-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--rob-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--rob-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2fafc; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--rob-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--rob); box-shadow: 0 6px 16px rgba(14,116,144,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div, .ciclo div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión 🏆 Robots que Resuelven Problemas</div>
+        <div class="f-meta"><b>Asignatura:</b> Robótica &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica &nbsp;·&nbsp; <b>Ruta de los Robots · Etapa 6 de 6 (misión final)</b></div>
+        <div class="f-meta"><b>Tema:</b> El ciclo de diseño de ingeniería (identificar, idear, diseñar, construir, probar, mejorar y comunicar), criterios y restricciones, ética y seguridad, trabajo en equipo y cinco proyectos hondureños: café, río, huerto escolar, inundaciones y basura</div>
+      </div>
+      <div class="fh-qr">
+        <img src="img/qr-mision-robots-problemas.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Nombrar y ordenar las <strong>7 etapas del ciclo de diseño de ingeniería</strong>.</li>
+      <li>Escribir un <strong>problema</strong> diciendo qué falla, a quién afecta y por qué importa.</li>
+      <li>Distinguir un <strong>criterio de éxito</strong> de una <strong>restricción</strong> (costo, materiales, tiempo, seguridad).</li>
+      <li>Justificar en el <strong>boceto</strong> qué sensor, qué mecanismo, qué energía y qué programa lleva el robot.</li>
+      <li>Explicar por qué <strong>fallar en la prueba</strong> es parte del proceso y proponer una mejora.</li>
+      <li>Valorar la <strong>ética y la seguridad</strong> del diseño y trabajar en equipo con roles definidos.</li>
+    </ol>
+
+    <h2>🏆 1. Un robot sirve para resolver problemas</h2>
+    <p>Ya sabes qué es un robot, qué miden sus <strong>sensores</strong>, cómo se mueve con <strong>motores y
+    mecanismos</strong>, de dónde saca su <strong>electricidad</strong> y cómo se le escribe un <strong>programa</strong>.
+    Ahora falta lo más importante: usar todo eso para <strong>resolver un problema real</strong> de tu comunidad.
+    Los ingenieros no improvisan: siguen el <strong>ciclo de diseño de ingeniería</strong>.</p>
+    <div class="ciclo">
+      <div>🔍 <b>1. Identificar</b></div>
+      <div>💡 <b>2. Idear</b></div>
+      <div>✏️ <b>3. Diseñar</b></div>
+      <div>🔧 <b>4. Construir</b></div>
+      <div>🧪 <b>5. Probar</b></div>
+      <div>🔁 <b>6. Mejorar</b></div>
+      <div>📢 <b>7. Comunicar</b></div>
+    </div>
+    <div class="caja truco">💡 <b>Truco:</b> el ciclo es una <strong>rueda</strong>, no una línea recta. Después de
+    mejorar se vuelve a probar, y a veces se descubre que el problema verdadero era otro. ¡Eso también es aprender!</div>
+
+    <h3>🔍✏️🧪 Mini-demostración: del problema al robot mejorado</h3>
+    <div class="ilus">
+      <div class="ilus-t">El regador del huerto escolar, paso a paso</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">🔍</span><b>Problema</b>La huerta se seca el fin de semana: nadie llega a regarla.</div>
+        <div class="cc"><span class="c-emoji">✏️</span><b>Diseño</b>Sensor de humedad + válvula de agua + batería solar + programa.</div>
+        <div class="cn"><span class="c-emoji">🧪</span><b>Prueba y mejora</b>Se abrió el agua pero no se cerró: se agrega la orden de cierre.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Y al final se <strong>comunica</strong> el resultado a la clase y a la comunidad. 📢</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Robots que Resuelven Problemas</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🔁 2. Las 7 etapas del ciclo de diseño</h2>
+    <table>
+      <tr><th>Etapa</th><th>¿Qué se hace?</th><th>Ejemplo: alerta del vado del río</th></tr>
+      <tr><td class="k">🔍 1. Identificar</td><td>Decir qué falla, a quién afecta y por qué importa; escribir el criterio de éxito</td><td>En invierno nadie sabe si el vado es seguro para cruzar</td></tr>
+      <tr><td class="k">💡 2. Idear</td><td>Anotar muchas soluciones sin juzgarlas y después escoger la más realista</td><td>Una regla pintada, un vigilante o una alarma automática</td></tr>
+      <tr><td class="k">✏️ 3. Diseñar</td><td>Bocetar: qué sensor, qué mecanismo, qué energía y qué programa</td><td>Sensor de nivel + bocina y luz + batería solar</td></tr>
+      <tr><td class="k">🔧 4. Construir</td><td>Armar el prototipo con el material disponible</td><td>Botella, boya de corcho, timbre y lámpara en una tabla</td></tr>
+      <tr><td class="k">🧪 5. Probar</td><td>Ensayar varias veces, medir y anotar qué falla</td><td>La alarma sonó tarde: el agua ya cubría la marca</td></tr>
+      <tr><td class="k">🔁 6. Mejorar</td><td>Corregir lo que falló y volver a probar</td><td>Subir el sensor y añadir un aviso temprano</td></tr>
+      <tr><td class="k">📢 7. Comunicar</td><td>Presentar el proyecto: problema, diseño, prueba, mejora</td><td>Explicar en la escuela y poner un cartel junto al vado</td></tr>
+    </table>
+    <div class="caja idea">📖 <b>Dato clave:</b> ningún prototipo sale bien la primera vez. Lo que separa a un buen
+    equipo de uno que se rinde es <strong>anotar el fallo, cambiar una cosa a la vez y volver a probar</strong>.</div>
+
+    <h2>🎯 3. Criterios y ⛔ restricciones</h2>
+    <p>Antes de diseñar, el equipo escribe dos listas: el <strong>criterio</strong> dice <strong>qué debe lograr</strong>
+    el robot y se <strong>mide</strong>; la <strong>restricción</strong> dice <strong>qué límite no se puede pasar</strong>
+    y se <strong>respeta</strong>.</p>
+    <table>
+      <tr><th>Proyecto</th><th>🎯 Criterio de éxito (se mide)</th><th>⛔ Restricciones (se respetan)</th></tr>
+      <tr><td class="k">🌱 Regador del huerto</td><td>Tierra húmeda 3 días seguidos sin que nadie llegue</td><td>200 lempiras · material reciclado · sin cables pelados</td></tr>
+      <tr><td class="k">🌊 Alerta del vado</td><td>Avisar con el agua a la mitad de la marca</td><td>Sin tomacorriente cerca · debe aguantar la lluvia</td></tr>
+      <tr><td class="k">♻️ Clasificador de basura</td><td>Acertar 19 de cada 20 envases</td><td>3 semanas de plazo · cartón y motor de juguete</td></tr>
+    </table>
+    <div class="caja regla">🎯 <b>Regla de oro:</b> si el prototipo no cumple el criterio, se <strong>mejora el
+    diseño</strong>… <strong>nunca se baja el criterio</strong> para que parezca que funcionó.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Robots que Resuelven Problemas</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🧩 4. En el boceto, cada parte se justifica</h2>
+    <table>
+      <tr><th>Pregunta del boceto</th><th>De la Ruta de los Robots</th><th>Ejemplo</th></tr>
+      <tr><td class="k">📡 ¿Qué sensor?</td><td>Etapa 2: mide la señal del problema</td><td>Humedad, nivel de agua, lluvia, peso, movimiento</td></tr>
+      <tr><td class="k">⚙️ ¿Qué mecanismo?</td><td>Etapa 3: ejecuta la acción</td><td>Motor con polea, banda, engranaje, válvula</td></tr>
+      <tr><td class="k">🔋 ¿Qué energía?</td><td>Etapa 4: circuito seguro y de bajo voltaje</td><td>Batería recargable, panel solar, cables aislados</td></tr>
+      <tr><td class="k">📋 ¿Qué programa?</td><td>Etapa 5: instrucciones exactas</td><td>«Si la tierra está seca, entonces abre el agua»</td></tr>
+    </table>
+    <div class="tri">
+      <div class="tnuc"><b>👥 Roles del equipo</b><strong>Diseñador</strong> (boceto), <strong>programador</strong> (instrucciones), <strong>constructor</strong> (prototipo) y <strong>probador</strong> (ensayos y datos). Todos revisan y opinan.</div>
+      <div class="torg"><b>⚖️ Ética y seguridad</b>Preguntarse <strong>a quién beneficia</strong> el robot y <strong>a quién podría afectar</strong>. Los robots ayudan a las personas, no las reemplazan sin más. Bajo voltaje y sin partes con filo.</div>
+    </div>
+
+    <h2>🇭🇳 5. Cinco proyectos para Honduras</h2>
+    <table>
+      <tr><th>Proyecto</th><th>Problema</th><th>Sensor y actuador</th></tr>
+      <tr><td class="k">☕ Patio de café</td><td>El café tendido se moja con la lluvia repentina</td><td>Sensor de lluvia · motor con polea que cierra el techo</td></tr>
+      <tr><td class="k">🌊 Vado del río</td><td>Nadie sabe si es seguro cruzar en invierno</td><td>Sensor de nivel de agua · bocina y luz de alarma</td></tr>
+      <tr><td class="k">🌱 Huerto escolar</td><td>La huerta se seca los fines de semana</td><td>Sensor de humedad · bomba o válvula de agua</td></tr>
+      <tr><td class="k">🚨 Inundaciones</td><td>El agua entra a las casas de noche sin aviso</td><td>Sensor de nivel y de lluvia · sirena y luz intermitente</td></tr>
+      <tr><td class="k">♻️ Basura del centro</td><td>El plástico y el papel se mezclan en el patio</td><td>Sensor de peso o color · banda con motor y compuerta</td></tr>
+    </table>
+
+    <h2>🎲 6. Actividades desconectadas (sin computadora)</h2>
+    <ul>
+      <li><strong>📐 Boceto en papel:</strong> dibuja tu robot en una hoja y <strong>rotula con flechas</strong> sus partes:
+      sensor, mecanismo, fuente de energía y la instrucción principal del programa. Al lado de cada parte escribe
+      <strong>para qué sirve</strong>: si no sabes justificarla, sobra.</li>
+      <li><strong>📋 Ficha de proyecto en equipo:</strong> con tu equipo llena las cinco casillas: <strong>problema ·
+      idea · diseño · prueba · mejora</strong>, y anota quién hace cada rol (diseñador, programador, constructor, probador).</li>
+      <li><strong>🧱 Maqueta con material reciclado:</strong> arma el prototipo con cartón, botellas, tapas, hilo y palitos.
+      No tiene que verse bonito: tiene que <strong>poder probarse</strong>.</li>
+      <li><strong>📢 Presentación de 2 minutos:</strong> preséntalo ante la clase: (1) el problema y a quién afecta,
+      (2) el diseño con sus partes justificadas, (3) qué pasó en la prueba con datos, (4) la mejora y (5) a quién beneficia.</li>
+    </ul>
+
+    <div class="caja hn">🇭🇳 <b>Ingeniería con lo que hay:</b> no necesitas un laboratorio caro para resolver problemas.
+    Con <strong>cartón, una pila, un motor de juguete y un buen ciclo de diseño</strong> ya puedes cuidar la huerta,
+    avisar de una crecida o separar la basura de tu centro educativo. ¡Los ingenieros que Honduras necesita empiezan
+    hoy, con papel y lápiz! 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Robots que Resuelven Problemas</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El ciclo de diseño empieza al <span class="linea-resp"></span> el problema.</li>
+      <li>En la etapa de idear se anotan muchas <span class="linea-resp"></span>.</li>
+      <li>El dibujo rotulado del robot se llama <span class="linea-resp"></span>.</li>
+      <li>La primera versión que se puede probar es el <span class="linea-resp"></span>.</li>
+      <li>Al probar hay que <span class="linea-resp"></span> lo que falla.</li>
+      <li>Si el prototipo falla, hay que <span class="linea-resp"></span> y volver a probar.</li>
+      <li>La última etapa del ciclo es <span class="linea-resp"></span> el resultado.</li>
+      <li>El dinero disponible es una <span class="linea-resp"></span> del proyecto.</li>
+      <li>Lo que el robot debe lograr para tener éxito es el <span class="linea-resp"></span>.</li>
+      <li>El robot regador necesita un sensor de <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El ciclo de diseño empieza por identificar el problema.</li>
+      <li>____ Lo primero que hace un buen equipo es construir el robot y después buscar el problema.</li>
+      <li>____ En la etapa de idear conviene anotar muchas soluciones posibles.</li>
+      <li>____ El boceto indica qué sensor, qué mecanismo y qué programa lleva el robot.</li>
+      <li>____ El prototipo es la versión final que ya no se cambia.</li>
+      <li>____ Al probar se anota qué falla y qué funciona.</li>
+      <li>____ Si el prototipo falla en la prueba, hay que abandonar el proyecto.</li>
+      <li>____ El costo, el tiempo y la seguridad son restricciones del proyecto.</li>
+      <li>____ La seguridad de quien usa el robot no es asunto del equipo.</li>
+      <li>____ Comunicar el resultado es la última etapa del ciclo de diseño.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Robots que Resuelven Problemas</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál es la primera etapa del ciclo de diseño?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> construir el prototipo</span>
+        <span class="op"><i>b</i> identificar el problema</span>
+        <span class="op"><i>c</i> comunicar el resultado</span>
+        <span class="op"><i>d</i> probar el robot</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué se hace en la etapa de idear?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> anotar muchas soluciones posibles</span>
+        <span class="op"><i>b</i> pintar el robot de colores</span>
+        <span class="op"><i>c</i> calificar al equipo</span>
+        <span class="op"><i>d</i> guardar los materiales</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué contiene un buen boceto de diseño?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la lista de asistencia</span>
+        <span class="op"><i>b</i> el precio de venta</span>
+        <span class="op full"><i>c</i> qué sensor, qué mecanismo, qué energía y qué programa lleva</span>
+        <span class="op"><i>d</i> solamente el nombre del robot</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué es un prototipo?</div>
+      <div class="preg-ops">
+        <span class="op full"><i>a</i> la primera versión del robot, hecha para poder probarla</span>
+        <span class="op"><i>b</i> un dibujo sin partes</span>
+        <span class="op"><i>c</i> el diploma del equipo</span>
+        <span class="op"><i>d</i> un robot traído de fábrica</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>Durante la prueba, ¿qué debe hacer el equipo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> esconder los fallos</span>
+        <span class="op"><i>b</i> cambiar de proyecto</span>
+        <span class="op"><i>c</i> repartir premios</span>
+        <span class="op"><i>d</i> anotar qué falla y qué funciona</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>«El robot no debe costar más de 200 lempiras» es un ejemplo de…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> criterio de éxito</span>
+        <span class="op"><i>b</i> restricción</span>
+        <span class="op"><i>c</i> boceto</span>
+        <span class="op"><i>d</i> prototipo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué sensor conviene al robot que alerta de inundaciones?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> de color</span>
+        <span class="op"><i>b</i> de sonido</span>
+        <span class="op"><i>c</i> de nivel de agua</span>
+        <span class="op"><i>d</i> de tacto</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué actuador necesita el regador del huerto escolar?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> una bomba o válvula de agua</span>
+        <span class="op"><i>b</i> una cámara</span>
+        <span class="op"><i>c</i> un sensor de humedad</span>
+        <span class="op"><i>d</i> una batería más grande</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué instrucción es correcta para el robot regador?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> riega siempre sin parar</span>
+        <span class="op full"><i>b</i> si la tierra está seca, entonces abre el agua</span>
+        <span class="op"><i>c</i> espera a que llueva</span>
+        <span class="op"><i>d</i> apaga la alarma del vado</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál es una pregunta ética del diseño?</div>
+      <div class="preg-ops">
+        <span class="op full"><i>a</i> ¿a quién beneficia y a quién podría afectar el robot?</span>
+        <span class="op"><i>b</i> ¿de qué color lo pinto?</span>
+        <span class="op"><i>c</i> ¿cuántos tornillos lleva?</span>
+        <span class="op"><i>d</i> ¿quién dibuja mejor?</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Robots que Resuelven Problemas</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Ciclo de diseño</td><td>A. Anotar muchas soluciones posibles antes de escoger</td></tr>
+      <tr><td>2. ____ Identificar</td><td>B. Corregir lo que falló y volver a probar</td></tr>
+      <tr><td>3. ____ Idear</td><td>C. Primera versión del robot, hecha para poder probarla</td></tr>
+      <tr><td>4. ____ Boceto</td><td>D. Límite de costo, materiales, tiempo o seguridad</td></tr>
+      <tr><td>5. ____ Prototipo</td><td>E. Presentar el proyecto en dos minutos ante la clase</td></tr>
+      <tr><td>6. ____ Probar</td><td>F. Los 7 pasos que siguen los ingenieros para resolver un problema</td></tr>
+      <tr><td>7. ____ Mejorar</td><td>G. Lo que el robot debe lograr para tener éxito</td></tr>
+      <tr><td>8. ____ Comunicar</td><td>H. Ensayar varias veces y anotar qué falla</td></tr>
+      <tr><td>9. ____ Criterio</td><td>I. Decir qué falla, a quién afecta y por qué importa</td></tr>
+      <tr><td>10. ____ Restricción</td><td>J. Dibujo rotulado con las partes del robot y su función</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Robots que Resuelven Problemas… y con ella toda la Ruta de los
+      Robots.</b> Ahora sabes identificar un problema, idear soluciones, diseñar justificando cada parte, construir un
+      prototipo, probarlo con datos, mejorarlo cuando falla y comunicar el resultado a tu comunidad. ¡Ya piensas como
+      ingeniero! 🏆🤖
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Robótica.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Entregó el boceto rotulado, la ficha de proyecto del equipo y la maqueta de material reciclado.</td><td class="lg">Tarea en el hogar y en equipo</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Presentó su proyecto en dos minutos ante la clase.</td><td class="lg">Exposición en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Sume el total del valor obtenido y divídalo entre cinco: el resultado será su nota final.
+    Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Robots que Resuelven Problemas</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. identificar &nbsp; 2. ideas &nbsp; 3. boceto &nbsp; 4. prototipo &nbsp; 5. anotar &nbsp; 6. mejorar &nbsp; 7. comunicar &nbsp; 8. restricción &nbsp; 9. criterio &nbsp; 10. humedad</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7F, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2a, 3c, 4a, 5d, 6b, 7c, 8a, 9b, 10a</div>
+      <div><span class="pt">IV. Pareados:</span> 1. F &nbsp; 2. I &nbsp; 3. A &nbsp; 4. J &nbsp; 5. C &nbsp; 6. H &nbsp; 7. B &nbsp; 8. E &nbsp; 9. G &nbsp; 10. D</div>
+    </div>
+
+    <div class="pauta" style="margin-top:10px;">
+      <div><span class="pt">Rúbrica del proyecto de diseño (20 pts):</span></div>
+      <div>① <strong>Problema bien definido (5 pts):</strong> dice qué falla, a quién afecta y por qué importa, con un criterio de éxito medible.</div>
+      <div>② <strong>Sensores y mecanismos justificados (5 pts):</strong> nombra qué sensor mide la señal, qué mecanismo o actuador ejecuta la acción y qué fuente de energía usa, explicando por qué escogió cada uno.</div>
+      <div>③ <strong>Programa coherente (5 pts):</strong> escribe la instrucción principal como «si pasa X, entonces hace Y» y respeta las restricciones de costo, materiales, tiempo y seguridad.</div>
+      <div>④ <strong>Mejora tras la prueba (5 pts):</strong> describe cómo probaría el prototipo (qué mediría y cuántas veces) y qué mejoraría si falla.</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Robots que Resuelven Problemas» (Educación Básica, II y III Ciclo), <strong>etapa 6 de 6 y cierre de la
+      Ruta de los Robots</strong> del área de Robótica. El enfoque sigue siendo de <strong>robótica desconectada</strong>:
+      el ciclo de diseño de ingeniería se trabaja con papel, cartón, material reciclado y trabajo en equipo, por lo que
+      puede aplicarse en aulas sin computadoras ni conectividad. La misión integra lo aprendido en las etapas anteriores
+      (sensores, motores y mecanismos, electricidad y programación del robot): en el boceto el estudiante debe justificar
+      qué sensor mide la señal del problema, qué mecanismo ejecuta la acción, qué fuente de energía es segura y qué
+      instrucción sigue el programa. Las actividades desconectadas de la página 3 (boceto rotulado, ficha de proyecto en
+      equipo con roles, maqueta de material reciclado y presentación de dos minutos) constituyen el <strong>proyecto
+      final de la ruta</strong> y se califican con la rúbrica de cuatro criterios de esta hoja, la misma que utiliza la
+      sección V de la prueba de pensamiento crítico de la plataforma. Se recomienda insistir en dos ideas: que
+      <strong>fallar en la prueba es parte del proceso</strong> (se anota el fallo, se cambia una cosa a la vez y se
+      vuelve a probar) y que <strong>nunca se baja el criterio</strong> para que parezca que el prototipo funcionó. El
+      código QR de la portada lleva a la misión interactiva, cuyo Taller de Diseño recorre los cinco proyectos
+      hondureños (café, río, huerto escolar, inundaciones y basura) con retroalimentación inmediata.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Robots que Resuelven Problemas · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión El Sistema Digestivo</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS NATURALES = VERDE/TEAL (#0d9488)
+     · Colores semánticos fijos: azul=núcleo/control, verde=organelo/vida,
+       naranja=cubierta/pared y errores/amenazas
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --nat: #0d9488; --nat-osc: #115e59; --nat-claro: #f0fdfa;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfece7;
+    --nuc: #1e40af; --org: #15803d; --cub: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef6f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--nat-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--nat); background: var(--nat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--nat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--nat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--nat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--nat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--nat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--nat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--nat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5fbfa; }
+  td.k { font-weight: 700; color: var(--nat-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafefd; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--nat-osc); margin-bottom: 8px; }
+
+  /* Partes básicas de la célula (mini-demostración de 3 cajas) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #ffedd5; } .celula .cm b { color: var(--cub); }
+  .celula .cc { background: #f0fdfa; } .celula .cc b { color: var(--nat-osc); }
+  .celula .cn { background: #eef2ff; } .celula .cn b { color: var(--nuc); }
+
+  /* Fotosíntesis / secuencia (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 7px; font-size: 8.5pt; background: #fafefd; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--nat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--nat-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .tri .torg { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tcub { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--nuc); } .tri .torg b { color: var(--org); } .tri .tcub b { color: var(--cub); }
+
+  .acts h3 { border-bottom: 2px solid var(--nat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--nat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--nat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--nat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--nat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--nat-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2faf8; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--nat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--nat); box-shadow: 0 6px 16px rgba(13,148,136,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión El Sistema Digestivo</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Naturales &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El sistema digestivo y la nutrición: los nutrientes, las etapas de la digestión, el recorrido y los órganos del tubo digestivo, las glándulas anexas y la alimentación saludable</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-sistema-digestivo.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender qué es la <strong>nutrición</strong> y qué sistema se encarga de ella.</li>
+      <li>Reconocer los cinco grupos de <strong>nutrientes</strong> y para qué sirven.</li>
+      <li>Explicar las <strong>cuatro etapas</strong> de la digestión.</li>
+      <li>Identificar el <strong>recorrido</strong> y los <strong>órganos</strong> del tubo digestivo.</li>
+      <li>Conocer las <strong>glándulas anexas</strong> y su función.</li>
+      <li>Practicar hábitos de <strong>alimentación saludable</strong> e higiene.</li>
+    </ol>
+
+    <h2>🍎 1. ¿Qué es la nutrición?</h2>
+    <p>La <strong>nutrición</strong> es el proceso por el que el cuerpo <strong>toma los alimentos</strong>, los
+    transforma y aprovecha para obtener <strong>energía</strong> y los materiales que necesita para crecer,
+    moverse y repararse. El encargado de esta tarea es el <strong>sistema digestivo</strong>.</p>
+    <div class="caja regla">🍎 <b>Dato clave:</b> no es lo mismo <em>alimentarse</em> que <em>nutrirse</em>.
+    <strong>Alimentarse</strong> es comer (acto voluntario); <strong>nutrirse</strong> es lo que hace el cuerpo por
+    dentro con esos alimentos (proceso involuntario).</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> el tubo digestivo mide unos <strong>9 metros</strong>. El alimento
+    hace un largo viaje por él y, al final, el cuerpo aprovecha los nutrientes y desecha lo que no sirve.</div>
+    <div class="caja truco">🧩 <b>Truco para el recorrido:</b> «<b>Bo-Es-Es-In-In</b>»: <b>Bo</b>ca, <b>Es</b>ófago,
+    <b>Es</b>tómago, <b>In</b>testino delgado, <b>In</b>testino grueso (y al final, el ano).</div>
+
+    <h3>🥗 Mini-demostración: los cinco grupos de nutrientes</h3>
+    <div class="ilus">
+      <div class="ilus-t">Cada nutriente cumple una función en el cuerpo</div>
+      <div class="celula">
+        <div class="cn"><span class="c-emoji">⚡</span><b>Carbohidratos</b>Dan ENERGÍA rápida (maíz, arroz, tortilla).</div>
+        <div class="cc"><span class="c-emoji">🧱</span><b>Proteínas</b>CONSTRUYEN y reparan (frijol, huevo, carne).</div>
+        <div class="cm"><span class="c-emoji">🍊</span><b>Grasas, vitaminas, minerales y agua</b>Reservan energía, REGULAN y protegen.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Una buena alimentación combina <strong>todos</strong> los grupos, en su justa medida.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Digestivo</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔄 2. Las cuatro etapas de la digestión</h2>
+    <p>El aparato digestivo transforma el alimento en <strong>cuatro pasos</strong>:</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>🍽️ Ingestión</b>Entra el alimento por la boca.</div>
+      <div><span class="pn">2</span><b>🔄 Digestión</b>Se deshace en nutrientes.</div>
+      <div><span class="pn">3</span><b>🩸 Absorción</b>Los nutrientes pasan a la sangre.</div>
+      <div><span class="pn">4</span><b>🧻 Egestión</b>Sale como heces lo que sobra.</div>
+    </div>
+
+    <h2>🛤️ 3. El recorrido del alimento</h2>
+    <p>El alimento viaja por el <strong>tubo digestivo</strong> en este orden:</p>
+    <div class="caja regla">🛤️ <b>Recorrido:</b> <b>Boca</b> → <b>Esófago</b> → <b>Estómago</b> →
+    <b>Intestino delgado</b> → <b>Intestino grueso</b> → <b>Ano</b>. El intestino delgado es el más largo
+    (unos 6 metros).</div>
+
+    <h2>🫃 4. Los órganos y las glándulas</h2>
+    <table>
+      <tr><th>Órgano</th><th>¿Qué hace?</th></tr>
+      <tr><td class="k">👄 Boca</td><td>Mastica (dientes) y ensaliva; forma el bolo alimenticio.</td></tr>
+      <tr><td class="k">🫙 Esófago</td><td>Transporta el bolo hasta el estómago.</td></tr>
+      <tr><td class="k">🫃 Estómago</td><td>Mezcla el alimento con jugos gástricos (forma el quimo).</td></tr>
+      <tr><td class="k">🌀 Intestino delgado</td><td>Termina la digestión y absorbe los nutrientes a la sangre.</td></tr>
+      <tr><td class="k">🧻 Intestino grueso</td><td>Absorbe el agua y forma las heces.</td></tr>
+    </table>
+    <div class="caja idea">💡 <b>Glándulas anexas:</b> las <strong>glándulas salivales</strong> (saliva), el
+    <strong>hígado</strong> (bilis, para las grasas) y el <strong>páncreas</strong> (jugo pancreático) fabrican
+    jugos que ayudan a digerir. El alimento <strong>no pasa por dentro</strong> de ellas.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Digestivo</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🥗 5. Alimentación saludable e higiene</h2>
+    <p>Para nutrirnos bien debemos comer <strong>variado y equilibrado</strong> y cuidar la <strong>higiene</strong>:</p>
+    <table>
+      <tr><th>Hábito saludable</th><th>¿Por qué?</th></tr>
+      <tr><td class="k">🍎 Come frutas y verduras</td><td>Aportan vitaminas, minerales y fibra.</td></tr>
+      <tr><td class="k">🌽 Suficientes carbohidratos y proteínas</td><td>Maíz y arroz dan energía; frijol y huevo construyen el cuerpo.</td></tr>
+      <tr><td class="k">🧼 Lávate las manos antes de comer</td><td>Evita parásitos y diarrea.</td></tr>
+      <tr><td class="k">💧 Bebe agua y mastica bien</td><td>Facilita la digestión y evita el estreñimiento.</td></tr>
+      <tr><td class="k">🍟 Evita el exceso de chatarra</td><td>El azúcar y la grasa en exceso causan caries y obesidad.</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que la absorción ocurre en el estómago</td><td>Los nutrientes pasan a la sangre en el intestino delgado.</td><td>Absorción = intestino delgado ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que los carbohidratos construyen el cuerpo</td><td>Los carbohidratos dan energía.</td><td>Construir = proteínas ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que el alimento pasa por dentro del hígado</td><td>El hígado es una glándula anexa.</td><td>Hígado = glándula anexa ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que comer solo dulces es sano</td><td>Una dieta sana es variada y equilibrada.</td><td>Comer variado ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Comer con las manos sucias</td><td>Causa parásitos y diarrea.</td><td>Lavarse las manos ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> nuestra comida tiene todo lo que el cuerpo necesita. El
+    <strong>maíz</strong> (tortilla) y el <strong>arroz</strong> dan energía; el <strong>frijol</strong> y el
+    <strong>huevo</strong> aportan proteínas; el <strong>aguacate</strong> tiene grasas buenas; y las
+    <strong>frutas</strong> (mango, banano, naranja) dan vitaminas. Una buena <strong>plato típico</strong> con
+    tortilla, frijol, huevo y aguacate es muy nutritivo. ¡Cuida tu alimentación y tu higiene! 🌽💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Digestivo</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El sistema <span class="linea-resp"></span> transforma los alimentos en nutrientes.</li>
+      <li>Los <span class="linea-resp"></span> dan energía rápida al cuerpo (maíz, arroz).</li>
+      <li>Las <span class="linea-resp"></span> construyen y reparan el cuerpo (frijol, huevo).</li>
+      <li>La digestión empieza en la <span class="linea-resp"></span>.</li>
+      <li>El <span class="linea-resp"></span> mezcla el alimento con jugos gástricos.</li>
+      <li>Los nutrientes pasan a la sangre en el intestino <span class="linea-resp"></span>.</li>
+      <li>El <span class="linea-resp"></span> fabrica la bilis para digerir las grasas.</li>
+      <li>La primera etapa de la digestión es la <span class="linea-resp"></span>.</li>
+      <li>El paso de los nutrientes a la sangre se llama <span class="linea-resp"></span>.</li>
+      <li>Antes de comer debemos <span class="linea-resp"></span> las manos.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ La nutrición es el proceso por el que el cuerpo aprovecha los alimentos.</li>
+      <li>____ Los carbohidratos sirven sobre todo para construir el cuerpo.</li>
+      <li>____ Las proteínas construyen y reparan el cuerpo.</li>
+      <li>____ La digestión empieza en la boca.</li>
+      <li>____ Los nutrientes pasan a la sangre en el intestino grueso.</li>
+      <li>____ El hígado fabrica la bilis, que ayuda a digerir las grasas.</li>
+      <li>____ La primera etapa de la digestión es la absorción.</li>
+      <li>____ Lavarse las manos antes de comer ayuda a evitar enfermedades.</li>
+      <li>____ El hígado y el páncreas son glándulas anexas.</li>
+      <li>____ Comer mucha comida chatarra es bueno para la salud.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Digestivo</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué sistema del cuerpo transforma los alimentos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el nervioso</span>
+        <span class="op"><i>b</i> el digestivo</span>
+        <span class="op"><i>c</i> el respiratorio</span>
+        <span class="op"><i>d</i> el óseo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué nutriente da energía rápida?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> las proteínas</span>
+        <span class="op"><i>b</i> las grasas</span>
+        <span class="op"><i>c</i> los carbohidratos</span>
+        <span class="op"><i>d</i> el agua</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué nutriente construye y repara el cuerpo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> los carbohidratos</span>
+        <span class="op"><i>b</i> las proteínas</span>
+        <span class="op"><i>c</i> las grasas</span>
+        <span class="op"><i>d</i> las vitaminas</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿En qué órgano EMPIEZA la digestión?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el estómago</span>
+        <span class="op"><i>b</i> la boca</span>
+        <span class="op"><i>c</i> el esófago</span>
+        <span class="op"><i>d</i> el hígado</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿En qué órgano se mezcla el alimento con jugos gástricos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la boca</span>
+        <span class="op"><i>b</i> el esófago</span>
+        <span class="op"><i>c</i> el estómago</span>
+        <span class="op"><i>d</i> el hígado</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿En qué órgano pasan los nutrientes a la sangre?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el estómago</span>
+        <span class="op"><i>b</i> el intestino delgado</span>
+        <span class="op"><i>c</i> el intestino grueso</span>
+        <span class="op"><i>d</i> la boca</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué glándula fabrica la bilis?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el páncreas</span>
+        <span class="op"><i>b</i> el hígado</span>
+        <span class="op"><i>c</i> el estómago</span>
+        <span class="op"><i>d</i> las salivales</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué órgano absorbe el agua y forma las heces?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el intestino delgado</span>
+        <span class="op"><i>b</i> el estómago</span>
+        <span class="op"><i>c</i> el intestino grueso</span>
+        <span class="op"><i>d</i> el esófago</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál es la PRIMERA etapa de la digestión?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la absorción</span>
+        <span class="op"><i>b</i> la digestión</span>
+        <span class="op"><i>c</i> la ingestión</span>
+        <span class="op"><i>d</i> la egestión</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué debemos hacer antes de comer para evitar enfermedades?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> correr</span>
+        <span class="op"><i>b</i> lavarnos las manos</span>
+        <span class="op"><i>c</i> dormir</span>
+        <span class="op"><i>d</i> ver televisión</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Digestivo</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Nutrición</td><td>A. Mezcla el alimento con jugos gástricos</td></tr>
+      <tr><td>2. ____ Carbohidratos</td><td>B. Primera etapa: entra el alimento</td></tr>
+      <tr><td>3. ____ Proteínas</td><td>C. Nutriente que da energía rápida</td></tr>
+      <tr><td>4. ____ Boca</td><td>D. Órgano donde empieza la digestión</td></tr>
+      <tr><td>5. ____ Estómago</td><td>E. Ayuda a digerir las grasas</td></tr>
+      <tr><td>6. ____ Intestino delgado</td><td>F. Aprovechar los alimentos para obtener energía</td></tr>
+      <tr><td>7. ____ Hígado</td><td>G. Glándula que fabrica la bilis</td></tr>
+      <tr><td>8. ____ Absorción</td><td>H. Absorbe los nutrientes a la sangre</td></tr>
+      <tr><td>9. ____ Bilis</td><td>I. Nutriente que construye y repara el cuerpo</td></tr>
+      <tr><td>10. ____ Ingestión</td><td>J. Paso de los nutrientes a la sangre</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión El Sistema Digestivo.</b> Ahora sabes cómo tu cuerpo aprovecha
+      los alimentos: conoces los cinco grupos de nutrientes, las cuatro etapas de la digestión, el recorrido del
+      alimento por la boca, el esófago, el estómago y los intestinos, y el papel de glándulas como el hígado. Y lo
+      más importante: sabes cómo alimentarte de forma saludable y con higiene. ¡Cuida tu cuerpo! 🍎💪
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Naturales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó y rotuló el aparato digestivo con sus órganos en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Digestivo</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. digestivo &nbsp; 2. carbohidratos &nbsp; 3. proteínas &nbsp; 4. boca &nbsp; 5. estómago &nbsp; 6. delgado &nbsp; 7. hígado &nbsp; 8. ingestión &nbsp; 9. absorción &nbsp; 10. lavarnos</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7F, 8V, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3b, 4b, 5c, 6b, 7b, 8c, 9c, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1F, 2C, 3I, 4D, 5A, 6H, 7G, 8J, 9E, 10B</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión El Sistema Digestivo» (Educación Básica). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con el dibujo rotulado del aparato digestivo, el modelado de sus órganos con
+      plastilina, la elaboración de un menú saludable y de un cartel sobre hábitos de higiene y alimentación, y la
+      clasificación de alimentos locales según el nutriente que aportan. Etapa 3 de la Ruta del Cuerpo. La misión
+      interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de
+      resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Sistema Digestivo · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

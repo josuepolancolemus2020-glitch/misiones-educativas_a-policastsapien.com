@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Potencias y Raíces Cuadradas</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=base, naranja=exponente, verde=raíz/resultado
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --base: #1e40af; --expo: #c2410c; --raiz: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Tabla de cuadrados perfectos (compacta) */
+  table.cuadrados { text-align: center; }
+  table.cuadrados th, table.cuadrados td { text-align: center; padding: 3px 2px; font-size: 9pt; }
+  table.cuadrados td.destacado { color: var(--raiz); font-weight: 800; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .ilus svg { max-width: 100%; height: auto; }
+  .ilus-par { display: flex; gap: 18px; justify-content: center; align-items: center; flex-wrap: wrap; }
+
+  /* Notación de potencia grande */
+  .pot-big { font-family: 'Cambria Math', Georgia, serif; font-size: 26pt; font-weight: 800; }
+  .pot-big .pbase { color: var(--base); }
+  .pot-big sup { color: var(--expo); font-size: 15pt; }
+  .pot-lbl { font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+  .pot-lbl.lbase { color: var(--base); } .pot-lbl.lexpo { color: var(--expo); }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .pot { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .rz { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .ord { background: #ede9fe; border: 1px solid #d3c9f5; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .pot b { color: var(--base); } .tri .rz b { color: var(--raiz); } .tri .ord b { color: #6b21a8; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Potencias y Raíces Cuadradas</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Potencias (base y exponente), elevar al cuadrado, raíz cuadrada y los cuadrados perfectos menores que 200</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-potencias-raices.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender la potencia como una <strong>multiplicación repetida</strong>, identificando la base y el exponente.</li>
+      <li>Elevar números al <strong>cuadrado</strong> (n² = n × n) sin confundirlo con multiplicar por 2.</li>
+      <li>Calcular la <strong>raíz cuadrada</strong> como la operación inversa de elevar al cuadrado.</li>
+      <li>Reconocer de memoria los <strong>cuadrados perfectos menores que 200</strong> (del 1 al 196).</li>
+      <li>Resolver operaciones combinadas aplicando el orden correcto: <strong>potencias y raíces antes que sumas y restas</strong>.</li>
+      <li>Identificar cuándo un número <strong>no tiene raíz cuadrada exacta</strong> y entre qué cuadrados se ubica.</li>
+    </ol>
+
+    <h2>🔲 1. ¿Qué es una potencia?</h2>
+    <p>Una <strong>potencia</strong> representa una multiplicación repetida de un mismo número. Se escribe con
+    una <strong>base</strong> (el número que se repite) y un <strong>exponente</strong> (cuántas veces se repite).
+    En 6², el 6 es la base y el 2 es el exponente: se lee «seis al cuadrado» y significa 6 × 6 = 36.</p>
+    <div class="caja regla">⚡ <b>La Regla de Oro:</b> el exponente <strong>NO multiplica</strong> a la base —
+    <strong>cuenta</strong> cuántas veces la base se multiplica por sí misma. 6² = 6 × 6 = 36, ¡nunca 6 × 2 = 12!</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> un <strong>cuadrado perfecto</strong> se puede dibujar como una
+    cuadrícula de n filas por n columnas. Por eso «elevar al cuadrado» se llama así: ¡forma un cuadrado!</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>La raíz deshace el cuadrado</b>»: elevar al
+    cuadrado y sacar raíz cuadrada son operaciones inversas, como caminar de ida y de vuelta. 8² = 64 y √64 = 8.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">4² dibujado: una cuadrícula de 4 filas × 4 columnas = 16 cuadritos</div>
+      <div class="ilus-par">
+        <svg viewBox="0 0 120 120" width="110" height="110" role="img" aria-label="Cuadrícula de cuatro por cuatro">
+          <g fill="#dbeafe" stroke="#1565c0" stroke-width="1.5">
+            <rect x="5" y="5" width="26" height="26"/><rect x="33" y="5" width="26" height="26"/><rect x="61" y="5" width="26" height="26"/><rect x="89" y="5" width="26" height="26"/>
+            <rect x="5" y="33" width="26" height="26"/><rect x="33" y="33" width="26" height="26"/><rect x="61" y="33" width="26" height="26"/><rect x="89" y="33" width="26" height="26"/>
+            <rect x="5" y="61" width="26" height="26"/><rect x="33" y="61" width="26" height="26"/><rect x="61" y="61" width="26" height="26"/><rect x="89" y="61" width="26" height="26"/>
+            <rect x="5" y="89" width="26" height="26"/><rect x="33" y="89" width="26" height="26"/><rect x="61" y="89" width="26" height="26"/><rect x="89" y="89" width="26" height="26"/>
+          </g>
+        </svg>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="text-align:center;">
+            <span class="pot-big"><span class="pbase">4</span><sup>2</sup></span>
+            <div style="font-size:9pt;margin-top:2px;"><span class="pot-lbl lbase">base</span> · <span class="pot-lbl lexpo">exponente</span></div>
+          </div>
+          <div style="text-align:left;font-size:10.5pt;">
+            <p style="margin-bottom:4px;">4² significa <strong>4 × 4</strong></p>
+            <p style="margin-bottom:4px;">= <strong style="color:var(--raiz);">16</strong> (cuadrado perfecto)</p>
+            <p style="margin-bottom:0;">y de regreso: <strong>√16 = 4</strong></p>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ 16 cuadritos en un cuadrado de 4 × 4: por eso 16 es un <strong>cuadrado perfecto</strong> y su raíz es 4.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Potencias y Raíces</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>√ 2. La raíz cuadrada: la operación inversa</h2>
+    <p>La <strong>raíz cuadrada (√)</strong> te dice qué número, multiplicado por sí mismo, da el resultado.
+    El símbolo √ se llama <strong>radical</strong>.</p>
+    <div class="ilus">
+      <div class="ilus-t">Pregunta clave: ¿qué número por sí mismo da 64?</div>
+      <p style="font-size:14pt;font-family:'Cambria Math',Georgia,serif;margin:0;">
+        <strong style="color:var(--raiz);">√64</strong> = ¿? &nbsp;→&nbsp; pruebo: 8 × 8 = 64 &nbsp;→&nbsp;
+        <strong style="color:var(--raiz);">√64 = 8</strong> ✅
+      </p>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;">Comprobación: 8² = 64. La raíz «deshace» el cuadrado.</p>
+    </div>
+
+    <h3>📋 Los cuadrados perfectos menores que 200 (¡apréndelos de memoria!)</h3>
+    <table class="cuadrados">
+      <tr><th style="text-align:center;">n</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td></tr>
+      <tr><th style="text-align:center;">n²</th><td>1</td><td>4</td><td>9</td><td>16</td><td>25</td><td>36</td><td>49</td><td>64</td><td>81</td><td>100</td><td>121</td><td>144</td><td>169</td><td class="destacado">196</td></tr>
+    </table>
+    <p style="font-size:9.5pt;color:var(--gris);">196 (14²) es el mayor cuadrado perfecto menor que 200: 15² = 225 ya lo supera.</p>
+
+    <h2>🪜 3. Los 4 pasos para hallar una raíz cuadrada</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Haz la pregunta</b>¿Qué número multiplicado por sí mismo da N?</div>
+      <div><span class="pn">2</span><b>Busca en la tabla</b>Recorre los cuadrados perfectos que conoces.</div>
+      <div><span class="pn">3</span><b>Comprueba</b>Multiplica: n × n debe dar exactamente N.</div>
+      <div><span class="pn">4</span><b>¿No aparece?</b>Entonces no es exacta: queda entre dos cuadrados vecinos.</div>
+    </div>
+
+    <h2>➕ 4. Operaciones combinadas: el orden importa</h2>
+    <p>Cuando una operación mezcla potencias, raíces, sumas y restas, resuelve <strong>primero las potencias
+    y raíces</strong>, y al final suma o resta.</p>
+    <div class="ilus">
+      <div class="ilus-t">Ejemplo: √25 + 3²</div>
+      <p style="font-size:13pt;font-family:'Cambria Math',Georgia,serif;margin:0;">
+        √25 + 3² &nbsp;→&nbsp; <strong style="color:var(--raiz);">5</strong> + <strong style="color:var(--base);">9</strong> &nbsp;→&nbsp; = <strong>14</strong> ✅
+      </p>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;">Primero √25 = 5 y 3² = 9; solo entonces se suma. ¡Nunca sumes antes de resolver!</p>
+    </div>
+
+    <div class="tri">
+      <div class="pot"><b>🔵 Potencia → construye</b>6² = 6 × 6 = 36. La base se repite tantas veces como diga el exponente.</div>
+      <div class="rz"><b>🟢 Raíz → deshace</b>√36 = 6. Busca el número que, por sí mismo, da 36.</div>
+      <div class="ord"><b>⚖️ Orden → primero ellas</b>Potencias y raíces se resuelven ANTES que sumas y restas.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Potencias y Raíces</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📋 5. Casos comunes</h2>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">7²</td><td>7 × 7</td><td>49</td></tr>
+      <tr><td class="k">12²</td><td>12 × 12</td><td>144</td></tr>
+      <tr><td class="k">√64</td><td>8 × 8 = 64</td><td>8</td></tr>
+      <tr><td class="k">√121</td><td>11 × 11 = 121</td><td>11</td></tr>
+      <tr><td class="k">√25 + 3²</td><td>5 + 9</td><td>14</td></tr>
+      <tr><td class="k">¿√50 es exacta?</td><td>50 está entre 7² = 49 y 8² = 64</td><td>No: no es cuadrado perfecto</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Multiplicar la base por el exponente</td><td>«6² = 6 × 2 = 12». El exponente cuenta factores, no multiplica.</td><td>6² = 6 × 6 = 36 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Dividir entre 2 para la raíz</td><td>«√100 = 50». La raíz no es la mitad: es el número que por sí mismo da 100.</td><td>√100 = 10 (10 × 10 = 100) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que toda raíz es exacta</td><td>«√50 = 25» o «√50 = 7». Solo los cuadrados perfectos tienen raíz entera.</td><td>√50 no es exacta: está entre 7 y 8 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Sumar antes de resolver</td><td>«2 + 3² = 5² = 25». La suma esperó su turno… ¡pero no lo respetaste!</td><td>2 + 3² = 2 + 9 = 11 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir 5 × 2 con 5²</td><td>Parecen gemelos pero no lo son: uno duplica, el otro forma un cuadrado.</td><td>5 × 2 = 10, pero 5² = 25 ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> los cuadrados perfectos trabajan en la construcción. Un patio
+    cuadrado de <strong>5 varas</strong> por lado tiene 5² = <strong>25 varas cuadradas</strong> (la vara es
+    nuestra medida tradicional). Y el albañil usa la raíz al revés: si el piso lleva <strong>49 baldosas</strong>
+    cuadradas, sabe que es de <strong>7 × 7</strong> — ¡sacó la raíz cuadrada sin darse cuenta!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Potencias y Raíces</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Una potencia representa una <span class="linea-resp"></span> repetida de un mismo número.</li>
+      <li>En una potencia, el número que se repite se llama <span class="linea-resp"></span>.</li>
+      <li>El <span class="linea-resp"></span> indica cuántas veces se multiplica la base por sí misma.</li>
+      <li>6² se lee «seis al <span class="linea-resp"></span>».</li>
+      <li>La operación inversa de elevar al cuadrado es la raíz <span class="linea-resp"></span>.</li>
+      <li>√36 = 6 porque 6² = <span class="linea-resp"></span>.</li>
+      <li>Un número que resulta de elevar al cuadrado un entero se llama cuadrado <span class="linea-resp"></span>.</li>
+      <li>El símbolo √ se llama <span class="linea-resp"></span>.</li>
+      <li>Las potencias y raíces se resuelven <span class="linea-resp"></span> que las sumas y restas.</li>
+      <li>El mayor cuadrado perfecto menor que 200 es <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ 9² = 81.</li>
+      <li>____ La raíz cuadrada de 100 es 50.</li>
+      <li>____ 150 es un cuadrado perfecto.</li>
+      <li>____ En 6², el número 2 es el exponente.</li>
+      <li>____ Las potencias se resuelven después que las sumas.</li>
+      <li>____ √196 = 14.</li>
+      <li>____ 5 × 2 es lo mismo que 5².</li>
+      <li>____ El cuadrado perfecto más grande menor que 200 es 196.</li>
+      <li>____ La raíz cuadrada deshace la operación de elevar al cuadrado.</li>
+      <li>____ √50 es un número entero exacto.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Potencias y Raíces</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuánto es 9²?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 18</span>
+        <span class="op"><i>b</i> 81</span>
+        <span class="op"><i>c</i> 72</span>
+        <span class="op"><i>d</i> 99</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál es la raíz cuadrada de 100?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 50</span>
+        <span class="op"><i>b</i> 100</span>
+        <span class="op"><i>c</i> 10</span>
+        <span class="op"><i>d</i> 20</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál de estos es un cuadrado perfecto?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 150</span>
+        <span class="op"><i>b</i> 144</span>
+        <span class="op"><i>c</i> 130</span>
+        <span class="op"><i>d</i> 190</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuánto es 6²?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 12</span>
+        <span class="op"><i>b</i> 62</span>
+        <span class="op"><i>c</i> 36</span>
+        <span class="op"><i>d</i> 66</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuál es la raíz cuadrada de 196?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 13</span>
+        <span class="op"><i>b</i> 14</span>
+        <span class="op"><i>c</i> 98</span>
+        <span class="op"><i>d</i> 196</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>En la potencia 8², ¿cuál es el exponente?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 8</span>
+        <span class="op"><i>b</i> 2</span>
+        <span class="op"><i>c</i> 16</span>
+        <span class="op"><i>d</i> 64</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuánto es √25 + 3²?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 14</span>
+        <span class="op"><i>b</i> 11</span>
+        <span class="op"><i>c</i> 28</span>
+        <span class="op"><i>d</i> 8</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cuál es el cuadrado perfecto más grande menor que 200?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 169</span>
+        <span class="op"><i>b</i> 196</span>
+        <span class="op"><i>c</i> 225</span>
+        <span class="op"><i>d</i> 144</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuánto es 12²?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 24</span>
+        <span class="op"><i>b</i> 144</span>
+        <span class="op"><i>c</i> 122</span>
+        <span class="op"><i>d</i> 121</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Por qué 50 no tiene raíz cuadrada exacta?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> porque es un número par</span>
+        <span class="op"><i>b</i> porque está entre 7² y 8²</span>
+        <span class="op"><i>c</i> porque es mayor que 25</span>
+        <span class="op"><i>d</i> porque es un número primo</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Potencias y Raíces</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Potencia</td><td>A. Operación inversa de elevar al cuadrado</td></tr>
+      <tr><td>2. ____ Base</td><td>B. Resultado de elevar un entero al cuadrado: 1, 4, 9, 16…</td></tr>
+      <tr><td>3. ____ Exponente</td><td>C. Multiplicación repetida de un mismo número</td></tr>
+      <tr><td>4. ____ Cuadrado de un número</td><td>D. 13</td></tr>
+      <tr><td>5. ____ Raíz cuadrada</td><td>E. n² = n × n, como 6² = 36</td></tr>
+      <tr><td>6. ____ Radical (√)</td><td>F. Potencias y raíces se resuelven antes que sumas y restas</td></tr>
+      <tr><td>7. ____ Cuadrado perfecto</td><td>G. Indica cuántas veces se repite la base</td></tr>
+      <tr><td>8. ____ 12²</td><td>H. El número que se multiplica por sí mismo</td></tr>
+      <tr><td>9. ____ √169</td><td>I. 144</td></tr>
+      <tr><td>10. ____ Orden de operaciones</td><td>J. El símbolo que representa la raíz cuadrada</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Potencias y Raíces Cuadradas.</b> Ahora sabes que el exponente
+      cuenta y no multiplica, dibujas los cuadrados perfectos como cuadrículas, recitas la tabla del 1² al 14², y
+      usas la raíz cuadrada para deshacer cualquier cuadrado. Además respetas el orden: primero potencias y
+      raíces, después sumas y restas. ¡Del patio de varas a las baldosas del piso, los cuadrados ya no tienen
+      secretos! 🔲✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió potencias, raíces y operaciones combinadas de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Potencias y Raíces</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. multiplicación &nbsp; 2. base &nbsp; 3. exponente &nbsp; 4. cuadrado &nbsp; 5. cuadrada &nbsp; 6. 36 &nbsp; 7. perfecto &nbsp; 8. radical &nbsp; 9. antes &nbsp; 10. 196</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3F, 4V, 5F, 6V, 7F, 8V, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3b, 4c, 5b, 6b, 7a, 8b, 9b, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2H, 3G, 4E, 5A, 6J, 7B, 8I, 9D, 10F</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Potencias y Raíces Cuadradas» (Educación Básica). Puede utilizarse como guía de estudio impresa o digital antes de
+      la evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con la construcción de cuadrículas con tapitas o semillas (representación
+      gráfica de los cuadrados perfectos), el memorizado de la tabla del 1² al 14² y operaciones combinadas en el
+      cuaderno. Etapa 5 de la Ruta del Número del Educación Básica, después de «Múltiplos, Divisores y Primos». La misión
+      interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de
+      resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Potencias y Raíces · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

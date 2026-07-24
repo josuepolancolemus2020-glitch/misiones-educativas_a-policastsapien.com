@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Ángulos y Bisectriz</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=rayos, naranja=vértice, verde=bisectriz
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --rayo: #1e40af; --vert: #c2410c; --bis: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .ilus svg { max-width: 100%; height: auto; }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .compl { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .suple { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .bisec { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .compl b { color: var(--rayo); } .tri .suple b { color: var(--vert); } .tri .bisec b { color: var(--bis); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Ángulos y Bisectriz</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El ángulo y sus partes, los cinco tipos, la bisectriz, y los ángulos complementarios y suplementarios</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-bisectriz.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Definir el <strong>ángulo</strong> como la abertura entre dos rayos que comparten un vértice, y nombrarlo con tres letras (∠ABC).</li>
+      <li>Clasificar los <strong>cinco tipos de ángulos</strong> según su medida: agudo, recto, obtuso, llano y completo.</li>
+      <li>Comprender la <strong>bisectriz</strong> como el rayo que divide un ángulo en dos partes iguales y calcularla con la fórmula ángulo ÷ 2.</li>
+      <li>Identificar parejas de ángulos <strong>complementarios</strong> (suman 90°) y <strong>suplementarios</strong> (suman 180°).</li>
+      <li>Calcular el <strong>complemento</strong> y el <strong>suplemento</strong> de un ángulo dado.</li>
+      <li>Reconocer los ángulos en <strong>objetos de la vida cotidiana</strong> y evitar los errores más comunes.</li>
+    </ol>
+
+    <h2>📖 1. ¿Qué es un ángulo?</h2>
+    <p>Un <strong>ángulo</strong> es la abertura formada por dos <strong>rayos</strong> (semirrectas) que comparten
+    un mismo punto de origen llamado <strong>vértice</strong>. Los ángulos se miden en <strong>grados (°)</strong>
+    con un instrumento semicircular llamado <strong>transportador</strong>.</p>
+    <div class="caja regla">⚡ <b>Cómo se nombra:</b> un ángulo se nombra con <strong>tres letras</strong> y la del
+    medio es SIEMPRE el vértice. En ∠ABC, el vértice es <strong>B</strong>.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> lo que importa de un ángulo es su <strong>abertura</strong>, no el
+    largo de sus rayos. Un ángulo de 45° con rayos cortos y otro con rayos largos ¡miden lo mismo!</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">Las partes del ángulo ∠ABC (el vértice es la letra del medio)</div>
+      <svg viewBox="0 0 360 150" width="360" height="150" role="img" aria-label="Diagrama de un ángulo con sus partes">
+        <line x1="45" y1="125" x2="330" y2="125" stroke="#1e40af" stroke-width="3" stroke-linecap="round"/>
+        <line x1="45" y1="125" x2="245" y2="20" stroke="#1e40af" stroke-width="3" stroke-linecap="round"/>
+        <path d="M 100 125 A 55 55 0 0 0 91 100" fill="none" stroke="#5b6773" stroke-width="2"/>
+        <circle cx="45" cy="125" r="5" fill="#c2410c"/>
+        <text x="238" y="14" font-family="Arial" font-size="13" font-weight="bold" fill="#1a2733">A</text>
+        <text x="28" y="144" font-family="Arial" font-size="13" font-weight="bold" fill="#c2410c">B</text>
+        <text x="334" y="129" font-family="Arial" font-size="13" font-weight="bold" fill="#1a2733">C</text>
+        <text x="150" y="60" font-family="Arial" font-size="10" font-weight="bold" fill="#1e40af">rayo</text>
+        <text x="180" y="118" font-family="Arial" font-size="10" font-weight="bold" fill="#1e40af">rayo</text>
+        <text x="52" y="144" font-family="Arial" font-size="9" font-weight="bold" fill="#c2410c">vértice</text>
+        <text x="108" y="103" font-family="Arial" font-size="9" fill="#5b6773">abertura (°)</text>
+      </svg>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ Dos <strong style="color:var(--rayo);">rayos</strong> + un <strong style="color:var(--vert);">vértice</strong> = un ángulo. Su medida es la abertura en grados.</p>
+    </div>
+
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>La C llega a la esquina y la S se estira</b>»:
+    los <strong>C</strong>omplementarios completan la esquina (90°) y los <strong>S</strong>uplementarios se
+    estiran hasta la línea recta (180°).</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos y Bisectriz</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🏷️ 2. Los cinco tipos de ángulos</h2>
+    <p>Los ángulos se clasifican según su <strong>amplitud</strong> (su medida en grados):</p>
+    <table>
+      <tr><th>Tipo</th><th>Medida</th><th>¿Cómo reconocerlo?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">📐 Agudo</td><td><strong>Menor de 90°</strong></td><td>Más cerrado que una esquina de cuaderno.</td><td>30°, 45°, 60°, 89°</td></tr>
+      <tr><td class="k">🔲 Recto</td><td><strong>Exactamente 90°</strong></td><td>Se marca con un cuadradito en el vértice.</td><td>La esquina de una hoja</td></tr>
+      <tr><td class="k">📏 Obtuso</td><td><strong>Entre 90° y 180°</strong></td><td>Más abierto que una esquina.</td><td>120°, 135°, 150°</td></tr>
+      <tr><td class="k">➖ Llano</td><td><strong>Exactamente 180°</strong></td><td>Los dos rayos forman una línea recta.</td><td>Una carretera recta</td></tr>
+      <tr><td class="k">🔄 Completo</td><td><strong>Exactamente 360°</strong></td><td>Una vuelta entera alrededor del vértice.</td><td>La manecilla que da toda la vuelta</td></tr>
+    </table>
+
+    <h2>🪜 3. Los 4 pasos para clasificar un ángulo</h2>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Mide o lee</b>Averigua cuántos grados tiene el ángulo (con el transportador).</div>
+      <div><span class="pn">2</span><b>Compáralo con 90°</b>¿Es menor (agudo), igual (recto) o mayor?</div>
+      <div><span class="pn">3</span><b>Compáralo con 180°</b>Si pasa de 90°: ¿menor que 180° (obtuso) o igual (llano)?</div>
+      <div><span class="pn">4</span><b>Nombra el tipo</b>Y si es 360°, es completo: la vuelta entera.</div>
+    </div>
+
+    <h2>✂️ 4. La bisectriz: el corte perfecto</h2>
+    <p>La <strong>bisectriz</strong> de un ángulo es el <strong>rayo que lo divide en dos ángulos iguales</strong>,
+    como cortar el ángulo exactamente por la mitad. Se construye con compás y regla.</p>
+    <div class="caja regla">⚡ <b>Fórmula rápida:</b> cada mitad = <strong>ángulo ÷ 2</strong>. Bisectriz de 80° →
+    dos ángulos de 40°. Bisectriz de 120° → dos de 60°. Bisectriz de 140° → dos de 70°.</div>
+
+    <div class="ilus">
+      <div class="ilus-t">La bisectriz divide el ángulo de 80° en dos partes iguales de 40°</div>
+      <svg viewBox="0 0 340 155" width="340" height="155" role="img" aria-label="Diagrama de la bisectriz de un ángulo de 80 grados">
+        <line x1="45" y1="140" x2="310" y2="140" stroke="#1e40af" stroke-width="3" stroke-linecap="round"/>
+        <line x1="45" y1="140" x2="83" y2="15" stroke="#1e40af" stroke-width="3" stroke-linecap="round"/>
+        <line x1="45" y1="140" x2="205" y2="8" stroke="#15803d" stroke-width="3" stroke-dasharray="7 5" stroke-linecap="round"/>
+        <path d="M 105 140 A 60 60 0 0 0 91 94" fill="none" stroke="#5b6773" stroke-width="1.6"/>
+        <path d="M 99 96 A 72 72 0 0 0 60 71" fill="none" stroke="#5b6773" stroke-width="1.6"/>
+        <circle cx="45" cy="140" r="5" fill="#c2410c"/>
+        <text x="112" y="122" font-family="Arial" font-size="11" font-weight="bold" fill="#1a2733">40°</text>
+        <text x="88" y="76" font-family="Arial" font-size="11" font-weight="bold" fill="#1a2733">40°</text>
+        <text x="212" y="14" font-family="Arial" font-size="10" font-weight="bold" fill="#15803d">bisectriz</text>
+      </svg>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ 80° ÷ 2 = <strong style="color:var(--bis);">40° + 40°</strong>. La <strong style="color:var(--bis);">bisectriz</strong> (verde) siempre crea dos ángulos gemelos.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos y Bisectriz</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🤝 5. Complementarios y suplementarios</h2>
+    <p>Algunos ángulos trabajan <strong>en pareja</strong>: lo importante es cuánto SUMAN entre los dos.</p>
+    <div class="tri">
+      <div class="compl"><b>🧩 Complementarios → suman 90°</b>30° + 60° = 90°. Juntos completan una esquina (un ángulo recto).</div>
+      <div class="suple"><b>🔗 Suplementarios → suman 180°</b>110° + 70° = 180°. Juntos se estiran hasta la línea recta (un llano).</div>
+      <div class="bisec"><b>✂️ Bisectriz → divide entre 2</b>No es pareja: es el corte que crea dos ángulos gemelos. 100° → 50° y 50°.</div>
+    </div>
+    <div class="caja idea">💡 <b>Para calcular:</b> el <strong>complemento</strong> de un ángulo es 90° menos el
+    ángulo (complemento de 40° = 90° − 40° = 50°). El <strong>suplemento</strong> es 180° menos el ángulo
+    (suplemento de 110° = 180° − 110° = 70°).</div>
+
+    <h3>📋 Casos comunes</h3>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">¿Qué tipo es 45°?</td><td>45 &lt; 90</td><td>Agudo</td></tr>
+      <tr><td class="k">¿Qué tipo es 135°?</td><td>90 &lt; 135 &lt; 180</td><td>Obtuso</td></tr>
+      <tr><td class="k">Bisectriz de 140°</td><td>140 ÷ 2</td><td>Dos ángulos de 70°</td></tr>
+      <tr><td class="k">Complemento de 35°</td><td>90 − 35</td><td>55°</td></tr>
+      <tr><td class="k">Suplemento de 110°</td><td>180 − 110</td><td>70°</td></tr>
+      <tr><td class="k">¿90° + 90° son…?</td><td>90 + 90 = 180</td><td>Suplementarios</td></tr>
+    </table>
+
+    <h3>🌎 Los ángulos en tu vida cotidiana</h3>
+    <table>
+      <tr><th>Objeto</th><th>Ángulo que forma</th></tr>
+      <tr><td class="k">🕒 Reloj a las 3:00</td><td>Recto · 90°</td></tr>
+      <tr><td class="k">✏️ Punta de un lápiz</td><td>Agudo · menor de 90°</td></tr>
+      <tr><td class="k">🚪 Puerta bien abierta</td><td>Obtuso · entre 90° y 180°</td></tr>
+      <tr><td class="k">🛣️ Carretera recta</td><td>Llano · 180°</td></tr>
+      <tr><td class="k">✂️ Tijeras abiertas</td><td>El eje del corte es la bisectriz</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir complementarios con suplementarios</td><td>«30° y 60° son suplementarios». Esa pareja suma 90°, no 180°.</td><td>C = 90° · S = 180° ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que la bisectriz corta en 3</td><td>«Bi» significa DOS: la bisectriz crea exactamente dos partes iguales.</td><td>Bisectriz de 90° = 45° y 45° ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Llamar agudo a 95°</td><td>Agudo es solo hasta 89°; al pasar de 90° ya es obtuso.</td><td>95° es obtuso ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Nombrar mal el vértice en ∠ABC</td><td>«El vértice es la A porque va primero». El vértice es SIEMPRE la letra del medio.</td><td>En ∠ABC el vértice es B ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir llano con completo</td><td>«360° es un ángulo llano». El llano es 180° (línea recta); 360° es la vuelta entera.</td><td>180° = llano · 360° = completo ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> la geometría está en nuestras construcciones. Las esquinas de la
+    cancha de fútbol forman ángulos <strong>rectos de 90°</strong>, los techos de dos aguas de nuestras casas se
+    abren en ángulos <strong>obtusos</strong>, y el machete al afilarse busca un ángulo <strong>agudo</strong>.
+    ¡Los ángulos construyen nuestro país!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos y Bisectriz</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Un ángulo <span class="linea-resp"></span> mide menos de 90°.</li>
+      <li>La bisectriz divide un ángulo en <span class="linea-resp"></span> partes iguales.</li>
+      <li>Dos ángulos suplementarios suman <span class="linea-resp"></span>.</li>
+      <li>El punto donde se unen los dos rayos se llama <span class="linea-resp"></span>.</li>
+      <li>Un ángulo <span class="linea-resp"></span> mide exactamente 90°.</li>
+      <li>El complemento de 35° es <span class="linea-resp"></span>.</li>
+      <li>El suplemento de 110° es <span class="linea-resp"></span>.</li>
+      <li>La bisectriz de un ángulo de 80° crea dos ángulos de <span class="linea-resp"></span> cada uno.</li>
+      <li>Un ángulo que mide entre 90° y 180° se llama <span class="linea-resp"></span>.</li>
+      <li>Los ángulos se miden con un instrumento llamado <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Un ángulo agudo mide menos de 90°.</li>
+      <li>____ La bisectriz divide un ángulo en tres partes iguales.</li>
+      <li>____ Dos ángulos complementarios suman 180°.</li>
+      <li>____ Un ángulo obtuso mide entre 90° y 180°.</li>
+      <li>____ El vértice es el instrumento que sirve para medir ángulos.</li>
+      <li>____ Un ángulo llano mide exactamente 180°.</li>
+      <li>____ La bisectriz de un ángulo de 60° crea dos ángulos de 30°.</li>
+      <li>____ Un ángulo de 360° se llama ángulo llano.</li>
+      <li>____ El complemento de 45° es 45°.</li>
+      <li>____ Un ángulo de 95° es un ángulo agudo.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos y Bisectriz</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuánto mide un ángulo recto?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 45°</span>
+        <span class="op"><i>b</i> 90°</span>
+        <span class="op"><i>c</i> 180°</span>
+        <span class="op"><i>d</i> 360°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>Un ángulo de 135° es de tipo:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> agudo</span>
+        <span class="op"><i>b</i> recto</span>
+        <span class="op"><i>c</i> obtuso</span>
+        <span class="op"><i>d</i> llano</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué hace la bisectriz de un ángulo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> lo elimina</span>
+        <span class="op"><i>b</i> lo duplica</span>
+        <span class="op"><i>c</i> lo divide en dos partes iguales</span>
+        <span class="op"><i>d</i> lo convierte en recto</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>Si un ángulo mide 60°, su bisectriz crea dos ángulos de:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 20°</span>
+        <span class="op"><i>b</i> 30°</span>
+        <span class="op"><i>c</i> 45°</span>
+        <span class="op"><i>d</i> 60°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuánto suman dos ángulos suplementarios?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 90°</span>
+        <span class="op"><i>b</i> 180°</span>
+        <span class="op"><i>c</i> 270°</span>
+        <span class="op"><i>d</i> 360°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>Un ángulo de 55° es de tipo:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> agudo</span>
+        <span class="op"><i>b</i> recto</span>
+        <span class="op"><i>c</i> obtuso</span>
+        <span class="op"><i>d</i> llano</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuánto suman dos ángulos complementarios?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 45°</span>
+        <span class="op"><i>b</i> 90°</span>
+        <span class="op"><i>c</i> 180°</span>
+        <span class="op"><i>d</i> 360°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>El complemento de un ángulo de 40° es:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 40°</span>
+        <span class="op"><i>b</i> 50°</span>
+        <span class="op"><i>c</i> 140°</span>
+        <span class="op"><i>d</i> 320°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuánto mide un ángulo llano?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 90°</span>
+        <span class="op"><i>b</i> 120°</span>
+        <span class="op"><i>c</i> 180°</span>
+        <span class="op"><i>d</i> 360°</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>En el ángulo ∠ABC, ¿cuál letra es el vértice?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la primera (A)</span>
+        <span class="op"><i>b</i> la del medio (B)</span>
+        <span class="op"><i>c</i> la última (C)</span>
+        <span class="op"><i>d</i> ninguna</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos y Bisectriz</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Ángulo</td><td>A. Mide entre 90° y 180°</td></tr>
+      <tr><td>2. ____ Vértice</td><td>B. Dos ángulos cuya suma es 90°</td></tr>
+      <tr><td>3. ____ Ángulo agudo</td><td>C. Mide exactamente 180°: sus rayos forman una línea recta</td></tr>
+      <tr><td>4. ____ Ángulo recto</td><td>D. Punto de origen donde se unen los dos rayos</td></tr>
+      <tr><td>5. ____ Ángulo obtuso</td><td>E. Rayo que divide el ángulo en dos partes iguales</td></tr>
+      <tr><td>6. ____ Ángulo llano</td><td>F. Dos ángulos cuya suma es 180°</td></tr>
+      <tr><td>7. ____ Ángulo completo</td><td>G. Mide menos de 90°</td></tr>
+      <tr><td>8. ____ Bisectriz</td><td>H. Abertura formada por dos rayos que comparten un vértice</td></tr>
+      <tr><td>9. ____ Complementarios</td><td>I. Mide exactamente 90°: se marca con un cuadradito</td></tr>
+      <tr><td>10. ____ Suplementarios</td><td>J. Mide 360°: una vuelta entera alrededor del vértice</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Ángulos y Bisectriz.</b> Ahora reconoces las partes de un ángulo
+      y sus cinco tipos, sabes cortar cualquier ángulo por la mitad con la bisectriz (ángulo ÷ 2), y calculas
+      complementos y suplementos como todo un geómetra. ¡Desde la esquina de tu cuaderno hasta el techo de tu casa,
+      ya ves los ángulos que construyen el mundo! 📐✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Midió, clasificó y trazó bisectrices de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos y Bisectriz</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. agudo &nbsp; 2. dos (2) &nbsp; 3. 180° &nbsp; 4. vértice &nbsp; 5. recto &nbsp; 6. 55° &nbsp; 7. 70° &nbsp; 8. 40° &nbsp; 9. obtuso &nbsp; 10. transportador</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3F, 4V, 5F, 6V, 7V, 8F, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3c, 4b, 5b, 6a, 7b, 8b, 9c, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1H, 2D, 3G, 4I, 5A, 6C, 7J, 8E, 9B, 10F</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Ángulos y Bisectriz». Puede utilizarse como guía de estudio impresa o digital antes de la evaluación final.
+      Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple, pareados) y puede
+      complementarse con mediciones con transportador, trazado de bisectrices con compás y regla, y la búsqueda de
+      ángulos en objetos del aula. La misión interactiva (código QR de la portada) permite al estudiante practicar
+      con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Ángulos y Bisectriz · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

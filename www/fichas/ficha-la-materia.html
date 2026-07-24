@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión La Materia</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS NATURALES = VERDE/TEAL (#0d9488)
+     · Colores semánticos: azul=sólido, celeste=líquido, ámbar=gaseoso
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --nat: #0d9488; --nat-osc: #115e59; --nat-claro: #f0fdfa;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfece7;
+    --sol: #1e40af; --liq: #0369a1; --gas: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef6f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--nat-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--nat); background: var(--nat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--nat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--nat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--nat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--nat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--nat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--nat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--nat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5fbfa; }
+  td.k { font-weight: 700; color: var(--nat-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafefd; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--nat-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (sólido / líquido / gaseoso) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #ffedd5; } .celula .cm b { color: var(--gas); }
+  .celula .cc { background: #e0f2fe; } .celula .cc b { color: var(--liq); }
+  .celula .cn { background: #dbeafe; } .celula .cn b { color: var(--sol); }
+
+  /* Secuencia de pasos (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 7px; font-size: 8.5pt; background: #fafefd; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--nat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--nat-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #dbeafe; border: 1px solid #b6ccf5; }
+  .tri .torg { background: #e0f2fe; border: 1px solid #b3ddf2; }
+  .tri .tcub { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--sol); } .tri .torg b { color: var(--liq); } .tri .tcub b { color: var(--gas); }
+
+  .acts h3 { border-bottom: 2px solid var(--nat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--nat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--nat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--nat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--nat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--nat-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2faf8; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--nat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--nat); box-shadow: 0 6px 16px rgba(13,148,136,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión La Materia</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Naturales &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> La materia: la masa y el volumen, los estados sólido, líquido y gaseoso, los cambios de estado, las mezclas y sustancias puras, y los átomos y moléculas</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-la-materia.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender qué es la <strong>materia</strong> y sus propiedades.</li>
+      <li>Diferenciar la <strong>masa</strong> y el <strong>volumen</strong>.</li>
+      <li>Identificar los tres <strong>estados</strong> de la materia.</li>
+      <li>Explicar los <strong>cambios de estado</strong> con el calor y el frío.</li>
+      <li>Distinguir las <strong>mezclas</strong> de las <strong>sustancias puras</strong>.</li>
+      <li>Reconocer los <strong>átomos</strong> y las <strong>moléculas</strong>.</li>
+    </ol>
+
+    <h2>🧪 1. ¿Qué es la materia?</h2>
+    <p>La <strong>materia</strong> es <strong>todo lo que tiene masa y ocupa un lugar</strong> en el espacio. Todo lo
+    que puedes tocar, ver o pesar está hecho de materia: una piedra, el agua, el aire, tu cuerpo… ¡todo!</p>
+    <div class="caja regla">⚖️ <b>Dato clave:</b> la materia tiene dos propiedades generales: la <strong>masa</strong>
+    (la cantidad de materia que tiene un cuerpo) y el <strong>volumen</strong> (el lugar que ocupa).</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> toda la materia está formada por partículas diminutas llamadas
+    <strong>átomos</strong>. Cuando se unen varios átomos forman <strong>moléculas</strong> (el agua es una molécula).</div>
+
+    <h3>🧊💧💨 Mini-demostración: los tres estados</h3>
+    <div class="ilus">
+      <div class="ilus-t">La misma materia puede estar en tres estados</div>
+      <div class="celula">
+        <div class="cn"><span class="c-emoji">🧊</span><b>Sólido</b>Forma y volumen FIJOS (el hielo, una piedra).</div>
+        <div class="cc"><span class="c-emoji">💧</span><b>Líquido</b>Toma la FORMA del recipiente (el agua).</div>
+        <div class="cm"><span class="c-emoji">💨</span><b>Gaseoso</b>NO tiene forma ni volumen fijos (el aire, el vapor).</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ El <strong>agua</strong> puede estar sólida (hielo), líquida (agua) o gaseosa (vapor).</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Materia</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>⚖️ 2. La masa y el volumen</h2>
+    <p>Estas dos propiedades las tiene <strong>toda</strong> la materia:</p>
+    <div class="tri">
+      <div class="tnuc"><b>⚖️ Masa</b>Es la <strong>cantidad de materia</strong> de un cuerpo. Se mide en gramos y kilogramos.</div>
+      <div class="torg"><b>📦 Volumen</b>Es el <strong>lugar que ocupa</strong> un cuerpo. Se mide en litros o cm³.</div>
+    </div>
+    <div class="caja idea">💡 <b>No los confundas:</b> la <strong>masa</strong> es cuánta materia hay; el
+    <strong>volumen</strong> es cuánto espacio ocupa. Un cuerpo puede tener mucha masa en poco volumen (es
+    <strong>denso</strong>).</div>
+
+    <h2>🔄 3. Los cambios de estado</h2>
+    <p>La materia puede <strong>cambiar de estado</strong> con el calor o el frío. Cada cambio tiene su nombre:</p>
+    <table>
+      <tr><th>Cambio</th><th>¿De qué a qué?</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🔥 Fusión</td><td>Sólido → líquido</td><td>El hielo se derrite</td></tr>
+      <tr><td class="k">❄️ Solidificación</td><td>Líquido → sólido</td><td>El agua se congela</td></tr>
+      <tr><td class="k">💨 Evaporación</td><td>Líquido → gas</td><td>El agua hierve</td></tr>
+      <tr><td class="k">💧 Condensación</td><td>Gas → líquido</td><td>El vapor se enfría</td></tr>
+    </table>
+    <div class="caja regla">🌡️ <b>Recuerda:</b> con <strong>calor</strong>, la materia pasa de sólido → líquido →
+    gas. Con <strong>frío</strong>, va al revés: gas → líquido → sólido.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Materia</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🥤 4. Mezclas y sustancias puras</h2>
+    <table>
+      <tr><th>Tipo</th><th>¿Qué es?</th><th>Ejemplos</th></tr>
+      <tr><td class="k">💠 Sustancia pura</td><td>Un solo tipo de materia</td><td>El oro, la sal, el agua pura</td></tr>
+      <tr><td class="k">🥗 Mezcla</td><td>Dos o más sustancias juntas</td><td>Agua con sal, una ensalada, el aire</td></tr>
+    </table>
+    <div class="caja idea">🔎 <b>Dos tipos de mezcla:</b> en una mezcla <strong>homogénea</strong> no se distinguen
+    los componentes (agua con azúcar); en una <strong>heterogénea</strong> sí se ven (una ensalada, agua con arena).
+    Las mezclas se pueden <strong>separar</strong> con filtros, coladores o dejándolas reposar.</div>
+
+    <h2>⚠️ 5. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que el aire no es materia</td><td>El aire tiene masa y ocupa un lugar.</td><td>El aire sí es materia ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que masa y volumen son lo mismo</td><td>La masa es cantidad; el volumen es espacio.</td><td>Son distintos ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que la fusión es de líquido a gas</td><td>La fusión es de sólido a líquido.</td><td>Líquido a gas = evaporación ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que el agua con sal es sustancia pura</td><td>Es una mezcla de agua y sal.</td><td>Es una mezcla ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que un gas tiene forma fija</td><td>El gas no tiene forma ni volumen fijos.</td><td>Forma fija = sólido ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>La materia en tu casa:</b> cuando tu familia hierve agua para el café, el agua
+    (líquido) se convierte en <strong>vapor</strong> (gas): es la evaporación. Cuando pones agua en el congelador y
+    se hace <strong>hielo</strong>, es la solidificación. Y cuando preparas una <strong>fresco</strong> con agua y
+    azúcar, ¡estás haciendo una mezcla! La materia y sus cambios están en todas partes. ♻️ Reutiliza y recicla los
+    materiales (papel, plástico, vidrio) para cuidar el planeta.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Materia</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 6. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>La <span class="linea-resp"></span> es la cantidad de materia de un cuerpo.</li>
+      <li>El <span class="linea-resp"></span> es el lugar que ocupa un cuerpo.</li>
+      <li>El estado <span class="linea-resp"></span> tiene forma y volumen fijos.</li>
+      <li>El estado <span class="linea-resp"></span> toma la forma del recipiente.</li>
+      <li>La <span class="linea-resp"></span> es el paso de sólido a líquido.</li>
+      <li>La <span class="linea-resp"></span> es el paso de líquido a gas.</li>
+      <li>La partícula más pequeña de la materia es el <span class="linea-resp"></span>.</li>
+      <li>Una <span class="linea-resp"></span> junta dos o más sustancias.</li>
+      <li>El agua en estado sólido es el <span class="linea-resp"></span>.</li>
+      <li>El estado <span class="linea-resp"></span> no tiene forma ni volumen fijos.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ La materia es todo lo que tiene masa y ocupa un lugar.</li>
+      <li>____ La masa es el lugar que ocupa un cuerpo.</li>
+      <li>____ El estado sólido tiene forma y volumen fijos.</li>
+      <li>____ El estado líquido toma la forma del recipiente.</li>
+      <li>____ El estado gaseoso tiene forma fija.</li>
+      <li>____ La fusión es el paso de sólido a líquido.</li>
+      <li>____ La evaporación es el paso de líquido a gas.</li>
+      <li>____ El átomo es la partícula más pequeña de la materia.</li>
+      <li>____ El agua con sal es una sustancia pura.</li>
+      <li>____ Al unirse varios átomos forman una molécula.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Materia</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es la materia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> solo las cosas duras</span>
+        <span class="op"><i>b</i> todo lo que tiene masa y ocupa un lugar</span>
+        <span class="op"><i>c</i> solo el agua</span>
+        <span class="op"><i>d</i> solo el aire</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué es la masa?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el lugar que ocupa un cuerpo</span>
+        <span class="op"><i>b</i> la cantidad de materia de un cuerpo</span>
+        <span class="op"><i>c</i> el color de un cuerpo</span>
+        <span class="op"><i>d</i> la temperatura</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué estado tiene forma y volumen fijos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el líquido</span>
+        <span class="op"><i>b</i> el gaseoso</span>
+        <span class="op"><i>c</i> el sólido</span>
+        <span class="op"><i>d</i> ninguno</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué estado toma la forma del recipiente?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el sólido</span>
+        <span class="op"><i>b</i> el líquido</span>
+        <span class="op"><i>c</i> el gaseoso</span>
+        <span class="op"><i>d</i> el átomo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cómo se llama el paso de sólido a líquido?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> evaporación</span>
+        <span class="op"><i>b</i> condensación</span>
+        <span class="op"><i>c</i> fusión</span>
+        <span class="op"><i>d</i> solidificación</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cómo se llama el paso de líquido a gas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> fusión</span>
+        <span class="op"><i>b</i> evaporación</span>
+        <span class="op"><i>c</i> solidificación</span>
+        <span class="op"><i>d</i> condensación</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuál es la partícula más pequeña de la materia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la molécula</span>
+        <span class="op"><i>b</i> la mezcla</span>
+        <span class="op"><i>c</i> el átomo</span>
+        <span class="op"><i>d</i> el volumen</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué es una mezcla?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un solo tipo de materia</span>
+        <span class="op"><i>b</i> la unión de dos o más sustancias</span>
+        <span class="op"><i>c</i> un átomo</span>
+        <span class="op"><i>d</i> un estado de la materia</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál es un ejemplo de sustancia pura?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> una ensalada</span>
+        <span class="op"><i>b</i> el agua con sal</span>
+        <span class="op"><i>c</i> el oro</span>
+        <span class="op"><i>d</i> el aire</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuáles son las dos propiedades generales de la materia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el color y el olor</span>
+        <span class="op"><i>b</i> la masa y el volumen</span>
+        <span class="op"><i>c</i> la dureza y el sabor</span>
+        <span class="op"><i>d</i> el calor y el frío</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Materia</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Materia</td><td>A. Estado que toma la forma del recipiente</td></tr>
+      <tr><td>2. ____ Masa</td><td>B. Paso de líquido a gas</td></tr>
+      <tr><td>3. ____ Volumen</td><td>C. Todo lo que tiene masa y ocupa un lugar</td></tr>
+      <tr><td>4. ____ Átomo</td><td>D. La partícula más pequeña de la materia</td></tr>
+      <tr><td>5. ____ Sólido</td><td>E. Estado con forma y volumen fijos</td></tr>
+      <tr><td>6. ____ Líquido</td><td>F. La cantidad de materia de un cuerpo</td></tr>
+      <tr><td>7. ____ Gaseoso</td><td>G. Unión de dos o más sustancias</td></tr>
+      <tr><td>8. ____ Fusión</td><td>H. El lugar que ocupa un cuerpo</td></tr>
+      <tr><td>9. ____ Evaporación</td><td>I. Paso de sólido a líquido</td></tr>
+      <tr><td>10. ____ Mezcla</td><td>J. Estado sin forma ni volumen fijos</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión La Materia.</b> Ahora sabes de qué está hecho todo lo que te
+      rodea: conoces la masa y el volumen, los tres estados de la materia (sólido, líquido y gaseoso), los cambios
+      de estado con el calor y el frío, las mezclas y sustancias puras, y los átomos y moléculas. ¡Sigue observando
+      la materia a tu alrededor! 🧪🔬
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Naturales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Clasificó objetos de su casa según su estado (sólido, líquido o gaseoso).</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Materia</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. masa &nbsp; 2. volumen &nbsp; 3. sólido &nbsp; 4. líquido &nbsp; 5. fusión &nbsp; 6. evaporación &nbsp; 7. átomo &nbsp; 8. mezcla &nbsp; 9. hielo &nbsp; 10. gaseoso</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4V, 5F, 6V, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2b, 3c, 4b, 5c, 6b, 7c, 8b, 9c, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2F, 3H, 4D, 5E, 6A, 7J, 8I, 9B, 10G</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión La Materia» (Educación Básica), del bloque «La materia y la energía» de la programación de Ciencias Naturales
+      del DCNB. Puede utilizarse como guía de estudio impresa o digital antes de la evaluación final. Incluye todos los
+      conceptos evaluados en la plataforma (completar, V/F, selección múltiple, pareados) y puede complementarse con
+      experimentos sencillos y seguros: observar cómo se derrite un hielo (fusión), cómo el agua hervida se evapora, cómo el
+      vapor empaña un vidrio frío (condensación), clasificar objetos del aula según su estado, y preparar mezclas (agua con
+      sal, agua con arena) y luego separarlas con un colador o un filtro. Etapa 1 de la Ruta de la Materia. La misión
+      interactiva (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de resolver
+      esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Materia · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

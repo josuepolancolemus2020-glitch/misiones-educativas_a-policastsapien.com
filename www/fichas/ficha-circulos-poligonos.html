@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Área de Círculos y Polígonos</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=radio, naranja=diámetro, verde=apotema
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --rad: #1e40af; --dia: #c2410c; --apo: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .ilus svg { max-width: 100%; height: auto; }
+  .ilus-par { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  /* Fórmulas destacadas */
+  .formula { display: inline-block; font-family: 'Cambria Math', Georgia, serif; font-size: 14pt; font-weight: 800; background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 5px 14px; margin: 3px 4px; }
+  .formula.destacada { background: var(--mat-claro); color: var(--mat-osc); }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .lineal { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .cuadrada { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .angular { background: #ede9fe; border: 1px solid #d3c9f5; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .lineal b { color: var(--rad); } .tri .cuadrada b { color: var(--dia); } .tri .angular b { color: #6b21a8; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .formula
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Área de Círculos y Polígonos</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Área del círculo (A = π·r²), sector circular, y polígonos regulares con centro, apotema y A = (P·a)/2</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-circulos-poligonos.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Calcular el <strong>área del círculo</strong> con la fórmula A = π · r², identificando radio, diámetro y el número Pi.</li>
+      <li>Reconocer el <strong>sector circular</strong> («la rebanada») y las fórmulas de su área y su perímetro.</li>
+      <li>Identificar el <strong>centro</strong> y la <strong>apotema</strong> de un polígono regular.</li>
+      <li>Calcular el área de cualquier polígono regular con la fórmula <strong>A = (P · a) / 2</strong>.</li>
+      <li>Hallar el <strong>perímetro</strong> de un polígono regular multiplicando el lado por el número de lados.</li>
+      <li>Distinguir las <strong>unidades lineales</strong> (perímetro: cm, m) de las <strong>unidades cuadradas</strong> (área: cm², m²).</li>
+    </ol>
+
+    <h2>🛑 1. El área del círculo</h2>
+    <p>El <strong>área</strong> es la medida de la superficie que cubre una figura. Para el círculo se calcula
+    con el número <strong>Pi (π ≈ 3.1416)</strong> y el <strong>radio</strong>: la distancia del centro a
+    cualquier punto del borde.</p>
+    <div class="caja regla">⚡ <b>La fórmula de oro:</b> <span class="formula destacada">A = π · r²</span>
+    &nbsp;Primero eleva el radio al cuadrado (r × r) y luego multiplica por Pi.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> el <strong>diámetro</strong> cruza todo el círculo pasando por el
+    centro: mide exactamente <strong>dos radios (d = 2r)</strong>. Si te dan el diámetro, divídelo entre 2 antes
+    de usar la fórmula.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>El área lleva cuadrado dos veces</b>»: el radio va
+    <strong>al cuadrado</strong> (r²) y el resultado va en unidades <strong>cuadradas</strong> (cm², m²).</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">Radio y diámetro + un cálculo completo (con π ≈ 3 para estimar)</div>
+      <div class="ilus-par">
+        <svg viewBox="0 0 200 150" width="200" height="150" role="img" aria-label="Círculo con radio y diámetro">
+          <circle cx="100" cy="78" r="60" fill="#e8f1fb" stroke="#1565c0" stroke-width="2.5"/>
+          <line x1="40" y1="78" x2="160" y2="78" stroke="#c2410c" stroke-width="3" stroke-linecap="round"/>
+          <line x1="100" y1="78" x2="143" y2="36" stroke="#1e40af" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="100" cy="78" r="4" fill="#1a2733"/>
+          <text x="128" y="48" font-family="Arial" font-size="11" font-weight="bold" fill="#1e40af">r</text>
+          <text x="62" y="93" font-family="Arial" font-size="11" font-weight="bold" fill="#c2410c">d = 2r</text>
+          <text x="100" y="145" text-anchor="middle" font-family="Arial" font-size="9" fill="#5b6773">radio azul · diámetro naranja</text>
+        </svg>
+        <div style="text-align:left;align-self:center;font-size:10.5pt;">
+          <p style="margin-bottom:4px;"><strong>Ejemplo:</strong> radio r = 3 cm, con π ≈ 3</p>
+          <p style="margin-bottom:4px;">1.º &nbsp;r² = 3 × 3 = <strong>9</strong></p>
+          <p style="margin-bottom:4px;">2.º &nbsp;A = 3 × 9 = <strong style="color:var(--mat-osc);">27 cm²</strong></p>
+          <p style="font-size:9pt;color:var(--gris);">Con π = 3.1416 sería 28.27 cm²: la estimación se acerca.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Círculos y Polígonos</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🍕 2. El sector circular: una porción del círculo</h2>
+    <p>Un <strong>sector circular</strong> es la parte del círculo limitada por <strong>dos radios y un
+    arco</strong> — como una rebanada de pizza o de pastel. Su tamaño depende del <strong>ángulo central
+    (α)</strong> que se abre entre los dos radios.</p>
+    <table>
+      <tr><th>Medida del sector</th><th>Fórmula</th><th>La clave</th></tr>
+      <tr><td class="k">📐 Área</td><td><span class="formula">A = (π · r² · α) / 360°</span></td><td>Es el área del círculo completo, repartida según el ángulo.</td></tr>
+      <tr><td class="k">📏 Perímetro</td><td><span class="formula">P = L<small>arco</small> + 2r</small></span></td><td>El arco curvo MÁS los dos radios rectos de los lados.</td></tr>
+    </table>
+
+    <h2>⬢ 3. Polígonos regulares: centro y apotema</h2>
+    <p>Un <strong>polígono regular</strong> (pentágono, hexágono, octágono…) tiene <strong>todos sus lados y
+    ángulos iguales</strong>. Para su área necesitas dos elementos:</p>
+    <ul>
+      <li><strong>Centro:</strong> el punto interior que está a la misma distancia de todos los vértices.</li>
+      <li><strong>Apotema (a):</strong> el segmento que va del centro al <strong>punto medio de un lado</strong>, formando un ángulo de 90°.</li>
+    </ul>
+    <div class="caja regla">⚡ <b>Fórmula del área:</b> <span class="formula destacada">A = (P · a) / 2</span>
+    &nbsp;Perímetro por apotema, dividido entre 2. Sirve para TODO polígono regular.</div>
+
+    <div class="ilus">
+      <div class="ilus-t">El hexágono regular: centro, apotema (verde, 90° con el lado) y camino al vértice</div>
+      <svg viewBox="0 0 340 155" width="340" height="155" role="img" aria-label="Hexágono regular con centro y apotema">
+        <polygon points="230,78 200,26 140,26 110,78 140,130 200,130" fill="#eef7ee" stroke="#1565c0" stroke-width="2.5"/>
+        <line x1="170" y1="78" x2="170" y2="130" stroke="#15803d" stroke-width="3" stroke-linecap="round"/>
+        <rect x="163" y="116" width="7" height="7" fill="none" stroke="#15803d" stroke-width="1.4"/>
+        <line x1="170" y1="78" x2="230" y2="78" stroke="#5b6773" stroke-width="2" stroke-dasharray="6 4"/>
+        <circle cx="170" cy="78" r="4.5" fill="#c2410c"/>
+        <text x="176" y="70" font-family="Arial" font-size="9.5" font-weight="bold" fill="#c2410c">centro</text>
+        <text x="128" y="108" font-family="Arial" font-size="10" font-weight="bold" fill="#15803d">apotema (a)</text>
+        <text x="238" y="82" font-family="Arial" font-size="9" fill="#5b6773">al vértice</text>
+        <text x="272" y="40" font-family="Arial" font-size="9" fill="#5b6773">6 lados</text>
+        <text x="272" y="52" font-family="Arial" font-size="9" fill="#5b6773">iguales</text>
+      </svg>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ La <strong style="color:var(--apo);">apotema</strong> cae al punto MEDIO del lado (con su cuadradito de 90°); el camino al vértice NO es la apotema.</p>
+    </div>
+
+    <h3>🪜 Los 4 pasos para el área de un polígono regular</h3>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Halla el perímetro</b>Lado × número de lados (pentágono: l × 5).</div>
+      <div><span class="pn">2</span><b>Identifica la apotema</b>Del centro al punto medio del lado.</div>
+      <div><span class="pn">3</span><b>Multiplica P × a</b>Perímetro por apotema.</div>
+      <div><span class="pn">4</span><b>Divide entre 2</b>Y escribe el resultado en unidades cuadradas.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Círculos y Polígonos</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📏 4. ¿Con qué unidades se mide?</h2>
+    <div class="tri">
+      <div class="lineal"><b>🔵 Perímetro → unidades LINEALES</b>cm, m, km. Mide el contorno: la cerca del terreno.</div>
+      <div class="cuadrada"><b>🟠 Área → unidades CUADRADAS</b>cm², m², km². Mide la superficie: la alfombra que cubre el piso.</div>
+      <div class="angular"><b>⚖️ Ángulo central → grados (°)</b>La abertura del sector. El círculo completo tiene 360°.</div>
+    </div>
+
+    <h3>📋 Casos comunes</h3>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">Radio si d = 10 cm</td><td>10 ÷ 2</td><td>r = 5 cm</td></tr>
+      <tr><td class="k">Diámetro si r = 4 cm</td><td>4 × 2</td><td>d = 8 cm</td></tr>
+      <tr><td class="k">Área del círculo, r = 3 (π ≈ 3)</td><td>3² = 9 → 3 × 9</td><td>≈ 27 cm²</td></tr>
+      <tr><td class="k">Perímetro pentágono, lado 4 cm</td><td>4 × 5</td><td>20 cm</td></tr>
+      <tr><td class="k">Área hexágono, P = 24, a = 3.5</td><td>(24 × 3.5) ÷ 2</td><td>42 cm²</td></tr>
+      <tr><td class="k">Perímetro sector: arco 5, r = 3</td><td>5 + 3 + 3</td><td>11 cm</td></tr>
+    </table>
+
+    <h2>⚠️ 5. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir área con perímetro</td><td>«El área del pentágono es lado × 5». Eso mide el contorno, no la superficie.</td><td>Perímetro = contorno · Área = (P · a)/2 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Usar el diámetro como radio</td><td>«d = 10, entonces A = π · 10²». La fórmula pide el RADIO.</td><td>r = 10 ÷ 2 = 5 → A = π · 5² ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar elevar al cuadrado</td><td>«A = π · r» solo multiplica una vez. Falta r × r.</td><td>A = π · r² (primero r², luego × π) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir apotema con el camino al vértice</td><td>La apotema NO va del centro a la esquina: va al punto MEDIO del lado.</td><td>Apotema ⟂ lado (90°) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar dividir entre 2</td><td>«A = P · a» da el doble del área real del polígono.</td><td>A = (P · a) ÷ 2 ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> la geometría nos rodea. La señal de <strong>ALTO</strong> de
+    nuestras calles es un <strong>octágono regular</strong> (8 lados iguales), la <strong>tortilla de maíz</strong>
+    es un círculo listo para calcular su área, y en el campo: si vas a <strong>cercar</strong> un terreno usas el
+    perímetro, pero si vas a <strong>sembrarlo completo</strong> usas el área. ¡Dos medidas, dos trabajos!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Círculos y Polígonos</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 6. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>El área de un círculo es <span class="linea-resp"></span> por el radio al cuadrado.</li>
+      <li>La <span class="linea-resp"></span> es la distancia del centro al punto medio del lado del polígono.</li>
+      <li>El <span class="linea-resp"></span> equivale a dos radios.</li>
+      <li>El <span class="linea-resp"></span> del sector circular incluye el arco y dos radios.</li>
+      <li>Un <span class="linea-resp"></span> circular está formado por un arco y dos radios.</li>
+      <li>El área se mide siempre en unidades <span class="linea-resp"></span>.</li>
+      <li>Un hexágono regular tiene <span class="linea-resp"></span> lados iguales.</li>
+      <li>El número Pi (π) equivale aproximadamente a <span class="linea-resp"></span>.</li>
+      <li>El radio es la distancia del <span class="linea-resp"></span> del círculo hasta su borde.</li>
+      <li>La apotema forma con el lado un ángulo de <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El área de un círculo se calcula multiplicando Pi por su radio al cuadrado.</li>
+      <li>____ La apotema es el segmento más largo de un polígono.</li>
+      <li>____ El diámetro equivale exactamente a dos radios.</li>
+      <li>____ Un sector circular está delimitado por tres apotemas.</li>
+      <li>____ El perímetro se expresa en unidades cuadradas (cm²).</li>
+      <li>____ La apotema de un polígono regular forma un ángulo de 90° con el lado.</li>
+      <li>____ El perímetro de un sector circular es la suma de su arco y dos radios.</li>
+      <li>____ Un octágono regular tiene 6 lados.</li>
+      <li>____ Para calcular el perímetro de un pentágono regular, se multiplica el lado por 5.</li>
+      <li>____ El centro del polígono está a la misma distancia de todos sus vértices.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Círculos y Polígonos</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuál es la fórmula para calcular el área de un círculo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> A = π · d</span>
+        <span class="op"><i>b</i> A = π · r²</span>
+        <span class="op"><i>c</i> A = (P · a) / 2</span>
+        <span class="op"><i>d</i> A = 2 · π · r</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>Si el diámetro de un círculo es 10 cm, ¿cuál es su radio?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 5 cm</span>
+        <span class="op"><i>b</i> 10 cm</span>
+        <span class="op"><i>c</i> 20 cm</span>
+        <span class="op"><i>d</i> 3.14 cm</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué es la apotema de un polígono regular?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el lado más largo</span>
+        <span class="op"><i>b</i> la distancia de vértice a vértice</span>
+        <span class="op full"><i>c</i> la distancia del centro al punto medio del lado</span>
+        <span class="op"><i>d</i> la suma de todos los lados</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>Para encontrar el área de un hexágono regular usamos:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> A = l · l</span>
+        <span class="op"><i>b</i> A = (b · h) / 2</span>
+        <span class="op"><i>c</i> A = π · r²</span>
+        <span class="op"><i>d</i> A = (P · a) / 2</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Qué elementos delimitan un sector circular?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> dos radios y un arco</span>
+        <span class="op"><i>b</i> tres lados rectos</span>
+        <span class="op"><i>c</i> un diámetro y una cuerda</span>
+        <span class="op"><i>d</i> dos apotemas</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>Si el radio de un círculo es 3 cm y consideramos π ≈ 3, su área aproximada es:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 9 cm²</span>
+        <span class="op"><i>b</i> 18 cm²</span>
+        <span class="op"><i>c</i> 27 cm²</span>
+        <span class="op"><i>d</i> 12 cm²</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cómo se calcula el perímetro de un pentágono regular si conoces un lado (l)?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> P = l + 5</span>
+        <span class="op"><i>b</i> P = 5 · l</span>
+        <span class="op"><i>c</i> P = l²</span>
+        <span class="op"><i>d</i> P = (l · 5) / 2</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>Al calcular áreas, ¿en qué unidades se expresa el resultado?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> unidades cúbicas (cm³)</span>
+        <span class="op"><i>b</i> unidades lineales (cm)</span>
+        <span class="op"><i>c</i> grados (°)</span>
+        <span class="op"><i>d</i> unidades cuadradas (cm²)</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>El número Pi (π) equivale aproximadamente a:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 2.14</span>
+        <span class="op"><i>b</i> 3.1416</span>
+        <span class="op"><i>c</i> 1.41</span>
+        <span class="op"><i>d</i> 9.81</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Si el radio de un círculo es 4 cm, su diámetro mide:</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 2 cm</span>
+        <span class="op"><i>b</i> 8 cm</span>
+        <span class="op"><i>c</i> 16 cm</span>
+        <span class="op"><i>d</i> 12 cm</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Círculos y Polígonos</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Área del círculo</td><td>A. Se calcula con la fórmula A = (P · a) / 2</td></tr>
+      <tr><td>2. ____ Radio</td><td>B. Número irracional, aproximadamente 3.1416</td></tr>
+      <tr><td>3. ____ Diámetro</td><td>C. Punto a la misma distancia de todos los vértices</td></tr>
+      <tr><td>4. ____ Pi (π)</td><td>D. Figura con todos sus lados y ángulos iguales</td></tr>
+      <tr><td>5. ____ Sector circular</td><td>E. Cruza por el centro: mide el doble del radio</td></tr>
+      <tr><td>6. ____ Polígono regular</td><td>F. Se calcula con la fórmula A = π · r²</td></tr>
+      <tr><td>7. ____ Centro del polígono</td><td>G. Del centro del círculo a cualquier punto del borde</td></tr>
+      <tr><td>8. ____ Apotema</td><td>H. «Rebanada» limitada por dos radios y un arco</td></tr>
+      <tr><td>9. ____ Área de polígonos</td><td>I. Medida del contorno: lado × número de lados</td></tr>
+      <tr><td>10. ____ Perímetro</td><td>J. Del centro al punto medio del lado, formando 90°</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Área de Círculos y Polígonos.</b> Ahora calculas el área del
+      círculo con π · r², reconoces la rebanada del sector circular, y dominas el dúo centro-apotema para hallar
+      el área de cualquier polígono regular con (P · a) / 2. Sabes cuándo usar la cerca (perímetro) y cuándo la
+      alfombra (área). ¡De la tortilla a la señal de ALTO, la geometría ya es tuya! 🛑✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Calculó áreas y perímetros de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Círculos y Polígonos</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Pi (π) &nbsp; 2. apotema &nbsp; 3. diámetro &nbsp; 4. perímetro &nbsp; 5. sector &nbsp; 6. cuadradas &nbsp; 7. seis (6) &nbsp; 8. 3.1416 &nbsp; 9. centro &nbsp; 10. 90°</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5F, 6V, 7V, 8F, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2a, 3c, 4d, 5a, 6c, 7b, 8d, 9b, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1F, 2G, 3E, 4B, 5H, 6D, 7C, 8J, 9A, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Área de Círculos y Polígonos». Puede utilizarse como guía de estudio impresa o digital antes de la evaluación
+      final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple, pareados) y puede
+      complementarse con cálculos de áreas con figuras del aula, el trazado de hexágonos con compás y la comparación
+      cerca/alfombra (perímetro/área) en el terreno de la escuela. Esta misión cierra la Ruta de la Forma junto con
+      «Ángulos y Bisectriz» (etapa 1). La misión interactiva (código QR de la portada) permite al estudiante practicar
+      con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Área de Círculos y Polígonos · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

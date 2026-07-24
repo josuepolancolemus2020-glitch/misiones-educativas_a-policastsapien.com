@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Variables: las Cajitas de Memoria</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: PROGRAMACIÓN = CIAN TEC (#0e7490)
+     · Colores semánticos: cian=variables/código, ámbar=vida diaria, gris=errores
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --tec: #0e7490; --tec-osc: #155e75; --tec-claro: #ecfeff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cffafe;
+    --amb: #b45309; --oro: #b45309; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eefafc; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--tec-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--tec); background: var(--tec-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--tec-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--tec-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--tec); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--tec-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--tec-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--tec-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--tec); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4fcfd; }
+  td.k { font-weight: 700; color: var(--tec-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #f8feff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--tec-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (GUARDA / SUMA-RESTA / MUESTRA) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #d5f4f9; } .celula .cm b { color: var(--tec); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--oro); }
+  .celula .cn { background: #eceae8; } .celula .cn b { color: var(--pie); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #d5f4f9; border: 1px solid #a9e6ef; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--tec); } .tri .torg b { color: var(--oro); }
+
+  .prog-ej { font-family: 'Courier New', monospace; font-weight: 700; font-size: 9.5pt; background: var(--tec-claro); border: 1px solid var(--linea); border-radius: 8px; padding: 8px 12px; margin: 8px 0; text-align: left; break-inside: avoid; }
+
+  .acts h3 { border-bottom: 2px solid var(--tec-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--tec); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--tec); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--tec-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--tec-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--tec-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2fbfd; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--tec-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--tec); box-shadow: 0 6px 16px rgba(14,116,144,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div, .prog-ej
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📦 Ficha Didáctica: Misión Variables: las Cajitas de Memoria</div>
+        <div class="f-meta"><b>Asignatura:</b> Programación &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Las variables como cajitas con nombre y valor: cómo GUARDA reemplaza, SUMA y RESTA actualizan y MUESTRA lee; contadores y acumuladores; trazar la tabla de valores paso a paso (el marcador del partido, la alcancía, la venta de la pulpería)</div>
+      </div>
+      <div class="fh-qr">
+        <img src="img/qr-mision-variables-cajitas.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Explicar qué es una <strong>variable</strong>: una cajita con <strong>nombre</strong> que guarda un <strong>valor</strong>.</li>
+      <li>Comprender que en una cajita cabe <strong>un solo valor a la vez</strong>.</li>
+      <li>Diferenciar <strong>GUARDA</strong> (reemplaza) de <strong>SUMA</strong> y <strong>RESTA</strong> (actualizan) y de <strong>MUESTRA</strong> (solo lee).</li>
+      <li>Distinguir un <strong>contador</strong> (sube de 1 en 1) de un <strong>acumulador</strong> (suma cantidades distintas).</li>
+      <li><strong>Trazar</strong> la tabla de valores de una variable paso a paso para predecir el valor final.</li>
+      <li>Encontrar el <strong>bug</strong> que deja una cajita con un valor equivocado y corregirlo.</li>
+    </ol>
+
+    <h2>📦 1. ¿Qué es una variable?</h2>
+    <p>Una <strong>variable</strong> es como una <strong>cajita con nombre</strong> que guarda <strong>un valor</strong>.
+    El <strong>nombre</strong> es el rótulo de la cajita (como <em>puntos</em>, <em>dinero</em> o <em>goles</em>) y dice
+    qué guarda; el <strong>valor</strong> es lo que hay adentro <strong>en este momento</strong>. En una cajita solo
+    cabe <strong>UN valor a la vez</strong>: si metes otro, el anterior se va. Por eso el valor de una variable
+    <strong>puede cambiar</strong> mientras corre el programa: hoy <em>puntos</em> vale 5, luego 6, luego 7…</p>
+    <div class="caja truco">💡 <b>Truco:</b> imagina una <strong>estantería con cajitas rotuladas</strong>. Cada cajita
+    tiene un nombre pegado y adentro guarda un solo número. Programar es ir <strong>cambiando</strong> con cuidado lo
+    que hay dentro de esas cajitas.</div>
+
+    <h3>💾➕👀 Mini-demostración: las instrucciones de la cajita</h3>
+    <div class="ilus">
+      <div class="ilus-t">Unas cambian el valor… y otra solo lo lee</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">💾</span><b>GUARDA (reemplaza)</b>GUARDA 5 EN puntos: mete 5 y borra lo que había.</div>
+        <div class="cc"><span class="c-emoji">➕➖</span><b>SUMA / RESTA (actualiza)</b>SUMA 2 A puntos: de 5 pasa a 7. RESTA usa el valor actual.</div>
+        <div class="cn"><span class="c-emoji">👀</span><b>MUESTRA (lee)</b>MUESTRA puntos: enseña el valor sin cambiar la cajita.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">📦 En una cajita cabe <strong>un</strong> valor: GUARDA lo <strong>reemplaza</strong>, SUMA/RESTA lo <strong>cambian</strong>, MUESTRA solo lo <strong>lee</strong>.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Variables: las Cajitas de Memoria</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🔧 2. GUARDA, SUMA, RESTA y MUESTRA</h2>
+    <p>Con solo cuatro instrucciones manejamos cualquier cajita. Lo más importante es que <strong>GUARDA no suma:
+    reemplaza</strong>. Si <em>goles</em> tenía 8 y ejecutas <strong>GUARDA 3 EN goles</strong>, ya no vale 11: vale
+    <strong>3</strong>, porque el 8 se borró. En cambio <strong>SUMA</strong> y <strong>RESTA</strong> usan el valor que
+    hay <strong>en ese momento</strong>, y <strong>MUESTRA</strong> deja la cajita exactamente igual.</p>
+    <div class="tri">
+      <div class="tnuc"><b>✏️ Cambian la cajita</b>GUARDA mete un valor nuevo y borra el anterior; SUMA lo aumenta; RESTA le quita cantidad. Después de ellas, el valor es distinto.</div>
+      <div class="torg"><b>👀 Solo lee</b>MUESTRA enseña el valor pero NO lo cambia: la cajita queda igual antes y después de mirarla.</div>
+    </div>
+
+    <h3>📋 Las 4 instrucciones de las cajitas</h3>
+    <table>
+      <tr><th>Instrucción</th><th>¿Qué hace?</th><th>Ejemplo</th></tr>
+      <tr><td class="k">💾 GUARDA</td><td>Mete un valor nuevo y borra el que había</td><td>GUARDA 5 EN puntos → puntos = 5</td></tr>
+      <tr><td class="k">➕ SUMA</td><td>Aumenta usando el valor actual</td><td>SUMA 2 A puntos → de 5 pasa a 7</td></tr>
+      <tr><td class="k">➖ RESTA</td><td>Quita cantidad al valor actual</td><td>RESTA 3 A dinero → de 10 pasa a 7</td></tr>
+      <tr><td class="k">👀 MUESTRA</td><td>Lee el valor sin cambiarlo</td><td>MUESTRA puntos → enseña 7, sigue 7</td></tr>
+    </table>
+    <div class="caja regla">1️⃣🧺 <b>Contadores y acumuladores:</b> un <strong>contador</strong> sube de 1 en 1
+    (la asistencia del aula, los goles del partido: SUMA 1 cada vez). Un <strong>acumulador</strong> suma cantidades
+    distintas (la venta de la pulpería: SUMA 12, luego SUMA 8, luego SUMA 5). Ambos suelen <strong>empezar con
+    GUARDA 0</strong>.</div>
+
+    <h3>📊 Ejemplo de traza (síguela con el dedo)</h3>
+    <div class="prog-ej">Programa: llevar el marcador de goles ⚽<br>
+    1. GUARDA 0 EN goles &nbsp; 2. SUMA 1 A goles &nbsp; 3. SUMA 1 A goles &nbsp; 4. MUESTRA goles<br>
+    Tabla de valores de goles: &nbsp; 0 &nbsp;→&nbsp; 1 &nbsp;→&nbsp; 2 &nbsp;→&nbsp; 2<br>
+    → Es un CONTADOR que terminó en 2. MUESTRA solo lo leyó: ¡no lo cambió! ✅</div>
+    <div class="caja idea">🐛 <b>Ojo al bug:</b> si al final la cajita tiene un valor raro, <strong>traza</strong> el
+    programa línea por línea. El error casi siempre es confundir GUARDA con SUMA, u olvidar el <strong>valor inicial</strong>.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Variables: las Cajitas de Memoria</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🔍 3. Trazar valores y errores comunes</h2>
+    <p>Un buen programador <strong>traza</strong> la cajita: anota su valor <strong>después de cada instrucción</strong>
+    en una tabla y así predice dónde termina y descubre en qué línea se torció el programa. Las variables aparecen en
+    todo lo que lleva una cuenta que cambia: el <strong>marcador</strong> del partido (contador), la
+    <strong>alcancía</strong> y la <strong>venta de la pulpería</strong> (acumuladores).</p>
+
+    <h3>⚠️ Errores comunes — ¡no caigas en ellos!</h3>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que GUARDA suma</td><td>GUARDA borra el valor anterior y pone el nuevo.</td><td>Usar SUMA para aumentar ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que MUESTRA cambia la cajita</td><td>MUESTRA solo lee; el valor queda igual.</td><td>Recordar que MUESTRA no altera nada ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Cambiar el orden de las instrucciones</td><td>SUMA usa el valor que hay en ese momento.</td><td>Ejecutar en orden, de la 1 a la última ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar el valor inicial</td><td>La cajita arranca con basura y la cuenta falla.</td><td>Empezar el contador con GUARDA 0 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">No trazar la tabla</td><td>Se adivina el valor final y sale mal.</td><td>Anotar el valor tras cada línea ✔</td></tr>
+    </table>
+
+    <h2>🎲 4. Actividades desconectadas (sin computadora)</h2>
+    <div class="caja regla">📦🫘 <b>La estantería de frijoles:</b> en equipos. Consigan <strong>cajitas de cartón</strong>
+    (de fósforos o de medicina) y rotúlenlas con un nombre de variable: <em>puntos</em>, <em>dinero</em>,
+    <em>goles</em>. Usen <strong>frijoles reales</strong> como valor. Un alumno «lee» instrucciones en voz alta y el
+    equipo las ejecuta con los frijoles: <strong>GUARDA 5 EN puntos</strong> = vaciar la cajita y poner 5 frijoles;
+    <strong>SUMA 2 A puntos</strong> = agregar 2 frijoles a los que ya hay; <strong>RESTA 3 A puntos</strong> = quitar
+    3. Al final <strong>cuentan los frijoles</strong> y comprueban el valor. ¡Verán con las manos que GUARDA borra y
+    SUMA/RESTA solo cambian!</div>
+    <div class="caja regla">⚽ <b>El marcador humano del partido del recreo:</b> dos alumnos son las cajitas
+    <em>golesA</em> y <em>golesB</em> y sostienen un cartel con su número (empiezan en 0). Cada vez que cae un gol,
+    ese alumno hace <strong>SUMA 1</strong> y cambia su cartel; cuando el árbitro pide el marcador, alguien hace
+    <strong>MUESTRA</strong> y lo lee <strong>en voz alta sin cambiar los carteles</strong>. Comprueban que el marcador
+    es un <strong>contador</strong> que sube de 1 en 1.</div>
+    <div class="caja hn">🇭🇳 <b>Las variables en tu vida:</b> cuando llevas los goles del partido, cuentas el dinero de la
+    alcancía o sumas la venta de la pulpería, ya usas variables: cajitas con nombre cuyo valor va cambiando. Quien
+    aprende a trazarlas paso a paso tiene lo más difícil de la programación… ¡aun sin tocar una computadora! 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Variables: las Cajitas de Memoria</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 5. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Una <span class="linea-resp"></span> es una cajita con nombre que guarda un valor.</li>
+      <li>La instrucción <span class="linea-resp"></span> mete un valor nuevo y borra el anterior.</li>
+      <li>SUMA y RESTA calculan usando el valor <span class="linea-resp"></span> de la cajita.</li>
+      <li>La instrucción <span class="linea-resp"></span> lee el valor sin cambiarlo.</li>
+      <li>Un <span class="linea-resp"></span> sube de 1 en 1, como la asistencia del aula.</li>
+      <li>Un <span class="linea-resp"></span> suma cantidades distintas, como la venta de la pulpería.</li>
+      <li>En una cajita cabe <span class="linea-resp"></span> valor a la vez.</li>
+      <li>El <span class="linea-resp"></span> de la variable es su rótulo (puntos, dinero, goles).</li>
+      <li>GUARDA 8 EN goles y luego GUARDA 3 EN goles deja goles en <span class="linea-resp"></span>.</li>
+      <li>Para trazar una variable anotamos su valor después de cada <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Una variable es una cajita con nombre que guarda un valor.</li>
+      <li>____ GUARDA suma el valor nuevo al que ya había en la cajita.</li>
+      <li>____ SUMA usa el valor actual de la cajita para aumentarlo.</li>
+      <li>____ MUESTRA cambia el valor de la cajita.</li>
+      <li>____ En una cajita solo cabe un valor a la vez.</li>
+      <li>____ Un contador sube de 1 en 1.</li>
+      <li>____ Un acumulador siempre suma la misma cantidad.</li>
+      <li>____ RESTA quita cantidad al valor actual de la cajita.</li>
+      <li>____ Si puntos valía 8 y ejecutas GUARDA 5 EN puntos, queda en 13.</li>
+      <li>____ Un buen nombre de variable dice qué guarda la cajita.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Variables: las Cajitas de Memoria</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es una variable?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un dibujo de una caja</span>
+        <span class="op"><i>b</i> una cajita con nombre que guarda un valor</span>
+        <span class="op"><i>c</i> un número que nunca cambia</span>
+        <span class="op"><i>d</i> un error del programa</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué hace la instrucción GUARDA?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> mete un valor y borra el anterior</span>
+        <span class="op"><i>b</i> lee el valor sin cambiarlo</span>
+        <span class="op"><i>c</i> siempre sube de 1 en 1</span>
+        <span class="op"><i>d</i> borra la cajita para siempre</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>goles vale 8. Ejecutas GUARDA 3 EN goles. ¿Cuánto vale ahora?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 11</span>
+        <span class="op"><i>b</i> 8</span>
+        <span class="op"><i>c</i> 3</span>
+        <span class="op"><i>d</i> 5</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué instrucción lee el valor SIN cambiarlo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> GUARDA</span>
+        <span class="op"><i>b</i> SUMA</span>
+        <span class="op"><i>c</i> RESTA</span>
+        <span class="op"><i>d</i> MUESTRA</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>GUARDA 10 EN dinero · RESTA 4 A dinero. ¿Cuánto queda?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 14</span>
+        <span class="op"><i>b</i> 6</span>
+        <span class="op"><i>c</i> 10</span>
+        <span class="op"><i>d</i> 4</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>La asistencia del aula que sube de 1 en 1 es un…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> acumulador</span>
+        <span class="op"><i>b</i> contador</span>
+        <span class="op"><i>c</i> bug</span>
+        <span class="op"><i>d</i> nombre</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>La venta de la pulpería (L 12, luego L 8, luego L 5) es un…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> contador</span>
+        <span class="op"><i>b</i> marcador</span>
+        <span class="op"><i>c</i> acumulador</span>
+        <span class="op"><i>d</i> error</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cuántos valores guarda una cajita a la vez?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> uno</span>
+        <span class="op"><i>b</i> dos</span>
+        <span class="op"><i>c</i> diez</span>
+        <span class="op"><i>d</i> todos los que quiera</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>GUARDA 5 EN puntos · SUMA 2 A puntos. ¿Cuánto vale puntos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 5</span>
+        <span class="op"><i>b</i> 2</span>
+        <span class="op"><i>c</i> 7</span>
+        <span class="op"><i>d</i> 3</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Un buen nombre de variable para el dinero de la alcancía es…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> x7</span>
+        <span class="op"><i>b</i> dinero</span>
+        <span class="op"><i>c</i> GUARDA</span>
+        <span class="op"><i>d</i> MUESTRA</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Variables: las Cajitas de Memoria</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Variable</td><td>A. Variable que sube de 1 en 1, como la asistencia</td></tr>
+      <tr><td>2. ____ GUARDA</td><td>B. Quita cantidad al valor actual de la cajita</td></tr>
+      <tr><td>3. ____ SUMA</td><td>C. Mete un valor nuevo y borra el anterior</td></tr>
+      <tr><td>4. ____ RESTA</td><td>D. Suma cantidades distintas, como la venta de la pulpería</td></tr>
+      <tr><td>5. ____ MUESTRA</td><td>E. El rótulo de la cajita: dice qué guarda</td></tr>
+      <tr><td>6. ____ Contador</td><td>F. Cajita con nombre que guarda un valor</td></tr>
+      <tr><td>7. ____ Acumulador</td><td>G. Error que deja la cajita en un valor equivocado</td></tr>
+      <tr><td>8. ____ Nombre</td><td>H. Lo que la cajita guarda en este momento</td></tr>
+      <tr><td>9. ____ Valor</td><td>I. Aumenta el valor usando el que ya estaba</td></tr>
+      <tr><td>10. ____ Bug de variable</td><td>J. Lee el valor de la cajita sin cambiarlo</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Variables: las Cajitas de Memoria.</b> Ahora sabes que una variable
+      es una cajita con nombre y valor, que GUARDA reemplaza mientras SUMA y RESTA actualizan y MUESTRA solo lee, y
+      puedes trazar la tabla de valores de un contador o un acumulador y atrapar sus bugs. ¡Vas por la etapa 5 de la
+      Ruta del Código! 📦💻
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Programación.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Trazó en su cuaderno la tabla de valores de un programa de 4 instrucciones y armó la «estantería de frijoles» en equipo.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Variables: las Cajitas de Memoria</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. variable &nbsp; 2. GUARDA &nbsp; 3. actual &nbsp; 4. MUESTRA &nbsp; 5. contador &nbsp; 6. acumulador &nbsp; 7. un &nbsp; 8. nombre &nbsp; 9. 3 &nbsp; 10. instrucción</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7F, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2a, 3c, 4d, 5b, 6b, 7c, 8a, 9c, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1F, 2C, 3I, 4B, 5J, 6A, 7D, 8E, 9H, 10G</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Variables: las Cajitas de Memoria» (Educación Básica), etapa 5 de la Ruta del Código (Programación) y
+      accesible desde 4º grado. Presenta la variable como una cajita con nombre y valor, y las cuatro instrucciones
+      GUARDA (reemplaza), SUMA y RESTA (actualizan usando el valor actual) y MUESTRA (solo lee), con ejemplos de la vida
+      hondureña: el marcador del partido, la alcancía y la venta de la pulpería. La misión interactiva (código QR de la
+      portada) incluye la «Máquina de Cajitas» con 4 escenarios que se ejecutan instrucción por instrucción, y los
+      widgets de trazar la tabla de valores, detective del bug y distinguir contador de acumulador. Las actividades
+      desconectadas de la página 3 permiten trabajar los mismos conceptos sin ningún dispositivo: en «La estantería de
+      frijoles» los equipos usan cajitas de cartón rotuladas y frijoles reales para ejecutar GUARDA, SUMA y RESTA con
+      las manos; en «El marcador humano» comprueban que un contador sube de 1 en 1 y que MUESTRA solo lee. La sección
+      «Ponte a Prueba» replica los formatos de la evaluación imprimible de la plataforma (completar, V/F, selección
+      múltiple y pareados). En la sección IV los pareados llevan la Columna B barajada; la clave real es
+      1F, 2C, 3I, 4B, 5J, 6A, 7D, 8E, 9H, 10G.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Variables: las Cajitas de Memoria · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

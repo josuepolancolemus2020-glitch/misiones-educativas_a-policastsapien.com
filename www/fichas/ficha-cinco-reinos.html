@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Los Cinco Reinos</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: CIENCIAS NATURALES = VERDE/TEAL (#0d9488)
+     · Colores semánticos fijos: azul=núcleo/control, verde=organelo/vida,
+       naranja=cubierta/pared y errores/amenazas
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --nat: #0d9488; --nat-osc: #115e59; --nat-claro: #f0fdfa;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfece7;
+    --nuc: #1e40af; --org: #15803d; --cub: #c2410c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef6f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--nat-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--nat); background: var(--nat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--nat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--nat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--nat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--nat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--nat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--nat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--nat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5fbfa; }
+  td.k { font-weight: 700; color: var(--nat-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafefd; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--nat-osc); margin-bottom: 8px; }
+
+  /* Partes básicas de la célula (mini-demostración de 3 cajas) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #ffedd5; } .celula .cm b { color: var(--cub); }
+  .celula .cc { background: #f0fdfa; } .celula .cc b { color: var(--nat-osc); }
+  .celula .cn { background: #eef2ff; } .celula .cn b { color: var(--nuc); }
+
+  /* Fotosíntesis / secuencia (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 7px; font-size: 8.5pt; background: #fafefd; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--nat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--nat-osc); font-size: 9pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #eef2ff; border: 1px solid #c7d2fe; }
+  .tri .torg { background: #dcfce7; border: 1px solid #b9e6c6; }
+  .tri .tcub { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--nuc); } .tri .torg b { color: var(--org); } .tri .tcub b { color: var(--cub); }
+
+  .acts h3 { border-bottom: 2px solid var(--nat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--nat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--nat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--nat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--nat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--nat-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2faf8; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--nat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--nat); box-shadow: 0 6px 16px rgba(13,148,136,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Los Cinco Reinos</div>
+        <div class="f-meta"><b>Asignatura:</b> Ciencias Naturales &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> La clasificación de los seres vivos: la taxonomía, los niveles de clasificación, las tres preguntas clave (nº de células, tipo de célula y nutrición) y los cinco reinos: Monera, Protista, Fungi, Plantae y Animalia</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-cinco-reinos.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender qué es la <strong>taxonomía</strong> y por qué clasificamos a los seres vivos.</li>
+      <li>Reconocer los <strong>niveles de clasificación</strong>, del reino a la especie, y el nombre científico.</li>
+      <li>Aplicar las <strong>tres preguntas clave</strong>: nº de células, tipo de célula y forma de nutrición.</li>
+      <li>Distinguir entre nutrición <strong>autótrofa</strong> y <strong>heterótrofa</strong>.</li>
+      <li>Identificar los <strong>cinco reinos</strong> (Monera, Protista, Fungi, Plantae y Animalia) y sus características.</li>
+      <li>Clasificar seres vivos comunes en el reino que les corresponde.</li>
+    </ol>
+
+    <h2>🌳 1. ¿Por qué clasificamos a los seres vivos?</h2>
+    <p>En la Tierra existen <strong>millones de especies</strong> distintas. Para poder estudiarlas, los
+    científicos las <strong>clasifican</strong>: las ordenan en grupos según las características que comparten.
+    La ciencia que <strong>identifica, nombra y ordena</strong> a los seres vivos se llama <strong>taxonomía</strong>.</p>
+    <div class="caja regla">🌳 <b>Dato clave:</b> el naturalista <strong>Carlos Linneo</strong> creó en el
+    siglo XVIII el sistema moderno de clasificación. En <strong>1969</strong>, el biólogo <strong>Robert
+    Whittaker</strong> propuso agrupar a todos los seres vivos en <strong>cinco reinos</strong>.</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> un ser <strong>unicelular</strong> está formado por una sola
+    célula (una bacteria, una ameba); un ser <strong>pluricelular</strong> está formado por muchas células
+    que trabajan juntas (una planta, un perro, tú).</div>
+    <div class="caja truco">🧩 <b>Truco para recordar los reinos:</b> «<b>Mónica Protege 5 Plantas Animadas</b>»:
+    <b>M</b>onera · <b>P</b>rotista · <b>F</b>ungi · <b>P</b>lantae · <b>A</b>nimalia.</div>
+
+    <h3>🗝️ Mini-demostración: las tres preguntas para clasificar</h3>
+    <div class="ilus">
+      <div class="ilus-t">Con estas tres preguntas ubicas a cualquier ser vivo en su reino</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">🔢</span><b>¿Cuántas células?</b>Unicelular (una) o pluricelular (muchas).</div>
+        <div class="cc"><span class="c-emoji">🧬</span><b>¿Qué tipo de célula?</b>Procariota (sin núcleo) o eucariota (con núcleo).</div>
+        <div class="cn"><span class="c-emoji">🍽️</span><b>¿Cómo se alimenta?</b>Autótrofo (fabrica su alimento) o heterótrofo (lo toma de otros).</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ El <strong>reino</strong> es el grupo más grande; la <strong>especie</strong> es el más pequeño.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Cinco Reinos</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🪜 2. Los niveles de clasificación</h2>
+    <p>Los seres vivos se ordenan en grupos, del <strong>más grande al más pequeño</strong>. Cada nivel se llama
+    <strong>taxón</strong>:</p>
+    <div class="caja regla">🪜 <b>Del reino a la especie:</b> <b>Reino</b> → Filo → Clase → Orden → Familia →
+    <b>Género</b> → <b>Especie</b>. El <strong>nombre científico</strong> de cada ser vivo se forma con dos
+    palabras en latín (género y especie). Por ejemplo, el ser humano es <em>Homo sapiens</em>.</div>
+    <div class="tri">
+      <div class="tnuc"><b>👑 El Reino</b>Es el grupo MÁS GRANDE. Reúne a los seres vivos con características básicas comunes. Hay cinco reinos.</div>
+      <div class="torg"><b>🐾 La Especie</b>Es el grupo MÁS PEQUEÑO. Reúne a seres tan parecidos que pueden reproducirse entre sí.</div>
+    </div>
+
+    <h2>🍽️ 3. Autótrofos y heterótrofos</h2>
+    <p>Una de las tres preguntas clave es <strong>cómo se alimenta</strong> el ser vivo:</p>
+    <div class="tri">
+      <div class="torg"><b>🌞 Autótrofo</b>FABRICA su propio alimento, casi siempre por fotosíntesis con la luz del sol. Ejemplo: las plantas.</div>
+      <div class="tcub"><b>🍖 Heterótrofo</b>NO fabrica su alimento: lo toma de otros seres vivos. Ejemplo: los animales y los hongos.</div>
+    </div>
+
+    <h2>🦠 4. Los reinos Monera, Protista y Fungi</h2>
+    <table>
+      <tr><th>Reino</th><th>Características</th><th>Ejemplos</th></tr>
+      <tr><td class="k">🦠 Monera</td><td>Unicelular y procariota. Los primeros seres vivos.</td><td>Bacterias, cianobacterias</td></tr>
+      <tr><td class="k">🔬 Protista</td><td>Eucariota, casi todos unicelulares. Viven en el agua.</td><td>Ameba, paramecio, algas</td></tr>
+      <tr><td class="k">🍄 Fungi</td><td>Eucariota, heterótrofo por absorción. Pared de quitina.</td><td>Setas, mohos, levaduras</td></tr>
+    </table>
+    <div class="caja idea">💡 <b>Dato curioso:</b> muchos hongos y bacterias son <strong>descomponedores</strong>:
+    reciclan los restos de plantas y animales muertos y devuelven los nutrientes al suelo. ¡Sin ellos, el planeta
+    estaría cubierto de restos muertos!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Cinco Reinos</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🌿 5. Los reinos Plantae y Animalia</h2>
+    <p>Los dos reinos de seres <strong>pluricelulares</strong> más conocidos son las plantas y los animales:</p>
+    <table>
+      <tr><th>Reino</th><th>Características</th><th>Ejemplos</th></tr>
+      <tr><td class="k">🌿 Plantae</td><td>Pluricelular, eucariota y <strong>autótrofo</strong> (fotosíntesis con clorofila). Pared de celulosa.</td><td>Musgos, helechos, pino, maíz</td></tr>
+      <tr><td class="k">🐾 Animalia</td><td>Pluricelular, eucariota y <strong>heterótrofo</strong>. Sin pared celular. La mayoría se mueve.</td><td>Insectos, peces, aves, mamíferos</td></tr>
+    </table>
+    <div class="caja regla">🦴 <b>Dentro del reino Animalia:</b> los <strong>invertebrados</strong> no tienen
+    columna vertebral (insectos, moluscos, gusanos) y los <strong>vertebrados</strong> sí la tienen (peces,
+    anfibios, reptiles, aves y mamíferos). El <strong>ser humano</strong> es un mamífero de este reino.</div>
+
+    <h3>📊 Cuadro resumen de los 5 reinos</h3>
+    <table>
+      <tr><th>Reino</th><th>Nº de células</th><th>Tipo de célula</th><th>Nutrición</th></tr>
+      <tr><td class="k">🦠 Monera</td><td>Unicelular</td><td>Procariota</td><td>Autótrofa/Heterótrofa</td></tr>
+      <tr><td class="k">🔬 Protista</td><td>Unicelular</td><td>Eucariota</td><td>Autótrofa/Heterótrofa</td></tr>
+      <tr><td class="k">🍄 Fungi</td><td>Uni o pluricelular</td><td>Eucariota</td><td>Heterótrofa</td></tr>
+      <tr><td class="k">🌿 Plantae</td><td>Pluricelular</td><td>Eucariota</td><td>Autótrofa</td></tr>
+      <tr><td class="k">🐾 Animalia</td><td>Pluricelular</td><td>Eucariota</td><td>Heterótrofa</td></tr>
+    </table>
+
+    <h2>⚠️ 6. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que las bacterias son del reino Fungi</td><td>Las bacterias son unicelulares y procariotas.</td><td>Bacteria = reino Monera ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Decir que los hongos son plantas</td><td>Los hongos no hacen fotosíntesis; son heterótrofos.</td><td>Hongo = reino Fungi ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Pensar que las plantas son heterótrofas</td><td>Las plantas fabrican su alimento por fotosíntesis.</td><td>Planta = autótrofa ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir el reino más grande con el más pequeño</td><td>El reino es el grupo mayor; la especie, el menor.</td><td>Reino &gt; … &gt; Especie ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Ubicar al ser humano en el reino Plantae</td><td>El ser humano se mueve y es heterótrofo.</td><td>Ser humano = reino Animalia ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> ¡los cinco reinos están por todas partes! El <strong>maíz</strong>,
+    el <strong>café</strong> y los bosques de <strong>pino</strong> son del reino Plantae; los <strong>hongos</strong>
+    y <strong>setas</strong> del bosque nublado son del reino Fungi; el ganado, las aves y los peces del Caribe son
+    del reino Animalia; y en el suelo fértil viven millones de <strong>bacterias</strong> (Monera) y
+    <strong>protistas</strong> que mantienen la vida. Cuidar la biodiversidad es cuidar los cinco reinos. 🌱💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Cinco Reinos</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>La <span class="linea-resp"></span> es la ciencia que clasifica y nombra a los seres vivos.</li>
+      <li>El grupo más grande de la clasificación es el <span class="linea-resp"></span>.</li>
+      <li>El grupo más pequeño de la clasificación es la <span class="linea-resp"></span>.</li>
+      <li>Un ser <span class="linea-resp"></span> fabrica su propio alimento por fotosíntesis.</li>
+      <li>El reino de las bacterias se llama <span class="linea-resp"></span>.</li>
+      <li>Los hongos, las setas y los mohos pertenecen al reino <span class="linea-resp"></span>.</li>
+      <li>La ameba y las algas pertenecen al reino <span class="linea-resp"></span>.</li>
+      <li>El ser humano pertenece al reino <span class="linea-resp"></span>.</li>
+      <li>Los animales con columna vertebral se llaman <span class="linea-resp"></span>.</li>
+      <li>Los hongos y bacterias que reciclan restos muertos se llaman <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ La taxonomía es la ciencia que clasifica a los seres vivos.</li>
+      <li>____ Las bacterias pertenecen al reino Protista.</li>
+      <li>____ Los seres autótrofos fabrican su propio alimento.</li>
+      <li>____ Los hongos fabrican su alimento por fotosíntesis, igual que las plantas.</li>
+      <li>____ La ameba y el paramecio pertenecen al reino Protista.</li>
+      <li>____ El ser humano pertenece al reino Animalia.</li>
+      <li>____ El reino es el grupo más pequeño de la clasificación.</li>
+      <li>____ Las plantas son seres autótrofos.</li>
+      <li>____ Los animales invertebrados tienen columna vertebral.</li>
+      <li>____ Robert Whittaker propuso los cinco reinos en 1969.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Cinco Reinos</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cómo se llama la ciencia que clasifica y nombra a los seres vivos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> la biología</span>
+        <span class="op"><i>b</i> la ecología</span>
+        <span class="op"><i>c</i> la taxonomía</span>
+        <span class="op"><i>d</i> la geología</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿En cuántos reinos agrupó Whittaker a los seres vivos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> tres</span>
+        <span class="op"><i>b</i> cuatro</span>
+        <span class="op"><i>c</i> cinco</span>
+        <span class="op"><i>d</i> seis</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿A qué reino pertenecen las bacterias?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Protista</span>
+        <span class="op"><i>b</i> Monera</span>
+        <span class="op"><i>c</i> Fungi</span>
+        <span class="op"><i>d</i> Animalia</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué reino reúne a los hongos, las setas y los mohos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Plantae</span>
+        <span class="op"><i>b</i> Monera</span>
+        <span class="op"><i>c</i> Fungi</span>
+        <span class="op"><i>d</i> Protista</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuál es el grupo MÁS PEQUEÑO de la clasificación?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el reino</span>
+        <span class="op"><i>b</i> la familia</span>
+        <span class="op"><i>c</i> el género</span>
+        <span class="op"><i>d</i> la especie</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué significa que un ser vivo sea "autótrofo"?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> que se mueve</span>
+        <span class="op"><i>b</i> que fabrica su propio alimento</span>
+        <span class="op"><i>c</i> que come otros seres</span>
+        <span class="op"><i>d</i> que es unicelular</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿A qué reino pertenecen la ameba y las algas?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Monera</span>
+        <span class="op"><i>b</i> Protista</span>
+        <span class="op"><i>c</i> Plantae</span>
+        <span class="op"><i>d</i> Fungi</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿A qué reino pertenece el ser humano?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Plantae</span>
+        <span class="op"><i>b</i> Protista</span>
+        <span class="op"><i>c</i> Animalia</span>
+        <span class="op"><i>d</i> Fungi</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿De qué está hecha la pared celular de los hongos?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> celulosa</span>
+        <span class="op"><i>b</i> quitina</span>
+        <span class="op"><i>c</i> proteína</span>
+        <span class="op"><i>d</i> grasa</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué grupo de animales tiene columna vertebral?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> invertebrados</span>
+        <span class="op"><i>b</i> vertebrados</span>
+        <span class="op"><i>c</i> insectos</span>
+        <span class="op"><i>d</i> moluscos</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Cinco Reinos</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Taxonomía</td><td>A. Reino de las plantas</td></tr>
+      <tr><td>2. ____ Reino</td><td>B. Grupo más pequeño de la clasificación</td></tr>
+      <tr><td>3. ____ Especie</td><td>C. Fabrica su propio alimento</td></tr>
+      <tr><td>4. ____ Monera</td><td>D. Reino de la ameba y las algas</td></tr>
+      <tr><td>5. ____ Protista</td><td>E. Ciencia que clasifica y nombra a los seres vivos</td></tr>
+      <tr><td>6. ____ Fungi</td><td>F. Reino de los animales</td></tr>
+      <tr><td>7. ____ Plantae</td><td>G. Reino de las bacterias</td></tr>
+      <tr><td>8. ____ Animalia</td><td>H. Grupo más grande de la clasificación</td></tr>
+      <tr><td>9. ____ Autótrofo</td><td>I. Reino de los hongos y las setas</td></tr>
+      <tr><td>10. ____ Heterótrofo</td><td>J. Obtiene su alimento de otros seres vivos</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Los Cinco Reinos.</b> Ahora sabes clasificar a los seres
+      vivos: conoces la taxonomía, los niveles del reino a la especie, y las tres preguntas clave (nº de células,
+      tipo de célula y nutrición). Distingues los cinco reinos —Monera, Protista, Fungi, Plantae y Animalia— y
+      puedes ubicar en su reino a una bacteria, una ameba, un hongo, una planta o un animal. 🌳🔬
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Ciencias Naturales.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Elaboró un cuadro con los cinco reinos y un ejemplo de cada uno en su cuaderno.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Cinco Reinos</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. taxonomía &nbsp; 2. reino &nbsp; 3. especie &nbsp; 4. autótrofo &nbsp; 5. Monera &nbsp; 6. Fungi &nbsp; 7. Protista &nbsp; 8. Animalia &nbsp; 9. vertebrados &nbsp; 10. descomponedores</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7F, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1c, 2c, 3b, 4c, 5d, 6b, 7b, 8c, 9b, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1E, 2H, 3B, 4G, 5D, 6I, 7A, 8F, 9C, 10J</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Los Cinco Reinos» (Educación Básica). Puede utilizarse como guía de estudio impresa o digital antes de la
+      evaluación final. Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple,
+      pareados) y puede complementarse con la observación de mohos y levaduras, la recolección y clasificación de hojas,
+      hongos e insectos del entorno en su reino correspondiente, y la elaboración de un mural o cuadro comparativo de los
+      cinco reinos. Etapa 2 de la Ruta de la Vida. La misión interactiva (código QR de la portada) permite al estudiante
+      practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Cinco Reinos · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

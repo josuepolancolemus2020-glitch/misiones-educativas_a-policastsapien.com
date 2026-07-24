@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Las Fracciones</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Colores semánticos fijos: azul=numerador, naranja=denominador,
+       verde=resultado simplificado
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+    --num: #1e40af; --den: #c2410c; --res: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  /* Objetivos ENUMERADOS visibles */
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  /* Ilustraciones (widgets de la misión) */
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .ilus svg { max-width: 100%; height: auto; }
+  .ilus-par { display: flex; gap: 18px; justify-content: center; align-items: center; flex-wrap: wrap; }
+
+  /* Fracción grande con partes coloreadas */
+  .frac-big { display: inline-block; text-align: center; font-family: 'Cambria Math', Georgia, serif; }
+  .frac-big .fnum { font-size: 22pt; font-weight: 800; color: var(--num); display: block; }
+  .frac-big .fbar { display: block; border-top: 3px solid var(--tinta); margin: 2px 8px; }
+  .frac-big .fden { font-size: 22pt; font-weight: 800; color: var(--den); display: block; }
+  .frac-lbl { font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+  .frac-lbl.lnum { color: var(--num); } .frac-lbl.lden { color: var(--den); }
+
+  /* Los 4 pasos del procedimiento (chunking pedagógico) */
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .mismo { background: #dbeafe; border: 1px solid #b6d4fb; }
+  .tri .distinto { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri .resta { background: #ede9fe; border: 1px solid #d3c9f5; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .mismo b { color: var(--num); } .tri .distinto b { color: var(--den); } .tri .resta b { color: #6b21a8; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  /* Números de ítem DIFERENCIADOS (paratexto): en negrita y azul */
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* ─── Selección múltiple con jerarquía clara ───
+     número en cuadrito azul · pregunta en negrita · letras SIN círculo
+     impreso (el niño debe poder ENCERRARLAS y que su trazo se vea) */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--mat-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  /* Rúbrica compacta */
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .pasos > div, .pasos .pn
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Las Fracciones</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Partes de la fracción, tipos (propia, impropia, mixta, equivalente), simplificación, y suma y resta de fracciones</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-fracciones.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Comprender la fracción como <strong>parte de un todo</strong> dividido en partes iguales, identificando numerador y denominador.</li>
+      <li>Clasificar fracciones en <strong>propias, impropias, mixtas, equivalentes y unitarias</strong>.</li>
+      <li>Leer fracciones con su nombre correcto: medios, tercios, cuartos, quintos, décimos y centésimos.</li>
+      <li><strong>Simplificar</strong> fracciones dividiendo numerador y denominador entre su MCD.</li>
+      <li>Sumar y restar fracciones con <strong>igual denominador</strong> (el denominador no cambia).</li>
+      <li>Sumar fracciones con <strong>distinto denominador</strong> convirtiéndolas primero en equivalentes.</li>
+    </ol>
+
+    <h2>🍕 1. ¿Qué es una fracción?</h2>
+    <p>Una <strong>fracción</strong> representa una <strong>parte de un todo</strong> que se ha dividido en
+    partes iguales. Se escribe con dos números separados por una línea: arriba el <strong>numerador</strong>
+    (cuántas partes se toman) y abajo el <strong>denominador</strong> (en cuántas partes iguales se dividió
+    el entero).</p>
+    <div class="caja regla">⚡ <b>El orden manda:</b> el numerador SIEMPRE va arriba y el denominador SIEMPRE va
+    abajo. La línea divisoria se lee «de»: 3/4 = «tres <strong>de</strong> cuatro» o «tres cuartos».</div>
+    <div class="caja idea">💡 <b>Idea clave:</b> el denominador da el <strong>nombre</strong> a la fracción:
+    con 2 son medios, con 3 tercios, con 4 cuartos, con 5 quintos, con 10 décimos y con 100 centésimos.</div>
+    <div class="caja truco">🧠 <b>Truco para recordar:</b> «<b>El de abajo no se toca</b>»: al sumar o restar
+    fracciones con el MISMO denominador, solo operas los numeradores — el denominador queda igual.
+    1/4 + 2/4 = 3/4.</div>
+
+    <h3>🔬 Mini-demostración</h3>
+    <div class="ilus">
+      <div class="ilus-t">Un pastel dividido en 4 partes iguales con 3 sombreadas: la fracción 3/4</div>
+      <div class="ilus-par">
+        <svg viewBox="0 0 150 150" width="140" height="140" role="img" aria-label="Círculo dividido en cuartos con tres partes sombreadas">
+          <path d="M75 75 L75 20 A55 55 0 0 1 130 75 Z" fill="#1565c0" opacity="0.85" stroke="#fff" stroke-width="2"/>
+          <path d="M75 75 L130 75 A55 55 0 0 1 75 130 Z" fill="#1565c0" opacity="0.85" stroke="#fff" stroke-width="2"/>
+          <path d="M75 75 L75 130 A55 55 0 0 1 20 75 Z" fill="#1565c0" opacity="0.85" stroke="#fff" stroke-width="2"/>
+          <path d="M75 75 L20 75 A55 55 0 0 1 75 20 Z" fill="#e8f1fb" stroke="#fff" stroke-width="2"/>
+          <circle cx="75" cy="75" r="55" fill="none" stroke="#0d3b7a" stroke-width="2.5"/>
+        </svg>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div class="frac-big">
+            <span class="fnum">3</span>
+            <span class="fbar"></span>
+            <span class="fden">4</span>
+          </div>
+          <div style="text-align:left;font-size:9.5pt;">
+            <p style="margin-bottom:3px;"><span class="frac-lbl lnum">← numerador:</span> partes que se toman (3)</p>
+            <p style="margin-bottom:3px;">← línea divisoria: se lee «de»</p>
+            <p style="margin-bottom:0;"><span class="frac-lbl lden">← denominador:</span> partes iguales del entero (4)</p>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ Se lee «tres cuartos»: tomamos <strong style="color:var(--num);">3</strong> de las <strong style="color:var(--den);">4</strong> partes iguales del pastel.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Fracciones</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>📊 2. Los tipos de fracciones</h2>
+    <table>
+      <tr><th>Tipo</th><th>¿Cómo es?</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🍕 Propia</td><td>Numerador MENOR que el denominador: representa menos de 1 entero.</td><td>3/4, 1/2, 2/5</td></tr>
+      <tr><td class="k">🍰 Impropia</td><td>Numerador IGUAL O MAYOR que el denominador: representa 1 entero o más.</td><td>7/4, 5/3, 9/9</td></tr>
+      <tr><td class="k">🎂 Mixta</td><td>Un entero junto con una fracción propia.</td><td>1 3/4 (equivale a 7/4)</td></tr>
+      <tr><td class="k">⚖️ Equivalente</td><td>Distinta forma, misma parte del entero.</td><td>1/2 = 2/4 = 3/6</td></tr>
+      <tr><td class="k">☝️ Unitaria</td><td>Su numerador es 1: una sola parte del entero.</td><td>1/2, 1/3, 1/4</td></tr>
+    </table>
+    <div class="caja idea">💡 <b>Ojo:</b> «impropia» NO significa «incorrecta». Solo indica que la fracción vale
+    <strong>un entero o más</strong>. Toda impropia puede escribirse como mixta: 7/4 = 1 3/4.</div>
+
+    <h3>📖 Cómo se leen las fracciones</h3>
+    <table>
+      <tr><th>Denominador</th><th>Se lee</th><th>Ejemplo</th><th>Denominador</th><th>Se lee</th><th>Ejemplo</th></tr>
+      <tr><td class="k">2</td><td>medios</td><td>1/2 = un medio</td><td class="k">5</td><td>quintos</td><td>4/5 = cuatro quintos</td></tr>
+      <tr><td class="k">3</td><td>tercios</td><td>2/3 = dos tercios</td><td class="k">10</td><td>décimos</td><td>7/10 = siete décimos</td></tr>
+      <tr><td class="k">4</td><td>cuartos</td><td>3/4 = tres cuartos</td><td class="k">100</td><td>centésimos</td><td>25/100 = veinticinco centésimos</td></tr>
+    </table>
+
+    <h2>✂️ 3. Los 4 pasos para simplificar una fracción</h2>
+    <p>Simplificar es <strong>reducir</strong> la fracción a su forma más simple, dividiendo arriba y abajo
+    entre el <strong>mismo número</strong>.</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Busca el MCD</b>El número más grande que divide al numerador Y al denominador.</div>
+      <div><span class="pn">2</span><b>Divide arriba</b>Numerador ÷ MCD.</div>
+      <div><span class="pn">3</span><b>Divide abajo</b>Denominador ÷ MCD (¡el mismo número!).</div>
+      <div><span class="pn">4</span><b>Verifica</b>Si ya no se pueden dividir más, la fracción está simplificada.</div>
+    </div>
+    <div class="ilus">
+      <div class="ilus-t">Ejemplo: simplificar 6/9</div>
+      <p style="font-size:13pt;font-family:'Cambria Math',Georgia,serif;margin:0;">
+        <strong style="color:var(--num);">6</strong>/<strong style="color:var(--den);">9</strong>
+        &nbsp;→&nbsp; MCD de 6 y 9 = 3 &nbsp;→&nbsp; 6÷3 = 2 y 9÷3 = 3 &nbsp;→&nbsp;
+        <strong style="color:var(--res);">2/3</strong> ✅
+      </p>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;">6/9 y 2/3 son equivalentes: representan la MISMA parte del entero, pero 2/3 está en su forma más simple.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Fracciones</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">➕ 4. Suma y resta de fracciones</h2>
+    <div class="tri">
+      <div class="mismo"><b>🔵 Mismo denominador → directo</b>Suma o resta SOLO los numeradores; el de abajo no se toca. 1/4 + 2/4 = 3/4 · 3/5 − 1/5 = 2/5</div>
+      <div class="distinto"><b>🟠 Distinto denominador → convierte primero</b>Busca fracciones equivalentes con denominador común y luego opera. 1/2 + 1/4 = 2/4 + 1/4 = 3/4</div>
+      <div class="resta"><b>⚖️ Equivalentes → multiplica o divide parejo</b>Arriba y abajo por el MISMO número: 1/2 ×2 = 2/4 ×2 = 4/8. El valor no cambia.</div>
+    </div>
+
+    <h3>📋 Casos comunes</h3>
+    <table>
+      <tr><th>Pregunta</th><th>Procedimiento</th><th>Resultado</th></tr>
+      <tr><td class="k">7/4 como número mixto</td><td>7 ÷ 4 = 1 entero y sobran 3</td><td>1 3/4</td></tr>
+      <tr><td class="k">Simplificar 4/8</td><td>MCD = 4: dividir arriba y abajo entre 4</td><td>1/2</td></tr>
+      <tr><td class="k">1/4 + 2/4</td><td>Mismo denominador: 1 + 2</td><td>3/4</td></tr>
+      <tr><td class="k">3/5 − 1/5</td><td>Mismo denominador: 3 − 1</td><td>2/5</td></tr>
+      <tr><td class="k">1/2 + 1/4</td><td>Convertir: 1/2 = 2/4, luego 2/4 + 1/4</td><td>3/4</td></tr>
+      <tr><td class="k">1/2 como decimal</td><td>1 ÷ 2</td><td>0.5</td></tr>
+    </table>
+
+    <h2>⚠️ 5. Errores comunes — ¡no caigas en ellos!</h2>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Sumar también los denominadores</td><td>«1/4 + 2/4 = 3/8». El denominador dice el tamaño de las partes: NO se suma.</td><td>1/4 + 2/4 = 3/4 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Sumar sin denominador común</td><td>«1/2 + 1/4 = 2/6». Son partes de distinto tamaño: no se pueden juntar así.</td><td>2/4 + 1/4 = 3/4 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que «impropia» = incorrecta</td><td>7/4 es una fracción válida: solo dice que hay más de un entero.</td><td>7/4 = 1 3/4 ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">«Simplificar» multiplicando</td><td>Multiplicar da una equivalente MÁS grande. Simplificar es reducir.</td><td>Simplificar = DIVIDIR entre el MCD ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Denominador grande = fracción grande</td><td>«1/8 &gt; 1/2 porque 8 &gt; 2». Al partir en más pedazos, cada pedazo es MÁS PEQUEÑO.</td><td>1/2 &gt; 1/8 ✔</td></tr>
+    </table>
+
+    <div class="caja hn">🇭🇳 <b>En Honduras:</b> las fracciones alimentan al país. En la pulpería pedimos
+    <strong>media</strong> libra de queso (1/2) y <strong>un cuarto</strong> de mantequilla (1/4) para las
+    baleadas; la tortilla se parte en <strong>mitades</strong> para compartir; y la receta de la horchata pide
+    <strong>tres cuartos</strong> de taza de arroz. ¡Cocinar es hacer fracciones sin darse cuenta!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Fracciones</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 6. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Una fracción representa una parte de un <span class="linea-resp"></span> dividido en partes iguales.</li>
+      <li>El número de arriba de la fracción se llama <span class="linea-resp"></span>.</li>
+      <li>El número de abajo se llama <span class="linea-resp"></span> e indica en cuántas partes iguales se divide el entero.</li>
+      <li>En una fracción propia, el numerador es <span class="linea-resp"></span> que el denominador.</li>
+      <li>La fracción 2 1/2, que combina un entero con una fracción, se llama <span class="linea-resp"></span>.</li>
+      <li>1/2 y 2/4 son fracciones <span class="linea-resp"></span>.</li>
+      <li>Para simplificar una fracción se divide arriba y abajo entre el <span class="linea-resp"></span>.</li>
+      <li>Al sumar fracciones con el mismo denominador, se suman los <span class="linea-resp"></span> y el denominador no cambia.</li>
+      <li>Una fracción con numerador 1, como 1/4, se llama fracción <span class="linea-resp"></span>.</li>
+      <li>La fracción 3/4 se lee «tres <span class="linea-resp"></span>».</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El numerador es el número que está arriba en una fracción.</li>
+      <li>____ El denominador indica cuántas partes se toman del entero.</li>
+      <li>____ En una fracción impropia, el numerador es menor que el denominador.</li>
+      <li>____ 2 1/2 es un ejemplo de fracción mixta.</li>
+      <li>____ 1/2 y 2/4 son fracciones equivalentes.</li>
+      <li>____ Para simplificar una fracción se multiplica el numerador y el denominador por el mismo número.</li>
+      <li>____ 3/4 − 1/4 = 2/4.</li>
+      <li>____ 1/2 + 1/4 = 2/6.</li>
+      <li>____ El MCD (máximo común divisor) se usa para simplificar fracciones.</li>
+      <li>____ La recta numérica solo puede representar números enteros, no fracciones.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Fracciones</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué indica el numerador de una fracción?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> en cuántas partes se divide el entero</span>
+        <span class="op"><i>b</i> cuántas partes se toman del entero</span>
+        <span class="op"><i>c</i> el resultado de una suma</span>
+        <span class="op"><i>d</i> el nombre de la fracción</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué indica el denominador?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cuántas partes se toman</span>
+        <span class="op full"><i>b</i> el número total de partes iguales del entero</span>
+        <span class="op"><i>c</i> la mitad del numerador</span>
+        <span class="op"><i>d</i> un número decimal</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál de estas es una fracción propia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 7/4</span>
+        <span class="op"><i>b</i> 5/5</span>
+        <span class="op"><i>c</i> 3/8</span>
+        <span class="op"><i>d</i> 9/2</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuál de estas es una fracción impropia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 3/4</span>
+        <span class="op"><i>b</i> 1/2</span>
+        <span class="op"><i>c</i> 2/5</span>
+        <span class="op"><i>d</i> 9/4</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuál es la forma mixta de 7/4?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 1 3/4</span>
+        <span class="op"><i>b</i> 2 1/4</span>
+        <span class="op"><i>c</i> 1 1/2</span>
+        <span class="op"><i>d</i> 3 1/4</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuál de estas fracciones es equivalente a 1/2?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 2/3</span>
+        <span class="op"><i>b</i> 3/6</span>
+        <span class="op"><i>c</i> 2/5</span>
+        <span class="op"><i>d</i> 1/4</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>Al simplificar 6/9, ¿qué obtienes?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 3/4</span>
+        <span class="op"><i>b</i> 1/3</span>
+        <span class="op"><i>c</i> 2/3</span>
+        <span class="op"><i>d</i> 3/3</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cuánto es 1/4 + 2/4?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 3/4</span>
+        <span class="op"><i>b</i> 3/8</span>
+        <span class="op"><i>c</i> 2/4</span>
+        <span class="op"><i>d</i> 1/8</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuánto es 1/2 + 1/4?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 2/6</span>
+        <span class="op"><i>b</i> 3/4</span>
+        <span class="op"><i>c</i> 1/4</span>
+        <span class="op"><i>d</i> 2/4</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuál de estas fracciones es mayor?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 1/4</span>
+        <span class="op"><i>b</i> 1/2</span>
+        <span class="op"><i>c</i> 1/8</span>
+        <span class="op"><i>d</i> 1/10</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Fracciones</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Fracción</td><td>A. Combina un entero con una fracción propia, como 2 1/2</td></tr>
+      <tr><td>2. ____ Numerador</td><td>B. Se suman los numeradores; el denominador no cambia</td></tr>
+      <tr><td>3. ____ Denominador</td><td>C. Distinta forma, misma parte: 1/2 = 2/4</td></tr>
+      <tr><td>4. ____ Fracción propia</td><td>D. Numerador igual o mayor: representa 1 entero o más</td></tr>
+      <tr><td>5. ____ Fracción impropia</td><td>E. Numerador menor que el denominador: menos de 1 entero</td></tr>
+      <tr><td>6. ____ Fracción mixta</td><td>F. Número de abajo: total de partes iguales del entero</td></tr>
+      <tr><td>7. ____ Equivalentes</td><td>G. Número de arriba: cuántas partes se toman</td></tr>
+      <tr><td>8. ____ Simplificar</td><td>H. Parte de un todo dividido en partes iguales</td></tr>
+      <tr><td>9. ____ Suma con igual denominador</td><td>I. Su numerador es 1, como 1/4</td></tr>
+      <tr><td>10. ____ Fracción unitaria</td><td>J. Dividir numerador y denominador entre el MCD</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Las Fracciones.</b> Ahora sabes que toda fracción es una parte
+      de un todo, distingues las propias de las impropias y las mixtas, encuentras equivalentes, simplificas con
+      el MCD y sumas y restas respetando al denominador. ¡De la media libra de queso a los tres cuartos de taza
+      de la receta, las fracciones ya trabajan para ti! 🍕✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió sumas, restas y simplificaciones de práctica en su cuaderno con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Fracciones</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. todo (entero) &nbsp; 2. numerador &nbsp; 3. denominador &nbsp; 4. menor &nbsp; 5. mixta &nbsp; 6. equivalentes &nbsp; 7. MCD (mismo número) &nbsp; 8. numeradores &nbsp; 9. unitaria &nbsp; 10. cuartos</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3F, 4V, 5V, 6F, 7V, 8F, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2b, 3c, 4d, 5a, 6b, 7c, 8a, 9b, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1H, 2G, 3F, 4E, 5D, 6A, 7C, 8J, 9B, 10I</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Las Fracciones». Puede utilizarse como guía de estudio impresa o digital antes de la evaluación final.
+      Incluye todos los conceptos evaluados en la plataforma (completar, V/F, selección múltiple, pareados) y puede
+      complementarse con material concreto: repartir tortillas o frutas en partes iguales, tiras de papel plegadas para
+      equivalencias y la recta numérica en el pizarrón. Esta misión es la etapa previa a «Números Decimales» en la Ruta
+      del Número: las fracciones decimales (1/10, 1/100) preparan el valor posicional decimal. La misión interactiva
+      (código QR de la portada) permite al estudiante practicar con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Las Fracciones · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

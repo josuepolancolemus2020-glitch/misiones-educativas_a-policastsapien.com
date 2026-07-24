@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Electricidad para Robots</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: ROBÓTICA = CIAN TEC (#0e7490)
+     · Colores semánticos: ámbar=fuente/pila, cian=cables, naranja=interruptor, verde=carga
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --rob: #0e7490; --rob-osc: #155e75; --rob-claro: #ecfeff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cdeef6;
+    --fue: #b45309; --cab: #0891b2; --int: #c2410c; --car: #1c7c43;
+    --peligro: #b91c1c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef8fa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--rob-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--rob); background: var(--rob-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--rob-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--rob-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--rob); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--rob-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--rob-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--rob-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+  .alerta { background: #fdeaea; border: 1px solid #f3bcbc; }
+  .alerta b { color: var(--peligro); }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--rob); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4fbfd; }
+  td.k { font-weight: 700; color: var(--rob-osc); white-space: nowrap; }
+  td.si { color: var(--car); font-weight: 700; }
+  td.no { color: var(--peligro); font-weight: 700; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafdfe; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--rob-osc); margin-bottom: 8px; }
+  .ilus svg { max-width: 100%; height: auto; }
+
+  /* Mini-demostración de 4 cajas (fuente / cables / interruptor / carga) */
+  .celula { display: flex; gap: 6px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 25%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 7px; font-size: 8.6pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cf { background: #fdf0d5; } .celula .cf b { color: var(--fue); }
+  .celula .cb { background: #d7f2f8; } .celula .cb b { color: var(--cab); }
+  .celula .ci { background: #ffedd5; } .celula .ci b { color: var(--int); }
+  .celula .cc { background: #e4f4e7; } .celula .cc b { color: var(--car); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #e4f4e7; border: 1px solid #bfe0c6; }
+  .tri .torg { background: #fdeaea; border: 1px solid #f3bcbc; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--car); } .tri .torg b { color: var(--peligro); }
+
+  .acts h3 { border-bottom: 2px solid var(--rob-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--rob); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--rob); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--rob-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--rob-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--rob-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2fafc; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--rob-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--rob); box-shadow: 0 6px 16px rgba(14,116,144,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Electricidad para Robots</div>
+        <div class="f-meta"><b>Asignatura:</b> Robótica &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica &nbsp;·&nbsp; <b>Ruta de los Robots · Etapa 4</b></div>
+        <div class="f-meta"><b>Tema:</b> El circuito básico (fuente, cables, interruptor y carga), circuito abierto y cerrado, serie y paralelo, conductores y aislantes, voltaje, corriente y resistencia, y la seguridad eléctrica</div>
+      </div>
+      <div class="fh-qr">
+        <img src="img/qr-mision-electricidad-robots.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Identificar las <strong>partes del circuito básico</strong>: fuente, cables, interruptor y carga.</li>
+      <li>Explicar por qué la corriente necesita un <strong>camino cerrado</strong> y qué es un circuito abierto.</li>
+      <li>Distinguir el circuito <strong>en serie</strong> del circuito <strong>en paralelo</strong> y sus consecuencias.</li>
+      <li>Clasificar materiales en <strong>conductores</strong> y <strong>aislantes</strong>.</li>
+      <li>Usar con sus palabras las nociones de <strong>voltaje, corriente y resistencia</strong>, y explicar la polaridad del LED.</li>
+      <li>Aplicar las <strong>reglas de seguridad eléctrica</strong> en el aula y en la casa.</li>
+      <li>Relacionar la electricidad con la misión <strong>La Energía</strong>: se transforma en luz, movimiento y sonido.</li>
+    </ol>
+
+    <h2>🔌 1. El circuito básico</h2>
+    <p>Un <strong>circuito eléctrico</strong> es un <strong>camino cerrado</strong> por donde viaja la corriente. La corriente
+    sale por un polo de la pila, recorre los cables, atraviesa la carga y <strong>regresa</strong> al otro polo. Si el
+    camino se corta en cualquier punto, <strong>nada funciona</strong>.</p>
+
+    <div class="ilus">
+      <div class="ilus-t">Las cuatro partes trabajan juntas: si falta una, el circuito no funciona</div>
+      <div class="celula">
+        <div class="cf"><span class="c-emoji">🔋</span><b>Fuente</b>La pila o batería: empuja la corriente. Tiene polo + y polo −.</div>
+        <div class="cb"><span class="c-emoji">🧵</span><b>Cables</b>El camino: cobre por dentro, plástico por fuera.</div>
+        <div class="ci"><span class="c-emoji">🔘</span><b>Interruptor</b>La puerta: abre o cierra el paso de la corriente.</div>
+        <div class="cc"><span class="c-emoji">💡</span><b>Carga</b>Lo que aprovecha la electricidad: LED, motor o zumbador.</div>
+      </div>
+    </div>
+
+    <div class="caja truco">💡 <b>Truco del agua:</b> la <strong>pila</strong> es la bomba que empuja, los <strong>cables</strong>
+    son el canal, el <strong>interruptor</strong> es la compuerta y el <strong>LED</strong> es el molino que aprovecha el agua.
+    Si el canal se rompe, el molino se detiene.</div>
+
+    <div class="caja idea">📖 <b>Dato clave:</b> la electricidad es una <strong>forma de energía</strong>, como aprendiste en
+    la misión <strong>La Energía</strong>. En el LED se transforma en <strong>luz</strong>, en el motor en
+    <strong>movimiento</strong> y en el zumbador en <strong>sonido</strong>.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Electricidad para Robots</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🟢🔴 2. Circuito cerrado y circuito abierto</h2>
+    <div class="tri">
+      <div class="tnuc"><b>🟢 Cerrado — sí funciona</b>El camino está <strong>completo</strong>: la corriente sale del <strong>+</strong>, pasa por la carga y regresa al <strong>−</strong>. El LED enciende, el motor gira, el zumbador suena.</div>
+      <div class="torg"><b>🔴 Abierto — no funciona</b>El camino está <strong>cortado</strong>: interruptor apagado, cable suelto o foco quemado en serie. La corriente no circula aunque la pila esté nueva.</div>
+    </div>
+
+    <h3>✏️ Los símbolos para dibujar circuitos</h3>
+    <div class="ilus">
+      <div class="ilus-t">Así se dibuja un circuito básico: pila, interruptor, resistencia y LED</div>
+      <svg viewBox="0 0 460 150" width="430" role="img" aria-label="Circuito básico dibujado con símbolos">
+        <g fill="none" stroke="#0e7490" stroke-width="3" stroke-linecap="round">
+          <path d="M40 30 H150"/><path d="M195 30 H420"/>
+          <path d="M40 30 V60"/><path d="M40 90 V120"/><path d="M40 120 H420"/>
+          <path d="M420 30 V55"/><path d="M420 85 V120"/>
+        </g>
+        <!-- pila -->
+        <g stroke="#b45309" stroke-width="3"><path d="M22 60 H58"/><path d="M32 70 H48"/><path d="M22 80 H58"/><path d="M32 90 H48"/></g>
+        <text x="64" y="66" font-size="12" font-weight="bold" fill="#b45309">+</text>
+        <text x="64" y="94" font-size="12" font-weight="bold" fill="#b45309">–</text>
+        <text x="40" y="140" font-size="10" text-anchor="middle" fill="#5b6773">pila (fuente)</text>
+        <!-- interruptor -->
+        <circle cx="150" cy="30" r="4" fill="#c2410c"/><circle cx="195" cy="30" r="4" fill="#c2410c"/>
+        <path d="M150 30 L190 10" stroke="#c2410c" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <text x="172" y="52" font-size="10" text-anchor="middle" fill="#5b6773">interruptor (abierto)</text>
+        <!-- resistencia -->
+        <rect x="255" y="20" width="46" height="20" fill="#fff" stroke="#0e7490" stroke-width="3"/>
+        <text x="278" y="56" font-size="10" text-anchor="middle" fill="#5b6773">resistencia</text>
+        <!-- LED -->
+        <circle cx="420" cy="70" r="15" fill="#fff8e1" stroke="#1c7c43" stroke-width="3"/>
+        <path d="M413 63 L413 77 L428 70 Z" fill="#1c7c43"/><path d="M428 62 V78" stroke="#1c7c43" stroke-width="3"/>
+        <path d="M437 58 l8 -8 M441 66 l8 -8" stroke="#1c7c43" stroke-width="2" fill="none"/>
+        <text x="420" y="105" font-size="10" text-anchor="middle" fill="#5b6773">LED (carga)</text>
+      </svg>
+    </div>
+
+    <h2>➖🛣️ 3. Circuito en serie y circuito en paralelo</h2>
+    <table>
+      <tr><th>Conexión</th><th>¿Cuántos caminos?</th><th>Si uno se quema…</th><th>Voltaje</th><th>Ejemplo</th></tr>
+      <tr><td class="k">➖ En serie</td><td>Uno solo</td><td class="no">Se apagan TODOS</td><td>Se lo reparten: alumbran más débil</td><td>Luces viejas de arbolito</td></tr>
+      <tr><td class="k">🛣️ En paralelo</td><td>Uno para cada carga</td><td class="si">Los demás siguen encendidos</td><td>Cada carga recibe todo el voltaje</td><td>Las luces de tu casa</td></tr>
+    </table>
+    <div class="caja regla">🎯 <b>Regla de oro:</b> las <strong>luces de la casa van en paralelo</strong>. Por eso, cuando se
+    quema el foco de la sala, el de la cocina sigue encendido.</div>
+
+    <h2>💪🌊🪨 4. Voltaje, corriente y resistencia</h2>
+    <table>
+      <tr><th>Palabra</th><th>¿Qué es?</th><th>Se mide en</th><th>Ejemplo</th></tr>
+      <tr><td class="k">💪 Voltaje</td><td>El EMPUJE que da la fuente</td><td>voltios (V)</td><td>Pila AA = 1.5 V; tomacorriente = 110 V</td></tr>
+      <tr><td class="k">🌊 Corriente</td><td>La CANTIDAD de electricidad que pasa</td><td>amperios (A)</td><td>Más voltaje, más corriente</td></tr>
+      <tr><td class="k">🪨 Resistencia</td><td>El ESTORBO al paso de la corriente</td><td>ohmios (Ω)</td><td>La resistencia que protege al LED</td></tr>
+    </table>
+    <div class="caja idea">➕➖ <b>Polaridad del LED:</b> el LED solo enciende en <strong>un sentido</strong>: su
+    <strong>pata larga</strong> va al <strong>+</strong> y la <strong>pata corta</strong> al <strong>−</strong>. Y siempre
+    lleva una <strong>resistencia</strong>: sin ella pasa demasiada corriente y se quema al instante.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Electricidad para Robots</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🟠🚫 5. Conductores y aislantes</h2>
+    <p>El cable lleva <strong>cobre por dentro</strong> y <strong>plástico por fuera</strong>: uno conduce la corriente y el
+    otro nos protege. Así se clasifican los materiales:</p>
+    <table>
+      <tr><th>Tipo</th><th>¿Deja pasar la corriente?</th><th>Ejemplos</th><th>¿Para qué se usa?</th></tr>
+      <tr><td class="k">🟠 Conductor</td><td class="si">Sí</td><td>Cobre, aluminio, hierro, monedas, agua con sales</td><td>Forma el camino del circuito</td></tr>
+      <tr><td class="k">🚫 Aislante</td><td class="no">No</td><td>Plástico, hule, madera seca, vidrio, tela seca</td><td>Forra los cables y nos protege</td></tr>
+    </table>
+    <div class="caja alerta">💧 <b>¡Cuidado con el agua!</b> El agua de la llave, del río y hasta el <strong>sudor</strong>
+    llevan <strong>sales</strong> y sí conducen la electricidad. Por eso <strong>nunca</strong> se tocan enchufes, cables ni
+    aparatos con las <strong>manos mojadas</strong>.</div>
+
+    <h2>🦺 6. Seguridad eléctrica</h2>
+    <table>
+      <tr><th>✅ Sí se hace</th><th>⛔ Nunca se hace</th></tr>
+      <tr><td>Experimentar solo con <strong>pilas</strong> (1.5 V o 9 V)</td><td>Experimentar en el <strong>tomacorriente de 110 V</strong></td></tr>
+      <tr><td>Trabajar con las <strong>manos secas</strong></td><td>Tocar aparatos con las <strong>manos mojadas</strong></td></tr>
+      <tr><td>Usar cables con su <strong>forro de plástico</strong> en buen estado</td><td>Meter alambres o clavos en los <strong>enchufes</strong></td></tr>
+      <tr><td>Desconectar el cargador <strong>halando del enchufe</strong></td><td>Unir los dos polos de la pila: es un <strong>cortocircuito</strong> y la pila se calienta</td></tr>
+      <tr><td>Llevar las <strong>pilas usadas</strong> a un centro de acopio</td><td>Botar las pilas usadas en la <strong>basura común</strong></td></tr>
+    </table>
+
+    <h2>🎲 7. Actividades desconectadas (sin computadora)</h2>
+    <ul>
+      <li><strong>✏️ Dibuja el circuito:</strong> en tu cuaderno dibuja un circuito básico usando los <strong>símbolos</strong>
+      de la página 2 (pila, interruptor, resistencia y LED) y marca con flechas el <strong>camino de la corriente</strong>.
+      Luego dibuja el mismo circuito con el interruptor <strong>abierto</strong> y explica qué pasa.</li>
+      <li><strong>🔋 Arma un circuito de verdad:</strong> con una <strong>pila AA</strong>, dos pedazos de <strong>cable</strong>
+      y un <strong>foquito de linterna</strong>, forma el camino cerrado y enciéndelo. Después suelta un cable y observa.
+      ¡Solo con pilas, nunca con el tomacorriente!</li>
+      <li><strong>🔎 Cazadores de conductores:</strong> prueba con tu circuito 6 objetos del aula (clavo, regla, moneda,
+      borrador, llave, palito) tocándolos con las dos puntas del cable. Llena esta tabla:</li>
+    </ul>
+    <table>
+      <tr><th style="width:34%;">Objeto probado</th><th>¿Encendió el foquito?</th><th>¿Conductor o aislante?</th></tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    </table>
+    <ul>
+      <li><strong>🦺 Detective de seguridad:</strong> recorre tu casa y anota <strong>3 prácticas seguras</strong> y
+      <strong>3 peligrosas</strong> que veas con la electricidad. Escribe al lado cómo se corrige cada práctica peligrosa.</li>
+    </ul>
+
+    <div class="caja hn">🇭🇳 <b>La electricidad en tu comunidad:</b> cuando hay <strong>apagón</strong>, la linterna de pilas
+    funciona porque lleva su propio circuito cerrado. En los caseríos sin tendido eléctrico, el <strong>panel solar</strong>
+    carga una batería de día y de noche enciende los LED. Y el <strong>cargador del celular</strong> convierte los 110 V del
+    tomacorriente en un voltaje pequeño y seguro. ¡La electricidad bien entendida cambia la vida de una comunidad! 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Electricidad para Robots</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 8. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>La corriente solo circula si el camino está <span class="linea-resp"></span>.</li>
+      <li>La pila o batería es la <span class="linea-resp"></span> de energía del circuito.</li>
+      <li>El <span class="linea-resp"></span> abre o cierra el paso de la corriente.</li>
+      <li>Dentro del cable va el <span class="linea-resp"></span>, que es buen conductor.</li>
+      <li>El plástico seco es un <span class="linea-resp"></span>.</li>
+      <li>En un circuito en <span class="linea-resp"></span> se apagan todos los focos si uno se quema.</li>
+      <li>Las luces de una casa se conectan en <span class="linea-resp"></span>.</li>
+      <li>El LED lleva una <span class="linea-resp"></span> para que la corriente no lo queme.</li>
+      <li>El empuje que da la fuente se llama <span class="linea-resp"></span>.</li>
+      <li>Para experimentar en el aula usamos solo <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ La corriente eléctrica necesita un camino cerrado para circular.</li>
+      <li>____ El plástico seco y la madera seca son conductores.</li>
+      <li>____ El interruptor sirve para abrir o cerrar el camino de la corriente.</li>
+      <li>____ Las luces de una casa se conectan en serie.</li>
+      <li>____ En un circuito en serie, si un foco se quema se apagan todos.</li>
+      <li>____ El LED tiene polaridad: solo enciende conectado en un sentido.</li>
+      <li>____ Es seguro experimentar en el tomacorriente de 110 voltios.</li>
+      <li>____ El agua con sales conduce la electricidad.</li>
+      <li>____ Las pilas usadas se botan en la basura común de la casa.</li>
+      <li>____ Un cortocircuito calienta la pila y puede ser peligroso.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Electricidad para Robots</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es un circuito eléctrico?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un cable enrollado</span>
+        <span class="op"><i>b</i> el camino cerrado por donde circula la corriente</span>
+        <span class="op"><i>c</i> una pila descargada</span>
+        <span class="op"><i>d</i> un foco pintado</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuáles son las partes de un circuito básico?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> sol, agua, aire y tierra</span>
+        <span class="op"><i>b</i> motor, rueda, tornillo y clavo</span>
+        <span class="op"><i>c</i> fuente, cables, interruptor y carga</span>
+        <span class="op"><i>d</i> papel, goma, tijera y regla</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Para qué sirve el interruptor?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> para abrir o cerrar el camino de la corriente</span>
+        <span class="op"><i>b</i> para aumentar el voltaje</span>
+        <span class="op"><i>c</i> para enfriar la pila</span>
+        <span class="op"><i>d</i> para pintar el circuito</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>Si se suelta un cable, el circuito queda…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> en paralelo</span>
+        <span class="op"><i>b</i> en serie</span>
+        <span class="op"><i>c</i> cerrado</span>
+        <span class="op"><i>d</i> abierto y nada funciona</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>En un circuito EN SERIE se quema un foco. ¿Qué ocurre?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> los demás alumbran más</span>
+        <span class="op"><i>b</i> se apagan todos</span>
+        <span class="op"><i>c</i> no pasa nada</span>
+        <span class="op"><i>d</i> la pila se recarga</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuál de estos materiales es AISLANTE?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el cobre</span>
+        <span class="op"><i>b</i> el hierro</span>
+        <span class="op"><i>c</i> el plástico seco</span>
+        <span class="op"><i>d</i> el agua con sal</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Por qué el LED lleva una resistencia?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> para que la corriente no lo queme</span>
+        <span class="op"><i>b</i> para darle color</span>
+        <span class="op"><i>c</i> para que pese más</span>
+        <span class="op"><i>d</i> para pegarlo al cable</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué es un cortocircuito?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un circuito en paralelo</span>
+        <span class="op"><i>b</i> un cable de colores</span>
+        <span class="op"><i>c</i> un circuito muy corto y bonito</span>
+        <span class="op"><i>d</i> un atajo sin carga que calienta la pila</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál de estas prácticas es SEGURA?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> meter alambres al tomacorriente</span>
+        <span class="op"><i>b</i> experimentar solo con pilas y cables forrados</span>
+        <span class="op"><i>c</i> tocar enchufes con las manos mojadas</span>
+        <span class="op"><i>d</i> unir los dos polos de la pila con alambre</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>En un motor, ¿en qué se transforma la energía eléctrica?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> en luz</span>
+        <span class="op"><i>b</i> en frío</span>
+        <span class="op"><i>c</i> en movimiento</span>
+        <span class="op"><i>d</i> en agua</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Electricidad para Robots</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:40%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Circuito eléctrico</td><td>A. Abre o cierra el paso de la corriente</td></tr>
+      <tr><td>2. ____ Fuente (pila)</td><td>B. Cada carga tiene su propio camino; así van las luces de la casa</td></tr>
+      <tr><td>3. ____ Interruptor</td><td>C. Camino cerrado por donde circula la corriente</td></tr>
+      <tr><td>4. ____ Conductor</td><td>D. Estorbo que se opone al paso de la corriente; protege al LED</td></tr>
+      <tr><td>5. ____ Aislante</td><td>E. Empuja la corriente; tiene polo + y polo −</td></tr>
+      <tr><td>6. ____ Circuito en serie</td><td>F. Atajo sin carga que calienta la pila; es peligroso</td></tr>
+      <tr><td>7. ____ Circuito en paralelo</td><td>G. Material que no deja pasar la corriente, como el plástico</td></tr>
+      <tr><td>8. ____ Voltaje</td><td>H. Un solo camino: si un foco se quema, se apagan todos</td></tr>
+      <tr><td>9. ____ Resistencia</td><td>I. Material que deja pasar la corriente, como el cobre</td></tr>
+      <tr><td>10. ____ Cortocircuito</td><td>J. El empuje de la fuente, medido en voltios</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Electricidad para Robots.</b> Ahora sabes que la corriente necesita un
+      camino cerrado; que el interruptor abre y cierra ese camino; que en serie se apagan todos y en paralelo cada carga
+      sigue su rumbo; que el cobre conduce y el plástico aísla; y que la seguridad eléctrica se respeta siempre.
+      ¡Sigue avanzando por la Ruta de los Robots! ⚡🤖
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Robótica.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó el circuito con símbolos, armó el circuito con pila AA y llenó la tabla de conductores y aislantes.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Electricidad para Robots</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. cerrado &nbsp; 2. fuente &nbsp; 3. interruptor &nbsp; 4. cobre &nbsp; 5. aislante &nbsp; 6. serie &nbsp; 7. paralelo &nbsp; 8. resistencia &nbsp; 9. voltaje &nbsp; 10. pilas</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7F, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3a, 4d, 5b, 6c, 7a, 8d, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2E, 3A, 4I, 5G, 6H, 7B, 8J, 9D, 10F</div>
+    </div>
+
+    <div class="caja regla" style="margin-top:12px;">🔎 <b>Respuestas de la tabla de conductores y aislantes (página 3):</b>
+    encienden el foquito (CONDUCTORES) el clavo, la moneda y la llave; no lo encienden (AISLANTES) la regla de plástico,
+    el borrador de hule y el palito de madera seca. Si el foquito no enciende con un objeto metálico, revise primero que el
+    circuito esté bien cerrado antes de concluir que es aislante.</div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Electricidad para Robots» (Educación Básica, II y III Ciclo), etapa 4 de la Ruta de los Robots del área de
+      Robótica. Los conceptos se trabajan con material sencillo y de bajo costo: <strong>pilas AA o de 9 V, cable, foquito
+      de linterna, LED con su resistencia y un interruptor casero</strong>; nunca con la corriente del tomacorriente
+      (110 V), que queda excluida de toda práctica escolar. La ficha incluye las actividades desconectadas de la página 3:
+      el dibujo del circuito con símbolos, el armado del circuito real con pila AA, la prueba de conductores y aislantes
+      con objetos del aula y el recorrido de detective de seguridad en la casa. El tema enlaza con la misión
+      <strong>La Energía</strong> de Ciencias Naturales: la electricidad es una forma de energía que se transforma en luz
+      (LED), movimiento (motor) y sonido (zumbador). También prepara la etapa siguiente de la Ruta de los Robots, donde
+      estos circuitos alimentan sensores y actuadores. Se recomienda supervisar el armado de circuitos, revisar que las
+      pilas no queden en cortocircuito (se calientan) y organizar con el grupo la recolección de pilas usadas. La misión
+      interactiva (código QR de la portada) permite al estudiante practicar en el <strong>Laboratorio de Circuitos</strong>
+      —abrir y cerrar el interruptor, ver el cable suelto, la pila al revés, el cortocircuito, la serie y el paralelo—
+      con retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Electricidad para Robots · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

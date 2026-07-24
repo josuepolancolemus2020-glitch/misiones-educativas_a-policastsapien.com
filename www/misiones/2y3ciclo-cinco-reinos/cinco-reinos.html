@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Los Cinco Reinos | policastsapien.com</title>
+<meta name="description" content="Misión Los Cinco Reinos: misión educativa interactiva con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión Los Cinco Reinos">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-cinco-reinos/cinco-reinos.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/cinco-reinos.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=naturales" class="xp-back-btn" title="Regresar a misiones de C. Naturales">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🌳</div>
+    <div class="hero-text">
+      <h1>Misión <span>Los Cinco Reinos</span></h1>
+      <p class="sub">¡Aprende a clasificar todos los seres vivos en cinco grandes grupos! 🌱</p>
+      <div class="badge">🌱 Ruta de la Vida · Etapa 2 · Ciencias Naturales</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🌳 ¿Por qué clasificamos a los seres vivos?</h2>
+    <p>En la Tierra existen <strong>millones de especies</strong> distintas. Para poder estudiarlas, los científicos las <strong>clasifican</strong>: las ordenan en grupos según las características que comparten. La ciencia que <strong>identifica, nombra y ordena</strong> a los seres vivos se llama <strong>taxonomía</strong>.</p>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Dato clave:</strong> El naturalista <strong>Carlos Linneo</strong> creó en el siglo XVIII el sistema moderno de clasificación. Más tarde, en <strong>1969</strong>, el biólogo <strong>Robert Whittaker</strong> propuso agrupar a todos los seres vivos en <strong>cinco reinos</strong>: Monera, Protista, Fungi, Plantae y Animalia.</div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🪜 Los niveles de clasificación</h2>
+    <p>Los seres vivos se ordenan en grupos, del <strong>más grande al más pequeño</strong>. Cada nivel se llama <strong>taxón</strong>:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>👑 El Reino</h4>
+        <p>Es el grupo <strong>más grande y general</strong>. Reúne a todos los seres vivos que comparten características básicas. Hay <strong>cinco reinos</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🐾 La Especie</h4>
+        <p>Es el grupo <strong>más pequeño</strong>. Reúne a seres tan parecidos que pueden <strong>reproducirse entre sí</strong> y tener descendencia fértil.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🪜 De lo grande a lo pequeño</span><br>
+      <span><span class="hl">Reino</span> → Filo → Clase → Orden → Familia → <span class="hl2">Género</span> → <span class="hl3">Especie</span>. El <strong>nombre científico</strong> de cada ser vivo se forma con dos palabras en latín: el género y la especie. Por ejemplo, el ser humano es <em>Homo sapiens</em>.</span>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🗝️ Las tres preguntas para clasificar</h2>
+    <p>Para saber a qué reino pertenece un ser vivo, los científicos se hacen <strong>tres preguntas clave</strong>:</p>
+    <div class="stat-bar">
+      <div class="stat-item"><div class="stat-label">🔢 ¿Cuántas células?</div><div class="stat-val">Unicelular o pluricelular</div></div>
+      <div class="stat-item"><div class="stat-label">🧬 ¿Qué tipo de célula?</div><div class="stat-val">Procariota o eucariota</div></div>
+      <div class="stat-item"><div class="stat-label">🍽️ ¿Cómo se alimenta?</div><div class="stat-val">Autótrofo o heterótrofo</div></div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔢 Número de células</h4>
+        <p>Un ser <strong>unicelular</strong> tiene <strong>una sola célula</strong> (una bacteria). Un ser <strong>pluricelular</strong> está formado por <strong>muchas células</strong> (una planta, tú).</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🧬 Tipo de célula</h4>
+        <p>La célula <strong>procariota</strong> no tiene núcleo definido (bacterias). La <strong>eucariota</strong> sí tiene núcleo (protistas, hongos, plantas y animales).</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>🌞 Nutrición autótrofa</h4>
+        <p>El ser vivo <strong>fabrica su propio alimento</strong>, casi siempre por <strong>fotosíntesis</strong> con la luz del Sol. Ejemplo: las plantas.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🍖 Nutrición heterótrofa</h4>
+        <p>El ser vivo <strong>no puede fabricar su alimento</strong>: lo toma de otros seres vivos. Ejemplo: los animales y los hongos.</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">🧬</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== ESTRUCTURA (LOS 5 REINOS) ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🦠 Reino Monera</h2>
+    <p>Son las <strong>bacterias</strong> y las <strong>cianobacterias</strong>. Fueron los <strong>primeros seres vivos</strong> de la Tierra y son los más pequeños y sencillos.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔎 Características</h4>
+        <p><strong>Unicelulares</strong> y <strong>procariotas</strong> (sin núcleo definido). Su nutrición puede ser <strong>autótrofa o heterótrofa</strong>. Muchas viven en colonias.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🌍 Ejemplos</h4>
+        <p>La bacteria del yogur (<em>Lactobacillus</em>), las bacterias que causan enfermedades y las cianobacterias que hacen fotosíntesis.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div>No todas las bacterias son dañinas: muchas nos ayudan a <strong>digerir alimentos</strong> y a fabricar yogur, queso y vinagre.</div>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>🔬 Reino Protista</h2>
+    <p>Es el reino más <strong>variado</strong> de todos: reúne a seres muy distintos que no encajan en los otros reinos. Casi todos viven en el <strong>agua o en lugares húmedos</strong>.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔎 Características</h4>
+        <p><strong>Eucariotas</strong>, casi todos <strong>unicelulares</strong> (algunos forman colonias). Nutrición <strong>autótrofa o heterótrofa</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🌍 Ejemplos</h4>
+        <p>La <strong>ameba</strong> y el <strong>paramecio</strong> (protozoos), y las <strong>algas</strong> unicelulares que producen gran parte del oxígeno del planeta.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🍄 Reino Fungi (Hongos)</h2>
+    <p>Son los <strong>hongos</strong>. Durante mucho tiempo se creyó que eran plantas, pero <strong>no hacen fotosíntesis</strong>: se alimentan de otros seres.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔎 Características</h4>
+        <p><strong>Eucariotas</strong>, uni o pluricelulares. <strong>Heterótrofos</strong>: absorben su alimento. Su pared celular es de <strong>quitina</strong> (no de celulosa).</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🌍 Ejemplos</h4>
+        <p>Las <strong>setas</strong> y champiñones, los <strong>mohos</strong> del pan y las <strong>levaduras</strong> con que se hace el pan y el queso.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">♻️ Su papel en la naturaleza</span><br>
+      <span>Muchos hongos son <span class="hl">descomponedores</span>: reciclan los restos de plantas y animales muertos y devuelven los <span class="hl2">nutrientes</span> al suelo.</span>
+    </div>
+  </div>
+
+  <div class="card ac-teal">
+    <h2>🌿 Reino Plantae (Plantas)</h2>
+    <p>Son las <strong>plantas</strong>: desde los musgos hasta los árboles más grandes. Son la base de casi todas las cadenas alimenticias.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔎 Características</h4>
+        <p><strong>Pluricelulares</strong> y <strong>eucariotas</strong>. <strong>Autótrofas</strong>: fabrican su alimento por <strong>fotosíntesis</strong> gracias a la <strong>clorofila</strong> de sus cloroplastos. Tienen pared de <strong>celulosa</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🌍 Ejemplos</h4>
+        <p>Los <strong>musgos</strong> y <strong>helechos</strong>, y las plantas con flor: el <strong>pino</strong>, el <strong>maíz</strong>, el <strong>rosal</strong> y los árboles frutales.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">🌞</span>
+      <div>Las plantas producen el <strong>oxígeno</strong> que respiramos y el <strong>alimento</strong> del que dependen los animales. ¡Sin ellas no habría vida como la conocemos!</div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🐾 Reino Animalia (Animales)</h2>
+    <p>Son los <strong>animales</strong>, el reino al que pertenece el ser humano. Se caracterizan por <strong>moverse</strong> y por buscar activamente su alimento.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔎 Características</h4>
+        <p><strong>Pluricelulares</strong> y <strong>eucariotas</strong>. <strong>Heterótrofos</strong>: comen otros seres vivos. <strong>No</strong> tienen pared celular. La mayoría se <strong>desplazan</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🌍 Dos grandes grupos</h4>
+        <p>Los <strong>invertebrados</strong> (sin columna: insectos, moluscos, gusanos) y los <strong>vertebrados</strong> (con columna: peces, anfibios, reptiles, aves y mamíferos).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📊 Cuadro resumen de los 5 Reinos</h2>
+    <p>Con las <strong>tres preguntas clave</strong> puedes ubicar cualquier ser vivo en su reino:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🦠 Monera</div><div class="t-info">Unicelular · Procariota · Autótrofo/Heterótrofo · Bacterias</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🔬 Protista</div><div class="t-info">Unicelular · Eucariota · Autótrofo/Heterótrofo · Ameba, algas</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">🍄 Fungi</div><div class="t-info">Uni/Pluricelular · Eucariota · Heterótrofo · Hongos, setas</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🌿 Plantae</div><div class="t-info">Pluricelular · Eucariota · Autótrofo · Plantas</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🐾 Animalia</div><div class="t-info">Pluricelular · Eucariota · Heterótrofo · Animales</div></div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🧪 Laboratorio de los Reinos</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Selecciona un reino y un aspecto para explorar sus características. ¡Combínalos todos para aprender!</p>
+    <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>Reino Monera</strong> → <strong>Características</strong></div>
+    <div class="lab-stage">
+      <div id="lab-display" class="lab-display-box">
+        <!-- Rellenado por JS -->
+      </div>
+    </div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">🌳 Reino:</span>
+        <button class="lab-btn lab-cont-btn" data-parte="monera" onclick="labShowParte('monera')">🦠 Monera</button>
+        <button class="lab-btn lab-cont-btn" data-parte="protista" onclick="labShowParte('protista')">🔬 Protista</button>
+        <button class="lab-btn lab-cont-btn" data-parte="fungi" onclick="labShowParte('fungi')">🍄 Fungi</button>
+        <button class="lab-btn lab-cont-btn" data-parte="plantae" onclick="labShowParte('plantae')">🌿 Plantae</button>
+        <button class="lab-btn lab-cont-btn" data-parte="animalia" onclick="labShowParte('animalia')">🐾 Animalia</button>
+      </div>
+      <div class="lab-group">
+        <span class="lab-group-label">📌 Aspecto:</span>
+        <button class="lab-btn lab-asp-btn" data-aspecto="estructura" onclick="labShowAspecto('estructura')">🔎 Características</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="funcion" onclick="labShowAspecto('funcion')">🍽️ Nutrición</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="ubicacion" onclick="labShowAspecto('ubicacion')">🌍 Ejemplos</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="dato" onclick="labShowAspecto('dato')">💡 Dato curioso</button>
+      </div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Conceptos</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un término del banco y toca la columna donde pertenece.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔗 Ordena la secuencia</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por secuencia)</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para poner los pasos en el orden correcto de principio a fin:</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nueva secuencia</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🔬 Identifica el Reino</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez por pista)</p>
+    <p class="id-prog" id="neuronProg" aria-live="polite">Pista 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Qué reino o concepto se describe?</p>
+    <div class="neuron-desc" id="neuronDesc">Cargando...</div>
+    <div class="cmp-opts" id="neuronOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuron" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextNeuron()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetNeuron()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔗 Empareja: Reino → Característica</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="neuroProg" aria-live="polite">1 de 5</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Cuál es la característica de este reino?</p>
+    <div class="neuro-trans-display" id="neuroTrans">Monera</div>
+    <div class="qz-opts" id="neuroOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuro" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetNeuro()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🌳 ¿A qué reino pertenece?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="enferProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Selecciona a qué reino pertenece este ser vivo:</p>
+    <div class="neuro-trans-display" id="enferDisease">Bacteria del yogur</div>
+    <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEnfer" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEnfer()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada término lo más rápido que puedas.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">🌞 Autótrofo</button>
+        <button class="btn btn-sec" onclick="">🍖 Heterótrofo</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔄 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · Los Cinco Reinos · Educación Básica · Ciencias Naturales</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final — Los Cinco Reinos</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Evaluación Competencial · Pensamiento Crítico · Los Cinco Reinos · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
+    </div>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Los Cinco Reinos</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="calcCritTotal()">🧮 Calcular Total</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🔬</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas (teoría, actividades y evaluación) para imprimir o resolver antes del examen.</p>
+      <a href="../../fichas/ficha-cinco-reinos.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
+    <a href="https://drive.google.com/drive/folders/1cinco_reinos_recursos"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+    <div class="tip" style="margin-top:1.2rem;">
+      <span class="ti">💡</span>
+      <div>Los archivos se abren directamente en el navegador. Puedes descargarlos o verlos sin necesidad de una cuenta de Google.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Los Cinco Reinos</div>
+    <div class="diploma-mascot" aria-hidden="true">🔬</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">🧬</span> Reinos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/cinco-reinos.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+</body>
+</html>

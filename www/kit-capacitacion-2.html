@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit de Capacitación 2 · Evaluación impresa · M.E.T.A.S</title>
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --azul: #1565c0; --azul-osc: #0d417e; --dorado: #c49000; --verde: #16a34a;
+    --texto: #22303f; --gris: #5b6773; --linea: #dbe4ee; --fondo: #f4f8fd;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--texto); background: #eef2f7; line-height: 1.5;
+  }
+  .hoja { max-width: 8.5in; margin: 0 auto; background: #fff; padding: 34px 44px; }
+
+  .cabecera {
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 4px solid var(--azul); padding-bottom: 14px; margin-bottom: 18px;
+  }
+  .marca { font-size: 1.9rem; font-weight: 900; color: var(--azul); letter-spacing: 2px; }
+  .marca small { display: block; font-size: 0.72rem; font-weight: 700; color: var(--gris); letter-spacing: 0.5px; }
+  .kit-titulo { text-align: right; }
+  .kit-titulo .t1 { font-size: 1.15rem; font-weight: 900; color: var(--azul-osc); }
+  .kit-titulo .t2 { font-size: 0.78rem; color: var(--gris); }
+
+  h2 {
+    font-size: 1.02rem; color: #fff; background: var(--azul);
+    padding: 8px 14px; border-radius: 10px; margin: 22px 0 12px;
+  }
+  h2 .num {
+    display: inline-block; background: #fff; color: var(--azul);
+    width: 24px; height: 24px; border-radius: 50%; text-align: center;
+    line-height: 24px; font-size: 0.85rem; margin-right: 8px; font-weight: 900;
+  }
+  p { font-size: 0.9rem; margin-bottom: 8px; }
+  .nota {
+    background: #fdf8ee; border: 1px solid #f3ddb3; border-radius: 10px;
+    padding: 10px 14px; font-size: 0.84rem; margin: 10px 0;
+  }
+  .nota b { color: var(--dorado); }
+
+  .paso { display: flex; gap: 18px; align-items: flex-start; margin: 12px 0 16px; }
+  .paso-txt { flex: 1; }
+  .paso-txt ol { margin: 6px 0 6px 20px; font-size: 0.88rem; }
+  .paso-txt ol li { margin-bottom: 5px; }
+  .paso-txt ul { margin: 6px 0 6px 20px; font-size: 0.88rem; }
+  .paso-txt ul li { margin-bottom: 4px; }
+  .qr-caja { flex: 0 0 130px; text-align: center; }
+  .qr-caja img { width: 120px; height: 120px; border: 2px solid var(--linea); border-radius: 12px; padding: 5px; }
+  .qr-caja .qr-et { font-size: 0.7rem; color: var(--gris); margin-top: 4px; line-height: 1.3; }
+
+  .destacado {
+    background: var(--fondo); border: 2px dashed var(--azul); border-radius: 12px;
+    padding: 12px 16px; text-align: center; margin: 10px 0;
+    font-size: 1rem; font-weight: 800; color: var(--azul-osc);
+  }
+
+  /* tabla del AHORRO: la estrella de esta sesión */
+  table.ahorro { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 8px 0; }
+  table.ahorro th { background: var(--azul); color: #fff; padding: 6px 10px; text-align: left; font-size: 0.8rem; }
+  table.ahorro th:nth-child(2) { background: #8a5a00; }
+  table.ahorro th:nth-child(3) { background: var(--verde); }
+  table.ahorro td { border: 1px solid var(--linea); padding: 6px 10px; vertical-align: top; }
+  table.ahorro td:nth-child(2) { color: #a05a00; font-weight: 700; }
+  table.ahorro td:nth-child(3) { color: var(--verde); font-weight: 800; }
+  table.ahorro tr.total td { background: #f0fdf4; font-weight: 900; font-size: 0.9rem; }
+
+  .granahorro {
+    background: linear-gradient(135deg, #e8f7ee, #f0fdf4); border: 2px solid #bfe6cd;
+    border-radius: 14px; padding: 14px 18px; text-align: center; margin: 12px 0;
+  }
+  .granahorro .ga-n { font-size: 1.7rem; font-weight: 900; color: var(--verde); }
+  .granahorro .ga-t { font-size: 0.85rem; color: var(--texto); }
+
+  table.guion { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 8px 0; }
+  table.guion th { background: var(--azul); color: #fff; padding: 6px 10px; text-align: left; font-size: 0.8rem; }
+  table.guion td { border: 1px solid var(--linea); padding: 6px 10px; vertical-align: top; }
+  table.guion td:first-child { white-space: nowrap; font-weight: 800; color: var(--azul); }
+
+  .check { list-style: none; margin: 8px 0; }
+  .check li { font-size: 0.92rem; padding: 7px 0 7px 34px; position: relative; border-bottom: 1px dashed var(--linea); }
+  .check li::before {
+    content: ''; position: absolute; left: 4px; top: 8px;
+    width: 16px; height: 16px; border: 2px solid var(--azul); border-radius: 5px;
+  }
+
+  .pie {
+    margin-top: 26px; padding-top: 12px; border-top: 2px solid var(--linea);
+    font-size: 0.76rem; color: var(--gris); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+  }
+
+  .imprimir-btn {
+    position: fixed; right: 18px; bottom: 18px; z-index: 5;
+    border: none; cursor: pointer; padding: 14px 22px; border-radius: 999px;
+    font-size: 1rem; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, #1565c0, #7b2ff7);
+    box-shadow: 0 6px 18px rgba(21,101,192,.4);
+  }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  .salto { page-break-before: always; }
+  @page { size: letter; margin: 10mm 9mm; }
+  @media print {
+    body { background: #fff; }
+    .hoja { max-width: none; padding: 0; }
+    .imprimir-btn { display: none; }
+    h2, table.ahorro th, table.guion th, .destacado, .nota, .granahorro
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h2 { margin: 11px 0 8px; padding: 6px 12px; font-size: 0.95rem; }
+    p { font-size: 0.85rem; margin-bottom: 6px; }
+    .cabecera { padding-bottom: 10px; margin-bottom: 12px; }
+    table.ahorro td, table.ahorro th, table.guion td, table.guion th { padding: 4px 8px; font-size: 0.78rem; }
+    .granahorro { padding: 9px 14px; margin: 8px 0; }
+    .granahorro .ga-n { font-size: 1.35rem; }
+    .granahorro .ga-t { font-size: 0.8rem; }
+    .nota { padding: 7px 11px; margin: 7px 0; font-size: 0.8rem; }
+    .paso { margin: 7px 0 9px; }
+    .paso-txt ol li, .paso-txt ul li { margin-bottom: 2px; }
+    .paso-txt ol, .paso-txt ul { font-size: 0.84rem; }
+    .destacado { padding: 9px 14px; margin: 8px 0; font-size: 0.92rem; }
+    .qr-caja img { width: 106px; height: 106px; }
+    .check li { padding: 4px 0 4px 34px; font-size: 0.88rem; }
+    .check li::before { top: 5px; }
+    .pie { margin-top: 12px; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir el kit</button>
+
+<div class="hoja">
+
+  <!-- ════════ PÁGINA 1: EL AHORRO + GUIÓN ════════ -->
+  <div class="cabecera">
+    <div class="marca">M.E.T.A.S.<small>Misiones Educativas · metas.policastsapien.com</small></div>
+    <div class="kit-titulo">
+      <div class="t1">⏱️ Kit de Capacitación · Sesión 2</div>
+      <div class="t2">La evaluación que se corrige sola · examen impreso + ZipGrade · 60 minutos</div>
+    </div>
+  </div>
+
+  <p><strong>Esta sesión demuestra una sola cosa:</strong> M.E.T.A.S es un <strong>agente que trabaja
+  para ti</strong>. Diseña el examen, imprime 30 versiones distintas para que nadie copie, te entrega la
+  pauta ya hecha… y con ZipGrade tu teléfono <strong>corrige cada hoja en segundos</strong>. Tú solo
+  enseñas: lo demás lo hace tu agente.</p>
+
+  <h2>💰 Lo que cuesta UN examen (grupo de 35 alumnos)</h2>
+  <table class="ahorro">
+    <tr><th>Tarea</th><th>A mano ✍️</th><th>Con tu agente 🤖</th></tr>
+    <tr><td>Diseñar y escribir el examen</td><td>≈ 2 horas</td><td>2 minutos (eliges misión y Forma)</td></tr>
+    <tr><td>Versiones anti-copia</td><td>casi imposible</td><td>30 formas del mismo examen, incluidas</td></tr>
+    <tr><td>Hacer la pauta de respuestas</td><td>≈ 30 minutos</td><td>0 — nace hecha, con la clave ZipGrade</td></tr>
+    <tr><td>Revisar 35 exámenes</td><td>≈ 3 horas y media</td><td>≈ 3 minutos (5 segundos por hoja)</td></tr>
+    <tr><td>Pasar las notas al registro</td><td>≈ 30 minutos</td><td>unos minutos, sin sumar a mano</td></tr>
+    <tr class="total"><td>TOTAL por examen</td><td>≈ 6 horas y media</td><td>≈ 15 minutos</td></tr>
+  </table>
+
+  <div class="granahorro">
+    <div class="ga-n">≈ 100 horas al año</div>
+    <div class="ga-t">Con 4 materias básicas × 4 parciales (16 exámenes), tu agente te devuelve
+    <strong>más de DOS SEMANAS de trabajo</strong> cada año. Dos semanas para planificar, descansar…
+    o para tu familia.</div>
+  </div>
+
+  <h2>📋 Guión de la sesión (para quien conduce)</h2>
+  <table class="guion">
+    <tr><th>Tiempo</th><th>Momento</th><th>Qué pasa</th></tr>
+    <tr><td>0–10 min</td><td>💸 El costo oculto</td><td>Dinámica en pizarra: cada maestro dice cuántas horas le toma UN examen (hacer + revisar + pasar notas). Se suman. Ese número es el enemigo de hoy.</td></tr>
+    <tr><td>10–20 min</td><td>🖨️ Nace el examen</td><td>Todos abren la misión <strong>Ángulos y Bisectriz</strong> (Paso 1) y generan SU examen con SU número de Forma. En 2 minutos cada quien tiene un examen distinto y su pauta.</td></tr>
+    <tr><td>20–30 min</td><td>📲 ZipGrade</td><td>Descargan ZipGrade (Paso 2), crean su cuenta gratis y copian la clave de la pauta (Paso 3).</td></tr>
+    <tr><td>30–45 min</td><td>🎬 LA MUESTRA</td><td>Se reparte la hoja de respuestas personalizada. Todos responden el examen de Bisectriz como alumnos… y el facilitador <strong>escanea en vivo</strong>: nota en pantalla en segundos. Luego cada quien escanea la suya.</td></tr>
+    <tr><td>45–55 min</td><td>📊 Cerrar el ciclo</td><td>Del escaneo a las notas: Registro de clase y Notas SACE → boleta (Paso 5). El agente diseña, corrige y archiva.</td></tr>
+    <tr><td>55–60 min</td><td>✅ Cierre</td><td>Checklist final (Paso 7). Nadie se va sin haber escaneado una hoja.</td></tr>
+  </table>
+
+  <div class="nota">🎒 <b>El facilitador lleva impresos:</b> el examen de la misión «Ángulos y Bisectriz»
+  (una Forma), las <b>hojas de respuestas ZipGrade personalizadas</b> (una por participante) y la
+  <b>pauta con la clave</b>. Los participantes solo traen su teléfono.</div>
+
+  <!-- ════════ PÁGINA 2: PASOS 1-3 ════════ -->
+  <div class="salto"></div>
+
+  <h2><span class="num">1</span>🖨️ Genera el examen en 2 minutos</h2>
+  <div class="paso">
+    <div class="paso-txt">
+      <ol>
+        <li>Escanea el QR: se abre la misión <strong>«Ángulos y Bisectriz»</strong>.</li>
+        <li>Baja hasta la sección de <strong>evaluación imprimible</strong>.</li>
+        <li>Elige tu <strong>Forma</strong> (1 a 30) y el <strong>parcial</strong> → Imprimir.</li>
+      </ol>
+      <ul>
+        <li>🔁 <strong>30 formas del mismo examen:</strong> mismas preguntas de fondo, distinto orden —
+            nadie puede copiar del compañero.</li>
+        <li>🎯 <strong>La Forma es exacta:</strong> la Forma 7 regenera SIEMPRE el mismo examen y la misma
+            pauta. Si pierdes la hoja, la vuelves a imprimir idéntica.</li>
+        <li>🎨 Cada materia sale con su color oficial (matemáticas azul) y el encabezado con el parcial.</li>
+      </ul>
+    </div>
+    <div class="qr-caja">
+      <img src="img/qr-mision-bisectriz.png" alt="QR misión Ángulos y Bisectriz">
+      <div class="qr-et">📷 Misión «Ángulos y Bisectriz»</div>
+    </div>
+  </div>
+
+  <h2><span class="num">2</span>📲 Descarga ZipGrade: tu escáner de exámenes</h2>
+  <div class="paso">
+    <div class="paso-txt">
+      <ol>
+        <li>Escanea el QR o busca <strong>«ZipGrade»</strong> en la Play Store / App Store.</li>
+        <li>Instala la app y crea tu <strong>cuenta gratis</strong> (correo y contraseña).</li>
+        <li>La cuenta gratuita permite <strong>100 escaneos al mes</strong> — de sobra para empezar;
+            el plan completo cuesta unos dólares al año.</li>
+      </ol>
+      <p class="nota" style="margin-top:8px;">📱 ZipGrade convierte la cámara de tu teléfono en una
+      máquina calificadora: apuntas a la hoja de respuestas y <b>la nota aparece al instante</b>,
+      con estadística de qué pregunta falló más el grupo.</p>
+    </div>
+    <div class="qr-caja">
+      <img src="img/qr-zipgrade.png" alt="QR ZipGrade">
+      <div class="qr-et">📷 zipgrade.com<br>(o búscala en tu tienda de apps)</div>
+    </div>
+  </div>
+
+  <h2><span class="num">3</span>🔑 La pauta que nace hecha</h2>
+  <div class="paso-txt">
+    <p>Al imprimir el examen, M.E.T.A.S imprime también la <strong>pauta del docente</strong> — y ahí viene
+    <strong>la clave ZipGrade ya escrita</strong> (A, C, B, D…) en el orden exacto de tu Forma.</p>
+    <div class="destacado">En ZipGrade: New Quiz → Edit Key → marca las letras que dice tu pauta.
+    Listo: tu agente ya sabe corregir ese examen.</div>
+    <ul>
+      <li>Cada Forma tiene SU clave — usa la pauta de la Forma que imprimiste.</li>
+      <li>La pauta también sirve para revisar a mano un caso especial, con el desarrollo completo.</li>
+    </ul>
+  </div>
+
+  <!-- ════════ PÁGINA 3: PASOS 4-7 ════════ -->
+  <div class="salto"></div>
+
+  <h2><span class="num">4</span>🎬 La muestra en vivo: todos son alumnos por 10 minutos</h2>
+  <div class="paso-txt">
+    <ol>
+      <li>Recibe tu <strong>hoja de respuestas ZipGrade personalizada</strong> y el examen de Bisectriz.</li>
+      <li>Respóndelo de verdad, como si fueras tu alumno (¡rellena bien los círculos!).</li>
+      <li>El facilitador escanea las primeras hojas <strong>frente a todos</strong>: la nota sale en segundos.</li>
+      <li>Ahora tú: abre ZipGrade → <strong>Scan Papers</strong> → apunta la cámara a tu hoja. Esa
+          sensación de ver la nota al instante… <strong>es la que tendrás cada parcial</strong>.</li>
+    </ol>
+    <p class="nota">💡 <b>Tip del aula real:</b> mientras los alumnos terminan el examen, tú vas escaneando
+    las hojas de los que entregan. Cuando suena el timbre, <b>ya está todo corregido</b>.</p>
+  </div>
+
+  <h2><span class="num">5</span>📊 Cerrar el ciclo: del escaneo a la boleta</h2>
+  <div class="paso">
+    <div class="paso-txt">
+      <ol>
+        <li>ZipGrade te muestra la lista de notas del grupo (y qué pregunta falló más — oro para reenseñar).</li>
+        <li>Pasa las notas a M.E.T.A.S: <strong>☰ → Registro de clase</strong> (diario) o
+            <strong>Zona Docente → Mi aula → Notas SACE</strong> (parcial), con auto-avance: escribes y el
+            cursor salta solo.</li>
+        <li>Desde ahí, tu agente arma la <strong>boleta oficial</strong> con gráfico de evolución, análisis
+            por materia y consejo para cada familia. Tú no calculas nada.</li>
+      </ol>
+    </div>
+    <div class="qr-caja">
+      <img src="img/qr-app.png" alt="QR de la plataforma">
+      <div class="qr-et">📷 Plataforma M.E.T.A.S</div>
+    </div>
+  </div>
+
+  <h2><span class="num">6</span>🆘 ¿Dudas después de hoy?</h2>
+  <div class="paso">
+    <div class="paso-txt">
+      <ul>
+        <li><strong>Guías ilustradas</strong>: escanea el QR de la derecha.</li>
+        <li><strong>Buzón directo al creador</strong>: en la app, ☰ → Ajustes → «Escríbele al creador del proyecto».</li>
+      </ul>
+    </div>
+    <div class="qr-caja">
+      <img src="img/qr-guias.png" alt="QR de las guías">
+      <div class="qr-et">📷 Guías y manuales</div>
+    </div>
+  </div>
+
+  <h2><span class="num">7</span>✅ Salgo de esta capacitación con…</h2>
+  <ul class="check">
+    <li>Generé el examen de Bisectriz con MI número de Forma y vi mi pauta con la clave.</li>
+    <li>ZipGrade instalado y con mi cuenta creada.</li>
+    <li>Respondí una hoja y la escaneé: vi mi nota en segundos.</li>
+    <li>Sé copiar la clave de la pauta en ZipGrade (New Quiz → Edit Key).</li>
+    <li>Sé dónde pasar las notas (Registro de clase / Notas SACE) para que salga la boleta sola.</li>
+    <li>Sé cuántas horas me devuelve mi agente cada año — y qué haré con ellas.</li>
+  </ul>
+
+  <div class="pie">
+    <span>⏱️ Kit de Capacitación M.E.T.A.S · Sesión 2 · Proyecto Educativo policastsapien.com</span>
+    <span>Se imprime una hoja por participante · versión julio 2026</span>
+  </div>
+
+</div>
+</body>
+</html>

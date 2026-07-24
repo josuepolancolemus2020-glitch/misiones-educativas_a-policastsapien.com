@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Programando un Robot</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: ROBÓTICA = CIAN TEC (#0e7490)
+     · Colores semánticos: cian=sensores/instrucciones, naranja=condicional/decisión, verde=bucle/variable
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --rob: #0e7490; --rob-osc: #155e75; --rob-claro: #ecfeff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cdeef6;
+    --sen: #0891b2; --ctr: #c2410c; --act: #1c7c43; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef8fa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--rob-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--rob); background: var(--rob-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--rob-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--rob-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--rob); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--rob-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--rob-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--rob-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--rob); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4fbfd; }
+  td.k { font-weight: 700; color: var(--rob-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fafdfe; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--rob-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (leer sensores / decidir / mover actuadores) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #d7f2f8; } .celula .cm b { color: var(--sen); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--ctr); }
+  .celula .cn { background: #e4f4e7; } .celula .cn b { color: var(--act); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #d7f2f8; border: 1px solid #ade0ed; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--sen); } .tri .torg b { color: var(--ctr); }
+
+  /* Pseudocódigo impreso */
+  .pseudo { font-family: "Courier New", Courier, monospace; font-size: 10pt; background: #f3fbfd;
+            border: 1px solid var(--linea); border-left: 5px solid var(--rob); border-radius: 7px;
+            padding: 9px 13px; margin: 8px 0; white-space: pre-wrap; line-height: 1.45; break-inside: avoid; }
+  .pseudo b { color: var(--ctr); }
+
+  /* Cuadrícula de papel para trazar */
+  table.malla { width: auto; margin: 8px auto; border-collapse: collapse; }
+  table.malla td { width: 34px; height: 34px; border: 1px solid #9aa7b5; text-align: center; font-size: 12pt; padding: 0; background: #fff; }
+  table.malla td.cab { border: none; font-size: 9pt; font-weight: 700; color: var(--rob-osc); background: none; }
+  table.malla td.obst { background: #ffedd5; }
+  table.malla td.lin { background: #cfd8de; }
+
+  .acts h3 { border-bottom: 2px solid var(--rob-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--rob); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--rob); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--rob-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--rob-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--rob-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2fafc; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--rob-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--rob); box-shadow: 0 6px 16px rgba(14,116,144,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div, .pseudo, table.malla td
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Programando un Robot</div>
+        <div class="f-meta"><b>Asignatura:</b> Robótica &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica &nbsp;·&nbsp; <b>Ruta de los Robots · Etapa 5</b></div>
+        <div class="f-meta"><b>Tema:</b> El ciclo leer sensores → decidir → mover actuadores → repetir; instrucciones de movimiento y espera; condicionales con sensores; bucles; variables; pseudocódigo y depuración (robótica desconectada: sin computadora)</div>
+      </div>
+      <div class="fh-qr">
+        <img src="img/qr-mision-programando-robot.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Explicar el <strong>ciclo del robot</strong>: leer sensores → decidir → mover actuadores → repetir.</li>
+      <li>Usar las <strong>instrucciones de movimiento</strong> (avanzar, girar) y la de <strong>espera</strong>.</li>
+      <li>Escribir <strong>condicionales con sensores</strong>: SI… ENTONCES… SINO…</li>
+      <li>Usar <strong>bucles</strong> («repite N veces», «repite hasta…», «repite mientras…»).</li>
+      <li>Usar <strong>variables</strong> para contar (giros, objetos recogidos).</li>
+      <li>Escribir el programa en <strong>pseudocódigo</strong> y <strong>depurarlo</strong> paso a paso.</li>
+    </ol>
+
+    <h2>🔁 1. El ciclo del robot: un bucle que nunca para</h2>
+    <p>Mientras un robot está encendido repite <strong>siempre lo mismo</strong>: <strong>lee sus sensores</strong>,
+    <strong>decide</strong> con su programa, <strong>mueve sus actuadores</strong> y <strong>vuelve a empezar</strong>.
+    Ese ciclo es un <strong>bucle infinito</strong> que se repite muchas veces por segundo.</p>
+    <div class="caja truco">💡 <b>Truco:</b> ante cualquier programa de robot pregúntate tres cosas: ¿qué <strong>lee</strong>?,
+    ¿qué <strong>decide</strong>? y ¿qué <strong>hace</strong>? Si falta alguna, el robot va a fallar.</div>
+
+    <h3>📡🧠⚙️ Mini-demostración: los tres pasos del ciclo</h3>
+    <div class="ilus">
+      <div class="ilus-t">El programa une los tres pasos y luego los repite</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">📡</span><b>1. Leer sensores</b>¿Hay pared adelante? ¿Veo la línea negra? ¿Está seca la tierra?</div>
+        <div class="cc"><span class="c-emoji">🧠</span><b>2. Decidir</b>SI pasa esto, ENTONCES haz aquello, SINO haz lo otro.</div>
+        <div class="cn"><span class="c-emoji">⚙️</span><b>3. Mover actuadores</b>Avanza, gira, recoge, abre el agua.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">🔄 Y vuelve al paso 1: <strong>repetir</strong> es el cuarto paso invisible del ciclo.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">👣 2. Las instrucciones del programa</h2>
+    <p>El programa se arma con <strong>instrucciones exactas</strong>, una por línea. Estas son las que usa el robot del simulador:</p>
+    <table>
+      <tr><th>Instrucción</th><th>¿Qué hace?</th><th>Error frecuente</th></tr>
+      <tr><td class="k">👣 AVANZA</td><td>Mueve al robot UNA casilla hacia donde mira</td><td>Contar mal las casillas</td></tr>
+      <tr><td class="k">↪️ GIRA DERECHA</td><td>Cambia el rumbo; NO cambia de casilla</td><td>Creer que también avanza</td></tr>
+      <tr><td class="k">↩️ GIRA IZQUIERDA</td><td>Cambia el rumbo al otro lado</td><td>Girar para el lado contrario</td></tr>
+      <tr><td class="k">⏳ ESPERA</td><td>Deja pasar el tiempo sin moverse</td><td>Olvidarla cuando hay que aguardar una señal</td></tr>
+      <tr><td class="k">🎯 DETENTE</td><td>Instrucción final: el robot se queda quieto en la meta</td><td>Olvidarla: el robot se pasa de largo</td></tr>
+    </table>
+    <div class="caja idea">📖 <b>Dato clave:</b> girar cuatro veces seguidas deja al robot <strong>exactamente donde estaba</strong>,
+    solo que mareado. <strong>Girar no es avanzar.</strong></div>
+
+    <h2>❓ 3. Condicionales con sensores</h2>
+    <p>Un <strong>condicional</strong> es el bloque <strong>SI… ENTONCES… SINO…</strong>. El robot <strong>lee un sensor</strong>
+    y elige una de las dos ramas. Así el mismo programa sirve aunque las cosas cambien de lugar:</p>
+    <div class="pseudo"># Sensor de pared (obstáculo)
+<b>SI</b> hay pared adelante <b>ENTONCES</b> GIRA DERECHA
+<b>SINO</b> AVANZA
+
+# Sensor de línea (color del piso)
+<b>SI</b> hay línea negra adelante <b>ENTONCES</b> AVANZA
+<b>SINO</b> GIRA DERECHA</div>
+    <div class="tri">
+      <div class="tnuc"><b>🧱 Sensor de pared / obstáculo</b>Mira la casilla de <strong>adelante</strong>: si hay un cajón o el borde del patio, responde SÍ. Sirve para esquivar sin chocar.</div>
+      <div class="torg"><b>⬛ Sensor de línea / color</b>Distingue el <strong>negro</strong> de la línea pintada del piso claro. Sirve para seguir el camino del pasillo.</div>
+    </div>
+    <div class="caja regla">🎯 <b>Regla de oro:</b> todo condicional debe decir también qué hacer cuando la respuesta es <strong>NO</strong>
+    (la rama SINO). Si falta, el robot se queda «pensando» o hace algo inesperado.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🔄 4. Bucles y 📦 variables</h2>
+    <table>
+      <tr><th>Bloque</th><th>¿Para qué sirve?</th><th>Ejemplo en el robot</th></tr>
+      <tr><td class="k">🔄 REPITE N VECES</td><td>Hacer lo mismo un número exacto de veces</td><td>REPITE 6 VECES: AVANZA</td></tr>
+      <tr><td class="k">🔄 REPITE HASTA…</td><td>Repetir hasta que se cumpla algo</td><td>REPITE HASTA llegar a la meta</td></tr>
+      <tr><td class="k">🔄 REPITE MIENTRAS…</td><td>Repetir mientras el sensor diga que sí</td><td>REPITE MIENTRAS no haya obstáculo: AVANZA</td></tr>
+      <tr><td class="k">📦 VARIABLE</td><td>Guardar un número con nombre</td><td>objetos = objetos + 1</td></tr>
+    </table>
+    <div class="caja idea">🐞 <b>¡Cuidado con el bucle infinito!</b> Todo bucle necesita una <strong>forma de terminar</strong>.
+    «REPITE PARA SIEMPRE: AVANZA» hace que el robot se salga del patio.</div>
+
+    <h2>📝 5. Pseudocódigo y 🐞 depuración</h2>
+    <p>El <strong>pseudocódigo</strong> es el programa escrito en <strong>español claro y numerado</strong>, antes de cargarlo
+    al robot. <strong>Depurar</strong> es probar el programa paso a paso, encontrar la instrucción equivocada (el <strong>bug</strong>)
+    y corregirla. Recuerda: <strong>el robot hace lo que dice el programa, no lo que uno quiso decir.</strong></p>
+    <div class="pseudo"># Robot regador del huerto escolar 🌱
+1. plantas = 0
+2. <b>REPITE</b> 10 <b>VECES</b>:
+3.    AVANZA
+4.    <b>SI</b> el sensor de humedad dice «tierra seca» <b>ENTONCES</b> abre la válvula
+5.    <b>SINO</b> sigue adelante
+6.    plantas = plantas + 1
+7. DETENTE y avisa cuántas plantas regó</div>
+
+    <h2>🎲 6. Actividades desconectadas (sin computadora)</h2>
+    <ul>
+      <li><strong>🧵 El laberinto de cinta:</strong> con cinta adhesiva marquen en el piso del aula una cuadrícula de 5×5
+      y peguen una <strong>línea negra</strong> y algunos <strong>cajones</strong> (cajas o mochilas). Un compañero hace de
+      <strong>robot</strong> (¡solo obedece instrucciones exactas!) y otro de <strong>programador</strong>. Luego cambian de papel.</li>
+      <li><strong>🃏 Tarjetas de flechas:</strong> recorten tarjetas con ▲ AVANZA, ↪ GIRA DER., ↩ GIRA IZQ., ⏳ ESPERA y 🎯 DETENTE.
+      Armen el programa <strong>completo sobre la mesa antes de ejecutarlo</strong>: el «robot» solo se mueve cuando el
+      programador levanta una tarjeta a la vez, en orden.</li>
+      <li><strong>✏️ Traza el recorrido en papel:</strong> usa la cuadrícula de abajo. Marca con una X la casilla donde queda
+      el robot después de cada instrucción y escribe la coordenada (A1…E5). Compara con lo que hizo el «robot» humano:
+      la primera diferencia es el <strong>bug</strong>.</li>
+      <li><strong>💧 El pseudocódigo del robot regador:</strong> escribe en tu cuaderno, numerado, el programa de un robot que
+      riegue el huerto escolar. Debe llevar un <strong>bucle</strong>, un <strong>condicional con sensor</strong>, una
+      <strong>variable</strong> contadora y terminar con <strong>DETENTE</strong>.</li>
+    </ul>
+
+    <div class="ilus">
+      <div class="ilus-t">Cuadrícula de papel para trazar el recorrido (📦 = cajón · gris = línea negra)</div>
+      <table class="malla">
+        <tr><td class="cab"></td><td class="cab">A</td><td class="cab">B</td><td class="cab">C</td><td class="cab">D</td><td class="cab">E</td></tr>
+        <tr><td class="cab">1</td><td></td><td></td><td class="lin"></td><td></td><td>🎯</td></tr>
+        <tr><td class="cab">2</td><td class="obst">📦</td><td></td><td class="lin"></td><td class="obst">📦</td><td></td></tr>
+        <tr><td class="cab">3</td><td></td><td class="lin"></td><td class="lin"></td><td></td><td></td></tr>
+        <tr><td class="cab">4</td><td></td><td class="obst">📦</td><td></td><td class="obst">📦</td><td></td></tr>
+        <tr><td class="cab">5</td><td>🤖</td><td></td><td></td><td></td><td></td></tr>
+      </table>
+      <p style="font-size:9pt;color:var(--gris);margin:6px 0 0;text-align:center;">El robot 🤖 arranca en A5 mirando al Norte. ¿Qué programa lo lleva a la meta 🎯 de E1?</p>
+    </div>
+
+    <div class="caja hn">🇭🇳 <b>La robótica también es tuya:</b> un robot que <strong>sigue la línea del pasillo</strong> de la
+    escuela, otro que <strong>recoge la basura del patio</strong> y otro que <strong>riega el huerto escolar</strong> se programan
+    exactamente igual: sensores, condicionales, bucles y variables. No necesitas una computadora para empezar: necesitas
+    <strong>pensar en pasos exactos</strong>. 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>La lista de instrucciones exactas del robot se llama <span class="linea-resp"></span>.</li>
+      <li>El ciclo del robot es: leer sensores, decidir, mover actuadores y <span class="linea-resp"></span>.</li>
+      <li>Para repetir un bloque muchas veces se usa un <span class="linea-resp"></span>.</li>
+      <li>El bloque SI… ENTONCES… SINO se llama <span class="linea-resp"></span>.</li>
+      <li>La cajita donde el robot guarda un número se llama <span class="linea-resp"></span>.</li>
+      <li>El programa escrito en lenguaje claro antes de cargarlo es el <span class="linea-resp"></span>.</li>
+      <li>Buscar y corregir los errores del programa se llama <span class="linea-resp"></span>.</li>
+      <li>El sensor de <span class="linea-resp"></span> distingue el negro del piso claro.</li>
+      <li>Los <span class="linea-resp"></span> ejecutan la orden: motores y ruedas.</li>
+      <li>Cuando el robot llega a la meta, el programa termina con la instrucción <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El programa es la lista de instrucciones exactas que el robot ejecuta paso a paso.</li>
+      <li>____ El robot adivina lo que el programador quiso decir.</li>
+      <li>____ Un bucle sirve para repetir un bloque de instrucciones.</li>
+      <li>____ La instrucción GIRA DERECHA mueve al robot una casilla hacia adelante.</li>
+      <li>____ Un condicional decide entre dos caminos según lo que lee el sensor.</li>
+      <li>____ Una variable guarda un número, como cuántas veces giró el robot.</li>
+      <li>____ El pseudocódigo se escribe después de cargar el programa al robot.</li>
+      <li>____ Un bucle que nunca termina no causa ningún problema.</li>
+      <li>____ Depurar es buscar y corregir los errores del programa.</li>
+      <li>____ Si al programa le falta la instrucción final, el robot sabe solo cuándo parar.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es el programa de un robot?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> su batería</span>
+        <span class="op"><i>b</i> la lista de instrucciones exactas que ejecuta paso a paso</span>
+        <span class="op"><i>c</i> su carcasa de metal</span>
+        <span class="op"><i>d</i> el nombre que le puso el dueño</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál es el ciclo de un robot programado?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> dormir → soñar → despertar</span>
+        <span class="op"><i>b</i> actuar → apagar → cargar</span>
+        <span class="op full"><i>c</i> leer sensores → decidir → mover actuadores → repetir</span>
+        <span class="op"><i>d</i> girar → girar → girar</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>El robot debe avanzar 8 casillas iguales. ¿Qué bloque conviene usar?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un bucle: repite 8 veces AVANZA</span>
+        <span class="op"><i>b</i> una variable</span>
+        <span class="op"><i>c</i> un sensor de color</span>
+        <span class="op"><i>d</i> la instrucción ESPERA</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>«SI el sensor de pared detecta obstáculo ENTONCES gira, SINO avanza» es…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un bucle</span>
+        <span class="op"><i>b</i> una variable</span>
+        <span class="op"><i>c</i> un actuador</span>
+        <span class="op"><i>d</i> un condicional</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Para qué sirve una variable en el programa?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> para mover las ruedas</span>
+        <span class="op"><i>b</i> para guardar un número, como cuántas veces giró</span>
+        <span class="op"><i>c</i> para cargar la batería</span>
+        <span class="op"><i>d</i> para pintar el robot</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué es el pseudocódigo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un robot descompuesto</span>
+        <span class="op"><i>b</i> un idioma secreto de las máquinas</span>
+        <span class="op full"><i>c</i> el programa escrito en lenguaje claro antes de cargarlo</span>
+        <span class="op"><i>d</i> un sensor especial</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>El robot chocó con la pared. ¿Qué hay que hacer?</div>
+      <div class="preg-ops">
+        <span class="op full"><i>a</i> depurar: revisar el programa paso a paso y corregirlo</span>
+        <span class="op"><i>b</i> cambiarle el nombre al robot</span>
+        <span class="op"><i>c</i> mover la pared de lugar</span>
+        <span class="op"><i>d</i> apagar los sensores para siempre</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Qué instrucción cambia el rumbo del robot sin moverlo de casilla?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> AVANZA</span>
+        <span class="op"><i>b</i> ESPERA</span>
+        <span class="op"><i>c</i> GIRA IZQUIERDA</span>
+        <span class="op"><i>d</i> DETENTE</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué sensor usa un robot que sigue la línea del pasillo de la escuela?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el sensor de humedad</span>
+        <span class="op"><i>b</i> el sensor de línea (color)</span>
+        <span class="op"><i>c</i> el sensor de sonido</span>
+        <span class="op"><i>d</i> el sensor de temperatura</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Un bucle que nunca termina…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> hace al robot más rápido</span>
+        <span class="op"><i>b</i> ahorra batería</span>
+        <span class="op"><i>c</i> es la mejor forma de programar</span>
+        <span class="op"><i>d</i> es un error: el robot nunca llega a la meta</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:40%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Programa</td><td>A. SI el sensor detecta algo, ENTONCES…, SINO…</td></tr>
+      <tr><td>2. ____ Bucle</td><td>B. El programa escrito en lenguaje claro, antes de cargarlo</td></tr>
+      <tr><td>3. ____ Condicional</td><td>C. Instrucción equivocada o en mal orden que hace fallar al robot</td></tr>
+      <tr><td>4. ____ Variable</td><td>D. Lista de instrucciones exactas que el robot ejecuta paso a paso</td></tr>
+      <tr><td>5. ____ Pseudocódigo</td><td>E. Distingue la línea negra del piso claro</td></tr>
+      <tr><td>6. ____ Depurar</td><td>F. Mueve al robot una casilla hacia adelante</td></tr>
+      <tr><td>7. ____ Bug</td><td>G. Repite un bloque de instrucciones varias veces</td></tr>
+      <tr><td>8. ____ Sensor de línea</td><td>H. Instrucción final: el robot se queda quieto en la meta</td></tr>
+      <tr><td>9. ____ AVANZA</td><td>I. Cajita con nombre donde el robot guarda un número</td></tr>
+      <tr><td>10. ____ DETENTE</td><td>J. Buscar y corregir los errores del programa</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Programando un Robot.</b> Ahora sabes que un robot repite el ciclo
+      leer sensores → decidir → mover actuadores → repetir; que los condicionales lo hacen decidir solo, los bucles le
+      ahorran instrucciones y las variables le sirven para contar; y que cuando algo falla, el error casi siempre está
+      en el programa: hay que depurarlo. ¡Sigue avanzando por la Ruta de los Robots! 🤖🕹️
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Robótica.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Jugó al laberinto de cinta con las tarjetas de flechas, trazó el recorrido en la cuadrícula y escribió el pseudocódigo del robot regador.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. programa &nbsp; 2. repetir &nbsp; 3. bucle &nbsp; 4. condicional &nbsp; 5. variable &nbsp; 6. pseudocódigo &nbsp; 7. depurar &nbsp; 8. línea &nbsp; 9. actuadores &nbsp; 10. DETENTE</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7F, 8F, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3a, 4d, 5b, 6c, 7a, 8c, 9b, 10d</div>
+      <div><span class="pt">IV. Pareados:</span> 1D, 2G, 3A, 4I, 5B, 6J, 7C, 8E, 9F, 10H</div>
+      <div><span class="pt">Cuadrícula de la página 3 (una solución válida):</span> desde A5 mirando al Norte —
+      1) SI HAY PARED ADELANTE → GIRA DER., SINO → AVANZA · 2) el mismo bloque · 3) el mismo bloque (aquí el sensor detecta el cajón de A2 y gira al Este) ·
+      4) SI HAY LÍNEA → AVANZA, SINO → GIRA DER. · 5) el mismo bloque · 6) SI HAY LÍNEA → AVANZA, SINO → GIRA IZQ. ·
+      7) y 8) el mismo bloque (sube por la línea de C2 y C1) · 9) SI HAY LÍNEA → AVANZA, SINO → GIRA DER. · 10) AVANZA · 11) AVANZA · 12) DETENTE en E1.
+      Se acepta cualquier programa que llegue a E1 sin pisar los cajones 📦.</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Programando un Robot» (Educación Básica, II y III Ciclo), etapa 5 de la Ruta de los Robots del área de
+      Robótica. Es la misión que <strong>integra la Ruta del Código con la Ruta de los Robots</strong>: todo lo aprendido
+      sobre instrucciones, condicionales, bucles y variables se aplica ahora a un robot que <strong>lee sensores</strong>
+      (de pared/obstáculo y de línea/color). El enfoque sigue siendo de <strong>robótica desconectada</strong>: los
+      conceptos se trabajan con papel, cinta adhesiva, tarjetas de flechas y lógica, por lo que la ficha puede aplicarse
+      en aulas sin computadoras ni conectividad. Las actividades de la página 3 (laberinto de cinta con un compañero
+      haciendo de robot, tarjetas de flechas para «programarlo», trazado del recorrido en la cuadrícula de papel y
+      escritura del pseudocódigo del robot regador) son el corazón de la clase: dan la experiencia física de que
+      <strong>el robot hace lo que dice el programa, no lo que uno quiso decir</strong>, y de que depurar es comparar
+      paso a paso lo previsto con lo ocurrido. La misión interactiva (código QR de la portada) incluye un
+      <strong>simulador de cuadrícula con 6 niveles</strong> donde el estudiante arma el programa con bloques y ve al
+      robot ejecutarlo, con retroalimentación inmediata de cada lectura de sensor. Puede utilizarse como guía de estudio
+      impresa o digital antes de la evaluación final e incluye todos los conceptos evaluados en la plataforma
+      (completar, V/F, selección múltiple y pareados).
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
