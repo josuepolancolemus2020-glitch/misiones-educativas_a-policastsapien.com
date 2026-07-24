@@ -51,8 +51,8 @@ const DIAGNOSTICOS = {
     { etapa: 2, q: '¿Cuál es la «glándula maestra» que dirige a las demás glándulas?', o: ['La tiroides', 'El páncreas', 'La hipófisis', 'La glándula pineal'], a: 2 },
   ],
   codigo: [
+    { etapa: 1, q: '¿Cuál de estas instrucciones es EXACTA?', o: ['Camina por ahí', 'Da 3 pasos hacia adelante', 'Muévete un poco', 'Ve rápido'], a: 1 },
     { etapa: 2, q: 'Un robot mira hacia arriba (Norte) y ejecuta: AVANZA, GIRA DERECHA, AVANZA. ¿Hacia dónde mira al final?', o: ['Norte', 'Sur', 'Este', 'Oeste'], a: 2 },
-    { etapa: 2, q: '¿Qué es una secuencia en programación?', o: ['Un error del programa', 'Una lista de instrucciones en orden', 'Un dibujo del robot', 'Un botón para apagar'], a: 1 },
   ],
   robots: [
     { etapa: 1, q: '¿Qué parte del robot funciona como sus «sentidos»?', o: ['Los actuadores', 'Los sensores', 'La batería', 'Las ruedas'], a: 1 },

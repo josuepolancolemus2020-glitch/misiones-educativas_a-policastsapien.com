@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión El Pensamiento Computacional</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: PROGRAMACIÓN = CIAN TEC (#0e7490)
+     · Colores semánticos: cian=pensamiento/código, ámbar=algoritmos de la vida, gris=errores
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --tec: #0e7490; --tec-osc: #155e75; --tec-claro: #ecfeff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cffafe;
+    --amb: #b45309; --oro: #b45309; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eefafc; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--tec-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--tec); background: var(--tec-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--tec-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--tec-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--tec); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--tec-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--tec-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--tec-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--tec); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4fcfd; }
+  td.k { font-weight: 700; color: var(--tec-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #f8feff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--tec-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (exacta / ambigua / descomponer) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #d5f4f9; } .celula .cm b { color: var(--tec); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--oro); }
+  .celula .cn { background: #eceae8; } .celula .cn b { color: var(--pie); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #d5f4f9; border: 1px solid #a9e6ef; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--tec); } .tri .torg b { color: var(--oro); }
+
+  .prog-ej { font-family: 'Courier New', monospace; font-weight: 700; font-size: 9.5pt; background: var(--tec-claro); border: 1px solid var(--linea); border-radius: 8px; padding: 8px 12px; margin: 8px 0; text-align: left; break-inside: avoid; }
+
+  .acts h3 { border-bottom: 2px solid var(--tec-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--tec); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--tec); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--tec-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--tec-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--tec-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2fbfd; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--tec-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--tec); box-shadow: 0 6px 16px rgba(14,116,144,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div, .prog-ej
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión El Pensamiento Computacional</div>
+        <div class="f-meta"><b>Asignatura:</b> Programación &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Pensar antes de programar: qué es un algoritmo (la receta de las baleadas), instrucciones exactas frente a ambiguas, descomponer problemas grandes en partes pequeñas, patrones y abstracción — todo sin computadora</div>
+      </div>
+      <div class="fh-qr">
+        <img src="img/qr-mision-pensamiento-computacional.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Explicar qué es un <strong>algoritmo</strong> y reconocerlo en tareas de la vida diaria.</li>
+      <li>Distinguir una <strong>instrucción exacta</strong> de una <strong>instrucción ambigua</strong>.</li>
+      <li>Comprender que la computadora hace <strong>exactamente</strong> lo que se le dice: no adivina.</li>
+      <li><strong>Descomponer</strong> un problema grande en partes pequeñas manejables.</li>
+      <li>Descubrir <strong>patrones</strong> (lo que se repite) para ahorrar trabajo.</li>
+      <li>Aplicar la <strong>abstracción</strong>: quedarse solo con lo importante, como un mapa.</li>
+    </ol>
+
+    <h2>🫓 1. ¿Qué es un algoritmo?</h2>
+    <p>Un <strong>algoritmo</strong> son los <strong>pasos ordenados</strong> para lograr algo. La
+    <strong>receta de las baleadas</strong> es un algoritmo: amasar la harina, hacer la tortilla, cocerla en el
+    comal, untar los frijoles y doblarla. Ya usás algoritmos sin saberlo: lavarte los dientes, izar la bandera el
+    lunes cívico o alistar la mochila son pasos <strong>en orden</strong> que repetís cada día.</p>
+    <div class="caja truco">💡 <b>Truco:</b> cada paso de un algoritmo empieza con un <strong>verbo claro</strong>
+    (lavar, amasar, doblar) y va en su lugar. Si cambiás el orden, el resultado cambia: nadie dobla la baleada
+    antes de hacer la tortilla.</div>
+
+    <h3>🧠🌫️🧩 Mini-demostración: las tres ideas clave</h3>
+    <div class="ilus">
+      <div class="ilus-t">Así piensa un programador (¡sin computadora!)</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">✅</span><b>Instrucción exacta</b>«Agrega 2 cucharadas»: cualquiera la ejecuta igual.</div>
+        <div class="cc"><span class="c-emoji">🌫️</span><b>Instrucción ambigua</b>«Ponle un poco»: cada quien entiende otra cosa.</div>
+        <div class="cn"><span class="c-emoji">🧩</span><b>Descomponer</b>La feria escolar se divide en comida, juegos e invitaciones.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Algoritmo = pasos <strong>exactos</strong> + en el <strong>orden</strong> correcto.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Pensamiento Computacional</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🌫️ 2. Instrucciones exactas vs ambiguas</h2>
+    <p>Una computadora (¡o una persona-robot!) ejecuta las instrucciones <strong>tal como están escritas</strong>:
+    <strong>no adivina</strong> lo que quisiste decir. Por eso «ponle un poco» falla: cada quien le pone una
+    cantidad distinta. En cambio «agrega 2 cucharadas» funciona: <strong>todos hacen lo mismo</strong>.</p>
+    <div class="tri">
+      <div class="tnuc"><b>✅ Exacta</b>Tiene cantidades, lugares y tiempos claros: «da 3 pasos», «lee las páginas 12 a 15». Todos la ejecutan igual.</div>
+      <div class="torg"><b>🌫️ Ambigua</b>Deja dudas: «un poco», «por ahí», «bonito», «rapidito». Cada quien entiende otra cosa y la tarea falla.</div>
+    </div>
+
+    <h3>📋 Las 4 ideas del pensamiento computacional</h3>
+    <table>
+      <tr><th>Idea</th><th>¿Qué es?</th><th>Ejemplo hondureño</th></tr>
+      <tr><td class="k">🫓 Algoritmo</td><td>Pasos ordenados para lograr algo</td><td>La receta de las baleadas</td></tr>
+      <tr><td class="k">🗣️ Instrucción</td><td>Cada orden; debe ser exacta, no ambigua</td><td>«Agrega 2 cucharadas» ✅ vs «ponle un poco» 🌫️</td></tr>
+      <tr><td class="k">🧩 Descomposición</td><td>Dividir un problema grande en partes pequeñas</td><td>La feria escolar: comida, juegos, invitaciones</td></tr>
+      <tr><td class="k">🔁 Patrón</td><td>Lo que se repite; descubrirlo ahorra trabajo</td><td>Cada tortilla se palmea y se cuece igual</td></tr>
+    </table>
+    <div class="caja regla">🗺️ <b>Y de regalo, la abstracción:</b> quedarse solo con lo importante. Un mapa no dibuja
+    cada piedra del camino: dibuja solo lo que sirve para llegar. Para el fresco de nance no importa el color del
+    guacal: importan los nances, el azúcar y el hielo.</div>
+
+    <h3>💾 Ejemplo de algoritmo (léelo y ejecútalo con la mente)</h3>
+    <div class="prog-ej">Algoritmo: preparar un fresco de nance 🥤<br>
+    1. Lavar bien los nances &nbsp; 2. Machacarlos en una taza de agua &nbsp; 3. Colar la mezcla<br>
+    4. Agregar 4 tazas de agua y 6 cucharadas de azúcar &nbsp; 5. Servir con hielo<br>
+    → Cada paso es EXACTO y va en ORDEN: por eso cualquiera puede prepararlo igual. ✅</div>
+    <div class="caja idea">🧠 <b>Ojo:</b> si un programa falla, casi nunca es culpa de la computadora: ella solo
+    obedeció una instrucción ambigua o fuera de orden. ¡El pensamiento se hace ANTES de programar!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Pensamiento Computacional</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">🧩 3. Descomponer, patrones y errores comunes</h2>
+    <p>Un <strong>problema grande</strong> (organizar la feria escolar) asusta entero, pero se vence
+    <strong>descompuesto</strong>: una comisión prepara la comida, otra los juegos y otra invita a las familias.
+    Después se busca el <strong>patrón</strong>: lo que se repite se hace siempre igual y ahorra trabajo.</p>
+
+    <h3>⚠️ Errores comunes — ¡no caigas en ellos!</h3>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Creer que la computadora «adivina»</td><td>Ejecuta exactamente lo escrito, aunque esté mal.</td><td>Escribir instrucciones exactas ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Dar órdenes ambiguas</td><td>«Un poco», «por ahí»: cada quien entiende otra cosa.</td><td>Cantidades y lugares claros ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Cambiar el orden de los pasos</td><td>El algoritmo se ejecuta en orden.</td><td>Numerar los pasos del 1 al final ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Atacar el problemón entero</td><td>Agota y desordena el trabajo.</td><td>Descomponer y repartir las partes ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Ignorar lo que se repite</td><td>Se pierde tiempo reinventando cada vez.</td><td>Descubrir el patrón y repetirlo ✔</td></tr>
+    </table>
+
+    <h2>🎲 4. Actividades desconectadas (sin computadora)</h2>
+    <div class="caja regla">🤖 <b>El robot humano:</b> en parejas. Un alumno escribe las instrucciones para una tarea
+    sencilla (dibujar una casa, hacer un avión de papel, guardar un libro en la mochila) y el otro es el «robot»:
+    ejecuta cada instrucción <strong>al pie de la letra</strong>, exagerando toda ambigüedad — si dice «ponle una
+    ventana», ¡el robot puede dibujarla del tamaño de la casa! Cuando la tarea falla, encuentran juntos la
+    instrucción ambigua y la corrigen con cantidades y lugares exactos. Después cambian de papel.</div>
+    <div class="caja regla">🎪 <b>Descompongan la feria:</b> el docente escribe en el pizarrón el problema grande
+    «organizar la feria escolar». Cada equipo recibe una parte (comida, juegos, invitaciones, limpieza) y escribe el
+    algoritmo de SU parte en 4 a 6 pasos exactos. Al final, los equipos leen sus algoritmos en orden y comprueban
+    que, juntas, las partes pequeñas resuelven el problemón. Gana el equipo sin pasos ambiguos.</div>
+    <div class="caja hn">🇭🇳 <b>El pensamiento computacional en tu vida:</b> cuando seguís la receta de las baleadas,
+    izás la bandera el lunes cívico o repartís los oficios de la casa, ya estás pensando como programador: pasos en
+    orden, partes pequeñas y patrones. Quien domina esto tiene lo más difícil de la programación… ¡aun sin tocar una
+    computadora! 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Pensamiento Computacional</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 5. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Los pasos ordenados para lograr algo forman un <span class="linea-resp"></span>.</li>
+      <li>Una instrucción que todos ejecutan igual es una instrucción <span class="linea-resp"></span>.</li>
+      <li>«Ponle un poco» es una instrucción <span class="linea-resp"></span>.</li>
+      <li>Dividir un problema grande en partes pequeñas se llama <span class="linea-resp"></span>.</li>
+      <li>Algo que se repite una y otra vez es un <span class="linea-resp"></span>.</li>
+      <li>Quedarse solo con lo importante, como un mapa, se llama <span class="linea-resp"></span>.</li>
+      <li>En un algoritmo importa mucho el <span class="linea-resp"></span> de los pasos.</li>
+      <li>Cada paso de un algoritmo empieza con un <span class="linea-resp"></span> claro.</li>
+      <li>La computadora hace <span class="linea-resp"></span> lo que se le dice.</li>
+      <li>Un problema grande se vence dividiéndolo en <span class="linea-resp"></span> pequeñas.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Un algoritmo es una lista de pasos ordenados para lograr algo.</li>
+      <li>____ «Ponle un poco de sal» es una instrucción exacta.</li>
+      <li>____ «Agrega 2 cucharadas de azúcar» es una instrucción exacta.</li>
+      <li>____ La computadora adivina lo que queremos decir.</li>
+      <li>____ Descomponer es dividir un problema grande en partes pequeñas.</li>
+      <li>____ Un patrón es algo que se repite.</li>
+      <li>____ La abstracción es quedarse solo con lo importante, como un mapa.</li>
+      <li>____ El orden de los pasos de un algoritmo no importa.</li>
+      <li>____ La receta de las baleadas es un algoritmo.</li>
+      <li>____ Cada paso de un algoritmo debe empezar con un verbo claro.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Pensamiento Computacional</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es un algoritmo?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un dibujo bonito</span>
+        <span class="op"><i>b</i> pasos ordenados para lograr algo</span>
+        <span class="op"><i>c</i> un tipo de computadora</span>
+        <span class="op"><i>d</i> un número muy grande</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál de estas instrucciones es EXACTA?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> camina por ahí</span>
+        <span class="op"><i>b</i> da 3 pasos hacia adelante</span>
+        <span class="op"><i>c</i> muévete un poco</span>
+        <span class="op"><i>d</i> ve rápido</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Por qué falla la instrucción «ponle un poco»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> cada quien entiende una cantidad distinta</span>
+        <span class="op"><i>b</i> porque es muy larga</span>
+        <span class="op"><i>c</i> porque está en español</span>
+        <span class="op"><i>d</i> porque tiene números</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué hace una computadora con las instrucciones?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> adivina lo que queremos</span>
+        <span class="op"><i>b</i> elige la que le gusta</span>
+        <span class="op"><i>c</i> las cambia de orden</span>
+        <span class="op"><i>d</i> ejecuta exactamente lo que se le dice</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>Descomponer un problema es…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> borrarlo</span>
+        <span class="op"><i>b</i> dividirlo en partes pequeñas</span>
+        <span class="op"><i>c</i> hacerlo más grande</span>
+        <span class="op"><i>d</i> esconderlo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué es un patrón?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> algo que se repite</span>
+        <span class="op"><i>b</i> un error del programa</span>
+        <span class="op"><i>c</i> un mapa</span>
+        <span class="op"><i>d</i> un premio</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>La abstracción consiste en…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> escribir todo con detalle</span>
+        <span class="op"><i>b</i> repetir los pasos</span>
+        <span class="op"><i>c</i> quedarse solo con lo importante</span>
+        <span class="op"><i>d</i> hacer un dibujo realista</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Cuál es un algoritmo de tu vida diaria?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el color azul</span>
+        <span class="op"><i>b</i> una piedra</span>
+        <span class="op"><i>c</i> un número</span>
+        <span class="op"><i>d</i> lavarse los dientes paso a paso</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>Para organizar la feria escolar conviene…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> dividirla en partes: comida, juegos, invitaciones</span>
+        <span class="op"><i>b</i> hacer todo a la vez sin plan</span>
+        <span class="op"><i>c</i> esperar a que se organice sola</span>
+        <span class="op"><i>d</i> cancelarla</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Un buen paso de algoritmo empieza con…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un chiste</span>
+        <span class="op"><i>b</i> un verbo claro (lavar, cortar, pegar)</span>
+        <span class="op"><i>c</i> un saludo</span>
+        <span class="op"><i>d</i> una adivinanza</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Pensamiento Computacional</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Algoritmo</td><td>A. Lista de pasos en orden</td></tr>
+      <tr><td>2. ____ Instrucción exacta</td><td>B. Cada acción del algoritmo; empieza con un verbo</td></tr>
+      <tr><td>3. ____ Instrucción ambigua</td><td>C. Máquina que hace exactamente lo que se le dice</td></tr>
+      <tr><td>4. ____ Secuencia</td><td>D. Pasos ordenados para lograr una tarea</td></tr>
+      <tr><td>5. ____ Descomponer</td><td>E. Quedarse solo con lo importante, como un mapa</td></tr>
+      <tr><td>6. ____ Patrón</td><td>F. Orden que todos ejecutan igual</td></tr>
+      <tr><td>7. ____ Abstracción</td><td>G. Tarea enorme que se vence por partes</td></tr>
+      <tr><td>8. ____ Paso</td><td>H. Orden confusa que cada quien entiende distinto</td></tr>
+      <tr><td>9. ____ Problema grande</td><td>I. Dividir un problema grande en partes pequeñas</td></tr>
+      <tr><td>10. ____ Computadora</td><td>J. Algo que se repite una y otra vez</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión El Pensamiento Computacional.</b> Ahora sabes escribir algoritmos
+      con pasos exactos y en orden, cazar instrucciones ambiguas, descomponer problemas grandes en partes pequeñas y
+      descubrir patrones como un verdadero programador. ¡Este es el primer paso de la Ruta del Código! 🧠💻
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Programación.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Escribió en su cuaderno el algoritmo de una tarea de su casa (4 a 6 pasos exactos) y un compañero lo ejecutó como «robot humano».</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Pensamiento Computacional</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. algoritmo &nbsp; 2. exacta &nbsp; 3. ambigua &nbsp; 4. descomponer &nbsp; 5. patrón &nbsp; 6. abstracción &nbsp; 7. orden &nbsp; 8. verbo &nbsp; 9. exactamente &nbsp; 10. partes</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7V, 8F, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2b, 3a, 4d, 5b, 6a, 7c, 8d, 9a, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1D, 2F, 3H, 4A, 5I, 6J, 7E, 8B, 9G, 10C</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión El Pensamiento Computacional» (Educación Básica), etapa 1 de la Ruta del Código (Programación) y accesible
+      desde 4º grado. Trabaja el pensamiento computacional con enfoque totalmente desconectado — esta etapa no usa
+      todavía ningún simulador —: algoritmos de la vida diaria hondureña (la receta de las baleadas, izar la bandera,
+      sembrar un frijol, el fresco de nance), instrucciones exactas frente a ambiguas, descomposición de problemas
+      grandes, patrones y abstracción. La misión interactiva (código QR de la portada) incluye el laboratorio «El
+      maestro robot» con 4 escenarios y 4 desafíos por escenario; las actividades desconectadas de la página 3 («El
+      robot humano» y «Descompongan la feria») permiten trabajar los mismos conceptos sin ningún dispositivo: en la
+      primera, un alumno ejecuta literalmente las instrucciones ambiguas de otro para evidenciar el fallo; en la
+      segunda, los equipos descomponen entre todos la feria escolar. La sección «Ponte a Prueba» replica los formatos
+      de la evaluación imprimible de la plataforma (completar, V/F, selección múltiple y pareados).
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Pensamiento Computacional · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

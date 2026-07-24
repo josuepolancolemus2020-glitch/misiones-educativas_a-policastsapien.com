@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión El Pensamiento Computacional | policastsapien.com</title>
+<meta name="description" content="Misión El Pensamiento Computacional: qué es un algoritmo (la receta de las baleadas), instrucciones exactas frente a ambiguas, descomponer problemas grandes, patrones y abstracción. Todo desconectado: pensar antes de programar. Misión educativa interactiva de Programación. PolicastSapien.">
+<meta property="og:title" content="Misión El Pensamiento Computacional">
+<meta property="og:description" content="Juega, piensa como programador y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-pensamiento-computacional/pensamiento-computacional.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/pensamiento-computacional.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=programacion" class="xp-back-btn" title="Regresar a misiones de Programación">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🧠</div>
+    <div class="hero-text">
+      <h1>Misión <span>El Pensamiento Computacional</span></h1>
+      <p class="sub">¡Aprende a pensar como programador sin encender ninguna computadora! 🧠🫓🇭🇳</p>
+      <div class="badge">💻 Ruta del Código · Etapa 1 de 7 · Programación</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🫓 ¿Qué es un algoritmo?</h2>
+    <p>Un <strong>algoritmo</strong> son los <strong>pasos ordenados</strong> para lograr algo. ¡La
+    <strong>receta de las baleadas</strong> es un algoritmo!: amasar la harina, hacer la tortilla, cocerla en el
+    comal, untar los frijoles y doblarla. Si cambias el orden, la baleada sale mal.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🪥 Ya usás algoritmos</h4>
+        <p>Lavarte los dientes, <strong>izar la bandera</strong> el lunes cívico o alistar la mochila: todos son pasos <strong>en orden</strong> que repetís sin darte cuenta.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🔢 El orden importa</h4>
+        <p>No podés <em>doblar la baleada</em> antes de <em>hacer la tortilla</em>, ni ponerte los zapatos antes que los calcetines. <strong>Cambiar el orden cambia el resultado.</strong></p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">🫓</span>
+      <div><strong>Idea clave:</strong> escribir un algoritmo es «programar» con lápiz y papel: cada paso empieza con un <b>verbo claro</b> (lavar, amasar, doblar) y va en su lugar.</div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: ¿cuál de estas cosas es un algoritmo?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb1')">La receta de las baleadas</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb1')">Una piedra del río</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb1')">El color azul</button>
+      </div>
+      <div class="mq-fb" id="mqFb1" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🌫️ Instrucciones exactas vs ambiguas</h2>
+    <p>Una computadora (¡o una persona-robot!) hace <strong>EXACTAMENTE</strong> lo que se le dice: <strong>no
+    adivina</strong>. Por eso las instrucciones deben ser <strong>exactas</strong>.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>✅ Instrucción exacta</h4>
+        <p>«Agrega <strong>2 cucharadas</strong> de frijoles», «da <strong>3 pasos</strong> hacia adelante». Cualquiera que la lea hace <strong>lo mismo</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🌫️ Instrucción ambigua</h4>
+        <p>«Ponle <strong>un poco</strong>», «camina <strong>por ahí</strong>». Cada quien entiende algo distinto… ¡y la tarea <strong>falla</strong>!</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">💻</span>
+      <div><strong>Dato clave:</strong> cuando un programa falla, muchas veces la culpa no es de la computadora: es de una instrucción <b>ambigua o fuera de orden</b>. La máquina solo obedeció.</div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: ¿cuál instrucción entendería igual TODO el mundo?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb2')">«Ponle un poco de sal»</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb2')">«Hazlo bonito»</button>
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb2')">«Agrega 2 cucharadas de azúcar»</button>
+      </div>
+      <div class="mq-fb" id="mqFb2" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🧩 Descomponer, patrones y abstracción</h2>
+    <p>Un problema grande asusta… ¡hasta que lo <strong>descomponés</strong> en partes pequeñas! Para
+    <strong>organizar la feria escolar</strong>: una comisión prepara la comida, otra los juegos y otra invita a las
+    familias. Cada parte es fácil; juntas resuelven el problemón.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔁 Patrones</h4>
+        <p>¿Qué se <strong>repite</strong>? Si ya sabés hacer UNA baleada, sabés hacer cincuenta: repetís el mismo patrón. Descubrir lo repetido <strong>ahorra trabajo</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🗺️ Abstracción</h4>
+        <p>Quedarse <strong>solo con lo importante</strong>, como un <strong>mapa</strong>: no dibuja cada piedra del camino, solo lo que sirve para llegar.</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🧠 Pensamiento computacional completo</span><br>
+      <span>Problema: <span class="hl">vender frescos de nance en la feria</span> → <span class="hl2">1. Descompongo</span> (comprar, preparar, vender) · <span class="hl2">2. Busco el patrón</span> (cada vaso se prepara igual) · <span class="hl2">3. Abstraigo</span> (solo importa: nances, azúcar, hielo, vasos) · <span class="hl2">4. Escribo el algoritmo</span> paso a paso. 🥤</span>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CONCEPTOS (DETALLE) ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>📋 Las 4 ideas del pensamiento computacional</h2>
+    <p>Este es el «idioma» del programador que piensa antes de programar. ¡Con solo 4 ideas podés resolver problemas enormes!</p>
+    <table class="instr-tbl">
+      <tr><th>Idea</th><th>¿Qué es?</th><th>Ejemplo hondureño</th></tr>
+      <tr><td class="k">Algoritmo</td><td>Pasos ordenados para lograr algo</td><td>La receta de las baleadas 🫓</td></tr>
+      <tr><td class="k">Instrucción</td><td>Cada orden; debe ser exacta, no ambigua</td><td>«Agrega 2 cucharadas» ✅ vs «ponle un poco» 🌫️</td></tr>
+      <tr><td class="k">Descomposición</td><td>Dividir un problema grande en partes pequeñas</td><td>La feria escolar: comida, juegos, invitaciones 🎪</td></tr>
+      <tr><td class="k">Patrón</td><td>Lo que se repite; descubrirlo ahorra trabajo</td><td>Cada tortilla se palmea y cuece igual 🔁</td></tr>
+    </table>
+    <div class="tip">
+      <span class="ti">🗺️</span>
+      <div><strong>Y de regalo, la abstracción:</strong> quedarse solo con lo importante, como un mapa. Para el fresco de nance no importa el color del guacal: importan los nances, el azúcar y el hielo.</div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: dividir «organizar la feria» en comida, juegos e invitaciones es…</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb3')">Un patrón</button>
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb3')">Descomposición</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb3')">Una instrucción ambigua</button>
+      </div>
+      <div class="mq-fb" id="mqFb3" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>⚠️ Errores comunes — ¡no caigas en ellos!</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🚫 Creer que la computadora adivina</h4>
+        <p>«Ella sabe lo que quise decir»… ¡NO! La computadora ejecuta <strong>exactamente</strong> lo que está escrito, aunque esté mal.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🚫 Dar órdenes ambiguas</h4>
+        <p>«Ponle un poco», «hazlo bonito»: cada quien entiende otra cosa. Instrucciones con <strong>cantidades y lugares claros</strong>.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>🚫 Saltarse el orden</h4>
+        <p>Los pasos se ejecutan <strong>en orden</strong>, del primero al último. Doblar la baleada antes de cocer la tortilla arruina la merienda.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🚫 Atacar el problemón entero</h4>
+        <p>Querer hacer TODA la feria de un solo jalón agota a cualquiera. Primero se <strong>descompone</strong>, después se reparte.</p>
+      </div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: escribiste «ponle azúcar» y el fresco salió amargo. ¿Quién falló?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb4')">La instrucción: era ambigua</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb4')">La computadora: debió adivinar</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb4')">El azúcar</button>
+      </div>
+      <div class="mq-fb" id="mqFb4" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🇭🇳 Pensamiento computacional en tu vida diaria</h2>
+    <p>Aunque no tengas computadora, ya pensás como programador cada vez que ordenás pasos, dividís trabajos o descubrís lo que se repite.</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🫓 La baleada</div><div class="t-info">Amasar → tortilla → frijoles → doblar. ¡Receta = algoritmo!</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🇭🇳 Izar la bandera</div><div class="t-info">Formarse → amarrar → izar con el himno → saludar</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🌱 Sembrar frijoles</div><div class="t-info">Algodón → frijol → luz → regar cada día</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🎪 La feria escolar</div><div class="t-info">Descomponer: comida + juegos + invitaciones</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Dato clave:</strong> quien aprende a pensar en pasos, partes y patrones ya tiene lo más difícil de la programación. La computadora es solo la herramienta que ejecuta.</div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🔬</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB: EL MAESTRO ROBOT ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🔬 Lab: El maestro robot</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Juega a darle instrucciones a un «robot humano». Elige un <strong>escenario</strong> y supera sus <strong>4 desafíos</strong>: ordenar el algoritmo, cazar la instrucción ambigua, encontrar el paso que falta y descomponer el problema. ⭐ +1 XP por desafío y +2 XP por escenario completo (primera vez).</p>
+    <div id="lab-sentence" class="lab-sentence">🫓 Cargando el escenario…</div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">🎯 Escenario:</span>
+        <button class="lab-btn lab-cont-btn" data-parte="baleada" onclick="labShowParte('baleada')">🫓 La baleada</button>
+        <button class="lab-btn lab-cont-btn" data-parte="bandera" onclick="labShowParte('bandera')">🇭🇳 La bandera</button>
+        <button class="lab-btn lab-cont-btn" data-parte="frijol" onclick="labShowParte('frijol')">🌱 El frijol</button>
+        <button class="lab-btn lab-cont-btn" data-parte="nance" onclick="labShowParte('nance')">🥤 El fresco</button>
+      </div>
+      <div class="lab-group">
+        <span class="lab-group-label">🧩 Desafío:</span>
+        <button class="lab-btn lab-asp-btn" data-asp="orden" onclick="labShowAspecto('orden')">🔢 Ordena los pasos</button>
+        <button class="lab-btn lab-asp-btn" data-asp="ambigua" onclick="labShowAspecto('ambigua')">🌫️ Caza la ambigua</button>
+        <button class="lab-btn lab-asp-btn" data-asp="falta" onclick="labShowAspecto('falta')">❓ El paso que falta</button>
+        <button class="lab-btn lab-asp-btn" data-asp="partes" onclick="labShowAspecto('partes')">🧩 Descompón</button>
+      </div>
+    </div>
+    <div class="lab-stage">
+      <div id="lab-display" class="lab-display-box">
+        <!-- Rellenado por JS: desafío interactivo del escenario -->
+      </div>
+    </div>
+    <div id="fbLab" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS + MEMORAMA ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>🧠 Juego: Memoria del Pensamiento</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
+    <div class="memo-stats" id="memoStats" aria-live="polite"></div>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Conceptos</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un término del banco y toca la columna donde pertenece.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔗 Ordena el algoritmo</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por secuencia)</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para poner los pasos en el orden correcto de principio a fin:</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nueva secuencia</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🌫️ ¿Exacta o ambigua?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez) · ¡Cuida tu racha 🔥!</p>
+    <p class="id-prog" id="enferProg" aria-live="polite">1 de 10 · Racha: 0 🔥</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Una persona-robot podría ejecutar esta orden tal como está escrita?</p>
+    <div class="neuro-trans-display" id="enferDisease">«Da 3 pasos hacia adelante»</div>
+    <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEnfer" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEnfer()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🧩 Descompón el problema</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por problema bien descompuesto (primera vez)</p>
+    <p class="id-prog" id="neuronProg" aria-live="polite">Problema 1 de 5</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Cada problema grande tiene 3 partes verdaderas escondidas entre partes que no le pertenecen. ¡Elígelas!</p>
+    <div class="neuron-desc" id="neuronDesc">Cargando...</div>
+    <div class="cmp-opts" id="neuronOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuron" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextNeuron()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetNeuron()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada término lo más rápido que puedas.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">✅ Exacta</button>
+        <button class="btn btn-sec" onclick="">🌫️ Ambigua</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="algoritmo">🫓 Escribir el algoritmo de una tarea de casa</option>
+        <option value="ambigua">🌫️ Marcar la instrucción ambigua</option>
+        <option value="descompon">🧩 Descomponer un problema</option>
+        <option value="patron">🔁 Encontrar el patrón</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">🧠 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · El Pensamiento Computacional · Educación Básica · Programación</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final — El Pensamiento Computacional</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Programación — Prueba Operativa · El Pensamiento Computacional · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 20 pts · II: 10 pts · III: 20 pts · IV: 30 pts · V: 20 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">🧠 Prueba Operativa — El Pensamiento Computacional</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Ordena algoritmos, caza instrucciones ambiguas, completa pasos perdidos y descompón problemas. Responde en pantalla y presiona <strong>Calificar prueba</strong> para autoevaluarte. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🧠</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas (teoría, actividades desconectadas y evaluación) para imprimir o resolver antes del examen.</p>
+      <a href="../../fichas/ficha-pensamiento-computacional.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
+    <a href="https://drive.google.com/drive/folders/1pensamiento_computacional_recursos"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+    <div class="tip" style="margin-top:1.2rem;">
+      <span class="ti">💡</span>
+      <div>Los archivos se abren directamente en el navegador. Puedes descargarlos o verlos sin necesidad de una cuenta de Google.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión El Pensamiento Computacional</div>
+    <div class="diploma-mascot" aria-hidden="true">🧠</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">📋</span> Conceptos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/pensamiento-computacional.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+</body>
+</html>
