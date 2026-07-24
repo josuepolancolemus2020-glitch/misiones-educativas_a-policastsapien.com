@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Condicionales: el Robot Decide | policastsapien.com</title>
+<meta name="description" content="Misión Condicionales: el Robot Decide: condicionales SI…ENTONCES…SINO en pseudocódigo español, la condición como pregunta de sí/no, los sensores del robot (¿hay pared adelante?, ¿el semáforo está en verde?), el simulador de decisiones con muros y semáforos, y detectar bugs. Misión educativa interactiva de Programación. PolicastSapien.">
+<meta property="og:title" content="Misión Condicionales: el Robot Decide">
+<meta property="og:description" content="Juega, haz que el robot DECIDA con condicionales y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-robot-decide/robot-decide.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/robot-decide.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=programacion" class="xp-back-btn" title="Regresar a misiones de Programación">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🚦</div>
+    <div class="hero-text">
+      <h1>Misión <span>Condicionales: el Robot Decide</span></h1>
+      <p class="sub">¡Haz que el robot DECIDA con SI…ENTONCES…SINO según lo que ve! 🤖🔀🚦</p>
+      <div class="badge">💻 Ruta del Código · Etapa 3 de 7 · Programación</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔀 Decidir según la situación</h2>
+    <p>Todos los días <strong>tomamos decisiones</strong> según lo que pasa: <strong>SI</strong> llueve
+    <strong>ENTONCES</strong> llevo paraguas, <strong>SINO</strong> llevo gorra. Eso es un
+    <strong>condicional</strong>: una instrucción que hace <strong>elegir</strong> entre dos caminos según una
+    <strong>condición</strong>. La condición siempre es una <strong>pregunta de sí o no</strong> («¿está lloviendo?»).</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>❓ La condición es una pregunta</h4>
+        <p>«¿Está lloviendo?», «¿hay pared adelante?». Solo puede responderse <strong>SÍ</strong> o <strong>NO</strong>: nunca «tal vez».</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🔀 Dos caminos, uno solo corre</h4>
+        <p>Si la respuesta es <strong>SÍ</strong>, corre la rama <strong>ENTONCES</strong>. Si es <strong>NO</strong>, corre la rama <strong>SINO</strong>. ¡Nunca las dos!</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">☂️</span>
+      <div><strong>Ejemplo de la vida diaria:</strong> <em>SI</em> está lloviendo <em>ENTONCES</em> llevo paraguas, <em>SINO</em> llevo gorra. Cambia la respuesta y cambia lo que haces… ¡pero solo haces UNA cosa!</div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: ¿cuál de estas SÍ es una condición (pregunta de sí/no)?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb1')">«AVANZA una casilla»</button>
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb1')">«¿Hay pared adelante?»</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb1')">«GIRA DERECHA»</button>
+      </div>
+      <div class="mq-fb" id="mqFb1" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🤖 SI-ENTONCES y SI-ENTONCES-SINO en el robot</h2>
+    <p>Los <strong>sensores</strong> son las «preguntas» del robot: le dicen si <strong>¿hay pared adelante?</strong>
+    o si <strong>¿el semáforo está en verde?</strong>. Con esa respuesta el robot decide qué rama ejecutar y
+    cuál <strong>ignorar</strong>.</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">❓ Condición</div><div class="t-info">La pregunta de sí/no que lee el sensor</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">👉 Rama ENTONCES</div><div class="t-info">Lo que hace si la respuesta es SÍ</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">👈 Rama SINO</div><div class="t-info">Lo que hace si la respuesta es NO</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">☝️ Solo una rama</div><div class="t-info">Se ejecuta una; la otra se ignora</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">🌳</span>
+      <div><strong>En el simulador:</strong> «<b>SI HAY PARED ADELANTE → GIRA DERECHA, SINO → AVANZA</b>». Si el robot tiene un árbol 🌳 enfrente, gira; si el camino está libre, avanza. ¡Solo pasa una cosa!</div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: «SI hay pared → GIRA DERECHA, SINO → AVANZA». El robot NO tiene pared adelante. ¿Qué hace?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb2')">Gira derecha</button>
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb2')">Avanza</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb2')">Hace las dos</button>
+      </div>
+      <div class="mq-fb" id="mqFb2" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔗 Condicionales encadenados y el orden de las preguntas</h2>
+    <p>A veces el robot necesita <strong>varias preguntas seguidas</strong>: primero «¿hay pared?», después
+    «¿el semáforo está en verde?». Son <strong>condicionales encadenados</strong>, y el <strong>orden</strong> de
+    las preguntas puede cambiar la decisión.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>🚫 Error 1: creer que corren las dos ramas</h4>
+        <p>En cada condicional se ejecuta <strong>UNA sola</strong> rama: la que responde la condición. La otra <strong>se ignora</strong> por completo.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🚫 Error 2: confundir condición con acción</h4>
+        <p>La <strong>condición</strong> es una <em>pregunta</em> («¿hay pared?»); la <strong>acción</strong> es una <em>orden</em> («AVANZA»). ¡No son lo mismo!</p>
+      </div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🚦 Ejemplo con semáforo</span><br>
+      <span><span class="hl2">SI SEMÁFORO EN VERDE</span> → <span class="hl3">AVANZA</span>, <span class="hl2">SINO</span> → <span class="hl">ESPERA</span>. Con luz 🟢 verde el robot cruza; con luz 🔴 roja espera hasta que cambie. 🚦</span>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== INSTRUCCIONES (DETALLE) ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>📋 La estructura de un condicional</h2>
+    <p>Un condicional tiene tres partes: una <strong>condición</strong> (la pregunta) y dos <strong>ramas</strong>
+    (qué hacer si <strong>sí</strong> y qué hacer si <strong>no</strong>). ¡Mira cómo se lee!</p>
+    <table class="instr-tbl">
+      <tr><th>Condición (pregunta)</th><th>Rama ENTONCES (si SÍ)</th><th>Rama SINO (si NO)</th></tr>
+      <tr><td class="k">¿Está lloviendo?</td><td>llevo paraguas ☂️</td><td>llevo gorra 🧢</td></tr>
+      <tr><td class="k">¿Hay pared adelante?</td><td>GIRA DERECHA ↪️</td><td>AVANZA 👣</td></tr>
+      <tr><td class="k">¿El semáforo está en verde?</td><td>AVANZA (cruzo) 🟢</td><td>ESPERA ⏳🔴</td></tr>
+      <tr><td class="k">¿Llegó a la casa?</td><td>ENTREGA 📬</td><td>sigue avanzando 👣</td></tr>
+    </table>
+    <div class="tip">
+      <span class="ti">🔀</span>
+      <div><strong>Se lee así:</strong> <b>SI</b> (condición) <b>ENTONCES</b> (rama del sí) <b>SINO</b> (rama del no). El robot lee la respuesta de la condición y ejecuta <strong>solo una</strong> rama.</div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: en «SI verde → AVANZA, SINO → ESPERA», con luz 🔴 roja el robot…</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb3')">Avanza igual</button>
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb3')">Espera</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb3')">Gira</button>
+      </div>
+      <div class="mq-fb" id="mqFb3" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>⚠️ Errores comunes — ¡no caigas en ellos!</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🚫 Creer que corren las dos ramas</h4>
+        <p>En un condicional se ejecuta <strong>UNA sola</strong> rama. Si la respuesta es SÍ, la rama SINO <strong>ni se mira</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🚫 Confundir condición con acción</h4>
+        <p>«¿Hay pared?» es una <strong>pregunta</strong> (condición). «AVANZA» es una <strong>orden</strong> (acción). La condición nunca mueve al robot: solo <em>decide</em>.</p>
+      </div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>🚫 Invertir las ramas</h4>
+        <p>Si escribes «SI hay pared → AVANZA» el robot ¡choca contra el árbol! 🌳 Cuando SÍ hay pared debe <strong>GIRAR</strong>, no avanzar.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🚫 Elegir la condición equivocada</h4>
+        <p>Para no chocar, la pregunta correcta es <strong>«¿hay pared adelante?»</strong>, no «¿el semáforo está en verde?». ¡El sensor debe medir lo correcto!</p>
+      </div>
+    </div>
+    <div class="mq-wrap">
+      <div class="mq-q">🎮 Mini-quiz: «SI hay pared → GIRA DERECHA, SINO → AVANZA». El robot SÍ tiene pared adelante. ¿Qué hace?</div>
+      <div class="mq-opts">
+        <button class="mq-opt" onclick="miniQuiz(this,true,'mqFb4')">Gira derecha</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb4')">Avanza</button>
+        <button class="mq-opt" onclick="miniQuiz(this,false,'mqFb4')">Hace las dos</button>
+      </div>
+      <div class="mq-fb" id="mqFb4" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🇭🇳 Condicionales en tu vida diaria</h2>
+    <p>Aunque no tengas computadora, ya decides con condicionales todo el tiempo: eliges según la respuesta a una pregunta de sí o no.</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">☂️ La lluvia</div><div class="t-info">SI llueve → paraguas, SINO → gorra</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🚦 El semáforo</div><div class="t-info">SI está en verde → cruzo, SINO → espero</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🔥 El fogón</div><div class="t-info">SI está encendido → cocino, SINO → prendo la leña</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🌡️ El clima</div><div class="t-info">SI hace frío → suéter, SINO → camiseta</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Dato clave:</strong> el robot no adivina: su <b>sensor</b> responde la pregunta y él ejecuta la rama que corresponde. Buenos condicionales = buenas decisiones. 🤖</div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🔬</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB: SIMULADOR ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🔬 Simulador: el Robot que Decide</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige un mapa, arma tu programa tocando los botones — ¡incluye los <strong>condicionales</strong> 🌳🚦 para que el robot DECIDA! — y presiona <strong>▶ Ejecutar</strong>. Verás cómo evalúa cada condición (✔ sí / ✘ no) paso a paso. ⭐ +6 XP por cada mapa resuelto (primera vez).</p>
+    <div id="lab-sentence" class="lab-sentence">🤖 Cargando la aldea…</div>
+    <div class="lab-stage">
+      <div id="lab-display" class="lab-display-box">
+        <!-- Rellenado por JS: cuadrícula SVG de la aldea con muros y semáforos -->
+      </div>
+    </div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">🗺️ Mapa:</span>
+        <button class="lab-btn lab-cont-btn" data-parte="n1" onclick="labShowParte('n1')">1️⃣ El muro</button>
+        <button class="lab-btn lab-cont-btn" data-parte="n2" onclick="labShowParte('n2')">2️⃣ El pasillo</button>
+        <button class="lab-btn lab-cont-btn" data-parte="n3" onclick="labShowParte('n3')">3️⃣ El semáforo</button>
+        <button class="lab-btn lab-cont-btn" data-parte="n4" onclick="labShowParte('n4')">4️⃣ El desafío</button>
+      </div>
+      <div class="sim-cmd-btns">
+        <button class="sim-cmd" onclick="labAdd('AVANZA')">👣 AVANZA</button>
+        <button class="sim-cmd" onclick="labAdd('GIRA IZQUIERDA')">↩️ GIRA IZQ.</button>
+        <button class="sim-cmd" onclick="labAdd('GIRA DERECHA')">↪️ GIRA DER.</button>
+        <button class="sim-cmd" onclick="labAdd('ESPERA')">⏳ ESPERA</button>
+        <button class="sim-cmd sim-cmd-entrega" onclick="labAdd('ENTREGA')">📬 ENTREGA</button>
+      </div>
+      <div class="sim-cmd-btns">
+        <button class="sim-cmd" style="grid-column:span 2;" onclick="labAdd('C_PARED')">🌳 SI PARED → GIRA DER., SINO → AVANZA</button>
+        <button class="sim-cmd" style="grid-column:span 2;" onclick="labAdd('C_VERDE')">🚦 SI VERDE → AVANZA, SINO → ESPERA</button>
+      </div>
+      <div class="sim-prog" id="progList" aria-live="polite"></div>
+      <div class="sim-util-btns">
+        <button class="btn btn-g" onclick="labRun()">▶ Ejecutar</button>
+        <button class="btn btn-d" onclick="labDel()">⌫ Borrar última</button>
+        <button class="btn btn-d" onclick="labClear()">🗑️ Limpiar</button>
+      </div>
+      <div id="fbLab" class="fb" role="alert"></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS + MEMORAMA ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>🧠 Juego: Memoria del Código</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
+    <div class="memo-stats" id="memoStats" aria-live="polite"></div>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Conceptos</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un término del banco y toca la columna donde pertenece.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔀 Arma el condicional en orden</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por condicional)</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ordenar las partes del condicional (SI → condición → ENTONCES → SINO):</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nuevo condicional</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🤖 ¿Qué hace el robot?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez por caso)</p>
+    <p class="id-prog" id="neuronProg" aria-live="polite">Caso 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Evalúa el condicional (¡mira si hay pared 🌳!) y elige la casilla donde termina el robot:</p>
+    <div class="neuron-desc" id="neuronDesc">Cargando...</div>
+    <div class="cmp-opts" id="neuronOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuron" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextNeuron()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetNeuron()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>❓ Elige la condición</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="enferProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Qué PREGUNTA (condición) necesita el robot para decidir en esta situación?</p>
+    <div class="neuro-trans-display" id="enferDisease">Cargando...</div>
+    <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEnfer" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEnfer()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🐛 Detective del bug</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por bug atrapado (primera vez)</p>
+    <p class="id-prog" id="neuroProg" aria-live="polite">1 de 5</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Cada programa tiene UN condicional al revés o con la condición errada. ¿En qué línea está el bug?</p>
+    <div class="neuro-trans-display" id="neuroTrans">Cargando...</div>
+    <div class="qz-opts" id="neuroOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuro" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetNeuro()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada término lo más rápido que puedas.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">❓ Condición</button>
+        <button class="btn btn-sec" onclick="">👣 Acción</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔄 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="rama">🔀 Predecir la rama</option>
+        <option value="condicional">✍️ Escribir el condicional</option>
+        <option value="trazar">🔮 Trazar el recorrido</option>
+        <option value="bug">🐛 Encontrar el error</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">🤖 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · Condicionales: el Robot Decide · Educación Básica · Programación</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final — Condicionales: el Robot Decide</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Programación — Prueba Operativa · Condicionales: el Robot Decide · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 20 pts · II: 10 pts · III: 20 pts · IV: 30 pts · V: 20 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">🤖 Prueba Operativa — Condicionales: el Robot Decide</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Ejecuta condicionales en la cuadrícula, predice la rama, completa condicionales y atrapa bugs. Responde en pantalla y presiona <strong>Calificar prueba</strong> para autoevaluarte. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🤖</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas (teoría, actividades desconectadas y evaluación) para imprimir o resolver antes del examen.</p>
+      <a href="../../fichas/ficha-robot-decide.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
+    <a href="https://drive.google.com/drive/folders/1robot_decide_recursos"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+    <div class="tip" style="margin-top:1.2rem;">
+      <span class="ti">💡</span>
+      <div>Los archivos se abren directamente en el navegador. Puedes descargarlos o verlos sin necesidad de una cuenta de Google.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Condicionales: el Robot Decide</div>
+    <div class="diploma-mascot" aria-hidden="true">🤖</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">📋</span> Condicional</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Simulador</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/robot-decide.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+</body>
+</html>
