@@ -36,6 +36,7 @@ function fb(id, msg, isOk) {
 const SAVE_KEY = 'adverbios_v1_basica';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1;
+let evalCritFormNum = 1, evalCritAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
@@ -43,7 +44,7 @@ const TOTAL_SECTIONS = 11;
 
 const xpTracker = {
     fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(),
-    cmp: new Set(), reto: new Set(), sopa: new Set(),
+    cmp: new Set(), reto: new Set(), sopa: new Set(), critWin: new Set(),
 };
 
 // ===================== SONIDO =====================
@@ -73,7 +74,7 @@ function initTheme() { const s = localStorage.getItem(SAVE_KEY + '_theme'); cons
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ doneSections: Array.from(done), unlockedAch, evalFormNum, xp })); } catch (e) { }
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ doneSections: Array.from(done), unlockedAch, evalFormNum, evalCritFormNum, xp })); } catch (e) { }
 }
 function loadProgress() {
     try {
@@ -86,6 +87,7 @@ function loadProgress() {
         });
         if (s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id => ACHIEVEMENTS[id] !== undefined);
         if (s.evalFormNum) evalFormNum = s.evalFormNum;
+        if (s.evalCritFormNum) evalCritFormNum = s.evalCritFormNum;
         if (s.xp !== undefined) {
             xp = s.xp;
             updateXPBar();
@@ -1177,6 +1179,370 @@ ${s1}${s2}${s3}${s4}
 <div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
+    const win = window.open('', '_blank', '');
+    if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+    win.document.write(doc);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
+}
+
+// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+// Segunda evaluación imprimible de la misión (Español · Lengua). Todo el
+// contenido nace de los bancos y tarjetas de ESTA misión (adjetivo vs adverbio,
+// sufijo -mente, adverbios en serie, clases). Formas deterministas: semilla
+// _evalRng(200000 + cf). Progresión de dificultad: identificar → transformar →
+// analizar el error → clasificar/argumentar en texto → producir.
+function evalSwitchMode(mode) {
+    sfx('click');
+    const cWrap = document.getElementById('evalConceptWrap'), critWrap = document.getElementById('evalCritWrap');
+    const cBtn = document.getElementById('evalModeBtnConcept'), critBtn = document.getElementById('evalModeBtnCrit');
+    if (mode === 'crit') {
+        cWrap.style.display = 'none'; critWrap.style.display = 'block';
+        cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected', 'false');
+        critBtn.classList.add('active'); critBtn.setAttribute('aria-selected', 'true');
+        if (!window._evalCritData) genEvalCrit();
+    } else {
+        critWrap.style.display = 'none'; cWrap.style.display = 'block';
+        critBtn.classList.remove('active'); critBtn.setAttribute('aria-selected', 'false');
+        cBtn.classList.add('active'); cBtn.setAttribute('aria-selected', 'true');
+    }
+}
+
+// ── I. ¿Adjetivo o adverbio? El juez de la invariabilidad (misma palabra que
+//    concuerda como adjetivo o es invariable como adverbio; prueba de la p.10 del quiz)
+const critAdjAdvBank = [
+    { sent: 'Juan es RÁPIDO.', word: 'rápido', ans: 'adj', rewrite: 'Con sujeto femenino: «Ana es rápida». La palabra CAMBIA (rápida) → es adjetivo, concuerda en género y número.' },
+    { sent: 'Juan corre RÁPIDO.', word: 'rápido', ans: 'adv', rewrite: 'Con sujeto femenino: «Ana corre rápido». La palabra NO cambia (rápido) → es adverbio, invariable.' },
+    { sent: 'Los corredores son LENTOS.', word: 'lentos', ans: 'adj', rewrite: 'Femenino/plural: «Las corredoras son lentas». Cambia → adjetivo (concuerda).' },
+    { sent: 'Los corredores caminan LENTO.', word: 'lento', ans: 'adv', rewrite: 'Femenino/plural: «Las corredoras caminan lento». No cambia → adverbio (invariable).' },
+    { sent: 'El cielo está CLARO.', word: 'claro', ans: 'adj', rewrite: 'Femenino/plural: «Las mañanas están claras». Cambia → adjetivo (concuerda).' },
+    { sent: 'María habla CLARO.', word: 'claro', ans: 'adv', rewrite: 'Con otro sujeto: «Ellas hablan claro». No cambia → adverbio (invariable).' },
+    { sent: 'El pan está DURO.', word: 'duro', ans: 'adj', rewrite: 'Femenino/plural: «Las tortillas están duras». Cambia → adjetivo (concuerda).' },
+    { sent: 'Ellas trabajan DURO.', word: 'duro', ans: 'adv', rewrite: 'Con otro sujeto: «Él trabaja duro». No cambia → adverbio (invariable).' },
+];
+// ── II. Laboratorio del sufijo -mente (transformar adjetivo → adverbio conservando la tilde)
+const critMenteBank = [
+    { adj: 'fácil', adv: 'fácilmente', hint: 'conserva la tilde de «fácil»' },
+    { adj: 'rápida', adv: 'rápidamente', hint: 'conserva la tilde de «rápida»' },
+    { adj: 'feliz', adv: 'felizmente', hint: '¡ojo! NO es «felizamente»' },
+    { adj: 'lenta', adv: 'lentamente', hint: 'sobre el adjetivo femenino «lenta»' },
+    { adj: 'clara', adv: 'claramente', hint: 'sobre el adjetivo femenino «clara»' },
+    { adj: 'débil', adv: 'débilmente', hint: 'conserva la tilde de «débil»' },
+    { adj: 'cortés', adv: 'cortésmente', hint: 'conserva la tilde de «cortés»' },
+    { adj: 'amable', adv: 'amablemente', hint: 'sobre el adjetivo «amable»' },
+    { adj: 'tímida', adv: 'tímidamente', hint: 'conserva la tilde de «tímida»' },
+];
+// ── III. Detective del error (errores que la misión enseña a evitar)
+const critErrBank = [
+    { bad: 'Ella cantó felizamente en la fiesta.', key: 'felizmente', fix: 'Ella cantó felizmente en la fiesta.', rule: 'El adverbio de «feliz» es «felizmente»: el sufijo es -mente, nunca «-amente».' },
+    { bad: 'Habló claramente y precisamente.', key: 'clara', fix: 'Habló clara y precisamente.', rule: 'En una serie de adverbios en -mente, solo el ÚLTIMO conserva el sufijo; el anterior va como adjetivo femenino (clara).' },
+    { bad: 'Ellas corren rápidas.', key: 'rapido', fix: 'Ellas corren rápido.', rule: '«Rápido» modifica al verbo «corren»: es adverbio e invariable, no concuerda (no «rápidas»).' },
+    { bad: '«Ayer» es un adverbio de lugar.', key: 'tiempo', fix: '«Ayer» es un adverbio de tiempo.', rule: '«Ayer» indica CUÁNDO ocurre la acción → adverbio de tiempo, no de lugar.' },
+    { bad: 'Hablaron lentamente y suavemente.', key: 'lenta', fix: 'Hablaron lenta y suavemente.', rule: 'Serie de -mente: solo el último lleva el sufijo (lenta y suavemente).' },
+    { bad: '«Cerca» es un adverbio de tiempo.', key: 'lugar', fix: '«Cerca» es un adverbio de lugar.', rule: '«Cerca» indica DÓNDE ocurre la acción → adverbio de lugar.' },
+    { bad: 'Los atletas llegaron rápidamentes.', key: 'rapidamente', fix: 'Los atletas llegaron rápidamente.', rule: 'El adverbio es invariable: no tiene plural; se dice «rápidamente», no «rápidamentes».' },
+    { bad: '«Mucho» es un adverbio de modo.', key: 'cantidad', fix: '«Mucho» es un adverbio de cantidad.', rule: '«Mucho» indica intensidad o cantidad → adverbio de cantidad.' },
+];
+// ── IV. El poder del adverbio en el texto (mini-párrafos hondureños con 5 adverbios subrayados)
+const critClassOptions = ['lugar', 'tiempo', 'modo', 'cantidad', 'afirmación', 'negación', 'duda'];
+const critTextBank = [
+    {
+        scene: '🛒 En el mercado',
+        html: 'Hoy fui temprano al mercado de mi comunidad. <u class="crit-adv">AQUÍ</u><sup>1</sup> los vendedores ofrecen <u class="crit-adv">SIEMPRE</u><sup>2</sup> frutas frescas. Mi mamá compró <u class="crit-adv">MUCHO</u><sup>3</sup> maíz y pagó cincuenta lempiras. «Regatea <u class="crit-adv">BIEN</u><sup>4</sup>», me dijo. <u class="crit-adv">QUIZÁS</u><sup>5</sup> mañana volvamos por más.',
+        advs: [{ n: 1, w: 'AQUÍ', cls: 'lugar' }, { n: 2, w: 'SIEMPRE', cls: 'tiempo' }, { n: 3, w: 'MUCHO', cls: 'cantidad' }, { n: 4, w: 'BIEN', cls: 'modo' }, { n: 5, w: 'QUIZÁS', cls: 'duda' }],
+        effect: [
+            { q: 'Si cambias SIEMPRE (nº 2) por NUNCA, ¿cómo cambia el sentido de la oración?', model: 'Cambia por completo: con NUNCA los vendedores ya no ofrecen frutas frescas de forma habitual; el adverbio de negación indica que jamás lo hacen, lo contrario de SIEMPRE.' },
+            { q: 'Si quitas el adverbio MUCHO (nº 3), ¿qué información se pierde?', model: 'Se pierde la cantidad: ya no sabríamos cuánto maíz compró. El adverbio de cantidad precisa la intensidad de la acción.' }
+        ]
+    },
+    {
+        scene: '🏫 En la escuela',
+        html: '<u class="crit-adv">AYER</u><sup>1</sup> en la escuela estudiamos <u class="crit-adv">BASTANTE</u><sup>2</sup>. La maestra explicó <u class="crit-adv">CLARAMENTE</u><sup>3</sup> la lección. «<u class="crit-adv">SÍ</u><sup>4</sup>, entendimos todo», respondimos. Luego salimos <u class="crit-adv">AFUERA</u><sup>5</sup> al patio.',
+        advs: [{ n: 1, w: 'AYER', cls: 'tiempo' }, { n: 2, w: 'BASTANTE', cls: 'cantidad' }, { n: 3, w: 'CLARAMENTE', cls: 'modo' }, { n: 4, w: 'SÍ', cls: 'afirmación' }, { n: 5, w: 'AFUERA', cls: 'lugar' }],
+        effect: [
+            { q: 'Si cambias SÍ (nº 4) por NO, ¿cómo cambia el sentido de la respuesta?', model: 'Se invierte: con NO negamos, indicaría que NO entendieron. El adverbio de afirmación confirma; el de negación rechaza.' },
+            { q: 'Si cambias AYER (nº 1) por MAÑANA, ¿qué cambia en el tiempo del relato?', model: 'El relato deja de ser pasado: MAÑANA sitúa la acción en el futuro, algo que todavía no ha ocurrido.' }
+        ]
+    },
+    {
+        scene: '🏪 En la pulpería',
+        html: '<u class="crit-adv">CERCA</u><sup>1</sup> de mi casa hay una pulpería. <u class="crit-adv">HOY</u><sup>2</sup> compré pan y pagué diez lempiras. La señora me atendió <u class="crit-adv">AMABLEMENTE</u><sup>3</sup>. «<u class="crit-adv">TAMBIÉN</u><sup>4</sup> llévate leche», me dijo. <u class="crit-adv">POSIBLEMENTE</u><sup>5</sup> regrese en la tarde.',
+        advs: [{ n: 1, w: 'CERCA', cls: 'lugar' }, { n: 2, w: 'HOY', cls: 'tiempo' }, { n: 3, w: 'AMABLEMENTE', cls: 'modo' }, { n: 4, w: 'TAMBIÉN', cls: 'afirmación' }, { n: 5, w: 'POSIBLEMENTE', cls: 'duda' }],
+        effect: [
+            { q: 'Si cambias POSIBLEMENTE (nº 5) por SEGURAMENTE, ¿cómo cambia la certeza?', model: 'Aumenta la certeza: POSIBLEMENTE expresa duda; SEGURAMENTE expresa casi seguridad de que regresará.' },
+            { q: 'Si eliminas el adverbio CERCA (nº 1), ¿qué se pierde en la oración?', model: 'Se pierde el lugar: ya no sabríamos dónde está la pulpería respecto a la casa.' }
+        ]
+    }
+];
+// ── V. Producción escrita (con rúbrica de 4 criterios × 5 pts)
+const critProdBank = [
+    { prompt: 'Escribe de 4 a 5 oraciones que cuenten cómo es un día en tu comunidad. Usa al menos 5 adverbios de clases distintas (lugar, tiempo, modo, cantidad, afirmación, negación o duda). Subraya cada adverbio e indica entre paréntesis a qué clase pertenece.' },
+    { prompt: 'Escribe de 4 a 5 oraciones que describan un día de trabajo o de faena en tu comunidad. Emplea al menos 5 adverbios de clases diferentes; subraya cada uno e indica su clase entre paréntesis.' },
+    { prompt: 'Escribe de 4 a 5 oraciones sobre un paseo o una fiesta en tu comunidad. Incluye al menos 5 adverbios de clases distintas; subráyalos e indica la clase de cada uno entre paréntesis.' }
+];
+const critProdRubric = [
+    'Usa al menos 5 adverbios en el texto.',
+    'Los adverbios pertenecen a clases variadas (no repite siempre la misma).',
+    'Clasifica correctamente cada adverbio subrayado.',
+    'El texto es coherente y trata sobre un día en su comunidad.'
+];
+
+// Comparación estricta que SÍ exige la tilde (para el laboratorio -mente)
+function _critNormTilde(v) { return (v || '').toString().toLowerCase().replace(/\s+/g, ' ').trim(); }
+function _critClassSelect(dataAttr, i) {
+    return `<select class="crit-fossil-select" ${dataAttr}="${i}" aria-label="Clase del adverbio ${i + 1}"><option value="">— elige la clase —</option>${critClassOptions.map(e => `<option value="${e}">${e}</option>`).join('')}</select>`;
+}
+
+function genEvalCrit() {
+    sfx('click');
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const _sC = document.getElementById('evalCritFormaSel');
+    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
+    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
+    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    saveProgress();
+    document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Los Adverbios`;
+    evalCritAnsVisible = false;
+    const out = document.getElementById('evalCritOut'); out.innerHTML = '';
+
+    // Barra de distribución + progresión de dificultad
+    const bar = document.createElement('div'); bar.className = 'eval-score-bar';
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar (I) → transformar (II) → analizar el error (III) → clasificar y argumentar en un texto (IV) → producir por escrito (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Adj/Adv 20</span><span class="eval-score-pill esp-tf">II. -mente 15</span><span class="eval-score-pill esp-mc">III. Error 20</span><span class="eval-score-pill esp-pr">IV. En el texto 25</span><span class="eval-score-pill esp-cp">V. Producción 20</span></div>`;
+    out.appendChild(bar);
+
+    // ── I. ¿Adjetivo o adverbio? (5 × 4 = 20; radios autocalificables + reescritura modelo)
+    const adjItems = _pickF(critAdjAdvBank, 5, rngC);
+    let adjRows = '';
+    adjItems.forEach((it, i) => {
+        adjRows += `<div class="crit-q-block"><div class="crit-q-label">${i + 1}. ${it.sent.replace(it.word.toUpperCase(), '<strong>' + it.word.toUpperCase() + '</strong>')}</div><div class="crit-adj-opts"><label class="crit-radio"><input type="radio" name="critAdj${i}" value="adj"> Adjetivo (concuerda)</label><label class="crit-radio"><input type="radio" name="critAdj${i}" value="adv"> Adverbio (invariable)</label></div><div class="crit-q-sub">Aplica la prueba: reescríbela con sujeto femenino o plural en tu cuaderno.</div><div class="crit-pauta">Es <strong>${it.ans === 'adj' ? 'ADJETIVO' : 'ADVERBIO'}</strong>. ${it.rewrite}</div><div class="eval-item-feedback" id="critFbAdj${i}" aria-live="polite"></div></div>`;
+    });
+    const s1 = document.createElement('div');
+    s1.innerHTML = `<div class="eval-section-title">I. ¿Adjetivo o adverbio? El juez de la invariabilidad <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Marca si la palabra en mayúsculas es adjetivo o adverbio. Luego aplica la prueba de la invariabilidad: reescribe la oración con sujeto femenino o plural y observa si la palabra cambia.</p>${adjRows}</div>`;
+    out.appendChild(s1);
+
+    // ── II. Laboratorio del sufijo -mente (5 × 3 = 15; inputs, exige la tilde correcta)
+    const menteItems = _pickF(critMenteBank, 5, rngC);
+    let menteRows = '';
+    menteItems.forEach((it, i) => {
+        menteRows += `<div class="crit-tl-row"><span class="crit-tl-ev"><strong>${it.adj}</strong> → <input type="text" class="crit-mente-input" data-mente="${i}" autocomplete="off" spellcheck="false" aria-label="Adverbio en -mente de ${it.adj}" placeholder="adverbio en -mente"> <span class="crit-mente-hint">(${it.hint})</span></span><div class="crit-pauta">${it.adj} → <strong>${it.adv}</strong></div><div class="eval-item-feedback" id="critFbMente${i}" aria-live="polite"></div></div>`;
+    });
+    const s2 = document.createElement('div');
+    s2.innerHTML = `<div class="eval-section-title">II. Laboratorio del sufijo -mente <span class="eval-pts">15 pts · 3 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Transforma cada adjetivo en un adverbio terminado en -mente. <strong>Debes conservar la tilde</strong> del adjetivo si la tiene.</p>${menteRows}</div>`;
+    out.appendChild(s2);
+
+    // ── III. Detective del error (4 × 5 = 20; corrección autocalificable + regla modelo)
+    const errItems = _pickF(critErrBank, 4, rngC);
+    let errRows = '';
+    errItems.forEach((it, i) => {
+        errRows += `<div class="crit-q-block"><div class="crit-scenario">❌ ${it.bad}</div><div class="crit-q-label">Escribe la forma correcta:</div><textarea class="crit-textarea" data-err="${i}" rows="2" aria-label="Corrige la afirmación ${i + 1}" placeholder="Reescribe la oración corregida..."></textarea><div class="crit-pauta">${it.fix} <em>Regla:</em> ${it.rule}</div><div class="eval-item-feedback" id="critFbErr${i}" aria-live="polite"></div></div>`;
+    });
+    const s3 = document.createElement('div');
+    s3.innerHTML = `<div class="eval-section-title">III. Detective del error <span class="eval-pts">20 pts · 5 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Cada oración contiene un error de los que estudiamos. Escribe la forma correcta y, en tu cuaderno, explica qué regla se rompió.</p>${errRows}</div>`;
+    out.appendChild(s3);
+
+    // ── IV. El poder del adverbio en el texto (5 clasificaciones × 5 = 25; + 2 preguntas de efecto)
+    const txtItem = _pickF(critTextBank, 1, rngC)[0];
+    let advRows = '';
+    txtItem.advs.forEach((a, i) => {
+        advRows += `<div class="crit-tl-row"><span class="crit-match-n">${a.n}. ${a.w}</span> ${_critClassSelect('data-adv', i)}<div class="eval-item-feedback" id="critFbAdv${i}" aria-live="polite"></div></div>`;
+    });
+    let effRows = '';
+    txtItem.effect.forEach((e, i) => {
+        effRows += `<div class="crit-q-block"><div class="crit-q-label">Efecto ${i + 1}: ${e.q}</div><textarea class="crit-textarea" rows="2" aria-label="Efecto semántico ${i + 1}"></textarea><div class="crit-pauta">${e.model}</div></div>`;
+    });
+    const advKey = txtItem.advs.map(a => a.n + '. ' + a.w + ' → ' + a.cls).join(' · ');
+    const s4 = document.createElement('div');
+    s4.innerHTML = `<div class="eval-section-title">IV. El poder del adverbio en el texto <span class="eval-pts">25 pts · 5 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">${txtItem.scene}. Lee el texto y clasifica cada adverbio subrayado. Luego responde las preguntas de efecto (en tu cuaderno).</p><div class="crit-scenario">${txtItem.html}</div><div class="crit-q-label" style="margin-top:0.6rem;">Clasifica cada adverbio subrayado:</div>${advRows}<div class="crit-pauta">Clases: ${advKey}</div>${effRows}</div>`;
+    out.appendChild(s4);
+
+    // ── V. Producción escrita (autoevaluación 0-20; rúbrica de 4 criterios × 5)
+    const prodItem = _pickF(critProdBank, 1, rngC)[0];
+    const rubricHtml = critProdRubric.map((c, i) => `<label class="crit-rubric-item"><input type="checkbox" class="crit-rubric-chk" data-rubric="${i}"> ${c} <span class="crit-rubric-pts">(5 pts)</span></label>`).join('');
+    const s5 = document.createElement('div');
+    s5.innerHTML = `<div class="eval-section-title">V. Producción escrita <span class="eval-pts">20 pts · 4 criterios × 5 pts</span></div><div class="eval-item"><div class="crit-q-label">${prodItem.prompt}</div><textarea class="crit-textarea" rows="5" aria-label="Producción escrita"></textarea><div class="crit-rubric"><strong>📋 Autoevaluación (marca lo que cumpliste, cada casilla vale 5 pts):</strong><div class="crit-rubric-list">${rubricHtml}</div></div><div class="crit-selfscore"><span>Puntaje de esta sección (según las casillas marcadas):</span> <strong id="critScoreVout">0</strong> <span>de 20 pts</span></div></div>`;
+    out.appendChild(s5);
+
+    window._evalCritData = {
+        adj: adjItems,
+        mente: menteItems,
+        err: errItems,
+        txt: txtItem,
+        prod: prodItem,
+        rubric: critProdRubric
+    };
+    const totalPanel = document.createElement('div'); totalPanel.id = 'evalCritTotalResult'; totalPanel.className = 'eval-auto-result';
+    totalPanel.innerHTML = '<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve las secciones I–IV en pantalla, autoevalúa la V con la rúbrica de casillas y presiona <em>Calificar prueba</em>. La impresión conserva el formato limpio para papel.';
+    out.appendChild(totalPanel);
+    fin('s-evaluacion');
+}
+function toggleEvalCritAns() {
+    evalCritAnsVisible = !evalCritAnsVisible;
+    document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el => el.style.display = evalCritAnsVisible ? 'block' : 'none');
+    sfx('click');
+}
+function _setCritFb(id, ok, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
+}
+function gradeEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const d = window._evalCritData;
+    const detail = { adj: 0, mente: 0, err: 0, txt: 0, prod: 0 };
+
+    // I. Adjetivo o adverbio (radios, 4 pts c/u)
+    d.adj.forEach((it, i) => {
+        const sel = document.querySelector(`input[name="critAdj${i}"]:checked`);
+        const ok = !!sel && sel.value === it.ans;
+        if (ok) detail.adj += 4;
+        _setCritFb('critFbAdj' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ Es ' + (it.ans === 'adj' ? 'adjetivo (concuerda)' : 'adverbio (invariable)'));
+    });
+
+    // II. Laboratorio -mente (inputs con tilde estricta, 3 pts c/u)
+    d.mente.forEach((it, i) => {
+        const inp = document.querySelector(`[data-mente="${i}"]`);
+        const ok = !!inp && _critNormTilde(inp.value) === _critNormTilde(it.adv);
+        if (inp) { inp.classList.toggle('eval-input-ok', ok); inp.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.mente += 3;
+        _setCritFb('critFbMente' + i, ok, ok ? 'Correcto. +3 pts' : 'Revisar (¡cuida la tilde!). R/ ' + it.adv);
+    });
+
+    // III. Detective del error (5 pts c/u; correcto si el texto contiene la palabra clave)
+    d.err.forEach((it, i) => {
+        const ta = document.querySelector(`[data-err="${i}"]`);
+        const student = normalizeEvalAnswer(ta ? ta.value : '');
+        const key = normalizeEvalAnswer(it.key);
+        const ok = !!student && student.includes(key);
+        if (ta) { ta.classList.toggle('eval-input-ok', ok); ta.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.err += 5;
+        _setCritFb('critFbErr' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + it.fix);
+    });
+
+    // IV. El poder del adverbio en el texto (clasificación, 5 pts c/u)
+    d.txt.advs.forEach((a, i) => {
+        const sel = document.querySelector(`[data-adv="${i}"]`);
+        const ok = !!sel && sel.value === a.cls;
+        if (sel) { sel.classList.toggle('eval-input-ok', ok); sel.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.txt += 5;
+        _setCritFb('critFbAdv' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + a.w + ' → ' + a.cls);
+    });
+
+    // V. Producción escrita (autoevaluación por casillas, 5 pts c/u)
+    const chks = document.querySelectorAll('.crit-rubric-chk');
+    let vScore = 0;
+    chks.forEach(c => { if (c.checked) vScore += 5; });
+    vScore = Math.min(20, vScore);
+    detail.prod = vScore;
+    const vOut = document.getElementById('critScoreVout'); if (vOut) vOut.textContent = vScore;
+
+    const total = detail.adj + detail.mente + detail.err + detail.txt + detail.prod;
+    const panel = document.getElementById('evalCritTotalResult');
+    if (panel) {
+        panel.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk');
+        panel.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>I. Adj/Adv: ${detail.adj}/20 · II. -mente: ${detail.mente}/15 · III. Error: ${detail.err}/20 · IV. En el texto: ${detail.txt}/25 · V. Producción: ${detail.prod}/20</span><br><em>Las secciones I–IV se califican solas; la V la autoevalúas con la rúbrica. Compara siempre con la Pauta.</em>`;
+    }
+    const formKey = 'crit_' + (window._currentEvalCritForm || 1);
+    if (total >= 70) { if (!xpTracker.critWin.has(formKey)) { xpTracker.critWin.add(formKey); pts(8); } showToast('🎯 Pensamiento crítico: ' + total + '/100'); }
+    else showToast('🧮 Prueba calificada: ' + total + '/100. Revisa lo marcado.');
+}
+function printEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const forma = window._currentEvalCritForm || 1;
+    const d = window._evalCritData;
+    const lines = (n) => Array(n).fill('<div class="ln"></div>').join('');
+
+    // I. ¿Adjetivo o adverbio?
+    let s1 = `<div class="sec-title"><span>I. ¿Adjetivo o adverbio? El juez de la invariabilidad</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Marca (Adj / Adv) y aplica la prueba: reescribe con sujeto femenino o plural y observa si la palabra cambia.</p>`;
+    d.adj.forEach((it, i) => { const sent = it.sent.replace(it.word.toUpperCase(), '<strong>' + it.word.toUpperCase() + '</strong>'); s1 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text">${sent} &nbsp; Es: <span class="ph-box2">Adj</span> <span class="ph-box2">Adv</span> &nbsp; Reescritura: <span class="cp-blank"></span></span></div>`; });
+
+    // II. Laboratorio -mente
+    let s2 = `<div class="sec-title"><span>II. Laboratorio del sufijo -mente</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 15 pts</span></div></div><p class="crit-print-q">Transforma cada adjetivo en adverbio en -mente. Conserva la tilde del adjetivo si la tiene.</p>`;
+    d.mente.forEach((it, i) => { s2 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text"><strong>${it.adj}</strong> → <span class="cp-blank"></span></span></div>`; });
+
+    // III. Detective del error
+    let s3 = `<div class="sec-title"><span>III. Detective del error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Cada oración tiene un error. Escribe la forma correcta y la regla.</p>`;
+    d.err.forEach((it, i) => { s3 += `<p class="crit-print-scenario">❌ ${it.bad}</p>${lines(1)}`; });
+
+    // IV. El poder del adverbio en el texto
+    let s4 = `<div class="sec-title"><span>IV. El poder del adverbio en el texto</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25 pts</span></div></div><p class="crit-print-scenario">${d.txt.scene}. ${d.txt.html}</p><p class="crit-print-q">Clasifica cada adverbio subrayado (lugar, tiempo, modo, cantidad, afirmación, negación o duda):</p>`;
+    d.txt.advs.forEach(a => { s4 += `<div class="cp-row"><span class="qn">${a.n}.</span><span class="cp-text">${a.w} → <span class="cp-blank"></span></span></div>`; });
+    d.txt.effect.forEach((e, i) => { s4 += `<p class="crit-print-q"><strong>Efecto ${i + 1}.</strong> ${e.q}</p>${lines(1)}`; });
+
+    // V. Producción escrita
+    let s5 = `<div class="sec-title"><span>V. Producción escrita</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">${d.prod.prompt}</p>${lines(6)}<p class="crit-print-q" style="margin-top:0.3rem;">Rúbrica (5 pts c/u): ${d.rubric.join(' · ')}</p>`;
+
+    // Pauta
+    let pR = '';
+    pR += `<div class="p-sec"><div class="p-ttl">I. ¿Adjetivo o adverbio?</div>${d.adj.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.ans === 'adj' ? 'ADJETIVO' : 'ADVERBIO'}:</strong> ${it.rewrite}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">II. Laboratorio -mente</div>${d.mente.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.adj} → ${it.adv}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">III. Detective del error</div>${d.err.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.fix} <em>(${it.rule})</em></div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">IV. El poder del adverbio en el texto</div>${d.txt.advs.map(a => `<div class="p-crit-line"><strong>${a.n}. ${a.w}:</strong> ${a.cls}</div>`).join('')}${d.txt.effect.map((e, i) => `<div class="p-crit-line"><strong>Efecto ${i + 1}:</strong> ${e.model}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Producción escrita (guía de corrección)</div>${d.rubric.map((c, i) => `<div class="p-crit-line"><strong>Criterio ${i + 1} (5 pts):</strong> ${c}</div>`).join('')}</div>`;
+
+    const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico Los Adverbios · Forma ${forma}</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 6mm;width:201.9mm;margin:0 auto;}
+.ph{margin-bottom:0.35rem;}
+.ph h2{font-size:11.5pt;font-weight:700;text-align:center;margin-bottom:0.25rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.15rem 0.45rem;margin:0.28rem 0 0.12rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c49000;background:#fef9e7;color:#c49000;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c49000;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #c49000;height:12px;}
+.obt-pct{white-space:nowrap;}
+.crit-print-scenario{font-size:10pt;background:#fef9e7;border-left:3px solid #c49000;padding:0.18rem 0.5rem;margin:0.12rem 0 0.15rem;line-height:1.4;}
+.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}
+.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:3px;}
+.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.5;padding:0.16rem 0.2rem;border-bottom:1px solid #eee;}
+.qn{font-weight:700;min-width:22px;flex-shrink:0;}
+.cp-text{flex:1;}
+.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.ph-box2{display:inline-block;border:1.3px solid #111;border-radius:3px;padding:0 5px;font-size:9pt;font-weight:700;margin:0 2px;}
+.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#c49000;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c49000;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:13pt;font-weight:700;color:#c49000;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}
+.p-ttl{font-size:11pt;font-weight:700;color:#c49000;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-crit-line{font-size:10pt;color:#007a00;margin-bottom:0.16rem;line-height:1.35;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
+</style></head><body><div id="evalPage">
+<div class="ph">
+  <h2>Evaluación Competencial · Pensamiento Crítico · Los Adverbios · Educación Básica · Español · Lengua</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · I. Adj/Adv 20 · II. -mente 15 · III. Error 20 · IV. En el texto 25 · V. Producción 20 · Forma ${forma}</p>
+</div>
+${s1}${s2}${s3}${s4}${s5}
+<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
+</div><div class="pauta-wrap" id="pautaPage">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Adverbios · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 15 · III 20 · IV 25 · V 20 — secciones abiertas: usar como guía de corrección</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
     const win = window.open('', '_blank', '');
     if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
     win.document.write(doc);

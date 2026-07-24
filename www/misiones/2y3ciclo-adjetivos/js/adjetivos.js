@@ -81,7 +81,7 @@ function initTheme(){ const s=localStorage.getItem(SAVE_KEY+'_theme'); const sys
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress(){
-  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, xp})); }catch(e){}
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, evalCritFormNum, xp})); }catch(e){}
 }
 function loadProgress(){
   try{
@@ -94,7 +94,8 @@ function loadProgress(){
     });
     if(s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum) evalFormNum = s.evalFormNum;
-    
+    if(s.evalCritFormNum) evalCritFormNum = s.evalCritFormNum;
+
     // NUEVO: Recuperar los puntos XP guardados
     if(s.xp !== undefined) { 
         xp = s.xp; 
@@ -1203,6 +1204,359 @@ ${s1}${s2}${s3}${s4}
   win.document.write(doc);
   win.document.close();
   setTimeout(()=>win.print(), 400);
+}
+
+// ═════════════════ PRUEBA DE PENSAMIENTO CRÍTICO ═════════════════
+// Segunda evaluación imprimible de la misión (Español · Los Adjetivos).
+// Todo nace de los bancos y tarjetas de ESTA misión (concordancia, grados,
+// tipos de adjetivo, epíteto, Laboratorio de Monstruos). Formas deterministas:
+// semilla _evalRng(200000 + cf); barajado SOLO con _shuffleF/_pickF.
+let evalCritFormNum = 1, evalCritAnsVisible = false;
+const _critWinForms = new Set();
+
+function evalSwitchMode(mode) {
+    sfx('click');
+    const cWrap = document.getElementById('evalConceptWrap'), critWrap = document.getElementById('evalCritWrap');
+    const cBtn = document.getElementById('evalModeBtnConcept'), critBtn = document.getElementById('evalModeBtnCrit');
+    if (mode === 'crit') {
+        cWrap.style.display = 'none'; critWrap.style.display = 'block';
+        cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected', 'false');
+        critBtn.classList.add('active'); critBtn.setAttribute('aria-selected', 'true');
+        if (!window._evalCritData) genEvalCrit();
+    } else {
+        critWrap.style.display = 'none'; cWrap.style.display = 'block';
+        critBtn.classList.remove('active'); critBtn.setAttribute('aria-selected', 'false');
+        cBtn.classList.add('active'); cBtn.setAttribute('aria-selected', 'true');
+    }
+}
+
+// ── I. Detective de la concordancia (oraciones con error de género/número,
+//     réplica de los distractores reales de cmpData y completeTaskDB)
+const critConcBank = [
+    { bad: 'Las manzanas de mi huerto están muy rojos.', word: 'rojos', fix: 'rojas', just: '«manzanas» es femenino plural, así que el adjetivo debe ser «rojas».' },
+    { bad: 'María y Lucía son niñas muy inteligente.', word: 'inteligente', fix: 'inteligentes', just: 'Son dos personas (plural), el adjetivo debe ir en plural: «inteligentes».' },
+    { bad: 'Compré un coche rápidas porque me gusta la velocidad.', word: 'rápidas', fix: 'rápido', just: '«coche» es masculino singular, el adjetivo correcto es «rápido».' },
+    { bad: 'Ayer conocí a unos chicos muy simpáticas.', word: 'simpáticas', fix: 'simpáticos', just: '«chicos» es masculino plural, el adjetivo debe ser «simpáticos».' },
+    { bad: 'Mi abuela cocinó una torta delicioso.', word: 'delicioso', fix: 'deliciosa', just: '«torta» es femenino singular; el adjetivo correcto es «deliciosa».' },
+    { bad: 'Esos gatos de la vecina son muy pequeña.', word: 'pequeña', fix: 'pequeños', just: '«gatos» es masculino plural, el adjetivo debe ser «pequeños».' },
+    { bad: 'El cielo está muy azules esta mañana.', word: 'azules', fix: 'azul', just: '«cielo» es singular, el adjetivo correcto es «azul».' },
+    { bad: 'Nuestra casa de la esquina es muy grandes.', word: 'grandes', fix: 'grande', just: '«casa» es singular, el adjetivo debe ir en singular: «grande».' },
+];
+// ── II. Transforma el grado (parte del positivo «Juan es alto» de Aprende)
+const critGradeBank = [
+    { pos: 'Juan es alto.', adj: 'alto', grade: 'comparativo de superioridad (más… que)', model: 'Juan es más alto que su hermano.', groups: [['mas', 'que']] },
+    { pos: 'La casa es grande.', adj: 'grande', grade: 'comparativo de inferioridad (menos… que)', model: 'La casa es menos grande que la escuela.', groups: [['menos', 'que']] },
+    { pos: 'El perro es rápido.', adj: 'rápido', grade: 'comparativo de igualdad (tan… como)', model: 'El perro es tan rápido como el gato.', groups: [['tan', 'como']] },
+    { pos: 'El árbol es viejo.', adj: 'viejo', grade: 'superlativo (‑ísimo o el/la más)', model: 'El árbol es viejísimo. / El árbol es el más viejo del parque.', groups: [['isim'], ['el mas'], ['la mas'], ['muy viejo']] },
+    { pos: 'María es simpática.', adj: 'simpática', grade: 'superlativo (‑ísimo o el/la más)', model: 'María es simpatiquísima. / María es la más simpática de la clase.', groups: [['isim'], ['la mas'], ['el mas'], ['muy simpatica']] },
+    { pos: 'El examen es difícil.', adj: 'difícil', grade: 'comparativo de superioridad (más… que)', model: 'El examen es más difícil que el anterior.', groups: [['mas', 'que']] },
+    { pos: 'Tu mochila es pesada.', adj: 'pesada', grade: 'comparativo de igualdad (tan… como)', model: 'Tu mochila es tan pesada como la mía.', groups: [['tan', 'como']] },
+    { pos: 'El río es ancho.', adj: 'ancho', grade: 'comparativo de inferioridad (menos… que)', model: 'El río es menos ancho que el mar.', groups: [['menos', 'que']] },
+];
+// ── III. Análisis de texto breve (mini-párrafos de contexto hondureño con su
+//     banco de adjetivos ya clasificados). Se pide llenar la tabla.
+const critTextBank = [
+    {
+        text: 'En la feria de Comayagua compré unas frutas <b>frescas</b> y un sombrero <b>grande</b>. Mi amiga eligió una hamaca más <b>colorida</b> que la mía, probamos el café más <b>aromático</b> del pueblo y saludamos a un vendedor <b>amable</b>.',
+        adjs: [
+            { w: 'frescas', gen: 'Femenino', num: 'Plural', gra: 'Positivo' },
+            { w: 'grande', gen: 'Masculino', num: 'Singular', gra: 'Positivo' },
+            { w: 'colorida', gen: 'Femenino', num: 'Singular', gra: 'Comparativo' },
+            { w: 'aromático', gen: 'Masculino', num: 'Singular', gra: 'Superlativo' },
+            { w: 'amable', gen: 'Masculino', num: 'Singular', gra: 'Positivo' },
+        ]
+    },
+    {
+        text: 'Durante mi viaje a Roatán observé un mar <b>azul</b> y unas playas <b>hermosas</b>. Vi dos tortugas <b>pequeñas</b>, el arrecife más <b>colorido</b> del Caribe y una brisa tan <b>fresca</b> como la de la montaña.',
+        adjs: [
+            { w: 'azul', gen: 'Masculino', num: 'Singular', gra: 'Positivo' },
+            { w: 'hermosas', gen: 'Femenino', num: 'Plural', gra: 'Positivo' },
+            { w: 'pequeñas', gen: 'Femenino', num: 'Plural', gra: 'Positivo' },
+            { w: 'colorido', gen: 'Masculino', num: 'Singular', gra: 'Superlativo' },
+            { w: 'fresca', gen: 'Femenino', num: 'Singular', gra: 'Comparativo' },
+        ]
+    },
+    {
+        text: 'En el parque nacional La Tigra caminé por senderos <b>largos</b> y vi árboles <b>altísimos</b>. Escuché unos pájaros <b>ruidosos</b>, encontré una cascada tan <b>alta</b> como un edificio y respiré un aire <b>puro</b>.',
+        adjs: [
+            { w: 'largos', gen: 'Masculino', num: 'Plural', gra: 'Positivo' },
+            { w: 'altísimos', gen: 'Masculino', num: 'Plural', gra: 'Superlativo' },
+            { w: 'ruidosos', gen: 'Masculino', num: 'Plural', gra: 'Positivo' },
+            { w: 'alta', gen: 'Femenino', num: 'Singular', gra: 'Comparativo' },
+            { w: 'puro', gen: 'Masculino', num: 'Singular', gra: 'Positivo' },
+        ]
+    },
+    {
+        text: 'En la finca de mi abuelo hay vacas <b>mansas</b> y un caballo <b>veloz</b>. También tiene unas gallinas <b>gordas</b>, el toro más <b>fuerte</b> del pueblo y un perro menos <b>grande</b> que el gato.',
+        adjs: [
+            { w: 'mansas', gen: 'Femenino', num: 'Plural', gra: 'Positivo' },
+            { w: 'veloz', gen: 'Masculino', num: 'Singular', gra: 'Positivo' },
+            { w: 'gordas', gen: 'Femenino', num: 'Plural', gra: 'Positivo' },
+            { w: 'fuerte', gen: 'Masculino', num: 'Singular', gra: 'Superlativo' },
+            { w: 'grande', gen: 'Masculino', num: 'Singular', gra: 'Comparativo' },
+        ]
+    },
+];
+const CRIT_GEN = ['Masculino', 'Femenino'], CRIT_NUM = ['Singular', 'Plural'], CRIT_GRA = ['Positivo', 'Comparativo', 'Superlativo'];
+// ── IV. Juicio crítico (pares de oraciones: comparar y justificar)
+const critJudgeBank = [
+    { q: '¿Cuál oración describe con más precisión? A) «Vi un carro.» B) «Vi un carro rojo y veloz.»', opts: ['Oración A', 'Oración B'], c: 1, model: 'La B: los adjetivos «rojo» y «veloz» aportan cualidades que hacen la descripción más precisa. Sin adjetivos, la oración A dice muy poco.' },
+    { q: 'En «la blanca nieve», ¿el adjetivo «blanca» es un epíteto?', opts: ['Sí, es un epíteto', 'No, no es un epíteto'], c: 0, model: 'Sí. El epíteto resalta una cualidad obvia o inherente del sustantivo: la nieve siempre es blanca.' },
+    { q: 'En «Mi perro es muy rápido», ¿«muy rápido» está en grado superlativo o comparativo?', opts: ['Superlativo', 'Comparativo'], c: 0, model: 'Superlativo. «muy + adjetivo» expresa la cualidad en su grado máximo, sin compararla con otro ser.' },
+    { q: '¿Cuál está bien escrito? A) «Las flores amarillos.» B) «Las flores amarillas.»', opts: ['Oración A', 'Oración B'], c: 1, model: 'La B: «amarillas» concuerda en género (femenino) y número (plural) con «flores».' },
+    { q: '¿«más alto que» y «altísimo» están en el mismo grado?', opts: ['Sí, el mismo grado', 'No, son grados distintos'], c: 1, model: 'No. «más alto que» es comparativo (compara dos seres) y «altísimo» es superlativo (grado máximo).' },
+    { q: 'En «la verde hierba», ¿«verde» es un epíteto o sirve para distinguir esta hierba de otra?', opts: ['Es un epíteto', 'La distingue de otra'], c: 0, model: 'Es un epíteto: resalta una cualidad propia y obvia de la hierba; no la diferencia de otra.' },
+];
+// ── V. Producción (rúbrica): Describe tu monstruo (eco del Laboratorio)
+const critMonsterModel = 'Este monstruo verde es mi criatura favorita. Tiene dos ojos enormes y una sonrisa amable; es el más feliz de todos. En cambio, aquel monstruo diminuto siempre está enojado.';
+const critMonsterUnderlined = 'Demostrativos: <u>Este</u>, <u>aquel</u> · Posesivo: <u>mi</u> · Numeral: <u>dos</u> · Calificativos: <u>verde</u>, <u>enormes</u>, <u>amable</u>, <u>diminuto</u>, <u>enojado</u> · Superlativo: <u>el más feliz</u>.';
+
+function _critSel(cls, attr, i, opts) {
+    return `<select class="${cls}" ${attr}="${i}"><option value="">—</option>${opts.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+}
+function _gradeMatch(text, groups) {
+    const s = normalizeEvalAnswer(text);
+    if (!s) return false;
+    return groups.some(g => g.every(k => s.includes(normalizeEvalAnswer(k))));
+}
+
+function genEvalCrit() {
+    sfx('click');
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const _sC = document.getElementById('evalCritFormaSel');
+    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
+    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
+    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    saveProgress();
+    document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Los Adjetivos`;
+    evalCritAnsVisible = false;
+    const out = document.getElementById('evalCritOut'); out.innerHTML = '';
+
+    const bar = document.createElement('div'); bar.className = 'eval-score-bar';
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar (I) → transformar (II) → analizar (III) → argumentar (IV) → producir (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Concordancia 20</span><span class="eval-score-pill esp-tf">II. Grado 20</span><span class="eval-score-pill esp-mc">III. Texto 20</span><span class="eval-score-pill esp-pr">IV. Juicio 20</span><span class="eval-score-pill esp-cp">V. Producción 20</span></div>`;
+    out.appendChild(bar);
+
+    // ── I. Detective de la concordancia (5×4=20)
+    const coItems = _pickF(critConcBank, 5, rngC);
+    let coRows = '';
+    coItems.forEach((it, i) => {
+        coRows += `<div class="crit-q-block"><div class="crit-scenario">❌ ${it.bad}</div><div class="crit-q-label">Escribe la palabra <strong>corregida</strong>: <input class="crit-input" data-co="${i}" type="text" autocomplete="off" aria-label="Corrección ${i + 1}"></div><textarea class="crit-textarea" rows="2" aria-label="Justifica la corrección ${i + 1}" placeholder="¿Por qué está mal? Explica la concordancia..."></textarea><div class="crit-pauta">Corrección: <strong>${it.fix}</strong>. ${it.just}</div><div class="eval-item-feedback" id="critFbCo${i}" aria-live="polite"></div></div>`;
+    });
+    const s1 = document.createElement('div');
+    s1.innerHTML = `<div class="eval-section-title">I. Detective de la concordancia <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Cada oración tiene un adjetivo mal concordado. Escribe la palabra corregida y justifica.</p>${coRows}</div>`;
+    out.appendChild(s1);
+
+    // ── II. Transforma el grado (5×4=20)
+    const grItems = _pickF(critGradeBank, 5, rngC);
+    let grRows = '';
+    grItems.forEach((it, i) => {
+        grRows += `<div class="crit-q-block"><div class="crit-scenario">Grado positivo: <strong>${it.pos}</strong></div><div class="crit-q-label">Reescríbela en <strong>${it.grade}</strong>: <textarea class="crit-textarea" data-gr="${i}" rows="2" aria-label="Transforma al grado ${i + 1}" placeholder="Escribe la oración transformada..."></textarea></div><div class="crit-pauta">Ejemplo: ${it.model}</div><div class="eval-item-feedback" id="critFbGr${i}" aria-live="polite"></div></div>`;
+    });
+    const s2 = document.createElement('div');
+    s2.innerHTML = `<div class="eval-section-title">II. Transforma el grado <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Parte del grado positivo y reescribe cada oración en el grado indicado (usa más… que / menos… que / tan… como, o ‑ísimo / el·la más).</p>${grRows}</div>`;
+    out.appendChild(s2);
+
+    // ── III. Análisis de texto breve (1 párrafo, tabla de 5 adjetivos, 5×4=20)
+    const txt = _pickF(critTextBank, 1, rngC)[0];
+    let anRows = '';
+    txt.adjs.forEach((a, i) => {
+        anRows += `<tr><td class="crit-tbl-adj">${a.w}</td><td>${_critSel('crit-an-select', 'data-an-gen', i, CRIT_GEN)}</td><td>${_critSel('crit-an-select', 'data-an-num', i, CRIT_NUM)}</td><td>${_critSel('crit-an-select', 'data-an-gra', i, CRIT_GRA)}</td><td class="eval-item-feedback" id="critFbAn${i}" aria-live="polite"></td></tr>`;
+    });
+    const anPauta = txt.adjs.map(a => `<strong>${a.w}:</strong> ${a.gen} · ${a.num} · ${a.gra}`).join(' &nbsp;|&nbsp; ');
+    const s3 = document.createElement('div');
+    s3.innerHTML = `<div class="eval-section-title">III. Análisis de texto breve <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Lee el párrafo y clasifica los 5 adjetivos destacados. Marca género, número y grado (4 pts si aciertas los tres).</p><div class="crit-scenario">${txt.text}</div><div class="crit-tbl-wrap"><table class="crit-tbl"><thead><tr><th>Adjetivo</th><th>Género</th><th>Número</th><th>Grado</th><th></th></tr></thead><tbody>${anRows}</tbody></table></div><div class="crit-pauta">${anPauta}</div></div>`;
+    out.appendChild(s3);
+
+    // ── IV. Juicio crítico (4×5=20)
+    const juItems = _pickF(critJudgeBank, 4, rngC);
+    let juRows = '';
+    juItems.forEach((it, i) => {
+        const opts = it.opts.map((op, oi) => `<label class="crit-radio"><input type="radio" name="critJu${i}" value="${oi}"> ${op}</label>`).join('');
+        juRows += `<div class="crit-q-block"><div class="crit-q-label">${i + 1}. ${it.q}</div><div class="crit-radios">${opts}</div><textarea class="crit-textarea" rows="2" aria-label="Justifica tu elección ${i + 1}" placeholder="¿Por qué? Justifica tu respuesta..."></textarea><div class="crit-pauta">Respuesta: <strong>${it.opts[it.c]}</strong>. ${it.model}</div><div class="eval-item-feedback" id="critFbJu${i}" aria-live="polite"></div></div>`;
+    });
+    const s4 = document.createElement('div');
+    s4.innerHTML = `<div class="eval-section-title">IV. Juicio crítico <span class="eval-pts">20 pts · 5 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Compara las oraciones o afirmaciones, elige la opción correcta y justifica tu decisión en la línea o en tu cuaderno.</p>${juRows}</div>`;
+    out.appendChild(s4);
+
+    // ── V. Producción: Describe tu monstruo (rúbrica, autoevaluación por casillas, 20)
+    const s5 = document.createElement('div');
+    s5.innerHTML = `<div class="eval-section-title">V. Producción: describe tu monstruo <span class="eval-pts">20 pts</span></div><div class="eval-item"><p class="crit-q-label">Describe un monstruo (recuerda el Laboratorio: color, tamaño y ánimo) usando <strong>mínimo 6 adjetivos</strong>: 2 calificativos, 1 demostrativo, 1 posesivo, 1 numeral y 1 superlativo. <strong>Subraya</strong> cada adjetivo.</p><textarea class="crit-textarea" rows="4" aria-label="Descripción del monstruo" placeholder="Este monstruo... (subraya tus adjetivos)"></textarea><div class="crit-rubric"><strong>📋 Rúbrica (autoevalúate marcando lo que cumpliste):</strong><label class="crit-rub-line"><input type="checkbox" class="crit-rub" data-pts="8"> Variedad de tipos: 2 calificativos, 1 demostrativo, 1 posesivo, 1 numeral y 1 superlativo — 8 pts</label><label class="crit-rub-line"><input type="checkbox" class="crit-rub" data-pts="6"> Concordancia: los adjetivos concuerdan en género y número — 6 pts</label><label class="crit-rub-line"><input type="checkbox" class="crit-rub" data-pts="3"> Incluye al menos un adjetivo en grado no positivo (comparativo o superlativo) — 3 pts</label><label class="crit-rub-line"><input type="checkbox" class="crit-rub" data-pts="3"> Subrayaste correctamente los adjetivos — 3 pts</label></div><div class="crit-pauta">Respuesta modelo: «${critMonsterModel}» — ${critMonsterUnderlined}</div></div>`;
+    out.appendChild(s5);
+
+    window._evalCritData = { co: coItems, gr: grItems, an: txt, ju: juItems };
+    const totalPanel = document.createElement('div'); totalPanel.id = 'evalCritTotalResult'; totalPanel.className = 'eval-auto-result';
+    totalPanel.innerHTML = '<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve I–IV en pantalla, autoevalúa la V con la rúbrica y presiona <em>Calificar prueba</em>. La impresión conserva el formato limpio para papel.';
+    out.appendChild(totalPanel);
+    fin('s-evaluacion');
+}
+function toggleEvalCritAns() {
+    evalCritAnsVisible = !evalCritAnsVisible;
+    document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el => el.style.display = evalCritAnsVisible ? 'block' : 'none');
+    sfx('click');
+}
+function _setCritFb(id, ok, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
+}
+function gradeEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const d = window._evalCritData;
+    const detail = { co: 0, gr: 0, an: 0, ju: 0, pr: 0 };
+
+    // I. Concordancia (4 pts c/u): input corrección
+    d.co.forEach((it, i) => {
+        const inp = document.querySelector(`[data-co="${i}"]`);
+        const ok = isCpCorrect(inp ? inp.value : '', it.fix);
+        if (inp) { inp.classList.toggle('eval-input-ok', ok); inp.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.co += 4;
+        _setCritFb('critFbCo' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + it.fix);
+    });
+    // II. Transforma el grado (4 pts c/u): verificación por palabra clave
+    d.gr.forEach((it, i) => {
+        const ta = document.querySelector(`[data-gr="${i}"]`);
+        const ok = _gradeMatch(ta ? ta.value : '', it.groups);
+        if (ta) { ta.classList.toggle('eval-input-ok', ok); ta.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.gr += 4;
+        _setCritFb('critFbGr' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + it.model);
+    });
+    // III. Análisis (4 pts si género + número + grado correctos)
+    d.an.adjs.forEach((a, i) => {
+        const gS = document.querySelector(`[data-an-gen="${i}"]`);
+        const nS = document.querySelector(`[data-an-num="${i}"]`);
+        const grS = document.querySelector(`[data-an-gra="${i}"]`);
+        const okG = !!gS && gS.value === a.gen, okN = !!nS && nS.value === a.num, okGr = !!grS && grS.value === a.gra;
+        [[gS, okG], [nS, okN], [grS, okGr]].forEach(([s, ok]) => { if (s) { s.classList.toggle('eval-input-ok', ok); s.classList.toggle('eval-input-no', !ok); } });
+        const all = okG && okN && okGr;
+        if (all) detail.an += 4;
+        _setCritFb('critFbAn' + i, all, all ? '+4' : 'R/ ' + a.gen[0] + '·' + a.num[0] + '·' + a.gra);
+    });
+    // IV. Juicio crítico (5 pts c/u): radio
+    d.ju.forEach((it, i) => {
+        const sel = document.querySelector(`input[name="critJu${i}"]:checked`);
+        const ok = !!sel && Number(sel.value) === it.c;
+        if (ok) detail.ju += 5;
+        _setCritFb('critFbJu' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + it.opts[it.c]);
+    });
+    // V. Producción (autoevaluación por casillas: 8+6+3+3 = 20)
+    document.querySelectorAll('#evalCritOut .crit-rub:checked').forEach(cb => { detail.pr += parseInt(cb.dataset.pts, 10) || 0; });
+    detail.pr = Math.max(0, Math.min(20, detail.pr));
+
+    const total = detail.co + detail.gr + detail.an + detail.ju + detail.pr;
+    const panel = document.getElementById('evalCritTotalResult');
+    if (panel) {
+        panel.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk');
+        panel.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>I. Concordancia: ${detail.co}/20 · II. Grado: ${detail.gr}/20 · III. Texto: ${detail.an}/20 · IV. Juicio: ${detail.ju}/20 · V. Producción: ${detail.pr}/20</span><br><em>Las secciones I–IV se califican solas; la V la autoevalúas con la rúbrica. Compara siempre con la Pauta.</em>`;
+    }
+    const formKey = 'crit_' + (window._currentEvalCritForm || 1);
+    if (total >= 70) { if (!_critWinForms.has(formKey)) { _critWinForms.add(formKey); pts(8); } showToast('🎯 Pensamiento crítico: ' + total + '/100'); }
+    else showToast('🧮 Prueba calificada: ' + total + '/100. Revisa lo marcado.');
+}
+function printEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const forma = window._currentEvalCritForm || 1;
+    const d = window._evalCritData;
+    const lines = (n) => Array(n).fill('<div class="ln"></div>').join('');
+
+    // I. Concordancia
+    let s1 = `<div class="sec-title"><span>I. Detective de la concordancia</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Cada oración tiene un adjetivo mal concordado. Encierra la palabra errada, escribe la corrección y justifica.</p>`;
+    d.co.forEach((it, i) => { s1 += `<p class="crit-print-scenario"><strong>${i + 1}.</strong> ❌ ${it.bad}</p><p class="crit-print-q">Palabra corregida: <span class="cp-blank"></span> · Justificación:</p>${lines(1)}`; });
+
+    // II. Transforma el grado
+    let s2 = `<div class="sec-title"><span>II. Transforma el grado</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Reescribe cada oración (que está en grado positivo) en el grado que se indica.</p>`;
+    d.gr.forEach((it, i) => { s2 += `<p class="crit-print-scenario"><strong>${i + 1}.</strong> ${it.pos} → <em>${it.grade}</em></p>${lines(1)}`; });
+
+    // III. Análisis de texto breve
+    let anHead = '<tr><th>Adjetivo</th><th>Género</th><th>Número</th><th>Grado</th></tr>';
+    let anBody = d.an.adjs.map(a => `<tr><td class="crit-tbl-adj">${a.w}</td><td></td><td></td><td></td></tr>`).join('');
+    let s3 = `<div class="sec-title"><span>III. Análisis de texto breve</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Lee el párrafo y completa la tabla con el género, número y grado de cada adjetivo destacado.</p><p class="crit-print-scenario">${d.an.text}</p><table class="crit-print-tbl">${anHead}${anBody}</table>`;
+
+    // IV. Juicio crítico
+    let s4 = `<div class="sec-title"><span>IV. Juicio crítico</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Elige la opción correcta y justifica tu decisión.</p>`;
+    d.ju.forEach((it, i) => { s4 += `<p class="crit-print-q"><strong>${i + 1}.</strong> ${it.q}</p><p class="crit-print-opts">${it.opts.map(o => '☐ ' + o).join('&nbsp;&nbsp;&nbsp;')}</p><p class="crit-print-q">Porque:</p>${lines(1)}`; });
+
+    // V. Producción
+    let s5 = `<div class="sec-title"><span>V. Producción: describe tu monstruo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Describe un monstruo (color, tamaño y ánimo) con mínimo 6 adjetivos: 2 calificativos, 1 demostrativo, 1 posesivo, 1 numeral y 1 superlativo. Subraya cada adjetivo.</p>${lines(5)}`;
+
+    // Pauta
+    let pR = '';
+    pR += `<div class="p-sec"><div class="p-ttl">I. Detective de la concordancia</div>${d.co.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.word} → ${it.fix}:</strong> ${it.just}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">II. Transforma el grado</div>${d.gr.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.model}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">III. Análisis de texto breve</div>${d.an.adjs.map((a, i) => `<div class="p-crit-line"><strong>${i + 1}. ${a.w}:</strong> ${a.gen} · ${a.num} · ${a.gra}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">IV. Juicio crítico</div>${d.ju.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.opts[it.c]}:</strong> ${it.model}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Producción (rúbrica y respuesta modelo)</div><div class="p-crit-line"><strong>Rúbrica:</strong> variedad de tipos 8 · concordancia 6 · grado no positivo 3 · subrayado 3 = 20 pts.</div><div class="p-crit-line"><strong>Modelo:</strong> ${critMonsterModel}</div><div class="p-crit-line">${critMonsterUnderlined}</div></div>`;
+
+    const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico Los Adjetivos · Forma ${forma}</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 6mm;width:201.9mm;margin:0 auto;}
+.ph{margin-bottom:0.35rem;}
+.ph h2{font-size:11.5pt;font-weight:700;text-align:center;margin-bottom:0.25rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.15rem 0.45rem;margin:0.28rem 0 0.12rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c49000;background:#fef9e7;color:#c49000;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c49000;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #c49000;height:12px;}
+.obt-pct{white-space:nowrap;}
+.crit-print-scenario{font-size:10pt;background:#fef9e7;border-left:3px solid #c49000;padding:0.18rem 0.5rem;margin:0.12rem 0 0.15rem;line-height:1.3;}
+.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}
+.crit-print-opts{font-size:10pt;margin:0.1rem 0 0.12rem;}
+.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:3px;}
+.cp-blank{display:inline-block;min-width:120px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.crit-print-tbl{width:100%;border-collapse:collapse;font-size:10pt;margin:0.15rem 0 0.2rem;}
+.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.28rem 0.4rem;text-align:center;height:22px;}
+.crit-print-tbl th{background:#fef9e7;color:#c49000;font-size:9.5pt;}
+.crit-tbl-adj{font-weight:700;text-align:left;background:#fbf4dd;}
+.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#c49000;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c49000;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:13pt;font-weight:700;color:#c49000;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}
+.p-ttl{font-size:11pt;font-weight:700;color:#c49000;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-crit-line{font-size:10.5pt;color:#007a00;margin-bottom:0.16rem;line-height:1.35;}
+.p-crit-line u{color:#007a00;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
+</style></head><body><div id="evalPage">
+<div class="ph">
+  <h2>Evaluación Competencial · Pensamiento Crítico · Los Adjetivos · Educación Básica · Español · Lengua</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · I. Concordancia 20 · II. Grado 20 · III. Texto 20 · IV. Juicio 20 · V. Producción 20 · Forma ${forma}</p>
+</div>
+${s1}${s2}${s3}${s4}${s5}
+<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
+</div><div class="pauta-wrap" id="pautaPage">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Adjetivos · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — secciones abiertas: usar como guía de corrección</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
+    const win = window.open('', '_blank', '');
+    if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+    win.document.write(doc);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
 }
 
 // ===================== LABORATORIO DE MONSTRUOS =====================

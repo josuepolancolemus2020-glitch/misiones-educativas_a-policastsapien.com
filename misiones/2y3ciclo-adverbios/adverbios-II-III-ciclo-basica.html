@@ -19,6 +19,60 @@
     rel="stylesheet">
   <link rel="stylesheet" href="css/adverbios.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* ── Toggle de evaluación (Conceptual / Pensamiento Crítico) ── */
+    .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+    .eval-mode-btn{flex:1;min-width:160px;font-family:'Fredoka',sans-serif;font-size:0.9rem;padding:0.65rem 1rem;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--gray);cursor:pointer;transition:all 0.2s;}
+    .eval-mode-btn:hover{border-color:var(--sec);}
+    .eval-mode-btn.active{border-color:var(--sec);background:var(--sec-gl);color:var(--sec);font-weight:700;}
+    /* ── Estilos interactivos de evaluación (autocalificables) ── */
+    .eval-cp-input{display:inline-block;min-width:150px;max-width:220px;border:none;border-bottom:2px solid var(--pri);background:var(--card);color:var(--dark);font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:700;padding:0.16rem 0.35rem;margin:0 0.2rem;outline:none;border-radius:6px 6px 0 0;}
+    .eval-cp-input:focus{background:var(--pri-gl);box-shadow:0 0 0 3px rgba(0,151,167,0.12);}
+    .eval-match-select{font-family:'Fredoka',sans-serif;font-size:0.82rem;border:2px solid var(--border);border-radius:8px;background:var(--card);color:var(--dark);padding:0.16rem 0.35rem;margin-right:0.2rem;cursor:pointer;}
+    .eval-input-ok{border-color:var(--jade)!important;background:var(--jade-gl)!important;}
+    .eval-input-no{border-color:var(--red)!important;background:var(--red-gl)!important;}
+    .eval-item-feedback{display:none;margin-top:0.45rem;margin-left:0.2rem;border-radius:8px;padding:0.38rem 0.6rem;font-size:0.82rem;font-weight:700;}
+    .eval-item-feedback.eval-ok{display:block;background:var(--jade-gl);color:var(--jade);border:1.5px solid var(--jade);}
+    .eval-item-feedback.eval-no{display:block;background:var(--red-gl);color:var(--red);border:1.5px solid var(--red);}
+    .eval-auto-result{margin:1rem 0 0;padding:0.85rem 1rem;border:2px dashed var(--pri);background:var(--pri-gl);border-radius:12px;color:var(--dark);font-size:0.92rem;line-height:1.5;}
+    .eval-auto-result strong{font-family:'Fredoka',sans-serif;color:var(--pri);}
+    .eval-auto-pass{border-color:var(--jade);background:var(--jade-gl);}
+    .eval-auto-pass strong{color:var(--jade);}
+    .eval-auto-risk{border-color:var(--amber);background:var(--amber-gl);}
+    .eval-auto-risk strong{color:var(--amber);}
+    /* ── Pensamiento crítico ── */
+    .crit-scenario{background:var(--sec-gl);border-left:4px solid var(--sec);border-radius:0 8px 8px 0;padding:0.6rem 0.9rem;margin-bottom:0.6rem;font-size:0.9rem;line-height:1.55;color:var(--dark);}
+    .crit-adv{text-decoration-color:var(--sec);text-underline-offset:2px;font-weight:700;}
+    .crit-q-block{margin-bottom:0.85rem;}
+    .crit-q-block:last-of-type{margin-bottom:0;}
+    .crit-q-label{font-size:0.88rem;color:var(--dark);font-weight:600;margin-bottom:0.4rem;line-height:1.45;}
+    .crit-q-sub{font-size:0.8rem;color:var(--gray);margin:0.25rem 0 0.1rem;line-height:1.35;}
+    .crit-adj-opts{display:flex;gap:1rem;flex-wrap:wrap;margin:0.25rem 0;}
+    .crit-radio{font-size:0.85rem;color:var(--dark);display:inline-flex;align-items:center;gap:0.3rem;cursor:pointer;}
+    .crit-textarea{width:100%;min-height:56px;font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;background:var(--card);color:var(--dark);resize:vertical;}
+    .crit-textarea:focus{outline:none;border-color:var(--sec);}
+    .crit-mente-input{font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;border:none;border-bottom:2px solid var(--sec);background:var(--card);color:var(--dark);padding:0.14rem 0.35rem;min-width:160px;outline:none;border-radius:6px 6px 0 0;}
+    .crit-mente-input:focus{background:var(--sec-gl);}
+    .crit-mente-hint{font-size:0.76rem;color:var(--gray);font-style:italic;}
+    .crit-pauta{display:none;margin-top:0.4rem;font-size:0.82rem;color:var(--jade);background:var(--jade-gl);border-radius:8px;padding:0.45rem 0.7rem;line-height:1.5;}
+    .crit-pauta::before{content:'📋 Pauta: ';font-weight:700;}
+    .crit-match-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin:0.4rem 0 0.2rem;}
+    .crit-match-col h5{font-family:'Fredoka',sans-serif;font-size:0.85rem;color:var(--sec);margin:0 0 0.4rem;}
+    .crit-match-row{font-size:0.85rem;color:var(--dark);background:var(--sec-gl);border-radius:8px;padding:0.4rem 0.55rem;margin-bottom:0.4rem;line-height:1.4;}
+    .crit-match-n{font-weight:700;color:var(--sec);}
+    .crit-cc-select,.crit-tl-select,.crit-fossil-select{font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:6px;padding:0.2rem 0.4rem;background:var(--card);color:var(--dark);}
+    .crit-tl-row{display:flex;align-items:center;gap:0.55rem;flex-wrap:wrap;background:var(--sec-gl);border-radius:8px;padding:0.4rem 0.55rem;margin-bottom:0.4rem;}
+    .crit-tl-ev{font-size:0.85rem;color:var(--dark);line-height:1.35;}
+    .crit-fossil-item{margin-bottom:0.9rem;}
+    .crit-rubric{margin-top:0.7rem;font-size:0.82rem;color:var(--dark);background:var(--jade-gl);border-radius:8px;padding:0.5rem 0.75rem;line-height:1.5;}
+    .crit-rubric-list{display:flex;flex-direction:column;gap:0.3rem;margin-top:0.4rem;}
+    .crit-rubric-item{display:flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--dark);cursor:pointer;}
+    .crit-rubric-pts{color:var(--gray);font-size:0.76rem;}
+    .crit-selfscore{display:flex;align-items:center;gap:0.5rem;margin-top:0.7rem;padding-top:0.6rem;border-top:1px dashed var(--border);font-size:0.82rem;color:var(--gray);flex-wrap:wrap;}
+    .crit-selfscore strong{color:var(--sec);font-size:1rem;}
+    @media (max-width:560px){.crit-match-grid{grid-template-columns:1fr;}}
+    @media print{.eval-cp-input,.eval-match-select,.crit-textarea,.crit-mente-input,.crit-fossil-select,.eval-item-feedback,.eval-auto-result{display:none!important;}}
+  </style>
 </head>
 
 <body>
@@ -456,6 +510,13 @@
     </div>
 
     <div class="sec" id="s-evaluacion" role="tabpanel">
+      <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+        <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true"
+          onclick="evalSwitchMode('concept')">📝 Evaluación Conceptual</button>
+        <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false"
+          onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+      </div>
+      <div id="evalConceptWrap">
       <div class="card ac-purple">
         <div class="eval-print-header">
           <h2>Evaluación Final de Misión Los Adverbios · Educación Básica · Español · Lengua</h2>
@@ -482,6 +543,23 @@
         <div id="evalOut"></div>
       </div>
       <div id="eval-pauta-sheet"></div>
+      </div>
+      <div id="evalCritWrap" style="display:none;">
+      <div class="card ac-purple">
+        <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Los Adverbios</h2>
+        <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Identifica, transforma, detecta errores,
+          clasifica adverbios dentro de un texto y produce por escrito con lo aprendido. Responde en pantalla o en tu
+          cuaderno, compara con la <strong>Pauta</strong> y autoevalúa la última sección. <strong>Genera una nueva
+            prueba cuando quieras.</strong></p>
+        <div class="eval-controls">
+          <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+          <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+          <button class="btn btn-g" onclick="gradeEvalCrit()">🧮 Calificar prueba</button>
+          <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+        </div>
+        <div id="evalCritOut"></div>
+      </div>
+      </div>
       <button class="next-sec-btn" onclick="openDiploma()"
         style="background:linear-gradient(135deg,var(--pri),var(--sec));">
         <span class="nsb-icon">🎓</span>

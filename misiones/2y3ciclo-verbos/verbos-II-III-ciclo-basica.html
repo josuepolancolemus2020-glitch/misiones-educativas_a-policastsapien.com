@@ -19,6 +19,27 @@
     rel="stylesheet">
   <link rel="stylesheet" href="css/verbos.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Estilos de la Prueba de Pensamiento Crítico (2ª evaluación de la misión) -->
+  <style>
+    .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+    .eval-mode-btn{flex:1;min-width:160px;font-family:'Fredoka',sans-serif;font-size:0.9rem;padding:0.65rem 1rem;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--gray);cursor:pointer;transition:all 0.2s;}
+    .eval-mode-btn:hover{border-color:var(--pri);}
+    .eval-mode-btn.active{border-color:var(--pri);background:var(--pri-gl);color:var(--pri);font-weight:700;}
+    .crit-scenario{background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:0 8px 8px 0;padding:0.6rem 0.9rem;margin-bottom:0.5rem;font-size:0.9rem;line-height:1.5;color:var(--dark);}
+    .crit-q-block{margin-bottom:0.95rem;padding-bottom:0.6rem;border-bottom:1px dashed var(--border);}
+    .crit-q-block:last-of-type{margin-bottom:0;border-bottom:none;padding-bottom:0;}
+    .crit-q-label{font-size:0.88rem;color:var(--dark);font-weight:600;margin-bottom:0.4rem;line-height:1.45;}
+    .crit-cir-row{font-size:0.86rem;color:var(--dark);line-height:2;display:flex;flex-wrap:wrap;align-items:center;gap:0.25rem;}
+    .crit-cir-input{min-width:90px;max-width:130px;}
+    .crit-sel{font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:6px;padding:0.2rem 0.4rem;background:var(--card);color:var(--dark);}
+    .crit-textarea{width:100%;min-height:56px;font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;background:var(--card);color:var(--dark);resize:vertical;}
+    .crit-textarea:focus{outline:none;border-color:var(--pri);}
+    .crit-rubric{margin-top:0.7rem;font-size:0.82rem;color:var(--dark);background:var(--jade-gl);border-radius:8px;padding:0.5rem 0.75rem;line-height:1.5;}
+    .crit-selfscore{display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;font-size:0.82rem;color:var(--gray);flex-wrap:wrap;}
+    .crit-score-input{width:60px;font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:6px;padding:0.2rem 0.4rem;background:var(--card);color:var(--dark);text-align:center;}
+    #evalCritOut .eval-answer::before{content:'📋 Pauta: ';}
+    @media print{.crit-sel,.crit-textarea,.crit-score-input,.eval-mode-toggle{display:none!important;}}
+  </style>
 </head>
 
 <body>
@@ -442,6 +463,13 @@
     </div>
 
     <div class="sec" id="s-evaluacion" role="tabpanel">
+      <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+        <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true"
+          onclick="evalSwitchMode('concept')">📝 Evaluación Conceptual</button>
+        <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false"
+          onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+      </div>
+      <div id="evalConceptWrap">
       <div class="card ac-purple">
         <div class="eval-print-header">
           <h2>Evaluación Final de Misión Los Verbos · Educación Básica · Español · Lengua</h2>
@@ -468,6 +496,23 @@
         <div id="evalOut"></div>
       </div>
       <div id="eval-pauta-sheet"></div>
+      </div>
+      <div id="evalCritWrap" style="display:none;">
+      <div class="card ac-amber">
+        <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Los Verbos</h2>
+        <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Opera verbos, detecta pistas de tiempo y
+          modo, corrige errores de concordancia, transforma oraciones y argumenta con lo aprendido. Responde en
+          pantalla o en tu cuaderno, compara con la <strong>Pauta</strong> y autoevalúa la última sección.
+          <strong>Genera una nueva prueba cuando quieras.</strong></p>
+        <div class="eval-controls">
+          <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+          <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+          <button class="btn btn-g" onclick="gradeEvalCrit()">🧮 Calificar prueba</button>
+          <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+        </div>
+        <div id="evalCritOut"></div>
+      </div>
+      </div>
       <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,#e84393,#6c5ce7);">
         <span class="nsb-icon">🎓</span>
         <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi

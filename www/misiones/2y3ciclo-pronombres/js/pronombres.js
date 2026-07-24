@@ -36,6 +36,7 @@ function fb(id, msg, isOk) {
 const SAVE_KEY = 'pronombres_v2_basica';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1;
+let evalCritFormNum = 1, evalCritAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
@@ -43,7 +44,7 @@ const TOTAL_SECTIONS = 11;
 
 const xpTracker = {
     fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(),
-    cmp: new Set(), reto: new Set(), sopa: new Set(),
+    cmp: new Set(), reto: new Set(), sopa: new Set(), critWin: new Set(),
 };
 
 // ===================== SONIDO =====================
@@ -73,7 +74,7 @@ function initTheme() { const s = localStorage.getItem(SAVE_KEY + '_theme'); cons
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ doneSections: Array.from(done), unlockedAch, evalFormNum, xp })); } catch (e) { }
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ doneSections: Array.from(done), unlockedAch, evalFormNum, evalCritFormNum, xp })); } catch (e) { }
 }
 function loadProgress() {
     try {
@@ -86,6 +87,7 @@ function loadProgress() {
         });
         if (s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id => ACHIEVEMENTS[id] !== undefined);
         if (s.evalFormNum) evalFormNum = s.evalFormNum;
+        if (s.evalCritFormNum) evalCritFormNum = s.evalCritFormNum;
         if (s.xp !== undefined) {
             xp = s.xp;
             updateXPBar();
@@ -1188,6 +1190,372 @@ ${s1}${s2}${s3}${s4}
     setTimeout(() => win.print(), 400);
 }
 
+// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+// Segunda evaluación imprimible de la misión (Español · Lengua). Todo el
+// contenido nace de los bancos y tarjetas de ESTA misión (pronombres vs
+// determinantes, proclítico/enclítico, voseo hondureño, antecedente). Formas
+// deterministas: semilla _evalRng(200000+cf). Progresión de dificultad:
+// identificar → transformar → transformar → analizar/argumentar → producir.
+function evalSwitchMode(mode) {
+    sfx('click');
+    const cWrap = document.getElementById('evalConceptWrap'), critWrap = document.getElementById('evalCritWrap');
+    const cBtn = document.getElementById('evalModeBtnConcept'), critBtn = document.getElementById('evalModeBtnCrit');
+    if (mode === 'crit') {
+        cWrap.style.display = 'none'; critWrap.style.display = 'block';
+        cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected', 'false');
+        critBtn.classList.add('active'); critBtn.setAttribute('aria-selected', 'true');
+        if (!window._evalCritData) genEvalCrit();
+    } else {
+        critWrap.style.display = 'none'; cWrap.style.display = 'block';
+        critBtn.classList.remove('active'); critBtn.setAttribute('aria-selected', 'false');
+        cBtn.classList.add('active'); cBtn.setAttribute('aria-selected', 'true');
+    }
+}
+
+// ── I. ¿Pronombre o determinante? — Juez gramatical (pares mínimos del tip de Aprende)
+const critJuezBank = [
+    { frase: 'Está mesa se ve así porque marqué <b>Esa</b>… <b>Esa</b> mesa está sucia.', foco: 'Esa', pre: '', post: ' mesa está sucia.', t: 'D', pista: 'Acompaña al sustantivo «mesa».' },
+    { frase: 'Quiero <b>esa</b>, no la otra.', foco: 'esa', pre: 'Quiero ', post: ', no la otra.', t: 'P', pista: 'Sustituye al sustantivo; va sola.' },
+    { frase: '<b>Aquel</b> carro es rojo.', foco: 'Aquel', pre: '', post: ' carro es rojo.', t: 'D', pista: 'Acompaña al sustantivo «carro».' },
+    { frase: 'Dame <b>aquel</b>, por favor.', foco: 'aquel', pre: 'Dame ', post: ', por favor.', t: 'P', pista: 'Sustituye al sustantivo; va solo.' },
+    { frase: '<b>Este</b> libro es nuevo.', foco: 'Este', pre: '', post: ' libro es nuevo.', t: 'D', pista: 'Acompaña al sustantivo «libro».' },
+    { frase: 'Prefiero <b>este</b> a los demás.', foco: 'este', pre: 'Prefiero ', post: ' a los demás.', t: 'P', pista: 'Sustituye al sustantivo; va solo.' },
+    { frase: '<b>Mi</b> casa es pequeña.', foco: 'Mi', pre: '', post: ' casa es pequeña.', t: 'D', pista: 'Posesivo que acompaña al sustantivo «casa».' },
+    { frase: 'Esa casa es <b>mía</b>.', foco: 'mía', pre: 'Esa casa es ', post: '.', t: 'P', pista: 'Posesivo que sustituye; va solo.' },
+    { frase: '<b>Esos</b> zapatos son caros.', foco: 'Esos', pre: '', post: ' zapatos son caros.', t: 'D', pista: 'Acompaña al sustantivo «zapatos».' },
+    { frase: 'Me gustan <b>esos</b>.', foco: 'esos', pre: 'Me gustan ', post: '.', t: 'P', pista: 'Sustituye al sustantivo; va solo.' },
+];
+// ── II. Reescribe sin repetir (sustituir el sustantivo repetido con pronombres)
+const critReescribeBank = [
+    { orig: 'Marta compró tortillas y Marta repartió las tortillas.', model: 'Marta compró tortillas y ella las repartió.', key: 'ella' },
+    { orig: 'Los niños ganaron el partido y los niños celebraron mucho.', model: 'Los niños ganaron el partido y ellos celebraron mucho.', key: 'ellos' },
+    { orig: 'Compré un pastel y regalé un pastel a mamá.', model: 'Compré un pastel y lo regalé a mamá.', key: 'lo regale' },
+    { orig: 'Vimos a unos turistas y saludamos a unos turistas.', model: 'Vimos a unos turistas y los saludamos.', key: 'los saludamos' },
+    { orig: 'Escribí una carta y envié una carta ayer.', model: 'Escribí una carta y la envié ayer.', key: 'la envie' },
+    { orig: 'Nosotros trajimos comida y nosotros repartimos la comida.', model: 'Nosotros trajimos comida y la repartimos.', key: 'la repartimos' },
+    { orig: 'El maestro revisó los exámenes y el maestro entregó los exámenes.', model: 'El maestro revisó los exámenes y los entregó.', key: 'los entrego' },
+    { orig: 'Papá lavó el carro y papá enceró el carro.', model: 'Papá lavó el carro y lo enceró.', key: 'lo encero' },
+];
+// ── III. Cambia la posición (proclítico ↔ enclítico; obligatorio en infinitivo, gerundio, imperativo)
+const critPosicionBank = [
+    { given: 'Me lo dio', target: 'Conviértelo en orden (enclítico):', ans: 'dámelo', alts: ['damelo'], regla: 'En el imperativo afirmativo el pronombre va pegado al final: dá+me+lo = dámelo.' },
+    { given: 'Te llamo', target: 'Conviértelo en orden (enclítico):', ans: 'llámame', alts: ['llamame'], regla: 'En el imperativo el pronombre es enclítico: llama+me = llámame.' },
+    { given: 'Viéndolo', target: 'Escríbelo con el verbo conjugado (proclítico):', ans: 'lo veo', alts: ['lo veo'], regla: 'Con el verbo conjugado el pronombre va antes y separado: lo veo.' },
+    { given: 'Se fue', target: 'Conviértelo en infinitivo (enclítico obligatorio):', ans: 'irse', alts: ['irse'], regla: 'Con el infinitivo el pronombre va pegado: ir+se = irse.' },
+    { given: 'Dímelo', target: 'Escríbelo con el verbo conjugado (proclítico):', ans: 'me lo dices', alts: ['me lo dices', 'me lo dijiste'], regla: 'Con el verbo conjugado los pronombres van antes y separados: me lo dices.' },
+    { given: 'Nos llama', target: 'Conviértelo en gerundio (enclítico):', ans: 'llamándonos', alts: ['llamandonos'], regla: 'Con el gerundio el pronombre va pegado: llamando+nos = llamándonos.' },
+    { given: 'Cómpralo', target: 'Escríbelo con «vas a» (proclítico):', ans: 'lo vas a comprar', alts: ['lo vas a comprar', 'vas a comprarlo'], regla: 'Con el verbo conjugado se antepone: lo vas a comprar (o enclítico: vas a comprarlo).' },
+    { given: 'Lo estás viendo', target: 'Únelo al gerundio (enclítico):', ans: 'estás viéndolo', alts: ['estas viendolo', 'viendolo'], regla: 'El pronombre puede ir pegado al gerundio: estás viéndolo.' },
+];
+// ── IV.a Tuteo → voseo (conjugación «sos/cantás/tenés» del habla hondureña)
+const critVoseoBank = [
+    { tu: 'Tú cantas muy bien', ans: 'vos cantás muy bien', alts: ['vos cantas muy bien'] },
+    { tu: 'Tú eres muy amable', ans: 'vos sos muy amable', alts: ['vos sos muy amable'] },
+    { tu: 'Tú tienes razón', ans: 'vos tenés razón', alts: ['vos tenes razon'] },
+    { tu: 'Tú vives cerca', ans: 'vos vivís cerca', alts: ['vos vivis cerca'] },
+    { tu: 'Tú comes rápido', ans: 'vos comés rápido', alts: ['vos comes rapido'] },
+    { tu: 'Tú sabes la respuesta', ans: 'vos sabés la respuesta', alts: ['vos sabes la respuesta'] },
+];
+// ── IV.b Elige el registro: vos (confianza) o usted (respeto/formal)
+const critRegistroBank = [
+    { who: 'Hablas con el director del centro educativo en una reunión.', ans: 'usted', model: 'USTED: es una autoridad y la situación es formal; muestra respeto.' },
+    { who: 'Conversas con tu mejor amigo del barrio.', ans: 'vos', model: 'VOS: hay confianza y cercanía; es el trato informal hondureño.' },
+    { who: 'Le pides un favor a una persona mayor que acabas de conocer.', ans: 'usted', model: 'USTED: por respeto y distancia con alguien mayor y desconocido.' },
+    { who: 'Saludas a tu hermano menor en casa.', ans: 'vos', model: 'VOS: por la confianza y cercanía familiar informal.' },
+    { who: 'Te diriges a un maestro nuevo durante la clase.', ans: 'usted', model: 'USTED: por respeto a la autoridad en un contexto formal.' },
+    { who: 'Juegas fútbol con tus compañeros de equipo.', ans: 'vos', model: 'VOS: por la confianza entre amigos y compañeros.' },
+];
+// ── V. Detective del texto (mini-párrafo hondureño con 2 errores plantados)
+const critDetectiveBank = [
+    {
+        text: 'En la escuela de Danlí, los alumnos recibieron a los maestros que llegaron tarde. Después, el director dijo: «No quiero eso silla, quiero aquella».',
+        errores: [
+            { tipo: 'Pronombre relativo con antecedente ambiguo', problema: '«que llegaron tarde» no aclara si llegaron tarde los alumnos o los maestros.', correccion: 'Reformular para evitar la ambigüedad, p. ej.: «…a los maestros, quienes llegaron tarde» o «los alumnos, que llegaron tarde, recibieron a los maestros».' },
+            { tipo: 'Pronombre/determinante demostrativo mal usado', problema: '«eso silla» no concuerda en género con el sustantivo femenino «silla».', correccion: 'Debe ser «esa silla» (concordancia de género y número).' }
+        ]
+    },
+    {
+        text: 'Ana y Lucía hornearon galletas. Ella las repartió entre sus amigos. Luego comentó: «Prefiero estos galletas a las que hizo mi tía».',
+        errores: [
+            { tipo: 'Pronombre personal con antecedente ambiguo', problema: '«Ella» no deja claro si fue Ana o Lucía quien repartió las galletas.', correccion: 'Nombrar a la persona, p. ej.: «Ana las repartió entre sus amigos».' },
+            { tipo: 'Pronombre/determinante demostrativo mal usado', problema: '«estos galletas» no concuerda con el sustantivo femenino «galletas».', correccion: 'Debe ser «estas galletas» (concordancia de género y número).' }
+        ]
+    },
+    {
+        text: 'Los vecinos llamaron a los bomberos que estaban cansados. El jefe explicó: «Necesito ese herramientas, no aquellas».',
+        errores: [
+            { tipo: 'Pronombre relativo con antecedente ambiguo', problema: '«que estaban cansados» no aclara si estaban cansados los vecinos o los bomberos.', correccion: 'Reformular, p. ej.: «…a los bomberos, quienes estaban cansados».' },
+            { tipo: 'Pronombre/determinante demostrativo mal usado', problema: '«ese herramientas» no concuerda con el sustantivo femenino plural «herramientas».', correccion: 'Debe ser «esas herramientas» (concordancia de género y número).' }
+        ]
+    },
+];
+
+// Comparación estricta con normalización de tildes (para las secciones III y IV.a)
+function _critMatch(student, ans, alts) {
+    const s = normalizeEvalAnswer(student);
+    if (!s) return false;
+    if (s === normalizeEvalAnswer(ans)) return true;
+    return (alts || []).some(a => normalizeEvalAnswer(a) === s);
+}
+
+function genEvalCrit() {
+    sfx('click');
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const _sC = document.getElementById('evalCritFormaSel');
+    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
+    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
+    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    saveProgress();
+    document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Los Pronombres`;
+    evalCritAnsVisible = false;
+    const out = document.getElementById('evalCritOut'); out.innerHTML = '';
+
+    // Barra de distribución + progresión de dificultad
+    const bar = document.createElement('div'); bar.className = 'eval-score-bar';
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar (I) → transformar (II–III) → analizar y argumentar (IV) → producir (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Juez 20</span><span class="eval-score-pill esp-tf">II. Reescribe 20</span><span class="eval-score-pill esp-mc">III. Posición 20</span><span class="eval-score-pill esp-pr">IV. Vos/usted 20</span><span class="eval-score-pill esp-cp">V. Detective 20</span></div>`;
+    out.appendChild(bar);
+
+    // ── I. ¿Pronombre o determinante? (5×4=20, radios P/D autocalificables)
+    const juItems = _pickF(critJuezBank, 5, rngC);
+    let juRows = '';
+    juItems.forEach((it, i) => {
+        juRows += `<div class="crit-q-block"><div class="crit-scenario"><span class="crit-juez-n">${i + 1}.</span> ${it.pre}<b class="crit-foco">${it.foco}</b>${it.post}</div><div class="crit-juez-opts"><label class="crit-radio"><input type="radio" name="juez${i}" value="P"> Pronombre (sustituye)</label><label class="crit-radio"><input type="radio" name="juez${i}" value="D"> Determinante (acompaña)</label></div><div class="crit-pauta">${it.t === 'P' ? 'Pronombre' : 'Determinante'} — ${it.pista}</div><div class="eval-item-feedback" id="critFbJu${i}" aria-live="polite"></div></div>`;
+    });
+    const s1 = document.createElement('div');
+    s1.innerHTML = `<div class="eval-section-title">I. ¿Pronombre o determinante? — Juez gramatical <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Observa la palabra en negrita. Marca si es <b>Pronombre</b> (sustituye al sustantivo, va sola) o <b>Determinante</b> (acompaña al sustantivo). En tu cuaderno, subraya la pista: ¿acompaña o sustituye?</p>${juRows}</div>`;
+    out.appendChild(s1);
+
+    // ── II. Reescribe sin repetir (5×4=20, palabras clave + respuesta modelo)
+    const reItems = _pickF(critReescribeBank, 5, rngC);
+    let reRows = '';
+    reItems.forEach((it, i) => {
+        reRows += `<div class="crit-q-block"><div class="crit-scenario"><span class="crit-juez-n">${i + 1}.</span> ${it.orig}</div><textarea class="crit-textarea" data-re="${i}" rows="2" aria-label="Reescribe la oración ${i + 1}" placeholder="Reescríbela sustituyendo con pronombres..."></textarea><div class="crit-pauta">${it.model}</div><div class="eval-item-feedback" id="critFbRe${i}" aria-live="polite"></div></div>`;
+    });
+    const s2 = document.createElement('div');
+    s2.innerHTML = `<div class="eval-section-title">II. Reescribe sin repetir <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Cada oración repite un sustantivo. Reescríbela sustituyéndolo con el pronombre adecuado para no repetir.</p>${reRows}</div>`;
+    out.appendChild(s2);
+
+    // ── III. Cambia la posición (5×4=20, inputs autocalificables con normalización de tildes)
+    const poItems = _pickF(critPosicionBank, 5, rngC);
+    let poRows = '';
+    poItems.forEach((it, i) => {
+        poRows += `<div class="crit-q-block"><div class="crit-pos-row"><span class="crit-juez-n">${i + 1}.</span> <span class="crit-pos-given">${it.given}</span> <span class="crit-pos-arrow">→</span> <span class="crit-pos-target">${it.target}</span></div><input type="text" class="crit-pos-input" data-pos="${i}" autocomplete="off" aria-label="Reescribe cambiando la posición ${i + 1}"><div class="crit-pauta">${it.ans} — ${it.regla}</div><div class="eval-item-feedback" id="critFbPo${i}" aria-live="polite"></div></div>`;
+    });
+    const s3 = document.createElement('div');
+    s3.innerHTML = `<div class="eval-section-title">III. Cambia la posición: proclítico ↔ enclítico <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Reescribe el verbo cambiando la posición del pronombre. Recuerda: es <b>enclítico obligatorio</b> con infinitivo, gerundio e imperativo.</p>${poRows}</div>`;
+    out.appendChild(s3);
+
+    // ── IV. Habla hondureña: vos, tú y usted (4×5=20)
+    const voItems = _pickF(critVoseoBank, 2, rngC);
+    const regItems = _pickF(critRegistroBank, 2, rngC);
+    let voRows = '';
+    voItems.forEach((it, i) => {
+        voRows += `<div class="crit-q-block"><div class="crit-pos-row"><span class="crit-juez-n">${i + 1}.</span> <span class="crit-pos-given">${it.tu}</span> <span class="crit-pos-arrow">→ (voseo)</span></div><input type="text" class="crit-pos-input" data-vo="${i}" autocomplete="off" aria-label="Convierte al voseo ${i + 1}"><div class="crit-pauta">${it.ans}</div><div class="eval-item-feedback" id="critFbVo${i}" aria-live="polite"></div></div>`;
+    });
+    let regRows = '';
+    regItems.forEach((it, i) => {
+        regRows += `<div class="crit-q-block"><div class="crit-scenario"><span class="crit-juez-n">${i + 3}.</span> ${it.who}</div><div class="crit-juez-opts"><label class="crit-radio"><input type="radio" name="reg${i}" value="vos"> Vos</label><label class="crit-radio"><input type="radio" name="reg${i}" value="usted"> Usted</label></div><div class="crit-pauta">${it.model}</div><div class="eval-item-feedback" id="critFbReg${i}" aria-live="polite"></div></div>`;
+    });
+    const s4 = document.createElement('div');
+    s4.innerHTML = `<div class="eval-section-title">IV. Habla hondureña: vos, tú y usted <span class="eval-pts">20 pts · 5 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">A) Convierte del tuteo al <b>voseo</b> hondureño (usa «sos», «cantás», «tenés»…).</p>${voRows}<p class="crit-q-label" style="margin-top:0.7rem;">B) Elige <b>vos</b> o <b>usted</b> según con quién hablas y, en tu cuaderno, justifica el registro.</p>${regRows}</div>`;
+    out.appendChild(s4);
+
+    // ── V. Detective del texto (2 errores × 10 = 20, autoevaluación con rúbrica)
+    const deItem = _pickF(critDetectiveBank, 1, rngC)[0];
+    const s5 = document.createElement('div');
+    s5.innerHTML = `<div class="eval-section-title">V. Detective del texto <span class="eval-pts">20 pts · 2 errores × 10 pts</span></div><div class="eval-item"><p class="crit-q-label">Lee el párrafo. Tiene <b>2 errores</b> con pronombres. Para cada uno: <b>localiza</b> el error, <b>nombra</b> el tipo de pronombre y <b>corrígelo</b>.</p><div class="crit-scenario crit-detective-text">${deItem.text}</div><div class="crit-q-block"><div class="crit-q-label">Error 1 — tipo, problema y corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1"></textarea></div><div class="crit-q-block"><div class="crit-q-label">Error 2 — tipo, problema y corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2"></textarea></div><div class="crit-pauta">${deItem.errores.map((e, i) => `Error ${i + 1} — <b>${e.tipo}</b>: ${e.problema} Corrección: ${e.correccion}`).join('<br>')}</div><div class="crit-rubric"><strong>📋 Rúbrica (2 criterios · 10 pts c/u):</strong> 1) Localiza y <b>nombra bien el tipo</b> de pronombre de cada error. 2) <b>Corrige</b> adecuadamente respetando la concordancia y evitando la ambigüedad. <em>Bien = 10; incompleto = 5; ausente = 0.</em></div><div class="crit-selfscore"><label for="critScoreV">Obtenido (autoevaluación):</label><input type="number" id="critScoreV" class="crit-score-input" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+    out.appendChild(s5);
+
+    window._evalCritData = {
+        ju: juItems, re: reItems, po: poItems,
+        vo: voItems, reg: regItems, de: deItem
+    };
+    const totalPanel = document.createElement('div'); totalPanel.id = 'evalCritTotalResult'; totalPanel.className = 'eval-auto-result';
+    totalPanel.innerHTML = '<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve las secciones I–IV en pantalla, autoevalúa la V con la rúbrica y presiona <em>Calificar prueba</em>. La impresión conserva el formato limpio para papel.';
+    out.appendChild(totalPanel);
+    fin('s-evaluacion');
+}
+function toggleEvalCritAns() {
+    evalCritAnsVisible = !evalCritAnsVisible;
+    document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el => el.style.display = evalCritAnsVisible ? 'block' : 'none');
+    sfx('click');
+}
+function _setCritFb(id, ok, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
+}
+function gradeEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const d = window._evalCritData;
+    const detail = { ju: 0, re: 0, po: 0, iv: 0, de: 0 };
+
+    // I. ¿Pronombre o determinante? (radios P/D, 4 pts c/u)
+    d.ju.forEach((it, i) => {
+        const sel = document.querySelector(`input[name="juez${i}"]:checked`);
+        const ok = !!sel && sel.value === it.t;
+        if (ok) detail.ju += 4;
+        _setCritFb('critFbJu' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + (it.t === 'P' ? 'Pronombre' : 'Determinante') + ' — ' + it.pista);
+    });
+
+    // II. Reescribe sin repetir (palabra clave, 4 pts c/u)
+    d.re.forEach((it, i) => {
+        const ta = document.querySelector(`[data-re="${i}"]`);
+        const student = normalizeEvalAnswer(ta ? ta.value : '');
+        const ok = !!student && student.includes(normalizeEvalAnswer(it.key));
+        if (ta) { ta.classList.toggle('eval-input-ok', ok); ta.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.re += 4;
+        _setCritFb('critFbRe' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + it.model);
+    });
+
+    // III. Cambia la posición (comparación estricta con tildes, 4 pts c/u)
+    d.po.forEach((it, i) => {
+        const inp = document.querySelector(`[data-pos="${i}"]`);
+        const ok = _critMatch(inp ? inp.value : '', it.ans, it.alts);
+        if (inp) { inp.classList.toggle('eval-input-ok', ok); inp.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.po += 4;
+        _setCritFb('critFbPo' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + it.ans);
+    });
+
+    // IV.a Voseo (input estricto, 5 pts c/u)
+    d.vo.forEach((it, i) => {
+        const inp = document.querySelector(`[data-vo="${i}"]`);
+        const ok = _critMatch(inp ? inp.value : '', it.ans, it.alts);
+        if (inp) { inp.classList.toggle('eval-input-ok', ok); inp.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.iv += 5;
+        _setCritFb('critFbVo' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + it.ans);
+    });
+    // IV.b Registro vos/usted (radios, 5 pts c/u)
+    d.reg.forEach((it, i) => {
+        const sel = document.querySelector(`input[name="reg${i}"]:checked`);
+        const ok = !!sel && sel.value === it.ans;
+        if (ok) detail.iv += 5;
+        _setCritFb('critFbReg' + i, ok, ok ? 'Correcto. +5 pts' : 'Revisar. R/ ' + it.model);
+    });
+
+    // V. Detective del texto (autoevaluación 0-20)
+    const inpV = document.getElementById('critScoreV');
+    let vScore = parseInt(inpV ? inpV.value : 0) || 0;
+    vScore = Math.max(0, Math.min(20, vScore));
+    if (inpV) inpV.value = vScore;
+    detail.de = vScore;
+
+    const total = detail.ju + detail.re + detail.po + detail.iv + detail.de;
+    const panel = document.getElementById('evalCritTotalResult');
+    if (panel) {
+        panel.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk');
+        panel.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>I. Juez: ${detail.ju}/20 · II. Reescribe: ${detail.re}/20 · III. Posición: ${detail.po}/20 · IV. Vos/usted: ${detail.iv}/20 · V. Detective: ${detail.de}/20</span><br><em>Las secciones I–IV se califican solas; la V la autoevalúas con la rúbrica. Compara siempre con la Pauta.</em>`;
+    }
+    const formKey = 'crit_' + (window._currentEvalCritForm || 1);
+    if (total >= 70) { if (!xpTracker.critWin.has(formKey)) { xpTracker.critWin.add(formKey); pts(8); } showToast('🎯 Pensamiento crítico: ' + total + '/100'); }
+    else showToast('🧮 Prueba calificada: ' + total + '/100. Revisa lo marcado.');
+}
+function printEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const forma = window._currentEvalCritForm || 1;
+    const d = window._evalCritData;
+    const lines = (n) => Array(n).fill('<div class="ln"></div>').join('');
+
+    // I. ¿Pronombre o determinante? (marca P o D)
+    let s1 = `<div class="sec-title"><span>I. ¿Pronombre o determinante? — Juez gramatical</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Observa la palabra en negrita. Escribe <b>P</b> (pronombre, sustituye) o <b>D</b> (determinante, acompaña) y subraya la pista.</p>`;
+    d.ju.forEach((it, i) => { s1 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="tf-blank"></span><span class="cp-text">${it.pre}<b>${it.foco}</b>${it.post}</span></div>`; });
+
+    // II. Reescribe sin repetir
+    let s2 = `<div class="sec-title"><span>II. Reescribe sin repetir</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Reescribe cada oración sustituyendo el sustantivo repetido con un pronombre.</p>`;
+    d.re.forEach((it, i) => { s2 += `<p class="crit-print-scenario"><strong>${i + 1}.</strong> ${it.orig}</p>${lines(1)}`; });
+
+    // III. Cambia la posición
+    let s3 = `<div class="sec-title"><span>III. Cambia la posición: proclítico ↔ enclítico</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Reescribe el verbo cambiando la posición del pronombre (enclítico obligatorio con infinitivo, gerundio e imperativo).</p>`;
+    d.po.forEach((it, i) => { s3 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text"><b>${it.given}</b> → ${it.target} <span class="cp-blank"></span></span></div>`; });
+
+    // IV. Habla hondureña
+    let s4 = `<div class="sec-title"><span>IV. Habla hondureña: vos, tú y usted</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">A) Convierte del tuteo al voseo hondureño.</p>`;
+    d.vo.forEach((it, i) => { s4 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text"><b>${it.tu}</b> → <span class="cp-blank"></span></span></div>`; });
+    s4 += `<p class="crit-print-q">B) Escribe <b>vos</b> o <b>usted</b> según el interlocutor y justifica el registro.</p>`;
+    d.reg.forEach((it, i) => { s4 += `<div class="cp-row"><span class="qn">${i + 3}.</span><span class="tf-blank"></span><span class="cp-text">${it.who}</span></div>`; });
+
+    // V. Detective del texto
+    let s5 = `<div class="sec-title"><span>V. Detective del texto</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Lee el párrafo. Localiza los 2 errores con pronombres, nombra el tipo y corrígelos.</p><p class="crit-print-scenario">${d.de.text}</p><p class="crit-print-q"><strong>Error 1</strong> (tipo, problema y corrección):</p>${lines(2)}<p class="crit-print-q"><strong>Error 2</strong> (tipo, problema y corrección):</p>${lines(2)}`;
+
+    // Pauta
+    let pR = '';
+    pR += `<div class="p-sec"><div class="p-ttl">I. ¿Pronombre o determinante?</div>${d.ju.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.t}</strong> (${it.t === 'P' ? 'Pronombre' : 'Determinante'}): ${it.pista}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">II. Reescribe sin repetir</div>${d.re.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.model}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">III. Cambia la posición</div>${d.po.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.ans}</strong> — ${it.regla}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">IV. Habla hondureña</div>${d.vo.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.ans}</strong></div>`).join('')}${d.reg.map((it, i) => `<div class="p-crit-line"><strong>${i + 3}. ${it.ans}:</strong> ${it.model}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Detective del texto (respuestas sugeridas)</div>${d.de.errores.map((e, i) => `<div class="p-crit-line"><strong>Error ${i + 1} — ${e.tipo}:</strong> ${e.problema} Corrección: ${e.correccion}</div>`).join('')}</div>`;
+
+    const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico Los Pronombres · Forma ${forma}</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 6mm;width:201.9mm;margin:0 auto;}
+.ph{margin-bottom:0.35rem;}
+.ph h2{font-size:11.5pt;font-weight:700;text-align:center;margin-bottom:0.25rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.15rem 0.45rem;margin:0.28rem 0 0.12rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #6c5ce7;background:#efedfb;color:#5a4bd1;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#5a4bd1;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #5a4bd1;height:12px;}
+.obt-pct{white-space:nowrap;}
+.crit-print-scenario{font-size:10pt;background:#efedfb;border-left:3px solid #6c5ce7;padding:0.18rem 0.5rem;margin:0.12rem 0 0.15rem;line-height:1.3;}
+.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}
+.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:3px;}
+.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-text{flex:1;}
+.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.qn{font-weight:700;min-width:22px;flex-shrink:0;}
+.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}
+.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#5a4bd1;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #5a4bd1;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:13pt;font-weight:700;color:#5a4bd1;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}
+.p-ttl{font-size:11pt;font-weight:700;color:#5a4bd1;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-crit-line{font-size:10.5pt;color:#007a00;margin-bottom:0.16rem;line-height:1.35;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
+</style></head><body><div id="evalPage">
+<div class="ph">
+  <h2>Evaluación Competencial · Pensamiento Crítico · Los Pronombres · Educación Básica · Español · Lengua</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · I. Juez 20 · II. Reescribe 20 · III. Posición 20 · IV. Vos/usted 20 · V. Detective 20 · Forma ${forma}</p>
+</div>
+${s1}${s2}${s3}${s4}${s5}
+<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
+</div><div class="pauta-wrap" id="pautaPage">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Pronombres · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — secciones abiertas: usar como guía de corrección</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
+    const win = window.open('', '_blank', '');
+    if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+    win.document.write(doc);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
+}
+
 // ===================== DIPLOMA =====================
 function _diplPct() { return xp >= MXP ? 100 : Math.round((xp / MXP) * 100); }
 function openDiploma() {
@@ -1365,7 +1733,7 @@ function copiarEnlaceAlumno() {
 function asignarEnClassroom() {
     const out = document.getElementById('tgOut');
     const url = encodeURIComponent(window.location.href);
-    const titulo = encodeURIComponent('Misión Los Pronombres | II y III Ciclo – policastsapien.com');
+    const titulo = encodeURIComponent('Misión Los Pronombres | Educación Básica – policastsapien.com');
     const classroomUrl = 'https://classroom.google.com/share?url=' + url + '&title=' + titulo;
 
     if (!out || out.innerHTML.trim() === '') {
@@ -1375,7 +1743,7 @@ function asignarEnClassroom() {
 
     const tipoEl = document.getElementById('tgType');
     const tipoText = tipoEl ? tipoEl.options[tipoEl.selectedIndex].text.replace(/^\S+\s*/, '') : '';
-    let texto = '📚 MISIÓN: LOS PRONOMBRES | II y III Ciclo – Español · Lengua\n';
+    let texto = '📚 MISIÓN: LOS PRONOMBRES | Educación Básica – Español · Lengua\n';
     texto += '🔗 ' + window.location.href + '\n';
     texto += '📋 Tipo de tarea: ' + tipoText + '\n';
     texto += '─'.repeat(45) + '\n\n';

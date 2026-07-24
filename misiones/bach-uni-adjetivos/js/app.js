@@ -15,6 +15,7 @@ const _shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 const SAVE_KEY = 'adjetivo_avanzado_uni';
 let xp = 0, MXP = 250, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1;
+let evalCritFormNum = 1, evalCritAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
@@ -53,7 +54,7 @@ function initTheme(){ const s=localStorage.getItem(SAVE_KEY+'_theme'); const sys
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress(){
-  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum})); }catch(e){}
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({doneSections:Array.from(done), unlockedAch, evalFormNum, evalCritFormNum})); }catch(e){}
 }
 function loadProgress(){
   try{
@@ -66,6 +67,7 @@ function loadProgress(){
     });
     if(s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);
     if(s.evalFormNum) evalFormNum = s.evalFormNum;
+    if(s.evalCritFormNum) evalCritFormNum = s.evalCritFormNum;
   }catch(e){}
 }
 
@@ -1149,6 +1151,338 @@ ${s1}${s2}${s3}${s4}
 <div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
+  const win=window.open('','_blank','');
+  if(!win){ showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+  win.document.write(doc);
+  win.document.close();
+  setTimeout(()=>win.print(), 400);
+}
+
+// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+// Segunda evaluación imprimible de la misión (Español · NGLE, nivel Bachillerato/
+// Universidad). Todo el contenido nace de los bancos y tarjetas de ESTA misión
+// (idData, cmpData, classifyTaskDB, quiz y explainQuestions). Formas deterministas:
+// semilla _evalRng(200000 + cf). Barajado SOLO con _shuffleF/_pickF.
+const _critWinForms = new Set();
+
+function evalSwitchMode(mode){
+  sfx('click');
+  const cWrap=document.getElementById('evalConceptWrap'), critWrap=document.getElementById('evalCritWrap');
+  const cBtn=document.getElementById('evalModeBtnConcept'), critBtn=document.getElementById('evalModeBtnCrit');
+  if(mode==='crit'){
+    cWrap.style.display='none'; critWrap.style.display='block';
+    cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected','false');
+    critBtn.classList.add('active'); critBtn.setAttribute('aria-selected','true');
+    if(!window._evalCritData) genEvalCrit();
+  } else {
+    critWrap.style.display='none'; cWrap.style.display='block';
+    critBtn.classList.remove('active'); critBtn.setAttribute('aria-selected','false');
+    cBtn.classList.add('active'); cBtn.setAttribute('aria-selected','true');
+  }
+}
+
+// ── I. Análisis sintáctico dirigido (oraciones tipo idData: adjetivo + clase + función)
+const critSintBank=[
+  {s:'Los niños llegaron cansados.', adj:'cansados', acc:['cansados'], clase:'calificativo', funcion:'complemento predicativo'},
+  {s:'Trajeron fría la sopa.', adj:'fría', acc:['fria'], clase:'calificativo', funcion:'complemento predicativo'},
+  {s:'El presunto culpable declaró ayer.', adj:'presunto', acc:['presunto'], clase:'adverbial', funcion:'adyacente'},
+  {s:'La crisis económica afectó los mercados.', adj:'económica', acc:['economica'], clase:'relacional', funcion:'adyacente'},
+  {s:'El examen parece complejo.', adj:'complejo', acc:['complejo'], clase:'calificativo', funcion:'atributo'},
+  {s:'El gran monarca dictó una ley.', adj:'gran', acc:['gran'], clase:'calificativo apocopado', funcion:'adyacente'},
+  {s:'Ese argumento es paupérrimo.', adj:'paupérrimo', acc:['pauperrimo'], clase:'calificativo', funcion:'atributo'},
+  {s:'Caminaron por la oscura selva.', adj:'oscura', acc:['oscura'], clase:'calificativo', funcion:'adyacente'},
+];
+const critClaseOpts=['calificativo','relacional','adverbial','calificativo apocopado'];
+const critFuncOpts=['adyacente','atributo','complemento predicativo'];
+
+// ── II. Juez de gramaticalidad (válida/agramatical + regla exacta; réplica de quiz y cmpData)
+const critJuezBank=[
+  {expr:'*muy solar', valida:false, regla:'Agramatical: «solar» es un adjetivo relacional; los relacionales clasifican y no admiten gradación ni el cuantificador «muy».'},
+  {expr:'*muy enorme', valida:false, regla:'Agramatical: «enorme» es un elativo léxico, ya lleva el grado extremo en su significado, por eso rechaza cuantificadores de grado como «muy».'},
+  {expr:'*grandérrimo', valida:false, regla:'Agramatical: el sufijo culto -érrimo solo se aplica a bases cultas (libre→libérrimo, pobre→paupérrimo); «grande» no lo admite.'},
+  {expr:'libérrimo', valida:true, regla:'Válida: es el superlativo absoluto culto de «libre», formado con el sufijo -érrimo sobre su base culta.'},
+  {expr:'una energía muy eléctrica', valida:false, regla:'Agramatical: «eléctrica» es un adjetivo relacional (clasifica el tipo de energía); los relacionales no se gradúan con «muy».'},
+  {expr:'celebérrimo', valida:true, regla:'Válida: superlativo absoluto culto de «célebre» con el sufijo -érrimo.'},
+  {expr:'*muy diminuto', valida:false, regla:'Agramatical: «diminuto» es elativo léxico (grado extremo inherente); rechaza el cuantificador «muy».'},
+  {expr:'un rasgo característico', valida:true, regla:'Válida: «característico» funciona aquí como adjetivo calificativo pospuesto y restrictivo, admite su uso normal.'},
+];
+
+// ── III. Contraste semántico por posición (pares reales de la misión; palabra clave donde es posible)
+const critSemBank=[
+  {par:'un pobre hombre / un hombre pobre', acc:['lastima','pena','compasion','desdichado','digno','dinero','pobreza','carece'], model:'Antepuesto, «un pobre hombre» es afectivo: alguien digno de lástima. Pospuesto, «un hombre pobre» es calificativo/restrictivo: alguien sin dinero.'},
+  {par:'un viejo amigo / un amigo viejo', acc:['tiempo','antiguo','anos','amistad','edad','avanzada','anciano'], model:'«Un viejo amigo» = amigo de mucho tiempo (valor adverbial/temporal, antepuesto). «Un amigo viejo» = amigo de edad avanzada (valor calificativo, pospuesto).'},
+  {par:'la blanca nieve / la nieve blanca', acc:['epiteto','inherente','obvia','explicativ','restrictiv','delimit','propia','cualidad'], model:'«La blanca nieve» es un epíteto: destaca una cualidad inherente y obvia (no restringe). «La nieve blanca» es restrictivo: opone esa nieve a otra de distinto color.'},
+  {par:'el gran rey / el rey grande', acc:['apocope','importante','ilustre','tamano','estatura','magnitud','fisica','tam'], model:'«El gran rey» presenta apócope (grande→gran) y significa importante/ilustre. «El rey grande» es calificativo de tamaño físico o estatura.'},
+  {par:'un simple empleado / un empleado simple', acc:['mero','solo','unicamente','sencillo','ingenuo','poco','intelig'], model:'«Un simple empleado» = un mero empleado (valor adverbial, antepuesto). «Un empleado simple» = un empleado sencillo o ingenuo (valor calificativo, pospuesto).'},
+];
+
+// ── IV. Matriz morfosemántica (calcada de classifyTaskDB; lexemas del corpus de la misión)
+const critMatrizBank=[
+  {w:'paupérrimo', gen:'m', num:'singular', grado:'superlativo absoluto', tipo:'calificativo'},
+  {w:'presunto', gen:'m', num:'singular', grado:'no aplica (–)', tipo:'adverbial'},
+  {w:'óptima', gen:'f', num:'singular', grado:'superlativo léxico', tipo:'calificativo'},
+  {w:'gran', gen:'f/m', num:'singular', grado:'positivo', tipo:'calificativo apocopado'},
+  {w:'sintácticas', gen:'f', num:'plural', grado:'no aplica (–)', tipo:'relacional'},
+];
+const critGenOpts=['m','f','f/m'];
+const critNumOpts=['singular','plural'];
+const critGradoOpts=['positivo','superlativo absoluto','superlativo léxico','elativo inherente','no aplica (–)'];
+const critTipoOpts=['calificativo','relacional','adverbial','calificativo apocopado'];
+
+// ── V. Miniensayo NGLE (pregunta rotada por forma; rúbrica de 4 criterios ×5)
+const critEnsayoBank=[
+  {q:'¿Por qué la NGLE reclasifica los tradicionales «adjetivos determinativos» (mi, este, algún) como determinantes y cuantificadores, y reserva «adjetivo» para calificativos, relacionales y adverbiales? Argumenta con ejemplos propios.', model:'Los antiguos «determinativos» no expresan propiedades del sustantivo, sino que lo actualizan, señalan o cuantifican (mi, este, algún); por eso la NGLE los agrupa como determinantes/cuantificadores. El término «adjetivo» queda para los que modifican semánticamente el nombre: calificativos (grande), relacionales (solar) y adverbiales (presunto). Se espera que el alumno aporte ejemplos propios de cada clase.'},
+  {q:'Explica la diferencia entre la función de Atributo y la de Complemento Predicativo, con ejemplos originales tuyos.', model:'El atributo aparece solo con verbos copulativos o semicopulativos (ser, estar, parecer) y se predica del sujeto: «El libro es extenso». El complemento predicativo acompaña a un verbo pleno y concuerda a la vez con el verbo y con el sujeto o el CD: «Llegaron cansados», «Trajo fría la sopa». Se valoran ejemplos originales del alumno.'},
+  {q:'Argumenta por qué los adjetivos relacionales no admiten gradación ni el cuantificador «muy», frente a los calificativos, ilustrándolo con ejemplos propios.', model:'Los relacionales clasifican al sustantivo en un ámbito (crisis económica, energía solar); no denotan una cualidad graduable, por eso resulta agramatical *muy solar. Los calificativos sí expresan propiedades escalables y admiten grado (muy grande, grandísimo). Se esperan ejemplos propios que contrasten ambas clases.'},
+  {q:'Explica el cambio de significado que produce la posición del adjetivo (antepuesto vs. pospuesto) y ejemplifícalo con pares propios distintos a los vistos en clase.', model:'La anteposición suele dar valores explicativos, afectivos o adverbiales, y la posposición valores restrictivos o calificativos: pobre hombre / hombre pobre, viejo amigo / amigo viejo. Además la anteposición puede provocar apócope (gran rey). Se valoran pares originales del alumno con la explicación del contraste.'},
+  {q:'Desarrolla por qué los adjetivos elativos léxicos rechazan las marcas de grado, contrastándolos con los superlativos morfológicos, con ejemplos propios.', model:'Los elativos léxicos (enorme, diminuto, atroz, precioso) llevan ya el grado extremo en su raíz, por lo que rechazan «muy» o -ísimo (*muy enorme). Los superlativos morfológicos construyen el grado con sufijos: altísimo, paupérrimo, libérrimo. Se esperan ejemplos propios de cada tipo.'},
+];
+
+function _critSel(cls, dataAttr, i, opts, label){
+  return `<select class="${cls}" ${dataAttr}="${i}" aria-label="${label}"><option value="">—</option>${opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
+}
+
+function genEvalCrit(){
+  sfx('click');
+  _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});
+  const _sC=document.getElementById('evalCritFormaSel');
+  if(_sC&&parseInt(_sC.value,10)) evalCritFormNum=Math.min(EVAL_FORMAS,Math.max(1,parseInt(_sC.value,10)));
+  const cf=evalCritFormNum; window._currentEvalCritForm=cf; const rngC=_evalRng(200000+cf);
+  evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;
+  _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;});
+  saveProgress();
+  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · El Adjetivo Avanzado (NGLE)`;
+  evalCritAnsVisible=false;
+  const out=document.getElementById('evalCritOut'); out.innerHTML='';
+
+  const bar=document.createElement('div'); bar.className='eval-score-bar';
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar (I) → juzgar y transformar (II–III) → analizar la matriz (IV) → producir el ensayo (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Análisis 20</span><span class="eval-score-pill esp-tf">II. Gramaticalidad 20</span><span class="eval-score-pill esp-mc">III. Contraste 20</span><span class="eval-score-pill esp-pr">IV. Matriz 20</span><span class="eval-score-pill esp-cp">V. Miniensayo 20</span></div>`;
+  out.appendChild(bar);
+
+  // ── I. Análisis sintáctico dirigido (5×4=20): adjetivo(2) + clase(1) + función(1)
+  const siItems=_pickF(critSintBank,5,rngC);
+  let siRows='';
+  siItems.forEach((it,i)=>{ siRows+=`<div class="crit-q-block"><div class="crit-scenario"><strong>${i+1}.</strong> ${it.s}</div><div class="crit-field-row"><label class="crit-field">Adjetivo: <input class="crit-adj-input" data-siadj="${i}" type="text" autocomplete="off" aria-label="Adjetivo de la oración ${i+1}"></label></div><div class="crit-field-row"><label class="crit-field">Clase NGLE: ${_critSel('crit-cc-select','data-siclase',i,critClaseOpts,'Clase NGLE de la oración '+(i+1))}</label><label class="crit-field">Función: ${_critSel('crit-cc-select','data-sifunc',i,critFuncOpts,'Función sintáctica de la oración '+(i+1))}</label></div><div class="crit-pauta">Adjetivo «${it.adj}» · Clase: ${it.clase} · Función: ${it.funcion}.</div><div class="eval-item-feedback" id="critFbSi${i}" aria-live="polite"></div></div>`; });
+  const s1=document.createElement('div');
+  s1.innerHTML=`<div class="eval-section-title">I. Análisis sintáctico dirigido <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Localiza el adjetivo de cada oración e indica su clase según la NGLE y su función sintáctica (adyacente, atributo o complemento predicativo).</p>${siRows}</div>`;
+  out.appendChild(s1);
+
+  // ── II. Juez de gramaticalidad (5×4=20): radio válida/agramatical (auto) + regla modelo
+  const juItems=_pickF(critJuezBank,5,rngC);
+  let juRows='';
+  juItems.forEach((it,i)=>{ juRows+=`<div class="crit-q-block"><div class="crit-scenario"><strong>${i+1}.</strong> <span class="crit-expr">${it.expr}</span></div><div class="crit-radio-row"><label class="crit-radio"><input type="radio" name="crju${i}" value="valida"> Válida</label><label class="crit-radio"><input type="radio" name="crju${i}" value="agramatical"> Agramatical</label></div><label class="crit-q-label" style="font-weight:400;">Justifica con la regla exacta:</label><textarea class="crit-textarea" rows="2" aria-label="Justificación de la construcción ${i+1}" placeholder="Escribe la regla que la explica..."></textarea><div class="crit-pauta">${it.valida?'Válida':'Agramatical'}. ${it.regla}</div><div class="eval-item-feedback" id="critFbJu${i}" aria-live="polite"></div></div>`; });
+  const s2=document.createElement('div');
+  s2.innerHTML=`<div class="eval-section-title">II. Juez de gramaticalidad <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Decide si cada construcción es válida o agramatical y justifica con la regla exacta de la NGLE.</p>${juRows}</div>`;
+  out.appendChild(s2);
+
+  // ── III. Contraste semántico por posición (4×5=20): textarea + palabra clave
+  const seItems=_pickF(critSemBank,4,rngC);
+  let seRows='';
+  seItems.forEach((it,i)=>{ seRows+=`<div class="crit-q-block"><div class="crit-scenario"><strong>${i+1}.</strong> <span class="crit-expr">${it.par}</span></div><textarea class="crit-textarea" data-se="${i}" rows="2" aria-label="Contraste semántico del par ${i+1}" placeholder="Explica en 1-2 líneas el cambio de significado o el fenómeno..."></textarea><div class="crit-pauta">${it.model}</div><div class="eval-item-feedback" id="critFbSe${i}" aria-live="polite"></div></div>`; });
+  const s3=document.createElement('div');
+  s3.innerHTML=`<div class="eval-section-title">III. Contraste semántico por posición <span class="eval-pts">20 pts · 5 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Explica en 1-2 líneas el cambio de significado o el fenómeno (apócope, epíteto, restricción) de cada par.</p>${seRows}</div>`;
+  out.appendChild(s3);
+
+  // ── IV. Matriz morfosemántica (5×4=20): 5 filas × 4 selects (1 pt c/u), orden barajado
+  const maItems=_shuffleF(critMatrizBank,rngC);
+  const th=(t,extra='')=>`<th class="crit-mx-th"${extra?' style="'+extra+'"':''}>${t}</th>`;
+  let maTable=`<div style="overflow-x:auto;"><table class="crit-mx-table"><thead><tr>${th('Adjetivo','text-align:left;')}${th('Género')}${th('Número')}${th('Grado')}${th('Tipología')}</tr></thead><tbody>`;
+  maItems.forEach((it,i)=>{ maTable+=`<tr><td class="crit-mx-word">${it.w}</td><td>${_critSel('crit-fossil-select','data-magen',i,critGenOpts,'Género de '+it.w)}</td><td>${_critSel('crit-fossil-select','data-manum',i,critNumOpts,'Número de '+it.w)}</td><td>${_critSel('crit-fossil-select','data-magrado',i,critGradoOpts,'Grado de '+it.w)}</td><td>${_critSel('crit-fossil-select','data-matipo',i,critTipoOpts,'Tipología de '+it.w)}</td></tr>`; });
+  maTable+='</tbody></table></div>';
+  const maPauta=maItems.map(it=>`${it.w}: Gén ${it.gen} · Núm ${it.num} · Grado ${it.grado} · Tipo ${it.tipo}`).join(' · ');
+  const s4=document.createElement('div');
+  s4.innerHTML=`<div class="eval-section-title">IV. Matriz morfosemántica <span class="eval-pts">20 pts · 4 pts por fila</span></div><div class="eval-item"><p class="crit-q-label">Analiza cada lexema del corpus: indica su género, número, grado y tipología NGLE.</p>${maTable}<div class="crit-pauta">${maPauta}</div><div class="eval-item-feedback" id="critFbMa" aria-live="polite"></div></div>`;
+  out.appendChild(s4);
+
+  // ── V. Miniensayo NGLE (1×20): pregunta rotada + autoevaluación rúbrica 4×5
+  const enItem=_pickF(critEnsayoBank,1,rngC)[0];
+  const s5=document.createElement('div');
+  s5.innerHTML=`<div class="eval-section-title">V. Miniensayo NGLE <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-q-block"><div class="crit-q-label">${enItem.q}</div><textarea class="crit-textarea" rows="5" aria-label="Miniensayo NGLE"></textarea><div class="crit-pauta">Respuesta modelo: ${enItem.model}</div></div><div class="crit-rubric"><strong>📋 Rúbrica (4 criterios × 5 pts):</strong> tesis clara · terminología NGLE precisa · ejemplos propios · redacción y cohesión.</div><div class="crit-selfscore"><span>Autoevaluación:</span><label class="crit-field">Tesis <input type="number" id="critScoreTesis" class="crit-score-input" min="0" max="5" value="0"></label><label class="crit-field">Terminología <input type="number" id="critScoreTerm" class="crit-score-input" min="0" max="5" value="0"></label><label class="crit-field">Ejemplos <input type="number" id="critScoreEj" class="crit-score-input" min="0" max="5" value="0"></label><label class="crit-field">Redacción <input type="number" id="critScoreRed" class="crit-score-input" min="0" max="5" value="0"></label><span>de 20 pts</span></div></div>`;
+  out.appendChild(s5);
+
+  window._evalCritData={
+    sint:siItems.map(it=>({s:it.s,adj:it.adj,acc:it.acc,clase:it.clase,funcion:it.funcion})),
+    juez:juItems.map(it=>({expr:it.expr,valida:it.valida,regla:it.regla})),
+    sem:seItems.map(it=>({par:it.par,acc:it.acc,model:it.model})),
+    matriz:maItems.map(it=>({w:it.w,gen:it.gen,num:it.num,grado:it.grado,tipo:it.tipo})),
+    ensayo:{q:enItem.q,model:enItem.model}
+  };
+  const totalPanel=document.createElement('div'); totalPanel.id='evalCritTotalResult'; totalPanel.className='eval-auto-result';
+  totalPanel.innerHTML='<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve las secciones cerradas (I, II, IV) en pantalla, redacta las abiertas (III, V), autoevalúa el ensayo con la rúbrica y presiona <em>Calificar prueba</em>. La impresión conserva el formato para papel.';
+  out.appendChild(totalPanel);
+  fin('s-evaluacion');
+}
+
+function toggleEvalCritAns(){
+  evalCritAnsVisible=!evalCritAnsVisible;
+  document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');
+  sfx('click');
+}
+function _setCritFb(id, ok, msg){
+  const el=document.getElementById(id); if(!el) return;
+  el.textContent=msg; el.className='eval-item-feedback '+(ok?'eval-ok':'eval-no');
+}
+function gradeEvalCrit(){
+  if(!window._evalCritData){ showToast('⚠️ Genera una prueba primero'); return; }
+  sfx('click');
+  const d=window._evalCritData;
+  const det={sint:0, juez:0, sem:0, matriz:0, ensayo:0};
+
+  // I. Análisis sintáctico: adjetivo(2) + clase(1) + función(1)
+  d.sint.forEach((it,i)=>{
+    const inp=document.querySelector(`[data-siadj="${i}"]`);
+    const val=_normTxt(inp?inp.value:'');
+    const adjOk=val!==''&&(it.acc||[it.adj]).some(a=>_normTxt(a)===val);
+    const clSel=document.querySelector(`[data-siclase="${i}"]`);
+    const clOk=!!clSel&&clSel.value===it.clase;
+    const fnSel=document.querySelector(`[data-sifunc="${i}"]`);
+    const fnOk=!!fnSel&&fnSel.value===it.funcion;
+    if(inp){ inp.classList.toggle('eval-input-ok',adjOk); inp.classList.toggle('eval-input-no',!adjOk); }
+    if(clSel){ clSel.classList.toggle('eval-input-ok',clOk); clSel.classList.toggle('eval-input-no',!clOk); }
+    if(fnSel){ fnSel.classList.toggle('eval-input-ok',fnOk); fnSel.classList.toggle('eval-input-no',!fnOk); }
+    let p=0; if(adjOk) p+=2; if(clOk) p+=1; if(fnOk) p+=1; det.sint+=p;
+    _setCritFb('critFbSi'+i, p===4, p===4?'Correcto. +4 pts':`${p}/4 pts. R/ «${it.adj}» · ${it.clase} · ${it.funcion}`);
+  });
+
+  // II. Juez de gramaticalidad: radio auto (4 pts c/u)
+  d.juez.forEach((it,i)=>{
+    const sel=document.querySelector(`#evalCritOut input[name="crju${i}"]:checked`);
+    const ok=!!sel&&sel.value===(it.valida?'valida':'agramatical');
+    if(ok) det.juez+=4;
+    _setCritFb('critFbJu'+i, ok, ok?'Correcto. +4 pts':'Revisar. R/ '+(it.valida?'Válida':'Agramatical'));
+  });
+
+  // III. Contraste semántico: textarea con palabra clave (5 pts c/u)
+  d.sem.forEach((it,i)=>{
+    const ta=document.querySelector(`[data-se="${i}"]`);
+    const student=_normTxt(ta?ta.value:'');
+    const ok=student!==''&&(it.acc||[]).some(k=>student.includes(_normTxt(k)));
+    if(ta){ ta.classList.toggle('eval-input-ok',ok); ta.classList.toggle('eval-input-no',!ok); }
+    if(ok) det.sem+=5;
+    _setCritFb('critFbSe'+i, ok, ok?'Correcto. +5 pts':'Revisar la Pauta para el contraste completo.');
+  });
+
+  // IV. Matriz morfosemántica: 4 selects por fila (1 pt c/u)
+  let maHits=0;
+  d.matriz.forEach((it,i)=>{
+    const gS=document.querySelector(`[data-magen="${i}"]`), nS=document.querySelector(`[data-manum="${i}"]`), grS=document.querySelector(`[data-magrado="${i}"]`), tS=document.querySelector(`[data-matipo="${i}"]`);
+    const gOk=!!gS&&gS.value===it.gen, nOk=!!nS&&nS.value===it.num, grOk=!!grS&&grS.value===it.grado, tOk=!!tS&&tS.value===it.tipo;
+    [[gS,gOk],[nS,nOk],[grS,grOk],[tS,tOk]].forEach(([el,ok])=>{ if(el){ el.classList.toggle('eval-input-ok',ok); el.classList.toggle('eval-input-no',!ok); } if(ok){ det.matriz+=1; maHits+=1; } });
+  });
+  _setCritFb('critFbMa', maHits===20, maHits===20?'Matriz perfecta. +20 pts':`${maHits}/20 celdas correctas. Consulta la Pauta.`);
+
+  // V. Miniensayo: autoevaluación 4 criterios × 5
+  const clamp=(id)=>{ const el=document.getElementById(id); let v=parseInt(el?el.value:0)||0; v=Math.max(0,Math.min(5,v)); if(el) el.value=v; return v; };
+  det.ensayo=clamp('critScoreTesis')+clamp('critScoreTerm')+clamp('critScoreEj')+clamp('critScoreRed');
+
+  const total=det.sint+det.juez+det.sem+det.matriz+det.ensayo;
+  const panel=document.getElementById('evalCritTotalResult');
+  if(panel){
+    panel.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');
+    panel.innerHTML=`<strong>Resultado: ${total}/100 pts</strong><br><span>I. Análisis: ${det.sint}/20 · II. Gramaticalidad: ${det.juez}/20 · III. Contraste: ${det.sem}/20 · IV. Matriz: ${det.matriz}/20 · V. Miniensayo: ${det.ensayo}/20</span><br><em>I, II y IV se califican solas; III se verifica por palabra clave y V la autoevalúas con la rúbrica. Compara siempre con la Pauta.</em>`;
+  }
+  const formKey='crit_'+(window._currentEvalCritForm||1);
+  if(total>=70){ if(!_critWinForms.has(formKey)){ _critWinForms.add(formKey); pts(8); } showToast('🎯 Pensamiento crítico: '+total+'/100'); }
+  else showToast('🧮 Prueba calificada: '+total+'/100. Revisa lo marcado.');
+}
+
+function printEvalCrit(){
+  if(!window._evalCritData){ showToast('⚠️ Genera una prueba primero'); return; }
+  sfx('click');
+  const forma=window._currentEvalCritForm||1;
+  const d=window._evalCritData;
+  const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
+
+  // I. Análisis sintáctico dirigido
+  let s1=`<div class="sec-title"><span>I. Análisis sintáctico dirigido</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Localiza el adjetivo de cada oración e indica su clase NGLE y su función (adyacente, atributo, complemento predicativo).</p>`;
+  d.sint.forEach((it,i)=>{ s1+=`<div class="crit-print-scenario"><strong>${i+1}.</strong> ${it.s}</div><p class="crit-print-q">Adjetivo: <span class="cp-blank"></span> · Clase NGLE: <span class="cp-blank"></span> · Función: <span class="cp-blank"></span></p>`; });
+
+  // II. Juez de gramaticalidad
+  let s2=`<div class="sec-title"><span>II. Juez de gramaticalidad</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Marca Válida (V) o Agramatical (A) y justifica con la regla exacta.</p>`;
+  d.juez.forEach((it,i)=>{ s2+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text"><span class="crit-expr">${it.expr}</span> &nbsp; ☐ Válida &nbsp; ☐ Agramatical &nbsp; Regla: <span class="cp-blank" style="min-width:170px;"></span></span></div>`; });
+
+  // III. Contraste semántico por posición
+  let s3=`<div class="sec-title"><span>III. Contraste semántico por posición</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Explica en 1-2 líneas el cambio de significado o el fenómeno (apócope, epíteto, restricción).</p>`;
+  d.sem.forEach((it,i)=>{ s3+=`<p class="crit-print-scenario"><strong>${i+1}.</strong> ${it.par}</p>${lines(1)}`; });
+
+  // IV. Matriz morfosemántica
+  let s4=`<div class="sec-title"><span>IV. Matriz morfosemántica</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Completa la matriz: género, número, grado y tipología NGLE de cada lexema.</p><table class="mx-print"><thead><tr><th style="text-align:left;">Adjetivo</th><th>Género</th><th>Número</th><th>Grado</th><th>Tipología</th></tr></thead><tbody>`;
+  d.matriz.forEach(it=>{ s4+=`<tr><td class="mx-word">${it.w}</td><td></td><td></td><td></td><td></td></tr>`; });
+  s4+='</tbody></table>';
+
+  // V. Miniensayo NGLE
+  let s5=`<div class="sec-title"><span>V. Miniensayo NGLE</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Desarrolla con tesis clara, terminología NGLE, ejemplos propios y buena redacción.</p><p class="crit-print-q"><strong>Tema:</strong> ${d.ensayo.q}</p>${lines(6)}`;
+
+  // Pauta
+  let pR='';
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Análisis sintáctico dirigido</div>${d.sint.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> «${it.adj}» · ${it.clase} · ${it.funcion}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Juez de gramaticalidad</div>${d.juez.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}. ${it.valida?'Válida':'Agramatical'}:</strong> ${it.regla}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">III. Contraste semántico por posición</div>${d.sem.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${it.model}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">IV. Matriz morfosemántica</div>${d.matriz.map((it,i)=>`<div class="p-crit-line"><strong>${it.w}:</strong> Gén ${it.gen} · Núm ${it.num} · Grado ${it.grado} · Tipo ${it.tipo}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">V. Miniensayo (respuesta modelo)</div><div class="p-crit-line"><strong>Tema:</strong> ${d.ensayo.q}</div><div class="p-crit-line">${d.ensayo.model}</div><div class="p-crit-line"><strong>Rúbrica:</strong> tesis (5) · terminología NGLE (5) · ejemplos propios (5) · redacción (5).</div></div>`;
+
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico El Adjetivo Avanzado · Forma ${forma}</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 6mm;width:201.9mm;margin:0 auto;}
+.ph{margin-bottom:0.35rem;}
+.ph h2{font-size:11.5pt;font-weight:700;text-align:center;margin-bottom:0.25rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.15rem 0.45rem;margin:0.28rem 0 0.12rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c49000;background:#fef9e7;color:#8a6600;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#8a6600;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #8a6600;height:12px;}
+.obt-pct{white-space:nowrap;}
+.crit-print-scenario{font-size:10pt;background:#fef9e7;border-left:3px solid #c49000;padding:0.18rem 0.5rem;margin:0.12rem 0 0.15rem;line-height:1.3;}
+.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}
+.crit-expr{font-style:italic;font-weight:700;}
+.ln{border-bottom:1px solid #111;min-height:14px;margin-bottom:3px;}
+.qn{font-weight:700;min-width:20px;flex-shrink:0;}
+.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.5;padding:0.18rem 0.2rem;border-bottom:1px solid #eee;}
+.cp-text{flex:1;}
+.cp-blank{display:inline-block;min-width:110px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.mx-print{width:100%;border-collapse:collapse;font-size:10pt;margin-top:0.15rem;}
+.mx-print th{border:1px solid #999;background:#fef9e7;padding:0.25rem 0.35rem;font-size:9pt;text-align:center;}
+.mx-print td{border:1px solid #999;padding:0.4rem 0.35rem;height:1.4rem;}
+.mx-word{font-weight:700;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:13pt;font-weight:700;color:#8a6600;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}
+.p-ttl{font-size:11pt;font-weight:700;color:#8a6600;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-crit-line{font-size:10pt;color:#007a00;margin-bottom:0.16rem;line-height:1.35;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
+</style></head><body><div id="evalPage">
+<div class="ph">
+  <h2>Prueba de Pensamiento Crítico · El Adjetivo Avanzado (NGLE) · Gramática Española</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Universidad/Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Carrera/Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Cuenta:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · I. Análisis 20 · II. Gramaticalidad 20 · III. Contraste 20 · IV. Matriz 20 · V. Miniensayo 20 · Forma ${forma}</p>
+</div>
+${s1}${s2}${s3}${s4}${s5}
+<div class="total-row" style="display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#8a6600;"><span>Total obtenido:</span><span class="obt-line" style="min-width:80px;"></span><span>de 100 pts</span></div>
+</div><div class="pauta-wrap" id="pautaPage">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Pensamiento Crítico · El Adjetivo Avanzado · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — secciones abiertas (III y V): usar como guía de corrección</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){ showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc);

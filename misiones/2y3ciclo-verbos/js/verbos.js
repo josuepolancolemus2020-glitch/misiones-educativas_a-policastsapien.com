@@ -34,6 +34,7 @@ const _shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 const SAVE_KEY = 'verbos_v2_basica';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1;
+let evalCritFormNum = 1, evalCritAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
@@ -42,7 +43,7 @@ const TOTAL_SECTIONS = 11;
 // XP TRACKER — previene doble puntuación
 const xpTracker = {
     fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(),
-    cmp: new Set(), reto: new Set(), sopa: new Set(),
+    cmp: new Set(), reto: new Set(), sopa: new Set(), critWin: new Set(),
 };
 
 // ===================== SONIDO =====================
@@ -72,7 +73,7 @@ function initTheme() { const s = localStorage.getItem(SAVE_KEY + '_theme'); cons
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ doneSections: Array.from(done), unlockedAch, evalFormNum })); } catch (e) { }
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ doneSections: Array.from(done), unlockedAch, evalFormNum, evalCritFormNum })); } catch (e) { }
 }
 function loadProgress() {
     try {
@@ -85,6 +86,7 @@ function loadProgress() {
         });
         if (s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id => ACHIEVEMENTS[id] !== undefined);
         if (s.evalFormNum) evalFormNum = s.evalFormNum;
+        if (s.evalCritFormNum) evalCritFormNum = s.evalCritFormNum;
     } catch (e) { }
 }
 
@@ -1182,6 +1184,364 @@ ${s1}${s2}${s3}${s4}
 <div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
+    const win = window.open('', '_blank', '');
+    if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+    win.document.write(doc);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
+}
+
+// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+// Segunda evaluación imprimible de la misión (Español). Todo el contenido nace
+// de los bancos y tarjetas de ESTA misión (classifyTaskDB, cmpData,
+// completeTaskDB, fcData). Formas deterministas: semilla _evalRng(200000+cf).
+function evalSwitchMode(mode) {
+    sfx('click');
+    const cWrap = document.getElementById('evalConceptWrap'), critWrap = document.getElementById('evalCritWrap');
+    const cBtn = document.getElementById('evalModeBtnConcept'), critBtn = document.getElementById('evalModeBtnCrit');
+    if (mode === 'crit') {
+        cWrap.style.display = 'none'; critWrap.style.display = 'block';
+        cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected', 'false');
+        critBtn.classList.add('active'); critBtn.setAttribute('aria-selected', 'true');
+        if (!window._evalCritData) genEvalCrit();
+    } else {
+        critWrap.style.display = 'none'; cWrap.style.display = 'block';
+        critBtn.classList.remove('active'); critBtn.setAttribute('aria-selected', 'false');
+        cBtn.classList.add('active'); cBtn.setAttribute('aria-selected', 'true');
+    }
+}
+
+// ── I. Cirujano del verbo (raíz + desinencia + conjugación; derivado de classifyTaskDB)
+const critCirBank = [
+    { w: 'corrió', raiz: 'corr', des: 'ió', inf: 'correr', conj: '2da' },
+    { w: 'cantamos', raiz: 'cant', des: 'amos', inf: 'cantar', conj: '1ra' },
+    { w: 'viviré', raiz: 'viv', des: 'iré', inf: 'vivir', conj: '3ra' },
+    { w: 'lees', raiz: 'le', des: 'es', inf: 'leer', conj: '2da' },
+    { w: 'saltaron', raiz: 'salt', des: 'aron', inf: 'saltar', conj: '1ra' },
+    { w: 'escribirá', raiz: 'escrib', des: 'irá', inf: 'escribir', conj: '3ra' },
+    { w: 'jugaban', raiz: 'jug', des: 'aban', inf: 'jugar', conj: '1ra' },
+    { w: 'dibujas', raiz: 'dibuj', des: 'as', inf: 'dibujar', conj: '1ra' },
+    { w: 'estudiaré', raiz: 'estudi', des: 'aré', inf: 'estudiar', conj: '1ra' },
+    { w: 'dormimos', raiz: 'dorm', des: 'imos', inf: 'dormir', conj: '3ra' },
+    { w: 'comerán', raiz: 'com', des: 'erán', inf: 'comer', conj: '2da' },
+    { w: 'viajaste', raiz: 'viaj', des: 'aste', inf: 'viajar', conj: '1ra' },
+];
+const critConjOptions = [{ v: '1ra', t: '1ra (-ar)' }, { v: '2da', t: '2da (-er)' }, { v: '3ra', t: '3ra (-ir)' }];
+// ── II. Detective del tiempo y modo (pistas contextuales al estilo de cmpData)
+const critTMBank = [
+    { s: 'Ayer nosotros <strong>fuimos</strong> al parque a jugar fútbol.', pista: 'Ayer', t: 'pasado', m: 'indicativo' },
+    { s: 'Mañana yo <strong>escribiré</strong> una carta a mi abuela.', pista: 'Mañana', t: 'futuro', m: 'indicativo' },
+    { s: '¡Por favor, <strong>cierra</strong> la puerta ahora mismo!', pista: 'ahora mismo', t: 'presente', m: 'imperativo' },
+    { s: 'Ojalá que mi equipo <strong>gane</strong> el campeonato.', pista: 'Ojalá que', t: 'presente', m: 'subjuntivo' },
+    { s: 'En este momento, la profesora <strong>explica</strong> la lección.', pista: 'En este momento', t: 'presente', m: 'indicativo' },
+    { s: 'El año pasado, yo <strong>viajé</strong> a la montaña con mi familia.', pista: 'El año pasado', t: 'pasado', m: 'indicativo' },
+    { s: 'Mañana nosotros <strong>veremos</strong> una película muy divertida.', pista: 'Mañana', t: 'futuro', m: 'indicativo' },
+    { s: 'Ojalá que no <strong>llueva</strong> durante nuestra excursión.', pista: 'Ojalá que', t: 'presente', m: 'subjuntivo' },
+    { s: '¡<strong>Ordena</strong> tu habitación ahora mismo!', pista: 'ahora mismo', t: 'presente', m: 'imperativo' },
+    { s: 'El verano pasado, mis amigos <strong>viajaron</strong> a la playa.', pista: 'El verano pasado', t: 'pasado', m: 'indicativo' },
+];
+const critTiempoOptions = ['pasado', 'presente', 'futuro'];
+const critModoOptions = ['indicativo', 'subjuntivo', 'imperativo'];
+// ── III. Detective del error de concordancia (persona/número mal conjugados)
+const critConcBank = [
+    { bad: 'Nosotros canta en el coro de la escuela.', fix: 'cantamos', model: 'El sujeto «nosotros» es 1ra persona del plural: el verbo debe ser «cantamos».' },
+    { bad: 'Los pájaros vuela alto en el cielo azul.', fix: 'vuelan', model: 'El sujeto «los pájaros» es plural (3ra persona): el verbo debe ser «vuelan».' },
+    { bad: 'Yo comes frutas todas las mañanas.', fix: 'como', model: '«Yo» es 1ra persona del singular: el verbo debe ser «como».' },
+    { bad: 'Tú estudian para el examen de Español.', fix: 'estudias', model: '«Tú» es 2da persona del singular: el verbo debe ser «estudias».' },
+    { bad: 'Ella dibujamos un paisaje del campo.', fix: 'dibuja', model: '«Ella» es 3ra persona del singular: el verbo debe ser «dibuja».' },
+    { bad: 'Ustedes lee un cuento cada noche.', fix: 'leen', model: '«Ustedes» es plural: el verbo debe ser «leen».' },
+    { bad: 'Mi mamá preparan la cena de la familia.', fix: 'prepara', model: '«Mi mamá» es un solo sujeto (3ra persona singular): el verbo debe ser «prepara».' },
+    { bad: 'Ellos duerme en el sofá de la sala.', fix: 'duermen', model: '«Ellos» es 3ra persona del plural: el verbo debe ser «duermen».' },
+];
+// ── IV. Transformador de oraciones (contexto hondureño; verificación por forma verbal clave)
+const critTransBank = [
+    { orig: 'El agricultor cosecha café en la montaña.', pedido: 'presente → futuro', key: 'cosechará', model: 'El agricultor cosechará café en la montaña.' },
+    { orig: 'Yo como una baleada en el desayuno.', pedido: 'singular → plural (yo → nosotros)', key: 'comemos', model: 'Nosotros comemos baleadas en el desayuno.' },
+    { orig: 'Tú cuidas el río de tu comunidad.', pedido: 'indicativo → imperativo', key: 'cuida', model: '¡Cuida el río de tu comunidad!' },
+    { orig: 'La niña canta el Himno Nacional en el acto cívico.', pedido: 'presente → pasado', key: 'cantó', model: 'La niña cantó el Himno Nacional en el acto cívico.' },
+    { orig: 'Los estudiantes visitarán las ruinas de Copán.', pedido: 'futuro → pasado', key: 'visitaron', model: 'Los estudiantes visitaron las ruinas de Copán.' },
+    { orig: 'El pescador vende pescado frito en La Ceiba.', pedido: 'singular → plural (el pescador → los pescadores)', key: 'venden', model: 'Los pescadores venden pescado frito en La Ceiba.' },
+    { orig: 'Ustedes leen la leyenda de la Lluvia de Peces de Yoro.', pedido: 'presente → futuro', key: 'leerán', model: 'Ustedes leerán la leyenda de la Lluvia de Peces de Yoro.' },
+    { orig: 'Tú estudias la clase de Español todos los días.', pedido: 'indicativo → imperativo', key: 'estudia', model: '¡Estudia la clase de Español todos los días!' },
+];
+// ── V. Razonamiento argumentado (desarrollo con respuesta modelo + rúbrica)
+const critArgBank = [
+    {
+        q: 'Aplica la «prueba de la raíz»: conjuga «cantar» y «tener» en pasado (yo) y en futuro (yo), y demuestra con esas formas por qué «cantar» es regular y «tener» es irregular.',
+        model: 'Cantar: yo canté, yo cantaré — la raíz cant- se mantiene igual en todos los tiempos: es REGULAR. Tener: yo tuve, yo tendré — la raíz ten- cambia a tuv- y tendr-: es IRREGULAR porque no conserva su raíz al conjugarse.'
+    },
+    {
+        q: 'Argumenta por qué «ser», «estar» y «parecer» son verbos copulativos y no de acción. Escribe un ejemplo propio con uno de ellos.',
+        model: 'No expresan una acción que el sujeto realiza: unen el sujeto con una cualidad o estado (atributo). Ejemplo: «Mi abuela es cariñosa» — «es» no indica movimiento ni acción; solo une a la abuela con su cualidad.'
+    },
+];
+
+function _critSel(cls, dataAttr, i, opts, aria) {
+    return `<select class="${cls}" ${dataAttr}="${i}" aria-label="${aria}"><option value="">—</option>${opts.map(o => typeof o === 'string' ? `<option value="${o}">${o}</option>` : `<option value="${o.v}">${o.t}</option>`).join('')}</select>`;
+}
+function _critEq(student, expected) {
+    return normalizeEvalAnswer(student).replace(/-/g, '') === normalizeEvalAnswer(expected).replace(/-/g, '');
+}
+function _critHasWord(student, key) {
+    const words = normalizeEvalAnswer(student).replace(/[¡!¿?.,;:«»"']/g, ' ').split(/\s+/).filter(Boolean);
+    return words.includes(normalizeEvalAnswer(key));
+}
+
+function genEvalCrit() {
+    sfx('click');
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const _sC = document.getElementById('evalCritFormaSel');
+    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
+    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
+    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    saveProgress();
+    document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Los Verbos`;
+    evalCritAnsVisible = false;
+    const out = document.getElementById('evalCritOut'); out.innerHTML = '';
+
+    // Barra de distribución + progresión de dificultad declarada
+    const bar = document.createElement('div'); bar.className = 'eval-score-bar';
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar y separar (I) → analizar pistas de tiempo y modo (II) → detectar y corregir errores (III) → transformar oraciones (IV) → argumentar (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Cirujano 20</span><span class="eval-score-pill esp-tf">II. Tiempo y modo 20</span><span class="eval-score-pill esp-mc">III. Concordancia 20</span><span class="eval-score-pill esp-pr">IV. Transformador 20</span><span class="eval-score-pill esp-cp">V. Argumenta 20</span></div>`;
+    out.appendChild(bar);
+
+    // ── I. Cirujano del verbo (5×4=20)
+    const cirItems = _pickF(critCirBank, 5, rngC);
+    let cirRows = '';
+    cirItems.forEach((it, i) => {
+        cirRows += `<div class="crit-q-block"><div class="crit-scenario"><strong>🔪 Verbo ${i + 1}:</strong> <em style="font-size:1.05rem;">${it.w}</em></div><div class="crit-cir-row">Raíz: <input class="eval-cp-input crit-cir-input" type="text" data-cirr="${i}" autocomplete="off" aria-label="Raíz del verbo ${it.w}"> + Desinencia: <input class="eval-cp-input crit-cir-input" type="text" data-cird="${i}" autocomplete="off" aria-label="Desinencia del verbo ${it.w}"> · Conjugación del infinitivo: ${_critSel('crit-sel', 'data-circ', i, critConjOptions, 'Conjugación del infinitivo de ' + it.w)}</div><div class="eval-answer">${it.raiz}- + -${it.des} → infinitivo ${it.inf}, ${it.conj} conjugación</div><div class="eval-item-feedback" id="critFbCir${i}" aria-live="polite"></div></div>`;
+    });
+    const s1 = document.createElement('div');
+    s1.innerHTML = `<div class="eval-section-title">I. Cirujano del verbo <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Opera cada verbo conjugado: sepáralo en <strong>raíz</strong> + <strong>desinencia</strong> y elige la <strong>conjugación</strong> de su infinitivo (1ra -ar, 2da -er, 3ra -ir).</p>${cirRows}</div>`;
+    out.appendChild(s1);
+
+    // ── II. Detective del tiempo y modo (5×4=20)
+    const tmItems = _pickF(critTMBank, 5, rngC);
+    let tmRows = '';
+    tmItems.forEach((it, i) => {
+        tmRows += `<div class="crit-q-block"><div class="crit-scenario"><strong>🕵️ Oración ${i + 1}:</strong> ${it.s}</div><div class="crit-cir-row">Tiempo: ${_critSel('crit-sel', 'data-tmt', i, critTiempoOptions, 'Tiempo verbal de la oración ' + (i + 1))} · Modo: ${_critSel('crit-sel', 'data-tmm', i, critModoOptions, 'Modo verbal de la oración ' + (i + 1))} · Palabra-pista: <input class="eval-cp-input crit-cir-input" type="text" data-tmp="${i}" autocomplete="off" aria-label="Palabra pista de la oración ${i + 1}"></div><div class="eval-answer">Tiempo ${it.t} · modo ${it.m} · pista: «${it.pista}»</div><div class="eval-item-feedback" id="critFbTm${i}" aria-live="polite"></div></div>`;
+    });
+    const s2 = document.createElement('div');
+    s2.innerHTML = `<div class="eval-section-title">II. Detective del tiempo y modo <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">El verbo va <strong>resaltado</strong>. Identifica su tiempo y su modo, y escribe la <strong>palabra-pista</strong> del contexto que te lo reveló (en papel la subrayas).</p>${tmRows}</div>`;
+    out.appendChild(s2);
+
+    // ── III. Detective del error de concordancia (5×4=20)
+    const concItems = _pickF(critConcBank, 5, rngC);
+    let concRows = '';
+    concItems.forEach((it, i) => {
+        concRows += `<div class="crit-q-block"><div class="crit-scenario">❌ ${it.bad}</div><div class="crit-cir-row">Forma verbal correcta: <input class="eval-cp-input crit-cir-input" type="text" data-conc="${i}" autocomplete="off" aria-label="Forma verbal correcta de la oración ${i + 1}"></div><div class="crit-q-label" style="margin-top:0.35rem;">¿Por qué está mal? Explica:</div><textarea class="crit-textarea" rows="2" aria-label="Explicación del error ${i + 1}" placeholder="El sujeto es... por eso el verbo debe..."></textarea><div class="eval-answer">${it.fix}. ${it.model}</div><div class="eval-item-feedback" id="critFbConc${i}" aria-live="polite"></div></div>`;
+    });
+    const s3 = document.createElement('div');
+    s3.innerHTML = `<div class="eval-section-title">III. Detective del error de concordancia <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Cada oración tiene un verbo <strong>mal conjugado</strong> en persona o número. Escribe la forma correcta (se autocalifica) y explica el porqué (se compara con la pauta).</p>${concRows}</div>`;
+    out.appendChild(s3);
+
+    // ── IV. Transformador de oraciones (5×4=20)
+    const transItems = _pickF(critTransBank, 5, rngC);
+    let transRows = '';
+    transItems.forEach((it, i) => {
+        transRows += `<div class="crit-q-block"><div class="crit-scenario"><strong>⚙️ Original ${i + 1}:</strong> ${it.orig}<br><strong>Cambio pedido:</strong> ${it.pedido}</div><textarea class="crit-textarea" data-trans="${i}" rows="2" aria-label="Oración transformada ${i + 1}" placeholder="Reescribe la oración completa con el cambio pedido..."></textarea><div class="eval-answer">${it.model} (forma verbal clave: «${it.key}»)</div><div class="eval-item-feedback" id="critFbTrans${i}" aria-live="polite"></div></div>`;
+    });
+    const s4 = document.createElement('div');
+    s4.innerHTML = `<div class="eval-section-title">IV. Transformador de oraciones <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Reescribe cada oración cambiando <strong>solo lo que se pide</strong> (tiempo, número o modo). Se verifica que uses la forma verbal correcta.</p>${transRows}</div>`;
+    out.appendChild(s4);
+
+    // ── V. Razonamiento argumentado (2×10=20, autoevaluación con rúbrica)
+    const agItems = critArgBank; // las dos preguntas del diseño, fijas en todas las formas
+    let agRows = '';
+    agItems.forEach((it, i) => {
+        agRows += `<div class="crit-q-block"><div class="crit-q-label">${String.fromCharCode(97 + i)}) ${it.q}</div><textarea class="crit-textarea" rows="3" aria-label="Respuesta argumentada ${i + 1}"></textarea><div class="eval-answer">${it.model}</div><div class="crit-selfscore"><label for="critScoreV${i}">Obtenido (autoevaluación con la rúbrica):</label><input type="number" id="critScoreV${i}" class="crit-score-input" min="0" max="10" value="0"> <span>de 10 pts</span></div></div>`;
+    });
+    const s5 = document.createElement('div');
+    s5.innerHTML = `<div class="eval-section-title">V. Razonamiento argumentado <span class="eval-pts">20 pts · 10 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Responde con tus propias palabras y compara con la respuesta modelo de la <strong>Pauta</strong>.</p>${agRows}<div class="crit-rubric"><strong>📋 Rúbrica (3 criterios, hasta 10 pts por respuesta):</strong> claridad de la idea (0-3) · uso correcto de los conceptos de la misión: raíz, desinencia, conjugación, regular/irregular, copulativo (0-4) · demostración con ejemplos o conjugaciones propias (0-3).</div></div>`;
+    out.appendChild(s5);
+
+    window._evalCritData = { cir: cirItems, tm: tmItems, conc: concItems, trans: transItems, arg: agItems };
+    const totalPanel = document.createElement('div'); totalPanel.id = 'evalCritTotalResult'; totalPanel.className = 'eval-auto-result';
+    totalPanel.innerHTML = '<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve las secciones I–IV en pantalla, autoevalúa la V con la rúbrica y presiona <em>Calificar prueba</em>. La impresión conserva el formato limpio para papel.';
+    out.appendChild(totalPanel);
+    fin('s-evaluacion');
+}
+function toggleEvalCritAns() {
+    evalCritAnsVisible = !evalCritAnsVisible;
+    document.querySelectorAll('#evalCritOut .eval-answer').forEach(el => el.style.display = evalCritAnsVisible ? 'block' : 'none');
+    sfx('click');
+}
+function _setCritFb(id, ok, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
+}
+function gradeEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const d = window._evalCritData;
+    const detail = { cir: 0, tm: 0, conc: 0, trans: 0, arg: 0 };
+
+    // I. Cirujano del verbo (4 pts c/u: raíz + desinencia + conjugación correctas)
+    d.cir.forEach((it, i) => {
+        const inR = document.querySelector(`[data-cirr="${i}"]`), inD = document.querySelector(`[data-cird="${i}"]`), sel = document.querySelector(`[data-circ="${i}"]`);
+        const okR = !!inR && _critEq(inR.value, it.raiz);
+        const okD = !!inD && _critEq(inD.value, it.des);
+        const okC = !!sel && sel.value === it.conj;
+        if (inR) { inR.classList.toggle('eval-input-ok', okR); inR.classList.toggle('eval-input-no', !okR); }
+        if (inD) { inD.classList.toggle('eval-input-ok', okD); inD.classList.toggle('eval-input-no', !okD); }
+        if (sel) { sel.classList.toggle('eval-input-ok', okC); sel.classList.toggle('eval-input-no', !okC); }
+        const ok = okR && okD && okC;
+        if (ok) detail.cir += 4;
+        _setCritFb('critFbCir' + i, ok, ok ? 'Correcto. +4 pts' : `Revisar. R/ ${it.raiz}- + -${it.des} · ${it.conj} conjugación (${it.inf})`);
+    });
+
+    // II. Detective del tiempo y modo (4 pts c/u: tiempo + modo + palabra-pista)
+    d.tm.forEach((it, i) => {
+        const selT = document.querySelector(`[data-tmt="${i}"]`), selM = document.querySelector(`[data-tmm="${i}"]`), inP = document.querySelector(`[data-tmp="${i}"]`);
+        const okT = !!selT && selT.value === it.t;
+        const okM = !!selM && selM.value === it.m;
+        const sP = normalizeEvalAnswer(inP ? inP.value : ''), eP = normalizeEvalAnswer(it.pista);
+        const okP = !!sP && (eP.includes(sP) || sP.includes(eP));
+        if (selT) { selT.classList.toggle('eval-input-ok', okT); selT.classList.toggle('eval-input-no', !okT); }
+        if (selM) { selM.classList.toggle('eval-input-ok', okM); selM.classList.toggle('eval-input-no', !okM); }
+        if (inP) { inP.classList.toggle('eval-input-ok', okP); inP.classList.toggle('eval-input-no', !okP); }
+        const ok = okT && okM && okP;
+        if (ok) detail.tm += 4;
+        _setCritFb('critFbTm' + i, ok, ok ? 'Correcto. +4 pts' : `Revisar. R/ Tiempo ${it.t} · modo ${it.m} · pista: «${it.pista}»`);
+    });
+
+    // III. Concordancia (4 pts c/u por la forma verbal correcta; explicación → pauta)
+    d.conc.forEach((it, i) => {
+        const inp = document.querySelector(`[data-conc="${i}"]`);
+        const ok = !!inp && isCpCorrect(inp.value, it.fix);
+        if (inp) { inp.classList.toggle('eval-input-ok', ok); inp.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.conc += 4;
+        _setCritFb('critFbConc' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + it.fix + '. ' + it.model);
+    });
+
+    // IV. Transformador (4 pts c/u si la oración contiene la forma verbal esperada)
+    d.trans.forEach((it, i) => {
+        const ta = document.querySelector(`[data-trans="${i}"]`);
+        const ok = !!ta && _critHasWord(ta.value, it.key);
+        if (ta) { ta.classList.toggle('eval-input-ok', ok); ta.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.trans += 4;
+        _setCritFb('critFbTrans' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + it.model);
+    });
+
+    // V. Razonamiento argumentado (autoevaluación 0-10 por respuesta)
+    d.arg.forEach((it, i) => {
+        const inp = document.getElementById('critScoreV' + i);
+        let v = parseInt(inp ? inp.value : 0) || 0;
+        v = Math.max(0, Math.min(10, v));
+        if (inp) inp.value = v;
+        detail.arg += v;
+    });
+
+    const total = detail.cir + detail.tm + detail.conc + detail.trans + detail.arg;
+    const panel = document.getElementById('evalCritTotalResult');
+    if (panel) {
+        panel.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk');
+        panel.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>I. Cirujano: ${detail.cir}/20 · II. Tiempo y modo: ${detail.tm}/20 · III. Concordancia: ${detail.conc}/20 · IV. Transformador: ${detail.trans}/20 · V. Argumenta: ${detail.arg}/20</span><br><em>Las secciones I–IV se califican solas; la V la autoevalúas con la rúbrica. Compara siempre con la Pauta.</em>`;
+    }
+    const formKey = 'crit_' + (window._currentEvalCritForm || 1);
+    if (total >= 70) { if (!xpTracker.critWin.has(formKey)) { xpTracker.critWin.add(formKey); pts(8); } showToast('🎯 Pensamiento crítico: ' + total + '/100'); }
+    else showToast('🧮 Prueba calificada: ' + total + '/100. Revisa lo marcado.');
+}
+function printEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const forma = window._currentEvalCritForm || 1;
+    const d = window._evalCritData;
+    const lines = (n) => Array(n).fill('<div class="ln"></div>').join('');
+
+    // I. Cirujano del verbo
+    let s1 = `<div class="sec-title"><span>I. Cirujano del verbo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Separa cada verbo conjugado en raíz + desinencia y escribe la conjugación de su infinitivo (1ra -ar, 2da -er, 3ra -ir).</p>`;
+    d.cir.forEach((it, i) => { s1 += `<div class="cir-row"><span class="qn">${i + 1}.</span><strong class="cir-w">${it.w}</strong> → Raíz: <span class="cp-blank sm"></span> + Desinencia: <span class="cp-blank sm"></span> · Conjugación: <span class="cp-blank sm"></span></div>`; });
+
+    // II. Detective del tiempo y modo
+    let s2 = `<div class="sec-title"><span>II. Detective del tiempo y modo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Subraya la palabra-pista de cada oración y escribe el tiempo y el modo del verbo resaltado.</p>`;
+    d.tm.forEach((it, i) => { s2 += `<div class="tm-row"><span class="qn">${i + 6}.</span><span class="tm-s">${it.s}</span></div><div class="tm-ans">Tiempo: <span class="cp-blank sm"></span> · Modo: <span class="cp-blank sm"></span></div>`; });
+
+    // III. Detective del error de concordancia
+    let s3 = `<div class="sec-title"><span>III. Detective del error de concordancia</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Cada oración tiene un verbo mal conjugado en persona o número. Escribe la forma correcta y explica por qué.</p>`;
+    d.conc.forEach((it, i) => { s3 += `<div class="crit-print-scenario">❌ ${it.bad}</div><p class="crit-print-q">${i + 11}. Forma correcta: <span class="cp-blank sm"></span> · ¿Por qué?</p>${lines(1)}`; });
+
+    // IV. Transformador de oraciones
+    let s4 = `<div class="sec-title"><span>IV. Transformador de oraciones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Reescribe cada oración cambiando solo lo que se pide (tiempo, número o modo).</p>`;
+    d.trans.forEach((it, i) => { s4 += `<div class="crit-print-scenario"><strong>${i + 16}.</strong> ${it.orig} <em>(Cambio: ${it.pedido})</em></div>${lines(1)}`; });
+
+    // V. Razonamiento argumentado
+    let s5 = `<div class="sec-title"><span>V. Razonamiento argumentado</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Responde con tus propias palabras (10 pts c/u). Rúbrica: claridad (0-3) · uso correcto de conceptos: raíz, conjugación, regular/irregular, copulativo (0-4) · demostración con ejemplos propios (0-3).</p>`;
+    d.arg.forEach((it, i) => { s5 += `<p class="crit-print-q"><strong>${String.fromCharCode(97 + i)})</strong> ${it.q}</p>${lines(3)}`; });
+
+    // Pauta
+    let pR = '';
+    pR += `<div class="p-sec"><div class="p-ttl">I. Cirujano del verbo</div>${d.cir.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.w}:</strong> ${it.raiz}- + -${it.des} → ${it.inf}, ${it.conj} conjugación</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">II. Detective del tiempo y modo</div>${d.tm.map((it, i) => `<div class="p-crit-line"><strong>${i + 6}.</strong> Tiempo ${it.t} · modo ${it.m} · pista: «${it.pista}»</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">III. Error de concordancia</div>${d.conc.map((it, i) => `<div class="p-crit-line"><strong>${i + 11}. ${it.fix}:</strong> ${it.model}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">IV. Transformador de oraciones</div>${d.trans.map((it, i) => `<div class="p-crit-line"><strong>${i + 16}.</strong> ${it.model} <em>(clave: ${it.key})</em></div>`).join('')}</div>`;
+    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Razonamiento argumentado (respuestas modelo + rúbrica)</div>${d.arg.map((it, i) => `<div class="p-crit-line"><strong>${String.fromCharCode(97 + i)})</strong> ${it.model}</div>`).join('')}<div class="p-crit-line"><em>Rúbrica por respuesta (10 pts): claridad de la idea (0-3) · uso correcto de conceptos de la misión (0-4) · demostración con ejemplos o conjugaciones propias (0-3).</em></div></div>`;
+
+    const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico Los Verbos · Forma ${forma}</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 6mm;width:201.9mm;margin:0 auto;}
+.ph{margin-bottom:0.35rem;}
+.ph h2{font-size:11.5pt;font-weight:700;text-align:center;margin-bottom:0.25rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.15rem 0.45rem;margin:0.28rem 0 0.12rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c49000;background:#fef9e7;color:#c49000;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c49000;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #c49000;height:12px;}
+.obt-pct{white-space:nowrap;}
+.crit-print-scenario{font-size:10pt;background:#fef9e7;border-left:3px solid #c49000;padding:0.18rem 0.5rem;margin:0.12rem 0 0.15rem;line-height:1.3;}
+.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}
+.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:3px;}
+.qn{font-weight:700;min-width:20px;flex-shrink:0;}
+.cir-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.5;padding:0.2rem 0.2rem;border-bottom:1px solid #eee;flex-wrap:wrap;}
+.cir-w{min-width:70px;}
+.tm-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.18rem 0.2rem 0;}
+.tm-s{flex:1;}
+.tm-ans{font-size:10pt;margin:0.08rem 0 0.15rem 1.5rem;border-bottom:1px solid #eee;padding-bottom:0.15rem;}
+.cp-blank{display:inline-block;min-width:110px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.cp-blank.sm{min-width:62px;}
+.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#c49000;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c49000;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:13pt;font-weight:700;color:#c49000;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}
+.p-ttl{font-size:11pt;font-weight:700;color:#c49000;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.16rem;line-height:1.35;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
+</style></head><body><div id="critPage">
+<div class="ph">
+  <h2>Evaluación Competencial · Pensamiento Crítico · Los Verbos · Educación Básica · Español</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · I. Cirujano 20 · II. Tiempo y modo 20 · III. Concordancia 20 · IV. Transformador 20 · V. Argumenta 20 · Forma ${forma}</p>
+</div>
+${s1}${s2}${s3}${s4}${s5}
+<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
+</div><div class="pauta-wrap" id="critPautaPage">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Verbos · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — secciones abiertas: usar como guía de corrección</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critPage",252,0.55,1.3);fit("critPautaPage",252,0.55,1.3);})();<\/script></body></html>`;
     const win = window.open('', '_blank', '');
     if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
     win.document.write(doc);

@@ -33,6 +33,7 @@ const _shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 const SAVE_KEY = 'sustantivos_v2_basica';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1;
+let evalCritFormNum = 1, evalCritAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
@@ -41,7 +42,7 @@ const TOTAL_SECTIONS = 11;
 // XP TRACKER — previene doble puntuación
 const xpTracker = {
     fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(),
-    cmp: new Set(), reto: new Set(), sopa: new Set(),
+    cmp: new Set(), reto: new Set(), sopa: new Set(), critWin: new Set(),
 };
 
 // ===================== SONIDO =====================
@@ -71,7 +72,7 @@ function initTheme() { const s = localStorage.getItem(SAVE_KEY + '_theme'); cons
 
 // ===================== LOCALSTORAGE =====================
 function saveProgress() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ doneSections: Array.from(done), unlockedAch, evalFormNum })); } catch (e) { }
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ doneSections: Array.from(done), unlockedAch, evalFormNum, evalCritFormNum })); } catch (e) { }
 }
 function loadProgress() {
     try {
@@ -84,6 +85,7 @@ function loadProgress() {
         });
         if (s.unlockedAch && Array.isArray(s.unlockedAch)) unlockedAch = s.unlockedAch.filter(id => ACHIEVEMENTS[id] !== undefined);
         if (s.evalFormNum) evalFormNum = s.evalFormNum;
+        if (s.evalCritFormNum) evalCritFormNum = s.evalCritFormNum;
     } catch (e) { }
 }
 
@@ -1212,6 +1214,330 @@ ${s1}${s2}${s3}${s4}
 <div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
+    const win = window.open('', '_blank', '');
+    if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
+    win.document.write(doc);
+    win.document.close();
+    setTimeout(() => win.print(), 400);
+}
+
+// ═════════════ PRUEBA DE PENSAMIENTO CRÍTICO (2ª evaluación de la misión) ═════════════
+// Conmutador de pestañas de la sección Evaluación (conceptual / crítica)
+function evalSwitchMode(mode) {
+    sfx('click');
+    const cWrap = document.getElementById('evalConceptWrap'), critWrap = document.getElementById('evalCritWrap');
+    const cBtn = document.getElementById('evalModeBtnConcept'), critBtn = document.getElementById('evalModeBtnCrit');
+    if (mode === 'crit') {
+        cWrap.style.display = 'none'; critWrap.style.display = 'block';
+        cBtn.classList.remove('active'); cBtn.setAttribute('aria-selected', 'false');
+        critBtn.classList.add('active'); critBtn.setAttribute('aria-selected', 'true');
+        if (!window._evalCritData) genEvalCrit();
+    } else {
+        critWrap.style.display = 'none'; cWrap.style.display = 'block';
+        critBtn.classList.remove('active'); critBtn.setAttribute('aria-selected', 'false');
+        cBtn.classList.add('active'); cBtn.setAttribute('aria-selected', 'true');
+    }
+}
+
+// ── I. Corrector de mayúsculas: mini-textos hondureños con los propios de la misión
+//    (classGroups, retoPairs, identifyTaskDB, completeTaskDB) escritos en minúscula.
+const critMayusBank = [
+    { text: 'maría viajó de tegucigalpa a copán con su perro rex. Al regresar, le contó la aventura a su abuela carmen.', props: ['María', 'Tegucigalpa', 'Copán', 'Rex', 'Carmen'] },
+    { text: 'pedro vive en comayagua y sueña con navegar el río ulúa. Su hermana marta admira la historia del cacique lempira.', props: ['Pedro', 'Comayagua', 'Ulúa', 'Marta', 'Lempira'] },
+    { text: 'juan leyó que el río amazonas está en brasil, muy lejos de honduras, y quiso conocerlo con su amiga marta.', props: ['Juan', 'Amazonas', 'Brasil', 'Honduras', 'Marta'] },
+    { text: 'carmen preparó baleadas cuando pedro regresó de parís y le mostró fotos de las ruinas de copán y de comayagua.', props: ['Carmen', 'Pedro', 'París', 'Copán', 'Comayagua'] },
+    { text: 'la maestra marta llevó a juan y a maría a conocer las ruinas de copán, el gran orgullo de honduras.', props: ['Marta', 'Juan', 'María', 'Copán', 'Honduras'] },
+    { text: 'el perro rex siguió a pedro por las calles de tegucigalpa hasta el estadio donde jugaba honduras contra brasil.', props: ['Rex', 'Pedro', 'Tegucigalpa', 'Honduras', 'Brasil'] },
+];
+// ── II. Tabla de análisis completo: réplica de la tabla del Generador de Tareas (classifyTaskDB)
+const critClaseOpts = ['Común', 'Propio', 'Concreto', 'Abstracto', 'Colectivo', 'Individual', 'Incontable'];
+const critGenOpts = ['Masculino', 'Femenino'];
+const critNumOpts = ['Singular', 'Plural'];
+// ── III. Fábrica de palabras: transformaciones derivadas de las flashcards y bancos
+//    (primitivo→derivado, plural con -z→-ces, aumentativo/diminutivo/despectivo).
+//    acc[0] es la respuesta principal; el resto, variantes aceptadas.
+const critFabBank = [
+    { lbl: 'Derivado de «pan»', a: 'panadería', acc: ['panadería', 'panadero', 'panecillo', 'panera'] },
+    { lbl: 'Derivado de «flor»', a: 'florero', acc: ['florero', 'florería', 'floristería', 'florista'] },
+    { lbl: 'Derivado de «zapato»', a: 'zapatero', acc: ['zapatero', 'zapatería'] },
+    { lbl: 'Derivado de «mar»', a: 'marinero', acc: ['marinero', 'marino', 'marea', 'maremoto'] },
+    { lbl: 'Plural de «lápiz»', a: 'lápices', acc: ['lápices'] },
+    { lbl: 'Plural de «pez»', a: 'peces', acc: ['peces'] },
+    { lbl: 'Plural de «luz»', a: 'luces', acc: ['luces'] },
+    { lbl: 'Plural de «voz»', a: 'voces', acc: ['voces'] },
+    { lbl: 'Plural de «flor»', a: 'flores', acc: ['flores'] },
+    { lbl: 'Aumentativo de «casa»', a: 'casona', acc: ['casona', 'casota'] },
+    { lbl: 'Aumentativo de «perro»', a: 'perrazo', acc: ['perrazo', 'perrote', 'perrón'] },
+    { lbl: 'Diminutivo de «casa»', a: 'casita', acc: ['casita'] },
+    { lbl: 'Diminutivo de «flor»', a: 'florecita', acc: ['florecita', 'florcita', 'florecilla'] },
+    { lbl: 'Despectivo de «casa»', a: 'casucha', acc: ['casucha'] },
+];
+// ── IV. Detective del intruso: series generadas desde classGroups / retoPairs de la misión
+const critIntrBank = [
+    { words: ['enjambre', 'rebaño', 'soldado', 'jauría'], bad: 'soldado', why: '«Soldado» es un sustantivo individual; los demás son colectivos que nombran grupos en singular.' },
+    { words: ['mesa', 'música', 'amor', 'chocolate'], bad: 'amor', why: '«Amor» es un sustantivo abstracto; los demás son concretos que se perciben con los sentidos.' },
+    { words: ['Honduras', 'Copán', 'ciudad', 'Tegucigalpa'], bad: 'ciudad', why: '«Ciudad» es un sustantivo común; los demás son propios y se escriben con mayúscula.' },
+    { words: ['libertad', 'tristeza', 'piedra', 'esperanza'], bad: 'piedra', why: '«Piedra» es un sustantivo concreto; los demás son abstractos que no se perciben con los sentidos.' },
+    { words: ['María', 'Pedro', 'niño', 'Lempira'], bad: 'niño', why: '«Niño» es un sustantivo común; los demás son propios que nombran seres específicos.' },
+    { words: ['árbol', 'abeja', 'bosque', 'oveja'], bad: 'bosque', why: '«Bosque» es un sustantivo colectivo; los demás son individuales que nombran un solo ser.' },
+    { words: ['pan', 'flor', 'panadería', 'mar'], bad: 'panadería', why: '«Panadería» es un sustantivo derivado; los demás son primitivos que no vienen de otra palabra.' },
+    { words: ['casas', 'flores', 'lápiz', 'ríos'], bad: 'lápiz', why: '«Lápiz» está en número singular; los demás están en plural.' },
+];
+// ── V. Escritor hondureño: bancos de la misión (propios HN, colectivos, abstractos)
+const critEscPropios = ['Honduras', 'Tegucigalpa', 'Copán', 'Comayagua', 'Lempira'];
+const critEscColectivos = [
+    { w: 'jauría', ej: 'una jauría de perros nos siguió por el camino' },
+    { w: 'enjambre', ej: 'un enjambre de abejas voló sobre nosotros' },
+    { w: 'rebaño', ej: 'un rebaño de ovejas cruzó la carretera' },
+    { w: 'bosque', ej: 'caminamos por un bosque de pinos' },
+    { w: 'ejército', ej: 'vimos marchar a un ejército en el desfile' },
+];
+const critEscAbstractos = ['alegría', 'valentía', 'libertad', 'esperanza', 'tristeza'];
+
+// Comparación para mayúsculas: tolera tildes pero EXIGE la mayúscula inicial (case-sensitive)
+function _critNormCase(v) { return (v || '').toString().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim(); }
+function _critMayusOk(student, expected) { const s = _critNormCase(student); return !!s && s === _critNormCase(expected); }
+function _critFabOk(student, item) { const s = normalizeEvalAnswer(student); return !!s && item.acc.some(v => normalizeEvalAnswer(v) === s); }
+
+function genEvalCrit() {
+    sfx('click');
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    const _sC = document.getElementById('evalCritFormaSel');
+    if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
+    const cf = evalCritFormNum; window._currentEvalCritForm = cf; const rngC = _evalRng(200000 + cf);
+    evalCritFormNum = (evalCritFormNum % EVAL_FORMAS) + 1;
+    _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+    saveProgress();
+    document.getElementById('evalcrit-screen-title').textContent = `🧠 Pensamiento Crítico · Forma ${cf} · Los Sustantivos`;
+    evalCritAnsVisible = false;
+    const out = document.getElementById('evalCritOut'); out.innerHTML = '';
+
+    // Barra de distribución + progresión de dificultad
+    const bar = document.createElement('div'); bar.className = 'eval-score-bar';
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar y aplicar la regla (I), analizar por completo (II), transformar palabras (III), argumentar el intruso (IV) y producir texto propio (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Mayúsculas 20</span><span class="eval-score-pill esp-tf">II. Análisis 20</span><span class="eval-score-pill esp-mc">III. Fábrica 20</span><span class="eval-score-pill esp-pr">IV. Intruso 20</span><span class="eval-score-pill esp-cp">V. Escritor 20</span></div>`;
+    out.appendChild(bar);
+
+    // ── I. Corrector de mayúsculas (5×4=20)
+    const mayItem = _pickF(critMayusBank, 1, rngC)[0];
+    let mayRows = '';
+    mayItem.props.forEach((p, i) => { mayRows += `<div class="crit-q-block"><div class="crit-q-label">Propio ${i + 1}: <input type="text" class="eval-cp-input" data-may="${i}" autocomplete="off" aria-label="Sustantivo propio ${i + 1} corregido"></div><div class="crit-pauta">${p}</div><div class="eval-item-feedback" id="critFbMay${i}" aria-live="polite"></div></div>`; });
+    const s1 = document.createElement('div');
+    s1.innerHTML = `<div class="eval-section-title">I. Corrector de mayúsculas <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Lee el mini-texto: hay 5 sustantivos propios escritos incorrectamente en minúscula. Escríbelos corregidos, con su mayúscula, en el orden en que aparecen.</p><div class="crit-scenario">📖 ${mayItem.text}</div>${mayRows}</div>`;
+    out.appendChild(s1);
+
+    // ── II. Tabla de análisis completo (5×4=20) — tomada de classifyTaskDB
+    const tabItems = _pickF(classifyTaskDB, 5, rngC);
+    const _critSel = (i, attr, opts, lbl) => `<select class="crit-tbl-select" data-tab="${i}" data-attr="${attr}" aria-label="${lbl} de ${tabItems[i].w}"><option value="">—</option>${opts.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+    let tabRows = '';
+    tabItems.forEach((it, i) => { tabRows += `<div class="crit-tbl-row"><div class="crit-tbl-word">${i + 1}. ${it.w}</div><div class="crit-tbl-selects"><label>Clase ${_critSel(i, 't', critClaseOpts, 'Clase')}</label><label>Género ${_critSel(i, 'p', critGenOpts, 'Género')}</label><label>Número ${_critSel(i, 'n', critNumOpts, 'Número')}</label></div><div class="crit-pauta">Clase: ${it.t} · Género: ${it.p} · Número: ${it.n}</div><div class="eval-item-feedback" id="critFbTab${i}" aria-live="polite"></div></div>`; });
+    const s2 = document.createElement('div');
+    s2.innerHTML = `<div class="eval-section-title">II. Tabla de análisis completo <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Analiza cada sustantivo por completo: elige su Clase, su Género y su Número. Los 3 datos deben estar correctos para ganar los 4 puntos.</p>${tabRows}</div>`;
+    out.appendChild(s2);
+
+    // ── III. Fábrica de palabras (10×2=20)
+    const fabItems = _pickF(critFabBank, 10, rngC);
+    let fabRows = '';
+    fabItems.forEach((it, i) => { fabRows += `<div class="crit-q-block"><div class="crit-q-label">${i + 1}. ${it.lbl}: <input type="text" class="eval-cp-input" data-fab="${i}" autocomplete="off" aria-label="${it.lbl}"></div><div class="crit-pauta">${it.a}${it.acc.length > 1 ? ' (también se acepta: ' + it.acc.slice(1).join(', ') + ')' : ''}</div><div class="eval-item-feedback" id="critFbFab${i}" aria-live="polite"></div></div>`; });
+    const s3 = document.createElement('div');
+    s3.innerHTML = `<div class="eval-section-title">III. Fábrica de palabras <span class="eval-pts">20 pts · 2 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Transforma cada palabra según se pide: derivados, plurales con -z→-ces, aumentativos, diminutivos y despectivos.</p>${fabRows}</div>`;
+    out.appendChild(s3);
+
+    // ── IV. Detective del intruso (4×5=20) — palabras barajadas con _shuffleF
+    const intrPick = _pickF(critIntrBank, 4, rngC);
+    const intrItems = intrPick.map(it => ({ words: _shuffleF(it.words, rngC), bad: it.bad, why: it.why }));
+    let intrRows = '';
+    intrItems.forEach((it, i) => {
+        const opts = it.words.map(w => `<label class="crit-intr-opt"><input type="radio" name="intr${i}" value="${w}"> ${w}</label>`).join('');
+        intrRows += `<div class="crit-q-block"><div class="crit-scenario"><strong>🔎 Serie ${i + 1}:</strong> ${it.words.join(' · ')}</div><div class="crit-q-label">¿Cuál es el intruso que no pertenece a la clase de las demás?</div><div class="crit-intr-opts">${opts}</div><div class="crit-q-label">Justifica por qué:</div><textarea class="crit-textarea" rows="2" aria-label="Justificación de la serie ${i + 1}" placeholder="Explica a qué clase pertenecen las demás palabras..."></textarea><div class="crit-pauta">Intruso: ${it.bad}. ${it.why}</div><div class="eval-item-feedback" id="critFbIntr${i}" aria-live="polite"></div></div>`;
+    });
+    const s4 = document.createElement('div');
+    s4.innerHTML = `<div class="eval-section-title">IV. Detective del intruso <span class="eval-pts">20 pts · 5 pts c/u</span></div><div class="eval-item">${intrRows}</div>`;
+    out.appendChild(s4);
+
+    // ── V. Escritor hondureño (2×10=20) — palabras asignadas por la forma
+    const esc = { propio: _pickF(critEscPropios, 1, rngC)[0], colectivo: _pickF(critEscColectivos, 1, rngC)[0], abstracto: _pickF(critEscAbstractos, 1, rngC)[0] };
+    const escChk = (o) => `<div class="crit-chk-row"><label class="crit-chk"><input type="checkbox" class="crit-esc-chk" data-esc="${o}" data-pts="4"> Usa las clases pedidas (4 pts)</label><label class="crit-chk"><input type="checkbox" class="crit-esc-chk" data-esc="${o}" data-pts="3"> Mayúsculas correctas (3 pts)</label><label class="crit-chk"><input type="checkbox" class="crit-esc-chk" data-esc="${o}" data-pts="3"> Concordancia de género y número (3 pts)</label></div>`;
+    const s5 = document.createElement('div');
+    s5.innerHTML = `<div class="eval-section-title">V. Escritor hondureño <span class="eval-pts">20 pts · 10 pts c/u</span></div><div class="eval-item"><div class="crit-scenario">✍️ Palabras asignadas por la Forma ${cf}: propio hondureño «<strong>${esc.propio}</strong>» · colectivo «<strong>${esc.colectivo.w}</strong>» · abstracto «<strong>${esc.abstracto}</strong>».</div><div class="crit-q-block"><div class="crit-q-label">Oración 1: usa «${esc.propio}» y «${esc.colectivo.w}».</div><textarea class="crit-textarea" rows="2" aria-label="Oración 1"></textarea>${escChk(0)}</div><div class="crit-q-block"><div class="crit-q-label">Oración 2: usa «${esc.abstracto}» y un sustantivo común de tu elección.</div><textarea class="crit-textarea" rows="2" aria-label="Oración 2"></textarea>${escChk(1)}</div><div class="crit-rubric"><strong>📋 Rúbrica (3 criterios por oración):</strong> usa las clases pedidas (4 pts) · mayúsculas correctas (3 pts) · concordancia de género y número (3 pts). Marca las casillas que tu oración cumple: esa es tu autoevaluación.</div><div class="crit-pauta">Respuesta libre. Ejemplo 1: Cuando viajamos a ${esc.propio}, ${esc.colectivo.ej}. Ejemplo 2: Al terminar el paseo, todos sentimos una gran ${esc.abstracto}.</div></div>`;
+    out.appendChild(s5);
+
+    window._evalCritData = { forma: cf, may: mayItem, tab: tabItems, fab: fabItems, intr: intrItems, esc: esc };
+    const totalPanel = document.createElement('div'); totalPanel.id = 'evalCritTotalResult'; totalPanel.className = 'eval-auto-result';
+    totalPanel.innerHTML = '<strong>🧮 Prueba de pensamiento crítico:</strong> resuelve las secciones I–IV en pantalla, autoevalúa la V con las casillas de la rúbrica y presiona <em>Calificar prueba</em>. La impresión conserva el formato limpio para papel.';
+    out.appendChild(totalPanel);
+    fin('s-evaluacion');
+}
+function toggleEvalCritAns() {
+    evalCritAnsVisible = !evalCritAnsVisible;
+    document.querySelectorAll('#evalCritOut .crit-pauta, #evalCritOut .eval-answer').forEach(el => el.style.display = evalCritAnsVisible ? 'block' : 'none');
+    sfx('click');
+}
+function _setCritFb(id, ok, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
+}
+function gradeEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const d = window._evalCritData;
+    const detail = { may: 0, tab: 0, fab: 0, intr: 0, esc: 0 };
+
+    // I. Corrector de mayúsculas (4 pts c/u; exige mayúscula inicial, tolera tildes)
+    d.may.props.forEach((p, i) => {
+        const inp = document.querySelector(`[data-may="${i}"]`);
+        const ok = _critMayusOk(inp ? inp.value : '', p);
+        if (inp) { inp.classList.toggle('eval-input-ok', ok); inp.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.may += 4;
+        _setCritFb('critFbMay' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + p + ' (con mayúscula inicial)');
+    });
+
+    // II. Tabla de análisis completo (4 pts por fila con Clase+Género+Número correctos)
+    d.tab.forEach((it, i) => {
+        let rowOk = true;
+        [['t', it.t], ['p', it.p], ['n', it.n]].forEach(pair => {
+            const sel = document.querySelector(`[data-tab="${i}"][data-attr="${pair[0]}"]`);
+            const ok = !!sel && sel.value === pair[1];
+            if (sel) { sel.classList.toggle('eval-input-ok', ok); sel.classList.toggle('eval-input-no', !ok); }
+            if (!ok) rowOk = false;
+        });
+        if (rowOk) detail.tab += 4;
+        _setCritFb('critFbTab' + i, rowOk, rowOk ? 'Correcto. +4 pts' : `Revisar. R/ Clase: ${it.t} · Género: ${it.p} · Número: ${it.n}`);
+    });
+
+    // III. Fábrica de palabras (2 pts c/u, acepta variantes)
+    d.fab.forEach((it, i) => {
+        const inp = document.querySelector(`[data-fab="${i}"]`);
+        const ok = _critFabOk(inp ? inp.value : '', it);
+        if (inp) { inp.classList.toggle('eval-input-ok', ok); inp.classList.toggle('eval-input-no', !ok); }
+        if (ok) detail.fab += 2;
+        _setCritFb('critFbFab' + i, ok, ok ? 'Correcto. +2 pts' : 'Revisar. R/ ' + it.a);
+    });
+
+    // IV. Detective del intruso (5 pts c/u por el radio; justificación se compara con la pauta)
+    d.intr.forEach((it, i) => {
+        const selr = document.querySelector(`input[name="intr${i}"]:checked`);
+        const ok = !!selr && selr.value === it.bad;
+        if (ok) detail.intr += 5;
+        _setCritFb('critFbIntr' + i, ok, ok ? 'Correcto. +5 pts — compara tu justificación con la pauta' : 'Revisar. R/ El intruso es «' + it.bad + '». ' + it.why);
+    });
+
+    // V. Escritor hondureño (autoevaluación por casillas de rúbrica, 10 pts por oración)
+    [0, 1].forEach(o => { document.querySelectorAll(`.crit-esc-chk[data-esc="${o}"]`).forEach(chk => { if (chk.checked) detail.esc += parseInt(chk.dataset.pts, 10) || 0; }); });
+    detail.esc = Math.min(20, detail.esc);
+
+    const total = detail.may + detail.tab + detail.fab + detail.intr + detail.esc;
+    const panel = document.getElementById('evalCritTotalResult');
+    if (panel) {
+        panel.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk');
+        panel.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>I. Mayúsculas: ${detail.may}/20 · II. Análisis: ${detail.tab}/20 · III. Fábrica: ${detail.fab}/20 · IV. Intruso: ${detail.intr}/20 · V. Escritor: ${detail.esc}/20</span><br><em>Las secciones I–IV se califican solas; la V la autoevalúas con las casillas de la rúbrica. Compara siempre con la Pauta.</em>`;
+    }
+    const formKey = 'crit_' + (window._currentEvalCritForm || 1);
+    if (total >= 70) { if (!xpTracker.critWin.has(formKey)) { xpTracker.critWin.add(formKey); pts(8); } showToast('🎯 Pensamiento crítico: ' + total + '/100'); }
+    else showToast('🧮 Prueba calificada: ' + total + '/100. Revisa lo marcado.');
+}
+function printEvalCrit() {
+    if (!window._evalCritData) { showToast('⚠️ Genera una prueba primero'); return; }
+    sfx('click');
+    const forma = window._currentEvalCritForm || 1;
+    const d = window._evalCritData;
+    const lines = (n) => Array(n).fill('<div class="ln"></div>').join('');
+
+    // I. Corrector de mayúsculas
+    let s1 = `<div class="sec-title"><span>I. Corrector de mayúsculas</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Encierra en un círculo los 5 sustantivos propios escritos incorrectamente en minúscula y reescríbelos con su mayúscula, en el orden en que aparecen.</p><div class="crit-print-scenario">${d.may.text}</div><div class="may-grid">${d.may.props.map((p, i) => `<span class="may-slot">${i + 1}. <span class="cp-blank" style="min-width:78px;"></span></span>`).join('')}</div>`;
+
+    // II. Tabla de análisis completo
+    let s2 = `<div class="sec-title"><span>II. Tabla de análisis completo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Completa la Clase, el Género y el Número de cada sustantivo (los 3 datos correctos valen 4 pts).</p><table class="an-tbl"><thead><tr><th>Sustantivo</th><th>Clase</th><th>Género</th><th>Número</th></tr></thead><tbody>`;
+    d.tab.forEach(it => { s2 += `<tr><td class="an-w">${it.w}</td><td></td><td></td><td></td></tr>`; });
+    s2 += '</tbody></table>';
+
+    // III. Fábrica de palabras
+    let s3 = `<div class="sec-title"><span>III. Fábrica de palabras</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Transforma cada palabra según se pide.</p><div class="fab-grid">`;
+    d.fab.forEach((it, i) => { s3 += `<div class="fab-item">${i + 1}. ${it.lbl}: <span class="cp-blank" style="min-width:64px;"></span></div>`; });
+    s3 += '</div>';
+
+    // IV. Detective del intruso
+    let s4 = `<div class="sec-title"><span>IV. Detective del intruso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">En cada serie hay una palabra que NO pertenece a la clase de las demás. Enciérrala en un círculo y justifica.</p>`;
+    d.intr.forEach((it, i) => { s4 += `<p class="crit-print-scenario"><strong>${i + 1})</strong> ${it.words.join(' · ')}</p><p class="crit-print-q">Justifica por qué:</p>${lines(1)}`; });
+
+    // V. Escritor hondureño
+    let s5 = `<div class="sec-title"><span>V. Escritor hondureño</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Redacta 2 oraciones (o un mini-párrafo). Oración 1: usa el propio hondureño «<strong>${d.esc.propio}</strong>» y el colectivo «<strong>${d.esc.colectivo.w}</strong>». Oración 2: usa el abstracto «<strong>${d.esc.abstracto}</strong>» y un sustantivo común de tu elección.</p>${lines(2)}${lines(2)}<div class="rub-box"><strong>Rúbrica (por oración, 10 pts):</strong> usa las clases pedidas (4) · mayúsculas correctas (3) · concordancia de género y número (3)</div>`;
+
+    // Pauta
+    let pR = '';
+    pR += `<div class="p-sec"><div class="p-ttl">I. Corrector de mayúsculas</div>${d.may.props.map((p, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${p}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">II. Tabla de análisis</div>${d.tab.map(it => `<div class="p-crit-line"><strong>${it.w}:</strong> ${it.t} · ${it.p} · ${it.n}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">III. Fábrica de palabras</div>${d.fab.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.a}${it.acc.length > 1 ? ' (también: ' + it.acc.slice(1).join(', ') + ')' : ''}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">IV. Detective del intruso</div>${d.intr.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.bad}:</strong> ${it.why}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Escritor hondureño (guía de corrección)</div><div class="p-crit-line"><strong>Rúbrica por oración (10 pts):</strong> usa las clases pedidas (4) · mayúsculas correctas (3) · concordancia de género y número (3).</div><div class="p-crit-line"><strong>Oración 1 — ejemplo:</strong> Cuando viajamos a ${d.esc.propio}, ${d.esc.colectivo.ej}.</div><div class="p-crit-line"><strong>Oración 2 — ejemplo:</strong> Al terminar el paseo, todos sentimos una gran ${d.esc.abstracto}.</div></div>`;
+
+    const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico Los Sustantivos · Forma ${forma}</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 6mm;width:201.9mm;margin:0 auto;}
+.ph{margin-bottom:0.35rem;}
+.ph h2{font-size:11.5pt;font-weight:700;text-align:center;margin-bottom:0.25rem;}
+.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}
+.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}
+.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}
+.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}
+.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}
+.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}
+.sec-title{font-size:10.5pt;font-weight:700;padding:0.15rem 0.45rem;margin:0.28rem 0 0.12rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c49000;background:#fef9e7;color:#c49000;}
+.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c49000;}
+.obt-lbl{white-space:nowrap;}
+.obt-line{display:inline-block;min-width:52px;border-bottom:1.5px solid #c49000;height:12px;}
+.obt-pct{white-space:nowrap;}
+.crit-print-scenario{font-size:10pt;background:#fef9e7;border-left:3px solid #c49000;padding:0.18rem 0.5rem;margin:0.12rem 0 0.15rem;line-height:1.3;}
+.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}
+.ln{border-bottom:1px solid #111;min-height:13px;margin-bottom:3px;}
+.cp-blank{display:inline-block;min-width:120px;border-bottom:1.5px solid #111;margin:0 0.12rem;}
+.may-grid{display:flex;flex-wrap:wrap;gap:0.22rem 0.85rem;margin-top:0.18rem;font-size:10.5pt;}
+.may-slot{display:flex;align-items:baseline;gap:4px;font-weight:700;}
+.an-tbl{width:100%;border-collapse:collapse;font-size:10.5pt;margin-top:0.12rem;}
+.an-tbl th,.an-tbl td{border:1px solid #555;padding:0.2rem 0.4rem;text-align:left;}
+.an-tbl th{background:#fef9e7;color:#c49000;font-size:10pt;}
+.an-tbl td{height:17px;}
+.an-w{font-weight:700;}
+.fab-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.8rem;}
+.fab-item{font-size:10.5pt;padding:0.13rem 0;border-bottom:1px solid #eee;line-height:1.3;}
+.rub-box{font-size:9.5pt;border:1px solid #c49000;background:#fef9e7;padding:0.2rem 0.5rem;margin-top:0.15rem;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#c49000;}
+.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c49000;}
+.pauta-wrap{page-break-before:always;padding-top:0.4rem;}
+.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}
+.p-main{font-size:13pt;font-weight:700;color:#c49000;}
+.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}
+.p-meta{font-size:9pt;color:#555;}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}
+.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}
+.p-ttl{font-size:11pt;font-weight:700;color:#c49000;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}
+.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.16rem;line-height:1.35;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}
+@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
+</style></head><body><div id="critEvalPage">
+<div class="ph">
+  <h2>Evaluación Competencial · Pensamiento Crítico · Los Sustantivos · Educación Básica · Español · Lengua</h2>
+  <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <p class="ph-crit">Valor total: 100 puntos · I. Mayúsculas 20 · II. Análisis 20 · III. Fábrica 20 · IV. Intruso 20 · V. Escritor 20 · Forma ${forma}</p>
+</div>
+${s1}${s2}${s3}${s4}${s5}
+<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
+</div><div class="pauta-wrap" id="critPautaPage">
+  <div class="p-head">
+    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Sustantivos · Forma ${forma}</div>
+    <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — sección V abierta: usar la rúbrica como guía de corrección</div>
+  </div>
+  <div class="p-grid">${pR}</div>
+</div>
+<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",252,0.55,1.3);fit("critPautaPage",252,0.55,1.3);})();<\/script></body></html>`;
     const win = window.open('', '_blank', '');
     if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
     win.document.write(doc);

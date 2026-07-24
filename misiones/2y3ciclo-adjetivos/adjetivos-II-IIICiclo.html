@@ -16,6 +16,47 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="css/adjetivos.css">
+<!-- Estilos de la Prueba de Pensamiento Crítico (2ª evaluación de la misión) -->
+<style>
+  .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+  .eval-mode-btn{flex:1;min-width:160px;font-family:'Fredoka',sans-serif;font-size:0.9rem;padding:0.65rem 1rem;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--gray);cursor:pointer;transition:all 0.2s;}
+  .eval-mode-btn:hover{border-color:var(--sec);}
+  .eval-mode-btn.active{border-color:var(--sec);background:var(--sec-gl);color:var(--sec);font-weight:700;}
+  .crit-scenario{background:var(--sec-gl);border-left:4px solid var(--sec);border-radius:0 8px 8px 0;padding:0.6rem 0.9rem;margin-bottom:0.6rem;font-size:0.9rem;line-height:1.5;color:var(--dark);}
+  .crit-scenario u{text-decoration-color:var(--sec);}
+  .crit-q-block{margin-bottom:0.85rem;}
+  .crit-q-block:last-of-type{margin-bottom:0;}
+  .crit-q-label{font-size:0.88rem;color:var(--dark);font-weight:600;margin-bottom:0.4rem;line-height:1.45;}
+  .crit-input{font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:6px;padding:0.25rem 0.5rem;background:var(--card);color:var(--dark);min-width:150px;}
+  .crit-input:focus{outline:none;border-color:var(--sec);}
+  .crit-textarea{width:100%;min-height:52px;font-family:'Fredoka',sans-serif;font-size:0.85rem;border:1.5px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;background:var(--card);color:var(--dark);resize:vertical;margin-top:0.3rem;}
+  .crit-textarea:focus{outline:none;border-color:var(--sec);}
+  .crit-pauta{display:none;margin-top:0.4rem;font-size:0.82rem;color:var(--jade);background:var(--jade-gl);border-radius:8px;padding:0.45rem 0.7rem;line-height:1.5;}
+  .crit-pauta::before{content:'📋 Pauta: ';font-weight:700;}
+  .crit-radios{display:flex;flex-wrap:wrap;gap:0.4rem 1.2rem;margin:0.3rem 0;}
+  .crit-radio{display:flex;align-items:center;gap:0.35rem;font-size:0.85rem;color:var(--dark);}
+  .crit-radio input{width:15px;height:15px;accent-color:var(--sec);}
+  .crit-an-select{font-family:'Fredoka',sans-serif;font-size:0.82rem;border:1.5px solid var(--border);border-radius:6px;padding:0.2rem 0.35rem;background:var(--card);color:var(--dark);width:100%;}
+  .crit-tbl-wrap{overflow-x:auto;margin:0.4rem 0;}
+  .crit-tbl{width:100%;border-collapse:collapse;font-size:0.82rem;min-width:460px;}
+  .crit-tbl th,.crit-tbl td{border:1px solid var(--border);padding:0.35rem 0.4rem;text-align:center;}
+  .crit-tbl th{background:var(--sec-gl);color:var(--sec);font-family:'Fredoka',sans-serif;font-size:0.78rem;}
+  .crit-tbl-adj{font-weight:700;color:var(--dark);text-align:left;background:var(--sec-gl);}
+  .crit-rubric{margin-top:0.7rem;font-size:0.82rem;color:var(--dark);background:var(--jade-gl);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.5;}
+  .crit-rub-line{display:flex;align-items:flex-start;gap:0.4rem;margin-top:0.4rem;font-size:0.82rem;color:var(--dark);}
+  .crit-rub-line input{width:15px;height:15px;margin-top:0.15rem;accent-color:var(--jade);flex-shrink:0;}
+  .eval-item-feedback{display:none;margin-top:0.3rem;font-size:0.8rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:6px;}
+  .eval-item-feedback.eval-ok,.eval-item-feedback.eval-no{display:inline-block;}
+  .eval-item-feedback.eval-ok{color:#0a7d55;background:var(--jade-gl);}
+  .eval-item-feedback.eval-no{color:var(--red);background:var(--red-gl);}
+  .eval-input-ok{border-color:var(--jade)!important;background:var(--jade-gl)!important;}
+  .eval-input-no{border-color:var(--red)!important;background:var(--red-gl)!important;}
+  .eval-auto-result{margin-top:1rem;padding:0.9rem 1.1rem;border-radius:12px;font-size:0.9rem;line-height:1.6;border:2px solid var(--border);background:var(--card);color:var(--dark);}
+  .eval-auto-result.eval-auto-pass{border-color:var(--jade);background:var(--jade-gl);}
+  .eval-auto-result.eval-auto-risk{border-color:var(--sec);background:var(--sec-gl);}
+  .esp-mc{background:#a29a25;}.esp-pr{background:#6c5ce7;}
+  @media (max-width:560px){.eval-mode-btn{min-width:120px;}}
+</style>
 </head>
 <body>
 
@@ -394,6 +435,13 @@
 </div>
 
 <div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true"
+      onclick="evalSwitchMode('concept')">📝 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false"
+      onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
   <div class="card ac-purple">
     <div class="eval-print-header">
       <h2>Evaluación Final de Misión Los Adjetivos · Educación Básica · Español · Lengua</h2>
@@ -412,6 +460,22 @@
     <div id="evalOut"></div>
   </div>
   <div id="eval-pauta-sheet"></div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-gold">
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Los Adjetivos</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Identifica errores, transforma grados, analiza un
+      texto, argumenta y produce con lo aprendido. Responde en pantalla o en tu cuaderno, compara con la
+      <strong>Pauta</strong> y autoevalúa la última sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalCrit()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
   <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
     <span class="nsb-icon">🎓</span>
     <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
