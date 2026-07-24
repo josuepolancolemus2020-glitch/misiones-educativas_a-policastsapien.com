@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Bucles: Repetir sin Cansarse</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: PROGRAMACIÓN = CIAN TEC (#0e7490)
+     · Colores semánticos: cian=bucles/código, ámbar=patrones de la vida, gris=errores
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --tec: #0e7490; --tec-osc: #155e75; --tec-claro: #ecfeff;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cffafe;
+    --amb: #b45309; --oro: #b45309; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eefafc; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--tec-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--tec); background: var(--tec-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--tec-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--tec-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--tec); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--tec-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--tec-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--tec-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--tec); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4fcfd; }
+  td.k { font-weight: 700; color: var(--tec-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #f8feff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--tec-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (con bucle / sin bucle / vueltas) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #d5f4f9; } .celula .cm b { color: var(--tec); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--oro); }
+  .celula .cn { background: #eceae8; } .celula .cn b { color: var(--pie); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #d5f4f9; border: 1px solid #a9e6ef; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--tec); } .tri .torg b { color: var(--oro); }
+
+  .prog-ej { font-family: 'Courier New', monospace; font-weight: 700; font-size: 9.5pt; background: var(--tec-claro); border: 1px solid var(--linea); border-radius: 8px; padding: 8px 12px; margin: 8px 0; text-align: left; break-inside: avoid; }
+
+  .acts h3 { border-bottom: 2px solid var(--tec-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--tec); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--tec); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto;
+    font-size: 10.5pt; font-weight: 800; color: var(--tec-osc);
+  }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--tec-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--tec-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f2fbfd; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--tec-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--tec); box-shadow: 0 6px 16px rgba(14,116,144,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div, .prog-ej
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Bucles: Repetir sin Cansarse</div>
+        <div class="f-meta"><b>Asignatura:</b> Programación &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Los bucles: qué es REPETIR N VECES, el cuerpo del bucle y las vueltas, cómo un bucle ahorra instrucciones y cómo el rastro del robot dibuja figuras (línea, escalera, cuadrado, rectángulo)</div>
+      </div>
+      <div class="fh-qr">
+        <img src="img/qr-mision-bucles-repetir.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Explicar qué es un <strong>bucle</strong> y para qué sirve: repetir instrucciones sin escribirlas de nuevo.</li>
+      <li>Reconocer las partes del bucle: el <strong>número de vueltas (N)</strong> y el <strong>cuerpo</strong> entre corchetes [ ].</li>
+      <li>Convertir un programa largo en un bucle corto (<strong>compactar</strong>) y al revés (<strong>expandir</strong>).</li>
+      <li>Distinguir cuántas instrucciones se <strong>escriben</strong> frente a cuántas se <strong>ejecutan</strong>, y calcular el <strong>ahorro</strong>.</li>
+      <li>Predecir la <strong>figura</strong> que dibuja el rastro del robot: línea, escalera, cuadrado y rectángulo.</li>
+      <li>Detectar errores comunes en la <strong>N</strong> o en el <strong>cuerpo</strong> del bucle.</li>
+    </ol>
+
+    <h2>🔁 1. ¿Qué es un bucle?</h2>
+    <p>Un <strong>bucle</strong> sirve para <strong>repetir un grupo de instrucciones</strong> varias veces sin escribirlas
+    otra vez. En lugar de <strong>AVANZA, AVANZA, AVANZA</strong> escribimos <strong>REPETIR 3 VECES [AVANZA]</strong>:
+    el robot hace exactamente lo mismo, ¡pero tú escribes mucho menos! Cada repetición completa del grupo se llama
+    <strong>vuelta</strong>. Ya usás bucles sin saberlo: aplaudir 3 veces, dar 20 pasos o palmear una por una las
+    tortillas son <strong>patrones que se repiten</strong>.</p>
+    <div class="caja truco">💡 <b>Truco:</b> el número de <strong>VECES</strong> (la <b>N</b>) dice cuántas vueltas dará
+    el robot, y lo que va dentro de los <strong>corchetes [ ]</strong> es el <b>cuerpo</b> que se repite en cada vuelta.
+    ¡Cuenta las vueltas con los dedos!</div>
+
+    <h3>🔁📜🔢 Mini-demostración: la magia del bucle</h3>
+    <div class="ilus">
+      <div class="ilus-t">El mismo trabajo… escribiendo mucho menos</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">🔁</span><b>Con bucle (corto)</b>REPETIR 3 VECES [AVANZA]: escribes 2 y el robot avanza 3.</div>
+        <div class="cc"><span class="c-emoji">📜</span><b>Sin bucle (largo)</b>AVANZA, AVANZA, AVANZA: escribes 3 para lo mismo.</div>
+        <div class="cn"><span class="c-emoji">🔢</span><b>Las vueltas</b>La N dice cuántas veces se repite el cuerpo del bucle.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Bucle = un <strong>cuerpo</strong> que se repite <strong>N veces</strong> → menos que escribir, ¡lo mismo que ejecutar!</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Bucles: Repetir sin Cansarse</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">📦 2. Las partes del bucle</h2>
+    <p>Un bucle tiene dos partes fáciles de reconocer: el <strong>número de vueltas</strong> (la <strong>N</strong> de
+    REPETIR N VECES) y el <strong>cuerpo</strong> (las instrucciones que van dentro de los corchetes [ ] y se repiten en
+    cada vuelta). Fíjate: <strong>escribir</strong> no es lo mismo que <strong>ejecutar</strong>. En
+    REPETIR 10 VECES [AVANZA] escribes solo 2 instrucciones, ¡pero el robot ejecuta 10!</p>
+    <div class="tri">
+      <div class="tnuc"><b>🔢 La N (vueltas)</b>El número de VECES: cuántas veces se repite el cuerpo. En REPETIR 4 VECES, la N es 4.</div>
+      <div class="torg"><b>📦 El cuerpo [ ]</b>Las instrucciones dentro de los corchetes; se ejecutan en cada vuelta, como [AVANZA, GIRA DERECHA].</div>
+    </div>
+
+    <h3>📋 El bucle por dentro</h3>
+    <table>
+      <tr><th>Parte del bucle</th><th>¿Qué es?</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🗣️ REPETIR N VECES</td><td>Abre el bucle e indica cuántas vueltas dará el cuerpo</td><td>REPETIR 5 VECES [ … ]</td></tr>
+      <tr><td class="k">🔢 Número de vueltas (N)</td><td>Cuántas veces se repite el cuerpo completo</td><td>El 5 de REPETIR 5 VECES</td></tr>
+      <tr><td class="k">📦 Cuerpo [ … ]</td><td>Las instrucciones que se repiten en cada vuelta</td><td>[AVANZA, GIRA DERECHA]</td></tr>
+      <tr><td class="k">🌀 Vuelta</td><td>Una repetición completa del cuerpo</td><td>Vuelta 2 de 4</td></tr>
+      <tr><td class="k">💰 Ahorro</td><td>Las instrucciones que dejas de escribir gracias al bucle</td><td>Escribes 2, ejecutas 10</td></tr>
+    </table>
+    <div class="caja regla">🗜️ <b>Compactar y expandir:</b> <strong>compactar</strong> es convertir un programa largo en
+    un bucle corto que hace lo mismo; <strong>expandir</strong> es escribir la lista completa de instrucciones que el
+    bucle ejecuta, vuelta por vuelta. ¡Son dos caras de la misma moneda!</div>
+
+    <h3>💾 Ejemplo de bucle (léelo y ejecútalo con la mente)</h3>
+    <div class="prog-ej">Dibujar un cuadrado 🟦<br>
+    El robot mira al Norte y ejecuta: REPETIR 4 VECES [AVANZA, GIRA DERECHA]<br>
+    → Vuelta 1: AVANZA y GIRA · Vuelta 2: AVANZA y GIRA · Vuelta 3: AVANZA y GIRA · Vuelta 4: AVANZA y GIRA<br>
+    → Solo 3 instrucciones ESCRITAS, 8 EJECUTADAS: el rastro dibuja un cuadrado. ✅</div>
+    <div class="caja idea">🧠 <b>Ojo:</b> si la <strong>N</strong> está errada, el robot da vueltas de más o de menos y la
+    figura sale mal; si al <strong>cuerpo</strong> le falta el giro, nunca dobla. ¡Revisa siempre la N y el cuerpo!</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Bucles: Repetir sin Cansarse</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2 style="margin-top:0;">✏️ 3. Dibujar figuras y errores comunes</h2>
+    <p>Cuando el robot camina deja un <strong>rastro</strong>: las casillas pintadas por donde pasa (contando la de
+    salida). Con el bucle correcto, ese rastro dibuja figuras: <strong>REPETIR N VECES [AVANZA]</strong> pinta una
+    <strong>línea</strong> (N + 1 casillas); <strong>REPETIR 4 VECES [AVANZA, GIRA DERECHA]</strong> dibuja un
+    <strong>cuadrado</strong>; y con el patrón «sube y dobla, sube y dobla» sale una <strong>escalera</strong>.</p>
+
+    <h3>⚠️ Errores comunes — ¡no caigas en ellos!</h3>
+    <table>
+      <tr><th>Error</th><th>Por qué está mal</th><th>Lo correcto</th></tr>
+      <tr><td class="k" style="white-space:normal;">Contar mal las vueltas (la N)</td><td>Una línea de 5 casillas necesita 4 vueltas, no 5.</td><td>N = casillas − 1 (por la de salida) ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Olvidar el giro en el cuerpo</td><td>Sin GIRA DERECHA el robot nunca dobla.</td><td>Poner AVANZA y GIRA dentro de [ ] ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Repetir a mano lo que el bucle ya repite</td><td>Se pierde el ahorro del bucle.</td><td>Escribir el cuerpo una sola vez ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Confundir escritas con ejecutadas</td><td>REPETIR 10 VECES [AVANZA] son 2 escritas, 10 ejecutadas.</td><td>Contar aparte escritas y ejecutadas ✔</td></tr>
+      <tr><td class="k" style="white-space:normal;">Usar la figura equivocada</td><td>Un cuadrado necesita 4 vueltas, no 3.</td><td>Contar los lados y las esquinas ✔</td></tr>
+    </table>
+
+    <h2>🎲 4. Actividades desconectadas (sin computadora)</h2>
+    <div class="caja regla">👏 <b>La ronda del bucle:</b> de pie, en círculo. El docente dicta un bucle de sonidos, por
+    ejemplo <strong>REPETIR 3 VECES [aplaudir, zapatear]</strong>, y todos lo ejecutan <strong>contando las vueltas en
+    voz alta</strong>: «vuelta 1… vuelta 2… vuelta 3». Después cada estudiante inventa su propio patrón
+    (REPETIR N VECES [su cuerpo de palmas, chasquidos o zapateos]) y lo ejecuta; los demás <strong>adivinan la N y el
+    cuerpo</strong> solo escuchando. Gana quien acierte más patrones.</div>
+    <div class="caja regla">✏️ <b>Dibuja el bucle en tu cuaderno cuadriculado:</b> el docente dicta un bucle (por
+    ejemplo <strong>REPETIR 4 VECES [AVANZA, GIRA DERECHA]</strong>). Cada estudiante marca en la cuadrícula del cuaderno
+    la <strong>casilla de salida</strong> y pinta el <strong>rastro</strong> del robot <strong>vuelta por vuelta</strong>,
+    doblando en cada GIRA. Al terminar escriben qué <strong>figura</strong> quedó (línea, escalera, cuadrado o
+    rectángulo) y cuántas casillas pintaron. Después comparan sus dibujos: todos deben coincidir.</div>
+    <div class="caja hn">🇭🇳 <b>Los bucles en tu vida:</b> cuando palmeás una por una las tortillas, aplaudís en el saludo
+    de la mañana o sembrás frijol tras frijol en la huerta, ya estás repitiendo un patrón: eso es un bucle. Descubrir lo
+    que se repite y escribirlo una sola vez con REPETIR N VECES es la clave de un buen programa… ¡y de trabajar sin
+    cansarse! 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Bucles: Repetir sin Cansarse</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>✍️ 5. ¡Ponte a Prueba! Actividades</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Repetir un grupo de instrucciones varias veces se logra con un <span class="linea-resp"></span>.</li>
+      <li>La instrucción que abre el bucle es <span class="linea-resp"></span> N VECES.</li>
+      <li>Las instrucciones que van dentro de los corchetes [ ] forman el <span class="linea-resp"></span> del bucle.</li>
+      <li>La N de REPETIR N VECES indica el número de <span class="linea-resp"></span>.</li>
+      <li>Cada repetición completa del cuerpo del bucle se llama <span class="linea-resp"></span>.</li>
+      <li>AVANZA, AVANZA, AVANZA equivale a REPETIR <span class="linea-resp"></span> VECES [AVANZA].</li>
+      <li>Para dibujar un cuadrado: REPETIR 4 VECES [AVANZA, GIRA <span class="linea-resp"></span>].</li>
+      <li>Las casillas pintadas por donde pasa el robot forman su <span class="linea-resp"></span>.</li>
+      <li>Algo que se repite siguiendo una regla es un <span class="linea-resp"></span>.</li>
+      <li>Gracias al bucle escribes menos y el programa queda más <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Un bucle repite un grupo de instrucciones varias veces.</li>
+      <li>____ La N de REPETIR N VECES indica cuántas vueltas da el bucle.</li>
+      <li>____ El cuerpo del bucle es lo que va dentro de los corchetes [ ].</li>
+      <li>____ REPETIR 3 VECES [AVANZA] mueve al robot una sola casilla.</li>
+      <li>____ AVANZA, AVANZA, AVANZA hace lo mismo que REPETIR 3 VECES [AVANZA].</li>
+      <li>____ Con REPETIR 10 VECES [AVANZA] escribes 10 instrucciones.</li>
+      <li>____ Para dibujar un cuadrado se usa REPETIR 4 VECES [AVANZA, GIRA DERECHA].</li>
+      <li>____ Un bucle hace que el programa sea más largo de escribir.</li>
+      <li>____ El rastro son las casillas pintadas por donde pasa el robot.</li>
+      <li>____ Se puede poner un bucle dentro de otro bucle.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Bucles: Repetir sin Cansarse</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Qué es un bucle?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> un dibujo del robot</span>
+        <span class="op"><i>b</i> repetir un grupo de instrucciones varias veces</span>
+        <span class="op"><i>c</i> un error escondido</span>
+        <span class="op"><i>d</i> una casilla pintada</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>En REPETIR 4 VECES [AVANZA], ¿qué indica el número 4?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> las casillas del mapa</span>
+        <span class="op"><i>b</i> los giros del robot</span>
+        <span class="op"><i>c</i> el número de vueltas del bucle</span>
+        <span class="op"><i>d</i> la velocidad del robot</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cómo se llama lo que va dentro de los corchetes [ ]?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> el cuerpo del bucle</span>
+        <span class="op"><i>b</i> la cabeza del bucle</span>
+        <span class="op"><i>c</i> el rastro</span>
+        <span class="op"><i>d</i> la vuelta</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué hace LO MISMO que AVANZA, AVANZA, AVANZA?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> REPETIR 2 VECES [AVANZA]</span>
+        <span class="op"><i>b</i> REPETIR 3 VECES [AVANZA]</span>
+        <span class="op"><i>c</i> REPETIR 3 VECES [GIRA DERECHA]</span>
+        <span class="op"><i>d</i> AVANZA</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Para qué sirve un bucle?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> para que el robot camine más rápido</span>
+        <span class="op"><i>b</i> para borrar el programa</span>
+        <span class="op"><i>c</i> para pintar la cuadrícula de colores</span>
+        <span class="op"><i>d</i> para ahorrar instrucciones escritas</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué figura dibuja REPETIR 4 VECES [AVANZA, GIRA DERECHA]?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> una línea recta</span>
+        <span class="op"><i>b</i> una escalera</span>
+        <span class="op"><i>c</i> un cuadrado</span>
+        <span class="op"><i>d</i> un círculo</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuántas instrucciones EJECUTA el robot con REPETIR 3 VECES [AVANZA, GIRA DERECHA]?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> 2</span>
+        <span class="op"><i>b</i> 3</span>
+        <span class="op"><i>c</i> 5</span>
+        <span class="op"><i>d</i> 6</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>El robot ejecuta REPETIR 2 VECES [GIRA DERECHA]. ¿Qué le pasa?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> da la media vuelta (queda mirando al lado contrario)</span>
+        <span class="op"><i>b</i> avanza dos casillas</span>
+        <span class="op"><i>c</i> se sale del mapa</span>
+        <span class="op"><i>d</i> no le pasa nada</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>Para pintar una línea recta de 5 casillas se usa…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> REPETIR 5 VECES [GIRA DERECHA]</span>
+        <span class="op"><i>b</i> REPETIR 4 VECES [AVANZA]</span>
+        <span class="op"><i>c</i> REPETIR 5 VECES [AVANZA, GIRA DERECHA]</span>
+        <span class="op"><i>d</i> AVANZA</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Un bucle dentro de otro bucle se llama bucle…</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> roto</span>
+        <span class="op"><i>b</i> anidado</span>
+        <span class="op"><i>c</i> corto</span>
+        <span class="op"><i>d</i> vacío</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Bucles: Repetir sin Cansarse</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Bucle</td><td>A. Cada repetición completa del cuerpo del bucle</td></tr>
+      <tr><td>2. ____ REPETIR N VECES</td><td>B. Las instrucciones que van dentro de los corchetes [ ]</td></tr>
+      <tr><td>3. ____ Cuerpo del bucle</td><td>C. Se dibuja con REPETIR 4 VECES [AVANZA, GIRA DERECHA]</td></tr>
+      <tr><td>4. ____ Número de vueltas (N)</td><td>D. Algo que se repite siguiendo una regla</td></tr>
+      <tr><td>5. ____ Vuelta</td><td>E. Un bucle dentro de otro bucle</td></tr>
+      <tr><td>6. ____ Patrón</td><td>F. Las instrucciones que dejas de escribir gracias al bucle</td></tr>
+      <tr><td>7. ____ Rastro</td><td>G. Cuántas veces se repite el cuerpo (la N)</td></tr>
+      <tr><td>8. ____ Cuadrado</td><td>H. Repite un grupo de instrucciones varias veces</td></tr>
+      <tr><td>9. ____ Ahorro</td><td>I. Las casillas pintadas por donde pasa el robot</td></tr>
+      <tr><td>10. ____ Bucle anidado</td><td>J. La instrucción que abre el bucle e indica las vueltas</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Bucles: Repetir sin Cansarse.</b> Ahora sabes escribir bucles con
+      REPETIR N VECES, reconocer la N y el cuerpo, contar las vueltas, compactar programas largos y predecir la figura
+      que dibuja el rastro del robot. ¡Repetir sin cansarse es todo un superpoder de programador! 🔁💻
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Programación.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Dibujó en su cuaderno cuadriculado el rastro de un bucle dictado y escribió qué figura salió.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Bucles: Repetir sin Cansarse</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. bucle &nbsp; 2. REPETIR &nbsp; 3. cuerpo &nbsp; 4. vueltas &nbsp; 5. vuelta &nbsp; 6. 3 &nbsp; 7. DERECHA &nbsp; 8. rastro &nbsp; 9. patrón &nbsp; 10. corto</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2V, 3V, 4F, 5V, 6F, 7V, 8F, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3a, 4b, 5d, 6c, 7d, 8a, 9b, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1H, 2J, 3B, 4G, 5A, 6D, 7I, 8C, 9F, 10E</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Bucles: Repetir sin Cansarse» (Educación Básica), etapa 4 de la Ruta del Código (Programación). Trabaja el
+      concepto de <strong>bucle</strong> (REPETIR N VECES): el número de vueltas (N), el cuerpo entre corchetes [ ], la
+      diferencia entre instrucciones escritas y ejecutadas, el ahorro que da el bucle y cómo el rastro del robot dibuja
+      figuras (línea, escalera, cuadrado y rectángulo). La misión interactiva (código QR de la portada) incluye el
+      simulador donde el estudiante arma bucles con 🔁 REPETIR y hace coincidir el rastro con la figura objetivo; las
+      actividades desconectadas de la página 3 («La ronda del bucle» y «Dibuja el bucle en tu cuaderno cuadriculado»)
+      permiten trabajar los mismos conceptos sin ningún dispositivo: en la primera, el grupo ejecuta y adivina patrones
+      de sonidos con REPETIR N VECES; en la segunda, cada estudiante pinta el rastro de un bucle dictado sobre la
+      cuadrícula del cuaderno. La sección «Ponte a Prueba» replica los formatos de la evaluación imprimible de la
+      plataforma (completar, V/F, selección múltiple y pareados con la Columna B barajada).
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Bucles: Repetir sin Cansarse · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>

@@ -53,6 +53,8 @@ const DIAGNOSTICOS = {
   codigo: [
     { etapa: 1, q: '¿Cuál de estas instrucciones es EXACTA?', o: ['Camina por ahí', 'Da 3 pasos hacia adelante', 'Muévete un poco', 'Ve rápido'], a: 1 },
     { etapa: 2, q: 'Un robot mira hacia arriba (Norte) y ejecuta: AVANZA, GIRA DERECHA, AVANZA. ¿Hacia dónde mira al final?', o: ['Norte', 'Sur', 'Este', 'Oeste'], a: 2 },
+    { etapa: 4, q: 'Para dibujar un cuadrado, el robot ejecuta REPETIR ___ VECES [AVANZA, GIRA DERECHA]. ¿Qué número falta?', o: ['2', '3', '4', '8'], a: 2 },
+    { etapa: 5, q: 'Una variable en programación es como…', o: ['Un dibujo del robot', 'Una cajita con nombre que guarda un valor que puede cambiar', 'Un error del programa', 'Un botón de apagado'], a: 1 },
   ],
   robots: [
     { etapa: 1, q: '¿Qué parte del robot funciona como sus «sentidos»?', o: ['Los actuadores', 'Los sensores', 'La batería', 'Las ruedas'], a: 1 },
