@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meta-app-v28';
+const CACHE_NAME = 'meta-app-v29';
 const STATIC_ASSETS = [
   './padres.html',
   './manifest-padres.json',
@@ -38,9 +38,12 @@ self.addEventListener('fetch', event => {
   const isImage = event.request.destination === 'image';
 
   if (isLocal && !isImage) {
-    // Archivos propios (HTML, CSS, JS): siempre va a la red primero
+    // Archivos propios (HTML, CSS, JS): siempre va a la red primero y
+    // revalidando contra el servidor (cache: 'no-cache' → ETag/304), porque
+    // la caché HTTP del navegador guarda hasta 10 minutos y escondía los
+    // despliegues nuevos: llegaba el HTML nuevo con el CSS y el JS viejos.
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: 'no-cache' })
         .then(response => {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
