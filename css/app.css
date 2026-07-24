@@ -2445,6 +2445,8 @@ a.padre-asistente-btn {
 .camp-ws-mat .camp-ws-short { color: #1d4ed8; }
 .camp-ws-cnat .camp-ws-short { color: #0f766e; }
 .camp-ws-csoc .camp-ws-short { color: #b91c1c; }
+.camp-ws-tec-pro .camp-ws-short { color: #155e75; }
+.camp-ws-tec-rob .camp-ws-short { color: #3730a3; }
 
 /* Anuncio de materia seleccionada */
 .camp-subject-announce {
@@ -2461,6 +2463,8 @@ a.padre-asistente-btn {
 .camp-sa-mat  { background: #dbeafe; color: #1d4ed8; border: 2px solid #93c5fd; }
 .camp-sa-cnat { background: #ccfbf1; color: #0f766e; border: 2px solid #5eead4; }
 .camp-sa-csoc { background: #fee2e2; color: #b91c1c; border: 2px solid #fca5a5; }
+.camp-sa-tec-pro { background: #cffafe; color: #155e75; border: 2px solid #67e8f9; }
+.camp-sa-tec-rob { background: #e0e7ff; color: #3730a3; border: 2px solid #a5b4fc; }
 
 @keyframes campPop {
   0%   { transform: scale(.7); opacity: 0; }
@@ -2524,6 +2528,8 @@ a.padre-asistente-btn {
 .camp-q-header-mat  { background: #dbeafe; }
 .camp-q-header-cnat { background: #ccfbf1; }
 .camp-q-header-csoc { background: #fee2e2; }
+.camp-q-header-tec-pro { background: #cffafe; }
+.camp-q-header-tec-rob { background: #e0e7ff; }
 .camp-q-subj-icon { font-size: 20px; }
 .camp-q-subj-label {
   font-weight: 800;
@@ -2819,6 +2825,8 @@ a.padre-asistente-btn {
 .camp-ms-bh-mat  { background: #dbeafe; color: #1d4ed8; }
 .camp-ms-bh-cnat { background: #ccfbf1; color: #0f766e; }
 .camp-ms-bh-csoc { background: #fee2e2; color: #b91c1c; }
+.camp-ms-bh-tec-pro { background: #cffafe; color: #155e75; }
+.camp-ms-bh-tec-rob { background: #e0e7ff; color: #3730a3; }
 .camp-ms-tog {
   padding: 3px 9px;
   border-radius: 6px;
@@ -3362,14 +3370,18 @@ a.padre-asistente-btn {
   border-radius: 50%;
   border: 6px solid #1e293b;
   box-shadow: 0 6px 24px rgba(15,23,42,.35), inset 0 0 0 3px rgba(255,255,255,.35);
+  /* Respaldo: 2 gajos por materia (6 materias → 12 gajos de 30°).
+     El gradiente real lo genera _wheelGradient() desde CAMP_SUBJECTS. */
   background: conic-gradient(
-    #b45309 0deg 45deg,  #2563eb 45deg 90deg,  #0d9488 90deg 135deg,  #dc2626 135deg 180deg,
-    #d97706 180deg 225deg, #3b82f6 225deg 270deg, #14b8a6 270deg 315deg, #ef4444 315deg 360deg
+    #b45309 0deg 30deg,    #2563eb 30deg 60deg,   #0d9488 60deg 90deg,
+    #dc2626 90deg 120deg,  #0e7490 120deg 150deg, #4f46e5 150deg 180deg,
+    #d97706 180deg 210deg, #3b82f6 210deg 240deg, #14b8a6 240deg 270deg,
+    #ef4444 270deg 300deg, #06b6d4 300deg 330deg, #6366f1 330deg 360deg
   );
 }
 .camp-w2-seg {
   position: absolute; left: 50%; top: 50%;
-  font-size: 24px;
+  font-size: 21px;
   text-shadow: 0 1px 3px rgba(0,0,0,.35);
   pointer-events: none;
 }
@@ -3417,6 +3429,8 @@ a.padre-asistente-btn {
 .camp-sp-mat  { background: linear-gradient(150deg, #3b82f6, #1e40af); }
 .camp-sp-cnat { background: linear-gradient(150deg, #14b8a6, #115e59); }
 .camp-sp-csoc { background: linear-gradient(150deg, #ef4444, #991b1b); }
+.camp-sp-tec-pro { background: linear-gradient(150deg, #06b6d4, #155e75); }
+.camp-sp-tec-rob { background: linear-gradient(150deg, #6366f1, #3730a3); }
 .camp-elegir-btn {
   display: block; margin: 10px auto 0;
   border: 2px dashed #8b5cf6;

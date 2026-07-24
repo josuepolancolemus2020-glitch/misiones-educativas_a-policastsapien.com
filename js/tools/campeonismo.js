@@ -14,13 +14,46 @@
    Banco de preguntas: CAMP_BANK (js/data/campeonismo-bank.js).
    ============================================================ */
 
-/* ── Materias y colores ── */
+/* ── Materias y colores ──
+   `key` debe coincidir con el `subject` de js/data/misiones.js.
+   `cls` alimenta las clases .camp-sa-*, .camp-sp-*, .camp-q-header-*,
+   .camp-ms-bh-* y .camp-ws-* de css/app.css: debe ser ÚNICO por materia
+   (Programación y Robótica comparten la familia «tec» del sitio, por eso
+   se distinguen como tec-pro / tec-rob). */
 const CAMP_SUBJECTS = [
-  { key: 'español',     label: 'Español',      short: 'ESP', icon: '📝', color: '#b45309', bg: '#fef3c7', cls: 'esp'  },
-  { key: 'matemáticas', label: 'Matemáticas',   short: 'MAT', icon: '📐', color: '#2563eb', bg: '#dbeafe', cls: 'mat'  },
-  { key: 'naturales',   label: 'C. Naturales',  short: 'NAT', icon: '🌿', color: '#0d9488', bg: '#ccfbf1', cls: 'cnat' },
-  { key: 'sociales',    label: 'C. Sociales',   short: 'SOC', icon: '🌍', color: '#dc2626', bg: '#fee2e2', cls: 'csoc' },
+  { key: 'español',      label: 'Español',      short: 'ESP', icon: '📝', color: '#b45309', bg: '#fef3c7', cls: 'esp'     },
+  { key: 'matemáticas',  label: 'Matemáticas',  short: 'MAT', icon: '📐', color: '#2563eb', bg: '#dbeafe', cls: 'mat'     },
+  { key: 'naturales',    label: 'C. Naturales', short: 'NAT', icon: '🌿', color: '#0d9488', bg: '#ccfbf1', cls: 'cnat'    },
+  { key: 'sociales',     label: 'C. Sociales',  short: 'SOC', icon: '🌍', color: '#dc2626', bg: '#fee2e2', cls: 'csoc'    },
+  { key: 'programación', label: 'Programación', short: 'PRO', icon: '💻', color: '#0e7490', bg: '#cffafe', cls: 'tec-pro' },
+  { key: 'robótica',     label: 'Robótica',     short: 'ROB', icon: '🤖', color: '#4f46e5', bg: '#e0e7ff', cls: 'tec-rob' },
 ];
+
+/* ── Ruleta: 2 gajos por materia, generada desde CAMP_SUBJECTS ──
+   Así la ruleta crece sola cuando se agrega una materia nueva. */
+function _wheelSegs() { return CAMP_SUBJECTS.length * 2; }
+function _wheelStep() { return 360 / _wheelSegs(); }
+
+function _lighten(hex, p) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || ''));
+  if (!m) return hex;
+  const n = parseInt(m[1], 16);
+  const mix = c => Math.round(c + (255 - c) * p);
+  const r = mix((n >> 16) & 255), g = mix((n >> 8) & 255), b = mix(n & 255);
+  return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+
+function _wheelGradient() {
+  const step  = _wheelStep();
+  const total = _wheelSegs();
+  const partes = [];
+  for (let i = 0; i < total; i++) {
+    const s = CAMP_SUBJECTS[i % CAMP_SUBJECTS.length];
+    const c = i < CAMP_SUBJECTS.length ? s.color : _lighten(s.color, 0.28);
+    partes.push(`${c} ${(i * step).toFixed(2)}deg ${((i + 1) * step).toFixed(2)}deg`);
+  }
+  return `conic-gradient(${partes.join(', ')})`;
+}
 
 const CAMP_COLORS   = ['#6366f1','#f59e0b','#10b981','#ef4444','#8b5cf6','#06b6d4','#84cc16','#f97316'];
 const CAMP_MASCOTAS = ['🦅','🐆','🦈','🐺','🦁','🐉','🐢','🐍'];
@@ -795,10 +828,10 @@ function renderTurno() {
           <div class="camp-w2-lights" id="camp-w2-lights">
             ${Array.from({ length: 12 }, (_, i) => `<span class="camp-w2-bulb" style="transform: rotate(${i * 30}deg) translateY(-124px)"></span>`).join('')}
           </div>
-          <div class="camp-w2" id="camp-wheel">
-            ${Array.from({ length: 8 }, (_, i) => {
-              const s = CAMP_SUBJECTS[i % 4];
-              const a = i * 45 + 22.5;
+          <div class="camp-w2" id="camp-wheel" style="background:${_wheelGradient()}">
+            ${Array.from({ length: _wheelSegs() }, (_, i) => {
+              const s = CAMP_SUBJECTS[i % CAMP_SUBJECTS.length];
+              const a = i * _wheelStep() + _wheelStep() / 2;
               return `<span class="camp-w2-seg" style="transform: translate(-50%,-50%) rotate(${a}deg) translateY(-82px) rotate(${-a}deg)">${s.icon}</span>`;
             }).join('')}
             <div class="camp-w2-hub">🏆</div>
@@ -973,11 +1006,13 @@ function spinWheel() {
   const subject = validSubjects[Math.floor(Math.random() * validSubjects.length)];
   const subjIdx = CAMP_SUBJECTS.indexOf(subject);
 
-  /* 8 gajos de 45°; los gajos del tema elegido son subjIdx y subjIdx+4.
-     Centro del gajo i = i·45 + 22.5 (desde arriba, horario).
+  /* 2 gajos por materia (paso = 360/nGajos); los gajos del tema elegido
+     son subjIdx y subjIdx + nMaterias.
+     Centro del gajo i = i·paso + paso/2 (desde arriba, horario).
      rotate(θ) lleva el centro a la flecha cuando θ ≡ 360 − centro. */
-  const gajo   = subjIdx + (Math.random() < 0.5 ? 0 : 4);
-  const centro = gajo * 45 + 22.5;
+  const paso   = _wheelStep();
+  const gajo   = subjIdx + (Math.random() < 0.5 ? 0 : CAMP_SUBJECTS.length);
+  const centro = gajo * paso + paso / 2;
   const target = (360 - centro) % 360;
   const cur    = T.wheelRotation % 360;
   let   extra  = target - cur;
