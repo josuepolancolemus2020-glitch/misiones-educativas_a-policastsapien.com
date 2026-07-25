@@ -37,7 +37,7 @@
 <header class="hero" role="banner">
   <div class="hero-inner">
     <div class="hero-mascot" aria-hidden="true">🕹️</div>
-    <div class="hero-text">
+    <div class="hero-text" data-i18n="hero">
       <h1>Misión <span>Programando un Robot</span></h1>
       <p class="sub">Une la Ruta del Código con la Ruta de los Robots: escribe el programa, lee los sensores, repite con bucles y depura los errores. 📋📡🔄</p>
       <div class="badge">🤖 Ruta de los Robots · Etapa 5 de 6 · Robótica</div>
@@ -49,7 +49,7 @@
 
 <!-- ===== APRENDE ===== -->
 <div class="sec active" id="s-aprende" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="a1">
     <h2>🔁 El ciclo del robot: un bucle que nunca para</h2>
     <p>Un robot encendido hace <strong>siempre lo mismo, una y otra vez</strong>: <strong>lee sus sensores</strong>,
     <strong>decide</strong> con su programa, <strong>mueve sus actuadores</strong> y <strong>vuelve a empezar</strong>.
@@ -66,7 +66,7 @@
     </div>
   </div>
 
-  <div class="card ac-gold">
+  <div class="card ac-gold" data-i18n="a2">
     <h2>👣 Las instrucciones de movimiento</h2>
     <p>El programa del robot se arma con <strong>instrucciones exactas</strong>. En nuestro simulador son estas cinco:</p>
     <div class="type-grid">
@@ -82,7 +82,7 @@
     </div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="a3">
     <h2>❓ Condicionales con sensores: el robot decide solo</h2>
     <p>Un <strong>condicional</strong> es un bloque <strong>SI… ENTONCES… SINO</strong>. El robot <strong>lee un sensor</strong>
     y, según la respuesta, ejecuta una rama u otra. Así el mismo programa sirve <b>aunque las cosas cambien de lugar</b>:</p>
@@ -113,7 +113,7 @@
 
 <!-- ===== BLOQUES: BUCLES, VARIABLES, PSEUDOCÓDIGO Y DEPURACIÓN ===== -->
 <div class="sec" id="s-estructura" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="e1">
     <h2>🔄 Bucles y 📦 variables</h2>
     <p>Si el robot debe repetir lo mismo, <strong>no escribas la instrucción diez veces</strong>: usa un <strong>bucle</strong>.
     Y si necesita <strong>recordar un número</strong> (cuántas veces giró, cuántas botellas recogió), usa una <strong>variable</strong>.</p>
@@ -140,7 +140,7 @@
     </div>
   </div>
 
-  <div class="card ac-gold">
+  <div class="card ac-gold" data-i18n="e2">
     <h2>📝 Pseudocódigo: piensa antes de cargar el programa</h2>
     <p>El <strong>pseudocódigo</strong> es el programa escrito en <strong>español claro y numerado</strong>, antes de
     «cargarlo» al robot. Sirve para pensar el camino y, después, para <strong>comparar</strong> lo que el robot hizo con lo que debía hacer.</p>
@@ -158,7 +158,7 @@
     </div>
   </div>
 
-  <div class="card ac-amber">
+  <div class="card ac-amber" data-i18n="e3">
     <h2>⚡ Mini-quiz relámpago</h2>
     <p style="font-size:0.9rem;margin-bottom:0.5rem;">1) El robot debe avanzar 7 casillas iguales. ¿Qué conviene escribir?</p>
     <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
@@ -176,7 +176,7 @@
     <div id="fbMq2" class="fb" role="alert"></div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="e4">
     <h2>🐞 Depurar: el robot hace lo que dice el programa</h2>
     <p>El robot <strong>no adivina</strong>: ejecuta <strong>literalmente</strong> cada instrucción. Si algo sale mal,
     casi siempre el error está en el <strong>programa</strong>, no en la máquina. A ese error se le llama <strong>bug</strong>,
@@ -202,8 +202,8 @@
 <!-- ===== LAB: SIMULADOR ===== -->
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
-    <h2>🔬 Simulador: programa tu robot</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige un nivel, arma el programa tocando los botones — ¡incluye los <strong>bloques de sensor</strong> 🧱⬛ para que el robot DECIDA solo! — y presiona <strong>▶ Ejecutar</strong>. Verás cómo lee cada sensor (✔ sí / ✘ no) paso a paso. ⭐ +5 XP por cada nivel resuelto (primera vez).</p>
+    <h2 data-i18n="labh2">🔬 Simulador: programa tu robot</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;" data-i18n="labintro">Elige un nivel, arma el programa tocando los botones — ¡incluye los <strong>bloques de sensor</strong> 🧱⬛ para que el robot DECIDA solo! — y presiona <strong>▶ Ejecutar</strong>. Verás cómo lee cada sensor (✔ sí / ✘ no) paso a paso. ⭐ +5 XP por cada nivel resuelto (primera vez).</p>
     <div id="lab-sentence" class="lab-sentence">🕹️ Cargando el patio de la escuela…</div>
     <div class="lab-stage">
       <div id="lab-display" class="lab-display-box">
@@ -211,7 +211,7 @@
       </div>
     </div>
     <div class="lab-controls">
-      <div class="lab-group">
+      <div class="lab-group" data-i18n="labniv">
         <span class="lab-group-label">🗺️ Nivel:</span>
         <button class="lab-btn lab-cont-btn" data-parte="n1" onclick="labShowParte('n1')">1️⃣ Avanzar</button>
         <button class="lab-btn lab-cont-btn" data-parte="n2" onclick="labShowParte('n2')">2️⃣ Girar</button>
@@ -220,20 +220,20 @@
         <button class="lab-btn lab-cont-btn" data-parte="n5" onclick="labShowParte('n5')">5️⃣ La curva</button>
         <button class="lab-btn lab-cont-btn" data-parte="n6" onclick="labShowParte('n6')">6️⃣ Desafío</button>
       </div>
-      <div class="sim-cmd-btns">
+      <div class="sim-cmd-btns" data-i18n="labcmd">
         <button class="sim-cmd" onclick="labAdd('AVANZA')">👣 AVANZA</button>
         <button class="sim-cmd" onclick="labAdd('GIRA IZQUIERDA')">↩️ GIRA IZQ.</button>
         <button class="sim-cmd" onclick="labAdd('GIRA DERECHA')">↪️ GIRA DER.</button>
         <button class="sim-cmd" onclick="labAdd('ESPERA')">⏳ ESPERA</button>
         <button class="sim-cmd sim-cmd-fin" onclick="labAdd('DETENTE')">🎯 DETENTE</button>
       </div>
-      <div class="sim-cmd-btns">
+      <div class="sim-cmd-btns" data-i18n="labcond">
         <button class="sim-cmd sim-cmd-cond" onclick="labAdd('C_PARED')">🧱 SI PARED → GIRA DER., SINO → AVANZA</button>
         <button class="sim-cmd sim-cmd-cond" onclick="labAdd('C_LINEA')">⬛ SI LÍNEA → AVANZA, SINO → GIRA DER.</button>
         <button class="sim-cmd sim-cmd-cond" onclick="labAdd('C_LINEAI')">⬛ SI LÍNEA → AVANZA, SINO → GIRA IZQ.</button>
       </div>
       <div class="sim-prog" id="progList" aria-live="polite"></div>
-      <div class="sim-util-btns">
+      <div class="sim-util-btns" data-i18n="labutil">
         <button class="btn btn-g" onclick="labRun()">▶ Ejecutar</button>
         <button class="btn btn-d" onclick="labDel()">⌫ Borrar última</button>
         <button class="btn btn-d" onclick="labClear()">🗑️ Limpiar</button>
@@ -560,7 +560,7 @@
 </div>
 
 <div class="sec" id="s-recursos" role="tabpanel">
-  <div class="card ac-blue">
+  <div class="card ac-blue" data-i18n="rec">
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
@@ -659,6 +659,8 @@
 
   <script src="js/html2canvas.min.js"></script>
   <script src="js/programando-robot.js"></script>
+  <script src="js/programando-robot-en.js?v=36"></script>
+  <script src="../../js/metas-i18n.js?v=36"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>

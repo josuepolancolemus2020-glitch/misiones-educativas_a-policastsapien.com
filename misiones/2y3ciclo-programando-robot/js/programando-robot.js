@@ -164,7 +164,7 @@ function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSe
 function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalCritFormNum)evalCritFormNum=s.evalCritFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
 
 // ===================== ACHIEVEMENTS =====================
-const ACHIEVEMENTS={
+let ACHIEVEMENTS={
   primer_quiz:{icon:'🕹️',label:'Primer quiz de programación superado'},
   flash_master:{icon:'🃏',label:'Todas las tarjetas del programa exploradas'},
   clasif_pro:{icon:'🗂️',label:'Clasificador de instrucciones y bloques experto'},
@@ -182,7 +182,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#0e7490','#22d3ee','#c2410c','#fb923c','#06b6d4'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Cargando programa 💾'},{t:55,n:'Piloto de Pruebas 🧭'},{t:90,n:'Depurador de Bugs 🐞'},{t:130,n:'Programador de Robots 🕹️'},{t:165,n:'Ingeniero de Control 🛠️'},{t:190,n:'Maestro Programador 🏆'}];
+let lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Cargando programa 💾'},{t:55,n:'Piloto de Pruebas 🧭'},{t:90,n:'Depurador de Bugs 🐞'},{t:130,n:'Programador de Robots 🕹️'},{t:165,n:'Ingeniero de Control 🛠️'},{t:190,n:'Maestro Programador 🏆'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -196,7 +196,7 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 function miniQ(btn,isOk,fbId){const wrap=btn.parentElement;if(wrap.dataset.done==='1')return;wrap.querySelectorAll('.cmp-opt').forEach(b=>b.classList.remove('sel'));if(isOk){wrap.dataset.done='1';btn.classList.add('correct');fb(fbId,'¡Correcto! Piensas como todo un programador.',true);sfx('ok');}else{btn.classList.add('wrong');fb(fbId,'Casi. Recuerda: el robot solo hace lo que dice el programa.',false);sfx('no');}}
 
 // ===================== FLASHCARD DATA =====================
-const fcData=[
+let fcData=[
   {w:'Programa',a:'📋 La <strong>lista de instrucciones exactas</strong> que el robot ejecuta paso a paso.'},
   {w:'Ciclo del robot',a:'🔁 <strong>Leer sensores → decidir → mover actuadores → repetir</strong>, sin parar mientras el robot está encendido.'},
   {w:'Instrucción',a:'👣 Una orden simple del programa: <strong>AVANZA, GIRA DERECHA, GIRA IZQUIERDA, ESPERA, DETENTE</strong>.'},
@@ -219,7 +219,7 @@ function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
 
 // ===================== JUEGO: MEMORIA DEL ROBOT =====================
-const memoPairs=[
+let memoPairs=[
   {id:'programa',t:'Programa',d:'📋 lista de instrucciones exactas'},
   {id:'condicional',t:'Condicional',d:'❓ SI el sensor detecta… ENTONCES… SINO…'},
   {id:'bucle',t:'Bucle',d:'🔄 repetir un bloque muchas veces'},
@@ -266,7 +266,7 @@ function flipMemo(btn,i){
 function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
-const qzData=[
+let qzData=[
   {q:'¿Cuál es el ciclo que repite un robot mientras está encendido?',o:['a) Dormir → soñar → despertar','b) Leer sensores → decidir → mover actuadores → repetir','c) Actuar → apagarse → cargarse','d) Decidir → olvidar → repetir'],c:1},
   {q:'¿Qué es el programa de un robot?',o:['a) Un canal de televisión','b) La batería del robot','c) La lista de instrucciones exactas que ejecuta paso a paso','d) El nombre que le pone el dueño'],c:2},
   {q:'¿Qué instrucción cambia el rumbo del robot sin moverlo de casilla?',o:['a) AVANZA','b) GIRA DERECHA','c) DETENTE','d) REPITE'],c:1},
@@ -284,7 +284,7 @@ function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false
 function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
 
 // ===================== CLASIFICACIÓN =====================
-const classGroups=[
+let classGroups=[
   {label:['Instrucción','Sensor'],headA:'👣 Instrucción (el robot hace)',headB:'📡 Sensor (el robot lee)',colA:'ins',colB:'sen',
    words:[{w:'AVANZA',t:'ins'},{w:'Sensor de pared',t:'sen'},{w:'GIRA DERECHA',t:'ins'},{w:'Sensor de línea',t:'sen'},{w:'ESPERA',t:'ins'},{w:'Sensor de obstáculo',t:'sen'},{w:'GIRA IZQUIERDA',t:'ins'},{w:'Sensor de color',t:'sen'},{w:'DETENTE',t:'ins'},{w:'Sensor de distancia',t:'sen'}]},
   {label:['Bucle','Condicional'],headA:'🔄 Bucle (repetir)',headB:'❓ Condicional (decidir)',colA:'buc',colB:'con',
@@ -301,7 +301,7 @@ function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupId
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
 // ===================== IDENTIFICAR =====================
-const idData=[
+let idData=[
   {s:['El','programa','es','la','lista','de','instrucciones','del','robot.'],c:1,art:'La lista de instrucciones que el robot ejecuta'},
   {s:['El','bucle','repite','el','bloque','muchas','veces.'],c:1,art:'El bloque que repite instrucciones'},
   {s:['El','condicional','decide','entre','dos','caminos.'],c:1,art:'El bloque que decide con el sensor'},
@@ -318,7 +318,7 @@ function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').
 function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
 
 // ===================== COMPLETA =====================
-const cmpData=[
+let cmpData=[
   {s:'El ciclo del robot es: leer sensores → ___ → mover actuadores → repetir.',opts:['decidir','dormir','pintar'],c:0},
   {s:'La lista de instrucciones que el robot obedece se llama ___.',opts:['batería','programa','antena'],c:1},
   {s:'Para repetir el mismo bloque muchas veces se usa un ___.',opts:['bucle','tornillo','cable'],c:0},
@@ -334,7 +334,7 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 
 // ===================== WIDGETS =====================
 // Widget 1: Percibe-Decide-Actúa (ordenar el ciclo en casos concretos)
-const routeSets=[
+let routeSets=[
   {label:'El robot seguidor de línea del pasillo de la escuela',steps:['El sensor de línea lee el piso: ¿hay negro adelante?','El controlador decide: si hay línea, seguir; si no, girar','Los motores ejecutan la orden y mueven las ruedas','El robot vuelve a leer el sensor: el ciclo se repite']},
   {label:'El robot que recoge la basura del patio',steps:['El sensor de obstáculo detecta la botella tirada','El programa decide: si hay objeto, entonces recogerlo','El brazo actúa y guarda la botella en la caja','La variable sube uno: objetos = objetos + 1','El bucle se repite hasta terminar el patio']},
   {label:'Programar el robot regador del huerto escolar',steps:['Escribir el pseudocódigo del riego en el cuaderno','Cargar el programa en el controlador del robot','Probar el programa paso a paso en el huerto','Depurar: corregir la instrucción que hizo fallar al robot','Volver a probar hasta que el riego salga bien']},
@@ -347,7 +347,7 @@ function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Caso: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: ¿Qué bloque necesita el programa?
-const neuronPartes=[
+let neuronPartes=[
   {desc:'El robot debe avanzar 6 casillas iguales por el pasillo',ans:'Un bucle: repite 6 veces AVANZA',opts:['Un bucle: repite 6 veces AVANZA','Una variable contadora','Un sensor de color','La instrucción ESPERA']},
   {desc:'El robot debe girar solo cuando encuentre una pared adelante',ans:'Un condicional con el sensor de pared',opts:['Un condicional con el sensor de pared','Un bucle infinito','Una variable contadora','La instrucción DETENTE']},
   {desc:'El robot debe contar cuántas botellas recogió en el patio',ans:'Una variable contadora',opts:['Una variable contadora','Un sensor de línea','La instrucción GIRA DERECHA','Un condicional de pared']},
@@ -364,7 +364,7 @@ function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Parte → Función
-const neuroPairs=[
+let neuroPairs=[
   {trans:'AVANZA',func:'Mueve al robot una casilla hacia adelante',opts:['Mueve al robot una casilla hacia adelante','Cambia el rumbo sin moverse de casilla','Repite un bloque de instrucciones','Guarda un número en una cajita']},
   {trans:'GIRA DERECHA',func:'Cambia el rumbo del robot sin cambiar de casilla',opts:['Cambia el rumbo del robot sin cambiar de casilla','Avanza dos casillas de golpe','Enciende la batería','Borra el programa']},
   {trans:'Bucle',func:'Repite un bloque de instrucciones varias veces',opts:['Repite un bloque de instrucciones varias veces','Lee el sensor de línea','Apaga los motores','Escribe el pseudocódigo']},
@@ -377,7 +377,7 @@ function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.query
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: ¿Robot o no es robot?
-const enfermedadData=[
+let enfermedadData=[
   {disease:'AVANZA · AVANZA · GIRA DERECHA · AVANZA · DETENTE',characteristic:'Programa correcto',opts:['Programa correcto','Tiene un bug']},
   {disease:'GIRA DERECHA · GIRA DERECHA · GIRA DERECHA · GIRA DERECHA (el robot nunca cambia de casilla)',characteristic:'Tiene un bug',opts:['Tiene un bug','Programa correcto']},
   {disease:'REPITE 5 VECES: AVANZA. Luego DETENTE',characteristic:'Programa correcto',opts:['Programa correcto','Tiene un bug']},
@@ -391,7 +391,7 @@ function checkEnfer(opt,btn,d){if(enferDone)return;enferDone=true;document.query
 function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
-const retoPairs=[
+let retoPairs=[
   {label:['Instrucción','Sensor'],btnA:'👣 Instrucción',btnB:'📡 Sensor',colA:'ins',colB:'sen',
    words:[{w:'AVANZA',t:'ins'},{w:'Sensor de pared',t:'sen'},{w:'GIRA DERECHA',t:'ins'},{w:'Sensor de línea',t:'sen'},{w:'ESPERA',t:'ins'},{w:'Sensor de color',t:'sen'},{w:'GIRA IZQUIERDA',t:'ins'},{w:'Sensor de distancia',t:'sen'},{w:'DETENTE',t:'ins'},{w:'Sensor de obstáculo',t:'sen'}]},
   {label:['Bucle','Condicional'],btnA:'🔄 Bucle',btnB:'❓ Condicional',colA:'buc',colB:'con',
@@ -409,7 +409,7 @@ function nextRetoPair(){sfx('click');clearInterval(retoTimerInt);retoRunning=fal
 function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';document.getElementById('fbReto').classList.remove('show');}
 
 // ===================== TASK GENERATOR =====================
-const identifyTaskDB=[
+let identifyTaskDB=[
   {s:'El programa es la lista de instrucciones exactas del robot.',type:'Programa'},
   {s:'Repite 6 veces AVANZA hasta cruzar el pasillo.',type:'Bucle'},
   {s:'SI el sensor de pared detecta obstáculo ENTONCES gira.',type:'Condicional'},
@@ -421,7 +421,7 @@ const identifyTaskDB=[
   {s:'Los motores mueven las ruedas cuando llega la orden.',type:'Actuadores'},
   {s:'Leer sensores, decidir, mover actuadores y repetir.',type:'Ciclo del robot'},
 ];
-const classifyTaskDB=[
+let classifyTaskDB=[
   {w:'SI hay pared adelante ENTONCES gira, SINO avanza',gen:'Condicional',n:'El sensor de pared',g:'Girar o avanzar',t:'Gira las ruedas o avanza una casilla'},
   {w:'REPITE 6 VECES: AVANZA',gen:'Bucle',n:'Nada: solo cuenta las repeticiones',g:'Repetir el bloque 6 veces',t:'Avanza 6 casillas seguidas'},
   {w:'objetos = objetos + 1',gen:'Variable (contador)',n:'Nada: usa el número que ya guardó',g:'Sumar uno al contador',t:'Guarda el nuevo número en la cajita'},
@@ -431,7 +431,7 @@ const classifyTaskDB=[
   {w:'ESPERA',gen:'Instrucción simple',n:'Nada',g:'Nada',t:'Deja pasar el tiempo sin moverse'},
   {w:'DETENTE',gen:'Instrucción final',n:'Nada',g:'Nada',t:'El robot se queda quieto en la meta'},
 ];
-const completeTaskDB=[
+let completeTaskDB=[
   {s:'El ciclo del robot es: leer sensores → ___ → mover actuadores → repetir.',opts:['decidir','dormir','cantar'],ans:'decidir'},
   {s:'La lista de instrucciones del robot se llama ___.',opts:['programa','batería','rueda'],ans:'programa'},
   {s:'Para repetir un bloque varias veces se usa un ___.',opts:['bucle','tornillo','imán'],ans:'bucle'},
@@ -441,7 +441,7 @@ const completeTaskDB=[
   {s:'Corregir los errores del programa se llama ___.',opts:['depurar','borrar','apagar'],ans:'depurar'},
   {s:'El robot hace lo que dice el ___, no lo que uno quiso decir.',opts:['programa','maestro','viento'],ans:'programa'},
 ];
-const explainQuestions=[
+let explainQuestions=[
   {q:'Explica el ciclo de un robot programado: leer sensores → decidir → mover actuadores → repetir. Pon un ejemplo de tu escuela.',ans:'El robot lee sus sensores (por ejemplo el sensor de línea del pasillo), su programa decide qué hacer («si hay línea, sigue; si no, gira»), los motores ejecutan la orden y el ciclo vuelve a empezar. Se repite mientras el robot está encendido.'},
   {q:'Escribe en pseudocódigo el programa de un robot que sigue la línea negra del pasillo de la escuela.',ans:'REPITE HASTA LLEGAR AL AULA: SI el sensor de línea ve negro adelante ENTONCES AVANZA, SINO GIRA DERECHA. Al llegar: DETENTE. (Vale cualquier redacción clara con un bucle y un condicional.)'},
   {q:'¿Qué es depurar un programa? Explica por qué el robot «hace lo que dice el programa, no lo que uno quiso decir».',ans:'Depurar es buscar y corregir los errores (bugs) del programa probándolo paso a paso. El robot no adivina: ejecuta literalmente cada instrucción, por eso una instrucción de más, de menos o en mal orden lo hace chocar o perderse.'},
@@ -458,7 +458,7 @@ function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las si
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
-const sopaSets=[
+let sopaSets=[
   {size:10,grid:[
     ['I','I','E','I','S','T','E','F','R','Q'],
     ['U','A','M','E','Y','H','H','A','F','S'],
@@ -522,7 +522,7 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank=[
+let evalTFBank=[
   {q:'El programa es la lista de instrucciones exactas que el robot ejecuta paso a paso.',a:true},
   {q:'El ciclo del robot es: leer sensores → decidir → mover actuadores → repetir.',a:true},
   {q:'El robot adivina lo que el programador quiso decir.',a:false},
@@ -539,7 +539,7 @@ const evalTFBank=[
   {q:'Los actuadores ejecutan la orden que envía el programa.',a:true},
   {q:'Un contador resta uno cada vez que el robot recoge un objeto.',a:false},
 ];
-const evalMCBank=[
+let evalMCBank=[
   {q:'¿Qué es el programa de un robot?',o:['a) Su batería','b) Su carcasa de metal','c) La lista de instrucciones exactas que ejecuta paso a paso','d) El nombre que le puso el dueño'],a:2},
   {q:'¿Cuál es el ciclo de un robot programado?',o:['a) Dormir → soñar → despertar','b) Leer sensores → decidir → mover actuadores → repetir','c) Actuar → apagar → cargar','d) Girar → girar → girar'],a:1},
   {q:'El robot debe avanzar 8 casillas iguales. ¿Qué bloque conviene usar?',o:['a) Un bucle: repite 8 veces AVANZA','b) Una variable','c) Un sensor de color','d) La instrucción ESPERA'],a:0},
@@ -556,7 +556,7 @@ const evalMCBank=[
   {q:'¿Cuál es el primer paso para programar bien un robot?',o:['a) Apretar botones al azar','b) Escribir el pseudocódigo en lenguaje claro','c) Cambiar la batería','d) Quitarle los sensores'],a:1},
   {q:'En el huerto escolar, ¿qué condicional usa el robot regador?',o:['a) SI hace sol ENTONCES apaga el robot','b) SI hay ruido ENTONCES gira','c) SI hay línea ENTONCES riega','d) SI la tierra está seca ENTONCES abre el agua, SINO sigue adelante'],a:3},
 ];
-const evalCPBank=[
+let evalCPBank=[
   {q:'La lista de instrucciones exactas del robot se llama ___.',a:'programa'},
   {q:'El ciclo del robot es: leer sensores, decidir, mover actuadores y ___.',a:'repetir'},
   {q:'Para repetir un bloque muchas veces se usa un ___.',a:'bucle'},
@@ -573,7 +573,7 @@ const evalCPBank=[
   {q:'Los ___ ejecutan la orden: motores y ruedas.',a:'actuadores'},
   {q:'Cuando el robot llega a la meta, el programa termina con la instrucción ___.',a:'detente'},
 ];
-const evalPRBank=[
+let evalPRBank=[
   {term:'Programa',def:'Lista de instrucciones exactas que el robot ejecuta paso a paso'},
   {term:'Ciclo del robot',def:'Leer sensores → decidir → mover actuadores → repetir'},
   {term:'Bucle',def:'Repite un bloque de instrucciones varias veces'},
@@ -656,7 +656,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
 .forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Programando un Robot · Educación Básica · Robótica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Programando un Robot · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 function evalSwitchMode(mode){
@@ -674,7 +674,7 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
-const critFaltaBank=[
+let critFaltaBank=[
   {txt:'El robot debe ir de A5 a A1 avanzando 4 casillas, pero el programa dice: AVANZA · AVANZA · AVANZA · DETENTE. El robot se queda una casilla antes de la meta.',
    ans:'Falta una instrucción AVANZA (deben ser 4 en total) antes de DETENTE. También puede escribirse con un bucle: REPITE 4 VECES AVANZA y luego DETENTE.'},
   {txt:'El robot seguidor de línea funciona bien, pero al llegar a la meta sigue caminando y se cae de la mesa. Programa: REPITE PARA SIEMPRE: SI hay línea ENTONCES AVANZA, SINO GIRA DERECHA.',
@@ -688,7 +688,7 @@ const critFaltaBank=[
   {txt:'El robot debe esperar la señal del maestro antes de arrancar, pero sale disparado apenas se enciende. Programa: AVANZA · AVANZA · DETENTE.',
    ans:'Falta la instrucción ESPERA al inicio (o un condicional: SI el sensor de sonido oye la señal ENTONCES AVANZA, SINO ESPERA).'},
 ];
-const critErrorBank=[
+let critErrorBank=[
   {txt:'«Mi robot no necesita leer los sensores: yo ya sé dónde están las paredes, así que solo escribo AVANZA muchas veces.»',
    g1:'Sin leer los sensores el robot no percibe nada: si algo cambia de lugar (una silla, una mochila) chocará, porque repite AVANZA a ciegas.',
    g2:'El ciclo del robot empieza siempre por LEER SENSORES: sin ese paso no hay decisión posible, porque el condicional necesita el dato del sensor para elegir la rama.'},
@@ -705,12 +705,12 @@ const critErrorBank=[
    g1:'El pseudocódigo se escribe ANTES, para pensar el camino en lenguaje claro; probar al azar hace perder tiempo y no enseña dónde está el error.',
    g2:'Además, sin pseudocódigo no se puede depurar: no hay con qué comparar lo que hizo el robot contra lo que debía hacer.'},
 ];
-const critTraceQuestions=[
+let critTraceQuestions=[
   '1. Escribe la casilla donde queda el robot después de cada instrucción (usa las coordenadas A1…E5).',
   '2. ¿En qué casilla termina el robot y hacia dónde queda mirando?',
   '3. ¿En qué instrucción el sensor cambió la decisión del robot? Explica por qué.',
 ];
-const critTraceBank=[
+let critTraceBank=[
   {txt:'El robot arranca en A5 mirando al Norte. Hay un cajón 📦 en A3 que le bloquea el paso.',
    n:5,start:{r:4,c:0,dir:'N'},obst:[[2,0]],linea:[],deco:{'0,4':'🏫'},
    prog:[C_PARED,C_PARED,C_PARED,I_AV,I_AV]},
@@ -724,7 +724,7 @@ const critTraceBank=[
    n:5,start:{r:4,c:1,dir:'N'},obst:[],linea:[[3,1],[2,1],[2,0]],deco:{'0,4':'🏫'},
    prog:[C_LINEAI,C_LINEAI,C_LINEAI,C_LINEAI,C_LINEAI]},
 ];
-const critCompareBank=[
+let critCompareBank=[
   {a:'PROGRAMA A: AVANZA · AVANZA · AVANZA · AVANZA · DETENTE',
    b:'PROGRAMA B: AVANZA · AVANZA · AVANZA · DETENTE',
    ga:'El programa A es el correcto: recorre las 4 casillas y se detiene justo en la meta.',
@@ -746,14 +746,14 @@ const critCompareBank=[
    gb:'El programa B «casi» funciona: recoge la basura igual, pero al final no sabe cuántos objetos recogió.',
    gr:'Semejanza: los dos recogen la basura con el mismo condicional. Diferencia: solo A guarda la información en una variable; sin contador el dato se pierde.'},
 ];
-const critDesignBank=[
+let critDesignBank=[
   'En tu escuela, el pasillo que va del portón a la dirección tiene una línea negra pintada en el piso y todos los días hay que llevar la lista de asistencia.',
   'El patio de la escuela amanece con botellas y bolsas tiradas, y el aseo se lleva media hora de clase.',
   'La huerta escolar se seca los fines de semana porque nadie llega a regarla.',
   'En la milpa de tu comunidad los pájaros se comen el maíz y alguien tiene que estar espantándolos todo el día.',
   'En la pulpería del barrio hay que revisar de noche si la puerta quedó abierta.',
 ];
-const critDesignGuide='Rúbrica de 4 criterios (total 20 pts) — ① PSEUDOCÓDIGO (6 pts): escribe el programa en lenguaje claro, con las instrucciones en orden y numeradas. ② CONDICIONAL CON SENSOR (5 pts): incluye al menos un «SI el sensor … ENTONCES … SINO …» con un sensor adecuado al problema. ③ BUCLE (5 pts): usa «repite N veces» o «repite hasta …» y explica cómo termina el bucle. ④ VARIABLE Y CIERRE (4 pts): usa una variable contadora y termina el programa con DETENTE. Cualquier diseño vale si otra persona puede ejecutarlo paso a paso sin dudar.';
+let critDesignGuide='Rúbrica de 4 criterios (total 20 pts) — ① PSEUDOCÓDIGO (6 pts): escribe el programa en lenguaje claro, con las instrucciones en orden y numeradas. ② CONDICIONAL CON SENSOR (5 pts): incluye al menos un «SI el sensor … ENTONCES … SINO …» con un sensor adecuado al problema. ③ BUCLE (5 pts): usa «repite N veces» o «repite hasta …» y explica cómo termina el bucle. ④ VARIABLE Y CIERRE (4 pts): usa una variable contadora y termina el programa con DETENTE. Cualquier diseño vale si otra persona puede ejecutarlo paso a paso sin dudar.';
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
@@ -827,14 +827,14 @@ function printEvalCrit(){
   const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Programando un Robot · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #0e7490;background:#ecfeff;color:#0e7490;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#0e7490;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #0e7490;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#ecfeff;border-left:3px solid #0e7490;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#ecfeff;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#0e7490;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #0e7490;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Programando un Robot · Educación Básica · Robótica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Programando un Robot · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
-  win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
+  win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
 // ===================== LAB: SIMULADOR DEL ROBOT PROGRAMADO =====================
 // 6 niveles en el patio de la escuela (cuadrícula 5×5). 📦 = obstáculo (no se pisa),
 // las casillas oscuras son la LÍNEA negra del piso, 🎯🗑️🌱 = meta.
 // Todos los niveles están verificados como resolubles por solveSim (BFS). Coordenadas A–E / 1–5.
-const parteData={
+let parteData={
   n1:{nombre:'Nivel 1 · Instrucciones de movimiento',icon:'1️⃣',n:5,start:{r:4,c:2,dir:'N'},dest:[0,2],destEmoji:'🎯',
       obst:[],linea:[],deco:{'0,0':'🏫','4,4':'🏀'},
       meta:'El programa más sencillo: el robot está en C5 mirando al Norte y la meta 🎯 está en C1, en línea recta. Usa AVANZA las veces necesarias y cierra con DETENTE.',
@@ -973,3 +973,67 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ===================== IDIOMA (español ↔ inglés) =====================
+// El contenido en inglés vive en programando-robot-en.js y el botón lo maneja
+// ../../js/metas-i18n.js. Aquí solo se intercambian los bancos y se repinta:
+// el progreso (XP, logros, secciones hechas) no se toca al cambiar de idioma.
+//
+// OJO con el lenguaje del simulador: I_AV, I_GD, C_PARED… siguen siendo las
+// palabras EN ESPAÑOL también en inglés. Son el identificador interno con el
+// que el simulador compara (real===I_GD), con el que el HTML llama a
+// labAdd('AVANZA') y con el que los bancos guardan los programas. Lo que se
+// traduce es lo que se PINTA: el motor cambia AVANZA→FORWARD y
+// «SI HAY PARED ADELANTE → …» en cuanto aparecen en pantalla.
+const _BANCOS_ES = {
+  ACHIEVEMENTS, lvls, fcData, memoPairs, qzData, classGroups, idData, cmpData,
+  routeSets, neuronPartes, neuroPairs, enfermedadData, retoPairs,
+  identifyTaskDB, classifyTaskDB, completeTaskDB, explainQuestions, sopaSets,
+  evalTFBank, evalMCBank, evalCPBank, evalPRBank,
+  critFaltaBank, critErrorBank, critTraceQuestions, critTraceBank,
+  critCompareBank, critDesignBank, critDesignGuide, parteData
+};
+window.MISION_APLICAR_IDIOMA = function (lang) {
+  const src = (lang === 'en' && window.MISION_EN && window.MISION_EN.data)
+    ? window.MISION_EN.data : _BANCOS_ES;
+  const usa = (k) => (src[k] !== undefined ? src[k] : _BANCOS_ES[k]);
+
+  ACHIEVEMENTS = usa('ACHIEVEMENTS'); lvls = usa('lvls');
+  fcData = usa('fcData'); memoPairs = usa('memoPairs'); qzData = usa('qzData');
+  classGroups = usa('classGroups'); idData = usa('idData'); cmpData = usa('cmpData');
+  routeSets = usa('routeSets'); neuronPartes = usa('neuronPartes');
+  neuroPairs = usa('neuroPairs'); enfermedadData = usa('enfermedadData');
+  retoPairs = usa('retoPairs'); identifyTaskDB = usa('identifyTaskDB');
+  classifyTaskDB = usa('classifyTaskDB'); completeTaskDB = usa('completeTaskDB');
+  explainQuestions = usa('explainQuestions'); sopaSets = usa('sopaSets');
+  evalTFBank = usa('evalTFBank'); evalMCBank = usa('evalMCBank');
+  evalCPBank = usa('evalCPBank'); evalPRBank = usa('evalPRBank');
+  critFaltaBank = usa('critFaltaBank'); critErrorBank = usa('critErrorBank');
+  critTraceQuestions = usa('critTraceQuestions'); critTraceBank = usa('critTraceBank');
+  critCompareBank = usa('critCompareBank'); critDesignBank = usa('critDesignBank');
+  critDesignGuide = usa('critDesignGuide'); parteData = usa('parteData');
+
+  // Repintar cada juego desde el principio con el banco nuevo
+  fcIdx = 0; upFC();
+  buildMemo();
+  qzIdx = 0; qzSel = -1; qzDone = false; showQz();
+  currentClassGroupIdx = 0; buildClass();
+  idIdx = 0; showId();
+  cmpIdx = 0; cmpSel = -1; showCmp();
+  currentRouteIdx = 0; buildRoute();
+  neuronIdx = 0; showNeuron();
+  neuroIdx = 0; showNeuro();
+  enferIdx = 0; showEnfer();
+  currentRetoPairIdx = 0; updateRetoButtons(); resetReto();
+  currentSopaSetIdx = 0; sopaFoundWords = new Set(); buildSopa();
+  labProg = []; labShowParte(labNivel);   // el nivel en pantalla se redibuja vacío
+  renderAchPanel(); updateXPBar();
+
+  // Las pruebas ya generadas se rehacen en el idioma nuevo, con su misma forma
+  const out = document.getElementById('evalOut');
+  if (out && out.innerHTML.trim()) { evalFormNum = window._currentEvalForm || evalFormNum; genEval(); }
+  const outCrit = document.getElementById('evalCritOut');
+  if (outCrit && outCrit.innerHTML.trim()) { evalCritFormNum = window._currentEvalCritForm || evalCritFormNum; genEvalCrit(); }
+  const tg = document.getElementById('tgOut');
+  if (tg) tg.innerHTML = '';
+};
