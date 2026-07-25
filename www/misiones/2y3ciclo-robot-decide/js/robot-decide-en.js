@@ -616,6 +616,10 @@
        3. FRASES EXACTAS (pantalla y pruebas imprimibles)
        ══════════════════════════════════════════════════════ */
     frases: {
+      /* — mensaje de WhatsApp: lo propio de esta misión —
+         (lo común a todas las misiones vive en js/metas-i18n.js) */
+      'Aprende a que el robot *DECIDA* con condicionales SI…ENTONCES…SINO. 🤖':
+        'Teach the robot to *DECIDE* with IF…THEN…ELSE conditionals. 🤖',
       /* — pestañas propias de esta misión — */
       'Condicional': 'Conditional', 'Simulador': 'Simulator',
       /* — el lenguaje del simulador, cuando cae solo en un nodo de texto — */
@@ -724,6 +728,8 @@
        4. FRAGMENTOS (textos con números o nombres variables)
        ══════════════════════════════════════════════════════ */
     fragmentos: [
+      /* — WhatsApp: el título de la misión en la constancia — */
+      [/¡(.+?) completó la Misión "Condicionales: el Robot Decide"!/g, '$1 completed the mission “Conditionals: the Robot Decides”!'],
       /* El rótulo del semáforo dice AVANZAR/ESPERAR (con R): va ANTES que las
          palabras sueltas del simulador, o quedaría «puedes FORWARDR» */
       [/ · Semáforo 🚦 🟢 verde \(puedes AVANZAR\)/g, ' · Traffic light 🚦 🟢 green (you may go FORWARD)'],

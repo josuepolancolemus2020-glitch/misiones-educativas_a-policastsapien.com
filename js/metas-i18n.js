@@ -259,6 +259,17 @@
     'Evaluación solo de repaso': 'Practice test only',
     '1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.':
       '1–5 (Fill in): marked by hand → ✓ (A) means a correct answer · 6–10: T=A, F=B · Visual reference only; use the official ZipGrade sheet to scan students.',
+    /* — mensajes de WhatsApp —
+       El texto que se comparte se arma en JS y sale de la página sin pasar
+       nunca por el DOM, así que el observador no lo ve: lo traduce
+       METAS_TR_TEXTO línea por línea antes de abrir WhatsApp. Aquí viven las
+       líneas idénticas en todas las misiones; el gancho propio de cada una y
+       su título en la constancia van en su <mision>-en.js. */
+    'Practica sobre este tema y sobresale en ser de los mejores alumnos. 🏆':
+      'Practice this topic and stand out as one of the best students. 🏆',
+    'Desbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋':
+      'Unlock *every achievement* and enter *your details* so your teacher can see everything you have earned. 📋',
+    '👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇': '👇 *TAP THE LINK TO START YOUR MISSION* 👇',
     /* — constancia — */
     'CONSTANCIA DE LOGRO': 'CERTIFICATE OF ACHIEVEMENT',
     '📲 WhatsApp': '📲 WhatsApp', '📷 Guardar foto': '📷 Save photo', '✖ Cerrar': '✖ Close',
@@ -358,6 +369,17 @@
     [/Puntaje total autoevaluado: (\d+)\/100/g, 'Self-assessed total score: $1/100'],
     [/🎯 Pensamiento crítico: (\d+)\/100/g, '🎯 Critical thinking: $1/100'],
     [/🧮 Puntaje registrado: (\d+)\/100\. ¡Sigue practicando!/g, '🧮 Score saved: $1/100. Keep practicing!'],
+    /* — WhatsApp: líneas comunes cuya decoración cambia de misión a misión —
+         el emoji que abre y cierra el rótulo, y el que remata la línea en
+         _cursiva_, los elige cada misión, así que estas no pueden ir como
+         frase completa. El marcador de progreso de la constancia va aquí
+         porque lleva el porcentaje dentro. */
+    [/\*Misión Asignada\*/g, '*Mission Assigned*'],
+    [/Se te hará prueba escrita y serás excelente estudiante en Robótica\./g,
+      'You will take a written test and become an excellent Robotics student.'],
+    [/Se te hará prueba escrita y serás excelente estudiante en Programación\./g,
+      'You will take a written test and become an excellent Programming student.'],
+    [/🏅 Progreso: (\d+)% ·/g, '🏅 Progress: $1% ·'],
     /* — impresión: clave ZipGrade y número de forma — */
     [/🎯 Clave rápida estilo ZipGrade · Forma (\d+) — respuestas correctas ya rellenadas para digitar la clave en la app/g,
       '🎯 ZipGrade-style quick key · Form $1 — correct answers already filled in so you can type the key into the app'],
@@ -387,6 +409,17 @@
     // Primero los de la misión y después los de la base: así una misión puede
     // adelantarse a un fragmento común, pero lo que no diga lo cubre la base.
     return aplicarLista(aplicarFragmentos(texto), BASE_FRAGMENTOS);
+  }
+
+  /* Traduce un texto plano que la misión manda FUERA de la página (el mensaje
+     de WhatsApp): se arma en JS, nunca llega al DOM y por eso el observador no
+     lo alcanza. Se traduce línea por línea para que cada renglón entre por el
+     mismo camino que un nodo de texto —frase exacta primero, fragmentos
+     después— y no por el reemplazo global de trDocumento, que sobre un texto
+     corto con una URL dentro es demasiado bruto. */
+  function trTexto(texto) {
+    if (idiomaActual !== 'en' || !texto) return texto;
+    return texto.split('\n').map(function (linea) { return tr(linea); }).join('\n');
   }
 
   /* Los paneles compartidos se arman por JS y su texto de ayuda vive en
@@ -725,10 +758,13 @@
     idioma: function () { return idiomaActual; },
     set: cambiar,
     tr: tr,
+    trTexto: trTexto,
     trDocumento: trDocumento,
     traducirZona: traducirZona
   };
 
   // Atajo para las misiones: envuelve el HTML que se manda a imprimir.
   window.METAS_TR = trDocumento;
+  // Y el del texto plano que sale por WhatsApp.
+  window.METAS_TR_TEXTO = trTexto;
 })();

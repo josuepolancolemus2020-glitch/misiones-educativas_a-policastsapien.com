@@ -828,6 +828,8 @@
        Los comunes a todas las misiones ya viven en el motor.
        ══════════════════════════════════════════════════════ */
     fragmentos: [
+      /* — WhatsApp: el título de la misión en la constancia — */
+      [/¡(.+?) completó la Misión "Programando un Robot"!/g, '$1 completed the mission “Programming a Robot”!'],
       /* — el lenguaje del simulador dentro de frases compuestas —
          primero los bloques completos, que contienen a las sueltas */
       ['SI HAY PARED ADELANTE → GIRA DERECHA, SINO → AVANZA', 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD'],

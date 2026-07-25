@@ -693,6 +693,10 @@
        3. FRASES EXACTAS (pantalla y pruebas imprimibles)
        ══════════════════════════════════════════════════════ */
     frases: {
+      /* — mensaje de WhatsApp: lo propio de esta misión —
+         (lo común a todas las misiones vive en js/metas-i18n.js) */
+      '_Se te hará prueba escrita y serás excelente estudiante en Robótica: motores, engranajes, poleas y palancas._ ⚙️':
+        '_You will take a written test and become an excellent Robotics student: motors, gears, pulleys and levers._ ⚙️',
       /* — pestañas propias de esta misión — */
       'Mecanismos': 'Mechanisms', 'Engranajes': 'Gears',
       /* — laboratorio del tren de engranajes — */
@@ -796,6 +800,8 @@
        «Motores y Mecanismos».
        ══════════════════════════════════════════════════════ */
     fragmentos: [
+      /* — WhatsApp: el título de la misión en la constancia — */
+      [/¡(.+?) completó la Misión "Motores y Mecanismos"!/g, '$1 completed the mission “Motors and Mechanisms”!'],
       /* — laboratorio: rótulos y datos del tren de engranajes — */
       [/🦷 Dientes: /g, '🦷 Teeth: '],
       [/🎬 El primero gira /g, '🎬 The first one turns '],

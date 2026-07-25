@@ -734,6 +734,10 @@
        3. FRASES EXACTAS (pantalla y pruebas imprimibles)
        ══════════════════════════════════════════════════════ */
     frases: {
+      /* — mensaje de WhatsApp: lo propio de esta misión —
+         (lo común a todas las misiones vive en js/metas-i18n.js) */
+      'Aprende cómo el robot VE, OYE, TOCA y MIDE el mundo con sus sensores. 🤖':
+        'Learn how the robot SEES, HEARS, TOUCHES and MEASURES the world with its sensors. 🤖',
       /* — barra superior, navegación y pie — */
       'Aprende': 'Learn', 'Tipos': 'Types', 'Lab': 'Lab', 'Flashcards': 'Flashcards', 'Quiz': 'Quiz',
       /* — laboratorio (rótulos del robot en SVG) — */
@@ -826,6 +830,8 @@
        4. FRAGMENTOS (textos con números o nombres variables)
        ══════════════════════════════════════════════════════ */
     fragmentos: [
+      /* — WhatsApp: el título de la misión en la constancia — */
+      [/¡(.+?) completó la Misión "Sensores: los Sentidos del Robot"!/g, '$1 completed the mission “Sensors: The Robot’s Senses”!'],
       [/Pregunta (\d+) de (\d+)/g, 'Question $1 of $2'],
       [/Oración (\d+) de (\d+)/g, 'Sentence $1 of $2'],
       [/Pista (\d+) de (\d+)/g, 'Clue $1 of $2'],

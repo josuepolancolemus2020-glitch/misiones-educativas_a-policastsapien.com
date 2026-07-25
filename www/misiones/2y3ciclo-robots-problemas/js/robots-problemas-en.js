@@ -782,6 +782,12 @@
        3. FRASES EXACTAS (pantalla y pruebas imprimibles)
        ══════════════════════════════════════════════════════ */
     frases: {
+      /* — mensaje de WhatsApp: lo propio de esta misión —
+         (lo común a todas las misiones vive en js/metas-i18n.js) */
+      'Cierra la *Ruta de los Robots*: aprende el ciclo de diseño de ingeniería y crea un robot que resuelva un problema de tu comunidad. 🛠️':
+        'Close the *Robot Path*: learn the engineering design cycle and build a robot that solves a problem in your community. 🛠️',
+      '_Se te hará prueba escrita y presentarás tu proyecto en equipo._ 🤖':
+        '_You will take a written test and present your project as a team._ 🤖',
       /* — pestañas propias de esta misión — */
       'Criterios': 'Criteria', 'Taller': 'Workshop',
       /* — mini-quiz — */
@@ -812,7 +818,7 @@
       'para poner los pasos del proyecto en el orden correcto:': 'arrows to put the project steps in the right order:',
       '🧭 ¿Qué decisión de diseño conviene?': '🧭 Which design decision is the right one?',
       'Lee la situación del proyecto y elige la decisión de diseño adecuada:': 'Read the project situation and choose the right design decision:',
-      '🎉 ¡Eres todo un técnico de sensores!': '🎉 You are a true sensor technician!',
+      '🎉 ¡Tomas decisiones de diseño como todo un ingeniero!': '🎉 You are making design decisions like a real engineer!',
       '🔗 Empareja: Etapa → ¿Qué se hace?': '🔗 Match: Stage → What is done?',
       '¿Qué se hace en esta etapa del ciclo de diseño?': 'What is done in this stage of the design cycle?',
       '⚖️ ¿Ayuda a las personas o hay que pensarlo mejor?': '⚖️ Does it help people, or does it need more thought?',
@@ -864,6 +870,9 @@
        4. FRAGMENTOS (textos con números o nombres variables)
        ══════════════════════════════════════════════════════ */
     fragmentos: [
+      /* — WhatsApp: el título de la misión en la constancia — */
+      [/¡(.+?) completó la Misión "Robots que Resuelven Problemas" y cerró la Ruta de los Robots!/g,
+        '$1 completed the mission “Robots that Solve Problems” and finished the Robot Path!'],
       /* — taller: el rótulo compuesto «Proyecto → Etapa» y sus avisos —
          el «¡Proyecto X completo!» va antes que el «Proyecto: » suelto */
       [/🛠️ ¡Proyecto (.+) completo!/g, '🛠️ Project $1 complete!'],

@@ -720,6 +720,8 @@
        4. FRAGMENTOS (textos con números o nombres variables)
        ══════════════════════════════════════════════════════ */
     fragmentos: [
+      /* — WhatsApp: el título de la misión en la constancia — */
+      [/¡(.+?) completó la Misión "¿Qué es un Robot\?"!/g, '$1 completed the mission “What Is a Robot?”!'],
       [/Pregunta (\d+) de (\d+)/g, 'Question $1 of $2'],
       [/Oración (\d+) de (\d+)/g, 'Sentence $1 of $2'],
       [/Pista (\d+) de (\d+)/g, 'Clue $1 of $2'],
