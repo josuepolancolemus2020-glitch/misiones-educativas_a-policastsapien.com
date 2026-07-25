@@ -66,6 +66,8 @@
 
   window.MISION_EN = {
 
+    titulo: 'Mission What Is a Robot? | policastsapien.com',
+
     /* Cinta decorativa del encabezado: vive en content: '…' del CSS */
     css: 'body[data-idioma="en"] .hero::before{content:"ROBOT · SENSOR · CONTROLLER · ACTUATOR · ' +
       'PROGRAM · SENSE · THINK · ACT · MOTOR · DRONE · ROBOTIC ARM · POWER · BATTERY · HUMANOID · CYCLE";}',
@@ -640,247 +642,77 @@
        ══════════════════════════════════════════════════════ */
     frases: {
       /* — barra superior, navegación y pie — */
-      'Aprendiz 🌱': 'Beginner 🌱',
-      'Regresar al catálogo de misiones': 'Back to the mission catalog',
       'Aprende': 'Learn', 'Tipos': 'Types', 'Lab': 'Lab', 'Flashcards': 'Flashcards', 'Quiz': 'Quiz',
-      'Clasifica': 'Sort', 'Identifica': 'Spot', 'Completa': 'Complete', 'Widgets': 'Widgets',
-      'Reto': 'Challenge', 'Sopa': 'Word search', 'Tareas': 'Homework', 'Evaluación': 'Test',
-      'Constancia': 'Certificate', 'Recursos': 'Resources',
-      '🏠 Proyecto Educativo M.E.T.A.S': '🏠 M.E.T.A.S Educational Project',
-      'Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael & Angelly Polanco': 'Developers: Josué E. Polanco_Evelyn Castellanos_Jael & Angelly Polanco',
-      '«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.':
-        '«Use your cell phone only as a learning tool; otherwise it can be harmful» 🌱 · Read, interact, remember what you learn.',
-      '🔊 Sonido': '🔊 Sound', '🌙 Tema': '🌙 Theme', '🏅 Logros': '🏅 Achievements',
-      '🔤 Letra': '🔤 Text size', '🔄 Reiniciar XP': '🔄 Reset XP', '🏅 Mis Logros': '🏅 My Achievements',
-
       /* — laboratorio (rótulos del robot en SVG) — */
       'ENERGÍA': 'POWER', 'SENSORES': 'SENSORS', 'ACTUADORES': 'ACTUATORS', 'CONTROLADOR 🧠': 'CONTROLLER 🧠',
       '🔬 Laboratorio de las Partes del Robot': '🔬 Robot Parts Laboratory',
       'Toca una parte del robot (en el dibujo o en los botones) y un aspecto para explorarlo. ¡Combínalos todos!':
         'Tap a robot part (on the drawing or on the buttons) and an aspect to explore it. Try every combination!',
-
       /* — flashcards y memorama — */
-      '🃏 Flashcards — Toca para voltear': '🃏 Flashcards — Tap to flip',
-      '⭐ +1 XP por cada tarjeta volteada (primera vez)': '⭐ +1 XP for each card you flip (first time)',
-      '🃏 Toca · Enter para voltear': '🃏 Tap · press Enter to flip',
-      '◀ Anterior': '◀ Previous', 'Siguiente ▶': 'Next ▶',
       '🧠 Memorama del Robot': '🧠 Robot Memory Game',
-      '⭐ +1 XP por pareja (primera vez) · +2 XP al completar': '⭐ +1 XP per pair (first time) · +2 XP for finishing',
-      '🔄 Mezclar de nuevo': '🔄 Shuffle again',
-
       /* — quiz, clasifica, identifica, completa — */
-      '🧠 Quiz de Comprensión': '🧠 Comprehension Quiz',
-      '⭐ +5 XP por respuesta correcta (primera vez por pregunta)': '⭐ +5 XP per correct answer (first time per question)',
-      '✔ Verificar': '✔ Check', '🔄 Reiniciar Quiz': '🔄 Restart quiz', '🔄 Reiniciar': '🔄 Restart',
-      '🎉 ¡Quiz completado!': '🎉 Quiz completed!', '🎉 ¡Completado!': '🎉 Completed!',
-      'Selecciona una respuesta.': 'Choose an answer.', 'Selecciona una opción.': 'Choose an option.',
-      '¡Correcto! +5 XP': 'Correct! +5 XP', '¡Correcto! +3 XP': 'Correct! +3 XP',
-      'Incorrecto. Revisa la respuesta correcta.': 'Not quite. Check the correct answer.',
-      'Incorrecto. Revisa bien la respuesta.': 'Not quite. Look at the answer again.',
       '¡Correcto! Piensas como todo un robotista.': 'Correct! You are thinking like a real roboticist.',
       'Casi. Pregúntate: ¿percibe?, ¿decide?, ¿actúa?': 'Almost. Ask yourself: does it sense? does it decide? does it act?',
-      '🗂️ Clasifica los Conceptos': '🗂️ Sort the Concepts',
-      'Selecciona un término del banco y toca la columna donde pertenece.': 'Pick a term from the bank and tap the column it belongs to.',
-      '⭐ +5 XP al completar el grupo (primera vez)': '⭐ +5 XP for finishing the group (first time)',
       '💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.':
         '💡 Tip: use the "Change group" button several times! Practicing with different categories helps you master the topic.',
-      'Columna A': 'Column A', 'Columna B': 'Column B',
-      '🔄 Variar grupo': '🔄 Change group',
-      'Mueve todas las palabras a las columnas primero.': 'Move every word into the columns first.',
-      '¡Perfecto! +5 XP': 'Perfect! +5 XP', 'Hay errores. Marcados en rojo.': 'There are mistakes. They are marked in red.',
-      '🔍 Identifica el concepto': '🔍 Spot the concept',
-      'Toca la palabra o término solicitado:': 'Tap the word or term you are asked for:',
-      'Ese no es el término solicitado.': 'That is not the term you were asked for.',
-      '▶ Siguiente': '▶ Next',
-      '✏️ Completa la oración': '✏️ Complete the sentence',
-      '⭐ +5 XP por respuesta correcta (primera vez)': '⭐ +5 XP per correct answer (first time)',
-
       /* — widgets — */
       '🔁 Percibe → Decide → Actúa: ordena el ciclo': '🔁 Sense → Think → Act: put the cycle in order',
-      '⭐ +4 XP por orden correcto (primera vez por secuencia)': '⭐ +4 XP per correct order (first time per sequence)',
       'Usa las flechas ▲ ▼ para poner los pasos del robot en el orden correcto:': 'Use the ▲ ▼ arrows to put the robot steps in the right order:',
-      '✅ Verificar orden': '✅ Check the order', '🔄 Nuevo caso': '🔄 New case',
-      '¡Perfecto! Orden correcto. +4 XP': 'Perfect! Correct order. +4 XP',
       'Hay pasos fuera de orden. Recuerda: percibir → decidir → actuar.': 'Some steps are out of order. Remember: sense → think → act.',
       '📡 ¿Qué sensor necesita?': '📡 Which sensor does it need?',
-      '⭐ +3 XP por respuesta correcta (primera vez por pista)': '⭐ +3 XP per correct answer (first time per clue)',
       'Lee la situación y elige el sensor adecuado:': 'Read the situation and choose the right sensor:',
-      'Cargando...': 'Loading…',
       '🎉 ¡Eres todo un técnico de sensores!': '🎉 You are a true sensor technician!',
       '🔗 Empareja: Parte → Función': '🔗 Match: Part → Function',
-      '⭐ +3 XP por respuesta correcta (primera vez)': '⭐ +3 XP per correct answer (first time)',
       '¿Cuál es la función de esta parte del robot?': 'What is the job of this robot part?',
       '🤖 ¿Robot o no es robot?': '🤖 Robot or not a robot?',
       'Pregúntate: ¿percibe?, ¿decide?, ¿actúa? Y responde:': 'Ask yourself: does it sense? does it decide? does it act? Then answer:',
       'La aspiradora robot': 'The robot vacuum',
-
-      /* — reto — */
-      '🏆 Reto Final — ¡30 segundos!': '🏆 Final Challenge — 30 seconds!',
-      'Clasifica cada término lo más rápido que puedas.': 'Sort each term as fast as you can.',
-      '⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)': '⭐ +1 XP correct | ❌ -1 XP wrong (first round only)',
-      '💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.':
-        '💡 Tip: when you finish, use "Change pair" to play with other categories and get even quicker.',
-      '¡Prepárate!': 'Get ready!', '🏁 ¡Tiempo!': '🏁 Time!',
-      '🚀 ¡Iniciar!': '🚀 Start!', '🔀 Variar pareja': '🔀 Change pair',
-
-      /* — sopa de letras — */
-      '🤍 Sopa de Letras': '🤍 Word Search',
-      '⭐ +1 XP por palabra encontrada (primera vez)': '⭐ +1 XP per word you find (first time)',
-      '🖱️ Arrastra o haz clic en la primera letra, luego en la última': '🖱️ Drag, or click the first letter and then the last one',
-      '🔄 Variar sopa': '🔄 New word search', '🔦 Linterna (-2 XP)': '🔦 Flashlight (-2 XP)',
-      '🔄 Nueva sopa cargada': '🔄 New word search loaded',
-      '🎉 ¡Todas las palabras encontradas!': '🎉 You found every word!',
-      '🎉 ¡Ya encontraste todas las palabras!': '🎉 You have already found every word!',
-      '⚠️ Necesitas al menos 2 XP para usar la linterna.': '⚠️ You need at least 2 XP to use the flashlight.',
-      '🔦 ¡Linterna encendida 3 segundos! (-2 XP)': '🔦 Flashlight on for 3 seconds! (-2 XP)',
-
       /* — generador de tareas — */
-      '📋 Generador de Tareas': '📋 Homework Generator',
       '🔍 Identificar': '🔍 Identify', '🗂️ Clasificar máquinas': '🗂️ Sort machines',
-      '✏️ Completar oraciones': '✏️ Complete sentences', '💡 Explicar y diseñar': '💡 Explain and design',
-      '5 tareas': '5 tasks', '8 tareas': '8 tasks', '10 tareas': '10 tasks', '15 tareas': '15 tasks',
-      '⚡ Generar': '⚡ Generate', '👁 Respuestas': '👁 Answers',
-      '📋 Instrucción': '📋 Instructions',
       'Copia en tu cuaderno; subraya, colorea o encierra el concepto de robótica indicado en cada oración. Escribe al lado qué parte o tipo de robot es.':
         'Copy this in your notebook; underline, color or circle the robotics concept in each sentence. Next to it, write which robot part or type it is.',
       'Copia la siguiente tabla en tu cuaderno. Para cada máquina responde: ¿es robot?, ¿percibe?, ¿decide?, ¿actúa? Explica con tus palabras.':
         'Copy the table below in your notebook. For each machine answer: is it a robot? does it sense? does it decide? does it act? Explain in your own words.',
-      'Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.':
-        'Copy and solve in your notebook. Each sentence has a ___ gap. Choose and write the correct option.',
-      'Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa. Puedes acompañarlas con dibujos.':
-        'Copy the questions below in your notebook and answer each one clearly and completely. You may add drawings.',
       'Máquina': 'Machine', '¿Es robot?': 'Is it a robot?', '¿Percibe?': 'Does it sense?',
       '¿Decide?': 'Does it decide?', '¿Actúa?': 'Does it act?',
-
       /* — evaluación conceptual: pantalla — */
-      '🎓 Evaluación Conceptual': '🎓 Concept Test', '🧠 Pensamiento Crítico': '🧠 Critical Thinking',
       'Evaluación Final · ¿Qué es un Robot? · Educación Básica · Robótica': 'Final Test · What Is a Robot? · Basic Education · Robotics',
       'Evaluación Competencial · Pensamiento Crítico · ¿Qué es un Robot? · Educación Básica': 'Competency Test · Critical Thinking · What Is a Robot? · Basic Education',
       'Evaluación Competencial · Pensamiento Crítico · ¿Qué es un Robot? · Educación Básica · Robótica': 'Competency Test · Critical Thinking · What Is a Robot? · Basic Education · Robotics',
       '🎓 Evaluación Final — ¿Qué es un Robot?': '🎓 Final Test — What Is a Robot?',
       '🧠 Prueba de Pensamiento Crítico — ¿Qué es un Robot?': '🧠 Critical Thinking Test — What Is a Robot?',
-      'Nombre:': 'Name:', 'Fecha:': 'Date:', 'Centro Educativo:': 'School:', 'Instituto:': 'School:',
-      'Grado y Sección:': 'Grade and section:', 'Nº Lista:': 'Student No.:', 'Parcial:': 'Term:',
-      'Valor total: 100 puntos · Cada respuesta vale 5 puntos': 'Total value: 100 points · Each answer is worth 5 points',
-      'Valor total: 100 puntos · 5 secciones de 20 puntos': 'Total value: 100 points · 5 sections of 20 points',
-      'Copia el examen en tu cuaderno y responde las preguntas, después selecciona Ver Pauta para que te autoevalúes. Genera nuevas preguntas cuando quieras.':
-        'Copy the test in your notebook and answer the questions, then choose Show Answer Key to check yourself. Generate new questions whenever you like.',
-      'Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la Pauta y anótate el puntaje de cada sección. Genera una nueva prueba cuando quieras.':
-        'Answer each case in your own words (on screen or in your notebook), compare with the Answer Key and write down your score for each section. Generate a new test whenever you like.',
-      '🔄 Nueva Evaluación': '🔄 New Test', '🔄 Nueva Prueba': '🔄 New Test',
-      '👁 Ver Pauta': '👁 Show Answer Key', '🧮 Calificar prueba': '🧮 Grade the test',
-      '🧮 Calcular Total': '🧮 Add up the total', '🖨️ Imprimir': '🖨️ Print',
-      '📊 Distribución de puntaje · 100 puntos': '📊 Score distribution · 100 points',
-      'Cada sección vale 25 puntos (5 preguntas × 5 pts)': 'Each section is worth 25 points (5 questions × 5 pts)',
-      'Completar 25 pts': 'Fill in 25 pts', 'V/F 25 pts': 'T/F 25 pts',
-      'Selección 25 pts': 'Multiple choice 25 pts', 'Pareados 25 pts': 'Matching 25 pts',
-      'I. Completar el espacio': 'I. Fill in the blank', 'II. Verdadero o Falso': 'II. True or False',
-      'III. Selección Múltiple': 'III. Multiple Choice', 'IV. Términos Pareados': 'IV. Matching Terms',
-      '25 pts · 5 pts c/u': '25 pts · 5 pts each',
-      'Verdadero': 'True', 'Falso': 'False',
-      '📌 Términos': '📌 Terms', '🔑 Definiciones': '🔑 Definitions',
-      'Correcto. +5 pts': 'Correct. +5 pts',
-      '⚠️ Genera una evaluación primero': '⚠️ Generate a test first',
-      '⚠️ Genera una prueba primero': '⚠️ Generate a test first',
-      '⚠️ Activa las ventanas emergentes para imprimir': '⚠️ Allow pop-up windows in order to print',
-      '🧮 Evaluación interactiva: responde en pantalla y presiona Calificar prueba. La impresión conserva el formato original sin respuestas digitadas.':
-        '🧮 Interactive test: answer on screen and press Grade the test. Printing keeps the original layout with no typed answers.',
-      'Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.':
-        'This result is only for checking on screen; printing keeps the clean layout for paper.',
-      '🧮 Autoevaluación: responde cada sección, compara con la Pauta y anota tu puntaje (0–20) en cada casilla. Luego presiona Calcular Total.':
-        '🧮 Self-assessment: answer each section, compare with the Answer Key and write your score (0–20) in each box. Then press Add up the total.',
-      'Compara siempre tus respuestas con la Pauta antes de anotar el puntaje de cada sección.':
-        'Always compare your answers with the Answer Key before writing the score for each section.',
-
       /* — pensamiento crítico — */
       'I. ¿Qué sensor necesita?': 'I. Which sensor does it need?',
-      'II. Corrige el error conceptual': 'II. Correct the misconception',
       'III. Analiza el ciclo: percibe → decide → actúa': 'III. Analyze the cycle: sense → think → act',
-      'IV. Comparación razonada': 'IV. Reasoned comparison',
       'V. Diseña y justifica tu robot': 'V. Design and justify your robot',
-      '20 pts': '20 pts',
       '¿Qué sensor necesita este robot? Justifica tu elección: ¿qué percibe y para qué le sirve?':
         'Which sensor does this robot need? Justify your choice: what does it sense and what for?',
       '¿Qué sensor necesita este robot? Justifica tu elección.': 'Which sensor does this robot need? Justify your choice.',
-      'Error 1 y su corrección:': 'Mistake 1 and its correction:',
-      'Error 2 y su corrección:': 'Mistake 2 and its correction:',
-      'Error 1:': 'Mistake 1:', 'Error 2:': 'Mistake 2:',
       'Esta afirmación tiene dos errores. Corrígelos con argumentos, usando el ciclo percibir → decidir → actuar:':
         'This statement contains two mistakes. Correct them with arguments, using the sense → think → act cycle:',
-      'Esta afirmación tiene dos errores. Corrígelos con argumentos:': 'This statement contains two mistakes. Correct them with arguments:',
-      '1. ¿Qué concepto corresponde a cada caso? 2. ¿En qué se parecen? 3. ¿En qué se diferencian? Da un ejemplo de cada uno.':
-        '1. Which concept matches each case? 2. How are they alike? 3. How are they different? Give an example of each.',
-      'Caso A': 'Case A', 'Caso B': 'Case B', 'Caso A:': 'Case A:', 'Caso B:': 'Case B:',
       'Inventa un robot que resuelva este problema: escribe su nombre, qué SENSORES usa (¿qué percibe?), qué DECIDE su controlador («si pasa X, entonces hace Y») y con qué ACTUADORES actúa. Puedes dibujarlo en tu cuaderno.':
         'Invent a robot that solves this problem: write its name, which SENSORS it uses (what does it sense?), what its controller DECIDES («if X happens, then it does Y») and which ACTUATORS it acts with. You may draw it in your notebook.',
       'Inventa un robot que resuelva este problema: escribe su nombre, qué SENSORES usa, qué DECIDE su controlador («si pasa X, entonces hace Y») y con qué ACTUADORES actúa. Dibújalo al reverso de la hoja.':
         'Invent a robot that solves this problem: write its name, which SENSORS it uses, what its controller DECIDES («if X happens, then it does Y») and which ACTUATORS it acts with. Draw it on the back of the sheet.',
-      'Obtenido:': 'Score:', 'de 20 pts': 'of 20 pts',
       'I. Corrige el error': 'I. Correct the mistake', 'II. Corrige el error': 'II. Correct the mistake',
       'III. Analiza el ciclo': 'III. Analyze the cycle', 'IV. Comparación': 'IV. Comparison',
       'V. Diseña tu robot — Rúbrica': 'V. Design your robot — Rubric',
       'Percibe:': 'Senses:', 'Decide:': 'Decides:', 'Actúa:': 'Acts:',
-
       /* — impresión: encabezados, pauta y pie — */
       'Evaluación ¿Qué es un Robot?': 'Test · What Is a Robot?',
       'Pensamiento Crítico ¿Qué es un Robot?': 'Critical Thinking · What Is a Robot?',
       '✅ PAUTA — Evaluación Final · ¿Qué es un Robot?': '✅ ANSWER KEY — Final Test · What Is a Robot?',
       '✅ PAUTA — Pensamiento Crítico · ¿Qué es un Robot?': '✅ ANSWER KEY — Critical Thinking · What Is a Robot?',
-      'Documento exclusivo del docente · No distribuir al estudiante': 'For the teacher only · Do not hand out to students',
-      'Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u': 'Total value: 100 pts | 4 sections × 5 questions × 5 pts each',
-      'Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección':
-        'Total value: 100 pts | 5 sections × 20 pts each — open answers, use as a marking guide',
-      'I. Completar': 'I. Fill in', 'II. V o F': 'II. T or F', 'III. Selección': 'III. Multiple choice', 'IV. Pareados': 'IV. Matching',
-      'Total, obtenido': 'Total score', 'de 100%': 'of 100%', 'de 100': 'of 100', 'de 25%': 'of 25%', 'de 20': 'of 20',
-      'Nº de Evaluación temática realizada:': 'Topic test number:',
-      'Evaluación con valor en el parcial': 'Test counts toward the term grade',
-      'Evaluación solo de repaso': 'Practice test only',
-      '1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.':
-        '1–5 (Fill in): marked by hand → ✓ (A) means a correct answer · 6–10: T=A, F=B · Visual reference only; use the official ZipGrade sheet to scan students.',
-
       /* — constancia — */
-      'CONSTANCIA DE LOGRO': 'CERTIFICATE OF ACHIEVEMENT',
       'Misión ¿Qué es un Robot?': 'Mission · What Is a Robot?',
-      'Estudiante': 'Student', 'Escribe tu nombre aquí...': 'Type your name here…',
-      '📲 WhatsApp': '📲 WhatsApp', '📷 Guardar foto': '📷 Save photo', '✖ Cerrar': '✖ Close',
       '¡Sigue adelante!': 'Keep going!', '¡Sigue aprendiendo!': 'Keep learning!',
       '¡Muy buen trabajo!': 'Great work!', '¡Vas muy bien!': 'You are doing very well!',
       '¡Dominas las partes del robot!': 'You have mastered the robot parts!',
       '¡Maestro Constructor de Robots!': 'Master Robot Builder!',
-      'Sigue completando secciones para desbloquear logros': 'Keep completing sections to unlock achievements',
-      '🔄 XP reiniciado a 0': '🔄 XP reset to 0',
-      '¡Misión completada!': 'Mission completed!', 'Ver mi Constancia': 'See my certificate',
-
-      /* — herramientas compartidas (modo presentación) — */
-      '📽️ Presentación': '📽️ Slideshow', 'Modo presentación': 'Slideshow mode',
-      'Letra más grande': 'Bigger text', 'Letra más pequeña': 'Smaller text',
-      '📖 Libro (deslizar páginas)': '📖 Book (swipe pages)',
-      '📱 Vertical 3:4': '📱 Portrait 3:4', '📽️ Panorámico 16:9': '📽️ Widescreen 16:9',
-
       /* — trozos sueltos: frases que el <strong> parte en varios nodos — */
-      'Usa las flechas': 'Use the',
       'para poner los pasos del robot en el orden correcto:': 'arrows to put the robot steps in the right order:',
-      'Ejemplo:': 'Example:',
       'Los sensores captan luz y distancia. →': 'Sensors pick up light and distance. →',
       'Sensores': 'Sensors',
-      'Copia el examen en tu cuaderno y responde las preguntas, después selecciona': 'Copy the test in your notebook and answer the questions, then choose',
-      'Ver Pauta': 'Show Answer Key',
-      'para que te autoevalúes.': 'to check yourself.',
-      'Genera nuevas preguntas cuando quieras.': 'Generate new questions whenever you like.',
-      'Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la': 'Answer each case in your own words (on screen or in your notebook), compare with the',
-      'Pauta': 'Answer Key',
-      'y anótate el puntaje de cada sección.': 'and write down your score for each section.',
-      'Genera una nueva prueba cuando quieras.': 'Generate a new test whenever you like.',
-      '🧮 Evaluación interactiva:': '🧮 Interactive test:',
-      'responde en pantalla y presiona': 'answer on screen and press',
-      'Calificar prueba': 'Grade the test',
-      '. La impresión conserva el formato original sin respuestas digitadas.': '. Printing keeps the original layout with no typed answers.',
-      '🧮 Autoevaluación:': '🧮 Self-assessment:',
-      'responde cada sección, compara con la': 'answer each section, compare with the',
-      'y anota tu puntaje (0–20) en cada casilla. Luego presiona': 'and write your score (0–20) in each box. Then press',
-      'Calcular Total': 'Add up the total',
-      'Esta afirmación tiene': 'This statement contains',
-      'dos errores': 'two mistakes',
       '. Corrígelos con argumentos, usando el ciclo percibir → decidir → actuar:': '. Correct them with arguments, using the sense → think → act cycle:'
     },
 
