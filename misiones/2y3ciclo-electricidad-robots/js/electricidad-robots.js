@@ -32,7 +32,7 @@ function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSe
 function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalCritFormNum)evalCritFormNum=s.evalCritFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
 
 // ===================== ACHIEVEMENTS =====================
-const ACHIEVEMENTS={
+let ACHIEVEMENTS={
   primer_quiz:{icon:'⚡',label:'Primer quiz eléctrico superado'},
   flash_master:{icon:'🃏',label:'Todas las flashcards del circuito exploradas'},
   clasif_pro:{icon:'🗂️',label:'Clasificador de conductores y aislantes experto'},
@@ -51,7 +51,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#0e7490','#22d3ee','#c2410c','#fb923c','#06b6d4'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Chispa Curiosa ⚡'},{t:55,n:'Armador de Circuitos 🔌'},{t:90,n:'Técnico del LED 💡'},{t:130,n:'Cazador de Fallas 🔧'},{t:165,n:'Ingeniero Eléctrico 🛠️'},{t:190,n:'Maestro del Circuito ⚡'}];
+let lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Chispa Curiosa ⚡'},{t:55,n:'Armador de Circuitos 🔌'},{t:90,n:'Técnico del LED 💡'},{t:130,n:'Cazador de Fallas 🔧'},{t:165,n:'Ingeniero Eléctrico 🛠️'},{t:190,n:'Maestro del Circuito ⚡'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -65,7 +65,7 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 function miniQ(btn,isOk,fbId){const wrap=btn.parentElement;if(wrap.dataset.done==='1')return;wrap.querySelectorAll('.cmp-opt').forEach(b=>b.classList.remove('sel'));if(isOk){wrap.dataset.done='1';btn.classList.add('correct');fb(fbId,'¡Correcto! Piensas como todo un electricista.',true);sfx('ok');}else{btn.classList.add('wrong');fb(fbId,'Casi. Pregúntate: ¿el camino de la corriente está cerrado y completo?',false);sfx('no');}}
 
 // ===================== FLASHCARD DATA =====================
-const fcData=[
+let fcData=[
   {w:'Circuito eléctrico',a:'🔌 <strong>Camino cerrado</strong> por donde viaja la corriente: fuente + cables + interruptor + carga.'},
   {w:'Fuente (pila o batería)',a:'🔋 La que <strong>empuja</strong> la corriente. Tiene dos polos: <strong>+</strong> y <strong>−</strong>.'},
   {w:'Cable',a:'🧵 El <strong>camino</strong> de la corriente. Por dentro lleva <strong>cobre</strong> (conduce) y por fuera plástico (aísla).'},
@@ -90,7 +90,7 @@ function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
 
 // ===================== JUEGO: MEMORIA DEL ROBOT =====================
-const memoPairs=[
+let memoPairs=[
   {id:'pila',t:'Pila',d:'🔋 la fuente que empuja la corriente'},
   {id:'cable',t:'Cable',d:'🧵 el camino de cobre por donde pasa'},
   {id:'interruptor',t:'Interruptor',d:'🔘 abre o cierra el camino'},
@@ -137,7 +137,7 @@ function flipMemo(btn,i){
 function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
-const qzData=[
+let qzData=[
   {q:'¿Qué necesita la corriente eléctrica para poder circular?',o:['a) Un camino cerrado y completo','b) Mucha luz','c) Un imán','d) Estar mojada'],c:0},
   {q:'¿Cuáles son las cuatro partes de un circuito básico?',o:['a) Sol, agua, aire y tierra','b) Fuente, cables, interruptor y carga','c) Motor, rueda, tornillo y clavo','d) Pila, foco, papel y goma'],c:1},
   {q:'¿Para qué sirve el interruptor?',o:['a) Para dar voltaje','b) Para calentar el cable','c) Para abrir o cerrar el camino de la corriente','d) Para pintar el circuito'],c:2},
@@ -155,7 +155,7 @@ function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false
 function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
 
 // ===================== CLASIFICACIÓN =====================
-const classGroups=[
+let classGroups=[
   {label:['Conductor','Aislante'],headA:'🟠 Conductor (deja pasar)',headB:'🚫 Aislante (no deja pasar)',colA:'con',colB:'ais',
    words:[{w:'Alambre de cobre',t:'con'},{w:'Regla de plástico',t:'ais'},{w:'Clavo de hierro',t:'con'},{w:'Palito de madera seca',t:'ais'},{w:'Papel de aluminio',t:'con'},{w:'Borrador de hule',t:'ais'},{w:'Moneda',t:'con'},{w:'Vidrio',t:'ais'},{w:'Agua con sal',t:'con'},{w:'Tela seca',t:'ais'}]},
   {label:['Serie','Paralelo'],headA:'➖ En serie',headB:'🛣️ En paralelo',colA:'ser',colB:'par',
@@ -172,7 +172,7 @@ function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupId
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
 // ===================== IDENTIFICAR =====================
-const idData=[
+let idData=[
   {s:['La','pila','empuja','la','corriente','por','el','circuito.'],c:1,art:'La fuente de energía del circuito'},
   {s:['El','interruptor','abre','y','cierra','el','camino.'],c:1,art:'La pieza que abre o cierra el circuito'},
   {s:['Por','dentro','del','cable','va','el','cobre.'],c:6,art:'El metal conductor que va dentro del cable'},
@@ -189,7 +189,7 @@ function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').
 function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
 
 // ===================== COMPLETA =====================
-const cmpData=[
+let cmpData=[
   {s:'La corriente solo circula si el camino está ___.',opts:['cerrado','pintado','mojado'],c:0},
   {s:'La pila es la ___ de energía del circuito.',opts:['carga','fuente','resistencia'],c:1},
   {s:'El ___ abre o cierra el paso de la corriente.',opts:['cable','LED','interruptor'],c:2},
@@ -205,7 +205,7 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 
 // ===================== WIDGETS =====================
 // Widget 1: Percibe-Decide-Actúa (ordenar el ciclo en casos concretos)
-const routeSets=[
+let routeSets=[
   {label:'La linterna de pilas en un apagón',steps:['La corriente sale del polo + de la pila','Viaja por el cable hasta el interruptor','El interruptor cerrado la deja pasar','La corriente llega al foquito y lo enciende','Regresa por el otro cable al polo − de la pila']},
   {label:'El carrito con motor del aula',steps:['La batería empuja la corriente por su polo +','El cable lleva la corriente hasta el interruptor','Con el interruptor cerrado el camino queda completo','El motor recibe la corriente y hace girar la rueda','La corriente vuelve a la batería y el ciclo continúa']},
   {label:'La lámpara solar del caserío',steps:['El panel solar recibe la luz del sol y produce electricidad','La electricidad se guarda en la batería durante el día','Al oscurecer, el circuito de la lámpara se cierra','El LED enciende y alumbra el patio','Al amanecer el circuito se abre y el LED se apaga']},
@@ -218,7 +218,7 @@ function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Caso: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: ¿Qué sensor necesita?
-const neuronPartes=[
+let neuronPartes=[
   {desc:'Quieres que la luz se encienda y se apague sin desconectar los cables',ans:'Un interruptor',opts:['Un interruptor','Una resistencia','Un aislante','Un panel solar']},
   {desc:'Necesitas el empuje (voltaje) para que la corriente circule',ans:'Una pila',opts:['Una pila','Un cable','Un interruptor','Un zumbador']},
   {desc:'Quieres transformar la electricidad en movimiento',ans:'Un motor',opts:['Un motor','Un LED','Un cable','Una resistencia']},
@@ -235,7 +235,7 @@ function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Parte → Función
-const neuroPairs=[
+let neuroPairs=[
   {trans:'Pila',func:'Da el voltaje que empuja la corriente',opts:['Da el voltaje que empuja la corriente','Abre y cierra el camino','Transforma la electricidad en luz','Impide el paso de la corriente']},
   {trans:'Interruptor',func:'Abre o cierra el camino de la corriente',opts:['Abre o cierra el camino de la corriente','Empuja la corriente','Gira la rueda del carrito','Cubre el cable por fuera']},
   {trans:'LED',func:'Transforma la electricidad en luz',opts:['Transforma la electricidad en luz','Transforma la electricidad en movimiento','Guarda la energía del sol','Corta el paso de la corriente']},
@@ -248,7 +248,7 @@ function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.query
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: ¿Robot o no es robot?
-const enfermedadData=[
+let enfermedadData=[
   {disease:'Armar un circuito con una pila AA, cable y foquito',characteristic:'Seguro',opts:['Seguro','Peligroso']},
   {disease:'Meter un alambre en el tomacorriente de 110 V',characteristic:'Peligroso',opts:['Peligroso','Seguro']},
   {disease:'Tocar el cargador del celular con las manos mojadas',characteristic:'Peligroso',opts:['Peligroso','Seguro']},
@@ -262,7 +262,7 @@ function checkEnfer(opt,btn,d){if(enferDone)return;enferDone=true;document.query
 function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
-const retoPairs=[
+let retoPairs=[
   {label:['Conductor','Aislante'],btnA:'🟠 Conductor',btnB:'🚫 Aislante',colA:'con',colB:'ais',
    words:[{w:'Cobre',t:'con'},{w:'Plástico',t:'ais'},{w:'Hierro',t:'con'},{w:'Madera seca',t:'ais'},{w:'Aluminio',t:'con'},{w:'Hule',t:'ais'},{w:'Moneda',t:'con'},{w:'Vidrio',t:'ais'},{w:'Agua con sal',t:'con'},{w:'Tela seca',t:'ais'}]},
   {label:['Serie','Paralelo'],btnA:'➖ Serie',btnB:'🛣️ Paralelo',colA:'ser',colB:'par',
@@ -280,7 +280,7 @@ function nextRetoPair(){sfx('click');clearInterval(retoTimerInt);retoRunning=fal
 function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';document.getElementById('fbReto').classList.remove('show');}
 
 // ===================== TASK GENERATOR =====================
-const identifyTaskDB=[
+let identifyTaskDB=[
   {s:'El camino cerrado por donde circula la corriente se llama circuito.',type:'Circuito'},
   {s:'La pila da el empuje o voltaje que mueve la corriente.',type:'Fuente'},
   {s:'El interruptor abre o cierra el paso de la corriente.',type:'Interruptor'},
@@ -292,7 +292,7 @@ const identifyTaskDB=[
   {s:'Si un foco se quema y los demás siguen encendidos, están conectados así.',type:'Circuito en paralelo'},
   {s:'Cuando la pila se calienta porque la corriente encontró un atajo sin carga.',type:'Cortocircuito'},
 ];
-const classifyTaskDB=[
+let classifyTaskDB=[
   {w:'Alambre de cobre',gen:'Sí, muy bien',n:'Metal (cobre)',g:'Conductor',t:'Forma el camino del circuito'},
   {w:'Regla de plástico',gen:'No',n:'Plástico',g:'Aislante',t:'Sirve para protegernos, no para conducir'},
   {w:'Clavo de hierro',gen:'Sí',n:'Metal (hierro)',g:'Conductor',t:'Puede unir dos puntos del circuito'},
@@ -302,7 +302,7 @@ const classifyTaskDB=[
   {w:'Agua con sal',gen:'Sí',n:'Líquido con sales',g:'Conductor',t:'Por eso NUNCA se tocan aparatos con las manos mojadas'},
   {w:'Vidrio',gen:'No',n:'Vidrio',g:'Aislante',t:'Se usa para sostener piezas sin que pase corriente'},
 ];
-const completeTaskDB=[
+let completeTaskDB=[
   {s:'La corriente circula solo si el camino está ___.',opts:['cerrado','roto','pintado'],ans:'cerrado'},
   {s:'La pila es la ___ de energía del circuito.',opts:['fuente','carga','resistencia'],ans:'fuente'},
   {s:'El ___ abre o cierra el paso de la corriente.',opts:['interruptor','cable','LED'],ans:'interruptor'},
@@ -312,7 +312,7 @@ const completeTaskDB=[
   {s:'Las luces de la casa van en ___.',opts:['paralelo','serie','cortocircuito'],ans:'paralelo'},
   {s:'El LED lleva una ___ para no quemarse.',opts:['resistencia','pila','antena'],ans:'resistencia'},
 ];
-const explainQuestions=[
+let explainQuestions=[
   {q:'Dibuja un circuito básico y nombra sus cuatro partes. Explica el camino que recorre la corriente.',ans:'Debe dibujar la fuente (pila), los cables, el interruptor y la carga (LED, motor o zumbador). La corriente sale del polo + de la pila, recorre el cable, pasa por el interruptor cerrado y la carga, y regresa al polo −. Si el camino se abre en cualquier punto, nada funciona.'},
   {q:'Explica con tus palabras la diferencia entre circuito en serie y circuito en paralelo. ¿Cuál usarías para las luces de tu casa y por qué?',ans:'En serie hay un solo camino: los focos se reparten el voltaje y si uno se quema se apagan todos. En paralelo cada foco tiene su propio camino y recibe todo el voltaje: si uno se quema los demás siguen. En la casa se usa paralelo, porque así una lámpara quemada no deja a oscuras toda la vivienda.'},
   {q:'Haz una lista de 5 objetos de tu casa y clasifícalos en conductores y aislantes. Explica cómo lo sabes.',ans:'Respuesta libre. Los metales (cobre, hierro, aluminio) y el agua con sales conducen; el plástico, la madera seca, el hule y el vidrio aíslan. Se reconoce por el material: los cables llevan cobre adentro (conductor) y plástico afuera (aislante).'},
@@ -329,7 +329,7 @@ function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las si
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
-const sopaSets=[
+let sopaSets=[
   {size:10,grid:[
     ['T','V','T','M','O','T','O','R','T','B'],
     ['R','J','O','P','U','Q','C','E','F','N'],
@@ -393,7 +393,7 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank=[
+let evalTFBank=[
   {q:'La corriente eléctrica necesita un camino cerrado para circular.',a:true},
   {q:'El interruptor sirve para abrir o cerrar el camino de la corriente.',a:true},
   {q:'El cobre es un buen conductor de la electricidad.',a:true},
@@ -410,7 +410,7 @@ const evalTFBank=[
   {q:'Un cortocircuito calienta la pila y puede ser peligroso.',a:true},
   {q:'Las pilas usadas se pueden botar en la basura común de la casa.',a:false},
 ];
-const evalMCBank=[
+let evalMCBank=[
   {q:'¿Qué es un circuito eléctrico?',o:['a) Un cable enrollado','b) El camino cerrado por donde circula la corriente','c) Una pila descargada','d) Un foco pintado'],a:1},
   {q:'¿Cuáles son las partes de un circuito básico?',o:['a) Fuente, cables, interruptor y carga','b) Sol, agua, aire y tierra','c) Motor, rueda, tornillo y clavo','d) Papel, goma, tijera y regla'],a:0},
   {q:'¿Para qué sirve el interruptor?',o:['a) Para aumentar el voltaje','b) Para pintar el circuito','c) Para abrir o cerrar el camino de la corriente','d) Para enfriar la pila'],a:2},
@@ -427,7 +427,7 @@ const evalMCBank=[
   {q:'En un motor, ¿en qué se transforma la energía eléctrica?',o:['a) En luz','b) En movimiento','c) En frío','d) En papel'],a:1},
   {q:'¿Qué se hace con las pilas usadas?',o:['a) Se botan en la basura común','b) Se entierran en la huerta','c) Se llevan a un centro de acopio o recolección especial','d) Se tiran al río'],a:2},
 ];
-const evalCPBank=[
+let evalCPBank=[
   {q:'La corriente solo circula si el camino está ___.',a:'cerrado'},
   {q:'La pila o batería es la ___ de energía del circuito.',a:'fuente'},
   {q:'El ___ abre o cierra el paso de la corriente.',a:'interruptor'},
@@ -444,7 +444,7 @@ const evalCPBank=[
   {q:'Para experimentar en el aula usamos solo ___.',a:'pilas'},
   {q:'El LED tiene ___: solo enciende conectado en un sentido.',a:'polaridad'},
 ];
-const evalPRBank=[
+let evalPRBank=[
   {term:'Circuito eléctrico',def:'Camino cerrado por donde circula la corriente'},
   {term:'Fuente',def:'Pila o batería que empuja la corriente'},
   {term:'Interruptor',def:'Abre o cierra el camino de la corriente'},
@@ -527,7 +527,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
 .forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Electricidad para Robots · Educación Básica · Robótica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Electricidad para Robots · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 function evalSwitchMode(mode){
@@ -545,7 +545,7 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
-const critSensorBank=[
+let critSensorBank=[
   {txt:'Armaste el circuito con pila, cables, interruptor y un LED, cierras el interruptor y el LED NO enciende.',ans:'Revisar en orden: ① que el camino esté completo (cables bien sujetos, sin puntas sueltas), ② que la pila tenga carga, ③ la polaridad del LED (pata larga al +, pata corta al −) y ④ que lleve su resistencia. Basta un punto abierto para que nada funcione.'},
   {txt:'El foquito enciende solo mientras aprietas los cables con la mano; al soltarlos se apaga.',ans:'Hay un contacto flojo: el circuito se abre al soltar. Se debe asegurar la unión (retorcer bien el alambre, usar cinta aislante o un portapilas) para que el camino quede cerrado por sí solo.'},
   {txt:'La pila se calienta muchísimo, el alambre también, y la carga sigue apagada.',ans:'Es un CORTOCIRCUITO: la corriente encontró un atajo del + al − sin pasar por la carga. Hay que desconectar de inmediato (la pila puede quemar o reventar) y rehacer el circuito para que la corriente pase por la carga.'},
@@ -553,7 +553,7 @@ const critSensorBank=[
   {txt:'De dos focos en paralelo, uno no enciende y el otro alumbra normalmente.',ans:'Como están en PARALELO, cada uno tiene su camino: la falla es solo del foco apagado (quemado o mal conectado). Se revisa ese ramal; el otro sigue funcionando porque su camino está completo.'},
   {txt:'Conectaste un LED directo a una pila de 9 V, sin resistencia, y se quemó al instante.',ans:'Sin resistencia pasa demasiada corriente por el LED y lo destruye. Siempre se coloca una resistencia en serie con el LED para limitar la corriente; también hay que respetar su polaridad.'},
 ];
-const critErrorBank=[
+let critErrorBank=[
   {txt:'"La corriente pasa igual aunque el interruptor esté abierto, solo que más despacio."',
    g1:'Falso: con el interruptor ABIERTO el camino queda cortado y NO pasa nada de corriente; no es cuestión de velocidad.',
    g2:'La corriente necesita un camino CERRADO y completo: sale de un polo de la pila, pasa por la carga y regresa al otro polo.'},
@@ -570,12 +570,12 @@ const critErrorBank=[
    g1:'No se recarga: se produce un CORTOCIRCUITO, la corriente pasa sin carga que la limite y la pila se CALIENTA.',
    g2:'Es peligroso: la pila puede quemar la mano, derramarse o reventar. La corriente siempre debe pasar por una carga (LED, motor o zumbador).'},
 ];
-const critCicloQuestions=[
+let critCicloQuestions=[
   '1. ¿Qué camino recorre la corriente? Descríbelo desde la pila hasta que regresa a ella.',
   '2. ¿Qué pasaría si se abre el interruptor o se suelta un cable? ¿Por qué?',
   '3. ¿En qué se transforma la energía eléctrica en este circuito?',
 ];
-const critCicloBank=[
+let critCicloBank=[
   {txt:'La linterna de pilas que usa tu familia durante los apagones: al mover el botón, el foquito enciende.',
    p:'La corriente sale del polo + de las pilas, pasa por el resorte y el cable metálico, llega al interruptor y de ahí al foquito, y regresa al polo −.',
    d:'El circuito quedaría ABIERTO y el foquito se apagaría, porque la corriente necesita un camino cerrado y completo.',
@@ -597,7 +597,7 @@ const critCicloBank=[
    d:'Si el cable está dañado o mal conectado, el camino se abre y el teléfono no carga.',
    a:'La energía eléctrica se transforma en energía química guardada en la batería, y luego en luz, sonido y movimiento del teléfono.'},
 ];
-const critCompareBank=[
+let critCompareBank=[
   {a:'Conexión con un solo camino: los focos se reparten el voltaje y, si uno se quema, se apagan todos.',b:'Conexión en la que cada foco tiene su propio camino y recibe todo el voltaje; si uno se quema, los demás siguen.',
    ga:'El circuito en serie.',
    gb:'El circuito en paralelo.',
@@ -615,14 +615,14 @@ const critCompareBank=[
    gb:'La resistencia.',
    gr:'Semejanza: los dos deciden cuánta corriente pasa por el circuito. Diferencia: el voltaje empuja (más voltaje, más corriente) y la resistencia frena (más resistencia, menos corriente). Por eso un LED con pila de 9 V necesita resistencia y con pila de 1.5 V casi no se nota.'},
 ];
-const critDesignBank=[
+let critDesignBank=[
   'En tu casa los apagones son frecuentes y en la noche nadie encuentra las velas ni la linterna.',
   'El corral de las gallinas queda oscuro y el zorro entra de noche sin que nadie se dé cuenta.',
   'En la escuela no hay timbre: la maestra tiene que salir al patio a gritar la hora del recreo.',
   'El caserío no tiene tendido eléctrico, pero sí mucho sol durante todo el día.',
   'En la pulpería no se dan cuenta cuando entra un cliente, porque la dueña está en la cocina.',
 ];
-const critDesignGuide='Rúbrica de 3 criterios (total 20 pts) — ① PARTES DEL CIRCUITO (7 pts): nombra la fuente (pilas o panel solar), los cables, el interruptor y la carga (LED, motor o zumbador) y explica el camino cerrado. ② FUNCIONAMIENTO (6 pts): explica cuándo se cierra y cuándo se abre el circuito y en qué se transforma la energía eléctrica (luz, movimiento o sonido); si usa varias cargas, justifica serie o paralelo. ③ SEGURIDAD (7 pts): usa solo pilas (nunca los 110 V), cables forrados y manos secas, evita el cortocircuito y dice qué hará con las pilas usadas. Cualquier diseño vale si el camino queda cerrado y la solución es realista.';
+let critDesignGuide='Rúbrica de 3 criterios (total 20 pts) — ① PARTES DEL CIRCUITO (7 pts): nombra la fuente (pilas o panel solar), los cables, el interruptor y la carga (LED, motor o zumbador) y explica el camino cerrado. ② FUNCIONAMIENTO (6 pts): explica cuándo se cierra y cuándo se abre el circuito y en qué se transforma la energía eléctrica (luz, movimiento o sonido); si usa varias cargas, justifica serie o paralelo. ③ SEGURIDAD (7 pts): usa solo pilas (nunca los 110 V), cables forrados y manos secas, evita el cortocircuito y dice qué hará con las pilas usadas. Cualquier diseño vale si el camino queda cerrado y la solución es realista.';
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
@@ -690,14 +690,14 @@ function printEvalCrit(){
   const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Electricidad para Robots · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #0e7490;background:#ecfeff;color:#0e7490;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#0e7490;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #0e7490;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#ecfeff;border-left:3px solid #0e7490;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#ecfeff;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#0e7490;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #0e7490;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Electricidad para Robots · Educación Básica · Robótica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Electricidad para Robots · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
-  win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
+  win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
 // ===================== LABORATORIO DE LAS PARTES DEL ROBOT =====================
 // ===================== LABORATORIO DE CIRCUITOS =====================
 // Cada caso se resuelve con circuitoResuelve(): el resultado (enciende / no enciende)
 // se calcula a partir de la estructura del circuito, nunca se escribe a mano.
-const circuitoCasos=[
+let circuitoCasos=[
   {id:'correcto',nombre:'Circuito correcto',icon:'✅',tipo:'simple',cable:true,polaridad:true,corto:false,resistencia:true,
    cargas:[{n:'LED',emoji:'💡',quemada:false}],clave:[true],
    desc:'Pila, cables, interruptor y un LED con su resistencia. Todo está bien conectado.',
@@ -742,7 +742,7 @@ function circuitoResuelve(caso,cerrado){
   return{enc:caso.cargas.map(c=>!c.quemada),estado:'cerrado',motivo:'🟢 <strong>Circuito CERRADO:</strong> la corriente recorre todo el camino y la carga funciona.'};
 }
 function circuitoClave(caso){const e=caso.clave;if(e.every(x=>x))return 0;if(e.some(x=>x))return 1;return 2;}
-const labPredOpts=['🟢 Sí, funciona todo','🟡 Funciona solo una parte','🔴 No funciona nada'];
+let labPredOpts=['🟢 Sí, funciona todo','🟡 Funciona solo una parte','🔴 No funciona nada'];
 let labCaso=circuitoCasos[0].id,labCerrado=false;
 function _labCaso(){return circuitoCasos.find(c=>c.id===labCaso)||circuitoCasos[0];}
 function _labCarga(x,y,carga,on,lado){
@@ -822,7 +822,7 @@ function updateLabDisplay(){
   if(op&&op.children.length===0){labPredOpts.forEach((t,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=t;b.onclick=()=>labPredice(i);op.appendChild(b);});}
 }
 // ===================== WIDGET: DIAGNÓSTICO DE FALLAS =====================
-const diagData=[
+let diagData=[
   {desc:'El LED no enciende y el interruptor está cerrado. ¿Qué revisas PRIMERO?',ans:'Que el camino esté completo: cables bien sujetos y sin puntas sueltas',opts:['Que el camino esté completo: cables bien sujetos y sin puntas sueltas','El color del cable','El tamaño del LED','La marca de la pila']},
   {desc:'El LED sigue apagado, los cables están bien y la pila es nueva. ¿Qué revisas ahora?',ans:'La polaridad del LED: pata larga al + y pata corta al −',opts:['La polaridad del LED: pata larga al + y pata corta al −','Cambiar de mesa','Soplar el LED','Mojar los cables']},
   {desc:'La pila se calienta mucho y nada enciende. ¿Qué ocurre?',ans:'Hay un cortocircuito: desconecta de inmediato',opts:['Hay un cortocircuito: desconecta de inmediato','La pila está feliz','Falta voltaje','El LED es muy grande']},
@@ -883,3 +883,68 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ===================== IDIOMA (español ↔ inglés) =====================
+// El contenido en inglés vive en electricidad-robots-en.js y el botón lo maneja
+// ../../js/metas-i18n.js. Aquí solo se intercambian los bancos y se repinta:
+// el progreso (XP, logros, secciones hechas) no se toca al cambiar de idioma.
+const _BANCOS_ES = {
+  ACHIEVEMENTS, lvls, fcData, memoPairs, qzData, classGroups, idData, cmpData,
+  routeSets, neuronPartes, neuroPairs, enfermedadData, retoPairs,
+  identifyTaskDB, classifyTaskDB, completeTaskDB, explainQuestions, sopaSets,
+  evalTFBank, evalMCBank, evalCPBank, evalPRBank,
+  critSensorBank, critErrorBank, critCicloQuestions, critCicloBank,
+  critCompareBank, critDesignBank, critDesignGuide,
+  circuitoCasos, labPredOpts, diagData
+};
+window.MISION_APLICAR_IDIOMA = function (lang) {
+  const src = (lang === 'en' && window.MISION_EN && window.MISION_EN.data)
+    ? window.MISION_EN.data : _BANCOS_ES;
+  const usa = (k) => (src[k] !== undefined ? src[k] : _BANCOS_ES[k]);
+
+  ACHIEVEMENTS = usa('ACHIEVEMENTS'); lvls = usa('lvls');
+  fcData = usa('fcData'); memoPairs = usa('memoPairs'); qzData = usa('qzData');
+  classGroups = usa('classGroups'); idData = usa('idData'); cmpData = usa('cmpData');
+  routeSets = usa('routeSets'); neuronPartes = usa('neuronPartes');
+  neuroPairs = usa('neuroPairs'); enfermedadData = usa('enfermedadData');
+  retoPairs = usa('retoPairs'); identifyTaskDB = usa('identifyTaskDB');
+  classifyTaskDB = usa('classifyTaskDB'); completeTaskDB = usa('completeTaskDB');
+  explainQuestions = usa('explainQuestions'); sopaSets = usa('sopaSets');
+  evalTFBank = usa('evalTFBank'); evalMCBank = usa('evalMCBank');
+  evalCPBank = usa('evalCPBank'); evalPRBank = usa('evalPRBank');
+  critSensorBank = usa('critSensorBank'); critErrorBank = usa('critErrorBank');
+  critCicloQuestions = usa('critCicloQuestions'); critCicloBank = usa('critCicloBank');
+  critCompareBank = usa('critCompareBank'); critDesignBank = usa('critDesignBank');
+  critDesignGuide = usa('critDesignGuide');
+  circuitoCasos = usa('circuitoCasos'); labPredOpts = usa('labPredOpts');
+  diagData = usa('diagData');
+
+  // Repintar cada juego desde el principio con el banco nuevo
+  fcIdx = 0; upFC();
+  buildMemo();
+  qzIdx = 0; qzSel = -1; qzDone = false; showQz();
+  currentClassGroupIdx = 0; buildClass();
+  idIdx = 0; showId();
+  cmpIdx = 0; cmpSel = -1; showCmp();
+  currentRouteIdx = 0; buildRoute();
+  neuronIdx = 0; showNeuron();
+  neuroIdx = 0; showNeuro();
+  enferIdx = 0; showEnfer();
+  diagIdx = 0; showDiag();
+  currentRetoPairIdx = 0; updateRetoButtons(); resetReto();
+  currentSopaSetIdx = 0; sopaFoundWords = new Set(); buildSopa();
+  // El laboratorio de circuitos se rearma con las opciones del idioma nuevo
+  labCaso = circuitoCasos[0].id; labCerrado = false;
+  const op = document.getElementById('labPredOpts'); if (op) op.innerHTML = '';
+  updateLabDisplay();
+
+  renderAchPanel(); updateXPBar();
+
+  // Las pruebas ya generadas se rehacen en el idioma nuevo, con su misma forma
+  const out = document.getElementById('evalOut');
+  if (out && out.innerHTML.trim()) { evalFormNum = window._currentEvalForm || evalFormNum; genEval(); }
+  const outCrit = document.getElementById('evalCritOut');
+  if (outCrit && outCrit.innerHTML.trim()) { evalCritFormNum = window._currentEvalCritForm || evalCritFormNum; genEvalCrit(); }
+  const tg = document.getElementById('tgOut');
+  if (tg) tg.innerHTML = '';
+};

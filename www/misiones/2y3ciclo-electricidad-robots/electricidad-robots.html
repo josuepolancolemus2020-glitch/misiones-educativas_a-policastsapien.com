@@ -37,7 +37,7 @@
 <header class="hero" role="banner">
   <div class="hero-inner">
     <div class="hero-mascot" aria-hidden="true">⚡</div>
-    <div class="hero-text">
+    <div class="hero-text" data-i18n="hero">
       <h1>Misión <span>Electricidad para Robots</span></h1>
       <p class="sub">Arma el circuito, cierra el interruptor y descubre por qué enciende el LED. ¡Con pilas, cables y mucha seguridad! 🔋🔌💡</p>
       <div class="badge">🤖 Ruta de los Robots · Etapa 4 de 6 · Robótica</div>
@@ -49,7 +49,7 @@
 
 <!-- ===== APRENDE ===== -->
 <div class="sec active" id="s-aprende" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="a1">
     <h2>🔌 El circuito básico</h2>
     <p>Un <strong>circuito eléctrico</strong> es un <strong>camino cerrado</strong> por donde viaja la corriente.
     Si el camino se corta en cualquier punto, <strong>nada funciona</strong>. Todo circuito básico tiene cuatro partes:</p>
@@ -67,7 +67,7 @@
     </div>
   </div>
 
-  <div class="card ac-gold">
+  <div class="card ac-gold" data-i18n="a2">
     <h2>🟢🔴 Circuito cerrado y circuito abierto</h2>
     <p>El <strong>interruptor</strong> decide si el camino está completo o cortado:</p>
     <div class="vs-grid">
@@ -90,7 +90,7 @@
     </div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="a3">
     <h2>🦺 Seguridad eléctrica: la regla más importante</h2>
     <p>La electricidad es útil, pero también puede hacer daño. En el aula y en la casa se respetan estas reglas:</p>
     <div class="seg-grid">
@@ -117,7 +117,7 @@
 
 <!-- ===== ESTRUCTURA: SERIE / PARALELO / MATERIALES / MAGNITUDES ===== -->
 <div class="sec" id="s-estructura" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="e1">
     <h2>➖🛣️ Serie y paralelo</h2>
     <p>Cuando hay <strong>dos o más cargas</strong>, se pueden conectar de dos maneras distintas:</p>
     <div style="overflow-x:auto;">
@@ -144,7 +144,7 @@
     </div>
   </div>
 
-  <div class="card ac-amber">
+  <div class="card ac-amber" data-i18n="e2">
     <h2>⚡ Mini-quiz relámpago</h2>
     <p style="font-size:0.9rem;margin-bottom:0.5rem;">1) Cierras el interruptor y el LED <strong>no enciende</strong>. Revisas y hay un <strong>cable suelto</strong>. ¿Qué pasó?</p>
     <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
@@ -162,7 +162,7 @@
     <div id="fbMq2" class="fb" role="alert"></div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="e3">
     <h2>🟠🚫 Conductores y aislantes</h2>
     <p>No todos los materiales dejan pasar la corriente. Por eso el cable lleva <strong>cobre por dentro</strong> y
     <strong>plástico por fuera</strong>: uno conduce y el otro nos protege.</p>
@@ -180,7 +180,7 @@
     </div>
   </div>
 
-  <div class="card ac-purple">
+  <div class="card ac-purple" data-i18n="e4">
     <h2>💪🌊🪨 Voltaje, corriente y resistencia</h2>
     <p>Tres palabras que siempre van juntas. La comparación con el agua ayuda a entenderlas:</p>
     <div class="type-grid">
@@ -214,7 +214,7 @@
       <button class="btn btn-pri" id="labSwitchBtn" onclick="labToggle()">🔘 Cerrar el interruptor</button>
     </div>
     <div id="lab-display" class="lab-display-box"><!-- Rellenado por JS --></div>
-    <div class="lab-controls" style="max-width:640px;">
+    <div class="lab-controls" style="max-width:640px;" data-i18n="labctl">
       <div class="lab-group">
         <span class="lab-group-label">🧪 Caso:</span>
         <button class="lab-btn lab-cont-btn" data-caso="correcto" onclick="labShowCaso('correcto')">✅ Correcto</button>
@@ -563,7 +563,7 @@
 </div>
 
 <div class="sec" id="s-recursos" role="tabpanel">
-  <div class="card ac-blue">
+  <div class="card ac-blue" data-i18n="rec">
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
@@ -661,7 +661,10 @@
 </footer>
 
   <script src="js/html2canvas.min.js"></script>
-  <script src="js/electricidad-robots.js"></script>
+  <script src="js/electricidad-robots.js?v=35"></script>
+  <!-- Traducción de autor al inglés + motor de idioma (botón 🌐 EN/ES) -->
+  <script src="js/electricidad-robots-en.js?v=35"></script>
+  <script src="../../js/metas-i18n.js?v=35"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
