@@ -86,19 +86,19 @@
         '<table>' +
         '<tr><th>Idea</th><th>What is it?</th><th>Honduran example</th></tr>' +
         '<tr><td class="k">🫓 Algorithm</td><td>Ordered steps for getting something done</td><td>The recipe for baleadas</td></tr>' +
-        '<tr><td class="k">🗣️ Instruction</td><td>Each order; it must be exact, not ambiguous</td><td>«Add 2 spoonfuls» ✅ vs. «put in a little» 🌫️</td></tr>' +
+        '<tr><td class="k">🗣️ Instruction</td><td>Each command; it must be exact, not ambiguous</td><td>«Add 2 spoonfuls» ✅ vs. «put in a little» 🌫️</td></tr>' +
         '<tr><td class="k">🧩 Decomposition</td><td>Splitting a big problem into small parts</td><td>The school fair: food, games, invitations</td></tr>' +
         '<tr><td class="k">🔁 Pattern</td><td>What repeats; spotting it saves work</td><td>Every tortilla is patted and cooked the same way</td></tr>' +
         '</table>' +
         '<div class="caja regla">🗺️ <b>And as a bonus, abstraction:</b> keeping only what matters. A map does not draw ' +
         'every stone on the road: it draws only what you need to get there. For the nance drink the color of the ' +
-        'gourd bowl does not matter: what matters is the nances, the sugar and the ice.</div>' +
+        'gourd bowl does not matter: the nances, the sugar and the ice are what count.</div>' +
         '<h3>💾 Sample algorithm (read it and run it in your head)</h3>' +
         '<div class="prog-ej">Algorithm: making a nance drink 🥤<br>' +
         '1. Wash the nances well &nbsp; 2. Mash them in a cup of water &nbsp; 3. Strain the mixture<br>' +
         '4. Add 4 cups of water and 6 spoonfuls of sugar &nbsp; 5. Serve with ice<br>' +
         '→ Every step is EXACT and goes in ORDER: that is why anyone can make it the same way. ✅</div>' +
-        '<div class="caja idea">🧠 <b>Watch out:</b> when a program fails it is almost never the computer\'s fault: it only ' +
+        '<div class="caja idea">🧠 <b>Watch out:</b> when a program fails it is almost never the computer’s fault: it only ' +
         'obeyed an ambiguous or out-of-order instruction. The thinking happens BEFORE the programming!</div>',
 
       /* ═══════════ PÁGINA 3 ═══════════ */
@@ -111,9 +111,9 @@
         '<table>' +
         '<tr><th>Mistake</th><th>Why it is wrong</th><th>The right way</th></tr>' +
         '<tr><td class="k" style="white-space:normal;">Believing the computer «guesses»</td><td>It runs exactly what is written, even if it is wrong.</td><td>Write exact instructions ✔</td></tr>' +
-        '<tr><td class="k" style="white-space:normal;">Giving ambiguous orders</td><td>«A little», «over there»: everyone understands something else.</td><td>Clear amounts and places ✔</td></tr>' +
+        '<tr><td class="k" style="white-space:normal;">Giving ambiguous commands</td><td>«A little», «over there»: everyone understands something else.</td><td>Clear amounts and places ✔</td></tr>' +
         '<tr><td class="k" style="white-space:normal;">Changing the order of the steps</td><td>The algorithm runs in order.</td><td>Number the steps from 1 to the end ✔</td></tr>' +
-        '<tr><td class="k" style="white-space:normal;">Attacking the whole huge problem</td><td>It wears you out and messes up the work.</td><td>Decompose and share out the parts ✔</td></tr>' +
+        '<tr><td class="k" style="white-space:normal;">Taking on the whole problem at once</td><td>It wears you out and messes up the work.</td><td>Decompose and divide up the parts ✔</td></tr>' +
         '<tr><td class="k" style="white-space:normal;">Ignoring what repeats</td><td>You waste time reinventing it every time.</td><td>Spot the pattern and repeat it ✔</td></tr>' +
         '</table>' +
         '<h2>🎲 4. Unplugged activities (no computer)</h2>' +
@@ -127,7 +127,7 @@
         'THEIR part in 4 to 6 exact steps. At the end the teams read their algorithms in order and check that, together, ' +
         'the small parts solve the huge problem. The team with no ambiguous steps wins.</div>' +
         '<div class="caja hn">🇭🇳 <b>Computational thinking in your life:</b> when you follow the recipe for baleadas, ' +
-        'raise the flag at the Monday ceremony or share out the chores at home, you are already thinking like a programmer: ' +
+        'raise the flag at the Monday ceremony or divide up the chores at home, you are already thinking like a programmer: ' +
         'steps in order, small parts and patterns. Whoever masters this has the hardest part of programming… without even ' +
         'touching a computer! 💚</div>',
 
@@ -257,9 +257,9 @@
         '<tr><td>3. ____ Ambiguous instruction</td><td>C. A machine that does exactly what it is told</td></tr>' +
         '<tr><td>4. ____ Sequence</td><td>D. Ordered steps for getting a task done</td></tr>' +
         '<tr><td>5. ____ Decompose</td><td>E. Keeping only what matters, like a map</td></tr>' +
-        '<tr><td>6. ____ Pattern</td><td>F. An order that everyone carries out the same way</td></tr>' +
+        '<tr><td>6. ____ Pattern</td><td>F. A command that everyone carries out the same way</td></tr>' +
         '<tr><td>7. ____ Abstraction</td><td>G. A huge task that is beaten part by part</td></tr>' +
-        '<tr><td>8. ____ Step</td><td>H. A confusing order that everyone understands differently</td></tr>' +
+        '<tr><td>8. ____ Step</td><td>H. A confusing command that everyone understands differently</td></tr>' +
         '<tr><td>9. ____ Big problem</td><td>I. Split a big problem into small parts</td></tr>' +
         '<tr><td>10. ____ Computer</td><td>J. Something that repeats over and over</td></tr>' +
         '</table>' +
@@ -282,7 +282,7 @@
 
       /* ═══════════ PÁGINA 7 · HOJA DEL DOCENTE ═══════════ */
       p7:
-        '<h2>✅ Answer Key — Teacher\'s Sheet</h2>' +
+        '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
         '<div class="pauta">' +
         '<div><span class="pt">I. Fill in:</span> 1. algorithm &nbsp; 2. exact &nbsp; 3. ambiguous &nbsp; 4. decomposing &nbsp; 5. pattern &nbsp; 6. abstraction &nbsp; 7. order &nbsp; 8. verb &nbsp; 9. exactly &nbsp; 10. parts</div>' +
@@ -298,9 +298,9 @@
         'exact vs. ambiguous instructions, decomposition of big problems, patterns and abstraction. The interactive mission ' +
         '(QR code on the cover) includes the «robot teacher» lab with 4 scenarios and 4 challenges per scenario; the unplugged ' +
         'activities on page 3 («The human robot» and «Decompose the fair») cover the same concepts with no device at all: in the ' +
-        'first one, a student literally carries out another student\'s ambiguous instructions so the failure becomes obvious; in the ' +
+        'first one, a student literally carries out another student’s ambiguous instructions so the failure becomes obvious; in the ' +
         'second one, the teams decompose the school fair together. The «Test Yourself» section mirrors the formats of the ' +
-        'platform\'s printable test (fill in, true/false, multiple choice and matching).' +
+        'platform’s printable test (fill in, true/false, multiple choice and matching).' +
         '</div>'
     },
 

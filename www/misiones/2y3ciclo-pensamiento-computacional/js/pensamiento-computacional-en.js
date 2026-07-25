@@ -53,7 +53,7 @@
       a1:
         '<h2>🫓 What is an algorithm?</h2>' +
         '<p>An <strong>algorithm</strong> is the <strong>ordered steps</strong> for getting something done. The ' +
-        '<strong>recipe for baleadas</strong> (the Honduran folded flour tortilla) is an algorithm!: knead the flour, ' +
+        '<strong>recipe for baleadas</strong> (the Honduran folded flour tortilla) is an algorithm: knead the flour, ' +
         'shape the tortilla, cook it on the griddle, spread the beans and fold it. If you change the order, the baleada ' +
         'comes out wrong.</p>' +
         '<div class="vs-grid">' +
@@ -96,7 +96,7 @@
         '</div>' +
         '<div class="tip">' +
         '<span class="ti">💻</span>' +
-        '<div><strong>Key fact:</strong> when a program fails, very often it is not the computer\'s fault: it is an <b>ambiguous or out-of-order</b> instruction. The machine only obeyed.</div>' +
+        '<div><strong>Key fact:</strong> when a program fails, very often it is not the computer’s fault: it is an <b>ambiguous or out-of-order</b> instruction. The machine only obeyed.</div>' +
         '</div>' +
         '<div class="mq-wrap">' +
         '<div class="mq-q">🎮 Mini-quiz: which instruction would EVERYONE understand the same way?</div>' +
@@ -135,13 +135,13 @@
         '<table class="instr-tbl">' +
         '<tr><th>Idea</th><th>What is it?</th><th>Honduran example</th></tr>' +
         '<tr><td class="k">Algorithm</td><td>Ordered steps for getting something done</td><td>The recipe for baleadas 🫓</td></tr>' +
-        '<tr><td class="k">Instruction</td><td>Each order; it must be exact, not ambiguous</td><td>«Add 2 spoonfuls» ✅ vs. «put in a little» 🌫️</td></tr>' +
+        '<tr><td class="k">Instruction</td><td>Each command; it must be exact, not ambiguous</td><td>«Add 2 spoonfuls» ✅ vs. «put in a little» 🌫️</td></tr>' +
         '<tr><td class="k">Decomposition</td><td>Splitting a big problem into small parts</td><td>The school fair: food, games, invitations 🎪</td></tr>' +
         '<tr><td class="k">Pattern</td><td>What repeats; spotting it saves work</td><td>Every tortilla is patted and cooked the same way 🔁</td></tr>' +
         '</table>' +
         '<div class="tip">' +
         '<span class="ti">🗺️</span>' +
-        '<div><strong>And as a bonus, abstraction:</strong> keeping only what matters, like a map. For the nance drink the color of the gourd bowl does not matter: what matters is the nances, the sugar and the ice.</div>' +
+        '<div><strong>And as a bonus, abstraction:</strong> keeping only what matters, like a map. For the nance drink the color of the gourd bowl does not matter: the nances, the sugar and the ice are what count.</div>' +
         '</div>' +
         '<div class="mq-wrap">' +
         '<div class="mq-q">🎮 Mini-quiz: splitting «organize the fair» into food, games and invitations is…</div>' +
@@ -161,7 +161,7 @@
         '<p>«It knows what I meant»… NO! The computer runs <strong>exactly</strong> what is written, even if it is wrong.</p>' +
         '</div>' +
         '<div class="vs-box vs-b">' +
-        '<h4>🚫 Giving ambiguous orders</h4>' +
+        '<h4>🚫 Giving ambiguous commands</h4>' +
         '<p>«Put in a little», «make it look nice»: everyone understands something else. Use instructions with <strong>clear amounts and places</strong>.</p>' +
         '</div>' +
         '</div>' +
@@ -171,8 +171,8 @@
         '<p>The steps run <strong>in order</strong>, from the first to the last. Folding the baleada before cooking the tortilla ruins the snack.</p>' +
         '</div>' +
         '<div class="vs-box vs-d">' +
-        '<h4>🚫 Attacking the whole huge problem</h4>' +
-        '<p>Trying to do the WHOLE fair in one go wears anybody out. First you <strong>decompose</strong>, then you share out the parts.</p>' +
+        '<h4>🚫 Taking on the whole problem at once</h4>' +
+        '<p>Trying to do the WHOLE fair all at once wears anyone out. First you <strong>decompose</strong>, then you divide up the parts.</p>' +
         '</div>' +
         '</div>' +
         '<div class="mq-wrap">' +
@@ -274,7 +274,7 @@
       fcData: [
         { w: 'Computational thinking', a: '🧠 Thinking like a programmer: <strong>putting steps in order</strong>, <strong>splitting problems</strong> and <strong>looking for patterns</strong>, even with no computer!' },
         { w: 'Algorithm', a: '🫓 The <strong>ordered steps</strong> for getting something done, like the <strong>recipe for baleadas</strong>.' },
-        { w: 'Instruction', a: '🗣️ An <strong>order</strong> that someone can carry out; it forms each step of an algorithm.' },
+        { w: 'Instruction', a: '🗣️ A <strong>command</strong> that someone can carry out; it forms each step of an algorithm.' },
         { w: 'Exact instruction', a: '✅ «Add <strong>2 spoonfuls</strong>»: everyone carries it out <strong>the same way</strong>.' },
         { w: 'Ambiguous instruction', a: '🌫️ «Put in <strong>a little</strong>»: everyone understands <strong>something different</strong> and it fails.' },
         { w: 'Sequence', a: '📜 A list of steps <strong>in order</strong>: they are done from the first to the last.' },
@@ -316,7 +316,7 @@
         },
         {
           label: ['Big problem', 'Small part'], headA: '🎪 Big problem', headB: '🍰 Small part', colA: 'pg', colB: 'pp',
-          words: [{ w: 'Organizing the school fair', t: 'pg' }, { w: 'Setting up the food stalls', t: 'pp' }, { w: 'Starting the school garden', t: 'pg' }, { w: 'Getting the seeds', t: 'pp' }, { w: 'Celebrating Children\'s Day', t: 'pg' }, { w: 'Buying the piñatas', t: 'pp' }, { w: 'Painting the independence mural', t: 'pg' }, { w: 'Painting one section of the mural', t: 'pp' }]
+          words: [{ w: 'Organizing the school fair', t: 'pg' }, { w: 'Setting up the food stalls', t: 'pp' }, { w: 'Starting the school garden', t: 'pg' }, { w: 'Getting the seeds', t: 'pp' }, { w: 'Celebrating Children’s Day', t: 'pg' }, { w: 'Buying the piñatas', t: 'pp' }, { w: 'Painting the independence mural', t: 'pg' }, { w: 'Painting one section of the mural', t: 'pp' }]
         },
         {
           label: ['Correct sequence', 'Sequence with a mistake'], headA: '✅ Correct sequence', headB: '❌ Sequence with a mistake', colA: 'ok', colB: 'err',
@@ -372,7 +372,7 @@
       ],
 
       neuronPartes: [
-        { problema: 'Organizing grandma\'s birthday', correctas: ['Make the guest list', 'Prepare the cake and the food', 'Decorate the house'], extra: ['Raise the flag', 'Solve a long division', 'Paint the school'] },
+        { problema: 'Organizing grandma’s birthday', correctas: ['Make the guest list', 'Prepare the cake and the food', 'Decorate the house'], extra: ['Raise the flag', 'Solve a long division', 'Paint the school'] },
         { problema: 'Doing the math homework', correctas: ['Read the instructions carefully', 'Solve the exercises one by one', 'Check the answers'], extra: ['Water the garden', 'Buy nances', 'Fold the laundry'] },
         { problema: 'Cleaning the classroom on Friday', correctas: ['Put the chairs up on the desks', 'Sweep and mop the floor', 'Take the trash where it belongs'], extra: ['Sing the anthem', 'Plant a pine tree', 'Make a cool drink'] },
         { problema: 'Setting up the school food sale', correctas: ['Decide what food to sell', 'Buy the ingredients', 'Organize the selling shifts'], extra: ['Watch television', 'Count the clouds', 'Paint a map'] },
@@ -386,7 +386,7 @@
         },
         {
           label: ['Big problem', 'Small part'], btnA: '🎪 Big problem', btnB: '🍰 Small part', colA: 'pg', colB: 'pp',
-          words: [{ w: 'Organizing the school fair', t: 'pg' }, { w: 'Setting up one food stall', t: 'pp' }, { w: 'Starting the school garden', t: 'pg' }, { w: 'Getting the seeds', t: 'pp' }, { w: 'Celebrating Children\'s Day', t: 'pg' }, { w: 'Buying the piñatas', t: 'pp' }, { w: 'Painting the independence mural', t: 'pg' }, { w: 'Painting one section of the mural', t: 'pp' }]
+          words: [{ w: 'Organizing the school fair', t: 'pg' }, { w: 'Setting up one food stall', t: 'pp' }, { w: 'Starting the school garden', t: 'pg' }, { w: 'Getting the seeds', t: 'pp' }, { w: 'Celebrating Children’s Day', t: 'pg' }, { w: 'Buying the piñatas', t: 'pp' }, { w: 'Painting the independence mural', t: 'pg' }, { w: 'Painting one section of the mural', t: 'pp' }]
         },
         {
           label: ['From computational thinking', 'From another subject'], btnA: '💻 Thinking', btnB: '📚 Another subject', colA: 'prog', colB: 'otro',
@@ -398,7 +398,7 @@
         { tarea: 'Making the bed', pasos: ['Take off whatever is on top', 'Straighten the sheet', 'Arrange the pillow', 'Fold the bedspread and smooth it out'] },
         { tarea: 'Washing the lunch dishes', pasos: ['Scrape off the leftovers', 'Soap up each dish', 'Rinse with clean water', 'Leave them to drain'] },
         { tarea: 'Sweeping the yard', pasos: ['Get the broom and the dustpan', 'Sweep from one end to the other', 'Gather the trash with the dustpan', 'Throw it in the trash can'] },
-        { tarea: 'Feeding the dog', pasos: ['Wash the dog\'s bowl', 'Serve 2 cups of food', 'Change the water in the dish', 'Put the food bag away'] },
+        { tarea: 'Feeding the dog', pasos: ['Wash the dog’s bowl', 'Serve 2 cups of food', 'Change the water in the dish', 'Put the food bag away'] },
         { tarea: 'Making rice for lunch', pasos: ['Wash the rice', 'Fry it lightly with a little oil', 'Add 2 cups of water and salt', 'Cook on low heat until it dries out'] },
         { tarea: 'Folding the clean laundry', pasos: ['Gather the dry laundry', 'Sort it by person', 'Fold each garment', 'Put it away where it belongs'] },
         { tarea: 'Watering the house plants', pasos: ['Fill the watering can', 'Water each plant without flooding it', 'Pull off the dry leaves', 'Put the watering can away'] },
@@ -413,7 +413,7 @@
 
       descomponDB: [
         { problema: 'Organizing the school fair', partes: ['Form the working committees', 'Set up the food and game stalls', 'Invite the families'] },
-        { problema: 'Celebrating Children\'s Day', partes: ['Plan the games and prizes', 'Get the food and the piñatas', 'Decorate the classroom'] },
+        { problema: 'Celebrating Children’s Day', partes: ['Plan the games and prizes', 'Get the food and the piñatas', 'Decorate the classroom'] },
         { problema: 'Painting the independence mural', partes: ['Research the founding fathers', 'Draw the sketch', 'Paint the mural section by section'] },
         { problema: 'Starting the school garden', partes: ['Prepare the soil', 'Plant the seeds', 'Organize the watering shifts'] },
         { problema: 'Organizing the soccer championship', partes: ['Sign up the teams', 'Schedule the games', 'Get the prize'] },
@@ -526,8 +526,8 @@
 
       evalPRBank: [
         { term: 'Algorithm', def: 'Ordered steps for getting a task done' },
-        { term: 'Exact instruction', def: 'An order that everyone carries out the same way' },
-        { term: 'Ambiguous instruction', def: 'A confusing order that everyone understands differently' },
+        { term: 'Exact instruction', def: 'A command that everyone carries out the same way' },
+        { term: 'Ambiguous instruction', def: 'A confusing command that everyone understands differently' },
         { term: 'Sequence', def: 'A list of steps in order' },
         { term: 'Decompose', def: 'Split a big problem into small parts' },
         { term: 'Pattern', def: 'Something that repeats over and over' },
@@ -603,9 +603,9 @@
 
       opDescompBank: [
         { problema: 'Organizing the school fair', partes: ['Form the working committees', 'Set up the food and game stalls', 'Invite the families', 'Hold the fair and clean up at the end'] },
-        { problema: 'Celebrating Children\'s Day', partes: ['Plan the games and prizes', 'Get the food and the piñatas', 'Decorate the classroom', 'Hold the party and tidy the classroom'] },
+        { problema: 'Celebrating Children’s Day', partes: ['Plan the games and prizes', 'Get the food and the piñatas', 'Decorate the classroom', 'Hold the party and tidy the classroom'] },
         { problema: 'Painting the independence mural', partes: ['Research the founding fathers', 'Draw the sketch of the mural', 'Paint the mural section by section', 'Present the mural to the school'] },
-        { problema: 'Starting the school garden', partes: ['Prepare the soil', 'Plant the seeds', 'Organize the watering shifts', 'Harvest and share out'] },
+        { problema: 'Starting the school garden', partes: ['Prepare the soil', 'Plant the seeds', 'Organize the watering shifts', 'Harvest and hand out the crop'] },
         { problema: 'Organizing the soccer championship', partes: ['Sign up the teams', 'Schedule the games', 'Get the prizes', 'Play the final and hand out the prizes'] },
         { problema: 'Preparing the end-of-year ceremony', partes: ['Rehearse the performances and dances', 'Prepare the certificates', 'Decorate the hall', 'Hold the ceremony'] }
       ],
@@ -616,7 +616,7 @@
         { tarea: 'Raising the flag', pasos: ['Line up', 'Tie on the flag', 'Raise it with the anthem', 'Give the salute'], malo: 'Get it up there somehow', tipo: 'A' },
         { tarea: 'Planting a bean', pasos: ['Put in damp cotton', 'Place the bean', 'Leave it in the light', 'Water it every day'], malo: 'Watch television for a while', tipo: 'I' },
         { tarea: 'Making a nance drink', pasos: ['Wash the nances', 'Mash them with water', 'Strain the mixture', 'Serve it with ice'], malo: 'Add as much sugar as whoever walks by likes', tipo: 'A' },
-        { tarea: 'Doing the homework', pasos: ['Take out the notebook', 'Read the instructions', 'Solve the exercises', 'Check the answers'], malo: 'Hide your classmate\'s pencil', tipo: 'I' },
+        { tarea: 'Doing the homework', pasos: ['Take out the notebook', 'Read the instructions', 'Solve the exercises', 'Check the answers'], malo: 'Hide your classmate’s pencil', tipo: 'I' },
         { tarea: 'Sweeping the classroom', pasos: ['Put the chairs up', 'Sweep from the back toward the door', 'Gather the trash with the dustpan', 'Throw it in the trash can'], malo: 'Sweep more or less wherever it looks dirty', tipo: 'A' },
         { tarea: 'Feeding the chickens', pasos: ['Fill the gourd bowl with corn', 'Open the chicken coop', 'Scatter the corn', 'Change the water'], malo: 'Count the clouds in the sky', tipo: 'I' }
       ],
@@ -639,7 +639,7 @@
           algoritmo: ['Line up in the yard', 'Tie the flag to the rope', 'Raise it slowly while the anthem plays', 'Give the salute in silence', 'Go back to the classroom in an orderly line'],
           ambigua: { lista: ['Line up in the yard', 'Tie the flag to the rope', 'Get it up there somehow, quickly', 'Give the salute in silence'], mala: 2, fix: 'Raise it slowly while the anthem plays' },
           falta: { pasos: ['Line up in the yard', 'Tie the flag to the rope', '❓', 'Give the salute in silence'], correcta: 'Raise it slowly while the anthem plays', distractores: ['Put the rope away', 'Clap really loudly', 'Run to the classroom'] },
-          partes: { problema: 'Organizing Monday\'s flag ceremony', correctas: ['Get the flag and the rope ready', 'Rehearse the anthem with the choir', 'Line up the grades in order'], extra: ['Make the tortillas', 'Plant the bean', 'Buy the nances'] }
+          partes: { problema: 'Organizing Monday’s flag ceremony', correctas: ['Get the flag and the rope ready', 'Rehearse the anthem with the choir', 'Line up the grades in order'], extra: ['Make the tortillas', 'Plant the bean', 'Buy the nances'] }
         },
         frijol: {
           nombre: 'Planting a bean in a cup', icon: '🌱',
@@ -715,7 +715,7 @@
       '⭐ +3 XP por respuesta correcta (primera vez) · ¡Cuida tu racha 🔥!':
         '⭐ +3 XP per correct answer (first time) · Watch your streak 🔥!',
       '¿Una persona-robot podría ejecutar esta orden tal como está escrita?':
-        'Could a human robot carry out this order exactly as it is written?',
+        'Could a human robot carry out this instruction exactly as it is written?',
       '«Da 3 pasos hacia adelante»': '«Take 3 steps forward»',
       '🧩 Descompón el problema': '🧩 Decompose the problem',
       '⭐ +3 XP por problema bien descompuesto (primera vez)': '⭐ +3 XP per problem nicely decomposed (first time)',
@@ -779,9 +779,9 @@
       'Nivel avanzado. Escribe el ALGORITMO de 4 a 6 pasos numerados; cada paso empieza con un verbo claro. 10 pts c/u.':
         'Advanced level. Write the ALGORITHM in 4 to 6 numbered steps; each step starts with a clear verb. 10 pts each.',
       'Desafío. Piensa como programador: descompón el problema grande y atrapa el paso malo.':
-        'Challenge. Think like a programmer: decompose the big problem and catch the bad step.',
+        'Challenge round. Think like a programmer: decompose the big problem and catch the bad step.',
       'Desafío. Reto 1: 10 pts · Reto 2: 10 pts (5 el paso + 5 el porqué).':
-        'Challenge. Challenge 1: 10 pts · Challenge 2: 10 pts (5 for the step + 5 for the reason).',
+        'Challenge round. Challenge 1: 10 pts · Challenge 2: 10 pts (5 for the step + 5 for the reason).',
       'Orden correcto:': 'Right order:', 'Orden lógico:': 'Logical order:',
       '✅ Exacta': '✅ Exact', '🌫️ Ambigua': '🌫️ Ambiguous',
       'Compara con la pauta y anota tu puntaje:': 'Compare with the answer key and write your score:',
