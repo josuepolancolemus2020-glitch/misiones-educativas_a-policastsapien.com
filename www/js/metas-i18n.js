@@ -677,9 +677,37 @@
     document.head.appendChild(s);
   }
 
+  /* ---------- fuera el traductor automático ----------
+     La misión ya trae su traducción de autor. Si además se deja que el
+     navegador traduzca la página, al pasar a inglés Chrome ve el
+     lang="en" y —si el alumno tiene «traducir siempre inglés → español»—
+     la retraduce entera al español en menos de un segundo: parece que el
+     botón «se devuelve solo». Y lo que queda es traducción de máquina
+     («East ciclo» por «Este ciclo», «DE LO CONTRARIO» por SINO).
+
+     En el navegador se ve la barra de «¿Traducir?» y el alumno puede
+     negarse; dentro de la app instalada no hay barra y pasa en silencio,
+     que fue justo donde se reportó.
+
+     Se marca por las tres vías que entiende Chrome, y también en el
+     <head> de cada misión para que la decisión ya esté tomada antes de
+     que el motor arranque. */
+  function sinTraduccionAutomatica() {
+    var html = document.documentElement;
+    html.setAttribute('translate', 'no');
+    if (html.classList) html.classList.add('notranslate');
+    if (!document.querySelector('meta[name="google"][content="notranslate"]')) {
+      var m = document.createElement('meta');
+      m.setAttribute('name', 'google');
+      m.setAttribute('content', 'notranslate');
+      (document.head || html).appendChild(m);
+    }
+  }
+
   /* ---------- arranque ---------- */
 
   function iniciar() {
+    sinTraduccionAutomatica();
     crearBoton();
     if (guardado() !== 'en') return;
     if (hayIngles()) { cambiar('en', true); return; }
