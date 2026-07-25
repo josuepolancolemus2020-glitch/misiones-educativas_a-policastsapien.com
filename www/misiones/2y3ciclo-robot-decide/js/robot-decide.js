@@ -156,7 +156,7 @@ function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSe
 function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalOpFormNum)evalOpFormNum=s.evalOpFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
 
 // ===================== ACHIEVEMENTS =====================
-const ACHIEVEMENTS={
+let ACHIEVEMENTS={
   primer_quiz:{icon:'🤖',label:'Primer quiz de condicionales superado'},
   flash_master:{icon:'🃏',label:'Todas las flashcards de decisiones exploradas'},
   clasif_pro:{icon:'🗂️',label:'Clasificador de condiciones y ramas experto'},
@@ -174,7 +174,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#0e7490','#22d3ee','#b45309','#f59e0b','#06b6d4'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador de Decisiones 🧭'},{t:55,n:'Robot que Decide 🤖'},{t:90,n:'Programador Junior 💻'},{t:130,n:'Cazador de Bugs 🔍'},{t:165,n:'Ingeniero de Condicionales 🏅'},{t:190,n:'Maestro de los Condicionales 🏆'}];
+let lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador de Decisiones 🧭'},{t:55,n:'Robot que Decide 🤖'},{t:90,n:'Programador Junior 💻'},{t:130,n:'Cazador de Bugs 🔍'},{t:165,n:'Ingeniero de Condicionales 🏅'},{t:190,n:'Maestro de los Condicionales 🏆'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -188,7 +188,7 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 function miniQuiz(btn,ok,fbId){const wrap=btn.parentElement;wrap.querySelectorAll('.mq-opt').forEach(b=>b.classList.remove('correct','wrong'));btn.classList.add(ok?'correct':'wrong');const f=document.getElementById(fbId);if(f){f.textContent=ok?'¡Correcto! Así piensa un programador. 🎉':'Todavía no. Vuelve a leer la tarjeta y prueba otra vez.';f.className='mq-fb '+(ok?'ok':'err');}sfx(ok?'ok':'no');if(ok&&!xpTracker.wgt.has('mq_'+fbId)){xpTracker.wgt.add('mq_'+fbId);pts(2);}}
 
 // ===================== FLASHCARD DATA =====================
-const fcData=[
+let fcData=[
   {w:'Condicional',a:'🔀 Una instrucción que hace al robot <strong>decidir</strong>: <strong>SI</strong> se cumple algo <strong>ENTONCES</strong> hace una cosa, <strong>SINO</strong> hace otra.'},
   {w:'Condición',a:'❓ La <strong>pregunta de sí o no</strong> que decide qué rama se ejecuta, como «¿hay pared adelante?».'},
   {w:'SI…ENTONCES',a:'✅ Un condicional <strong>sin SINO</strong>: si la condición es cierta hace la acción; si es falsa, <strong>no hace nada</strong>.'},
@@ -211,7 +211,7 @@ function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
 
 // ===================== JUEGO: MEMORIA DEL CÓDIGO =====================
-const memoPairs=[
+let memoPairs=[
   {id:'condicional',t:'Condicional',d:'🔀 SI…ENTONCES…SINO: el robot decide'},
   {id:'condicion',t:'Condición',d:'❓ La pregunta de sí o no'},
   {id:'entonces',t:'Rama ENTONCES',d:'👉 El camino cuando la respuesta es SÍ'},
@@ -258,7 +258,7 @@ function flipMemo(btn,i){
 function resetMemo(){sfx('click');buildMemo();}
 
 // ===================== QUIZ DATA =====================
-const qzData=[
+let qzData=[
   {q:'¿Qué es un condicional?',o:['a) Una lista de pasos siempre iguales','b) Una instrucción que hace al robot DECIDIR según una condición','c) Un giro de 90°','d) Un error del programa'],c:1},
   {q:'¿Qué es la CONDICIÓN de un condicional?',o:['a) Una orden como AVANZA','b) El color del robot','c) Una pregunta de sí o no','d) La casilla final'],c:2},
   {q:'En SI…ENTONCES…SINO, ¿cuándo se ejecuta la rama SINO?',o:['a) Cuando la condición es verdadera','b) Cuando la condición es falsa','c) Siempre','d) Nunca'],c:1},
@@ -276,7 +276,7 @@ function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false
 function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
 
 // ===================== CLASIFICACIÓN =====================
-const classGroups=[
+let classGroups=[
   {label:['Condición (pregunta)','Acción (orden)'],headA:'❓ Condición (pregunta)',headB:'👣 Acción (orden)',colA:'cond',colB:'acc',
    words:[{w:'¿Hay pared adelante?',t:'cond'},{w:'AVANZA',t:'acc'},{w:'¿El semáforo está en verde?',t:'cond'},{w:'GIRA DERECHA',t:'acc'},{w:'¿Está lloviendo?',t:'cond'},{w:'ESPERA',t:'acc'},{w:'¿Llegó a la casa?',t:'cond'},{w:'ENTREGA',t:'acc'},{w:'¿La olla está caliente?',t:'cond'},{w:'GIRA IZQUIERDA',t:'acc'}]},
   {label:['Rama ENTONCES (sí)','Rama SINO (no)'],headA:'👉 Rama ENTONCES (respuesta SÍ)',headB:'👈 Rama SINO (respuesta NO)',colA:'ent',colB:'sino',
@@ -293,7 +293,7 @@ function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupId
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
 // ===================== IDENTIFICAR =====================
-const idData=[
+let idData=[
   {s:['SI','hay','pared','adelante','ENTONCES','gira','derecha.'],c:2,art:'La palabra clave de la CONDICIÓN (la pregunta): «hay ___ adelante»'},
   {s:['SI','el','semáforo','está','en','verde','AVANZA','SINO','ESPERA.'],c:6,art:'La ACCIÓN de la rama ENTONCES (cuando la respuesta es sí)'},
   {s:['SI','llueve','ENTONCES','llevo','paraguas','SINO','llevo','gorra.'],c:2,art:'La palabra que abre la rama del SÍ'},
@@ -310,7 +310,7 @@ function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').
 function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
 
 // ===================== COMPLETA =====================
-const cmpData=[
+let cmpData=[
   {s:'Una instrucción que hace al robot decidir se llama ___.',opts:['condicional','giro','casilla'],c:0},
   {s:'La ___ es la pregunta de sí o no del condicional.',opts:['acción','condición','casilla'],c:1},
   {s:'La rama que se ejecuta cuando la respuesta es SÍ se llama rama ___.',opts:['SINO','ESPERA','ENTONCES'],c:2},
@@ -326,7 +326,7 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 
 // ===================== WIDGETS =====================
 // Widget 1: Ordena el algoritmo
-const routeSets=[
+let routeSets=[
   {label:'Arma el condicional del semáforo (en orden)',steps:['SI','el semáforo está en verde','ENTONCES avanzo','SINO','espero']},
   {label:'Arma el condicional de la pared (en orden)',steps:['SI','hay pared adelante','ENTONCES giro a la derecha','SINO','avanzo']},
   {label:'Arma el condicional de la lluvia (en orden)',steps:['SI','está lloviendo','ENTONCES llevo paraguas','SINO','llevo gorra']},
@@ -339,7 +339,7 @@ function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Secuencia: '+routeSets[currentRouteIdx].label);}
 
 // Widget 1: ¿Qué hace el robot? (mini-cuadrícula 3×3 con UN condicional, IDs estándar «neuron»)
-const _wgtEndDefs=[
+let _wgtEndDefs=[
   {r:0,c:0,dir:'E',obst:[[0,1]],prog:[C_PARED,I_AV,I_AV]},
   {r:0,c:0,dir:'E',obst:[],prog:[C_PARED,I_AV]},
   {r:0,c:2,dir:'S',obst:[[1,2]],prog:[C_PARED,I_AV,I_AV]},
@@ -349,13 +349,20 @@ const _wgtEndDefs=[
   {r:2,c:2,dir:'O',obst:[[2,1]],prog:[C_PARED,I_AV,I_AV]},
   {r:2,c:2,dir:'O',obst:[],prog:[C_PARED,I_AV]},
 ];
-const neuronPartes=_wgtEndDefs.map(d=>{
+// El pegamento de estos dos widgets se compara contra el textContent de los
+// botones, así que NO puede traducirse al vuelo: tiene que estar ya en el
+// idioma del banco. Por eso vive en WGT_TXT y los widgets se reconstruyen.
+let WGT_TXT={parte:'El robot parte de',mirando:'mirando al',cuidado:'¡Cuidado con la condición! ❓',
+  meta:'🎯 <strong>Meta:</strong>',bug:'¡Este programa tiene UN bug en su condicional!',
+  linea:'Línea',mal:' (el condicional está mal)',bien:' (está bien)'};
+function _buildNeuronPartes(){return _wgtEndDefs.map(d=>{
   const res=simRun({r:d.r,c:d.c,dir:d.dir},d.prog,{n:3,obst:(d.obst||[]).map(o=>o[0]+','+o[1])});
   const ans=coordName(res.st.r,res.st.c);
   const all=[];for(let r=0;r<3;r++)for(let c=0;c<3;c++)all.push(coordName(r,c));
   const opts=[ans,..._shuffle(all.filter(x=>x!==ans)).slice(0,3)];
-  return{desc:`<div>El robot parte de <strong>${coordName(d.r,d.c)}</strong> mirando al <strong>${DIR_NOMBRE[d.dir]}</strong>. ¡Cuidado con la condición! ❓</div><div class="w-prog">${d.prog.map((p,i)=>(i+1)+'. '+progLine(p)).join('<br>')}</div><div style="margin-top:0.4rem;">${svgGridHTML({n:3,robot:{r:d.r,c:d.c,dir:d.dir},obst:d.obst,w:150})}</div>`,ans,opts};
-});
+  return{desc:`<div>${WGT_TXT.parte} <strong>${coordName(d.r,d.c)}</strong> ${WGT_TXT.mirando} <strong>${DIR_NOMBRE[d.dir]}</strong>. ${WGT_TXT.cuidado}</div><div class="w-prog">${d.prog.map((p,i)=>(i+1)+'. '+progLine(p)).join('<br>')}</div><div style="margin-top:0.4rem;">${svgGridHTML({n:3,robot:{r:d.r,c:d.c,dir:d.dir},obst:d.obst,w:150})}</div>`,ans,opts};
+});}
+let neuronPartes=_buildNeuronPartes();
 let neuronIdx=0,neuronDone=false;
 function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.innerHTML='🎉 ¡Predijiste todos los recorridos!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Recorrido ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.innerHTML=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
@@ -363,7 +370,7 @@ function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Detective del bug del condicional (IDs estándar «neuro»)
-const _wgtBugDefs=[
+let _wgtBugDefs=[
   {goal:'El robot debe GIRAR cuando choque con una pared 🌳 y AVANZAR si el camino está libre.',
    lines:['SI HAY PARED ADELANTE → AVANZA, SINO → GIRA DERECHA','AVANZA','ENTREGA'],bug:0,fix:'las ramas están al revés: debe girar cuando SÍ hay pared'},
   {goal:'El robot debe CRUZAR solo con luz verde 🚦 y ESPERAR con luz roja.',
@@ -375,21 +382,22 @@ const _wgtBugDefs=[
   {goal:'El robot debe ESPERAR con rojo y AVANZAR con verde.',
    lines:['SI SEMÁFORO EN VERDE → AVANZA, SINO → GIRA DERECHA','AVANZA','ENTREGA'],bug:0,fix:'la rama SINO debería ser ESPERA, no GIRA DERECHA'},
 ];
-const neuroPairs=_wgtBugDefs.map(d=>{
+function _buildNeuroPairs(){return _wgtBugDefs.map(d=>{
   const bi=d.bug;
   return{
-    trans:`<div>🎯 <strong>Meta:</strong> ${d.goal} ¡Este programa tiene UN bug en su condicional!</div><div class="w-prog" style="text-align:left;margin-top:0.5rem;">${d.lines.map((p,i)=>'Línea '+(i+1)+': '+p).join('<br>')}</div>`,
-    func:'Línea '+(bi+1)+' (el condicional está mal)',
-    opts:d.lines.map((p,i)=>'Línea '+(i+1)+(i===bi?' (el condicional está mal)':' (está bien)'))
+    trans:`<div>${WGT_TXT.meta} ${d.goal} ${WGT_TXT.bug}</div><div class="w-prog" style="text-align:left;margin-top:0.5rem;">${d.lines.map((p,i)=>WGT_TXT.linea+' '+(i+1)+': '+p).join('<br>')}</div>`,
+    func:WGT_TXT.linea+' '+(bi+1)+WGT_TXT.mal,
+    opts:d.lines.map((p,i)=>WGT_TXT.linea+' '+(i+1)+(i===bi?WGT_TXT.mal:WGT_TXT.bien))
   };
-});
+});}
+let neuroPairs=_buildNeuroPairs();
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.innerHTML='🎉 ¡Todos los bugs atrapados!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.innerHTML=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.querySelectorAll('#neuroOpts .qz-opt').forEach(b=>{if(b.textContent===d.func)b.classList.add('correct');else if(b===btn&&b.textContent!==d.func)b.classList.add('wrong');});const isOk=opt===d.func;if(isOk){fb('fbNeuro','¡Bug atrapado! +3 XP',true);if(!xpTracker.wgt.has('neuro_'+neuroIdx)){xpTracker.wgt.add('neuro_'+neuroIdx);pts(3);}sfx('ok');}else{fb('fbNeuro','El bug estaba en: '+d.func,false);sfx('no');}setTimeout(()=>{neuroIdx++;showNeuro();},1800);}
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 2: Elige la condición (situación → qué pregunta necesita el robot, IDs estándar «enfer»)
-const enfermedadData=[
+let enfermedadData=[
   {disease:'El robot no debe chocar con los árboles 🌳. ¿Qué debe preguntar antes de avanzar?',characteristic:'¿Hay pared adelante?',opts:['¿Hay pared adelante?','¿Está lloviendo?']},
   {disease:'El robot cruza la calle solo con luz verde 🚦. ¿Qué debe preguntar?',characteristic:'¿El semáforo está en verde?',opts:['¿El semáforo está en verde?','¿Hay pared adelante?']},
   {disease:'Antes de salir de casa decides si llevar paraguas. ¿Qué preguntas?',characteristic:'¿Está lloviendo?',opts:['¿Está lloviendo?','¿Hay pared adelante?']},
@@ -403,7 +411,7 @@ function checkEnfer(opt,btn,d){if(enferDone)return;enferDone=true;document.query
 function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
-const retoPairs=[
+let retoPairs=[
   {label:['Condición (pregunta)','Acción (orden)'],btnA:'❓ Condición',btnB:'👣 Acción',colA:'cond',colB:'acc',
    words:[{w:'¿Hay pared adelante?',t:'cond'},{w:'AVANZA',t:'acc'},{w:'¿Está en verde?',t:'cond'},{w:'GIRA DERECHA',t:'acc'},{w:'¿Está lloviendo?',t:'cond'},{w:'ESPERA',t:'acc'},{w:'¿Llegó a la casa?',t:'cond'},{w:'ENTREGA',t:'acc'},{w:'¿Hace frío?',t:'cond'},{w:'GIRA IZQUIERDA',t:'acc'}]},
   {label:['Rama ENTONCES (sí)','Rama SINO (no)'],btnA:'👉 ENTONCES',btnB:'👈 SINO',colA:'ent',colB:'sino',
@@ -466,7 +474,7 @@ function _rndTrazaCaso(){
   return{n:4,sr:3,sc:0,dir:'N',obst:[[1,0]],obstStr:['1,0'],prog:[C_PARED,I_AV],fin:simRun({r:3,c:0,dir:'N'},[C_PARED,I_AV],{n:4,obst:['1,0']}).st};
 }
 function genRamaTask(out,count){_instrBlock(out,'Instrucción',['Lee la situación y el condicional. Escribe QUÉ RAMA se ejecuta (ENTONCES o SINO) y qué HACE el robot.']);const conds=[{c:'PARED',q:'¿hay pared adelante?',pre:C_PARED},{c:'VERDE',q:'¿el semáforo está en verde?',pre:C_VERDE}];for(let i=0;i<count;i++){const cd=conds[_rndInt(0,1)];const verdad=_rndInt(0,1)===1;const sit=cd.c==='PARED'?(verdad?'El robot tiene un árbol 🌳 justo adelante':'El camino del robot está libre'):(verdad?'El semáforo está en 🟢 verde':'El semáforo está en 🔴 rojo');const rama=verdad?'ENTONCES':'SINO';const acc=verdad?cd.pre.then:cd.pre.els;const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sit}.</strong><div class="tg-prog">${cd.pre.txt}</div><div style="margin-top:0.4rem;font-size:0.85rem;">Respuesta a «${cd.q}»: <span class="tg-blank">&nbsp;</span> · Rama que corre: <span class="tg-blank">&nbsp;</span> · El robot: <span class="tg-blank">&nbsp;</span></div><div class="tg-answer">✅ La condición es ${verdad?'VERDADERA (sí)':'FALSA (no)'} → corre la rama ${rama} → el robot ${acc}.</div></div>`;out.appendChild(div);}}
-const condSitDB=[
+let condSitDB=[
   {tema:'Cruzar la calle con semáforo 🚦',cond:'¿el semáforo está en verde?',si:'cruzo la calle',no:'espero en la acera'},
   {tema:'Salir de casa cuando el cielo está nublado ☁️',cond:'¿está lloviendo?',si:'llevo paraguas',no:'llevo gorra'},
   {tema:'El robot avanza por un pasillo con árboles 🌳',cond:'¿hay pared adelante?',si:'giro a la derecha',no:'avanzo'},
@@ -478,7 +486,7 @@ const condSitDB=[
 ];
 function genCondTask(out,count){_instrBlock(out,'Instrucción',['Escribe el condicional COMPLETO para cada situación, con este formato:','SI (pregunta) ENTONCES (acción del sí) SINO (acción del no).']);const pool=_shuffle([...condSitDB]);for(let i=0;i<count;i++){const it=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${it.tema}.</strong><div style="margin-top:0.4rem;font-size:0.9rem;">SI <span class="tg-blank" style="min-width:150px;">&nbsp;</span> ENTONCES <span class="tg-blank" style="min-width:120px;">&nbsp;</span> SINO <span class="tg-blank" style="min-width:120px;">&nbsp;</span></div><div class="tg-answer">✅ SI ${it.cond} ENTONCES ${it.si} SINO ${it.no}.</div></div>`;out.appendChild(div);}}
 function genTrazarTask(out,count){_instrBlock(out,'Instrucción',['Copia la cuadrícula en tu cuaderno. Traza el programa con el dedo — ¡evalúa el condicional en cada paso! — y escribe la casilla donde TERMINA el robot 🤖.']);for(let i=0;i<count;i++){const t=_rndTrazaCaso();const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>El robot parte de ${coordName(t.sr,t.sc)} mirando al ${DIR_NOMBRE[t.dir]}.</strong><div style="margin-top:0.4rem;">${svgGridHTML({n:4,robot:{r:t.sr,c:t.sc,dir:t.dir},obst:t.obst,w:170})}</div><div class="tg-prog">${t.prog.map((p,j)=>(j+1)+'. '+progLine(p)).join('<br>')}</div><div style="margin-top:0.4rem;font-size:0.85rem;">¿En qué casilla termina? <span class="tg-blank">&nbsp;</span></div><div class="tg-answer">✅ Termina en ${coordName(t.fin.r,t.fin.c)} mirando al ${DIR_NOMBRE[t.fin.dir]}.</div></div>`;out.appendChild(div);}}
-const bugCondDB=[
+let bugCondDB=[
   {goal:'girar al toparse con una pared 🌳',mala:'SI HAY PARED ADELANTE → AVANZA, SINO → GIRA DERECHA',buena:'SI HAY PARED ADELANTE → GIRA DERECHA, SINO → AVANZA',err:'las ramas están al revés'},
   {goal:'cruzar solo con luz verde 🚦',mala:'SI SEMÁFORO EN VERDE → ESPERA, SINO → AVANZA',buena:'SI SEMÁFORO EN VERDE → AVANZA, SINO → ESPERA',err:'las ramas están al revés'},
   {goal:'girar al chocar con un árbol 🌳',mala:'SI EL SEMÁFORO ESTÁ EN VERDE → GIRA DERECHA, SINO → AVANZA',buena:'SI HAY PARED ADELANTE → GIRA DERECHA, SINO → AVANZA',err:'la condición está equivocada (debe preguntar por la pared)'},
@@ -489,7 +497,7 @@ function genBugCondTask(out,count){_instrBlock(out,'Instrucción',['Cada condici
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
-const sopaSets=[
+let sopaSets=[
   {size:10,grid:[
     ['F','X','D','O','R','S','I','S','Y','Z'],
     ['L','D','V','Z','V','S','E','Y','A','J'],
@@ -553,7 +561,7 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
-const evalTFBank=[
+let evalTFBank=[
   {q:'Un condicional hace que el robot DECIDA según una condición.',a:true},
   {q:'La condición de un condicional es una pregunta de sí o no.',a:true},
   {q:'En un condicional siempre se ejecutan las dos ramas a la vez.',a:false},
@@ -570,7 +578,7 @@ const evalTFBank=[
   {q:'El orden de las preguntas en condicionales encadenados no importa.',a:false},
   {q:'La condición es una pregunta y la acción es una orden: no son lo mismo.',a:true},
 ];
-const evalMCBank=[
+let evalMCBank=[
   {q:'SI hay pared adelante ENTONCES gira derecha, SINO avanza. El robot NO tiene pared adelante. ¿Qué hace?',o:['Gira derecha','Avanza','Se detiene','Gira izquierda'],a:1},
   {q:'¿Qué es un condicional?',o:['a) Una lista de pasos siempre iguales','b) Una instrucción que hace decidir según una condición','c) Un giro de 90°','d) Un mapa'],a:1},
   {q:'¿Qué es la CONDICIÓN de un condicional?',o:['a) Una orden como AVANZA','b) Una pregunta de sí o no','c) El color del robot','d) La casilla final'],a:1},
@@ -587,7 +595,7 @@ const evalMCBank=[
   {q:'En condicionales encadenados, el ORDEN de las preguntas…',o:['a) No importa','b) Puede cambiar la decisión del robot','c) Solo importa el color','d) Nunca cambia nada'],a:1},
   {q:'La condición «es una pregunta» y la acción «es una…»',o:['a) orden que el robot ejecuta','b) otra pregunta','c) casilla','d) constancia'],a:0},
 ];
-const evalCPBank=[
+let evalCPBank=[
   {q:'Una instrucción que hace al robot decidir se llama ___.',a:'condicional'},
   {q:'La pregunta de sí o no de un condicional se llama ___.',a:'condición'},
   {q:'La rama que corre cuando la respuesta es SÍ se llama rama ___.',a:'ENTONCES'},
@@ -604,7 +612,7 @@ const evalCPBank=[
   {q:'Varios condicionales seguidos son condicionales ___.',a:'encadenados'},
   {q:'La instrucción ___ hace que el robot no se mueva y deje pasar el tiempo.',a:'ESPERA'},
 ];
-const evalPRBank=[
+let evalPRBank=[
   {term:'Condicional',def:'Instrucción que hace decidir según una condición'},
   {term:'Condición',def:'Pregunta de sí o no que decide la rama'},
   {term:'Rama ENTONCES',def:'Camino que corre cuando la respuesta es SÍ'},
@@ -687,7 +695,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
 .forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Condicionales: el Robot Decide · Educación Básica · Programación</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Condicionales: el Robot Decide · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u · Programación · Educación Básica</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA OPERATIVA (patrón angulos.js) =====================
 function evalSwitchMode(mode){
@@ -754,9 +762,15 @@ function genPrediceItems(){
   {const d=DIRS[_opRint(0,3)];items.push({txt:`El robot mira al ${DIR_NOMBRE[d]} y hay pared adelante. Con «${C_PARED.txt}» corre su rama. ¿Hacia dónde mira después?`,ans:DIR_NOMBRE[turnR(d)]});}
   return _shuffleF(items,_opRnd);
 }
+// El alumno bilingüe escribe la respuesta en inglés, pero la esperada nace de
+// las constantes en español (ENTONCES, AVANZA, Norte…): se traduce antes de comparar.
+const _PRED_EN={'then':'entonces','yes':'si','true':'entonces','else':'sino','no':'no','false':'sino',
+  'forward':'avanza','go forward':'avanza','turn right':'gira derecha','turn left':'gira izquierda',
+  'wait':'espera','deliver':'entrega','north':'norte','east':'este','south':'sur','west':'oeste'};
 function _isPredOk(student,expected){
   let s=normalizeEvalAnswer(student).replace(/^(el|al|la|la rama|rama)\s+/,'');
   const e=normalizeEvalAnswer(expected);
+  if(_PRED_EN[s])s=_PRED_EN[s];
   if(!s)return false;
   if(s===e)return true;
   if(e==='entonces'&&(s==='si'||s==='verdadera'||s==='verdad'))return true;
@@ -766,7 +780,7 @@ function _isPredOk(student,expected){
 }
 
 // III. Completa el condicional (5 × 4 = 20 pts): falta la CONDICIÓN o una RAMA; elige la opción.
-const OP_COMPLETA_BANK=[
+let OP_COMPLETA_BANK=[
   {txt:'El robot debe GIRAR cuando choque con un árbol 🌳.',prog:'SI ___ → GIRA DERECHA, SINO → AVANZA',opts:['HAY PARED ADELANTE','EL SEMÁFORO ESTÁ EN VERDE','ES DE NOCHE','LLUEVE'],ans:0},
   {txt:'El robot cruza la calle solo con luz verde 🚦.',prog:'SI EL SEMÁFORO ESTÁ EN VERDE → ___, SINO → ESPERA',opts:['AVANZA','GIRA DERECHA','ESPERA','ENTREGA'],ans:0},
   {txt:'El robot espera cuando la luz está en rojo 🔴.',prog:'SI EL SEMÁFORO ESTÁ EN VERDE → AVANZA, SINO → ___',opts:['ESPERA','AVANZA','GIRA IZQUIERDA','ENTREGA'],ans:0},
@@ -785,7 +799,7 @@ function genCompletaItems(){
 }
 
 // IV. Problemas de la vida real (3 × 10 = 30 pts): escribir el condicional SI-ENTONCES-SINO completo.
-const opVidaBank=[
+let opVidaBank=[
   {tema:'Cocinar en el fogón de leña 🔥',cond:'¿el fogón está encendido?',si:'pongo la olla a cocinar',no:'enciendo primero la leña'},
   {tema:'La lluvia y la ropa tendida 👕',cond:'¿está lloviendo?',si:'recojo la ropa del tendedero',no:'dejo la ropa secándose al sol'},
   {tema:'El río crecido camino a la escuela 🌊',cond:'¿el río está crecido?',si:'espero o busco otro camino',no:'cruzo con cuidado'},
@@ -793,7 +807,7 @@ const opVidaBank=[
   {tema:'Abrigarse por la mañana 🌡️',cond:'¿hace frío?',si:'me pongo suéter',no:'me pongo camiseta'},
   {tema:'Regar la milpa 🌽',cond:'¿la tierra está seca?',si:'riego las plantas',no:'no riego hoy'},
 ];
-const OP_VIDA_RUBRICA='La CONDICIÓN es una pregunta de sí/no (4 pts) · La rama ENTONCES es la acción del SÍ (3 pts) · La rama SINO es la acción del NO (3 pts)';
+let OP_VIDA_RUBRICA='La CONDICIÓN es una pregunta de sí/no (4 pts) · La rama ENTONCES es la acción del SÍ (3 pts) · La rama SINO es la acción del NO (3 pts)';
 function genVidaItems(){return _pickF(opVidaBank,3,_opRnd);}
 
 // V. Olimpiada (10 + 10 = 20 pts)
@@ -815,7 +829,7 @@ function genRetoCorto(){
   return best;
 }
 // (b) Detective del bug del condicional: hallar la línea errada y su corrección
-const OP_BUG_BANK=[
+let OP_BUG_BANK=[
   {goal:'girar al toparse con una pared 🌳',lines:['SI HAY PARED ADELANTE → AVANZA, SINO → GIRA DERECHA','AVANZA','ENTREGA'],linea:1,correcta:'SI HAY PARED ADELANTE → GIRA DERECHA, SINO → AVANZA'},
   {goal:'cruzar solo con luz verde 🚦',lines:['AVANZA','SI SEMÁFORO EN VERDE → ESPERA, SINO → AVANZA','ENTREGA'],linea:2,correcta:'SI SEMÁFORO EN VERDE → AVANZA, SINO → ESPERA'},
   {goal:'esperar con luz roja 🔴',lines:['SI SEMÁFORO EN VERDE → AVANZA, SINO → GIRA DERECHA','AVANZA','ENTREGA'],linea:1,correcta:'SI SEMÁFORO EN VERDE → AVANZA, SINO → ESPERA'},
@@ -973,14 +987,14 @@ function printEvalOp() {
   const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Condicionales: el Robot Decide · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#0e7490;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#0e7490;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #0e7490;background:#ecfeff;display:flex;justify-content:space-between;align-items:center;color:#0e7490;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#0e7490;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #0e7490;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#0e7490;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10.5pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-mini-blank{display:inline-block;min-width:60px;border-bottom:1.5px solid #111;}.mono{font-family:'Courier New',monospace;font-weight:700;font-size:9.5pt;}.ej-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.35rem 0.5rem;margin-top:0.2rem;}.ej-box{border:1px solid #bbb;border-radius:4px;padding:0.25rem 0.35rem;break-inside:avoid;page-break-inside:avoid;}.ej-head{font-size:8.5pt;font-weight:700;color:#0e7490;margin-bottom:0.15rem;}.ej-svg{text-align:center;}.ej-prog{font-family:'Courier New',monospace;font-size:8.5pt;font-weight:700;line-height:1.3;margin-top:0.15rem;}.ej-resp{font-size:9pt;margin-top:0.2rem;}.ln-vida{display:block;border-bottom:1px solid #111;min-height:14px;margin-top:8px;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#0e7490;margin-bottom:0.2rem;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#0e7490;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#ecfeff;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #0e7490;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#0e7490;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #a5f3fc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#0e7490;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#0e7490;}.pa{color:#007a00;font-weight:600;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.p-rub{font-size:9.5pt;color:#555;margin-top:0.2rem;border-top:1px dotted #ddd;padding-top:0.2rem;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Programación — Prueba Operativa · Condicionales: el Robot Decide · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Condicionales: el Robot Decide · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · I: 5×4 · II: 5×2 · III: 5×4 · IV: 3×10 · V: 10+10 · Programación · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
-  win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
+  win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc); win.document.close(); setTimeout(() => win.print(), 400);
 }
 
 // ===================== LAB: SIMULADOR CON DECISIONES =====================
 // 4 mapas (parteData) en una aldea 5×5: 🌳 = muro/pared (no se pisa), 🚦 = semáforo (cruce
 // que solo se pasa en verde), 🏠 = casa destino. Cada mapa se resuelve usando el condicional.
 // Verificados como resolubles por solveSim al construirse. Coordenadas A–E / 1–5.
-const parteData={
+let parteData={
   n1:{nombre:'Nivel 1 · El muro que hace decidir',icon:'1️⃣',n:5,start:{r:4,c:2,dir:'N'},dest:[0,2],
       obst:[[2,2]],cross:[],semFase:0,deco:{'0,0':'🏫','4,4':'🏪'},
       meta:'Lleva al robot a la casa 🏠 en C1. Hay un árbol 🌳 en C3 que bloquea la subida directa: usa «SI HAY PARED ADELANTE → GIRA DERECHA, SINO → AVANZA» para rodearlo.',xpn:6},
@@ -1103,3 +1117,68 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ===================== IDIOMA (español ↔ inglés) =====================
+// El contenido en inglés vive en robot-decide-en.js y el botón lo maneja
+// ../../js/metas-i18n.js. Aquí solo se intercambian los bancos y se repinta:
+// el progreso (XP, logros, secciones hechas) no se toca al cambiar de idioma.
+//
+// Como en Programando un Robot, I_AV, C_PARED… siguen siendo las palabras EN
+// ESPAÑOL: son el identificador con el que el simulador compara, con el que el
+// HTML llama a labAdd('AVANZA') y con el que se guardan los programas. Lo que
+// se traduce es lo que se pinta. La excepción es WGT_TXT: ese pegamento SÍ se
+// cambia en el dato, porque los dos widgets comparan contra el textContent de
+// sus botones y una traducción al vuelo rompería la comparación.
+const _BANCOS_ES = {
+  ACHIEVEMENTS, lvls, fcData, memoPairs, qzData, classGroups, idData, cmpData,
+  routeSets, WGT_TXT, _wgtEndDefs, _wgtBugDefs, enfermedadData, retoPairs,
+  condSitDB, bugCondDB, sopaSets,
+  evalTFBank, evalMCBank, evalCPBank, evalPRBank,
+  OP_COMPLETA_BANK, opVidaBank, OP_VIDA_RUBRICA, OP_BUG_BANK, parteData
+};
+window.MISION_APLICAR_IDIOMA = function (lang) {
+  const src = (lang === 'en' && window.MISION_EN && window.MISION_EN.data)
+    ? window.MISION_EN.data : _BANCOS_ES;
+  const usa = (k) => (src[k] !== undefined ? src[k] : _BANCOS_ES[k]);
+
+  ACHIEVEMENTS = usa('ACHIEVEMENTS'); lvls = usa('lvls');
+  fcData = usa('fcData'); memoPairs = usa('memoPairs'); qzData = usa('qzData');
+  classGroups = usa('classGroups'); idData = usa('idData'); cmpData = usa('cmpData');
+  routeSets = usa('routeSets'); WGT_TXT = usa('WGT_TXT');
+  _wgtEndDefs = usa('_wgtEndDefs'); _wgtBugDefs = usa('_wgtBugDefs');
+  enfermedadData = usa('enfermedadData'); retoPairs = usa('retoPairs');
+  condSitDB = usa('condSitDB'); bugCondDB = usa('bugCondDB'); sopaSets = usa('sopaSets');
+  evalTFBank = usa('evalTFBank'); evalMCBank = usa('evalMCBank');
+  evalCPBank = usa('evalCPBank'); evalPRBank = usa('evalPRBank');
+  OP_COMPLETA_BANK = usa('OP_COMPLETA_BANK'); opVidaBank = usa('opVidaBank');
+  OP_VIDA_RUBRICA = usa('OP_VIDA_RUBRICA'); OP_BUG_BANK = usa('OP_BUG_BANK');
+  parteData = usa('parteData');
+
+  // Los dos widgets derivados se vuelven a armar con el pegamento del idioma nuevo
+  neuronPartes = _buildNeuronPartes();
+  neuroPairs = _buildNeuroPairs();
+
+  // Repintar cada juego desde el principio con el banco nuevo
+  fcIdx = 0; upFC();
+  buildMemo();
+  qzIdx = 0; qzSel = -1; qzDone = false; showQz();
+  currentClassGroupIdx = 0; buildClass();
+  idIdx = 0; showId();
+  cmpIdx = 0; cmpSel = -1; showCmp();
+  currentRouteIdx = 0; buildRoute();
+  neuronIdx = 0; showNeuron();
+  neuroIdx = 0; showNeuro();
+  enferIdx = 0; showEnfer();
+  currentRetoPairIdx = 0; updateRetoButtons(); resetReto();
+  currentSopaSetIdx = 0; sopaFoundWords = new Set(); buildSopa();
+  labProg = []; labShowParte(labNivel);
+  renderAchPanel(); updateXPBar();
+
+  // Las pruebas ya generadas se rehacen en el idioma nuevo, con su misma forma
+  const out = document.getElementById('evalOut');
+  if (out && out.innerHTML.trim()) { evalFormNum = window._currentEvalForm || evalFormNum; genEval(); }
+  const outOp = document.getElementById('evalOpOut');
+  if (outOp && outOp.innerHTML.trim()) { evalOpFormNum = window._currentEvalOpForm || evalOpFormNum; genEvalOp(); }
+  const tg = document.getElementById('tgOut');
+  if (tg) tg.innerHTML = '';
+};

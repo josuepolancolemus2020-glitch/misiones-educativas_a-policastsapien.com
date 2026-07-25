@@ -36,7 +36,7 @@
 <header class="hero" role="banner">
   <div class="hero-inner">
     <div class="hero-mascot" aria-hidden="true">🚦</div>
-    <div class="hero-text">
+    <div class="hero-text" data-i18n="hero">
       <h1>Misión <span>Condicionales: el Robot Decide</span></h1>
       <p class="sub">¡Haz que el robot DECIDA con SI…ENTONCES…SINO según lo que ve! 🤖🔀🚦</p>
       <div class="badge">💻 Ruta del Código · Etapa 3 de 7 · Programación</div>
@@ -48,7 +48,7 @@
 
 <!-- ===== APRENDE ===== -->
 <div class="sec active" id="s-aprende" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="a1">
     <h2>🔀 Decidir según la situación</h2>
     <p>Todos los días <strong>tomamos decisiones</strong> según lo que pasa: <strong>SI</strong> llueve
     <strong>ENTONCES</strong> llevo paraguas, <strong>SINO</strong> llevo gorra. Eso es un
@@ -79,7 +79,7 @@
     </div>
   </div>
 
-  <div class="card ac-gold">
+  <div class="card ac-gold" data-i18n="a2">
     <h2>🤖 SI-ENTONCES y SI-ENTONCES-SINO en el robot</h2>
     <p>Los <strong>sensores</strong> son las «preguntas» del robot: le dicen si <strong>¿hay pared adelante?</strong>
     o si <strong>¿el semáforo está en verde?</strong>. Con esa respuesta el robot decide qué rama ejecutar y
@@ -105,7 +105,7 @@
     </div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="a3">
     <h2>🔗 Condicionales encadenados y el orden de las preguntas</h2>
     <p>A veces el robot necesita <strong>varias preguntas seguidas</strong>: primero «¿hay pared?», después
     «¿el semáforo está en verde?». Son <strong>condicionales encadenados</strong>, y el <strong>orden</strong> de
@@ -134,7 +134,7 @@
 
 <!-- ===== INSTRUCCIONES (DETALLE) ===== -->
 <div class="sec" id="s-estructura" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="e1">
     <h2>📋 La estructura de un condicional</h2>
     <p>Un condicional tiene tres partes: una <strong>condición</strong> (la pregunta) y dos <strong>ramas</strong>
     (qué hacer si <strong>sí</strong> y qué hacer si <strong>no</strong>). ¡Mira cómo se lee!</p>
@@ -160,7 +160,7 @@
     </div>
   </div>
 
-  <div class="card ac-amber">
+  <div class="card ac-amber" data-i18n="e2">
     <h2>⚠️ Errores comunes — ¡no caigas en ellos!</h2>
     <div class="vs-grid">
       <div class="vs-box vs-a">
@@ -193,7 +193,7 @@
     </div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="e3">
     <h2>🇭🇳 Condicionales en tu vida diaria</h2>
     <p>Aunque no tengas computadora, ya decides con condicionales todo el tiempo: eliges según la respuesta a una pregunta de sí o no.</p>
     <div class="type-grid">
@@ -217,8 +217,8 @@
 <!-- ===== LAB: SIMULADOR ===== -->
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
-    <h2>🔬 Simulador: el Robot que Decide</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige un mapa, arma tu programa tocando los botones — ¡incluye los <strong>condicionales</strong> 🌳🚦 para que el robot DECIDA! — y presiona <strong>▶ Ejecutar</strong>. Verás cómo evalúa cada condición (✔ sí / ✘ no) paso a paso. ⭐ +6 XP por cada mapa resuelto (primera vez).</p>
+    <h2 data-i18n="labh2">🔬 Simulador: el Robot que Decide</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;" data-i18n="labintro">Elige un mapa, arma tu programa tocando los botones — ¡incluye los <strong>condicionales</strong> 🌳🚦 para que el robot DECIDA! — y presiona <strong>▶ Ejecutar</strong>. Verás cómo evalúa cada condición (✔ sí / ✘ no) paso a paso. ⭐ +6 XP por cada mapa resuelto (primera vez).</p>
     <div id="lab-sentence" class="lab-sentence">🤖 Cargando la aldea…</div>
     <div class="lab-stage">
       <div id="lab-display" class="lab-display-box">
@@ -226,26 +226,26 @@
       </div>
     </div>
     <div class="lab-controls">
-      <div class="lab-group">
+      <div class="lab-group" data-i18n="labmapa">
         <span class="lab-group-label">🗺️ Mapa:</span>
         <button class="lab-btn lab-cont-btn" data-parte="n1" onclick="labShowParte('n1')">1️⃣ El muro</button>
         <button class="lab-btn lab-cont-btn" data-parte="n2" onclick="labShowParte('n2')">2️⃣ El pasillo</button>
         <button class="lab-btn lab-cont-btn" data-parte="n3" onclick="labShowParte('n3')">3️⃣ El semáforo</button>
         <button class="lab-btn lab-cont-btn" data-parte="n4" onclick="labShowParte('n4')">4️⃣ El desafío</button>
       </div>
-      <div class="sim-cmd-btns">
+      <div class="sim-cmd-btns" data-i18n="labcmd">
         <button class="sim-cmd" onclick="labAdd('AVANZA')">👣 AVANZA</button>
         <button class="sim-cmd" onclick="labAdd('GIRA IZQUIERDA')">↩️ GIRA IZQ.</button>
         <button class="sim-cmd" onclick="labAdd('GIRA DERECHA')">↪️ GIRA DER.</button>
         <button class="sim-cmd" onclick="labAdd('ESPERA')">⏳ ESPERA</button>
         <button class="sim-cmd sim-cmd-entrega" onclick="labAdd('ENTREGA')">📬 ENTREGA</button>
       </div>
-      <div class="sim-cmd-btns">
+      <div class="sim-cmd-btns" data-i18n="labcond">
         <button class="sim-cmd" style="grid-column:span 2;" onclick="labAdd('C_PARED')">🌳 SI PARED → GIRA DER., SINO → AVANZA</button>
         <button class="sim-cmd" style="grid-column:span 2;" onclick="labAdd('C_VERDE')">🚦 SI VERDE → AVANZA, SINO → ESPERA</button>
       </div>
       <div class="sim-prog" id="progList" aria-live="polite"></div>
-      <div class="sim-util-btns">
+      <div class="sim-util-btns" data-i18n="labutil">
         <button class="btn btn-g" onclick="labRun()">▶ Ejecutar</button>
         <button class="btn btn-d" onclick="labDel()">⌫ Borrar última</button>
         <button class="btn btn-d" onclick="labClear()">🗑️ Limpiar</button>
@@ -570,7 +570,7 @@
 </div>
 
 <div class="sec" id="s-recursos" role="tabpanel">
-  <div class="card ac-blue">
+  <div class="card ac-blue" data-i18n="rec">
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
@@ -669,6 +669,8 @@
 
   <script src="js/html2canvas.min.js"></script>
   <script src="js/robot-decide.js"></script>
+  <script src="js/robot-decide-en.js?v=36"></script>
+  <script src="../../js/metas-i18n.js?v=36"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
