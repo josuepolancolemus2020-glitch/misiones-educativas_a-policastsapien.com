@@ -32,7 +32,7 @@ function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSe
 function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalCritFormNum)evalCritFormNum=s.evalCritFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
 
 // ===================== ACHIEVEMENTS =====================
-const ACHIEVEMENTS={
+let ACHIEVEMENTS={
   primer_quiz:{icon:'📡',label:'Primer quiz de sensores superado'},
   flash_master:{icon:'🃏',label:'Todas las flashcards de sensores exploradas'},
   clasif_pro:{icon:'🗂️',label:'Clasificador de sensor vs actuador experto'},
@@ -49,7 +49,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#0e7490','#22d3ee','#c2410c','#fb923c','#06b6d4'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Curioso Tec 🔋'},{t:55,n:'Observador de Señales 🧭'},{t:90,n:'Lector de Sensores 👀'},{t:130,n:'Técnico de Sensores 📡'},{t:165,n:'Ingeniero de Sensores 🛠️'},{t:190,n:'Maestro de los Sentidos del Robot 🤖'}];
+let lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Curioso Tec 🔋'},{t:55,n:'Observador de Señales 🧭'},{t:90,n:'Lector de Sensores 👀'},{t:130,n:'Técnico de Sensores 📡'},{t:165,n:'Ingeniero de Sensores 🛠️'},{t:190,n:'Maestro de los Sentidos del Robot 🤖'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -63,7 +63,7 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 function miniQ(btn,isOk,fbId){const wrap=btn.parentElement;if(wrap.dataset.done==='1')return;wrap.querySelectorAll('.cmp-opt').forEach(b=>b.classList.remove('sel'));if(isOk){wrap.dataset.done='1';btn.classList.add('correct');fb(fbId,'¡Correcto! Piensas como todo un técnico de sensores.',true);sfx('ok');}else{btn.classList.add('wrong');fb(fbId,'Casi. Pregúntate: ¿percibe algo del mundo o hace algo en el mundo?',false);sfx('no');}}
 
 // ===================== FLASHCARD DATA =====================
-const fcData=[
+let fcData=[
   {w:'Sensor',a:'📡 Parte del robot que <strong>percibe</strong>: convierte algo del mundo (luz, distancia, calor, contacto, sonido, humedad) en una <strong>señal</strong> para el controlador.'},
   {w:'Sensor de luz',a:'☀️ Mide <strong>cuánta luz hay</strong>: distingue claro de oscuro. Es la <strong>fotorresistencia</strong> del carrito sigue-líneas.'},
   {w:'Sensor de distancia',a:'📏 Mide <strong>qué tan lejos</strong> está un objeto. El <strong>ultrasónico</strong> trabaja como el murciélago: lanza sonido y espera el eco.'},
@@ -86,7 +86,7 @@ function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
 
 // ===================== JUEGO: MEMORIA DE LOS SENSORES =====================
-const memoPairs=[
+let memoPairs=[
   {id:'luz',t:'Sensor de luz',d:'☀️ distingue claro y oscuro (sigue-líneas)'},
   {id:'distancia',t:'Sensor de distancia',d:'📏 mide qué tan lejos está el obstáculo'},
   {id:'tacto',t:'Sensor de tacto',d:'🤲 avisa cuando algo lo toca o lo presiona'},
@@ -133,7 +133,7 @@ function flipMemo(btn,i){
 function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
-const qzData=[
+let qzData=[
   {q:'¿Qué hace exactamente un sensor?',o:['a) Mueve las ruedas del robot','b) Convierte algo del mundo en una señal para el controlador','c) Decide qué hacer','d) Guarda la energía del robot'],c:1},
   {q:'¿A qué parte del cuerpo se parece el sensor de luz?',o:['a) Al ojo','b) Al oído','c) Al músculo','d) Al hueso'],c:0},
   {q:'¿Qué sensor usa el robot que se detiene antes de chocar?',o:['a) De humedad','b) De temperatura','c) De distancia','d) De sonido'],c:2},
@@ -151,7 +151,7 @@ function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false
 function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
 
 // ===================== CLASIFICACIÓN =====================
-const classGroups=[
+let classGroups=[
   {label:['Sensor','Actuador'],headA:'📡 Sensor (percibe)',headB:'💪 Actuador (actúa)',colA:'sen',colB:'act',
    words:[{w:'Fotorresistencia',t:'sen'},{w:'Motor',t:'act'},{w:'Micrófono',t:'sen'},{w:'Rueda',t:'act'},{w:'Pulsador de tacto',t:'sen'},{w:'Bocina',t:'act'},{w:'Termómetro',t:'sen'},{w:'Brazo mecánico',t:'act'},{w:'Ultrasónico',t:'sen'},{w:'Luz LED',t:'act'}]},
   {label:['Sensor de luz','Sensor de distancia'],headA:'☀️ Necesita sensor de luz',headB:'📏 Necesita sensor de distancia',colA:'luz',colB:'dis',
@@ -168,7 +168,7 @@ function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupId
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
 // ===================== IDENTIFICAR =====================
-const idData=[
+let idData=[
   {s:['El','sensor','percibe','el','mundo','del','robot.'],c:1,art:'La parte del robot que percibe'},
   {s:['El','controlador','decide','con','la','señal','del','sensor.'],c:1,art:'La parte del robot que decide'},
   {s:['El','actuador','ejecuta','la','orden','recibida.'],c:1,art:'La parte del robot que actúa'},
@@ -185,7 +185,7 @@ function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').
 function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
 
 // ===================== COMPLETA =====================
-const cmpData=[
+let cmpData=[
   {s:'El sensor convierte algo del mundo en una ___ para el controlador.',opts:['señal','rueda','batería'],c:0},
   {s:'El sensor de luz se parece a tu ___.',opts:['oído','ojo','codo'],c:1},
   {s:'El sensor de distancia trabaja como el ___, con el eco.',opts:['murciélago','caballo','pez'],c:0},
@@ -201,7 +201,7 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 
 // ===================== WIDGETS =====================
 // Widget 1: ordenar la cadena sensor → controlador → actuador
-const routeSets=[
+let routeSets=[
   {label:'La puerta automática del supermercado',steps:['El sensor de distancia detecta a una persona cerca','La señal viaja del sensor al controlador','El controlador decide: «si hay alguien, abrir»','El motor (actuador) desliza la puerta']},
   {label:'El riego del cafetal',steps:['El sensor de humedad mide que la tierra está seca','El controlador recibe el dato y decide abrir el agua','La válvula (actuador) deja pasar el agua','El sensor vuelve a medir y avisa que la tierra ya está húmeda']},
   {label:'El carrito sigue-líneas del aula',steps:['El sensor de luz ve que el piso se puso claro','El controlador compara: «me salí de la línea negra»','Decide corregir el rumbo hacia la izquierda','Los motores (actuadores) mueven las ruedas','El sensor confirma que volvió sobre la línea']},
@@ -215,7 +215,7 @@ function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Caso: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: ¿Qué sensor necesita?
-const neuronPartes=[
+let neuronPartes=[
   {desc:'Un robot que se detiene antes de chocar con la pared',ans:'Sensor de distancia',opts:['Sensor de distancia','Sensor de luz','Sensor de sonido','Sensor de temperatura']},
   {desc:'Un robot que enciende la lámpara del corredor cuando oscurece',ans:'Sensor de luz',opts:['Sensor de luz','Sensor de tacto','Sensor de distancia','Sensor de humedad']},
   {desc:'Un robot de juguete que arranca cuando aplaudes',ans:'Sensor de sonido',opts:['Sensor de sonido','Sensor de luz','Sensor de temperatura','Sensor de distancia']},
@@ -232,7 +232,7 @@ function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Sensor → sentido humano
-const neuroPairs=[
+let neuroPairs=[
   {trans:'Sensor de luz',func:'El ojo: capta la luz y distingue claro de oscuro',opts:['El ojo: capta la luz y distingue claro de oscuro','El oído: capta los sonidos','El músculo: mueve el cuerpo','El hueso: sostiene el cuerpo']},
   {trans:'Sensor de sonido',func:'El oído: capta ruidos, voces y aplausos',opts:['El oído: capta ruidos, voces y aplausos','El ojo: capta la luz','La lengua: capta los sabores','El músculo: ejecuta el movimiento']},
   {trans:'Sensor de tacto',func:'La piel: siente cuando algo la toca o la presiona',opts:['La piel: siente cuando algo la toca o la presiona','El ojo: capta la luz','El corazón: bombea la sangre','El pulmón: toma el aire']},
@@ -245,7 +245,7 @@ function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.query
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: ¿Sensor o actuador?
-const enfermedadData=[
+let enfermedadData=[
   {disease:'El micrófono',characteristic:'Es un sensor',opts:['Es un sensor','Es un actuador']},
   {disease:'El motor de la rueda',characteristic:'Es un actuador',opts:['Es un actuador','Es un sensor']},
   {disease:'La fotorresistencia',characteristic:'Es un sensor',opts:['Es un sensor','Es un actuador']},
@@ -259,7 +259,7 @@ function checkEnfer(opt,btn,d){if(enferDone)return;enferDone=true;document.query
 function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
-const retoPairs=[
+let retoPairs=[
   {label:['Sensor','Actuador'],btnA:'📡 Sensor',btnB:'💪 Actuador',colA:'sen',colB:'act',
    words:[{w:'Fotorresistencia',t:'sen'},{w:'Motor',t:'act'},{w:'Micrófono',t:'sen'},{w:'Rueda',t:'act'},{w:'Pulsador',t:'sen'},{w:'Bocina',t:'act'},{w:'Termómetro',t:'sen'},{w:'Brazo mecánico',t:'act'},{w:'Ultrasónico',t:'sen'},{w:'Luz LED',t:'act'}]},
   {label:['Sensor de luz','Sensor de distancia'],btnA:'☀️ De luz',btnB:'📏 De distancia',colA:'luz',colB:'dis',
@@ -277,7 +277,7 @@ function nextRetoPair(){sfx('click');clearInterval(retoTimerInt);retoRunning=fal
 function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';document.getElementById('fbReto').classList.remove('show');}
 
 // ===================== TASK GENERATOR =====================
-const identifyTaskDB=[
+let identifyTaskDB=[
   {s:'El sensor convierte la luz, el sonido o la distancia en una señal.',type:'Sensor'},
   {s:'La fotorresistencia distingue el piso claro de la línea negra.',type:'Sensor de luz'},
   {s:'El ultrasónico mide la distancia con el eco, como el murciélago.',type:'Sensor de distancia'},
@@ -289,7 +289,7 @@ const identifyTaskDB=[
   {s:'Recibe la señal del sensor y decide qué hacer.',type:'Controlador'},
   {s:'El sensor sucio informó mal y el robot se salió de la línea.',type:'Lectura equivocada'},
 ];
-const classifyTaskDB=[
+let classifyTaskDB=[
   {w:'Sensor de luz',gen:'Sensor',n:'Cuánta luz hay: claro u oscuro',g:'👁️ El ojo',t:'Carrito sigue-líneas; lámpara del corredor'},
   {w:'Sensor de distancia',gen:'Sensor',n:'Qué tan lejos está un objeto (por eco)',g:'🦇 El eco del murciélago',t:'Puerta automática del supermercado'},
   {w:'Sensor de tacto',gen:'Sensor',n:'Si algo lo toca o lo presiona',g:'🖐️ La piel',t:'Parachoques del robot; botón de encendido'},
@@ -299,7 +299,7 @@ const classifyTaskDB=[
   {w:'Motor',gen:'Actuador',n:'No percibe nada: ejecuta la orden',g:'💪 El músculo',t:'Ruedas del carrito robótico'},
   {w:'Bocina',gen:'Actuador',n:'No percibe nada: produce sonido',g:'🗣️ La voz',t:'Alarma del robot al ir de reversa'},
 ];
-const completeTaskDB=[
+let completeTaskDB=[
   {s:'El sensor convierte algo del mundo en una ___.',opts:['señal','rueda','sombra'],ans:'señal'},
   {s:'El sensor de luz se parece al ___ humano.',opts:['ojo','codo','diente'],ans:'ojo'},
   {s:'El sensor ultrasónico mide la ___ con el eco.',opts:['distancia','fiebre','humedad'],ans:'distancia'},
@@ -309,7 +309,7 @@ const completeTaskDB=[
   {s:'El motor no percibe: es un ___.',opts:['actuador','sensor','programa'],ans:'actuador'},
   {s:'Un sensor sucio da una lectura ___.',opts:['equivocada','exacta','doble'],ans:'equivocada'},
 ];
-const explainQuestions=[
+let explainQuestions=[
   {q:'¿Qué es un sensor? Explica con tus palabras qué capta y en qué lo convierte.',ans:'Un sensor es la parte del robot que percibe: capta algo del mundo real (luz, distancia, calor, contacto, sonido o humedad) y lo convierte en una señal eléctrica que el controlador puede entender.'},
   {q:'Explica la cadena sensor → controlador → actuador y compárala con tu cuerpo.',ans:'El sensor percibe y envía la señal (como el receptor: ojo, oído o piel), el controlador decide (como el cerebro) y el actuador ejecuta la acción (como el músculo). En el cuerpo es receptor → cerebro → efector.'},
   {q:'¿En qué se diferencia un sensor de un actuador? Da dos ejemplos de cada uno.',ans:'El sensor mete información al robot (percibe): fotorresistencia, ultrasónico, micrófono, termómetro. El actuador saca acción (hace algo): motor, rueda, bocina, luz LED, válvula. El sensor no mueve nada y el actuador no mide nada.'},
@@ -329,7 +329,7 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 // ===================== SOPA DE LETRAS =====================
 // Cuadrículas generadas por script y verificadas por construcción:
 // cada palabra se lee exacta, colineal y contigua en las celdas indicadas.
-const sopaSets=[
+let sopaSets=[
   {size:10,grid:[
     ['W','U','K','K','S','K','I','H','G','O'],
     ['V','L','J','V','F','E','U','I','S','W'],
@@ -395,7 +395,7 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank=[
+let evalTFBank=[
   {q:'El sensor convierte algo del mundo en una señal para el controlador.',a:true},
   {q:'El sensor es el que decide qué hará el robot.',a:false},
   {q:'El sensor de luz se parece al ojo humano.',a:true},
@@ -412,7 +412,7 @@ const evalTFBank=[
   {q:'El sensor de temperatura mide cuánta luz hay en el cuarto.',a:false},
   {q:'En el cuerpo humano la cadena es receptor → cerebro → efector.',a:true},
 ];
-const evalMCBank=[
+let evalMCBank=[
   {q:'¿Qué es un sensor?',o:['a) La parte que mueve al robot','b) La parte que percibe y convierte el mundo en una señal','c) La batería del robot','d) La lista de instrucciones'],a:1},
   {q:'¿A qué sentido humano se parece el sensor de luz?',o:['a) Al oído','b) Al gusto','c) A la vista','d) Al olfato'],a:2},
   {q:'¿Qué sensor necesita un robot para no chocar con la pared?',o:['a) De humedad','b) De distancia','c) De temperatura','d) De sonido'],a:1},
@@ -429,7 +429,7 @@ const evalMCBank=[
   {q:'¿Con qué parte del cuerpo se compara el controlador?',o:['a) Con la piel','b) Con el oído','c) Con el músculo','d) Con el cerebro'],a:3},
   {q:'El componente del sensor de luz se llama…',o:['a) Válvula','b) Fotorresistencia','c) Hélice','d) Engranaje'],a:1},
 ];
-const evalCPBank=[
+let evalCPBank=[
   {q:'El sensor convierte algo del mundo en una ___ para el controlador.',a:'señal'},
   {q:'El sensor de luz se parece al ___ humano.',a:'ojo'},
   {q:'El sensor de sonido del robot es el ___.',a:'micrófono'},
@@ -446,7 +446,7 @@ const evalCPBank=[
   {q:'El sensor de distancia que usa ultrasonido se llama ___.',a:'ultrasónico'},
   {q:'El sensor no decide: quien decide es el ___.',a:'controlador'},
 ];
-const evalPRBank=[
+let evalPRBank=[
   {term:'Sensor',def:'Percibe el mundo y lo convierte en una señal'},
   {term:'Sensor de luz',def:'Distingue claro y oscuro; sirve al sigue-líneas'},
   {term:'Sensor de distancia',def:'Mide qué tan lejos está un objeto con el eco'},
@@ -529,7 +529,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
 .forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Sensores: los Sentidos del Robot · Educación Básica · Robótica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Sensores: los Sentidos del Robot · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 function evalSwitchMode(mode){
@@ -547,7 +547,7 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
-const critSensorBank=[
+let critSensorBank=[
   {txt:'Un robot riega la huerta escolar solo cuando la tierra está seca.',ans:'Sensor de humedad: mide el agua de la tierra; si está seca, el controlador decide abrir el riego. Si el sensor se moja por fuera puede informar «húmeda» y la huerta se queda sin agua.'},
   {txt:'Un robot mensajero se detiene antes de chocar con una pared o una persona.',ans:'Sensor de distancia (ultrasónico): mide con el eco qué tan cerca está el obstáculo; si está muy cerca, el controlador decide frenar. Si algo tapa el sensor, el eco no regresa y el robot choca.'},
   {txt:'Una lámpara robótica del corredor se enciende sola cuando llega la noche.',ans:'Sensor de luz: detecta que hay poca luz; el controlador decide encender la lámpara. Si el sensor está sucio, puede «ver» oscuro a mediodía y encender la lámpara de gusto.'},
@@ -557,7 +557,7 @@ const critSensorBank=[
   {txt:'La puerta del supermercado se abre cuando una persona se acerca.',ans:'Sensor de distancia o de movimiento: detecta a la persona cerca; el controlador decide abrir y el motor desliza la puerta. Si el sensor apunta mal, la puerta se abre sin que pase nadie.'},
   {txt:'El robot detecta que alguien presionó su botón de emergencia.',ans:'Sensor de tacto (pulsador): se activa por contacto; el controlador decide detener todo. Es un sensor que necesita tocar, no funciona a distancia.'},
 ];
-const critErrorBank=[
+let critErrorBank=[
   {txt:'"El sensor mueve al robot: por eso el carrito avanza."',
    g1:'El sensor NO mueve nada: solo percibe y envía una señal al controlador.',
    g2:'Quien mueve el carrito es el ACTUADOR (el motor), después de que el controlador decidió. La cadena es sensor → controlador → actuador.'},
@@ -577,12 +577,12 @@ const critErrorBank=[
    g1:'Los sensores NO piensan ni deciden: solo miden y convierten lo medido en una señal.',
    g2:'Quien decide es el CONTROLADOR, siguiendo su programa: «si el sensor marca X, entonces hacer Y».'},
 ];
-const critCicloQuestions=[
+let critCicloQuestions=[
   '1. ¿Qué SENSOR usa y qué percibe exactamente?',
   '2. ¿Qué DECIDE el controlador con esa señal?',
   '3. ¿Con qué ACTUADOR responde el robot?',
 ];
-const critCicloBank=[
+let critCicloBank=[
   {txt:'La puerta automática del supermercado se abre cuando una persona se acerca y se cierra cuando ya nadie pasa.',
    p:'Un sensor de distancia o de movimiento percibe que hay alguien cerca de la puerta.',
    d:'El controlador decide abrir cuando detecta a alguien y cerrar cuando ya no hay nadie.',
@@ -604,7 +604,7 @@ const critCicloBank=[
    d:'El controlador decide encender el foco si hace frío y apagarlo cuando ya hay suficiente calor.',
    a:'El foco de calor (actuador) se enciende; una alarma puede sonar si el problema sigue.'},
 ];
-const critCompareBank=[
+let critCompareBank=[
   {a:'Parte del robot que capta información del mundo: luz, sonido, distancia, calor o humedad.',b:'Parte del robot que ejecuta la acción: motores, ruedas, brazos, bocinas o luces.',
    ga:'El sensor.',
    gb:'El actuador.',
@@ -626,7 +626,7 @@ const critCompareBank=[
    gb:'El sensor de humedad.',
    gr:'Semejanza: los dos vigilan el ambiente y son muy útiles en el agro hondureño. Diferencia: el de temperatura sirve para la incubadora o el termómetro del centro de salud y el de humedad para decidir cuándo regar el cafetal.'},
 ];
-const critDesignBank=[
+let critDesignBank=[
   'En la huerta escolar el agua se desperdicia: a veces riegan cuando la tierra todavía está mojada y otras veces se olvidan por días.',
   'En el pasillo de la escuela dejan la luz encendida todo el día y el recibo de energía es altísimo.',
   'En el beneficio de café los granos se secan al sol en el patio y nadie avisa a tiempo cuando empieza a llover.',
@@ -634,7 +634,7 @@ const critDesignBank=[
   'En la bodega de granos básicos el maíz se echa a perder por la humedad y nadie lo nota hasta que ya está dañado.',
   'Los niños más pequeños se acercan demasiado al fogón de la cocina escolar y nadie los ve a tiempo.',
 ];
-const critDesignGuide='Rúbrica de 3 criterios (total 20 pts) — ① SENSORES (8 pts): elige al menos dos sensores adecuados al problema y explica QUÉ PERCIBE cada uno. ② CONTROLADOR (6 pts): escribe una decisión clara del tipo «si el sensor marca X, entonces el robot hace Y». ③ ACTUADOR Y FALLOS (6 pts): nombra con qué actúa el robot y menciona qué podría hacer que un sensor dé una lectura equivocada (sucio, mojado, tapado, poca luz). Cualquier diseño vale si la cadena sensor → controlador → actuador queda completa y es realista.';
+let critDesignGuide='Rúbrica de 3 criterios (total 20 pts) — ① SENSORES (8 pts): elige al menos dos sensores adecuados al problema y explica QUÉ PERCIBE cada uno. ② CONTROLADOR (6 pts): escribe una decisión clara del tipo «si el sensor marca X, entonces el robot hace Y». ③ ACTUADOR Y FALLOS (6 pts): nombra con qué actúa el robot y menciona qué podría hacer que un sensor dé una lectura equivocada (sucio, mojado, tapado, poca luz). Cualquier diseño vale si la cadena sensor → controlador → actuador queda completa y es realista.';
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
@@ -702,11 +702,11 @@ function printEvalCrit(){
   const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Sensores: los Sentidos del Robot · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #0e7490;background:#ecfeff;color:#0e7490;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#0e7490;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #0e7490;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#ecfeff;border-left:3px solid #0e7490;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#ecfeff;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#0e7490;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #0e7490;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Sensores: los Sentidos del Robot · Educación Básica · Robótica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Sensores: los Sentidos del Robot · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
-  win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
+  win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
 // ===================== LABORATORIO DE SENSORES =====================
-const sensorData={
+let sensorData={
   luz:{
     nombre:'El sensor de luz',icon:'☀️',
     percibe:{title:'¿Qué percibe?',info:'• Mide <strong>cuánta luz</strong> hay: distingue <strong>claro y oscuro</strong><br>• Su componente se llama <strong>fotorresistencia</strong><br>• Convierte la luz en una <strong>señal</strong> para el controlador'},
@@ -780,3 +780,60 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ===================== IDIOMA (español ↔ inglés) =====================
+// El contenido en inglés vive en sensores-robot-en.js y el botón lo maneja
+// ../../js/metas-i18n.js. Aquí solo se intercambian los bancos y se repinta:
+// el progreso (XP, logros, secciones hechas) no se toca al cambiar de idioma.
+const _BANCOS_ES = {
+  ACHIEVEMENTS, lvls, fcData, memoPairs, qzData, classGroups, idData, cmpData,
+  routeSets, neuronPartes, neuroPairs, enfermedadData, retoPairs,
+  identifyTaskDB, classifyTaskDB, completeTaskDB, explainQuestions, sopaSets,
+  evalTFBank, evalMCBank, evalCPBank, evalPRBank,
+  critSensorBank, critErrorBank, critCicloQuestions, critCicloBank,
+  critCompareBank, critDesignBank, critDesignGuide, sensorData
+};
+window.MISION_APLICAR_IDIOMA = function (lang) {
+  const src = (lang === 'en' && window.MISION_EN && window.MISION_EN.data)
+    ? window.MISION_EN.data : _BANCOS_ES;
+  const usa = (k) => (src[k] !== undefined ? src[k] : _BANCOS_ES[k]);
+
+  ACHIEVEMENTS = usa('ACHIEVEMENTS'); lvls = usa('lvls');
+  fcData = usa('fcData'); memoPairs = usa('memoPairs'); qzData = usa('qzData');
+  classGroups = usa('classGroups'); idData = usa('idData'); cmpData = usa('cmpData');
+  routeSets = usa('routeSets'); neuronPartes = usa('neuronPartes');
+  neuroPairs = usa('neuroPairs'); enfermedadData = usa('enfermedadData');
+  retoPairs = usa('retoPairs'); identifyTaskDB = usa('identifyTaskDB');
+  classifyTaskDB = usa('classifyTaskDB'); completeTaskDB = usa('completeTaskDB');
+  explainQuestions = usa('explainQuestions'); sopaSets = usa('sopaSets');
+  evalTFBank = usa('evalTFBank'); evalMCBank = usa('evalMCBank');
+  evalCPBank = usa('evalCPBank'); evalPRBank = usa('evalPRBank');
+  critSensorBank = usa('critSensorBank'); critErrorBank = usa('critErrorBank');
+  critCicloQuestions = usa('critCicloQuestions'); critCicloBank = usa('critCicloBank');
+  critCompareBank = usa('critCompareBank'); critDesignBank = usa('critDesignBank');
+  critDesignGuide = usa('critDesignGuide'); sensorData = usa('sensorData');
+
+  // Repintar cada juego desde el principio con el banco nuevo
+  fcIdx = 0; upFC();
+  buildMemo();
+  qzIdx = 0; qzSel = -1; qzDone = false; showQz();
+  currentClassGroupIdx = 0; buildClass();
+  idIdx = 0; showId();
+  cmpIdx = 0; cmpSel = -1; showCmp();
+  currentRouteIdx = 0; buildRoute();
+  neuronIdx = 0; showNeuron();
+  neuroIdx = 0; showNeuro();
+  enferIdx = 0; showEnfer();
+  currentRetoPairIdx = 0; updateRetoButtons(); resetReto();
+  currentSopaSetIdx = 0; sopaFoundWords = new Set(); buildSopa();
+  updateLabDisplay();
+  renderAchPanel(); updateXPBar();
+
+  // Las pruebas ya generadas se rehacen en el idioma nuevo, con su misma forma
+  const out = document.getElementById('evalOut');
+  if (out && out.innerHTML.trim()) { evalFormNum = window._currentEvalForm || evalFormNum; genEval(); }
+  const outCrit = document.getElementById('evalCritOut');
+  if (outCrit && outCrit.innerHTML.trim()) { evalCritFormNum = window._currentEvalCritForm || evalCritFormNum; genEvalCrit(); }
+  const tg = document.getElementById('tgOut');
+  if (tg) tg.innerHTML = '';
+};

@@ -68,6 +68,63 @@
     return out;
   }
 
+  /* Rótulos que NO son de ninguna misión en particular: los arman
+     js/metas-registro.js (identificarse, buzón de sugerencias, reporte) y
+     js/metas-presentacion.js. Viven aquí para que las 56 misiones los
+     hereden y no haya que repetirlos en cada archivo -en.js. Si una misión
+     declara la misma frase, la suya manda. */
+  var BASE_FRASES = {
+    /* — identificación del alumno — */
+    '👋 ¡Hola, explorador!': '👋 Hi there, explorer!',
+    'Identifícate': 'Identify yourself',
+    '👤 Tu nombre o código de alumno': '👤 Your name or student code',
+    '🔢 Tu número de lista (opcional)': '🔢 Your student number (optional)',
+    '🏫 Tu escuela o centro educativo': '🏫 Your school',
+    '📚 Grado y sección': '📚 Grade and section',
+    '🔑 Código de aula (te lo da tu maestro)': '🔑 Classroom code (your teacher gives it to you)',
+    '✅ Guardar': '✅ Save', 'Ahora no': 'Not right now', 'Cancelar': 'Cancel',
+    /* ejemplos de los campos (viven en el atributo placeholder) */
+    'Ej: Ana López o A07': 'e.g., Ana López or A07', 'Ej: 7': 'e.g., 7',
+    'Ej: Esc. Francisco Morazán': 'e.g., Francisco Morazán School', 'Ej: 6to A': 'e.g., 6th A',
+    'Ej: K2M9P': 'e.g., K2M9P', 'Escribe aquí con tus palabras...': 'Write here in your own words…',
+    '👤 Aún no te has identificado': '👤 You have not identified yourself yet',
+    '✍️ Escribir mis datos': '✍️ Enter my details',
+    '👤 Cambiar alumno': '👤 Change student',
+    '⏳ Buscando…': '⏳ Searching…',
+    '❌ Código no encontrado. Pídeselo de nuevo a tu maestro.': '❌ Code not found. Ask your teacher for it again.',
+    '📴 Sin internet: se confirmará al reconectar.': '📴 No internet: it will be confirmed once you reconnect.',
+    '📤 Enviar resultados': '📤 Send results',
+    'Estudiante': 'Student',
+    /* — buzón de sugerencias — */
+    '💬 Buzón de sugerencias': '💬 Suggestion box', 'Sugerencias': 'Suggestions',
+    '🏷️ Tipo de mensaje': '🏷️ Type of message', '✍️ Tu mensaje': '✍️ Your message',
+    '💡 Tengo una idea': '💡 I have an idea',
+    '📚 Encontré un error en el contenido': '📚 I found a mistake in the content',
+    '🔧 Algo no funciona bien': '🔧 Something is not working properly',
+    '🎉 Quiero felicitar al equipo': '🎉 I want to congratulate the team',
+    '📤 Enviar': '📤 Send',
+    '💬 ¡Gracias! Tu mensaje fue registrado y se enviará al equipo.': '💬 Thank you! Your message was saved and will be sent to the team.',
+    /* — modo presentación — */
+    '📽️ Presentación': '📽️ Slideshow', 'Modo presentación': 'Slideshow mode',
+    'Letra más grande': 'Bigger text', 'Letra más pequeña': 'Smaller text',
+    '📖 Libro (deslizar páginas)': '📖 Book (swipe pages)',
+    '📱 Vertical 3:4': '📱 Portrait 3:4', '📽️ Panorámico 16:9': '📽️ Widescreen 16:9',
+    '📲 Historia 9:16': '📲 Story 9:16',
+    'Página anterior': 'Previous page', 'Página siguiente': 'Next page'
+  };
+
+  var BASE_FRAGMENTOS = [
+    [/^Escribe tus datos $/, 'Write your details '],
+    [/^una sola vez$/, 'just once'],
+    [/^ para que tu maestro sepa que estos logros son tuyos\.$/, ' so your teacher knows these achievements are yours.'],
+    [/^👤 Alumno: /, '👤 Student: '],
+    [/^🧑‍🏫 Maestro: /, '🧑‍🏫 Teacher: '],
+    [/^🚀 Misión: /, '🚀 Mission: '],
+    [/^📚 Grado y sección: /, '📚 Grade and section: '],
+    [/^⏱️ Tiempo activo: /, '⏱️ Time on task: '],
+    [/: aún sin calificar/, ': not graded yet']
+  ];
+
   function tr(texto) {
     if (idiomaActual !== 'en' || !texto) return texto;
     var frases = (window.MISION_EN && window.MISION_EN.frases) || {};
@@ -76,14 +133,54 @@
       // Conserva los espacios/saltos que rodean al texto original.
       return texto.replace(limpio, frases[limpio]);
     }
-    return aplicarFragmentos(texto);
+    if (Object.prototype.hasOwnProperty.call(BASE_FRASES, limpio)) {
+      return texto.replace(limpio, BASE_FRASES[limpio]);
+    }
+    var out = aplicarFragmentos(texto);
+    if (out !== texto) return out;
+    for (var i = 0; i < BASE_FRAGMENTOS.length; i++) {
+      var b = BASE_FRAGMENTOS[i][0], r = BASE_FRAGMENTOS[i][1];
+      if (b.test(out)) return out.replace(b, r);
+    }
+    return out;
+  }
+
+  /* Los paneles compartidos se arman por JS y su texto de ayuda vive en
+     atributos (placeholder, title, aria-label), fuera del alcance de un
+     recorrido de nodos de texto. */
+  var ATTRS_TR = ['placeholder', 'title', 'aria-label'];
+  var attrsES = [];
+
+  function restaurarAttrs() {
+    for (var i = 0; i < attrsES.length; i++) {
+      var a = attrsES[i];
+      if (a.el.isConnected) a.el.setAttribute(a.attr, a.es);
+    }
+    attrsES = [];
+  }
+
+  function traducirAttrs(el) {
+    if (!el.getAttribute) return;
+    for (var i = 0; i < ATTRS_TR.length; i++) {
+      var attr = ATTRS_TR[i], viejo = el.getAttribute(attr);
+      if (!viejo || !viejo.trim()) continue;
+      if (el.hasAttribute('data-i18n-attr')) continue;   // ya lo maneja aplicarBloques
+      var nuevo = tr(viejo);
+      if (nuevo !== viejo) {
+        el.setAttribute(attr, nuevo);
+        attrsES.push({ el: el, attr: attr, es: viejo });
+      }
+    }
   }
 
   /* Traduce el documento completo que se manda a imprimir (se abre en
      otra ventana, fuera del alcance del observador). */
   function trDocumento(html) {
     if (idiomaActual !== 'en' || !html) return html;
-    var frases = (window.MISION_EN && window.MISION_EN.frases) || {};
+    var propias = (window.MISION_EN && window.MISION_EN.frases) || {};
+    var frases = {}, k;
+    for (k in BASE_FRASES) frases[k] = BASE_FRASES[k];
+    for (k in propias) frases[k] = propias[k];      // la misión manda sobre la base
     // Frases de más larga a más corta: «II. Verdadero o Falso» debe caer
     // antes que «Falso», o quedarían mitades sin traducir.
     var claves = Object.keys(frases).sort(function (a, b) { return b.length - a.length; });
@@ -131,6 +228,8 @@
     }
     if (nodo.nodeType !== 1) return;
     if (SALTAR[nodo.nodeName] || nodo.hasAttribute('data-i18n-omitir')) return;
+    traducirAttrs(nodo);
+    nodo.querySelectorAll('[placeholder],[title],[aria-label]').forEach(traducirAttrs);
     var it = document.createTreeWalker(nodo, NodeFilter.SHOW_TEXT, null);
     var n, pend = [];
     while ((n = it.nextNode())) pend.push(n);
@@ -282,7 +381,7 @@
 
     detenerObservador();
     inyectarCSS();
-    if (lang !== 'en') restaurarTextos();
+    if (lang !== 'en') { restaurarTextos(); restaurarAttrs(); }
     aplicarBloques(lang);
 
     // Título de la pestaña (y de la cabecera al imprimir desde el navegador)

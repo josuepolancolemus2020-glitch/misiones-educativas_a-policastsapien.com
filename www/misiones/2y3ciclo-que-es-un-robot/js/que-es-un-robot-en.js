@@ -641,7 +641,7 @@
     frases: {
       /* — barra superior, navegación y pie — */
       'Aprendiz 🌱': 'Beginner 🌱',
-      'Regresar al catálogo de misiones': 'Back to the mission catalogue',
+      'Regresar al catálogo de misiones': 'Back to the mission catalog',
       'Aprende': 'Learn', 'Tipos': 'Types', 'Lab': 'Lab', 'Flashcards': 'Flashcards', 'Quiz': 'Quiz',
       'Clasifica': 'Sort', 'Identifica': 'Spot', 'Completa': 'Complete', 'Widgets': 'Widgets',
       'Reto': 'Challenge', 'Sopa': 'Word search', 'Tareas': 'Homework', 'Evaluación': 'Test',
@@ -649,7 +649,7 @@
       '🏠 Proyecto Educativo M.E.T.A.S': '🏠 M.E.T.A.S Educational Project',
       'Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael & Angelly Polanco': 'Developers: Josué E. Polanco_Evelyn Castellanos_Jael & Angelly Polanco',
       '«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.':
-        '«Use your mobile phone only as a learning tool; otherwise it can be harmful» 🌱 · Read, interact, remember what you learn.',
+        '«Use your cell phone only as a learning tool; otherwise it can be harmful» 🌱 · Read, interact, remember what you learn.',
       '🔊 Sonido': '🔊 Sound', '🌙 Tema': '🌙 Theme', '🏅 Logros': '🏅 Achievements',
       '🔤 Letra': '🔤 Text size', '🔄 Reiniciar XP': '🔄 Reset XP', '🏅 Mis Logros': '🏅 My Achievements',
 
@@ -683,7 +683,7 @@
       'Selecciona un término del banco y toca la columna donde pertenece.': 'Pick a term from the bank and tap the column it belongs to.',
       '⭐ +5 XP al completar el grupo (primera vez)': '⭐ +5 XP for finishing the group (first time)',
       '💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.':
-        '💡 Tip: use the "Change group" button several times! Practising with different categories helps you master the topic.',
+        '💡 Tip: use the "Change group" button several times! Practicing with different categories helps you master the topic.',
       'Columna A': 'Column A', 'Columna B': 'Column B',
       '🔄 Variar grupo': '🔄 Change group',
       'Mueve todas las palabras a las columnas primero.': 'Move every word into the columns first.',

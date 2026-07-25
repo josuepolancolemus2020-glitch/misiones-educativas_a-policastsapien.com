@@ -37,7 +37,7 @@
 <header class="hero" role="banner">
   <div class="hero-inner">
     <div class="hero-mascot" aria-hidden="true">📡</div>
-    <div class="hero-text">
+    <div class="hero-text" data-i18n="hero">
       <h1>Misión <span>Sensores: los Sentidos del Robot</span></h1>
       <p class="sub">Descubre cómo el robot ve, oye, toca y mide el mundo… ¡y qué pasa cuando un sensor se equivoca! 👁️📏🌡️</p>
       <div class="badge">🤖 Ruta de los Robots · Etapa 2 de 6 · Robótica</div>
@@ -49,7 +49,7 @@
 
 <!-- ===== APRENDE ===== -->
 <div class="sec active" id="s-aprende" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="a1">
     <h2>📡 ¿Qué es un sensor?</h2>
     <p>Un <strong>sensor</strong> es la parte del robot que <strong>PERCIBE</strong>: convierte algo del mundo real
     —<strong>luz, distancia, calor, contacto, sonido o humedad</strong>— en una <strong>señal</strong> que el
@@ -68,7 +68,7 @@
     </div>
   </div>
 
-  <div class="card ac-gold">
+  <div class="card ac-gold" data-i18n="a2">
     <h2>🫀 Sensor → Controlador → Actuador (¡como tu cuerpo!)</h2>
     <p>En la <strong>Ruta del Cuerpo</strong> aprendiste el camino del sistema nervioso:
     <strong>receptor → cerebro → efector</strong>. En robótica es exactamente lo mismo, solo cambian los nombres:</p>
@@ -85,7 +85,7 @@
     </div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="a3">
     <h2>🇭🇳 Sensores en tu vida diaria (Honduras)</h2>
     <p>Aunque no los veas, ya convives con sensores todos los días:</p>
     <div class="vs-grid">
@@ -117,7 +117,7 @@
 
 <!-- ===== ESTRUCTURA (TIPOS DE SENSORES + SENSOR VS ACTUADOR) ===== -->
 <div class="sec" id="s-estructura" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="e1">
     <h2>🗺️ Los tipos de sensores más usados</h2>
     <p>Cada sensor percibe <strong>una sola cosa</strong>. Por eso un robot suele llevar varios:</p>
     <div style="overflow-x:auto;">
@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <div class="card ac-amber">
+  <div class="card ac-amber" data-i18n="e2">
     <h2>⚖️ Sensor ≠ Actuador (¡el error más común!)</h2>
     <p>Muchos confunden estas dos partes. La diferencia es simple: uno <strong>mete información</strong> y el otro
     <strong>saca acción</strong>.</p>
@@ -171,7 +171,7 @@
     </div>
   </div>
 
-  <div class="card ac-gold">
+  <div class="card ac-gold" data-i18n="e3">
     <h2>⚡ Mini-quiz relámpago</h2>
     <p style="font-size:0.9rem;margin-bottom:0.5rem;">1) La <strong>bocina</strong> que suena cuando el robot va de reversa. ¿Qué es?</p>
     <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
@@ -196,7 +196,7 @@
     <div id="fbMq3" class="fb" role="alert"></div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="e4">
     <h2>🧪 ¿Y si el sensor se equivoca?</h2>
     <p>Un sensor puede dar una <strong>lectura equivocada</strong>. El controlador se la cree… y decide mal:</p>
     <div class="type-grid">
@@ -285,7 +285,7 @@
         <!-- Rellenado por JS -->
       </div>
     </div>
-    <div class="lab-controls">
+    <div class="lab-controls" data-i18n="labctl">
       <div class="lab-group">
         <span class="lab-group-label">📡 Sensor:</span>
         <button class="lab-btn lab-cont-btn" data-sensor="luz" onclick="labShowSensor('luz')">☀️ Luz</button>
@@ -621,7 +621,7 @@
 </div>
 
 <div class="sec" id="s-recursos" role="tabpanel">
-  <div class="card ac-blue">
+  <div class="card ac-blue" data-i18n="rec">
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
@@ -719,7 +719,10 @@
 </footer>
 
   <script src="js/html2canvas.min.js"></script>
-  <script src="js/sensores-robot.js"></script>
+  <script src="js/sensores-robot.js?v=35"></script>
+  <!-- Traducción de autor al inglés + motor de idioma (botón 🌐 EN/ES) -->
+  <script src="js/sensores-robot-en.js?v=35"></script>
+  <script src="../../js/metas-i18n.js?v=35"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
