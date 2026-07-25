@@ -37,7 +37,7 @@
 <header class="hero" role="banner">
   <div class="hero-inner">
     <div class="hero-mascot" aria-hidden="true">⚙️</div>
-    <div class="hero-text">
+    <div class="hero-text" data-i18n="hero">
       <h1>Misión <span>Motores y Mecanismos</span></h1>
       <p class="sub">Descubre cómo se mueve un robot: motores, engranajes, poleas y palancas. ¿Necesitas fuerza o velocidad? ⚙️💪⚡</p>
       <div class="badge">🤖 Ruta de los Robots · Etapa 3 de 6 · Robótica</div>
@@ -49,7 +49,7 @@
 
 <!-- ===== APRENDE ===== -->
 <div class="sec active" id="s-aprende" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="a1">
     <h2>⚙️ El motor: el actuador que da movimiento</h2>
     <p>El <strong>motor</strong> es el <strong>actuador</strong> más importante de un robot: convierte la
     <strong>energía eléctrica</strong> de la batería en <strong>movimiento de giro</strong>. Pero el giro del motor casi
@@ -69,7 +69,7 @@
     </div>
   </div>
 
-  <div class="card ac-gold">
+  <div class="card ac-gold" data-i18n="a2">
     <h2>🦷 Engranajes: dientes que se dan la mano</h2>
     <p>Un <strong>engranaje</strong> (o piñón) es una rueda con <strong>dientes</strong>. Cuando los dientes de dos
     engranajes <strong>encajan</strong>, uno arrastra al otro sin resbalar. Dos reglas de oro que nunca fallan:</p>
@@ -93,7 +93,7 @@
     </div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="a3">
     <h2>🇭🇳 Mecanismos en la vida real de Honduras</h2>
     <p>No hace falta un laboratorio: los mecanismos están en tu casa, en tu patio y en tu comunidad.</p>
     <div class="vs-grid">
@@ -125,7 +125,7 @@
 
 <!-- ===== MECANISMOS (TIPOS Y COMPARACIÓN) ===== -->
 <div class="sec" id="s-estructura" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="e1">
     <h2>⚖️ ¿Fuerza o velocidad? La tabla que decide</h2>
     <p>Todos los mecanismos hacen el mismo trato: <strong>fuerza a cambio de distancia o velocidad</strong>.</p>
     <div style="overflow-x:auto;">
@@ -154,7 +154,7 @@
     </div>
   </div>
 
-  <div class="card ac-amber">
+  <div class="card ac-amber" data-i18n="e2">
     <h2>⚡ Mini-quiz relámpago</h2>
     <p style="font-size:0.9rem;margin-bottom:0.5rem;">1) Un engranaje de <strong>10 dientes</strong> mueve a uno de <strong>40 dientes</strong>. ¿Qué pasa con el grande?</p>
     <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
@@ -172,7 +172,7 @@
     <div id="fbMq2" class="fb" role="alert"></div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="e3">
     <h2>🗺️ La familia de los mecanismos</h2>
     <p>Cada mecanismo resuelve un problema distinto. Estos son los que debes conocer:</p>
     <div class="type-grid">
@@ -199,8 +199,8 @@
 <!-- ===== LAB: TREN DE ENGRANAJES ===== -->
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
-    <h2>⚙️ Laboratorio del Tren de Engranajes</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige un caso, observa cómo giran los engranajes y responde las dos preguntas. ⭐ +4 XP por caso resuelto (primera vez).</p>
+    <h2 data-i18n="labh2">⚙️ Laboratorio del Tren de Engranajes</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;" data-i18n="labintro">Elige un caso, observa cómo giran los engranajes y responde las dos preguntas. ⭐ +4 XP por caso resuelto (primera vez).</p>
     <div id="gear-sentence" class="lab-sentence">⚙️ Caso 1: el motor mueve el engranaje azul</div>
     <div class="gear-stage" id="gearStage" aria-live="polite">
       <!-- SVG generado por JS -->
@@ -209,17 +209,17 @@
 
     <div class="gear-quiz">
       <div class="gear-q-block">
-        <p class="gear-q-label">1️⃣ ¿Hacia dónde gira el <strong>último</strong> engranaje (el verde)?</p>
+        <p class="gear-q-label" data-i18n="labq1">1️⃣ ¿Hacia dónde gira el <strong>último</strong> engranaje (el verde)?</p>
         <div class="cmp-opts" id="gearDirOpts" role="group"></div>
       </div>
       <div class="gear-q-block">
-        <p class="gear-q-label">2️⃣ Comparado con el primero, ¿cómo gira el último?</p>
+        <p class="gear-q-label" data-i18n="labq2">2️⃣ Comparado con el primero, ¿cómo gira el último?</p>
         <div class="cmp-opts" id="gearRelOpts" role="group"></div>
       </div>
     </div>
     <div id="fbGear" class="fb" role="alert"></div>
 
-    <div class="lab-controls" style="margin-top:1rem;">
+    <div class="lab-controls" style="margin-top:1rem;" data-i18n="labctl">
       <div class="lab-group">
         <span class="lab-group-label">⚙️ Caso:</span>
         <button class="lab-btn lab-cont-btn" data-caso="0" onclick="gearShowCase(0)">1</button>
@@ -554,7 +554,7 @@
 </div>
 
 <div class="sec" id="s-recursos" role="tabpanel">
-  <div class="card ac-blue">
+  <div class="card ac-blue" data-i18n="rec">
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
@@ -653,6 +653,8 @@
 
   <script src="js/html2canvas.min.js"></script>
   <script src="js/motores-mecanismos.js"></script>
+  <script src="js/motores-mecanismos-en.js?v=36"></script>
+  <script src="../../js/metas-i18n.js?v=36"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>

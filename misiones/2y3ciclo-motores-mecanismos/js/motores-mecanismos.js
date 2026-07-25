@@ -32,7 +32,7 @@ function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSe
 function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalCritFormNum)evalCritFormNum=s.evalCritFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
 
 // ===================== ACHIEVEMENTS =====================
-const ACHIEVEMENTS={
+let ACHIEVEMENTS={
   primer_quiz:{icon:'⚙️',label:'Primer quiz de mecanismos superado'},
   flash_master:{icon:'🃏',label:'Todas las flashcards de mecanismos exploradas'},
   clasif_pro:{icon:'🗂️',label:'Clasificador de fuerza y velocidad experto'},
@@ -50,7 +50,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#0e7490','#22d3ee','#c2410c','#fb923c','#06b6d4'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Curioso Tec 🔩'},{t:55,n:'Aprendiz de Engranajes ⚙️'},{t:90,n:'Técnico de Poleas 🎡'},{t:130,n:'Armador de Palancas 🪝'},{t:165,n:'Ingeniero Mecánico 🛠️'},{t:190,n:'Maestro del Movimiento 🤖'}];
+let lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Curioso Tec 🔩'},{t:55,n:'Aprendiz de Engranajes ⚙️'},{t:90,n:'Técnico de Poleas 🎡'},{t:130,n:'Armador de Palancas 🪝'},{t:165,n:'Ingeniero Mecánico 🛠️'},{t:190,n:'Maestro del Movimiento 🤖'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -64,7 +64,7 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 function miniQ(btn,isOk,fbId){const wrap=btn.parentElement;if(wrap.dataset.done==='1')return;wrap.querySelectorAll('.cmp-opt').forEach(b=>b.classList.remove('sel'));if(isOk){wrap.dataset.done='1';btn.classList.add('correct');fb(fbId,'¡Correcto! Piensas como todo un ingeniero de mecanismos.',true);sfx('ok');}else{btn.classList.add('wrong');fb(fbId,'Casi. Pregúntate siempre: ¿gana fuerza o gana velocidad?, ¿en qué sentido gira?',false);sfx('no');}}
 
 // ===================== FLASHCARD DATA =====================
-const fcData=[
+let fcData=[
   {w:'Motor',a:'⚙️ El <strong>actuador</strong> que convierte la <strong>energía eléctrica</strong> de la batería en <strong>movimiento de giro</strong>.'},
   {w:'Servomotor',a:'📐 Motor que gira hasta un <strong>ángulo exacto</strong> (por ejemplo 90°) y se queda ahí: sirve para brazos y pinzas.'},
   {w:'Motorreductor',a:'🧰 Motor + caja de <strong>engranajes</strong>: gira <strong>más lento</strong> pero con <strong>mucha más fuerza</strong>.'},
@@ -87,7 +87,7 @@ function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
 
 // ===================== JUEGO: MEMORIA DE LOS MECANISMOS =====================
-const memoPairs=[
+let memoPairs=[
   {id:'motor',t:'Motor',d:'⚙️ convierte la electricidad en giro'},
   {id:'engranaje',t:'Engranaje',d:'🦷 rueda dentada: dos en contacto giran al revés'},
   {id:'polea',t:'Polea y correa',d:'🎡 llevan el giro a distancia'},
@@ -134,7 +134,7 @@ function flipMemo(btn,i){
 function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
-const qzData=[
+let qzData=[
   {q:'¿Qué hace el motor de un robot?',o:['a) Guarda la información','b) Convierte la energía eléctrica en movimiento de giro','c) Percibe la luz','d) Enfría la batería'],c:1},
   {q:'Dos engranajes con los dientes encajados, ¿cómo giran?',o:['a) En el mismo sentido','b) Uno gira y el otro no','c) En sentidos contrarios','d) Depende del color'],c:2},
   {q:'Un engranaje de 10 dientes mueve a uno de 30. ¿Qué le pasa al de 30?',o:['a) Gira más lento y con más fuerza','b) Gira más rápido y con más fuerza','c) Gira más rápido y con menos fuerza','d) Se queda quieto'],c:0},
@@ -152,7 +152,7 @@ function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false
 function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
 
 // ===================== CLASIFICACIÓN =====================
-const classGroups=[
+let classGroups=[
   {label:['Gana fuerza','Gana velocidad'],headA:'💪 Gana fuerza',headB:'⚡ Gana velocidad',colA:'fue',colB:'vel',
    words:[{w:'Piñón pequeño mueve rueda grande',t:'fue'},{w:'Rueda grande mueve piñón pequeño',t:'vel'},{w:'Tornillo sin fin',t:'fue'},{w:'Motor DC sin reducción',t:'vel'},{w:'Motorreductor',t:'fue'},{w:'Piñón chico de la bicicleta',t:'vel'},{w:'Piñón grande para la cuesta',t:'fue'},{w:'Polea grande mueve polea pequeña',t:'vel'},{w:'Polea pequeña mueve polea grande',t:'fue'},{w:'Palanca larga sobre el apoyo',t:'fue'}]},
   {label:['Mismo sentido','Sentido contrario'],headA:'🔄 Giran igual',headB:'↩️ Giran al revés',colA:'igu',colB:'con',
@@ -169,7 +169,7 @@ function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupId
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
 // ===================== IDENTIFICAR =====================
-const idData=[
+let idData=[
   {s:['El','motor','convierte','la','electricidad','en','giro.'],c:1,art:'El actuador que produce el movimiento'},
   {s:['El','engranaje','tiene','dientes','que','encajan','sin','resbalar.'],c:1,art:'La rueda dentada que transmite el giro'},
   {s:['La','palanca','gira','sobre','su','punto','de','apoyo.'],c:1,art:'La barra rígida que multiplica la fuerza'},
@@ -186,7 +186,7 @@ function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').
 function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
 
 // ===================== COMPLETA =====================
-const cmpData=[
+let cmpData=[
   {s:'El motor convierte la energía eléctrica en movimiento de ___.',opts:['giro','color','sonido'],c:0},
   {s:'Dos engranajes en contacto giran en sentidos ___.',opts:['iguales','contrarios','lentos'],c:1},
   {s:'Un engranaje pequeño que mueve a uno grande da más ___.',opts:['fuerza','velocidad','ruido'],c:0},
@@ -202,7 +202,7 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 
 // ===================== WIDGETS =====================
 // Widget 1: Cadena de transmisión (ordenar el camino del movimiento)
-const routeSets=[
+let routeSets=[
   {label:'El molino de maíz de la casa',steps:['La mano hace girar la manivela','El eje transmite el giro al tornillo sin fin','El tornillo sin fin gira despacio y con muchísima fuerza','La piedra de moler aplasta el grano de maíz']},
   {label:'La bicicleta que sube la cuesta',steps:['El pie empuja el pedal hacia abajo','El plato grande gira junto con el pedal','La cadena lleva el giro hasta el piñón','El piñón hace girar la rueda trasera','La bicicleta avanza por la calle']},
   {label:'El carrito robot con motorreductor',steps:['La batería envía corriente al motor','El motor gira muy rápido pero con poca fuerza','La caja de engranajes reduce la velocidad','El eje de salida gira despacio y con mucha fuerza','La rueda empuja el carrito con su carga']},
@@ -215,7 +215,7 @@ function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Caso: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: ¿Qué mecanismo necesita?
-const neuronPartes=[
+let neuronPartes=[
   {desc:'Levantar una piedra pesada del patio usando una barra de hierro',ans:'Palanca',opts:['Palanca','Correa y poleas','Biela-manivela','Rueda y eje']},
   {desc:'Subir el balde de agua desde el fondo del pozo jalando hacia abajo',ans:'Polea',opts:['Polea','Engranajes','Tornillo sin fin','Palanca']},
   {desc:'Llevar el giro del motor a un eje que está lejos, sin que se toquen',ans:'Correa y poleas',opts:['Correa y poleas','Palanca','Tornillo sin fin','Punto de apoyo']},
@@ -232,7 +232,7 @@ function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Mecanismo → Función
-const neuroPairs=[
+let neuroPairs=[
   {trans:'Engranaje',func:'Transmite el giro con sus dientes; el que sigue gira al revés',opts:['Transmite el giro con sus dientes; el que sigue gira al revés','Guarda la energía de la batería','Convierte el giro en vaivén','Sostiene el punto de apoyo']},
   {trans:'Polea y correa',func:'Llevan el giro a distancia de un eje a otro',opts:['Llevan el giro a distancia de un eje a otro','Cortan la corriente eléctrica','Multiplican la fuerza con una barra','Marcan el ángulo exacto']},
   {trans:'Palanca',func:'Multiplica la fuerza girando sobre un punto de apoyo',opts:['Multiplica la fuerza girando sobre un punto de apoyo','Transforma el giro en vaivén','Aumenta la velocidad del motor','Transmite el giro a distancia']},
@@ -245,7 +245,7 @@ function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.query
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: ¿Gana fuerza o gana velocidad?
-const enfermedadData=[
+let enfermedadData=[
   {disease:'Un piñón de 10 dientes mueve una rueda dentada de 40',characteristic:'Gana fuerza (gira más lento)',opts:['Gana fuerza (gira más lento)','Gana velocidad (con menos fuerza)']},
   {disease:'Una rueda dentada de 40 dientes mueve un piñón de 10',characteristic:'Gana velocidad (con menos fuerza)',opts:['Gana velocidad (con menos fuerza)','Gana fuerza (gira más lento)']},
   {disease:'El plato grande de la bicicleta mueve el piñón más pequeño',characteristic:'Gana velocidad (con menos fuerza)',opts:['Gana velocidad (con menos fuerza)','Gana fuerza (gira más lento)']},
@@ -259,7 +259,7 @@ function checkEnfer(opt,btn,d){if(enferDone)return;enferDone=true;document.query
 function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
-const retoPairs=[
+let retoPairs=[
   {label:['Más fuerza','Más velocidad'],btnA:'💪 Más fuerza',btnB:'⚡ Más velocidad',colA:'fue',colB:'vel',
    words:[{w:'Piñón mueve rueda grande',t:'fue'},{w:'Rueda grande mueve piñón',t:'vel'},{w:'Tornillo sin fin',t:'fue'},{w:'Motor DC sin reducción',t:'vel'},{w:'Motorreductor',t:'fue'},{w:'Polea pequeña a polea grande',t:'fue'},{w:'Polea grande a polea pequeña',t:'vel'},{w:'Piñón chico de la bici',t:'vel'},{w:'Piñón grande para la cuesta',t:'fue'},{w:'Palanca larga',t:'fue'}]},
   {label:['Giro','Vaivén'],btnA:'🔄 Giro',btnB:'↔️ Vaivén',colA:'gir',colB:'vai',
@@ -277,7 +277,7 @@ function nextRetoPair(){sfx('click');clearInterval(retoTimerInt);retoRunning=fal
 function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';document.getElementById('fbReto').classList.remove('show');}
 
 // ===================== TASK GENERATOR =====================
-const identifyTaskDB=[
+let identifyTaskDB=[
   {s:'El motor convierte la energía eléctrica en movimiento de giro.',type:'Motor (actuador)'},
   {s:'El servomotor gira hasta un ángulo exacto y se detiene ahí.',type:'Servomotor'},
   {s:'Dos ruedas dentadas encajan sus dientes y giran al revés una de la otra.',type:'Engranajes'},
@@ -289,7 +289,7 @@ const identifyTaskDB=[
   {s:'El plato de la bicicleta mueve el piñón de la rueda trasera.',type:'Cadena y piñones'},
   {s:'Al engranaje del medio solo le toca cambiar el sentido del giro.',type:'Engranaje loco'},
 ];
-const classifyTaskDB=[
+let classifyTaskDB=[
   {w:'Engranaje pequeño moviendo a uno grande',gen:'Reducción: menos velocidad, más fuerza',n:'Sentidos contrarios',g:'Fuerza',t:'La despulpadora de café'},
   {w:'Engranaje grande moviendo a uno pequeño',gen:'Multiplicación: más velocidad, menos fuerza',n:'Sentidos contrarios',g:'Velocidad',t:'El ventilador de mesa'},
   {w:'Tren de tres engranajes iguales',gen:'Solo cambia el sentido del giro',n:'El 1º y el 3º giran igual',g:'Ni fuerza ni velocidad: quedan iguales',t:'El molinete del portón'},
@@ -299,7 +299,7 @@ const classifyTaskDB=[
   {w:'Tornillo sin fin con rueda dentada',gen:'Reducción muy grande; no se devuelve solo',n:'Cambia el eje del giro 90°',g:'Fuerza',t:'El molino de maíz'},
   {w:'Biela-manivela',gen:'Transforma el giro en vaivén',n:'La manivela gira, la biela va y viene',g:'Ni fuerza ni velocidad: cambia el tipo de movimiento',t:'La máquina de coser de pedal'},
 ];
-const completeTaskDB=[
+let completeTaskDB=[
   {s:'El motor convierte la electricidad en movimiento de ___.',opts:['giro','olor','sonido'],ans:'giro'},
   {s:'Dos engranajes en contacto giran en sentidos ___.',opts:['contrarios','iguales','lentos'],ans:'contrarios'},
   {s:'Un piñón pequeño que mueve una rueda grande da más ___.',opts:['fuerza','velocidad','luz'],ans:'fuerza'},
@@ -309,7 +309,7 @@ const completeTaskDB=[
   {s:'El tornillo ___ da mucha fuerza y poca velocidad.',opts:['sin fin','de banco','de madera'],ans:'sin fin'},
   {s:'La biela-manivela convierte el giro en ___.',opts:['vaivén','calor','sonido'],ans:'vaivén'},
 ];
-const explainQuestions=[
+let explainQuestions=[
   {q:'Explica con tus palabras qué hace un motor y por qué casi siempre necesita un mecanismo.',ans:'El motor convierte la energía eléctrica en movimiento de giro, pero gira muy rápido y con poca fuerza. Los mecanismos (engranajes, poleas, palancas) transmiten ese giro y lo cambian: sirven para conseguir la fuerza o la velocidad que el trabajo necesita.'},
   {q:'Dibuja tres engranajes en fila y marca con flechas hacia dónde gira cada uno. Explica la regla.',ans:'Cada par en contacto gira en sentidos contrarios, así que las flechas se alternan. Por eso el primero y el tercero giran en el mismo sentido; el del medio es el engranaje loco y no cambia la velocidad.'},
   {q:'¿Qué cambia en la bicicleta al usar un piñón grande en vez de uno pequeño? ¿Cuándo conviene cada uno?',ans:'Con el piñón grande la rueda gira más lento pero con más fuerza: conviene para subir cuestas. Con el piñón pequeño la rueda gira más rápido pero con menos fuerza: conviene en plano. Es el intercambio fuerza-velocidad.'},
@@ -326,7 +326,7 @@ function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las si
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
-const sopaSets=[
+let sopaSets=[
   {size:10,grid:[
     ['T','R','K','H','S','C','M','H','A','S'],
     ['J','M','C','E','A','A','E','L','O','P'],
@@ -390,7 +390,7 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank=[
+let evalTFBank=[
   {q:'El motor convierte la energía eléctrica en movimiento de giro.',a:true},
   {q:'Dos engranajes que encajan sus dientes giran en el mismo sentido.',a:false},
   {q:'Un engranaje pequeño que mueve a uno grande le da más fuerza.',a:true},
@@ -407,7 +407,7 @@ const evalTFBank=[
   {q:'Las poleas con correa sirven para transmitir el giro a distancia.',a:true},
   {q:'La palanca multiplica la fuerza sin ninguna desventaja.',a:false},
 ];
-const evalMCBank=[
+let evalMCBank=[
   {q:'¿Qué hace el motor de un robot?',o:['a) Guarda la información del programa','b) Convierte la energía eléctrica en movimiento de giro','c) Percibe la luz del ambiente','d) Enfría la batería'],a:1},
   {q:'Dos engranajes con los dientes encajados, ¿cómo giran?',o:['a) En el mismo sentido','b) Uno gira y el otro se queda quieto','c) En sentidos contrarios','d) Los dos hacia arriba'],a:2},
   {q:'Un engranaje de 10 dientes mueve a uno de 30. ¿Qué le pasa al de 30?',o:['a) Gira más lento y con más fuerza','b) Gira más rápido y con más fuerza','c) Gira más rápido y con menos fuerza','d) No gira'],a:0},
@@ -424,7 +424,7 @@ const evalMCBank=[
   {q:'¿Cuál es el intercambio de todo mecanismo?',o:['a) Lo que se gana en fuerza se pierde en velocidad','b) Se gana fuerza y velocidad a la vez','c) Se pierde todo','d) El mecanismo crea energía nueva'],a:0},
   {q:'¿Qué máquina hondureña usa manivela y engranajes para quitarle la cáscara al café?',o:['a) El molino de maíz','b) La despulpadora de café','c) La carretilla','d) El molinete del portón'],a:1},
 ];
-const evalCPBank=[
+let evalCPBank=[
   {q:'El motor convierte la energía eléctrica en movimiento de ___.',a:'giro'},
   {q:'El motor es el ___ del robot: la parte que ejecuta el movimiento.',a:'actuador'},
   {q:'El ___ gira hasta un ángulo exacto y se queda ahí.',a:'servomotor'},
@@ -441,7 +441,7 @@ const evalCPBank=[
   {q:'De tres engranajes en fila, el primero y el tercero giran en el mismo ___.',a:'sentido'},
   {q:'La palanca multiplica la fuerza, pero recorre menos ___.',a:'distancia'},
 ];
-const evalPRBank=[
+let evalPRBank=[
   {term:'Motor',def:'Convierte la energía eléctrica en movimiento de giro'},
   {term:'Servomotor',def:'Motor que gira hasta un ángulo exacto y se detiene ahí'},
   {term:'Motorreductor',def:'Motor con caja de engranajes: menos velocidad, más fuerza'},
@@ -524,7 +524,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
 .forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Motores y Mecanismos · Educación Básica · Robótica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Motores y Mecanismos · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 function evalSwitchMode(mode){
@@ -542,7 +542,7 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
-const critMecBank=[
+let critMecBank=[
   {txt:'En la escuela hay que subir un balde de agua desde el pozo, pero los niños no logran jalar la cuerda hacia arriba.',ans:'Una POLEA fija en el brocal: cambia la dirección de la fuerza y permite jalar hacia abajo, que es más cómodo; con una polea móvil, además, hace falta menos fuerza.'},
   {txt:'Un motor pequeño tiene que abrir un portón muy pesado, y el portón no debe devolverse solo.',ans:'Un TORNILLO SIN FIN (o una caja reductora de engranajes): baja mucho la velocidad y multiplica la fuerza; además el tornillo sin fin no deja que la carga lo haga girar al revés.'},
   {txt:'Hay que llevar el giro del motor hasta un eje que está a medio metro de distancia, sin que las piezas se toquen.',ans:'POLEAS Y CORREA (o cadena y piñones): transmiten el giro a distancia. Si la correa se coloca cruzada, el segundo eje además gira al revés.'},
@@ -550,7 +550,7 @@ const critMecBank=[
   {txt:'En el patio hay que levantar una piedra grande y solo se cuenta con una barra de hierro y un bloque.',ans:'Una PALANCA: la barra apoyada en el bloque (punto de apoyo) cerca de la piedra multiplica la fuerza; a cambio, el extremo donde se empuja recorre más distancia.'},
   {txt:'El carrito robot avanza rapidísimo, pero se queda pegado cuando sube una rampa con un libro encima.',ans:'ENGRANAJES DE REDUCCIÓN (un piñón pequeño moviendo una rueda dentada grande) o un motorreductor: pierde velocidad, pero gana la fuerza que necesita para subir.'},
 ];
-const critErrorBank=[
+let critErrorBank=[
   {txt:'"Con los engranajes se gana fuerza y velocidad al mismo tiempo."',
    g1:'Falso: el mecanismo no crea energía, solo la reparte. Lo que se gana en fuerza se pierde en velocidad.',
    g2:'Si la rueda grande gira más lento es justamente porque está entregando más fuerza: nunca se gana todo.'},
@@ -567,12 +567,12 @@ const critErrorBank=[
    g1:'La palanca multiplica la fuerza, pero a cambio el extremo donde empujas recorre MÁS distancia que la carga.',
    g2:'Y sin punto de apoyo no hay palanca: la barra necesita un punto fijo sobre el cual girar.'},
 ];
-const critTrenQuestions=[
+let critTrenQuestions=[
   '1. ¿En qué sentido gira el último engranaje? Explica por qué.',
   '2. ¿Gira más rápido o con más fuerza que el primero? Explica el porqué con los dientes.',
   '3. ¿Qué cambiarías en el montaje para conseguir el efecto contrario?',
 ];
-const critTrenBank=[
+let critTrenBank=[
   {txt:'Un motor mueve un piñón de 10 dientes y ese piñón mueve una rueda dentada de 30 dientes. El primero gira a la DERECHA (horario).',
    p:'La rueda de 30 gira a la IZQUIERDA (antihorario): dos engranajes en contacto siempre giran en sentidos contrarios.',
    d:'Gira 3 veces más lento, pero con 3 veces más fuerza (30 ÷ 10 = 3): el pequeño moviendo al grande da fuerza.',
@@ -594,7 +594,7 @@ const critTrenBank=[
    d:'Gira más lento pero con más fuerza: la polea grande da menos vueltas que la pequeña en el mismo tiempo.',
    a:'Para invertir el sentido bastaría con cruzar la correa; para ganar velocidad, poner la polea grande como motriz.'},
 ];
-const critCompareBank=[
+let critCompareBank=[
   {a:'Dos ruedas dentadas cuyos dientes encajan y se empujan directamente.',b:'Dos ruedas con canal unidas por una cinta que da la vuelta alrededor de las dos.',
    ga:'Los engranajes.',
    gb:'Las poleas con correa.',
@@ -612,14 +612,14 @@ const critCompareBank=[
    gb:'La biela-manivela.',
    gr:'Semejanza: los dos son mecanismos que cambian la forma del movimiento y se pueden construir con cartón y materiales del entorno. Diferencia: la palanca multiplica la fuerza en un balanceo corto; la biela-manivela transforma el giro continuo en vaivén, como la máquina de coser de pedal.'},
 ];
-const critDesignBank=[
+let critDesignBank=[
   'En tu comunidad hay que subir sacos de café a la carreta y las personas se lastiman la espalda.',
   'El portón de la escuela es tan pesado que los niños no pueden abrirlo solos.',
   'El molino de maíz de la casa cuesta muchísimo girar: hay que hacer demasiada fuerza con la manivela.',
   'Un robot de la feria escolar debe mover un letrero de un lado a otro, sin parar, con un solo motor.',
   'El carrito robot de la clase avanza rapidísimo, pero se queda pegado cuando lleva un libro encima.',
 ];
-const critDesignGuide='Rúbrica de 3 criterios (total 20 pts) — ① MECANISMO (7 pts): elige y nombra un mecanismo adecuado (palanca, polea, engranajes, correa, tornillo sin fin, rueda y eje o biela-manivela). ② RELACIÓN (6 pts): explica si necesita FUERZA o VELOCIDAD y cómo la consigue (cuál rueda o barra es la grande y cuál la pequeña, dónde va el punto de apoyo). ③ JUSTIFICACIÓN (7 pts): reconoce el intercambio (lo que se gana en fuerza se pierde en velocidad) y propone una solución realista con materiales del entorno. Cualquier diseño vale si el mecanismo resuelve el problema y el estudiante explica el porqué.';
+let critDesignGuide='Rúbrica de 3 criterios (total 20 pts) — ① MECANISMO (7 pts): elige y nombra un mecanismo adecuado (palanca, polea, engranajes, correa, tornillo sin fin, rueda y eje o biela-manivela). ② RELACIÓN (6 pts): explica si necesita FUERZA o VELOCIDAD y cómo la consigue (cuál rueda o barra es la grande y cuál la pequeña, dónde va el punto de apoyo). ③ JUSTIFICACIÓN (7 pts): reconoce el intercambio (lo que se gana en fuerza se pierde en velocidad) y propone una solución realista con materiales del entorno. Cualquier diseño vale si el mecanismo resuelve el problema y el estudiante explica el porqué.';
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
@@ -687,14 +687,14 @@ function printEvalCrit(){
   const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Motores y Mecanismos · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #0e7490;background:#ecfeff;color:#0e7490;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#0e7490;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #0e7490;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#ecfeff;border-left:3px solid #0e7490;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#ecfeff;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#0e7490;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #0e7490;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Motores y Mecanismos · Educación Básica · Robótica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Motores y Mecanismos · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
-  win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
+  win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
 // ===================== LABORATORIO DEL TREN DE ENGRANAJES =====================
 // Cada caso es determinista y autocalificable: el sentido de giro y la relación
 // velocidad/fuerza se CALCULAN con gearDirOf() y gearRelOf() a partir del número
 // de dientes; keyDir/keyRel son la clave declarada que el arnés compara.
-const gearCases=[
+let gearCases=[
   {ctx:'El motor del robot mueve un piñón de 10 dientes que arrastra una rueda dentada de 30.',gears:[10,30],dirFirst:1,keyDir:-1,keyRel:'fuerza',uso:'Así se arma un motorreductor: el robot pierde velocidad, pero gana la fuerza que necesita para subir la rampa.'},
   {ctx:'En la despulpadora de café, la rueda dentada grande de 40 dientes mueve un piñón de 10.',gears:[40,10],dirFirst:1,keyDir:-1,keyRel:'velocidad',uso:'Se usa cuando hace falta que algo gire rápido, aunque sea con menos fuerza.'},
   {ctx:'Tres engranajes iguales de 20 dientes en fila: el del medio es un engranaje loco.',gears:[20,20,20],dirFirst:-1,keyDir:-1,keyRel:'igual',uso:'El engranaje loco solo sirve para que el primero y el último giren en el mismo sentido.'},
@@ -702,8 +702,8 @@ const gearCases=[
   {ctx:'El molinete del portón lleva dos engranajes del mismo tamaño, de 24 dientes cada uno.',gears:[24,24],dirFirst:-1,keyDir:1,keyRel:'igual',uso:'Cuando los dos son iguales solo cambia el sentido del giro: ni fuerza ni velocidad.'},
   {ctx:'El plato de la bicicleta (36 dientes) mueve un engranaje loco de 12 y este al piñón de 12.',gears:[36,12,12],dirFirst:1,keyDir:1,keyRel:'velocidad',uso:'La rueda gira mucho más rápido que el pedal: ideal para el camino plano.'},
 ];
-const GEAR_DIR_OPTS=[{v:1,txt:'↻ A la derecha (horario)'},{v:-1,txt:'↺ A la izquierda (antihorario)'}];
-const GEAR_REL_OPTS=[{v:'velocidad',txt:'⚡ Más rápido, con menos fuerza'},{v:'fuerza',txt:'💪 Más lento, con más fuerza'},{v:'igual',txt:'➡️ Igual velocidad y misma fuerza'}];
+let GEAR_DIR_OPTS=[{v:1,txt:'↻ A la derecha (horario)'},{v:-1,txt:'↺ A la izquierda (antihorario)'}];
+let GEAR_REL_OPTS=[{v:'velocidad',txt:'⚡ Más rápido, con menos fuerza'},{v:'fuerza',txt:'💪 Más lento, con más fuerza'},{v:'igual',txt:'➡️ Igual velocidad y misma fuerza'}];
 const GEAR_COLORS=[{f:'#a5f3fc',s:'#0e7490'},{f:'#fed7aa',s:'#c2410c'},{f:'#bbf7d0',s:'#15803d'}];
 let gearIdx=0,gearSelDir=null,gearSelRel=null,gearAnimOn=true;
 const gearSolved=new Set();
@@ -838,3 +838,62 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ===================== IDIOMA (español ↔ inglés) =====================
+// El contenido en inglés vive en motores-mecanismos-en.js y el botón lo maneja
+// ../../js/metas-i18n.js. Aquí solo se intercambian los bancos y se repinta:
+// el progreso (XP, logros, secciones hechas) no se toca al cambiar de idioma.
+const _BANCOS_ES = {
+  ACHIEVEMENTS, lvls, fcData, memoPairs, qzData, classGroups, idData, cmpData,
+  routeSets, neuronPartes, neuroPairs, enfermedadData, retoPairs,
+  identifyTaskDB, classifyTaskDB, completeTaskDB, explainQuestions, sopaSets,
+  evalTFBank, evalMCBank, evalCPBank, evalPRBank,
+  critMecBank, critErrorBank, critTrenQuestions, critTrenBank,
+  critCompareBank, critDesignBank, critDesignGuide,
+  gearCases, GEAR_DIR_OPTS, GEAR_REL_OPTS
+};
+window.MISION_APLICAR_IDIOMA = function (lang) {
+  const src = (lang === 'en' && window.MISION_EN && window.MISION_EN.data)
+    ? window.MISION_EN.data : _BANCOS_ES;
+  const usa = (k) => (src[k] !== undefined ? src[k] : _BANCOS_ES[k]);
+
+  ACHIEVEMENTS = usa('ACHIEVEMENTS'); lvls = usa('lvls');
+  fcData = usa('fcData'); memoPairs = usa('memoPairs'); qzData = usa('qzData');
+  classGroups = usa('classGroups'); idData = usa('idData'); cmpData = usa('cmpData');
+  routeSets = usa('routeSets'); neuronPartes = usa('neuronPartes');
+  neuroPairs = usa('neuroPairs'); enfermedadData = usa('enfermedadData');
+  retoPairs = usa('retoPairs'); identifyTaskDB = usa('identifyTaskDB');
+  classifyTaskDB = usa('classifyTaskDB'); completeTaskDB = usa('completeTaskDB');
+  explainQuestions = usa('explainQuestions'); sopaSets = usa('sopaSets');
+  evalTFBank = usa('evalTFBank'); evalMCBank = usa('evalMCBank');
+  evalCPBank = usa('evalCPBank'); evalPRBank = usa('evalPRBank');
+  critMecBank = usa('critMecBank'); critErrorBank = usa('critErrorBank');
+  critTrenQuestions = usa('critTrenQuestions'); critTrenBank = usa('critTrenBank');
+  critCompareBank = usa('critCompareBank'); critDesignBank = usa('critDesignBank');
+  critDesignGuide = usa('critDesignGuide'); gearCases = usa('gearCases');
+  GEAR_DIR_OPTS = usa('GEAR_DIR_OPTS'); GEAR_REL_OPTS = usa('GEAR_REL_OPTS');
+
+  // Repintar cada juego desde el principio con el banco nuevo
+  fcIdx = 0; upFC();
+  buildMemo();
+  qzIdx = 0; qzSel = -1; qzDone = false; showQz();
+  currentClassGroupIdx = 0; buildClass();
+  idIdx = 0; showId();
+  cmpIdx = 0; cmpSel = -1; showCmp();
+  currentRouteIdx = 0; buildRoute();
+  neuronIdx = 0; showNeuron();
+  neuroIdx = 0; showNeuro();
+  enferIdx = 0; showEnfer();
+  currentRetoPairIdx = 0; updateRetoButtons(); resetReto();
+  currentSopaSetIdx = 0; sopaFoundWords = new Set(); buildSopa();
+  gearShowCase(gearIdx);          // el laboratorio se redibuja con el caso en pantalla
+  renderAchPanel(); updateXPBar();
+
+  // Las pruebas ya generadas se rehacen en el idioma nuevo, con su misma forma
+  const out = document.getElementById('evalOut');
+  if (out && out.innerHTML.trim()) { evalFormNum = window._currentEvalForm || evalFormNum; genEval(); }
+  const outCrit = document.getElementById('evalCritOut');
+  if (outCrit && outCrit.innerHTML.trim()) { evalCritFormNum = window._currentEvalCritForm || evalCritFormNum; genEvalCrit(); }
+  const tg = document.getElementById('tgOut');
+  if (tg) tg.innerHTML = '';
+};

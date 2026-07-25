@@ -55,17 +55,22 @@
     return (window.MISION_EN && window.MISION_EN.fragmentos) || [];
   }
 
-  function aplicarFragmentos(texto) {
-    var out = texto, lista = fragmentos();
+  function aplicarLista(texto, lista) {
+    var out = texto;
     for (var i = 0; i < lista.length; i++) {
       var busca = lista[i][0], pon = lista[i][1];
       if (typeof busca === 'string') {
         if (out.indexOf(busca) !== -1) out = out.split(busca).join(pon);
       } else {
+        busca.lastIndex = 0;                 // los /g guardan posición entre llamadas
         out = out.replace(busca, pon);
       }
     }
     return out;
+  }
+
+  function aplicarFragmentos(texto) {
+    return aplicarLista(texto, fragmentos());
   }
 
   /* Rótulos que NO son de ninguna misión en particular: los arman
@@ -297,7 +302,15 @@
     'Escribe tu nombre aquí...': 'Type your name here…'
   };
 
+  /* Los fragmentos con números o nombres variables que TAMPOCO cambian de
+     misión a misión: contadores de progreso, marcadores de los juegos,
+     resultados de las dos evaluaciones, la clave ZipGrade y la fecha de la
+     constancia. Se aplican DESPUÉS de los de la misión, así que una misión
+     siempre puede adelantarse y decirlo a su manera. Van de más específico a
+     más general (la clave ZipGrade nombra «Forma N» y debe caer antes que la
+     regla suelta de «Forma N»). */
   var BASE_FRAGMENTOS = [
+    /* — panel de identificarse y registro — */
     [/^Escribe tus datos $/, 'Write your details '],
     [/^una sola vez$/, 'just once'],
     [/^ para que tu maestro sepa que estos logros son tuyos\.$/, ' so your teacher knows these achievements are yours.'],
@@ -306,7 +319,58 @@
     [/^🚀 Misión: /, '🚀 Mission: '],
     [/^📚 Grado y sección: /, '📚 Grade and section: '],
     [/^⏱️ Tiempo activo: /, '⏱️ Time on task: '],
-    [/: aún sin calificar/, ': not graded yet']
+    [/: aún sin calificar/, ': not graded yet'],
+    /* — contadores de progreso de los juegos — */
+    [/Pregunta (\d+) de (\d+)/g, 'Question $1 of $2'],
+    [/Oración (\d+) de (\d+)/g, 'Sentence $1 of $2'],
+    [/Pista (\d+) de (\d+)/g, 'Clue $1 of $2'],
+    [/Carta de memoria (\d+)/g, 'Memory card $1'],
+    [/Caso (\d+) de (\d+):/g, 'Case $1 of $2:'],
+    [/Caso (\d+):/g, 'Case $1:'],
+    [/^(\d+) de (\d+)$/g, '$1 of $2'],
+    /* — memorama, quiz, reto y sopa — */
+    [/🃏 Parejas: (\d+) de (\d+) · Intentos: (\d+)/g, '🃏 Pairs: $1 of $2 · Tries: $3'],
+    [/¡Memoria completada en (\d+) intentos! \+2 XP extra/g, 'Memory game finished in $1 tries! +2 XP bonus'],
+    [/✅ (\d+) correctas \| ❌ (\d+) errores/g, '✅ $1 correct | ❌ $2 wrong'],
+    [/Resultado: (\d+)\/(\d+) \((\d+)%\) ¡Bien hecho!/g, 'Result: $1/$2 ($3%) Well done!'],
+    [/✅ ¡Encontraste: ([A-ZÑÁÉÍÓÚ]+)!/g, '✅ You found $1!'],
+    /* — avisos y rótulos que nombran el grupo, la pareja o el caso — */
+    [/🔄 Grupo: (.+?) vs (.+)/g, '🔄 Group: $1 vs $2'],
+    [/🔄 Pareja: (.+?) vs (.+)/g, '🔄 Pair: $1 vs $2'],
+    [/🔄 Caso: /g, '🔄 Case: '],
+    // el aviso lleva por delante el icono del logro, y cada misión usa el suyo
+    [/ ¡Logro desbloqueado! /g, ' Achievement unlocked! '],
+    [/La respuesta correcta es: /g, 'The correct answer is: '],
+    [/^Busca: /g, 'Look for: '],
+    /* — generador de tareas — */
+    [/📝 Opciones: /g, '📝 Options: '],
+    [/✅ Respuestas:/g, '✅ Answers:'],
+    /* — evaluación conceptual: calificación y clave — */
+    [/Revisar\. Respuesta esperada: /g, 'Check again. Expected answer: '],
+    [/Pareados: (\d+)\/5 correctos\. Excelente\. \+25 pts/g, 'Matching: $1/5 correct. Excellent. +25 pts'],
+    [/Pareados: (\d+)\/5 correctos\. Clave: /g, 'Matching: $1/5 correct. Key: '],
+    [/Resultado automático: (\d+)\/100 puntos/g, 'Automatic result: $1/100 points'],
+    [/Completar: (\d+)\/25 · V\/F: (\d+)\/25 · Selección: (\d+)\/25 · Pareados: (\d+)\/25/g,
+      'Fill in: $1/25 · T/F: $2/25 · Multiple choice: $3/25 · Matching: $4/25'],
+    [/🎯 Evaluación calificada: (\d+)\/100/g, '🎯 Test graded: $1/100'],
+    [/🧮 Evaluación calificada: (\d+)\/100\. Revisa las respuestas marcadas\./g, '🧮 Test graded: $1/100. Check the marked answers.'],
+    /* — pensamiento crítico: autoevaluación — */
+    [/Puntaje total autoevaluado: (\d+)\/100/g, 'Self-assessed total score: $1/100'],
+    [/🎯 Pensamiento crítico: (\d+)\/100/g, '🎯 Critical thinking: $1/100'],
+    [/🧮 Puntaje registrado: (\d+)\/100\. ¡Sigue practicando!/g, '🧮 Score saved: $1/100. Keep practicing!'],
+    /* — impresión: clave ZipGrade y número de forma — */
+    [/🎯 Clave rápida estilo ZipGrade · Forma (\d+) — respuestas correctas ya rellenadas para digitar la clave en la app/g,
+      '🎯 ZipGrade-style quick key · Form $1 — correct answers already filled in so you can type the key into the app'],
+    [/Test Version \/ Forma:/g, 'Test Version / Form:'],
+    [/Forma (\d+)/g, 'Form $1'],
+    /* — fecha de la constancia: «25 de julio de 2026» → «July 25, 2026» — */
+    [/(\d+) de enero de (\d+)/g, 'January $1, $2'], [/(\d+) de febrero de (\d+)/g, 'February $1, $2'],
+    [/(\d+) de marzo de (\d+)/g, 'March $1, $2'], [/(\d+) de abril de (\d+)/g, 'April $1, $2'],
+    [/(\d+) de mayo de (\d+)/g, 'May $1, $2'], [/(\d+) de junio de (\d+)/g, 'June $1, $2'],
+    [/(\d+) de julio de (\d+)/g, 'July $1, $2'], [/(\d+) de agosto de (\d+)/g, 'August $1, $2'],
+    [/(\d+) de septiembre de (\d+)/g, 'September $1, $2'], [/(\d+) de octubre de (\d+)/g, 'October $1, $2'],
+    [/(\d+) de noviembre de (\d+)/g, 'November $1, $2'], [/(\d+) de diciembre de (\d+)/g, 'December $1, $2'],
+    [/^Fecha: /g, 'Date: ']
   ];
 
   function tr(texto) {
@@ -320,13 +384,9 @@
     if (Object.prototype.hasOwnProperty.call(BASE_FRASES, limpio)) {
       return texto.replace(limpio, BASE_FRASES[limpio]);
     }
-    var out = aplicarFragmentos(texto);
-    if (out !== texto) return out;
-    for (var i = 0; i < BASE_FRAGMENTOS.length; i++) {
-      var b = BASE_FRAGMENTOS[i][0], r = BASE_FRAGMENTOS[i][1];
-      if (b.test(out)) return out.replace(b, r);
-    }
-    return out;
+    // Primero los de la misión y después los de la base: así una misión puede
+    // adelantarse a un fragmento común, pero lo que no diga lo cubre la base.
+    return aplicarLista(aplicarFragmentos(texto), BASE_FRAGMENTOS);
   }
 
   /* Los paneles compartidos se arman por JS y su texto de ayuda vive en
@@ -372,7 +432,7 @@
     for (var i = 0; i < claves.length; i++) {
       if (out.indexOf(claves[i]) !== -1) out = out.split(claves[i]).join(frases[claves[i]]);
     }
-    out = aplicarFragmentos(out);
+    out = aplicarLista(aplicarFragmentos(out), BASE_FRAGMENTOS);
     return out.replace('<html lang="es"', '<html lang="en"');
   }
 

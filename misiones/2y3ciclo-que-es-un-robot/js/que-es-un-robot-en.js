@@ -734,8 +734,10 @@
       [/🔄 Caso: /g, '🔄 Case: '],
       [/🏅 ¡Logro desbloqueado! /g, '🏅 Achievement unlocked! '],
       [/La respuesta correcta es: /g, 'The correct answer is: '],
-      [/^Correcto: /g, 'Correct: '],
+      /* la corrección larga va ANTES que la genérica, o esta se la come y el
+         «Pregúntate…» del final se queda en español */
       [/Correcto: (.+)\. Pregúntate: ¿percibe\?, ¿decide\?, ¿actúa\?/g, 'Correct: $1. Ask yourself: does it sense? does it decide? does it act?'],
+      [/^Correcto: /g, 'Correct: '],
       [/Busca: /g, 'Look for: '],
       [/🔬 Explorando: /g, '🔬 Exploring: '],
       [/Forma (\d+)/g, 'Form $1'],
