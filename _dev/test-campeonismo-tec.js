@@ -1,15 +1,15 @@
 /* =============================================================
    test-campeonismo-tec.js — Arnés de verificación de Campeonísimo
-   con las materias nuevas (Programación 💻 y Robótica 🤖).
+   con las materias nuevas (Programación 💻, Robótica 🤖 e Inglés 🗣️).
 
    Uso:  node _dev/test-campeonismo-tec.js
 
    Comprueba, sin navegador:
-   1. CAMP_BANK tiene las claves «programación» y «robótica».
+   1. CAMP_BANK tiene las claves «programación», «robótica» e «inglés».
    2. Toda pregunta del banco: 4 opciones, c entre 0 y 3, opciones
       sin repetidos, texto no vacío.
    3. Todo `mision` corresponde a un `title` real de misiones.js.
-   4. ≥10 preguntas por misión de las dos materias nuevas.
+   4. ≥10 preguntas por misión de las materias nuevas.
    5. Sin preguntas duplicadas (texto normalizado) dentro del banco
       ni contra el evalMCBank de su propia misión.
    6. Las `key` de CAMP_SUBJECTS coinciden con los `subject` de
@@ -33,7 +33,7 @@ const P = {
   css:   path.join(ROOT, 'css', 'app.css'),
 };
 
-const NUEVAS = ['programación', 'robótica'];
+const NUEVAS = ['programación', 'robótica', 'inglés'];
 
 let fallos = 0;
 const err = m => { fallos++; console.log('  ✗ ' + m); };
@@ -77,7 +77,7 @@ function extraerArray(txt, nombre) {
 }
 
 /* ── carga ────────────────────────────────────────────────── */
-console.log('\n════════ CAMPEONÍSIMO · Programación y Robótica ════════\n');
+console.log('\n════════ CAMPEONÍSIMO · Programación, Robótica e Inglés ════════\n');
 
 const { CAMP_BANK }     = cargar(P.bank, ['CAMP_BANK']);
 const { MISSIONS }      = cargar(P.mis,  ['MISSIONS']);
@@ -117,7 +117,7 @@ if (!malas)      ok(`${totalQ} preguntas con 4 opciones válidas y c entre 0 y 3
 if (!misionMala) ok('Todos los valores de `mision` corresponden a un título real del catálogo');
 
 /* ── 4 y 5. cobertura y duplicados en las materias nuevas ── */
-console.log('\n3) Cobertura y duplicados (Programación y Robótica)');
+console.log('\n3) Cobertura y duplicados (Programación, Robótica e Inglés)');
 const resumen = {};
 NUEVAS.forEach(mat => {
   const lista = CAMP_BANK[mat] || [];
@@ -211,7 +211,7 @@ NUEVAS.forEach(mat => {
   const porMision = resumen[mat] || {};
   const total = Object.values(porMision).reduce((a, b) => a + b.length, 0);
   const icono = (CAMP_SUBJECTS.find(s => s.key === mat) || {}).icon || '';
-  console.log(`\n${icono} ${mat.toUpperCase()} — ${total} preguntas en ${Object.keys(porMision).length} misiones`);
+  console.log(`\n${icono} ${mat.toUpperCase()} — ${total} preguntas en ${Object.keys(porMision).length} ${Object.keys(porMision).length === 1 ? 'misión' : 'misiones'}`);
   MISSIONS.filter(m => m.subject === mat).forEach(m => {
     const n = (porMision[m.title] || []).length;
     const pos = (porMision[m.title] || []).reduce((acc, q) => { acc[q.c]++; return acc; }, [0, 0, 0, 0]);

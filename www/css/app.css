@@ -2534,6 +2534,7 @@ a.padre-asistente-btn {
 .camp-ws-csoc .camp-ws-short { color: #b91c1c; }
 .camp-ws-tec-pro .camp-ws-short { color: #155e75; }
 .camp-ws-tec-rob .camp-ws-short { color: #3730a3; }
+.camp-ws-ing .camp-ws-short { color: #9d174d; }
 
 /* Anuncio de materia seleccionada */
 .camp-subject-announce {
@@ -2552,6 +2553,7 @@ a.padre-asistente-btn {
 .camp-sa-csoc { background: #fee2e2; color: #b91c1c; border: 2px solid #fca5a5; }
 .camp-sa-tec-pro { background: #cffafe; color: #155e75; border: 2px solid #67e8f9; }
 .camp-sa-tec-rob { background: #e0e7ff; color: #3730a3; border: 2px solid #a5b4fc; }
+.camp-sa-ing { background: #fce7f3; color: #9d174d; border: 2px solid #f9a8d4; }
 
 @keyframes campPop {
   0%   { transform: scale(.7); opacity: 0; }
@@ -2617,6 +2619,7 @@ a.padre-asistente-btn {
 .camp-q-header-csoc { background: #fee2e2; }
 .camp-q-header-tec-pro { background: #cffafe; }
 .camp-q-header-tec-rob { background: #e0e7ff; }
+.camp-q-header-ing { background: #fce7f3; }
 .camp-q-subj-icon { font-size: 20px; }
 .camp-q-subj-label {
   font-weight: 800;
@@ -2914,6 +2917,7 @@ a.padre-asistente-btn {
 .camp-ms-bh-csoc { background: #fee2e2; color: #b91c1c; }
 .camp-ms-bh-tec-pro { background: #cffafe; color: #155e75; }
 .camp-ms-bh-tec-rob { background: #e0e7ff; color: #3730a3; }
+.camp-ms-bh-ing { background: #fce7f3; color: #9d174d; }
 .camp-ms-tog {
   padding: 3px 9px;
   border-radius: 6px;
@@ -3519,6 +3523,7 @@ a.padre-asistente-btn {
 .camp-sp-csoc { background: linear-gradient(150deg, #ef4444, #991b1b); }
 .camp-sp-tec-pro { background: linear-gradient(150deg, #06b6d4, #155e75); }
 .camp-sp-tec-rob { background: linear-gradient(150deg, #6366f1, #3730a3); }
+.camp-sp-ing { background: linear-gradient(150deg, #ec4899, #9d174d); }
 .camp-elegir-btn {
   display: block; margin: 10px auto 0;
   border: 2px dashed #8b5cf6;

@@ -27,6 +27,7 @@ const CAMP_SUBJECTS = [
   { key: 'sociales',     label: 'C. Sociales',  short: 'SOC', icon: '🌍', color: '#dc2626', bg: '#fee2e2', cls: 'csoc'    },
   { key: 'programación', label: 'Programación', short: 'PRO', icon: '💻', color: '#0e7490', bg: '#cffafe', cls: 'tec-pro' },
   { key: 'robótica',     label: 'Robótica',     short: 'ROB', icon: '🤖', color: '#4f46e5', bg: '#e0e7ff', cls: 'tec-rob' },
+  { key: 'inglés',       label: 'Inglés',       short: 'ING', icon: '🗣️', color: '#be185d', bg: '#fce7f3', cls: 'ing'     },
 ];
 
 /* ── Ruleta: 2 gajos por materia, generada desde CAMP_SUBJECTS ──

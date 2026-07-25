@@ -348,4 +348,26 @@ const CAMP_BANK = {
     { q: 'El café tendido se moja cuando llueve de repente. ¿Qué diseño lo resuelve?', o: ['Un robot que recoja basura', 'Una alarma de ruido', 'Un regador automático', 'Un techo que se cierra solo al detectar lluvia'], c: 3, mision: 'Robots que Resuelven Problemas' },
     { q: '¿Qué hace verdaderamente útil a un robot escolar?', o: ['Que resuelva un problema real de su comunidad', 'Que sea el más bonito', 'Que use más piezas que los demás', 'Que tenga muchas luces'], c: 0, mision: 'Robots que Resuelven Problemas' },
   ],
+
+  /* ── INGLÉS ──────────────────────────────────────────────
+     El enunciado va en español y la respuesta en inglés: en el
+     Campeonísimo el alumno reconoce la expresión, no la traduce.
+     Todo sale de la etapa 1 (Pre-A1), incluidos los dos puntos
+     que la misión ataca de frente: «Good night» no es saludo y
+     la /h/ inglesa sí suena. */
+  inglés: [
+    // Hello! Saludos y Presentarme
+    { q: 'Según el reloj de los saludos, de 12:00 a 17:59 se dice…', o: ['Good morning', 'Good afternoon', 'Good evening', 'Good night'], c: 1, mision: 'Hello! Saludos y Presentarme' },
+    { q: 'Misma noche, distinto momento: ¿cuál se dice al LLEGAR y cuál al IRSE?', o: ['«Good night» al llegar y «Good evening» al irse', '«Good evening» al llegar y «Good night» al irse', 'Las dos sirven para llegar', 'Las dos sirven para irse'], c: 1, mision: 'Hello! Saludos y Presentarme' },
+    { q: 'A diferencia del español, la h de «hello» y «hi» en inglés…', o: ['es muda, no se pronuncia', 'suena como una r', 'sí suena, es un soplo', 'se pronuncia como una s'], c: 2, mision: 'Hello! Saludos y Presentarme' },
+    { q: 'Si no soplás la h, «hi» suena como «eye», que significa…', o: ['ojo', 'oído', 'mano', 'nombre'], c: 0, mision: 'Hello! Saludos y Presentarme' },
+    { q: 'Te presentás ante la directora de la escuela. ¿Cuál es la forma FORMAL?', o: ['Hey! What’s up?', 'Hi! I’m Carlos. What’s your name?', 'Good night. I’m Carlos.', 'Good morning. My name is Carlos. Nice to meet you.'], c: 3, mision: 'Hello! Saludos y Presentarme' },
+    { q: '¿Qué diferencia hay entre «I’m Carlos» y «My name is Carlos»?', o: ['Significan lo mismo; «I’m» es más corto y natural', '«I’m» pregunta el nombre y «My name is» lo dice', '«I’m» solo se usa por escrito', 'Ninguna de las dos dice el nombre'], c: 0, mision: 'Hello! Saludos y Presentarme' },
+    { q: 'Un compañero te dice «How are you?». ¿Qué respondés en bloque?', o: ['Nice to meet you', 'I’m fine, thank you. And you?', 'You’re welcome', 'See you tomorrow'], c: 1, mision: 'Hello! Saludos y Presentarme' },
+    { q: 'Según la misión, ¿qué sonido delata más a un principiante?', o: ['La r de «morning»', 'La th de «thank you»', 'La d de «good»', 'La m de «name»'], c: 1, mision: 'Hello! Saludos y Presentarme' },
+    { q: '«See you tomorrow» se usa cuando…', o: ['acabás de conocer a alguien', 'querés preguntar un nombre', 'volverás a ver a la persona al día siguiente', 'te vas a dormir'], c: 2, mision: 'Hello! Saludos y Presentarme' },
+    { q: '¿Cuál es la despedida FORMAL?', o: ['Bye', 'Hi', 'Hey', 'Goodbye'], c: 3, mision: 'Hello! Saludos y Presentarme' },
+    { q: '¿A qué hora del día sirve «Hello»?', o: ['A cualquier hora', 'Solo por la mañana', 'Solo por la tarde', 'Solo de noche'], c: 0, mision: 'Hello! Saludos y Presentarme' },
+    { q: 'Saludás a un compañero de tu grado en el recreo. ¿Cuál es el natural?', o: ['Good evening', 'Hi!', 'Good night', 'Nice to meet you'], c: 1, mision: 'Hello! Saludos y Presentarme' },
+  ],
 };
