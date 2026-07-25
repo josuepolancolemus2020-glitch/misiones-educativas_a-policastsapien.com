@@ -7,7 +7,7 @@
 <meta name="description" content="Catálogo docente de las 50 fichas didácticas imprimibles del Proyecto Educativo M.E.T.A.S, agrupadas por materia.">
 <style>
   :root {
-    --mat: #1e40af; --esp: #b45309; --bach: #7c3aed; --nat: #0d9488; --soc: #dc2626; --tec: #0e7490;
+    --mat: #1e40af; --esp: #b45309; --bach: #7c3aed; --nat: #0d9488; --soc: #dc2626; --tec: #0e7490; --ing: #be185d;
     --tinta: #1a2733; --gris: #5b6773; --linea: #e2e8f0;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,6 +35,7 @@
   .m-mat h2 { background: var(--mat); } .m-esp h2 { background: var(--esp); }
   .m-bach h2 { background: var(--bach); } .m-nat h2 { background: var(--nat); }
   .m-soc h2 { background: var(--soc); } .m-tec h2 { background: var(--tec); }
+  .m-ing h2 { background: var(--ing); }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
   a.card {
@@ -54,6 +55,7 @@
   .m-nat a.card { border-left-color: var(--nat); }
   .m-soc a.card { border-left-color: var(--soc); }
   .m-tec a.card { border-left-color: var(--tec); }
+  .m-ing a.card { border-left-color: var(--ing); }
 
   footer { text-align: center; font-size: 0.8rem; color: var(--gris); margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--linea); }
   footer b { color: var(--tinta); }
@@ -194,6 +196,14 @@
       <a class="card" href="ficha-electricidad-robots.html"><span class="ico">🔌</span><span class="txt"><span class="t">Electricidad para Robots</span><span class="sub">Ruta de los Robots</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-programando-robot.html"><span class="ico">🕹️</span><span class="txt"><span class="t">Programando un Robot</span><span class="sub">Ruta de los Robots</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-robots-problemas.html"><span class="ico">🏆</span><span class="txt"><span class="t">Robots que Resuelven Problemas</span><span class="sub">Ruta de los Robots</span></span><span class="go">→</span></a>
+    </div>
+  </section>
+
+  <!-- INGLÉS -->
+  <section class="materia m-ing">
+    <h2>🗣️ Inglés <span class="n">1 ficha</span></h2>
+    <div class="grid">
+      <a class="card" href="ficha-ingles-saludos.html"><span class="ico">🗣️</span><span class="txt"><span class="t">Hello! Saludos y Presentarme</span><span class="sub">Ruta de las Primeras Palabras · Pre-A1</span></span><span class="go">→</span></a>
     </div>
   </section>
 

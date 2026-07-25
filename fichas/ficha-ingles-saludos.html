@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Hello! Saludos y Presentarme</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: INGLÉS = ROSA (#be185d)
+     · Colores semánticos: rosa=saludo, morado=presentación, verde=despedida
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --ing: #be185d; --ing-osc: #831843; --ing-claro: #fff1f5;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #fbcfe8;
+    --sal: #be185d; --pre: #7c3aed; --des: #15803d; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #fdf2f8; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ing-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ing); background: var(--ing-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ing-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ing-osc); }
+  .fh-qr { flex: 0 0 120px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+  /* Mientras no exista el PNG del QR, se imprime la dirección escrita */
+  .fh-qr .url-alterna { display: none; font-size: 7.4pt; color: var(--ing-osc); font-weight: 700; overflow-wrap: normal; line-height: 1.35; }
+  .fh-qr.sin-qr img { display: none; }
+  .fh-qr.sin-qr .url-alterna { display: block; }
+  .fh-qr.sin-qr .qr-pie { display: none; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ing); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h3 { font-size: 11pt; color: var(--ing-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ing-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ing-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #15803d; }
+  .truco { background: #f3e8ff; border: 1px solid #ddd0f7; }
+  .truco b { color: #6d28d9; }
+  .ojo { background: #fef2f2; border: 1.5px solid #fca5a5; }
+  .ojo b { color: #b91c1c; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ing); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf2f8; }
+  td.k { font-weight: 700; color: var(--ing-osc); white-space: nowrap; }
+  td.fon { font-family: 'Courier New', monospace; color: var(--pre); font-weight: 700; white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fffafc; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--ing-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (saludo / presentación / despedida) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #fce7f3; } .celula .cm b { color: var(--sal); }
+  .celula .cc { background: #ede9fe; } .celula .cc b { color: var(--pre); }
+  .celula .cn { background: #dcfce7; } .celula .cn b { color: var(--des); }
+
+  .tri { display: flex; gap: 7px; margin: 8px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 8px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #fce7f3; border: 1px solid #f9a8d4; }
+  .tri .torg { background: #ede9fe; border: 1px solid #ddd0f7; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--sal); } .tri .torg b { color: var(--pre); }
+
+  .dialogo { background: #fff; border: 1.5px solid var(--linea); border-radius: 9px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .dialogo .li { margin-bottom: 3px; }
+  .dialogo .a { color: var(--sal); font-weight: 700; }
+  .dialogo .b { color: var(--pre); font-weight: 700; }
+
+  .acts h3 { border-bottom: 2px solid var(--ing-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ing); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--ing); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i { font-style: normal; flex: 0 0 auto; font-size: 10.5pt; font-weight: 800; color: var(--ing-osc); }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--ing-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--ing-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #fdf2f8; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--ing-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--ing); box-shadow: 0 6px 16px rgba(190,24,93,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div, .dialogo
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido" data-i18n="p1">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Hello! Saludos y Presentarme</div>
+        <div class="f-meta"><b>Asignatura:</b> Inglés &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica &nbsp;·&nbsp; <b>Ruta de las Primeras Palabras · Etapa 1</b> &nbsp;·&nbsp; <b>Pre-A1 (Cambridge Starters)</b></div>
+        <div class="f-meta"><b>Tema:</b> Saludar según la hora del día, presentarse (What’s your name? / My name is…), preguntar How are you? y despedirse. Registro formal e informal, la /h/ que sí suena y la <i>th</i> de <i>thank you</i></div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-ingles-saludos.png" alt="QR de la misión"
+             onerror="this.closest('.fh-qr').classList.add('sin-qr')">
+        <span class="qr-pie">📷 Juega la misión en tu teléfono</span>
+        <span class="url-alterna">📱 Juega la misión en:<br>metas.policastsapien.com</span>
+      </div>
+    </div>
+
+    <h2>🎯 I CAN — Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li><b>I can greet:</b> saludar en inglés según la <strong>hora del día</strong>.</li>
+      <li><b>I can introduce myself:</b> decir mi nombre y <strong>preguntar el de otra persona</strong>.</li>
+      <li><b>I can ask how you are:</b> preguntar cómo está alguien y <strong>responder</strong>.</li>
+      <li><b>I can say goodbye:</b> despedirme con <strong>cortesía</strong>.</li>
+      <li>Elegir el registro <strong>formal o informal</strong> y pronunciar la <strong>/h/</strong> de <i>hello</i> y la <strong>th</strong> de <i>thank you</i>.</li>
+    </ol>
+
+    <h2>👋 1. Saludar según la hora del día</h2>
+    <p>En inglés el saludo <strong>cambia con el reloj</strong>. No se aprende palabra por palabra: se aprende
+    <strong>en bloque</strong>, como una sola pieza que ya viene armada.</p>
+    <table>
+      <tr><th style="width:26%;">Se dice</th><th style="width:26%;">Se pronuncia</th><th>Significado y cuándo se usa</th></tr>
+      <tr><td class="k">Hello</td><td class="fon">je-LOU</td><td>Hola · sirve a cualquier hora y con cualquier persona</td></tr>
+      <tr><td class="k">Hi</td><td class="fon">jai</td><td>Hola · informal, con amigos y compañeros</td></tr>
+      <tr><td class="k">Good morning</td><td class="fon">gud MOR-ning</td><td>Buenos días · desde que amanece hasta las 12</td></tr>
+      <tr><td class="k">Good afternoon</td><td class="fon">gud af-ter-NUN</td><td>Buenas tardes · de 12 a 6 de la tarde</td></tr>
+      <tr><td class="k">Good evening</td><td class="fon">gud IV-ning</td><td>Buenas noches · <strong>al llegar</strong>, desde las 6</td></tr>
+      <tr><td class="k">Good night</td><td class="fon">gud NAIT</td><td>Buenas noches · <strong>al irse</strong> o al ir a dormir</td></tr>
+    </table>
+
+    <div class="ilus">
+      <div class="ilus-t">👋🙋🚪 Mini-demostración: toda conversación corta tiene el mismo esqueleto</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">👋</span><b>Greeting</b>El saludo: abre la puerta. <i>Good morning!</i></div>
+        <div class="cc"><span class="c-emoji">🙋</span><b>Introduction</b>La presentación: tu nombre. <i>I’m Ana.</i></div>
+        <div class="cn"><span class="c-emoji">🚪</span><b>Farewell</b>La despedida: cierra bien. <i>See you!</i></div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Y en medio, la cortesía: <b>How are you?</b> · <b>Please</b> · <b>Thank you</b>. 🙏</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Hello! Saludos y Presentarme</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido" data-i18n="p2">
+
+    <h2 style="margin-top:0;">🙋 2. Presentarme: nombre y cortesía</h2>
+    <table>
+      <tr><th style="width:30%;">Se dice</th><th style="width:26%;">Se pronuncia</th><th>Significado</th></tr>
+      <tr><td class="k">What’s your name?</td><td class="fon">guats yor NEIM</td><td>¿Cómo te llamas?</td></tr>
+      <tr><td class="k">My name is…</td><td class="fon">mai NEIM is</td><td>Me llamo…</td></tr>
+      <tr><td class="k">I’m…</td><td class="fon">aim</td><td>Soy… · más corto y natural</td></tr>
+      <tr><td class="k">Nice to meet you</td><td class="fon">nais tu MIT yu</td><td>Mucho gusto · al conocer a alguien</td></tr>
+      <tr><td class="k">How are you?</td><td class="fon">jau ar YU</td><td>¿Cómo estás?</td></tr>
+      <tr><td class="k">I’m fine, thank you</td><td class="fon">aim FAIN, zenk yu</td><td>Estoy bien, gracias</td></tr>
+    </table>
+
+    <div class="dialogo">
+      <div class="li"><span class="a">Ana:</span> Hi! I’m Ana. What’s your name?</div>
+      <div class="li"><span class="b">Luis:</span> My name is Luis.</div>
+      <div class="li"><span class="a">Ana:</span> Nice to meet you, Luis.</div>
+      <div class="li"><span class="b">Luis:</span> Nice to meet you, too. How are you?</div>
+      <div class="li"><span class="a">Ana:</span> I’m fine, thank you. And you?</div>
+      <div class="li"><span class="b">Luis:</span> I’m fine, too. See you tomorrow!</div>
+    </div>
+
+    <h2>🎩 3. Formal e informal: ¿con quién hablo?</h2>
+    <p>La cortesía es contenido, no adorno. Escoger mal el registro suena raro aunque la gramática esté bien:</p>
+    <table>
+      <tr><th>Situación</th><th>Registro</th><th>Se dice</th></tr>
+      <tr><td class="k">🎩 Con la directora, un maestro, un visitante</td><td>Formal</td><td>Good morning · Good afternoon · Goodbye · Nice to meet you</td></tr>
+      <tr><td class="k">🙌 Con un amigo o compañero</td><td>Informal</td><td>Hi · Hey · Bye · See you</td></tr>
+      <tr><td class="k">✅ Con cualquiera</td><td>Siempre bien</td><td>Hello · Please · Thank you</td></tr>
+      <tr><td class="k">🇭🇳 Con un turista o en el hotel</td><td>Formal primero</td><td>Good afternoon. My name is… Nice to meet you.</td></tr>
+    </table>
+
+    <h2>🗣️ 4. Pronunciación de hoy</h2>
+    <div class="tri">
+      <div class="tnuc"><b>La /h/ que sí suena</b>En español la «h» es muda; en inglés <strong>sopla</strong>, como una j suave: <i>hello</i> → «je-lou», <i>hi</i> → «jai», <i>how</i> → «jau». Sin ese soplo, <i>hi</i> suena como <i>eye</i> («ojo»).</div>
+      <div class="torg"><b>La <i>th</i> de <i>thank you</i></b>No es «tenk» ni «senk». Se saca un poquito la <strong>lengua entre los dientes</strong> y se sopla: «ZENK yu». Es el sonido que más delata a un principiante.</div>
+    </div>
+    <div class="caja truco">💡 <b>Truco de academia:</b> escucha primero y repite después. Di cada bloque
+    <strong>dos veces en voz alta</strong> antes de escribirlo. El oído va adelante de la boca, y la boca adelante del lápiz.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Hello! Saludos y Presentarme</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido" data-i18n="p3">
+
+    <h2 style="margin-top:0;">🕐 5. El reloj de los saludos</h2>
+    <table>
+      <tr><th>Hora</th><th>Se dice</th><th>En español</th><th>¿Saludo o despedida?</th></tr>
+      <tr><td class="k">🌅 6:00 – 11:59</td><td class="k">Good morning</td><td>Buenos días</td><td>Saludo</td></tr>
+      <tr><td class="k">☀️ 12:00 – 17:59</td><td class="k">Good afternoon</td><td>Buenas tardes</td><td>Saludo</td></tr>
+      <tr><td class="k">🌇 18:00 en adelante</td><td class="k">Good evening</td><td>Buenas noches</td><td>Saludo</td></tr>
+      <tr><td class="k">🌙 Al irse o al dormir</td><td class="k">Good night</td><td>Buenas noches</td><td><strong>¡Despedida!</strong></td></tr>
+    </table>
+
+    <div class="caja ojo">⚠️ <b>El error número uno del hispanohablante:</b> <strong>Good night NO es un saludo</strong>.
+    Es una despedida, como «que descanses». Si llegas de noche a un lugar se dice <strong>Good evening</strong>.
+    Misma noche, distinto momento: <i>Good evening</i> al entrar, <i>Good night</i> al salir.</div>
+
+    <h2>🚪 6. Despedirse con cortesía</h2>
+    <table>
+      <tr><th style="width:30%;">Se dice</th><th style="width:26%;">Se pronuncia</th><th>Cuándo se usa</th></tr>
+      <tr><td class="k">Goodbye</td><td class="fon">gud-BAI</td><td>Adiós · formal</td></tr>
+      <tr><td class="k">Bye</td><td class="fon">bai</td><td>Chao · informal, entre amigos</td></tr>
+      <tr><td class="k">See you later</td><td class="fon">si yu LEI-ter</td><td>Hasta luego · el mismo día</td></tr>
+      <tr><td class="k">See you tomorrow</td><td class="fon">si yu tu-MO-rou</td><td>Nos vemos mañana</td></tr>
+      <tr><td class="k">Thank you / You’re welcome</td><td class="fon">ZENK yu / yor UEL-com</td><td>Gracias / De nada</td></tr>
+    </table>
+
+    <h2>🎲 7. Actividades desconectadas (sin computadora)</h2>
+    <ul>
+      <li><strong>🗣️ Meet a classmate (en parejas):</strong> uno saluda, se presenta y pregunta el nombre; el otro
+      responde, dice <i>Nice to meet you</i> y se despide. Luego <strong>cambian de papel</strong>. Regla del juego:
+      solo se puede hablar en inglés; si alguien se traba, su pareja le sopla el bloque.</li>
+      <li><strong>🕐 El juego del reloj:</strong> el maestro dice una hora («son las 7 de la noche y estás llegando»)
+      y los alumnos responden de pie con el saludo correcto. Quien diga <i>Good night</i> para saludar, se sienta.</li>
+      <li><strong>✍️ My own dialogue:</strong> escribe un diálogo de <strong>6 líneas</strong> entre dos personas
+      (saludo, presentación, cortesía y despedida) y actúalo frente a la clase con un compañero.</li>
+      <li><strong>🌎 Tarea de la vida real:</strong> mañana <strong>saluda en inglés a tres personas</strong>: un
+      compañero, tu maestro y alguien de tu casa. Anota qué les dijiste y qué te respondieron.</li>
+    </ul>
+
+    <div class="caja hn">🇭🇳 <b>El inglés también es tuyo:</b> en Honduras el inglés abre puertas reales — el turismo
+    en las Islas de la Bahía y Copán, las maquilas, los <i>call centers</i> y las becas. Y empieza por lo mismo que
+    en cualquier academia del mundo: <strong>saber saludar y presentarte</strong>. Con eso ya puedes tener tu primera
+    conversación… hoy mismo. 💚</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Hello! Saludos y Presentarme</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts" data-i18n="p4">
+
+    <h2>✍️ 8. ¡Ponte a Prueba! Activities</h2>
+
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>De 6:00 a 11:59 se saluda: Good <span class="linea-resp"></span>.</li>
+      <li>De 12:00 a 5:59 p.m. se saluda: Good <span class="linea-resp"></span>.</li>
+      <li>Al llegar después de las 6 p.m.: Good <span class="linea-resp"></span>.</li>
+      <li>Al irse a dormir: Good <span class="linea-resp"></span>.</li>
+      <li>Para preguntar el nombre: What’s your <span class="linea-resp"></span>?</li>
+      <li>Para decir el tuyo: My name <span class="linea-resp"></span> Ana.</li>
+      <li>Al conocer a alguien: <span class="linea-resp"></span> to meet you.</li>
+      <li>Para preguntar cómo está: <span class="linea-resp"></span> are you?</li>
+      <li>Se responde: I’m <span class="linea-resp"></span>, thank you.</li>
+      <li>Te dicen Thank you y respondes: You’re <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ «Good morning» se usa hasta las 12 del mediodía.</li>
+      <li>____ «Good night» sirve para saludar cuando llegas de noche.</li>
+      <li>____ En inglés la h de «hello» es muda, igual que en español.</li>
+      <li>____ «Hi» es un saludo informal.</li>
+      <li>____ «Nice to meet you» se dice al conocer a alguien por primera vez.</li>
+      <li>____ «What’s your name?» sirve para preguntar la edad.</li>
+      <li>____ «I’m fine, thank you» responde a «How are you?».</li>
+      <li>____ «Goodbye» es más formal que «Bye».</li>
+      <li>____ A la directora de la escuela se le saluda con «Hey! What’s up?».</li>
+      <li>____ «Thank you» se responde con «You’re welcome».</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Hello! Saludos y Presentarme</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts" data-i18n="p5">
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Encierra en un círculo la letra correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>Son las 9:00 de la mañana y saludas a tu maestra. ¿Qué dices?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Good night</span>
+        <span class="op"><i>b</i> Good morning</span>
+        <span class="op"><i>c</i> Good evening</span>
+        <span class="op"><i>d</i> Goodbye</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué significa «Good evening»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> buenas noches, al despedirse</span>
+        <span class="op"><i>b</i> buenos días</span>
+        <span class="op"><i>c</i> buenas noches, al llegar</span>
+        <span class="op"><i>d</i> buenas tardes</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuál de estas expresiones se usa SOLO para despedirse?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Hello</span>
+        <span class="op"><i>b</i> Good night</span>
+        <span class="op"><i>c</i> Good afternoon</span>
+        <span class="op"><i>d</i> Hi</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cómo preguntas el nombre de una persona?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> How are you?</span>
+        <span class="op"><i>b</i> How old are you?</span>
+        <span class="op"><i>c</i> What’s your name?</span>
+        <span class="op"><i>d</i> Where are you from?</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuál es la respuesta correcta a «What’s your name?»</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> I’m fine</span>
+        <span class="op"><i>b</i> My name is Ana</span>
+        <span class="op"><i>c</i> Nice to meet you</span>
+        <span class="op"><i>d</i> Good morning</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué significa «Nice to meet you»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> mucho gusto</span>
+        <span class="op"><i>b</i> hasta luego</span>
+        <span class="op"><i>c</i> ¿cómo estás?</span>
+        <span class="op"><i>d</i> de nada</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuál de estos saludos es FORMAL?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Hey</span>
+        <span class="op"><i>b</i> What’s up?</span>
+        <span class="op"><i>c</i> Hi</span>
+        <span class="op"><i>d</i> Good afternoon</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>Son las 3:00 de la tarde. ¿Qué saludo corresponde?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> Good morning</span>
+        <span class="op"><i>b</i> Good afternoon</span>
+        <span class="op"><i>c</i> Good evening</span>
+        <span class="op"><i>d</i> Good night</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>Un compañero te dice «Thank you». ¿Qué respondes?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> You’re welcome</span>
+        <span class="op"><i>b</i> And you?</span>
+        <span class="op"><i>c</i> My name is Luis</span>
+        <span class="op"><i>d</i> Good night</span>
+      </div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cómo se pronuncia la h de «hello»?</div>
+      <div class="preg-ops">
+        <span class="op"><i>a</i> es muda, como en español</span>
+        <span class="op"><i>b</i> suena como una j suave</span>
+        <span class="op"><i>c</i> suena como una s</span>
+        <span class="op"><i>d</i> suena como una g</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Hello! Saludos y Presentarme</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts" data-i18n="p6">
+
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
+    <table>
+      <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. ____ Hello</td><td>A. Nos vemos mañana</td></tr>
+      <tr><td>2. ____ Good morning</td><td>B. Buenas noches · al llegar a un lugar</td></tr>
+      <tr><td>3. ____ Good afternoon</td><td>C. Hola · sirve a cualquier hora</td></tr>
+      <tr><td>4. ____ Good evening</td><td>D. ¿Cómo estás?</td></tr>
+      <tr><td>5. ____ Good night</td><td>E. Buenas tardes · de 12 a 6</td></tr>
+      <tr><td>6. ____ What’s your name?</td><td>F. De nada</td></tr>
+      <tr><td>7. ____ Nice to meet you</td><td>G. Buenos días · hasta las 12</td></tr>
+      <tr><td>8. ____ How are you?</td><td>H. Mucho gusto</td></tr>
+      <tr><td>9. ____ See you tomorrow</td><td>I. Buenas noches · al despedirse</td></tr>
+      <tr><td>10. ____ You’re welcome</td><td>J. ¿Cómo te llamas?</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>Congratulations! Has completado la Misión Hello!</b> Ahora puedes saludar según la hora, decir tu nombre,
+      preguntar el de otra persona y despedirte con cortesía. Ya no es teoría: <strong>sal y úsalo hoy mismo</strong>
+      con tres personas. Sigue avanzando por la Ruta de las Primeras Palabras. 🗣️👋
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Inglés.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Actuó el diálogo de 6 líneas con un compañero y saludó en inglés a tres personas reales.</td><td class="lg">Tarea oral en aula y hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Hello! Saludos y Presentarme</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido" data-i18n="p7">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. morning &nbsp; 2. afternoon &nbsp; 3. evening &nbsp; 4. night &nbsp; 5. name &nbsp; 6. is &nbsp; 7. Nice &nbsp; 8. How &nbsp; 9. fine &nbsp; 10. welcome</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3F, 4V, 5V, 6F, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3b, 4c, 5b, 6a, 7d, 8b, 9a, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2G, 3E, 4B, 5I, 6J, 7H, 8D, 9A, 10F</div>
+    </div>
+
+    <div class="caja regla" style="margin-top:10px;">
+      🗣️ <b>Cómo calificar lo oral (lo más importante):</b> en Pre-A1 no se corrige cada error. Se valora que el
+      alumno <strong>se haga entender</strong> y que el bloque sea el adecuado a la situación. Priorice en este orden:
+      ① eligió el saludo correcto para la hora y la persona · ② usó el bloque completo (no palabras sueltas) ·
+      ③ pronunció la <i>/h/</i> y la <i>th</i>. La fluidez va antes que la perfección: corregir cada palabra en esta
+      etapa produce alumnos que entienden pero no se atreven a hablar.
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma M.E.T.A.S
+      «Misión Hello! Saludos y Presentarme» (Educación Básica, II y III Ciclo), etapa 1 de la Ruta de las Primeras
+      Palabras del área de Inglés, nivel <strong>Pre-A1</strong> según el MCER, equivalente a <strong>Cambridge English
+      Starters</strong>. El enfoque es <strong>comunicativo y por bloques</strong>: cada expresión se enseña como una
+      pieza completa con su uso (<i>What’s your name?</i> no se descompone en cuatro palabras), tal como se hace en las
+      academias de idiomas, porque así es como el hablante las almacena y las recupera. La ficha declara sus objetivos
+      como <strong>I CAN</strong> (descriptores «puedo hacer», no temas gramaticales) y puede aplicarse en aulas sin
+      computadora ni conectividad: todo el trabajo es de papel, voz y juego. Incluye los cuatro tipos de ítem que evalúa
+      la plataforma (completar, V/F, selección múltiple y pareados) y las actividades desconectadas de la página 3, entre
+      ellas el <i>role play</i> en parejas y el juego del reloj. Se ataca de frente el error más común del hispanohablante
+      —usar <i>Good night</i> como saludo— y los dos focos de pronunciación de esta etapa: la <strong>/h/</strong> que en
+      inglés sí suena y la <strong>th</strong> de <i>thank you</i>. La misión interactiva (código QR de la portada) permite
+      al estudiante <strong>escuchar cada expresión con la voz del propio teléfono</strong> y practicar con
+      retroalimentación inmediata antes de resolver esta ficha. Siguiente etapa de la ruta: <i>Numbers and My Age</i>.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Hello! Saludos y Presentarme · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
