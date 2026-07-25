@@ -304,12 +304,47 @@
     document.dispatchEvent(new CustomEvent('metas:idioma', { detail: { lang: lang } }));
   }
 
+  /* ---------- rescate: el archivo de inglés no llegó ----------
+     Si el alumno dejó la misión en inglés y al volver el navegador sirvió una
+     copia vieja del HTML (o el teléfono estaba sin red la primera vez), este
+     archivo no existe y la misión se veía en español SIN AVISAR. Aquí se
+     intenta traerlo una vez más y, si no se puede, se le dice al alumno. */
+
+  function urlIngles() {
+    var ss = document.querySelectorAll('script[src]'), i, src;
+    for (i = 0; i < ss.length; i++) {           // el HTML sí lo declara
+      src = ss[i].getAttribute('src') || '';
+      if (/-en\.js(\?|$)/.test(src)) return src;
+    }
+    for (i = 0; i < ss.length; i++) {           // deducirlo del JS de la misión
+      src = ss[i].getAttribute('src') || '';
+      var m = /^js\/([A-Za-z0-9_-]+)\.js(\?.*)?$/.exec(src);
+      if (m && m[1] !== 'html2canvas') return 'js/' + m[1] + '-en.js';
+    }
+    return null;
+  }
+
+  function cargarIngles(listo) {
+    var url = urlIngles();
+    if (!url) return listo(false);
+    var s = document.createElement('script');
+    s.src = url + (url.indexOf('?') < 0 ? '?reintento=1' : '&reintento=1');
+    s.onload = function () { listo(hayIngles()); };
+    s.onerror = function () { listo(false); };
+    document.head.appendChild(s);
+  }
+
   /* ---------- arranque ---------- */
 
   function iniciar() {
     crearBoton();
-    var pref = guardado();
-    if (pref === 'en' && hayIngles()) cambiar('en', true);
+    if (guardado() !== 'en') return;
+    if (hayIngles()) { cambiar('en', true); return; }
+    cargarIngles(function (ok) {
+      if (ok) { crearBoton(); cambiar('en', true); }
+      // Bilingüe a propósito: el alumno pidió inglés pero está viendo español.
+      else aviso('🌐 English not available offline yet · Conéctate una vez para descargarlo');
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);

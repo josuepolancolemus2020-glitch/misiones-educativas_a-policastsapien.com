@@ -1,5 +1,10 @@
-const CACHE_NAME = 'meta-app-v32';
+const CACHE_NAME = 'meta-app-v33';
 const STATIC_ASSETS = [
+  // Idioma inglés: se pre-cachea para que el botón EN/ES funcione sin red
+  // desde la primera vez (antes se quedaba en español y sin avisar).
+  './js/metas-i18n.js',
+  './misiones/2y3ciclo-que-es-un-robot/js/que-es-un-robot-en.js',
+  './fichas/js/ficha-que-es-un-robot-en.js',
   './padres.html',
   './manifest-padres.json',
   './img/qr-padres.png',
@@ -14,11 +19,18 @@ const STATIC_ASSETS = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
-// Al instalar: pre-cachea solo imágenes y recursos externos estáticos
+// Al instalar: pre-cachea imágenes, recursos externos y el idioma inglés.
+// Uno por uno y tolerando fallos: con addAll, un solo archivo caído (un CDN,
+// una misión renombrada) aborta TODA la instalación y el alumno se queda sin
+// service worker.
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then(cache =>
+      Promise.all(STATIC_ASSETS.map(url =>
+        cache.add(url).catch(err => console.warn('[sw] no se pudo cachear', url, err))
+      ))
+    )
   );
 });
 
