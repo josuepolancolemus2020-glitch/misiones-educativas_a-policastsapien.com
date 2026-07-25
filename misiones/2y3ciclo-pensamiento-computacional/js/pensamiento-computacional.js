@@ -1,5 +1,5 @@
 // En escritorio (Windows) la app de WhatsApp corrompe los emojis recibidos vía wa.me; WhatsApp Web los conserva
-function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);window.open(esMovil?'https://wa.me/?text='+enc:'https://web.whatsapp.com/send?text='+enc,'_blank');}
+function _waShare(texto){if(typeof METAS_TR_TEXTO==='function')texto=METAS_TR_TEXTO(texto);const enc=encodeURIComponent(texto);const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);window.open(esMovil?'https://wa.me/?text='+enc:'https://web.whatsapp.com/send?text='+enc,'_blank');}
 function compartirMision(){const url=window.location.href;const texto=`🧠 *Misión Asignada* 🧠\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Programación._ 💻\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;_waShare(texto);}
 function toggleLetra(){document.body.classList.toggle('letra-grande');if(typeof sfx==='function')sfx('click');localStorage.setItem('preferenciaLetra',document.body.classList.contains('letra-grande'));}
 window.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('preferenciaLetra')==='true')document.body.classList.add('letra-grande');});
@@ -32,7 +32,7 @@ function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSe
 function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalOpFormNum)evalOpFormNum=s.evalOpFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
 
 // ===================== ACHIEVEMENTS =====================
-const ACHIEVEMENTS={
+let ACHIEVEMENTS={
   primer_quiz:{icon:'🧠',label:'Primer quiz del pensamiento superado'},
   flash_master:{icon:'🃏',label:'Todas las flashcards del pensamiento exploradas'},
   clasif_pro:{icon:'🗂️',label:'Clasificador de instrucciones y problemas experto'},
@@ -50,7 +50,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#0e7490','#22d3ee','#b45309','#f59e0b','#06b6d4'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador de Pasos 🧭'},{t:55,n:'Cazador de Patrones 🔍'},{t:90,n:'Maestro del Orden 📜'},{t:130,n:'Divisor de Problemas 🧩'},{t:165,n:'Pensador Computacional 🧠'},{t:190,n:'Maestro del Pensamiento 🏆'}];
+let lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Explorador de Pasos 🧭'},{t:55,n:'Cazador de Patrones 🔍'},{t:90,n:'Maestro del Orden 📜'},{t:130,n:'Divisor de Problemas 🧩'},{t:165,n:'Pensador Computacional 🧠'},{t:190,n:'Maestro del Pensamiento 🏆'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -64,7 +64,7 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 function miniQuiz(btn,ok,fbId){const wrap=btn.parentElement;wrap.querySelectorAll('.mq-opt').forEach(b=>b.classList.remove('correct','wrong'));btn.classList.add(ok?'correct':'wrong');const f=document.getElementById(fbId);if(f){f.textContent=ok?'¡Correcto! Así piensa un programador. 🎉':'Todavía no. Vuelve a leer la tarjeta y prueba otra vez.';f.className='mq-fb '+(ok?'ok':'err');}sfx(ok?'ok':'no');if(ok&&!xpTracker.wgt.has('mq_'+fbId)){xpTracker.wgt.add('mq_'+fbId);pts(2);}}
 
 // ===================== FLASHCARD DATA =====================
-const fcData=[
+let fcData=[
   {w:'Pensamiento computacional',a:'🧠 Pensar como programador: <strong>ordenar pasos</strong>, <strong>dividir problemas</strong> y <strong>buscar patrones</strong>, ¡aun sin computadora!'},
   {w:'Algoritmo',a:'🫓 Los <strong>pasos ordenados</strong> para lograr algo, como la <strong>receta de las baleadas</strong>.'},
   {w:'Instrucción',a:'🗣️ Una <strong>orden</strong> que alguien puede ejecutar; forma cada paso de un algoritmo.'},
@@ -87,7 +87,7 @@ function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
 
 // ===================== JUEGO: MEMORIA DEL PENSAMIENTO =====================
-const memoPairs=[
+let memoPairs=[
   {id:'algoritmo',t:'Algoritmo',d:'🫓 La receta de las baleadas: pasos ordenados'},
   {id:'exacta',t:'Instrucción exacta',d:'✅ «Agrega 2 cucharadas de frijoles»'},
   {id:'ambigua',t:'Instrucción ambigua',d:'🌫️ «Ponle un poco de sal»'},
@@ -134,7 +134,7 @@ function flipMemo(btn,i){
 function resetMemo(){sfx('click');buildMemo();}
 
 // ===================== QUIZ DATA =====================
-const qzData=[
+let qzData=[
   {q:'¿Qué es un algoritmo?',o:['a) Pasos ordenados para lograr algo','b) Un tipo de computadora','c) Un dibujo bonito','d) Un número muy grande'],c:0},
   {q:'¿Cuál de estas instrucciones es EXACTA?',o:['a) «Ponle un poco»','b) «Agrega 2 cucharadas de azúcar»','c) «Hazlo bonito»','d) «Trae varias cosas»'],c:1},
   {q:'¿Por qué falla la instrucción «ponle un poco»?',o:['a) Porque es muy larga','b) Porque tiene números','c) Porque cada quien entiende una cantidad distinta','d) Porque está en español'],c:2},
@@ -152,7 +152,7 @@ function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false
 function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
 
 // ===================== CLASIFICACIÓN =====================
-const classGroups=[
+let classGroups=[
   {label:['Instrucción exacta','Instrucción ambigua'],headA:'✅ Instrucción exacta',headB:'🌫️ Instrucción ambigua',colA:'ex',colB:'am',
    words:[{w:'«Da 3 pasos hacia adelante»',t:'ex'},{w:'«Camina por ahí»',t:'am'},{w:'«Agrega 2 cucharadas de azúcar»',t:'ex'},{w:'«Ponle un poco de sal»',t:'am'},{w:'«Lee las páginas 12 a 15»',t:'ex'},{w:'«Hazlo bonito»',t:'am'},{w:'«Recorta un cuadrado de 10 cm»',t:'ex'},{w:'«Trae varias cosas»',t:'am'},{w:'«Guarda 5 lempiras cada lunes»',t:'ex'},{w:'«Espera un ratito»',t:'am'}]},
   {label:['Problema grande','Parte pequeña'],headA:'🎪 Problema grande',headB:'🍰 Parte pequeña',colA:'pg',colB:'pp',
@@ -169,7 +169,7 @@ function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupId
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
 // ===================== IDENTIFICAR =====================
-const idData=[
+let idData=[
   {s:['Un','algoritmo','es','una','lista','de','pasos','en','orden.'],c:1,art:'La palabra que nombra los pasos ordenados para lograr algo'},
   {s:['«Agrega','2','cucharadas»','es','una','instrucción','exacta.'],c:6,art:'La palabra que dice que la instrucción es clara y precisa'},
   {s:['«Ponle','un','poco»','es','una','instrucción','ambigua.'],c:6,art:'La palabra que dice que la orden es confusa'},
@@ -186,7 +186,7 @@ function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').
 function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
 
 // ===================== COMPLETA =====================
-const cmpData=[
+let cmpData=[
   {s:'Los pasos ordenados para lograr algo forman un ___.',opts:['algoritmo','patrón','mapa'],c:0},
   {s:'«Agrega 2 cucharadas» es una instrucción ___.',opts:['ambigua','exacta','inútil'],c:1},
   {s:'«Ponle un poco» falla porque es una instrucción ___.',opts:['exacta','corta','ambigua'],c:2},
@@ -202,7 +202,7 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 
 // ===================== WIDGETS =====================
 // Widget 1: Ordena el algoritmo
-const routeSets=[
+let routeSets=[
   {label:'Lavarse los dientes (en orden)',steps:['Poner pasta en el cepillo','Cepillar arriba y abajo','Enjuagar la boca','Lavar y guardar el cepillo']},
   {label:'Hacer tortillas de maíz (en orden)',steps:['Mezclar la masa con agua','Hacer las bolitas','Palmear la tortilla','Cocerla en el comal','Guardarlas en la servilleta']},
   {label:'Preparar el café de la mañana (en orden)',steps:['Poner el agua a hervir','Agregar el café al colador','Colar el café en la taza','Endulzar con 2 cucharaditas de azúcar']},
@@ -217,7 +217,7 @@ function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Secuencia: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: ¿Exacta o ambigua? (racha con feedback · IDs estándar «enfer»)
-const enfermedadData=[
+let enfermedadData=[
   {disease:'«Da 3 pasos hacia adelante»',characteristic:'Instrucción exacta',opts:['Instrucción exacta','Instrucción ambigua']},
   {disease:'«Ponle un poco de sal»',characteristic:'Instrucción ambigua',opts:['Instrucción ambigua','Instrucción exacta']},
   {disease:'«Agrega 2 cucharadas de azúcar»',characteristic:'Instrucción exacta',opts:['Instrucción exacta','Instrucción ambigua']},
@@ -235,7 +235,7 @@ function checkEnfer(opt,btn,d){if(enferDone)return;enferDone=true;document.query
 function resetEnfer(){sfx('click');enferIdx=0;enferRacha=0;showEnfer();}
 
 // Widget 3: Descompón el problema (elige las 3 partes correctas · IDs estándar «neuron»)
-const neuronPartes=[
+let neuronPartes=[
   {problema:'Organizar el cumpleaños de la abuela',correctas:['Hacer la lista de invitados','Preparar el pastel y la comida','Decorar la casa'],extra:['Izar la bandera','Resolver una división','Pintar la escuela']},
   {problema:'Hacer la tarea de matemáticas',correctas:['Leer bien la instrucción','Resolver los ejercicios uno por uno','Revisar las respuestas'],extra:['Regar la huerta','Comprar nances','Doblar la ropa']},
   {problema:'Limpiar el aula el viernes',correctas:['Subir las sillas a los pupitres','Barrer y trapear el piso','Botar la basura en su lugar'],extra:['Cantar el himno','Sembrar un pino','Hacer un fresco']},
@@ -250,7 +250,7 @@ function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // ===================== RETO FINAL =====================
-const retoPairs=[
+let retoPairs=[
   {label:['Instrucción exacta','Instrucción ambigua'],btnA:'✅ Exacta',btnB:'🌫️ Ambigua',colA:'ex',colB:'am',
    words:[{w:'«Da 3 pasos hacia adelante»',t:'ex'},{w:'«Camina por ahí»',t:'am'},{w:'«Agrega 2 cucharadas»',t:'ex'},{w:'«Ponle un poco»',t:'am'},{w:'«Lee las páginas 12 a 15»',t:'ex'},{w:'«Hazlo bonito»',t:'am'},{w:'«Recorta un cuadrado de 10 cm»',t:'ex'},{w:'«Trae varias cosas»',t:'am'},{w:'«Guarda 5 lempiras cada lunes»',t:'ex'},{w:'«Muévete un poco»',t:'am'}]},
   {label:['Problema grande','Parte pequeña'],btnA:'🎪 Problema grande',btnB:'🍰 Parte pequeña',colA:'pg',colB:'pp',
@@ -273,7 +273,7 @@ let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='algoritmo')genAlgoritmoTask(out,count);else if(type==='ambigua')genAmbiguaTask(out,count);else if(type==='descompon')genDescomponTask(out,count);else if(type==='patron')genPatronTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
 // Tipo 1: escribir el algoritmo de una tarea de casa
-const algoritmoTaskDB=[
+let algoritmoTaskDB=[
   {tarea:'Tender la cama',pasos:['Quitar lo que estorba encima','Estirar la sábana','Acomodar la almohada','Doblar la colcha y alisarla']},
   {tarea:'Lavar los trastes del almuerzo',pasos:['Botar los restos de comida','Enjabonar cada traste','Enjuagar con agua limpia','Ponerlos a escurrir']},
   {tarea:'Barrer el patio',pasos:['Sacar la escoba y la pala','Barrer de un extremo al otro','Juntar la basura con la pala','Botarla en el basurero']},
@@ -287,11 +287,11 @@ const algoritmoTaskDB=[
 ];
 function genAlgoritmoTask(out,count){_instrBlock(out,'Instrucción',['Escribe en tu cuaderno el ALGORITMO de cada tarea: de 4 a 6 pasos numerados, cada paso con un verbo claro y en el orden correcto.','Recuerda: instrucciones EXACTAS (cantidades y lugares claros), como si programaras a una persona-robot.']);const pool=_shuffle([...algoritmoTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>Escribe el algoritmo para: ${item.tarea}.</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ Ejemplo de pauta: ${item.pasos.map((p,j)=>(j+1)+'. '+p).join(' · ')}</div></div>`;out.appendChild(div);}}
 // Tipo 2: marcar la instrucción ambigua
-const _exactasDB=['Da {n} pasos hacia adelante','Agrega {n} cucharadas de azúcar','Lee las páginas {n} a {m}','Recorta un cuadrado de {n} cm por lado','Guarda {n} lempiras cada lunes','Escribe {n} oraciones en el cuaderno','Corta {n} rodajas de queso','Camina {n} cuadras y dobla a la derecha'];
-const _ambiguasDB=['Ponle un poco de sal','Camina por ahí','Hazlo bonito','Trae varias cosas','Muévete un poco','Espera un ratito','Dibuja algo grande','Échale bastante agua','Ve rápido','Agarra lo que sea'];
+let _exactasDB=['Da {n} pasos hacia adelante','Agrega {n} cucharadas de azúcar','Lee las páginas {n} a {m}','Recorta un cuadrado de {n} cm por lado','Guarda {n} lempiras cada lunes','Escribe {n} oraciones en el cuaderno','Corta {n} rodajas de queso','Camina {n} cuadras y dobla a la derecha'];
+let _ambiguasDB=['Ponle un poco de sal','Camina por ahí','Hazlo bonito','Trae varias cosas','Muévete un poco','Espera un ratito','Dibuja algo grande','Échale bastante agua','Ve rápido','Agarra lo que sea'];
 function genAmbiguaTask(out,count){_instrBlock(out,'Instrucción',['En cada grupo hay UNA instrucción ambigua escondida entre instrucciones exactas. Escribe la letra de la ambigua y corrígela para volverla exacta.']);for(let i=0;i<count;i++){const exs=_pick(_exactasDB,3).map(t=>t.replace('{n}',_rndInt(2,9)).replace('{m}',_rndInt(10,20)));const amb=_ambiguasDB[_rndInt(0,_ambiguasDB.length-1)];const pos=_rndInt(0,3);const lista=[...exs];lista.splice(pos,0,amb);const letras=['a','b','c','d'];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>¿Cuál es la instrucción ambigua?</strong><div class="tg-prog">${lista.map((t,j)=>letras[j]+') '+t).join('<br>')}</div><div style="margin-top:0.4rem;font-size:0.85rem;">Letra: <span class="tg-blank">&nbsp;</span> · Corrección exacta: <span class="tg-blank">&nbsp;</span></div><div class="tg-answer">✅ La ambigua es la ${letras[pos]}) «${amb}» — corrígela con cantidades o lugares claros.</div></div>`;out.appendChild(div);}}
 // Tipo 3: descomponer un problema grande
-const descomponDB=[
+let descomponDB=[
   {problema:'Organizar la feria escolar',partes:['Formar las comisiones','Preparar los puestos de comida y juegos','Invitar a las familias']},
   {problema:'Celebrar el Día del Niño',partes:['Planear los juegos y premios','Conseguir la comida y las piñatas','Decorar el aula']},
   {problema:'Hacer el mural de la independencia',partes:['Investigar sobre los próceres','Dibujar el boceto','Pintar el mural por secciones']},
@@ -309,7 +309,7 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 
 // ===================== SOPA DE LETRAS =====================
 // Grids generados y VERIFICADOS por script Node (8 direcciones, incluidas inversas)
-const sopaSets=[
+let sopaSets=[
   {size:10,grid:[
     ['X','H','R','Q','Y','V','Q','V','G','D'],
     ['A','L','G','O','R','I','T','M','O','R'],
@@ -373,7 +373,7 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
-const evalTFBank=[
+let evalTFBank=[
   {q:'Un algoritmo es una lista de pasos ordenados para lograr algo.',a:true},
   {q:'«Ponle un poco de sal» es una instrucción exacta.',a:false},
   {q:'«Agrega 2 cucharadas de azúcar» es una instrucción exacta.',a:true},
@@ -390,7 +390,7 @@ const evalTFBank=[
   {q:'Cada paso de un algoritmo debe empezar con un verbo claro.',a:true},
   {q:'Buscar patrones ahorra trabajo, porque lo que se repite se hace igual.',a:true},
 ];
-const evalMCBank=[
+let evalMCBank=[
   {q:'¿Qué es un algoritmo?',o:['Pasos ordenados para lograr algo','Un tipo de computadora','Un dibujo bonito','Un problema sin solución'],a:0},
   {q:'¿Cuál de estas instrucciones es EXACTA?',o:['Camina por ahí','Da 3 pasos hacia adelante','Muévete un poco','Ve rápido'],a:1},
   {q:'¿Por qué falla la instrucción «ponle un poco»?',o:['Porque es muy larga','Porque cada quien entiende una cantidad distinta','Porque está en español','Porque tiene números'],a:1},
@@ -407,7 +407,7 @@ const evalMCBank=[
   {q:'Un mapa es un ejemplo de abstracción porque…',o:['Muestra solo lo importante del lugar','Muestra cada piedra del camino','Es de papel','Tiene colores'],a:0},
   {q:'¿Qué es el pensamiento computacional?',o:['Usar la computadora todo el día','Pensar en pasos ordenados, partes y patrones antes de actuar','Memorizar números','Escribir rápido'],a:1},
 ];
-const evalCPBank=[
+let evalCPBank=[
   {q:'Los pasos ordenados para lograr algo forman un ___.',a:'algoritmo'},
   {q:'Una instrucción que todos entienden y ejecutan igual es una instrucción ___.',a:'exacta'},
   {q:'«Ponle un poco» es una instrucción ___.',a:'ambigua'},
@@ -424,7 +424,7 @@ const evalCPBank=[
   {q:'Seguir una ___ de cocina es ejecutar un algoritmo.',a:'receta'},
   {q:'La máquina que ejecuta instrucciones sin adivinar nada es la ___.',a:'computadora'},
 ];
-const evalPRBank=[
+let evalPRBank=[
   {term:'Algoritmo',def:'Pasos ordenados para lograr una tarea'},
   {term:'Instrucción exacta',def:'Orden que todos ejecutan igual'},
   {term:'Instrucción ambigua',def:'Orden confusa que cada quien entiende distinto'},
@@ -507,7 +507,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
 .forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · El Pensamiento Computacional · Educación Básica · Programación</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · El Pensamiento Computacional · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u · Programación · Educación Básica</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA OPERATIVA (patrón robot-mensajero, sin cuadrículas) =====================
 function evalSwitchMode(mode){
@@ -533,7 +533,7 @@ function _opRint(min, max) { return Math.floor(_opRnd() * (max - min + 1)) + min
 function _ordShuffleIdx(n, rng) { const idx = Array.from({ length: n }, (_, i) => i); let d = _shuffleF(idx, rng); let t = 0; while (d.every((v, i) => v === i) && t < 15) { d = _shuffleF(idx, rng); t++; } return d; }
 
 // I. Ordena el algoritmo (5 × 4 = 20 pts)
-const opOrdenBank=[
+let opOrdenBank=[
   {tarea:'Hacer una baleada',pasos:['Amasar la harina','Cocer la tortilla en el comal','Untar los frijoles','Doblarla y servirla']},
   {tarea:'Lavarse los dientes',pasos:['Poner pasta en el cepillo','Cepillar arriba y abajo','Enjuagar la boca','Guardar el cepillo']},
   {tarea:'Izar la bandera el lunes cívico',pasos:['Formar filas en el patio','Amarrar la bandera a la cuerda','Izarla con el himno','Hacer el saludo']},
@@ -556,7 +556,7 @@ function genOrdenaItems(){
 function _isOrdOk(student,ans){const s=((student||'').match(/\d/g)||[]).join('');return !!s&&s===ans.replace(/[^\d]/g,'');}
 
 // II. ¿Exacta o ambigua? (5 × 2 = 10 pts)
-const opEABank=[
+let opEABank=[
   {txt:'Da 3 pasos hacia adelante',a:'E'},
   {txt:'Agrega 2 cucharadas de azúcar',a:'E'},
   {txt:'Lee las páginas 12 a 15 del libro',a:'E'},
@@ -579,7 +579,7 @@ const opEABank=[
 function genEAItems(){return _pickF(opEABank,5,_opRnd);}
 
 // III. Completa el paso que falta (5 × 4 = 20 pts, razonamiento inverso con opciones)
-const opFaltaBank=[
+let opFaltaBank=[
   {tarea:'Hacer una baleada',pasos:['Amasar la harina','Cocer la tortilla','___','Doblar la baleada y servirla'],correcta:'Untar los frijoles y el queso',distractores:['Lavar el comal','Guardar la harina','Comerse la baleada']},
   {tarea:'Lavarse las manos',pasos:['Abrir el chorro','Mojarse las manos','___','Enjuagar y secarse'],correcta:'Frotar con jabón',distractores:['Cerrar los ojos','Peinarse','Secar el piso']},
   {tarea:'Sembrar un frijol',pasos:['Poner algodón húmedo en el vaso','___','Dejar el vaso con luz','Regar cada día'],correcta:'Colocar el frijol sobre el algodón',distractores:['Comerse el frijol','Tapar el vaso con piedras','Esconder el vaso']},
@@ -597,7 +597,7 @@ function genFaltaItems(){
 }
 
 // IV. Problemas de la vida real (3 × 10 = 30 pts): algoritmos de tareas hondureñas.
-const opVidaBank=[
+let opVidaBank=[
   {tema:'Preparar una baleada para la merienda',pasos:['Amasar la harina con agua','Hacer la tortilla y cocerla en el comal','Untar frijoles y queso','Doblarla y servirla']},
   {tema:'Lavarse las manos antes de la merienda',pasos:['Abrir el chorro','Mojarse las manos','Frotar con jabón por 20 segundos','Enjuagar bien','Cerrar el chorro y secarse']},
   {tema:'Izar la bandera el lunes cívico',pasos:['Formar filas en el patio','Amarrar la bandera a la cuerda','Izarla despacio mientras suena el himno','Hacer el saludo en silencio','Volver al aula en orden']},
@@ -607,12 +607,12 @@ const opVidaBank=[
   {tema:'Barrer el aula el viernes',pasos:['Subir las sillas a los pupitres','Barrer de adentro hacia la puerta','Recoger la basura con la pala','Botarla en el basurero']},
   {tema:'Sembrar un frijol en un vaso',pasos:['Poner algodón húmedo en el vaso','Colocar el frijol sobre el algodón','Dejar el vaso cerca de la luz','Regarlo con una cucharada de agua cada día']},
 ];
-const OP_VIDA_RUBRICA='Orden lógico de inicio a fin (4 pts) · Pasos completos, sin saltarse ninguno esencial (4 pts) · Cada paso es una instrucción exacta que empieza con un verbo (2 pts)';
+let OP_VIDA_RUBRICA='Orden lógico de inicio a fin (4 pts) · Pasos completos, sin saltarse ninguno esencial (4 pts) · Cada paso es una instrucción exacta que empieza con un verbo (2 pts)';
 function genVidaItems(){return _pickF(opVidaBank,3,_opRnd);}
 
 // V. Retos de olimpiada (10 + 10 = 20 pts)
 // (a) Descompón el problema grande en el orden correcto
-const opDescompBank=[
+let opDescompBank=[
   {problema:'Organizar la feria escolar',partes:['Formar las comisiones de trabajo','Preparar los puestos de comida y juegos','Invitar a las familias','Celebrar la feria y limpiar al final']},
   {problema:'Celebrar el Día del Niño',partes:['Planear los juegos y premios','Conseguir la comida y las piñatas','Decorar el aula','Celebrar la fiesta y ordenar el aula']},
   {problema:'Hacer el mural de la independencia',partes:['Investigar sobre los próceres','Dibujar el boceto del mural','Pintar el mural por secciones','Presentar el mural a la escuela']},
@@ -628,7 +628,7 @@ function genRetoDescomp(){
   return{problema:item.problema,partes:item.partes,display,ans};
 }
 // (b) Detective del paso inútil o ambiguo
-const opDetectiveBank=[
+let opDetectiveBank=[
   {tarea:'Lavarse los dientes',pasos:['Poner pasta en el cepillo','Cepillar arriba y abajo','Enjuagar la boca','Guardar el cepillo'],malo:'Hacer algo con el agua',tipo:'A'},
   {tarea:'Hacer una baleada',pasos:['Amasar la harina','Cocer la tortilla','Untar los frijoles','Doblarla y servirla'],malo:'Patear una pelota',tipo:'I'},
   {tarea:'Izar la bandera',pasos:['Formar filas','Amarrar la bandera','Izarla con el himno','Hacer el saludo'],malo:'Súbela como sea',tipo:'A'},
@@ -644,7 +644,7 @@ function genRetoDetective(){
   const lineas=[...item.pasos];lineas.splice(pos,0,item.malo);
   return{tarea:item.tarea,lineas,linea:pos+1,tipo:item.tipo,malo:item.malo};
 }
-const OP_TIPO_TXT={A:'Es ambiguo (no es exacto)',I:'Es inútil (no ayuda a la tarea)'};
+let OP_TIPO_TXT={A:'Es ambiguo (no es exacto)',I:'Es inútil (no ayuda a la tarea)'};
 
 function genEvalOp() {
   sfx('click');
@@ -790,11 +790,11 @@ function printEvalOp() {
   const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa El Pensamiento Computacional · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#0e7490;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#0e7490;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #0e7490;background:#ecfeff;display:flex;justify-content:space-between;align-items:center;color:#0e7490;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#0e7490;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #0e7490;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#0e7490;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10.5pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-mini-blank{display:inline-block;min-width:60px;border-bottom:1.5px solid #111;}.mono{font-family:'Courier New',monospace;font-weight:700;font-size:9.5pt;}.ej-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.35rem 0.5rem;margin-top:0.2rem;}.ej-box{border:1px solid #bbb;border-radius:4px;padding:0.25rem 0.35rem;break-inside:avoid;page-break-inside:avoid;}.ej-head{font-size:8.5pt;font-weight:700;color:#0e7490;margin-bottom:0.15rem;}.ej-prog{font-family:'Courier New',monospace;font-size:8.5pt;font-weight:700;line-height:1.3;margin-top:0.15rem;}.ej-resp{font-size:9pt;margin-top:0.2rem;}.ln-vida{display:block;border-bottom:1px solid #111;min-height:14px;margin-top:8px;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#0e7490;margin-bottom:0.2rem;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#0e7490;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#ecfeff;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #0e7490;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#0e7490;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #a5f3fc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#0e7490;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#0e7490;}.pa{color:#007a00;font-weight:600;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.p-rub{font-size:9.5pt;color:#555;margin-top:0.2rem;border-top:1px dotted #ddd;padding-top:0.2rem;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Programación — Prueba Operativa · El Pensamiento Computacional · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · El Pensamiento Computacional · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · I: 5×4 · II: 5×2 · III: 5×4 · IV: 3×10 · V: 10+10 · Programación · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
-  win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
+  win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc); win.document.close(); setTimeout(() => win.print(), 400);
 }
 
 // ===================== LAB: EL MAESTRO ROBOT (4 escenarios × 4 desafíos, todo desconectado) =====================
-const parteData={
+let parteData={
   baleada:{nombre:'Hacer una baleada',icon:'🫓',
     algoritmo:['Amasar la harina con agua','Hacer la bolita y aplastar la tortilla','Cocer la tortilla en el comal','Untar 2 cucharadas de frijoles y queso','Doblar la baleada y servirla'],
     ambigua:{lista:['Amasar la harina con agua','Ponle frijoles, más o menos','Cocer la tortilla en el comal','Doblar la baleada y servirla'],mala:1,fix:'Untar 2 cucharadas de frijoles'},
@@ -816,7 +816,7 @@ const parteData={
     falta:{pasos:['Lavar bien los nances','Machacar los nances en una taza de agua','❓','Agregar 4 tazas de agua y 6 cucharadas de azúcar'],correcta:'Colar la mezcla',distractores:['Congelar los nances enteros','Botar el agua','Pintar el vaso']},
     partes:{problema:'Vender frescos en la feria escolar',correctas:['Comprar los nances y el azúcar','Preparar el fresco temprano','Conseguir vasos y hielo'],extra:['Amarrar la bandera','Barrer la dirección','Aflojar la tierra del patio']}}
 };
-const LAB_ASPECTOS={orden:'🔢 Ordena los pasos',ambigua:'🌫️ Caza la ambigua',falta:'❓ El paso que falta',partes:'🧩 Descompón'};
+let LAB_ASPECTOS={orden:'🔢 Ordena los pasos',ambigua:'🌫️ Caza la ambigua',falta:'❓ El paso que falta',partes:'🧩 Descompón'};
 let labParte='baleada',labAspecto='orden',labOrdenNext=0,labPartesSel=[],labLock=false;
 function _labAspDoneCount(parte){return Object.keys(LAB_ASPECTOS).filter(a=>xpTracker.lab.has(parte+'_'+a)).length;}
 function labShowParte(parteKey){labParte=parteKey;document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');renderLab();if(typeof sfx==='function')sfx('click');}
@@ -975,6 +975,71 @@ window.addEventListener('DOMContentLoaded',()=>{
   labShowParte('baleada');
   renderAchPanel();
 });
+
+// ===================== IDIOMA (español ↔ inglés) =====================
+// El contenido en inglés vive en pensamiento-computacional-en.js y el botón lo
+// maneja ../../js/metas-i18n.js. Aquí solo se intercambian los bancos y se
+// repinta: el progreso (XP, logros, secciones hechas) no se toca al cambiar.
+//
+// Esta misión es la única de la Ruta del Código sin simulador, así que NO
+// quedan identificadores en español: los juegos que comparan textContent
+// (¿Exacta o ambigua?, Descompón, el reto, los cuatro desafíos del Lab)
+// comparan siempre contra el MISMO banco que pintaron, y el banco entero
+// cambia de idioma de golpe. Lo único que se queda en español son las claves
+// internas —'baleada', 'bandera', 'orden', 'ambigua'…— porque son los
+// data-parte / data-asp del HTML, no texto que el alumno lea.
+const _BANCOS_ES = {
+  ACHIEVEMENTS, lvls, fcData, memoPairs, qzData, classGroups, idData, cmpData,
+  routeSets, enfermedadData, neuronPartes, retoPairs,
+  algoritmoTaskDB, _exactasDB, _ambiguasDB, descomponDB, sopaSets,
+  evalTFBank, evalMCBank, evalCPBank, evalPRBank,
+  opOrdenBank, opEABank, opFaltaBank, opVidaBank, OP_VIDA_RUBRICA,
+  opDescompBank, opDetectiveBank, OP_TIPO_TXT, LAB_ASPECTOS, parteData
+};
+window.MISION_APLICAR_IDIOMA = function (lang) {
+  const src = (lang === 'en' && window.MISION_EN && window.MISION_EN.data)
+    ? window.MISION_EN.data : _BANCOS_ES;
+  const usa = (k) => (src[k] !== undefined ? src[k] : _BANCOS_ES[k]);
+
+  ACHIEVEMENTS = usa('ACHIEVEMENTS'); lvls = usa('lvls');
+  fcData = usa('fcData'); memoPairs = usa('memoPairs'); qzData = usa('qzData');
+  classGroups = usa('classGroups'); idData = usa('idData'); cmpData = usa('cmpData');
+  routeSets = usa('routeSets'); enfermedadData = usa('enfermedadData');
+  neuronPartes = usa('neuronPartes'); retoPairs = usa('retoPairs');
+  algoritmoTaskDB = usa('algoritmoTaskDB'); _exactasDB = usa('_exactasDB');
+  _ambiguasDB = usa('_ambiguasDB'); descomponDB = usa('descomponDB');
+  sopaSets = usa('sopaSets');
+  evalTFBank = usa('evalTFBank'); evalMCBank = usa('evalMCBank');
+  evalCPBank = usa('evalCPBank'); evalPRBank = usa('evalPRBank');
+  opOrdenBank = usa('opOrdenBank'); opEABank = usa('opEABank');
+  opFaltaBank = usa('opFaltaBank'); opVidaBank = usa('opVidaBank');
+  OP_VIDA_RUBRICA = usa('OP_VIDA_RUBRICA'); opDescompBank = usa('opDescompBank');
+  opDetectiveBank = usa('opDetectiveBank'); OP_TIPO_TXT = usa('OP_TIPO_TXT');
+  LAB_ASPECTOS = usa('LAB_ASPECTOS'); parteData = usa('parteData');
+
+  // Repintar cada juego desde el principio con el banco nuevo
+  fcIdx = 0; upFC();
+  buildMemo();
+  qzIdx = 0; qzSel = -1; qzDone = false; showQz();
+  currentClassGroupIdx = 0; buildClass();
+  idIdx = 0; showId();
+  cmpIdx = 0; cmpSel = -1; showCmp();
+  currentRouteIdx = 0; buildRoute();
+  neuronIdx = 0; showNeuron();
+  enferIdx = 0; enferRacha = 0; showEnfer();
+  currentRetoPairIdx = 0; updateRetoButtons(); resetReto();
+  currentSopaSetIdx = 0; sopaFoundWords = new Set(); buildSopa();
+  labShowParte(labParte);
+  renderAchPanel(); updateXPBar();
+
+  // Las pruebas ya generadas se rehacen en el idioma nuevo, con su misma forma
+  const out = document.getElementById('evalOut');
+  if (out && out.innerHTML.trim()) { evalFormNum = window._currentEvalForm || evalFormNum; genEval(); }
+  const outOp = document.getElementById('evalOpOut');
+  if (outOp && outOp.innerHTML.trim()) { evalOpFormNum = window._currentEvalOpForm || evalOpFormNum; genEvalOp(); }
+  const tg = document.getElementById('tgOut');
+  if (tg) tg.innerHTML = '';
+};
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();

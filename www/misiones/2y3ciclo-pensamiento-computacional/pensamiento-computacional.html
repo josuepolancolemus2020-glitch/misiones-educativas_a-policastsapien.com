@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<!-- La misión trae su traducción de autor: que el navegador no la retraduzca -->
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Misión El Pensamiento Computacional | policastsapien.com</title>
 <meta name="description" content="Misión El Pensamiento Computacional: qué es un algoritmo (la receta de las baleadas), instrucciones exactas frente a ambiguas, descomponer problemas grandes, patrones y abstracción. Todo desconectado: pensar antes de programar. Misión educativa interactiva de Programación. PolicastSapien.">
@@ -36,7 +38,7 @@
 <header class="hero" role="banner">
   <div class="hero-inner">
     <div class="hero-mascot" aria-hidden="true">🧠</div>
-    <div class="hero-text">
+    <div class="hero-text" data-i18n="hero">
       <h1>Misión <span>El Pensamiento Computacional</span></h1>
       <p class="sub">¡Aprende a pensar como programador sin encender ninguna computadora! 🧠🫓🇭🇳</p>
       <div class="badge">💻 Ruta del Código · Etapa 1 de 7 · Programación</div>
@@ -48,7 +50,7 @@
 
 <!-- ===== APRENDE ===== -->
 <div class="sec active" id="s-aprende" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="a1">
     <h2>🫓 ¿Qué es un algoritmo?</h2>
     <p>Un <strong>algoritmo</strong> son los <strong>pasos ordenados</strong> para lograr algo. ¡La
     <strong>receta de las baleadas</strong> es un algoritmo!: amasar la harina, hacer la tortilla, cocerla en el
@@ -78,7 +80,7 @@
     </div>
   </div>
 
-  <div class="card ac-gold">
+  <div class="card ac-gold" data-i18n="a2">
     <h2>🌫️ Instrucciones exactas vs ambiguas</h2>
     <p>Una computadora (¡o una persona-robot!) hace <strong>EXACTAMENTE</strong> lo que se le dice: <strong>no
     adivina</strong>. Por eso las instrucciones deben ser <strong>exactas</strong>.</p>
@@ -107,7 +109,7 @@
     </div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="a3">
     <h2>🧩 Descomponer, patrones y abstracción</h2>
     <p>Un problema grande asusta… ¡hasta que lo <strong>descomponés</strong> en partes pequeñas! Para
     <strong>organizar la feria escolar</strong>: una comisión prepara la comida, otra los juegos y otra invita a las
@@ -136,7 +138,7 @@
 
 <!-- ===== CONCEPTOS (DETALLE) ===== -->
 <div class="sec" id="s-estructura" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="e1">
     <h2>📋 Las 4 ideas del pensamiento computacional</h2>
     <p>Este es el «idioma» del programador que piensa antes de programar. ¡Con solo 4 ideas podés resolver problemas enormes!</p>
     <table class="instr-tbl">
@@ -161,7 +163,7 @@
     </div>
   </div>
 
-  <div class="card ac-amber">
+  <div class="card ac-amber" data-i18n="e2">
     <h2>⚠️ Errores comunes — ¡no caigas en ellos!</h2>
     <div class="vs-grid">
       <div class="vs-box vs-a">
@@ -194,7 +196,7 @@
     </div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="e3">
     <h2>🇭🇳 Pensamiento computacional en tu vida diaria</h2>
     <p>Aunque no tengas computadora, ya pensás como programador cada vez que ordenás pasos, dividís trabajos o descubrís lo que se repite.</p>
     <div class="type-grid">
@@ -218,18 +220,18 @@
 <!-- ===== LAB: EL MAESTRO ROBOT ===== -->
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
-    <h2>🔬 Lab: El maestro robot</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Juega a darle instrucciones a un «robot humano». Elige un <strong>escenario</strong> y supera sus <strong>4 desafíos</strong>: ordenar el algoritmo, cazar la instrucción ambigua, encontrar el paso que falta y descomponer el problema. ⭐ +1 XP por desafío y +2 XP por escenario completo (primera vez).</p>
+    <h2 data-i18n="labh2">🔬 Lab: El maestro robot</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;" data-i18n="labintro">Juega a darle instrucciones a un «robot humano». Elige un <strong>escenario</strong> y supera sus <strong>4 desafíos</strong>: ordenar el algoritmo, cazar la instrucción ambigua, encontrar el paso que falta y descomponer el problema. ⭐ +1 XP por desafío y +2 XP por escenario completo (primera vez).</p>
     <div id="lab-sentence" class="lab-sentence">🫓 Cargando el escenario…</div>
     <div class="lab-controls">
-      <div class="lab-group">
+      <div class="lab-group" data-i18n="labesc">
         <span class="lab-group-label">🎯 Escenario:</span>
         <button class="lab-btn lab-cont-btn" data-parte="baleada" onclick="labShowParte('baleada')">🫓 La baleada</button>
         <button class="lab-btn lab-cont-btn" data-parte="bandera" onclick="labShowParte('bandera')">🇭🇳 La bandera</button>
         <button class="lab-btn lab-cont-btn" data-parte="frijol" onclick="labShowParte('frijol')">🌱 El frijol</button>
         <button class="lab-btn lab-cont-btn" data-parte="nance" onclick="labShowParte('nance')">🥤 El fresco</button>
       </div>
-      <div class="lab-group">
+      <div class="lab-group" data-i18n="labdes">
         <span class="lab-group-label">🧩 Desafío:</span>
         <button class="lab-btn lab-asp-btn" data-asp="orden" onclick="labShowAspecto('orden')">🔢 Ordena los pasos</button>
         <button class="lab-btn lab-asp-btn" data-asp="ambigua" onclick="labShowAspecto('ambigua')">🌫️ Caza la ambigua</button>
@@ -548,7 +550,7 @@
 </div>
 
 <div class="sec" id="s-recursos" role="tabpanel">
-  <div class="card ac-blue">
+  <div class="card ac-blue" data-i18n="rec">
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
@@ -647,6 +649,8 @@
 
   <script src="js/html2canvas.min.js"></script>
   <script src="js/pensamiento-computacional.js"></script>
+  <script src="js/pensamiento-computacional-en.js?v=40"></script>
+  <script src="../../js/metas-i18n.js?v=40"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>

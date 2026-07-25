@@ -96,6 +96,7 @@ const MISIONES_EN = new Set([
   53,  // Electricidad para Robots          · Ruta de los Robots · Etapa 4
   54,  // Programando un Robot              · Ruta de los Robots · Etapa 5
   55,  // Robots que Resuelven Problemas   · Ruta de los Robots · Etapa 6 (cierra la ruta)
+  46,  // El Pensamiento Computacional      · Ruta del Código    · Etapa 1
   47,  // Condicionales: el Robot Decide    · Ruta del Código    · Etapa 3
 ]);
 

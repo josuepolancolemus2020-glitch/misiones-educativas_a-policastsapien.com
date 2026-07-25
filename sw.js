@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meta-app-v39';
+const CACHE_NAME = 'meta-app-v40';
 const STATIC_ASSETS = [
   // Idioma inglés: se pre-cachea para que el botón EN/ES funcione sin red
   // desde la primera vez (antes se quedaba en español y sin avisar).
@@ -18,6 +18,8 @@ const STATIC_ASSETS = [
   './fichas/js/ficha-programando-robot-en.js',
   './misiones/2y3ciclo-robots-problemas/js/robots-problemas-en.js',
   './fichas/js/ficha-robots-problemas-en.js',
+  './misiones/2y3ciclo-pensamiento-computacional/js/pensamiento-computacional-en.js',
+  './fichas/js/ficha-pensamiento-computacional-en.js',
   './misiones/2y3ciclo-robot-decide/js/robot-decide-en.js',
   './fichas/js/ficha-robot-decide-en.js',
   './padres.html',
