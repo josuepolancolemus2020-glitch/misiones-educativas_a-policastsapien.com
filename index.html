@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1e3a7c">
   <title>M.E.T.A.S. — Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="css/app.css?v=29">
+  <link rel="stylesheet" href="css/app.css?v=30">
   <!-- Font Awesome local (funciona sin internet); el CDN queda de respaldo una versión -->
   <link rel="stylesheet" href="css/vendor/fontawesome/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -114,6 +114,11 @@
           <i class="fa-solid fa-robot"></i>
           <span>Robótica</span>
           <em>6 misiones</em>
+        </button>
+        <button class="subj-chip ing" data-subject="inglés" data-oculta-vacio>
+          <i class="fa-solid fa-language"></i>
+          <span>Inglés</span>
+          <em>Próximamente</em>
         </button>
       </div>
 
@@ -241,6 +246,10 @@
         </button>
         <button class="pill tec" data-filter="robótica" aria-pressed="false">
           <i class="fa-solid fa-robot"></i><span>Robótica</span><b class="pill-count"></b>
+        </button>
+        <!-- Inglés: se muestra en cuanto tenga su primera misión -->
+        <button class="pill ing" data-filter="inglés" data-oculta-vacio aria-pressed="false">
+          <i class="fa-solid fa-language"></i><span>Inglés</span><b class="pill-count"></b>
         </button>
       </div>
       <button class="rutas-banner" onclick="switchView('view-rutas')">
@@ -1000,7 +1009,7 @@
        Cuando haya misiones de otros países, reactivar cambiando false → true. */
     window.METAS_PAISES_ON = false;
   </script>
-  <script src="js/app.js?v=29"></script>
+  <script src="js/app.js?v=30"></script>
   <script src="js/metas-docente-sync.js"></script>
   <script src="js/tools/pwa-install.js"></script>
   <script>

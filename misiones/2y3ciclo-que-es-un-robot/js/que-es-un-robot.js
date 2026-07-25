@@ -32,7 +32,7 @@ function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSe
 function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalCritFormNum)evalCritFormNum=s.evalCritFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
 
 // ===================== ACHIEVEMENTS =====================
-const ACHIEVEMENTS={
+let ACHIEVEMENTS={
   primer_quiz:{icon:'🤖',label:'Primer quiz robótico superado'},
   flash_master:{icon:'🃏',label:'Todas las flashcards del robot exploradas'},
   clasif_pro:{icon:'🗂️',label:'Clasificador de sensores y actuadores experto'},
@@ -49,7 +49,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#0e7490','#22d3ee','#c2410c','#fb923c','#06b6d4'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Curioso Tec 🔋'},{t:55,n:'Explorador Robótico 🧭'},{t:90,n:'Técnico de Sensores 📡'},{t:130,n:'Programador Junior 💻'},{t:165,n:'Ingeniero de Robots 🛠️'},{t:190,n:'Maestro Constructor 🤖'}];
+let lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Curioso Tec 🔋'},{t:55,n:'Explorador Robótico 🧭'},{t:90,n:'Técnico de Sensores 📡'},{t:130,n:'Programador Junior 💻'},{t:165,n:'Ingeniero de Robots 🛠️'},{t:190,n:'Maestro Constructor 🤖'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -63,7 +63,7 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 function miniQ(btn,isOk,fbId){const wrap=btn.parentElement;if(wrap.dataset.done==='1')return;wrap.querySelectorAll('.cmp-opt').forEach(b=>b.classList.remove('sel'));if(isOk){wrap.dataset.done='1';btn.classList.add('correct');fb(fbId,'¡Correcto! Piensas como todo un robotista.',true);sfx('ok');}else{btn.classList.add('wrong');fb(fbId,'Casi. Pregúntate: ¿percibe?, ¿decide?, ¿actúa?',false);sfx('no');}}
 
 // ===================== FLASHCARD DATA =====================
-const fcData=[
+let fcData=[
   {w:'Robot',a:'🤖 Máquina que <strong>percibe</strong> con sensores, <strong>decide</strong> con su programa y <strong>actúa</strong> con motores.'},
   {w:'Sensor',a:'📡 La parte que <strong>percibe</strong>: capta luz, sonido, distancia, tacto o temperatura.'},
   {w:'Controlador',a:'🧠 El «cerebro» del robot: recibe la información de los sensores y <strong>decide</strong> qué hacer según su programa.'},
@@ -86,7 +86,7 @@ function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
 
 // ===================== JUEGO: MEMORIA DEL ROBOT =====================
-const memoPairs=[
+let memoPairs=[
   {id:'robot',t:'Robot',d:'🤖 percibe, decide y actúa'},
   {id:'sensor',t:'Sensor',d:'📡 los «ojos y oídos»: capta luz, tacto, distancia'},
   {id:'controlador',t:'Controlador',d:'🧠 el cerebro: decide según el programa'},
@@ -133,7 +133,7 @@ function flipMemo(btn,i){
 function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
-const qzData=[
+let qzData=[
   {q:'¿Qué hace un robot que NO hace una máquina simple?',o:['a) Pesar mucho','b) Percibir y decidir solo','c) Ser de metal','d) Necesitar una persona que lo empuje'],c:1},
   {q:'¿Qué parte del robot funciona como sus sentidos?',o:['a) Los actuadores','b) La batería','c) Los sensores','d) Las ruedas'],c:2},
   {q:'¿Qué parte del robot decide qué hacer?',o:['a) El controlador','b) El motor','c) La bocina','d) La carrocería'],c:0},
@@ -151,7 +151,7 @@ function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false
 function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
 
 // ===================== CLASIFICACIÓN =====================
-const classGroups=[
+let classGroups=[
   {label:['Sensor','Actuador'],headA:'📡 Sensor (percibe)',headB:'💪 Actuador (actúa)',colA:'sen',colB:'act',
    words:[{w:'Cámara',t:'sen'},{w:'Motor',t:'act'},{w:'Micrófono',t:'sen'},{w:'Rueda',t:'act'},{w:'Sensor de tacto',t:'sen'},{w:'Bocina',t:'act'},{w:'Termómetro del robot',t:'sen'},{w:'Brazo mecánico',t:'act'},{w:'Sensor de distancia',t:'sen'},{w:'Luz LED',t:'act'}]},
   {label:['Es un robot','No es robot'],headA:'🤖 Es un robot',headB:'🚫 No es robot',colA:'rob',colB:'no',
@@ -168,7 +168,7 @@ function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupId
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
 // ===================== IDENTIFICAR =====================
-const idData=[
+let idData=[
   {s:['El','robot','percibe,','decide','y','actúa.'],c:1,art:'La máquina que cumple el ciclo completo'},
   {s:['Los','sensores','son','los','sentidos','del','robot.'],c:1,art:'La parte del robot que percibe'},
   {s:['El','controlador','es','el','cerebro','del','robot.'],c:1,art:'La parte del robot que decide'},
@@ -185,7 +185,7 @@ function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').
 function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
 
 // ===================== COMPLETA =====================
-const cmpData=[
+let cmpData=[
   {s:'Un robot es una máquina que percibe, ___ y actúa.',opts:['decide','duerme','come'],c:0},
   {s:'Los sensores del robot funcionan como los ___ del cuerpo.',opts:['huesos','sentidos','dientes'],c:1},
   {s:'El controlador del robot es como el ___ humano.',opts:['pie','corazón','cerebro'],c:2},
@@ -201,7 +201,7 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 
 // ===================== WIDGETS =====================
 // Widget 1: Percibe-Decide-Actúa (ordenar el ciclo en casos concretos)
-const routeSets=[
+let routeSets=[
   {label:'La aspiradora robot limpia la sala',steps:['El sensor detecta un obstáculo adelante','El controlador decide girar a la derecha','Los motores giran las ruedas hacia el lado libre','La aspiradora sigue limpiando por el camino libre']},
   {label:'El robot que riega la huerta',steps:['El sensor de humedad mide que la tierra está seca','El controlador decide abrir el agua','El actuador abre la válvula y riega','El sensor detecta tierra húmeda y el controlador cierra el agua']},
   {label:'El carrito seguidor de línea',steps:['El sensor de luz ve la línea negra del piso','El controlador compara: ¿estoy sobre la línea?','Decide corregir el rumbo hacia la izquierda','Los motores mueven las ruedas','El carrito sigue avanzando sobre la línea']},
@@ -214,7 +214,7 @@ function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Caso: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: ¿Qué sensor necesita?
-const neuronPartes=[
+let neuronPartes=[
   {desc:'Un robot que se detiene antes de chocar con la pared',ans:'Sensor de distancia',opts:['Sensor de distancia','Sensor de luz','Sensor de sonido','Sensor de temperatura']},
   {desc:'Un robot que enciende la lámpara cuando oscurece',ans:'Sensor de luz',opts:['Sensor de luz','Sensor de tacto','Sensor de distancia','Sensor de humedad']},
   {desc:'Un robot de juguete que arranca cuando aplaudes',ans:'Sensor de sonido',opts:['Sensor de sonido','Sensor de luz','Sensor de temperatura','Sensor de distancia']},
@@ -231,7 +231,7 @@ function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Parte → Función
-const neuroPairs=[
+let neuroPairs=[
   {trans:'Sensor',func:'Capta información: luz, sonido, distancia, tacto',opts:['Capta información: luz, sonido, distancia, tacto','Ejecuta la acción con motores','Guarda la batería del robot','Es la lista de instrucciones']},
   {trans:'Controlador',func:'Recibe la información y decide según el programa',opts:['Recibe la información y decide según el programa','Capta la luz y el sonido','Mueve las ruedas del robot','Le da color al robot']},
   {trans:'Actuador',func:'Ejecuta la acción: motores, ruedas, brazos, luces',opts:['Ejecuta la acción: motores, ruedas, brazos, luces','Decide qué hacer','Mide la temperatura','Escribe el programa']},
@@ -244,7 +244,7 @@ function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.query
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: ¿Robot o no es robot?
-const enfermedadData=[
+let enfermedadData=[
   {disease:'La aspiradora que detecta obstáculos y elige su ruta',characteristic:'Es un robot',opts:['Es un robot','No es robot']},
   {disease:'El martillo',characteristic:'No es robot',opts:['No es robot','Es un robot']},
   {disease:'El dron que revisa el cafetal y esquiva los árboles',characteristic:'Es un robot',opts:['Es un robot','No es robot']},
@@ -258,7 +258,7 @@ function checkEnfer(opt,btn,d){if(enferDone)return;enferDone=true;document.query
 function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
-const retoPairs=[
+let retoPairs=[
   {label:['Sensor','Actuador'],btnA:'📡 Sensor',btnB:'💪 Actuador',colA:'sen',colB:'act',
    words:[{w:'Cámara',t:'sen'},{w:'Motor',t:'act'},{w:'Micrófono',t:'sen'},{w:'Rueda',t:'act'},{w:'Sensor de tacto',t:'sen'},{w:'Bocina',t:'act'},{w:'Termómetro',t:'sen'},{w:'Brazo mecánico',t:'act'},{w:'Sensor de luz',t:'sen'},{w:'Luz LED',t:'act'}]},
   {label:['Es un robot','No es robot'],btnA:'🤖 Es un robot',btnB:'🚫 No es robot',colA:'rob',colB:'no',
@@ -276,7 +276,7 @@ function nextRetoPair(){sfx('click');clearInterval(retoTimerInt);retoRunning=fal
 function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';document.getElementById('fbReto').classList.remove('show');}
 
 // ===================== TASK GENERATOR =====================
-const identifyTaskDB=[
+let identifyTaskDB=[
   {s:'Un robot es una máquina que percibe, decide y actúa.',type:'Robot'},
   {s:'Los sensores captan luz, sonido, distancia o temperatura.',type:'Sensores'},
   {s:'El controlador es el cerebro que decide según el programa.',type:'Controlador'},
@@ -288,7 +288,7 @@ const identifyTaskDB=[
   {s:'El brazo robótico de la maquila cose siguiendo su programa.',type:'Robot industrial'},
   {s:'El martillo no percibe ni decide: es una máquina simple.',type:'Máquina simple'},
 ];
-const classifyTaskDB=[
+let classifyTaskDB=[
   {w:'Aspiradora robot',gen:'Sí, es robot',n:'Sí: detecta obstáculos y suciedad',g:'Sí: elige su ruta sola',t:'Sí: mueve ruedas y cepillos'},
   {w:'Licuadora',gen:'No es robot',n:'No: no capta nada de su entorno',g:'No: la enciende una persona',t:'Sí: gira sus cuchillas'},
   {w:'Martillo',gen:'No es robot (máquina simple)',n:'No percibe nada',g:'No decide nada',t:'No: lo mueve la mano de la persona'},
@@ -298,7 +298,7 @@ const classifyTaskDB=[
   {w:'Televisor',gen:'No es robot',n:'Solo las órdenes del control remoto',g:'No: obedece a la persona',t:'Sí: muestra imagen y sonido'},
   {w:'Puerta automática',gen:'Sí, es un robot sencillo',n:'Sí: sensor de movimiento',g:'Sí: decide abrir cuando alguien llega',t:'Sí: su motor desliza la puerta'},
 ];
-const completeTaskDB=[
+let completeTaskDB=[
   {s:'Un robot percibe, ___ y actúa.',opts:['decide','duerme','pinta'],ans:'decide'},
   {s:'Los sensores son los ___ del robot.',opts:['sentidos','músculos','zapatos'],ans:'sentidos'},
   {s:'El controlador funciona como el ___ del cuerpo.',opts:['cerebro','pie','codo'],ans:'cerebro'},
@@ -308,7 +308,7 @@ const completeTaskDB=[
   {s:'La energía del robot viene de la ___.',opts:['batería','lluvia','arena'],ans:'batería'},
   {s:'La licuadora no es robot porque no ___ sola.',opts:['decide','gira','suena'],ans:'decide'},
 ];
-const explainQuestions=[
+let explainQuestions=[
   {q:'¿Qué es un robot? Explica el ciclo percibir → decidir → actuar con un ejemplo de tu casa o comunidad.',ans:'Un robot es una máquina que percibe con sensores, decide con su controlador (según un programa) y actúa con actuadores. Ejemplo: la aspiradora robot percibe un obstáculo, decide girar y actúa moviendo sus ruedas.'},
   {q:'Escribe la analogía cuerpo ↔ robot: ¿a qué se parecen los sensores, el controlador y los actuadores?',ans:'Los sensores son como los sentidos (ojos, oídos, piel), el controlador es como el cerebro que decide, y los actuadores son como los músculos que ejecutan el movimiento. Igual que en tu cuerpo: receptor → cerebro → efector.'},
   {q:'Inventa un robot para un problema de tu pueblo o aldea: dibújalo en tu cuaderno y nombra sus 3 partes.',ans:'Respuesta libre. Debe nombrar sensores (qué percibe), controlador (qué decide: «si pasa X, hace Y») y actuadores (cómo actúa), unidos en el ciclo percibir → decidir → actuar.'},
@@ -325,7 +325,7 @@ function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las si
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
-const sopaSets=[
+let sopaSets=[
   {size:10,grid:[
     ['L','T','T','P','L','H','D','Y','U','C'],
     ['N','J','O','O','S','R','C','O','G','U'],
@@ -389,7 +389,7 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank=[
+let evalTFBank=[
   {q:'Un robot percibe, decide y actúa.',a:true},
   {q:'El martillo es un robot porque actúa.',a:false},
   {q:'Los sensores son los «sentidos» del robot.',a:true},
@@ -406,7 +406,7 @@ const evalTFBank=[
   {q:'El ciclo del robot es: actuar → decidir → percibir.',a:false},
   {q:'Sin programa, el controlador no sabe qué decidir.',a:true},
 ];
-const evalMCBank=[
+let evalMCBank=[
   {q:'¿Qué es un robot?',o:['a) Cualquier máquina de metal','b) Una máquina que percibe, decide y actúa','c) Un juguete con luces','d) Una computadora con pantalla'],a:1},
   {q:'¿Qué parte del robot funciona como sus «sentidos»?',o:['a) Los actuadores','b) Los sensores','c) Las ruedas','d) La batería'],a:1},
   {q:'¿Cuál de estas máquinas es un robot?',o:['a) El martillo','b) La licuadora','c) La aspiradora que detecta obstáculos y decide su ruta sola','d) La bicicleta'],a:2},
@@ -423,7 +423,7 @@ const evalMCBank=[
   {q:'¿Cuál es un robot con forma de persona?',o:['a) El dron','b) El brazo industrial','c) La aspiradora robot','d) El humanoide'],a:3},
   {q:'¿De dónde obtiene su energía un robot?',o:['a) De la batería o la electricidad','b) De la comida','c) Del agua que bebe','d) Del aire'],a:0},
 ];
-const evalCPBank=[
+let evalCPBank=[
   {q:'Un robot percibe, ___ y actúa.',a:'decide'},
   {q:'Los sensores son los ___ del robot.',a:'sentidos'},
   {q:'El controlador funciona como el ___ del cuerpo.',a:'cerebro'},
@@ -440,7 +440,7 @@ const evalCPBank=[
   {q:'El sensor de ___ mide si la tierra está seca.',a:'humedad'},
   {q:'El robot que limpia el piso y evita obstáculos es la ___ robot.',a:'aspiradora'},
 ];
-const evalPRBank=[
+let evalPRBank=[
   {term:'Robot',def:'Máquina que percibe, decide y actúa'},
   {term:'Sensor',def:'Capta luz, sonido, distancia o temperatura'},
   {term:'Controlador',def:'El «cerebro» que decide según el programa'},
@@ -523,7 +523,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
 .forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · ¿Qué es un Robot? · Educación Básica · Robótica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · ¿Qué es un Robot? · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 function evalSwitchMode(mode){
@@ -541,7 +541,7 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
-const critSensorBank=[
+let critSensorBank=[
   {txt:'Un robot riega la huerta escolar solo cuando la tierra está seca.',ans:'Sensor de humedad: mide el agua de la tierra; si está seca, el controlador decide abrir el riego.'},
   {txt:'Un robot mensajero se detiene antes de chocar con una pared o una persona.',ans:'Sensor de distancia: mide qué tan cerca está el obstáculo; si está muy cerca, el controlador decide frenar.'},
   {txt:'Una lámpara robótica se enciende sola cuando llega la noche.',ans:'Sensor de luz: detecta que oscureció; el controlador decide encender la lámpara.'},
@@ -549,7 +549,7 @@ const critSensorBank=[
   {txt:'Un robot de juguete arranca cuando el niño aplaude dos veces.',ans:'Sensor de sonido: capta los aplausos; el controlador decide poner en marcha los motores.'},
   {txt:'Un carrito robótico sigue una línea negra pintada en el piso del aula.',ans:'Sensor de luz: distingue lo negro de lo claro en el piso; el controlador decide corregir el rumbo para no salirse.'},
 ];
-const critErrorBank=[
+let critErrorBank=[
   {txt:'"La licuadora es un robot porque se mueve."',
    g1:'Moverse (actuar) no basta para ser robot: la licuadora NO PERCIBE su entorno con sensores.',
    g2:'Tampoco DECIDE sola: una persona la enciende y la apaga. El robot cumple el ciclo completo percibir → decidir → actuar.'},
@@ -566,12 +566,12 @@ const critErrorBank=[
    g1:'Sin PROGRAMA el controlador no sabe qué decidir: el programa es su lista de instrucciones exactas.',
    g2:'Lo que parece «saber» del robot es trabajo de las personas que lo programaron paso a paso.'},
 ];
-const critCicloQuestions=[
+let critCicloQuestions=[
   '1. ¿Qué PERCIBE el robot y con qué sensor?',
   '2. ¿Qué DECIDE su controlador?',
   '3. ¿Cómo ACTÚA y con qué actuador?',
 ];
-const critCicloBank=[
+let critCicloBank=[
   {txt:'La aspiradora robot limpia la casa: cuando encuentra una silla la esquiva, y cuando su batería está baja regresa sola a cargarse.',
    p:'Percibe los obstáculos (sensor de distancia o de tacto) y el nivel de su propia batería.',
    d:'Decide esquivar la silla y, si la batería está baja, decide regresar al cargador.',
@@ -593,7 +593,7 @@ const critCicloBank=[
    d:'Decide dónde colocar la tela y cuándo empezar y terminar la costura, según su programa.',
    a:'Actúa moviendo el brazo y la aguja (actuadores) para coser.'},
 ];
-const critCompareBank=[
+let critCompareBank=[
   {a:'Máquina que actúa cuando la enciendes, pero no elige nada sola (ejemplo: la licuadora).',b:'Máquina que percibe con sensores, decide con su programa y actúa sola (ejemplo: la aspiradora robot).',
    ga:'El electrodoméstico.',
    gb:'El robot.',
@@ -611,14 +611,14 @@ const critCompareBank=[
    gb:'El brazo robótico (robot industrial).',
    gr:'Semejanza: los dos son robots: perciben, deciden y actúan. Diferencia: el dron es móvil y vuela por el campo; el brazo industrial trabaja fijo en la fábrica.'},
 ];
-const critDesignBank=[
+let critDesignBank=[
   'En tu comunidad, la cosecha de café se pierde cuando llueve de repente y los granos están secándose en el patio.',
   'En invierno el río crece y los niños no saben si es seguro cruzar el vado para llegar a la escuela.',
   'La pulpería de la esquina necesita vigilancia de noche, cuando ya no hay nadie.',
   'En verano la huerta escolar se seca porque nadie llega a regarla los fines de semana.',
   'Los pájaros se comen el maíz de la milpa cuando nadie está cuidando.',
 ];
-const critDesignGuide='Rúbrica de 3 criterios (total 20 pts) — ① SENSORES (7 pts): elige sensores adecuados al problema y explica qué perciben. ② CONTROLADOR (6 pts): escribe una decisión clara del tipo «si pasa X, entonces el robot hace Y». ③ ACTUADORES (7 pts): nombra con qué actúa el robot y la solución es realista para el problema. Cualquier diseño vale si las tres partes trabajan juntas en el ciclo percibir → decidir → actuar.';
+let critDesignGuide='Rúbrica de 3 criterios (total 20 pts) — ① SENSORES (7 pts): elige sensores adecuados al problema y explica qué perciben. ② CONTROLADOR (6 pts): escribe una decisión clara del tipo «si pasa X, entonces el robot hace Y». ③ ACTUADORES (7 pts): nombra con qué actúa el robot y la solución es realista para el problema. Cualquier diseño vale si las tres partes trabajan juntas en el ciclo percibir → decidir → actuar.';
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
@@ -686,11 +686,11 @@ function printEvalCrit(){
   const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico ¿Qué es un Robot? · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #0e7490;background:#ecfeff;color:#0e7490;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#0e7490;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #0e7490;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#ecfeff;border-left:3px solid #0e7490;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#ecfeff;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#0e7490;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #0e7490;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · ¿Qué es un Robot? · Educación Básica · Robótica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · ¿Qué es un Robot? · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
-  win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
+  win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
 // ===================== LABORATORIO DE LAS PARTES DEL ROBOT =====================
-const parteData={
+let parteData={
   sensores:{
     nombre:'Los sensores',icon:'📡',
     estructura:{title:'¿Qué es?',info:'• La parte del robot que <strong>PERCIBE</strong> el mundo<br>• Capta <strong>luz, sonido, distancia, tacto o temperatura</strong><br>• Convierte lo que capta en señales para el controlador'},
@@ -757,3 +757,60 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ===================== IDIOMA (español ↔ inglés) =====================
+// El contenido en inglés vive en que-es-un-robot-en.js y el botón lo maneja
+// ../../js/metas-i18n.js. Aquí solo se intercambian los bancos y se repinta:
+// el progreso (XP, logros, secciones hechas) no se toca al cambiar de idioma.
+const _BANCOS_ES = {
+  ACHIEVEMENTS, lvls, fcData, memoPairs, qzData, classGroups, idData, cmpData,
+  routeSets, neuronPartes, neuroPairs, enfermedadData, retoPairs,
+  identifyTaskDB, classifyTaskDB, completeTaskDB, explainQuestions, sopaSets,
+  evalTFBank, evalMCBank, evalCPBank, evalPRBank,
+  critSensorBank, critErrorBank, critCicloQuestions, critCicloBank,
+  critCompareBank, critDesignBank, critDesignGuide, parteData
+};
+window.MISION_APLICAR_IDIOMA = function (lang) {
+  const src = (lang === 'en' && window.MISION_EN && window.MISION_EN.data)
+    ? window.MISION_EN.data : _BANCOS_ES;
+  const usa = (k) => (src[k] !== undefined ? src[k] : _BANCOS_ES[k]);
+
+  ACHIEVEMENTS = usa('ACHIEVEMENTS'); lvls = usa('lvls');
+  fcData = usa('fcData'); memoPairs = usa('memoPairs'); qzData = usa('qzData');
+  classGroups = usa('classGroups'); idData = usa('idData'); cmpData = usa('cmpData');
+  routeSets = usa('routeSets'); neuronPartes = usa('neuronPartes');
+  neuroPairs = usa('neuroPairs'); enfermedadData = usa('enfermedadData');
+  retoPairs = usa('retoPairs'); identifyTaskDB = usa('identifyTaskDB');
+  classifyTaskDB = usa('classifyTaskDB'); completeTaskDB = usa('completeTaskDB');
+  explainQuestions = usa('explainQuestions'); sopaSets = usa('sopaSets');
+  evalTFBank = usa('evalTFBank'); evalMCBank = usa('evalMCBank');
+  evalCPBank = usa('evalCPBank'); evalPRBank = usa('evalPRBank');
+  critSensorBank = usa('critSensorBank'); critErrorBank = usa('critErrorBank');
+  critCicloQuestions = usa('critCicloQuestions'); critCicloBank = usa('critCicloBank');
+  critCompareBank = usa('critCompareBank'); critDesignBank = usa('critDesignBank');
+  critDesignGuide = usa('critDesignGuide'); parteData = usa('parteData');
+
+  // Repintar cada juego desde el principio con el banco nuevo
+  fcIdx = 0; upFC();
+  buildMemo();
+  qzIdx = 0; qzSel = -1; qzDone = false; showQz();
+  currentClassGroupIdx = 0; buildClass();
+  idIdx = 0; showId();
+  cmpIdx = 0; cmpSel = -1; showCmp();
+  currentRouteIdx = 0; buildRoute();
+  neuronIdx = 0; showNeuron();
+  neuroIdx = 0; showNeuro();
+  enferIdx = 0; showEnfer();
+  currentRetoPairIdx = 0; updateRetoButtons(); resetReto();
+  currentSopaSetIdx = 0; sopaFoundWords = new Set(); buildSopa();
+  updateLabDisplay();
+  renderAchPanel(); updateXPBar();
+
+  // Las pruebas ya generadas se rehacen en el idioma nuevo, con su misma forma
+  const out = document.getElementById('evalOut');
+  if (out && out.innerHTML.trim()) { evalFormNum = window._currentEvalForm || evalFormNum; genEval(); }
+  const outCrit = document.getElementById('evalCritOut');
+  if (outCrit && outCrit.innerHTML.trim()) { evalCritFormNum = window._currentEvalCritForm || evalCritFormNum; genEvalCrit(); }
+  const tg = document.getElementById('tgOut');
+  if (tg) tg.innerHTML = '';
+};

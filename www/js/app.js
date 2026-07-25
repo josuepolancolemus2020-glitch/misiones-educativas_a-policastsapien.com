@@ -9,6 +9,7 @@ const SUBJECT_LABELS = {
   'sociales':    'C. Sociales',
   'programación': 'Programación',
   'robótica':    'Robótica',
+  'inglés':      'Inglés',
 };
 
 const LEVELS = [
@@ -304,8 +305,10 @@ function renderHome() {
   document.querySelectorAll('.subj-chip').forEach(chip => {
     const em = chip.querySelector('em');
     if (!em) return;
+    const count = MISSIONS.filter(m => m.subject === chip.dataset.subject).length;
+    // Materias en preparación (Inglés): el chip aparece con su primera misión
+    if (chip.hasAttribute('data-oculta-vacio')) chip.hidden = (count === 0);
     if (country === 'HN') {
-      const count = MISSIONS.filter(m => m.subject === chip.dataset.subject).length;
       em.textContent = `${count} misión${count !== 1 ? 'es' : ''}`;
     } else {
       em.textContent = 'Próximamente';
@@ -445,10 +448,11 @@ function updatePillCounts(country) {
     if (!b) return;
     if (country !== 'HN') { b.textContent = ''; b.hidden = true; return; }
     const f = pill.dataset.filter;
-    b.textContent = (f === 'all')
-      ? MISSIONS.length
-      : MISSIONS.filter(m => m.subject === f).length;
+    const n = (f === 'all') ? MISSIONS.length : MISSIONS.filter(m => m.subject === f).length;
+    b.textContent = n;
     b.hidden = false;
+    // Materias en preparación (Inglés): el filtro aparece con su primera misión
+    if (pill.hasAttribute('data-oculta-vacio')) pill.hidden = (n === 0);
   });
 }
 
@@ -943,7 +947,10 @@ function renderProgress() {
     { key: 'sociales',    label: 'C. Sociales',  color: 'var(--csoc)' },
     { key: 'programación', label: 'Programación', color: 'var(--tec)' },
     { key: 'robótica',    label: 'Robótica',     color: 'var(--tec)'  },
-  ];
+    { key: 'inglés',      label: 'Inglés',       color: 'var(--ing)'  },
+  // Una materia sin misiones aún no se muestra: evita barras al 0 % que
+  // parecen un error en vez de contenido por venir.
+  ].filter(sub => MISSIONS.some(m => m.subject === sub.key));
 
   document.getElementById('progress-subjects').innerHTML = `
     <h2 class="section-title" style="margin-bottom:12px;">Por materia</h2>
