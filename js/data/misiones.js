@@ -76,6 +76,32 @@ const MISSIONS = [
   { id: 57, title: 'Hello! Saludos y Presentarme',                        subject: 'inglés',      color: 'ing',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'primeras', etapa: 1, xp: 30, icon: '🗣️', pais: 'HN', url: 'misiones/2y3ciclo-ingles-saludos/saludos-ingles.html' },
 ];
 
+/* ─────────────────────────────────────────────
+   Misiones con traducción de autor al inglés
+   ─────────────────────────────────────────────
+   El alumno lo ve como un distintivo 🌐 EN en la tarjeta, ANTES de abrir
+   la misión, para no entrar a buscar un botón que quizá no está.
+
+   AL TRADUCIR UNA MISIÓN NUEVA: añadir aquí su id y ya. Es lo único que
+   hay que tocar en el catálogo; la tarjeta, la vista de rutas y la lista
+   de visitadas leen de esta misma lista.
+
+   No se detecta solo (mirando si existe el archivo -en.js) a propósito:
+   el catálogo tiene que funcionar sin internet y dentro del APK, y una
+   comprobación por red mostraría el distintivo tarde o no lo mostraría. */
+const MISIONES_EN = new Set([
+  45,  // ¿Qué es un Robot?                 · Ruta de los Robots · Etapa 1
+  51,  // Sensores: los Sentidos del Robot  · Ruta de los Robots · Etapa 2
+  52,  // Motores y Mecanismos              · Ruta de los Robots · Etapa 3
+  53,  // Electricidad para Robots          · Ruta de los Robots · Etapa 4
+  54,  // Programando un Robot              · Ruta de los Robots · Etapa 5
+  47,  // Condicionales: el Robot Decide    · Ruta del Código    · Etapa 3
+]);
+
+function tieneIngles(m) {
+  return !!(m && MISIONES_EN.has(m.id));
+}
+
 /* Helpers de rutas (globales: index los usa en app.js) */
 function rutaEtapas(rutaKey) {
   return MISSIONS.filter(m => m.ruta === rutaKey).sort((a, b) => a.etapa - b.etapa);

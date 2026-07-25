@@ -1,10 +1,23 @@
-const CACHE_NAME = 'meta-app-v36';
+const CACHE_NAME = 'meta-app-v37';
 const STATIC_ASSETS = [
   // Idioma inglés: se pre-cachea para que el botón EN/ES funcione sin red
   // desde la primera vez (antes se quedaba en español y sin avisar).
+  // Van TODAS las traducidas: si el catálogo le promete «🌐 EN» al alumno,
+  // el archivo tiene que estar ya en el teléfono cuando lo abra sin señal.
+  // Al traducir una misión nueva, añadir aquí sus dos líneas.
   './js/metas-i18n.js',
   './misiones/2y3ciclo-que-es-un-robot/js/que-es-un-robot-en.js',
   './fichas/js/ficha-que-es-un-robot-en.js',
+  './misiones/2y3ciclo-sensores-robot/js/sensores-robot-en.js',
+  './fichas/js/ficha-sensores-robot-en.js',
+  './misiones/2y3ciclo-motores-mecanismos/js/motores-mecanismos-en.js',
+  './fichas/js/ficha-motores-mecanismos-en.js',
+  './misiones/2y3ciclo-electricidad-robots/js/electricidad-robots-en.js',
+  './fichas/js/ficha-electricidad-robots-en.js',
+  './misiones/2y3ciclo-programando-robot/js/programando-robot-en.js',
+  './fichas/js/ficha-programando-robot-en.js',
+  './misiones/2y3ciclo-robot-decide/js/robot-decide-en.js',
+  './fichas/js/ficha-robot-decide-en.js',
   './padres.html',
   './manifest-padres.json',
   './img/qr-padres.png',

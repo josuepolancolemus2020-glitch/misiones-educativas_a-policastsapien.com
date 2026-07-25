@@ -522,6 +522,7 @@ function renderMissions(filter, query) {
           <div class="mc-meta">
             <span class="mc-subj ${m.color}">${SUBJECT_LABELS[m.subject] || m.subject}</span>
             <span class="mc-grade">${rutaLabel(m)}</span>
+            ${tieneIngles(m) ? `<span class="mc-en" title="Esta misión también se puede leer en inglés">🌐 EN</span>` : ''}
             ${visited
               ? `<span class="mc-done"><i class="fa-solid fa-check"></i> Visitada</span>`
               : `<span class="mc-xp"><i class="fa-solid fa-star"></i> +${m.xp} XP</span>`}
@@ -864,7 +865,7 @@ function renderRutas() {
             <span class="re-line ${i === etapas.length - 1 ? 'hide' : ''}"></span>
           </span>
           <span class="re-info">
-            <span class="re-etapa">${etiquetaEtapa}</span>
+            <span class="re-etapa">${etiquetaEtapa}${tieneIngles(m) ? ' <span class="mc-en" title="Esta misión también se puede leer en inglés">🌐 EN</span>' : ''}</span>
             <span class="re-title">${m.title}</span>
             ${chip}
           </span>
@@ -991,6 +992,7 @@ function renderProgress() {
                <div class="mc-meta">
                  <span class="mc-subj ${m.color}">${SUBJECT_LABELS[m.subject] || m.subject}</span>
                  <span class="mc-grade">${rutaLabel(m)}</span>
+                 ${tieneIngles(m) ? `<span class="mc-en" title="Esta misión también se puede leer en inglés">🌐 EN</span>` : ''}
                  <span class="mc-done"><i class="fa-solid fa-check"></i> Visitada</span>
                </div>
              </div>

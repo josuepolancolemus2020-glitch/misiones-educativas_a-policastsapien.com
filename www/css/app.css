@@ -973,6 +973,13 @@ a.padre-asistente-btn {
 .mc-grade { font-size: 11px; color: var(--muted); }
 .mc-xp    { font-size: 11px; color: var(--accent); font-weight: 700; }
 .mc-done  { font-size: 11px; color: #22c55e; font-weight: 600; }
+/* Distintivo «también está en inglés»: se ve ANTES de abrir la misión.
+   Va en el rosa de la materia Inglés para que el alumno lo asocie de un
+   vistazo, y con borde en vez de relleno para no competir con el chip de
+   materia, que es el que manda en la tarjeta. */
+.mc-en    { font-size: 10px; font-weight: 800; letter-spacing: .3px; color: var(--ing, #be185d);
+            border: 1.5px solid var(--ing, #be185d); border-radius: 10px; padding: 1px 6px;
+            line-height: 1.4; white-space: nowrap; }
 .mc-arrow { color: var(--faint); font-size: 14px; flex-shrink: 0; }
 
 .mc-icon.esp  { background: var(--esp-bg);  color: var(--esp); }
