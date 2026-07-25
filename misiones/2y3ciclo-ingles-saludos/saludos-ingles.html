@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Hello! Saludos y Presentarme | policastsapien.com</title>
+<meta name="description" content="Misión Hello!: saludos en inglés según la hora del día, presentarse (What's your name? / My name is…), preguntar How are you? y despedirse. Nivel Pre-A1 (Cambridge Starters) con pronunciación, registro formal e informal y el error típico del hispanohablante. Misión educativa interactiva. PolicastSapien.">
+<meta property="og:title" content="Misión Hello! Saludos y Presentarme">
+<meta property="og:description" content="Aprende a saludar, presentarte y despedirte en inglés. Juega, escucha y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-ingles-saludos/saludos-ingles.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/saludos-ingles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones" class="xp-back-btn" title="Regresar al catálogo de misiones">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Beginner 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🗣️</div>
+    <div class="hero-text">
+      <h1>Mission <span>Hello!</span></h1>
+      <p class="sub">Saluda, di tu nombre y despídete en inglés. ¡Hoy mismo puedes usarlo con una persona real! 👋</p>
+      <div class="badge">🗣️ Ruta de las Primeras Palabras · Etapa 1 de 8 · Inglés · Pre-A1</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🎯 I CAN — Lo que podrás hacer hoy</h2>
+    <p>Al terminar esta misión vas a poder decir, sin ayuda:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">👋 I can greet</div><div class="t-info">Saludar según la hora del día</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🙋 I can introduce myself</div><div class="t-info">Decir mi nombre y preguntar el de otra persona</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">💬 I can ask how you are</div><div class="t-info">Preguntar cómo está alguien y responder</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">👋 I can say goodbye</div><div class="t-info">Despedirme con cortesía</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">🔊</span>
+      <div><strong>Escucha antes de hablar:</strong> toca el botón 🔊 de cada expresión para oírla. Repite en voz alta
+      dos veces. Así se aprende en las academias: <b>primero el oído, después la boca</b>.</div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>👋 1. Saludar según la hora del día</h2>
+    <p>En inglés el saludo <strong>cambia con el reloj</strong>. Estos son los bloques que se usan todos los días:</p>
+    <div class="chunk-list">
+      <div class="chunk"><button class="say-btn" onclick="say('Hello')" aria-label="Escuchar Hello">🔊</button>
+        <b>Hello</b><span class="ch-fon">«je-LOU»</span><span class="ch-es">Hola · sirve a cualquier hora</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Hi')" aria-label="Escuchar Hi">🔊</button>
+        <b>Hi</b><span class="ch-fon">«jai»</span><span class="ch-es">Hola · con amigos y compañeros</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Good morning')" aria-label="Escuchar Good morning">🔊</button>
+        <b>Good morning</b><span class="ch-fon">«gud MOR-ning»</span><span class="ch-es">Buenos días · hasta las 12</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Good afternoon')" aria-label="Escuchar Good afternoon">🔊</button>
+        <b>Good afternoon</b><span class="ch-fon">«gud af-ter-NUN»</span><span class="ch-es">Buenas tardes · de 12 a 6</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Good evening')" aria-label="Escuchar Good evening">🔊</button>
+        <b>Good evening</b><span class="ch-fon">«gud IV-ning»</span><span class="ch-es">Buenas noches · <b>al llegar</b></span></div>
+    </div>
+    <div class="tip tip-warn">
+      <span class="ti">⚠️</span>
+      <div><strong>El error número uno del hispanohablante:</strong> <b>Good night</b> NO es un saludo, es una
+      <b>despedida</b> (como «que descanses»). Si llegas de noche a un lugar dices <b>Good evening</b>.
+      «Good night» solo cuando ya te vas o te vas a dormir.</div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🙋 2. Presentarme: nombre y cortesía</h2>
+    <p>Esto no se aprende palabra por palabra: se aprende <strong>en bloque</strong>, como una sola pieza.</p>
+    <div class="chunk-list">
+      <div class="chunk"><button class="say-btn" onclick="say('What is your name?')" aria-label="Escuchar What's your name?">🔊</button>
+        <b>What’s your name?</b><span class="ch-fon">«guats yor NEIM»</span><span class="ch-es">¿Cómo te llamas?</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('My name is Ana')" aria-label="Escuchar My name is">🔊</button>
+        <b>My name is…</b><span class="ch-fon">«mai NEIM is»</span><span class="ch-es">Me llamo…</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('I am Ana')" aria-label="Escuchar I am">🔊</button>
+        <b>I’m…</b><span class="ch-fon">«aim»</span><span class="ch-es">Soy… · más corto y natural</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Nice to meet you')" aria-label="Escuchar Nice to meet you">🔊</button>
+        <b>Nice to meet you</b><span class="ch-fon">«nais tu MIT yu»</span><span class="ch-es">Mucho gusto</span></div>
+    </div>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🎩 Con una persona mayor</h4>
+        <p><b>Good morning. My name is Carlos. Nice to meet you.</b><br>
+        <span class="ch-es">Formal: con la directora, un maestro, un visitante.</span></p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🙌 Con un compañero</h4>
+        <p><b>Hi! I’m Carlos. What’s your name?</b><br>
+        <span class="ch-es">Informal: con amigos y compañeros de clase.</span></p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">🗣️</span>
+      <div><strong>Pronunciación de hoy — la /h/:</strong> en español la «h» es muda, pero en inglés
+      <b>sí suena</b>, como un soplo. <b>Hello, Hi, How</b> se dicen soplando: «je-lou», «jai», «jau».
+      Si no soplas, <em>hi</em> suena como <em>eye</em>, que significa «ojo».</div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>💬 3. Preguntar cómo está y despedirme</h2>
+    <div class="chunk-list">
+      <div class="chunk"><button class="say-btn" onclick="say('How are you?')" aria-label="Escuchar How are you?">🔊</button>
+        <b>How are you?</b><span class="ch-fon">«jau ar YU»</span><span class="ch-es">¿Cómo estás?</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('I am fine, thank you. And you?')" aria-label="Escuchar I am fine thank you">🔊</button>
+        <b>I’m fine, thank you. And you?</b><span class="ch-fon">«aim FAIN, zenk yu. and YU»</span><span class="ch-es">Bien, gracias. ¿Y tú?</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Goodbye')" aria-label="Escuchar Goodbye">🔊</button>
+        <b>Goodbye</b><span class="ch-fon">«gud-BAI»</span><span class="ch-es">Adiós · formal</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('See you tomorrow')" aria-label="Escuchar See you tomorrow">🔊</button>
+        <b>See you tomorrow</b><span class="ch-fon">«si yu tu-MO-rou»</span><span class="ch-es">Nos vemos mañana</span></div>
+      <div class="chunk"><button class="say-btn" onclick="say('Thank you')" aria-label="Escuchar Thank you">🔊</button>
+        <b>Thank you</b><span class="ch-fon">«ZENK yu»</span><span class="ch-es">Gracias · lengua entre los dientes</span></div>
+    </div>
+    <div class="tip">
+      <span class="ti">👅</span>
+      <div><strong>La <em>th</em> de <b>thank you</b>:</strong> no es «tenk» ni «senk». Saca un poquito la lengua
+      entre los dientes y sopla. Practícalo con el 🔊 tres veces: es el sonido que más delata a un principiante.</div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">🕐</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== ESTRUCTURA (RELOJ + REGISTRO) ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🕐 El reloj de los saludos</h2>
+    <p>La pregunta clave siempre es la misma: <strong>¿qué hora es y con quién hablo?</strong></p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.82rem;min-width:480px;">
+        <thead>
+          <tr style="background:var(--pri-gl);">
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);text-align:left;">Hora</th>
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);">Se dice</th>
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);">En español</th>
+            <th style="padding:0.4rem 0.5rem;border:1px solid var(--border);">¿Saludo o despedida?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:700;">🌅 6:00 – 11:59</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;font-weight:700;">Good morning</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Buenos días</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Saludo</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:700;">☀️ 12:00 – 17:59</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;font-weight:700;">Good afternoon</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Buenas tardes</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Saludo</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:700;">🌇 18:00 en adelante</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;font-weight:700;">Good evening</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Buenas noches</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Saludo</td></tr>
+          <tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:700;">🌙 Al irte o al dormir</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;font-weight:700;">Good night</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;">Buenas noches</td><td style="padding:0.4rem;border:1px solid var(--border);text-align:center;font-weight:700;">¡Despedida!</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tip">
+      <span class="ti">🎯</span>
+      <div><strong>Regla de oro:</strong> <b>Good evening</b> se dice al <b>llegar</b> de noche;
+      <b>Good night</b> al <b>irse</b>. Misma noche, distinto momento.</div>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>⚡ Mini-quiz relámpago</h2>
+    <p style="font-size:0.9rem;margin-bottom:0.5rem;">1) Son las <strong>7:00 de la mañana</strong> y entras al aula. ¿Qué dices?</p>
+    <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
+      <button class="cmp-opt" onclick="miniQ(this,true,'fbMq1')">Good morning</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq1')">Good night</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq1')">Goodbye</button>
+    </div>
+    <div id="fbMq1" class="fb" role="alert"></div>
+    <p style="font-size:0.9rem;margin:0.9rem 0 0.5rem;">2) Llegas a una reunión a las <strong>7:00 de la noche</strong>. ¿Qué dices al saludar?</p>
+    <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
+      <button class="cmp-opt" onclick="miniQ(this,true,'fbMq2')">Good evening</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq2')">Good night</button>
+      <button class="cmp-opt" onclick="miniQ(this,false,'fbMq2')">Good afternoon</button>
+    </div>
+    <div id="fbMq2" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🎩 Formal e informal: con quién hablo</h2>
+    <p>La cortesía es contenido, no adorno. Escoger mal el registro suena raro aunque la gramática esté bien:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🎩 Formal</div><div class="t-info">Good morning · Good afternoon · Goodbye · Nice to meet you</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🙌 Informal</div><div class="t-info">Hi · Hey · Bye · See you</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">✅ Siempre bien</div><div class="t-info">Hello · Please · Thank you</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🇭🇳 En Honduras</div><div class="t-info">Con turistas y en el hotel: formal primero</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">🙏</span>
+      <div><strong>Please y Thank you:</strong> en inglés se usan <b>muchísimo más</b> que en español. Pedir algo sin
+      <b>please</b> suena a orden. Añádelo siempre: <em>Water, please.</em></div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🔬</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🔬 Laboratorio de la Conversación</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Toca una parte del diálogo (en el chat o en los botones) y un aspecto para explorarlo. ¡Combínalos todos!</p>
+    <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>El saludo</strong> → <strong>¿Qué es?</strong></div>
+    <div class="lab-stage">
+      <svg class="lab-robot-svg" viewBox="0 0 320 340" role="img" aria-label="Conversación en inglés: toca cada burbuja para explorarla">
+        <rect x="16" y="10" width="288" height="320" rx="20" fill="#fff1f5" stroke="#be185d" stroke-width="3"/>
+        <rect x="16" y="10" width="288" height="34" rx="16" fill="#be185d"/>
+        <text x="160" y="33" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">English Chat</text>
+
+        <g id="svgP-saludo" class="lab-svg-part" onclick="labShowParte('saludo')" tabindex="0" role="button" aria-label="Explorar el saludo">
+          <rect x="30" y="58" width="184" height="48" rx="14" fill="#fbcfe8" stroke="#be185d" stroke-width="3"/>
+          <text x="122" y="81" text-anchor="middle" font-size="15" font-weight="bold" fill="#831843">Good morning!</text>
+          <text x="122" y="98" text-anchor="middle" font-size="10" fill="#9d174d">el saludo</text>
+        </g>
+
+        <g id="svgP-presentacion" class="lab-svg-part" onclick="labShowParte('presentacion')" tabindex="0" role="button" aria-label="Explorar la presentacion">
+          <rect x="106" y="118" width="184" height="48" rx="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="3"/>
+          <text x="198" y="141" text-anchor="middle" font-size="14" font-weight="bold" fill="#5b21b6">I am Ana. And you?</text>
+          <text x="198" y="158" text-anchor="middle" font-size="10" fill="#6d28d9">la presentacion</text>
+        </g>
+
+        <g id="svgP-pregunta" class="lab-svg-part" onclick="labShowParte('pregunta')" tabindex="0" role="button" aria-label="Explorar la pregunta de cortesia">
+          <rect x="30" y="178" width="184" height="48" rx="14" fill="#ffedd5" stroke="#c2410c" stroke-width="3"/>
+          <text x="122" y="201" text-anchor="middle" font-size="15" font-weight="bold" fill="#9a3412">How are you?</text>
+          <text x="122" y="218" text-anchor="middle" font-size="10" fill="#c2410c">la cortesia</text>
+        </g>
+
+        <g id="svgP-despedida" class="lab-svg-part" onclick="labShowParte('despedida')" tabindex="0" role="button" aria-label="Explorar la despedida">
+          <rect x="106" y="238" width="184" height="48" rx="14" fill="#dcfce7" stroke="#15803d" stroke-width="3"/>
+          <text x="198" y="261" text-anchor="middle" font-size="14" font-weight="bold" fill="#14532d">See you tomorrow!</text>
+          <text x="198" y="278" text-anchor="middle" font-size="10" fill="#15803d">la despedida</text>
+        </g>
+        <text x="160" y="312" text-anchor="middle" font-size="11" fill="#9d174d">Toca cada burbuja</text>
+      </svg>
+      <div id="lab-display" class="lab-display-box">
+        <!-- Rellenado por JS -->
+      </div>
+    </div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">💬 Parte:</span>
+        <button class="lab-btn lab-cont-btn" data-parte="saludo" onclick="labShowParte('saludo')">👋 El saludo</button>
+        <button class="lab-btn lab-cont-btn" data-parte="presentacion" onclick="labShowParte('presentacion')">🙋 La presentación</button>
+        <button class="lab-btn lab-cont-btn" data-parte="pregunta" onclick="labShowParte('pregunta')">💬 La cortesía</button>
+        <button class="lab-btn lab-cont-btn" data-parte="despedida" onclick="labShowParte('despedida')">🚪 La despedida</button>
+      </div>
+      <div class="lab-group">
+        <span class="lab-group-label">📌 Aspecto:</span>
+        <button class="lab-btn lab-asp-btn" data-aspecto="estructura" onclick="labShowAspecto('estructura')">🔎 ¿Qué es?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="funcion" onclick="labShowAspecto('funcion')">🗣️ ¿Cómo se pronuncia?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="ubicacion" onclick="labShowAspecto('ubicacion')">🌍 Ejemplos</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="dato" onclick="labShowAspecto('dato')">⚠️ Error típico</button>
+      </div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez) · escúchala con el botón 🔊</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div style="margin-top:0.7rem;display:flex;justify-content:center;">
+      <button class="btn btn-g" onclick="sayFC()">🔊 Escuchar esta expresión</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🧠 Memorama de la Conversación</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja (primera vez) · +2 XP al completar</p>
+    <p class="memo-stats" id="memoStats" aria-live="polite">🃏 Parejas: 0 de 6 · Intentos: 0</p>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica las Expresiones</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una expresión del banco y toca la columna donde pertenece.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica la expresión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o expresión solicitada:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa el diálogo</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔁 Ordena la conversación</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por diálogo)</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para poner el diálogo en el orden correcto:</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nuevo diálogo</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🕐 ¿Qué dirías en esta situación?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez por situación)</p>
+    <p class="id-prog" id="neuronProg" aria-live="polite">Situación 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la situación y elige la expresión adecuada:</p>
+    <div class="neuron-desc" id="neuronDesc">Cargando...</div>
+    <div class="cmp-opts" id="neuronOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuron" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextNeuron()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetNeuron()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔗 Empareja: expresión → significado</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="neuroProg" aria-live="polite">1 de 5</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Qué significa esta expresión?</p>
+    <div class="neuro-trans-display" id="neuroTrans">Hello</div>
+    <div class="qz-opts" id="neuroOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuro" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetNeuro()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🎩 ¿Formal o informal?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="enferProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Pregúntate: ¿se lo dirías a la directora o a tu mejor amigo?</p>
+    <div class="neuro-trans-display" id="enferDisease">Hi!</div>
+    <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEnfer" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEnfer()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada expresión lo más rápido que puedas.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">👋 Saludo</button>
+        <button class="btn btn-sec" onclick="">🚪 Despedida</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras en inglés</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Traducir expresiones</option>
+        <option value="classify">🗂️ Saludo o despedida</option>
+        <option value="complete">✏️ Completar diálogos</option>
+        <option value="explain">💡 Escribir y actuar</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · Hello! Saludos y Presentarme · Educación Básica · Inglés</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final — Hello! Saludos y Presentarme</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Evaluación Competencial · Pensamiento Crítico · Hello! Saludos y Presentarme · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
+    </div>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Hello! Saludos y Presentarme</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="calcCritTotal()">🧮 Calcular Total</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🗣️</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">🗣️ La tarea más importante no está en la pantalla</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Mañana <strong>saluda en inglés a tres personas</strong>: un compañero,
+      tu maestro y alguien de tu casa. Preséntate y despídete. Un idioma se aprende usándolo, no memorizándolo.</p>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo para esta misión: presentaciones, documentos PDF, guías de estudio y más. El docente irá agregando recursos en esta carpeta.</p>
+    <a href="https://drive.google.com/drive/folders/1ingles_saludos_recursos"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+    <div class="tip" style="margin-top:1.2rem;">
+      <span class="ti">💡</span>
+      <div>Los archivos se abren directamente en el navegador. Puedes descargarlos o verlos sin necesidad de una cuenta de Google.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">I can greet and introduce myself</div>
+    <div class="diploma-mascot" aria-hidden="true">🗣️</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">🕐</span> Reloj</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/saludos-ingles.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+</body>
+</html>

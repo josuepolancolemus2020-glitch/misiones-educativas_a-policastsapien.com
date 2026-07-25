@@ -47,6 +47,8 @@ Reglas de ahorro y calidad:
    | **Matemáticas** | `#1565c0` (azul) | `#e3f2fd` (+ borde pauta `#cce0ff`) |
    | **Ciencias Naturales** | `#27ae60` (verde) | `#e8f8f5` |
    | **Ciencias Sociales** | `#c0392b` (rojo) | `#fbe9e7` |
+   | **Robótica y Programación** | `#0e7490` (cian) | `#ecfeff` |
+   | **Inglés** | `#be185d` (rosa) | `#fff1f5` |
 
    Reglas duras:
    - Aplica a TODOS los documentos imprimibles: `printEval` (evaluación
