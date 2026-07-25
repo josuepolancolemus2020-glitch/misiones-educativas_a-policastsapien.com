@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Medición de desborde horizontal a 360 px</title>
+<!--
+  M.E.T.A.S · ¿alguna misión se sale de la pantalla del teléfono?
+  ---------------------------------------------------------------
+  Mide de verdad: carga cada misión en un iframe de 360 px y compara
+  scrollWidth contra clientWidth. Complementa a _dev/verifica-barra-xp.js,
+  que solo comprueba que la regla CSS esté escrita.
+
+  Lleva un CONTROL con el arreglo anulado: si ese no desborda, el medidor
+  no sirve y el verde de abajo es falso. Mirar SIEMPRE esa primera línea.
+
+  Cómo correrlo (hace falta servir el proyecto, no vale file://):
+    1. node _dev/servidor-estatico.js        (o cualquier servidor en la raíz)
+    2. chrome --headless=new --disable-gpu --virtual-time-budget=60000          --dump-dom http://localhost:8123/_dev/probe-desborde.html
+       …o simplemente abrirlo en el navegador.
+-->
+<style>
+  body{font:16px/1.5 monospace;background:#111;color:#eee;padding:16px;margin:0}
+  h1{font-size:18px;margin:0 0 12px}
+  pre{font-size:19px;line-height:1.7;white-space:pre-wrap;background:#000;padding:14px;border-radius:8px}
+  .ok{color:#4ade80} .mal{color:#f87171} .pend{color:#fbbf24}
+  iframe{position:absolute;left:-9999px;top:0;width:360px;height:760px;border:0}
+</style>
+</head>
+<body>
+<h1>Desborde horizontal de las misiones · viewport de 360 px</h1>
+<pre id="out" class="pend">midiendo…</pre>
+<script>
+const MISIONES = [
+  ['pensamiento-computacional', '/misiones/2y3ciclo-pensamiento-computacional/pensamiento-computacional.html'],
+  ['robot-decide',              '/misiones/2y3ciclo-robot-decide/robot-decide.html'],
+  ['robots-problemas',          '/misiones/2y3ciclo-robots-problemas/robots-problemas.html'],
+  ['que-es-un-robot',           '/misiones/2y3ciclo-que-es-un-robot/que-es-un-robot.html'],
+  ['bucles-repetir',            '/misiones/2y3ciclo-bucles-repetir/bucles-repetir.html'],
+  ['la-celula',                 '/misiones/2y3ciclo-la-celula/la-celula.html'],
+  ['fracciones',                '/misiones/2y3ciclo-fracciones/fracciones.html'],
+  ['acentuacion',               '/misiones/2y3ciclo-acentuacion/acentuacion.html'],
+  ['mayas-precolombinas',       '/misiones/2y3ciclo-mayas-precolombinas/mayas-precolombinas.html'],
+  ['adverbios (otro formato)',  '/misiones/2y3ciclo-adverbios/adverbios.html'],
+  ['ingles-saludos',            '/misiones/2y3ciclo-ingles-saludos/saludos-ingles.html'],
+  ['mi-primer-programa',        '/misiones/2y3ciclo-mi-primer-programa/mi-primer-programa.html']
+];
+/* Los nombres de nivel largos son el caso peor: se fuerzan para probarlo */
+const NIVELES = ['Aprendiz 🌱', 'Maestro del Pensamiento 🏆'];
+
+/* Anula el arreglo, para comprobar que el medidor SÍ detecta el fallo:
+   si con esto sigue dando 0 px, el medidor no sirve y el verde es falso. */
+const ANULA = `@media (max-width:430px){
+  .xp-bar{flex-wrap:nowrap!important;gap:.8rem!important;padding-left:1rem!important;padding-right:1rem!important}
+  .xp-bar .xp-lbl{display:inline!important}
+  .xp-bar .xp-track{flex:1 1 0%!important;min-width:0!important}
+}`;
+
+function mide(url, nivel, anular) {
+  return new Promise(res => {
+    const f = document.createElement('iframe');
+    f.src = url;
+    document.body.appendChild(f);
+    const listo = () => setTimeout(() => {
+      try {
+        const d = f.contentDocument;
+        if (anular) { const s = d.createElement('style'); s.textContent = ANULA; d.head.appendChild(s); }
+        const lvl = d.getElementById('xpLvl');
+        if (lvl) lvl.textContent = nivel;
+        const vw = d.documentElement.clientWidth;
+        const sw = d.documentElement.scrollWidth;
+        const bar = d.querySelector('.xp-bar');
+        const alto = bar ? Math.round(bar.getBoundingClientRect().height) : 0;
+        let culpables = [];
+        d.querySelectorAll('*').forEach(el => {
+          const r = el.getBoundingClientRect();
+          if (r.width === 0 || r.height === 0) return;
+          if (r.right + f.contentWindow.scrollX > vw + 1) {
+            culpables.push(el.tagName.toLowerCase() + (el.id ? '#' + el.id : ''));
+          }
+        });
+        res({ vw, sw, desborde: sw - vw, alto, culpables: [...new Set(culpables)].slice(0, 4) });
+      } catch (e) { res({ error: e.message }); }
+      f.remove();
+    }, 900);
+    f.onload = listo;
+    setTimeout(listo, 6000);
+  });
+}
+
+(async () => {
+  const out = document.getElementById('out');
+  const lineas = [];
+
+  /* CONTROL: la misma misión con el arreglo anulado. Tiene que desbordar. */
+  const c1 = await mide(MISIONES[0][1], NIVELES[0], true);
+  const c2 = await mide(MISIONES[0][1], NIVELES[1], true);
+  const controlOk = c1.desborde > 0 && c2.desborde > 0;
+  lineas.push((controlOk ? '✔ ' : '✖ ') + 'CONTROL sin arreglo'.padEnd(26) +
+    `  |  ${String(c1.desborde).padStart(4)}px  |  ${String(c2.desborde).padStart(4)}px` +
+    (controlOk ? '   ← el medidor detecta el fallo' : '   ← ¡EL MEDIDOR NO SIRVE!'));
+  lineas.push('');
+
+  for (const [nombre, url] of MISIONES) {
+    const fila = [nombre.padEnd(26)];
+    let malo = false;
+    for (const nivel of NIVELES) {
+      const r = await mide(url, nivel);
+      if (r.error) { fila.push('ERROR ' + r.error); malo = true; continue; }
+      if (r.desborde > 0) malo = true;
+      fila.push(`${String(r.desborde).padStart(4)}px${r.culpables.length ? ' (' + r.culpables.join(',') + ')' : ''}`);
+    }
+    lineas.push((malo ? '✖ ' : '✔ ') + fila.join('  |  '));
+    out.textContent = 'nivel corto  |  nivel LARGO\n\n' + lineas.join('\n');
+  }
+  const fallan = lineas.filter(l => l.startsWith('✖')).length;
+  out.className = fallan ? 'mal' : 'ok';
+  out.textContent = 'desborde con nivel corto  |  con nivel LARGO\n\n' + lineas.join('\n') +
+    '\n\n' + (fallan ? '✖ ' + fallan + ' misiones desbordan' : '✅ NINGUNA DESBORDA · ' + MISIONES.length + ' misiones × 2 niveles');
+})();
+</script>
+</body>
+</html>
