@@ -98,14 +98,35 @@
   // Los <text> de los SVG sí se traducen (rótulos del robot del laboratorio).
   var SALTAR = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, INPUT: 1, SELECT: 1 };
 
+  /* Los nodos de texto se traducen en su sitio, así que hay que recordar el
+     español para poder devolverlo: sin esto, al regresar a español se
+     quedaban en inglés los pies de página y las pestañas. */
+  var textosES = [];
+
+  function podarTextos() {
+    textosES = textosES.filter(function (r) { return r.n.isConnected; });
+  }
+
+  function restaurarTextos() {
+    for (var i = 0; i < textosES.length; i++) {
+      if (textosES[i].n.isConnected) textosES[i].n.nodeValue = textosES[i].es;
+    }
+    textosES = [];
+  }
+
   function traducirNodo(nodo) {
     if (idiomaActual !== 'en') return;
     if (nodo.nodeType === 3) {
       var p = nodo.parentNode;
       if (p && (SALTAR[p.nodeName] || p.closest('[data-i18n-omitir]'))) return;
       if (!nodo.nodeValue || !nodo.nodeValue.trim()) return;
-      var nuevo = tr(nodo.nodeValue);
-      if (nuevo !== nodo.nodeValue) nodo.nodeValue = nuevo;
+      var viejo = nodo.nodeValue;
+      var nuevo = tr(viejo);
+      if (nuevo !== viejo) {
+        nodo.nodeValue = nuevo;
+        textosES.push({ n: nodo, es: viejo });
+        if (textosES.length > 4000) podarTextos();
+      }
       return;
     }
     if (nodo.nodeType !== 1) return;
@@ -189,6 +210,10 @@
       '.metas-lang-btn .mlb-cod{background:rgba(255,255,255,.9);color:#0e7490;border-radius:6px;',
       'padding:2px 5px;font-size:.62rem;font-weight:900;letter-spacing:.5px;}',
       '@media(max-width:420px){.metas-lang-btn{padding:3px 7px;}.metas-lang-btn .mlb-txt{display:none;}}',
+      '.metas-lang-suelto{position:fixed;right:18px;bottom:72px;z-index:6;background:#0e7490;',
+      'border-color:#0e7490;padding:11px 16px;font-size:.85rem;box-shadow:0 6px 16px rgba(14,116,144,.4);}',
+      '.metas-lang-suelto .mlb-txt{font-size:.85rem;}',
+      '@media print{.metas-lang-btn,.metas-lang-toast{display:none !important;}}',
       '.metas-lang-toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);z-index:9999;',
       'background:#0f172a;color:#fff;padding:9px 16px;border-radius:22px;font-size:.82rem;font-weight:700;',
       'box-shadow:0 8px 24px rgba(0,0,0,.28);opacity:0;transition:opacity .25s;}',
@@ -225,6 +250,9 @@
       var ref = barra.querySelector('.xp-pts');
       if (ref) barra.insertBefore(btn, ref); else barra.appendChild(btn);
     } else {
+      // Fichas imprimibles: no hay barra de XP, así que el botón se acomoda
+      // junto al de imprimir y desaparece al mandar a papel.
+      btn.classList.add('metas-lang-suelto');
       document.body.appendChild(btn);
     }
   }
@@ -254,7 +282,14 @@
 
     detenerObservador();
     inyectarCSS();
+    if (lang !== 'en') restaurarTextos();
     aplicarBloques(lang);
+
+    // Título de la pestaña (y de la cabecera al imprimir desde el navegador)
+    if (window.MISION_EN && window.MISION_EN.titulo) {
+      if (!document.body.dataset.tituloEs) document.body.dataset.tituloEs = document.title;
+      document.title = (lang === 'en') ? window.MISION_EN.titulo : document.body.dataset.tituloEs;
+    }
 
     // 2. bancos de datos + repintado de los juegos de la misión
     if (typeof window.MISION_APLICAR_IDIOMA === 'function') {
@@ -265,7 +300,7 @@
       traducirNodo(document.body);
       iniciarObservador();
     }
-    if (!silencioso) aviso(lang === 'en' ? '🇺🇸 Mission in English' : '🇭🇳 Misión en español');
+    if (!silencioso) aviso(lang === 'en' ? '🌐 Now in English' : '🌐 Ahora en español');
     document.dispatchEvent(new CustomEvent('metas:idioma', { detail: { lang: lang } }));
   }
 

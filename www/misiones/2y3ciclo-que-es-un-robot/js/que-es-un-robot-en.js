@@ -9,7 +9,7 @@
    · Vocabulario técnico estándar de robótica escolar:
      sense → think → act · sensors · controller · actuators.
    · Lo cultural se explica, no se calca: «maquila» se traduce
-     como garment factory (maquila), «pulpería» como corner shop.
+     como garment factory (maquila), «pulpería» como corner store.
    · Se conserva el tuteo cercano del original con el «you» directo
      y el mismo tono de juego.
 
@@ -192,7 +192,7 @@
         '<h2>📁 Topic Resources</h2>' +
         '<div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">' +
         '<p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Printable study sheet</p>' +
-        '<p style="font-size:0.86rem;margin-bottom:0.85rem;">A 7-page study guide (theory, unplugged activities and assessment) to print or solve before the test. <em>Available in Spanish.</em></p>' +
+        '<p style="font-size:0.86rem;margin-bottom:0.85rem;">A 7-page study guide (theory, unplugged activities and assessment) to print or solve before the test. <em>It opens in English too — the language you choose here carries over.</em></p>' +
         '<a href="../../fichas/ficha-que-es-un-robot.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Open / print the study sheet</a>' +
         '</div>' +
         '<p style="font-size:0.9rem;margin-bottom:1rem;">Here you will find support materials for this mission: slide decks, PDF documents, study guides and more. Your teacher keeps adding resources to this folder.</p>' +
@@ -340,7 +340,7 @@
 
       neuroPairs: [
         { trans: 'Sensor', func: 'It picks up information: light, sound, distance, touch', opts: ['It picks up information: light, sound, distance, touch', 'It carries out the action with motors', 'It stores the robot’s battery', 'It is the list of instructions'] },
-        { trans: 'Controller', func: 'It receives the information and decides using the program', opts: ['It receives the information and decides using the program', 'It picks up light and sound', 'It moves the robot’s wheels', 'It gives the robot its colour'] },
+        { trans: 'Controller', func: 'It receives the information and decides using the program', opts: ['It receives the information and decides using the program', 'It picks up light and sound', 'It moves the robot’s wheels', 'It gives the robot its color'] },
         { trans: 'Actuator', func: 'It carries out the action: motors, wheels, arms, lights', opts: ['It carries out the action: motors, wheels, arms, lights', 'It decides what to do', 'It measures the temperature', 'It writes the program'] },
         { trans: 'Program', func: 'A list of exact step-by-step instructions', opts: ['A list of exact step-by-step instructions', 'The robot’s battery', 'The mechanical arm', 'The light sensor'] },
         { trans: 'Battery', func: 'It provides the power that keeps the whole robot running', opts: ['It provides the power that keeps the whole robot running', 'It senses the obstacles', 'It decides the route', 'It sews fabric in the factory'] }
@@ -549,7 +549,7 @@
         {
           txt: 'A drone flies over the coffee field: it takes photos of the plants and, if it spots a diseased area, it alerts the farmer.',
           p: 'It senses the crop with its camera (sensor) and its position with GPS.',
-          d: 'It decides which area to inspect and recognises when an area looks diseased.',
+          d: 'It decides which area to inspect and recognizes when an area looks diseased.',
           a: 'It acts with its propellers (motors) to fly and sends the alert to the farmer’s phone.'
         },
         {
@@ -596,7 +596,7 @@
       critDesignBank: [
         'In your community, the coffee harvest is lost when it rains all of a sudden while the beans are drying in the yard.',
         'During the rainy season the river rises and the children cannot tell whether it is safe to cross the ford on their way to school.',
-        'The corner shop needs to be watched at night, when nobody is around.',
+        'The corner store needs to be watched at night, when nobody is around.',
         'In the dry season the school garden dries out because nobody comes to water it at weekends.',
         'Birds eat the corn in the field when nobody is guarding it.'
       ],
@@ -742,7 +742,7 @@
       '⚡ Generar': '⚡ Generate', '👁 Respuestas': '👁 Answers',
       '📋 Instrucción': '📋 Instructions',
       'Copia en tu cuaderno; subraya, colorea o encierra el concepto de robótica indicado en cada oración. Escribe al lado qué parte o tipo de robot es.':
-        'Copy this in your notebook; underline, colour or circle the robotics concept in each sentence. Next to it, write which robot part or type it is.',
+        'Copy this in your notebook; underline, color or circle the robotics concept in each sentence. Next to it, write which robot part or type it is.',
       'Copia la siguiente tabla en tu cuaderno. Para cada máquina responde: ¿es robot?, ¿percibe?, ¿decide?, ¿actúa? Explica con tus palabras.':
         'Copy the table below in your notebook. For each machine answer: is it a robot? does it sense? does it decide? does it act? Explain in your own words.',
       'Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.':
@@ -760,7 +760,7 @@
       '🎓 Evaluación Final — ¿Qué es un Robot?': '🎓 Final Test — What Is a Robot?',
       '🧠 Prueba de Pensamiento Crítico — ¿Qué es un Robot?': '🧠 Critical Thinking Test — What Is a Robot?',
       'Nombre:': 'Name:', 'Fecha:': 'Date:', 'Centro Educativo:': 'School:', 'Instituto:': 'School:',
-      'Grado y Sección:': 'Grade and section:', 'Nº Lista:': 'Roll no.:', 'Parcial:': 'Term:',
+      'Grado y Sección:': 'Grade and section:', 'Nº Lista:': 'Student No.:', 'Parcial:': 'Term:',
       'Valor total: 100 puntos · Cada respuesta vale 5 puntos': 'Total value: 100 points · Each answer is worth 5 points',
       'Valor total: 100 puntos · 5 secciones de 20 puntos': 'Total value: 100 points · 5 sections of 20 points',
       'Copia el examen en tu cuaderno y responde las preguntas, después selecciona Ver Pauta para que te autoevalúes. Genera nuevas preguntas cuando quieras.':
@@ -795,7 +795,7 @@
       /* — pensamiento crítico — */
       'I. ¿Qué sensor necesita?': 'I. Which sensor does it need?',
       'II. Corrige el error conceptual': 'II. Correct the misconception',
-      'III. Analiza el ciclo: percibe → decide → actúa': 'III. Analyse the cycle: sense → think → act',
+      'III. Analiza el ciclo: percibe → decide → actúa': 'III. Analyze the cycle: sense → think → act',
       'IV. Comparación razonada': 'IV. Reasoned comparison',
       'V. Diseña y justifica tu robot': 'V. Design and justify your robot',
       '20 pts': '20 pts',
@@ -817,7 +817,7 @@
         'Invent a robot that solves this problem: write its name, which SENSORS it uses, what its controller DECIDES («if X happens, then it does Y») and which ACTUATORS it acts with. Draw it on the back of the sheet.',
       'Obtenido:': 'Score:', 'de 20 pts': 'of 20 pts',
       'I. Corrige el error': 'I. Correct the mistake', 'II. Corrige el error': 'II. Correct the mistake',
-      'III. Analiza el ciclo': 'III. Analyse the cycle', 'IV. Comparación': 'IV. Comparison',
+      'III. Analiza el ciclo': 'III. Analyze the cycle', 'IV. Comparación': 'IV. Comparison',
       'V. Diseña tu robot — Rúbrica': 'V. Design your robot — Rubric',
       'Percibe:': 'Senses:', 'Decide:': 'Decides:', 'Actúa:': 'Acts:',
 
@@ -919,7 +919,7 @@
       [/🎯 Evaluación calificada: (\d+)\/100/g, '🎯 Test graded: $1/100'],
       [/🧮 Evaluación calificada: (\d+)\/100\. Revisa las respuestas marcadas\./g, '🧮 Test graded: $1/100. Check the marked answers.'],
       [/🎯 Pensamiento crítico: (\d+)\/100/g, '🎯 Critical thinking: $1/100'],
-      [/🧮 Puntaje registrado: (\d+)\/100\. ¡Sigue practicando!/g, '🧮 Score saved: $1/100. Keep practising!'],
+      [/🧮 Puntaje registrado: (\d+)\/100\. ¡Sigue practicando!/g, '🧮 Score saved: $1/100. Keep practicing!'],
       [/📝 Opciones: /g, '📝 Options: '],
       [/✅ Respuestas:/g, '✅ Answers:'],
       [/🎯 Clave rápida estilo ZipGrade · Form (\d+) — respuestas correctas ya rellenadas para digitar la clave en la app/g,
