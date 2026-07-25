@@ -661,3 +661,20 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .fc-back{overflow-y:auto;}
 #fcA{font-size:1.28rem;line-height:1.5;}
 #fcA::first-letter{text-transform:uppercase !important;}
+
+/* ── La barra de XP en pantallas angostas ─────────────────────────────
+   Son siete elementos en una fila que no se encoge (botón de volver,
+   «🎮 XP», la barra de progreso, WhatsApp, el botón de idioma cuando la
+   misión está traducida, «⭐ N» y el nivel). En un teléfono no caben: el
+   nivel —que llega a decir «Maestro del Pensamiento 🏆»— se salía y
+   empujaba la PÁGINA ENTERA hacia la derecha, así que el alumno leía todo
+   cortado por la izquierda y podía esconderlo con el dedo.
+
+   Aquí se quita el rótulo «🎮 XP» (es redundante: al lado va «⭐ N»), se
+   aprietan los huecos y se deja que la fila baje a dos líneas antes que
+   desbordar. No se oculta ni se recorta nada que el alumno necesite. */
+@media (max-width: 430px) {
+  .xp-bar { gap: 0.45rem; padding-left: 0.6rem; padding-right: 0.6rem; flex-wrap: wrap; row-gap: 0.3rem; }
+  .xp-bar .xp-lbl { display: none; }
+  .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
+}
