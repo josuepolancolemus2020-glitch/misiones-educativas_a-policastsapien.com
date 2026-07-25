@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<!-- La misión trae su traducción de autor: que el navegador no la retraduzca -->
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Misión 🏆 Robots que Resuelven Problemas | policastsapien.com</title>
 <meta name="description" content="Misión Robots que Resuelven Problemas: el ciclo de diseño de ingeniería (identificar, idear, diseñar, construir, probar, mejorar y comunicar), criterios y restricciones, ética del diseño, trabajo en equipo y cinco proyectos hondureños: café, río, huerto escolar, inundaciones y basura. Misión final de la Ruta de los Robots. PolicastSapien.">
@@ -37,7 +39,7 @@
 <header class="hero" role="banner">
   <div class="hero-inner">
     <div class="hero-mascot" aria-hidden="true">🏆</div>
-    <div class="hero-text">
+    <div class="hero-text" data-i18n="hero">
       <h1>Misión <span>Robots que Resuelven Problemas</span></h1>
       <p class="sub">La misión final de la Ruta de los Robots: aprende el ciclo de diseño de ingeniería y crea un robot que resuelva un problema real de tu comunidad. 🔍💡✏️🔧🧪🔁📢</p>
       <div class="badge">🤖 Ruta de los Robots · Etapa 6 de 6 (¡la última!) · Robótica</div>
@@ -49,7 +51,7 @@
 
 <!-- ===== APRENDE ===== -->
 <div class="sec active" id="s-aprende" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="a1">
     <h2>🏆 Un robot sirve para resolver problemas</h2>
     <p>Ya sabes qué es un robot, qué miden sus <strong>sensores</strong>, cómo se mueve con <strong>motores y mecanismos</strong>,
     de dónde saca su <strong>electricidad</strong> y cómo se le escribe un <strong>programa</strong>. Ahora falta lo más importante:
@@ -72,7 +74,7 @@
     </div>
   </div>
 
-  <div class="card ac-gold">
+  <div class="card ac-gold" data-i18n="a2">
     <h2>🧩 Repaso de la ruta: cada parte se justifica</h2>
     <p>En el <strong>boceto</strong> de tu diseño no basta con dibujar: hay que <strong>justificar</strong> cada decisión con lo
     que aprendiste en las etapas anteriores de la Ruta de los Robots.</p>
@@ -89,7 +91,7 @@
     </div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="a3">
     <h2>🇭🇳 Cinco proyectos para Honduras</h2>
     <p>Estos son los cinco problemas que trabajarás en el <strong>Taller de diseño</strong> de esta misión:</p>
     <div class="vs-grid">
@@ -120,7 +122,7 @@
 
 <!-- ===== CRITERIOS, RESTRICCIONES Y ÉTICA ===== -->
 <div class="sec" id="s-estructura" role="tabpanel">
-  <div class="card ac-teal">
+  <div class="card ac-teal" data-i18n="e1">
     <h2>🎯 Criterios y ⛔ restricciones</h2>
     <p>Antes de diseñar, el equipo escribe dos listas. El <strong>criterio</strong> dice <b>qué debe lograr</b> el robot;
     la <strong>restricción</strong> dice <b>qué límite no se puede pasar</b>.</p>
@@ -147,7 +149,7 @@
     </div>
   </div>
 
-  <div class="card ac-amber">
+  <div class="card ac-amber" data-i18n="e2">
     <h2>⚡ Mini-quiz relámpago</h2>
     <p style="font-size:0.9rem;margin-bottom:0.5rem;">1) «El robot no debe costar más de 200 lempiras». ¿Qué es?</p>
     <div class="cmp-opts" role="group" style="margin-bottom:0.4rem;">
@@ -165,7 +167,7 @@
     <div id="fbMq2" class="fb" role="alert"></div>
   </div>
 
-  <div class="card ac-jade">
+  <div class="card ac-jade" data-i18n="e3">
     <h2>⚖️ Ética, seguridad y trabajo en equipo</h2>
     <p>Un robot no es bueno solo porque funciona: también tiene que ser <strong>justo y seguro</strong> para las personas.</p>
     <div class="type-grid">
@@ -190,10 +192,10 @@
 <!-- ===== LAB: TALLER DE DISEÑO ===== -->
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
-    <h2>🛠️ Taller de Diseño</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Escoge uno de los cinco proyectos hondureños y recorre sus <strong>7 etapas</strong>. En cada decisión elige la mejor opción: el taller te explica por qué. ⭐ +2 XP por decisión acertada.</p>
+    <h2 data-i18n="labh2">🛠️ Taller de Diseño</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;" data-i18n="labintro">Escoge uno de los cinco proyectos hondureños y recorre sus <strong>7 etapas</strong>. En cada decisión elige la mejor opción: el taller te explica por qué. ⭐ +2 XP por decisión acertada.</p>
     <div id="lab-sentence" class="lab-sentence">🛠️ Proyecto: <strong>☕ Robot del patio de café</strong> → <strong>🔍 1. Identificar el problema</strong></div>
-    <div class="lab-controls">
+    <div class="lab-controls" data-i18n="labctl">
       <div class="lab-group">
         <span class="lab-group-label">🇭🇳 Proyecto:</span>
         <button class="lab-btn lab-cont-btn" data-proj="cafe" onclick="tallerShowProyecto('cafe')">☕ Café</button>
@@ -551,7 +553,7 @@
 </div>
 
 <div class="sec" id="s-recursos" role="tabpanel">
-  <div class="card ac-blue">
+  <div class="card ac-blue" data-i18n="rec">
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
@@ -650,6 +652,8 @@
 
   <script src="js/html2canvas.min.js"></script>
   <script src="js/robots-problemas.js"></script>
+  <script src="js/robots-problemas-en.js?v=38"></script>
+  <script src="../../js/metas-i18n.js?v=38"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>

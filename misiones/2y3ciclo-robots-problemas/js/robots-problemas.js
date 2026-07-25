@@ -32,7 +32,7 @@ function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSe
 function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalCritFormNum)evalCritFormNum=s.evalCritFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
 
 // ===================== ACHIEVEMENTS =====================
-const ACHIEVEMENTS={
+let ACHIEVEMENTS={
   primer_quiz:{icon:'🏆',label:'Primer quiz del ciclo de diseño superado'},
   flash_master:{icon:'🃏',label:'Todas las flashcards del diseño exploradas'},
   clasif_pro:{icon:'🗂️',label:'Clasificador de problemas y soluciones experto'},
@@ -50,7 +50,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#0e7490','#22d3ee','#c2410c','#fb923c','#06b6d4'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Observador de Problemas 🔍'},{t:55,n:'Diseñador Junior ✏️'},{t:90,n:'Constructor de Prototipos 🔧'},{t:130,n:'Probador Incansable 🧪'},{t:165,n:'Ingeniero de Proyectos 🛠️'},{t:190,n:'Maestro Innovador 🏆'}];
+let lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Observador de Problemas 🔍'},{t:55,n:'Diseñador Junior ✏️'},{t:90,n:'Constructor de Prototipos 🔧'},{t:130,n:'Probador Incansable 🧪'},{t:165,n:'Ingeniero de Proyectos 🛠️'},{t:190,n:'Maestro Innovador 🏆'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -64,7 +64,7 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 function miniQ(btn,isOk,fbId){const wrap=btn.parentElement;if(wrap.dataset.done==='1')return;wrap.querySelectorAll('.cmp-opt').forEach(b=>b.classList.remove('sel'));if(isOk){wrap.dataset.done='1';btn.classList.add('correct');fb(fbId,'¡Correcto! Piensas como todo un robotista.',true);sfx('ok');}else{btn.classList.add('wrong');fb(fbId,'Casi. Pregúntate siempre: ¿a quién beneficia?, ¿a quién podría afectar?, ¿es seguro?',false);sfx('no');}}
 
 // ===================== FLASHCARD DATA =====================
-const fcData=[
+let fcData=[
   {w:'Ciclo de diseño',a:'🔁 Los <strong>7 pasos</strong> que siguen los ingenieros: identificar → idear → diseñar → construir → probar → mejorar → comunicar.'},
   {w:'Identificar el problema',a:'🔍 Primer paso: decir con claridad <strong>qué falla, a quién afecta y por qué importa</strong>.'},
   {w:'Idear',a:'💡 Anotar <strong>muchas ideas</strong> sin juzgarlas todavía; después se escoge la más realista.'},
@@ -87,7 +87,7 @@ function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
 
 // ===================== JUEGO: MEMORIA DEL CICLO DE DISEÑO =====================
-const memoPairs=[
+let memoPairs=[
   {id:'identificar',t:'Identificar',d:'🔍 decir qué falla y a quién afecta'},
   {id:'idear',t:'Idear',d:'💡 anotar muchas soluciones posibles'},
   {id:'disenar',t:'Diseñar',d:'✏️ bocetar sensores, mecanismos y programa'},
@@ -134,7 +134,7 @@ function flipMemo(btn,i){
 function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
-const qzData=[
+let qzData=[
   {q:'¿Cuál es el PRIMER paso del ciclo de diseño?',o:['a) Construir el prototipo','b) Identificar el problema','c) Comunicar el resultado','d) Comprar materiales'],c:1},
   {q:'En la etapa de IDEAR, ¿qué conviene hacer?',o:['a) Escoger la primera idea que aparezca','b) Anotar muchas ideas y después escoger','c) Copiar el robot de otro equipo','d) Empezar a pegar cartón'],c:1},
   {q:'¿Qué se decide en el BOCETO del diseño?',o:['a) El color de la caja','b) Qué sensor, qué mecanismo, qué energía y qué programa','c) Quién habla en la presentación','d) La nota del equipo'],c:1},
@@ -152,7 +152,7 @@ function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false
 function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
 
 // ===================== CLASIFICACIÓN =====================
-const classGroups=[
+let classGroups=[
   {label:['Problema','Solución'],headA:'❓ Problema',headB:'💡 Solución',colA:'pro',colB:'sol',
    words:[{w:'La huerta se seca el fin de semana',t:'pro'},{w:'Un regador que abre el agua solo',t:'sol'},{w:'El río crece y nadie sabe si cruzar',t:'pro'},{w:'Una alarma que mide el nivel del agua',t:'sol'},{w:'La basura del centro se mezcla',t:'pro'},{w:'Una banda que separa plástico y papel',t:'sol'},{w:'El café tendido se moja con la lluvia',t:'pro'},{w:'Un techo que se cierra al llover',t:'sol'}]},
   {label:['Criterio','Restricción'],headA:'🎯 Criterio (qué debe lograr)',headB:'⛔ Restricción (límite)',colA:'cri',colB:'res',
@@ -169,7 +169,7 @@ function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupId
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
 // ===================== IDENTIFICAR =====================
-const idData=[
+let idData=[
   {s:['Todo','proyecto','empieza','al','identificar','el','problema.'],c:4,art:'La primera etapa del ciclo de diseño'},
   {s:['Después','de','idear,','el','equipo','dibuja','el','boceto.'],c:6,art:'El dibujo rotulado del diseño'},
   {s:['El','prototipo','se','arma','con','material','reciclado.'],c:1,art:'La primera versión del robot'},
@@ -186,7 +186,7 @@ function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').
 function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
 
 // ===================== COMPLETA =====================
-const cmpData=[
+let cmpData=[
   {s:'El ciclo de diseño empieza al ___ el problema.',opts:['identificar','pintar','vender'],c:0},
   {s:'En la etapa de idear anotamos muchas ___.',opts:['notas de conducta','ideas','tareas'],c:1},
   {s:'El dibujo rotulado del robot se llama ___.',opts:['boceto','recibo','cartel'],c:0},
@@ -202,7 +202,7 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 
 // ===================== WIDGETS =====================
 // Widget 1: el ciclo de diseño aplicado a proyectos reales (ordenar los pasos)
-const routeSets=[
+let routeSets=[
   {label:'El robot regador del huerto escolar',steps:['Identificamos el problema: la huerta se seca los fines de semana','Ideamos varias soluciones y escogemos la más realista','Diseñamos el boceto: sensor de humedad, bomba y programa','Construimos el prototipo con botellas y material reciclado','Probamos tres veces y anotamos que el agua no se cierra','Mejoramos el programa y presentamos el proyecto a la clase']},
   {label:'La alarma del río en invierno',steps:['Identificamos el problema: nadie sabe si el vado es seguro','Ideamos ideas: una regla pintada, una boya, una alarma','Diseñamos el boceto: sensor de nivel, bocina y batería','Construimos el prototipo y lo colocamos junto al vado','Probamos con agua y vemos que la bocina suena muy tarde','Mejoramos la altura del sensor y avisamos a la comunidad']},
   {label:'El clasificador de basura del centro educativo',steps:['Identificamos el problema: el plástico y el papel se mezclan','Ideamos soluciones y comparamos costo y tiempo','Diseñamos el boceto: sensor de peso, banda y motor','Construimos la banda con cartón, una polea y un motor','Probamos con 20 envases y dos se van al depósito equivocado','Mejoramos la banda, repetimos la prueba y presentamos los datos']}
@@ -215,7 +215,7 @@ function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Caso: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: ¿qué decisión de diseño conviene?
-const neuronPartes=[
+let neuronPartes=[
   {desc:'El robot debe avisar cuando el agua del río empiece a subir',ans:'Sensor de nivel de agua',opts:['Sensor de nivel de agua','Sensor de sonido','Sensor de color']},
   {desc:'El regador del huerto debe saber cuándo la tierra está seca',ans:'Sensor de humedad',opts:['Sensor de humedad','Sensor de peso','Sensor de sonido']},
   {desc:'El clasificador necesita mover los envases hasta el depósito',ans:'Banda con motor',opts:['Banda con motor','Bocina','Batería extra']},
@@ -232,7 +232,7 @@ function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Etapa del ciclo → ¿qué se hace?
-const neuroPairs=[
+let neuroPairs=[
   {trans:'Identificar',func:'Decir qué falla, a quién afecta y por qué importa',opts:['Decir qué falla, a quién afecta y por qué importa','Armar el prototipo con cartón','Presentar el proyecto a la clase']},
   {trans:'Idear',func:'Anotar muchas soluciones posibles y escoger la mejor',opts:['Anotar muchas soluciones posibles y escoger la mejor','Medir cuántas veces falla','Repartir el diploma']},
   {trans:'Diseñar',func:'Bocetar qué sensor, qué mecanismo, qué energía y qué programa lleva',opts:['Bocetar qué sensor, qué mecanismo, qué energía y qué programa lleva','Pintar la caja de colores','Contar el dinero recaudado']},
@@ -245,7 +245,7 @@ function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.query
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: ¿ayuda a las personas o hay que pensarlo mejor?
-const enfermedadData=[
+let enfermedadData=[
   {disease:'Un robot que avisa a la comunidad cuando el río empieza a crecer',characteristic:'Ayuda a las personas',opts:['Ayuda a las personas','Hay que pensarlo mejor']},
   {disease:'Un robot que deja sin trabajo a los recolectores y nadie les avisó',characteristic:'Hay que pensarlo mejor',opts:['Hay que pensarlo mejor','Ayuda a las personas']},
   {disease:'Un regador que ahorra agua y cuida la huerta escolar',characteristic:'Ayuda a las personas',opts:['Ayuda a las personas','Hay que pensarlo mejor']},
@@ -259,7 +259,7 @@ function checkEnfer(opt,btn,d){if(enferDone)return;enferDone=true;document.query
 function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
-const retoPairs=[
+let retoPairs=[
   {label:['Problema','Solución'],btnA:'❓ Problema',btnB:'💡 Solución',colA:'pro',colB:'sol',
    words:[{w:'La huerta se seca',t:'pro'},{w:'Regador automático',t:'sol'},{w:'El río crece de noche',t:'pro'},{w:'Alarma de nivel',t:'sol'},{w:'La basura se mezcla',t:'pro'},{w:'Banda clasificadora',t:'sol'},{w:'El café se moja',t:'pro'},{w:'Techo que se cierra',t:'sol'},{w:'Nadie ve el vado',t:'pro'},{w:'Luz con sensor',t:'sol'}]},
   {label:['Criterio','Restricción'],btnA:'🎯 Criterio',btnB:'⛔ Restricción',colA:'cri',colB:'res',
@@ -277,7 +277,7 @@ function nextRetoPair(){sfx('click');clearInterval(retoTimerInt);retoRunning=fal
 function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';document.getElementById('fbReto').classList.remove('show');}
 
 // ===================== TASK GENERATOR =====================
-const identifyTaskDB=[
+let identifyTaskDB=[
   {s:'El equipo escribe qué falla y a quién afecta.',type:'Identificar el problema'},
   {s:'Los alumnos anotan diez soluciones posibles sin juzgarlas.',type:'Idear'},
   {s:'Se dibuja el robot con sus sensores y motores rotulados.',type:'Diseñar (boceto)'},
@@ -289,7 +289,7 @@ const identifyTaskDB=[
   {s:'El robot debe avisar antes de que el agua llegue al vado.',type:'Criterio'},
   {s:'El equipo se pregunta a quién beneficia y a quién podría afectar.',type:'Ética del diseño'}
 ];
-const classifyTaskDB=[
+let classifyTaskDB=[
   {w:'Robot de la cosecha de café',gen:'El café tendido se moja cuando llueve de repente',n:'Sensor de lluvia o de humedad',g:'Motor con polea que cierra el techo',t:'Poco dinero y solo material reciclado'},
   {w:'Alerta del vado del río',gen:'En invierno nadie sabe si es seguro cruzar',n:'Sensor de nivel de agua',g:'Bocina y luz de alarma',t:'No hay tomacorriente: debe usar batería'},
   {w:'Regador del huerto escolar',gen:'La huerta se seca los fines de semana',n:'Sensor de humedad de la tierra',g:'Bomba o válvula de agua',t:'Debe ahorrar agua y ser seguro'},
@@ -299,7 +299,7 @@ const classifyTaskDB=[
   {w:'Espantapájaros robótico de la milpa',gen:'Los pájaros se comen el maíz recién sembrado',n:'Sensor de movimiento',g:'Brazo giratorio y bocina',t:'Debe funcionar todo el día con energía solar'},
   {w:'Aviso de humo en la cocina escolar',gen:'Nadie se da cuenta cuando la leña humea de más',n:'Sensor de humo',g:'Alarma sonora y luz',t:'Debe ser barato y no asustar a los niños'}
 ];
-const completeTaskDB=[
+let completeTaskDB=[
   {s:'El ciclo de diseño empieza al ___ el problema.',opts:['identificar','pintar','guardar'],ans:'identificar'},
   {s:'En la etapa de idear anotamos muchas ___.',opts:['ideas','faltas','notas'],ans:'ideas'},
   {s:'El dibujo rotulado del robot se llama ___.',opts:['boceto','recibo','cartel'],ans:'boceto'},
@@ -309,7 +309,7 @@ const completeTaskDB=[
   {s:'El dinero disponible es una ___ del proyecto.',opts:['restricción','idea','prueba'],ans:'restricción'},
   {s:'La última etapa del ciclo es ___ el resultado.',opts:['comunicar','borrar','esconder'],ans:'comunicar'}
 ];
-const explainQuestions=[
+let explainQuestions=[
   {q:'Explica con tus palabras las 7 etapas del ciclo de diseño y pon un ejemplo de cada una con un robot de tu comunidad.',ans:'Identificar (decir qué falla y a quién afecta), idear (muchas soluciones), diseñar (boceto con sensores, mecanismos, energía y programa), construir el prototipo, probar y anotar los fallos, mejorar y volver a probar, y comunicar el resultado.'},
   {q:'Escoge un problema de tu aldea o barrio y escribe su ficha de proyecto: problema, idea, diseño, prueba y mejora.',ans:'Respuesta libre. Debe verse el problema con las personas afectadas, una idea escogida entre varias, un diseño con sensor y actuador justificados, una prueba con datos y una mejora concreta.'},
   {q:'¿Cuál es la diferencia entre un criterio y una restricción? Da dos ejemplos de cada uno para el robot regador del huerto.',ans:'El criterio es lo que debe lograr (regar toda la huerta, ahorrar agua); la restricción es el límite (200 lempiras, tres semanas, material reciclado, sin cables pelados).'},
@@ -326,7 +326,7 @@ function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las si
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
-const sopaSets=[
+let sopaSets=[
   {size:10,grid:[
     ['X','P','R','O','T','O','T','I','P','O'],
     ['G','J','P','R','O','B','L','E','M','A'],
@@ -390,7 +390,7 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank=[
+let evalTFBank=[
   {q:'El ciclo de diseño empieza por identificar el problema.',a:true},
   {q:'Lo primero que hace un buen equipo es construir el robot.',a:false},
   {q:'En la etapa de idear conviene anotar muchas soluciones.',a:true},
@@ -407,7 +407,7 @@ const evalTFBank=[
   {q:'Los robots deben reemplazar a las personas sin avisarles.',a:false},
   {q:'En el equipo hay roles: diseñador, programador, constructor y probador.',a:true}
 ];
-const evalMCBank=[
+let evalMCBank=[
   {q:'¿Cuál es la primera etapa del ciclo de diseño?',o:['a) Construir','b) Identificar el problema','c) Comunicar','d) Probar'],a:1},
   {q:'¿Qué se hace en la etapa de idear?',o:['a) Pintar el robot','b) Anotar muchas soluciones posibles','c) Calificar al equipo','d) Guardar los materiales'],a:1},
   {q:'¿Qué contiene un buen boceto de diseño?',o:['a) Solo el nombre del robot','b) Sensores, mecanismos, energía y programa','c) La lista de asistencia','d) El precio de venta'],a:1},
@@ -424,7 +424,7 @@ const evalMCBank=[
   {q:'¿Cuál es una pregunta ética del diseño?',o:['a) ¿A quién beneficia y a quién podría afectar?','b) ¿De qué color lo pinto?','c) ¿Cuántos tornillos lleva?','d) ¿Quién dibuja mejor?'],a:0},
   {q:'¿Qué rol del equipo se encarga de ensayar el robot y anotar los fallos?',o:['a) El diseñador','b) El programador','c) El constructor','d) El probador'],a:3}
 ];
-const evalCPBank=[
+let evalCPBank=[
   {q:'El ciclo de diseño empieza al ___ el problema.',a:'identificar'},
   {q:'En la etapa de ___ se anotan muchas soluciones posibles.',a:'idear'},
   {q:'El dibujo rotulado del robot se llama ___.',a:'boceto'},
@@ -441,7 +441,7 @@ const evalCPBank=[
   {q:'Una maqueta de material ___ permite construir un prototipo barato.',a:'reciclado'},
   {q:'La presentación final dura dos ___ ante la clase.',a:'minutos'}
 ];
-const evalPRBank=[
+let evalPRBank=[
   {term:'Ciclo de diseño',def:'Los 7 pasos que siguen los ingenieros para resolver un problema'},
   {term:'Identificar',def:'Decir qué falla, a quién afecta y por qué importa'},
   {term:'Idear',def:'Anotar muchas soluciones posibles antes de escoger'},
@@ -524,7 +524,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
 .forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Robótica · Evaluación Conceptual · Robots que Resuelven Problemas · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Robótica · Robots que Resuelven Problemas · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 function evalSwitchMode(mode){
@@ -542,7 +542,7 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
-const critCasoBank=[
+let critCasoBank=[
   {txt:'En la aldea, el café tendido en el patio se moja cuando llueve de repente y la cosecha se pierde.',ans:'Problema: la lluvia repentina daña el café tendido y afecta a las familias cafetaleras. Sensor: de lluvia o de humedad. Actuador: motor con polea que cierra el techo corredizo. Programa: si detecta lluvia, entonces cierra el techo.'},
   {txt:'En invierno el río crece y los niños no saben si es seguro cruzar el vado para llegar a la escuela.',ans:'Problema: nadie sabe si el vado es seguro y hay riesgo de accidente. Sensor: de nivel de agua. Actuador: bocina y luz roja de alarma. Programa: si el nivel pasa la marca, entonces enciende la alarma.'},
   {txt:'La huerta escolar se seca los fines de semana porque nadie llega a regarla.',ans:'Problema: sin riego el fin de semana se pierden las plantas del huerto. Sensor: de humedad de la tierra. Actuador: bomba o válvula de agua. Programa: si la tierra está seca, entonces abre el agua hasta que se humedezca.'},
@@ -550,7 +550,7 @@ const critCasoBank=[
   {txt:'En el centro educativo el plástico y el papel se mezclan en el mismo depósito.',ans:'Problema: la basura mezclada no se puede reciclar. Sensor: de peso o de color. Actuador: banda con motor y compuerta que desvía. Programa: si el envase es liviano, entonces desvía al depósito del plástico.'},
   {txt:'Los pájaros se comen el maíz recién sembrado de la milpa cuando nadie está cuidando.',ans:'Problema: se pierde la siembra por falta de vigilancia. Sensor: de movimiento. Actuador: brazo giratorio con cintas y bocina. Programa: si detecta movimiento en la milpa, entonces gira el brazo y suena.'}
 ];
-const critErrorBank=[
+let critErrorBank=[
   {txt:'"Lo primero que hace un buen equipo es construir el robot; el problema se busca después."',
    g1:'Está al revés: la PRIMERA etapa es IDENTIFICAR el problema, decir qué falla, a quién afecta y por qué importa.',
    g2:'Construir sin problema definido desperdicia tiempo y materiales: no habría criterio con qué comparar la prueba.'},
@@ -567,12 +567,12 @@ const critErrorBank=[
    g1:'Falta la ÉTICA del diseño: hay que preguntarse a quién beneficia y a quién podría perjudicar.',
    g2:'También falta la SEGURIDAD de quien lo usa: voltaje bajo, cables aislados y partes sin filo son parte del diseño.'}
 ];
-const critProcesoQuestions=[
+let critProcesoQuestions=[
   '1. ¿Qué falló en la prueba y cómo se dieron cuenta?',
   '2. ¿Qué cambio concreto harías para mejorarlo?',
   '3. ¿Cómo comunicarías el resultado a tu comunidad?',
 ];
-const critProcesoBank=[
+let critProcesoBank=[
   {txt:'El equipo del huerto probó su regador tres veces: el agua se abrió bien, pero nunca se cerró y el terreno quedó encharcado.',
    f:'Falló el cierre: el programa abría el agua pero no tenía la orden de cerrarla cuando la tierra ya estaba húmeda. Lo notaron porque midieron el terreno después de cada ensayo.',
    m:'Agregar al programa: si la tierra ya está húmeda, entonces cierra la válvula; y volver a probar tres veces midiendo el agua usada.',
@@ -594,7 +594,7 @@ const critProcesoBank=[
    m:'Agregar un panel solar pequeño para recargar la batería y hacer que el brazo gire solo cuando el sensor detecte movimiento.',
    c:'Compartiendo con los vecinos la tabla de horas de funcionamiento antes y después del panel solar.'}
 ];
-const critCompareBank=[
+let critCompareBank=[
   {a:'Enunciado que dice qué falla, a quién afecta y por qué importa (ejemplo: la huerta se seca el fin de semana).',b:'Propuesta concreta para resolverlo (ejemplo: un regador que abre el agua cuando la tierra está seca).',
    ga:'El problema.',
    gb:'La solución.',
@@ -612,14 +612,14 @@ const critCompareBank=[
    gb:'La comunicación del proyecto.',
    gr:'Semejanza: los dos explican el robot a otras personas y necesitan claridad. Diferencia: el boceto se hace antes de construir y guía al equipo; la comunicación se hace al final y muestra los resultados obtenidos.'}
 ];
-const critDesignBank=[
+let critDesignBank=[
   'En tu comunidad, la cosecha de café se pierde cuando llueve de repente y los granos están secándose en el patio.',
   'En invierno el río crece y los niños no saben si es seguro cruzar el vado para llegar a la escuela.',
   'La huerta escolar se seca porque nadie llega a regarla los fines de semana ni en vacaciones.',
   'El agua de la quebrada inunda las casas del barrio de noche y las familias no alcanzan a resguardar sus cosas.',
   'En el centro educativo la basura se mezcla: plástico, papel y restos de comida van al mismo depósito.',
 ];
-const critDesignGuide='Rúbrica de 4 criterios (total 20 pts) — ① PROBLEMA BIEN DEFINIDO (5 pts): dice qué falla, a quién afecta y por qué importa, con un criterio de éxito medible. ② SENSORES Y MECANISMOS JUSTIFICADOS (5 pts): nombra qué sensor mide la señal del problema, qué mecanismo o actuador ejecuta la acción y qué fuente de energía usa, explicando POR QUÉ escogió cada uno. ③ PROGRAMA COHERENTE (5 pts): escribe la instrucción principal en la forma «si pasa X, entonces hace Y», y respeta las restricciones de costo, materiales, tiempo y seguridad. ④ MEJORA TRAS LA PRUEBA (5 pts): describe cómo probaría el prototipo (qué mediría y cuántas veces) y qué mejoraría si falla, mostrando que fallar es parte del proceso.';
+let critDesignGuide='Rúbrica de 4 criterios (total 20 pts) — ① PROBLEMA BIEN DEFINIDO (5 pts): dice qué falla, a quién afecta y por qué importa, con un criterio de éxito medible. ② SENSORES Y MECANISMOS JUSTIFICADOS (5 pts): nombra qué sensor mide la señal del problema, qué mecanismo o actuador ejecuta la acción y qué fuente de energía usa, explicando POR QUÉ escogió cada uno. ③ PROGRAMA COHERENTE (5 pts): escribe la instrucción principal en la forma «si pasa X, entonces hace Y», y respeta las restricciones de costo, materiales, tiempo y seguridad. ④ MEJORA TRAS LA PRUEBA (5 pts): describe cómo probaría el prototipo (qué mediría y cuántas veces) y qué mejoraría si falla, mostrando que fallar es parte del proceso.';
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
@@ -687,13 +687,13 @@ function printEvalCrit(){
   const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Robots que Resuelven Problemas · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #0e7490;background:#ecfeff;color:#0e7490;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#0e7490;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #0e7490;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#ecfeff;border-left:3px solid #0e7490;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#ecfeff;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#0e7490;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #0e7490;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Robótica · Prueba de Pensamiento Crítico · Robots que Resuelven Problemas · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Robots que Resuelven Problemas · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
-  win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
+  win.document.write(typeof METAS_TR==='function'?METAS_TR(doc):doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
 // ===================== TALLER DE DISEÑO =====================
 // Recorrido por las 7 etapas del ciclo de diseño aplicado a 5 proyectos hondureños.
 // Toda la retroalimentación sale de los datos: las claves nunca se escriben en el HTML.
-const CICLO_ETAPAS=[
+let CICLO_ETAPAS=[
   {id:'identificar',n:'1. Identificar el problema',icon:'🔍',guia:'¿Qué falla?, ¿a quién afecta?, ¿por qué importa? Aquí se escribe también el criterio de éxito.'},
   {id:'idear',n:'2. Idear soluciones',icon:'💡',guia:'Se anotan MUCHAS ideas sin juzgarlas; después se escoge la más realista según el costo, el tiempo y los materiales.'},
   {id:'disenar',n:'3. Diseñar',icon:'✏️',guia:'Boceto rotulado: qué SENSOR mide, qué MECANISMO actúa, qué ENERGÍA lo mueve y qué INSTRUCCIÓN sigue el programa.'},
@@ -703,7 +703,7 @@ const CICLO_ETAPAS=[
   {id:'comunicar',n:'7. Comunicar',icon:'📢',guia:'Se presenta el proyecto en dos minutos: problema, diseño, prueba, mejora y a quién beneficia.'}
 ];
 function cicloOrdenCorrecto(){return CICLO_ETAPAS.map(e=>e.id);}
-const proyectosHN=[
+let proyectosHN=[
   {id:'cafe',nombre:'Robot del patio de café',icon:'☕',equipo:'Diseñadora: Keyli · Programador: Denis · Constructor: Alexis · Probadora: Yensi',
    etapas:{
     identificar:'☕ En la aldea, el café tendido en el patio se moja cuando llueve de repente. Afecta a las familias cafetaleras: pierden parte de la cosecha del año. <strong>Criterio:</strong> el techo debe quedar cerrado antes de un minuto desde la primera gota.',
@@ -893,3 +893,66 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ===================== IDIOMA (español ↔ inglés) =====================
+// El contenido en inglés vive en robots-problemas-en.js y el botón lo maneja
+// ../../js/metas-i18n.js. Aquí solo se intercambian los bancos y se repinta:
+// el progreso (XP, logros, secciones hechas) no se toca al cambiar de idioma.
+//
+// El widget que ordena las 7 etapas compara por ID (identificar, idear…), no
+// por texto, así que traducir CICLO_ETAPAS no lo rompe. Los otros tres widgets
+// sí comparan contra el textContent del botón, pero ese texto sale del propio
+// banco: al cambiarlo entero, los dos lados quedan en el mismo idioma.
+const _BANCOS_ES = {
+  ACHIEVEMENTS, lvls, fcData, memoPairs, qzData, classGroups, idData, cmpData,
+  routeSets, neuronPartes, neuroPairs, enfermedadData, retoPairs,
+  identifyTaskDB, classifyTaskDB, completeTaskDB, explainQuestions, sopaSets,
+  evalTFBank, evalMCBank, evalCPBank, evalPRBank,
+  critCasoBank, critErrorBank, critProcesoQuestions, critProcesoBank,
+  critCompareBank, critDesignBank, critDesignGuide, CICLO_ETAPAS, proyectosHN
+};
+window.MISION_APLICAR_IDIOMA = function (lang) {
+  const src = (lang === 'en' && window.MISION_EN && window.MISION_EN.data)
+    ? window.MISION_EN.data : _BANCOS_ES;
+  const usa = (k) => (src[k] !== undefined ? src[k] : _BANCOS_ES[k]);
+
+  ACHIEVEMENTS = usa('ACHIEVEMENTS'); lvls = usa('lvls');
+  fcData = usa('fcData'); memoPairs = usa('memoPairs'); qzData = usa('qzData');
+  classGroups = usa('classGroups'); idData = usa('idData'); cmpData = usa('cmpData');
+  routeSets = usa('routeSets'); neuronPartes = usa('neuronPartes');
+  neuroPairs = usa('neuroPairs'); enfermedadData = usa('enfermedadData');
+  retoPairs = usa('retoPairs'); identifyTaskDB = usa('identifyTaskDB');
+  classifyTaskDB = usa('classifyTaskDB'); completeTaskDB = usa('completeTaskDB');
+  explainQuestions = usa('explainQuestions'); sopaSets = usa('sopaSets');
+  evalTFBank = usa('evalTFBank'); evalMCBank = usa('evalMCBank');
+  evalCPBank = usa('evalCPBank'); evalPRBank = usa('evalPRBank');
+  critCasoBank = usa('critCasoBank'); critErrorBank = usa('critErrorBank');
+  critProcesoQuestions = usa('critProcesoQuestions'); critProcesoBank = usa('critProcesoBank');
+  critCompareBank = usa('critCompareBank'); critDesignBank = usa('critDesignBank');
+  critDesignGuide = usa('critDesignGuide');
+  CICLO_ETAPAS = usa('CICLO_ETAPAS'); proyectosHN = usa('proyectosHN');
+
+  // Repintar cada juego desde el principio con el banco nuevo
+  fcIdx = 0; upFC();
+  buildMemo();
+  qzIdx = 0; qzSel = -1; qzDone = false; showQz();
+  currentClassGroupIdx = 0; buildClass();
+  idIdx = 0; showId();
+  cmpIdx = 0; cmpSel = -1; showCmp();
+  currentRouteIdx = 0; buildRoute();
+  neuronIdx = 0; showNeuron();
+  neuroIdx = 0; showNeuro();
+  enferIdx = 0; showEnfer();
+  currentRetoPairIdx = 0; updateRetoButtons(); resetReto();
+  currentSopaSetIdx = 0; sopaFoundWords = new Set(); buildSopa();
+  tallerShowProyecto(tallerProy); tallerShowEtapa(tallerEtapa); tallerBuildOrden();
+  renderAchPanel(); updateXPBar();
+
+  // Las pruebas ya generadas se rehacen en el idioma nuevo, con su misma forma
+  const out = document.getElementById('evalOut');
+  if (out && out.innerHTML.trim()) { evalFormNum = window._currentEvalForm || evalFormNum; genEval(); }
+  const outCrit = document.getElementById('evalCritOut');
+  if (outCrit && outCrit.innerHTML.trim()) { evalCritFormNum = window._currentEvalCritForm || evalCritFormNum; genEvalCrit(); }
+  const tg = document.getElementById('tgOut');
+  if (tg) tg.innerHTML = '';
+};
