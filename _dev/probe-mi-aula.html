@@ -67,7 +67,7 @@ f.onload = () => {
         const fila = d.querySelector('.ad-colecta-row');
         if (fila) fila.click();
         setTimeout(() => {
-          const ruta = d.querySelector('.ad-ruta');
+          const ruta = d.querySelector('.nav-ruta');
           comprueba(!!ruta, 'hay migaja de pan', 'falta la migaja de pan');
           if (ruta) log('  migaja: «' + ruta.textContent.replace(/\s+/g, ' ').trim() + '»');
           comprueba(!d.querySelector('.ad-volver'),
@@ -88,7 +88,7 @@ f.onload = () => {
           setTimeout(() => {
             const sigueEnAula = d.getElementById('view-admin').classList.contains('active');
             comprueba(sigueEnAula, 'al tocarla, sigue dentro de Mi aula', 'se salió del aula');
-            comprueba(!d.querySelector('.ad-ruta'), 'y volvió a la lista de colectas', 'no volvió a la lista');
+            comprueba(!d.querySelector('.nav-ruta'), 'y volvió a la lista de colectas', 'no volvió a la lista');
             log('\n' + (fallos ? '✖ ' + fallos + ' fallos' : '✔ todo en orden'));
           }, 250);
         }, 300);

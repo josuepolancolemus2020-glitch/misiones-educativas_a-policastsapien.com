@@ -852,10 +852,10 @@ function adRenderColecta(body, d) {
 
   body.innerHTML = `
     <div class="pa-card">
-      <nav class="ad-ruta" aria-label="Dónde estás">
-        <button class="ad-ruta-link" id="ad-eco-volver">🗂️ Mis colectas</button>
-        <span class="ad-ruta-sep" aria-hidden="true">›</span>
-        <span class="ad-ruta-actual" aria-current="page">estás aquí</span>
+      <nav class="nav-ruta" aria-label="Dónde estás">
+        <button class="nav-ruta-link" id="ad-eco-volver">🗂️ Mis colectas</button>
+        <span class="nav-ruta-sep" aria-hidden="true">›</span>
+        <span class="nav-ruta-actual" aria-current="page">estás aquí</span>
       </nav>
       <div class="pa-card-title">💰 ${adEsc(c.concepto)}</div>
       <p class="pa-optional-hint">${adFechaBonita(c.fecha)} · aporte sugerido: <strong>${adLps(c.montoAlumno)}</strong><br>

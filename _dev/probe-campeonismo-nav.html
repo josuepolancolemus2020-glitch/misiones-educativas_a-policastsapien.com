@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sonda · Navegación del Campeonísimo</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 10px; background: #222; color: #eee; }
+  iframe { width: 380px; height: 900px; border: 0; background: #fff; }
+  pre { background: #111; color: #7f7; padding: 10px; font-size: 12px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<iframe id="f" src="/index.html"></iframe>
+<pre id="out">midiendo…</pre>
+<script>
+/* REGLA DE LA CASA: la flecha ← es solo del encabezado y sube UN nivel.
+   Dentro del contenido no va ninguna flecha: para subir está la migaja de
+   pan y para cerrar un recorrido, un botón con nombre propio.
+   Esta sonda recorre el Campeonísimo y comprueba, en cada pantalla:
+   - que haya migaja donde toca y no la haya en el menú,
+   - que no quede ningún «←» dentro de #camp-content,
+   - que la flecha del encabezado diga (y haga) a dónde lleva de verdad. */
+const out = document.getElementById('out'), f = document.getElementById('f');
+const L = []; let fallos = 0;
+function log(s) { L.push(s); out.textContent = L.join('\n'); }
+function comprueba(cond, ok, mal) { if (cond) log('  ✔ ' + ok); else { fallos++; log('  ✘ ' + mal); } }
+const esperar = ms => new Promise(r => setTimeout(r, ms));
+
+f.onload = async () => {
+  const w = f.contentWindow, d = f.contentDocument;
+  await esperar(900);
+  try {
+    const cont   = () => d.getElementById('camp-content');
+    const flecha = () => d.getElementById('camp-back-btn');
+    const rotulo = () => flecha().getAttribute('aria-label') || '';
+    const flechasDentro = () => (cont().textContent.match(/←/g) || []).length;
+    const migaja = () => cont().querySelector('.nav-ruta');
+
+    /* revisa una pantalla de segundo nivel y vuelve al menú por la vía pedida */
+    async function revisa(nombre, abrir, volverPor) {
+      log('\n── ' + nombre.toUpperCase() + ' ──');
+      abrir();
+      await esperar(350);
+      const m = migaja();
+      comprueba(!!m, 'hay migaja de pan', 'falta la migaja de pan');
+      if (m) log('  migaja: «' + m.textContent.replace(/\s+/g, ' ').trim() + '»');
+      const fl = flechasDentro();
+      comprueba(fl === 0, 'no queda ninguna flecha ← en el contenido',
+        'quedan ' + fl + ' flechas ← que compiten con la del encabezado');
+      log('  rótulo de la flecha: «' + rotulo() + '»');
+      comprueba(/Campeonísimo/.test(rotulo()),
+        'la flecha sube al menú del Campeonísimo', 'la flecha no cambió de destino');
+
+      if (volverPor === 'flecha') flecha().click();
+      else cont().querySelector('#camp-ruta-menu').click();
+      await esperar(350);
+      const enHome = !!d.getElementById('camp-h-torneo');
+      comprueba(enHome, 'al tocar la ' + volverPor + ' vuelve al menú', 'no volvió al menú');
+      comprueba(d.getElementById('view-campeonismo').classList.contains('active'),
+        'y sigue dentro de la herramienta', 'se salió de la herramienta');
+      comprueba(/Zona Docente/.test(rotulo()),
+        'en el menú la flecha vuelve a salir a la Zona Docente',
+        'en el menú la flecha sigue apuntando adentro');
+    }
+
+    w.switchView('view-campeonismo');
+    await esperar(500);
+
+    log('── MENÚ DEL CAMPEONÍSIMO ──');
+    comprueba(!!d.getElementById('camp-h-torneo'), 'abrió el menú', 'no abrió el menú');
+    comprueba(!migaja(), 'el menú no lleva migaja', 'el menú no debería llevar migaja');
+    log('  rótulo de la flecha: «' + rotulo() + '»');
+    comprueba(/Zona Docente/.test(rotulo()),
+      'la flecha sale a la Zona Docente', 'la flecha debería salir a la Zona Docente');
+
+    await revisa('Salón de la Fama',  () => d.getElementById('camp-h-fama').click(),     'flecha');
+    await revisa('Modo Práctica',     () => d.getElementById('camp-h-practica').click(), 'migaja');
+    await revisa('Nuevo Torneo',      () => d.getElementById('camp-h-torneo').click(),   'flecha');
+
+    /* Los botones de abajo se leen como acción, no como retroceso */
+    log('\n── BOTONES DE ABAJO ──');
+    d.getElementById('camp-h-practica').click();
+    await esperar(300);
+    const btn = d.getElementById('camp-pr-back');
+    log('  botón de salida: «' + (btn ? btn.textContent.trim() : '(no hay)') + '»');
+    comprueba(btn && !/←/.test(btn.textContent), 'sin flecha, con nombre propio', 'sigue con flecha');
+
+    /* Durante una práctica en curso la flecha NO salta al menú: sale de la
+       herramienta y el estado se conserva para reanudar al volver. */
+    log('\n── PRÁCTICA EN CURSO ──');
+    d.getElementById('camp-pr-start').click();
+    await esperar(400);
+    const jugando = !!d.querySelector('.camp-q-opt');
+    comprueba(jugando, 'arrancó la práctica', 'no arrancó la práctica');
+    if (jugando) {
+      log('  rótulo de la flecha: «' + rotulo() + '»');
+      comprueba(/Zona Docente/.test(rotulo()),
+        'la flecha sale de la herramienta, no salta al menú',
+        'la flecha ofrece salida de un toque a una práctica empezada');
+      comprueba(flechasDentro() === 0, 'tampoco hay flechas ← en la pregunta',
+        'hay flechas ← dentro de la pregunta');
+      flecha().click();
+      await esperar(300);
+      w.switchView('view-campeonismo');
+      await esperar(400);
+      comprueba(!!d.querySelector('.camp-q-opt'), 'al volver, la práctica se reanuda donde iba',
+        'la práctica se perdió al salir');
+    }
+
+    log('\n' + (fallos ? '✖ ' + fallos + ' fallos' : '✔ todo en orden'));
+  } catch (e) { log('✘ ' + e.message + '\n' + e.stack); }
+};
+</script>
+</body>
+</html>

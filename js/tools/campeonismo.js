@@ -150,6 +150,35 @@ let _container = null;
 let _timerInt  = null;
 const $id = id => document.getElementById(id);
 
+/* A dónde sube la flecha del encabezado desde la pantalla actual.
+   null = no hay nivel intermedio, así que sale de la herramienta.
+   Cada pantalla lo declara al pintarse; durante una partida en vivo se
+   deja en null a propósito, para no dar una salida de un toque a un
+   torneo empezado (el estado se conserva y al volver se reanuda). */
+let _campArriba = null;
+function _campSubir(fn) {
+  _campArriba = fn || null;
+  /* la flecha dice a dónde lleva AHORA, como en Mi aula */
+  const b = $id('camp-back-btn');
+  if (!b) return;
+  const rotulo = _campArriba ? 'Volver al menú del Campeonísimo' : 'Volver a la Zona Docente';
+  b.setAttribute('aria-label', rotulo);
+  b.setAttribute('title', rotulo);
+}
+
+/* Migaja de pan: la flecha ← es solo del encabezado, aquí nunca. */
+function _campRuta(rotulo) {
+  return `
+    <nav class="nav-ruta" aria-label="Dónde estás">
+      <button class="nav-ruta-link" id="camp-ruta-menu">🏆 Menú del Campeonísimo</button>
+      <span class="nav-ruta-sep" aria-hidden="true">›</span>
+      <span class="nav-ruta-actual" aria-current="page">${rotulo}</span>
+    </nav>`;
+}
+function _campRutaEnganchar() {
+  $id('camp-ruta-menu')?.addEventListener('click', () => { _sfx('click'); renderCampHome(); });
+}
+
 function _stopTimer() { clearInterval(_timerInt); _timerInt = null; }
 
 function _missionsBySubject(subjectKey) {
@@ -323,6 +352,7 @@ window.initCampeonismo = initCampeonismo;
 ══════════════════════════════════════════════════════════════ */
 function renderCampHome() {
   CAMP.screen = 'home';
+  _campSubir(null);            /* aquí sí, la flecha sale a la Zona Docente */
   _stopTimer();
   const data   = _campLoad();
   const total  = data.historial.length;
@@ -467,6 +497,7 @@ function _showNormas(cfg) {
 ══════════════════════════════════════════════════════════════ */
 function renderSetup() {
   CAMP.screen = 'setup';
+  _campSubir(renderCampHome);
   _stopTimer();
 
   const misionHTML = CAMP_SUBJECTS.map(s => {
@@ -490,6 +521,7 @@ function renderSetup() {
 
   _container.innerHTML = `
     <div class="camp-setup">
+      ${_campRuta('Nuevo torneo')}
 
       <div class="camp-setup-hero">
         <div class="camp-trophy">🎬</div>
@@ -603,9 +635,10 @@ function renderSetup() {
 
       <button class="camp-action-btn camp-ver-normas" id="camp-ver-normas">📜 Ver normas con esta configuración</button>
       <button class="camp-start-btn" id="camp-start-btn">🎬 ¡Al aire! Comenzar torneo</button>
-      <button class="camp-action-btn" id="camp-setup-back">← Volver</button>
+      <button class="camp-action-btn" id="camp-setup-back">🏆 Ir al menú del Campeonísimo</button>
     </div>
   `;
+  _campRutaEnganchar();
 
   const activate = (sel, cb) => _container.querySelectorAll(sel).forEach(btn =>
     btn.addEventListener('click', () => {
@@ -748,6 +781,7 @@ function startTorneo() {
 function renderRondaIntro() {
   const T = CAMP.T; if (!T) { renderCampHome(); return; }
   const R = _rondasDef(T.cfg)[T.rondaIdx];
+  _campSubir(null);            /* torneo en marcha: la flecha no salta al menú */
   _stopTimer();
   _sfx('drum');
 
@@ -795,6 +829,7 @@ function _turnGroup() {
 function renderTurno() {
   const T = CAMP.T; if (!T) { renderCampHome(); return; }
   CAMP.screen = 'play';
+  _campSubir(null);
   T.fase = 'turno';
   T.currentSubject = null;
   _stopTimer();
@@ -1409,6 +1444,7 @@ function renderApuesta(subjectKey) {
   const subject = CAMP_SUBJECTS.find(s => s.key === subjectKey);
   const maxBet  = Math.max(0, g.score);
   T.apuesta = Math.min(Math.max(T.cfg.basePts, Math.round(maxBet / 2 / 5) * 5), maxBet) || T.cfg.basePts;
+  _campSubir(null);
   _sfx('drum');
 
   _container.innerHTML = `
@@ -1470,6 +1506,7 @@ function _empatePrimero() {
 
 function renderMuerteSubita() {
   const T = CAMP.T, M = T.muerte;
+  _campSubir(null);
   _sfx('drum');
   T.fase = 'muerte';
 
@@ -1682,6 +1719,7 @@ function renderPodio() {
   const sorted = [...T.groups].sort((a, b) => b.score - a.score);
   const insignias = _calcularInsignias();
   T.insignias = insignias;
+  _campSubir(renderCampHome);  /* el torneo ya terminó: arriba está el menú */
   _sfx('fanfare');
 
   /* Guardar en el Salón de la Fama */
@@ -1739,7 +1777,7 @@ function renderPodio() {
 
       <button class="camp-start-btn" id="camp-pd-nuevo">🎬 Nuevo torneo</button>
       <button class="camp-action-btn" id="camp-pd-fama">🏅 Ver Salón de la Fama</button>
-      <button class="camp-action-btn" id="camp-pd-home">← Menú del Campeonísimo</button>
+      <button class="camp-action-btn" id="camp-pd-home">🏆 Ir al menú del Campeonísimo</button>
     </div>`;
 
   _lanzarConfetti();
@@ -1769,6 +1807,7 @@ function _lanzarConfetti() {
 ══════════════════════════════════════════════════════════════ */
 function renderFame() {
   CAMP.screen = 'fame';
+  _campSubir(renderCampHome);
   _stopTimer();
   const data = _campLoad();
   const hist = [...data.historial].reverse();
@@ -1785,6 +1824,7 @@ function renderFame() {
 
   _container.innerHTML = `
     <div class="camp-setup">
+      ${_campRuta('Salón de la Fama')}
       <div class="camp-setup-hero">
         <div class="camp-trophy">🏅</div>
         <h2 class="camp-setup-title">Salón de la Fama</h2>
@@ -1817,8 +1857,9 @@ function renderFame() {
       }).join('')}
 
       ${hist.length ? `<button class="camp-action-btn camp-fame-borrar" id="camp-fame-clear">🗑 Borrar historial</button>` : ''}
-      <button class="camp-action-btn" id="camp-fame-back">← Menú del Campeonísimo</button>
+      <button class="camp-action-btn" id="camp-fame-back">🏆 Ir al menú del Campeonísimo</button>
     </div>`;
+  _campRutaEnganchar();
 
   const clearBtn = $id('camp-fame-clear');
   if (clearBtn) clearBtn.addEventListener('click', async () => {
@@ -1835,6 +1876,7 @@ function renderFame() {
 function renderPracticeSetup() {
   CAMP.screen = 'practice';
   CAMP.P = null;
+  _campSubir(renderCampHome);
   _stopTimer();
 
   const misionHTML = CAMP_SUBJECTS.map(s => {
@@ -1857,6 +1899,7 @@ function renderPracticeSetup() {
 
   _container.innerHTML = `
     <div class="camp-setup">
+      ${_campRuta('Modo Práctica')}
       <div class="camp-setup-hero">
         <div class="camp-trophy">🎯</div>
         <h2 class="camp-setup-title">Modo Práctica</h2>
@@ -1882,8 +1925,9 @@ function renderPracticeSetup() {
       </div>
 
       <button class="camp-start-btn" id="camp-pr-start">🎯 ¡A practicar!</button>
-      <button class="camp-action-btn" id="camp-pr-back">← Volver</button>
+      <button class="camp-action-btn" id="camp-pr-back">🏆 Ir al menú del Campeonísimo</button>
     </div>`;
+  _campRutaEnganchar();
 
   _container.querySelectorAll('.camp-pn-btn').forEach(btn =>
     btn.addEventListener('click', () => {
@@ -1951,6 +1995,7 @@ function renderPractice() {
   if (P.idx >= P.qs.length) { renderPracticeEnd(); return; }
 
   CAMP.screen = 'practice';
+  _campSubir(null);            /* práctica en curso: se reanuda al volver */
   const q = P.qs[P.idx];
   const subject = CAMP_SUBJECTS.find(s => s.key === q.subj);
 
@@ -2039,6 +2084,7 @@ function _findMissionByTitle(title) {
 
 function renderPracticeEnd() {
   const P = CAMP.P;
+  _campSubir(renderCampHome);  /* la práctica terminó: arriba está el menú */
   const total = P.qs.length;
   const pct   = total ? Math.round(P.aciertos / total * 100) : 0;
   const emoji = pct >= 90 ? '🌟' : pct >= 70 ? '💪' : pct >= 50 ? '📚' : '🌱';
@@ -2079,7 +2125,7 @@ function renderPracticeEnd() {
         </div>` : '')}
 
       <button class="camp-start-btn" id="camp-pr-otra">🎯 Practicar de nuevo</button>
-      <button class="camp-action-btn" id="camp-pr-home">← Menú del Campeonísimo</button>
+      <button class="camp-action-btn" id="camp-pr-home">🏆 Ir al menú del Campeonísimo</button>
     </div>`;
 
   $id('camp-pr-otra').addEventListener('click', () => { _sfx('click'); renderPracticeSetup(); });
@@ -2278,6 +2324,13 @@ function _vivoPodioPublicar(insignias) {
 /* ── Registro de navegación (llamado por app.js al cargar) ── */
 function campRegisterNav() {
   $id('goto-camp-btn')?.addEventListener('click', () => switchView('view-campeonismo'));
-  $id('camp-back-btn')?.addEventListener('click', () => switchView('view-perfil'));
+  /* La flecha sube UN nivel. Desde armar el torneo, el Salón de la Fama o
+     el final de una práctica, «atrás» es el menú del Campeonísimo, no la
+     Zona Docente: el maestro confundía esta flecha con los botones de
+     volver que había dentro del contenido y se salía de la herramienta. */
+  $id('camp-back-btn')?.addEventListener('click', () => {
+    if (typeof _campArriba === 'function') { _sfx('click'); _campArriba(); return; }
+    switchView('view-perfil');
+  });
 }
 window.campRegisterNav = campRegisterNav;

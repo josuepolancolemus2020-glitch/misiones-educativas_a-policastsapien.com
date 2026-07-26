@@ -4038,16 +4038,19 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   display: flex; justify-content: space-between; gap: 8px;
   padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px;
 }
-/* ── Migaja de pan dentro de una colecta ──
-   Antes había aquí un «← Todas las colectas» y el maestro lo confundía con
-   la flecha del encabezado: dos flechas hacia la izquierda en la misma
-   pantalla, una sale del aula y la otra no. La migaja quita la flecha y
-   enseña la jerarquía, que es lo que de verdad hacía falta saber. */
-.ad-ruta {
+/* ── Migaja de pan de las herramientas del maestro ──
+   REGLA DE LA CASA: la flecha ← es SOLO del encabezado. Dentro del
+   contenido no va ninguna, porque dos flechas hacia la izquierda en la
+   misma pantalla se confunden y una de ellas se sale de la herramienta.
+   Para subir de nivel, esta migaja arriba; para cerrar un recorrido, un
+   botón con nombre propio abajo («🏆 Ir al menú…»), que se lee como una
+   acción y no como un retroceso.
+   La usan Mi aula (colectas) y el Campeonísimo. */
+.nav-ruta {
   display: flex; align-items: center; gap: 7px;
   margin-bottom: 12px; min-width: 0;
 }
-.ad-ruta-link {
+.nav-ruta-link {
   flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
   background: rgba(30,58,124,.07); border: 1.5px solid rgba(30,58,124,.14);
   border-radius: 999px; cursor: pointer; font-family: inherit;
@@ -4057,20 +4060,20 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
 @media (hover: hover) {
-  .ad-ruta-link:hover { background: rgba(30,58,124,.13); border-color: var(--brand-light); }
+  .nav-ruta-link:hover { background: rgba(30,58,124,.13); border-color: var(--brand-light); }
 }
-.ad-ruta-link:active { transform: scale(.96); }
-.ad-ruta-link:focus-visible { outline: 3px solid rgba(59,130,246,.5); outline-offset: 2px; }
-.ad-ruta-sep { flex-shrink: 0; color: var(--faint); font-size: 15px; font-weight: 800; }
+.nav-ruta-link:active { transform: scale(.96); }
+.nav-ruta-link:focus-visible { outline: 3px solid rgba(59,130,246,.5); outline-offset: 2px; }
+.nav-ruta-sep { flex-shrink: 0; color: var(--faint); font-size: 15px; font-weight: 800; }
 /* El nombre de la colecta ya va en el título grande de la tarjeta, justo
    debajo: aquí solo se marca el «estás aquí», sin repetirlo. */
-.ad-ruta-actual {
+.nav-ruta-actual {
   min-width: 0; font-size: 12.5px; font-weight: 700; color: var(--muted);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 @media (prefers-reduced-motion: reduce) {
-  .ad-ruta-link { transition: none; }
-  .ad-ruta-link:active { transform: none; }
+  .nav-ruta-link { transition: none; }
+  .nav-ruta-link:active { transform: none; }
 }
 
 /* tablas y notas SACE */
