@@ -33,8 +33,8 @@ te interpele o cuestione, con seguridad y con tus propias palabras.
   *«¿Y si GitHub o Supabase se caen?»* → offline-first: la app funciona sin red.
 
 ### Módulo 2 — El frontend: mapa de piezas
-- `index.html` (Portada de Tres Puertas), las **32 misiones** (estructura de
-  3 archivos, 13 secciones didácticas), Zona Docente y sus 7 herramientas
+- `index.html` (13 vistas), las **57 misiones** (estructura de
+  3 archivos, 14 secciones), Zona Docente y sus 7 herramientas
   (`js/tools/`: plan-accion, registros-admin, campeonismo, gobierno-escolar,
   parte-mensual, collage-maker, pwa-install), páginas satélite
   (`padres.html`, `panel-docente.html`, `consulta-nube.html`, `registro.html`,
@@ -128,8 +128,10 @@ te interpele o cuestione, con seguridad y con tus propias palabras.
 
 ## 4. Estado
 
-- [x] Módulo 1 — Panorama → `kit-auto-1.html` (17 jul 2026)
-- [ ] Módulo 2 — Frontend
+- [x] Módulo 1 — Panorama → `kit-auto-1.html` (17 jul 2026) y misión
+      interactiva en F.A.R.O (id 3). Cifras actualizadas el 26 jul 2026.
+- [x] Módulo 2 — Frontend → misión interactiva en F.A.R.O (id 4,
+      `modulo-2-frontend`, 26 jul 2026). Falta su `kit-auto-2.html` imprimible.
 - [ ] Módulo 3 — Datos locales
 - [ ] Módulo 4 — Nube Supabase
 - [ ] Módulo 5 — Seguridad ⭐
