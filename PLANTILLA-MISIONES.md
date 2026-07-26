@@ -93,6 +93,36 @@ Reglas de ahorro y calidad:
      como se publicaron**, aunque traigan guion largo. Cambiar un título es
      alterar la cita.
 
+1-ter. **⚠️ NORMATIVA DE RESPUESTAS REPARTIDAS (obligatoria, jul 2026)**:
+   en los bancos de opción múltiple, **ninguna letra puede concentrar más del
+   40%** de las respuestas correctas. Aplica a los tres bancos que el motor
+   pinta en **orden fijo** (los widgets no cuentan porque el motor los baraja
+   al pintarlos):
+
+   - `qzData` (quiz de comprensión, clave `c`),
+   - `evalMCBank` (selección múltiple de la evaluación final, clave `a`),
+   - `cmpData` (completa la oración, clave `c`).
+
+   - **Por qué:** si la correcta está casi siempre en la misma letra, el alumno
+     aprueba sin leer y la misión deja de medir lo que dice medir. El defecto se
+     detectó el 26-jul-2026: **54 de las 57 misiones** tenían al menos un banco
+     por encima del 40%, con la «b» dominando en 36 quizzes y casos extremos del
+     93% y del 100%.
+   - **Cómo se mide:** `node _dev/mide-reparto-respuestas.js` (solo informa;
+     `--detalle` lista las 57). Ninguna misión nueva se publica sin pasarlo.
+   - **Cómo se escribe un banco nuevo:** repartir a mano las correctas entre a,
+     b, c y d mientras se redacta. Es más barato que corregirlo después.
+   - ⚠️ **Al reordenar opciones de una misión traducida, mover los DOS lados a
+     la vez.** Los bancos del `-en.js` van **índice a índice** con el español: si
+     se cambia el orden en uno y no en el otro, la respuesta correcta en inglés
+     apunta a otra opción. Después, pasar el verificador de bancos traducidos.
+   - ⚠️ **Reordenar cambia las pruebas impresas de aquí en adelante.** Las 30
+     formas deterministas se arman del banco, así que la pauta siempre sale
+     coherente con lo que se imprime ese día, pero **una pauta ya fotocopiada o
+     una clave de ZipGrade ya registrada deja de coincidir**. Igual que con el
+     cambio de formas del 23-jul: se corta por fecha y lo ya impreso se termina
+     con su pauta vieja.
+
 2. **Predice** (primera impresión, debe encantar): cada predicción lleva su
    explorador interactivo ("🔍 Explorar la pista") que induce a la respuesta
    jugando: medir distancias, animaciones, tocar y descubrir.
