@@ -2,8 +2,6 @@
 
 **Tu guía para completar misiones y convertirte en Maestro del conocimiento**
 
-[IMAGEN: portada divertida con el logo de M.E.T.A.S y un cohete]
-
 ---
 
 ## 1. ¿Qué es una misión? 🎯
@@ -18,23 +16,23 @@ demostrar todo lo que sabes!
 
 **Lo mejor: funciona sin internet.** Puedes trabajar donde sea.
 
-[IMAGEN: una misión abierta mostrando las secciones de colores]
-
 ---
 
 ## 2. Las rutas: elige tu aventura 🗺️
 
 Las misiones están ordenadas en **rutas**. Cada ruta tiene etapas, como los
-niveles de un videojuego: terminas una y se abre la siguiente.
+niveles de un videojuego: terminas una y se abre la siguiente. Hoy hay
+**57 misiones repartidas en 11 rutas**:
 
 - 🧭 Ruta del Número · 📐 Ruta de la Forma → matemáticas
 - ✍️ Ruta de la Palabra → español
 - 🧠 Ruta del Cuerpo · 🌱 Ruta de la Vida · ⚡ Ruta de la Materia → ciencias naturales
 - 🌎 Ruta del Planeta · 🏛️ Ruta del Tiempo → ciencias sociales
-- 💻 **Ruta del Código** → ¡programación! **NUEVA**
-- 🤖 **Ruta de los Robots** → ¡robótica! **NUEVA**
+- 💻 Ruta del Código → ¡programación!
+- 🤖 Ruta de los Robots → ¡robótica!
+- 🗣️ **Ruta de las Primeras Palabras** → ¡inglés! **NUEVA**
 
-### ¡Lo más nuevo: programación y robótica! 💻🤖
+### Programación y robótica 💻🤖
 
 En la **💻 Ruta del Código** aprendes a darle órdenes a un robot en la pantalla,
 etapa por etapa:
@@ -57,25 +55,49 @@ Problemas (¡diseñas el tuyo para tu comunidad!).
 > engranajes de cartón y una pila con un foquito. Tu maestro tiene la ficha
 > con todos los juegos.
 
+### ¡Lo más nuevo: inglés! 🗣️
+
+La **🗣️ Ruta de las Primeras Palabras** arranca con **Hello! Saludos y
+Presentarme**: aprendes a saludar, decir tu nombre, tu edad y de dónde eres.
+
+Dos cosas que te van a gustar:
+
+- 🔊 **Puedes oír cada palabra.** Toca el botón de sonido junto a una frase y el
+  teléfono la pronuncia en inglés, las veces que quieras y sin internet.
+- 🗣️ **Se aprenden frases completas**, no palabras sueltas: *What's your name?*
+  se guarda en tu cabeza como una sola pieza, igual que aprendiste "¿cómo te
+  llamas?" en español.
+
 ---
 
-## 3. Cómo entrar 🔑
+## 3. Misiones en dos idiomas 🌐
+
+Algunas misiones tienen un botón **🌐 English** arriba, junto a la barra de
+puntos. Tócalo y **toda la misión cambia al inglés** — el contenido, los juegos
+y hasta la prueba. Vuelve a tocarlo (**🌐 Español**) y regresa al español.
+
+En el catálogo, esas misiones llevan la etiqueta **🌐 EN** para que las
+reconozcas antes de abrirlas. Hoy están en inglés las **6 etapas de la 🤖 Ruta
+de los Robots** y dos de la 💻 Ruta del Código.
+
+> 💡 Truco de explorador: haz la misión primero en español y después repítela en
+> inglés. Ya sabes el tema, así que tu cabeza se concentra solo en el idioma.
+> No es traducción de máquina: está escrita por personas y funciona sin internet.
+
+---
+
+## 4. Cómo entrar 🔑
 
 1. Tu maestro te enviará un **enlace por WhatsApp** (o te dirá cuál misión
    abrir en la app).
 2. Tócalo y la misión se abre en tu navegador. ¡Ya está, sin instalar nada!
 
-[IMAGEN: mensaje de WhatsApp con el enlace de la misión]
-
 ---
 
-## 4. La primera vez: tus datos 👋
+## 5. La primera vez: tus datos 👋
 
-La primera vez que abras una misión, aparece esta pantalla:
-
-[IMAGEN: el modal "¡Hola, explorador!" con los cuatro campos]
-
-Escribe:
+La primera vez que abras una misión aparece la pantalla **«¡Hola, explorador!»**
+con cuatro campos. Escribe:
 
 - 👤 **Tu nombre o código de alumno** — como te diga tu maestro.
 - 🏫 **Tu escuela** — ¡copia EXACTAMENTE lo que tu maestro escribió en la
@@ -93,15 +115,14 @@ dicen a tu maestro que tus logros son TUYOS.
 
 ---
 
-## 5. Cómo se juega 🎮
+## 6. Cómo se juega 🎮
 
 - Avanza por las secciones en orden — cada una que completas se marca ✅.
 - Gana **⭐ XP** con cada actividad: subes de nivel de **Novato ✏️** hasta
   **Maestro 🎓**.
 - Desbloquea **🏆 logros** especiales (¡colecciónalos todos!).
-- Botones útiles arriba: **🔊 sonido**, **🌙 tema oscuro**, **letra grande**.
-
-[IMAGEN: la barra de XP con el nivel y el panel de logros abierto]
+- Botones útiles arriba: **🔊 sonido**, **🌙 tema oscuro**, **letra grande** y,
+  en las misiones bilingües, **🌐 English**.
 
 **Consejos de explorador experto:**
 
@@ -111,7 +132,24 @@ dicen a tu maestro que tus logros son TUYOS.
 
 ---
 
-## 6. La prueba final 📋
+## 7. El Campeonísimo 🏆
+
+En el menú ☰ está el **🏆 Campeonísimo**: un torneo de preguntas estilo programa
+de televisión, con ruleta de materias, ronda relámpago, gran final con apuesta y
+podio con insignias.
+
+- **Modo Torneo** — por equipos o entre compañeros, con turnos, rebote y muerte
+  súbita.
+- **Modo Práctica** — preguntas sueltas para ti solo, con la respuesta explicada
+  al momento y la misión que te conviene repasar.
+- **Salón de la Fama** — guarda tus torneos ganados y tus insignias.
+
+La ruleta ya trae las **7 materias**: Español, Matemáticas, C. Naturales,
+C. Sociales, Programación, Robótica e **Inglés**.
+
+---
+
+## 8. La prueba final 📋
 
 En la sección de **Evaluación**:
 
@@ -122,11 +160,9 @@ En la sección de **Evaluación**:
 4. ¿No te gustó tu nota? Genera otra forma y vuelve a intentarlo. Cada intento
    queda guardado.
 
-[IMAGEN: la prueba calificada mostrando Resultado: 85/100]
-
 ---
 
-## 7. Tu constancia 🏅
+## 9. Tu constancia 🏅
 
 Cuando completes la misión:
 
@@ -134,22 +170,18 @@ Cuando completes la misión:
 2. Mira tus estrellas, tu porcentaje y tus logros.
 3. **📷 Guarda la foto** o **📲 compártela por WhatsApp** con tu familia.
 
-[IMAGEN: constancia de logro con estrellas]
-
 ---
 
-## 8. Envíale tus resultados a tu maestro 📤
+## 10. Envíale tus resultados a tu maestro 📤
 
 Junto a la constancia está el botón **"📤 Enviar resultados"**: arma un mensaje
 de WhatsApp con todo tu trabajo — secciones completadas, XP, tiempo y tus
 notas — listo para enviárselo a tu maestro. Es tu forma de decir:
 **"¡Misión cumplida!"** 🚀
 
-[IMAGEN: el reporte de resultados en WhatsApp]
-
 ---
 
-## 9. ¿Encontraste un error? ¡Avísanos! 💬
+## 11. ¿Encontraste un error? ¡Avísanos! 💬
 
 ¿Viste una respuesta que parece mala? ¿Algo no funciona? ¿Tienes una idea
 genial? En la barra donde aparece tu nombre está el botón **"💬 Sugerencias"**:
@@ -157,9 +189,9 @@ elige el tipo de mensaje, escribe con tus palabras y toca **Enviar**. Tu
 mensaje llega al equipo de M.E.T.A.S con la misión y la sección exacta donde
 estabas — ¡eres parte del equipo que mejora la app! 🛠️
 
-[IMAGEN: el buzón de sugerencias abierto]
+---
 
-## 10. Preguntas de explorador 🤔
+## 12. Preguntas de explorador 🤔
 
 **"¿Y si no tengo internet en casa?"**
 ¡No importa! Trabaja normal. Tus resultados se guardan en el teléfono y se
@@ -176,6 +208,15 @@ y corrígelos.
 ¡Para nada! Empiezas dándole 3 órdenes a un robot de la pantalla (AVANZA, GIRA,
 AVANZA). Si se equivoca, lo arreglas y vuelves a intentar: eso mismo hacen los
 programadores de verdad. 😎
+
+**"No sé nada de inglés. ¿Puedo entrar a la ruta?"**
+Sí, empieza por *Hello!*: al principio solo tienes que **reconocer y elegir**,
+no escribir. Escuchar mucho antes de hablar es exactamente como aprenden los
+que terminan hablándolo bien.
+
+**"El botón 🌐 English no me aparece."**
+Es que esa misión todavía no está traducida. Búscala en el catálogo: las que sí
+lo están llevan la etiqueta **🌐 EN**.
 
 **"¿Mi maestro de verdad ve lo que hago?"**
 Sí: ve tus notas, tu tiempo y tus secciones completadas. Así que cuando

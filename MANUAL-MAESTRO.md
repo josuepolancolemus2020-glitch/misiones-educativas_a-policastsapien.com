@@ -4,8 +4,6 @@
 
 *Guía de uso para docentes · Proyecto Educativo M.E.T.A.S · policastsapien.com*
 
-[IMAGEN: portada con el logo de M.E.T.A.S y una foto de alumnos usando la app]
-
 ---
 
 ## 1. ¿Qué es M.E.T.A.S?
@@ -13,7 +11,7 @@
 M.E.T.A.S es una colección de **misiones educativas interactivas** alineadas al
 DCNB de Honduras. Cada misión es una experiencia completa sobre un tema
 (fracciones, sustantivos, el sistema nervioso, los bucles de un programa, los
-sensores de un robot…) que combina:
+sensores de un robot, los saludos en inglés…) que combina:
 
 - **Contenido** explicado de forma visual y sencilla.
 - **Juegos de práctica**: flashcards, memorama, quiz, clasificación, sopa de
@@ -26,8 +24,6 @@ sensores de un robot…) que combina:
 **Lo más importante: funciona sin internet.** Una vez abierta la misión (o
 instalada la app), el alumno puede trabajar completamente offline. Los
 resultados se envían solos cuando el dispositivo encuentra conexión.
-
-[IMAGEN: pantalla de inicio de la app con la lista de misiones]
 
 ---
 
@@ -42,17 +38,18 @@ Hay dos formas de usar M.E.T.A.S:
 
 El enlace de cada misión se comparte por WhatsApp: dentro de cualquier misión,
 el botón **"Compartir"** genera el mensaje listo para enviar al grupo de padres
-o alumnos.
-
-[IMAGEN: mensaje de WhatsApp con el enlace de una misión asignada]
+o alumnos. En las misiones bilingües, el mensaje se arma en el idioma en que
+esté la misión.
 
 ---
 
-## 3. El catálogo: seis materias y diez rutas
+## 3. El catálogo: siete materias y once rutas
 
 El alumno no navega por grados sino por **rutas de aprendizaje**: cada ruta es una
 secuencia de misiones (etapas) que se recorre en orden. El ciclo se conserva como
 dato del docente (Registro, mapeo DCNB), no como menú del alumno.
+
+**Hoy el catálogo tiene 57 misiones.**
 
 | Materia | Rutas | Misiones |
 |---|---|---|
@@ -60,16 +57,18 @@ dato del docente (Registro, mapeo DCNB), no como menú del alumno.
 | 🟡 Español | ✍️ Ruta de la Palabra | 9 (una de Bachillerato) |
 | 🟢 Ciencias Naturales | 🧠 Ruta del Cuerpo · 🌱 Ruta de la Vida · ⚡ Ruta de la Materia · 🌎 Ruta del Planeta (etapas 4-7) | 14 |
 | 🔴 Ciencias Sociales | 🌎 Ruta del Planeta (etapas 1-3 y 8) · 🏛️ Ruta del Tiempo | 5 |
-| 🩵 **Programación** *(nueva, 2026)* | 💻 Ruta del Código | 7 (ruta completa) |
-| 🩵 **Robótica** *(nueva, 2026)* | 🤖 Ruta de los Robots | 6 (ruta completa) |
+| 🩵 Programación | 💻 Ruta del Código | 7 (ruta completa) |
+| 🩵 Robótica | 🤖 Ruta de los Robots | 6 (ruta completa) |
+| 🩷 **Inglés** *(nueva, 2026)* | 🗣️ Ruta de las Primeras Palabras | 1 (en construcción) |
 
 Cada misión tiene además su **ficha didáctica imprimible de 7 páginas** con código QR;
-el catálogo completo está en `metas.policastsapien.com/fichas/`.
+el catálogo completo está en `metas.policastsapien.com/fichas/`, junto con el
+**mapa curricular M.E.T.A.S ↔ DCNB**.
 
-### 3.1 Las dos materias nuevas: Programación y Robótica
+### 3.1 Programación y Robótica
 
 Ambas son de **II y III Ciclo**, comparten el color cian del área tecnológica y
-**no requieren computadoras, internet ni kits de robots** (vea la sección 7).
+**no requieren computadoras, internet ni kits de robots** (vea la sección 8).
 
 **💻 Ruta del Código — Programación** (7 etapas):
 
@@ -100,9 +99,64 @@ Ambas son de **II y III Ciclo**, comparten el color cian del área tecnológica 
 > 💡 Se recomienda recorrerlas en ese orden: la Ruta del Código prepara la etapa 5 de
 > Robótica, y la Ruta del Cuerpo (sistema nervioso) es el mejor puente para los sensores.
 
+### 3.2 La materia nueva: Inglés 🗣️
+
+**🗣️ Ruta de las Primeras Palabras** — nivel **Pre-A1**, alineada al MCER y al examen
+**Cambridge Starters**. Su primera etapa ya está publicada: **Hello! Saludos y
+Presentarme** (saludar según la hora, decir el nombre, la edad y el país).
+
+La materia sigue el método de las academias de idiomas, no el de la lista de
+vocabulario:
+
+- **Enfoque comunicativo:** cada misión abre con su meta *can-do* (**I CAN**:
+  «puedo saludar y presentarme») y cierra comprobándola.
+- **Bloques, no palabras sueltas:** *What's your name?* se enseña como **una sola
+  pieza**, que es como realmente se guarda en la memoria del hablante.
+- **Primero comprender, después producir:** las etapas iniciales piden reconocer y
+  elegir; la escritura llega cuando el reconocimiento ya es seguro (se respeta el
+  período de silencio).
+- **Vocabulario de alta frecuencia** primero, y **un foco de pronunciación por
+  misión**, con el error típico del hispanohablante nombrado (la /h/ de *hello*, la
+  «e» delante de *school*, la *th*).
+
+**El sonido no necesita internet ni descargas:** cada palabra y cada frase traen un
+botón 🔊 que usa la voz que el propio teléfono ya tiene instalada. Si un aparato
+viejo no la trae, la misión no se rompe: cada bloque incluye además su
+**pronunciación figurada** pensada para el oído hispanohablante.
+
+> 📌 En construcción: las etapas 2 y 3 de la ruta, y las rutas siguientes
+> (🗨️ Ruta de la Conversación, nivel A1 / Movers, y 🌍 Ruta del Mundo en Inglés,
+> nivel A2 / Flyers).
+
 ---
 
-## 4. La estructura de una misión
+## 4. Misiones bilingües (español ↔ inglés) 🌐
+
+Además de la materia de Inglés, varias misiones de **otras materias** se pueden
+leer completas en inglés. En la misión aparece el botón **🌐 English** junto a la
+barra de XP: al tocarlo cambian el contenido, los juegos, la retroalimentación y
+**los bancos de evaluación**; con **🌐 Español** se regresa. La preferencia queda
+guardada para la próxima vez.
+
+- **No es traducción automática.** Es traducción de autor empaquetada con la
+  misión: funciona **sin internet** y dentro del APK, y el traductor del navegador
+  no la pisa.
+- **En el catálogo** las misiones bilingües llevan la etiqueta **🌐 EN**, para que
+  usted las identifique antes de abrirlas.
+- **La ficha didáctica** de esas misiones también existe en inglés.
+
+**Disponibles hoy (8 misiones):** las **6 etapas completas de la 🤖 Ruta de los
+Robots** y dos de la 💻 Ruta del Código (*El Pensamiento Computacional* y
+*Condicionales: el Robot Decide*).
+
+> 💡 Uso pedagógico: es material listo para **CLIL / escuela bilingüe** — el alumno
+> hace la misión en español y la repite en inglés. Como el contenido ya lo domina,
+> toda la carga cognitiva se va al idioma. También sirve para el docente de inglés
+> que quiere contenido real en vez de ejercicios sueltos.
+
+---
+
+## 5. La estructura de una misión
 
 Todas las misiones siguen la misma lógica (los nombres exactos pueden variar
 por tema). El alumno avanza por secciones y va ganando **XP (puntos de
@@ -113,17 +167,15 @@ experiencia)**, subiendo de nivel y desbloqueando **logros**:
 3. **Flashcards + Memorama** — vocabulario clave del tema, en tarjetas y en juego de parejas.
 4. **Práctica lúdica** — Quiz, Clasifica, Identifica, Completa, Widgets, Reto, Sopa de letras.
 5. **Generador de Tareas** — crea tareas para la casa, siempre distintas.
-6. **Evaluación** — la prueba formal (ver sección 6 de este manual).
+6. **Evaluación** — la prueba formal (ver sección 7 de este manual).
 7. **Constancia** — el diploma del alumno al completar la misión.
 
 Cada misión incluye botones de **accesibilidad**: sonido, tema oscuro y letra
 grande.
 
-[IMAGEN: una misión abierta mostrando la barra de navegación con las secciones y la barra de XP]
-
 ---
 
-## 5. La primera vez del alumno: su identificación
+## 6. La primera vez del alumno: su identificación
 
 La primera vez que un alumno abre una misión en su dispositivo, la app le
 pregunta **una sola vez** sus datos:
@@ -145,19 +197,15 @@ permiten a usted saber de quién es cada resultado.
 > - Escuela: `ESC-MORAZAN-TELA`
 > - Maestro: `Prof. Josué`
 
-[IMAGEN: el modal "¡Hola, explorador!" con los cuatro campos]
-
 **¿Quién está trabajando?** Justo arriba del menú de secciones, cada misión
 muestra siempre una barra con el alumno activo — **"👤 Nombre · grado"** — y el
 botón **"✏️ Cambiar alumno"**. En tablets o teléfonos compartidos, cada alumno
 lo toca al iniciar su turno y escribe sus datos: desde ese momento todo queda
 registrado a su nombre. (El botón también está junto a la constancia.)
 
-[IMAGEN: la barra "👤 Alumno · grado · Cambiar alumno" sobre el menú de secciones]
-
 ---
 
-## 6. Las evaluaciones: su ahorro de tiempo más grande
+## 7. Las evaluaciones: su ahorro de tiempo más grande
 
 Cada misión trae **dos pruebas** con bancos de preguntas que generan formas
 distintas (Forma 1 a Forma 30) — cada alumno puede recibir una versión
@@ -180,10 +228,14 @@ Con cada prueba usted puede:
    para fotocopiar, **con su pauta de respuestas en página aparte, exclusiva
    del docente**.
 
+Las formas son **deterministas**: la Forma 7 regenera siempre el mismo examen y la
+misma pauta, así que puede imprimir hoy y reimprimir el mes entrante sin perder la
+correspondencia con lo ya calificado.
+
 > 💡 Esto significa que usted ya no redacta exámenes de estos temas: los
 > genera, imprime o califica automáticamente. Ese tiempo es suyo otra vez.
 
-### 6.1 La Forma R (adaptada): para el alumno rezagado ♿
+### 7.1 La Forma R (adaptada): para el alumno rezagado ♿
 
 *Disponible por ahora en la misión División de Decimales (piloto).*
 
@@ -208,13 +260,9 @@ antes de Generar o Imprimir. Es una **adecuación curricular no significativa**:
 
 En el Registro y el Panel Docente estas pruebas aparecen como "R-N ♿".
 
-[IMAGEN: la evaluación en pantalla con el botón Calificar y el resultado X/100]
-[IMAGEN: la versión impresa de la prueba con la pauta del docente]
+### 7.2 Cómo se evalúan Programación y Robótica
 
-### 6.2 Cómo se evalúan Programación y Robótica
-
-Las dos materias nuevas nacieron con el estándar completo: **30 formas
-deterministas** (la Forma 7 regenera siempre el mismo examen y la misma pauta),
+Las dos materias nacieron con el estándar completo: **30 formas deterministas**,
 **sin Forma R** (esa sigue solo en División de Decimales), calificación en pantalla
 y la normativa impresa de siempre — encabezado con el **Parcial**, pie con el
 **Nº de evaluación** y las casillas ☐ *con valor en el parcial* / ☐ *solo de repaso*,
@@ -235,9 +283,22 @@ una página de prueba más su pauta en letra grande.
   Matemáticas o como taller) o queda **solo de repaso**. La prueba sale igual; solo se
   marca la casilla.
 
+### 7.3 Cómo se evalúa Inglés
+
+La misión de Inglés trae las dos pruebas del estándar, con el mismo formato
+impreso. Dos advertencias didácticas:
+
+- **Se evalúa la tarea comunicativa, no la gramática suelta:** elegir el saludo que
+  corresponde a la hora, ordenar un diálogo, responder a una presentación.
+- **No penalice la ortografía en Pre-A1.** A este nivel el logro es reconocer y
+  usar el bloque; escribirlo perfecto viene después. La pauta lo indica.
+
+Igual que en Programación y Robótica, usted decide con la casilla del pie si la
+nota cuenta en el parcial o queda como repaso.
+
 ---
 
-## 7. Dar Programación y Robótica sin computadoras ni robots
+## 8. Dar Programación y Robótica sin computadoras ni robots
 
 El diseño de estas dos rutas es **desconectado primero, simulador después, hardware
 nunca**. Si su aula no tiene dispositivos, no pierde contenido: las actividades
@@ -253,7 +314,7 @@ didáctica imprimible** de cada una.
 4. Si algún día hay una tablet o el teléfono de un padre, ahí entra el simulador como
    refuerzo, no como requisito.
 
-### 7.1 Actividades desconectadas y material, etapa por etapa
+### 8.1 Actividades desconectadas y material, etapa por etapa
 
 | Etapa | Actividad desconectada | Material |
 |---|---|---|
@@ -284,7 +345,32 @@ cable y un foquito. Nada más es obligatorio.
 
 ---
 
-## 8. Cómo le llegan los resultados
+## 9. El Campeonísimo: repaso convertido en torneo 🏆
+
+En el menú ☰ está el **🏆 Campeonísimo**, un torneo académico estilo programa de
+televisión con **banco propio de preguntas de las 7 materias** (unas 290 hoy),
+ligadas cada una a la misión de donde salen.
+
+- **Modo Torneo** — tres rondas (Conocimiento, Relámpago ×2 y Gran Final ×3 con
+  **apuesta final**), ruleta de materias, turnos rotativos, rebote, muerte súbita,
+  normativa en pantalla, podio e insignias. Sirve para cerrar un parcial, para el
+  día del logro o para competir entre secciones.
+- **Modo Práctica** — preguntas individuales con retroalimentación inmediata y
+  **sugerencia de la misión a repasar** según lo que el alumno falló.
+- **Salón de la Fama** — historial de torneos e insignias, guardado en el
+  dispositivo.
+
+La ruleta ya incluye **Inglés** junto a Español, Matemáticas, C. Naturales,
+C. Sociales, Programación y Robótica; cuando se agrega una materia al catálogo, la
+ruleta crece sola.
+
+> 💡 Truco de aula: use el modo Torneo por equipos con un solo teléfono conectado al
+> proyector o pasando el aparato. La evidencia del evento se arma en un momento con
+> el **Collage de Evidencias** del menú.
+
+---
+
+## 10. Cómo le llegan los resultados
 
 Usted tiene **tres canales**, del más simple al más completo:
 
@@ -293,8 +379,6 @@ En la pantalla de la constancia, el botón **"📤 Enviar resultados"** arma un
 mensaje con: nombre, escuela, grado, misión, secciones completadas, XP, tiempo
 de trabajo y la última nota de cada prueba con sus intentos. El alumno se lo
 envía a usted directamente.
-
-[IMAGEN: reporte de resultados recibido en WhatsApp]
 
 ### b) El Registro Docente del dispositivo
 En el menú ☰ de la app está **"Registro Docente"**: la bitácora completa de
@@ -306,30 +390,24 @@ de evento, ver estadísticas, y:
 
 Ideal para tablets del aula: al final de la semana, exporta el CSV de cada una.
 
-[IMAGEN: panel Registro Docente con la tabla de eventos y las tarjetas de resumen]
-
 ### c) La hoja central automática (si su escuela participa del proyecto)
 Cuando los dispositivos tienen internet, los resultados **se envían solos** a
 una hoja de cálculo central del proyecto. Su escuela puede recibir un **archivo
 espejo con su propio tablero de gráficos**, actualizado en tiempo real, solo
 con sus alumnos. Solicítelo al coordinador del proyecto.
 
-[IMAGEN: dashboard de Google Sheets con las tarjetas y gráficos]
-
 ---
 
-## 9. La constancia de logro
+## 11. La constancia de logro
 
 Al completar la misión, el alumno escribe su nombre en la **Constancia de
 Logro**, que muestra su porcentaje, estrellas, XP y logros desbloqueados.
 Puede **guardarla como foto** o **compartirla por WhatsApp** — es la
 celebración del esfuerzo, y a las familias les encanta recibirla.
 
-[IMAGEN: constancia de logro completada con estrellas y logros]
-
 ---
 
-## 10. El buzón de sugerencias
+## 12. El buzón de sugerencias
 
 En la barra de identidad de toda misión está el botón **"💬 Sugerencias"**:
 cualquier usuario (alumno o docente) puede reportar un error de contenido,
@@ -340,9 +418,9 @@ cuando hay conexión).
 
 Anime a sus alumnos a usarlo: cada reporte mejora el material para todos.
 
-[IMAGEN: el formulario del buzón de sugerencias abierto]
+---
 
-## 11. Buenas prácticas
+## 13. Buenas prácticas
 
 - ✅ Dicte la convención exacta de escuela y maestro (regla de oro).
 - ✅ Asigne la misión unos días antes de la prueba en papel: la app es el
@@ -356,12 +434,14 @@ Anime a sus alumnos a usarlo: cada reporte mejora el material para todos.
   cada turno.
 - ✅ En Programación y Robótica, haga **primero la actividad desconectada** y
   después el simulador: el laberinto de cinta enseña más que la pantalla.
+- ✅ En las misiones bilingües, primero en español y después en inglés: se
+  aprende el idioma, no el tema otra vez.
 - ✅ Respete el orden de las rutas: cada etapa supone la anterior (los bucles
   necesitan las secuencias; el robot con sensores necesita los condicionales).
 
 ---
 
-## 12. Preguntas frecuentes
+## 14. Preguntas frecuentes
 
 **"A un alumno no le aparece la pantalla de datos."**
 Ya se identificó antes en ese dispositivo. Verifíquelo en la constancia con
@@ -384,9 +464,17 @@ No. Ninguna de las 13 etapas exige hardware: se trabajan con la ficha impresa y
 las actividades desconectadas (cinta en el piso, tarjetas de flechas, engranajes
 de cartón, pila y foquito). El simulador es un refuerzo, no un requisito.
 
-**"¿Cómo pongo la nota de Programación o Robótica si no están en el DCNB?"**
+**"¿Cómo pongo la nota de Programación, Robótica o Inglés si no están en el DCNB
+de mi grado?"**
 Usted decide con la casilla del pie de la prueba: **con valor en el parcial**
-(como taller o dentro de Matemáticas/Ciencias) o **solo de repaso**.
+(como taller o dentro de Matemáticas/Ciencias/Español) o **solo de repaso**.
+
+**"¿Las misiones en inglés sirven si mi escuela no es bilingüe?"**
+Sí. El botón 🌐 es opcional: la misión funciona igual en español. Úselo como
+extensión para los alumnos que van adelantados.
+
+**"¿La traducción al inglés necesita internet?"**
+No. Viaja empaquetada con la misión y funciona igual dentro del APK.
 
 **"La app instalada se ve distinta al sitio web."**
 La app instalada (APK) se actualiza con menos frecuencia. Ante la duda, use el
