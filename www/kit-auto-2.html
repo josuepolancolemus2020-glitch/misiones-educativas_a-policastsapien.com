@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autocapacitación · Módulo 2: El frontend · M.E.T.A.S</title>
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --azul: #1565c0; --azul-osc: #0d417e; --dorado: #c49000;
+    --texto: #22303f; --gris: #5b6773; --linea: #dbe4ee; --fondo: #f4f8fd;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--texto); background: #eef2f7; line-height: 1.5;
+  }
+  .hoja {
+    max-width: 8.5in; margin: 0 auto; background: #fff;
+    padding: 34px 44px;
+  }
+  .cabecera {
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 4px solid var(--azul); padding-bottom: 14px; margin-bottom: 18px;
+  }
+  .marca { font-size: 1.9rem; font-weight: 900; color: var(--azul); letter-spacing: 2px; }
+  .marca small { display: block; font-size: 0.72rem; font-weight: 700; color: var(--gris); letter-spacing: 0.5px; }
+  .kit-titulo { text-align: right; }
+  .kit-titulo .t1 { font-size: 1.15rem; font-weight: 900; color: var(--azul-osc); }
+  .kit-titulo .t2 { font-size: 0.78rem; color: var(--gris); }
+
+  h2 {
+    font-size: 1.02rem; color: #fff; background: var(--azul);
+    padding: 8px 14px; border-radius: 10px; margin: 22px 0 12px;
+  }
+  h2 .num {
+    display: inline-block; background: #fff; color: var(--azul);
+    width: 24px; height: 24px; border-radius: 50%; text-align: center;
+    line-height: 24px; font-size: 0.85rem; margin-right: 8px; font-weight: 900;
+  }
+  p { font-size: 0.9rem; margin-bottom: 8px; }
+  .nota {
+    background: #fdf8ee; border: 1px solid #f3ddb3; border-radius: 10px;
+    padding: 10px 14px; font-size: 0.84rem; margin: 10px 0;
+  }
+  .nota b { color: var(--dorado); }
+  .destacado {
+    background: var(--fondo); border: 2px dashed var(--azul); border-radius: 12px;
+    padding: 12px 16px; text-align: center; margin: 10px 0;
+    font-size: 1rem; font-weight: 800; color: var(--azul-osc);
+  }
+
+  table.guion { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 8px 0; }
+  table.guion th {
+    background: var(--azul); color: #fff; padding: 6px 10px; text-align: left; font-size: 0.8rem;
+  }
+  table.guion td { border: 1px solid var(--linea); padding: 6px 10px; vertical-align: top; }
+  table.guion td:first-child { white-space: nowrap; font-weight: 800; color: var(--azul); }
+
+  /* pregunta de interpelación + respuesta modelo */
+  .interp { border: 1px solid var(--linea); border-radius: 12px; margin: 10px 0; overflow: hidden; }
+  .interp .preg {
+    background: #fbeaea; color: #8f2020; font-weight: 800; font-size: 0.9rem;
+    padding: 8px 14px; border-bottom: 1px solid var(--linea);
+  }
+  .interp .resp { padding: 9px 14px; font-size: 0.87rem; }
+  .interp .resp b { color: var(--azul-osc); }
+
+  .check { list-style: none; margin: 8px 0; }
+  .check li {
+    font-size: 0.92rem; padding: 7px 0 7px 34px; position: relative;
+    border-bottom: 1px dashed var(--linea);
+  }
+  .check li::before {
+    content: ''; position: absolute; left: 4px; top: 8px;
+    width: 16px; height: 16px; border: 2px solid var(--azul); border-radius: 5px;
+  }
+  .diagrama { margin: 12px 0; text-align: center; }
+  .diagrama svg { width: 100%; height: auto; max-width: 720px; }
+  .diagrama .cap { font-size: 0.76rem; color: var(--gris); margin-top: 4px; }
+
+  code {
+    background: var(--fondo); border: 1px solid var(--linea); border-radius: 5px;
+    padding: 1px 5px; font-size: 0.82em; font-family: Consolas, monospace;
+  }
+
+  .pie {
+    margin-top: 26px; padding-top: 12px; border-top: 2px solid var(--linea);
+    font-size: 0.76rem; color: var(--gris); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+  }
+  .imprimir-btn {
+    position: fixed; right: 18px; bottom: 18px; z-index: 5;
+    border: none; cursor: pointer; padding: 14px 22px; border-radius: 999px;
+    font-size: 1rem; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, #1565c0, #7b2ff7);
+    box-shadow: 0 6px 18px rgba(21,101,192,.4);
+  }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  .salto { page-break-before: always; }
+  @page { size: letter; margin: 10mm 9mm; }
+  @media print {
+    body { background: #fff; }
+    .hoja { max-width: none; padding: 0; }
+    .imprimir-btn { display: none; }
+    h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 14px 0 9px; }
+    table.guion th, .destacado, .nota, .interp .preg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .check li { padding: 5px 0 5px 34px; }
+    .check li::before { top: 6px; }
+    .pie { margin-top: 14px; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir el módulo</button>
+<div class="hoja">
+
+  <div class="cabecera">
+    <div class="marca">M.E.T.A.S<small>Kit de Autocapacitación Técnica</small></div>
+    <div class="kit-titulo">
+      <div class="t1">Módulo 2 · El frontend</div>
+      <div class="t2">Mapa de piezas: qué hay y de qué responde · 2 de 8</div>
+    </div>
+  </div>
+
+  <div class="nota"><b>Cómo usar este módulo:</b> léelo completo una vez; después haz la
+  <b>lectura guiada</b> (sección 6) con los archivos abiertos en tu computadora; cierra con la
+  <b>actividad metalingüística</b> (sección 7) y el simulacro de interpelación (sección 8).
+  Dominado = puedes dibujar el árbol del proyecto de memoria y marcar toda la lista final sin
+  mirar el papel. <b>Cifras verificadas contra el repositorio el 26 de julio de 2026.</b></div>
+
+  <h2><span class="num">1</span>La frase maestra (apréndela con tus palabras)</h2>
+  <div class="destacado">«El frontend de M.E.T.A.S es un solo index.html con 13 vistas,<br>
+  57 misiones que repiten el mismo molde de 3 archivos y 14 secciones,<br>
+  7 herramientas del maestro y unas pocas capas comunes:<br>
+  no hay framework, hay convención.»</div>
+  <p>Cada término tiene un significado preciso que debes poder desglosar:</p>
+  <table class="guion">
+    <tr><th>Término</th><th>Qué significa aquí</th></tr>
+    <tr><td>vista</td><td>Un bloque del index con <code>id="view-…"</code>. Cambiar de pantalla es apagar una y encender otra: nunca se recarga la página.</td></tr>
+    <tr><td>switchView()</td><td>La función de <code>js/app.js</code> que hace ese cambio. Es TODO el enrutador del proyecto: sin librería, sin dirección web nueva por pantalla.</td></tr>
+    <tr><td>molde de misión</td><td>Carpeta propia con HTML + JS + CSS, y un cuarto archivo <code>-en.js</code> si tiene traducción de autor. Las 57 son hermanas.</td></tr>
+    <tr><td>catálogo</td><td><code>js/data/misiones.js</code>: id, título, materia, ciclo, ruta, etapa, XP e ícono. La app no escanea carpetas, lee el catálogo.</td></tr>
+    <tr><td>capa común</td><td>Lo que comparten todas las pantallas: registro, diálogos, presentación, cliente de nube, sincronización docente e idioma.</td></tr>
+    <tr><td>convención</td><td>Que las 57 misiones se parezcan no lo obliga un compilador: lo fija <code>PLANTILLA-MISIONES.md</code> y lo vigilan los arneses de verificación.</td></tr>
+  </table>
+
+  <h2><span class="num">2</span>El diagrama maestro: el árbol del frontend</h2>
+  <div class="diagrama">
+  <svg viewBox="0 0 760 430" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+    <rect x="240" y="8" width="280" height="60" rx="12" fill="#0d417e"/>
+    <text x="380" y="32" text-anchor="middle" fill="#fff" font-size="15" font-weight="800">🏠 index.html</text>
+    <text x="380" y="52" text-anchor="middle" fill="#cfe0f5" font-size="11">13 vistas en un solo archivo · sin recargas</text>
+
+    <line x1="330" y1="68" x2="150" y2="112" stroke="#1565c0" stroke-width="3"/>
+    <line x1="380" y1="68" x2="380" y2="112" stroke="#1565c0" stroke-width="3"/>
+    <line x1="430" y1="68" x2="610" y2="112" stroke="#1565c0" stroke-width="3"/>
+    <text x="215" y="95" fill="#5b6773" font-size="10" text-anchor="middle">carga</text>
+    <text x="405" y="95" fill="#5b6773" font-size="10" text-anchor="middle">enlaza</text>
+    <text x="545" y="95" fill="#5b6773" font-size="10" text-anchor="middle">abre</text>
+
+    <rect x="20" y="114" width="250" height="96" rx="12" fill="#f4f8fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="145" y="136" text-anchor="middle" fill="#0d417e" font-size="13" font-weight="800">⚙️ js/ · lógica</text>
+    <text x="145" y="155" text-anchor="middle" fill="#22303f" font-size="10.5">app.js: switchView, catálogo</text>
+    <text x="145" y="171" text-anchor="middle" fill="#22303f" font-size="10.5">tools/: 7 herramientas del maestro</text>
+    <text x="145" y="187" text-anchor="middle" fill="#5b6773" font-size="10">registro · diálogos · presentación</text>
+    <text x="145" y="202" text-anchor="middle" fill="#5b6773" font-size="10">supabase · docente-sync · i18n</text>
+
+    <rect x="290" y="114" width="180" height="96" rx="12" fill="#f4f8fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="380" y="136" text-anchor="middle" fill="#0d417e" font-size="13" font-weight="800">🗃️ js/data/ · datos</text>
+    <text x="380" y="156" text-anchor="middle" fill="#22303f" font-size="10.5">misiones.js (catálogo)</text>
+    <text x="380" y="172" text-anchor="middle" fill="#22303f" font-size="10.5">campeonismo-bank · dcnb-map</text>
+    <text x="380" y="188" text-anchor="middle" fill="#5b6773" font-size="10">diagnosticos · consejos · frases</text>
+    <text x="380" y="203" text-anchor="middle" fill="#5b6773" font-size="10">paises · proceres</text>
+
+    <rect x="490" y="114" width="250" height="96" rx="12" fill="#f4f8fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="615" y="136" text-anchor="middle" fill="#0d417e" font-size="13" font-weight="800">📐 misiones/ · 57 carpetas</text>
+    <text x="615" y="156" text-anchor="middle" fill="#22303f" font-size="10.5">&lt;mision&gt;.html + js/ + css/</text>
+    <text x="615" y="172" text-anchor="middle" fill="#22303f" font-size="10.5">(+ &lt;mision&gt;-en.js si traducida)</text>
+    <text x="615" y="188" text-anchor="middle" fill="#5b6773" font-size="10">14 secciones iguales en todas</text>
+    <text x="615" y="203" text-anchor="middle" fill="#5b6773" font-size="10">página aparte, no vive en el index</text>
+
+    <rect x="20" y="238" width="340" height="70" rx="12" fill="#fdf8ee" stroke="#c49000" stroke-width="2"/>
+    <text x="190" y="260" text-anchor="middle" fill="#8a6400" font-size="12.5" font-weight="800">🛰️ Páginas satélite (raíz)</text>
+    <text x="190" y="279" text-anchor="middle" fill="#22303f" font-size="10.5">padres · panel-docente · consulta-nube · registro</text>
+    <text x="190" y="295" text-anchor="middle" fill="#22303f" font-size="10.5">camp-vivo · evaluaciones · mision</text>
+
+    <rect x="400" y="238" width="340" height="70" rx="12" fill="#fdf8ee" stroke="#c49000" stroke-width="2"/>
+    <text x="570" y="260" text-anchor="middle" fill="#8a6400" font-size="12.5" font-weight="800">🖨️ fichas/ · 57 fichas imprimibles</text>
+    <text x="570" y="279" text-anchor="middle" fill="#22303f" font-size="10.5">una por misión + índice + mapa curricular DCNB</text>
+    <text x="570" y="295" text-anchor="middle" fill="#22303f" font-size="10.5">el puente entre la pantalla y el cuaderno</text>
+
+    <line x1="145" y1="210" x2="190" y2="238" stroke="#c49000" stroke-width="2" stroke-dasharray="6 4"/>
+    <line x1="615" y1="210" x2="570" y2="238" stroke="#c49000" stroke-width="2" stroke-dasharray="6 4"/>
+
+    <rect x="20" y="336" width="720" height="80" rx="12" fill="#eef2f7"/>
+    <text x="380" y="358" text-anchor="middle" fill="#0d417e" font-size="11.5" font-weight="800">LO QUE SOSTIENE LA UNIFORMIDAD</text>
+    <text x="380" y="377" text-anchor="middle" fill="#22303f" font-size="11">PLANTILLA-MISIONES.md (el molde escrito) · arneses de determinismo, traducción y layout en _dev/</text>
+    <text x="380" y="395" text-anchor="middle" fill="#22303f" font-size="11">sw.js con CACHE_NAME versionado + etiquetas ?v= en cada script</text>
+    <text x="380" y="411" text-anchor="middle" fill="#5b6773" font-size="10">Sin compilador que obligue: la convención la sostienen el documento y las pruebas</text>
+  </svg>
+  <div class="cap">Diagrama 2 · El frontend por dentro: una portada, la lógica y los datos separados, 57 misiones hermanas y el papel.</div>
+  </div>
+
+  <div class="nota"><b>Idea clave para defender:</b> las 57 misiones NO son 57 desarrollos.
+  Son un molde repetido con contenido distinto, y por eso una corrección en el molde se vuelve
+  una corrección en las 57.</div>
+
+  <div class="salto"></div>
+
+  <h2><span class="num">3</span>El molde de una misión, pieza por pieza</h2>
+  <table class="guion">
+    <tr><th>Archivo</th><th>Qué contiene</th></tr>
+    <tr><td><code>&lt;mision&gt;.html</code></td><td>Las 14 secciones, la barra de XP, el botón de WhatsApp y el distintivo 🌐 EN si aplica. Estructura, no contenido: el texto de las actividades vive en el JS.</td></tr>
+    <tr><td><code>js/&lt;mision&gt;.js</code></td><td>Los bancos de contenido (flashcards, quiz, clasificaciones, evaluación, rúbricas) y el motor que los pinta. Es el archivo más grande de la misión.</td></tr>
+    <tr><td><code>css/&lt;mision&gt;.css</code></td><td>El color de la materia y los ajustes propios. La media query de la barra de XP vive aquí y hay que llevarla al copiar el molde.</td></tr>
+    <tr><td><code>js/&lt;mision&gt;-en.js</code></td><td>Solo en las traducidas: la traducción de autor, con los bancos cuadrando índice a índice para que las formas deterministas coincidan en los dos idiomas.</td></tr>
+  </table>
+  <p>Y las <b>14 secciones</b>, iguales en las 57, en este orden:</p>
+  <table class="guion">
+    <tr><th>1-5</th><td>Aprende · Estructura · Laboratorio · Flashcards · Quiz</td></tr>
+    <tr><th>6-10</th><td>Clasifica · Identifica · Completa · Widgets · Reto</td></tr>
+    <tr><th>11-14</th><td>Sopa · Tareas · Evaluación · Recursos</td></tr>
+  </table>
+
+  <h2><span class="num">4</span>Los números del frontend (memorízalos: dan autoridad)</h2>
+  <table class="guion">
+    <tr><th>Dato</th><th>Valor</th><th>Por qué importa al explicar</th></tr>
+    <tr><td>Vistas del index</td><td>13</td><td>inicio, misiones, rutas, progreso, ajustes, padre, Zona Docente, Mi aula, gobierno, plan de acción, parte mensual, Campeonísimo y collage.</td></tr>
+    <tr><td>Misiones</td><td>57 carpetas</td><td>Molde idéntico de 3 archivos y 14 secciones: replicable en horas, y un arreglo del molde arregla las 57.</td></tr>
+    <tr><td>Fichas imprimibles</td><td>57</td><td>Una por misión, más el índice y el mapa curricular DCNB: el sistema no depende de que haya pantalla para todos.</td></tr>
+    <tr><td>Herramientas docentes</td><td>7 en <code>js/tools/</code></td><td>plan-accion, registros-admin (Mi aula), campeonismo, gobierno-escolar, parte-mensual, collage-maker y pwa-install.</td></tr>
+    <tr><td>Bancos de datos</td><td>8 en <code>js/data/</code></td><td>misiones, campeonismo-bank, dcnb-map, diagnosticos, consejos-padres, frases, paises y proceres. Datos separados de la lógica.</td></tr>
+    <tr><td>Capas comunes</td><td>7 en <code>js/</code></td><td>app, metas-registro, metas-dialogos, metas-presentacion, metas-supabase, metas-docente-sync y metas-i18n.</td></tr>
+    <tr><td>Páginas satélite</td><td>7 HTML</td><td>padres, panel-docente, consulta-nube, registro, camp-vivo, evaluaciones y mision. Entradas propias para públicos que no pasan por el index.</td></tr>
+    <tr><td>Framework</td><td>Ninguno</td><td>Cero dependencias de interfaz: nada que caduque, nada que compilar. Lo que está en el repo es lo que corre.</td></tr>
+  </table>
+
+  <h2><span class="num">5</span>Cómo viaja un toque (del dedo a la misión)</h2>
+  <table class="guion">
+    <tr><th>Paso</th><th>Qué pasa</th></tr>
+    <tr><td>1. El toque</td><td>El alumno elige una misión en la vista Misiones del index.</td></tr>
+    <tr><td>2. Consulta al catálogo</td><td><code>app.js</code> busca esa misión en <code>js/data/misiones.js</code> y toma su carpeta, su materia y su XP.</td></tr>
+    <tr><td>3. Se abre el molde</td><td>Se navega a <code>misiones/&lt;carpeta&gt;/&lt;mision&gt;.html</code>, que carga su JS y su CSS propios.</td></tr>
+    <tr><td>4. ¿Hay traducción?</td><td>Si existe el <code>-en.js</code>, aparece el distintivo 🌐 EN y el motor de idioma cambia los rótulos comunes. Si no, la misión corre igual en español.</td></tr>
+    <tr><td>5. Vuelve el progreso</td><td>El XP y las secciones completadas se guardan en localStorage con la clave propia de esa misión, y el catálogo la marca como visitada.</td></tr>
+  </table>
+
+  <div class="salto"></div>
+
+  <h2><span class="num">6</span>Lectura guiada del código (30-40 min, en la computadora)</h2>
+  <p>Abre cada archivo y comprueba con tus ojos lo que este módulo afirma. Eso es lo metalingüístico: no creerle al kit, verificarlo.</p>
+  <table class="guion">
+    <tr><th>Abre…</th><th>Observa…</th></tr>
+    <tr><td><code>index.html</code></td><td>Busca <code>id="view-</code>: cuenta 13 resultados. Cada uno es una pantalla completa de la aplicación dentro del mismo archivo.</td></tr>
+    <tr><td><code>js/app.js</code> (función <code>switchView</code>)</td><td>Quita la clase <code>active</code> de todas las vistas, se la pone a una, y arranca la herramienta que corresponda. Ese es el enrutador entero.</td></tr>
+    <tr><td><code>js/data/misiones.js</code> (primeras líneas)</td><td>El objeto <code>RUTAS</code> y luego una línea por misión. Comprueba que el número de líneas con <code>id:</code> coincide con las carpetas de <code>misiones/</code>.</td></tr>
+    <tr><td>Una misión cualquiera</td><td>Entra a <code>misiones/2y3ciclo-robot-decide/</code>: HTML, <code>js/</code>, <code>css/</code> y el <code>-en.js</code>. Busca <code>id="s-</code> en el HTML: 14 secciones.</td></tr>
+    <tr><td><code>js/tools/</code></td><td>Siete archivos, uno por herramienta. Abre <code>campeonismo.js</code> y busca <code>renderCampHome</code>: cada pantalla de la herramienta es una función que pinta HTML.</td></tr>
+    <tr><td><code>sw.js</code> (línea 1) e <code>index.html</code></td><td><code>CACHE_NAME</code> y las etiquetas <code>?v=</code> de los scripts llevan el mismo número. Ese par es lo que hace que un cambio llegue a los teléfonos.</td></tr>
+    <tr><td><code>PLANTILLA-MISIONES.md</code></td><td>El molde escrito: colores por materia, norma 1-bis (sin guiones largos) y el checklist al copiar una misión. Es la ley del proyecto.</td></tr>
+  </table>
+
+  <h2><span class="num">7</span>Actividad metalingüística de cierre</h2>
+  <ul class="check">
+    <li>Dibuja el <b>árbol del proyecto</b> en una hoja en blanco, de memoria, y escribe al lado de cada carpeta su responsabilidad en una frase.</li>
+    <li>Di la <b>frase maestra</b> en voz alta sin leerla y desglosa sus seis términos.</li>
+    <li>Explícale a alguien no técnico por qué agregar una misión son dos pasos (carpeta y catálogo) y no uno.</li>
+    <li>Cuenta a mano cuántas misiones hay en <code>misiones/</code> y compáralo con el catálogo: si no coinciden, ya sabes qué se olvidó.</li>
+  </ul>
+
+  <h2><span class="num">8</span>Simulacro de interpelación (respuestas modelo)</h2>
+
+  <div class="interp">
+    <div class="preg">«Todo en un index.html con divs que se ocultan no es arquitectura; es lo que hacíamos en 2010.»</div>
+    <div class="resp">El hecho es cierto: son vistas que se muestran y ocultan. La interpretación ignora el contexto. Sin build ni dependencias, el sitio carga en escuelas con internet pobre, se edita en cualquier computadora y lo mantiene una sola persona. La navegación completa se lee en una función, <b>switchView()</b>, y el costo asumido (un archivo grande) se paga con orden y convención.</div>
+  </div>
+  <div class="interp">
+    <div class="preg">«Tienes 57 carpetas con el mismo código repetido: eso es duplicación insostenible.»</div>
+    <div class="resp">No es copia y pega ciega: es un <b>molde</b> de 14 secciones fijado por PLANTILLA-MISIONES.md y verificado por arneses que comprueban determinismo, traducción y layout. Ese molde convierte cualquier arreglo en un arreglo replicable. La deuda honesta es que hay que replicarlo, y por eso existen las pruebas.</div>
+  </div>
+  <div class="interp">
+    <div class="preg">«Si el catálogo es un archivo escrito a mano, ¿qué pasa cuando lleguen a 500 misiones?»</div>
+    <div class="resp">Con 500 tocaría generarlo, y ese día se genera. Hoy son 57: el archivo es revisable en el historial de cambios y obliga a un paso consciente al publicar contenido. En un sitio estático sin servidor, un archivo de datos es coherente con el resto de las decisiones; se cambia cuando el dolor aparezca, no antes.</div>
+  </div>
+  <div class="interp">
+    <div class="preg">«¿Por qué no usaste React o Vue? Cualquier equipo lo haría.»</div>
+    <div class="resp">Porque el requisito no es la comodidad del equipo: no hay equipo. Sin framework no hay <b>build step</b>, ni dependencias que caduquen, ni versiones que migrar cada año; depurar es abrir el archivo. Un framework me daría componentes reutilizables y me quitaría lo que más necesito: que esto siga corriendo dentro de cinco años sin mantenimiento ajeno.</div>
+  </div>
+  <div class="interp">
+    <div class="preg">«¿Cómo evitas que las 57 misiones se vuelvan un desorden?»</div>
+    <div class="resp">Con tres cosas concretas: la plantilla escrita que fija el molde, los <b>arneses</b> de <code>_dev/</code> que verifican determinismo de las evaluaciones, traducción índice a índice y layout en pantalla de teléfono, y el hábito de arreglar en el molde y replicar. No es disciplina abstracta: son pruebas que se corren antes de publicar.</div>
+  </div>
+  <div class="interp">
+    <div class="preg">«¿Y si alguien más tiene que mantener esto mañana?»</div>
+    <div class="resp">Encuentra HTML, CSS y JavaScript estándar, sin cadena de herramientas que instalar, con la estructura documentada en los manuales y en esta misma serie de autocapacitación. Puede abrir cualquier archivo y entenderlo sin aprender un framework primero. Ese fue un criterio de diseño desde el inicio, porque el proyecto es patrimonio familiar.</div>
+  </div>
+
+  <h2><span class="num">✔</span>Lista de dominio del Módulo 2</h2>
+  <ul class="check">
+    <li>Dibujo el árbol del proyecto de memoria y digo de qué responde cada carpeta.</li>
+    <li>Explico qué es una vista y cómo se cambia de pantalla sin recargar.</li>
+    <li>Describo el molde de 3 archivos y nombro las 14 secciones.</li>
+    <li>Explico por qué el catálogo manda y qué pasa si una misión no está en él.</li>
+    <li>Digo qué hay que subir para que un cambio llegue a un teléfono ya instalado.</li>
+    <li>Respondo las 6 interpelaciones sin ver las respuestas modelo, reconociendo la deuda de cada decisión.</li>
+  </ul>
+
+  <div class="pie">
+    <span>M.E.T.A.S · Kit de Autocapacitación Técnica · Módulo 2 de 8</span>
+    <span>Siguiente: Módulo 3 · Datos locales: el corazón offline-first</span>
+  </div>
+</div>
+</body>
+</html>

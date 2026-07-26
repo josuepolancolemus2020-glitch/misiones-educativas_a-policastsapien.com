@@ -130,8 +130,9 @@ te interpele o cuestione, con seguridad y con tus propias palabras.
 
 - [x] Módulo 1 — Panorama → `kit-auto-1.html` (17 jul 2026) y misión
       interactiva en F.A.R.O (id 3). Cifras actualizadas el 26 jul 2026.
-- [x] Módulo 2 — Frontend → misión interactiva en F.A.R.O (id 4,
-      `modulo-2-frontend`, 26 jul 2026). Falta su `kit-auto-2.html` imprimible.
+- [x] Módulo 2 — Frontend → `kit-auto-2.html` y misión interactiva en F.A.R.O
+      (id 4, `modulo-2-frontend`), ambos del 26 jul 2026. Las cifras del kit 1
+      se pusieron al día ese mismo día y los dos kits cumplen la norma 1-bis.
 - [ ] Módulo 3 — Datos locales
 - [ ] Módulo 4 — Nube Supabase
 - [ ] Módulo 5 — Seguridad ⭐

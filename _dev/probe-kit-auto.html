@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><title>Sonda · Kits de autocapacitación</title>
+<style>body{font-family:system-ui;background:#222;color:#eee;margin:0;padding:10px}
+pre{background:#111;color:#7f7;padding:10px;font-size:12px;white-space:pre-wrap}
+iframe{width:420px;height:360px;border:0;background:#fff;margin-right:8px}</style>
+</head>
+<body>
+<iframe id="k1" src="/kit-auto-1.html"></iframe>
+<iframe id="k2" src="/kit-auto-2.html"></iframe>
+<pre id="out">midiendo…</pre>
+<script>
+/* Los kits son hojas imprimibles: se comprueba que tengan sus 8 secciones más
+   la lista de dominio, el simulacro con respuestas modelo, el diagrama y los
+   saltos de página; y que las cifras del kit 1 estén al día. */
+const out = document.getElementById('out');
+const L = []; let fallos = 0;
+function log(s){ L.push(s); out.textContent = L.join('\n'); }
+function ok(c, bien, mal){ if(c) log('  ✔ '+bien); else { fallos++; log('  ✘ '+mal); } }
+
+window.addEventListener('load', () => setTimeout(() => {
+  try {
+    const d1 = document.getElementById('k1').contentDocument;
+    const d2 = document.getElementById('k2').contentDocument;
+
+    log('── KIT DEL MÓDULO 2 ──');
+    ok(/Módulo 2: El frontend/.test(d2.title), 'título propio: ' + d2.title, 'título: ' + d2.title);
+    ok(d2.querySelectorAll('h2').length === 9, '8 secciones más la lista de dominio', 'secciones: ' + d2.querySelectorAll('h2').length);
+    ok(d2.querySelectorAll('.interp').length === 6, '6 interpelaciones con respuesta modelo', 'interpelaciones: ' + d2.querySelectorAll('.interp').length);
+    ok(d2.querySelectorAll('.diagrama svg').length === 1, 'trae su diagrama del árbol del frontend', 'falta el diagrama');
+    ok(d2.querySelectorAll('.salto').length === d1.querySelectorAll('.salto').length,
+      'mismos saltos de página que el kit 1 (' + d2.querySelectorAll('.salto').length + ')',
+      'saltos: ' + d2.querySelectorAll('.salto').length + ' contra ' + d1.querySelectorAll('.salto').length + ' del kit 1');
+    ok(d2.querySelectorAll('.check li').length >= 10, 'listas de comprobación completas', 'pocas casillas');
+    ok(/57 misiones|57 carpetas/.test(d2.body.textContent), 'usa las cifras de hoy (57 misiones)', 'no menciona las 57 misiones');
+    ok(/14 secciones/.test(d2.body.textContent), 'dice 14 secciones por misión', 'no dice 14 secciones');
+    ok(!/—/.test(d2.body.textContent), 'sin guiones largos (norma 1-bis)', 'quedan ' + (d2.body.textContent.match(/—/g) || []).length + ' guiones largos');
+
+    log('\n── KIT DEL MÓDULO 1 (cifras al día) ──');
+    const t1 = d1.body.textContent;
+    ok(/57 carpetas/.test(t1), '57 carpetas de misiones', 'sigue diciendo 56');
+    ok(/7 materias · 11 rutas/.test(t1), '7 materias y 11 rutas', 'materias y rutas viejas');
+    ok(/19 archivos/.test(t1), '19 archivos SQL', 'sigue en 18 archivos SQL');
+    ok(/meta-app-v47/.test(t1), 'service worker en v47', 'sigue en v27');
+    ok(/14 secciones/.test(t1), '14 secciones por misión', 'sigue diciendo 13 secciones');
+    const enlace = d1.querySelector('.pie a[href="kit-auto-2.html"]');
+    ok(!!enlace, 'el pie enlaza el kit del Módulo 2', 'el pie no enlaza el kit 2');
+    ok(!/—/.test(t1), 'sin guiones largos (norma 1-bis)', 'quedan ' + (t1.match(/—/g) || []).length + ' guiones largos');
+
+    log('\n' + (fallos ? '✖ ' + fallos + ' fallos' : '✔ todo en orden'));
+  } catch (e) { log('✘ ' + e.message); }
+}, 900));
+</script>
+</body>
+</html>

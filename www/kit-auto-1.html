@@ -130,12 +130,12 @@
 
   <h2><span class="num">1</span>La frase maestra (apréndela con tus palabras)</h2>
   <div class="destacado">«M.E.T.A.S es una aplicación web estática y <i>offline-first</i>,<br>
-  que se distribuye por tres frentes —web, PWA y APK Android— desde un mismo código,<br>
+  que se distribuye por tres frentes (web, PWA y APK Android) desde un mismo código,<br>
   y usa Supabase como nube para lo único que necesita servidor.»</div>
   <p>Cada término de esa frase tiene un significado preciso que debes poder desglosar:</p>
   <table class="guion">
     <tr><th>Término</th><th>Qué significa aquí</th></tr>
-    <tr><td>web estática</td><td>El sitio son archivos HTML, CSS y JavaScript tal cual — no hay un programa corriendo en un servidor que "arme" las páginas. GitHub Pages solo los entrega.</td></tr>
+    <tr><td>web estática</td><td>El sitio son archivos HTML, CSS y JavaScript tal cual: no hay un programa corriendo en un servidor que "arme" las páginas. GitHub Pages solo los entrega.</td></tr>
     <tr><td>offline-first</td><td>La app se diseñó para funcionar SIN internet primero: los datos viven en el dispositivo (localStorage) y la nube es una copia/extensión, nunca un requisito.</td></tr>
     <tr><td>PWA</td><td><i>Progressive Web App</i>: la misma página web, pero instalable con ícono propio y capaz de abrir sin conexión gracias a un <i>service worker</i> que guarda una copia local.</td></tr>
     <tr><td>APK Android</td><td>La app nativa para Android. No se reescribió nada: Capacitor envuelve el MISMO código web dentro de una app instalable (id <code>com.policastsapien.metas</code>).</td></tr>
@@ -190,7 +190,7 @@
     <text x="380" y="379" text-anchor="middle" fill="#22303f" font-size="11">🧒 Alumno (misiones) · 👨‍🏫 Maestro (Zona Docente) · 👨‍👩‍👧 Familia (asistente padres.html) · 🏫 Dirección (roles y Ajustes)</text>
     <line x1="380" y1="318" x2="380" y2="344" stroke="#9fb2c8" stroke-width="2"/>
   </svg>
-  <div class="cap">Diagrama 1 — Un solo código fuente alimenta tres frentes de distribución; la nube es opcional y complementaria.</div>
+  <div class="cap">Diagrama 1 · Un solo código fuente alimenta tres frentes de distribución; la nube es opcional y complementaria.</div>
   </div>
 
   <div class="nota"><b>Idea clave para defender:</b> los tres frentes NO son tres desarrollos.
@@ -201,7 +201,7 @@
   <h2><span class="num">3</span>¿Quién usa qué? (actores y puertas de entrada)</h2>
   <table class="guion">
     <tr><th>Actor</th><th>Su puerta de entrada</th><th>Qué tecnología lo sostiene</th></tr>
-    <tr><td>🧒 Alumno</td><td>El index («Portada de Tres Puertas») → las 56 misiones interactivas. Se identifica con el CÓDIGO DE AULA, nunca escribe su nombre.</td><td>HTML/JS puro; progreso en localStorage; resultados suben a la nube cuando hay red.</td></tr>
+    <tr><td>🧒 Alumno</td><td>El index («Portada de Tres Puertas») → las 57 misiones interactivas. Se identifica con el CÓDIGO DE AULA, nunca escribe su nombre.</td><td>HTML/JS puro; progreso en localStorage; resultados suben a la nube cuando hay red.</td></tr>
     <tr><td>👨‍🏫 Maestro</td><td>Zona Docente (dentro del index): Plan de Acción, Mi aula, boleta, Campeonísimo, etc. Entra con cuenta docente (correo + contraseña → PROF-XXXX).</td><td>7 herramientas en <code>js/tools/</code>; estado espejado en la nube para verse igual en PC y teléfono.</td></tr>
     <tr><td>👨‍👩‍👧 Familia</td><td><code>padres.html</code>: asistente virtual conversacional. Entra con la CLAVE DE FAMILIA de su hijo (ej. 26-9GW3), jamás con nombres.</td><td>PWA propia (manifiesto e ícono aparte); lee la nube por funciones RPC con deduplicación; caché local si no hay señal.</td></tr>
     <tr><td>🏫 Dirección</td><td>Ajustes con roles (docente / director / rector / admin) y panel docente.</td><td>Roles guardados en la nube; cada rol ve solo lo suyo (reglas RLS).</td></tr>
@@ -210,15 +210,15 @@
   <h2><span class="num">4</span>Los números del sistema (memorízalos: dan autoridad)</h2>
   <table class="guion">
     <tr><th>Dato</th><th>Valor</th><th>Por qué importa al explicar</th></tr>
-    <tr><td>Misiones educativas</td><td>56 carpetas en <code>misiones/</code></td><td>Cada una con estructura idéntica de 3 archivos (HTML+JS+CSS) y 13 secciones didácticas → replicable hasta 100+.</td></tr>
-    <tr><td>Materias y rutas</td><td>6 materias · 10 rutas</td><td>Matemáticas (15), Ciencias Naturales (14), Español (9), Ciencias Sociales (5) y las dos de 2026: Programación (6) y Robótica (6) — agregar una ruta son 2 líneas en <code>js/data/misiones.js</code> y <code>js/app.js</code>.</td></tr>
+    <tr><td>Misiones educativas</td><td>57 carpetas en <code>misiones/</code></td><td>Cada una con estructura idéntica de 3 archivos (HTML+JS+CSS) y 14 secciones → replicable hasta 100+.</td></tr>
+    <tr><td>Materias y rutas</td><td>7 materias · 11 rutas</td><td>Matemáticas (15), Ciencias Naturales (14), Español (9), Ciencias Sociales (5) y las dos de 2026: Programación (7) y Robótica (6), más Inglés (1) desde el 25 de julio. Agregar una ruta son 2 líneas en <code>js/data/misiones.js</code> y <code>js/app.js</code>.</td></tr>
     <tr><td>Herramientas docentes</td><td>7 en <code>js/tools/</code></td><td>plan-accion, registros-admin (Mi aula), campeonismo, gobierno-escolar, parte-mensual, collage-maker, pwa-install.</td></tr>
-    <tr><td>Páginas en la raíz</td><td>10 HTML</td><td>index, padres, panel-docente, consulta-nube, registro, evaluaciones, camp-vivo, mision y 2 kits de capacitación.</td></tr>
-    <tr><td>SQL de la nube</td><td>18 archivos <code>SUPABASE-*.sql</code></td><td>Son la HISTORIA documentada de la nube: cada tabla y función tiene su archivo con comentarios de por qué existe.</td></tr>
-    <tr><td>Dependencias</td><td>4 — y las 4 son Capacitor</td><td>En <code>package.json</code> no hay ni un framework, ni librerías de moda: nada que se rompa solo con el tiempo.</td></tr>
+    <tr><td>Páginas en la raíz</td><td>12 HTML</td><td>index, padres, panel-docente, consulta-nube, registro, evaluaciones, camp-vivo, mision, 2 kits de capacitación y 2 kits de autocapacitación.</td></tr>
+    <tr><td>SQL de la nube</td><td>19 archivos <code>SUPABASE-*.sql</code></td><td>Son la HISTORIA documentada de la nube: cada tabla y función tiene su archivo con comentarios de por qué existe.</td></tr>
+    <tr><td>Dependencias</td><td>4, y las 4 son Capacitor</td><td>En <code>package.json</code> no hay ni un framework, ni librerías de moda: nada que se rompa solo con el tiempo.</td></tr>
     <tr><td>Compilación</td><td>Ninguna</td><td>No hay <i>build step</i>: lo que está en el repo es lo que corre en el navegador. Depurar = leer el archivo.</td></tr>
     <tr><td>Costo de infraestructura</td><td>≈ $0 + dominio anual</td><td>GitHub Pages gratis, Supabase plan Free, Cloudflare incluido por Supabase. El dominio es el único gasto fijo.</td></tr>
-    <tr><td>Versión del service worker</td><td>v27 (línea 1 de <code>sw.js</code>)</td><td>Se sube el número en CADA cambio publicado: así los teléfonos sueltan la copia vieja y toman la nueva.</td></tr>
+    <tr><td>Versión del service worker</td><td>v47 (línea 1 de <code>sw.js</code>)</td><td>Se sube el número en CADA cambio publicado: así los teléfonos sueltan la copia vieja y toman la nueva.</td></tr>
   </table>
 
   <h2><span class="num">5</span>Cómo viaja un dato (versión panorámica)</h2>
@@ -240,10 +240,10 @@
     <tr><th>Abre…</th><th>Observa…</th></tr>
     <tr><td><code>package.json</code></td><td>La sección <code>dependencies</code>: 4 entradas, todas <code>@capacitor/*</code>. El script <code>sync</code>: copia el código a <code>www/</code> y llama a Capacitor. Ahí está TODO el "proceso de build".</td></tr>
     <tr><td><code>CNAME</code></td><td>Una sola línea: <code>metas.policastsapien.com</code>. Así le dice GitHub Pages a qué dominio responde.</td></tr>
-    <tr><td><code>capacitor.config.json</code></td><td>3 líneas: id de la app, nombre METAS, y <code>webDir: www</code> — la prueba de que el APK envuelve el mismo código web.</td></tr>
-    <tr><td><code>sw.js</code> (línea 1)</td><td><code>CACHE_NAME = 'meta-app-v27'</code> y la lista de archivos que la PWA guarda para funcionar sin internet.</td></tr>
+    <tr><td><code>capacitor.config.json</code></td><td>3 líneas: id de la app, nombre METAS, y <code>webDir: www</code>: la prueba de que el APK envuelve el mismo código web.</td></tr>
+    <tr><td><code>sw.js</code> (línea 1)</td><td><code>CACHE_NAME = 'meta-app-v47'</code> y la lista de archivos que la PWA guarda para funcionar sin internet.</td></tr>
     <tr><td><code>js/metas-supabase.js</code> (líneas 1-35)</td><td>El comentario de cabecera explica el offline-first y el outbox con tus propias palabras de entonces. La clave que aparece ahí es la PÚBLICA (verás por qué eso es correcto en el Módulo 5).</td></tr>
-    <tr><td>Carpeta <code>misiones/</code></td><td>56 carpetas hermanas con la misma anatomía. Entra a una: HTML + JS + CSS, nada más.</td></tr>
+    <tr><td>Carpeta <code>misiones/</code></td><td>57 carpetas hermanas con la misma anatomía. Entra a una: HTML + JS + CSS, nada más.</td></tr>
   </table>
 
   <h2><span class="num">7</span>Actividad metalingüística de cierre</h2>
@@ -258,7 +258,7 @@
 
   <div class="interp">
     <div class="preg">«¿Dónde está tu servidor?»</div>
-    <div class="resp">No tengo servidor propio, <b>por diseño</b>. El frontend son archivos estáticos servidos por GitHub Pages, y lo único que necesita servidor —sincronizar dispositivos y atender al asistente de padres— lo hace Supabase, un backend-como-servicio sobre PostgreSQL. Menos piezas propias = menos que se cae, menos que mantener y menos que asegurar.</div>
+    <div class="resp">No tengo servidor propio, <b>por diseño</b>. El frontend son archivos estáticos servidos por GitHub Pages, y lo único que necesita servidor (sincronizar dispositivos y atender al asistente de padres) lo hace Supabase, un backend-como-servicio sobre PostgreSQL. Menos piezas propias = menos que se cae, menos que mantener y menos que asegurar.</div>
   </div>
   <div class="interp">
     <div class="preg">«¿Qué stack usas?»</div>
@@ -266,7 +266,7 @@
   </div>
   <div class="interp">
     <div class="preg">«¿Y si GitHub o Supabase se caen?»</div>
-    <div class="resp">La app sigue funcionando: es <b>offline-first</b>. La PWA tiene copia local del código (service worker) y los datos del usuario viven en su dispositivo; la nube solo sincroniza. Lo pendiente de subir espera en una cola local y sube solo cuando vuelve el servicio — está probado con los cortes de energía reales de Honduras.</div>
+    <div class="resp">La app sigue funcionando: es <b>offline-first</b>. La PWA tiene copia local del código (service worker) y los datos del usuario viven en su dispositivo; la nube solo sincroniza. Lo pendiente de subir espera en una cola local y sube solo cuando vuelve el servicio: está probado con los cortes de energía reales de Honduras.</div>
   </div>
   <div class="interp">
     <div class="preg">«¿Esto es una página web o una app de verdad?»</div>
@@ -278,7 +278,7 @@
   </div>
   <div class="interp">
     <div class="preg">«¿Y una sola persona mantiene todo esto?»</div>
-    <div class="resp">Sí, y el diseño existe para que eso sea posible: cero frameworks (nada se rompe por dependencias ajenas), cero compilación (depurar es leer el archivo), estructura idéntica en las 56 misiones (arreglar una enseña a arreglar todas), y cada decisión de la nube documentada en su propio archivo SQL comentado.</div>
+    <div class="resp">Sí, y el diseño existe para que eso sea posible: cero frameworks (nada se rompe por dependencias ajenas), cero compilación (depurar es leer el archivo), estructura idéntica en las 57 misiones (arreglar una enseña a arreglar todas), y cada decisión de la nube documentada en su propio archivo SQL comentado.</div>
   </div>
 
   <h2><span class="num">✔</span>Lista de dominio del Módulo 1</h2>
@@ -293,7 +293,7 @@
 
   <div class="pie">
     <span>M.E.T.A.S · Kit de Autocapacitación Técnica · Módulo 1 de 8</span>
-    <span>Siguiente: Módulo 2 — El frontend y sus piezas</span>
+    <span>Siguiente: <a href="kit-auto-2.html" style="color:inherit;">Módulo 2 · El frontend y sus piezas</a></span>
   </div>
 </div>
 </body>
