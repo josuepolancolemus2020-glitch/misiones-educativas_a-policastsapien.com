@@ -4038,18 +4038,40 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   display: flex; justify-content: space-between; gap: 8px;
   padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px;
 }
-.ad-volver {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--surface); border: 1.5px solid var(--border);
+/* ── Migaja de pan dentro de una colecta ──
+   Antes había aquí un «← Todas las colectas» y el maestro lo confundía con
+   la flecha del encabezado: dos flechas hacia la izquierda en la misma
+   pantalla, una sale del aula y la otra no. La migaja quita la flecha y
+   enseña la jerarquía, que es lo que de verdad hacía falta saber. */
+.ad-ruta {
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 12px; min-width: 0;
+}
+.ad-ruta-link {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(30,58,124,.07); border: 1.5px solid rgba(30,58,124,.14);
   border-radius: 999px; cursor: pointer; font-family: inherit;
   color: var(--brand); font-size: 13px; font-weight: 800;
-  padding: 8px 15px; margin-bottom: 10px;
-  box-shadow: 0 1px 3px rgba(15,23,42,.07);
-  transition: transform .13s cubic-bezier(.34,1.56,.64,1), box-shadow .18s, border-color .18s;
+  padding: 7px 14px;
+  transition: transform .13s cubic-bezier(.34,1.56,.64,1), background .18s, border-color .18s;
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
-@media (hover: hover) { .ad-volver:hover { border-color: var(--brand-light); box-shadow: 0 5px 14px rgba(30,58,124,.16); } }
-.ad-volver:active { transform: scale(.96); }
+@media (hover: hover) {
+  .ad-ruta-link:hover { background: rgba(30,58,124,.13); border-color: var(--brand-light); }
+}
+.ad-ruta-link:active { transform: scale(.96); }
+.ad-ruta-link:focus-visible { outline: 3px solid rgba(59,130,246,.5); outline-offset: 2px; }
+.ad-ruta-sep { flex-shrink: 0; color: var(--faint); font-size: 15px; font-weight: 800; }
+/* El nombre de la colecta ya va en el título grande de la tarjeta, justo
+   debajo: aquí solo se marca el «estás aquí», sin repetirlo. */
+.ad-ruta-actual {
+  min-width: 0; font-size: 12.5px; font-weight: 700; color: var(--muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ad-ruta-link { transition: none; }
+  .ad-ruta-link:active { transform: none; }
+}
 
 /* tablas y notas SACE */
 .ad-tabla { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 10px; }

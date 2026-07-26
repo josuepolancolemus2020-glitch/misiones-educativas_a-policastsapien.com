@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Captura · Mi aula</title>
+<style>
+  body { margin: 0; background: #eef2f7; display: flex; gap: 14px; padding: 12px; font-family: system-ui, sans-serif; }
+  figure { margin: 0; }
+  figcaption { font-size: 12px; font-weight: 700; color: #334155; text-align: center; padding: 4px 0; }
+  iframe { width: 380px; height: 620px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; }
+</style>
+</head>
+<body>
+<figure><figcaption>Lista de colectas</figcaption><iframe id="a" src="/index.html"></iframe></figure>
+<figure><figcaption>Dentro de una colecta</figcaption><iframe id="b" src="/index.html"></iframe></figure>
+<script>
+const ESTADO = {
+  v: 2, activo: 'G1',
+  grupos: [{
+    id: 'G1', escuela: 'JOHN ARNOLD COOK', grado: '6', seccion: '1',
+    materias: 'Español, Matemáticas, Ciencias Naturales',
+    lista: [{ num: 1, nombre: 'Ada Sarai Sevilla Pagoada' }, { num: 2, nombre: 'Ashly Belén Miranda Valle' },
+            { num: 3, nombre: 'Balloteth Camila Espino Lones' }, { num: 4, nombre: 'Brenda Lizeth Martínez Turcios' },
+            { num: 5, nombre: 'Brianna Monserrath López Díaz' }, { num: 6, nombre: 'Brilian Alejandra Andrade Murcia' }],
+    colectas: [{ id: 'C1', concepto: 'Aporte día del niño', montoAlumno: 100,
+                 fecha: '2026-07-22', pagos: { 2: 100, 4: 100 }, gastos: [] }]
+  }]
+};
+function preparar(id, abrirColecta) {
+  const f = document.getElementById(id);
+  f.onload = () => {
+    const w = f.contentWindow, d = f.contentDocument;
+    try { w.localStorage.setItem('METAS_ADMIN_V1', JSON.stringify(ESTADO)); } catch (e) {}
+    setTimeout(() => {
+      d.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      d.getElementById('view-admin').classList.add('active');
+      w.renderAdmin();
+      d.querySelector('[data-adtab="eco"]')?.click();
+      if (abrirColecta) setTimeout(() => d.querySelector('.ad-colecta-row')?.click(), 250);
+    }, 800);
+  };
+}
+preparar('a', false);
+preparar('b', true);
+</script>
+</body>
+</html>

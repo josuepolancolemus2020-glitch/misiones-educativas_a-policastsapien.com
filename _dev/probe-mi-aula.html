@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sonda · Mi aula (grupo y colectas)</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 10px; background: #222; color: #eee; }
+  iframe { width: 380px; height: 900px; border: 0; background: #fff; }
+  pre { background: #111; color: #7f7; padding: 10px; font-size: 12px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<iframe id="f" src="/index.html"></iframe>
+<pre id="out">midiendo…</pre>
+<script>
+/* Siembra un grupo 6-1 con una colecta abierta y comprueba:
+   - que el chip diga «6-1» y no «61»
+   - que dentro de una colecta la flecha del encabezado suba UN nivel
+     (a la lista de colectas) y no se salga del aula
+   - que ya no quede ningún «←» dentro del contenido */
+const out = document.getElementById('out'), f = document.getElementById('f');
+const L = []; let fallos = 0;
+function log(s) { L.push(s); out.textContent = L.join('\n'); }
+function comprueba(cond, ok, mal) { if (cond) log('  ✔ ' + ok); else { fallos++; log('  ✘ ' + mal); } }
+
+f.onload = () => {
+  const w = f.contentWindow, d = f.contentDocument;
+  const ESTADO = {
+    v: 2, activo: 'G1',
+    grupos: [{
+      id: 'G1', escuela: 'JOHN ARNOLD COOK', grado: '6', seccion: '1',
+      materias: 'Español, Matemáticas',
+      lista: [{ num: 1, nombre: 'Ada Sarai Sevilla' }, { num: 2, nombre: 'Ashly Belén Miranda' },
+              { num: 3, nombre: 'Balloteth Camila Espino' }],
+      colectas: [{ id: 'C1', concepto: 'Aporte día del niño', montoAlumno: 100,
+                   fecha: '2026-07-22', pagos: { 2: 100 }, gastos: [] },
+                 { id: 'C2', concepto: 'Rifa de fin de año', montoAlumno: 50,
+                   fecha: '2026-07-23', pagos: {}, gastos: [] }]
+    }]
+  };
+  try { w.localStorage.setItem('METAS_ADMIN_V1', JSON.stringify(ESTADO)); } catch (e) {}
+
+  setTimeout(() => {
+    try {
+      d.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      d.getElementById('view-admin').classList.add('active');
+      w.renderAdmin();
+
+      log('\n── CHIP DEL GRUPO ──');
+      const chip = d.querySelector('.ad-gr-gs');
+      log('  texto del chip: «' + (chip ? chip.textContent.trim() : '(no hay)') + '»');
+      comprueba(chip && chip.textContent.trim() === '6-1',
+        'dice 6-1', 'debería decir 6-1');
+      const chipBtn = d.querySelector('.ad-gr-chip');
+      log('  title del chip: «' + (chipBtn ? chipBtn.getAttribute('title') : '') + '»');
+
+      log('\n── FUERA DE UNA COLECTA ──');
+      const atras = d.getElementById('admin-back-btn');
+      log('  rótulo de la flecha: «' + atras.getAttribute('aria-label') + '»');
+      comprueba(/Zona Docente/.test(atras.getAttribute('aria-label')),
+        'la flecha sale del aula', 'la flecha debería salir del aula');
+
+      log('\n── DENTRO DE UNA COLECTA ──');
+      /* la variable es de módulo: se entra tocando, como el maestro */
+      d.querySelector('[data-adtab="eco"]')?.click();
+      setTimeout(() => {
+        const fila = d.querySelector('.ad-colecta-row');
+        if (fila) fila.click();
+        setTimeout(() => {
+          const ruta = d.querySelector('.ad-ruta');
+          comprueba(!!ruta, 'hay migaja de pan', 'falta la migaja de pan');
+          if (ruta) log('  migaja: «' + ruta.textContent.replace(/\s+/g, ' ').trim() + '»');
+          comprueba(!d.querySelector('.ad-volver'),
+            'ya no existe el botón «← Todas las colectas»', 'sigue el botón viejo');
+
+          const cont = d.getElementById('admin-content');
+          const flechas = (cont.textContent.match(/←/g) || []).length;
+          comprueba(flechas === 0,
+            'no queda ninguna flecha ← en el contenido',
+            'quedan ' + flechas + ' flechas ← que compiten con la del encabezado');
+
+          const a2 = d.getElementById('admin-back-btn');
+          log('  rótulo de la flecha: «' + a2.getAttribute('aria-label') + '»');
+          comprueba(/colectas/i.test(a2.getAttribute('aria-label')),
+            'la flecha ahora sube a las colectas', 'la flecha no cambió de destino');
+
+          a2.click();
+          setTimeout(() => {
+            const sigueEnAula = d.getElementById('view-admin').classList.contains('active');
+            comprueba(sigueEnAula, 'al tocarla, sigue dentro de Mi aula', 'se salió del aula');
+            comprueba(!d.querySelector('.ad-ruta'), 'y volvió a la lista de colectas', 'no volvió a la lista');
+            log('\n' + (fallos ? '✖ ' + fallos + ' fallos' : '✔ todo en orden'));
+          }, 250);
+        }, 300);
+      }, 300);
+    } catch (e) { log('✘ ' + e.message + '\n' + e.stack); }
+  }, 900);
+};
+</script>
+</body>
+</html>

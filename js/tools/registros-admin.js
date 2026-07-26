@@ -250,13 +250,33 @@ function adLps(n) {
   const v = Math.round((Number(n) || 0) * 100) / 100;
   return 'L ' + v.toLocaleString('es-HN');
 }
+/* Grado y sección juntos: «6» y «1» son SEXTO GRADO, SECCIÓN 1, y pegados
+   se leían «61», como si fuera un número. El guion los separa.
+   Solo entra cuando las dos partes son cortas, que es como las escribe el
+   maestro (6-1, 9-2, 7-A); si alguien escribe «Sexto» y «A», un guion
+   quedaría raro y se usa el espacio de siempre. */
+function adGradoSeccion(grado, seccion) {
+  const g = String(grado || '').trim();
+  const s = String(seccion || '').trim();
+  if (!g || !s) return g || s;
+  return (g.length <= 3 && s.length <= 3) ? g + '-' + s : g + ' ' + s;
+}
+/* Para lectores de pantalla y para el «title» del chip: sin abreviar. */
+function adGrupoTitulo(g) {
+  const grado = String(g.grado || '').trim();
+  const sec = String(g.seccion || '').trim();
+  const partes = [];
+  if (grado) partes.push('Grado ' + grado);
+  if (sec) partes.push('Sección ' + sec);
+  if (g.escuela) partes.push(String(g.escuela).trim());
+  return partes.join(' · ') || 'Grupo sin nombre';
+}
 function adGrupoTxt(d) {
-  const gs = [(d.grado || '').trim(), (d.seccion || '').trim()].filter(Boolean).join(' ');
+  const gs = adGradoSeccion(d.grado, d.seccion);
   return gs + (d.escuela ? (gs ? ' · ' : '') + String(d.escuela).trim() : '');
 }
 function adGrupoChipTxt(g) {
-  const gs = [(g.grado || '').trim(), (g.seccion || '').trim()].filter(Boolean).join(' ');
-  return gs || 'Nuevo grupo';
+  return adGradoSeccion(g.grado, g.seccion) || 'Nuevo grupo';
 }
 
 /* ── RENDER PRINCIPAL ── */
@@ -265,13 +285,22 @@ function renderAdmin() {
   if (!cont) return;
   /* recordar dónde está el docente para restaurarlo al recargar */
   if (window.metasSaveNav) window.metasSaveNav({ view: 'view-admin', adTab: _adTab, adColecta: _adColectaId });
+  /* la flecha del encabezado dice a dónde lleva AHORA, que cambia según se
+     esté dentro de una colecta o no */
+  const _atras = document.getElementById('admin-back-btn');
+  if (_atras) {
+    const rotulo = _adColectaId ? 'Volver a mis colectas' : 'Volver a la Zona Docente';
+    _atras.setAttribute('aria-label', rotulo);
+    _atras.setAttribute('title', rotulo);
+  }
   const st = adState();
   const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
   /* Barra de grupos: el maestro puede tener varios (incluso en dos
      colegios); todo lo de abajo (lista, economía, asistencia, notas)
      es DEL GRUPO ACTIVO. */
   const chips = st.grupos.map(g => `
-    <button class="ad-gr-chip ${g.id === st.activo ? 'ad-gr-on' : ''}" data-gid="${g.id}">
+    <button class="ad-gr-chip ${g.id === st.activo ? 'ad-gr-on' : ''}" data-gid="${g.id}"
+            title="${adEsc(adGrupoTitulo(g))}" aria-label="${adEsc(adGrupoTitulo(g))}">
       <span class="ad-gr-gs">${adEsc(adGrupoChipTxt(g))}</span>
       ${g.escuela ? `<span class="ad-gr-esc">${adEsc(g.escuela)}</span>` : ''}
     </button>`).join('');
@@ -286,7 +315,7 @@ function renderAdmin() {
       <button class="pa-otab ${_adTab === 'asis'  ? 'pa-otab-active' : ''}" data-adtab="asis">📋 Asistencia</button>
       <button class="pa-otab ${_adTab === 'sace'  ? 'pa-otab-active' : ''}" data-adtab="sace">🧮 Notas SACE</button>
       <button class="pa-otab ${_adTab === 'com'   ? 'pa-otab-active' : ''}" data-adtab="com">📣 Comunicados</button>
-      <button class="pa-otab" id="ad-nube-chip" title="Nube del chatbot de padres — toca para sincronizar ahora">${(() => {
+      <button class="pa-otab" id="ad-nube-chip" title="Nube del chatbot de padres: toca para sincronizar ahora">${(() => {
         const n = adPendientesTotal();
         return n ? '⏳ ' + n + ' por subir' : '☁️ al día';
       })()}</button>
@@ -823,7 +852,11 @@ function adRenderColecta(body, d) {
 
   body.innerHTML = `
     <div class="pa-card">
-      <button class="ad-volver" id="ad-eco-volver">← Todas las colectas</button>
+      <nav class="ad-ruta" aria-label="Dónde estás">
+        <button class="ad-ruta-link" id="ad-eco-volver">🗂️ Mis colectas</button>
+        <span class="ad-ruta-sep" aria-hidden="true">›</span>
+        <span class="ad-ruta-actual" aria-current="page">estás aquí</span>
+      </nav>
       <div class="pa-card-title">💰 ${adEsc(c.concepto)}</div>
       <p class="pa-optional-hint">${adFechaBonita(c.fecha)} · aporte sugerido: <strong>${adLps(c.montoAlumno)}</strong><br>
         <strong>Toca</strong> un alumno para marcar que dio el aporte sugerido.
@@ -3116,5 +3149,12 @@ document.addEventListener('DOMContentLoaded', () => {
     switchView('view-admin');
     renderAdmin();
   });
-  document.getElementById('admin-back-btn')?.addEventListener('click', () => switchView('view-perfil'));
+  /* La flecha de arriba sube UN nivel, no salta al final. Dentro de una
+     colecta, «atrás» es la lista de colectas: el maestro confundía la flecha
+     del encabezado con el enlace de la colecta y se salía del aula sin
+     querer. Fuera de una colecta sí sale a la Zona Docente. */
+  document.getElementById('admin-back-btn')?.addEventListener('click', () => {
+    if (_adColectaId) { _adColectaId = null; renderAdmin(); return; }
+    switchView('view-perfil');
+  });
 });
