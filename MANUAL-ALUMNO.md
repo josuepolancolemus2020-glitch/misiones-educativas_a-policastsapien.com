@@ -1,4 +1,4 @@
-# 🚀 Manual del Explorador — M.E.T.A.S
+# 🚀 Manual del Explorador · M.E.T.A.S
 
 **Tu guía para completar misiones y convertirte en Maestro del conocimiento**
 
@@ -37,13 +37,13 @@ niveles de un videojuego: terminas una y se abre la siguiente. Hoy hay
 En la **💻 Ruta del Código** aprendes a darle órdenes a un robot en la pantalla,
 etapa por etapa:
 
-1. 🧩 El Pensamiento Computacional — pensar en pasos exactos.
-2. 💻 Secuencias: el Robot Mensajero — AVANZA, GIRA… ¡y llega!
-3. 🚦 Condicionales: el Robot Decide — SI hay pared, ENTONCES gira.
-4. 🔁 Bucles: Repetir sin Cansarse — repetir 4 veces en vez de escribir 4 veces.
-5. 📦 Variables: las Cajitas de Memoria — guardar puntos en una cajita.
-6. 🐞 Detective de Bugs — encontrar el error escondido en un programa.
-7. 🚀 Mi Primer Programa Completo — ¡todo junto en un proyecto!
+1. 🧩 El Pensamiento Computacional: pensar en pasos exactos.
+2. 💻 Secuencias, el Robot Mensajero. AVANZA, GIRA… ¡y llega!
+3. 🚦 Condicionales, el Robot Decide. SI hay pared, ENTONCES gira.
+4. 🔁 Bucles, Repetir sin Cansarse. Repetir 4 veces en vez de escribir 4 veces.
+5. 📦 Variables, las Cajitas de Memoria. Guardar puntos en una cajita.
+6. 🐞 Detective de Bugs: encontrar el error escondido en un programa.
+7. 🚀 Mi Primer Programa Completo: ¡todo junto en un proyecto!
 
 En la **🤖 Ruta de los Robots** descubres cómo funciona un robot por dentro:
 🤖 ¿Qué es un Robot? → 📡 Sensores (sus sentidos) → ⚙️ Motores y Mecanismos →
@@ -73,7 +73,7 @@ Dos cosas que te van a gustar:
 ## 3. Misiones en dos idiomas 🌐
 
 Algunas misiones tienen un botón **🌐 English** arriba, junto a la barra de
-puntos. Tócalo y **toda la misión cambia al inglés** — el contenido, los juegos
+puntos. Tócalo y **toda la misión cambia al inglés**: el contenido, los juegos
 y hasta la prueba. Vuelve a tocarlo (**🌐 Español**) y regresa al español.
 
 En el catálogo, esas misiones llevan la etiqueta **🌐 EN** para que las
@@ -99,11 +99,11 @@ de los Robots** y dos de la 💻 Ruta del Código.
 La primera vez que abras una misión aparece la pantalla **«¡Hola, explorador!»**
 con cuatro campos. Escribe:
 
-- 👤 **Tu nombre o código de alumno** — como te diga tu maestro.
-- 🏫 **Tu escuela** — ¡copia EXACTAMENTE lo que tu maestro escribió en la
+- 👤 **Tu nombre o código de alumno**: como te diga tu maestro.
+- 🏫 **Tu escuela**: ¡copia EXACTAMENTE lo que tu maestro escribió en la
   pizarra! Letra por letra.
-- 📚 **Tu grado y sección** — ejemplo: 6to A.
-- 🧑‍🏫 **El nombre de tu maestro o código** — también como está en la pizarra.
+- 📚 **Tu grado y sección**: por ejemplo, 6to A.
+- 🧑‍🏫 **El nombre de tu maestro o código**: también como está en la pizarra.
 
 Toca **✅ Guardar** y listo: **solo se pregunta una vez**. Estos datos le
 dicen a tu maestro que tus logros son TUYOS.
@@ -117,7 +117,7 @@ dicen a tu maestro que tus logros son TUYOS.
 
 ## 6. Cómo se juega 🎮
 
-- Avanza por las secciones en orden — cada una que completas se marca ✅.
+- Avanza por las secciones en orden: cada una que completas se marca ✅.
 - Gana **⭐ XP** con cada actividad: subes de nivel de **Novato ✏️** hasta
   **Maestro 🎓**.
 - Desbloquea **🏆 logros** especiales (¡colecciónalos todos!).
@@ -127,7 +127,7 @@ dicen a tu maestro que tus logros son TUYOS.
 **Consejos de explorador experto:**
 
 - 🧠 No corras. La app guarda tu avance: si cierras, al volver sigues donde ibas.
-- 🔁 Puedes repetir los juegos las veces que quieras — así se entrena.
+- 🔁 Puedes repetir los juegos las veces que quieras: así se entrena.
 - ⏱️ La app cuenta tu tiempo de trabajo… ¡y tu maestro lo puede ver! 👀
 
 ---
@@ -138,11 +138,11 @@ En el menú ☰ está el **🏆 Campeonísimo**: un torneo de preguntas estilo p
 de televisión, con ruleta de materias, ronda relámpago, gran final con apuesta y
 podio con insignias.
 
-- **Modo Torneo** — por equipos o entre compañeros, con turnos, rebote y muerte
+- **Modo Torneo**: por equipos o entre compañeros, con turnos, rebote y muerte
   súbita.
-- **Modo Práctica** — preguntas sueltas para ti solo, con la respuesta explicada
+- **Modo Práctica**: preguntas sueltas para ti solo, con la respuesta explicada
   al momento y la misión que te conviene repasar.
-- **Salón de la Fama** — guarda tus torneos ganados y tus insignias.
+- **Salón de la Fama**: guarda tus torneos ganados y tus insignias.
 
 La ruleta ya trae las **7 materias**: Español, Matemáticas, C. Naturales,
 C. Sociales, Programación, Robótica e **Inglés**.
@@ -153,9 +153,9 @@ C. Sociales, Programación, Robótica e **Inglés**.
 
 En la sección de **Evaluación**:
 
-1. Toca **Generar** — cada prueba es distinta, ¡no intentes copiar! 😉
+1. Toca **Generar**: cada prueba es distinta, ¡no intentes copiar! 😉
 2. Responde en la pantalla.
-3. Toca **🧮 Calificar prueba** — la app te dice tu nota al instante y te
+3. Toca **🧮 Calificar prueba**: la app te dice tu nota al instante y te
    muestra qué respondiste bien y qué debes repasar.
 4. ¿No te gustó tu nota? Genera otra forma y vuelve a intentarlo. Cada intento
    queda guardado.
@@ -175,8 +175,8 @@ Cuando completes la misión:
 ## 10. Envíale tus resultados a tu maestro 📤
 
 Junto a la constancia está el botón **"📤 Enviar resultados"**: arma un mensaje
-de WhatsApp con todo tu trabajo — secciones completadas, XP, tiempo y tus
-notas — listo para enviárselo a tu maestro. Es tu forma de decir:
+de WhatsApp con todo tu trabajo (secciones completadas, XP, tiempo y tus
+notas), listo para enviárselo a tu maestro. Es tu forma de decir:
 **"¡Misión cumplida!"** 🚀
 
 ---
@@ -187,7 +187,7 @@ notas — listo para enviárselo a tu maestro. Es tu forma de decir:
 genial? En la barra donde aparece tu nombre está el botón **"💬 Sugerencias"**:
 elige el tipo de mensaje, escribe con tus palabras y toca **Enviar**. Tu
 mensaje llega al equipo de M.E.T.A.S con la misión y la sección exacta donde
-estabas — ¡eres parte del equipo que mejora la app! 🛠️
+estabas. ¡Eres parte del equipo que mejora la app! 🛠️
 
 ---
 
@@ -224,5 +224,5 @@ trabajes duro… ¡él lo va a saber! 💪
 
 ---
 
-*Proyecto Educativo M.E.T.A.S — tú puedes, explorador.*
+*Proyecto Educativo M.E.T.A.S · tú puedes, explorador.*
 *🌐 policastsapien.com*

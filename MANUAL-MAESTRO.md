@@ -1,4 +1,4 @@
-# 📘 Manual del Maestro — M.E.T.A.S
+# 📘 Manual del Maestro · M.E.T.A.S
 
 **Misiones Educativas Tecnológicas de Aprendizaje Significativo**
 
@@ -19,7 +19,7 @@ sensores de un robot, los saludos en inglés…) que combina:
 - **Evaluaciones automáticas** calificables en pantalla o imprimibles en papel
   con su pauta para el docente.
 - **Registro de evidencia**: la app guarda qué trabajó cada alumno, cuánto
-  tiempo y qué notas obtuvo — y se lo hace llegar a usted.
+  tiempo y qué notas obtuvo, y se lo hace llegar a usted.
 
 **Lo más importante: funciona sin internet.** Una vez abierta la misión (o
 instalada la app), el alumno puede trabajar completamente offline. Los
@@ -70,30 +70,30 @@ el catálogo completo está en `metas.policastsapien.com/fichas/`, junto con el
 Ambas son de **II y III Ciclo**, comparten el color cian del área tecnológica y
 **no requieren computadoras, internet ni kits de robots** (vea la sección 8).
 
-**💻 Ruta del Código — Programación** (7 etapas):
+**💻 Ruta del Código · Programación** (7 etapas):
 
-1. 🧩 **El Pensamiento Computacional** — algoritmos de la vida diaria, instrucciones
+1. 🧩 **El Pensamiento Computacional**: algoritmos de la vida diaria, instrucciones
    exactas frente a ambiguas, descomponer un problema. *Etapa totalmente desconectada.*
-2. 💻 **Secuencias: el Robot Mensajero** — leer y escribir programas cortos
+2. 💻 **Secuencias, el Robot Mensajero.** Leer y escribir programas cortos
    (AVANZA, GIRA) en un simulador de cuadrícula.
-3. 🚦 **Condicionales: el Robot Decide** — SI–ENTONCES–SINO, sensor de pared, semáforos.
-4. 🔁 **Bucles: Repetir sin Cansarse** — REPETIR N VECES, patrones y figuras con el rastro.
-5. 📦 **Variables: las Cajitas de Memoria** — guardar, leer y cambiar valores; contadores;
+3. 🚦 **Condicionales, el Robot Decide.** SI–ENTONCES–SINO, sensor de pared, semáforos.
+4. 🔁 **Bucles, Repetir sin Cansarse.** REPETIR N VECES, patrones y figuras con el rastro.
+5. 📦 **Variables, las Cajitas de Memoria.** Guardar, leer y cambiar valores; contadores;
    tablas de traza.
-6. 🐞 **Detective de Bugs: la Depuración** — encontrar y corregir el error de un programa.
-7. 🚀 **Mi Primer Programa Completo** — proyecto integrador que junta secuencia,
+6. 🐞 **Detective de Bugs, la Depuración.** Encontrar y corregir el error de un programa.
+7. 🚀 **Mi Primer Programa Completo**: proyecto integrador que junta secuencia,
    condicional, bucle y variable (etapa de cierre de la ruta).
 
-**🤖 Ruta de los Robots — Robótica** (6 etapas, ruta completa):
+**🤖 Ruta de los Robots · Robótica** (6 etapas, ruta completa):
 
-1. 🤖 **¿Qué es un Robot?** — sensores, controlador y actuadores; robot frente a máquina.
-2. 📡 **Sensores: los Sentidos del Robot** — luz, distancia, tacto, temperatura y humedad,
+1. 🤖 **¿Qué es un Robot?**: sensores, controlador y actuadores; robot frente a máquina.
+2. 📡 **Sensores, los Sentidos del Robot.** Luz, distancia, tacto, temperatura y humedad,
    con la analogía del cuerpo humano.
-3. ⚙️ **Motores y Mecanismos** — engranajes, poleas y palancas (widget de engranajes).
-4. 🔌 **Electricidad para Robots** — circuito básico, serie y paralelo, conductores y
+3. ⚙️ **Motores y Mecanismos**: engranajes, poleas y palancas (widget de engranajes).
+4. 🔌 **Electricidad para Robots**: circuito básico, serie y paralelo, conductores y
    aislantes, seguridad.
-5. 🕹️ **Programando un Robot** — aplica la Ruta del Código a un robot con sensores.
-6. 🏆 **Robots que Resuelven Problemas** — ciclo de diseño y proyecto (café, río, huerto,
+5. 🕹️ **Programando un Robot**: aplica la Ruta del Código a un robot con sensores.
+6. 🏆 **Robots que Resuelven Problemas**: ciclo de diseño y proyecto (café, río, huerto,
    inundaciones, basura).
 
 > 💡 Se recomienda recorrerlas en ese orden: la Ruta del Código prepara la etapa 5 de
@@ -101,7 +101,7 @@ Ambas son de **II y III Ciclo**, comparten el color cian del área tecnológica 
 
 ### 3.2 La materia nueva: Inglés 🗣️
 
-**🗣️ Ruta de las Primeras Palabras** — nivel **Pre-A1**, alineada al MCER y al examen
+**🗣️ Ruta de las Primeras Palabras**: nivel **Pre-A1**, alineada al MCER y al examen
 **Cambridge Starters**. Su primera etapa ya está publicada: **Hello! Saludos y
 Presentarme** (saludar según la hora, decir el nombre, la edad y el país).
 
@@ -149,7 +149,7 @@ guardada para la próxima vez.
 Robots** y dos de la 💻 Ruta del Código (*El Pensamiento Computacional* y
 *Condicionales: el Robot Decide*).
 
-> 💡 Uso pedagógico: es material listo para **CLIL / escuela bilingüe** — el alumno
+> 💡 Uso pedagógico: es material listo para **CLIL / escuela bilingüe**: el alumno
 > hace la misión en español y la repite en inglés. Como el contenido ya lo domina,
 > toda la carga cognitiva se va al idioma. También sirve para el docente de inglés
 > que quiere contenido real en vez de ejercicios sueltos.
@@ -162,13 +162,13 @@ Todas las misiones siguen la misma lógica (los nombres exactos pueden variar
 por tema). El alumno avanza por secciones y va ganando **XP (puntos de
 experiencia)**, subiendo de nivel y desbloqueando **logros**:
 
-1. **Aprende** — el contenido del tema, explicado con tarjetas visuales.
-2. **Secciones de detalle** — estructura, tipos, comparaciones, laboratorio interactivo.
-3. **Flashcards + Memorama** — vocabulario clave del tema, en tarjetas y en juego de parejas.
-4. **Práctica lúdica** — Quiz, Clasifica, Identifica, Completa, Widgets, Reto, Sopa de letras.
-5. **Generador de Tareas** — crea tareas para la casa, siempre distintas.
-6. **Evaluación** — la prueba formal (ver sección 7 de este manual).
-7. **Constancia** — el diploma del alumno al completar la misión.
+1. **Aprende**: el contenido del tema, explicado con tarjetas visuales.
+2. **Secciones de detalle**: estructura, tipos, comparaciones, laboratorio interactivo.
+3. **Flashcards + Memorama**: vocabulario clave del tema, en tarjetas y en juego de parejas.
+4. **Práctica lúdica**: Quiz, Clasifica, Identifica, Completa, Widgets, Reto, Sopa de letras.
+5. **Generador de Tareas**: crea tareas para la casa, siempre distintas.
+6. **Evaluación**: la prueba formal (ver sección 7 de este manual).
+7. **Constancia**: el diploma del alumno al completar la misión.
 
 Cada misión incluye botones de **accesibilidad**: sonido, tema oscuro y letra
 grande.
@@ -198,7 +198,7 @@ permiten a usted saber de quién es cada resultado.
 > - Maestro: `Prof. Josué`
 
 **¿Quién está trabajando?** Justo arriba del menú de secciones, cada misión
-muestra siempre una barra con el alumno activo — **"👤 Nombre · grado"** — y el
+muestra siempre una barra con el alumno activo (**"👤 Nombre · grado"**) y el
 botón **"✏️ Cambiar alumno"**. En tablets o teléfonos compartidos, cada alumno
 lo toca al iniciar su turno y escribe sus datos: desde ese momento todo queda
 registrado a su nombre. (El botón también está junto a la constancia.)
@@ -208,23 +208,23 @@ registrado a su nombre. (El botón también está junto a la constancia.)
 ## 7. Las evaluaciones: su ahorro de tiempo más grande
 
 Cada misión trae **dos pruebas** con bancos de preguntas que generan formas
-distintas (Forma 1 a Forma 30) — cada alumno puede recibir una versión
+distintas (Forma 1 a Forma 30), y cada alumno puede recibir una versión
 diferente:
 
 - **Evaluación Conceptual** (100 pts): completar, verdadero/falso, selección
   múltiple y términos pareados.
 - **Segunda prueba** (100 pts), del tipo que pide la materia:
-  - **Prueba Operativa** — ejercicios de procedimiento y resolución de problemas
+  - **Prueba Operativa**: ejercicios de procedimiento y resolución de problemas
     (matemáticas y **programación**).
-  - **Prueba de Pensamiento Crítico** — análisis, comparación y justificación con
+  - **Prueba de Pensamiento Crítico**: análisis, comparación y justificación con
     rúbrica (español, ciencias y **robótica**).
 
 Con cada prueba usted puede:
 
-1. **🔄 Generar** — crea una forma nueva al instante.
-2. **🧮 Calificar en pantalla** — el alumno responde en el dispositivo y la app
+1. **🔄 Generar**: crea una forma nueva al instante.
+2. **🧮 Calificar en pantalla**: el alumno responde en el dispositivo y la app
    califica sola, ítem por ítem, con retroalimentación.
-3. **🖨️ Imprimir** — genera la prueba en formato de examen de papel, lista
+3. **🖨️ Imprimir**: genera la prueba en formato de examen de papel, lista
    para fotocopiar, **con su pauta de respuestas en página aparte, exclusiva
    del docente**.
 
@@ -243,7 +243,7 @@ Si tiene un alumno con problemas de aprendizaje (dificultad lectora, ritmo
 lento, sobreedad), marque la casilla **♿ Forma R** junto al selector de forma
 antes de Generar o Imprimir. Es una **adecuación curricular no significativa**:
 
-- **Misma competencia y mismos 100 pts** — la nota vale igual en el parcial.
+- **Misma competencia y mismos 100 pts**: la nota vale igual en el parcial.
 - **Menos ítems con más valor cada uno** (13 en vez de ~20), solo niveles
   básico e intermedio, con letra más grande.
 - **Apoyos incluidos**: banco de palabras en Completar, ejemplo resuelto,
@@ -264,7 +264,7 @@ En el Registro y el Panel Docente estas pruebas aparecen como "R-N ♿".
 
 Las dos materias nacieron con el estándar completo: **30 formas deterministas**,
 **sin Forma R** (esa sigue solo en División de Decimales), calificación en pantalla
-y la normativa impresa de siempre — encabezado con el **Parcial**, pie con el
+y la normativa impresa de siempre: encabezado con el **Parcial**, pie con el
 **Nº de evaluación** y las casillas ☐ *con valor en el parcial* / ☐ *solo de repaso*,
 una página de prueba más su pauta en letra grande.
 
@@ -309,7 +309,7 @@ didáctica imprimible** de cada una.
 
 1. Imprima (o proyecte desde su teléfono) la ficha de la misión: trae el resumen del
    tema, el vocabulario, las actividades desconectadas y los ejercicios del alumno.
-2. Haga primero la actividad física con todo el grupo — es la que enseña.
+2. Haga primero la actividad física con todo el grupo: es la que enseña.
 3. Deje los ejercicios de la ficha en el cuaderno de Programación o de Robótica.
 4. Si algún día hay una tablet o el teléfono de un padre, ahí entra el simulador como
    refuerzo, no como requisito.
@@ -351,13 +351,13 @@ En el menú ☰ está el **🏆 Campeonísimo**, un torneo académico estilo pro
 televisión con **banco propio de preguntas de las 7 materias** (unas 290 hoy),
 ligadas cada una a la misión de donde salen.
 
-- **Modo Torneo** — tres rondas (Conocimiento, Relámpago ×2 y Gran Final ×3 con
+- **Modo Torneo**: tres rondas (Conocimiento, Relámpago ×2 y Gran Final ×3 con
   **apuesta final**), ruleta de materias, turnos rotativos, rebote, muerte súbita,
   normativa en pantalla, podio e insignias. Sirve para cerrar un parcial, para el
   día del logro o para competir entre secciones.
-- **Modo Práctica** — preguntas individuales con retroalimentación inmediata y
+- **Modo Práctica**: preguntas individuales con retroalimentación inmediata y
   **sugerencia de la misión a repasar** según lo que el alumno falló.
-- **Salón de la Fama** — historial de torneos e insignias, guardado en el
+- **Salón de la Fama**: historial de torneos e insignias, guardado en el
   dispositivo.
 
 La ruleta ya incluye **Inglés** junto a Español, Matemáticas, C. Naturales,
@@ -385,8 +385,8 @@ En el menú ☰ de la app está **"Registro Docente"**: la bitácora completa de
 todo lo trabajado en ese dispositivo. Puede filtrar por misión, alumno o tipo
 de evento, ver estadísticas, y:
 
-- **📥 Exportar CSV** — descarga los datos para abrirlos en Excel.
-- **📤 Resumen por WhatsApp** — el resumen del dispositivo en un mensaje.
+- **📥 Exportar CSV**: descarga los datos para abrirlos en Excel.
+- **📤 Resumen por WhatsApp**: el resumen del dispositivo en un mensaje.
 
 Ideal para tablets del aula: al final de la semana, exporta el CSV de cada una.
 
@@ -402,7 +402,7 @@ con sus alumnos. Solicítelo al coordinador del proyecto.
 
 Al completar la misión, el alumno escribe su nombre en la **Constancia de
 Logro**, que muestra su porcentaje, estrellas, XP y logros desbloqueados.
-Puede **guardarla como foto** o **compartirla por WhatsApp** — es la
+Puede **guardarla como foto** o **compartirla por WhatsApp**: es la
 celebración del esfuerzo, y a las familias les encanta recibirla.
 
 ---
@@ -413,7 +413,7 @@ En la barra de identidad de toda misión está el botón **"💬 Sugerencias"**:
 cualquier usuario (alumno o docente) puede reportar un error de contenido,
 un problema técnico, una idea o una felicitación. El mensaje viaja
 automáticamente al equipo del proyecto **junto con la misión y la sección
-exacta** donde estaba el usuario — funciona incluso sin internet (se envía
+exacta** donde estaba el usuario. Funciona incluso sin internet (se envía
 cuando hay conexión).
 
 Anime a sus alumnos a usarlo: cada reporte mejora el material para todos.
@@ -456,7 +456,7 @@ No pasa nada: el progreso, XP y logros quedan guardados. Al volver a abrir,
 continúa donde iba.
 
 **"¿Puede el alumno repetir la prueba?"**
-Sí, generando otra forma. El registro guarda cada intento con su nota — usted
+Sí, generando otra forma. El registro guarda cada intento con su nota: usted
 decide cuál cuenta (el reporte muestra la última y el número de intentos).
 
 **"¿Necesito computadoras o un kit de robótica para dar esas materias?"**
@@ -482,5 +482,5 @@ enlace web, que siempre está al día.
 
 ---
 
-*Proyecto Educativo M.E.T.A.S — hecho en Honduras con amor a la educación.*
+*Proyecto Educativo M.E.T.A.S · hecho en Honduras con amor a la educación.*
 *🌐 policastsapien.com*

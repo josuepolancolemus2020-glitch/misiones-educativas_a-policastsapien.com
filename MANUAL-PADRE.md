@@ -1,4 +1,4 @@
-# 👨‍👩‍👧 Manual para la Familia — M.E.T.A.S
+# 👨‍👩‍👧 Manual para la Familia · M.E.T.A.S
 
 **Cómo seguir los avances de su hijo o hija con la clave de la familia**
 
@@ -43,16 +43,16 @@ Para ver las notas necesita la **clave de la familia**: un código secreto como 
 
 Puede **tocar los botones** o **escribir su pregunta** con sus propias palabras. Los botones son:
 
-- **📊 ¿Cómo va?** — resumen y promedio general.
-- **📝 Última nota** — la evaluación más reciente.
-- **📚 Todas las notas** — el historial de evaluaciones.
-- **🗓 ¿Faltó a clases?** — registro de ausencias y excusas.
-- **🧮 Notas finales** — las notas de cierre por parcial (las que van al SACE).
-- **💰 Colaboraciones** — aportes del grado, pendientes y ya entregados.
-- **🏠 ¿Cómo ayudo en casa?** — consejos según la última nota.
-- **💡 Consejo de hoy** — una recomendación breve para apoyar el estudio.
-- **🔄 Actualizar** — vuelve a consultar la nube (con internet).
-- **🔑 Cambiar clave** — para consultar otro estudiante.
+- **📊 ¿Cómo va?** Resumen y promedio general.
+- **📝 Última nota**: la evaluación más reciente.
+- **📚 Todas las notas**: el historial de evaluaciones.
+- **🗓 ¿Faltó a clases?** Registro de ausencias y excusas.
+- **🧮 Notas finales**: las notas de cierre por parcial (las que van al SACE).
+- **💰 Colaboraciones**: aportes del grado, pendientes y ya entregados.
+- **🏠 ¿Cómo ayudo en casa?** Consejos según la última nota.
+- **💡 Consejo de hoy**: una recomendación breve para apoyar el estudio.
+- **🔄 Actualizar**: vuelve a consultar la nube (con internet).
+- **🔑 Cambiar clave**: para consultar otro estudiante.
 
 También puede escribir cosas como *«¿cómo va en mate?»*, *«¿aprobó?»*, *«¿faltó esta semana?»* y el asistente le responde.
 
@@ -75,7 +75,7 @@ Si el maestro dejó un **💬 mensaje**, aparecerá junto a la nota.
 El asistente también le informa sobre:
 
 - **🗓 Faltas:** las ausencias registradas. Si una falta tiene justificación, envíela con su hijo/a o preséntela en la escuela.
-- **🧮 Notas finales:** las notas de cierre de cada parcial (I, II, III, IV), materia por materia — las mismas que van al boletín/SACE.
+- **🧮 Notas finales:** las notas de cierre de cada parcial (I, II, III, IV), materia por materia. Son las mismas que van al boletín/SACE.
 - **💰 Colaboraciones:** los aportes acordados en las reuniones de grado, con lo que está **pendiente** y lo que **ya entregaron**. El aporte se entrega al maestro; él lo marca recibido y aquí se actualiza.
 
 ---
@@ -84,7 +84,7 @@ El asistente también le informa sobre:
 
 Toque **«🏠 ¿Cómo ayudo en casa?»** y el asistente le da consejos **según la última evaluación** de su hijo/a. Además, **«💡 Consejo de hoy»** le comparte una idea práctica cada día.
 
-Un secreto que sí funciona: **15 minutos de repaso diario** y preguntar *«¿qué aprendiste hoy?»* valen más que muchas horas el día antes del examen. Y recuerde: las **misiones de M.E.T.A.S son gratis y funcionan sin internet** — aproveche el teléfono para que practique.
+Un secreto que sí funciona: **15 minutos de repaso diario** y preguntar *«¿qué aprendiste hoy?»* valen más que muchas horas el día antes del examen. Y recuerde: las **misiones de M.E.T.A.S son gratis y funcionan sin internet**: aproveche el teléfono para que practique.
 
 ---
 
@@ -94,17 +94,17 @@ Además de matemáticas, español, ciencias naturales y ciencias sociales, M.E.T
 tiene desde julio de 2026 **tres materias nuevas** para II y III Ciclo:
 
 - **💻 Programación (Ruta del Código):** 7 etapas en las que su hijo/a aprende a dar
-  instrucciones exactas a un robot de la pantalla — poner los pasos en orden, tomar
+  instrucciones exactas a un robot de la pantalla: poner los pasos en orden, tomar
   decisiones («si hay una pared, gira»), repetir sin cansarse, guardar datos y
   encontrar errores.
 - **🤖 Robótica (Ruta de los Robots):** 6 etapas sobre cómo funciona un robot por
-  dentro — sensores, motores y engranajes, electricidad segura con una pila, y
+  dentro: sensores, motores y engranajes, electricidad segura con una pila, y
   diseñar un robot que resuelva un problema de la comunidad.
 - **🗣️ Inglés (Ruta de las Primeras Palabras):** empieza con *Hello!*, para saludar,
   decir su nombre, su edad y de dónde es. Se enseña como en las academias de
   idiomas: **frases completas** en vez de listas de palabras sueltas, y **primero
   entender, después hablar**. Cada palabra trae un botón 🔊 que la pronuncia con la
-  voz que el teléfono ya tiene — **sin descargar audios y sin internet**.
+  voz que el teléfono ya tiene, **sin descargar audios y sin internet**.
 
 Tres cosas que conviene saber:
 
@@ -120,7 +120,7 @@ Tres cosas que conviene saber:
 > 💡 Cómo apoyar en casa: pídale que le explique **«¿qué le ordenaste hoy al robot?»**
 > o que le enseñe el laberinto que hicieron en el piso. En inglés, pídale que lo
 > **salude a usted** en inglés y que le enseñe cómo suena. Explicar en voz alta lo
-> aprendido es la práctica que más fija el conocimiento — y aquí usted no necesita
+> aprendido es la práctica que más fija el conocimiento, y aquí usted no necesita
 > saber de computadoras ni de inglés para escucharlo.
 
 ---
@@ -134,7 +134,7 @@ etiqueta **🌐 EN**.
 
 No es un traductor automático: está escrita por personas y **funciona sin
 internet**. Si su hijo/a está en una escuela bilingüe o quiere practicar, el
-consejo es hacer la misión primero en español y repetirla en inglés — ya sabiendo
+consejo es hacer la misión primero en español y repetirla en inglés: ya sabiendo
 el tema, la atención se va toda al idioma.
 
 ---
@@ -166,5 +166,5 @@ Este asistente es para consultar notas sin molestar al maestro. Para temas perso
 
 ---
 
-*Proyecto Educativo M.E.T.A.S — hecho en Honduras con amor a la educación.*
+*Proyecto Educativo M.E.T.A.S · hecho en Honduras con amor a la educación.*
 *🌐 policastsapien.com*
