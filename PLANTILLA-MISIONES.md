@@ -1,4 +1,4 @@
-# 🧩 PLANTILLA DE MISIONES — Guía rápida (M.E.T.A.S)
+# 🧩 PLANTILLA DE MISIONES · Guía rápida (M.E.T.A.S)
 
 Receta para crear una **misión nueva** rápido y **ahorrando tokens**.
 En una sesión nueva basta con decir: **"Sigue PLANTILLA-MISIONES para una misión de [materia], tema [X]"**.
@@ -38,7 +38,7 @@ Reglas de ahorro y calidad:
 1. **⚠️ NORMATIVA DE COLORES POR MATERIA (obligatoria e inviolable)**: el
    maestro debe saber de qué materia es el examen CON SOLO VER EL COLOR.
    Códigos oficiales únicos (auditados y normalizados en las 28 misiones el
-   11 jul 2026 — se corrigieron 10 misiones desviadas que usaban morado,
+   11 jul 2026: se corrigieron 10 misiones desviadas que usaban morado,
    rosa, turquesa, naranja…):
 
    | Materia | Acento (títulos, líneas, «Obtenido», números) | Fondo claro (franjas, cajas) |
@@ -53,23 +53,53 @@ Reglas de ahorro y calidad:
    Reglas duras:
    - Aplica a TODOS los documentos imprimibles: `printEval` (evaluación
      conceptual), `printEvalOp` (prueba operativa) y `printEvalCrit`
-     (pensamiento crítico). Un solo acento por documento — sin variantes
+     (pensamiento crítico). Un solo acento por documento, sin variantes
      oscuras ni paletas "del tema de la misión".
    - Las respuestas de la pauta (clase `.pa`) van SIEMPRE en verde `#007a00`
      ("respuesta correcta"), independiente de la materia.
    - PROHIBIDO inventar paletas por misión en los imprimibles: nada de
      morados, rosas, turquesas o naranjas aunque la misión los use en
-     pantalla. El ROJO es exclusivo de Sociales — nada de acentos rojos en
+     pantalla. El ROJO es exclusivo de Sociales: nada de acentos rojos en
      mate, tampoco al imprimir.
    - Al crear una misión nueva, copiar la paleta EXACTA de la tabla según la
      materia declarada en el encabezado de la evaluación.
+
+1-bis. **⚠️ NORMATIVA DE REDACCIÓN: SIN GUIONES LARGOS (obligatoria, jul 2026)**:
+   ningún texto del proyecto lleva guion largo (`—`). Tampoco el guion medio como
+   signo de puntuación. Aplica a **todo**: pantallas de la misión, flashcards,
+   quizzes, retos, bancos de evaluación, textos de la pauta, fichas didácticas
+   imprimibles, guías y manuales.
+
+   - **Por qué:** el guion largo se lee como firma de texto escrito por IA. El
+     proyecto declara cuándo hay IA en el proceso, pero la redacción debe leerse
+     como la de una persona: lo leen colegas y académicos, y la forma no debe
+     invitar a descartar el contenido.
+   - **Con qué se sustituye,** según lo que pida la frase: **dos puntos** cuando
+     lo que sigue explica («no fue una insurrección sofocada: fue un
+     exterminio»); **paréntesis** cuando la raya abría y cerraba una aclaración
+     («las condiciones materiales (económicas, biológicas) que…»); **coma** en las
+     aposiciones; **punto y seguido** cuando son dos ideas.
+   - Si el paréntesis cae dentro de otro paréntesis, se usan **corchetes**
+     (criterio de la RAE) o comas. Nunca paréntesis anidados.
+   - **Sí se conserva el guion medio (`–`) en rangos numéricos**: «0–5 min»,
+     «1821–2025», «Formas 1–30». Eso es tipografía normal.
+   - ⚠️ **Al corregir una misión ya traducida, cambiar los DOS lados a la vez.**
+     El diccionario de frases de `js/metas-i18n.js` usa el texto español exacto
+     como clave (por ejemplo `'🃏 Flashcards — Toca para voltear'`). Si se corrige
+     la misión y no la clave (o al revés), ese rótulo deja de traducirse y se queda
+     en español al pasar la misión a inglés. Después de tocar una misión bilingüe,
+     comprobar con el verificador de bancos traducidos.
+   - Excepción única: **los títulos citados en bibliografías se reproducen tal
+     como se publicaron**, aunque traigan guion largo. Cambiar un título es
+     alterar la cita.
+
 2. **Predice** (primera impresión, debe encantar): cada predicción lleva su
    explorador interactivo ("🔍 Explorar la pista") que induce a la respuesta
    jugando: medir distancias, animaciones, tocar y descubrir.
 3. **Flashcards**: reverso en minúscula PERO con **mayúscula inicial**
    (ortografía: todo texto comienza en mayúscula) y **letra grande sin
    desbordes**. ⚠️ CAUSA RAÍZ del bug histórico: NUNCA usar `class="fa"` en el
-   div del reverso — Font Awesome 6 mapea las letras a-z y los dígitos 0-9 a
+   div del reverso, porque Font Awesome 6 mapea las letras a-z y los dígitos 0-9 a
    ICONOS con forma de MAYÚSCULA e impone su fuente (ninguna regla
    `text-transform` puede arreglarlo porque el glifo mismo es mayúsculo; las
    tildes ú/á delatan el bug al caer a la fuente normal). La clase correcta es
@@ -108,7 +138,7 @@ Reglas de ahorro y calidad:
    sin importar cuánto contenido tenga la evaluación. Se logra con el
    **auto-ajuste de escala** incluido en el documento impreso: el examen vive en
    `<div id="evalPage">` y la pauta en `#pautaPage`; un script hace búsqueda
-   binaria del mayor `zoom` cuya altura quepa en la página (252mm útiles) —
+   binaria del mayor `zoom` cuya altura quepa en la página (252mm útiles):
    si el contenido es poco AGRANDA la letra hasta llenar la hoja (máx 1.45×);
    si es mucho la REDUCE hasta que quepa (mín 0.55×). Requisitos técnicos que
    NO deben romperse al crear/editar misiones:
@@ -125,11 +155,11 @@ Reglas de ahorro y calidad:
    - Probar con el harness (Node extrae `printEval()`, la ejecuta con datos
      cortos Y largos, Chrome headless imprime a PDF y se cuentan las páginas:
      deben ser exactamente 2 en ambos casos).
-9-bis. **⚠️ NORMATIVA DE FORMAS DETERMINISTAS — «bucle exacto» (jul 2026,
+9-bis. **⚠️ NORMATIVA DE FORMAS DETERMINISTAS · «bucle exacto» (jul 2026,
    obligatoria en TODA prueba imprimible)**: hay **30 formas** (`EVAL_FORMAS = 30`)
    y la **Forma N genera SIEMPRE exactamente el mismo examen y la misma pauta**,
    en cualquier navegador y aunque se cierre el programa. Caso de uso que la
-   motiva: el docente imprimió la Forma 15, perdió la pauta o se fue la luz —
+   motiva: el docente imprimió la Forma 15, perdió la pauta o se fue la luz:
    al volver a la misión elige «Forma 15» en el selector y obtiene tal cual
    el examen y la pauta que repartió. Piezas del estándar (bloque «Formas
    deterministas v1» antes de `genEval`):
@@ -142,7 +172,7 @@ Reglas de ahorro y calidad:
      «📋 Forma N» junto al botón de generar, para pedir una forma EXACTA.
    - Semillas por tipo de prueba: conceptual `_evalRng(cf)` · operativa
      `_evalRng(100000 + cf)` con `_opRnd` · pensamiento crítico
-     `_evalRng(200000 + cf)` — así la Forma 5 conceptual ≠ Forma 5 operativa.
+     `_evalRng(200000 + cf)`, así la Forma 5 conceptual ≠ Forma 5 operativa.
    - **Forma R (adaptada, piloto en división-decimales)**: semillas reservadas
      conceptual-R `_evalRng(300000 + cf)` · operativa/crítico-R
      `_evalRng(400000 + cf)`. Misma competencia y mismos 100 pts con menos
@@ -215,19 +245,19 @@ Reglas de ahorro y calidad:
    gradeEvalOp quedan en localStorage y el docente las exporta desde `registro.html`.
    No requiere ningún cambio en el JS de la misión: se engancha solo a las funciones
    estándar `fin`, `gradeEval` y `gradeEvalOp`, y lee la nota del panel
-   `#evalAutoResult` / `#evalOpAutoResult` — por eso el texto "Resultado: X/100 pts"
+   `#evalAutoResult` / `#evalOpAutoResult`, por eso el texto "Resultado: X/100 pts"
    de esos paneles NO debe cambiar de formato. Además inyecta solo: el modal de
    identificación del alumno (nombre/código + grado + código del maestro, 1 sola vez
    por dispositivo) y los botones "📤 Enviar resultados" y "👤 Cambiar alumno"
-   (para dispositivos compartidos) dentro de `.diploma-actions` de la constancia —
+   (para dispositivos compartidos) dentro de `.diploma-actions` de la constancia:
    por eso ese div y el input `.diploma-input` deben conservar sus clases estándar).
    E inmediatamente antes de esa línea, incluir también:
    `<script src="../../js/metas-presentacion.js"></script>`
-   (accesibilidad de aula compartida: letra grande predeterminada — el botón
-   "🔎 Letra" la vuelve pequeña —, botón "📽️ Presentación" con proporciones para
+   (accesibilidad de aula compartida: letra grande predeterminada (el botón
+   "🔎 Letra" la vuelve pequeña), botón "📽️ Presentación" con proporciones para
    proyector + escala A−/A+, y modo 📖 Libro por tarjetas. Se engancha solo: usa
    `.cred-tools` del pie, `.main`, las secciones `.sec` con tarjetas `.card` hijas
-   directas y la función `go()` — por eso esas clases y esa función deben conservar
+   directas y la función `go()`, por eso esas clases y esa función deben conservar
    sus nombres estándar).
 6. **Registrar** en `js/data/misiones.js` con el **siguiente id libre** (revisar el
    archivo; NO asumir count+1) y con su **Ruta de Aprendizaje**: campos `ruta`

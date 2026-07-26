@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#1e3a7c">
-  <title>M.E.T.A.S. — Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</title>
+  <title>M.E.T.A.S. · Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/app.css?v=43">
   <!-- Font Awesome local (funciona sin internet); el CDN queda de respaldo una versión -->
@@ -53,7 +53,7 @@
         </div>
         <div class="pensador-cita">
           <p class="pensador-text">América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.</p>
-          <span class="pensador-autor">— José Cecilio del Valle</span>
+          <span class="pensador-autor">José Cecilio del Valle</span>
         </div>
       </div>
 
@@ -295,7 +295,7 @@
   </div>
 
   <!-- ========== PARA MADRES Y PADRES ========== -->
-  <!-- VISTA: AJUSTES — perfiles y roles (docente/director/rector/admin) -->
+  <!-- VISTA: AJUSTES · perfiles y roles (docente/director/rector/admin) -->
   <div id="view-ajustes" class="view">
     <header class="app-header compact">
       <button class="hamburger-btn" aria-label="Abrir menú"><i class="fa-solid fa-bars"></i></button>
@@ -329,14 +329,14 @@
     </header>
     <div class="view-scroll">
 
-      <!-- Herramientas del aula ARRIBA — solo visibles con sesión docente
+      <!-- Herramientas del aula ARRIBA · solo visibles con sesión docente
            (renderProfile las muestra/oculta según METAS_DOCENTE_V1) -->
       <div class="setting-group teacher-panel-group" id="teacher-tools-group" style="display:none;">
         <div class="teacher-panel-head">
           <i class="fa-solid fa-chalkboard-user teacher-panel-icon"></i>
           <label class="setting-label" style="margin-bottom:0;">Herramientas del aula</label>
         </div>
-        <p class="teacher-panel-desc">Todo lo del aula en un toque — sin papeleo.</p>
+        <p class="teacher-panel-desc">Todo lo del aula en un toque, sin papeleo.</p>
 
         <!-- Acceso rápido estilo mosaico: ícono de color + nombre.
              El ORDEN es vivo: lo que más usa el maestro se va al frente
@@ -378,7 +378,7 @@
       </div>
 
       <!-- Acceso del maestro (saludo, sync, cuenta) + al final el aviso a los
-           alumnos y «Ver el avance» — lo pinta renderProfile() -->
+           alumnos y «Ver el avance» · lo pinta renderProfile() -->
       <div id="docente-acceso"></div>
 
     </div>
@@ -463,7 +463,7 @@
             <i class="fa-solid fa-lock"></i>
           </button>
         </div>
-        <p class="ge-subtitle">Ingresa tu código para votar. Formato: <strong>Grado + Sección + NºLista</strong> — Grado del 1 al 6, Sección A ó B, lista hasta 99. Ej: <strong>4B26</strong></p>
+        <p class="ge-subtitle">Ingresa tu código para votar. Formato: <strong>Grado + Sección + NºLista</strong>. Grado del 1 al 6, Sección A ó B, lista hasta 99. Ej: <strong>4B26</strong></p>
         <div class="ge-code-box">
           <input type="text" id="ge-code-input" placeholder="ej: 4B26" class="ge-input ge-code-input" maxlength="4" autocomplete="off" inputmode="text">
           <div id="ge-code-error" class="ge-code-error" hidden></div>
@@ -581,7 +581,7 @@
         <div class="pa-field" style="margin-bottom:10px;">
           <label>Evaluación aplicada (elígela del banco M.E.T.A.S)</label>
           <select id="pa-materia" class="pa-inp-field">
-            <option value="">— Primero elige la materia —</option>
+            <option value="">Primero elige la materia</option>
             <option value="español">📖 Español</option>
             <option value="matemáticas">🔢 Matemáticas</option>
             <option value="naturales">🌱 Ciencias Naturales</option>
@@ -597,13 +597,13 @@
           <div class="pa-field">
             <label>Forma impresa</label>
             <select id="pa-forma" class="pa-inp-field">
-              <option value="">— Sin forma —</option>
+              <option value="">Sin forma</option>
             </select>
           </div>
           <div class="pa-field">
             <label>Parcial</label>
             <select id="pa-parcial" class="pa-inp-field">
-              <option value="">—</option>
+              <option value="">Sin parcial</option>
               <option value="I">Parcial I</option>
               <option value="II">Parcial II</option>
               <option value="III">Parcial III</option>
@@ -624,7 +624,7 @@
         </div>
         <div class="pa-field">
           <label>Nombre de la Evaluación / Misión</label>
-          <input type="text" id="pa-evaluacion" class="pa-inp-field" placeholder="ej: 1ª E — Coordenadas y Paralelos">
+          <input type="text" id="pa-evaluacion" class="pa-inp-field" placeholder="ej: 1ª E · Coordenadas y Paralelos">
         </div>
       </div>
 
@@ -679,16 +679,16 @@
         <div class="pa-card-title">🗂️ Análisis guardados</div>
         <p class="pa-optional-hint">Cada análisis queda <strong>guardado</strong> aquí, y sus notas y mensajes
           <strong>suben solos al asistente de padres</strong> ☁️ (la familia los consulta con su clave).
-          Ábrelo cuando quieras para revisarlo, actualizarlo o reenviar mensajes — actualizar vuelve a subir los cambios.</p>
+          Ábrelo cuando quieras para revisarlo, actualizarlo o reenviar mensajes: actualizar vuelve a subir los cambios.</p>
         <div id="pa-historial-list"></div>
       </div>
 
-      <!-- Nube de padres (chatbot) — Supabase, por clave de familia -->
+      <!-- Nube de padres (chatbot) · Supabase, por clave de familia -->
       <div class="pa-card" id="pa-sync-card">
         <div class="pa-card-title">🔑 Nube de padres</div>
         <p class="pa-optional-hint">Cada nota y mensaje viaja automáticamente a la <strong>nube M.E.T.A.S</strong>:
           los padres la consultan desde su casa con la <strong>clave de la familia</strong>
-          (número de lista + 4 letras al azar, ej. 15-K7QM — imposible de adivinar por otro alumno).
+          (número de lista + 4 letras al azar, ej. 15-K7QM, imposible de adivinar por otro alumno).
           Imprímelas con el botón <strong>🔑 Códigos de padres</strong> de la tarjeta ✏️ Calificaciones.</p>
         <p class="pa-sync-status" id="pa-sb-status"></p>
       </div>
@@ -816,14 +816,14 @@
             <span class="pm-res-label">Asistencia Media</span>
             <span class="pm-res-formula">Matrícula − (Inasist. ÷ Días trabajados)</span>
           </div>
-          <span class="pm-res-value" id="pm-asist-media">—</span>
+          <span class="pm-res-value" id="pm-asist-media">s/d</span>
         </div>
         <div class="pm-resultado-item" style="border-bottom:none;">
           <div class="pm-res-lbl-wrap">
             <span class="pm-res-label">Tanto por Ciento</span>
             <span class="pm-res-formula">(Asist. Media ÷ Matrícula) × 100</span>
           </div>
-          <span class="pm-res-value pm-pct-value" id="pm-pct-asist">—</span>
+          <span class="pm-res-value pm-pct-value" id="pm-pct-asist">s/d</span>
         </div>
         <div class="pm-bar-wrap">
           <div class="pm-bar-fill" id="pm-bar-fill" style="width:0%"></div>
@@ -879,7 +879,7 @@
       <div class="pa-card">
         <div class="pa-card-title"><i class="fa-solid fa-pen-to-square co-title-icon"></i> Texto de Evidencia</div>
         <textarea id="co-text" class="pa-paste-area co-textarea" rows="2"
-          placeholder="Ej: Laboratorio de Ciencias — 7° Grado A · Mayo 2026"></textarea>
+          placeholder="Ej: Laboratorio de Ciencias · 7° Grado A · Mayo 2026"></textarea>
       </div>
 
       <!-- Formato -->
