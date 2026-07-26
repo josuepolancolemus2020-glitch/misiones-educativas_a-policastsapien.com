@@ -1,5 +1,5 @@
 /* ============================================================
-   Misión «Motores y Mecanismos» — versión en inglés
+   Misión «Motores y Mecanismos»: versión en inglés
    ------------------------------------------------------------
    Traducción de autor (no automática) para escuelas bilingües.
    Se carga junto a la misión y el motor js/metas-i18n.js la
@@ -666,7 +666,7 @@
         'The class robot car goes incredibly fast, but it gets stuck when it carries a book on top.'
       ],
 
-      critDesignGuide: 'Rubric with 3 criteria (20 pts total) — ① MECHANISM (7 pts): choose and name a mechanism that suits the problem (lever, pulley, gears, belt, worm gear, wheel and axle or crank and rod). ② RATIO (6 pts): explain whether it needs FORCE or SPEED and how it gets it (which wheel or bar is the big one and which is the small one, where the fulcrum goes). ③ JUSTIFICATION (7 pts): recognize the trade (whatever you gain in force you lose in speed) and propose a realistic solution with materials from around you. Any design counts as long as the mechanism solves the problem and the student explains why.',
+      critDesignGuide: 'Rubric with 3 criteria (20 pts total): ① MECHANISM (7 pts): choose and name a mechanism that suits the problem (lever, pulley, gears, belt, worm gear, wheel and axle or crank and rod). ② RATIO (6 pts): explain whether it needs FORCE or SPEED and how it gets it (which wheel or bar is the big one and which is the small one, where the fulcrum goes). ③ JUSTIFICATION (7 pts): recognize the trade (whatever you gain in force you lose in speed) and propose a realistic solution with materials from around you. Any design counts as long as the mechanism solves the problem and the student explains why.',
 
       gearCases: [
         { ctx: 'The robot’s motor drives a 10-tooth pinion that drags a 30-tooth wheel along.', gears: [10, 30], dirFirst: 1, keyDir: -1, keyRel: 'fuerza', uso: 'This is how a gearmotor is put together: the robot loses speed, but it gains the force it needs to climb the ramp.' },
@@ -693,27 +693,27 @@
        3. FRASES EXACTAS (pantalla y pruebas imprimibles)
        ══════════════════════════════════════════════════════ */
     frases: {
-      /* — mensaje de WhatsApp: lo propio de esta misión —
+      /* mensaje de WhatsApp: lo propio de esta misión
          (lo común a todas las misiones vive en js/metas-i18n.js) */
       '_Se te hará prueba escrita y serás excelente estudiante en Robótica: motores, engranajes, poleas y palancas._ ⚙️':
         '_You will take a written test and become an excellent Robotics student: motors, gears, pulleys and levers._ ⚙️',
-      /* — pestañas propias de esta misión — */
+      /* pestañas propias de esta misión */
       'Mecanismos': 'Mechanisms', 'Engranajes': 'Gears',
-      /* — laboratorio del tren de engranajes — */
+      /* laboratorio del tren de engranajes */
       'MOTOR': 'MOTOR', 'SALIDA': 'OUTPUT', 'LOCO': 'IDLER',
       '⏸️ Pausar el giro': '⏸️ Pause the spin', '▶️ Reanudar el giro': '▶️ Resume the spin',
       '▶ Siguiente caso': '▶ Next case',
       '⚙️ Caso 1: el motor mueve el engranaje azul': '⚙️ Case 1: the motor drives the blue gear',
-      /* — mini-quiz de la sección Mecanismos — */
+      /* mini-quiz de la sección Mecanismos */
       '¡Correcto! Piensas como todo un ingeniero de mecanismos.': 'Correct! You are thinking like a real mechanism engineer.',
       'Casi. Pregúntate siempre: ¿gana fuerza o gana velocidad?, ¿en qué sentido gira?':
         'Almost. Always ask yourself: does it gain force or does it gain speed? and which way does it turn?',
-      /* — flashcards y memorama — */
+      /* flashcards y memorama */
       '🧠 Memorama de los Mecanismos': '🧠 Mechanism Memory Game',
-      /* — clasifica — */
+      /* clasifica */
       '💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.':
         '💡 Tip: use the "Change group" button several times! Practicing with different categories helps you master the topic.',
-      /* — widgets — */
+      /* widgets */
       '🔗 Cadena de transmisión: ordena el movimiento': '🔗 Transmission chain: put the movement in order',
       'para ordenar el camino que sigue el movimiento, desde la energía hasta el trabajo final:':
         'arrows to put the path the movement follows in order, from the energy to the final work:',
@@ -729,9 +729,9 @@
       'Recuerda: lo que se gana en fuerza se pierde en velocidad. Decide:':
         'Remember: whatever you gain in force you lose in speed. Decide:',
       'Un piñón pequeño mueve una rueda grande': 'A small pinion drives a big wheel',
-      /* — reto — */
+      /* reto */
       '💪 Más fuerza': '💪 More force', '⚡ Más velocidad': '⚡ More speed',
-      /* — generador de tareas — */
+      /* generador de tareas */
       '🗂️ Analizar mecanismos': '🗂️ Analyze mechanisms',
       'Copia en tu cuaderno; subraya, colorea o encierra el mecanismo indicado en cada oración. Escribe al lado cómo se llama.':
         'Copy this in your notebook; underline, color or circle the mechanism in each sentence. Next to it, write what it is called.',
@@ -742,20 +742,20 @@
       'Montaje o mecanismo': 'Setup or mechanism', '¿Qué hace?': 'What does it do?',
       '¿Sentido del giro?': 'Direction of rotation?', '¿Fuerza o velocidad?': 'Force or speed?',
       'Ejemplo real': 'Real example',
-      /* — evaluación conceptual: pantalla e impresión — */
+      /* evaluación conceptual: pantalla e impresión */
       'Evaluación Final · Motores y Mecanismos · Educación Básica · Robótica': 'Final Test · Motors and Mechanisms · Basic Education · Robotics',
       'Evaluación Competencial · Pensamiento Crítico · Motores y Mecanismos · Educación Básica': 'Competency Test · Critical Thinking · Motors and Mechanisms · Basic Education',
       /* la versión impresa añade la materia al final */
       'Evaluación Competencial · Pensamiento Crítico · Motores y Mecanismos · Educación Básica · Robótica': 'Competency Test · Critical Thinking · Motors and Mechanisms · Basic Education · Robotics',
-      '🎓 Evaluación Final — Motores y Mecanismos': '🎓 Final Test — Motors and Mechanisms',
-      '🧠 Prueba de Pensamiento Crítico — Motores y Mecanismos': '🧠 Critical Thinking Test — Motors and Mechanisms',
-      '✅ PAUTA — Evaluación Final · Motores y Mecanismos': '✅ ANSWER KEY — Final Test · Motors and Mechanisms',
-      '✅ PAUTA — Pensamiento Crítico · Motores y Mecanismos': '✅ ANSWER KEY — Critical Thinking · Motors and Mechanisms',
-      /* — pensamiento crítico: títulos y consignas propias — */
+      '🎓 Evaluación Final · Motores y Mecanismos': '🎓 Final Test · Motors and Mechanisms',
+      '🧠 Prueba de Pensamiento Crítico · Motores y Mecanismos': '🧠 Critical Thinking Test · Motors and Mechanisms',
+      '✅ PAUTA: Evaluación Final · Motores y Mecanismos': '✅ ANSWER KEY: Final Test · Motors and Mechanisms',
+      '✅ PAUTA: Pensamiento Crítico · Motores y Mecanismos': '✅ ANSWER KEY: Critical Thinking · Motors and Mechanisms',
+      /* pensamiento crítico: títulos y consignas propias */
       'I. ¿Qué mecanismo necesita?': 'I. Which mechanism does it need?',
       'III. Analiza el mecanismo': 'III. Analyze the mechanism',
       'V. Diseña y justifica tu mecanismo': 'V. Design and justify your mechanism',
-      'V. Diseña tu mecanismo — Rúbrica': 'V. Design your mechanism — Rubric',
+      'V. Diseña tu mecanismo · Rúbrica': 'V. Design your mechanism · Rubric',
       '¿Qué mecanismo necesita esta situación? Justifica tu elección: ¿hace falta FUERZA o VELOCIDAD, y por qué?':
         'Which mechanism does this situation need? Justify your choice: is FORCE or SPEED needed, and why?',
       '¿Qué mecanismo necesita esta situación? Justifica tu elección.':
@@ -771,14 +771,14 @@
       '1. Sentido de giro:': '1. Direction of rotation:',
       '2. Velocidad y fuerza:': '2. Speed and force:',
       '3. Qué cambiar:': '3. What to change:',
-      /* — constancia — */
+      /* constancia */
       'Misión Motores y Mecanismos': 'Mission · Motors and Mechanisms',
       '¡Sigue aprendiendo!': 'Keep learning!',
       '¡Muy buen trabajo!': 'Great work!',
       '¡Vas muy bien!': 'You are doing very well!',
       '¡Dominas los mecanismos!': 'You have mastered the mechanisms!',
       '¡Maestro del Movimiento!': 'Master of Movement!',
-      /* — etiquetas de accesibilidad (viven en aria-label y title) — */
+      /* etiquetas de accesibilidad (viven en aria-label y title) */
       'Barra de progreso XP': 'XP progress bar',
       'Compartir misión por WhatsApp': 'Share this mission on WhatsApp',
       'Tarjeta de estudio. Presiona Enter para voltear': 'Study card. Press Enter to flip',
@@ -800,9 +800,9 @@
        «Motores y Mecanismos».
        ══════════════════════════════════════════════════════ */
     fragmentos: [
-      /* — WhatsApp: el título de la misión en la constancia — */
+      /* WhatsApp: el título de la misión en la constancia */
       [/¡(.+?) completó la Misión "Motores y Mecanismos"!/g, '$1 completed the mission “Motors and Mechanisms”!'],
-      /* — laboratorio: rótulos y datos del tren de engranajes — */
+      /* laboratorio: rótulos y datos del tren de engranajes */
       [/🦷 Dientes: /g, '🦷 Teeth: '],
       [/🎬 El primero gira /g, '🎬 The first one turns '],
       [/⚖️ Relación (\d+) : (\d+)/g, '⚖️ Ratio $1 : $2'],
@@ -820,21 +820,21 @@
       [/^¡Correcto! El último engranaje gira /, 'Correct! The last gear turns '],
       [/^Revisa: el último gira /, 'Check again: the last one turns '],
       [/ y (💪|⚡|➡️)/g, ' and $1'],
-      /* — widgets: la corrección que explica la regla va antes que la genérica — */
+      /* widgets: la corrección que explica la regla va antes que la genérica */
       [/^Correcto: (.+)\. Recuerda: la rueda GRANDE siempre gira más lento y con más fuerza\./,
         'Correct: $1. Remember: the BIG wheel always turns slower and with more force.'],
       [/^Correcto: /, 'Correct: '],
-      /* — generador de tareas: la fila de respuestas de la tabla — */
+      /* generador de tareas: la fila de respuestas de la tabla */
       [/¿Qué hace\?: /g, 'What does it do?: '],
       [/ \| ¿Sentido\?: /g, ' | Direction?: '],
       [/ \| ¿Fuerza o velocidad\?: /g, ' | Force or speed?: '],
       [/ \| Ejemplo: /g, ' | Example: '],
-      /* — títulos con número de forma: van antes que la regla suelta «Forma N» — */
+      /* títulos con número de forma: van antes que la regla suelta «Forma N» */
       [/🎓 Evaluación Final · Forma (\d+) · Motores y Mecanismos/g, '🎓 Final Test · Form $1 · Motors and Mechanisms'],
       [/🧠 Pensamiento Crítico · Forma (\d+) · Motores y Mecanismos/g, '🧠 Critical Thinking · Form $1 · Motors and Mechanisms'],
       [/Evaluación Motores y Mecanismos/g, 'Test · Motors and Mechanisms'],
       [/Pensamiento Crítico Motores y Mecanismos/g, 'Critical Thinking · Motors and Mechanisms'],
-      /* — etiquetas de accesibilidad con número — */
+      /* etiquetas de accesibilidad con número */
       [/Respuesta pareada (\d+)/g, 'Matching answer $1'],
       [/Mecanismo del caso (\d+) y su justificación/g, 'Mechanism for case $1 and its justification'],
       [/Elegir número de forma exacta \(1 a (\d+)\)/g, 'Choose the exact form number (1 to $1)']

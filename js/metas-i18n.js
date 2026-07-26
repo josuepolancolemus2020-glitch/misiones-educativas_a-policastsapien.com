@@ -8,13 +8,13 @@
 
    La misión se traduce por tres vías, de mayor a menor calidad:
 
-   1. BLOQUES  — cada bloque estático de la misión lleva
+   1. BLOQUES: cada bloque estático de la misión lleva
       data-i18n="clave" y MISION_EN.html['clave'] trae su HTML en
       inglés ya redactado (con sus <strong>, tablas y emojis).
-   2. BANCOS   — flashcards, quizzes, retos y bancos de examen se
+   2. BANCOS: flashcards, quizzes, retos y bancos de examen se
       cambian en bloque: la misión expone MISION_APLICAR_IDIOMA()
       y este motor le pasa MISION_EN.data.
-   3. FRASES   — los textos fijos que el JS genera al vuelo
+   3. FRASES: los textos fijos que el JS genera al vuelo
       (rótulos de evaluación, retroalimentación, avisos) se
       traducen con un diccionario de frases exactas y fragmentos.
       Un MutationObserver los atrapa apenas aparecen, así no hay
@@ -79,7 +79,7 @@
      hereden y no haya que repetirlos en cada archivo -en.js. Si una misión
      declara la misma frase, la suya manda. */
   var BASE_FRASES = {
-    /* — identificación del alumno — */
+    /* identificación del alumno */
     '👋 ¡Hola, explorador!': '👋 Hi there, explorer!',
     'Identifícate': 'Identify yourself',
     '👤 Tu nombre o código de alumno': '👤 Your name or student code',
@@ -100,7 +100,7 @@
     '📴 Sin internet: se confirmará al reconectar.': '📴 No internet: it will be confirmed once you reconnect.',
     '📤 Enviar resultados': '📤 Send results',
     'Estudiante': 'Student',
-    /* — buzón de sugerencias — */
+    /* buzón de sugerencias */
     '💬 Buzón de sugerencias': '💬 Suggestion box', 'Sugerencias': 'Suggestions',
     '🏷️ Tipo de mensaje': '🏷️ Type of message', '✍️ Tu mensaje': '✍️ Your message',
     '💡 Tengo una idea': '💡 I have an idea',
@@ -109,7 +109,7 @@
     '🎉 Quiero felicitar al equipo': '🎉 I want to congratulate the team',
     '📤 Enviar': '📤 Send',
     '💬 ¡Gracias! Tu mensaje fue registrado y se enviará al equipo.': '💬 Thank you! Your message was saved and will be sent to the team.',
-    /* — modo presentación — */
+    /* modo presentación */
     '📽️ Presentación': '📽️ Slideshow', 'Modo presentación': 'Slideshow mode',
     'Letra más grande': 'Bigger text', 'Letra más pequeña': 'Smaller text',
     '📖 Libro (deslizar páginas)': '📖 Book (swipe pages)',
@@ -117,12 +117,12 @@
     '📲 Historia 9:16': '📲 Story 9:16',
     'Página anterior': 'Previous page', 'Página siguiente': 'Next page',
 
-    /* ——— Rótulos comunes a TODAS las misiones ———
+    /* ··· Rótulos comunes a TODAS las misiones ···
        Los juegos, el generador de tareas y las dos evaluaciones se llaman
        igual en las 56 misiones, así que su traducción vive aquí una sola
        vez. Cada <mision>-en.js solo declara lo suyo; si repite una clave,
        la de la misión manda. */
-    /* — barra superior, navegación y pie — */
+    /* barra superior, navegación y pie */
     'Aprendiz 🌱': 'Beginner 🌱',
     'Regresar al catálogo de misiones': 'Back to the mission catalog',
     'Clasifica': 'Sort', 'Identifica': 'Spot', 'Completa': 'Complete', 'Widgets': 'Widgets',
@@ -134,14 +134,17 @@
       '«Use your cell phone only as a learning tool; otherwise it can be harmful» 🌱 · Read, interact, remember what you learn.',
     '🔊 Sonido': '🔊 Sound', '🌙 Tema': '🌙 Theme', '🏅 Logros': '🏅 Achievements',
     '🔤 Letra': '🔤 Text size', '🔄 Reiniciar XP': '🔄 Reset XP', '🏅 Mis Logros': '🏅 My Achievements',
-    /* — flashcards y memorama — */
-    '🃏 Flashcards — Toca para voltear': '🃏 Flashcards — Tap to flip',
+    /* flashcards y memorama */
+    '🃏 Flashcards: toca para voltear': '🃏 Flashcards: tap to flip',
+    /* rótulo viejo, con raya: lo siguen usando las misiones de la Ruta del
+       Código. Se borra cuando esa ruta pase el barrido de guiones largos. */
+    '🃏 Flashcards — Toca para voltear': '🃏 Flashcards: tap to flip',
     '⭐ +1 XP por cada tarjeta volteada (primera vez)': '⭐ +1 XP for each card you flip (first time)',
     '🃏 Toca · Enter para voltear': '🃏 Tap · press Enter to flip',
     '◀ Anterior': '◀ Previous', 'Siguiente ▶': 'Next ▶',
     '⭐ +1 XP por pareja (primera vez) · +2 XP al completar': '⭐ +1 XP per pair (first time) · +2 XP for finishing',
     '🔄 Mezclar de nuevo': '🔄 Shuffle again',
-    /* — quiz, clasifica, identifica, completa — */
+    /* quiz, clasifica, identifica, completa */
     '🧠 Quiz de Comprensión': '🧠 Comprehension Quiz',
     '⭐ +5 XP por respuesta correcta (primera vez por pregunta)': '⭐ +5 XP per correct answer (first time per question)',
     '✔ Verificar': '✔ Check', '🔄 Reiniciar Quiz': '🔄 Restart quiz', '🔄 Reiniciar': '🔄 Restart',
@@ -164,7 +167,7 @@
     '▶ Siguiente': '▶ Next',
     '✏️ Completa la oración': '✏️ Complete the sentence',
     '⭐ +5 XP por respuesta correcta (primera vez)': '⭐ +5 XP per correct answer (first time)',
-    /* — widgets — */
+    /* widgets */
     '⭐ +4 XP por orden correcto (primera vez por secuencia)': '⭐ +4 XP per correct order (first time per sequence)',
     'Usa las flechas ▲ ▼ para poner los pasos en el orden correcto:': 'Use the ▲ ▼ arrows to put the steps in the right order:',
     '✅ Verificar orden': '✅ Check the order', '🔄 Nuevo caso': '🔄 New case',
@@ -172,15 +175,17 @@
     '⭐ +3 XP por respuesta correcta (primera vez por pista)': '⭐ +3 XP per correct answer (first time per clue)',
     'Cargando...': 'Loading…',
     '⭐ +3 XP por respuesta correcta (primera vez)': '⭐ +3 XP per correct answer (first time)',
-    /* — reto — */
-    '🏆 Reto Final — ¡30 segundos!': '🏆 Final Challenge — 30 seconds!',
+    /* reto */
+    '🏆 Reto Final: ¡30 segundos!': '🏆 Final Challenge: 30 seconds!',
+    /* rótulo viejo, con raya: ver la nota de las flashcards */
+    '🏆 Reto Final — ¡30 segundos!': '🏆 Final Challenge: 30 seconds!',
     'Clasifica cada término lo más rápido que puedas.': 'Sort each term as fast as you can.',
     '⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)': '⭐ +1 XP correct | ❌ -1 XP wrong (first round only)',
     '💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.':
       '💡 Tip: when you finish, use "Change pair" to play with other categories and get even quicker.',
     '¡Prepárate!': 'Get ready!', '🏁 ¡Tiempo!': '🏁 Time!',
     '🚀 ¡Iniciar!': '🚀 Start!', '🔀 Variar pareja': '🔀 Change pair',
-    /* — sopa de letras — */
+    /* sopa de letras */
     '🤍 Sopa de Letras': '🤍 Word Search',
     '⭐ +1 XP por palabra encontrada (primera vez)': '⭐ +1 XP per word you find (first time)',
     '🖱️ Arrastra o haz clic en la primera letra, luego en la última': '🖱️ Drag, or click the first letter and then the last one',
@@ -190,7 +195,7 @@
     '🎉 ¡Ya encontraste todas las palabras!': '🎉 You have already found every word!',
     '⚠️ Necesitas al menos 2 XP para usar la linterna.': '⚠️ You need at least 2 XP to use the flashlight.',
     '🔦 ¡Linterna encendida 3 segundos! (-2 XP)': '🔦 Flashlight on for 3 seconds! (-2 XP)',
-    /* — generador de tareas — */
+    /* generador de tareas */
     '📋 Generador de Tareas': '📋 Homework Generator',
     '✏️ Completar oraciones': '✏️ Complete sentences', '💡 Explicar y diseñar': '💡 Explain and design',
     '5 tareas': '5 tasks', '8 tareas': '8 tasks', '10 tareas': '10 tasks', '15 tareas': '15 tasks',
@@ -200,7 +205,7 @@
       'Copy and solve in your notebook. Each sentence has a ___ gap. Choose and write the correct option.',
     'Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa. Puedes acompañarlas con dibujos.':
       'Copy the questions below in your notebook and answer each one clearly and completely. You may add drawings.',
-    /* — evaluación conceptual: pantalla — */
+    /* evaluación conceptual: pantalla */
     '🎓 Evaluación Conceptual': '🎓 Concept Test', '🧠 Pensamiento Crítico': '🧠 Critical Thinking',
     /* la versión impresa añade la materia al final */
     'Nombre:': 'Name:', 'Fecha:': 'Date:', 'Centro Educativo:': 'School:', 'Instituto:': 'School:',
@@ -235,7 +240,7 @@
       '🧮 Self-assessment: answer each section, compare with the Answer Key and write your score (0–20) in each box. Then press Add up the total.',
     'Compara siempre tus respuestas con la Pauta antes de anotar el puntaje de cada sección.':
       'Always compare your answers with the Answer Key before writing the score for each section.',
-    /* — pensamiento crítico — */
+    /* pensamiento crítico */
     'II. Corrige el error conceptual': 'II. Correct the misconception',
     'IV. Comparación razonada': 'IV. Reasoned comparison',
     '20 pts': '20 pts',
@@ -247,11 +252,14 @@
       '1. Which concept matches each case? 2. How are they alike? 3. How are they different? Give an example of each.',
     'Caso A': 'Case A', 'Caso B': 'Case B', 'Caso A:': 'Case A:', 'Caso B:': 'Case B:',
     'Obtenido:': 'Score:', 'de 20 pts': 'of 20 pts',
-    /* — impresión: encabezados, pauta y pie — */
+    /* impresión: encabezados, pauta y pie */
     'Documento exclusivo del docente · No distribuir al estudiante': 'For the teacher only · Do not hand out to students',
     'Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u': 'Total value: 100 pts | 4 sections × 5 questions × 5 pts each',
+    'Valor total: 100 pts | 5 secciones × 20 pts c/u · respuesta abierta, usar como guía de corrección':
+      'Total value: 100 pts | 5 sections × 20 pts each · open answers, use as a marking guide',
+    /* rótulo viejo, con raya: ver la nota de las flashcards */
     'Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección':
-      'Total value: 100 pts | 5 sections × 20 pts each — open answers, use as a marking guide',
+      'Total value: 100 pts | 5 sections × 20 pts each · open answers, use as a marking guide',
     'I. Completar': 'I. Fill in', 'II. V o F': 'II. T or F', 'III. Selección': 'III. Multiple choice', 'IV. Pareados': 'IV. Matching',
     'Total, obtenido': 'Total score', 'de 100%': 'of 100%', 'de 100': 'of 100', 'de 25%': 'of 25%', 'de 20': 'of 20',
     'Nº de Evaluación temática realizada:': 'Topic test number:',
@@ -259,7 +267,7 @@
     'Evaluación solo de repaso': 'Practice test only',
     '1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.':
       '1–5 (Fill in): marked by hand → ✓ (A) means a correct answer · 6–10: T=A, F=B · Visual reference only; use the official ZipGrade sheet to scan students.',
-    /* — mensajes de WhatsApp —
+    /* mensajes de WhatsApp
        El texto que se comparte se arma en JS y sale de la página sin pasar
        nunca por el DOM, así que el observador no lo ve: lo traduce
        METAS_TR_TEXTO línea por línea antes de abrir WhatsApp. Aquí viven las
@@ -270,7 +278,7 @@
     'Desbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋':
       'Unlock *every achievement* and enter *your details* so your teacher can see everything you have earned. 📋',
     '👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇': '👇 *TAP THE LINK TO START YOUR MISSION* 👇',
-    /* — constancia — */
+    /* constancia */
     'CONSTANCIA DE LOGRO': 'CERTIFICATE OF ACHIEVEMENT',
     '📲 WhatsApp': '📲 WhatsApp', '📷 Guardar foto': '📷 Save photo', '✖ Cerrar': '✖ Close',
     '¡Sigue adelante!': 'Keep going!',
@@ -280,7 +288,7 @@
     '⚠️ No se pudo guardar la constancia': '⚠️ The certificate could not be saved',
     '⏳ Capturando...': '⏳ Capturing…',
     '¡Misión completada!': 'Mission completed!', 'Ver mi Constancia': 'See my certificate',
-    /* — trozos sueltos: frases que el <strong> parte en varios nodos — */
+    /* trozos sueltos: frases que el <strong> parte en varios nodos */
     'Usa las flechas': 'Use the',
     'para poner los pasos en el orden correcto:': 'arrows to put the steps in the right order:',
     'Ejemplo:': 'Example:',
@@ -302,7 +310,7 @@
     'Calcular Total': 'Add up the total',
     'Esta afirmación tiene': 'This statement contains',
     'dos errores': 'two mistakes',
-    /* — otras comunes — */
+    /* otras comunes */
     'Aprende': 'Learn',
     'Lab': 'Lab',
     'Flashcards': 'Flashcards',
@@ -321,7 +329,7 @@
      más general (la clave ZipGrade nombra «Forma N» y debe caer antes que la
      regla suelta de «Forma N»). */
   var BASE_FRAGMENTOS = [
-    /* — panel de identificarse y registro — */
+    /* panel de identificarse y registro */
     [/^Escribe tus datos $/, 'Write your details '],
     [/^una sola vez$/, 'just once'],
     [/^ para que tu maestro sepa que estos logros son tuyos\.$/, ' so your teacher knows these achievements are yours.'],
@@ -331,7 +339,7 @@
     [/^📚 Grado y sección: /, '📚 Grade and section: '],
     [/^⏱️ Tiempo activo: /, '⏱️ Time on task: '],
     [/: aún sin calificar/, ': not graded yet'],
-    /* — contadores de progreso de los juegos — */
+    /* contadores de progreso de los juegos */
     [/Pregunta (\d+) de (\d+)/g, 'Question $1 of $2'],
     [/Oración (\d+) de (\d+)/g, 'Sentence $1 of $2'],
     [/Pista (\d+) de (\d+)/g, 'Clue $1 of $2'],
@@ -339,13 +347,13 @@
     [/Caso (\d+) de (\d+):/g, 'Case $1 of $2:'],
     [/Caso (\d+):/g, 'Case $1:'],
     [/^(\d+) de (\d+)$/g, '$1 of $2'],
-    /* — memorama, quiz, reto y sopa — */
+    /* memorama, quiz, reto y sopa */
     [/🃏 Parejas: (\d+) de (\d+) · Intentos: (\d+)/g, '🃏 Pairs: $1 of $2 · Tries: $3'],
     [/¡Memoria completada en (\d+) intentos! \+2 XP extra/g, 'Memory game finished in $1 tries! +2 XP bonus'],
     [/✅ (\d+) correctas \| ❌ (\d+) errores/g, '✅ $1 correct | ❌ $2 wrong'],
     [/Resultado: (\d+)\/(\d+) \((\d+)%\) ¡Bien hecho!/g, 'Result: $1/$2 ($3%) Well done!'],
     [/✅ ¡Encontraste: ([A-ZÑÁÉÍÓÚ]+)!/g, '✅ You found $1!'],
-    /* — avisos y rótulos que nombran el grupo, la pareja o el caso — */
+    /* avisos y rótulos que nombran el grupo, la pareja o el caso */
     [/🔄 Grupo: (.+?) vs (.+)/g, '🔄 Group: $1 vs $2'],
     [/🔄 Pareja: (.+?) vs (.+)/g, '🔄 Pair: $1 vs $2'],
     [/🔄 Caso: /g, '🔄 Case: '],
@@ -353,10 +361,10 @@
     [/ ¡Logro desbloqueado! /g, ' Achievement unlocked! '],
     [/La respuesta correcta es: /g, 'The correct answer is: '],
     [/^Busca: /g, 'Look for: '],
-    /* — generador de tareas — */
+    /* generador de tareas */
     [/📝 Opciones: /g, '📝 Options: '],
     [/✅ Respuestas:/g, '✅ Answers:'],
-    /* — evaluación conceptual: calificación y clave — */
+    /* evaluación conceptual: calificación y clave */
     [/Revisar\. Respuesta esperada: /g, 'Check again. Expected answer: '],
     [/Pareados: (\d+)\/5 correctos\. Excelente\. \+25 pts/g, 'Matching: $1/5 correct. Excellent. +25 pts'],
     [/Pareados: (\d+)\/5 correctos\. Clave: /g, 'Matching: $1/5 correct. Key: '],
@@ -365,11 +373,11 @@
       'Fill in: $1/25 · T/F: $2/25 · Multiple choice: $3/25 · Matching: $4/25'],
     [/🎯 Evaluación calificada: (\d+)\/100/g, '🎯 Test graded: $1/100'],
     [/🧮 Evaluación calificada: (\d+)\/100\. Revisa las respuestas marcadas\./g, '🧮 Test graded: $1/100. Check the marked answers.'],
-    /* — pensamiento crítico: autoevaluación — */
+    /* pensamiento crítico: autoevaluación */
     [/Puntaje total autoevaluado: (\d+)\/100/g, 'Self-assessed total score: $1/100'],
     [/🎯 Pensamiento crítico: (\d+)\/100/g, '🎯 Critical thinking: $1/100'],
     [/🧮 Puntaje registrado: (\d+)\/100\. ¡Sigue practicando!/g, '🧮 Score saved: $1/100. Keep practicing!'],
-    /* — WhatsApp: líneas comunes cuya decoración cambia de misión a misión —
+    /* WhatsApp: líneas comunes cuya decoración cambia de misión a misión
          el emoji que abre y cierra el rótulo, y el que remata la línea en
          _cursiva_, los elige cada misión, así que estas no pueden ir como
          frase completa. El marcador de progreso de la constancia va aquí
@@ -380,12 +388,14 @@
     [/Se te hará prueba escrita y serás excelente estudiante en Programación\./g,
       'You will take a written test and become an excellent Programming student.'],
     [/🏅 Progreso: (\d+)% ·/g, '🏅 Progress: $1% ·'],
-    /* — impresión: clave ZipGrade y número de forma — */
-    [/🎯 Clave rápida estilo ZipGrade · Forma (\d+) — respuestas correctas ya rellenadas para digitar la clave en la app/g,
-      '🎯 ZipGrade-style quick key · Form $1 — correct answers already filled in so you can type the key into the app'],
+    /* impresión: clave ZipGrade y número de forma */
+    /* acepta los dos puntos (rótulo ya barrido) y la raya vieja, que sigue
+       viva en la Ruta del Código hasta que le toque su tanda */
+    [/🎯 Clave rápida estilo ZipGrade · Forma (\d+)(?::| —) respuestas correctas ya rellenadas para digitar la clave en la app/g,
+      '🎯 ZipGrade-style quick key · Form $1: correct answers already filled in so you can type the key into the app'],
     [/Test Version \/ Forma:/g, 'Test Version / Form:'],
     [/Forma (\d+)/g, 'Form $1'],
-    /* — fecha de la constancia: «25 de julio de 2026» → «July 25, 2026» — */
+    /* fecha de la constancia: «25 de julio de 2026» → «July 25, 2026» */
     [/(\d+) de enero de (\d+)/g, 'January $1, $2'], [/(\d+) de febrero de (\d+)/g, 'February $1, $2'],
     [/(\d+) de marzo de (\d+)/g, 'March $1, $2'], [/(\d+) de abril de (\d+)/g, 'April $1, $2'],
     [/(\d+) de mayo de (\d+)/g, 'May $1, $2'], [/(\d+) de junio de (\d+)/g, 'June $1, $2'],
@@ -414,8 +424,8 @@
   /* Traduce un texto plano que la misión manda FUERA de la página (el mensaje
      de WhatsApp): se arma en JS, nunca llega al DOM y por eso el observador no
      lo alcanza. Se traduce línea por línea para que cada renglón entre por el
-     mismo camino que un nodo de texto —frase exacta primero, fragmentos
-     después— y no por el reemplazo global de trDocumento, que sobre un texto
+     mismo camino que un nodo de texto (frase exacta primero, fragmentos
+     después) y no por el reemplazo global de trDocumento, que sobre un texto
      corto con una URL dentro es demasiado bruto. */
   function trTexto(texto) {
     if (idiomaActual !== 'en' || !texto) return texto;
@@ -713,7 +723,7 @@
   /* ---------- fuera el traductor automático ----------
      La misión ya trae su traducción de autor. Si además se deja que el
      navegador traduzca la página, al pasar a inglés Chrome ve el
-     lang="en" y —si el alumno tiene «traducir siempre inglés → español»—
+     lang="en" y (si el alumno tiene «traducir siempre inglés → español»)
      la retraduce entera al español en menos de un segundo: parece que el
      botón «se devuelve solo». Y lo que queda es traducción de máquina
      («East ciclo» por «Este ciclo», «DE LO CONTRARIO» por SINO).

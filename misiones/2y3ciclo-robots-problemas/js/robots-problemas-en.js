@@ -1,5 +1,5 @@
 /* ============================================================
-   Misión «Robots que Resuelven Problemas» — versión en inglés
+   Misión «Robots que Resuelven Problemas»: versión en inglés
    ------------------------------------------------------------
    Traducción de autor (no automática) para escuelas bilingües.
    Es la etapa 6 de 6: la que CIERRA la Ruta de los Robots.
@@ -555,7 +555,7 @@
       critErrorBank: [
         {
           txt: '"The first thing a good team does is build the robot; the problem gets looked for afterwards."',
-          g1: 'That is backwards: the FIRST stage is to IDENTIFY the problem — say what is going wrong, who it affects and why it matters.',
+          g1: 'That is backwards: the FIRST stage is to IDENTIFY the problem. Say what is going wrong, who it affects and why it matters.',
           g2: 'Building with no problem defined wastes time and materials: there would be no criterion to compare the test against.'
         },
         {
@@ -654,7 +654,7 @@
         'At school the trash gets mixed together: plastic, paper and food scraps all go into the same bin.'
       ],
 
-      critDesignGuide: 'Rubric with 4 criteria (20 pts total) — ① A WELL-DEFINED PROBLEM (5 pts): says what is going wrong, who it affects and why it matters, with a measurable success criterion. ② JUSTIFIED SENSORS AND MECHANISMS (5 pts): names which sensor measures the signal of the problem, which mechanism or actuator carries out the action and which energy source it uses, explaining WHY each one was chosen. ③ A COHERENT PROGRAM (5 pts): writes the main order in the form «if X happens, then do Y», matching the sensor with the actuator. ④ TEST, IMPROVEMENT AND ETHICS (5 pts): says how it would be tested and measured, proposes an improvement if it does not meet the criterion, and mentions who it benefits, who it might harm and how it is kept safe.',
+      critDesignGuide: 'Rubric with 4 criteria (20 pts total): ① A WELL-DEFINED PROBLEM (5 pts): says what is going wrong, who it affects and why it matters, with a measurable success criterion. ② JUSTIFIED SENSORS AND MECHANISMS (5 pts): names which sensor measures the signal of the problem, which mechanism or actuator carries out the action and which energy source it uses, explaining WHY each one was chosen. ③ A COHERENT PROGRAM (5 pts): writes the main order in the form «if X happens, then do Y», matching the sensor with the actuator. ④ TEST, IMPROVEMENT AND ETHICS (5 pts): says how it would be tested and measured, proposes an improvement if it does not meet the criterion, and mentions who it benefits, who it might harm and how it is kept safe.',
 
       /* Los ids (identificar, idear…) NO se traducen: el widget que ordena las
          7 etapas compara por id, no por texto. */
@@ -782,19 +782,19 @@
        3. FRASES EXACTAS (pantalla y pruebas imprimibles)
        ══════════════════════════════════════════════════════ */
     frases: {
-      /* — mensaje de WhatsApp: lo propio de esta misión —
+      /* mensaje de WhatsApp: lo propio de esta misión
          (lo común a todas las misiones vive en js/metas-i18n.js) */
       'Cierra la *Ruta de los Robots*: aprende el ciclo de diseño de ingeniería y crea un robot que resuelva un problema de tu comunidad. 🛠️':
         'Close the *Robot Path*: learn the engineering design cycle and build a robot that solves a problem in your community. 🛠️',
       '_Se te hará prueba escrita y presentarás tu proyecto en equipo._ 🤖':
         '_You will take a written test and present your project as a team._ 🤖',
-      /* — pestañas propias de esta misión — */
+      /* pestañas propias de esta misión */
       'Criterios': 'Criteria', 'Taller': 'Workshop',
-      /* — mini-quiz — */
+      /* mini-quiz */
       '¡Correcto! Piensas como todo un robotista.': 'Correct! You are thinking like a real roboticist.',
       'Casi. Pregúntate siempre: ¿a quién beneficia?, ¿a quién podría afectar?, ¿es seguro?':
         'Almost. Always ask yourself: who does it benefit? who might it harm? is it safe?',
-      /* — taller de diseño — */
+      /* taller de diseño */
       '🛠️ Taller de Diseño': '🛠️ Design Workshop',
       '✍️ Anota esta etapa en tu ficha de proyecto: es la que llevarás al cuaderno.':
         '✍️ Write this stage down on your project sheet: it is the one that goes in your notebook.',
@@ -802,12 +802,12 @@
       '✅ ¡Buena decisión!': '✅ Good call!',
       '☕ Robot del patio de café': '☕ Coffee drying yard robot',
       '🔍 1. Identificar el problema': '🔍 1. Identify the problem',
-      /* — flashcards y memorama — */
+      /* flashcards y memorama */
       '🧠 Memorama del Ciclo de Diseño': '🧠 Design Cycle Memory Game',
-      /* — clasifica — */
+      /* clasifica */
       '💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.':
         '💡 Tip: use the "Change group" button several times! Practicing with different categories helps you master the topic.',
-      /* — widgets — */
+      /* widgets */
       '🔁 Ordena las 7 etapas del ciclo de diseño': '🔁 Put the 7 stages of the design cycle in order',
       '⭐ +5 XP por dejar el ciclo en orden (primera vez por proyecto)': '⭐ +5 XP for getting the cycle in order (first time per project)',
       'hasta dejar las etapas en el orden correcto del ciclo de diseño:': 'arrows to put the stages into the right order of the design cycle:',
@@ -825,7 +825,7 @@
       'Pregúntate: ¿a quién beneficia?, ¿a quién podría afectar?, ¿es seguro? Y responde:':
         'Ask yourself: who does it benefit? who might it harm? is it safe? Then answer:',
       'Un robot que avisa de la crecida del río': 'A robot that warns about the river rising',
-      /* — generador de tareas — */
+      /* generador de tareas */
       '🗂️ Fichas de proyecto': '🗂️ Project sheets',
       '💡 Explicar y diseñar proyectos': '💡 Explain and design projects',
       'Copia en tu cuaderno; subraya, colorea o encierra el concepto de robótica indicado en cada oración. Escribe al lado qué parte o tipo de robot es.':
@@ -834,20 +834,22 @@
         'Copy the table below in your notebook. For each project answer: which problem does it solve? which sensor does it carry? which actuator does it carry? and what constraint does it have? Explain in your own words.',
       'Proyecto': 'Project', '¿Qué problema resuelve?': 'Which problem does it solve?',
       '¿Qué sensor?': 'Which sensor?', '¿Qué actuador?': 'Which actuator?', '¿Qué restricción?': 'Which constraint?',
-      /* — evaluación conceptual y pensamiento crítico — */
+      /* evaluación conceptual y pensamiento crítico */
       'Robótica · Evaluación Conceptual · Robots que Resuelven Problemas · Educación Básica': 'Robotics · Concept Test · Robots that Solve Problems · Basic Education',
       'Robótica · Prueba de Pensamiento Crítico · Robots que Resuelven Problemas · Educación Básica': 'Robotics · Critical Thinking Test · Robots that Solve Problems · Basic Education',
-      '🎓 Evaluación Final — Robots que Resuelven Problemas': '🎓 Final Test — Robots that Solve Problems',
-      '🧠 Prueba de Pensamiento Crítico — Robots que Resuelven Problemas': '🧠 Critical Thinking Test — Robots that Solve Problems',
-      '✅ PAUTA — Evaluación Final · Robots que Resuelven Problemas': '✅ ANSWER KEY — Final Test · Robots that Solve Problems',
-      '✅ PAUTA — Pensamiento Crítico · Robots que Resuelven Problemas': '✅ ANSWER KEY — Critical Thinking · Robots that Solve Problems',
-      /* — pensamiento crítico: títulos y consignas propias — */
+      '🎓 Evaluación Final · Robots que Resuelven Problemas': '🎓 Final Test · Robots that Solve Problems',
+      '🧠 Prueba de Pensamiento Crítico · Robots que Resuelven Problemas': '🧠 Critical Thinking Test · Robots that Solve Problems',
+      /* esta misión encabeza la pauta con «Robótica» donde las otras cinco de
+         la ruta ponen «Evaluación Final»; la clave copia lo que emite el JS */
+      '✅ PAUTA: Robótica · Robots que Resuelven Problemas': '✅ ANSWER KEY: Robotics · Robots that Solve Problems',
+      '✅ PAUTA: Pensamiento Crítico · Robots que Resuelven Problemas': '✅ ANSWER KEY: Critical Thinking · Robots that Solve Problems',
+      /* pensamiento crítico: títulos y consignas propias */
       'I. Diseña la solución': 'I. Design the solution',
       'II. Corrige el error del proceso': 'II. Correct the mistake in the process',
       'III. Analiza la prueba y la mejora': 'III. Analyze the test and the improvement',
-      'V. Diseña tu proyecto': 'V. Design your project',
-      'V. Diseña tu proyecto — Rúbrica': 'V. Design your project — Rubric',
-      /* — constancia — */
+      'V. Proyecto de diseño completo': 'V. Full design project',
+      'V. Proyecto de diseño completo · Rúbrica': 'V. Full design project · Rubric',
+      /* constancia */
       'Misión 🏆 Robots que Resuelven Problemas · Ruta de los Robots completa':
         'Mission 🏆 Robots that Solve Problems · Robot Path complete',
       '¡Sigue diseñando!': 'Keep designing!',
@@ -855,7 +857,7 @@
       '¡Vas muy bien: ya sabes probar y mejorar!': 'You are doing very well: you know how to test and improve now!',
       '¡Dominas el ciclo de diseño completo!': 'You have mastered the whole design cycle!',
       '¡Cerraste la Ruta de los Robots: eres Maestro Innovador!': 'You have completed the Robot Path: you are a Master Innovator!',
-      /* — etiquetas de accesibilidad (aria-label y title) — */
+      /* etiquetas de accesibilidad (aria-label y title) */
       'Barra de progreso XP': 'XP progress bar',
       'Compartir misión por WhatsApp': 'Share this mission on WhatsApp',
       'Tarjeta de estudio. Presiona Enter para voltear': 'Study card. Press Enter to flip',
@@ -870,10 +872,10 @@
        4. FRAGMENTOS (textos con números o nombres variables)
        ══════════════════════════════════════════════════════ */
     fragmentos: [
-      /* — WhatsApp: el título de la misión en la constancia — */
+      /* WhatsApp: el título de la misión en la constancia */
       [/¡(.+?) completó la Misión "Robots que Resuelven Problemas" y cerró la Ruta de los Robots!/g,
         '$1 completed the mission “Robots that Solve Problems” and finished the Robot Path!'],
-      /* — taller: el rótulo compuesto «Proyecto → Etapa» y sus avisos —
+      /* taller: el rótulo compuesto «Proyecto → Etapa» y sus avisos
          el «¡Proyecto X completo!» va antes que el «Proyecto: » suelto */
       [/🛠️ ¡Proyecto (.+) completo!/g, '🛠️ Project $1 complete!'],
       [/🛠️ Proyecto: /g, '🛠️ Project: '],
@@ -882,21 +884,21 @@
       [/^❌ Conviene la otra opción\. /, '❌ The other option is the right one. '],
       [/: recuerda identificar → idear → diseñar → construir → probar → mejorar → comunicar\./g,
         ': remember identify → brainstorm → design → build → test → improve → communicate.'],
-      /* — widgets: la corrección genérica y la de la ética — */
+      /* widgets: la corrección genérica y la de la ética */
       [/^Correcto: (.+)\. Pregúntate siempre: ¿a quién beneficia\?, ¿a quién podría afectar\?, ¿es seguro\?/,
         'Correct: $1. Always ask yourself: who does it benefit? who might it harm? is it safe?'],
       [/^Correcto: /, 'Correct: '],
-      /* — generador de tareas: la fila de respuestas de la ficha de proyecto — */
+      /* generador de tareas: la fila de respuestas de la ficha de proyecto */
       [/Problema: /g, 'Problem: '],
       [/ \| Sensor: /g, ' | Sensor: '],
       [/ \| Actuador: /g, ' | Actuator: '],
       [/ \| Restricción: /g, ' | Constraint: '],
-      /* — títulos con número de forma: antes que la regla suelta «Forma N» — */
+      /* títulos con número de forma: antes que la regla suelta «Forma N» */
       [/🎓 Evaluación Final · Forma (\d+) · Robots que Resuelven Problemas/g, '🎓 Final Test · Form $1 · Robots that Solve Problems'],
       [/🧠 Pensamiento Crítico · Forma (\d+) · Robots que Resuelven Problemas/g, '🧠 Critical Thinking · Form $1 · Robots that Solve Problems'],
       [/Evaluación Robots que Resuelven Problemas/g, 'Test · Robots that Solve Problems'],
       [/Pensamiento Crítico Robots que Resuelven Problemas/g, 'Critical Thinking · Robots that Solve Problems'],
-      /* — etiquetas de accesibilidad con número — */
+      /* etiquetas de accesibilidad con número */
       [/Problema y diseño del caso (\d+)/g, 'Problem and design for case $1'],
       [/Elegir número de forma exacta \(1 a (\d+)\)/g, 'Choose the exact form number (1 to $1)']
     ],

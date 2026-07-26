@@ -1,5 +1,5 @@
 /* ============================================================
-   Misión «Sensores: los Sentidos del Robot» — versión en inglés
+   Misión «Sensores: los Sentidos del Robot»: versión en inglés
    ------------------------------------------------------------
    Traducción de autor (no automática) para escuelas bilingües.
    Se carga junto a la misión y el motor js/metas-i18n.js la
@@ -87,7 +87,7 @@
       a1:
         '<h2>📡 What is a sensor?</h2>' +
         '<p>A <strong>sensor</strong> is the part of the robot that <strong>SENSES</strong>: it turns something from the real world ' +
-        '—<strong>light, distance, heat, contact, sound or moisture</strong>— into a <strong>signal</strong> that the ' +
+        '(<strong>light, distance, heat, contact, sound or moisture</strong>) into a <strong>signal</strong> that the ' +
         '<strong>controller</strong> understands. With no sensors the robot would be «blind and deaf»: it would know nothing about what ' +
         'is going on around it.</p>' +
         '<div class="type-grid">' +
@@ -253,7 +253,7 @@
         '<h2>📁 Topic Resources</h2>' +
         '<div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">' +
         '<p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Printable study sheet</p>' +
-        '<p style="font-size:0.86rem;margin-bottom:0.85rem;">A 7-page study guide (theory, unplugged activities and assessment) to print or solve before the test. <em>It opens in English too — the language you choose here carries over.</em></p>' +
+        '<p style="font-size:0.86rem;margin-bottom:0.85rem;">A 7-page study guide (theory, unplugged activities and assessment) to print or solve before the test. <em>It opens in English too: the language you choose here carries over.</em></p>' +
         '<a href="../../fichas/ficha-sensores-robot.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Open / print the study sheet</a>' +
         '</div>' +
         '<p style="font-size:0.9rem;margin-bottom:1rem;">Here you will find support materials for this mission: slide decks, PDF documents, study guides and more. Your teacher keeps adding resources to this folder.</p>' +
@@ -689,7 +689,7 @@
         'The youngest children get too close to the cookfire in the school kitchen and nobody sees them in time.'
       ],
 
-      critDesignGuide: 'Rubric with 3 criteria (20 pts total) — ① SENSORS (8 pts): choose at least two sensors that suit the problem and explain WHAT EACH ONE SENSES. ② CONTROLLER (6 pts): write a clear decision of the type «if the sensor reads X, then the robot does Y». ③ ACTUATOR AND FAILURES (6 pts): name what the robot acts with and mention what could make a sensor give a wrong reading (dirty, wet, blocked, low light). Any design counts as long as the sensor → controller → actuator chain is complete and realistic.',
+      critDesignGuide: 'Rubric with 3 criteria (20 pts total): ① SENSORS (8 pts): choose at least two sensors that suit the problem and explain WHAT EACH ONE SENSES. ② CONTROLLER (6 pts): write a clear decision of the type «if the sensor reads X, then the robot does Y». ③ ACTUATOR AND FAILURES (6 pts): name what the robot acts with and mention what could make a sensor give a wrong reading (dirty, wet, blocked, low light). Any design counts as long as the sensor → controller → actuator chain is complete and realistic.',
 
       sensorData: {
         luz: {
@@ -734,13 +734,13 @@
        3. FRASES EXACTAS (pantalla y pruebas imprimibles)
        ══════════════════════════════════════════════════════ */
     frases: {
-      /* — mensaje de WhatsApp: lo propio de esta misión —
+      /* mensaje de WhatsApp: lo propio de esta misión
          (lo común a todas las misiones vive en js/metas-i18n.js) */
       'Aprende cómo el robot VE, OYE, TOCA y MIDE el mundo con sus sensores. 🤖':
         'Learn how the robot SEES, HEARS, TOUCHES and MEASURES the world with its sensors. 🤖',
-      /* — barra superior, navegación y pie — */
+      /* barra superior, navegación y pie */
       'Aprende': 'Learn', 'Tipos': 'Types', 'Lab': 'Lab', 'Flashcards': 'Flashcards', 'Quiz': 'Quiz',
-      /* — laboratorio (rótulos del robot en SVG) — */
+      /* laboratorio (rótulos del robot en SVG) */
       'CONTROLADOR': 'CONTROLLER', 'LUZ': 'LIGHT', 'DISTANCIA': 'DISTANCE',
       'TEMPERATURA': 'TEMPERATURE', 'HUMEDAD': 'MOISTURE', 'TACTO 🤲': 'TOUCH 🤲',
       '🔬 Laboratorio de Sensores': '🔬 Sensor Laboratory',
@@ -752,14 +752,14 @@
       'Explorar el sensor de humedad': 'Explore the moisture sensor',
       'Explorar el sensor de tacto': 'Explore the touch sensor',
       'Robot con cinco sensores: toca cada sensor para explorarlo': 'A robot with five sensors: tap each sensor to explore it',
-      /* — flashcards y memorama — */
+      /* flashcards y memorama */
       '🧠 Memorama de los Sensores': '🧠 Sensor Memory Game',
-      /* — quiz, clasifica, identifica, completa — */
+      /* quiz, clasifica, identifica, completa */
       '¡Correcto! Piensas como todo un técnico de sensores.': 'Correct! You are thinking like a real sensor technician.',
       'Casi. Pregúntate: ¿percibe algo del mundo o hace algo en el mundo?': 'Almost. Ask yourself: does it sense something in the world, or does it do something in the world?',
       '💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.':
         '💡 Tip: use the "Change group" button several times! Practicing with different categories helps you master the topic.',
-      /* — widgets — */
+      /* widgets */
       '🔗 Sensor → Controlador → Actuador: ordena la cadena': '🔗 Sensor → Controller → Actuator: put the chain in order',
       'Hay pasos fuera de orden. Recuerda: sensor → controlador → actuador.': 'Some steps are out of order. Remember: sensor → controller → actuator.',
       '📡 ¿Qué sensor necesita?': '📡 Which sensor does it need?',
@@ -771,9 +771,9 @@
       '📡💪 ¿Sensor o actuador?': '📡💪 Sensor or actuator?',
       'Pregúntate: ¿me informa algo del mundo o hace algo en el mundo?': 'Ask yourself: does it tell me something about the world, or does it do something in the world?',
       'El micrófono': 'The microphone',
-      /* — reto — */
+      /* reto */
       '📡 Sensor': '📡 Sensor', '💪 Actuador': '💪 Actuator',
-      /* — generador de tareas — */
+      /* generador de tareas */
       '🔍 Identificar': '🔍 Identify', '🗂️ Analizar sensores': '🗂️ Analyze sensors',
       'Copia en tu cuaderno; subraya, colorea o encierra el concepto de robótica indicado en cada oración. Escribe al lado de qué sensor o parte se trata.':
         'Copy this in your notebook; underline, color or circle the robotics concept in each sentence. Next to it, write which sensor or part it is.',
@@ -781,14 +781,14 @@
         'Copy the table below in your notebook. For each component answer: is it a sensor or an actuator? what does it sense? which human sense is it like? and write a real example.',
       'Componente': 'Component', '¿Sensor o actuador?': 'Sensor or actuator?', '¿Qué percibe?': 'What does it sense?',
       'Sentido humano': 'Human sense', 'Ejemplo': 'Example',
-      /* — evaluación conceptual: pantalla — */
+      /* evaluación conceptual: pantalla */
       'Evaluación Final · Sensores: los Sentidos del Robot · Educación Básica · Robótica': 'Final Test · Sensors: The Robot’s Senses · Basic Education · Robotics',
       'Evaluación Competencial · Pensamiento Crítico · Sensores: los Sentidos del Robot · Educación Básica': 'Competency Test · Critical Thinking · Sensors: The Robot’s Senses · Basic Education',
       /* la versión impresa añade la materia al final */
       'Evaluación Competencial · Pensamiento Crítico · Sensores: los Sentidos del Robot · Educación Básica · Robótica': 'Competency Test · Critical Thinking · Sensors: The Robot’s Senses · Basic Education · Robotics',
-      '🎓 Evaluación Final — Sensores: los Sentidos del Robot': '🎓 Final Test — Sensors: The Robot’s Senses',
-      '🧠 Prueba de Pensamiento Crítico — Sensores: los Sentidos del Robot': '🧠 Critical Thinking Test — Sensors: The Robot’s Senses',
-      /* — pensamiento crítico — */
+      '🎓 Evaluación Final · Sensores: los Sentidos del Robot': '🎓 Final Test · Sensors: The Robot’s Senses',
+      '🧠 Prueba de Pensamiento Crítico · Sensores: los Sentidos del Robot': '🧠 Critical Thinking Test · Sensors: The Robot’s Senses',
+      /* pensamiento crítico */
       'I. Elige el sensor y justifica': 'I. Choose the sensor and justify it',
       'III. Analiza la cadena: sensor → controlador → actuador': 'III. Analyze the chain: sensor → controller → actuator',
       'V. Diseña el sistema de sensores de tu robot': 'V. Design your robot’s sensor system',
@@ -803,21 +803,21 @@
         'Invent a robot that solves this problem: write its name, which SENSORS it carries and what each one senses, what its controller DECIDES («if the sensor reads X, then it does Y»), which ACTUATOR it responds with, and what could make a sensor fail. Draw it on the back of the sheet.',
       'I. Elige el sensor': 'I. Choose the sensor', 'II. Corrige el error': 'II. Correct the mistake',
       'III. Analiza la cadena': 'III. Analyze the chain', 'IV. Comparación': 'IV. Comparison',
-      'V. Diseña tu sistema de sensores — Rúbrica': 'V. Design your sensor system — Rubric',
+      'V. Diseña tu sistema de sensores · Rúbrica': 'V. Design your sensor system · Rubric',
       'Sensor:': 'Sensor:', 'Controlador:': 'Controller:', 'Actuador:': 'Actuator:',
-      /* — impresión: encabezados, pauta y pie — */
+      /* impresión: encabezados, pauta y pie */
       'Evaluación Sensores: los Sentidos del Robot': 'Test · Sensors: The Robot’s Senses',
       'Pensamiento Crítico Sensores: los Sentidos del Robot': 'Critical Thinking · Sensors: The Robot’s Senses',
-      '✅ PAUTA — Evaluación Final · Sensores: los Sentidos del Robot': '✅ ANSWER KEY — Final Test · Sensors: The Robot’s Senses',
-      '✅ PAUTA — Pensamiento Crítico · Sensores: los Sentidos del Robot': '✅ ANSWER KEY — Critical Thinking · Sensors: The Robot’s Senses',
-      /* — constancia — */
+      '✅ PAUTA: Evaluación Final · Sensores: los Sentidos del Robot': '✅ ANSWER KEY: Final Test · Sensors: The Robot’s Senses',
+      '✅ PAUTA: Pensamiento Crítico · Sensores: los Sentidos del Robot': '✅ ANSWER KEY: Critical Thinking · Sensors: The Robot’s Senses',
+      /* constancia */
       'Misión Sensores: los Sentidos del Robot': 'Mission · Sensors: The Robot’s Senses',
       '¡Sigue explorando los sensores!': 'Keep exploring the sensors!',
       '¡Muy buen trabajo, observador!': 'Great work, observer!',
       '¡Vas muy bien: ya lees las señales!': 'You are doing very well: you can read the signals now!',
       '¡Dominas los sentidos del robot!': 'You have mastered the robot’s senses!',
       '¡Maestro de los Sentidos del Robot!': 'Master of the Robot’s Senses!',
-      /* — trozos sueltos: frases que el <strong> parte en varios nodos — */
+      /* trozos sueltos: frases que el <strong> parte en varios nodos */
       'El micrófono capta los aplausos. →': 'The microphone picks up claps. →',
       'Sensor de sonido': 'Sound sensor',
       /* la versión de pantalla nombra la cadena; va antes que la corta, que es su prefijo */
@@ -830,7 +830,7 @@
        4. FRAGMENTOS (textos con números o nombres variables)
        ══════════════════════════════════════════════════════ */
     fragmentos: [
-      /* — WhatsApp: el título de la misión en la constancia — */
+      /* WhatsApp: el título de la misión en la constancia */
       [/¡(.+?) completó la Misión "Sensores: los Sentidos del Robot"!/g, '$1 completed the mission “Sensors: The Robot’s Senses”!'],
       [/Pregunta (\d+) de (\d+)/g, 'Question $1 of $2'],
       [/Oración (\d+) de (\d+)/g, 'Sentence $1 of $2'],
@@ -870,8 +870,10 @@
       [/✅ Respuestas:/g, '✅ Answers:'],
       [/Percibe: (.+?) \| Sentido: /g, 'Senses: $1 | Sense: '],
       [/ \| Ejemplo: /g, ' | Example: '],
-      [/🎯 Clave rápida estilo ZipGrade · Form (\d+) — respuestas correctas ya rellenadas para digitar la clave en la app/g,
-        '🎯 ZipGrade-style quick key · Form $1 — correct answers already filled in so you can type the key into the app'],
+      /* dice «Form» y no «Forma» porque el fragmento de arriba ya tradujo el
+         número de forma cuando le toca el turno a este */
+      [/🎯 Clave rápida estilo ZipGrade · Form (\d+): respuestas correctas ya rellenadas para digitar la clave en la app/g,
+        '🎯 ZipGrade-style quick key · Form $1: correct answers already filled in so you can type the key into the app'],
       [/Test Version \/ Form:/g, 'Test Version / Form:'],
       /* fecha de la constancia: «25 de julio de 2026» → «July 25, 2026» */
       [/(\d+) de enero de (\d+)/g, 'January $1, $2'], [/(\d+) de febrero de (\d+)/g, 'February $1, $2'],

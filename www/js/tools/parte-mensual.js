@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────
-   PARTE MENSUAL — LÓGICA SEDUC HONDURAS
+   PARTE MENSUAL · LÓGICA SEDUC HONDURAS
    Fórmulas:
    Asistencia Media = Matrícula Actual − (Total Inasistencias ÷ Días Trabajados)
    Tanto por Ciento = (Asistencia Media ÷ Matrícula Actual) × 100
@@ -44,8 +44,8 @@ function pmActualizar() {
   const semaEl  = document.getElementById('pm-semaforo');
 
   if (!matricula || !dias) {
-    if (mediaEl) mediaEl.textContent = '—';
-    if (pctEl)   pctEl.textContent   = '—';
+    if (mediaEl) mediaEl.textContent = 's/d';
+    if (pctEl)   pctEl.textContent   = 's/d';
     if (barEl)   barEl.style.width   = '0%';
     if (semaEl)  semaEl.innerHTML    = '';
     return;
@@ -69,8 +69,8 @@ function pmActualizar() {
   if (semaEl) {
     const icon = pct >= 90 ? '✅' : pct >= 75 ? '⚠️' : '🔴';
     const msg  = pct >= 90 ? 'Asistencia satisfactoria'
-               : pct >= 75 ? 'Asistencia regular — requiere seguimiento'
-               : 'Asistencia crítica — acción inmediata';
+               : pct >= 75 ? 'Asistencia regular: requiere seguimiento'
+               : 'Asistencia crítica: acción inmediata';
     semaEl.innerHTML = `<span class="pm-semaforo-text">${icon} ${msg}</span>`;
   }
 }

@@ -1,5 +1,5 @@
 /* ============================================================
-   Misión «Programando un Robot» — versión en inglés
+   Misión «Programando un Robot»: versión en inglés
    ------------------------------------------------------------
    Traducción de autor (no automática) para escuelas bilingües.
    Se carga junto a la misión y el motor js/metas-i18n.js la
@@ -222,7 +222,7 @@
 
       labh2: '🔬 Simulator: program your robot',
 
-      labintro: 'Choose a level, build the program by tapping the buttons — include the <strong>sensor blocks</strong> 🧱⬛ so the robot DECIDES on its own! — and press <strong>▶ Run</strong>. You will see how it reads each sensor (✔ yes / ✘ no) step by step. ⭐ +5 XP for each level you solve (first time).',
+      labintro: 'Choose a level, build the program by tapping the buttons (include the <strong>sensor blocks</strong> 🧱⬛ so the robot DECIDES on its own!) and press <strong>▶ Run</strong>. You will see how it reads each sensor (✔ yes / ✘ no) step by step. ⭐ +5 XP for each level you solve (first time).',
 
       labniv:
         '<span class="lab-group-label">🗺️ Level:</span>' +
@@ -673,7 +673,7 @@
         'At the corner store in the neighborhood somebody has to check at night whether the door was left open.'
       ],
 
-      critDesignGuide: 'Rubric with 4 criteria (20 pts total) — ① PSEUDOCODE (6 pts): write the program in plain language, with the instructions in order and numbered. ② CONDITIONAL WITH A SENSOR (5 pts): include at least one «IF the sensor … THEN … ELSE …» with a sensor that suits the problem. ③ LOOP (5 pts): use «repeat N times» or «repeat until …» and explain how the loop ends. ④ VARIABLE AND CLOSING (4 pts): use a counter variable and end the program with STOP. Any design counts as long as another person can run it step by step without hesitating.',
+      critDesignGuide: 'Rubric with 4 criteria (20 pts total): ① PSEUDOCODE (6 pts): write the program in plain language, with the instructions in order and numbered. ② CONDITIONAL WITH A SENSOR (5 pts): include at least one «IF the sensor … THEN … ELSE …» with a sensor that suits the problem. ③ LOOP (5 pts): use «repeat N times» or «repeat until …» and explain how the loop ends. ④ VARIABLE AND CLOSING (4 pts): use a counter variable and end the program with STOP. Any design counts as long as another person can run it step by step without hesitating.',
 
       /* Igual que arriba: sol[] guarda las constantes del simulador */
       parteData: {
@@ -720,15 +720,15 @@
        3. FRASES EXACTAS (pantalla y pruebas imprimibles)
        ══════════════════════════════════════════════════════ */
     frases: {
-      /* — pestañas propias de esta misión — */
+      /* pestañas propias de esta misión */
       'Bloques': 'Blocks', 'Simulador': 'Simulator',
-      /* — el lenguaje del simulador, cuando cae solo en un nodo de texto — */
+      /* el lenguaje del simulador, cuando cae solo en un nodo de texto */
       'AVANZA': 'FORWARD', 'GIRA DERECHA': 'TURN RIGHT', 'GIRA IZQUIERDA': 'TURN LEFT',
       'ESPERA': 'WAIT', 'DETENTE': 'STOP',
       'Norte': 'North', 'Este': 'East', 'Sur': 'South', 'Oeste': 'West',
       'Robot en': 'Robot at', 'mirando al': 'facing',
       'pared adelante': 'wall ahead', 've la línea': 'it sees the line',
-      /* — simulador: avisos que el JS arma al vuelo — */
+      /* simulador: avisos que el JS arma al vuelo */
       'Toca los botones de arriba para armar tu programa 👆': 'Tap the buttons above to build your program 👆',
       '⚠️ Máximo 30 instrucciones': '⚠️ 30 instructions maximum',
       '🕹️ Cargando el patio de la escuela…': '🕹️ Loading the schoolyard…',
@@ -738,16 +738,16 @@
         'The program finished and the robot did not stop on the goal. Add the STOP instruction for when the robot is right on top of the goal.',
       'En este programa el sensor respondió siempre igual y el robot avanzó cada vez.':
         'In this program the sensor answered the same way every time and the robot moved forward each turn.',
-      /* — mini-quiz — */
+      /* mini-quiz */
       '¡Correcto! Piensas como todo un programador.': 'Correct! You are thinking like a real programmer.',
       'Casi. Recuerda: el robot solo hace lo que dice el programa.': 'Almost. Remember: the robot only does what the program says.',
-      /* — flashcards y memorama — */
+      /* flashcards y memorama */
       '🧠 Memorama de la Programación': '🧠 Programming Memory Game',
-      /* — clasifica — */
+      /* clasifica */
       '🗂️ Clasifica los Bloques': '🗂️ Sort the Blocks',
       '💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.':
         '💡 Tip: use the "Change group" button several times! Practicing with different categories helps you master the topic.',
-      /* — widgets — */
+      /* widgets */
       '🔁 Ordena el ciclo del robot': '🔁 Put the robot cycle in order',
       'para poner los pasos del programa en el orden correcto:': 'arrows to put the program steps in the right order:',
       'Hay pasos fuera de orden. Recuerda: leer sensores → decidir → mover actuadores → repetir.':
@@ -759,7 +759,7 @@
       '¿Qué hace este bloque o instrucción?': 'What does this block or instruction do?',
       '🐞 ¿Programa correcto o tiene un bug?': '🐞 Correct program, or does it have a bug?',
       'Pregúntate: ¿el robot llega a la meta y el programa termina?': 'Ask yourself: does the robot reach the goal and does the program end?',
-      /* — generador de tareas — */
+      /* generador de tareas */
       '🗂️ Clasificar bloques': '🗂️ Sort blocks', '💡 Explicar y programar': '💡 Explain and program',
       'Copia en tu cuaderno; subraya, colorea o encierra el concepto de programación indicado en cada oración. Escribe al lado qué bloque o parte del programa es.':
         'Copy this in your notebook; underline, color or circle the programming concept in each sentence. Next to it, write which block or part of the program it is.',
@@ -769,21 +769,21 @@
         'Copy the table below in your notebook. For each line of the program answer: what kind of block is it? which sensor does it read? what does it decide? and what does the robot do? Explain in your own words.',
       'Línea del programa': 'Line of the program', '¿Qué bloque es?': 'Which block is it?',
       '¿Qué lee?': 'What does it read?', '¿Qué decide?': 'What does it decide?', '¿Qué hace?': 'What does it do?',
-      /* — evaluación conceptual: pantalla e impresión — */
+      /* evaluación conceptual: pantalla e impresión */
       'Evaluación Final · Programando un Robot · Educación Básica · Robótica': 'Final Test · Programming a Robot · Basic Education · Robotics',
       'Evaluación Competencial · Pensamiento Crítico · Programando un Robot · Educación Básica': 'Competency Test · Critical Thinking · Programming a Robot · Basic Education',
       'Evaluación Competencial · Pensamiento Crítico · Programando un Robot · Educación Básica · Robótica': 'Competency Test · Critical Thinking · Programming a Robot · Basic Education · Robotics',
-      '🎓 Evaluación Final — Programando un Robot': '🎓 Final Test — Programming a Robot',
-      '🧠 Prueba de Pensamiento Crítico — Programando un Robot': '🧠 Critical Thinking Test — Programming a Robot',
-      '✅ PAUTA — Evaluación Final · Programando un Robot': '✅ ANSWER KEY — Final Test · Programming a Robot',
-      '✅ PAUTA — Pensamiento Crítico · Programando un Robot': '✅ ANSWER KEY — Critical Thinking · Programming a Robot',
-      /* — pensamiento crítico: títulos y consignas propias — */
+      '🎓 Evaluación Final · Programando un Robot': '🎓 Final Test · Programming a Robot',
+      '🧠 Prueba de Pensamiento Crítico · Programando un Robot': '🧠 Critical Thinking Test · Programming a Robot',
+      '✅ PAUTA: Evaluación Final · Programando un Robot': '✅ ANSWER KEY: Final Test · Programming a Robot',
+      '✅ PAUTA: Pensamiento Crítico · Programando un Robot': '✅ ANSWER KEY: Critical Thinking · Programming a Robot',
+      /* pensamiento crítico: títulos y consignas propias */
       'I. ¿Qué instrucción falta?': 'I. Which instruction is missing?',
       'II. Corrige el programa': 'II. Correct the program',
       'III. Traza el recorrido y predice dónde termina': 'III. Trace the route and predict where it ends',
       'III. Traza el recorrido': 'III. Trace the route',
       'V. Diseña el programa de tu robot': 'V. Design your robot’s program',
-      'V. Diseña el programa — Rúbrica': 'V. Design the program — Rubric',
+      'V. Diseña el programa · Rúbrica': 'V. Design the program · Rubric',
       '¿Qué instrucción falta en este programa? Escríbela y explica por qué el robot falla sin ella.':
         'Which instruction is missing from this program? Write it down and explain why the robot fails without it.',
       '. Corrígelos con argumentos, usando lo que sabes de instrucciones, condicionales y bucles:':
@@ -800,14 +800,14 @@
       'Programa A': 'Program A', 'Programa B': 'Program B',
       'Programa:': 'Program:', 'Recorrido:': 'Route:', 'Termina en:': 'Ends at:',
       'El sensor decidió:': 'The sensor decided:',
-      /* — constancia — */
+      /* constancia */
       'Misión Programando un Robot': 'Mission · Programming a Robot',
       '¡Sigue aprendiendo!': 'Keep learning!',
       '¡Muy buen trabajo!': 'Great work!',
       '¡Vas muy bien!': 'You are doing very well!',
       '¡Ya programas robots con sensores!': 'You can program robots with sensors now!',
       '¡Maestro Programador de Robots!': 'Master Robot Programmer!',
-      /* — etiquetas de accesibilidad (aria-label y title) — */
+      /* etiquetas de accesibilidad (aria-label y title) */
       'Barra de progreso XP': 'XP progress bar',
       'Compartir misión por WhatsApp': 'Share this mission on WhatsApp',
       'Tarjeta de estudio. Presiona Enter para voltear': 'Study card. Press Enter to flip',
@@ -828,9 +828,9 @@
        Los comunes a todas las misiones ya viven en el motor.
        ══════════════════════════════════════════════════════ */
     fragmentos: [
-      /* — WhatsApp: el título de la misión en la constancia — */
+      /* WhatsApp: el título de la misión en la constancia */
       [/¡(.+?) completó la Misión "Programando un Robot"!/g, '$1 completed the mission “Programming a Robot”!'],
-      /* — el lenguaje del simulador dentro de frases compuestas —
+      /* el lenguaje del simulador dentro de frases compuestas
          primero los bloques completos, que contienen a las sueltas */
       ['SI HAY PARED ADELANTE → GIRA DERECHA, SINO → AVANZA', 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD'],
       ['SI HAY LÍNEA ADELANTE → AVANZA, SINO → GIRA DERECHA', 'IF THERE IS A LINE AHEAD → FORWARD, ELSE → TURN RIGHT'],
@@ -838,7 +838,7 @@
       ['GIRA DERECHA', 'TURN RIGHT'], ['GIRA IZQUIERDA', 'TURN LEFT'],
       ['GIRA DER.', 'TURN RIGHT'], ['GIRA IZQ.', 'TURN LEFT'],
       ['AVANZA', 'FORWARD'], ['ESPERA', 'WAIT'], ['DETENTE', 'STOP'],
-      /* — simulador: estado del robot y de los sensores — */
+      /* simulador: estado del robot y de los sensores */
       /* «El robot termina en C1 mirando al Norte» va antes que el « mirando al »
          suelto, o este se lo come y el principio se queda en español */
       [/El robot termina en ([A-E]\d) mirando al /g, 'The robot ends at $1 facing '],
@@ -848,13 +848,13 @@
       [/✅ camino libre/g, '✅ clear path'],
       [/⬜ no ve línea/g, '⬜ it does not see the line'],
       [/Norte/g, 'North'], [/Este/g, 'East'], [/Sur/g, 'South'], [/Oeste/g, 'West'],
-      /* — simulador: la traza de la rama que corrió el condicional — */
+      /* simulador: la traza de la rama que corrió el condicional */
       ['✔ SÍ · ', '✔ YES · '],
       ['¿el sensor de pared detecta un obstáculo adelante?', 'does the wall sensor detect an obstacle ahead?'],
       ['¿el sensor de línea ve la línea negra adelante?', 'does the line sensor see the black line ahead?'],
       [' → corre la rama ENTONCES (', ' → it runs the THEN branch ('],
       [' → corre la rama SINO (', ' → it runs the ELSE branch ('],
-      /* — simulador: choque, meta y pista — */
+      /* simulador: choque, meta y pista */
       [/💥 ¡El robot chocó en la instrucción (\d+) \(/g, '💥 The robot crashed on instruction $1 ('],
       ['! Se salió del patio. Depura tu programa: revísalo paso a paso y vuelve a ejecutarlo.',
         '! It went off the schoolyard. Debug your program: check it step by step and run it again.'],
@@ -867,27 +867,27 @@
       /* la palabra DETENTE ya la tradujo el fragmento de arriba: aquí dice STOP */
       [/💡 Pista: la solución más corta usa (\d+|\?) instrucciones \(contando STOP\)\./g,
         '💡 Hint: the shortest solution uses $1 instructions (counting the STOP).'],
-      /* — pensamiento crítico: la traza paso a paso — */
+      /* pensamiento crítico: la traza paso a paso */
       [/En la instrucción (\d+) el sensor respondió «SÍ», por eso el robot ejecutó /g,
         'On instruction $1 the sensor answered «YES», so the robot ran '],
       [/En la instrucción (\d+) el sensor respondió «NO», por eso el robot ejecutó /g,
         'On instruction $1 the sensor answered «NO», so the robot ran '],
       [' en vez de avanzar.', ' instead of moving forward.'],
-      /* — widgets: la corrección larga va antes que la genérica — */
+      /* widgets: la corrección larga va antes que la genérica */
       [/^Correcto: (.+)\. Pregúntate: ¿el robot llega a la meta y el programa termina\?/,
         'Correct: $1. Ask yourself: does the robot reach the goal and does the program end?'],
       [/^Correcto: /, 'Correct: '],
-      /* — generador de tareas: la fila de respuestas de la tabla — */
+      /* generador de tareas: la fila de respuestas de la tabla */
       [/Bloque: /g, 'Block: '],
       [/ \| Lee: /g, ' | Reads: '],
       [/ \| Decide: /g, ' | Decides: '],
       [/ \| Hace: /g, ' | Does: '],
-      /* — títulos con número de forma: antes que la regla suelta «Forma N» — */
+      /* títulos con número de forma: antes que la regla suelta «Forma N» */
       [/🎓 Evaluación Final · Forma (\d+) · Programando un Robot/g, '🎓 Final Test · Form $1 · Programming a Robot'],
       [/🧠 Pensamiento Crítico · Forma (\d+) · Programando un Robot/g, '🧠 Critical Thinking · Form $1 · Programming a Robot'],
       [/Evaluación Programando un Robot/g, 'Test · Programming a Robot'],
       [/Pensamiento Crítico Programando un Robot/g, 'Critical Thinking · Programming a Robot'],
-      /* — etiquetas de accesibilidad con número — */
+      /* etiquetas de accesibilidad con número */
       [/Instrucción que falta en el caso (\d+) y su justificación/g, 'Missing instruction in case $1 and its justification'],
       [/Elegir número de forma exacta \(1 a (\d+)\)/g, 'Choose the exact form number (1 to $1)']
     ],

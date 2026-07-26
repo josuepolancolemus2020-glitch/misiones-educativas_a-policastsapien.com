@@ -1,5 +1,5 @@
 /* ============================================================
-   Misión «¿Qué es un Robot?» — versión en inglés
+   Misión «¿Qué es un Robot?»: versión en inglés
    ------------------------------------------------------------
    Traducción de autor (no automática) para escuelas bilingües.
    Se carga junto a la misión y el motor js/metas-i18n.js la
@@ -194,7 +194,7 @@
         '<h2>📁 Topic Resources</h2>' +
         '<div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">' +
         '<p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Printable study sheet</p>' +
-        '<p style="font-size:0.86rem;margin-bottom:0.85rem;">A 7-page study guide (theory, unplugged activities and assessment) to print or solve before the test. <em>It opens in English too — the language you choose here carries over.</em></p>' +
+        '<p style="font-size:0.86rem;margin-bottom:0.85rem;">A 7-page study guide (theory, unplugged activities and assessment) to print or solve before the test. <em>It opens in English too: the language you choose here carries over.</em></p>' +
         '<a href="../../fichas/ficha-que-es-un-robot.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Open / print the study sheet</a>' +
         '</div>' +
         '<p style="font-size:0.9rem;margin-bottom:1rem;">Here you will find support materials for this mission: slide decks, PDF documents, study guides and more. Your teacher keeps adding resources to this folder.</p>' +
@@ -603,7 +603,7 @@
         'Birds eat the corn in the field when nobody is guarding it.'
       ],
 
-      critDesignGuide: 'Rubric with 3 criteria (20 pts total) — ① SENSORS (7 pts): choose sensors that suit the problem and explain what they sense. ② CONTROLLER (6 pts): write a clear decision of the type «if X happens, then the robot does Y». ③ ACTUATORS (7 pts): name what the robot acts with, and make the solution realistic for the problem. Any design counts as long as the three parts work together in the sense → think → act cycle.',
+      critDesignGuide: 'Rubric with 3 criteria (20 pts total): ① SENSORS (7 pts): choose sensors that suit the problem and explain what they sense. ② CONTROLLER (6 pts): write a clear decision of the type «if X happens, then the robot does Y». ③ ACTUATORS (7 pts): name what the robot acts with, and make the solution realistic for the problem. Any design counts as long as the three parts work together in the sense → think → act cycle.',
 
       parteData: {
         sensores: {
@@ -641,21 +641,21 @@
        3. FRASES EXACTAS (pantalla y pruebas imprimibles)
        ══════════════════════════════════════════════════════ */
     frases: {
-      /* — barra superior, navegación y pie — */
+      /* barra superior, navegación y pie */
       'Aprende': 'Learn', 'Tipos': 'Types', 'Lab': 'Lab', 'Flashcards': 'Flashcards', 'Quiz': 'Quiz',
-      /* — laboratorio (rótulos del robot en SVG) — */
+      /* laboratorio (rótulos del robot en SVG) */
       'ENERGÍA': 'POWER', 'SENSORES': 'SENSORS', 'ACTUADORES': 'ACTUATORS', 'CONTROLADOR 🧠': 'CONTROLLER 🧠',
       '🔬 Laboratorio de las Partes del Robot': '🔬 Robot Parts Laboratory',
       'Toca una parte del robot (en el dibujo o en los botones) y un aspecto para explorarlo. ¡Combínalos todos!':
         'Tap a robot part (on the drawing or on the buttons) and an aspect to explore it. Try every combination!',
-      /* — flashcards y memorama — */
+      /* flashcards y memorama */
       '🧠 Memorama del Robot': '🧠 Robot Memory Game',
-      /* — quiz, clasifica, identifica, completa — */
+      /* quiz, clasifica, identifica, completa */
       '¡Correcto! Piensas como todo un robotista.': 'Correct! You are thinking like a real roboticist.',
       'Casi. Pregúntate: ¿percibe?, ¿decide?, ¿actúa?': 'Almost. Ask yourself: does it sense? does it decide? does it act?',
       '💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.':
         '💡 Tip: use the "Change group" button several times! Practicing with different categories helps you master the topic.',
-      /* — widgets — */
+      /* widgets */
       '🔁 Percibe → Decide → Actúa: ordena el ciclo': '🔁 Sense → Think → Act: put the cycle in order',
       'Usa las flechas ▲ ▼ para poner los pasos del robot en el orden correcto:': 'Use the ▲ ▼ arrows to put the robot steps in the right order:',
       'Hay pasos fuera de orden. Recuerda: percibir → decidir → actuar.': 'Some steps are out of order. Remember: sense → think → act.',
@@ -667,7 +667,7 @@
       '🤖 ¿Robot o no es robot?': '🤖 Robot or not a robot?',
       'Pregúntate: ¿percibe?, ¿decide?, ¿actúa? Y responde:': 'Ask yourself: does it sense? does it decide? does it act? Then answer:',
       'La aspiradora robot': 'The robot vacuum',
-      /* — generador de tareas — */
+      /* generador de tareas */
       '🔍 Identificar': '🔍 Identify', '🗂️ Clasificar máquinas': '🗂️ Sort machines',
       'Copia en tu cuaderno; subraya, colorea o encierra el concepto de robótica indicado en cada oración. Escribe al lado qué parte o tipo de robot es.':
         'Copy this in your notebook; underline, color or circle the robotics concept in each sentence. Next to it, write which robot part or type it is.',
@@ -675,13 +675,13 @@
         'Copy the table below in your notebook. For each machine answer: is it a robot? does it sense? does it decide? does it act? Explain in your own words.',
       'Máquina': 'Machine', '¿Es robot?': 'Is it a robot?', '¿Percibe?': 'Does it sense?',
       '¿Decide?': 'Does it decide?', '¿Actúa?': 'Does it act?',
-      /* — evaluación conceptual: pantalla — */
+      /* evaluación conceptual: pantalla */
       'Evaluación Final · ¿Qué es un Robot? · Educación Básica · Robótica': 'Final Test · What Is a Robot? · Basic Education · Robotics',
       'Evaluación Competencial · Pensamiento Crítico · ¿Qué es un Robot? · Educación Básica': 'Competency Test · Critical Thinking · What Is a Robot? · Basic Education',
       'Evaluación Competencial · Pensamiento Crítico · ¿Qué es un Robot? · Educación Básica · Robótica': 'Competency Test · Critical Thinking · What Is a Robot? · Basic Education · Robotics',
-      '🎓 Evaluación Final — ¿Qué es un Robot?': '🎓 Final Test — What Is a Robot?',
-      '🧠 Prueba de Pensamiento Crítico — ¿Qué es un Robot?': '🧠 Critical Thinking Test — What Is a Robot?',
-      /* — pensamiento crítico — */
+      '🎓 Evaluación Final · ¿Qué es un Robot?': '🎓 Final Test · What Is a Robot?',
+      '🧠 Prueba de Pensamiento Crítico · ¿Qué es un Robot?': '🧠 Critical Thinking Test · What Is a Robot?',
+      /* pensamiento crítico */
       'I. ¿Qué sensor necesita?': 'I. Which sensor does it need?',
       'III. Analiza el ciclo: percibe → decide → actúa': 'III. Analyze the cycle: sense → think → act',
       'V. Diseña y justifica tu robot': 'V. Design and justify your robot',
@@ -696,20 +696,20 @@
         'Invent a robot that solves this problem: write its name, which SENSORS it uses, what its controller DECIDES («if X happens, then it does Y») and which ACTUATORS it acts with. Draw it on the back of the sheet.',
       'I. Corrige el error': 'I. Correct the mistake', 'II. Corrige el error': 'II. Correct the mistake',
       'III. Analiza el ciclo': 'III. Analyze the cycle', 'IV. Comparación': 'IV. Comparison',
-      'V. Diseña tu robot — Rúbrica': 'V. Design your robot — Rubric',
+      'V. Diseña tu robot · Rúbrica': 'V. Design your robot · Rubric',
       'Percibe:': 'Senses:', 'Decide:': 'Decides:', 'Actúa:': 'Acts:',
-      /* — impresión: encabezados, pauta y pie — */
+      /* impresión: encabezados, pauta y pie */
       'Evaluación ¿Qué es un Robot?': 'Test · What Is a Robot?',
       'Pensamiento Crítico ¿Qué es un Robot?': 'Critical Thinking · What Is a Robot?',
-      '✅ PAUTA — Evaluación Final · ¿Qué es un Robot?': '✅ ANSWER KEY — Final Test · What Is a Robot?',
-      '✅ PAUTA — Pensamiento Crítico · ¿Qué es un Robot?': '✅ ANSWER KEY — Critical Thinking · What Is a Robot?',
-      /* — constancia — */
+      '✅ PAUTA: Evaluación Final · ¿Qué es un Robot?': '✅ ANSWER KEY: Final Test · What Is a Robot?',
+      '✅ PAUTA: Pensamiento Crítico · ¿Qué es un Robot?': '✅ ANSWER KEY: Critical Thinking · What Is a Robot?',
+      /* constancia */
       'Misión ¿Qué es un Robot?': 'Mission · What Is a Robot?',
       '¡Sigue adelante!': 'Keep going!', '¡Sigue aprendiendo!': 'Keep learning!',
       '¡Muy buen trabajo!': 'Great work!', '¡Vas muy bien!': 'You are doing very well!',
       '¡Dominas las partes del robot!': 'You have mastered the robot parts!',
       '¡Maestro Constructor de Robots!': 'Master Robot Builder!',
-      /* — trozos sueltos: frases que el <strong> parte en varios nodos — */
+      /* trozos sueltos: frases que el <strong> parte en varios nodos */
       'para poner los pasos del robot en el orden correcto:': 'arrows to put the robot steps in the right order:',
       'Los sensores captan luz y distancia. →': 'Sensors pick up light and distance. →',
       'Sensores': 'Sensors',
@@ -720,7 +720,7 @@
        4. FRAGMENTOS (textos con números o nombres variables)
        ══════════════════════════════════════════════════════ */
     fragmentos: [
-      /* — WhatsApp: el título de la misión en la constancia — */
+      /* WhatsApp: el título de la misión en la constancia */
       [/¡(.+?) completó la Misión "¿Qué es un Robot\?"!/g, '$1 completed the mission “What Is a Robot?”!'],
       [/Pregunta (\d+) de (\d+)/g, 'Question $1 of $2'],
       [/Oración (\d+) de (\d+)/g, 'Sentence $1 of $2'],
@@ -758,8 +758,10 @@
       [/🧮 Puntaje registrado: (\d+)\/100\. ¡Sigue practicando!/g, '🧮 Score saved: $1/100. Keep practicing!'],
       [/📝 Opciones: /g, '📝 Options: '],
       [/✅ Respuestas:/g, '✅ Answers:'],
-      [/🎯 Clave rápida estilo ZipGrade · Form (\d+) — respuestas correctas ya rellenadas para digitar la clave en la app/g,
-        '🎯 ZipGrade-style quick key · Form $1 — correct answers already filled in so you can type the key into the app'],
+      /* dice «Form» y no «Forma» porque el fragmento de arriba ya tradujo el
+         número de forma cuando le toca el turno a este */
+      [/🎯 Clave rápida estilo ZipGrade · Form (\d+): respuestas correctas ya rellenadas para digitar la clave en la app/g,
+        '🎯 ZipGrade-style quick key · Form $1: correct answers already filled in so you can type the key into the app'],
       [/Test Version \/ Form:/g, 'Test Version / Form:'],
       /* fecha de la constancia: «24 de julio de 2026» → «July 24, 2026» */
       [/(\d+) de enero de (\d+)/g, 'January $1, $2'], [/(\d+) de febrero de (\d+)/g, 'February $1, $2'],

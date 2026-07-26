@@ -1,5 +1,5 @@
 /* ============================================================
-   Misión «Electricidad para Robots» — versión en inglés
+   Misión «Electricidad para Robots»: versión en inglés
    ------------------------------------------------------------
    Traducción de autor (no automática) para escuelas bilingües.
    Se carga junto a la misión y el motor js/metas-i18n.js la
@@ -234,7 +234,7 @@
         '<h2>📁 Topic Resources</h2>' +
         '<div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">' +
         '<p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Printable study sheet</p>' +
-        '<p style="font-size:0.86rem;margin-bottom:0.85rem;">A 7-page study guide (theory, unplugged activities and assessment) to print or solve before the test. <em>It opens in English too — the language you choose here carries over.</em></p>' +
+        '<p style="font-size:0.86rem;margin-bottom:0.85rem;">A 7-page study guide (theory, unplugged activities and assessment) to print or solve before the test. <em>It opens in English too: the language you choose here carries over.</em></p>' +
         '<a href="../../fichas/ficha-electricidad-robots.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Open / print the study sheet</a>' +
         '</div>' +
         '<p style="font-size:0.9rem;margin-bottom:1rem;">Here you will find support materials for this mission: slide decks, PDF documents, study guides and more. Your teacher keeps adding resources to this folder.</p>' +
@@ -653,7 +653,7 @@
         'At the corner store nobody notices when a customer comes in, because the owner is in the kitchen.'
       ],
 
-      critDesignGuide: 'Rubric with 3 criteria (20 pts total) — ① PARTS OF THE CIRCUIT (7 pts): name the source (batteries or solar panel), the wires, the switch and the load (LED, motor or buzzer) and explain the closed path. ② HOW IT WORKS (6 pts): explain when the circuit closes and when it opens, and what electrical energy turns into (light, movement or sound); if it uses several loads, justify series or parallel. ③ SAFETY (7 pts): use only batteries (never the 110 V), insulated wires and dry hands, avoid a short circuit, and say what will be done with the used batteries. Any design counts as long as the path is closed and the solution is realistic.',
+      critDesignGuide: 'Rubric with 3 criteria (20 pts total): ① PARTS OF THE CIRCUIT (7 pts): name the source (batteries or solar panel), the wires, the switch and the load (LED, motor or buzzer) and explain the closed path. ② HOW IT WORKS (6 pts): explain when the circuit closes and when it opens, and what electrical energy turns into (light, movement or sound); if it uses several loads, justify series or parallel. ③ SAFETY (7 pts): use only batteries (never the 110 V), insulated wires and dry hands, avoid a short circuit, and say what will be done with the used batteries. Any design counts as long as the path is closed and the solution is realistic.',
 
       circuitoCasos: [
         {
@@ -724,9 +724,9 @@
        3. FRASES EXACTAS (pantalla y pruebas imprimibles)
        ══════════════════════════════════════════════════════ */
     frases: {
-      /* — barra superior, navegación y pie — */
+      /* barra superior, navegación y pie */
       'Aprende': 'Learn', 'Partes': 'Parts', 'Lab': 'Lab', 'Flashcards': 'Flashcards', 'Quiz': 'Quiz',
-      /* — laboratorio de circuitos — */
+      /* laboratorio de circuitos */
       '🔬 Laboratorio de Circuitos': '🔬 Circuit Laboratory',
       'Elige un caso, predice si funcionará y luego cierra el interruptor para comprobarlo. ¡Pruébalos todos!':
         'Choose a case, predict whether it will work and then close the switch to check. Try them all!',
@@ -765,14 +765,14 @@
       'Circuito CERRADO:': 'CLOSED circuit:',
       'la corriente recorre todo el camino y la carga funciona.':
         'the current runs along the whole path and the load works.',
-      /* — flashcards y memorama — */
+      /* flashcards y memorama */
       '🧠 Memorama del Circuito': '🧠 Circuit Memory Game',
-      /* — quiz, clasifica, identifica, completa — */
+      /* quiz, clasifica, identifica, completa */
       '¡Correcto! Piensas como todo un electricista.': 'Correct! You are thinking like a real electrician.',
       'Casi. Pregúntate: ¿el camino de la corriente está cerrado y completo?': 'Almost. Ask yourself: is the path of the current closed and complete?',
       '💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Conductor/aislante, serie/paralelo, cerrado/abierto y seguro/peligroso.':
         '💡 Tip: use the "Change group" button several times! Conductor/insulator, series/parallel, closed/open and safe/dangerous.',
-      /* — widgets — */
+      /* widgets */
       '🔁 El camino de la corriente: ordena los pasos': '🔁 The path of the current: put the steps in order',
       /* esta misión redacta los rótulos a su manera; no valen los del motor */
       'Serie/Paralelo': 'Series/Parallel',
@@ -794,7 +794,7 @@
       '🔧 Diagnóstico de fallas': '🔧 Troubleshooting',
       'El circuito no funciona. Piensa como técnico: ¿qué revisas?': 'The circuit does not work. Think like a technician: what do you check?',
       '🎉 ¡Eres todo un técnico en diagnóstico eléctrico!': '🎉 You are a real electrical troubleshooting technician!',
-      /* — generador de tareas — */
+      /* generador de tareas */
       '🔍 Identificar': '🔍 Identify', '🗂️ Conductores y aislantes': '🗂️ Conductors and insulators',
       'Copia en tu cuaderno; subraya, colorea o encierra el concepto de electricidad indicado en cada oración. Escribe al lado qué parte del circuito o qué idea es.':
         'Copy this in your notebook; underline, color or circle the electricity concept in each sentence. Next to it, write which circuit part or idea it is.',
@@ -802,18 +802,18 @@
         'Copy the table below in your notebook. For each object answer: does it conduct current? what material is it? is it a conductor or an insulator? and what is it good for in a circuit?',
       'Objeto': 'Object', '¿Conduce?': 'Does it conduct?', 'Material': 'Material',
       '¿Conductor o aislante?': 'Conductor or insulator?', 'Uso en el circuito': 'Use in the circuit',
-      /* — evaluación conceptual: pantalla — */
+      /* evaluación conceptual: pantalla */
       'Evaluación Final · Electricidad para Robots · Educación Básica · Robótica': 'Final Test · Electricity for Robots · Basic Education · Robotics',
       'Evaluación Competencial · Pensamiento Crítico · Electricidad para Robots · Educación Básica': 'Competency Test · Critical Thinking · Electricity for Robots · Basic Education',
       'Evaluación Competencial · Pensamiento Crítico · Electricidad para Robots · Educación Básica · Robótica': 'Competency Test · Critical Thinking · Electricity for Robots · Basic Education · Robotics',
-      '🎓 Evaluación Final — Electricidad para Robots': '🎓 Final Test — Electricity for Robots',
-      '🧠 Prueba de Pensamiento Crítico — Electricidad para Robots': '🧠 Critical Thinking Test — Electricity for Robots',
+      '🎓 Evaluación Final · Electricidad para Robots': '🎓 Final Test · Electricity for Robots',
+      '🧠 Prueba de Pensamiento Crítico · Electricidad para Robots': '🧠 Critical Thinking Test · Electricity for Robots',
       /* títulos de sección: la versión de pantalla y la impresa se escriben distinto */
       'I. Diagnóstico de fallas': 'I. Troubleshooting',
       'III. Analiza el circuito paso a paso': 'III. Analyze the circuit step by step',
       'III. Analiza el circuito': 'III. Analyze the circuit',
       'V. Diseña y justifica tu circuito': 'V. Design and justify your circuit',
-      'V. Diseña tu circuito — Rúbrica': 'V. Design your circuit — Rubric',
+      'V. Diseña tu circuito · Rúbrica': 'V. Design your circuit · Rubric',
       '¿Qué revisarías y en qué orden? Explica por qué esa falla deja el circuito sin funcionar.':
         'What would you check, and in what order? Explain why that fault leaves the circuit dead.',
       '¿Qué revisarías y en qué orden? Explica por qué.': 'What would you check, and in what order? Explain why.',
@@ -823,14 +823,14 @@
         'Invent a circuit that solves this problem: write its name, which SOURCE it uses, how the WIRES and the SWITCH are arranged, which LOAD it carries and what the energy turns into. Draw it with its symbols on the back of the sheet.',
       /* la pauta reusa los rótulos del ciclo percibir-decidir-actuar */
       'Percibe:': 'Path:', 'Decide:': 'If it opens:', 'Actúa:': 'Transformation:',
-      /* — impresión: encabezados, pauta y pie — */
+      /* impresión: encabezados, pauta y pie */
       'Evaluación Electricidad para Robots': 'Test · Electricity for Robots',
       'Pensamiento Crítico Electricidad para Robots': 'Critical Thinking · Electricity for Robots',
-      '✅ PAUTA — Evaluación Final · Electricidad para Robots': '✅ ANSWER KEY — Final Test · Electricity for Robots',
-      '✅ PAUTA — Pensamiento Crítico · Electricidad para Robots': '✅ ANSWER KEY — Critical Thinking · Electricity for Robots',
-      /* — constancia — */
+      '✅ PAUTA: Evaluación Final · Electricidad para Robots': '✅ ANSWER KEY: Final Test · Electricity for Robots',
+      '✅ PAUTA: Pensamiento Crítico · Electricidad para Robots': '✅ ANSWER KEY: Critical Thinking · Electricity for Robots',
+      /* constancia */
       'Misión Electricidad para Robots': 'Mission · Electricity for Robots',
-      /* — trozos sueltos: frases que el <strong> parte en varios nodos — */
+      /* trozos sueltos: frases que el <strong> parte en varios nodos */
       'El cobre deja pasar la corriente. →': 'Copper lets current through. →',
       'Conductor': 'Conductor',
       'Elige un caso,': 'Choose a case,',
@@ -850,7 +850,7 @@
        4. FRAGMENTOS (textos con números o nombres variables)
        ══════════════════════════════════════════════════════ */
     fragmentos: [
-      /* — WhatsApp: el título de la misión en la constancia — */
+      /* WhatsApp: el título de la misión en la constancia */
       [/¡(.+?) completó la Misión "Electricidad para Robots"!/g, '$1 completed the mission “Electricity for Robots”!'],
       [/Pregunta (\d+) de (\d+)/g, 'Question $1 of $2'],
       [/Oración (\d+) de (\d+)/g, 'Sentence $1 of $2'],
@@ -905,8 +905,10 @@
       [/¿Conduce\?: (.+?) \| Material: /g, 'Conducts?: $1 | Material: '],
       [/ \| Tipo: /g, ' | Type: '],
       [/ \| Uso: /g, ' | Use: '],
-      [/🎯 Clave rápida estilo ZipGrade · Form (\d+) — respuestas correctas ya rellenadas para digitar la clave en la app/g,
-        '🎯 ZipGrade-style quick key · Form $1 — correct answers already filled in so you can type the key into the app'],
+      /* dice «Form» y no «Forma» porque el fragmento de arriba ya tradujo el
+         número de forma cuando le toca el turno a este */
+      [/🎯 Clave rápida estilo ZipGrade · Form (\d+): respuestas correctas ya rellenadas para digitar la clave en la app/g,
+        '🎯 ZipGrade-style quick key · Form $1: correct answers already filled in so you can type the key into the app'],
       [/Test Version \/ Form:/g, 'Test Version / Form:'],
       /* fecha de la constancia: «25 de julio de 2026» → «July 25, 2026» */
       [/(\d+) de enero de (\d+)/g, 'January $1, $2'], [/(\d+) de febrero de (\d+)/g, 'February $1, $2'],

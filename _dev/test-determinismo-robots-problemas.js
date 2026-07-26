@@ -144,7 +144,7 @@ ok('documento crítico con las 5 secciones',
   ['I. Del problema al diseño', 'II. Corrige el error conceptual', 'III. Analiza el proceso de diseño',
    'IV. Comparación razonada', 'V. Proyecto de diseño completo'].every(s => a.docCrit.includes(s)));
 ok('la sección V imprime la rúbrica de 4 criterios en la pauta',
-  a.docCrit.includes('V. Proyecto de diseño completo — Rúbrica') && a.docCrit.includes('MEJORA TRAS LA PRUEBA'));
+  a.docCrit.includes('V. Proyecto de diseño completo · Rúbrica') && a.docCrit.includes('MEJORA TRAS LA PRUEBA'));
 ['docConcept', 'docCrit'].forEach(k => {
   const doc = a[k];
   ok('[' + k + '] encabezado Nombre/Parcial/Fecha', doc.includes('<strong>Nombre:</strong>') && doc.includes('<strong>Parcial:</strong>') && doc.includes('<strong>Fecha:</strong>'));
