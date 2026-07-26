@@ -3768,6 +3768,101 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   font-size: 0.82rem; font-weight: 700; color: var(--muted); cursor: pointer;
 }
 .doc-tipo-btn.doc-tipo-sel { border-color: var(--brand); background: var(--brand); color: #fff; }
+.doc-tipo-row { display: flex; gap: 8px; margin-bottom: 10px; }
+
+/* ══ Zona Docente: entrar arriba, crear cuenta abajo ══
+   El maestro que ya tiene cuenta es el caso de todos los días, así que su
+   formulario va primero y abierto. El registro queda debajo, plegado tras
+   un botón que dice lo que la persona gana, no lo que el sistema hace. */
+
+.doc-acceso-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px 14px 12px;
+  box-shadow: var(--shadow);
+}
+.doc-acceso-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.doc-acceso-emoji { font-size: 26px; line-height: 1; }
+.doc-acceso-txt { display: flex; flex-direction: column; }
+.doc-acceso-t { font-size: 16px; font-weight: 800; color: var(--text); line-height: 1.25; }
+.doc-acceso-s { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+
+.doc-lbl {
+  display: block; font-size: 11.5px; font-weight: 800;
+  color: var(--muted); letter-spacing: .02em;
+  margin: 0 2px 4px;
+}
+.doc-inp { margin-bottom: 10px; }
+.doc-inp:focus { border-color: var(--brand-light); box-shadow: 0 0 0 3px rgba(59,130,246,.14); }
+
+/* Botón principal: una sola forma para los tres, el color hace la jerarquía */
+.doc-cta {
+  position: relative; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2px;
+  width: 100%; border: none; border-radius: 14px;
+  padding: 14px 16px; cursor: pointer; color: #fff;
+  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+}
+.doc-cta:active { transform: translateY(1px) scale(.99); }
+.doc-cta:focus-visible { outline: 3px solid rgba(59,130,246,.5); outline-offset: 2px; }
+.doc-cta-t { font-size: 15px; font-weight: 800; letter-spacing: .01em; }
+.doc-cta-s { font-size: 12px; font-weight: 600; opacity: .9; }
+
+/* Entrar: verde, porque es la acción que devuelve al maestro a lo suyo */
+.doc-cta-entrar {
+  margin-top: 4px;
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  box-shadow: 0 4px 14px rgba(22,163,74,.32);
+}
+.doc-cta-entrar:hover { filter: brightness(1.05); box-shadow: 0 6px 18px rgba(22,163,74,.4); }
+
+/* Crear: azul de marca, con la flecha que gira al desplegarse */
+.doc-cta-crear {
+  background: linear-gradient(135deg, var(--brand), var(--brand-mid));
+  box-shadow: 0 4px 14px rgba(30,58,124,.28);
+  padding-right: 40px; padding-left: 40px;
+}
+.doc-cta-crear:hover { filter: brightness(1.08); box-shadow: 0 6px 18px rgba(30,58,124,.36); }
+.doc-cta-flecha {
+  position: absolute; right: 16px; top: 50%;
+  transform: translateY(-50%); font-size: 15px; line-height: 1;
+  opacity: .85; transition: transform .25s ease;
+}
+.doc-cta-abierto .doc-cta-flecha { transform: translateY(-50%) rotate(180deg); }
+
+/* Confirmar el registro: ámbar, para que no se confunda con «entrar» */
+.doc-cta-crear-firme {
+  background: linear-gradient(135deg, #d97706, var(--accent));
+  box-shadow: 0 4px 14px rgba(217,119,6,.3);
+}
+.doc-cta-crear-firme:hover { filter: brightness(1.06); box-shadow: 0 6px 18px rgba(217,119,6,.38); }
+
+.doc-link-sutil {
+  display: block; width: 100%; margin-top: 10px;
+  background: none; border: none; cursor: pointer;
+  font-size: 12.5px; font-weight: 600; color: var(--muted);
+  text-align: center; padding: 4px;
+}
+.doc-link-sutil:hover { color: var(--brand-light); text-decoration: underline; }
+
+/* Separador con rótulo: marca el cambio de intención entre los dos bloques */
+.doc-separador {
+  display: flex; align-items: center; gap: 10px;
+  margin: 18px 2px 12px; color: var(--faint);
+  font-size: 12px; font-weight: 700;
+}
+.doc-separador::before, .doc-separador::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.doc-registro-intro { margin: 14px 0 10px; }
+.doc-registro-pie { margin-top: 10px; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .doc-cta, .doc-cta-flecha { transition: none; }
+  .doc-cta:active { transform: none; }
+}
 
 /* Fila de 3 campos (Forma · Parcial · Tipo) del Plan de Acción */
 .pa-row-3 { grid-template-columns: 1fr 1fr 1fr; }

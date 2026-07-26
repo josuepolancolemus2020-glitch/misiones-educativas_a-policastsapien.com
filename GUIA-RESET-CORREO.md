@@ -141,8 +141,9 @@ SQL Editor → pega COMPLETO **`SUPABASE-RESET-CORREO.sql`** → Run.
 
 ## Paso 4 — Probar
 
-1. En la app: Zona Docente → «¿Ya tienes cuenta? Entrar» →
-   **«🆘 ¿Olvidaste tu contraseña?»** → escribe tu correo registrado.
+1. En la app: Zona Docente → en la tarjeta «👋 Bienvenido de vuelta», que sale
+   de primera, toca **«¿Olvidaste tu contraseña? Te ayudamos.»** → escribe tu
+   correo registrado.
 2. Debe llegarte el correo con el código (revisa *no deseado* la primera vez).
 3. Escribe el código + una contraseña nueva → entra con ella. ✅
 

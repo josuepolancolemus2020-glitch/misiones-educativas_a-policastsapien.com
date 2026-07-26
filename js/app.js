@@ -1254,9 +1254,22 @@ function _docenteCfg() {
 }
 function _docenteSave(c) { try { localStorage.setItem(DOCENTE_KEY, JSON.stringify(c)); } catch (_) {} }
 
-function docenteMostrarRecuperar() {
-  const f = document.getElementById('doc-recuperar-form');
-  if (f) f.style.display = f.style.display === 'none' ? '' : 'none';
+/* El registro vive debajo del acceso y arranca plegado: el maestro que ya
+   tiene cuenta entra en dos toques y no recorre diez campos que no va a
+   llenar. Al abrirlo, el foco salta al primer campo para que se note que
+   pasó algo, y la flecha del botón gira. */
+function docenteMostrarRegistro() {
+  const f = document.getElementById('doc-registro-form');
+  const b = document.getElementById('doc-registro-toggle');
+  if (!f) return;
+  const abierto = f.style.display !== 'none';
+  f.style.display = abierto ? 'none' : '';
+  if (b) b.classList.toggle('doc-cta-abierto', !abierto);
+  if (!abierto) {
+    const primer = document.getElementById('doc-nombre');
+    if (primer) setTimeout(() => primer.focus({ preventScroll: true }), 60);
+    if (f.scrollIntoView) setTimeout(() => f.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+  }
 }
 
 async function docenteRecuperar() {
@@ -1308,61 +1321,78 @@ function renderProfile() {
 
   if (!d.codigo) {
     // Visitante: formulario de suscripción
+    /* Orden: primero ENTRAR (el maestro que vuelve es el caso de todos los
+       días) y debajo el REGISTRO, plegado. La redacción habla de lo que el
+       maestro gana, no de lo que el sistema hace. */
     cont.innerHTML = `
       <div class="setting-group teacher-panel-group">
-        <div class="teacher-panel-head">
-          <i class="fa-solid fa-user-plus teacher-panel-icon"></i>
-          <label class="setting-label" style="margin-bottom:0;">¿Eres maestro o maestra?</label>
-        </div>
-        <p class="teacher-panel-desc">Crea tu cuenta gratis. Tus alumnos escribirán tu
-          <strong>nombre</strong> al empezar una misión y su avance llegará solo a tu cuenta.</p>
-        <input id="doc-nombre" class="pa-inp-field" maxlength="60" autocomplete="name"
-               placeholder="Nombre completo *" style="margin-bottom:4px;">
-        <p class="doc-campo-hint">Nombre y apellidos — tus alumnos lo escribirán para que te llegue su avance.</p>
-        <input id="doc-correo" class="pa-inp-field" maxlength="100" autocomplete="email" type="email"
-               placeholder="Correo electrónico *" style="margin-bottom:8px;">
-        <input id="doc-clave" class="pa-inp-field" maxlength="40" autocomplete="new-password" type="password"
-               placeholder="Elige una contraseña fácil de recordar *" style="margin-bottom:8px;">
-        <input id="doc-escuela" class="pa-inp-field" maxlength="120" autocomplete="off"
-               placeholder="Nombre de tu escuela" style="margin-bottom:8px;">
-        <div style="display:flex;gap:8px;margin-bottom:8px;">
-          <button id="doc-tipo-pub" class="doc-tipo-btn doc-tipo-sel" onclick="docenteTipo('Pública')">🏫 Pública</button>
-          <button id="doc-tipo-pri" class="doc-tipo-btn" onclick="docenteTipo('Privada')">🏛 Privada</button>
-        </div>
-        <select id="doc-departamento" class="pa-inp-field" style="margin-bottom:8px;">
-          <option value="">Departamento</option>
-          <option>Atlántida</option><option>Choluteca</option><option>Colón</option>
-          <option>Comayagua</option><option>Copán</option><option>Cortés</option>
-          <option>El Paraíso</option><option>Francisco Morazán</option><option>Gracias a Dios</option>
-          <option>Intibucá</option><option>Islas de la Bahía</option><option>La Paz</option>
-          <option>Lempira</option><option>Ocotepeque</option><option>Olancho</option>
-          <option>Santa Bárbara</option><option>Valle</option><option>Yoro</option>
-        </select>
-        <input id="doc-municipio" class="pa-inp-field" maxlength="80" autocomplete="off"
-               placeholder="Municipio" style="margin-bottom:8px;">
-        <input id="doc-lugar" class="pa-inp-field" maxlength="200" autocomplete="off"
-               placeholder="Lugar / dirección o referencia de la escuela" style="margin-bottom:8px;">
-        <input id="doc-telefono" class="pa-inp-field" maxlength="40" autocomplete="tel" type="tel"
-               placeholder="Teléfono / WhatsApp (opcional)" style="margin-bottom:12px;">
-        <button class="padre-wa-btn doc-btn-brand" onclick="docenteSuscribir()">🎓 Crear mi cuenta gratis</button>
-        <p class="padre-hint" style="margin-top:8px;">Solo este paso necesita internet.
-          <a href="panel-docente.html" class="doc-admin-link">¿Administrador del proyecto?</a></p>
-        <div style="margin-top:10px;text-align:center;">
-          <button class="doc-ver-btn" onclick="docenteMostrarRecuperar()" style="font-size:0.82rem;padding:6px 12px;">
-            🔑 ¿Ya tienes cuenta? Entrar
+
+        <div class="doc-acceso-card">
+          <div class="doc-acceso-head">
+            <span class="doc-acceso-emoji">👋</span>
+            <span class="doc-acceso-txt">
+              <span class="doc-acceso-t">Bienvenido de vuelta</span>
+              <span class="doc-acceso-s">Tu aula te está esperando.</span>
+            </span>
+          </div>
+          <label class="doc-lbl" for="doc-rec-correo">📧 Tu correo</label>
+          <input id="doc-rec-correo" class="pa-inp-field doc-inp" maxlength="100" autocomplete="email" type="email"
+                 placeholder="El correo con que te registraste">
+          <label class="doc-lbl" for="doc-rec-clave">🔒 Tu contraseña</label>
+          <input id="doc-rec-clave" class="pa-inp-field doc-inp" type="password" maxlength="40" autocomplete="current-password"
+                 placeholder="La contraseña que elegiste">
+          <button class="doc-cta doc-cta-entrar" onclick="docenteRecuperar()">
+            <span class="doc-cta-t">🚪 Entrar a mi aula</span>
           </button>
+          <button class="doc-link-sutil" onclick="docenteOlvide()">¿Olvidaste tu contraseña? Te ayudamos.</button>
         </div>
-        <div id="doc-recuperar-form" style="display:none;margin-top:10px;border-top:1px solid #e0e0e0;padding-top:12px;">
-          <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">Entra con tu correo y tu contraseña:</p>
-          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">📧 TU CORREO</label>
-          <input id="doc-rec-correo" class="pa-inp-field" maxlength="100" autocomplete="email" type="email"
-                 placeholder="El correo con que te registraste" style="margin-bottom:10px;">
-          <label style="font-size:0.72rem;font-weight:700;color:#666;display:block;margin-bottom:3px;">🔒 TU CONTRASEÑA</label>
-          <input id="doc-rec-clave" class="pa-inp-field" type="password" maxlength="40" autocomplete="current-password"
-                 placeholder="La contraseña que elegiste" style="margin-bottom:14px;">
-          <button class="padre-wa-btn" onclick="docenteRecuperar()">🔓 Entrar</button>
-          <button class="padre-wa-cambiar" onclick="docenteOlvide()">🆘 ¿Olvidaste tu contraseña?</button>
+
+        <div class="doc-separador"><span>¿Es tu primera vez?</span></div>
+
+        <button id="doc-registro-toggle" class="doc-cta doc-cta-crear" onclick="docenteMostrarRegistro()">
+          <span class="doc-cta-t">🎓 Quiero mi aula gratis</span>
+          <span class="doc-cta-s">En dos minutos, y es tuya para siempre.</span>
+          <span class="doc-cta-flecha" aria-hidden="true">▾</span>
+        </button>
+
+        <div id="doc-registro-form" style="display:none;">
+          <p class="teacher-panel-desc doc-registro-intro">Tus alumnos escribirán tu
+            <strong>nombre</strong> al empezar una misión, y su avance llegará solo a tu cuenta.</p>
+          <input id="doc-nombre" class="pa-inp-field doc-inp" maxlength="60" autocomplete="name"
+                 placeholder="Nombre completo *" style="margin-bottom:4px;">
+          <p class="doc-campo-hint">Nombre y apellidos: es el que tus alumnos escribirán para que te llegue su avance.</p>
+          <input id="doc-correo" class="pa-inp-field doc-inp" maxlength="100" autocomplete="email" type="email"
+                 placeholder="Correo electrónico *">
+          <input id="doc-clave" class="pa-inp-field doc-inp" maxlength="40" autocomplete="new-password" type="password"
+                 placeholder="Elige una contraseña fácil de recordar *">
+          <input id="doc-escuela" class="pa-inp-field doc-inp" maxlength="120" autocomplete="off"
+                 placeholder="Nombre de tu escuela">
+          <div class="doc-tipo-row">
+            <button id="doc-tipo-pub" class="doc-tipo-btn doc-tipo-sel" onclick="docenteTipo('Pública')">🏫 Pública</button>
+            <button id="doc-tipo-pri" class="doc-tipo-btn" onclick="docenteTipo('Privada')">🏛 Privada</button>
+          </div>
+          <select id="doc-departamento" class="pa-inp-field doc-inp">
+            <option value="">Departamento</option>
+            <option>Atlántida</option><option>Choluteca</option><option>Colón</option>
+            <option>Comayagua</option><option>Copán</option><option>Cortés</option>
+            <option>El Paraíso</option><option>Francisco Morazán</option><option>Gracias a Dios</option>
+            <option>Intibucá</option><option>Islas de la Bahía</option><option>La Paz</option>
+            <option>Lempira</option><option>Ocotepeque</option><option>Olancho</option>
+            <option>Santa Bárbara</option><option>Valle</option><option>Yoro</option>
+          </select>
+          <input id="doc-municipio" class="pa-inp-field doc-inp" maxlength="80" autocomplete="off"
+                 placeholder="Municipio">
+          <input id="doc-lugar" class="pa-inp-field doc-inp" maxlength="200" autocomplete="off"
+                 placeholder="Lugar / dirección o referencia de la escuela">
+          <input id="doc-telefono" class="pa-inp-field doc-inp" maxlength="40" autocomplete="tel" type="tel"
+                 placeholder="Teléfono / WhatsApp (opcional)" style="margin-bottom:12px;">
+          <button class="doc-cta doc-cta-crear-firme" onclick="docenteSuscribir()">
+            <span class="doc-cta-t">✨ Crear mi aula ahora</span>
+          </button>
+          <p class="padre-hint doc-registro-pie">Es gratis y siempre lo será. Solo este paso necesita internet.
+            <a href="panel-docente.html" class="doc-admin-link">¿Administrador del proyecto?</a></p>
         </div>
+
       </div>`;
     return;
   }

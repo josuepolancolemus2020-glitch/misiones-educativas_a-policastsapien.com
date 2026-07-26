@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Captura · Zona Docente</title>
+<style>
+  body { margin: 0; background: #eef2f7; display: flex; gap: 14px; padding: 12px; font-family: system-ui, sans-serif; }
+  figure { margin: 0; }
+  figcaption { font-size: 12px; font-weight: 700; color: #334155; text-align: center; padding: 4px 0; }
+  iframe { width: 380px; height: 1180px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; }
+</style>
+</head>
+<body>
+<figure><figcaption>Al entrar (registro plegado)</figcaption><iframe id="a" src="/index.html"></iframe></figure>
+<figure><figcaption>Con el registro desplegado</figcaption><iframe id="b" src="/index.html"></iframe></figure>
+<script>
+/* Prepara los dos estados del panel para poder mirarlos de un vistazo. */
+function preparar(id, abrir) {
+  const f = document.getElementById(id);
+  f.onload = () => {
+    const w = f.contentWindow, d = f.contentDocument;
+    try { w.localStorage.removeItem('metas-docente'); } catch (e) {}
+    setTimeout(() => {
+      if (typeof w.renderProfile === 'function') w.renderProfile();
+      const cont = d.getElementById('docente-acceso');
+      if (!cont) return;
+      const vista = cont.closest('.view');
+      d.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      if (vista) vista.classList.add('active');
+      if (abrir && typeof w.docenteMostrarRegistro === 'function') w.docenteMostrarRegistro();
+    }, 700);
+  };
+}
+preparar('a', false);
+preparar('b', true);
+</script>
+</body>
+</html>

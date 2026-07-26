@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sonda · Zona Docente</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 10px; background: #222; color: #eee; }
+  iframe { width: 380px; height: 900px; border: 0; background: #fff; }
+  pre { background: #111; color: #7f7; padding: 10px; font-size: 12px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<iframe id="f" src="/index.html"></iframe>
+<pre id="out">midiendo…</pre>
+<script>
+/* Abre la Zona Docente sin sesión, mide el bloque de acceso y el de registro
+   (plegado y desplegado) y avisa de cualquier desborde horizontal. */
+const out = document.getElementById('out');
+const f = document.getElementById('f');
+const L = [];
+function log(s) { L.push(s); out.textContent = L.join('\n'); }
+
+f.onload = () => {
+  const w = f.contentWindow, d = f.contentDocument;
+  try { w.localStorage.removeItem('metas-docente'); } catch (e) {}
+  setTimeout(() => {
+    try {
+      if (typeof w.renderProfile === 'function') w.renderProfile();
+      const cont = d.getElementById('docente-acceso');
+      if (!cont) { log('✘ no existe #docente-acceso'); return; }
+      cont.closest('.view')?.classList.add('active');
+
+      const medir = (sel, nombre) => {
+        const el = d.querySelector(sel);
+        if (!el) { log('✘ falta ' + nombre + '  (' + sel + ')'); return null; }
+        const r = el.getBoundingClientRect();
+        log('  ' + nombre.padEnd(26) + Math.round(r.width) + ' x ' + Math.round(r.height) + ' px');
+        return el;
+      };
+
+      log('── ORDEN EN PANTALLA (de arriba abajo) ──');
+      const hijos = [...cont.querySelector('.teacher-panel-group').children];
+      hijos.forEach((h, i) => log('  ' + (i + 1) + '. ' + (h.className || h.id || h.tagName)));
+
+      log('\n── PLEGADO (como lo ve el maestro al entrar) ──');
+      medir('.doc-acceso-card', 'tarjeta de acceso');
+      medir('.doc-cta-entrar', 'botón Entrar');
+      medir('.doc-separador', 'separador');
+      medir('.doc-cta-crear', 'botón Crear cuenta');
+      const reg = d.getElementById('doc-registro-form');
+      log('  registro visible?          ' + (reg.style.display !== 'none' ? 'SÍ (mal)' : 'no (bien)'));
+      const altoPlegado = cont.getBoundingClientRect().height;
+      log('  ALTO TOTAL del panel       ' + Math.round(altoPlegado) + ' px');
+
+      log('\n── DESPLEGADO (al tocar «Quiero mi aula gratis») ──');
+      w.docenteMostrarRegistro();
+      log('  registro visible?          ' + (reg.style.display !== 'none' ? 'SÍ (bien)' : 'no (mal)'));
+      log('  flecha girada?             ' +
+        (d.getElementById('doc-registro-toggle').classList.contains('doc-cta-abierto') ? 'sí' : 'NO'));
+      medir('.doc-cta-crear-firme', 'botón Crear mi aula');
+      log('  ALTO TOTAL del panel       ' + Math.round(cont.getBoundingClientRect().height) + ' px');
+
+      log('\n── DESBORDE HORIZONTAL ──');
+      const doc = d.documentElement;
+      log('  documento  scrollWidth ' + doc.scrollWidth + ' vs clientWidth ' + doc.clientWidth +
+          '  → ' + Math.max(0, doc.scrollWidth - doc.clientWidth) + ' px');
+      let peor = 0, quien = '';
+      cont.querySelectorAll('*').forEach(el => {
+        const ex = Math.round(el.getBoundingClientRect().right - cont.getBoundingClientRect().right);
+        if (ex > peor) { peor = ex; quien = el.className || el.tagName; }
+      });
+      log('  el que más sobresale del panel: ' + (peor > 1 ? peor + ' px (' + quien + ')' : 'ninguno'));
+
+      log('\n── RAYAS (norma 1-bis) ──');
+      const rayas = (cont.textContent.match(/—/g) || []).length;
+      log('  guiones largos en el panel: ' + rayas + (rayas ? '  ✘' : '  ✔'));
+    } catch (e) { log('✘ ' + e.message + '\n' + e.stack); }
+  }, 900);
+};
+</script>
+</body>
+</html>
