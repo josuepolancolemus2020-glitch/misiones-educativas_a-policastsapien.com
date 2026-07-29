@@ -29,8 +29,9 @@ const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
                          E: 'Excelente', R: 'Regular', D: 'Deficiente',
                          NS: 'No Satisfactorio', PS: 'Poco Satisfactorio' };
 
-let _adTab = 'lista';        /* lista | eco | asis | sace | com */
+let _adTab = 'lista';        /* lista | eco | asis | ctrl | sace | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
+let _adControlId = null;     /* control abierto en Controles */
 
 /* ── Estado v2: GRUPOS (multi-aula) ──
    Un maestro puede atender varios grupos, incluso en DOS colegios.
@@ -56,7 +57,7 @@ function adGrupoNuevo(props) {
   let id = 'G';
   for (let i = 0; i < 5; i++) id += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
   return Object.assign({ id, escuela: '', grado: '', seccion: '', logo: '', logoSec: '', boleta: adBoletaDef(),
-    materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {} }, props || {});
+    materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {}, controles: [] }, props || {});
 }
 
 function adNormGrupo(g) {
@@ -72,6 +73,7 @@ function adNormGrupo(g) {
   g.lista = Array.isArray(g.lista) ? g.lista : [];
   g.colectas = Array.isArray(g.colectas) ? g.colectas : [];
   g.asistencia = Array.isArray(g.asistencia) ? g.asistencia : [];
+  g.controles = Array.isArray(g.controles) ? g.controles : [];
   g.materias = Array.isArray(g.materias) && g.materias.length ? g.materias : AD_MATERIAS_DEF.slice();
   g.notas = (g.notas && typeof g.notas === 'object') ? g.notas : {};
   return g;
@@ -284,12 +286,13 @@ function renderAdmin() {
   const cont = document.getElementById('admin-content');
   if (!cont) return;
   /* recordar dónde está el docente para restaurarlo al recargar */
-  if (window.metasSaveNav) window.metasSaveNav({ view: 'view-admin', adTab: _adTab, adColecta: _adColectaId });
+  if (window.metasSaveNav) window.metasSaveNav({ view: 'view-admin', adTab: _adTab, adColecta: _adColectaId, adControl: _adControlId });
   /* la flecha del encabezado dice a dónde lleva AHORA, que cambia según se
-     esté dentro de una colecta o no */
+     esté dentro de una colecta o de un control */
   const _atras = document.getElementById('admin-back-btn');
   if (_atras) {
-    const rotulo = _adColectaId ? 'Volver a mis colectas' : 'Volver a la Zona Docente';
+    const rotulo = _adColectaId ? 'Volver a mis colectas'
+      : _adControlId ? 'Volver a mis controles' : 'Volver a la Zona Docente';
     _atras.setAttribute('aria-label', rotulo);
     _atras.setAttribute('title', rotulo);
   }
@@ -313,6 +316,7 @@ function renderAdmin() {
       <button class="pa-otab ${_adTab === 'lista' ? 'pa-otab-active' : ''}" data-adtab="lista">👥 Alumnos</button>
       <button class="pa-otab ${_adTab === 'eco'   ? 'pa-otab-active' : ''}" data-adtab="eco">💰 Economía</button>
       <button class="pa-otab ${_adTab === 'asis'  ? 'pa-otab-active' : ''}" data-adtab="asis">📋 Asistencia</button>
+      <button class="pa-otab ${_adTab === 'ctrl'  ? 'pa-otab-active' : ''}" data-adtab="ctrl">✅ Controles</button>
       <button class="pa-otab ${_adTab === 'sace'  ? 'pa-otab-active' : ''}" data-adtab="sace">🧮 Notas SACE</button>
       <button class="pa-otab ${_adTab === 'com'   ? 'pa-otab-active' : ''}" data-adtab="com">📣 Comunicados</button>
       <button class="pa-otab" id="ad-nube-chip" title="Nube del chatbot de padres: toca para sincronizar ahora">${(() => {
@@ -324,7 +328,7 @@ function renderAdmin() {
   cont.querySelectorAll('[data-gid]').forEach(b =>
     b.addEventListener('click', () => {
       const s2 = adState(); s2.activo = b.dataset.gid; adStateSave(s2);
-      _adColectaId = null; renderAdmin();
+      _adColectaId = null; _adControlId = null; renderAdmin();
     }));
   document.getElementById('ad-gr-add').addEventListener('click', async () => {
     if (!await metasConfirm('Un grupo nuevo tiene su PROPIA lista de alumnos, claves de familia, economía, asistencia y notas.\n\nÚsalo si atiendes **otro grado/sección** o trabajas en **otro colegio**. ¿Crear el grupo?',
@@ -336,7 +340,7 @@ function renderAdmin() {
     toast('🏫 Grupo nuevo: escribe su grado, sección y colegio');
   });
   cont.querySelectorAll('[data-adtab]').forEach(b =>
-    b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; renderAdmin(); }));
+    b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; _adControlId = null; renderAdmin(); }));
   /* chip de nube: visible en TODAS las pestañas (antes solo en Alumnos
      se sabía si lo publicado ya subió); tocarlo sincroniza ya */
   document.getElementById('ad-nube-chip').addEventListener('click', async () => {
@@ -348,6 +352,7 @@ function renderAdmin() {
   if (_adTab === 'lista') adRenderLista(body, d);
   else if (_adTab === 'eco') adRenderEco(body, d);
   else if (_adTab === 'asis') adRenderAsis(body, d);
+  else if (_adTab === 'ctrl') adRenderControles(body, d);
   else if (_adTab === 'com') adRenderCom(body, d);
   else adRenderSace(body, d);
 }
@@ -1026,6 +1031,15 @@ function adMesLabel(m) {
   return (AD_MESES_ES[(+p[1]) - 1] || m) + ' ' + (p[0] || '');
 }
 
+/* 'YYYY-MM-DD' → 'mié. 29' (encabezado corto del día por día) */
+const AD_DIAS_ES = ['dom.', 'lun.', 'mar.', 'mié.', 'jue.', 'vie.', 'sáb.'];
+function adDiaLabel(f) {
+  const p = String(f || '').split('-');
+  if (p.length !== 3) return f;
+  const dt = new Date(+p[0], (+p[1]) - 1, +p[2]);
+  return AD_DIAS_ES[dt.getDay()] + ' ' + (+p[2]);
+}
+
 function adRenderAsis(body, d) {
   if (!d.lista.length) { adSinLista(body, 'el pase de lista'); return; }
   const hoy = adHoy();
@@ -1034,6 +1048,9 @@ function adRenderAsis(body, d) {
 
   /* resumen navegable por meses: los que tienen datos + el mes actual */
   const mesSel = body.dataset.mes || fechaSel.slice(0, 7);
+  /* dos maneras de mirar el mismo mes: 'dia' = qué pasó cada día ·
+     'mes' = cuánto acumula cada alumno (lo de siempre) */
+  const vista = body.dataset.vista || 'dia';
   const mesesDisp = [...new Set(
     d.asistencia.map(r => r.f.slice(0, 7)).concat([hoy.slice(0, 7), mesSel])
   )].filter(Boolean).sort().reverse();
@@ -1043,6 +1060,16 @@ function adRenderAsis(body, d) {
     resumen[n] = resumen[n] || { A: 0, E: 0 };
     resumen[n][r.aus[n]] = (resumen[n][r.aus[n]] || 0) + 1;
   }));
+  /* días con registro, el más reciente arriba (así el maestro ve primero
+     lo de hoy y lo de ayer, que es lo que corrige a diario) */
+  const dias = delMes.filter(r => Object.keys(r.aus || {}).length)
+    .sort((a, b) => a.f < b.f ? 1 : -1);
+  const nomDe = num => {
+    const a = d.lista.find(x => String(x.num) === String(num));
+    return a ? adPrimerNombre(a.nombre) : '';
+  };
+  const totalMes = { A: 0, E: 0 };
+  Object.keys(resumen).forEach(n => { totalMes.A += resumen[n].A || 0; totalMes.E += resumen[n].E || 0; });
 
   body.innerHTML = `
     <div class="pa-card">
@@ -1072,12 +1099,55 @@ function adRenderAsis(body, d) {
     </div>
 
     <div class="pa-card">
-      <div class="pa-card-title">📊 Ausencias por mes</div>
-      <p class="pa-optional-hint" style="margin-top:-2px">Toca un mes para ver quién faltó. Aparecen los meses con registro y el mes actual.</p>
+      <div class="pa-card-title">📨 Excusas de las familias</div>
+      <p class="pa-optional-hint" style="margin-top:-2px">Lo que los padres avisaron por el asistente.
+        <strong>Apruébala aquí</strong> y el día queda marcado 📝 con excusa en el pase de lista.</p>
+      <div id="ad-asis-exc"><p class="pa-optional-hint">⏳ Revisando el buzón…</p></div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-exc-refresh">🔄 Revisar buzón</button>
+      </div>
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">📊 Ausencias</div>
+      <p class="pa-optional-hint" style="margin-top:-2px">Elige el mes y mira las faltas
+        <strong>día por día</strong> (qué pasó cada día) o el <strong>resumen del mes</strong>
+        (cuánto acumula cada alumno).</p>
       <div class="ad-meses">
         ${mesesDisp.map(m => `<button class="ad-mes-btn ${m === mesSel ? 'ad-mes-on' : ''}" data-mes="${m}">${adMesLabel(m)}</button>`).join('')}
       </div>
-      ${Object.keys(resumen).length ? `
+      <div class="ad-meses" role="group" aria-label="Cómo ver las ausencias">
+        <button class="ad-mes-btn ${vista === 'dia' ? 'ad-mes-on' : ''}" data-vista="dia">🗓 Día por día</button>
+        <button class="ad-mes-btn ${vista === 'mes' ? 'ad-mes-on' : ''}" data-vista="mes">📊 Resumen del mes</button>
+      </div>
+      ${!Object.keys(resumen).length
+        ? `<p class="pa-optional-hint">Sin ausencias registradas en <strong>${adMesLabel(mesSel)}</strong>. 🎉</p>`
+        : vista === 'dia' ? `
+      <div class="ad-resumen">
+        <span>🗓 Días con faltas: <strong>${dias.length}</strong></span>
+        <span>🚫 Ausencias: <strong>${totalMes.A}</strong></span>
+        <span>📝 Excusas: <strong>${totalMes.E}</strong></span>
+      </div>
+      ${dias.map(r => {
+        const nums = Object.keys(r.aus);
+        const aus = nums.filter(n => r.aus[n] === 'A');
+        const exc = nums.filter(n => r.aus[n] === 'E');
+        const quien = arr => arr.map(n => '#' + n + (nomDe(n) ? ' ' + adEsc(nomDe(n)) : '')).join(' · ');
+        return `
+        <button class="ad-colecta-row ad-dia-row" data-dia="${r.f}"
+                title="Abrir el pase de lista de ese día">
+          <span class="ad-cr-txt">
+            <strong>${adDiaLabel(r.f)} · ${adFechaBonita(r.f)}</strong>
+            ${r.f === hoy ? ' <span class="ad-dia-hoy">hoy</span>' : ''}<br>
+            ${aus.length ? `<small>🚫 ${quien(aus)}</small><br>` : ''}
+            ${exc.length ? `<small>📝 ${quien(exc)}</small>` : ''}
+          </span>
+          <span class="ad-cr-arrow">›</span>
+        </button>`;
+      }).join('')}
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-asis-print-dias">🖨️ Imprimir día por día (${adMesLabel(mesSel)})</button>
+      </div>` : `
       <table class="ad-tabla">
         <thead><tr><th>#</th><th>Alumno/a</th><th>🚫 Ausencias</th><th>📝 Excusas</th></tr></thead>
         <tbody>
@@ -1086,8 +1156,7 @@ function adRenderAsis(body, d) {
           <td>${resumen[a.num].A || 0}</td><td>${resumen[a.num].E || 0}</td></tr>`).join('')}
         </tbody>
       </table>
-      <button class="pa-generate-btn ad-btn-sec" id="ad-asis-print">🖨️ Imprimir resumen (${adMesLabel(mesSel)})</button>`
-      : `<p class="pa-optional-hint">Sin ausencias registradas en <strong>${adMesLabel(mesSel)}</strong>. 🎉</p>`}
+      <button class="pa-generate-btn ad-btn-sec" id="ad-asis-print">🖨️ Imprimir resumen (${adMesLabel(mesSel)})</button>`}
     </div>`;
 
   document.getElementById('ad-asis-fecha').addEventListener('change', e => {
@@ -1097,9 +1166,23 @@ function adRenderAsis(body, d) {
     adRenderAsis(body, adLoad());
   });
 
-  body.querySelectorAll('.ad-mes-btn').forEach(b => b.addEventListener('click', () => {
+  body.querySelectorAll('[data-mes]').forEach(b => b.addEventListener('click', () => {
     body.dataset.mes = b.dataset.mes;
     adRenderAsis(body, adLoad());
+  }));
+
+  body.querySelectorAll('[data-vista]').forEach(b => b.addEventListener('click', () => {
+    body.dataset.vista = b.dataset.vista;
+    adRenderAsis(body, adLoad());
+  }));
+
+  /* tocar un día lo sube al pase de lista de arriba: corregir la falta de
+     ayer no obliga a buscar la fecha en el calendario */
+  body.querySelectorAll('.ad-dia-row').forEach(b => b.addEventListener('click', () => {
+    body.dataset.fecha = b.dataset.dia;
+    adRenderAsis(body, adLoad());
+    try { document.getElementById('ad-asis-fecha').scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+    toast('🗓 Pase de lista del ' + adFechaBonita(b.dataset.dia));
   }));
 
   body.querySelectorAll('.ad-chip').forEach(ch =>
@@ -1122,6 +1205,99 @@ function adRenderAsis(body, d) {
 
   const pr = document.getElementById('ad-asis-print');
   if (pr) pr.addEventListener('click', () => adPrintAsis(adLoad(), mesSel));
+  const prd = document.getElementById('ad-asis-print-dias');
+  if (prd) prd.addEventListener('click', () => adPrintAsisDias(adLoad(), mesSel));
+  document.getElementById('ad-exc-refresh').addEventListener('click', () => adAsisExcusas(body, adLoad(), true));
+  adAsisExcusas(body, d, false);
+}
+
+/* ── 📨 Excusas del buzón, dentro del pase de lista ──
+   El padre avisa la falta por el asistente; aquí el maestro la APRUEBA
+   de un toque y el día queda 📝 con excusa (y sube solo a la nube, así
+   la familia ve que se le tomó en cuenta). */
+async function adAsisExcusas(body, d, forzar) {
+  const cont = document.getElementById('ad-asis-exc');
+  if (!cont) return;
+  const hint = t => '<p class="pa-optional-hint">' + t + '</p>';
+  const r = await avBuzonFilas(d, forzar);
+  if (r.err === 'sinclaves') { cont.innerHTML = hint('Aún no hay claves de familia en este grupo: entrégalas en 👥 Alumnos y las familias podrán avisar sus faltas.'); return; }
+  if (r.err === 'offline') { cont.innerHTML = hint('📴 Sin internet: las excusas se revisan con conexión. El pase de lista funciona igual.'); return; }
+  if (r.err === 'red') { cont.innerHTML = hint('⚠️ No se pudo revisar el buzón. Toca «🔄 Revisar buzón» para reintentar.'); return; }
+
+  const numDe = {};
+  d.lista.forEach(a => {
+    const c = adClaveFamilia(d.id, a.num, false);
+    if (c) numDe[c] = a.num;
+  });
+  /* solo las excusas estructuradas del asistente, más recientes primero */
+  const excusas = [];
+  (r.rows || []).forEach(m => {
+    const ex = avParseExcusa(m.texto);
+    if (!ex || !numDe[m.codigo]) return;
+    excusas.push({ num: numDe[m.codigo], fecha: ex.fecha, razon: ex.razon, creado: m.creado_en });
+  });
+  if (!excusas.length) { cont.innerHTML = hint('Sin excusas de las familias por ahora.'); return; }
+  excusas.sort((a, b) => a.fecha < b.fecha ? 1 : -1);
+
+  const estadoDe = (fecha, num) => {
+    const reg = (adLoad().asistencia || []).find(x => x.f === fecha);
+    return (reg && reg.aus && reg.aus[num]) || '';
+  };
+  const nomDe = num => {
+    const a = d.lista.find(x => String(x.num) === String(num));
+    return a ? adPrimerNombre(a.nombre) : '';
+  };
+  const pendientes = excusas.filter(e => estadoDe(e.fecha, e.num) !== 'E');
+
+  cont.innerHTML = `
+    ${pendientes.length ? `<p class="pa-optional-hint" style="margin-top:0">
+      🔔 <strong>${pendientes.length}</strong> excusa(s) esperando tu aprobación.</p>` : ''}
+    ${excusas.slice(0, 25).map(e => {
+      const st = estadoDe(e.fecha, e.num);
+      const quien = '#' + e.num + (nomDe(e.num) ? ' ' + adEsc(nomDe(e.num)) : '');
+      const sello = st === 'E'
+        ? '<small style="color:#15803d">✅ Aprobada: ese día quedó 📝 con excusa.</small>'
+        : st === 'A'
+          ? `<small style="color:#b45309">🚫 Ese día está como ausente sin excusa.</small><br>
+             <button class="pa-generate-btn ad-btn-sec ad-exc-ok" data-num="${e.num}" data-fecha="${e.fecha}"
+                     style="margin-top:6px">✔ Aprobar excusa</button>`
+          : `<button class="pa-generate-btn ad-btn-sec ad-exc-ok" data-num="${e.num}" data-fecha="${e.fecha}"
+                     style="margin-top:6px">✔ Aprobar y marcar 📝</button>`;
+      return `<div class="ad-gasto-row ${st === 'E' ? 'ad-exc-lista' : 'ad-exc-nueva'}" style="align-items:flex-start">
+        <span style="flex:1">🤒 <strong>${quien}</strong> — faltó el
+          <strong>${adFechaBonita(e.fecha)}</strong> (${adDiaLabel(e.fecha)})<br>
+          <small>«${adEsc(e.razon)}»</small><br>${sello}</span>
+      </div>`;
+    }).join('')}
+    ${pendientes.length > 1 ? `<div class="ad-btn-row">
+      <button class="pa-generate-btn" id="ad-exc-todas">✔ Aprobar las ${pendientes.length} pendientes</button>
+    </div>` : ''}`;
+
+  const marcar = (num, fecha) => {
+    const dd = adLoad();
+    let reg = dd.asistencia.find(x => x.f === fecha);
+    if (!reg) { reg = { f: fecha, aus: {} }; dd.asistencia.push(reg); }
+    reg.aus = reg.aus || {};
+    reg.aus[num] = 'E';
+    dd.asistencia.sort((a, b) => a.f < b.f ? -1 : 1);
+    adSave(dd);
+  };
+
+  cont.querySelectorAll('.ad-exc-ok').forEach(b => b.addEventListener('click', () => {
+    marcar(+b.dataset.num, b.dataset.fecha);
+    toast('📝 #' + b.dataset.num + ' con excusa el ' + adFechaBonita(b.dataset.fecha));
+    adRenderAsis(body, adLoad());
+  }));
+
+  const todas = document.getElementById('ad-exc-todas');
+  if (todas) todas.addEventListener('click', async () => {
+    if (!await metasConfirm('Se marcarán con 📝 <strong>excusa</strong> las <strong>' + pendientes.length +
+      '</strong> faltas que las familias avisaron.\n\nPuedes cambiar cualquiera después tocando al alumno en el pase de lista.',
+      { icono: '📨', titulo: 'Aprobar excusas', okTxt: 'Sí, aprobar todas' })) return;
+    pendientes.forEach(e => marcar(e.num, e.fecha));
+    toast('✅ ' + pendientes.length + ' excusa(s) aprobadas');
+    adRenderAsis(body, adLoad());
+  });
 }
 
 function adPrintAsis(d, mes) {
@@ -1157,6 +1333,374 @@ ${d.lista.filter(a => resumen[a.num]).map(a => `
   <td>${resumen[a.num].A}</td><td>${resumen[a.num].E}</td>
   <td>${resumen[a.num].dias.join(', ')}</td></tr>`).join('')}
 </tbody></table>
+</body></html>`;
+  const w = window.open('', '_blank');
+  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
+  w.document.write(html); w.document.close();
+}
+
+/* Día por día del mes: el acta que piden en dirección cuando hay que
+   justificar una falta concreta (fecha, quién y si traía excusa). */
+function adPrintAsisDias(d, mes) {
+  const dias = d.asistencia.filter(r => r.f.startsWith(mes) && Object.keys(r.aus || {}).length)
+    .sort((a, b) => a.f < b.f ? -1 : 1);
+  const nomDe = num => {
+    const a = d.lista.find(x => String(x.num) === String(num));
+    return a ? (a.nombre || '') : '';
+  };
+  const quien = (r, tipo) => Object.keys(r.aus).filter(n => r.aus[n] === tipo)
+    .sort((x, y) => (+x) - (+y))
+    .map(n => '#' + n + (nomDe(n) ? ' ' + adEsc(nomDe(n)) : '')).join(', ');
+  const grupo = adGrupoTxt(d);
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Asistencia día por día ${mes}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:12mm;}
+h1{font-size:16px;color:#1e3a7c;margin-bottom:2mm;}
+.sub{font-size:11px;color:#444;margin-bottom:5mm;}
+table{width:100%;border-collapse:collapse;}
+th,td{border:1px solid #999;padding:4px 6px;text-align:left;vertical-align:top;}
+th{background:#e8eef9;}
+td.f{white-space:nowrap;font-weight:bold;}
+.tot{margin-top:4mm;font-size:11px;color:#444;}
+.noprint{margin-bottom:5mm;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
+<h1>🗓 Asistencia día por día — ${adMesLabel(mes)}</h1>
+<div class="sub">${grupo ? 'Grupo ' + adEsc(grupo) + ' · ' : ''}Solo aparecen los días con faltas; en los demás asistió todo el grupo. Generado con M.E.T.A.S.</div>
+<table>
+<thead><tr><th>Fecha</th><th>🚫 Ausentes (NSP)</th><th>📝 Con excusa</th></tr></thead>
+<tbody>
+${dias.map(r => `
+  <tr><td class="f">${adDiaLabel(r.f)}<br>${adFechaBonita(r.f)}</td>
+  <td>${quien(r, 'A') || '—'}</td><td>${quien(r, 'E') || '—'}</td></tr>`).join('')}
+</tbody></table>
+<p class="tot">Días con faltas: <strong>${dias.length}</strong> ·
+  total de ausencias: <strong>${dias.reduce((s, r) => s + Object.values(r.aus).filter(v => v === 'A').length, 0)}</strong> ·
+  total con excusa: <strong>${dias.reduce((s, r) => s + Object.values(r.aus).filter(v => v === 'E').length, 0)}</strong></p>
+</body></html>`;
+  const w = window.open('', '_blank');
+  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
+  w.document.write(html); w.document.close();
+}
+
+/* ══════════════ ✅ CONTROLES DEL AULA ══════════════
+   Todo lo que el maestro anota a diario y NO es dinero ni nota: quién
+   recibió la ficha, la merienda o el libro, quién se apuntó al desfile,
+   quién trajo el material, la talla del uniforme… Antes eso vivía en
+   hojitas sueltas; aquí cada cosa es un CONTROL con nombre propio, se
+   marca con un toque sobre la misma lista de siempre y se ve al
+   instante QUIÉNES FALTAN (que es el dato que de verdad se necesita).
+   Todo local y sin internet; viaja solo entre los equipos del maestro
+   con el espejo de la Zona Docente. */
+const AD_CTRL_PLANTILLAS = [
+  { icono: '📄', nombre: 'Entrega de ficha', tipo: 'marca' },
+  { icono: '📗', nombre: 'Entrega de libro', tipo: 'marca' },
+  { icono: '🍎', nombre: 'Merienda escolar', tipo: 'marca' },
+  { icono: '🧰', nombre: 'Material solicitado', tipo: 'marca' },
+  { icono: '🎟️', nombre: 'Inscritos al evento', tipo: 'marca' },
+  { icono: '✍️', nombre: 'Firma del padre', tipo: 'marca' },
+  { icono: '🧾', nombre: 'Documento entregado', tipo: 'marca' },
+  { icono: '💊', nombre: 'Control de salud', tipo: 'marca' },
+  { icono: '📖', nombre: 'Libro devuelto', tipo: 'marca' },
+  { icono: '👕', nombre: 'Talla de uniforme', tipo: 'texto' },
+  { icono: '🔢', nombre: 'Cantidad recibida', tipo: 'numero' },
+  { icono: '📝', nombre: 'Otro control (sí o no)', tipo: 'marca' },
+  { icono: '✏️', nombre: 'Otro control (dato corto)', tipo: 'texto' },
+  { icono: '#️⃣', nombre: 'Otro control (cantidad)', tipo: 'numero' },
+];
+const AD_CTRL_TIPOS = {
+  marca: { et: '✔ sí o no', ayuda: 'Toca al alumno para marcarlo ✔; tócalo otra vez para quitarle la marca.' },
+  texto: { et: '✏️ dato corto', ayuda: 'Toca al alumno y escribe su dato (talla, color, nº de recibo…). Vacío lo borra.' },
+  numero: { et: '🔢 cantidad', ayuda: 'Toca al alumno y escribe la cantidad (cuadernos, libros, unidades…). Vacío o 0 lo borra.' },
+};
+
+function adControl(d, id) { return (d.controles || []).find(c => c.id === id); }
+function adCtrlTipo(c) { return AD_CTRL_TIPOS[c.tipo] ? c.tipo : 'marca'; }
+/* Cuántos tienen dato y quiénes faltan (el corazón del control) */
+function adCtrlHechos(c) { return Object.keys(c.datos || {}).length; }
+function adCtrlFaltan(d, c) {
+  return d.lista.filter(a => (c.datos || {})[a.num] == null);
+}
+/* Lo que se pinta dentro del chip y en la hoja impresa */
+function adCtrlValorTxt(c, num) {
+  const v = (c.datos || {})[num];
+  if (v == null) return '';
+  if (adCtrlTipo(c) === 'marca') return '✔';
+  return String(v);
+}
+
+function adRenderControles(body, d) {
+  if (!d.lista.length) { adSinLista(body, 'los controles del aula'); return; }
+  if (_adControlId) { adRenderControl(body, d); return; }
+
+  const lista = (d.controles || []).slice().reverse();
+  body.innerHTML = `
+    <div class="pa-card">
+      <div class="pa-card-title">✅ Controles del aula</div>
+      <p class="pa-optional-hint">Para todo lo que se anota a diario y no es dinero ni nota:
+        <strong>quién recibió la ficha</strong>, la merienda o el libro, <strong>quién se apuntó</strong>
+        a un evento, quién trajo el material… Elige de qué se trata y marca sobre tu misma lista.
+        Lo importante lo tienes de un vistazo: <strong>quiénes faltan</strong>.</p>
+      <p class="pa-optional-hint" style="margin-top:-2px"><strong>Toca una etiqueta</strong> para crear el control de hoy:</p>
+      <div class="ad-meses ad-ctrl-plantillas">
+        ${AD_CTRL_PLANTILLAS.map((p, i) =>
+          `<button class="ad-mes-btn" data-plant="${i}" title="Dato: ${adEsc(AD_CTRL_TIPOS[p.tipo].et)}">${p.icono} ${adEsc(p.nombre)}</button>`).join('')}
+      </div>
+    </div>
+    ${lista.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">🗂️ Mis controles</div>
+      ${lista.map(c => {
+        const hechos = adCtrlHechos(c), total = d.lista.length;
+        const faltan = total - hechos;
+        return `
+        <button class="ad-colecta-row" data-ctid="${c.id}">
+          <span class="ad-cr-txt"><strong>${c.icono || '✅'} ${adEsc(c.nombre)}</strong><br>
+            <small>${adFechaBonita(c.fecha)} · ${hechos}/${total} anotados${faltan ? ' · faltan ' + faltan : ' · ¡completo! 🎉'}</small></span>
+          <span class="ad-cr-arrow">›</span>
+        </button>`;
+      }).join('')}
+    </div>` : `
+    <div class="pa-card">
+      <p class="pa-optional-hint">Todavía no hay controles. El primero te tomará
+        <strong>menos de un minuto</strong>: toca una etiqueta de arriba.</p>
+    </div>`}`;
+
+  body.querySelectorAll('[data-plant]').forEach(b =>
+    b.addEventListener('click', async () => {
+      const p = AD_CTRL_PLANTILLAS[+b.dataset.plant];
+      const nombre = await metasPrompt('¿Cómo se llama este control?\nPonle el nombre con el que TÚ lo buscarías después (ej. **Ficha de Español 3er parcial**).', {
+        icono: p.icono, titulo: 'Nuevo control', okTxt: 'Crear',
+        value: p.nombre.startsWith('Otro control') ? '' : p.nombre,
+        placeholder: p.nombre,
+        valida: v => String(v).trim().length >= 3 ? '' : 'Escribe el nombre (mínimo 3 letras).',
+      });
+      if (nombre === null) return;
+      const dd = adLoad();
+      dd.controles = dd.controles || [];
+      dd.controles.push({
+        id: 'K' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        icono: p.icono, nombre: String(nombre).trim(), tipo: p.tipo,
+        fecha: adHoy(), datos: {},
+      });
+      adSave(dd);
+      _adControlId = dd.controles[dd.controles.length - 1].id;
+      renderAdmin();
+    }));
+
+  body.querySelectorAll('[data-ctid]').forEach(b =>
+    b.addEventListener('click', () => { _adControlId = b.dataset.ctid; renderAdmin(); }));
+}
+
+function adRenderControl(body, d) {
+  const c = adControl(d, _adControlId);
+  if (!c) { _adControlId = null; renderAdmin(); return; }
+  const tipo = adCtrlTipo(c);
+  const hechos = adCtrlHechos(c), total = d.lista.length;
+  const faltan = adCtrlFaltan(d, c);
+
+  body.innerHTML = `
+    <div class="pa-card">
+      <nav class="nav-ruta" aria-label="Dónde estás">
+        <button class="nav-ruta-link" id="ad-ctrl-volver">🗂️ Mis controles</button>
+        <span class="nav-ruta-sep" aria-hidden="true">›</span>
+        <span class="nav-ruta-actual" aria-current="page">estás aquí</span>
+      </nav>
+      <div class="pa-card-title">${c.icono || '✅'} ${adEsc(c.nombre)}</div>
+      <p class="pa-optional-hint">${adFechaBonita(c.fecha)} · dato: <strong>${AD_CTRL_TIPOS[tipo].et}</strong><br>
+        ${AD_CTRL_TIPOS[tipo].ayuda}</p>
+      <div class="ad-resumen">
+        <span>✅ Anotados: <strong>${hechos}/${total}</strong></span>
+        <span class="${faltan.length ? 'ad-mal' : 'ad-ok'}">⏳ Faltan: <strong>${faltan.length}</strong></span>
+      </div>
+      <div class="ad-chips">
+        ${d.lista.map(a => {
+          const val = adCtrlValorTxt(c, a.num);
+          const nom = adPrimerNombre(a.nombre);
+          return `<button class="ad-chip ${val ? 'ad-chip-on' : ''}" data-num="${a.num}" title="${adEsc(a.nombre)}">
+            <span class="ad-chip-num">#${a.num}</span>
+            ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}
+            ${val ? `<span class="ad-chip-monto">${adEsc(val)}</span>` : ''}</button>`;
+        }).join('')}
+      </div>
+      ${tipo === 'marca' ? `
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-todos">✅ Marcar a todos</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-limpiar">🧹 Quitar todas las marcas</button>
+      </div>
+      <p class="pa-optional-hint">💡 Si casi todos cumplieron, marca a todos y quita solo a los que faltaron:
+        se anota en segundos, igual que el pase de lista.</p>` : ''}
+    </div>
+
+    <div class="pa-card">
+      <div class="pa-card-title">⏳ Todavía faltan (${faltan.length})</div>
+      ${faltan.length ? `
+      <p class="pa-optional-hint" style="margin-top:-2px">${faltan.map(a =>
+        '#' + a.num + (adPrimerNombre(a.nombre) ? ' ' + adEsc(adPrimerNombre(a.nombre)) : '')).join(' · ')}</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-copiar">📋 Copiar los que faltan</button>
+      </div>`
+      : '<p class="pa-optional-hint">🎉 ¡Todo el grupo está anotado en este control!</p>'}
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-print">🖨️ Imprimir hoja de control</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-repetir">📄 Repetir este control</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-ctrl-renombrar">✏️ Cambiar nombre o fecha</button>
+        <button class="pa-generate-btn ad-btn-sec ad-btn-peligro" id="ad-ctrl-borrar">🗑 Eliminar control</button>
+      </div>
+    </div>`;
+
+  document.getElementById('ad-ctrl-volver').addEventListener('click', () => { _adControlId = null; renderAdmin(); });
+
+  body.querySelectorAll('.ad-chip').forEach(ch =>
+    ch.addEventListener('click', async () => {
+      const num = ch.dataset.num;
+      const dd = adLoad(); const cc = adControl(dd, _adControlId); if (!cc) return;
+      cc.datos = cc.datos || {};
+      const t = adCtrlTipo(cc);
+      if (t === 'marca') {
+        if (cc.datos[num] != null) delete cc.datos[num]; else cc.datos[num] = 1;
+      } else {
+        const al = dd.lista.find(a => String(a.num) === String(num)) || {};
+        const quien = '#' + num + (al.nombre ? ' ' + adPrimerNombre(al.nombre) : '');
+        const esNum = t === 'numero';
+        const r = await metasPrompt('¿Qué anoto de **' + quien + '**?\n' +
+          (esNum ? 'Escribe la cantidad. El **0** o vacío quita la anotación.'
+                 : 'Escribe el dato corto. Vacío quita la anotación.'), {
+          icono: cc.icono || '✅', titulo: adEsc(cc.nombre), okTxt: 'Guardar',
+          inputmode: esNum ? 'decimal' : 'text',
+          value: cc.datos[num] != null ? String(cc.datos[num]) : '',
+          maxlength: esNum ? 8 : 24,
+          valida: v => {
+            const s = String(v).trim();
+            if (s === '' || !esNum) return '';
+            return isNaN(Number(s.replace(',', '.'))) ? 'Escribe un número (o vacío para quitar).' : '';
+          },
+        });
+        if (r === null) return;
+        const s = String(r).trim();
+        if (s === '') delete cc.datos[num];
+        else if (esNum) {
+          const n = Number(s.replace(',', '.'));
+          if (!(n > 0)) delete cc.datos[num]; else cc.datos[num] = n;
+        } else cc.datos[num] = s;
+      }
+      adSave(dd); renderAdmin();
+    }));
+
+  const todos = document.getElementById('ad-ctrl-todos');
+  if (todos) todos.addEventListener('click', () => {
+    const dd = adLoad(); const cc = adControl(dd, _adControlId); if (!cc) return;
+    cc.datos = cc.datos || {};
+    dd.lista.forEach(a => { cc.datos[a.num] = 1; });
+    adSave(dd); renderAdmin();
+    toast('✅ Marcados los ' + dd.lista.length);
+  });
+  const limpiar = document.getElementById('ad-ctrl-limpiar');
+  if (limpiar) limpiar.addEventListener('click', async () => {
+    if (!await metasConfirm('¿Quitar TODAS las marcas de **' + c.nombre + '**?\nLa lista queda en blanco para volver a empezar.',
+      { icono: '🧹', titulo: 'Controles', okTxt: 'Sí, quitar' })) return;
+    const dd = adLoad(); const cc = adControl(dd, _adControlId); if (!cc) return;
+    adUndoGuardar('Limpiar el control «' + cc.nombre + '»');
+    cc.datos = {};
+    adSave(dd); renderAdmin();
+  });
+
+  const cop = document.getElementById('ad-ctrl-copiar');
+  if (cop) cop.addEventListener('click', () => {
+    const txt = c.icono + ' ' + c.nombre + ' — todavía faltan (' + faltan.length + '):\n' +
+      faltan.map(a => '#' + a.num + (a.nombre ? ' ' + a.nombre : '')).join('\n');
+    adCopiar(txt,
+      () => toast('📋 Copiado: pégalo en WhatsApp o en tu cuaderno'),
+      () => toast('⚠️ No se pudo copiar en este navegador'));
+  });
+
+  document.getElementById('ad-ctrl-print').addEventListener('click', () => adPrintControl(adLoad(), c));
+
+  document.getElementById('ad-ctrl-repetir').addEventListener('click', async () => {
+    if (!await metasConfirm('Se crea un control NUEVO con el mismo nombre y la fecha de hoy, ' +
+      'con la lista en blanco.\n\nSirve para lo que se repite: la merienda de cada semana, ' +
+      'la ficha de cada parcial…', { icono: '📄', titulo: 'Repetir control', okTxt: 'Sí, repetir' })) return;
+    const dd = adLoad();
+    dd.controles.push({
+      id: 'K' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      icono: c.icono, nombre: c.nombre, tipo: c.tipo, fecha: adHoy(), datos: {},
+    });
+    adSave(dd);
+    _adControlId = dd.controles[dd.controles.length - 1].id;
+    renderAdmin();
+    toast('📄 Control repetido con fecha de hoy');
+  });
+
+  document.getElementById('ad-ctrl-renombrar').addEventListener('click', async () => {
+    const nombre = await metasPrompt('Nombre del control:', {
+      icono: c.icono || '✅', titulo: 'Cambiar nombre', okTxt: 'Siguiente', value: c.nombre,
+      valida: v => String(v).trim().length >= 3 ? '' : 'Escribe el nombre (mínimo 3 letras).',
+    });
+    if (nombre === null) return;
+    const fecha = await metasPrompt('Fecha del control (AAAA-MM-DD):', {
+      icono: '🗓', titulo: 'Cambiar fecha', okTxt: 'Guardar', value: c.fecha,
+      valida: v => /^\d{4}-\d{2}-\d{2}$/.test(String(v).trim()) ? '' : 'Escribe la fecha así: 2026-07-29',
+    });
+    if (fecha === null) return;
+    const dd = adLoad(); const cc = adControl(dd, _adControlId); if (!cc) return;
+    cc.nombre = String(nombre).trim();
+    cc.fecha = String(fecha).trim();
+    adSave(dd); renderAdmin();
+  });
+
+  document.getElementById('ad-ctrl-borrar').addEventListener('click', async () => {
+    if (!await metasConfirm('¿Eliminar el control **' + c.nombre + '** con todo lo anotado?',
+      { icono: '🗑', titulo: 'Controles', okTxt: 'Sí, eliminar' })) return;
+    const dd = adLoad();
+    adUndoGuardar('Eliminar el control «' + c.nombre + '»');
+    dd.controles = dd.controles.filter(x => x.id !== _adControlId);
+    adSave(dd); _adControlId = null; renderAdmin();
+    toast('🗑 Control eliminado — si fue un error, restaura en 🕘 (pestaña Alumnos)');
+  });
+}
+
+/* Hoja de control imprimible: la que se firma, se entrega en dirección
+   o se lleva al aula cuando toca anotar a mano. */
+function adPrintControl(d, c) {
+  const cc = adControl(d, c.id) || c;
+  const tipo = adCtrlTipo(cc);
+  const grupo = adGrupoTxt(d);
+  const hechos = adCtrlHechos(cc);
+  const colDato = tipo === 'marca' ? '✔' : tipo === 'numero' ? 'Cantidad' : 'Dato';
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>${adEsc(cc.nombre)}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:12mm;}
+h1{font-size:16px;color:#1e3a7c;margin-bottom:2mm;}
+.sub{font-size:11px;color:#444;margin-bottom:5mm;}
+table{width:100%;border-collapse:collapse;}
+th,td{border:1px solid #999;padding:4px 6px;text-align:left;}
+th{background:#e8eef9;}
+td.n{width:12mm;text-align:center;font-weight:bold;}
+td.v{width:26mm;text-align:center;font-weight:bold;}
+td.o{width:52mm;}
+.pie{margin-top:6mm;font-size:11px;color:#444;}
+.firma{margin-top:14mm;font-size:11px;}
+.noprint{margin-bottom:5mm;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
+<h1>${adEsc(cc.icono || '✅')} ${adEsc(cc.nombre)}</h1>
+<div class="sub">${grupo ? 'Grupo ' + adEsc(grupo) + ' · ' : ''}${adFechaBonita(cc.fecha)} ·
+  ${hechos} de ${d.lista.length} anotados. Generado con M.E.T.A.S.</div>
+<table>
+<thead><tr><th class="n">#</th><th>Alumno/a</th><th class="v">${colDato}</th><th class="o">Observación</th></tr></thead>
+<tbody>
+${d.lista.map(a => `
+  <tr><td class="n">${a.num}</td><td>${adEsc(a.nombre) || '—'}</td>
+  <td class="v">${adEsc(adCtrlValorTxt(cc, a.num))}</td><td class="o"></td></tr>`).join('')}
+</tbody></table>
+<p class="pie">Faltan por anotar: <strong>${d.lista.length - hechos}</strong>.</p>
+<div class="firma">F. _______________________________ &nbsp;&nbsp; Docente</div>
 </body></html>`;
   const w = window.open('', '_blank');
   if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
@@ -2196,7 +2740,7 @@ async function adCerrarAnio() {
     return;
   }
   if (!await metasConfirm('Vas a cerrar el año **' + anio + '** de **' + nombre + '**:\n\n' +
-    '• Se borran de este teléfono la asistencia, notas, colectas y avisos del grupo\n' +
+    '• Se borran de este teléfono la asistencia, notas, colectas, controles y avisos del grupo\n' +
     '• La nube del chatbot se limpia (los padres dejan de ver datos del año viejo)\n' +
     '• Las **claves de familia se regeneran**: las tiras entregadas DEJAN de valer\n' +
     '• Los análisis del Plan de Acción de este grado se archivan\n' +
@@ -2242,7 +2786,7 @@ async function adCerrarAnio() {
 
   const dd = adLoad();
   /* 2) limpiar lo local del grupo (la ficha del aula se conserva) */
-  dd.asistencia = []; dd.notas = {}; dd.colectas = [];
+  dd.asistencia = []; dd.notas = {}; dd.colectas = []; dd.controles = [];
   dd.boleta = dd.boleta || adBoletaDef();
   dd.boleta.parcialFechas = {};
   const gg = avGrupo(dd.id); gg.avisos = []; avGrupoSave(dd.id, gg);
@@ -2672,13 +3216,24 @@ function _avSbConexion() {
   } catch (_) {}
   return { url, key };
 }
-async function avBuzonCargar(d) {
-  const cont = document.getElementById('av-buzon');
-  if (!cont) return;
-  const hint = t => '<p class="pa-optional-hint">' + t + '</p>';
+/* Excusa estructurada que deja el asistente de padres: «[EXCUSA YYYY-MM-DD] razón» */
+function avParseExcusa(texto) {
+  const m = String(texto || '').match(/^\[EXCUSA (\d{4}-\d{2}-\d{2})\]\s*([\s\S]*)$/);
+  return m ? { fecha: m[1], razon: (m[2] || '').trim() || 'Sin razón' } : null;
+}
+
+/* Una sola consulta al buzón para las DOS pantallas que lo usan
+   (Comunicados y el pase de lista): se guarda un minuto en memoria para
+   no gastar datos del maestro al ir y venir entre pestañas. */
+let _avBuzonCache = null;
+async function avBuzonFilas(d, forzar) {
   const claves = adClavesDelGrupo(d);
-  if (!claves.length) { cont.innerHTML = hint('Aún no hay claves de familia en este grupo.'); return; }
-  if (navigator.onLine === false) { cont.innerHTML = hint('📴 Sin internet: el buzón se revisa con conexión.'); return; }
+  if (!claves.length) return { err: 'sinclaves', rows: [] };
+  if (navigator.onLine === false) return { err: 'offline', rows: [] };
+  if (!forzar && _avBuzonCache && _avBuzonCache.gid === d.id &&
+      Date.now() - _avBuzonCache.t < 60000) {
+    return { err: '', rows: _avBuzonCache.rows };
+  }
   try {
     const { url, key } = _avSbConexion();
     const r = await fetch(url + '/rest/v1/rpc/metas_buzon_docente', {
@@ -2688,7 +3243,28 @@ async function avBuzonCargar(d) {
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const rows = await r.json();
-    if (!Array.isArray(rows) || !rows.length) { cont.innerHTML = hint('Buzón vacío: sin mensajes de las familias.'); return; }
+    if (!Array.isArray(rows)) throw new Error('respuesta inesperada');
+    _avBuzonCache = { t: Date.now(), gid: d.id, rows };
+    return { err: '', rows };
+  } catch (_) {
+    return { err: 'red', rows: [] };
+  }
+}
+
+async function avBuzonCargar(d) {
+  const cont = document.getElementById('av-buzon');
+  if (!cont) return;
+  const hint = t => '<p class="pa-optional-hint">' + t + '</p>';
+  const res = await avBuzonFilas(d, true);
+  if (res.err === 'sinclaves') { cont.innerHTML = hint('Aún no hay claves de familia en este grupo.'); return; }
+  if (res.err === 'offline') { cont.innerHTML = hint('📴 Sin internet: el buzón se revisa con conexión.'); return; }
+  if (res.err === 'red') {
+    cont.innerHTML = hint('⚠️ No se pudo revisar el buzón (¿ya corriste SUPABASE-FASE3.sql?). Toca «🔄 Revisar buzón» para reintentar.');
+    return;
+  }
+  {
+    const rows = res.rows;
+    if (!rows.length) { cont.innerHTML = hint('Buzón vacío: sin mensajes de las familias.'); return; }
     const quien = {}, numDe = {};
     d.lista.forEach(a => {
       const c = adClaveFamilia(d.id, a.num, false);
@@ -2706,9 +3282,9 @@ async function avBuzonCargar(d) {
       const id = m.codigo + '|' + m.creado_en;
       const nuevo = !vSet.has(id);
       /* excusa estructurada del asistente: [EXCUSA YYYY-MM-DD] razón */
-      const mEx = String(m.texto || '').match(/^\[EXCUSA (\d{4}-\d{2}-\d{2})\]\s*([\s\S]*)$/);
+      const mEx = avParseExcusa(m.texto);
       if (mEx && numDe[m.codigo]) {
-        const fecha = mEx[1], razon = mEx[2] || 'Sin razón', num = numDe[m.codigo];
+        const fecha = mEx.fecha, razon = mEx.razon, num = numDe[m.codigo];
         const marcada = yaMarcada(fecha, num);
         return `<div class="ad-gasto-row" style="align-items:flex-start${nuevo ? '' : ';opacity:.75'}">
           <span style="flex:1">${nuevo ? '🔵 ' : ''}🤒 <strong>${adEsc(quien[m.codigo])}</strong> — excusa para el
@@ -2743,8 +3319,6 @@ async function avBuzonCargar(d) {
       const todos = Array.from(new Set(vistos.concat(rows.map(m => m.codigo + '|' + m.creado_en))));
       localStorage.setItem(BUZON_VISTO_KEY, JSON.stringify(todos.slice(-400)));
     } catch (_) {}
-  } catch (_) {
-    cont.innerHTML = hint('⚠️ No se pudo revisar el buzón (¿ya corriste SUPABASE-FASE3.sql?). Toca «🔄 Revisar buzón» para reintentar.');
   }
 }
 
@@ -3128,9 +3702,10 @@ async function avSincronizarNube(manual) {
 /* Restaurar «Mi aula» tras recargar: re-pide el candado del maestro y
    vuelve a la pestaña/colecta donde estaba. Si no pasa el PIN, va a la
    Zona Docente en vez de exponer el dinero. */
-window.adRestoreState = async function (tab, colectaId) {
+window.adRestoreState = async function (tab, colectaId, controlId) {
   if (tab) _adTab = tab;
   _adColectaId = colectaId || null;
+  _adControlId = controlId || null;
   if (typeof paVerificarPin === 'function' &&
       !(await paVerificarPin('Los registros administrativos guardan **dinero y notas finales**:'))) {
     switchView('view-perfil');
@@ -3155,6 +3730,7 @@ document.addEventListener('DOMContentLoaded', () => {
      querer. Fuera de una colecta sí sale a la Zona Docente. */
   document.getElementById('admin-back-btn')?.addEventListener('click', () => {
     if (_adColectaId) { _adColectaId = null; renderAdmin(); return; }
+    if (_adControlId) { _adControlId = null; renderAdmin(); return; }
     switchView('view-perfil');
   });
 });

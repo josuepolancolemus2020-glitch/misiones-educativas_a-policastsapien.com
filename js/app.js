@@ -2622,7 +2622,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (_nav.view && _nav.view !== 'view-inicio' && document.getElementById(_nav.view)) {
       if (_nav.view === 'view-admin' && typeof adRestoreState === 'function') {
         // Mi aula está tras el candado del maestro: adRestoreState re-pide el PIN
-        adRestoreState(_nav.adTab, _nav.adColecta);
+        adRestoreState(_nav.adTab, _nav.adColecta, _nav.adControl);
       } else {
         switchView(_nav.view);
       }
