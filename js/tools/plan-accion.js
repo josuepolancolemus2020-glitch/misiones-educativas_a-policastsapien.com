@@ -241,7 +241,14 @@ function paGenerate() {
   const misionId = parseInt(document.getElementById('pa-mision')?.value, 10) || null;
   const formaEv  = document.getElementById('pa-forma')?.value || '';
   const tipoEval = document.getElementById('pa-tipo')?.value || 'conceptual';
-  paPersistCurrent(students, { grado, seccion, docente, evaluacion, misionId, forma: formaEv, tipoEval, parcial, fechaPrueba });
+  /* La materia queda GUARDADA en el análisis para poder filtrar el historial
+     aunque la evaluación se haya escrito a mano y no venga del banco. */
+  let materia = document.getElementById('pa-materia')?.value || '';
+  if (!materia && misionId && typeof MISSIONS !== 'undefined') {
+    const mm = MISSIONS.find(x => x.id === misionId);
+    if (mm) materia = mm.subject || '';
+  }
+  paPersistCurrent(students, { grado, seccion, docente, evaluacion, misionId, materia, forma: formaEv, tipoEval, parcial, fechaPrueba });
   paRenderPadres();
   paRenderHistorial();
   paSincronizarNube(false); // nube de padres (código de lista)
@@ -599,17 +606,134 @@ function paRenderPadres() {
   });
 }
 
-/* ── Historial de análisis ── */
+/* ── Historial de análisis ──
+   El maestro acumula decenas de análisis (hasta 40) y el listado se vuelve
+   larguísimo, así que se filtra por PARCIAL y por MATERIA con un toque.
+   Los filtros se recuerdan junto a los datos (PA_KEY.histFiltros). */
+const PA_HIST_PARCIALES = ['I', 'II', 'III', 'IV'];
+const PA_HIST_MATERIAS = [
+  { key: 'español',      chip: '📖 Español',      nom: 'Español' },
+  { key: 'matemáticas',  chip: '🔢 Matemáticas',  nom: 'Matemáticas' },
+  { key: 'naturales',    chip: '🌱 Naturales',    nom: 'Ciencias Naturales' },
+  { key: 'sociales',     chip: '🌎 Sociales',     nom: 'Ciencias Sociales' },
+  { key: 'programación', chip: '💻 Programación', nom: 'Programación' },
+  { key: 'robótica',     chip: '🤖 Robótica',     nom: 'Robótica' },
+  { key: 'inglés',       chip: '🔤 Inglés',       nom: 'Inglés' },
+];
+/* «sin» es el valor de los chips «Sin parcial» / «Sin materia»: '' ya
+   significa «no filtrar», así que los análisis sueltos necesitan su propia
+   marca para poder encontrarlos. */
+const PA_HIST_SIN = 'sin';
+
+/* Materia del análisis: manda la que quedó guardada; los análisis viejos la
+   deducen de la misión del banco a la que se amarraron. */
+function paMateriaDe(a) {
+  if (a && a.materia) return a.materia;
+  if (a && a.misionId && typeof MISSIONS !== 'undefined') {
+    const m = MISSIONS.find(x => x.id === a.misionId);
+    if (m && m.subject) return m.subject;
+  }
+  return '';
+}
+function paMateriaNom(k) {
+  const x = PA_HIST_MATERIAS.find(y => y.key === k);
+  return x ? x.nom : k;
+}
+function paHistFiltros() {
+  const f = paLoadData().histFiltros || {};
+  return { parcial: f.parcial || '', materia: f.materia || '' };
+}
+function paHistFiltroSet(campo, valor) {
+  const d = paLoadData();
+  const f = paHistFiltros();
+  f[campo] = (f[campo] === valor) ? '' : valor;   // tocar el mismo chip = quitar el filtro
+  d.histFiltros = f;
+  paSaveData(d);
+  paRenderHistorial();
+}
+function paHistPasa(a, f) {
+  const p = String(a.parcial || '');
+  const k = paMateriaDe(a);
+  if (f.parcial === PA_HIST_SIN ? !!p : (f.parcial && p !== f.parcial)) return false;
+  if (f.materia === PA_HIST_SIN ? !!k : (f.materia && k !== f.materia)) return false;
+  return true;
+}
+
+/* Chips de filtro: solo se ofrecen los parciales y las materias que DE VERDAD
+   hay guardados, para no llenar la tarjeta de botones que no filtran nada. */
+function paRenderHistFiltros(todos, f) {
+  const box = document.getElementById('pa-hist-filtros');
+  if (!box) return todos;
+
+  const opsP = PA_HIST_PARCIALES
+    .filter(p => todos.some(a => String(a.parcial || '') === p))
+    .map(p => ({ v: p, t: 'P-' + p }));
+  if (todos.some(a => !a.parcial)) opsP.push({ v: PA_HIST_SIN, t: 'Sin parcial' });
+  const opsM = PA_HIST_MATERIAS
+    .filter(x => todos.some(a => paMateriaDe(a) === x.key))
+    .map(x => ({ v: x.key, t: x.chip }));
+  if (todos.some(a => !paMateriaDe(a))) opsM.push({ v: PA_HIST_SIN, t: '📋 Sin materia' });
+
+  /* Una fila con una sola opción no filtra nada y solo estorba, así que no se
+     dibuja. Ningún filtro puede quedar activo sin su fila a la vista: si su
+     valor ya no existe (se borró el último análisis) o la fila desaparece, el
+     filtro se cae solo y se olvida, para no dejar la lista corta sin salida. */
+  const vivo = (sel, ops) => (ops.length > 1 && ops.some(o => o.v === sel)) ? sel : '';
+  const antes = f.parcial + '|' + f.materia;
+  f.parcial = vivo(f.parcial, opsP);
+  f.materia = vivo(f.materia, opsM);
+  if (antes !== f.parcial + '|' + f.materia) {
+    const d = paLoadData();
+    d.histFiltros = { parcial: f.parcial, materia: f.materia };
+    paSaveData(d);
+  }
+
+  const vistos = todos.filter(a => paHistPasa(a, f));
+  const etiquetas = [];
+  if (f.parcial) etiquetas.push(f.parcial === PA_HIST_SIN ? 'sin parcial' : 'Parcial ' + f.parcial);
+  if (f.materia) etiquetas.push(f.materia === PA_HIST_SIN ? 'sin materia' : paMateriaNom(f.materia));
+
+  const fila = (campo, lbl, todosTxt, ops, sel) => (ops.length < 2 ? '' : `
+      <div class="pa-hist-flbl">${lbl}</div>
+      <div class="pa-hist-chips">
+        <button class="pa-hist-chip${sel ? '' : ' pa-hist-chip-sel'}" data-fcampo="${campo}" data-fvalor="">${todosTxt}</button>
+        ${ops.map(o => `<button class="pa-hist-chip${sel === o.v ? ' pa-hist-chip-sel' : ''}" data-fcampo="${campo}" data-fvalor="${paEsc(o.v)}">${o.t}</button>`).join('')}
+      </div>`);
+
+  box.innerHTML =
+    fila('parcial', '🗓️ Parcial', 'Todos', opsP, f.parcial) +
+    fila('materia', '📚 Materia', 'Todas', opsM, f.materia) +
+    `<div class="pa-hist-count">${vistos.length === todos.length
+        ? `${todos.length} análisis guardado${todos.length === 1 ? '' : 's'}`
+        : `${vistos.length} de ${todos.length} análisis${etiquetas.length ? ' · ' + paEsc(etiquetas.join(' · ')) : ''}`}</div>`;
+
+  box.querySelectorAll('.pa-hist-chip').forEach(b =>
+    b.addEventListener('click', () => paHistFiltroSet(b.dataset.fcampo, b.dataset.fvalor)));
+
+  return vistos;
+}
+
 function paRenderHistorial() {
   const card = document.getElementById('pa-historial-card');
   const list = document.getElementById('pa-historial-list');
   if (!card || !list) return;
   const d = paLoadData();
-  if (!d.analisis.length) { card.style.display = 'none'; return; }
+  const fbox = document.getElementById('pa-hist-filtros');
+  if (!d.analisis.length) {
+    card.style.display = 'none';
+    if (fbox) fbox.innerHTML = '';
+    return;
+  }
   card.style.display = '';
 
-  let hayPendNube = false;
-  list.innerHTML = [...d.analisis].reverse().map(a => {
+  const vistos = paRenderHistFiltros([...d.analisis].reverse(), paHistFiltros());
+  if (!vistos.length) {
+    list.innerHTML = `<p class="pa-hist-vacio">🔎 Ningún análisis guardado coincide con este filtro.
+      Toca <strong>Todos</strong> y <strong>Todas</strong> para ver el listado completo.</p>`;
+    return;
+  }
+
+  list.innerHTML = vistos.map(a => {
     const nums = a.students.filter(s => typeof s.nota === 'number');
     const avg  = nums.length ? (nums.reduce((x, s) => x + s.nota, 0) / nums.length).toFixed(1) : '—';
     // Estado REAL del asistente de padres: cuenta lo que aún no está en la
@@ -619,17 +743,17 @@ function paRenderHistorial() {
       const codigo = paCodigoLista(a, s);
       return codigo && s.sb !== paSbFirma(a, s, codigo);
     }).length;
-    if (pendNube) hayPendNube = true;
     const waEnv = a.students.filter(s => s.env).length;
     const nube = pendNube
       ? `<span class="pa-hist-nube pend">☁️ ${pendNube} por subir al asistente</span>`
       : `<span class="pa-hist-nube ok">☁️ En el asistente de padres ✅</span>`;
     const wa = waEnv ? ` <span class="pa-hist-wa">📱 ${waEnv}/${a.students.length} avisados por WhatsApp</span>` : '';
+    const mat = paMateriaDe(a);
     return `
       <div class="pa-hist-row">
         <div class="pa-hist-info">
           <span class="pa-hist-titulo">${paEsc(a.evaluacion || 'Evaluación')}${a.parcial ? ' · P-' + paEsc(a.parcial) : ''}</span>
-          <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(a.grado || '')} ${paEsc(a.seccion || '')} · ${a.students.length} alumnos · prom. ${avg}</span>
+          <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(a.grado || '')} ${paEsc(a.seccion || '')} · ${a.students.length} alumnos · prom. ${avg}${mat ? ' · ' + paEsc(paMateriaNom(mat)) : ''}</span>
           <span class="pa-hist-meta">${nube}${wa}</span>
         </div>
         ${pendNube ? `<button class="pa-hist-subir" data-id="${a.id}">☁️ Subir ahora</button>` : ''}
@@ -670,12 +794,9 @@ function paAbrirAnalisis(id) {
   set('pa-grado', a.grado); set('pa-seccion', a.seccion);
   set('pa-docente', a.docente); set('pa-evaluacion', a.evaluacion);
   paPoblarMisiones(); // por si el historial se abre antes de entrar a la vista
-  /* la materia del análisis manda el filtro para que su misión aparezca */
-  let materiaA = '';
-  if (a.misionId && typeof MISSIONS !== 'undefined') {
-    const m = MISSIONS.find(x => x.id === a.misionId);
-    if (m) materiaA = m.subject || '';
-  }
+  /* la materia del análisis manda el filtro para que su misión aparezca (y
+     para que al volver a generarlo no se pierda la materia guardada) */
+  const materiaA = paMateriaDe(a);
   set('pa-materia', materiaA);
   paFiltrarMisiones(materiaA, a.misionId || '');
   set('pa-mision', a.misionId || ''); set('pa-forma', a.forma || '');

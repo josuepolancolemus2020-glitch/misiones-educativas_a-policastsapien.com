@@ -469,10 +469,12 @@ a.padre-asistente-btn {
   color: var(--muted); margin: 12px 0 6px;
 }
 .doc-chips { display: flex; gap: 7px; flex-wrap: wrap; }
-.doc-chips-scroll {
-  flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px;
-  -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+/* Los meses del año escolar son once: NINGUNO se esconde ni hay que
+   deslizar a ciegas — bajan a la fila siguiente en columnas parejas. */
+.doc-chips-meses {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 7px;
 }
+.doc-chips-meses .doc-chip { padding: 8px 6px; text-align: center; }
 .doc-chip {
   border: 1.5px solid var(--line, #dbe3f0); background: #fff; color: var(--text);
   border-radius: 999px; padding: 8px 15px;
@@ -3687,6 +3689,42 @@ a.padre-asistente-btn {
 .pa-hist-meta { font-size: 11.5px; color: var(--muted); }
 .pa-hist-abrir { border: none; background: var(--brand-mid); color: #fff; font-family: inherit; font-size: 12px; font-weight: 800; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
 .pa-hist-borrar { border: none; background: transparent; font-size: 14px; cursor: pointer; padding: 4px; }
+/* Filtros del historial (parcial + materia): acortan un listado que con el
+   tiempo llega a 40 análisis. Los chips se envuelven, ninguno se esconde. */
+.pa-hist-filtros { margin: 4px 0 12px; }
+.pa-hist-flbl {
+  font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); margin: 10px 0 6px;
+}
+.pa-hist-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pa-hist-chip {
+  border: 1.5px solid var(--border); background: var(--surface); color: var(--text);
+  border-radius: 999px; padding: 6px 12px;
+  font-family: inherit; font-size: 12px; font-weight: 800; white-space: nowrap;
+  cursor: pointer; box-shadow: 0 1px 3px rgba(15,23,42,.08);
+  transition: transform .12s, box-shadow .12s, background .18s, border-color .18s, color .18s;
+}
+@media (hover: hover) {
+  .pa-hist-chip:hover:not(.pa-hist-chip-sel) {
+    background: rgba(30,58,124,.06); border-color: var(--brand-light); color: var(--brand);
+  }
+}
+.pa-hist-chip:active { transform: scale(.94); }
+.pa-hist-chip:focus-visible { outline: 3px solid rgba(59,130,246,.45); outline-offset: 2px; }
+.pa-hist-chip-sel {
+  background: linear-gradient(135deg, var(--brand), var(--brand-mid));
+  border-color: var(--brand); color: #fff;
+  box-shadow: 0 4px 12px rgba(30,58,124,.32);
+}
+.pa-hist-count { margin-top: 10px; font-size: 12px; font-weight: 800; color: var(--brand); }
+.pa-hist-vacio { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+/* En el teléfono los botones de la fila dejaban el nombre de la evaluación en
+   una columna de tres letras de ancho: pasan a su propio renglón, a la
+   derecha, y cada análisis se lee de un vistazo. */
+@media (max-width: 640px) {
+  .pa-hist-row { flex-wrap: wrap; justify-content: flex-end; row-gap: 6px; }
+  .pa-hist-info { flex: 1 1 100%; }
+}
 
 /* ── Campeonísimo: corrección del jurado y preguntas variadas (jul 2026) ── */
 .camp-edit-hint { font-size: 12.5px; color: var(--muted); margin: 4px 0 10px; line-height: 1.45; }
@@ -3870,13 +3908,43 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 /* ══════════════════════════════════════════════════════════════
    REGISTROS ADMINISTRATIVOS (jul 2026) — Economía · Asistencia · SACE
 ══════════════════════════════════════════════════════════════ */
-.ad-tabs { margin: 12px 0; }
-/* Mi aula en pantallas angostas: 5 pestañas + chip de nube no caben en
-   una fila — se envuelven en DOS filas compactas para que NINGÚN botón
-   quede escondido (nada de deslizar a ciegas) */
+/* Pestañas de Mi aula: seis secciones + el chip de nube. Cada una es un
+   BOTÓN con su propio borde y relieve, para que se vea de un golpe que se
+   puede tocar y cuál está elegida; se envuelven en varias filas para que
+   NINGUNA quede escondida (nada de deslizar a ciegas). */
+.ad-tabs {
+  margin: 12px 0; gap: 8px; flex-wrap: wrap;
+  background: none; border: none; border-radius: 0; overflow: visible;
+}
+.ad-tabs .pa-otab {
+  /* crecen para llenar su fila, pero con tope: la última fila puede quedar con
+     una sola pestaña y no debe verse como un botonazo del ancho de la pantalla */
+  flex: 1 1 auto; min-width: 94px; max-width: 220px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  border-radius: 12px; padding: 9px 10px;
+  font-size: 12.5px; font-weight: 800; color: var(--text); white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(15,23,42,.09);
+  transition: transform .12s, box-shadow .12s, background .18s, border-color .18s, color .18s;
+}
+@media (hover: hover) {
+  .ad-tabs .pa-otab:hover:not(.pa-otab-active) {
+    background: rgba(30,58,124,.06); border-color: var(--brand-light); color: var(--brand);
+    transform: translateY(-2px); box-shadow: 0 6px 14px rgba(15,23,42,.13);
+  }
+}
+/* el chip de la nube informa, no es una sección: se queda del tamaño de su
+   texto para que no parezca una pestaña gigante al final de la fila */
+.ad-tabs #ad-nube-chip { flex: 0 0 auto; }
+.ad-tabs .pa-otab:active { transform: scale(.95); box-shadow: 0 1px 4px rgba(15,23,42,.12); }
+.ad-tabs .pa-otab:focus-visible { outline: 3px solid rgba(59,130,246,.45); outline-offset: 2px; }
+.ad-tabs .pa-otab.pa-otab-active {
+  background: linear-gradient(135deg, var(--brand-mid), var(--brand-light));
+  border-color: var(--brand); color: #fff;
+  box-shadow: 0 4px 12px rgba(30,58,124,.32);
+}
 @media (max-width: 640px) {
-  .ad-tabs { flex-wrap: wrap; }
-  .ad-tabs .pa-otab { flex: 1 1 30%; padding: 9px 4px; font-size: 11.5px; white-space: nowrap; }
+  .ad-tabs { gap: 7px; }
+  .ad-tabs .pa-otab { flex: 1 1 30%; min-width: 0; padding: 9px 4px; font-size: 11.5px; }
 }
 .ad-btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .ad-btn-row .pa-generate-btn { flex: 1 1 auto; width: auto; margin: 0; }

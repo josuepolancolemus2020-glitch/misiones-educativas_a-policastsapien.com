@@ -1450,7 +1450,7 @@ function renderProfile() {
         <div class="doc-prog-lbl">🎓 Grado que imparto</div>
         <div class="doc-chips" id="doc-prog-grados"></div>
         <div class="doc-prog-lbl">🗓️ Mes del año escolar</div>
-        <div class="doc-chips doc-chips-scroll" id="doc-prog-meses"></div>
+        <div class="doc-chips doc-chips-meses" id="doc-prog-meses"></div>
         <div class="doc-prog-lbl">📚 Materia</div>
         <div class="doc-chips" id="doc-prog-materias"></div>
         <div id="doc-prog-out"></div>
