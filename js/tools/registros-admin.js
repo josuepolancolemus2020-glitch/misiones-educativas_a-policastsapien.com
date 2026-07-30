@@ -1433,21 +1433,32 @@ ${dias.map(r => `
    habrá evaluación para nota acumulativa. Los controles delicados (salud, talla,
    merienda) nacen APAGADOS: un dato de salud no se publica por descuido. */
 const AD_CTRL_PLANTILLAS = [
-  { icono: '📄', nombre: 'Entrega de ficha', tipo: 'marca', fam: 1, acum: 1 },
-  { icono: '📗', nombre: 'Entrega de libro', tipo: 'marca', fam: 1 },
-  { icono: '🍎', nombre: 'Merienda escolar', tipo: 'marca' },
-  { icono: '🧰', nombre: 'Material solicitado', tipo: 'marca', fam: 1, acum: 1 },
-  { icono: '🎟️', nombre: 'Inscritos al evento', tipo: 'marca', fam: 1 },
-  { icono: '✍️', nombre: 'Firma del padre', tipo: 'marca', fam: 1 },
-  { icono: '🧾', nombre: 'Documento entregado', tipo: 'marca', fam: 1 },
+  { icono: '📄', nombre: 'Entrega de ficha', tipo: 'marca', fam: 1, acum: 1, verbo: 'recibio' },
+  { icono: '📗', nombre: 'Entrega de libro', tipo: 'marca', fam: 1, verbo: 'recibio' },
+  { icono: '🍎', nombre: 'Merienda escolar', tipo: 'marca', verbo: 'recibio' },
+  { icono: '🧰', nombre: 'Material solicitado', tipo: 'marca', fam: 1, acum: 1, verbo: 'recibio' },
+  { icono: '🎟️', nombre: 'Inscritos al evento', tipo: 'marca', fam: 1, verbo: 'inscrito' },
+  { icono: '✍️', nombre: 'Firma del padre', tipo: 'marca', fam: 1, verbo: 'entrego' },
+  { icono: '🧾', nombre: 'Documento entregado', tipo: 'marca', fam: 1, verbo: 'entrego' },
   { icono: '💊', nombre: 'Control de salud', tipo: 'marca' },
-  { icono: '📖', nombre: 'Libro devuelto', tipo: 'marca', fam: 1 },
+  { icono: '📖', nombre: 'Libro devuelto', tipo: 'marca', fam: 1, verbo: 'devolvio' },
   { icono: '👕', nombre: 'Talla de uniforme', tipo: 'texto' },
   { icono: '🔢', nombre: 'Cantidad recibida', tipo: 'numero' },
   { icono: '📝', nombre: 'Otro control (sí o no)', tipo: 'marca' },
   { icono: '✏️', nombre: 'Otro control (dato corto)', tipo: 'texto' },
   { icono: '#️⃣', nombre: 'Otro control (cantidad)', tipo: 'numero' },
 ];
+/* Qué HIZO el alumno, en la Bitácora que lee la familia. Un verbo solo no sirve
+   para todo: «recibió Libro devuelto» o «recibió Firma del padre» dirían lo
+   contrario de lo que pasó, así que cada control lleva el suyo y el maestro lo
+   puede cambiar viendo la vista previa. */
+const AD_CTRL_VERBOS = {
+  recibio:  { et: '📥 recibió',            fr: (q, c) => q + ' recibió «' + c + '»' },
+  entrego:  { et: '📤 entregó',            fr: (q, c) => q + ' entregó «' + c + '»' },
+  devolvio: { et: '↩️ devolvió',            fr: (q, c) => q + ' devolvió «' + c + '»' },
+  inscrito: { et: '🎟️ quedó inscrito en',  fr: (q, c) => q + ' quedó inscrito en «' + c + '»' },
+  anotado:  { et: '✔ quedó anotado en',    fr: (q, c) => q + ' quedó anotado en «' + c + '»' },
+};
 const AD_CTRL_TIPOS = {
   marca: { et: '✔ sí o no', ayuda: 'Toca al alumno para marcarlo ✔; tócalo otra vez para quitarle la marca.' },
   texto: { et: '✏️ dato corto', ayuda: 'Toca al alumno y escribe su dato (talla, color, nº de recibo…). Vacío lo borra.' },
@@ -1469,13 +1480,42 @@ function adCtrlMision(c) {
   if (!c || !c.misionId || typeof MISSIONS === 'undefined') return null;
   return MISSIONS.find(m => m.id === c.misionId) || null;
 }
+/* Verbo del control. Los creados antes de que esto existiera lo deducen de su
+   nombre una sola vez, para que su bitácora no diga una cosa por otra. */
+function adCtrlVerbo(c) {
+  if (c && AD_CTRL_VERBOS[c.verbo]) return c.verbo;
+  const n = String((c && c.nombre) || '').toLowerCase();
+  if (/devolv|devuelt/.test(n)) return 'devolvio';
+  if (/inscri|apunt/.test(n)) return 'inscrito';
+  if (/ficha|libro|merienda|material|cuadern/.test(n)) return 'recibio';
+  if (/firma|documento|constancia|partida|entreg/.test(n)) return 'entrego';
+  return 'anotado';
+}
+/* Cómo se nombra la COSA en la frase. El maestro bautiza sus controles como le
+   sirve para buscarlos («Entrega de ficha de Español», «Libro devuelto de
+   Sociales»), y al pegarles el verbo salían frases que se repiten: «recibió
+   «Entrega de ficha…»», «devolvió «Libro devuelto…»». Se le quita al nombre solo
+   lo que el verbo YA dice; el control conserva su nombre intacto. */
+function adCtrlCosa(c) {
+  const orig = String((c && c.nombre) || '').trim();
+  let s = orig
+    .replace(/^entrega\s+(de\s+l?[ao]s?\s+|del\s+|de\s+)?/i, '')
+    .replace(/^inscri(tos|pción|pcion)\s+(a\s+l?[ao]s?\s+|al\s+|a\s+)?/i, '');
+  const v = adCtrlVerbo(c);
+  if (v === 'devolvio') s = s.replace(/\s*\bdevuelt[oa]s?\b/i, '');
+  if (v === 'entrego')  s = s.replace(/\s*\bentregad[oa]s?\b/i, '');
+  s = s.replace(/\s{2,}/g, ' ').trim();
+  if (!s) s = orig;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 function adCtrlBitacoraTxt(c, d, num) {
   const al = (d.lista || []).find(a => String(a.num) === String(num)) || {};
   const nom = String(al.nombre || '').trim();
   const quien = (nom || 'su hijo/a') + ' (n.º ' + num + ' de la lista)';
   const v = (c.datos || {})[num];
   let p = adCtrlTipo(c) === 'marca'
-    ? 'El ' + adFechaBonita(c.fecha) + ' quedó anotado que ' + quien + ' cumplió con «' + c.nombre + '».'
+    ? 'El ' + adFechaBonita(c.fecha) + ', ' +
+      AD_CTRL_VERBOS[adCtrlVerbo(c)].fr(quien, adCtrlCosa(c)) + '.'
     : 'El ' + adFechaBonita(c.fecha) + ', en «' + c.nombre + '», se anotó de ' + quien + ': ' + String(v) + '.';
   if (c.acum) {
     p += ' Sobre este material se le aplicará una evaluación que cuenta para la NOTA ACUMULATIVA,' +
@@ -1605,7 +1645,7 @@ function adRenderControles(body, d) {
         id: 'K' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
         icono: p.icono, nombre: String(nombre).trim(), tipo: p.tipo,
         fecha: adHoy(), datos: {},
-        fam: p.fam ? 1 : 0, acum: p.acum ? 1 : 0, misionId: null,
+        fam: p.fam ? 1 : 0, acum: p.acum ? 1 : 0, misionId: null, verbo: p.verbo || 'anotado',
       });
       adSave(dd);
       _adControlId = dd.controles[dd.controles.length - 1].id;
@@ -1668,6 +1708,12 @@ function adRenderControl(body, d) {
         <input type="checkbox" id="ad-ctrl-acum" ${c.acum ? 'checked' : ''} ${c.fam ? '' : 'disabled'}>
         <span>Avisar que se le aplicará <strong>evaluación para nota acumulativa</strong></span>
       </label>
+      ${tipo === 'marca' ? `
+      <label class="ad-bit-lbl" for="ad-ctrl-verbo">✍️ Qué hizo el alumno (así se lee en la Bitácora)</label>
+      <select id="ad-ctrl-verbo" class="pa-inp-field" ${c.fam ? '' : 'disabled'}>
+        ${Object.keys(AD_CTRL_VERBOS).map(k =>
+          `<option value="${k}"${k === adCtrlVerbo(c) ? ' selected' : ''}>${AD_CTRL_VERBOS[k].et} «${adEsc(adCtrlCosa(c))}»</option>`).join('')}
+      </select>` : ''}
       <label class="ad-bit-lbl" for="ad-ctrl-mision">📚 Misión para que estudie el tema en casa</label>
       <select id="ad-ctrl-mision" class="pa-inp-field" ${c.fam ? '' : 'disabled'}>
         <option value="">Sin misión enlazada</option>
@@ -1716,6 +1762,8 @@ function adRenderControl(body, d) {
   document.getElementById('ad-ctrl-acum').addEventListener('change', e => bitSet('acum', e.target.checked ? 1 : 0));
   document.getElementById('ad-ctrl-mision').addEventListener('change', e =>
     bitSet('misionId', parseInt(e.target.value, 10) || null));
+  const selVerbo = document.getElementById('ad-ctrl-verbo');
+  if (selVerbo) selVerbo.addEventListener('change', e => bitSet('verbo', e.target.value));
 
   body.querySelectorAll('.ad-chip').forEach(ch =>
     ch.addEventListener('click', async () => {
@@ -1792,7 +1840,7 @@ function adRenderControl(body, d) {
       icono: c.icono, nombre: c.nombre, tipo: c.tipo, fecha: adHoy(), datos: {},
       /* lo que la familia ve viaja con la copia: la ficha de cada parcial se
          repite igual, con su misma misión y su mismo aviso de acumulativa */
-      fam: c.fam ? 1 : 0, acum: c.acum ? 1 : 0, misionId: c.misionId || null,
+      fam: c.fam ? 1 : 0, acum: c.acum ? 1 : 0, misionId: c.misionId || null, verbo: adCtrlVerbo(c),
     });
     adSave(dd);
     _adControlId = dd.controles[dd.controles.length - 1].id;
