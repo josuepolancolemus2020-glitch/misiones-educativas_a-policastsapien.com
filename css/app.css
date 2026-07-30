@@ -3965,6 +3965,7 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   transition: transform .14s, box-shadow .14s, border-color .18s;
 }
 .ad-puerta-deuda { border-left: 5px solid #b45309; }
+.ad-puerta-exp { border-left: 5px solid var(--brand-mid); margin-top: 14px; }
 @media (hover: hover) {
   .ad-puerta:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(15,23,42,.15); border-color: var(--brand-light); }
 }

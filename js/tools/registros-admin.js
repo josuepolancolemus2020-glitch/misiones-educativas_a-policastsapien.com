@@ -430,6 +430,16 @@ function adRenderLista(body, d) {
       <p class="pa-optional-hint" id="ad-sb-status" style="margin-top:8px"></p>
     </div>
 
+    <button class="ad-puerta ad-puerta-exp" id="ad-expediente">
+      <span class="ad-puerta-ic">📄</span>
+      <span class="ad-puerta-txt">
+        <span class="ad-puerta-t">Expediente del aula en PDF</span>
+        <span class="ad-puerta-s">Todo en un solo documento: lista, asistencia, colectas, gastos,
+          controles, novedades, notas y comunicados. Para imprimir o guardar en tu portafolio.</span>
+      </span>
+      <span class="ad-puerta-go">›</span>
+    </button>
+
     <div class="pa-card">
       <div class="pa-card-title">🎓 Fin del año escolar</div>
       <p class="pa-optional-hint">Cuando el año esté <strong>entregado</strong> (boletas impresas), cierra el
@@ -503,6 +513,9 @@ function adRenderLista(body, d) {
   document.getElementById('ad-import-btn').addEventListener('click', adImportarPegado);
   document.getElementById('ad-insertar-al').addEventListener('click', adInsertarAlumno);
   document.getElementById('ad-tiras-todas').addEventListener('click', () => adTirasTodas(adLoad()));
+  /* el expediente lee el estado COMPLETO: los gastos de bolsillo viven en la
+     cuenta, no en el grupo, y también van en el legajo */
+  document.getElementById('ad-expediente').addEventListener('click', () => adPrintExpediente(adState()));
   document.getElementById('ad-sb-sync').addEventListener('click', () => adSincronizarNube(true));
   document.getElementById('ad-cerrar-anio').addEventListener('click', adCerrarAnio);
   body.querySelectorAll('.ad-undo-btn').forEach(b =>
@@ -793,6 +806,216 @@ function adSinLista(body, quePara) {
       <p class="pa-optional-hint" style="margin:0">Primero arma tu <strong>👥 Lista</strong> de alumnos
       (o tráela del Plan de Acción) para usar ${quePara}.</p>
     </div>`;
+}
+
+/* ══════════════ 📄 EXPEDIENTE DEL AULA ══════════════
+   UN botón que arma TODO lo del grupo en un solo documento: lista, asistencia,
+   colectas con sus cuentas, gastos de bolsillo, controles, novedades, notas de
+   cada parcial y comunicados. El maestro le da a Imprimir y lo guarda como PDF
+   para su portafolio o lo lleva impreso a dirección.
+
+   No se usa librería de PDF: el navegador ya sabe hacer PDF desde una hoja
+   imprimible, y meter 500 KB de librería a una app que tiene que abrir sin
+   señal en teléfonos modestos no se paga. Cada sección arranca en página nueva
+   y los encabezados de tabla se repiten al cortar.
+
+   Las CLAVES DE FAMILIA no van: son para entregarlas una por una y un legajo
+   que se enseña en dirección no es lugar para ellas. Para eso está
+   «🖨️ Tiras de claves». */
+const AD_EXP_CSS = `
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#111;background:#fff;padding:10mm 12mm;}
+h1{font-size:20px;color:#1e3a7c;margin-bottom:3mm;}
+h2{font-size:14px;color:#1e3a7c;border-bottom:2px solid #1e3a7c;padding-bottom:1.5mm;margin-bottom:3mm;}
+h3{font-size:12px;color:#333;margin:4mm 0 1.5mm;}
+.sub{font-size:11px;color:#444;line-height:1.6;}
+.sec{page-break-before:always;}
+table{width:100%;border-collapse:collapse;margin-bottom:4mm;}
+th,td{border:1px solid #999;padding:2px 4px;text-align:left;vertical-align:top;}
+th{background:#e8eef9;font-size:10px;}
+thead{display:table-header-group;}
+tr{page-break-inside:avoid;}
+td.n{text-align:right;white-space:nowrap;}
+td.c{text-align:center;}
+.tot{font-size:12px;font-weight:bold;margin:2mm 0 4mm;}
+.vacio{font-size:11px;color:#666;font-style:italic;margin-bottom:4mm;}
+.indice{border:1px solid #999;border-radius:3mm;padding:4mm 5mm;margin-top:6mm;}
+.indice div{padding:1mm 0;font-size:11.5px;}
+.nota{margin-top:6mm;font-size:10px;color:#555;line-height:1.5;border-left:3px solid #1e3a7c;padding-left:3mm;}
+.firmas{display:flex;gap:12mm;margin-top:14mm;}
+.firma{flex:1;border-top:1.5px solid #333;text-align:center;padding-top:2mm;font-size:10.5px;}
+.noprint{margin-bottom:5mm;}
+@media print{.noprint{display:none;} body{padding:0;}}
+@page{margin:12mm;}`;
+
+function adExpTabla(cabs, filas, vacioTxt) {
+  if (!filas.length) return '<p class="vacio">' + vacioTxt + '</p>';
+  return '<table><thead><tr>' + cabs.map(c => '<th>' + c + '</th>').join('') + '</tr></thead><tbody>' +
+    filas.join('') + '</tbody></table>';
+}
+
+function adPrintExpediente(st) {
+  const d = st.grupos.find(g => g.id === st.activo) || st.grupos[0];
+  const anio = adAnioDe(d);
+  const nom = n => { const a = d.lista.find(x => String(x.num) === String(n)); return (a && a.nombre) || ''; };
+  const secs = [];
+  const indice = [];
+  const apunta = (et, dato) => indice.push('<div>' + et + ' — <strong>' + dato + '</strong></div>');
+
+  /* 1 · alumnos */
+  apunta('👥 Alumnos', d.lista.length + ' en la lista');
+  secs.push('<div class="sec"><h2>👥 Alumnos</h2>' +
+    adExpTabla(['Nº', 'Alumno/a'], d.lista.map(a =>
+      '<tr><td class="c">' + a.num + '</td><td>' + (adEsc(a.nombre) || '—') + '</td></tr>'),
+      'La lista está vacía.') +
+    '<p class="nota">Las claves de familia no se incluyen a propósito: se entregan una por una. ' +
+    'Para imprimirlas está «🖨️ Tiras de claves» en la pestaña Alumnos.</p></div>');
+
+  /* 2 · asistencia */
+  const dias = (d.asistencia || []).slice().sort((a, b) => String(a.f).localeCompare(String(b.f)));
+  const res = {};
+  dias.forEach(r => Object.keys(r.aus || {}).forEach(n => {
+    res[n] = res[n] || { A: 0, E: 0 };
+    res[n][r.aus[n]] = (res[n][r.aus[n]] || 0) + 1;
+  }));
+  apunta('📋 Asistencia', dias.length + ' día(s) con pase de lista');
+  secs.push('<div class="sec"><h2>📋 Asistencia</h2>' +
+    '<p class="sub">Días con pase de lista tomado: <strong>' + dias.length + '</strong>' +
+    (dias.length ? ' · del ' + adFechaBonita(dias[0].f) + ' al ' + adFechaBonita(dias[dias.length - 1].f) : '') + '</p>' +
+    '<h3>Resumen por alumno</h3>' +
+    adExpTabla(['Nº', 'Alumno/a', 'Ausencias', 'Excusas', 'Días presente'],
+      d.lista.map(a => {
+        const r = res[a.num] || { A: 0, E: 0 };
+        return '<tr><td class="c">' + a.num + '</td><td>' + (adEsc(a.nombre) || '—') + '</td><td class="c">' +
+          (r.A || 0) + '</td><td class="c">' + (r.E || 0) + '</td><td class="c">' +
+          Math.max(0, dias.length - (r.A || 0) - (r.E || 0)) + '</td></tr>';
+      }), 'Todavía no se ha tomado el pase de lista.') +
+    (dias.length ? '<h3>Día por día</h3>' + adExpTabla(['Fecha', 'Ausentes', 'Con excusa'],
+      dias.map(r => {
+        const A = Object.keys(r.aus || {}).filter(n => r.aus[n] === 'A');
+        const E = Object.keys(r.aus || {}).filter(n => r.aus[n] === 'E');
+        const et = ns => ns.length ? ns.map(n => '#' + n + (adPrimerNombre(nom(n)) ? ' ' + adEsc(adPrimerNombre(nom(n))) : '')).join(', ') : '—';
+        return '<tr><td>' + adFechaBonita(r.f) + '</td><td>' + et(A) + '</td><td>' + et(E) + '</td></tr>';
+      }), '') : '') + '</div>');
+
+  /* 3 · colectas */
+  apunta('💰 Colectas', (d.colectas || []).length + ' colecta(s)');
+  secs.push('<div class="sec"><h2>💰 Colaboraciones y acuerdos</h2>' +
+    ((d.colectas || []).length ? d.colectas.slice().reverse().map(c => {
+      const t = adColectaTotales(c);
+      return '<h3>' + adEsc(c.concepto) + ' — acordado el ' + adFechaBonita(c.fecha) +
+        ' · sugerido ' + adLps(c.montoAlumno) + '</h3>' +
+        adExpTabla(['Nº', 'Alumno/a', 'Aportó', 'Fecha', 'Monto', 'Recibo'],
+          d.lista.map(a => {
+            const m = c.pagos && c.pagos[a.num];
+            return '<tr><td class="c">' + a.num + '</td><td>' + (adEsc(a.nombre) || '—') + '</td><td class="c">' +
+              (m != null ? 'Sí' : '—') + '</td><td>' + (m != null ? adFechaBonita((c.pagosF && c.pagosF[a.num]) || c.fecha) : '') +
+              '</td><td class="n">' + (m != null ? adLps(m) : '') + '</td><td>' + (m != null ? adReciboFolio(c, a.num) : '') + '</td></tr>';
+          }), '') +
+        ((c.gastos || []).length ? adExpTabla(['Fecha', 'Gasto de esta colecta', 'Monto'],
+          c.gastos.map(g => '<tr><td>' + adFechaBonita(g.f) + '</td><td>' + adEsc(g.d) + '</td><td class="n">' + adLps(g.m) + '</td></tr>')) : '') +
+        '<p class="tot">Recaudado: ' + adLps(t.rec) + ' · Gastado: ' + adLps(t.gas) + ' · Saldo: ' + adLps(t.saldo) + '</p>';
+    }).join('') : '<p class="vacio">No hay colectas registradas.</p>') + '</div>');
+
+  /* 4 · gastos de mi bolsillo (son de la cuenta, no del grupo) */
+  const gs = adGastosLoad(); const gt = adGastosTotales(gs);
+  apunta('🧾 Gastos de mi bolsillo', gt.pend.length + ' por cobrar (' + adLps(gt.mPend) + ')');
+  secs.push('<div class="sec"><h2>🧾 Gastos de mi bolsillo</h2>' +
+    '<p class="sub">Lo que el docente pagó de lo suyo para el centro. Va por cuenta del docente, no por grupo.</p>' +
+    adExpTabla(['Fecha', 'Tipo', 'Concepto', 'Recibo', 'Se cobra a', 'Estado', 'Monto'],
+      gs.slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha))).map(g =>
+        '<tr><td>' + adFechaBonita(g.fecha) + '</td><td>' + adEsc(adGastoCatEt(g.cat)) + '</td><td>' +
+        adEsc(g.concepto) + '</td><td class="c">' + (g.factura ? 'Sí' : 'No') + '</td><td>' +
+        adEsc(g.cobrarA || 'Dirección') + '</td><td>' + (g.estado === 'cobrado'
+          ? 'Pagado el ' + adFechaBonita(g.fechaCobro || g.fecha) : 'Por cobrar') +
+        '</td><td class="n">' + adLps(g.monto) + '</td></tr>'),
+      'No hay gastos anotados.') +
+    (gs.length ? '<p class="tot">Por cobrar: ' + adLps(gt.mPend) + ' · Ya recuperado: ' + adLps(gt.mCobr) + '</p>' : '') + '</div>');
+
+  /* 5 · controles */
+  apunta('✅ Controles', (d.controles || []).length + ' control(es)');
+  secs.push('<div class="sec"><h2>✅ Controles del aula</h2>' +
+    ((d.controles || []).length ? d.controles.slice().reverse().map(c => {
+      const faltan = adCtrlFaltan(d, c);
+      const m = adCtrlMision(c);
+      return '<h3>' + (c.icono || '✅') + ' ' + adEsc(c.nombre) + ' — ' + adFechaBonita(c.fecha) +
+        ' · ' + adCtrlHechos(c) + ' de ' + d.lista.length + ' anotados</h3>' +
+        '<p class="sub">' + (c.fam ? '📔 Se cuenta a la familia en la Bitácora' : '🔒 Solo para el docente') +
+        (c.acum ? ' · avisa evaluación acumulativa' : '') + (m ? ' · misión: ' + adEsc(m.title) : '') + '</p>' +
+        adExpTabla(['Nº', 'Alumno/a', 'Dato'],
+          d.lista.map(a => '<tr><td class="c">' + a.num + '</td><td>' + (adEsc(a.nombre) || '—') +
+            '</td><td class="c">' + (adEsc(adCtrlValorTxt(c, a.num)) || '—') + '</td></tr>')) +
+        (faltan.length ? '<p class="tot">Faltan por anotar (' + faltan.length + '): ' +
+          faltan.map(a => '#' + a.num).join(', ') + '</p>' : '<p class="tot">Grupo completo.</p>');
+    }).join('') : '<p class="vacio">No hay controles registrados.</p>') + '</div>');
+
+  /* 6 · novedades de la clase */
+  apunta('📔 Novedades de la clase', (d.bitacora || []).length + ' anotación(es)');
+  secs.push('<div class="sec"><h2>📔 Novedades de la clase</h2>' +
+    adExpTabla(['Fecha', 'Novedad'],
+      (d.bitacora || []).slice().reverse().map(n =>
+        '<tr><td>' + adFechaBonita(n.fecha) + '</td><td>' + adEsc(n.texto) + '</td></tr>'),
+      'No hay novedades anotadas.') + '</div>');
+
+  /* 7 · notas por parcial (materias y personalidad) */
+  const parciales = Object.keys(d.notas || {}).sort();
+  apunta('🧮 Notas SACE', parciales.length ? 'parcial(es) ' + parciales.join(', ') : 'sin notas');
+  secs.push('<div class="sec"><h2>🧮 Notas por parcial</h2>' +
+    (parciales.length ? parciales.map(p => {
+      const cols = (d.materias || []).concat(AD_PERSONALIDAD);
+      const usadas = cols.filter(c => Object.keys((d.notas[p] || {})[c] || {}).length);
+      if (!usadas.length) return '<h3>Parcial ' + adEsc(p) + '</h3><p class="vacio">Sin notas en este parcial.</p>';
+      const pf = ((d.boleta || {}).parcialFechas || {})[p];
+      return '<h3>Parcial ' + adEsc(p) + (pf && pf.desde ? ' · evaluaciones del ' + adFechaBonita(pf.desde) +
+        ' al ' + adFechaBonita(pf.hasta) : '') + '</h3>' +
+        adExpTabla(['Nº', 'Alumno/a'].concat(usadas.map(adEsc)),
+          d.lista.map(a => '<tr><td class="c">' + a.num + '</td><td>' + (adEsc(a.nombre) || '—') + '</td>' +
+            usadas.map(c => { const v = ((d.notas[p] || {})[c] || {})[a.num]; return '<td class="c">' + (v != null && v !== '' ? adEsc(String(v)) : '—') + '</td>'; }).join('') + '</tr>'));
+    }).join('') : '<p class="vacio">Todavía no hay notas guardadas.</p>') + '</div>');
+
+  /* 8 · comunicados y conducta */
+  const gg = (avLoad().grupos || {})[d.id] || { avisos: [], faqs: [], conducta: [] };
+  apunta('📣 Comunicados', (gg.avisos || []).length + ' aviso(s) · ' + (gg.conducta || []).length + ' de conducta');
+  secs.push('<div class="sec"><h2>📣 Comunicados y conducta</h2>' +
+    '<h3>Avisos publicados a las familias</h3>' +
+    adExpTabla(['Publicado', 'Título', 'Texto', 'Vigente hasta'],
+      (gg.avisos || []).slice().reverse().map(a =>
+        '<tr><td>' + adFechaBonita(String(a.mod || '').slice(0, 10)) + '</td><td>' + adEsc(a.titulo) +
+        '</td><td>' + adEsc(a.texto) + '</td><td>' + adFechaBonita(a.hasta) + '</td></tr>'),
+      'No hay avisos publicados.') +
+    '<h3>Reportes de conducta</h3>' +
+    adExpTabla(['Fecha', 'Nº', 'Alumno/a', 'Tipo', 'Detalle'],
+      (gg.conducta || []).slice().reverse().map(c =>
+        '<tr><td>' + adFechaBonita(c.fecha) + '</td><td class="c">' + c.num + '</td><td>' +
+        (adEsc(nom(c.num)) || '—') + '</td><td>' + adEsc(AV_CONDUCTA_TIPOS[c.tipo] || '📋 Reporte') + '</td><td>' +
+        adEsc(c.texto) + '</td></tr>'),
+      'No hay reportes de conducta.') +
+    ((gg.faqs || []).length ? '<h3>Ficha del aula (respuestas para las familias)</h3>' +
+      adExpTabla(['Pregunta', 'Respuesta'], gg.faqs.map(f =>
+        '<tr><td>' + adEsc(f.pregunta) + '</td><td>' + adEsc(f.respuesta) + '</td></tr>')) : '') +
+    '<div class="firmas"><div class="firma">Docente</div><div class="firma">Dirección</div></div></div>');
+
+  const html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
+    '<title>Expediente del aula ' + adEsc(adGradoSeccion(d.grado, d.seccion)) + ' ' + anio + '</title>' +
+    '<style>' + AD_EXP_CSS + '</style></head><body>' +
+    '<div class="noprint"><button onclick="window.print()" style="padding:10px 18px;font-weight:bold;font-size:14px;cursor:pointer;">' +
+    '🖨️ Imprimir o guardar como PDF</button> <span style="font-size:12px;color:#444">' +
+    'En el teléfono: Imprimir → destino <strong>Guardar como PDF</strong>.</span></div>' +
+    '<h1>📄 Expediente del aula</h1>' +
+    '<p class="sub">' +
+    (d.escuela ? '<strong>' + adEsc(String(d.escuela).trim()) + '</strong><br>' : '') +
+    (adGradoSeccion(d.grado, d.seccion) ? 'Grupo ' + adEsc(adGradoSeccion(d.grado, d.seccion)) + ' · ' : '') +
+    'Año lectivo ' + anio + '<br>' +
+    (adDocenteNombre() ? 'Docente: ' + adEsc(adDocenteNombre()) + '<br>' : '') +
+    'Generado con M.E.T.A.S el ' + adFechaBonita(adHoy()) + '</p>' +
+    '<div class="indice"><strong>Lo que contiene este expediente</strong>' + indice.join('') + '</div>' +
+    '<p class="nota">Documento de respaldo del trabajo del aula. Contiene datos de menores: ' +
+    'manéjelo con el mismo cuidado que el libro de registro.</p>' +
+    secs.join('') + '</body></html>';
+
+  const w = window.open('', '_blank');
+  if (!w) { toast('Permite las ventanas emergentes para generar el expediente'); return; }
+  w.document.write(html); w.document.close();
 }
 
 /* ══════════════ 🧾 GASTOS DE MI BOLSILLO ══════════════
