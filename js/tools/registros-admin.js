@@ -392,6 +392,21 @@ function adRenderLista(body, d) {
         Notas SACE y el Plan de Acción. El número es el <strong>nº de lista oficial</strong> (SACE).
         Cada alumno recibe su <strong>🔑 clave de familia</strong>: con ella el padre o la madre
         consulta al asistente desde su casa. Tócala para cambiarla o imprimirla.</p>
+      <button class="ad-puerta ad-puerta-ficha" id="ad-ir-fichas">
+        <span class="ad-puerta-ic">🗂️</span>
+        <span class="ad-puerta-txt">
+          <span class="ad-puerta-t">Identidad y contactos</span>
+          <span class="ad-puerta-s">${(() => {
+            const c = (d.lista || []).filter(a => AD_FICHA_CAMPOS.every(x => String(a[x.k] || '').trim())).length;
+            return d.lista.length
+              ? (c === d.lista.length
+                  ? 'Las ' + c + ' fichas están completas'
+                  : c + ' de ' + d.lista.length + ' fichas completas — identidad, teléfonos y encargado')
+              : 'Identidad, teléfonos y encargado de cada alumno';
+          })()}</span>
+        </span>
+        <span class="ad-puerta-go">›</span>
+      </button>
       <div id="ad-lista-rows">
         ${d.lista.map(a => {
           const cl = adClaveFamilia(d.id, a.num, false);
@@ -411,21 +426,6 @@ function adRenderLista(body, d) {
         <button class="pa-generate-btn ad-btn-sec" id="ad-traer-pa">📥 Traer del Plan de Acción</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-tiras-todas">🖨️ Tiras de claves (todas)</button>
       </div>
-      <button class="ad-puerta ad-puerta-ficha" id="ad-ir-fichas">
-        <span class="ad-puerta-ic">🗂️</span>
-        <span class="ad-puerta-txt">
-          <span class="ad-puerta-t">Identidad y contactos</span>
-          <span class="ad-puerta-s">${(() => {
-            const c = (d.lista || []).filter(a => AD_FICHA_CAMPOS.every(x => String(a[x.k] || '').trim())).length;
-            return d.lista.length
-              ? (c === d.lista.length
-                  ? 'Las ' + c + ' fichas están completas'
-                  : c + ' de ' + d.lista.length + ' fichas completas — identidad, teléfonos y encargado')
-              : 'Identidad, teléfonos y encargado de cada alumno';
-          })()}</span>
-        </span>
-        <span class="ad-puerta-go">›</span>
-      </button>
       <div id="ad-pegar-box" style="display:none;margin-top:10px;">
         <p class="pa-paste-hint">Pega la lista, <strong>un alumno por línea</strong>. Si la línea empieza
           con su número de lista (ej. <em>7 Ada Sarai</em> o <em>7. Ada Sarai</em>), se respeta ese número;
