@@ -95,6 +95,21 @@
       background: #fff8e6; border-left: 4px solid #e6a817;
       border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 15px;
     }
+    /* Recibo de aporte: el número va como dato de documento (chiquito, al pie),
+       no como una clave que el padre tenga que cuidar. */
+    .rec-folio { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+    .rec-guardar {
+      display: block; width: 100%; margin-top: 8px;
+      background: var(--verde); color: #fff; border: none; border-radius: 9px;
+      padding: 11px 12px; font-family: inherit; font-size: 15px; font-weight: 800;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .rec-guardar:active { transform: scale(.97); }
+    .rec-guardar:disabled { opacity: .65; }
+    .rec-img {
+      display: block; width: 100%; height: auto; margin-top: 8px;
+      border: 1px solid var(--borde); border-radius: 10px;
+    }
     /* «Escribiendo…» */
     .typing .bub { color: var(--muted); font-style: italic; }
     /* ── Chips de respuesta rápida ── */
@@ -855,9 +870,11 @@ function reciboCardHTML(r) {
   const concepto = String(r.titulo || '').replace(/^🧾 Recibo \S+ — /, '') || 'Aporte';
   return '<div class="nota-card"><div class="nc-top">' +
     '<span class="nc-eval">🧾 ' + esc(concepto) + '</span>' +
-    (folio ? '<span class="nc-val ok">' + esc(folio) + '</span>' : '') + '</div>' +
+    (r.fecha_evento ? '<span class="nc-val ok">' + fmtFecha(r.fecha_evento) + '</span>' : '') + '</div>' +
     '<div class="nc-meta" style="font-size:14px;margin-top:4px">' + esc(r.texto || '') + '</div>' +
-    (r.fecha_evento ? '<div class="nc-meta" style="margin-top:4px">📅 <strong>' + fmtFecha(r.fecha_evento) + '</strong></div>' : '') +
+    (folio ? '<div class="rec-folio">N.º de recibo <strong>' + esc(folio) + '</strong></div>' : '') +
+    (folio ? '<button class="rec-guardar" onclick="guardarRecibo(this)" data-folio="' + esc(folio) + '">' +
+      '📷 Guardar en mi galería</button>' : '') +
     '</div>';
 }
 async function respRecibos() {
@@ -869,9 +886,131 @@ async function respRecibos() {
       'mientras tanto puede ver lo pendiente con «💰 Colaboraciones».', chipsMenu());
     return;
   }
-  await botSay('🧾 <strong>Sus recibos de aporte</strong> (respaldan cada entrega; ' +
-    'guarde el folio para cualquier aclaración):' +
-    recibos.map(reciboCardHTML).join('') + selloDatos(), chipsMenu());
+  await botSay('🧾 <strong>Sus recibos de aporte</strong>, uno por cada entrega:' +
+    recibos.map(reciboCardHTML).join('') +
+    '<br><small>Toque <strong>📷 Guardar en mi galería</strong> y el recibo le queda como foto en el ' +
+    'teléfono, para mostrarlo cuando quiera. El <strong>N.º de recibo</strong> es el número de ese ' +
+    'comprobante, como el de una factura: <strong>no es una clave</strong> y no tiene que memorizarlo ' +
+    'ni apuntarlo, solo sirve si usted y el maestro necesitan hablar de esa entrega en particular.</small>' +
+    selloDatos(), chipsMenu());
+}
+
+/* ── Guardar el recibo como FOTO ──
+   El padre quiere el comprobante en su galería, no otra pantalla que abrir. Se
+   dibuja a mano en un canvas (nada de librerías: este asistente pesa poco a
+   propósito y abre sin señal) y se entrega por el camino que exista: compartir
+   nativo si la app está instalada, descarga si el navegador la soporta, y en
+   todo caso la imagen queda en la conversación para mantenerla presionada. */
+function _recWrap(ctx, txt, max) {
+  const lineas = [];
+  String(txt || '').split('\n').forEach(parrafo => {
+    let linea = '';
+    parrafo.split(/\s+/).forEach(p => {
+      const probar = linea ? linea + ' ' + p : p;
+      if (ctx.measureText(probar).width > max && linea) { lineas.push(linea); linea = p; }
+      else linea = probar;
+    });
+    lineas.push(linea);
+  });
+  return lineas;
+}
+function reciboPNG(r) {
+  const folio = reciboFolio(r);
+  const concepto = String(r.titulo || '').replace(/^🧾 Recibo \S+ — /, '') || 'Aporte';
+  /* el monto ya viene dentro del texto del recibo: se saca para escribirlo
+     GRANDE, que es lo que hace que una foto se lea como un recibo */
+  const mm = String(r.texto || '').match(/:\s*(L\s*[\d.,]+)\s+por concepto/);
+  const monto = mm ? mm[1] : '';
+  const W = 900, PAD = 56, MAXT = W - PAD * 2;
+  const cv = document.createElement('canvas');
+  const ctx = cv.getContext('2d');
+  const F = n => n + 'px system-ui, -apple-system, "Segoe UI", Arial, sans-serif';
+
+  /* se miden TODAS las líneas antes de fijar el alto: si el pie no se envuelve,
+     se sale de la foto y el recibo queda cortado */
+  ctx.font = 'bold ' + F(31);
+  const lConcepto = _recWrap(ctx, concepto, MAXT);
+  ctx.font = F(25);
+  const lCuerpo = _recWrap(ctx, r.texto || '', MAXT);
+  ctx.font = F(22);
+  const pie = [];
+  if (folio) pie.push.apply(pie, _recWrap(ctx,
+    'N.º de recibo: ' + folio + ' (no es una clave: es el número de este comprobante, como el de una factura).', MAXT));
+  pie.push.apply(pie, _recWrap(ctx,
+    'Emitido por el docente en M.E.T.A.S · metas.policastsapien.com', MAXT));
+
+  const H = 132 + 64 + lConcepto.length * 40 + (monto ? 62 : 0) +
+            (r.fecha_evento ? 44 : 0) + lCuerpo.length * 38 + 62 + pie.length * 32 + 30;
+  cv.width = W; cv.height = H;
+
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#1e7a44'; ctx.fillRect(0, 0, W, 132);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold ' + F(38); ctx.fillText('RECIBO DE APORTE', PAD, 62);
+  ctx.font = F(23); ctx.fillText('M.E.T.A.S · Misiones Educativas', PAD, 100);
+
+  let y = 132 + 64;
+  ctx.fillStyle = '#0f2f1c'; ctx.font = 'bold ' + F(31);
+  lConcepto.forEach(l => { ctx.fillText(l, PAD, y); y += 40; });
+  if (monto) {
+    ctx.fillStyle = '#1e7a44'; ctx.font = 'bold ' + F(48);
+    ctx.fillText(monto, PAD, y + 34); y += 62;
+  }
+  if (r.fecha_evento) {
+    ctx.fillStyle = '#1e7a44'; ctx.font = 'bold ' + F(25);
+    ctx.fillText('Fecha: ' + fmtFecha(r.fecha_evento), PAD, y); y += 44;
+  }
+  ctx.fillStyle = '#1c2733'; ctx.font = F(25);
+  lCuerpo.forEach(l => { ctx.fillText(l, PAD, y); y += 38; });
+
+  y += 22;
+  ctx.strokeStyle = '#d5dfd8'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W - PAD, y); ctx.stroke();
+  y += 38;
+  ctx.fillStyle = '#5b6b7b'; ctx.font = F(22);
+  pie.forEach(l => { ctx.fillText(l, PAD, y); y += 32; });
+  return { url: cv.toDataURL('image/png'), nombre: 'recibo-' + (folio || 'aporte') + '.png' };
+}
+async function guardarRecibo(btn) {
+  const folio = btn && btn.dataset.folio;
+  const r = esRecibo.de(ROWS_AV || []).find(x => reciboFolio(x) === folio);
+  if (!r) { await botSay('⚠️ No encontré ese recibo. Toque «🔄 Actualizar» y pruebe de nuevo.', chipsMenu()); return; }
+  const txtOrig = btn.textContent;
+  btn.disabled = true; btn.textContent = '⏳ Preparando…';
+  let img;
+  try { img = reciboPNG(r); }
+  catch (_) {
+    btn.disabled = false; btn.textContent = txtOrig;
+    await botSay('⚠️ No pude armar la foto del recibo en este teléfono. ' +
+      'Puede tomarle una <strong>captura de pantalla</strong> a la tarjeta de arriba.', chipsMenu());
+    return;
+  }
+  let guardado = false;
+  const cap = window.Capacitor;
+  if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins && cap.Plugins.Filesystem && cap.Plugins.Share) {
+    try {
+      const res = await cap.Plugins.Filesystem.writeFile({
+        path: img.nombre, data: img.url.split(',')[1], directory: 'CACHE' });
+      await cap.Plugins.Share.share({ url: res.uri, dialogTitle: 'Guardar o compartir el recibo' });
+      guardado = true;
+    } catch (_) {}
+  }
+  if (!guardado) {
+    try {
+      const a = document.createElement('a');
+      a.href = img.url; a.download = img.nombre;
+      document.body.appendChild(a); a.click(); a.remove();
+      guardado = true;
+    } catch (_) {}
+  }
+  btn.disabled = false; btn.textContent = '📷 Guardar de nuevo';
+  /* la imagen SIEMPRE queda en la conversación: en muchos teléfonos la descarga
+     no avisa dónde cayó, y mantener presionada la foto es lo que el padre sabe hacer */
+  await botSay('🧾 Este es su recibo como foto. ' +
+    (guardado ? 'Ya se descargó; si no la encuentra, mantenga' : 'Mantenga') +
+    ' <strong>presionada la imagen</strong> y elija «Guardar imagen» o «Descargar imagen» ' +
+    'para que quede en su galería.' +
+    '<img class="rec-img" src="' + img.url + '" alt="Recibo de aporte ' + esc(folio) + '">', chipsMenu());
 }
 
 /* ── comunicados del maestro (avisos, eventos, materiales, ficha del aula) ── */

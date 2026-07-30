@@ -878,8 +878,12 @@ function adRenderColecta(body, d) {
         <strong>Toca de nuevo</strong> a quien pagó para <strong>cambiar su monto</strong>
         (hermanos, becados, abonos) o quitarlo. Lo marcado = dinero en mano.</p>
       <div class="ad-recibo-hint">🧾 Al marcar, la familia de ese alumno recibe solo su
-        <strong>recibo con folio</strong> (monto, fecha y quién recibió) en el asistente de padres.
-        Si corriges el monto, el recibo se reemite; si quitas la marca, se anula.</div>
+        <strong>recibo</strong> en el asistente de padres, con el nombre completo del alumno, el monto,
+        la fecha y quién recibió. Si corriges el monto, el recibo se reemite; si quitas la marca, se anula.<br>
+        <strong>Si un padre pregunta por el «N.º de recibo»:</strong> es el número de ese comprobante,
+        como el de una factura. No es una clave y no tiene que memorizarlo ni escribirlo en ninguna parte;
+        sirve para que usted y él hablen de la misma entrega. Tú lo ves aquí manteniendo pulsado al alumno,
+        y sale en el informe imprimible.</div>
       <div class="ad-resumen">
         <span>✅ Dieron: <strong>${pagaron}/${d.lista.length}</strong></span>
         <span>💵 Recaudado: <strong>${adLps(t.rec)}</strong></span>
@@ -3687,18 +3691,25 @@ function avFilasNube(st) {
         const monto = Number(c.pagos[num]) || 0;
         if (!(monto > 0)) return;
         const al = (d.lista || []).find(a => String(a.num) === String(num)) || {};
-        const nom = adPrimerNombre(al.nombre);
+        /* NOMBRE COMPLETO, no solo el primero: el recibo va detrás de la clave
+           de esa familia, así que el dato es privado y un comprobante con el
+           nombre entero es el que sirve de respaldo de verdad. */
+        const nom = String(al.nombre || '').trim();
+        const quien = nom ? nom + ' (n.º ' + num + ' de la lista)' : 'su hijo/a (n.º ' + num + ' de la lista)';
         const fecha = (c.pagosF && c.pagosF[num]) || c.fecha;
         const folio = adReciboFolio(c, num);
         filas.push(Object.assign({
           evento_id: 'AVR-' + c.id + '-' + x.cod, codigo: x.cod,
           subtipo: 'cuentas', titulo: '🧾 Recibo ' + folio + ' — ' + c.concepto,
-          texto: 'Recibido de ' + (nom || 'su hijo/a') + ' (n.º ' + num + ' de la lista): ' +
-                 adLps(monto) + ' por concepto de «' + c.concepto + '», el ' + adFechaBonita(fecha) + '.' +
+          /* el número del recibo NO se le pide al padre dentro del texto: ya
+             está a la vista en la tarjeta. Nada de «conserve el folio»: la
+             familia está harta de códigos que le toca cuidar. */
+          texto: 'Recibido de ' + quien + ': ' + adLps(monto) +
+                 ' por concepto de «' + c.concepto + '», el ' + adFechaBonita(fecha) + '.' +
                  (grupoTxt ? ' Grupo ' + grupoTxt + '.' : '') +
-                 ' Recibió ' + (adDocenteNombre() || 'el docente') + '. Conserve el folio ' + folio +
-                 ' para cualquier aclaración: este comprobante respalda el movimiento y las cuentas' +
-                 ' completas de la colecta las puede consultar aquí mismo. ' +
+                 ' Recibió ' + (adDocenteNombre() || 'el docente') + '.' +
+                 ' Este comprobante respalda su entrega, y las cuentas completas de la colecta' +
+                 ' (recaudado, gastado y saldo) las puede consultar aquí mismo. ' +
                  AV_RECIBO_CIERRE[(Number(num) || 0) % AV_RECIBO_CIERRE.length],
           fecha_evento: fecha, vigente_hasta: anio + '-12-31',
         }, base));
