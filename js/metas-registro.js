@@ -321,7 +321,7 @@
       '⏱️ Tiempo activo: ' + Math.round(minutos) + ' min\n' +
       '📋 ' + linea('evaluacion', 'Evaluación conceptual') + '\n' +
       '🧮 ' + linea('prueba_operativa', 'Prueba operativa') + '\n\n' +
-      '🔎 Verificable en el Registro Docente del dispositivo ' + idDispositivo() + '\n\n' +
+      '🔎 Verificable en la Evidencia de misiones del dispositivo ' + idDispositivo() + '\n\n' +
       '🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com';
   }
   function abrirWA(texto) {

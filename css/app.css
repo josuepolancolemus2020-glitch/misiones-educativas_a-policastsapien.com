@@ -3946,6 +3946,13 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   .ad-tabs { gap: 7px; }
   .ad-tabs .pa-otab { flex: 1 1 30%; min-width: 0; padding: 9px 4px; font-size: 11.5px; }
 }
+/* Aviso del recibo automático en la colecta: el maestro tiene que saber que al
+   marcar sale un comprobante a esa familia, no solo una marca en su pantalla. */
+.ad-recibo-hint {
+  margin: 0 0 10px; padding: 9px 12px;
+  background: #eef7f1; border: 1px solid #c9e6d5; border-left: 4px solid #16a34a;
+  border-radius: 10px; font-size: 12.5px; line-height: 1.5; color: #14532d;
+}
 .ad-btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .ad-btn-row .pa-generate-btn { flex: 1 1 auto; width: auto; margin: 0; }
 

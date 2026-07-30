@@ -329,7 +329,7 @@ function pintarChips(lista) {
 }
 const CHIPS_BASE = ['📊 ¿Cómo va?', '📣 Avisos', '📝 Última nota', '📚 Todas las notas',
                     '🗓 ¿Faltó a clases?', '🤒 Avisar falta', '🧮 Boleta del parcial',
-                    '💰 Pagos y colectas', '🙂 Conducta', '🏠 ¿Cómo ayudo en casa?',
+                    '💰 Pagos y colectas', '🧾 Mis recibos', '🙂 Conducta', '🏠 ¿Cómo ayudo en casa?',
                     '💡 Consejo de hoy', '🔄 Actualizar', '🔑 Cambiar clave'];
 /* Con más de una clave guardada aparece el conmutador de hijos */
 function chipsMenu() {
@@ -526,6 +526,8 @@ async function respResumen() {
   if (nAvisos) html += '<br>📣 Tiene <strong>' + nAvisos + '</strong> aviso(s) del maestro — toque «📣 Avisos».';
   const nCond = avDe(['conducta']).length;
   if (nCond) html += '<br>📋 Tiene <strong>' + nCond + '</strong> reporte(s) de conducta — toque «🙂 Conducta».';
+  const nRec = esRecibo.de(avDe(['cuentas'])).length;
+  if (nRec) html += '<br>🧾 Tiene <strong>' + nRec + '</strong> recibo(s) de aporte — toque «🧾 Mis recibos».';
   html += notaCardHTML(ROWS[0]) + selloDatos();
   await botSay(html, chipsMenu());
 }
@@ -822,14 +824,54 @@ async function respEconomia() {
   }
   if (!pend.length) html += '<br><br>🎉 No tienen aportes pendientes.';
   else html += '<br><br><small>El aporte se entrega al maestro; él lo marca recibido y aquí se actualiza.</small>';
-  /* rendición de cuentas: llega sola desde la Economía de Mi aula */
-  const cuentas = avDe(['cuentas']);
+  /* recibos y rendición de cuentas: llegan solos desde la Economía de Mi aula.
+     El RECIBO es de esta familia (respalda su movimiento, con folio); las
+     CUENTAS son del grupo entero. Van separados para no confundirlos. */
+  const recibos = esRecibo.de(avDe(['cuentas']));
+  const cuentas = avDe(['cuentas']).filter(r => !esRecibo(r));
+  if (recibos.length) {
+    html += '<br><br>🧾 <strong>Sus recibos de aporte:</strong>' + recibos.map(reciboCardHTML).join('');
+  }
   if (cuentas.length) {
-    html += '<br><br>🧾 <strong>Cuentas claras del grupo:</strong>' +
+    html += '<br><br>💰 <strong>Cuentas claras del grupo:</strong>' +
       cuentas.map(c => '<br>• <strong>' + esc(String(c.titulo || '').replace(/^Cuentas claras — /, '')) +
         '</strong>: ' + esc(c.texto || '')).join('');
   }
   await botSay(html + selloDatos(), chipsMenu());
+}
+
+/* ── recibos de aporte ──
+   Viajan por el canal de comunicados como 'cuentas' (así no hace falta tocar
+   la base de datos) y se reconocen por el folio del título: «🧾 Recibo RC-…».
+   Cada uno es de UNA familia: el maestro lo emite al marcar el aporte. */
+function esRecibo(r) { return /^🧾 Recibo /.test(String(r && r.titulo || '')); }
+esRecibo.de = arr => (arr || []).filter(esRecibo);
+function reciboFolio(r) {
+  const m = String(r && r.titulo || '').match(/^🧾 Recibo (\S+)/);
+  return m ? m[1] : '';
+}
+function reciboCardHTML(r) {
+  const folio = reciboFolio(r);
+  const concepto = String(r.titulo || '').replace(/^🧾 Recibo \S+ — /, '') || 'Aporte';
+  return '<div class="nota-card"><div class="nc-top">' +
+    '<span class="nc-eval">🧾 ' + esc(concepto) + '</span>' +
+    (folio ? '<span class="nc-val ok">' + esc(folio) + '</span>' : '') + '</div>' +
+    '<div class="nc-meta" style="font-size:14px;margin-top:4px">' + esc(r.texto || '') + '</div>' +
+    (r.fecha_evento ? '<div class="nc-meta" style="margin-top:4px">📅 <strong>' + fmtFecha(r.fecha_evento) + '</strong></div>' : '') +
+    '</div>';
+}
+async function respRecibos() {
+  if (!await conDatos()) return;
+  const recibos = esRecibo.de(avDe(['cuentas']));
+  if (!recibos.length) {
+    await botSay('🧾 Todavía no hay <strong>recibos</strong> para esta clave. ' +
+      'El maestro emite uno en cuanto marca que su hijo/a entregó el aporte; ' +
+      'mientras tanto puede ver lo pendiente con «💰 Colaboraciones».', chipsMenu());
+    return;
+  }
+  await botSay('🧾 <strong>Sus recibos de aporte</strong> (respaldan cada entrega; ' +
+    'guarde el folio para cualquier aclaración):' +
+    recibos.map(reciboCardHTML).join('') + selloDatos(), chipsMenu());
 }
 
 /* ── comunicados del maestro (avisos, eventos, materiales, ficha del aula) ── */
@@ -1127,6 +1169,9 @@ const MENU_TXT = 'Escriba el <strong>número</strong> de lo que necesita:<br>' +
 /* Pistas parciales: si la frase no entendida trae un fragmento reconocible
    («pagand», «faltas de mi niña»…), se sugiere el chip probable antes del menú */
 const PISTAS = [
+  /* el recibo va primero: «comprobante de pago» trae «pag» y se iría a la
+     lista de pendientes cuando lo que piden es el respaldo de lo entregado */
+  [/recib|comprob|folio/, '🧾 Mis recibos'],
   [/pag|deb|cuot|colect|aport|diner|pisto|lempir|cobr/, '💰 Pagos y colectas'],
   [/avis|reunion|junta|comunicad|acto|event/, '📣 Avisos'],
   [/falt|asist|ausen|llego/, '🗓 ¿Faltó a clases?'],
@@ -1223,6 +1268,11 @@ async function manejar(txtOriginal) {
   }
   /* conducta ANTES que notas (el dato viaja dentro de las notas finales) */
   if (/conducta|comporta|se porta|disciplin|puntualidad|moralidad|sociabilidad|orden y presentacion/.test(t)) { await respConducta(t); return; }
+  /* el recibo ANTES que el dinero en general: quien pide «mi recibo» o cita un
+     folio quiere el comprobante de lo que YA entregó, no la lista de pendientes */
+  if (/recibo|comprobante|\bfolio\b|constancia de (pago|aporte)|respaldo del (pago|aporte)/.test(t)) {
+    await respRecibos(); return;
+  }
   /* dinero ANTES que faltas: «cuánto falta pagar» es economía, no asistencia */
   if (!/tarea/.test(t) &&
       /colaboracion|aporte|cuota|colecta|deuda|dinero|pisto|lempira|cobr|\bpag(o|ar|ue|os|amos)\b|\bdeb(o|e|en|emos)\b(?! mejorar)|cuanto (hay que pagar|se paga|es|cuesta)|pendiente/.test(t)) {
@@ -1328,7 +1378,9 @@ async function novedadesDesde(prev) {
   const otrosAd = (ROWS_AD || []).filter(r => r.tipo !== 'asistencia' && !vA.has(sigA(r)));
   const avisos = avDe(['aviso', 'evento', 'material', 'individual']).filter(r => !vV.has(sigV(r)));
   const conducta = avDe(['conducta']).filter(r => !vV.has(sigV(r)));
+  const recibos = esRecibo.de(avDe(['cuentas'])).filter(r => !vV.has(sigV(r)));
   const partes = [];
+  if (recibos.length) partes.push(recibos.length + ' recibo(s) de aporte');
   if (conducta.length) partes.push(conducta.length + ' reporte(s) de conducta');
   if (notas.length) {
     const mats = notas.map(r => r.materia).filter(Boolean)

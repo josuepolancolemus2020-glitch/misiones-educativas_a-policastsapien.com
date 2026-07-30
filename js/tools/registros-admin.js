@@ -726,7 +726,10 @@ async function adInsertarAlumno() {
   d.asistencia.forEach(r => { r.aus = adShiftNums(r.aus, pos); });
   Object.keys(d.notas || {}).forEach(p =>
     Object.keys(d.notas[p] || {}).forEach(m => { d.notas[p][m] = adShiftNums(d.notas[p][m], pos); }));
-  d.colectas.forEach(c => { c.pagos = adShiftNums(c.pagos, pos); });
+  d.colectas.forEach(c => {
+    c.pagos = adShiftNums(c.pagos, pos);
+    c.pagosF = adShiftNums(c.pagosF, pos);   /* la fecha viaja con su pago */
+  });
   /* 3) la lista misma */
   d.lista.forEach(a => { if (a.num >= pos) a.num++; });
   d.lista.push({ num: pos, nombre: String(nombre).trim() });
@@ -790,6 +793,13 @@ function adSinLista(body, quePara) {
 
 /* ══════════════ 💰 ECONOMÍA — colaboraciones y acuerdos ══════════════ */
 function adColecta(d, id) { return d.colectas.find(c => c.id === id); }
+/* Folio del recibo: FIJO para ese alumno en esa colecta (corregir el monto no
+   lo cambia) y distinto entre colectas, porque sale del id de la colecta, que
+   ya es único. La familia lo cita si quiere una aclaración. */
+function adReciboFolio(c, num) {
+  const base = String(c.id || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  return 'RC-' + (base.slice(-4) || '0000') + '-' + num;
+}
 function adColectaTotales(c) {
   const rec = Object.values(c.pagos || {}).reduce((s, m) => s + (Number(m) || 0), 0);
   const gas = (c.gastos || []).reduce((s, g) => s + (Number(g.m) || 0), 0);
@@ -839,7 +849,7 @@ function adRenderEco(body, d) {
       id: 'C' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
       concepto: String(concepto).trim(),
       montoAlumno: Number(String(monto).replace(',', '.')),
-      fecha: adHoy(), pagos: {}, gastos: [],
+      fecha: adHoy(), pagos: {}, pagosF: {}, gastos: [],
     });
     adSave(dd);
     _adColectaId = dd.colectas[dd.colectas.length - 1].id;
@@ -867,6 +877,9 @@ function adRenderColecta(body, d) {
         <strong>Toca</strong> un alumno para marcar que dio el aporte sugerido.
         <strong>Toca de nuevo</strong> a quien pagó para <strong>cambiar su monto</strong>
         (hermanos, becados, abonos) o quitarlo. Lo marcado = dinero en mano.</p>
+      <div class="ad-recibo-hint">🧾 Al marcar, la familia de ese alumno recibe solo su
+        <strong>recibo con folio</strong> (monto, fecha y quién recibió) en el asistente de padres.
+        Si corriges el monto, el recibo se reemite; si quitas la marca, se anula.</div>
       <div class="ad-resumen">
         <span>✅ Dieron: <strong>${pagaron}/${d.lista.length}</strong></span>
         <span>💵 Recaudado: <strong>${adLps(t.rec)}</strong></span>
@@ -878,8 +891,13 @@ function adRenderColecta(body, d) {
           const pagado = c.pagos && c.pagos[a.num] != null;
           const nom = adPrimerNombre(a.nombre);
           const especial = pagado && Number(c.pagos[a.num]) !== Number(c.montoAlumno);
+          /* el title lleva el folio: si un padre reclama, el maestro lo lee aquí */
+          const rot = pagado
+            ? adEsc(a.nombre) + ' · recibo ' + adReciboFolio(c, a.num) +
+              ' del ' + adFechaBonita((c.pagosF && c.pagosF[a.num]) || c.fecha)
+            : adEsc(a.nombre);
           return `<button class="ad-chip ${pagado ? 'ad-chip-on' : ''}" data-num="${a.num}"
-            title="${adEsc(a.nombre)}">
+            title="${rot}">
             <span class="ad-chip-num">#${a.num}${pagado ? ' ✓' : ''}</span>
             ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}
             ${pagado ? `<span class="ad-chip-monto${especial ? ' ad-chip-monto-esp' : ''}">${adLps(c.pagos[a.num])}</span>` : ''}</button>`;
@@ -908,6 +926,7 @@ function adRenderColecta(body, d) {
       const num = ch.dataset.num;
       const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
       cc.pagos = cc.pagos || {};
+      cc.pagosF = cc.pagosF || {};   /* fecha del movimiento, para el recibo */
       if (cc.pagos[num] != null) {
         /* ya pagó → editar su monto (hermanos/becados/abonos) o quitar */
         const al = dd.lista.find(a => String(a.num) === String(num)) || {};
@@ -924,10 +943,16 @@ function adRenderColecta(body, d) {
         if (r === null) return;   // canceló: no cambia nada
         const s = String(r).trim();
         const n = s === '' ? 0 : Number(s.replace(',', '.'));
-        if (!(n > 0)) delete cc.pagos[num];
-        else cc.pagos[num] = n;
+        if (!(n > 0)) { delete cc.pagos[num]; delete cc.pagosF[num]; }
+        else {
+          cc.pagos[num] = n;
+          /* corregir el monto NO cambia el día en que entró el dinero: el
+             recibo se reemite con la cifra buena y la fecha original */
+          if (!cc.pagosF[num]) cc.pagosF[num] = adHoy();
+        }
       } else {
         cc.pagos[num] = cc.montoAlumno;   // aporte sugerido (marca rápida)
+        cc.pagosF[num] = adHoy();
       }
       adSave(dd); renderAdmin();
     }));
@@ -995,11 +1020,14 @@ th{background:#e8eef9;font-size:11px;}
 <div class="sub">${grupo ? 'Grupo ' + adEsc(grupo) + ' · ' : ''}Acordado el ${adFechaBonita(c.fecha)} ·
 Aporte sugerido: ${adLps(c.montoAlumno)} (cada aporte real se detalla abajo) · Generado con M.E.T.A.S el ${adFechaBonita(adHoy())}</div>
 <table>
-<thead><tr><th>#</th><th>Alumno/a</th><th>Aportó</th><th>Monto</th></tr></thead>
+<thead><tr><th>#</th><th>Alumno/a</th><th>Aportó</th><th>Fecha</th><th>Monto</th><th>Recibo</th></tr></thead>
 <tbody>
 ${d.lista.map(a => {
   const m = c.pagos && c.pagos[a.num];
-  return `<tr><td>${a.num}</td><td>${adEsc(a.nombre) || '—'}</td><td>${m != null ? '✔ Sí' : '—'}</td><td>${m != null ? adLps(m) : ''}</td></tr>`;
+  /* el mismo folio que ya tiene la familia en el asistente: el papel y la nube
+     hablan del mismo movimiento */
+  const f = m != null ? adFechaBonita((c.pagosF && c.pagosF[a.num]) || c.fecha) : '';
+  return `<tr><td>${a.num}</td><td>${adEsc(a.nombre) || '—'}</td><td>${m != null ? '✔ Sí' : '—'}</td><td>${f}</td><td>${m != null ? adLps(m) : ''}</td><td>${m != null ? adReciboFolio(c, a.num) : ''}</td></tr>`;
 }).join('')}
 </tbody></table>
 ${(c.gastos || []).length ? `
@@ -2885,6 +2913,16 @@ const AV_CONDUCTA_TIPOS = {
   leve: '📋 Falta leve',
   felicitacion: '⭐ Felicitación',
 };
+/* Cierre del recibo de aporte: el cuerpo es formal (folio, monto, fecha, quién
+   recibió) y esta última línea agradece y sostiene la colaboración. Se elige
+   por número de lista, NO al azar: el texto tiene que ser siempre el mismo para
+   esa familia, o la firma cambiaría y el recibo se resubiría sin parar. */
+const AV_RECIBO_CIERRE = [
+  'Gracias por cumplir con lo acordado en reunión: cada aporte se convierte en algo que su hijo/a usa en el aula.',
+  'Gracias por su colaboración: cuando las familias responden a tiempo, el grupo alcanza lo que se propuso sin quedarse a medias.',
+  'Gracias por apoyar el acuerdo del grupo: su aporte ya está trabajando por los niños de esta sección.',
+  'Gracias por confiar: cada lempira queda anotado, rendido y a la vista de todas las familias.',
+];
 function avGrupoSave(gid, g) {
   const o = avLoad(); o.grupos[gid] = g; avSaveAll(o);
 }
@@ -3368,6 +3406,15 @@ function adDocenteTxt() {
   } catch (_) {}
   return '';
 }
+/* Solo el NOMBRE, sin el código PROF: en un recibo el padre lee «Recibió
+   Josué Polanco Lemus», no un código de sistema. */
+function adDocenteNombre() {
+  try {
+    const d = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1'));
+    if (d && d.nombre) return String(d.nombre).trim();
+  } catch (_) {}
+  return '';
+}
 /* Credenciales del maestro (PROF + contraseña) para reautenticar las
    escrituras a la nube del chatbot. Sin cuenta docente no se publica. */
 function adDocenteCreds() {
@@ -3616,6 +3663,7 @@ function avFilasNube(st) {
     });
 
     /* AUTOMÁTICO: cuentas claras de cada colecta (rendición) */
+    const grupoTxt = adGrupoTxt(d);
     (d.colectas || []).forEach(c => {
       const t = adColectaTotales(c);
       const gastos = (c.gastos || []).map(gx => gx.d + ' ' + adLps(gx.m)).join(', ');
@@ -3626,6 +3674,35 @@ function avFilasNube(st) {
                (gastos ? ' (' + gastos + ')' : '') + ' · Saldo: ' + adLps(t.saldo) + '.',
         vigente_hasta: avFechaMas(c.fecha, 200),
       }, base)));
+
+      /* AUTOMÁTICO: RECIBO de cada aporte marcado. Sale solo al marcar al
+         alumno y viaja ÚNICAMENTE a la clave de ESA familia: respalda su
+         movimiento con folio, monto, fecha y quién recibió el dinero. Si el
+         maestro corrige el monto, el mismo folio se reemite con la cifra
+         buena; si quita la marca, la anulación lo apaga sola.
+         Dura todo el año lectivo: es un comprobante, no un aviso del día. */
+      Object.keys(c.pagos || {}).forEach(num => {
+        const x = claves.find(k => String(k.num) === String(num));
+        if (!x) return;
+        const monto = Number(c.pagos[num]) || 0;
+        if (!(monto > 0)) return;
+        const al = (d.lista || []).find(a => String(a.num) === String(num)) || {};
+        const nom = adPrimerNombre(al.nombre);
+        const fecha = (c.pagosF && c.pagosF[num]) || c.fecha;
+        const folio = adReciboFolio(c, num);
+        filas.push(Object.assign({
+          evento_id: 'AVR-' + c.id + '-' + x.cod, codigo: x.cod,
+          subtipo: 'cuentas', titulo: '🧾 Recibo ' + folio + ' — ' + c.concepto,
+          texto: 'Recibido de ' + (nom || 'su hijo/a') + ' (n.º ' + num + ' de la lista): ' +
+                 adLps(monto) + ' por concepto de «' + c.concepto + '», el ' + adFechaBonita(fecha) + '.' +
+                 (grupoTxt ? ' Grupo ' + grupoTxt + '.' : '') +
+                 ' Recibió ' + (adDocenteNombre() || 'el docente') + '. Conserve el folio ' + folio +
+                 ' para cualquier aclaración: este comprobante respalda el movimiento y las cuentas' +
+                 ' completas de la colecta las puede consultar aquí mismo. ' +
+                 AV_RECIBO_CIERRE[(Number(num) || 0) % AV_RECIBO_CIERRE.length],
+          fecha_evento: fecha, vigente_hasta: anio + '-12-31',
+        }, base));
+      });
     });
   });
   return filas;

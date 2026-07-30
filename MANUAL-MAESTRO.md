@@ -380,9 +380,9 @@ mensaje con: nombre, escuela, grado, misión, secciones completadas, XP, tiempo
 de trabajo y la última nota de cada prueba con sus intentos. El alumno se lo
 envía a usted directamente.
 
-### b) El Registro Docente del dispositivo
-En el menú ☰ de la app está **"Registro Docente"**: la bitácora completa de
-todo lo trabajado en ese dispositivo. Puede filtrar por misión, alumno o tipo
+### b) La Evidencia de misiones del dispositivo
+En **Zona Docente → Herramientas del aula → 📋 Evidencia de misiones** está la
+bitácora completa de todo lo trabajado en ese dispositivo. Puede filtrar por misión, alumno o tipo
 de evento, ver estadísticas, y:
 
 - **📥 Exportar CSV**: descarga los datos para abrirlos en Excel.
@@ -425,7 +425,7 @@ Anime a sus alumnos a usarlo: cada reporte mejora el material para todos.
 - ✅ Dicte la convención exacta de escuela y maestro (regla de oro).
 - ✅ Asigne la misión unos días antes de la prueba en papel: la app es el
   espacio de práctica, el examen impreso es la evidencia formal.
-- ✅ Revise el Registro Docente antes de calificar: el tiempo de trabajo y los
+- ✅ Revise la Evidencia de misiones antes de calificar: el tiempo de trabajo y los
   intentos cuentan una historia que la nota sola no cuenta.
 - ✅ Si usa datos de alumnos para estudios o informes, gestione el
   consentimiento de madres, padres o tutores. Considere códigos de alumno

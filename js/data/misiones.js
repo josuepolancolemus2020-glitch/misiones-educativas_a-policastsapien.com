@@ -1,6 +1,6 @@
 /* Rutas de aprendizaje: el alumno navega por rutas secuenciales (etapas),
    nunca por ciclos/grados. El ciclo (campo grade/cycle) se conserva SOLO
-   como metadato docente (Registro Docente, manuales, mapeo DCNB). */
+   como metadato docente (Evidencia de misiones, manuales, mapeo DCNB). */
 const RUTAS = {
   numero:  { nombre: 'Ruta del Número',   emoji: '🧭', color: 'mat'  },
   forma:   { nombre: 'Ruta de la Forma',  emoji: '📐', color: 'mat'  },
