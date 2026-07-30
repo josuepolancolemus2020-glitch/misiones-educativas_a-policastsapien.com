@@ -57,7 +57,8 @@ function adGrupoNuevo(props) {
   let id = 'G';
   for (let i = 0; i < 5; i++) id += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
   return Object.assign({ id, escuela: '', grado: '', seccion: '', logo: '', logoSec: '', boleta: adBoletaDef(),
-    materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {}, controles: [] }, props || {});
+    materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {}, controles: [],
+    bitacora: [] }, props || {});
 }
 
 function adNormGrupo(g) {
@@ -74,6 +75,7 @@ function adNormGrupo(g) {
   g.colectas = Array.isArray(g.colectas) ? g.colectas : [];
   g.asistencia = Array.isArray(g.asistencia) ? g.asistencia : [];
   g.controles = Array.isArray(g.controles) ? g.controles : [];
+  g.bitacora = Array.isArray(g.bitacora) ? g.bitacora : [];   /* novedades de la clase */
   g.materias = Array.isArray(g.materias) && g.materias.length ? g.materias : AD_MATERIAS_DEF.slice();
   g.notas = (g.notas && typeof g.notas === 'object') ? g.notas : {};
   return g;
@@ -1427,16 +1429,19 @@ ${dias.map(r => `
    instante QUIÉNES FALTAN (que es el dato que de verdad se necesita).
    Todo local y sin internet; viaja solo entre los equipos del maestro
    con el espejo de la Zona Docente. */
+/* fam: nace contándose a la familia en la Bitácora · acum: además avisa que
+   habrá evaluación para nota acumulativa. Los controles delicados (salud, talla,
+   merienda) nacen APAGADOS: un dato de salud no se publica por descuido. */
 const AD_CTRL_PLANTILLAS = [
-  { icono: '📄', nombre: 'Entrega de ficha', tipo: 'marca' },
-  { icono: '📗', nombre: 'Entrega de libro', tipo: 'marca' },
+  { icono: '📄', nombre: 'Entrega de ficha', tipo: 'marca', fam: 1, acum: 1 },
+  { icono: '📗', nombre: 'Entrega de libro', tipo: 'marca', fam: 1 },
   { icono: '🍎', nombre: 'Merienda escolar', tipo: 'marca' },
-  { icono: '🧰', nombre: 'Material solicitado', tipo: 'marca' },
-  { icono: '🎟️', nombre: 'Inscritos al evento', tipo: 'marca' },
-  { icono: '✍️', nombre: 'Firma del padre', tipo: 'marca' },
-  { icono: '🧾', nombre: 'Documento entregado', tipo: 'marca' },
+  { icono: '🧰', nombre: 'Material solicitado', tipo: 'marca', fam: 1, acum: 1 },
+  { icono: '🎟️', nombre: 'Inscritos al evento', tipo: 'marca', fam: 1 },
+  { icono: '✍️', nombre: 'Firma del padre', tipo: 'marca', fam: 1 },
+  { icono: '🧾', nombre: 'Documento entregado', tipo: 'marca', fam: 1 },
   { icono: '💊', nombre: 'Control de salud', tipo: 'marca' },
-  { icono: '📖', nombre: 'Libro devuelto', tipo: 'marca' },
+  { icono: '📖', nombre: 'Libro devuelto', tipo: 'marca', fam: 1 },
   { icono: '👕', nombre: 'Talla de uniforme', tipo: 'texto' },
   { icono: '🔢', nombre: 'Cantidad recibida', tipo: 'numero' },
   { icono: '📝', nombre: 'Otro control (sí o no)', tipo: 'marca' },
@@ -1456,6 +1461,48 @@ function adCtrlHechos(c) { return Object.keys(c.datos || {}).length; }
 function adCtrlFaltan(d, c) {
   return d.lista.filter(a => (c.datos || {})[a.num] == null);
 }
+/* ── BITÁCORA: lo que la familia lee de un control ──
+   El texto se arma en UN solo lugar y se usa en dos: la vista previa que ve el
+   maestro y la fila que viaja al asistente de padres. Así lo que promete la
+   pantalla es exactamente lo que le llega al padre, sin sorpresas. */
+function adCtrlMision(c) {
+  if (!c || !c.misionId || typeof MISSIONS === 'undefined') return null;
+  return MISSIONS.find(m => m.id === c.misionId) || null;
+}
+function adCtrlBitacoraTxt(c, d, num) {
+  const al = (d.lista || []).find(a => String(a.num) === String(num)) || {};
+  const nom = String(al.nombre || '').trim();
+  const quien = (nom || 'su hijo/a') + ' (n.º ' + num + ' de la lista)';
+  const v = (c.datos || {})[num];
+  let p = adCtrlTipo(c) === 'marca'
+    ? 'El ' + adFechaBonita(c.fecha) + ' quedó anotado que ' + quien + ' cumplió con «' + c.nombre + '».'
+    : 'El ' + adFechaBonita(c.fecha) + ', en «' + c.nombre + '», se anotó de ' + quien + ': ' + String(v) + '.';
+  if (c.acum) {
+    p += ' Sobre este material se le aplicará una evaluación que cuenta para la NOTA ACUMULATIVA,' +
+         ' así que apóyele a estudiarlo en casa estos días.';
+  }
+  const m = adCtrlMision(c);
+  if (m) p += ' El tema lo puede repasar y practicar en la misión «' + m.title + '», con el botón de abajo.';
+  return p;
+}
+/* Enlace de la misión para la fila de la nube: viaja en `claves` (columna libre
+   del mismo canal) como «url|título», y el asistente lo pinta como botón. */
+function adCtrlMisionClaves(c) {
+  const m = adCtrlMision(c);
+  return m ? (m.url || '') + '|' + m.title : '';
+}
+/* Selector de misiones agrupado por materia, para amarrar la ficha a su tema */
+function adMisionOptions(sel) {
+  if (typeof MISSIONS === 'undefined') return '';
+  const porMat = {};
+  MISSIONS.forEach(m => { (porMat[m.subject] = porMat[m.subject] || []).push(m); });
+  return Object.keys(porMat).map(s =>
+    '<optgroup label="' + adEsc((typeof SUBJECT_LABELS !== 'undefined' && SUBJECT_LABELS[s]) || s) + '">' +
+    porMat[s].slice().sort((a, b) => a.title.localeCompare(b.title, 'es')).map(m =>
+      '<option value="' + m.id + '"' + (String(m.id) === String(sel) ? ' selected' : '') + '>' +
+      adEsc(m.icon + ' ' + m.title) + '</option>').join('') + '</optgroup>').join('');
+}
+
 /* Lo que se pinta dentro del chip y en la hoja impresa */
 function adCtrlValorTxt(c, num) {
   const v = (c.datos || {})[num];
@@ -1491,7 +1538,7 @@ function adRenderControles(body, d) {
         return `
         <button class="ad-colecta-row" data-ctid="${c.id}">
           <span class="ad-cr-txt"><strong>${c.icono || '✅'} ${adEsc(c.nombre)}</strong><br>
-            <small>${adFechaBonita(c.fecha)} · ${hechos}/${total} anotados${faltan ? ' · faltan ' + faltan : ' · ¡completo! 🎉'}</small></span>
+            <small>${adFechaBonita(c.fecha)} · ${hechos}/${total} anotados${faltan ? ' · faltan ' + faltan : ' · ¡completo! 🎉'}${c.fam ? ' · 📔 en la Bitácora' : ''}</small></span>
           <span class="ad-cr-arrow">›</span>
         </button>`;
       }).join('')}
@@ -1499,7 +1546,48 @@ function adRenderControles(body, d) {
     <div class="pa-card">
       <p class="pa-optional-hint">Todavía no hay controles. El primero te tomará
         <strong>menos de un minuto</strong>: toca una etiqueta de arriba.</p>
-    </div>`}`;
+    </div>`}
+    <div class="pa-card">
+      <div class="pa-card-title">📔 Novedades de la clase</div>
+      <p class="pa-optional-hint">Algo importante que se dijo o se hizo hoy y que la casa debe saber.
+        Lo leen <strong>todas las familias</strong> en la Bitácora del asistente, tal como lo escribas.
+        No es para regañar a un alumno: eso va en 📣 Comunicados, que sí llega a una sola familia.</p>
+      <textarea id="ad-bit-nueva" class="pa-paste-area ad-bit-ta" rows="3" maxlength="500"
+        placeholder="Ej.: Hoy empezamos las fracciones con la pizza. Pregúntele qué es el denominador."></textarea>
+      <button class="pa-generate-btn" id="ad-bit-add">➕ Anotar la novedad</button>
+      ${(d.bitacora || []).length ? (d.bitacora || []).slice().reverse().map(n => `
+        <div class="ad-gasto-row ad-bit-row">
+          <span><strong>${adFechaBonita(n.fecha)}</strong> · ${adEsc(n.texto)}</span>
+          <span><button class="ad-al-del ad-bit-del" data-bid="${n.id}" aria-label="Borrar novedad">✕</button></span>
+        </div>`).join('')
+        : '<p class="pa-optional-hint">Sin novedades anotadas todavía.</p>'}
+    </div>`;
+
+  const bitTa = document.getElementById('ad-bit-nueva');
+  document.getElementById('ad-bit-add').addEventListener('click', () => {
+    const txt = String(bitTa.value || '').trim();
+    if (txt.length < 4) { toast('✍️ Escribe la novedad (mínimo 4 letras)'); bitTa.focus(); return; }
+    const dd = adLoad();
+    dd.bitacora = dd.bitacora || [];
+    dd.bitacora.push({
+      id: 'N' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      fecha: adHoy(), texto: txt.slice(0, 500),
+    });
+    /* el asistente solo muestra lo vigente y la nube tiene tope por familia:
+       se guardan las últimas 40, que es más de un parcial de novedades */
+    if (dd.bitacora.length > 40) dd.bitacora = dd.bitacora.slice(-40);
+    adSave(dd); renderAdmin();
+    toast('📔 Anotada: las familias la verán en su Bitácora');
+  });
+  body.querySelectorAll('.ad-bit-del').forEach(b =>
+    b.addEventListener('click', async () => {
+      if (!await metasConfirm('¿Borrar esta novedad? Dejará de verse en la Bitácora de las familias.',
+        { icono: '📔', titulo: 'Novedades de la clase', okTxt: 'Sí, borrar' })) return;
+      const dd = adLoad();
+      adUndoGuardar('Borrar una novedad de la clase');
+      dd.bitacora = (dd.bitacora || []).filter(x => x.id !== b.dataset.bid);
+      adSave(dd); renderAdmin();
+    }));
 
   body.querySelectorAll('[data-plant]').forEach(b =>
     b.addEventListener('click', async () => {
@@ -1517,6 +1605,7 @@ function adRenderControles(body, d) {
         id: 'K' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
         icono: p.icono, nombre: String(nombre).trim(), tipo: p.tipo,
         fecha: adHoy(), datos: {},
+        fam: p.fam ? 1 : 0, acum: p.acum ? 1 : 0, misionId: null,
       });
       adSave(dd);
       _adControlId = dd.controles[dd.controles.length - 1].id;
@@ -1568,6 +1657,33 @@ function adRenderControl(body, d) {
     </div>
 
     <div class="pa-card">
+      <div class="pa-card-title">📔 Lo que verá la familia</div>
+      <p class="pa-optional-hint">La <strong>Bitácora</strong> del asistente de padres cuenta esto
+        <strong>solo a la familia del alumno anotado</strong>, nunca al grupo entero.</p>
+      <label class="ad-bit-sw">
+        <input type="checkbox" id="ad-ctrl-fam" ${c.fam ? 'checked' : ''}>
+        <span>Contarlo a la familia en la Bitácora</span>
+      </label>
+      <label class="ad-bit-sw">
+        <input type="checkbox" id="ad-ctrl-acum" ${c.acum ? 'checked' : ''} ${c.fam ? '' : 'disabled'}>
+        <span>Avisar que se le aplicará <strong>evaluación para nota acumulativa</strong></span>
+      </label>
+      <label class="ad-bit-lbl" for="ad-ctrl-mision">📚 Misión para que estudie el tema en casa</label>
+      <select id="ad-ctrl-mision" class="pa-inp-field" ${c.fam ? '' : 'disabled'}>
+        <option value="">Sin misión enlazada</option>
+        ${adMisionOptions(c.misionId)}
+      </select>
+      ${c.fam ? `
+      <div class="ad-bit-prev">
+        <strong>Así lo leerá la familia:</strong><br>
+        ${adEsc(adCtrlBitacoraTxt(c, d, (Object.keys(c.datos || {})[0]) || (d.lista[0] && d.lista[0].num) || 1))}
+        ${adCtrlMision(c) ? `<br><span class="ad-bit-btn-prev">📚 Estudiar «${adEsc(adCtrlMision(c).title)}»</span>` : ''}
+      </div>` : `
+      <p class="pa-optional-hint">🔒 Apagado: este control queda solo para ti. Nada de él llega al
+        asistente de padres.</p>`}
+    </div>
+
+    <div class="pa-card">
       <div class="pa-card-title">⏳ Todavía faltan (${faltan.length})</div>
       ${faltan.length ? `
       <p class="pa-optional-hint" style="margin-top:-2px">${faltan.map(a =>
@@ -1585,6 +1701,21 @@ function adRenderControl(body, d) {
     </div>`;
 
   document.getElementById('ad-ctrl-volver').addEventListener('click', () => { _adControlId = null; renderAdmin(); });
+
+  /* ajustes de la Bitácora: cada cambio se guarda al toque y se repinta, para
+     que la vista previa diga siempre la verdad de lo que va a leer el padre */
+  /* apagar «contarlo a la familia» NO borra la misión ni el aviso de acumulativa:
+     quedan guardados y vuelven al encenderlo. Mientras está apagado no sale ni
+     una fila del teléfono, que es lo único que importa. */
+  const bitSet = (campo, valor) => {
+    const dd = adLoad(); const cc = adControl(dd, _adControlId); if (!cc) return;
+    cc[campo] = valor;
+    adSave(dd); renderAdmin();
+  };
+  document.getElementById('ad-ctrl-fam').addEventListener('change', e => bitSet('fam', e.target.checked ? 1 : 0));
+  document.getElementById('ad-ctrl-acum').addEventListener('change', e => bitSet('acum', e.target.checked ? 1 : 0));
+  document.getElementById('ad-ctrl-mision').addEventListener('change', e =>
+    bitSet('misionId', parseInt(e.target.value, 10) || null));
 
   body.querySelectorAll('.ad-chip').forEach(ch =>
     ch.addEventListener('click', async () => {
@@ -1659,6 +1790,9 @@ function adRenderControl(body, d) {
     dd.controles.push({
       id: 'K' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
       icono: c.icono, nombre: c.nombre, tipo: c.tipo, fecha: adHoy(), datos: {},
+      /* lo que la familia ve viaja con la copia: la ficha de cada parcial se
+         repite igual, con su misma misión y su mismo aviso de acumulativa */
+      fam: c.fam ? 1 : 0, acum: c.acum ? 1 : 0, misionId: c.misionId || null,
     });
     adSave(dd);
     _adControlId = dd.controles[dd.controles.length - 1].id;
@@ -3663,6 +3797,40 @@ function avFilasNube(st) {
         texto: 'Evaluaciones del Parcial ' + p + ': del ' + adFechaBonita(r.desde) +
                ' al ' + adFechaBonita(r.hasta) + '. Apoye el repaso en casa esos días.',
         fecha_evento: r.desde, vigente_hasta: avFechaMas(r.hasta, 7),
+      }, base)));
+    });
+
+    /* AUTOMÁTICO: BITÁCORA de los controles marcados «contarlo a la familia».
+       Cada anotación va SOLO a la clave de ese alumno. Los controles apagados
+       (salud, talla, merienda) no producen ni una fila: no salen del teléfono.
+       Vencen a los 60 días: la Bitácora cuenta lo reciente, y así no se llena
+       el tope de filas por familia con el diario de todo el año. */
+    (d.controles || []).forEach(c => {
+      if (!c.fam) return;
+      const misEnlace = adCtrlMisionClaves(c);
+      Object.keys(c.datos || {}).forEach(num => {
+        const x = claves.find(k => String(k.num) === String(num));
+        if (!x) return;
+        filas.push(Object.assign({
+          evento_id: 'AVB-' + c.id + '-' + x.cod, codigo: x.cod,
+          subtipo: 'individual', prioridad: 'normal',
+          titulo: '📔 Bitácora · ' + (c.icono || '✅') + ' ' + c.nombre,
+          texto: adCtrlBitacoraTxt(c, d, num),
+          claves: misEnlace,
+          fecha_evento: c.fecha, vigente_hasta: avFechaMas(c.fecha, 60),
+        }, base));
+      });
+    });
+
+    /* AUTOMÁTICO: novedades de la clase, escritas por el maestro. Estas SÍ van a
+       todas las familias: es lo que pasó en el aula, no el dato de un alumno. */
+    (d.bitacora || []).forEach(n => {
+      claves.forEach(x => filas.push(Object.assign({
+        evento_id: 'AVN-' + n.id + '-' + x.cod, codigo: x.cod,
+        subtipo: 'aviso', prioridad: 'normal',
+        titulo: '📔 Bitácora · Novedad de la clase',
+        texto: n.texto,
+        fecha_evento: n.fecha, vigente_hasta: avFechaMas(n.fecha, 60),
       }, base)));
     });
 

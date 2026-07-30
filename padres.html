@@ -110,6 +110,14 @@
       display: block; width: 100%; height: auto; margin-top: 8px;
       border: 1px solid var(--borde); border-radius: 10px;
     }
+    /* Bitácora: el botón lleva a la misión del tema de esa ficha */
+    .bit-mision {
+      display: block; margin-top: 8px; padding: 10px 12px;
+      background: var(--verde); color: #fff !important; text-decoration: none;
+      border-radius: 9px; font-size: 14.5px; font-weight: 800; text-align: center;
+      word-break: normal;
+    }
+    .bit-mision:active { transform: scale(.98); }
     /* «Escribiendo…» */
     .typing .bub { color: var(--muted); font-style: italic; }
     /* ── Chips de respuesta rápida ── */
@@ -344,7 +352,7 @@ function pintarChips(lista) {
 }
 const CHIPS_BASE = ['📊 ¿Cómo va?', '📣 Avisos', '📝 Última nota', '📚 Todas las notas',
                     '🗓 ¿Faltó a clases?', '🤒 Avisar falta', '🧮 Boleta del parcial',
-                    '💰 Pagos y colectas', '🧾 Mis recibos', '🙂 Conducta', '🏠 ¿Cómo ayudo en casa?',
+                    '💰 Pagos y colectas', '🧾 Mis recibos', '📔 Bitácora', '🙂 Conducta', '🏠 ¿Cómo ayudo en casa?',
                     '💡 Consejo de hoy', '🔄 Actualizar', '🔑 Cambiar clave'];
 /* Con más de una clave guardada aparece el conmutador de hijos */
 function chipsMenu() {
@@ -537,12 +545,14 @@ async function respResumen() {
       'Promedio: <strong>' + prom + '/100</strong>. Aprobadas: <strong>' + aprob + ' de ' + conNota.length + '</strong>' +
       (nsp ? ' · NSP: ' + nsp : '') + '.<br>' + veredicto;
   }
-  const nAvisos = avDe(['aviso', 'evento', 'material', 'individual']).length;
+  const nAvisos = avDe(['aviso', 'evento', 'material', 'individual']).filter(r => !esBitacora(r)).length;
   if (nAvisos) html += '<br>📣 Tiene <strong>' + nAvisos + '</strong> aviso(s) del maestro — toque «📣 Avisos».';
   const nCond = avDe(['conducta']).length;
   if (nCond) html += '<br>📋 Tiene <strong>' + nCond + '</strong> reporte(s) de conducta — toque «🙂 Conducta».';
   const nRec = esRecibo.de(avDe(['cuentas'])).length;
   if (nRec) html += '<br>🧾 Tiene <strong>' + nRec + '</strong> recibo(s) de aporte — toque «🧾 Mis recibos».';
+  const nBit = bitacoraTodas().length;
+  if (nBit) html += '<br>📔 La <strong>Bitácora</strong> trae ' + nBit + ' anotación(es) de clase — toque «📔 Bitácora».';
   html += notaCardHTML(ROWS[0]) + selloDatos();
   await botSay(html, chipsMenu());
 }
@@ -839,14 +849,15 @@ async function respEconomia() {
   }
   if (!pend.length) html += '<br><br>🎉 No tienen aportes pendientes.';
   else html += '<br><br><small>El aporte se entrega al maestro; él lo marca recibido y aquí se actualiza.</small>';
-  /* recibos y rendición de cuentas: llegan solos desde la Economía de Mi aula.
-     El RECIBO es de esta familia (respalda su movimiento, con folio); las
-     CUENTAS son del grupo entero. Van separados para no confundirlos. */
-  const recibos = esRecibo.de(avDe(['cuentas']));
-  const cuentas = avDe(['cuentas']).filter(r => !esRecibo(r));
-  if (recibos.length) {
-    html += '<br><br>🧾 <strong>Sus recibos de aporte:</strong>' + recibos.map(reciboCardHTML).join('');
+  /* Los RECIBOS no se mezclan aquí: esta respuesta es «qué debo y qué ya di»,
+     y los comprobantes viven en su propia pantalla («🧾 Mis recibos»). Mezclarlos
+     dejaba una pared de texto donde no se hallaba lo pendiente. */
+  const nRec = esRecibo.de(avDe(['cuentas'])).length;
+  if (nRec) {
+    html += '<br><br>🧾 Tiene <strong>' + nRec + '</strong> recibo(s) de lo ya entregado — toque ' +
+      '«🧾 Mis recibos» para verlos o guardarlos.';
   }
+  const cuentas = avDe(['cuentas']).filter(r => !esRecibo(r));
   if (cuentas.length) {
     html += '<br><br>💰 <strong>Cuentas claras del grupo:</strong>' +
       cuentas.map(c => '<br>• <strong>' + esc(String(c.titulo || '').replace(/^Cuentas claras — /, '')) +
@@ -1026,9 +1037,55 @@ function avisoCardHTML(r) {
     (r.fecha_evento ? '<div class="nc-meta" style="margin-top:4px">📅 <strong>' + fmtFecha(r.fecha_evento) + '</strong></div>' : '') +
     '</div>';
 }
+/* ── BITÁCORA de la clase ──
+   La escribe sola Mi aula: cada control que el maestro marcó «contarlo a la
+   familia» (ficha entregada, material, libro…) y las novedades que él anota del
+   día. Viajan por el canal de comunicados y se reconocen por el título, así que
+   se excluyen de «📣 Avisos» para no contar dos veces lo mismo. */
+function esBitacora(r) { return /^📔 Bitácora/.test(String(r && r.titulo || '')); }
+esBitacora.de = arr => (arr || []).filter(esBitacora);
+function bitacoraTodas() {
+  return esBitacora.de(avDe(['individual', 'aviso']))
+    .slice().sort((a, b) => String(b.fecha_evento || '').localeCompare(String(a.fecha_evento || '')));
+}
+function bitacoraCardHTML(r) {
+  const titulo = String(r.titulo || '').replace(/^📔 Bitácora · /, '') || 'Novedad';
+  /* La misión enlazada viaja en `claves` como «url|título». Hay rutas con
+     espacios y acentos («…bisectriz_II y III-Ciclo_Básica.html»), así que no se
+     puede exigir un path limpio: se acepta cualquier ruta RELATIVA (sin «:» que
+     abriría javascript:, sin «/» inicial y sin «..») y se codifica al ponerla. */
+  const par = String(r.claves || '').split('|');
+  const crudo = par[0] || '';
+  const url = (crudo && crudo.indexOf(':') < 0 && crudo[0] !== '/' && crudo.indexOf('..') < 0)
+    ? encodeURI(crudo) : '';
+  const nom = par[1] || 'la misión';
+  return '<div class="nota-card"><div class="nc-top">' +
+    '<span class="nc-eval">' + esc(titulo) + '</span>' +
+    (r.fecha_evento ? '<span class="nc-val ok">' + fmtFecha(r.fecha_evento) + '</span>' : '') + '</div>' +
+    '<div class="nc-meta" style="font-size:14px;margin-top:4px">' + linkify(esc(r.texto || '')) + '</div>' +
+    (url ? '<a class="bit-mision" href="' + esc(url) + '" target="_blank" rel="noopener">' +
+      '📚 Estudiar «' + esc(nom) + '»</a>' : '') +
+    '</div>';
+}
+async function respBitacora() {
+  if (!await conDatos()) return;
+  const bit = bitacoraTodas();
+  if (!bit.length) {
+    await botSay('📔 La <strong>Bitácora</strong> está vacía por ahora. Aquí le iré contando lo que se ' +
+      'anota en clase: cuándo le entregaron una ficha o material de estudio, si hay evaluación de por ' +
+      'medio, y las novedades que el maestro escriba del día.', chipsMenu());
+    return;
+  }
+  await botSay('📔 <strong>Bitácora de la clase</strong>, de lo más reciente a lo más viejo:' +
+    bit.map(bitacoraCardHTML).join('') +
+    '<br><small>Cuando aparezca el botón <strong>📚 Estudiar</strong>, ábralo con su hijo/a: es la misma ' +
+    'misión del tema de esa ficha, con práctica y evaluación en el teléfono.</small>' +
+    selloDatos(), chipsMenu());
+}
+
 async function respAvisos() {
   if (!await conDatos()) return;
-  const avs = avDe(['aviso', 'evento', 'material', 'individual']);
+  const avs = avDe(['aviso', 'evento', 'material', 'individual']).filter(r => !esBitacora(r));
   if (!avs.length) {
     await botSay('📣 Por ahora no hay avisos del maestro. Cuando publique uno (reunión, materiales, ' +
       'suspensión de clases…), aquí se lo muestro.' + selloDatos(), chipsMenu());
@@ -1310,6 +1367,7 @@ const MENU_TXT = 'Escriba el <strong>número</strong> de lo que necesita:<br>' +
 const PISTAS = [
   /* el recibo va primero: «comprobante de pago» trae «pag» y se iría a la
      lista de pendientes cuando lo que piden es el respaldo de lo entregado */
+  [/bitacora|novedad|ficha|diario/, '📔 Bitácora'],
   [/recib|comprob|folio/, '🧾 Mis recibos'],
   [/pag|deb|cuot|colect|aport|diner|pisto|lempir|cobr/, '💰 Pagos y colectas'],
   [/avis|reunion|junta|comunicad|acto|event/, '📣 Avisos'],
@@ -1417,6 +1475,11 @@ async function manejar(txtOriginal) {
       /colaboracion|aporte|cuota|colecta|deuda|dinero|pisto|lempira|cobr|\bpag(o|ar|ue|os|amos)\b|\bdeb(o|e|en|emos)\b(?! mejorar)|cuanto (hay que pagar|se paga|es|cuesta)|pendiente/.test(t)) {
     await respEconomia(); return;
   }
+  /* la Bitácora ANTES de avisos y materiales: «la ficha» y «qué hicieron hoy»
+     son diario de clase, no un aviso ni la lista de útiles */
+  if (/bitacora|novedad|diario de (la )?clase|\bfichas?\b|material de estudio|que hicieron (hoy|en clase)|que paso en (la )?clase/.test(t)) {
+    await respBitacora(); return;
+  }
   /* comunicados del maestro: avisos y eventos, materiales, ficha del aula */
   if (/aviso|comunicad|anuncio|reunion|junta|convocatoria|evento|acto civico|suspend/.test(t)) { await respAvisos(); return; }
   if (/material|utiles|mochila|\bque lleva\b|que hay que (llevar|traer)|\btraer\b|\bllevar\b/.test(t)) { await respMateriales(); return; }
@@ -1515,10 +1578,13 @@ async function novedadesDesde(prev) {
   const faltas = (ROWS_AD || []).filter(r => r.tipo === 'asistencia' &&
     (r.estado === 'ausente' || r.estado === 'excusa') && !vA.has(sigA(r)));
   const otrosAd = (ROWS_AD || []).filter(r => r.tipo !== 'asistencia' && !vA.has(sigA(r)));
-  const avisos = avDe(['aviso', 'evento', 'material', 'individual']).filter(r => !vV.has(sigV(r)));
+  const avisos = avDe(['aviso', 'evento', 'material', 'individual'])
+    .filter(r => !esBitacora(r) && !vV.has(sigV(r)));
+  const bitac = bitacoraTodas().filter(r => !vV.has(sigV(r)));
   const conducta = avDe(['conducta']).filter(r => !vV.has(sigV(r)));
   const recibos = esRecibo.de(avDe(['cuentas'])).filter(r => !vV.has(sigV(r)));
   const partes = [];
+  if (bitac.length) partes.push(bitac.length + ' anotación(es) en la Bitácora');
   if (recibos.length) partes.push(recibos.length + ' recibo(s) de aporte');
   if (conducta.length) partes.push(conducta.length + ' reporte(s) de conducta');
   if (notas.length) {

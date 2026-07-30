@@ -3953,6 +3953,33 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   background: #eef7f1; border: 1px solid #c9e6d5; border-left: 4px solid #16a34a;
   border-radius: 10px; font-size: 12.5px; line-height: 1.5; color: #14532d;
 }
+/* Bitácora: los interruptores que deciden qué sale del teléfono se ven grandes y
+   tocables, y la vista previa muestra el texto EXACTO que leerá la familia. */
+.ad-bit-sw {
+  display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
+  padding: 10px 12px; margin-bottom: 8px;
+  border: 1.5px solid var(--border); border-radius: 10px; background: var(--surface);
+  font-size: 13.5px; line-height: 1.45;
+}
+.ad-bit-sw input { width: 20px; height: 20px; margin: 1px 0 0; flex-shrink: 0; accent-color: var(--brand-mid); }
+.ad-bit-sw input:disabled { opacity: .45; }
+.ad-bit-sw:has(input:disabled) { opacity: .6; cursor: default; }
+.ad-bit-lbl {
+  display: block; font-size: 11px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: .5px; color: var(--muted); margin: 12px 0 5px;
+}
+.ad-bit-prev {
+  margin-top: 12px; padding: 10px 12px;
+  background: #eef4ff; border: 1px solid #ccdcf7; border-left: 4px solid var(--brand-mid);
+  border-radius: 10px; font-size: 13px; line-height: 1.5; color: #16305e;
+}
+.ad-bit-btn-prev {
+  display: inline-block; margin-top: 7px; padding: 5px 11px;
+  background: var(--brand-mid); color: #fff; border-radius: 999px;
+  font-size: 12px; font-weight: 800;
+}
+.ad-bit-ta { min-height: 78px; margin-bottom: 8px; }
+.ad-bit-row { align-items: flex-start; gap: 8px; }
 .ad-btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .ad-btn-row .pa-generate-btn { flex: 1 1 auto; width: auto; margin: 0; }
 
