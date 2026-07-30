@@ -31,6 +31,7 @@ const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
 
 let _adTab = 'lista';        /* lista | eco | asis | ctrl | sace | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
+let _adGastosOn = 0;         /* dentro de «Gastos de mi bolsillo» */
 let _adControlId = null;     /* control abierto en Controles */
 
 /* ── Estado v2: GRUPOS (multi-aula) ──
@@ -293,7 +294,8 @@ function renderAdmin() {
      esté dentro de una colecta o de un control */
   const _atras = document.getElementById('admin-back-btn');
   if (_atras) {
-    const rotulo = _adColectaId ? 'Volver a mis colectas'
+    const rotulo = _adGastosOn ? 'Volver a Economía'
+      : _adColectaId ? 'Volver a mis colectas'
       : _adControlId ? 'Volver a mis controles' : 'Volver a la Zona Docente';
     _atras.setAttribute('aria-label', rotulo);
     _atras.setAttribute('title', rotulo);
@@ -330,7 +332,7 @@ function renderAdmin() {
   cont.querySelectorAll('[data-gid]').forEach(b =>
     b.addEventListener('click', () => {
       const s2 = adState(); s2.activo = b.dataset.gid; adStateSave(s2);
-      _adColectaId = null; _adControlId = null; renderAdmin();
+      _adColectaId = null; _adControlId = null; _adGastosOn = 0; renderAdmin();
     }));
   document.getElementById('ad-gr-add').addEventListener('click', async () => {
     if (!await metasConfirm('Un grupo nuevo tiene su PROPIA lista de alumnos, claves de familia, economía, asistencia y notas.\n\nÚsalo si atiendes **otro grado/sección** o trabajas en **otro colegio**. ¿Crear el grupo?',
@@ -342,7 +344,7 @@ function renderAdmin() {
     toast('🏫 Grupo nuevo: escribe su grado, sección y colegio');
   });
   cont.querySelectorAll('[data-adtab]').forEach(b =>
-    b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; _adControlId = null; renderAdmin(); }));
+    b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; _adControlId = null; _adGastosOn = 0; renderAdmin(); }));
   /* chip de nube: visible en TODAS las pestañas (antes solo en Alumnos
      se sabía si lo publicado ya subió); tocarlo sincroniza ya */
   document.getElementById('ad-nube-chip').addEventListener('click', async () => {
@@ -793,6 +795,47 @@ function adSinLista(body, quePara) {
     </div>`;
 }
 
+/* ══════════════ 🧾 GASTOS DE MI BOLSILLO ══════════════
+   Lo que el maestro paga de lo suyo para el centro y le tienen que devolver:
+   copias, un flete en su propio carro, cartulinas, una reparación. NO es una
+   colecta (esa es plata de los padres) ni un gasto de colecta (ese sale del
+   dinero ya recaudado): es una DEUDA DEL CENTRO CON EL MAESTRO.
+
+   Vive en el nivel de la CUENTA, no del grupo: el bolsillo del maestro es uno
+   solo aunque atienda dos colegios, así que la deuda no se parte por grado.
+   Cada gasto se queda con el nombre del colegio al que se le cobra.
+
+   NUNCA viaja al asistente de padres: esto es entre el maestro y su dirección.
+   Sale del teléfono solo cuando él toca «enviar», y va a quien él decida. */
+const AD_GASTO_CATS = [
+  { k: 'copias',     et: '🖨️ Copias e impresiones' },
+  { k: 'transporte', et: '🚚 Transporte o flete' },
+  { k: 'materiales', et: '🧰 Materiales' },
+  { k: 'refrigerio', et: '🍽️ Refrigerio' },
+  { k: 'servicio',   et: '🔧 Servicio o reparación' },
+  { k: 'otro',       et: '📦 Otro gasto' },
+];
+const AD_GASTO_COBRAR = ['Dirección', 'Tesorería', 'Sociedad de Padres', 'Otro'];
+function adGastoCatEt(k) {
+  const x = AD_GASTO_CATS.find(c => c.k === k);
+  return x ? x.et : '📦 Otro gasto';
+}
+function adGastosLoad() {
+  const st = adState();
+  return Array.isArray(st.gastos) ? st.gastos : [];
+}
+function adGastosSave(arr) {
+  const st = adState();
+  st.gastos = arr;
+  adStateSave(st);
+}
+function adGastosTotales(lista) {
+  const pend = lista.filter(g => g.estado !== 'cobrado');
+  const cobr = lista.filter(g => g.estado === 'cobrado');
+  const suma = a => a.reduce((s, g) => s + (Number(g.monto) || 0), 0);
+  return { pend, cobr, mPend: suma(pend), mCobr: suma(cobr) };
+}
+
 /* ══════════════ 💰 ECONOMÍA — colaboraciones y acuerdos ══════════════ */
 function adColecta(d, id) { return d.colectas.find(c => c.id === id); }
 /* Folio del recibo: FIJO para ese alumno en esa colecta (corregir el monto no
@@ -809,10 +852,22 @@ function adColectaTotales(c) {
 }
 
 function adRenderEco(body, d) {
+  if (_adGastosOn) { adRenderGastos(body, d); return; }
   if (!d.lista.length) { adSinLista(body, 'el registro económico'); return; }
   if (_adColectaId) { adRenderColecta(body, d); return; }
 
+  const gT = adGastosTotales(adGastosLoad());
   body.innerHTML = `
+    <button class="ad-puerta ad-puerta-deuda" id="ad-ir-gastos">
+      <span class="ad-puerta-ic">🧾</span>
+      <span class="ad-puerta-txt">
+        <span class="ad-puerta-t">Gastos de mi bolsillo</span>
+        <span class="ad-puerta-s">${gT.pend.length
+          ? 'La escuela te debe <strong>' + adLps(gT.mPend) + '</strong> en ' + gT.pend.length + ' gasto(s)'
+          : 'Copias, un flete, materiales… anótalo y cóbralo sin pelear de memoria'}</span>
+      </span>
+      <span class="ad-puerta-go">›</span>
+    </button>
     <div class="pa-card">
       <div class="pa-card-title">💰 Colaboraciones y acuerdos</div>
       <p class="pa-optional-hint">Cada acuerdo de reunión (colaboración, rifa, eventualidad) es una
@@ -859,6 +914,252 @@ function adRenderEco(body, d) {
   });
   body.querySelectorAll('.ad-colecta-row').forEach(b =>
     b.addEventListener('click', () => { _adColectaId = b.dataset.cid; renderAdmin(); }));
+  document.getElementById('ad-ir-gastos').addEventListener('click', () => { _adGastosOn = 1; renderAdmin(); });
+}
+
+/* ── Gastos de mi bolsillo: anotar, cobrar y cerrar ──
+   Todo en UNA pantalla: el formulario arriba (categoría y a quién se le cobra en
+   chips, para no escribir de más), y debajo lo pendiente con su total gordo, que
+   es el dato con el que el maestro va a hablar con la tesorera. */
+function adRenderGastos(body, d) {
+  const lista = adGastosLoad();
+  const t = adGastosTotales(lista);
+  const escuela = String(d.escuela || '').trim();
+  const fila = g => `
+    <div class="ad-gsto ${g.estado === 'cobrado' ? 'ad-gsto-ok' : ''}">
+      <div class="ad-gsto-top">
+        <span class="ad-gsto-cat">${adEsc(adGastoCatEt(g.cat))}</span>
+        <span class="ad-gsto-monto">${adLps(g.monto)}</span>
+      </div>
+      <div class="ad-gsto-con">${adEsc(g.concepto)}</div>
+      <div class="ad-gsto-meta">${adFechaBonita(g.fecha)} · cobrar a <strong>${adEsc(g.cobrarA || 'Dirección')}</strong>${
+        g.escuela ? ' · ' + adEsc(g.escuela) : ''} · ${g.factura ? '📎 con recibo' : '⚠️ sin recibo'}${
+        g.estado === 'cobrado' ? ' · ✅ me lo pagaron el ' + adFechaBonita(g.fechaCobro || g.fecha) : ''}</div>
+      <div class="ad-gsto-btns">
+        <button class="ad-gsto-b ad-gsto-wa" data-wa="${g.id}">📲 Enviar este</button>
+        ${g.estado === 'cobrado'
+          ? `<button class="ad-gsto-b" data-reabrir="${g.id}">↩️ Sigue pendiente</button>`
+          : `<button class="ad-gsto-b ad-gsto-ok-b" data-cobrado="${g.id}">✅ Ya me lo pagaron</button>`}
+        <button class="ad-gsto-b ad-gsto-del" data-del="${g.id}" aria-label="Eliminar">🗑</button>
+      </div>
+    </div>`;
+
+  body.innerHTML = `
+    <div class="pa-card">
+      <nav class="nav-ruta" aria-label="Dónde estás">
+        <button class="nav-ruta-link" id="ad-gsto-volver">💰 Economía</button>
+        <span class="nav-ruta-sep" aria-hidden="true">›</span>
+        <span class="nav-ruta-actual" aria-current="page">estás aquí</span>
+      </nav>
+      <div class="pa-card-title">🧾 Gastos de mi bolsillo</div>
+      <p class="pa-optional-hint">Lo que <strong>pagaste de lo tuyo</strong> para el centro y te tienen
+        que devolver: copias, un flete en tu carro, cartulinas, una reparación. No se mezcla con las
+        colectas, porque esa es plata de los padres.
+        <strong>Nada de esto llega al asistente de padres</strong>: sale de aquí solo cuando tú lo envías.</p>
+
+      <div class="ad-gsto-marcador">
+        <span class="ad-gsto-m-lbl">La escuela me debe</span>
+        <span class="ad-gsto-m-val">${adLps(t.mPend)}</span>
+        <span class="ad-gsto-m-sub">${t.pend.length} gasto(s) por cobrar${
+          t.cobr.length ? ' · ' + adLps(t.mCobr) + ' ya recuperados' : ''}</span>
+      </div>
+
+      <div class="ad-gsto-lbl">🗂️ ¿De qué fue el gasto?</div>
+      <div class="ad-gchips" id="ad-gsto-cats">
+        ${AD_GASTO_CATS.map((c, i) =>
+          `<button class="ad-gchip${i === 0 ? ' ad-gchip-sel' : ''}" data-cat="${c.k}">${c.et}</button>`).join('')}
+      </div>
+      <div class="ad-gsto-lbl">✍️ ¿En qué exactamente?</div>
+      <input id="ad-gsto-con" class="pa-inp-field" maxlength="120" autocomplete="off"
+             placeholder="Ej.: 43 juegos de la ficha de Español">
+      <div class="ad-gsto-fila2">
+        <div>
+          <div class="ad-gsto-lbl">💵 ¿Cuánto pagaste?</div>
+          <input id="ad-gsto-monto" class="pa-inp-field" inputmode="decimal" placeholder="120">
+        </div>
+        <div>
+          <div class="ad-gsto-lbl">🗓 ¿Qué día?</div>
+          <input id="ad-gsto-fecha" class="pa-inp-field" type="date" value="${adHoy()}">
+        </div>
+      </div>
+      <div class="ad-gsto-lbl">🙋 ¿A quién se le cobra?</div>
+      <div class="ad-gchips" id="ad-gsto-cobrar">
+        ${AD_GASTO_COBRAR.map((c, i) =>
+          `<button class="ad-gchip${i === 1 ? ' ad-gchip-sel' : ''}" data-cobrar="${adEsc(c)}">${adEsc(c)}</button>`).join('')}
+      </div>
+      <label class="ad-bit-sw" style="margin-top:10px">
+        <input type="checkbox" id="ad-gsto-fac" checked>
+        <span>Guardé el <strong>recibo o factura</strong> (súbelo con esto y no te lo discuten)</span>
+      </label>
+      <button class="pa-generate-btn" id="ad-gsto-add">➕ Anotar este gasto</button>
+    </div>
+
+    ${t.pend.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">⏳ Por cobrar (${t.pend.length})</div>
+      ${t.pend.slice().reverse().map(fila).join('')}
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn" id="ad-gsto-wa-todo">📲 Enviar el resumen por WhatsApp</button>
+      </div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-gsto-copiar">📋 Copiar el resumen</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-gsto-print">🖨️ Imprimir la solicitud</button>
+      </div>
+      <p class="pa-optional-hint">💡 El resumen sirve igual para el grupo de WhatsApp de maestros,
+        para la tesorera o para dirección: va con fecha, concepto, monto y total.</p>
+    </div>` : `
+    <div class="pa-card">
+      <p class="pa-optional-hint">🎉 No tienes gastos por cobrar. Cuando saques copias o prestes el
+        carro para un flete, anótalo arriba <strong>el mismo día</strong>: es cuando te acordás del monto.</p>
+    </div>`}
+
+    ${t.cobr.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">✅ Ya recuperados (${t.cobr.length})</div>
+      ${t.cobr.slice().reverse().map(fila).join('')}
+    </div>` : ''}`;
+
+  document.getElementById('ad-gsto-volver').addEventListener('click', () => { _adGastosOn = 0; renderAdmin(); });
+
+  /* chips: se seleccionan SIN repintar la pantalla, para no borrar lo escrito */
+  const chipUnico = (cont) => body.querySelectorAll('#' + cont + ' .ad-gchip').forEach(b =>
+    b.addEventListener('click', () => {
+      body.querySelectorAll('#' + cont + ' .ad-gchip').forEach(x => x.classList.remove('ad-gchip-sel'));
+      b.classList.add('ad-gchip-sel');
+    }));
+  chipUnico('ad-gsto-cats'); chipUnico('ad-gsto-cobrar');
+
+  document.getElementById('ad-gsto-add').addEventListener('click', () => {
+    const con = String(document.getElementById('ad-gsto-con').value || '').trim();
+    const mRaw = String(document.getElementById('ad-gsto-monto').value || '').replace(',', '.').trim();
+    const monto = Number(mRaw);
+    if (con.length < 3) { toast('✍️ Escribe en qué fue el gasto'); document.getElementById('ad-gsto-con').focus(); return; }
+    if (!(monto > 0)) { toast('💵 Escribe cuánto pagaste'); document.getElementById('ad-gsto-monto').focus(); return; }
+    const cat = (body.querySelector('#ad-gsto-cats .ad-gchip-sel') || {}).dataset;
+    const cob = (body.querySelector('#ad-gsto-cobrar .ad-gchip-sel') || {}).dataset;
+    const arr = adGastosLoad();
+    arr.push({
+      id: 'X' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      fecha: String(document.getElementById('ad-gsto-fecha').value || adHoy()),
+      cat: (cat && cat.cat) || 'otro', concepto: con, monto,
+      cobrarA: (cob && cob.cobrar) || 'Tesorería',
+      factura: document.getElementById('ad-gsto-fac').checked ? 1 : 0,
+      escuela, estado: 'pendiente',
+    });
+    adGastosSave(arr); renderAdmin();
+    toast('🧾 Anotado: ya no depende de tu memoria');
+  });
+
+  body.querySelectorAll('[data-cobrado]').forEach(b =>
+    b.addEventListener('click', () => {
+      const arr = adGastosLoad();
+      const g = arr.find(x => x.id === b.dataset.cobrado); if (!g) return;
+      g.estado = 'cobrado'; g.fechaCobro = adHoy();
+      adGastosSave(arr); renderAdmin();
+      toast('✅ Cobrado: sale de lo pendiente');
+    }));
+  body.querySelectorAll('[data-reabrir]').forEach(b =>
+    b.addEventListener('click', () => {
+      const arr = adGastosLoad();
+      const g = arr.find(x => x.id === b.dataset.reabrir); if (!g) return;
+      g.estado = 'pendiente'; delete g.fechaCobro;
+      adGastosSave(arr); renderAdmin();
+    }));
+  body.querySelectorAll('[data-del]').forEach(b =>
+    b.addEventListener('click', async () => {
+      if (!await metasConfirm('¿Eliminar este gasto de tu registro?',
+        { icono: '🗑', titulo: 'Gastos de mi bolsillo', okTxt: 'Sí, eliminar' })) return;
+      adUndoGuardar('Eliminar un gasto de mi bolsillo');
+      adGastosSave(adGastosLoad().filter(x => x.id !== b.dataset.del));
+      renderAdmin();
+    }));
+  body.querySelectorAll('[data-wa]').forEach(b =>
+    b.addEventListener('click', () => {
+      const g = adGastosLoad().find(x => x.id === b.dataset.wa); if (!g) return;
+      adGastoEnviar(adGastoTxtUno(g, d));
+    }));
+
+  const wt = document.getElementById('ad-gsto-wa-todo');
+  if (wt) wt.addEventListener('click', () => adGastoEnviar(adGastoTxtResumen(t.pend, d)));
+  const cp = document.getElementById('ad-gsto-copiar');
+  if (cp) cp.addEventListener('click', () => adCopiar(adGastoTxtResumen(t.pend, d),
+    () => toast('📋 Copiado: pégalo donde lo necesites'),
+    () => toast('⚠️ No se pudo copiar en este navegador')));
+  const pr = document.getElementById('ad-gsto-print');
+  if (pr) pr.addEventListener('click', () => adPrintGastos(t.pend, d));
+}
+
+/* WhatsApp sin número: abre el selector del teléfono para que el maestro elija
+   dirección, la tesorera o el grupo de maestros, sin guardar contactos aquí. */
+function adGastoEnviar(txt) {
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+}
+function adGastoTxtUno(g, d) {
+  return '🧾 *Gasto por reembolsar*\n' +
+    (adDocenteNombre() ? adDocenteNombre() + '\n' : '') +
+    (g.escuela || d.escuela ? (g.escuela || d.escuela) + '\n' : '') + '\n' +
+    adFechaBonita(g.fecha) + ' · ' + adGastoCatEt(g.cat) + '\n' +
+    g.concepto + '\n' +
+    '*' + adLps(g.monto) + '*' + (g.factura ? ' (tengo el recibo)' : ' (sin recibo)') + '\n' +
+    'A cobrar a: ' + (g.cobrarA || 'Dirección') + '\n\n' +
+    'Agradezco la gestión del reembolso.\n_Anotado con M.E.T.A.S_';
+}
+function adGastoTxtResumen(pend, d) {
+  const total = pend.reduce((s, g) => s + (Number(g.monto) || 0), 0);
+  const aQuien = [...new Set(pend.map(g => g.cobrarA || 'Dirección'))].join(' y ');
+  return '🧾 *SOLICITUD DE REEMBOLSO*\n' +
+    (adDocenteNombre() ? adDocenteNombre() + '\n' : '') +
+    (d.escuela ? String(d.escuela).trim() + '\n' : '') +
+    'Al ' + adFechaBonita(adHoy()) + '\n\n' +
+    'Gastos que hice de mi bolsillo para el centro:\n' +
+    pend.slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha))).map((g, i) =>
+      (i + 1) + '. ' + adFechaBonita(g.fecha) + ' · ' + adGastoCatEt(g.cat) + ' · ' + g.concepto +
+      ' — *' + adLps(g.monto) + '*' + (g.factura ? ' (con recibo)' : ' (sin recibo)')).join('\n') +
+    '\n\n*TOTAL POR REEMBOLSAR: ' + adLps(total) + '*\n' +
+    'A cobrar a: ' + aQuien + '\n\n' +
+    'Quedo a la orden para entregar los recibos.\n_Anotado con M.E.T.A.S_';
+}
+
+/* Solicitud imprimible: la que se firma y queda archivada en dirección */
+function adPrintGastos(pend, d) {
+  const total = pend.reduce((s, g) => s + (Number(g.monto) || 0), 0);
+  const orden = pend.slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Solicitud de reembolso</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;font-size:12px;color:#111;background:#fff;padding:12mm;}
+h1{font-size:16px;color:#1e3a7c;margin-bottom:2mm;}
+.sub{font-size:11px;color:#444;margin-bottom:5mm;}
+table{width:100%;border-collapse:collapse;margin-bottom:5mm;}
+th,td{border:1px solid #999;padding:3px 6px;text-align:left;}
+th{background:#e8eef9;font-size:11px;}
+td.n{text-align:right;white-space:nowrap;}
+.tot{margin:4mm 0;font-size:14px;font-weight:bold;}
+.firmas{display:flex;gap:14mm;margin-top:16mm;}
+.firma{flex:1;border-top:1.5px solid #333;text-align:center;padding-top:2mm;font-size:11px;}
+.noprint{margin-bottom:5mm;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
+<h1>🧾 Solicitud de reembolso</h1>
+<div class="sub">${adDocenteNombre() ? adEsc(adDocenteNombre()) + ' · ' : ''}${d.escuela ? adEsc(String(d.escuela).trim()) + ' · ' : ''}${
+  adGradoSeccion(d.grado, d.seccion) ? 'Grupo ' + adEsc(adGradoSeccion(d.grado, d.seccion)) + ' · ' : ''}Generado con M.E.T.A.S el ${adFechaBonita(adHoy())}</div>
+<table>
+<thead><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Recibo</th><th>Se cobra a</th><th>Monto</th></tr></thead>
+<tbody>
+${orden.map(g => `<tr><td>${adFechaBonita(g.fecha)}</td><td>${adEsc(adGastoCatEt(g.cat))}</td><td>${adEsc(g.concepto)}</td><td>${g.factura ? 'Sí' : 'No'}</td><td>${adEsc(g.cobrarA || 'Dirección')}</td><td class="n">${adLps(g.monto)}</td></tr>`).join('')}
+</tbody></table>
+<div class="tot">TOTAL POR REEMBOLSAR: ${adLps(total)}</div>
+<div class="firmas">
+  <div class="firma">Docente solicitante</div>
+  <div class="firma">Tesorería</div>
+  <div class="firma">Dirección</div>
+</div>
+</body></html>`;
+  const w = window.open('', '_blank');
+  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
+  w.document.write(html); w.document.close();
 }
 
 function adRenderColecta(body, d) {
@@ -4033,6 +4334,7 @@ document.addEventListener('DOMContentLoaded', () => {
      del encabezado con el enlace de la colecta y se salía del aula sin
      querer. Fuera de una colecta sí sale a la Zona Docente. */
   document.getElementById('admin-back-btn')?.addEventListener('click', () => {
+    if (_adGastosOn) { _adGastosOn = 0; renderAdmin(); return; }
     if (_adColectaId) { _adColectaId = null; renderAdmin(); return; }
     if (_adControlId) { _adControlId = null; renderAdmin(); return; }
     switchView('view-perfil');
