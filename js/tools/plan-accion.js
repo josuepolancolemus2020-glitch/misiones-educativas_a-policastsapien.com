@@ -20,6 +20,19 @@ const PA_SUGS = {
 let _paInitDone = false;
 let _paStudents = [];
 
+/* Grado + sección con la NORMATIVA del proyecto: siempre «6º-1».
+   La regla vive en adGradoSeccion (js/tools/registros-admin.js), que se
+   carga en la misma página; el respaldo es por si este archivo se usa
+   suelto. Nunca se usa para armar claves de familia: eso va con los
+   dígitos pelados (paCodigoAlumno). */
+function paGrupoTxt(grado, seccion) {
+  if (typeof adGradoSeccion === 'function') return adGradoSeccion(grado, seccion);
+  const g = String(grado || '').trim().replace(/^(\d{1,2})\s*[ºo°]?$/i, '$1º');
+  const s = String(seccion || '').trim();
+  if (!g || !s) return g || s;
+  return (g.length <= 4 && s.length <= 3) ? g + '-' + s : g + ' ' + s;
+}
+
 function paGradeColors(g) {
   if (typeof g !== 'number') return { bg:'#e5e7eb', txt:'#374151' };
   if (g >= 95) return { bg:'#22c55e', txt:'#fff' };
@@ -118,7 +131,9 @@ function paGenerate() {
     return `<div class="pa-ng-col">${rows}</div>`;
   }).join('');
 
-  const grupoTxt = (grado !== '—' ? grado : '') + (seccion !== '—' ? ' ' + seccion : '');
+  /* El grupo se escribe con la regla del proyecto: «6º-1», no «6 1»
+     (adGradoSeccion, en js/tools/registros-admin.js) */
+  const grupoTxt = paGrupoTxt(grado === '—' ? '' : grado, seccion === '—' ? '' : seccion);
   /* Sin GRADO no hay clave de familia (paCodigoAlumno) y nada de esto llega
      al asistente. Decirlo aquí, grande, en vez de dejar creer que subió. */
   const sinGrado = !String(grado === '—' ? '' : grado).replace(/\D/g, '');
@@ -496,7 +511,11 @@ async function paCaptureGrilla() {
     const dataUrl   = canvas.toDataURL('image/png');
     const grado     = document.getElementById('pa-grado')?.value    || 'grado';
     const seccion   = document.getElementById('pa-seccion')?.value  || 'seccion';
-    const fileName  = `calificaciones-${grado}-${seccion}.png`.replace(/\s+/g, '-');
+    /* El NOMBRE DEL ARCHIVO va sin adornos: el grupo se escribe «6º-1» en
+       pantalla, pero la «º» y los acentos dan problemas al guardar y al
+       compartir, así que aquí se queda «calificaciones-6-1.png». */
+    const limpio    = s => String(s).normalize('NFD').replace(/[^\w-]/g, '') || 'x';
+    const fileName  = `calificaciones-${limpio(grado)}-${limpio(seccion)}.png`;
     const cap = window.Capacitor;
     if (cap && cap.isNativePlatform?.() && cap.Plugins?.Filesystem && cap.Plugins?.Share) {
       const result = await cap.Plugins.Filesystem.writeFile({ path: fileName, data: dataUrl.split(',')[1], directory: 'CACHE' });
@@ -838,7 +857,7 @@ function paRenderHistorial() {
       <div class="pa-hist-row">
         <div class="pa-hist-info">
           <span class="pa-hist-titulo">${paEsc(a.evaluacion || 'Evaluación')}${a.parcial ? ' · P-' + paEsc(a.parcial) : ''}</span>
-          <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(a.grado || '')} ${paEsc(a.seccion || '')} · ${a.students.length} alumnos · prom. ${avg}${mat ? ' · ' + paEsc(paMateriaNom(mat)) : ''}</span>
+          <span class="pa-hist-meta">${(a.t || '').slice(0, 10)} · ${paEsc(paGrupoTxt(a.grado, a.seccion))} · ${a.students.length} alumnos · prom. ${avg}${mat ? ' · ' + paEsc(paMateriaNom(mat)) : ''}</span>
           <span class="pa-hist-meta">${nube}${wa}</span>
         </div>
         ${pendNube ? `<button class="pa-hist-subir" data-id="${a.id}">☁️ Subir ahora</button>` : ''}
@@ -1217,7 +1236,7 @@ document.addEventListener('DOMContentLoaded', () => {
       (r.querySelector('.pa-inp-name')?.value || '').trim() ||
       (r.querySelector('.pa-inp-grade-cell')?.value || '').trim());
     if (hayFilas && !await metasConfirm('Se reemplazarán las filas actuales con la lista de **' +
-      ((g.grado || '') + ' ' + (g.seccion || '')).trim() + (g.escuela ? ' · ' + g.escuela : '') +
+      paGrupoTxt(g.grado, g.seccion) + (g.escuela ? ' · ' + g.escuela : '') +
       '** (' + g.lista.length + ' alumnos). ¿Continuar?',
       { icono: '👥', titulo: 'Traer mi lista', okTxt: 'Sí, traer' })) return;
     const gradoInp = document.getElementById('pa-grado');

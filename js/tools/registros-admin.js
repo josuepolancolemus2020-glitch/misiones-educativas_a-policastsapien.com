@@ -257,20 +257,49 @@ function adLps(n) {
   const v = Math.round((Number(n) || 0) * 100) / 100;
   return 'L ' + v.toLocaleString('es-HN');
 }
-/* Grado y sección juntos: «6» y «1» son SEXTO GRADO, SECCIÓN 1, y pegados
-   se leían «61», como si fuera un número. El guion los separa.
-   Solo entra cuando las dos partes son cortas, que es como las escribe el
-   maestro (6-1, 9-2, 7-A); si alguien escribe «Sexto» y «A», un guion
-   quedaría raro y se usa el espacio de siempre. */
-function adGradoSeccion(grado, seccion) {
+/* ══════════════ NORMATIVA · CÓMO SE ESCRIBE UN GRUPO ══════════════
+   Un grupo SIEMPRE se lee «6º-1»: el grado con su MARCA DE ORDINAL,
+   guion, y la sección. Nada de inventar el formato en cada pantalla.
+
+   Por qué, y en este orden se fueron corrigiendo:
+     «61»   → parecía el número sesenta y uno.
+     «6-1»  → ya separaba, pero el 6 seguía leyéndose como cantidad.
+     «6º-1» → dice lo que es: SEXTO grado, sección 1.
+
+   El maestro escribe el grado como le sale —«6», «6º», «6°», «6o»— y
+   aquí se muestra siempre igual. Si escribe una palabra («Bachillerato»,
+   «Kinder») se respeta tal cual: el ordinal solo aplica a números.
+
+   ► TODA pantalla, documento impreso o mensaje que junte grado y
+     sección pasa por adGradoSeccion(). Si algún día hay que cambiar el
+     formato otra vez, se cambia AQUÍ y en ningún otro lugar.
+   ► NO la usa la lógica interna: las claves de familia
+     (paCodigoAlumno/adClaveFamilia), las llaves de guardado y los
+     nombres de archivo trabajan con los DÍGITOS pelados. Meterles la
+     «º» invalidaría claves ya entregadas a las familias.
+   ► Las páginas que no cargan este archivo (padres.html) llevan su
+     propia copia de la regla, marcada con esta misma nota. */
+function adGradoOrdinal(grado) {
   const g = String(grado || '').trim();
+  if (!g) return '';
+  const m = g.match(/^(\d{1,2})\s*[ºo°]?$/i);
+  return m ? m[1] + 'º' : g;
+}
+/* El guion solo entra cuando las dos partes son cortas, que es como las
+   escribe el maestro (6º-1, 9º-2, 7º-A); con «Bachillerato» y «A» un
+   guion quedaría raro y se usa el espacio de siempre. */
+function adGradoSeccion(grado, seccion) {
+  const g = adGradoOrdinal(grado);
   const s = String(seccion || '').trim();
   if (!g || !s) return g || s;
-  return (g.length <= 3 && s.length <= 3) ? g + '-' + s : g + ' ' + s;
+  return (g.length <= 4 && s.length <= 3) ? g + '-' + s : g + ' ' + s;
 }
-/* Para lectores de pantalla y para el «title» del chip: sin abreviar. */
+window.adGradoSeccion = adGradoSeccion;
+/* Para lectores de pantalla y para el «title» del chip: sin abreviar.
+   Aquí la palabra «Grado» ya dice lo que es, así que el número va pelado
+   («Grado 6», no «Grado 6º»), aunque el maestro lo haya escrito con º. */
 function adGrupoTitulo(g) {
-  const grado = String(g.grado || '').trim();
+  const grado = String(g.grado || '').trim().replace(/\s*[ºo°]\s*$/i, '');
   const sec = String(g.seccion || '').trim();
   const partes = [];
   if (grado) partes.push('Grado ' + grado);

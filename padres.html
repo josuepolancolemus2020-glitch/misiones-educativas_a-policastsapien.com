@@ -217,6 +217,18 @@ function norm(s) {
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
 }
+/* NORMATIVA DEL PROYECTO · cómo se escribe un grupo ─────────────────
+   Un grupo SIEMPRE se lee «6º-1»: sexto grado, sección 1. Nunca «6 1»
+   (dos números sueltos) ni «61» (parece sesenta y uno).
+   Esta página es AUTÓNOMA —no carga js/tools/registros-admin.js— así que
+   lleva su propia copia de adGradoSeccion(). Si allá cambia la regla,
+   cambia también aquí: la madre y el maestro tienen que leer lo mismo. */
+function grupoTxt(grado, seccion) {
+  const g = String(grado || '').trim().replace(/^(\d{1,2})\s*[ºo°]?$/i, '$1º');
+  const s = String(seccion || '').trim();
+  if (!g || !s) return g || s;
+  return (g.length <= 4 && s.length <= 3) ? g + '-' + s : g + ' ' + s;
+}
 /* Chat-speak y errores comunes al escribir («q debe mi ijo», «como ba»):
    se expanden palabra por palabra DESPUÉS de norm, para que las reglas
    trabajen siempre con español estándar. */
@@ -636,7 +648,7 @@ async function respMaestro() {
   const todas = ROWS.concat(ROWS_AD || []);
   const conDoc = todas.find(r => r.docente);
   const r = todas[0] || {};
-  const grupo = [r.grado, r.seccion].filter(Boolean).join(' ');
+  const grupo = grupoTxt(r.grado, r.seccion);
   let html = conDoc
     ? '👨‍🏫 Las notas las registró <strong>' + esc(conDoc.docente) + '</strong>' + (grupo ? ' (' + esc(grupo) + ')' : '') + '.'
     : '👨‍🏫 En las notas no aparece el nombre del docente' + (grupo ? ', pero el grupo es <strong>' + esc(grupo) + '</strong>' : '') + '.';
@@ -1309,7 +1321,7 @@ function identidadClave(codigo) {
   const num = (String(codigo).match(/^(\d+)/) || [])[1] || '';
   let grupo = '', doc = '';
   (ROWS || []).concat(ROWS_AD || []).forEach(r => {
-    if (!grupo) grupo = r.grupo || [(r.grado || ''), (r.seccion || '')].filter(Boolean).join(' ');
+    if (!grupo) grupo = r.grupo || grupoTxt(r.grado, r.seccion);
     if (!doc) doc = r.docente || '';
   });
   return { num, grupo: String(grupo).trim(), doc: String(doc).trim() };
