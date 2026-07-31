@@ -32,6 +32,7 @@ const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
 let _adTab = 'lista';        /* lista | eco | asis | ctrl | sace | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
 let _adGastosOn = 0;         /* dentro de «Gastos de mi bolsillo» */
+let _adInvOn = 0;            /* dentro de «Inventario del aula» */
 let _adFichasOn = 0;         /* dentro de «Identidad y contactos» */
 let _adControlId = null;     /* control abierto en Controles */
 
@@ -296,7 +297,7 @@ function renderAdmin() {
   const _atras = document.getElementById('admin-back-btn');
   if (_atras) {
     const rotulo = _adFichasOn ? 'Volver a Alumnos'
-      : _adGastosOn ? 'Volver a Economía'
+      : (_adGastosOn || _adInvOn) ? 'Volver a Economía'
       : _adColectaId ? 'Volver a mis colectas'
       : _adControlId ? 'Volver a mis controles' : 'Volver a la Zona Docente';
     _atras.setAttribute('aria-label', rotulo);
@@ -334,7 +335,7 @@ function renderAdmin() {
   cont.querySelectorAll('[data-gid]').forEach(b =>
     b.addEventListener('click', () => {
       const s2 = adState(); s2.activo = b.dataset.gid; adStateSave(s2);
-      _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adFichasOn = 0; renderAdmin();
+      _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0; renderAdmin();
     }));
   document.getElementById('ad-gr-add').addEventListener('click', async () => {
     if (!await metasConfirm('Un grupo nuevo tiene su PROPIA lista de alumnos, claves de familia, economía, asistencia y notas.\n\nÚsalo si atiendes **otro grado/sección** o trabajas en **otro colegio**. ¿Crear el grupo?',
@@ -346,7 +347,7 @@ function renderAdmin() {
     toast('🏫 Grupo nuevo: escribe su grado, sección y colegio');
   });
   cont.querySelectorAll('[data-adtab]').forEach(b =>
-    b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adFichasOn = 0; renderAdmin(); }));
+    b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0; renderAdmin(); }));
   /* chip de nube: visible en TODAS las pestañas (antes solo en Alumnos
      se sabía si lo publicado ya subió); tocarlo sincroniza ya */
   document.getElementById('ad-nube-chip').addEventListener('click', async () => {
@@ -1286,10 +1287,12 @@ function adColectaTotales(c) {
 
 function adRenderEco(body, d) {
   if (_adGastosOn) { adRenderGastos(body, d); return; }
+  if (_adInvOn) { adRenderInventario(body, d); return; }
   if (!d.lista.length) { adSinLista(body, 'el registro económico'); return; }
   if (_adColectaId) { adRenderColecta(body, d); return; }
 
   const gT = adGastosTotales(adGastosLoad());
+  const iT = adInvTotales(adInvLoad());
   body.innerHTML = `
     <button class="ad-puerta ad-puerta-deuda" id="ad-ir-gastos">
       <span class="ad-puerta-ic">🧾</span>
@@ -1298,6 +1301,17 @@ function adRenderEco(body, d) {
         <span class="ad-puerta-s">${gT.pend.length
           ? 'La escuela te debe <strong>' + adLps(gT.mPend) + '</strong> en ' + gT.pend.length + ' gasto(s)'
           : 'Copias, un flete, materiales… anótalo y cóbralo sin pelear de memoria'}</span>
+      </span>
+      <span class="ad-puerta-go">›</span>
+    </button>
+    <button class="ad-puerta ad-puerta-inv" id="ad-ir-inv">
+      <span class="ad-puerta-ic">📦</span>
+      <span class="ad-puerta-txt">
+        <span class="ad-puerta-t">Inventario del aula</span>
+        <span class="ad-puerta-s">${iT.mio.length
+          ? 'Tienes <strong>' + iT.mio.length + '</strong> cosa(s) tuyas en el aula por ' +
+            adLps(iT.vMio) + (adInvVence() ? ' · ⚠️ toca firmar el acta' : '')
+          : 'Lo que es TUYO y lo que es de la escuela, separado y con acta firmada'}</span>
       </span>
       <span class="ad-puerta-go">›</span>
     </button>
@@ -1348,6 +1362,7 @@ function adRenderEco(body, d) {
   body.querySelectorAll('.ad-colecta-row').forEach(b =>
     b.addEventListener('click', () => { _adColectaId = b.dataset.cid; renderAdmin(); }));
   document.getElementById('ad-ir-gastos').addEventListener('click', () => { _adGastosOn = 1; renderAdmin(); });
+  document.getElementById('ad-ir-inv').addEventListener('click', () => { _adInvOn = 1; renderAdmin(); });
 }
 
 /* ── Gastos de mi bolsillo: anotar, cobrar y cerrar ──
@@ -1589,6 +1604,470 @@ ${orden.map(g => `<tr><td>${adFechaBonita(g.fecha)}</td><td>${adEsc(adGastoCatEt
   <div class="firma">Tesorería</div>
   <div class="firma">Dirección</div>
 </div>
+</body></html>`;
+  const w = window.open('', '_blank');
+  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
+  w.document.write(html); w.document.close();
+}
+
+/* ══════════════ 📦 INVENTARIO DEL AULA ══════════════
+   El aula está llena de cosas y NO todas son de la escuela. El maestro
+   compra un parlante, una engrapadora, un abanico… y muchas veces nadie
+   se lo paga. Cuando lo trasladan, esa discusión se pierde de memoria.
+
+   Aquí cada cosa dice DE QUIÉN ES, con una regla simple y verificable:
+
+   🧑‍🏫 MÍO   — lo compré con mi dinero y NO me lo han reembolsado.
+                Es propiedad personal del docente y puede retirarlo.
+                El día que la escuela se lo pague, deja de ser suyo:
+                el botón «✅ Ya me lo pagaron» lo pasa a la escuela y
+                queda escrito quién pagó y cuándo.
+   🏫 DE LA ESCUELA — bien del centro bajo custodia del docente: lo usa,
+                lo cuida y lo entrega al final del año.
+   🎁 DONADO — lo regalaron los padres o un tercero AL AULA: pertenece
+                al centro, pero se guarda el nombre de quien lo donó.
+
+   El ACTA imprimible es lo que le da valor legal: la firman el docente,
+   la dirección y la directiva de padres cada cierto tiempo (por defecto
+   cada 3 meses; el aviso sale solo cuando se vence).
+
+   Vive en el nivel de la CUENTA (st.inventario / st.invActas), como los
+   gastos: el patrimonio del maestro es uno solo aunque atienda dos
+   grupos. NUNCA viaja al asistente de padres. */
+const AD_INV_CATS = [
+  { k: 'tecnologia', et: '💻 Tecnología' },
+  { k: 'mobiliario', et: '🪑 Mobiliario' },
+  { k: 'didactico',  et: '🧩 Material didáctico' },
+  { k: 'libros',     et: '📚 Libros y textos' },
+  { k: 'aseo',       et: '🧹 Aseo y mantenimiento' },
+  { k: 'deporte',    et: '⚽ Deporte y arte' },
+  { k: 'otro',       et: '📦 Otro' },
+];
+const AD_INV_DUENOS = [
+  { k: 'mio',     et: '🧑‍🏫 Mío',           largo: 'Propiedad del docente' },
+  { k: 'escuela', et: '🏫 De la escuela',  largo: 'Propiedad del centro educativo' },
+  { k: 'donado',  et: '🎁 Donado al aula', largo: 'Donación al centro educativo' },
+];
+const AD_INV_MESES_ACTA = 3;   /* cada trimestre toca volver a firmar */
+
+function adInvCatEt(k) {
+  const x = AD_INV_CATS.find(c => c.k === k);
+  return x ? x.et : '📦 Otro';
+}
+function adInvDuenoEt(k) {
+  const x = AD_INV_DUENOS.find(c => c.k === k);
+  return x ? x.et : '🏫 De la escuela';
+}
+function adInvDuenoLargo(k) {
+  const x = AD_INV_DUENOS.find(c => c.k === k);
+  return x ? x.largo : 'Propiedad del centro educativo';
+}
+function adInvLoad() {
+  const st = adState();
+  return Array.isArray(st.inventario) ? st.inventario : [];
+}
+function adInvSave(arr) {
+  const st = adState();
+  st.inventario = arr;
+  adStateSave(st);
+}
+function adInvActas() {
+  const st = adState();
+  return Array.isArray(st.invActas) ? st.invActas : [];
+}
+function adInvActasSave(arr) {
+  const st = adState();
+  st.invActas = arr;
+  adStateSave(st);
+}
+function adInvTotales(lista) {
+  const val = a => a.reduce((s, x) => s + (Number(x.valor) || 0) * (Number(x.cant) || 1), 0);
+  const mio = lista.filter(x => x.dueno === 'mio');
+  const esc = lista.filter(x => x.dueno === 'escuela');
+  const don = lista.filter(x => x.dueno === 'donado');
+  return { mio, esc, don, vMio: val(mio), vEsc: val(esc), vDon: val(don) };
+}
+/* ¿Toca firmar? Sin acta nunca, o con la última de hace más de un
+   trimestre. Solo pesa si hay algo que declarar. */
+function adInvVence() {
+  if (!adInvLoad().length) return false;
+  const actas = adInvActas();
+  if (!actas.length) return true;
+  const ult = actas[actas.length - 1];
+  const t = Date.parse(ult.fecha || ult.t || '');
+  if (!t) return true;
+  return (Date.now() - t) > AD_INV_MESES_ACTA * 30 * 86400000;
+}
+function adInvUltimaActa() {
+  const actas = adInvActas();
+  return actas.length ? actas[actas.length - 1] : null;
+}
+
+function adRenderInventario(body, d) {
+  const lista = adInvLoad();
+  const t = adInvTotales(lista);
+  const ult = adInvUltimaActa();
+  const escuela = String(d.escuela || '').trim();
+
+  const fila = x => `
+    <div class="ad-inv ad-inv-${adEsc(x.dueno)}">
+      <div class="ad-inv-top">
+        <span class="ad-inv-nom">${x.cant > 1 ? adEsc(x.cant) + ' × ' : ''}${adEsc(x.nombre)}</span>
+        <span class="ad-inv-val">${x.valor ? adLps((Number(x.valor) || 0) * (Number(x.cant) || 1)) : '—'}</span>
+      </div>
+      <div class="ad-inv-meta">${adEsc(adInvCatEt(x.cat))} · ${adFechaBonita(x.fecha)}${
+        x.dueno === 'mio' ? ' · <strong>lo pagué yo y no me lo han devuelto</strong>' : ''}${
+        x.dueno === 'donado' && x.donante ? ' · donó ' + adEsc(x.donante) : ''}${
+        x.dueno === 'escuela' && x.pagadoPor ? ' · me lo pagó ' + adEsc(x.pagadoPor) + ' el ' + adFechaBonita(x.fechaPago) : ''}${
+        x.factura ? ' · 📎 con recibo' : ''}${x.nota ? ' · ' + adEsc(x.nota) : ''}</div>
+      <div class="ad-inv-btns">
+        ${x.dueno === 'mio'
+          ? `<button class="ad-gsto-b ad-gsto-ok-b" data-invpago="${x.id}">✅ Ya me lo pagaron</button>`
+          : ''}
+        ${x.dueno === 'escuela' && x.pagadoPor
+          ? `<button class="ad-gsto-b" data-invmio="${x.id}">↩️ Sigue siendo mío</button>`
+          : ''}
+        <button class="ad-gsto-b ad-gsto-del" data-invdel="${x.id}" aria-label="Eliminar">🗑</button>
+      </div>
+    </div>`;
+
+  body.innerHTML = `
+    <div class="pa-card">
+      <nav class="nav-ruta" aria-label="Dónde estás">
+        <button class="nav-ruta-link" id="ad-inv-volver">💰 Economía</button>
+        <span class="nav-ruta-sep" aria-hidden="true">›</span>
+        <span class="nav-ruta-actual" aria-current="page">estás aquí</span>
+      </nav>
+      <div class="pa-card-title">📦 Inventario del aula</div>
+      <p class="pa-optional-hint">Todo lo que hay en tu aula, diciendo <strong>de quién es</strong>.
+        Lo que compraste con tu dinero y <strong>nadie te ha pagado es TUYO</strong>: si te trasladan,
+        te lo llevas. Lo de la escuela es de la escuela y tú solo lo custodias. Se firma con
+        dirección y la directiva de padres para que nunca sea la palabra de uno contra la del otro.
+        <strong>Nada de esto llega al asistente de padres.</strong></p>
+
+      <div class="ad-inv-marcadores">
+        <div class="ad-inv-mk ad-inv-mk-mio">
+          <span class="ad-inv-mk-lbl">🧑‍🏫 Mío</span>
+          <span class="ad-inv-mk-val">${adLps(t.vMio)}</span>
+          <span class="ad-inv-mk-sub">${t.mio.length} cosa(s) sin pagarme</span>
+        </div>
+        <div class="ad-inv-mk">
+          <span class="ad-inv-mk-lbl">🏫 De la escuela</span>
+          <span class="ad-inv-mk-val">${t.esc.length + t.don.length}</span>
+          <span class="ad-inv-mk-sub">bajo mi custodia</span>
+        </div>
+      </div>
+
+      <div class="ad-gsto-lbl">📦 ¿Qué cosa es?</div>
+      <input id="ad-inv-nom" class="pa-inp-field" maxlength="120" autocomplete="off"
+             placeholder="Ej.: Parlante bluetooth, abanico de pared, 20 sillas">
+      <div class="ad-gsto-lbl">🏷️ ¿De quién es?</div>
+      <div class="ad-gchips" id="ad-inv-duenos">
+        ${AD_INV_DUENOS.map((c, i) =>
+          `<button class="ad-gchip${i === 0 ? ' ad-gchip-sel' : ''}" data-dueno="${c.k}">${c.et}</button>`).join('')}
+      </div>
+      <p class="pa-optional-hint ad-inv-regla" id="ad-inv-regla"></p>
+      <div class="ad-gsto-lbl">🗂️ ¿De qué tipo?</div>
+      <div class="ad-gchips" id="ad-inv-cats">
+        ${AD_INV_CATS.map((c, i) =>
+          `<button class="ad-gchip${i === 0 ? ' ad-gchip-sel' : ''}" data-cat="${c.k}">${c.et}</button>`).join('')}
+      </div>
+      <div class="ad-inv-fila3">
+        <div>
+          <div class="ad-gsto-lbl">🔢 Cantidad</div>
+          <input id="ad-inv-cant" class="pa-inp-field" inputmode="numeric" value="1">
+        </div>
+        <div>
+          <div class="ad-gsto-lbl">💵 Valor c/u</div>
+          <input id="ad-inv-valor" class="pa-inp-field" inputmode="decimal" placeholder="0">
+        </div>
+        <div>
+          <div class="ad-gsto-lbl">🗓 ¿Desde cuándo está en el aula?</div>
+          <input id="ad-inv-fecha" class="pa-inp-field" type="date" value="${adHoy()}">
+        </div>
+      </div>
+      <div class="ad-gsto-lbl" id="ad-inv-extra-lbl">✍️ Detalle (opcional)</div>
+      <input id="ad-inv-nota" class="pa-inp-field" maxlength="120" autocomplete="off"
+             placeholder="Marca, color, estado, número de serie…">
+      <label class="ad-bit-sw" style="margin-top:10px">
+        <input type="checkbox" id="ad-inv-fac">
+        <span>Guardé el <strong>recibo o factura</strong> (es la prueba de que lo compraste tú)</span>
+      </label>
+      <button class="pa-generate-btn" id="ad-inv-add">➕ Anotar en el inventario</button>
+    </div>
+
+    ${t.mio.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">🧑‍🏫 Mío — propiedad del docente (${t.mio.length})</div>
+      <p class="pa-optional-hint">Comprado con tu dinero y <strong>sin reembolso</strong>. Es tuyo:
+        puedes retirarlo cuando dejes el aula. Si algún día te lo pagan, tócalo en
+        «✅ Ya me lo pagaron» y pasa a ser de la escuela, con la fecha escrita.</p>
+      ${t.mio.slice().reverse().map(fila).join('')}
+    </div>` : ''}
+
+    ${t.esc.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">🏫 De la escuela — bajo mi custodia (${t.esc.length})</div>
+      <p class="pa-optional-hint">Herramientas y materiales del centro que usas en el aula. No son
+        tuyos: se entregan al final del año o cuando la dirección los pida.</p>
+      ${t.esc.slice().reverse().map(fila).join('')}
+    </div>` : ''}
+
+    ${t.don.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">🎁 Donado al aula (${t.don.length})</div>
+      <p class="pa-optional-hint">Lo que los padres o un tercero regalaron al aula: pertenece al
+        centro, y queda escrito quién lo donó.</p>
+      ${t.don.slice().reverse().map(fila).join('')}
+    </div>` : ''}
+
+    ${lista.length ? `
+    <div class="pa-card ${adInvVence() ? 'ad-inv-acta-vence' : ''}">
+      <div class="pa-card-title">🖊️ Acta de inventario</div>
+      <p class="pa-optional-hint">El acta separa en dos cuadros lo <strong>tuyo</strong> y lo de la
+        <strong>escuela</strong>, y la firman contigo la <strong>dirección</strong> y la
+        <strong>directiva de padres</strong>. Imprime dos: una para dirección y otra para ti.
+        Se recomienda repetirlo cada ${AD_INV_MESES_ACTA} meses y al cerrar el año.</p>
+      <p class="pa-optional-hint ${adInvVence() ? 'ad-inv-aviso' : ''}">${ult
+        ? (adInvVence()
+            ? '⚠️ La última acta se firmó el <strong>' + adFechaBonita(ult.fecha) + '</strong> (' +
+              adEsc(ult.quien || 'sin registrar') + '). Ya pasó el trimestre: toca firmar de nuevo.'
+            : '✅ Última acta firmada el <strong>' + adFechaBonita(ult.fecha) + '</strong> — ' +
+              adEsc(ult.quien || '') + '.')
+        : '⚠️ Todavía no has hecho firmar ninguna acta. Hazlo en la próxima reunión: es lo que te respalda.'}</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn" id="ad-inv-print">🖨️ Imprimir el acta para firmar</button>
+      </div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-inv-firmada">✅ Ya me la firmaron</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-inv-wa">📲 Enviar el resumen</button>
+      </div>
+      ${adInvActas().length ? `
+      <div class="ad-inv-actas">
+        <div class="ad-gsto-lbl">📚 Actas firmadas</div>
+        ${adInvActas().slice().reverse().map(a => `
+          <div class="ad-inv-acta">
+            <span>🖊️ ${adFechaBonita(a.fecha)} · ${adEsc(a.quien || '')}</span>
+            <span class="ad-inv-acta-n">${a.nMio || 0} mías · ${a.nEsc || 0} del centro</span>
+          </div>`).join('')}
+      </div>` : ''}
+    </div>` : `
+    <div class="pa-card">
+      <p class="pa-optional-hint">📦 Tu inventario está vacío. Empieza por lo que compraste tú:
+        ese parlante, el abanico, la engrapadora. <strong>Anotarlo hoy es lo que te lo devuelve
+        mañana</strong>, si te trasladan o cambia la dirección.</p>
+    </div>`}`;
+
+  document.getElementById('ad-inv-volver').addEventListener('click', () => { _adInvOn = 0; renderAdmin(); });
+
+  /* La regla de propiedad se explica según lo que el maestro acaba de elegir:
+     el campo extra también cambia (donante vs detalle). */
+  const regla = document.getElementById('ad-inv-regla');
+  const extraLbl = document.getElementById('ad-inv-extra-lbl');
+  const extraInp = document.getElementById('ad-inv-nota');
+  const pintarRegla = k => {
+    if (k === 'mio') {
+      regla.innerHTML = '🧑‍🏫 <strong>Es tuyo.</strong> Lo compraste con tu dinero y no te lo han ' +
+        'reembolsado: figura como propiedad del docente y puedes retirarlo.';
+      extraLbl.textContent = '✍️ Detalle (opcional)';
+      extraInp.placeholder = 'Marca, color, estado, número de serie…';
+    } else if (k === 'donado') {
+      regla.innerHTML = '🎁 <strong>Es del centro.</strong> Lo donaron al aula; queda escrito quién ' +
+        'lo dio para que se le pueda agradecer y nadie lo reclame después.';
+      extraLbl.textContent = '🙋 ¿Quién lo donó?';
+      extraInp.placeholder = 'Ej.: Familia Sevilla · Sociedad de Padres';
+    } else {
+      regla.innerHTML = '🏫 <strong>Es del centro.</strong> Está bajo tu custodia: lo usas, lo cuidas ' +
+        'y lo entregas al final del año o cuando dirección lo pida.';
+      extraLbl.textContent = '✍️ Detalle (opcional)';
+      extraInp.placeholder = 'Marca, color, estado, número de serie…';
+    }
+  };
+  pintarRegla('mio');
+
+  const chipUnico = (cont, cb) => body.querySelectorAll('#' + cont + ' .ad-gchip').forEach(b =>
+    b.addEventListener('click', () => {
+      body.querySelectorAll('#' + cont + ' .ad-gchip').forEach(x => x.classList.remove('ad-gchip-sel'));
+      b.classList.add('ad-gchip-sel');
+      if (cb) cb(b);
+    }));
+  chipUnico('ad-inv-duenos', b => pintarRegla(b.dataset.dueno));
+  chipUnico('ad-inv-cats');
+
+  document.getElementById('ad-inv-add').addEventListener('click', () => {
+    const nom = String(document.getElementById('ad-inv-nom').value || '').trim();
+    if (nom.length < 3) { toast('📦 Escribe qué cosa es'); document.getElementById('ad-inv-nom').focus(); return; }
+    const dueno = (body.querySelector('#ad-inv-duenos .ad-gchip-sel') || {}).dataset;
+    const cat = (body.querySelector('#ad-inv-cats .ad-gchip-sel') || {}).dataset;
+    const k = (dueno && dueno.dueno) || 'mio';
+    const extra = String(document.getElementById('ad-inv-nota').value || '').trim();
+    const arr = adInvLoad();
+    arr.push({
+      id: 'I' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      fecha: String(document.getElementById('ad-inv-fecha').value || adHoy()),
+      nombre: nom, dueno: k, cat: (cat && cat.cat) || 'otro',
+      cant: Math.max(1, parseInt(document.getElementById('ad-inv-cant').value, 10) || 1),
+      valor: Number(String(document.getElementById('ad-inv-valor').value || '').replace(',', '.')) || 0,
+      nota: k === 'donado' ? '' : extra,
+      donante: k === 'donado' ? extra : '',
+      factura: document.getElementById('ad-inv-fac').checked ? 1 : 0,
+      escuela,
+    });
+    adInvSave(arr); renderAdmin();
+    toast(k === 'mio' ? '🧑‍🏫 Anotado como TUYO: ya no es tu palabra contra la de nadie'
+                      : '🏫 Anotado como del centro, bajo tu custodia');
+  });
+
+  body.querySelectorAll('[data-invpago]').forEach(b =>
+    b.addEventListener('click', async () => {
+      const quien = await metasPrompt('¿Quién te lo pagó? Queda escrito en el acta junto con la fecha de hoy.\n\nDesde este momento la cosa deja de ser tuya y pasa a ser **del centro**.', {
+        icono: '✅', titulo: 'Ya me lo pagaron', okTxt: 'Sí, me lo pagaron',
+        valida: v => String(v).trim().length >= 3 ? '' : 'Escribe quién te lo pagó (dirección, tesorería…).',
+      });
+      if (quien === null) return;
+      const arr = adInvLoad();
+      const x = arr.find(y => y.id === b.dataset.invpago); if (!x) return;
+      x.dueno = 'escuela'; x.pagadoPor = String(quien).trim(); x.fechaPago = adHoy();
+      adInvSave(arr); renderAdmin();
+      toast('🏫 Pasa a la escuela: te lo pagaron y así queda en el acta');
+    }));
+  body.querySelectorAll('[data-invmio]').forEach(b =>
+    b.addEventListener('click', () => {
+      const arr = adInvLoad();
+      const x = arr.find(y => y.id === b.dataset.invmio); if (!x) return;
+      x.dueno = 'mio'; delete x.pagadoPor; delete x.fechaPago;
+      adInvSave(arr); renderAdmin();
+      toast('🧑‍🏫 Vuelve a figurar como tuyo');
+    }));
+  body.querySelectorAll('[data-invdel]').forEach(b =>
+    b.addEventListener('click', async () => {
+      if (!await metasConfirm('¿Quitar esta cosa del inventario?\n\nLas actas ya firmadas no cambian: siguen valiendo tal como se imprimieron.',
+        { icono: '🗑', titulo: 'Inventario del aula', okTxt: 'Sí, quitar' })) return;
+      adUndoGuardar('Quitar algo del inventario del aula');
+      adInvSave(adInvLoad().filter(y => y.id !== b.dataset.invdel));
+      renderAdmin();
+    }));
+
+  const pr = document.getElementById('ad-inv-print');
+  if (pr) pr.addEventListener('click', () => adPrintInventario(lista, d));
+  const wa = document.getElementById('ad-inv-wa');
+  if (wa) wa.addEventListener('click', () => adGastoEnviar(adInvTxtResumen(lista, d)));
+  const fi = document.getElementById('ad-inv-firmada');
+  if (fi) fi.addEventListener('click', async () => {
+    const quien = await metasPrompt('¿Quién firmó el acta? (dirección, directiva de padres, ambos)\n\nSe guarda la fecha de hoy y cuántas cosas declaraste, para saber cuándo toca la siguiente.', {
+      icono: '🖊️', titulo: 'Acta firmada', okTxt: 'Guardar',
+      valida: v => String(v).trim().length >= 3 ? '' : 'Escribe quién la firmó.',
+    });
+    if (quien === null) return;
+    const tt = adInvTotales(adInvLoad());
+    const actas = adInvActas();
+    actas.push({
+      t: new Date().toISOString(), fecha: adHoy(), quien: String(quien).trim(),
+      nMio: tt.mio.length, nEsc: tt.esc.length + tt.don.length, vMio: tt.vMio,
+    });
+    adInvActasSave(actas.slice(-12));
+    renderAdmin();
+    toast('🖊️ Acta registrada: quedas respaldado hasta la siguiente');
+  });
+}
+
+function adInvTxtResumen(lista, d) {
+  const t = adInvTotales(lista);
+  const linea = (x, i) => (i + 1) + '. ' + (x.cant > 1 ? x.cant + ' × ' : '') + x.nombre +
+    (x.valor ? ' — ' + adLps((Number(x.valor) || 0) * (Number(x.cant) || 1)) : '') +
+    (x.factura ? ' (con recibo)' : '');
+  return '📦 *INVENTARIO DEL AULA*\n' +
+    (adDocenteNombre() ? adDocenteNombre() + '\n' : '') +
+    (d.escuela ? String(d.escuela).trim() + '\n' : '') +
+    (adGradoSeccion(d.grado, d.seccion) ? 'Grupo ' + adGradoSeccion(d.grado, d.seccion) + '\n' : '') +
+    'Al ' + adFechaBonita(adHoy()) + '\n\n' +
+    '*A) DE MI PROPIEDAD* (comprado por mí, sin reembolso):\n' +
+    (t.mio.length ? t.mio.map(linea).join('\n') + '\n*Valor: ' + adLps(t.vMio) + '*' : 'Ninguno') + '\n\n' +
+    '*B) DEL CENTRO, BAJO MI CUSTODIA:*\n' +
+    (t.esc.length || t.don.length
+      ? t.esc.concat(t.don).map(linea).join('\n')
+      : 'Ninguno') + '\n\n' +
+    'Solicito revisar y firmar el acta correspondiente.\n_Anotado con M.E.T.A.S_';
+}
+
+/* Acta imprimible: dos cuadros separados y tres firmas. Es el documento que
+   se archiva en dirección y el que el maestro guarda en su portafolio. */
+function adPrintInventario(lista, d) {
+  const t = adInvTotales(lista);
+  const ult = adInvUltimaActa();
+  const fila = (x, i) => `<tr><td>${i + 1}</td><td>${adFechaBonita(x.fecha)}</td><td class="n">${adEsc(x.cant || 1)}</td>` +
+    `<td>${adEsc(x.nombre)}${x.nota ? ' <em>(' + adEsc(x.nota) + ')</em>' : ''}${
+      x.donante ? ' <em>— donó ' + adEsc(x.donante) + '</em>' : ''}${
+      x.pagadoPor ? ' <em>— pagado por ' + adEsc(x.pagadoPor) + ' el ' + adFechaBonita(x.fechaPago) + '</em>' : ''}</td>` +
+    `<td>${adEsc(adInvCatEt(x.cat))}</td><td>${x.factura ? 'Sí' : 'No'}</td>` +
+    `<td class="n">${x.valor ? adLps((Number(x.valor) || 0) * (Number(x.cant) || 1)) : '—'}</td></tr>`;
+  const cuadro = (arr, vacio) => arr.length
+    ? `<table>
+<thead><tr><th>#</th><th>Desde</th><th>Cant.</th><th>Descripción</th><th>Tipo</th><th>Recibo</th><th>Valor</th></tr></thead>
+<tbody>${arr.map(fila).join('')}</tbody></table>`
+    : `<p class="vacio">${vacio}</p>`;
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Acta de inventario del aula</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;font-size:11.5px;color:#111;background:#fff;padding:12mm;}
+h1{font-size:16px;color:#1e3a7c;margin-bottom:2mm;}
+h2{font-size:12.5px;color:#1e3a7c;margin:5mm 0 2mm;border-bottom:1.5px solid #1e3a7c;padding-bottom:1mm;}
+.sub{font-size:11px;color:#444;margin-bottom:4mm;}
+table{width:100%;border-collapse:collapse;margin-bottom:3mm;}
+th,td{border:1px solid #999;padding:3px 5px;text-align:left;vertical-align:top;}
+th{background:#e8eef9;font-size:10.5px;}
+td.n{text-align:right;white-space:nowrap;}
+td em{color:#555;font-size:10.5px;}
+.tot{margin:2mm 0 4mm;font-size:12.5px;font-weight:bold;}
+.vacio{font-size:11px;color:#666;font-style:italic;margin-bottom:3mm;}
+.declara{border:1.5px solid #1e3a7c;border-radius:4px;padding:3mm 4mm;margin:4mm 0;font-size:11px;line-height:1.6;background:#f7f9fe;}
+.firmas{display:flex;gap:8mm;margin-top:18mm;}
+.firma{flex:1;border-top:1.5px solid #333;text-align:center;padding-top:2mm;font-size:10.5px;line-height:1.4;}
+.pie{margin-top:6mm;font-size:10px;color:#666;text-align:center;}
+.noprint{margin-bottom:5mm;}
+@media print{.noprint{display:none;}body{padding:8mm;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
+<h1>📦 Acta de inventario del aula</h1>
+<div class="sub">${adDocenteNombre() ? adEsc(adDocenteNombre()) + ' · ' : ''}${
+  d.escuela ? adEsc(String(d.escuela).trim()) + ' · ' : ''}${
+  adGradoSeccion(d.grado, d.seccion) ? 'Grupo ' + adEsc(adGradoSeccion(d.grado, d.seccion)) + ' · ' : ''}Levantada el ${adFechaBonita(adHoy())}${
+  ult ? ' · Acta anterior: ' + adFechaBonita(ult.fecha) : ' · Primera acta'}</div>
+
+<h2>Cuadro A — Bienes propiedad del docente</h2>
+${cuadro(t.mio, 'El docente no declara bienes propios en esta aula.')}
+${t.mio.length ? `<div class="tot">Valor declarado: ${adLps(t.vMio)}</div>` : ''}
+
+<h2>Cuadro B — Bienes del centro educativo bajo custodia del docente</h2>
+${cuadro(t.esc, 'No hay bienes del centro asignados a esta aula.')}
+
+${t.don.length ? `<h2>Cuadro C — Bienes donados al aula (propiedad del centro)</h2>
+${cuadro(t.don, '')}` : ''}
+
+<div class="declara">
+  <strong>Se hace constar que:</strong><br>
+  1. Los bienes del <strong>Cuadro A</strong> fueron adquiridos por el docente
+  <strong>con recursos propios</strong> y <strong>no le han sido reembolsados</strong> por el centro
+  educativo ni por la sociedad de padres de familia. En consecuencia son de su
+  <strong>propiedad personal</strong>, permanecen en el aula por su voluntad para beneficio de los
+  estudiantes, y podrá retirarlos al terminar su labor en este grupo o centro.<br>
+  2. Los bienes de los <strong>Cuadros B y C</strong> son <strong>propiedad del centro educativo</strong>.
+  El docente los recibe <strong>bajo custodia</strong>, se compromete a cuidarlos y darles uso
+  pedagógico, y a entregarlos al finalizar el año escolar o cuando la dirección lo requiera.<br>
+  3. Si el centro reembolsa al docente el valor de algún bien del Cuadro A, ese bien pasa a ser
+  propiedad del centro desde la fecha del pago, y se hará constar en el acta siguiente.<br>
+  4. Las partes revisaron físicamente los bienes aquí listados y firman en señal de conformidad.
+  Este inventario se actualiza cada ${AD_INV_MESES_ACTA} meses y al cierre del año escolar.
+</div>
+
+<div class="firmas">
+  <div class="firma">Docente<br>${adDocenteNombre() ? adEsc(adDocenteNombre()) : '_______________'}</div>
+  <div class="firma">Dirección del centro<br>Nombre y sello</div>
+  <div class="firma">Directiva de padres de familia<br>Presidente/a</div>
+</div>
+<div class="pie">Imprima dos ejemplares: uno para la dirección y otro para el docente. · Generado con M.E.T.A.S</div>
 </body></html>`;
   const w = window.open('', '_blank');
   if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
@@ -4769,6 +5248,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('admin-back-btn')?.addEventListener('click', () => {
     if (_adFichasOn) { _adFichasOn = 0; renderAdmin(); return; }
     if (_adGastosOn) { _adGastosOn = 0; renderAdmin(); return; }
+    if (_adInvOn) { _adInvOn = 0; renderAdmin(); return; }
     if (_adColectaId) { _adColectaId = null; renderAdmin(); return; }
     if (_adControlId) { _adControlId = null; renderAdmin(); return; }
     switchView('view-perfil');

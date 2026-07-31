@@ -1157,9 +1157,14 @@ function renderPadre() {
         <button class="padre-wa-btn" onclick="padreConsultarNube()">Consultar</button>
       </div>
       <div id="padre-nube-out"></div>
-      <a class="padre-wa-btn padre-asistente-btn" href="padres.html">🤖 Abrir el asistente de padres</a>
-      <p class="padre-hint padre-asistente-hint">El asistente responde preguntas como
-        «¿cómo va?», «¿qué sacó?» y «¿cómo lo ayudo en casa?» con la misma clave.</p>
+      <a class="padre-asis-btn" href="padres.html">
+        <span class="padre-asis-bot" aria-hidden="true">🤖</span>
+        <span class="padre-asis-txt">
+          <span class="padre-asis-t">Pregúntele al asistente</span>
+          <span class="padre-asis-s">«¿cómo va?», «¿qué sacó?», «¿cómo lo ayudo en casa?» — con esta misma clave.</span>
+        </span>
+        <span class="padre-asis-go" aria-hidden="true">›</span>
+      </a>
     </div>`;
 
   const avisoHTML = `
@@ -1919,6 +1924,7 @@ function switchView(id) {
   if (id === 'view-parte-mensual')  { /* la UI se recalcula en tiempo real con inputs */ }
   if (id === 'view-collage')        initCollage();
   if (id === 'view-campeonismo' && typeof initCampeonismo === 'function') initCampeonismo();
+  if (id === 'view-formacion' && typeof mfRender === 'function') mfRender();
 
   const scroll = document.querySelector(`#${id} .view-scroll`);
   if (scroll) scroll.scrollTop = 0;

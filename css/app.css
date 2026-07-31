@@ -355,26 +355,74 @@ a { text-decoration: none; color: inherit; }
    (la tarjeta es azul degradado: blanco translúcido para buen contraste) */
 .paso-nota { font-size: 10px; color: rgba(255,255,255,.78); margin-top: 8px; text-align: right; }
 
-/* ── Tarjeta puente para madres y padres ── */
-.padres-card {
-  width: 100%;
-  display: flex; align-items: center; gap: 12px;
-  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-  border: 1.5px solid rgba(39,174,96,.35);
-  border-radius: var(--r);
-  padding: 14px 16px;
-  margin-bottom: 24px;
-  cursor: pointer;
-  text-align: left;
-  box-shadow: var(--shadow);
-  transition: transform .15s;
+/* ── Puerta al ASISTENTE DE PADRES (portada, bajo «¿Qué quieres hacer hoy?») ──
+   Es la tarjeta que la familia tiene que ver sin buscar: verde del asistente,
+   robot con halo que respira, y UNA sola acción clara. El halo se apaga si el
+   sistema pide menos movimiento. */
+.asis-card {
+  position: relative; overflow: hidden;
+  display: flex; align-items: flex-start; gap: 14px;
+  width: 100%; box-sizing: border-box;
+  background: linear-gradient(135deg, #14833b 0%, #0d5f2a 55%, #0b4f24 100%);
+  border-radius: 20px;
+  padding: 18px 18px 18px 16px;
+  margin-bottom: 8px;
+  text-decoration: none;
+  box-shadow: 0 10px 26px rgba(13,95,42,.32);
+  transition: transform .15s, box-shadow .15s;
 }
-.padres-card:active { transform: scale(.97); }
-.padres-emoji { font-size: 28px; line-height: 1; }
-.padres-info { display: flex; flex-direction: column; min-width: 0; }
-.padres-info strong { font-size: 14px; font-weight: 800; color: #166534; }
-.padres-info em { font-style: normal; font-size: 12px; color: #14532d; }
-.padres-card .fa-chevron-right { margin-left: auto; color: #166534; }
+.asis-card:active { transform: scale(.98); box-shadow: 0 5px 14px rgba(13,95,42,.3); }
+/* brillo diagonal suave, para que no se vea un bloque plano */
+.asis-halo {
+  position: absolute; top: -60%; right: -20%;
+  width: 220px; height: 220px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.22), rgba(255,255,255,0) 70%);
+  pointer-events: none;
+}
+.asis-bot {
+  position: relative; flex: 0 0 auto; margin-top: 20px;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; line-height: 1;
+  box-shadow: 0 0 0 0 rgba(255,255,255,.55);
+  animation: asisLatido 2.6s ease-out infinite;
+}
+@keyframes asisLatido {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,.5); }
+  70%  { box-shadow: 0 0 0 14px rgba(255,255,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+.asis-txt { position: relative; display: flex; flex-direction: column; min-width: 0; gap: 2px; }
+.asis-badge {
+  align-self: flex-start;
+  font-size: 10px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase;
+  color: #eafff1; background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 999px; padding: 3px 9px; margin-bottom: 4px;
+}
+.asis-t { font-size: 17px; font-weight: 900; color: #fff; line-height: 1.25; }
+.asis-s { font-size: 12.5px; line-height: 1.5; color: rgba(255,255,255,.9); }
+.asis-cta {
+  align-self: flex-start; margin-top: 10px;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; color: #0d5f2a;
+  font-size: 13.5px; font-weight: 900;
+  border-radius: 999px; padding: 9px 16px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.18);
+}
+.asis-cta i { font-size: 12px; }
+/* Puerta secundaria: el avance que vive en ESTE teléfono, sin internet */
+.asis-sub {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; background: none; border: none; cursor: pointer;
+  font-size: 12.5px; font-weight: 700; color: var(--muted);
+  padding: 6px 4px; margin-bottom: 22px;
+}
+.asis-sub i { font-size: 10px; }
+@media (prefers-reduced-motion: reduce) {
+  .asis-bot { animation: none; }
+}
 
 /* ── Vista Padre (Fase 2) ── */
 .padre-titulo { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 14px; }
@@ -418,11 +466,27 @@ a { text-decoration: none; color: inherit; }
 }
 .padre-tel-row .padre-wa-btn { width: auto; }
 .padre-wa-btn:active { transform: scale(.97); }
-a.padre-asistente-btn {
-  display: block; text-align: center; text-decoration: none;
-  margin-top: 10px; background: #14833b;
+/* El asistente dentro de la vista del padre: mismo verde y misma promesa
+   que la puerta de la portada, para que se reconozca como «lo mismo». */
+.padre-asis-btn {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; box-sizing: border-box;
+  margin-top: 12px; padding: 14px;
+  background: linear-gradient(135deg, #14833b, #0d5f2a);
+  border-radius: 16px; text-decoration: none;
+  box-shadow: 0 6px 16px rgba(13,95,42,.28);
+  transition: transform .15s;
 }
-.padre-asistente-hint { margin: 6px 0 0; text-align: center; }
+.padre-asis-btn:active { transform: scale(.98); }
+.padre-asis-bot {
+  flex: 0 0 auto; width: 42px; height: 42px; border-radius: 50%;
+  background: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 23px; line-height: 1;
+}
+.padre-asis-txt { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
+.padre-asis-t { font-size: 15px; font-weight: 900; color: #fff; }
+.padre-asis-s { font-size: 12px; line-height: 1.45; color: rgba(255,255,255,.9); }
+.padre-asis-go { margin-left: auto; color: #fff; font-size: 22px; font-weight: 900; }
 .padre-wa-cambiar {
   background: none; border: none; cursor: pointer;
   font-size: 12px; color: var(--muted);
@@ -1661,6 +1725,58 @@ a.padre-asistente-btn {
 .pa-inp-field { width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;outline:none;background:var(--bg);color:var(--text);font-family:inherit;transition:border-color .15s; }
 .pa-inp-field:focus { border-color:var(--brand-light);background:var(--surface); }
 
+/* «Traer mi lista de Mi aula»: el paso 1 del Plan de Acción. Va grande y
+   arriba porque es lo que evita reescribir 43 nombres; antes era un botón
+   punteado al final de la cuadrícula y nadie lo veía. */
+.pa-traer-hero {
+  display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;
+  background:linear-gradient(135deg,#eef4ff,#dbe7ff);
+  border:1.5px solid rgba(30,58,124,.28);border-radius:14px;
+  padding:14px;margin-bottom:14px;cursor:pointer;text-align:left;font-family:inherit;
+  box-shadow:0 4px 14px rgba(30,58,124,.14);transition:transform .15s,box-shadow .15s;
+}
+.pa-traer-hero:active { transform:scale(.98);box-shadow:0 2px 8px rgba(30,58,124,.14); }
+.pa-th-ic { flex:0 0 auto;font-size:26px;line-height:1; }
+.pa-th-txt { display:flex;flex-direction:column;min-width:0;gap:2px; }
+.pa-th-paso { font-size:10px;font-weight:900;letter-spacing:.6px;text-transform:uppercase;color:var(--brand); }
+.pa-th-t { font-size:15px;font-weight:900;color:var(--brand); }
+.pa-th-s { font-size:12px;line-height:1.45;color:#33456e; }
+.pa-th-go { margin-left:auto;font-size:22px;font-weight:900;color:var(--brand); }
+.pa-paso-lbl { font-size:12.5px;font-weight:700;color:var(--muted);margin:0 2px 8px; }
+.pa-paso-lbl span {
+  font-size:10px;font-weight:900;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--brand);background:#eef4ff;border-radius:999px;padding:3px 8px;margin-right:6px;
+}
+
+/* Aviso de cierre del análisis: «ya subió» + «¿otra prueba?» */
+.pa-listo {
+  background:linear-gradient(135deg,#ecfdf5,#d1fae5);
+  border:1.5px solid rgba(5,150,105,.35);border-radius:var(--r);
+  padding:14px;margin-bottom:14px;box-shadow:var(--shadow);
+}
+.pa-listo-top { display:flex;gap:12px;align-items:flex-start; }
+.pa-listo-ic { font-size:26px;line-height:1;flex:0 0 auto; }
+.pa-listo-txt { display:flex;flex-direction:column;gap:3px;min-width:0; }
+.pa-listo-t { font-size:14.5px;font-weight:900;color:#065f46; }
+.pa-listo-s { font-size:12.5px;line-height:1.5;color:#134e3a; }
+.pa-listo-s strong { color:#065f46; }
+.pa-listo-estado { font-size:12px;font-weight:700;color:#047857;margin-top:4px; }
+.pa-listo-btns { display:flex;gap:8px;flex-wrap:wrap;margin-top:12px; }
+.pa-listo-b {
+  flex:1 1 150px;background:var(--surface);border:1.5px solid rgba(5,150,105,.35);
+  border-radius:10px;padding:11px 10px;font-size:13px;font-weight:800;color:#065f46;
+  cursor:pointer;font-family:inherit;transition:transform .15s;
+}
+.pa-listo-b:active { transform:scale(.97); }
+.pa-listo-b-otra { background:#059669;border-color:#059669;color:#fff; }
+/* Falta el grado: el mismo bloque, en tono de aviso */
+.pa-listo-falta { background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#f3ddb3; }
+.pa-listo-falta .pa-listo-t { color:#92400e; }
+.pa-listo-falta .pa-listo-s { color:#78350f; }
+.pa-listo-falta .pa-listo-s strong { color:#92400e; }
+.pa-listo-falta .pa-listo-b { border-color:#f3ddb3;color:#92400e; }
+.pa-listo-falta .pa-listo-b-otra { background:#b45309;border-color:#b45309;color:#fff; }
+
 /* Tabs de entrada */
 .pa-entry-tabs { display:flex;gap:8px;margin-bottom:14px; }
 .pa-etab { flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s; }
@@ -1912,10 +2028,81 @@ a.padre-asistente-btn {
   font-size: 12.5px; font-weight: 700; color: var(--text);
   text-align: center; line-height: 1.15; max-width: 96px;
 }
+/* Sello «Pronto» para la herramienta que aún no tiene contenido: se anuncia
+   sin engañar, y el maestro sabe que ahí va a haber algo. */
+.zd-pronto {
+  font-size: 9px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase;
+  color: #7e22ce; background: #f3e8ff; border: 1px solid #e9d5ff;
+  border-radius: 999px; padding: 2px 7px; margin-top: -3px;
+}
 @media (max-width: 420px) {
   .zd-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px 6px; }
   .zd-ico { width: 52px; height: 52px; border-radius: 15px; font-size: 21px; }
   .zd-name { font-size: 11.5px; }
+}
+
+/* ── 🎓 Misiones del maestro (formación docente) ── */
+.mf-hero {
+  background: linear-gradient(135deg, #7e22ce, #4c1d95);
+  border-radius: 18px; padding: 20px 18px; margin-bottom: 16px;
+  color: #fff; box-shadow: 0 8px 22px rgba(76,29,149,.32);
+}
+.mf-hero-ic { font-size: 32px; line-height: 1; }
+.mf-hero-t { font-size: 19px; font-weight: 900; margin-top: 8px; }
+.mf-hero-s { font-size: 13px; line-height: 1.55; color: rgba(255,255,255,.9); margin-top: 6px; }
+.mf-hero-s strong { color: #fff; }
+.mf-hero-badge {
+  display: inline-block; margin-top: 12px;
+  font-size: 11px; font-weight: 900; letter-spacing: .4px;
+  background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35);
+  border-radius: 999px; padding: 5px 11px;
+}
+.mf-lead { font-size: 12.5px; font-weight: 700; color: var(--muted); margin-bottom: 8px; }
+.mf-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+.mf-chip {
+  border: 1.5px solid var(--border); background: var(--surface); color: var(--text);
+  border-radius: 999px; padding: 9px 14px; font-family: inherit;
+  font-size: 12.5px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 1px 3px rgba(15,23,42,.08); transition: transform .12s, background .18s, color .18s, border-color .18s;
+}
+.mf-chip:active { transform: scale(.94); }
+.mf-chip-on {
+  background: linear-gradient(135deg, #a855f7, #7e22ce);
+  border-color: #7e22ce; color: #fff; box-shadow: 0 4px 12px rgba(126,34,206,.32);
+}
+.mf-area {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+  box-shadow: var(--shadow); padding: 16px; margin-bottom: 14px;
+}
+.mf-area-t { font-size: 16px; font-weight: 900; color: #6d28d9; }
+.mf-area-s { font-size: 13px; line-height: 1.55; color: var(--text); margin-top: 5px; }
+.mf-area-h {
+  font-size: 12px; color: var(--muted); margin-top: 8px;
+  background: #faf5ff; border: 1px solid #eddcfd; border-radius: 8px; padding: 7px 10px;
+}
+.mf-tema {
+  border: 1.5px solid var(--border); border-left: 4px solid #c4b5fd;
+  border-radius: 12px; padding: 11px 12px; margin-top: 10px; background: var(--bg);
+}
+.mf-tema-listo { border-left-color: #16a34a; background: #f4fbf6; }
+.mf-tema-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.mf-tema-t { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.35; }
+.mf-tema-badge {
+  flex-shrink: 0; font-size: 9.5px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase;
+  color: #7e22ce; background: #f3e8ff; border: 1px solid #e9d5ff;
+  border-radius: 999px; padding: 3px 8px;
+}
+.mf-badge-listo { color: #15803d; background: #dcfce7; border-color: #bbf7d0; }
+.mf-tema-s { font-size: 12.5px; line-height: 1.5; color: var(--muted); margin-top: 4px; }
+.mf-tema-btn {
+  display: inline-block; margin-top: 9px; text-decoration: none;
+  background: #16a34a; color: #fff; border-radius: 9px;
+  padding: 8px 14px; font-size: 12.5px; font-weight: 800;
+}
+.mf-pie {
+  font-size: 12px; line-height: 1.55; color: var(--muted);
+  background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px;
+  padding: 10px 12px; margin-bottom: 16px;
 }
 .teacher-tool-item {
   background: var(--bg); border: 1.5px solid var(--border);
@@ -4046,6 +4233,53 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-gsto-wa { background: #128c7e; border-color: #128c7e; color: #fff; }
 .ad-gsto-ok-b { background: #16a34a; border-color: #16a34a; color: #fff; }
 .ad-gsto-del { flex: 0 0 auto; color: #b91c1c; }
+
+/* ── 📦 Inventario del aula ──
+   Lo TUYO se ve distinto de lo de la escuela a simple vista: franja morada y
+   fondo cálido para lo propio, gris sobrio para lo del centro. Esa diferencia
+   visual es la que evita la discusión el día del traslado. */
+.ad-puerta-inv { border-left: 5px solid #7c3aed; }
+.ad-inv-marcadores { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 4px; }
+.ad-inv-mk {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 13px 10px; border-radius: 14px;
+  background: var(--bg); border: 1.5px solid var(--border);
+}
+.ad-inv-mk-mio { background: linear-gradient(135deg, #f5f3ff, #ede9fe); border-color: #ddd6fe; }
+.ad-inv-mk-lbl { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); text-align: center; }
+.ad-inv-mk-val { font-size: 26px; font-weight: 900; line-height: 1.15; color: var(--text); }
+.ad-inv-mk-mio .ad-inv-mk-lbl { color: #6d28d9; }
+.ad-inv-mk-mio .ad-inv-mk-val { color: #6d28d9; }
+.ad-inv-mk-sub { font-size: 11px; font-weight: 700; color: var(--muted); text-align: center; }
+/* En teléfono, tres columnas parten los rótulos en dos líneas: cantidad y
+   valor van juntos y la fecha se lleva la fila entera. */
+.ad-inv-fila3 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ad-inv-fila3 > :last-child { grid-column: 1 / -1; }
+.ad-inv-regla { margin-top: 8px; }
+.ad-inv {
+  padding: 11px 12px; margin-top: 10px;
+  border: 1.5px solid var(--border); border-left: 5px solid var(--border);
+  border-radius: 12px; background: var(--surface);
+}
+.ad-inv-mio { border-left-color: #7c3aed; background: #faf8ff; }
+.ad-inv-escuela { border-left-color: #64748b; }
+.ad-inv-donado { border-left-color: #0891b2; }
+.ad-inv-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.ad-inv-nom { font-size: 14.5px; font-weight: 800; color: var(--text); line-height: 1.35; }
+.ad-inv-val { font-size: 15px; font-weight: 900; color: var(--muted); white-space: nowrap; }
+.ad-inv-mio .ad-inv-val { color: #6d28d9; }
+.ad-inv-meta { font-size: 11.5px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+.ad-inv-btns { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.ad-inv-acta-vence { border: 1.5px solid #f3ddb3; background: #fffbeb; }
+.ad-inv-aviso { background: #fff7ed; border-color: #f3ddb3; color: #92400e; }
+.ad-inv-actas { margin-top: 12px; }
+.ad-inv-acta {
+  display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  padding: 8px 10px; margin-top: 6px; border-radius: 10px;
+  background: var(--bg); border: 1px solid var(--border);
+  font-size: 12px; color: var(--text);
+}
+.ad-inv-acta-n { color: var(--muted); font-weight: 700; }
 
 /* Bitácora: los interruptores que deciden qué sale del teléfono se ven grandes y
    tocables, y la vista previa muestra el texto EXACTO que leerá la familia. */

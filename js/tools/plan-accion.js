@@ -118,7 +118,41 @@ function paGenerate() {
     return `<div class="pa-ng-col">${rows}</div>`;
   }).join('');
 
+  const grupoTxt = (grado !== '—' ? grado : '') + (seccion !== '—' ? ' ' + seccion : '');
+  /* Sin GRADO no hay clave de familia (paCodigoAlumno) y nada de esto llega
+     al asistente. Decirlo aquí, grande, en vez de dejar creer que subió. */
+  const sinGrado = !String(grado === '—' ? '' : grado).replace(/\D/g, '');
+
   dash.innerHTML = `
+    <!-- Lo PRIMERO que ve el maestro al generar: qué pasó con estas notas
+         (si quedaron guardadas y si subieron al asistente) y cuál es el
+         siguiente paso. Antes el análisis aparecía y no se sabía nada. -->
+    <div class="pa-listo ${sinGrado ? 'pa-listo-falta' : ''}" id="pa-listo">
+      <div class="pa-listo-top">
+        <span class="pa-listo-ic">${sinGrado ? '⚠️' : '☁️'}</span>
+        <span class="pa-listo-txt">
+          <span class="pa-listo-t">${sinGrado
+            ? 'Guardado, pero las familias todavía NO lo pueden ver'
+            : 'Listo: guardado y camino al asistente de padres'}</span>
+          <span class="pa-listo-s">${sinGrado
+            ? 'Falta el <strong>Grado</strong> en 📋 Datos de la Evaluación. Sin él no se puede armar ' +
+              'la <strong>clave de la familia</strong> (nº de lista + 4 letras) y las notas no salen ' +
+              'al asistente. Escríbelo y toca <strong>Generar Análisis</strong> otra vez.'
+            : 'Las <strong>' + total + ' nota' + (total !== 1 ? 's' : '') + '</strong>' +
+              (grupoTxt.trim() ? ' de <strong>' + paEsc(grupoTxt.trim()) + '</strong>' : '') + ' quedaron en ' +
+              '🗂️ <strong>Análisis guardados</strong>, y cada familia ya puede verlas con su ' +
+              'clave (nº de lista + 4 letras).'}</span>
+          ${sinGrado ? '' : '<span class="pa-listo-estado" id="pa-listo-estado">⏳ Enviando…</span>'}
+        </span>
+      </div>
+      <div class="pa-listo-btns">
+        ${sinGrado
+          ? '<button class="pa-listo-b pa-listo-b-otra" id="pa-ir-grado">✏️ Escribir el grado</button>'
+          : '<button class="pa-listo-b pa-listo-b-otra" id="pa-otra-btn">➕ Analizar otra prueba</button>'}
+        <button class="pa-listo-b" id="pa-ver-msg-btn">👨‍👩‍👧 Ver los mensajes para padres</button>
+      </div>
+    </div>
+
     <div class="pa-dash-head">
       <div>
         <div class="pa-dash-title">ANÁLISIS Y PLAN DE ACCIÓN</div>
@@ -236,6 +270,18 @@ function paGenerate() {
     });
   });
 
+  document.getElementById('pa-otra-btn')?.addEventListener('click', paOtraPrueba);
+  document.getElementById('pa-ir-grado')?.addEventListener('click', () => {
+    const g = document.getElementById('pa-grado');
+    if (!g) return;
+    g.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => g.focus(), 400);
+  });
+  document.getElementById('pa-ver-msg-btn')?.addEventListener('click', () => {
+    const t = dash.querySelector('.pa-otab[data-otab="padres"]');
+    if (t) { t.click(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+
   // Persistencia local + mensajes a padres + sincronización
   // (misionId/forma/tipoEval amarran la nota a la evaluación exacta del banco)
   const misionId = parseInt(document.getElementById('pa-mision')?.value, 10) || null;
@@ -256,6 +302,45 @@ function paGenerate() {
   dash.style.display = '';
   dash.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+/* ── «¿Y ahora?»: la prueba siguiente del mismo grupo ──
+   El error que se cometía: tras generar, los alumnos quedaban en pantalla
+   con sus notas y el maestro escribía la evaluación nueva ENCIMA, sin
+   saber si lo anterior se había guardado. Ahora se dice qué se conserva
+   (los alumnos) y qué se borra (las notas y los datos de la prueba), y el
+   análisis anterior queda cerrado en el historial. */
+async function paOtraPrueba() {
+  const ok = await metasConfirm(
+    'Este análisis ya está **guardado** en 🗂️ Análisis guardados y sus notas viajaron al asistente de padres.\n\n' +
+    'Para la prueba siguiente **se quedan tus alumnos** (sus nombres y números de lista) y ' +
+    'se borran **solo las notas** y los datos de la evaluación.\n\n' +
+    'Si necesitas corregir esta prueba, ábrela después en 🗂️ Análisis guardados.',
+    { icono: '➕', titulo: 'Analizar otra prueba', okTxt: 'Sí, otra prueba' });
+  if (!ok) return;
+
+  _paCurrentId = null;   /* el próximo Generar crea un análisis NUEVO */
+  _paStudents = [];
+  document.querySelectorAll('.pa-student-row .pa-inp-grade-cell').forEach(i => { i.value = ''; });
+
+  /* Grado, sección y docente se conservan: es el mismo grupo. Cambian la
+     evaluación y su fecha. El parcial se queda: suelen ser varias pruebas
+     dentro del mismo parcial. */
+  ['pa-evaluacion', 'pa-fecha'].forEach(id => {
+    const e = document.getElementById(id); if (e) e.value = '';
+  });
+  const mat = document.getElementById('pa-materia');
+  if (mat) { mat.value = ''; paFiltrarMisiones(''); }
+  const forma = document.getElementById('pa-forma');
+  if (forma) forma.value = '';
+
+  const dash = document.getElementById('pa-dashboard');
+  if (dash) { dash.style.display = 'none'; dash.innerHTML = ''; }
+  paRenderHistorial();
+
+  document.querySelector('#view-plan-accion .pa-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  toast('✏️ Elige la evaluación nueva y escribe sus notas');
+}
+window.paOtraPrueba = paOtraPrueba;
 
 function paPrint() {
   const students = _paStudents;
@@ -932,9 +1017,6 @@ function paCodigoAlumno(grado, seccion, num) {
   return grupo[n];
 }
 
-/* Con guion para leerse fácil: 15K7QM → 15-K7QM (la consulta ignora el guion) */
-function paCodigoBonito(c) { return String(c || '').replace(/^(\d+)/, '$1-'); }
-
 /* 2026-07-11 → 11/07/2026 (la fecha que el alumno escribió en su prueba) */
 function paFechaBonita(iso) {
   const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -945,63 +1027,11 @@ function paCodigoLista(a, s) {
   return paCodigoAlumno(a.grado, a.seccion, s.num);
 }
 
-/* Tiras imprimibles con la clave de cada familia (una por alumno) */
-function paMostrarCodigos() {
-  const grado   = document.getElementById('pa-grado')?.value || '';
-  const seccion = document.getElementById('pa-seccion')?.value || '';
-  if (!String(grado).replace(/\D/g, '')) { toast('Escribe primero el Grado (tarjeta de arriba)'); return; }
-  const rows = Array.from(document.querySelectorAll('.pa-student-row'));
-  if (!rows.length) { toast('Agrega la lista de estudiantes primero'); return; }
-  const filas = rows.map((row, i) => ({
-    num: i + 1,
-    nombre: row.querySelector('.pa-inp-name')?.value.trim() || '',
-    codigo: paCodigoAlumno(grado, seccion, i + 1),
-  })).filter(f => f.codigo);
-
-  const grupoTxt = paEsc(grado) + (seccion ? ' ' + paEsc(seccion) : '');
-  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-<title>Claves de familia — ${grupoTxt}</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Arial,sans-serif;color:#111;background:#fff;padding:10mm;}
-h1{font-size:15px;margin-bottom:2mm;}
-p.intro{font-size:11px;color:#444;margin-bottom:5mm;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm;}
-.tira{border:1.5px dashed #888;border-radius:6px;padding:4mm;page-break-inside:avoid;position:relative;padding-right:25mm;}
-.t1{font-size:10px;font-weight:bold;color:#1e3a7c;}
-.t2{font-size:11px;margin-top:1.5mm;}
-.cod{font-size:20px;font-weight:900;letter-spacing:2px;margin:2mm 0;font-family:'Courier New',monospace;}
-.t3{font-size:9px;color:#333;line-height:1.45;}
-.qr{position:absolute;top:4mm;right:3mm;width:20mm;height:20mm;}
-.qrtxt{position:absolute;top:24.5mm;right:3mm;width:20mm;font-size:7px;text-align:center;color:#333;line-height:1.2;}
-.noprint{margin-bottom:6mm;}
-.noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;}
-@media print{.noprint{display:none;}}
-</style></head><body>
-<div class="noprint"><button onclick="window.print()">🖨️ Imprimir tiras</button></div>
-<h1>🔑 Claves de familia — ${grupoTxt}</h1>
-<p class="intro">Recorte cada tira y entréguela EN PRIVADO a la familia de cada estudiante (reunión de padres o cuaderno).
-La clave es secreta: con ella el padre ve las notas de su hijo/a desde cualquier teléfono con internet.</p>
-<div class="grid">
-${filas.map(f => `
-  <div class="tira">
-    <img class="qr" src="${(() => { try { return new URL('img/qr-padres.png', location.href).href; } catch (_) { return 'img/qr-padres.png'; } })()}" alt="QR">
-    <div class="qrtxt">📷 Apunte la cámara a este cuadro</div>
-    <div class="t1">🔑 M.E.T.A.S — Clave de la familia</div>
-    <div class="t2">Alumno/a <strong>#${f.num}</strong> · ${grupoTxt}${f.nombre ? ' · ' + paEsc(f.nombre) : ''}</div>
-    <div class="cod">${paCodigoBonito(f.codigo)}</div>
-    <div class="t3">📱 Apunte la cámara del teléfono al cuadro, o entre a:<br><strong>${PA_SITE}padres.html</strong><br>
-    El 🤖 asistente le pedirá esta clave y le contará cómo va su hijo/a: notas, mensajes del maestro
-    y cómo apoyar en casa. Guárdela como una llave: es solo para su familia.</div>
-  </div>`).join('')}
-</div>
-</body></html>`;
-
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html);
-  w.document.close();
-}
+/* Las TIRAS IMPRIMIBLES de las claves de familia vivían también aquí y
+   confundían: la misma clave se imprimía desde dos pantallas distintas.
+   Ahora hay UN solo lugar — Mi aula → 👥 Alumnos → 🖨️ Tiras de claves
+   (adTirasTodas, en js/tools/registros-admin.js), que es donde nace la
+   lista y donde el maestro edita clave por clave. */
 
 /* La firma incluye el CÓDIGO: si el maestro regenera la clave de una
    familia (tira filtrada, cierre de año), la fila se re-publica con la
@@ -1014,11 +1044,16 @@ function paSbFirma(a, s, codigo) {
          (a.parcial || '') + '|' + (a.fechaPrueba || '');
 }
 
+/* Devuelve lo que falta subir y, aparte, cuántas notas NO se pueden subir
+   porque su análisis se guardó sin Grado: sin grado no hay clave de familia
+   (paCodigoAlumno) y esa nota jamás llegaría al asistente. Hay que decirlo,
+   no dejar creer que está publicada. */
 function paSbPendientes(d) {
   const filas = [];
+  filas.sinCodigo = 0;
   d.analisis.forEach(a => (a.students || []).forEach(s => {
     const codigo = paCodigoLista(a, s);
-    if (!codigo) return;
+    if (!codigo) { filas.sinCodigo++; return; }
     if (s.sb === paSbFirma(a, s, codigo)) return; // ya está en la nube tal cual
     filas.push({
       evento_id: 'PASB-' + a.id + '-' + s.num,
@@ -1037,6 +1072,16 @@ function paSbPendientes(d) {
   return filas;
 }
 
+/* El estado de la nube se dice en DOS lugares: la tarjeta 🔑 Nube de padres
+   (al pie) y el aviso que sale encima del análisis recién generado, que es
+   donde el maestro está mirando en ese momento. */
+function paNubeEstado(txt, corto) {
+  const st = document.getElementById('pa-sb-status');
+  if (st) st.textContent = txt;
+  const li = document.getElementById('pa-listo-estado');
+  if (li) li.textContent = corto || txt;
+}
+
 let _paSbBusy = false;
 /* Editar un mensaje ya publicado también debe llegar a la nube: mismo
    auto-publish con calma (4 s) que usa Mi aula (adSyncProgramar) */
@@ -1047,15 +1092,22 @@ function paNubeProgramar() {
 }
 async function paSincronizarNube(manual) {
   if (_paSbBusy) return;
-  const st = document.getElementById('pa-sb-status');
   const d = paLoadData();
   const filas = paSbPendientes(d);
   if (!filas.length) {
-    if (st) st.textContent = '🔑 Nube de padres: al día.';
+    if (filas.sinCodigo) {
+      paNubeEstado('🔑 Nube de padres: ⚠️ ' + filas.sinCodigo + ' nota(s) sin Grado: no se les puede ' +
+        'crear la clave de familia, así que no llegan al asistente. Ábrelas en 🗂️ Análisis guardados, ' +
+        'escribe el grado y vuelve a generar.',
+        '⚠️ Falta el Grado: sin él no hay clave de familia y esto no llega al asistente.');
+      return;
+    }
+    paNubeEstado('🔑 Nube de padres: al día.', '✅ Ya está en el asistente: las familias pueden consultarlo.');
     return;
   }
   if (navigator.onLine === false) {
-    if (st) st.textContent = '🔑 Nube de padres: 📴 sin conexión, se enviará al haber internet (' + filas.length + ' pendientes).';
+    paNubeEstado('🔑 Nube de padres: 📴 sin conexión, se enviará al haber internet (' + filas.length + ' pendientes).',
+      '📴 Sin internet: se sube solo en cuanto tengas señal.');
     return;
   }
   let paCred = null;
@@ -1064,11 +1116,12 @@ async function paSincronizarNube(manual) {
     if (d && d.codigo && d.clave) paCred = { prof: d.codigo, clave: d.clave };
   } catch (_) {}
   if (!paCred) {
-    if (st) st.textContent = '🔒 Entra a tu cuenta docente para publicar las notas en la nube de padres.';
+    paNubeEstado('🔒 Entra a tu cuenta docente para publicar las notas en la nube de padres.',
+      '🔒 Entra a tu cuenta docente para que las familias lo vean.');
     return;
   }
   _paSbBusy = true;
-  if (st) st.textContent = '🔑 Nube de padres: ⏳ enviando ' + Math.min(filas.length, 200) + '…';
+  paNubeEstado('🔑 Nube de padres: ⏳ enviando ' + Math.min(filas.length, 200) + '…', '⏳ Enviando al asistente…');
   try {
     const lote = filas.slice(0, 200);
     const { url, key } = paSbCfg();
@@ -1085,12 +1138,14 @@ async function paSincronizarNube(manual) {
       if (enviados.has('PASB-' + a.id + '-' + s.num)) s.sb = paSbFirma(a, s, paCodigoLista(a, s));
     }));
     paSaveData(d);
-    if (st) st.textContent = '🔑 Nube de padres: ✅ ' + lote.length + ' nota' + (lote.length !== 1 ? 's' : '') + ' disponibles por código de lista.';
+    paNubeEstado('🔑 Nube de padres: ✅ ' + lote.length + ' nota' + (lote.length !== 1 ? 's' : '') + ' disponibles por código de lista.',
+      '✅ Subido: cada familia ya lo ve con su clave.');
     if (manual) toast('✅ Notas enviadas a la nube de padres');
     /* quedaron más de 200 pendientes (re-publicación masiva): siguiente lote solo */
     if (filas.length > lote.length) paNubeProgramar();
   } catch (_) {
-    if (st) st.textContent = '🔑 Nube de padres: ⚠️ no se pudo enviar; se reintentará.';
+    paNubeEstado('🔑 Nube de padres: ⚠️ no se pudo enviar; se reintentará.',
+      '⚠️ No se pudo enviar todavía; se reintenta solo.');
   }
   _paSbBusy = false;
 }
@@ -1155,7 +1210,12 @@ document.addEventListener('DOMContentLoaded', () => {
         { icono: '👥', titulo: 'Traer mi lista' });
       return;
     }
-    const hayFilas = document.querySelectorAll('.pa-student-row').length > 0;
+    /* Solo se pregunta si hay algo ESCRITO: la cuadrícula arranca con 20
+       filas en blanco, y avisar de que «se reemplazarán» unas filas vacías
+       asustaba al maestro en el primer paso de la pantalla. */
+    const hayFilas = Array.from(document.querySelectorAll('.pa-student-row')).some(r =>
+      (r.querySelector('.pa-inp-name')?.value || '').trim() ||
+      (r.querySelector('.pa-inp-grade-cell')?.value || '').trim());
     if (hayFilas && !await metasConfirm('Se reemplazarán las filas actuales con la lista de **' +
       ((g.grado || '') + ' ' + (g.seccion || '')).trim() + (g.escuela ? ' · ' + g.escuela : '') +
       '** (' + g.lista.length + ' alumnos). ¿Continuar?',
@@ -1187,9 +1247,6 @@ document.addEventListener('DOMContentLoaded', () => {
     paFiltrarMisiones(e.target.value);
     paAutoNombre();
   });
-
-  // Claves de familia: tiras imprimibles para entregar a cada padre
-  document.getElementById('pa-codigos-btn')?.addEventListener('click', paMostrarCodigos);
 
   // Nube de padres (Supabase): reintenta al volver la conexión
   window.addEventListener('online', () => paSincronizarNube(false));
