@@ -485,14 +485,18 @@ tbody tr:nth-child(even){background:#f8fafc;}
 </div>
 </body></html>`;
 
-  const printWin = window.open('', '_blank');
+  /* Con la barra «cerrar y volver» de adPrintAbrir (registros-admin.js,
+     misma página); el respaldo es por si este archivo se usa suelto. */
+  const printWin = (typeof adPrintAbrir === 'function') ? adPrintAbrir(html) : window.open('', '_blank');
   if (!printWin) {
-    toast('Activa las ventanas emergentes para imprimir');
+    if (typeof adPrintAbrir !== 'function') toast('Activa las ventanas emergentes para imprimir');
     return;
   }
-  printWin.document.open();
-  printWin.document.write(html);
-  printWin.document.close();
+  if (typeof adPrintAbrir !== 'function') {
+    printWin.document.open();
+    printWin.document.write(html);
+    printWin.document.close();
+  }
   printWin.focus();
   setTimeout(() => printWin.print(), 700);
 }

@@ -28,6 +28,12 @@ const AD_PERS_ESCALA_DEF = ['S', 'MB', 'B'];
 const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
                          E: 'Excelente', R: 'Regular', D: 'Deficiente',
                          NS: 'No Satisfactorio', PS: 'Poco Satisfactorio' };
+/* Equivalencia numérica OFICIAL del SACE para la valoración final de un
+   rasgo de personalidad: se promedian los parciales y el redondeo vuelve
+   a letra (MB, S, B, MB → 12/4 = 3 → MB). Solo estas letras tienen
+   número; a una escala propia del docente no se le inventa equivalencia. */
+const AD_PERS_NUM = { S: 4, MB: 3, B: 2, NS: 1 };
+const AD_PERS_DE_NUM = { 4: 'S', 3: 'MB', 2: 'B', 1: 'NS' };
 
 let _adTab = 'lista';        /* lista | eco | asis | ctrl | sace | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
@@ -279,6 +285,31 @@ function adLps(n) {
      «º» invalidaría claves ya entregadas a las familias.
    ► Las páginas que no cargan este archivo (padres.html) llevan su
      propia copia de la regla, marcada con esta misma nota. */
+/* Abre un documento en su ventana de impresión CON salida a la vista: en el
+   teléfono la pestaña del documento tapa la app y más de un maestro se quedó
+   ahí, sin saber que había que cerrarla para volver. La barra de abajo lo
+   dice y da el botón; en el papel no sale (@media print). Todas las
+   impresiones de la app pasan por aquí. */
+function adPrintAbrir(html) {
+  const w = window.open('', '_blank');
+  if (!w) { if (typeof toast === 'function') toast('Permite las ventanas emergentes para imprimir'); return null; }
+  const barra = `<style>
+    .ad-volver-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9999; background: #0f2350;
+      color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+      padding: 9px 12px; font-family: Arial, Helvetica, sans-serif; font-size: 12.5px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,.3); }
+    .ad-volver-bar button { border: none; border-radius: 999px; padding: 10px 18px; font-size: 14px;
+      font-weight: 800; background: #ffd34d; color: #0f2350; cursor: pointer; }
+    body { padding-bottom: 62px; }
+    @media print { .ad-volver-bar { display: none !important; } body { padding-bottom: 0 !important; } }
+  </style>
+  <div class="ad-volver-bar"><span>Cuando termines de imprimir o guardar el PDF…</span>
+    <button onclick="window.close()">✅ Cerrar y volver a M.E.T.A.S.</button></div>`;
+  w.document.write(html.indexOf('</body>') >= 0 ? html.replace('</body>', barra + '</body>') : html + barra);
+  w.document.close();
+  return w;
+}
+
 function adGradoOrdinal(grado) {
   const g = String(grado || '').trim();
   if (!g) return '';
@@ -745,9 +776,7 @@ ${filas.map(f => `
   </div>`).join('')}
 </div>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* ── Alumno nuevo a mitad de año ──
@@ -851,9 +880,7 @@ body{font-family:Arial,sans-serif;color:#111;background:#fff;padding:10mm;}
   y cómo apoyar en casa. Guárdela como una llave: es solo para su familia.</div>
 </div>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 function adSinLista(body, quePara) {
@@ -1253,9 +1280,7 @@ function adPrintExpediente(st) {
     'manéjelo con el mismo cuidado que el libro de registro.</p>' +
     secs.join('') + '</body></html>';
 
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para generar el expediente'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* ══════════════ 🧾 GASTOS DE MI BOLSILLO ══════════════
@@ -1634,9 +1659,7 @@ ${orden.map(g => `<tr><td>${adFechaBonita(g.fecha)}</td><td>${adEsc(adGastoCatEt
   <div class="firma">Dirección</div>
 </div>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* ══════════════ 📦 INVENTARIO DEL AULA ══════════════
@@ -2098,9 +2121,7 @@ ${cuadro(t.don, '')}` : ''}
 </div>
 <div class="pie">Imprima dos ejemplares: uno para la dirección y otro para el docente. · Generado con M.E.T.A.S</div>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 function adRenderColecta(body, d) {
@@ -2293,9 +2314,7 @@ ${c.gastos.map(g => `<tr><td>${adFechaBonita(g.f)}</td><td>${adEsc(g.d)}</td><td
   <div class="firma">Dirección</div>
 </div>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* ══════════════ 📋 ASISTENCIA — solo lo excepcional ══════════════ */
@@ -2610,9 +2629,7 @@ ${d.lista.filter(a => resumen[a.num]).map(a => `
   <td>${resumen[a.num].dias.join(', ')}</td></tr>`).join('')}
 </tbody></table>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* Día por día del mes: el acta que piden en dirección cuando hay que
@@ -2657,9 +2674,7 @@ ${dias.map(r => `
   total de ausencias: <strong>${dias.reduce((s, r) => s + Object.values(r.aus).filter(v => v === 'A').length, 0)}</strong> ·
   total con excusa: <strong>${dias.reduce((s, r) => s + Object.values(r.aus).filter(v => v === 'E').length, 0)}</strong></p>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* ══════════════ ✅ CONTROLES DEL AULA ══════════════
@@ -3158,9 +3173,7 @@ ${d.lista.map(a => `
 <p class="pie">Faltan por anotar: <strong>${d.lista.length - hechos}</strong>.</p>
 <div class="firma">F. _______________________________ &nbsp;&nbsp; Docente</div>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* ══════════════ 🧮 BOLETA DE CALIFICACIONES (SACE) ══════════════ */
@@ -4040,6 +4053,16 @@ function adPrintBoletas(d, nums) {
     const xs = parciales.map(p => val(p, 'Inasistencias', num)).filter(x => x !== '' && !isNaN(Number(x))).map(Number);
     return xs.length ? xs.reduce((a, b) => a + b, 0) : '';
   };
+  /* Valoración FINAL de un rasgo de personalidad (normativa SACE, en
+     AD_PERS_NUM): promedio de los parciales con valoración, redondeado y
+     de vuelta a su letra. Con letras fuera de la tabla oficial queda «—»
+     y la valoración final la decide el docente. */
+  const promPers = (c, num) => {
+    const xs = parciales.map(p => String(val(p, c, num)).toUpperCase().trim()).filter(Boolean);
+    if (!xs.length || xs.some(x => !AD_PERS_NUM[x])) return '—';
+    const n = Math.round(xs.reduce((t, x) => t + AD_PERS_NUM[x], 0) / xs.length);
+    return AD_PERS_DE_NUM[Math.max(1, Math.min(4, n))];
+  };
   const thV = t => `<th class="v"><span>${adEsc(t)}</span></th>`;
   const primer = nom => String(nom || '').trim().split(/\s+/)[0] || '';
 
@@ -4187,7 +4210,7 @@ function adPrintBoletas(d, nums) {
     const promRow = `
       <tr class="prom">
         <td class="pa">PROM.</td>
-        ${pers.map(() => '<td>—</td>').join('')}
+        ${pers.map(c => `<td>${promPers(c, a.num)}</td>`).join('')}
         ${mats.map(c => `<td>${promMat(c, a.num)}</td>`).join('')}
         <td>${inasis}</td>
       </tr>`;
@@ -4399,9 +4422,7 @@ function adPrintBoletas(d, nums) {
 ${hojas.map(a => hoja(a)).join('')}
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { if (typeof toast === 'function') toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 function adCopiar(txt, ok, mal) {
@@ -4451,9 +4472,7 @@ ${d.lista.map(a => `<tr><td>${a.num}</td><td>${adEsc(a.nombre) || '—'}</td>
   <td class="n">${ns[a.num] != null ? ns[a.num] : ''}</td></tr>`).join('')}
 </tbody></table>
 </body></html>`;
-  const w = window.open('', '_blank');
-  if (!w) { toast('Permite las ventanas emergentes para imprimir'); return; }
-  w.document.write(html); w.document.close();
+  adPrintAbrir(html);
 }
 
 /* ══════════════ 🎓 CERRAR EL AÑO ESCOLAR ══════════════
@@ -5309,6 +5328,16 @@ async function adSincronizarNube(manual) {
   }
   _adSyncBusy = true;
   if (st) st.textContent = '⏳ Subiendo ' + pendientes.length + ' cambio(s)…';
+  /* Qué NOTAS van en este viaje, por parcial: al terminar se avisa con un
+     toast «Parcial II subido». El maestro que acaba de llenar la boleta
+     necesita oírlo sin ir a buscar el chip de la nube; lo demás
+     (asistencia, economía) sigue subiendo en silencio, como siempre. */
+  const notasParcial = {};
+  pendientes.forEach(f => {
+    if (f.tipo === 'nota_final' && f.parcial && actuales.has(f.evento_id)) {
+      notasParcial[f.parcial] = (notasParcial[f.parcial] || 0) + 1;
+    }
+  });
   try {
     let url = 'https://uljjgrikyigdrkbikcxo.supabase.co';
     let key = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
@@ -5336,6 +5365,13 @@ async function adSincronizarNube(manual) {
     }
     if (st) st.textContent = '✅ Nube del chatbot al día (' + new Date().toLocaleTimeString('es-HN') + ').';
     if (manual) toast('☁️ Registros sincronizados');
+    else if (typeof toast === 'function') {
+      const orden = ['I', 'II', 'III', 'IV'];
+      const ps = Object.keys(notasParcial).sort((a, b) => orden.indexOf(a) - orden.indexOf(b));
+      const nTxt = p => notasParcial[p] === 1 ? '1 nota' : notasParcial[p] + ' notas';
+      if (ps.length === 1) toast('☁️ Parcial ' + ps[0] + ' subido a la nube (' + nTxt(ps[0]) + '). Las familias ya pueden verlo.');
+      else if (ps.length) toast('☁️ Notas subidas a la nube — ' + ps.map(p => 'Parcial ' + p + ': ' + nTxt(p)).join(' · '));
+    }
   } catch (_) {
     if (st) st.textContent = '⚠️ No se pudo subir ahora; se reintenta solo.';
   }
