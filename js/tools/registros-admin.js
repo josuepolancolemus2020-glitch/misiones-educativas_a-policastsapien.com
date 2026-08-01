@@ -4364,11 +4364,10 @@ function adPrintBoletas(d, nums) {
       if (!bajas.length) {
         finalHtml = `<div class="bl-final ok">
           <div class="bl-final-t">📜 Resultado final del año lectivo: APROBADO</div>
-          <p>Estimada familia: al cierre de los cuatro parciales, ${adEsc(nom)} alcanzó la nota mínima de 70
-          en todas las materias, con un promedio general de ${promGen}. Nos complace comunicarle formalmente
-          que ha <b>aprobado el año lectivo</b>. Felicítenle en casa: este logro es fruto de su esfuerzo
-          sostenido y del acompañamiento de ustedes. Será un honor seguir acompañando su formación el
-          próximo año escolar.</p></div>`;
+          <p>Estimada familia: al cierre de los cuatro parciales, ${adEsc(nom)} alcanzó un promedio general
+          de ${promGen}. Nos complace comunicarle formalmente que ha <b>aprobado el año lectivo</b>.
+          Felicítenle en casa: este logro es fruto de su esfuerzo sostenido y del acompañamiento de
+          ustedes. Será un honor seguir acompañando su formación el próximo año escolar.</p></div>`;
       } else {
         const det = bajas.map(x => x.mat + ' (' + x.val + ')').join(', ');
         finalHtml = `<div class="bl-final rep">
@@ -4518,10 +4517,10 @@ function adPrintBoletas(d, nums) {
      ámbar —nunca rojo— si no, que la noticia ya pesa suficiente. Vive en la
      columna de mensajes EN LUGAR de motivación y consejo: la boleta cabe
      en una sola página carta. */
-  .bl-final { border-radius: 9px; padding: 10px 14px; break-inside: avoid; border: 1.5px solid; }
+  .bl-final { border-radius: 9px; padding: 12px 16px; break-inside: avoid; border: 1.5px solid; }
   .bl-msgs .bl-final { flex: 1; }
-  .bl-final-t { font-family: Georgia, serif; font-size: 11.5px; font-weight: 700; letter-spacing: .4px; margin-bottom: 5px; }
-  .bl-final p { font-size: 10.5px; line-height: 1.55; text-align: justify; color: #223; }
+  .bl-final-t { font-family: Georgia, serif; font-size: 14px; font-weight: 700; letter-spacing: .4px; margin-bottom: 7px; }
+  .bl-final p { font-size: 12.5px; line-height: 1.6; text-align: justify; color: #223; }
   .bl-final.ok { background: linear-gradient(180deg, #f0f8f0, #fff); border-color: #9fcc9f; }
   .bl-final.ok .bl-final-t { color: #2e7d32; }
   .bl-final.rep { background: linear-gradient(180deg, #fdf6ec, #fff); border-color: #dcbf8e; }
