@@ -4309,6 +4309,46 @@ function adPrintBoletas(d, nums) {
         ${chip('Inasistencias', inasis !== '' ? inasis : '0')}
       </div>`;
 
+    /* ── RESULTADO FINAL DEL AÑO — solo con los CUATRO parciales llenos ──
+       Normativa de Honduras (Primero y Segundo Ciclo): se aprueba el año
+       con nota final de 70 o más en CADA materia. El promedio general NO
+       salva una materia baja: con 75 de promedio y una materia en 65 se
+       reprueba igual. El veredicto usa el MISMO promedio redondeado de la
+       fila PROM., para que el papel nunca se contradiga a sí mismo.
+       Materias sin ninguna nota en el año no cuentan (no se impartieron);
+       si alguna materia con notas aún no tiene sus cuatro parciales, el
+       año no está cerrado y no se dicta veredicto. */
+    const matsConDatos = mats.filter(cc => parciales.some(p => valNum(p, cc) != null));
+    const anioCompleto = matsConDatos.length > 0 &&
+      matsConDatos.every(cc => parciales.every(p => valNum(p, cc) != null));
+    let finalHtml = '';
+    if (anioCompleto) {
+      const finales = matsConDatos.map(cc => ({ mat: cc, val: Number(promMat(cc, a.num)) }));
+      const bajas = finales.filter(x => x.val < 70).sort((x, y) => x.val - y.val);
+      const nom = primer(a.nombre) || 'su hijo(a)';
+      if (!bajas.length) {
+        finalHtml = `<div class="bl-final ok">
+          <div class="bl-final-t">📜 Resultado final del año lectivo: APROBADO</div>
+          <p>Estimada familia: al cierre de los cuatro parciales, ${adEsc(nom)} alcanzó la nota mínima de 70
+          en todas las materias, con un promedio general de ${promGen}. Nos complace comunicarle formalmente
+          que ha <b>aprobado el año lectivo</b>. Felicítenle en casa: este logro es fruto de su esfuerzo
+          sostenido y del acompañamiento de ustedes. Será un honor seguir acompañando su formación el
+          próximo año escolar.</p></div>`;
+      } else {
+        const det = bajas.map(x => x.mat + ' (' + x.val + ')').join(', ');
+        finalHtml = `<div class="bl-final rep">
+          <div class="bl-final-t">📜 Resultado final del año lectivo</div>
+          <p>Estimada familia: al cierre de los cuatro parciales, ${adEsc(nom)} alcanzó un promedio general
+          de ${promGen}, reflejo de un esfuerzo que valoramos y reconocemos sinceramente. La normativa
+          educativa establece que, en el Primero y Segundo Ciclo, el año se aprueba con una nota final de
+          70 o más en <b>cada materia</b>; en ${adEsc(det)} la nota final quedó por debajo de ese mínimo y,
+          por ello, el año lectivo <b>no queda aprobado</b>. Este resultado no define a ${adEsc(nom)}: es una
+          etapa que, con el proceso de recuperación, su acompañamiento en casa y el apoyo del centro
+          educativo, se puede superar. Le invitamos con todo respeto a conversar con el docente para acordar
+          juntos los pasos a seguir. Cuente con nosotros.</p></div>`;
+      }
+    }
+
     const cita = CITAS[(Number(a.num) || String(a.nombre || '').length || 0) % CITAS.length];
 
     return `<section class="hoja">
@@ -4384,6 +4424,8 @@ function adPrintBoletas(d, nums) {
         </div>
       </div>
 
+      ${finalHtml}
+
       <div class="bl-cita">
         <p>&ldquo;${adEsc(cita.t)}&rdquo;</p>
         <span>— ${adEsc(cita.a)}</span>
@@ -4437,6 +4479,16 @@ function adPrintBoletas(d, nums) {
   .fp-slot i { display: block; border-top: 1px solid #55637d; margin: 0 1px 2px; }
   .fp-slot span { font-size: 7.5px; color: #55637d; text-align: center; }
   .bl-cuerpo .bl-notas { flex: 1; }
+
+  /* Veredicto del año (solo con los 4 parciales): verde sereno si aprueba;
+     ámbar —nunca rojo— si no, que la noticia ya pesa suficiente */
+  .bl-final { margin-top: 11px; border-radius: 9px; padding: 10px 14px; break-inside: avoid; border: 1.5px solid; }
+  .bl-final-t { font-family: Georgia, serif; font-size: 11.5px; font-weight: 700; letter-spacing: .4px; margin-bottom: 5px; }
+  .bl-final p { font-size: 10.5px; line-height: 1.55; text-align: justify; color: #223; }
+  .bl-final.ok { background: linear-gradient(180deg, #f0f8f0, #fff); border-color: #9fcc9f; }
+  .bl-final.ok .bl-final-t { color: #2e7d32; }
+  .bl-final.rep { background: linear-gradient(180deg, #fdf6ec, #fff); border-color: #dcbf8e; }
+  .bl-final.rep .bl-final-t { color: #8a5a00; }
 
   .bl-cita { margin-top: 11px; text-align: center; padding: 8px 26px; border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); break-inside: avoid; }
   .bl-cita p { font-family: Georgia, 'Times New Roman', serif; font-size: 12.5px; font-style: italic; color: var(--tinta); line-height: 1.45; }
