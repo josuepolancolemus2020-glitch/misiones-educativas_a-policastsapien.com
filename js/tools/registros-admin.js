@@ -298,15 +298,47 @@ function adPrintAbrir(html) {
       color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
       padding: 9px 12px; font-family: Arial, Helvetica, sans-serif; font-size: 12.5px;
       box-shadow: 0 -2px 10px rgba(0,0,0,.3); }
-    .ad-volver-bar button { border: none; border-radius: 999px; padding: 10px 18px; font-size: 14px;
-      font-weight: 800; background: #ffd34d; color: #0f2350; cursor: pointer; }
+    .ad-volver-bar button, #ad-volver-lista .ad-vl-btn { border: none; border-radius: 999px; padding: 10px 18px;
+      font-size: 14px; font-weight: 800; background: #ffd34d; color: #0f2350; cursor: pointer; }
+    #ad-volver-lista { display: none; position: fixed; inset: 0; z-index: 10000;
+      background: rgba(15, 35, 80, .55); align-items: center; justify-content: center;
+      font-family: Arial, Helvetica, sans-serif; }
+    #ad-volver-lista .ad-vl-card { background: #fff; border-radius: 14px; padding: 20px 24px;
+      max-width: 340px; margin: 16px; text-align: center; box-shadow: 0 10px 34px rgba(0,0,0,.35); }
+    #ad-volver-lista .ad-vl-ico { font-size: 36px; }
+    #ad-volver-lista .ad-vl-t { font-size: 14.5px; color: #0f2350; font-weight: 800; margin: 8px 0 4px; }
+    #ad-volver-lista .ad-vl-s { font-size: 12px; color: #55637d; margin-bottom: 14px; line-height: 1.45; }
+    #ad-volver-lista .ad-vl-seguir { display: inline-block; margin-top: 10px; border: none; background: none;
+      color: #55637d; font-size: 12px; text-decoration: underline; cursor: pointer; }
     body { padding-bottom: 62px; }
-    @media print { .ad-volver-bar { display: none !important; } body { padding-bottom: 0 !important; } }
+    @media print { .ad-volver-bar, #ad-volver-lista { display: none !important; } body { padding-bottom: 0 !important; } }
   </style>
   <div class="ad-volver-bar"><span>Cuando termines de imprimir o guardar el PDF…</span>
-    <button onclick="window.close()">✅ Cerrar y volver a M.E.T.A.S.</button></div>`;
+    <button onclick="window.close()">✅ Cerrar y volver a M.E.T.A.S.</button></div>
+  <div id="ad-volver-lista">
+    <div class="ad-vl-card">
+      <div class="ad-vl-ico">✅</div>
+      <div class="ad-vl-t">¿Terminaste con este documento?</div>
+      <div class="ad-vl-s">Cierra esta ventana para volver a M.E.T.A.S. — mientras siga abierta, la aplicación queda esperándote.</div>
+      <button class="ad-vl-btn" onclick="window.close()">Cerrar y volver a M.E.T.A.S.</button><br>
+      <button class="ad-vl-seguir" onclick="document.getElementById('ad-volver-lista').style.display='none'">Seguir viendo el documento</button>
+    </div>
+  </div>
+  <script>
+    /* Al salir del diálogo de imprimir (imprimió o canceló), ofrecer la
+       salida en grande: en la app instalada esta ventana tapa todo y no es
+       obvio que hay que cerrarla para volver. */
+    window.addEventListener('afterprint', function () {
+      var o = document.getElementById('ad-volver-lista');
+      if (o) o.style.display = 'flex';
+    });
+  <\/script>`;
   w.document.write(html.indexOf('</body>') >= 0 ? html.replace('</body>', barra + '</body>') : html + barra);
   w.document.close();
+  try { w.focus(); } catch (_) {}
+  /* la app de origen también lo dice: si la ventana nueva tapa todo, al
+     menos se supo a dónde se fue y cómo se vuelve */
+  if (typeof toast === 'function') toast('🖨️ Documento abierto en otra ventana. Al terminar, ciérrala con su botón amarillo para volver.');
   return w;
 }
 
