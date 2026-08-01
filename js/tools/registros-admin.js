@@ -3181,13 +3181,37 @@ ${d.lista.map(a => `
      prueba pendiente en el Plan de acción;
    · solo se llenan celdas VACÍAS: lo que el maestro escribió, manda. */
 
-/* Mismo grupo que el análisis: la comparación va con los dígitos del grado
-   y el último carácter de la sección porque en el Plan se escriben a mano
-   («6º» / «6», «1» / «uno») y en Alumnos pueden ir distinto. */
+/* Mismo grupo que el análisis. Los análisis nuevos traen el id del grupo
+   (paGrupoIdDe, en el Plan de acción) y con eso no hay duda: el maestro de
+   jornada doble con «6º-1» en dos colegios no mezcla notas ajenas. Los
+   viejos no lo tienen y se comparan como siempre — dígitos del grado y
+   último carácter de la sección, porque en el Plan se escriben a mano
+   («6º» / «6») y en Alumnos pueden ir distinto. */
 function adSugMismoGrupo(a, d) {
+  if (a && a.grupoId) return a.grupoId === d.id;
   const dig = s => String(s || '').replace(/\D/g, '');
   const sec = s => { const m = String(s || '').trim().match(/([a-zA-Z0-9])\s*$/); return m ? m[1].toUpperCase() : ''; };
   return !!dig(a.grado) && dig(a.grado) === dig(d.grado) && sec(a.seccion) === sec(d.seccion);
+}
+
+/* Otros grupos que se escriben igual que este («6º-1» en dos colegios). Si
+   los hay, los análisis viejos —los que no llevan sello de grupo— pueden
+   venir de cualquiera de los dos, y eso hay que advertirlo. */
+function adSugGemelos(d) {
+  try {
+    return adState().grupos.filter(g => g.id !== d.id &&
+      adSugMismoGrupo({ grado: g.grado, seccion: g.seccion }, d)).length;
+  } catch (_) { return 0; }
+}
+
+/* La materia del Plan se busca en la boleta sin reparar en mayúsculas ni
+   acentos, y devuelve el nombre de la columna TAL COMO la escribió el
+   maestro: quien puso «Ciencias naturales» no merece una columna repetida
+   por una tilde. */
+function adSugColumna(mat, materias) {
+  const llano = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+  const k = llano(mat);
+  return (materias || []).find(c => llano(c) === k) || '';
 }
 
 /* Materia del análisis → nombre de columna de la boleta. La regla real vive
@@ -3220,18 +3244,29 @@ function adSugFuentes(d, parcial) {
       : (JSON.parse(localStorage.getItem('METAS_PLANACCION_V1')) || { analisis: [] });
   } catch (_) {}
   const rango = ((d.boleta || {}).parcialFechas || {})[parcial] || null;
-  const delParcial = a => String(a.parcial || '') === parcial ||
-    (!a.parcial && a.fechaPrueba && rango && rango.desde && rango.hasta &&
-     a.fechaPrueba >= rango.desde && a.fechaPrueba <= rango.hasta);
-  const res = { porMat: {}, evals: 0, sinMateria: 0, matSinCol: {} };
+  const porFecha = a => !a.parcial && a.fechaPrueba && rango && rango.desde && rango.hasta &&
+    a.fechaPrueba >= rango.desde && a.fechaPrueba <= rango.hasta;
+  const delParcial = a => String(a.parcial || '') === parcial || porFecha(a);
+  const res = { porMat: {}, evals: 0, porFecha: 0, sinSello: 0,
+                sinMateria: 0, matSinCol: {}, otroGrupo: 0, otroGrupoTxt: [] };
   (plan.analisis || []).forEach(a => {
-    if (!a || !Array.isArray(a.students)) return;
-    if (!adSugMismoGrupo(a, d) || !delParcial(a)) return;
+    if (!a || !Array.isArray(a.students) || !delParcial(a)) return;
+    /* De otra aula: no es un error del maestro, pero si NADA entra hay que
+       poder decirle que sus evaluaciones están anotadas con otro grado. */
+    if (!adSugMismoGrupo(a, d)) {
+      res.otroGrupo++;
+      const txt = adGradoSeccion(a.grado, a.seccion) || 'sin grado';
+      if (res.otroGrupoTxt.indexOf(txt) < 0) res.otroGrupoTxt.push(txt);
+      return;
+    }
     const mat = adSugMateriaNom(a);
     if (!mat) { res.sinMateria++; return; }
-    if (!d.materias.includes(mat)) { res.matSinCol[mat] = (res.matSinCol[mat] || 0) + 1; return; }
+    const col = adSugColumna(mat, d.materias);
+    if (!col) { res.matSinCol[mat] = (res.matSinCol[mat] || 0) + 1; return; }
     res.evals++;
-    const m = res.porMat[mat] = res.porMat[mat] || { evals: 0, notas: {} };
+    if (porFecha(a)) res.porFecha++;
+    if (!a.grupoId) res.sinSello++;
+    const m = res.porMat[col] = res.porMat[col] || { evals: 0, notas: {} };
     m.evals++;
     a.students.forEach(s => {
       if (s && typeof s.nota === 'number' && isFinite(s.nota)) {
@@ -3406,6 +3441,16 @@ function adRenderSace(body, d) {
         </table>
       </div>
       ${!esLetra && !esInasis ? '<button class="pa-generate-btn ad-btn-sec ad-mx-addmat" id="ad-sace-addmat">➕ Agregar materia</button>' : ''}
+      <div class="pa-field ad-bol-quien">
+        <label>Boleta de</label>
+        <select id="ad-sace-bol-quien" class="pa-inp-field">
+          <option value="">👥 Todo el grupo (${d.lista.length} alumno${d.lista.length === 1 ? '' : 's'})</option>
+          ${d.lista.map(a => `<option value="${a.num}">🧑‍🎓 #${a.num} · ${adEsc(a.nombre) || 'Sin nombre'}</option>`).join('')}
+        </select>
+        <p class="pa-optional-hint">Elige un alumno cuando solo necesites <strong>su</strong> boleta: la mamá que
+          viene por la de su hijo, o la nota que corregiste y hay que reimprimir. Sale la misma hoja completa, con
+          los cuatro parciales.</p>
+      </div>
       <div class="ad-btn-row" style="margin-top:8px">
         <button class="pa-generate-btn" id="ad-sace-boletas">🧾 Imprimir boletas (todas)</button>
         <button class="pa-generate-btn ad-btn-sec" id="ad-sace-csv">⬇ Copiar CSV (todas las materias)</button>
@@ -3549,7 +3594,24 @@ function adRenderSace(body, d) {
     });
   }
 
-  document.getElementById('ad-sace-boletas').addEventListener('click', () => adPrintBoletas(adLoad()));
+  /* Imprimir boletas: del grupo entero o la de un solo alumno. El botón dice
+     SIEMPRE a quién va a imprimir, porque con 43 alumnos una impresión de
+     más son 43 hojas de papel que el maestro paga de su bolsillo. */
+  const bolQuien = document.getElementById('ad-sace-bol-quien');
+  const bolBtn = document.getElementById('ad-sace-boletas');
+  const bolRotulo = () => {
+    const num = bolQuien.value;
+    if (!num) { bolBtn.textContent = '🧾 Imprimir boletas (todas)'; return; }
+    const al = d.lista.find(x => String(x.num) === String(num));
+    const nom = adPrimerNombre((al && al.nombre) || '');
+    bolBtn.textContent = '🧾 Imprimir la boleta de ' + (nom || '#' + num);
+  };
+  bolQuien.addEventListener('change', bolRotulo);
+  bolRotulo();
+  bolBtn.addEventListener('click', () => {
+    const num = bolQuien.value;
+    adPrintBoletas(adLoad(), num ? [num] : null);
+  });
 
   // Traer faltas del pase de lista → Inasistencias del parcial
   document.getElementById('ad-inasis-traer')?.addEventListener('click', () => {
@@ -3585,12 +3647,24 @@ function adRenderSace(body, d) {
     const f = adSugFuentes(dd, parcial);
     const mats = Object.keys(f.porMat);
     const digGrado = String(dd.grado || '').replace(/\D/g, '');
+    const evTxt = n => n === 1 ? '1 evaluación' : n + ' evaluaciones';
+    /* Cuando no entra nada, el maestro tiene derecho a saber POR QUÉ: casi
+       siempre es un dato que le falta al análisis (materia sin elegir) o un
+       grado escrito distinto, y con el motivo lo arregla en un minuto. */
     if (!mats.length) {
       const colgadas = Object.keys(f.matSinCol);
+      const porques = [];
+      if (colgadas.length) porques.push('Hay ' + evTxt(colgadas.reduce((t, k) => t + f.matSinCol[k], 0)) +
+        ' de ' + colgadas.join(', ') + ', pero la boleta no tiene esa materia: agrégala con «➕ Agregar materia».');
+      if (f.sinMateria) porques.push('Hay ' + evTxt(f.sinMateria) + ' sin materia elegida en el Plan de acción: ' +
+        'ábrela allá, elige su materia y vuelve — sin materia no se sabe en qué columna va.');
+      if (f.otroGrupo) porques.push('Hay ' + evTxt(f.otroGrupo) + ' anotada' + (f.otroGrupo === 1 ? '' : 's') +
+        ' como ' + f.otroGrupoTxt.join(' y ') + ', y este grupo es ' + (adGrupoTxt(dd) || 'otro') +
+        ': si son de esta aula, corrige el grado o la sección.');
       estado(!digGrado
         ? '⚠️ Ponle el grado y la sección al grupo (pestaña Alumnos): sin ellos no se sabe qué análisis del Plan de acción son de esta aula.'
-        : colgadas.length
-          ? '🔎 Hay evaluaciones de ' + colgadas.join(', ') + ' en el Plan de acción, pero la boleta no tiene esa materia. Agrégala con «➕ Agregar materia» y vuelve a tocar el botón.'
+        : porques.length
+          ? '🔎 Nada que sugerir todavía. ' + porques.join(' ')
           : '🔎 No hay evaluaciones del Parcial ' + parcial + ' de este grupo en el 📊 Plan de acción. Genera allá el análisis de cada prueba (con su parcial y su materia) y vuelve: de ahí salen las sugerencias.');
       return;
     }
@@ -3599,38 +3673,59 @@ function adRenderSace(body, d) {
       estado('✅ Nada que llenar: las celdas con evaluaciones del Plan de acción ya tienen su nota. Borra una celda y vuelve a tocar el botón si quieres recalcularla.');
       return;
     }
-    const evTxt = n => n === 1 ? '1 evaluación' : n + ' evaluaciones';
     const lista = mats.map(mat => '· ' + mat + ': ' + evTxt(f.porMat[mat].evals)).join('\n');
+    /* Las que entran por fecha no llevan parcial escrito: decirlo, porque el
+       maestro está a punto de aceptarlas como «del Parcial II». */
+    const notaFecha = f.porFecha
+      ? '\n\n_(' + evTxt(f.porFecha) + ' no tiene parcial marcado y entra por su **fecha**, dentro del rango que ' +
+        'pusiste en Inasistencias.)_' : '';
+    /* Dos aulas que se escriben igual: los análisis viejos no dicen de cuál
+       son, y el maestro merece saberlo ANTES de aceptar. */
+    const notaGemelos = (f.sinSello && adSugGemelos(dd))
+      ? '\n\n⚠️ Tienes **otro grupo** que también se escribe ' + (adGrupoTxt(dd) || 'igual') + '. De estas, ' +
+        evTxt(f.sinSello) + ' viene de antes y no dice de cuál aula es: revisa esas notas con cuidado.' : '';
     const ok = await metasConfirm(
       'Del 📊 Plan de acción de este grupo hay **' + evTxt(f.evals) +
-      '** del **Parcial ' + parcial + '**:\n' + lista +
+      '** del **Parcial ' + parcial + '**:\n' + lista + notaFecha +
       '\n\nSe llenarán **' + cambios.length + ' celdas vacías** con el promedio de las evaluaciones de cada alumno ' +
       '(todas pesan igual; NSP no cuenta como cero).\n\nLo que ya escribiste **no se toca**, y después puedes ' +
-      'corregir cualquier nota: la última palabra es tuya.',
+      'corregir cualquier nota: la última palabra es tuya.' + notaGemelos,
       { icono: '✨', titulo: 'Sugerir notas', okTxt: 'Sí, llenar' });
     if (!ok) return;
-    adUndoGuardar('Sugerir notas · Parcial ' + parcial);
     /* se recarga y recalcula: si algo cambió con el diálogo abierto, las
        celdas que dejaron de estar vacías se respetan */
     const dd2 = adLoad();
     const f2 = adSugFuentes(dd2, parcial);
     const cambios2 = adSugCambios(dd2, parcial, f2);
+    if (!cambios2.length) {
+      estado('✅ Nada que llenar: esas celdas ya tienen su nota (quizá se llenaron desde tu otro equipo).');
+      return;
+    }
+    /* la foto de la papelera se guarda AQUÍ, cuando ya se sabe que algo va a
+       cambiar: solo caben 4 y no se gasta una en una acción que no hizo nada */
+    adUndoGuardar('Sugerir notas · Parcial ' + parcial);
     dd2.notas[parcial] = dd2.notas[parcial] || {};
     cambios2.forEach(c => {
       dd2.notas[parcial][c.mat] = dd2.notas[parcial][c.mat] || {};
       dd2.notas[parcial][c.mat][c.num] = c.v;
     });
     adSave(dd2); adRenderSace(body, adLoad());
-    /* transparencia: la celda sugerida queda teñida hasta el próximo
-       redibujo y dice de qué notas salió su promedio */
+    /* transparencia: la celda sugerida queda teñida hasta el próximo redibujo.
+       El desglose se cuenta al TOCARLA (los tooltips no existen en un
+       teléfono): «Ada · Matemáticas: 86 — promedio de 80 y 91». */
     const porCelda = {};
     cambios2.forEach(c => { porCelda[c.mat + '|' + c.num] = c; });
+    const deTxt = c => c.de.length === 1
+      ? 'de una sola evaluación (' + c.de[0] + ')'
+      : 'promedio de ' + c.de.slice(0, -1).join(', ') + ' y ' + c.de[c.de.length - 1];
     body.querySelectorAll('.ad-mx-inp').forEach(inp => {
       const c = porCelda[inp.dataset.campo + '|' + inp.dataset.num];
       if (!c) return;
       inp.classList.add('ad-mx-sug');
-      inp.title = c.de.length === 1 ? 'Sugerida: una sola evaluación (' + c.de[0] + ')'
-        : 'Sugerida: promedio de ' + c.de.join(', ');
+      inp.title = 'Sugerida: ' + deTxt(c);
+      const al = dd2.lista.find(x => String(x.num) === String(inp.dataset.num));
+      inp.addEventListener('focus', () => estado('✨ ' + (adPrimerNombre((al && al.nombre) || '') || '#' + inp.dataset.num) +
+        ' · ' + c.mat + ': ' + c.v + ' — ' + deTxt(c) + '. Puedes escribir otra nota encima.'));
     });
     const sinDatos = dd2.lista.filter(al =>
       mats.some(mat => {
@@ -3645,7 +3740,8 @@ function adRenderSace(body, d) {
         ' con celdas vacías por no tener evaluaciones.' : '') +
       (colgadas.length ? ' Ojo: hay evaluaciones de ' + colgadas.join(', ') +
         ' pero la boleta no tiene esa materia (➕ Agregar materia).' : '') +
-      ' Revisa las celdas verdes: la última palabra es tuya.');
+      (f2.sinMateria ? ' Otras ' + f2.sinMateria + ' quedaron fuera por no tener materia elegida en el Plan de acción.' : '') +
+      ' Toca una celda verde para ver de qué notas salió: la última palabra es tuya.');
     if (typeof toast === 'function') toast('✨ Parcial ' + parcial + ': ' + cambios2.length + ' notas sugeridas');
   });
 
@@ -3908,9 +4004,17 @@ function adBoletaGraficoEvo(filas) {
 
 /* Imprime una BOLETA elegante por alumno: encabezado con dos logos (centro y
    Secretaría), tabla compacta de personalidad + aprovechamiento, gráfico de
-   rendimiento, mensaje formal de motivación y consejo para la familia. */
-function adPrintBoletas(d) {
+   rendimiento, mensaje formal de motivación y consejo para la familia.
+
+   `nums` (opcional) son los números de lista que se quieren imprimir. Sin él
+   sale el grupo entero. Con UN alumno se resuelve lo de todos los días: la
+   madre que llega por la boleta de su hijo y la nota que se corrigió y hay
+   que reimprimir — antes tocaba mandar las 43 hojas para rescatar una. */
+function adPrintBoletas(d, nums) {
   if (!d.lista || !d.lista.length) { if (typeof toast === 'function') toast('No hay alumnos'); return; }
+  const quiere = Array.isArray(nums) ? nums.map(String) : null;
+  const hojas = quiere && quiere.length ? d.lista.filter(a => quiere.includes(String(a.num))) : d.lista;
+  if (!hojas.length) { if (typeof toast === 'function') toast('Ese alumno ya no está en la lista'); return; }
   const centro = (d.escuela || '').trim() || 'Centro Educativo';
   const grado = adGrupoTxt(d) || '';
   const pers = AD_PERSONALIDAD.slice();
@@ -4156,8 +4260,13 @@ function adPrintBoletas(d) {
     </section>`;
   };
 
+  /* El título es el nombre con que el teléfono guarda el PDF: con un solo
+     alumno dice de quién es, para no acabar con diez «Boletas 6º-1.pdf». */
+  const titulo = hojas.length === 1
+    ? 'Boleta — ' + (String(hojas[0].nombre || '').trim() || 'N° ' + hojas[0].num) + (grado ? ' · ' + grado : '')
+    : 'Boletas — ' + grado;
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-<title>Boletas — ${adEsc(grado)}</title>
+<title>${adEsc(titulo)}</title>
 <style>
   @page { size: letter portrait; margin: 10mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -4243,7 +4352,7 @@ function adPrintBoletas(d) {
   .bl-firmas b { font-size: 10px; color: var(--tinta); font-weight: 700; }
   .bl-firmas span { display: block; font-size: 8.5px; color: #55637d; }
 </style></head><body>
-${d.lista.map(a => hoja(a)).join('')}
+${hojas.map(a => hoja(a)).join('')}
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script>
 </body></html>`;
   const w = window.open('', '_blank');

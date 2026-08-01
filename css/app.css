@@ -4608,6 +4608,8 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-mx-inp.ad-mx-sug { background: #e8f7ee; box-shadow: inset 0 0 0 2px rgba(22,163,74,.25); }
 :root[data-theme="dark"] .ad-mx-inp.ad-mx-sug { background: rgba(22,163,74,.18); }
 .ad-sug-bar { margin: 8px 0 2px; }
+/* Elegir de quién es la boleta que se imprime (todo el grupo o un alumno) */
+.ad-bol-quien { margin-top: 12px; }
 /* destello de recompensa al aplicar un valor de personalidad en la celda */
 .ad-mx-inp.ad-mx-hit { animation: adCellHit .5s ease; }
 @keyframes adCellHit {

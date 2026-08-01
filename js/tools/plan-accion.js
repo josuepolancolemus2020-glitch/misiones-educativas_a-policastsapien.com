@@ -309,7 +309,8 @@ function paGenerate() {
     const mm = MISSIONS.find(x => x.id === misionId);
     if (mm) materia = mm.subject || '';
   }
-  paPersistCurrent(students, { grado, seccion, docente, evaluacion, misionId, materia, forma: formaEv, tipoEval, parcial, fechaPrueba });
+  paPersistCurrent(students, { grado, seccion, docente, evaluacion, misionId, materia,
+    forma: formaEv, tipoEval, parcial, fechaPrueba, grupoId: paGrupoIdDe(grado, seccion) });
   paRenderPadres();
   paRenderHistorial();
   paSincronizarNube(false); // nube de padres (código de lista)
@@ -1044,6 +1045,27 @@ function paFechaBonita(iso) {
 
 function paCodigoLista(a, s) {
   return paCodigoAlumno(a.grado, a.seccion, s.num);
+}
+
+/* SELLO DEL AULA en cada análisis nuevo. El grado y la sección se escriben a
+   mano aquí, y el maestro de jornada doble tiene «6º-1» en dos colegios: sin
+   sello, Mi aula no puede saber de cuál de las dos es la prueba y las notas
+   sugeridas para la boleta se mezclarían. Se resuelve igual que las claves de
+   familia (paCodigoAlumno): manda el grupo activo si calza. Los análisis
+   viejos no lo llevan y se siguen comparando por grado y sección. */
+function paGrupoIdDe(grado, seccion) {
+  try {
+    const g = String(grado || '').replace(/\D/g, '');
+    const mSec = String(seccion || '').trim().match(/([a-zA-Z0-9])\s*$/);
+    const sec = mSec ? mSec[1].toUpperCase() : '';
+    if (!g) return '';
+    const st = JSON.parse(localStorage.getItem('METAS_ADMIN_V1'));
+    if (!st || st.v !== 2 || !Array.isArray(st.grupos)) return '';
+    const calza = gr => String(gr.grado || '').replace(/\D/g, '') === g &&
+      (((String(gr.seccion || '').trim().match(/([a-zA-Z0-9])\s*$/) || [])[1] || '').toUpperCase() === sec);
+    const gr = st.grupos.find(x => x.id === st.activo && calza(x)) || st.grupos.find(calza);
+    return gr ? gr.id : '';
+  } catch (_) { return ''; }
 }
 
 /* Las TIRAS IMPRIMIBLES de las claves de familia vivían también aquí y
