@@ -3889,10 +3889,10 @@ function adConsejoFamilia(nombre, ctx) {
     partes.push(`Celebre el logro de ${n} en ${mejores[0].mat} (${c.maxV}): el elogio sincero motiva.`);
   }
   if (c.tendencia && c.tendencia.tipo === 'sube') {
-    partes.push(`Además viene mejorando: pasó de ${c.tendencia.ini.prom} a ${c.tendencia.fin.prom} entre parciales — ese rumbo es el correcto.`);
+    partes.push(`Además viene mejorando: pasó de ${c.tendencia.ini.prom} a ${c.tendencia.fin.prom} del parcial ${c.tendencia.ini.p} al ${c.tendencia.fin.p} — ese rumbo es el correcto.`);
   }
   if (c.mejoraMax) {
-    partes.push(`Su mayor avance de este parcial fue en ${c.mejoraMax.mat}: de ${c.mejoraMax.de} a ${c.mejoraMax.a} (+${c.mejoraMax.d}) — reconózcalo, eso consolida el hábito.`);
+    partes.push(`Su mayor avance fue en ${c.mejoraMax.mat}: de ${c.mejoraMax.de} (parcial ${c.mejoraMax.pDe}) a ${c.mejoraMax.a} (parcial ${c.mejoraMax.pA}) — reconózcalo, eso consolida el hábito.`);
   }
 
   // 2) Diagnóstico: qué DICEN los datos sobre el porqué (máx. 3 causas
@@ -3906,25 +3906,41 @@ function adConsejoFamilia(nombre, ctx) {
     causas.push(`el docente observa margen en ${c.rasgosBajos.slice(0, 2).join(' y ')} — ${tip}`);
   }
   if (c.caidaMax) {
-    causas.push(`la mayor caída fue en ${c.caidaMax.mat} (de ${c.caidaMax.de} a ${c.caidaMax.a}): pregunte al docente qué cambió en esa asignatura`);
+    causas.push(`la mayor caída fue en ${c.caidaMax.mat} (de ${c.caidaMax.de} en el parcial ${c.caidaMax.pDe} a ${c.caidaMax.a} en el ${c.caidaMax.pA}): pregunte al docente qué cambió en esa asignatura`);
   }
   if (c.tendencia && c.tendencia.tipo === 'baja') {
-    causas.push(`el promedio general bajó de ${c.tendencia.ini.prom} (parcial ${c.tendencia.ini.p}) a ${c.tendencia.fin.prom} (parcial ${c.tendencia.fin.p}) — conviene retomar la rutina que funcionaba`);
+    causas.push(`el promedio de sus materias bajó de ${c.tendencia.ini.prom} (parcial ${c.tendencia.ini.p}) a ${c.tendencia.fin.prom} (parcial ${c.tendencia.fin.p}) — conviene retomar la rutina que funcionaba`);
   }
+  const hayBajo = (c.basicasBajas && c.basicasBajas.length) || (peores.length && Number(c.minV) < 70);
   if (causas.length) {
     partes.push(`Los datos del aula señalan por dónde empezar: ${causas.slice(0, 3).join('; ')}.`);
-  } else if (peores.length && (c.inasis || 0) === 0) {
+  } else if (hayBajo && (c.inasis || 0) === 0) {
     partes.push(`Sin faltas ni observaciones de conducta, el reto es de práctica: más ejercicios guiados harán la diferencia.`);
   }
 
-  // 3) Acción sobre lo bajo, con la etiqueta oficial de la nota
-  if (peores.length) {
+  // 3) Acción sobre lo bajo — las MATERIAS BÁSICAS van primero: sostienen
+  //    todo lo demás y son donde el refuerzo en casa rinde más. Y si las
+  //    cuatro están aprobadas, también se dice: esa tranquilidad informa
+  //    tanto como una alerta.
+  const bajas = c.basicasBajas || [];
+  if (bajas.length) {
+    const bTxt = bajas.slice(0, 3).map(x => `${x.mat} (${x.val} · «${adNotaCat(x.val).label}»)`).join(', ');
+    partes.push(bajas[0].val < 60
+      ? `El refuerzo empieza por lo básico: ${bTxt}. Coordine con el docente un plan de recuperación esta misma semana.`
+      : `El refuerzo empieza por lo básico: ${bTxt}. Acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
+    if (peores.length && !adEsBasica(peores[0].mat) && Number(c.minV) < 70) {
+      partes.push(`También conviene un empujón en ${adNombresMats(peores)} (${c.minV}).`);
+    }
+  } else if (peores.length && Number(c.minV) < 70) {
     const et = adNotaCat(c.minV).label;
     if (Number(c.minV) < 60) {
       partes.push(`En ${adNombresMats(peores)} (${c.minV} · «${et}») se necesita refuerzo urgente: coordine con el docente un plan de recuperación esta misma semana.`);
     } else {
       partes.push(`En ${adNombresMats(peores)} (${c.minV} · «${et}») acompáñele con 15–20 minutos de repaso diario y consulte al docente cómo apoyar desde casa.`);
     }
+  } else if (c.basicasTot) {
+    partes.push(`Las ${c.basicasTot === 4 ? 'cuatro ' : ''}materias básicas están aprobadas${c.basicasMin
+      ? ` (la más baja hoy: ${c.basicasMin.mat} con ${c.basicasMin.val})` : ''}: manténgalas con un repaso breve y constante.`);
   }
 
   if (!partes.length) partes.push('Mantenga una rutina de estudio en casa y comunicación cercana con el centro educativo.');
@@ -3932,44 +3948,25 @@ function adConsejoFamilia(nombre, ctx) {
   return partes.join(' ');
 }
 
-/* Gráfico de barras horizontales (SVG: los fill SÍ imprimen, a diferencia de
-   los fondos CSS). Verde = materia más alta, ámbar = más baja, azul = resto;
-   línea roja punteada en 70 (nota de aprobación). */
-function adBoletaGrafico(datos) {
-  if (!datos.length) return '';
-  const rowH = 18, gap = 4, padT = 6, padB = 12;
-  const labelW = 104, barX = labelW + 4, W = 320;
-  const barMax = W - barX - 26;
-  const H = padT + datos.length * (rowH + gap) - gap + padB;
-  const x70 = barX + barMax * 0.7;
-  const gridBot = padT + datos.length * (rowH + gap) - gap;
-  const bars = datos.map((it, i) => {
-    const y = padT + i * (rowH + gap);
-    const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
-    // Cada barra con el color OFICIAL de su calificación (el mismo del
-    // Plan de Acción): verde=Avanzado, cian=Muy Bueno, amarillo=
-    // Satisfactorio, naranja=Debe Mejorar, rojo=Insatisfactorio.
-    const color = adNotaCat(it.val).color;
-    const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
-    return `<text x="${labelW}" y="${(y + rowH * 0.72).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#334155">${adEsc(lbl)}</text>
-      <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
-      <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="${rowH - 4}" rx="2.5" fill="${color}"/>
-      <text x="${(barX + w + 3).toFixed(1)}" y="${(y + rowH * 0.72).toFixed(1)}" font-size="8.5" font-weight="bold" fill="${color}">${it.val}</text>`;
-  }).join('');
-  const leyenda = `<div class="bl-leyenda">${AD_NOTA_CATS.map(c =>
-    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}</div>`;
-  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
-    <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
-    <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
-    ${bars}
-  </svg>${leyenda}`;
-}
-
-/* Gráfico de EVOLUCIÓN (2+ parciales): la barra es la nota del ÚLTIMO
-   parcial con su color oficial (el estado real de hoy — el promedio del
-   año disimula las caídas), la marca | señala dónde estaba el parcial
-   anterior, y a la derecha va el delta ▲/▼ por materia. */
-function adBoletaGraficoEvo(filas) {
+/* ── NORMATIVA DEL GRÁFICO DE LA BOLETA: cómo se leen los parciales I–IV ──
+   Nació de una boleta real: el III parcial traía solo Matemáticas (85) y el
+   gráfico, que exigía un «último parcial» común a todas las materias, se
+   caía al promedio del año y pintaba 77 — el 85 no aparecía por ningún lado.
+   Las reglas, para que con I, II, III y IV el análisis sea siempre el mismo:
+   1. La nota VIGENTE de una materia es la de SU último parcial con nota.
+      El promedio del año vive en la fila PROM. de la tabla; el gráfico y
+      los chips hablan del HOY, porque el promedio disimula las caídas y
+      llega tarde a las mejoras.
+   2. Solo se compara lo comparable. La marca | y el ▲/▼ de cada materia son
+      contra su propio parcial anterior; la tendencia general del consejo
+      compara dos parciales solo por las materias que AMBOS tienen (nunca
+      el promedio de 8 materias contra el de 1).
+   3. Si las materias vienen de parciales distintos (boleta a medio llenar),
+      cada barra dice de cuál parcial es su nota (P-I…P-IV).
+   Con los cuatro parciales llenos queda: barra = IV, marca | = III, y la
+   tendencia compara III → IV con todas las materias.
+   (SVG porque los fill SÍ imprimen; los fondos CSS no siempre.) */
+function adBoletaGraficoEstado(filas, mixto) {
   if (!filas.length) return '';
   const rowH = 18, gap = 4, padT = 6, padB = 12;
   const labelW = 104, barX = labelW + 4, W = 320;
@@ -3977,24 +3974,34 @@ function adBoletaGraficoEvo(filas) {
   const H = padT + filas.length * (rowH + gap) - gap + padB;
   const x70 = barX + barMax * 0.7;
   const gridBot = padT + filas.length * (rowH + gap) - gap;
+  const hayPrev = filas.some(it => it.prev != null);
   const bars = filas.map((it, i) => {
     const y = padT + i * (rowH + gap);
     const w = Math.max(2, barMax * (Math.min(100, Math.max(0, it.val)) / 100));
-    const xp = barX + barMax * (Math.min(100, Math.max(0, it.prev)) / 100);
+    // Color OFICIAL de la calificación (el mismo del Plan de Acción)
     const color = adNotaCat(it.val).color;
-    const d = it.val - it.prev;
-    const dTxt = d > 0 ? '▲+' + d : (d < 0 ? '▼' + d : '· igual');
-    const dCol = d > 0 ? '#16a34a' : (d < 0 ? '#dc2626' : '#7286a8');
     const lbl = it.mat.length > 17 ? it.mat.slice(0, 16) + '…' : it.mat;
+    let marca = '', linea2 = '';
+    if (it.prev != null) {
+      const xp = barX + barMax * (Math.min(100, Math.max(0, it.prev)) / 100);
+      const dd = it.val - it.prev;
+      const dTxt = (dd > 0 ? '▲+' + dd : (dd < 0 ? '▼' + dd : '· igual')) + (mixto ? ' · P-' + it.p : '');
+      const dCol = dd > 0 ? '#16a34a' : (dd < 0 ? '#dc2626' : '#7286a8');
+      marca = `<rect x="${(xp - 0.7).toFixed(1)}" y="${y + 1}" width="1.4" height="${rowH - 2}" fill="#0f2350" opacity="0.6"/>`;
+      linea2 = `<text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.98).toFixed(1)}" font-size="6.3" font-weight="bold" fill="${dCol}">${dTxt}</text>`;
+    } else if (mixto) {
+      // materia con una sola nota entre varios parciales: decir de cuál es
+      linea2 = `<text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.98).toFixed(1)}" font-size="6.3" font-weight="bold" fill="#7286a8">P-${it.p}</text>`;
+    }
     return `<text x="${labelW}" y="${(y + rowH * 0.72).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#334155">${adEsc(lbl)}</text>
       <rect x="${barX}" y="${y + 2}" width="${barMax}" height="${rowH - 4}" rx="2.5" fill="#eef2f7"/>
       <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="${rowH - 4}" rx="2.5" fill="${color}"/>
-      <rect x="${(xp - 0.7).toFixed(1)}" y="${y + 1}" width="1.4" height="${rowH - 2}" fill="#0f2350" opacity="0.6"/>
+      ${marca}
       <text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.52).toFixed(1)}" font-size="8.5" font-weight="bold" fill="${color}">${it.val}</text>
-      <text x="${(barX + barMax + 3).toFixed(1)}" y="${(y + rowH * 0.98).toFixed(1)}" font-size="6.3" font-weight="bold" fill="${dCol}">${dTxt}</text>`;
+      ${linea2}`;
   }).join('');
   const leyenda = `<div class="bl-leyenda">${AD_NOTA_CATS.map(c =>
-    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}<span><i style="background:#0f2350"></i>| parcial anterior</span></div>`;
+    `<span><i style="background:${c.color}"></i>${c.min > 0 ? c.min + '+' : '&lt;60'} ${c.label}</span>`).join('')}${hayPrev ? '<span><i style="background:#0f2350"></i>| parcial anterior</span>' : ''}</div>`;
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:340px;font-family:Arial,Helvetica,sans-serif">
     <line x1="${x70.toFixed(1)}" y1="${padT - 1}" x2="${x70.toFixed(1)}" y2="${gridBot}" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="3 2"/>
     <text x="${x70.toFixed(1)}" y="${(H - 2).toFixed(1)}" text-anchor="middle" font-size="7" fill="#c0392b">70 · aprobación</text>
@@ -4065,34 +4072,58 @@ function adPrintBoletas(d, nums) {
   ];
 
   const hoja = a => {
-    // Datos del gráfico: promedio anual por materia
+    // Promedio del año por materia: el dato OFICIAL acumulado. Vive en la
+    // fila PROM. y en su chip; el gráfico y los demás chips hablan del HOY
+    // (normativa del gráfico, en adBoletaGraficoEstado).
     const datos = mats.map(c => ({ mat: c, val: promMat(c, a.num) }))
       .filter(x => x.val !== '' && !isNaN(Number(x.val)))
       .map(x => ({ mat: x.mat, val: Number(x.val) }));
     const promGen = datos.length ? Math.round(datos.reduce((s, x) => s + x.val, 0) / datos.length) : null;
-    // EMPATES con honestidad: «la más alta» son TODAS las que comparten la
-    // nota máxima; «a reforzar», todas las de la mínima. Si todas las
-    // materias tienen la misma nota, no se corona ninguna.
-    const maxV = datos.length ? Math.max.apply(null, datos.map(x => x.val)) : null;
-    const minV = datos.length ? Math.min.apply(null, datos.map(x => x.val)) : null;
-    const todasIguales = datos.length > 0 && maxV === minV;
-    const mejores = datos.filter(x => x.val === maxV);
-    const peores = todasIguales ? [] : datos.filter(x => x.val === minV);
     const inasis = sumInasis(a.num);
 
-    // ── SEÑALES para el consejo (patrones reales del aula) ──
-    // Tendencia: promedio general de cada parcial con datos; si entre el
-    // primero y el último hay ±5 puntos, es un patrón que vale contar.
-    const promsParc = parciales.map(p => {
-      const xs = mats.map(cc => val(p, cc, a.num)).filter(x => x !== '' && !isNaN(Number(x))).map(Number);
-      return xs.length ? { p, prom: Math.round(xs.reduce((s, x) => s + x, 0) / xs.length) } : null;
+    // ── ESTADO VIGENTE por materia (regla 1): la última nota de CADA
+    //    materia con su parcial, y la de su parcial anterior si existe.
+    //    Por materia, no global: un III parcial con solo Matemáticas no
+    //    puede esconder el 85 ni arrastrar al resto.
+    const valNum = (p, cc) => { const v = val(p, cc, a.num); return (v === '' || isNaN(Number(v))) ? null : Number(v); };
+    const estado = mats.map(cc => {
+      const s = parciales.map(p => ({ p, v: valNum(p, cc) })).filter(x => x.v != null);
+      if (!s.length) return null;
+      const u = s[s.length - 1], ant = s.length >= 2 ? s[s.length - 2] : null;
+      return { mat: cc, val: u.v, p: u.p, prev: ant ? ant.v : null, pPrev: ant ? ant.p : null };
     }).filter(Boolean);
+
+    // EMPATES con honestidad sobre el HOY: «la más alta» son TODAS las que
+    // comparten la nota máxima; «a reforzar», las de la mínima. Si todas
+    // están iguales, no se corona ninguna.
+    const maxV = estado.length ? Math.max.apply(null, estado.map(x => x.val)) : null;
+    const minV = estado.length ? Math.min.apply(null, estado.map(x => x.val)) : null;
+    const todasIguales = estado.length > 0 && maxV === minV;
+    const mejores = estado.filter(x => x.val === maxV);
+    const peores = todasIguales ? [] : estado.filter(x => x.val === minV);
+
+    // ── SEÑALES para el consejo (patrones reales del aula) ──
+    // Tendencia general (regla 2): el par de parciales MÁS RECIENTE que
+    // comparta 2+ materias, comparado SOLO por esas materias. Antes se
+    // comparaba el promedio de cada parcial con lo que tuviera, y un III
+    // con una sola materia daba «mejorías» fantasma (69 → 85 comparando
+    // 8 materias contra 1). Elegir otro par sería escoger el dato que
+    // conviene; ±5 para no leer ruido.
+    const parcConDatos = parciales.filter(p => mats.some(cc => valNum(p, cc) != null));
     let tendencia = null;
-    if (promsParc.length >= 2) {
-      const ini = promsParc[0], fin = promsParc[promsParc.length - 1];
-      if (fin.prom <= ini.prom - 5) tendencia = { tipo: 'baja', ini, fin };
-      else if (fin.prom >= ini.prom + 5) tendencia = { tipo: 'sube', ini, fin };
+    for (let j = parcConDatos.length - 1; j > 0 && !tendencia; j--) {
+      for (let i = j - 1; i >= 0 && !tendencia; i--) {
+        const comunes = mats.filter(cc => valNum(parcConDatos[i], cc) != null && valNum(parcConDatos[j], cc) != null);
+        if (comunes.length < 2) continue;
+        const prom = p => Math.round(comunes.reduce((s, cc) => s + valNum(p, cc), 0) / comunes.length);
+        const ini = { p: parcConDatos[i], prom: prom(parcConDatos[i]) };
+        const fin = { p: parcConDatos[j], prom: prom(parcConDatos[j]) };
+        tendencia = fin.prom <= ini.prom - 5 ? { tipo: 'baja', ini, fin }
+          : fin.prom >= ini.prom + 5 ? { tipo: 'sube', ini, fin }
+          : { tipo: 'plana' };
+      }
     }
+    if (tendencia && tendencia.tipo === 'plana') tendencia = null;
     // Personalidad: rasgos marcados con lo MÁS BAJO de la escala del centro
     // (último valor de escalaPers). Solo si NO todos están abajo — si todos,
     // es el criterio general del docente, no un patrón del alumno.
@@ -4109,33 +4140,42 @@ function adPrintBoletas(d, nums) {
     const persVals = pers.map(cc => ({ c: cc, v: rasgoUlt(cc) })).filter(x => x.v);
     const rasgosBajosTodos = persVals.filter(x => x.v === bajoP).map(x => x.c);
     const rasgosBajos = (persVals.length && rasgosBajosTodos.length === persVals.length) ? [] : rasgosBajosTodos;
-    // Elogio anclado en las MATERIAS BÁSICAS: la(s) mejor(es) entre
-    // Matemáticas/Español/CC.NN./CC.SS. Una no básica solo se suma si el
+    // MATERIAS BÁSICAS (Matemáticas/Español/CC.NN./CC.SS.), sobre el HOY:
+    // el elogio se ancla en la mejor de ellas, y el refuerzo del consejo
+    // empieza SIEMPRE por las básicas que estén debajo de 70 — son las que
+    // sostienen todo lo demás. Una no básica solo se suma al elogio si el
     // dato lo amerita: llega a 90+ o supera a la mejor básica por 8+.
-    const basicas = datos.filter(x => adEsBasica(x.mat));
+    const basicas = estado.filter(x => adEsBasica(x.mat));
     const maxB = basicas.length ? Math.max.apply(null, basicas.map(x => x.val)) : null;
     const mejoresBas = basicas.filter(x => x.val === maxB);
-    const extraDestacada = datos
+    const basicasBajas = basicas.filter(x => x.val < 70).sort((x, y) => x.val - y.val);
+    const basicasMin = basicas.length ? basicas.reduce((m, x) => (x.val < m.val ? x : m)) : null;
+    const extraDestacada = estado
       .filter(x => !adEsBasica(x.mat) && (x.val >= 90 || (maxB != null && x.val >= maxB + 8)))
       .sort((x, y) => y.val - x.val)[0] || null;
-    // EVOLUCIÓN por materia (2+ parciales): último parcial vs el anterior.
-    // Alimenta el gráfico de evolución, los chips y el consejo con la
-    // mayor mejora y la mayor caída (umbral ±5 para no leer ruido).
-    const valNum = (p, cc) => { const v = val(p, cc, a.num); return (v === '' || isNaN(Number(v))) ? null : Number(v); };
-    const parcConDatos = parciales.filter(p => mats.some(cc => valNum(p, cc) != null));
-    const pUlt = parcConDatos[parcConDatos.length - 1] || null;
-    const pPrev = parcConDatos.length >= 2 ? parcConDatos[parcConDatos.length - 2] : null;
-    const filasEvo = pPrev
-      ? mats.map(cc => ({ mat: cc, prev: valNum(pPrev, cc), val: valNum(pUlt, cc) }))
-          .filter(x => x.val != null && x.prev != null)
-      : [];
-    const evoOK = filasEvo.length >= 2;
+
+    // Mayor avance y mayor caída POR MATERIA (regla 2): su última nota
+    // contra la de su propio parcial anterior, umbral ±5. En empate manda
+    // el parcial más reciente: es la noticia de hoy, no la de hace meses.
     let mejoraMax = null, caidaMax = null;
-    filasEvo.forEach(x => {
+    const masNuevo = (x, actual) => parciales.indexOf(x.p) > parciales.indexOf(actual.pA);
+    estado.forEach(x => {
+      if (x.prev == null) return;
       const dd = x.val - x.prev;
-      if (dd >= 5 && (!mejoraMax || dd > mejoraMax.d)) mejoraMax = { mat: x.mat, de: x.prev, a: x.val, d: dd };
-      if (dd <= -5 && (!caidaMax || dd < caidaMax.d)) caidaMax = { mat: x.mat, de: x.prev, a: x.val, d: dd };
+      const fila = { mat: x.mat, de: x.prev, a: x.val, d: dd, pDe: x.pPrev, pA: x.p };
+      if (dd >= 5 && (!mejoraMax || dd > mejoraMax.d || (dd === mejoraMax.d && masNuevo(x, mejoraMax)))) mejoraMax = fila;
+      if (dd <= -5 && (!caidaMax || dd < caidaMax.d || (dd === caidaMax.d && masNuevo(x, caidaMax)))) caidaMax = fila;
     });
+
+    // Título del gráfico según lo que haya (regla 3): un solo parcial dice
+    // cuál es; parciales mezclados lo advierten; parejo dice de dónde a dónde.
+    const parcsVig = estado.map(x => x.p).filter((v, i, arr) => arr.indexOf(v) === i);
+    const gMixto = parcsVig.length > 1;
+    const prevsU = estado.filter(x => x.prev != null).map(x => x.pPrev).filter((v, i, arr) => arr.indexOf(v) === i);
+    const gTitulo = !estado.length ? 'Rendimiento por materia'
+      : parcConDatos.length === 1 ? `Notas del Parcial ${parcConDatos[0]}`
+      : gMixto ? 'Estado por materia <small>(cada una, su último parcial con nota)</small>'
+      : `Evolución por materia <small>(${prevsU.length === 1 ? 'parcial ' + prevsU[0] + ' → ' + parcsVig[0] : 'al parcial ' + parcsVig[0]})</small>`;
 
     const filas = parciales.map(p => `
       <tr>
@@ -4152,18 +4192,22 @@ function adPrintBoletas(d, nums) {
         <td>${inasis}</td>
       </tr>`;
 
+    // Chips: el promedio es del AÑO (la fila PROM.); lo demás habla del HOY
+    // (estado vigente por materia) y lo dice en su etiqueta. «A reforzar»
+    // solo cuando de verdad está bajo 70: con todo aprobado no hay alarma.
     const chip = (lbl, valTxt, cls) => `<div class="chip ${cls || ''}"><span>${lbl}</span><b>${valTxt}</b></div>`;
     const chipAlta = todasIguales
-      ? chip('Rendimiento', 'Parejo · ' + maxV + ' en todo', 'good')
+      ? chip('Rendimiento hoy', 'Parejo · ' + maxV + ' en todo', 'good')
       : (mejores.length > 1
-        ? chip('Materias más altas', adEsc(adNombresMats(mejores, mejores.length === 2 ? 2 : 1)) + ' · ' + maxV, 'good')
-        : (mejores.length ? chip('Materia más alta', adEsc(mejores[0].mat) + ' · ' + maxV, 'good') : ''));
-    const chipBaja = peores.length
-      ? chip('A reforzar', adEsc(adNombresMats(peores, peores.length === 2 ? 2 : 1)) + ' · ' + minV, 'low')
-      : '';
+        ? chip('Materias más altas (hoy)', adEsc(adNombresMats(mejores, mejores.length === 2 ? 2 : 1)) + ' · ' + maxV, 'good')
+        : (mejores.length ? chip('Materia más alta (hoy)', adEsc(mejores[0].mat) + ' · ' + maxV, 'good') : ''));
+    const chipBaja = !peores.length ? ''
+      : Number(minV) < 70
+        ? chip('A reforzar (hoy)', adEsc(adNombresMats(peores, peores.length === 2 ? 2 : 1)) + ' · ' + minV, 'low')
+        : chip('Más baja (hoy)', adEsc(adNombresMats(peores, peores.length === 2 ? 2 : 1)) + ' · ' + minV);
     const resumen = `
       <div class="chips">
-        ${chip('Promedio general', promGen != null ? promGen : '—')}
+        ${chip('Promedio del año', promGen != null ? promGen : '—')}
         ${chipAlta}
         ${chipBaja}
         ${mejoraMax ? chip('Mayor avance', adEsc(mejoraMax.mat) + ' ▲ +' + mejoraMax.d, 'good') : ''}
@@ -4222,22 +4266,22 @@ function adPrintBoletas(d, nums) {
 
       <div class="bl-grid2">
         <div class="bl-card">
-          <div class="bl-h">${evoOK
-            ? `Evolución por materia <small>(parcial ${pPrev} → ${pUlt})</small>`
-            : 'Rendimiento por materia <small>(promedio del año)</small>'}</div>
-          ${(evoOK ? adBoletaGraficoEvo(filasEvo) : adBoletaGrafico(datos)) || '<p class="bl-nada">Aún no hay promedios que graficar.</p>'}
+          <div class="bl-h">${gTitulo}</div>
+          ${adBoletaGraficoEstado(estado, gMixto) || '<p class="bl-nada">Aún no hay notas que graficar.</p>'}
           ${resumen}
         </div>
         <div class="bl-msgs">
           <div class="bl-card motiva">
             <div class="bl-h">✦ Mensaje de motivación</div>
-            <p>${adEsc(adMsgMotiva(primer(a.nombre), promGen, mejores.length === 1 ? mejores[0].mat : ''))}</p>
+            <p>${adEsc(adMsgMotiva(primer(a.nombre), promGen,
+              mejoresBas.length === 1 ? mejoresBas[0].mat : (mejores.length === 1 ? mejores[0].mat : '')))}</p>
           </div>
           <div class="bl-card consejo">
             <div class="bl-h">✿ Consejo para la familia</div>
             <p>${adEsc(adConsejoFamilia(primer(a.nombre), {
               mejores, peores, maxV, minV,
               mejoresBas, maxB, extraDestacada,
+              basicasBajas, basicasMin, basicasTot: basicas.length,
               inasis: Number(inasis) || 0,
               tendencia, rasgosBajos,
               mejoraMax, caidaMax,
