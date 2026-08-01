@@ -3421,6 +3421,7 @@ function adRenderSace(body, d) {
         ${d.boleta.escalaPers.map(v => `<button class="ad-pers-val" data-v="${adEsc(v)}">${adEsc(v)}</button>`).join('')}
         <button class="ad-pers-val ad-pers-borrar" data-v="">✕</button>
         <button class="ad-pers-edit" id="ad-pers-editescala">✏️ Editar escala</button>
+        <span class="ad-pers-ctx" id="ad-pers-ctx"></span>
       </div>
       <p class="ad-pers-leyenda">${d.boleta.escalaPers.map(v => AD_PERS_SIGNIF[v]
         ? '<b>' + adEsc(v) + '</b> = ' + adEsc(AD_PERS_SIGNIF[v]) : '<b>' + adEsc(v) + '</b>').join(' · ')}</p>` : ''}
@@ -3579,16 +3580,41 @@ function adRenderSace(body, d) {
   // Celda activa (para el teclado cualitativo de personalidad)
   let _activoIdx = 0;
   const marcarActivo = i => { inputs.forEach(x => x.classList.remove('ad-mx-activo')); if (inputs[i]) inputs[i].classList.add('ad-mx-activo'); };
+  /* Letrero del teclado de personalidad: en la fila 43 la cabecera queda
+     lejos, así que la celda activa se anuncia con nombre, rasgo y parcial */
+  const persCtx = i => {
+    if (!esLetra) return;
+    const el = document.getElementById('ad-pers-ctx');
+    const cd = colDefs[i % ncols], al = d.lista[Math.floor(i / ncols)];
+    if (!el || !cd || !al) return;
+    const nom = adPrimerNombre(al.nombre);
+    el.textContent = '✍️ #' + al.num + (nom ? ' ' + nom : '') + ' · ' + cd.campo + ' · P-' + cd.parcial;
+  };
+  /* Valores que el auto-salto reconoce: la escala del grupo más las letras
+     oficiales (por si el maestro escribe NS u otra a mano). */
+  const persValores = esLetra
+    ? Array.from(new Set((d.boleta.escalaPers || AD_PERS_ESCALA_DEF)
+        .map(x => String(x).toUpperCase()).concat(Object.keys(AD_PERS_SIGNIF))))
+    : [];
   let _letraT = null;
   inputs.forEach(inp => {
     const idx = +inp.dataset.idx;
-    inp.addEventListener('focus', () => { _activoIdx = idx; marcarActivo(idx); });
+    inp.addEventListener('focus', () => { _activoIdx = idx; marcarActivo(idx); persCtx(idx); });
     inp.addEventListener('input', () => {
       guardar(inp);
       const v = inp.value;
       if (esLetra) {
         clearTimeout(_letraT);
-        _letraT = setTimeout(() => { if (document.activeElement === inp) focar(idx + 1); }, 550);
+        /* «M» quiere ser «MB»: solo se salta de una vez cuando lo escrito ya
+           no puede crecer a un valor más largo de la escala. Si es prefijo
+           (M → MB) se le da tiempo a la segunda letra, y si lo escrito no es
+           ningún valor conocido, el cursor se queda para corregirlo. */
+        const esValor = persValores.indexOf(v) >= 0;
+        const esPrefijo = persValores.some(x => x !== v && x.indexOf(v) === 0);
+        if (v && esValor && !esPrefijo) focar(idx + 1);
+        else if (v && esPrefijo) _letraT = setTimeout(() => {
+          if (document.activeElement === inp && persValores.indexOf(inp.value) >= 0) focar(idx + 1);
+        }, 1200);
       } else if (!esInasis) {
         // nota 1-100: salta cuando ya no puede crecer (3 cifras o 2 cifras > 10)
         if (v.length >= 3 || (v.length === 2 && Number(v) > 10)) focar(idx + 1);
@@ -3605,6 +3631,16 @@ function adRenderSace(body, d) {
   // ── Teclado cualitativo de PERSONALIDAD ──
   if (esLetra) {
     marcarActivo(0);
+    persCtx(0);
+    /* la fila I–IV se pega justo debajo de la fila de rasgos: su altura se
+       mide en vivo porque los nombres largos parten en dos líneas. OJO: se
+       mide un th de RASGO (colspan), no el esquinero — ese abarca las DOS
+       filas y con su altura la subcabecera caía encima de la primera fila */
+    const th1 = body.querySelector('.ad-mx thead tr:first-child th[colspan]');
+    if (th1) {
+      const h1 = th1.offsetHeight;
+      body.querySelectorAll('.ad-mx thead tr:nth-child(2) th').forEach(th => { th.style.top = h1 + 'px'; });
+    }
     body.querySelectorAll('.ad-pers-val').forEach(btn => {
       btn.addEventListener('mousedown', e => e.preventDefault());   // no robar el foco/selección
       btn.addEventListener('click', () => {
