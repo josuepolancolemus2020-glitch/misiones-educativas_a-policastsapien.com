@@ -3164,6 +3164,103 @@ ${d.lista.map(a => `
 }
 
 /* ══════════════ 🧮 BOLETA DE CALIFICACIONES (SACE) ══════════════ */
+
+/* ── ✨ SUGERIR NOTAS: el Plan de acción llena la boleta ──
+   El maestro ya calificó las pruebas del parcial en 📊 Plan de acción (cada
+   análisis guarda parcial, materia y la nota de cada nº de lista). Pasarlas
+   a la boleta era volver a buscarlas una por una entre decenas de análisis.
+   Aquí se promedian y se escriben de un toque, con estas reglas de justicia:
+   · solo análisis de ESTE grupo (grado por dígitos y sección por su letra o
+     número final, igual que adMigrarCodigos): un maestro con dos aulas no
+     mezcla notas ajenas;
+   · solo los del parcial elegido — o sin parcial pero con fecha de prueba
+     dentro del rango que el maestro marcó para ese parcial en Inasistencias;
+   · todas las evaluaciones pesan IGUAL (promedio simple): no hay dato
+     objetivo para decir que una prueba vale más que otra;
+   · NSP no promedia: no presentarse no es un cero — ya tiene su proceso de
+     prueba pendiente en el Plan de acción;
+   · solo se llenan celdas VACÍAS: lo que el maestro escribió, manda. */
+
+/* Mismo grupo que el análisis: la comparación va con los dígitos del grado
+   y el último carácter de la sección porque en el Plan se escriben a mano
+   («6º» / «6», «1» / «uno») y en Alumnos pueden ir distinto. */
+function adSugMismoGrupo(a, d) {
+  const dig = s => String(s || '').replace(/\D/g, '');
+  const sec = s => { const m = String(s || '').trim().match(/([a-zA-Z0-9])\s*$/); return m ? m[1].toUpperCase() : ''; };
+  return !!dig(a.grado) && dig(a.grado) === dig(d.grado) && sec(a.seccion) === sec(d.seccion);
+}
+
+/* Materia del análisis → nombre de columna de la boleta. La regla real vive
+   en el Plan de acción (paMateriaDe + PA_HIST_MATERIAS, que se cargan antes
+   en esta misma página); el mapa de respaldo es por si este archivo se usa
+   suelto. */
+function adSugMateriaNom(a) {
+  let k = (a && a.materia) || '';
+  if (!k && a && a.misionId && typeof MISSIONS !== 'undefined') {
+    const m = MISSIONS.find(x => x.id === a.misionId);
+    if (m) k = m.subject || '';
+  }
+  if (!k) return '';
+  if (typeof PA_HIST_MATERIAS !== 'undefined') {
+    const x = PA_HIST_MATERIAS.find(y => y.key === k);
+    if (x) return x.nom;
+  }
+  const nom = { 'español': 'Español', 'matemáticas': 'Matemáticas', 'naturales': 'Ciencias Naturales',
+    'sociales': 'Ciencias Sociales', 'inglés': 'Inglés', 'programación': 'Programación', 'robótica': 'Robótica' }[k];
+  return nom || (k.charAt(0).toUpperCase() + k.slice(1));
+}
+
+/* Junta, por materia de la boleta, las notas de cada alumno en las
+   evaluaciones del parcial. También cuenta lo que NO entró y por qué,
+   para decírselo al maestro en vez de callarlo. */
+function adSugFuentes(d, parcial) {
+  let plan = { analisis: [] };
+  try {
+    plan = (typeof paLoadData === 'function') ? paLoadData()
+      : (JSON.parse(localStorage.getItem('METAS_PLANACCION_V1')) || { analisis: [] });
+  } catch (_) {}
+  const rango = ((d.boleta || {}).parcialFechas || {})[parcial] || null;
+  const delParcial = a => String(a.parcial || '') === parcial ||
+    (!a.parcial && a.fechaPrueba && rango && rango.desde && rango.hasta &&
+     a.fechaPrueba >= rango.desde && a.fechaPrueba <= rango.hasta);
+  const res = { porMat: {}, evals: 0, sinMateria: 0, matSinCol: {} };
+  (plan.analisis || []).forEach(a => {
+    if (!a || !Array.isArray(a.students)) return;
+    if (!adSugMismoGrupo(a, d) || !delParcial(a)) return;
+    const mat = adSugMateriaNom(a);
+    if (!mat) { res.sinMateria++; return; }
+    if (!d.materias.includes(mat)) { res.matSinCol[mat] = (res.matSinCol[mat] || 0) + 1; return; }
+    res.evals++;
+    const m = res.porMat[mat] = res.porMat[mat] || { evals: 0, notas: {} };
+    m.evals++;
+    a.students.forEach(s => {
+      if (s && typeof s.nota === 'number' && isFinite(s.nota)) {
+        (m.notas[s.num] = m.notas[s.num] || []).push(s.nota);
+      }
+    });
+  });
+  return res;
+}
+
+/* Las celdas vacías que se pueden llenar, con su promedio ya calculado.
+   Se recalcula sobre datos recién cargados justo antes de aplicar, para no
+   pisar nada que haya cambiado mientras el diálogo estaba abierto. */
+function adSugCambios(d, parcial, fuentes) {
+  const cambios = [];
+  Object.keys(fuentes.porMat).forEach(mat => {
+    const m = fuentes.porMat[mat];
+    d.lista.forEach(al => {
+      const ya = (((d.notas[parcial] || {})[mat]) || {})[al.num];
+      if (ya != null && ya !== '') return;
+      const xs = m.notas[al.num];
+      if (!xs || !xs.length) return;
+      const prom = Math.max(1, Math.min(100, Math.round(xs.reduce((t, x) => t + x, 0) / xs.length)));
+      cambios.push({ mat, num: al.num, v: prom, de: xs.slice() });
+    });
+  });
+  return cambios;
+}
+
 function adRenderSace(body, d) {
   if (!d.lista.length) { adSinLista(body, 'la boleta'); return; }
   const parcial = body.dataset.parcial || 'I';
@@ -3276,6 +3373,14 @@ function adRenderSace(body, d) {
         <button class="pa-generate-btn ad-btn-sec" id="ad-inasis-traer">📅 Traer faltas del pase de lista</button>
         <p class="pa-optional-hint">Cuenta las faltas (ausentes y con excusa) registradas en <strong>Asistencia</strong>
           dentro de ese rango y las pone en el <strong>Parcial ${parcial}</strong>. Puedes ajustar a mano después.</p>
+      </div>` : ''}
+
+      ${(!esLetra && !esInasis) ? `
+      <div class="ad-sug-bar">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-sace-sugerir">✨ Sugerir notas del Parcial ${parcial}</button>
+        <p class="pa-optional-hint">Toma las evaluaciones que guardaste en el <strong>📊 Plan de acción</strong> con este
+          parcial, promedia las de cada alumno por materia (todas pesan igual y NSP no cuenta como cero) y llena las
+          celdas <strong>vacías</strong>. Lo que ya escribiste no se toca, y toda sugerencia se puede corregir.</p>
       </div>` : ''}
 
       <div class="ad-mx-wrap">
@@ -3472,6 +3577,76 @@ function adRenderSace(body, d) {
     });
     adSave(dd); adRenderSace(body, adLoad());
     if (typeof toast === 'function') toast('📅 Parcial ' + parcial + ': ' + total + ' faltas (' + conFaltas + ' alumnos)');
+  });
+
+  // ✨ Sugerir notas del parcial desde el Plan de acción (reglas: ver adSugFuentes)
+  document.getElementById('ad-sace-sugerir')?.addEventListener('click', async () => {
+    const dd = adLoad();
+    const f = adSugFuentes(dd, parcial);
+    const mats = Object.keys(f.porMat);
+    const digGrado = String(dd.grado || '').replace(/\D/g, '');
+    if (!mats.length) {
+      const colgadas = Object.keys(f.matSinCol);
+      estado(!digGrado
+        ? '⚠️ Ponle el grado y la sección al grupo (pestaña Alumnos): sin ellos no se sabe qué análisis del Plan de acción son de esta aula.'
+        : colgadas.length
+          ? '🔎 Hay evaluaciones de ' + colgadas.join(', ') + ' en el Plan de acción, pero la boleta no tiene esa materia. Agrégala con «➕ Agregar materia» y vuelve a tocar el botón.'
+          : '🔎 No hay evaluaciones del Parcial ' + parcial + ' de este grupo en el 📊 Plan de acción. Genera allá el análisis de cada prueba (con su parcial y su materia) y vuelve: de ahí salen las sugerencias.');
+      return;
+    }
+    const cambios = adSugCambios(dd, parcial, f);
+    if (!cambios.length) {
+      estado('✅ Nada que llenar: las celdas con evaluaciones del Plan de acción ya tienen su nota. Borra una celda y vuelve a tocar el botón si quieres recalcularla.');
+      return;
+    }
+    const evTxt = n => n === 1 ? '1 evaluación' : n + ' evaluaciones';
+    const lista = mats.map(mat => '· ' + mat + ': ' + evTxt(f.porMat[mat].evals)).join('\n');
+    const ok = await metasConfirm(
+      'Del 📊 Plan de acción de este grupo hay **' + evTxt(f.evals) +
+      '** del **Parcial ' + parcial + '**:\n' + lista +
+      '\n\nSe llenarán **' + cambios.length + ' celdas vacías** con el promedio de las evaluaciones de cada alumno ' +
+      '(todas pesan igual; NSP no cuenta como cero).\n\nLo que ya escribiste **no se toca**, y después puedes ' +
+      'corregir cualquier nota: la última palabra es tuya.',
+      { icono: '✨', titulo: 'Sugerir notas', okTxt: 'Sí, llenar' });
+    if (!ok) return;
+    adUndoGuardar('Sugerir notas · Parcial ' + parcial);
+    /* se recarga y recalcula: si algo cambió con el diálogo abierto, las
+       celdas que dejaron de estar vacías se respetan */
+    const dd2 = adLoad();
+    const f2 = adSugFuentes(dd2, parcial);
+    const cambios2 = adSugCambios(dd2, parcial, f2);
+    dd2.notas[parcial] = dd2.notas[parcial] || {};
+    cambios2.forEach(c => {
+      dd2.notas[parcial][c.mat] = dd2.notas[parcial][c.mat] || {};
+      dd2.notas[parcial][c.mat][c.num] = c.v;
+    });
+    adSave(dd2); adRenderSace(body, adLoad());
+    /* transparencia: la celda sugerida queda teñida hasta el próximo
+       redibujo y dice de qué notas salió su promedio */
+    const porCelda = {};
+    cambios2.forEach(c => { porCelda[c.mat + '|' + c.num] = c; });
+    body.querySelectorAll('.ad-mx-inp').forEach(inp => {
+      const c = porCelda[inp.dataset.campo + '|' + inp.dataset.num];
+      if (!c) return;
+      inp.classList.add('ad-mx-sug');
+      inp.title = c.de.length === 1 ? 'Sugerida: una sola evaluación (' + c.de[0] + ')'
+        : 'Sugerida: promedio de ' + c.de.join(', ');
+    });
+    const sinDatos = dd2.lista.filter(al =>
+      mats.some(mat => {
+        const m = f2.porMat[mat] || { notas: {} };
+        const v = (((dd2.notas[parcial] || {})[mat]) || {})[al.num];
+        return (v == null || v === '') && !(m.notas[al.num] || []).length;
+      })).length;
+    const colgadas = Object.keys(f2.matSinCol);
+    estado('✨ ' + cambios2.length + ' nota' + (cambios2.length === 1 ? '' : 's') + ' sugerida' +
+      (cambios2.length === 1 ? '' : 's') + ' en ' + mats.join(', ') + '.' +
+      (sinDatos ? ' ' + sinDatos + ' alumno' + (sinDatos === 1 ? ' quedó' : 's quedaron') +
+        ' con celdas vacías por no tener evaluaciones.' : '') +
+      (colgadas.length ? ' Ojo: hay evaluaciones de ' + colgadas.join(', ') +
+        ' pero la boleta no tiene esa materia (➕ Agregar materia).' : '') +
+      ' Revisa las celdas verdes: la última palabra es tuya.');
+    if (typeof toast === 'function') toast('✨ Parcial ' + parcial + ': ' + cambios2.length + ' notas sugeridas');
   });
 
   // Mover una materia de posición (◀ ▶) — reordena d.materias (afecta tabla,
