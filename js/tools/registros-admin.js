@@ -3316,7 +3316,17 @@ function adRenderSace(body, d) {
   const esLetra = vista === 'pers';
   const esInasis = vista === 'inasis';
   const cols = esLetra ? AD_PERSONALIDAD.slice() : esInasis ? ['Inasistencias'] : d.materias.slice();
-  const valOf = (c, num) => { const v = (((d.notas[parcial] || {})[c]) || {})[num]; return (v == null || v === '') ? '' : v; };
+  const valOfP = (p, c, num) => { const v = (((d.notas[p] || {})[c]) || {})[num]; return (v == null || v === '') ? '' : v; };
+  const valOf = (c, num) => valOfP(parcial, c, num);
+  /* En PERSONALIDAD los CUATRO parciales van a la vista de una vez (cada
+     rasgo con sus columnas I–IV): la conducta se llena de corrido, sin ir
+     parcial por parcial. En aprovechamiento no cabe (8+ materias × 4) y las
+     notas nacen parcial a parcial, así que ahí sigue el selector. */
+  const parcialesTodos = ['I', 'II', 'III', 'IV'];
+  const colDefs = esLetra
+    ? AD_PERSONALIDAD.reduce((arr, t) => arr.concat(parcialesTodos.map((p, i) =>
+        ({ campo: t, parcial: p, ini: i === 0 }))), [])
+    : cols.map(c => ({ campo: c, parcial }));
   // rango de fechas para traer faltas del pase de lista (por parcial)
   const _fAsis = (d.asistencia || []).map(r => r.f).filter(Boolean).sort();
   const _rango = (d.boleta.parcialFechas && d.boleta.parcialFechas[parcial]) || {};
@@ -3380,14 +3390,17 @@ function adRenderSace(body, d) {
         </div>
       </details>
 
-      <p class="pa-optional-hint">Elige el <strong>parcial</strong> y llena cada alumno <strong>a lo ancho</strong>,
+      <p class="pa-optional-hint">${esLetra
+        ? 'La <strong>Personalidad</strong> se llena con los <strong>cuatro parciales a la vista</strong>: cada rasgo trae sus columnas I–IV, sin andar cambiando de parcial. Todo va a <strong>SACE</strong> y a la <strong>boleta</strong>.'
+        : `Elige el <strong>parcial</strong> y llena cada alumno <strong>a lo ancho</strong>,
         en el orden de la boleta: al escribir una nota, el cursor <strong>salta solo</strong> a la siguiente
-        materia y, al terminar la fila, baja al siguiente alumno. Las notas van a <strong>SACE</strong> y a la <strong>boleta</strong>.</p>
+        materia y, al terminar la fila, baja al siguiente alumno. Las notas van a <strong>SACE</strong> y a la <strong>boleta</strong>.`}</p>
       <div class="pa-row-2">
+        ${esLetra ? '' : `
         <div class="pa-field"><label>Parcial</label>
           <select id="ad-sace-parcial" class="pa-inp-field">
             ${['I', 'II', 'III', 'IV'].map(p => `<option value="${p}" ${p === parcial ? 'selected' : ''}>Parcial ${p}</option>`).join('')}
-          </select></div>
+          </select></div>`}
         <div class="pa-field"><label>Sección a llenar</label>
           <select id="ad-sace-vista" class="pa-inp-field">
             <option value="aprov" ${vista === 'aprov' ? 'selected' : ''}>📚 Aprovechamiento (todas las materias)</option>
@@ -3397,7 +3410,7 @@ function adRenderSace(body, d) {
       </div>
       <p class="pa-optional-hint" style="margin-top:2px">
         ${esLetra
-          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — se llena y avanza solo.'
+          ? 'La conducta es <strong>cualitativa</strong>: <strong>escríbela</strong> (S, MB, B) o toca la celda y luego el <strong>valor</strong> — el cursor recorre los parciales I→IV de cada rasgo y sigue solo. Desliza la tabla → para ver todos los rasgos.'
           : esInasis
             ? 'Escribe el <strong>número de inasistencias</strong>. Enter o «Siguiente» para bajar.'
             : 'Escribe la <strong>nota (1-100)</strong>. Las de 2+ cifras saltan solas; con Enter también. Desliza la tabla → para ver todas las materias.'}</p>
@@ -3432,23 +3445,34 @@ function adRenderSace(body, d) {
       </div>` : ''}
 
       <div class="ad-mx-wrap">
-        <table class="ad-mx">
-          <thead><tr>
+        <table class="ad-mx${esLetra ? ' ad-mx-pers' : ''}">
+          <thead>${esLetra ? `
+          <tr>
+            <th class="ad-mx-sticky ad-mx-corner" rowspan="2">Nº · Alumno</th>
+            ${cols.map(c => `<th colspan="4" class="ad-mx-ini"><div class="ad-mx-h">${adEsc(c)}</div></th>`).join('')}
+          </tr>
+          <tr>
+            ${colDefs.map(cd => `<th class="ad-mx-sub${cd.ini ? ' ad-mx-ini' : ''}"><span>${cd.parcial}</span>
+              <button class="ad-mx-copy" data-campo="${adEsc(cd.campo)}" data-parcial="${cd.parcial}"
+                title="Copiar «${adEsc(cd.campo)} · Parcial ${cd.parcial}» para SACE">📋</button></th>`).join('')}
+          </tr>` : `
+          <tr>
             <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
             ${cols.map((c, ci) => `<th><div class="ad-mx-h">${adEsc(c)}</div>
               <div class="ad-mx-hbtns">
-                ${(!esLetra && !esInasis) ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
+                ${!esInasis ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="-1" title="Mover a la izquierda"${ci === 0 ? ' disabled' : ''}>◀</button>` : ''}
                 <button class="ad-mx-copy" data-col="${ci}" title="Copiar «${adEsc(c)}» para SACE">📋</button>
-                ${(!esLetra && !esInasis) ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="1" title="Mover a la derecha"${ci === cols.length - 1 ? ' disabled' : ''}>▶</button>` : ''}
+                ${!esInasis ? `<button class="ad-mx-mv" data-col="${ci}" data-dir="1" title="Mover a la derecha"${ci === cols.length - 1 ? ' disabled' : ''}>▶</button>` : ''}
               </div></th>`).join('')}
-          </tr></thead>
+          </tr>`}
+          </thead>
           <tbody>
             ${d.lista.map((a, ri) => `<tr>
               <td class="ad-mx-sticky" title="${adEsc(a.nombre)}"><b>#${a.num}</b> <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
-              ${cols.map((c, ci) => `<td><input class="ad-mx-inp" data-idx="${ri * cols.length + ci}"
-                data-num="${a.num}" data-campo="${adEsc(c)}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
+              ${colDefs.map((cd, ci) => `<td${cd.ini ? ' class="ad-mx-ini"' : ''}><input class="ad-mx-inp" data-idx="${ri * colDefs.length + ci}"
+                data-num="${a.num}" data-campo="${adEsc(cd.campo)}" data-parcial="${cd.parcial}" type="text" inputmode="${esLetra ? 'text' : 'numeric'}"
                 maxlength="3" autocapitalize="characters" ${esLetra ? 'style="text-transform:uppercase;"' : ''}
-                value="${valOf(c, a.num) !== '' ? adEsc(String(valOf(c, a.num))) : ''}" placeholder="·"></td>`).join('')}
+                value="${valOfP(cd.parcial, cd.campo, a.num) !== '' ? adEsc(String(valOfP(cd.parcial, cd.campo, a.num))) : ''}" placeholder="·"></td>`).join('')}
             </tr>`).join('')}
           </tbody>
         </table>
@@ -3472,7 +3496,7 @@ function adRenderSace(body, d) {
     </div>`;
 
   const setSel = (k, v) => { body.dataset[k] = v; adRenderSace(body, adLoad()); };
-  document.getElementById('ad-sace-parcial').addEventListener('change', e => setSel('parcial', e.target.value));
+  document.getElementById('ad-sace-parcial')?.addEventListener('change', e => setSel('parcial', e.target.value));
   document.getElementById('ad-sace-vista').addEventListener('change', e => setSel('vista', e.target.value));
   document.getElementById('ad-sace-addmat')?.addEventListener('click', async () => {
     const nueva = await metasPrompt('Nombre de la materia nueva:', {
@@ -3520,7 +3544,7 @@ function adRenderSace(body, d) {
 
   // ── Entrada con AUTO-AVANCE (a lo ancho, en el orden de la boleta) ──
   const inputs = [...body.querySelectorAll('.ad-mx-inp')];
-  const ncols = cols.length;
+  const ncols = colDefs.length;
   const focar = i => {
     if (i >= 0 && i < inputs.length) {
       inputs[i].focus(); inputs[i].select();
@@ -3530,22 +3554,24 @@ function adRenderSace(body, d) {
   const guardar = inp => {
     const dd = adLoad();
     const campo = inp.dataset.campo;
-    dd.notas[parcial] = dd.notas[parcial] || {};
-    dd.notas[parcial][campo] = dd.notas[parcial][campo] || {};
+    /* cada celda sabe su parcial (en Personalidad conviven los cuatro) */
+    const pDest = inp.dataset.parcial || parcial;
+    dd.notas[pDest] = dd.notas[pDest] || {};
+    dd.notas[pDest][campo] = dd.notas[pDest][campo] || {};
     let raw = inp.value.trim();
     if (esLetra) {
       raw = raw.toUpperCase().replace(/[^A-ZÑ+]/g, '').slice(0, 3);
       inp.value = raw;
-      if (raw === '') delete dd.notas[parcial][campo][inp.dataset.num];
-      else dd.notas[parcial][campo][inp.dataset.num] = raw;
+      if (raw === '') delete dd.notas[pDest][campo][inp.dataset.num];
+      else dd.notas[pDest][campo][inp.dataset.num] = raw;
     } else {
       raw = raw.replace(/\D/g, '').slice(0, 3);
       inp.value = raw;
-      if (raw === '') { delete dd.notas[parcial][campo][inp.dataset.num]; }
+      if (raw === '') { delete dd.notas[pDest][campo][inp.dataset.num]; }
       else {
         let v = Math.round(Number(raw));
         v = esInasis ? Math.max(0, Math.min(999, v)) : Math.max(1, Math.min(100, v));
-        dd.notas[parcial][campo][inp.dataset.num] = v;
+        dd.notas[pDest][campo][inp.dataset.num] = v;
       }
     }
     adSave(dd);
@@ -3768,28 +3794,37 @@ function adRenderSace(body, d) {
     adSave(dd); adRenderSace(body, adLoad());
   }));
 
-  // Copiar UNA columna (materia/rasgo) para SACE — botón 📋 en su cabecera
+  // Copiar UNA columna (materia/rasgo) para SACE — botón 📋 en su cabecera.
+  // En Personalidad cada botón trae su rasgo Y su parcial (hay 4 a la vista).
   body.querySelectorAll('.ad-mx-copy').forEach(btn => btn.addEventListener('click', () => {
     const dd = adLoad();
-    const c = cols[+btn.dataset.col];
-    const ns = ((dd.notas[parcial] || {})[c]) || {};
+    const c = btn.dataset.campo || cols[+btn.dataset.col];
+    const p = btn.dataset.parcial || parcial;
+    const ns = ((dd.notas[p] || {})[c]) || {};
     const col = dd.lista.map(a => ns[a.num] != null ? ns[a.num] : '').join('\n');
     adCopiar(col,
-      () => estado('✅ Columna «' + c + '» copiada (' + dd.lista.length + ' filas, orden de lista). Pégala en SACE.'),
+      () => estado('✅ Columna «' + c + (btn.dataset.parcial ? ' · Parcial ' + p : '') + '» copiada (' +
+        dd.lista.length + ' filas, orden de lista). Pégala en SACE.'),
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
   }));
 
   document.getElementById('ad-sace-csv').addEventListener('click', () => {
     const dd = adLoad();
-    const cs = esLetra ? AD_PERSONALIDAD.slice() : esInasis ? ['Inasistencias'] : dd.materias.slice();
-    const cab = ['numero_lista', 'alumno'].concat(cs.map(c => '"' + c + '"')).join(',');
+    /* En Personalidad el CSV lleva los 4 parciales de cada rasgo (como la
+       tabla); en las otras vistas, las columnas del parcial elegido. */
+    const defs = esLetra ? colDefs
+      : (esInasis ? ['Inasistencias'] : dd.materias.slice()).map(c => ({ campo: c, parcial }));
+    const cab = ['numero_lista', 'alumno']
+      .concat(defs.map(x => '"' + x.campo + (esLetra ? ' P-' + x.parcial : '') + '"')).join(',');
     const filas = dd.lista.map(a => {
       const base = [a.num, '"' + String(a.nombre || '').replace(/"/g, '""') + '"'];
-      const vals = cs.map(c => { const v = (((dd.notas[parcial] || {})[c]) || {})[a.num]; return v != null ? v : ''; });
+      const vals = defs.map(x => { const v = (((dd.notas[x.parcial] || {})[x.campo]) || {})[a.num]; return v != null ? v : ''; });
       return base.concat(vals).join(',');
     });
     adCopiar(cab + '\n' + filas.join('\n'),
-      () => estado('✅ CSV del Parcial ' + parcial + ' copiado (todas las columnas). Pégalo en una hoja de cálculo.'),
+      () => estado(esLetra
+        ? '✅ CSV de Personalidad copiado (los 4 parciales). Pégalo en una hoja de cálculo.'
+        : '✅ CSV del Parcial ' + parcial + ' copiado (todas las columnas). Pégalo en una hoja de cálculo.'),
       () => estado('⚠️ No se pudo copiar automáticamente en este navegador.'));
   });
 }

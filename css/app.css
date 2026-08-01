@@ -4586,6 +4586,16 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-mx-inp.ad-mx-activo { background: #fff7e0; box-shadow: inset 0 0 0 2px #d9a400; }
 :root[data-theme="dark"] .ad-mx-inp.ad-mx-activo { background: rgba(217,164,0,.22); }
 .ad-mx-inp[readonly] { cursor: pointer; }
+/* Personalidad con los 4 parciales a la vista: celdas angostas, subcabecera
+   I–IV con su botón de copiar, y una raya más marcada donde empieza cada
+   rasgo para que el ojo no se pierda entre 20 columnas */
+.ad-mx-pers .ad-mx-inp { width: 38px; }
+.ad-mx-pers .ad-mx-h { max-width: 148px; }
+.ad-mx-sub { font-size: 10px; font-weight: 800; color: var(--muted); padding: 2px 1px 3px; min-width: 34px; }
+.ad-mx-sub span { display: block; }
+.ad-mx-sub .ad-mx-copy { display: block; margin: 1px auto 0; }
+.ad-mx th.ad-mx-ini, .ad-mx td.ad-mx-ini { border-left: 2px solid #9db1cc; }
+:root[data-theme="dark"] .ad-mx th.ad-mx-ini, :root[data-theme="dark"] .ad-mx td.ad-mx-ini { border-left-color: #46586e; }
 .ad-mx-addmat { margin-top: 8px; }
 /* Teclado cualitativo de personalidad */
 .ad-pers-kp { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; margin: 10px 0 2px; }
