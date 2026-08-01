@@ -4349,7 +4349,10 @@ function adPrintBoletas(d, nums) {
        fila PROM., para que el papel nunca se contradiga a sí mismo.
        Materias sin ninguna nota en el año no cuentan (no se impartieron);
        si alguna materia con notas aún no tiene sus cuatro parciales, el
-       año no está cerrado y no se dicta veredicto. */
+       año no está cerrado y no se dicta veredicto.
+       El veredicto SUSTITUYE a la motivación y al consejo en su columna:
+       con el año dictado, «¡vamos, tú puedes!» ya no tiene sentido junto a
+       un «no aprobado» — y así la boleta se queda en UNA página carta. */
     const matsConDatos = mats.filter(cc => parciales.some(p => valNum(p, cc) != null));
     const anioCompleto = matsConDatos.length > 0 &&
       matsConDatos.every(cc => parciales.every(p => valNum(p, cc) != null));
@@ -4437,6 +4440,7 @@ function adPrintBoletas(d, nums) {
           ${resumen}
         </div>
         <div class="bl-msgs">
+          ${anioCompleto ? finalHtml : `
           <div class="bl-card motiva">
             <div class="bl-h">✦ Mensaje de motivación</div>
             <p>${adEsc(adMsgMotiva(primer(a.nombre), promGen,
@@ -4452,11 +4456,9 @@ function adPrintBoletas(d, nums) {
               tendencia, rasgosBajos,
               mejoraMax, caidaMax,
             }))}</p>
-          </div>
+          </div>`}
         </div>
       </div>
-
-      ${finalHtml}
 
       <div class="bl-cita">
         <p>&ldquo;${adEsc(cita.t)}&rdquo;</p>
@@ -4513,8 +4515,11 @@ function adPrintBoletas(d, nums) {
   .bl-cuerpo .bl-notas { flex: 1; }
 
   /* Veredicto del año (solo con los 4 parciales): verde sereno si aprueba;
-     ámbar —nunca rojo— si no, que la noticia ya pesa suficiente */
-  .bl-final { margin-top: 11px; border-radius: 9px; padding: 10px 14px; break-inside: avoid; border: 1.5px solid; }
+     ámbar —nunca rojo— si no, que la noticia ya pesa suficiente. Vive en la
+     columna de mensajes EN LUGAR de motivación y consejo: la boleta cabe
+     en una sola página carta. */
+  .bl-final { border-radius: 9px; padding: 10px 14px; break-inside: avoid; border: 1.5px solid; }
+  .bl-msgs .bl-final { flex: 1; }
   .bl-final-t { font-family: Georgia, serif; font-size: 11.5px; font-weight: 700; letter-spacing: .4px; margin-bottom: 5px; }
   .bl-final p { font-size: 10.5px; line-height: 1.55; text-align: justify; color: #223; }
   .bl-final.ok { background: linear-gradient(180deg, #f0f8f0, #fff); border-color: #9fcc9f; }
