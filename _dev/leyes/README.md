@@ -43,6 +43,9 @@ reglamento-general-lfe-acuerdo-1358-se-2014.pdf
 - [x] **Estatuto del Docente Hondureño**, Decreto 136-97 (`estatuto-docente-decreto-136-97.pdf`), 101 artículos.
 - [x] **Reglamento General del Estatuto del Docente Hondureño**, Acuerdo 0760-SE-99
       (`reglamento-estatuto-docente-acuerdo-0760-se-99.pdf`), 229 artículos.
+- [x] **Código de la Niñez y la Adolescencia**, Decreto 73-96
+      (`codigo-ninez-adolescencia-decreto-73-96.pdf`), texto con reformas del Poder
+      Judicial. Con él se escribió «Derechos de la niñez en la escuela».
 
 Con esos dos se escribió la misión «Estatuto del Docente: sus derechos». El
 antes y el después está contado en `INVESTIGACION-ESTATUTO-DOCENTE.md`: leer el

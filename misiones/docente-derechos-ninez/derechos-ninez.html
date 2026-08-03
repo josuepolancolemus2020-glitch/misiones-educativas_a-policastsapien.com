@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión del maestro · Derechos de la niñez en la escuela</title>
+<meta name="description" content="Formación docente: qué manda el Código de la Niñez y la Adolescencia dentro del aula. Disciplina sin humillación, el deber de informar en 24 horas, evaluación impugnable, niñez que trabaja y deserción. Con simulacro de concurso y ficha de estudio de diez páginas.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/derechos-ninez.css">
+</head>
+<body>
+
+<!-- Volver: index.html sin parámetros restaura la última vista guardada, que es
+     «Misiones del maestro» (switchView la guarda al entrar). -->
+<div class="xp-bar" role="status" aria-label="Progreso de la misión">
+  <a href="../../index.html" class="xp-back-btn" title="Volver a Misiones del maestro">
+    <span aria-hidden="true">←</span>
+    <img src="../../img/logo.png" alt="" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎓 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-num" id="xpNum">0</span>
+</div>
+
+<header class="hero">
+  <div class="main">
+    <span class="hero-badge">⚖️ Leyes educativas · Misión 4 de 6</span>
+    <h1>Derechos de la niñez en la escuela</h1>
+    <p>El Código de la Niñez no se consulta antes: se consulta cuando ya pasó algo y hay que
+      decidir en caliente. Un niño llega con un moretón. Hay que corregir y no se sabe hasta
+      dónde. Un alumno de doce años trabaja. Aquí están nueve escenas del aula con lo que dice
+      la ley, qué hacer y, sobre todo, qué no hacer.</p>
+    <div class="hero-solo">👤 Esta misión es para usted, no para sus alumnos. Nadie más la ve.</div>
+  </div>
+</header>
+
+<nav class="nav" id="nav" aria-label="Secciones de la misión"></nav>
+
+<main class="main">
+
+  <!-- ══════════ 1. LAS SITUACIONES ══════════ -->
+  <section class="sec active" id="sec-situaciones">
+    <div class="card">
+      <h2>🏫 Nueve situaciones que ya le pasaron a alguien</h2>
+      <p>No son casos de manual: son escenas de un centro hondureño. Toque cada una: se abre
+        debajo con lo que dice el Código, la frase textual, los pasos en orden y, aparte, lo que
+        no se hace.</p>
+      <div class="si-lista" id="siLista"></div>
+      <div class="si-nav">
+        <button class="btn btn-g" onclick="siMover(-1)">← Anterior</button>
+        <button class="btn" onclick="siMover(1)">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 2. APRENDE ══════════ -->
+  <section class="sec" id="sec-aprende">
+    <div class="card">
+      <h2>🧭 Lo que cambió en 1996, y por qué le toca a usted</h2>
+      <p>El Código de la Niñez y la Adolescencia, Decreto 73-96, trasladó a la ley hondureña la
+        Convención sobre los Derechos del Niño, que Honduras ratificó en 1990. El cambio de fondo
+        cabe en una frase: el niño dejó de ser <b>objeto</b> de protección y pasó a ser
+        <b>sujeto de derecho</b>. Eso no es filosofía: cambia quién decide, a quién hay que
+        escuchar y de qué responde el adulto que tiene al niño a su cargo.</p>
+      <p>Tres reglas del Código ordenan todo lo demás:</p>
+      <ul>
+        <li>Es <b>niño o niña</b> toda persona <b>hasta los dieciocho años</b>. Y en caso de duda
+          sobre la edad, se presume que la persona es menor de dieciocho.</li>
+        <li>Los derechos que el Código establece son <b>irrenunciables, intransigibles y de
+          aplicación obligatoria</b> en todo acto, decisión o medida administrativa, judicial o de
+          cualquier naturaleza. Nadie puede renunciar a ellos en nombre del niño.</li>
+        <li>En toda medida que tomen las instituciones <b>públicas o privadas</b>, la consideración
+          primordial es el <b>interés superior del niño</b>, respetando su condición de sujeto de
+          derecho y su derecho a <b>ser oído y a que su opinión sea tenida en cuenta</b>.</li>
+      </ul>
+      <div class="dato">📌 <b>Dato que cambia cómo se lee todo:</b> el Código incluye expresamente a
+        los <b>maestros</b> entre las personas cuyas acciones u omisiones pueden constituir
+        maltrato de un niño. No está escrito pensando solo en la familia: está escrito pensando
+        también en el aula.</div>
+
+      <h3>Los tres tipos de maltrato, y cuál se comete sin darse cuenta</h3>
+      <p>La reforma de 2013 dejó las definiciones así:</p>
+      <ul>
+        <li><b>Por omisión:</b> incumplir los deberes de cuidado. Incluye el maltrato
+          <b>intelectual</b> por omisión, que es no prestarle al niño la atención debida en los
+          procesos educativos, formativos y recreativos.</li>
+        <li><b>Por supresión:</b> todo trato, disimulado o no, aplicado <b>como medida
+          disciplinaria o correctiva</b>, que tienda a negar al niño el goce de sus derechos.</li>
+        <li><b>Por transgresión:</b> conductas hostiles, rechazantes o destructivas: malos tratos
+          físicos, agresiones emocionales o de palabra <b>incluyendo la ofensa y la humillación</b>,
+          la incomunicación rechazante y el castigo por medio de labores pesadas.</li>
+      </ul>
+      <div class="aula">🎯 <b>En su aula:</b> el que más se comete de buena fe es el de
+        <b>supresión</b>, porque no se parece a un maltrato. Dejar sin recreo, sacar del aula, no
+        dejar entrar, excluir de la actividad: son castigos que quitan derechos, y por eso tienen
+        nombre en la ley.</div>
+    </div>
+
+    <div class="card">
+      <h2>📋 Sus cuatro deberes, en una hoja</h2>
+      <p>Si de toda esta misión hubiera que quedarse con lo que la ley le exige a usted como
+        docente, es esto:</p>
+      <ul>
+        <li><b>Informar.</b> Ante un niño con signos evidentes de agresión, en un plazo máximo de
+          <b>veinticuatro horas</b>. Alcanza a los directores y a los responsables directos de los
+          niños en el centro. Omitirlo se sanciona con multa.</li>
+        <li><b>Dar cuenta.</b> Si detecta una dificultad de aprendizaje en un niño con
+          discapacidad, informar <b>a sus superiores jerárquicos y a los padres</b>.</li>
+        <li><b>Educar sin humillar.</b> Proteger al niño de todo trato humillante o destructivo,
+          <b>aunque se pretenda que es por razones disciplinarias</b>.</li>
+        <li><b>Sostener la permanencia.</b> Velar porque el ambiente y el trato escolar sean un
+          incentivo para evitar la deserción, la repitencia y el ausentismo.</li>
+      </ul>
+      <div class="dato">📌 <b>Un matiz honesto sobre a quién se reporta.</b> El Código nombra al
+        Instituto Hondureño de la Niñez y la Familia y al Ministerio Público. El mapa institucional
+        de la niñez se reorganizó después de 2013, así que el nombre de la entidad rectora pudo
+        cambiar. <b>Lo que no cambia es el deber ni el plazo</b>: confirme en su centro a quién se
+        reporta hoy, y anótelo antes de necesitarlo.</div>
+      <div class="aula">🎯 <b>El hábito que lo protege:</b> registrar el mismo día, con fecha y
+        hechos, y dejar constancia escrita de que informó. En esta materia, lo que no está en papel
+        no ocurrió, y el que responde es el que tuvo al niño a su cargo.</div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3. TARJETAS ══════════ -->
+  <section class="sec" id="sec-tarjetas">
+    <div class="card">
+      <h2>🃏 Tarjetas de repaso</h2>
+      <p>Toque la tarjeta para voltearla. Van en el orden en que se preguntan.</p>
+      <div class="fc" id="fc" onclick="fcVoltea()">
+        <div class="fc-in">
+          <div class="fc-cara fc-front" id="fcQ"></div>
+          <div class="fc-cara fc-back"><div id="fcA"></div></div>
+        </div>
+      </div>
+      <div class="btn-fila">
+        <button class="btn btn-g" onclick="fcPasa(-1)">← Anterior</button>
+        <button class="btn" onclick="fcPasa(1)">Siguiente →</button>
+        <span class="q-num" id="fcNum" style="align-self:center"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Memorama de artículos</h2>
+      <p>Empareje cada artículo con lo que manda. Seis parejas.</p>
+      <div class="memo-grid" id="memoGrid"></div>
+      <div class="btn-fila"><button class="btn btn-g" onclick="memoInit()">🔄 Barajar de nuevo</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 4. QUIZ ══════════ -->
+  <section class="sec" id="sec-quiz">
+    <div class="card">
+      <h2>❓ Compruebe lo que quedó</h2>
+      <p>Nueve preguntas con explicación inmediata. Aquí no se guarda nota: es para usted.</p>
+      <div id="quiz"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 5. CLASIFICA ══════════ -->
+  <section class="sec" id="sec-clasifica">
+    <div class="card">
+      <h2>🗂️ Cada regla en su tema</h2>
+      <p>Toque una tarjeta y luego la caja donde va. Si se equivoca, vuelva a tocarla para
+        devolverla al banco.</p>
+      <div class="cl-banco" id="clBanco"></div>
+      <div class="cl-cajas" id="clCajas"></div>
+      <div class="btn-fila">
+        <button class="btn" onclick="clRevisa()">✔️ Revisar</button>
+        <button class="btn btn-g" onclick="clInit()">🔄 Empezar de nuevo</button>
+      </div>
+      <div class="resu" id="clResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 6. COMPLETA ══════════ -->
+  <section class="sec" id="sec-completa">
+    <div class="card">
+      <h2>✍️ Complete la oración</h2>
+      <p>Escriba la palabra o el número que falta. Se aceptan mayúsculas, minúsculas y tildes
+        indistintamente.</p>
+      <div id="completa"></div>
+      <div class="btn-fila"><button class="btn" onclick="cpRevisa()">✔️ Revisar todo</button></div>
+      <div class="resu" id="cpResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 7. RETO ══════════ -->
+  <section class="sec" id="sec-reto">
+    <div class="card">
+      <h2>⏱️ Reto: la ruta del día que llega con un moretón</h2>
+      <p>Nueve pasos desordenados. Tóquelos en el orden en que se hacen. Tiene noventa segundos, y
+        el día que pase de verdad va a tener menos.</p>
+      <div class="btn-fila">
+        <button class="btn" id="retoBtn" onclick="retoInit()">▶️ Empezar</button>
+        <span class="reto-reloj" id="retoReloj">1:30</span>
+      </div>
+      <div class="reto-lista" id="retoLista"></div>
+      <div class="resu" id="retoResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 8. SOPA ══════════ -->
+  <section class="sec" id="sec-sopa">
+    <div class="card">
+      <h2>🔤 Sopa de letras</h2>
+      <p>Ocho palabras de la misión, en todas las direcciones. Toque la primera y la última letra
+        de cada palabra.</p>
+      <div class="sopa-grid" id="sopaGrid"></div>
+      <div class="sopa-pal" id="sopaPal"></div>
+      <div class="btn-fila">
+        <button class="btn btn-amb" onclick="sopaLinterna()">🔦 Linterna (cuesta 2 XP)</button>
+        <button class="btn btn-g" onclick="sopaInit()">🔄 Otra sopa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 9. CASOS ══════════ -->
+  <section class="sec" id="sec-casos">
+    <div class="card">
+      <h2>🏫 Cinco situaciones de esta semana</h2>
+      <p>Estas no traen la ruta hecha: hay que pensarlas. Piense su respuesta antes de abrir la
+        sugerencia.</p>
+
+      <div class="caso">
+        <div class="caso-t">Caso 1 · «Ese moretón se lo hizo jugando»</div>
+        <p>Un niño de segundo llega con un moretón en el brazo. Cuando usted pregunta, la madre le
+          dice que se cayó. A usted no le cuadra, pero tampoco está seguro. ¿Reporta?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Sí, y la duda no es motivo para no hacerlo. El artículo 168 pide
+          informar sobre los niños que <b>muestren signos evidentes de agresión</b>: pide signos,
+          no certeza, y le da un plazo de <b>veinticuatro horas</b>. Usted no está acusando a
+          nadie, está cumpliendo un deber que la ley le puso encima, y cuya omisión se sanciona
+          con multa de dos a cinco salarios mínimos. Lo que sí no debe hacer es interrogar al niño
+          ni confrontar a la madre: eso le toca a quien investiga, y hacerlo mal puede cerrar el
+          caso. Registre lo que vio con fecha y hechos, informe a la dirección ese mismo día y deje
+          constancia escrita de que informó.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 2 · «Aquí siempre se han quedado sin recreo»</div>
+        <p>Su grado viene de una maestra que castigaba dejando a los niños sin recreo, y los padres
+          lo dan por normal. Usted quiere cambiarlo pero no encuentra con qué sostenerlo.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Tiene con qué: el artículo 164 llama <b>maltrato por supresión</b> a
+          todo trato aplicado como medida disciplinaria o correctiva que tienda a negar al niño el
+          goce de sus derechos, e incluye expresamente negarle el acceso a actividades y áreas
+          recreativas sin causa justa. No hace falta pelear con nadie ni acusar a la compañera: se
+          presenta como lo que es, una forma de castigar que la ley nombró, y se ofrece el
+          reemplazo. Consecuencias que reparan: pedir disculpas, arreglar lo que dañó, recuperar el
+          trabajo pendiente. Y llévelo al consejo de docentes para que quede en acta: así deja de
+          ser su opinión y pasa a ser el criterio del centro.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 3 · El alumno que trabaja de noche</div>
+        <p>Un alumno de trece años se duerme en clase todos los días. Averigua que trabaja en un
+          taller hasta tarde y que la familia necesita ese dinero.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Hay dos cosas que decidir, y conviene no mezclarlas. La primera es
+          legal: <b>en ningún caso se autoriza a trabajar a un menor de catorce años</b>, y el
+          trabajo nocturno está prohibido para la niñez trabajadora. Además, el artículo 173
+          considera maltrato obligar a un niño a actividades que <b>impidan su concurrencia a los
+          establecimientos educativos</b>. Eso se informa a la dirección y se reporta. La segunda es
+          humana: esa familia no está eligiendo entre trabajo y escuela, la necesidad eligió por
+          ella. Mientras el reporte sigue su curso, ajuste lo que esté en su mano y averigüe si el
+          centro tiene beca: el Código manda otorgarlas al menos al cinco por ciento del alumnado.
+          Lo que no debe hacer es tratarlo como vago ni bajarle la nota por faltas cuya causa usted
+          ya conoce.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 4 · La nota que la madre no acepta</div>
+        <p>Una madre llega molesta a reclamar la nota de su hija y le exige ver «cómo sacó ese
+          número». Usted siente que le están cuestionando su criterio profesional.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">No le están cuestionando el criterio: están usando un derecho. El
+          artículo 35 incluye entre los contenidos del derecho a la educación <b>la impugnación de
+          las evaluaciones</b> ante las instancias correspondientes, y el artículo 43 les da a la
+          alumna y a su madre derecho a <b>obtener información sobre los procesos pedagógicos</b>.
+          Lo que hay que hacer es enseñar: el criterio escrito, el instrumento, el registro del
+          acumulativo, y cómo se llegó al número. Si hubo error, se corrige sin drama, que corregir
+          a tiempo da autoridad en vez de quitarla; si no lo hubo, se explica y se indica cuál es la
+          instancia siguiente. Lo que evita esta escena entera es tener el criterio escrito y
+          avisado <b>antes</b> de calificar.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 5 · El que dejó de venir en septiembre</div>
+        <p>Un alumno lleva tres semanas sin aparecer. En el centro le dicen que «esa familia es
+          así» y que lo reporte como desertor al cierre.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Al cierre ya es tarde, y la ley no lo deja en manos de la familia. El
+          artículo 39 dice que las autoridades escolares, los padres <b>y los maestros</b> velarán
+          porque el ambiente y el tratamiento escolar sean un incentivo para <b>evitar la deserción,
+          la repitencia y el ausentismo</b>. Busque a la familia ya, con tono de quien pregunta y no
+          de quien reclama, y deje constancia escrita de cada intento con su fecha. Y hágase la
+          pregunta incómoda que la ley sugiere: ¿qué del ambiente del aula pesa en que no vuelva?
+          Burlas del grupo, la materia que no entiende, el hambre. Esa parte sí está en sus manos, y
+          es la única que usted puede cambiar el lunes.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 10. SIMULACRO DE CONCURSO ══════════ -->
+  <section class="sec" id="sec-concurso">
+    <div class="card">
+      <h2>🎯 Simulacro de concurso</h2>
+      <p>Veinte preguntas con el formato de las pruebas de conocimientos del concurso docente:
+        una sola respuesta correcta y sin pistas. Al final se califica sobre cien y le dice qué
+        repasar. En el concurso real el promedio final exigido no baja de setenta y cinco por
+        ciento, así que ese es el listón de aquí.</p>
+      <div id="concurso"></div>
+      <div class="btn-fila">
+        <button class="btn btn-ok" onclick="cnCalifica()">🧮 Calificar</button>
+        <button class="btn btn-g" onclick="cnInit()">🔄 Otro intento</button>
+      </div>
+      <div class="resu" id="cnResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 11. FICHA, RECURSOS Y CONSTANCIA ══════════ -->
+  <section class="sec" id="sec-cierre">
+    <div class="card">
+      <h2>🖨️ Ficha de estudio, diez páginas</h2>
+      <p>Las mismas situaciones en papel, para estudiar sin batería y para tener a mano el día que
+        haga falta: los artículos con su texto, la tabla de qué se hace y qué no, la ruta del
+        reporte, el vocabulario que exigen los exámenes, ejercicios para lápiz y la pauta.</p>
+      <div class="btn-fila">
+        <a class="btn" href="../../fichas/ficha-docente-derechos-ninez.html">📄 Abrir la ficha</a>
+      </div>
+      <div class="dato">📌 Se imprime en diez hojas tamaño carta, a doble cara son cinco. La pauta va
+        en las últimas páginas: si la va a usar con colegas, imprima sin ellas y repártalas después.</div>
+    </div>
+
+    <div class="card">
+      <h2>📚 De dónde salió todo esto</h2>
+      <p>Esta misión no se escribió con buscador: se escribió leyendo el documento, que está
+        guardado en el proyecto. Estudie siempre contra el documento, no contra un resumen (ni
+        siquiera este):</p>
+      <div class="rec-it"><b>Código de la Niñez y la Adolescencia</b>, Decreto 73-96, en su texto
+        con reformas publicado por el Poder Judicial. La reforma grande del capítulo del maltrato
+        es el <b>Decreto 35-2013</b>, del 27 de febrero de 2013, publicado en La Gaceta n.º 33,222
+        del 6 de septiembre de 2013.</div>
+      <div class="rec-it"><b>Convención sobre los Derechos del Niño</b>, ratificada por Honduras
+        mediante Decreto 75-90 del 31 de mayo de 1990. Es el origen del Código, y el propio Código
+        dice que los tratados de derechos de la niñez <b>prevalecen sobre el derecho interno</b>.</div>
+      <div class="rec-it"><b>Ley Fundamental de Educación</b>, Decreto 262-2011, y el <b>Estatuto
+        del Docente Hondureño</b>, Decreto 136-97. Las otras dos normas que se cruzan con esta en
+        el aula: tienen su propia misión en esta serie.</div>
+      <div class="rec-it"><b>Dónde bajarlo:</b> portal del Poder Judicial (poderjudicial.gob.hn) y
+        biblioteca del Tribunal Superior de Cuentas (tsc.gob.hn). Los dos son gratuitos y publican
+        el texto oficial.</div>
+      <div class="fuente">Artículos, plazos y cifras leídos en el texto del Código en agosto de
+        2026. Sobre a qué entidad se reporta hoy: el Código nombra al Instituto Hondureño de la
+        Niñez y la Familia y al Ministerio Público, pero el mapa institucional de la niñez se
+        reorganizó después de 2013 y aquí no se afirma cuál es la entidad vigente. El deber y el
+        plazo no cambian; el destinatario se confirma en el centro.</div>
+    </div>
+
+    <div class="card const" id="constancia">
+      <div style="font-size:38px">🎓</div>
+      <h3>Constancia de estudio</h3>
+      <p>Escriba su nombre para cerrar la misión. Queda guardada en este teléfono.</p>
+      <input id="constNombre" placeholder="Su nombre completo" maxlength="60" oninput="guardar()">
+      <p id="constTxt" style="font-size:14px;color:var(--gris)"></p>
+      <div class="logros" id="logros"></div>
+    </div>
+  </section>
+
+  <p class="pie">M.E.T.A.S · Misiones del maestro · Formación docente ·
+    <a href="../../index.html">Volver a mi Zona Docente</a></p>
+</main>
+
+<!-- Panel de logros (lo abre el botón del pie) -->
+<div class="ach-fondo" id="achFondo" onclick="if (event.target === this) toggleAchPanel()">
+  <div class="ach-panel" role="dialog" aria-label="Logros de la misión">
+    <h3>🏅 Sus logros en esta misión</h3>
+    <div class="ach-sub" id="achSub"></div>
+    <div id="achLista"></div>
+    <div class="btn-fila"><button class="btn" onclick="toggleAchPanel()">Cerrar</button></div>
+  </div>
+</div>
+
+<footer class="credits">
+  <p class="fam">🏛️ Proyecto Formación e Investigación Docente M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Docentes <strong>Josué E. Polanco</strong> y
+    <strong>Evelyn S. Castellanos</strong>, investigadores en acción. Este material se elabora
+    con el apoyo de las mejores herramientas de investigación profunda («Deep Research»)
+    disponibles en la actualidad. Consulte siempre las fuentes citadas y, si encuentra un error,
+    agradeceremos que nos lo reporte.</p>
+  <div class="mot">«Cuanto mejor preparado esté, mejores serán sus decisiones. Al maestro que
+    estudia no se le impone: se le consulta.» 🎓</div>
+  <div class="cred-contact">
+    <span>📧 <a href="mailto:josuepolancolemus2020@gmail.com">josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank" rel="noopener">policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/derechos-ninez.js"></script>
+<!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
+     «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
+     .sec.active y go(). -->
+<script src="../../js/metas-presentacion.js"></script>
+</body>
+</html>

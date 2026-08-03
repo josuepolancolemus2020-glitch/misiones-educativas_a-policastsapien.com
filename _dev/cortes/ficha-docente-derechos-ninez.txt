@@ -1,0 +1,15 @@
+# Nueve cortes = diez páginas. Cada línea es un trozo literal del HTML que debe
+# QUEDAR AL INICIO de una página. Se prefieren encabezados; donde el reparto no
+# los permite (las situaciones se explican en bloques largos que no se parten),
+# se ancla en la caja que abre el bloque. Los anclajes van por el texto de
+# adentro, no por «<div class="caja">»: esa etiqueta se repite en toda la ficha
+# y el repaginador cortaría en la primera que encontrara.
+<h3>Las tres reglas que ordenan todo lo demás</h3>
+«En la misma obligación incurrirán los Directores
+<b>La pregunta que resuelve el noventa por ciento de los casos.</b>
+<h3>Los deberes del Estado en educación (artículo 36)</h3>
+El Código prohíbe además a los niños toda labor
+<h2>Vocabulario que exigen los exámenes</h2>
+<h3>B. Verdadero o falso</h3>
+<li>A qué <b>entidad se reporta hoy</b>
+<h2>Cómo se pregunta esto en un concurso</h2>
