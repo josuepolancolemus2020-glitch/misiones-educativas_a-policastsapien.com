@@ -1,0 +1,278 @@
+/* ══════════════════════════════════════════════════════════════
+   Misión del maestro · Historia de las leyes educativas de Honduras
+
+   COLOR: violeta. La normativa de colores por materia (roja para
+   Sociales, azul para Matemáticas…) existe para que el maestro sepa
+   de qué materia es un examen con solo verlo. Esta misión no es de
+   ninguna materia: es formación del docente, y usa el violeta de
+   «Misiones del maestro» (#6d28d9 en app.css) para que se distinga
+   de un vistazo del material del alumno. No cambiar a rojo: el rojo
+   diría «esto es una prueba de Sociales para el grado».
+
+   TIPOGRAFÍA: se lee de pie, en el teléfono, entre clase y clase.
+   Letra grande de base y nada de gris claro sobre blanco.
+══════════════════════════════════════════════════════════════ */
+:root {
+  --pri: #6d28d9;
+  --pri-mid: #7c3aed;
+  --pri-soft: #f3eeff;
+  --sec: #b45309;
+  --sec-soft: #fffbeb;
+  --ok: #15803d;
+  --ok-soft: #e8f8ef;
+  --mal: #b91c1c;
+  --mal-soft: #fdeceb;
+  --tinta: #1a2331;
+  --gris: #5b6773;
+  --linea: #e2e8f0;
+  --papel: #ffffff;
+  --fondo: #f1f4f9;
+  --sombra: 0 2px 10px rgba(26, 35, 49, .09);
+  --r: 14px;
+  --r-sm: 10px;
+}
+[data-theme="dark"] {
+  --pri-soft: #2b2350;
+  --sec-soft: #3a2c14;
+  --ok-soft: #14352a;
+  --mal-soft: #3a1c1c;
+  --tinta: #e8edf5;
+  --gris: #a4b0c0;
+  --linea: #33415a;
+  --papel: #18202c;
+  --fondo: #0f1620;
+  --sombra: 0 2px 10px rgba(0, 0, 0, .4);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0 0 90px;
+  background: var(--fondo); color: var(--tinta);
+  font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px; line-height: 1.6;
+}
+.main { max-width: 780px; margin: 0 auto; padding: 0 12px; }
+
+/* ── Barra de XP (mismo lenguaje que las misiones del alumno) ── */
+.xp-bar {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; background: var(--papel);
+  border-bottom: 1.5px solid var(--linea); box-shadow: var(--sombra);
+}
+.xp-back-btn { display: flex; align-items: center; gap: 6px; text-decoration: none; color: var(--pri); font-weight: 800; font-size: 14px; }
+.xp-back-logo { width: 26px; height: 26px; border-radius: 6px; }
+.xp-lbl { font-size: 13px; font-weight: 800; color: var(--gris); white-space: nowrap; }
+.xp-track { flex: 1; height: 12px; border-radius: 999px; background: var(--linea); overflow: hidden; }
+.xp-fill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--pri), var(--pri-mid)); transition: width .45s ease; }
+.xp-num { font-size: 13px; font-weight: 900; color: var(--pri); min-width: 54px; text-align: right; }
+
+/* ── Portada ── */
+.hero {
+  background: linear-gradient(135deg, #4c1d95, #7c3aed);
+  color: #fff; border-radius: 0 0 22px 22px;
+  padding: 22px 16px 24px; margin-bottom: 16px;
+}
+.hero-badge {
+  display: inline-block; background: rgba(255, 255, 255, .18);
+  border-radius: 999px; padding: 4px 12px;
+  font-size: 12.5px; font-weight: 800; margin-bottom: 10px;
+}
+.hero h1 { font-size: 26px; line-height: 1.2; margin: 0 0 8px; font-weight: 900; }
+.hero p { margin: 0; font-size: 14.5px; line-height: 1.55; color: rgba(255, 255, 255, .93); }
+.hero-solo {
+  margin-top: 12px; background: rgba(0, 0, 0, .22); border-radius: var(--r-sm);
+  padding: 9px 12px; font-size: 13px; font-weight: 700;
+}
+
+/* ── Navegación por secciones ── */
+.nav { display: flex; gap: 7px; overflow-x: auto; padding: 4px 12px 12px; -webkit-overflow-scrolling: touch; }
+.nav::-webkit-scrollbar { display: none; }
+.nav button {
+  flex: 0 0 auto; border: 1.5px solid var(--linea); background: var(--papel);
+  color: var(--gris); border-radius: 999px; padding: 7px 13px;
+  font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer;
+}
+.nav button.on { background: var(--pri); border-color: var(--pri); color: #fff; }
+
+/* ── Secciones y tarjetas ── */
+.sec { display: none; }
+.sec.on { display: block; animation: sube .25s ease; }
+@keyframes sube { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.card {
+  background: var(--papel); border: 1.5px solid var(--linea);
+  border-radius: var(--r); padding: 15px 14px; margin-bottom: 14px; box-shadow: var(--sombra);
+}
+.card h2 { font-size: 19px; font-weight: 900; margin: 0 0 8px; color: var(--pri); line-height: 1.25; }
+.card h3 { font-size: 16px; font-weight: 800; margin: 14px 0 6px; }
+.card p { margin: 8px 0; }
+.card ul, .card ol { margin: 8px 0; padding-left: 22px; }
+.card li { margin: 5px 0; }
+.dato {
+  border-left: 5px solid var(--sec); background: var(--sec-soft);
+  border-radius: var(--r-sm); padding: 10px 12px; margin: 10px 0; font-size: 14.5px;
+}
+.aula {
+  border-left: 5px solid var(--pri); background: var(--pri-soft);
+  border-radius: var(--r-sm); padding: 10px 12px; margin: 10px 0; font-size: 14.5px;
+}
+.aula b, .dato b { font-weight: 900; }
+.fuente { font-size: 12.5px; color: var(--gris); font-style: italic; margin-top: 6px; }
+
+/* ── Línea de tiempo (el laboratorio de esta misión) ── */
+.tl-rail { display: flex; gap: 8px; overflow-x: auto; padding: 6px 2px 12px; }
+.tl-rail::-webkit-scrollbar { height: 6px; }
+.tl-rail::-webkit-scrollbar-thumb { background: var(--linea); border-radius: 99px; }
+.tl-hito {
+  flex: 0 0 108px; border: 1.5px solid var(--linea); background: var(--papel);
+  border-radius: var(--r-sm); padding: 9px 8px; cursor: pointer; text-align: center;
+  font-family: inherit; color: var(--tinta);
+}
+.tl-hito.on { border-color: var(--pri); background: var(--pri-soft); box-shadow: 0 0 0 3px rgba(109, 40, 217, .14); }
+.tl-hito.visto::after { content: ' ✓'; color: var(--ok); font-weight: 900; }
+.tl-anio { display: block; font-size: 17px; font-weight: 900; color: var(--pri); }
+.tl-tit { display: block; font-size: 12px; font-weight: 700; line-height: 1.3; margin-top: 3px; }
+.tl-det { border: 1.5px solid var(--linea); border-radius: var(--r); padding: 13px; background: var(--papel); }
+.tl-det h3 { margin: 0 0 4px; font-size: 18px; color: var(--pri); }
+.tl-det .tl-sub { font-size: 13px; color: var(--gris); font-weight: 700; margin-bottom: 8px; }
+.tl-nav { display: flex; gap: 8px; margin-top: 12px; }
+
+/* ── Botones ── */
+.btn {
+  border: none; border-radius: var(--r-sm); padding: 11px 15px;
+  font-family: inherit; font-size: 14.5px; font-weight: 800; cursor: pointer;
+  background: var(--pri); color: #fff;
+}
+.btn:active { transform: scale(.97); }
+.btn-g { background: var(--papel); color: var(--pri); border: 1.5px solid var(--pri); }
+.btn-ok { background: var(--ok); }
+.btn-amb { background: var(--sec); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn-fila { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+/* ── Flashcards y memorama ── */
+.fc {
+  perspective: 1000px; height: 190px; margin: 10px 0; cursor: pointer;
+}
+.fc-in { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .5s; }
+.fc.flip .fc-in { transform: rotateY(180deg); }
+.fc-cara {
+  position: absolute; inset: 0; backface-visibility: hidden;
+  border-radius: var(--r); display: flex; align-items: center; justify-content: center;
+  padding: 16px; text-align: center; border: 1.5px solid var(--linea);
+}
+.fc-front { background: linear-gradient(135deg, #4c1d95, #7c3aed); color: #fff; font-size: 1.25rem; font-weight: 800; }
+.fc-back { background: var(--papel); transform: rotateY(180deg); overflow-y: auto; }
+#fcA {
+  font-family: 'Nunito', system-ui, sans-serif !important;
+  font-weight: 600 !important; font-style: normal !important;
+  font-size: 1.18rem; line-height: 1.5; color: var(--tinta);
+}
+.memo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.memo-c {
+  min-height: 84px; border-radius: var(--r-sm); border: 1.5px solid var(--linea);
+  background: #1565c0; color: #fff; display: flex; align-items: center; justify-content: center;
+  padding: 7px; text-align: center; font-size: 12.5px; font-weight: 800; cursor: pointer;
+}
+.memo-c.abierta { background: #fff; color: #1b2838; }
+.memo-c.lograda { background: #d9f5ec; color: #075e44; cursor: default; }
+[data-theme="dark"] .memo-c.abierta { background: #223047; color: #e8edf5; }
+[data-theme="dark"] .memo-c.lograda { background: #14352a; color: #7dedc9; }
+
+/* ── Preguntas (quiz, completa, simulacro) ── */
+.q { border: 1.5px solid var(--linea); border-radius: var(--r-sm); padding: 12px; margin: 10px 0; background: var(--papel); }
+.q-num { font-size: 12.5px; font-weight: 900; color: var(--pri); }
+.q-txt { font-weight: 800; margin: 4px 0 9px; }
+.q-op {
+  display: block; width: 100%; text-align: left; border: 1.5px solid var(--linea);
+  background: var(--papel); color: var(--tinta); border-radius: var(--r-sm);
+  padding: 10px 12px; margin: 6px 0; font-family: inherit; font-size: 14.5px; cursor: pointer;
+}
+.q-op:active { transform: scale(.99); }
+/* En el simulacro la opción marcada NO se pinta de verde: en la prueba real
+   nadie le dice si acertó hasta el final, y ver verde antes de calificar
+   engaña al que estudia. Marcada es violeta; verde y rojo salen al calificar. */
+.q-op.sel { border-color: var(--pri); background: var(--pri-soft); font-weight: 800; }
+.q-op.bien { background: var(--ok-soft); border-color: var(--ok); color: #075e44; font-weight: 800; }
+.q-op.mal { background: var(--mal-soft); border-color: var(--mal); color: #8f1d1d; font-weight: 800; }
+[data-theme="dark"] .q-op.bien { color: #7dedc9; }
+[data-theme="dark"] .q-op.mal { color: #ffb3b3; }
+.q-fb { margin-top: 8px; font-size: 14px; font-weight: 700; }
+.q-fb.bien { color: #075e44; }
+.q-fb.mal { color: #8f1d1d; }
+[data-theme="dark"] .q-fb.bien { color: #7dedc9; }
+[data-theme="dark"] .q-fb.mal { color: #ffb3b3; }
+.q-inp {
+  width: 100%; border: 1.5px solid var(--linea); border-radius: var(--r-sm);
+  padding: 10px 12px; font-family: inherit; font-size: 15px; background: var(--fondo); color: var(--tinta);
+}
+
+/* ── Clasifica ── */
+.cl-banco { display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0; min-height: 44px; }
+.cl-ficha {
+  border: 1.5px solid var(--linea); background: var(--papel); color: var(--tinta);
+  border-radius: 999px; padding: 7px 12px; font-family: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer;
+}
+.cl-ficha.sel { border-color: var(--pri); background: var(--pri-soft); box-shadow: 0 0 0 3px rgba(109, 40, 217, .16); }
+.cl-cajas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 520px) { .cl-cajas { grid-template-columns: 1fr; } }
+.cl-caja { border: 1.5px dashed var(--linea); border-radius: var(--r-sm); padding: 9px; background: var(--fondo); min-height: 88px; }
+.cl-caja-t { font-size: 13px; font-weight: 900; color: var(--pri); margin-bottom: 6px; }
+.cl-caja.bien { border-color: var(--ok); border-style: solid; }
+
+/* ── Reto contra reloj ── */
+.reto-lista { display: flex; flex-direction: column; gap: 7px; margin: 10px 0; }
+.reto-it {
+  border: 1.5px solid var(--linea); background: var(--papel); color: var(--tinta);
+  border-radius: var(--r-sm); padding: 10px 12px; font-family: inherit; font-size: 14px;
+  font-weight: 700; text-align: left; cursor: pointer;
+}
+.reto-it.sel { border-color: var(--pri); background: var(--pri-soft); }
+.reto-reloj { font-size: 22px; font-weight: 900; color: var(--sec); }
+
+/* ── Sopa de letras ── */
+.sopa-grid { display: grid; gap: 2px; margin: 10px auto; max-width: 380px; }
+.sopa-c {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  background: var(--papel); border: 1px solid var(--linea); border-radius: 4px;
+  font-size: 14px; font-weight: 800; cursor: pointer; user-select: none;
+}
+.sopa-c.sel { background: var(--pri-soft); border-color: var(--pri); }
+.sopa-c.hallada { background: var(--ok-soft); border-color: var(--ok); color: #075e44; }
+.sopa-c.linterna { background: #fef08a; }
+.sopa-pal { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.sopa-pal span { font-size: 12.5px; font-weight: 800; padding: 4px 9px; border-radius: 999px; background: var(--fondo); border: 1.5px solid var(--linea); }
+.sopa-pal span.ok { background: var(--ok-soft); border-color: var(--ok); color: #075e44; text-decoration: line-through; }
+
+/* ── Casos de aula ── */
+.caso { border: 1.5px solid var(--linea); border-left: 5px solid var(--sec); border-radius: var(--r-sm); padding: 12px; margin: 12px 0; background: var(--papel); }
+.caso-t { font-weight: 900; color: var(--sec); margin-bottom: 6px; }
+.caso-resp { margin-top: 8px; padding: 10px; border-radius: var(--r-sm); background: var(--ok-soft); font-size: 14px; display: none; }
+.caso-resp.on { display: block; }
+
+/* ── Resultado y constancia ── */
+.resu { border-radius: var(--r); padding: 14px; margin-top: 12px; font-weight: 800; text-align: center; display: none; }
+.resu.on { display: block; }
+.resu.bien { background: var(--ok-soft); color: #075e44; }
+.resu.mal { background: var(--sec-soft); color: #8a5200; }
+.resu-num { font-size: 30px; font-weight: 900; display: block; }
+.const {
+  border: 3px double var(--pri); border-radius: var(--r); padding: 18px 14px;
+  text-align: center; background: var(--papel);
+}
+.const h3 { color: var(--pri); font-size: 20px; margin: 6px 0; }
+.const input {
+  width: 100%; max-width: 340px; margin: 10px auto; display: block;
+  border: none; border-bottom: 2px solid var(--pri); background: transparent;
+  color: var(--tinta); font-family: inherit; font-size: 17px; font-weight: 800; text-align: center; padding: 6px;
+}
+.logros { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-top: 10px; }
+.logro { font-size: 12.5px; font-weight: 800; padding: 5px 10px; border-radius: 999px; background: var(--fondo); border: 1.5px solid var(--linea); opacity: .45; }
+.logro.on { opacity: 1; background: var(--pri-soft); border-color: var(--pri); color: var(--pri); }
+
+/* ── Recursos y pie ── */
+.rec-it { border-bottom: 1px solid var(--linea); padding: 9px 0; font-size: 14.5px; }
+.rec-it:last-child { border-bottom: none; }
+.rec-it b { color: var(--pri); }
+.pie { text-align: center; font-size: 12.5px; color: var(--gris); padding: 18px 12px 6px; }
+.pie a { color: var(--pri); font-weight: 800; }

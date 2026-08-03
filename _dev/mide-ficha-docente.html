@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><title>Medir · páginas de una ficha del maestro al imprimir</title>
+<style>body{font-family:system-ui;background:#222;color:#eee;margin:0;padding:10px}
+pre{background:#111;color:#7f7;padding:10px;font-size:12px;white-space:pre-wrap}
+iframe{position:absolute;left:-9999px;top:0;border:0}</style>
+</head>
+<body>
+<pre id="out">midiendo…</pre>
+<script>
+/* Traído de las misiones autodidacta (F.A.R.O) junto con su norma de las
+   diez páginas, para las fichas de las MISIONES DEL MAESTRO. Las fichas del
+   alumno no se miden con esto: llevan su propia hoja dentro del archivo.
+
+   Mide cuánto mide cada .pagina de una ficha CON LAS REGLAS DE IMPRESIÓN
+   aplicadas, que es lo único que importa: en pantalla la hoja lleva 32 mm de
+   relleno y la letra es más chica, así que medir en pantalla engaña.
+
+   El truco: se carga la ficha en un iframe del ancho real del papel (carta
+   menos márgenes = 194 mm) y se le inyectan como reglas normales las mismas
+   que la hoja aplica dentro de @media print.
+
+   Uso:  /_dev/mide-ficha-docente.html?f=ficha-docente-historia-leyes-educativas.html
+         &bloques=1  lista cada pieza y su alto
+         &cortes=1   propone dónde cortar las diez páginas               */
+const params = new URLSearchParams(location.search);
+const ficha = params.get('f') || 'ficha-docente-historia-leyes-educativas.html';
+const UTIL = 252;   /* medido llevando la ficha a PDF y contando hojas: con 257
+                       cada hoja se partía en dos, porque el margen del primer
+                       bloque se suma por fuera de la sección. Con 252 salen las
+                       diez justas. La sonda _dev/probe-alto-util.html mide el
+                       papel; esto mide lo que de verdad se puede poner dentro. */
+const FLOJA = 215;  /* por debajo se ve a medio usar. No se puede exigir más: las
+                       secciones no se parten, así que cada hoja cierra donde
+                       termina un bloque y sobra lo que ese bloque no alcanzaba
+                       a llenar. Entre 215 y 257 el hueco no se nota. */
+const PAGS = 10;    /* toda ficha del maestro va en diez páginas (misma norma que F.A.R.O) */
+
+const marco = document.createElement('iframe');
+marco.style.width = '194mm';
+marco.style.height = '400px';
+marco.src = '/fichas/' + ficha;
+document.body.appendChild(marco);
+
+marco.addEventListener('load', async () => {
+  const d = marco.contentDocument;
+  const s = d.createElement('style');
+  /* Las mismas reglas que ficha-docente.css aplica dentro de @media print. Si allá
+     cambia la letra o el interlineado, aquí también, o la medida miente. */
+  s.textContent = `
+    body { background:#fff; padding:0; font-size:10pt; line-height:1.38; }
+    .doc { max-width:none; }
+    .pagina { box-shadow:none; border-radius:0; padding:0; margin:0; min-height:0; }
+    h2 { margin:12px 0 5px; }
+    h3 { margin:8px 0 3px; }
+    p, li { margin:4px 0; }
+    .caja, .pauta { padding:8px 11px; margin:8px 0; }
+    .caso { padding:7px 10px; margin:7px 0; }
+    .fh { padding:9px 11px; margin-bottom:11px; }
+    .idline { margin-bottom:9px; }
+    table { margin:7px 0; }
+    th, td { padding:4px 7px; }
+    .raya-resp { height:15px; margin:6px 0; }
+    .lineas-4 .raya-resp:last-child { margin-bottom:9px; }
+    .pie { margin-top:11px; padding-top:5px; }
+    .imprimir-btn, .volver { display:none; }`;
+  d.head.appendChild(s);
+
+  /* Hay que esperar a la tipografía: con la de reserva el texto ocupa menos y
+     la medida sale corta, que fue justo el error que hizo dar por buena una
+     ficha que al imprimir se partía en dos. */
+  try { await d.fonts.ready; } catch (e) {}
+  await new Promise(r => setTimeout(r, 1200));
+
+  const mm = 96 / 25.4;
+
+  /* Modo bloques (?bloques=1): en vez de medir las páginas de ahora, mide cada
+     pieza suelta de la ficha (cada encabezado, tabla, caja o caso). Con esa
+     lista se calcula dónde tienen que caer los diez cortes ANTES de tocar el
+     HTML, que es mucho más rápido que repaginar a ciegas y volver a medir. */
+  if (params.get('bloques') || params.get('cortes')) {
+    const piezas = [];
+    d.querySelectorAll('.pagina').forEach(sec => {
+      [...sec.children].forEach(el => {
+        if (el.classList.contains('pie')) return;
+        const h = el.getBoundingClientRect().height / mm
+          + parseFloat(getComputedStyle(el).marginTop) / mm
+          + parseFloat(getComputedStyle(el).marginBottom) / mm;
+        piezas.push({
+          h,
+          ancla: el.outerHTML.split('\n')[0].trim(),
+          texto: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 56),
+          etiqueta: `<${el.tagName.toLowerCase()}${el.className ? '.' + el.className.split(' ')[0] : ''}>`,
+        });
+      });
+    });
+
+    if (params.get('bloques')) {
+      document.getElementById('out').textContent = `${ficha} · ${piezas.length} bloques\n\n`
+        + piezas.map(p => `${p.h.toFixed(1).padStart(6)} mm  ${p.etiqueta}  ${p.texto}`).join('\n');
+      return;
+    }
+
+    /* Modo cortes (?cortes=1): reparte los bloques en las 10 páginas que pide
+       la norma y propone los anclajes, listos para pegarlos en
+       _dev/cortes/<ficha>.txt.
+
+       No sirve ir llenando hasta el tope (lo probé): eso deja la última hoja
+       con dos líneas, porque no mira lo que viene después. Es el problema de
+       justificar un párrafo, así que se resuelve igual, con programación
+       dinámica: se minimiza la suma de los huecos al cuadrado, de modo que
+       diez huecos parecidos ganan a nueve páginas llenas y una vacía. */
+    const n = piezas.length;
+    const acum = [0];
+    piezas.forEach(p => acum.push(acum[acum.length - 1] + p.h));
+    const alto = (i, j) => acum[j] - acum[i];          /* bloques [i, j) */
+    const INF = Infinity;
+    const esTitulo = p => /^<h[234]/.test(p.ancla);
+    const coste = (i, j, ultima) => {
+      const h = alto(i, j);
+      if (h > UTIL) return INF;                         /* no cabe en la hoja */
+      /* Una página no debería terminar en un encabezado (el título se queda en
+         una hoja y su contenido en la otra). Pesa mucho, pero no se prohíbe:
+         si no, con la ficha casi llena el reparto se queda sin solución. */
+      const penalizaTitulo = esTitulo(piezas[j - 1]) ? 20000 : 0;
+      /* Y conviene que empiece por algo que abra: un título, un caso, una
+         caja de pauta. Empezar a media explicación se admite, pero pesa. */
+      const abre = i === 0 || esTitulo(piezas[i]) || /^<div class="(caso|pauta|caja)/.test(piezas[i].ancla);
+      const penalizaInicio = abre ? 0 : 6000;
+      if (h < FLOJA && !ultima) return (UTIL - h) * (UTIL - h) * 4 + penalizaInicio + penalizaTitulo;  /* hoja a medias: penaliza fuerte */
+      return (UTIL - h) * (UTIL - h) + penalizaInicio + penalizaTitulo;
+    };
+    const dp = Array.from({ length: PAGS + 1 }, () => new Array(n + 1).fill(INF));
+    const de = Array.from({ length: PAGS + 1 }, () => new Array(n + 1).fill(-1));
+    dp[0][0] = 0;
+    for (let k = 1; k <= PAGS; k++) {
+      for (let j = 1; j <= n; j++) {
+        for (let i = k - 1; i < j; i++) {
+          if (dp[k - 1][i] === INF) continue;
+          const c = coste(i, j, k === PAGS && j === n);
+          if (c === INF) continue;
+          if (dp[k - 1][i] + c < dp[k][j]) { dp[k][j] = dp[k - 1][i] + c; de[k][j] = i; }
+        }
+      }
+    }
+    const paginas = [];
+    if (dp[PAGS][n] === INF) {
+      document.getElementById('out').textContent = `${ficha}\n\n✖ no hay manera de repartir estos ${n} bloques en ${PAGS} páginas de ${UTIL} mm.\n`
+        + `El contenido suma ${acum[n].toFixed(0)} mm y en ${PAGS} hojas caben ${PAGS * UTIL} mm.\n`
+        + (acum[n] > PAGS * UTIL ? 'Sobra contenido: hay que podar.' : 'Cabe, pero algún bloque suelto es demasiado alto o deja huecos: hay que partirlo.');
+      return;
+    }
+    { let j = n; for (let k = PAGS; k >= 1; k--) { const i = de[k][j]; paginas.unshift(piezas.slice(i, j)); j = i; } }
+    const suma = a => a.reduce((s, p) => s + p.h, 0);
+    const lineas = paginas.map((pg, i) => `pág ${String(i + 1).padStart(2)}: ${suma(pg).toFixed(0).padStart(4)} mm · ${pg[0].texto}`);
+    const anclas = paginas.slice(1).map(pg => pg[0].ancla);
+    document.getElementById('out').textContent =
+      `${ficha} · reparto en ${paginas.length} páginas (tope ${UTIL} mm)\n\n${lineas.join('\n')}\n\n`
+      + `── cortes para _dev/cortes/ ──\n${anclas.join('\n')}`;
+    return;
+  }
+
+  {
+    const paginas = [...d.querySelectorAll('.pagina')];
+    let desbordan = 0, flojas = 0;
+    const filas = paginas.map((sec, i) => {
+      const h = sec.getBoundingClientRect().height / mm;
+      const ultima = i === paginas.length - 1;
+      if (h > UTIL) { desbordan++; return fila(i, h, `✘ sobran ${Math.ceil(h - UTIL)} mm`); }
+      /* La última puede ir más corta: es la que cierra, no se rellena por rellenar */
+      if (h < FLOJA && !ultima) { flojas++; return fila(i, h, `◻ floja: caben ${Math.floor(UTIL - h)} mm más`); }
+      return fila(i, h, '✔');
+    });
+    function fila(i, h, nota) {
+      return `pág ${String(i + 1).padStart(2)}: ${h.toFixed(0).padStart(4)} mm  ${nota}`;
+    }
+    const problemas = [];
+    if (paginas.length !== PAGS) problemas.push(`✖ son ${paginas.length} páginas y la norma de las diez páginas pide ${PAGS}`);
+    if (desbordan) problemas.push(`✖ ${desbordan} página(s) se parten en dos al imprimir`);
+    if (flojas) problemas.push(`✖ ${flojas} página(s) quedan a medio usar (mínimo ${FLOJA} mm)`);
+    const out = document.getElementById('out');
+    out.textContent = `${ficha}\nalto útil ${UTIL} mm · mínimo por hoja ${FLOJA} mm · ${paginas.length} páginas declaradas\n\n`
+      + filas.join('\n') + '\n\n'
+      + (problemas.length ? problemas.join('\n')
+                          : `✅ las ${PAGS} páginas caben y ninguna queda a medias`);
+  }
+});
+</script>
+</body>
+</html>

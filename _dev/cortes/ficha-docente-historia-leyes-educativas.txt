@@ -1,0 +1,13 @@
+# Nueve cortes = diez páginas. Cada línea es un trozo literal del HTML que debe
+# QUEDAR AL INICIO de una página. Se prefieren encabezados: una hoja que empieza
+# a media explicación se lee mal, y un título solo al final de la hoja anterior
+# deja al lector buscando su contenido en la siguiente.
+<h2>La cronología, segunda parte: el siglo XX</h2>
+<h2>2. 1882: la Reforma Liberal funda la escuela pública</h2>
+<h3>La formación docente, de un vistazo</h3>
+<b>Úselo bien.</b>
+<h3>Qué regula</h3>
+<h2>9. 2012: la Ley Fundamental de Educación</h2>
+<h2>Los cuatro hilos de doscientos años</h2>
+<h3>A. Ponga el año que corresponde</h3>
+<h3>D. Dos situaciones para resolver por escrito</h3>

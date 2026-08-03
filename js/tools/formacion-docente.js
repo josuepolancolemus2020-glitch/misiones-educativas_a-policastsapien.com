@@ -31,6 +31,12 @@ const MF_AREAS = [
            'documento oficial vigente y traducirá a lenguaje de aula lo que significa para usted.',
     herramienta: '',
     temas: [
+      /* Va primera a propósito: sin saber de dónde salió cada regla, la Ley
+         Fundamental se estudia de memoria y se olvida. Además es la mitad del
+         temario de legislación de un concurso de nombramiento. */
+      { t: 'Dos siglos de leyes educativas en Honduras',
+        s: 'De la independencia de 1821 a la ley que rige hoy su aula: qué cambió, por qué, y el temario de legislación que cae en los concursos. Con ficha de estudio de diez páginas.',
+        url: 'misiones/docente-historia-leyes-educativas/historia-leyes-educativas.html' },
       { t: 'La Ley Fundamental de Educación en el aula',
         s: 'Qué le toca al docente de grado, en palabras simples: jornada, planificación, evaluación y rendición de cuentas.' },
       { t: 'Evaluación: qué manda la norma',
@@ -40,7 +46,7 @@ const MF_AREAS = [
       { t: 'Estatuto del Docente: sus derechos',
         s: 'Traslados, permisos, escalafón y qué respaldo documental le conviene tener guardado siempre.' },
       { t: 'Bienes del centro y bienes del docente',
-        s: 'Qué dice la norma sobre inventarios, donaciones y reembolsos — lo que respalda su acta de inventario.' },
+        s: 'Qué dice la norma sobre inventarios, donaciones y reembolsos: lo que respalda su acta de inventario.' },
     ],
   },
   {

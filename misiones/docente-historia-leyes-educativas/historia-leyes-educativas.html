@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión del maestro · Dos siglos de leyes educativas en Honduras</title>
+<meta name="description" content="Formación docente: cómo llegó Honduras, desde 1821 hasta hoy, a las leyes que rigen su aula. Con simulacro de concurso y ficha de estudio de diez páginas.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/historia-leyes-educativas.css">
+</head>
+<body>
+
+<!-- Volver: index.html sin parámetros restaura la última vista guardada, que es
+     «Misiones del maestro» (switchView la guarda al entrar). -->
+<div class="xp-bar" role="status" aria-label="Progreso de la misión">
+  <a href="../../index.html" class="xp-back-btn" title="Volver a Misiones del maestro">
+    <span aria-hidden="true">←</span>
+    <img src="../../img/logo.png" alt="" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎓 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-num" id="xpNum">0</span>
+</div>
+
+<header class="hero">
+  <div class="main">
+    <span class="hero-badge">⚖️ Leyes educativas · Misión 1 de 6</span>
+    <h1>Dos siglos de leyes educativas en Honduras</h1>
+    <p>De la independencia de 1821 al aula que usted abrió esta mañana. Cada regla que hoy
+      cumple (matricular, evaluar, reportar, concursar por una plaza) llegó en una fecha,
+      con un nombre y por una razón. Conocerlas cambia cómo se para usted frente a su grupo,
+      y es la mitad del temario de cualquier concurso de nombramiento.</p>
+    <div class="hero-solo">👤 Esta misión es para usted, no para sus alumnos. Nadie más la ve.</div>
+  </div>
+</header>
+
+<nav class="nav" id="nav" aria-label="Secciones de la misión"></nav>
+
+<main class="main">
+
+  <!-- ══════════ 1. LÍNEA DE TIEMPO ══════════ -->
+  <section class="sec on" id="sec-linea">
+    <div class="card">
+      <h2>🕰️ La línea de tiempo</h2>
+      <p>Nueve momentos en que el país cambió de idea sobre para qué sirve una escuela.
+        Toque cada uno: verá qué pasó, qué documento lo dice y qué le dejó a su aula de hoy.</p>
+      <div class="tl-rail" id="tlRail"></div>
+      <div class="tl-det" id="tlDet"></div>
+      <div class="tl-nav">
+        <button class="btn btn-g" onclick="tlMover(-1)">← Anterior</button>
+        <button class="btn" onclick="tlMover(1)">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 2. APRENDE ══════════ -->
+  <section class="sec" id="sec-aprende">
+    <div class="card">
+      <h2>🧭 Cuatro hilos que atraviesan doscientos años</h2>
+      <p>La historia de la educación hondureña no es una lista de leyes: son cuatro preguntas
+        que el país ha contestado distinto en cada época. Verlas así hace que las fechas se
+        peguen solas, y es como se preguntan en un concurso.</p>
+
+      <h3>1. ¿Quién manda en la escuela?</h3>
+      <p>Al independizarse, en 1821, la escuela dependía de quien pudiera pagarla: el cabildo
+        del pueblo, la parroquia o el padre de familia que contrataba a un preceptor. La
+        Reforma Liberal se la quita a la costumbre y se la entrega al Estado. La Ley Orgánica
+        de 1966 la organiza desde el centro, y la Ley Fundamental de 2012 vuelve a repartir:
+        deja la rectoría en la Secretaría de Educación pero descentraliza en direcciones
+        departamentales, municipales y en los consejos del centro con participación de padres.</p>
+      <div class="aula">🎯 <b>En su aula:</b> por eso hoy usted responde a la vez a una dirección
+        departamental, a un director de centro y a un consejo con padres. No es burocracia
+        suelta: es el reparto de mando que fijó la ley de 2012.</div>
+
+      <h3>2. ¿Para qué educa el país?</h3>
+      <p>Cada época puso un fin distinto en el papel: formar cristianos y súbditos ordenados en
+        la colonia, formar ciudadanos de la nueva república en el siglo XIX, formar mano de obra
+        y técnicos en el siglo XX, formar personas con competencias en el currículo actual. El
+        fin declarado explica qué se evaluaba: memoria y conducta antes, desempeño y
+        competencias ahora.</p>
+
+      <h3>3. ¿Qué es un maestro?</h3>
+      <p>Fue un oficio (el preceptor que sabía leer y contar), pasó a ser un titulado (con las
+        escuelas normales desde 1882) y terminó siendo una carrera con derechos escritos: el
+        Estatuto del Docente Hondureño de 1997 fija ingreso por concurso, escalafón, permisos,
+        traslados y estabilidad. Ese salto (de favor a derecho) es el que más le toca el bolsillo
+        y la tranquilidad.</p>
+      <div class="aula">🎯 <b>En su aula:</b> cuando le piden un traslado, un permiso o una plaza,
+        usted no está pidiendo un favor: está usando un procedimiento con plazos. Saber el nombre
+        del procedimiento es la mitad de conseguirlo.</div>
+
+      <h3>4. ¿Quién queda fuera?</h3>
+      <p>Cada ley amplió a quién alcanza la escuela: primero los varones de la cabecera, luego las
+        niñas, luego el campo, luego la prebásica, luego los pueblos indígenas y afrohondureños con
+        educación intercultural bilingüe, luego la inclusión de estudiantes con discapacidad y la
+        educación en casa. La historia de la educación hondureña se puede contar entera como la
+        historia de quién iba entrando.</p>
+      <div class="dato">📌 <b>Regla de estudio:</b> si en un examen le dan una fecha y no la recuerda,
+        pregúntese cuál de estos cuatro hilos movió esa norma. Casi siempre acierta el sentido de
+        la respuesta aunque falle el año exacto.</div>
+    </div>
+
+    <div class="card">
+      <h2>📐 Cómo quedó armado el sistema hoy</h2>
+      <p>La Ley Fundamental de Educación de 2012 es la que manda hoy sobre la estructura. Esto es
+        lo mínimo que un docente debe poder decir de memoria:</p>
+      <ul>
+        <li><b>Educación prebásica:</b> antes de la básica, para la primera infancia.</li>
+        <li><b>Educación básica:</b> nueve grados repartidos en <b>tres ciclos</b> de tres grados
+          cada uno. Su aula está en uno de esos ciclos.</li>
+        <li><b>Educación media:</b> después de la básica, con sus modalidades y salidas.</li>
+        <li><b>Educación superior:</b> tiene ley propia desde 1989 y no la rige la Secretaría de
+          Educación.</li>
+      </ul>
+      <div class="dato">📌 La ley enumera además varias <b>modalidades</b> del sistema (artículo 27),
+        entre ellas la educación intercultural bilingüe, la educación de jóvenes y adultos, la
+        educación especial e inclusiva y la educación en casa. Es el artículo que más se cita mal:
+        la lista no es cerrada, dice «entre otras».</div>
+      <div class="aula">🎯 <b>En su aula:</b> cuando llene documentos oficiales, «primaria» ya no es
+        el nombre legal. Se dice <b>educación básica</b> y se indica el ciclo. Un acta con el nombre
+        viejo se devuelve.</div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3. TARJETAS ══════════ -->
+  <section class="sec" id="sec-tarjetas">
+    <div class="card">
+      <h2>🃏 Tarjetas de repaso</h2>
+      <p>Toque la tarjeta para voltearla. Van en el orden en que se preguntan.</p>
+      <div class="fc" id="fc" onclick="fcVoltea()">
+        <div class="fc-in">
+          <div class="fc-cara fc-front" id="fcQ"></div>
+          <div class="fc-cara fc-back"><div id="fcA"></div></div>
+        </div>
+      </div>
+      <div class="btn-fila">
+        <button class="btn btn-g" onclick="fcPasa(-1)">← Anterior</button>
+        <button class="btn" onclick="fcPasa(1)">Siguiente →</button>
+        <span class="q-num" id="fcNum" style="align-self:center"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Memorama de fechas</h2>
+      <p>Empareje cada año con lo que ocurrió. Seis parejas.</p>
+      <div class="memo-grid" id="memoGrid"></div>
+      <div class="btn-fila"><button class="btn btn-g" onclick="memoInit()">🔄 Barajar de nuevo</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 4. QUIZ ══════════ -->
+  <section class="sec" id="sec-quiz">
+    <div class="card">
+      <h2>❓ Compruebe lo que quedó</h2>
+      <p>Nueve preguntas con explicación inmediata. Aquí no se guarda nota: es para usted.</p>
+      <div id="quiz"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 5. CLASIFICA ══════════ -->
+  <section class="sec" id="sec-clasifica">
+    <div class="card">
+      <h2>🗂️ Cada norma en su época</h2>
+      <p>Toque una tarjeta y luego la caja donde va. Si se equivoca, vuelva a tocarla para
+        devolverla al banco.</p>
+      <div class="cl-banco" id="clBanco"></div>
+      <div class="cl-cajas" id="clCajas"></div>
+      <div class="btn-fila">
+        <button class="btn" onclick="clRevisa()">✔️ Revisar</button>
+        <button class="btn btn-g" onclick="clInit()">🔄 Empezar de nuevo</button>
+      </div>
+      <div class="resu" id="clResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 6. COMPLETA ══════════ -->
+  <section class="sec" id="sec-completa">
+    <div class="card">
+      <h2>✍️ Complete la oración</h2>
+      <p>Escriba la palabra que falta. Se aceptan mayúsculas, minúsculas y tildes indistintamente.</p>
+      <div id="completa"></div>
+      <div class="btn-fila"><button class="btn" onclick="cpRevisa()">✔️ Revisar todo</button></div>
+      <div class="resu" id="cpResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 7. RETO ══════════ -->
+  <section class="sec" id="sec-reto">
+    <div class="card">
+      <h2>⏱️ Reto: ponga la historia en orden</h2>
+      <p>Toque los hechos del más antiguo al más reciente. Tiene noventa segundos.</p>
+      <div class="btn-fila">
+        <button class="btn" id="retoBtn" onclick="retoInit()">▶️ Empezar</button>
+        <span class="reto-reloj" id="retoReloj">1:30</span>
+      </div>
+      <div class="reto-lista" id="retoLista"></div>
+      <div class="resu" id="retoResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 8. SOPA ══════════ -->
+  <section class="sec" id="sec-sopa">
+    <div class="card">
+      <h2>🔤 Sopa de letras</h2>
+      <p>Ocho palabras de la misión, en todas las direcciones. Toque la primera y la última letra
+        de cada palabra.</p>
+      <div class="sopa-grid" id="sopaGrid"></div>
+      <div class="sopa-pal" id="sopaPal"></div>
+      <div class="btn-fila">
+        <button class="btn btn-amb" onclick="sopaLinterna()">🔦 Linterna (cuesta 2 XP)</button>
+        <button class="btn btn-g" onclick="sopaInit()">🔄 Otra sopa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 9. CASOS ══════════ -->
+  <section class="sec" id="sec-casos">
+    <div class="card">
+      <h2>🏫 Cinco situaciones de esta semana</h2>
+      <p>No son casos de manual: son cosas que pasan en un centro hondureño y que se resuelven
+        distinto según lo que usted sepa de la norma. Piense su respuesta antes de abrir la
+        sugerencia.</p>
+
+      <div class="caso">
+        <div class="caso-t">Caso 1 · «Aquí siempre se ha hecho así»</div>
+        <p>Usted propone cambiar la forma de evaluar en su grado y un colega con veinte años de
+          servicio le contesta que así se ha hecho siempre. ¿Cómo sostiene su propuesta sin
+          convertirlo en pleito personal?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Saque la discusión de las personas y llévela al documento vigente.
+          «Siempre se ha hecho así» describe una costumbre, y la costumbre en educación pública
+          cede ante la norma escrita. Cite el marco actual (Ley Fundamental de Educación y su
+          reglamento) y pida que la decisión quede en acta del consejo de docentes. Si la norma le
+          da la razón, el acta lo protege; si no se la da, usted acaba de aprender algo antes de
+          equivocarse frente a los padres.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 2 · La plaza que salió a concurso</div>
+        <p>Sale a concurso una plaza que a usted le interesa. Un compañero le dice que «eso ya
+          está arreglado» y que no vale la pena inscribirse. ¿Qué hace?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Inscribirse y documentar. El ingreso a la carrera docente por
+          concurso está en el Estatuto del Docente Hondureño desde 1997 justamente porque antes se
+          nombraba por recomendación. El concurso tiene pruebas, clasificación de méritos y una
+          junta de selección con procedimiento escrito. Si algo se hace mal, lo que se impugna es
+          el procedimiento, y para eso hay que estar dentro y con papeles en regla. Quien no se
+          inscribe se queda sin plaza y sin derecho a reclamar.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 3 · La madre que quiere educar en casa</div>
+        <p>Una madre le avisa que sacará a su hija de tercer grado para enseñarle en casa. ¿Le dice
+          que eso no se puede?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">No, porque sí se puede: la educación en casa aparece entre las
+          modalidades del sistema en el artículo 27 de la Ley Fundamental de Educación y tiene
+          reglamento propio. Lo que corresponde es explicarle que no es simplemente dejar de venir:
+          hay registro, requisitos y evaluación, y que mientras no cumpla el trámite la niña sigue
+          matriculada con usted. Decirle «no se puede» sería falso y además la empujaría a
+          desaparecer sin dejar rastro, que es lo peor para la niña.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 4 · El acta que le piden a fin de año</div>
+        <p>En el cierre le devuelven un acta porque escribió «sexto de primaria». ¿Error de forma o
+          error de fondo?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">De fondo, aunque parezca de forma. Desde 2012 el nivel se llama
+          <b>educación básica</b> y se organiza en tres ciclos: «primaria» es el nombre de la ley
+          derogada de 1966. Un documento oficial con la denominación vieja crea dudas de validez
+          años después, cuando ese alumno pida su certificación para seguir estudiando o trabajar.
+          Escribir el nombre correcto es proteger al alumno, no complacer a la oficina.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 5 · «Usted no tiene derecho a eso»</div>
+        <p>Le niegan verbalmente un permiso al que cree tener derecho, sin darle nada por escrito.
+          ¿Qué hace ese mismo día?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Pedirlo por escrito y guardar copia sellada de su solicitud. Los
+          derechos del docente (permisos, licencias, traslados, estabilidad) están escritos en el
+          Estatuto del Docente Hondureño y su reglamento, y una negativa verbal no se puede
+          reclamar en ninguna instancia porque no existe. La regla práctica de dos siglos de
+          historia educativa hondureña es siempre la misma: lo que no está en papel, no ocurrió.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 10. SIMULACRO DE CONCURSO ══════════ -->
+  <section class="sec" id="sec-concurso">
+    <div class="card">
+      <h2>🎯 Simulacro de concurso</h2>
+      <p>Veinte preguntas con el formato de las pruebas de conocimientos del concurso docente:
+        una sola respuesta correcta y sin pistas. Al final se califica sobre cien y le dice qué
+        repasar. En el concurso real el promedio final exigido no baja de setenta y cinco por
+        ciento, así que ese es el listón de aquí.</p>
+      <div id="concurso"></div>
+      <div class="btn-fila">
+        <button class="btn btn-ok" onclick="cnCalifica()">🧮 Calificar</button>
+        <button class="btn btn-g" onclick="cnInit()">🔄 Otro intento</button>
+      </div>
+      <div class="resu" id="cnResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 11. FICHA, RECURSOS Y CONSTANCIA ══════════ -->
+  <section class="sec" id="sec-cierre">
+    <div class="card">
+      <h2>🖨️ Ficha de estudio, diez páginas</h2>
+      <p>La misma historia en papel, para estudiar sin batería y para llevar al concurso:
+        cronología completa, las leyes con su decreto y su fecha, el vocabulario que exigen los
+        exámenes, ejercicios para lápiz y la pauta con todas las respuestas al final.</p>
+      <div class="btn-fila">
+        <a class="btn" href="../../fichas/ficha-docente-historia-leyes-educativas.html">📄 Abrir la ficha</a>
+      </div>
+      <div class="dato">📌 Se imprime en diez hojas tamaño carta, a doble cara son cinco. La pauta va
+        en las últimas páginas: si la va a usar con colegas, imprima sin ellas y repártalas después.</div>
+    </div>
+
+    <div class="card">
+      <h2>📚 De dónde salió todo esto</h2>
+      <p>Estudie siempre contra el documento, no contra un resumen (ni siquiera este). Estas son
+        las fuentes que rigen y dónde se consiguen:</p>
+      <div class="rec-it"><b>Constitución de la República (1982)</b>, título sobre educación y cultura.
+        Es la norma de la que cuelgan todas las demás.</div>
+      <div class="rec-it"><b>Ley Fundamental de Educación</b>, Decreto 262-2011, publicado en La Gaceta
+        n.º 32,754 del 22 de febrero de 2012. La que rige hoy.</div>
+      <div class="rec-it"><b>Reglamento General de la Ley Fundamental de Educación</b>, Acuerdo
+        1358-SE-2014, La Gaceta n.º 33,533 del 17 de septiembre de 2014. Junto a él salieron los
+        demás reglamentos de la ley.</div>
+      <div class="rec-it"><b>Estatuto del Docente Hondureño</b>, Decreto 136-97, y su Reglamento
+        General, Acuerdo 0760-SE-99. Su carrera, sus derechos y el concurso.</div>
+      <div class="rec-it"><b>Ley Orgánica de Educación</b>, Decreto 79 del 14 de noviembre de 1966.
+        Derogada por la de 2012, salvo unos capítulos sobre bibliotecas, archivos y monumentos.
+        Se estudia porque explica el sistema del que venimos.</div>
+      <div class="rec-it"><b>Código de Instrucción Pública de 1882</b>, de la Reforma Liberal. Acta de
+        nacimiento de la escuela pública hondureña.</div>
+      <div class="rec-it"><b>Dónde bajarlos:</b> portal de leyes de la Secretaría de Educación
+        (se.gob.hn) y biblioteca del Tribunal Superior de Cuentas (tsc.gob.hn). Los dos son
+        gratuitos y publican el texto oficial.</div>
+      <div class="fuente">Fechas y números de decreto verificados contra La Gaceta y los portales
+        oficiales en agosto de 2026. Si una reforma posterior cambia algo, manda el documento, no
+        esta misión.</div>
+    </div>
+
+    <div class="card const" id="constancia">
+      <div style="font-size:38px">🎓</div>
+      <h3>Constancia de estudio</h3>
+      <p>Escriba su nombre para cerrar la misión. Queda guardada en este teléfono.</p>
+      <input id="constNombre" placeholder="Su nombre completo" maxlength="60" oninput="guardar()">
+      <p id="constTxt" style="font-size:14px;color:var(--gris)"></p>
+      <div class="logros" id="logros"></div>
+    </div>
+  </section>
+
+  <p class="pie">M.E.T.A.S · Misiones del maestro · Formación docente ·
+    <a href="../../index.html">Volver a mi Zona Docente</a></p>
+</main>
+
+<script src="js/historia-leyes-educativas.js"></script>
+</body>
+</html>
