@@ -213,22 +213,28 @@ function tlVer(i) {
 }
 function tlMover(d) { tlVer(Math.max(0, Math.min(HITOS.length - 1, _hito + d))); }
 
-/* ══════════════════ TARJETAS DE REPASO ══════════════════ */
+/* ══════════════════ TARJETAS DE REPASO ══════════════════
+   NOMBRES PROPIOS CON MAYÚSCULA, aquí también (normativa de la casa).
+   Estas tarjetas salieron escritas en minúscula («marco aurelio soto»,
+   «la unah», «la ley fundamental de educación») y así se le mostraron a
+   un maestro. Es material que circula entre colegas y en preparación de
+   concursos: una minúscula en el nombre de una ley o de una persona le
+   quita autoridad a todo lo demás, por bien verificado que esté. */
 const FC = [
   ['¿En qué año se independiza Honduras?', 'El 15 de septiembre de 1821, con una población casi toda analfabeta y sin sistema escolar público.'],
-  ['¿Qué documento funda la escuela pública hondureña?', 'El código de instrucción pública de 1882, vigente desde el 12 de febrero de ese año, durante la reforma liberal.'],
-  ['¿Quiénes impulsaron la reforma educativa liberal?', 'El presidente marco aurelio soto y su ministro ramón rosa.'],
-  ['¿Qué tres características declaró el código de 1882 para la enseñanza primaria?', 'Gratuita, obligatoria y laica.'],
+  ['¿Qué documento funda la escuela pública hondureña?', 'El Código de Instrucción Pública de 1882, vigente desde el 12 de febrero de ese año, durante la Reforma Liberal.'],
+  ['¿Quiénes impulsaron la Reforma Liberal en la educación?', 'El presidente Marco Aurelio Soto y su ministro Ramón Rosa.'],
+  ['¿Qué tres características declaró el Código de 1882 para la enseñanza primaria?', 'Gratuita, obligatoria y laica.'],
   ['¿Para qué se crearon las escuelas normales?', 'Para formar maestros hondureños en vez de depender de preceptores sin título o de docentes traídos de otros países.'],
-  ['¿Qué pasó en 1957 con la formación docente?', 'La unah obtuvo su autonomía y nació la escuela superior del profesorado francisco morazán, con apoyo de la unesco.'],
-  ['¿Qué ley ordenó el sistema educativo en 1966?', 'La ley orgánica de educación, decreto 79 del 14 de noviembre de 1966, que rigió cuarenta y seis años.'],
-  ['¿Qué dice el artículo 151 de la constitución?', 'Que la educación es función esencial del estado para la conservación, el fomento y difusión de la cultura, sin discriminación de ninguna naturaleza.'],
-  ['¿Qué reconoce el artículo 152 de la constitución?', 'El derecho preferente de los padres a escoger el tipo de educación que darán a sus hijos.'],
-  ['¿Qué ley rige la educación superior?', 'La ley de educación superior, decreto 142-89 de 1989: el nivel superior no depende de la secretaría de educación.'],
-  ['¿Qué cambió el código de la niñez y la adolescencia de 1996?', 'Que el niño pasó de ser objeto de protección a ser sujeto de derechos, con efectos directos en disciplina y protección escolar.'],
-  ['¿Qué ordena el estatuto del docente hondureño de 1997?', 'La carrera docente: ingreso por concurso, escalafón, traslados, permisos, licencias, estabilidad y régimen disciplinario.'],
+  ['¿Qué pasó en 1957 con la formación docente?', 'La UNAH obtuvo su autonomía y nació la Escuela Superior del Profesorado Francisco Morazán, con apoyo de la UNESCO.'],
+  ['¿Qué ley ordenó el sistema educativo en 1966?', 'La Ley Orgánica de Educación, Decreto 79 del 14 de noviembre de 1966, que rigió cuarenta y seis años.'],
+  ['¿Qué dice el artículo 151 de la Constitución?', 'Que la educación es función esencial del Estado para la conservación, el fomento y difusión de la cultura, sin discriminación de ninguna naturaleza.'],
+  ['¿Qué reconoce el artículo 152 de la Constitución?', 'El derecho preferente de los padres a escoger el tipo de educación que darán a sus hijos.'],
+  ['¿Qué ley rige la educación superior?', 'La Ley de Educación Superior, Decreto 142-89 de 1989: el nivel superior no depende de la Secretaría de Educación.'],
+  ['¿Qué cambió el Código de la Niñez y la Adolescencia de 1996?', 'Que el niño pasó de ser objeto de protección a ser sujeto de derechos, con efectos directos en disciplina y protección escolar.'],
+  ['¿Qué ordena el Estatuto del Docente Hondureño de 1997?', 'La carrera docente: ingreso por concurso, escalafón, traslados, permisos, licencias, estabilidad y régimen disciplinario.'],
   ['¿Qué promedio mínimo exige el concurso docente?', 'Setenta y cinco por ciento, sumando pruebas de conocimientos, méritos, prueba psicométrica y credenciales.'],
-  ['¿Cuál es la ley educativa vigente y desde cuándo?', 'La ley fundamental de educación, decreto 262-2011, publicada en la gaceta 32,754 del 22 de febrero de 2012.'],
+  ['¿Cuál es la ley educativa vigente y desde cuándo?', 'La Ley Fundamental de Educación, Decreto 262-2011, publicada en La Gaceta n.º 32,754 del 22 de febrero de 2012.'],
 ];
 let _fc = 0;
 function fcPinta() {

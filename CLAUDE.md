@@ -75,6 +75,45 @@ deje de funcionar, no se hace.
 - Nada de tecnicismos: el usuario es un maestro con 43 alumnos y un
   teléfono, muchas veces sin señal y a veces sin luz.
 
+## Normativa: los nombres propios llevan mayúscula, también en los juegos
+
+Vale para **todo texto que ve una persona**: tarjetas de repaso, quiz,
+memorama, respuestas correctas, sopa, casos, fichas impresas y mensajes.
+Se escribe **Marco Aurelio Soto**, **UNAH**, **UNESCO**, **La Gaceta**,
+**Ley Fundamental de Educación**, **Decreto 262-2011**, **Acuerdo
+1358-SE-2014**, **Constitución de la República**, **Secretaría de
+Educación**, **Honduras**. En minúscula van **artículo 27** y los nombres
+comunes (la ley, el decreto, cuando no nombran uno concreto).
+
+No es preciosismo. Esta normativa nació porque las tarjetas de la primera
+misión del maestro salieron en minúscula («el presidente marco aurelio
+soto y su ministro ramón rosa») y así se le mostraron a un maestro: en
+material que circula entre colegas y sirve para preparar un concurso, una
+minúscula en el nombre de una ley o de una persona le quita autoridad a
+todo el trabajo, por bien verificado que esté el dato.
+
+El error entra porque el texto se escribe «como se pronuncia» y nadie
+vuelve a leer catorce tarjetas buscando mayúsculas. Por eso se comprueba
+con una herramienta, antes de publicar:
+
+```
+node _dev/verifica-nombres-propios.js
+```
+
+Revisa `misiones/` y `fichas/`. Si añade una misión con nombres propios
+nuevos (una institución, una ley, un municipio), **agréguelos a la lista
+`NOMBRES`** de esa herramienta: la lista es el comprobador.
+
+Dos excepciones, y están anotadas dentro: la misión de sustantivos y su
+ficha escriben los nombres propios en minúscula **a propósito**, porque
+el ejercicio consiste en que el alumno los corrija.
+
+Cuando la respuesta se compara sin distinguir mayúsculas (`norm` en
+«Completa la oración»), **la primera de la lista es la que se le muestra
+al maestro cuando falla**: esa va escrita bien («1358-SE-2014», no
+«1358-se-2014»). Aceptar todas las formas no cuesta nada; mostrar una mal
+escrita, sí.
+
 ## Comentarios en el código
 
 En español, y explicando **por qué** está así, no qué hace la línea. Casi

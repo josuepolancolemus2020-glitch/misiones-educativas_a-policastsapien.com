@@ -96,6 +96,14 @@ Romperlos deja al maestro sin accesibilidad o rompe la sonda:
   aplica**: esto no es material del alumno y no debe confundirse con él.
 - Ninguna letra concentra más del **40 %** de las respuestas correctas en el
   quiz ni en el simulacro. Se reparte a mano al escribir el banco.
+- **Los nombres propios llevan mayúscula, también dentro de los juegos**
+  (regla de la casa, en `CLAUDE.md`). La primera misión salió con las tarjetas
+  en minúscula («marco aurelio soto», «la unah», «la ley fundamental de
+  educación») y así se le mostraron a un maestro: eso le quita autoridad a
+  todo lo demás. Se escribe **UNAH**, **La Gaceta**, **Ley Fundamental de
+  Educación**, **Decreto 262-2011**; en minúscula queda **artículo 27**. Se
+  comprueba con `node _dev/verifica-nombres-propios.js`, y los nombres nuevos
+  de la misión se agregan a la lista `NOMBRES` de esa herramienta.
 
 ---
 
@@ -173,6 +181,8 @@ tocan.
 
 1. `node --check` del JS de la misión.
 2. `grep -c "—"` en misión y ficha: debe dar 0.
+2-bis. `node _dev/verifica-nombres-propios.js`: ningún nombre propio en
+   minúscula, tarjetas y juegos incluidos.
 3. Sonda con Chromium a 390 px (molde: la de la primera misión). Comprueba
    secciones, juegos, sopa validada contra su cuadrícula, reparto de respuestas,
    pie y accesibilidad, y que **nada se corra en horizontal**.

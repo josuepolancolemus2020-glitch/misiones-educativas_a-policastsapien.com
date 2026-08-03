@@ -257,22 +257,26 @@ function arVer(i) {
 }
 function arMover(d) { arVer(Math.max(0, Math.min(ARTS.length - 1, _art + d))); }
 
-/* ══════════════════ TARJETAS DE REPASO ══════════════════ */
+/* ══════════════════ TARJETAS DE REPASO ══════════════════
+   NOMBRES PROPIOS CON MAYÚSCULA, aquí también (normativa de la casa).
+   Es lo primero que mira un colega: una ley escrita en minúscula en una
+   tarjeta de estudio le quita autoridad a todo lo demás, por bien
+   verificado que esté el dato. */
 const FC = [
-  ['¿Cuál es la ley que rige hoy la educación hondureña?', 'La ley fundamental de educación, decreto 262-2011, publicada en la gaceta 32,754 del 22 de febrero de 2012.'],
+  ['¿Cuál es la ley que rige hoy la educación hondureña?', 'La Ley Fundamental de Educación, Decreto 262-2011, publicada en La Gaceta n.º 32,754 del 22 de febrero de 2012.'],
   ['¿Cuántos días de clase tiene el año lectivo, como mínimo?', 'Doscientos días de clase, y el año no puede darse por concluido antes de completarlos. Lo dice el artículo 16.'],
-  ['¿Quién informa cada mes cuántos días se trabajaron en un centro?', 'La dirección municipal o distrital de educación, junto con el consejo de desarrollo del centro educativo.'],
-  ['¿Qué pasa si no se cumplen los días de clase?', 'Se aplican correctivos y, en su caso, las sanciones que establece el estatuto del docente hondureño.'],
+  ['¿Quién informa cada mes cuántos días se trabajaron en un centro?', 'La Dirección Municipal o Distrital de Educación, junto con el Consejo de Desarrollo del Centro Educativo.'],
+  ['¿Qué pasa si no se cumplen los días de clase?', 'Se aplican correctivos y, en su caso, las sanciones que establece el Estatuto del Docente Hondureño.'],
   ['¿Qué dice el artículo 7 sobre el dinero?', 'Que la educación en establecimientos oficiales es gratuita y que se prohíbe exigir aportaciones económicas o en especie por parte de docentes o autoridades educativas.'],
   ['¿Hasta dónde llega la escolaridad obligatoria en Honduras?', 'Desde al menos un año de prebásica hasta terminar la educación media. Es obligación de los padres procurarla, según el artículo 8.'],
   ['¿Cómo está organizada la educación básica?', 'Nueve años en tres ciclos secuenciales y continuos de tres años cada uno, con edades de referencia de seis a catorce años.'],
   ['¿Cuáles son las edades de referencia de la prebásica?', 'Cuatro, cinco y seis años. La prebásica es gratuita y obligatoria.'],
   ['¿Qué edades de referencia cubre la educación media?', 'De quince a diecisiete años, y también es gratuita y obligatoria.'],
-  ['¿Qué son las modalidades educativas?', 'Opciones de organización y de currículo del sistema nacional de educación, con principios de integralidad, equidad e inclusión. El artículo 27 enumera siete.'],
+  ['¿Qué son las modalidades educativas?', 'Opciones de organización y de currículo del Sistema Nacional de Educación, con principios de integralidad, equidad e inclusión. El artículo 27 enumera siete.'],
   ['¿Qué define el currículo, según el artículo 59?', 'Las competencias, objetivos, contenidos y criterios metodológicos y de evaluación de los aprendizajes que el educando debe alcanzar en cada nivel.'],
-  ['¿Qué es el proyecto educativo de centro?', 'El instrumento que cada centro elabora con su comunidad educativa: principios y fines, recursos, estrategia pedagógica, normativa y gestión. Debe ser concreto, factible y evaluable.'],
-  ['¿Qué dice el artículo 6 sobre la rendición de cuentas?', 'Que la educación es inversión social pública y que quien la administra rinde cuentas a la nación, sujeto a auditoría social y a la fiscalización del estado.'],
-  ['¿Cuál es el reglamento general de esta ley?', 'El acuerdo 1358-SE-2014, publicado en la gaceta 33,533 del 17 de septiembre de 2014.'],
+  ['¿Qué es el Proyecto Educativo de Centro?', 'El instrumento que cada centro elabora con su comunidad educativa: principios y fines, recursos, estrategia pedagógica, normativa y gestión. Debe ser concreto, factible y evaluable.'],
+  ['¿Qué dice el artículo 6 sobre la rendición de cuentas?', 'Que la educación es inversión social pública y que quien la administra rinde cuentas a la nación, sujeto a auditoría social y a la fiscalización del Estado.'],
+  ['¿Cuál es el Reglamento General de esta ley?', 'El Acuerdo 1358-SE-2014, publicado en La Gaceta n.º 33,533 del 17 de septiembre de 2014.'],
 ];
 let _fc = 0;
 function fcPinta() {
@@ -464,8 +468,12 @@ const CP = [
   ['La educación básica tiene nueve años repartidos en ____ ciclos.', ['3', 'tres']],
   ['El artículo ____ prohíbe exigir aportaciones económicas o en especie.', ['7', 'siete']],
   ['El artículo 6 declara que la educación es una inversión ____ pública.', ['social']],
-  ['Cada centro elabora con su comunidad el Proyecto ____ de Centro.', ['educativo']],
-  ['El Reglamento General de la ley es el Acuerdo ____.', ['1358-se-2014', '1358se2014', '1358']],
+  /* La primera de cada lista es la que se le muestra al maestro cuando falla,
+     así que va escrita como se escribe de verdad: «1358-SE-2014», no
+     «1358-se-2014». Comparar no distingue mayúsculas (norm), de modo que
+     escribirla bien no le complica nada al que responde. */
+  ['Cada centro elabora con su comunidad el Proyecto ____ de Centro.', ['Educativo']],
+  ['El Reglamento General de la ley es el Acuerdo ____.', ['1358-SE-2014', '1358se2014', '1358']],
   ['El artículo 27 enumera siete ____ del Sistema Nacional de Educación.', ['modalidades', 'modalidades educativas']],
 ];
 function cpPinta() {
