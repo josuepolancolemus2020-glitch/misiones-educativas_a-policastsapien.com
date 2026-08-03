@@ -145,7 +145,7 @@ const HITOS = [
     txt: 'El Estatuto del Docente Hondureño ordena la carrera: ingreso por concurso, escalafón, ' +
          'traslados, permisos, licencias, estabilidad y régimen disciplinario. Su Reglamento ' +
          'General (Acuerdo 0760-SE-99) detalla los procedimientos y las juntas de selección que ' +
-         'identifican y designan a quien ocupará cada plaza vacante en el nivel municipal, ' +
+         'identifican y designan a quien ocupará cada plaza vacante en el nivel distrital, ' +
          'departamental o nacional. El concurso comprende pruebas de aptitud y conocimientos, ' +
          'clasificación de méritos, prueba psicométrica con investigación de antecedentes y ' +
          'clasificación de credenciales; los resultados se suman y el promedio final no puede ' +
@@ -635,9 +635,13 @@ const CN = [
   { q: 'El ingreso a la carrera docente por concurso está ordenado en:',
     o: ['La Constitución de 1957', 'El Código de Ética del Docente',
         'El Estatuto del Docente Hondureño', 'El Reglamento de Educación en Casa'], c: 2 },
+  /* «Distrital», no «municipal»: lo dice el artículo 22 del Estatuto, leído en
+     el documento. La versión anterior decía «municipal» y estaba mal; el error
+     venía de confundir estas juntas con las direcciones municipales que nombra
+     la Ley Fundamental de Educación, que son otra cosa. */
   { q: 'Las juntas de selección docente funcionan en el nivel:',
     o: ['Solo nacional', 'Solo departamental', 'Solo del centro educativo',
-        'Municipal, departamental y nacional'], c: 3 },
+        'Distrital, departamental y nacional'], c: 3 },
   { q: 'El promedio final mínimo para aprobar el concurso docente es:',
     o: ['60%', '75%', '80%', '90%'], c: 1 },
   { q: 'El concurso docente comprende, entre otros componentes:',

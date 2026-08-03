@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión del maestro · El Estatuto del Docente y sus derechos</title>
+<meta name="description" content="Formación docente: los trámites de su carrera con el Estatuto del Docente Hondureño en la mano. Concurso, propiedad, permuta, traslado, permisos, evaluación y cómo defenderse de una sanción. Con simulacro de concurso y ficha de estudio de diez páginas.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estatuto-derechos.css">
+</head>
+<body>
+
+<!-- Volver: index.html sin parámetros restaura la última vista guardada, que es
+     «Misiones del maestro» (switchView la guarda al entrar). -->
+<div class="xp-bar" role="status" aria-label="Progreso de la misión">
+  <a href="../../index.html" class="xp-back-btn" title="Volver a Misiones del maestro">
+    <span aria-hidden="true">←</span>
+    <img src="../../img/logo.png" alt="" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎓 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-num" id="xpNum">0</span>
+</div>
+
+<header class="hero">
+  <div class="main">
+    <span class="hero-badge">⚖️ Leyes educativas · Misión 5 de 6</span>
+    <h1>El Estatuto del Docente y sus derechos</h1>
+    <p>Esta es su ley. La plaza, la propiedad, la permuta, el traslado, el permiso y la
+      defensa ante una sanción no se piden como favor: se tramitan, con plazos y con papeles
+      que usted puede citar. Aquí están los nueve trámites de su carrera, uno por uno, con lo
+      que dice la norma y con lo que hay que llevar a la oficina.</p>
+    <div class="hero-solo">👤 Esta misión es para usted, no para sus alumnos. Nadie más la ve.</div>
+  </div>
+</header>
+
+<nav class="nav" id="nav" aria-label="Secciones de la misión"></nav>
+
+<main class="main">
+
+  <!-- ══════════ 1. LOS TRÁMITES ══════════ -->
+  <section class="sec active" id="sec-tramites">
+    <div class="card">
+      <h2>🗺️ Nueve trámites de su carrera</h2>
+      <p>El Estatuto no se lee por curiosidad: se lee el día que hay que pedir algo o defenderse
+        de algo. Toque cada trámite: se abre debajo con lo que manda la norma, la frase textual,
+        los pasos en orden y los papeles que hay que llevar.</p>
+      <div class="tr-lista" id="trLista"></div>
+      <div class="tr-nav">
+        <button class="btn btn-g" onclick="trMover(-1)">← Anterior</button>
+        <button class="btn" onclick="trMover(1)">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 2. APRENDE ══════════ -->
+  <section class="sec" id="sec-aprende">
+    <div class="card">
+      <h2>🧭 El artículo 13: sus veintitrés derechos</h2>
+      <p>Si de todo el Estatuto tuviera que aprenderse un solo artículo, es este. El 13 enumera
+        veintitrés derechos del docente, y es el que más cae en un concurso. Estos son los que
+        más se usan y los que más se ignoran:</p>
+      <ul>
+        <li><b>Estabilidad</b> en el trabajo, mientras mantenga buen desempeño.</li>
+        <li><b>Libertad de cátedra</b>, en la búsqueda de mayor calidad de la educación.</li>
+        <li><b>Vacaciones remuneradas</b>, y percibir con regularidad la remuneración, el
+          decimotercer y el decimocuarto salario.</li>
+        <li><b>Licencias con goce de sueldo</b>: enfermedad, maternidad, aborto, estudios
+          autorizados y cargos directivos gremiales de nivel nacional.</li>
+        <li><b>Licencias sin goce de sueldo</b>: asuntos particulares hasta dos años prorrogables
+          por dos más, otro puesto del sistema, o cargos de elección popular.</li>
+        <li><b>Permisos especiales con goce de sueldo</b>, hasta treinta días en el curso del año.</li>
+        <li><b>Una hora diaria de lactancia</b> hasta que el hijo cumpla seis meses.</li>
+        <li>Que le <b>reconozcan los años de servicio</b>, y un incremento por año sobre el sueldo base.</li>
+        <li><b>Ascensos, traslados y permutas</b> conforme al Estatuto y su Reglamento.</li>
+        <li>Que se le <b>nombre en propiedad</b> cuando el puesto se vuelva vacante definitiva, si
+          ingresó legalmente y lo ocupó de forma interina por seis meses.</li>
+        <li><b>Ser sancionado mediante un procedimiento legal</b>, si se le imputa una falta.</li>
+        <li>Una <b>beca</b> para que un hijo curse educación media, tras diez años consecutivos o
+          quince no consecutivos de trabajo.</li>
+        <li>Que se le <b>provea de instalaciones y materiales</b> para el normal desempeño.</li>
+        <li>Ser <b>reintegrado y pagado</b> por sueldos caídos si el despido o la sanción fueron
+          injustificados.</li>
+      </ul>
+      <div class="dato">📌 El propio Estatuto añade un candado en su artículo 95: los derechos que
+        reconoce <b>no podrán ser disminuidos, tergiversados o ignorados</b>. Eso sí, es una ley
+        ordinaria: una ley posterior del mismo rango sí puede reformarla. Cite el artículo 95 para
+        defenderse de una circular o de una costumbre del centro, no de una ley nueva.</div>
+
+      <h3>Lo que la norma le prohíbe a su jefe</h3>
+      <p>El artículo 11 es el reverso del 13, y casi nadie lo ha leído. Prohíbe a las autoridades
+        de los centros, entre otras cosas:</p>
+      <ul>
+        <li><b>Exigir o aceptar dinero</b> del docente como gratificación para darle privilegios
+          relacionados con sus condiciones de trabajo.</li>
+        <li><b>Imponer sanciones que no estén tipificadas</b> en la ley.</li>
+        <li><b>Imponerle actividades de recaudación de fondos</b> sin la aprobación de la
+          respectiva sociedad de padres de familia.</li>
+        <li><b>Deducir o retener</b> suma alguna de su salario sin su autorización, mandamiento
+          judicial o ley que lo permita.</li>
+        <li><b>Ejercer coacción</b> sobre sus convicciones políticas o religiosas.</li>
+      </ul>
+      <div class="aula">🎯 <b>En su centro:</b> cuando le mandan a recoger dinero sin acta de la
+        sociedad de padres, no es solo incómodo: está prohibido a quien se lo manda. Pídalo por
+        escrito y el asunto se ordena solo.</div>
+    </div>
+
+    <div class="card">
+      <h2>⏱️ Los plazos que hacen ganar o perder un derecho</h2>
+      <p>Un derecho que no se ejerce a tiempo se pierde igual que si no existiera. Estos son los
+        relojes que corren en su contra:</p>
+      <ul>
+        <li><b>10 días hábiles</b> para pedir revisión de la evaluación, desde que se la notifican.</li>
+        <li><b>7 días hábiles</b> es el plazo dentro del cual se celebra la audiencia de descargos,
+          contados desde su notificación.</li>
+        <li><b>90 días</b> para que prescriban las faltas y sanciones, desde que la autoridad
+          competente las conoce (artículo 41 del Estatuto).</li>
+        <li><b>20 días hábiles</b> para que las juntas publiquen los resultados de un concurso.</li>
+        <li><b>15 días hábiles</b> de antelación para el llamamiento a concurso general.</li>
+        <li><b>Un año</b> de validez de la lista del concurso general, y también el tiempo mínimo
+          entre un movimiento laboral y otro.</li>
+      </ul>
+      <div class="dato">📌 <b>Cuando dos normas no dicen lo mismo.</b> El Reglamento fija además
+        plazos de prescripción propios (sesenta días hábiles para los derechos y acciones del
+        docente, treinta para la autoridad nominadora) que no calzan con los noventa días del
+        artículo 41. Ante la duda, recuerde el orden: la ley manda sobre el reglamento, y lo que
+        de verdad lo protege es no dejar correr ningún plazo.</div>
+      <div class="aula">🎯 <b>Hábito que vale una carrera:</b> el día que le notifiquen algo, anote
+        la fecha en su registro antes de guardar el papel. Casi todos los plazos se cuentan desde
+        la notificación, y casi nadie recuerda el día exacto tres semanas después.</div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3. TARJETAS ══════════ -->
+  <section class="sec" id="sec-tarjetas">
+    <div class="card">
+      <h2>🃏 Tarjetas de repaso</h2>
+      <p>Toque la tarjeta para voltearla. Van en el orden en que se preguntan.</p>
+      <div class="fc" id="fc" onclick="fcVoltea()">
+        <div class="fc-in">
+          <div class="fc-cara fc-front" id="fcQ"></div>
+          <div class="fc-cara fc-back"><div id="fcA"></div></div>
+        </div>
+      </div>
+      <div class="btn-fila">
+        <button class="btn btn-g" onclick="fcPasa(-1)">← Anterior</button>
+        <button class="btn" onclick="fcPasa(1)">Siguiente →</button>
+        <span class="q-num" id="fcNum" style="align-self:center"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Memorama de plazos</h2>
+      <p>Empareje cada plazo o cifra con lo que decide. Seis parejas.</p>
+      <div class="memo-grid" id="memoGrid"></div>
+      <div class="btn-fila"><button class="btn btn-g" onclick="memoInit()">🔄 Barajar de nuevo</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 4. QUIZ ══════════ -->
+  <section class="sec" id="sec-quiz">
+    <div class="card">
+      <h2>❓ Compruebe lo que quedó</h2>
+      <p>Nueve preguntas con explicación inmediata. Aquí no se guarda nota: es para usted.</p>
+      <div id="quiz"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 5. CLASIFICA ══════════ -->
+  <section class="sec" id="sec-clasifica">
+    <div class="card">
+      <h2>🗂️ Cada regla en su trámite</h2>
+      <p>Toque una tarjeta y luego la caja donde va. Si se equivoca, vuelva a tocarla para
+        devolverla al banco.</p>
+      <div class="cl-banco" id="clBanco"></div>
+      <div class="cl-cajas" id="clCajas"></div>
+      <div class="btn-fila">
+        <button class="btn" onclick="clRevisa()">✔️ Revisar</button>
+        <button class="btn btn-g" onclick="clInit()">🔄 Empezar de nuevo</button>
+      </div>
+      <div class="resu" id="clResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 6. COMPLETA ══════════ -->
+  <section class="sec" id="sec-completa">
+    <div class="card">
+      <h2>✍️ Complete la oración</h2>
+      <p>Escriba la palabra o el número que falta. Se aceptan mayúsculas, minúsculas y tildes
+        indistintamente.</p>
+      <div id="completa"></div>
+      <div class="btn-fila"><button class="btn" onclick="cpRevisa()">✔️ Revisar todo</button></div>
+      <div class="resu" id="cpResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 7. RETO ══════════ -->
+  <section class="sec" id="sec-reto">
+    <div class="card">
+      <h2>⏱️ Reto: el camino de una sanción, en orden</h2>
+      <p>Nueve pasos desordenados. Tóquelos en el orden en que ocurren, del primer papel al
+        último recurso. Tiene noventa segundos.</p>
+      <div class="btn-fila">
+        <button class="btn" id="retoBtn" onclick="retoInit()">▶️ Empezar</button>
+        <span class="reto-reloj" id="retoReloj">1:30</span>
+      </div>
+      <div class="reto-lista" id="retoLista"></div>
+      <div class="resu" id="retoResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 8. SOPA ══════════ -->
+  <section class="sec" id="sec-sopa">
+    <div class="card">
+      <h2>🔤 Sopa de letras</h2>
+      <p>Ocho palabras de la misión, en todas las direcciones. Toque la primera y la última letra
+        de cada palabra.</p>
+      <div class="sopa-grid" id="sopaGrid"></div>
+      <div class="sopa-pal" id="sopaPal"></div>
+      <div class="btn-fila">
+        <button class="btn btn-amb" onclick="sopaLinterna()">🔦 Linterna (cuesta 2 XP)</button>
+        <button class="btn btn-g" onclick="sopaInit()">🔄 Otra sopa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 9. CASOS ══════════ -->
+  <section class="sec" id="sec-casos">
+    <div class="card">
+      <h2>🏫 Cinco situaciones de esta semana</h2>
+      <p>No son casos de manual: son cosas que pasan en un centro hondureño y que se resuelven
+        distinto según lo que usted sepa de la norma. Piense su respuesta antes de abrir la
+        sugerencia.</p>
+
+      <div class="caso">
+        <div class="caso-t">Caso 1 · «Mejor renuncie usted, y no le queda nada en el expediente»</div>
+        <p>Tras un incidente con un padre de familia, en la dirección le sugieren que renuncie
+          «para evitarse el problema». No hay nada por escrito. ¿Firma?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">No, y no por terquedad: porque el procedimiento que lo protege
+          todavía no ha empezado. El artículo 13 le reconoce el derecho a <b>ser sancionado
+          mediante un procedimiento legal</b>, y el artículo 39 exige que para faltas graves y muy
+          graves haya <b>siempre</b> audiencia de descargo con garantías de legítima defensa. El
+          Reglamento remata: no se tramita ninguna sanción sin haber observado el procedimiento.
+          Si hay una falta, que se la imputen por escrito y que lo citen; si no la hay, no hay nada
+          que renunciar. Una renuncia firmada en caliente cierra la puerta a todo reclamo posterior.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 2 · La permuta que «no conviene al servicio»</div>
+        <p>Usted y una colega de otro centro acordaron permutar. Los dos puestos son iguales.
+          En la oficina le dicen de palabra que no procede «porque no conviene al servicio».</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Pida la negativa por escrito y revise los tres requisitos. La
+          permuta es un intercambio <b>voluntario</b> de empleos de <b>igual nivel</b>, en igualdad
+          de condiciones y de puesto, y de <b>mutuo acuerdo</b>; requiere dictamen y aprobación de
+          la autoridad competente. Si los dos trabajan en el mismo departamento, la autoriza el
+          Director Departamental; si están en departamentos distintos, los dos Directores
+          Departamentales. Compruebe también que ninguno de los dos esté dentro de los tres años
+          previos a la edad de jubilación voluntaria, porque ahí sí está prohibida. Cumplidos los
+          requisitos, lo que procede es un dictamen motivado, no una frase en el pasillo.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 3 · El traslado que huele a castigo</div>
+        <p>Después de que usted reclamara por unos fondos, aparece un acuerdo que lo traslada a un
+          centro lejano y a un puesto menor. Nadie le habló de falta ni de audiencia.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Ponga el dedo en la contradicción. El traslado a un puesto inferior
+          solo procede como <b>sanción disciplinaria firme</b>, que es la sexta causa del artículo
+          28, y el traslado a puesto de menor jerarquía figura entre las sanciones por falta muy
+          grave. Es decir: si lo bajaron de puesto, lo están sancionando, y una sanción muy grave
+          exige notificación escrita de los hechos, citación y audiencia de descargos. Si no hubo
+          nada de eso, el acto está viciado. Pida por escrito que se le informe la causa legal del
+          movimiento y guarde copia sellada de esa petición: ese papel es el que sostiene el
+          reclamo después.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 4 · «Por la muerte de su papá le doy tres días»</div>
+        <p>Fallece su padre en otro departamento. En la dirección le conceden tres días y le dicen
+          que es lo que da la ley.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Son nueve, no tres. La tabla del Reglamento concede <b>nueve días
+          calendario</b> por muerte de cónyuge o compañero de hogar, padres, hijos o hermanos, y
+          <b>tres días más</b> si el fallecido se sepulta fuera de su domicilio. Los tres días son
+          para parientes hasta el cuarto grado de consanguinidad o segundo de afinidad que no
+          entren en esa lista. Se acredita con la certificación del acta de defunción al
+          reintegrarse. Dígalo sin pelear, que casi siempre es desconocimiento y no mala fe: lo que
+          corresponde son nueve, y estos permisos salen del tope de treinta días al año.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 5 · La evaluación que salió baja justo este año</div>
+        <p>Le notifican una evaluación mucho más baja que la del año pasado, sin que su trabajo
+          haya cambiado. Usted sospecha que hay algo personal.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Actúe rápido, porque el reloj ya empezó: tiene <b>diez días
+          hábiles</b> desde la notificación para solicitar revisión ante el mismo órgano que
+          practicó la evaluación. Junte lo que documenta su año (planificaciones, registros,
+          evidencias) y presente la solicitud por escrito con copia sellada. Y sepa que el
+          Estatuto previó exactamente esta sospecha: quien use la evaluación para perjudicar o
+          favorecer a alguien <b>será sancionado</b>, sin perjuicio de la responsabilidad
+          administrativa, civil y penal. Reclame por el procedimiento, no por el pasillo: pasados
+          los diez días, la nota queda firme aunque tenga toda la razón.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 10. SIMULACRO DE CONCURSO ══════════ -->
+  <section class="sec" id="sec-concurso">
+    <div class="card">
+      <h2>🎯 Simulacro de concurso</h2>
+      <p>Veinte preguntas con el formato de las pruebas de conocimientos del concurso docente:
+        una sola respuesta correcta y sin pistas. Al final se califica sobre cien y le dice qué
+        repasar. En el concurso real el promedio final exigido no baja de setenta y cinco por
+        ciento, así que ese es el listón de aquí.</p>
+      <div id="concurso"></div>
+      <div class="btn-fila">
+        <button class="btn btn-ok" onclick="cnCalifica()">🧮 Calificar</button>
+        <button class="btn btn-g" onclick="cnInit()">🔄 Otro intento</button>
+      </div>
+      <div class="resu" id="cnResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 11. FICHA, RECURSOS Y CONSTANCIA ══════════ -->
+  <section class="sec" id="sec-cierre">
+    <div class="card">
+      <h2>🖨️ Ficha de estudio, diez páginas</h2>
+      <p>Los mismos trámites en papel, para estudiar sin batería y para llevar a la oficina: los
+        artículos con su texto, las tablas de permisos y sanciones, el vocabulario que exigen los
+        exámenes, ejercicios para lápiz y la pauta con todas las respuestas al final.</p>
+      <div class="btn-fila">
+        <a class="btn" href="../../fichas/ficha-docente-estatuto-derechos.html">📄 Abrir la ficha</a>
+      </div>
+      <div class="dato">📌 Se imprime en diez hojas tamaño carta, a doble cara son cinco. La pauta va
+        en las últimas páginas: si la va a usar con colegas, imprima sin ellas y repártalas después.</div>
+    </div>
+
+    <div class="card">
+      <h2>📚 De dónde salió todo esto</h2>
+      <p>Esta misión no se escribió con buscador: se escribió leyendo los dos documentos, que están
+        guardados en el proyecto. Estudie siempre contra el documento, no contra un resumen (ni
+        siquiera este):</p>
+      <div class="rec-it"><b>Estatuto del Docente Hondureño</b>, Decreto 136-97. Ciento un
+        artículos en ocho títulos. Es la ley de su carrera, y deroga la antigua Ley de Personal y
+        Escalafón del Magisterio.</div>
+      <div class="rec-it"><b>Reglamento General del Estatuto del Docente Hondureño</b>, Acuerdo
+        0760-SE-99. Doscientos veintinueve artículos. Aquí están las tablas: los días de cada
+        permiso, el orden de prioridad de los traslados y el procedimiento de la audiencia.</div>
+      <div class="rec-it"><b>Constitución de la República</b>. El Estatuto se dicta por mandato de
+        su artículo 165, y su artículo 162 habla de las responsabilidades científicas y morales del
+        educador.</div>
+      <div class="rec-it"><b>Ley Fundamental de Educación</b>, Decreto 262-2011, y su Reglamento
+        General, Acuerdo 1358-SE-2014. Son posteriores al Estatuto y conviven con él: revise en la
+        convocatoria o en el acuerdo vigente qué norma le están aplicando.</div>
+      <div class="rec-it"><b>Dónde bajarlos:</b> portal de leyes de la Secretaría de Educación
+        (se.gob.hn) y biblioteca del Tribunal Superior de Cuentas (tsc.gob.hn). Los dos son
+        gratuitos y publican el texto oficial.</div>
+      <div class="fuente">Artículos, plazos y cifras leídos en el texto de los dos documentos en
+        agosto de 2026. Aquí no se citan sueldos en lempiras a propósito: las cifras del Estatuto
+        son de 1997 y el régimen económico se ha movido por acuerdos posteriores. Un número viejo
+        de sueldo hace más daño que su ausencia.</div>
+    </div>
+
+    <div class="card const" id="constancia">
+      <div style="font-size:38px">🎓</div>
+      <h3>Constancia de estudio</h3>
+      <p>Escriba su nombre para cerrar la misión. Queda guardada en este teléfono.</p>
+      <input id="constNombre" placeholder="Su nombre completo" maxlength="60" oninput="guardar()">
+      <p id="constTxt" style="font-size:14px;color:var(--gris)"></p>
+      <div class="logros" id="logros"></div>
+    </div>
+  </section>
+
+  <p class="pie">M.E.T.A.S · Misiones del maestro · Formación docente ·
+    <a href="../../index.html">Volver a mi Zona Docente</a></p>
+</main>
+
+<!-- Panel de logros (lo abre el botón del pie) -->
+<div class="ach-fondo" id="achFondo" onclick="if (event.target === this) toggleAchPanel()">
+  <div class="ach-panel" role="dialog" aria-label="Logros de la misión">
+    <h3>🏅 Sus logros en esta misión</h3>
+    <div class="ach-sub" id="achSub"></div>
+    <div id="achLista"></div>
+    <div class="btn-fila"><button class="btn" onclick="toggleAchPanel()">Cerrar</button></div>
+  </div>
+</div>
+
+<footer class="credits">
+  <p class="fam">🏛️ Proyecto Formación e Investigación Docente M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Docentes <strong>Josué E. Polanco</strong> y
+    <strong>Evelyn S. Castellanos</strong>, investigadores en acción. Este material se elabora
+    con el apoyo de las mejores herramientas de investigación profunda («Deep Research»)
+    disponibles en la actualidad. Consulte siempre las fuentes citadas y, si encuentra un error,
+    agradeceremos que nos lo reporte.</p>
+  <div class="mot">«Cuanto mejor preparado esté, mejores serán sus decisiones. Al maestro que
+    estudia no se le impone: se le consulta.» 🎓</div>
+  <div class="cred-contact">
+    <span>📧 <a href="mailto:josuepolancolemus2020@gmail.com">josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank" rel="noopener">policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/estatuto-derechos.js"></script>
+<!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
+     «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
+     .sec.active y go(). -->
+<script src="../../js/metas-presentacion.js"></script>
+</body>
+</html>

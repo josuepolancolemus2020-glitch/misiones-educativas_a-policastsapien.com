@@ -1,0 +1,15 @@
+# Nueve cortes = diez páginas. Cada línea es un trozo literal del HTML que debe
+# QUEDAR AL INICIO de una página. Se prefieren encabezados; donde el reparto no
+# los permite (los trámites se explican en bloques largos que no se parten), se
+# ancla en la caja que abre el bloque, que también empieza idea. Los anclajes van
+# por el texto de adentro, no por «<div class="caja">»: esa etiqueta se repite
+# en toda la ficha y el repaginador cortaría en la primera que encontrara.
+<h2>2. El artículo 13: los veintitrés derechos</h2>
+<h2>3. Entrar a la carrera y ganar una plaza</h2>
+<b>La condición que lo decide todo.</b>
+<h2>6. Permisos y licencias: la tabla completa</h2>
+<b>Diez días hábiles, y corren desde la notificación.</b>
+<b>Si no comparece, pierde.</b>
+<h2>Ejercicios</h2>
+<h3>C. Complete</h3>
+<h2>Pauta de respuestas: ejercicios C y D</h2>

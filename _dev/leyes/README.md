@@ -38,15 +38,22 @@ ley-fundamental-educacion-decreto-262-2011.pdf
 reglamento-general-lfe-acuerdo-1358-se-2014.pdf
 ```
 
-## Lo que hace falta ahora mismo
+## Lo que ya está aquí
 
-Para poder escribir la misión «Estatuto del Docente: sus derechos»:
+- [x] **Estatuto del Docente Hondureño**, Decreto 136-97 (`estatuto-docente-decreto-136-97.pdf`), 101 artículos.
+- [x] **Reglamento General del Estatuto del Docente Hondureño**, Acuerdo 0760-SE-99
+      (`reglamento-estatuto-docente-acuerdo-0760-se-99.pdf`), 229 artículos.
 
-- [ ] **Estatuto del Docente Hondureño**, Decreto 136-97.
-- [ ] **Reglamento General del Estatuto del Docente Hondureño**, Acuerdo 0760-SE-99.
+Con esos dos se escribió la misión «Estatuto del Docente: sus derechos». El
+antes y el después está contado en `INVESTIGACION-ESTATUTO-DOCENTE.md`: leer el
+documento corrigió media docena de números de artículo que la búsqueda web daba
+por buenos, y destapó un error ya publicado en la primera misión.
 
-Con esos dos, la lista de comprobación que ya está escrita en
-`INVESTIGACION-ESTATUTO-DOCENTE.md` se resuelve leyendo, no buscando.
+## Lo que haría falta después
+
+Para cerrar la vigencia de hoy (régimen económico y carrera docente):
+
+- [ ] Acuerdos de 2014 y de 2022 sobre carrera docente.
 
 ## Dos advertencias
 
