@@ -42,7 +42,7 @@
 <main class="main">
 
   <!-- ══════════ 1. LÍNEA DE TIEMPO ══════════ -->
-  <section class="sec on" id="sec-linea">
+  <section class="sec active" id="sec-linea">
     <div class="card">
       <h2>🕰️ La línea de tiempo</h2>
       <p>Nueve momentos en que el país cambió de idea sobre para qué sirve una escuela.
@@ -361,6 +361,41 @@
     <a href="../../index.html">Volver a mi Zona Docente</a></p>
 </main>
 
+<!-- Panel de logros (lo abre el botón del pie) -->
+<div class="ach-fondo" id="achFondo" onclick="if (event.target === this) toggleAchPanel()">
+  <div class="ach-panel" role="dialog" aria-label="Logros de la misión">
+    <h3>🏅 Sus logros en esta misión</h3>
+    <div class="ach-sub" id="achSub"></div>
+    <div id="achLista"></div>
+    <div class="btn-fila"><button class="btn" onclick="toggleAchPanel()">Cerrar</button></div>
+  </div>
+</div>
+
+<footer class="credits">
+  <p class="fam">🏛️ Proyecto Formación e Investigación Docente M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Docentes <strong>Josué E. Polanco</strong> y
+    <strong>Evelyn S. Castellanos</strong>, investigadores en acción. Este material se elabora
+    con el apoyo de las mejores herramientas de investigación profunda («Deep Research»)
+    disponibles en la actualidad. Consulte siempre las fuentes citadas y, si encuentra un error,
+    agradeceremos que nos lo reporte.</p>
+  <div class="mot">«Cuanto mejor preparado esté, mejores serán sus decisiones. Al maestro que
+    estudia no se le impone: se le consulta.» 🎓</div>
+  <div class="cred-contact">
+    <span>📧 <a href="mailto:josuepolancolemus2020@gmail.com">josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank" rel="noopener">policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
 <script src="js/historia-leyes-educativas.js"></script>
+<!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
+     «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
+     .sec.active y go(). -->
+<script src="../../js/metas-presentacion.js"></script>
 </body>
 </html>

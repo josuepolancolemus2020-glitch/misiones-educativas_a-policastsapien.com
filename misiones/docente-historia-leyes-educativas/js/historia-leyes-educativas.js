@@ -19,7 +19,7 @@ const SAVE_KEY = 'METAS_MD_HISTLEYES_V1';
 
 /* ── Estado guardado (solo de este maestro, en este teléfono) ── */
 let S = {
-  xp: 0, hitos: [], fcVistas: [], nombre: '',
+  xp: 0, hitos: [], fcVistas: [], nombre: '', sonido: 1,
   memo: 0, quiz: 0, clasifica: 0, completa: 0, reto: 0, sopa: 0, concurso: 0,
 };
 function cargar() {
@@ -284,7 +284,7 @@ function memoToca(i) {
     const [a, b] = _memoAbiertas;
     if (_memoCartas[a].par === _memoCartas[b].par) {
       _memoCartas[a].lograda = _memoCartas[b].lograda = true;
-      _memoLogradas++; _memoAbiertas = []; xp(1);
+      _memoLogradas++; _memoAbiertas = []; xp(1); sfx('bien');
       if (_memoLogradas === MEMO.length && !S.memo) { S.memo = 1; xp(4); }
       memoPinta();
     } else {
@@ -356,6 +356,7 @@ function qzResp(i, j) {
   if (!bien) document.getElementById('qz' + i + '-' + QZ[i].c)?.classList.add('bien');
   const fb = document.getElementById('qzfb' + i);
   if (fb) { fb.className = 'q-fb ' + (bien ? 'bien' : 'mal'); fb.textContent = (bien ? '✅ Correcto. ' : '❌ No era esa. ') + QZ[i].e; }
+  sfx(bien ? 'bien' : 'mal');
   if (bien) xp(2);
   if (_qzResp.filter(x => x != null).length === QZ.length && !S.quiz) { S.quiz = 1; xp(4); }
   guardar();
@@ -584,7 +585,7 @@ function sopaToca(f, c) {
   const rev = txt.split('').reverse().join('');
   const hit = SOPA_PAL.find(p => (p === txt || p === rev) && !_sopaHall.includes(p));
   if (hit) {
-    _sopaHall.push(hit); xp(2);
+    _sopaHall.push(hit); xp(2); sfx('bien');
     if (_sopaHall.length === SOPA_PAL.length && !S.sopa) { S.sopa = 1; xp(5); }
     guardar();
   }
@@ -694,6 +695,7 @@ function cnCalifica() {
       ? `Pasa el listón del concurso (75). Acertó ${bien} de ${CN.length}.`
       : `Todavía no llega al 75 que exige el concurso. Acertó ${bien} de ${CN.length}.`) +
     (fallos.length ? `<div style="font-weight:600;font-size:14px;margin-top:8px">Repase las preguntas: ${fallos.join(', ')}.</div>` : '');
+  sfx(nota >= 75 ? 'logro' : 'mal');
   if (nota >= 75 && !S.concurso) { S.concurso = 1; xp(15); }
   S.concursoNota = Math.max(S.concursoNota || 0, nota);
   guardar();
@@ -750,9 +752,12 @@ const SECS = [
   ['sec-concurso', '🎯 Simulacro'],
   ['sec-cierre', '🖨️ Ficha'],
 ];
+/* La sección activa lleva la clase «active» y los botones «nav-t» con data-s:
+   son los nombres que busca metas-presentacion.js para el modo presentación y
+   el modo libro. Cambiarlos deja al maestro sin esos dos apoyos. */
 function go(id) {
-  document.querySelectorAll('.sec').forEach(s => s.classList.toggle('on', s.id === id));
-  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.sec === id));
+  document.querySelectorAll('.sec').forEach(s => s.classList.toggle('active', s.id === id));
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.s === id));
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (id === 'sec-reto') { clearInterval(_retoTimer); }
 }
@@ -760,7 +765,95 @@ function navPinta() {
   const n = document.getElementById('nav');
   if (!n) return;
   n.innerHTML = SECS.map(([id, t], i) =>
-    `<button data-sec="${id}" class="${i === 0 ? 'on' : ''}" onclick="go('${id}')">${t}</button>`).join('');
+    `<button class="nav-t ${i === 0 ? 'on' : ''}" data-s="${id}" onclick="go('${id}')">${t}</button>`).join('');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PIE: SONIDO, TEMA, LOGROS Y REINICIAR
+   Los mismos apoyos que traen las misiones del alumno, porque el
+   maestro los usa en las mismas condiciones: pantalla al sol, vista
+   cansada, aula con ruido y a veces un proyector. «🔎 Letra» y
+   «📽️ Presentación» los agrega metas-presentacion.js al pie.
+══════════════════════════════════════════════════════════════ */
+
+/* Sonido corto y sintetizado: ni un archivo que descargar, que aquí se
+   estudia con datos contados y a veces sin señal. */
+let _audio = null;
+function sfx(tipo) {
+  if (S.sonido === 0) return;
+  try {
+    _audio = _audio || new (window.AudioContext || window.webkitAudioContext)();
+    const notas = { bien: [660, 880], mal: [220, 165], click: [520], logro: [660, 880, 1180] };
+    (notas[tipo] || notas.click).forEach((f, i) => {
+      const o = _audio.createOscillator(), g = _audio.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(.06, _audio.currentTime + i * .09);
+      g.gain.exponentialRampToValueAtTime(.0001, _audio.currentTime + i * .09 + .16);
+      o.connect(g); g.connect(_audio.destination);
+      o.start(_audio.currentTime + i * .09); o.stop(_audio.currentTime + i * .09 + .18);
+    });
+  } catch (_) {}
+}
+window.sfx = sfx;
+function toggleSnd() {
+  S.sonido = S.sonido === 0 ? 1 : 0;
+  const b = document.getElementById('sndBtn');
+  if (b) b.textContent = S.sonido === 0 ? '🔇 Sonido' : '🔊 Sonido';
+  guardar();
+  sfx('click');
+}
+
+/* El tema se recuerda por misión, como en las del alumno */
+function toggleTheme() {
+  const oscuro = document.documentElement.getAttribute('data-theme') !== 'dark';
+  document.documentElement.setAttribute('data-theme', oscuro ? 'dark' : 'light');
+  const b = document.getElementById('themeBtn');
+  if (b) b.textContent = oscuro ? '☀️ Tema' : '🌙 Tema';
+  try { localStorage.setItem(SAVE_KEY + '_theme', oscuro ? 'dark' : 'light'); } catch (_) {}
+  sfx('click');
+}
+function initTheme() {
+  let t = null;
+  try { t = localStorage.getItem(SAVE_KEY + '_theme'); } catch (_) {}
+  const sis = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (t === 'dark' || (t === null && sis)) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const b = document.getElementById('themeBtn');
+    if (b) b.textContent = '☀️ Tema';
+  }
+  const sb = document.getElementById('sndBtn');
+  if (sb && S.sonido === 0) sb.textContent = '🔇 Sonido';
+}
+
+function toggleAchPanel() {
+  const f = document.getElementById('achFondo');
+  if (!f) return;
+  const abrir = !f.classList.contains('on');
+  if (abrir) {
+    const hechos = LOGROS.filter(l => l[1]()).length;
+    document.getElementById('achSub').textContent =
+      hechos + ' de ' + LOGROS.length + ' completados · ' + S.xp + ' XP';
+    document.getElementById('achLista').innerHTML = LOGROS.map(l =>
+      `<div class="ach-fila ${l[1]() ? '' : 'no'}">${l[1]() ? '✅' : '⬜'} ${l[0]}</div>`).join('');
+  }
+  f.classList.toggle('on', abrir);
+  sfx('click');
+}
+
+/* Reiniciar borra SOLO el progreso de esta misión (su clave), nunca los
+   datos del aula. Se pregunta antes: el maestro pudo tocarlo sin querer. */
+function resetXP() {
+  if (!confirm('¿Empezar esta misión de nuevo?\n\nSe borra su avance en ella (XP, logros y el simulacro). Los datos de su aula no se tocan.')) return;
+  const tema = S.sonido;
+  S = { xp: 0, hitos: [], fcVistas: [], nombre: '', sonido: tema,
+        memo: 0, quiz: 0, clasifica: 0, completa: 0, reto: 0, sopa: 0, concurso: 0 };
+  try { localStorage.removeItem(SAVE_KEY); } catch (_) {}
+  const inp = document.getElementById('constNombre');
+  if (inp) inp.value = '';
+  _hito = 0; _fc = 0; _qzResp = [];
+  tlPinta(); fcPinta(); memoInit(); qzPinta(); clInit(); cpPinta(); sopaInit(); cnInit();
+  guardar();
+  sfx('click');
 }
 
 /* ══════════════════ ARRANQUE ══════════════════ */
@@ -777,5 +870,6 @@ document.addEventListener('DOMContentLoaded', () => {
   cnInit();
   const inp = document.getElementById('constNombre');
   if (inp) inp.value = S.nombre || '';
+  initTheme();
   pintaXP(); pintaLogros(); pintaConst();
 });

@@ -101,7 +101,7 @@ body {
 
 /* ── Secciones y tarjetas ── */
 .sec { display: none; }
-.sec.on { display: block; animation: sube .25s ease; }
+.sec.active { display: block; animation: sube .25s ease; }
 @keyframes sube { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .card {
   background: var(--papel); border: 1.5px solid var(--linea);
@@ -306,5 +306,54 @@ body {
 .rec-it { border-bottom: 1px solid var(--linea); padding: 9px 0; font-size: 14.5px; }
 .rec-it:last-child { border-bottom: none; }
 .rec-it b { color: var(--pri); }
+/* ── Pie de créditos y accesibilidad ──
+   Mismo lugar y misma forma que en las misiones del alumno, para que el
+   maestro encuentre los botones donde ya sabe. El texto sí cambia: aquí no
+   se le habla a un niño, se le habla a un colega. */
+.credits {
+  background: #17203a; color: rgba(255, 255, 255, .78);
+  text-align: center; padding: 20px 14px 22px; margin-top: 26px;
+  font-size: 13px; line-height: 1.6;
+}
+.credits .fam { font-size: 15.5px; font-weight: 900; color: #fbbf24; margin-bottom: 4px; }
+.credits .ppl { font-size: 12.5px; opacity: .9; margin: 0 auto 6px; max-width: 620px; }
+.credits .mot {
+  font-size: 12.5px; font-style: italic; color: #c4b5fd;
+  margin: 8px auto 0; max-width: 620px;
+}
+.credits a { color: #fbbf24; text-decoration: none; font-weight: 700; }
+.credits a:hover { text-decoration: underline; }
+.cred-contact {
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, .14);
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; font-size: 12.5px;
+}
+.cred-tools { margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+.cred-btn {
+  font-family: inherit; font-size: 12.5px; font-weight: 700; padding: 6px 12px;
+  background: rgba(255, 255, 255, .10); color: rgba(255, 255, 255, .85);
+  border: 1px solid rgba(255, 255, 255, .22); border-radius: 999px; cursor: pointer;
+}
+.cred-btn:hover { background: rgba(255, 255, 255, .18); color: #fff; }
+.cred-btn:active { transform: scale(.96); }
 .pie { text-align: center; font-size: 12.5px; color: var(--gris); padding: 18px 12px 6px; }
 .pie a { color: var(--pri); font-weight: 800; }
+
+/* Panel de logros: se abre desde el pie, sin sacar al maestro de donde está */
+.ach-fondo {
+  position: fixed; inset: 0; background: rgba(15, 22, 32, .55); z-index: 1300;
+  display: none; align-items: center; justify-content: center; padding: 16px;
+}
+.ach-fondo.on { display: flex; }
+.ach-panel {
+  background: var(--papel); color: var(--tinta); border-radius: var(--r);
+  padding: 16px 14px; max-width: 420px; width: 100%; max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .3);
+}
+.ach-panel h3 { margin: 0 0 4px; color: var(--pri); font-size: 18px; }
+.ach-panel .ach-sub { font-size: 13px; color: var(--gris); margin-bottom: 10px; }
+.ach-fila {
+  display: flex; align-items: center; gap: 9px; padding: 7px 0;
+  border-bottom: 1px solid var(--linea); font-size: 14px; font-weight: 700;
+}
+.ach-fila:last-of-type { border-bottom: none; }
+.ach-fila.no { opacity: .45; font-weight: 600; }
