@@ -8,15 +8,16 @@
 # repagina-ficha.js partiría la etiqueta (solo sabe retroceder hasta un <div>
 # sin cerrar, no hasta un <table>).
 #
-# La segunda tabla de «Verdadero o falso» lleva pegada además su primera fila:
-# su encabezado es idéntico al de la primera y sin esa fila el anclaje habría
-# caído en la tabla equivocada.
+# Y dos tablas llevan pegada además su PRIMERA FILA, porque su encabezado se
+# repite en la ficha y el anclaje habría caído en la tabla equivocada: la
+# segunda mitad de los módulos del docente y la del momento 2. Las ocho tablas
+# de los momentos tienen el mismo encabezado, así que ojo si se mueve un corte.
 <p><b>M.E.T.A.S</b> es una herramienta de trabajo del maestro.
-<h3>Momento 2 · El día que da el tema</h3>
-<table><tr><th>N.º</th><th>Paso</th><th>Por qué en ese orden</th></tr>
-<h3>Momento 7 · El día que piden un papel</h3>
-<h2>3. Las otras plataformas, sin atacar a ninguna</h2>
-<table><tr><th>Si no calza…</th><th>Qué hace</th></tr>
-<table><tr><th>Término</th><th>Qué significa exactamente</th></tr>
-<table><tr><th>N.º</th><th>Afirmación</th><th>V/F</th></tr><tr><td>6</td>
-<h2>Pauta de respuestas: ejercicios C y D</h2>
+<table class="t-partida"><tr><th style="width:30%">Módulo del docente</th><th>Para qué es</th></tr><tr><td><b>Zona de Descargas</b></td>
+<table class="t-partida"><tr><th style="width:26%">&nbsp;</th><th>Qué le toca</th></tr><tr><td><b>SACE</b></td><td>Nada. Sus nueve módulos administran
+<b>Y la advertencia que cambia cómo se trabaja.</b>
+<b>Son dos accesos, y no son el mismo.</b>
+<table><tr><th>Qué le piden</th><th>Cuándo</th><th>Dónde</th></tr>
+<h2>6. Cuando los dos no calzan</h2>
+<p>Trabaje con lápiz y sin mirar atrás.
+<h3>D. Dos situaciones para resolver por escrito</h3>

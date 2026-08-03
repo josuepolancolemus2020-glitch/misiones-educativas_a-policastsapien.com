@@ -9,45 +9,59 @@
    y se queda en su teléfono.
 
    ─────────────────────────────────────────────────────────────
-   ⚠️ LO QUE ESTA MISIÓN NO DICE, Y POR QUÉ
+   FUENTES: LEÍDAS, NO BUSCADAS
 
-   Esta misión NO enseña a usar SACE por dentro: ni un menú, ni una
-   pestaña, ni un plazo de digitación, ni un número de acuerdo. Y no
-   es un olvido, es la norma de la casa aplicada al pie de la letra.
+   Lo de SACE que se afirma aquí sale de los manuales oficiales, que
+   están en el repositorio y hay que tener delante para tocar esta
+   misión:
 
-   La regla de la serie es «buscar no es leer»: si una misión va a
-   citar un documento, el documento tiene que estar delante, en
-   `_dev/leyes/`. Al escribir esta, el entorno de desarrollo NO
-   alcanzó los portales del Estado (se.gob.hn, sace.se.gob.hn y
-   tsc.gob.hn contestaron 403 a través del proxy), así que el Manual
-   de Procesos del SACE no se pudo leer. Un extracto de buscador no
-   acredita un procedimiento, y mandar a un maestro a una pestaña que
-   ya no está, o darle un plazo derogado, es un daño concreto: el
-   mismo error que ya costó caro con el Estatuto del Docente y quedó
-   contado en INVESTIGACION-ESTATUTO-DOCENTE.md.
+     _dev/leyes/Manual_de_usuario_SACE_Docente.pdf
+     _dev/leyes/sace_manual_de_usuario_director.pdf
 
-   Así que la misión se queda en lo que sí es firme y estable, que
-   además es lo único que el maestro necesita para dejar de tener
-   miedo:
+   Los publica la Unidad del Sistema Nacional de Información
+   Educativa de Honduras (USINIEH) de la Secretaría de Educación.
 
-   • De SACE: que es el Sistema de Administración de Centros
-     Educativos de la Secretaría de Educación, que es el registro
-     OFICIAL del Estado, que ahí viven la matrícula, la nota que
-     cuenta legalmente y la certificación, y que no tiene sustituto.
-   • De M.E.T.A.S: absolutamente todo, porque se cuenta en este
-     mismo repositorio.
-   • Del procedimiento (cuándo se digita, en qué pantalla, quién
-     firma): NADA. En cada parada se le dice al maestro que lo
-     confirme en su centro y lo anote antes de necesitarlo.
+   ⚠️ EL DATO QUE MANDA SOBRE TODOS LOS DEMÁS: los dos son
+   **versión 2.0**. El del docente se actualizó en **junio de 2019**
+   y el del director en **septiembre de 2017**. Esta misión se
+   escribió en agosto de 2026, o sea que los manuales tienen entre
+   siete y nueve años. Por eso:
 
-   SI ALGUIEN RETOMA ESTO: la forma de profundizar no es buscar más,
-   es meter el documento al repositorio. Está pedido en
-   `_dev/leyes/README.md`:
+   • Se cuenta el FLUJO (qué módulo, en qué orden, qué produce),
+     que es lo que aguanta el tiempo.
+   • NO se cuenta ninguna FECHA de digitación ni ningún plazo: eso
+     lo fija la Secretaría cada año por circular y no está en los
+     manuales.
+   • Cada vez que se nombra un botón, la misión dice que si la
+     pantalla no calza, gana la pantalla del maestro, y le recuerda
+     la línea de soporte (104, en el pie de todas las páginas del
+     manual del director).
 
-     manual-procesos-sace.pdf   (Secretaría de Educación, USINIEH)
+   Primera versión de esta misión, escrita antes de tener los PDF,
+   no citaba nada de SACE y mandaba al maestro a preguntarlo todo en
+   su centro. Con los documentos leídos se corrigieron dos cosas que
+   estaban dichas de menos y una dicha de más:
 
-   Con ese PDF delante se pueden añadir plazos y pantallas. Sin él,
-   no se añade nada.
+   1. Las notas NO se teclean en una pantalla: se descarga un
+      archivo con el cuadro de calificaciones, se llena con la nota
+      total y las inasistencias por parcial, y se vuelve a subir
+      (Manual del docente, módulo Notas). Eso cambia por completo el
+      consejo práctico de la misión: M.E.T.A.S produce exactamente
+      esas dos columnas.
+   2. SACE SÍ tiene acceso para el padre de familia: el
+      administrador del centro lo genera con usuario y contraseña,
+      si el alumno tiene matrícula activa (Manual del director,
+      «Generar Acceso Padre de Familia | Encargado»). Antes la
+      misión decía «por la vía que el centro tenga», que era vago.
+   3. El Tablero de Estadísticas del propio SACE ya da el listado de
+      reprobados y de alumnos en peligro de reprobación. Decir que
+      «el registro solo guarda y no analiza» era pasarse: guarda,
+      avisa quiénes, y no dice por qué ni qué hacer. Así se dice
+      ahora.
+
+   LO QUE SIGUE SIN DECIRSE, Y HAY QUE MANTENERLO ASÍ: fechas de
+   digitación, plazos de matrícula y cualquier cosa que cambie por
+   circular. Eso se pregunta en el centro, y la ficha trae la lista.
 
    ─────────────────────────────────────────────────────────────
    LAS OTRAS PLATAFORMAS: SIN NOMBRES EN AFIRMACIÓN NEGATIVA
@@ -126,26 +140,26 @@ const PARADAS = [
     ic: '🧾', corto: 'El día que matricula al alumno',
     tit: 'Estar en su lista no es estar matriculado',
     sub: 'Momento 1 · quién existe de verdad para el sistema',
-    txt: 'Es la confusión más cara de todas, y se resuelve en una frase: <b>la matrícula solo ' +
-         'existe en un sitio, y no es este</b>. El registro oficial del alumno lo lleva el centro ' +
-         'en <b>SACE</b>, que es el sistema de la Secretaría de Educación. Ahí está su expediente, ' +
-         'y de ahí sale todo lo que después certifica. La lista que usted escribe en <b>Mi aula</b> ' +
-         'es otra cosa: es su lista de trabajo, la que alimenta asistencia, notas, claves de ' +
-         'familia y boleta. Sirve para trabajar, no para inscribir.',
-    ofi: 'La matrícula del alumno, su expediente y lo que después certifica. Lo hace el centro.',
-    metas: 'Su lista de trabajo, para asistencia, notas, colectas, claves de familia y Plan de Acción.',
+    txt: 'Es la confusión más cara de todas, y se resuelve mirando quién tiene qué en la mano. En ' +
+         'SACE, la <b>matrícula</b>, el registro del alumno, los <b>repitientes</b> y los ' +
+         '<b>traslados</b> son módulos del <b>administrador del centro</b>: no aparecen en el perfil ' +
+         'del docente, o sea que usted no puede matricular a nadie ni aunque quiera. Su lista de ' +
+         '<b>Mi aula</b> es otra cosa: es la lista de trabajo que alimenta asistencia, notas, claves ' +
+         'de familia y boleta. Sirve para trabajar, no para inscribir.',
+    ofi: 'Matrícula, expediente, repitientes y traslados. Son módulos del administrador del centro, no suyos.',
+    metas: 'Su lista de trabajo: asistencia, notas, colectas, claves de familia y Plan de Acción.',
     manda: 'El centro, en el sistema oficial. Si un alumno no está ahí, no está.',
     pasos: [
       'Escriba en Mi aula los nombres <b>tal como están en la matrícula oficial</b>, completos y sin abreviar.',
-      'Si llega un alumno nuevo a mitad de año, avise a la dirección antes de anotarlo en su lista.',
-      'Confirme en su centro quién registra la matrícula y en qué fechas, y anótelo.',
+      'Si llega un alumno de otro centro, el traslado lo hace el centro de origen y <b>el suyo tiene que aceptarlo</b>: pregunte en la dirección si ya quedó aceptado.',
+      'Si un alumno repite, avise para que quede registrado <b>como repitiente</b>. El manual advierte que si no, el alumno está en el centro y no aparece en los cuadros de notas del docente.',
       'Al cerrar el año, compare su lista con la del centro: los nombres que no calzan se arreglan ahí.',
     ],
     nohacer: [
       'No dé por inscrito a un alumno porque ya aparece en Mi aula. Son dos cosas distintas.',
-      'No use ninguna lista ni pantalla de M.E.T.A.S como constancia de matrícula: no lo es.',
+      'No use ninguna lista ni pantalla de M.E.T.A.S como constancia de matrícula: la de verdad la extiende el centro.',
       'No escriba el nombre de una manera aquí y de otra allá: la boleta y el recibo salen con el suyo.',
-      'No matricule usted por su cuenta a nadie «para que no pierda el año»: eso se resuelve en la dirección.',
+      'No deje pasar semanas con un alumno «prestado» sin registrar: el que pierde el año es él.',
     ],
     aula: 'El alumno que trabajó todo el año y no está en el registro oficial se queda sin nada, por ' +
           'bien que le haya ido con usted. Revisar eso en marzo cuesta cinco minutos; en noviembre, un año.',
@@ -154,13 +168,13 @@ const PARADAS = [
     ic: '📚', corto: 'El día que da el tema',
     tit: 'Aquí no hay reparto: la clase es solo suya',
     sub: 'Momento 2 · el contenido y la práctica',
-    txt: 'Un sistema de administración de centros educativos administra: registros, matrícula, ' +
-         'calificaciones. No trae la clase, ni el ejercicio, ni el juego con el que un niño de ' +
-         'sexto entiende las fracciones. Eso es lo que M.E.T.A.S pone: <b>57 misiones</b> con ' +
-         'contenido, práctica y evaluación, alineadas al DCNB y escritas para el alumno hondureño. ' +
-         'Y lo pone <b>sin quitarle a usted la clase</b>: la misión practica y evalúa; explicar, ' +
-         'sostener el grupo y decidir por dónde se avanza sigue siendo trabajo de maestro.',
-    ofi: 'Nada en este momento: administra el centro, no da la clase.',
+    txt: 'Basta con mirar los <b>nueve módulos</b> que el manual le da al perfil docente: Tablero de ' +
+         'Estadísticas, Perfil del Docente, Puestos de Trabajo, Notas, Zona de Descargas, Alumnos, ' +
+         'Polimedias, Salud y Voucher. Ninguno da clase, y no es un defecto: es un sistema de ' +
+         '<b>administración</b> de centros educativos, y hace bien lo suyo. La clase, el ejercicio y ' +
+         'el juego con el que un niño de sexto entiende las fracciones vienen de otro lado. Eso es ' +
+         'lo que pone M.E.T.A.S: <b>57 misiones</b> alineadas al DCNB, sin quitarle a usted la clase.',
+    ofi: 'Nada en este momento. Sus nueve módulos administran: ninguno trae contenido para el alumno.',
     metas: '57 misiones en 11 rutas y 7 materias, con juegos, evaluación y ficha imprimible con QR.',
     manda: 'Usted. La plataforma es material; la clase la sostiene el maestro.',
     pasos: [
@@ -186,8 +200,8 @@ const PARADAS = [
          'formas distintas por fila de pupitres y reimprimir la misma prueba dentro de un mes sin ' +
          'perder la correspondencia. Lo que no hace, y conviene tenerlo claro, es <b>calificar por ' +
          'usted ni decidir por usted</b>: la pauta es una ayuda, y el criterio es del maestro que ' +
-         'conoce a ese grupo.',
-    ofi: 'Nada en este momento: no genera exámenes ni pautas.',
+         'conoce a ese grupo. En SACE no hay nada de esto: entra la nota ya decidida.',
+    ofi: 'Nada en este momento: no genera exámenes ni pautas. Recibe el resultado, no el instrumento.',
     metas: 'La prueba imprimible del tema, con pauta, clave y 30 formas que se repiten iguales.',
     manda: 'Usted, con su criterio escrito y avisado antes de calificar.',
     pasos: [
@@ -199,35 +213,37 @@ const PARADAS = [
     nohacer: [
       'No reparta la misma Forma a todo el grado si le preocupa la copia: para eso hay treinta.',
       'No tire el examen ni la pauta después de entregar notas.',
-      'No presente la nota de esta prueba como nota oficial: todavía le falta el paso 4.',
+      'No presente la nota de esta prueba como nota oficial: todavía le falta el momento 4.',
     ],
     aula: 'Aquí es donde se recuperan las horas de verdad. Redactar un examen con su pauta es media ' +
           'tarde; elegir una Forma es un toque.',
   },
   {
     ic: '🔢', corto: 'El día que cierra el parcial',
-    tit: 'La nota que cuenta se digita en SACE, y nadie lo hace por usted',
+    tit: 'La nota oficial se sube en un archivo, y lo sube usted',
     sub: 'Momento 4 · el punto donde un maestro puede perder de verdad',
-    txt: 'Esta es la parada más importante de la misión. La nota que <b>certifica</b>, la que va al ' +
-         'expediente del alumno y la que vale si mañana alguien pregunta, es la que está en el ' +
-         'registro oficial. M.E.T.A.S le lleva el acumulativo, le arma la boleta y le enseña cómo ' +
-         'quedó el grupo, y ahí <b>se detiene</b>: <b>no envía nada a SACE</b>, ni tiene forma de ' +
-         'hacerlo, ni se le va a añadir en secreto. La nota la digita el maestro, en el sistema ' +
-         'oficial, dentro de los plazos que fija la Secretaría y que su centro le va a recordar.',
-    ofi: 'La nota oficial del parcial. La digita usted, y es la única que certifica.',
-    metas: 'El acumulativo, la boleta imprimible, el Plan de Acción y el respaldo de cómo se llegó a esa nota.',
-    manda: 'Usted, dos veces: decide la nota y la digita. El registro no se llena solo.',
+    txt: 'Esta es la parada más importante de la misión, y la que más gente hace mal por no saber ' +
+         'cómo funciona. En el módulo <b>Notas</b> del perfil docente no se teclea alumno por ' +
+         'alumno: se <b>descarga un archivo</b> con el cuadro de calificaciones de esa clase (por ' +
+         'modalidad, curso, sección y jornada), se llena con <b>la nota total de cada alumno y su ' +
+         'cantidad de inasistencias del parcial</b>, y se <b>vuelve a subir</b>. Después se ' +
+         'comprueba en <b>Ver Cuadro #1</b>. Y ahí está el punto: esas dos columnas, nota total e ' +
+         'inasistencias, son exactamente lo que M.E.T.A.S ya tiene calculado por usted. Lo que no ' +
+         'hace, ni tiene forma de hacer, es <b>mandarlas allá</b>: eso lo hace el maestro.',
+    ofi: 'La nota oficial. Se descarga el cuadro de calificaciones, se llena con nota total e inasistencias por parcial, y se sube.',
+    metas: 'El acumulativo que produce esa nota, la boleta, el Plan de Acción y el respaldo de cómo se llegó a ella.',
+    manda: 'Usted, dos veces: decide la nota y sube el archivo. El registro no se llena solo.',
     pasos: [
       'Cierre en M.E.T.A.S las evaluaciones del parcial y mire el Plan de Acción antes de decidir.',
       'Decida la nota de cada alumno con su criterio, no con la calculadora sola.',
-      'Digítela en el sistema oficial y <b>compruebe que quedó guardada</b> antes de salir.',
-      'Confirme en su centro la fecha límite de digitación de cada parcial y anótela en su cuaderno.',
+      'Descargue el cuadro de calificaciones de su clase y llénelo con la nota total y las inasistencias.',
+      'Súbalo y <b>compruebe en Ver Cuadro #1</b> que quedó cargado antes de salir.',
       'Imprima la boleta de M.E.T.A.S para la familia y guarde su respaldo.',
     ],
     nohacer: [
       'No suponga que la nota «ya se subió» porque la registró aquí. Nadie la manda: la manda usted.',
-      'No deje la digitación para el último día: si ese día no hay señal en el centro, el problema es suyo.',
-      'No cambie una nota en un sitio y en el otro no: dos versiones de la misma nota es un reclamo servido.',
+      'No suba una nota provisional «para ir adelantando»: el manual avisa que una nota ya ingresada <b>se puede modificar, pero no eliminar ni poner en cero</b>.',
+      'No deje la subida para el último día: si ese día no hay señal en el centro, el problema es suyo.',
       'No entregue la boleta antes de haber cerrado la nota oficial, o va a entregar dos veces.',
     ],
     aula: 'La frase que hay que aprenderse: <b>SACE guarda la nota; M.E.T.A.S es donde esa nota se ' +
@@ -235,20 +251,21 @@ const PARADAS = [
   },
   {
     ic: '🔍', corto: 'El día que el grupo salió mal',
-    tit: 'El registro guarda el número; no le dice qué hacer con él',
+    tit: 'El sistema le dice quiénes; no le dice por qué',
     sub: 'Momento 5 · entender antes de repetir',
-    txt: 'Un registro oficial hace lo que tiene que hacer: guardar. Que el grupo salió en 62 va a ' +
-         'quedar guardado con toda exactitud, y con eso solo no se arregla nada. Lo que cambia la ' +
-         'clase siguiente es saber <b>quiénes</b> son los que van mal y <b>por qué contenido</b>: ' +
-         'el <b>Plan de Acción</b> reparte al grupo en cinco categorías (Avanzado, Muy Bueno, ' +
-         'Satisfactorio, Debe Mejorar, Insatisfactorio) y propone qué hacer con cada una, y la ' +
-         '<b>Evidencia de misiones</b> le dice quién trabajó, cuánto y con qué resultado.',
-    ofi: 'El dato guardado, con su respaldo oficial.',
-    metas: 'El Plan de Acción con sus cinco categorías, el análisis y la Evidencia de misiones.',
-    manda: 'Usted, que es quien conoce al grupo. La herramienta agrupa; decidir es del maestro.',
+    txt: 'Aquí hay que ser justo con el sistema oficial, porque hace más de lo que la gente cree: su ' +
+         '<b>Tablero de Estadísticas</b> muestra el rendimiento del centro y deja descargar el ' +
+         '<b>listado de reprobados</b> y el de <b>alumnos en peligro de reprobación</b>. Eso ya es ' +
+         'una alerta, y sirve. Lo que no le da es lo otro: <b>por qué contenido</b> fallaron y ' +
+         '<b>qué hacer</b> con cada grupo. El <b>Plan de Acción</b> reparte al grado en cinco ' +
+         'categorías (Avanzado, Muy Bueno, Satisfactorio, Debe Mejorar, Insatisfactorio) y propone ' +
+         'qué hacer con cada una, y la <b>Evidencia de misiones</b> dice quién trabajó y cuánto.',
+    ofi: 'El Tablero de Estadísticas: rendimiento del centro, listado de reprobados y de alumnos en peligro.',
+    metas: 'Por qué contenido falló cada quien, el grupo repartido en cinco categorías y qué hacer con cada una.',
+    manda: 'Usted, que conoce al grupo. Los dos sistemas señalan; decidir es del maestro.',
     pasos: [
+      'Mire el listado de alumnos en peligro que le da el sistema oficial: es una alerta gratis.',
       'Abra el Plan de Acción con las notas del parcial ya registradas.',
-      'Mire cuántos alumnos hay en «Debe Mejorar» e «Insatisfactorio», y quiénes son.',
       'Pregúntese si fallaron por el mismo contenido: si media clase falló lo mismo, el problema fue la clase.',
       'Escriba qué va a hacer distinto, y con quiénes, antes de empezar el parcial siguiente.',
     ],
@@ -257,31 +274,33 @@ const PARADAS = [
       'No use el reparto en categorías para etiquetar a un alumno delante de nadie.',
       'No espere a fin de año para mirarlo: en noviembre ya no hay clase que cambiar.',
     ],
-    aula: 'Esto es lo que convierte «el grupo va mal» en «siete alumnos en Debe Mejorar por el mismo ' +
-          'contenido». Lo primero se lamenta; lo segundo se atiende el lunes.',
+    aula: 'Un listado de reprobados le dice a quién perdió. El Plan de Acción le dice a quién todavía ' +
+          'puede recuperar, y con qué. Esa es toda la diferencia.',
   },
   {
     ic: '👨‍👩‍👧', corto: 'El día que la familia pregunta',
-    tit: 'Lo que la casa quiere saber no se contesta con un registro',
+    tit: 'Hay dos accesos para la casa, y no son el mismo',
     sub: 'Momento 6 · la comunicación con las familias',
-    txt: 'Una madre no le pregunta a usted por un registro: le pregunta cómo va su hija, si faltó, ' +
-         'qué se debe de la colecta y qué puede hacer en casa. Eso es exactamente lo que le ' +
-         'contesta el <b>asistente de padres</b> con una <b>clave de familia</b> (el número de ' +
-         'lista más cuatro caracteres), sin cuenta, sin correo y sin instalar nada, y enseñando ' +
-         '<b>un solo alumno</b>, el suyo. Si su centro además le da a la familia algún acceso al ' +
-         'sistema oficial, no estorba: son cosas distintas y no compiten.',
-    ofi: 'El dato oficial del alumno, por la vía que el centro tenga establecida.',
-    metas: 'El asistente de padres: notas, boleta del parcial, faltas, conducta, avisos y colaboraciones.',
-    manda: 'Usted decide qué publica y cuándo. La clave la genera Mi aula y la entrega usted.',
+    txt: 'Los dos existen, y conviene saber cuál es cuál. El sistema oficial <b>sí</b> tiene acceso ' +
+         'para la familia: el administrador del centro lo genera con un <b>usuario y una ' +
+         'contraseña</b>, y solo si el alumno tiene <b>matrícula activa</b>. Ahí la familia ve el ' +
+         'expediente oficial. La <b>clave de familia</b> de M.E.T.A.S es otra cosa: la genera usted ' +
+         'en Mi aula, es anónima, no pide cuenta ni correo, y enseña el día a día (notas de cada ' +
+         'evaluación, boleta, faltas, conducta, avisos y colaboraciones) de <b>un solo alumno</b>. ' +
+         'No compiten: una es el expediente, la otra es el seguimiento.',
+    ofi: 'Acceso al expediente con usuario y contraseña, que genera el administrador del centro si hay matrícula activa.',
+    metas: 'La clave de familia, anónima y sin cuenta: notas, boleta, faltas, conducta, avisos y colaboraciones.',
+    manda: 'El centro genera el acceso oficial; usted genera y entrega la clave de familia.',
     pasos: [
       'Imprima las tiras de claves desde Mi aula y recórtelas.',
       'Entréguelas en mano y en privado, en la primera reunión. Es una llave, no un volante.',
-      'Diga en voz alta qué se va a poder ver, para que nadie espere lo que no está.',
-      'Si una familia pregunta por su nota oficial o por un certificado, mándela a la dirección: eso no sale de aquí.',
+      'Diga en voz alta qué se va a poder ver, y aclare que <b>no es</b> el acceso al sistema oficial.',
+      'Si una familia quiere el acceso oficial, mándela a la dirección: ahí se lo generan.',
     ],
     nohacer: [
       'No reparta claves en un grupo de WhatsApp: una clave publicada deja de ser una clave.',
-      'No le diga a una familia que lo que ve en el asistente es su nota oficial. Es la suya, de trabajo.',
+      'No le diga a una familia que lo que ve en el asistente es su expediente oficial. Es el seguimiento del aula.',
+      'No prometa generar usted un acceso al sistema oficial: ese módulo no está en su perfil.',
       'No use el asistente para dar noticias difíciles: eso se habla, y después se registra.',
     ],
     aula: 'El efecto real no es tecnológico: el padre deja de preguntar «¿cómo va mi hijo?» porque ya ' +
@@ -291,18 +310,19 @@ const PARADAS = [
     ic: '🎓', corto: 'El día que piden un papel',
     tit: 'Constancia no es certificado, y conviene decirlo antes',
     sub: 'Momento 7 · lo que vale ante el sistema',
-    txt: 'Las misiones cierran con una <b>constancia</b> y el alumno la enseña con orgullo, que para ' +
-         'eso está. Pero hay que ser claro, con las familias y con uno mismo: <b>es un ' +
-         'reconocimiento de la plataforma, no un documento oficial</b>. Lo mismo con la constancia ' +
-         'de estudio de estas misiones del maestro: es para su control, no vale como capacitación ' +
-         'oficial ni da puntos de carrera. La <b>certificación de estudios</b> la emite el centro ' +
-         'por la vía oficial, con el respaldo del registro del Estado.',
-    ofi: 'El respaldo del que salen los certificados y las constancias oficiales del alumno.',
+    txt: 'En el sistema oficial hay un módulo entero para esto: <b>Documentos</b>, con la ' +
+         '<b>Constancia de Matrícula</b>, los <b>Cuadros Finales</b> por grado y sección y los ' +
+         '<b>Certificados y Boletas</b> por alumno. Los extiende el <b>director del centro</b>. ' +
+         'M.E.T.A.S no tiene nada de eso ni lo va a tener: sus constancias <b>reconocen el esfuerzo ' +
+         'del alumno, no certifican un grado</b>. Lo mismo con la constancia de estudio de estas ' +
+         'misiones del maestro: es para su control, no vale como capacitación oficial ni da puntos ' +
+         'de carrera.',
+    ofi: 'El módulo Documentos: constancia de matrícula, cuadros finales, certificados y boletas. Los extiende el director.',
     metas: 'Constancias de logro para el alumno y de estudio para usted. Motivan; no certifican.',
-    manda: 'El centro y la Secretaría. Ningún papel de una plataforma sustituye eso.',
+    manda: 'El centro y la Secretaría de Educación. Ningún papel de una plataforma sustituye eso.',
     pasos: [
       'Explique la diferencia la primera vez que entregue una constancia, no la tercera.',
-      'Si un padre pide un documento con valor, remítalo a la dirección del centro.',
+      'Si un padre pide un documento con valor, remítalo a la dirección: ahí está el módulo que lo emite.',
       'Use las constancias para lo que sirven: reconocer el esfuerzo delante del grupo.',
       'Guarde su propia constancia de estudio como control personal, no como respaldo de carrera.',
     ],
@@ -319,14 +339,14 @@ const PARADAS = [
     tit: 'El número está en el sistema; el cómo se llegó a él, en el suyo',
     sub: 'Momento 8 · supervisión, reclamo o reunión',
     txt: 'Llega una visita, o una madre que no acepta la nota, o le piden el informe del mes. El ' +
-         'dato oficial va a estar donde tiene que estar. Lo que casi nadie tiene a mano es lo otro: ' +
-         'con qué instrumento se evaluó, qué pauta se usó, cuántas veces faltó ese alumno, qué se ' +
-         'hizo con los que iban mal, en qué se gastó la colecta. Todo eso lo lleva M.E.T.A.S sin ' +
-         'que usted haga nada extra: <b>boleta</b>, <b>Parte Mensual</b>, <b>Evidencia de ' +
-         'misiones</b>, <b>economía con recibo</b>. Es la misma lógica del artículo 6 de la Ley ' +
-         'Fundamental de Educación, que ya tiene su misión en esta serie: lo que no está en papel, ' +
-         'no ocurrió.',
-    ofi: 'La nota oficial y el registro del alumno: el dato que certifica.',
+         'dato oficial va a estar donde tiene que estar, y se comprueba en <b>Ver Cuadro #1</b>. Lo ' +
+         'que casi nadie tiene a mano es lo otro: con qué instrumento se evaluó, qué pauta se usó, ' +
+         'cuántas veces faltó ese alumno, qué se hizo con los que iban mal, en qué se gastó la ' +
+         'colecta. Todo eso lo lleva M.E.T.A.S sin que usted haga nada extra: <b>boleta</b>, ' +
+         '<b>Parte Mensual</b>, <b>Evidencia de misiones</b>, <b>economía con recibo</b>. Es la ' +
+         'misma lógica del artículo 6 de la Ley Fundamental de Educación, que ya tiene su misión en ' +
+         'esta serie: lo que no está en papel, no ocurrió.',
+    ofi: 'La nota oficial y el registro del alumno, comprobables en Ver Cuadro #1: el dato que certifica.',
     metas: 'El instrumento, la pauta, la asistencia, el análisis, el Parte Mensual y los recibos.',
     manda: 'Usted. El respaldo lo arma quien lo va a necesitar, y se arma antes.',
     pasos: [
@@ -393,20 +413,20 @@ function reMover(d) { reVer(Math.max(0, Math.min(PARADAS.length - 1, _par + d)))
    NOMBRES PROPIOS CON MAYÚSCULA, aquí también (normativa de la casa,
    en CLAUDE.md). Se comprueba con node _dev/verifica-nombres-propios.js. */
 const FC = [
-  ['¿Qué es SACE?', 'El Sistema de Administración de Centros Educativos, de la Secretaría de Educación de Honduras. Es el registro oficial del Estado.'],
+  ['¿Qué es SACE?', 'El Sistema de Administración de Centros Educativos, de la Secretaría de Educación de Honduras. Lo administra la Unidad del Sistema Nacional de Información Educativa (USINIEH) y es el registro oficial del Estado.'],
   ['¿M.E.T.A.S sustituye a SACE?', 'No, y no va a hacerlo nunca. SACE guarda la nota; M.E.T.A.S es donde esa nota se gana, se sustenta y se explica.'],
-  ['¿Quién digita la nota oficial?', 'Usted, en el sistema oficial. M.E.T.A.S no envía nada allá: si no la digitó, para el sistema esa nota no existe.'],
-  ['¿Qué pasa con un alumno que no está en el registro oficial?', 'Para el sistema educativo no existe, por muchas misiones que haya completado. La matrícula la hace el centro.'],
-  ['¿Para qué sirve entonces la lista de Mi aula?', 'Es su lista de trabajo: asistencia, notas, colectas con recibo, claves de familia, boleta y Plan de Acción. No matricula a nadie.'],
-  ['¿Quién decide la nota de un alumno?', 'El maestro. Ni el registro oficial ni la plataforma deciden: uno la guarda y el otro le da con qué sustentarla.'],
-  ['¿Qué vale la constancia de una misión?', 'Es un reconocimiento de la plataforma, no un documento oficial. La certificación de estudios la emite el centro por la vía oficial.'],
-  ['¿Y la constancia de estudio de las misiones del maestro?', 'Es para su propio control. No vale como capacitación oficial ante la Secretaría de Educación ni da puntos de carrera.'],
-  ['¿Dónde se ve por qué falló el grupo?', 'En el Plan de Acción, que reparte al grupo en cinco categorías. Un registro guarda el número; no lo explica.'],
-  ['La frase que resume toda la misión', 'SACE guarda la nota; M.E.T.A.S es donde esa nota se gana, se sustenta y se explica.'],
-  ['¿Qué le pasa al maestro que registra aquí y no digita allá?', 'Se queda sin nota oficial. El respaldo no sustituye el registro: se hacen las dos cosas, y en ese orden.'],
-  ['¿Qué NO le enseña esta misión?', 'A usar SACE por dentro. Menús, pantallas y plazos los fija la Secretaría de Educación y cambian por circular: eso se confirma en su centro y se anota.'],
-  ['¿En qué se diferencian los sistemas de gestión que se venden a colegios privados?', 'Resuelven la administración del centro, con contrato y con pago. M.E.T.A.S resuelve el aula, para el maestro, sin contrato y sin pago.'],
-  ['¿Y los catálogos de contenido internacional?', 'Traen catálogos grandes, pero no están alineados al DCNB, no hablan de la realidad hondureña y casi todos exigen conexión permanente.'],
+  ['¿Cómo se sube la nota oficial de un parcial?', 'En el módulo Notas se descarga el cuadro de calificaciones de la clase, se llena, se vuelve a subir y se comprueba en «Ver Cuadro #1». No se teclea alumno por alumno.'],
+  ['¿Qué pide exactamente ese archivo?', 'La nota total obtenida por cada alumno y su cantidad de inasistencias del parcial. Las dos las tiene ya calculadas M.E.T.A.S.'],
+  ['¿Se puede corregir una nota ya subida?', 'Modificarla sí. Eliminarla o ponerla en cero, no. Por eso nunca se sube una nota provisional «para ir adelantando».'],
+  ['¿Cuáles son los módulos del perfil docente?', 'Nueve: Tablero de Estadísticas, Perfil del Docente, Puestos de Trabajo, Notas, Zona de Descargas, Alumnos, Polimedias, Salud y Voucher. Ninguno da clase.'],
+  ['¿Quién matricula, traslada y registra repitientes?', 'El administrador del centro. Esos módulos no existen en el perfil del docente, así que el maestro no puede hacerlo ni queriendo.'],
+  ['¿Y si un alumno repite y no lo registran como repitiente?', 'El manual avisa: el alumno está en el centro pero no aparece en los cuadros de notas del docente. Conviene comprobarlo al inicio del año.'],
+  ['¿La familia tiene acceso al sistema oficial?', 'Sí: el administrador del centro se lo genera con usuario y contraseña, y solo si el alumno tiene matrícula activa.'],
+  ['¿En qué se diferencia de la clave de familia?', 'La clave la genera el maestro, es anónima, no pide cuenta ni correo y enseña el día a día de un solo alumno. El acceso oficial enseña el expediente.'],
+  ['¿De dónde salen los certificados y las boletas oficiales?', 'Del módulo Documentos, y los extiende el director del centro: constancia de matrícula, cuadros finales, certificados y boletas.'],
+  ['¿Qué vale la constancia de una misión?', 'Reconoce el esfuerzo del alumno; no certifica un grado. Y la constancia de estudio del maestro no vale como capacitación oficial ni da puntos de carrera.'],
+  ['¿Qué le da el Tablero de Estadísticas que M.E.T.A.S no?', 'El listado de reprobados y el de alumnos en peligro de reprobación del centro. Lo que no le da es por qué contenido fallaron ni qué hacer con ellos.'],
+  ['Si su pantalla no calza con lo que dice esta misión, ¿qué gana?', 'Su pantalla. Los manuales oficiales que se leyeron son de 2017 y 2019, y el sistema cambia. La línea de soporte del SACE es el 104.'],
 ];
 let _fc = 0;
 function fcPinta() {
@@ -427,11 +447,11 @@ function fcPasa(d) { _fc = (_fc + d + FC.length) % FC.length; fcPinta(); }
 /* ══════════════════ MEMORAMA ══════════════════ */
 const MEMO = [
   ['SACE', 'El registro oficial del Estado'],
-  ['Mi aula', 'La lista de trabajo del maestro'],
-  ['La nota que certifica', 'Se digita en el sistema oficial'],
-  ['El Plan de Acción', 'Explica por qué falló el grupo'],
-  ['La constancia de una misión', 'Reconoce el esfuerzo, no certifica'],
-  ['El certificado de estudios', 'Lo emite el centro por la vía oficial'],
+  ['Módulo Notas', 'Se descarga el cuadro, se llena y se sube'],
+  ['Ver Cuadro #1', 'Comprobar que la nota quedó cargada'],
+  ['Módulo Documentos', 'Certificados y boletas, del director'],
+  ['Clave de familia', 'La genera el maestro, y es anónima'],
+  ['Línea 104', 'El soporte del SACE, si algo no calza'],
 ];
 let _memoAbiertas = [], _memoLogradas = 0, _memoCartas = [];
 function memoInit() {
@@ -478,39 +498,39 @@ const QZ = [
   { q: 'SACE es…',
     o: ['Una plataforma privada de contenido', 'El Sistema de Administración de Centros Educativos, de la Secretaría de Educación',
         'Un programa de la Dirección Departamental para capacitar docentes', 'Otro nombre de M.E.T.A.S'],
-    c: 1, e: 'Es el registro oficial del Estado: ahí viven la matrícula, la nota que cuenta legalmente y la certificación.' },
-  { q: 'La nota que certifica al alumno queda registrada en…',
-    o: ['M.E.T.A.S, que la envía sola', 'El cuaderno del maestro',
-        'El sistema oficial, digitada por el maestro', 'La boleta impresa'],
-    c: 2, e: 'M.E.T.A.S no envía nada al sistema oficial. La digita usted, y esa es la única que certifica.' },
+    c: 1, e: 'Lo administra la USINIEH y es el registro oficial del Estado: ahí viven la matrícula, la nota que cuenta legalmente y la certificación.' },
+  { q: 'La nota oficial del parcial se sube…',
+    o: ['Tecleándola alumno por alumno en una pantalla', 'Sola, porque M.E.T.A.S la envía',
+        'Descargando el cuadro de calificaciones, llenándolo y volviéndolo a subir', 'Entregando la boleta impresa en la dirección'],
+    c: 2, e: 'Y después se comprueba en «Ver Cuadro #1». M.E.T.A.S le da justo las dos columnas que ese archivo pide: nota total e inasistencias.' },
+  { q: 'Una nota que ya subió al sistema oficial…',
+    o: ['Se puede modificar, pero no eliminar ni poner en cero', 'Se puede borrar y volver a empezar',
+        'Queda bloqueada y no se toca', 'Se corrige llamando a la Dirección Departamental'],
+    c: 0, e: 'Por eso no se suben notas provisionales: lo que entra, se queda, aunque se pueda corregir su valor.' },
   { q: 'Un alumno aparece en su lista de Mi aula. Eso quiere decir que…',
-    o: ['Usted lo tiene en su lista de trabajo, nada más', 'Ya quedó matriculado',
+    o: ['Ya quedó matriculado', 'Usted lo tiene en su lista de trabajo, nada más',
         'El centro ya lo registró', 'Tiene expediente oficial abierto'],
-    c: 0, e: 'La matrícula es un acto oficial del centro. Mi aula es una lista de trabajo: sirve para trabajar, no para inscribir.' },
+    c: 1, e: 'La matrícula, los traslados y los repitientes son módulos del administrador del centro: no están en el perfil del docente.' },
+  { q: 'El grupo salió con promedio 62. ¿Qué le da cada sistema?',
+    o: ['Los dos le dicen lo mismo', 'El oficial le dice quiénes van a reprobar; M.E.T.A.S, por qué contenido y qué hacer',
+        'Solo M.E.T.A.S dice algo', 'Solo el oficial dice algo'],
+    c: 1, e: 'El Tablero de Estadísticas deja descargar el listado de reprobados y de alumnos en peligro. El Plan de Acción reparte al grupo y propone qué hacer.' },
+  { q: 'Sobre el acceso de la familia, lo correcto es que…',
+    o: ['Solo existe el de M.E.T.A.S', 'Solo existe el oficial',
+        'Existen los dos: el oficial lo genera el centro con usuario y contraseña; la clave de familia la genera usted', 'Ninguno de los dos existe'],
+    c: 2, e: 'El oficial pide matrícula activa y lo genera el administrador. La clave de familia es anónima, sin cuenta, y enseña el día a día de un solo alumno.' },
+  { q: 'Los certificados y las boletas oficiales salen…',
+    o: ['De M.E.T.A.S, al terminar la misión', 'Del cuaderno del maestro',
+        'De la Dirección Departamental, a solicitud', 'Del módulo Documentos, y los extiende el director del centro'],
+    c: 3, e: 'Ahí están también la constancia de matrícula y los cuadros finales por grado y sección.' },
   { q: 'La constancia que el alumno recibe al terminar una misión…',
     o: ['Certifica el grado aprobado', 'Sustituye el certificado del centro',
         'Vale ante la Dirección Departamental', 'Reconoce su esfuerzo, pero no es un documento oficial'],
     c: 3, e: 'Motiva, y para eso está. La certificación de estudios la emite el centro por la vía oficial.' },
-  { q: 'El grupo salió con promedio 62. ¿Dónde se averigua qué hacer con eso?',
-    o: ['En el registro oficial, que guarda el dato', 'En el Plan de Acción de M.E.T.A.S, que reparte al grupo y propone qué hacer',
-        'En la boleta', 'En el Parte Mensual'],
-    c: 1, e: 'Un registro guarda con exactitud; no analiza. El Plan de Acción convierte «el grupo va mal» en alumnos concretos.' },
-  { q: 'Una madre le pregunta cómo va su hija. Lo que resuelve eso es…',
-    o: ['Mandarla a la dirección', 'Enseñarle el registro oficial',
-        'Su clave de familia en el asistente de padres', 'Esperar a la entrega de boletas'],
-    c: 2, e: 'Sin cuenta, sin correo y sin instalar nada, y enseñando un solo alumno: el suyo.' },
-  { q: 'Si usted registra las notas en M.E.T.A.S y no las digita en el sistema oficial…',
-    o: ['El sistema las toma igual, con retraso', 'Se pierde la nota oficial de ese parcial',
-        'El centro las copia de la boleta', 'No pasa nada, la boleta sirve'],
-    c: 1, e: 'El respaldo no sustituye el registro. Se hacen las dos cosas, y en ese orden: decidir, digitar, respaldar.' },
-  { q: 'Sobre las otras plataformas educativas, esta serie enseña a…',
-    o: ['Explicar en qué se diferencian, sin desacreditar a ninguna', 'Advertir a los colegas de cuáles son malas',
-        'No mencionarlas jamás', 'Compararlas por precio'],
-    c: 0, e: 'La comparación se hace sobre diferencias estructurales, que son verificables. Un material que ataca a un competidor pierde autoridad.' },
-  { q: 'Los plazos y las pantallas para digitar notas en el sistema oficial…',
-    o: ['Están explicados en esta misión', 'Son los mismos todos los años',
-        'Los fija la Secretaría de Educación y se confirman en su centro', 'Los decide cada maestro'],
-    c: 2, e: 'Por eso esta misión no los inventa: lo que cambia por circular se pregunta donde se sabe, y se anota antes de necesitarlo.' },
+  { q: 'Si la pantalla del sistema no calza con lo que dice esta misión…',
+    o: ['Gana su pantalla, y para dudas está la línea 104', 'Gana la misión, que se escribió con los manuales',
+        'Hay que reportarlo a la Secretaría de Educación', 'Se deja de usar el sistema hasta que coincida'],
+    c: 0, e: 'Los manuales oficiales que se leyeron son de 2017 y 2019: el flujo aguanta, los botones pueden haber cambiado.' },
 ];
 let _qzResp = [];
 function qzPinta() {
@@ -545,9 +565,9 @@ function qzResp(i, j) {
    plataforma «decida» la nota es el mismo que después se queja de la
    plataforma. */
 const CL_GRUPOS = [
-  { t: 'Solo en SACE', it: ['La matrícula oficial', 'La nota que certifica', 'El certificado de estudios'] },
-  { t: 'Solo en M.E.T.A.S', it: ['Misiones con juegos y evaluación', 'La clave de familia', 'El Plan de Acción'] },
-  { t: 'En los dos, cada uno a lo suyo', it: ['La lista de sus alumnos', 'Las notas del parcial', 'Dejar constancia de lo hecho'] },
+  { t: 'Solo en SACE', it: ['La matrícula oficial', 'El certificado de estudios', 'El listado de reprobados del centro'] },
+  { t: 'Solo en M.E.T.A.S', it: ['Misiones con juegos y evaluación', 'El Plan de Acción por contenido', 'La ficha imprimible con QR'] },
+  { t: 'En los dos, cada uno a lo suyo', it: ['La nota del parcial', 'La lista de sus alumnos', 'Un acceso para la familia'] },
   { t: 'En ninguno: eso es suyo', it: ['Decidir la nota final', 'Explicar el tema en clase', 'Sostener la disciplina del grupo'] },
 ];
 let _clSel = null, _clPos = {}, _clTodas = [];
@@ -594,13 +614,13 @@ function clRevisa() {
 /* ══════════════════ COMPLETA LA ORACIÓN ══════════════════ */
 const CP = [
   ['SACE es el Sistema de Administración de Centros ____.', ['Educativos', 'educativos']],
-  ['La matrícula del alumno la hace el ____ en el sistema oficial.', ['centro', 'centro educativo']],
-  ['M.E.T.A.S no envía nada a SACE: la nota oficial la digita ____.', ['usted', 'el maestro', 'el docente']],
-  ['Un alumno que no está en SACE no ____ para el sistema educativo.', ['existe']],
-  ['La lista de Mi aula es una lista de ____, no una matrícula.', ['trabajo']],
-  ['La constancia de una misión es un reconocimiento, no un ____ oficial.', ['certificado', 'documento']],
+  ['La matrícula, los traslados y los repitientes los maneja el administrador del ____.', ['centro', 'centro educativo']],
+  ['Para subir la nota oficial se descarga un ____, se llena y se vuelve a subir.', ['archivo', 'cuadro']],
+  ['Ese archivo pide la nota total de cada alumno y su cantidad de ____.', ['inasistencias', 'faltas']],
+  ['Una nota ya ingresada se puede modificar, pero no ____.', ['eliminar', 'borrar']],
+  ['Que la nota quedó cargada se comprueba en Ver Cuadro #____.', ['1', 'uno']],
   ['SACE guarda la nota; M.E.T.A.S es donde esa nota se ____, se sustenta y se explica.', ['gana']],
-  ['Quien decide la nota final de un alumno es el ____.', ['maestro', 'docente']],
+  ['La línea de soporte del SACE es el ____.', ['104']],
 ];
 function cpPinta() {
   const c = document.getElementById('completa');
@@ -649,12 +669,12 @@ const RETO = [
   { t: 'Cierra en M.E.T.A.S las evaluaciones del parcial', o: 1 },
   { t: 'Abre el Plan de Acción y mira cómo quedó el grupo', o: 2 },
   { t: 'Decide la nota de cada alumno, con su criterio escrito', o: 3 },
-  { t: 'Digita esa nota en el sistema oficial', o: 4 },
-  { t: 'Comprueba que quedó guardada antes de salir', o: 5 },
-  { t: 'Imprime la boleta de M.E.T.A.S para la familia', o: 6 },
-  { t: 'Publica el aviso a las familias', o: 7 },
-  { t: 'Guarda el respaldo: instrumento, pauta y registro', o: 8 },
-  { t: 'Anota qué hay que reforzar el próximo parcial', o: 9 },
+  { t: 'Descarga el cuadro de calificaciones de su clase', o: 4 },
+  { t: 'Lo llena con la nota total y las inasistencias', o: 5 },
+  { t: 'Lo sube al sistema oficial', o: 6 },
+  { t: 'Comprueba en Ver Cuadro #1 que quedó cargado', o: 7 },
+  { t: 'Imprime la boleta de M.E.T.A.S para la familia', o: 8 },
+  { t: 'Guarda el respaldo: instrumento, pauta y registro', o: 9 },
 ];
 let _retoOrden = [], _retoPend = [], _retoTimer = null, _retoSeg = 90;
 function retoInit() {
@@ -813,18 +833,18 @@ const DIAG_BLOQUES = [
 ];
 /* b: índice del bloque al que pertenece la pregunta */
 const DG = [
-  { b: 0, q: 'La matrícula oficial de un alumno se hace:',
-    o: ['En Mi aula, al escribir su nombre', 'En el sistema oficial, y la hace el centro',
-        'En el catálogo, al darle el código de aula', 'En la boleta del primer parcial'], c: 1 },
-  { b: 1, q: 'La nota que certifica al alumno queda registrada:',
-    o: ['En el sistema oficial, digitada por el maestro', 'En M.E.T.A.S, que la envía sola',
-        'En la boleta impresa', 'En la Evidencia de misiones'], c: 0 },
-  { b: 2, q: 'Para consultar cómo va su hija, la familia usa:',
-    o: ['El sistema oficial, con una cuenta', 'Una llamada al maestro',
-        'Su clave de familia en el asistente de padres', 'La boleta, cuando se entrega'], c: 2 },
-  { b: 3, q: 'El instrumento y la pauta con que evaluó un tema quedan guardados:',
-    o: ['En el registro oficial', 'En la Dirección Departamental',
-        'En ningún lado: se botan', 'En M.E.T.A.S, y son la mitad de su respaldo'], c: 3 },
+  { b: 0, q: 'La matrícula oficial de un alumno la hace:',
+    o: ['Usted, al escribirlo en Mi aula', 'El administrador del centro, en el sistema oficial',
+        'La Dirección Departamental', 'El padre de familia, con su acceso'], c: 1 },
+  { b: 1, q: 'La nota oficial del parcial se sube:',
+    o: ['Tecleándola alumno por alumno', 'Sola, porque M.E.T.A.S la envía',
+        'Entregando la boleta en la dirección', 'Descargando el cuadro de calificaciones, llenándolo y subiéndolo'], c: 3 },
+  { b: 2, q: 'El acceso de la familia al sistema oficial:',
+    o: ['Lo genera usted desde Mi aula', 'No existe',
+        'Lo genera el administrador del centro, si el alumno tiene matrícula activa', 'Se pide a la Secretaría de Educación'], c: 2 },
+  { b: 3, q: 'Los certificados y las boletas oficiales salen:',
+    o: ['Del módulo Documentos, y los extiende el director del centro', 'De M.E.T.A.S, al cerrar el parcial',
+        'De la Dirección Departamental', 'Del cuaderno del maestro'], c: 0 },
   { b: 4, q: 'Quién decide la nota final de un alumno:',
     o: ['El promedio automático', 'El maestro, con su criterio escrito',
         'El sistema oficial', 'La plataforma, según los juegos completados'], c: 1 },
@@ -832,50 +852,50 @@ const DG = [
   { b: 0, q: 'Un alumno aparece en su lista de Mi aula. Eso significa que:',
     o: ['Ya está matriculado', 'Ya tiene expediente oficial',
         'Lo tiene en su lista de trabajo, nada más', 'El centro ya lo registró'], c: 2 },
-  { b: 1, q: 'Si registra las notas en M.E.T.A.S y no las digita en el sistema oficial:',
-    o: ['El sistema las toma igual, con retraso', 'El centro las copia de la boleta',
-        'No pasa nada, la boleta sirve', 'Se queda sin la nota oficial de ese parcial'], c: 3 },
-  { b: 2, q: 'Con su clave de familia, una madre puede ver:',
-    o: ['Las notas de todo el grado', 'Solo lo de su hijo o hija',
-        'El expediente oficial del alumno', 'La planificación del maestro'], c: 1 },
-  { b: 3, q: 'Le piden el informe del mes. Lo arma:',
-    o: ['El Parte Mensual de M.E.T.A.S, con lo que ya registró', 'El sistema oficial, solo',
-        'La Dirección Departamental', 'Nadie: se escribe a mano cada vez'], c: 0 },
+  { b: 1, q: 'Ese archivo de notas pide, por cada alumno:',
+    o: ['La nota total y la cantidad de inasistencias del parcial', 'Solo la nota',
+        'La nota de cada evaluación por separado', 'La nota y la conducta'], c: 0 },
+  { b: 2, q: 'La clave de familia de M.E.T.A.S:',
+    o: ['Es el acceso al expediente oficial', 'La entrega la dirección del centro',
+        'Necesita correo y contraseña', 'La genera el maestro, es anónima y enseña un solo alumno'], c: 3 },
+  { b: 3, q: 'La constancia que el alumno recibe al terminar una misión:',
+    o: ['Certifica el grado aprobado', 'Reconoce su esfuerzo, pero no certifica un grado',
+        'Sustituye el certificado del centro', 'Vale ante la Dirección Departamental'], c: 1 },
   { b: 4, q: 'Explicar el tema en clase y sostener al grupo es trabajo de:',
     o: ['La plataforma', 'El sistema oficial',
-        'Las fichas imprimibles', 'El maestro, y no lo hace ningún sistema'], c: 3 },
+        'El maestro, y no lo hace ningún sistema', 'Las fichas imprimibles'], c: 2 },
 
-  { b: 0, q: 'Los nombres de sus alumnos en Mi aula deben escribirse:',
-    o: ['Abreviados, para que quepan', 'Como cada quien prefiera',
-        'Tal como están en la matrícula oficial', 'Solo con el primer nombre'], c: 2 },
-  { b: 1, q: 'La evaluación de una misión trae 30 formas. Eso sirve para:',
-    o: ['Que cada alumno reciba una prueba distinta y sin pauta', 'Dar formas distintas por fila y reimprimir la misma prueba con su pauta',
-        'Cambiar el contenido del tema', 'Subir la nota del grupo'], c: 1 },
-  { b: 2, q: 'Si una familia le pide un certificado de estudios:',
-    o: ['Se lo imprime desde M.E.T.A.S', 'Le entrega la constancia de la misión',
-        'La remite a la dirección del centro, que es la vía oficial', 'Le enseña la boleta'], c: 2 },
+  { b: 0, q: 'Llega un alumno que viene de otro centro educativo:',
+    o: ['El traslado lo hace el centro de origen y el suyo tiene que aceptarlo', 'Basta con anotarlo en Mi aula',
+        'Se matricula de nuevo desde cero', 'Lo resuelve el padre de familia con su acceso'], c: 0 },
+  { b: 1, q: 'Una nota que ya subió al sistema oficial:',
+    o: ['Se puede borrar y volver a empezar', 'Queda bloqueada y no se toca',
+        'Se corrige llamando a la Dirección Departamental', 'Se puede modificar, pero no eliminar ni poner en cero'], c: 3 },
+  { b: 2, q: 'Las tiras de claves de familia se entregan:',
+    o: ['Por el grupo de WhatsApp del grado', 'En mano y en privado, explicando qué se ve con ellas',
+        'Pegadas en la pizarra', 'Solo a quien las pida'], c: 1 },
   { b: 3, q: 'Ante un reclamo por una nota, lo que lo respalda es:',
-    o: ['Su memoria de cómo trabajó el alumno', 'El criterio escrito, el instrumento, la pauta y el registro',
-        'La palabra del director', 'El promedio del grado'], c: 1 },
+    o: ['Su memoria de cómo trabajó el alumno', 'La palabra del director',
+        'El criterio escrito, el instrumento, la pauta y el registro', 'El promedio del grado'], c: 2 },
   { b: 4, q: 'El Plan de Acción reparte al grupo en cinco categorías. Lo que hace usted con eso es:',
     o: ['Archivarlo con la boleta', 'Enviarlo al sistema oficial',
         'Publicarlo en el aula', 'Decidir a quién atiende primero y con qué'], c: 3 },
 
-  { b: 0, q: 'Un alumno trabajó todo el año con usted pero no está en el registro oficial:',
-    o: ['Para el sistema educativo no existe, y hay que resolverlo en la dirección', 'Se le certifica igual con la constancia de las misiones',
-        'Basta con que aparezca en la Evidencia', 'La plataforma lo registra sola al final del año'], c: 0 },
-  { b: 1, q: 'Los plazos para digitar las notas de cada parcial:',
-    o: ['Vienen en esta misión', 'Son iguales todos los años',
-        'Los decide cada maestro', 'Los fija la Secretaría de Educación y se confirman en el centro'], c: 3 },
-  { b: 2, q: 'Las tiras de claves de familia se entregan:',
-    o: ['Por el grupo de WhatsApp del grado', 'En mano y en privado, explicando qué se ve con ellas',
-        'Pegadas en la pizarra', 'Solo a quien las pida'], c: 1 },
-  { b: 3, q: 'La constancia que el alumno recibe al terminar una misión:',
-    o: ['Certifica el grado aprobado', 'Sustituye el certificado del centro',
-        'Reconoce su esfuerzo, pero no es un documento oficial', 'Vale ante la Dirección Departamental'], c: 2 },
-  { b: 4, q: 'Sobre otras plataformas educativas, ante un colega conviene:',
-    o: ['Explicar en qué se diferencian, sin desacreditar a ninguna', 'Advertirle de cuáles son malas',
-        'No hablar del tema', 'Compararlas por precio'], c: 0 },
+  { b: 0, q: 'Si un alumno repite y no queda registrado como repitiente:',
+    o: ['Está en el centro pero no aparece en los cuadros de notas del docente', 'No pasa nada, se arregla al cierre',
+        'El sistema lo detecta solo', 'Lo corrige el maestro desde su perfil'], c: 0 },
+  { b: 1, q: 'Después de subir el archivo de notas conviene:',
+    o: ['Esperar el correo de confirmación', 'Volver a subirlo por seguridad',
+        'Comprobar en Ver Cuadro #1 que quedó cargado', 'Imprimir la boleta de una vez'], c: 2 },
+  { b: 2, q: 'Si una familia le pide el acceso al sistema oficial:',
+    o: ['Le da su clave de familia', 'La remite a la dirección del centro, que es donde se genera',
+        'Le dice que no existe', 'Se lo genera usted desde Mi aula'], c: 1 },
+  { b: 3, q: 'Le piden el informe del mes. Lo arma:',
+    o: ['El sistema oficial, solo', 'La Dirección Departamental',
+        'Nadie: se escribe a mano cada vez', 'El Parte Mensual de M.E.T.A.S, con lo que ya registró'], c: 3 },
+  { b: 4, q: 'Si la pantalla del sistema oficial no calza con lo que dice esta misión:',
+    o: ['Gana su pantalla, y para dudas está la línea de soporte 104', 'Gana la misión, que se escribió con los manuales',
+        'Hay que dejar de usar el sistema', 'Se reporta a la Secretaría de Educación'], c: 0 },
 ];
 let _dgResp = [];
 function dgInit() {
@@ -898,10 +918,10 @@ function dgMarca(i, j) {
 /* Qué se le dice al maestro cuando una frontera queda floja. No es un
    regaño: es el problema concreto que esa confusión le va a costar. */
 const DIAG_SALIDA = [
-  'Compare su lista de Mi aula con la matrícula del centro, nombre por nombre. Ahí es donde se pierde un alumno.',
-  'Repase la parada del cierre de parcial: la nota que certifica se digita en el sistema oficial, y nadie lo hace por usted.',
-  'Prepare cómo va a entregar las claves de familia y qué va a decir que se ve con ellas.',
-  'Arme su carpeta de respaldo antes de necesitarla: criterio escrito, instrumento, pauta y registro.',
+  'Compare su lista de Mi aula con la matrícula del centro, nombre por nombre, y pregunte si los repitientes quedaron registrados como tales.',
+  'Vuelva al momento 4: la nota se sube en un archivo que usted descarga, llena con la nota total y las inasistencias, y vuelve a subir.',
+  'Prepare cómo va a entregar las claves de familia, y aclare que no son el acceso al sistema oficial: ese lo genera la dirección.',
+  'Arme su carpeta de respaldo antes de necesitarla: criterio escrito, instrumento, pauta y registro. Los certificados los extiende el centro.',
   'Vuelva a la sección «Cada cosa en su sitio»: hay decisiones que no las toma ningún sistema, las toma usted.',
 ];
 function dgCalifica() {

@@ -103,11 +103,20 @@ justamente lo que SACE no hace:
 | Sin internet | No | Sí, y sincroniza sola después |
 | Contenido para el alumno | No tiene | 57 misiones alineadas al DCNB |
 | Exámenes | No genera | 30 formas por misión, con pauta |
-| Comunicación con la familia | No | Asistente de padres con clave por alumno |
+| Comunicación con la familia | Acceso al expediente, que genera el centro con usuario y contraseña | Asistente de padres con clave anónima, que genera el maestro |
 | Economía del aula, asistencia, boleta | Parcialmente | Sí, desde una sola lista |
 
 **La frase que resume el área:** *SACE guarda la nota; M.E.T.A.S es donde esa nota se
 gana, se sustenta y se explica.*
+
+> ✅ **Corregido en agosto de 2026, con los manuales del SACE delante.** Esta tabla
+> decía que SACE no tiene comunicación con la familia, y no era cierto: el
+> administrador del centro puede **generar un acceso al padre o encargado**, con
+> usuario y contraseña, si el alumno tiene matrícula activa. La diferencia real es
+> otra, y es mejor argumento: el acceso oficial enseña el **expediente** y lo da la
+> dirección; la clave de familia enseña el **día a día**, es anónima, no pide cuenta y
+> la genera el maestro. Los manuales están en `_dev/leyes/`: quien retome esta área
+> los tiene que leer antes de escribir una comparación.
 
 ---
 
@@ -276,23 +285,38 @@ hace sola, sin tocar nada.
 | 1 · Bienvenido: qué es M.E.T.A.S y por qué existe | `misiones/docente-bienvenida-metas/` | `fichas/ficha-docente-bienvenida-metas.html` |
 | 2 · M.E.T.A.S y SACE: qué hace cada uno | `misiones/docente-metas-sace/` | `fichas/ficha-docente-metas-sace.html` |
 
-### ⚠️ Lo que la misión 2 dejó pendiente, y hay que saberlo antes de tocarla
+### La misión 2 se escribió dos veces, y conviene saber por qué
 
-El apartado 3 daba por hecho que se podía describir SACE. Se pudo, pero **solo hasta
-cierto punto**: al escribirla, el entorno de desarrollo **no alcanzó los portales del
-Estado** (se.gob.hn, sace.se.gob.hn y tsc.gob.hn contestaron 403), así que el Manual
-de Procesos del SACE no se pudo leer.
+La primera vez, sin documentos: el entorno de desarrollo **no alcanza los portales
+del Estado** (se.gob.hn, sace.se.gob.hn y tsc.gob.hn contestan 403), así que la
+misión no citó nada de SACE y mandaba al maestro a preguntarlo todo en su centro. Era
+honesto, pero era poco.
 
-Aplicando la regla de la casa («buscar no es leer»), la misión **no cita ni un plazo
-de digitación, ni una pantalla, ni un número de acuerdo**. Afirma solo lo firme: que
-SACE es el Sistema de Administración de Centros Educativos de la Secretaría de
-Educación, que es el registro oficial del Estado, que ahí viven la matrícula, la nota
-que cuenta legalmente y el respaldo de la certificación, y que no tiene sustituto.
-Todo lo procedimental se convirtió en algo mejor: **una lista de seis preguntas para
-hacer en el centro**, que va en la ficha con su espacio para anotar.
+Después el autor **subió los manuales de usuario del SACE** a `_dev/leyes/` (perfiles
+docente y director, de la USINIEH), y la misión se rehízo con ellos delante. Lo que
+cambió no fue el tono, fue el contenido:
 
-El PDF quedó pedido en `_dev/leyes/README.md`. **Con él delante** se le pueden añadir
-los plazos y la ruta exacta de la digitación; sin él, no se añade nada.
+- Las notas **no se teclean**: se descarga el cuadro de calificaciones, se llena con
+  la **nota total y las inasistencias** de cada alumno y se vuelve a subir. Ahí está
+  el mejor argumento de toda el área: M.E.T.A.S produce exactamente esas dos
+  columnas.
+- Una nota ya subida **se modifica, pero no se elimina ni se pone en cero**. De ahí
+  sale un consejo que antes no existía: no subir notas provisionales.
+- SACE **sí** tiene acceso para el padre de familia (lo genera el administrador del
+  centro, con usuario y contraseña, si hay matrícula activa). La versión anterior
+  decía «por la vía que el centro tenga», que era vago.
+- El Tablero del propio SACE ya da el listado de reprobados y de alumnos en peligro.
+  Decir que «el registro solo guarda y no analiza» era pasarse.
+
+**Lo que sigue sin decirse, y hay que mantenerlo así:** ninguna fecha de digitación
+ni plazo de matrícula. No están en los manuales porque las fija la Secretaría cada
+año. Y una advertencia de la que depende todo lo demás: los manuales son **versión
+2.0, de 2019 y 2017**, o sea que el flujo aguanta pero los botones pueden haber
+cambiado. La misión lo repite donde nombra una pantalla y da la línea de soporte del
+SACE, el **104**.
+
+**La lección, para la próxima vez que una fuente no se alcance:** no buscar más.
+Pedir el documento.
 
 **La desviación de la sección 10 se consultó con el autor, quedó aprobada y ya se
 aplicó dos veces.** Ninguna de las dos misiones trae simulacro de concurso: la 1 trae

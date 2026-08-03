@@ -128,7 +128,11 @@ function tapaCodigo(linea) {
     /* Una comilla simple con una sola palabra dentro es código (un argumento,
        una llave): la prosa de este proyecto usa comillas angulares. */
     .replace(/\\?'[\w-]+\\?'/g, m => ' '.repeat(m.length))
-    .replace(/[\w./-]*[/.][\w./-]*/g, m => (/[/]|\.(html|js|css|png|jpg|webp|svg|json)/.test(m) ? ' '.repeat(m.length) : m))
+    /* Los dominios también son código a estos efectos: «sace.se.gob.hn» se
+       escribe en minúscula porque así se teclea, y no es la sigla mal escrita.
+       Lo destapó la misión de M.E.T.A.S y SACE, que le dice al maestro dónde
+       entrar. El \b del final evita tapar prosa: «.com» sí, «.como» no. */
+    .replace(/[\w./-]*[/.][\w./-]*/g, m => (/[/]|\.(html|js|css|png|jpg|webp|svg|json|hn|com|org|net|edu)\b/.test(m) ? ' '.repeat(m.length) : m))
     .replace(/[\wáéíóúñü]+\s*:\s*[{[]/g, m => ' '.repeat(m.length))
     /* Y una llave de objeto seguida de TEXTO entre comillas: «sace: '…'». Lo
        destapó la misión de M.E.T.A.S y SACE, donde cada parada guarda su lado

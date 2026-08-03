@@ -159,6 +159,18 @@ body {
   font-size: 15px; font-weight: 800; text-align: center; line-height: 1.45;
 }
 
+/* ── Tabla de reparto (quién hace qué) ──
+   Es la única tabla de la misión, y va aquí y no en una lista porque lo que
+   enseña es el PAR: lo que puede hacer el maestro y lo que solo puede hacer el
+   administrador del centro. En una lista suelta eso se pierde. A 390 px las dos
+   columnas quedan estrechas pero legibles: son frases de cinco palabras. */
+.mods { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13.5px; }
+.mods th, .mods td {
+  border: 1.5px solid var(--linea); padding: 7px 9px; text-align: left; vertical-align: top;
+}
+.mods th { background: var(--pri-soft); color: var(--pri); font-weight: 900; font-size: 13px; }
+.mods td:last-child { background: var(--ofi-soft); }
+
 /* ── El recorrido por las piezas, en vertical ──
    Mismo molde que las cuatro misiones anteriores, y por la misma razón: en
    un riel horizontal se ven tres paradas y las demás hay que adivinarlas
