@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión del maestro · Bienvenido: qué es M.E.T.A.S y por qué existe</title>
+<meta name="description" content="Formación docente: el ecosistema completo de M.E.T.A.S en un mapa. Las misiones del alumno, las herramientas del aula, el asistente de las familias y la formación del maestro, con lo que cada pieza hace y lo que no hace. Con diagnóstico de uso y ficha de estudio de diez páginas.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/bienvenida-metas.css">
+</head>
+<body>
+
+<!-- Volver: index.html sin parámetros restaura la última vista guardada, que es
+     «Misiones del maestro» (switchView la guarda al entrar). -->
+<div class="xp-bar" role="status" aria-label="Progreso de la misión">
+  <a href="../../index.html" class="xp-back-btn" title="Volver a Misiones del maestro">
+    <span aria-hidden="true">←</span>
+    <img src="../../img/logo.png" alt="" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎓 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-num" id="xpNum">0</span>
+</div>
+
+<header class="hero">
+  <div class="main">
+    <span class="hero-badge">🚀 Dominar M.E.T.A.S · Misión 1 de 7</span>
+    <h1>Bienvenido: qué es M.E.T.A.S y por qué existe</h1>
+    <p>Usted probablemente llegó aquí por una misión que le pasaron por WhatsApp. Esa misión es una
+      de 57, y las 57 son solo una de las cuatro piezas de esto. Las otras tres las tiene ya, en el
+      mismo teléfono, y nadie se lo ha contado. Este es el mapa completo, con lo que cada pieza hace
+      y, dicho sin adornos, lo que no hace.</p>
+    <div class="hero-solo">👤 Esta misión es para usted, no para sus alumnos. Nadie más la ve.</div>
+  </div>
+</header>
+
+<nav class="nav" id="nav" aria-label="Secciones de la misión"></nav>
+
+<main class="main">
+
+  <!-- ══════════ 1. EL RECORRIDO POR LAS PIEZAS ══════════ -->
+  <section class="sec active" id="sec-recorrido">
+    <div class="card">
+      <h2>🗺️ El mapa, antes que nada</h2>
+      <p>Cuatro piezas. Lo que ninguna otra herramienta le da no está en las cajas: está en las
+        flechas, porque el dato se escribe <b>una sola vez</b> y sale en los cuatro sitios.</p>
+      <div class="mapa">
+        <div class="mapa-pz"><b>1 · Misiones del alumno</b>
+          <span>57 misiones · 11 rutas · 7 materias</span></div>
+        <div class="mapa-fl">▼ el avance viaja con el <b>código de aula</b></div>
+        <div class="mapa-pz"><b>2 · Herramientas de su aula</b>
+          <span>Mi aula · Plan de Acción · Evaluaciones · Fichas · Campeonísimo · Parte Mensual ·
+            Collage · Gobierno Escolar · Evidencia</span></div>
+        <div class="mapa-fl">▼ una sola lista alimenta la <b>clave de familia</b> y las notas</div>
+        <div class="mapa-pz"><b>3 · Asistente de las familias</b>
+          <span>Sin cuenta y sin aplicación: una clave por alumno</span></div>
+        <div class="mapa-fl">▼ y, aparte, lo que estudia usted</div>
+        <div class="mapa-pz"><b>4 · Misiones del maestro</b>
+          <span>Su propia formación: leyes, estrategias, datos, gestión, familia y tecnología</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🧭 Siete paradas para conocerlo entero</h2>
+      <p>Toque cada parada: se abre debajo con qué es, dónde se toca en la plataforma, los pasos
+        para estrenarla y, aparte, lo que esa pieza <b>no</b> hace.</p>
+      <div class="re-lista" id="reLista"></div>
+      <div class="re-nav">
+        <button class="btn btn-g" onclick="reMover(-1)">← Anterior</button>
+        <button class="btn" onclick="reMover(1)">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 2. APRENDE ══════════ -->
+  <section class="sec" id="sec-aprende">
+    <div class="card">
+      <h2>🇭🇳 De dónde viene esto: el Sabio Valle</h2>
+      <p>En la portada de M.E.T.A.S hay, siempre visible, un retrato de <b>José Cecilio del Valle</b>
+        con una frase suya. No es un adorno patriótico: es la tesis del proyecto, y explica por qué
+        esta plataforma se siente distinta de las demás.</p>
+      <div class="dato">📜 «América de día cuando escriba. América de noche cuando piense. El estudio
+        más digno de un americano es América.»</div>
+      <p>De ahí salen tres decisiones que usted va a notar en cuanto abra una misión:</p>
+      <ul>
+        <li><b>Se estudia lo propio.</b> La geografía de Honduras, las áreas protegidas de Honduras,
+          las leyes educativas de Honduras. Un alumno hondureño aprende primero su país, con sus
+          nombres y sus ejemplos.</li>
+        <li><b>Está hecha desde aquí, para las condiciones de aquí.</b> Sin luz, sin señal, con un
+          teléfono compartido y 43 alumnos. Eso es el diseño, no una limitación que se toleró.</li>
+        <li><b>El conocimiento como salida.</b> Es lo mismo que dice el lema de esta serie: al
+          maestro que estudia no se le impone, se le consulta.</li>
+      </ul>
+      <div class="aula">🎯 <b>En su aula:</b> cuando un alumno le pregunte por qué los ejemplos son de
+        Honduras y no de otro lado, esa es la respuesta, y viene de 1830, no de un departamento de
+        mercadeo.</div>
+    </div>
+
+    <div class="card">
+      <h2>💡 Los tres argumentos, con números</h2>
+      <p>Si de toda esta misión hubiera que quedarse con tres frases, y que las tres fueran ciertas,
+        son estas.</p>
+
+      <h3>1. Le devuelve horas de su vida</h3>
+      <ul>
+        <li><b>57 misiones</b> con contenido, juegos y evaluación, alineadas al DCNB, para no
+          preparar desde cero los temas que ya están.</li>
+        <li><b>30 formas</b> por evaluación, y cada forma sale idéntica cada vez: imprime hoy la
+          Forma 7 y la reimprime el mes que viene con su misma pauta.</li>
+        <li><b>Una sola lista de alumnos</b> alimenta colectas con recibo, asistencia, notas, boleta
+          imprimible, claves de familia y Plan de Acción. Sin volver a escribir un nombre.</li>
+        <li><b>Una ficha imprimible por misión</b>, con su código QR, para el aula sin
+          dispositivos.</li>
+      </ul>
+
+      <h3>2. Le da con qué decidir, y con qué defenderse</h3>
+      <ul>
+        <li>El <b>Plan de Acción</b> reparte al grupo en cinco categorías y propone qué hacer con
+          cada una: deja de ser «el grupo va mal» y pasa a ser siete alumnos concretos.</li>
+        <li>La <b>Evidencia de misiones</b> registra qué trabajó cada alumno y cuánto.</li>
+        <li>El <b>Parte Mensual</b> arma el informe del mes.</li>
+        <li>Y todo junto convierte una reunión de padres o una visita de supervisión en algo que se
+          contesta con papeles en vez de con memoria. Es lo mismo que enseñan las misiones de leyes
+          de esta serie: lo que no está en papel, no ocurrió.</li>
+      </ul>
+
+      <h3>3. Funciona donde usted trabaja de verdad</h3>
+      <ul>
+        <li><b>Sin internet.</b> Abierta la misión, el alumno trabaja completamente sin señal y los
+          resultados se envían solos cuando aparece, aunque pasen días.</li>
+        <li><b>Sin computadoras.</b> Programación y Robótica están diseñadas desconectado primero:
+          el presupuesto del trimestre es cartón, cinta, tijeras y un foquito.</li>
+        <li><b>Sin cuentas para el alumno ni para la familia.</b> El alumno escribe cinco letras una
+          vez; la familia escribe una clave y ya está dentro.</li>
+        <li><b>En el teléfono que usted ya tiene</b>, y se instala como aplicación desde la propia
+          página, sin tienda y sin pago.</li>
+      </ul>
+
+      <div class="dato">📌 <b>Lo que no se promete, y conviene que lo lea ahora.</b> M.E.T.A.S
+        <b>no sustituye a SACE</b>. SACE es el registro oficial del Estado: ahí vive la matrícula, la
+        nota que cuenta legalmente y la certificación, y un alumno que no está en SACE no existe para
+        el sistema educativo, por muchas misiones que haya completado. Lo que hace M.E.T.A.S es el
+        trabajo diario con el que esa nota se gana, se sustenta y se explica, que es justamente lo
+        que SACE no hace. Esa comparación tiene su propia misión en esta misma área.</div>
+      <div class="aula">🎯 <b>Por qué se dice así:</b> una plataforma que exagera se descubre en la
+        primera semana de uso, y entonces el maestro deja de creer también lo que sí era cierto.
+        Aquí se prefiere quedarse corto.</div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3. TARJETAS ══════════ -->
+  <section class="sec" id="sec-tarjetas">
+    <div class="card">
+      <h2>🃏 Tarjetas de repaso</h2>
+      <p>Toque la tarjeta para voltearla. Van en el orden en que se preguntan.</p>
+      <div class="fc" id="fc" onclick="fcVoltea()">
+        <div class="fc-in">
+          <div class="fc-cara fc-front" id="fcQ"></div>
+          <div class="fc-cara fc-back"><div id="fcA"></div></div>
+        </div>
+      </div>
+      <div class="btn-fila">
+        <button class="btn btn-g" onclick="fcPasa(-1)">← Anterior</button>
+        <button class="btn" onclick="fcPasa(1)">Siguiente →</button>
+        <span class="q-num" id="fcNum" style="align-self:center"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Memorama de la plataforma</h2>
+      <p>Empareje cada pieza con lo que resuelve. Seis parejas.</p>
+      <div class="memo-grid" id="memoGrid"></div>
+      <div class="btn-fila"><button class="btn btn-g" onclick="memoInit()">🔄 Barajar de nuevo</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 4. QUIZ ══════════ -->
+  <section class="sec" id="sec-quiz">
+    <div class="card">
+      <h2>❓ Compruebe lo que quedó</h2>
+      <p>Nueve preguntas con explicación inmediata. Aquí no se guarda nota: es para usted.</p>
+      <div id="quiz"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 5. CLASIFICA ══════════ -->
+  <section class="sec" id="sec-clasifica">
+    <div class="card">
+      <h2>🗂️ Cada cosa en su pieza</h2>
+      <p>Toque una tarjeta y luego la caja donde va. Si se equivoca, vuelva a tocarla para
+        devolverla al banco.</p>
+      <div class="cl-banco" id="clBanco"></div>
+      <div class="cl-cajas" id="clCajas"></div>
+      <div class="btn-fila">
+        <button class="btn" onclick="clRevisa()">✔️ Revisar</button>
+        <button class="btn btn-g" onclick="clInit()">🔄 Empezar de nuevo</button>
+      </div>
+      <div class="resu" id="clResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 6. COMPLETA ══════════ -->
+  <section class="sec" id="sec-completa">
+    <div class="card">
+      <h2>✍️ Complete la oración</h2>
+      <p>Escriba la palabra o el número que falta. Se aceptan mayúsculas, minúsculas y tildes
+        indistintamente.</p>
+      <div id="completa"></div>
+      <div class="btn-fila"><button class="btn" onclick="cpRevisa()">✔️ Revisar todo</button></div>
+      <div class="resu" id="cpResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 7. RETO ══════════ -->
+  <section class="sec" id="sec-reto">
+    <div class="card">
+      <h2>⏱️ Reto: su primera semana, en orden</h2>
+      <p>Nueve pasos desordenados. Tóquelos en el orden en que se hacen. Tiene noventa segundos, y
+        el orden importa: la forma más común de abandonar esto es empezar por el final.</p>
+      <div class="btn-fila">
+        <button class="btn" id="retoBtn" onclick="retoInit()">▶️ Empezar</button>
+        <span class="reto-reloj" id="retoReloj">1:30</span>
+      </div>
+      <div class="reto-lista" id="retoLista"></div>
+      <div class="resu" id="retoResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 8. SOPA ══════════ -->
+  <section class="sec" id="sec-sopa">
+    <div class="card">
+      <h2>🔤 Sopa de letras</h2>
+      <p>Ocho palabras de la misión, en todas las direcciones. Toque la primera y la última letra
+        de cada palabra.</p>
+      <div class="sopa-grid" id="sopaGrid"></div>
+      <div class="sopa-pal" id="sopaPal"></div>
+      <div class="btn-fila">
+        <button class="btn btn-amb" onclick="sopaLinterna()">🔦 Linterna (cuesta 2 XP)</button>
+        <button class="btn btn-g" onclick="sopaInit()">🔄 Otra sopa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 9. CASOS ══════════ -->
+  <section class="sec" id="sec-casos">
+    <div class="card">
+      <h2>🏫 Cinco conversaciones que va a tener</h2>
+      <p>No son casos de manual: son las preguntas que le van a hacer en la sala de maestros y en la
+        reunión de padres. Piense su respuesta antes de abrir la sugerencia.</p>
+
+      <div class="caso">
+        <div class="caso-t">Caso 1 · «¿Y esto no me mete en problemas con el sistema?»</div>
+        <p>Un compañero le dice que no piensa usar «otra plataforma más» porque lo oficial es SACE y
+          no quiere líos con la Dirección Departamental.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Tiene razón en la premisa y se equivoca en la conclusión. SACE es el
+          registro oficial del Estado y <b>no se sustituye</b>: la matrícula, la nota legal y la
+          certificación viven ahí y se siguen digitando ahí, punto. M.E.T.A.S no compite con eso:
+          hace el <b>trabajo diario que produce esa nota</b>, que es lo que SACE no hace. Enseñar,
+          practicar, evaluar con pauta, analizar el resultado y comunicarlo a la casa. Dígalo así,
+          con esa frase: SACE guarda la nota; aquí es donde esa nota se gana, se sustenta y se
+          explica. Y si su compañero quiere el detalle, la comparación completa es la segunda misión
+          de esta área.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 2 · «Yo ya probé una misión y ya está»</div>
+        <p>En su centro varios maestros pasaron alguna misión suelta con su grado, les gustó, y ahí
+          se quedó. Nadie ha abierto la Zona Docente.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Es exactamente el problema que esta misión viene a resolver, y no se
+          arregla con un discurso: se arregla enseñando <b>una</b> pieza que le duela a quien
+          escucha. Con un maestro de sexto que lleva 43 alumnos, abra el <b>Plan de Acción</b>
+          delante de él con notas de verdad y déjelo ver el reparto en cinco categorías. Con uno que
+          sufre las colectas, abra la economía con recibo. Con uno al que los padres lo llaman a
+          toda hora, enséñele una clave de familia funcionando. Una pieza, la que le duele, y
+          después el mapa. Si empieza por el mapa, se le queda dormido a la tercera caja.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 3 · «En mi escuela no hay señal ni computadoras»</div>
+        <p>Le dicen que eso está muy bonito para un colegio de ciudad, pero que en su centro se va la
+          luz y la señal entra a ratos.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Ese es justo el caso para el que se diseñó, y conviene decirlo sin
+          exagerar. Abierta la misión una vez, el alumno trabaja <b>sin señal</b> y lo que hizo se
+          envía solo cuando la señal aparece, aunque pasen días. La plataforma se instala como
+          aplicación desde la propia página, sin tienda y sin pago. Programación y Robótica están
+          escritas <b>desconectado primero</b>: cartón, cinta, tijeras y un foquito. Y para el aula
+          sin dispositivos, cada misión tiene su <b>ficha imprimible</b>. Lo que sí necesita señal
+          alguna vez es el envío de resultados y la sincronización de sus datos: eso ocurre cuando
+          haya, no cuando usted esté delante.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 4 · «¿Y quién ve los datos de mis alumnos?»</div>
+        <p>Una madre, en la reunión, le pregunta quién más puede ver las notas de su hija, y si eso
+          se publica en algún lado.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Contéstele con lo concreto, no con una declaración de privacidad. El
+          asistente <b>no pide nombres ni cuentas</b>: la familia entra con una clave, y esa clave
+          enseña <b>un solo alumno</b>, el suyo. Nadie ve la lista de los demás ni puede comparar.
+          La clave se la entrega usted impresa, en mano y en privado, y funciona como una llave: si
+          se publica en un grupo de WhatsApp, deja de ser una clave. Los datos del aula son suyos y
+          se sincronizan con su cuenta de maestro, no con la del centro. Y añada lo que le toca a
+          ella: guardar esa tira como guarda una llave.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 5 · «Quiero enseñárselo al claustro el lunes»</div>
+        <p>El director le pide que presente esto en la reunión de docentes, y le da cuarenta minutos.
+          Usted no sabe por dónde empezar.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">No lo arme de cero: el proyecto tiene una <b>sesión de 60 minutos</b>
+          ya escrita, con su guión y sus siete pasos, y el primero es el que hace el trabajo:
+          <b>que cada maestro viva una misión como alumno</b>, en su propio teléfono, antes de
+          escuchar una sola explicación. Después se crea la cuenta, después el código de aula,
+          después Mi aula, y al final las familias. Si solo tiene cuarenta minutos, recorte por el
+          final, nunca por el principio: un claustro al que se le explica sin que haya tocado nada
+          se olvida del asunto el martes. Y cierre pidiendo un compromiso chico y concreto: que cada
+          quien escriba su lista de alumnos esta semana.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 10. DIAGNÓSTICO DE USO ══════════
+       Aquí la plantilla manda «simulacro de concurso». En esta misión no
+       encaja y se sustituyó con el autor: de esto no pregunta ningún concurso
+       de nombramiento. Se conserva la mecánica (veinte preguntas, sin pistas
+       hasta calificar, listón en 75) y cambia el propósito: mide el USO de la
+       plataforma y al final dice qué pieza no ha tocado. -->
+  <section class="sec" id="sec-diagnostico">
+    <div class="card">
+      <h2>🚀 ¿Ya le está sacando todo?</h2>
+      <p>Veinte preguntas sobre el uso de la plataforma, con una sola respuesta correcta y sin
+        pistas hasta calificar. No es un simulacro de concurso: de esto no pregunta ningún concurso,
+        y no se lo vamos a decir. Es un diagnóstico. Al calificar se pone sobre cien, con el listón
+        en <b>75</b>, y le dice <b>qué bloque quedó flojo y por dónde empezar</b>, que es lo único
+        para lo que sirve una nota aquí.</p>
+      <div id="diag"></div>
+      <div class="btn-fila">
+        <button class="btn btn-ok" onclick="dgCalifica()">🧮 Calificar</button>
+        <button class="btn btn-g" onclick="dgInit()">🔄 Otro intento</button>
+      </div>
+      <div class="resu" id="dgResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 11. FICHA, RECURSOS Y CONSTANCIA ══════════ -->
+  <section class="sec" id="sec-cierre">
+    <div class="card">
+      <h2>🖨️ Ficha de estudio, diez páginas</h2>
+      <p>El mismo mapa en papel, para estudiar sin batería y para llevarlo a una reunión de docentes:
+        las cuatro piezas por dentro, la tabla de qué hace y qué no hace cada una, el plan de la
+        primera semana, el guión para presentarlo al claustro, vocabulario, ejercicios para lápiz y
+        la pauta.</p>
+      <div class="btn-fila">
+        <a class="btn" href="../../fichas/ficha-docente-bienvenida-metas.html">📄 Abrir la ficha</a>
+      </div>
+      <div class="dato">📌 Se imprime en diez hojas tamaño carta, a doble cara son cinco. La pauta va
+        en las últimas páginas: si la va a usar con colegas, imprima sin ellas y repártalas después.</div>
+    </div>
+
+    <div class="card">
+      <h2>📚 De dónde salió todo esto</h2>
+      <p>Las otras misiones de esta serie se escriben leyendo una ley. Esta no tiene ley que leer:
+        sus datos salen del propio proyecto, así que se contaron uno por uno en el repositorio el día
+        que se escribió. Si algún número no le cuadra con lo que ve en pantalla, <b>gana la
+        pantalla</b>: significa que el proyecto creció y esta misión se quedó atrás.</p>
+      <div class="rec-it"><b>El catálogo del alumno</b>: 57 misiones, 11 rutas y 7 materias, con 8
+        traducidas al inglés por autor. Se cuenta en la propia lista de misiones del proyecto.</div>
+      <div class="rec-it"><b>Las herramientas del aula</b>: las diez del mosaico de la Zona Docente.
+        Las cinco categorías del Plan de Acción salen de su propia configuración.</div>
+      <div class="rec-it"><b>Lo que ve la familia</b>: el asistente de padres y el manual para la
+        familia, que puede repartir tal cual junto con las claves.</div>
+      <div class="rec-it"><b>Para capacitar colegas</b>: el kit de capacitación del proyecto, una
+        sesión de 60 minutos con guión y siete pasos.</div>
+      <div class="rec-it"><b>Los manuales</b>: hay uno para el maestro, uno para el alumno y uno para
+        la familia. Están escritos para imprimirse y repartirse.</div>
+      <div class="fuente">Cifras contadas en el repositorio del proyecto en agosto de 2026. Estas
+        cifras envejecen solas: el catálogo crece. Lo que no cambia es el mapa de las cuatro piezas
+        ni lo que cada una hace y no hace.</div>
+    </div>
+
+    <div class="card const" id="constancia">
+      <div style="font-size:38px">🎓</div>
+      <h3>Constancia de estudio</h3>
+      <p>Escriba su nombre para cerrar la misión. Queda guardada en este teléfono, para su control:
+        no vale como capacitación oficial ni se envía a ningún expediente.</p>
+      <input id="constNombre" placeholder="Su nombre completo" maxlength="60" oninput="guardar()">
+      <p id="constTxt" style="font-size:14px;color:var(--gris)"></p>
+      <div class="logros" id="logros"></div>
+    </div>
+  </section>
+
+  <p class="pie">M.E.T.A.S · Misiones del maestro · Formación docente ·
+    <a href="../../index.html">Volver a mi Zona Docente</a></p>
+</main>
+
+<!-- Panel de logros (lo abre el botón del pie) -->
+<div class="ach-fondo" id="achFondo" onclick="if (event.target === this) toggleAchPanel()">
+  <div class="ach-panel" role="dialog" aria-label="Logros de la misión">
+    <h3>🏅 Sus logros en esta misión</h3>
+    <div class="ach-sub" id="achSub"></div>
+    <div id="achLista"></div>
+    <div class="btn-fila"><button class="btn" onclick="toggleAchPanel()">Cerrar</button></div>
+  </div>
+</div>
+
+<footer class="credits">
+  <p class="fam">🏛️ Proyecto Formación e Investigación Docente M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Docentes <strong>Josué E. Polanco</strong> y
+    <strong>Evelyn S. Castellanos</strong>, investigadores en acción. Este material se elabora
+    con el apoyo de las mejores herramientas de investigación profunda («Deep Research»)
+    disponibles en la actualidad. Consulte siempre las fuentes citadas y, si encuentra un error,
+    agradeceremos que nos lo reporte.</p>
+  <div class="mot">«Cuanto mejor preparado esté, mejores serán sus decisiones. Al maestro que
+    estudia no se le impone: se le consulta.» 🎓</div>
+  <div class="cred-contact">
+    <span>📧 <a href="mailto:josuepolancolemus2020@gmail.com">josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank" rel="noopener">policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/bienvenida-metas.js"></script>
+<!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
+     «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
+     .sec.active y go(). -->
+<script src="../../js/metas-presentacion.js"></script>
+</body>
+</html>

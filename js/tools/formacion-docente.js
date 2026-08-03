@@ -40,7 +40,8 @@ const MF_AREAS = [
     herramienta: 'Todas: Mi aula · Plan de Acción · Evaluaciones · Asistente de padres · Evidencia',
     temas: [
       { t: 'Bienvenido: qué es M.E.T.A.S y por qué existe',
-        s: 'El ecosistema completo en un mapa: las misiones del alumno, las herramientas de su aula, el asistente de las familias y su propia formación. Y de dónde viene todo esto.' },
+        s: 'El ecosistema completo en un mapa: las misiones del alumno, las herramientas de su aula, el asistente de las familias y su propia formación. Con lo que cada pieza NO hace, y ficha de estudio de diez páginas.',
+        url: 'misiones/docente-bienvenida-metas/bienvenida-metas.html' },
       { t: 'M.E.T.A.S y SACE: qué hace cada uno',
         s: 'SACE guarda la nota oficial; aquí es donde esa nota se gana, se sustenta y se explica. Qué NO sustituye esta plataforma, para que usted no se meta en un problema.' },
       { t: 'El código de aula: cómo el trabajo del alumno le llega solo',

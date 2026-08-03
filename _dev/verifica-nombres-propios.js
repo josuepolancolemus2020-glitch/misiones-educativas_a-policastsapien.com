@@ -61,6 +61,21 @@ const NOMBRES = [
   ['unesco', 'UNESCO'],
   ['upnfm', 'UPNFM'],
   ['sace', 'SACE'],
+  /* Los trajo la misión de bienvenida del maestro, que presenta la plataforma:
+     ahí se nombran a cada rato el pensador de la portada, el currículo y las
+     pantallas del producto. Los nombres de las herramientas son nombres
+     propios de verdad: el maestro los busca escritos igual en la misión, en la
+     ficha y en el mosaico de su Zona Docente, y una minúscula ahí lo deja
+     dudando de si es la misma cosa. */
+  ['josé cecilio del valle', 'José Cecilio del Valle'],
+  ['dcnb', 'DCNB'],
+  ['whatsapp', 'WhatsApp'],
+  ['zona docente', 'Zona Docente'],
+  ['plan de acción', 'Plan de Acción'],
+  ['parte mensual', 'Parte Mensual'],
+  ['gobierno escolar', 'Gobierno Escolar'],
+  ['campeonísimo', 'Campeonísimo'],
+  ['evidencia de misiones', 'Evidencia de misiones'],
 ];
 
 /* «Decreto 79» y «Acuerdo 1358-SE-2014» nombran una norma concreta y van con

@@ -262,53 +262,78 @@ luz.
 
 ---
 
-## 9. Decidido: se escribe la 1 primero
+## 9. Hecha: la 1 ya está publicada
 
 El autor escogió el tema **1, «Bienvenido: qué es M.E.T.A.S y por qué existe»**, y
-pidió empezarlo en una sesión nueva. Esto es lo que hace falta saber para arrancar
-sin releer todo.
+se escribió en agosto de 2026. Vive en:
 
-### Prompt de arranque (copiar y pegar en una sesión nueva)
+- `misiones/docente-bienvenida-metas/` (misión) y
+- `fichas/ficha-docente-bienvenida-metas.html` (ficha de diez páginas).
+
+Queda **«Disponible»** en `js/tools/formacion-docente.js`, y con eso el temario del
+maestro abre por primera vez en esta área en vez de en Leyes educativas: la línea
+que elige el área de entrada lo hace sola, sin tocar nada.
+
+**La desviación de la sección 10 se consultó con el autor y quedó aprobada.** No hay
+simulacro de concurso: hay un **«¿Ya le está sacando todo?»**, veinte preguntas de
+uso de la plataforma repartidas en cinco bloques, con el mismo listón de 75, que al
+calificar le dice al maestro qué bloque quedó flojo y por dónde empezar. La
+excepción y sus condiciones quedaron escritas en la plantilla de la serie, para que
+no haya que volver a discutirla ni se copie donde no toca.
+
+### Prompt de arranque (para el siguiente tema del área)
 
 ```
 Sigue PLANTILLA-MISIONES-DEL-MAESTRO.
 
 Nueva misión del maestro:
 - Área: metas
-- Tema: Bienvenido: qué es M.E.T.A.S y por qué existe
+- Tema: ______ (el que siga del apartado 7)
 - Lee primero PROPUESTA-MISIONES-METAS-2026.md (apartados 2, 5, 6 y 9).
-- Referencia: misiones/docente-derechos-ninez/ y
-  fichas/ficha-docente-derechos-ninez.html (NO releas otras misiones)
+- Referencia: misiones/docente-bienvenida-metas/ y
+  fichas/ficha-docente-bienvenida-metas.html (NO releas otras misiones)
 
 Al terminar: commit y push a main, como manda CLAUDE.md.
 ```
 
-### Lo que esta misión tiene de distinto
+### Lo que estas misiones tienen de distinto
 
 **No hay documento legal que leer.** Sus datos salen del propio proyecto, así que la
 norma «buscar no es leer» se traduce aquí en otra cosa: **contar de nuevo en el
 repositorio** el día que se escriba, porque estas cifras envejecen solas.
 
-| Dato | Dónde se cuenta |
-|---|---|
-| Misiones, rutas y materias | `js/data/misiones.js` y `MANUAL-MAESTRO.md` |
-| Herramientas del aula | la rejilla `zd-grid` de `index.html` |
-| Qué ve la familia | `padres.html` y `MANUAL-PADRE.md` |
-| Categorías del Plan de Acción | `PA_CATS` en `js/tools/plan-accion.js` |
-| Cómo se capacita en 60 minutos | `kit-capacitacion.html` |
+| Dato | Dónde se cuenta | Contado en agosto de 2026 |
+|---|---|---|
+| Misiones, rutas y materias | `MISSIONS` y `RUTAS` en `js/data/misiones.js` | 57 · 11 · 7 |
+| Formas por evaluación | `EVAL_FORMAS` en el js de cada misión | 30, en las 57 |
+| Prueba de pensamiento crítico | `genEvalCrit` en el js de cada misión | **46 de 57**, no todas |
+| Fichas del alumno | `fichas/ficha-*.html`, sin las del maestro | 57 |
+| Misiones traducidas al inglés | `MISIONES_EN` en `js/data/misiones.js` | 8 |
+| Herramientas del aula | la rejilla `zd-grid` de `index.html` | 10 |
+| Categorías del Plan de Acción | `PA_CATS` en `js/tools/plan-accion.js` | 5 |
+| Qué ve la familia | `CHIPS_BASE` en `padres.html` y `MANUAL-PADRE.md` | 15 botones |
+| Cómo se capacita en 60 minutos | `kit-capacitacion.html` | 7 pasos |
+
+⚠️ Esa columna de la derecha es una **foto**, no una fuente: se vuelve a contar el
+día que se escriba. Y ojo con la de pensamiento crítico: la tentación fácil es decir
+«dos evaluaciones por misión», y hoy no es cierto en once de ellas.
 
 **El formato explorable sugerido** es un recorrido por las cuatro piezas del
-ecosistema (apartado 6), no por artículos ni por trámites: es lo que distingue esta
-misión de las cuatro de leyes.
+ecosistema (apartado 6), no por artículos ni por trámites: es lo que distingue estas
+misiones de las cuatro de leyes.
 
-**El simulacro de concurso no encaja aquí.** Las once secciones de la plantilla se
-mantienen, pero la décima no puede ser un simulacro de nombramiento: de esto no
-pregunta ningún concurso. Se propone sustituirla, con el mismo formato de veinte
-preguntas y el mismo listón de 75, por un **«¿Ya le está sacando todo?»**: un
-diagnóstico de uso que al final le dice al maestro qué parte de la plataforma no ha
-tocado y por dónde empezar. Es la misma mecánica y el mismo código; cambia el
-propósito. **Esta desviación de la plantilla hay que confirmarla con el autor antes
-de escribirla.**
+**El simulacro de concurso no encaja aquí, y ya se resolvió.** Las once secciones de
+la plantilla se mantienen, pero la décima no puede ser un simulacro de
+nombramiento: de esto no pregunta ningún concurso. El autor aprobó sustituirla, con
+el mismo formato de veinte preguntas y el mismo listón de 75, por un **«¿Ya le está
+sacando todo?»**: un diagnóstico de uso que al final le dice al maestro qué parte de
+la plataforma no ha tocado y por dónde empezar. Es la misma mecánica y el mismo
+código; cambia el propósito. Está escrito en
+`misiones/docente-bienvenida-metas/js/bienvenida-metas.js` y la excepción quedó
+anotada en la plantilla de la serie.
 
-**El aviso de tono del punto 4 vale doble en esta misión**, que es la de marca. Si
-exagera, se descubre en la primera semana de uso.
+**El aviso de tono del punto 4 vale doble en esta área**, que es la de marca. Si
+exagera, se descubre en la primera semana de uso. Por eso cada parada del recorrido
+lleva su caja roja de **lo que esa pieza no hace**, y se dice con todas sus letras
+que M.E.T.A.S no sustituye a SACE y que la constancia de estudio no vale como
+capacitación oficial.
