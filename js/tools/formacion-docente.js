@@ -23,6 +23,38 @@
      leyes educativas) van de primeras. */
 
 const MF_AREAS = [
+  /* Va PRIMERA a propósito, antes que las leyes. Las misiones de leyes le dicen
+     al maestro qué le exige la norma; esta le enseña la herramienta con la que
+     va a cumplirla, y sin eso el resto se queda en teoría. Además resuelve un
+     problema real de adopción: el maestro promedio conoce UNA pieza de
+     M.E.T.A.S (la misión que le llegó por WhatsApp) y no sabe que existe todo
+     lo demás. La propuesta completa, con los argumentos y las advertencias de
+     verificación, está en PROPUESTA-MISIONES-METAS-2026.md. */
+  {
+    k: 'metas',
+    chip: '🚀 Dominar M.E.T.A.S',
+    titulo: 'Su plataforma, de punta a punta',
+    intro: 'No es un curso de botones: es cuántas horas recupera, con qué decide y con qué se ' +
+           'respalda. Lo que casi nadie sabe es que M.E.T.A.S no son las misiones: son cuatro ' +
+           'piezas que se alimentan entre sí, y el dato se escribe una sola vez.',
+    herramienta: 'Todas: Mi aula · Plan de Acción · Evaluaciones · Asistente de padres · Evidencia',
+    temas: [
+      { t: 'Bienvenido: qué es M.E.T.A.S y por qué existe',
+        s: 'El ecosistema completo en un mapa: las misiones del alumno, las herramientas de su aula, el asistente de las familias y su propia formación. Y de dónde viene todo esto.' },
+      { t: 'M.E.T.A.S y SACE: qué hace cada uno',
+        s: 'SACE guarda la nota oficial; aquí es donde esa nota se gana, se sustenta y se explica. Qué NO sustituye esta plataforma, para que usted no se meta en un problema.' },
+      { t: 'El código de aula: cómo el trabajo del alumno le llega solo',
+        s: 'Cinco letras en la pizarra y el avance de sus alumnos aparece en su cuenta. Sin cuentas ni contraseñas para ellos, y sin que usted escriba un nombre dos veces.' },
+      { t: 'Decidir con datos, no con impresiones',
+        s: 'Del «el grupo va mal» al «siete alumnos en Debe Mejorar por el mismo contenido». El Plan de Acción, el análisis de la prueba y la asistencia que avisa antes de la deserción.' },
+      { t: 'El asistente de padres: la clave que baja los reclamos',
+        s: 'Qué ve la familia con su clave y qué no ve. El padre deja de preguntar cómo va su hijo porque ya lo sabe, y usted recupera la reunión de padres.' },
+      { t: 'El papeleo que se hace solo',
+        s: 'Una sola lista alimenta colectas con recibo, asistencia, notas, boleta imprimible y el parte del mes. Es también con lo que se rinden cuentas cuando alguien pregunta.' },
+      { t: 'Sin internet y sin luz: por qué esto no se cae',
+        s: 'El alumno trabaja sin señal y los resultados se envían solos cuando aparece. Cómo instalarla como app, y cómo dar Programación y Robótica sin una sola computadora.' },
+    ],
+  },
   {
     k: 'leyes',
     chip: '⚖️ Leyes educativas',
@@ -144,9 +176,16 @@ const MF_AREAS = [
   },
 ];
 
-/* Área mostrada. Puede no tener misiones todavía: mfRender se queda con la
-   primera que sí tenga. */
-let _mfArea = MF_AREAS[0].k;
+/* Área mostrada al entrar. NO es la primera de la lista: es la primera que
+   tiene algo que se pueda abrir hoy.
+
+   «Dominar M.E.T.A.S» va primera en los chips porque es la puerta de entrada al
+   proyecto, pero mientras sus misiones estén en «Pronto» sería un mal recibo:
+   el maestro abre el temario y no encuentra nada que tocar. Así que se abre en
+   la primera área con misión disponible, y el chip de la nueva queda a la vista
+   para que sepa que viene. El día que se publique su primera misión, esta línea
+   la elige sola y no hay que tocar nada. */
+let _mfArea = (MF_AREAS.find(a => a.temas.some(t => t.url)) || MF_AREAS[0]).k;
 
 function mfEsc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
