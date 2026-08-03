@@ -58,6 +58,24 @@ Para cerrar la vigencia de hoy (régimen económico y carrera docente):
 
 - [ ] Acuerdos de 2014 y de 2022 sobre carrera docente.
 
+Y para el área «Dominar M.E.T.A.S», que compara la plataforma con el sistema
+oficial:
+
+- [ ] **Manual de Procesos del SACE**, de la Unidad del Sistema Nacional de
+      Información Educativa de Honduras (`manual-procesos-sace.pdf`).
+
+  Se pidió al escribir la misión «M.E.T.A.S y SACE: qué hace cada uno», en
+  agosto de 2026. El entorno de desarrollo **no alcanzó los portales del
+  Estado** (se.gob.hn, sace.se.gob.hn y tsc.gob.hn contestaron 403 a través del
+  proxy), así que esa misión se escribió sin él, y se nota: no cita ni un plazo
+  de digitación, ni una pantalla, ni un número de acuerdo. En su lugar le da al
+  maestro la lista de lo que tiene que preguntar en su centro.
+
+  **Con ese PDF delante** se le pueden añadir los plazos, la ruta exacta de la
+  digitación de notas y el procedimiento del alumno que llega a destiempo, que
+  es justo lo que un maestro busca. **Sin él, no se añade nada**: un
+  procedimiento mal citado manda al maestro a una oficina que ya no existe.
+
 ## Dos advertencias
 
 **Solo documentos públicos.** Aquí van leyes, reglamentos y acuerdos publicados

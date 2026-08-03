@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión del maestro · M.E.T.A.S y SACE: qué hace cada uno</title>
+<meta name="description" content="Formación docente: dónde termina el registro oficial del Estado y dónde empieza la plataforma del maestro. Ocho momentos del año escolar con qué es de SACE, qué es de M.E.T.A.S y quién manda. Con diagnóstico de fronteras y ficha de estudio de diez páginas.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/metas-sace.css">
+</head>
+<body>
+
+<!-- Volver: index.html sin parámetros restaura la última vista guardada, que es
+     «Misiones del maestro» (switchView la guarda al entrar). -->
+<div class="xp-bar" role="status" aria-label="Progreso de la misión">
+  <a href="../../index.html" class="xp-back-btn" title="Volver a Misiones del maestro">
+    <span aria-hidden="true">←</span>
+    <img src="../../img/logo.png" alt="" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎓 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-num" id="xpNum">0</span>
+</div>
+
+<header class="hero">
+  <div class="main">
+    <span class="hero-badge">🆚 Dominar M.E.T.A.S · Misión 2 de 7</span>
+    <h1>M.E.T.A.S y SACE: qué hace cada uno</h1>
+    <p>Es la pregunta que frena a más maestros, y contestarla mal cuesta caro: «¿y esto no me mete
+      en problemas con el sistema?». La respuesta corta es no, y conviene entender por qué. Aquí
+      está la frontera, momento por momento del año escolar: qué es del registro oficial, qué es de
+      su plataforma y, sobre todo, qué decide usted.</p>
+    <div class="hero-solo">👤 Esta misión es para usted, no para sus alumnos. Nadie más la ve.</div>
+  </div>
+</header>
+
+<nav class="nav" id="nav" aria-label="Secciones de la misión"></nav>
+
+<main class="main">
+
+  <!-- ══════════ 1. LOS OCHO MOMENTOS ══════════ -->
+  <section class="sec active" id="sec-recorrido">
+    <div class="card">
+      <h2>⚖️ La frontera, en un cuadro</h2>
+      <p>No compiten y no se estorban: hacen cosas distintas. Lo que hay que tener claro es cuál
+        hace cuál, porque el maestro que los confunde acaba haciendo dos veces el mismo trabajo o,
+        peor, dejando sin hacer el que sí es obligatorio.</p>
+      <div class="vs">
+        <div class="vs-caja">
+          <div class="vs-t">🏛️ SACE</div>
+          <span>Sistema de Administración de Centros Educativos, de la Secretaría de Educación. Es
+            el <b>registro oficial del Estado</b>.</span>
+          <ul>
+            <li>La <b>matrícula</b> del alumno</li>
+            <li>La <b>nota que cuenta legalmente</b></li>
+            <li>El respaldo de la <b>certificación</b></li>
+            <li>Es obligatorio y <b>no tiene sustituto</b></li>
+          </ul>
+        </div>
+        <div class="vs-caja mio">
+          <div class="vs-t">🚀 M.E.T.A.S</div>
+          <span>Herramienta de trabajo del maestro. Es donde ocurre el <b>día a día</b> que produce
+            esa nota.</span>
+          <ul>
+            <li>Enseñar y practicar: 57 misiones alineadas al DCNB</li>
+            <li>Evaluar: exámenes con pauta y 30 formas</li>
+            <li>Analizar: el Plan de Acción y la Evidencia</li>
+            <li>Comunicar: una clave por familia</li>
+          </ul>
+        </div>
+        <div class="vs-frase">«SACE guarda la nota; M.E.T.A.S es donde esa nota se gana, se sustenta
+          y se explica.»</div>
+      </div>
+      <div class="dato">📌 <b>Lo que esta misión no le enseña, y es a propósito:</b> a usar SACE por
+        dentro. Ni un menú, ni una pestaña, ni un plazo de digitación. Eso lo fija la Secretaría de
+        Educación, cambia por circular y su centro lo sabe mejor que nadie: <b>pregúntelo ahí y
+        anótelo antes de necesitarlo</b>. Lo que sí le enseña es la frontera, que no cambia, y que
+        es lo que le quita el miedo.</div>
+    </div>
+
+    <div class="card">
+      <h2>🗓️ Ocho momentos del año escolar</h2>
+      <p>Toque cada momento: se abre debajo con lo que es de SACE, lo que es de M.E.T.A.S, quién
+        manda, los pasos y, aparte, lo que no se hace.</p>
+      <div class="re-lista" id="reLista"></div>
+      <div class="re-nav">
+        <button class="btn btn-g" onclick="reMover(-1)">← Anterior</button>
+        <button class="btn" onclick="reMover(1)">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 2. APRENDE ══════════ -->
+  <section class="sec" id="sec-aprende">
+    <div class="card">
+      <h2>🏛️ Qué es SACE, dicho sin adornos</h2>
+      <p><b>SACE</b> es el <b>Sistema de Administración de Centros Educativos</b> de la Secretaría de
+        Educación de Honduras. Es el registro oficial del Estado: ahí vive la matrícula del alumno,
+        ahí queda la nota que cuenta legalmente y de ahí sale el respaldo de la certificación. Es
+        obligatorio y <b>no tiene sustituto</b>.</p>
+      <div class="dato">📌 <b>La consecuencia que hay que tener presente todo el año:</b> un alumno
+        que no está en el registro oficial <b>no existe para el sistema educativo</b>, por muchas
+        misiones que haya completado y por bien que le haya ido en su clase. Reinsertarlo después es
+        un trámite, y el que lo sufre es él.</p>
+      <p>Que M.E.T.A.S no lo sustituya no es una limitación que se toleró: es que son cosas de
+        naturaleza distinta. Un registro del Estado tiene que ser único, obligatorio y controlado,
+        porque de él dependen la certificación y las estadísticas del país. Una herramienta de
+        trabajo del maestro tiene que ser lo contrario: rápida, sin trámite, en el teléfono que ya
+        tiene y funcionando sin señal.</p>
+
+      <h3>Lo que aquí no se afirma, y por qué se dice</h3>
+      <p>Esta serie tiene una regla de la casa: <b>buscar no es leer</b>. Si una misión va a citar un
+        documento, el documento tiene que estar delante. Al escribir esta, el entorno de trabajo
+        <b>no alcanzó los portales del Estado</b>, así que el manual de procesos del sistema no se
+        pudo leer. Por eso aquí no va a encontrar plazos de digitación, nombres de pantallas ni
+        números de acuerdo: se los inventaría, y mandarlo a una pestaña que ya no está o darle una
+        fecha derogada sería un daño concreto.</p>
+      <div class="aula">🎯 <b>Lo que sí le sirve:</b> pregunte hoy en su centro tres cosas y anótelas
+        en la primera hoja de su cuaderno: <b>quién</b> registra la matrícula, <b>hasta qué día</b>
+        se digitan las notas de cada parcial, y <b>a quién</b> se le pide un certificado. Con eso
+        resuelto, esta misión hace el resto.</div>
+    </div>
+
+    <div class="card">
+      <h2>🌐 Las otras plataformas, sin atacar a ninguna</h2>
+      <p>Un maestro que compara antes de adoptar hace bien, y merece una respuesta honesta. La
+        comparación se hace por <b>diferencias estructurales</b>, que son verificables y no
+        envejecen, y por familias, no por nombres: un material que ataca a un competidor pierde
+        autoridad ante el colega que lo lee, y además no hace falta.</p>
+      <ul>
+        <li><b>Los sistemas de gestión que se venden a colegios privados.</b> Resuelven la
+          administración del <b>centro</b>, con contrato y con pago: matrícula interna, cobros,
+          boletas, comunicación institucional. M.E.T.A.S resuelve el <b>aula</b>, para el maestro,
+          sin contrato y sin pago. No es que uno sea mejor: es que el cliente de uno es la
+          dirección y el del otro es usted.</li>
+        <li><b>Los catálogos de contenido internacional.</b> Traen catálogos grandes y bien hechos,
+          pero no están alineados al DCNB, no hablan de la realidad hondureña y casi todos exigen
+          conexión permanente. Para un aula con 43 alumnos, señal a ratos y un examen que tiene que
+          calzar con el currículo nacional, eso pesa.</li>
+        <li><b>Las plataformas que la propia Secretaría contrata</b> para programas específicos
+          (bachillerato virtual, bibliotecas digitales). Resuelven un tramo del sistema, y lo
+          resuelven bien. No bajan al aula de un maestro de sexto grado con un teléfono.</li>
+      </ul>
+      <div class="dato">📌 <b>Y ninguna de ellas sustituye al registro oficial tampoco.</b> Eso vale
+        para todas, incluida esta: la nota que certifica se digita en el sistema del Estado. Si
+        alguna plataforma le promete lo contrario, ahí sí conviene desconfiar.</div>
+      <div class="aula">🎯 <b>Cómo contestar en la sala de maestros:</b> no diga que las otras son
+        malas. Diga qué resuelve cada una y para quién, y después enseñe una pieza de la suya
+        funcionando con datos de verdad. Eso convence; lo otro solo incomoda.</div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3. TARJETAS ══════════ -->
+  <section class="sec" id="sec-tarjetas">
+    <div class="card">
+      <h2>🃏 Tarjetas de repaso</h2>
+      <p>Toque la tarjeta para voltearla. Van en el orden en que se preguntan.</p>
+      <div class="fc" id="fc" onclick="fcVoltea()">
+        <div class="fc-in">
+          <div class="fc-cara fc-front" id="fcQ"></div>
+          <div class="fc-cara fc-back"><div id="fcA"></div></div>
+        </div>
+      </div>
+      <div class="btn-fila">
+        <button class="btn btn-g" onclick="fcPasa(-1)">← Anterior</button>
+        <button class="btn" onclick="fcPasa(1)">Siguiente →</button>
+        <span class="q-num" id="fcNum" style="align-self:center"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Memorama de la frontera</h2>
+      <p>Empareje cada cosa con lo que es. Seis parejas.</p>
+      <div class="memo-grid" id="memoGrid"></div>
+      <div class="btn-fila"><button class="btn btn-g" onclick="memoInit()">🔄 Barajar de nuevo</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 4. QUIZ ══════════ -->
+  <section class="sec" id="sec-quiz">
+    <div class="card">
+      <h2>❓ Compruebe lo que quedó</h2>
+      <p>Nueve preguntas con explicación inmediata. Aquí no se guarda nota: es para usted.</p>
+      <div id="quiz"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 5. CLASIFICA ══════════ -->
+  <section class="sec" id="sec-clasifica">
+    <div class="card">
+      <h2>🗂️ Cada cosa en su sitio</h2>
+      <p>Toque una tarjeta y luego la caja donde va. Fíjese en la cuarta caja: hay cosas que no las
+        hace ningún sistema, ni el oficial ni el suyo. Esas son las que decide usted.</p>
+      <div class="cl-banco" id="clBanco"></div>
+      <div class="cl-cajas" id="clCajas"></div>
+      <div class="btn-fila">
+        <button class="btn" onclick="clRevisa()">✔️ Revisar</button>
+        <button class="btn btn-g" onclick="clInit()">🔄 Empezar de nuevo</button>
+      </div>
+      <div class="resu" id="clResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 6. COMPLETA ══════════ -->
+  <section class="sec" id="sec-completa">
+    <div class="card">
+      <h2>✍️ Complete la oración</h2>
+      <p>Escriba la palabra que falta. Se aceptan mayúsculas, minúsculas y tildes indistintamente.</p>
+      <div id="completa"></div>
+      <div class="btn-fila"><button class="btn" onclick="cpRevisa()">✔️ Revisar todo</button></div>
+      <div class="resu" id="cpResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 7. RETO ══════════ -->
+  <section class="sec" id="sec-reto">
+    <div class="card">
+      <h2>⏱️ Reto: el cierre de parcial, en orden</h2>
+      <p>Nueve pasos desordenados. Tóquelos en el orden en que se hacen. Tiene noventa segundos, y
+        aquí el orden no es un adorno: entregar la boleta antes de cerrar la nota oficial obliga a
+        entregarla dos veces.</p>
+      <div class="btn-fila">
+        <button class="btn" id="retoBtn" onclick="retoInit()">▶️ Empezar</button>
+        <span class="reto-reloj" id="retoReloj">1:30</span>
+      </div>
+      <div class="reto-lista" id="retoLista"></div>
+      <div class="resu" id="retoResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 8. SOPA ══════════ -->
+  <section class="sec" id="sec-sopa">
+    <div class="card">
+      <h2>🔤 Sopa de letras</h2>
+      <p>Ocho palabras de la misión, en todas las direcciones. Toque la primera y la última letra
+        de cada palabra.</p>
+      <div class="sopa-grid" id="sopaGrid"></div>
+      <div class="sopa-pal" id="sopaPal"></div>
+      <div class="btn-fila">
+        <button class="btn btn-amb" onclick="sopaLinterna()">🔦 Linterna (cuesta 2 XP)</button>
+        <button class="btn btn-g" onclick="sopaInit()">🔄 Otra sopa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 9. CASOS ══════════ -->
+  <section class="sec" id="sec-casos">
+    <div class="card">
+      <h2>🏫 Cinco situaciones de esta semana</h2>
+      <p>Ninguna es de manual: son las que se dan en la sala de maestros y en la reunión de padres.
+        Piense su respuesta antes de abrir la sugerencia.</p>
+
+      <div class="caso">
+        <div class="caso-t">Caso 1 · «Ya lo tengo aquí, ¿para qué lo escribo otra vez?»</div>
+        <p>Usted cerró el parcial en M.E.T.A.S: notas registradas, boleta lista, Plan de Acción
+          revisado. Un compañero le dice que con eso ya está y que digitar de nuevo es perder el
+          tiempo.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">No está. La nota que certifica es la del <b>registro oficial</b>, y
+          M.E.T.A.S <b>no envía nada allá</b>: no tiene forma de hacerlo. Si no la digita usted, para
+          el sistema esa nota no existe, y el que responde por eso es el docente de grado. No es
+          trabajo doble: es trabajo distinto. Aquí decidió la nota y le quedó el respaldo de cómo
+          llegó a ella; allá la registró para que valga. Y el orden importa: primero decide, después
+          digita, después entrega la boleta. Al revés termina entregando dos veces.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 2 · El alumno que llegó en agosto</div>
+        <p>Le mandan a un alumno nuevo a mitad de año. Usted lo anota en Mi aula, le genera su clave
+          de familia y empieza a trabajar con él. En noviembre, al cerrar, resulta que en el centro
+          nunca quedó registrado.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Es la escena que esta misión viene a evitar. Anotarlo en Mi aula fue
+          correcto para trabajar con él, pero <b>eso no lo matricula</b>: la matrícula es un acto
+          oficial del centro. Lo que faltó fue un paso de treinta segundos: avisar a la dirección
+          el día que llegó y confirmar que quedó registrado. Hágalo regla para todo alumno que
+          entre a destiempo, y déjelo por escrito con fecha. Si ya pasó, no lo esconda ni lo
+          resuelva usted: llévelo a la dirección de inmediato, con su registro de asistencia y de
+          notas como respaldo de que el niño sí estuvo y sí trabajó. Ese respaldo es lo que va a
+          servir para ubicarlo.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 3 · «El director dice que no usemos cosas de fuera»</div>
+        <p>En el consejo de docentes alguien plantea que solo se debe usar lo oficial, y que meter
+          otra plataforma puede traer problemas con la Dirección Departamental.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">La preocupación es legítima y se desarma con una distinción, no con
+          una discusión. Lo que <b>no</b> se puede hacer es sustituir el registro oficial, y nadie
+          está proponiendo eso: la matrícula y la nota siguen donde tienen que estar. Lo que hace
+          M.E.T.A.S es el trabajo de aula, que ningún registro hace y que cada maestro ya venía
+          haciendo con cuadernos, hojas sueltas y memoria. Preséntelo como lo que es: material de
+          apoyo y organización del docente, sin cobro, sin contrato y sin datos que salgan del
+          aula. Y ofrezca la prueba que cierra el tema: enseñe su boleta y su Plan de Acción al
+          lado del cuaderno de otro compañero. La conversación se acaba sola.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 4 · La madre que quiere «el papel»</div>
+        <p>Una madre le pide una constancia de que su hijo aprobó el grado, porque lo va a cambiar
+          de centro. Ve la constancia de la misión, con su nombre y su sello de colores, y le pide
+          esa.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Esa no sirve, y hay que decírselo de frente y con amabilidad: la
+          constancia de una misión <b>reconoce el esfuerzo del alumno, no certifica un grado</b>.
+          Lo que ella necesita lo emite el centro por la vía oficial, con el respaldo del registro
+          del Estado, así que la ruta es la dirección. Nunca firme ni selle un papel de la
+          plataforma como si fuera del centro: eso sí le puede costar caro a usted. Y aproveche
+          para hacer lo que sí ayuda: entréguele la boleta impresa y el resumen de cómo trabajó su
+          hijo, que es información real que el centro nuevo va a agradecer.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 5 · «Vamos a comprar una plataforma»</div>
+        <p>En la reunión de docentes proponen contratar un sistema de gestión escolar y le preguntan
+          a usted, que es «el de la tecnología», si conviene.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Conteste por lo que resuelve cada cosa, sin desacreditar a nadie. Un
+          sistema de gestión escolar resuelve la administración del <b>centro</b>: cobros, boletas
+          institucionales, comunicación de la dirección. Eso puede ser exactamente lo que su centro
+          necesita, y no compite con lo que usted usa en el aula. Lo único que conviene preguntar
+          antes de firmar son tres cosas concretas: si <b>sustituye o no</b> el registro oficial (no
+          lo sustituye ninguno), qué pasa con los datos si un día se deja de pagar, y si funciona
+          los días que no hay señal en el centro. Y aclare lo suyo: lo que usted usa en el aula no
+          cuesta nada y no ata al centro a ningún contrato, así que no hay por qué escoger.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 10. DIAGNÓSTICO DE FRONTERAS ══════════
+       Aquí la plantilla manda «simulacro de concurso». En esta área no encaja
+       y se sustituyó con el autor: de esto no pregunta ningún concurso. Se
+       conserva la mecánica (veinte preguntas, sin pistas hasta calificar,
+       listón en 75) y cambia el propósito: mide si el maestro sabe dónde va
+       cada cosa y al final le dice qué frontera confunde. -->
+  <section class="sec" id="sec-diagnostico">
+    <div class="card">
+      <h2>🧭 ¿Sabe dónde va cada cosa?</h2>
+      <p>Veinte preguntas sobre la frontera, con una sola respuesta correcta y sin pistas hasta
+        calificar. No es un simulacro de concurso: de esto no pregunta ningún concurso, y no se lo
+        vamos a decir. Al calificar se pone sobre cien, con el listón en <b>75</b>, y le dice
+        <b>cuál de las cinco fronteras se le mezcla</b>. Esa es la que le puede costar un problema
+        de verdad.</p>
+      <div id="diag"></div>
+      <div class="btn-fila">
+        <button class="btn btn-ok" onclick="dgCalifica()">🧮 Calificar</button>
+        <button class="btn btn-g" onclick="dgInit()">🔄 Otro intento</button>
+      </div>
+      <div class="resu" id="dgResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 11. FICHA, RECURSOS Y CONSTANCIA ══════════ -->
+  <section class="sec" id="sec-cierre">
+    <div class="card">
+      <h2>🖨️ Ficha de estudio, diez páginas</h2>
+      <p>La misma frontera en papel, para estudiar sin batería y para llevarla al consejo de
+        docentes: el cuadro comparativo completo, los ocho momentos del año, la hoja de las tres
+        preguntas que hay que hacer en su centro, las respuestas para la sala de maestros,
+        vocabulario, ejercicios y pauta.</p>
+      <div class="btn-fila">
+        <a class="btn" href="../../fichas/ficha-docente-metas-sace.html">📄 Abrir la ficha</a>
+      </div>
+      <div class="dato">📌 Se imprime en diez hojas tamaño carta, a doble cara son cinco. La pauta va
+        en las últimas páginas: si la va a usar con colegas, imprima sin ellas y repártalas después.</div>
+    </div>
+
+    <div class="card">
+      <h2>📚 De dónde salió todo esto, y qué falta</h2>
+      <p>Esta misión mezcla dos clases de dato, y conviene que sepa cuál es cuál.</p>
+      <div class="rec-it"><b>Todo lo de M.E.T.A.S está contado</b> en el propio proyecto: las 57
+        misiones, las 11 rutas, las 30 formas, las diez herramientas y las cinco categorías del Plan
+        de Acción salen del repositorio, no de la memoria. Esas cifras envejecen porque el catálogo
+        crece: si no le cuadran con la pantalla, gana la pantalla.</div>
+      <div class="rec-it"><b>De SACE solo se afirma lo firme:</b> que es el Sistema de Administración
+        de Centros Educativos de la Secretaría de Educación, que es el registro oficial del Estado,
+        que ahí viven la matrícula, la nota que cuenta legalmente y el respaldo de la certificación,
+        y que no tiene sustituto.</div>
+      <div class="rec-it"><b>Lo que falta, y por qué falta:</b> el manual de procesos del sistema no
+        se pudo leer al escribir esta misión, porque el entorno de trabajo no alcanzó los portales
+        del Estado. Por eso aquí no hay plazos, ni pantallas, ni números de acuerdo. La regla de la
+        casa es «buscar no es leer», y un procedimiento mal citado manda al maestro a una oficina
+        que ya no existe.</div>
+      <div class="rec-it"><b>Lo que usted puede hacer hoy:</b> confirmar en su centro quién registra
+        la matrícula, hasta qué día se digitan las notas de cada parcial y a quién se le pide un
+        certificado. Anótelo en la primera hoja de su cuaderno: es información que no se busca el
+        día que se necesita.</div>
+      <div class="rec-it"><b>Las misiones vecinas:</b> «Bienvenido: qué es M.E.T.A.S y por qué
+        existe» trae el mapa completo de las cuatro piezas. Y la rendición de cuentas del artículo 6
+        de la Ley Fundamental de Educación tiene su propia misión en el área de leyes.</div>
+      <div class="fuente">Cifras del producto contadas en el repositorio en agosto de 2026. Sobre el
+        sistema oficial no se cita ningún documento, precisamente porque no se pudo leer ninguno: se
+        afirma solo lo que es público, estable y no depende de una circular. Todo lo procedimental
+        se confirma en el centro.</div>
+    </div>
+
+    <div class="card const" id="constancia">
+      <div style="font-size:38px">🎓</div>
+      <h3>Constancia de estudio</h3>
+      <p>Escriba su nombre para cerrar la misión. Queda guardada en este teléfono, para su control:
+        no vale como capacitación oficial ni se envía a ningún expediente.</p>
+      <input id="constNombre" placeholder="Su nombre completo" maxlength="60" oninput="guardar()">
+      <p id="constTxt" style="font-size:14px;color:var(--gris)"></p>
+      <div class="logros" id="logros"></div>
+    </div>
+  </section>
+
+  <p class="pie">M.E.T.A.S · Misiones del maestro · Formación docente ·
+    <a href="../../index.html">Volver a mi Zona Docente</a></p>
+</main>
+
+<!-- Panel de logros (lo abre el botón del pie) -->
+<div class="ach-fondo" id="achFondo" onclick="if (event.target === this) toggleAchPanel()">
+  <div class="ach-panel" role="dialog" aria-label="Logros de la misión">
+    <h3>🏅 Sus logros en esta misión</h3>
+    <div class="ach-sub" id="achSub"></div>
+    <div id="achLista"></div>
+    <div class="btn-fila"><button class="btn" onclick="toggleAchPanel()">Cerrar</button></div>
+  </div>
+</div>
+
+<footer class="credits">
+  <p class="fam">🏛️ Proyecto Formación e Investigación Docente M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Docentes <strong>Josué E. Polanco</strong> y
+    <strong>Evelyn S. Castellanos</strong>, investigadores en acción. Este material se elabora
+    con el apoyo de las mejores herramientas de investigación profunda («Deep Research»)
+    disponibles en la actualidad. Consulte siempre las fuentes citadas y, si encuentra un error,
+    agradeceremos que nos lo reporte.</p>
+  <div class="mot">«Cuanto mejor preparado esté, mejores serán sus decisiones. Al maestro que
+    estudia no se le impone: se le consulta.» 🎓</div>
+  <div class="cred-contact">
+    <span>📧 <a href="mailto:josuepolancolemus2020@gmail.com">josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank" rel="noopener">policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/metas-sace.js"></script>
+<!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
+     «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
+     .sec.active y go(). -->
+<script src="../../js/metas-presentacion.js"></script>
+</body>
+</html>

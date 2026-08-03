@@ -37,10 +37,12 @@ que sean verdad.
 No es una promesa vaga, se cuenta con números del propio producto:
 
 - **57 misiones** con contenido, juegos y evidencia, alineadas al DCNB.
-- **Dos evaluaciones por misión, con 30 formas deterministas cada una**: la Forma 7
+- **Evaluación imprimible con 30 formas deterministas** en las 57: la Forma 7
   regenera siempre el mismo examen y la misma pauta, así que se imprime hoy y se
   reimprime el mes que viene sin perder la correspondencia. El maestro deja de
-  redactar exámenes de esos temas.
+  redactar exámenes de esos temas. **46 de las 57** traen además una prueba de
+  pensamiento crítico; decir «dos evaluaciones por misión», como decía antes esta
+  propuesta, no era cierto en once de ellas.
 - **Una sola lista de alumnos** alimenta economía de colectas, asistencia, notas,
   boleta imprimible y Plan de Acción, sin volver a escribir un nombre.
 - **Fichas didácticas imprimibles** por misión, con su código QR, para el aula sin
@@ -100,7 +102,7 @@ justamente lo que SACE no hace:
 | Quién lo abre | El centro, con trámite | El maestro, en minutos y gratis |
 | Sin internet | No | Sí, y sincroniza sola después |
 | Contenido para el alumno | No tiene | 57 misiones alineadas al DCNB |
-| Exámenes | No genera | Dos por misión, 30 formas, con pauta |
+| Exámenes | No genera | 30 formas por misión, con pauta |
 | Comunicación con la familia | No | Asistente de padres con clave por alumno |
 | Economía del aula, asistencia, boleta | Parcialmente | Sí, desde una sola lista |
 
@@ -262,24 +264,44 @@ luz.
 
 ---
 
-## 9. Hecha: la 1 ya está publicada
+## 9. Hechas: van la 1 y la 2
 
-El autor escogió el tema **1, «Bienvenido: qué es M.E.T.A.S y por qué existe»**, y
-se escribió en agosto de 2026. Vive en:
+Se escribieron en agosto de 2026 y quedan **«Disponibles»** en
+`js/tools/formacion-docente.js`. Con la primera, el temario del maestro pasó a abrir
+en esta área en vez de en Leyes educativas: la línea que elige el área de entrada lo
+hace sola, sin tocar nada.
 
-- `misiones/docente-bienvenida-metas/` (misión) y
-- `fichas/ficha-docente-bienvenida-metas.html` (ficha de diez páginas).
+| Tema | Misión | Ficha |
+|---|---|---|
+| 1 · Bienvenido: qué es M.E.T.A.S y por qué existe | `misiones/docente-bienvenida-metas/` | `fichas/ficha-docente-bienvenida-metas.html` |
+| 2 · M.E.T.A.S y SACE: qué hace cada uno | `misiones/docente-metas-sace/` | `fichas/ficha-docente-metas-sace.html` |
 
-Queda **«Disponible»** en `js/tools/formacion-docente.js`, y con eso el temario del
-maestro abre por primera vez en esta área en vez de en Leyes educativas: la línea
-que elige el área de entrada lo hace sola, sin tocar nada.
+### ⚠️ Lo que la misión 2 dejó pendiente, y hay que saberlo antes de tocarla
 
-**La desviación de la sección 10 se consultó con el autor y quedó aprobada.** No hay
-simulacro de concurso: hay un **«¿Ya le está sacando todo?»**, veinte preguntas de
-uso de la plataforma repartidas en cinco bloques, con el mismo listón de 75, que al
-calificar le dice al maestro qué bloque quedó flojo y por dónde empezar. La
-excepción y sus condiciones quedaron escritas en la plantilla de la serie, para que
-no haya que volver a discutirla ni se copie donde no toca.
+El apartado 3 daba por hecho que se podía describir SACE. Se pudo, pero **solo hasta
+cierto punto**: al escribirla, el entorno de desarrollo **no alcanzó los portales del
+Estado** (se.gob.hn, sace.se.gob.hn y tsc.gob.hn contestaron 403), así que el Manual
+de Procesos del SACE no se pudo leer.
+
+Aplicando la regla de la casa («buscar no es leer»), la misión **no cita ni un plazo
+de digitación, ni una pantalla, ni un número de acuerdo**. Afirma solo lo firme: que
+SACE es el Sistema de Administración de Centros Educativos de la Secretaría de
+Educación, que es el registro oficial del Estado, que ahí viven la matrícula, la nota
+que cuenta legalmente y el respaldo de la certificación, y que no tiene sustituto.
+Todo lo procedimental se convirtió en algo mejor: **una lista de seis preguntas para
+hacer en el centro**, que va en la ficha con su espacio para anotar.
+
+El PDF quedó pedido en `_dev/leyes/README.md`. **Con él delante** se le pueden añadir
+los plazos y la ruta exacta de la digitación; sin él, no se añade nada.
+
+**La desviación de la sección 10 se consultó con el autor, quedó aprobada y ya se
+aplicó dos veces.** Ninguna de las dos misiones trae simulacro de concurso: la 1 trae
+**«¿Ya le está sacando todo?»** (qué pieza de la plataforma no ha tocado) y la 2 trae
+**«¿Sabe dónde va cada cosa?»** (cuál de las cinco fronteras se le mezcla). Misma
+mecánica en las dos: veinte preguntas, sin pistas hasta calificar, listón en 75,
+cinco bloques, y al final una salida concreta para el bloque más flojo. La excepción
+y sus condiciones quedaron escritas en la plantilla de la serie, para que no haya que
+volver a discutirla ni se copie donde no toca.
 
 ### Prompt de arranque (para el siguiente tema del área)
 
@@ -288,10 +310,10 @@ Sigue PLANTILLA-MISIONES-DEL-MAESTRO.
 
 Nueva misión del maestro:
 - Área: metas
-- Tema: ______ (el que siga del apartado 7)
+- Tema: ______ (el que siga del apartado 7; van hechos el 1 y el 2)
 - Lee primero PROPUESTA-MISIONES-METAS-2026.md (apartados 2, 5, 6 y 9).
-- Referencia: misiones/docente-bienvenida-metas/ y
-  fichas/ficha-docente-bienvenida-metas.html (NO releas otras misiones)
+- Referencia: misiones/docente-metas-sace/ y
+  fichas/ficha-docente-metas-sace.html (NO releas otras misiones)
 
 Al terminar: commit y push a main, como manda CLAUDE.md.
 ```
@@ -334,6 +356,16 @@ anotada en la plantilla de la serie.
 
 **El aviso de tono del punto 4 vale doble en esta área**, que es la de marca. Si
 exagera, se descubre en la primera semana de uso. Por eso cada parada del recorrido
-lleva su caja roja de **lo que esa pieza no hace**, y se dice con todas sus letras
-que M.E.T.A.S no sustituye a SACE y que la constancia de estudio no vale como
+lleva su caja roja de **lo que no se hace**, y se dice con todas sus letras que
+M.E.T.A.S no sustituye a SACE y que la constancia de estudio no vale como
 capacitación oficial.
+
+**Y el aviso del apartado 4 sobre empresas se cumplió al pie de la letra** en la
+misión 2: las otras plataformas se mencionan por **familias** («los sistemas de
+gestión que se venden a colegios privados», «los catálogos de contenido
+internacional», «las que la Secretaría de Educación contrata»), la comparación se
+hace solo sobre diferencias estructurales, y **ningún nombre de empresa aparece en
+ninguna frase**, ni positiva ni negativa. Eso no es timidez: un material que ataca a
+un competidor pierde autoridad ante el colega que lo lee, y los datos de mercado de
+`INVESTIGACION-HOMESCHOOL-2026.md` no están verificados al nivel que exige el
+material del maestro.

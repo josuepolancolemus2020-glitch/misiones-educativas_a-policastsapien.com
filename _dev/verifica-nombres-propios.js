@@ -129,7 +129,14 @@ function tapaCodigo(linea) {
        una llave): la prosa de este proyecto usa comillas angulares. */
     .replace(/\\?'[\w-]+\\?'/g, m => ' '.repeat(m.length))
     .replace(/[\w./-]*[/.][\w./-]*/g, m => (/[/]|\.(html|js|css|png|jpg|webp|svg|json)/.test(m) ? ' '.repeat(m.length) : m))
-    .replace(/[\wáéíóúñü]+\s*:\s*[{[]/g, m => ' '.repeat(m.length));
+    .replace(/[\wáéíóúñü]+\s*:\s*[{[]/g, m => ' '.repeat(m.length))
+    /* Y una llave de objeto seguida de TEXTO entre comillas: «sace: '…'». Lo
+       destapó la misión de M.E.T.A.S y SACE, donde cada parada guarda su lado
+       oficial en una clave; sin esto, el comprobador leía la clave como la
+       sigla escrita en minúscula y daba nueve falsos positivos. Solo se tapa
+       la llave, no el texto: lo que va dentro de las comillas se sigue
+       revisando, que es lo que lee el maestro. */
+    .replace(/(^|[\s{,])[\wáéíóúñü]+\s*:\s*(?=['"`])/g, m => ' '.repeat(m.length));
 }
 
 let fallos = 0;
