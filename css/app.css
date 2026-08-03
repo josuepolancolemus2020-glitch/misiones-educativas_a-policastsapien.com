@@ -4021,6 +4021,30 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .doc-inp { margin-bottom: 10px; }
 .doc-inp:focus { border-color: var(--brand-light); box-shadow: 0 0 0 3px rgba(59,130,246,.14); }
 
+/* Ver la contraseña: el botón va DENTRO del campo, a la derecha, que es
+   donde el pulgar ya está apoyado. El margen sube al contenedor para que
+   el ojito quede centrado de verdad dentro del campo.
+   Solo sale cuando ya hay algo escrito: con el campo vacío no habría nada
+   que mirar y, peor, le quitaría el sitio al texto guía —«Elige una
+   contraseña fácil de recordar»—, que en un teléfono angosto ya va justo.
+   Cuando sale, el relleno del campo le reserva su hueco para que la
+   contraseña no se meta por debajo del botón. */
+.doc-clave-wrap { position: relative; margin-bottom: 10px; }
+.doc-clave-wrap .doc-inp { display: block; margin-bottom: 0; }
+.doc-ver-clave {
+  display: none;
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 999px; padding: 6px 10px;
+  font-family: inherit; font-size: 12px; font-weight: 800; line-height: 1;
+  color: var(--brand); white-space: nowrap; cursor: pointer;
+}
+/* Con algo escrito: sale el botón y el campo le reserva su hueco */
+.doc-clave-wrap.doc-clave-llena .doc-ver-clave { display: block; }
+.doc-clave-wrap.doc-clave-llena .doc-inp { padding-right: 96px; }
+.doc-ver-clave:active { transform: translateY(-50%) scale(.95); }
+.doc-ver-clave:focus-visible { outline: 3px solid rgba(59,130,246,.5); outline-offset: 2px; }
+
 /* Botón principal: una sola forma para los tres, el color hace la jerarquía */
 .doc-cta {
   position: relative; display: flex; flex-direction: column;
