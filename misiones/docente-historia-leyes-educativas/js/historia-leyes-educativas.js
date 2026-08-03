@@ -175,28 +175,41 @@ const HITOS = [
 ];
 
 let _hito = 0;
+/* La lista va en vertical y el detalle se abre DEBAJO del año tocado, como un
+   acordeón. Antes era un riel horizontal con el detalle aparte: en el teléfono
+   se veían tres años, los otros seis quedaban fuera de la pantalla y el detalle
+   aparecía lejos de lo que se había tocado. */
 function tlPinta() {
-  const rail = document.getElementById('tlRail'), det = document.getElementById('tlDet');
-  if (!rail || !det) return;
-  rail.innerHTML = HITOS.map((h, i) => `
-    <button class="tl-hito ${i === _hito ? 'on' : ''} ${S.hitos.includes(i) ? 'visto' : ''}" onclick="tlVer(${i})">
-      <span class="tl-anio">${h.anio}</span>
-      <span class="tl-tit">${h.corto}</span>
-    </button>`).join('');
-  const h = HITOS[_hito];
-  det.innerHTML = `
-    <h3>${h.anio} · ${h.tit}</h3>
-    <div class="tl-sub">${h.sub}</div>
-    <p>${h.txt}</p>
-    <div class="dato">📜 <b>Dónde consta:</b> ${h.doc}</div>
-    <div class="aula">🎯 <b>Qué le deja a su aula:</b> ${h.aula}</div>`;
-  const act = rail.children[_hito];
-  if (act && act.scrollIntoView) act.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  const lista = document.getElementById('tlLista');
+  if (!lista) return;
+  lista.innerHTML = HITOS.map((h, i) => {
+    const abierto = i === _hito;
+    return `
+    <div class="tl-item ${abierto ? 'on' : ''} ${S.hitos.includes(i) ? 'visto' : ''}" id="tlIt${i}">
+      <button class="tl-cab" onclick="tlVer(${i})" aria-expanded="${abierto}">
+        <span class="tl-anio">${h.anio}</span>
+        <span class="tl-tit">${h.corto}</span>
+        ${S.hitos.includes(i) ? '<span class="tl-visto">✓</span>' : ''}
+        <span class="tl-flecha" aria-hidden="true">▾</span>
+      </button>
+      ${abierto ? `
+      <div class="tl-det" id="tlDet">
+        <h3>${h.anio} · ${h.tit}</h3>
+        <div class="tl-sub">${h.sub}</div>
+        <p>${h.txt}</p>
+        <div class="dato">📜 <b>Dónde consta:</b> ${h.doc}</div>
+        <div class="aula">🎯 <b>Qué le deja a su aula:</b> ${h.aula}</div>
+      </div>` : ''}
+    </div>`;
+  }).join('');
 }
 function tlVer(i) {
   _hito = i;
   if (!S.hitos.includes(i)) { S.hitos.push(i); xp(3); }
   tlPinta();
+  // Que el año tocado quede a la vista aunque el detalle empuje la lista
+  const el = document.getElementById('tlIt' + i);
+  if (el && el.scrollIntoView) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
 }
 function tlMover(d) { tlVer(Math.max(0, Math.min(HITOS.length - 1, _hito + d))); }
 
@@ -725,17 +738,17 @@ function pintaConst() {
 
 /* ══════════════════ NAVEGACIÓN ══════════════════ */
 const SECS = [
-  ['sec-linea', '🕰️ Línea de tiempo'],
+  ['sec-linea', '🕰️ Historia'],
   ['sec-aprende', '🧭 Aprende'],
   ['sec-tarjetas', '🃏 Tarjetas'],
   ['sec-quiz', '❓ Quiz'],
-  ['sec-clasifica', '🗂️ Clasifica'],
+  ['sec-clasifica', '🗂️ Épocas'],
   ['sec-completa', '✍️ Completa'],
   ['sec-reto', '⏱️ Reto'],
   ['sec-sopa', '🔤 Sopa'],
   ['sec-casos', '🏫 Casos'],
   ['sec-concurso', '🎯 Simulacro'],
-  ['sec-cierre', '🖨️ Ficha y cierre'],
+  ['sec-cierre', '🖨️ Ficha'],
 ];
 function go(id) {
   document.querySelectorAll('.sec').forEach(s => s.classList.toggle('on', s.id === id));

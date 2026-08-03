@@ -85,13 +85,17 @@ body {
   padding: 9px 12px; font-size: 13px; font-weight: 700;
 }
 
-/* ── Navegación por secciones ── */
-.nav { display: flex; gap: 7px; overflow-x: auto; padding: 4px 12px 12px; -webkit-overflow-scrolling: touch; }
-.nav::-webkit-scrollbar { display: none; }
+/* ── Navegación por secciones ──
+   NO se desliza de lado. Con las secciones en un riel horizontal, en el
+   teléfono se veían tres y las otras ocho quedaban fuera de la pantalla: el
+   maestro no tiene por qué adivinar que hay más si arrastra. Ahora bajan de
+   línea y se ven las once de un golpe, con letra más chica pero legible. */
+.nav { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 12px 12px; }
 .nav button {
-  flex: 0 0 auto; border: 1.5px solid var(--linea); background: var(--papel);
-  color: var(--gris); border-radius: 999px; padding: 7px 13px;
-  font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer;
+  flex: 0 1 auto; border: 1.5px solid var(--linea); background: var(--papel);
+  color: var(--gris); border-radius: 999px; padding: 6px 10px;
+  font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer;
+  line-height: 1.2;
 }
 .nav button.on { background: var(--pri); border-color: var(--pri); color: #fff; }
 
@@ -119,22 +123,50 @@ body {
 .aula b, .dato b { font-weight: 900; }
 .fuente { font-size: 12.5px; color: var(--gris); font-style: italic; margin-top: 6px; }
 
-/* ── Línea de tiempo (el laboratorio de esta misión) ── */
-.tl-rail { display: flex; gap: 8px; overflow-x: auto; padding: 6px 2px 12px; }
-.tl-rail::-webkit-scrollbar { height: 6px; }
-.tl-rail::-webkit-scrollbar-thumb { background: var(--linea); border-radius: 99px; }
-.tl-hito {
-  flex: 0 0 108px; border: 1.5px solid var(--linea); background: var(--papel);
-  border-radius: var(--r-sm); padding: 9px 8px; cursor: pointer; text-align: center;
-  font-family: inherit; color: var(--tinta);
+/* ── Línea de tiempo, en vertical ──
+   Iba de lado y se salía de la pantalla: en el teléfono se veían tres años y
+   los otros seis había que adivinarlos arrastrando. En vertical caben los
+   nueve seguidos, se leen como una lista y el detalle se abre DEBAJO del año
+   que se tocó, no en otro sitio de la pantalla. La raya de la izquierda es la
+   línea del tiempo: por eso los años van pegados a ella. */
+.tl-lista { position: relative; margin: 10px 0 4px; padding-left: 16px; }
+.tl-lista::before {
+  content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px;
+  width: 3px; border-radius: 3px; background: var(--linea);
 }
-.tl-hito.on { border-color: var(--pri); background: var(--pri-soft); box-shadow: 0 0 0 3px rgba(109, 40, 217, .14); }
-.tl-hito.visto::after { content: ' ✓'; color: var(--ok); font-weight: 900; }
-.tl-anio { display: block; font-size: 17px; font-weight: 900; color: var(--pri); }
-.tl-tit { display: block; font-size: 12px; font-weight: 700; line-height: 1.3; margin-top: 3px; }
-.tl-det { border: 1.5px solid var(--linea); border-radius: var(--r); padding: 13px; background: var(--papel); }
-.tl-det h3 { margin: 0 0 4px; font-size: 18px; color: var(--pri); }
-.tl-det .tl-sub { font-size: 13px; color: var(--gris); font-weight: 700; margin-bottom: 8px; }
+.tl-item { position: relative; margin-bottom: 6px; }
+.tl-item::before {
+  content: ''; position: absolute; left: -14px; top: 15px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--linea); border: 2px solid var(--papel);
+}
+.tl-item.on::before { background: var(--pri); }
+.tl-item.visto::before { background: var(--ok); }
+.tl-cab {
+  display: flex; align-items: center; gap: 9px; width: 100%; text-align: left;
+  border: 1.5px solid var(--linea); background: var(--papel); color: var(--tinta);
+  border-radius: var(--r-sm); padding: 8px 10px; cursor: pointer; font-family: inherit;
+}
+/* Abierto, la cabecera y el detalle son una sola pieza: sin esquinas
+   redondeadas en medio ni raya doble entre los dos. */
+.tl-item.on .tl-cab {
+  border-color: var(--pri); background: var(--pri-soft);
+  border-radius: var(--r-sm) var(--r-sm) 0 0; border-bottom: none;
+}
+.tl-anio { font-size: 15.5px; font-weight: 900; color: var(--pri); min-width: 42px; }
+.tl-tit { flex: 1; font-size: 13px; font-weight: 700; line-height: 1.3; }
+.tl-visto { color: var(--ok); font-weight: 900; font-size: 13px; }
+.tl-flecha { color: var(--gris); font-size: 13px; }
+.tl-item.on .tl-flecha { transform: rotate(180deg); }
+.tl-det {
+  border: 1.5px solid var(--pri); border-top: none;
+  border-radius: 0 0 var(--r-sm) var(--r-sm);
+  padding: 11px 12px; background: var(--papel); margin: 0 0 4px;
+  font-size: 14.5px;
+}
+.tl-det h3 { margin: 0 0 4px; font-size: 16.5px; color: var(--pri); line-height: 1.25; }
+.tl-det .tl-sub { font-size: 12.5px; color: var(--gris); font-weight: 700; margin-bottom: 8px; }
+.tl-det .dato, .tl-det .aula { font-size: 14px; }
 .tl-nav { display: flex; gap: 8px; margin-top: 12px; }
 
 /* ── Botones ── */

@@ -1,26 +1,27 @@
 /* ═══════════════════════════════════════════════════════════════
-   🎓 MISIONES DEL MAESTRO — formación y actualización docente
+   🎓 MISIONES DEL MAESTRO · formación y actualización docente
 
    Las misiones del catálogo son para el ALUMNO. Estas son otra cosa:
    son para el maestro que se registra, y nadie más las ve (viven
    dentro de «Herramientas del aula», que se oculta sin sesión, y
    además vuelven a comprobar la cuenta al abrirse).
 
-   ESTADO: la estructura está lista y vacía a propósito. Todavía no
-   se ha construido ninguna misión de formación; lo que hay aquí es
-   el TEMARIO PROPUESTO: al tocar cada área, el maestro ve qué
-   misiones vendrán y para qué le van a servir en su aula. Cada
-   tema sale marcado «Pronto» y ninguno promete nada que no exista.
+   QUÉ SE MUESTRA: solo las misiones que YA se pueden abrir. La lista
+   de abajo es el temario completo y sirve de plan de trabajo, pero al
+   maestro no se le enseñan las que faltan: una pantalla llena de
+   «Pronto» se lee como una plataforma vacía, y quien abrió el teléfono
+   para aprender algo hoy se iba con las manos vacías. Las áreas sin
+   ninguna misión tampoco aparecen.
 
-   ► Para publicar una misión: cambiar `pronto: 1` por
-     `url: 'misiones/…/archivo.html'` en ese tema. La tarjeta pasa
-     sola de «Pronto» a un botón que abre la misión.
+   ► Para publicar una misión: agregarle
+     `url: 'misiones/…/archivo.html'` a ese tema. Aparece sola, con su
+     botón, y su área vuelve a la lista.
 
    ► Las áreas están amarradas a las herramientas del aula
      (`herramienta`): así el maestro entiende que la formación no es
      teoría suelta, sino lo que necesita para usar mejor lo que ya
-     tiene en la mano. Las dos que pidió el usuario —estrategias y
-     leyes educativas— van de primeras. */
+     tiene en la mano. Las dos que pidió el usuario (estrategias y
+     leyes educativas) van de primeras. */
 
 const MF_AREAS = [
   {
@@ -90,7 +91,7 @@ const MF_AREAS = [
     k: 'gestion',
     chip: '🏫 Gestión del aula',
     titulo: 'Gestión y papelería sin sufrimiento',
-    intro: 'Lo administrativo bien hecho es tiempo que le queda para enseñar — y respaldo el día ' +
+    intro: 'Lo administrativo bien hecho es tiempo que le queda para enseñar, y respaldo el día ' +
            'que alguien pregunte.',
     herramienta: 'Mi aula · Economía · Inventario · Comunicados',
     temas: [
@@ -125,7 +126,7 @@ const MF_AREAS = [
     k: 'tecnologia',
     chip: '💻 Tecnología para enseñar',
     titulo: 'Tecnología con sentido pedagógico',
-    intro: 'El teléfono como herramienta de aprendizaje, no como distracción — incluso donde se ' +
+    intro: 'El teléfono como herramienta de aprendizaje, no como distracción, incluso donde se ' +
            'va la luz y no hay señal.',
     herramienta: 'Misiones · Fichas · Campeonísimo · Collage · Evidencia',
     temas: [
@@ -141,6 +142,8 @@ const MF_AREAS = [
   },
 ];
 
+/* Área mostrada. Puede no tener misiones todavía: mfRender se queda con la
+   primera que sí tenga. */
 let _mfArea = MF_AREAS[0].k;
 
 function mfEsc(s) {
@@ -168,8 +171,25 @@ function mfRender() {
       </div>`;
     return;
   }
-  const a = MF_AREAS.find(x => x.k === _mfArea) || MF_AREAS[0];
-  const listos = MF_AREAS.reduce((n, x) => n + x.temas.filter(t => t.url).length, 0);
+  /* Solo se enseña lo que YA se puede abrir. El temario completo sigue arriba,
+     en MF_AREAS, como plan de trabajo: al terminar una misión se le pone su
+     `url` y aparece sola. Pero al maestro no se le muestran promesas: una
+     pantalla llena de «Pronto» se lee como una plataforma vacía, y la que
+     abrió el teléfono para aprender algo hoy se va con las manos vacías. */
+  const AREAS = MF_AREAS.filter(x => x.temas.some(t => t.url));
+  const a = AREAS.find(x => x.k === _mfArea) || AREAS[0];
+  const listos = AREAS.reduce((n, x) => n + x.temas.filter(t => t.url).length, 0);
+
+  if (!a) {
+    cont.innerHTML = `
+      <div class="mf-hero">
+        <div class="mf-hero-ic">🎓</div>
+        <div class="mf-hero-t">Aquí el que aprende es usted</div>
+        <div class="mf-hero-s">Las primeras misiones de formación docente están en camino.
+          Vuelva pronto: aparecerán aquí sin que tenga que hacer nada.</div>
+      </div>`;
+    return;
+  }
 
   cont.innerHTML = `
     <div class="mf-hero">
@@ -178,34 +198,33 @@ function mfRender() {
       <div class="mf-hero-s">Misiones cortas para su propia actualización: estrategias, leyes
         educativas y lo que necesita para sacarle todo a las herramientas de su aula.
         <strong>Solo las ve el maestro registrado.</strong></div>
-      <div class="mf-hero-badge">${listos
-        ? listos + ' misión(es) disponible(s) · el resto viene en camino'
-        : '🚧 En construcción · este es el temario que viene'}</div>
+      <div class="mf-hero-badge">${listos === 1 ? '1 misión lista para hoy' : listos + ' misiones listas para hoy'}</div>
     </div>
 
-    <p class="mf-lead">Toque un área para ver los temas propuestos:</p>
+    ${AREAS.length > 1 ? `
+    <p class="mf-lead">Toque un área para ver sus misiones:</p>
     <div class="mf-chips" id="mf-chips">
-      ${MF_AREAS.map(x => `
+      ${AREAS.map(x => `
         <button class="mf-chip ${x.k === a.k ? 'mf-chip-on' : ''}" data-mfarea="${x.k}">${x.chip}</button>`).join('')}
-    </div>
+    </div>` : ''}
 
     <div class="mf-area">
       <div class="mf-area-t">${mfEsc(a.titulo)}</div>
       <p class="mf-area-s">${mfEsc(a.intro)}</p>
       ${a.herramienta ? `<p class="mf-area-h">🧰 Le sirve para: <strong>${mfEsc(a.herramienta)}</strong></p>` : ''}
-      ${a.temas.map(t => `
-        <div class="mf-tema ${t.url ? 'mf-tema-listo' : ''}">
+      ${a.temas.filter(t => t.url).map(t => `
+        <div class="mf-tema mf-tema-listo">
           <div class="mf-tema-top">
             <span class="mf-tema-t">${mfEsc(t.t)}</span>
-            <span class="mf-tema-badge ${t.url ? 'mf-badge-listo' : ''}">${t.url ? 'Disponible' : 'Pronto'}</span>
+            <span class="mf-tema-badge mf-badge-listo">Disponible</span>
           </div>
           <p class="mf-tema-s">${mfEsc(t.s)}</p>
-          ${t.url ? `<a class="mf-tema-btn" href="${mfEsc(t.url)}">Abrir la misión →</a>` : ''}
+          <a class="mf-tema-btn" href="${mfEsc(t.url)}">Abrir la misión →</a>
         </div>`).join('')}
     </div>
 
     <p class="mf-pie">💡 ¿Le falta un tema? Es su plataforma: anote lo que necesita aprender y
-      dígalo — estas misiones se construyen con lo que el aula real pide, no con lo que se
+      dígalo: estas misiones se construyen con lo que el aula real pide, no con lo que se
       supone que un maestro debería saber.</p>`;
 
   cont.querySelectorAll('[data-mfarea]').forEach(b =>
