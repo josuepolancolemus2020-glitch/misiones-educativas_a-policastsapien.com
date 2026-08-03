@@ -1277,6 +1277,40 @@ function docenteMostrarRegistro() {
   }
 }
 
+/* El ojito solo se asoma cuando ya hay algo escrito: con el campo vacío no
+   habría nada que mirar y le quitaría el sitio al texto guía del campo,
+   que en un teléfono angosto ya va justo. */
+function docenteClaveOjito(inp) {
+  const wrap = inp && inp.closest && inp.closest('.doc-clave-wrap');
+  if (wrap) wrap.classList.toggle('doc-clave-llena', !!inp.value);
+}
+
+/* Mirar la contraseña antes de entrar.
+   El maestro la escribe en el teclado del teléfono, con prisa y muchas
+   veces con el sol encima: los puntitos no dejan ver si el dedo pegó dos
+   letras o si quedó activada la mayúscula. Sin poder mirarla, lee «correo
+   o contraseña incorrectos», se convence de que perdió la cuenta y abre
+   otra — y su aula termina partida en dos.
+   Arranca tapada, y el botón dice en PALABRAS lo que va a pasar: el ojito
+   solo no lo lee todo el mundo. */
+function docenteVerClave(id, btn) {
+  const inp = document.getElementById(id);
+  if (!inp) return;
+  const destapar = inp.type === 'password';
+  inp.type = destapar ? 'text' : 'password';
+  if (btn) {
+    btn.textContent = destapar ? '🙈 Ocultar' : '👁 Ver';
+    btn.setAttribute('aria-pressed', destapar ? 'true' : 'false');
+  }
+  // Quien toca el ojito estaba escribiendo: el foco vuelve al campo y el
+  // cursor al final, para que siga escribiendo sin volver a tocar nada.
+  try {
+    const n = inp.value.length;
+    inp.focus({ preventScroll: true });
+    inp.setSelectionRange(n, n);
+  } catch (_) {}
+}
+
 async function docenteRecuperar() {
   const correo = (document.getElementById('doc-rec-correo')?.value || '').trim().toLowerCase();
   const clave  = (document.getElementById('doc-rec-clave')?.value || '');
@@ -1344,8 +1378,12 @@ function renderProfile() {
           <input id="doc-rec-correo" class="pa-inp-field doc-inp" maxlength="100" autocomplete="email" type="email"
                  placeholder="El correo con que te registraste">
           <label class="doc-lbl" for="doc-rec-clave">🔒 Tu contraseña</label>
-          <input id="doc-rec-clave" class="pa-inp-field doc-inp" type="password" maxlength="40" autocomplete="current-password"
-                 placeholder="La contraseña que elegiste">
+          <div class="doc-clave-wrap">
+            <input id="doc-rec-clave" class="pa-inp-field doc-inp" type="password" maxlength="40" autocomplete="current-password"
+                   placeholder="La contraseña que elegiste" oninput="docenteClaveOjito(this)">
+            <button class="doc-ver-clave" aria-pressed="false" aria-controls="doc-rec-clave"
+                    onclick="docenteVerClave('doc-rec-clave', this)">👁 Ver</button>
+          </div>
           <button class="doc-cta doc-cta-entrar" onclick="docenteRecuperar()">
             <span class="doc-cta-t">🚪 Entrar a mi aula</span>
           </button>
@@ -1368,8 +1406,12 @@ function renderProfile() {
           <p class="doc-campo-hint">Nombre y apellidos: es el que tus alumnos escribirán para que te llegue su avance.</p>
           <input id="doc-correo" class="pa-inp-field doc-inp" maxlength="100" autocomplete="email" type="email"
                  placeholder="Correo electrónico *">
-          <input id="doc-clave" class="pa-inp-field doc-inp" maxlength="40" autocomplete="new-password" type="password"
-                 placeholder="Elige una contraseña fácil de recordar *">
+          <div class="doc-clave-wrap">
+            <input id="doc-clave" class="pa-inp-field doc-inp" maxlength="40" autocomplete="new-password" type="password"
+                   placeholder="Elige una contraseña fácil de recordar *" oninput="docenteClaveOjito(this)">
+            <button class="doc-ver-clave" aria-pressed="false" aria-controls="doc-clave"
+                    onclick="docenteVerClave('doc-clave', this)">👁 Ver</button>
+          </div>
           <input id="doc-escuela" class="pa-inp-field doc-inp" maxlength="120" autocomplete="off"
                  placeholder="Nombre de tu escuela">
           <div class="doc-tipo-row">
@@ -1399,6 +1441,9 @@ function renderProfile() {
         </div>
 
       </div>`;
+    // Si el navegador guarda la contraseña y la rellena él solo, no hay
+    // tecleo que avise: se revisa al pintar para que el ojito aparezca igual.
+    setTimeout(() => document.querySelectorAll('.doc-clave-wrap .doc-inp').forEach(i => docenteClaveOjito(i)), 300);
     return;
   }
 

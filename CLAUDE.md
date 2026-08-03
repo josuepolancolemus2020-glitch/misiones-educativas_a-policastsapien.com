@@ -10,6 +10,16 @@ sube a `main`**, que es de donde se publica el sitio
 (metas.policastsapien.com, GitHub Pages). Publicar es el final del trabajo,
 no un paso aparte.
 
+Si el trabajo se hizo en una rama aparte, la rama **no es el final**: se
+fusiona en `main` y se sube. Un cambio que se queda esperando permiso en
+una rama es un cambio que el maestro no tiene. Tampoco se pregunta «¿lo
+fusiono o abro un pull request?»: se publica.
+
+Se publica aunque falte probarlo en el teléfono real. La plataforma
+todavía tiene pocos usuarios y las pruebas finales se hacen **en línea,
+sobre el sitio publicado**; si algo sale torcido, se arregla con otro
+commit. Esperar cuesta más que corregir.
+
 Solo se para a preguntar si el cambio **borra datos del maestro o de las
 familias** (claves ya entregadas, listas, notas): ahí sí, primero se avisa.
 
