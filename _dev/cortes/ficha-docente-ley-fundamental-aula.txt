@@ -1,0 +1,16 @@
+# Nueve cortes = diez páginas. Cada línea es un trozo literal del HTML que debe
+# QUEDAR AL INICIO de una página. Se prefieren encabezados; cuando el reparto no
+# los permite (la ley se explica en bloques largos que no se parten), se ancla
+# en la caja que abre el bloque, que también empieza idea. Los anclajes van por
+# el texto de adentro, no por «<div class="caja">»: esa etiqueta se repite
+# quince veces en la ficha y el repaginador cortaría en la primera que
+# encontrara.
+<h2>Los diez artículos, primera parte</h2>
+<h2>1. Qué es esta ley y de dónde viene</h2>
+<b>Quién responde.</b>
+<b>Lo que le conviene guardar.</b>
+<b>El artículo que más se cita mal.</b>
+<b>Qué hace usted con esto.</b>
+<h3>De la gestión y de las normas</h3>
+<h3>B. Verdadero o falso</h3>
+<h2>Pauta de respuestas: ejercicios A y B</h2>

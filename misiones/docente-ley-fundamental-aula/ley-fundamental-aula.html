@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión del maestro · La Ley Fundamental de Educación en el aula</title>
+<meta name="description" content="Formación docente: qué le manda a usted, docente de grado, la Ley Fundamental de Educación. Jornada, planificación, evaluación y rendición de cuentas, artículo por artículo. Con simulacro de concurso y ficha de estudio de diez páginas.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/ley-fundamental-aula.css">
+</head>
+<body>
+
+<!-- Volver: index.html sin parámetros restaura la última vista guardada, que es
+     «Misiones del maestro» (switchView la guarda al entrar). -->
+<div class="xp-bar" role="status" aria-label="Progreso de la misión">
+  <a href="../../index.html" class="xp-back-btn" title="Volver a Misiones del maestro">
+    <span aria-hidden="true">←</span>
+    <img src="../../img/logo.png" alt="" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎓 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-num" id="xpNum">0</span>
+</div>
+
+<header class="hero">
+  <div class="main">
+    <span class="hero-badge">⚖️ Leyes educativas · Misión 2 de 6</span>
+    <h1>La Ley Fundamental de Educación en el aula</h1>
+    <p>La ley que rige su grado cabe en diez artículos que usted usa todos los días sin saber
+      su número: los doscientos días, la gratuidad, el currículo, los ciclos, la rendición de
+      cuentas. Aquí están con su texto, con lo que le exigen y con lo que le garantizan.
+      El maestro que puede citar el artículo deja de discutir de opiniones.</p>
+    <div class="hero-solo">👤 Esta misión es para usted, no para sus alumnos. Nadie más la ve.</div>
+  </div>
+</header>
+
+<nav class="nav" id="nav" aria-label="Secciones de la misión"></nav>
+
+<main class="main">
+
+  <!-- ══════════ 1. RECORRIDO POR ARTÍCULOS ══════════ -->
+  <section class="sec active" id="sec-articulos">
+    <div class="card">
+      <h2>📜 Diez artículos que le tocan a usted</h2>
+      <p>No es la ley entera: son los artículos que cambian lo que usted hace el lunes. Toque
+        cada uno: se abre debajo con lo que dice, con lo que la ley dice textualmente y con lo
+        que le deja a su aula.</p>
+      <div class="ar-lista" id="arLista"></div>
+      <div class="ar-nav">
+        <button class="btn btn-g" onclick="arMover(-1)">← Anterior</button>
+        <button class="btn" onclick="arMover(1)">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 2. APRENDE ══════════ -->
+  <section class="sec" id="sec-aprende">
+    <div class="card">
+      <h2>🧭 Cuatro cosas que la ley pone en sus manos</h2>
+      <p>La Ley Fundamental de Educación (Decreto 262-2011) se lee mejor si en vez de ir artículo
+        por artículo se pregunta qué le exige a usted. Son cuatro cosas, y las cuatro se preguntan
+        en un concurso.</p>
+
+      <h3>1. La jornada: el año no lo cierra el cansancio, lo cierra el calendario</h3>
+      <p>El artículo 16 dice que el año lectivo consta de al menos doscientos días de clase y que
+        no puede darse por concluido antes de completarlos. El mismo artículo le pone contador:
+        las Direcciones Municipales o Distritales, junto con los Consejos de Desarrollo del Centro
+        Educativo, informan cada mes cuántos días se trabajaron, para aplicar los correctivos y,
+        si toca, las sanciones del Estatuto del Docente Hondureño.</p>
+      <div class="aula">🎯 <b>En su aula:</b> por eso le piden el reporte mensual de días y por eso
+        los días perdidos se reponen. Guarde su registro de asistencia y de días trabajados: es
+        el documento con el que usted demuestra que cumplió cuando el centro no cumplió.</div>
+
+      <h3>2. La planificación: usted no inventa el contenido, lo baja</h3>
+      <p>El currículo es la normativa básica del Sistema Nacional de Educación y define las
+        competencias, los objetivos, los contenidos y los criterios metodológicos y de evaluación
+        que el educando debe alcanzar en cada nivel. Eso significa que su planificación no arranca
+        de una idea suya: arranca del currículo nacional y se aterriza en el Proyecto Educativo de
+        Centro, que cada centro elabora con su comunidad educativa.</p>
+      <div class="dato">📌 El Reglamento General de la ley (Acuerdo 1358-SE-2014) pide que el
+        Proyecto Educativo de Centro precise los principios y fines del centro, los recursos
+        docentes y didácticos, la estrategia pedagógica, la normativa para docentes y educandos y
+        el sistema de gestión, y que sea <b>concreto, factible y evaluable</b>. Un PEC que no se
+        puede evaluar no cumple el reglamento.</div>
+
+      <h3>3. La evaluación: los criterios vienen del currículo</h3>
+      <p>La ley no fija porcentajes de examen ni de acumulativo: eso lo mueve la Secretaría cada
+        año por acuerdo o por circular, y por eso cambia. Lo que sí es fijo es de dónde salen los
+        criterios de evaluación (del currículo) y qué se evalúa (competencias, no simpatías).
+        Cuando alguien le discuta una nota, la pregunta no es «cuánto le puso», es «con qué
+        criterio, escrito dónde, avisado cuándo».</p>
+      <div class="aula">🎯 <b>En su aula:</b> anote el criterio antes de calificar y déjelo a la
+        vista del alumno. Un criterio escrito de antemano defiende su nota; uno explicado después
+        parece inventado, aunque sea justo.</div>
+
+      <h3>4. La rendición de cuentas: no es desconfianza, es el artículo 6</h3>
+      <p>La ley declara la educación una inversión social pública y obliga a quien la administra a
+        rendir cuentas a la nación por los resultados, sujeto además a auditoría social y a la
+        fiscalización del Estado. La auditoría social la ejercen las asociaciones de padres y los
+        consejos de desarrollo educativo del centro y del municipio.</p>
+      <div class="dato">📌 <b>Regla de estudio:</b> si en un examen le preguntan por una obligación
+        del docente y duda, mire cuál de estas cuatro toca: tiempo, currículo, evaluación o
+        cuentas. Casi siempre acierta el sentido aunque falle el número del artículo.</div>
+    </div>
+
+    <div class="card">
+      <h2>📐 Dónde está su grado dentro del sistema</h2>
+      <p>La ley de 2012 rearmó los niveles y les puso edades de referencia. Esto es lo mínimo que
+        un docente debe poder decir sin buscarlo:</p>
+      <ul>
+        <li><b>Educación prebásica (art. 21):</b> gratuita y obligatoria, para edades de referencia
+          de cuatro, cinco y seis años.</li>
+        <li><b>Educación básica (art. 22):</b> gratuita y obligatoria, <b>nueve años</b> en
+          <b>tres ciclos secuenciales y continuos de tres años</b> cada uno, con edades de
+          referencia de seis a catorce años. Su aula está en uno de esos ciclos.</li>
+        <li><b>Educación media (art. 23):</b> gratuita y obligatoria, edades de referencia de
+          quince a diecisiete años, para incorporarse al trabajo o seguir estudios superiores.</li>
+      </ul>
+      <div class="dato">📌 Se llaman <b>edades de referencia</b>, no edades obligatorias. El alumno
+        de doce años en cuarto grado no está fuera de la ley: está en extraedad, y eso se atiende,
+        no se expulsa.</div>
+      <div class="aula">🎯 <b>En su aula:</b> en documentos oficiales se escribe «educación básica»
+        y se indica el ciclo, no «primaria», que es el nombre de la Ley Orgánica de 1966, derogada.
+        Un acta con el nombre viejo se devuelve.</div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3. TARJETAS ══════════ -->
+  <section class="sec" id="sec-tarjetas">
+    <div class="card">
+      <h2>🃏 Tarjetas de repaso</h2>
+      <p>Toque la tarjeta para voltearla. Van en el orden en que se preguntan.</p>
+      <div class="fc" id="fc" onclick="fcVoltea()">
+        <div class="fc-in">
+          <div class="fc-cara fc-front" id="fcQ"></div>
+          <div class="fc-cara fc-back"><div id="fcA"></div></div>
+        </div>
+      </div>
+      <div class="btn-fila">
+        <button class="btn btn-g" onclick="fcPasa(-1)">← Anterior</button>
+        <button class="btn" onclick="fcPasa(1)">Siguiente →</button>
+        <span class="q-num" id="fcNum" style="align-self:center"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Memorama de artículos</h2>
+      <p>Empareje cada artículo con lo que manda. Seis parejas.</p>
+      <div class="memo-grid" id="memoGrid"></div>
+      <div class="btn-fila"><button class="btn btn-g" onclick="memoInit()">🔄 Barajar de nuevo</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 4. QUIZ ══════════ -->
+  <section class="sec" id="sec-quiz">
+    <div class="card">
+      <h2>❓ Compruebe lo que quedó</h2>
+      <p>Nueve preguntas con explicación inmediata. Aquí no se guarda nota: es para usted.</p>
+      <div id="quiz"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 5. CLASIFICA ══════════ -->
+  <section class="sec" id="sec-clasifica">
+    <div class="card">
+      <h2>🗂️ Cada mandato en su tema</h2>
+      <p>Toque una tarjeta y luego la caja donde va. Si se equivoca, vuelva a tocarla para
+        devolverla al banco.</p>
+      <div class="cl-banco" id="clBanco"></div>
+      <div class="cl-cajas" id="clCajas"></div>
+      <div class="btn-fila">
+        <button class="btn" onclick="clRevisa()">✔️ Revisar</button>
+        <button class="btn btn-g" onclick="clInit()">🔄 Empezar de nuevo</button>
+      </div>
+      <div class="resu" id="clResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 6. COMPLETA ══════════ -->
+  <section class="sec" id="sec-completa">
+    <div class="card">
+      <h2>✍️ Complete la oración</h2>
+      <p>Escriba la palabra que falta. Se aceptan mayúsculas, minúsculas y tildes indistintamente.</p>
+      <div id="completa"></div>
+      <div class="btn-fila"><button class="btn" onclick="cpRevisa()">✔️ Revisar todo</button></div>
+      <div class="resu" id="cpResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 7. RETO ══════════ -->
+  <section class="sec" id="sec-reto">
+    <div class="card">
+      <h2>⏱️ Reto: ponga los artículos en orden</h2>
+      <p>Le damos lo que manda cada artículo, sin el número. Tóquelos del artículo más bajo al más
+        alto. Tiene noventa segundos.</p>
+      <div class="btn-fila">
+        <button class="btn" id="retoBtn" onclick="retoInit()">▶️ Empezar</button>
+        <span class="reto-reloj" id="retoReloj">1:30</span>
+      </div>
+      <div class="reto-lista" id="retoLista"></div>
+      <div class="resu" id="retoResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 8. SOPA ══════════ -->
+  <section class="sec" id="sec-sopa">
+    <div class="card">
+      <h2>🔤 Sopa de letras</h2>
+      <p>Ocho palabras de la misión, en todas las direcciones. Toque la primera y la última letra
+        de cada palabra.</p>
+      <div class="sopa-grid" id="sopaGrid"></div>
+      <div class="sopa-pal" id="sopaPal"></div>
+      <div class="btn-fila">
+        <button class="btn btn-amb" onclick="sopaLinterna()">🔦 Linterna (cuesta 2 XP)</button>
+        <button class="btn btn-g" onclick="sopaInit()">🔄 Otra sopa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 9. CASOS ══════════ -->
+  <section class="sec" id="sec-casos">
+    <div class="card">
+      <h2>🏫 Cinco situaciones de esta semana</h2>
+      <p>No son casos de manual: son cosas que pasan en un centro hondureño y que se resuelven
+        distinto según lo que usted sepa de la norma. Piense su respuesta antes de abrir la
+        sugerencia.</p>
+
+      <div class="caso">
+        <div class="caso-t">Caso 1 · «Son cincuenta lempiras por alumno»</div>
+        <p>En la primera reunión le indican que pida cincuenta lempiras por alumno para pintura y
+          material. Usted sabe que el centro los necesita de verdad. ¿Los pide?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">No de esa manera. El artículo 7 de la Ley Fundamental de Educación
+          declara gratuita la educación que se ofrece en establecimientos oficiales y prohíbe
+          exigir aportaciones económicas o en especie de parte de docentes o autoridades
+          educativas, con sanción conforme al reglamento. La palabra que hace la diferencia es
+          <b>exigir</b>: un aporte voluntario, acordado en asamblea, con acta, con recibo y con
+          rendición pública de en qué se gastó, es otra cosa que una cuota que el maestro cobra en
+          el aula. Y quien queda expuesto si se cobra mal no es el director: es usted, que tuvo el
+          dinero en la mano.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 2 · El año que quieren cerrar antes</div>
+        <p>Entre paros, lluvias y días sin agua, el centro lleva ciento ochenta días. En noviembre
+          se comenta que «este año se cierra ya». ¿Qué le corresponde a usted?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Dejar constancia. El artículo 16 dice que el año lectivo consta de
+          al menos doscientos días de clase y que no puede darse por concluido hasta completarlos.
+          Usted no decide el calendario del centro, pero sí decide tener por escrito cuántos días
+          trabajó su grado, entregado mes a mes. Ese mismo artículo manda a la Dirección Municipal
+          o Distrital, junto con el Consejo de Desarrollo del Centro, informar cada mes los días
+          trabajados, y prevé correctivos y sanciones del Estatuto del Docente. Cuando eso se
+          revisa, se revisa por centro y por docente.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 3 · «Mi hijo entra a primer grado a los cinco»</div>
+        <p>Una madre quiere matricular en primer grado a un niño de cinco años porque «ya lee», y
+          otra le dice que no manda a la niña a prebásica porque «eso es solo jugar». ¿Qué les
+          explica?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Que la ley da edades de referencia y que la prebásica no es
+          opcional. El artículo 21 fija la prebásica como gratuita y obligatoria, con edades de
+          referencia de cuatro, cinco y seis años, y el artículo 22 pone la básica de seis a
+          catorce. Además, el artículo 8 obliga a los padres a procurar que sus hijos cursen desde
+          un año de prebásica hasta la educación media. A la primera madre se le explica la edad de
+          referencia; a la segunda, que ese año de prebásica es obligación suya, no una cortesía
+          del centro. A las dos, en tono de quien informa, no de quien regaña.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 4 · El colega que planifica de memoria</div>
+        <p>Un compañero le dice que él no usa el currículo ni el Proyecto Educativo de Centro:
+          después de veinte años «ya sabe lo que hay que dar». ¿Es un problema real o papeleo?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Es real, y le va a costar en dos momentos. El currículo es la
+          normativa básica del sistema y es de donde salen las competencias, los contenidos y los
+          criterios de evaluación de cada nivel; el Proyecto Educativo de Centro es el instrumento
+          que el reglamento manda elaborar con la comunidad educativa y evaluar. Sin eso, el día
+          que un padre reclame una nota o que llegue una supervisión, no hay con qué sostener lo
+          que se hizo. Veinte años de experiencia se defienden solos cuando están escritos en la
+          planificación; sin escribirlos, son la palabra de uno contra la de otro.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 5 · «Y usted, ¿en qué gastó lo del kiosco?»</div>
+        <p>En plena reunión, un padre pregunta en voz alta en qué se gastó el dinero recogido en el
+          grado. Usted siente que le están faltando el respeto. ¿Cómo responde?</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Contestando con papeles, no con orgullo herido. El artículo 6
+          declara la educación una inversión social pública y obliga a quien la administra a rendir
+          cuentas, sujeto a auditoría social. Esa auditoría social la ejercen precisamente las
+          asociaciones de padres y los consejos de desarrollo del centro: ese padre está usando un
+          derecho, no atacándolo a usted. La respuesta profesional es un cuadro de ingresos y
+          gastos con recibos, leído en voz alta y dejado en acta. El maestro que rinde cuentas
+          antes de que se las pidan no vuelve a pasar por esta escena.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 10. SIMULACRO DE CONCURSO ══════════ -->
+  <section class="sec" id="sec-concurso">
+    <div class="card">
+      <h2>🎯 Simulacro de concurso</h2>
+      <p>Veinte preguntas con el formato de las pruebas de conocimientos del concurso docente:
+        una sola respuesta correcta y sin pistas. Al final se califica sobre cien y le dice qué
+        repasar. En el concurso real el promedio final exigido no baja de setenta y cinco por
+        ciento, así que ese es el listón de aquí.</p>
+      <div id="concurso"></div>
+      <div class="btn-fila">
+        <button class="btn btn-ok" onclick="cnCalifica()">🧮 Calificar</button>
+        <button class="btn btn-g" onclick="cnInit()">🔄 Otro intento</button>
+      </div>
+      <div class="resu" id="cnResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 11. FICHA, RECURSOS Y CONSTANCIA ══════════ -->
+  <section class="sec" id="sec-cierre">
+    <div class="card">
+      <h2>🖨️ Ficha de estudio, diez páginas</h2>
+      <p>La misma ley en papel, para estudiar sin batería y para llevar al concurso: los artículos
+        con su texto, la estructura del sistema, el vocabulario que exigen los exámenes, ejercicios
+        para lápiz y la pauta con todas las respuestas al final.</p>
+      <div class="btn-fila">
+        <a class="btn" href="../../fichas/ficha-docente-ley-fundamental-aula.html">📄 Abrir la ficha</a>
+      </div>
+      <div class="dato">📌 Se imprime en diez hojas tamaño carta, a doble cara son cinco. La pauta va
+        en las últimas páginas: si la va a usar con colegas, imprima sin ellas y repártalas después.</div>
+    </div>
+
+    <div class="card">
+      <h2>📚 De dónde salió todo esto</h2>
+      <p>Estudie siempre contra el documento, no contra un resumen (ni siquiera este). Estas son
+        las fuentes que rigen y dónde se consiguen:</p>
+      <div class="rec-it"><b>Ley Fundamental de Educación</b>, Decreto 262-2011, publicado en La
+        Gaceta n.º 32,754 del 22 de febrero de 2012. Es el texto que se cita en toda esta misión.</div>
+      <div class="rec-it"><b>Reglamento General de la Ley Fundamental de Educación</b>, Acuerdo
+        1358-SE-2014, La Gaceta n.º 33,533 del 17 de septiembre de 2014. Desarrolla la ley: aquí
+        están el Proyecto Educativo de Centro y los consejos de desarrollo educativo.</div>
+      <div class="rec-it"><b>Los reglamentos hermanos de 2014</b>, publicados el mismo día: Centros
+        Educativos (Acuerdo 1361-SE-2014), Nivel de Educación Básica (Acuerdo 1362-SE-2014),
+        Instituciones de Educación No Gubernamentales (Acuerdo 1363-SE-2014) y Educación en Casa
+        (Acuerdo 1367-SE-2014).</div>
+      <div class="rec-it"><b>Constitución de la República (1982)</b>, artículos 151 y siguientes.
+        La norma de la que cuelga la Ley Fundamental: si un acuerdo la contradice, manda la
+        Constitución.</div>
+      <div class="rec-it"><b>Estatuto del Docente Hondureño</b>, Decreto 136-97, y su Reglamento
+        General, Acuerdo 0760-SE-99. Es la norma a la que remite el artículo 16 cuando habla de
+        correctivos y sanciones por los días no trabajados.</div>
+      <div class="rec-it"><b>Código de Ética para el Docente</b>, Acuerdo 0401-SE-2019.</div>
+      <div class="rec-it"><b>Dónde bajarlos:</b> portal de leyes de la Secretaría de Educación
+        (se.gob.hn) y biblioteca del Tribunal Superior de Cuentas (tsc.gob.hn). Los dos son
+        gratuitos y publican el texto oficial.</div>
+      <div class="fuente">Números de decreto, de acuerdo y de La Gaceta verificados contra los
+        portales oficiales en agosto de 2026. Los porcentajes de evaluación (examen y acumulativo)
+        no se citan aquí a propósito: no los fija la ley, los mueve la Secretaría cada año, y hay
+        que mirarlos en el acuerdo o la circular vigente.</div>
+    </div>
+
+    <div class="card const" id="constancia">
+      <div style="font-size:38px">🎓</div>
+      <h3>Constancia de estudio</h3>
+      <p>Escriba su nombre para cerrar la misión. Queda guardada en este teléfono.</p>
+      <input id="constNombre" placeholder="Su nombre completo" maxlength="60" oninput="guardar()">
+      <p id="constTxt" style="font-size:14px;color:var(--gris)"></p>
+      <div class="logros" id="logros"></div>
+    </div>
+  </section>
+
+  <p class="pie">M.E.T.A.S · Misiones del maestro · Formación docente ·
+    <a href="../../index.html">Volver a mi Zona Docente</a></p>
+</main>
+
+<!-- Panel de logros (lo abre el botón del pie) -->
+<div class="ach-fondo" id="achFondo" onclick="if (event.target === this) toggleAchPanel()">
+  <div class="ach-panel" role="dialog" aria-label="Logros de la misión">
+    <h3>🏅 Sus logros en esta misión</h3>
+    <div class="ach-sub" id="achSub"></div>
+    <div id="achLista"></div>
+    <div class="btn-fila"><button class="btn" onclick="toggleAchPanel()">Cerrar</button></div>
+  </div>
+</div>
+
+<footer class="credits">
+  <p class="fam">🏛️ Proyecto Formación e Investigación Docente M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Docentes <strong>Josué E. Polanco</strong> y
+    <strong>Evelyn S. Castellanos</strong>, investigadores en acción. Este material se elabora
+    con el apoyo de las mejores herramientas de investigación profunda («Deep Research»)
+    disponibles en la actualidad. Consulte siempre las fuentes citadas y, si encuentra un error,
+    agradeceremos que nos lo reporte.</p>
+  <div class="mot">«Cuanto mejor preparado esté, mejores serán sus decisiones. Al maestro que
+    estudia no se le impone: se le consulta.» 🎓</div>
+  <div class="cred-contact">
+    <span>📧 <a href="mailto:josuepolancolemus2020@gmail.com">josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank" rel="noopener">policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/ley-fundamental-aula.js"></script>
+<!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
+     «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
+     .sec.active y go(). -->
+<script src="../../js/metas-presentacion.js"></script>
+</body>
+</html>
