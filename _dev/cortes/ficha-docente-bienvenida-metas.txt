@@ -1,0 +1,22 @@
+# Nueve cortes = diez páginas. Cada línea es un trozo literal del HTML que debe
+# QUEDAR AL INICIO de una página.
+#
+# Esta ficha se reparte casi toda por TABLAS, porque el mapa del ecosistema se
+# cuenta en tablas. Para que una tabla pueda ser punto de corte, su fila de
+# encabezado va escrita EN LA MISMA LÍNEA que el <table>: así hay una línea que
+# empieza justo donde empieza el bloque. Si se separan, el anclaje caería dentro
+# de la tabla y repagina-ficha.js partiría la etiqueta (solo sabe retroceder
+# hasta un <div> sin cerrar, no hasta un <table>).
+#
+# Por eso la segunda tabla de herramientas lleva pegada además su primera fila:
+# su encabezado es idéntico al de la primera y sin esa fila el anclaje habría
+# caído en la tabla equivocada.
+<table><tr><th>Pieza</th><th>Qué es</th><th>Dónde se toca</th></tr>
+<table class="t-partida"><tr><th style="width:33%">Ruta</th>
+<table><tr><th>Herramienta</th><th>Qué resuelve</th></tr><tr><td><b>Campeonísimo</b></td>
+<b>Cómo se entregan las claves, y por qué así.</b>
+<b>Y se sincroniza solo entre sus equipos.</b>
+<h2>9. Su primera semana, día por día</h2>
+<table><tr><th>Le preguntan</th><th>Usted contesta</th></tr>
+<table><tr><th>N.º</th><th>Lo que se pregunta</th><th>Respuesta</th></tr>
+<div class="caso-t">Situación 1</div>

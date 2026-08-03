@@ -83,6 +83,15 @@ table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12.5p
 th, td { border: 1px solid var(--linea); padding: 6px 8px; text-align: left; vertical-align: top; }
 th { background: var(--pri-suave); font-weight: 800; }
 
+/* Una tabla larga que hubo que PARTIR EN DOS para que las diez páginas cuadren
+   (los bloques no se parten solos: una tabla de 110 mm no se reparte, dos de 55
+   sí). Las dos mitades quedan pegadas, y con el ancho automático cada una
+   reparte sus columnas a su manera: parecen dos tablas puestas por error. Con
+   .t-partida manda la primera fila, así que basta con darle el mismo ancho a
+   los encabezados de las dos mitades y se leen como lo que son, una sola tabla
+   continuada. */
+table.t-partida { table-layout: fixed; }
+
 .raya-resp { border-bottom: 1px solid var(--linea); height: 18px; margin: 8px 0; }
 .lineas-4 .raya-resp:last-child { margin-bottom: 14px; }
 

@@ -73,6 +73,18 @@ En este orden, cada una en un `<section class="sec">` con `.card` hijas:
     repasar. Es lo que más le interesa al maestro: no se omite.
 11. Ficha, recursos y constancia.
 
+⚠️ **La única excepción admitida a la sección 10, y cómo se hace.** Si el tema
+**no cae en ningún concurso** (es el caso del área «Dominar M.E.T.A.S»: de la
+propia plataforma no pregunta nadie), llamarlo «simulacro» sería el primer dato
+falso de la misión. Entonces se conserva la mecánica entera (veinte preguntas,
+una correcta, sin retroalimentación hasta calificar, listón en 75, letras
+repartidas) y se le cambia el propósito. El precedente es
+`misiones/docente-bienvenida-metas/`: ahí es un **diagnóstico de uso** con las
+preguntas repartidas en cinco bloques, y al calificar no dice solo la nota, dice
+qué bloque quedó flojo y por dónde empezar. **La excepción se consulta con el
+autor antes de escribirla**, y no vale para las misiones de leyes: ahí el
+simulacro es justo lo que el maestro viene a buscar.
+
 ---
 
 ## 3. Contratos técnicos que NO se tocan
