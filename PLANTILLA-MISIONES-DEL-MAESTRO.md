@@ -115,6 +115,15 @@ Es material con el que un maestro va a un concurso: un dato malo le cuesta caro.
   documento oficial o su ficha en un portal del Estado (se.gob.hn, tsc.gob.hn,
   La Gaceta, RAE-DPEJ). **Nunca de memoria.**
 - Lo que no se pudo verificar, no se afirma.
+- ⚠️ **Buscar no es leer.** Un extracto de buscador NO acredita un número de
+  artículo: los resúmenes de Studocu, Scribd, SlideShare y las presentaciones de
+  estudiantes citan mal los artículos y a veces reproducen el proyecto de ley en
+  vez del texto aprobado. Y cuidado con las corroboraciones falsas: oas.org y
+  siteal.iiep.unesco.org alojan el mismo documento, así que coincidir no prueba
+  nada. **Si la misión va a citar artículos, hay que tener el documento
+  delante.** Cuando el entorno no alcance los portales del Estado, la salida es
+  meter el PDF al repositorio (`_dev/leyes/`) y leerlo. Cómo se descubrió esto y
+  qué cuesta saltárselo: `INVESTIGACION-ESTATUTO-DOCENTE.md`.
 - La misión y la ficha llevan la lista de fuentes y la fecha de verificación.
 - Si se corrige un dato, se corrige en las **dos**: se estudian juntas.
 
