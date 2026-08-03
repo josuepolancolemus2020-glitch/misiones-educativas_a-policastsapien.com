@@ -6,16 +6,15 @@
    dentro de «Herramientas del aula», que se oculta sin sesión, y
    además vuelven a comprobar la cuenta al abrirse).
 
-   QUÉ SE MUESTRA: solo las misiones que YA se pueden abrir. La lista
-   de abajo es el temario completo y sirve de plan de trabajo, pero al
-   maestro no se le enseñan las que faltan: una pantalla llena de
-   «Pronto» se lee como una plataforma vacía, y quien abrió el teléfono
-   para aprender algo hoy se iba con las manos vacías. Las áreas sin
-   ninguna misión tampoco aparecen.
+   QUÉ SE MUESTRA: el TEMARIO COMPLETO, con las misiones que ya se
+   pueden abrir y las que vienen. Las que faltan salen marcadas
+   «Pronto» y eso se queda así a propósito (decisión del autor): le
+   sirve de plan de trabajo a la vista, y al maestro le dice qué viene,
+   así vuelve a mirar. Ningún tema promete nada que no vaya a existir.
 
    ► Para publicar una misión: agregarle
-     `url: 'misiones/…/archivo.html'` a ese tema. Aparece sola, con su
-     botón, y su área vuelve a la lista.
+     `url: 'misiones/…/archivo.html'` a ese tema. La tarjeta pasa sola
+     de «Pronto» a un botón que abre la misión.
 
    ► Las áreas están amarradas a las herramientas del aula
      (`herramienta`): así el maestro entiende que la formación no es
@@ -171,25 +170,12 @@ function mfRender() {
       </div>`;
     return;
   }
-  /* Solo se enseña lo que YA se puede abrir. El temario completo sigue arriba,
-     en MF_AREAS, como plan de trabajo: al terminar una misión se le pone su
-     `url` y aparece sola. Pero al maestro no se le muestran promesas: una
-     pantalla llena de «Pronto» se lee como una plataforma vacía, y la que
-     abrió el teléfono para aprender algo hoy se va con las manos vacías. */
-  const AREAS = MF_AREAS.filter(x => x.temas.some(t => t.url));
-  const a = AREAS.find(x => x.k === _mfArea) || AREAS[0];
-  const listos = AREAS.reduce((n, x) => n + x.temas.filter(t => t.url).length, 0);
-
-  if (!a) {
-    cont.innerHTML = `
-      <div class="mf-hero">
-        <div class="mf-hero-ic">🎓</div>
-        <div class="mf-hero-t">Aquí el que aprende es usted</div>
-        <div class="mf-hero-s">Las primeras misiones de formación docente están en camino.
-          Vuelva pronto: aparecerán aquí sin que tenga que hacer nada.</div>
-      </div>`;
-    return;
-  }
+  /* El temario se muestra COMPLETO, con sus «Pronto». No es relleno: al autor
+     le sirve de plan de trabajo a la vista, y al maestro le dice qué viene,
+     así vuelve a mirar. Las que ya se pueden abrir se distinguen solas por su
+     etiqueta «Disponible» y su botón. */
+  const a = MF_AREAS.find(x => x.k === _mfArea) || MF_AREAS[0];
+  const listos = MF_AREAS.reduce((n, x) => n + x.temas.filter(t => t.url).length, 0);
 
   cont.innerHTML = `
     <div class="mf-hero">
@@ -198,28 +184,30 @@ function mfRender() {
       <div class="mf-hero-s">Misiones cortas para su propia actualización: estrategias, leyes
         educativas y lo que necesita para sacarle todo a las herramientas de su aula.
         <strong>Solo las ve el maestro registrado.</strong></div>
-      <div class="mf-hero-badge">${listos === 1 ? '1 misión lista para hoy' : listos + ' misiones listas para hoy'}</div>
+      <div class="mf-hero-badge">${listos
+        ? (listos === 1 ? '1 misión lista para hoy' : listos + ' misiones listas para hoy') +
+          ' · el resto viene en camino'
+        : '🚧 En construcción · este es el temario que viene'}</div>
     </div>
 
-    ${AREAS.length > 1 ? `
-    <p class="mf-lead">Toque un área para ver sus misiones:</p>
+    <p class="mf-lead">Toque un área para ver sus temas:</p>
     <div class="mf-chips" id="mf-chips">
-      ${AREAS.map(x => `
+      ${MF_AREAS.map(x => `
         <button class="mf-chip ${x.k === a.k ? 'mf-chip-on' : ''}" data-mfarea="${x.k}">${x.chip}</button>`).join('')}
-    </div>` : ''}
+    </div>
 
     <div class="mf-area">
       <div class="mf-area-t">${mfEsc(a.titulo)}</div>
       <p class="mf-area-s">${mfEsc(a.intro)}</p>
       ${a.herramienta ? `<p class="mf-area-h">🧰 Le sirve para: <strong>${mfEsc(a.herramienta)}</strong></p>` : ''}
-      ${a.temas.filter(t => t.url).map(t => `
-        <div class="mf-tema mf-tema-listo">
+      ${a.temas.map(t => `
+        <div class="mf-tema ${t.url ? 'mf-tema-listo' : ''}">
           <div class="mf-tema-top">
             <span class="mf-tema-t">${mfEsc(t.t)}</span>
-            <span class="mf-tema-badge mf-badge-listo">Disponible</span>
+            <span class="mf-tema-badge ${t.url ? 'mf-badge-listo' : ''}">${t.url ? 'Disponible' : 'Pronto'}</span>
           </div>
           <p class="mf-tema-s">${mfEsc(t.s)}</p>
-          <a class="mf-tema-btn" href="${mfEsc(t.url)}">Abrir la misión →</a>
+          ${t.url ? `<a class="mf-tema-btn" href="${mfEsc(t.url)}">Abrir la misión →</a>` : ''}
         </div>`).join('')}
     </div>
 
