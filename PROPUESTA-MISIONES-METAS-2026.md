@@ -259,3 +259,56 @@ luz.
    no se promete nada que la plataforma no haga hoy. Una misión de marca que exagera
    se descubre en la primera semana de uso, y entonces se pierde al maestro para
    siempre.
+
+---
+
+## 9. Decidido: se escribe la 1 primero
+
+El autor escogió el tema **1, «Bienvenido: qué es M.E.T.A.S y por qué existe»**, y
+pidió empezarlo en una sesión nueva. Esto es lo que hace falta saber para arrancar
+sin releer todo.
+
+### Prompt de arranque (copiar y pegar en una sesión nueva)
+
+```
+Sigue PLANTILLA-MISIONES-DEL-MAESTRO.
+
+Nueva misión del maestro:
+- Área: metas
+- Tema: Bienvenido: qué es M.E.T.A.S y por qué existe
+- Lee primero PROPUESTA-MISIONES-METAS-2026.md (apartados 2, 5, 6 y 9).
+- Referencia: misiones/docente-derechos-ninez/ y
+  fichas/ficha-docente-derechos-ninez.html (NO releas otras misiones)
+
+Al terminar: commit y push a main, como manda CLAUDE.md.
+```
+
+### Lo que esta misión tiene de distinto
+
+**No hay documento legal que leer.** Sus datos salen del propio proyecto, así que la
+norma «buscar no es leer» se traduce aquí en otra cosa: **contar de nuevo en el
+repositorio** el día que se escriba, porque estas cifras envejecen solas.
+
+| Dato | Dónde se cuenta |
+|---|---|
+| Misiones, rutas y materias | `js/data/misiones.js` y `MANUAL-MAESTRO.md` |
+| Herramientas del aula | la rejilla `zd-grid` de `index.html` |
+| Qué ve la familia | `padres.html` y `MANUAL-PADRE.md` |
+| Categorías del Plan de Acción | `PA_CATS` en `js/tools/plan-accion.js` |
+| Cómo se capacita en 60 minutos | `kit-capacitacion.html` |
+
+**El formato explorable sugerido** es un recorrido por las cuatro piezas del
+ecosistema (apartado 6), no por artículos ni por trámites: es lo que distingue esta
+misión de las cuatro de leyes.
+
+**El simulacro de concurso no encaja aquí.** Las once secciones de la plantilla se
+mantienen, pero la décima no puede ser un simulacro de nombramiento: de esto no
+pregunta ningún concurso. Se propone sustituirla, con el mismo formato de veinte
+preguntas y el mismo listón de 75, por un **«¿Ya le está sacando todo?»**: un
+diagnóstico de uso que al final le dice al maestro qué parte de la plataforma no ha
+tocado y por dónde empezar. Es la misma mecánica y el mismo código; cambia el
+propósito. **Esta desviación de la plantilla hay que confirmarla con el autor antes
+de escribirla.**
+
+**El aviso de tono del punto 4 vale doble en esta misión**, que es la de marca. Si
+exagera, se descubre en la primera semana de uso.

@@ -16,13 +16,19 @@ Esta plantilla es para las misiones **del maestro**. Las del **alumno** siguen
 Sigue PLANTILLA-MISIONES-DEL-MAESTRO.
 
 Nueva misión del maestro:
-- Área: (leyes / estrategias / datos / gestión / familia / tecnología)
+- Área: (metas / leyes / estrategias / datos / gestión / familia / tecnología)
 - Tema: ______
-- Referencia: misiones/docente-historia-leyes-educativas/ y
-  fichas/ficha-docente-historia-leyes-educativas.html (NO releas otras misiones)
+- Referencia: misiones/docente-derechos-ninez/ y
+  fichas/ficha-docente-derechos-ninez.html (NO releas otras misiones)
 
 Al terminar: commit y push a main, como manda CLAUDE.md.
 ```
+
+La referencia es la última misión escrita a propósito: trae el molde ya maduro
+(recorrido explorable con pasos numerados y una caja aparte de «lo que no se
+hace»). Si la misión es del área **metas**, lea además
+`PROPUESTA-MISIONES-METAS-2026.md`: ahí están los argumentos, el mapa del
+ecosistema y las advertencias de verificación.
 
 ---
 
