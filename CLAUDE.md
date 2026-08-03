@@ -38,6 +38,31 @@ el número en dos sitios:
 
 Si no se sella, el despliegue existe pero nadie lo ve.
 
+## Normativa: el catálogo crece, y el texto tiene que saberlo
+
+Cuántas misiones hay **no es un dato del proyecto: es una foto**. Hoy son 57
+porque ese es el avance de hoy; el plan es cubrir el currículo entero de
+Básica en sus tres ciclos y de Media, y después mirar hacia las currículas
+de Latinoamérica. Un material que dice «son 57 misiones» envejece en la
+semana siguiente, y peor: le sugiere al maestro que eso es todo lo que va a
+haber.
+
+Dos reglas, y la primera es la que de verdad resuelve:
+
+1. **Donde haya JavaScript, el número se cuenta, no se escribe.** El
+   catálogo vive en `js/data/misiones.js` (`MISSIONS`, `RUTAS`), que es puro
+   dato y se puede cargar en cualquier página. Las misiones del maestro lo
+   cargan y pintan las cifras al vuelo (`CAT` en su JS, con marcadores
+   `{{MISIONES}}`, `{{RUTAS}}`, `{{MATERIAS}}` en el texto). Así el día que
+   entre la misión 58 el texto se corrige solo.
+2. **En papel, donde no hay JavaScript** (fichas imprimibles, manuales), el
+   número se escribe **fechado y con el rumbo a la vista**: «hoy son 57 y
+   siguen entrando», nunca «son 57». La ficha se imprime y se guarda un año
+   entero en una gaveta.
+
+Lo mismo vale para las demás cifras del producto (rutas, materias, formas,
+herramientas): se cuentan, y si se escriben, se fechan.
+
 ## Normativa: cómo se escribe un grupo
 
 Un grupo **siempre** se lee `6º-1` — sexto grado, sección 1. Nunca `6 1`

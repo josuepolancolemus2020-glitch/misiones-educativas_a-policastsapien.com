@@ -115,6 +115,67 @@ function pintaXP() {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   LAS CIFRAS DEL CATÁLOGO SE CUENTAN, NO SE ESCRIBEN
+
+   Normativa de la casa (CLAUDE.md). Cuántas misiones hay no es un
+   dato del proyecto: es una FOTO. El plan es cubrir el currículo
+   entero de Básica en sus tres ciclos y el de Media, así que un
+   texto que diga «son 57 misiones» envejece en una semana y, peor,
+   le sugiere al maestro que eso es todo lo que va a haber.
+
+   Por eso esta misión carga el catálogo del alumno
+   (js/data/misiones.js, que es puro dato y no engancha nada) y
+   pinta las cifras al vuelo. En el texto se escriben marcadores:
+
+     {{MISIONES}}  {{RUTAS}}  {{MATERIAS}}  {{INGLES}}
+
+   y se rellenan al arrancar, tanto en el HTML escrito a mano como
+   en los bancos de datos de aquí abajo. El día que entre la misión
+   siguiente, este texto se corrige solo.
+
+   OJO al redactar: que el número se cuente no basta. La FRASE
+   también tiene que decir que la lista crece («hoy», «y siguen
+   entrando»), porque el maestro lee una cifra y la da por final.
+══════════════════════════════════════════════════════════════ */
+const CAT = (function () {
+  try {
+    const m = MISSIONS.length;
+    const r = Object.keys(RUTAS).length;
+    const s = new Set(MISSIONS.map(x => x.subject)).size;
+    const en = typeof MISIONES_EN !== 'undefined' ? MISIONES_EN.size : 0;
+    if (m && r && s) return { misiones: m, rutas: r, materias: s, ingles: en };
+  } catch (_) {}
+  /* Respaldo por si el catálogo no cargó. Es la foto de agosto de 2026: si el
+     maestro ve estos números es que algo falló, pero el texto sigue teniendo
+     sentido en vez de quedarse con los marcadores a la vista. */
+  return { misiones: 57, rutas: 11, materias: 7, ingles: 8 };
+})();
+function catTxt(s) {
+  return String(s)
+    .replace(/\{\{MISIONES\}\}/g, CAT.misiones)
+    .replace(/\{\{RUTAS\}\}/g, CAT.rutas)
+    .replace(/\{\{MATERIAS\}\}/g, CAT.materias)
+    .replace(/\{\{INGLES\}\}/g, CAT.ingles);
+}
+/* Rellena los marcadores del HTML escrito a mano. Va por nodos de texto para
+   no tocar ni una etiqueta ni un atributo. */
+function catPintaHTML() {
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const pend = [];
+  while (w.nextNode()) if (w.currentNode.nodeValue.indexOf('{{') >= 0) pend.push(w.currentNode);
+  pend.forEach(n => { n.nodeValue = catTxt(n.nodeValue); });
+}
+/* Y los de los bancos: se recorren una sola vez al arrancar, antes de pintar. */
+function catAplica(o) {
+  if (Array.isArray(o)) {
+    o.forEach((v, i) => { if (typeof v === 'string') o[i] = catTxt(v); else catAplica(v); });
+  } else if (o && typeof o === 'object') {
+    Object.keys(o).forEach(k => { const v = o[k]; if (typeof v === 'string') o[k] = catTxt(v); else catAplica(v); });
+  }
+  return o;
+}
+
+/* ══════════════════════════════════════════════════════════════
    EL RECORRIDO: OCHO MOMENTOS DEL AÑO ESCOLAR
 
    La propuesta pedía «tabla comparativa explorable, caso por caso»,
@@ -173,9 +234,10 @@ const PARADAS = [
          'Polimedias, Salud y Voucher. Ninguno da clase, y no es un defecto: es un sistema de ' +
          '<b>administración</b> de centros educativos, y hace bien lo suyo. La clase, el ejercicio y ' +
          'el juego con el que un niño de sexto entiende las fracciones vienen de otro lado. Eso es ' +
-         'lo que pone M.E.T.A.S: <b>57 misiones</b> alineadas al DCNB, sin quitarle a usted la clase.',
+         'lo que pone M.E.T.A.S: hoy <b>{{MISIONES}} misiones</b> alineadas al DCNB, y subiendo, porque ' +
+         'la meta es cubrir el currículo completo de Básica y de Media. Sin quitarle a usted la clase.',
     ofi: 'Nada en este momento. Sus nueve módulos administran: ninguno trae contenido para el alumno.',
-    metas: '57 misiones en 11 rutas y 7 materias, con juegos, evaluación y ficha imprimible con QR.',
+    metas: 'Hoy {{MISIONES}} misiones en {{RUTAS}} rutas y {{MATERIAS}} materias, y creciendo, con juegos, evaluación y ficha imprimible con QR.',
     manda: 'Usted. La plataforma es material; la clase la sostiene el maestro.',
     pasos: [
       'Escoja del catálogo un tema que le toque este mes y recórralo entero antes de llevarlo.',
@@ -185,7 +247,7 @@ const PARADAS = [
     ],
     nohacer: [
       'No ponga la misión y se siente: es un apoyo para atender a quien lo necesita, no un sustituto.',
-      'No prometa a la dirección que la plataforma cubre el programa completo: son 57 temas, no el año.',
+      'No prometa a la dirección que la plataforma cubre ya el programa completo: hoy son {{MISIONES}} temas, y van entrando más.',
       'No lleve al aula una misión que usted no recorrió antes.',
     ],
     aula: 'Este es el único momento del año en el que no hay frontera que discutir. Todo lo que ' +
@@ -1121,6 +1183,8 @@ function resetXP() {
 /* ══════════════════ ARRANQUE ══════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   cargar();
+  [PARADAS, FC, MEMO, QZ, CL_GRUPOS, CP, RETO, DG, DIAG_SALIDA].forEach(catAplica);
+  catPintaHTML();
   navPinta();
   rePinta();
   fcPinta();

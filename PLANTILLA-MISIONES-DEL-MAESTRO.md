@@ -114,6 +114,14 @@ Romperlos deja al maestro sin accesibilidad o rompe la sonda:
   aplica**: esto no es material del alumno y no debe confundirse con él.
 - Ninguna letra concentra más del **40 %** de las respuestas correctas en el
   quiz ni en el simulacro. Se reparte a mano al escribir el banco.
+- **Las cifras del producto no se escriben: se cuentan** (normativa en
+  `CLAUDE.md`). Cuántas misiones hay es una foto, no un dato: el catálogo va
+  camino de cubrir Básica y Media. En pantalla, la misión carga
+  `js/data/misiones.js` y pinta el número al vuelo con los marcadores
+  `{{MISIONES}}`, `{{RUTAS}}`, `{{MATERIAS}}` e `{{INGLES}}` (bloque `CAT`,
+  copiable de `misiones/docente-bienvenida-metas/js/`). En la ficha, que es
+  papel, se escribe fechado: «hoy son 57 y siguen entrando». Y la frase, no
+  solo el número, tiene que decir que la lista crece.
 - **Los nombres propios llevan mayúscula, también dentro de los juegos**
   (regla de la casa, en `CLAUDE.md`). La primera misión salió con las tarjetas
   en minúscula («marco aurelio soto», «la unah», «la ley fundamental de

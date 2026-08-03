@@ -17,8 +17,10 @@
    la retome no debe confiar en estos números: tiene que volver a
    contarlos. Aquí queda dónde se cuenta cada uno.
 
-     57 misiones, 11 rutas, 7 materias ... MISSIONS y RUTAS en
-                                           js/data/misiones.js
+     Misiones, rutas y materias ......... NO se escriben a mano:
+                                           se cuentan solas de
+                                           MISSIONS y RUTAS (ver el
+                                           bloque CAT más abajo)
      30 formas por evaluación ........... EVAL_FORMAS en el js de
                                            cada misión (las 57 la
                                            tienen)
@@ -101,6 +103,67 @@ function pintaXP() {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   LAS CIFRAS DEL CATÁLOGO SE CUENTAN, NO SE ESCRIBEN
+
+   Normativa de la casa (CLAUDE.md). Cuántas misiones hay no es un
+   dato del proyecto: es una FOTO. El plan es cubrir el currículo
+   entero de Básica en sus tres ciclos y el de Media, así que un
+   texto que diga «son 57 misiones» envejece en una semana y, peor,
+   le sugiere al maestro que eso es todo lo que va a haber.
+
+   Por eso esta misión carga el catálogo del alumno
+   (js/data/misiones.js, que es puro dato y no engancha nada) y
+   pinta las cifras al vuelo. En el texto se escriben marcadores:
+
+     {{MISIONES}}  {{RUTAS}}  {{MATERIAS}}  {{INGLES}}
+
+   y se rellenan al arrancar, tanto en el HTML escrito a mano como
+   en los bancos de datos de aquí abajo. El día que entre la misión
+   siguiente, este texto se corrige solo.
+
+   OJO al redactar: que el número se cuente no basta. La FRASE
+   también tiene que decir que la lista crece («hoy», «y siguen
+   entrando»), porque el maestro lee una cifra y la da por final.
+══════════════════════════════════════════════════════════════ */
+const CAT = (function () {
+  try {
+    const m = MISSIONS.length;
+    const r = Object.keys(RUTAS).length;
+    const s = new Set(MISSIONS.map(x => x.subject)).size;
+    const en = typeof MISIONES_EN !== 'undefined' ? MISIONES_EN.size : 0;
+    if (m && r && s) return { misiones: m, rutas: r, materias: s, ingles: en };
+  } catch (_) {}
+  /* Respaldo por si el catálogo no cargó. Es la foto de agosto de 2026: si el
+     maestro ve estos números es que algo falló, pero el texto sigue teniendo
+     sentido en vez de quedarse con los marcadores a la vista. */
+  return { misiones: 57, rutas: 11, materias: 7, ingles: 8 };
+})();
+function catTxt(s) {
+  return String(s)
+    .replace(/\{\{MISIONES\}\}/g, CAT.misiones)
+    .replace(/\{\{RUTAS\}\}/g, CAT.rutas)
+    .replace(/\{\{MATERIAS\}\}/g, CAT.materias)
+    .replace(/\{\{INGLES\}\}/g, CAT.ingles);
+}
+/* Rellena los marcadores del HTML escrito a mano. Va por nodos de texto para
+   no tocar ni una etiqueta ni un atributo. */
+function catPintaHTML() {
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const pend = [];
+  while (w.nextNode()) if (w.currentNode.nodeValue.indexOf('{{') >= 0) pend.push(w.currentNode);
+  pend.forEach(n => { n.nodeValue = catTxt(n.nodeValue); });
+}
+/* Y los de los bancos: se recorren una sola vez al arrancar, antes de pintar. */
+function catAplica(o) {
+  if (Array.isArray(o)) {
+    o.forEach((v, i) => { if (typeof v === 'string') o[i] = catTxt(v); else catAplica(v); });
+  } else if (o && typeof o === 'object') {
+    Object.keys(o).forEach(k => { const v = o[k]; if (typeof v === 'string') o[k] = catTxt(v); else catAplica(v); });
+  }
+  return o;
+}
+
+/* ══════════════════════════════════════════════════════════════
    EL RECORRIDO POR LAS PIEZAS
    Las cuatro misiones anteriores se recorrían por fechas, por
    artículos, por trámites y por escenas del aula. Esta se recorre
@@ -118,7 +181,9 @@ const PARADAS = [
     sub: 'El mapa completo, antes de entrar en cada pieza',
     txt: 'Casi todos los maestros que usan esto llegaron igual: alguien les pasó por WhatsApp el ' +
          'enlace de una misión, la abrieron con su grado, funcionó, y ahí se quedó la cosa. Esa ' +
-         'misión es <b>una de 57</b>, y las 57 juntas son solo la <b>primera de cuatro piezas</b>. ' +
+         'misión es <b>una de {{MISIONES}}</b>, y digo hoy porque el catálogo sigue creciendo: la ' +
+         'meta es cubrir el currículo entero de Básica y de Media. Todas juntas son solo la ' +
+         '<b>primera de cuatro piezas</b>. ' +
          'Las otras tres (las herramientas de su aula, el asistente de las familias y estas ' +
          'misiones suyas) no se anuncian solas: viven dentro de la <b>Zona Docente</b>, y hay que ' +
          'entrar con su cuenta para verlas. Esta misión existe porque nadie se las ha contado, y ' +
@@ -144,14 +209,17 @@ const PARADAS = [
   },
   {
     ic: '📚', corto: 'Pieza 1: las misiones del alumno',
-    tit: 'Cincuenta y siete misiones, y cada una con su ficha',
+    tit: 'Hoy {{MISIONES}} misiones, y la lista sigue creciendo',
     sub: 'Lo único que la mayoría de los maestros conoce',
-    txt: 'Son <b>57 misiones</b> repartidas en <b>11 rutas</b> y <b>7 materias</b> (Español, ' +
-         'Matemáticas, Ciencias Naturales, Ciencias Sociales, Programación, Robótica e Inglés), ' +
-         'escritas para el alumno hondureño y alineadas al DCNB. Cada una trae su contenido, sus ' +
-         'juegos, su constancia y su <b>evaluación imprimible con pauta</b>. Cada una tiene además ' +
-         'su <b>ficha didáctica de papel</b>, con código QR, para el día que no hay dispositivos. ' +
-         'Y <b>8 están traducidas al inglés</b> por autor, no por traductor automático.',
+    txt: 'Hoy son <b>{{MISIONES}} misiones</b> repartidas en <b>{{RUTAS}} rutas</b> y ' +
+         '<b>{{MATERIAS}} materias</b> (Español, Matemáticas, Ciencias Naturales, Ciencias ' +
+         'Sociales, Programación, Robótica e Inglés), escritas para el alumno hondureño y ' +
+         'alineadas al DCNB. Ese <b>hoy</b> va a propósito: el catálogo <b>está en construcción y ' +
+         'no para</b>. La meta declarada es cubrir el <b>currículo completo de Básica en sus tres ' +
+         'ciclos y el de Media</b>, y para eso entran temas nuevos durante todo el año. Cada misión ' +
+         'trae su contenido, sus juegos, su constancia, su <b>evaluación imprimible con pauta</b> y ' +
+         'su <b>ficha de papel</b> con código QR. Y <b>{{INGLES}} están traducidas al inglés</b> ' +
+         'por autor, no por traductor automático.',
     donde: 'El catálogo del alumno se abre en <b>metas.policastsapien.com</b>, sin cuenta y sin ' +
            'clave. Las fichas, en <b>Zona Docente → Fichas didácticas</b>.',
     pasos: [
@@ -161,14 +229,15 @@ const PARADAS = [
       'Imprima la ficha de esa misión para los alumnos que no van a tener teléfono en la mano.',
     ],
     nohacer: [
-      'No cubren todo el programa: son 57 temas, no el año completo. Lo que no está, lo sigue dando usted.',
+      'Todavía no cubren el programa completo: hoy son {{MISIONES}} temas, no el año entero. Lo que aún no está, lo sigue dando usted.',
       'No sustituyen su clase. La misión practica y evalúa; explicar sigue siendo suyo.',
       'No ponen la nota oficial: el examen sale con pauta, pero quien califica y quien decide es usted.',
-      'No todas traen la prueba de pensamiento crítico: hoy la tienen 46 de las 57.',
+      'No todas traen la prueba de pensamiento crítico: hoy la tienen 46, y las demás se van poniendo al día.',
     ],
     aula: 'Lo que se ahorra aquí es redactar exámenes. Cada misión da <b>30 formas</b> de su ' +
           'evaluación, y cada forma sale idéntica cada vez que se pide: imprime hoy y reimprime en ' +
-          'un mes sin perder la pauta.',
+          'un mes sin perder la pauta. Y si su tema todavía no está, vuelva a mirar el mes que ' +
+          'viene: la lista de hoy no es la de fin de año.',
   },
   {
     ic: '🧰', corto: 'Pieza 2: las herramientas de su aula',
@@ -362,17 +431,17 @@ function reMover(d) { reVer(Math.max(0, Math.min(PARADAS.length - 1, _par + d)))
    en CLAUDE.md). Se comprueba con node _dev/verifica-nombres-propios.js. */
 const FC = [
   ['¿De cuántas piezas se compone M.E.T.A.S?', 'De cuatro: las misiones del alumno, las herramientas de su aula, el asistente de las familias y las misiones del maestro.'],
-  ['¿Cuántas misiones tiene el catálogo del alumno?', '57 misiones, repartidas en 11 rutas y 7 materias, alineadas al DCNB.'],
-  ['¿Cuántas formas tiene la evaluación de cada misión?', '30. La Forma 7 genera siempre el mismo examen y la misma pauta, así que se puede reimprimir sin perder la correspondencia.'],
-  ['¿Qué trae cada misión para el aula sin dispositivos?', 'Una ficha didáctica imprimible con su código QR.'],
+  ['¿Cuántas misiones tiene el catálogo del alumno?', 'Hoy {{MISIONES}}, en {{RUTAS}} rutas y {{MATERIAS}} materias, alineadas al DCNB. Es la cifra de hoy: la meta es cubrir Básica completa y Media, así que sigue subiendo.'],
+  ['¿Qué trae cada misión además del contenido y los juegos?', 'Una evaluación imprimible con pauta y 30 formas (la Forma 7 sale siempre igual), y una ficha didáctica de papel con su código QR para el aula sin dispositivos.'],
+  ['¿A qué familia de proyectos pertenece M.E.T.A.S?', 'A la de JClic, del Departament d\'Educació de la Generalitat de Catalunya, y el Proyecto Descartes, de España: material educativo libre hecho por docentes. La diferencia es que esta es hondureña y está pensada con el DCNB.'],
   ['¿Cuántas herramientas hay en la Zona Docente?', 'Diez: Mi aula, Plan de Acción, Evaluaciones, Fichas didácticas, Campeonísimo, Parte Mensual, Collage, Gobierno Escolar, Evidencia de misiones y Misiones del maestro.'],
   ['¿Cuántas veces se escribe la lista de alumnos?', 'Una sola vez, en Mi aula. De ahí comen la asistencia, las notas, la boleta, las colectas, las claves de familia y el Plan de Acción.'],
   ['¿En cuántas categorías reparte el grupo el Plan de Acción?', 'En cinco: Avanzado, Muy Bueno, Satisfactorio, Debe Mejorar e Insatisfactorio.'],
   ['¿Qué necesita el alumno para que su trabajo le llegue al maestro?', 'El código de aula: cinco letras que el maestro dicta una vez. No necesita cuenta ni contraseña.'],
   ['¿Cómo entra la familia al asistente?', 'Con su clave de familia (el número de lista más cuatro caracteres). Sin cuenta, sin correo y sin instalar nada.'],
   ['¿Qué ve la familia con su clave?', 'Las notas, la boleta del parcial, las faltas, la conducta, los avisos del maestro y las colaboraciones de su hijo o hija. De ningún otro alumno.'],
-  ['¿Qué pasa si el alumno se queda sin señal a mitad de una misión?', 'Sigue trabajando: la misión ya está en el teléfono. Los resultados se envían solos cuando aparece señal, aunque pasen días.'],
-  ['¿Qué hace falta para dar Programación y Robótica?', 'Cartón, cinta, tijeras y lo que ya hay en el aula: están diseñadas desconectado primero, y el hardware nunca es obligatorio.'],
+  ['¿Qué pasa si el alumno se queda sin señal a mitad de una misión?', 'Sigue trabajando: la misión ya está en el teléfono, y los resultados se envían solos cuando aparece señal. Para Programación y Robótica basta con cartón, cinta y tijeras: están diseñadas desconectado primero.'],
+  ['¿Por qué existe el botón «Actualizar» y cuándo se usa?', 'Porque la plataforma cambia seguido y el teléfono guarda la versión vieja para poder trabajar sin señal. Ese botón trae lo último y lo deja a usted donde estaba. Úselo si un colega le habla de algo que usted no ve.'],
   ['¿M.E.T.A.S sustituye a SACE?', 'No. SACE es el registro oficial del Estado y no tiene sustituto. M.E.T.A.S es el trabajo diario con el que esa nota se gana, se sustenta y se explica.'],
   ['¿De quién es la frase de la portada y qué dice?', 'De José Cecilio del Valle: «América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.»'],
 ];
@@ -448,9 +517,10 @@ const QZ = [
         'Dos aplicaciones separadas', 'Una plataforma de la Secretaría de Educación'],
     c: 1, e: 'Misiones del alumno, herramientas del aula, asistente de las familias y misiones del maestro. El argumento está en cómo se pasan el dato.' },
   { q: 'El catálogo del alumno tiene hoy…',
-    o: ['57 misiones en 11 rutas y 7 materias', '20 misiones de Español y Matemáticas',
-        'Una misión por grado', '100 misiones de todas las materias'],
-    c: 0, e: 'Y cada una con su ficha imprimible y su evaluación con pauta. Son 57 temas, no el programa completo del año.' },
+    o: ['{{MISIONES}} misiones en {{RUTAS}} rutas y {{MATERIAS}} materias, y sigue creciendo',
+        'Solo Español y Matemáticas', 'Una misión por grado, sin rutas',
+        'Un catálogo cerrado que ya no cambia'],
+    c: 0, e: 'Cada una con su ficha imprimible y su evaluación con pauta. Y es la cifra de hoy: la meta es cubrir Básica completa y Media.' },
   { q: 'Para que el trabajo del alumno le llegue a usted, el alumno necesita…',
     o: ['Una cuenta con correo y contraseña', 'Pagar una suscripción',
         'Escribir una sola vez el código de aula de cinco letras', 'Estar conectado todo el tiempo'],
@@ -510,7 +580,7 @@ function qzResp(i, j) {
    Las cuatro cajas son las cuatro piezas del ecosistema: si el maestro
    sabe poner cada cosa en su pieza, ya tiene el mapa. */
 const CL_GRUPOS = [
-  { t: 'Misiones del alumno', it: ['11 rutas y 7 materias', 'Evaluación con 30 formas', 'Ficha imprimible con QR'] },
+  { t: 'Misiones del alumno', it: ['{{RUTAS}} rutas y {{MATERIAS}} materias', 'Evaluación con 30 formas', 'Ficha imprimible con QR'] },
   { t: 'Herramientas de su aula', it: ['Plan de Acción', 'Boleta y Parte Mensual', 'Economía de colectas con recibo'] },
   { t: 'Asistente de las familias', it: ['Clave de familia', 'Sin cuenta y sin aplicación', 'Avisos del maestro a la casa'] },
   { t: 'Misiones del maestro', it: ['Ficha de estudio de diez páginas', 'Solo la ve el maestro registrado', 'Leyes educativas y estrategias'] },
@@ -559,8 +629,8 @@ function clRevisa() {
 /* ══════════════════ COMPLETA LA ORACIÓN ══════════════════ */
 const CP = [
   ['M.E.T.A.S se compone de ____ piezas que se alimentan entre sí.', ['4', 'cuatro']],
-  ['El catálogo del alumno tiene ____ misiones.', ['57', 'cincuenta y siete']],
-  ['Esas misiones se reparten en ____ rutas de aprendizaje.', ['11', 'once']],
+  ['La única cuenta de todo el sistema es la del ____.', ['maestro', 'docente']],
+  ['La familia entra al asistente con su clave de ____.', ['familia']],
   ['La evaluación de cada misión tiene ____ formas distintas.', ['30', 'treinta']],
   ['El código de aula que el maestro dicta tiene ____ letras.', ['5', 'cinco']],
   ['El Plan de Acción reparte al grupo en ____ categorías.', ['5', 'cinco']],
@@ -794,9 +864,9 @@ const DG = [
     o: ['Pierde lo que llevaba hecho', 'Sigue trabajando: la misión ya está en su teléfono',
         'Tiene que empezar de nuevo cuando vuelva la señal', 'La misión se cierra sola'], c: 1 },
 
-  { b: 0, q: 'La evaluación de cada misión se puede generar en:',
-    o: ['Una sola versión', 'Diez versiones',
-        'Treinta formas distintas', 'Versiones nuevas que nunca se repiten'], c: 2 },
+  { b: 0, q: 'El catálogo de misiones del alumno:',
+    o: ['Está cerrado: es el que hay y no cambia', 'Solo crece si el maestro lo pide',
+        'Está en construcción: la meta es cubrir Básica completa y Media', 'Cambia de temas cada año, quitando los viejos'], c: 2 },
   { b: 1, q: 'El Plan de Acción reparte al grupo en:',
     o: ['Cinco categorías, de Avanzado a Insatisfactorio', 'Aprobados y reprobados',
         'Tres niveles de logro', 'Una nota por alumno, sin categorías'], c: 0 },
@@ -819,9 +889,9 @@ const DG = [
   { b: 2, q: 'Con su clave, una madre puede ver:',
     o: ['Las notas de todo el grado, para comparar', 'Las notas, faltas, avisos y colaboraciones de su hijo o hija',
         'Solo el promedio final del año', 'El expediente completo de la sección'], c: 1 },
-  { b: 3, q: 'La constancia que se escribe al terminar una misión del maestro:',
-    o: ['Vale como capacitación oficial ante la Secretaría de Educación', 'Se envía sola a su expediente',
-        'Es suya, para su propio control, y se queda en su teléfono', 'Suma puntos en el concurso de nombramiento'], c: 2 },
+  { b: 3, q: 'Los manuales del maestro, del alumno y de la familia están en:',
+    o: ['Solo dentro de la aplicación', 'Se piden por correo',
+        'El índice de guías de policastsapien.com, para leer, imprimir y repartir', 'No existen todavía'], c: 2 },
   { b: 4, q: 'Para dar clase de Programación y Robótica hace falta:',
     o: ['Un laboratorio con computadoras', 'Un kit de robótica por equipo',
         'Comprar tarjetas programables', 'Cartón, cinta, tijeras y lo que ya tiene: están diseñadas desconectado primero'], c: 3 },
@@ -863,7 +933,7 @@ function dgMarca(i, j) {
 /* Lo que se le dice al maestro cuando un bloque queda flojo. No es un
    regaño: es por dónde empezar el lunes. */
 const DIAG_SALIDA = [
-  'Abra el catálogo y recorra una misión completa antes de llevarla al aula.',
+  'Abra el catálogo y recorra una misión completa antes de llevarla al aula. Y toque «Actualizar»: el catálogo crece y su teléfono guarda la versión vieja.',
   'Entre a Mi aula, escriba su lista y registre una nota: de ahí sale todo lo demás.',
   'Imprima las tiras de claves y prepare cómo las va a entregar en la próxima reunión.',
   'Vuelva al temario de Misiones del maestro y escoja el área que le urge.',
@@ -1066,6 +1136,8 @@ function resetXP() {
 /* ══════════════════ ARRANQUE ══════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   cargar();
+  [PARADAS, FC, MEMO, QZ, CL_GRUPOS, CP, RETO, DG, DIAG_SALIDA].forEach(catAplica);
+  catPintaHTML();
   navPinta();
   rePinta();
   fcPinta();

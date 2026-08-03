@@ -34,19 +34,34 @@ que sean verdad.
 
 ### 2.1 «Le devuelve horas de su vida»
 
-No es una promesa vaga, se cuenta con números del propio producto:
+No es una promesa vaga, se cuenta con números del propio producto. Pero **ojo con cómo
+se escriben esos números**: ver el aviso al final de este apartado.
 
-- **57 misiones** con contenido, juegos y evidencia, alineadas al DCNB.
-- **Evaluación imprimible con 30 formas deterministas** en las 57: la Forma 7
+- **Las misiones del catálogo** con contenido, juegos y evidencia, alineadas al DCNB
+  (57 en agosto de 2026, y subiendo).
+- **Evaluación imprimible con 30 formas deterministas** en todas: la Forma 7
   regenera siempre el mismo examen y la misma pauta, así que se imprime hoy y se
   reimprime el mes que viene sin perder la correspondencia. El maestro deja de
-  redactar exámenes de esos temas. **46 de las 57** traen además una prueba de
-  pensamiento crítico; decir «dos evaluaciones por misión», como decía antes esta
-  propuesta, no era cierto en once de ellas.
+  redactar exámenes de esos temas. No todas traen además la prueba de pensamiento
+  crítico (en agosto de 2026 la tenían 46 de 57); decir «dos evaluaciones por misión»,
+  como decía antes esta propuesta, no era cierto en once de ellas.
 - **Una sola lista de alumnos** alimenta economía de colectas, asistencia, notas,
   boleta imprimible y Plan de Acción, sin volver a escribir un nombre.
 - **Fichas didácticas imprimibles** por misión, con su código QR, para el aula sin
   dispositivos.
+
+> ⚠️ **Cómo se escriben estas cifras (normativa, en CLAUDE.md).** Cuántas misiones hay
+> **no es un dato: es una foto**. El plan es cubrir el currículo completo de Básica en
+> sus tres ciclos y el de Media, y después mirar hacia las currículas de Latinoamérica.
+> Un material que dice «son 57 misiones» envejece en una semana y, peor, le sugiere al
+> maestro que eso es todo lo que va a haber.
+>
+> En pantalla el número **no se escribe: se cuenta**. Las dos misiones publicadas del
+> área cargan `js/data/misiones.js` y pintan las cifras al vuelo con los marcadores
+> `{{MISIONES}}`, `{{RUTAS}}`, `{{MATERIAS}}` e `{{INGLES}}` (bloque `CAT` en su JS).
+> En papel, donde no hay JavaScript, se escribe **fechado y con el rumbo a la vista**:
+> «hoy son 57 y siguen entrando». Y la frase, además del número, tiene que decir que la
+> lista crece: el maestro lee una cifra y la da por final.
 
 ### 2.2 «Le da con qué decidir, y con qué defenderse»
 
@@ -101,7 +116,7 @@ justamente lo que SACE no hace:
 | Para qué sirve | Matrícula, nota oficial, certificación | Enseñar, practicar, evaluar, analizar y comunicar |
 | Quién lo abre | El centro, con trámite | El maestro, en minutos y gratis |
 | Sin internet | No | Sí, y sincroniza sola después |
-| Contenido para el alumno | No tiene | 57 misiones alineadas al DCNB |
+| Contenido para el alumno | No tiene | Misiones alineadas al DCNB, y entrando más |
 | Exámenes | No genera | 30 formas por misión, con pauta |
 | Comunicación con la familia | Acceso al expediente, que genera el centro con usuario y contraseña | Asistente de padres con clave anónima, que genera el maestro |
 | Economía del aula, asistencia, boleta | Parcialmente | Sí, desde una sola lista |
@@ -147,6 +162,41 @@ verificables y no envejecen:
 
 ---
 
+## 4-bis. De qué familia viene esto, y hacia dónde va
+
+Dos cosas que la misión de bienvenida ya cuenta y que conviene que repitan las demás,
+porque son las que ponen el proyecto en su sitio.
+
+**Tiene antecedentes con nombre, y decirlo da confianza.** **JClic**, del Departament
+d'Educació de la Generalitat de Catalunya: software libre para que un maestro arme sus
+propias actividades y las comparta en un banco común. Y el **Proyecto Descartes**,
+nacido en el Ministerio de Educación de España para las matemáticas interactivas y
+continuado hoy por una asociación de profesores, con sus materiales en abierto. De
+JClic se hereda que **el material lo hace el docente**; de Descartes, que **un recurso
+interactivo bien hecho vale más que cien páginas de teoría, y se regala**.
+
+**Lo que cambia aquí es todo:** aquellos nacieron en Europa y para sus currículos.
+M.E.T.A.S es **hondureña**, pensada con la lógica de la educación de Honduras: el DCNB,
+los tres ciclos de Básica, el parcial, la boleta, el aula sin señal y el maestro con 43
+alumnos. No es una plataforma extranjera traducida.
+
+**Y el horizonte es más ancho que Honduras.** El plan de este año es cubrir el currículo
+de Básica y de Media; después, mirar hacia las **currículas de otros países de
+Latinoamérica**. Eso no es una ocurrencia comercial: es lo que ya dice la portada. Por
+eso el apartado siguiente importa más de lo que parece.
+
+**La plataforma está en construcción, y hay que decirlo.** Entran misiones nuevas, se
+corrigen datos, se agregan herramientas. Por eso existe el botón **«Actualizar»** (la
+flecha en círculo del encabezado): el teléfono guarda la aplicación para funcionar sin
+señal y se queda con la versión vieja. Toda misión del área lo menciona, y la de
+bienvenida le pide al maestro el hábito de tocarlo el primer día de cada mes.
+
+**Y los manuales tienen su sitio:** el índice de guías de **policastsapien.com/guias/**,
+con el del maestro, el del alumno y el de la familia. Son los que se usan para
+capacitar: se leen en el teléfono, se imprimen y se reparten.
+
+---
+
 ## 5. La inspiración: José Cecilio del Valle
 
 La portada de M.E.T.A.S lleva, siempre visible, al Sabio Valle y su frase:
@@ -166,6 +216,14 @@ entienda, porque explica por qué esta plataforma se siente distinta de las dem�
 - **El conocimiento como la salida.** Es lo mismo que dice el lema de la serie de
   formación docente: *al maestro que estudia no se le impone, se le consulta*.
 
+**Y lo que Valle no escribió.** No escribió «Honduras»: escribió **América**. El Sabio
+Valle fue un prócer **centroamericano** y su pensamiento fue americanista: la región y
+el continente como una sola cosa que hay que estudiar desde adentro, no como apéndice de
+lo que se piensa afuera. Esa palabra es la que autoriza el horizonte del apartado 4-bis:
+**lo que hoy está alineado al DCNB se piensa mañana para las currículas de otros países
+de Latinoamérica**. Primero Honduras, bien hecha; después la vecindad. Sin ese anclaje,
+expandirse sonaría a ambición de mercado; con él, es la tesis del proyecto cumpliéndose.
+
 La misión de bienvenida es el lugar natural para contarlo, una vez, bien contado, y
 que el maestro sepa en qué proyecto está entrando.
 
@@ -180,7 +238,7 @@ juntas.
 ```
         ┌──────────────────────────────────────────────┐
         │  1. MISIONES DEL ALUMNO                      │
-        │  57 misiones · 11 rutas · 7 materias         │
+        │  misiones · rutas · materias (y creciendo)   │
         │  juegos, evaluaciones, constancia, offline   │
         └────────────────────┬─────────────────────────┘
                              │  el avance viaja con el código de aula
@@ -350,9 +408,10 @@ repositorio** el día que se escriba, porque estas cifras envejecen solas.
 
 | Dato | Dónde se cuenta | Contado en agosto de 2026 |
 |---|---|---|
-| Misiones, rutas y materias | `MISSIONS` y `RUTAS` en `js/data/misiones.js` | 57 · 11 · 7 |
-| Formas por evaluación | `EVAL_FORMAS` en el js de cada misión | 30, en las 57 |
+| Misiones, rutas y materias | `MISSIONS` y `RUTAS` en `js/data/misiones.js`. **No se escriben: se cuentan** (bloque `CAT`) | 57 · 11 · 7 |
+| Formas por evaluación | `EVAL_FORMAS` en el js de cada misión | 30, en todas |
 | Prueba de pensamiento crítico | `genEvalCrit` en el js de cada misión | **46 de 57**, no todas |
+| Misiones traducidas al inglés | `MISIONES_EN` en `js/data/misiones.js`, también contado | 8 |
 | Fichas del alumno | `fichas/ficha-*.html`, sin las del maestro | 57 |
 | Misiones traducidas al inglés | `MISIONES_EN` en `js/data/misiones.js` | 8 |
 | Herramientas del aula | la rejilla `zd-grid` de `index.html` | 10 |

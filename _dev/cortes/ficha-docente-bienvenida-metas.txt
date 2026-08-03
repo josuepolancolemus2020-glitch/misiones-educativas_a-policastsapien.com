@@ -8,15 +8,16 @@
 # de la tabla y repagina-ficha.js partiría la etiqueta (solo sabe retroceder
 # hasta un <div> sin cerrar, no hasta un <table>).
 #
-# Por eso la segunda tabla de herramientas lleva pegada además su primera fila:
-# su encabezado es idéntico al de la primera y sin esa fila el anclaje habría
-# caído en la tabla equivocada.
+# Dos tablas llevan pegada además su primera fila, porque su encabezado se
+# repite: la segunda mitad de las herramientas y la segunda mitad de la primera
+# semana. Si se mueve un corte, hay que volver a mirar si el anclaje sigue
+# cayendo en la tabla que toca.
 <table><tr><th>Pieza</th><th>Qué es</th><th>Dónde se toca</th></tr>
-<table class="t-partida"><tr><th style="width:33%">Ruta</th>
+<table><tr><th>Ruta</th><th>De qué va</th></tr>
 <table><tr><th>Herramienta</th><th>Qué resuelve</th></tr><tr><td><b>Campeonísimo</b></td>
 <b>Cómo se entregan las claves, y por qué así.</b>
 <b>Y se sincroniza solo entre sus equipos.</b>
-<h2>9. Su primera semana, día por día</h2>
-<table><tr><th>Le preguntan</th><th>Usted contesta</th></tr>
-<table><tr><th>N.º</th><th>Lo que se pregunta</th><th>Respuesta</th></tr>
-<div class="caso-t">Situación 1</div>
+<p>De ahí salen las tres decisiones que se notan al abrir cualquier misión:
+<table><tr><th>Día</th><th>Qué hace</th><th>Con qué queda</th></tr><tr><td>Jueves</td>
+<h3>A. Escriba el dato que corresponde</h3>
+<h3>D. Dos situaciones para resolver por escrito</h3>

@@ -30,9 +30,9 @@
     <span class="hero-badge">🚀 Dominar M.E.T.A.S · Misión 1 de 7</span>
     <h1>Bienvenido: qué es M.E.T.A.S y por qué existe</h1>
     <p>Usted probablemente llegó aquí por una misión que le pasaron por WhatsApp. Esa misión es una
-      de 57, y las 57 son solo una de las cuatro piezas de esto. Las otras tres las tiene ya, en el
-      mismo teléfono, y nadie se lo ha contado. Este es el mapa completo, con lo que cada pieza hace
-      y, dicho sin adornos, lo que no hace.</p>
+      de {{MISIONES}}, y todas juntas son solo una de las cuatro piezas de esto. Las otras tres las
+      tiene ya, en el mismo teléfono, y nadie se lo ha contado. Este es el mapa completo, con lo que
+      cada pieza hace y, dicho sin adornos, lo que no hace.</p>
     <div class="hero-solo">👤 Esta misión es para usted, no para sus alumnos. Nadie más la ve.</div>
   </div>
 </header>
@@ -49,7 +49,7 @@
         flechas, porque el dato se escribe <b>una sola vez</b> y sale en los cuatro sitios.</p>
       <div class="mapa">
         <div class="mapa-pz"><b>1 · Misiones del alumno</b>
-          <span>57 misiones · 11 rutas · 7 materias</span></div>
+          <span>hoy {{MISIONES}} misiones · {{RUTAS}} rutas · {{MATERIAS}} materias · y creciendo</span></div>
         <div class="mapa-fl">▼ el avance viaja con el <b>código de aula</b></div>
         <div class="mapa-pz"><b>2 · Herramientas de su aula</b>
           <span>Mi aula · Plan de Acción · Evaluaciones · Fichas · Campeonísimo · Parte Mensual ·
@@ -94,9 +94,58 @@
         <li><b>El conocimiento como salida.</b> Es lo mismo que dice el lema de esta serie: al
           maestro que estudia no se le impone, se le consulta.</li>
       </ul>
+      <h3>Y fíjese en lo que Valle no escribió</h3>
+      <p>No escribió «Honduras». Escribió <b>América</b>. El Sabio Valle fue un prócer
+        <b>centroamericano</b> y su pensamiento fue americanista: la región y el continente como una
+        sola cosa que hay que estudiar y entender desde adentro, no como un apéndice de lo que se
+        piensa afuera. Esa palabra marca el horizonte del proyecto y no es un adorno: <b>lo que hoy
+        está alineado al DCNB se piensa mañana para las currículas de otros países de
+        Latinoamérica</b>, con la misma lógica de estudiar lo propio. Primero Honduras, bien hecha;
+        después la vecindad.</p>
       <div class="aula">🎯 <b>En su aula:</b> cuando un alumno le pregunte por qué los ejemplos son de
-        Honduras y no de otro lado, esa es la respuesta, y viene de 1830, no de un departamento de
-        mercadeo.</div>
+        Honduras y no de otro lado, esa es la respuesta, y viene del pensamiento de un prócer
+        centroamericano, no de un departamento de mercadeo.</div>
+    </div>
+
+    <div class="card">
+      <h2>🧬 A qué familia pertenece esto</h2>
+      <p>M.E.T.A.S no se inventó de la nada, y conviene que el maestro lo sepa: lo pone en una
+        tradición con nombres, y una tradición da confianza donde una novedad da sospecha.</p>
+      <ul>
+        <li><b>JClic</b>, del Departament d'Educació de la Generalitat de Catalunya: software libre
+          para que un maestro arme sus propias actividades (asociaciones, sopas, rompecabezas) y las
+          comparta en un banco común. La idea de fondo es la que aquí se hereda: <b>el que hace el
+          material es el docente</b>, no una editorial.</li>
+        <li><b>El Proyecto Descartes</b>, nacido en el Ministerio de Educación de España para las
+          matemáticas interactivas y continuado hoy por una asociación de profesores, con sus
+          materiales en abierto. De ahí viene la otra idea: <b>un recurso interactivo bien hecho
+          vale más que cien páginas de teoría</b>, y se regala.</li>
+      </ul>
+      <div class="dato">📌 <b>Lo que cambia aquí, y es todo:</b> aquellos nacieron en Europa y para
+        sus currículos. M.E.T.A.S es <b>hondureña</b>, pensada con la lógica de la educación de
+        Honduras: el DCNB, los tres ciclos de Básica, el parcial, la boleta, el aula sin señal y el
+        maestro con 43 alumnos. No es una plataforma extranjera traducida: es la misma idea, hecha
+        aquí y para aquí.</div>
+      <div class="aula">🎯 <b>En la sala de maestros:</b> si alguien le dice que esto es «un invento
+        raro», tiene dos nombres que dar. Lo que se hace aquí lleva décadas haciéndose en otros
+        países; lo nuevo es que por fin se haga con el currículo hondureño en la mano.</div>
+    </div>
+
+    <div class="card">
+      <h2>🔄 Esto no está terminado, y esa es la idea</h2>
+      <p>Una plataforma educativa que no cambia es una plataforma abandonada. Esta cambia
+        <b>seguido</b>: entran misiones nuevas, se corrigen datos, se agregan herramientas. Hoy hay
+        <b>{{MISIONES}} misiones</b>; el plan de este año es cubrir el <b>currículo completo de
+        Básica en sus tres ciclos y el de Media</b>, y de ahí en adelante seguir. Así que la lista
+        que usted vea hoy no es la lista de diciembre.</p>
+      <div class="dato">📌 <b>Por eso existe el botón «Actualizar»</b>, el de la flecha en círculo que
+        está arriba en la pantalla de inicio. El teléfono guarda la aplicación para que funcione sin
+        señal, y eso mismo hace que a veces se quede con la versión de la semana pasada. Ese botón
+        trae lo último <b>y lo deja a usted donde estaba</b>. Si un compañero le habla de una misión
+        que usted no ve, empiece por ahí.</div>
+      <div class="aula">🎯 <b>El hábito que conviene:</b> tóquelo el primer día de cada mes, y de
+        paso mire si entró algo de su grado. Y si el tema que necesita todavía no está, dígalo: estas
+        misiones se construyen con lo que el aula real pide.</div>
     </div>
 
     <div class="card">
@@ -106,8 +155,9 @@
 
       <h3>1. Le devuelve horas de su vida</h3>
       <ul>
-        <li><b>57 misiones</b> con contenido, juegos y evaluación, alineadas al DCNB, para no
-          preparar desde cero los temas que ya están.</li>
+        <li><b>{{MISIONES}} misiones</b> con contenido, juegos y evaluación, alineadas al DCNB,
+          para no preparar desde cero los temas que ya están. Y son las de hoy: el catálogo va
+          camino de cubrir Básica completa y Media.</li>
         <li><b>30 formas</b> por evaluación, y cada forma sale idéntica cada vez: imprime hoy la
           Forma 7 y la reimprime el mes que viene con su misma pauta.</li>
         <li><b>Una sola lista de alumnos</b> alimenta colectas con recibo, asistencia, notas, boleta
@@ -370,19 +420,28 @@
         sus datos salen del propio proyecto, así que se contaron uno por uno en el repositorio el día
         que se escribió. Si algún número no le cuadra con lo que ve en pantalla, <b>gana la
         pantalla</b>: significa que el proyecto creció y esta misión se quedó atrás.</p>
-      <div class="rec-it"><b>El catálogo del alumno</b>: 57 misiones, 11 rutas y 7 materias, con 8
-        traducidas al inglés por autor. Se cuenta en la propia lista de misiones del proyecto.</div>
+      <div class="rec-it"><b>El catálogo del alumno</b>: hoy {{MISIONES}} misiones, {{RUTAS}} rutas
+        y {{MATERIAS}} materias, con {{INGLES}} traducidas al inglés por autor. Esta misión
+        <b>no</b> las lleva escritas a mano: las cuenta de la propia lista del proyecto cada vez que
+        usted la abre, para que el número no envejezca.</div>
       <div class="rec-it"><b>Las herramientas del aula</b>: las diez del mosaico de la Zona Docente.
         Las cinco categorías del Plan de Acción salen de su propia configuración.</div>
       <div class="rec-it"><b>Lo que ve la familia</b>: el asistente de padres y el manual para la
         familia, que puede repartir tal cual junto con las claves.</div>
+      <div class="rec-it"><b>Los manuales, todos en un sitio</b>: en
+        <b>policastsapien.com/guias/</b> está el índice, con el manual del maestro, el del alumno y
+        el de la familia. Son los que se usan para <b>capacitar</b>: se leen en el teléfono, se
+        imprimen y se reparten tal cual. El del padre se entrega junto con la clave.</div>
       <div class="rec-it"><b>Para capacitar colegas</b>: el kit de capacitación del proyecto, una
-        sesión de 60 minutos con guión y siete pasos.</div>
-      <div class="rec-it"><b>Los manuales</b>: hay uno para el maestro, uno para el alumno y uno para
-        la familia. Están escritos para imprimirse y repartirse.</div>
-      <div class="fuente">Cifras contadas en el repositorio del proyecto en agosto de 2026. Estas
-        cifras envejecen solas: el catálogo crece. Lo que no cambia es el mapa de las cuatro piezas
-        ni lo que cada una hace y no hace.</div>
+        sesión de 60 minutos con guión y siete pasos, y los módulos de autocapacitación para quien
+        quiera entender la plataforma por dentro antes de presentarla.</div>
+      <div class="rec-it"><b>Si algo no le calza con lo que ve en pantalla</b>: toque
+        <b>«Actualizar»</b>, el de la flecha en círculo. Esta plataforma cambia seguido, y el
+        teléfono guarda la versión vieja para poder trabajar sin señal.</div>
+      <div class="fuente">Las cifras del catálogo no van escritas en esta misión: se cuentan de la
+        propia lista del proyecto cada vez que se abre, porque el catálogo crece y la meta es cubrir
+        el currículo completo de Básica y de Media. Lo demás se contó en el repositorio en agosto de
+        2026. Lo que no cambia es el mapa de las cuatro piezas ni lo que cada una hace y no hace.</div>
     </div>
 
     <div class="card const" id="constancia">
@@ -431,6 +490,11 @@
   </div>
 </footer>
 
+<!-- El catálogo del alumno, solo para CONTAR: cuántas misiones, rutas y materias
+     hay hoy. Es puro dato (no engancha nada) y evita que esta misión se quede
+     con un número escrito a mano el día que entre la misión siguiente.
+     Normativa en CLAUDE.md. -->
+<script src="../../js/data/misiones.js"></script>
 <script src="js/bienvenida-metas.js"></script>
 <!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
      «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
