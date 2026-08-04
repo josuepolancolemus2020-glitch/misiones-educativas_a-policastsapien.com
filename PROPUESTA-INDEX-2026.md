@@ -16,6 +16,10 @@ Hoy, cuando alguien abre M.E.T.A.S. en su teléfono, lo primero que ve son adorn
 - Los **padres y madres** ganan su primera puerta: una tarjeta en la portada que les muestra el avance de su hijo. En la Fase 2 esa puerta se vuelve una **página completa para el padre**: «esta semana hizo 3 misiones, su mejor nota fue 85», qué le toca ahora, un consejo para apoyar en casa y un botón para escribirle al maestro por WhatsApp.
 - Lo bonito **no se pierde**: la tarjeta de Honduras con sus símbolos patrios y curiosidades, y el pensador del día, siguen ahí — solo bajan al final de la pantalla, plegaditos.
 - El **selector de países se guarda en una gaveta** (standby): desaparece de la vista para que ningún niño curioso «apague» las misiones sin querer, pero el código queda dormido y listo; cuando haya misiones de El Salvador o Guatemala, se despierta cambiando una sola palabra.
+  **Ya despertó (agosto de 2026).** El selector volvió a la portada y el inicio
+  se pinta con los colores de la bandera que se elija. El catálogo sigue siendo
+  hondureño: en los demás países la lista dice «en construcción» y ofrece un
+  botón para volver a Honduras, que era la condición para encenderlo.
 - Todo se hace en **pasos chiquitos, uno por uno, guardando (commit) después de cada paso** — si se va la luz a media tarea, la app queda funcionando igual que antes.
 
 **Las 28 misiones no se tocan. Ni la telemetría, ni las rutas, ni el Campeonísimo, ni el modo presentación, ni el guardado sin internet.** Solo cambia la portada y el orden de las puertas.
@@ -176,6 +180,24 @@ Hoy, cuando alguien abre M.E.T.A.S. en su teléfono, lo primero que ve son adorn
 
 ## 4) Países en STANDBY — exactamente así
 
+> **ESTADO: encendido desde agosto de 2026.** `METAS_PAISES_ON = true` en
+> `index.html`. Lo de abajo se deja escrito porque explica cómo está armado el
+> interruptor y qué hace cada pieza; el paso 6 (la salida del callejón) ya se
+> cumplió. Si alguna vez hay que apagarlo, se pone `false` y todo vuelve a
+> Honduras sin que nadie pierda su XP.
+>
+> Lo que se hizo al encenderlo, además de la palabra:
+> - El selector de **Grado** sigue muerto, así que se quedó oculto (`hidden`)
+>   en vez de aparecer con el de país: un menú que se mueve y no cambia nada
+>   hace creer que la aplicación no responde. Revive en el paso 18.
+> - La bandera de la tarjeta se **dibuja con CSS** (`flagBg` de `paises.js`,
+>   clase `.cc-flag-visual`, ambas ya escritas y sin usar) en vez del emoji:
+>   en Windows y en Android viejo 🇭🇳 sale como las letras «HN».
+> - La barra de arriba del teléfono (`meta[name=theme-color]`) también cambia
+>   de color; si no, queda el azul de Honduras sobre una pantalla roja.
+> - El cambio de país vive en **`aplicarPais(code)`**, no dentro del listener
+>   del `<select>`: lo llaman el selector y el botón «Volver a Honduras».
+
 **Dormido pero vivo. Reactivar = cambiar UNA palabra.**
 
 1. **Bandera única**, en index.html ANTES de `<script src="js/app.js">` (línea ~850):
@@ -202,7 +224,7 @@ Hoy, cuando alguien abre M.E.T.A.S. en su teléfono, lo primero que ve son adorn
 
 5. **Réplica obligatoria** de (1)-(3) en `www/index.html` y `www/js/app.js` + subir `CACHE_NAME` de sw.js.
 
-6. **Reactivación futura, cuando haya misiones de otro país:** `METAS_PAISES_ON = true` devuelve selector, temas y gating tal cual. En ese mismo momento (una línea en renderMissions 424-442): cambiar el empty-state «Próximamente» por **«Misiones de [país] en construcción» + botón «🇭🇳 Volver a Honduras»** — se elimina para siempre el callejón sin salida. El campo `pais:'HN'` ya añadido en el paso 5 hace trivial el filtro por país del catálogo.
+6. ✅ **Hecho (agosto de 2026).** `METAS_PAISES_ON = true` devolvió selector, temas y gating tal cual, y el empty-state «Próximamente» pasó a **«Misiones de [país]: en construcción» + botón «Volver a Honduras»** (`.empty-btn`, 44 px de alto): el callejón sin salida queda cerrado, porque en la vista Misiones no hay selector de país y quien elegía otro se quedaba sin misiones y sin salida. El campo `pais:'HN'` ya añadido en el paso 5 hace trivial el filtro por país del catálogo cuando llegue.
 
 ---
 

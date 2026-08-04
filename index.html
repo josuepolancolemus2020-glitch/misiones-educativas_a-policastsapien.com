@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1e3a7c">
   <title>M.E.T.A.S. · Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="css/app.css?v=78">
+  <link rel="stylesheet" href="css/app.css?v=79">
   <!-- Font Awesome local (funciona sin internet); el CDN queda de respaldo una versión -->
   <link rel="stylesheet" href="css/vendor/fontawesome/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -152,8 +152,9 @@
         </div>
       </div>
 
+    <h2 class="section-title">Explora tu país</h2>
     <div class="selectors-container" id="selectors-container">
-        
+
         <div class="selector-group">
           <label><i class="fa-solid fa-earth-americas"></i> Elige tu País</label>
           <select id="country-select" class="custom-select">
@@ -167,7 +168,11 @@
           </select>
         </div>
 
-        <div class="selector-group">
+        <!-- Grado: escrito pero todavía sin conectar (nada lee grade-select).
+             Se deja oculto en vez de borrarlo: un menú que se puede mover y no
+             cambia nada hace creer al alumno que la aplicación no le responde.
+             Quitar el hidden el día que filtre misiones de verdad. -->
+        <div class="selector-group" hidden>
           <label><i class="fa-solid fa-graduation-cap"></i> Grado</label>
           <select id="grade-select" class="custom-select">
             <option value="1-3">1° a 3° Grado</option>
@@ -183,12 +188,15 @@
 
         <!-- Encabezado: bandera visual + nombre + lema -->
         <div class="cc-head">
+          <!-- La bandera se dibuja con CSS, no con el emoji 🇭🇳: en Windows y en
+               los Android viejos el emoji de bandera sale como dos letras
+               («HN») y el alumno ve un error donde debería ver su país. -->
+          <span class="cc-flag-visual" id="cc-flag" role="img" aria-label="Bandera de Honduras"></span>
           <div class="cc-head-info">
             <div class="cc-exploring">Explorando</div>
             <div class="cc-country-name" id="cc-country-name">Honduras</div>
             <div class="cc-lema" id="cc-lema"></div>
           </div>
-          <span class="cc-emoji-flag" id="cc-flag">🇭🇳</span>
         </div>
 
         <!-- Símbolos patrios -->
@@ -1030,31 +1038,35 @@
     </nav>
   </aside>
 
-  <script src="js/metas-dialogos.js?v=78"></script>
-  <script src="js/html2canvas.min.js?v=78"></script>
-  <script src="js/data/misiones.js?v=78"></script>
-  <script src="js/data/dcnb-map.js?v=78"></script>
-  <script src="js/data/diagnosticos.js?v=78"></script>
-  <script src="js/data/proceres.js?v=78"></script>
-  <script src="js/data/paises.js?v=78"></script>
-  <script src="js/data/frases.js?v=78"></script>
-  <script src="js/data/consejos-padres.js?v=78"></script>
-  <script src="js/tools/gobierno-escolar.js?v=78"></script>
-  <script src="js/tools/plan-accion.js?v=78"></script>
-  <script src="js/tools/registros-admin.js?v=78"></script>
-  <script src="js/tools/parte-mensual.js?v=78"></script>
-  <script src="js/tools/collage-maker.js?v=78"></script>
-  <script src="js/tools/formacion-docente.js?v=78"></script>
-  <script src="js/data/campeonismo-bank.js?v=78"></script>
-  <script src="js/tools/campeonismo.js?v=78"></script>
+  <script src="js/metas-dialogos.js?v=79"></script>
+  <script src="js/html2canvas.min.js?v=79"></script>
+  <script src="js/data/misiones.js?v=79"></script>
+  <script src="js/data/dcnb-map.js?v=79"></script>
+  <script src="js/data/diagnosticos.js?v=79"></script>
+  <script src="js/data/proceres.js?v=79"></script>
+  <script src="js/data/paises.js?v=79"></script>
+  <script src="js/data/frases.js?v=79"></script>
+  <script src="js/data/consejos-padres.js?v=79"></script>
+  <script src="js/tools/gobierno-escolar.js?v=79"></script>
+  <script src="js/tools/plan-accion.js?v=79"></script>
+  <script src="js/tools/registros-admin.js?v=79"></script>
+  <script src="js/tools/parte-mensual.js?v=79"></script>
+  <script src="js/tools/collage-maker.js?v=79"></script>
+  <script src="js/tools/formacion-docente.js?v=79"></script>
+  <script src="js/data/campeonismo-bank.js?v=79"></script>
+  <script src="js/tools/campeonismo.js?v=79"></script>
   <script>
-    /* Países en STANDBY: el selector queda oculto y todos exploran Honduras.
-       Cuando haya misiones de otros países, reactivar cambiando false → true. */
-    window.METAS_PAISES_ON = false;
+    /* Países ENCENDIDOS: el alumno elige su país y el inicio se pinta con los
+       colores de esa bandera. Las misiones siguen siendo de Honduras: en los
+       demás países el catálogo dice «Próximamente», y eso es a propósito
+       mientras se trabajan las currículas de la región.
+       Si alguna vez hay que apagarlo, basta con poner false: todo vuelve a
+       Honduras sin que nadie pierda su XP. */
+    window.METAS_PAISES_ON = true;
   </script>
-  <script src="js/app.js?v=78"></script>
-  <script src="js/metas-docente-sync.js?v=78"></script>
-  <script src="js/tools/pwa-install.js?v=78"></script>
+  <script src="js/app.js?v=79"></script>
+  <script src="js/metas-docente-sync.js?v=79"></script>
+  <script src="js/tools/pwa-install.js?v=79"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

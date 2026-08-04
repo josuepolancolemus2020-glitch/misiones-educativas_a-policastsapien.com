@@ -772,9 +772,12 @@ a { text-decoration: none; color: inherit; }
 .home-nav-btn.hnb-docente { background: linear-gradient(135deg, #f8fafc, #eef4ff); border-color: rgba(30,58,124,.25); }
 .home-nav-btn.hnb-docente .hnb-label { color: var(--brand); }
 
+/* auto-fit y no «1fr 1fr»: hoy solo se muestra el selector de país (el de
+   grado está oculto hasta que filtre algo) y a media pantalla se vería
+   descuadrado. Con auto-fit, uno solo ocupa el ancho y dos se reparten. */
 .selectors-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
   margin-bottom: 24px;
 }
@@ -1069,6 +1072,24 @@ a { text-decoration: none; color: inherit; }
 .empty-icon  { font-size: 44px; margin-bottom: 12px; }
 .empty-state h3 { font-size: 16px; margin-bottom: 6px; color: var(--text); }
 .empty-state p  { font-size: 13px; line-height: 1.5; }
+
+/* Salida del estado vacío (p. ej. «Volver a Honduras»): 44 px de alto para
+   que se toque con el pulgar sin apuntar. */
+.empty-btn {
+  margin-top: 16px;
+  min-height: 44px;
+  padding: 12px 22px;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+.empty-btn:active { background: var(--brand-mid); transform: scale(.98); }
 
 /* ====== PROGRESS VIEW ====== */
 .progress-overview {
@@ -2211,7 +2232,7 @@ a { text-decoration: none; color: inherit; }
   .proc-foto { width: 88px; height: 88px; }
 
   /* Selectors en fila */
-  .selectors-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .selectors-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
 }
 
 /* ====== DESKTOP (1024px+) ====== */

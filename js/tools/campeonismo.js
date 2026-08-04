@@ -436,7 +436,7 @@ function renderCampHome() {
       _sfx(r.nuevasPreguntas ? 'pts' : 'click');
       if (st) {
         if (!r.pendientes)            st.textContent = '✅ El banco ya cubre todas las misiones. ' + _bankStatusTxt();
-        else if (r.nuevasPreguntas)   st.textContent = `✅ ¡Listo! +${r.nuevasPreguntas} preguntas de ${r.nuevasMisiones} misión${r.nuevasMisiones > 1 ? 'es' : ''}. ${_bankStatusTxt()}`;
+        else if (r.nuevasPreguntas)   st.textContent = `✅ ¡Listo! +${r.nuevasPreguntas} preguntas de ${r.nuevasMisiones} ${r.nuevasMisiones === 1 ? 'misión' : 'misiones'}. ${_bankStatusTxt()}`;
         else                          st.textContent = '⚠️ No se pudieron leer las misiones pendientes. Revisa la conexión e intenta de nuevo.';
       }
     } catch (_) {

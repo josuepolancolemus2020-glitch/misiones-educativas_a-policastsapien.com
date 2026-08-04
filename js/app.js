@@ -75,8 +75,9 @@ function load() {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const st = Object.assign(blank(), JSON.parse(raw));
-      // Países en standby: mientras la bandera esté apagada todos exploran
-      // Honduras (rescata sin perder XP a quien tenía otro país guardado).
+      // Interruptor de países (index.html). Si alguna vez se apaga, todos
+      // vuelven a Honduras sin perder su XP: solo se ignora el país guardado,
+      // no se borra, así al reencenderlo cada quien recupera el suyo.
       if (!window.METAS_PAISES_ON) st.country = 'HN';
       return st;
     }
@@ -201,6 +202,11 @@ function applyCountryTheme(code) {
   r.setProperty('--brand',       data.tema.brand);
   r.setProperty('--brand-mid',   data.tema.brandMid);
   r.setProperty('--brand-light', data.tema.brandLight);
+
+  // La barra de arriba del teléfono también se tiñe. Sin esto queda el azul
+  // de Honduras encima de una pantalla verde o roja, y se ve como un error.
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', data.tema.brand);
 }
 
 function renderCountryCard(code) {
@@ -217,7 +223,18 @@ function renderCountryCard(code) {
   const textEl = document.getElementById('cc-text');
   const catEl  = document.getElementById('cc-category');
 
-  if (flagEl) flagEl.textContent = data.bandera;
+  // Bandera dibujada con CSS (data.flagBg), no el emoji: ver la nota en
+  // index.html. Si algún país no trajera su dibujo, se cae al emoji.
+  if (flagEl) {
+    if (data.flagBg) {
+      flagEl.style.background = data.flagBg;
+      flagEl.textContent = '';
+    } else {
+      flagEl.style.background = '';
+      flagEl.textContent = data.bandera;
+    }
+    flagEl.setAttribute('aria-label', 'Bandera de ' + data.nombre);
+  }
   if (nameEl) nameEl.textContent = data.nombre;
   if (lemaEl) lemaEl.textContent = data.lema || '';
   if (textEl) textEl.textContent = fact.texto;
@@ -272,6 +289,52 @@ function prevFact() {
   scheduleNextTick();
 }
 
+/* Cambiar de país. Vive aquí y no dentro del listener del selector porque
+   se llama desde dos sitios: el selector del inicio y el botón «Volver a
+   Honduras» de la lista de misiones. */
+function aplicarPais(code) {
+  if (!COUNTRY_DATA[code]) return;
+
+  const s = load();
+  s.country = code;
+  save(s);
+  _currentCountry = code;
+  _factIdx = 0;
+
+  applyCountryTheme(code);
+  renderCountryCard(code);
+  scheduleNextTick();
+
+  const sel = document.getElementById('country-select');
+  if (sel && sel.value !== code) sel.value = code;
+
+  // Chips de materia: conteo real solo donde hay catálogo
+  document.querySelectorAll('.subj-chip').forEach(chip => {
+    const em = chip.querySelector('em');
+    if (!em) return;
+    if (code === 'HN') {
+      const count = MISSIONS.filter(m => m.subject === chip.dataset.subject).length;
+      em.textContent = `${count} ${count === 1 ? 'misión' : 'misiones'}`;
+    } else {
+      em.textContent = 'Próximamente';
+    }
+  });
+
+  const featuredSection = document.getElementById('featured-section');
+  if (featuredSection) featuredSection.hidden = (code !== 'HN');
+
+  // Si el cambio se hizo desde la lista de misiones, esa lista se repinta
+  // sola; si no, quedaría con el catálogo del país anterior.
+  const vistaMisiones = document.getElementById('view-misiones');
+  if (vistaMisiones && vistaMisiones.classList.contains('active')) {
+    renderMissions(currentFilter, currentQuery);
+  }
+
+  const d = COUNTRY_DATA[code];
+  if (d) toast(`${d.bandera} ¡Explorando ${d.nombre}!`);
+}
+window.aplicarPais = aplicarPais;
+
 /* ─────────────────────────────────────────────
    RENDER — HOME
 ───────────────────────────────────────────── */
@@ -309,7 +372,9 @@ function renderHome() {
     // Materias en preparación (Inglés): el chip aparece con su primera misión
     if (chip.hasAttribute('data-oculta-vacio')) chip.hidden = (count === 0);
     if (country === 'HN') {
-      em.textContent = `${count} misión${count !== 1 ? 'es' : ''}`;
+      // «misiones» pierde la tilde en plural: pegarle «es» a «misión» daba
+      // «misiónes» en la portada, a la vista de todos.
+      em.textContent = `${count} ${count === 1 ? 'misión' : 'misiones'}`;
     } else {
       em.textContent = 'Próximamente';
     }
@@ -475,12 +540,17 @@ function renderMissions(filter, query) {
 
   if (country !== 'HN') {
     const cd = COUNTRY_DATA[country];
+    const nom = cd ? cd.nombre : 'este país';
+    // El botón no es adorno: en esta pantalla NO hay selector de país (vive en
+    // el inicio), así que sin él quien eligió otro país se queda sin misiones
+    // y sin salida visible. Callejón sin salida cerrado.
     container.innerHTML = `
       <div class="empty-state">
-        <div class="empty-icon">🚀</div>
-        <h3>¡Próximamente!</h3>
-        <p>Las misiones para <strong>${cd ? cd.nombre : 'este país'}</strong> están en camino.<br>
-           Cambia a <strong>🇭🇳 Honduras</strong> para explorar las misiones disponibles.</p>
+        <div class="empty-icon">🏗️</div>
+        <h3>Misiones de ${nom}: en construcción</h3>
+        <p>Se están armando con la currícula de ${nom}. Mientras tanto, las de
+           Honduras están abiertas para todo el que quiera estudiarlas.</p>
+        <button class="empty-btn" onclick="aplicarPais('HN')">Volver a Honduras</button>
       </div>`;
     return;
   }
@@ -1098,7 +1168,7 @@ function renderPadre() {
     <div class="padre-sec">
       <div class="padre-sec-title">📈 Esta semana</div>
       ${misSem.size
-        ? `<p class="padre-big">${quien} trabajó en <strong>${misSem.size} misión${misSem.size !== 1 ? 'es' : ''}</strong>${mejor
+        ? `<p class="padre-big">${quien} trabajó en <strong>${misSem.size} ${misSem.size === 1 ? 'misión' : 'misiones'}</strong>${mejor
             ? ` y su mejor nota fue <strong>${mejor.pct}</strong> en «${_pEsc(mejorTitulo)}»${mejor.pct >= 70 ? ' ✔' : ''}` : ''}.</p>`
         : `<p class="padre-big">Esta semana aún no hay actividad registrada en este teléfono. Anime a ${quien} a entrar a su siguiente misión. 💪</p>`}
     </div>`;
@@ -2725,33 +2795,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Cambio de país
   if (countryEl) {
     countryEl.addEventListener('change', () => {
-      const s = load();
-      s.country = countryEl.value;
-      save(s);
-      _currentCountry = s.country;
-      _factIdx = 0;
-      applyCountryTheme(s.country);
-      renderCountryCard(s.country);
-      scheduleNextTick();
-
-      // Actualizar chips de materia (Próximamente vs conteo real)
-      document.querySelectorAll('.subj-chip').forEach(chip => {
-        const em = chip.querySelector('em');
-        if (!em) return;
-        if (s.country === 'HN') {
-          const count = MISSIONS.filter(m => m.subject === chip.dataset.subject).length;
-          em.textContent = `${count} misión${count !== 1 ? 'es' : ''}`;
-        } else {
-          em.textContent = 'Próximamente';
-        }
-      });
-
-      // Mostrar u ocultar sección Misión destacada
-      const featuredSection = document.getElementById('featured-section');
-      if (featuredSection) featuredSection.hidden = (s.country !== 'HN');
-
-      const d = COUNTRY_DATA[s.country];
-      if (d) toast(`${d.bandera} ¡Explorando ${d.nombre}!`);
+      aplicarPais(countryEl.value);
 
       // Quitar foco del select para que el scroll listener no quede bloqueado,
       // y restaurar el header si estaba oculto por el scroll.
