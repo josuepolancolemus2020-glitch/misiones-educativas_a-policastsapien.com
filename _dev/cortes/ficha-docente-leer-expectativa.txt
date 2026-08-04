@@ -1,0 +1,13 @@
+# Nueve cortes para diez páginas. Se buscan EN ORDEN sobre lo que queda, así
+# que un encabezado repetido no estorba: cada uno se busca tras el anterior.
+# NUNCA se corta dentro de una <table>: el repaginador solo equilibra <div>,
+# así que un corte en medio de una tabla deja la página rota y midiendo 0 mm.
+<h3>Las cuatro partes, una por una</h3>
+<h3>Los que piden producir</h3>
+<h3>El techo: hasta dónde llega</h3>
+<b>Este orden se comprobó en la página impresa.</b>
+<p>Lo que esa fila le entrega, sin que usted tenga que inventar nada:
+<h2>10. Filas reales para practicar</h2>
+<h3>Los seis errores que más se cobran</h3>
+<h3>D. Escoja el instrumento</h3>
+<h3>C. Desarme la expectativa</h3>

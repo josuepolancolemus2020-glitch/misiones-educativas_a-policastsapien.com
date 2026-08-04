@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión del maestro · Leer una expectativa de logro sin marearse</title>
+<meta name="description" content="Formación docente: cómo se lee una fila del DCNB. El verbo, el objeto, el techo, el componente del énfasis, las tres columnas en su orden real y los símbolos de contenidos conceptuales y actitudinales. Con ejemplos reales del currículo, simulacro de concurso y ficha de diez páginas.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/leer-expectativa.css">
+</head>
+<body>
+
+<!-- Volver: index.html sin parámetros restaura la última vista guardada, que es
+     «Misiones del maestro» (switchView la guarda al entrar). -->
+<div class="xp-bar" role="status" aria-label="Progreso de la misión">
+  <a href="../../index.html" class="xp-back-btn" title="Volver a Misiones del maestro">
+    <span aria-hidden="true">←</span>
+    <img src="../../img/logo.png" alt="" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎓 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-num" id="xpNum">0</span>
+</div>
+
+<header class="hero">
+  <div class="main">
+    <span class="hero-badge">📘 El DCNB en su aula · Misión 2 de 8</span>
+    <h1>Leer una expectativa de logro sin marearse</h1>
+    <p>Nadie se marea con el currículo entero: uno se marea con la fila que tiene delante cuando va
+      a planificar. Aquí se desarma una fila real del DCNB, pieza por pieza, hasta que se vuelve un
+      plan de clase. Con ejemplos tomados del documento, no inventados.</p>
+    <div class="hero-solo">👤 Esta misión es para usted, no para sus alumnos. Nadie más la ve.</div>
+  </div>
+</header>
+
+<nav class="nav" id="nav" aria-label="Secciones de la misión"></nav>
+
+<main class="main">
+
+  <!-- ══════════ 1. LA ESCALERA ══════════ -->
+  <section class="sec active" id="sec-peldanos">
+    <div class="card">
+      <h2>🔎 Ocho cortes a una misma fila</h2>
+      <p>Se desarma una fila del DCNB por partes, y en cada corte va una cita textual del documento.
+        Toque cada uno: se abre debajo con qué es, cómo se usa y, aparte, lo que no se hace.</p>
+      <div class="si-lista" id="pelLista"></div>
+      <div class="si-nav">
+        <button class="btn btn-g" onclick="pelMover(-1)">← Anterior</button>
+        <button class="btn" onclick="pelMover(1)">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 2. APRENDE ══════════ -->
+  <section class="sec" id="sec-aprende">
+    <div class="card">
+      <h2>🧭 Una fila entera, leída en voz alta</h2>
+      <p>Antes de los cortes por separado, conviene ver el procedimiento completo sobre un caso
+        real. Esta es una expectativa del currículo de <b>Ciencias Naturales de Primer Grado</b>,
+        del bloque «Los seres vivos en su ambiente», copiada tal como está en el documento:</p>
+      <div class="dato">📜 «Clasifican los elementos ambientales en seres no vivos y seres vivos, y
+        éstos en los dos tipos más evidentes, plantas y animales, con énfasis en el componente
+        diversidad.»</div>
+      <p>Ahora, por partes:</p>
+      <ul>
+        <li><b>El verbo es «clasifican».</b> No dice «conocen» ni «identifican»: clasificar es
+          <b>agrupar</b>. Si el alumno solo nombra plantas y animales, todavía no cumplió.</li>
+        <li><b>El objeto son «los elementos ambientales».</b> No es «la naturaleza» en general: son
+          las cosas concretas que hay alrededor, las que se pueden señalar en el patio.</li>
+        <li><b>El techo está escrito:</b> «en los dos tipos <b>más evidentes</b>». No se le pide a un
+          niño de primer grado que distinga hongos ni microorganismos. Ese límite lo protege a
+          usted de exigir de más.</li>
+        <li><b>El énfasis es «diversidad».</b> La idea que tiene que quedar al final no es
+          «las plantas tienen hojas», sino <b>que hay muchas clases distintas de seres vivos</b>.</li>
+      </ul>
+      <div class="aula">🎯 <b>El plan de clase que sale de ahí:</b> salir al patio, recoger o señalar
+        diez cosas, separarlas primero en vivas y no vivas, y después las vivas en plantas y
+        animales. Se evalúa viendo al niño agrupar, no preguntándole una definición. La actividad no
+        hubo que inventarla: la fila ya la traía.</div>
+    </div>
+
+    <div class="card">
+      <h2>📐 Los seis verbos que hay que saber leer</h2>
+      <p>El DCNB no usa los verbos al azar y tampoco usa muchos. Contando los del currículo de
+        Básica, estos son los que más se repiten, y con ellos se lee casi todo el documento:</p>
+      <ul>
+        <li><b>Identifican</b> y <b>Reconocen</b>: se comprueban señalando o nombrando. Son el
+          escalón de entrada.</li>
+        <li><b>Describen</b>: pide decir cómo es algo, con sus partes o sus rasgos.</li>
+        <li><b>Comparan</b> y <b>Clasifican</b>: piden poner dos cosas en frente o agrupar. Ya no
+          basta con nombrar.</li>
+        <li><b>Aplican</b>: pide usar lo aprendido en un caso nuevo.</li>
+        <li><b>Analizan</b> y <b>Explican</b>: piden producir una razón, no repetir un dato.</li>
+        <li><b>Elaboran</b> y <b>Construyen</b>: piden un producto terminado que se pueda ver.</li>
+      </ul>
+      <div class="dato">📌 <b>El error que más cuesta:</b> planificar con el verbo de la expectativa
+        y evaluar con otro más fácil. El alumno estudió para analizar y le preguntaron para
+        identificar, o al revés. La nota que sale de ahí no mide lo que el currículo pedía.</div>
+      <div class="aula">🎯 <b>Un hábito de dos segundos:</b> cuando escriba el examen, ponga al lado
+        la expectativa y compruebe que el verbo es el mismo. Si no lo es, uno de los dos está mal.</div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3. TARJETAS ══════════ -->
+  <section class="sec" id="sec-tarjetas">
+    <div class="card">
+      <h2>🃏 Tarjetas de repaso</h2>
+      <p>Toque la tarjeta para voltearla. Van en el orden en que se preguntan.</p>
+      <div class="fc" id="fc" onclick="fcVoltea()">
+        <div class="fc-in">
+          <div class="fc-cara fc-front" id="fcQ"></div>
+          <div class="fc-cara fc-back"><div id="fcA"></div></div>
+        </div>
+      </div>
+      <div class="btn-fila">
+        <button class="btn btn-g" onclick="fcPasa(-1)">← Anterior</button>
+        <button class="btn" onclick="fcPasa(1)">Siguiente →</button>
+        <span class="q-num" id="fcNum" style="align-self:center"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Memorama del currículo</h2>
+      <p>Empareje cada pieza con lo que hace. Seis parejas.</p>
+      <div class="memo-grid" id="memoGrid"></div>
+      <div class="btn-fila"><button class="btn btn-g" onclick="memoInit()">🔄 Barajar de nuevo</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 4. QUIZ ══════════ -->
+  <section class="sec" id="sec-quiz">
+    <div class="card">
+      <h2>❓ Compruebe lo que quedó</h2>
+      <p>Nueve preguntas con explicación inmediata. Aquí no se guarda nota: es para usted.</p>
+      <div id="quiz"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 5. CLASIFICA ══════════ -->
+  <section class="sec" id="sec-clasifica">
+    <div class="card">
+      <h2>🗂️ Cada pieza en su nivel</h2>
+      <p>Toque una tarjeta y luego la caja donde va. Si se equivoca, vuelva a tocarla para
+        devolverla al banco.</p>
+      <div class="cl-banco" id="clBanco"></div>
+      <div class="cl-cajas" id="clCajas"></div>
+      <div class="btn-fila">
+        <button class="btn" onclick="clRevisa()">✔️ Revisar</button>
+        <button class="btn btn-g" onclick="clInit()">🔄 Empezar de nuevo</button>
+      </div>
+      <div class="resu" id="clResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 6. COMPLETA ══════════ -->
+  <section class="sec" id="sec-completa">
+    <div class="card">
+      <h2>✍️ Complete la oración</h2>
+      <p>Escriba la palabra o el número que falta. Se aceptan mayúsculas, minúsculas y tildes
+        indistintamente.</p>
+      <div id="completa"></div>
+      <div class="btn-fila"><button class="btn" onclick="cpRevisa()">✔️ Revisar todo</button></div>
+      <div class="resu" id="cpResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 7. RETO ══════════ -->
+  <section class="sec" id="sec-reto">
+    <div class="card">
+      <h2>⏱️ Reto: del documento nacional al plan del lunes</h2>
+      <p>Nueve pasos desordenados. Tóquelos en el orden en que se decide. Tiene noventa segundos.</p>
+      <div class="btn-fila">
+        <button class="btn" id="retoBtn" onclick="retoInit()">▶️ Empezar</button>
+        <span class="reto-reloj" id="retoReloj">1:30</span>
+      </div>
+      <div class="reto-lista" id="retoLista"></div>
+      <div class="resu" id="retoResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 8. SOPA ══════════ -->
+  <section class="sec" id="sec-sopa">
+    <div class="card">
+      <h2>🔤 Sopa de letras</h2>
+      <p>Ocho palabras de la misión, en todas las direcciones. Toque la primera y la última letra
+        de cada palabra.</p>
+      <div class="sopa-grid" id="sopaGrid"></div>
+      <div class="sopa-pal" id="sopaPal"></div>
+      <div class="btn-fila">
+        <button class="btn btn-amb" onclick="sopaLinterna()">🔦 Linterna (cuesta 2 XP)</button>
+        <button class="btn btn-g" onclick="sopaInit()">🔄 Otra sopa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 9. CASOS ══════════ -->
+  <section class="sec" id="sec-casos">
+    <div class="card">
+      <h2>🏫 Cinco situaciones de esta semana</h2>
+      <p>Estas no traen la ruta hecha: hay que pensarlas. Piense su respuesta antes de abrir la
+        sugerencia.</p>
+
+      <div class="caso">
+        <div class="caso-t">Caso 1 · «Todos sacaron mal el examen»</div>
+        <p>Dio el tema completo, la clase salió bien, los alumnos participaron. Pero el examen salió
+          bajo en casi todo el grupo y usted no entiende qué pasó.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Antes de repetir el tema, ponga lado a lado <b>la expectativa y su
+          examen</b>, y compare los verbos. El caso más frecuente es este: la expectativa decía
+          <b>analizan</b> o <b>clasifican</b>, la clase se dio explicando y el examen preguntó
+          definiciones. El alumno estudió una cosa y le midieron otra, y la nota no significa lo que
+          parece. Si los verbos no coinciden, el problema fue del instrumento, no del grupo: rehaga
+          la evaluación con el verbo correcto antes de dar por perdido el contenido. Y para la
+          próxima, escriba el examen el mismo día que el plan, con la fila del DCNB delante.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 2 · «Ese contenido no se lo pedí así»</div>
+        <p>Una madre reclama porque su hijo reprobó una pregunta sobre raíces cuadradas de números
+          grandes. Usted la puso porque el grupo iba bien y quiso subir el nivel.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">La madre tiene razón, y la respuesta está escrita en la fila. La
+          expectativa de Quinto Grado dice <b>«raíz cuadrada de números cuadrados pequeños»</b>: ese
+          «pequeños» es el <b>techo</b> y forma parte de la norma. Evaluar por encima del alcance
+          escrito no es exigencia, es salirse del currículo, y deja la nota sin respaldo. Corrija esa
+          pregunta sin discutir. Que el grupo pueda más es una buena noticia: se aprovecha
+          proponiendo el reto como trabajo adicional, nunca convirtiéndolo en el mínimo con que se
+          califica a todos.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 3 · La actitud que nadie evalúa</div>
+        <p>Su fila del DCNB trae contenidos con cuadrito y con círculo. Usted preparó una prueba
+          escrita y con eso dio por evaluada la expectativa completa.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Quedó media expectativa sin evaluar. El <b>cuadrito (■)</b> marca los
+          contenidos <b>conceptuales</b>, que sí se comprueban con una pregunta; el <b>círculo
+          (●)</b> marca los <b>actitudinales</b>, y esos no se pueden medir con un examen: se
+          <b>observan</b> a lo largo del tiempo. Lo que hace falta no es otra prueba, es un registro:
+          una lista con los nombres y dos o tres rasgos que va marcando durante las semanas, con
+          fecha. Cuesta poco y es lo único que sostiene una nota de conducta o de trabajo en equipo
+          si alguien la cuestiona. Y anótelo desde el plan, no al final.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 4 · «Ya di todos los bloques»</div>
+        <p>Es octubre. Usted revisó su jornalización y dio todos los bloques del grado. Pero al
+          revisar la lista de expectativas del grado, hay varias que no reconoce haber trabajado.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">No es contradicción: son <b>las dos listas</b>. El DCNB trae las
+          expectativas en dos lugares, la general del grado («Al finalizar el Primer Grado…») y las
+          de cada fila de la tabla. Se pueden dar todos los bloques y aun así dejar sin cubrir
+          expectativas del grado, porque una expectativa grande se arma con varias filas y basta que
+          falte una. Marque en la lista del grado lo que sí quedó cubierto, y con lo que falte arme
+          las semanas que queden: casi siempre se recupera integrando, no agregando temas nuevos.
+          Para el año que viene, revise esa lista <b>al cerrar cada parcial</b>, no en octubre.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 5 · «Inventar actividades me lleva toda la tarde»</div>
+        <p>Un colega nuevo le cuenta que se le van las tardes del domingo buscando actividades en
+          internet para las clases de la semana.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Enséñele la <b>tercera columna</b>. Es la de más a la derecha,
+          <b>Procesos y Actividades Sugeridas</b>, y trae las actividades ya pensadas para esa
+          expectativa; en varias áreas incluso con el ejemplo numérico resuelto, calibrado para ese
+          grado. En el bloque de divisibilidad de Quinto, por ejemplo, no dice «trabajar múltiplos»:
+          dice calcular y comparar los múltiplos de dos números y pone la lista de los de 4 y los de
+          6 para que se vea el común. Eso es una clase escrita por el currículo, gratis. Dice
+          «sugeridas», así que se adapta a lo que hay en el aula, pero partir de ahí en vez de
+          partir de cero es la diferencia entre media hora y una tarde entera.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 10. SIMULACRO DE CONCURSO ══════════ -->
+  <section class="sec" id="sec-concurso">
+    <div class="card">
+      <h2>🎯 Simulacro de concurso</h2>
+      <p>Veinte preguntas con el formato de las pruebas de conocimientos del concurso docente:
+        una sola respuesta correcta y sin pistas. Currículo es materia fija en esas pruebas. Al
+        final se califica sobre cien y le dice qué repasar. En el concurso real el promedio final
+        exigido no baja de setenta y cinco por ciento, así que ese es el listón de aquí.</p>
+      <div id="concurso"></div>
+      <div class="btn-fila">
+        <button class="btn btn-ok" onclick="cnCalifica()">🧮 Calificar</button>
+        <button class="btn btn-g" onclick="cnInit()">🔄 Otro intento</button>
+      </div>
+      <div class="resu" id="cnResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 11. FICHA, RECURSOS Y CONSTANCIA ══════════ -->
+  <section class="sec" id="sec-cierre">
+    <div class="card">
+      <h2>🖨️ Ficha de estudio, diez páginas</h2>
+      <p>Los mismos cortes en papel, para estudiar sin batería y para tenerla al lado cuando toque
+        planificar: la anatomía de la expectativa, la tabla de verbos con lo que pide cada uno, las
+        tres columnas con su orden, los dos símbolos, filas reales del DCNB para practicar,
+        ejercicios para lápiz y la pauta.</p>
+      <div class="btn-fila">
+        <a class="btn" href="../../fichas/ficha-docente-leer-expectativa.html">📄 Abrir la ficha</a>
+      </div>
+      <div class="dato">📌 Se imprime en diez hojas tamaño carta, a doble cara son cinco. La pauta va
+        en las últimas páginas: si la va a usar con colegas, imprima sin ellas y repártalas después.</div>
+    </div>
+
+    <div class="card">
+      <h2>📚 De dónde salió todo esto</h2>
+      <p>Las expectativas que se citan aquí no son ejemplos inventados: son filas del documento
+        oficial, copiadas tal cual. Estudie siempre contra el documento, no contra un resumen (ni
+        siquiera este):</p>
+      <div class="rec-it"><b>Diseño Curricular Nacional para la Educación Básica</b>, volúmenes de I
+        y II Ciclo. De ahí salen las expectativas de Ciencias Naturales de Primer Grado (bloque «Los
+        seres vivos en su ambiente»), las de Matemáticas de Quinto Grado (Bloque 1, «Números y
+        Operaciones») y las de Comunicación / Español de Sexto Grado (Bloque 1, «Lengua Oral»).</div>
+      <div class="rec-it"><b>El orden de las columnas y los dos símbolos</b> se comprobaron en la
+        página impresa del documento, no en un resumen. Importa decirlo: la extracción automática de
+        texto devuelve los encabezados en otro orden, y por fiarse de ella la misión anterior de
+        esta serie salió publicada con la columna del medio cambiada. Ya está corregido en las dos.</div>
+      <div class="rec-it"><b>Las frecuencias de verbos</b> (que «Identifican» es el más repetido, y
+        después «Analizan» y «Reconocen») se contaron sobre el texto completo de los tres volúmenes
+        de Educación Básica.</div>
+      <div class="rec-it"><b>Dónde bajarlo:</b> portal de la Secretaría de Educación (se.gob.hn). Si
+        el documento que usted consigue trae otra fecha o versión, gana el suyo: revise y avísenos.</div>
+      <div class="fuente">Filas, símbolos, orden de columnas y conteo de verbos leídos en el
+        documento en agosto de 2026. <b>Lo que aquí no se afirma, a propósito:</b> que estas mismas
+        reglas de lectura sirvan para Educación Media. Sus documentos de 2025 se organizan de otra
+        forma (espacios curriculares, competencias y criterios de evaluación) y además llevan
+        impreso «Versión Preliminar», así que esta misión se queda en Prebásica y Básica.</div>
+    </div>
+
+    <div class="card const" id="constancia">
+      <div style="font-size:38px">🎓</div>
+      <h3>Constancia de estudio</h3>
+      <p>Escriba su nombre para cerrar la misión. Queda guardada en este teléfono.</p>
+      <input id="constNombre" placeholder="Su nombre completo" maxlength="60" oninput="guardar()">
+      <p id="constTxt" style="font-size:14px;color:var(--gris)"></p>
+      <div class="logros" id="logros"></div>
+    </div>
+  </section>
+
+  <p class="pie">M.E.T.A.S · Misiones del maestro · Formación docente ·
+    <a href="../../index.html">Volver a mi Zona Docente</a></p>
+</main>
+
+<!-- Panel de logros (lo abre el botón del pie) -->
+<div class="ach-fondo" id="achFondo" onclick="if (event.target === this) toggleAchPanel()">
+  <div class="ach-panel" role="dialog" aria-label="Logros de la misión">
+    <h3>🏅 Sus logros en esta misión</h3>
+    <div class="ach-sub" id="achSub"></div>
+    <div id="achLista"></div>
+    <div class="btn-fila"><button class="btn" onclick="toggleAchPanel()">Cerrar</button></div>
+  </div>
+</div>
+
+<footer class="credits">
+  <p class="fam">🏛️ Proyecto Formación e Investigación Docente M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Docentes <strong>Josué E. Polanco</strong> y
+    <strong>Evelyn S. Castellanos</strong>, investigadores en acción. Este material se elabora
+    con el apoyo de las mejores herramientas de investigación profunda («Deep Research»)
+    disponibles en la actualidad. Consulte siempre las fuentes citadas y, si encuentra un error,
+    agradeceremos que nos lo reporte.</p>
+  <div class="mot">«Cuanto mejor preparado esté, mejores serán sus decisiones. Al maestro que
+    estudia no se le impone: se le consulta.» 🎓</div>
+  <div class="cred-contact">
+    <span>📧 <a href="mailto:josuepolancolemus2020@gmail.com">josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank" rel="noopener">policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/leer-expectativa.js"></script>
+<!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
+     «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
+     .sec.active y go(). -->
+<script src="../../js/metas-presentacion.js"></script>
+</body>
+</html>

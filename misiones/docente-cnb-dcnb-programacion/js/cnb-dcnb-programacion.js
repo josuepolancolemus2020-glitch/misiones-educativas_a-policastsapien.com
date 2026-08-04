@@ -237,13 +237,13 @@ const PELDANOS = [
   },
   {
     ic: '📊', corto: 'La tabla del DCNB: tres columnas',
-    tit: 'Casi nadie usa la columna del medio',
+    tit: 'La tercera columna ya trae la clase escrita',
     sub: 'DCNB de Educación Básica, programación por área y grado',
     txt: 'Abra el DCNB de su nivel en cualquier grado y va a encontrar siempre la misma tabla, con ' +
-         'tres columnas: <b>Expectativas de Logro</b>, <b>Procesos y Actividades Sugeridas</b> y ' +
-         '<b>Contenidos Conceptuales y Actitudinales</b>. La primera dice a dónde hay que llegar. La ' +
-         'tercera dice con qué. Y la del medio, que es la que casi nadie mira, ya trae las ' +
-         'actividades pensadas: está escrita para ahorrarle a usted el trabajo de inventarlas. El ' +
+         'tres columnas, y en este orden: <b>Expectativas de Logro</b>, <b>Contenidos Conceptuales ' +
+         '(■) y Actitudinales (●)</b> y <b>Procesos y Actividades Sugeridas</b>. La primera dice a ' +
+         'dónde hay que llegar. La segunda, con qué. Y la tercera, que es la que casi nadie mira, ' +
+         'ya trae las actividades pensadas: está escrita para ahorrarle el trabajo de inventarlas. El ' +
          'documento organiza todo eso en <b>bloques de contenido o macrotemas</b>, de los cuales ' +
          'derivan los contenidos conceptuales, procedimentales y actitudinales de cada ciclo y de ' +
          'cada grado.',
@@ -252,12 +252,12 @@ const PELDANOS = [
           'identifican cada ciclo y cada uno de sus grados.',
     pasos: [
       'Lea la fila completa antes de planificar: las tres columnas son una sola idea partida en tres.',
-      'De la columna del medio saque la actividad, y ahórrese inventarla.',
+      'De la tercera columna saque la actividad, y ahórrese inventarla.',
       'Fíjese en qué tipo de contenido está: conceptual se evalúa distinto que procedimental.',
       'Un bloque no es una semana: es un macrotema que puede tomar varias.',
     ],
     nohacer: [
-      'No planifique solo con la tercera columna: da la lista de temas y le quita el para qué.',
+      'No planifique solo con la columna de contenidos: da la lista de temas y le quita el para qué.',
       'No convierta la expectativa en el título de la clase: la expectativa es el logro, no el tema.',
     ],
     aula: 'Esa fila es, literalmente, su plan de clase a medio escribir. El día que lo descubra va a ' +
@@ -382,7 +382,7 @@ const FC = [
   ['¿Cuáles son los tres ejes transversales del CNB?', 'La Identidad, El Trabajo y La Democracia Participativa. Atraviesan todas las áreas: no son una materia aparte.'],
   ['¿Qué son los Estándares Educativos?', 'Declaraciones claras, exigentes y consistentes sobre lo que se espera que aprenda el alumnado del Sistema Educativo Nacional.'],
   ['¿Qué son las expectativas de logro?', 'Opciones de carácter curricular que concretizan las intencionalidades educativas y las competencias de carácter conceptual, procedimental y actitudinal.'],
-  ['¿Qué tres columnas trae la tabla del DCNB?', 'Expectativas de Logro, Procesos y Actividades Sugeridas, y Contenidos Conceptuales y Actitudinales.'],
+  ['¿Qué tres columnas trae la tabla del DCNB, y en qué orden?', 'Expectativas de Logro, luego Contenidos Conceptuales (■) y Actitudinales (●), y por último Procesos y Actividades Sugeridas.'],
 ];
 let _fc = 0;
 function fcPinta() {
@@ -481,7 +481,7 @@ const QZ = [
   { q: 'En la tabla del DCNB, la columna que trae las actividades ya pensadas es…',
     o: ['Expectativas de Logro', 'Contenidos Conceptuales y Actitudinales',
         'La de evaluación', 'Procesos y Actividades Sugeridas'],
-    c: 3, e: 'Es la columna del medio, la que casi nadie usa, y está escrita para ahorrarle el trabajo de inventar la actividad.' },
+    c: 3, e: 'Es la tercera columna, la de más a la derecha, y está escrita para ahorrarle el trabajo de inventar la actividad.' },
   { q: 'El área de libre elección institucional que incorpora el III Ciclo es…',
     o: ['Educación Física', 'Educación Técnica', 'Tecnología', 'Ciencias Sociales'],
     c: 1, e: 'La Educación Técnica. En ese mismo ciclo, Tecnología pasa a ser área independiente.' },

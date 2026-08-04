@@ -98,10 +98,20 @@ const MF_AREAS = [
      Vale aquí la misma regla que en las misiones de leyes: lo que se cite se
      confirma en el PDF, que es el que acredita.
 
-     ⚠️ Falta la Educación Media (BCH y BTP). Hasta que su currículo entre a
-     `_dev/dcnb-pdf/`, ninguna misión de esta área debe afirmar nada de Media:
-     los temas de abajo se quedan en Prebásica y Básica, que es lo que hay
-     documentado. */
+     ⚠️ Educación Media YA entró (BCH y dos BTP), pero sus documentos llevan
+     impreso «Versión Preliminar 2025». De ellos se puede tomar lo estructural
+     y la aritmética de la programación; NO se cita una competencia ni un
+     criterio de evaluación como si fuera norma firme. Y ojo: Media se organiza
+     distinto que Básica (espacios curriculares, competencias y criterios, en
+     vez de áreas, bloques y expectativas de logro), así que lo que enseñe una
+     misión sobre el DCNB de Básica no se traslada solo.
+
+     ⚠️ LA MAQUETACIÓN SE VERIFICA RENDERIZANDO EL PDF. La extracción
+     automática de texto devuelve los encabezados de la tabla del DCNB en un
+     orden que NO es el visual, y por fiarse de ella la primera misión salió
+     publicada diciendo que «Procesos y Actividades Sugeridas» era la columna
+     del medio. Es la tercera. Corregido en la misión, en su ficha y en la
+     segunda misión del área. */
   {
     k: 'curriculo',
     chip: '📘 El DCNB en su aula',
@@ -117,7 +127,8 @@ const MF_AREAS = [
         s: 'Los cuatro niveles del sistema, los tres ciclos de Básica y las áreas curriculares de cada uno. Dónde cae su grado, qué documento manda cuando dos se contradicen, por qué el Idioma Extranjero entra hasta el II Ciclo, y cómo se pasa del currículo a la jornalización del año. Con ficha de estudio de diez páginas.',
         url: 'misiones/docente-cnb-dcnb-programacion/cnb-dcnb-programacion.html' },
       { t: 'Leer una expectativa de logro sin marearse',
-        s: 'La tabla del DCNB tiene tres columnas y casi nadie usa las tres. Qué es expectativa, qué es proceso sugerido y qué es contenido, y cómo se convierte esa fila en la clase del lunes.' },
+        s: 'Una fila real del DCNB desarmada pieza por pieza: el verbo (que es lo que se evalúa), el objeto, el techo que nadie lee, el componente del énfasis, las tres columnas en su orden y los dos símbolos de contenidos. Con ficha de estudio de diez páginas.',
+        url: 'misiones/docente-leer-expectativa/leer-expectativa.html' },
       { t: 'Conceptuales, procedimentales y actitudinales',
         s: 'Los tres tipos de contenido que el DCNB marca con símbolos distintos en cada bloque. Saber cuál está evaluando explica por qué un alumno que «se sabe la teoría» reprueba la práctica.' },
       { t: 'Estándares y expectativas: qué se compara con qué',
