@@ -1299,15 +1299,10 @@ a { text-decoration: none; color: inherit; }
   border-bottom: 1px solid var(--border);
 }
 
-.cc-flag-visual {
-  width: 62px;
-  height: 41px;
-  border-radius: 5px;
-  flex-shrink: 0;
-  border: 1px solid rgba(0,0,0,.1);
-  box-shadow: 0 2px 6px rgba(0,0,0,.12);
-  overflow: hidden;
-}
+/* Aquí vivía .cc-flag-visual, un rectángulo para pintar la bandera con
+   franjas de color. Se quitó: así dibujada, a Honduras le faltaban las cinco
+   estrellas y a los demás su escudo. La bandera va con el emoji, entera
+   (.cc-emoji-flag). La nota larga está en js/data/paises.js. */
 
 .cc-head-info { flex: 1; min-width: 0; }
 

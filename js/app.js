@@ -223,18 +223,9 @@ function renderCountryCard(code) {
   const textEl = document.getElementById('cc-text');
   const catEl  = document.getElementById('cc-category');
 
-  // Bandera dibujada con CSS (data.flagBg), no el emoji: ver la nota en
-  // index.html. Si algún país no trajera su dibujo, se cae al emoji.
-  if (flagEl) {
-    if (data.flagBg) {
-      flagEl.style.background = data.flagBg;
-      flagEl.textContent = '';
-    } else {
-      flagEl.style.background = '';
-      flagEl.textContent = data.bandera;
-    }
-    flagEl.setAttribute('aria-label', 'Bandera de ' + data.nombre);
-  }
+  // El emoji, nunca data.flagBg: ese degradado deja la bandera sin sus
+  // estrellas ni su escudo. Ver la nota en index.html.
+  if (flagEl) flagEl.textContent = data.bandera;
   if (nameEl) nameEl.textContent = data.nombre;
   if (lemaEl) lemaEl.textContent = data.lema || '';
   if (textEl) textEl.textContent = fact.texto;

@@ -1,9 +1,20 @@
+/* Datos de los países que se muestran en la portada.
+   Cada país trae: nombre, emoji de bandera, lema, símbolos patrios (mayores y
+   menores), colores de tema y doce curiosidades.
+
+   ⚠️ Aquí NO va un dibujo de la bandera. Hubo un campo `flagBg` con la bandera
+   armada a franjas de color y se probó en la tarjeta: se veía limpia, pero a
+   Honduras le faltaban las cinco estrellas, a El Salvador, Guatemala,
+   Nicaragua, Costa Rica y México su escudo, y a Panamá sus estrellas. Una
+   bandera es un símbolo patrio: se muestra completa o no se muestra. La
+   tarjeta usa el emoji (`bandera`), que la trae entera y no pesa nada.
+   Si algún día se quiere una bandera más grande, se pone la imagen real del
+   país, con todo lo suyo, nunca un degradado. */
 const COUNTRY_DATA = {
   HN: {
     nombre: 'Honduras',
     bandera: '🇭🇳',
     lema: 'Libre, Soberana e Independiente',
-    flagBg: 'linear-gradient(180deg,#0073CF 33.3%,#fff 33.3% 66.6%,#0073CF 66.6%)',
     simbolosMayores: [
       { emoji: '🇭🇳', nombre: 'La Bandera', tipo: 'Símbolo patrio', img: 'img/honduras_img/simbolos/bandera.webp',
         info: 'Tres franjas horizontales: azul, blanca y azul. Las cinco estrellas azules del centro representan a los países que formaron la República Federal de Centroamérica. Adoptada oficialmente el 16 de septiembre de 1825.' },
@@ -44,7 +55,6 @@ const COUNTRY_DATA = {
     nombre: 'México',
     bandera: '🇲🇽',
     lema: 'La Patria es Primero',
-    flagBg: 'linear-gradient(90deg,#006847 33.3%,#fff 33.3% 66.6%,#CE1126 66.6%)',
     simbolosMayores: [
       { emoji: '🇲🇽', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
       { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
@@ -76,7 +86,6 @@ const COUNTRY_DATA = {
     nombre: 'Guatemala',
     bandera: '🇬🇹',
     lema: 'El País de la Eterna Primavera',
-    flagBg: 'linear-gradient(90deg,#4997D0 33.3%,#fff 33.3% 66.6%,#4997D0 66.6%)',
     simbolosMayores: [
       { emoji: '🇬🇹', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
       { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
@@ -108,7 +117,6 @@ const COUNTRY_DATA = {
     nombre: 'El Salvador',
     bandera: '🇸🇻',
     lema: 'Dios, Unión, Libertad',
-    flagBg: 'linear-gradient(180deg,#0F47AF 33.3%,#fff 33.3% 66.6%,#0F47AF 66.6%)',
     simbolosMayores: [
       { emoji: '🇸🇻', nombre: 'Bandera Nacional', tipo: 'Símbolo patrio', img: 'img/salvador_img/bandera.webp',
         info: 'Tres franjas horizontales: azul, blanca y azul. El azul representa los dos océanos que bañan Centroamérica; el blanco simboliza la paz. El Escudo Nacional aparece en el centro de la franja blanca. Su diseño actual ha sido utilizado desde 1912.' },
@@ -147,7 +155,6 @@ const COUNTRY_DATA = {
     nombre: 'Nicaragua',
     bandera: '🇳🇮',
     lema: 'Tierra de Poetas y Volcanes',
-    flagBg: 'linear-gradient(180deg,#003893 33.3%,#fff 33.3% 66.6%,#003893 66.6%)',
     simbolosMayores: [
       { emoji: '🇳🇮', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
       { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
@@ -179,7 +186,6 @@ const COUNTRY_DATA = {
     nombre: 'Costa Rica',
     bandera: '🇨🇷',
     lema: '¡Vivan siempre el trabajo y la paz!',
-    flagBg: 'linear-gradient(180deg,#002B7F 16.7%,#fff 16.7% 33.3%,#CE1126 33.3% 66.7%,#fff 66.7% 83.3%,#002B7F 83.3%)',
     simbolosMayores: [
       { emoji: '🇨🇷', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
       { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },
@@ -211,7 +217,6 @@ const COUNTRY_DATA = {
     nombre: 'Panamá',
     bandera: '🇵🇦',
     lema: 'Pro Mundi Beneficio',
-    flagBg: 'linear-gradient(to right,#fff 50%,#D21034 50%) top/100% 50% no-repeat,linear-gradient(to right,#002B7F 50%,#fff 50%) bottom/100% 50% no-repeat',
     simbolosMayores: [
       { emoji: '🇵🇦', nombre: 'Bandera',  tipo: 'Símbolo patrio' },
       { emoji: '🛡️',  nombre: 'Escudo',   tipo: 'Símbolo patrio' },

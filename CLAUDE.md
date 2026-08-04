@@ -139,6 +139,25 @@ al maestro cuando falla**: esa va escrita bien («1358-SE-2014», no
 «1358-se-2014»). Aceptar todas las formas no cuesta nada; mostrar una mal
 escrita, sí.
 
+## Normativa: un símbolo patrio se muestra completo o no se muestra
+
+Vale para la bandera, el escudo y el himno, de Honduras y **de cualquier
+otro país** que aparezca en la plataforma. No se le quita nada, no se
+«simplifica» y no se sustituye por una versión parecida.
+
+La regla nació en la tarjeta «Explorando» de la portada. Se pintó ahí la
+bandera con franjas de color en CSS: se veía limpia, cargaba al instante y
+funcionaba sin internet, pero **a Honduras le faltaban las cinco estrellas**,
+a El Salvador, Guatemala, Nicaragua, Costa Rica y México su escudo, y a
+Panamá sus estrellas. Bonita y rápida no alcanza: era la bandera del país
+mostrada incompleta, en una plataforma que se usa para enseñar civismo.
+
+En la práctica: **el emoji del país** (🇭🇳, 🇸🇻, 🇬🇹…) trae la bandera entera,
+no pesa nada y funciona sin conexión; es lo que usa la tarjeta. Si algún día
+se quiere una bandera grande, se pone la imagen real del país con todo lo
+suyo. Nunca un degradado, nunca «solo las franjas». La nota larga y el porqué
+están en `js/data/paises.js`.
+
 ## Comentarios en el código
 
 En español, y explicando **por qué** está así, no qué hace la línea. Casi

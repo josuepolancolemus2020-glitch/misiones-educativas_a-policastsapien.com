@@ -190,9 +190,12 @@ Hoy, cuando alguien abre M.E.T.A.S. en su teléfono, lo primero que ve son adorn
 > - El selector de **Grado** sigue muerto, así que se quedó oculto (`hidden`)
 >   en vez de aparecer con el de país: un menú que se mueve y no cambia nada
 >   hace creer que la aplicación no responde. Revive en el paso 18.
-> - La bandera de la tarjeta se **dibuja con CSS** (`flagBg` de `paises.js`,
->   clase `.cc-flag-visual`, ambas ya escritas y sin usar) en vez del emoji:
->   en Windows y en Android viejo 🇭🇳 sale como las letras «HN».
+> - La bandera de la tarjeta va con el **emoji del país**, nunca dibujada.
+>   Se probó a pintarla con franjas de color (`flagBg` de `paises.js` y la
+>   clase `.cc-flag-visual`, ambas escritas y sin usar desde antes) y se veía
+>   limpia, pero a Honduras le faltaban las cinco estrellas y a los demás su
+>   escudo: una bandera es un símbolo patrio, se muestra completa o no se
+>   muestra. Las dos piezas se borraron para que nadie las reviva.
 > - La barra de arriba del teléfono (`meta[name=theme-color]`) también cambia
 >   de color; si no, queda el azul de Honduras sobre una pantalla roja.
 > - El cambio de país vive en **`aplicarPais(code)`**, no dentro del listener
