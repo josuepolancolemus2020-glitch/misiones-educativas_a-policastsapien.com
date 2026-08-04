@@ -345,8 +345,11 @@ def nombre_archivo(base, i, titulo):
 
 def convierte(ruta, salida, prueba=None):
     doc = fitz.open(ruta)
-    base = re.sub(r'[^a-z0-9]+', '-', os.path.splitext(
-        os.path.basename(ruta))[0].lower()).strip('-')
+    # Las tildes se quitan ANTES de limpiar, o cada una se vuelve un guión y
+    # «SISTEMATIZACIÓN INFORMÁTICA.pdf» sale como «sistematizaci-n-inform-tica»:
+    # ilegible, y encima irrastreable si alguien busca el archivo por su nombre.
+    base = re.sub(r'[^a-z0-9]+', '-', _sin_tildes(os.path.splitext(
+        os.path.basename(ruta))[0]).lower()).strip('-')
 
     if prueba:
         pag = doc[prueba - 1].get_text()
