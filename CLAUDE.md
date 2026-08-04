@@ -175,3 +175,35 @@ evita que alguien lo «arregle» de vuelta al problema.
   documentadas en los archivos `SUPABASE-*.sql`.
 - Se prueba con Playwright y Chromium contra un servidor local antes de
   subir. Los fallos de red hacia Supabase en ese entorno son normales.
+
+## Las fuentes oficiales están en el repositorio: úselas
+
+No hay que salir a buscar en internet lo que ya está aquí, y menos citarlo de
+memoria. En `_dev/` viven los documentos con los que se escriben las misiones:
+
+- **`_dev/leyes/`** — Estatuto del Docente, Código de la Niñez, manuales del
+  SACE. Su `README.md` cuenta qué hay y qué falta.
+- **`_dev/dcnb-pdf/`** — el currículo oficial: Prebásica y los tres ciclos de
+  Básica. **Falta Educación Media**; hasta que entre, no se afirma nada de
+  Media.
+- **`_dev/dcnb/`** — ese mismo currículo convertido a Markdown y **troceado
+  por área y grado**, con `INDICE.md`.
+
+**Cómo se consulta el DCNB sin gastar de más:** se abre `_dev/dcnb/INDICE.md`,
+se busca el archivo del área y grado que interesa, y se abre **ese**. Una
+consulta cuesta unos 4.000 tokens. Abrir los PDF completos cuesta más de cuatro
+millones, y no caben. Por eso está troceado: no es manía de orden.
+
+Se regenera con `python3 _dev/dcnb-a-markdown.py _dev/dcnb-pdf/*.pdf`
+(necesita `pip install pymupdf`). Antes de convertir un documento nuevo se
+prueba **una** página con `--prueba N` y se mira cómo salen las tablas.
+
+**El PDF es el que acredita.** El Markdown salió de una conversión automática y
+sirve para trabajar y para buscar; el número de un artículo, de una expectativa
+de logro o de un bloque **se confirma en el PDF** antes de publicarlo. Y hay
+páginas cuyo contenido es una imagen: ahí el Markdown no tiene nada, el índice
+las señala y hay que ir al PDF.
+
+Esto nació de un problema real, contado entero en
+`INVESTIGACION-ESTATUTO-DOCENTE.md`: se escribió una misión citando artículos
+hallados con buscador, y estaban mal. **Buscar no es leer.**

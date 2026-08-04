@@ -86,6 +86,54 @@ const MF_AREAS = [
         s: 'Qué dice la norma sobre inventarios, donaciones y reembolsos: lo que respalda su acta de inventario.' },
     ],
   },
+  /* Va entre las leyes y las estrategias a propósito, y ese orden es el
+     argumento: la ley dice qué se le exige, el currículo dice QUÉ enseñar, y
+     las estrategias dicen cómo. Puesta antes de las leyes parecería que el
+     DCNB se elige; puesta después de las estrategias, el maestro ya habría
+     aprendido a dar una clase que quizá no corresponde a su grado.
+
+     Se puede escribir con propiedad porque el DCNB entero está en el
+     repositorio: `_dev/dcnb/` (Prebásica y los tres ciclos de Básica,
+     troceados por área y grado) con los PDF oficiales en `_dev/dcnb-pdf/`.
+     Vale aquí la misma regla que en las misiones de leyes: lo que se cite se
+     confirma en el PDF, que es el que acredita.
+
+     ⚠️ Falta la Educación Media (BCH y BTP). Hasta que su currículo entre a
+     `_dev/dcnb-pdf/`, ninguna misión de esta área debe afirmar nada de Media:
+     los temas de abajo se quedan en Prebásica y Básica, que es lo que hay
+     documentado. */
+  {
+    k: 'curriculo',
+    chip: '📘 El DCNB en su aula',
+    titulo: 'El currículo nacional, aterrizado a su grado',
+    intro: 'El DCNB no es un libro para el archivo: es la lista de lo que sus alumnos tienen ' +
+           'derecho a aprender este año. Estas misiones lo traducen a la clase del lunes, con el ' +
+           'documento oficial en la mano y sin pedirle que se lo lea entero.',
+    herramienta: 'Plan de Acción · Misiones del catálogo · Parte Mensual',
+    temas: [
+      /* Primero el mapa: sin saber dónde cae su grado, lo demás son siglas.
+         Es además lo que más se pregunta en un concurso de nombramiento. */
+      { t: 'CNB, DCNB y programación: quién manda sobre qué',
+        s: 'Los cuatro niveles del sistema, los tres ciclos de Básica y las áreas curriculares de cada uno. Dónde cae su grado, qué documento manda cuando dos se contradicen, y por qué el Idioma Extranjero entra hasta el II Ciclo.' },
+      { t: 'Leer una expectativa de logro sin marearse',
+        s: 'La tabla del DCNB tiene tres columnas y casi nadie usa las tres. Qué es expectativa, qué es proceso sugerido y qué es contenido, y cómo se convierte esa fila en la clase del lunes.' },
+      { t: 'Conceptuales, procedimentales y actitudinales',
+        s: 'Los tres tipos de contenido que el DCNB marca con símbolos distintos en cada bloque. Saber cuál está evaluando explica por qué un alumno que «se sabe la teoría» reprueba la práctica.' },
+      { t: 'Estándares y expectativas: qué se compara con qué',
+        s: 'El estándar dice a dónde debe llegar el país; la expectativa, a dónde su grado. Cómo se relacionan y cuál de los dos le van a pedir cuando llegue una evaluación externa.' },
+      { t: 'Programar el año desde el DCNB',
+        s: 'Del bloque de contenidos a la jornalización mes por mes, contando los 200 días reales y los parciales. Para que en octubre no le queden tres bloques sin dar.' },
+      { t: 'Los ejes transversales no son relleno',
+        s: 'Identidad, Trabajo y Democracia Participativa atraviesan todas las áreas. Cómo se trabajan dentro de su clase de Matemáticas o de Sociales, sin inventar una hora aparte.' },
+      { t: 'Adecuación curricular: el mismo currículo, otro camino',
+        s: 'Lo que el DCNB dice sobre atención a la diversidad, educación especial y multigrado. Qué se puede ajustar de verdad y qué no se toca, con el respaldo normativo por delante.' },
+      /* El puente entre el currículo y lo que el maestro ya tiene instalado:
+         el catálogo YA está mapeado a grados y meses del DCNB en
+         js/data/dcnb-map.js, que es lo que alimenta docenteProgDatos(). */
+      { t: 'Del DCNB a una misión: qué darle a su grado esta semana',
+        s: 'El catálogo de M.E.T.A.S ya está amarrado a los grados y meses del DCNB. Cómo saber qué misión cubre el contenido que le toca ahorita, y qué hacer con los contenidos que todavía no tienen misión.' },
+    ],
+  },
   {
     k: 'estrategias',
     chip: '🧠 Estrategias de aula',
