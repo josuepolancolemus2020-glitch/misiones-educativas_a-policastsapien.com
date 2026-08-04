@@ -50,8 +50,70 @@ MIN_CHARS_PAGINA = 200
 # Tope de un trozo. Por encima, la consulta vuelve a costar de más.
 MAX_CHARS_TROZO = 24000
 
-# Encabezados de sección del DCNB y de las leyes. El orden importa: se prueba
-# de lo más específico a lo más general.
+# Adornos del diseño del DCNB: la orla de circulitos que bordea cada página.
+# En el segundo ciclo son 36 líneas de «○» por hoja — 493 páginas × 36 son unos
+# 10.000 tokens de pura decoración.
+# OJO con «•» y «·»: esos NO son adorno, son las viñetas de las listas de
+# contenidos («• La conversación espontánea»), y sin ellas la lista se lee como
+# un párrafo corrido. Van fuera de este juego a propósito.
+ADORNOS = re.compile(r'^[\s○●◦▪▫—–\-_=~*]{0,4}$')
+# La orla también deja circulitos sueltos pegados al texto al juntar renglones.
+ORLA_SUELTA = re.compile(r'[○◦]+')
+
+# Membrete que se repite en TODAS las páginas del DCNB. Se quita por patrón y
+# no por «línea que se repite» porque lleva el número de página pegado, así que
+# cada página tiene una versión distinta y la detección por repetición la deja
+# pasar entera.
+MEMBRETE = [
+    re.compile(r'Dise[ñn]o Curricular Nacional para la Educaci[óo]n B[áa]sica', re.I),
+    re.compile(r'Curr[íi]culo Nacional B[áa]sico', re.I),
+    re.compile(r'Secretar[íi]a de Educaci[óo]n', re.I),
+    re.compile(r'\b(?:I{1,3}|IV)\s+CICLO\b'),
+]
+
+# El membrete de cada página dice de qué ÁREA es, y en las páginas de
+# programación también el GRADO. Es la mejor guía para trocear: el maestro
+# busca «qué dice de 5º en Matemáticas», no «el capítulo 4».
+#
+# Las áreas van en LISTA CERRADA y no con una expresión general. Se probó lo
+# general y salió mal de las dos maneras: «Área de Ciencias Sociales» se
+# quedaba en «Ciencias» (Naturales y Sociales caían en el mismo saco), y
+# cualquier frase del cuerpo que dijera «el área de comunicación considera
+# las…» se colaba como si fuera un encabezado. La lista es corta y el DCNB no
+# inventa áreas nuevas a mitad del documento.
+AREAS = [
+    'Ciencias Naturales', 'Ciencias Sociales', 'Matemáticas', 'Matematicas',
+    'Educación Física y Deportes', 'Educación Física', 'Tecnología',
+    'Comunicación / Español', 'Comunicación / Inglés',
+    'Comunicación / Educ. Artística', 'Comunicación / Educación Artística',
+    'Comunicación', 'Español', 'Inglés',
+    # Prebásica llama distinto a las suyas.
+    'Desarrollo Personal y Social',
+    'Desarrollo de la Comunicación y Representación',
+    'Relación con el Entorno',
+]
+
+
+def _sin_tildes(s):
+    for a, b in (('á', 'a'), ('é', 'e'), ('í', 'i'), ('ó', 'o'), ('ú', 'u'),
+                 ('ñ', 'n'), ('Á', 'A'), ('É', 'E'), ('Í', 'I'), ('Ó', 'O'),
+                 ('Ú', 'U'), ('Ñ', 'N')):
+        s = s.replace(a, b)
+    return s
+
+
+# Se comparan sin tildes y sin distinguir mayúsculas: el DCNB escribe «Área» y
+# «Area» en la misma página, y «Matemáticas» a veces sin tilde.
+AREAS_BUSCA = sorted(
+    [(re.compile(r'[ÁA]rea\s+de\s+' + re.escape(_sin_tildes(a)).replace(r'\ ', r'\s+')
+                 .replace('/', r'\s*/\s*'), re.I), a) for a in AREAS],
+    key=lambda x: -len(x[1]))   # la más larga primero: «/ Español» antes que sola
+RE_GRADO = re.compile(r'\b(PRIMER|SEGUNDO|TERCER|CUARTO|QUINTO|SEXTO|'
+                      r'S[ÉE]PTIMO|OCTAVO|NOVENO)\s+GRADO\b')
+RE_BLOQUE = re.compile(r'\bBloque\s+(\d+)', re.I)
+
+# Encabezados de sección para documentos SIN estructura de área/grado (las
+# leyes de `_dev/leyes/`). El orden importa: de lo específico a lo general.
 CORTES = [
     (re.compile(r'^\s*(CAP[IÍ]TULO|CAPITULO)\s+([IVXLC\d]+)', re.I), 'capitulo'),
     (re.compile(r'^\s*(T[IÍ]TULO|TITULO)\s+([IVXLC\d]+)', re.I), 'titulo'),
@@ -77,27 +139,58 @@ def sin_repetidos(paginas):
     """
     if len(paginas) < 4:
         return paginas
+    # El número de página cambia en cada hoja: se comparan las líneas con los
+    # dígitos neutralizados, o «… 64» y «… 123» pasarían por líneas distintas
+    # y el membrete sobreviviría entero.
+    clave = lambda l: re.sub(r'\d+', '#', l.strip())
     cuenta = Counter()
     for p in paginas:
         # Solo se miran las primeras y últimas líneas: ahí viven membrete y pie.
         lineas = [l.strip() for l in p.split('\n') if l.strip()]
-        for l in lineas[:3] + lineas[-3:]:
+        for l in lineas[:4] + lineas[-4:]:
             if 8 < len(l) < 120:
-                cuenta[l] += 1
+                cuenta[clave(l)] += 1
     umbral = len(paginas) * 0.5
-    # El número de página cambia en cada hoja: se normaliza antes de comparar.
-    basura = {l for l, n in cuenta.items() if n >= umbral}
+    basura = {k for k, n in cuenta.items() if n >= umbral}
     if not basura:
         return paginas
     limpias = []
     for p in paginas:
         limpias.append('\n'.join(
-            l for l in p.split('\n') if l.strip() not in basura))
+            l for l in p.split('\n') if clave(l) not in basura))
     return limpias
+
+
+def solo_membrete(linea):
+    """
+    ¿Esta línea es SOLO membrete, o es texto de verdad que lo menciona?
+
+    La diferencia no es un detalle: al principio esto borraba el patrón en toda
+    la página y dejó «E l , marca el inicio del proceso» donde el documento
+    decía «El Currículo Nacional Básico, marca el inicio del proceso». Un
+    corpus con frases mutiladas es peor que no tenerlo, porque el destrozo no
+    se ve hasta que alguien cita esa línea.
+
+    Regla: se quita el membrete solo si, después de quitarlo, no queda nada que
+    valga la pena. Si queda frase, la línea se respeta entera.
+    """
+    l = linea.strip()
+    if not l:
+        return False
+    resto = l
+    for patron in MEMBRETE:
+        resto = patron.sub(' ', resto)
+    resto = re.sub(r'[\s\d.,:;|/·—–\-]+', '', resto)
+    return len(resto) < 4 and resto != l
 
 
 def limpia(txt):
     """Junta lo que el PDF partió y quita el aire sobrante."""
+    # Adornos y membrete: se van ANTES de juntar renglones, porque después
+    # quedan pegados dentro del primer párrafo y ya no hay línea que borrar.
+    txt = '\n'.join(l for l in txt.split('\n') if not ADORNOS.match(l))
+    txt = ORLA_SUELTA.sub(' ', txt)
+    txt = '\n'.join(l for l in txt.split('\n') if not solo_membrete(l))
     # Renglones de solo espacios: el extractor deja uno por cada línea en
     # blanco del diseño, y en un documento largo son miles de tokens de nada.
     # Van PRIMERO, porque si no, «\n \n \n» no se reconoce como línea vacía.
@@ -111,6 +204,67 @@ def limpia(txt):
     txt = re.sub(r'[ \t]+', ' ', txt)
     txt = re.sub(r'\n{3,}', '\n\n', txt)
     return txt.strip()
+
+
+def cabecera_dcnb(cruda):
+    """
+    Saca (área, grado) del membrete de la página del DCNB.
+
+    Se lee del TEXTO CRUDO —antes de quitar el membrete— porque justamente ahí
+    es donde el documento repite en cada hoja de qué área y grado está
+    hablando. Es la guía de troceo que le sirve al maestro: él busca «qué dice
+    de 5º en Matemáticas», no «el capítulo 4».
+    """
+    # La orla de circulitos ocupa las primeras ~36 líneas: si se cortara por
+    # caracteres crudos, el «encabezado» serían puros adornos y la búsqueda se
+    # metería en el cuerpo del texto, que es de donde salían los grados falsos.
+    lineas = [l for l in cruda.split('\n') if not ADORNOS.match(l)]
+    cab = _sin_tildes(re.sub(r'[\s○●]+', ' ', ' '.join(lineas[:14])))
+    area = ''
+    for patron, nombre in AREAS_BUSCA:
+        if patron.search(cab):
+            area = nombre
+            break
+    g = RE_GRADO.search(cab)
+    return area, (g.group(0).title() if g else '')
+
+
+def secciones_dcnb(paginas, crudas):
+    """
+    Trocea el DCNB por (área, grado), que es como se consulta.
+
+    El área viene del membrete de cada página; el grado aparece cuando empieza
+    la programación de ese grado y vale hasta que aparezca otro. Se agrupan
+    páginas consecutivas con la misma pareja.
+    """
+    metas, area, grado = [], '', ''
+    for c in crudas:
+        a, g = cabecera_dcnb(c)
+        if a:
+            # Área nueva: el grado anterior ya no aplica.
+            if a != area:
+                grado = ''
+            area = a
+        if g:
+            grado = g
+        metas.append((area, grado))
+
+    if not any(a for a, _ in metas):
+        return None            # no es un DCNB: que lo trocee el modo general
+
+    trozos, actual = [], None
+    for n, (pag, meta) in enumerate(zip(paginas, metas), 1):
+        if actual is None or meta != actual['meta']:
+            if actual:
+                trozos.append(actual)
+            titulo = ' — '.join(x for x in meta if x) or 'Presentación'
+            actual = {'titulo': titulo, 'clase': 'dcnb', 'meta': meta,
+                      'desde': n, 'texto': []}
+        actual['texto'].append(pag)
+        actual['hasta'] = n
+    if actual:
+        trozos.append(actual)
+    return trozos
 
 
 def secciones(paginas):
@@ -142,23 +296,31 @@ def secciones(paginas):
         actual['hasta'] = n
     if actual['texto']:
         trozos.append(actual)
+    return trozos
 
-    # Un trozo enorme (un capítulo de 80 páginas) se vuelve a partir por tamaño:
-    # el corte por estructura manda, pero no puede dejar un archivo inconsultable.
+
+def parte_por_tamano(trozos):
+    """
+    Un trozo enorme (un área de 80 páginas) se vuelve a partir por tamaño.
+
+    El corte por estructura manda, pero no puede dejar un archivo que cueste
+    más abrir que el documento entero, que es justo lo que se quería evitar.
+    """
     finales = []
     for t in trozos:
-        entero = '\n\n'.join(t['texto'])
+        entero = '\n\n'.join(t['texto']) if isinstance(t['texto'], list) else t['texto']
         if len(entero) <= MAX_CHARS_TROZO:
             finales.append({**t, 'texto': entero})
             continue
+        paginas = t['texto'] if isinstance(t['texto'], list) else [entero]
         partes, buf, desde = [], [], t['desde']
-        for i, pag in enumerate(t['texto']):
+        for i, pag in enumerate(paginas):
             buf.append(pag)
             if len('\n\n'.join(buf)) >= MAX_CHARS_TROZO:
                 partes.append((desde, t['desde'] + i, '\n\n'.join(buf)))
                 buf, desde = [], t['desde'] + i + 1
         if buf:
-            partes.append((desde, t['hasta'], '\n\n'.join(buf)))
+            partes.append((desde, t.get('hasta', t['desde']), '\n\n'.join(buf)))
         for i, (d, h, txt) in enumerate(partes, 1):
             finales.append({'titulo': f"{t['titulo']} ({i} de {len(partes)})",
                             'clase': t['clase'], 'desde': d, 'hasta': h,
@@ -168,12 +330,17 @@ def secciones(paginas):
 
 def nombre_archivo(base, i, titulo):
     """Sin acentos ni espacios, como el resto del repositorio."""
-    t = titulo.lower()
+    # El «(3 de 6)» se aparta ANTES de recortar: pegado al título se lo comía
+    # el límite de largo y quedaban nombres como «…-sexto-3-de-», que no dicen
+    # ni de qué parte son.
+    m = re.search(r'\((\d+) de (\d+)\)\s*$', titulo)
+    parte = f'-{m.group(1)}de{m.group(2)}' if m else ''
+    t = (titulo[:m.start()] if m else titulo).lower()
     for a, b in (('á', 'a'), ('é', 'e'), ('í', 'i'), ('ó', 'o'), ('ú', 'u'),
                  ('ñ', 'n'), ('ü', 'u')):
         t = t.replace(a, b)
-    t = re.sub(r'[^a-z0-9]+', '-', t).strip('-')[:45] or 'seccion'
-    return f'{base}-{i:02d}-{t}.md'
+    t = re.sub(r'[^a-z0-9]+', '-', t).strip('-')[:42] or 'seccion'
+    return f'{base}-{i:02d}-{t}{parte}.md'
 
 
 def convierte(ruta, salida, prueba=None):
@@ -194,7 +361,10 @@ def convierte(ruta, salida, prueba=None):
     # encabezado del manual y una captura de pantalla pasa de largo si se mide
     # antes, y es justo la que hay que ir a ver al PDF.
     imagenes = [i + 1 for i, p in enumerate(paginas) if len(p.strip()) < MIN_CHARS_PAGINA]
-    trozos = secciones(paginas)
+    # El DCNB dice en cada página de qué área y grado es: si está esa guía se
+    # usa, porque es como el maestro consulta. Si no (las leyes), se cae al
+    # troceo por encabezados de capítulo.
+    trozos = parte_por_tamano(secciones_dcnb(paginas, crudas) or secciones(paginas))
 
     os.makedirs(salida, exist_ok=True)
     escritos = []

@@ -1,0 +1,21 @@
+# Educación Física — Segundo Grado
+
+> Fuente: `dcneb-basica-i-ciclo.pdf`, páginas 274–274. Convertido automáticamente: para **citar** un número de artículo, confirmarlo en el PDF.
+
+Área de Educación Física segundo grado SEGUNDO GRADO.
+Al finalizar el segundo grado de la Educación Básica, los alumnos y las alumnas:
+Expresan verbal y corporalmente el conocimiento del cuerpo, fortaleciendo a la vez su movimiento corporal en forma global ,segmentada y combinada, demostrando así una actitud de respeto y aprecio hacia su propio cuerpo delimitando su espacio personal y el de las demás personas.
+Realizan, utilizan, practican y valoran, tomando conciencia del esfuerzo físico y percepción propia, los conocimientos sobre los parámetros de la imagen , percepción y expresión corporal y los beneficios que adquieren en su aprendizaje motor y sus posibilidades de movimiento.
+Ejecutan, practican y crean diversos movimientos propios del desarrollo de la imagen y percepción corporal, sentido de integridad personal, así como, diferentes formas de movimiento con los patrones básicos, formas de equilibrio y movimiento creativo.
+Demuestran disposición e interés en superar o fortalecer sus posibilidades y limitaciones corporales, motoras y expresivas, adquiriendo confianza, autonomía y seguridad en sus acciones motoras y actitudes creativas.
+Reafirman la importancia de la expresión corporal como otra forma de lenguaje y medio de comunicación, utilizando y ejercitando el lenguaje corporal para expresar gestos, emociones, sentimientos, ideas o situaciones propias de su edad y crean movimiento expresivo para dar respuestas a situaciones presentadas Realizan diversos movimiento expresivos siguiendo composiciones rítmicas sencillas, elaborando secuencias de ejercicios con y sin acompañamiento musical, practicando diferente rondas y bailes, valorando las expresiones propias y más comunes de su comunidad y de los diferentes pueblos autóctonos.
+ Fortalecen a través de su práctica el esquema motor básico, desde su forma generalizada en las habilidades, destrezas , capacidades físicas y los movimientos básicos.
+Ejercitan y mejoran algunas de las habilidades y destrezas básicas de forma cuantitativa y cualitativa, ampliando y mejorando así, su trabajo motor y competencia motriz, con la práctica de diferentes formas y posibilidades de movimiento.
+Aceptan y demuestran interés por sus propias posibilidades motrices, según la ejecución de habilidades y destrezas básicas, reconociendo y valorando los diferentes niveles de habilidad entre los compañeros y las compañeras; la importancia que brinda el aprendizaje motriz para el mejor desempeño en sus tareas cotidianas.
+10. Conocen, adoptan y practican hábitos saludables para su cuerpo, de fortalecimiento de la autoestima y autocuidado en las actividades físicas realizadas en su entorno escolar, familiar y comunal.
+11. Actúan responsablemente sin riesgo para su salud , y en pleno ejercicio de sus derechos humanos e integridad personal con iniciativas motrices aprendidas, regulando su propio esfuerzo y sus capacidades físicas, valorando con ello la práctica del ejercicio para mantener su salud física y mental.
+12. Conocen, experimentan, practican y valoran diferentes tipos de juegos propios de su edad y de su entorno, y como un medio de aprendizaje con placer, disfrute o diversión.
+13. Inician y reafirman algunos aspectos propios para el aprendizaje de aspectos básicos relacionados con la práctica deportiva, participando en diferentes juegos, respetando y aceptando las reglas y normas establecidas para su ejecución.
+14. Superan los estereotipos discriminatorios por motivos de género, diferencias étnicas, sociales, culturales y/o religiosas, a través de la convivencia en el juego y en otras actividades físicas que realiza en su entorno.
+15. Conocen, participan y valoran algunas de las diversas actividades físicas, propias a su edad, que se pueden realizar en su escuela, en su entorno natural y en las actividades extraclase, para mantener su salud mental y corporal, y como un estímulo para mantener satisfactoriamente su desempeño personal y escolar, tanto académico como disciplinario, aplicando también lo aprendido en las distintas áreas.
+16. Respetan, cuidan y aprecian su entorno, con el fin poseer medios para el aprovechamiento del tiempo libre.
