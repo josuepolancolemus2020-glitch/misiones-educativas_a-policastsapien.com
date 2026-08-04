@@ -114,7 +114,8 @@ const MF_AREAS = [
       /* Primero el mapa: sin saber dónde cae su grado, lo demás son siglas.
          Es además lo que más se pregunta en un concurso de nombramiento. */
       { t: 'CNB, DCNB y programación: quién manda sobre qué',
-        s: 'Los cuatro niveles del sistema, los tres ciclos de Básica y las áreas curriculares de cada uno. Dónde cae su grado, qué documento manda cuando dos se contradicen, y por qué el Idioma Extranjero entra hasta el II Ciclo.' },
+        s: 'Los cuatro niveles del sistema, los tres ciclos de Básica y las áreas curriculares de cada uno. Dónde cae su grado, qué documento manda cuando dos se contradicen, por qué el Idioma Extranjero entra hasta el II Ciclo, y cómo se pasa del currículo a la jornalización del año. Con ficha de estudio de diez páginas.',
+        url: 'misiones/docente-cnb-dcnb-programacion/cnb-dcnb-programacion.html' },
       { t: 'Leer una expectativa de logro sin marearse',
         s: 'La tabla del DCNB tiene tres columnas y casi nadie usa las tres. Qué es expectativa, qué es proceso sugerido y qué es contenido, y cómo se convierte esa fila en la clase del lunes.' },
       { t: 'Conceptuales, procedimentales y actitudinales',

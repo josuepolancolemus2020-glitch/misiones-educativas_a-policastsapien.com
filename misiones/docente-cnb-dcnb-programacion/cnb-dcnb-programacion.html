@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión del maestro · CNB, DCNB y programación: quién manda sobre qué</title>
+<meta name="description" content="Formación docente: los cuatro niveles del sistema, los tres ciclos de Básica, las áreas curriculares, los ejes transversales, estándares y expectativas de logro, y cómo se pasa del currículo a la jornalización del año. Con simulacro de concurso y ficha de estudio de diez páginas.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/cnb-dcnb-programacion.css">
+</head>
+<body>
+
+<!-- Volver: index.html sin parámetros restaura la última vista guardada, que es
+     «Misiones del maestro» (switchView la guarda al entrar). -->
+<div class="xp-bar" role="status" aria-label="Progreso de la misión">
+  <a href="../../index.html" class="xp-back-btn" title="Volver a Misiones del maestro">
+    <span aria-hidden="true">←</span>
+    <img src="../../img/logo.png" alt="" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎓 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-num" id="xpNum">0</span>
+</div>
+
+<header class="hero">
+  <div class="main">
+    <span class="hero-badge">📘 El DCNB en su aula · Misión 1 de 8</span>
+    <h1>CNB, DCNB y programación: quién manda sobre qué</h1>
+    <p>Casi nadie discute el currículo: se discute quién tiene razón. Y quien sabe de dónde viene
+      cada regla deja de opinar y empieza a mostrar. Aquí está la escalera completa, del documento
+      que manda en todo el país hasta el plan de clase del lunes, con lo que usted sí puede decidir
+      y lo que no.</p>
+    <div class="hero-solo">👤 Esta misión es para usted, no para sus alumnos. Nadie más la ve.</div>
+  </div>
+</header>
+
+<nav class="nav" id="nav" aria-label="Secciones de la misión"></nav>
+
+<main class="main">
+
+  <!-- ══════════ 1. LA ESCALERA ══════════ -->
+  <section class="sec active" id="sec-peldanos">
+    <div class="card">
+      <h2>🪜 Ocho peldaños, del país a su pizarrón</h2>
+      <p>Se baja del documento más general al plan del lunes. Toque cada peldaño: se abre debajo
+        con qué es, en qué documento consta, los pasos en orden y, aparte, lo que no se hace.</p>
+      <div class="si-lista" id="pelLista"></div>
+      <div class="si-nav">
+        <button class="btn btn-g" onclick="pelMover(-1)">← Anterior</button>
+        <button class="btn" onclick="pelMover(1)">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 2. APRENDE ══════════ -->
+  <section class="sec" id="sec-aprende">
+    <div class="card">
+      <h2>🧭 Tres ideas que ordenan todo lo demás</h2>
+      <p>Si de esta misión hubiera que quedarse con lo mínimo para no equivocarse en una reunión ni
+        en un concurso, es esto.</p>
+
+      <h3>1. El currículo es normativo, y por eso protege</h3>
+      <p>El Currículo Nacional Básico se define a sí mismo como un <b>instrumento normativo de
+        carácter nacional</b>. Se suele leer como una carga, y es lo contrario: mientras lo que
+        usted da esté mandado por el currículo, no depende del gusto de quien pase por su aula. La
+        pregunta «¿por qué está dando eso?» tiene una respuesta que no es su opinión.</p>
+      <div class="dato">📌 <b>Lo que cambia en la práctica:</b> el libro de texto <b>no</b> es la
+        norma. El libro es un apoyo que puede estar desactualizado, incompleto o simplemente no
+        alcanzar. El que obliga es el currículo, y cuando los dos no coinciden, gana el currículo.</div>
+
+      <h3>2. Estándar y expectativa de logro no son lo mismo</h3>
+      <p>Es la confusión más común y la que más rápido delata a quien no leyó el documento. El
+        <b>estándar educativo</b> es una declaración clara, exigente y consistente sobre lo que se
+        espera que aprenda el alumnado del sistema: es la meta del país. La <b>expectativa de
+        logro</b> es una opción de carácter curricular que concretiza las intencionalidades
+        educativas y las competencias conceptuales, procedimentales y actitudinales: es el escalón
+        que le toca a su grado.</p>
+      <div class="aula">🎯 <b>En su aula:</b> para planificar la clase manda la expectativa de logro
+        de su grado. Para hablar de resultados con una evaluación externa, el idioma es el de los
+        estándares. Usar una palabra por la otra confunde a quien lo escucha y le cuesta puntos en
+        una prueba.</div>
+
+      <h3>3. El currículo dice qué; el calendario dice cuándo</h3>
+      <p>Aquí está el reparto de poder que casi nadie tiene claro. El documento fija las áreas, los
+        bloques y las expectativas. <b>Repartirlos en el año es trabajo suyo</b>, y no se hace con
+        buenas intenciones sino contando. Los planes de estudio de Educación Media enseñan el molde
+        con todas sus letras: trabajan sobre <b>cuarenta semanas</b>, con la hora clase de
+        <b>cuarenta y cinco minutos</b>, y las horas anuales salen de multiplicar las semanales por
+        cuarenta.</p>
+      <div class="dato">📌 <b>Un dato que esta misión no le da, a propósito:</b> cuántos días tiene
+        el año lectivo. Ese número está en la Ley Fundamental de Educación y el calendario concreto
+        lo fija la Secretaría de Educación cada año. Aquí no se afirma de memoria: se lo confirma
+        usted en su centro antes de jornalizar, que para eso sirve preguntarlo una sola vez.</div>
+    </div>
+
+    <div class="card">
+      <h2>🗺️ El mapa en una hoja</h2>
+      <p>Lo que hay que poder dibujar de memoria el día del concurso:</p>
+      <ul>
+        <li><b>Cuatro niveles:</b> Prebásica, Básica, Media y Superior. El CNB se concreta en los
+          tres primeros, bajo la Secretaría de Educación.</li>
+        <li><b>Básica, tres ciclos de tres años:</b> I Ciclo de seis a nueve años, II Ciclo de nueve
+          a doce, III Ciclo de doce a quince.</li>
+        <li><b>Media, dos modalidades:</b> Bachillerato Científico Humanista, de dos años, y
+          Bachillerato Técnico Profesional, de tres.</li>
+        <li><b>Siete áreas en Básica:</b> Comunicación, Matemática, Ciencias Sociales, Ciencias
+          Naturales, Educación Física, Tecnología y Educación Técnica.</li>
+        <li><b>Tres ejes transversales:</b> La Identidad, El Trabajo y La Democracia Participativa.</li>
+      </ul>
+      <div class="aula">🎯 <b>Dos detalles que se preguntan mucho:</b> el Idioma Extranjero entra
+        dentro del área de Comunicación <b>a partir del II Ciclo</b>, y el <b>III Ciclo</b> es el que
+        tiene Tecnología como área independiente e incorpora la Educación Técnica como área de libre
+        elección institucional.</div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3. TARJETAS ══════════ -->
+  <section class="sec" id="sec-tarjetas">
+    <div class="card">
+      <h2>🃏 Tarjetas de repaso</h2>
+      <p>Toque la tarjeta para voltearla. Van en el orden en que se preguntan.</p>
+      <div class="fc" id="fc" onclick="fcVoltea()">
+        <div class="fc-in">
+          <div class="fc-cara fc-front" id="fcQ"></div>
+          <div class="fc-cara fc-back"><div id="fcA"></div></div>
+        </div>
+      </div>
+      <div class="btn-fila">
+        <button class="btn btn-g" onclick="fcPasa(-1)">← Anterior</button>
+        <button class="btn" onclick="fcPasa(1)">Siguiente →</button>
+        <span class="q-num" id="fcNum" style="align-self:center"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Memorama del currículo</h2>
+      <p>Empareje cada pieza con lo que hace. Seis parejas.</p>
+      <div class="memo-grid" id="memoGrid"></div>
+      <div class="btn-fila"><button class="btn btn-g" onclick="memoInit()">🔄 Barajar de nuevo</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 4. QUIZ ══════════ -->
+  <section class="sec" id="sec-quiz">
+    <div class="card">
+      <h2>❓ Compruebe lo que quedó</h2>
+      <p>Nueve preguntas con explicación inmediata. Aquí no se guarda nota: es para usted.</p>
+      <div id="quiz"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 5. CLASIFICA ══════════ -->
+  <section class="sec" id="sec-clasifica">
+    <div class="card">
+      <h2>🗂️ Cada pieza en su nivel</h2>
+      <p>Toque una tarjeta y luego la caja donde va. Si se equivoca, vuelva a tocarla para
+        devolverla al banco.</p>
+      <div class="cl-banco" id="clBanco"></div>
+      <div class="cl-cajas" id="clCajas"></div>
+      <div class="btn-fila">
+        <button class="btn" onclick="clRevisa()">✔️ Revisar</button>
+        <button class="btn btn-g" onclick="clInit()">🔄 Empezar de nuevo</button>
+      </div>
+      <div class="resu" id="clResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 6. COMPLETA ══════════ -->
+  <section class="sec" id="sec-completa">
+    <div class="card">
+      <h2>✍️ Complete la oración</h2>
+      <p>Escriba la palabra o el número que falta. Se aceptan mayúsculas, minúsculas y tildes
+        indistintamente.</p>
+      <div id="completa"></div>
+      <div class="btn-fila"><button class="btn" onclick="cpRevisa()">✔️ Revisar todo</button></div>
+      <div class="resu" id="cpResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 7. RETO ══════════ -->
+  <section class="sec" id="sec-reto">
+    <div class="card">
+      <h2>⏱️ Reto: del documento nacional al plan del lunes</h2>
+      <p>Nueve pasos desordenados. Tóquelos en el orden en que se decide. Tiene noventa segundos.</p>
+      <div class="btn-fila">
+        <button class="btn" id="retoBtn" onclick="retoInit()">▶️ Empezar</button>
+        <span class="reto-reloj" id="retoReloj">1:30</span>
+      </div>
+      <div class="reto-lista" id="retoLista"></div>
+      <div class="resu" id="retoResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 8. SOPA ══════════ -->
+  <section class="sec" id="sec-sopa">
+    <div class="card">
+      <h2>🔤 Sopa de letras</h2>
+      <p>Ocho palabras de la misión, en todas las direcciones. Toque la primera y la última letra
+        de cada palabra.</p>
+      <div class="sopa-grid" id="sopaGrid"></div>
+      <div class="sopa-pal" id="sopaPal"></div>
+      <div class="btn-fila">
+        <button class="btn btn-amb" onclick="sopaLinterna()">🔦 Linterna (cuesta 2 XP)</button>
+        <button class="btn btn-g" onclick="sopaInit()">🔄 Otra sopa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 9. CASOS ══════════ -->
+  <section class="sec" id="sec-casos">
+    <div class="card">
+      <h2>🏫 Cinco situaciones de esta semana</h2>
+      <p>Estas no traen la ruta hecha: hay que pensarlas. Piense su respuesta antes de abrir la
+        sugerencia.</p>
+
+      <div class="caso">
+        <div class="caso-t">Caso 1 · «Ese tema no viene en el libro»</div>
+        <p>Usted planificó un contenido que está en el DCNB de su grado, pero el libro de texto que
+          reparte el centro no lo trae. Un colega le dice que entonces no lo dé.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Se da, y el libro no es el que decide. El CNB es el <b>instrumento
+          normativo</b>: el libro es un apoyo y puede estar desactualizado o simplemente no alcanzar.
+          Lo que hay que resolver es el material, no el contenido: busque la columna de
+          <b>Procesos y Actividades Sugeridas</b> del DCNB, que ya trae actividades pensadas y casi
+          nunca necesitan libro. Lleve el punto al centro con la página del documento en la mano: si
+          al libro le faltan contenidos del currículo, eso es información que la dirección necesita
+          tener, y no es un reclamo contra nadie.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 2 · La supervisión pide la jornalización</div>
+        <p>Llega una supervisión y le piden la programación del año. Usted la tiene, pero la copió
+          de la del año pasado sin recontar las semanas.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Enséñela y anote la lección para el año que viene: una jornalización
+          copiada se cae sola, porque el calendario cambia todos los años y los feriados no caen en
+          el mismo día. El molde correcto lo dan los planes de estudio de Educación Media: se parte
+          de las <b>semanas efectivas</b> y de la hora clase real, y las horas del año salen de
+          multiplicar. Rehágala contando las semanas que de verdad va a tener, con los feriados y las
+          actividades del centro ya descontados, y deje semanas de holgura para evaluación y
+          recuperación. Y confirme el calendario oficial en su centro antes de repartir: ese dato lo
+          fija la Secretaría de Educación cada año.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 3 · «Es que ese alumno no puede»</div>
+        <p>Tiene un alumno con necesidades educativas especiales. Le sugieren que le baje la
+          exigencia y lo evalúe con otra expectativa más fácil, «para que no repruebe».</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Ahí se está confundiendo adecuar con rebajar, y no son lo mismo. El
+          CNB incluye la <b>adecuación curricular para la atención a la diversidad</b>, y la
+          <b>educación especial</b> es uno de sus tres componentes, junto con la educación
+          intercultural bilingüe y la de jóvenes y adultos. Lo que se adecúa es el <b>camino</b>: la
+          actividad, el tiempo, el material, el tipo de apoyo, la forma de demostrar lo aprendido. Lo
+          que no se quita es el derecho a llegar. Y hágalo por escrito y con el centro, nunca a
+          solas: una adecuación de palabra no se sostiene ante nadie, ni ante la familia ni ante una
+          supervisión, y sobre todo no protege al alumno el año que usted ya no esté.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 4 · «Los ejes transversales los vemos en septiembre»</div>
+        <p>En la reunión de planificación acuerdan dejar los ejes transversales para una semana de
+          actividades cívicas en septiembre.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">Eso es exactamente lo contrario de lo que significa la palabra. Los
+          ejes son <b>elementos actitudinales que atraviesan todas las áreas</b> y sostienen la
+          integración del currículo: si tienen una semana propia, dejaron de ser transversales y se
+          volvieron una unidad. La Identidad se trabaja en el cuento que usted escoge para leer; El
+          Trabajo, en la rutina con que se exige que las cosas se hagan bien; La Democracia
+          Participativa, en los acuerdos del aula y en el Gobierno Escolar. La forma práctica de que
+          dejen de olvidarse es anotar en cada plan de clase con qué eje se trabaja: lo que se anota,
+          se hace. Y la semana de septiembre puede quedarse igual, pero como cierre de algo que ya
+          venía, no como el único momento.</div>
+      </div>
+
+      <div class="caso">
+        <div class="caso-t">Caso 5 · Dos documentos que no se parecen</div>
+        <p>Usted da clase en III Ciclo y le piden apoyar en décimo grado. Abre el documento de
+          Educación Media y no encuentra expectativas de logro por ningún lado.</p>
+        <button class="btn btn-g" onclick="casoVer(this)">💡 Ver una salida</button>
+        <div class="caso-resp">No las va a encontrar, y no es que esté mal buscando. Los documentos
+          de Educación Media de 2025 están escritos con otro vocabulario: hablan de <b>espacios
+          curriculares</b>, <b>competencias</b> y <b>criterios de evaluación</b>, mientras que el
+          DCNB de Básica trabaja con áreas, bloques y expectativas de logro. Son dos generaciones de
+          documentos conviviendo, y conviene saberlo antes de sentarse a planificar con un colega de
+          Media, porque van a usar palabras distintas para cosas parecidas. Dos cautelas: esos
+          documentos de Media llevan impreso <b>Versión Preliminar</b>, así que lo que allí se lee
+          puede cambiar antes de aprobarse; y no dé por hecho que el vocabulario nuevo derogó al
+          anterior, porque eso no consta en ninguno de los dos. Para Básica, siga mandando el DCNB.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 10. SIMULACRO DE CONCURSO ══════════ -->
+  <section class="sec" id="sec-concurso">
+    <div class="card">
+      <h2>🎯 Simulacro de concurso</h2>
+      <p>Veinte preguntas con el formato de las pruebas de conocimientos del concurso docente:
+        una sola respuesta correcta y sin pistas. Currículo es materia fija en esas pruebas. Al
+        final se califica sobre cien y le dice qué repasar. En el concurso real el promedio final
+        exigido no baja de setenta y cinco por ciento, así que ese es el listón de aquí.</p>
+      <div id="concurso"></div>
+      <div class="btn-fila">
+        <button class="btn btn-ok" onclick="cnCalifica()">🧮 Calificar</button>
+        <button class="btn btn-g" onclick="cnInit()">🔄 Otro intento</button>
+      </div>
+      <div class="resu" id="cnResu"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 11. FICHA, RECURSOS Y CONSTANCIA ══════════ -->
+  <section class="sec" id="sec-cierre">
+    <div class="card">
+      <h2>🖨️ Ficha de estudio, diez páginas</h2>
+      <p>La misma escalera en papel, para estudiar sin batería y para tener a mano cuando toque
+        planificar: la estructura del sistema, las áreas y los ejes, la diferencia entre estándar y
+        expectativa, la tabla del DCNB explicada columna por columna, el modelo de jornalización,
+        el vocabulario que exigen los exámenes, ejercicios para lápiz y la pauta.</p>
+      <div class="btn-fila">
+        <a class="btn" href="../../fichas/ficha-docente-cnb-dcnb-programacion.html">📄 Abrir la ficha</a>
+      </div>
+      <div class="dato">📌 Se imprime en diez hojas tamaño carta, a doble cara son cinco. La pauta va
+        en las últimas páginas: si la va a usar con colegas, imprima sin ellas y repártalas después.</div>
+    </div>
+
+    <div class="card">
+      <h2>📚 De dónde salió todo esto</h2>
+      <p>Esta misión no se escribió con buscador: se escribió leyendo los documentos, que están
+        guardados en el proyecto. Estudie siempre contra el documento, no contra un resumen (ni
+        siquiera este):</p>
+      <div class="rec-it"><b>Currículo Nacional Básico, Versión Sintetizada</b>, Secretaría de
+        Educación, Subsecretaría Técnico Pedagógica, Dirección General de Currículo. De ahí salen la
+        estructura del sistema, las áreas curriculares, los ejes transversales, la definición de
+        estándar educativo y los componentes de la atención a la diversidad.</div>
+      <div class="rec-it"><b>Diseño Curricular Nacional para la Educación Básica</b>, en sus tres
+        volúmenes de ciclo, y el <b>Currículo de Educación Prebásica</b>. De ahí salen la definición
+        de expectativa de logro, los bloques de contenido y la tabla de tres columnas.</div>
+      <div class="rec-it"><b>Planes de estudio de Educación Media</b> (Bachillerato en Ciencias y
+        Humanidades y Bachillerato Técnico Profesional). De ahí sale la aritmética de la
+        programación: cuarenta semanas, hora clase de cuarenta y cinco minutos y horas anuales.
+        <b>Llevan impreso «Versión Preliminar 2025»</b>: por eso aquí solo se toma de ellos ese
+        molde de cálculo, y no se cita ninguna competencia como norma firme.</div>
+      <div class="rec-it"><b>Dónde bajarlos:</b> portal de la Secretaría de Educación (se.gob.hn).
+        Si el documento que usted consigue trae otra fecha o marca de versión, gana el suyo: revise
+        y avísenos.</div>
+      <div class="fuente">Estructura, áreas, ejes, definiciones y aritmética de la programación
+        leídas en los documentos citados, en agosto de 2026. <b>Lo que aquí no se afirma, a
+        propósito:</b> cuántos días tiene el año lectivo y en qué fechas. Ese dato es de la Ley
+        Fundamental de Educación y del calendario que fija la Secretaría de Educación cada año, y
+        ninguno de los dos se leyó para esta misión: confírmelo en su centro antes de jornalizar.</div>
+    </div>
+
+    <div class="card const" id="constancia">
+      <div style="font-size:38px">🎓</div>
+      <h3>Constancia de estudio</h3>
+      <p>Escriba su nombre para cerrar la misión. Queda guardada en este teléfono.</p>
+      <input id="constNombre" placeholder="Su nombre completo" maxlength="60" oninput="guardar()">
+      <p id="constTxt" style="font-size:14px;color:var(--gris)"></p>
+      <div class="logros" id="logros"></div>
+    </div>
+  </section>
+
+  <p class="pie">M.E.T.A.S · Misiones del maestro · Formación docente ·
+    <a href="../../index.html">Volver a mi Zona Docente</a></p>
+</main>
+
+<!-- Panel de logros (lo abre el botón del pie) -->
+<div class="ach-fondo" id="achFondo" onclick="if (event.target === this) toggleAchPanel()">
+  <div class="ach-panel" role="dialog" aria-label="Logros de la misión">
+    <h3>🏅 Sus logros en esta misión</h3>
+    <div class="ach-sub" id="achSub"></div>
+    <div id="achLista"></div>
+    <div class="btn-fila"><button class="btn" onclick="toggleAchPanel()">Cerrar</button></div>
+  </div>
+</div>
+
+<footer class="credits">
+  <p class="fam">🏛️ Proyecto Formación e Investigación Docente M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Docentes <strong>Josué E. Polanco</strong> y
+    <strong>Evelyn S. Castellanos</strong>, investigadores en acción. Este material se elabora
+    con el apoyo de las mejores herramientas de investigación profunda («Deep Research»)
+    disponibles en la actualidad. Consulte siempre las fuentes citadas y, si encuentra un error,
+    agradeceremos que nos lo reporte.</p>
+  <div class="mot">«Cuanto mejor preparado esté, mejores serán sus decisiones. Al maestro que
+    estudia no se le impone: se le consulta.» 🎓</div>
+  <div class="cred-contact">
+    <span>📧 <a href="mailto:josuepolancolemus2020@gmail.com">josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank" rel="noopener">policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+<script src="js/cnb-dcnb-programacion.js"></script>
+<!-- Accesibilidad de aula compartida: añade al pie «🔎 Letra» y
+     «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
+     .sec.active y go(). -->
+<script src="../../js/metas-presentacion.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Nueve cortes para diez páginas. Se buscan EN ORDEN sobre lo que queda,
+# así que un encabezado repetido (A. Complete sale en ejercicios y en la
+# pauta) no estorba: cada corte se busca después del anterior.
+<b>El libro de texto no es la norma.</b>
+<h3>Las dos modalidades de Educación Media</h3>
+<h2>5. Fundamentos y principios (lo que se pregunta de memoria)</h2>
+<h2>7. La tabla del DCNB, columna por columna</h2>
+<h3>Un cálculo hecho, para copiar el método</h3>
+<h2>10. Vocabulario que exigen los exámenes</h2>
+<h3>A. Complete</h3>
+<h3>E. Para desarrollar</h3>
+<h3>D. Cálculo</h3>
