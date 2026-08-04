@@ -720,14 +720,19 @@ function paRenderPadres() {
    larguísimo, así que se filtra por PARCIAL y por MATERIA con un toque.
    Los filtros se recuerdan junto a los datos (PA_KEY.histFiltros). */
 const PA_HIST_PARCIALES = ['I', 'II', 'III', 'IV'];
+/* Esta tabla es el nombre de las materias en TODA la herramienta: los chips
+   del historial, el selector de evaluación y la columna de la boleta. El
+   nombre va dos veces a propósito: «corto» para los chips, que van en fila y
+   con «Ciencias Naturales» se salen de la pantalla del teléfono; «nom» para
+   donde hay sitio y el maestro espera el nombre de la boleta. */
 const PA_HIST_MATERIAS = [
-  { key: 'español',      chip: '📖 Español',      nom: 'Español' },
-  { key: 'matemáticas',  chip: '🔢 Matemáticas',  nom: 'Matemáticas' },
-  { key: 'naturales',    chip: '🌱 Naturales',    nom: 'Ciencias Naturales' },
-  { key: 'sociales',     chip: '🌎 Sociales',     nom: 'Ciencias Sociales' },
-  { key: 'programación', chip: '💻 Programación', nom: 'Programación' },
-  { key: 'robótica',     chip: '🤖 Robótica',     nom: 'Robótica' },
-  { key: 'inglés',       chip: '🔤 Inglés',       nom: 'Inglés' },
+  { key: 'español',      emoji: '📖', corto: 'Español',      nom: 'Español' },
+  { key: 'matemáticas',  emoji: '🔢', corto: 'Matemáticas',  nom: 'Matemáticas' },
+  { key: 'naturales',    emoji: '🌱', corto: 'Naturales',    nom: 'Ciencias Naturales' },
+  { key: 'sociales',     emoji: '🌎', corto: 'Sociales',     nom: 'Ciencias Sociales' },
+  { key: 'programación', emoji: '💻', corto: 'Programación', nom: 'Programación' },
+  { key: 'robótica',     emoji: '🤖', corto: 'Robótica',     nom: 'Robótica' },
+  { key: 'inglés',       emoji: '🔤', corto: 'Inglés',       nom: 'Inglés' },
 ];
 /* «sin» es el valor de los chips «Sin parcial» / «Sin materia»: '' ya
    significa «no filtrar», así que los análisis sueltos necesitan su propia
@@ -780,7 +785,7 @@ function paRenderHistFiltros(todos, f) {
   if (todos.some(a => !a.parcial)) opsP.push({ v: PA_HIST_SIN, t: 'Sin parcial' });
   const opsM = PA_HIST_MATERIAS
     .filter(x => todos.some(a => paMateriaDe(a) === x.key))
-    .map(x => ({ v: x.key, t: x.chip }));
+    .map(x => ({ v: x.key, t: x.emoji + ' ' + x.corto }));
   if (todos.some(a => !paMateriaDe(a))) opsM.push({ v: PA_HIST_SIN, t: '📋 Sin materia' });
 
   /* Una fila con una sola opción no filtra nada y solo estorba, así que no se
@@ -935,6 +940,7 @@ function paMisionCanon(a) {
    el nombre se autollena y el análisis guarda misionId/forma/tipoEval
    para que la vista Padre cruce la nota con la evaluación precisa. */
 function paPoblarMisiones() {
+  paPoblarMaterias();
   paFiltrarMisiones(document.getElementById('pa-materia')?.value || '');
   const sf = document.getElementById('pa-forma');
   if (sf && sf.options.length <= 1) {
@@ -945,6 +951,39 @@ function paPoblarMisiones() {
       sf.appendChild(o);
     }
   }
+}
+
+/* Las materias del selector se CUENTAN del banco de misiones, no se escriben.
+   Estaban escritas a mano en index.html y pasó lo que tenía que pasar: Inglés
+   entró al catálogo, al filtro del historial y al Campeonísimo, pero aquí no,
+   y el maestro que aplicó «Hello! Saludos y Presentarme» no podía analizar su
+   evaluación —ni siquiera escribiendo el nombre a mano, porque sin materia el
+   listado de evaluaciones no le ofrecía la misión ni su Forma—. Ahora la
+   materia nueva aparece sola el día que entra su primera misión.
+
+   El orden es el de PA_HIST_MATERIAS (el mismo de los chips del historial, para
+   que el maestro busque en el mismo sitio de siempre); una materia del catálogo
+   que aún no esté en esa tabla se muestra igual, al final, antes que esconderla. */
+function paPoblarMaterias() {
+  const sel = document.getElementById('pa-materia');
+  if (!sel || typeof MISSIONS === 'undefined') return;
+  const claves = PA_HIST_MATERIAS
+    .map(x => x.key)
+    .filter(k => MISSIONS.some(m => m.subject === k));
+  MISSIONS.forEach(m => {
+    if (m.subject && claves.indexOf(m.subject) < 0) claves.push(m.subject);
+  });
+
+  const actual = sel.value;
+  sel.innerHTML = '<option value="">Primero elige la materia</option>';
+  claves.forEach(k => {
+    const x = PA_HIST_MATERIAS.find(y => y.key === k);
+    const op = document.createElement('option');
+    op.value = k;
+    op.textContent = x ? (x.emoji + ' ' + x.nom) : (k.charAt(0).toUpperCase() + k.slice(1));
+    sel.appendChild(op);
+  });
+  if (actual && [...sel.options].some(o => o.value === actual)) sel.value = actual;
 }
 
 /* El listado de evaluaciones se filtra por materia: con 28 misiones ya

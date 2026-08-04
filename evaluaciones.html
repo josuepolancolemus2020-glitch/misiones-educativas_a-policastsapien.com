@@ -6,7 +6,7 @@
 <title>🖨️ Banco de Evaluaciones — M.E.T.A.S</title>
 <style>
 :root{
-  --esp:#c49000; --mat:#1565c0; --cnat:#27ae60; --csoc:#c0392b;
+  --esp:#c49000; --mat:#1565c0; --cnat:#27ae60; --csoc:#c0392b; --tec:#0e7490; --ing:#be185d;
   --bg:#f4f7fb; --card:#ffffff; --texto:#2d3436; --gray:#636e72; --border:#dfe6ee; --pri:#1565c0; --pri-gl:#e3f2fd;
 }
 @media (prefers-color-scheme: dark){
@@ -35,6 +35,7 @@ header p{font-size:0.85rem;opacity:0.92;line-height:1.45;}
 .mision .sub{font-size:0.72rem;color:var(--gray);margin-top:0.15rem;}
 .mision .go{margin-left:auto;color:var(--mcolor);font-weight:800;flex-shrink:0;}
 .esp{--mcolor:var(--esp);} .mat{--mcolor:var(--mat);} .cnat{--mcolor:var(--cnat);} .csoc{--mcolor:var(--csoc);}
+.tec{--mcolor:var(--tec);} .ing{--mcolor:var(--ing);} .otra{--mcolor:var(--pri);}
 .nota-etica{margin-top:1rem;background:var(--pri-gl);border-left:4px solid var(--pri);border-radius:8px;padding:0.7rem 0.9rem;font-size:0.78rem;line-height:1.55;}
 footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5rem;}
 </style>
@@ -67,15 +68,29 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <footer>🏠 Proyecto Educativo M.E.T.A.S · 🌐 policastsapien.com</footer>
 
-<script src="js/data/misiones.js?v=84"></script>
+<script src="js/data/misiones.js?v=85"></script>
 <script>
 'use strict';
+/* El orden y el color de cada materia se escriben; QUÉ materias hay se CUENTA
+   del catálogo. Escribir las dos cosas costó 14 misiones: la cabecera contaba
+   las 57 de MISSIONS y la lista solo pintaba cuatro materias, así que las
+   evaluaciones de Programación, Robótica e Inglés no tenían dónde imprimirse.
+   Una materia que entre al catálogo y aún no tenga su color sale igual, al
+   final: mejor sin color que sin sus exámenes. */
 const ORDEN = [
-  { key: 'español',     label: '📖 Español',     cls: 'esp'  },
-  { key: 'matemáticas', label: '🔢 Matemáticas', cls: 'mat'  },
-  { key: 'naturales',   label: '🌱 Ciencias Naturales', cls: 'cnat' },
-  { key: 'sociales',    label: '🌎 Ciencias Sociales',  cls: 'csoc' },
+  { key: 'español',      label: '📖 Español',            cls: 'esp'  },
+  { key: 'matemáticas',  label: '🔢 Matemáticas',        cls: 'mat'  },
+  { key: 'naturales',    label: '🌱 Ciencias Naturales', cls: 'cnat' },
+  { key: 'sociales',     label: '🌎 Ciencias Sociales',  cls: 'csoc' },
+  { key: 'programación', label: '💻 Programación',       cls: 'tec'  },
+  { key: 'robótica',     label: '🤖 Robótica',           cls: 'tec'  },
+  { key: 'inglés',       label: '🔤 Inglés',             cls: 'ing'  },
 ];
+MISSIONS.forEach(m => {
+  if (m.subject && !ORDEN.some(o => o.key === m.subject)) {
+    ORDEN.push({ key: m.subject, label: '📚 ' + m.subject.charAt(0).toUpperCase() + m.subject.slice(1), cls: 'otra' });
+  }
+});
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 document.getElementById('totalMisiones').textContent = MISSIONS.length;
 document.getElementById('banco').innerHTML = ORDEN.map(o => {
@@ -83,7 +98,7 @@ document.getElementById('banco').innerHTML = ORDEN.map(o => {
   if (!lista.length) return '';
   return `
   <section class="materia ${o.cls}">
-    <h2>${o.label} <span class="cnt">· ${lista.length} evaluaciones</span></h2>
+    <h2>${o.label} <span class="cnt">· ${lista.length} evaluaci${lista.length === 1 ? 'ón' : 'ones'}</span></h2>
     <div class="lista">
       ${lista.map(m => `
         <a class="mision ${o.cls}" href="${esc(m.url)}">
