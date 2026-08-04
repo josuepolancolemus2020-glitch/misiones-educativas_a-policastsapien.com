@@ -1,0 +1,5 @@
+# Ciencias Naturales
+
+> Fuente: `cnb-media-bch-ciencias-y-humanidades.pdf`, páginas 41–41. Convertido automáticamente: para **citar** un número de artículo, confirmarlo en el PDF.
+
+Perfil académico ● Profesor de Educación Media en el área de Ciencias Naturales con orientación en Biología y Física en el Grado de Licenciatura. ● Profesor de Educación Media en el Área de Ciencias Naturales con Orientación en Química y Biología en el Grado de Licenciatura. ● Profesor de Educación Media en Ciencias Naturales en el Grado de Licenciatura. Requisitos básicos de infraestructuras, espacios y equipamientos Espacios e instalaciones ● Aula de clase ● Laboratorio de biología ● Biblioteca y banco de recursos digitales Herramientas y equipo ● Equipo básico de laboratorio: microscopio, equipo de medición de masa, longitud, volumen y temperatura ● Libros de texto ● Manual de laboratorio ● Banco de videos ● Proyector de imagen ● Computadora ● Internet Bibliografía sugerida ● Biología: La vida en la tierra (8ª ed.) de Teresa Audesirk https://ecobiouvm.files.wordpress.com/2014/08/biol ogia_la_vida_en_la_tierra_primera_parte-jbdecrypted.pdf

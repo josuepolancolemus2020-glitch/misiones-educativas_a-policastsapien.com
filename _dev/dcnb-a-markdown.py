@@ -110,6 +110,13 @@ AREAS_BUSCA = sorted(
     key=lambda x: -len(x[1]))   # la más larga primero: «/ Español» antes que sola
 RE_GRADO = re.compile(r'\b(PRIMER|SEGUNDO|TERCER|CUARTO|QUINTO|SEXTO|'
                       r'S[ÉE]PTIMO|OCTAVO|NOVENO)\s+GRADO\b')
+# Educación Media se organiza distinto que Básica: no tiene «áreas» con
+# expectativas de logro, sino ESPACIOS CURRICULARES por grado (décimo a
+# duodécimo), cada uno con sus competencias y criterios de evaluación. Se
+# trocea por esa pareja, que es su equivalente de «área + grado».
+RE_ESPACIO = re.compile(r'Espacio\s+[Cc]urricular:?\s+([A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñ\s]{2,34}?)'
+                        r'(?=\s+(?:Grado|GRADO|D[EÉ]CIMO|Horas|Duraci[óo]n|Nivel|\d)|\s*$)')
+RE_GRADO_MEDIA = re.compile(r'\b(D[ÉE]CIMO|UND[ÉE]CIMO|DUOD[ÉE]CIMO)\s+GRADO\b', re.I)
 RE_BLOQUE = re.compile(r'\bBloque\s+(\d+)', re.I)
 
 # Encabezados de sección para documentos SIN estructura de área/grado (las
@@ -225,7 +232,14 @@ def cabecera_dcnb(cruda):
         if patron.search(cab):
             area = nombre
             break
-    g = RE_GRADO.search(cab)
+    # Media: el «área» es el espacio curricular, y el grado va de décimo a
+    # duodécimo. Se prueba después de las áreas de Básica porque un documento
+    # es de un nivel o del otro, nunca de los dos.
+    if not area:
+        e = RE_ESPACIO.search(cab)
+        if e:
+            area = re.sub(r'\s+', ' ', e.group(1)).strip().title()
+    g = RE_GRADO.search(cab) or RE_GRADO_MEDIA.search(cab)
     return area, (g.group(0).title() if g else '')
 
 

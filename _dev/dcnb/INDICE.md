@@ -5,6 +5,119 @@ Lo generó `_dev/dcnb-a-markdown.py`. **Se abre este archivo primero**: dice qu�
 Los PDF originales siguen en `_dev/dcnb-pdf/` y son los que acreditan una cita: el Markdown es para trabajar, el PDF para verificar.
 
 
+## cnb-media-bch-ciencias-y-humanidades.pdf (170 páginas)
+
+> ⚠️ 5 página(s) son imágenes y no tienen texto aquí: hay que verlas en el PDF.
+
+| Archivo | Sección | Páginas | Tokens |
+|---|---|---:|---:|
+| [`cnb-media-bch-ciencias-y-humanidades-01-presentacion.md`](cnb-media-bch-ciencias-y-humanidades-01-presentacion.md) | Presentación | 1–1 | 61 |
+| [`cnb-media-bch-ciencias-y-humanidades-02-decimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-02-decimo-grado.md) | Decimo Grado | 2–3 | 1,297 |
+| [`cnb-media-bch-ciencias-y-humanidades-03-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-03-undecimo-grado.md) | Undecimo Grado | 4–4 | 161 |
+| [`cnb-media-bch-ciencias-y-humanidades-04-matematica-decimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-04-matematica-decimo-grado.md) | Matematica — Decimo Grado | 5–10 | 2,980 |
+| [`cnb-media-bch-ciencias-y-humanidades-05-espanol-decimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-05-espanol-decimo-grado.md) | Espanol — Decimo Grado | 11–17 | 3,727 |
+| [`cnb-media-bch-ciencias-y-humanidades-06-fisica-decimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-06-fisica-decimo-grado.md) | Fisica — Decimo Grado | 18–24 | 3,120 |
+| [`cnb-media-bch-ciencias-y-humanidades-07-ciencias-naturales.md`](cnb-media-bch-ciencias-y-humanidades-07-ciencias-naturales.md) | Ciencias Naturales | 25–25 | 331 |
+| [`cnb-media-bch-ciencias-y-humanidades-08-quimica-decimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-08-quimica-decimo-grado.md) | Quimica — Decimo Grado | 26–32 | 2,575 |
+| [`cnb-media-bch-ciencias-y-humanidades-09-biologia-decimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-09-biologia-decimo-grado.md) | Biologia — Decimo Grado | 33–40 | 2,370 |
+| [`cnb-media-bch-ciencias-y-humanidades-10-ciencias-naturales.md`](cnb-media-bch-ciencias-y-humanidades-10-ciencias-naturales.md) | Ciencias Naturales | 41–41 | 325 |
+| [`cnb-media-bch-ciencias-y-humanidades-11-historia-de-honduras-decimo-grado-1de2.md`](cnb-media-bch-ciencias-y-humanidades-11-historia-de-honduras-decimo-grado-1de2.md) | Historia De Honduras — Decimo Grado (1 de 2) | 42–53 | 7,271 |
+| [`cnb-media-bch-ciencias-y-humanidades-12-historia-de-honduras-decimo-grado-2de2.md`](cnb-media-bch-ciencias-y-humanidades-12-historia-de-honduras-decimo-grado-2de2.md) | Historia De Honduras — Decimo Grado (2 de 2) | 54–57 | 1,463 |
+| [`cnb-media-bch-ciencias-y-humanidades-13-ingles-decimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-13-ingles-decimo-grado.md) | Ingles — Decimo Grado | 58–62 | 2,004 |
+| [`cnb-media-bch-ciencias-y-humanidades-14-informatica-decimo-grado-1de2.md`](cnb-media-bch-ciencias-y-humanidades-14-informatica-decimo-grado-1de2.md) | Informatica — Decimo Grado (1 de 2) | 63–82 | 7,098 |
+| [`cnb-media-bch-ciencias-y-humanidades-15-informatica-decimo-grado-2de2.md`](cnb-media-bch-ciencias-y-humanidades-15-informatica-decimo-grado-2de2.md) | Informatica — Decimo Grado (2 de 2) | 83–95 | 5,470 |
+| [`cnb-media-bch-ciencias-y-humanidades-16-educacion-fisica-y-deportes-decimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-16-educacion-fisica-y-deportes-decimo-grado.md) | Educacion Fisica Y Deportes — Decimo Grado | 96–101 | 2,710 |
+| [`cnb-media-bch-ciencias-y-humanidades-17-matematica-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-17-matematica-undecimo-grado.md) | Matematica — Undecimo Grado | 102–108 | 3,652 |
+| [`cnb-media-bch-ciencias-y-humanidades-18-espanol-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-18-espanol-undecimo-grado.md) | Espanol — Undecimo Grado | 109–113 | 2,361 |
+| [`cnb-media-bch-ciencias-y-humanidades-19-fisica-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-19-fisica-undecimo-grado.md) | Fisica — Undecimo Grado | 114–120 | 3,024 |
+| [`cnb-media-bch-ciencias-y-humanidades-20-ciencias-naturales.md`](cnb-media-bch-ciencias-y-humanidades-20-ciencias-naturales.md) | Ciencias Naturales | 121–121 | 336 |
+| [`cnb-media-bch-ciencias-y-humanidades-21-quimica-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-21-quimica-undecimo-grado.md) | Quimica — Undecimo Grado | 122–128 | 2,705 |
+| [`cnb-media-bch-ciencias-y-humanidades-22-biologia-ii-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-22-biologia-ii-undecimo-grado.md) | Biologia Ii — Undecimo Grado | 129–133 | 2,207 |
+| [`cnb-media-bch-ciencias-y-humanidades-23-ingles-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-23-ingles-undecimo-grado.md) | Ingles — Undecimo Grado | 134–137 | 1,950 |
+| [`cnb-media-bch-ciencias-y-humanidades-24-introduccion-a-la-economia-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-24-introduccion-a-la-economia-undecimo-grado.md) | Introduccion A La Economia — Undecimo Grado | 138–142 | 2,370 |
+| [`cnb-media-bch-ciencias-y-humanidades-25-antropologia-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-25-antropologia-undecimo-grado.md) | Antropologia — Undecimo Grado | 143–147 | 2,163 |
+| [`cnb-media-bch-ciencias-y-humanidades-26-historia-universal-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-26-historia-universal-undecimo-grado.md) | Historia Universal — Undecimo Grado | 148–153 | 3,053 |
+| [`cnb-media-bch-ciencias-y-humanidades-27-filosofia-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-27-filosofia-undecimo-grado.md) | Filosofia — Undecimo Grado | 154–158 | 2,018 |
+| [`cnb-media-bch-ciencias-y-humanidades-28-educacion-y-apreciacion-artistica-undecimo.md`](cnb-media-bch-ciencias-y-humanidades-28-educacion-y-apreciacion-artistica-undecimo.md) | Educacion Y Apreciacion Artistica — Undecimo Grado | 159–164 | 2,015 |
+| [`cnb-media-bch-ciencias-y-humanidades-29-programacion-y-tic-undecimo-grado.md`](cnb-media-bch-ciencias-y-humanidades-29-programacion-y-tic-undecimo-grado.md) | Programacion Y Tic — Undecimo Grado | 165–170 | 1,890 |
+
+## cnb-media-btp-administracion-empresas-2025.pdf (201 páginas)
+
+> ⚠️ 5 página(s) son imágenes y no tienen texto aquí: hay que verlas en el PDF.
+
+| Archivo | Sección | Páginas | Tokens |
+|---|---|---:|---:|
+| [`cnb-media-btp-administracion-empresas-2025-01-presentacion.md`](cnb-media-btp-administracion-empresas-2025-01-presentacion.md) | Presentación | 1–1 | 69 |
+| [`cnb-media-btp-administracion-empresas-2025-02-decimo-grado.md`](cnb-media-btp-administracion-empresas-2025-02-decimo-grado.md) | Decimo Grado | 2–3 | 540 |
+| [`cnb-media-btp-administracion-empresas-2025-03-undecimo-grado.md`](cnb-media-btp-administracion-empresas-2025-03-undecimo-grado.md) | Undecimo Grado | 4–4 | 196 |
+| [`cnb-media-btp-administracion-empresas-2025-04-duodecimo-grado.md`](cnb-media-btp-administracion-empresas-2025-04-duodecimo-grado.md) | Duodecimo Grado | 5–5 | 179 |
+| [`cnb-media-btp-administracion-empresas-2025-05-decimo-grado.md`](cnb-media-btp-administracion-empresas-2025-05-decimo-grado.md) | Decimo Grado | 6–11 | 3,045 |
+| [`cnb-media-btp-administracion-empresas-2025-06-espanol.md`](cnb-media-btp-administracion-empresas-2025-06-espanol.md) | Espanol | 12–18 | 3,703 |
+| [`cnb-media-btp-administracion-empresas-2025-07-fisica.md`](cnb-media-btp-administracion-empresas-2025-07-fisica.md) | Fisica | 19–25 | 3,307 |
+| [`cnb-media-btp-administracion-empresas-2025-08-quimica.md`](cnb-media-btp-administracion-empresas-2025-08-quimica.md) | Quimica | 26–30 | 2,555 |
+| [`cnb-media-btp-administracion-empresas-2025-09-biologia.md`](cnb-media-btp-administracion-empresas-2025-09-biologia.md) | Biologia | 31–37 | 2,623 |
+| [`cnb-media-btp-administracion-empresas-2025-10-historia-de-honduras.md`](cnb-media-btp-administracion-empresas-2025-10-historia-de-honduras.md) | Historia De Honduras | 38–44 | 4,447 |
+| [`cnb-media-btp-administracion-empresas-2025-11-ciencias-sociales.md`](cnb-media-btp-administracion-empresas-2025-11-ciencias-sociales.md) | Ciencias Sociales | 45–52 | 4,248 |
+| [`cnb-media-btp-administracion-empresas-2025-12-ingles.md`](cnb-media-btp-administracion-empresas-2025-12-ingles.md) | Ingles | 53–57 | 2,020 |
+| [`cnb-media-btp-administracion-empresas-2025-13-informatica-1de2.md`](cnb-media-btp-administracion-empresas-2025-13-informatica-1de2.md) | Informatica (1 de 2) | 58–70 | 6,965 |
+| [`cnb-media-btp-administracion-empresas-2025-14-informatica-2de2.md`](cnb-media-btp-administracion-empresas-2025-14-informatica-2de2.md) | Informatica (2 de 2) | 71–81 | 5,549 |
+| [`cnb-media-btp-administracion-empresas-2025-15-educacion-fisica.md`](cnb-media-btp-administracion-empresas-2025-15-educacion-fisica.md) | Educacion Fisica | 82–86 | 2,679 |
+| [`cnb-media-btp-administracion-empresas-2025-16-educacion-fisica-undecimo-grado.md`](cnb-media-btp-administracion-empresas-2025-16-educacion-fisica-undecimo-grado.md) | Educacion Fisica — Undecimo Grado | 87–93 | 4,021 |
+| [`cnb-media-btp-administracion-empresas-2025-17-espanol.md`](cnb-media-btp-administracion-empresas-2025-17-espanol.md) | Espanol | 94–105 | 5,219 |
+| [`cnb-media-btp-administracion-empresas-2025-18-ingles-tecnico.md`](cnb-media-btp-administracion-empresas-2025-18-ingles-tecnico.md) | Ingles Tecnico | 106–111 | 2,382 |
+| [`cnb-media-btp-administracion-empresas-2025-19-filosofia.md`](cnb-media-btp-administracion-empresas-2025-19-filosofia.md) | Filosofia | 112–115 | 1,857 |
+| [`cnb-media-btp-administracion-empresas-2025-20-ciencias-sociales.md`](cnb-media-btp-administracion-empresas-2025-20-ciencias-sociales.md) | Ciencias Sociales | 116–116 | 187 |
+| [`cnb-media-btp-administracion-empresas-2025-21-legislacion-mercantil.md`](cnb-media-btp-administracion-empresas-2025-21-legislacion-mercantil.md) | Legislacion Mercantil | 117–125 | 4,780 |
+| [`cnb-media-btp-administracion-empresas-2025-22-cultura-empresarial.md`](cnb-media-btp-administracion-empresas-2025-22-cultura-empresarial.md) | Cultura Empresarial | 126–129 | 1,940 |
+| [`cnb-media-btp-administracion-empresas-2025-23-estadistica-para-administradores.md`](cnb-media-btp-administracion-empresas-2025-23-estadistica-para-administradores.md) | Estadistica Para Administradores | 130–135 | 1,996 |
+| [`cnb-media-btp-administracion-empresas-2025-24-contabilidad-basica.md`](cnb-media-btp-administracion-empresas-2025-24-contabilidad-basica.md) | Contabilidad Basica | 136–140 | 2,628 |
+| [`cnb-media-btp-administracion-empresas-2025-25-administracion-organizacional.md`](cnb-media-btp-administracion-empresas-2025-25-administracion-organizacional.md) | Administracion Organizacional | 141–151 | 5,240 |
+| [`cnb-media-btp-administracion-empresas-2025-26-informatica-empresarial.md`](cnb-media-btp-administracion-empresas-2025-26-informatica-empresarial.md) | Informatica Empresarial | 152–155 | 1,906 |
+| [`cnb-media-btp-administracion-empresas-2025-27-informatica-empresarial-duodecimo-grado.md`](cnb-media-btp-administracion-empresas-2025-27-informatica-empresarial-duodecimo-grado.md) | Informatica Empresarial — Duodecimo Grado | 156–160 | 2,578 |
+| [`cnb-media-btp-administracion-empresas-2025-28-mercadotecnia-empresarial.md`](cnb-media-btp-administracion-empresas-2025-28-mercadotecnia-empresarial.md) | Mercadotecnia Empresarial | 161–170 | 4,442 |
+| [`cnb-media-btp-administracion-empresas-2025-29-auditoria.md`](cnb-media-btp-administracion-empresas-2025-29-auditoria.md) | Auditoria | 171–181 | 4,932 |
+| [`cnb-media-btp-administracion-empresas-2025-30-informatica-contable.md`](cnb-media-btp-administracion-empresas-2025-30-informatica-contable.md) | Informatica Contable | 182–186 | 2,583 |
+| [`cnb-media-btp-administracion-empresas-2025-31-contabilidad-de-costos.md`](cnb-media-btp-administracion-empresas-2025-31-contabilidad-de-costos.md) | Contabilidad De Costos | 187–191 | 1,892 |
+| [`cnb-media-btp-administracion-empresas-2025-32-contabilidad-de-sociedades.md`](cnb-media-btp-administracion-empresas-2025-32-contabilidad-de-sociedades.md) | Contabilidad De Sociedades | 192–196 | 2,434 |
+| [`cnb-media-btp-administracion-empresas-2025-33-planeacion-estrategica-y-ventas.md`](cnb-media-btp-administracion-empresas-2025-33-planeacion-estrategica-y-ventas.md) | Planeacion Estrategica Y Ventas | 197–201 | 1,986 |
+
+## cnb-media-btp-sistematizacion-informatica-12-2025.pdf (197 páginas)
+
+> ⚠️ 5 página(s) son imágenes y no tienen texto aquí: hay que verlas en el PDF.
+
+| Archivo | Sección | Páginas | Tokens |
+|---|---|---:|---:|
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-01-presentacion.md`](cnb-media-btp-sistematizacion-informatica-12-2025-01-presentacion.md) | Presentación | 1–1 | 67 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-02-decimo-grado.md`](cnb-media-btp-sistematizacion-informatica-12-2025-02-decimo-grado.md) | Decimo Grado | 2–3 | 531 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-03-undecimo-grado.md`](cnb-media-btp-sistematizacion-informatica-12-2025-03-undecimo-grado.md) | Undecimo Grado | 4–4 | 280 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-04-matematica-decimo-grado.md`](cnb-media-btp-sistematizacion-informatica-12-2025-04-matematica-decimo-grado.md) | Matematica — Decimo Grado | 5–10 | 2,927 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-05-espanol.md`](cnb-media-btp-sistematizacion-informatica-12-2025-05-espanol.md) | Espanol | 11–16 | 3,687 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-06-fisica.md`](cnb-media-btp-sistematizacion-informatica-12-2025-06-fisica.md) | Fisica | 17–22 | 3,144 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-07-ciencias-naturales.md`](cnb-media-btp-sistematizacion-informatica-12-2025-07-ciencias-naturales.md) | Ciencias Naturales | 23–23 | 245 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-08-quimica.md`](cnb-media-btp-sistematizacion-informatica-12-2025-08-quimica.md) | Quimica | 24–27 | 2,261 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-09-ciencias-naturales.md`](cnb-media-btp-sistematizacion-informatica-12-2025-09-ciencias-naturales.md) | Ciencias Naturales | 28–28 | 338 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-10-biologia.md`](cnb-media-btp-sistematizacion-informatica-12-2025-10-biologia.md) | Biologia | 29–35 | 2,608 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-11-historia-de-honduras-1de2.md`](cnb-media-btp-sistematizacion-informatica-12-2025-11-historia-de-honduras-1de2.md) | Historia De Honduras (1 de 2) | 36–47 | 7,331 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-12-historia-de-honduras-2de2.md`](cnb-media-btp-sistematizacion-informatica-12-2025-12-historia-de-honduras-2de2.md) | Historia De Honduras (2 de 2) | 48–50 | 1,339 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-13-ingles.md`](cnb-media-btp-sistematizacion-informatica-12-2025-13-ingles.md) | Ingles | 51–54 | 1,983 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-14-informatica-1de2.md`](cnb-media-btp-sistematizacion-informatica-12-2025-14-informatica-1de2.md) | Informatica (1 de 2) | 55–74 | 7,243 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-15-informatica-2de2.md`](cnb-media-btp-sistematizacion-informatica-12-2025-15-informatica-2de2.md) | Informatica (2 de 2) | 75–84 | 4,806 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-16-educacion-fisica-y-deportes.md`](cnb-media-btp-sistematizacion-informatica-12-2025-16-educacion-fisica-y-deportes.md) | Educacion Fisica Y Deportes | 85–89 | 2,667 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-17-matematica-undecimo-grado.md`](cnb-media-btp-sistematizacion-informatica-12-2025-17-matematica-undecimo-grado.md) | Matematica — Undecimo Grado | 90–95 | 2,774 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-18-espanol.md`](cnb-media-btp-sistematizacion-informatica-12-2025-18-espanol.md) | Espanol | 96–106 | 5,223 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-19-filosofia.md`](cnb-media-btp-sistematizacion-informatica-12-2025-19-filosofia.md) | Filosofia | 107–120 | 4,607 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-20-ingles-tecnico.md`](cnb-media-btp-sistematizacion-informatica-12-2025-20-ingles-tecnico.md) | Ingles Tecnico | 121–124 | 1,502 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-21-programacion-i.md`](cnb-media-btp-sistematizacion-informatica-12-2025-21-programacion-i.md) | Programacion I | 125–135 | 5,705 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-22-analisis-y-diseno-de-sistemas.md`](cnb-media-btp-sistematizacion-informatica-12-2025-22-analisis-y-diseno-de-sistemas.md) | Analisis Y Diseno De Sistemas | 136–143 | 3,868 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-23-informatica-aplicada.md`](cnb-media-btp-sistematizacion-informatica-12-2025-23-informatica-aplicada.md) | Informatica Aplicada | 144–148 | 2,705 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-24-legislacion-aplicada-la-informatica.md`](cnb-media-btp-sistematizacion-informatica-12-2025-24-legislacion-aplicada-la-informatica.md) | Legislacion Aplicada La Informatica | 149–152 | 2,075 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-25-producciones-digitales-duodecimo-grado.md`](cnb-media-btp-sistematizacion-informatica-12-2025-25-producciones-digitales-duodecimo-grado.md) | Producciones Digitales — Duodecimo Grado | 153–156 | 2,454 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-26-programacion-ii.md`](cnb-media-btp-sistematizacion-informatica-12-2025-26-programacion-ii.md) | Programacion Ii | 157–161 | 2,804 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-27-diseno-web.md`](cnb-media-btp-sistematizacion-informatica-12-2025-27-diseno-web.md) | Diseno Web | 162–174 | 6,576 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-28-mantenimiento-y-reparacion.md`](cnb-media-btp-sistematizacion-informatica-12-2025-28-mantenimiento-y-reparacion.md) | Mantenimiento Y Reparacion | 175–183 | 3,898 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-29-redes-informaticas-1de2.md`](cnb-media-btp-sistematizacion-informatica-12-2025-29-redes-informaticas-1de2.md) | Redes Informaticas (1 de 2) | 184–194 | 6,994 |
+| [`cnb-media-btp-sistematizacion-informatica-12-2025-30-redes-informaticas-2de2.md`](cnb-media-btp-sistematizacion-informatica-12-2025-30-redes-informaticas-2de2.md) | Redes Informaticas (2 de 2) | 195–197 | 1,458 |
+
 ## cnb-sintetizado.pdf (15 páginas)
 
 > ⚠️ 1 página(s) son imágenes y no tienen texto aquí: hay que verlas en el PDF.
@@ -330,4 +443,4 @@ Los PDF originales siguen en `_dev/dcnb-pdf/` y son los que acreditan una cita: 
 
 ---
 
-**Total: 1,326,344 tokens** repartidos en trozos consultables por separado.
+**Total: 1,588,279 tokens** repartidos en trozos consultables por separado.
