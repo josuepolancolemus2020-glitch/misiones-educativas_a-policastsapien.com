@@ -39,19 +39,18 @@
     /* ── Encabezado ── */
     header {
       background: var(--verde); color: #fff;
-      padding: 12px 14px;
+      padding: 9px 14px;
       display: flex; align-items: center; gap: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,.18);
       flex: 0 0 auto;
     }
     .h-avatar {
-      width: 44px; height: 44px; border-radius: 50%;
+      width: 36px; height: 36px; border-radius: 50%;
       background: #fff; display: flex; align-items: center; justify-content: center;
-      font-size: 24px; flex: 0 0 auto;
+      font-size: 20px; flex: 0 0 auto;
     }
     .h-txt { min-width: 0; }
     .h-t1 { font-size: 16px; font-weight: 800; line-height: 1.2; }
-    .h-t2 { font-size: 12px; opacity: .92; }
     .h-inicio {
       margin-left: auto; flex: 0 0 auto;
       color: #fff; text-decoration: none; font-size: 12px; font-weight: 700;
@@ -63,6 +62,9 @@
       flex: 1 1 auto; overflow-y: auto;
       padding: 14px 12px 8px;
       -webkit-overflow-scrolling: touch;
+      /* referencia de offsetTop para llevar la vista al INICIO de una
+         respuesta larga (ver botSay) */
+      position: relative;
     }
     .msg { display: flex; margin-bottom: 10px; }
     .msg.bot { justify-content: flex-start; }
@@ -127,7 +129,13 @@
       flex: 0 0 auto;
       display: flex; flex-wrap: wrap; gap: 6px;
       padding: 6px 12px 8px;
+      /* En un teléfono los botones ocupaban media pantalla y la lectura
+         quedaba en una rendija. Mientras se desliza hacia arriba (leyendo)
+         se recogen; al deslizar hacia la caja de escribir, vuelven. */
+      max-height: 60vh; overflow: hidden; opacity: 1;
+      transition: max-height .28s ease, padding .28s ease, opacity .2s ease;
     }
+    #chips.recogido { max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; }
     /* 🔊 escuchar el mensaje (accesibilidad) */
     .bub-oir {
       background: none; border: none; cursor: pointer;
@@ -167,11 +175,13 @@
 </head>
 <body>
 
+  <!-- Una sola línea: en el teléfono cada renglón del encabezado se lo
+       resta a la conversación, y el nombre largo no le decía nada nuevo
+       a quien ya está adentro. -->
   <header>
     <div class="h-avatar">🤖</div>
     <div class="h-txt">
-      <div class="h-t1">Asistente para madres y padres</div>
-      <div class="h-t2">M.E.T.A.S — responde con las notas reales de su hijo/a</div>
+      <div class="h-t1">Asistente M.E.T.A.S</div>
     </div>
     <a class="h-inicio" href="index.html">Inicio</a>
   </header>
@@ -347,7 +357,16 @@ function botSay(html, chips) {
       div.innerHTML = '<div class="bub">' + html + oir + '</div>';
       $chat.appendChild(div);
       if (chips) pintarChips(chips);
-      $chat.scrollTop = $chat.scrollHeight;
+      /* Una respuesta larga (Bitácora, todas las notas) se muestra desde su
+         INICIO, que es donde va lo más reciente: antes se aterrizaba al final
+         y a la familia le tocaba subir buscándolo. Si el mensaje cabe en
+         pantalla, se va al fondo como siempre. Se ancla dos veces: si los
+         botones estaban recogidos, su transición de apertura cambia la altura
+         del chat DESPUÉS del primer cálculo y taparía el final del mensaje. */
+      const ancla = () => {
+        $chat.scrollTop = Math.min(div.offsetTop - 6, $chat.scrollHeight - $chat.clientHeight);
+      };
+      ancla(); setTimeout(ancla, 340);
       res();
     }, 420);
   });
@@ -361,11 +380,34 @@ function pintarChips(lista) {
     b.addEventListener('click', () => { userSay(c); manejar(c); });
     $chips.appendChild(b);
   });
+  /* con respuesta nueva, los botones vuelven a la vista */
+  $chips.classList.remove('recogido');
 }
+/* ── botones que se apartan mientras se lee ──
+   Se escucha el GESTO (dedo o rueda), no el scroll: cuando la vista ya
+   está pegada al fondo el scroll no dispara eventos, y justo ahí es donde
+   el padre desliza hacia arriba para releer. Dedo hacia abajo = está
+   leyendo lo de antes → los botones se recogen. Dedo hacia arriba =
+   viene a la caja de escribir → reaparecen. */
+let _dedoY = null;
+$chat.addEventListener('touchstart', e => { _dedoY = e.touches[0].clientY; }, { passive: true });
+$chat.addEventListener('touchmove', e => {
+  if (_dedoY == null) return;
+  const dy = e.touches[0].clientY - _dedoY;
+  if (dy > 14)       { $chips.classList.add('recogido');    _dedoY = e.touches[0].clientY; }
+  else if (dy < -14) { $chips.classList.remove('recogido'); _dedoY = e.touches[0].clientY; }
+}, { passive: true });
+/* con ratón (computadora del maestro): la rueda hacia arriba también recoge */
+$chat.addEventListener('wheel', e => {
+  if (e.deltaY < 0) $chips.classList.add('recogido');
+  else if (e.deltaY > 0) $chips.classList.remove('recogido');
+}, { passive: true });
+/* Nombres CORTOS: con quince botones, cada palabra de más era un renglón
+   entero menos para la conversación. */
 const CHIPS_BASE = ['📊 ¿Cómo va?', '📣 Avisos', '📝 Última nota', '📚 Todas las notas',
-                    '🗓 ¿Faltó a clases?', '🤒 Avisar falta', '🧮 Boleta del parcial',
-                    '💰 Pagos y colectas', '🧾 Mis recibos', '📔 Bitácora', '🙂 Conducta', '🏠 ¿Cómo ayudo en casa?',
-                    '💡 Consejo de hoy', '🔄 Actualizar', '🔑 Cambiar clave'];
+                    '🗓 ¿Faltó?', '🤒 Avisar falta', '🧮 Boleta del parcial',
+                    '💰 Pagos', '🧾 Recibos', '📔 Bitácora', '🙂 Conducta', '🏠 ¿Cómo ayudo?',
+                    '💡 Consejo', '🔄 Actualizar', '🔑 Cambiar clave'];
 /* Con más de una clave guardada aparece el conmutador de hijos */
 function chipsMenu() {
   return cfgCodigos().length > 1 ? ['👧 Cambiar de hijo'].concat(CHIPS_BASE) : CHIPS_BASE;
@@ -468,6 +510,9 @@ function _desdeCache(codigo) {
 }
 async function consultar(codigo) {
   ROWS = null; ROWS_AD = null; ROWS_AV = null; ROWS_CACHE = false; ROWS_FECHA = null;
+  /* datos frescos = Bitácora desde el principio; si no, al cambiar de hijo
+     o actualizar, «Más antiguas» saltaría las anotaciones nuevas sin mostrarlas */
+  _bitDesde = 0;
   if (navigator.onLine === false) return _desdeCache(codigo) ? 'cache' : 'offline';
   try {
     const { url, key } = sbCfg();
@@ -532,7 +577,7 @@ async function conDatos() {
    administrativos, se orienta al padre a lo que sí puedo contarle */
 async function _sinPlan() {
   await botSay('El maestro aún no sube evaluaciones del Plan de Acción para esta clave, ' +
-    'pero sí puedo contarle otras cosas: 👇', ['📣 Avisos', '🗓 ¿Faltó a clases?', '🧮 Boleta del parcial', '💰 Pagos y colectas', '🙂 Conducta', '💡 Consejo de hoy']);
+    'pero sí puedo contarle otras cosas: 👇', ['📣 Avisos', '🗓 ¿Faltó?', '🧮 Boleta del parcial', '💰 Pagos', '🙂 Conducta', '💡 Consejo']);
 }
 
 async function respResumen() {
@@ -562,7 +607,7 @@ async function respResumen() {
   const nCond = avDe(['conducta']).length;
   if (nCond) html += '<br>📋 Tiene <strong>' + nCond + '</strong> reporte(s) de conducta — toque «🙂 Conducta».';
   const nRec = esRecibo.de(avDe(['cuentas'])).length;
-  if (nRec) html += '<br>🧾 Tiene <strong>' + nRec + '</strong> recibo(s) de aporte — toque «🧾 Mis recibos».';
+  if (nRec) html += '<br>🧾 Tiene <strong>' + nRec + '</strong> recibo(s) de aporte — toque «🧾 Recibos».';
   const nBit = bitacoraTodas().length;
   if (nBit) html += '<br>📔 La <strong>Bitácora</strong> trae ' + nBit + ' anotación(es) de clase — toque «📔 Bitácora».';
   html += notaCardHTML(ROWS[0]) + selloDatos();
@@ -862,12 +907,12 @@ async function respEconomia() {
   if (!pend.length) html += '<br><br>🎉 No tienen aportes pendientes.';
   else html += '<br><br><small>El aporte se entrega al maestro; él lo marca recibido y aquí se actualiza.</small>';
   /* Los RECIBOS no se mezclan aquí: esta respuesta es «qué debo y qué ya di»,
-     y los comprobantes viven en su propia pantalla («🧾 Mis recibos»). Mezclarlos
+     y los comprobantes viven en su propia pantalla («🧾 Recibos»). Mezclarlos
      dejaba una pared de texto donde no se hallaba lo pendiente. */
   const nRec = esRecibo.de(avDe(['cuentas'])).length;
   if (nRec) {
     html += '<br><br>🧾 Tiene <strong>' + nRec + '</strong> recibo(s) de lo ya entregado — toque ' +
-      '«🧾 Mis recibos» para verlos o guardarlos.';
+      '«🧾 Recibos» para verlos o guardarlos.';
   }
   const cuentas = avDe(['cuentas']).filter(r => !esRecibo(r));
   if (cuentas.length) {
@@ -906,7 +951,7 @@ async function respRecibos() {
   if (!recibos.length) {
     await botSay('🧾 Todavía no hay <strong>recibos</strong> para esta clave. ' +
       'El maestro emite uno en cuanto marca que su hijo/a entregó el aporte; ' +
-      'mientras tanto puede ver lo pendiente con «💰 Colaboraciones».', chipsMenu());
+      'mientras tanto puede ver lo pendiente con «💰 Pagos».', chipsMenu());
     return;
   }
   await botSay('🧾 <strong>Sus recibos de aporte</strong>, uno por cada entrega:' +
@@ -1079,7 +1124,12 @@ function bitacoraCardHTML(r) {
       '📚 Estudiar «' + esc(nom) + '»</a>' : '') +
     '</div>';
 }
-async function respBitacora() {
+/* La Bitácora crece con cada día de clase. Si se pinta entera, la anotación
+   nueva queda arriba de una pared de tarjetas viejas: se sirve por TANDAS de
+   las más recientes, y «📔 Más antiguas» trae las que siguen. */
+const BIT_TANDA = 5;
+let _bitDesde = 0;   /* desde qué anotación sigue la próxima tanda */
+async function respBitacora(desde) {
   if (!await conDatos()) return;
   const bit = bitacoraTodas();
   if (!bit.length) {
@@ -1088,11 +1138,30 @@ async function respBitacora() {
       'medio, y las novedades que el maestro escriba del día.', chipsMenu());
     return;
   }
-  await botSay('📔 <strong>Bitácora de la clase</strong>, de lo más reciente a lo más viejo:' +
-    bit.map(bitacoraCardHTML).join('') +
-    '<br><small>Cuando aparezca el botón <strong>📚 Estudiar</strong>, ábralo con su hijo/a: es la misma ' +
-    'misión del tema de esa ficha, con práctica y evaluación en el teléfono.</small>' +
-    selloDatos(), chipsMenu());
+  const d = Math.min(desde || 0, bit.length);
+  const tanda = bit.slice(d, d + BIT_TANDA);
+  if (!tanda.length) {
+    _bitDesde = 0;
+    await botSay('📔 Ya leyó la Bitácora completa: no hay anotaciones más viejas. ' +
+      'Toque «📔 Bitácora» para volver a lo más reciente.', chipsMenu());
+    return;
+  }
+  _bitDesde = d + tanda.length;
+  const quedan = bit.length - _bitDesde;
+  const titulo = d
+    ? '📔 <strong>Bitácora</strong> — anotaciones más viejas:'
+    : '📔 <strong>Bitácora de la clase</strong>, lo más reciente primero:';
+  await botSay(titulo +
+    tanda.map(bitacoraCardHTML).join('') +
+    (quedan > 0
+      ? '<br><small>Van ' + _bitDesde + ' de ' + bit.length +
+        ' anotaciones — toque «📔 Más antiguas» para seguir leyendo.</small>'
+      : (d ? '<br><small>Hasta aquí llega la Bitácora.</small>' : '')) +
+    (d ? '' :
+      '<br><small>Cuando aparezca el botón <strong>📚 Estudiar</strong>, ábralo con su hijo/a: es la misma ' +
+      'misión del tema de esa ficha, con práctica y evaluación en el teléfono.</small>') +
+    selloDatos(),
+    quedan > 0 ? ['📔 Más antiguas'].concat(chipsMenu()) : chipsMenu());
 }
 
 async function respAvisos() {
@@ -1371,7 +1440,7 @@ const MENU_NUM = [respResumen, respUltima, respTodas, respAsistencia,
 const MENU_TXT = 'Escriba el <strong>número</strong> de lo que necesita:<br>' +
   '1️⃣ Cómo va (resumen) · 2️⃣ Última nota<br>' +
   '3️⃣ Todas las notas · 4️⃣ Faltas<br>' +
-  '5️⃣ Boleta del parcial · 6️⃣ Pagos y colectas<br>' +
+  '5️⃣ Boleta del parcial · 6️⃣ Pagos<br>' +
   '7️⃣ Conducta · 8️⃣ Cómo ayudar en casa<br>' +
   '9️⃣ Avisos del maestro';
 /* Pistas parciales: si la frase no entendida trae un fragmento reconocible
@@ -1380,10 +1449,10 @@ const PISTAS = [
   /* el recibo va primero: «comprobante de pago» trae «pag» y se iría a la
      lista de pendientes cuando lo que piden es el respaldo de lo entregado */
   [/bitacora|novedad|ficha|diario/, '📔 Bitácora'],
-  [/recib|comprob|folio/, '🧾 Mis recibos'],
-  [/pag|deb|cuot|colect|aport|diner|pisto|lempir|cobr/, '💰 Pagos y colectas'],
+  [/recib|comprob|folio/, '🧾 Recibos'],
+  [/pag|deb|cuot|colect|aport|diner|pisto|lempir|cobr/, '💰 Pagos'],
   [/avis|reunion|junta|comunicad|acto|event/, '📣 Avisos'],
-  [/falt|asist|ausen|llego/, '🗓 ¿Faltó a clases?'],
+  [/falt|asist|ausen|llego/, '🗓 ¿Faltó?'],
   [/conduct|porta|disciplin/, '🙂 Conducta'],
   [/boleta|parcial|final|sace/, '🧮 Boleta del parcial'],
   [/not|calif|evalu|examen|prueb|saco/, '📚 Todas las notas'],
@@ -1489,6 +1558,7 @@ async function manejar(txtOriginal) {
   }
   /* la Bitácora ANTES de avisos y materiales: «la ficha» y «qué hicieron hoy»
      son diario de clase, no un aviso ni la lista de útiles */
+  if (/mas antiguas|mas viejas/.test(t)) { await respBitacora(_bitDesde); return; }
   if (/bitacora|novedad|diario de (la )?clase|\bfichas?\b|material de estudio|que hicieron (hoy|en clase)|que paso en (la )?clase/.test(t)) {
     await respBitacora(); return;
   }
@@ -1669,10 +1739,10 @@ $inp.addEventListener('keydown', e => { if (e.key === 'Enter') enviar(); });
         ['🔄 Actualizar', '🔑 Cambiar clave', '❓ ¿Qué es la clave?']);
     } else if (st === 'offline') {
       await botSay('📴 No hay internet ahorita y no tengo notas guardadas. Vuelva a intentarlo con conexión.',
-        ['🔄 Actualizar', '💡 Consejo de hoy']);
+        ['🔄 Actualizar', '💡 Consejo']);
     } else {
       await botSay('⚠️ No pude consultar la nube. Intente «🔄 Actualizar» en unos minutos.',
-        ['🔄 Actualizar', '💡 Consejo de hoy']);
+        ['🔄 Actualizar', '💡 Consejo']);
     }
   } else {
     await botSay('Para empezar, escriba la <strong>clave de la familia</strong> que le entregó el maestro en una tira de papel ' +
