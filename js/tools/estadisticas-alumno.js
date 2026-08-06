@@ -838,13 +838,13 @@ function estImprimirInforme(d, nums) {
             <thead><tr><th>Materia</th><th>I</th><th>II</th><th>III</th><th>IV</th><th>Prom.</th><th>Nivel</th></tr></thead>
             <tbody>${x.sace.matsConDatos.length ? x.sace.matsConDatos.map(filaMat).join('') : '<tr><td colspan="7" class="vacio">Sin notas guardadas</td></tr>'}</tbody>
           </table>
-          <div class="inf-h" style="margin-top:6px">📋 Asistencia (pase de lista)</div>
-          ${x.asis.meses.length ? estGAsis(x.asis.meses, { w: 360, h: 110, maxw: 340 }) : '<p class="inf-nada">Sin faltas registradas. 🎉</p>'}
+          <div class="inf-h" style="margin-top:8px">📋 Asistencia (pase de lista)</div>
+          ${x.asis.meses.length ? estGAsis(x.asis.meses, { w: 340, h: 130, maxw: 420 }) : '<p class="inf-nada">Sin faltas registradas. 🎉</p>'}
         </div>
         <div class="inf-col">
           <div class="inf-h">📊 Estado por materia <small>(última nota · | = parcial anterior)</small></div>
-          ${x.sace.estado.length ? estGBarras(x.sace.estado, { w: 360, compacto: 1, maxw: 340 }) + estLeyendaNotas() : '<p class="inf-nada">Sin notas todavía.</p>'}
-          <div class="inf-h" style="margin-top:6px">🚀 Práctica y lectura</div>
+          ${x.sace.estado.length ? estGBarras(x.sace.estado, { w: 340, maxw: 420 }) + estLeyendaNotas() : '<p class="inf-nada">Sin notas todavía.</p>'}
+          <div class="inf-h" style="margin-top:8px">🚀 Práctica y lectura</div>
           <p class="inf-txt">${adEsc(misTxt)}.</p>
           ${lecTxt ? '<p class="inf-txt">📖 ' + adEsc(lecTxt) + '.</p>' : ''}
         </div>
@@ -858,13 +858,13 @@ function estImprimirInforme(d, nums) {
       ${estDecisionHtml(dec)}
 
       <footer class="inf-foot">
-        <p class="inf-fuente">Informe generado por M.E.T.A.S. con los registros del aula (Notas SACE, pase de lista,
-          Plan de Acción y práctica de misiones en la nube) al ${adEsc(hoy)}.</p>
         <div class="inf-firmas">
           <div><i></i><b>${adEsc(bol.docente) || '&nbsp;'}</b><span>Docente de grado</span></div>
           <div><i></i><b>${adEsc(bol.director) || '&nbsp;'}</b><span>Director(a)</span></div>
           <div><i></i><b>&nbsp;</b><span>Madre, padre o encargado</span></div>
         </div>
+        <p class="inf-fuente">Informe generado por M.E.T.A.S. con los registros del aula (Notas SACE, pase de lista,
+          Plan de Acción y práctica de misiones en la nube) al ${adEsc(hoy)}.</p>
       </footer>
     </section>`;
   };
@@ -882,62 +882,68 @@ function estImprimirInforme(d, nums) {
   .hoja { page-break-after: always; min-height: 256mm; display: flex; flex-direction: column; }
   .hoja:last-child { page-break-after: auto; }
 
-  .inf-head { display: flex; align-items: center; gap: 10px; padding-bottom: 6px; border-bottom: 2.5px solid var(--azul); }
-  .inf-logo { width: 64px; min-height: 40px; display: flex; align-items: center; }
-  .inf-logo img { max-width: 62px; max-height: 46px; object-fit: contain; }
+  /* Letra GRANDE a propósito: el informe se lee en una reunión con la
+     familia y con el director, muchas veces con poca luz. La página tiene
+     espacio de sobra (se comprobó con datos de un año completo) y se
+     prefiere llenarla a dejarla en blanco con letra de hormiga. */
+  .inf-head { display: flex; align-items: center; gap: 12px; padding-bottom: 8px; border-bottom: 2.5px solid var(--azul); }
+  .inf-logo { width: 72px; min-height: 46px; display: flex; align-items: center; }
+  .inf-logo img { max-width: 70px; max-height: 54px; object-fit: contain; }
   .inf-tit { flex: 1; text-align: center; }
-  .inf-centro { font-family: Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: 700; letter-spacing: .3px; }
-  .inf-doc { font-family: Georgia, serif; font-size: 11px; font-weight: 700; color: var(--oro); margin-top: 2px; letter-spacing: .6px; }
-  .inf-sub { font-size: 8.5px; color: #55637d; margin-top: 2px; }
-  .inf-fecha { width: 64px; text-align: right; font-size: 9px; color: #55637d; }
+  .inf-centro { font-family: Georgia, 'Times New Roman', serif; font-size: 17px; font-weight: 700; letter-spacing: .3px; }
+  .inf-doc { font-family: Georgia, serif; font-size: 13.5px; font-weight: 700; color: var(--oro); margin-top: 2px; letter-spacing: .6px; }
+  .inf-sub { font-size: 10.5px; color: #55637d; margin-top: 2px; }
+  .inf-fecha { width: 72px; text-align: right; font-size: 11px; color: #55637d; }
 
-  .inf-alumno { display: flex; gap: 6px; margin: 7px 0; }
-  .inf-alumno > div { flex: 1; background: var(--suave); border: 1px solid var(--linea); border-radius: 6px; padding: 3px 7px; }
-  .inf-alumno span { display: block; font-size: 7px; letter-spacing: .5px; text-transform: uppercase; color: #7286a8; }
-  .inf-alumno b { font-size: 11px; }
+  .inf-alumno { display: flex; gap: 7px; margin: 9px 0; }
+  .inf-alumno > div { flex: 1; background: var(--suave); border: 1px solid var(--linea); border-radius: 6px; padding: 5px 9px; }
+  .inf-alumno span { display: block; font-size: 9px; letter-spacing: .5px; text-transform: uppercase; color: #7286a8; }
+  .inf-alumno b { font-size: 14px; }
 
-  .chips { display: flex; gap: 5px; margin-bottom: 7px; }
-  .chip { flex: 1; border: 1px solid var(--linea); border-radius: 7px; padding: 3px 7px; background: var(--suave); }
-  .chip span { display: block; font-size: 6.8px; text-transform: uppercase; letter-spacing: .4px; color: #7286a8; }
-  .chip b { font-size: 10px; }
+  .chips { display: flex; gap: 6px; margin-bottom: 10px; }
+  .chip { flex: 1; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 9px; background: var(--suave); }
+  .chip span { display: block; font-size: 8.6px; text-transform: uppercase; letter-spacing: .4px; color: #7286a8; }
+  .chip b { font-size: 13px; }
   .chip.good { background: #eef7ee; border-color: #cfe6cf; } .chip.good b { color: #2e7d32; }
   .chip.low { background: #fdf3e5; border-color: #ecdcbf; } .chip.low b { color: #c8730a; }
 
-  .inf-cols { display: flex; gap: 10px; align-items: flex-start; }
+  .inf-cols { display: flex; gap: 14px; align-items: flex-start; }
   .inf-col { flex: 1; min-width: 0; }
-  .inf-h { font-family: Georgia, serif; font-size: 10.5px; font-weight: 700; color: var(--azul); padding-bottom: 3px; border-bottom: 1px solid var(--linea); margin-bottom: 4px; }
-  .inf-h small { font-weight: 400; font-style: italic; color: #7286a8; font-size: 8px; }
+  .inf-h { font-family: Georgia, serif; font-size: 13.5px; font-weight: 700; color: var(--azul); padding-bottom: 4px; border-bottom: 1px solid var(--linea); margin-bottom: 6px; }
+  .inf-h small { font-weight: 400; font-style: italic; color: #7286a8; font-size: 10px; }
 
   .inf-tabla { border-collapse: collapse; width: 100%; }
-  .inf-tabla th, .inf-tabla td { border: 1px solid #c7cfdd; text-align: center; font-size: 8.6px; padding: 1.5px 2px; }
-  .inf-tabla th { background: #eaf0fa; font-size: 8px; text-transform: uppercase; letter-spacing: .3px; }
-  .inf-tabla td.mat { text-align: left; font-weight: 700; padding-left: 4px; white-space: nowrap; max-width: 96px; overflow: hidden; text-overflow: ellipsis; }
+  .inf-tabla th, .inf-tabla td { border: 1px solid #c7cfdd; text-align: center; font-size: 11px; padding: 3.5px 4px; }
+  .inf-tabla th { background: #eaf0fa; font-size: 9.5px; text-transform: uppercase; letter-spacing: .3px; }
+  .inf-tabla td.mat { text-align: left; font-weight: 700; padding-left: 5px; white-space: nowrap; max-width: 128px; overflow: hidden; text-overflow: ellipsis; }
   .inf-tabla td.prom { font-weight: 800; background: #fdf6e3; color: #8a5a00; }
-  .inf-tabla td.niv { font-weight: 700; font-size: 7.6px; white-space: nowrap; }
-  .inf-tabla td.vacio { color: #7286a8; font-style: italic; padding: 6px; }
+  .inf-tabla td.niv { font-weight: 700; font-size: 10px; white-space: nowrap; }
+  .inf-tabla td.vacio { color: #7286a8; font-style: italic; padding: 8px; }
 
-  .est-leyenda { display: flex; flex-wrap: wrap; gap: 2px 8px; justify-content: center; margin-top: 3px; font-size: 6.8px; color: #55637d; }
-  .est-leyenda i { display: inline-block; width: 7px; height: 7px; border-radius: 2px; margin-right: 3px; vertical-align: -1px; }
+  .est-leyenda { display: flex; flex-wrap: wrap; gap: 3px 10px; justify-content: center; margin-top: 4px; font-size: 9px; color: #55637d; }
+  .est-leyenda i { display: inline-block; width: 9px; height: 9px; border-radius: 2.5px; margin-right: 3px; vertical-align: -1px; }
 
-  .inf-txt { font-size: 9.5px; line-height: 1.5; color: #223; margin-bottom: 3px; }
-  .inf-nada { font-size: 9px; color: #7286a8; font-style: italic; }
-  .inf-obs { list-style: none; margin: 0 0 7px; }
-  .inf-obs li { font-size: 9.3px; line-height: 1.45; color: #223; padding: 1.5px 0 1.5px 2px; }
+  .inf-txt { font-size: 12px; line-height: 1.55; color: #223; margin-bottom: 5px; }
+  .inf-nada { font-size: 11px; color: #7286a8; font-style: italic; }
+  .inf-obs { list-style: none; margin: 0 0 9px; }
+  .inf-obs li { font-size: 12px; line-height: 1.55; color: #223; padding: 2.5px 0 2.5px 2px; }
 
-  .est-dec { border-radius: 8px; padding: 8px 12px; border: 1.5px solid; font-size: 10px; line-height: 1.55; break-inside: avoid; }
-  .est-dec b { font-family: Georgia, serif; font-size: 11px; display: block; margin-bottom: 2px; }
-  .est-dec small { display: block; margin-top: 3px; color: #55637d; font-size: 8px; }
+  .est-dec { border-radius: 9px; padding: 10px 14px; border: 1.5px solid; font-size: 12.5px; line-height: 1.6; break-inside: avoid; }
+  .est-dec b { font-family: Georgia, serif; font-size: 14.5px; display: block; margin-bottom: 3px; }
+  .est-dec small { display: block; margin-top: 4px; color: #55637d; font-size: 10px; }
   .est-dec.ok { background: linear-gradient(180deg, #f0f8f0, #fff); border-color: #9fcc9f; } .est-dec.ok b { color: #2e7d32; }
   .est-dec.rep { background: linear-gradient(180deg, #fdf6ec, #fff); border-color: #dcbf8e; } .est-dec.rep b { color: #8a5a00; }
   .est-dec.neutro { background: var(--suave); border-color: var(--linea); color: #55637d; }
 
-  .inf-foot { margin-top: auto; padding-top: 8px; }
-  .inf-fuente { font-size: 7.5px; color: #7286a8; text-align: center; line-height: 1.4; }
-  .inf-firmas { display: flex; justify-content: space-around; gap: 12px; margin-top: 26px; }
+  /* Las firmas cierran el documento; la nota de origen va DEBAJO, como
+     letra chica de archivo: primero firma la gente, después habla el papel. */
+  .inf-foot { margin-top: auto; padding-top: 10px; }
+  .inf-firmas { display: flex; justify-content: space-around; gap: 14px; margin-top: 30px; }
   .inf-firmas > div { flex: 1; text-align: center; }
-  .inf-firmas i { display: block; border-top: 1px solid #55637d; margin: 0 8px 3px; }
-  .inf-firmas b { font-size: 9.5px; }
-  .inf-firmas span { display: block; font-size: 8px; color: #55637d; }
+  .inf-firmas i { display: block; border-top: 1px solid #55637d; margin: 0 8px 4px; }
+  .inf-firmas b { font-size: 12px; }
+  .inf-firmas span { display: block; font-size: 10.5px; color: #55637d; }
+  .inf-fuente { font-size: 9px; color: #7286a8; text-align: center; line-height: 1.4; margin-top: 16px; }
 </style></head><body>
 ${alumnos.map(a => hoja(a)).join('')}
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script>
