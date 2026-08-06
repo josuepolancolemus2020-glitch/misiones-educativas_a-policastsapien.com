@@ -1,0 +1,7 @@
+# Lo que NO se publica en el sitio (Cloudflare): material de taller,
+# no de aula. GitHub Pages los sirve porque no sabe ignorar; aquí sí.
+.git
+_dev
+www
+node_modules
+android
