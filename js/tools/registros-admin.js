@@ -35,7 +35,7 @@ const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
 const AD_PERS_NUM = { S: 4, MB: 3, B: 2, NS: 1 };
 const AD_PERS_DE_NUM = { 4: 'S', 3: 'MB', 2: 'B', 1: 'NS' };
 
-let _adTab = 'lista';        /* lista | eco | asis | ctrl | sace | est | com */
+let _adTab = 'lista';        /* lista | eco | asis | ctrl | sace | est | lec | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
 let _adGastosOn = 0;         /* dentro de «Gastos de mi bolsillo» */
 let _adInvOn = 0;            /* dentro de «Inventario del aula» */
@@ -422,6 +422,7 @@ function renderAdmin() {
       <button class="pa-otab ${_adTab === 'ctrl'  ? 'pa-otab-active' : ''}" data-adtab="ctrl">✅ Controles</button>
       <button class="pa-otab ${_adTab === 'sace'  ? 'pa-otab-active' : ''}" data-adtab="sace">🧮 Notas SACE</button>
       <button class="pa-otab ${_adTab === 'est'   ? 'pa-otab-active' : ''}" data-adtab="est">📈 Estadísticas</button>
+      <button class="pa-otab ${_adTab === 'lec'   ? 'pa-otab-active' : ''}" data-adtab="lec">📖 Lectura</button>
       <button class="pa-otab ${_adTab === 'com'   ? 'pa-otab-active' : ''}" data-adtab="com">📣 Comunicados</button>
       <button class="pa-otab" id="ad-nube-chip" title="Nube del chatbot de padres: toca para sincronizar ahora">${(() => {
         const n = adPendientesTotal();
@@ -459,6 +460,7 @@ function renderAdmin() {
   else if (_adTab === 'ctrl') adRenderControles(body, d);
   else if (_adTab === 'com') adRenderCom(body, d);
   else if (_adTab === 'est' && typeof adRenderEstadisticas === 'function') adRenderEstadisticas(body, d);
+  else if (_adTab === 'lec' && typeof adRenderLectura === 'function') adRenderLectura(body, d);
   else adRenderSace(body, d);
 }
 

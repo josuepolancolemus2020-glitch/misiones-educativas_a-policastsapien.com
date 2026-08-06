@@ -219,11 +219,13 @@ function estControles(d, num) {
   return { hechos: filas.filter(c => c.marcado).length, de: filas.length, filas };
 }
 
-/* Lectura (PPM): el canal futuro — hoy casi siempre vacío */
+/* Lectura (PPM): lo que registra la pestaña 📖 Lectura (Control de
+   lectura); comp/compDe traen la comprensión oral de cada toma */
 function estLectura(d, num) {
   return (d.lectura || [])
     .filter(r => r && String(r.num) === String(num) && estNum(r.ppm) != null && r.f)
-    .map(r => ({ f: r.f, ppm: Number(r.ppm), palabras: estNum(r.palabras), errores: estNum(r.errores), texto: r.texto || '' }))
+    .map(r => ({ f: r.f, ppm: Number(r.ppm), palabras: estNum(r.palabras), errores: estNum(r.errores),
+                 texto: r.titulo || r.texto || '', comp: estNum(r.comp), compDe: estNum(r.compDe) }))
     .sort((a, b) => String(a.f).localeCompare(String(b.f)));
 }
 
@@ -284,6 +286,7 @@ function estMisiones(d, num) {
 function estDatosAlumno(d, al) {
   return {
     al,
+    grado: parseInt(String(d.grado || '').replace(/\D/g, ''), 10) || null,
     sace: estSace(d, al.num),
     asis: estAsistencia(d, al.num),
     evals: estEvaluaciones(d, al.num),
@@ -378,10 +381,30 @@ function estObservaciones(x) {
     obs.push({ ic: '✅', nivel: 'ojo', txt: 'Cumplió ' + x.controles.hechos + ' de ' + x.controles.de + ' controles del aula (tareas, útiles…): menos de la mitad.' });
   }
 
-  if (x.lectura.length >= 2) {
-    const primero = x.lectura[0], ultimo = x.lectura[x.lectura.length - 1];
-    const dd = ultimo.ppm - primero.ppm;
-    obs.push({ ic: '📖', nivel: dd >= 0 ? 'bien' : 'ojo', txt: 'Lectura: de ' + primero.ppm + ' a ' + ultimo.ppm + ' palabras por minuto entre ' + adFechaBonita(primero.f) + ' y ' + adFechaBonita(ultimo.f) + (dd >= 0 ? ' (va subiendo).' : ' (bajó: conviene volver a tomar la lectura).') });
+  if (x.lectura.length) {
+    const ultimo = x.lectura[x.lectura.length - 1];
+    /* con las normas cargadas, el nivel se dice con su banda; sin ellas,
+       solo la evolución */
+    let nivelTxt = '';
+    if (typeof lecNivelVelocidad === 'function' && x.grado) {
+      const nv = lecNivelVelocidad(x.grado, ultimo.ppm);
+      nivelTxt = ' Para ' + x.grado + 'º es nivel «' + nv.etiqueta + '» (banda ' + nv.banda[0] + '–' + nv.banda[1] + ').';
+    }
+    let compTxt = '';
+    if (ultimo.comp != null && ultimo.compDe) {
+      compTxt = ' Comprensión: ' + ultimo.comp + ' de ' + ultimo.compDe + '.';
+      if (typeof lecNivelComprension === 'function') {
+        const nc = lecNivelComprension(ultimo.comp, ultimo.compDe);
+        if (nc && nc.pct < 60 && ultimo.ppm >= 90) compTxt += ' Lee veloz pero comprende poco: pedirle que baje la marcha y lea para contar.';
+      }
+    }
+    if (x.lectura.length >= 2) {
+      const primero = x.lectura[0];
+      const dd = ultimo.ppm - primero.ppm;
+      obs.push({ ic: '📖', nivel: dd >= 0 ? 'bien' : 'ojo', txt: 'Lectura: de ' + primero.ppm + ' a ' + ultimo.ppm + ' palabras por minuto entre ' + adFechaBonita(primero.f) + ' y ' + adFechaBonita(ultimo.f) + (dd >= 0 ? ' (va subiendo).' : ' (bajó: conviene repetir la toma).') + nivelTxt + compTxt });
+    } else {
+      obs.push({ ic: '📖', nivel: 'bien', txt: 'Lectura: ' + ultimo.ppm + ' palabras por minuto el ' + adFechaBonita(ultimo.f) + '.' + nivelTxt + compTxt });
+    }
   }
 
   if (!obs.length) obs.push({ ic: '🕊️', nivel: 'bien', txt: 'Sin señales de alarma con los datos guardados hasta hoy.' });
@@ -688,9 +711,18 @@ function adRenderEstadisticas(body, d) {
     <div class="pa-card">
       <div class="pa-card-title">📖 Lectura — palabras por minuto</div>
       ${x.lectura.length
-        ? estGSerieFechas(x.lectura.map(r => ({ x: adFechaBonita(r.f).slice(0, 5), v: r.ppm, titulo: adFechaBonita(r.f) + ': ' + r.ppm + ' ppm' + (r.errores != null ? ' · ' + r.errores + ' errores' : '') })), { aria: 'Palabras por minuto' }) +
-          '<p class="pa-optional-hint">Última toma: <strong>' + x.lectura[x.lectura.length - 1].ppm + ' palabras por minuto</strong> (' + adFechaBonita(x.lectura[x.lectura.length - 1].f) + ').</p>'
-        : '<p class="pa-optional-hint">El canal ya está listo: cuando estrenes la herramienta de lectura y tomes la primera medición, aquí se dibuja solo el avance de ' + adEsc(adPrimerNombre(al.nombre) || 'este alumno') + ' — sin configurar nada.</p>'}
+        ? estGSerieFechas(x.lectura.map(r => ({ x: adFechaBonita(r.f).slice(0, 5), v: r.ppm, titulo: adFechaBonita(r.f) + ': ' + r.ppm + ' ppm' + (r.errores != null ? ' · ' + r.errores + ' errores' : '') + (r.comp != null && r.compDe ? ' · comprensión ' + r.comp + '/' + r.compDe : '') })), { aria: 'Palabras por minuto' }) +
+          (() => {
+            const u = x.lectura[x.lectura.length - 1];
+            let extra = '';
+            if (typeof lecNivelVelocidad === 'function' && x.grado) {
+              const nv = lecNivelVelocidad(x.grado, u.ppm);
+              extra += ' Nivel para ' + x.grado + 'º: <strong style="color:' + nv.color + '">' + nv.etiqueta + '</strong> (banda ' + nv.banda[0] + '–' + nv.banda[1] + ').';
+            }
+            if (u.comp != null && u.compDe) extra += ' Comprensión: <strong>' + u.comp + ' de ' + u.compDe + '</strong>.';
+            return '<p class="pa-optional-hint">Última toma: <strong>' + u.ppm + ' palabras por minuto</strong> (' + adFechaBonita(u.f) + ').' + extra + '</p>';
+          })()
+        : '<p class="pa-optional-hint">Aún no hay tomas de lectura de ' + adEsc(adPrimerNombre(al.nombre) || 'este alumno') + '. Se toman en la pestaña <strong>📖 Lectura</strong>: cronómetro, conteo de palabras y cinco preguntas de comprensión — y el avance se dibuja aquí solo.</p>'}
     </div>
 
     <div class="pa-card">
@@ -800,10 +832,19 @@ function estImprimirInforme(d, nums) {
     const misTxt = x.misiones && x.misiones.intentos
       ? x.misiones.intentos + ' evaluación(es) en misiones · ' + x.misiones.dominadas + ' dominada(s) con 70+' + (x.misiones.minutos != null ? ' · ~' + x.misiones.minutos + ' min de práctica' : '')
       : (x.misiones ? 'Sin práctica registrada en la nube' : 'Nube sin consultar en este equipo');
-    const lecTxt = x.lectura.length
-      ? 'Última toma: ' + x.lectura[x.lectura.length - 1].ppm + ' palabras por minuto (' + adFechaBonita(x.lectura[x.lectura.length - 1].f) + ')' +
-        (x.lectura.length >= 2 ? ' · venía de ' + x.lectura[0].ppm + ' el ' + adFechaBonita(x.lectura[0].f) : '')
-      : null;
+    const lecTxt = (() => {
+      if (!x.lectura.length) return null;
+      const u = x.lectura[x.lectura.length - 1];
+      let s = 'Última toma: ' + u.ppm + ' palabras por minuto (' + adFechaBonita(u.f) + ')';
+      if (typeof lecNivelVelocidad === 'function' && x.grado) {
+        const nv = lecNivelVelocidad(x.grado, u.ppm);
+        s += ' · nivel ' + nv.etiqueta + ' para ' + x.grado + 'º (banda ' + nv.banda[0] + '–' + nv.banda[1] + ', ' +
+          ((typeof LECTURA_NORMAS !== 'undefined' && LECTURA_NORMAS.fuenteCorta) || 'referencia') + ')';
+      }
+      if (u.comp != null && u.compDe) s += ' · comprensión ' + u.comp + ' de ' + u.compDe;
+      if (x.lectura.length >= 2) s += ' · venía de ' + x.lectura[0].ppm + ' el ' + adFechaBonita(x.lectura[0].f);
+      return s;
+    })();
     return `<section class="hoja">
       <header class="inf-head">
         <div class="inf-logo">${d.logo ? '<img src="' + d.logo + '" alt="">' : ''}</div>
