@@ -14,8 +14,9 @@
    dibuja), así que el dato entra al expediente, al informe de una
    carta y al espejo del maestro sin un paso más.
 
-   Los TEXTOS viven en js/data/lectura-textos.js (LECTURA_TEXTOS, 20
-   por grado de 2º a 9º, contexto hondureño) y las NORMAS en
+   Los TEXTOS viven en js/data/lectura-textos.js (LECTURA_TEXTOS, de 2º
+   a 9º, contexto hondureño; el número por grado SE CUENTA del dato,
+   nunca se escribe) y las NORMAS en
    js/data/lectura-normas.js (banda por grado con su fuente nombrada
    y fechada). Las palabras de cada texto SE CUENTAN, nunca se
    escriben a mano.
@@ -135,7 +136,7 @@ function lecRenderElegir(body, d) {
     </div>
 
     <div class="pa-card">
-      <div class="pa-card-title">📚 El texto <small class="est-sub">(20 por grado, del contexto hondureño)</small></div>
+      <div class="pa-card-title">📚 El texto <small class="est-sub">(${textos.length} en este grado, del contexto hondureño)</small></div>
       <div class="ad-meses">
         ${[2, 3, 4, 5, 6, 7, 8, 9].map(g => '<button class="ad-mes-btn ' + (g === _lecGrado ? 'ad-mes-on' : '') + '" data-lecgrado="' + g + '">' + g + 'º' + (gradoGrupo === g ? ' ⭐' : '') + '</button>').join('')}
       </div>
@@ -382,14 +383,18 @@ function lecRenderResultado(body, d) {
 /* ══════════════ FICHAS IMPRIMIBLES — una carta por texto ══════════════
    La ficha trae el texto en letra del tamaño del grado, con el conteo
    acumulado de palabras al final de cada línea (para tomar la lectura
-   en papel), la tabla de registro y las cinco preguntas con ✓/✗ y su
-   respuesta guía. La banda del grado va nombrada y fechada. */
+   en papel), la tabla de registro y las cinco preguntas de comprensión
+   COMO SELECCIÓN MÚLTIPLE (a/b/c en horizontal): esta hoja la contesta
+   el alumno, así que NO lleva la respuesta guía ni la fuente de la
+   banda — esas se quedan en la pantalla del maestro, que es quien las
+   necesita. Al final del juego de fichas sale UNA página de pauta con
+   las letras correctas, para corregir rápido; esa página se guarda y
+   no se reparte. */
 function lecImprimirFichas(d, grado, ids) {
   const textos = lecTextosDe(grado).filter(t => ids.indexOf(t.id) >= 0);
   if (!textos.length) { if (typeof toast === 'function') toast('No hay textos que imprimir'); return; }
   const grupo = adGrupoTxt(d);
   const banda = (typeof LECTURA_NORMAS !== 'undefined') ? LECTURA_NORMAS.bandas[grado] : null;
-  const fuente = (typeof LECTURA_NORMAS !== 'undefined') ? LECTURA_NORMAS.fuenteCorta : '';
   /* letra y palabras por línea según el grado: más chico el lector,
      más grande la letra y más corta la línea */
   const porLinea = grado <= 3 ? 8 : grado <= 6 ? 10 : 12;
@@ -405,7 +410,7 @@ function lecImprimirFichas(d, grado, ids) {
           <div class="lf-tit">📖 Control de lectura · ${grado}º grado</div>
           <div class="lf-sub">${adEsc((d.escuela || '').trim() || 'Centro Educativo')}${grupo ? ' · ' + adEsc(grupo) : ''}</div>
         </div>
-        <div class="lf-banda">${banda ? 'Banda de ' + grado + 'º: <b>' + banda[0] + '–' + banda[1] + ' ppm</b><br><small>' + adEsc(fuente) + '</small>' : ''}</div>
+        <div class="lf-banda">${banda ? 'Banda de ' + grado + 'º: <b>' + banda[0] + '–' + banda[1] + ' ppm</b>' : ''}</div>
       </header>
       <div class="lf-registro">
         <div><span>Alumno/a</span><i></i></div>
@@ -421,16 +426,38 @@ function lecImprimirFichas(d, grado, ids) {
       </div>
       <p class="lf-total">${totalP} palabras en total · el número al final de cada línea es el conteo acumulado:
         marca la última palabra leída y toma el número de su línea.</p>
-      <div class="lf-preg-tit">Comprensión oral — pregunta y marca</div>
+      <div class="lf-preg-tit">Comprensión — marca con una ✗ la respuesta correcta</div>
       ${t.preguntas.map((p, i) => `
         <div class="lf-preg">
-          <div class="lf-preg-q">${i + 1}. <b>[${TIPO_TXT[p.tipo] || p.tipo}]</b> ${adEsc(p.q)} <span class="lf-cajas">✓ ☐ &nbsp; ✗ ☐</span></div>
-          <div class="lf-preg-r">Guía: ${adEsc(p.r)}</div>
+          <div class="lf-preg-q">${i + 1}. <b>[${TIPO_TXT[p.tipo] || p.tipo}]</b> ${adEsc(p.q)}</div>
+          ${Array.isArray(p.o) && p.o.length === 3
+            ? '<div class="lf-ops">' + p.o.map((op, oi) => '<span class="lf-op"><i></i><b>' + 'abc'[oi] + ')</b> ' + adEsc(op) + '</span>').join('') + '</div>'
+            : '<div class="lf-ops"><span class="lf-op lf-cajas">✓ ☐ &nbsp; ✗ ☐ (respuesta oral)</span></div>'}
         </div>`).join('')}
       <footer class="lf-foot">Ficha de M.E.T.A.S. · Control de lectura · texto ${adEsc(t.id)} · La velocidad sin
         comprensión no es fluidez: las dos se toman juntas.</footer>
     </section>`;
   };
+
+  /* Página de pauta — SOLO para el maestro: las letras correctas de cada
+     ficha impresa, en una hoja aparte al final. No se reparte. */
+  const pautaFila = t => {
+    const letras = t.preguntas.map((p, i) => (i + 1) + '·' + (Array.isArray(p.o) && p.c >= 0 && p.c <= 2 ? 'abc'[p.c] : '—')).join('&nbsp;&nbsp;');
+    return '<div class="lf-pa-fila"><span class="lf-pa-id">' + adEsc(t.id) + '</span><span class="lf-pa-tit">' + adEsc(t.titulo) + '</span><span class="lf-pa-lets">' + letras + '</span></div>';
+  };
+  const pauta = `<section class="hoja">
+    <header class="lf-head">
+      <div>
+        <div class="lf-tit">🔑 Pauta de corrección · ${grado}º grado</div>
+        <div class="lf-sub">Solo para el maestro: no se reparte con las fichas</div>
+      </div>
+      <div class="lf-banda">${textos.length} ficha${textos.length === 1 ? '' : 's'}</div>
+    </header>
+    <div class="lf-pauta">${textos.map(pautaFila).join('')}</div>
+    <p class="lf-total">En las preguntas críticas la letra marca la opinión mejor razonada; si el alumno
+      defiende otra con un buen porqué, también vale.</p>
+    <footer class="lf-foot">Ficha de M.E.T.A.S. · Control de lectura · pauta de ${grado}º</footer>
+  </section>`;
 
   const titulo = textos.length === 1
     ? 'Lectura — ' + textos[0].titulo + ' (' + grado + 'º)'
@@ -460,14 +487,26 @@ function lecImprimirFichas(d, grado, ids) {
   .lf-linea em { font-style: normal; font-size: 9.5px; color: #9aa8c0; min-width: 24px; text-align: right; }
   .lf-total { font-size: 9.5px; color: #7286a8; margin: 6px 0 10px; }
   .lf-preg-tit { font-family: Georgia, serif; font-size: 13px; font-weight: 700; color: #1e3a7c; border-bottom: 1px solid #d4dbe6; padding-bottom: 3px; margin-bottom: 6px; }
-  .lf-preg { margin-bottom: 7px; }
+  .lf-preg { margin-bottom: 8px; }
   .lf-preg-q { font-size: 12px; line-height: 1.5; }
   .lf-preg-q b { color: #1e3a7c; font-size: 10px; }
   .lf-cajas { white-space: nowrap; color: #333; }
-  .lf-preg-r { font-size: 10px; color: #7286a8; font-style: italic; margin-top: 1px; }
+  /* opciones en horizontal, como la selección múltiple de las misiones:
+     tres por fila para aprovechar el ancho; si una opción es larga, el
+     flex la deja bajar sin romper la hoja */
+  .lf-ops { display: flex; flex-wrap: wrap; gap: 3px 14px; margin: 3px 0 0 16px; }
+  .lf-op { font-size: 10.5px; line-height: 1.4; display: inline-flex; align-items: baseline; gap: 4px; }
+  .lf-op i { display: inline-block; width: 10px; height: 10px; border: 1.3px solid #333; border-radius: 50%; flex-shrink: 0; align-self: center; }
+  .lf-op b { color: #1e3a7c; }
+  .lf-pauta { margin-top: 8px; column-count: 2; column-gap: 18px; }
+  .lf-pa-fila { font-size: 10px; display: flex; gap: 6px; align-items: baseline; padding: 2px 0; border-bottom: 1px dotted #d4dbe6; break-inside: avoid; }
+  .lf-pa-id { font-weight: 700; color: #1e3a7c; min-width: 38px; }
+  .lf-pa-tit { flex: 1; color: #55637d; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .lf-pa-lets { font-weight: 700; white-space: nowrap; }
   .lf-foot { margin-top: auto; padding-top: 10px; font-size: 9px; color: #7286a8; text-align: center; }
 </style></head><body>
 ${textos.map(ficha).join('')}
+${pauta}
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script>
 </body></html>`;
   adPrintAbrir(html);

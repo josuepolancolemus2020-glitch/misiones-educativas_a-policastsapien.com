@@ -23,6 +23,11 @@
    Todo texto que el maestro imprima con estas cifras las nombra y
    fecha («referencia SEP México, 2010»): la normativa del proyecto
    manda que un número impreso diga de dónde viene y cuándo.
+   UNA excepción, pedida por el maestro (agosto de 2026): la ficha del
+   Control de lectura que contestan LOS ALUMNOS lleva la banda pero no
+   la fuente — la referencia es un dato para el maestro, no para la
+   hoja del alumno, y ahí solo mete ruido. En las pantallas de la
+   plataforma y en el informe la fuente sigue nombrada y fechada.
 
    La PRECISIÓN usa el criterio clásico de los inventarios informales
    de lectura (Betts): ≥98 % palabras correctas = nivel independiente;
