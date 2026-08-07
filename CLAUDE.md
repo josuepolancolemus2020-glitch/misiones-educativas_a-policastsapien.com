@@ -128,11 +128,21 @@ Lo que lo sostiene, en `estInformeCss()` y en `estImprimirInforme()`:
 - **Nada se parte por dentro**: `break-inside: avoid` en la hoja y en el
   pie de firmas.
 
-**Antes de publicar un cambio en cualquiera de los dos informes:**
+Lo mismo vale para las **fichas del Control de lectura**, y ahí la
+tensión es más fina: el maestro pide letra grande —la ficha la lee un
+niño— y los textos crecen con el grado (58 palabras en 2º, hasta 200 en
+9º) sobre la misma hoja. Los tamaños de `LEC_FICHA_FZ` y
+`LEC_FICHA_PORLINEA` son **los más grandes que caben, medidos**, y hay
+una segunda condición que no se ve venir: **ningún renglón del texto
+puede partirse en dos**, porque el número del final es el conteo
+acumulado y descolgado no sirve para nada.
+
+**Antes de publicar un cambio en cualquiera de los informes o fichas:**
 
 ```
 node _dev/servidor-estatico.js      (en otra terminal)
-node _dev/verifica-una-hoja.js
+node _dev/verifica-una-hoja.js         → informes del alumno y del grado
+node _dev/verifica-fichas-lectura.js   → las 400 fichas de lectura
 ```
 
 Mide con media `print`, el ancho útil de una carta y **el número de

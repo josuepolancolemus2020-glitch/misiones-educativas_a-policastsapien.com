@@ -50,6 +50,23 @@ function lecPalabras(texto) {
   return String(texto || '').trim().split(/\s+/);
 }
 
+/* Tamaño de letra del texto de la ficha impresa, por grado. Es el MÁS
+   GRANDE que deja la ficha en una sola hoja carta: se midieron las 400
+   fichas (8 grados × 50) con _dev/verifica-fichas-lectura.js. Baja al
+   subir de grado porque los textos se alargan — 58 palabras en 2º, hasta
+   200 en 9º— y la hoja es la misma. Cambiar un número de aquí obliga a
+   volver a medir; si no, hay fichas que se parten en dos páginas. */
+const LEC_FICHA_FZ = { 2: 23.5, 3: 21, 4: 19, 5: 16.5, 6: 15.5, 7: 15, 8: 13.5, 9: 12.5 };
+
+/* Cuántas palabras van en cada renglón del texto. Va de la mano del
+   tamaño de letra: el renglón tiene que caber ENTERO de un lado a otro
+   de la hoja, porque el número del final es el conteo acumulado hasta
+   ahí — si el renglón se parte en dos, ese número queda descolgado y la
+   ficha deja de servir para tomar la lectura. Más palabras por renglón
+   también significa menos renglones, y eso es lo que deja subir la letra
+   en los grados altos, donde los textos llegan a 200 palabras. */
+const LEC_FICHA_PORLINEA = { 2: 8, 3: 9, 4: 10, 5: 11, 6: 11, 7: 12, 8: 14, 9: 16 };
+
 /* Corta el texto en líneas de N palabras con el conteo ACUMULADO al
    final de cada línea: en el papel, el maestro marca la última palabra
    y suma con la vista, como en las tomas clásicas de fluidez. */
@@ -387,19 +404,39 @@ function lecRenderResultado(body, d) {
    COMO SELECCIÓN MÚLTIPLE (a/b/c en horizontal): esta hoja la contesta
    el alumno, así que NO lleva la respuesta guía ni la fuente de la
    banda — esas se quedan en la pantalla del maestro, que es quien las
-   necesita. Al final del juego de fichas sale UNA página de pauta con
-   las letras correctas, para corregir rápido; esa página se guarda y
-   no se reparte. */
+   necesita.
+
+   Tampoco lleva el TIPO de cada pregunta («[Literal]», «[Inferencial]»).
+   Lo pidió el maestro y tiene razón: al alumno esa etiqueta no le dice
+   nada y le adelanta qué clase de respuesta se espera, que es media
+   pista. El tipo es información para quien corrige, así que se fue a la
+   pauta, donde además sirve para leer el resultado («falla siempre en
+   las inferenciales»).
+
+   La PAUTA que va al final es la hoja del maestro: los criterios con
+   que se evalúa, qué hacer según lo que salga y las letras correctas.
+   Se guarda y no se reparte.
+
+   ⚠️ El tamaño de letra de la ficha NO se sube a ojo: cada ficha tiene
+   que caber en UNA hoja carta, y los textos de 9º llegan a 200 palabras.
+   Los tamaños de abajo son los más grandes que caben, medidos sobre las
+   400 fichas con _dev/verifica-fichas-lectura.js. Si se suben, hay que
+   volver a medir. */
 function lecImprimirFichas(d, grado, ids) {
   const textos = lecTextosDe(grado).filter(t => ids.indexOf(t.id) >= 0);
   if (!textos.length) { if (typeof toast === 'function') toast('No hay textos que imprimir'); return; }
-  const grupo = adGrupoTxt(d);
+  /* Solo grado y sección: adGrupoTxt() ya trae el nombre de la escuela
+     dentro, y la cabecera lo pone aparte — juntos lo escribían DOS VECES
+     en cada una de las 50 fichas, y de paso empujaban la banda a otro
+     renglón. */
+  const grupo = adGradoSeccion(d.grado, d.seccion);
   const banda = (typeof LECTURA_NORMAS !== 'undefined') ? LECTURA_NORMAS.bandas[grado] : null;
   /* letra y palabras por línea según el grado: más chico el lector,
      más grande la letra y más corta la línea */
-  const porLinea = grado <= 3 ? 8 : grado <= 6 ? 10 : 12;
-  const fz = grado <= 2 ? 17 : grado === 3 ? 16 : grado <= 5 ? 14.5 : grado === 6 ? 14 : 12.5;
-  const TIPO_TXT = { literal: 'Literal', inferencial: 'Inferencial', critica: 'Crítica' };
+  const porLinea = LEC_FICHA_PORLINEA[grado] || 12;
+  const fz = LEC_FICHA_FZ[grado] || 13;
+  const TIPO_TXT = { literal: 'literal', inferencial: 'inferencial', critica: 'crítica' };
+  const TIPO_PL = { literal: 'literales', inferencial: 'inferenciales', critica: 'críticas' };
 
   const ficha = t => {
     const lineas = lecPartirLineas(t.texto, porLinea);
@@ -429,7 +466,7 @@ function lecImprimirFichas(d, grado, ids) {
       <div class="lf-preg-tit">Comprensión — marca con una ✗ la respuesta correcta</div>
       ${t.preguntas.map((p, i) => `
         <div class="lf-preg">
-          <div class="lf-preg-q">${i + 1}. <b>[${TIPO_TXT[p.tipo] || p.tipo}]</b> ${adEsc(p.q)}</div>
+          <div class="lf-preg-q"><b>${i + 1}.</b> ${adEsc(p.q)}</div>
           ${Array.isArray(p.o) && p.o.length === 3
             ? '<div class="lf-ops">' + p.o.map((op, oi) => '<span class="lf-op"><i></i><b>' + 'abc'[oi] + ')</b> ' + adEsc(op) + '</span>').join('') + '</div>'
             : '<div class="lf-ops"><span class="lf-op lf-cajas">✓ ☐ &nbsp; ✗ ☐ (respuesta oral)</span></div>'}
@@ -439,12 +476,45 @@ function lecImprimirFichas(d, grado, ids) {
     </section>`;
   };
 
-  /* Página de pauta — SOLO para el maestro: las letras correctas de cada
-     ficha impresa, en una hoja aparte al final. No se reparte. */
+  /* ══════════════ PAUTA — la hoja del maestro ══════════════
+     Lleva TRES cosas, y en este orden porque así se usa: cómo se toma,
+     con qué criterio se juzga lo que salió, y qué hacer con cada
+     resultado. Las letras correctas van al final: se consultan rápido y
+     de reojo, pero lo que convierte un número en una decisión son los
+     criterios, y esos hasta ahora vivían solo en la pantalla.
+
+     Los niveles y las etiquetas NO se escriben aquí: se le PREGUNTAN a
+     js/data/lectura-normas.js llamando a sus funciones con casos de
+     ejemplo. Si mañana cambia la tabla, esta hoja cambia sola. */
+  const etqVel = ppm => (typeof lecNivelVelocidad === 'function') ? lecNivelVelocidad(grado, ppm).etiqueta : '';
+  const etqPrec = err => (typeof lecNivelPrecision === 'function') ? lecNivelPrecision(100, err).etiqueta : '';
+  const etqComp = n => (typeof lecNivelComprension === 'function') ? lecNivelComprension(n, 5).etiqueta : '';
+  const bandaPrev = (banda && typeof LECTURA_NORMAS !== 'undefined')
+    ? (LECTURA_NORMAS.bandas[grado - 1] || [Math.max(10, banda[0] - 25), banda[0] - 1]) : null;
+
+  /* «1, 2 y 3 literales · 4 inferencial · 5 crítica», contado de las
+     preguntas que se están imprimiendo. En el catálogo el patrón es fijo
+     por grado, pero se cuenta igual: el día que entre un texto con otro
+     reparto, la pauta lo dirá sola. */
+  const listaY = ns => ns.length <= 1 ? String(ns[0]) : ns.slice(0, -1).join(', ') + ' y ' + ns[ns.length - 1];
+  const patronDe = t => t.preguntas.map(p => p.tipo).join(',');
+  const patronUnico = textos.every(t => patronDe(t) === patronDe(textos[0])) ? textos[0].preguntas.map(p => p.tipo) : null;
+  const frasePatron = tipos => {
+    const grupos = [];
+    tipos.forEach((tp, i) => {
+      const g = grupos[grupos.length - 1];
+      if (g && g.tipo === tp) g.nums.push(i + 1); else grupos.push({ tipo: tp, nums: [i + 1] });
+    });
+    return grupos.map(g => '<b>' + listaY(g.nums) + '</b> ' + (g.nums.length > 1 ? TIPO_PL[g.tipo] : TIPO_TXT[g.tipo])).join(' · ');
+  };
+
   const pautaFila = t => {
     const letras = t.preguntas.map((p, i) => (i + 1) + '·' + (Array.isArray(p.o) && p.c >= 0 && p.c <= 2 ? 'abc'[p.c] : '—')).join('&nbsp;&nbsp;');
-    return '<div class="lf-pa-fila"><span class="lf-pa-id">' + adEsc(t.id) + '</span><span class="lf-pa-tit">' + adEsc(t.titulo) + '</span><span class="lf-pa-lets">' + letras + '</span></div>';
+    const tipos = patronUnico ? '' : '<span class="lf-pa-tip">' + t.preguntas.map(p => TIPO_TXT[p.tipo][0].toUpperCase()).join('') + '</span>';
+    return '<div class="lf-pa-fila"><span class="lf-pa-id">' + adEsc(t.id) + '</span><span class="lf-pa-tit">' +
+      adEsc(t.titulo) + '</span>' + tipos + '<span class="lf-pa-lets">' + letras + '</span></div>';
   };
+
   const pauta = `<section class="hoja">
     <header class="lf-head">
       <div>
@@ -453,9 +523,69 @@ function lecImprimirFichas(d, grado, ids) {
       </div>
       <div class="lf-banda">${textos.length} ficha${textos.length === 1 ? '' : 's'}</div>
     </header>
+
+    <div class="lf-pa-h">⏱️ Cómo se toma</div>
+    <ol class="lf-pa-lista">
+      <li>Entrégale la ficha, arranca el cronómetro y pídele que lea <b>en voz alta</b>.</li>
+      <li>Al cumplirse <b>el minuto</b> —o cuando termine, si quieres la lectura completa— marca la
+        <b>última palabra que leyó</b> y toma el número del final de esa línea: ese es el conteo acumulado.</li>
+      <li>Cuenta un <b>error</b> cada vez que salta, cambia o se traba en una palabra. Autocorregirse no es error.</li>
+      <li>Las <b>palabras por minuto</b> salen de dividir las palabras leídas entre los segundos y multiplicar por 60.
+        En la pestaña 📖 Lectura de M.E.T.A.S. eso se calcula solo y queda en el expediente del alumno.</li>
+      <li>Las cinco preguntas se contestan <b>en la hoja</b>; también valen de viva voz si el niño aún escribe despacio.</li>
+    </ol>
+
+    <div class="lf-pa-h">📏 Con qué criterio se juzga</div>
+    <table class="lf-pa-tab">
+      <tr>
+        <th>Velocidad<br><small>palabras por minuto</small></th>
+        <td>
+          ${banda ? '<b>' + etqVel(banda[1] + 1) + ':</b> más de ' + banda[1] + ' &nbsp;·&nbsp; ' +
+            '<b>' + etqVel(banda[0]) + ':</b> ' + banda[0] + '–' + banda[1] + ' &nbsp;·&nbsp; ' +
+            (bandaPrev ? '<b>' + etqVel(bandaPrev[0]) + ':</b> ' + bandaPrev[0] + '–' + (banda[0] - 1) + ' &nbsp;·&nbsp; ' : '') +
+            '<b>' + etqVel(0) + ':</b> menos de ' + (bandaPrev ? bandaPrev[0] : banda[0]) : '—'}
+          <div class="lf-pa-nota">La banda es de <b>fin de grado</b>: en los primeros meses del año es normal ir por debajo.</div>
+        </td>
+      </tr>
+      <tr>
+        <th>Precisión<br><small>palabras correctas</small></th>
+        <td>
+          <b>${etqPrec(1)}:</b> 98 % o más &nbsp;·&nbsp; <b>${etqPrec(4)}:</b> 95 a 97 % &nbsp;·&nbsp;
+          <b>${etqPrec(8)}:</b> menos de 95 %
+          <div class="lf-pa-nota">Frustración no es mala nota: es que <b>el texto le quedó grande</b>. Repite con uno de
+            un grado menor y vuelve a subir cuando lo lea cómodo.</div>
+        </td>
+      </tr>
+      <tr>
+        <th>Comprensión<br><small>de 5 preguntas</small></th>
+        <td>
+          <b>5:</b> ${etqComp(5)} &nbsp;·&nbsp; <b>4:</b> ${etqComp(4)} &nbsp;·&nbsp;
+          <b>3:</b> ${etqComp(3)} &nbsp;·&nbsp; <b>2 o menos:</b> ${etqComp(2)}
+          ${patronUnico ? '<div class="lf-pa-nota">En ' + grado + 'º las preguntas van así: ' + frasePatron(patronUnico) +
+            '. Las <b>literales</b> están en el texto; las <b>inferenciales</b> hay que deducirlas; la <b>crítica</b> pide opinión razonada.</div>' : ''}
+        </td>
+      </tr>
+    </table>
+
+    <div class="lf-pa-h">🩺 Qué hacer con lo que salga</div>
+    <ul class="lf-pa-lista lf-pa-sug">
+      <li><b>Lee rápido pero comprende poco.</b> Eso es descifrado, no fluidez. Pídele que baje la marcha y que lea
+        «para contármelo después»; luego vuelve a preguntar. La velocidad ya la tiene.</li>
+      <li><b>Comprende bien pero lee despacio.</b> Va por el camino difícil, que es el bueno. La velocidad sube sola
+        con diez minutos diarios en voz alta; no la apures con el cronómetro.</li>
+      <li><b>Debajo de la banda.</b> La receta probada: diez minutos diarios en voz alta con un texto de su nivel,
+        <b>releyendo el mismo texto dos o tres días</b>. La relectura es lo que más sube la fluidez.</li>
+      <li><b>Muchos errores.</b> Un pelín más despacio y con el dedo bajo la línea; casi siempre es prisa, no dificultad.</li>
+      <li><b>Arriba de la banda y comprendiendo.</b> Dale textos de un grado mayor y ponlo a leerle a los pequeños:
+        leer para otros es el mejor ejercicio de entonación.</li>
+      <li><b>Repite la toma cada mes o mes y medio</b>, con textos distintos. Un solo dato no dice nada; tres seguidos
+        dicen si sube.</li>
+    </ul>
+
+    <div class="lf-pa-h">✅ Respuestas correctas</div>
     <div class="lf-pauta">${textos.map(pautaFila).join('')}</div>
-    <p class="lf-total">En las preguntas críticas la letra marca la opinión mejor razonada; si el alumno
-      defiende otra con un buen porqué, también vale.</p>
+    <p class="lf-pa-nota">En las <b>críticas</b> la letra marca la opinión mejor razonada; si el alumno defiende otra
+      con un buen porqué, <b>también vale</b> — se le pone correcta y se le felicita el argumento.</p>
     <footer class="lf-foot">Ficha de M.E.T.A.S. · Control de lectura · pauta de ${grado}º</footer>
   </section>`;
 
@@ -471,37 +601,65 @@ function lecImprimirFichas(d, grado, ids) {
   .hoja { page-break-after: always; min-height: 252mm; display: flex; flex-direction: column; }
   .hoja:last-child { page-break-after: auto; }
   .lf-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; border-bottom: 2.5px solid #1e3a7c; padding-bottom: 6px; }
+  .lf-head > div:first-child { min-width: 0; }
   .lf-tit { font-family: Georgia, serif; font-size: 15px; font-weight: 700; color: #1e3a7c; }
   .lf-sub { font-size: 11px; color: #55637d; margin-top: 2px; }
-  .lf-banda { text-align: right; font-size: 11px; color: #333; }
+  /* la banda no se parte: «125–134 ppm» en dos renglones se lee como dos
+     datos distintos */
+  .lf-banda { text-align: right; font-size: 11px; color: #333; flex: 0 0 auto; white-space: nowrap; }
   .lf-banda small { color: #7286a8; font-size: 9px; }
   .lf-registro { display: flex; gap: 6px; margin: 9px 0; }
   .lf-registro > div { flex: 1; }
   .lf-registro > div:first-child { flex: 2.2; }
   .lf-registro span { display: block; font-size: 8.5px; text-transform: uppercase; letter-spacing: .4px; color: #7286a8; }
   .lf-registro i { display: block; border-bottom: 1.2px solid #55637d; height: 16px; }
-  .lf-titulo { font-family: Georgia, serif; font-size: 19px; text-align: center; margin: 8px 0 6px; }
-  .lf-texto { line-height: 1.9; }
+  .lf-titulo { font-family: Georgia, serif; font-size: 21px; text-align: center; margin: 8px 0 6px; }
+  .lf-texto { line-height: 1.85; }
   .lf-linea { display: flex; align-items: baseline; gap: 8px; }
   .lf-linea span { flex: 1; }
-  .lf-linea em { font-style: normal; font-size: 9.5px; color: #9aa8c0; min-width: 24px; text-align: right; }
-  .lf-total { font-size: 9.5px; color: #7286a8; margin: 6px 0 10px; }
-  .lf-preg-tit { font-family: Georgia, serif; font-size: 13px; font-weight: 700; color: #1e3a7c; border-bottom: 1px solid #d4dbe6; padding-bottom: 3px; margin-bottom: 6px; }
-  .lf-preg { margin-bottom: 8px; }
-  .lf-preg-q { font-size: 12px; line-height: 1.5; }
-  .lf-preg-q b { color: #1e3a7c; font-size: 10px; }
+  .lf-linea em { font-style: normal; font-size: 10px; color: #9aa8c0; min-width: 26px; text-align: right; }
+  .lf-total { font-size: 10px; color: #7286a8; margin: 6px 0 9px; }
+  .lf-preg-tit { font-family: Georgia, serif; font-size: 14px; font-weight: 700; color: #1e3a7c; border-bottom: 1px solid #d4dbe6; padding-bottom: 3px; margin-bottom: 6px; }
+  .lf-preg { margin-bottom: 9px; }
+  /* La PREGUNTA va en negrita y sin la etiqueta del tipo: así se
+     distingue de un vistazo de sus tres opciones, que es lo que el
+     alumno necesita para no perderse en una hoja llena de renglones. */
+  .lf-preg-q { font-size: 13.5px; line-height: 1.45; font-weight: 700; color: #16305f; }
+  .lf-preg-q b { color: #1e3a7c; }
   .lf-cajas { white-space: nowrap; color: #333; }
   /* opciones en horizontal, como la selección múltiple de las misiones:
      tres por fila para aprovechar el ancho; si una opción es larga, el
      flex la deja bajar sin romper la hoja */
-  .lf-ops { display: flex; flex-wrap: wrap; gap: 3px 14px; margin: 3px 0 0 16px; }
-  .lf-op { font-size: 10.5px; line-height: 1.4; display: inline-flex; align-items: baseline; gap: 4px; }
-  .lf-op i { display: inline-block; width: 10px; height: 10px; border: 1.3px solid #333; border-radius: 50%; flex-shrink: 0; align-self: center; }
+  .lf-ops { display: flex; flex-wrap: wrap; gap: 3px 16px; margin: 4px 0 0 18px; }
+  .lf-op { font-size: 12px; line-height: 1.4; display: inline-flex; align-items: baseline; gap: 5px; }
+  .lf-op i { display: inline-block; width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%; flex-shrink: 0; align-self: center; }
   .lf-op b { color: #1e3a7c; }
-  .lf-pauta { margin-top: 8px; column-count: 2; column-gap: 18px; }
-  .lf-pa-fila { font-size: 10px; display: flex; gap: 6px; align-items: baseline; padding: 2px 0; border-bottom: 1px dotted #d4dbe6; break-inside: avoid; }
-  .lf-pa-id { font-weight: 700; color: #1e3a7c; min-width: 38px; }
+
+  /* ── La pauta del maestro ──
+     Letra MÁS GRANDE que la de la ficha: esta hoja se consulta de reojo,
+     con el alumno leyendo enfrente y sin tiempo de acercarse el papel. */
+  .lf-pa-h { font-family: Georgia, serif; font-size: 14.5px; font-weight: 700; color: #1e3a7c;
+    border-bottom: 1.5px solid #d4dbe6; padding-bottom: 3px; margin: 11px 0 6px; }
+  .lf-pa-lista { font-size: 12.5px; line-height: 1.5; margin: 0 0 0 18px; }
+  .lf-pa-lista li { margin-bottom: 3px; }
+  .lf-pa-sug { list-style: none; margin-left: 0; }
+  .lf-pa-sug li { padding-left: 13px; position: relative; }
+  .lf-pa-sug li::before { content: '▸'; position: absolute; left: 0; color: #1e3a7c; }
+  /* con 50 fichas la pauta ocupa dos hojas; que el corte caiga ENTRE
+     bloques y nunca a media fila de criterios o a media sugerencia */
+  .lf-pa-h { break-after: avoid; page-break-after: avoid; }
+  .lf-pa-tab tr, .lf-pa-lista li, .lf-pa-sug li { break-inside: avoid; page-break-inside: avoid; }
+  .lf-pa-tab { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.45; }
+  .lf-pa-tab th { text-align: left; vertical-align: top; width: 108px; padding: 5px 8px 5px 0;
+    color: #1e3a7c; font-size: 12.5px; border-top: 1px solid #e3e8f0; }
+  .lf-pa-tab th small { display: block; font-weight: 400; font-size: 10px; color: #7286a8; }
+  .lf-pa-tab td { padding: 5px 0; border-top: 1px solid #e3e8f0; }
+  .lf-pa-nota { font-size: 11px; line-height: 1.45; color: #55637d; margin-top: 3px; }
+  .lf-pauta { margin-top: 4px; column-count: 2; column-gap: 18px; }
+  .lf-pa-fila { font-size: 11.5px; display: flex; gap: 6px; align-items: baseline; padding: 2.5px 0; border-bottom: 1px dotted #d4dbe6; break-inside: avoid; }
+  .lf-pa-id { font-weight: 700; color: #1e3a7c; min-width: 42px; }
   .lf-pa-tit { flex: 1; color: #55637d; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .lf-pa-tip { color: #7286a8; font-size: 9.5px; letter-spacing: 1px; }
   .lf-pa-lets { font-weight: 700; white-space: nowrap; }
   .lf-foot { margin-top: auto; padding-top: 10px; font-size: 9px; color: #7286a8; text-align: center; }
 </style></head><body>
