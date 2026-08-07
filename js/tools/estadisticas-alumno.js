@@ -50,6 +50,25 @@
 /* alumno elegido en la pestaña (mismo patrón que _adColectaId) */
 let _estNum = null;
 
+/* ── ✍️ OBSERVACIÓN DEL DOCENTE EN EL INFORME DEL GRADO ──
+   Pedida por el maestro (agosto de 2026) con un caso concreto: tres
+   alumnos suyos no aparecen registrados en el SACE —inscribirlos le toca
+   a la Dirección— pero sí están en su lista y él los atiende todos los
+   días. Ningún número del informe puede contar eso, y sin contarlo el
+   papel parece decir que el maestro tiene menos alumnos de los que tiene.
+
+   El bloque SOLO se imprime si el maestro escribió algo: un informe con
+   un recuadro de observaciones vacío se lee como un descuido.
+
+   El tope no es capricho. Se midió generando el PDF con el grupo lleno
+   (43 alumnos, 8 materias, 4 parciales y el año escolar completo de
+   faltas): la hoja aguanta hasta unos 1.000 caracteres y a los 1.200 las
+   firmas se van a la página 2. Se deja en 500 —de sobra para lo que se
+   escribe de verdad— para que quepa aunque el grupo traiga las
+   observaciones automáticas más largas. Subirlo sin volver a medir es
+   apostar la hoja. */
+const EST_OBS_MAX = 500;
+
 /* ── Nube de misiones: caché local por equipo ──
    NO va en el espejo del maestro (metas-docente-sync): es una copia de
    lo que ya vive en Supabase; cada equipo la refresca cuando puede. */
@@ -700,6 +719,18 @@ function adRenderEstadisticas(body, d) {
     </div>
 
     <div class="pa-card">
+      <div class="pa-card-title">✍️ Tu observación <small class="est-sub">(va en el informe del grado)</small></div>
+      <p class="pa-optional-hint">Los números cuentan lo que está registrado; <strong>lo que ellos no explican
+        lo escribes tú</strong>. Sale impreso <strong>encima de las firmas</strong>, así que queda como
+        respaldo tuyo ante la Dirección: alumnos que tienes en tu lista pero no aparecen en el SACE, un mes
+        con clases suspendidas, un traslado a medio año… Se imprime <strong>seguido, como un párrafo</strong>
+        (los renglones sueltos se juntan), para que la hoja siga siendo una.</p>
+      <textarea id="est-obs" class="pa-paste-area" rows="4" maxlength="${EST_OBS_MAX}"
+        placeholder="Ej.: La alumna Nº 42 y los alumnos Estarlin y Kenny están en mi lista pero no aparecen registrados en el SACE; su inscripción corresponde a la Dirección.">${adEsc(d.obsGrado || '')}</textarea>
+      <p class="pa-optional-hint" id="est-obs-pie"></p>
+    </div>
+
+    <div class="pa-card">
       <div class="pa-card-title">📌 Resumen de ${adEsc(al.nombre || ('alumno #' + al.num))}</div>
       <div class="est-chips">
         ${chip('Promedio del año', x.sace.promGen != null ? x.sace.promGen + (nivel ? ' · ' + nivel.label : '') : 'Sin notas', x.sace.promGen == null ? '' : x.sace.promGen >= 70 ? 'good' : 'low')}
@@ -803,6 +834,27 @@ function adRenderEstadisticas(body, d) {
     toast('🗑 Toma quitada — si fue un error, restaura en 🕘 (pestaña Alumnos)');
     adRenderEstadisticas(body, adLoad());
   }));
+  /* la observación se guarda mientras se escribe (como el resto de Mi
+     aula): el maestro no debe acordarse de pulsar «guardar» antes de
+     imprimir. El pie dice cuánto le queda, porque el largo es lo único
+     que separa una hoja de dos. */
+  const obsTa = document.getElementById('est-obs');
+  const obsPie = document.getElementById('est-obs-pie');
+  const obsPintaPie = () => {
+    const n = obsTa.value.trim().length;
+    obsPie.innerHTML = !n
+      ? 'Vacío: el informe sale <strong>tal cual</strong>, sin recuadro de observación.'
+      : '✍️ Se imprimirá encima de las firmas. Te quedan <strong>' + (EST_OBS_MAX - obsTa.value.length) +
+        '</strong> caracteres' + (EST_OBS_MAX - obsTa.value.length <= 40 ? ' — al llenarlos, corta: el informe tiene que caber en una hoja.' : '.');
+  };
+  obsPintaPie();
+  obsTa.addEventListener('input', () => {
+    const dd = adLoad();
+    const v = obsTa.value.slice(0, EST_OBS_MAX);
+    if (v.trim()) dd.obsGrado = v; else delete dd.obsGrado;
+    adSave(dd);
+    obsPintaPie();
+  });
   document.getElementById('est-prueba').addEventListener('click', () => {
     const on = adTogglePrueba(al.num);
     adRenderEstadisticas(body, adLoad());
@@ -1245,9 +1297,28 @@ function estImprimirInformeGrado(d) {
     if (typeof toast === 'function') toast('🧪 Todos los alumnos están marcados como de prueba: no hay grado que informar');
     return;
   }
-  /* tope de 5 observaciones: se midió imprimiendo — con 6 y la lista de
-     refuerzo llena, la hoja se pasa a una segunda página */
-  const obs = estObservacionesGrado(g).slice(0, 5);
+  /* La observación del maestro, si la escribió. Se recorta al tope y se
+     escapa antes de meterla en la hoja; los saltos de línea se respetan
+     porque casi siempre es una lista de nombres. */
+  const obsDocente = (() => {
+    /* Se imprime como PÁRRAFO CORRIDO: los saltos de línea del maestro se
+       vuelven espacios. No es capricho — ocho renglones cortos ocupan el
+       triple que el mismo texto seguido, y la diferencia entre una hoja y
+       dos estaba justo ahí. El tope de caracteres solo sirve si el alto
+       es predecible, y solo lo es sin saltos de línea. */
+    const t = String(d.obsGrado || '').trim().slice(0, EST_OBS_MAX).replace(/\s+/g, ' ');
+    return t ? adEsc(t) : '';
+  })();
+
+  /* Tope de observaciones automáticas: 5 normalmente; se midió
+     imprimiendo que con 6 y la lista de refuerzo llena la hoja se pasa.
+     CUANDO EL MAESTRO ESCRIBIÓ LA SUYA bajan a 3, y la lista de refuerzo
+     de 12 nombres a 8: su bloque cuesta ~100 px y en la hoja solo
+     sobraban 12. Se recorta lo de la máquina, no lo del maestro — sus
+     tres primeras observaciones son las más graves (van ordenadas), y lo
+     que él escribió no lo sabe nadie más. */
+  const obs = estObservacionesGrado(g).slice(0, obsDocente ? 3 : 5);
+  const refTope = obsDocente ? 8 : 12;
   const bol = d.boleta || {};
   const hoy = adFechaBonita(adHoy());
   const grupo = adGrupoTxt(d);
@@ -1317,8 +1388,8 @@ function estImprimirInformeGrado(d) {
   /* refuerzo: nombres cortos con su conteo — la hoja es del grado, el
      detalle de cada quien vive en su informe individual */
   const refTxt = g.refuerzo.length
-    ? g.refuerzo.slice(0, 12).map(r => '#' + r.a.num + ' ' + adEsc(adPrimerNombre(r.a.nombre) || '') + ' (' + r.bajas.length + ')').join(' · ') +
-      (g.refuerzo.length > 12 ? ' · …y ' + (g.refuerzo.length - 12) + ' más' : '')
+    ? g.refuerzo.slice(0, refTope).map(r => '#' + r.a.num + ' ' + adEsc(adPrimerNombre(r.a.nombre) || '') + ' (' + r.bajas.length + ')').join(' · ') +
+      (g.refuerzo.length > refTope ? ' · …y ' + (g.refuerzo.length - refTope) + ' más' : '')
     : null;
 
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
@@ -1344,6 +1415,13 @@ function estImprimirInformeGrado(d) {
   .gr-nv-pista i { display: block; height: 100%; border-radius: 3px; }
   .gr-nivel b { width: 20px; font-size: 11.5px; }
   .gr-ref { font-size: 10.5px; line-height: 1.5; color: #223; background: #fdf6ec; border: 1px solid #ecdcbf; border-radius: 7px; padding: 5px 9px; margin-bottom: 6px; }
+  /* La observación del maestro: con franja al canto, como una nota al
+     margen firmada. Va pegada a las firmas a propósito — lo que se firma
+     es el informe CON su observación, no el informe a secas. */
+  .gr-obs { font-size: 10px; line-height: 1.35; color: #223; background: #f4f7fc;
+    border: 1px solid #d4dbe6; border-left: 3px solid var(--azul); border-radius: 7px;
+    padding: 4px 9px; margin-top: 5px; }
+  .gr-obs b { color: var(--azul); }
   /* ── Días faltados por mes ──
      Vive DENTRO de la columna izquierda, debajo de «Alumnos por nivel»,
      y no a lo ancho de la hoja: ahí había 136px muertos (la columna
@@ -1416,7 +1494,10 @@ function estImprimirInformeGrado(d) {
       <div class="inf-h">📊 Estado vigente por materia <small>(última nota · | = parcial anterior)</small></div>
       ${g.estado.length ? estGBarras(g.estado, { w: 340, maxw: 420, compacto: true }) + estLeyendaNotas() : '<p class="inf-nada">Sin notas todavía.</p>'}
       <div class="inf-h" style="margin-top:8px">📈 Evolución del promedio por parcial</div>
-      ${g.parcialesConDatos.length ? estGEvolucion(g.saceG, { w: 340, h: 115, maxw: 420 }) : '<p class="inf-nada">Aparece al guardar notas de al menos un parcial.</p>'}
+      ${/* 95px y no 115: las notas viven entre 60 y 100, así que el tercio
+           de abajo del gráfico salía siempre en blanco. Esos 20px son los
+           que le hacen sitio a la observación del maestro. */''}
+      ${g.parcialesConDatos.length ? estGEvolucion(g.saceG, { w: 340, h: 95, maxw: 420 }) : '<p class="inf-nada">Aparece al guardar notas de al menos un parcial.</p>'}
     </div>
   </div>
 
@@ -1428,6 +1509,8 @@ function estImprimirInformeGrado(d) {
   ${refTxt ? '<div class="gr-ref"><b>Refuerzo primero (materias bajo 70 hoy):</b> ' + refTxt + '.</div>' : ''}
 
   ${estDecisionGradoHtml(g)}
+
+  ${obsDocente ? '<div class="gr-obs"><b>✍️ Observación del docente de grado:</b> ' + obsDocente + '</div>' : ''}
 
   <footer class="inf-foot">
     <div class="inf-firmas">
