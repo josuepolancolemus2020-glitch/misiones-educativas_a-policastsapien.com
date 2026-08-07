@@ -955,7 +955,7 @@ function estImprimirInforme(d, nums) {
       <div class="chips">
         ${chip('Promedio del año', x.sace.promGen != null ? x.sace.promGen + (nivel ? ' · ' + nivel.label : '') : 'Sin notas', x.sace.promGen != null && x.sace.promGen < 70 ? 'low' : x.sace.promGen != null ? 'good' : '')}
         ${chip('Tendencia', !tend ? '—' : tend.tipo === 'sube' ? '▲ Subiendo' : tend.tipo === 'baja' ? '▼ Bajando' : '· Estable', !tend ? '' : tend.tipo === 'baja' ? 'low' : tend.tipo === 'sube' ? 'good' : '')}
-        ${chip('Inasistencias (SACE)', x.sace.inasisSace != null ? String(x.sace.inasisSace) : '—', (x.sace.inasisSace || 0) >= 10 ? 'low' : '')}
+        ${chip('Inasistencias', x.sace.inasisSace != null ? String(x.sace.inasisSace) : '—', (x.sace.inasisSace || 0) >= 10 ? 'low' : '')}
         ${chip('Pase de lista', '🚫 ' + x.asis.totalA + ' · 📝 ' + x.asis.totalE)}
         ${chip('Evaluaciones', x.evals.length ? String(x.evals.length) + (x.evals.some(e => e.nsp) ? ' (' + x.evals.filter(e => e.nsp).length + ' NSP)' : '') : '0')}
         ${chip('Misiones M.E.T.A.S.', x.misiones && x.misiones.intentos ? x.misiones.intentos + ' eval. · ' + x.misiones.dominadas + ' dom.' : '—')}
@@ -1292,16 +1292,25 @@ function estImprimirInformeGrado(d) {
      Y los meses van en COLUMNAS, no en filas: un año escolar son diez
      meses, y diez filas se comerían el hueco entero. Así el año
      completo cabe en tres renglones. */
+  /* Matrícula por sexo: se CUENTA de la ficha de cada alumno (nunca se
+     escribe a mano). Si a alguno le falta el dato se dice cuántos, para
+     que la Dirección vea por qué las dos cifras no suman la matrícula. */
+  const sex = (typeof adSexos === 'function') ? adSexos(d) : { f: 0, m: 0, sin: 0, total: 0 };
+  const sexTxt = sex.sin === sex.total
+    ? '<small style="font-weight:600;color:#7286a8">sin registrar</small>'
+    : sex.f + ' ♀ · ' + sex.m + ' ♂' +
+      (sex.sin ? ' <small style="font-weight:600;color:#7286a8">+' + sex.sin + ' s/d</small>' : '');
+
   const mesTxt = m => (AD_MESES_ES[(+String(m).slice(5, 7)) - 1] || m);
   const cel = (v, cls) => '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + (v || '—') + '</td>';
   const mesesHtml = g.meses.length
-    ? '<table class="inf-tabla gr-meses"><thead><tr><th>Días faltados</th>' +
+    ? '<table class="inf-tabla gr-meses"><thead><tr><th class="gr-m-esq"></th>' +
       g.meses.map(m => '<th>' + adEsc(mesTxt(m.mes)) + '</th>').join('') + '<th>Año</th></tr></thead><tbody>' +
       '<tr><td class="mat">🚫 Sin excusa</td>' + g.meses.map(m => cel(m.A, m.A ? 'gr-m-a' : '')).join('') +
         '<td class="prom">' + g.totalA + '</td></tr>' +
       '<tr><td class="mat">📝 Con excusa</td>' + g.meses.map(m => cel(m.E)).join('') +
         '<td class="prom">' + g.totalE + '</td></tr>' +
-      '<tr class="gr-m-tot"><td class="mat">Total del mes</td>' + g.meses.map(m => cel(m.A + m.E)).join('') +
+      '<tr class="gr-m-tot"><td class="mat">Total</td>' + g.meses.map(m => cel(m.A + m.E)).join('') +
         '<td class="prom">' + (g.totalA + g.totalE) + '</td></tr></tbody></table>'
     : '<p class="inf-nada">Sin faltas registradas en el pase de lista. 🎉</p>';
 
@@ -1350,13 +1359,16 @@ function estImprimirInformeGrado(d) {
   .gr-meses { margin-bottom: 4px; table-layout: fixed; width: 100%; }
   .gr-meses td, .gr-meses th { text-align: center; padding: 1.5px 1px; font-size: 8px; }
   .gr-meses th { font-size: 7.5px; }
-  /* el rótulo se parte en dos renglones en vez de cortarse con «…»
-     (la tabla de materias sí corta, pero aquí «Sin excusa» a medias no
-     dice nada); alto sobra en esta columna, ancho no */
-  .gr-meses td.mat, .gr-meses th:first-child {
-    text-align: left; width: 52px; line-height: 1.2; max-width: none;
+  /* La esquina va VACÍA: el título del bloque ya dice «Faltas por mes»,
+     y repetirlo dentro de la tabla solo le robaba ancho a los meses.
+     El rótulo de cada fila se parte en dos renglones en vez de cortarse
+     con «…» (la tabla de materias sí corta, pero aquí «Sin excusa» a
+     medias no dice nada): alto sobra en esta columna, ancho no. */
+  .gr-meses td.mat, .gr-meses th.gr-m-esq {
+    text-align: left; width: 44px; line-height: 1.2; max-width: none;
     white-space: normal; overflow: visible; text-overflow: clip;
   }
+  .gr-meses th.gr-m-esq { background: transparent; border-color: transparent; }
   .gr-meses td.gr-m-a { color: #c0392b; font-weight: 800; }
   .gr-m-tot td { border-top: 1.5px solid #b9c4d8; font-weight: 800; }
 </style></head><body>
@@ -1373,30 +1385,31 @@ function estImprimirInformeGrado(d) {
 
   <div class="inf-alumno">
     <div><span>Grado y sección</span><b>${adEsc(adGradoSeccion(d.grado, d.seccion) || '—')}</b></div>
-    <div style="flex:3"><span>Docente de grado</span><b>${adEsc(bol.docente || '—')}</b></div>
+    <div style="flex:2"><span>Docente</span><b>${adEsc(bol.docente || '—')}</b></div>
     <div><span>Matrícula</span><b>${g.total} alumno(s)</b></div>
-    <div><span>Parciales guardados</span><b>${g.parcialesConDatos.length} de IV</b></div>
+    <div><span>Niñas · Varones</span><b>${sexTxt}</b></div>
+    <div><span>Parciales</span><b>${g.parcialesConDatos.length} de IV</b></div>
   </div>
 
   <div class="chips">
-    ${chip('Promedio del grado', g.promGen != null ? g.promGen + (nivel ? ' · ' + nivel.label : '') : 'Sin notas', g.promGen == null ? '' : g.promGen >= 70 ? 'good' : 'low')}
+    ${chip('Promedio', g.promGen != null ? g.promGen + (nivel ? ' · ' + nivel.label : '') : 'Sin notas', g.promGen == null ? '' : g.promGen >= 70 ? 'good' : 'low')}
     ${chip('Tendencia', !tend ? '—' : tend.tipo === 'sube' ? '▲ Subiendo' : tend.tipo === 'baja' ? '▼ Bajando' : '· Estable', !tend ? '' : tend.tipo === 'baja' ? 'low' : tend.tipo === 'sube' ? 'good' : '')}
     ${chip('Con todo en 70+', g.evaluables ? (g.evaluables - g.refuerzo.length) + ' de ' + g.evaluables : '—', g.evaluables && g.refuerzo.length ? 'low' : g.evaluables ? 'good' : '')}
-    ${chip('Inasistencias (SACE)', g.inasisSace != null ? String(g.inasisSace) : '—')}
+    ${chip('Inasistencias', g.inasisSace != null ? String(g.inasisSace) : '—')}
     ${chip('Pase de lista', '🚫 ' + g.totalA + ' · 📝 ' + g.totalE)}
     ${chip('Misiones M.E.T.A.S.', g.practican != null ? g.practican + ' de ' + g.total + ' practican' : '—', g.practican ? 'good' : '')}
   </div>
 
   <div class="inf-cols">
     <div class="inf-col">
-      <div class="inf-h">🧮 Promedio del grado por materia <small>(media de los alumnos con nota)</small></div>
+      <div class="inf-h">🧮 Promedio por materia <small>(media de los alumnos con nota)</small></div>
       <table class="inf-tabla">
         <thead><tr><th>Materia</th><th>I</th><th>II</th><th>III</th><th>IV</th><th>Prom.</th><th>Nivel</th><th>&lt;70</th></tr></thead>
         <tbody>${g.matsConDatos.length ? g.matsConDatos.map(filaMat).join('') : '<tr><td colspan="8" class="vacio">Sin notas guardadas</td></tr>'}</tbody>
       </table>
       <div class="inf-h" style="margin-top:8px">🧒 Alumnos por nivel <small>(según su promedio del año; con notas: ${g.conNotas} de ${g.total})</small></div>
       ${nivelesHtml}
-      <div class="inf-h gr-meses-h">📋 Días faltados por mes <small>(pase de lista de todo el grado)</small></div>
+      <div class="inf-h gr-meses-h">📋 Faltas por mes <small>(pase de lista de todo el grado)</small></div>
       ${mesesHtml}
     </div>
     <div class="inf-col">

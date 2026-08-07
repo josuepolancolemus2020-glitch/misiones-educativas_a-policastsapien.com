@@ -275,6 +275,30 @@ function adEsPrueba(a) { return !!(a && a.prueba); }
 function adAlumnosReales(d) { return (d.lista || []).filter(a => !adEsPrueba(a)); }
 function adCuentaPruebas(d) { return (d.lista || []).filter(adEsPrueba).length; }
 
+/* ══════════════ NIÑAS Y VARONES ══════════════
+   La matrícula por sexo la pide la Dirección y la pide el Parte Mensual
+   del SEDUC, que hoy obliga al maestro a contarlos a mano cada mes. Se
+   guarda por alumno (`sexo`: 'F' o 'M') y se CUENTA, nunca se escribe:
+   así el número no envejece cuando entra o se va un niño.
+
+   Los 🧪 de prueba no cuentan, igual que en el resto del informe. Los
+   que aún no tienen el dato se cuentan aparte y se dicen: un «22 y 20»
+   que no suma la matrícula es un número que la Dirección no puede usar. */
+function adSexos(d) {
+  const reales = adAlumnosReales(d);
+  let f = 0, m = 0;
+  reales.forEach(a => { if (a.sexo === 'F') f++; else if (a.sexo === 'M') m++; });
+  return { f, m, sin: reales.length - f - m, total: reales.length };
+}
+/* «22 ♀ · 20 ♂» y, si falta alguno, cuántos faltan */
+function adSexosTxt(d) {
+  const s = adSexos(d);
+  if (!s.total) return 'sin alumnos';
+  if (s.sin === s.total) return 'sexo sin registrar';
+  return s.f + ' ♀ · ' + s.m + ' ♂' + (s.sin ? ' · faltan ' + s.sin : '');
+}
+window.adSexos = adSexos;
+
 /* Marca o desmarca al alumno. Devuelve cómo quedó (true = de prueba). */
 function adTogglePrueba(num) {
   const dd = adLoad();
@@ -1027,10 +1051,14 @@ function adRenderFichas(body, d) {
       <p class="pa-optional-hint">Estos datos salen en el <strong>expediente del aula</strong>, en la hoja
         de alumnos. Escribe y <strong>Enter</strong> (o Tab) salta a la casilla siguiente; se guarda solo.
         <strong>No se comparten con nadie</strong>: no viajan al asistente de padres, solo a tus equipos.</p>
+      <p class="pa-optional-hint">♀♂ La columna <strong>Sexo</strong> se llena <strong>tocando</strong>,
+        sin teclado: cada toque pasa de niña a varón y a vacío. Con ella, el
+        <strong>informe del grado</strong> dice cuántas niñas y cuántos varones tienes sin que los
+        cuentes a mano.</p>
       <div class="ad-fi-marcador">
         <span class="ad-fi-m-val">${completos}<span class="ad-fi-m-de">/${total}</span></span>
         <span class="ad-fi-m-lbl">fichas completas</span>
-        <span class="ad-fi-m-sub">${AD_FICHA_CAMPOS.map(c =>
+        <span class="ad-fi-m-sub"><b id="ad-fi-sx-cuenta">${adSexosTxt(d)}</b> · ${AD_FICHA_CAMPOS.map(c =>
           adFichaLlenos(d, c.k) + ' ' + c.et.toLowerCase().replace('nº de ', '').replace('tel. del ', 'tel. ')).join(' · ')}</span>
       </div>
 
@@ -1038,12 +1066,16 @@ function adRenderFichas(body, d) {
         <table class="ad-mx ad-fi-mx">
           <thead><tr>
             <th class="ad-mx-sticky ad-mx-corner">Nº · Alumno</th>
+            <th><div class="ad-mx-h" style="min-width:52px">Sexo</div></th>
             ${AD_FICHA_CAMPOS.map(c => `<th><div class="ad-mx-h" style="min-width:${c.w}px">${adEsc(c.et)}</div></th>`).join('')}
           </tr></thead>
           <tbody>
             ${d.lista.map((a, ri) => `<tr>
               <td class="ad-mx-sticky" title="${adEsc(a.nombre)}"><b>#${a.num}</b>
                 <span class="ad-mx-nom">${adEsc(adPrimerNombre(a.nombre)) || '—'}</span></td>
+              <td><button class="ad-fi-sexo ad-fi-sx-${a.sexo === 'F' ? 'f' : a.sexo === 'M' ? 'm' : 'no'}"
+                data-sxnum="${a.num}" aria-label="Sexo de ${adEsc(adPrimerNombre(a.nombre) || ('#' + a.num))}: ${a.sexo === 'F' ? 'niña' : a.sexo === 'M' ? 'varón' : 'sin registrar'}. Tocar para cambiar."
+                >${a.sexo === 'F' ? '♀ Niña' : a.sexo === 'M' ? '♂ Varón' : '·'}</button></td>
               ${AD_FICHA_CAMPOS.map((c, ci) => `<td><input class="ad-mx-inp ad-fi-inp"
                 data-idx="${ri * AD_FICHA_CAMPOS.length + ci}" data-num="${a.num}" data-k="${c.k}"
                 type="text" inputmode="${c.im}" maxlength="${c.max}" style="min-width:${c.w}px"
@@ -1096,6 +1128,25 @@ function adRenderFichas(body, d) {
       else if (e.key === 'ArrowUp') { e.preventDefault(); focar(idx - AD_FICHA_CAMPOS.length); }
     });
   });
+
+  /* ♀/♂ de un toque, sin teclado: es como se llena esto en el teléfono,
+     con 43 alumnos y una mano. Cicla vacío → niña → varón → vacío, y se
+     repinta SOLO la casilla tocada: volver a dibujar la tabla entera
+     perdería el desplazamiento y dejaría al maestro buscando dónde iba. */
+  body.querySelectorAll('[data-sxnum]').forEach(b => b.addEventListener('click', () => {
+    const dd = adLoad();
+    const al = dd.lista.find(x => String(x.num) === String(b.dataset.sxnum));
+    if (!al) return;
+    const sig = al.sexo === 'F' ? 'M' : al.sexo === 'M' ? '' : 'F';
+    if (sig) al.sexo = sig; else delete al.sexo;
+    adSave(dd);
+    b.className = 'ad-fi-sexo ad-fi-sx-' + (sig === 'F' ? 'f' : sig === 'M' ? 'm' : 'no');
+    b.textContent = sig === 'F' ? '♀ Niña' : sig === 'M' ? '♂ Varón' : '·';
+    b.setAttribute('aria-label', 'Sexo de ' + (adPrimerNombre(al.nombre) || ('#' + al.num)) + ': ' +
+      (sig === 'F' ? 'niña' : sig === 'M' ? 'varón' : 'sin registrar') + '. Tocar para cambiar.');
+    const cuenta = document.getElementById('ad-fi-sx-cuenta');
+    if (cuenta) cuenta.textContent = adSexosTxt(adLoad());
+  }));
 
   document.getElementById('ad-fi-pegar').addEventListener('click', () => {
     const box = document.getElementById('ad-fi-pegar-box');
