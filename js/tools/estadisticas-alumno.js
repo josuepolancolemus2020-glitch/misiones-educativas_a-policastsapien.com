@@ -654,13 +654,16 @@ function adRenderEstadisticas(body, d) {
   const dec = estDecision(x.sace);
   const cache = estNubeCache();
 
-  /* a quién mirar primero: los tres con más señales de riesgo */
-  const enRiesgo = d.lista.map(a => {
+  /* a quién mirar primero: los tres con más señales de riesgo. Los 🧪 de
+     prueba no salen: no hay a quién ir a buscar. */
+  const reales = (typeof adAlumnosReales === 'function') ? adAlumnosReales(d) : d.lista;
+  const enRiesgo = reales.map(a => {
     const r = estRiesgo(estDatosAlumno(d, a));
     return { a, pts: r.pts, razones: r.razones };
   }).filter(r => r.pts > 0).sort((a, b) => b.pts - a.pts).slice(0, 3);
+  const esPrueba = typeof adEsPrueba === 'function' && adEsPrueba(al);
 
-  const nom = a => '#' + a.num + (a.nombre ? ' · ' + a.nombre : '');
+  const nom = a => (adEsPrueba(a) ? '🧪 ' : '') + '#' + a.num + (a.nombre ? ' · ' + a.nombre : '');
   const chip = (lbl, valTxt, cls) => '<div class="est-chip ' + (cls || '') + '"><span>' + lbl + '</span><b>' + valTxt + '</b></div>';
   const nivel = x.sace.promGen != null ? adNotaCat(x.sace.promGen) : null;
   const tend = estTendencia(x.sace);
@@ -678,6 +681,12 @@ function adRenderEstadisticas(body, d) {
         </select>
         <button class="pa-generate-btn ad-btn-sec" id="est-next" aria-label="Alumno siguiente">›</button>
       </div>
+      <p class="pa-optional-hint est-prueba-linea">
+        ${esPrueba
+          ? '🧪 <strong>Alumno de prueba.</strong> No entra en el informe del grado ni en los informes de todo el grupo — no infla la matrícula ni las inasistencias que ve la Dirección. Aquí lo sigues viendo entero.'
+          : '¿Este es un alumno inventado que solo usas para probar?'}
+        <button class="est-prueba-tog" id="est-prueba">${esPrueba ? '👥 Volverlo alumno del grado' : '🧪 Marcarlo como de prueba'}</button>
+      </p>
       ${enRiesgo.length ? `
       <p class="pa-optional-hint" style="margin-top:8px"><strong>A quién mirar primero:</strong></p>
       <div class="est-riesgo-row">
@@ -794,8 +803,19 @@ function adRenderEstadisticas(body, d) {
     toast('🗑 Toma quitada — si fue un error, restaura en 🕘 (pestaña Alumnos)');
     adRenderEstadisticas(body, adLoad());
   }));
+  document.getElementById('est-prueba').addEventListener('click', () => {
+    const on = adTogglePrueba(al.num);
+    adRenderEstadisticas(body, adLoad());
+    toast(on ? '🧪 Fuera del informe del grado — para ti sigue igual'
+             : '👥 Vuelve a contar en el informe del grado');
+  });
   document.getElementById('est-print-uno').addEventListener('click', () => estImprimirInforme(adLoad(), [al.num]));
-  document.getElementById('est-print-todos').addEventListener('click', () => estImprimirInforme(adLoad(), adLoad().lista.map(a => a.num)));
+  /* los informes «de todo el grupo» son los del GRADO: el 🧪 de prueba
+     no gasta una hoja ni se le entrega a nadie */
+  document.getElementById('est-print-todos').addEventListener('click', () => {
+    const dd = adLoad();
+    estImprimirInforme(dd, adAlumnosReales(dd).map(a => a.num));
+  });
   document.getElementById('est-print-grado').addEventListener('click', () => estImprimirInformeGrado(adLoad()));
   document.getElementById('est-nube-btn').addEventListener('click', async () => {
     const btn = document.getElementById('est-nube-btn');
@@ -1074,8 +1094,15 @@ function estInformeCss() {
    archiva. Ningún número va escrito a mano: todos se cuentan de los
    registros, como manda la normativa del proyecto. */
 
+/* El grado se cuenta SOLO con alumnos reales: los marcados 🧪 de prueba
+   quedan fuera de la matrícula, del promedio, de las inasistencias y de
+   la decisión del año. Cuántos se dejaron fuera se guarda (`pruebas`)
+   porque el informe lo dice: un total que no cuadra con la lista, sin
+   explicación, es un papel que la Dirección no puede firmar tranquila. */
 function estDatosGrado(d) {
-  const xs = d.lista.map(a => ({ a, x: estDatosAlumno(d, a) }));
+  const reales = (typeof adAlumnosReales === 'function') ? adAlumnosReales(d) : (d.lista || []);
+  const xs = reales.map(a => ({ a, x: estDatosAlumno(d, a) }));
+  const pruebas = (d.lista || []).length - reales.length;
   const mats = (d.materias || []).slice();
   const media = arr => {
     const v = arr.filter(n => n != null);
@@ -1154,7 +1181,7 @@ function estDatosGrado(d) {
   const decs = xs.map(r => estDecision(r.x.sace)).filter(dc => dc.tipo !== 'sindatos');
 
   return {
-    total: xs.length, mats, matsConDatos, porMateria, promMat, promParcial,
+    total: xs.length, pruebas, mats, matsConDatos, porMateria, promMat, promParcial,
     parcialesConDatos, estado, bajo70Mat, conNotas: conNotas.length, promGen,
     porNivel, refuerzo, evaluables, meses, totalA, totalE,
     inasisSace: inasisVals.length ? inasisVals.reduce((a, b) => a + b, 0) : null,
@@ -1214,6 +1241,10 @@ function estDecisionGradoHtml(g) {
 function estImprimirInformeGrado(d) {
   if (!d.lista.length) { if (typeof toast === 'function') toast('Primero llena la lista de alumnos'); return; }
   const g = estDatosGrado(d);
+  if (!g.total) {
+    if (typeof toast === 'function') toast('🧪 Todos los alumnos están marcados como de prueba: no hay grado que informar');
+    return;
+  }
   /* tope de 5 observaciones: se midió imprimiendo — con 6 y la lista de
      refuerzo llena, la hoja se pasa a una segunda página */
   const obs = estObservacionesGrado(g).slice(0, 5);
@@ -1245,6 +1276,29 @@ function estImprimirInformeGrado(d) {
     '<div class="gr-nv-pista"><i style="width:' + Math.round(100 * r.n / maxNivel) + '%;background:' + r.cat.color + '"></i></div>' +
     '<b>' + r.n + '</b></div>').join('');
 
+  /* Días faltados MES A MES (pedido del maestro, agosto de 2026).
+     El total del año no sirve para decidir nada: 96 ausencias repartidas
+     parejo son un grupo normal, y las mismas 96 metidas en un solo mes
+     son un problema con fecha —una feria, un aguacero, un paro— que se
+     puede atacar. La Dirección necesita ver en qué mes se cayó.
+
+     Los meses van en COLUMNAS y no en filas: un año escolar son diez
+     meses, y diez filas más su encabezado empujaban el informe a una
+     segunda hoja (se midió: 59 px de más). Así el año entero cabe en
+     tres renglones y la hoja sigue siendo una. */
+  const mesTxt = m => (AD_MESES_ES[(+String(m).slice(5, 7)) - 1] || m);
+  const cel = (v, cls) => '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + (v || '—') + '</td>';
+  const mesesHtml = g.meses.length
+    ? '<table class="inf-tabla gr-meses"><thead><tr><th>Días faltados</th>' +
+      g.meses.map(m => '<th>' + adEsc(mesTxt(m.mes)) + '</th>').join('') + '<th>Año</th></tr></thead><tbody>' +
+      '<tr><td class="mat">🚫 Sin excusa</td>' + g.meses.map(m => cel(m.A, m.A ? 'gr-m-a' : '')).join('') +
+        '<td class="prom">' + g.totalA + '</td></tr>' +
+      '<tr><td class="mat">📝 Con excusa</td>' + g.meses.map(m => cel(m.E)).join('') +
+        '<td class="prom">' + g.totalE + '</td></tr>' +
+      '<tr class="gr-m-tot"><td class="mat">Total del mes</td>' + g.meses.map(m => cel(m.A + m.E)).join('') +
+        '<td class="prom">' + (g.totalA + g.totalE) + '</td></tr></tbody></table>'
+    : '<p class="inf-nada">Sin faltas registradas en el pase de lista. 🎉</p>';
+
   /* refuerzo: nombres cortos con su conteo — la hoja es del grado, el
      detalle de cada quien vive en su informe individual */
   const refTxt = g.refuerzo.length
@@ -1275,6 +1329,17 @@ function estImprimirInformeGrado(d) {
   .gr-nv-pista i { display: block; height: 100%; border-radius: 3px; }
   .gr-nivel b { width: 20px; font-size: 11.5px; }
   .gr-ref { font-size: 10.5px; line-height: 1.5; color: #223; background: #fdf6ec; border: 1px solid #ecdcbf; border-radius: 7px; padding: 5px 9px; margin-bottom: 6px; }
+  /* Días faltados por mes: a lo ancho de la hoja, con los meses en
+     columnas — así el año escolar entero ocupa tres renglones.
+     Va apretada a propósito (renglón de 1.5px y letra de 9.5px): con el
+     tamaño normal de la tabla de materias, el informe se pasaba 16px a
+     una segunda hoja en un grupo de 43. Se midió imprimiendo. */
+  .gr-meses-h { margin-top: 4px !important; margin-bottom: 1px; padding-bottom: 1px; font-size: 11px; }
+  .gr-meses { margin-bottom: 4px; }
+  .gr-meses td, .gr-meses th { text-align: center; padding: 1px 3px; font-size: 9.5px; }
+  .gr-meses td.mat, .gr-meses th:first-child { text-align: left; white-space: nowrap; }
+  .gr-meses td.gr-m-a { color: #c0392b; font-weight: 800; }
+  .gr-m-tot td { border-top: 1.5px solid #b9c4d8; font-weight: 800; }
 </style></head><body>
 <section class="hoja">
   <header class="inf-head">
@@ -1321,6 +1386,9 @@ function estImprimirInformeGrado(d) {
     </div>
   </div>
 
+  <div class="inf-h gr-meses-h">📋 Días faltados por mes <small>(pase de lista de todo el grado)</small></div>
+  ${mesesHtml}
+
   <div class="inf-h" style="margin-top:7px">🔎 Lectura de los datos del grado <small>(coincidencias en lo registrado, no causas)</small></div>
   <ul class="inf-obs">
     ${obs.map(o => '<li>' + o + '</li>').join('')}
@@ -1336,7 +1404,8 @@ function estImprimirInformeGrado(d) {
       <div><i></i><b>${adEsc(bol.director) || '&nbsp;'}</b><span>Director(a) · Recibido</span></div>
     </div>
     <p class="inf-fuente">Informe del grado ${adEsc(grupo)} generado por M.E.T.A.S. con los registros del aula (Notas SACE, pase de lista,
-      Plan de Acción y práctica de misiones en la nube) al ${adEsc(hoy)}. El detalle de cada alumno está en su informe individual.</p>
+      Plan de Acción y práctica de misiones en la nube) al ${adEsc(hoy)}. El detalle de cada alumno está en su informe individual.${
+      g.pruebas ? ' No se cuenta' + (g.pruebas === 1 ? ' 1 registro de prueba del docente, ajeno' : ' ' + g.pruebas + ' registros de prueba del docente, ajenos') + ' a la matrícula.' : ''}</p>
   </footer>
 </section>
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script>

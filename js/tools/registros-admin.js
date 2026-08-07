@@ -254,6 +254,39 @@ function adEsc(s) {
 function adPrimerNombre(nombre) {
   return String(nombre || '').trim().split(/\s+/)[0] || '';
 }
+
+/* ══════════════ 🧪 ALUMNO DE PRUEBA ══════════════
+   Casi todo maestro deja uno o dos «alumnos» inventados al final de la
+   lista para probar la plataforma —una toma de lectura, una nota, una
+   clave— sin tocar el expediente de un niño de verdad. El problema no
+   es que existan: es que se colaban en el INFORME DEL GRADO que recibe
+   la Dirección. Ahí un alumno inventado infla la matrícula («43» cuando
+   son 42), baja el promedio del grado y suma inasistencias que nadie
+   faltó. Un papel firmado por el director no puede llevar eso.
+
+   Marcado con `prueba: true`, el alumno sigue entero donde el maestro
+   trabaja —lista, asistencia, notas, lectura, su informe individual—
+   pero queda FUERA de todo lo que cuenta al grupo. El informe del grado
+   dice cuántos dejó fuera: callarlo sería peor que contarlos.
+
+   Se marca por alumno y NUNCA por su número: el nº de lista sigue
+   siendo el oficial del SACE y la clave de familia no se toca. */
+function adEsPrueba(a) { return !!(a && a.prueba); }
+function adAlumnosReales(d) { return (d.lista || []).filter(a => !adEsPrueba(a)); }
+function adCuentaPruebas(d) { return (d.lista || []).filter(adEsPrueba).length; }
+
+/* Marca o desmarca al alumno. Devuelve cómo quedó (true = de prueba). */
+function adTogglePrueba(num) {
+  const dd = adLoad();
+  const a = (dd.lista || []).find(x => String(x.num) === String(num));
+  if (!a) return false;
+  if (a.prueba) delete a.prueba; else a.prueba = true;
+  adSave(dd);
+  return !!a.prueba;
+}
+window.adEsPrueba = adEsPrueba;
+window.adAlumnosReales = adAlumnosReales;
+
 function adHoy() {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' +
@@ -511,12 +544,16 @@ function adRenderLista(body, d) {
       <div id="ad-lista-rows">
         ${d.lista.map(a => {
           const cl = adClaveFamilia(d.id, a.num, false);
+          const pr = adEsPrueba(a);
           return `
-          <div class="ad-al-row" data-num="${a.num}">
+          <div class="ad-al-row${pr ? ' ad-al-prueba' : ''}" data-num="${a.num}">
             <span class="ad-al-num">#${a.num}</span>
             <input class="pa-inp-field ad-al-nombre" value="${adEsc(a.nombre)}" placeholder="Nombre (opcional)">
             <button class="ad-al-code" data-cnum="${a.num}" title="Clave de familia — tócala para editar o imprimir">
               🔑 ${cl ? adEsc(adClaveBonita(cl, a.num)) : 'crear'}</button>
+            ${pr ? `<button class="ad-al-test" data-pnum="${a.num}"
+              title="Alumno de prueba: no cuenta en el informe del grado. Tócalo para volverlo a contar."
+              aria-label="Quitar la marca de alumno de prueba">🧪 de prueba</button>` : ''}
             <button class="ad-al-del" aria-label="Quitar">✕</button>
           </div>`; }).join('')}
       </div>
@@ -538,6 +575,13 @@ function adRenderLista(body, d) {
         lugar del orden alfabético, usa «Alumno nuevo en su lugar»: los números se recorren, pero la
         <strong>clave de familia viaja con cada niño</strong> — las tiras ya entregadas siguen valiendo
         y solo imprimes la del nuevo.</p>
+      <p class="pa-optional-hint">🧪 ¿Tienes un alumno inventado para hacer pruebas? Búscalo en
+        <strong>📈 Estadísticas</strong> y márcalo de prueba: queda fuera del <strong>informe del
+        grado</strong> y de los informes de todo el grupo, así deja de inflar la matrícula, el promedio y
+        las inasistencias que ve la Dirección. Para ti sigue igual — puedes ponerle notas, asistencia y
+        tomas de lectura.${adCuentaPruebas(d)
+          ? ' Hoy hay <strong>' + adCuentaPruebas(d) + '</strong> marcado(s) así, señalado(s) aquí abajo; toca su 🧪 para volverlo(s) a contar.'
+          : ''}</p>
     </div>
 
     <div class="pa-card">
@@ -613,6 +657,16 @@ function adRenderLista(body, d) {
   body.querySelectorAll('.ad-al-nombre').forEach(i => i.addEventListener('input', persist));
   body.querySelectorAll('.ad-al-code').forEach(b =>
     b.addEventListener('click', () => adEditarClave(+b.dataset.cnum)));
+  /* 🧪 marcar/desmarcar alumno de prueba. Se guarda ANTES de tocar la
+     lista para no pisar un nombre a medio escribir en otra fila. */
+  body.querySelectorAll('[data-pnum]').forEach(b =>
+    b.addEventListener('click', () => {
+      persist();
+      const on = adTogglePrueba(+b.dataset.pnum);
+      renderAdmin();
+      toast(on ? '🧪 Alumno de prueba: ya no cuenta en el informe del grado'
+               : '👥 Vuelve a contar como alumno del grado');
+    }));
   body.querySelectorAll('.ad-al-del').forEach(b =>
     b.addEventListener('click', async () => {
       if (!await metasConfirm('¿Quitar a este alumno de la lista?\nSus pagos, asistencias y notas guardadas no se borran.', { icono: '👥', titulo: 'Lista de alumnos', okTxt: 'Sí, quitar' })) return;

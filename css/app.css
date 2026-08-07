@@ -4414,6 +4414,28 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   flex: 0 0 auto; background: none; border: none; cursor: pointer;
   color: #b91c1c; font-size: 15px; font-weight: 900; padding: 4px 8px;
 }
+/* 🧪 alumno de prueba: el que el maestro inventó para probar y no debe
+   contar en el informe del grado. El botón sale SOLO en la fila ya
+   marcada, para desmarcarla: puesto en las 43 filas se comía 37px de
+   ancho y partía cada fila en dos líneas en el teléfono (se midió). Se
+   marca desde 📈 Estadísticas, que es donde se explica por qué. */
+.ad-al-test {
+  flex: 0 0 auto; background: #f3e8ff; border: 1.5px solid #d8b4fe; border-radius: 8px;
+  cursor: pointer; font-size: 11.5px; font-weight: 800; color: #6b21a8; padding: 5px 8px;
+  font-family: inherit; -webkit-tap-highlight-color: transparent;
+}
+.ad-al-test:active { transform: scale(.94); }
+.ad-al-test:focus-visible { outline: 3px solid rgba(59,130,246,.45); outline-offset: 2px; }
+.ad-al-row.ad-al-prueba { background: #faf5ff; border-radius: 10px; padding: 3px 4px; margin: 0 -4px 6px; }
+.ad-al-row.ad-al-prueba .ad-al-num { color: #7c3aed; }
+
+.est-prueba-linea { margin-top: 8px; }
+.est-prueba-tog {
+  background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
+  font-size: inherit; font-weight: 800; color: var(--brand); text-decoration: underline;
+}
+.est-prueba-tog:active { opacity: .6; }
+
 /* clave de familia de cada alumno (tocable) */
 .ad-al-code {
   flex: 0 0 auto; cursor: pointer;
