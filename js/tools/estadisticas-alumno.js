@@ -1282,10 +1282,16 @@ function estImprimirInformeGrado(d) {
      son un problema con fecha —una feria, un aguacero, un paro— que se
      puede atacar. La Dirección necesita ver en qué mes se cayó.
 
-     Los meses van en COLUMNAS y no en filas: un año escolar son diez
-     meses, y diez filas más su encabezado empujaban el informe a una
-     segunda hoja (se midió: 59 px de más). Así el año entero cabe en
-     tres renglones y la hoja sigue siendo una. */
+     DÓNDE va y POR QUÉ, que costó dos intentos: a lo ancho de la hoja,
+     debajo de las dos columnas, el bloque empujaba el informe a una
+     segunda página (se midió: 12 px de más con el grupo real). Ahora
+     vive DENTRO de la columna izquierda, en el hueco que quedaba bajo
+     «Alumnos por nivel» —esa columna mide 282 px y la derecha 418—, y
+     así no cuesta un solo píxel de alto.
+
+     Y los meses van en COLUMNAS, no en filas: un año escolar son diez
+     meses, y diez filas se comerían el hueco entero. Así el año
+     completo cabe en tres renglones. */
   const mesTxt = m => (AD_MESES_ES[(+String(m).slice(5, 7)) - 1] || m);
   const cel = (v, cls) => '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + (v || '—') + '</td>';
   const mesesHtml = g.meses.length
@@ -1329,15 +1335,28 @@ function estImprimirInformeGrado(d) {
   .gr-nv-pista i { display: block; height: 100%; border-radius: 3px; }
   .gr-nivel b { width: 20px; font-size: 11.5px; }
   .gr-ref { font-size: 10.5px; line-height: 1.5; color: #223; background: #fdf6ec; border: 1px solid #ecdcbf; border-radius: 7px; padding: 5px 9px; margin-bottom: 6px; }
-  /* Días faltados por mes: a lo ancho de la hoja, con los meses en
-     columnas — así el año escolar entero ocupa tres renglones.
-     Va apretada a propósito (renglón de 1.5px y letra de 9.5px): con el
-     tamaño normal de la tabla de materias, el informe se pasaba 16px a
-     una segunda hoja en un grupo de 43. Se midió imprimiendo. */
-  .gr-meses-h { margin-top: 4px !important; margin-bottom: 1px; padding-bottom: 1px; font-size: 11px; }
-  .gr-meses { margin-bottom: 4px; }
-  .gr-meses td, .gr-meses th { text-align: center; padding: 1px 3px; font-size: 9.5px; }
-  .gr-meses td.mat, .gr-meses th:first-child { text-align: left; white-space: nowrap; }
+  /* ── Días faltados por mes ──
+     Vive DENTRO de la columna izquierda, debajo de «Alumnos por nivel»,
+     y no a lo ancho de la hoja: ahí había 136px muertos (la columna
+     izquierda mide 282px y la derecha 418px, medido), y a lo ancho el
+     bloque empujaba el informe a una segunda hoja. Metido en el hueco
+     no cuesta un solo píxel de alto.
+
+     Los meses van en COLUMNAS y no en filas: diez filas —un año escolar
+     entero— sí se comerían el hueco. Como el ancho es la mitad de la
+     hoja, la letra baja a 8px y la tabla se reparte a lo fijo, para que
+     con diez meses tampoco se salga de la columna. */
+  .gr-meses-h { margin-top: 8px !important; }
+  .gr-meses { margin-bottom: 4px; table-layout: fixed; width: 100%; }
+  .gr-meses td, .gr-meses th { text-align: center; padding: 1.5px 1px; font-size: 8px; }
+  .gr-meses th { font-size: 7.5px; }
+  /* el rótulo se parte en dos renglones en vez de cortarse con «…»
+     (la tabla de materias sí corta, pero aquí «Sin excusa» a medias no
+     dice nada); alto sobra en esta columna, ancho no */
+  .gr-meses td.mat, .gr-meses th:first-child {
+    text-align: left; width: 52px; line-height: 1.2; max-width: none;
+    white-space: normal; overflow: visible; text-overflow: clip;
+  }
   .gr-meses td.gr-m-a { color: #c0392b; font-weight: 800; }
   .gr-m-tot td { border-top: 1.5px solid #b9c4d8; font-weight: 800; }
 </style></head><body>
@@ -1377,6 +1396,8 @@ function estImprimirInformeGrado(d) {
       </table>
       <div class="inf-h" style="margin-top:8px">🧒 Alumnos por nivel <small>(según su promedio del año; con notas: ${g.conNotas} de ${g.total})</small></div>
       ${nivelesHtml}
+      <div class="inf-h gr-meses-h">📋 Días faltados por mes <small>(pase de lista de todo el grado)</small></div>
+      ${mesesHtml}
     </div>
     <div class="inf-col">
       <div class="inf-h">📊 Estado vigente por materia <small>(última nota · | = parcial anterior)</small></div>
@@ -1385,9 +1406,6 @@ function estImprimirInformeGrado(d) {
       ${g.parcialesConDatos.length ? estGEvolucion(g.saceG, { w: 340, h: 115, maxw: 420 }) : '<p class="inf-nada">Aparece al guardar notas de al menos un parcial.</p>'}
     </div>
   </div>
-
-  <div class="inf-h gr-meses-h">📋 Días faltados por mes <small>(pase de lista de todo el grado)</small></div>
-  ${mesesHtml}
 
   <div class="inf-h" style="margin-top:7px">🔎 Lectura de los datos del grado <small>(coincidencias en lo registrado, no causas)</small></div>
   <ul class="inf-obs">
