@@ -100,6 +100,52 @@ deje de funcionar, no se hace.
 - Nada de tecnicismos: el usuario es un maestro con 43 alumnos y un
   teléfono, muchas veces sin señal y a veces sin luz.
 
+## Normativa: un informe, una hoja carta — en cualquier computadora
+
+Los informes de 📈 Estadísticas se imprimen **en lote**: el maestro manda
+los 42 de su grado y se va a hacer otra cosa. Si una hoja se parte, la
+firma queda huérfana en la página siguiente y el estropicio se descubre
+con **52 hojas ya impresas** y la tinta gastada. Pasó de verdad, en
+agosto de 2026, y de ahí sale esta regla.
+
+**42 alumnos tienen que dar 42 páginas.** Ni una más.
+
+Lo que lo sostiene, en `estInformeCss()` y en `estImprimirInforme()`:
+
+- **Altura con colchón.** En carta con los márgenes de 10 mm del `@page`
+  caben 259,4 mm (980 px). El `min-height` de la hoja es de **248 mm**
+  (937 px) y el contenido más largo medido llega a 933. El colchón no es
+  de adorno: si el navegador ignora el `@page` y pone los suyos (Firefox
+  usa 12,7 mm y deja 960 px), la hoja **sigue cabiendo**.
+- **Las observaciones se cortan por ALTO, no por cantidad.** Cinco
+  viñetas cortas caben; tres largas, no. `estObsQueCaben` estima
+  renglones a 124 caracteres cada uno —medido, no a ojo— y corta al
+  llegar al presupuesto. Vienen ordenadas de más grave a menos, así que
+  lo que se cae por el borde es lo menos urgente.
+- **La observación del maestro tiene tope** (`EST_OBS_MAX`, 500) y se
+  imprime como párrafo corrido: ocho renglones sueltos ocupan el triple
+  que el mismo texto seguido.
+- **Nada se parte por dentro**: `break-inside: avoid` en la hoja y en el
+  pie de firmas.
+
+**Antes de publicar un cambio en cualquiera de los dos informes:**
+
+```
+node _dev/servidor-estatico.js      (en otra terminal)
+node _dev/verifica-una-hoja.js
+```
+
+Mide con media `print`, el ancho útil de una carta y **el número de
+páginas del PDF**, que es la verdad de la impresora. Medir una hoja
+suelta en la pantalla ancha **miente**: las columnas se estiran y el
+texto ocupa menos alto del que ocupará en el papel. Y hay que medir el
+**lote entero**, no un alumno: el largo cambia de uno a otro según sus
+observaciones, su práctica y sus tomas de lectura.
+
+Si hace falta sitio para algo nuevo, se recorta **espacio en blanco o lo
+que calcula la máquina**, nunca el tamaño de letra del cuerpo: el
+informe se lee en una reunión con la familia, muchas veces con poca luz.
+
 ## Normativa: los nombres propios llevan mayúscula, también en los juegos
 
 Vale para **todo texto que ve una persona**: tarjetas de repaso, quiz,

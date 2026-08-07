@@ -941,6 +941,32 @@ function estMisionesHtml(x) {
    Es el papel que acompaña la decisión del año: datos, gráficos y
    observaciones en una sola página que se firma y se archiva. El pie de
    firmas se ancla abajo (mismo truco de la boleta). */
+/* ── Cuántas observaciones caben en la hoja ──
+   No se cuentan VIÑETAS, se cuenta el ALTO que van a ocupar: cinco
+   viñetas cortas caben de sobra y tres largas ya no. Cortar por número
+   («las 5 primeras») fue lo que partía siete de cada 42 informes, porque
+   una observación de lectura o de NSP ocupa el doble que las demás.
+
+   Los 124 caracteres por renglón NO son a ojo: se midieron sobre el lote
+   impreso de 42 informes — las viñetas de un renglón llegaban hasta 124
+   caracteres y las de dos empezaban en 178. Si algún día cambia la letra
+   o el ancho de la hoja, hay que volver a medirlo.
+
+   Las observaciones vienen ordenadas de más grave a menos, así que lo
+   que se cae por el borde es siempre lo menos urgente. */
+const EST_OBS_CHARS_LINEA = 124;
+function estObsQueCaben(obs, renglones) {
+  const out = [];
+  let usados = 0;
+  for (const o of obs) {
+    const n = Math.max(1, Math.ceil(String(o.txt || '').length / EST_OBS_CHARS_LINEA));
+    if (out.length && usados + n > renglones) break;
+    out.push(o);
+    usados += n;
+  }
+  return out;
+}
+
 function estImprimirInforme(d, nums) {
   const alumnos = d.lista.filter(a => nums.some(n => String(n) === String(a.num)));
   if (!alumnos.length) { if (typeof toast === 'function') toast('Ese alumno ya no está en la lista'); return; }
@@ -950,7 +976,10 @@ function estImprimirInforme(d, nums) {
 
   const hoja = a => {
     const x = estDatosAlumno(d, a);
-    const obs = estObservaciones(x).slice(0, 5);
+    /* 6 renglones de observaciones: es lo que sobra en la hoja después
+       de las notas, los gráficos y el pie de firmas. Se midió el lote
+       completo de 42 informes; subirlo vuelve a partir hojas. */
+    const obs = estObsQueCaben(estObservaciones(x), 6);
     const dec = estDecision(x.sace);
     const nivel = x.sace.promGen != null ? adNotaCat(x.sace.promGen) : null;
     const tend = estTendencia(x.sace);
@@ -1072,7 +1101,29 @@ function estInformeCss() {
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   :root { --tinta:#0f2350; --azul:#1e3a7c; --oro:#a8791a; --linea:#d4dbe6; --suave:#f4f7fc; }
   body { color: var(--tinta); font-family: Arial, Helvetica, sans-serif; }
-  .hoja { page-break-after: always; min-height: 256mm; display: flex; flex-direction: column; }
+  /* ── NORMATIVA: UNA HOJA CARTA POR INFORME, EN CUALQUIER COMPUTADORA ──
+     Un lote de 42 informes tiene que salir en 42 páginas. Si una se parte,
+     la firma queda huérfana en la hoja siguiente y el maestro descubre el
+     estropicio con las 52 hojas ya impresas (pasó de verdad).
+
+     Dos cosas lo garantizan, y las dos importan:
+
+     1. ALTURA CON HOLGURA. En carta con los márgenes de 10 mm de aquí
+        arriba caben 259,4 mm (980 px). El «min-height» era de 256 mm:
+        dejaba 12 px, y siete de cada 42 informes se pasaban. Ahora son
+        248 mm (937 px) y el contenido más largo medido queda por debajo,
+        así que sobran ~45 px. Ese colchón NO es de adorno: si el
+        navegador ignora el «@page» y pone sus propios márgenes (Firefox
+        usa 12,7 mm y deja 960 px), la hoja sigue cabiendo.
+
+     2. NADA SE PARTE POR DENTRO. «break-inside: avoid» en la hoja y en el
+        pie: antes que cortar la firma en dos, que la mueva entera.
+
+     Si algún día se le añade un bloque al informe, hay que volver a medir
+     el lote completo, no una hoja suelta: el largo cambia de alumno a
+     alumno (observaciones, práctica, lectura). */
+  .hoja { page-break-after: always; break-inside: avoid; page-break-inside: avoid;
+          min-height: 248mm; display: flex; flex-direction: column; }
   .hoja:last-child { page-break-after: auto; }
 
   /* Letra GRANDE a propósito: el informe se lee en una reunión con la
@@ -1088,12 +1139,12 @@ function estInformeCss() {
   .inf-sub { font-size: 10.5px; color: #55637d; margin-top: 2px; }
   .inf-fecha { width: 72px; text-align: right; font-size: 11px; color: #55637d; }
 
-  .inf-alumno { display: flex; gap: 7px; margin: 9px 0; }
+  .inf-alumno { display: flex; gap: 7px; margin: 6px 0; }
   .inf-alumno > div { flex: 1; background: var(--suave); border: 1px solid var(--linea); border-radius: 6px; padding: 5px 9px; }
   .inf-alumno span { display: block; font-size: 9px; letter-spacing: .5px; text-transform: uppercase; color: #7286a8; }
   .inf-alumno b { font-size: 14px; }
 
-  .chips { display: flex; gap: 6px; margin-bottom: 10px; }
+  .chips { display: flex; gap: 6px; margin-bottom: 8px; }
   .chip { flex: 1; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 9px; background: var(--suave); }
   .chip span { display: block; font-size: 8.6px; text-transform: uppercase; letter-spacing: .4px; color: #7286a8; }
   .chip b { font-size: 13px; }
@@ -1116,12 +1167,16 @@ function estInformeCss() {
   .est-leyenda { display: flex; flex-wrap: wrap; gap: 3px 10px; justify-content: center; margin-top: 4px; font-size: 9px; color: #55637d; }
   .est-leyenda i { display: inline-block; width: 9px; height: 9px; border-radius: 2.5px; margin-right: 3px; vertical-align: -1px; }
 
-  .inf-txt { font-size: 12px; line-height: 1.55; color: #223; margin-bottom: 5px; }
+  /* Interlineado 1.45 y no 1.55: la letra sigue siendo la misma (se lee en
+     una reunión con poca luz, esa decisión no se toca), pero el aire entre
+     renglones sí se puede apretar. Son los px que separan una hoja de dos
+     cuando el alumno tiene muchas observaciones. */
+  .inf-txt { font-size: 12px; line-height: 1.45; color: #223; margin-bottom: 4px; }
   .inf-nada { font-size: 11px; color: #7286a8; font-style: italic; }
-  .inf-obs { list-style: none; margin: 0 0 9px; }
-  .inf-obs li { font-size: 12px; line-height: 1.55; color: #223; padding: 2.5px 0 2.5px 2px; }
+  .inf-obs { list-style: none; margin: 0 0 6px; }
+  .inf-obs li { font-size: 12px; line-height: 1.45; color: #223; padding: 1.5px 0 1.5px 2px; }
 
-  .est-dec { border-radius: 9px; padding: 10px 14px; border: 1.5px solid; font-size: 12.5px; line-height: 1.6; break-inside: avoid; }
+  .est-dec { border-radius: 9px; padding: 7px 12px; border: 1.5px solid; font-size: 12.5px; line-height: 1.45; break-inside: avoid; }
   .est-dec b { font-family: Georgia, serif; font-size: 14.5px; display: block; margin-bottom: 3px; }
   .est-dec small { display: block; margin-top: 4px; color: #55637d; font-size: 10px; }
   .est-dec.ok { background: linear-gradient(180deg, #f0f8f0, #fff); border-color: #9fcc9f; } .est-dec.ok b { color: #2e7d32; }
@@ -1130,13 +1185,13 @@ function estInformeCss() {
 
   /* Las firmas cierran el documento; la nota de origen va DEBAJO, como
      letra chica de archivo: primero firma la gente, después habla el papel. */
-  .inf-foot { margin-top: auto; padding-top: 10px; }
-  .inf-firmas { display: flex; justify-content: space-around; gap: 14px; margin-top: 30px; }
+  .inf-foot { margin-top: auto; padding-top: 5px; break-inside: avoid; page-break-inside: avoid; }
+  .inf-firmas { display: flex; justify-content: space-around; gap: 14px; margin-top: 10px; }
   .inf-firmas > div { flex: 1; text-align: center; }
   .inf-firmas i { display: block; border-top: 1px solid #55637d; margin: 0 8px 4px; }
   .inf-firmas b { font-size: 12px; }
   .inf-firmas span { display: block; font-size: 10.5px; color: #55637d; }
-  .inf-fuente { font-size: 9px; color: #7286a8; text-align: center; line-height: 1.4; margin-top: 16px; }`;
+  .inf-fuente { font-size: 9px; color: #7286a8; text-align: center; line-height: 1.4; margin-top: 7px; }`;
 }
 
 /* ══════════════ INFORME DEL GRADO — una hoja carta para la Dirección ══════════════
