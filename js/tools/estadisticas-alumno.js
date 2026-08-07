@@ -514,7 +514,12 @@ function estGEvolucion(sace, opts) {
     '<circle cx="' + X(i).toFixed(1) + '" cy="' + Y(v).toFixed(1) + '" r="4.5" fill="' + EST_AZUL + '" stroke="#fff" stroke-width="2"/>' +
     '<text x="' + X(i).toFixed(1) + '" y="' + (Y(v) - 8).toFixed(1) + '" text-anchor="middle" font-size="9.5" font-weight="bold" fill="' + EST_INK + '">' + v + '</text></g>').join('');
   const iUlt = (() => { let k = -1; proms.forEach((v, i) => { if (v != null) k = i; }); return k; })();
-  const etiqueta = iUlt >= 0 ? '<text x="' + (X(iUlt) + 8).toFixed(1) + '" y="' + (Y(proms[iUlt]) + 3.5).toFixed(1) + '" font-size="8.5" font-weight="bold" fill="' + EST_AZUL + '">Promedio</text>' : '';
+  /* con los cuatro parciales llenos el último punto queda pegado al borde
+     derecho y la palabra se salía del dibujo: ahí la etiqueta va DEBAJO
+     del punto, no a su lado */
+  const etiqueta = iUlt < 0 ? '' : (iUlt === parcs.length - 1
+    ? '<text x="' + X(iUlt).toFixed(1) + '" y="' + (Y(proms[iUlt]) + 14).toFixed(1) + '" text-anchor="end" font-size="8.5" font-weight="bold" fill="' + EST_AZUL + '">Promedio</text>'
+    : '<text x="' + (X(iUlt) + 8).toFixed(1) + '" y="' + (Y(proms[iUlt]) + 3.5).toFixed(1) + '" font-size="8.5" font-weight="bold" fill="' + EST_AZUL + '">Promedio</text>');
   return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Evolución del promedio por parcial" style="max-width:' + (opts.maxw || 460) + 'px;font-family:inherit">' +
     grid + linea70 + materias + promLinea + puntos + etiqueta + ejes + '</svg>';
 }
@@ -663,6 +668,7 @@ function adRenderEstadisticas(body, d) {
       <div class="ad-btn-row" style="margin-top:10px">
         <button class="pa-generate-btn" id="est-print-uno">🖨️ Informe de ${adEsc(adPrimerNombre(al.nombre) || ('#' + al.num))} (1 hoja carta)</button>
         <button class="pa-generate-btn ad-btn-sec" id="est-print-todos">🖨️ Informes de todo el grupo</button>
+        <button class="pa-generate-btn ad-btn-sec" id="est-print-grado">🏫 Informe del grado (1 hoja, para la Dirección)</button>
       </div>
     </div>
 
@@ -756,6 +762,7 @@ function adRenderEstadisticas(body, d) {
   }));
   document.getElementById('est-print-uno').addEventListener('click', () => estImprimirInforme(adLoad(), [al.num]));
   document.getElementById('est-print-todos').addEventListener('click', () => estImprimirInforme(adLoad(), adLoad().lista.map(a => a.num)));
+  document.getElementById('est-print-grado').addEventListener('click', () => estImprimirInformeGrado(adLoad()));
   document.getElementById('est-nube-btn').addEventListener('click', async () => {
     const btn = document.getElementById('est-nube-btn');
     btn.disabled = true; btn.textContent = '⏳ Consultando…';
@@ -915,7 +922,18 @@ function estImprimirInforme(d, nums) {
     : 'Informes — ' + grupo;
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <title>${adEsc(titulo)}</title>
-<style>
+<style>${estInformeCss()}</style></head><body>
+${alumnos.map(a => hoja(a)).join('')}
+<script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script>
+</body></html>`;
+  adPrintAbrir(html);
+}
+
+/* CSS compartido de los informes imprimibles (el del alumno y el del
+   grado): una sola hoja de estilos para que un ajuste de márgenes o de
+   letra les llegue a los dos papeles a la vez. */
+function estInformeCss() {
+  return `
   @page { size: letter portrait; margin: 10mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   :root { --tinta:#0f2350; --azul:#1e3a7c; --oro:#a8791a; --linea:#d4dbe6; --suave:#f4f7fc; }
@@ -984,9 +1002,281 @@ function estImprimirInforme(d, nums) {
   .inf-firmas i { display: block; border-top: 1px solid #55637d; margin: 0 8px 4px; }
   .inf-firmas b { font-size: 12px; }
   .inf-firmas span { display: block; font-size: 10.5px; color: #55637d; }
-  .inf-fuente { font-size: 9px; color: #7286a8; text-align: center; line-height: 1.4; margin-top: 16px; }
+  .inf-fuente { font-size: 9px; color: #7286a8; text-align: center; line-height: 1.4; margin-top: 16px; }`;
+}
+
+/* ══════════════ INFORME DEL GRADO — una hoja carta para la Dirección ══════════════
+   Lo que la Dirección pregunta del grupo («¿cómo van?, ¿cuántos aprueban?,
+   ¿dónde hay que reforzar?») contestado con los datos que el maestro ya
+   registra, en UNA sola hoja: se entrega, se lee en la reunión y se
+   archiva. Ningún número va escrito a mano: todos se cuentan de los
+   registros, como manda la normativa del proyecto. */
+
+function estDatosGrado(d) {
+  const xs = d.lista.map(a => ({ a, x: estDatosAlumno(d, a) }));
+  const mats = (d.materias || []).slice();
+  const media = arr => {
+    const v = arr.filter(n => n != null);
+    return v.length ? Math.round(v.reduce((s, n) => s + n, 0) / v.length) : null;
+  };
+
+  /* promedio del grado por materia y parcial (media de los alumnos con nota) */
+  const porMateria = {};
+  mats.forEach(c => {
+    const fila = {};
+    EST_PARCIALES.forEach(p => { fila[p] = media(xs.map(r => (r.x.sace.porMateria[c] || {})[p])); });
+    porMateria[c] = fila;
+  });
+  const promMat = {};
+  mats.forEach(c => { promMat[c] = media(xs.map(r => r.x.sace.promMat[c])); });
+  const matsConDatos = mats.filter(c => promMat[c] != null);
+  const promParcial = {};
+  EST_PARCIALES.forEach(p => { promParcial[p] = media(mats.map(c => porMateria[c][p])); });
+  const parcialesConDatos = EST_PARCIALES.filter(p => promParcial[p] != null);
+
+  /* estado vigente del grado por materia (misma regla que por alumno:
+     la última nota de CADA materia, con su parcial anterior al lado) */
+  const estado = mats.map(c => {
+    const s = EST_PARCIALES.map(p => ({ p, v: porMateria[c][p] })).filter(t => t.v != null);
+    if (!s.length) return null;
+    const u = s[s.length - 1], ant = s.length >= 2 ? s[s.length - 2] : null;
+    return { mat: c, val: u.v, p: u.p, prev: ant ? ant.v : null, pPrev: ant ? ant.p : null };
+  }).filter(Boolean);
+
+  /* cuántos alumnos van bajo 70 HOY en cada materia (estado vigente) */
+  const bajo70Mat = {};
+  mats.forEach(c => {
+    bajo70Mat[c] = xs.filter(r => {
+      const e = r.x.sace.estado.find(t => t.mat === c);
+      return e && e.val < 70;
+    }).length;
+  });
+
+  const conNotas = xs.filter(r => r.x.sace.promGen != null);
+  const promGen = media(conNotas.map(r => r.x.sace.promGen));
+  /* distribución de alumnos por nivel según su promedio del año */
+  const porNivel = AD_NOTA_CATS.map(cat => ({
+    cat, n: conNotas.filter(r => adNotaCat(r.x.sace.promGen) === cat).length,
+  }));
+
+  /* quiénes necesitan refuerzo hoy (alguna materia vigente bajo 70) */
+  const refuerzo = xs.map(r => {
+    const bajas = r.x.sace.estado.filter(e => e.val < 70).sort((p, q) => p.val - q.val);
+    return bajas.length ? { a: r.a, bajas } : null;
+  }).filter(Boolean).sort((p, q) => q.bajas.length - p.bajas.length);
+  const evaluables = xs.filter(r => r.x.sace.estado.length).length;
+
+  /* asistencia del grupo: pase de lista sumado y meses juntados */
+  const mesesMap = {};
+  let totalA = 0, totalE = 0;
+  xs.forEach(r => {
+    totalA += r.x.asis.totalA; totalE += r.x.asis.totalE;
+    r.x.asis.meses.forEach(m => {
+      const f = mesesMap[m.mes] || (mesesMap[m.mes] = { mes: m.mes, A: 0, E: 0 });
+      f.A += m.A; f.E += m.E;
+    });
+  });
+  const meses = Object.values(mesesMap).sort((a, b) => a.mes < b.mes ? -1 : 1);
+  const inasisVals = xs.map(r => r.x.sace.inasisSace).filter(v => v != null);
+
+  /* evaluaciones, misiones y lectura, contadas sobre todo el grupo */
+  const totalEvals = xs.reduce((s, r) => s + r.x.evals.length, 0);
+  const totalNsp = xs.reduce((s, r) => s + r.x.evals.filter(e => e.nsp).length, 0);
+  const cache = estNubeCache();
+  const practican = cache ? xs.filter(r => r.x.misiones && r.x.misiones.intentos > 0).length : null;
+  const intentosMis = cache ? xs.reduce((s, r) => s + ((r.x.misiones && r.x.misiones.intentos) || 0), 0) : null;
+  const conLectura = xs.filter(r => r.x.lectura.length);
+  const ppmProm = media(conLectura.map(r => r.x.lectura[r.x.lectura.length - 1].ppm));
+
+  /* la decisión del año de cada alumno, con la MISMA normativa de la boleta */
+  const decs = xs.map(r => estDecision(r.x.sace)).filter(dc => dc.tipo !== 'sindatos');
+
+  return {
+    total: xs.length, mats, matsConDatos, porMateria, promMat, promParcial,
+    parcialesConDatos, estado, bajo70Mat, conNotas: conNotas.length, promGen,
+    porNivel, refuerzo, evaluables, meses, totalA, totalE,
+    inasisSace: inasisVals.length ? inasisVals.reduce((a, b) => a + b, 0) : null,
+    totalEvals, totalNsp, practican, intentosMis,
+    conLectura: conLectura.length, ppmProm, decs,
+    /* forma de «sace» para reutilizar tendencia y gráfico de evolución */
+    saceG: { mats, porMateria, promParcial, parcialesConDatos },
+  };
+}
+
+function estObservacionesGrado(g) {
+  const obs = [];
+  const tend = estTendencia(g.saceG);
+  if (tend && tend.tipo === 'baja') obs.push('📉 El promedio del grado bajó de ' + tend.de + ' (parcial ' + tend.pDe + ') a ' + tend.a + ' (parcial ' + tend.pA + '), comparando las mismas materias.');
+  if (tend && tend.tipo === 'sube') obs.push('📈 El promedio del grado subió de ' + tend.de + ' (parcial ' + tend.pDe + ') a ' + tend.a + ' (parcial ' + tend.pA + '), comparando las mismas materias.');
+
+  const bajasMat = g.estado.filter(e => e.val < 70).sort((a, b) => a.val - b.val);
+  if (bajasMat.length) obs.push('🚨 Como grado, el promedio vigente está bajo 70 en ' + bajasMat.map(e => e.mat + ' (' + e.val + ')').join(', ') + ': ahí conviene un refuerzo colectivo, no caso por caso.');
+
+  const matsCriticas = g.mats.filter(c => g.bajo70Mat[c] > 0).sort((a, b) => g.bajo70Mat[b] - g.bajo70Mat[a]).slice(0, 3);
+  if (g.refuerzo.length) obs.push('⚠️ ' + g.refuerzo.length + ' de ' + g.evaluables + ' alumno(s) con notas llevan hoy alguna materia bajo 70' + (matsCriticas.length ? '; donde más se repite: ' + matsCriticas.map(c => c + ' (' + g.bajo70Mat[c] + ')').join(', ') : '') + '.');
+
+  if (g.totalA > 0) {
+    const peor = g.meses.slice().sort((a, b) => b.A - a.A)[0];
+    if (peor && peor.A >= 5) obs.push('📋 El mes con más ausencias sin excusa fue ' + adMesLabel(peor.mes) + ', con ' + peor.A + ' en total (pase de lista).');
+  }
+
+  if (g.totalNsp > 0) obs.push('📝 Quedan ' + g.totalNsp + ' evaluación(es) sin presentar (NSP) en el grupo: conviene programarlas antes del cierre del parcial.');
+
+  if (g.practican != null && g.practican > 0) obs.push('🚀 ' + g.practican + ' de ' + g.total + ' alumno(s) practican misiones de M.E.T.A.S. fuera del aula, con ' + g.intentosMis + ' evaluación(es) calificada(s) en la nube.');
+
+  if (g.conLectura > 0) obs.push('📖 Hay toma de lectura de ' + g.conLectura + ' alumno(s); el grado promedia ' + g.ppmProm + ' palabras por minuto en la última toma de cada uno.');
+
+  if (!obs.length) obs.push('🕊️ Sin señales de alarma a nivel de grado con los datos guardados hasta hoy.');
+  return obs;
+}
+
+/* Balance de aprobación del grado: se cuenta la decisión de cada alumno
+   (la misma de su informe individual) y se dice cuántos van bien y
+   cuántos en riesgo — con los parciales llenos, cuántos aprueban. */
+function estDecisionGradoHtml(g) {
+  if (!g.decs.length) {
+    return '<div class="est-dec neutro">⚖️ Aún no hay notas guardadas en Notas SACE: sin datos no hay lectura del grado.</div>';
+  }
+  const ap = g.decs.filter(dc => dc.aprueba).length;
+  const no = g.decs.length - ap;
+  const regla = '<small>Normativa (Primero y Segundo Ciclo): cada alumno aprueba el año con 70 o más en cada materia; el promedio no salva una materia baja.</small>';
+  if (g.decs.every(dc => dc.tipo === 'veredicto')) {
+    return '<div class="est-dec ' + (no ? 'rep' : 'ok') + '"><b>📜 Año lectivo cerrado: ' + ap + ' de ' + g.decs.length + ' alumno(s) con notas aprueban.</b> ' +
+      (no ? no + ' alumno(s) no aprueban y pasan a lo que dicte la normativa de recuperación.' : 'Todo el grado con notas cierra el año aprobado.') + ' ' + regla + '</div>';
+  }
+  return '<div class="est-dec ' + (no ? 'rep' : 'ok') + '"><b>⚖️ Si el año cerrara hoy: ' + ap + ' de ' + g.decs.length + ' alumno(s) con notas aprobarían.</b> ' +
+    (no ? no + ' alumno(s) están en riesgo y todavía hay año para levantarlos: ahí va el refuerzo.' : 'Nadie está en riesgo con lo guardado hasta hoy.') +
+    ' Van ' + g.parcialesConDatos.length + ' de IV parciales guardados: es una proyección, no un veredicto. ' + regla + '</div>';
+}
+
+function estImprimirInformeGrado(d) {
+  if (!d.lista.length) { if (typeof toast === 'function') toast('Primero llena la lista de alumnos'); return; }
+  const g = estDatosGrado(d);
+  /* tope de 5 observaciones: se midió imprimiendo — con 6 y la lista de
+     refuerzo llena, la hoja se pasa a una segunda página */
+  const obs = estObservacionesGrado(g).slice(0, 5);
+  const bol = d.boleta || {};
+  const hoy = adFechaBonita(adHoy());
+  const grupo = adGrupoTxt(d);
+  const nivel = g.promGen != null ? adNotaCat(g.promGen) : null;
+  const tend = estTendencia(g.saceG);
+  const chip = (lbl, valTxt, cls) => '<div class="chip ' + (cls || '') + '"><span>' + lbl + '</span><b>' + valTxt + '</b></div>';
+
+  const filaMat = c => {
+    const vals = EST_PARCIALES.map(p => {
+      const v = g.porMateria[c][p];
+      return '<td>' + (v == null ? '—' : v) + '</td>';
+    }).join('');
+    const pm = g.promMat[c];
+    const cat = pm != null ? adNotaCat(pm) : null;
+    const n70 = g.bajo70Mat[c];
+    return '<tr><td class="mat">' + adEsc(c) + '</td>' + vals +
+      '<td class="prom">' + (pm == null ? '—' : pm) + '</td>' +
+      '<td class="niv" style="color:' + (cat ? cat.color : '#7286a8') + '">' + (cat ? cat.label : '—') + '</td>' +
+      '<td class="b70' + (n70 ? ' hay' : '') + '">' + (n70 || '—') + '</td></tr>';
+  };
+
+  /* distribución de alumnos por nivel: barra proporcional + número */
+  const maxNivel = Math.max(1, ...g.porNivel.map(r => r.n));
+  const nivelesHtml = g.porNivel.map(r =>
+    '<div class="gr-nivel"><span style="color:' + r.cat.color + '">' + r.cat.label + (r.cat.min > 0 ? ' (' + r.cat.min + '+)' : ' (&lt;60)') + '</span>' +
+    '<div class="gr-nv-pista"><i style="width:' + Math.round(100 * r.n / maxNivel) + '%;background:' + r.cat.color + '"></i></div>' +
+    '<b>' + r.n + '</b></div>').join('');
+
+  /* refuerzo: nombres cortos con su conteo — la hoja es del grado, el
+     detalle de cada quien vive en su informe individual */
+  const refTxt = g.refuerzo.length
+    ? g.refuerzo.slice(0, 12).map(r => '#' + r.a.num + ' ' + adEsc(adPrimerNombre(r.a.nombre) || '') + ' (' + r.bajas.length + ')').join(' · ') +
+      (g.refuerzo.length > 12 ? ' · …y ' + (g.refuerzo.length - 12) + ' más' : '')
+    : null;
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>${adEsc('Informe del grado — ' + grupo)}</title>
+<style>${estInformeCss()}
+  /* propios del informe del grado: letra un punto más compacta que el
+     informe del alumno, porque esta hoja junta a TODO el grupo y aun
+     así tiene que caber en una sola carta (se comprobó imprimiendo) */
+  .inf-centro { font-size: 15.5px; } .inf-doc { font-size: 12.5px; }
+  .inf-alumno { margin: 7px 0; } .inf-alumno b { font-size: 13px; }
+  .chips { margin-bottom: 8px; } .chip b { font-size: 12px; }
+  .inf-h { font-size: 12px; margin-bottom: 4px; padding-bottom: 3px; }
+  .inf-tabla th, .inf-tabla td { font-size: 10px; padding: 2.5px 3px; }
+  .inf-tabla th { font-size: 8.5px; }
+  .inf-obs { margin-bottom: 6px; } .inf-obs li { font-size: 11px; padding: 1.5px 0 1.5px 2px; line-height: 1.45; }
+  .est-dec { padding: 7px 11px; font-size: 11px; line-height: 1.45; }
+  .est-dec b { font-size: 12.5px; } .est-dec small { margin-top: 2px; font-size: 9px; }
+  .inf-foot { padding-top: 5px; } .inf-firmas { margin-top: 14px; } .inf-fuente { margin-top: 7px; }
+  .inf-tabla td.b70 { color: #b8c0d0; } .inf-tabla td.b70.hay { color: #c0392b; font-weight: 800; }
+  .gr-nivel { display: flex; align-items: center; gap: 6px; margin: 3px 0; font-size: 10.5px; }
+  .gr-nivel > span { width: 118px; font-weight: 700; text-align: right; }
+  .gr-nv-pista { flex: 1; background: #eef2f7; border-radius: 3px; height: 11px; overflow: hidden; }
+  .gr-nv-pista i { display: block; height: 100%; border-radius: 3px; }
+  .gr-nivel b { width: 20px; font-size: 11.5px; }
+  .gr-ref { font-size: 10.5px; line-height: 1.5; color: #223; background: #fdf6ec; border: 1px solid #ecdcbf; border-radius: 7px; padding: 5px 9px; margin-bottom: 6px; }
 </style></head><body>
-${alumnos.map(a => hoja(a)).join('')}
+<section class="hoja">
+  <header class="inf-head">
+    <div class="inf-logo">${d.logo ? '<img src="' + d.logo + '" alt="">' : ''}</div>
+    <div class="inf-tit">
+      <div class="inf-centro">${adEsc((d.escuela || 'Centro Educativo').toUpperCase())}</div>
+      <div class="inf-doc">INFORME DE RENDIMIENTO ACADÉMICO DEL GRADO</div>
+      <div class="inf-sub">Informe estadístico para la Dirección · Año lectivo ${adEsc(bol.anio || String(new Date().getFullYear()))}</div>
+    </div>
+    <div class="inf-fecha">${adEsc(hoy)}</div>
+  </header>
+
+  <div class="inf-alumno">
+    <div><span>Grado y sección</span><b>${adEsc(adGradoSeccion(d.grado, d.seccion) || '—')}</b></div>
+    <div style="flex:3"><span>Docente de grado</span><b>${adEsc(bol.docente || '—')}</b></div>
+    <div><span>Matrícula</span><b>${g.total} alumno(s)</b></div>
+    <div><span>Parciales guardados</span><b>${g.parcialesConDatos.length} de IV</b></div>
+  </div>
+
+  <div class="chips">
+    ${chip('Promedio del grado', g.promGen != null ? g.promGen + (nivel ? ' · ' + nivel.label : '') : 'Sin notas', g.promGen == null ? '' : g.promGen >= 70 ? 'good' : 'low')}
+    ${chip('Tendencia', !tend ? '—' : tend.tipo === 'sube' ? '▲ Subiendo' : tend.tipo === 'baja' ? '▼ Bajando' : '· Estable', !tend ? '' : tend.tipo === 'baja' ? 'low' : tend.tipo === 'sube' ? 'good' : '')}
+    ${chip('Con todo en 70+', g.evaluables ? (g.evaluables - g.refuerzo.length) + ' de ' + g.evaluables : '—', g.evaluables && g.refuerzo.length ? 'low' : g.evaluables ? 'good' : '')}
+    ${chip('Inasistencias (SACE)', g.inasisSace != null ? String(g.inasisSace) : '—')}
+    ${chip('Pase de lista', '🚫 ' + g.totalA + ' · 📝 ' + g.totalE)}
+    ${chip('Misiones M.E.T.A.S.', g.practican != null ? g.practican + ' de ' + g.total + ' practican' : '—', g.practican ? 'good' : '')}
+  </div>
+
+  <div class="inf-cols">
+    <div class="inf-col">
+      <div class="inf-h">🧮 Promedio del grado por materia <small>(media de los alumnos con nota)</small></div>
+      <table class="inf-tabla">
+        <thead><tr><th>Materia</th><th>I</th><th>II</th><th>III</th><th>IV</th><th>Prom.</th><th>Nivel</th><th>&lt;70</th></tr></thead>
+        <tbody>${g.matsConDatos.length ? g.matsConDatos.map(filaMat).join('') : '<tr><td colspan="8" class="vacio">Sin notas guardadas</td></tr>'}</tbody>
+      </table>
+      <div class="inf-h" style="margin-top:8px">🧒 Alumnos por nivel <small>(según su promedio del año; con notas: ${g.conNotas} de ${g.total})</small></div>
+      ${nivelesHtml}
+    </div>
+    <div class="inf-col">
+      <div class="inf-h">📊 Estado vigente por materia <small>(última nota · | = parcial anterior)</small></div>
+      ${g.estado.length ? estGBarras(g.estado, { w: 340, maxw: 420, compacto: true }) + estLeyendaNotas() : '<p class="inf-nada">Sin notas todavía.</p>'}
+      <div class="inf-h" style="margin-top:8px">📈 Evolución del promedio por parcial</div>
+      ${g.parcialesConDatos.length ? estGEvolucion(g.saceG, { w: 340, h: 115, maxw: 420 }) : '<p class="inf-nada">Aparece al guardar notas de al menos un parcial.</p>'}
+    </div>
+  </div>
+
+  <div class="inf-h" style="margin-top:7px">🔎 Lectura de los datos del grado <small>(coincidencias en lo registrado, no causas)</small></div>
+  <ul class="inf-obs">
+    ${obs.map(o => '<li>' + o + '</li>').join('')}
+  </ul>
+
+  ${refTxt ? '<div class="gr-ref"><b>Refuerzo primero (materias bajo 70 hoy):</b> ' + refTxt + '.</div>' : ''}
+
+  ${estDecisionGradoHtml(g)}
+
+  <footer class="inf-foot">
+    <div class="inf-firmas">
+      <div><i></i><b>${adEsc(bol.docente) || '&nbsp;'}</b><span>Docente de grado</span></div>
+      <div><i></i><b>${adEsc(bol.director) || '&nbsp;'}</b><span>Director(a) · Recibido</span></div>
+    </div>
+    <p class="inf-fuente">Informe del grado ${adEsc(grupo)} generado por M.E.T.A.S. con los registros del aula (Notas SACE, pase de lista,
+      Plan de Acción y práctica de misiones en la nube) al ${adEsc(hoy)}. El detalle de cada alumno está en su informe individual.</p>
+  </footer>
+</section>
 <script>window.onload=function(){setTimeout(function(){window.print();},280);}<\/script>
 </body></html>`;
   adPrintAbrir(html);
