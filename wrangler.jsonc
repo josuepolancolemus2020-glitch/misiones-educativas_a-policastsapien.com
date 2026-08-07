@@ -1,0 +1,14 @@
+/* Configuración de Cloudflare (Workers con activos estáticos).
+   M.E.T.A.S. se sirve TAL CUAL: sin compilación, los archivos del
+   repositorio son el sitio. Cloudflare publica desde aquí con
+   «npx wrangler deploy» (el comando por defecto de su panel);
+   GitHub Pages sigue funcionando igual como respaldo — este archivo
+   no le afecta. Nació el día de la gran avería de GitHub Pages
+   (6-ago-2026), para que la publicación no dependa de un solo techo. */
+{
+  "name": "metas",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": "./"
+  }
+}

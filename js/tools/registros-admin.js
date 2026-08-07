@@ -35,7 +35,7 @@ const AD_PERS_SIGNIF = { S: 'Sobresaliente', MB: 'Muy Bueno', B: 'Bueno',
 const AD_PERS_NUM = { S: 4, MB: 3, B: 2, NS: 1 };
 const AD_PERS_DE_NUM = { 4: 'S', 3: 'MB', 2: 'B', 1: 'NS' };
 
-let _adTab = 'lista';        /* lista | eco | asis | ctrl | sace | com */
+let _adTab = 'lista';        /* lista | eco | asis | ctrl | sace | est | lec | com */
 let _adColectaId = null;     /* colecta abierta en Economía */
 let _adGastosOn = 0;         /* dentro de «Gastos de mi bolsillo» */
 let _adInvOn = 0;            /* dentro de «Inventario del aula» */
@@ -67,7 +67,7 @@ function adGrupoNuevo(props) {
   for (let i = 0; i < 5; i++) id += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
   return Object.assign({ id, escuela: '', grado: '', seccion: '', logo: '', logoSec: '', boleta: adBoletaDef(),
     materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {}, controles: [],
-    bitacora: [] }, props || {});
+    bitacora: [], lectura: [] }, props || {});
 }
 
 function adNormGrupo(g) {
@@ -85,6 +85,10 @@ function adNormGrupo(g) {
   g.asistencia = Array.isArray(g.asistencia) ? g.asistencia : [];
   g.controles = Array.isArray(g.controles) ? g.controles : [];
   g.bitacora = Array.isArray(g.bitacora) ? g.bitacora : [];   /* novedades de la clase */
+  /* tomas de lectura (palabras por minuto): el canal ya queda listo para
+     la herramienta de lectura; su forma está descrita en
+     js/tools/estadisticas-alumno.js, que es quien las dibuja */
+  g.lectura = Array.isArray(g.lectura) ? g.lectura : [];
   g.materias = Array.isArray(g.materias) && g.materias.length ? g.materias : AD_MATERIAS_DEF.slice();
   g.notas = (g.notas && typeof g.notas === 'object') ? g.notas : {};
   return g;
@@ -417,6 +421,8 @@ function renderAdmin() {
       <button class="pa-otab ${_adTab === 'asis'  ? 'pa-otab-active' : ''}" data-adtab="asis">📋 Asistencia</button>
       <button class="pa-otab ${_adTab === 'ctrl'  ? 'pa-otab-active' : ''}" data-adtab="ctrl">✅ Controles</button>
       <button class="pa-otab ${_adTab === 'sace'  ? 'pa-otab-active' : ''}" data-adtab="sace">🧮 Notas SACE</button>
+      <button class="pa-otab ${_adTab === 'est'   ? 'pa-otab-active' : ''}" data-adtab="est">📈 Estadísticas</button>
+      <button class="pa-otab ${_adTab === 'lec'   ? 'pa-otab-active' : ''}" data-adtab="lec">📖 Lectura</button>
       <button class="pa-otab ${_adTab === 'com'   ? 'pa-otab-active' : ''}" data-adtab="com">📣 Comunicados</button>
       <button class="pa-otab" id="ad-nube-chip" title="Nube del chatbot de padres: toca para sincronizar ahora">${(() => {
         const n = adPendientesTotal();
@@ -453,6 +459,8 @@ function renderAdmin() {
   else if (_adTab === 'asis') adRenderAsis(body, d);
   else if (_adTab === 'ctrl') adRenderControles(body, d);
   else if (_adTab === 'com') adRenderCom(body, d);
+  else if (_adTab === 'est' && typeof adRenderEstadisticas === 'function') adRenderEstadisticas(body, d);
+  else if (_adTab === 'lec' && typeof adRenderLectura === 'function') adRenderLectura(body, d);
   else adRenderSace(body, d);
 }
 
@@ -864,6 +872,10 @@ async function adInsertarAlumno() {
     c.pagos = adShiftNums(c.pagos, pos);
     c.pagosF = adShiftNums(c.pagosF, pos);   /* la fecha viaja con su pago */
   });
+  (d.lectura || []).forEach(r => { if (+r.num >= pos) r.num = +r.num + 1; });   /* las tomas de lectura también */
+  /* los controles se recorren igual: sus marcas son del niño, no del número
+     (antes se quedaban con el número viejo y el control mentía) */
+  (d.controles || []).forEach(c => { c.datos = adShiftNums(c.datos || {}, pos); });
   /* 3) la lista misma */
   d.lista.forEach(a => { if (a.num >= pos) a.num++; });
   d.lista.push({ num: pos, nombre: String(nombre).trim() });

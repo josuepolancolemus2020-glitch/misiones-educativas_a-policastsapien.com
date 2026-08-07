@@ -4845,3 +4845,124 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   border-radius: 8px; padding: 8px 2px;
 }
 .pa-inp-num:focus { outline: 2px solid #1565c0; background: #fff; }
+
+/* ═══════════════════════════════════════════════
+   📈 ESTADÍSTICAS POR ALUMNO (ago 2026) — pestaña de Mi aula
+   Gráficos SVG sin librerías: cada dato lleva su número escrito; el
+   color (escala oficial de calificaciones) refuerza, nunca decide solo.
+═══════════════════════════════════════════════ */
+.est-selector { display: flex; gap: 8px; align-items: stretch; margin-top: 8px; }
+.est-selector select { flex: 1; min-width: 0; font-weight: 700; }
+.est-selector .pa-generate-btn { flex: 0 0 auto; font-size: 18px; padding: 6px 16px; }
+
+.est-riesgo-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.est-riesgo-chip {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  background: #fdf3e5; border: 1.5px solid #f3ddb3; border-radius: 10px;
+  padding: 6px 10px; cursor: pointer; font-weight: 800; font-size: 13px; color: #8a5a00;
+  -webkit-tap-highlight-color: transparent;
+}
+.est-riesgo-chip small { font-weight: 600; font-size: 11px; color: #b26a00; }
+.est-riesgo-chip:active { transform: scale(.96); }
+
+.est-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.est-chip {
+  flex: 1 1 42%; min-width: 130px; background: var(--bg);
+  border: 1.5px solid var(--border); border-radius: 10px; padding: 6px 10px;
+}
+.est-chip span { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
+.est-chip b { font-size: 15px; color: var(--text); }
+.est-chip.good { background: #eef7ee; border-color: #cfe6cf; } .est-chip.good b { color: #2e7d32; }
+.est-chip.low  { background: #fdf3e5; border-color: #ecdcbf; } .est-chip.low b  { color: #c8730a; }
+
+.est-sub { font-weight: 500; font-size: 12px; color: var(--muted); }
+.est-leyenda { display: flex; flex-wrap: wrap; gap: 3px 11px; justify-content: center; margin-top: 5px; font-size: 11px; color: var(--muted); }
+.est-leyenda i { display: inline-block; width: 9px; height: 9px; border-radius: 2.5px; margin-right: 4px; vertical-align: -1px; }
+
+.est-obs { list-style: none; margin: 0; padding: 0; }
+.est-obs li {
+  display: flex; gap: 8px; align-items: flex-start;
+  font-size: 13.5px; line-height: 1.5; padding: 7px 10px; border-radius: 10px; margin-bottom: 6px;
+  background: var(--bg); border: 1.5px solid var(--border);
+}
+.est-obs li span { flex: 0 0 auto; }
+.est-obs .est-obs-alerta { background: #fdeeee; border-color: #f2c9c9; }
+.est-obs .est-obs-ojo    { background: #fdf3e5; border-color: #f3ddb3; }
+.est-obs .est-obs-bien   { background: #eef7ee; border-color: #cfe6cf; }
+
+.est-dec { border-radius: 12px; padding: 12px 14px; border: 2px solid; font-size: 14px; line-height: 1.6; }
+.est-dec b { display: block; margin-bottom: 4px; font-size: 15px; }
+.est-dec small { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+.est-dec.ok  { background: #f0f8f0; border-color: #9fcc9f; } .est-dec.ok b  { color: #2e7d32; }
+.est-dec.rep { background: #fdf6ec; border-color: #dcbf8e; } .est-dec.rep b { color: #8a5a00; }
+.est-dec.neutro { background: var(--bg); border-color: var(--border); color: var(--muted); }
+
+/* ═══════════════════════════════════════════════
+   📖 CONTROL DE LECTURA (ago 2026) — pestaña de Mi aula
+   El texto se toca palabra por palabra: cada palabra es un botón
+   ancho de dedo. El cronómetro va grande porque se mira de reojo
+   mientras se escucha al alumno.
+═══════════════════════════════════════════════ */
+.lec-lista { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; max-height: 340px; overflow-y: auto; }
+.lec-texto-row {
+  display: flex; flex-direction: column; gap: 2px; text-align: left; cursor: pointer;
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 12px;
+  -webkit-tap-highlight-color: transparent;
+}
+.lec-texto-row.lec-texto-on { border-color: #1565c0; background: #eef4fb; }
+.lec-tr-tit { font-weight: 800; font-size: 14px; color: var(--text); }
+.lec-tr-meta { font-size: 12px; color: var(--muted); }
+
+.lec-modos { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 10px; }
+.lec-crono-caja { text-align: center; margin: 6px 0 10px; }
+.lec-crono {
+  font-size: 56px; font-weight: 800; color: #1e3a7c; line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.lec-crono.lec-crono-fin { color: #c0392b; animation: lecParpadeo 1s ease-in-out 3; }
+@keyframes lecParpadeo { 50% { opacity: 0.25; } }
+.lec-crono-sub { font-size: 12.5px; color: var(--muted); }
+.lec-btn-grande { font-size: 18px; padding: 12px 26px; }
+
+.lec-err-caja {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: #fdf3e5; border: 1.5px solid #f3ddb3; border-radius: 10px; padding: 8px 12px; margin: 8px 0;
+  font-size: 13px; color: #8a5a00; flex-wrap: wrap;
+}
+.lec-err-caja small { color: #b26a00; font-weight: 500; }
+.lec-err-btns { display: flex; align-items: center; gap: 10px; }
+.lec-err-btns b { font-size: 22px; min-width: 30px; text-align: center; color: #8a5a00; }
+
+.lec-texto {
+  margin: 10px 0 8px; padding: 12px 10px; background: var(--bg);
+  border: 1.5px solid var(--border); border-radius: 12px;
+  font-size: 19px; line-height: 2.1; color: var(--text);
+}
+.lec-p { display: inline-block; padding: 1px 4px; border-radius: 6px; }
+.lec-andando .lec-p { cursor: pointer; }
+.lec-andando .lec-p:active { background: #dbe8fb; }
+
+.lec-preg { border: 1.5px solid var(--border); border-radius: 10px; padding: 9px 12px; margin-bottom: 8px; background: var(--bg); }
+.lec-preg-q { font-size: 14.5px; font-weight: 700; color: var(--text); line-height: 1.45; }
+.lec-preg-tipo {
+  display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .4px; border-radius: 999px; padding: 1px 8px; margin-right: 4px; vertical-align: 2px;
+}
+.lec-tipo-literal { background: #e3f2fd; color: #1565c0; }
+.lec-tipo-inferencial { background: #ede7f6; color: #6d28d9; }
+.lec-tipo-critica { background: #fff3e0; color: #b26a00; }
+.lec-preg-r { font-size: 12px; color: var(--muted); font-style: italic; margin: 3px 0 7px; }
+.lec-preg-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.lec-vbtn {
+  flex: 1; min-width: 130px; border: 1.5px solid var(--border); background: var(--surface);
+  border-radius: 10px; padding: 9px 10px; font-size: 13.5px; font-weight: 800; color: var(--muted);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.lec-vbtn:active { transform: scale(.97); }
+.lec-vbtn-si { background: #eef7ee; border-color: #2e7d32; color: #2e7d32; }
+.lec-vbtn-no { background: #fdeeee; border-color: #c0392b; color: #c0392b; }
+
+.lec-ppm-hero { text-align: center; margin: 4px 0 10px; }
+.lec-ppm-hero b { display: block; font-size: 64px; font-weight: 800; color: #1e3a7c; line-height: 1; }
+.lec-ppm-hero span { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.lec-veredicto { margin-top: 10px; font-size: 14px; color: var(--text); }
