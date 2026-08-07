@@ -4897,6 +4897,25 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .est-dec.rep { background: #fdf6ec; border-color: #dcbf8e; } .est-dec.rep b { color: #8a5a00; }
 .est-dec.neutro { background: var(--bg); border-color: var(--border); color: var(--muted); }
 
+/* Tomas de lectura, una por fila, con su 🗑 para quitar la de prueba.
+   El botón va separado del resto y con área de dedo: se toca en un
+   teléfono, al lado de filas que NO se deben tocar por error. */
+.est-tomas { display: flex; flex-direction: column; gap: 6px; margin: 10px 0 6px; max-height: 300px; overflow-y: auto; }
+.est-toma {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 6px 8px 6px 10px;
+}
+.est-toma-ppm { flex: 0 0 auto; text-align: center; line-height: 1.05; }
+.est-toma-ppm b { display: block; font-size: 17px; font-weight: 900; color: var(--text); }
+.est-toma-ppm span { font-size: 9.5px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
+.est-toma-meta { flex: 1; min-width: 0; font-size: 12px; line-height: 1.4; color: var(--muted); }
+.est-toma-del {
+  flex: 0 0 auto; background: none; border: 1.5px solid transparent; border-radius: 9px; cursor: pointer;
+  color: #b91c1c; font-size: 16px; padding: 7px 10px; -webkit-tap-highlight-color: transparent;
+}
+.est-toma-del:active { transform: scale(.94); background: #fdeeee; border-color: #f2c9c9; }
+.est-toma-del:focus-visible { outline: 3px solid rgba(59,130,246,.45); outline-offset: 2px; }
+
 /* ═══════════════════════════════════════════════
    📖 CONTROL DE LECTURA (ago 2026) — pestaña de Mi aula
    El texto se toca palabra por palabra: cada palabra es un botón

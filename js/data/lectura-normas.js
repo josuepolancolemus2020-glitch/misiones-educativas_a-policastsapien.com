@@ -20,14 +20,24 @@
        6º: 125–134 · 7º: 135–144 · 8º: 145–154 · 9º: 155–160
      (7º–9º equivalen a 1º–3º de secundaria en México.)
 
-   Todo texto que el maestro imprima con estas cifras las nombra y
-   fecha («referencia SEP México, 2010»): la normativa del proyecto
-   manda que un número impreso diga de dónde viene y cuándo.
-   UNA excepción, pedida por el maestro (agosto de 2026): la ficha del
-   Control de lectura que contestan LOS ALUMNOS lleva la banda pero no
-   la fuente — la referencia es un dato para el maestro, no para la
-   hoja del alumno, y ahí solo mete ruido. En las pantallas de la
-   plataforma y en el informe la fuente sigue nombrada y fechada.
+   ── Dónde se nombra la fuente y dónde NO ──
+   La regla del proyecto es que un número impreso diga de dónde viene y
+   cuándo. Para esta cifra, el maestro la afinó en dos pasos (agosto de
+   2026), y el criterio que quedó es de QUIÉN LEE EL PAPEL:
+
+   · EN LAS PANTALLAS DEL MAESTRO (pestaña 📖 Lectura, resultado de la
+     toma) la fuente va nombrada y fechada, siempre. El maestro es
+     quien tiene que poder defender la cifra si se la discuten.
+   · EN LO QUE SALE DE SUS MANOS —el informe del alumno que firman la
+     Dirección y la familia, y la ficha que contestan los alumnos— va
+     la BANDA sola, sin la fuente. Ahí «referencia SEP México, 2010»
+     no ayuda a nadie: al padre le abre una discusión que no es la de
+     su hijo, y en la hoja del alumno solo mete ruido.
+
+   La BANDA, en cambio, se escribe siempre, en pantalla y en papel: el
+   nivel («Requiere apoyo») sin los números que lo sostienen es una
+   etiqueta puesta encima de un niño, y eso sí que no puede salir en un
+   papel que lee su madre.
 
    La PRECISIÓN usa el criterio clásico de los inventarios informales
    de lectura (Betts): ≥98 % palabras correctas = nivel independiente;

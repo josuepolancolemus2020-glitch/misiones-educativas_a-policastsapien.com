@@ -220,13 +220,31 @@ function estControles(d, num) {
 }
 
 /* Lectura (PPM): lo que registra la pestaña 📖 Lectura (Control de
-   lectura); comp/compDe traen la comprensión oral de cada toma */
+   lectura); comp/compDe traen la comprensión oral de cada toma.
+   Cada toma se lleva su POSICIÓN en d.lectura (i): es lo que permite
+   quitar una toma suelta desde esta pestaña sin tocar las demás. */
 function estLectura(d, num) {
   return (d.lectura || [])
-    .filter(r => r && String(r.num) === String(num) && estNum(r.ppm) != null && r.f)
-    .map(r => ({ f: r.f, ppm: Number(r.ppm), palabras: estNum(r.palabras), errores: estNum(r.errores),
-                 texto: r.titulo || r.texto || '', comp: estNum(r.comp), compDe: estNum(r.compDe) }))
+    .map((r, i) => ({ r, i }))
+    .filter(o => o.r && String(o.r.num) === String(num) && estNum(o.r.ppm) != null && o.r.f)
+    .map(o => ({ i: o.i, f: o.r.f, ppm: Number(o.r.ppm), palabras: estNum(o.r.palabras), errores: estNum(o.r.errores),
+                 texto: o.r.titulo || o.r.texto || '', comp: estNum(o.r.comp), compDe: estNum(o.r.compDe) }))
     .sort((a, b) => String(a.f).localeCompare(String(b.f)));
+}
+
+/* Quita UNA toma del expediente. Se busca por su posición, pero antes
+   se comprueba la firma (alumno, fecha, palabras por minuto): si entre
+   el dibujo de la pantalla y el toque del maestro el arreglo cambió
+   —otra pestaña abierta, una sincronización—, se busca la toma de
+   verdad en vez de cortar la fila equivocada. Borrar la toma que no
+   era sería peor que no borrar ninguna. */
+function estQuitarToma(d, i, firma) {
+  const arr = d.lectura || [];
+  const igual = r => r && String(r.num) === String(firma.num) && r.f === firma.f && Number(r.ppm) === Number(firma.ppm);
+  const j = igual(arr[i]) ? i : arr.findIndex(igual);
+  if (j < 0) return false;
+  arr.splice(j, 1);
+  return true;
 }
 
 /* Misiones practicadas: filtra la caché de la nube para este alumno.
@@ -727,7 +745,7 @@ function adRenderEstadisticas(body, d) {
             }
             if (u.comp != null && u.compDe) extra += ' Comprensión: <strong>' + u.comp + ' de ' + u.compDe + '</strong>.';
             return '<p class="pa-optional-hint">Última toma: <strong>' + u.ppm + ' palabras por minuto</strong> (' + adFechaBonita(u.f) + ').' + extra + '</p>';
-          })()
+          })() + estTomasHtml(x)
         : '<p class="pa-optional-hint">Aún no hay tomas de lectura de ' + adEsc(adPrimerNombre(al.nombre) || 'este alumno') + '. Se toman en la pestaña <strong>📖 Lectura</strong>: cronómetro, conteo de palabras y cinco preguntas de comprensión — y el avance se dibuja aquí solo.</p>'}
     </div>
 
@@ -760,6 +778,22 @@ function adRenderEstadisticas(body, d) {
     _estNum = +b.dataset.estnum;
     adRenderEstadisticas(body, adLoad());
   }));
+  /* quitar una toma de lectura: la que se hizo «solo para probar» no
+     puede quedarse contando en el informe de la familia */
+  body.querySelectorAll('[data-lecdel]').forEach(b => b.addEventListener('click', async () => {
+    const firma = { num: al.num, f: b.dataset.lecf, ppm: Number(b.dataset.lecppm) };
+    const quien = adPrimerNombre(al.nombre) || ('#' + al.num);
+    if (!await metasConfirm('Se quita del expediente de **' + quien + '** la toma de **' + firma.ppm +
+      ' palabras por minuto** del ' + adFechaBonita(firma.f) + '.\n\nDeja de contar en el gráfico, en las ' +
+      'observaciones y en el informe.\n\nSi fue un error, la 🕘 papelera de la pestaña 👥 Alumnos la devuelve.',
+      { icono: '🗑', titulo: 'Quitar una toma de lectura', okTxt: 'Sí, quitarla' })) return;
+    adUndoGuardar('Quitar una toma de lectura de #' + al.num);
+    const dd = adLoad();
+    if (!estQuitarToma(dd, +b.dataset.lecdel, firma)) { toast('No se encontró esa toma; vuelve a abrir la pestaña.'); return; }
+    adSave(dd);
+    toast('🗑 Toma quitada — si fue un error, restaura en 🕘 (pestaña Alumnos)');
+    adRenderEstadisticas(body, adLoad());
+  }));
   document.getElementById('est-print-uno').addEventListener('click', () => estImprimirInforme(adLoad(), [al.num]));
   document.getElementById('est-print-todos').addEventListener('click', () => estImprimirInforme(adLoad(), adLoad().lista.map(a => a.num)));
   document.getElementById('est-print-grado').addEventListener('click', () => estImprimirInformeGrado(adLoad()));
@@ -779,6 +813,30 @@ function adRenderEstadisticas(body, d) {
 function estFechaHora(iso) {
   const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
   return m ? m[3] + '/' + m[2] + '/' + m[1] + ' ' + m[4] + ':' + m[5] : String(iso || '');
+}
+
+/* ── Las tomas de lectura, una por una, con su 🗑 ──
+   Pedido del maestro (agosto de 2026): hay tomas que se hacen «solo
+   para probar» la herramienta, y una vez guardadas se quedaban para
+   siempre torciendo el gráfico, las observaciones y el informe que
+   firma la familia. Se listan de la MÁS NUEVA a la más vieja —la de
+   prueba casi siempre es la última— y cada una se puede quitar.
+   No se borra en silencio: antes va una foto a la 🕘 papelera. */
+function estTomasHtml(x) {
+  const fila = r => {
+    const meta = [adFechaBonita(r.f), r.texto || 'texto sin título'];
+    if (r.comp != null && r.compDe) meta.push('comprensión ' + r.comp + '/' + r.compDe);
+    if (r.errores != null) meta.push(r.errores + (r.errores === 1 ? ' error' : ' errores'));
+    return `<div class="est-toma">
+      <div class="est-toma-ppm"><b>${r.ppm}</b><span>ppm</span></div>
+      <div class="est-toma-meta">${adEsc(meta.join(' · '))}</div>
+      <button class="est-toma-del" data-lecdel="${r.i}" data-lecf="${adEsc(r.f)}" data-lecppm="${r.ppm}"
+        aria-label="Quitar la toma de ${r.ppm} palabras por minuto del ${adEsc(adFechaBonita(r.f))}">🗑</button>
+    </div>`;
+  };
+  return '<div class="est-tomas">' + x.lectura.slice().reverse().map(fila).join('') + '</div>' +
+    '<p class="pa-optional-hint">¿Alguna fue solo una prueba? Toca 🗑 y sale del expediente, del gráfico y del ' +
+    'informe. Si te arrepientes, la 🕘 papelera de la pestaña 👥 Alumnos la devuelve.</p>';
 }
 
 function estMisionesHtml(x) {
@@ -845,8 +903,12 @@ function estImprimirInforme(d, nums) {
       let s = 'Última toma: ' + u.ppm + ' palabras por minuto (' + adFechaBonita(u.f) + ')';
       if (typeof lecNivelVelocidad === 'function' && x.grado) {
         const nv = lecNivelVelocidad(x.grado, u.ppm);
-        s += ' · nivel ' + nv.etiqueta + ' para ' + x.grado + 'º (banda ' + nv.banda[0] + '–' + nv.banda[1] + ', ' +
-          ((typeof LECTURA_NORMAS !== 'undefined' && LECTURA_NORMAS.fuenteCorta) || 'referencia') + ')';
+        /* la BANDA sí va (el número sin su referencia no dice nada), pero
+           NO la fuente: este papel lo lee la familia y la Dirección, y
+           «referencia SEP México, 2010» ahí solo abre una discusión que
+           no es la del alumno. La fuente vive en la pantalla del maestro
+           (📖 Lectura), que es quien tiene que poder defender la cifra. */
+        s += ' · nivel ' + nv.etiqueta + ' para ' + x.grado + 'º (banda ' + nv.banda[0] + '–' + nv.banda[1] + ')';
       }
       if (u.comp != null && u.compDe) s += ' · comprensión ' + u.comp + ' de ' + u.compDe;
       if (x.lectura.length >= 2) s += ' · venía de ' + x.lectura[0].ppm + ' el ' + adFechaBonita(x.lectura[0].f);
