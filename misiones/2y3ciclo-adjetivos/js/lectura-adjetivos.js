@@ -46,8 +46,9 @@ const LECTURA_ADJETIVOS = {
   4: [
     { id: 'LA4-01', titulo: 'El mercado del sábado', genero: 'descriptivo',
       texto: 'El sábado el mercado despierta temprano. Las sandías redondas se apilan junto a las piñas doradas. Hay mangos maduros, jocotes verdes y naranjas dulces. Doña Petrona vende hierbas frescas en canastos anchos. Su vecino ofrece quesos blancos y mantequilla espesa. Un niño pequeño camina entre la gente con una bolsa pesada. El aire huele a cilantro y a pan caliente. Todo suena alegre y revuelto. Al fondo, dos señoras conversan mientras doblan hojas anchas de plátano. Cuando el sol se pone alto, los puestos quedan casi vacíos y los vendedores descansan en sus bancos bajos, contentos por la mañana ocupada.',
-      adjs: ['redondas', 'doradas', 'maduros', 'verdes', 'dulces', 'frescas', 'blancos', 'espesa', 'pesada', 'caliente', 'alegre', 'vacíos', 'bajos'],
+      adjs: ['redondas', 'doradas', 'maduros', 'verdes', 'dulces', 'frescas', 'anchos', 'blancos', 'espesa', 'pequeño', 'pesada', 'caliente', 'alegre', 'revuelto', 'anchas', 'alto', 'vacíos', 'bajos', 'contentos', 'ocupada'],
       dets: ['Su', 'dos', 'sus'],
+      neutros: ['Todo'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo son las sandías del mercado?', r: 'Redondas.',
           o: ['Redondas.', 'Verdes.', 'Pequeñas.'], c: 0 },
@@ -63,8 +64,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA4-02', titulo: 'La guacamaya roja', genero: 'expositivo',
       texto: 'La guacamaya roja es un ave grande y ruidosa. Su plumaje rojo brilla bajo el sol, y sus alas guardan plumas azules y amarillas. Tiene un pico curvo y muy fuerte, capaz de partir semillas duras. Vive en los bosques cálidos de Honduras y casi siempre vuela en pareja. Su grito es áspero y se escucha desde lejos. Son aves fieles: la misma pareja se acompaña durante años. Muchas fueron atrapadas para venderlas, y por eso hoy es raro verlas libres en algunos lugares. Cuidar los árboles altos donde hacen sus nidos es la mejor forma de protegerlas.',
-      adjs: ['grande', 'ruidosa', 'rojo', 'azules', 'amarillas', 'curvo', 'fuerte', 'duras', 'cálidos', 'áspero', 'fieles', 'libres', 'altos'],
+      adjs: ['roja', 'grande', 'ruidosa', 'rojo', 'azules', 'amarillas', 'curvo', 'fuerte', 'capaz', 'duras', 'cálidos', 'áspero', 'fieles', 'raro', 'libres', 'altos', 'mejor'],
       dets: ['Su', 'sus', 'Muchas', 'algunos'],
+      neutros: ['atrapadas'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo es el pico de la guacamaya roja?', r: 'Curvo y muy fuerte.',
           o: ['Curvo y muy fuerte.', 'Corto y delgado.', 'Recto y suave.'], c: 0 },
@@ -81,7 +83,7 @@ const LECTURA_ADJETIVOS = {
     { id: 'LA4-03', titulo: 'La hamaca del abuelo', genero: 'cuento',
       texto: 'Mi abuelo tiene una hamaca vieja de hilo blanco. La colgó hace muchos años entre dos horcones firmes del corredor. La tela está desteñida y tiene un remiendo azul en la orilla. Cuando me siento con él, la hamaca se mece despacio y cruje bajito. Desde ahí se ve el patio, el palo de nance y una gallina flaca que nunca se está quieta. Mi abuelo cuenta historias largas y tranquilas. Dice que esa hamaca es más antigua que yo y que todavía aguanta a los dos. Yo creo que la quiere porque en ella descansó cuando era joven.',
       adjs: ['vieja', 'blanco', 'firmes', 'desteñida', 'azul', 'flaca', 'quieta', 'largas', 'tranquilas', 'antigua', 'joven'],
-      dets: ['Mi', 'dos', 'muchos', 'esa'],
+      dets: ['Mi', 'muchos', 'dos', 'esa'],
       preguntas: [
         { tipo: 'literal', q: '¿De qué material y color es la hamaca del abuelo?', r: 'De hilo blanco.',
           o: ['De cuero café.', 'De hilo blanco.', 'De tela negra.'], c: 1 },
@@ -96,9 +98,10 @@ const LECTURA_ADJETIVOS = {
       ] },
 
     { id: 'LA4-04', titulo: 'El río frío', genero: 'descriptivo',
-      texto: 'El río baja de la montaña con agua clara y muy fría. Sus piedras son lisas, redondas y resbalosas. En la orilla crecen helechos verdes y un sauce inclinado. El agua corre veloz en el estrecho y luego se queda mansa en la poza honda. Allí los niños se bañan y sacan camarones diminutos. Al mediodía el sol calienta las piedras grandes y todos se acuestan sobre ellas. El aire huele a tierra mojada. Cuando llueve arriba, el río se pone turbio y ancho, y entonces nadie entra: el agua tranquila de la mañana se vuelve peligrosa.',
-      adjs: ['clara', 'fría', 'lisas', 'redondas', 'resbalosas', 'verdes', 'inclinado', 'veloz', 'estrecho', 'mansa', 'honda', 'diminutos', 'grandes', 'mojada', 'turbio', 'ancho', 'tranquila', 'peligrosa'],
-      dets: ['Sus', 'un', 'todos'],
+      texto: 'El río baja de la montaña con agua clara y muy fría. Sus piedras son lisas, redondas y resbalosas. En la orilla crecen helechos verdes y un sauce inclinado. El agua corre veloz en el estrecho y luego se queda mansa en la poza honda. Allí muchos niños se bañan y sacan camarones diminutos. Al mediodía el sol calienta esas piedras grandes y todos se acuestan sobre ellas. El aire huele a tierra mojada. Cuando llueve arriba, el río se pone turbio y ancho, y entonces nadie entra: el agua tranquila de la mañana se vuelve peligrosa.',
+      adjs: ['clara', 'fría', 'lisas', 'redondas', 'resbalosas', 'verdes', 'inclinado', 'veloz', 'mansa', 'honda', 'diminutos', 'grandes', 'mojada', 'turbio', 'ancho', 'tranquila', 'peligrosa'],
+      dets: ['Sus', 'muchos', 'esas'],
+      neutros: ['estrecho', 'todos'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo son las piedras del río?', r: 'Lisas, redondas y resbalosas.',
           o: ['Lisas, redondas y resbalosas.', 'Filosas y negras.', 'Blandas y pequeñas.'], c: 0 },
@@ -114,8 +117,8 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA4-05', titulo: 'Chispa, la perra valiente', genero: 'cuento',
       texto: 'Chispa es una perra flaca de pelo café. Tiene una oreja parada y la otra caída. No es bonita, pero es la más valiente del barrio. Una tarde oscura, un ladrón se acercó al portón de la casa vecina. Chispa ladró fuerte y no se movió del zaguán. El hombre se fue corriendo. Al día siguiente, doña Rosa le llevó un plato hondo con arroz tibio. Ahora todos los vecinos la saludan. Mi hermana pequeña dice que Chispa no es fea: dice que es distinta. Yo creo que tiene razón, porque una perra fiel vale más que una bonita.',
-      adjs: ['flaca', 'café', 'parada', 'caída', 'bonita', 'valiente', 'oscura', 'fuerte', 'hondo', 'tibio', 'pequeña', 'fea', 'distinta', 'fiel'],
-      dets: ['Una', 'Mi', 'todos'],
+      adjs: ['flaca', 'café', 'parada', 'caída', 'bonita', 'valiente', 'oscura', 'vecina', 'fuerte', 'siguiente', 'hondo', 'tibio', 'pequeña', 'fea', 'distinta', 'fiel'],
+      dets: ['otra', 'todos', 'Mi'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo son las orejas de Chispa?', r: 'Una parada y la otra caída.',
           o: ['Las dos paradas.', 'Una parada y la otra caída.', 'Las dos caídas.'], c: 1 },
@@ -134,8 +137,9 @@ const LECTURA_ADJETIVOS = {
   5: [
     { id: 'LA5-01', titulo: 'El taller de barro de Ojojona', genero: 'descriptivo',
       texto: 'En Ojojona, doña Lucía trabaja el barro desde niña. Su taller es un cuarto fresco y polvoriento, con estantes altos llenos de piezas sin pintar. El barro llega en costales pesados y se ve gris y opaco. Ella lo amasa con las manos firmes hasta dejarlo suave y obediente. Sobre el torno pone una bola húmeda y, en pocos minutos, aparece una olla panzona. Después vienen los días lentos del secado, y por último el horno caliente. Cuando la pieza sale, el barro gris se ha vuelto rojizo y duro. Doña Lucía la revisa contra la luz, buscando alguna rajadura fina. Si está buena, sonríe y la pone en el estante de las terminadas.',
-      adjs: ['fresco', 'polvoriento', 'altos', 'pesados', 'gris', 'opaco', 'firmes', 'suave', 'obediente', 'húmeda', 'panzona', 'lentos', 'caliente', 'rojizo', 'duro', 'fina', 'buena', 'terminadas'],
-      dets: ['Su', 'pocos', 'alguna', 'una'],
+      adjs: ['fresco', 'polvoriento', 'altos', 'llenos', 'pesados', 'gris', 'opaco', 'firmes', 'suave', 'obediente', 'húmeda', 'panzona', 'lentos', 'caliente', 'rojizo', 'duro', 'fina', 'buena', 'terminadas'],
+      dets: ['Su', 'pocos', 'alguna'],
+      neutros: ['cuarto'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo se ve el barro cuando llega al taller?', r: 'Gris y opaco.',
           o: ['Gris y opaco.', 'Rojizo y duro.', 'Blanco y brillante.'], c: 0 },
@@ -151,8 +155,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA5-02', titulo: 'La montaña con nubes', genero: 'expositivo',
       texto: 'Hay montañas tan altas en Honduras que las nubes se quedan atrapadas en ellas. Ese bosque húmedo se llama bosque nublado. El aire es frío y pegajoso, y los troncos gruesos están cubiertos de musgo verde y esponjoso. De las ramas cuelgan barbas grises que gotean todo el día. Las hojas anchas de los helechos guardan agua limpia. Allí viven pájaros pequeños y ranitas silenciosas que no se ven en las tierras bajas y calientes. Ese bosque no solo es bonito: funciona como una esponja gigante. Recoge la neblina, la guarda entre las raíces y la suelta despacio hacia las quebradas. Por eso, cuando se corta un bosque nublado, muchas comunidades lejanas se quedan con menos agua.',
-      adjs: ['altas', 'húmedo', 'nublado', 'frío', 'pegajoso', 'gruesos', 'verde', 'esponjoso', 'grises', 'anchas', 'limpia', 'pequeños', 'silenciosas', 'bajas', 'calientes', 'bonito', 'gigante', 'lejanas'],
-      dets: ['Ese', 'muchas', 'una'],
+      adjs: ['altas', 'atrapadas', 'húmedo', 'nublado', 'frío', 'pegajoso', 'gruesos', 'cubiertos', 'verde', 'esponjoso', 'grises', 'anchas', 'limpia', 'pequeños', 'silenciosas', 'bajas', 'calientes', 'bonito', 'gigante', 'lejanas'],
+      dets: ['Ese', 'todo', 'muchas'],
+      neutros: ['quebradas', 'menos'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo es el aire dentro del bosque nublado?', r: 'Frío y pegajoso.',
           o: ['Seco y caliente.', 'Frío y pegajoso.', 'Tibio y liviano.'], c: 1 },
@@ -168,8 +173,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA5-03', titulo: 'El barrilete anaranjado', genero: 'cuento',
       texto: 'Marvin quería el barrilete más grande de la loma. Cortó varas delgadas de bambú, las amarró con hilo resistente y forró todo con papel anaranjado. La cola era larguísima, hecha de trapos viejos. Su primo Elmer se rio: dijo que era feo y pesado. El primer intento fue un desastre; el barrilete cayó como una piedra torpe. Marvin le quitó tres trapos a la cola y lo probó de nuevo. Esta vez subió recto, firme, más alto que los demás. Desde abajo se veía como una mancha encendida contra el cielo despejado. Elmer dejó de reírse y le pidió ayuda para arreglar el suyo, que era bonito pero nunca despegaba.',
-      adjs: ['grande', 'delgadas', 'resistente', 'anaranjado', 'larguísima', 'viejos', 'feo', 'pesado', 'primer', 'torpe', 'recto', 'firme', 'alto', 'encendida', 'despejado', 'bonito'],
-      dets: ['Su', 'tres', 'Esta', 'suyo'],
+      adjs: ['grande', 'delgadas', 'resistente', 'anaranjado', 'larguísima', 'hecha', 'viejos', 'feo', 'pesado', 'torpe', 'recto', 'firme', 'alto', 'encendida', 'despejado', 'bonito'],
+      dets: ['Su', 'primer', 'tres', 'Esta', 'demás', 'suyo'],
+      neutros: ['todo', 'nuevo'],
       preguntas: [
         { tipo: 'literal', q: '¿De qué hizo Marvin la cola del barrilete?', r: 'De trapos viejos.',
           o: ['De hilo resistente.', 'De papel anaranjado.', 'De trapos viejos.'], c: 2 },
@@ -186,7 +192,8 @@ const LECTURA_ADJETIVOS = {
     { id: 'LA5-04', titulo: 'Calles empedradas', genero: 'descriptivo',
       texto: 'El pueblo antiguo se despierta con un aire tibio. Sus calles son estrechas y empedradas, y las piedras redondas brillan cuando llueve. Las casas bajas tienen paredes gruesas, tejas rojizas y puertas anchas de madera oscura. En algunas ventanas hay macetas viejas con flores rojas. La iglesia blanca cierra la plaza por un lado; enfrente, unos bancos de hierro esperan bajo árboles frondosos. A las seis de la mañana pasa una señora silenciosa con un canasto tapado, y detrás va un perro perezoso. Todo parece quieto, pero no está dormido: en la esquina, un hombre ya barre la acera con una escoba corta y gastada, y saluda a cada persona que pasa.',
       adjs: ['antiguo', 'tibio', 'estrechas', 'empedradas', 'redondas', 'bajas', 'gruesas', 'rojizas', 'anchas', 'oscura', 'viejas', 'rojas', 'blanca', 'frondosos', 'silenciosa', 'tapado', 'perezoso', 'quieto', 'dormido', 'corta', 'gastada'],
-      dets: ['Sus', 'algunas', 'unos', 'cada'],
+      dets: ['Sus', 'algunas', 'cada'],
+      neutros: ['seis', 'Todo'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo son las calles del pueblo?', r: 'Estrechas y empedradas.',
           o: ['Anchas y de tierra.', 'Estrechas y empedradas.', 'Rectas y asfaltadas.'], c: 1 },
@@ -202,8 +209,8 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA5-05', titulo: 'La lancha azul', genero: 'cuento',
       texto: 'Don Chepe pintó su lancha de azul intenso y le escribió un nombre corto en la proa. La madera vieja quedó reluciente. Esa mañana el mar estaba manso y el cielo, limpio. Salió temprano con su hijo Bryan, callado y atento, que iba de ayudante por primera vez. A media mañana el viento se puso terco y las olas, altas y oscuras. Bryan se agarró fuerte y no dijo nada. Don Chepe no gritó: dio vuelta despacio y buscó la orilla más cercana. Cuando llegaron, la lancha azul tenía la pintura raspada, pero los dos estaban enteros. Bryan bajó con las piernas temblorosas y no soltó el remo hasta pisar la arena firme. «El mar bravo no se discute», dijo don Chepe. «Se le respeta.»',
-      adjs: ['azul', 'intenso', 'corto', 'vieja', 'reluciente', 'manso', 'limpio', 'callado', 'atento', 'terco', 'altas', 'oscuras', 'cercana', 'raspada', 'enteros', 'temblorosas', 'firme', 'bravo'],
-      dets: ['su', 'Esa', 'primera', 'dos'],
+      adjs: ['azul', 'intenso', 'corto', 'vieja', 'reluciente', 'manso', 'limpio', 'callado', 'atento', 'terco', 'altas', 'oscuras', 'fuerte', 'cercana', 'raspada', 'enteros', 'temblorosas', 'firme', 'bravo'],
+      dets: ['su', 'Esa', 'primera', 'media', 'dos'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo estaba el mar cuando salieron por la mañana?', r: 'Manso, y el cielo limpio.',
           o: ['Manso, y el cielo limpio.', 'Bravo y con olas altas.', 'Turbio y con neblina.'], c: 0 },
@@ -221,9 +228,10 @@ const LECTURA_ADJETIVOS = {
   /* ════════ 6º GRADO (125–150 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
   6: [
     { id: 'LA6-01', titulo: 'El arrecife de Roatán', genero: 'expositivo',
-      texto: 'Bajo el agua tibia de Roatán hay una ciudad viva. El arrecife parece una roca dura y quieta, pero está formado por animales diminutos que trabajan juntos durante siglos. Cada coral construye una casa calcárea, y encima de ella crecen otros corales nuevos. El resultado es un muro poroso y lleno de escondites. Allí viven peces amarillos, azules y rayados, langostas tímidas y caracoles enormes. El arrecife también sirve de muralla: rompe las olas fuertes antes de que lleguen a la playa y protege las casas cercanas. Los corales son frágiles y exigentes. Necesitan agua limpia, transparente y ni muy caliente ni muy fría. Cuando el agua se calienta demasiado, el coral se pone blanco y puede morir. Un arrecife blanquecino no es un arrecife descansando: es un arrecife enfermo.',
-      adjs: ['tibia', 'viva', 'dura', 'quieta', 'diminutos', 'calcárea', 'nuevos', 'poroso', 'amarillos', 'azules', 'rayados', 'tímidas', 'enormes', 'fuertes', 'cercanas', 'frágiles', 'exigentes', 'limpia', 'transparente', 'caliente', 'fría', 'blanco', 'blanquecino', 'enfermo'],
-      dets: ['Cada', 'otros', 'Un'],
+      texto: 'Bajo el agua tibia de Roatán hay una ciudad viva. El arrecife parece una roca dura y quieta, pero está formado por animales diminutos que trabajan juntos durante siglos. Cada coral construye una casa calcárea, y encima de ella crecen otros corales nuevos. Ese resultado es un muro poroso y lleno de escondites. Allí viven peces amarillos, azules y rayados, langostas tímidas y caracoles enormes. El arrecife también sirve de muralla: rompe las olas fuertes antes de que lleguen a la playa y protege las casas cercanas. Los corales son frágiles y exigentes. Necesitan agua limpia, transparente y ni muy caliente ni muy fría. Cuando el agua se calienta demasiado, el coral se pone blanco y puede morir. Un arrecife blanquecino no es un arrecife descansando: es un arrecife enfermo.',
+      adjs: ['tibia', 'viva', 'dura', 'quieta', 'diminutos', 'juntos', 'calcárea', 'nuevos', 'poroso', 'lleno', 'amarillos', 'azules', 'rayados', 'tímidas', 'enormes', 'fuertes', 'cercanas', 'frágiles', 'exigentes', 'limpia', 'transparente', 'caliente', 'fría', 'blanco', 'blanquecino', 'enfermo'],
+      dets: ['Cada', 'otros', 'Ese'],
+      neutros: ['formado', 'descansando'],
       preguntas: [
         { tipo: 'literal', q: '¿Qué construye cada coral?', r: 'Una casa calcárea, sobre la que crecen corales nuevos.',
           o: ['Una casa calcárea sobre la que crecen corales nuevos.', 'Un nido de arena fina.', 'Un túnel bajo la playa.'], c: 0 },
@@ -239,8 +247,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA6-02', titulo: 'Carta desde la aldea', genero: 'carta',
       texto: 'Querida Nayeli: te escribo desde la aldea, sentada en el corredor. Aquí todo es distinto de lo que te imaginas. La escuela es pequeña y tiene dos aulas soleadas; el patio es enorme y de tierra colorada. Mi maestra es joven, exigente y muy paciente. Nos hace escribir cada semana una descripción, y dice que un texto sin adjetivos es como una comida sin sal. Al principio yo escribía «el cerro grande», nada más. Ahora escribo «el cerro grande, pelado y sin sombra», y ya no es cualquier cerro: es el mío. Las tardes son largas y frescas. Cuando bajan las nubes bajas, el aire se pone helado y la gente cierra las puertas temprano. Te espero en diciembre. Traé tu cuaderno viejo, ese de tapa azul, y te enseño mi cerro. Con cariño, Suyapa.',
-      adjs: ['distinto', 'pequeña', 'soleadas', 'enorme', 'colorada', 'joven', 'exigente', 'paciente', 'grande', 'pelado', 'largas', 'frescas', 'bajas', 'helado', 'viejo', 'azul'],
-      dets: ['dos', 'Mi', 'cada', 'ese', 'tu'],
+      adjs: ['Querida', 'sentada', 'distinto', 'pequeña', 'soleadas', 'enorme', 'colorada', 'joven', 'exigente', 'paciente', 'grande', 'pelado', 'largas', 'frescas', 'bajas', 'helado', 'viejo', 'azul'],
+      dets: ['dos', 'Mi', 'cada', 'cualquier', 'mío', 'tu', 'ese'],
+      neutros: ['todo'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo describe Suyapa a su maestra?', r: 'Joven, exigente y muy paciente.',
           o: ['Joven, exigente y muy paciente.', 'Vieja, callada y distraída.', 'Alegre, ruidosa y desordenada.'], c: 0 },
@@ -256,8 +265,8 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA6-03', titulo: 'Las rosquillas de tía Marina', genero: 'cuento',
       texto: 'Tía Marina hace rosquillas desde hace treinta años y no mide nada con taza. Su cocina es angosta, oscura y siempre huele a maíz tostado. Amasa con las manos manchadas de harina y va probando la masa: si está muy blanda, agrega maíz molido; si está seca y quebradiza, le pone cuajada fresca. El horno es un domo de barro renegrido, y ella sabe que está listo cuando la mano no aguanta cerca de la boca. Un día, su sobrina llegó con una receta impresa, exacta, con gramos y minutos. Tía Marina la leyó despacio y sonrió. «Está buena tu receta», le dijo, «pero no dice cómo se siente la masa». Ese día la sobrina apuntó otra cosa en su cuaderno: los adjetivos que su tía usaba para hablar de la masa.',
-      adjs: ['angosta', 'oscura', 'tostado', 'manchadas', 'blanda', 'seca', 'quebradiza', 'fresca', 'renegrido', 'listo', 'impresa', 'exacta', 'buena'],
-      dets: ['Su', 'treinta', 'Un', 'Ese', 'otra'],
+      adjs: ['angosta', 'oscura', 'tostado', 'manchadas', 'blanda', 'molido', 'seca', 'quebradiza', 'fresca', 'renegrido', 'listo', 'impresa', 'exacta', 'buena'],
+      dets: ['treinta', 'Su', 'tu', 'Ese', 'otra'],
       preguntas: [
         { tipo: 'literal', q: '¿Qué le agrega tía Marina a la masa si está seca y quebradiza?', r: 'Cuajada fresca.',
           o: ['Más maíz molido.', 'Cuajada fresca.', 'Agua tibia.'], c: 1 },
@@ -273,8 +282,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA6-04', titulo: 'Un partido bajo la lluvia', genero: 'crónica',
       texto: 'El partido empezó con una cancha reseca y polvorienta. A los veinte minutos cayó un aguacero espeso y todo cambió. El balón, antes liviano y saltarín, se puso pesado y terco. Los uniformes limpios quedaron irreconocibles. Nuestro portero, alto y flaco, resbalaba en cada salida. El equipo visitante, más rápido en seco, empezó a fallar los pases largos. Nuestro entrenador gritó una sola instrucción: «¡Pases cortos y al ras!». Fue un consejo sencillo pero exacto. Con el barro espeso, el balón ya no rodaba lejos, así que los pases cortos eran los únicos posibles. Ganamos con un gol feo, embarrado, empujado casi con la rodilla. En el camino de vuelta, todos íbamos sucios, mojados y felices. Nadie recordaba ya la cancha reseca y dura del principio.',
-      adjs: ['reseca', 'polvorienta', 'espeso', 'liviano', 'saltarín', 'pesado', 'terco', 'limpios', 'irreconocibles', 'alto', 'flaco', 'rápido', 'largos', 'cortos', 'sencillo', 'exacto', 'posibles', 'feo', 'embarrado', 'sucios', 'mojados', 'felices'],
-      dets: ['veinte', 'Nuestro', 'cada', 'una', 'todos'],
+      adjs: ['reseca', 'polvorienta', 'espeso', 'liviano', 'saltarín', 'pesado', 'terco', 'limpios', 'irreconocibles', 'alto', 'flaco', 'visitante', 'rápido', 'largos', 'sola', 'cortos', 'sencillo', 'exacto', 'únicos', 'posibles', 'feo', 'embarrado', 'empujado', 'sucios', 'mojados', 'felices', 'dura'],
+      dets: ['veinte', 'Nuestro', 'cada'],
+      neutros: ['todo', 'seco', 'todos'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo estaba la cancha al empezar el partido?', r: 'Reseca y polvorienta.',
           o: ['Mojada y resbalosa.', 'Reseca y polvorienta.', 'Verde y pareja.'], c: 1 },
@@ -290,8 +300,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA6-05', titulo: 'El pájaro que casi nadie ve', genero: 'expositivo',
       texto: 'El quetzal es un ave rara y esquiva de los bosques nublados. El macho tiene el pecho rojo encendido, la espalda de un verde metálico que cambia con la luz y unas plumas larguísimas en la cola. La hembra es más discreta: verde apagada, sin esa cola llamativa. Ambos anidan en troncos podridos y blandos, porque solo esa madera floja se deja picotear con un pico pequeño. Se alimenta sobre todo de aguacatillos silvestres, que traga enteros. Después suelta la semilla lejos del árbol madre, y así siembra bosque sin proponérselo. Verlo es difícil: se queda inmóvil entre las hojas y su verde brillante se confunde con el follaje mojado. Muchos guías dicen que al quetzal no se le busca; se le espera, callado y quieto, hasta que él decide moverse.',
-      adjs: ['rara', 'esquiva', 'nublados', 'rojo', 'encendido', 'metálico', 'larguísimas', 'discreta', 'apagada', 'llamativa', 'podridos', 'blandos', 'floja', 'pequeño', 'silvestres', 'enteros', 'difícil', 'inmóvil', 'brillante', 'mojado', 'callado', 'quieto'],
-      dets: ['unas', 'esa', 'Ambos', 'Muchos'],
+      adjs: ['rara', 'esquiva', 'nublados', 'rojo', 'encendido', 'verde', 'metálico', 'larguísimas', 'discreta', 'apagada', 'llamativa', 'podridos', 'blandos', 'floja', 'pequeño', 'silvestres', 'enteros', 'difícil', 'inmóvil', 'brillante', 'mojado', 'callado', 'quieto'],
+      dets: ['esa', 'Ambos', 'Muchos', 'su'],
+      neutros: ['todo'],
       preguntas: [
         { tipo: 'literal', q: '¿En qué clase de troncos anida el quetzal?', r: 'En troncos podridos y blandos.',
           o: ['En troncos podridos y blandos.', 'En pinos altos y sanos.', 'En palos secos del suelo.'], c: 0 },
@@ -310,8 +321,8 @@ const LECTURA_ADJETIVOS = {
   7: [
     { id: 'LA7-01', titulo: 'Los sombreros de junco', genero: 'expositivo',
       texto: 'En varios pueblos de Santa Bárbara se tejen sombreros de junco desde hace generaciones. El junco es una fibra flexible y resistente que crece en terrenos húmedos. Antes de tejerlo hay que prepararlo: se corta, se pone a secar al sol hasta que queda pálido y quebradizo, y luego se humedece otra vez para volverlo dócil. Un junco demasiado seco se parte; uno demasiado mojado se estira y deforma la pieza. La tejedora empieza por la copa, con una espiral apretada y pareja, y va abriendo hacia el ala. Un sombrero fino puede llevar más de veinte vueltas por pulgada, y en ese caso el tejido queda tan cerrado que casi no deja pasar la luz. Los sombreros gruesos se hacen más rápido y se venden más baratos, pero se deforman con el primer aguacero. La diferencia entre uno y otro no está en el color: está en lo apretado del tejido.',
-      adjs: ['flexible', 'resistente', 'húmedos', 'pálido', 'quebradizo', 'dócil', 'seco', 'mojado', 'apretada', 'pareja', 'fino', 'cerrado', 'gruesos', 'baratos', 'primer', 'apretado'],
-      dets: ['varios', 'veinte', 'ese', 'otro'],
+      adjs: ['flexible', 'resistente', 'húmedos', 'pálido', 'quebradizo', 'dócil', 'seco', 'mojado', 'apretada', 'pareja', 'fino', 'cerrado', 'gruesos', 'rápido', 'baratos', 'apretado'],
+      dets: ['varios', 'otra', 'veinte', 'ese', 'primer', 'otro'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo queda el junco después de secarse al sol?', r: 'Pálido y quebradizo.',
           o: ['Pálido y quebradizo.', 'Verde y flexible.', 'Oscuro y pesado.'], c: 0 },
@@ -327,8 +338,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA7-02', titulo: 'Las piedras labradas de Copán', genero: 'descriptivo',
       texto: 'En Copán, las piedras hablan sin decir palabra. Las estelas son bloques altos y estrechos, labrados por sus cuatro caras con figuras profundas. La piedra es volcánica, de un gris verdoso suave, y por eso los antiguos escultores pudieron trabajarla con detalle. Algunas figuras están tan gastadas por la lluvia que apenas se adivinan; otras, protegidas por la sombra de un árbol, siguen nítidas y precisas. Uno se acerca esperando algo tosco y encuentra lo contrario: dedos delgados, penachos finísimos, ojos serenos. Alrededor, la hierba corta y verde deja ver una plaza amplia y despejada. Al fondo se levanta una escalinata larguísima, cubierta de signos apretados; subirla despacio es la única manera de mirarla entera. Los guías piden algo raro para un lugar tan visitado: silencio. Dicen que el sitio es magnífico cuando está lleno de gente, pero se vuelve inolvidable cuando está callado.',
-      adjs: ['altos', 'estrechos', 'labrados', 'profundas', 'volcánica', 'verdoso', 'suave', 'antiguos', 'gastadas', 'protegidas', 'nítidas', 'precisas', 'tosco', 'delgados', 'finísimos', 'serenos', 'corta', 'verde', 'amplia', 'despejada', 'larguísima', 'apretados', 'única', 'entera', 'raro', 'magnífico', 'inolvidable', 'callado'],
+      adjs: ['altos', 'estrechos', 'labrados', 'profundas', 'volcánica', 'verdoso', 'suave', 'antiguos', 'gastadas', 'protegidas', 'nítidas', 'precisas', 'tosco', 'contrario', 'delgados', 'finísimos', 'serenos', 'corta', 'verde', 'amplia', 'despejada', 'larguísima', 'cubierta', 'apretados', 'única', 'entera', 'raro', 'visitado', 'magnífico', 'lleno', 'inolvidable', 'callado'],
       dets: ['sus', 'cuatro', 'Algunas', 'otras'],
+      neutros: ['gris'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo son las estelas de Copán?', r: 'Bloques altos y estrechos, labrados por sus cuatro caras.',
           o: ['Bloques altos y estrechos, labrados por sus cuatro caras.', 'Losas planas puestas en el suelo.', 'Columnas redondas y lisas.'], c: 0 },
@@ -344,8 +356,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA7-03', titulo: 'El vivero de la escuela', genero: 'crónica',
       texto: 'El vivero empezó con veinte bolsas negras y tierra prestada. La idea fue de séptimo grado: sembrar árboles nativos para la ladera pelada detrás de la cancha. Al principio todo salió mal. Las primeras semillas, compradas baratas, no germinaron. La segunda tanda se pudrió por riego excesivo. En la tercera, la maestra propuso algo distinto: llevar un cuaderno donde cada equipo anotara cómo se veía su planta. No bastaba con escribir «bien» o «mal». Había que escribir «tallo delgado y pálido», «hojas mordidas», «tierra apelmazada». Ese cuaderno cambió el vivero. Con adjetivos precisos, los muchachos empezaron a notar diferencias que antes se les escapaban, y cada problema tuvo un remedio distinto. En noviembre trasplantaron ciento veinte arbolitos sanos. La ladera sigue casi pelada, porque un árbol pequeño tarda años. Pero los muchachos ya no ven una ladera: ven ciento veinte plantas con nombre.',
-      adjs: ['negras', 'prestada', 'nativos', 'pelada', 'primeras', 'baratas', 'excesivo', 'distinto', 'delgado', 'pálido', 'mordidas', 'apelmazada', 'precisos', 'sanos', 'pequeño'],
-      dets: ['veinte', 'cada', 'segunda', 'tercera', 'Ese', 'su'],
+      adjs: ['negras', 'prestada', 'nativos', 'pelada', 'compradas', 'baratas', 'excesivo', 'distinto', 'delgado', 'pálido', 'mordidas', 'apelmazada', 'precisos', 'sanos', 'pequeño'],
+      dets: ['veinte', 'séptimo', 'primeras', 'segunda', 'tercera', 'cada', 'su', 'Ese', 'ciento'],
+      neutros: ['todo'],
       preguntas: [
         { tipo: 'literal', q: '¿Qué le pasó a la segunda tanda de semillas?', r: 'Se pudrió por riego excesivo.',
           o: ['No germinó porque era barata.', 'Se pudrió por riego excesivo.', 'Se la comieron los pájaros.'], c: 1 },
@@ -361,8 +374,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA7-04', titulo: 'La palabra justa', genero: 'expositivo',
       texto: 'No todos los adjetivos pesan lo mismo. Hay unos gastados de tanto usarlos: «bonito», «feo», «bueno», «malo». Sirven para salir del paso, pero no dejan ver nada. Si alguien dice que el almuerzo estuvo bueno, el que escucha no sabe si estaba caliente, abundante, salado o simplemente puntual. Hay otros adjetivos que trabajan de verdad. «Aguado», «espeso», «tibio», «recalentado» dicen algo distinto cada uno, y quien escucha puede imaginar el plato. A esos les llamamos precisos. Elegirlos no es cuestión de tener un vocabulario enorme, sino de observar antes de hablar. El que no mira el plato solo puede decir «bueno». Hay además adjetivos tramposos, que parecen describir y en realidad juzgan: llamar a alguien «raro» no informa de cómo es esa persona, informa de lo que opina el que habla. Conviene reconocerlos, sobre todo cuando se usan para hablar de gente.',
-      adjs: ['gastados', 'bonito', 'feo', 'bueno', 'malo', 'caliente', 'abundante', 'salado', 'puntual', 'aguado', 'espeso', 'tibio', 'recalentado', 'precisos', 'enorme', 'tramposos', 'raro'],
-      dets: ['todos', 'unos', 'otros', 'esos', 'esa', 'cada'],
+      adjs: ['gastados', 'bonito', 'feo', 'bueno', 'malo', 'caliente', 'abundante', 'salado', 'puntual', 'Aguado', 'espeso', 'tibio', 'recalentado', 'distinto', 'precisos', 'enorme', 'tramposos', 'raro'],
+      dets: ['todos', 'otros', 'cada', 'esos', 'esa'],
+      neutros: ['tanto', 'todo'],
       preguntas: [
         { tipo: 'literal', q: '¿Qué ejemplos da el texto de adjetivos «gastados»?', r: 'Bonito, feo, bueno y malo.',
           o: ['Aguado, espeso y tibio.', 'Bonito, feo, bueno y malo.', 'Raro, extraño y distinto.'], c: 1 },
@@ -378,8 +392,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA7-05', titulo: 'Noche de luciérnagas', genero: 'descriptivo',
       texto: 'La noche cayó rápida sobre el potrero. El aire quedó pesado y quieto, con ese olor dulzón del zacate recién cortado. Primero apareció una lucecita amarilla, tímida, cerca del alambre. Después dos, después muchas. En un momento el potrero entero estuvo salpicado de puntos intermitentes, como si alguien hubiera volcado un tarro de chispas frías. Las luciérnagas no alumbran seguido: encienden y apagan, encienden y apagan, con un ritmo lento y desigual. Ninguna se apura. Marleny apagó su linterna blanca y potente, que a su lado se veía grosera. Se quedó sentada en la piedra tibia, con las manos quietas. El abuelo le había dicho que la luz de esos bichos es fría, que no quema nada. Ella no lo creyó hasta esa noche, cuando una se le paró en el brazo desnudo y se apagó despacio, sin dejar calor.',
-      adjs: ['rápida', 'pesado', 'quieto', 'dulzón', 'cortado', 'amarilla', 'tímida', 'intermitentes', 'frías', 'lento', 'desigual', 'blanca', 'potente', 'grosera', 'tibia', 'quietas', 'fría', 'desnudo'],
+      adjs: ['rápida', 'pesado', 'quieto', 'dulzón', 'cortado', 'amarilla', 'tímida', 'entero', 'salpicado', 'intermitentes', 'frías', 'lento', 'desigual', 'blanca', 'potente', 'grosera', 'sentada', 'tibia', 'quietas', 'fría', 'desnudo'],
       dets: ['ese', 'dos', 'muchas', 'Ninguna', 'su', 'esos', 'esa'],
+      neutros: ['Primero', 'volcado', 'seguido'],
       preguntas: [
         { tipo: 'literal', q: '¿Con qué compara el texto el potrero lleno de luciérnagas?', r: 'Con un tarro de chispas frías volcado.',
           o: ['Con un cielo estrellado.', 'Con un tarro de chispas frías volcado.', 'Con una ciudad vista de lejos.'], c: 1 },
@@ -398,8 +413,9 @@ const LECTURA_ADJETIVOS = {
   8: [
     { id: 'LA8-01', titulo: 'El adjetivo que sobra', genero: 'argumentativo',
       texto: 'Se repite mucho el consejo de escribir con abundantes adjetivos, como si el texto rico fuera el texto cargado. La experiencia de cualquier corrector dice lo contrario. Un adjetivo bien puesto vale por cinco amontonados. Cuando alguien escribe «una hermosa, bella y preciosa mañana soleada», no describe tres cosas: repite una sola idea tres veces y además cansa a quien lee. Hay adjetivos que no aportan nada porque ya vienen dentro del sustantivo. Decir «un cadáver muerto» o «una sorpresa inesperada» no agrega información: la repite. Estos casos se llaman redundantes. Hay otros que sí trabajan, y se reconocen con una prueba sencilla: quítelos y vea si el texto pierde algo. En «una mañana fría» el adjetivo dice cuál mañana fue; si lo borra, la frase se empobrece. En «una mañana bonita» casi no pierde nada, porque «bonita» solo dice que al autor le gustó. Escribir bien no consiste en poner más adjetivos, sino en poder defender cada uno de los que quedaron.',
-      adjs: ['abundantes', 'rico', 'cargado', 'amontonados', 'hermosa', 'bella', 'preciosa', 'soleada', 'muerto', 'inesperada', 'redundantes', 'sencilla', 'fría', 'bonita'],
-      dets: ['Un', 'tres', 'cinco', 'Estos', 'otros', 'cada'],
+      adjs: ['abundantes', 'rico', 'cargado', 'contrario', 'puesto', 'amontonados', 'hermosa', 'bella', 'preciosa', 'soleada', 'sola', 'muerto', 'inesperada', 'redundantes', 'sencilla', 'fría', 'bonita'],
+      dets: ['cualquier', 'cinco', 'tres', 'Estos', 'otros', 'cada'],
+      neutros: ['mucho', 'cuál'],
       preguntas: [
         { tipo: 'literal', q: '¿Qué ejemplos da el texto de adjetivos redundantes?', r: '«Cadáver muerto» y «sorpresa inesperada».',
           o: ['«Cadáver muerto» y «sorpresa inesperada».', '«Mañana fría» y «mañana bonita».', '«Hermosa» y «soleada».'], c: 0 },
@@ -416,7 +432,7 @@ const LECTURA_ADJETIVOS = {
     { id: 'LA8-02', titulo: 'La radio del abuelo', genero: 'narrativo',
       texto: 'La radio del abuelo era un aparato cuadrado, forrado en tela áspera, con dos perillas grandes y un dial amarillento. Pesaba como un ladrillo. En la casa había un teléfono moderno con todas las emisoras del mundo, pero el abuelo seguía con la suya. Yo lo encontraba ridículo. Una noche de octubre se fue la luz en todo el municipio. El teléfono aguantó dos horas y quedó mudo. El abuelo sacó del ropero cuatro pilas viejas, las metió en la radio y giró la perilla áspera hasta que la estática se volvió voz. Escuchamos el reporte del río, los nombres de las aldeas incomunicadas y la lista de las escuelas convertidas en albergues. Esa radio pequeña y anticuada fue nuestra única ventana durante tres días. Cuando volvió la luz, guardé mi opinión. El abuelo no dijo «te lo dije». Solo limpió el dial con un trapo suave y la devolvió a su lugar de siempre.',
       adjs: ['cuadrado', 'forrado', 'áspera', 'grandes', 'amarillento', 'moderno', 'ridículo', 'mudo', 'viejas', 'incomunicadas', 'convertidas', 'pequeña', 'anticuada', 'única', 'suave'],
-      dets: ['dos', 'todas', 'suya', 'cuatro', 'Esa', 'nuestra', 'tres', 'mi', 'su'],
+      dets: ['dos', 'todas', 'suya', 'todo', 'cuatro', 'Esa', 'nuestra', 'tres', 'mi', 'su'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo era la radio del abuelo?', r: 'Un aparato cuadrado, forrado en tela áspera, con dos perillas grandes y un dial amarillento.',
           o: ['Pequeña, plateada y con pantalla.', 'Cuadrada, forrada en tela áspera, con dos perillas grandes.', 'Redonda y de plástico brillante.'], c: 1 },
@@ -432,8 +448,8 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA8-03', titulo: 'Los telares de La Esperanza', genero: 'expositivo',
       texto: 'En los alrededores de La Esperanza, en Intibucá, muchas familias lencas conservan el telar de cintura. Es un aparato simple y exigente: unos palos delgados, un juego de hilos tensos y una faja que la tejedora se amarra a la espalda. La tensión de la tela no la da una máquina, la da el propio cuerpo. Si la tejedora se inclina hacia adelante, los hilos quedan flojos; si se echa atrás, quedan tirantes. De ese equilibrio depende que la pieza salga pareja. Los colores tradicionales son sobrios: café, negro, blanco crudo, rojo apagado. Las figuras son geométricas, repetidas y simétricas. Nada de eso es casual: un tejido de cintura no permite improvisar, porque el diseño se decide antes, al montar los hilos. Quien no lo sabe mira una faja terminada y ve algo sencillo. Quien lo sabe ve una pieza planificada entera desde el primer hilo, donde cualquier error obliga a deshacer y volver a empezar.',
-      adjs: ['simple', 'exigente', 'delgados', 'tensos', 'flojos', 'tirantes', 'pareja', 'tradicionales', 'sobrios', 'crudo', 'apagado', 'geométricas', 'repetidas', 'simétricas', 'casual', 'terminada', 'sencillo', 'planificada', 'primer'],
-      dets: ['muchas', 'unos', 'ese', 'cualquier'],
+      adjs: ['lencas', 'simple', 'exigente', 'delgados', 'tensos', 'flojos', 'tirantes', 'pareja', 'tradicionales', 'sobrios', 'café', 'negro', 'blanco', 'crudo', 'rojo', 'apagado', 'geométricas', 'repetidas', 'simétricas', 'casual', 'terminada', 'sencillo', 'planificada', 'entera'],
+      dets: ['muchas', 'ese', 'primer', 'cualquier'],
       preguntas: [
         { tipo: 'literal', q: '¿Qué da la tensión de la tela en un telar de cintura?', r: 'El propio cuerpo de la tejedora.',
           o: ['El propio cuerpo de la tejedora.', 'Un motor pequeño.', 'Un peso colgado del palo.'], c: 0 },
@@ -449,8 +465,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA8-04', titulo: 'El manglar del sur', genero: 'expositivo',
       texto: 'En la costa sur de Honduras crece un bosque que casi nadie llamaría bonito. El manglar es enredado, lodoso y oscuro. Sus raíces salen del agua como patas torcidas y el suelo es un barro blando que se traga las botas. Huele fuerte. Sin embargo, ese lugar incómodo es una de las guarderías más productivas del mar. Entre esas raíces enredadas se refugian camarones diminutos, jaibas y peces jóvenes que afuera serían presa fácil. Cuando crecen, salen al mar abierto; buena parte de lo que se pesca lejos de la costa empezó su vida allí. El manglar también sostiene la tierra: sus raíces amarran el lodo y frenan el oleaje de las tormentas. Donde el manglar se corta para hacer estanques, la costa se vuelve frágil y el agua salada avanza. Los pescadores viejos lo saben desde siempre. Un paisaje puede ser feo y valioso al mismo tiempo. Confundir esas dos ideas ha costado caro en muchas costas del mundo.',
-      adjs: ['bonito', 'enredado', 'lodoso', 'oscuro', 'torcidas', 'blando', 'fuerte', 'incómodo', 'productivas', 'enredadas', 'diminutos', 'jóvenes', 'fácil', 'abierto', 'frágil', 'salada', 'viejos', 'feo', 'valioso'],
-      dets: ['Sus', 'ese', 'esas', 'Un', 'dos', 'muchas'],
+      adjs: ['sur', 'bonito', 'enredado', 'lodoso', 'oscuro', 'torcidas', 'blando', 'fuerte', 'incómodo', 'productivas', 'enredadas', 'diminutos', 'jóvenes', 'fácil', 'abierto', 'buena', 'frágil', 'salada', 'viejos', 'feo', 'valioso'],
+      dets: ['Sus', 'ese', 'esas', 'su', 'dos', 'muchas'],
+      neutros: ['caro'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo describe el texto el suelo del manglar?', r: 'Un barro blando que se traga las botas.',
           o: ['Arena firme y clara.', 'Un barro blando que se traga las botas.', 'Piedra lisa y resbalosa.'], c: 1 },
@@ -466,8 +483,8 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA8-05', titulo: 'La biblioteca del barrio', genero: 'crónica',
       texto: 'La biblioteca del barrio abrió en una casa prestada, con estantes cojos y sillas desiguales. Nadie llegó la primera semana. Doña Ilse, la encargada, no puso un rótulo grande ni repartió volantes vistosos. Hizo algo más lento: pidió a cada vecino que le contara qué le gustaría leer. Un muchacho pidió libros sobre motores. Una señora pidió recetas. Dos niñas pidieron cuentos de miedo, pero de miedo suave, dijeron, «no del que da pesadillas». Con esa lista desordenada y pequeña, doña Ilse consiguió libros usados en tres ciudades. Al mes había quince lectores fijos; al año, más de cien. Lo interesante es lo que no hizo. No compró la colección completa y cara que le ofrecieron. No llenó las paredes de frases motivadoras. Tampoco pidió un silencio absoluto: dejó que los niños hablaran bajito. Dijo una sola cosa cuando le preguntaron por su método: que una biblioteca vacía no se llena con libros buenos, sino con libros que alguien esperaba.',
-      adjs: ['prestada', 'cojos', 'desiguales', 'primera', 'grande', 'vistosos', 'lento', 'suave', 'desordenada', 'pequeña', 'usados', 'fijos', 'interesante', 'completa', 'cara', 'motivadoras', 'absoluto', 'vacía', 'buenos'],
-      dets: ['cada', 'Un', 'Dos', 'esa', 'tres', 'quince', 'cien', 'su'],
+      adjs: ['prestada', 'cojos', 'desiguales', 'encargada', 'grande', 'vistosos', 'lento', 'suave', 'desordenada', 'pequeña', 'usados', 'fijos', 'interesante', 'completa', 'cara', 'motivadoras', 'absoluto', 'sola', 'vacía', 'buenos'],
+      dets: ['primera', 'cada', 'Dos', 'esa', 'tres', 'quince', 'cien', 'su'],
       preguntas: [
         { tipo: 'literal', q: '¿Qué hizo doña Ilse en lugar de poner un rótulo y repartir volantes?', r: 'Le pidió a cada vecino que le contara qué le gustaría leer.',
           o: ['Le pidió a cada vecino que le contara qué le gustaría leer.', 'Compró una colección completa.', 'Puso frases motivadoras en las paredes.'], c: 0 },
@@ -486,8 +503,9 @@ const LECTURA_ADJETIVOS = {
   9: [
     { id: 'LA9-01', titulo: 'Adjetivos que juzgan', genero: 'argumentativo',
       texto: 'Un adjetivo puede describir o puede juzgar, y casi nunca avisa cuál de las dos cosas está haciendo. Si un titular dice «una protesta multitudinaria» y otro dice «una protesta caótica», los dos hablan del mismo hecho. El primero informa del tamaño; el segundo emite una opinión disfrazada de dato. El lector desprevenido cree haber recibido información, cuando en realidad recibió una postura. Este mecanismo es viejo y eficaz. Funciona porque el adjetivo entra pegado al sustantivo, sin pedir permiso, y quien lee no se detiene a separarlos. Nadie discute «protesta»; casi nadie discute «caótica». Existe una prueba útil para reconocerlos: pregúntese si el adjetivo se puede comprobar. «Multitudinaria» admite un conteo aproximado. «Caótica» no admite ninguno: depende del ojo que mira. Los adjetivos verificables informan; los no verificables opinan, y opinar no tiene nada de malo mientras se declare. Lo grave es la opinión escondida dentro de un texto que se presenta como noticia. Leer bien, entonces, incluye una tarea humilde y constante: subrayar los adjetivos y preguntarse quién los eligió.',
-      adjs: ['multitudinaria', 'caótica', 'primero', 'segundo', 'disfrazada', 'desprevenido', 'viejo', 'eficaz', 'útil', 'verificables', 'escondida', 'humilde', 'constante'],
-      dets: ['Un', 'otro', 'Este', 'ninguno', 'una'],
+      adjs: ['multitudinaria', 'caótica', 'disfrazada', 'desprevenido', 'viejo', 'eficaz', 'pegado', 'útil', 'aproximado', 'verificables', 'malo', 'grave', 'escondida', 'humilde', 'constante'],
+      dets: ['dos', 'otro', 'primero', 'segundo', 'Este', 'ninguno'],
+      neutros: ['cuál', 'recibido'],
       preguntas: [
         { tipo: 'literal', q: '¿Qué prueba propone el texto para distinguir un adjetivo que informa de uno que opina?', r: 'Preguntarse si el adjetivo se puede comprobar.',
           o: ['Contar cuántas veces aparece.', 'Preguntarse si el adjetivo se puede comprobar.', 'Buscar quién escribió el titular.'], c: 1 },
@@ -504,7 +522,8 @@ const LECTURA_ADJETIVOS = {
     { id: 'LA9-02', titulo: 'El pescador de Trujillo', genero: 'narrativo',
       texto: 'Don Onán aprendió a leer el mar antes que las letras. A los sesenta y tres años distingue diferencias que a un visitante le resultarían invisibles: un agua verdosa y quieta que anuncia calma; un agua parda y picada que aconseja quedarse; ese brillo aceitoso y engañoso de las tardes de septiembre, que parece manso y no lo es. Su vocabulario del mar es reducido en palabras y enorme en precisión. Nunca dice «feo» ni «bonito». Dice «encrespado», «plomizo», «tendido», «cerrado». Cada uno de esos adjetivos es una decisión: si sale, si espera, si regresa. Una tarde, un estudiante que hacía su práctica le preguntó cómo se aprendía eso. Don Onán se quedó pensando y contestó algo que el muchacho anotó en su cuaderno mojado: que no se aprende mirando el mar, sino mirando el mar todos los días, incluso los días en que no pasa nada. Los adjetivos, dijo, no se estudian; se ganan. Después ordenó las boyas viejas y no habló más del asunto. El mar seguía tendido y gris detrás de él, indiferente a la conversación.',
       adjs: ['invisibles', 'verdosa', 'quieta', 'parda', 'picada', 'aceitoso', 'engañoso', 'manso', 'reducido', 'enorme', 'feo', 'bonito', 'encrespado', 'plomizo', 'tendido', 'cerrado', 'mojado', 'viejas', 'gris', 'indiferente'],
-      dets: ['un', 'ese', 'Su', 'esos', 'Cada', 'todos'],
+      dets: ['sesenta', 'tres', 'ese', 'Su', 'Cada', 'esos', 'todos'],
+      neutros: ['visitante'],
       preguntas: [
         { tipo: 'literal', q: '¿Qué adjetivos usa don Onán en lugar de «feo» y «bonito»?', r: 'Encrespado, plomizo, tendido y cerrado.',
           o: ['Verde, azul, gris y pardo.', 'Manso, quieto, fuerte y suave.', 'Encrespado, plomizo, tendido y cerrado.'], c: 2 },
@@ -520,8 +539,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA9-03', titulo: 'Retrato de una maestra', genero: 'semblanza',
       texto: 'A la profesora Blanca le decían estricta, y ella no lo desmentía. Llegaba temprano, con el pelo recogido y un cuaderno gastado bajo el brazo. Su aula era limpia, ordenada y silenciosa; sus reglas, pocas y claras. Un alumno tardío no entraba después del saludo, pero podía quedarse a recuperar al final del día. Nunca gritó. Los que la tuvieron recuerdan otra cosa que ese adjetivo no recoge: era minuciosa. Devolvía los trabajos con anotaciones largas al margen, escritas en tinta verde, donde señalaba el párrafo exacto que no se entendía. Ese trabajo callado le tomaba noches enteras y nadie se lo pagaba. Con los años, sus antiguos alumnos empezaron a corregirse entre ellos: «estricta no; exigente». La diferencia parece pequeña y no lo es. Estricto se refiere a quien impone reglas rígidas; exigente, a quien espera mucho de alguien porque cree que puede darlo. Blanca no cuidaba las reglas: cuidaba a las personas que estaban detrás de los trabajos. Al jubilarse dijo que solo había hecho su trabajo. Nadie en el patio le creyó.',
-      adjs: ['estricta', 'recogido', 'gastado', 'limpia', 'ordenada', 'silenciosa', 'pocas', 'claras', 'tardío', 'minuciosa', 'largas', 'verde', 'exacto', 'callado', 'enteras', 'antiguos', 'pequeña', 'rígidas', 'exigente'],
-      dets: ['Su', 'sus', 'Un', 'otra', 'ese'],
+      adjs: ['estricta', 'recogido', 'gastado', 'limpia', 'ordenada', 'silenciosa', 'claras', 'tardío', 'minuciosa', 'largas', 'escritas', 'verde', 'exacto', 'callado', 'enteras', 'antiguos', 'exigente', 'pequeña', 'Estricto', 'rígidas'],
+      dets: ['Su', 'sus', 'pocas', 'otra', 'ese'],
+      neutros: ['final', 'mucho'],
       preguntas: [
         { tipo: 'literal', q: '¿Cómo devolvía la profesora Blanca los trabajos?', r: 'Con anotaciones largas al margen, en tinta verde, señalando el párrafo exacto.',
           o: ['Con anotaciones largas en tinta verde, señalando el párrafo exacto.', 'Solo con una nota numérica.', 'Con un sello rojo de aprobado.'], c: 0 },
@@ -537,8 +557,8 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA9-04', titulo: 'La feria del libro en el parque', genero: 'crónica',
       texto: 'La feria se instaló en el parque un sábado nublado. Había mesas plegables, manteles disparejos y un toldo remendado. Los organizadores esperaban un público numeroso y llegó uno escaso, disperso y curioso. A media mañana pasó algo que nadie previó. Un vendedor de libros usados, cansado de que la gente tomara un ejemplar y lo devolviera sin abrirlo, empezó a leer en voz alta la primera página de cada libro que alguien tocaba. No hizo discursos ni prometió nada. Leía dos minutos, con voz pareja, y devolvía el libro. En una hora tenía diez personas alrededor; a mediodía, cuarenta. Vendió más que en toda la feria anterior. Un periodista le preguntó su secreto y él contestó, incómodo, que no tenía ninguno: que un libro cerrado es un objeto mudo y que las descripciones de la contratapa son siempre entusiastas y casi siempre falsas. Preferible, dijo, que el libro hable con su propia voz durante dos minutos. Un adjetivo puesto por el vendedor convence a pocos; una página leída completa convence sola.',
-      adjs: ['nublado', 'plegables', 'disparejos', 'remendado', 'numeroso', 'escaso', 'disperso', 'curioso', 'usados', 'cansado', 'primera', 'pareja', 'anterior', 'incómodo', 'cerrado', 'mudo', 'entusiastas', 'falsas', 'completa'],
-      dets: ['un', 'cada', 'dos', 'diez', 'cuarenta', 'ninguno', 'su', 'pocos'],
+      adjs: ['nublado', 'plegables', 'disparejos', 'remendado', 'numeroso', 'escaso', 'disperso', 'curioso', 'usados', 'cansado', 'alta', 'pareja', 'anterior', 'incómodo', 'cerrado', 'mudo', 'entusiastas', 'falsas', 'Preferible', 'puesto', 'leída', 'completa', 'sola'],
+      dets: ['media', 'primera', 'cada', 'dos', 'diez', 'cuarenta', 'toda', 'su', 'ninguno', 'pocos'],
       preguntas: [
         { tipo: 'literal', q: '¿Qué empezó a hacer el vendedor de libros usados?', r: 'Leer en voz alta la primera página de cada libro que alguien tocaba.',
           o: ['Regalar los libros que nadie compraba.', 'Bajar los precios a la mitad.', 'Leer en voz alta la primera página de cada libro que alguien tocaba.'], c: 2 },
@@ -554,8 +574,9 @@ const LECTURA_ADJETIVOS = {
 
     { id: 'LA9-05', titulo: 'Elogio de la palabra sencilla', genero: 'ensayo',
       texto: 'Existe la creencia de que un texto suena más culto cuando sus adjetivos son largos y poco frecuentes. Es una creencia cómoda, porque se puede fingir sin trabajo: basta cambiar «grande» por «descomunal» y ya parece que se escribió mejor. No es verdad. Un adjetivo raro llama la atención sobre sí mismo y aparta la mirada de lo descrito, que es exactamente lo contrario de su oficio. El adjetivo debería ser una ventana, no un espejo. Hay ocasiones, claro, en que la palabra infrecuente es la única exacta, y entonces se usa sin culpa. La diferencia está en el motivo: se elige por precisión o se elige por lucimiento. Uno de los ejercicios más duros para quien escribe es aceptar que el adjetivo humilde y viejo, ese que todo el mundo entiende, era el correcto. Cuesta porque no luce. Cuesta porque nadie felicita a quien escribe «una tarde fría». Y sin embargo, cuando alguien lee «una tarde fría», siente frío de verdad, que era lo único que el autor quería. No hacía falta nada más.',
-      adjs: ['culto', 'largos', 'frecuentes', 'cómoda', 'grande', 'descomunal', 'raro', 'contrario', 'infrecuente', 'única', 'exacta', 'duros', 'humilde', 'viejo', 'correcto', 'fría'],
-      dets: ['sus', 'Un', 'su', 'ese', 'todo', 'Uno'],
+      adjs: ['culto', 'largos', 'frecuentes', 'cómoda', 'grande', 'descomunal', 'raro', 'descrito', 'contrario', 'infrecuente', 'única', 'exacta', 'duros', 'humilde', 'viejo', 'correcto', 'fría', 'único'],
+      dets: ['sus', 'su', 'ese', 'todo'],
+      neutros: ['poco', 'mejor', 'claro'],
       preguntas: [
         { tipo: 'literal', q: '¿Con qué imagen compara el texto lo que debería ser un adjetivo?', r: 'Con una ventana, no con un espejo.',
           o: ['Con una ventana, no con un espejo.', 'Con una puerta cerrada.', 'Con un adorno de la casa.'], c: 0 },

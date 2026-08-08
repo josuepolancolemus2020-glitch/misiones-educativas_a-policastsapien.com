@@ -58,6 +58,13 @@ const err = m => { errores++; console.log('  ❌ ' + m); };
    se resalta, y el fallo aparece en la pantalla del alumno, no aquí. El guion
    NO se quita: en «teórico-práctico» la palabra es la de en medio también. */
 const LIMPIA = /[.,;:()¿?¡!«»"“”'’…—–]/g;
+
+/* Clases cerradas compartidas con la misión y con el auditor: una sola
+   lista en js/data/lectura-clases.js, no tres copias que se separan. */
+const CLASES = require(path.join(RAIZ, 'js', 'data', 'lectura-clases.js'));
+const DETERMINATIVOS = new Set(CLASES.determinativos);
+const NEUTROS_GLOBAL = new Set(CLASES.neutros);
+
 function palabrasDe(texto) {
   return String(texto || '').trim().split(/\s+/).map(p => p.replace(LIMPIA, '').toLowerCase()).filter(Boolean);
 }
@@ -97,23 +104,48 @@ function valida(entrada) {
       if (/\s\s/.test(t.texto)) err(`${quien}: dobles espacios en el texto`);
       if (t.texto !== String(t.texto).trim()) err(`${quien}: espacios colgantes en el texto`);
 
-      /* adjs y dets: el motor los pinta encima del texto leído */
+      /* adjs, dets y neutros: con esto el alumno CAZA los adjetivos
+         tocándolos sobre el texto, así que un fallo aquí no es un fallo
+         de datos: es la pantalla diciéndole que se equivocó cuando
+         acertó. Por eso se comprueba tan de cerca. */
       const enTexto = new Set(ps);
-      [['adjs', 'adjetivo calificativo'], ['dets', 'adjetivo determinativo']].forEach(([campo, etq]) => {
-        const lista = t[campo];
-        if (!Array.isArray(lista) || !lista.length) { err(`${quien}: falta la lista ${campo} (${etq}s a resaltar)`); return; }
-        const vistos = new Set();
-        lista.forEach(p => {
-          const clave = String(p).replace(LIMPIA, '').toLowerCase();
-          if (!clave) { err(`${quien}: ${campo} tiene una entrada vacía`); return; }
-          if (vistos.has(clave)) err(`${quien}: ${campo} repite «${p}»`);
-          vistos.add(clave);
-          if (!enTexto.has(clave)) err(`${quien}: ${campo} incluye «${p}», que no aparece tal cual en el texto`);
+      const clasificadas = new Map();
+      [['adjs', 'adjetivo calificativo', true], ['dets', 'adjetivo determinativo', true], ['neutros', 'palabra que no cuenta', false]]
+        .forEach(([campo, etq, obligatorio]) => {
+          const lista = t[campo];
+          if (!Array.isArray(lista) || !lista.length) {
+            if (obligatorio) err(`${quien}: falta la lista ${campo} (${etq}s a resaltar)`);
+            return;
+          }
+          const vistos = new Set();
+          lista.forEach(p => {
+            const clave = String(p).replace(LIMPIA, '').toLowerCase();
+            if (!clave) { err(`${quien}: ${campo} tiene una entrada vacía`); return; }
+            if (vistos.has(clave)) err(`${quien}: ${campo} repite «${p}»`);
+            vistos.add(clave);
+            if (!enTexto.has(clave)) err(`${quien}: ${campo} incluye «${p}», que no aparece tal cual en el texto`);
+            if (clasificadas.has(clave)) err(`${quien}: «${p}» está en ${clasificadas.get(clave)} y en ${campo} a la vez`);
+            else clasificadas.set(clave, campo);
+            if (NEUTROS_GLOBAL.has(clave) && campo !== 'neutros') {
+              err(`${quien}: «${p}» ya no cuenta nunca (js/data/lectura-clases.js): sacarla de ${campo}`);
+            }
+          });
         });
-      });
-      const cruce = (t.adjs || []).map(x => String(x).toLowerCase())
-        .filter(x => (t.dets || []).some(y => String(y).toLowerCase() === x));
-      if (cruce.length) err(`${quien}: «${cruce.join('», «')}» está en adjs y en dets a la vez`);
+
+      /* Los determinativos son CLASE CERRADA, así que esto sí se puede
+         afirmar: uno que esté en el texto y no esté clasificado se le
+         va a marcar mal al alumno cuando lo toque. Los calificativos no
+         se pueden comprobar así —son clase abierta— y para eso está
+         _dev/audita-adjetivos-lectura.js, que propone candidatos. */
+      const sueltos = [...new Set(ps)].filter(p =>
+        DETERMINATIVOS.has(p) && !clasificadas.has(p) && !NEUTROS_GLOBAL.has(p));
+      if (sueltos.length) {
+        err(`${quien}: determinativo(s) del texto sin clasificar en dets ni en neutros: «${sueltos.join('», «')}»`);
+      }
+
+      /* Tres determinativos por lectura es el mínimo para que la
+         actividad de clasificar tenga con qué jugar sin repetir. */
+      if ((t.dets || []).length < 3) err(`${quien}: solo ${(t.dets || []).length} determinativo(s); hacen falta 3 para la actividad de clasificar`);
 
       const pg = t.preguntas || [];
       if (pg.length !== 5) err(`${quien}: ${pg.length} preguntas (deben ser 5)`);

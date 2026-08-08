@@ -115,6 +115,7 @@ const ACHIEVEMENTS = {
   reto_hero:{icon:'🏆',label:'Héroe del reto final'},
   lector_minuto:{icon:'📖',label:'Primer minuto de lectura cronometrado'},
   lector_banda:{icon:'⏱️',label:'Leíste dentro de la banda de tu grado'},
+  cazador_adjetivos:{icon:'🎯',label:'Cazaste todos los adjetivos de una lectura'},
   nivel3:{icon:'🔭',label:'¡Explorador alcanzado! Nivel 3'},
   nivel5:{icon:'🥇',label:'¡Campeón alcanzado! Nivel 6'}
 };
@@ -1712,9 +1713,13 @@ async function captureDiploma() {
 }
 // ═══════════════ CONTROL DE LECTURA DE LA MISIÓN ═══════════════
 // El motor y el corpus son archivos aparte; aquí solo se dice qué gana el
-// alumno al terminar una toma. +5 XP por lectura NUEVA (no por repetirla:
-// releer el mismo texto es el mejor ejercicio de fluidez y no debe pagarse
-// como si fuera avance, ni castigarse quitándole XP).
+// alumno al terminar una toma: +5 XP por la lectura y hasta +5 más según lo
+// que haya sacado en las cuatro actividades del taller.
+//
+// Se paga UNA vez por lectura, no por repetirla. No es tacañería: releer el
+// mismo texto dos o tres días es el ejercicio que más sube la fluidez, y si
+// se pagara cada vez, el alumno repetiría por los puntos y no por leer. Que
+// repetir no dé XP tampoco le quita nada: sigue viendo subir sus ppm.
 function initLectura(){
   if (typeof LecturaMision === 'undefined' || typeof LECTURA_ADJETIVOS === 'undefined') return;
   _lecturaApi = LecturaMision.montar({
@@ -1726,7 +1731,12 @@ function initLectura(){
       fin('s-lectura');
       unlockAchievement('lector_minuto');
       if (r.nivelVelocidad === 'estandar' || r.nivelVelocidad === 'avanzado') unlockAchievement('lector_banda');
-      if (!xpTracker.lec.has(r.textoId)) { xpTracker.lec.add(r.textoId); pts(5); }
+      if (r.cazaDe && r.caza >= r.cazaDe) unlockAchievement('cazador_adjetivos');
+      if (!xpTracker.lec.has(r.textoId)) {
+        xpTracker.lec.add(r.textoId);
+        var bono = r.puntosDe ? Math.round((r.puntos / r.puntosDe) * 5) : 0;
+        pts(5 + bono);
+      }
     }
   });
 }

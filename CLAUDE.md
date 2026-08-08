@@ -178,32 +178,77 @@ escribe una cifra de velocidad en otro sitio.
 **Piloto vigente:** la misión de los adjetivos
 (`misiones/2y3ciclo-adjetivos/`), con cinco lecturas por grado de 4º a
 9º. El motor **no sabe de qué tema son los textos**: para estrenar la
-sección en otra misión se escribe su corpus, se añaden cuatro líneas al
+sección en otra misión se escribe su corpus, se añaden cinco líneas al
 HTML y se llama a `LecturaMision.montar(...)`.
 
-Reglas del corpus de una misión (`lectura-<tema>.js`):
+### La lectura no es la meta: es la materia prima
+
+Un minuto de cronómetro deja un número —las palabras por minuto— y poco
+más. Lo que aprovecha el texto es lo que viene después: **cuatro
+actividades sobre esa misma lectura**, que el motor arma solo.
+
+1. **❓ ¿Qué entendiste?** — las cinco preguntas, **una a la vez y en
+   letra grande**. Iban las cinco juntas y en letra chica: en un
+   teléfono eso es un muro de texto y el niño contesta por contestar.
+2. **🎯 Caza de adjetivos** — los toca sobre el texto que acaba de leer
+   en voz alta. Aquí está la razón de que la lectura viva dentro de la
+   misión y no en Mi aula.
+3. **🗂️ ¿Califica o determina?** — clasifica los que cazó, cada uno
+   dentro de su oración. Encontrar no es lo mismo que saber qué clase
+   de adjetivo es.
+4. **✏️ ¿Cómo lo decía el texto?** — vuelve de memoria a buscar el
+   adjetivo exacto, entre tres que salen de esa misma lectura.
+
+**Antes de leer no se elige nada.** Hubo un selector de modo de marcado
+—«marco yo» o «se marca sola»— y se quitó: puesto justo antes de
+arrancar distraía muchísimo, el niño se ponía a probar los dos modos y
+llegaba al minuto sin haber leído. Hay una sola forma, la que además
+mide de verdad: lee en voz alta y va pasando el dedo por lo que lee.
+`_dev/verifica-lectura-mision.js` vigila que no vuelva a colarse una
+decisión antes del minuto.
+
+Las actividades de una lectura **no cambian entre intentos** (se barajan
+con una semilla sacada de su id). La misión le pide al alumno que relea
+el mismo texto dos o tres días —es lo que más sube la fluidez— y con
+actividades distintas cada vez no podría notar que va mejorando.
+
+### Reglas del corpus de una misión (`lectura-<tema>.js`)
 
 - **Cinco lecturas por grado**, con el largo dentro de la banda de
   palabras del grado —la misma del corpus de Mi aula—, porque el texto
   tiene que poder leerse en cerca de un minuto al ritmo de ese grado.
 - **Cinco preguntas** con la mezcla de tipos del grado y **tres opciones
   cada una**: aquí las contesta el alumno en la pantalla.
-- `adjs` y `dets` son las palabras que el motor **pinta encima del texto
-  recién leído**. Ahí está la razón de que la lectura viva dentro de la
-  misión y no en Mi aula: el alumno ve el tema que estudió sobre algo
-  que acaba de leer en voz alta. Tienen que aparecer **tal cual** en el
-  texto —se compara palabra contra palabra, no con `indexOf`— y los
-  artículos no van, que en esta misión el artículo no es adjetivo
-  determinativo.
+- **`adjs` y `dets` son el INVENTARIO COMPLETO, no una muestra.** Es la
+  regla que más cuesta y la que no se puede saltar: con ellas el alumno
+  caza adjetivos tocándolos, así que un adjetivo que falte es la
+  pantalla diciéndole que se equivocó **cuando acertó**, y de paso el
+  resultado le presume «17 adjetivos» donde había 27. Tienen que
+  aparecer **tal cual** en el texto —se compara palabra contra palabra,
+  no con `indexOf`.
+- **`neutros`** es la zona gris de ESA lectura: la palabra que ahí hace
+  de pronombre y no de adjetivo («todos íbamos sucios»), el participio
+  que ahí es verbo («fueron atrapadas»). Tocarlas no suma ni resta y la
+  pantalla lo explica. Los artículos y los identificativos discutidos
+  (mismo, propio) no van por lectura: viven en
+  `js/data/lectura-clases.js`, que es también de donde las herramientas
+  sacan la clase cerrada de los determinativos.
 
 **Antes de publicar un cambio del corpus o del motor:**
 
 ```
-node _dev/valida-lectura-mision.js       → largo, mezcla, opciones, resaltado
+node _dev/audita-adjetivos-lectura.js    → ¿falta algún adjetivo en el inventario?
+node _dev/valida-lectura-mision.js       → largo, mezcla, opciones, inventario
 node _dev/verifica-nombres-propios.js    → mayúsculas de lugares y personas
 node _dev/servidor-estatico.js      (en otra terminal)
-node _dev/verifica-lectura-mision.js     → el minuto, los dos modos y el resultado
+node _dev/verifica-lectura-mision.js     → el minuto y el taller entero
 ```
+
+El **auditor** existe porque los determinativos son clase cerrada y los
+calificativos no: de los primeros afirma («este está en el texto y no lo
+clasificaste»), de los segundos solo propone candidatos por terminación
+para que un humano mire la oración. «cortado» es adjetivo en «el zacate
+recién cortado» y verbo en «ha cortado»; eso no lo decide una lista.
 
 Lo que de verdad vigila el último: **que el minuto dure un minuto y que
 al cumplirse todo se detenga**. Un cronómetro que sigue corriendo detrás
