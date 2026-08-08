@@ -221,11 +221,16 @@
   }
   function csv(eventos) {
     eventos = eventos || leer();
-    var filas = ['fecha,hora,mision,alumno,grado,docente,escuela,tipo,seccion,forma,nota,base,xp,min,sesion,dispositivo,categoria,texto'];
+    /* Las tres últimas columnas son del Control de lectura de las misiones
+       (tipo «lectura»): van AL FINAL y vacías en los demás eventos, para no
+       correr las columnas de las hojas de cálculo que el maestro ya armó. */
+    var filas = ['fecha,hora,mision,alumno,grado,docente,escuela,tipo,seccion,forma,nota,base,xp,min,sesion,dispositivo,categoria,texto,ppm,comprension,lectura'];
     eventos.forEach(function (ev) {
       var fl = fechaLocal(ev.t);
+      var comp = (ev.tipo === 'lectura' && typeof ev.comp === 'number') ? ev.comp + '/' + (ev.compDe || 5) : '';
       filas.push([fl.fecha, fl.hora, ev.mision, ev.alumno, ev.grado, ev.docente, ev.escuela, ev.tipo, ev.seccion, ev.forma,
-        ev.nota, ev.base, ev.xp, ev.min, ev.ses, ev.disp, ev.categoria, ev.texto].map(celda).join(','));
+        ev.nota, ev.base, ev.xp, ev.min, ev.ses, ev.disp, ev.categoria, ev.texto,
+        ev.ppm, comp, ev.titulo].map(celda).join(','));
     });
     return '﻿' + filas.join('\r\n'); // BOM para que Excel abra bien las tildes
   }
@@ -252,13 +257,14 @@
   // ---------- resumen (para el panel docente y WhatsApp) ----------
   function resumen(eventos) {
     eventos = eventos || leer();
-    var alumnos = {}, misiones = {}, evals = [], ops = [], porSesion = {};
+    var alumnos = {}, misiones = {}, evals = [], ops = [], lecturas = [], porSesion = {};
     var minT = null, maxT = null;
     eventos.forEach(function (ev) {
       if (ev.alumno) alumnos[ev.alumno] = true;
       if (ev.mision) misiones[ev.mision] = true;
       if (ev.tipo === 'evaluacion' && typeof ev.nota === 'number') evals.push(ev.nota);
       if (ev.tipo === 'prueba_operativa' && typeof ev.nota === 'number') ops.push(ev.nota);
+      if (ev.tipo === 'lectura' && typeof ev.ppm === 'number') lecturas.push(ev.ppm);
       if (ev.ses && typeof ev.min === 'number') porSesion[ev.ses] = Math.max(porSesion[ev.ses] || 0, ev.min);
       if (ev.t) { if (!minT || ev.t < minT) minT = ev.t; if (!maxT || ev.t > maxT) maxT = ev.t; }
     });
@@ -270,6 +276,7 @@
       misiones: Object.keys(misiones).sort(),
       evaluaciones: evals.length, promedioEval: prom(evals),
       pruebasOperativas: ops.length, promedioOp: prom(ops),
+      lecturas: lecturas.length, promedioPpm: prom(lecturas),
       minutos: Math.round(minutos),
       desde: minT ? fechaLocal(minT).fecha : null,
       hasta: maxT ? fechaLocal(maxT).fecha : null
@@ -308,6 +315,19 @@
         ' · ' + lista.length + ' intento' + (lista.length === 1 ? '' : 's') +
         ' · ' + fl.fecha + ' ' + fl.hora;
     };
+    /* Control de lectura: se manda la ÚLTIMA toma, no el promedio. En
+       fluidez lo que importa es hacia dónde va el alumno, y un promedio
+       entre septiembre y noviembre esconde justamente eso. */
+    var lecs = evs.filter(function (e) { return e.tipo === 'lectura' && typeof e.ppm === 'number'; });
+    var lineaLectura = function () {
+      if (!lecs.length) return 'Control de lectura: aún sin tomas';
+      var u = lecs[lecs.length - 1];
+      var fl = fechaLocal(u.t);
+      return 'Control de lectura: *' + u.ppm + ' palabras por minuto*' +
+        (typeof u.comp === 'number' ? ' · comprensión ' + u.comp + '/' + (u.compDe || 5) : '') +
+        (u.titulo ? ' · «' + u.titulo + '»' : '') +
+        ' · ' + lecs.length + ' toma' + (lecs.length === 1 ? '' : 's') + ' · ' + fl.fecha;
+    };
     var hoy = fechaLocal(new Date().toISOString());
     return '📤 *REPORTE DE RESULTADOS · M.E.T.A.S*\n\n' +
       '👤 Alumno: ' + nombre + '\n' +
@@ -320,7 +340,8 @@
       '⭐ XP: ' + (xpActual() === null ? '—' : xpActual()) + '\n' +
       '⏱️ Tiempo activo: ' + Math.round(minutos) + ' min\n' +
       '📋 ' + linea('evaluacion', 'Evaluación conceptual') + '\n' +
-      '🧮 ' + linea('prueba_operativa', 'Prueba operativa') + '\n\n' +
+      '🧮 ' + linea('prueba_operativa', 'Prueba operativa') + '\n' +
+      '📖 ' + lineaLectura() + '\n\n' +
       '🔎 Verificable en la Evidencia de misiones del dispositivo ' + idDispositivo() + '\n\n' +
       '🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com';
   }

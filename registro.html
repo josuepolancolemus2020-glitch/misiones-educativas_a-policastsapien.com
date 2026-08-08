@@ -43,6 +43,7 @@ tr:hover td{background:var(--pri-gl);}
 .b-prueba_operativa{background:#f0e8ff;color:#6c5ce7;}
 .b-sugerencia{background:#ffe8f0;color:#c2185b;}
 .b-pauta_vista{background:#ffe3e3;color:#c0392b;}
+.b-lectura{background:#e0f2fe;color:#0369a1;}
 .pauta-warn{cursor:help;font-size:1rem;}
 @media (prefers-color-scheme: dark){
   .b-seccion{background:#0d3327;color:#5fd3ab;}
@@ -50,6 +51,7 @@ tr:hover td{background:var(--pri-gl);}
   .b-prueba_operativa{background:#241b45;color:#a99af0;}
   .b-sugerencia{background:#42152a;color:#f48fb1;}
   .b-pauta_vista{background:#421515;color:#f4a09a;}
+  .b-lectura{background:#11314a;color:#7cc4ee;}
 }
 .nota-ok{color:var(--jade);font-weight:800;}
 .nota-media{color:#b8860b;font-weight:800;}
@@ -63,7 +65,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <header>
   <h1>📋 Evidencia de misiones — M.E.T.A.S</h1>
-  <p>Lo que las misiones registraron <strong>en este equipo</strong>: sesiones de trabajo, secciones completadas y evaluaciones calificadas. No se registra nada a mano: la evidencia la dejan los alumnos al trabajar. Exporta el CSV para consolidar los datos de tu aula.</p>
+  <p>Lo que las misiones registraron <strong>en este equipo</strong>: sesiones de trabajo, secciones completadas, evaluaciones calificadas y controles de lectura. No se registra nada a mano: la evidencia la dejan los alumnos al trabajar. Exporta el CSV para consolidar los datos de tu aula.</p>
   <div class="top-links">
     <a class="btn btn-blanco" href="index.html">🏠 Volver al inicio</a>
     <a class="btn btn-blanco" href="consulta-nube.html">☁️ Consulta en la nube (todos los dispositivos)</a>
@@ -82,6 +84,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
     <option value="seccion">✅ Sección</option>
     <option value="evaluacion">📋 Evaluación</option>
     <option value="prueba_operativa">🧮 Prueba operativa</option>
+    <option value="lectura">📖 Control de lectura</option>
     <option value="pauta_vista">🔍 Vio pauta</option>
     <option value="sugerencia">💬 Sugerencia</option>
   </select></label>
@@ -112,10 +115,10 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <footer>🏠 Proyecto Educativo M.E.T.A.S · 🌐 policastsapien.com</footer>
 
-<script src="js/metas-registro.js?v=97"></script>
+<script src="js/metas-registro.js?v=98"></script>
 <script>
 'use strict';
-const NOMBRE_TIPO = { sesion:'📱 Sesión', seccion:'✅ Sección', evaluacion:'📋 Evaluación', prueba_operativa:'🧮 Prueba operativa', pauta_vista:'🔍 Vio pauta', sugerencia:'💬 Sugerencia' };
+const NOMBRE_TIPO = { sesion:'📱 Sesión', seccion:'✅ Sección', evaluacion:'📋 Evaluación', prueba_operativa:'🧮 Prueba operativa', lectura:'📖 Control de lectura', pauta_vista:'🔍 Vio pauta', sugerencia:'💬 Sugerencia' };
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtF = t => { const d=new Date(t); if(isNaN(d)) return {f:'',h:''}; const p=n=>(n<10?'0':'')+n; return {f:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()), h:p(d.getHours())+':'+p(d.getMinutes())}; };
 
@@ -146,6 +149,11 @@ function pintar(){
     const detalle = ev.tipo==='seccion' ? (ev.seccion||'').replace(/^s-/,'')
       : (ev.tipo==='evaluacion'||ev.tipo==='prueba_operativa'||ev.tipo==='pauta_vista') ? (ev.forma?('Forma '+ev.forma):'')
       : ev.tipo==='sugerencia' ? ((ev.categoria||'')+(ev.texto?': '+ev.texto:''))
+      // El control de lectura no da nota: da velocidad y comprensión, y las
+      // dos juntas, porque leer rápido sin entender no es leer.
+      : ev.tipo==='lectura' ? ((ev.titulo||'')+(ev.gradoTexto?' ('+ev.gradoTexto+'º)':'')+
+          (typeof ev.ppm==='number'?' · '+ev.ppm+' ppm':'')+
+          (typeof ev.comp==='number'?' · comprensión '+ev.comp+'/'+(ev.compDe||5):''))
       : '';
     let nota='';
     if(typeof ev.nota==='number'){
@@ -170,6 +178,8 @@ function pintar(){
     stat(r.evaluaciones + r.pruebasOperativas,'Eval. calificadas') +
     stat(r.promedioEval!=null?r.promedioEval:'—','Promedio conceptual') +
     stat(r.promedioOp!=null?r.promedioOp:'—','Promedio operativa') +
+    stat(r.lecturas,'Controles de lectura') +
+    stat(r.promedioPpm!=null?r.promedioPpm:'—','Palabras por minuto') +
     stat(r.minutos,'Minutos activos');
 }
 
@@ -188,6 +198,7 @@ function resumenWA(){
     '🚀 Misiones trabajadas: '+r.misiones.length+'\n'+
     '📋 Evaluaciones conceptuales: '+r.evaluaciones+(r.promedioEval!=null?' (promedio '+r.promedioEval+'/100)':'')+'\n'+
     '🧮 Pruebas operativas: '+r.pruebasOperativas+(r.promedioOp!=null?' (promedio '+r.promedioOp+'/100)':'')+'\n'+
+    '📖 Controles de lectura: '+r.lecturas+(r.promedioPpm!=null?' (promedio '+r.promedioPpm+' palabras por minuto)':'')+'\n'+
     '⏱️ Tiempo activo total: '+r.minutos+' min\n\n'+
     '🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com';
   const enc=encodeURIComponent(txt);
