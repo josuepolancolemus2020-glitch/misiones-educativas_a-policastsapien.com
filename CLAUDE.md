@@ -199,13 +199,23 @@ actividades sobre esa misma lectura**, que el motor arma solo.
 4. **✏️ ¿Cómo lo decía el texto?** — vuelve de memoria a buscar el
    adjetivo exacto, entre tres que salen de esa misma lectura.
 
-**Antes de leer no se elige nada.** Hubo un selector de modo de marcado
-—«marco yo» o «se marca sola»— y se quitó: puesto justo antes de
-arrancar distraía muchísimo, el niño se ponía a probar los dos modos y
-llegaba al minuto sin haber leído. Hay una sola forma, la que además
-mide de verdad: lee en voz alta y va pasando el dedo por lo que lee.
-`_dev/verifica-lectura-mision.js` vigila que no vuelva a colarse una
-decisión antes del minuto.
+**Mientras se lee, la pantalla no pide nada.** Se llegó aquí quitando
+dos cosas, las dos porque el maestro las probó en el aula y distraían de
+leer, que es justo lo que se está midiendo:
+
+- un **selector de modo de marcado** («marco yo» / «se marca sola»)
+  puesto antes de arrancar: el niño se ponía a probar los dos modos y
+  llegaba al minuto sin haber leído nada;
+- el **marcado con el dedo mientras leía**, con el texto pintándose
+  detrás: acababa pendiente de que el dedo no se le adelantara.
+
+Queda la toma clásica, la misma que el maestro hace en papel: se lee en
+voz alta y ya. Al sonar el minuto —y solo entonces— el texto se vuelve
+tocable y se marca de **un solo toque** la última palabra leída; hasta
+que no marque no aparece el botón de seguir, porque sin esa marca no hay
+palabras por minuto que calcular. `_dev/verifica-lectura-mision.js`
+comprueba las dos mitades: que durante el minuto tocar el texto no haga
+nada, y que después sí.
 
 Las actividades de una lectura **no cambian entre intentos** (se barajan
 con una semilla sacada de su id). La misión le pide al alumno que relea

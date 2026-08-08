@@ -7,6 +7,10 @@
    congelada le regala palabras por minuto que el niño no leyó, y ese
    número acaba en su expediente y en el informe que firma su madre.
 
+   Vigila también que MIENTRAS SE LEE el texto no haga nada: se quitó
+   el marcado con el dedo porque distraía de la lectura, y esto impide
+   que vuelva a colarse. El único toque es el de después del minuto.
+
    Después recorre el taller entero —las cuatro actividades sobre el
    texto recién leído— y vigila la cacería de adjetivos de cerca:
    tocar un adjetivo de verdad tiene que sumar, tocar un sustantivo
@@ -55,10 +59,9 @@ async function eligeGradoYTexto(page, grado, indice) {
 async function leeElMinuto(page, hasta) {
   await page.click('#lm-empezar');
   await page.click('#lm-arrancar');
-  await page.clock.runFor(20000);
-  await page.click(`.lm-p[data-i="${hasta}"]`);
-  await page.clock.runFor(41000);
-  await page.waitForSelector('#lm-seguir:not([style*="display: none"])');
+  await page.clock.runFor(61000);
+  await page.click(`.lm-p[data-i="${hasta}"]`);   /* la marca va DESPUÉS del minuto */
+  await page.waitForSelector('#lm-seguir', { state: 'visible' });
   await page.click('#lm-seguir');
   await page.waitForSelector('.lm-preg-q');
 }
@@ -112,43 +115,45 @@ async function contestaComprension(page, op) {
     await page.click('#lm-empezar');
     await page.click('#lm-arrancar');
 
-    /* El dedo: se arrastra por encima de las palabras, que es el gesto real
-       —tocar una por una sería imposible leyendo en voz alta—. */
+    /* Mientras corre el minuto el texto tiene que ser SOLO TEXTO: ni el
+       toque ni las flechas pueden marcar nada, o volvemos a lo que
+       distraía al alumno de leer. */
     await page.clock.runFor(8000);
-    const p0 = await page.locator('.lm-p[data-i="0"]').boundingBox();
-    const p12 = await page.locator('.lm-p[data-i="12"]').boundingBox();
-    await page.mouse.move(p0.x + 2, p0.y + p0.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(p12.x + p12.width / 2, p12.y + p12.height / 2, { steps: 12 });
-    await page.mouse.up();
-    /* No se exige una palabra exacta: elementFromPoint puede caer en la de
-       al lado en el borde entre dos. Lo que sí tiene que cumplirse siempre
-       es la invariante —lo pintado es exactamente lo que quedó atrás— y que
-       el arrastre haya avanzado de verdad. */
-    const traArrastre = await page.$eval('.lm-aqui', e => +e.dataset.i);
-    const pintadas = await page.$$eval('.lm-leida', e => e.length);
-    comprueba(traArrastre >= 9 && pintadas === traArrastre,
-      `arrastrar el dedo pinta todo lo que queda atrás (marca en la palabra ${traArrastre + 1}, ${pintadas} pintadas)`);
-
+    await page.click('.lm-p[data-i="12"]');
     await page.focus('#lm-texto');
     await page.keyboard.press('ArrowRight');
-    comprueba(await page.$eval('.lm-aqui', e => +e.dataset.i) === traArrastre + 1,
-      'con teclado, la flecha derecha adelanta exactamente una palabra');
+    comprueba(await page.$$eval('.lm-leida, .lm-aqui', e => e.length) === 0,
+      'mientras se lee, tocar el texto no marca nada: el alumno solo lee');
+    comprueba(!(await page.isVisible('#lm-seguir')), 'y todavía no hay botón para seguir');
 
     await page.clock.runFor(12000);
-    await page.click('.lm-p[data-i="30"]');
     let quedan = await page.textContent('#lm-num');
     comprueba(+quedan >= 39 && +quedan <= 41, `a los 20 s el cronómetro va por ${quedan} (deberían quedar 40)`);
 
+    /* ══ 3. cumplido el minuto: UN toque marca hasta dónde llegó ══ */
+    console.log('\n═══ Cumplido el minuto: un solo toque ═══');
     await page.clock.runFor(41000);
-    await page.waitForSelector('#lm-seguir:not([style*="display: none"])');
     comprueba((await page.textContent('#lm-num')).trim() === '0', 'al cumplirse el minuto el cronómetro marca 0');
-    comprueba(await page.isVisible('.lm-aviso'), 'avisa que el minuto se cumplió');
+    comprueba(/Minuto cumplido/.test(await page.textContent('.lm-aviso')), 'pide marcar la última palabra leída');
+    comprueba(!(await page.isVisible('#lm-seguir')),
+      'no deja seguir hasta que marque: sin marca no hay palabras por minuto');
+
     await page.clock.runFor(30000);
     comprueba((await page.textContent('#lm-num')).trim() === '0', 'medio minuto después sigue detenido en 0');
-    comprueba(await page.$$eval('.lm-leida', e => e.length) === 30, 'el marcado quedó congelado donde estaba');
 
-    /* ══ 3. actividad 1 · comprensión, una a la vez y en letra grande ══ */
+    await page.click('.lm-p[data-i="30"]');
+    comprueba(await page.$$eval('.lm-leida', e => e.length) === 30,
+      'el toque pinta las 30 palabras que alcanzó a leer');
+    await page.waitForSelector('#lm-seguir', { state: 'visible' });
+    ok('y entonces sí aparece el botón para seguir');
+    /* Se puede corregir la marca antes de seguir, pero el tiempo ya no
+       se mueve: el minuto se cumplió. */
+    await page.click('.lm-p[data-i="34"]');
+    comprueba(await page.$$eval('.lm-leida', e => e.length) === 34, 'tocar otra palabra corrige la marca');
+    await page.click('.lm-p[data-i="30"]');
+    comprueba((await page.textContent('#lm-num')).trim() === '0', 'y el cronómetro sigue parado en 0');
+
+    /* ══ 4. actividad 1 · comprensión, una a la vez y en letra grande ══ */
     console.log('\n═══ Actividad 1 · ¿Qué entendiste? ═══');
     await page.click('#lm-seguir');
     await page.waitForSelector('.lm-preg-q');
@@ -165,7 +170,7 @@ async function contestaComprension(page, op) {
     for (let i = 0; i < 4; i++) { await page.click('#lm-sig'); await page.click('[data-lm-op="0"]'); }
     await page.click('#lm-sig');
 
-    /* ══ 4. actividad 2 · la cacería de adjetivos ══ */
+    /* ══ 5. actividad 2 · la cacería de adjetivos ══ */
     console.log('\n═══ Actividad 2 · Caza de adjetivos ═══');
     await page.waitForSelector('.lm-marcador');
     /* Se buscan en el corpus tres palabras del texto: un adjetivo, un
@@ -209,7 +214,7 @@ async function contestaComprension(page, op) {
       `«no encuentro más» revela los ${objetivo.total} adjetivos del texto (mostró ${revelados})`);
     await page.click('#lm-sig');
 
-    /* ══ 5. actividad 3 · ¿califica o determina? ══ */
+    /* ══ 6. actividad 3 · ¿califica o determina? ══ */
     console.log('\n═══ Actividad 3 · ¿Califica o determina? ═══');
     await page.waitForSelector('[data-lm-clase]');
     comprueba((await page.textContent('.lm-frase')).length > 10,
@@ -225,7 +230,7 @@ async function contestaComprension(page, op) {
     }
     comprueba(vueltas === 6, `se clasifican seis palabras (fueron ${vueltas})`);
 
-    /* ══ 6. actividad 4 · ¿cómo lo decía el texto? ══ */
+    /* ══ 7. actividad 4 · ¿cómo lo decía el texto? ══ */
     console.log('\n═══ Actividad 4 · ¿Cómo lo decía el texto? ═══');
     await page.waitForSelector('.lm-hueco');
     comprueba(await page.$$eval('.lm-op', e => e.length) === 3, 'el hueco ofrece tres adjetivos de la misma lectura');
@@ -238,7 +243,7 @@ async function contestaComprension(page, op) {
     }
     comprueba(huecos === 4, `son cuatro oraciones que completar (fueron ${huecos})`);
 
-    /* ══ 7. resultado, evidencia y XP ══ */
+    /* ══ 8. resultado, evidencia y XP ══ */
     console.log('\n═══ El resultado y lo que le queda al maestro ═══');
     await page.waitForSelector('.lm-hero b');
     const ppm = +(await page.$eval('.lm-hero b', e => e.textContent));
@@ -260,21 +265,21 @@ async function contestaComprension(page, op) {
     comprueba(await page.$eval('[data-s="s-lectura"]', b => b.classList.contains('done')),
       'la pestaña 📖 Lectura quedó marcada como completada');
 
-    /* ══ 8. las actividades no cambian al repetir la misma lectura ══ */
+    /* ══ 9. las actividades no cambian al repetir la misma lectura ══ */
     console.log('\n═══ Repetir la misma lectura ═══');
     const antes = await page.evaluate(() => LECTURA_ADJETIVOS[6][0].id);
     await page.click('#lm-repetir');
     await page.waitForSelector('#lm-arrancar');
     await page.click('#lm-arrancar');
-    await page.clock.runFor(20000);
+    await page.clock.runFor(61000);
     await page.click('.lm-p[data-i="20"]');
-    await page.clock.runFor(41000);
+    await page.waitForSelector('#lm-seguir', { state: 'visible' });
     await page.click('#lm-seguir');
     await contestaComprension(page, 0);
     comprueba(!!antes, 'la relectura arranca de nuevo sin arrastrar el resultado anterior');
     comprueba(await page.isVisible('.lm-marcador'), 'y vuelve a llevar al taller completo');
 
-    /* ══ 9. terminar el texto antes del minuto ══ */
+    /* ══ 10. terminar el texto antes del minuto ══ */
     console.log('\n═══ Terminar el texto antes del minuto ═══');
     await abrirLectura(page);
     await eligeGradoYTexto(page, 4, 2);
@@ -294,7 +299,7 @@ async function contestaComprension(page, op) {
     comprueba(Math.abs(ppm2 - Math.round(total * 60 / 40)) <= 2,
       `leer las ${total} palabras en 40 s da ${ppm2} ppm (se esperaba ${Math.round(total * 60 / 40)})`);
 
-    /* ══ 10. salir de la pestaña a media toma ══ */
+    /* ══ 11. salir de la pestaña a media toma ══ */
     console.log('\n═══ Salir de la pestaña a media toma ═══');
     await abrirLectura(page);
     await eligeGradoYTexto(page, 5, 0);

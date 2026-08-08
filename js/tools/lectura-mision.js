@@ -9,14 +9,22 @@
    minuto en voz alta y después TRABAJA ese mismo texto en cuatro
    actividades. La lectura no es la meta: es la materia prima.
 
-   ── Por qué hay un solo modo de leer ──
-   La primera versión le preguntaba al alumno si quería marcar él con
-   el dedo o dejar que las palabras se encendieran solas. Se quitó: el
-   maestro reportó que esa pregunta, puesta JUSTO ANTES de arrancar,
-   distraía muchísimo — el niño se ponía a probar los dos modos en vez
-   de leer, y llegaba al minuto sin haber leído nada. Ahora hay una
-   sola forma, la que además mide de verdad: lee en voz alta y va
-   pasando el dedo por lo que lee. Al minuto, todo se detiene.
+   ── Durante el minuto no se toca NADA ──
+   Se llegó aquí quitando dos cosas, las dos por el mismo motivo: el
+   maestro las probó en el aula y distraían de leer, que es justo lo
+   que se está midiendo.
+
+   1. Un selector de modo de marcado («marco yo» / «se marca sola»)
+      puesto antes de arrancar. El niño se ponía a probar los dos
+      modos y llegaba al minuto sin haber leído nada.
+   2. El marcado con el dedo mientras leía, con el texto pintándose
+      detrás. Acababa pendiente de que el dedo no se le adelantara.
+
+   Lo que queda es la toma clásica, la misma que el maestro hace en
+   papel: se lee en voz alta y ya. Cuando suena el minuto —y solo
+   entonces— el texto se vuelve tocable y se marca de UN SOLO TOQUE la
+   última palabra leída. Un toque después de leer no estorba, y es lo
+   único que hace falta para sacar las palabras por minuto.
 
    ── Qué cambia por no haber maestro delante ──
    · NO se cuentan errores de lectura. Un niño no puede escucharse y
@@ -422,9 +430,9 @@
       raiz.innerHTML =
         '<div class="card ac-teal">' +
           '<h2>📖 Control de lectura</h2>' +
-          '<p class="lm-pista">Lees <strong>un minuto en voz alta</strong> pasando el dedo por lo que vas leyendo. ' +
-            'Al cumplirse el minuto todo se detiene, y después trabajas ese mismo texto en <strong>cuatro actividades</strong>: ' +
-            'entender lo que leíste, cazar los adjetivos tocándolos, clasificarlos y recordar cómo lo decía la lectura.</p>' +
+          '<p class="lm-pista">Lees <strong>un minuto en voz alta</strong>, sin tocar nada. Cuando suene el minuto marcas ' +
+            'hasta dónde llegaste, y después trabajas ese mismo texto en <strong>cuatro actividades</strong>: entender lo que ' +
+            'leíste, cazar los adjetivos tocándolos, clasificarlos y recordar cómo lo decía la lectura.</p>' +
           '<p class="lm-pista"><strong>' + (st.grado ? 'Tu grado:' : '👇 Toca tu grado para ver tus cinco lecturas:') + '</strong></p>' +
           '<div class="lm-grados" role="group" aria-label="Elegir grado">' +
             grados.map(function (g) {
@@ -487,7 +495,8 @@
           '<div class="lm-crono-caja">' +
             '<div class="lm-crono" id="lm-crono" role="timer" aria-live="off"><span id="lm-num">' + SEGUNDOS + '</span><small>s</small></div>' +
             '<div class="lm-barra"><i id="lm-barra"></i></div>' +
-            '<div class="lm-crono-sub" id="lm-sub">Cuando arranques, <strong>lee en voz alta</strong> y ve pasando el dedo por encima de las palabras.</div>' +
+            '<div class="lm-crono-sub" id="lm-sub">Cuando arranques, <strong>lee en voz alta</strong>. ' +
+              'No tienes que tocar nada: al cumplirse el minuto te pregunto hasta dónde llegaste.</div>' +
           '</div>' +
           /* El botón de seguir va ARRIBA y ABAJO: con un texto de 9º el
              alumno termina el minuto mirando el final, y con uno de 4º
@@ -527,49 +536,43 @@
       }
       function aviso(html, cls) { avisos.innerHTML = '<div class="lm-aviso ' + (cls || '') + '">' + html + '</div>'; }
 
-      /* ── el dedo: pintar arrastrando es el gesto natural de un niño
-         siguiendo un renglón, y además es la técnica que la pauta del
-         maestro recomienda para leer sin saltarse palabras ── */
-      function palabraDe(ev) {
-        if (ev.clientX == null) return null;
-        var el = document.elementFromPoint(ev.clientX, ev.clientY);
-        return el && el.classList && el.classList.contains('lm-p') ? +el.dataset.i : null;
-      }
-      var arrastrando = false;
-      caja.addEventListener('pointerdown', function (ev) {
-        if (!st.ini || st.congelado) return;
-        arrastrando = true;
-        /* Se captura el puntero para que el «soltar» llegue a esta caja
-           aunque el dedo termine fuera. Con el listener en window se
-           acumulaba uno por cada toma. */
-        try { caja.setPointerCapture(ev.pointerId); } catch (e) {}
-        var i = palabraDe(ev); if (i != null) marca(i);
-      });
-      caja.addEventListener('pointermove', function (ev) {
-        if (!arrastrando || !st.ini || st.congelado) return;
-        var i = palabraDe(ev); if (i != null) marca(i);
-        ev.preventDefault();
-      });
-      caja.addEventListener('pointerup', function () { arrastrando = false; });
-      caja.addEventListener('pointercancel', function () { arrastrando = false; });
-      /* Después del minuto queda el toque disponible: no para seguir
-         leyendo, sino para corregir la marca si el dedo se quedó atrás
-         de la voz. El cronómetro ya está parado, así que ese toque no
-         cambia el tiempo, solo dice hasta dónde llegó. */
+      /* ── MIENTRAS SE LEE NO SE TOCA NADA ──
+         Hubo una versión en la que el alumno iba pasando el dedo por
+         encima de lo que leía y el texto se pintaba detrás. Se quitó por
+         lo mismo que el selector de modos: el maestro reportó que
+         distraía muchísimo de la lectura. El niño acababa pendiente de
+         que el dedo no se le adelantara en vez de leer, que es justo lo
+         que se está midiendo.
+
+         Queda el gesto de la toma clásica, la que el maestro hace en
+         papel: se lee y ya; cuando suena el minuto, se marca de UN SOLO
+         TOQUE la última palabra leída. Un toque después de leer no
+         estorba a la lectura, y es lo único que el cronómetro necesita
+         para sacar las palabras por minuto. */
       caja.addEventListener('click', function (ev) {
-        if (!st.ini) return;
+        if (!st.congelado) return;   /* durante el minuto, el texto es solo texto */
         var el = ev.target.closest ? ev.target.closest('.lm-p') : null;
-        if (el) marca(+el.dataset.i);
+        if (!el) return;
+        var primera = st.idx == null;
+        marca(+el.dataset.i);
+        suena('click');
+        if (primera) {
+          btnsSeguir.forEach(function (b) { b.style.display = ''; });
+          aviso('✅ <strong>Marcaste ' + (st.idx + 1) + ' palabra' + (st.idx ? 's' : '') + '.</strong> ' +
+            'Si te equivocaste, toca otra; si está bien, sigue a las actividades.', 'lm-av-ok');
+        }
       });
-      /* Teclado: en una computadora del aula o con el proyector no hay
-         dedo que arrastrar. Las flechas mueven la marca. */
+      /* Teclado: en la computadora del aula o con el proyector no hay
+         dedo. Las flechas mueven la marca, también solo al final. */
       caja.setAttribute('tabindex', '0');
       caja.addEventListener('keydown', function (ev) {
-        if (!st.ini) return;
+        if (!st.congelado) return;
         var paso = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[ev.key];
+        var antes = st.idx;
         if (paso) { marca(Math.max(0, Math.min(spans.length - 1, (st.idx == null ? -1 : st.idx) + paso))); ev.preventDefault(); }
         else if (ev.key === 'Home') { marca(0); ev.preventDefault(); }
         else if (ev.key === 'End') { marca(spans.length - 1); ev.preventDefault(); }
+        if (antes == null && st.idx != null) btnsSeguir.forEach(function (b) { b.style.display = ''; });
       });
 
       function alTaller() {
@@ -587,13 +590,23 @@
         num.textContent = porTiempo ? '0' : Math.max(0, SEGUNDOS - Math.round(st.seg));
         crono.classList.add('lm-fin');
         btnFin.style.display = 'none';
-        btnsSeguir.forEach(function (b) { b.style.display = ''; });
         suena('up'); vibra([180, 90, 180]);
-        aviso(porTiempo
-          ? '⏰ <strong>¡Minuto cumplido!</strong> Todo se detuvo aquí. Si tu dedo se quedó atrás de tu voz, toca ahora la ' +
-            '<strong>última palabra que alcanzaste a leer</strong>.'
-          : '✅ <strong>Leíste todo el texto en ' + st.seg + ' segundos.</strong> Vamos a las actividades.',
-          porTiempo ? '' : 'lm-av-ok');
+        if (porTiempo) {
+          /* Solo AQUÍ el texto se vuelve tocable, y el botón de seguir no
+             aparece hasta que haya marcado: sin la marca no hay palabras
+             por minuto que calcular, y un botón visible antes de tiempo
+             invita a saltarse el único paso que hace falta. */
+          caja.classList.add('lm-viva');
+          sub.innerHTML = 'Se acabó el minuto.';
+          aviso('⏰ <strong>¡Minuto cumplido!</strong> Ahora toca la <strong>última palabra que alcanzaste a leer</strong>.');
+        } else {
+          /* Terminó el texto entero: la última palabra es la última, no
+             hay nada que preguntarle. */
+          marca(spans.length - 1);
+          btnsSeguir.forEach(function (b) { b.style.display = ''; });
+          sub.innerHTML = 'Leíste el texto completo.';
+          aviso('✅ <strong>Leíste todo el texto en ' + st.seg + ' segundos.</strong> Vamos a las actividades.', 'lm-av-ok');
+        }
       }
 
       btnArr.onclick = function () {
@@ -602,8 +615,7 @@
         st.ini = Date.now();
         btnArr.style.display = 'none';
         btnFin.style.display = '';
-        caja.classList.add('lm-viva');
-        sub.innerHTML = 'Ve pasando el dedo por encima de lo que vas leyendo.';
+        sub.innerHTML = 'Lee en voz alta, sin prisa. No toques nada todavía.';
         st.timer = setInterval(function () {
           var ms = Date.now() - st.ini;
           var quedan = Math.max(0, SEGUNDOS - ms / 1000);
@@ -615,8 +627,7 @@
       };
       btnFin.onclick = function () {
         if (!st.ini || st.congelado) return;
-        marca(ps.length - 1);
-        terminarMinuto(false);
+        terminarMinuto(false);   /* él ya marca la última palabra */
       };
       btnsSeguir.forEach(function (b) { b.onclick = alTaller; });
       document.getElementById('lm-cancelar').onclick = function () { suena('click'); reiniciar(); pinta(); };
