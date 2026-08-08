@@ -73,9 +73,9 @@ su explicación al lado. Todo lo que junte grado y sección para mostrarse
 pasa por ahí: pantallas, documentos impresos y mensajes de WhatsApp. Si
 alguna vez hay que cambiar el formato, se cambia ahí y en ningún otro sitio.
 
-`padres.html` es una página autónoma —no carga ese archivo— y lleva su
-propia copia de la regla (`grupoTxt`), marcada con la misma nota. Si cambia
-una, cambia la otra: la madre y el maestro tienen que leer lo mismo.
+`padres.html` y `salida.html` son páginas autónomas —no cargan ese archivo— y
+llevan su propia copia de la regla (`grupoTxt`), marcada con la misma nota. Si
+cambia una, cambian las tres: la madre y el maestro tienen que leer lo mismo.
 
 ## Lo que NO se toca
 
@@ -298,6 +298,60 @@ leyó, y ese número acaba en su expediente y en el informe que firma su
 madre. El tiempo no se espera de verdad: se adelanta el reloj del
 navegador (`page.clock`), porque una comprobación que cuesta un minuto
 por caso no la corre nadie antes de publicar.
+
+## Normativa: la Convocatoria pregunta, no anota
+
+En ✅ Controles hay dos cosas que se parecen y no son lo mismo. Un
+**control** se ANOTA: el maestro ya sabe la respuesta y la marca sobre su
+lista. Una **convocatoria** PREGUNTA: todavía no la sabe, y la respuesta
+la dan las familias. Por eso la puerta lleva franja naranja y la palabra
+«pregúntales»; el maestro tiene que ver la diferencia sin leer.
+
+Vive en `js/tools/convocatoria.js` (pantalla del maestro), `salida.html`
+(pantalla del padre) y `SUPABASE-CONVOCATORIA.sql` (las dos tablas y sus
+RPC, con RLS cerrada).
+
+Nació de un problema con fecha: hay que contratar buses para el sábado y
+el número de gente se sabe el viernes, contando mensajes sueltos en un
+grupo de WhatsApp. Un bus de más es dinero tirado; uno de menos deja
+niños en el portón.
+
+**Cuatro reglas, y ninguna es de adorno:**
+
+1. **El padre NO necesita clave de familia.** El enlace se manda al grupo
+   de TODA la escuela, no al del grado: ahí hay padres sin clave que no
+   la van a pedir un domingo. Por eso escriben el nombre del alumno y
+   tocan su grado. Meterle un candado a esta pantalla la mata.
+2. **Se cuenta por PERSONAS, no por alumnos.** En una excursión va el
+   niño y va la mamá; el bus no distingue. Un conteo de alumnos deja
+   media flota de gente parada.
+3. **La respuesta no se pierde.** Si falla el internet al mandarla, la
+   pantalla se la manda al maestro por WhatsApp ya escrita —nombre,
+   grupo y cuántos van—. Un padre que cree que contestó y no, es un
+   asiento pagado de más.
+4. **Contestar dos veces CORRIGE, no suma.** La `huella` —nombre del
+   alumno + grado + sección, normalizados— es la llave única de la fila.
+   Sin ella, la madre que se equivocó de número paga un bus entero.
+
+Lo que sale sin PIN es el evento y **cuántos van en total**; los nombres
+y los teléfonos, nunca. El enlace anda suelto en un grupo de cientos de
+personas.
+
+Las fechas se parten a mano (`convFecha`, `aFecha`): `new Date('2026-08-15')`
+se lee en UTC y en Honduras enseña el día ANTERIOR. Un padre que lee el
+día equivocado no llega.
+
+**Antes de publicar un cambio de la convocatoria:**
+
+```
+node _dev/servidor-estatico.js      (en otra terminal)
+node _dev/verifica-convocatoria.js
+```
+
+Vigila las dos cifras que cuestan dinero —el día del evento y cuántos
+buses— y las dos formas de perder una respuesta: contarla doble y no
+contarla. La nube no se toca: se pone un Supabase de mentira con
+`page.route`, así corre sin internet y sin ensuciar datos reales.
 
 ## Normativa: los nombres propios llevan mayúscula, también en los juegos
 

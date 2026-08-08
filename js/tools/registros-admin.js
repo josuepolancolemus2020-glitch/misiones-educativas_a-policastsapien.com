@@ -67,7 +67,7 @@ function adGrupoNuevo(props) {
   for (let i = 0; i < 5; i++) id += AD_ID_ALFA[Math.floor(Math.random() * AD_ID_ALFA.length)];
   return Object.assign({ id, escuela: '', grado: '', seccion: '', logo: '', logoSec: '', boleta: adBoletaDef(),
     materias: AD_MATERIAS_DEF.slice(), lista: [], colectas: [], asistencia: [], notas: {}, controles: [],
-    bitacora: [], lectura: [] }, props || {});
+    bitacora: [], lectura: [], convocatorias: [] }, props || {});
 }
 
 function adNormGrupo(g) {
@@ -84,6 +84,7 @@ function adNormGrupo(g) {
   g.colectas = Array.isArray(g.colectas) ? g.colectas : [];
   g.asistencia = Array.isArray(g.asistencia) ? g.asistencia : [];
   g.controles = Array.isArray(g.controles) ? g.controles : [];
+  g.convocatorias = Array.isArray(g.convocatorias) ? g.convocatorias : [];  /* 📣 «¿va o no va?» */
   g.bitacora = Array.isArray(g.bitacora) ? g.bitacora : [];   /* novedades de la clase */
   /* tomas de lectura (palabras por minuto): el canal ya queda listo para
      la herramienta de lectura; su forma está descrita en
@@ -449,8 +450,11 @@ function renderAdmin() {
      esté dentro de una colecta o de un control */
   const _atras = document.getElementById('admin-back-btn');
   if (_atras) {
+    const nivelConv = typeof adConvNivel === 'function' ? adConvNivel() : 0;
     const rotulo = _adFichasOn ? 'Volver a Alumnos'
       : (_adGastosOn || _adInvOn) ? 'Volver a Economía'
+      : nivelConv === 2 ? 'Volver a mis convocatorias'
+      : nivelConv === 1 ? 'Volver a Controles'
       : _adColectaId ? 'Volver a mis colectas'
       : _adControlId ? 'Volver a mis controles' : 'Volver a la Zona Docente';
     _atras.setAttribute('aria-label', rotulo);
@@ -490,7 +494,9 @@ function renderAdmin() {
   cont.querySelectorAll('[data-gid]').forEach(b =>
     b.addEventListener('click', () => {
       const s2 = adState(); s2.activo = b.dataset.gid; adStateSave(s2);
-      _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0; renderAdmin();
+      _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0;
+      if (typeof adConvCerrar === 'function') adConvCerrar();
+      renderAdmin();
     }));
   document.getElementById('ad-gr-add').addEventListener('click', async () => {
     if (!await metasConfirm('Un grupo nuevo tiene su PROPIA lista de alumnos, claves de familia, economía, asistencia y notas.\n\nÚsalo si atiendes **otro grado/sección** o trabajas en **otro colegio**. ¿Crear el grupo?',
@@ -502,7 +508,12 @@ function renderAdmin() {
     toast('🏫 Grupo nuevo: escribe su grado, sección y colegio');
   });
   cont.querySelectorAll('[data-adtab]').forEach(b =>
-    b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0; renderAdmin(); }));
+    b.addEventListener('click', () => {
+      _adTab = b.dataset.adtab; _adColectaId = null; _adControlId = null;
+      _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0;
+      if (typeof adConvCerrar === 'function') adConvCerrar();
+      renderAdmin();
+    }));
   /* chip de nube: visible en TODAS las pestañas (antes solo en Alumnos
      se sabía si lo publicado ya subió); tocarlo sincroniza ya */
   document.getElementById('ad-nube-chip').addEventListener('click', async () => {
@@ -2957,8 +2968,47 @@ function adCtrlValorTxt(c, num) {
   return String(v);
 }
 
+/* La puerta a 📣 Convocatoria. Se pinta en un solo sitio porque sale en
+   dos: en Controles con lista y en Controles sin lista. */
+function adConvPuertaHtml(d) {
+  if (typeof adRenderConvocatoria !== 'function') return '';
+  const abiertas = (d.convocatorias || []).filter(c => c.codigo && !c.cerrada);
+  let sub = 'Pregúntales por WhatsApp quién va a la excursión, a la reunión o a la kermés — y cuántos buses hacen falta';
+  if (abiertas.length) {
+    const c = abiertas[abiertas.length - 1];
+    const r = (c.resp || []).filter(x => x.va);
+    const per = r.reduce((a, x) => a + (Number(x.personas) || 0), 0);
+    sub = c.icono + ' ' + (c.titulo || 'Convocatoria') + ' — ' +
+      (per ? per + ' personas confirmadas hasta ahora' : 'publicada, esperando respuestas');
+  }
+  return `
+    <button class="ad-puerta ad-puerta-conv" id="ad-ir-conv">
+      <span class="ad-puerta-ic">📣</span>
+      <span class="ad-puerta-txt">
+        <span class="ad-puerta-t">Convocatoria por WhatsApp</span>
+        <span class="ad-puerta-s">${adEsc(sub)}</span>
+      </span>
+      <span class="ad-puerta-go">›</span>
+    </button>`;
+}
+function adConvPuertaEnganchar(body) {
+  const b = body.querySelector('#ad-ir-conv');
+  if (b) b.addEventListener('click', () => { adConvEntrar(); renderAdmin(); });
+}
+
 function adRenderControles(body, d) {
-  if (!d.lista.length) { adSinLista(body, 'los controles del aula'); return; }
+  /* 📣 La Convocatoria va ANTES del candado de la lista: el enlace se
+     manda al grupo de WhatsApp de TODA la escuela y no necesita la lista
+     del aula para nada. Un maestro que todavía no ha metido a sus
+     alumnos igual tiene que contratar los buses del sábado. */
+  if (typeof adConvNivel === 'function' && adConvNivel() &&
+      typeof adRenderConvocatoria === 'function') { adRenderConvocatoria(body, d); return; }
+  if (!d.lista.length) {
+    adSinLista(body, 'los controles del aula');
+    body.insertAdjacentHTML('beforeend', adConvPuertaHtml(d));
+    adConvPuertaEnganchar(body);
+    return;
+  }
   if (_adControlId) { adRenderControl(body, d); return; }
 
   const lista = (d.controles || []).slice().reverse();
@@ -2974,6 +3024,7 @@ function adRenderControles(body, d) {
         ${AD_CTRL_PLANTILLAS.map((p, i) =>
           `<button class="ad-mes-btn" data-plant="${i}" title="Dato: ${adEsc(AD_CTRL_TIPOS[p.tipo].et)}">${p.icono} ${adEsc(p.nombre)}</button>`).join('')}
       </div>
+      ${adConvPuertaHtml(d)}
     </div>
     ${lista.length ? `
     <div class="pa-card">
@@ -3060,6 +3111,8 @@ function adRenderControles(body, d) {
 
   body.querySelectorAll('[data-ctid]').forEach(b =>
     b.addEventListener('click', () => { _adControlId = b.dataset.ctid; renderAdmin(); }));
+
+  adConvPuertaEnganchar(body);
 }
 
 function adRenderControl(body, d) {
@@ -5918,6 +5971,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (_adFichasOn) { _adFichasOn = 0; renderAdmin(); return; }
     if (_adGastosOn) { _adGastosOn = 0; renderAdmin(); return; }
     if (_adInvOn) { _adInvOn = 0; renderAdmin(); return; }
+    if (typeof adConvAtras === 'function' && adConvAtras()) { renderAdmin(); return; }
     if (_adColectaId) { _adColectaId = null; renderAdmin(); return; }
     if (_adControlId) { _adControlId = null; renderAdmin(); return; }
     switchView('view-perfil');

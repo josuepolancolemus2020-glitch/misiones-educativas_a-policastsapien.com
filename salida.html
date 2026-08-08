@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#c2410c">
+  <title>¿Va su hijo? — M.E.T.A.S</title>
+  <meta name="description" content="Conteste en veinte segundos si su hijo o hija va a la salida. Es para saber cuántos buses contratar.">
+  <!-- Lo que WhatsApp enseña al pegar el enlace en el grupo. No puede
+       nombrar el evento (la página es la misma para todos y no hay
+       servidor que la arme), así que vende lo ÚNICO que es siempre
+       verdad: se contesta en veinte segundos y hace falta ya. -->
+  <meta property="og:title" content="🚌 ¿Va su hijo? — conteste aquí en 20 segundos">
+  <meta property="og:description" content="El maestro necesita saber cuántos van para contratar los buses. Toque el enlace y diga sí o no. No hay que registrarse ni instalar nada.">
+  <meta property="og:image" content="https://metas.policastsapien.com/img/icon-512.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
+  <style>
+    :root {
+      --nar1: #ea580c; --nar2: #f59e0b;
+      --tinta: #1f2937; --suave: #6b7280;
+      --papel: #fff7ed; --tarjeta: #ffffff;
+      --ok: #16a34a; --ok2: #15803d;
+      --no: #94a3b8;
+      --borde: #f1e3d3;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--papel); color: var(--tinta);
+      min-height: 100dvh; line-height: 1.5;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    #app { max-width: 560px; margin: 0 auto; padding: 0 0 32px; }
+
+    /* ── Portada ── */
+    .hero {
+      background: linear-gradient(160deg, var(--nar1), var(--nar2));
+      color: #fff; padding: 26px 18px 30px; text-align: center;
+      border-radius: 0 0 26px 26px; box-shadow: 0 6px 20px rgba(234,88,12,.25);
+    }
+    .hero-ic { font-size: 58px; line-height: 1; }
+    .hero-kicker {
+      display: inline-block; margin: 8px 0 6px; padding: 4px 12px;
+      background: rgba(255,255,255,.22); border-radius: 999px;
+      font-size: 12px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase;
+    }
+    .hero h1 { font-size: 26px; font-weight: 900; line-height: 1.2; margin-bottom: 8px; }
+    .hero-sub { font-size: 15px; opacity: .95; }
+    .hero-cuenta {
+      margin-top: 14px; display: inline-block; padding: 8px 16px;
+      background: rgba(0,0,0,.22); border-radius: 999px;
+      font-size: 14px; font-weight: 800;
+    }
+    .hero-cuenta.urge { background: #fff; color: #b91c1c; }
+
+    .wrap { padding: 0 14px; }
+    .card {
+      background: var(--tarjeta); border: 1px solid var(--borde);
+      border-radius: 16px; padding: 16px; margin-top: 14px;
+      box-shadow: 0 2px 10px rgba(120,53,15,.06);
+    }
+    .card-t { font-size: 15px; font-weight: 900; margin-bottom: 10px; }
+
+    .datos { display: grid; gap: 10px; }
+    .dato { display: flex; gap: 11px; align-items: flex-start; }
+    .dato-ic { font-size: 20px; width: 26px; flex-shrink: 0; text-align: center; }
+    .dato-k { font-size: 11.5px; color: var(--suave); font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
+    .dato-v { font-size: 15px; font-weight: 700; }
+
+    .gana { list-style: none; display: grid; gap: 9px; }
+    .gana li { display: flex; gap: 10px; font-size: 14.5px; }
+    .gana li::before { content: "✨"; flex-shrink: 0; }
+
+    .prueba {
+      margin-top: 14px; background: #ecfdf5; border: 1px solid #a7f3d0;
+      border-radius: 14px; padding: 12px 14px; text-align: center;
+    }
+    .prueba-n { font-size: 26px; font-weight: 900; color: var(--ok2); line-height: 1.1; }
+    .prueba-t { font-size: 13px; color: #047857; font-weight: 700; }
+    .barra { height: 9px; background: #d1fae5; border-radius: 999px; margin-top: 9px; overflow: hidden; }
+    .barra > i { display: block; height: 100%; background: var(--ok); border-radius: 999px; transition: width .5s; }
+
+    /* ── Botones ── */
+    .botones { display: grid; gap: 10px; margin-top: 16px; }
+    .btn {
+      display: block; width: 100%; border: 0; border-radius: 14px;
+      padding: 17px 14px; font-size: 17px; font-weight: 900;
+      font-family: inherit; cursor: pointer; text-align: center;
+      transition: transform .1s;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-si { background: var(--ok); color: #fff; box-shadow: 0 4px 14px rgba(22,163,74,.3); font-size: 19px; padding: 20px 14px; }
+    .btn-no { background: #fff; color: var(--suave); border: 2px solid #e2e8f0; font-size: 15px; padding: 14px; }
+    .btn-wa { background: #25d366; color: #fff; }
+    .btn-sec { background: #fff; color: var(--nar1); border: 2px solid #fed7aa; }
+    .btn-2 { background: var(--nar1); color: #fff; }
+    .btn[disabled] { opacity: .55; }
+
+    .volver {
+      background: none; border: 0; color: var(--suave); font-size: 14px;
+      font-family: inherit; padding: 12px 4px; cursor: pointer; font-weight: 700;
+    }
+
+    /* ── Formulario ── */
+    .campo { margin-bottom: 14px; }
+    .campo > label { display: block; font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+    .campo .pista { font-size: 12.5px; color: var(--suave); font-weight: 500; margin-top: 4px; }
+    .inp {
+      width: 100%; padding: 14px; font-size: 17px; font-family: inherit;
+      border: 2px solid #e5e7eb; border-radius: 12px; background: #fff; color: var(--tinta);
+    }
+    .inp:focus { outline: none; border-color: var(--nar1); }
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .chip {
+      border: 2px solid #e5e7eb; background: #fff; color: var(--tinta);
+      border-radius: 11px; padding: 11px 13px; font-size: 15px; font-weight: 800;
+      font-family: inherit; cursor: pointer; min-width: 48px;
+    }
+    .chip.on { border-color: var(--nar1); background: #fff7ed; color: #9a3412; }
+    .paso { display: flex; align-items: center; gap: 12px; }
+    .paso button {
+      width: 54px; height: 54px; border-radius: 14px; border: 2px solid #e5e7eb;
+      background: #fff; font-size: 26px; font-weight: 900; color: var(--nar1);
+      font-family: inherit; cursor: pointer; line-height: 1;
+    }
+    .paso-n { font-size: 32px; font-weight: 900; min-width: 54px; text-align: center; }
+    .err { color: #b91c1c; font-size: 14px; font-weight: 700; margin-top: 8px; min-height: 20px; }
+
+    /* ── Gracias ── */
+    .gracias { text-align: center; padding-top: 26px; }
+    .gracias-ic { font-size: 66px; }
+    .gracias h2 { font-size: 24px; font-weight: 900; margin: 8px 0; }
+    .gracias p { font-size: 15px; color: var(--suave); }
+    .resumen {
+      background: #ecfdf5; border: 2px solid #a7f3d0; border-radius: 14px;
+      padding: 14px; margin-top: 16px; text-align: left; font-size: 15px;
+    }
+    .resumen strong { color: var(--ok2); }
+    .pasos { text-align: left; display: grid; gap: 10px; margin-top: 8px; }
+    .pasos li { list-style: none; display: flex; gap: 10px; font-size: 14.5px; }
+    .pasos .n {
+      flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+      background: var(--nar1); color: #fff; font-size: 13px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .pie { text-align: center; font-size: 12px; color: var(--suave); padding: 22px 16px 0; }
+    .pie a { color: var(--nar1); font-weight: 700; }
+    .aviso {
+      background: #fef3c7; border: 1px solid #fcd34d; border-radius: 12px;
+      padding: 12px 14px; font-size: 14px; margin-top: 14px;
+    }
+    .centro { text-align: center; padding: 8vh 18px; }
+    .centro .gr { font-size: 54px; }
+    .centro h2 { font-size: 21px; margin: 10px 0 6px; }
+    .centro p { color: var(--suave); font-size: 15px; }
+    .cod-row { display: flex; gap: 8px; max-width: 320px; margin: 16px auto 0; }
+    .cod-inp {
+      flex: 1; min-width: 0; padding: 14px; font-size: 22px; font-weight: 900;
+      text-align: center; letter-spacing: 4px; text-transform: uppercase;
+      border: 2px solid #e5e7eb; border-radius: 12px; font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   SALIDA — la página que contesta el PADRE.
+
+   El maestro manda este enlace al grupo de WhatsApp de la escuela
+   entera y necesita un número: cuánta gente va, para contratar los
+   buses antes de pagarlos. Todo lo demás se le quitó.
+
+   Tres reglas que explican cada decisión de esta pantalla:
+
+   1. NADA DE REGISTRARSE. El enlace cae en un grupo con padres de
+      todos los grados; muchos no tienen clave de familia y no la van
+      a pedir un domingo. Por eso el padre escribe a mano el nombre
+      del alumno y toca su grado.
+   2. LA RESPUESTA NO SE PIERDE. Si falla el internet, la misma
+      respuesta sale por WhatsApp al maestro, ya escrita. Un padre que
+      contestó y no llegó es un asiento pagado de más.
+   3. SE PUEDE CORREGIR. La huella (nombre + grado) hace que volver a
+      contestar CAMBIE la respuesta en vez de contarla dos veces.
+      Contar doble es justo lo que hace pagar un bus de sobra.
+   ═══════════════════════════════════════════════════════════════ */
+
+const SB_URL_DEF = 'https://uljjgrikyigdrkbikcxo.supabase.co';
+const SB_KEY_DEF = 'sb_publishable_VGj7He4XL8AGscsY3RsxGg__xlzi48w';
+const MIA_KEY = 'METAS_SALIDA_V1';       /* lo que YO contesté, por código */
+
+const $app = document.getElementById('app');
+
+let CODIGO = '';
+let EV = null;          /* datos del evento */
+let CUENTA = { familias: 0, personas: 0 };
+let YO = null;          /* mi respuesta guardada en este teléfono */
+let BORRADOR = { va: 1, alumno: '', grado: '', seccion: '', personas: 1, tel: '', nota: '' };
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function sbCfg() {
+  let url = SB_URL_DEF, key = SB_KEY_DEF;
+  try {
+    url = localStorage.getItem('METAS_SB_URL') || url;
+    key = localStorage.getItem('METAS_SB_KEY') || key;
+  } catch (_) {}
+  return { url, key };
+}
+async function rpc(fn, body) {
+  const { url, key } = sbCfg();
+  const r = await fetch(url + '/rest/v1/rpc/' + fn, {
+    method: 'POST',
+    headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+function limpiarCodigo(v) { return String(v || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase(); }
+
+/* ── Cómo se escribe un grupo ──
+   6º-1 es «sexto grado, sección 1». Nunca «6 1» (dos números sueltos)
+   ni «61» (parece sesenta y uno). La regla manda en toda la plataforma
+   y vive en adGradoSeccion (js/tools/registros-admin.js); esta página
+   es autónoma —no carga ese archivo— y lleva su propia copia. Si
+   cambia una, cambia la otra: la madre y el maestro tienen que leer
+   lo mismo. */
+function grupoTxt(grado, seccion) {
+  const g = String(grado || '').trim();
+  const s = String(seccion || '').trim();
+  if (!g) return s;
+  const go = /^\d+$/.test(g) ? g + 'º' : g;
+  if (!s) return go;
+  return (go.length <= 4 && s.length <= 3) ? go + '-' + s : go + ' ' + s;
+}
+/* Sin acentos ni signos: así «José Ángel» y «jose angel» son el mismo niño */
+function norm(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function huella() {
+  return (norm(BORRADOR.alumno) + '|' + norm(BORRADOR.grado) + '|' + norm(BORRADOR.seccion)).slice(0, 120);
+}
+
+/* ── Fechas: se parten a mano porque new Date('2026-08-15') se lee en
+   UTC y en Honduras eso enseña el día ANTERIOR. Un padre que lee el
+   día equivocado no llega. ── */
+const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+               'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+function aFecha(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+}
+function fechaLarga(iso) {
+  const f = aFecha(iso);
+  if (!f) return String(iso || '');
+  return DIAS[f.getDay()] + ' ' + f.getDate() + ' de ' + MESES[f.getMonth()];
+}
+function diasHasta(iso) {
+  const f = aFecha(iso);
+  if (!f) return null;
+  const h = new Date(); h.setHours(0, 0, 0, 0);
+  return Math.round((f - h) / 86400000);
+}
+function dinero(n) {
+  const v = Number(n) || 0;
+  return 'L ' + v.toLocaleString('es-HN');
+}
+
+/* ── Lo que este teléfono ya contestó ── */
+function leerMia() {
+  try {
+    const o = JSON.parse(localStorage.getItem(MIA_KEY));
+    return (o && typeof o === 'object' && o[CODIGO]) ? o[CODIGO] : null;
+  } catch (_) { return null; }
+}
+function guardarMia(r) {
+  try {
+    let o = {};
+    try { o = JSON.parse(localStorage.getItem(MIA_KEY)) || {}; } catch (_) {}
+    o[CODIGO] = r;
+    localStorage.setItem(MIA_KEY, JSON.stringify(o));
+  } catch (_) {}
+}
+
+/* En el escritorio de Windows, WhatsApp corrompe los emojis que llegan
+   por wa.me; WhatsApp Web los conserva. Igual que en las misiones. */
+function waAbrir(texto, tel) {
+  const enc = encodeURIComponent(texto);
+  const movil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const t = String(tel || '').replace(/\D/g, '');
+  const url = movil
+    ? 'https://wa.me/' + t + '?text=' + enc
+    : 'https://web.whatsapp.com/send?' + (t ? 'phone=' + t + '&' : '') + 'text=' + enc;
+  window.open(url, '_blank');
+}
+function enlaceMio() {
+  return location.origin + location.pathname + '?c=' + CODIGO;
+}
+
+/* ═════════ PANTALLA: pedir el código ═════════ */
+function verCodigo(err) {
+  $app.innerHTML = `
+    <div class="centro">
+      <div class="gr">🚌</div>
+      <h2>¿Cuál es el código?</h2>
+      <p>${esc(err || 'El maestro le mandó un enlace. Si solo tiene el código, escríbalo aquí.')}</p>
+      <div class="cod-row">
+        <input class="cod-inp" id="c-inp" maxlength="8" placeholder="R4TP" autocomplete="off" autocapitalize="characters">
+        <button class="btn btn-2" id="c-go" style="width:auto;padding:14px 18px">Ver</button>
+      </div>
+    </div>`;
+  const go = async () => {
+    const c = limpiarCodigo(document.getElementById('c-inp').value);
+    if (c.length < 4) { verCodigo('El código tiene al menos 4 letras o números.'); return; }
+    CODIGO = c;
+    await cargar();
+  };
+  document.getElementById('c-go').addEventListener('click', go);
+  document.getElementById('c-inp').addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+}
+
+/* ═════════ PANTALLA: la portada que convence ═════════ */
+function verPortada() {
+  const e = EV;
+  const dias = diasHasta(e.limite);
+  const cerrada = String(e.cerrada || '') === '1' || (dias != null && dias < 0);
+  let cuenta = '';
+  if (cerrada) cuenta = '<div class="hero-cuenta urge">⛔ Ya se cerró la lista</div>';
+  else if (dias === 0) cuenta = '<div class="hero-cuenta urge">⏰ HOY es el último día para contestar</div>';
+  else if (dias === 1) cuenta = '<div class="hero-cuenta urge">⏰ Mañana se cierra la lista</div>';
+  else if (dias != null && dias <= 5) cuenta = '<div class="hero-cuenta urge">⏰ Faltan ' + dias + ' días para contestar</div>';
+  else if (dias != null) cuenta = '<div class="hero-cuenta">🗓️ Conteste antes del ' + esc(fechaLarga(e.limite)) + '</div>';
+
+  const gana = (e.gana || []).filter(x => String(x || '').trim());
+  const incluye = (e.incluye || []).filter(x => String(x || '').trim());
+  const cupos = Number(e.cupos) || 0;
+  const pct = cupos ? Math.min(100, Math.round(CUENTA.personas * 100 / cupos)) : 0;
+
+  $app.innerHTML = `
+    <div class="hero">
+      <div class="hero-ic">${esc(e.icono || '🚌')}</div>
+      <div class="hero-kicker">${esc(e.dirigido || 'Para las familias de la escuela')}</div>
+      <h1>${esc(e.titulo || 'Salida educativa')}</h1>
+      <div class="hero-sub">${esc(fechaLarga(e.fecha))}${e.hora ? ' · salimos a las ' + esc(e.hora) : ''}</div>
+      ${cuenta}
+    </div>
+
+    <div class="wrap">
+      ${gana.length ? `
+      <div class="card">
+        <div class="card-t">Lo que su hijo o hija se lleva de este día</div>
+        <ul class="gana">${gana.map(g => '<li>' + esc(g) + '</li>').join('')}</ul>
+      </div>` : ''}
+
+      <div class="card">
+        <div class="card-t">Los datos, en corto</div>
+        <div class="datos">
+          <div class="dato"><div class="dato-ic">📍</div><div>
+            <div class="dato-k">A dónde</div><div class="dato-v">${esc(e.lugar || '—')}</div></div></div>
+          <div class="dato"><div class="dato-ic">🗓️</div><div>
+            <div class="dato-k">Cuándo</div><div class="dato-v">${esc(fechaLarga(e.fecha))}</div></div></div>
+          ${(e.hora || e.regreso) ? `
+          <div class="dato"><div class="dato-ic">⏰</div><div>
+            <div class="dato-k">Horario</div><div class="dato-v">${esc(e.hora || '—')}${e.regreso ? ' · de vuelta ' + esc(e.regreso) : ''}</div></div></div>` : ''}
+          ${e.punto ? `
+          <div class="dato"><div class="dato-ic">🚌</div><div>
+            <div class="dato-k">Dónde se sube</div><div class="dato-v">${esc(e.punto)}</div></div></div>` : ''}
+          <div class="dato"><div class="dato-ic">💵</div><div>
+            <div class="dato-k">Aporte por persona</div>
+            <div class="dato-v">${Number(e.aporte) > 0 ? esc(dinero(e.aporte)) : 'Sin costo'}</div>
+            ${incluye.length ? '<div class="pista">Cubre ' + esc(incluye.join(', ')) + '.</div>' : ''}
+            ${e.cobro ? '<div class="pista">' + esc(e.cobro) + '</div>' : ''}</div></div>
+          ${e.maestro ? `
+          <div class="dato"><div class="dato-ic">🧑‍🏫</div><div>
+            <div class="dato-k">Le acompaña</div><div class="dato-v">${esc(e.maestro)}</div></div></div>` : ''}
+        </div>
+        ${e.nota ? '<div class="aviso">' + esc(e.nota) + '</div>' : ''}
+      </div>
+
+      ${CUENTA.familias >= 3 ? `
+      <div class="prueba">
+        <div class="prueba-n">${CUENTA.personas}</div>
+        <div class="prueba-t">personas ya confirmadas${CUENTA.familias ? ' · ' + CUENTA.familias + ' familias' : ''}</div>
+        ${cupos ? `<div class="barra"><i style="width:${pct}%"></i></div>
+          <div class="prueba-t" style="margin-top:6px">${cupos - CUENTA.personas > 0
+            ? 'Quedan ' + (cupos - CUENTA.personas) + ' asientos de ' + cupos
+            : '¡Los ' + cupos + ' asientos están tomados!'}</div>` : ''}
+      </div>` : ''}
+
+      ${YO ? `
+      <div class="card" style="border-color:#a7f3d0;background:#ecfdf5">
+        <div class="card-t">✅ Usted ya contestó</div>
+        <p style="font-size:14.5px">${esc(YO.alumno)}${YO.grado ? ' (' + esc(grupoTxt(YO.grado, YO.seccion)) + ')' : ''}:
+          <strong>${YO.va ? 'sí va' + (YO.personas > 1 ? ', ' + YO.personas + ' personas' : '') : 'esta vez no va'}</strong>.</p>
+        ${cerrada ? '' : '<button class="btn btn-sec" style="margin-top:12px" id="b-cambiar">✏️ Cambiar mi respuesta</button>'}
+      </div>` : ''}
+
+      ${cerrada ? `
+      <div class="aviso" style="margin-top:16px">
+        <strong>La lista ya se cerró.</strong> Si todavía quiere ir, hable directamente con
+        ${esc(e.maestro || 'el maestro')}${e.wa ? '' : '.'}
+      </div>
+      ${e.wa ? '<div class="botones"><button class="btn btn-wa" id="b-wa-maestro">📲 Escribirle al maestro</button></div>' : ''}
+      ` : (YO ? '' : `
+      <div class="botones">
+        <button class="btn btn-si" id="b-si">✅ Sí, mi hijo va</button>
+        <button class="btn btn-no" id="b-no">Esta vez no puede ir</button>
+      </div>
+      <p class="pie" style="padding-top:10px">Tarda <strong>veinte segundos</strong>. No hay que registrarse ni instalar nada.</p>
+      `)}
+
+      <div class="botones" style="margin-top:18px">
+        <button class="btn btn-sec" id="b-compartir">↗️ Pasarlo a otro papá o mamá</button>
+      </div>
+      <p class="pie">${esc(e.escuela || '')}${e.escuela ? ' · ' : ''}Hecho con
+        <a href="https://metas.policastsapien.com" target="_blank" rel="noopener">M.E.T.A.S</a></p>
+    </div>`;
+
+  const bSi = document.getElementById('b-si');
+  if (bSi) bSi.addEventListener('click', () => { BORRADOR.va = 1; verFormulario(); });
+  const bNo = document.getElementById('b-no');
+  if (bNo) bNo.addEventListener('click', () => { BORRADOR.va = 0; verFormulario(); });
+  const bCam = document.getElementById('b-cambiar');
+  if (bCam) bCam.addEventListener('click', () => {
+    BORRADOR = Object.assign({}, BORRADOR, YO, { va: YO.va ? 1 : 0 });
+    verFormulario();
+  });
+  const bWa = document.getElementById('b-wa-maestro');
+  if (bWa) bWa.addEventListener('click', () => waAbrir('Buenas, le escribo por lo de «' + (EV.titulo || 'la salida') + '».', EV.wa));
+  document.getElementById('b-compartir').addEventListener('click', () => waAbrir(textoCompartir()));
+}
+
+function textoCompartir() {
+  const e = EV;
+  return (e.icono || '🚌') + ' *' + (e.titulo || 'Salida educativa') + '*\n' +
+    '🗓️ ' + fechaLarga(e.fecha) + (e.hora ? ' · ' + e.hora : '') + '\n' +
+    (Number(e.aporte) > 0 ? '💵 ' + dinero(e.aporte) + ' por persona\n' : '') +
+    '\nHay que decir si el niño va, para saber cuántos buses contratar.\n' +
+    'Se contesta en 20 segundos, aquí 👇\n' + enlaceMio();
+}
+
+/* ═════════ PANTALLA: los datos (lo más corto posible) ═════════ */
+const GRADOS = ['Prebásica', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Media'];
+
+function verFormulario() {
+  const va = BORRADOR.va === 1;
+  $app.innerHTML = `
+    <div class="hero" style="padding:18px 18px 22px">
+      <div class="hero-ic" style="font-size:40px">${va ? '✅' : '💬'}</div>
+      <h1 style="font-size:21px">${va ? '¡Qué bueno! Solo faltan sus datos' : 'Gracias por avisar'}</h1>
+      <div class="hero-sub">${va ? 'Es para apartarle el asiento en el bus.' : 'Con saberlo, el maestro no le aparta un asiento de más.'}</div>
+    </div>
+    <div class="wrap">
+      <div class="card">
+        <div class="campo">
+          <label for="f-al">Nombre del alumno o alumna</label>
+          <input class="inp" id="f-al" value="${esc(BORRADOR.alumno)}" placeholder="Como aparece en la lista"
+                 autocomplete="off" autocapitalize="words">
+        </div>
+        <div class="campo">
+          <label>¿En qué grado va?</label>
+          <div class="chips" id="f-grados">
+            ${GRADOS.map(g => `<button type="button" class="chip${BORRADOR.grado === g ? ' on' : ''}" data-g="${esc(g)}">${g === 'Prebásica' || g === 'Media' ? esc(g) : esc(g) + 'º'}</button>`).join('')}
+          </div>
+        </div>
+        <div class="campo">
+          <label for="f-sec">Sección <span style="font-weight:600;color:var(--suave)">(si la sabe)</span></label>
+          <input class="inp" id="f-sec" value="${esc(BORRADOR.seccion)}" placeholder="1, A, única…"
+                 maxlength="10" style="max-width:170px" autocomplete="off">
+        </div>
+      </div>
+
+      ${va ? `
+      <div class="card">
+        <div class="campo">
+          <label>¿Cuántas personas van de su casa?</label>
+          <div class="paso">
+            <button type="button" id="f-menos" aria-label="Una menos">−</button>
+            <div class="paso-n" id="f-num">${BORRADOR.personas}</div>
+            <button type="button" id="f-mas" aria-label="Una más">+</button>
+          </div>
+          <div class="pista">Cuente al alumno <strong>y a quien lo acompañe</strong>. Cada persona ocupa
+            un asiento del bus${Number(EV.aporte) > 0 ? ' y paga su aporte' : ''}.</div>
+          <div class="pista" id="f-cuesta" style="font-weight:800;color:var(--nar1)"></div>
+        </div>
+        <div class="campo">
+          <label for="f-tel">Su teléfono (WhatsApp)</label>
+          <input class="inp" id="f-tel" value="${esc(BORRADOR.tel)}" placeholder="9999-8888"
+                 inputmode="tel" autocomplete="tel">
+          <div class="pista">Para avisarle si cambia la hora y para ponerse de acuerdo con el aporte.</div>
+        </div>
+      </div>` : `
+      <div class="card">
+        <div class="campo">
+          <label>¿Por qué no puede? <span style="font-weight:600;color:var(--suave)">(opcional)</span></label>
+          <div class="chips" id="f-razones">
+            ${['Ese día no puedo', 'Por el aporte', 'Está enfermo', 'Otro motivo']
+              .map(r => `<button type="button" class="chip${BORRADOR.nota === r ? ' on' : ''}" data-r="${esc(r)}">${esc(r)}</button>`).join('')}
+          </div>
+          <div class="pista">Ayuda al maestro a ver si puede arreglar algo. Nadie más lo lee.</div>
+        </div>
+      </div>`}
+
+      <div class="err" id="f-err"></div>
+      <div class="botones">
+        <button class="btn ${va ? 'btn-si' : 'btn-2'}" id="f-enviar">${va ? '🚌 Apartar mi asiento' : 'Enviar mi respuesta'}</button>
+        <button class="volver" id="f-volver">‹ Volver</button>
+      </div>
+    </div>`;
+
+  const $al = document.getElementById('f-al');
+  const $sec = document.getElementById('f-sec');
+  $al.addEventListener('input', () => { BORRADOR.alumno = $al.value; });
+  $sec.addEventListener('input', () => { BORRADOR.seccion = $sec.value; });
+  document.querySelectorAll('#f-grados .chip').forEach(b =>
+    b.addEventListener('click', () => {
+      BORRADOR.grado = b.dataset.g;
+      document.querySelectorAll('#f-grados .chip').forEach(x => x.classList.toggle('on', x === b));
+    }));
+
+  if (va) {
+    const $n = document.getElementById('f-num');
+    const $c = document.getElementById('f-cuesta');
+    const pinta = () => {
+      $n.textContent = BORRADOR.personas;
+      const a = Number(EV.aporte) || 0;
+      $c.textContent = a > 0 ? 'Le tocaría dar ' + dinero(a * BORRADOR.personas) + ' en total.' : '';
+    };
+    pinta();
+    document.getElementById('f-menos').addEventListener('click', () => {
+      BORRADOR.personas = Math.max(1, BORRADOR.personas - 1); pinta();
+    });
+    document.getElementById('f-mas').addEventListener('click', () => {
+      BORRADOR.personas = Math.min(12, BORRADOR.personas + 1); pinta();
+    });
+    const $tel = document.getElementById('f-tel');
+    $tel.addEventListener('input', () => { BORRADOR.tel = $tel.value; });
+  } else {
+    document.querySelectorAll('#f-razones .chip').forEach(b =>
+      b.addEventListener('click', () => {
+        const ya = BORRADOR.nota === b.dataset.r;
+        BORRADOR.nota = ya ? '' : b.dataset.r;
+        document.querySelectorAll('#f-razones .chip').forEach(x =>
+          x.classList.toggle('on', !ya && x === b));
+      }));
+  }
+
+  document.getElementById('f-volver').addEventListener('click', verPortada);
+  document.getElementById('f-enviar').addEventListener('click', enviar);
+}
+
+/* ═════════ Enviar ═════════ */
+/* Se llama desde DOS pantallas: la del formulario y la de gracias (el
+   botón «probar otra vez» cuando falló el internet). Por eso no da por
+   sentado que los campos del formulario sigan en la pantalla: cuando el
+   padre reintenta ya no están, y darlos por hechos rompía justo el
+   camino que existe para no perder su respuesta. */
+async function enviar() {
+  const $err = document.getElementById('f-err');
+  const $b = document.getElementById('f-enviar');
+  const decir = m => { if ($err) $err.textContent = m; };
+  BORRADOR.alumno = String(BORRADOR.alumno || '').trim();
+  BORRADOR.seccion = String(BORRADOR.seccion || '').trim();
+  if (BORRADOR.alumno.length < 3) { decir('👆 Escriba el nombre del alumno.'); return; }
+  if (!BORRADOR.grado) { decir('👆 Toque el grado en el que va.'); return; }
+  decir('');
+  if ($b) { $b.disabled = true; $b.textContent = '⏳ Mandando…'; }
+  const yaContaba = !!(YO && YO.subida && YO.va);
+
+  const cuerpo = {
+    p_codigo: CODIGO, p_huella: huella(), p_va: BORRADOR.va === 1,
+    p_alumno: BORRADOR.alumno, p_grado: BORRADOR.grado, p_seccion: BORRADOR.seccion,
+    p_personas: BORRADOR.va === 1 ? BORRADOR.personas : 0,
+    p_tel: String(BORRADOR.tel || '').trim(), p_nota: String(BORRADOR.nota || '').trim(),
+  };
+  let ok = false;
+  try { ok = (await rpc('metas_conv_responder', cuerpo)) === true; } catch (_) { ok = false; }
+
+  YO = {
+    va: BORRADOR.va === 1, alumno: BORRADOR.alumno, grado: BORRADOR.grado,
+    seccion: BORRADOR.seccion, personas: BORRADOR.va === 1 ? BORRADOR.personas : 0,
+    tel: BORRADOR.tel, nota: BORRADOR.nota, subida: ok ? 1 : 0,
+  };
+  guardarMia(YO);
+  if (ok && YO.va && !yaContaba) { CUENTA.familias++; CUENTA.personas += YO.personas; }
+  verGracias(ok);
+}
+
+/* Lo que el padre le manda al maestro si el internet falló: la misma
+   respuesta, ya escrita. El maestro la anota a mano y nadie se queda
+   fuera del bus por una raya de señal. */
+function textoRespuesta() {
+  const g = grupoTxt(YO.grado, YO.seccion);
+  return (EV.icono || '🚌') + ' *' + (EV.titulo || 'Salida') + '*\n' +
+    (YO.va ? '✅ SÍ VAMOS' : '❌ Esta vez NO podemos') + '\n' +
+    '👦 ' + YO.alumno + (g ? ' — ' + g : '') + '\n' +
+    (YO.va ? '👨‍👩‍👧 Van ' + YO.personas + ' persona' + (YO.personas === 1 ? '' : 's') + '\n' : '') +
+    (YO.va && YO.tel ? '📞 ' + YO.tel + '\n' : '') +
+    (!YO.va && YO.nota ? '💬 ' + YO.nota + '\n' : '');
+}
+
+function verGracias(ok) {
+  const e = EV;
+  const g = grupoTxt(YO.grado, YO.seccion);
+  const total = Number(e.aporte) > 0 ? dinero(Number(e.aporte) * YO.personas) : '';
+  $app.innerHTML = `
+    <div class="wrap">
+      <div class="gracias">
+        <div class="gracias-ic">${YO.va ? '🎉' : '🤝'}</div>
+        <h2>${YO.va ? '¡Listo, asiento apartado!' : 'Gracias por contestar'}</h2>
+        <p>${YO.va
+          ? 'Su respuesta ya está en la lista de ' + esc(e.maestro || 'el maestro') + '.'
+          : 'El maestro ya sabe que esta vez no va. Se le tomará en cuenta para la próxima.'}</p>
+
+        <div class="resumen">
+          <div><strong>${esc(YO.alumno)}</strong>${g ? ' · ' + esc(g) : ''}</div>
+          <div>${YO.va
+            ? '✅ Van <strong>' + YO.personas + ' persona' + (YO.personas === 1 ? '' : 's') + '</strong>'
+              + (total ? ' · aporte de <strong>' + esc(total) + '</strong>' : '')
+            : '❌ Esta vez no va' + (YO.nota ? ' — ' + esc(YO.nota) : '')}</div>
+        </div>
+
+        ${!ok ? `
+        <div class="aviso">
+          <strong>No se pudo mandar por internet.</strong> No pierda su respuesta:
+          mándesela al maestro por WhatsApp con el botón de abajo. Ya va escrita.
+        </div>
+        <div class="botones">
+          <button class="btn btn-wa" id="g-wa">📲 Mandarla por WhatsApp</button>
+          <button class="btn btn-sec" id="g-reintentar">🔄 Probar otra vez con internet</button>
+        </div>` : (YO.va ? `
+        <div class="card" style="text-align:left">
+          <div class="card-t">Lo que sigue</div>
+          <ul class="pasos">
+            <li><span class="n">1</span><span>${Number(e.aporte) > 0
+              ? 'Mande el aporte de <strong>' + esc(total) + '</strong> esta semana. ' + esc(e.cobro || 'Con el maestro o con el alumno.')
+              : 'No hay que pagar nada.'}</span></li>
+            <li><span class="n">2</span><span>El <strong>${esc(fechaLarga(e.fecha))}</strong>${e.hora ? ', a las <strong>' + esc(e.hora) + '</strong>,' : ''}
+              esté en ${esc(e.punto || 'la escuela')}. El bus <strong>no espera</strong>.</span></li>
+            <li><span class="n">3</span><span>${esc(e.nota || 'Lleve agua y lo que su hijo vaya a necesitar en el día.')}</span></li>
+          </ul>
+        </div>
+        <div class="botones">
+          <button class="btn btn-si" id="g-compartir">↗️ Avisarle a otro papá o mamá</button>
+          ${e.wa ? '<button class="btn btn-sec" id="g-wa-maestro">💬 Tengo una pregunta para el maestro</button>' : ''}
+        </div>` : `
+        <div class="botones">
+          <button class="btn btn-sec" id="g-compartir">↗️ Pasarle el enlace a otro papá o mamá</button>
+        </div>`)}
+
+        <button class="volver" id="g-volver">‹ Ver los datos de la salida otra vez</button>
+      </div>
+      <p class="pie">${esc(e.escuela || '')}${e.escuela ? ' · ' : ''}Hecho con
+        <a href="https://metas.policastsapien.com" target="_blank" rel="noopener">M.E.T.A.S</a></p>
+    </div>`;
+
+  const bWa = document.getElementById('g-wa');
+  if (bWa) bWa.addEventListener('click', () => waAbrir(textoRespuesta(), e.wa));
+  const bRe = document.getElementById('g-reintentar');
+  if (bRe) bRe.addEventListener('click', async () => {
+    bRe.disabled = true; bRe.textContent = '⏳ Probando…';
+    await enviar();
+  });
+  const bComp = document.getElementById('g-compartir');
+  if (bComp) bComp.addEventListener('click', () => waAbrir(textoCompartir()));
+  const bWaM = document.getElementById('g-wa-maestro');
+  if (bWaM) bWaM.addEventListener('click', () =>
+    waAbrir('Buenas, soy el encargado de ' + YO.alumno + '. Le escribo por «' + (EV.titulo || 'la salida') + '».', e.wa));
+  document.getElementById('g-volver').addEventListener('click', verPortada);
+}
+
+/* ═════════ Arranque ═════════ */
+function verError(msg) {
+  $app.innerHTML = `
+    <div class="centro">
+      <div class="gr">📭</div>
+      <h2>No pude abrir la invitación</h2>
+      <p>${esc(msg)}</p>
+      <div class="botones" style="max-width:320px;margin:18px auto 0">
+        <button class="btn btn-2" id="e-otra">🔄 Intentar otra vez</button>
+        <button class="btn btn-sec" id="e-cod">Escribir el código a mano</button>
+      </div>
+    </div>`;
+  document.getElementById('e-otra').addEventListener('click', cargar);
+  document.getElementById('e-cod').addEventListener('click', () => verCodigo());
+}
+
+async function cargar() {
+  $app.innerHTML = '<div class="centro"><div class="gr">🚌</div><p>Abriendo la invitación…</p></div>';
+  try {
+    const filas = await rpc('metas_conv_ver', { p_codigo: CODIGO });
+    if (!Array.isArray(filas) || !filas.length) {
+      verError('No encontré ninguna salida con el código ' + CODIGO + '. Revise el enlace que le pasaron.');
+      return;
+    }
+    EV = filas[0].datos || {};
+    CUENTA = { familias: filas[0].familias || 0, personas: filas[0].personas || 0 };
+    YO = leerMia();
+    if (YO) BORRADOR = Object.assign({}, BORRADOR, YO, { va: YO.va ? 1 : 0 });
+    document.title = (EV.titulo ? EV.titulo + ' — ' : '') + '¿Va su hijo?';
+    verPortada();
+  } catch (_) {
+    verError('Parece que no hay internet. Conéctese y toque «Intentar otra vez».');
+  }
+}
+
+CODIGO = limpiarCodigo(new URLSearchParams(location.search).get('c') || location.hash.replace('#', ''));
+if (CODIGO.length >= 4) cargar(); else verCodigo();
+</script>
+</body>
+</html>

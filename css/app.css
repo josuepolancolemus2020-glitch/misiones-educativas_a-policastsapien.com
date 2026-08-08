@@ -5021,3 +5021,39 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .lec-ppm-hero b { display: block; font-size: 64px; font-weight: 800; color: #1e3a7c; line-height: 1; }
 .lec-ppm-hero span { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 .lec-veredicto { margin-top: 10px; font-size: 14px; color: var(--text); }
+
+/* ══════════════ 📣 CONVOCATORIA — «¿va o no va?» ══════════════
+   Franja naranja para distinguirla de un control corriente: el control
+   se ANOTA (el maestro ya sabe la respuesta) y la convocatoria se
+   PREGUNTA (todavía no la sabe). Es la misma pestaña, pero no es lo
+   mismo, y el maestro tiene que verlo sin leer. */
+.ad-puerta-conv { border-left: 5px solid #ea580c; margin-top: 12px; }
+
+/* Las cifras con las que decide: personas, familias y BUSES. El número
+   de buses va resaltado porque es el único que se convierte en dinero
+   comprometido; los demás son para entenderlo. */
+.ad-cv-cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 9px; margin-top: 4px; }
+.ad-cv-cif {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 12px 8px; border-radius: 14px;
+  background: var(--bg); border: 1.5px solid var(--border);
+}
+.ad-cv-cif b { font-size: 25px; font-weight: 900; line-height: 1.1; color: var(--text); }
+.ad-cv-cif span { font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); text-align: center; }
+.ad-cv-buses { background: linear-gradient(135deg, #fff7ed, #ffedd5); border-color: #fed7aa; }
+.ad-cv-buses b, .ad-cv-buses span { color: #c2410c; }
+/* «L 4,500» no cabe a 25 px en una columna de teléfono y se partía en
+   dos renglones: la «L» arriba y el número abajo, que se lee como otra
+   cosa. La cifra de dinero va más chica y de una sola pieza. */
+.ad-cv-plata b { font-size: 18px; white-space: nowrap; }
+.ad-cv-no { background: #f8fafc; }
+.ad-cv-no b, .ad-cv-no span { color: #64748b; }
+
+/* La vista previa del mensaje se ve COMO SE VA A VER en WhatsApp: el
+   maestro lo lee ahí y corrige antes de mandarlo a doscientas personas,
+   que es donde ya no hay vuelta atrás. */
+.ad-wa-previa {
+  background: #e7ffdb; border: 1.5px solid #c5ead2; border-radius: 14px 14px 14px 4px;
+  padding: 12px 14px; margin: 10px 0 12px; font-size: 13.5px; line-height: 1.55;
+  color: #111b21; white-space: normal; word-break: break-word;
+}
