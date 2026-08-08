@@ -41,6 +41,7 @@ let _adGastosOn = 0;         /* dentro de «Gastos de mi bolsillo» */
 let _adInvOn = 0;            /* dentro de «Inventario del aula» */
 let _adFichasOn = 0;         /* dentro de «Identidad y contactos» */
 let _adControlId = null;     /* control abierto en Controles */
+let _adExcOn = 0;            /* dentro de 🚌 Salida o excursión */
 
 /* ── Estado v2: GRUPOS (multi-aula) ──
    Un maestro puede atender varios grupos, incluso en DOS colegios.
@@ -85,6 +86,14 @@ function adNormGrupo(g) {
   g.asistencia = Array.isArray(g.asistencia) ? g.asistencia : [];
   g.controles = Array.isArray(g.controles) ? g.controles : [];
   g.bitacora = Array.isArray(g.bitacora) ? g.bitacora : [];   /* novedades de la clase */
+  /* 🚌 la salida que se está contando ahora mismo (js/tools/excursion.js).
+     Va DENTRO del grupo para que viaje sola entre los equipos del maestro
+     con el espejo de la Zona Docente, igual que sus colectas. Solo una a
+     la vez: es la mesa donde se cuenta antes de contratar el bus, no el
+     archivo de la salida (eso queda en el control y en la colecta). */
+  if (g.excursion && typeof g.excursion === 'object') {
+    g.excursion.respuestas = Array.isArray(g.excursion.respuestas) ? g.excursion.respuestas : [];
+  } else if (g.excursion != null) delete g.excursion;
   /* tomas de lectura (palabras por minuto): el canal ya queda listo para
      la herramienta de lectura; su forma está descrita en
      js/tools/estadisticas-alumno.js, que es quien las dibuja */
@@ -452,7 +461,7 @@ function renderAdmin() {
     const rotulo = _adFichasOn ? 'Volver a Alumnos'
       : (_adGastosOn || _adInvOn) ? 'Volver a Economía'
       : _adColectaId ? 'Volver a mis colectas'
-      : _adControlId ? 'Volver a mis controles' : 'Volver a la Zona Docente';
+      : (_adControlId || _adExcOn) ? 'Volver a mis controles' : 'Volver a la Zona Docente';
     _atras.setAttribute('aria-label', rotulo);
     _atras.setAttribute('title', rotulo);
   }
@@ -490,7 +499,7 @@ function renderAdmin() {
   cont.querySelectorAll('[data-gid]').forEach(b =>
     b.addEventListener('click', () => {
       const s2 = adState(); s2.activo = b.dataset.gid; adStateSave(s2);
-      _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0; renderAdmin();
+      _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0; _adExcOn = 0; renderAdmin();
     }));
   document.getElementById('ad-gr-add').addEventListener('click', async () => {
     if (!await metasConfirm('Un grupo nuevo tiene su PROPIA lista de alumnos, claves de familia, economía, asistencia y notas.\n\nÚsalo si atiendes **otro grado/sección** o trabajas en **otro colegio**. ¿Crear el grupo?',
@@ -502,7 +511,7 @@ function renderAdmin() {
     toast('🏫 Grupo nuevo: escribe su grado, sección y colegio');
   });
   cont.querySelectorAll('[data-adtab]').forEach(b =>
-    b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0; renderAdmin(); }));
+    b.addEventListener('click', () => { _adTab = b.dataset.adtab; _adColectaId = null; _adControlId = null; _adGastosOn = 0; _adInvOn = 0; _adFichasOn = 0; _adExcOn = 0; renderAdmin(); }));
   /* chip de nube: visible en TODAS las pestañas (antes solo en Alumnos
      se sabía si lo publicado ya subió); tocarlo sincroniza ya */
   document.getElementById('ad-nube-chip').addEventListener('click', async () => {
@@ -2958,11 +2967,25 @@ function adCtrlValorTxt(c, num) {
 }
 
 function adRenderControles(body, d) {
-  if (!d.lista.length) { adSinLista(body, 'los controles del aula'); return; }
+  /* 🚌 La salida va ANTES del candado de la lista a propósito: se contesta
+     sin clave y desde cualquier grado, así que el maestro tiene que poder
+     armar la invitación aunque todavía no haya escrito a sus alumnos. */
+  if (_adExcOn && typeof excRender === 'function') { excRender(body, d); return; }
+  if (!d.lista.length) {
+    adSinLista(body, 'los controles del aula');
+    /* pero la salida SÍ se puede armar sin lista: la contestan familias de
+       toda la escuela, no solo las suyas */
+    if (typeof excTarjetaEntrada === 'function') {
+      body.insertAdjacentHTML('beforeend', excTarjetaEntrada(d));
+      excEnganchaEntrada();
+    }
+    return;
+  }
   if (_adControlId) { adRenderControl(body, d); return; }
 
   const lista = (d.controles || []).slice().reverse();
   body.innerHTML = `
+    ${typeof excTarjetaEntrada === 'function' ? excTarjetaEntrada(d) : ''}
     <div class="pa-card">
       <div class="pa-card-title">✅ Controles del aula</div>
       <p class="pa-optional-hint">Para todo lo que se anota a diario y no es dinero ni nota:
@@ -3060,7 +3083,20 @@ function adRenderControles(body, d) {
 
   body.querySelectorAll('[data-ctid]').forEach(b =>
     b.addEventListener('click', () => { _adControlId = b.dataset.ctid; renderAdmin(); }));
+
+  if (typeof excEnganchaEntrada === 'function') excEnganchaEntrada();
 }
+
+/* ── Puertas para 🚌 Salida o excursión (js/tools/excursion.js) ──
+   Las banderas de navegación son `let` de este archivo, así que no se ven
+   desde otro script: se abren y se cierran por estas dos funciones y no
+   tocando variables por fuera. */
+window.adAbrirExcursion = function () { _adTab = 'ctrl'; _adExcOn = 1; renderAdmin(); };
+window.adSalirExcursion = function () { _adExcOn = 0; renderAdmin(); };
+/* Al abrir la colecta del pago se lleva al maestro DENTRO de ella: es
+   donde va a marcar quién pagó, y buscarla a mano después de crearla es
+   el paso donde se pierde. */
+window.adIrAColecta = function (id) { _adExcOn = 0; _adTab = 'eco'; _adColectaId = id; renderAdmin(); };
 
 function adRenderControl(body, d) {
   const c = adControl(d, _adControlId);

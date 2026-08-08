@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f2350">
+  <title>Salida educativa — conteste si su hijo o hija va</title>
+  <meta name="description" content="El maestro necesita saber cuántos van para contratar el transporte. Conteste en menos de un minuto: sí o no, y cuántas personas.">
+  <meta property="og:title" content="🚌 Salida educativa — ¿va su hijo o hija?">
+  <meta property="og:description" content="Toque aquí y conteste en menos de un minuto. El maestro contrata el bus con los que estén confirmados.">
+  <meta property="og:image" content="https://metas.policastsapien.com/img/icon-512.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
+  <style>
+    /* ── Paleta del boleto ──
+       Azul tinta (el mismo de los documentos impresos de la app) y ámbar.
+       No es la paleta verde del asistente de padres a propósito: esto no es
+       la consulta de notas, es una invitación, y tiene que verse distinto
+       de un vistazo cuando la madre lo abre desde el grupo de WhatsApp. */
+    :root {
+      --tinta: #0f2350;
+      --tinta-2: #1e3a7c;
+      --sol: #f59e0b;
+      --sol-osc: #b45309;
+      --ok: #16a34a;
+      --ok-osc: #15803d;
+      --no: #64748b;
+      --fondo: #eef2f9;
+      --blanco: #ffffff;
+      --texto: #1c2733;
+      --muted: #5b6b7b;
+      --borde: #d9e1ec;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--fondo); color: var(--texto);
+      line-height: 1.55; font-size: 16px;
+      padding-bottom: 40px;
+    }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 0 12px; }
+
+    /* ── El boleto: encabezado ──
+       Se dibuja como un boleto de verdad (recorte y perforación) porque el
+       enlace cae en un grupo de WhatsApp entre decenas de mensajes: si abre
+       y parece un formulario, se cierra; si parece un boleto, se lee. */
+    .boleto {
+      background: linear-gradient(160deg, var(--tinta-2) 0%, var(--tinta) 100%);
+      color: #fff; border-radius: 0 0 20px 20px;
+      padding: 20px 18px 26px; text-align: center;
+      box-shadow: 0 6px 24px rgba(15,35,80,.28);
+      position: relative; overflow: hidden;
+    }
+    .boleto::before {
+      content: ''; position: absolute; inset: -40% -20% auto -20%; height: 150%;
+      background: radial-gradient(circle at 30% 0%, rgba(245,158,11,.28), transparent 60%);
+      pointer-events: none;
+    }
+    .b-mini { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase;
+      font-weight: 800; color: #ffd68a; position: relative; }
+    .b-icono { font-size: 46px; line-height: 1; margin: 6px 0 4px; position: relative; }
+    .b-titulo { font-size: 26px; font-weight: 900; line-height: 1.18; position: relative;
+      text-wrap: balance; }
+    .b-escuela { font-size: 13px; opacity: .82; margin-top: 6px; position: relative; }
+    .b-fecha {
+      display: inline-block; margin-top: 14px; position: relative;
+      background: var(--sol); color: #3d2600; font-weight: 900;
+      padding: 9px 18px; border-radius: 999px; font-size: 16.5px;
+      box-shadow: 0 4px 14px rgba(245,158,11,.4);
+    }
+    .b-datos { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+      margin-top: 14px; position: relative; }
+    .b-dato { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28);
+      border-radius: 10px; padding: 7px 11px; font-size: 13px; font-weight: 600; }
+
+    /* ── Aviso de urgencia ── */
+    .urge {
+      background: #fff7ed; border: 2px solid var(--sol); color: #7c2d12;
+      border-radius: 14px; padding: 12px 14px; margin: 14px 0;
+      font-size: 14.5px; font-weight: 700; text-align: center;
+    }
+    .urge strong { color: #9a3412; }
+    .urge.cerrado { background: #fef2f2; border-color: #ef4444; color: #7f1d1d; }
+
+    /* ── Tarjetas ── */
+    .card {
+      background: var(--blanco); border: 1px solid var(--borde);
+      border-radius: 16px; padding: 16px; margin: 12px 0;
+      box-shadow: 0 2px 10px rgba(15,35,80,.06);
+    }
+    .card h2 { font-size: 15px; font-weight: 800; color: var(--tinta);
+      display: flex; align-items: center; gap: 7px; margin-bottom: 10px; }
+    .gancho {
+      background: linear-gradient(135deg, #fffbeb, #fff7ed);
+      border-left: 5px solid var(--sol); border-radius: 0 12px 12px 0;
+      padding: 13px 15px; margin: 12px 0; font-size: 15.5px; color: #4a3208;
+    }
+    .porques { display: grid; gap: 9px; }
+    .porque { display: flex; gap: 11px; align-items: flex-start;
+      background: #f8fafc; border-radius: 11px; padding: 10px 12px; }
+    .porque span:first-child { font-size: 22px; line-height: 1.2; flex: 0 0 auto; }
+    .porque b { display: block; font-size: 14.5px; color: var(--tinta); }
+    .porque small { color: var(--muted); font-size: 13px; }
+
+    .filas { display: grid; gap: 1px; background: var(--borde);
+      border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; }
+    .fila { display: flex; gap: 10px; background: var(--blanco); padding: 10px 13px; font-size: 14.5px; }
+    .fila .k { color: var(--muted); flex: 0 0 auto; font-weight: 600; }
+    .fila .v { margin-left: auto; text-align: right; font-weight: 700; color: var(--tinta); }
+    .precio-grande { font-size: 30px; font-weight: 900; color: var(--ok-osc); text-align: center;
+      margin: 4px 0 2px; }
+    .precio-pie { text-align: center; color: var(--muted); font-size: 13px; }
+
+    /* ── El asistente: una pregunta a la vez ──
+       Igual que en las misiones, la pantalla pide UNA cosa. Un formulario
+       largo en un teléfono se abandona a la mitad; aquí cada paso cabe
+       entero sin bajar y se contesta con el pulgar. */
+    .asis { border: 2px solid var(--tinta-2); }
+    .paso { display: none; }
+    .paso.on { display: block; animation: entra .22s ease-out; }
+    @keyframes entra { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .preg { font-size: 19px; font-weight: 800; color: var(--tinta); text-align: center;
+      margin-bottom: 4px; text-wrap: balance; }
+    .preg-sub { font-size: 13.5px; color: var(--muted); text-align: center; margin-bottom: 14px; }
+
+    .btn {
+      display: block; width: 100%; border: none; border-radius: 14px;
+      padding: 16px 14px; font-size: 17px; font-weight: 800; cursor: pointer;
+      font-family: inherit; margin-bottom: 10px; transition: transform .1s, box-shadow .15s;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-si { background: linear-gradient(135deg, #22c55e, var(--ok)); color: #fff;
+      box-shadow: 0 5px 16px rgba(22,163,74,.34); font-size: 19px; padding: 19px 14px; }
+    .btn-no { background: #f1f5f9; color: var(--no); border: 1.5px solid var(--borde); font-size: 15px; }
+    .btn-wa { background: linear-gradient(135deg, #25d366, #128c7e); color: #fff;
+      box-shadow: 0 5px 16px rgba(18,140,126,.34); font-size: 18.5px; padding: 18px 14px; }
+    .btn-sec { background: var(--blanco); color: var(--tinta-2); border: 1.5px solid var(--borde); font-size: 14.5px; }
+    .btn-sig { background: linear-gradient(135deg, var(--tinta-2), var(--tinta)); color: #fff; }
+    .btn:disabled { opacity: .45; cursor: default; box-shadow: none; }
+
+    .campo { width: 100%; border: 2px solid var(--borde); border-radius: 12px;
+      padding: 14px; font-size: 17px; font-family: inherit; outline: none;
+      background: #fbfdff; color: var(--texto); margin-bottom: 12px; }
+    .campo:focus { border-color: var(--tinta-2); background: #fff; }
+    .dos { display: flex; gap: 10px; }
+    .dos > div { flex: 1; min-width: 0; }
+    .etq { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 5px; display: block; }
+
+    /* Contador con dedo: los teclados numéricos en el teléfono tapan media
+       pantalla y el padre pierde de vista lo que estaba contestando. */
+    .cont { display: flex; align-items: center; justify-content: space-between;
+      background: #f8fafc; border: 2px solid var(--borde); border-radius: 14px;
+      padding: 10px 12px; margin-bottom: 12px; gap: 10px; }
+    .cont-txt { min-width: 0; }
+    .cont-txt b { display: block; font-size: 15px; color: var(--tinta); }
+    .cont-txt small { color: var(--muted); font-size: 12.5px; }
+    .cont-ctrl { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+    .cont-b { width: 42px; height: 42px; border-radius: 50%; border: none;
+      background: var(--tinta-2); color: #fff; font-size: 24px; font-weight: 800;
+      cursor: pointer; line-height: 1; }
+    .cont-b:disabled { background: #cbd5e1; }
+    .cont-n { font-size: 24px; font-weight: 900; min-width: 34px; text-align: center; color: var(--tinta); }
+
+    .total-caja { background: #f0fdf4; border: 2px solid #86efac; border-radius: 14px;
+      padding: 14px; text-align: center; margin-bottom: 12px; }
+    .total-caja .tt { font-size: 13px; color: var(--ok-osc); font-weight: 700; }
+    .total-caja .tv { font-size: 30px; font-weight: 900; color: var(--ok-osc); }
+
+    .resumen { background: #f8fafc; border: 1px dashed var(--borde); border-radius: 12px;
+      padding: 13px; font-size: 14.5px; margin-bottom: 12px; }
+    .resumen div { padding: 3px 0; }
+    .aviso { font-size: 13px; color: var(--muted); text-align: center; margin-top: 6px; }
+    .err { color: #b91c1c; font-size: 13.5px; font-weight: 700; text-align: center;
+      margin-bottom: 10px; display: none; }
+    .err.on { display: block; }
+
+    .listo { text-align: center; padding: 6px 0; }
+    .listo .lg { font-size: 54px; }
+    .listo h3 { font-size: 20px; color: var(--tinta); margin: 6px 0; }
+    .listo p { color: var(--muted); font-size: 14.5px; margin-bottom: 12px; }
+
+    footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 18px 12px 6px; }
+    footer a { color: var(--tinta-2); font-weight: 700; text-decoration: none; }
+    .sinconf { max-width: 520px; margin: 40px auto; padding: 22px; background: #fff;
+      border-radius: 16px; border: 1px solid var(--borde); }
+    .sinconf h1 { font-size: 19px; color: var(--tinta); margin-bottom: 10px; }
+    .sinconf p { font-size: 14.5px; color: var(--muted); margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   🚌 «¿Quién va?» — la invitación que el maestro manda al WhatsApp
+   ══════════════════════════════════════════════════════════════════
+   POR QUÉ ESTA PÁGINA NO TIENE SERVIDOR
+
+   El maestro necesita el conteo YA (contrata el bus el martes) y el
+   enlace no cae solo en el grupo de su grado: cae en el de toda la
+   escuela. Eso descarta de entrada las dos salidas «normales»:
+
+   · Pedir la clave de familia no sirve: las familias de los otros
+     grados no tienen clave, y las del suyo no se la saben de memoria.
+   · Guardar las respuestas en la nube obligaría a abrir una tabla
+     pública a escritura anónima —cualquiera con el enlace metiendo
+     filas— y a correr SQL nuevo un sábado por la tarde.
+
+   Así que la respuesta viaja por donde ya viven todos: **WhatsApp**.
+   El padre contesta aquí y la página le abre un mensaje ya escrito
+   hacia el número del maestro. Eso, además de simple, le da algo que
+   ninguna base de datos le daría: **el número de teléfono de quien
+   contestó**, que es justo lo que necesita para cobrarle la otra
+   semana y para llamar al que no pague.
+
+   Y la CONFIGURACIÓN viaja dentro del propio enlace (en el #, que no
+   llega a los registros del servidor). Por eso el mismo archivo sirve
+   para el museo de este mes y para la próxima salida sin tocar una
+   línea de código: lo que cambia es el enlace que arma «Mi aula».
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── El código del enlace ──
+   ⚠ Esta pareja de funciones está DUPLICADA en js/tools/excursion.js.
+   Tiene que estarlo: esta página es autónoma (la abre una madre que no
+   tiene la app instalada) y no puede cargar nada del programa. Si se
+   toca una, se toca la otra, o los enlaces ya repartidos dejan de
+   abrirse. El separador es el byte de control 0x1F: nadie lo puede
+   teclear en un formulario, así que no hay que escapar nada. */
+var EXC_SEP = '\u001f';
+function excEmpacar(campos) {
+  var s = campos.map(function (v) {
+    return String(v == null ? '' : v).split(EXC_SEP).join(' ');
+  }).join(EXC_SEP);
+  /* unescape(encodeURIComponent(...)) es el camino de UTF-8 a base64 que
+     funciona hasta en los WebView viejos de Android, que es donde corre
+     esto de verdad. Los signos + / = se cambian por - . porque WhatsApp
+     recorta y decora los enlaces con otros caracteres. */
+  var b = btoa(unescape(encodeURIComponent(s)));
+  return b.split('+').join('-').split('/').join('.').replace(/=+$/, '');
+}
+function excDesempacar(txt) {
+  var b = String(txt || '').split('-').join('+').split('.').join('/');
+  while (b.length % 4) b += '=';
+  return decodeURIComponent(escape(atob(b))).split(EXC_SEP);
+}
+/* Orden de los campos del enlace. Se añade AL FINAL, nunca en medio:
+   un enlace ya mandado por WhatsApp sigue vivo en el teléfono de la
+   familia y tiene que seguir abriéndose igual. */
+var EXC_CAMPOS = ['ver', 'titulo', 'fecha', 'hsal', 'hreg', 'precio', 'incluye',
+  'llevar', 'wa', 'limite', 'maestro', 'escuela', 'punto', 'cap', 'abierto',
+  'grupo', 'gancho', 'pago', 'icono'];
+/* Cuántos campos trae un enlace de la versión 1. Este número NO se toca al
+   añadir campos nuevos: los enlaces que ya circulan siguen trayendo 19 y
+   tienen que seguir abriéndose. */
+var EXC_MINIMO = 19;
+function excLeer(txt) {
+  try {
+    var a = excDesempacar(txt), o = {};
+    /* Un enlace CORTADO no se pinta a medias. WhatsApp recorta los enlaces
+       largos al reenviarlos y al copiarlos a mano, y medio código
+       decodifica igual: saldría una invitación con el nombre partido, sin
+       fecha y sin precio, y la madre contestaría a una salida inventada.
+       Si no vienen todos los campos, el enlace llegó roto y vale más
+       decirlo. */
+    if (a.length < EXC_MINIMO || !/^[1-9]\d*$/.test(a[0])) return null;
+    EXC_CAMPOS.forEach(function (k, i) { o[k] = a[i] || ''; });
+    return o.titulo ? o : null;
+  } catch (_) { return null; }
+}
+
+/* ── NORMATIVA · CÓMO SE ESCRIBE UN GRUPO ──
+   6º-1 es «sexto grado, sección 1». Nunca «6 1» ni «61».
+   La regla manda vive en adGradoSeccion (js/tools/registros-admin.js);
+   esta página es autónoma y lleva su copia, como padres.html. Si
+   cambia una, cambian las tres: la madre y el maestro tienen que leer
+   lo mismo en la pantalla y en el mensaje. */
+function grupoTxt(grado, seccion) {
+  var g = String(grado || '').trim().replace(/^(\d{1,2})\s*[ºo°]?$/i, '$1º');
+  var s = String(seccion || '').trim().toUpperCase();
+  if (!g || !s) return g || s;
+  return (g.length <= 4 && s.length <= 3) ? g + '-' + s : g + ' ' + s;
+}
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+  'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+var DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+/* Se parte la fecha a mano en vez de new Date('2026-08-15'): así el
+   navegador no la corre un día atrás por la zona horaria, que en
+   Honduras (UTC-6) pasa siempre. */
+function fechaObj(iso) {
+  var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+}
+function fechaLarga(iso) {
+  var d = fechaObj(iso);
+  return d ? DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] : '';
+}
+function fechaCorta(iso) {
+  var d = fechaObj(iso);
+  return d ? d.getDate() + '/' + String(d.getMonth() + 1).padStart(2, '0') : '';
+}
+function diasHasta(iso) {
+  var d = fechaObj(iso); if (!d) return null;
+  var h = new Date(); h = new Date(h.getFullYear(), h.getMonth(), h.getDate());
+  return Math.round((d - h) / 86400000);
+}
+function lps(n) {
+  var v = Math.round((Number(n) || 0) * 100) / 100;
+  return 'L ' + v.toLocaleString('es-HN', { minimumFractionDigits: v % 1 ? 2 : 0 });
+}
+
+/* ══════════ Estado de la respuesta ══════════ */
+var CFG = excLeer((location.hash || '').replace(/^#/, ''));
+var R = { va: null, nombre: '', grado: '', seccion: '', alumnos: 1, adultos: 0 };
+var PASO = 0;
+
+function total() { return R.alumnos + R.adultos; }
+function aPagar() { return total() * (Number(CFG.precio) || 0); }
+
+/* El mensaje que le llega al maestro. Arriba lo que un humano lee de un
+   vistazo; abajo, UNA línea con el mismo dato en corto, que es la que
+   «Mi aula» suma sola cuando el maestro pega las respuestas. Si esa
+   línea se pierde (alguien reescribe el mensaje a mano), el maestro
+   todavía puede leerlo y contarlo: por eso van los dos. */
+function mensaje() {
+  var enc = '🚌 *' + CFG.titulo + '* — ' + fechaCorta(CFG.fecha);
+  var quien = '🧒 ' + R.nombre + ' · ' + grupoTxt(R.grado, R.seccion);
+  /* Quien no va, va con cero personas. El paso de contar se le salta —no
+     tiene sentido preguntarle cuántos van si dijo que no— y el 1 que
+     traía por defecto se quedaba escrito en la respuesta: un «no» que
+     dice «1 alumno» es un dato que miente aunque nadie lo sume. */
+  var al = R.va ? R.alumnos : 0, ad = R.va ? R.adultos : 0;
+  var codigo = '#METAS|' + (R.va ? 'SI' : 'NO') + '|' + al + '|' + ad +
+    '|' + String(R.grado).replace(/\D/g, '') + '|' + String(R.seccion).toUpperCase() + '|' + R.nombre;
+  if (!R.va) {
+    return enc + '\n\n🙁 *Esta vez NO podemos ir*\n' + quien +
+      '\n\nGracias por avisar, maestro.\n\n' + codigo;
+  }
+  var p = Number(CFG.precio) || 0;
+  return enc + '\n\n✅ *SÍ VAMOS*\n' + quien +
+    '\n👥 Van ' + total() + ' persona' + (total() === 1 ? '' : 's') +
+    ' (' + R.alumnos + ' alumno' + (R.alumnos === 1 ? '' : 's') +
+    (R.adultos ? ' y ' + R.adultos + ' acompañante' + (R.adultos === 1 ? '' : 's') : ', sin acompañante') + ')' +
+    (p ? '\n💵 Pagaré ' + lps(aPagar()) + ' en total' : '') +
+    '\n\n' + codigo;
+}
+
+/* ══════════ Pantalla ══════════ */
+function render() {
+  if (!CFG) { sinConfig(); return; }
+  var dias = diasHasta(CFG.limite || CFG.fecha);
+  var cerrado = dias !== null && dias < 0;
+  var p = Number(CFG.precio) || 0;
+
+  document.getElementById('app').innerHTML =
+    '<div class="boleto">' +
+      '<div class="b-mini">' + (CFG.escuela ? esc(CFG.escuela) : 'Salida educativa') + '</div>' +
+      '<div class="b-icono">' + (CFG.icono || '🚌') + '</div>' +
+      '<div class="b-titulo">' + esc(CFG.titulo) + '</div>' +
+      (CFG.maestro ? '<div class="b-escuela">Invita el profesor ' + esc(CFG.maestro) +
+        (CFG.grupo ? ' · ' + esc(CFG.grupo) : '') + '</div>' : '') +
+      (CFG.fecha ? '<div class="b-fecha">📅 ' + esc(fechaLarga(CFG.fecha)) + '</div>' : '') +
+      '<div class="b-datos">' +
+        (CFG.hsal ? '<div class="b-dato">🕗 Sale ' + esc(CFG.hsal) + '</div>' : '') +
+        (CFG.hreg ? '<div class="b-dato">🏠 Regresa ' + esc(CFG.hreg) + '</div>' : '') +
+        (CFG.punto ? '<div class="b-dato">📍 ' + esc(CFG.punto) + '</div>' : '') +
+      '</div>' +
+    '</div>' +
+    '<div class="wrap">' +
+      avisoUrgencia(dias, cerrado) +
+      (CFG.gancho ? '<div class="gancho">' + esc(CFG.gancho) + '</div>' : '') +
+      tarjetaPorques() +
+      tarjetaPrecio(p) +
+      '<div class="card asis" id="asis"></div>' +
+      '<footer>Hecho con <a href="https://metas.policastsapien.com" target="_blank" rel="noopener">M.E.T.A.S</a>' +
+        ' · Su respuesta le llega al maestro por WhatsApp. Esta página no guarda nada.</footer>' +
+    '</div>';
+
+  pintaPaso();
+}
+
+function avisoUrgencia(dias, cerrado) {
+  if (cerrado) {
+    return '<div class="urge cerrado">⛔ <strong>Ya pasó la fecha para apuntarse.</strong><br>' +
+      'Si todavía quiere ir, hable directo con el maestro: puede que quede campo.</div>';
+  }
+  var lim = CFG.limite ? fechaLarga(CFG.limite) : '';
+  var cuenta = dias === 0 ? '<strong>Hoy es el último día para contestar.</strong>'
+    : dias === 1 ? '<strong>Mañana se cierra la lista.</strong>'
+    : '<strong>Quedan ' + dias + ' días</strong> para contestar.';
+  return '<div class="urge">⏰ ' + cuenta +
+    (lim ? '<br>El transporte se contrata el <strong>' + esc(lim) + '</strong> con los que estén confirmados.' : '') +
+    '<br><span style="font-weight:600">Conteste aunque sea que NO: así el maestro no aparta un campo que nadie va a usar.</span></div>';
+}
+
+function tarjetaPorques() {
+  var h = '<div class="card"><h2>✨ Por qué vale la pena</h2><div class="porques">';
+  h += por('🎓', 'Se aprende lo que no cabe en el aula',
+    'Lo que vio en el libro lo ve de cerca, y eso no se le olvida.');
+  h += por('👨‍👩‍👧', 'Usted puede acompañarlo',
+    'Si quiere ir con su hijo o hija, apúntese abajo como acompañante.');
+  /* El punto de salida va detrás de dos puntos, no de un «desde»: el
+     maestro lo escribe como le sale («Del portón», «La cancha») y
+     cualquier preposición que se le ponga delante acaba chocando con la
+     suya («desde Del portón de la escuela»). */
+  h += por('🚌', 'Con transporte y maestro responsable',
+    'Salen y regresan juntos.' + (CFG.punto ? ' Punto de encuentro: ' + esc(CFG.punto) + '.' : ''));
+  return h + '</div></div>';
+}
+function por(i, t, s) {
+  return '<div class="porque"><span>' + i + '</span><span><b>' + t + '</b><small>' + s + '</small></span></div>';
+}
+
+function tarjetaPrecio(p) {
+  var f = [];
+  if (CFG.incluye) f.push(['✅ Incluye', CFG.incluye]);
+  if (CFG.llevar) f.push(['🎒 Debe llevar', CFG.llevar]);
+  if (CFG.pago) f.push(['💰 Se paga', CFG.pago]);
+  if (!p && !f.length) return '';
+  return '<div class="card"><h2>🎟️ El aporte</h2>' +
+    (p ? '<div class="precio-grande">' + lps(p) + '</div>' +
+         '<div class="precio-pie">por cada persona que va (alumno o acompañante)</div>'
+       : '<div class="precio-pie" style="font-size:15px;font-weight:700;color:#15803d">Esta salida no tiene costo.</div>') +
+    (f.length ? '<div class="filas" style="margin-top:12px">' + f.map(function (x) {
+      return '<div class="fila"><span class="k">' + x[0] + '</span><span class="v">' + esc(x[1]) + '</span></div>';
+    }).join('') + '</div>' : '') + '</div>';
+}
+
+/* ══════════ Los pasos del asistente ══════════ */
+function pintaPaso() {
+  var a = document.getElementById('asis');
+  if (PASO === 0) return pasoInicio(a);
+  if (PASO === 1) return pasoQuien(a);
+  if (PASO === 2) return pasoCuantos(a);
+  if (PASO === 3) return pasoEnviar(a);
+  return pasoListo(a);
+}
+
+function pasoInicio(a) {
+  a.innerHTML = '<div class="paso on">' +
+    '<div class="preg">¿Va su hijo o hija?</div>' +
+    '<div class="preg-sub">Toque su respuesta. Le toma menos de un minuto.</div>' +
+    '<button class="btn btn-si" id="b-si">✅ SÍ, apúntenos</button>' +
+    '<button class="btn btn-no" id="b-no">🙁 Esta vez no podemos</button>' +
+    '<div class="aviso">Su respuesta se manda por WhatsApp al maestro. No se pide clave ni se crea cuenta.</div>' +
+  '</div>';
+  document.getElementById('b-si').onclick = function () { R.va = true; PASO = 1; pintaPaso(); };
+  document.getElementById('b-no').onclick = function () { R.va = false; PASO = 1; pintaPaso(); };
+}
+
+function pasoQuien(a) {
+  a.innerHTML = '<div class="paso on">' +
+    '<div class="preg">¿De quién es la respuesta?</div>' +
+    '<div class="preg-sub">El maestro necesita el nombre para apuntarlo en su lista.</div>' +
+    '<div class="err" id="e1"></div>' +
+    '<label class="etq" for="f-nom">Nombre y apellido del alumno</label>' +
+    '<input class="campo" id="f-nom" type="text" autocomplete="name" placeholder="Ej.: Juan Pérez Mejía" value="' + esc(R.nombre) + '">' +
+    '<div class="dos">' +
+      '<div><label class="etq" for="f-gra">Grado</label>' +
+        '<input class="campo" id="f-gra" type="text" inputmode="numeric" maxlength="2" placeholder="6" value="' + esc(R.grado) + '"></div>' +
+      '<div><label class="etq" for="f-sec">Sección</label>' +
+        '<input class="campo" id="f-sec" type="text" maxlength="3" placeholder="1" value="' + esc(R.seccion) + '"></div>' +
+    '</div>' +
+    '<button class="btn btn-sig" id="b-sig">Siguiente ›</button>' +
+    '<button class="btn btn-sec" id="b-atras">‹ Atrás</button>' +
+  '</div>';
+  document.getElementById('b-atras').onclick = function () { PASO = 0; pintaPaso(); };
+  document.getElementById('b-sig').onclick = function () {
+    R.nombre = document.getElementById('f-nom').value.trim().replace(/\s+/g, ' ');
+    R.grado = document.getElementById('f-gra').value.trim();
+    R.seccion = document.getElementById('f-sec').value.trim().toUpperCase();
+    var e = document.getElementById('e1');
+    if (R.nombre.length < 4 || R.nombre.indexOf(' ') < 0) {
+      e.textContent = '✍️ Escriba el nombre Y el apellido del alumno.'; e.className = 'err on'; return;
+    }
+    if (!R.grado || !R.seccion) {
+      e.textContent = '✍️ Falta el grado o la sección (ej.: grado 6, sección 1).'; e.className = 'err on'; return;
+    }
+    e.className = 'err';
+    PASO = R.va ? 2 : 3;
+    pintaPaso();
+  };
+}
+
+function pasoCuantos(a) {
+  var p = Number(CFG.precio) || 0;
+  a.innerHTML = '<div class="paso on">' +
+    '<div class="preg">¿Cuántas personas van?</div>' +
+    '<div class="preg-sub">De esto depende cuántos buses contrata el maestro.</div>' +
+    cont('al', '🧒 Alumnos de su casa', 'Su hijo o hija, y hermanos si también van.', R.alumnos) +
+    cont('ad', '🧑 Adultos que acompañan', 'Usted, o quien vaya con el niño. Puede ser 0.', R.adultos) +
+    (p ? '<div class="total-caja"><div class="tt">Le tocaría pagar en total</div>' +
+         '<div class="tv" id="tot">' + lps(aPagar()) + '</div>' +
+         '<div class="tt" style="font-weight:600">' + total() + ' × ' + lps(p) + '</div></div>' : '') +
+    '<button class="btn btn-sig" id="b-sig">Siguiente ›</button>' +
+    '<button class="btn btn-sec" id="b-atras">‹ Atrás</button>' +
+  '</div>';
+  ['al', 'ad'].forEach(function (k) {
+    document.getElementById('c-' + k + '-m').onclick = function () { mueve(k, -1); };
+    document.getElementById('c-' + k + '-p').onclick = function () { mueve(k, +1); };
+  });
+  document.getElementById('b-atras').onclick = function () { PASO = 1; pintaPaso(); };
+  document.getElementById('b-sig').onclick = function () { PASO = 3; pintaPaso(); };
+}
+function cont(k, t, s, v) {
+  return '<div class="cont"><span class="cont-txt"><b>' + t + '</b><small>' + s + '</small></span>' +
+    '<span class="cont-ctrl">' +
+      '<button class="cont-b" id="c-' + k + '-m" aria-label="Quitar uno">−</button>' +
+      '<span class="cont-n" id="c-' + k + '-n">' + v + '</span>' +
+      '<button class="cont-b" id="c-' + k + '-p" aria-label="Agregar uno">+</button>' +
+    '</span></div>';
+}
+function mueve(k, d) {
+  if (k === 'al') R.alumnos = Math.max(1, Math.min(9, R.alumnos + d));
+  else R.adultos = Math.max(0, Math.min(9, R.adultos + d));
+  pintaPaso();
+}
+
+function pasoEnviar(a) {
+  var p = Number(CFG.precio) || 0;
+  a.innerHTML = '<div class="paso on">' +
+    '<div class="preg">' + (R.va ? '📲 Último paso: mándelo' : '📲 Mande su respuesta') + '</div>' +
+    '<div class="preg-sub">Se abre WhatsApp con el mensaje ya escrito. Usted solo toca <strong>enviar</strong>.</div>' +
+    '<div class="resumen">' +
+      '<div>' + (R.va ? '✅ <strong>Sí vamos</strong>' : '🙁 <strong>Esta vez no podemos</strong>') + '</div>' +
+      '<div>🧒 ' + esc(R.nombre) + ' · ' + esc(grupoTxt(R.grado, R.seccion)) + '</div>' +
+      (R.va ? '<div>👥 ' + total() + ' persona' + (total() === 1 ? '' : 's') + '</div>' : '') +
+      (R.va && p ? '<div>💵 ' + lps(aPagar()) + ' en total</div>' : '') +
+    '</div>' +
+    '<button class="btn btn-wa" id="b-wa">📲 Enviar mi respuesta por WhatsApp</button>' +
+    '<button class="btn btn-sec" id="b-copiar">📋 Copiar el mensaje (si no se abre WhatsApp)</button>' +
+    '<button class="btn btn-sec" id="b-atras">‹ Corregir algo</button>' +
+  '</div>';
+  document.getElementById('b-atras').onclick = function () { PASO = R.va ? 2 : 1; pintaPaso(); };
+  document.getElementById('b-wa').onclick = function () {
+    /* El número llega DENTRO del enlace y ya con su código de país: se lo
+       pone «Mi aula» al guardar, no esta página. Aquí solo se le quitan
+       los guiones con que lo escribió el maestro.
+       Sin número, wa.me abre el selector de contactos del teléfono: la
+       madre elige al maestro y el mensaje va igual. Vale más eso que un
+       botón muerto. */
+    var num = String(CFG.wa || '').replace(/\D/g, '');
+    window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(mensaje()), '_blank');
+    PASO = 4; pintaPaso();
+  };
+  document.getElementById('b-copiar').onclick = function () {
+    var t = mensaje();
+    var ok = function () { alert('📋 Mensaje copiado.\n\nAbra WhatsApp, busque al maestro y péguelo.'); PASO = 4; pintaPaso(); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(ok, function () { copiaVieja(t, ok); });
+    } else copiaVieja(t, ok);
+  };
+}
+function copiaVieja(t, ok) {
+  var ta = document.createElement('textarea');
+  ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); ok(); }
+  catch (_) { alert('Copie este mensaje y mándeselo al maestro:\n\n' + t); }
+  document.body.removeChild(ta);
+}
+
+function pasoListo(a) {
+  a.innerHTML = '<div class="paso on listo">' +
+    '<div class="lg">' + (R.va ? '🎉' : '🤝') + '</div>' +
+    '<h3>' + (R.va ? '¡Listo! Ya van apuntados' : 'Gracias por avisar') + '</h3>' +
+    '<p>' + (R.va
+      ? 'Revise que el mensaje se haya <strong>enviado</strong> en WhatsApp. El maestro le confirmará el campo y le dirá cuándo entregar el aporte.'
+      : 'Con su respuesta el maestro no aparta un campo de más. Si cambia de opinión antes de la fecha, vuelva a entrar y conteste otra vez.') + '</p>' +
+    (R.va && CFG.pago ? '<div class="gancho" style="text-align:left">💰 ' + esc(CFG.pago) + '</div>' : '') +
+    '<button class="btn btn-sec" id="b-otro">➕ Contestar por otro hijo o hija</button>' +
+  '</div>';
+  document.getElementById('b-otro').onclick = function () {
+    R = { va: null, nombre: '', grado: R.grado, seccion: R.seccion, alumnos: 1, adultos: 0 };
+    PASO = 0; pintaPaso();
+    document.getElementById('asis').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+}
+
+function sinConfig() {
+  document.getElementById('app').innerHTML =
+    '<div class="sinconf"><h1>🚌 Este enlace está incompleto</h1>' +
+    '<p>La invitación viaja dentro del enlace, y este llegó cortado. Pasa cuando se copia a medias desde WhatsApp.</p>' +
+    '<p><strong>Pídale al maestro que se lo mande otra vez</strong> y ábralo tocándolo directamente, sin copiarlo.</p>' +
+    '<p style="margin-top:14px">Si usted es el maestro: el enlace se arma en la app, en <strong>Mi aula → ✅ Controles → 🚌 Salida o excursión</strong>.</p></div>';
+}
+
+render();
+/* Si el maestro se manda el enlace a sí mismo para revisarlo y luego lo
+   corrige, WhatsApp reabre la misma pestaña con otro #: hay que repintar. */
+window.addEventListener('hashchange', function () {
+  CFG = excLeer((location.hash || '').replace(/^#/, ''));
+  R = { va: null, nombre: '', grado: '', seccion: '', alumnos: 1, adultos: 0 };
+  PASO = 0; render();
+});
+</script>
+</body>
+</html>

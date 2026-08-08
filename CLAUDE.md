@@ -299,6 +299,46 @@ madre. El tiempo no se espera de verdad: se adelanta el reloj del
 navegador (`page.clock`), porque una comprobación que cuesta un minuto
 por caso no la corre nadie antes de publicar.
 
+## Normativa: la salida y su enlace (🚌 en ✅ Controles)
+
+Sirve para saber **cuántos van antes de contratar el bus**. El maestro arma
+la invitación en «Mi aula» → ✅ Controles → 🚌, la manda al grupo de
+WhatsApp de la escuela y pega de vuelta lo que le contesten; la pantalla le
+dice personas, **buses** y dinero.
+
+Tres decisiones que no se deshacen sin volver al problema:
+
+1. **La respuesta vuelve por WhatsApp, no a la nube.** El enlace no cae
+   solo en el grupo de su grado: cae en el de toda la escuela. Pedir la
+   clave de familia dejaría fuera a los demás grados, y guardar en la nube
+   obligaría a abrir una tabla a escritura anónima —cualquiera con el
+   enlace metiendo filas—. Por WhatsApp, además, al maestro le queda **el
+   número de teléfono** de quien contestó, que es con lo que cobra la
+   semana siguiente.
+2. **La configuración viaja dentro del enlace**, en el `#`. Por eso el
+   mismo archivo sirve para la salida de este mes y para la siguiente sin
+   tocar código: lo que cambia es el enlace.
+3. **El número del maestro se guarda ya con su código de país.** Lo pone
+   `excWaNum` al guardar, nunca la página de la familia: si el 504 no
+   viaja dentro del enlace, el botón de la madre abre un chat con nadie y
+   el maestro no se entera de que perdió esa respuesta.
+
+**El codificador está DUPLICADO a propósito** (`excEmpacar`/`EXC_CAMPOS`
+en `js/tools/excursion.js` y en `excursion.html`). Tiene que estarlo:
+`excursion.html` es autónoma, la abre una madre que no tiene la app.
+Si se toca una, **se toca la otra**, o los enlaces ya repartidos por
+WhatsApp dejan de abrirse. Los campos se añaden **al final, nunca en
+medio**, y `EXC_MINIMO` no se sube al añadirlos: un enlace viejo sigue
+vivo en el teléfono de la familia.
+
+Antes de publicar un cambio de la salida:
+
+```
+node _dev/verifica-excursion.js            → el enlace y las cuentas (sin navegador)
+node _dev/servidor-estatico.js        (en otra terminal)
+node _dev/verifica-excursion-pantalla.js   → las dos mitades hablándose
+```
+
 ## Normativa: los nombres propios llevan mayúscula, también en los juegos
 
 Vale para **todo texto que ve una persona**: tarjetas de repaso, quiz,

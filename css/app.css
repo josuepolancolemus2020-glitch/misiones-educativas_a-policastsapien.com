@@ -5021,3 +5021,72 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .lec-ppm-hero b { display: block; font-size: 64px; font-weight: 800; color: #1e3a7c; line-height: 1; }
 .lec-ppm-hero span { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 .lec-veredicto { margin-top: 10px; font-size: 14px; color: var(--text); }
+
+/* ══════════ 🚌 SALIDA O EXCURSIÓN (js/tools/excursion.js) ══════════
+   Vive en «Mi aula» → ✅ Controles. Mientras hay una salida abierta, el
+   maestro entra aquí a mirar UN número —cuántos buses— varias veces al
+   día, así que ese número se pinta grande y sin tener que bajar. */
+.exc-puerta { padding: 0 !important; overflow: hidden; }
+.exc-puerta-btn {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  background: none; border: none; padding: 14px 16px; cursor: pointer;
+  text-align: left; font-family: inherit; color: inherit;
+}
+.exc-puerta-viva { border-color: rgba(245,158,11,.55); background: linear-gradient(135deg,#fffbeb,#fff7ed); }
+.exc-p-ic { font-size: 30px; flex: 0 0 auto; line-height: 1; }
+.exc-p-txt { min-width: 0; flex: 1 1 auto; }
+.exc-p-txt b { display: block; font-size: 14.5px; font-weight: 800; color: var(--text); }
+.exc-p-txt small { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.45; margin-top: 2px; }
+@media (hover: hover) { .exc-puerta-btn:hover .exc-p-txt b { color: var(--brand); } }
+.exc-puerta-btn:active { transform: scale(.99); }
+
+.exc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: -4px; }
+.exc-chip {
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 999px; padding: 4px 10px;
+}
+.exc-chip-ok { color: #15803d; background: #f0fdf4; border-color: #86efac; }
+.exc-chip-urge { color: #b45309; background: #fffbeb; border-color: #fcd34d; }
+.exc-chip-mal { color: #b91c1c; background: #fef2f2; border-color: #fca5a5; }
+
+/* El tablero: personas, buses y dinero.
+   Arriba los dos números cortos, y el dinero ABAJO A TODO LO ANCHO. En
+   tres columnas «L 1,350» se partía en «L / 1,35 / 0» —tres renglones y
+   un número que no se puede leer—, y justo ese es el que el maestro
+   enseña cuando le preguntan en qué se gastó la plata. */
+.exc-tablero { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.exc-tablero > .exc-cifra:last-child { grid-column: 1 / -1; }
+.exc-cifra {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 12px;
+  padding: 10px 6px; text-align: center;
+}
+.exc-c-ic { font-size: 18px; line-height: 1; }
+.exc-c-n { font-size: 26px; font-weight: 800; color: #1e3a7c; line-height: 1.1; margin: 2px 0; white-space: nowrap; }
+.exc-c-et { font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: .3px; line-height: 1.25; }
+.exc-c-sub { font-size: 11px; color: var(--muted); line-height: 1.3; margin-top: 3px; }
+
+.exc-url { font-size: 12px !important; font-family: ui-monospace, Menlo, Consolas, monospace; margin-bottom: 10px; }
+.filas-exc { display: grid; gap: 6px; margin-top: 4px; }
+
+.exc-det { margin-top: 10px; }
+.exc-det > summary { cursor: pointer; font-size: 13px; color: var(--brand); font-weight: 700; padding: 6px 0; }
+.exc-pre {
+  white-space: pre-wrap; word-break: break-word; font-size: 12px; line-height: 1.5;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; margin-top: 8px; color: var(--text);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+
+.exc-pasos { display: grid; gap: 8px; margin: 12px 0; }
+.exc-paso { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.exc-paso b { display: block; font-size: 13.5px; color: var(--text); }
+.exc-paso small { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+
+.exc-form { margin-top: 10px; }
+.exc-et { display: block; font-size: 12.5px; font-weight: 700; color: var(--text); margin: 12px 0 4px; }
+.exc-ay { font-size: 11.5px; color: var(--muted); margin: 4px 0 0; line-height: 1.4; }
+.exc-area { height: auto !important; min-height: 62px; }
+.exc-iconos { margin-bottom: 4px; }
+.exc-ic { font-size: 20px !important; padding: 6px 10px !important; }
+.exc-ic-on { border-color: var(--brand) !important; background: #eef4ff !important; box-shadow: 0 0 0 2px rgba(30,58,124,.18); }
