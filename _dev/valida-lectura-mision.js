@@ -35,8 +35,18 @@ const RAIZ = path.resolve(__dirname, '..');
 /* Corpus registrados. Al pilotar la sección en otra misión, se añade
    aquí su archivo y el validador la cubre sin tocar nada más. */
 const CORPUS = [
-  { archivo: 'misiones/2y3ciclo-adjetivos/js/lectura-adjetivos.js', constante: 'LECTURA_ADJETIVOS', mision: 'Los Adjetivos' },
+  { archivo: 'misiones/2y3ciclo-adjetivos/js/lectura-adjetivos.js', constante: 'LECTURA_ADJETIVOS',
+    mision: 'Los Adjetivos', prefijo: 'LA', inventario: 'adjetivos' },
+  { archivo: 'misiones/1ciclo-segundo-grado/js/lectura-numeros.js', constante: 'LECTURA_NUMEROS',
+    mision: 'Números grandes', prefijo: 'LN', inventario: 'numeros' },
 ];
+
+/* El lector de numerales: la misión de los números no lleva inventario a
+   mano porque este lo saca del texto. Aquí se comprueba que lo que saca
+   alcance para las actividades. */
+const NUM = require(path.join(RAIZ, 'js', 'data', 'lectura-numerales.js'));
+const GRANDE = 1000;        /* lo que la cacería considera «número grande» */
+const MIN_GRANDES = 6;      /* seis para cazar y para las dos rondas de ordenar */
 
 /* Mismas bandas de palabras que el corpus de Mi aula (_dev/valida-lectura.js):
    el texto tiene que poder leerse en cerca de un minuto al ritmo del grado. */
@@ -92,7 +102,7 @@ function valida(entrada) {
 
     lote.forEach((t, i) => {
       const quien = `${t.id || '#' + i} «${t.titulo || 'sin título'}»`;
-      if (!new RegExp('^LA' + g + '-\\d\\d$').test(t.id || '')) err(`${quien}: id inválido (formato LA${g}-NN)`);
+      if (!new RegExp('^' + entrada.prefijo + g + '-\\d\\d$').test(t.id || '')) err(`${quien}: id inválido (formato ${entrada.prefijo}${g}-NN)`);
       if (ids.has(t.id)) err(`${quien}: id repetido`); ids.add(t.id);
       const titN = String(t.titulo || '').toLowerCase();
       if (titulos.has(titN)) err(`${quien}: título repetido`); titulos.add(titN);
@@ -104,6 +114,7 @@ function valida(entrada) {
       if (/\s\s/.test(t.texto)) err(`${quien}: dobles espacios en el texto`);
       if (t.texto !== String(t.texto).trim()) err(`${quien}: espacios colgantes en el texto`);
 
+      if (entrada.inventario === 'adjetivos') {
       /* adjs, dets y neutros: con esto el alumno CAZA los adjetivos
          tocándolos sobre el texto, así que un fallo aquí no es un fallo
          de datos: es la pantalla diciéndole que se equivocó cuando
@@ -146,6 +157,30 @@ function valida(entrada) {
       /* Tres determinativos por lectura es el mínimo para que la
          actividad de clasificar tenga con qué jugar sin repetir. */
       if ((t.dets || []).length < 3) err(`${quien}: solo ${(t.dets || []).length} determinativo(s); hacen falta 3 para la actividad de clasificar`);
+      }
+
+      /* En la misión de los números el inventario NO se escribe: lo saca
+         js/data/lectura-numerales.js del propio texto. Lo que hay que
+         comprobar es que el texto dé para las actividades — si una lectura
+         trae tres números, la cacería es un chiste y las dos rondas de
+         ordenar no se pueden armar. */
+      if (entrada.inventario === 'numeros') {
+        const nums = NUM.detectar(String(t.texto).trim().split(/\s+/));
+        const grandes = nums.filter(n => n.v >= GRANDE);
+        const valores = [...new Set(grandes.map(n => n.v))];
+        const enPalabras = grandes.filter(n => n.forma === 'palabras');
+        const enCifras = grandes.filter(n => n.forma === 'cifras');
+        const chicos = nums.filter(n => n.v < GRANDE);
+        if (grandes.length < MIN_GRANDES) err(`${quien}: solo ${grandes.length} número(s) mayor(es) que mil; hacen falta ${MIN_GRANDES}`);
+        if (valores.length < 6) err(`${quien}: solo ${valores.length} valor(es) grande(s) distinto(s); hacen falta 6 para las dos rondas de ordenar`);
+        if (!enPalabras.length) err(`${quien}: ningún número grande escrito en palabras; sin eso la actividad de leerlos no tiene de dónde salir`);
+        if (enCifras.length < 3) err(`${quien}: solo ${enCifras.length} número(s) grande(s) en cifras; hacen falta 3`);
+        /* Los pequeños son los que obligan a mirar de verdad: sin ellos,
+           cazar «números grandes» es tocar todo lo que tenga cifras. */
+        if (!chicos.length) err(`${quien}: ningún número menor que mil; la cacería se vuelve trivial`);
+        const fuera = grandes.filter(n => n.v > 20000000);
+        if (fuera.length) err(`${quien}: ${fuera.map(n => n.v).join(', ')} se sale del horizonte de la misión`);
+      }
 
       const pg = t.preguntas || [];
       if (pg.length !== 5) err(`${quien}: ${pg.length} preguntas (deben ser 5)`);
@@ -170,9 +205,14 @@ function valida(entrada) {
 
     if (lote.length) {
       const ns = lote.map(t => palabrasDe(t.texto).length);
-      const adj = lote.reduce((s, t) => s + (t.adjs || []).length + (t.dets || []).length, 0);
       console.log(`  📏 palabras: mín ${Math.min(...ns)} · máx ${Math.max(...ns)} · promedio ${Math.round(ns.reduce((a, b) => a + b, 0) / ns.length)}`);
-      console.log(`  🎨 palabras resaltadas: ${adj} en total · ${Math.round(adj / lote.length)} por lectura`);
+      if (entrada.inventario === 'adjetivos') {
+        const adj = lote.reduce((s, t) => s + (t.adjs || []).length + (t.dets || []).length, 0);
+        console.log(`  🎨 palabras resaltadas: ${adj} en total · ${Math.round(adj / lote.length)} por lectura`);
+      } else {
+        const gr = lote.map(t => NUM.detectar(String(t.texto).trim().split(/\s+/)).filter(n => n.v >= GRANDE).length);
+        console.log(`  🔢 números mayores que mil: mín ${Math.min(...gr)} · máx ${Math.max(...gr)} por lectura`);
+      }
       const totC = distC[0] + distC[1] + distC[2];
       if (totC) {
         const pct = distC.map(x => Math.round(x * 100 / totC));

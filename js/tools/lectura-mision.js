@@ -23,8 +23,7 @@
    Lo que queda es la toma clásica, la misma que el maestro hace en
    papel: se lee en voz alta y ya. Cuando suena el minuto —y solo
    entonces— el texto se vuelve tocable y se marca de UN SOLO TOQUE la
-   última palabra leída. Un toque después de leer no estorba, y es lo
-   único que hace falta para sacar las palabras por minuto.
+   última palabra leída.
 
    ── Qué cambia por no haber maestro delante ──
    · NO se cuentan errores de lectura. Un niño no puede escucharse y
@@ -34,37 +33,31 @@
    · El veredicto le habla a ÉL, de tú, y nunca lo etiqueta: dice qué
      hacer esta semana, no lo que es.
 
-   ── El taller: cuatro actividades sobre el texto recién leído ──
-   1. ❓ ¿Qué entendiste? — las cinco preguntas, UNA A LA VEZ y en
-      letra grande. Antes iban las cinco juntas y en letra chica: en
-      un teléfono eso es un muro de texto y el niño contesta por
-      contestar.
-   2. 🎯 Caza de adjetivos — los toca sobre el texto que acaba de leer
-      en voz alta. Aquí está la razón de que la lectura viva dentro de
-      la misión: el tema que estudió aparece encima de algo suyo.
-   3. 🗂️ ¿Califica o determina? — clasifica los que cazó. Encontrar no
-      es lo mismo que entender qué clase de adjetivo es.
-   4. ✏️ ¿Cómo lo decía el texto? — vuelve a la lectura de memoria a
-      buscar el adjetivo exacto. Comprensión y vocabulario a la vez.
+   ── El taller lo pone CADA MISIÓN ──
+   Este archivo no sabe de adjetivos ni de números: ofrece cinco FORMAS
+   de actividad y cada misión declara cuáles usa y con qué datos.
 
-   El motor no sabe de qué tema son los textos: las tres primeras
-   actividades salen de `adjs`/`dets`/`neutros` y la cuarta se arma
-   sola con las oraciones del texto. Una misión nueva escribe su
-   corpus y ya tiene su taller.
+     comprension  — las cinco preguntas del texto, una a la vez
+     cazar        — tocar sobre el texto las palabras que cumplen algo
+     dosGrupos    — clasificar algo en una de dos clases
+     tresOpciones — elegir entre tres
+     ordenar      — tocar varias fichas en el orden correcto
+
+   Así, la misión de los adjetivos caza adjetivos y la de los números
+   caza números grandes, con el mismo motor y sin tocarlo. Cuando una
+   forma nueva haga falta de verdad, se añade aquí y la heredan todas.
 
    Las NORMAS (banda de palabras por minuto por grado) viven en
-   js/data/lectura-normas.js; las CLASES de palabra que no se dejan al
-   criterio de nadie (artículos, determinativos) en
-   js/data/lectura-clases.js. Aquí no se escribe ninguna de las dos.
+   js/data/lectura-normas.js. Aquí no se escribe ninguna cifra de
+   velocidad.
 
    Uso desde una misión:
      <script src="../../js/data/lectura-normas.js"></script>
-     <script src="../../js/data/lectura-clases.js"></script>
      <script src="js/lectura-<tema>.js"></script>
      <script src="../../js/tools/lectura-mision.js"></script>
      LecturaMision.montar({
-       contenedor: 'lm-root', corpus: LECTURA_ADJETIVOS,
-       mision: 'adjetivos', tema: 'los adjetivos',
+       contenedor: 'lm-root', corpus: LECTURA_X, actividades: LECTURA_X_TALLER,
+       mision: 'x', tema: 'los adjetivos', resumen: {...},
        alTerminar: function (r) { ... }   // XP y logros de la misión
      });
 ══════════════════════════════════════════════════════════════ */
@@ -74,9 +67,6 @@
   var CLAVE = 'METAS_LECTURA_MISION_V1';   /* resultados por misión y texto */
   var CLAVE_PREF = 'METAS_LECTURA_MISION_PREF';  /* grado elegido */
   var SEGUNDOS = 60;
-  var META_CAZA = 10;       /* adjetivos que hay que cazar para cumplir */
-  var CLASIFICA_N = 6;      /* palabras que se clasifican */
-  var COMPLETA_N = 4;       /* huecos de «¿cómo lo decía el texto?» */
 
   /* ── utilidades ── */
   function esc(s) {
@@ -88,13 +78,12 @@
   /* Quita puntuación para comparar palabras. \b de JavaScript no sirve con
      acentos («ú» no es carácter de palabra para el motor), así que se
      compara palabra contra palabra, ya limpias. Esta expresión tiene que
-     ser IDÉNTICA a la de _dev/valida-lectura-mision.js: si no, el
-     validador aprueba palabras que aquí no se reconocen. */
+     ser IDÉNTICA a la de _dev/valida-lectura-mision.js. */
   var LIMPIA = /[.,;:()¿?¡!«»"“”'’…—–]/g;
   function clave(p) { return String(p).replace(LIMPIA, '').toLowerCase(); }
-  /* Marca del hueco de «¿cómo lo decía el texto?». Es un carácter que no
+  /* Marca del hueco de las actividades de completar: un carácter que no
      puede aparecer en una lectura, para poder sustituirlo sin miedo. */
-  var HUECO = '';
+  var HUECO = '\uE000';
   function leerJSON(k, porDefecto) {
     try { var o = JSON.parse(localStorage.getItem(k)); return o && typeof o === 'object' ? o : porDefecto; }
     catch (e) { return porDefecto; }
@@ -121,7 +110,7 @@
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
   }
-  function baraja(arr, rnd) {
+  function barajaCon(arr, rnd) {
     var a = arr.slice();
     for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)); var x = a[i]; a[i] = a[j]; a[j] = x; }
     return a;
@@ -140,8 +129,8 @@
     return grados.indexOf(g) >= 0 ? g : null;
   }
 
-  /* Oraciones como rangos de índices de palabra: las necesitan la
-     actividad de clasificar (para dar contexto) y la de completar. */
+  /* Oraciones como rangos de índices de palabra: las necesitan las
+     actividades que dan contexto o que tapan una palabra. */
   function oraciones(ps) {
     var out = [], ini = 0;
     ps.forEach(function (p, i) {
@@ -166,7 +155,7 @@
   var CSS = [
     '.lm-wrap{--lm-pri:var(--pri,#419b88);--lm-sec:var(--sec,#c49000);--lm-card:var(--card,#fff);',
     '--lm-borde:var(--border,#e2ddd4);--lm-txt:var(--dark,#1b2838);--lm-gris:var(--gray,#636e72);',
-    '--lm-ok:var(--jade,#00b894);--lm-no:var(--red,#d63031);--lm-det:var(--purple,#6c5ce7);}',
+    '--lm-ok:var(--jade,#00b894);--lm-no:var(--red,#d63031);--lm-b:var(--purple,#6c5ce7);}',
     '.lm-grados{display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.6rem 0;}',
     '.lm-grado{font-family:"Fredoka",sans-serif;font-size:1rem;font-weight:600;min-width:58px;padding:0.55rem 0.85rem;',
     'border:2px solid var(--lm-borde);border-radius:12px;background:var(--lm-card);color:var(--lm-txt);cursor:pointer;transition:all 0.15s;}',
@@ -194,7 +183,7 @@
     '.lm-barra{flex:1;min-width:120px;height:10px;border-radius:8px;background:var(--lm-borde);overflow:hidden;}',
     '.lm-barra i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--lm-pri),var(--lm-sec));transition:width 0.1s linear;}',
     '.lm-crono-sub{font-size:0.85rem;color:var(--lm-gris);width:100%;}',
-    /* el texto que se lee y se caza */
+    /* el texto que se lee y sobre el que se caza */
     /* text-align a la izquierda SIEMPRE, aunque la misión justifique sus
        párrafos: el texto justificado abre huecos desiguales entre palabras
        y el lector que va despacio pierde el renglón justo en esos huecos. */
@@ -204,10 +193,12 @@
     '.lm-viva .lm-p{cursor:pointer;}',
     '.lm-p.lm-leida{background:var(--pri-gl,rgba(65,155,136,0.18));}',
     '.lm-p.lm-aqui{background:var(--lm-pri);color:#fff;font-weight:700;box-shadow:0 0 0 2px var(--lm-pri);}',
-    '.lm-p.lm-adj{background:var(--sec-gl,rgba(196,144,0,0.22));color:var(--lm-txt);font-weight:700;',
+    /* dos resaltados con nombre neutro: cada misión decide qué es «a» y
+       qué es «b» (calificativo/determinativo, número grande/pequeño…) */
+    '.lm-p.lm-a{background:var(--sec-gl,rgba(196,144,0,0.22));color:var(--lm-txt);font-weight:700;',
     'box-shadow:inset 0 -0.18em 0 var(--lm-sec);}',
-    '.lm-p.lm-det{background:var(--purple-gl,rgba(108,92,231,0.18));color:var(--lm-txt);font-weight:700;',
-    'box-shadow:inset 0 -0.18em 0 var(--lm-det);}',
+    '.lm-p.lm-b{background:var(--purple-gl,rgba(108,92,231,0.18));color:var(--lm-txt);font-weight:700;',
+    'box-shadow:inset 0 -0.18em 0 var(--lm-b);}',
     '.lm-p.lm-hallada{background:var(--jade-gl,rgba(0,184,148,0.22));color:var(--lm-txt);font-weight:700;',
     'box-shadow:inset 0 -0.18em 0 var(--lm-ok);}',
     '.lm-p.lm-fallo{background:var(--red-gl,rgba(214,48,49,0.16));animation:lm-tiembla 0.3s;}',
@@ -241,8 +232,23 @@
     'background:var(--lm-card);color:var(--lm-txt);cursor:pointer;font-family:inherit;font-size:1.02rem;line-height:1.4;text-align:center;}',
     '.lm-dosbtn button b{display:block;font-family:"Fredoka",sans-serif;font-size:1.1rem;}',
     '.lm-dosbtn button small{display:block;color:var(--lm-gris);font-size:0.85rem;margin-top:0.15rem;}',
-    '.lm-dosbtn button.lm-b-adj:hover{border-color:var(--lm-sec);}',
-    '.lm-dosbtn button.lm-b-det:hover{border-color:var(--lm-det);}',
+    '.lm-dosbtn button.lm-g0:hover{border-color:var(--lm-sec);}',
+    '.lm-dosbtn button.lm-g1:hover{border-color:var(--lm-b);}',
+    '.lm-dosbtn button.lm-ok{border-color:var(--lm-ok);background:var(--jade-gl,rgba(0,184,148,0.14));}',
+    '.lm-dosbtn button.lm-no{border-color:var(--lm-no);background:var(--red-gl,rgba(214,48,49,0.10));}',
+    /* fichas de ordenar */
+    '.lm-fichas{display:flex;flex-wrap:wrap;gap:0.55rem;margin:0.7rem 0;}',
+    '.lm-ficha{flex:1;min-width:110px;padding:0.85rem 0.6rem;border-radius:14px;border:2px solid var(--lm-borde);',
+    'background:var(--lm-card);color:var(--lm-txt);cursor:pointer;font-family:"Fredoka",sans-serif;',
+    'font-size:1.25rem;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;}',
+    '.lm-ficha:hover{border-color:var(--lm-pri);}',
+    '.lm-ficha.lm-larga{font-size:0.95rem;line-height:1.35;}',
+    '.lm-ficha.lm-puesta{border-color:var(--lm-ok);background:var(--jade-gl,rgba(0,184,148,0.16));cursor:default;}',
+    '.lm-ficha.lm-puesta i{display:block;font-style:normal;font-size:0.72rem;font-weight:400;color:var(--lm-gris);}',
+    '.lm-ficha.lm-fallo{border-color:var(--lm-no);background:var(--red-gl,rgba(214,48,49,0.12));animation:lm-tiembla 0.3s;}',
+    '.lm-escalera{display:flex;flex-wrap:wrap;gap:0.4rem;align-items:center;font-family:"Fredoka",sans-serif;',
+    'font-size:1.05rem;color:var(--lm-gris);margin:0.4rem 0;min-height:1.6em;}',
+    '.lm-escalera b{color:var(--lm-txt);}',
     /* resultado */
     '.lm-hero{text-align:center;margin:0.4rem 0 0.7rem;}',
     '.lm-hero b{display:block;font-family:"Fredoka",sans-serif;font-size:3.2rem;line-height:1;color:var(--lm-pri);}',
@@ -271,7 +277,7 @@
   /* ══════════════ una instancia por misión ══════════════ */
   function montar(op) {
     var raiz = typeof op.contenedor === 'string' ? document.getElementById(op.contenedor) : op.contenedor;
-    if (!raiz || !op.corpus) return null;
+    if (!raiz || !op.corpus || !op.actividades || !op.actividades.length) return null;
     if (typeof LECTURA_NORMAS === 'undefined' || typeof lecNivelVelocidad !== 'function') {
       raiz.innerHTML = '<div class="card"><p>📖 Las normas de lectura no cargaron en este equipo. ' +
         'Abre la misión una vez con internet y quedarán guardadas.</p></div>';
@@ -283,17 +289,10 @@
     var corpus = op.corpus;
     var mision = op.mision || 'mision';
     var tema = op.tema || 'el tema de esta misión';
-    var grados = Object.keys(corpus).map(Number).filter(function (g) { return corpus[g] && corpus[g].length; }).sort(function (a, b) { return a - b; });
-    /* Artículos y palabras discutidas: no cuentan ni a favor ni en contra
-       en la cacería. El porqué está en js/data/lectura-clases.js. */
-    var NEUTROS_GLOBAL = (typeof LECTURA_CLASES !== 'undefined' && LECTURA_CLASES.neutros) ? LECTURA_CLASES.neutros : [];
-
-    var ACTIVIDADES = [
-      { id: 'comprension', icono: '❓', titulo: '¿Qué entendiste?' },
-      { id: 'caza', icono: '🎯', titulo: 'Caza de adjetivos' },
-      { id: 'clasifica', icono: '🗂️', titulo: '¿Califica o determina?' },
-      { id: 'completa', icono: '✏️', titulo: '¿Cómo lo decía el texto?' }
-    ];
+    var ACTOS = op.actividades;
+    var grados = Object.keys(corpus).map(Number)
+      .filter(function (g) { return Number.isInteger(g) && corpus[g] && corpus[g].length; })
+      .sort(function (a, b) { return a - b; });
 
     var pref = leerJSON(CLAVE_PREF, {}) || {};
     var st = null;
@@ -303,13 +302,15 @@
         grado: st ? st.grado : null,
         textoId: st ? st.textoId : null,
         ini: 0, seg: 0, idx: null, congelado: false,
-        acto: 0,                 /* actividad del taller en curso */
-        pregIdx: 0, resp: [],    /* comprensión */
-        caza: [], cazaFallos: 0, cazaRendido: false,
-        clasIdx: 0, clasResp: [],
-        compIdx: 0, compResp: [],
+        acto: 0,
+        est: ACTOS.map(estadoInicial),
         guardado: null, timer: null
       };
+    }
+    function estadoInicial(a) {
+      if (a.forma === 'cazar') return { hallados: [], fallos: 0, rendido: false };
+      if (a.forma === 'ordenar') return { i: 0, puestos: [], fallos: 0, rondaFallo: false, aciertos: 0 };
+      return { i: 0, resp: [] };
     }
     st = limpio('elegir');
     st.grado = (grados.indexOf(pref.grado) >= 0 ? pref.grado : null) || gradoIdentificado(grados);
@@ -341,84 +342,45 @@
     function pararTimer() { if (st.timer) { clearInterval(st.timer); st.timer = null; } }
     function reiniciar() { pararTimer(); var g = st.grado; st = limpio('elegir'); st.grado = g; }
 
-    /* ══════════════ Datos derivados de la lectura ══════════════ */
-    function inventario(t) {
-      var adj = {}, det = {}, neu = {};
-      (t.adjs || []).forEach(function (p) { adj[clave(p)] = 1; });
-      (t.dets || []).forEach(function (p) { det[clave(p)] = 1; });
-      (t.neutros || []).forEach(function (p) { neu[clave(p)] = 1; });
-      NEUTROS_GLOBAL.forEach(function (p) { neu[clave(p)] = 1; });
-      return { adj: adj, det: det, neu: neu };
-    }
-    /* Índices de palabra que son adjetivo (para la cacería). Se guardan
-       los ÍNDICES y no las palabras: si «verde» sale tres veces, cada
-       aparición se caza por separado, como en el papel. */
-    function indicesAdjetivos(ps, inv) {
-      var out = [];
-      ps.forEach(function (p, i) {
-        var k = clave(p);
-        if (inv.adj[k]) out.push({ i: i, clase: 'adj' });
-        else if (inv.det[k]) out.push({ i: i, clase: 'det' });
-      });
-      return out;
-    }
-    /* Las seis palabras de «¿califica o determina?»: mitad y mitad,
-       siempre las mismas para este texto (semilla). */
-    function itemsClasifica(t, ps) {
-      var rnd = semilla(t.id + '·clasifica');
-      var adj = baraja(t.adjs || [], rnd), det = baraja(t.dets || [], rnd);
-      var nDet = Math.min(3, det.length);
-      var nAdj = Math.min(CLASIFICA_N - nDet, adj.length);
-      var lista = adj.slice(0, nAdj).map(function (p) { return { palabra: p, clase: 'adj' }; })
-        .concat(det.slice(0, nDet).map(function (p) { return { palabra: p, clase: 'det' }; }));
-      return baraja(lista, rnd).map(function (it) {
-        it.contexto = contextoDe(ps, it.palabra);
-        return it;
-      });
-    }
-    /* Un pedazo de la oración donde vive la palabra: clasificar «bajas»
-       sin contexto es adivinar («las nubes bajas» o «las casas bajas»). */
-    function contextoDe(ps, palabra) {
-      var k = clave(palabra);
-      var pos = -1;
-      for (var i = 0; i < ps.length; i++) if (clave(ps[i]) === k) { pos = i; break; }
-      if (pos < 0) return '';
-      var a = Math.max(0, pos - 4), b = Math.min(ps.length - 1, pos + 4);
-      return (a > 0 ? '… ' : '') + ps.slice(a, b + 1).map(function (p, j) {
-        return (a + j === pos) ? '<u>' + esc(p) + '</u>' : esc(p);
-      }).join(' ') + (b < ps.length - 1 ? ' …' : '');
-    }
-    /* «¿Cómo lo decía el texto?»: se tapa un calificativo dentro de su
-       oración y se ofrecen otros dos del MISMO texto. Los distractores
-       salen de la misma lectura a propósito: así no se acierta por
-       descarte de vocabulario, hay que acordarse de lo que se leyó. */
-    function itemsCompleta(t, ps) {
-      var rnd = semilla(t.id + '·completa');
-      var inv = inventario(t);
-      var ors = oraciones(ps);
-      var candidatos = [];
-      ors.forEach(function (o) {
-        for (var i = o.ini; i <= o.fin; i++) {
-          if (inv.adj[clave(ps[i])]) { candidatos.push({ pos: i, ini: o.ini, fin: o.fin }); break; }
+    /* ══════════════ utilidades que recibe cada misión ══════════════
+       Con esto la misión construye sus ítems sin saber nada del motor.
+       `rnd` va sembrada con el id del texto y el de la actividad: los
+       mismos ítems siempre para el mismo texto. */
+    function utiles(t, actoId) {
+      var ps = palabras(t.texto);
+      var rnd = semilla(t.id + '·' + actoId);
+      return {
+        ps: ps, esc: esc, clave: clave, HUECO: HUECO,
+        rnd: rnd,
+        baraja: function (arr) { return barajaCon(arr, rnd); },
+        oraciones: function () { return oraciones(ps); },
+        /* Un pedazo de la oración con la palabra subrayada: clasificar
+           «bajas» sin contexto es adivinar («las nubes bajas» o «las
+           casas bajas»). */
+        contexto: function (ini, fin) {
+          var a = Math.max(0, ini - 4), b = Math.min(ps.length - 1, (fin == null ? ini : fin) + 4);
+          return (a > 0 ? '… ' : '') + ps.slice(a, b + 1).map(function (p, j) {
+            var k = a + j;
+            return (k >= ini && k <= (fin == null ? ini : fin)) ? '<u>' + esc(p) + '</u>' : esc(p);
+          }).join(' ') + (b < ps.length - 1 ? ' …' : '');
+        },
+        contextoDe: function (palabra) {
+          var k = clave(palabra);
+          for (var i = 0; i < ps.length; i++) if (clave(ps[i]) === k) return this.contexto(i, i);
+          return '';
         }
-      });
-      var elegidos = baraja(candidatos, rnd).slice(0, COMPLETA_N);
-      return elegidos.map(function (c) {
-        var correcta = ps[c.pos].replace(LIMPIA, '');
-        /* Los distractores salen de t.adjs TAL CUAL están escritos, no
-           normalizados: si la correcta fuera «Querida» con mayúscula y las
-           otras dos en minúscula, la mayúscula sola cantaría la respuesta. */
-        var otros = baraja((t.adjs || []).filter(function (p) { return clave(p) !== clave(correcta); }), rnd).slice(0, 2);
-        var ops = baraja([correcta].concat(otros), rnd);
-        /* El hueco va con una marca que no puede salir del texto. Con un
-           «?» literal, `replace('?')` reventaba en las oraciones que ya
-           traían un signo de interrogación antes del hueco. */
-        var frase = [];
-        for (var i = c.ini; i <= c.fin; i++) {
-          frase.push(i === c.pos ? HUECO + esc(ps[i].replace(/^[^.,;:!?»]*/, '')) : esc(ps[i]));
-        }
-        return { frase: frase.join(' '), ops: ops, c: ops.map(clave).indexOf(clave(correcta)) };
-      });
+      };
+    }
+    /* Los ítems se calculan muchas veces (cada repintado y el resultado);
+       se guardan por texto y actividad para no rehacerlos. */
+    var cacheItems = {};
+    function itemsDe(t, ai) {
+      var a = ACTOS[ai];
+      var k = t.id + '·' + ai;
+      if (!cacheItems[k]) cacheItems[k] = (a.forma === 'comprension') ? t.preguntas.slice()
+        : (a.forma === 'cazar') ? []          /* la caza no tiene ítems: tiene objetivos */
+          : (a.items(t, utiles(t, a.id)) || []);
+      return cacheItems[k];
     }
 
     /* ══════════════ FASE 1 · elegir grado y lectura ══════════════ */
@@ -431,8 +393,8 @@
         '<div class="card ac-teal">' +
           '<h2>📖 Control de lectura</h2>' +
           '<p class="lm-pista">Lees <strong>un minuto en voz alta</strong>, sin tocar nada. Cuando suene el minuto marcas ' +
-            'hasta dónde llegaste, y después trabajas ese mismo texto en <strong>cuatro actividades</strong>: entender lo que ' +
-            'leíste, cazar los adjetivos tocándolos, clasificarlos y recordar cómo lo decía la lectura.</p>' +
+            'hasta dónde llegaste, y después trabajas ese mismo texto en <strong>' + ACTOS.length + ' actividades</strong>: ' +
+            ACTOS.map(function (a) { return a.icono + ' ' + a.titulo.toLowerCase(); }).join(', ') + '.</p>' +
           '<p class="lm-pista"><strong>' + (st.grado ? 'Tu grado:' : '👇 Toca tu grado para ver tus cinco lecturas:') + '</strong></p>' +
           '<div class="lm-grados" role="group" aria-label="Elegir grado">' +
             grados.map(function (g) {
@@ -546,9 +508,7 @@
 
          Queda el gesto de la toma clásica, la que el maestro hace en
          papel: se lee y ya; cuando suena el minuto, se marca de UN SOLO
-         TOQUE la última palabra leída. Un toque después de leer no
-         estorba a la lectura, y es lo único que el cronómetro necesita
-         para sacar las palabras por minuto. */
+         TOQUE la última palabra leída. */
       caja.addEventListener('click', function (ev) {
         if (!st.congelado) return;   /* durante el minuto, el texto es solo texto */
         var el = ev.target.closest ? ev.target.closest('.lm-p') : null;
@@ -578,8 +538,7 @@
       function alTaller() {
         if (st.idx == null) { aviso('👆 Antes marca <strong>hasta dónde llegaste a leer</strong>: toca esa palabra.', 'lm-av-no'); return; }
         pararTimer();
-        st.resp = t.preguntas.map(function () { return null; });
-        st.fase = 'taller'; st.acto = 0; st.pregIdx = 0;
+        st.fase = 'taller'; st.acto = 0;
         pinta();
       }
 
@@ -600,8 +559,6 @@
           sub.innerHTML = 'Se acabó el minuto.';
           aviso('⏰ <strong>¡Minuto cumplido!</strong> Ahora toca la <strong>última palabra que alcanzaste a leer</strong>.');
         } else {
-          /* Terminó el texto entero: la última palabra es la última, no
-             hay nada que preguntarle. */
           marca(spans.length - 1);
           btnsSeguir.forEach(function (b) { b.style.display = ''; });
           sub.innerHTML = 'Leíste el texto completo.';
@@ -633,124 +590,114 @@
       document.getElementById('lm-cancelar').onclick = function () { suena('click'); reiniciar(); pinta(); };
     }
 
-    /* ══════════════ FASE 3 · el taller de actividades ══════════════ */
+    /* ══════════════ FASE 3 · el taller ══════════════ */
     function cabecera(t) {
       return '<div class="lm-pasos">' +
-        ACTIVIDADES.map(function (a, i) {
+        ACTOS.map(function (a, i) {
           return '<span class="lm-paso ' + (i === st.acto ? 'on' : (i < st.acto ? 'ya' : '')) + '">' +
             (i < st.acto ? '✓' : (i + 1)) + '</span>';
         }).join('') +
-        '<span>Actividad ' + (st.acto + 1) + ' de ' + ACTIVIDADES.length + ' · «' + esc(t.titulo) + '»</span></div>';
+        '<span>Actividad ' + (st.acto + 1) + ' de ' + ACTOS.length + ' · «' + esc(t.titulo) + '»</span></div>';
     }
     function siguienteActo() {
       st.acto++;
-      if (st.acto >= ACTIVIDADES.length) st.fase = 'resultado';
+      if (st.acto >= ACTOS.length) st.fase = 'resultado';
       pinta();
+    }
+    function rotuloSiguiente(esUltima, propio) {
+      if (!esUltima) return propio || 'Siguiente ▶';
+      var sig = ACTOS[st.acto + 1];
+      return sig ? sig.icono + ' Seguir: ' + sig.titulo.toLowerCase() : '📊 Ver mi resultado';
     }
 
     function pintaTaller() {
       var t = actual();
       if (!t) { reiniciar(); pinta(); return; }
-      var acto = ACTIVIDADES[st.acto];
-      if (acto.id === 'comprension') actoComprension(t);
-      else if (acto.id === 'caza') actoCaza(t);
-      else if (acto.id === 'clasifica') actoClasifica(t);
-      else actoCompleta(t);
+      var a = ACTOS[st.acto];
+      var items = itemsDe(t, st.acto);
+      if (!items.length && a.forma !== 'cazar') { siguienteActo(); return; }
+      if (a.forma === 'comprension') formaComprension(t, a, items);
+      else if (a.forma === 'cazar') formaCazar(t, a);
+      else if (a.forma === 'dosGrupos') formaDosGrupos(t, a, items);
+      else if (a.forma === 'ordenar') formaOrdenar(t, a, items);
+      else formaTresOpciones(t, a, items);
     }
 
-    /* ── 1 · Comprensión: UNA pregunta a la vez y en letra grande ── */
-    function actoComprension(t) {
-      var i = st.pregIdx;
-      var p = t.preguntas[i];
-      var dada = st.resp[i];
+    /* ── FORMA · comprensión: UNA pregunta a la vez y en letra grande ── */
+    function formaComprension(t, a, items) {
+      var e = st.est[st.acto];
+      var i = Math.min(e.i, items.length - 1);
+      var p = items[i];
+      var dada = e.resp[i];
       var LETRA = ['a', 'b', 'c'];
-      var esUltima = i === t.preguntas.length - 1;
+      var esUltima = i === items.length - 1;
 
       raiz.innerHTML =
-        '<div class="card ac-gold">' +
-          cabecera(t) +
-          '<h2>❓ ¿Qué entendiste?</h2>' +
-          '<p class="lm-pista">Pregunta ' + (i + 1) + ' de ' + t.preguntas.length + ' · contesta sin volver a mirar el texto.</p>' +
+        '<div class="card ac-gold">' + cabecera(t) +
+          '<h2>' + a.icono + ' ' + esc(a.titulo) + '</h2>' +
+          '<p class="lm-pista">Pregunta ' + (i + 1) + ' de ' + items.length + ' · contesta sin volver a mirar el texto.</p>' +
           '<div class="lm-preg-q">' + esc(p.q) + '</div>' +
-          '<div class="lm-ops" role="group">' +
-            p.o.map(function (o, j) {
-              var cls = 'lm-op';
-              if (dada != null) {
-                if (j === p.c) cls += ' lm-ok';
-                else if (dada === j) cls += ' lm-no';
-              }
-              return '<button class="' + cls + '" data-lm-op="' + j + '"' + (dada != null ? ' disabled' : '') + '>' +
-                '<b>' + LETRA[j] + ')</b> ' + esc(o) + '</button>';
-            }).join('') +
-          '</div>' +
+          opciones(p.o, dada, p.c) +
           (dada == null ? '' :
             '<div class="lm-guia">' +
               (dada === p.c ? '✅ <strong>¡Correcto!</strong> ' : '💡 <strong>La respuesta era la ' + LETRA[p.c] + ').</strong> ') +
               esc(p.r) +
               (p.tipo === 'critica' ? '<br><br>🗣️ En las preguntas de <strong>opinión</strong> también vale otra respuesta si la ' +
                 'defiendes con un buen porqué. Cuéntasela a tu maestro.' : '') +
-            '</div>' +
-            '<div class="lm-btns"><button class="btn btn-pri" id="lm-sig">' +
-              (esUltima ? '🎯 Ir a la caza de adjetivos' : 'Siguiente pregunta ▶') + '</button></div>') +
+            '</div>' + botonSiguiente(rotuloSiguiente(esUltima))) +
         '</div>';
 
-      cada('[data-lm-op]', function (b) {
-        b.onclick = function () {
-          if (st.resp[i] != null) return;
-          st.resp[i] = +b.dataset.lmOp;
-          suena(st.resp[i] === p.c ? 'ok' : 'no');
-          pinta();
-        };
-      });
-      var sig = document.getElementById('lm-sig');
-      if (sig) sig.onclick = function () {
-        suena('click');
-        if (esUltima) siguienteActo();
-        else { st.pregIdx++; pinta(); }
-      };
+      enlazaOpciones(function (j) { e.resp[i] = j; suena(j === p.c ? 'ok' : 'no'); pinta(); }, dada != null);
+      enlazaSiguiente(function () { if (esUltima) siguienteActo(); else { e.i = i + 1; pinta(); } });
     }
 
-    /* ── 2 · Caza de adjetivos: se tocan sobre el texto leído ── */
-    function actoCaza(t) {
-      var ps = palabras(t.texto);
-      var inv = inventario(t);
-      var todos = indicesAdjetivos(ps, inv);
-      var meta = Math.min(META_CAZA, todos.length);
-      var hallados = st.caza.length;
-      var cumplida = hallados >= meta || st.cazaRendido;
+    /* ── FORMA · cazar: se toca sobre el texto ── */
+    function formaCazar(t, a) {
+      var u = utiles(t, a.id);
+      var ps = u.ps;
+      var e = st.est[st.acto];
+      var objetivos = a.objetivos(t, u) || [];
+      var neutros = (a.neutros ? a.neutros(t, u) : []) || [];
+      var meta = Math.min(a.meta || 10, objetivos.length);
+      var hallados = e.hallados.length;
+      var cumplida = hallados >= meta || e.rendido;
+      /* Índice de palabra → rango objetivo, para que tocar cualquier
+         palabra de «cuarenta y dos mil» encienda el número entero. */
+      var mapa = {}, mapaNeutro = {};
+      objetivos.forEach(function (o, k) { for (var i = o.ini; i <= o.fin; i++) mapa[i] = k; });
+      neutros.forEach(function (o, k) { for (var i = o.ini; i <= o.fin; i++) if (mapa[i] == null) mapaNeutro[i] = k; });
+
+      function claseDe(i) {
+        for (var k = 0; k < e.hallados.length; k++) {
+          var o = objetivos[e.hallados[k]];
+          if (i >= o.ini && i <= o.fin) return 'lm-hallada';
+        }
+        if (e.rendido && mapa[i] != null) return objetivos[mapa[i]].clase === 'b' ? 'lm-b' : 'lm-a';
+        return '';
+      }
 
       raiz.innerHTML =
-        '<div class="card ac-jade">' +
-          cabecera(t) +
-          '<h2>🎯 Caza de adjetivos</h2>' +
-          '<p class="lm-pista">En esta lectura hay <strong>' + todos.length + ' adjetivos</strong>. Encuentra ' +
-            '<strong>al menos ' + meta + '</strong> y tócalos: valen los que dicen <strong>cómo es</strong> algo y los que ' +
-            'dicen <strong>cuál, de quién o cuántos</strong>. Los artículos (el, la, un, una) no cuentan.</p>' +
+        '<div class="card ac-jade">' + cabecera(t) +
+          '<h2>' + a.icono + ' ' + esc(a.titulo) + '</h2>' +
+          '<p class="lm-pista">' + a.instruccion(t, u, { total: objetivos.length, meta: meta }) + '</p>' +
           '<div class="lm-marcador">🎯 ' + Math.min(hallados, meta) + ' de ' + meta + ' encontrados' +
             (hallados > meta ? ' <em>(¡y llevas ' + hallados + ' en total!)</em>' : '') +
             /* El contador de fallos se actualiza SIN repintar: repintar
                borraría el temblor de la palabra y el mensaje que explica
-               por qué no era adjetivo, que es lo único que enseña. */
-            '<em id="lm-fallos">' + (st.cazaFallos ? ' · ' + st.cazaFallos + ' intento(s) fallido(s)' : '') + '</em></div>' +
+               por qué no era, que es lo único que enseña. */
+            '<em id="lm-fallos">' + (e.fallos ? ' · ' + e.fallos + ' intento(s) fallido(s)' : '') + '</em></div>' +
           '<div id="lm-avisos">' + (cumplida
-            ? '<div class="lm-aviso lm-av-ok">🎉 <strong>' + (st.cazaRendido ? 'Aquí los tienes todos.' : '¡Meta cumplida!') + '</strong> ' +
-              (st.cazaRendido ? 'Los que te faltaban quedaron marcados.' : 'Puedes seguir cazando o pasar a la siguiente actividad.') + '</div>'
+            ? '<div class="lm-aviso lm-av-ok">🎉 <strong>' + (e.rendido ? 'Aquí los tienes todos.' : '¡Meta cumplida!') + '</strong> ' +
+              (e.rendido ? 'Los que te faltaban quedaron marcados.' : 'Puedes seguir cazando o pasar a la siguiente actividad.') + '</div>'
             : '') + '</div>' +
           '<div class="lm-texto lm-viva" id="lm-texto">' +
             ps.map(function (p, i) {
-              var esta = st.caza.indexOf(i) >= 0;
-              var cls = 'lm-p' + (esta ? ' lm-hallada' : '');
-              if (st.cazaRendido && !esta) {
-                var k = clave(p);
-                if (inv.adj[k]) cls = 'lm-p lm-adj';
-                else if (inv.det[k]) cls = 'lm-p lm-det';
-              }
-              return '<span class="' + cls + '" data-i="' + i + '">' + esc(p) + '</span>';
+              return '<span class="lm-p ' + claseDe(i) + '" data-i="' + i + '">' + esc(p) + '</span>';
             }).join(' ') +
           '</div>' +
           '<div class="lm-btns">' +
-            (cumplida ? '<button class="btn btn-pri" id="lm-sig">🗂️ Seguir: clasificarlos</button>' : '') +
-            (!st.cazaRendido ? '<button class="btn btn-d" id="lm-rindo">😕 No encuentro más</button>' : '') +
+            (cumplida ? '<button class="btn btn-pri" id="lm-sig">' + rotuloSiguiente(true) + '</button>' : '') +
+            (!e.rendido ? '<button class="btn btn-d" id="lm-rindo">😕 No encuentro más</button>' : '') +
           '</div>' +
         '</div>';
 
@@ -758,141 +705,213 @@
       var avisos = document.getElementById('lm-avisos');
       caja.addEventListener('click', function (ev) {
         var el = ev.target.closest ? ev.target.closest('.lm-p') : null;
-        if (!el || st.cazaRendido) return;
-        var i = +el.dataset.i, k = clave(ps[i]);
-        if (st.caza.indexOf(i) >= 0) return;
-        if (inv.adj[k] || inv.det[k]) {
-          st.caza.push(i);
+        if (!el || e.rendido) return;
+        var i = +el.dataset.i;
+        if (mapa[i] != null) {
+          if (e.hallados.indexOf(mapa[i]) >= 0) return;
+          e.hallados.push(mapa[i]);
           suena('ok');
           pinta();
           return;
         }
-        if (inv.neu[k]) {
-          avisos.innerHTML = '<div class="lm-aviso">🤝 «' + esc(ps[i].replace(LIMPIA, '')) + '» es un <strong>artículo</strong> ' +
-            '(o una palabra discutida). En esta cacería no cuenta: ni bien ni mal.</div>';
+        if (mapaNeutro[i] != null) {
+          avisos.innerHTML = '<div class="lm-aviso">🤝 ' + neutros[mapaNeutro[i]].motivo + '</div>';
           return;
         }
-        st.cazaFallos++;
+        e.fallos++;
         var cf = document.getElementById('lm-fallos');
-        if (cf) cf.textContent = ' · ' + st.cazaFallos + ' intento(s) fallido(s)';
+        if (cf) cf.textContent = ' · ' + e.fallos + ' intento(s) fallido(s)';
         suena('no');
         el.classList.add('lm-fallo');
         setTimeout(function () { el.classList.remove('lm-fallo'); }, 320);
-        avisos.innerHTML = '<div class="lm-aviso lm-av-no">❌ «' + esc(ps[i].replace(LIMPIA, '')) + '» no es adjetivo. ' +
-          'Un adjetivo dice <strong>cómo es</strong> algo (grande, frío, alegre) o <strong>cuál, de quién o cuántos</strong> ' +
-          '(este, mi, tres).</div>';
+        avisos.innerHTML = '<div class="lm-aviso lm-av-no">' + a.fallo(ps[i].replace(LIMPIA, ''), u) + '</div>';
       });
       var sig = document.getElementById('lm-sig');
       if (sig) sig.onclick = function () { suena('click'); siguienteActo(); };
       var rindo = document.getElementById('lm-rindo');
-      if (rindo) rindo.onclick = function () { suena('click'); st.cazaRendido = true; pinta(); };
+      if (rindo) rindo.onclick = function () { suena('click'); e.rendido = true; pinta(); };
     }
 
-    /* ── 3 · ¿Califica o determina? ── */
-    function actoClasifica(t) {
-      var ps = palabras(t.texto);
-      var items = itemsClasifica(t, ps);
-      if (!items.length) { siguienteActo(); return; }
-      var i = Math.min(st.clasIdx, items.length - 1);
+    /* ── FORMA · dos grupos ── */
+    function formaDosGrupos(t, a, items) {
+      var e = st.est[st.acto];
+      var i = Math.min(e.i, items.length - 1);
       var it = items[i];
-      var dada = st.clasResp[i];
+      var dada = e.resp[i];
       var esUltima = i === items.length - 1;
 
       raiz.innerHTML =
-        '<div class="card ac-purple">' +
-          cabecera(t) +
-          '<h2>🗂️ ¿Califica o determina?</h2>' +
-          '<p class="lm-pista">Palabra ' + (i + 1) + ' de ' + items.length + ' · míralas en su oración antes de decidir.</p>' +
+        '<div class="card ac-purple">' + cabecera(t) +
+          '<h2>' + a.icono + ' ' + esc(a.titulo) + '</h2>' +
+          '<p class="lm-pista">' + (a.pista || ('Ítem ' + (i + 1) + ' de ' + items.length)) + ' · ' +
+            (i + 1) + ' de ' + items.length + '</p>' +
           '<div class="lm-frase">' + it.contexto + '</div>' +
           '<div class="lm-dosbtn">' +
-            '<button class="lm-b-adj' + (dada ? (it.clase === 'adj' ? ' lm-ok' : (dada === 'adj' ? ' lm-no' : '')) : '') + '" ' +
-              'data-lm-clase="adj"' + (dada ? ' disabled' : '') + '><b>✨ Califica</b><small>dice cómo es</small></button>' +
-            '<button class="lm-b-det' + (dada ? (it.clase === 'det' ? ' lm-ok' : (dada === 'det' ? ' lm-no' : '')) : '') + '" ' +
-              'data-lm-clase="det"' + (dada ? ' disabled' : '') + '><b>📌 Determina</b><small>dice cuál, de quién o cuántos</small></button>' +
+            a.grupos.map(function (g, gi) {
+              var cls = 'lm-g' + gi;
+              if (dada) { if (it.grupo === g.clave) cls += ' lm-ok'; else if (dada === g.clave) cls += ' lm-no'; }
+              return '<button class="' + cls + '" data-lm-grupo="' + g.clave + '"' + (dada ? ' disabled' : '') + '>' +
+                '<b>' + g.titulo + '</b><small>' + g.pista + '</small></button>';
+            }).join('') +
           '</div>' +
           (!dada ? '' :
             '<div class="lm-guia">' +
-              (dada === it.clase ? '✅ <strong>¡Correcto!</strong> ' : '💡 <strong>Era ' + (it.clase === 'adj' ? 'calificativo' : 'determinativo') + '.</strong> ') +
-              '«' + esc(it.palabra) + '» ' + (it.clase === 'adj'
-                ? 'te dice <strong>cómo es</strong> lo que acompaña: es una cualidad.'
-                : 'no dice cómo es nada; señala <strong>cuál</strong>, <strong>de quién</strong> o <strong>cuántos</strong>.') +
-            '</div>' +
-            '<div class="lm-btns"><button class="btn btn-pri" id="lm-sig">' +
-              (esUltima ? '✏️ Seguir: ¿cómo lo decía el texto?' : 'Siguiente palabra ▶') + '</button></div>') +
+              (dada === it.grupo ? '✅ <strong>¡Correcto!</strong> ' : '💡 <strong>Era ' + esc(nombreGrupo(a, it.grupo)) + '.</strong> ') +
+              it.explica + '</div>' + botonSiguiente(rotuloSiguiente(esUltima, a.siguiente))) +
         '</div>';
 
-      cada('[data-lm-clase]', function (b) {
+      cada('[data-lm-grupo]', function (b) {
         b.onclick = function () {
-          if (st.clasResp[i]) return;
-          st.clasResp[i] = b.dataset.lmClase;
-          suena(st.clasResp[i] === it.clase ? 'ok' : 'no');
+          if (e.resp[i]) return;
+          e.resp[i] = b.dataset.lmGrupo;
+          suena(e.resp[i] === it.grupo ? 'ok' : 'no');
           pinta();
         };
       });
-      var sig = document.getElementById('lm-sig');
-      if (sig) sig.onclick = function () {
-        suena('click');
-        if (esUltima) siguienteActo();
-        else { st.clasIdx = i + 1; pinta(); }
-      };
+      enlazaSiguiente(function () { if (esUltima) siguienteActo(); else { e.i = i + 1; pinta(); } });
+    }
+    function nombreGrupo(a, clave) {
+      for (var i = 0; i < a.grupos.length; i++) if (a.grupos[i].clave === clave) return a.grupos[i].nombre || a.grupos[i].titulo;
+      return clave;
     }
 
-    /* ── 4 · ¿Cómo lo decía el texto? ── */
-    function actoCompleta(t) {
-      var ps = palabras(t.texto);
-      var items = itemsCompleta(t, ps);
-      if (!items.length) { siguienteActo(); return; }
-      var i = Math.min(st.compIdx, items.length - 1);
+    /* ── FORMA · tres opciones ── */
+    function formaTresOpciones(t, a, items) {
+      var e = st.est[st.acto];
+      var i = Math.min(e.i, items.length - 1);
       var it = items[i];
-      var dada = st.compResp[i];
+      var dada = e.resp[i];
       var esUltima = i === items.length - 1;
-      var LETRA = ['a', 'b', 'c'];
 
       raiz.innerHTML =
-        '<div class="card ac-amber">' +
-          cabecera(t) +
-          '<h2>✏️ ¿Cómo lo decía el texto?</h2>' +
-          '<p class="lm-pista">Oración ' + (i + 1) + ' de ' + items.length + ' · las tres palabras salen de esta misma lectura. ' +
-            'Acuérdate de cuál iba aquí.</p>' +
-          '<div class="lm-frase">' + it.frase.replace(HUECO, dada != null
-            ? '<u>' + esc(it.ops[it.c]) + '</u>'
-            : '<span class="lm-hueco">?</span>') + '</div>' +
-          '<div class="lm-ops" role="group">' +
-            it.ops.map(function (o, j) {
-              var cls = 'lm-op';
-              if (dada != null) {
-                if (j === it.c) cls += ' lm-ok';
-                else if (dada === j) cls += ' lm-no';
-              }
-              return '<button class="' + cls + '" data-lm-op="' + j + '"' + (dada != null ? ' disabled' : '') + '>' +
-                '<b>' + LETRA[j] + ')</b> ' + esc(o) + '</button>';
-            }).join('') +
-          '</div>' +
+        '<div class="card ac-amber">' + cabecera(t) +
+          '<h2>' + a.icono + ' ' + esc(a.titulo) + '</h2>' +
+          '<p class="lm-pista">' + (a.pista || '') + (a.pista ? ' · ' : '') + (i + 1) + ' de ' + items.length + '</p>' +
+          (it.frase ? '<div class="lm-frase">' + it.frase.replace(HUECO, dada != null
+            ? '<u>' + esc(it.ops[it.c]) + '</u>' : '<span class="lm-hueco">?</span>') + '</div>' : '') +
+          (it.enunciado ? '<div class="lm-preg-q">' + it.enunciado + '</div>' : '') +
+          opciones(it.ops, dada, it.c) +
           (dada == null ? '' :
-            '<div class="lm-guia">' +
-              (dada === it.c
-                ? '✅ <strong>¡Así era!</strong> Fíjate en cuánto cambia la oración según el adjetivo que se le ponga.'
-                : '💡 La lectura decía <strong>«' + esc(it.ops[it.c]) + '»</strong>. Las otras dos también salen de este texto, ' +
-                  'pero acompañaban a otra cosa.') +
-            '</div>' +
-            '<div class="lm-btns"><button class="btn btn-pri" id="lm-sig">' +
-              (esUltima ? '📊 Ver mi resultado' : 'Siguiente oración ▶') + '</button></div>') +
+            '<div class="lm-guia">' + (dada === it.c ? '✅ <strong>¡Así es!</strong> ' : '💡 ') +
+              (dada === it.c ? (it.bien || '') : (it.mal || '')) + '</div>' +
+            botonSiguiente(rotuloSiguiente(esUltima, a.siguiente))) +
         '</div>';
 
-      cada('[data-lm-op]', function (b) {
+      enlazaOpciones(function (j) { e.resp[i] = j; suena(j === it.c ? 'ok' : 'no'); pinta(); }, dada != null);
+      enlazaSiguiente(function () { if (esUltima) siguienteActo(); else { e.i = i + 1; pinta(); } });
+    }
+
+    /* ── FORMA · ordenar: se tocan las fichas en el orden correcto ── */
+    function formaOrdenar(t, a, items) {
+      var e = st.est[st.acto];
+      var i = Math.min(e.i, items.length - 1);
+      var it = items[i];
+      var esUltima = i === items.length - 1;
+      var listo = e.puestos.length === it.fichas.length;
+      /* El orden correcto se calcula del valor, no se escribe: así una
+         misión no puede equivocarse al declararlo. */
+      var orden = it.fichas.map(function (f, k) { return k; })
+        .sort(function (x, y) { return it.fichas[x].v - it.fichas[y].v; });
+
+      raiz.innerHTML =
+        '<div class="card ac-teal">' + cabecera(t) +
+          '<h2>' + a.icono + ' ' + esc(a.titulo) + '</h2>' +
+          '<p class="lm-pista">' + (a.pista || '') + (a.pista ? ' · ' : '') + 'Ronda ' + (i + 1) + ' de ' + items.length + '</p>' +
+          (it.enunciado ? '<div class="lm-preg-q">' + it.enunciado + '</div>' : '') +
+          '<div class="lm-escalera" id="lm-escalera">' +
+            (e.puestos.length
+              ? e.puestos.map(function (k, n) { return (n ? '<span>&lt;</span>' : '') + '<b>' + esc(it.fichas[k].txt) + '</b>'; }).join(' ')
+              : '<span>Toca primero el más pequeño…</span>') +
+          '</div>' +
+          '<div class="lm-fichas">' +
+            it.fichas.map(function (f, k) {
+              var puesto = e.puestos.indexOf(k);
+              /* «cuatrocientos veinticinco mil» no cabe con la letra de
+                 «425,000»: la ficha larga baja de tamaño para que se lea
+                 entera en un teléfono. */
+              return '<button class="lm-ficha' + (f.txt.length > 14 ? ' lm-larga' : '') +
+                (puesto >= 0 ? ' lm-puesta' : '') + '" data-lm-ficha="' + k + '"' +
+                (puesto >= 0 ? ' disabled' : '') + '>' + esc(f.txt) +
+                (puesto >= 0 ? '<i>' + (puesto + 1) + 'º</i>' : '') + '</button>';
+            }).join('') +
+          '</div>' +
+          '<div id="lm-avisos"></div>' +
+          (listo ? '<div class="lm-guia">' + (e.rondaFallo
+            ? '💡 ' + (it.mal || 'Ya está en orden. Fíjate en la cantidad de cifras: el que tiene más cifras es siempre mayor.')
+            : '✅ <strong>¡En orden, de una!</strong> ' + (it.bien || '')) + '</div>' +
+            botonSiguiente(rotuloSiguiente(esUltima, a.siguiente)) : '') +
+        '</div>';
+
+      var avisos = document.getElementById('lm-avisos');
+      cada('[data-lm-ficha]', function (b) {
         b.onclick = function () {
-          if (st.compResp[i] != null) return;
-          st.compResp[i] = +b.dataset.lmOp;
-          suena(st.compResp[i] === it.c ? 'ok' : 'no');
-          pinta();
+          var k = +b.dataset.lmFicha;
+          if (e.puestos.indexOf(k) >= 0) return;
+          var toca = orden[e.puestos.length];
+          if (k === toca) {
+            e.puestos.push(k);
+            suena('ok');
+            if (e.puestos.length === it.fichas.length && !e.rondaFallo) e.aciertos++;
+            pinta();
+          } else {
+            e.fallos++; e.rondaFallo = true;
+            suena('no');
+            b.classList.add('lm-fallo');
+            setTimeout(function () { b.classList.remove('lm-fallo'); }, 320);
+            avisos.innerHTML = '<div class="lm-aviso lm-av-no">❌ Ese no es el más pequeño de los que quedan. ' +
+              'Mira cuántas cifras tiene cada uno: <strong>más cifras, más grande</strong>. Si tienen las mismas, ' +
+              'compara la primera cifra de la izquierda.</div>';
+          }
         };
       });
-      var sig = document.getElementById('lm-sig');
-      if (sig) sig.onclick = function () {
-        suena('click');
+      enlazaSiguiente(function () {
         if (esUltima) siguienteActo();
-        else { st.compIdx = i + 1; pinta(); }
-      };
+        else { e.i = i + 1; e.puestos = []; e.rondaFallo = false; pinta(); }
+      });
+    }
+
+    /* ── piezas compartidas de las formas ── */
+    function opciones(ops, dada, correcta) {
+      var LETRA = ['a', 'b', 'c'];
+      return '<div class="lm-ops" role="group">' + ops.map(function (o, j) {
+        var cls = 'lm-op';
+        if (dada != null) {
+          if (j === correcta) cls += ' lm-ok';
+          else if (dada === j) cls += ' lm-no';
+        }
+        return '<button class="' + cls + '" data-lm-op="' + j + '"' + (dada != null ? ' disabled' : '') + '>' +
+          '<b>' + LETRA[j] + ')</b> ' + esc(o) + '</button>';
+      }).join('') + '</div>';
+    }
+    function enlazaOpciones(fn, yaHecho) {
+      cada('[data-lm-op]', function (b) { b.onclick = function () { if (yaHecho) return; fn(+b.dataset.lmOp); }; });
+    }
+    function botonSiguiente(rotulo) {
+      return '<div class="lm-btns"><button class="btn btn-pri" id="lm-sig">' + rotulo + '</button></div>';
+    }
+    function enlazaSiguiente(fn) {
+      var b = document.getElementById('lm-sig');
+      if (b) b.onclick = function () { suena('click'); fn(); };
+    }
+
+    /* ── puntaje de cada actividad ── */
+    function puntosDe(t, ai) {
+      var a = ACTOS[ai], e = st.est[ai], items = itemsDe(t, ai);
+      if (a.forma === 'cazar') {
+        var u = utiles(t, a.id);
+        var total = (a.objetivos(t, u) || []).length;
+        var meta = Math.min(a.meta || 10, total);
+        return { puntos: Math.min(e.hallados.length, meta), de: meta, extra: e.hallados.length + ' de ' + total };
+      }
+      if (a.forma === 'ordenar') return { puntos: e.aciertos, de: items.length };
+      if (a.forma === 'dosGrupos') {
+        return { puntos: items.reduce(function (s, it, i) { return s + (e.resp[i] === it.grupo ? 1 : 0); }, 0), de: items.length };
+      }
+      return { puntos: items.reduce(function (s, it, i) { return s + (e.resp[i] === it.c ? 1 : 0); }, 0), de: items.length };
+    }
+    function indiceComprension() {
+      for (var i = 0; i < ACTOS.length; i++) if (ACTOS[i].forma === 'comprension') return i;
+      return -1;
     }
 
     /* ══════════════ FASE 4 · resultado ══════════════ */
@@ -900,46 +919,38 @@
       var t = actual();
       if (!t) { reiniciar(); pinta(); return; }
       var ps = palabras(t.texto);
-      var inv = inventario(t);
-      var todosAdj = indicesAdjetivos(ps, inv);
       var leidas = st.idx + 1;
       var ppm = st.seg > 0 ? Math.round((leidas / st.seg) * 60) : 0;
-      var comp = t.preguntas.reduce(function (s, p, i) { return s + (st.resp[i] === p.c ? 1 : 0); }, 0);
-      var itemsCl = itemsClasifica(t, ps), itemsCo = itemsCompleta(t, ps);
-      var clas = itemsCl.reduce(function (s, it, i) { return s + (st.clasResp[i] === it.clase ? 1 : 0); }, 0);
-      var completa = itemsCo.reduce(function (s, it, i) { return s + (st.compResp[i] === it.c ? 1 : 0); }, 0);
-      var cazados = st.caza.length;
-      var metaCaza = Math.min(META_CAZA, todosAdj.length);
+      var ic = indiceComprension();
+      var pc = ic >= 0 ? puntosDe(t, ic) : { puntos: 0, de: 0 };
+      var comp = pc.puntos, compDe = pc.de;
       var vel = lecNivelVelocidad(st.grado, ppm);
-      var nc = lecNivelComprension(comp, t.preguntas.length);
-      var puntos = comp + Math.min(cazados, metaCaza) + clas + completa;
-      var deTotal = t.preguntas.length + metaCaza + itemsCl.length + itemsCo.length;
+      var nc = compDe ? lecNivelComprension(comp, compDe) : null;
+      var marcas = ACTOS.map(function (a, i) {
+        var p = puntosDe(t, i);
+        return { id: a.id, icono: a.icono, titulo: a.titulo, puntos: p.puntos, de: p.de, extra: p.extra };
+      });
+      var puntos = marcas.reduce(function (s, m) { return s + m.puntos; }, 0);
+      var deTotal = marcas.reduce(function (s, m) { return s + m.de; }, 0);
 
       /* Se guarda UNA sola vez por toma: si algo repintara esta fase, la
          toma se contaría dos veces en el expediente del alumno. */
       if (!st.guardado) {
-        st.guardado = guardarResultado(t.id, { ppm: ppm, comp: comp, compDe: t.preguntas.length, puntos: puntos });
-        registra(t, ppm, leidas, ps.length, comp, puntos, deTotal);
+        st.guardado = guardarResultado(t.id, { ppm: ppm, comp: comp, compDe: compDe, puntos: puntos });
+        registra(t, ppm, leidas, ps.length, comp, compDe, puntos, deTotal);
         if (typeof op.alTerminar === 'function') {
           try {
+            var porActividad = {};
+            marcas.forEach(function (m) { porActividad[m.id] = { puntos: m.puntos, de: m.de }; });
             op.alTerminar({
               textoId: t.id, titulo: t.titulo, grado: st.grado, ppm: ppm, seg: st.seg,
-              palabras: leidas, total: ps.length, comp: comp, compDe: t.preguntas.length,
-              caza: cazados, cazaDe: todosAdj.length, clasifica: clas, completa: completa,
-              puntos: puntos, puntosDe: deTotal,
+              palabras: leidas, total: ps.length, comp: comp, compDe: compDe,
+              puntos: puntos, puntosDe: deTotal, porActividad: porActividad,
               nivelVelocidad: vel.clave, intentos: st.guardado.intentos
             });
           } catch (e) {}
         }
       }
-
-      var nAdj = 0, nDet = 0;
-      var pintado = ps.map(function (p) {
-        var k = clave(p);
-        if (inv.adj[k]) { nAdj++; return '<span class="lm-p lm-adj">' + esc(p) + '</span>'; }
-        if (inv.det[k]) { nDet++; return '<span class="lm-p lm-det">' + esc(p) + '</span>'; }
-        return '<span class="lm-p">' + esc(p) + '</span>';
-      }).join(' ');
 
       raiz.innerHTML =
         '<div class="card ac-jade">' +
@@ -947,7 +958,7 @@
           '<div class="lm-hero"><b>' + ppm + '</b><span>palabras por minuto</span></div>' +
           '<div class="lm-chips">' +
             chip('Velocidad · ' + st.grado + 'º: ' + vel.banda[0] + '–' + vel.banda[1], vel.etiqueta, vel.color) +
-            chip('Comprensión · ' + comp + ' de ' + t.preguntas.length, nc ? nc.etiqueta : '—', nc ? nc.color : '') +
+            (nc ? chip('Comprensión · ' + comp + ' de ' + compDe, nc.etiqueta, nc.color) : '') +
             chip('Lo que leíste', leidas + ' de ' + ps.length + ' palabras en ' + st.seg + ' s', '') +
           '</div>' +
           '<div class="lm-veredicto">🩺 ' + veredicto(vel, nc) + '</div>' +
@@ -958,24 +969,17 @@
 
         '<div class="card ac-purple">' +
           '<h2>🏅 Tu trabajo con el texto</h2>' +
-          '<div class="lm-hero"><b>' + puntos + '</b><span>de ' + deTotal + ' puntos en las cuatro actividades</span></div>' +
+          '<div class="lm-hero"><b>' + puntos + '</b><span>de ' + deTotal + ' puntos en las ' + ACTOS.length + ' actividades</span></div>' +
           '<div class="lm-chips">' +
-            chip('❓ Comprensión', comp + ' de ' + t.preguntas.length, '') +
-            chip('🎯 Adjetivos cazados', cazados + ' de ' + todosAdj.length, '') +
-            chip('🗂️ Clasificados', clas + ' de ' + itemsCl.length, '') +
-            chip('✏️ Recordados', completa + ' de ' + itemsCo.length, '') +
+            marcas.map(function (m) {
+              return chip(m.icono + ' ' + m.titulo, m.puntos + ' de ' + m.de, '');
+            }).join('') +
           '</div>' +
         '</div>' +
 
-        '<div class="card ac-amber">' +
-          '<h2>🎨 Todos los adjetivos de esta lectura</h2>' +
-          '<p class="lm-pista">Esto es lo que estabas leyendo sin darte cuenta: <strong>' + nAdj + ' calificativos</strong> ' +
-            'y <strong>' + nDet + ' determinativos</strong> en un solo texto. Sin ellos no sabrías cómo era nada de lo que leíste.</p>' +
-          '<div class="lm-leyenda">' +
-            '<span><i class="lm-p lm-adj">calificativo</i> dice cómo es</span>' +
-            '<span><i class="lm-p lm-det">determinativo</i> dice cuál, de quién o cuántos</span>' +
-          '</div>' +
-          '<div class="lm-texto">' + pintado + '</div>' +
+        (op.resumen ? tarjetaResumen(t) : '') +
+
+        '<div class="card">' +
           '<div class="lm-btns">' +
             '<button class="btn btn-pri" id="lm-otra">📚 Otra lectura</button>' +
             '<button class="btn btn-g" id="lm-repetir">🔁 Repetir esta</button>' +
@@ -992,6 +996,29 @@
         st = limpio('leer'); st.grado = g; st.textoId = id;
         pinta();
       };
+    }
+
+    /* La hoja de respuestas del final: el texto entero con lo que la
+       misión enseña, pintado encima de lo que el alumno acaba de leer.
+       Es el remate de la sección, y por eso lo pone cada misión. */
+    function tarjetaResumen(t) {
+      var r = op.resumen, u = utiles(t, 'resumen'), ps = u.ps;
+      var marcar = r.marcar(t, u) || [];
+      var clases = {}, cuenta = { a: 0, b: 0 };
+      marcar.forEach(function (m) {
+        cuenta[m.clase === 'b' ? 'b' : 'a']++;
+        for (var i = m.ini; i <= m.fin; i++) clases[i] = m.clase === 'b' ? 'lm-b' : 'lm-a';
+      });
+      return '<div class="card ac-amber">' +
+        '<h2>' + r.titulo + '</h2>' +
+        '<p class="lm-pista">' + r.intro(t, u, cuenta, marcar) + '</p>' +
+        '<div class="lm-leyenda">' + r.leyenda.map(function (l) {
+          return '<span><i class="lm-p lm-' + l.clase + '">' + esc(l.txt) + '</i> ' + esc(l.dice) + '</span>';
+        }).join('') + '</div>' +
+        '<div class="lm-texto">' + ps.map(function (p, i) {
+          return '<span class="lm-p ' + (clases[i] || '') + '">' + esc(p) + '</span>';
+        }).join(' ') + '</div>' +
+      '</div>';
     }
 
     function chip(etq, valor, color) {
@@ -1032,13 +1059,13 @@
 
     /* Evidencia para el maestro (registro.html y la nube). Si la misión
        no cargó la capa de registro, esto simplemente no ocurre. */
-    function registra(t, ppm, leidas, total, comp, puntos, puntosDe) {
+    function registra(t, ppm, leidas, total, comp, compDe, puntos, puntosDe) {
       if (!window.METAS || typeof window.METAS.registrar !== 'function') return;
       try {
         window.METAS.registrar('lectura', {
           textoId: t.id, titulo: t.titulo, gradoTexto: st.grado,
           ppm: ppm, seg: st.seg, palabras: leidas, total: total,
-          comp: comp, compDe: t.preguntas.length, puntos: puntos, puntosDe: puntosDe
+          comp: comp, compDe: compDe, puntos: puntos, puntosDe: puntosDe
         });
       } catch (e) {}
     }
@@ -1065,5 +1092,5 @@
     };
   }
 
-  window.LecturaMision = { montar: montar, version: 2 };
+  window.LecturaMision = { montar: montar, version: 3 };
 })();

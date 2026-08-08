@@ -1725,13 +1725,16 @@ function initLectura(){
   _lecturaApi = LecturaMision.montar({
     contenedor: 'lm-root',
     corpus: LECTURA_ADJETIVOS,
+    actividades: LECTURA_ADJETIVOS_TALLER,
+    resumen: LECTURA_ADJETIVOS_RESUMEN,
     mision: 'adjetivos',
     tema: 'los adjetivos',
     alTerminar: function (r) {
       fin('s-lectura');
       unlockAchievement('lector_minuto');
       if (r.nivelVelocidad === 'estandar' || r.nivelVelocidad === 'avanzado') unlockAchievement('lector_banda');
-      if (r.cazaDe && r.caza >= r.cazaDe) unlockAchievement('cazador_adjetivos');
+      var caza = r.porActividad && r.porActividad.caza;
+      if (caza && caza.de && caza.puntos >= caza.de) unlockAchievement('cazador_adjetivos');
       if (!xpTracker.lec.has(r.textoId)) {
         xpTracker.lec.add(r.textoId);
         var bono = r.puntosDe ? Math.round((r.puntos / r.puntosDe) * 5) : 0;

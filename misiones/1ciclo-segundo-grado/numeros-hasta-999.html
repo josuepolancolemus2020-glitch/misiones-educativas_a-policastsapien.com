@@ -537,6 +537,17 @@
     </div>
     <div id="tgOut"></div>
   </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lectura')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- 📖 Control de lectura. Todo lo pinta js/tools/lectura-mision.js dentro de
+     #lm-root: aquí no va marcado propio a propósito, para que la próxima
+     misión que estrene la sección copie estas cuatro líneas y nada más. -->
+<div class="sec" id="s-lectura" role="tabpanel">
+  <div id="lm-root"></div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
     <span class="nsb-icon">📝</span>
     <span class="nsb-arrow">→</span>
@@ -666,6 +677,7 @@
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lectura" data-s="s-lectura" onclick="go('s-lectura')"><span class="ico">📖</span> Lectura</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
   <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
@@ -696,6 +708,15 @@
   <script src="js/interaccion_posicion.js"></script>
   <script src="js/interaccion_duelo.js"></script>
   <script src="js/interaccion_cambista.js"></script>
+  <!-- 📖 Control de lectura de la misión. Cuatro piezas: las normas de lectura
+       son las MISMAS de Mi aula (un solo archivo manda sobre la banda de
+       palabras por minuto), el lector de numerales saca los números del texto,
+       el corpus es propio de esta misión y el motor no sabe de qué tema son
+       los textos: por eso la siguiente misión solo escribe su corpus. -->
+  <script src="../../js/data/lectura-normas.js?v=101"></script>
+  <script src="../../js/data/lectura-numerales.js?v=101"></script>
+  <script src="js/lectura-numeros.js?v=101"></script>
+  <script src="../../js/tools/lectura-mision.js?v=101"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>

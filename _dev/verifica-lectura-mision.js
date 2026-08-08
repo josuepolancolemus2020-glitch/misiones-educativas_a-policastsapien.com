@@ -209,24 +209,24 @@ async function contestaComprension(page, op) {
 
     await page.click('#lm-rindo');
     await page.waitForSelector('#lm-sig');
-    const revelados = await page.$$eval('.lm-adj, .lm-det, .lm-hallada', e => e.length);
+    const revelados = await page.$$eval('.lm-a, .lm-b, .lm-hallada', e => e.length);
     comprueba(revelados === objetivo.total,
       `«no encuentro más» revela los ${objetivo.total} adjetivos del texto (mostró ${revelados})`);
     await page.click('#lm-sig');
 
     /* ══ 6. actividad 3 · ¿califica o determina? ══ */
     console.log('\n═══ Actividad 3 · ¿Califica o determina? ═══');
-    await page.waitForSelector('[data-lm-clase]');
+    await page.waitForSelector('[data-lm-grupo]');
     comprueba((await page.textContent('.lm-frase')).length > 10,
       'cada palabra se clasifica dentro de su oración, no suelta');
     let vueltas = 0;
-    while (await page.$('[data-lm-clase]')) {
-      await page.click('[data-lm-clase="adj"]');
+    while (await page.$('[data-lm-grupo]')) {
+      await page.click('[data-lm-grupo="a"]');
       if (vueltas === 0) comprueba(await page.isVisible('.lm-guia'), 'explica en el acto qué clase era y por qué');
       await page.click('#lm-sig');
       vueltas++;
       if (vueltas > 8) break;
-      if (!(await page.$('[data-lm-clase]'))) break;
+      if (!(await page.$('[data-lm-grupo]'))) break;
     }
     comprueba(vueltas === 6, `se clasifican seis palabras (fueron ${vueltas})`);
 
@@ -251,7 +251,7 @@ async function contestaComprension(page, op) {
     comprueba((await page.textContent('.lm-chips')).includes('125'),
       'el resultado compara contra la banda de 6º (125–134)');
     /* Se cuenta dentro del texto: fuera hay dos ejemplos en la leyenda. */
-    const claves = await page.$$eval('.lm-texto .lm-adj, .lm-texto .lm-det', e => e.length);
+    const claves = await page.$$eval('.lm-texto .lm-a, .lm-texto .lm-b', e => e.length);
     comprueba(claves === objetivo.total, `la hoja de respuestas resalta los ${objetivo.total} adjetivos`);
 
     const guardado = await page.evaluate(() => JSON.parse(localStorage.getItem('METAS_LECTURA_MISION_V1') || '{}'));
@@ -292,7 +292,7 @@ async function contestaComprension(page, op) {
     await contestaComprension(page, 0);
     await page.click('#lm-rindo');
     await page.click('#lm-sig');
-    for (let i = 0; i < 6; i++) { await page.click('[data-lm-clase="adj"]'); await page.click('#lm-sig'); }
+    for (let i = 0; i < 6; i++) { await page.click('[data-lm-grupo="a"]'); await page.click('#lm-sig'); }
     for (let i = 0; i < 4; i++) { await page.click('[data-lm-op="0"]'); await page.click('#lm-sig'); }
     await page.waitForSelector('.lm-hero b');
     const ppm2 = +(await page.$eval('.lm-hero b', e => e.textContent));

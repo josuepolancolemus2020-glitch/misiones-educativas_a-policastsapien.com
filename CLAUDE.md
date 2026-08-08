@@ -175,11 +175,27 @@ La **banda de palabras por minuto es una sola** y vive en
 `js/data/lectura-normas.js`. Las dos herramientas se la preguntan; nadie
 escribe una cifra de velocidad en otro sitio.
 
-**Piloto vigente:** la misión de los adjetivos
-(`misiones/2y3ciclo-adjetivos/`), con cinco lecturas por grado de 4º a
-9º. El motor **no sabe de qué tema son los textos**: para estrenar la
-sección en otra misión se escribe su corpus, se añaden cinco líneas al
-HTML y se llama a `LecturaMision.montar(...)`.
+**Dónde está:** en la misión de los adjetivos
+(`misiones/2y3ciclo-adjetivos/`) y en la de los números grandes
+(`misiones/1ciclo-segundo-grado/`), con cinco lecturas por grado de 4º
+a 9º en cada una.
+
+**El motor no sabe de qué tema son los textos ni qué actividades toca
+hacer con ellos.** Ofrece cinco FORMAS y cada misión declara su taller:
+
+| forma | qué hace | en adjetivos | en números |
+|---|---|---|---|
+| `comprension` | las cinco preguntas, una a la vez | ❓ ¿Qué entendiste? | ❓ ¿Qué entendiste? |
+| `cazar` | tocar sobre el texto lo que cumple algo | 🎯 los adjetivos | 🎯 los números mayores que mil |
+| `dosGrupos` | clasificar en una de dos clases | 🗂️ ¿califica o determina? | — |
+| `tresOpciones` | elegir entre tres | ✏️ ¿cómo lo decía el texto? | 🔢 lee el número |
+| `ordenar` | tocar fichas en el orden correcto | — | 📊 de menor a mayor |
+
+Para estrenar la sección en otra misión: se escribe su corpus y su
+taller en un archivo (`lectura-<tema>.js`), se añaden cinco líneas al
+HTML y se llama a `LecturaMision.montar(...)`. **Si hace falta una
+forma nueva, se añade al motor y la heredan todas** — no se copia el
+motor.
 
 ### La lectura no es la meta: es la materia prima
 
@@ -229,6 +245,13 @@ actividades distintas cada vez no podría notar que va mejorando.
   tiene que poder leerse en cerca de un minuto al ritmo de ese grado.
 - **Cinco preguntas** con la mezcla de tipos del grado y **tres opciones
   cada una**: aquí las contesta el alumno en la pantalla.
+- **Lo que la actividad va a marcar tiene que estar completo.** En los
+  adjetivos se escribe a mano (`adjs`, `dets`) porque no hay forma de
+  deducirlo: un participio es adjetivo o verbo según la oración. En los
+  números NO se escribe: lo saca `js/data/lectura-numerales.js` del
+  propio texto, porque «cuarenta y dos mil» vale lo que vale siempre y
+  una lista a mano solo añadiría erratas. La regla es la misma en los
+  dos casos, y es esta:
 - **`adjs` y `dets` son el INVENTARIO COMPLETO, no una muestra.** Es la
   regla que más cuesta y la que no se puede saltar: con ellas el alumno
   caza adjetivos tocándolos, así que un adjetivo que falte es la
@@ -247,12 +270,20 @@ actividades distintas cada vez no podría notar que va mejorando.
 **Antes de publicar un cambio del corpus o del motor:**
 
 ```
+node _dev/prueba-numerales.js            → ¿lee bien los números? (cincuenta casos)
 node _dev/audita-adjetivos-lectura.js    → ¿falta algún adjetivo en el inventario?
-node _dev/valida-lectura-mision.js       → largo, mezcla, opciones, inventario
+node _dev/valida-lectura-mision.js       → largo, mezcla, opciones, inventario, números
 node _dev/verifica-nombres-propios.js    → mayúsculas de lugares y personas
 node _dev/servidor-estatico.js      (en otra terminal)
-node _dev/verifica-lectura-mision.js     → el minuto y el taller entero
+node _dev/verifica-lectura-mision.js     → el minuto y el taller de los adjetivos
+node _dev/verifica-lectura-numeros.js    → el taller de los números
 ```
+
+El **lector de numerales** tiene prueba propia porque es el que le dice
+al alumno cuánto vale «trescientos cuarenta y cinco mil»: si se
+equivoca, no falla una pantalla, le enseña un número mal. La prueba
+incluye una ida y vuelta sobre miles de valores —escribirlos en
+palabras y volverlos a leer— que es la que de verdad lo sostiene.
 
 El **auditor** existe porque los determinativos son clase cerrada y los
 calificativos no: de los primeros afirma («este está en el texto y no lo

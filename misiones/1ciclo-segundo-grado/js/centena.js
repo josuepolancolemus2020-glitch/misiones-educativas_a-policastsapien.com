@@ -63,8 +63,11 @@ function numToWords(n){
 const SAVE_KEY = 'matematica_numeros_grandes_v2';
 let xp = 0, MXP = 200, done = new Set(), evalAnsVisible = false;
 let evalFormNum = 1, evalOpFormNum = 1, evalOpAnsVisible = false, unlockedAch = [], darkMode = false, prevLevel = 0;
-const TOTAL_SECTIONS = 16;
-const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), sopa: new Set(), predice: new Set(), explica: new Set(), memo: new Set() };
+const TOTAL_SECTIONS = 17;
+const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), sopa: new Set(), predice: new Set(), explica: new Set(), memo: new Set(), lec: new Set() };
+
+// Control de lectura de la misión (js/tools/lectura-mision.js)
+let _lecturaApi = null;
 
 // ===================== SONIDO =====================
 let sndOn = true; let AC = null;
@@ -115,7 +118,10 @@ const ACHIEVEMENTS = {
   id_master:{icon:'🔍',label:'Identificador maestro'},
   reto_hero:{icon:'🏆',label:'Héroe del reto final'},
   nivel3:{icon:'🔭',label:'¡Explorador de Miles alcanzado!'},
-  nivel5:{icon:'🔥',label:'¡Millonario alcanzado!'}
+  nivel5:{icon:'🔥',label:'¡Millonario alcanzado!'},
+  lector_minuto:{icon:'📖',label:'Primer minuto de lectura cronometrado'},
+  lector_banda:{icon:'⏱️',label:'Leíste dentro de la banda de tu grado'},
+  cazador_numeros:{icon:'🎯',label:'Cazaste todos los números grandes de una lectura'}
 };
 function unlockAchievement(id){ if(unlockedAch.includes(id)) return; unlockedAch.push(id); sfx('ach'); showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label); launchConfetti(); renderAchPanel(); saveProgress(); }
 function renderAchPanel(){ const list=document.getElementById('achList'); list.innerHTML=''; Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{ const div=document.createElement('div'); div.className='ach-item'+(unlockedAch.includes(id)?'':' locked'); div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`; list.appendChild(div); }); }
@@ -131,7 +137,10 @@ function resetXP(){ sfx('click'); xp=0; updateXPBar(); showToast('🔄 XP reinic
 function fin(id,showFX=true){ if(!done.has(id)){ done.add(id); const b=document.querySelector(`[data-s="${id}"]`); if(b) b.classList.add('done'); if(showFX){ sfx('up'); launchConfetti(); } saveProgress(); } }
 
 // ===================== NAV =====================
-function go(id){ sfx('click'); document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.nav-t[role="tab"]').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-selected','false'); }); document.getElementById(id).classList.add('active'); const btn=document.querySelector(`[data-s="${id}"]`); if(btn){ btn.classList.add('active'); btn.setAttribute('aria-selected','true'); } window.scrollTo({top:0,behavior:'smooth'}); if(id==='s-sopa') setTimeout(buildSopa,50); }
+function go(id){ sfx('click'); document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.nav-t[role="tab"]').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-selected','false'); }); document.getElementById(id).classList.add('active'); const btn=document.querySelector(`[data-s="${id}"]`); if(btn){ btn.classList.add('active'); btn.setAttribute('aria-selected','true'); } window.scrollTo({top:0,behavior:'smooth'}); if(id==='s-sopa') setTimeout(buildSopa,50);
+  // El cronómetro del Control de lectura no puede seguir corriendo en una
+  // pestaña que ya nadie mira: un minuto medido a medias no es un minuto.
+  if(id!=='s-lectura' && _lecturaApi) _lecturaApi.soltar(); }
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
@@ -1405,6 +1414,38 @@ async function captureDiploma() {
         if (btn) { btn.disabled = false; btn.textContent = '📷 Guardar foto'; }
     }
 }
+// ═══════════════ CONTROL DE LECTURA DE LA MISIÓN ═══════════════
+// El motor, el corpus y el lector de numerales son archivos aparte; aquí solo
+// se dice qué gana el alumno al terminar una toma: +5 XP por la lectura y
+// hasta +5 más según lo que saque en las cuatro actividades del taller.
+//
+// Se paga UNA vez por lectura, no por repetirla. No es tacañería: releer el
+// mismo texto dos o tres días es el ejercicio que más sube la fluidez, y si se
+// pagara cada vez, el alumno repetiría por los puntos y no por leer.
+function initLectura(){
+  if (typeof LecturaMision === 'undefined' || typeof LECTURA_NUMEROS === 'undefined' || typeof LECTURA_NUMERALES === 'undefined') return;
+  _lecturaApi = LecturaMision.montar({
+    contenedor: 'lm-root',
+    corpus: LECTURA_NUMEROS,
+    actividades: LECTURA_NUMEROS_TALLER,
+    resumen: LECTURA_NUMEROS_RESUMEN,
+    mision: 'numeros-grandes',
+    tema: 'los números grandes',
+    alTerminar: function (r) {
+      fin('s-lectura');
+      unlockAchievement('lector_minuto');
+      if (r.nivelVelocidad === 'estandar' || r.nivelVelocidad === 'avanzado') unlockAchievement('lector_banda');
+      var caza = r.porActividad && r.porActividad.caza;
+      if (caza && caza.de && caza.puntos >= caza.de) unlockAchievement('cazador_numeros');
+      if (!xpTracker.lec.has(r.textoId)) {
+        xpTracker.lec.add(r.textoId);
+        var bono = r.puntosDe ? Math.round((r.puntos / r.puntosDe) * 5) : 0;
+        pts(5 + bono);
+      }
+    }
+  });
+}
+
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
@@ -1414,6 +1455,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   buildMemo();
   buildExplica();
   _retoPairLbl();
+  initLectura();
   document.addEventListener('click',function(e){ const panel=document.getElementById('achPanel'); const btn=document.getElementById('achBtn'); if(panel.classList.contains('open')&&!panel.contains(e.target)&&e.target!==btn) panel.classList.remove('open'); });
   document.addEventListener('click',function(e){ if(e.target===document.getElementById('diplomaOverlay')) closeDiploma(); });
   const savedName=localStorage.getItem('nombreEstudianteNumerosGrandes');

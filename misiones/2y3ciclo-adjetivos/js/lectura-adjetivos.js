@@ -591,3 +591,137 @@ const LECTURA_ADJETIVOS = {
       ] },
   ],
 };
+
+/* ══════════════════════════════════════════════════════════════
+   🛠️ EL TALLER DE ESTA MISIÓN
+
+   El motor (js/tools/lectura-mision.js) no sabe de adjetivos: ofrece
+   formas de actividad y aquí se dice cuáles usa esta misión y con qué
+   datos. Una misión nueva escribe su corpus y su taller, y no toca el
+   motor. Las cuatro de aquí son, en orden:
+
+   1. las cinco preguntas del texto;
+   2. cazar los adjetivos tocándolos sobre lo que acaba de leer;
+   3. clasificar los que cazó (encontrar no es saber de qué clase es);
+   4. volver de memoria al texto a buscar el adjetivo exacto.
+══════════════════════════════════════════════════════════════ */
+const LECTURA_ADJETIVOS_TALLER = [
+
+  { id: 'comprension', icono: '❓', titulo: '¿Qué entendiste?', forma: 'comprension' },
+
+  { id: 'caza', icono: '🎯', titulo: 'Caza de adjetivos', forma: 'cazar', meta: 10,
+    instruccion: function (t, u, info) {
+      return 'En esta lectura hay <strong>' + info.total + ' adjetivos</strong>. Encuentra ' +
+        '<strong>al menos ' + info.meta + '</strong> y tócalos: valen los que dicen <strong>cómo es</strong> algo y los ' +
+        'que dicen <strong>cuál, de quién o cuántos</strong>. Los artículos (el, la, un, una) no cuentan.';
+    },
+    objetivos: function (t, u) {
+      var adj = {}, det = {};
+      (t.adjs || []).forEach(function (p) { adj[u.clave(p)] = 1; });
+      (t.dets || []).forEach(function (p) { det[u.clave(p)] = 1; });
+      var out = [];
+      u.ps.forEach(function (p, i) {
+        var k = u.clave(p);
+        if (adj[k]) out.push({ ini: i, fin: i, clase: 'a' });
+        else if (det[k]) out.push({ ini: i, fin: i, clase: 'b' });
+      });
+      return out;
+    },
+    /* La zona gris de esta lectura más los artículos: tocarlas no suma
+       ni resta, y la pantalla explica por qué en vez de decir «no». */
+    neutros: function (t, u) {
+      var neu = {};
+      (t.neutros || []).forEach(function (p) { neu[u.clave(p)] = 1; });
+      if (typeof LECTURA_CLASES !== 'undefined') LECTURA_CLASES.neutros.forEach(function (p) { neu[u.clave(p)] = 1; });
+      var out = [];
+      u.ps.forEach(function (p, i) {
+        if (neu[u.clave(p)]) {
+          out.push({ ini: i, fin: i, motivo: '«' + u.esc(p.replace(/[.,;:()¿?¡!«»"“”'’…—–]/g, '')) +
+            '» es un <strong>artículo</strong> (o una palabra discutida). En esta cacería no cuenta: ni bien ni mal.' });
+        }
+      });
+      return out;
+    },
+    fallo: function (palabra, u) {
+      return '❌ «' + u.esc(palabra) + '» no es adjetivo. Un adjetivo dice <strong>cómo es</strong> algo ' +
+        '(grande, frío, alegre) o <strong>cuál, de quién o cuántos</strong> (este, mi, tres).';
+    } },
+
+  { id: 'clasifica', icono: '🗂️', titulo: '¿Califica o determina?', forma: 'dosGrupos',
+    pista: 'Míralas en su oración antes de decidir',
+    grupos: [
+      { clave: 'a', titulo: '✨ Califica', pista: 'dice cómo es', nombre: 'calificativo' },
+      { clave: 'b', titulo: '📌 Determina', pista: 'dice cuál, de quién o cuántos', nombre: 'determinativo' }
+    ],
+    items: function (t, u) {
+      var adj = u.baraja(t.adjs || []), det = u.baraja(t.dets || []);
+      var nDet = Math.min(3, det.length), nAdj = Math.min(6 - nDet, adj.length);
+      var lista = adj.slice(0, nAdj).map(function (p) { return { palabra: p, grupo: 'a' }; })
+        .concat(det.slice(0, nDet).map(function (p) { return { palabra: p, grupo: 'b' }; }));
+      return u.baraja(lista).map(function (it) {
+        it.contexto = u.contextoDe(it.palabra);
+        it.explica = '«' + u.esc(it.palabra) + '» ' + (it.grupo === 'a'
+          ? 'te dice <strong>cómo es</strong> lo que acompaña: es una cualidad.'
+          : 'no dice cómo es nada; señala <strong>cuál</strong>, <strong>de quién</strong> o <strong>cuántos</strong>.');
+        return it;
+      });
+    } },
+
+  { id: 'completa', icono: '✏️', titulo: '¿Cómo lo decía el texto?', forma: 'tresOpciones',
+    pista: 'Las tres palabras salen de esta misma lectura',
+    items: function (t, u) {
+      var adj = {};
+      (t.adjs || []).forEach(function (p) { adj[u.clave(p)] = 1; });
+      var candidatos = [];
+      u.oraciones().forEach(function (o) {
+        for (var i = o.ini; i <= o.fin; i++) {
+          if (adj[u.clave(u.ps[i])]) { candidatos.push({ pos: i, ini: o.ini, fin: o.fin }); break; }
+        }
+      });
+      return u.baraja(candidatos).slice(0, 4).map(function (c) {
+        var correcta = u.ps[c.pos].replace(/[.,;:()¿?¡!«»"“”'’…—–]/g, '');
+        /* Los distractores salen de t.adjs TAL CUAL están escritos, no
+           normalizados: si la correcta fuera «Querida» con mayúscula y
+           las otras dos en minúscula, la mayúscula cantaría la
+           respuesta. Y salen de la MISMA lectura para que no se acierte
+           por descarte de vocabulario: hay que acordarse de lo leído. */
+        var otros = u.baraja((t.adjs || []).filter(function (p) { return u.clave(p) !== u.clave(correcta); })).slice(0, 2);
+        var ops = u.baraja([correcta].concat(otros));
+        var frase = [];
+        for (var i = c.ini; i <= c.fin; i++) {
+          frase.push(i === c.pos ? u.HUECO + u.esc(u.ps[i].replace(/^[^.,;:!?»]*/, '')) : u.esc(u.ps[i]));
+        }
+        return {
+          frase: frase.join(' '), ops: ops, c: ops.map(u.clave).indexOf(u.clave(correcta)),
+          bien: 'Fíjate en cuánto cambia la oración según el adjetivo que se le ponga.',
+          mal: 'La lectura decía <strong>«' + u.esc(correcta) + '»</strong>. Las otras dos también salen de este texto, ' +
+            'pero acompañaban a otra cosa.'
+        };
+      });
+    } }
+];
+
+/* La hoja de respuestas del final: el texto con TODOS sus adjetivos. */
+const LECTURA_ADJETIVOS_RESUMEN = {
+  titulo: '🎨 Todos los adjetivos de esta lectura',
+  leyenda: [
+    { clase: 'a', txt: 'calificativo', dice: 'dice cómo es' },
+    { clase: 'b', txt: 'determinativo', dice: 'dice cuál, de quién o cuántos' }
+  ],
+  intro: function (t, u, cuenta) {
+    return 'Esto es lo que estabas leyendo sin darte cuenta: <strong>' + cuenta.a + ' calificativos</strong> y ' +
+      '<strong>' + cuenta.b + ' determinativos</strong> en un solo texto. Sin ellos no sabrías cómo era nada de lo que leíste.';
+  },
+  marcar: function (t, u) {
+    var adj = {}, det = {};
+    (t.adjs || []).forEach(function (p) { adj[u.clave(p)] = 1; });
+    (t.dets || []).forEach(function (p) { det[u.clave(p)] = 1; });
+    var out = [];
+    u.ps.forEach(function (p, i) {
+      var k = u.clave(p);
+      if (adj[k]) out.push({ ini: i, fin: i, clase: 'a' });
+      else if (det[k]) out.push({ ini: i, fin: i, clase: 'b' });
+    });
+    return out;
+  }
+};
