@@ -1,0 +1,572 @@
+/* ══════════════════════════════════════════════════════════════
+   📖 LECTURAS DE LA MISIÓN «LOS ADJETIVOS» — piloto
+
+   Cinco lecturas por cada grado del II y III ciclo (4º a 9º), para
+   el Control de lectura que vive DENTRO de la misión: el alumno se
+   cronometra solo, un minuto, y contesta cinco preguntas.
+
+   Por qué el corpus es propio y no el de Mi aula: aquí el texto
+   además ENSEÑA. Todas las lecturas son descriptivas o argumentan
+   sobre la descripción, van cargadas de adjetivos calificativos y
+   determinativos, y al terminar la toma el motor los pinta en el
+   texto para que el alumno vea, sobre lo que acaba de leer en voz
+   alta, las palabras que la misión le explicó en teoría.
+
+   REGLAS DEL CORPUS (las comprueba _dev/valida-lectura-mision.js):
+   · El LARGO va por grado, con la misma banda de palabras del
+     corpus de Mi aula: 4º 95–115 · 5º 110–135 · 6º 125–150 ·
+     7º 140–170 · 8º 155–185 · 9º 170–200. Se CUENTAN, nunca se
+     escriben a ojo.
+   · 5 preguntas exactas por texto, con la mezcla de tipos del
+     grado: 4º 3 literales + 1 inferencial + 1 crítica; 5º a 8º
+     2 + 2 + 1; 9º 1 + 2 + 2. La guía de las críticas empieza con
+     «Respuesta abierta: se valora que…».
+   · Cada pregunta lleva sus 3 opciones (o) con la correcta (c,
+     índice 0–2), repartida entre a, b y c: aquí las contesta el
+     alumno en la pantalla, y un patrón se aprende más rápido que
+     el texto.
+   · adjs / dets son las palabras que el motor resalta al final:
+     adjetivos CALIFICATIVOS y DETERMINATIVOS que aparecen tal cual
+     en el texto (el validador lo comprueba palabra por palabra).
+     Los artículos NO van: en esta misión el artículo no es
+     adjetivo determinativo, y meterlo ahí contradiría su teoría.
+   · Contexto hondureño, contado con dignidad y sin estereotipos.
+   · NADA que exija fuente oficial: ni cifras históricas, ni leyes,
+     ni estadísticas. Conocimiento general seguro o ficción.
+   · Nombres propios SIEMPRE con mayúscula (normativa del proyecto,
+     la comprueba _dev/verifica-nombres-propios.js).
+
+   El id es estable (LA<grado>-NN): los resultados guardados lo
+   citan; cambiarlo le borraría el historial al alumno.
+══════════════════════════════════════════════════════════════ */
+
+const LECTURA_ADJETIVOS = {
+
+  /* ════════ 4º GRADO (95–115 palabras · 3 literales, 1 inferencial, 1 crítica) ════════ */
+  4: [
+    { id: 'LA4-01', titulo: 'El mercado del sábado', genero: 'descriptivo',
+      texto: 'El sábado el mercado despierta temprano. Las sandías redondas se apilan junto a las piñas doradas. Hay mangos maduros, jocotes verdes y naranjas dulces. Doña Petrona vende hierbas frescas en canastos anchos. Su vecino ofrece quesos blancos y mantequilla espesa. Un niño pequeño camina entre la gente con una bolsa pesada. El aire huele a cilantro y a pan caliente. Todo suena alegre y revuelto. Al fondo, dos señoras conversan mientras doblan hojas anchas de plátano. Cuando el sol se pone alto, los puestos quedan casi vacíos y los vendedores descansan en sus bancos bajos, contentos por la mañana ocupada.',
+      adjs: ['redondas', 'doradas', 'maduros', 'verdes', 'dulces', 'frescas', 'blancos', 'espesa', 'pesada', 'caliente', 'alegre', 'vacíos', 'bajos'],
+      dets: ['Su', 'dos', 'sus'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo son las sandías del mercado?', r: 'Redondas.',
+          o: ['Redondas.', 'Verdes.', 'Pequeñas.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué vende doña Petrona?', r: 'Hierbas frescas.',
+          o: ['Quesos blancos.', 'Hierbas frescas.', 'Piñas doradas.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué adjetivo usa el texto para describir los canastos?', r: 'Anchos.',
+          o: ['Bajos.', 'Pesados.', 'Anchos.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué al final los puestos quedan casi vacíos?', r: 'Porque ya se vendió casi todo durante la mañana.',
+          o: ['Porque ya se vendió casi todo durante la mañana.', 'Porque empezó a llover muy fuerte.', 'Porque los vendedores llegaron tarde.'], c: 0 },
+        { tipo: 'critica', q: '¿Qué adjetivos usarías para describir el mercado de tu comunidad? ¿Por qué esos?', r: 'Respuesta abierta: se valora que proponga adjetivos propios y explique qué vio, oyó u olió para elegirlos.',
+          o: ['Ninguno, porque todos los mercados son iguales.', 'Los mismos del texto, sin mirar mi mercado.', 'Adjetivos que digan lo que yo veo y huelo allí, y explicar por qué.'], c: 2 },
+      ] },
+
+    { id: 'LA4-02', titulo: 'La guacamaya roja', genero: 'expositivo',
+      texto: 'La guacamaya roja es un ave grande y ruidosa. Su plumaje rojo brilla bajo el sol, y sus alas guardan plumas azules y amarillas. Tiene un pico curvo y muy fuerte, capaz de partir semillas duras. Vive en los bosques cálidos de Honduras y casi siempre vuela en pareja. Su grito es áspero y se escucha desde lejos. Son aves fieles: la misma pareja se acompaña durante años. Muchas fueron atrapadas para venderlas, y por eso hoy es raro verlas libres en algunos lugares. Cuidar los árboles altos donde hacen sus nidos es la mejor forma de protegerlas.',
+      adjs: ['grande', 'ruidosa', 'rojo', 'azules', 'amarillas', 'curvo', 'fuerte', 'duras', 'cálidos', 'áspero', 'fieles', 'libres', 'altos'],
+      dets: ['Su', 'sus', 'Muchas', 'algunos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo es el pico de la guacamaya roja?', r: 'Curvo y muy fuerte.',
+          o: ['Curvo y muy fuerte.', 'Corto y delgado.', 'Recto y suave.'], c: 0 },
+        { tipo: 'literal', q: '¿De qué colores son las plumas de sus alas?', r: 'Azules y amarillas.',
+          o: ['Verdes y blancas.', 'Azules y amarillas.', 'Rojas y negras.'], c: 1 },
+        { tipo: 'literal', q: '¿En dónde vive la guacamaya roja?', r: 'En los bosques cálidos de Honduras.',
+          o: ['En las playas frías.', 'En los cerros secos y pelados.', 'En los bosques cálidos de Honduras.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué cuidar los árboles altos ayuda a proteger a las guacamayas?', r: 'Porque en esos árboles hacen sus nidos y sin ellos no tendrían dónde criar.',
+          o: ['Porque en esos árboles hacen sus nidos.', 'Porque los árboles altos las esconden de la lluvia.', 'Porque de esos árboles sacan toda su comida.'], c: 0 },
+        { tipo: 'critica', q: '¿Te parece bien atrapar una guacamaya para tenerla en casa? ¿Por qué?', r: 'Respuesta abierta: se valora que dé una razón sobre la libertad del animal o el cuidado de la naturaleza.',
+          o: ['Sí, porque en la casa está más segura que en el monte.', 'No, porque vive en pareja y en libertad, y encerrada pierde eso.', 'Da igual, porque hay muchas en el bosque.'], c: 1 },
+      ] },
+
+    { id: 'LA4-03', titulo: 'La hamaca del abuelo', genero: 'cuento',
+      texto: 'Mi abuelo tiene una hamaca vieja de hilo blanco. La colgó hace muchos años entre dos horcones firmes del corredor. La tela está desteñida y tiene un remiendo azul en la orilla. Cuando me siento con él, la hamaca se mece despacio y cruje bajito. Desde ahí se ve el patio, el palo de nance y una gallina flaca que nunca se está quieta. Mi abuelo cuenta historias largas y tranquilas. Dice que esa hamaca es más antigua que yo y que todavía aguanta a los dos. Yo creo que la quiere porque en ella descansó cuando era joven.',
+      adjs: ['vieja', 'blanco', 'firmes', 'desteñida', 'azul', 'flaca', 'quieta', 'largas', 'tranquilas', 'antigua', 'joven'],
+      dets: ['Mi', 'dos', 'muchos', 'esa'],
+      preguntas: [
+        { tipo: 'literal', q: '¿De qué material y color es la hamaca del abuelo?', r: 'De hilo blanco.',
+          o: ['De cuero café.', 'De hilo blanco.', 'De tela negra.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué tiene la hamaca en la orilla?', r: 'Un remiendo azul.',
+          o: ['Un remiendo azul.', 'Un nudo grande.', 'Una cinta roja.'], c: 0 },
+        { tipo: 'literal', q: '¿Cómo son las historias que cuenta el abuelo?', r: 'Largas y tranquilas.',
+          o: ['Cortas y tristes.', 'Rápidas y ruidosas.', 'Largas y tranquilas.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué el nieto cree que el abuelo quiere tanto esa hamaca?', r: 'Porque en ella descansó desde que era joven y le recuerda su vida.',
+          o: ['Porque en ella descansó desde joven y le recuerda su vida.', 'Porque le costó muy cara cuando la compró.', 'Porque es la única silla que hay en la casa.'], c: 0 },
+        { tipo: 'critica', q: '¿Está bien conservar una cosa vieja y remendada en vez de botarla? ¿Por qué?', r: 'Respuesta abierta: se valora que hable del valor de los recuerdos, del cuidado o de no botar lo que sirve.',
+          o: ['No, porque lo viejo se ve feo y hay que cambiarlo.', 'Sí, porque todavía sirve y guarda recuerdos de la familia.', 'No importa, porque una hamaca cualquiera es igual.'], c: 1 },
+      ] },
+
+    { id: 'LA4-04', titulo: 'El río frío', genero: 'descriptivo',
+      texto: 'El río baja de la montaña con agua clara y muy fría. Sus piedras son lisas, redondas y resbalosas. En la orilla crecen helechos verdes y un sauce inclinado. El agua corre veloz en el estrecho y luego se queda mansa en la poza honda. Allí los niños se bañan y sacan camarones diminutos. Al mediodía el sol calienta las piedras grandes y todos se acuestan sobre ellas. El aire huele a tierra mojada. Cuando llueve arriba, el río se pone turbio y ancho, y entonces nadie entra: el agua tranquila de la mañana se vuelve peligrosa.',
+      adjs: ['clara', 'fría', 'lisas', 'redondas', 'resbalosas', 'verdes', 'inclinado', 'veloz', 'estrecho', 'mansa', 'honda', 'diminutos', 'grandes', 'mojada', 'turbio', 'ancho', 'tranquila', 'peligrosa'],
+      dets: ['Sus', 'un', 'todos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo son las piedras del río?', r: 'Lisas, redondas y resbalosas.',
+          o: ['Lisas, redondas y resbalosas.', 'Filosas y negras.', 'Blandas y pequeñas.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué sacan los niños en la poza?', r: 'Camarones diminutos.',
+          o: ['Peces grandes.', 'Camarones diminutos.', 'Caracoles blancos.'], c: 1 },
+        { tipo: 'literal', q: '¿Cómo se pone el río cuando llueve en la montaña?', r: 'Turbio y ancho.',
+          o: ['Manso y claro.', 'Seco y pedregoso.', 'Turbio y ancho.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué nadie entra al río después de la lluvia?', r: 'Porque baja crecido y turbio, y se vuelve peligroso.',
+          o: ['Porque el agua queda demasiado caliente.', 'Porque baja crecido y turbio, y se vuelve peligroso.', 'Porque las piedras desaparecen para siempre.'], c: 1 },
+        { tipo: 'critica', q: '¿Qué le dirías a alguien que quiere bañarse en el río crecido? ¿Por qué?', r: 'Respuesta abierta: se valora que aconseje esperar y justifique con el riesgo que describe el texto.',
+          o: ['Que entre rápido, porque el agua crecida es más divertida.', 'Que haga lo que quiera, porque no es asunto mío.', 'Que espere a que baje, porque el agua turbia esconde el fondo.'], c: 2 },
+      ] },
+
+    { id: 'LA4-05', titulo: 'Chispa, la perra valiente', genero: 'cuento',
+      texto: 'Chispa es una perra flaca de pelo café. Tiene una oreja parada y la otra caída. No es bonita, pero es la más valiente del barrio. Una tarde oscura, un ladrón se acercó al portón de la casa vecina. Chispa ladró fuerte y no se movió del zaguán. El hombre se fue corriendo. Al día siguiente, doña Rosa le llevó un plato hondo con arroz tibio. Ahora todos los vecinos la saludan. Mi hermana pequeña dice que Chispa no es fea: dice que es distinta. Yo creo que tiene razón, porque una perra fiel vale más que una bonita.',
+      adjs: ['flaca', 'café', 'parada', 'caída', 'bonita', 'valiente', 'oscura', 'fuerte', 'hondo', 'tibio', 'pequeña', 'fea', 'distinta', 'fiel'],
+      dets: ['Una', 'Mi', 'todos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo son las orejas de Chispa?', r: 'Una parada y la otra caída.',
+          o: ['Las dos paradas.', 'Una parada y la otra caída.', 'Las dos caídas.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué hizo Chispa cuando llegó el ladrón?', r: 'Ladró fuerte y no se movió del zaguán.',
+          o: ['Ladró fuerte y no se movió del zaguán.', 'Se escondió debajo del portón.', 'Salió corriendo a la calle.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué le llevó doña Rosa al día siguiente?', r: 'Un plato hondo con arroz tibio.',
+          o: ['Un hueso grande.', 'Un balde de agua fresca.', 'Un plato hondo con arroz tibio.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué la hermana pequeña dice que Chispa es «distinta» y no «fea»?', r: 'Porque prefiere un adjetivo que no ofende y que describe lo que la hace especial.',
+          o: ['Porque no conoce la palabra fea.', 'Porque escogió un adjetivo que no ofende y sí la describe.', 'Porque Chispa cambió de color.'], c: 1 },
+        { tipo: 'critica', q: '¿Importa qué adjetivo se usa para hablar de alguien? ¿Por qué?', r: 'Respuesta abierta: se valora que note que el adjetivo puede herir o valorar, y dé un ejemplo.',
+          o: ['Sí, porque un adjetivo puede herir o puede valorar a alguien.', 'No, porque las palabras se olvidan enseguida.', 'Solo importa cuando se habla de personas grandes.'], c: 0 },
+      ] },
+  ],
+
+  /* ════════ 5º GRADO (110–135 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
+  5: [
+    { id: 'LA5-01', titulo: 'El taller de barro de Ojojona', genero: 'descriptivo',
+      texto: 'En Ojojona, doña Lucía trabaja el barro desde niña. Su taller es un cuarto fresco y polvoriento, con estantes altos llenos de piezas sin pintar. El barro llega en costales pesados y se ve gris y opaco. Ella lo amasa con las manos firmes hasta dejarlo suave y obediente. Sobre el torno pone una bola húmeda y, en pocos minutos, aparece una olla panzona. Después vienen los días lentos del secado, y por último el horno caliente. Cuando la pieza sale, el barro gris se ha vuelto rojizo y duro. Doña Lucía la revisa contra la luz, buscando alguna rajadura fina. Si está buena, sonríe y la pone en el estante de las terminadas.',
+      adjs: ['fresco', 'polvoriento', 'altos', 'pesados', 'gris', 'opaco', 'firmes', 'suave', 'obediente', 'húmeda', 'panzona', 'lentos', 'caliente', 'rojizo', 'duro', 'fina', 'buena', 'terminadas'],
+      dets: ['Su', 'pocos', 'alguna', 'una'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo se ve el barro cuando llega al taller?', r: 'Gris y opaco.',
+          o: ['Gris y opaco.', 'Rojizo y duro.', 'Blanco y brillante.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué busca doña Lucía cuando revisa la pieza contra la luz?', r: 'Alguna rajadura fina.',
+          o: ['Una mancha de pintura.', 'Alguna rajadura fina.', 'El nombre del comprador.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué el texto dice que el barro queda «obediente» después de amasarlo?', r: 'Porque ya se deja moldear con facilidad y toma la forma que ella quiere.',
+          o: ['Porque el barro entiende lo que ella le dice.', 'Porque pesa menos que antes.', 'Porque ya se deja moldear y toma la forma que ella quiere.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Qué le pasa al barro entre el torno y el horno para que cambie de color?', r: 'Se seca despacio y luego el fuego del horno lo endurece y lo vuelve rojizo.',
+          o: ['Lo pintan de rojo antes de meterlo.', 'Se seca despacio y el fuego del horno lo endurece y lo vuelve rojizo.', 'Se moja otra vez para que agarre color.'], c: 1 },
+        { tipo: 'critica', q: '¿Vale la pena un trabajo tan lento como el de doña Lucía? ¿Por qué?', r: 'Respuesta abierta: se valora que reconozca el oficio, la paciencia o el valor de lo hecho a mano.',
+          o: ['No, porque una máquina lo haría en menos tiempo.', 'Da igual, porque las ollas se quiebran de todos modos.', 'Sí, porque cada pieza queda distinta y se necesita paciencia y oficio.'], c: 2 },
+      ] },
+
+    { id: 'LA5-02', titulo: 'La montaña con nubes', genero: 'expositivo',
+      texto: 'Hay montañas tan altas en Honduras que las nubes se quedan atrapadas en ellas. Ese bosque húmedo se llama bosque nublado. El aire es frío y pegajoso, y los troncos gruesos están cubiertos de musgo verde y esponjoso. De las ramas cuelgan barbas grises que gotean todo el día. Las hojas anchas de los helechos guardan agua limpia. Allí viven pájaros pequeños y ranitas silenciosas que no se ven en las tierras bajas y calientes. Ese bosque no solo es bonito: funciona como una esponja gigante. Recoge la neblina, la guarda entre las raíces y la suelta despacio hacia las quebradas. Por eso, cuando se corta un bosque nublado, muchas comunidades lejanas se quedan con menos agua.',
+      adjs: ['altas', 'húmedo', 'nublado', 'frío', 'pegajoso', 'gruesos', 'verde', 'esponjoso', 'grises', 'anchas', 'limpia', 'pequeños', 'silenciosas', 'bajas', 'calientes', 'bonito', 'gigante', 'lejanas'],
+      dets: ['Ese', 'muchas', 'una'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo es el aire dentro del bosque nublado?', r: 'Frío y pegajoso.',
+          o: ['Seco y caliente.', 'Frío y pegajoso.', 'Tibio y liviano.'], c: 1 },
+        { tipo: 'literal', q: '¿Con qué compara el texto al bosque nublado?', r: 'Con una esponja gigante.',
+          o: ['Con una esponja gigante.', 'Con un techo de lámina.', 'Con un río escondido.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué las comunidades lejanas se quedan sin agua si se corta ese bosque?', r: 'Porque el bosque recoge la neblina y la suelta despacio hacia las quebradas que las abastecen.',
+          o: ['Porque las nubes se van a otro país.', 'Porque el bosque recoge la neblina y la suelta despacio hacia las quebradas.', 'Porque los árboles se llevan el agua al cortarlos.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué esos pájaros y ranitas no viven en las tierras bajas y calientes?', r: 'Porque necesitan el clima frío y húmedo del bosque nublado.',
+          o: ['Porque necesitan el clima frío y húmedo de esa montaña.', 'Porque allí abajo no hay árboles de ninguna clase.', 'Porque no saben volar ni saltar tan lejos.'], c: 0 },
+        { tipo: 'critica', q: '¿Qué razón darías para cuidar un bosque nublado aunque quede lejos de tu casa?', r: 'Respuesta abierta: se valora que relacione el bosque con el agua que llega a las comunidades.',
+          o: ['Ninguna, porque lo lejano no me afecta.', 'Solo porque es bonito para tomarle fotos.', 'Que de allí sale el agua que después llega a lugares muy lejanos.'], c: 2 },
+      ] },
+
+    { id: 'LA5-03', titulo: 'El barrilete anaranjado', genero: 'cuento',
+      texto: 'Marvin quería el barrilete más grande de la loma. Cortó varas delgadas de bambú, las amarró con hilo resistente y forró todo con papel anaranjado. La cola era larguísima, hecha de trapos viejos. Su primo Elmer se rio: dijo que era feo y pesado. El primer intento fue un desastre; el barrilete cayó como una piedra torpe. Marvin le quitó tres trapos a la cola y lo probó de nuevo. Esta vez subió recto, firme, más alto que los demás. Desde abajo se veía como una mancha encendida contra el cielo despejado. Elmer dejó de reírse y le pidió ayuda para arreglar el suyo, que era bonito pero nunca despegaba.',
+      adjs: ['grande', 'delgadas', 'resistente', 'anaranjado', 'larguísima', 'viejos', 'feo', 'pesado', 'primer', 'torpe', 'recto', 'firme', 'alto', 'encendida', 'despejado', 'bonito'],
+      dets: ['Su', 'tres', 'Esta', 'suyo'],
+      preguntas: [
+        { tipo: 'literal', q: '¿De qué hizo Marvin la cola del barrilete?', r: 'De trapos viejos.',
+          o: ['De hilo resistente.', 'De papel anaranjado.', 'De trapos viejos.'], c: 2 },
+        { tipo: 'literal', q: '¿Qué le hizo Marvin al barrilete después del primer intento?', r: 'Le quitó tres trapos a la cola.',
+          o: ['Le quitó tres trapos a la cola.', 'Le puso más papel encima.', 'Le cambió todas las varas.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué el barrilete cayó «como una piedra torpe» la primera vez?', r: 'Porque la cola de trapos viejos lo hacía demasiado pesado.',
+          o: ['Porque no había nada de viento ese día.', 'Porque la cola de trapos lo hacía demasiado pesado.', 'Porque el papel anaranjado no servía.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué Elmer dejó de reírse al final?', r: 'Porque el barrilete «feo» voló mejor que el suyo, que era bonito pero no despegaba.',
+          o: ['Porque su primo le regaló el barrilete.', 'Porque se cansó de estar en la loma.', 'Porque el barrilete «feo» voló mejor que el suyo, que era bonito.'], c: 2 },
+        { tipo: 'critica', q: '¿Qué vale más en un barrilete: que sea bonito o que vuele? ¿Por qué?', r: 'Respuesta abierta: se valora que sostenga su opinión con una razón sacada del texto.',
+          o: ['Que sea bonito, porque así se ve mejor guardado.', 'Que vuele, porque para eso se hace un barrilete.', 'Ninguna de las dos cosas importa.'], c: 1 },
+      ] },
+
+    { id: 'LA5-04', titulo: 'Calles empedradas', genero: 'descriptivo',
+      texto: 'El pueblo antiguo se despierta con un aire tibio. Sus calles son estrechas y empedradas, y las piedras redondas brillan cuando llueve. Las casas bajas tienen paredes gruesas, tejas rojizas y puertas anchas de madera oscura. En algunas ventanas hay macetas viejas con flores rojas. La iglesia blanca cierra la plaza por un lado; enfrente, unos bancos de hierro esperan bajo árboles frondosos. A las seis de la mañana pasa una señora silenciosa con un canasto tapado, y detrás va un perro perezoso. Todo parece quieto, pero no está dormido: en la esquina, un hombre ya barre la acera con una escoba corta y gastada, y saluda a cada persona que pasa.',
+      adjs: ['antiguo', 'tibio', 'estrechas', 'empedradas', 'redondas', 'bajas', 'gruesas', 'rojizas', 'anchas', 'oscura', 'viejas', 'rojas', 'blanca', 'frondosos', 'silenciosa', 'tapado', 'perezoso', 'quieto', 'dormido', 'corta', 'gastada'],
+      dets: ['Sus', 'algunas', 'unos', 'cada'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo son las calles del pueblo?', r: 'Estrechas y empedradas.',
+          o: ['Anchas y de tierra.', 'Estrechas y empedradas.', 'Rectas y asfaltadas.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué hay en algunas ventanas?', r: 'Macetas viejas con flores rojas.',
+          o: ['Macetas viejas con flores rojas.', 'Cortinas blancas y limpias.', 'Jaulas con pájaros pequeños.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué el texto dice que el pueblo «no está dormido» aunque parezca quieto?', r: 'Porque ya hay gente trabajando: una señora con su canasto y un hombre barriendo.',
+          o: ['Porque las campanas suenan todo el día.', 'Porque los carros hacen mucho ruido.', 'Porque ya hay gente trabajando desde temprano.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Qué nos dice de las casas que tengan paredes gruesas y tejas?', r: 'Que son casas antiguas, construidas para conservar el fresco.',
+          o: ['Que son casas antiguas, hechas para conservar el fresco.', 'Que las construyeron el año pasado.', 'Que nadie vive en ellas.'], c: 0 },
+        { tipo: 'critica', q: '¿Vale la pena conservar las calles empedradas aunque sean incómodas? ¿Por qué?', r: 'Respuesta abierta: se valora que pese la comodidad frente al valor histórico del pueblo.',
+          o: ['No, porque lo viejo estorba y hay que quitarlo.', 'Sí, porque son parte de la historia del pueblo y lo hacen distinto.', 'Me da igual, porque yo no camino por allí.'], c: 1 },
+      ] },
+
+    { id: 'LA5-05', titulo: 'La lancha azul', genero: 'cuento',
+      texto: 'Don Chepe pintó su lancha de azul intenso y le escribió un nombre corto en la proa. La madera vieja quedó reluciente. Esa mañana el mar estaba manso y el cielo, limpio. Salió temprano con su hijo Bryan, callado y atento, que iba de ayudante por primera vez. A media mañana el viento se puso terco y las olas, altas y oscuras. Bryan se agarró fuerte y no dijo nada. Don Chepe no gritó: dio vuelta despacio y buscó la orilla más cercana. Cuando llegaron, la lancha azul tenía la pintura raspada, pero los dos estaban enteros. Bryan bajó con las piernas temblorosas y no soltó el remo hasta pisar la arena firme. «El mar bravo no se discute», dijo don Chepe. «Se le respeta.»',
+      adjs: ['azul', 'intenso', 'corto', 'vieja', 'reluciente', 'manso', 'limpio', 'callado', 'atento', 'terco', 'altas', 'oscuras', 'cercana', 'raspada', 'enteros', 'temblorosas', 'firme', 'bravo'],
+      dets: ['su', 'Esa', 'primera', 'dos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo estaba el mar cuando salieron por la mañana?', r: 'Manso, y el cielo limpio.',
+          o: ['Manso, y el cielo limpio.', 'Bravo y con olas altas.', 'Turbio y con neblina.'], c: 0 },
+        { tipo: 'literal', q: '¿Cómo quedó la lancha al regresar?', r: 'Con la pintura raspada.',
+          o: ['Sin el nombre de la proa.', 'Con la pintura raspada.', 'Partida por la mitad.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué don Chepe dio la vuelta en vez de seguir pescando?', r: 'Porque el viento y las olas se volvieron peligrosos y prefirió la seguridad.',
+          o: ['Porque ya había pescado bastante.', 'Porque Bryan le pidió regresar a gritos.', 'Porque el viento y las olas se volvieron peligrosos.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Qué quiere decir don Chepe con «el mar bravo no se discute»?', r: 'Que no se puede pelear contra el mar: hay que reconocer su fuerza y retirarse a tiempo.',
+          o: ['Que hay que hablarle bajito al mar.', 'Que no se puede pelear con el mar: hay que reconocer su fuerza.', 'Que el mar siempre tiene la culpa de todo.'], c: 1 },
+        { tipo: 'critica', q: '¿Fue cobardía o buen juicio regresar? Defiende tu respuesta.', r: 'Respuesta abierta: se valora que argumente, preferiblemente reconociendo la prudencia como decisión valiente.',
+          o: ['Cobardía, porque un pescador de verdad no se regresa.', 'Buen juicio, porque volver a tiempo salvó a los dos.', 'Ni una cosa ni la otra: fue suerte.'], c: 1 },
+      ] },
+  ],
+
+  /* ════════ 6º GRADO (125–150 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
+  6: [
+    { id: 'LA6-01', titulo: 'El arrecife de Roatán', genero: 'expositivo',
+      texto: 'Bajo el agua tibia de Roatán hay una ciudad viva. El arrecife parece una roca dura y quieta, pero está formado por animales diminutos que trabajan juntos durante siglos. Cada coral construye una casa calcárea, y encima de ella crecen otros corales nuevos. El resultado es un muro poroso y lleno de escondites. Allí viven peces amarillos, azules y rayados, langostas tímidas y caracoles enormes. El arrecife también sirve de muralla: rompe las olas fuertes antes de que lleguen a la playa y protege las casas cercanas. Los corales son frágiles y exigentes. Necesitan agua limpia, transparente y ni muy caliente ni muy fría. Cuando el agua se calienta demasiado, el coral se pone blanco y puede morir. Un arrecife blanquecino no es un arrecife descansando: es un arrecife enfermo.',
+      adjs: ['tibia', 'viva', 'dura', 'quieta', 'diminutos', 'calcárea', 'nuevos', 'poroso', 'amarillos', 'azules', 'rayados', 'tímidas', 'enormes', 'fuertes', 'cercanas', 'frágiles', 'exigentes', 'limpia', 'transparente', 'caliente', 'fría', 'blanco', 'blanquecino', 'enfermo'],
+      dets: ['Cada', 'otros', 'Un'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué construye cada coral?', r: 'Una casa calcárea, sobre la que crecen corales nuevos.',
+          o: ['Una casa calcárea sobre la que crecen corales nuevos.', 'Un nido de arena fina.', 'Un túnel bajo la playa.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué le pasa al coral cuando el agua se calienta demasiado?', r: 'Se pone blanco y puede morir.',
+          o: ['Crece más rápido que antes.', 'Se pone blanco y puede morir.', 'Cambia de lugar nadando.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué el texto llama al arrecife «una ciudad viva» si parece una roca?', r: 'Porque está hecho de animales vivos y en él habitan muchas especies, como una ciudad habitada.',
+          o: ['Porque tiene calles y casas de verdad.', 'Porque los buzos construyeron edificios allí.', 'Porque está hecho de animales vivos y allí habitan muchas especies.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué perder el arrecife afectaría también a las casas de la costa?', r: 'Porque el arrecife rompe las olas fuertes y sin él llegarían con más fuerza a la playa.',
+          o: ['Porque el arrecife rompe las olas y sin él llegarían con más fuerza.', 'Porque las casas se construyeron sobre el coral.', 'Porque el agua subiría de temperatura en las casas.'], c: 0 },
+        { tipo: 'critica', q: '¿Por qué el autor dice que «blanquecino» no significa «descansando»? ¿Te parece útil esa aclaración?', r: 'Respuesta abierta: se valora que note que un adjetivo puede sonar inofensivo y ocultar un problema grave.',
+          o: ['No sirve de nada: el color no significa nada.', 'Sí sirve: aclara que ese adjetivo suena inofensivo pero anuncia algo grave.', 'Solo la puso para hacer el texto más largo.'], c: 1 },
+      ] },
+
+    { id: 'LA6-02', titulo: 'Carta desde la aldea', genero: 'carta',
+      texto: 'Querida Nayeli: te escribo desde la aldea, sentada en el corredor. Aquí todo es distinto de lo que te imaginas. La escuela es pequeña y tiene dos aulas soleadas; el patio es enorme y de tierra colorada. Mi maestra es joven, exigente y muy paciente. Nos hace escribir cada semana una descripción, y dice que un texto sin adjetivos es como una comida sin sal. Al principio yo escribía «el cerro grande», nada más. Ahora escribo «el cerro grande, pelado y sin sombra», y ya no es cualquier cerro: es el mío. Las tardes son largas y frescas. Cuando bajan las nubes bajas, el aire se pone helado y la gente cierra las puertas temprano. Te espero en diciembre. Traé tu cuaderno viejo, ese de tapa azul, y te enseño mi cerro. Con cariño, Suyapa.',
+      adjs: ['distinto', 'pequeña', 'soleadas', 'enorme', 'colorada', 'joven', 'exigente', 'paciente', 'grande', 'pelado', 'largas', 'frescas', 'bajas', 'helado', 'viejo', 'azul'],
+      dets: ['dos', 'Mi', 'cada', 'ese', 'tu'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo describe Suyapa a su maestra?', r: 'Joven, exigente y muy paciente.',
+          o: ['Joven, exigente y muy paciente.', 'Vieja, callada y distraída.', 'Alegre, ruidosa y desordenada.'], c: 0 },
+        { tipo: 'literal', q: '¿Con qué compara la maestra un texto sin adjetivos?', r: 'Con una comida sin sal.',
+          o: ['Con un camino sin fin.', 'Con una comida sin sal.', 'Con una casa sin techo.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué Suyapa dice que ahora el cerro «es el mío» y no cualquier cerro?', r: 'Porque los adjetivos que agregó lo describen con detalle y lo distinguen de los demás.',
+          o: ['Porque su familia compró ese cerro.', 'Porque es el único cerro de la aldea.', 'Porque los adjetivos que agregó lo distinguen de cualquier otro.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué la gente cierra las puertas temprano cuando bajan las nubes?', r: 'Porque con la neblina el aire se pone helado y hace frío dentro de las casas.',
+          o: ['Porque con la neblina el aire se pone helado.', 'Porque de noche no hay luz en la aldea.', 'Porque las nubes traen animales peligrosos.'], c: 0 },
+        { tipo: 'critica', q: '¿Estás de acuerdo con la maestra en que un texto sin adjetivos es como una comida sin sal? Justifica.', r: 'Respuesta abierta: se valora que argumente a favor o en contra; la sal en exceso también arruina, y ese matiz suma.',
+          o: ['En desacuerdo: los adjetivos solo alargan el texto sin aportar.', 'No se puede opinar de eso.', 'De acuerdo: sin adjetivos el texto informa pero no deja ver nada.'], c: 2 },
+      ] },
+
+    { id: 'LA6-03', titulo: 'Las rosquillas de tía Marina', genero: 'cuento',
+      texto: 'Tía Marina hace rosquillas desde hace treinta años y no mide nada con taza. Su cocina es angosta, oscura y siempre huele a maíz tostado. Amasa con las manos manchadas de harina y va probando la masa: si está muy blanda, agrega maíz molido; si está seca y quebradiza, le pone cuajada fresca. El horno es un domo de barro renegrido, y ella sabe que está listo cuando la mano no aguanta cerca de la boca. Un día, su sobrina llegó con una receta impresa, exacta, con gramos y minutos. Tía Marina la leyó despacio y sonrió. «Está buena tu receta», le dijo, «pero no dice cómo se siente la masa». Ese día la sobrina apuntó otra cosa en su cuaderno: los adjetivos que su tía usaba para hablar de la masa.',
+      adjs: ['angosta', 'oscura', 'tostado', 'manchadas', 'blanda', 'seca', 'quebradiza', 'fresca', 'renegrido', 'listo', 'impresa', 'exacta', 'buena'],
+      dets: ['Su', 'treinta', 'Un', 'Ese', 'otra'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué le agrega tía Marina a la masa si está seca y quebradiza?', r: 'Cuajada fresca.',
+          o: ['Más maíz molido.', 'Cuajada fresca.', 'Agua tibia.'], c: 1 },
+        { tipo: 'literal', q: '¿Cómo sabe tía Marina que el horno está listo?', r: 'Cuando la mano no aguanta cerca de la boca del horno.',
+          o: ['Cuando la mano no aguanta cerca de la boca.', 'Cuando pasan exactamente treinta minutos.', 'Cuando el barro se pone blanco.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué tía Marina dice que la receta impresa no dice «cómo se siente la masa»?', r: 'Porque los gramos y minutos no describen la textura, y ella se guía por lo que toca.',
+          o: ['Porque la receta estaba escrita en otro idioma.', 'Porque no sabe leer bien las recetas.', 'Porque los gramos no describen la textura que ella reconoce al tocar.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Qué aprendió la sobrina al final?', r: 'Que los adjetivos de su tía guardan un saber que la receta exacta no recoge.',
+          o: ['Que los adjetivos de su tía guardan un saber que la receta no recoge.', 'Que su receta impresa estaba equivocada en los gramos.', 'Que hacer rosquillas es más fácil de lo que creía.'], c: 0 },
+        { tipo: 'critica', q: '¿Qué enseña mejor un oficio: los números exactos o los adjetivos precisos? Argumenta.', r: 'Respuesta abierta: se valora que reconozca que ambos sirven y que los adjetivos comunican lo que no se puede medir.',
+          o: ['Solo los números, porque no engañan.', 'Los dos: los números dan la medida y los adjetivos, lo que no se mide.', 'Ninguno, porque el oficio se aprende sin palabras.'], c: 1 },
+      ] },
+
+    { id: 'LA6-04', titulo: 'Un partido bajo la lluvia', genero: 'crónica',
+      texto: 'El partido empezó con una cancha reseca y polvorienta. A los veinte minutos cayó un aguacero espeso y todo cambió. El balón, antes liviano y saltarín, se puso pesado y terco. Los uniformes limpios quedaron irreconocibles. Nuestro portero, alto y flaco, resbalaba en cada salida. El equipo visitante, más rápido en seco, empezó a fallar los pases largos. Nuestro entrenador gritó una sola instrucción: «¡Pases cortos y al ras!». Fue un consejo sencillo pero exacto. Con el barro espeso, el balón ya no rodaba lejos, así que los pases cortos eran los únicos posibles. Ganamos con un gol feo, embarrado, empujado casi con la rodilla. En el camino de vuelta, todos íbamos sucios, mojados y felices. Nadie recordaba ya la cancha reseca y dura del principio.',
+      adjs: ['reseca', 'polvorienta', 'espeso', 'liviano', 'saltarín', 'pesado', 'terco', 'limpios', 'irreconocibles', 'alto', 'flaco', 'rápido', 'largos', 'cortos', 'sencillo', 'exacto', 'posibles', 'feo', 'embarrado', 'sucios', 'mojados', 'felices'],
+      dets: ['veinte', 'Nuestro', 'cada', 'una', 'todos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo estaba la cancha al empezar el partido?', r: 'Reseca y polvorienta.',
+          o: ['Mojada y resbalosa.', 'Reseca y polvorienta.', 'Verde y pareja.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué instrucción dio el entrenador?', r: 'Pases cortos y al ras.',
+          o: ['Pases cortos y al ras.', 'Pelotazos largos al área.', 'Aguantar el balón y no pasar.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué esa instrucción resultó acertada con la cancha embarrada?', r: 'Porque con el barro el balón no rodaba lejos y solo los pases cortos llegaban.',
+          o: ['Porque el rival no sabía dar pases cortos.', 'Porque con el barro el balón no rodaba lejos.', 'Porque así se cansaba menos el portero.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué el equipo visitante empezó a fallar cuando llovió?', r: 'Porque su ventaja era la velocidad en seco y el barro se la quitó.',
+          o: ['Porque perdieron a su mejor jugador.', 'Porque el árbitro los castigó.', 'Porque su ventaja era la velocidad en seco y el barro se la quitó.'], c: 2 },
+        { tipo: 'critica', q: '¿Un gol «feo» vale lo mismo que un gol bonito? Defiende tu postura.', r: 'Respuesta abierta: se valora que sostenga su opinión con una razón, sobre el resultado o sobre el esfuerzo.',
+          o: ['No, porque un gol embarrado no cuenta en la tabla.', 'Sí, porque en el marcador vale igual y costó más esfuerzo.', 'Solo si lo mete el mejor jugador del equipo.'], c: 1 },
+      ] },
+
+    { id: 'LA6-05', titulo: 'El pájaro que casi nadie ve', genero: 'expositivo',
+      texto: 'El quetzal es un ave rara y esquiva de los bosques nublados. El macho tiene el pecho rojo encendido, la espalda de un verde metálico que cambia con la luz y unas plumas larguísimas en la cola. La hembra es más discreta: verde apagada, sin esa cola llamativa. Ambos anidan en troncos podridos y blandos, porque solo esa madera floja se deja picotear con un pico pequeño. Se alimenta sobre todo de aguacatillos silvestres, que traga enteros. Después suelta la semilla lejos del árbol madre, y así siembra bosque sin proponérselo. Verlo es difícil: se queda inmóvil entre las hojas y su verde brillante se confunde con el follaje mojado. Muchos guías dicen que al quetzal no se le busca; se le espera, callado y quieto, hasta que él decide moverse.',
+      adjs: ['rara', 'esquiva', 'nublados', 'rojo', 'encendido', 'metálico', 'larguísimas', 'discreta', 'apagada', 'llamativa', 'podridos', 'blandos', 'floja', 'pequeño', 'silvestres', 'enteros', 'difícil', 'inmóvil', 'brillante', 'mojado', 'callado', 'quieto'],
+      dets: ['unas', 'esa', 'Ambos', 'Muchos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿En qué clase de troncos anida el quetzal?', r: 'En troncos podridos y blandos.',
+          o: ['En troncos podridos y blandos.', 'En pinos altos y sanos.', 'En palos secos del suelo.'], c: 0 },
+        { tipo: 'literal', q: '¿Cómo es la hembra comparada con el macho?', r: 'Más discreta: verde apagada y sin la cola llamativa.',
+          o: ['Igual de brillante que el macho.', 'Más discreta: verde apagada y sin la cola llamativa.', 'Más grande y de color rojo entero.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué el quetzal siembra bosque «sin proponérselo»?', r: 'Porque traga los frutos enteros y suelta las semillas lejos del árbol donde comió.',
+          o: ['Porque entierra semillas con el pico.', 'Porque arranca ramas y las deja caer.', 'Porque traga los frutos enteros y suelta las semillas lejos.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué es tan difícil verlo aunque tenga colores encendidos?', r: 'Porque se queda inmóvil y su verde brillante se confunde con el follaje mojado.',
+          o: ['Porque se queda inmóvil y su verde se confunde con el follaje.', 'Porque solo sale de noche.', 'Porque vive dentro de cuevas oscuras.'], c: 0 },
+        { tipo: 'critica', q: '¿Qué te parece el consejo de que «al quetzal no se le busca, se le espera»? ¿Se aplica a otras cosas?', r: 'Respuesta abierta: se valora que interprete el consejo como paciencia y lo lleve a otra situación de su vida.',
+          o: ['Es una tontería: al que espera nunca le llega nada.', 'Es un buen consejo sobre paciencia, y sirve para otras cosas también.', 'Solo sirve para los guías de turistas.'], c: 1 },
+      ] },
+  ],
+
+  /* ════════ 7º GRADO (140–170 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
+  7: [
+    { id: 'LA7-01', titulo: 'Los sombreros de junco', genero: 'expositivo',
+      texto: 'En varios pueblos de Santa Bárbara se tejen sombreros de junco desde hace generaciones. El junco es una fibra flexible y resistente que crece en terrenos húmedos. Antes de tejerlo hay que prepararlo: se corta, se pone a secar al sol hasta que queda pálido y quebradizo, y luego se humedece otra vez para volverlo dócil. Un junco demasiado seco se parte; uno demasiado mojado se estira y deforma la pieza. La tejedora empieza por la copa, con una espiral apretada y pareja, y va abriendo hacia el ala. Un sombrero fino puede llevar más de veinte vueltas por pulgada, y en ese caso el tejido queda tan cerrado que casi no deja pasar la luz. Los sombreros gruesos se hacen más rápido y se venden más baratos, pero se deforman con el primer aguacero. La diferencia entre uno y otro no está en el color: está en lo apretado del tejido.',
+      adjs: ['flexible', 'resistente', 'húmedos', 'pálido', 'quebradizo', 'dócil', 'seco', 'mojado', 'apretada', 'pareja', 'fino', 'cerrado', 'gruesos', 'baratos', 'primer', 'apretado'],
+      dets: ['varios', 'veinte', 'ese', 'otro'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo queda el junco después de secarse al sol?', r: 'Pálido y quebradizo.',
+          o: ['Pálido y quebradizo.', 'Verde y flexible.', 'Oscuro y pesado.'], c: 0 },
+        { tipo: 'literal', q: '¿Por dónde empieza la tejedora el sombrero?', r: 'Por la copa, con una espiral apretada y pareja.',
+          o: ['Por el ala, con vueltas anchas.', 'Por la copa, con una espiral apretada y pareja.', 'Por la cinta del borde.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué se vuelve a humedecer el junco después de secarlo?', r: 'Porque seco se parte al doblarlo, y humedecido recupera la flexibilidad para tejer.',
+          o: ['Para quitarle el polvo antes de tejer.', 'Para que cambie de color al tejerlo.', 'Porque seco se parte, y húmedo vuelve a ser flexible.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué un sombrero grueso se deforma con el primer aguacero?', r: 'Porque su tejido es flojo y el agua lo estira sin que la fibra recupere la forma.',
+          o: ['Porque su tejido es flojo y el agua lo estira.', 'Porque está hecho de otra fibra distinta.', 'Porque se le cae la cinta del borde.'], c: 0 },
+        { tipo: 'critica', q: '¿Por qué el autor dice que la diferencia «no está en el color»? ¿Compartes esa idea?', r: 'Respuesta abierta: se valora que distinga entre el adjetivo que adorna y el que informa de la calidad.',
+          o: ['Porque el color no se ve de lejos.', 'Porque lo vistoso no dice nada de la calidad: eso lo dice el tejido.', 'Porque todos los sombreros son del mismo color.'], c: 1 },
+      ] },
+
+    { id: 'LA7-02', titulo: 'Las piedras labradas de Copán', genero: 'descriptivo',
+      texto: 'En Copán, las piedras hablan sin decir palabra. Las estelas son bloques altos y estrechos, labrados por sus cuatro caras con figuras profundas. La piedra es volcánica, de un gris verdoso suave, y por eso los antiguos escultores pudieron trabajarla con detalle. Algunas figuras están tan gastadas por la lluvia que apenas se adivinan; otras, protegidas por la sombra de un árbol, siguen nítidas y precisas. Uno se acerca esperando algo tosco y encuentra lo contrario: dedos delgados, penachos finísimos, ojos serenos. Alrededor, la hierba corta y verde deja ver una plaza amplia y despejada. Al fondo se levanta una escalinata larguísima, cubierta de signos apretados; subirla despacio es la única manera de mirarla entera. Los guías piden algo raro para un lugar tan visitado: silencio. Dicen que el sitio es magnífico cuando está lleno de gente, pero se vuelve inolvidable cuando está callado.',
+      adjs: ['altos', 'estrechos', 'labrados', 'profundas', 'volcánica', 'verdoso', 'suave', 'antiguos', 'gastadas', 'protegidas', 'nítidas', 'precisas', 'tosco', 'delgados', 'finísimos', 'serenos', 'corta', 'verde', 'amplia', 'despejada', 'larguísima', 'apretados', 'única', 'entera', 'raro', 'magnífico', 'inolvidable', 'callado'],
+      dets: ['sus', 'cuatro', 'Algunas', 'otras'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo son las estelas de Copán?', r: 'Bloques altos y estrechos, labrados por sus cuatro caras.',
+          o: ['Bloques altos y estrechos, labrados por sus cuatro caras.', 'Losas planas puestas en el suelo.', 'Columnas redondas y lisas.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué piden los guías en un lugar tan visitado?', r: 'Silencio.',
+          o: ['Que no se tomen fotos.', 'Silencio.', 'Que se camine descalzo.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué algunas figuras siguen nítidas y otras están casi borradas?', r: 'Porque las que quedaron a la sombra se libraron del desgaste de la lluvia.',
+          o: ['Porque las labraron escultores distintos.', 'Porque unas son más nuevas que otras.', 'Porque las que quedaron a la sombra se libraron del desgaste de la lluvia.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Qué quiere decir el texto con «uno se acerca esperando algo tosco y encuentra lo contrario»?', r: 'Que el visitante prejuzga la obra como ruda y descubre un trabajo delicado y detallado.',
+          o: ['Que el visitante espera algo rudo y descubre un trabajo delicado.', 'Que las piedras cambian de forma al acercarse.', 'Que los guías engañan a los turistas.'], c: 0 },
+        { tipo: 'critica', q: '¿Qué diferencia hay entre llamar al sitio «magnífico» y llamarlo «inolvidable»? ¿Cuál elegirías?', r: 'Respuesta abierta: se valora que note que un adjetivo describe la obra y el otro describe el efecto en quien la vive.',
+          o: ['Ninguna: son dos formas de decir bonito.', 'Uno describe lo que se ve; el otro, lo que a uno le queda dentro.', '«Magnífico» es más correcto porque es más largo.'], c: 1 },
+      ] },
+
+    { id: 'LA7-03', titulo: 'El vivero de la escuela', genero: 'crónica',
+      texto: 'El vivero empezó con veinte bolsas negras y tierra prestada. La idea fue de séptimo grado: sembrar árboles nativos para la ladera pelada detrás de la cancha. Al principio todo salió mal. Las primeras semillas, compradas baratas, no germinaron. La segunda tanda se pudrió por riego excesivo. En la tercera, la maestra propuso algo distinto: llevar un cuaderno donde cada equipo anotara cómo se veía su planta. No bastaba con escribir «bien» o «mal». Había que escribir «tallo delgado y pálido», «hojas mordidas», «tierra apelmazada». Ese cuaderno cambió el vivero. Con adjetivos precisos, los muchachos empezaron a notar diferencias que antes se les escapaban, y cada problema tuvo un remedio distinto. En noviembre trasplantaron ciento veinte arbolitos sanos. La ladera sigue casi pelada, porque un árbol pequeño tarda años. Pero los muchachos ya no ven una ladera: ven ciento veinte plantas con nombre.',
+      adjs: ['negras', 'prestada', 'nativos', 'pelada', 'primeras', 'baratas', 'excesivo', 'distinto', 'delgado', 'pálido', 'mordidas', 'apelmazada', 'precisos', 'sanos', 'pequeño'],
+      dets: ['veinte', 'cada', 'segunda', 'tercera', 'Ese', 'su'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué le pasó a la segunda tanda de semillas?', r: 'Se pudrió por riego excesivo.',
+          o: ['No germinó porque era barata.', 'Se pudrió por riego excesivo.', 'Se la comieron los pájaros.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué propuso la maestra en el tercer intento?', r: 'Llevar un cuaderno donde cada equipo describiera su planta con detalle.',
+          o: ['Llevar un cuaderno donde cada equipo describiera su planta con detalle.', 'Comprar semillas más caras.', 'Regar solo una vez por semana.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué escribir «bien» o «mal» no servía en ese cuaderno?', r: 'Porque no dice qué le pasa a la planta y sin eso no se puede saber qué remedio aplicar.',
+          o: ['Porque la maestra quería textos más largos.', 'Porque esas palabras están mal escritas.', 'Porque no dicen qué le pasa a la planta, y sin eso no hay remedio posible.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué el texto dice que ahora «no ven una ladera: ven ciento veinte plantas con nombre»?', r: 'Porque al describir cada planta dejaron de ver un bulto general y empezaron a ver casos distintos.',
+          o: ['Porque al describir cada planta dejaron de ver un bulto y vieron casos distintos.', 'Porque le pusieron rótulos a la ladera.', 'Porque la ladera ya está cubierta de árboles.'], c: 0 },
+        { tipo: 'critica', q: '¿Vale la pena un proyecto que después de un año deja la ladera «casi pelada»? Argumenta.', r: 'Respuesta abierta: se valora que considere el plazo largo de un árbol y lo aprendido en el camino.',
+          o: ['No: si no se ve el resultado, fue tiempo perdido.', 'Sí: un árbol tarda años y además aprendieron a observar.', 'Solo si la alcaldía les paga por los árboles.'], c: 1 },
+      ] },
+
+    { id: 'LA7-04', titulo: 'La palabra justa', genero: 'expositivo',
+      texto: 'No todos los adjetivos pesan lo mismo. Hay unos gastados de tanto usarlos: «bonito», «feo», «bueno», «malo». Sirven para salir del paso, pero no dejan ver nada. Si alguien dice que el almuerzo estuvo bueno, el que escucha no sabe si estaba caliente, abundante, salado o simplemente puntual. Hay otros adjetivos que trabajan de verdad. «Aguado», «espeso», «tibio», «recalentado» dicen algo distinto cada uno, y quien escucha puede imaginar el plato. A esos les llamamos precisos. Elegirlos no es cuestión de tener un vocabulario enorme, sino de observar antes de hablar. El que no mira el plato solo puede decir «bueno». Hay además adjetivos tramposos, que parecen describir y en realidad juzgan: llamar a alguien «raro» no informa de cómo es esa persona, informa de lo que opina el que habla. Conviene reconocerlos, sobre todo cuando se usan para hablar de gente.',
+      adjs: ['gastados', 'bonito', 'feo', 'bueno', 'malo', 'caliente', 'abundante', 'salado', 'puntual', 'aguado', 'espeso', 'tibio', 'recalentado', 'precisos', 'enorme', 'tramposos', 'raro'],
+      dets: ['todos', 'unos', 'otros', 'esos', 'esa', 'cada'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué ejemplos da el texto de adjetivos «gastados»?', r: 'Bonito, feo, bueno y malo.',
+          o: ['Aguado, espeso y tibio.', 'Bonito, feo, bueno y malo.', 'Raro, extraño y distinto.'], c: 1 },
+        { tipo: 'literal', q: 'Según el texto, ¿de qué depende elegir el adjetivo preciso?', r: 'De observar antes de hablar, no de tener un vocabulario enorme.',
+          o: ['De observar antes de hablar.', 'De tener un diccionario a la mano.', 'De hablar despacio.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué «bueno» no ayuda a imaginar el almuerzo?', r: 'Porque no señala ninguna característica concreta: cabe cualquier cosa dentro de esa palabra.',
+          o: ['Porque es una palabra muy corta.', 'Porque se usa poco en Honduras.', 'Porque no señala nada concreto: cabe cualquier cosa dentro de esa palabra.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué el texto llama «tramposo» al adjetivo «raro»?', r: 'Porque parece describir a la persona, pero en realidad revela la opinión del que habla.',
+          o: ['Porque casi nadie sabe qué significa.', 'Porque se escribe parecido a otras palabras.', 'Porque parece describir, pero revela la opinión del que habla.'], c: 2 },
+        { tipo: 'critica', q: '¿Deberíamos evitar del todo los adjetivos que juzgan? Defiende tu postura.', r: 'Respuesta abierta: se valora que distinga entre opinar con honestidad y disfrazar un juicio de descripción.',
+          o: ['Sí: hay que prohibirlos en cualquier texto.', 'No hace falta evitarlos, pero sí saber cuándo opinamos y decirlo.', 'No importa: nadie se da cuenta de la diferencia.'], c: 1 },
+      ] },
+
+    { id: 'LA7-05', titulo: 'Noche de luciérnagas', genero: 'descriptivo',
+      texto: 'La noche cayó rápida sobre el potrero. El aire quedó pesado y quieto, con ese olor dulzón del zacate recién cortado. Primero apareció una lucecita amarilla, tímida, cerca del alambre. Después dos, después muchas. En un momento el potrero entero estuvo salpicado de puntos intermitentes, como si alguien hubiera volcado un tarro de chispas frías. Las luciérnagas no alumbran seguido: encienden y apagan, encienden y apagan, con un ritmo lento y desigual. Ninguna se apura. Marleny apagó su linterna blanca y potente, que a su lado se veía grosera. Se quedó sentada en la piedra tibia, con las manos quietas. El abuelo le había dicho que la luz de esos bichos es fría, que no quema nada. Ella no lo creyó hasta esa noche, cuando una se le paró en el brazo desnudo y se apagó despacio, sin dejar calor.',
+      adjs: ['rápida', 'pesado', 'quieto', 'dulzón', 'cortado', 'amarilla', 'tímida', 'intermitentes', 'frías', 'lento', 'desigual', 'blanca', 'potente', 'grosera', 'tibia', 'quietas', 'fría', 'desnudo'],
+      dets: ['ese', 'dos', 'muchas', 'Ninguna', 'su', 'esos', 'esa'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Con qué compara el texto el potrero lleno de luciérnagas?', r: 'Con un tarro de chispas frías volcado.',
+          o: ['Con un cielo estrellado.', 'Con un tarro de chispas frías volcado.', 'Con una ciudad vista de lejos.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué hizo Marleny con su linterna?', r: 'La apagó.',
+          o: ['La apagó.', 'La alumbró hacia los bichos.', 'Se la prestó al abuelo.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué la linterna se veía «grosera» al lado de las luciérnagas?', r: 'Porque su luz blanca y potente rompía la delicadeza de los destellos pequeños.',
+          o: ['Porque estaba sucia y golpeada.', 'Porque hacía mucho ruido al encenderla.', 'Porque su luz fuerte rompía la delicadeza de los destellos.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Cómo comprobó Marleny que la luz de las luciérnagas es fría?', r: 'Porque una se le posó en el brazo desnudo y se apagó sin dejarle calor.',
+          o: ['Porque una se le posó en el brazo y se apagó sin dejarle calor.', 'Porque el abuelo se lo repitió varias veces.', 'Porque la midió con la linterna.'], c: 0 },
+        { tipo: 'critica', q: '¿Por qué crees que Marleny no le creyó al abuelo hasta esa noche? ¿Te ha pasado algo parecido?', r: 'Respuesta abierta: se valora que reconozca la diferencia entre que se lo cuenten y comprobarlo uno mismo.',
+          o: ['Porque el abuelo solía mentirle a menudo.', 'Porque una cosa es que te lo cuenten y otra comprobarlo uno mismo.', 'Porque no entendía la palabra fría.'], c: 1 },
+      ] },
+  ],
+
+  /* ════════ 8º GRADO (155–185 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
+  8: [
+    { id: 'LA8-01', titulo: 'El adjetivo que sobra', genero: 'argumentativo',
+      texto: 'Se repite mucho el consejo de escribir con abundantes adjetivos, como si el texto rico fuera el texto cargado. La experiencia de cualquier corrector dice lo contrario. Un adjetivo bien puesto vale por cinco amontonados. Cuando alguien escribe «una hermosa, bella y preciosa mañana soleada», no describe tres cosas: repite una sola idea tres veces y además cansa a quien lee. Hay adjetivos que no aportan nada porque ya vienen dentro del sustantivo. Decir «un cadáver muerto» o «una sorpresa inesperada» no agrega información: la repite. Estos casos se llaman redundantes. Hay otros que sí trabajan, y se reconocen con una prueba sencilla: quítelos y vea si el texto pierde algo. En «una mañana fría» el adjetivo dice cuál mañana fue; si lo borra, la frase se empobrece. En «una mañana bonita» casi no pierde nada, porque «bonita» solo dice que al autor le gustó. Escribir bien no consiste en poner más adjetivos, sino en poder defender cada uno de los que quedaron.',
+      adjs: ['abundantes', 'rico', 'cargado', 'amontonados', 'hermosa', 'bella', 'preciosa', 'soleada', 'muerto', 'inesperada', 'redundantes', 'sencilla', 'fría', 'bonita'],
+      dets: ['Un', 'tres', 'cinco', 'Estos', 'otros', 'cada'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué ejemplos da el texto de adjetivos redundantes?', r: '«Cadáver muerto» y «sorpresa inesperada».',
+          o: ['«Cadáver muerto» y «sorpresa inesperada».', '«Mañana fría» y «mañana bonita».', '«Hermosa» y «soleada».'], c: 0 },
+        { tipo: 'literal', q: '¿Qué prueba propone el texto para saber si un adjetivo trabaja?', r: 'Quitarlo y ver si el texto pierde algo.',
+          o: ['Contar cuántas letras tiene.', 'Quitarlo y ver si el texto pierde algo.', 'Buscarlo en el diccionario.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué «una hermosa, bella y preciosa mañana» no describe tres cosas?', r: 'Porque los tres adjetivos significan casi lo mismo: repiten una sola idea.',
+          o: ['Porque están mal ordenados en la frase.', 'Porque no concuerdan con el sustantivo.', 'Porque los tres significan casi lo mismo y repiten una sola idea.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué «fría» sobrevive a la prueba y «bonita» no?', r: 'Porque «fría» informa de algo verificable de esa mañana y «bonita» solo expresa el gusto del autor.',
+          o: ['Porque «fría» informa algo de la mañana y «bonita» solo dice que al autor le gustó.', 'Porque «fría» es una palabra más corta.', 'Porque «bonita» está mal escrita en ese contexto.'], c: 0 },
+        { tipo: 'critica', q: '¿Estás de acuerdo con que escribir bien es «poder defender cada adjetivo»? Argumenta.', r: 'Respuesta abierta: se valora que tome postura y reconozca que en textos literarios la acumulación a veces sí busca un efecto.',
+          o: ['Sí, y por eso habría que prohibir los adjetivos en la escuela.', 'No se puede opinar sobre gustos de escritura.', 'No: en un poema la acumulación puede buscarse a propósito, y se defiende.'], c: 2 },
+      ] },
+
+    { id: 'LA8-02', titulo: 'La radio del abuelo', genero: 'narrativo',
+      texto: 'La radio del abuelo era un aparato cuadrado, forrado en tela áspera, con dos perillas grandes y un dial amarillento. Pesaba como un ladrillo. En la casa había un teléfono moderno con todas las emisoras del mundo, pero el abuelo seguía con la suya. Yo lo encontraba ridículo. Una noche de octubre se fue la luz en todo el municipio. El teléfono aguantó dos horas y quedó mudo. El abuelo sacó del ropero cuatro pilas viejas, las metió en la radio y giró la perilla áspera hasta que la estática se volvió voz. Escuchamos el reporte del río, los nombres de las aldeas incomunicadas y la lista de las escuelas convertidas en albergues. Esa radio pequeña y anticuada fue nuestra única ventana durante tres días. Cuando volvió la luz, guardé mi opinión. El abuelo no dijo «te lo dije». Solo limpió el dial con un trapo suave y la devolvió a su lugar de siempre.',
+      adjs: ['cuadrado', 'forrado', 'áspera', 'grandes', 'amarillento', 'moderno', 'ridículo', 'mudo', 'viejas', 'incomunicadas', 'convertidas', 'pequeña', 'anticuada', 'única', 'suave'],
+      dets: ['dos', 'todas', 'suya', 'cuatro', 'Esa', 'nuestra', 'tres', 'mi', 'su'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo era la radio del abuelo?', r: 'Un aparato cuadrado, forrado en tela áspera, con dos perillas grandes y un dial amarillento.',
+          o: ['Pequeña, plateada y con pantalla.', 'Cuadrada, forrada en tela áspera, con dos perillas grandes.', 'Redonda y de plástico brillante.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué escucharon en la radio durante el apagón?', r: 'El reporte del río, las aldeas incomunicadas y las escuelas convertidas en albergues.',
+          o: ['El reporte del río, las aldeas incomunicadas y las escuelas albergue.', 'Un partido de fútbol y música vieja.', 'Las noticias de otros países.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué el nieto «guardó su opinión» cuando volvió la luz?', r: 'Porque comprobó que el aparato que llamaba ridículo resultó ser el más útil.',
+          o: ['Porque el abuelo lo regañó delante de todos.', 'Porque se le olvidó lo que pensaba.', 'Porque comprobó que el aparato que llamaba ridículo resultó el más útil.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Qué muestra que el abuelo no dijera «te lo dije»?', r: 'Que no quiso humillar al nieto: le bastó con que los hechos hablaran.',
+          o: ['Que no quiso humillar al nieto: le bastó con que los hechos hablaran.', 'Que no se dio cuenta de nada.', 'Que estaba enojado y prefirió callarse.'], c: 0 },
+        { tipo: 'critica', q: 'El nieto llamó «ridículo» al aparato y después «única ventana». ¿Qué cambió: la radio o la mirada?', r: 'Respuesta abierta: se valora que reconozca que los adjetivos describían al que hablaba, no al objeto.',
+          o: ['Cambió la radio, porque con pilas nuevas funcionó mejor.', 'Cambió la mirada: los dos adjetivos hablaban del nieto, no del aparato.', 'No cambió nada, fue solo casualidad.'], c: 1 },
+      ] },
+
+    { id: 'LA8-03', titulo: 'Los telares de La Esperanza', genero: 'expositivo',
+      texto: 'En los alrededores de La Esperanza, en Intibucá, muchas familias lencas conservan el telar de cintura. Es un aparato simple y exigente: unos palos delgados, un juego de hilos tensos y una faja que la tejedora se amarra a la espalda. La tensión de la tela no la da una máquina, la da el propio cuerpo. Si la tejedora se inclina hacia adelante, los hilos quedan flojos; si se echa atrás, quedan tirantes. De ese equilibrio depende que la pieza salga pareja. Los colores tradicionales son sobrios: café, negro, blanco crudo, rojo apagado. Las figuras son geométricas, repetidas y simétricas. Nada de eso es casual: un tejido de cintura no permite improvisar, porque el diseño se decide antes, al montar los hilos. Quien no lo sabe mira una faja terminada y ve algo sencillo. Quien lo sabe ve una pieza planificada entera desde el primer hilo, donde cualquier error obliga a deshacer y volver a empezar.',
+      adjs: ['simple', 'exigente', 'delgados', 'tensos', 'flojos', 'tirantes', 'pareja', 'tradicionales', 'sobrios', 'crudo', 'apagado', 'geométricas', 'repetidas', 'simétricas', 'casual', 'terminada', 'sencillo', 'planificada', 'primer'],
+      dets: ['muchas', 'unos', 'ese', 'cualquier'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué da la tensión de la tela en un telar de cintura?', r: 'El propio cuerpo de la tejedora.',
+          o: ['El propio cuerpo de la tejedora.', 'Un motor pequeño.', 'Un peso colgado del palo.'], c: 0 },
+        { tipo: 'literal', q: '¿Cómo son los colores tradicionales que menciona el texto?', r: 'Sobrios: café, negro, blanco crudo y rojo apagado.',
+          o: ['Brillantes y fosforescentes.', 'Sobrios: café, negro, blanco crudo y rojo apagado.', 'Solo azules y verdes.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué el diseño «se decide antes» de empezar a tejer?', r: 'Porque el dibujo depende de cómo se montan los hilos, y después ya no se puede improvisar.',
+          o: ['Porque las tejedoras copian de un libro.', 'Porque los colores se acaban rápido.', 'Porque el dibujo depende de cómo se montan los hilos desde el inicio.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué el texto dice que quien no sabe «ve algo sencillo»?', r: 'Porque la pieza terminada esconde la planificación y el control que costó hacerla.',
+          o: ['Porque la pieza terminada esconde la planificación que costó hacerla.', 'Porque las fajas son pequeñas y baratas.', 'Porque nadie explica cómo se hacen.'], c: 0 },
+        { tipo: 'critica', q: '¿Es justo llamar «sencillo» a un trabajo así? ¿Qué adjetivo propondrías tú?', r: 'Respuesta abierta: se valora que proponga un adjetivo mejor fundado, como exigente, minucioso o planificado, y lo justifique.',
+          o: ['Sí, porque se hace con palos y no con máquinas.', 'No: es sobrio a la vista, pero exigente y minucioso al hacerlo.', 'Da lo mismo, porque los adjetivos no cambian el trabajo.'], c: 1 },
+      ] },
+
+    { id: 'LA8-04', titulo: 'El manglar del sur', genero: 'expositivo',
+      texto: 'En la costa sur de Honduras crece un bosque que casi nadie llamaría bonito. El manglar es enredado, lodoso y oscuro. Sus raíces salen del agua como patas torcidas y el suelo es un barro blando que se traga las botas. Huele fuerte. Sin embargo, ese lugar incómodo es una de las guarderías más productivas del mar. Entre esas raíces enredadas se refugian camarones diminutos, jaibas y peces jóvenes que afuera serían presa fácil. Cuando crecen, salen al mar abierto; buena parte de lo que se pesca lejos de la costa empezó su vida allí. El manglar también sostiene la tierra: sus raíces amarran el lodo y frenan el oleaje de las tormentas. Donde el manglar se corta para hacer estanques, la costa se vuelve frágil y el agua salada avanza. Los pescadores viejos lo saben desde siempre. Un paisaje puede ser feo y valioso al mismo tiempo. Confundir esas dos ideas ha costado caro en muchas costas del mundo.',
+      adjs: ['bonito', 'enredado', 'lodoso', 'oscuro', 'torcidas', 'blando', 'fuerte', 'incómodo', 'productivas', 'enredadas', 'diminutos', 'jóvenes', 'fácil', 'abierto', 'frágil', 'salada', 'viejos', 'feo', 'valioso'],
+      dets: ['Sus', 'ese', 'esas', 'Un', 'dos', 'muchas'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo describe el texto el suelo del manglar?', r: 'Un barro blando que se traga las botas.',
+          o: ['Arena firme y clara.', 'Un barro blando que se traga las botas.', 'Piedra lisa y resbalosa.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué pasa en la costa donde se corta el manglar?', r: 'Se vuelve frágil y el agua salada avanza.',
+          o: ['Se vuelve frágil y el agua salada avanza.', 'Aparecen más camarones.', 'El suelo se endurece y mejora.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué se llama «guardería» al manglar?', r: 'Porque allí crecen protegidos los animales jóvenes que después salen al mar abierto.',
+          o: ['Porque los pescadores llevan a sus hijos allí.', 'Porque hay maestros que cuidan las plantas.', 'Porque allí crecen protegidos los animales jóvenes que después salen al mar.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué el texto advierte que confundir «feo» con «inútil» ha costado caro?', r: 'Porque se han destruido manglares por parecer desagradables, perdiendo la pesca y la protección de la costa.',
+          o: ['Porque se han destruido manglares por parecer feos, perdiendo pesca y protección.', 'Porque los turistas no visitan lugares feos.', 'Porque las fotos del manglar no se venden.'], c: 0 },
+        { tipo: 'critica', q: '¿Debería un adjetivo como «feo» influir en decidir si algo se protege? Defiende tu respuesta.', r: 'Respuesta abierta: se valora que separe el juicio estético del valor real y lo sostenga con el ejemplo del texto.',
+          o: ['Sí, porque hay que conservar solo lo que se ve bien.', 'No: lo que se ve no dice para qué sirve, y el manglar lo demuestra.', 'No importa, porque nadie decide por adjetivos.'], c: 1 },
+      ] },
+
+    { id: 'LA8-05', titulo: 'La biblioteca del barrio', genero: 'crónica',
+      texto: 'La biblioteca del barrio abrió en una casa prestada, con estantes cojos y sillas desiguales. Nadie llegó la primera semana. Doña Ilse, la encargada, no puso un rótulo grande ni repartió volantes vistosos. Hizo algo más lento: pidió a cada vecino que le contara qué le gustaría leer. Un muchacho pidió libros sobre motores. Una señora pidió recetas. Dos niñas pidieron cuentos de miedo, pero de miedo suave, dijeron, «no del que da pesadillas». Con esa lista desordenada y pequeña, doña Ilse consiguió libros usados en tres ciudades. Al mes había quince lectores fijos; al año, más de cien. Lo interesante es lo que no hizo. No compró la colección completa y cara que le ofrecieron. No llenó las paredes de frases motivadoras. Tampoco pidió un silencio absoluto: dejó que los niños hablaran bajito. Dijo una sola cosa cuando le preguntaron por su método: que una biblioteca vacía no se llena con libros buenos, sino con libros que alguien esperaba.',
+      adjs: ['prestada', 'cojos', 'desiguales', 'primera', 'grande', 'vistosos', 'lento', 'suave', 'desordenada', 'pequeña', 'usados', 'fijos', 'interesante', 'completa', 'cara', 'motivadoras', 'absoluto', 'vacía', 'buenos'],
+      dets: ['cada', 'Un', 'Dos', 'esa', 'tres', 'quince', 'cien', 'su'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué hizo doña Ilse en lugar de poner un rótulo y repartir volantes?', r: 'Le pidió a cada vecino que le contara qué le gustaría leer.',
+          o: ['Le pidió a cada vecino que le contara qué le gustaría leer.', 'Compró una colección completa.', 'Puso frases motivadoras en las paredes.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué clase de cuentos de miedo pidieron las dos niñas?', r: 'De miedo suave, no del que da pesadillas.',
+          o: ['De miedo muy fuerte.', 'De miedo suave, no del que da pesadillas.', 'De miedo con dibujos.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué la lista «desordenada y pequeña» funcionó mejor que una colección completa?', r: 'Porque cada libro respondía a un lector concreto que ya lo estaba esperando.',
+          o: ['Porque era más barata de comprar.', 'Porque cabía mejor en los estantes cojos.', 'Porque cada libro respondía a un lector concreto que lo esperaba.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Qué quiere decir que una biblioteca no se llena «con libros buenos, sino con libros que alguien esperaba»?', r: 'Que la calidad de un libro no basta si nadie lo quiere leer; hay que partir del lector.',
+          o: ['Que la calidad no basta si nadie lo quiere leer: hay que partir del lector.', 'Que los libros buenos son más caros.', 'Que ningún libro bueno sirve en un barrio.'], c: 0 },
+        { tipo: 'critica', q: '¿Compartes el método de doña Ilse o preferirías la colección completa? Argumenta.', r: 'Respuesta abierta: se valora que sostenga su postura reconociendo el papel del lector o el del catálogo amplio.',
+          o: ['La colección completa, porque tener más títulos siempre es mejor.', 'El método de doña Ilse, porque un libro solo sirve cuando encuentra su lector.', 'Ninguno: las bibliotecas de barrio no funcionan.'], c: 1 },
+      ] },
+  ],
+
+  /* ════════ 9º GRADO (170–200 palabras · 1 literal, 2 inferenciales, 2 críticas) ════════ */
+  9: [
+    { id: 'LA9-01', titulo: 'Adjetivos que juzgan', genero: 'argumentativo',
+      texto: 'Un adjetivo puede describir o puede juzgar, y casi nunca avisa cuál de las dos cosas está haciendo. Si un titular dice «una protesta multitudinaria» y otro dice «una protesta caótica», los dos hablan del mismo hecho. El primero informa del tamaño; el segundo emite una opinión disfrazada de dato. El lector desprevenido cree haber recibido información, cuando en realidad recibió una postura. Este mecanismo es viejo y eficaz. Funciona porque el adjetivo entra pegado al sustantivo, sin pedir permiso, y quien lee no se detiene a separarlos. Nadie discute «protesta»; casi nadie discute «caótica». Existe una prueba útil para reconocerlos: pregúntese si el adjetivo se puede comprobar. «Multitudinaria» admite un conteo aproximado. «Caótica» no admite ninguno: depende del ojo que mira. Los adjetivos verificables informan; los no verificables opinan, y opinar no tiene nada de malo mientras se declare. Lo grave es la opinión escondida dentro de un texto que se presenta como noticia. Leer bien, entonces, incluye una tarea humilde y constante: subrayar los adjetivos y preguntarse quién los eligió.',
+      adjs: ['multitudinaria', 'caótica', 'primero', 'segundo', 'disfrazada', 'desprevenido', 'viejo', 'eficaz', 'útil', 'verificables', 'escondida', 'humilde', 'constante'],
+      dets: ['Un', 'otro', 'Este', 'ninguno', 'una'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué prueba propone el texto para distinguir un adjetivo que informa de uno que opina?', r: 'Preguntarse si el adjetivo se puede comprobar.',
+          o: ['Contar cuántas veces aparece.', 'Preguntarse si el adjetivo se puede comprobar.', 'Buscar quién escribió el titular.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué el autor dice que el adjetivo «entra pegado al sustantivo, sin pedir permiso»?', r: 'Porque el lector acepta el conjunto sin separarlo, y así pasa la opinión junto al hecho.',
+          o: ['Porque el lector acepta el conjunto sin separarlo y la opinión pasa con el hecho.', 'Porque en español el adjetivo va siempre delante.', 'Porque los periodistas escriben muy rápido.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué «multitudinaria» y «caótica» no son equivalentes aunque describan el mismo hecho?', r: 'Porque una remite a una magnitud comprobable y la otra a una valoración de quien escribe.',
+          o: ['Porque una es más larga que la otra.', 'Porque «caótica» es una palabra prohibida.', 'Porque una remite a algo comprobable y la otra a una valoración.'], c: 2 },
+        { tipo: 'critica', q: '¿Es siempre reprochable usar adjetivos que opinan? Sostén tu postura con un ejemplo.', r: 'Respuesta abierta: se valora que distinga el género del texto: en una columna de opinión son legítimos; en una noticia, engañosos.',
+          o: ['Sí, en cualquier texto: opinar siempre es manipular.', 'No: en una columna de opinión son legítimos; el problema es esconderlos en una noticia.', 'No importa, porque el lector nunca se da cuenta.'], c: 1 },
+        { tipo: 'critica', q: '¿Qué responsabilidad le toca al lector y cuál a quien escribe? Justifica el reparto que propones.', r: 'Respuesta abierta: se valora que reparta la responsabilidad, sin cargarla toda en un solo lado.',
+          o: ['Toda al lector: si se deja engañar, es su problema.', 'Toda a quien escribe: el lector no puede hacer nada.', 'A ambos: quien escribe debe declarar su postura y el lector, revisar los adjetivos.'], c: 2 },
+      ] },
+
+    { id: 'LA9-02', titulo: 'El pescador de Trujillo', genero: 'narrativo',
+      texto: 'Don Onán aprendió a leer el mar antes que las letras. A los sesenta y tres años distingue diferencias que a un visitante le resultarían invisibles: un agua verdosa y quieta que anuncia calma; un agua parda y picada que aconseja quedarse; ese brillo aceitoso y engañoso de las tardes de septiembre, que parece manso y no lo es. Su vocabulario del mar es reducido en palabras y enorme en precisión. Nunca dice «feo» ni «bonito». Dice «encrespado», «plomizo», «tendido», «cerrado». Cada uno de esos adjetivos es una decisión: si sale, si espera, si regresa. Una tarde, un estudiante que hacía su práctica le preguntó cómo se aprendía eso. Don Onán se quedó pensando y contestó algo que el muchacho anotó en su cuaderno mojado: que no se aprende mirando el mar, sino mirando el mar todos los días, incluso los días en que no pasa nada. Los adjetivos, dijo, no se estudian; se ganan. Después ordenó las boyas viejas y no habló más del asunto. El mar seguía tendido y gris detrás de él, indiferente a la conversación.',
+      adjs: ['invisibles', 'verdosa', 'quieta', 'parda', 'picada', 'aceitoso', 'engañoso', 'manso', 'reducido', 'enorme', 'feo', 'bonito', 'encrespado', 'plomizo', 'tendido', 'cerrado', 'mojado', 'viejas', 'gris', 'indiferente'],
+      dets: ['un', 'ese', 'Su', 'esos', 'Cada', 'todos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué adjetivos usa don Onán en lugar de «feo» y «bonito»?', r: 'Encrespado, plomizo, tendido y cerrado.',
+          o: ['Verde, azul, gris y pardo.', 'Manso, quieto, fuerte y suave.', 'Encrespado, plomizo, tendido y cerrado.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué el texto dice que su vocabulario es «reducido en palabras y enorme en precisión»?', r: 'Porque usa pocas palabras, pero cada una nombra una situación distinta y lleva a una decisión.',
+          o: ['Porque usa pocas palabras, pero cada una nombra una situación distinta.', 'Porque habla poco por ser tímido.', 'Porque olvidó muchas palabras con la edad.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Qué quiere decir que los adjetivos «no se estudian; se ganan»?', r: 'Que la precisión al describir nace de la observación repetida y no de memorizar listas.',
+          o: ['Que hay que pagar por aprenderlos.', 'Que la precisión nace de observar mucho tiempo, no de memorizar listas.', 'Que solo los pescadores pueden usarlos.'], c: 1 },
+        { tipo: 'critica', q: '¿Vale la observación de don Onán tanto como un instrumento de medición? Argumenta.', r: 'Respuesta abierta: se valora que reconozca el valor del saber empírico sin negar la utilidad del instrumento.',
+          o: ['No: sin instrumentos ningún saber es serio.', 'Sí, y además son cosas distintas: el instrumento mide, él interpreta lo que mide el ojo.', 'Sí, y por eso los instrumentos sobran.'], c: 1 },
+        { tipo: 'critica', q: 'El estudiante anotó la frase en su cuaderno. ¿Basta anotarla para aprenderla? Defiende tu respuesta.', r: 'Respuesta abierta: se valora que note la contradicción entre anotar y la práctica repetida que el texto propone.',
+          o: ['Sí: escrito ya no se olvida.', 'No, y ahí está la ironía: la frase misma dice que hace falta práctica diaria.', 'Da igual: nadie relee sus cuadernos.'], c: 1 },
+      ] },
+
+    { id: 'LA9-03', titulo: 'Retrato de una maestra', genero: 'semblanza',
+      texto: 'A la profesora Blanca le decían estricta, y ella no lo desmentía. Llegaba temprano, con el pelo recogido y un cuaderno gastado bajo el brazo. Su aula era limpia, ordenada y silenciosa; sus reglas, pocas y claras. Un alumno tardío no entraba después del saludo, pero podía quedarse a recuperar al final del día. Nunca gritó. Los que la tuvieron recuerdan otra cosa que ese adjetivo no recoge: era minuciosa. Devolvía los trabajos con anotaciones largas al margen, escritas en tinta verde, donde señalaba el párrafo exacto que no se entendía. Ese trabajo callado le tomaba noches enteras y nadie se lo pagaba. Con los años, sus antiguos alumnos empezaron a corregirse entre ellos: «estricta no; exigente». La diferencia parece pequeña y no lo es. Estricto se refiere a quien impone reglas rígidas; exigente, a quien espera mucho de alguien porque cree que puede darlo. Blanca no cuidaba las reglas: cuidaba a las personas que estaban detrás de los trabajos. Al jubilarse dijo que solo había hecho su trabajo. Nadie en el patio le creyó.',
+      adjs: ['estricta', 'recogido', 'gastado', 'limpia', 'ordenada', 'silenciosa', 'pocas', 'claras', 'tardío', 'minuciosa', 'largas', 'verde', 'exacto', 'callado', 'enteras', 'antiguos', 'pequeña', 'rígidas', 'exigente'],
+      dets: ['Su', 'sus', 'Un', 'otra', 'ese'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo devolvía la profesora Blanca los trabajos?', r: 'Con anotaciones largas al margen, en tinta verde, señalando el párrafo exacto.',
+          o: ['Con anotaciones largas en tinta verde, señalando el párrafo exacto.', 'Solo con una nota numérica.', 'Con un sello rojo de aprobado.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué sus alumnos terminaron corrigiendo «estricta» por «exigente»?', r: 'Porque con el tiempo entendieron que no imponía reglas por rigidez, sino que esperaba mucho de ellos.',
+          o: ['Porque «estricta» se había pasado de moda.', 'Porque entendieron que no era rigidez, sino que esperaba mucho de ellos.', 'Porque la profesora se los pidió al jubilarse.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Qué revela que sus correcciones le tomaran noches enteras sin pago?', r: 'Que su exigencia no era una norma impuesta desde afuera, sino un compromiso personal.',
+          o: ['Que no tenía otra cosa que hacer.', 'Que le pagaban por horas extras.', 'Que su exigencia era un compromiso personal, no una norma impuesta.'], c: 2 },
+        { tipo: 'critica', q: '¿Es importante corregir el adjetivo con que describimos a una persona? Sostén tu postura.', r: 'Respuesta abierta: se valora que reconozca que el adjetivo condensa un juicio duradero sobre alguien.',
+          o: ['Sí: el adjetivo se queda pegado a la persona y resume cómo la recuerda la gente.', 'No: al final todos entienden lo mismo.', 'Solo importa en los textos escritos.'], c: 0 },
+        { tipo: 'critica', q: 'Blanca dijo que «solo había hecho su trabajo» y nadie le creyó. ¿Quién tenía razón? Justifica.', r: 'Respuesta abierta: se valora que argumente sobre la modestia y sobre lo que separa cumplir de entregarse.',
+          o: ['Ella: cumplir con el deber no merece elogios.', 'Nadie tenía razón: es una discusión sin sentido.', 'Los alumnos: hizo mucho más de lo que su trabajo le exigía, y eso merece nombrarse.'], c: 2 },
+      ] },
+
+    { id: 'LA9-04', titulo: 'La feria del libro en el parque', genero: 'crónica',
+      texto: 'La feria se instaló en el parque un sábado nublado. Había mesas plegables, manteles disparejos y un toldo remendado. Los organizadores esperaban un público numeroso y llegó uno escaso, disperso y curioso. A media mañana pasó algo que nadie previó. Un vendedor de libros usados, cansado de que la gente tomara un ejemplar y lo devolviera sin abrirlo, empezó a leer en voz alta la primera página de cada libro que alguien tocaba. No hizo discursos ni prometió nada. Leía dos minutos, con voz pareja, y devolvía el libro. En una hora tenía diez personas alrededor; a mediodía, cuarenta. Vendió más que en toda la feria anterior. Un periodista le preguntó su secreto y él contestó, incómodo, que no tenía ninguno: que un libro cerrado es un objeto mudo y que las descripciones de la contratapa son siempre entusiastas y casi siempre falsas. Preferible, dijo, que el libro hable con su propia voz durante dos minutos. Un adjetivo puesto por el vendedor convence a pocos; una página leída completa convence sola.',
+      adjs: ['nublado', 'plegables', 'disparejos', 'remendado', 'numeroso', 'escaso', 'disperso', 'curioso', 'usados', 'cansado', 'primera', 'pareja', 'anterior', 'incómodo', 'cerrado', 'mudo', 'entusiastas', 'falsas', 'completa'],
+      dets: ['un', 'cada', 'dos', 'diez', 'cuarenta', 'ninguno', 'su', 'pocos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué empezó a hacer el vendedor de libros usados?', r: 'Leer en voz alta la primera página de cada libro que alguien tocaba.',
+          o: ['Regalar los libros que nadie compraba.', 'Bajar los precios a la mitad.', 'Leer en voz alta la primera página de cada libro que alguien tocaba.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué dice el vendedor que las descripciones de la contratapa son «casi siempre falsas»?', r: 'Porque están escritas para vender y exageran con adjetivos entusiastas que el libro no siempre cumple.',
+          o: ['Porque están escritas para vender y exageran con adjetivos entusiastas.', 'Porque las escriben en otro idioma.', 'Porque nadie las lee nunca.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué funcionó leer dos minutos mejor que elogiar el libro?', r: 'Porque el lector juzgó por sí mismo con una muestra real, en vez de confiar en la opinión del vendedor.',
+          o: ['Porque la voz del vendedor era agradable.', 'Porque el lector juzgó por sí mismo con una muestra real.', 'Porque la gente se aburría en el parque.'], c: 1 },
+        { tipo: 'critica', q: '«Un adjetivo convence a pocos; una página leída convence sola.» ¿Estás de acuerdo? Argumenta.', r: 'Respuesta abierta: se valora que reconozca la fuerza de la evidencia directa sin negar que la descripción también orienta.',
+          o: ['De acuerdo: la muestra directa pesa más que cualquier elogio ajeno.', 'En desacuerdo: sin adjetivos nadie sabría qué libro tomar.', 'No se puede saber, porque depende del día.'], c: 0 },
+        { tipo: 'critica', q: '¿Sería honesto que las contratapas dijeran menos adjetivos y más muestra del texto? ¿Qué se ganaría y qué se perdería?', r: 'Respuesta abierta: se valora que pese las dos cosas: ganaría honestidad, perdería el resumen que orienta al comprador apurado.',
+          o: ['Se ganaría todo y no se perdería nada.', 'No cambiaría nada, porque nadie mira la contratapa.', 'Ganaría honestidad, pero perdería el resumen que orienta a quien anda con prisa.'], c: 2 },
+      ] },
+
+    { id: 'LA9-05', titulo: 'Elogio de la palabra sencilla', genero: 'ensayo',
+      texto: 'Existe la creencia de que un texto suena más culto cuando sus adjetivos son largos y poco frecuentes. Es una creencia cómoda, porque se puede fingir sin trabajo: basta cambiar «grande» por «descomunal» y ya parece que se escribió mejor. No es verdad. Un adjetivo raro llama la atención sobre sí mismo y aparta la mirada de lo descrito, que es exactamente lo contrario de su oficio. El adjetivo debería ser una ventana, no un espejo. Hay ocasiones, claro, en que la palabra infrecuente es la única exacta, y entonces se usa sin culpa. La diferencia está en el motivo: se elige por precisión o se elige por lucimiento. Uno de los ejercicios más duros para quien escribe es aceptar que el adjetivo humilde y viejo, ese que todo el mundo entiende, era el correcto. Cuesta porque no luce. Cuesta porque nadie felicita a quien escribe «una tarde fría». Y sin embargo, cuando alguien lee «una tarde fría», siente frío de verdad, que era lo único que el autor quería. No hacía falta nada más.',
+      adjs: ['culto', 'largos', 'frecuentes', 'cómoda', 'grande', 'descomunal', 'raro', 'contrario', 'infrecuente', 'única', 'exacta', 'duros', 'humilde', 'viejo', 'correcto', 'fría'],
+      dets: ['sus', 'Un', 'su', 'ese', 'todo', 'Uno'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Con qué imagen compara el texto lo que debería ser un adjetivo?', r: 'Con una ventana, no con un espejo.',
+          o: ['Con una ventana, no con un espejo.', 'Con una puerta cerrada.', 'Con un adorno de la casa.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué un adjetivo raro «aparta la mirada de lo descrito»?', r: 'Porque el lector se detiene en la palabra misma en lugar de imaginar aquello que se describe.',
+          o: ['Porque el lector no lo entiende y deja de leer.', 'Porque el lector se detiene en la palabra en vez de imaginar lo descrito.', 'Porque las palabras raras se leen más despacio.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué el autor dice que la creencia es «cómoda» y «se puede fingir sin trabajo»?', r: 'Porque cambiar una palabra por otra más rara da apariencia de calidad sin haber observado ni pensado más.',
+          o: ['Porque escribir textos largos cansa mucho.', 'Porque los diccionarios son caros.', 'Porque cambiar una palabra por otra rara aparenta calidad sin pensar más.'], c: 2 },
+        { tipo: 'critica', q: '¿Cuándo crees que sí se justifica un adjetivo poco frecuente? Da un ejemplo y explícalo.', r: 'Respuesta abierta: se valora que aplique el criterio del texto: cuando es la única palabra exacta y no un lucimiento.',
+          o: ['Nunca: siempre hay que usar palabras comunes.', 'Cuando es la única palabra exacta para lo que se quiere decir.', 'Siempre que se quiera impresionar al lector.'], c: 1 },
+        { tipo: 'critica', q: '¿Te parece justo que «nadie felicite a quien escribe una tarde fría»? ¿Qué dice eso de cómo evaluamos la escritura?', r: 'Respuesta abierta: se valora que reflexione sobre premiar el adorno visible por encima del efecto logrado.',
+          o: ['Es justo: escribir fácil no tiene mérito.', 'No dice nada: los premios son cuestión de suerte.', 'No es justo: premiamos lo que se nota y no el efecto que de verdad se logra.'], c: 2 },
+      ] },
+  ],
+};

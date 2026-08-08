@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="css/adjetivos.css">
+<link rel="stylesheet" href="css/adjetivos.css?v=98">
 <!-- Estilos de la Prueba de Pensamiento Crítico (2ª evaluación de la misión) -->
 <style>
   .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -428,6 +428,18 @@
     </div>
     <div id="tgOut"></div>
   </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lectura')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- 📖 Control de lectura — piloto de la sección de lectura dentro de la misión.
+     Todo lo pinta js/tools/lectura-mision.js dentro de #lm-root: aquí no va
+     marcado propio a propósito, para que la próxima misión que estrene la
+     sección copie estas cuatro líneas y nada más. -->
+<div class="sec" id="s-lectura" role="tabpanel">
+  <div id="lm-root"></div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
     <span class="nsb-icon">📝</span>
     <span class="nsb-arrow">→</span>
@@ -555,6 +567,7 @@
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lectura" data-s="s-lectura" onclick="go('s-lectura')"><span class="ico">📖</span> Lectura</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
   <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
@@ -578,9 +591,17 @@
 </footer>
 
   <script src="js/html2canvas.min.js"></script>
-  <script src="js/adjetivos.js"></script>
+  <!-- 📖 Control de lectura de la misión (piloto). Tres piezas:
+       las normas de lectura son las MISMAS de Mi aula (un solo archivo manda
+       sobre la banda de palabras por minuto), el corpus es propio de esta
+       misión, y el motor no sabe de qué tema son los textos: por eso la
+       siguiente misión que lo estrene solo escribe su corpus. -->
+  <script src="../../js/data/lectura-normas.js?v=98"></script>
+  <script src="js/lectura-adjetivos.js?v=98"></script>
+  <script src="../../js/tools/lectura-mision.js?v=98"></script>
+  <script src="js/adjetivos.js?v=98"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
-  <script src="../../js/metas-presentacion.js"></script>
-  <script src="../../js/metas-registro.js"></script>
+  <script src="../../js/metas-presentacion.js?v=98"></script>
+  <script src="../../js/metas-registro.js?v=98"></script>
 </body>
 </html>

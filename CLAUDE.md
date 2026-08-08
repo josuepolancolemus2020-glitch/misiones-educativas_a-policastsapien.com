@@ -156,6 +156,63 @@ Si hace falta sitio para algo nuevo, se recorta **espacio en blanco o lo
 que calcula la máquina**, nunca el tamaño de letra del cuerpo: el
 informe se lee en una reunión con la familia, muchas veces con poca luz.
 
+## Normativa: el Control de lectura dentro de una misión
+
+Hay **dos** controles de lectura y no hacen lo mismo. Confundirlos
+estropea el dato del alumno, así que la diferencia se respeta:
+
+- **📖 Lectura de Mi aula** (`js/tools/lectura-fluidez.js`) la maneja el
+  **maestro**: escucha al niño, cuenta los errores y marca las
+  respuestas. Mide velocidad, **precisión** y comprensión.
+- **📖 Lectura dentro de la misión** (`js/tools/lectura-mision.js`) la
+  hace el **alumno solo**, un minuto, con las preguntas en pantalla.
+  Mide velocidad y comprensión, **y nada más**. La precisión NO se
+  estima: un niño no puede leer en voz alta y contarse los tropiezos a
+  la vez, y un dato inventado es peor que ningún dato. La pantalla se lo
+  dice, para que no crea que le falta algo.
+
+La **banda de palabras por minuto es una sola** y vive en
+`js/data/lectura-normas.js`. Las dos herramientas se la preguntan; nadie
+escribe una cifra de velocidad en otro sitio.
+
+**Piloto vigente:** la misión de los adjetivos
+(`misiones/2y3ciclo-adjetivos/`), con cinco lecturas por grado de 4º a
+9º. El motor **no sabe de qué tema son los textos**: para estrenar la
+sección en otra misión se escribe su corpus, se añaden cuatro líneas al
+HTML y se llama a `LecturaMision.montar(...)`.
+
+Reglas del corpus de una misión (`lectura-<tema>.js`):
+
+- **Cinco lecturas por grado**, con el largo dentro de la banda de
+  palabras del grado —la misma del corpus de Mi aula—, porque el texto
+  tiene que poder leerse en cerca de un minuto al ritmo de ese grado.
+- **Cinco preguntas** con la mezcla de tipos del grado y **tres opciones
+  cada una**: aquí las contesta el alumno en la pantalla.
+- `adjs` y `dets` son las palabras que el motor **pinta encima del texto
+  recién leído**. Ahí está la razón de que la lectura viva dentro de la
+  misión y no en Mi aula: el alumno ve el tema que estudió sobre algo
+  que acaba de leer en voz alta. Tienen que aparecer **tal cual** en el
+  texto —se compara palabra contra palabra, no con `indexOf`— y los
+  artículos no van, que en esta misión el artículo no es adjetivo
+  determinativo.
+
+**Antes de publicar un cambio del corpus o del motor:**
+
+```
+node _dev/valida-lectura-mision.js       → largo, mezcla, opciones, resaltado
+node _dev/verifica-nombres-propios.js    → mayúsculas de lugares y personas
+node _dev/servidor-estatico.js      (en otra terminal)
+node _dev/verifica-lectura-mision.js     → el minuto, los dos modos y el resultado
+```
+
+Lo que de verdad vigila el último: **que el minuto dure un minuto y que
+al cumplirse todo se detenga**. Un cronómetro que sigue corriendo detrás
+de una pantalla congelada le regala palabras por minuto que el niño no
+leyó, y ese número acaba en su expediente y en el informe que firma su
+madre. El tiempo no se espera de verdad: se adelanta el reloj del
+navegador (`page.clock`), porque una comprobación que cuesta un minuto
+por caso no la corre nadie antes de publicar.
+
 ## Normativa: los nombres propios llevan mayúscula, también en los juegos
 
 Vale para **todo texto que ve una persona**: tarjetas de repaso, quiz,

@@ -46,13 +46,16 @@ let evalFormNum = 1;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
-const TOTAL_SECTIONS = 12;
+const TOTAL_SECTIONS = 13;
 
 // XP TRACKER
 const xpTracker = {
   fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(),
-  cmp: new Set(), reto: new Set(), sopa: new Set(),
+  cmp: new Set(), reto: new Set(), sopa: new Set(), lec: new Set(),
 };
+
+// Control de lectura de la misión (js/tools/lectura-mision.js)
+let _lecturaApi = null;
 
 // ===================== SONIDO =====================
 let sndOn = true; let AC = null;
@@ -110,6 +113,8 @@ const ACHIEVEMENTS = {
   clasif_pro:{icon:'🗂️',label:'Clasificador experto'},
   id_master:{icon:'🔍',label:'Identificador maestro'},
   reto_hero:{icon:'🏆',label:'Héroe del reto final'},
+  lector_minuto:{icon:'📖',label:'Primer minuto de lectura cronometrado'},
+  lector_banda:{icon:'⏱️',label:'Leíste dentro de la banda de tu grado'},
   nivel3:{icon:'🔭',label:'¡Explorador alcanzado! Nivel 3'},
   nivel5:{icon:'🥇',label:'¡Campeón alcanzado! Nivel 6'}
 };
@@ -197,6 +202,11 @@ function go(id){
   if (id === 's-sopa') {
       setTimeout(buildSopa, 50);
   }
+
+  // El cronómetro del Control de lectura no puede seguir corriendo en una
+  // pestaña que ya nadie mira: un minuto medido a medias no es un minuto,
+  // y guardarlo le mentiría al alumno sobre su velocidad.
+  if (id !== 's-lectura' && _lecturaApi) _lecturaApi.soltar();
 }
 
 // ===================== FLASHCARD DATA =====================
@@ -1700,11 +1710,33 @@ async function captureDiploma() {
         if (btn) { btn.disabled = false; btn.textContent = '📷 Guardar foto'; }
     }
 }
+// ═══════════════ CONTROL DE LECTURA DE LA MISIÓN ═══════════════
+// El motor y el corpus son archivos aparte; aquí solo se dice qué gana el
+// alumno al terminar una toma. +5 XP por lectura NUEVA (no por repetirla:
+// releer el mismo texto es el mejor ejercicio de fluidez y no debe pagarse
+// como si fuera avance, ni castigarse quitándole XP).
+function initLectura(){
+  if (typeof LecturaMision === 'undefined' || typeof LECTURA_ADJETIVOS === 'undefined') return;
+  _lecturaApi = LecturaMision.montar({
+    contenedor: 'lm-root',
+    corpus: LECTURA_ADJETIVOS,
+    mision: 'adjetivos',
+    tema: 'los adjetivos',
+    alTerminar: function (r) {
+      fin('s-lectura');
+      unlockAchievement('lector_minuto');
+      if (r.nivelVelocidad === 'estandar' || r.nivelVelocidad === 'avanzado') unlockAchievement('lector_banda');
+      if (!xpTracker.lec.has(r.textoId)) { xpTracker.lec.add(r.textoId); pts(5); }
+    }
+  });
+}
+
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   loadProgress();
   upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval(); labInit();
+  initLectura();
   updateRetoButtons();
   renderAchPanel();
   document.addEventListener('click',function(e){

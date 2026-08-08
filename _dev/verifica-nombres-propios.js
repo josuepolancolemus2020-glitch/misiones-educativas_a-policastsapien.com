@@ -76,6 +76,22 @@ const NOMBRES = [
   ['gobierno escolar', 'Gobierno Escolar'],
   ['campeonísimo', 'Campeonísimo'],
   ['evidencia de misiones', 'Evidencia de misiones'],
+  /* Los trajeron las lecturas de la misión de los adjetivos: los textos son
+     del contexto hondureño y nombran lugares una y otra vez. En una lectura
+     que el niño lee EN VOZ ALTA, el municipio en minúscula es peor que en
+     otro sitio: se lee igual y se copia mal después.
+
+     ⚠️ «la esperanza» va aquí porque es la ciudad de Intibucá, que sale en
+     varias misiones. Es la única de la lista que choca con una frase común
+     («la esperanza de…»): si algún día salta por eso, no es un fallo del
+     texto — se mira y se deja pasar, o se saca de aquí. */
+  ['copán', 'Copán'],
+  ['roatán', 'Roatán'],
+  ['ojojona', 'Ojojona'],
+  ['santa bárbara', 'Santa Bárbara'],
+  ['intibucá', 'Intibucá'],
+  ['trujillo', 'Trujillo'],
+  ['la esperanza', 'La Esperanza'],
 ];
 
 /* «Decreto 79» y «Acuerdo 1358-SE-2014» nombran una norma concreta y van con
