@@ -421,8 +421,17 @@ async function adjuntaFoto(page) {
     comprueba(await page.locator('.puerta').count() === 6,
       'la puerta está en la portada, con las demás');
 
+    /* Que se sepa ANTES de tocar la puerta. En la pantalla de
+       condiciones ya sería tarde: para entonces ya escribió todo, y
+       quien cree que su pregunta va a salir impresa no la hace. */
+    const puerta = await page.textContent('.puerta[data-clase="metas"]');
+    comprueba(/no se publica/i.test(puerta),
+      'la propia puerta avisa de que esto NO se publica en la revista');
+
     await page.click('.puerta[data-clase="metas"]');
     await page.waitForSelector('#f-txt');
+    comprueba(/no sale en la revista/i.test(await page.textContent('#app')),
+      'y se lo repite mientras escribe, por si tocó sin leer');
     comprueba(await page.locator('#f-tit').count() === 0,
       'no le pide un título: no va a salir publicado, no hace falta titularlo');
 

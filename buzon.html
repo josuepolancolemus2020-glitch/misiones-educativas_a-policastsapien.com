@@ -78,6 +78,10 @@
     .puerta-aulas { border-color: #99f6e4; background: #f0fdfa; }
     .puerta-denuncia { border-color: #fed7aa; }
     .puerta-metas { border-color: #c7d2fe; background: #eef2ff; }
+    .puerta-aviso {
+      font-size: 12.5px; font-weight: 800; color: #3730a3;
+      margin-top: 5px; line-height: 1.35;
+    }
 
     /* ── Botones ── */
     .botones { display: grid; gap: 10px; margin-top: 16px; }
@@ -283,6 +287,10 @@ const CLASES = [
      preguntarle, no vuelve. */
   { id: 'metas', ic: '🎓', t: 'Quiero saber más de M.E.T.A.S',
     d: 'Para usarla con mis alumnos, o si necesito ayuda.', cls: 'puerta-metas',
+    // Tiene que quedar claro ANTES de tocar la puerta, no en la
+    // pantalla de condiciones: para entonces ya escribió todo. Quien
+    // cree que su pregunta va a salir impresa, no la hace.
+    aviso: '🔒 Esto NO se publica en la revista: es un mensaje privado.',
     guia: '¿Qué le gustaría hacer con la plataforma? Si ya la usa y algo no le funciona, cuente qué pasó y en qué pantalla; puede mandar una foto de lo que ve.' },
 ];
 /* Lo que NO va a la revista. Cambia la pantalla de condiciones, el
@@ -496,6 +504,7 @@ function verPortada() {
             <div>
               <div class="puerta-t">${esc(c.t)}</div>
               <div class="puerta-d">${esc(c.d)}</div>
+              ${c.aviso ? `<div class="puerta-aviso">${esc(c.aviso)}</div>` : ''}
             </div>
           </button>`).join('')}
         </div>
@@ -576,9 +585,18 @@ function verFormulario() {
       <h1 style="font-size:21px">${EDITANDO ? 'Corrigiendo lo que mandó' : esc(c.t)}</h1>
       <div class="hero-sub">${EDITANDO
         ? 'Folio ' + esc(EDITANDO.folio) + '. Cambie lo que haga falta; lo demás se queda igual.'
-        : esc(c.d)}</div>
+        : ES_AYUDA(B.clase)
+          ? 'Esto no se publica: es un mensaje privado para quien lleva la plataforma.'
+          : esc(c.d)}</div>
     </div>
     <div class="wrap">
+      ${ES_AYUDA(B.clase) ? `
+      <div class="aviso" style="margin-top:14px">
+        🔒 <strong>Lo que escriba aquí no sale en la revista.</strong> Va directo a quien
+        lleva M.E.T.A.S, para responderle. Si lo que quiere es que le publiquen algo,
+        vuelva atrás y elija otra de las puertas.
+      </div>` : ''}
+
       <div class="card">
         ${ES_AYUDA(B.clase) ? '' : `
         <div class="campo">
