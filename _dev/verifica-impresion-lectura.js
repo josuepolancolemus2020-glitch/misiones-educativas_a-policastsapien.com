@@ -23,6 +23,11 @@
    ancha miente: las columnas se estiran y el texto ocupa menos alto del
    que ocupará en el papel.
 
+   Vigila también que la hoja NO pida «marca con una ✗»: en el aula la ✗
+   es lo que el maestro pone sobre lo que está mal, y usarla para señalar
+   lo correcto enseña dos cosas contrarias con el mismo signo. Las
+   opciones llevan círculo y el círculo se rellena.
+
    Y comprueba una cosa que no se ve venir: que ningún renglón del texto
    se parta en dos. El número del final es el conteo acumulado, y
    descolgado no sirve para nada — es lo que convierte la hoja en una
@@ -96,10 +101,14 @@ function mal(t) { fallos++; console.log('  ✘ ' + t); }
 
       if (!lista.length) { mal(grado + 'º: no se encontró ninguna lectura'); continue; }
 
-      let peorAlto = 0, peorTexto = '', renglonesRotos = 0, paginasMal = 0;
+      let peorAlto = 0, peorTexto = '', renglonesRotos = 0, paginasMal = 0, conEquis = [];
       for (const id of lista) {
         const html = await page.evaluate(([i, g]) => window.LecturaMision.ultima.papel(i, g), [id, grado]);
         if (!html) { mal(grado + 'º · ' + id + ': la hoja salió vacía'); continue; }
+
+        /* la ✗ marca lo MALO: no puede ser lo que se le pide al alumno
+           para señalar lo correcto */
+        if (/marca\s+con\s+una\s+[✗✘xX]/i.test(html)) conEquis.push(id);
 
         const archivo = path.join(TMP, mision.nombre.replace(/\W/g, '') + '-' + id + '.html');
         /* fuera el <script> que dispara la impresión: aquí solo se mide */
@@ -142,6 +151,9 @@ function mal(t) { fallos++; console.log('  ✘ ' + t); }
       else mal(paginasMal + ' lectura(s) no salen en ' + HOJAS + ' páginas');
       if (!renglonesRotos) ok('ningún renglón del texto se parte: el conteo acumulado queda con su renglón');
       else mal(renglonesRotos + ' renglón(es) del texto se parten en dos y descuelgan su conteo');
+      if (!conEquis.length) ok('ninguna hoja pide marcar con una ✗: los círculos se rellenan');
+      else mal(conEquis.length + ' hoja(s) piden marcar con una ✗ (' + conEquis.join(', ') +
+        '): la ✗ es para lo que está mal');
     }
     await page.close();
     console.log('');

@@ -463,7 +463,7 @@ function lecImprimirFichas(d, grado, ids) {
       </div>
       <p class="lf-total">${totalP} palabras en total · el número al final de cada línea es el conteo acumulado:
         marca la última palabra leída y toma el número de su línea.</p>
-      <div class="lf-preg-tit">Comprensión — marca con una ✗ la respuesta correcta</div>
+      <div class="lf-preg-tit">Comprensión — rellena el círculo de la letra de la respuesta correcta</div>
       ${t.preguntas.map((p, i) => `
         <div class="lf-preg">
           <div class="lf-preg-q"><b>${i + 1}.</b> ${adEsc(p.q)}</div>

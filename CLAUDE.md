@@ -505,6 +505,34 @@ toca: se pone un Supabase de mentira con `page.route`.
 La otra mitad —la bandeja donde cae todo esto, el QR y el paso de envío a
 nota— vive en el repositorio de la revista, con su propia sonda.
 
+## Normativa: en papel, el círculo se RELLENA — la ✗ es para lo que está mal
+
+Vale para **todo ejercicio impreso de selección múltiple**: fichas de
+lectura, hojas de la lectura de una misión, evaluaciones, cualquier hoja
+con opciones. La instrucción es:
+
+> **Rellena el círculo de la letra de la respuesta correcta.**
+
+Nunca «marca con una ✗». En el aula la **✗ significa MALO**: es lo que el
+maestro pone encima de lo que está errado, y el alumno lo lee así desde
+primer grado. Pedírsela para señalar lo **correcto** enseña dos cosas
+contrarias con el mismo signo, y el niño que ya sabe leer una hoja
+corregida duda de cuál es cuál.
+
+Por eso las opciones se imprimen **con su círculo al lado** (`.lp-op i`,
+`.lf-op i`) y lo que se le pide es rellenarlo, como en cualquier hoja de
+respuestas. Donde la opción no lleva letra —dos grupos con su nombre—, se
+dice «rellena el círculo del grupo».
+
+La frase vive en **una sola constante** (`RELLENA`, en
+`js/tools/lectura-mision.js`) y no se reescribe a mano en cada actividad.
+`_dev/verifica-impresion-lectura.js` comprueba que ninguna hoja pida la
+✗; si aparece, falla.
+
+Fuera de la selección múltiple la ✗ sí sirve para lo que siempre ha
+servido —marcar un error, señalar una casilla en una cuadrícula—, y ahí
+se deja.
+
 ## Normativa: los nombres propios llevan mayúscula, también en los juegos
 
 Vale para **todo texto que ve una persona**: tarjetas de repaso, quiz,

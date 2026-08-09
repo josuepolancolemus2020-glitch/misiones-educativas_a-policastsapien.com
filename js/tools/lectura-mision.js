@@ -1287,6 +1287,13 @@
        puede traer su `enPapel`; si no la trae, se usa su instrucción de
        pantalla, que dirá «tócalos» — se entiende, pero está peor. */
     var LETRA = ['a', 'b', 'c', 'd'];
+    /* ── NUNCA «marca con una ✗» ──
+       En el aula la ✗ significa MALO: es lo que el maestro pone sobre lo
+       que está mal. Pedirla para señalar la respuesta CORRECTA enseña dos
+       cosas contrarias con el mismo signo, y el niño que ya sabe leer una
+       hoja corregida duda. Las opciones se imprimen con su círculo: se
+       rellena, como en cualquier hoja de respuestas. */
+    var RELLENA = 'Rellena el círculo de la letra de la respuesta correcta.';
 
     function papelOpciones(ops) {
       return '<div class="lp-ops">' + ops.map(function (o, j) {
@@ -1318,7 +1325,7 @@
 
       if (a.forma === 'comprension') {
         return {
-          html: cab + '<p class="lp-ins">Marca con una ✗ la respuesta correcta. Contesta <strong>sin volver a mirar el texto</strong>.</p>' +
+          html: cab + '<p class="lp-ins">' + RELLENA + ' Contesta <strong>sin volver a mirar el texto</strong>.</p>' +
             items.map(function (p, i) { return papelItem(i + 1, esc(p.q), papelOpciones(p.o)); }).join(''),
           clave: items.map(function (p, i) { return (i + 1) + ') ' + LETRA[p.c]; }).join(' · ')
         };
@@ -1326,7 +1333,7 @@
 
       if (a.forma === 'dosGrupos') {
         return {
-          html: cab + '<p class="lp-ins">' + (a.pista ? esc(a.pista) + '. ' : '') + 'Marca con una ✗ el grupo de la palabra subrayada.</p>' +
+          html: cab + '<p class="lp-ins">' + (a.pista ? esc(a.pista) + '. ' : '') + 'Rellena el círculo del grupo al que pertenece la palabra subrayada.</p>' +
             '<div class="lp-dos">' + items.map(function (it, i) {
               return papelItem(i + 1, it.contexto, '<div class="lp-ops">' + a.grupos.map(function (g) {
                 return '<span class="lp-op"><i></i>' + g.titulo + '</span>';
@@ -1354,7 +1361,7 @@
 
       /* tresOpciones */
       return {
-        html: cab + '<p class="lp-ins">' + (a.pista ? esc(a.pista) + '. ' : '') + 'Marca con una ✗ la respuesta correcta.</p>' +
+        html: cab + '<p class="lp-ins">' + (a.pista ? esc(a.pista) + '. ' : '') + RELLENA + '</p>' +
           items.map(function (it, i) {
             var cuerpo = it.frase ? it.frase.replace(HUECO, '<span class="lp-hueco"></span>') : (it.enunciado || '');
             return papelItem(i + 1, cuerpo, papelOpciones(it.ops));
