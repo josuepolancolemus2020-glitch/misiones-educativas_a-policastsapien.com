@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0f766e">
-  <title>Buzón del lector — cuente lo que pasa en su escuela</title>
-  <meta name="description" content="Mande una nota, una opinión, una denuncia o una sugerencia a la revista. Y si en su escuela va a pasar algo, pida que se lo cubran.">
+  <title>Buzón del lector — cuente lo que pasa a su alrededor</title>
+  <meta name="description" content="Mande una nota, una opinión, una denuncia o una sugerencia a la revista. Y si va a pasar algo en su escuela, pida que se lo cubran.">
   <!-- Lo que WhatsApp enseña al pegar el enlace. Vende lo único que
        es siempre verdad: se escribe desde el teléfono, en un rato, y
        lo lee gente que lo puede publicar. -->
-  <meta property="og:title" content="📬 Buzón del lector — cuente lo que pasa en su escuela">
+  <meta property="og:title" content="📬 Buzón del lector — cuente lo que pasa a su alrededor">
   <meta property="og:description" content="Una nota, una opinión, una denuncia o una sugerencia para la próxima revista. También puede pedir que le cubran un evento de su escuela. Se manda desde el teléfono y no hay que registrarse.">
   <meta property="og:image" content="https://metas.policastsapien.com/img/icon-512.png">
   <meta property="og:type" content="website">
@@ -199,8 +199,8 @@
 /* ═══════════════════════════════════════════════════════════════
    BUZÓN DEL LECTOR — la página que llena CUALQUIERA.
 
-   La revista sale cada quince días y hasta ahora la escribían
-   solo sus cuatro redactores. Esta pantalla abre la otra puerta:
+   La revista sale cada quince días o cada mes y hasta ahora la
+   escribían solo sus cuatro redactores. Esta pantalla abre la otra puerta:
    quien la lee puede mandar una nota, una opinión, una denuncia o
    una sugerencia, y una escuela puede PEDIR que le cubran un
    evento en «Aulas en acción». Lo que se manda cae en la
@@ -454,8 +454,8 @@ function verPortada() {
     <div class="hero">
       <div class="hero-ic">📬</div>
       <div class="hero-kicker">Buzón del lector</div>
-      <h1>Cuente lo que pasa en su escuela</h1>
-      <div class="hero-sub">La revista sale cada quince días, y lo que usted mande puede salir en ella.</div>
+      <h1>Cuente lo que pasa a su alrededor</h1>
+      <div class="hero-sub">Su escuela, su oficina, su comunidad. Lo que usted mande puede salir en la revista.</div>
       ${cuenta}
     </div>
 
@@ -484,6 +484,26 @@ function verPortada() {
         </div>
       </div>
 
+      <!-- Quién va a leer esto. Va justo después de las cinco puertas, que
+           es donde el lector duda: acaba de ver dónde escribir y lo que se
+           pregunta es «¿y esto lo lee alguien?». La tirada se escribe como
+           lo que es —un objetivo, no una cifra alcanzada—, porque la
+           revista está empezando y prometer un número que todavía no se
+           reparte es la clase de dato que envejece mal y desprestigia el
+           resto. -->
+      <div class="card">
+        <div class="card-t">¿Quién va a leer lo que mande?</div>
+        <p style="font-size:14.5px">La revista sale <strong>cada quince días o cada
+          mes</strong> y se imprime en papel. El objetivo es repartir
+          <strong>entre 150 y 300 ejemplares</strong> por número en
+          <strong>instituciones culturales, oficinas e instituciones
+          colaboradoras</strong>.</p>
+        <div class="aviso aviso-ok">
+          O sea que lo que usted escriba lo va a leer <strong>gente que no lo
+          conoce</strong>, en sitios donde se toman decisiones.
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-t">Cómo funciona</div>
         <ul class="pasos">
@@ -496,7 +516,7 @@ function verPortada() {
         </ul>
         <div class="aviso aviso-ok">
           Su opinión enriquece este proyecto. La revista la hacen cuatro personas:
-          <strong>lo que pasa en su escuela solo lo sabe usted</strong>.
+          <strong>lo que pasa donde usted está solo lo sabe usted</strong>.
         </div>
       </div>
 
@@ -576,7 +596,7 @@ function verFormulario() {
           <label for="f-evl">¿Dónde?</label>
           <input class="inp" id="f-evl" value="${esc(B.evento_lugar)}" maxlength="120"
                  placeholder="El patio, el salón comunal, la cancha…">
-          <div class="pista">La revista sale <strong>cada quince días</strong>. Si el evento es en
+          <div class="pista">La revista sale <strong>cada quince días o cada mes</strong>. Si el evento es en
             menos de una semana, avise igual: puede que dé tiempo, y si no, se cuenta después.</div>
         </div>
       </div>` : ''}
@@ -926,7 +946,7 @@ function verGracias(folio) {
 
 function textoCompartir() {
   return '📬 *Buzón del lector*\n' +
-    'Si en su escuela pasó algo que merece contarse —o algo que está mal y debería saberse—\n' +
+    'Si pasó algo que merece contarse —o algo que está mal y debería saberse—\n' +
     'aquí se manda a la revista, desde el teléfono y sin registrarse 👇\n' + enlaceMio();
 }
 
