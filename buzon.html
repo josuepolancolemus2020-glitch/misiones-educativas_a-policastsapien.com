@@ -282,6 +282,11 @@ const claseDe = id => CLASES.find(c => c.id === id) || CLASES[0];
 let EDICION = null;      /* { numero, cierre } de la edición abierta */
 let PASO = 'portada';
 let B = nuevoBorrador();
+/* Cuando NO es null, lo que hay en el formulario no es un envío nuevo:
+   es la corrección de uno que ya está en la bandeja. Lleva su folio, su
+   teléfono y cuántas fotos tenía, porque las fotos no se bajan para
+   corregir una coma. */
+let EDITANDO = null;
 
 function nuevoBorrador() {
   return {
@@ -522,18 +527,19 @@ function verPortada() {
 
       <p class="pie">
         Hecho con <a href="https://metas.policastsapien.com" target="_blank" rel="noopener">M.E.T.A.S</a><br>
-        <button id="p-retirar">¿Se arrepintió de algo que mandó? Retírelo aquí</button>
+        <button id="p-retirar">¿Ya mandó algo? Corríjalo o retírelo aquí</button>
       </p>
     </div>`;
 
   document.querySelectorAll('.puerta').forEach(b => b.addEventListener('click', () => {
     B = nuevoBorrador();
+    EDITANDO = null;          // esto es un envío nuevo, no una corrección
     B.clase = b.dataset.clase;
     verFormulario();
   }));
   const bRe = document.getElementById('p-reintentar');
   if (bRe) bRe.addEventListener('click', async () => {
-    B = Object.assign(nuevoBorrador(), pend);
+    B = Object.assign(nuevoBorrador(), pend); EDITANDO = null;
     bRe.disabled = true; bRe.textContent = '⏳ Mandando…';
     await enviar(true);
   });
@@ -543,7 +549,7 @@ function verPortada() {
       borraPendiente(); verPortada();
     }
   });
-  document.getElementById('p-retirar').addEventListener('click', verRetirar);
+  document.getElementById('p-retirar').addEventListener('click', () => verMio());
 }
 
 /* ═════════ PANTALLA: el formulario ═════════ */
@@ -554,9 +560,11 @@ function verFormulario() {
 
   $app.innerHTML = `
     <div class="hero" style="padding:18px 18px 22px">
-      <div class="hero-ic" style="font-size:40px">${c.ic}</div>
-      <h1 style="font-size:21px">${esc(c.t)}</h1>
-      <div class="hero-sub">${esc(c.d)}</div>
+      <div class="hero-ic" style="font-size:40px">${EDITANDO ? '✏️' : c.ic}</div>
+      <h1 style="font-size:21px">${EDITANDO ? 'Corrigiendo lo que mandó' : esc(c.t)}</h1>
+      <div class="hero-sub">${EDITANDO
+        ? 'Folio ' + esc(EDITANDO.folio) + '. Cambie lo que haga falta; lo demás se queda igual.'
+        : esc(c.d)}</div>
     </div>
     <div class="wrap">
       <div class="card">
@@ -603,12 +611,21 @@ function verFormulario() {
 
       <div class="card">
         <div class="card-t">📷 Fotos ${opcional()}</div>
+        ${(EDITANDO && EDITANDO.fotosAntes && !EDITANDO.cambiarFotos) ? `
+        <div class="aviso aviso-ok" style="margin-top:0">
+          Ya mandó <strong>${EDITANDO.fotosAntes} foto${EDITANDO.fotosAntes === 1 ? '' : 's'}</strong>,
+          y ahí se quedan. Solo tóquelo si quiere cambiarlas.
+          <div class="botones" style="margin-top:10px">
+            <button class="btn btn-sec" id="f-fotos-cambiar">Cambiar las fotos</button>
+          </div>
+        </div>` : `
         <div class="fotos" id="f-fotos"></div>
         <input type="file" id="f-file" accept="image/*" style="display:none">
         <div class="pista" style="margin-top:10px">
           Hasta <strong>dos</strong>. Se achican solas antes de mandarse, así que no gastan datos de más.
           Salen mejor las <strong>horizontales</strong> y con la gente cerca.
-        </div>
+          ${(EDITANDO && EDITANDO.fotosAntes) ? '<br><strong>Ojo:</strong> lo que deje aquí sustituye a las de antes. Si lo deja vacío, se queda sin fotos.' : ''}
+        </div>`}
       </div>
 
       <div class="card">
@@ -662,8 +679,13 @@ function verFormulario() {
   liga('f-evf', 'evento_fecha'); liga('f-evh', 'evento_hora'); liga('f-evl', 'evento_lugar');
 
   pintaCuenta();
-  ligaSelectorDeFotos();
-  pintaFotos();
+  const bCam = document.getElementById('f-fotos-cambiar');
+  if (bCam) {
+    bCam.addEventListener('click', () => { EDITANDO.cambiarFotos = true; verFormulario(); });
+  } else {
+    ligaSelectorDeFotos();
+    pintaFotos();
+  }
   document.getElementById('f-volver').addEventListener('click', verPortada);
   document.getElementById('f-seguir').addEventListener('click', () => {
     const $err = document.getElementById('f-err');
@@ -835,6 +857,33 @@ async function enviar(desdePendiente) {
     p_fotos: B.fotos,
   };
 
+  // Corrigiendo, va por otra puerta: la que cambia la fila que YA está
+  // en la bandeja en vez de crear otra. Y va por folio, no por huella:
+  // la huella lleva dentro el principio del texto, y corregir el texto
+  // es justo lo que la cambia.
+  if (EDITANDO) {
+    let r = 'error';
+    try {
+      r = String(await rpc('faro_buzon_editar', {
+        p_folio: EDITANDO.folio, p_tel: EDITANDO.tel, p_huella: cuerpo.p_huella,
+        p_clase: cuerpo.p_clase, p_titulo: cuerpo.p_titulo, p_texto: cuerpo.p_texto,
+        p_nombre: cuerpo.p_nombre, p_correo: cuerpo.p_correo, p_lugar: cuerpo.p_lugar,
+        p_escuela: cuerpo.p_escuela, p_cargo: cuerpo.p_cargo,
+        p_evento_fecha: cuerpo.p_evento_fecha, p_evento_hora: cuerpo.p_evento_hora,
+        p_evento_lugar: cuerpo.p_evento_lugar,
+        p_etica_version: ETICA_VERSION, p_permiso_fotos: cuerpo.p_permiso_fotos,
+        p_fotos_cambiar: !!EDITANDO.cambiarFotos, p_fotos: B.fotos,
+      }) || 'error');
+    } catch (_) { r = 'sin-red'; }
+
+    if (r === 'ok') { verGracias(EDITANDO.folio, true); return; }
+    // Un «no» del servidor no es un fallo de red: guardar y ofrecer
+    // WhatsApp aquí sería mentirle. Se le dice qué pasó y qué hacer.
+    if (r !== 'sin-red') { verNoSePudo(r); return; }
+    verFallo(guardaPendiente(Object.assign({}, B, { cuando: Date.now() })), desdePendiente);
+    return;
+  }
+
   let folio = '';
   try { folio = String((await rpc('faro_buzon_enviar', cuerpo)) || ''); } catch (_) { folio = ''; }
 
@@ -849,6 +898,49 @@ async function enviar(desdePendiente) {
   // perdida que nadie va a echar de menos porque nadie sabe que existió.
   const guardado = guardaPendiente(Object.assign({}, B, { cuando: Date.now() }));
   verFallo(guardado, desdePendiente);
+}
+
+/* El servidor dijo que no, y no por falta de red. Cada motivo lleva
+   su explicación y su salida: dejarlo en un «no se pudo» pelado es
+   abandonar a alguien delante de una pantalla que no le dice qué
+   hacer. */
+function verNoSePudo(motivo) {
+  const M = {
+    atendido: {
+      ic: '📰', t: 'Ya no se puede cambiar',
+      p: 'Alguien lo leyó, lo comprobó y lo puso en una edición de la revista. Si hay algo que corregir, dígaselo a quien le llamó: todavía hay tiempo antes de imprimir.',
+    },
+    descartado: {
+      ic: '🤝', t: 'Este ya no está en juego',
+      p: 'Esta vez no entró, así que no hay nada que corregir. Si quiere contarlo de otra manera, mande uno nuevo: no molesta.',
+    },
+    tope: {
+      ic: '✏️', t: 'Ya lo corrigió muchas veces',
+      p: 'Diez correcciones son bastantes. Si todavía hace falta otra, retírelo y mándelo de nuevo entero.',
+    },
+    'no-existe': {
+      ic: '🔍', t: 'No lo encontré',
+      p: 'Ese folio con ese teléfono no me sale. Revise que sean los mismos que usó al mandarlo.',
+    },
+  };
+  const m = M[motivo] || {
+    ic: '😕', t: 'No se pudo guardar',
+    p: 'Algo salió mal por el camino. Su texto sigue en la pantalla anterior: pruebe otra vez.',
+  };
+  $app.innerHTML = `
+    <div class="wrap">
+      <div class="gracias">
+        <div class="gracias-ic">${m.ic}</div>
+        <h2>${esc(m.t)}</h2>
+        <p>${esc(m.p)}</p>
+        <div class="botones">
+          <button class="btn btn-1" id="n-volver">‹ Volver a lo que escribí</button>
+          <button class="btn btn-sec" id="n-buzon">Ir al buzón</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('n-volver').addEventListener('click', verFormulario);
+  document.getElementById('n-buzon').addEventListener('click', () => { EDITANDO = null; verPortada(); });
 }
 
 /* Lo que el lector le manda a quien le pasó el enlace, si el
@@ -900,29 +992,34 @@ function verFallo(guardado, desdePendiente) {
   document.getElementById('x-volver').addEventListener('click', verFormulario);
 }
 
-function verGracias(folio) {
+function verGracias(folio, corregido) {
   PASO = 'gracias';
   const c = claseDe(B.clase);
   const cierre = EDICION && EDICION.cierre ? EDICION.cierre : quincenaActual().cierre;
   const esAulas = B.clase === 'aulas';
+  EDITANDO = null;          // la corrección ya está hecha: se cierra el modo
   $app.innerHTML = `
     <div class="wrap">
       <div class="gracias">
-        <div class="gracias-ic">🎉</div>
-        <h2>¡Recibido!</h2>
-        <p>Su ${esc(c.t.toLowerCase().replace(/^una?\s+/, ''))} ya está en la mesa de la redacción.</p>
+        <div class="gracias-ic">${corregido ? '✅' : '🎉'}</div>
+        <h2>${corregido ? '¡Corregido!' : '¡Recibido!'}</h2>
+        <p>${corregido
+          ? 'Se cambió lo que ya tenían, no se mandó otro: en la bandeja sigue habiendo uno solo.'
+          : 'Su ' + esc(c.t.toLowerCase().replace(/^una?\s+/, '')) + ' ya está en la mesa de la redacción.'}</p>
 
         <div class="folio">
           <div class="folio-n">${esc(folio)}</div>
-          <div class="folio-t">Apunte este folio. Con él y su teléfono puede retirar
-            lo que mandó cuando quiera.</div>
+          <div class="folio-t">${corregido
+            ? 'El folio es el mismo de siempre. Guárdelo: con él y su teléfono puede volver a corregirlo o retirarlo.'
+            : 'Apunte este folio. Con él y su teléfono puede corregir o retirar lo que mandó cuando quiera.'}</div>
         </div>
 
         <div class="card" style="text-align:left">
           <div class="card-t">Lo que sigue</div>
           <ul class="pasos">
-            <li><span class="n">1</span><span>Alguien de la redacción lo lee y,
-              si hace falta, <strong>le llama al ${esc(B.tel)}</strong> para confirmar.</span></li>
+            <li><span class="n">1</span><span>${corregido
+              ? 'Vuelve a la cola <strong>como sin leer</strong>, para que quien ya lo hubiera leído lo lea otra vez y no se quede con los datos viejos.'
+              : 'Alguien de la redacción lo lee y, si hace falta, <strong>le llama al ' + esc(B.tel) + '</strong> para confirmar.'}</span></li>
             <li><span class="n">2</span><span>La próxima revista cierra el
               <strong>${esc(fechaLarga(cierre))}</strong>. Lo que entra antes se considera para ese número.</span></li>
             <li><span class="n">3</span><span>${esAulas
@@ -935,13 +1032,19 @@ function verGracias(folio) {
           <button class="btn btn-1" id="g-otro">📬 Mandar otra cosa</button>
           <button class="btn btn-sec" id="g-compartir">↗️ Pasarle el buzón a alguien más</button>
         </div>
+        <div class="botones" style="margin-top:10px">
+          <button class="btn btn-sec" id="g-editar">✏️ Corregir lo que mandé</button>
+        </div>
         <button class="volver" id="g-retirar">Me arrepentí: quiero retirarlo</button>
       </div>
       <p class="pie">Hecho con <a href="https://metas.policastsapien.com" target="_blank" rel="noopener">M.E.T.A.S</a></p>
     </div>`;
-  document.getElementById('g-otro').addEventListener('click', () => { B = nuevoBorrador(); verPortada(); });
+  document.getElementById('g-otro').addEventListener('click', () => {
+    B = nuevoBorrador(); EDITANDO = null; verPortada();
+  });
   document.getElementById('g-compartir').addEventListener('click', () => waAbrir(textoCompartir()));
-  document.getElementById('g-retirar').addEventListener('click', () => verRetirar(folio, B.tel));
+  document.getElementById('g-editar').addEventListener('click', () => abrirMio(folio, B.tel));
+  document.getElementById('g-retirar').addEventListener('click', () => verMio(folio, B.tel));
 }
 
 function textoCompartir() {
@@ -950,16 +1053,25 @@ function textoCompartir() {
     'aquí se manda a la revista, desde el teléfono y sin registrarse 👇\n' + enlaceMio();
 }
 
-/* ═════════ PANTALLA: retirar lo mandado ═════════ */
-/* La promesa del punto 4 de arriba, hecha pantalla. Pide las dos
-   cosas que solo tiene quien lo mandó: su folio y su teléfono. */
-function verRetirar(folio, tel) {
-  PASO = 'retirar';
+/* ═════════ PANTALLA: lo que ya mandó ═════════ */
+/* La puerta de vuelta, y hace dos cosas que se parecen y no son lo
+   mismo: CORREGIR (cambia el envío que ya está, conserva su folio y su
+   sitio en la cola) y RETIRAR (lo borra del todo). Antes solo existía
+   la segunda, y quien se equivocaba en un dato tenía que borrarlo y
+   escribirlo entero otra vez. Mandarlo de nuevo tampoco servía: la
+   llave contra el doble toque lleva dentro el principio del texto, así
+   que en cuanto se cambia la primera línea entra como envío nuevo y en
+   la bandeja aparecen dos casi iguales.
+
+   Las dos piden lo mismo, que es lo único que solo tiene quien lo
+   mandó: su folio y su teléfono. */
+function verMio(folio, tel, err) {
+  PASO = 'mio';
   $app.innerHTML = `
     <div class="hero" style="padding:18px 18px 22px">
-      <div class="hero-ic" style="font-size:40px">🗑️</div>
-      <h1 style="font-size:21px">Retirar lo que mandó</h1>
-      <div class="hero-sub">Se borra del todo, con sus fotos, y nadie de la redacción lo vuelve a ver.</div>
+      <div class="hero-ic" style="font-size:40px">📄</div>
+      <h1 style="font-size:21px">Lo que ya mandó</h1>
+      <div class="hero-sub">Para corregirlo o para retirarlo. Hace falta el folio que le dimos.</div>
     </div>
     <div class="wrap">
       <div class="card">
@@ -976,40 +1088,125 @@ function verRetirar(folio, tel) {
                  placeholder="9999-8888" inputmode="tel">
         </div>
       </div>
-      <div class="err" id="r-err"></div>
+      <div class="err" id="r-err">${esc(err || '')}</div>
       <div class="botones">
-        <button class="btn btn-1" id="r-go">Retirarlo</button>
+        <button class="btn btn-1" id="r-go">Buscarlo</button>
         <button class="volver" id="r-volver">‹ Volver</button>
       </div>
     </div>`;
   document.getElementById('r-volver').addEventListener('click', verPortada);
-  document.getElementById('r-go').addEventListener('click', async () => {
-    const $err = document.getElementById('r-err');
+  document.getElementById('r-go').addEventListener('click', () => {
     const f = document.getElementById('r-fol').value.trim().toUpperCase();
     const t = document.getElementById('r-tel').value.trim();
     if (f.length < 4 || String(t).replace(/\D/g, '').length < 8) {
-      $err.textContent = 'Hacen falta el folio y el teléfono, los dos.'; return;
-    }
-    const $b = document.getElementById('r-go');
-    $b.disabled = true; $b.textContent = '⏳ Retirando…';
-    let ok = false;
-    try { ok = (await rpc('faro_buzon_retirar', { p_folio: f, p_tel: t })) === true; } catch (_) { ok = false; }
-    if (ok) {
-      $app.innerHTML = `
-        <div class="centro">
-          <div class="gr">✅</div>
-          <h2>Retirado</h2>
-          <p>Ya no está. Si algún día quiere contarlo otra vez, el buzón sigue aquí.</p>
-          <div class="botones" style="max-width:320px;margin:18px auto 0">
-            <button class="btn btn-1" id="rr-volver">Volver al buzón</button>
-          </div>
-        </div>`;
-      document.getElementById('rr-volver').addEventListener('click', verPortada);
+      document.getElementById('r-err').textContent = 'Hacen falta el folio y el teléfono, los dos.';
       return;
     }
-    $b.disabled = false; $b.textContent = 'Retirarlo';
-    $err.textContent = 'No encontré nada con ese folio y ese teléfono. Revise que sean los mismos que usó.';
+    abrirMio(f, t);
   });
+}
+
+/* Lo trae y lo enseña, con lo que se puede hacer con él. */
+async function abrirMio(folio, tel) {
+  $app.innerHTML = '<div class="centro"><div class="gr">📄</div><p>Buscándolo…</p></div>';
+  let m = null;
+  try {
+    const filas = await rpc('faro_buzon_mio', { p_folio: folio, p_tel: tel });
+    if (Array.isArray(filas) && filas.length) m = filas[0];
+  } catch (_) {
+    verMio(folio, tel, 'No hay internet. Conéctese y pruebe otra vez.');
+    return;
+  }
+  if (!m) {
+    verMio(folio, tel, 'No encontré nada con ese folio y ese teléfono. Revise que sean los mismos que usó.');
+    return;
+  }
+
+  const c = claseDe(m.clase);
+  // Al lector se le dice en qué punto está lo suyo, con palabras suyas.
+  // «atendido» no es una palabra que signifique nada para él: lo que
+  // significa es que ya está preparándose para salir.
+  const COMO_VA = {
+    nuevo:      { ic: '📬', t: 'Está en el buzón, sin abrir todavía.' },
+    leido:      { ic: '👀', t: 'Ya lo leyó alguien de la redacción.' },
+    atendido:   { ic: '📰', t: 'Ya se está preparando para un número de la revista.' },
+    descartado: { ic: '🤝', t: 'Esta vez no entró.' },
+  };
+  const va = COMO_VA[m.estado] || COMO_VA.nuevo;
+
+  $app.innerHTML = `
+    <div class="hero" style="padding:18px 18px 22px">
+      <div class="hero-ic" style="font-size:40px">${c.ic}</div>
+      <h1 style="font-size:21px">${esc(c.t)}</h1>
+      <div class="hero-sub">Folio ${esc(folio)} · mandado el ${esc(fechaLarga(String(m.creado_at || '').slice(0, 10)))}</div>
+    </div>
+    <div class="wrap">
+      <div class="aviso ${m.se_puede ? 'aviso-ok' : ''}" style="margin-top:14px">
+        ${va.ic} <strong>${esc(va.t)}</strong>
+        ${m.editado_at ? '<br>✏️ Usted ya lo corrigió una vez.' : ''}
+      </div>
+
+      <div class="card">
+        ${m.titulo ? `<div class="card-t">${esc(m.titulo)}</div>` : ''}
+        <p style="font-size:14.5px;white-space:pre-wrap">${esc(String(m.texto || '').slice(0, 600))}${String(m.texto || '').length > 600 ? '…' : ''}</p>
+        ${m.fotos ? `<div class="pista" style="margin-top:10px">📷 Con ${m.fotos} foto${m.fotos === 1 ? '' : 's'}.</div>` : ''}
+      </div>
+
+      ${m.se_puede ? `
+      <div class="botones">
+        <button class="btn btn-1" id="m-editar">✏️ Corregirlo</button>
+        <button class="btn btn-sec" id="m-retirar">🗑️ Retirarlo del todo</button>
+        <button class="volver" id="m-volver">‹ Volver al buzón</button>
+      </div>` : `
+      <div class="aviso">
+        ${m.estado === 'atendido'
+          ? 'Ya no se puede cambiar: alguien lo leyó, lo comprobó y lo puso en una edición. Si hay algo que corregir, dígaselo a quien le llamó — todavía hay tiempo antes de imprimir.'
+          : m.estado === 'descartado'
+            ? 'Esta vez no entró, así que no hay nada que corregir. Si quiere contarlo de otra manera, mande uno nuevo: no molesta.'
+            : 'Lo ha corregido ya muchas veces. Si hace falta otra, mejor retírelo y mándelo de nuevo entero.'}
+      </div>
+      <div class="botones">
+        <button class="btn btn-sec" id="m-retirar">🗑️ Retirarlo del todo</button>
+        <button class="volver" id="m-volver">‹ Volver al buzón</button>
+      </div>`}
+    </div>`;
+
+  document.getElementById('m-volver').addEventListener('click', verPortada);
+  document.getElementById('m-retirar').addEventListener('click', () => retirarMio(folio, tel));
+  const bEd = document.getElementById('m-editar');
+  if (bEd) bEd.addEventListener('click', () => {
+    // Lo suyo vuelve al mismo formulario con el que lo escribió. Las
+    // fotos NO bajan: pesan casi un mega y casi nadie las cambia al
+    // corregir una frase. Se le pregunta si las deja o las cambia.
+    B = Object.assign(nuevoBorrador(), {
+      clase: m.clase, titulo: m.titulo || '', texto: m.texto || '',
+      nombre: m.nombre || '', tel: m.tel || tel, correo: m.correo || '',
+      lugar: m.lugar || '', escuela: m.escuela || '', cargo: m.cargo || '',
+      evento_fecha: m.evento_fecha || '', evento_hora: m.evento_hora || '',
+      evento_lugar: m.evento_lugar || '',
+      permiso_fotos: !!m.fotos,
+    });
+    EDITANDO = { folio, tel, fotosAntes: Number(m.fotos) || 0, cambiarFotos: false };
+    verFormulario();
+  });
+}
+
+async function retirarMio(folio, tel) {
+  if (!confirm('¿Retirarlo del todo?\n\nSe borra con sus fotos y nadie de la redacción lo vuelve a ver. No se puede deshacer.')) return;
+  let ok = false;
+  try { ok = (await rpc('faro_buzon_retirar', { p_folio: folio, p_tel: tel })) === true; } catch (_) { ok = false; }
+  if (!ok) { verMio(folio, tel, 'No se pudo retirar. Pruebe otra vez.'); return; }
+  EDITANDO = null;
+  $app.innerHTML = `
+    <div class="centro">
+      <div class="gr">✅</div>
+      <h2>Retirado</h2>
+      <p>Ya no está. Si algún día quiere contarlo otra vez, el buzón sigue aquí.</p>
+      <div class="botones" style="max-width:320px;margin:18px auto 0">
+        <button class="btn btn-1" id="rr-volver">Volver al buzón</button>
+      </div>
+    </div>`;
+  document.getElementById('rr-volver').addEventListener('click', verPortada);
 }
 
 /* ═════════ Arranque ═════════ */
@@ -1023,7 +1220,8 @@ async function arrancar() {
     const filas = await rpc('faro_buzon_estado', {});
     if (Array.isArray(filas) && filas.length) EDICION = filas[0];
   } catch (_) {}
-  if (new URLSearchParams(location.search).has('retirar')) verRetirar();
+  const q = new URLSearchParams(location.search);
+  if (q.has('retirar') || q.has('mio')) verMio();
   else verPortada();
 }
 arrancar();

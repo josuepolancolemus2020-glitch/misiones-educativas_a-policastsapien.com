@@ -391,8 +391,18 @@ llega tiene una persona detrás esperando una llamada.
    WhatsApp ya escrito. Un lector que cree que mandó su denuncia y no la
    mandó es una denuncia que nadie va a echar de menos, porque nadie sabe
    que existió.
-5. **Se puede retirar.** Con su folio y su teléfono, el lector borra lo
-   suyo sin pedirle permiso a nadie. Una denuncia da miedo al día
+5. **Se puede corregir, y se puede retirar.** Con su folio y su teléfono
+   el lector recupera lo que mandó y lo cambia **sobre la misma fila**:
+   mismo folio, un solo envío en la bandeja. Mandarlo de nuevo no sirve
+   —la huella lleva dentro el principio del texto, así que al cambiar la
+   primera línea entra como envío nuevo y quedan dos casi iguales.
+
+   Solo mientras esté sin atender. En cuanto la redacción lo convierte en
+   nota ya lo leyó, llamó y lo comprobó: si el texto pudiera cambiar por
+   debajo, **lo verificado y lo impreso dejarían de ser lo mismo**. Esa
+   puerta la cierra el servidor, no la pantalla.
+
+   Y borra lo suyo sin pedirle permiso a nadie. Una denuncia da miedo al día
    siguiente, y esa puerta tiene que existir de verdad, no en un párrafo
    de buenas intenciones. Ahí no hay papelera **a propósito**: una
    papelera es justo lo que él está pidiendo que no exista.

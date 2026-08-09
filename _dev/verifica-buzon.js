@@ -72,6 +72,8 @@ function nube(estado) {
     if (fn === 'faro_buzon_estado') salida = estado.edicion ? [estado.edicion] : [];
     else if (fn === 'faro_buzon_enviar') salida = estado.folio;
     else if (fn === 'faro_buzon_retirar') salida = estado.retirado;
+    else if (fn === 'faro_buzon_mio') salida = estado.mio ? [estado.mio] : [];
+    else if (fn === 'faro_buzon_editar') salida = estado.editar;
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(salida) });
   };
 }
@@ -85,8 +87,16 @@ async function nuevaPagina(browser, estado) {
 }
 function nuevoEstado(extra) {
   return Object.assign({
-    llamadas: [], caer: false, folio: 'B-7K3M', retirado: true,
+    llamadas: [], caer: false, folio: 'B-7K3M', retirado: true, editar: 'ok',
     edicion: { numero: 3, cierre: '2026-08-15' },
+    mio: {
+      clase: 'denuncia', titulo: 'El muro del patio',
+      texto: 'Se cayó el muro del patio y los niños pasan por ahí todos los días.',
+      nombre: 'Ana López', tel: '9988-7766', correo: '', lugar: 'Comayagua',
+      escuela: '', cargo: 'madre', evento_fecha: null, evento_hora: '', evento_lugar: '',
+      fotos: 2, estado: 'leido', se_puede: true,
+      creado_at: '2026-08-07T10:00:00Z', editado_at: null,
+    },
   }, extra || {});
 }
 
@@ -401,30 +411,102 @@ async function adjuntaFoto(page) {
     await page.close();
   }
 
-  /* ── 8. Retirar lo mandado ─────────────────────────────────── */
+  /* ── 8. Corregir lo que ya mandó ───────────────────────────── */
+  console.log('\n✏️ El lector corrige lo que mandó');
+  {
+    const estado = nuevoEstado();
+    const page = await nuevaPagina(browser, estado);
+    await page.goto(URL_BUZON + '?mio=1');
+    await page.waitForSelector('#r-fol');
+    await page.fill('#r-fol', 'B-7K3M');
+    await page.fill('#r-tel', '9988-7766');
+    await page.click('#r-go');
+    await page.waitForSelector('#m-editar');
+    const pedido = estado.llamadas.filter(l => l.fn === 'faro_buzon_mio').pop().cuerpo;
+    comprueba(pedido.p_folio === 'B-7K3M' && pedido.p_tel === '9988-7766',
+      'para recuperarlo pide folio y teléfono, las dos cosas');
+    comprueba((await page.textContent('#app')).includes('El muro del patio'),
+      'le enseña lo que había escrito antes de dejarle tocar nada');
+
+    await page.click('#m-editar');
+    await page.waitForSelector('#f-txt');
+    comprueba(await page.inputValue('#f-txt') === estado.mio.texto,
+      'lo suyo vuelve al mismo formulario, ya escrito');
+    comprueba((await page.textContent('#app')).includes('Corrigiendo'),
+      'y la pantalla deja claro que está corrigiendo, no mandando otro');
+    comprueba(/2 fotos/.test(await page.textContent('#app')) && await page.locator('#f-file').count() === 0,
+      'las fotos que ya mandó se quedan sin volver a bajarlas ni subirlas');
+
+    await page.fill('#f-txt', 'Se cayó el muro del patio. Corrijo: fue el martes, no el lunes, y son dos tramos.');
+    await page.click('#f-seguir');
+    await page.check('#e-ok');
+    await page.click('#e-enviar');
+    await page.waitForSelector('.folio-n');
+
+    comprueba(estado.llamadas.filter(l => l.fn === 'faro_buzon_enviar').length === 0,
+      'NO se manda un envío nuevo: eso dejaría dos casi iguales en la bandeja');
+    const ed = estado.llamadas.filter(l => l.fn === 'faro_buzon_editar').pop().cuerpo;
+    comprueba(ed.p_folio === 'B-7K3M' && /son dos tramos/.test(ed.p_texto),
+      'se corrige la fila que ya estaba, por su folio');
+    comprueba(ed.p_fotos_cambiar === false,
+      'y sin tocar las fotos, porque no pidió cambiarlas');
+    comprueba((await page.textContent('.folio-n')) === 'B-7K3M',
+      'el folio sigue siendo el mismo: el lector no tiene que apuntar otro');
+    comprueba(/Corregido/i.test(await page.textContent('#app')),
+      'y se lo dice con esa palabra, no con «recibido»');
+    await page.close();
+  }
+  {
+    // Lo que ya está en la revista no se cambia, y hay que decir por qué
+    const estado = nuevoEstado({ editar: 'atendido' });
+    estado.mio = Object.assign({}, estado.mio, { estado: 'atendido', se_puede: false });
+    const page = await nuevaPagina(browser, estado);
+    await page.goto(URL_BUZON + '?mio=1');
+    await page.fill('#r-fol', 'B-7K3M');
+    await page.fill('#r-tel', '9988-7766');
+    await page.click('#r-go');
+    await page.waitForSelector('#m-retirar');
+    comprueba(await page.locator('#m-editar').count() === 0,
+      'un envío ya atendido no enseña el botón de corregir');
+    const txt = await page.textContent('#app');
+    comprueba(/comprob/i.test(txt) && /llam/i.test(txt),
+      'y le explica por qué y qué hacer: hablar con quien le llamó');
+    comprueba(await page.locator('#m-retirar').count() === 1,
+      'retirarlo sí lo puede seguir haciendo');
+    await page.close();
+  }
+
+  /* ── 9. Retirar lo mandado ─────────────────────────────────── */
   console.log('\n🗑️ El lector puede retirar lo que mandó');
   {
     const estado = nuevoEstado();
     const page = await nuevaPagina(browser, estado);
     await page.goto(URL_BUZON + '?retirar=1');
     await page.waitForSelector('#r-fol');
-    ok('se puede llegar directo a retirar, sin pasar por el formulario');
+    ok('se puede llegar directo, sin pasar por el formulario');
 
     await page.fill('#r-fol', 'B-7K3M');
     await page.fill('#r-tel', '99887766');
     await page.click('#r-go');
+    await page.waitForSelector('#m-retirar');
+    await page.click('#m-retirar');
     await page.waitForSelector('#rr-volver');
     const ret = estado.llamadas.filter(l => l.fn === 'faro_buzon_retirar').pop().cuerpo;
     comprueba(ret.p_folio === 'B-7K3M' && ret.p_tel === '99887766',
       'pide las dos cosas que solo tiene quien lo mandó: folio y teléfono');
 
-    estado.retirado = false;
+    estado.mio = null;
     await page.goto(URL_BUZON + '?retirar=1');
     await page.fill('#r-fol', 'B-0000');
     await page.fill('#r-tel', '99887766');
     await page.click('#r-go');
-    await page.waitForFunction(() => /No encontr/.test(document.getElementById('r-err').textContent));
-    ok('con un folio que no es suyo, no borra nada y lo dice');
+    // Entre medias se ve un «Buscándolo…» que no tiene el hueco del
+    // error: si se da por hecho que está, la prueba revienta sola.
+    await page.waitForFunction(() => {
+      const e = document.getElementById('r-err');
+      return e && /No encontr/.test(e.textContent);
+    });
+    ok('con un folio que no es suyo, no encuentra nada y lo dice');
     await page.close();
   }
 
