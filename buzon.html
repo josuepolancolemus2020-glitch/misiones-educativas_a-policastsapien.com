@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>Buzón del lector — cuente lo que pasa en su escuela</title>
+  <meta name="description" content="Mande una nota, una opinión, una denuncia o una sugerencia a la revista. Y si en su escuela va a pasar algo, pida que se lo cubran.">
+  <!-- Lo que WhatsApp enseña al pegar el enlace. Vende lo único que
+       es siempre verdad: se escribe desde el teléfono, en un rato, y
+       lo lee gente que lo puede publicar. -->
+  <meta property="og:title" content="📬 Buzón del lector — cuente lo que pasa en su escuela">
+  <meta property="og:description" content="Una nota, una opinión, una denuncia o una sugerencia para la próxima revista. También puede pedir que le cubran un evento de su escuela. Se manda desde el teléfono y no hay que registrarse.">
+  <meta property="og:image" content="https://metas.policastsapien.com/img/icon-512.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
+  <style>
+    :root {
+      --ver1: #0f766e; --ver2: #14b8a6;
+      --tinta: #1f2937; --suave: #6b7280;
+      --papel: #f0fdfa; --tarjeta: #ffffff;
+      --ok: #16a34a; --ok2: #15803d;
+      --alerta: #b45309;
+      --borde: #d9f0ec;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--papel); color: var(--tinta);
+      min-height: 100dvh; line-height: 1.5;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    #app { max-width: 560px; margin: 0 auto; padding: 0 0 32px; }
+
+    /* ── Portada ── */
+    .hero {
+      background: linear-gradient(160deg, var(--ver1), var(--ver2));
+      color: #fff; padding: 26px 18px 30px; text-align: center;
+      border-radius: 0 0 26px 26px; box-shadow: 0 6px 20px rgba(15,118,110,.25);
+    }
+    .hero-ic { font-size: 58px; line-height: 1; }
+    .hero-kicker {
+      display: inline-block; margin: 8px 0 6px; padding: 4px 12px;
+      background: rgba(255,255,255,.22); border-radius: 999px;
+      font-size: 12px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase;
+    }
+    .hero h1 { font-size: 26px; font-weight: 900; line-height: 1.2; margin-bottom: 8px; }
+    .hero-sub { font-size: 15px; opacity: .95; }
+    .hero-cuenta {
+      margin-top: 14px; display: inline-block; padding: 8px 16px;
+      background: rgba(0,0,0,.22); border-radius: 999px;
+      font-size: 14px; font-weight: 800;
+    }
+    .hero-cuenta.urge { background: #fff; color: #b45309; }
+
+    .wrap { padding: 0 14px; }
+    .card {
+      background: var(--tarjeta); border: 1px solid var(--borde);
+      border-radius: 16px; padding: 16px; margin-top: 14px;
+      box-shadow: 0 2px 10px rgba(15,118,110,.06);
+    }
+    .card-t { font-size: 15px; font-weight: 900; margin-bottom: 10px; }
+
+    /* ── Las cinco puertas ── */
+    .puertas { display: grid; gap: 10px; margin-top: 16px; }
+    .puerta {
+      display: flex; gap: 13px; align-items: center; text-align: left;
+      width: 100%; border: 2px solid #e5e7eb; background: #fff;
+      border-radius: 15px; padding: 14px; font-family: inherit; cursor: pointer;
+      color: var(--tinta); transition: transform .1s, border-color .15s;
+    }
+    .puerta:active { transform: scale(.985); }
+    .puerta-ic { font-size: 30px; flex-shrink: 0; width: 38px; text-align: center; }
+    .puerta-t { font-size: 16.5px; font-weight: 900; }
+    .puerta-d { font-size: 13.5px; color: var(--suave); margin-top: 2px; }
+    .puerta-aulas { border-color: #99f6e4; background: #f0fdfa; }
+    .puerta-denuncia { border-color: #fed7aa; }
+
+    /* ── Botones ── */
+    .botones { display: grid; gap: 10px; margin-top: 16px; }
+    .btn {
+      display: block; width: 100%; border: 0; border-radius: 14px;
+      padding: 17px 14px; font-size: 17px; font-weight: 900;
+      font-family: inherit; cursor: pointer; text-align: center;
+      transition: transform .1s;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-1 { background: var(--ver1); color: #fff; box-shadow: 0 4px 14px rgba(15,118,110,.28); }
+    .btn-ok { background: var(--ok); color: #fff; box-shadow: 0 4px 14px rgba(22,163,74,.3); font-size: 19px; padding: 20px 14px; }
+    .btn-wa { background: #25d366; color: #fff; }
+    .btn-sec { background: #fff; color: var(--ver1); border: 2px solid #99f6e4; }
+    .btn[disabled] { opacity: .55; }
+    .volver {
+      background: none; border: 0; color: var(--suave); font-size: 14px;
+      font-family: inherit; padding: 12px 4px; cursor: pointer; font-weight: 700;
+    }
+
+    /* ── Formulario ── */
+    .campo { margin-bottom: 14px; }
+    .campo > label { display: block; font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+    .campo .pista { font-size: 12.5px; color: var(--suave); font-weight: 500; margin-top: 4px; }
+    .inp {
+      width: 100%; padding: 14px; font-size: 17px; font-family: inherit;
+      border: 2px solid #e5e7eb; border-radius: 12px; background: #fff; color: var(--tinta);
+    }
+    .inp:focus { outline: none; border-color: var(--ver1); }
+    textarea.inp { min-height: 168px; resize: vertical; line-height: 1.5; }
+    .cuenta-letras { font-size: 12.5px; color: var(--suave); text-align: right; margin-top: 4px; font-weight: 700; }
+    .cuenta-letras.corto { color: var(--alerta); }
+    .fila2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .chip {
+      border: 2px solid #e5e7eb; background: #fff; color: var(--tinta);
+      border-radius: 11px; padding: 11px 13px; font-size: 15px; font-weight: 800;
+      font-family: inherit; cursor: pointer;
+    }
+    .chip.on { border-color: var(--ver1); background: #f0fdfa; color: #115e59; }
+    .err { color: #b91c1c; font-size: 14px; font-weight: 700; margin-top: 8px; min-height: 20px; }
+
+    /* ── Fotos ── */
+    .fotos { display: flex; gap: 10px; flex-wrap: wrap; }
+    .foto {
+      position: relative; width: 104px; height: 104px; border-radius: 12px;
+      overflow: hidden; border: 2px solid var(--borde); background: #f8fafc;
+    }
+    .foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .foto-x {
+      position: absolute; top: 4px; right: 4px; width: 26px; height: 26px;
+      border-radius: 50%; border: 0; background: rgba(0,0,0,.62); color: #fff;
+      font-size: 15px; font-weight: 900; cursor: pointer; line-height: 1; font-family: inherit;
+    }
+    .foto-add {
+      width: 104px; height: 104px; border-radius: 12px; border: 2px dashed #99f6e4;
+      background: #fff; color: var(--ver1); font-size: 13px; font-weight: 800;
+      font-family: inherit; cursor: pointer; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 4px;
+    }
+    .foto-add span { font-size: 26px; }
+
+    /* ── Ética ── */
+    .etica { list-style: none; display: grid; gap: 11px; }
+    .etica li { display: flex; gap: 10px; font-size: 14.5px; }
+    .etica li b { display: block; }
+    .etica-ic { flex-shrink: 0; font-size: 17px; width: 22px; text-align: center; }
+    .acepto {
+      display: flex; gap: 12px; align-items: flex-start; margin-top: 4px;
+      background: #f0fdfa; border: 2px solid #99f6e4; border-radius: 14px;
+      padding: 14px; cursor: pointer;
+    }
+    .acepto input { width: 24px; height: 24px; flex-shrink: 0; margin-top: 1px; accent-color: var(--ver1); }
+    .acepto span { font-size: 14.5px; font-weight: 700; }
+
+    .aviso {
+      background: #fef3c7; border: 1px solid #fcd34d; border-radius: 12px;
+      padding: 12px 14px; font-size: 14px; margin-top: 14px;
+    }
+    .aviso-ok { background: #ecfdf5; border-color: #a7f3d0; }
+
+    /* ── Gracias ── */
+    .gracias { text-align: center; padding-top: 26px; }
+    .gracias-ic { font-size: 66px; }
+    .gracias h2 { font-size: 24px; font-weight: 900; margin: 8px 0; }
+    .gracias p { font-size: 15px; color: var(--suave); }
+    .folio {
+      background: #ecfdf5; border: 2px solid #a7f3d0; border-radius: 14px;
+      padding: 16px; margin-top: 16px;
+    }
+    .folio-n {
+      font-size: 34px; font-weight: 900; color: var(--ok2);
+      letter-spacing: 3px; line-height: 1.1;
+    }
+    .folio-t { font-size: 13.5px; color: #047857; font-weight: 700; margin-top: 4px; }
+    .pasos { text-align: left; display: grid; gap: 10px; margin-top: 8px; }
+    .pasos li { list-style: none; display: flex; gap: 10px; font-size: 14.5px; }
+    .pasos .n {
+      flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+      background: var(--ver1); color: #fff; font-size: 13px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .pie { text-align: center; font-size: 12px; color: var(--suave); padding: 22px 16px 0; }
+    .pie a { color: var(--ver1); font-weight: 700; }
+    .pie button {
+      background: none; border: 0; color: var(--suave); font-size: 12px;
+      font-family: inherit; text-decoration: underline; cursor: pointer; padding: 6px;
+    }
+    .centro { text-align: center; padding: 8vh 18px; }
+    .centro .gr { font-size: 54px; }
+    .centro h2 { font-size: 21px; margin: 10px 0 6px; }
+    .centro p { color: var(--suave); font-size: 15px; }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   BUZÓN DEL LECTOR — la página que llena CUALQUIERA.
+
+   La revista sale cada quince días y hasta ahora la escribían
+   solo sus cuatro redactores. Esta pantalla abre la otra puerta:
+   quien la lee puede mandar una nota, una opinión, una denuncia o
+   una sugerencia, y una escuela puede PEDIR que le cubran un
+   evento en «Aulas en acción». Lo que se manda cae en la
+   herramienta de Redacción, en su propia bandeja.
+
+   El enlace va impreso en la revista, como código QR, y suelto en
+   grupos de WhatsApp. De ahí salen las reglas de esta pantalla:
+
+   1. NADA DE REGISTRARSE. Ni clave, ni cuenta, ni correo de
+      confirmación. Quien tiene algo que contar lo cuenta hoy o no
+      lo cuenta.
+   2. NOMBRE Y TELÉFONO, SIEMPRE. No es burocracia: es lo que
+      separa una nota de un anónimo. El teléfono no se publica
+      nunca; sirve para llamar y confirmar antes de imprimir.
+   3. LO QUE SE MANDA NO SE PIERDE. Si falla el internet, el envío
+      queda guardado en este teléfono y se reintenta solo; y de
+      paso se ofrece mandarlo por WhatsApp, ya escrito.
+   4. SE PUEDE RETIRAR. Con el folio y el teléfono, quien se
+      arrepiente borra lo suyo sin pedirle permiso a nadie. Una
+      denuncia da miedo al día siguiente, y esa puerta tiene que
+      existir de verdad, no en un párrafo de buenas intenciones.
+
+   POR QUÉ ESTA PÁGINA VIVE EN M.E.T.A.S Y LOS DATOS SE VAN A
+   OTRO SITIO: la aplicación de la revista es privada y está
+   detrás de una puerta con contraseña, así que no puede recibir
+   visitas de la calle. Esta página sí: es pública, tiene
+   dirección propia y no nombra a la revista por ninguna parte
+   —el enlace se reparte solo, y una pantalla que se presenta
+   sola no obliga a explicar de quién es—. Los envíos se mandan
+   por una única función del servidor que solo sabe ESCRIBIR: con
+   esta clave no se puede leer nada de lo que hay dentro, ni
+   contarlo, ni saber si existe.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* El proyecto de la revista. La clave es «publicable»: va en el
+   navegador porque así se diseña, y lo que la vuelve segura es que
+   la seguridad por fila está cerrada y la única puerta abierta es
+   la función de enviar. */
+const SB_URL_DEF = 'https://bzrnjvalpwlcnpszvwim.supabase.co';
+const SB_KEY_DEF = 'sb_publishable_74mJW5LoxPZOWtIi7YrBEw_0y9JjSfM';
+
+/* La versión de los requisitos de ética que se acepta hoy. Se guarda
+   con cada envío: si mañana cambian, la fila sigue diciendo cuáles
+   firmó ESE lector, y un reclamo dentro de un año se puede resolver
+   mirando el dato en vez de la memoria de alguien. */
+const ETICA_VERSION = '2026-08';
+
+const PEND_KEY = 'BUZON_PENDIENTE_V1';   /* lo que no se pudo mandar */
+const MIOS_KEY = 'BUZON_MIOS_V1';        /* los folios de este teléfono */
+
+const MAX_TEXTO = 4000;
+const MIN_TEXTO = 20;
+const MAX_FOTOS = 2;
+const MAX_FOTO_B64 = 1400000;   /* el mismo tope que hace cumplir el servidor */
+
+const $app = document.getElementById('app');
+
+/* ── Las cinco puertas ─────────────────────────────────────────── */
+const CLASES = [
+  { id: 'nota', ic: '📝', t: 'Una nota o un dato',
+    d: 'Algo que pasó y merece contarse.',
+    guia: '¿Qué pasó, dónde y cuándo? ¿Quién estaba? Si sabe números (cuántos niños, cuánto costó), póngalos.' },
+  { id: 'opinion', ic: '💬', t: 'Una opinión',
+    d: 'Su carta al director, con su nombre.',
+    guia: '¿De qué quiere hablar y qué piensa? Una idea clara vale más que tres a medias.' },
+  { id: 'denuncia', ic: '⚠️', t: 'Una denuncia',
+    d: 'Algo que está mal y debería saberse.', cls: 'puerta-denuncia',
+    guia: '¿Qué está mal, desde cuándo y a quién le afecta? ¿Lo vio usted o se lo contaron? ¿Ya lo reportó a alguien y qué le dijeron?' },
+  { id: 'sugerencia', ic: '💡', t: 'Una sugerencia',
+    d: 'Para que la revista salga mejor.',
+    guia: '¿Qué le gustaría leer, o qué le sobra? Diga también qué sección.' },
+  { id: 'aulas', ic: '🏫', t: 'Que cubran mi escuela',
+    d: 'Un evento para la sección Aulas en acción.', cls: 'puerta-aulas',
+    guia: '¿Qué va a pasar, quién participa y por qué vale la pena contarlo? Diga también a quién buscar el día del evento.' },
+];
+const claseDe = id => CLASES.find(c => c.id === id) || CLASES[0];
+
+/* ── Estado ────────────────────────────────────────────────────── */
+let EDICION = null;      /* { numero, cierre } de la edición abierta */
+let PASO = 'portada';
+let B = nuevoBorrador();
+
+function nuevoBorrador() {
+  return {
+    clase: 'nota', titulo: '', texto: '',
+    nombre: '', tel: '', correo: '', lugar: '', escuela: '', cargo: '',
+    evento_fecha: '', evento_hora: '', evento_lugar: '',
+    fotos: [], etica_ok: false, permiso_fotos: false,
+  };
+}
+
+/* ── Utilidades ────────────────────────────────────────────────── */
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function sbCfg() {
+  let url = SB_URL_DEF, key = SB_KEY_DEF;
+  try {
+    url = localStorage.getItem('BUZON_SB_URL') || url;
+    key = localStorage.getItem('BUZON_SB_KEY') || key;
+  } catch (_) {}
+  return { url, key };
+}
+async function rpc(fn, body) {
+  const { url, key } = sbCfg();
+  const r = await fetch(url + '/rest/v1/rpc/' + fn, {
+    method: 'POST',
+    headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body || {}),
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+/* Sin acentos ni signos: así «José Ángel» y «jose angel» son el
+   mismo, y mandar dos veces lo mismo CORRIGE en vez de duplicar. */
+function norm(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function huella() {
+  return (norm(B.nombre) + '|' + String(B.tel || '').replace(/\D/g, '') + '|' +
+          norm(B.texto).slice(0, 60)).slice(0, 160);
+}
+
+/* ── Fechas ──────────────────────────────────────────────────────
+   Se parten a mano porque new Date('2026-08-15') se lee en UTC y en
+   Honduras enseña el día ANTERIOR. Un lector que lee mal el cierre
+   manda tarde y su nota no entra. */
+const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+               'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+function aFecha(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+}
+function fechaLarga(iso) {
+  const f = aFecha(iso);
+  return f ? DIAS[f.getDay()] + ' ' + f.getDate() + ' de ' + MESES[f.getMonth()] : String(iso || '');
+}
+function diasHasta(iso) {
+  const f = aFecha(iso);
+  if (!f) return null;
+  const h = new Date(); h.setHours(0, 0, 0, 0);
+  return Math.round((f - h) / 86400000);
+}
+function isoDe(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') +
+         '-' + String(d.getDate()).padStart(2, '0');
+}
+/* La quincena en curso, para cuando el servidor no contesta. La
+   revista es quincenal: cierra el 15 y el último día del mes. */
+function quincenaActual() {
+  const h = new Date();
+  const fin = h.getDate() <= 15
+    ? new Date(h.getFullYear(), h.getMonth(), 15)
+    : new Date(h.getFullYear(), h.getMonth() + 1, 0);
+  return { numero: null, cierre: isoDe(fin) };
+}
+
+/* En el escritorio de Windows, WhatsApp corrompe los emojis que
+   llegan por wa.me; WhatsApp Web los conserva. */
+function waAbrir(texto, tel) {
+  const enc = encodeURIComponent(texto);
+  const movil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const t = String(tel || '').replace(/\D/g, '');
+  window.open(movil
+    ? 'https://wa.me/' + t + '?text=' + enc
+    : 'https://web.whatsapp.com/send?' + (t ? 'phone=' + t + '&' : '') + 'text=' + enc, '_blank');
+}
+function enlaceMio() { return location.origin + location.pathname; }
+
+/* ── Lo pendiente y lo mío ─────────────────────────────────────── */
+function guardaPendiente(b) {
+  // Con fotos puede no caber en el almacén del navegador (unos 5 MB).
+  // Antes que perderlo todo, se guarda sin ellas y se dice: el texto
+  // es lo que no se puede volver a escribir igual.
+  try { localStorage.setItem(PEND_KEY, JSON.stringify(b)); return 'entero'; } catch (_) {}
+  try {
+    localStorage.setItem(PEND_KEY, JSON.stringify(Object.assign({}, b, { fotos: [] })));
+    return 'sin-fotos';
+  } catch (_) { return 'no'; }
+}
+function leePendiente() {
+  try { return JSON.parse(localStorage.getItem(PEND_KEY)) || null; } catch (_) { return null; }
+}
+function borraPendiente() { try { localStorage.removeItem(PEND_KEY); } catch (_) {} }
+function apuntaMio(folio, clase) {
+  try {
+    const l = JSON.parse(localStorage.getItem(MIOS_KEY)) || [];
+    if (!l.some(x => x.folio === folio)) l.unshift({ folio, clase, cuando: Date.now() });
+    localStorage.setItem(MIOS_KEY, JSON.stringify(l.slice(0, 20)));
+  } catch (_) {}
+}
+
+/* ── Fotos ───────────────────────────────────────────────────────
+   Se achican AQUÍ, en el teléfono, antes de mandarlas. Una foto de
+   cámara moderna pesa cinco megas y por el internet de un pueblo no
+   sube nunca: el lector ve la rueda girar, se cansa y se va. 1600
+   píxeles es de sobra para imprimir a ancho de columna. */
+function achicaFoto(archivo) {
+  return new Promise((resolve, reject) => {
+    const lector = new FileReader();
+    lector.onerror = () => reject(new Error('no se pudo leer'));
+    lector.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('no es una imagen'));
+      img.onload = () => {
+        let lado = 1600;
+        let datos = '';
+        // Se baja de tamaño y de calidad hasta que entra en el tope.
+        // El tope lo hace cumplir también el servidor; aquí se cumple
+        // por adelantado para no gastarle los datos al lector en un
+        // envío que va a ser rechazado.
+        for (let intento = 0; intento < 5; intento++) {
+          const escala = Math.min(1, lado / Math.max(img.width, img.height));
+          const c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(img.width * escala));
+          c.height = Math.max(1, Math.round(img.height * escala));
+          const ctx = c.getContext('2d');
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, c.width, c.height);
+          ctx.drawImage(img, 0, 0, c.width, c.height);
+          datos = c.toDataURL('image/jpeg', intento === 0 ? 0.78 : 0.78 - intento * 0.12);
+          if (datos.length <= MAX_FOTO_B64) return resolve(datos);
+          lado = Math.round(lado * 0.75);
+        }
+        reject(new Error('la foto es demasiado grande'));
+      };
+      img.src = lector.result;
+    };
+    lector.readAsDataURL(archivo);
+  });
+}
+
+/* ═════════ PANTALLA: la portada ═════════ */
+function verPortada() {
+  PASO = 'portada';
+  const cierre = EDICION && EDICION.cierre ? EDICION.cierre : quincenaActual().cierre;
+  const dias = diasHasta(cierre);
+  let cuenta;
+  if (dias === 0) cuenta = '<div class="hero-cuenta urge">⏰ HOY se cierra la próxima revista</div>';
+  else if (dias === 1) cuenta = '<div class="hero-cuenta urge">⏰ Mañana se cierra la próxima revista</div>';
+  else if (dias != null && dias > 0 && dias <= 4) cuenta = '<div class="hero-cuenta urge">⏰ Faltan ' + dias + ' días para el cierre</div>';
+  else cuenta = '<div class="hero-cuenta">🗓️ La próxima cierra el ' + esc(fechaLarga(cierre)) + '</div>';
+
+  const pend = leePendiente();
+
+  $app.innerHTML = `
+    <div class="hero">
+      <div class="hero-ic">📬</div>
+      <div class="hero-kicker">Buzón del lector</div>
+      <h1>Cuente lo que pasa en su escuela</h1>
+      <div class="hero-sub">La revista sale cada quince días, y lo que usted mande puede salir en ella.</div>
+      ${cuenta}
+    </div>
+
+    <div class="wrap">
+      ${pend ? `
+      <div class="aviso">
+        <strong>Le quedó algo sin mandar.</strong> Lo tiene guardado este teléfono
+        desde ${esc(fechaLarga(isoDe(new Date(pend.cuando || Date.now()))))}.
+        <div class="botones" style="margin-top:10px">
+          <button class="btn btn-1" id="p-reintentar">📤 Mandarlo ahora</button>
+          <button class="volver" id="p-tirar">Descartarlo</button>
+        </div>
+      </div>` : ''}
+
+      <div class="card">
+        <div class="card-t">¿Qué quiere mandar?</div>
+        <div class="puertas">
+          ${CLASES.map(c => `
+          <button type="button" class="puerta ${c.cls || ''}" data-clase="${c.id}">
+            <div class="puerta-ic">${c.ic}</div>
+            <div>
+              <div class="puerta-t">${esc(c.t)}</div>
+              <div class="puerta-d">${esc(c.d)}</div>
+            </div>
+          </button>`).join('')}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-t">Cómo funciona</div>
+        <ul class="pasos">
+          <li><span class="n">1</span><span>Escribe lo que quiere contar y, si tiene, adjunta
+            <strong>una o dos fotos</strong>.</span></li>
+          <li><span class="n">2</span><span>Deja su <strong>nombre y su teléfono</strong>. El teléfono
+            <strong>no se publica</strong>: es para llamarle y confirmar antes de imprimir.</span></li>
+          <li><span class="n">3</span><span>La redacción lo revisa. Si entra, sale en la revista;
+            si no se pudo comprobar a tiempo, queda para la siguiente.</span></li>
+        </ul>
+        <div class="aviso aviso-ok">
+          Su opinión enriquece este proyecto. La revista la hacen cuatro personas:
+          <strong>lo que pasa en su escuela solo lo sabe usted</strong>.
+        </div>
+      </div>
+
+      <p class="pie">
+        Hecho con <a href="https://metas.policastsapien.com" target="_blank" rel="noopener">M.E.T.A.S</a><br>
+        <button id="p-retirar">¿Se arrepintió de algo que mandó? Retírelo aquí</button>
+      </p>
+    </div>`;
+
+  document.querySelectorAll('.puerta').forEach(b => b.addEventListener('click', () => {
+    B = nuevoBorrador();
+    B.clase = b.dataset.clase;
+    verFormulario();
+  }));
+  const bRe = document.getElementById('p-reintentar');
+  if (bRe) bRe.addEventListener('click', async () => {
+    B = Object.assign(nuevoBorrador(), pend);
+    bRe.disabled = true; bRe.textContent = '⏳ Mandando…';
+    await enviar(true);
+  });
+  const bTi = document.getElementById('p-tirar');
+  if (bTi) bTi.addEventListener('click', () => {
+    if (confirm('¿Descartar lo que quedó sin mandar? No se puede recuperar.')) {
+      borraPendiente(); verPortada();
+    }
+  });
+  document.getElementById('p-retirar').addEventListener('click', verRetirar);
+}
+
+/* ═════════ PANTALLA: el formulario ═════════ */
+function verFormulario() {
+  PASO = 'formulario';
+  const c = claseDe(B.clase);
+  const esAulas = B.clase === 'aulas';
+
+  $app.innerHTML = `
+    <div class="hero" style="padding:18px 18px 22px">
+      <div class="hero-ic" style="font-size:40px">${c.ic}</div>
+      <h1 style="font-size:21px">${esc(c.t)}</h1>
+      <div class="hero-sub">${esc(c.d)}</div>
+    </div>
+    <div class="wrap">
+      <div class="card">
+        <div class="campo">
+          <label for="f-tit">Póngale un título ${opcional()}</label>
+          <input class="inp" id="f-tit" value="${esc(B.titulo)}" maxlength="140"
+                 placeholder="En pocas palabras, ¿de qué se trata?" autocapitalize="sentences">
+        </div>
+        <div class="campo">
+          <label for="f-txt">Cuéntelo aquí</label>
+          <textarea class="inp" id="f-txt" maxlength="${MAX_TEXTO}"
+                    placeholder="Escriba con sus palabras. No hace falta que quede bonito: eso lo arregla la redacción.">${esc(B.texto)}</textarea>
+          <div class="cuenta-letras" id="f-cuenta"></div>
+          <div class="pista">💡 ${esc(c.guia)}</div>
+        </div>
+      </div>
+
+      ${esAulas ? `
+      <div class="card">
+        <div class="card-t">🏫 Del evento</div>
+        <div class="campo">
+          <label for="f-esc">¿Qué escuela o centro?</label>
+          <input class="inp" id="f-esc" value="${esc(B.escuela)}" maxlength="120"
+                 placeholder="Nombre completo del centro" autocapitalize="words">
+        </div>
+        <div class="fila2">
+          <div class="campo">
+            <label for="f-evf">¿Qué día?</label>
+            <input class="inp" id="f-evf" type="date" value="${esc(B.evento_fecha)}">
+          </div>
+          <div class="campo">
+            <label for="f-evh">¿A qué hora?</label>
+            <input class="inp" id="f-evh" value="${esc(B.evento_hora)}" maxlength="30" placeholder="9:00 a.m.">
+          </div>
+        </div>
+        <div class="campo">
+          <label for="f-evl">¿Dónde?</label>
+          <input class="inp" id="f-evl" value="${esc(B.evento_lugar)}" maxlength="120"
+                 placeholder="El patio, el salón comunal, la cancha…">
+          <div class="pista">La revista sale <strong>cada quince días</strong>. Si el evento es en
+            menos de una semana, avise igual: puede que dé tiempo, y si no, se cuenta después.</div>
+        </div>
+      </div>` : ''}
+
+      <div class="card">
+        <div class="card-t">📷 Fotos ${opcional()}</div>
+        <div class="fotos" id="f-fotos"></div>
+        <input type="file" id="f-file" accept="image/*" style="display:none">
+        <div class="pista" style="margin-top:10px">
+          Hasta <strong>dos</strong>. Se achican solas antes de mandarse, así que no gastan datos de más.
+          Salen mejor las <strong>horizontales</strong> y con la gente cerca.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-t">Para poder publicarlo, ¿quién lo manda?</div>
+        <div class="campo">
+          <label for="f-nom">Su nombre y apellido</label>
+          <input class="inp" id="f-nom" value="${esc(B.nombre)}" maxlength="80"
+                 placeholder="Como quiere que salga firmado" autocapitalize="words" autocomplete="name">
+        </div>
+        <div class="campo">
+          <label for="f-tel">Su teléfono (WhatsApp)</label>
+          <input class="inp" id="f-tel" value="${esc(B.tel)}" maxlength="30"
+                 placeholder="9999-8888" inputmode="tel" autocomplete="tel">
+          <div class="pista">🔒 <strong>No se publica nunca.</strong> Es para llamarle y confirmar
+            antes de imprimir, y para avisarle si sale.</div>
+        </div>
+        <div class="fila2">
+          <div class="campo">
+            <label for="f-lug">¿De dónde escribe?</label>
+            <input class="inp" id="f-lug" value="${esc(B.lugar)}" maxlength="80"
+                   placeholder="Municipio" autocapitalize="words">
+          </div>
+          <div class="campo">
+            <label for="f-car">¿Usted qué es? ${opcional()}</label>
+            <input class="inp" id="f-car" value="${esc(B.cargo)}" maxlength="60"
+                   placeholder="Madre, maestro, alumno…">
+          </div>
+        </div>
+        ${esAulas ? '' : `
+        <div class="campo" style="margin-bottom:0">
+          <label for="f-esc2">¿De qué escuela? ${opcional()}</label>
+          <input class="inp" id="f-esc2" value="${esc(B.escuela)}" maxlength="120"
+                 placeholder="Si escribe desde un centro" autocapitalize="words">
+        </div>`}
+      </div>
+
+      <div class="err" id="f-err"></div>
+      <div class="botones">
+        <button class="btn btn-1" id="f-seguir">Siguiente ›</button>
+        <button class="volver" id="f-volver">‹ Volver</button>
+      </div>
+    </div>`;
+
+  const liga = (id, campo) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => { B[campo] = el.value; if (campo === 'texto') pintaCuenta(); });
+  };
+  liga('f-tit', 'titulo'); liga('f-txt', 'texto'); liga('f-nom', 'nombre');
+  liga('f-tel', 'tel'); liga('f-lug', 'lugar'); liga('f-car', 'cargo');
+  liga('f-esc', 'escuela'); liga('f-esc2', 'escuela');
+  liga('f-evf', 'evento_fecha'); liga('f-evh', 'evento_hora'); liga('f-evl', 'evento_lugar');
+
+  pintaCuenta();
+  ligaSelectorDeFotos();
+  pintaFotos();
+  document.getElementById('f-volver').addEventListener('click', verPortada);
+  document.getElementById('f-seguir').addEventListener('click', () => {
+    const $err = document.getElementById('f-err');
+    const decir = m => { $err.textContent = m; window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    B.texto = String(B.texto || '').trim();
+    B.nombre = String(B.nombre || '').trim();
+    if (B.texto.length < MIN_TEXTO) { decir('👆 Cuente un poco más: con ' + MIN_TEXTO + ' letras no hay nota.'); return; }
+    if (B.nombre.length < 3) { decir('👆 Escriba su nombre. Sin nombre no se publica nada.'); return; }
+    if (String(B.tel || '').replace(/\D/g, '').length < 8) { decir('👆 Falta su teléfono, para poder confirmarlo.'); return; }
+    $err.textContent = '';
+    verEtica();
+  });
+}
+function opcional() { return '<span style="font-weight:600;color:var(--suave)">(si quiere)</span>'; }
+
+function pintaCuenta() {
+  const el = document.getElementById('f-cuenta');
+  if (!el) return;
+  const n = String(B.texto || '').trim().length;
+  el.textContent = n < MIN_TEXTO ? `Escriba al menos ${MIN_TEXTO} letras` : `${n} de ${MAX_TEXTO}`;
+  el.classList.toggle('corto', n < MIN_TEXTO);
+}
+
+function pintaFotos() {
+  const cont = document.getElementById('f-fotos');
+  if (!cont) return;
+  cont.innerHTML =
+    B.fotos.map((f, i) => `
+      <div class="foto">
+        <img src="${f}" alt="Foto ${i + 1}">
+        <button type="button" class="foto-x" data-quitar="${i}" aria-label="Quitar esta foto">✕</button>
+      </div>`).join('') +
+    (B.fotos.length < MAX_FOTOS
+      ? `<button type="button" class="foto-add" id="f-add"><span>＋</span>${B.fotos.length ? 'Otra' : 'Añadir foto'}</button>`
+      : '');
+
+  cont.querySelectorAll('[data-quitar]').forEach(b => b.addEventListener('click', () => {
+    B.fotos.splice(Number(b.dataset.quitar), 1);
+    if (!B.fotos.length) B.permiso_fotos = false;
+    pintaFotos();
+  }));
+  const add = document.getElementById('f-add');
+  const inp = document.getElementById('f-file');
+  if (add && inp) add.addEventListener('click', () => inp.click());
+}
+
+/* El selector de archivos es UNO y vive en la pantalla, no se crea al
+   vuelo en cada toque: así se puede probar de verdad (una prueba no
+   puede meterle un archivo a un elemento que no existe hasta que
+   alguien toca) y así no se acumulan selectores sueltos si el lector
+   se arrepiente tres veces. */
+function ligaSelectorDeFotos() {
+  const inp = document.getElementById('f-file');
+  if (!inp) return;
+  inp.addEventListener('change', async () => {
+    const archivo = inp.files && inp.files[0];
+    // El valor se limpia en cuanto se tiene el archivo: sin esto,
+    // elegir DOS VECES la misma foto no dispara nada y parece que la
+    // aplicación se colgó.
+    if (!archivo) return;
+    const add = document.getElementById('f-add');
+    if (add) { add.disabled = true; add.innerHTML = '<span>⏳</span>Achicando'; }
+    try {
+      if (B.fotos.length < MAX_FOTOS) B.fotos.push(await achicaFoto(archivo));
+    } catch (_) {
+      alert('No se pudo usar esa foto. Pruebe con otra.');
+    }
+    inp.value = '';
+    pintaFotos();
+  });
+}
+
+/* ═════════ PANTALLA: los requisitos ═════════ */
+/* No es letra chica ni un párrafo para tocar «acepto» sin leer. Son
+   las condiciones con las que esto se publica, escritas para que se
+   entiendan de una lectura, y se piden ANTES de mandar y no después:
+   quien no está dispuesto a poner su nombre tiene que enterarse aquí
+   y no cuando ya escribió media página. */
+function verEtica() {
+  PASO = 'etica';
+  const hayFotos = B.fotos.length > 0;
+  $app.innerHTML = `
+    <div class="hero" style="padding:18px 18px 22px">
+      <div class="hero-ic" style="font-size:40px">🤝</div>
+      <h1 style="font-size:21px">Antes de mandarlo</h1>
+      <div class="hero-sub">Esto es una revista, no un grupo de WhatsApp. Cinco condiciones, y son en serio.</div>
+    </div>
+    <div class="wrap">
+      <div class="card">
+        <ul class="etica">
+          <li><span class="etica-ic">🪪</span><span><b>Con su nombre.</b>
+            No se publica nada anónimo. Su teléfono no sale nunca: sirve para
+            llamarle y confirmar antes de imprimir.</span></li>
+          <li><span class="etica-ic">✔️</span><span><b>Que sea cierto.</b>
+            Cuente lo que vio, o diga quién se lo contó. Si un dato es un rumor,
+            escríbalo como rumor.</span></li>
+          <li><span class="etica-ic">🗣️</span><span><b>Sin insultos, y con derecho a respuesta.</b>
+            Se puede decir qué está mal sin llamarle nada a nadie. Si señala a una persona
+            o a una institución, se la va a buscar para que dé su versión <b>antes</b> de publicar.</span></li>
+          <li><span class="etica-ic">🧒</span><span><b>Cuidado con los niños.</b>
+            No mande fotos de menores sin permiso de su familia, ni el nombre de un menor
+            dentro de una denuncia. Tampoco direcciones de casa ni teléfonos de nadie.</span></li>
+          <li><span class="etica-ic">📰</span><span><b>Mandarlo no es publicarlo.</b>
+            La redacción revisa, comprueba y decide. Si no sale, casi siempre es porque
+            no se pudo comprobar a tiempo, y entonces queda para la siguiente.</span></li>
+        </ul>
+      </div>
+
+      ${hayFotos ? `
+      <div class="card">
+        <div class="card-t">📷 Sobre sus ${B.fotos.length === 1 ? 'foto' : 'fotos'}</div>
+        <label class="acepto">
+          <input type="checkbox" id="e-fotos" ${B.permiso_fotos ? 'checked' : ''}>
+          <span>Las tomé yo o tengo permiso para mandarlas, y quien sale en ellas
+            está de acuerdo. <b>Si sale un niño o una niña, su familia lo sabe y lo permite.</b></span>
+        </label>
+      </div>` : ''}
+
+      <div class="card">
+        <label class="acepto">
+          <input type="checkbox" id="e-ok" ${B.etica_ok ? 'checked' : ''}>
+          <span>Leí las condiciones, lo que mando es cierto y me hago responsable de ello.</span>
+        </label>
+      </div>
+
+      <div class="err" id="e-err"></div>
+      <div class="botones">
+        <button class="btn btn-ok" id="e-enviar">📤 Mandarlo a la revista</button>
+        <button class="volver" id="e-volver">‹ Volver a lo que escribí</button>
+      </div>
+      <p class="pie">Puede retirarlo después: se le va a dar un folio con el que
+        borrarlo usted mismo cuando quiera.</p>
+    </div>`;
+
+  const $ok = document.getElementById('e-ok');
+  $ok.addEventListener('change', () => { B.etica_ok = $ok.checked; });
+  const $fo = document.getElementById('e-fotos');
+  if ($fo) $fo.addEventListener('change', () => { B.permiso_fotos = $fo.checked; });
+
+  document.getElementById('e-volver').addEventListener('click', verFormulario);
+  document.getElementById('e-enviar').addEventListener('click', () => {
+    const $err = document.getElementById('e-err');
+    if (!B.etica_ok) { $err.textContent = '👆 Falta marcar que acepta las condiciones.'; return; }
+    if (hayFotos && !B.permiso_fotos) {
+      $err.textContent = '👆 Falta lo de las fotos. Si no tiene el permiso, quítelas y mándelo sin ellas.';
+      return;
+    }
+    $err.textContent = '';
+    enviar(false);
+  });
+}
+
+/* ═════════ Enviar ═════════ */
+async function enviar(desdePendiente) {
+  const $b = document.getElementById('e-enviar');
+  if ($b) { $b.disabled = true; $b.textContent = '⏳ Mandando…'; }
+
+  const cuerpo = {
+    p_huella: huella(), p_clase: B.clase,
+    p_titulo: String(B.titulo || '').trim(), p_texto: String(B.texto || '').trim(),
+    p_nombre: String(B.nombre || '').trim(), p_tel: String(B.tel || '').trim(),
+    p_correo: String(B.correo || '').trim(), p_lugar: String(B.lugar || '').trim(),
+    p_escuela: String(B.escuela || '').trim(), p_cargo: String(B.cargo || '').trim(),
+    p_evento_fecha: B.evento_fecha || null,
+    p_evento_hora: String(B.evento_hora || '').trim(),
+    p_evento_lugar: String(B.evento_lugar || '').trim(),
+    p_etica_ok: !!B.etica_ok, p_etica_version: ETICA_VERSION,
+    p_permiso_fotos: !!B.permiso_fotos,
+    p_fotos: B.fotos,
+  };
+
+  let folio = '';
+  try { folio = String((await rpc('faro_buzon_enviar', cuerpo)) || ''); } catch (_) { folio = ''; }
+
+  if (folio) {
+    borraPendiente();
+    apuntaMio(folio, B.clase);
+    verGracias(folio);
+    return;
+  }
+  // No llegó. Se guarda para reintentar y se ofrece la salida por
+  // WhatsApp: un lector que cree que mandó algo y no, es una nota
+  // perdida que nadie va a echar de menos porque nadie sabe que existió.
+  const guardado = guardaPendiente(Object.assign({}, B, { cuando: Date.now() }));
+  verFallo(guardado, desdePendiente);
+}
+
+/* Lo que el lector le manda a quien le pasó el enlace, si el
+   internet falló: lo mismo que iba a mandar, ya escrito. */
+function textoRespaldo() {
+  const c = claseDe(B.clase);
+  return c.ic + ' *' + c.t.toUpperCase() + ' — para la revista*\n' +
+    (B.titulo ? '*' + B.titulo + '*\n' : '') + '\n' +
+    B.texto + '\n\n' +
+    '👤 ' + B.nombre + (B.cargo ? ' (' + B.cargo + ')' : '') + '\n' +
+    '📞 ' + B.tel + '\n' +
+    (B.lugar ? '📍 ' + B.lugar + '\n' : '') +
+    (B.escuela ? '🏫 ' + B.escuela + '\n' : '') +
+    (B.clase === 'aulas' && B.evento_fecha ? '🗓️ ' + fechaLarga(B.evento_fecha) +
+      (B.evento_hora ? ' · ' + B.evento_hora : '') + '\n' : '') +
+    (B.fotos.length ? '\n(Van ' + B.fotos.length + ' foto' + (B.fotos.length === 1 ? '' : 's') +
+      ' aparte: se mandan por WhatsApp desde la galería.)\n' : '') +
+    '\n_Se mandó desde el buzón del lector, pero no había internet._';
+}
+
+function verFallo(guardado, desdePendiente) {
+  $app.innerHTML = `
+    <div class="wrap">
+      <div class="gracias">
+        <div class="gracias-ic">📡</div>
+        <h2>No se pudo mandar</h2>
+        <p>Parece que no hay internet${desdePendiente ? ' todavía' : ''}. Su texto <strong>no se ha perdido</strong>.</p>
+        <div class="aviso">
+          ${guardado === 'entero'
+            ? 'Quedó guardado en este teléfono, con sus fotos. Vuelva a abrir este enlace cuando tenga señal y se manda con un toque.'
+            : guardado === 'sin-fotos'
+              ? 'Quedó guardado en este teléfono, pero <strong>sin las fotos</strong> (no cabían). Cuando tenga señal, vuelva a abrir este enlace y añádalas otra vez.'
+              : '<strong>Este teléfono no pudo guardarlo.</strong> Mándelo ahora por WhatsApp con el botón de abajo, o no se recupera.'}
+        </div>
+        <div class="botones">
+          <button class="btn btn-1" id="x-reintentar">🔄 Probar otra vez</button>
+          <button class="btn btn-wa" id="x-wa">📲 Mandarlo por WhatsApp</button>
+          <button class="volver" id="x-volver">‹ Volver a lo que escribí</button>
+        </div>
+        ${B.fotos.length ? `<p class="pie">Por WhatsApp va el texto. Las fotos añádalas usted
+          desde la galería, en el mismo mensaje.</p>` : ''}
+      </div>
+    </div>`;
+  document.getElementById('x-reintentar').addEventListener('click', async (e) => {
+    e.target.disabled = true; e.target.textContent = '⏳ Probando…';
+    await enviar(true);
+  });
+  document.getElementById('x-wa').addEventListener('click', () => waAbrir(textoRespaldo()));
+  document.getElementById('x-volver').addEventListener('click', verFormulario);
+}
+
+function verGracias(folio) {
+  PASO = 'gracias';
+  const c = claseDe(B.clase);
+  const cierre = EDICION && EDICION.cierre ? EDICION.cierre : quincenaActual().cierre;
+  const esAulas = B.clase === 'aulas';
+  $app.innerHTML = `
+    <div class="wrap">
+      <div class="gracias">
+        <div class="gracias-ic">🎉</div>
+        <h2>¡Recibido!</h2>
+        <p>Su ${esc(c.t.toLowerCase().replace(/^una?\s+/, ''))} ya está en la mesa de la redacción.</p>
+
+        <div class="folio">
+          <div class="folio-n">${esc(folio)}</div>
+          <div class="folio-t">Apunte este folio. Con él y su teléfono puede retirar
+            lo que mandó cuando quiera.</div>
+        </div>
+
+        <div class="card" style="text-align:left">
+          <div class="card-t">Lo que sigue</div>
+          <ul class="pasos">
+            <li><span class="n">1</span><span>Alguien de la redacción lo lee y,
+              si hace falta, <strong>le llama al ${esc(B.tel)}</strong> para confirmar.</span></li>
+            <li><span class="n">2</span><span>La próxima revista cierra el
+              <strong>${esc(fechaLarga(cierre))}</strong>. Lo que entra antes se considera para ese número.</span></li>
+            <li><span class="n">3</span><span>${esAulas
+              ? 'Si se puede cubrir el evento, le avisan antes del día para ponerse de acuerdo.'
+              : 'Si sale publicado, le avisan. Si no sale, casi siempre es porque no se pudo comprobar a tiempo.'}</span></li>
+          </ul>
+        </div>
+
+        <div class="botones">
+          <button class="btn btn-1" id="g-otro">📬 Mandar otra cosa</button>
+          <button class="btn btn-sec" id="g-compartir">↗️ Pasarle el buzón a alguien más</button>
+        </div>
+        <button class="volver" id="g-retirar">Me arrepentí: quiero retirarlo</button>
+      </div>
+      <p class="pie">Hecho con <a href="https://metas.policastsapien.com" target="_blank" rel="noopener">M.E.T.A.S</a></p>
+    </div>`;
+  document.getElementById('g-otro').addEventListener('click', () => { B = nuevoBorrador(); verPortada(); });
+  document.getElementById('g-compartir').addEventListener('click', () => waAbrir(textoCompartir()));
+  document.getElementById('g-retirar').addEventListener('click', () => verRetirar(folio, B.tel));
+}
+
+function textoCompartir() {
+  return '📬 *Buzón del lector*\n' +
+    'Si en su escuela pasó algo que merece contarse —o algo que está mal y debería saberse—\n' +
+    'aquí se manda a la revista, desde el teléfono y sin registrarse 👇\n' + enlaceMio();
+}
+
+/* ═════════ PANTALLA: retirar lo mandado ═════════ */
+/* La promesa del punto 4 de arriba, hecha pantalla. Pide las dos
+   cosas que solo tiene quien lo mandó: su folio y su teléfono. */
+function verRetirar(folio, tel) {
+  PASO = 'retirar';
+  $app.innerHTML = `
+    <div class="hero" style="padding:18px 18px 22px">
+      <div class="hero-ic" style="font-size:40px">🗑️</div>
+      <h1 style="font-size:21px">Retirar lo que mandó</h1>
+      <div class="hero-sub">Se borra del todo, con sus fotos, y nadie de la redacción lo vuelve a ver.</div>
+    </div>
+    <div class="wrap">
+      <div class="card">
+        <div class="campo">
+          <label for="r-fol">Su folio</label>
+          <input class="inp" id="r-fol" value="${esc(folio || '')}" maxlength="12"
+                 placeholder="B-7K3M" autocapitalize="characters" autocomplete="off"
+                 style="letter-spacing:3px;font-weight:900;text-transform:uppercase">
+          <div class="pista">Se lo dimos al mandarlo. Si lo perdió, escríbale a quien le pasó el enlace.</div>
+        </div>
+        <div class="campo" style="margin-bottom:0">
+          <label for="r-tel">El teléfono con el que lo mandó</label>
+          <input class="inp" id="r-tel" value="${esc(tel || '')}" maxlength="30"
+                 placeholder="9999-8888" inputmode="tel">
+        </div>
+      </div>
+      <div class="err" id="r-err"></div>
+      <div class="botones">
+        <button class="btn btn-1" id="r-go">Retirarlo</button>
+        <button class="volver" id="r-volver">‹ Volver</button>
+      </div>
+    </div>`;
+  document.getElementById('r-volver').addEventListener('click', verPortada);
+  document.getElementById('r-go').addEventListener('click', async () => {
+    const $err = document.getElementById('r-err');
+    const f = document.getElementById('r-fol').value.trim().toUpperCase();
+    const t = document.getElementById('r-tel').value.trim();
+    if (f.length < 4 || String(t).replace(/\D/g, '').length < 8) {
+      $err.textContent = 'Hacen falta el folio y el teléfono, los dos.'; return;
+    }
+    const $b = document.getElementById('r-go');
+    $b.disabled = true; $b.textContent = '⏳ Retirando…';
+    let ok = false;
+    try { ok = (await rpc('faro_buzon_retirar', { p_folio: f, p_tel: t })) === true; } catch (_) { ok = false; }
+    if (ok) {
+      $app.innerHTML = `
+        <div class="centro">
+          <div class="gr">✅</div>
+          <h2>Retirado</h2>
+          <p>Ya no está. Si algún día quiere contarlo otra vez, el buzón sigue aquí.</p>
+          <div class="botones" style="max-width:320px;margin:18px auto 0">
+            <button class="btn btn-1" id="rr-volver">Volver al buzón</button>
+          </div>
+        </div>`;
+      document.getElementById('rr-volver').addEventListener('click', verPortada);
+      return;
+    }
+    $b.disabled = false; $b.textContent = 'Retirarlo';
+    $err.textContent = 'No encontré nada con ese folio y ese teléfono. Revise que sean los mismos que usó.';
+  });
+}
+
+/* ═════════ Arranque ═════════ */
+async function arrancar() {
+  $app.innerHTML = '<div class="centro"><div class="gr">📬</div><p>Abriendo el buzón…</p></div>';
+  // La fecha de cierre es lo único que se le pregunta al servidor, y
+  // si no contesta no pasa nada: la revista es quincenal y la quincena
+  // se calcula aquí. Un buzón que no abre porque falló una consulta
+  // de adorno es un buzón cerrado.
+  try {
+    const filas = await rpc('faro_buzon_estado', {});
+    if (Array.isArray(filas) && filas.length) EDICION = filas[0];
+  } catch (_) {}
+  if (new URLSearchParams(location.search).has('retirar')) verRetirar();
+  else verPortada();
+}
+arrancar();
+</script>
+</body>
+</html>
