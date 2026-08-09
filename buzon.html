@@ -1010,8 +1010,21 @@ function verGracias(folio, corregido) {
         <div class="folio">
           <div class="folio-n">${esc(folio)}</div>
           <div class="folio-t">${corregido
-            ? 'El folio es el mismo de siempre. Guárdelo: con él y su teléfono puede volver a corregirlo o retirarlo.'
-            : 'Apunte este folio. Con él y su teléfono puede corregir o retirar lo que mandó cuando quiera.'}</div>
+            ? 'El folio es el mismo de siempre. Con él y su teléfono puede volver a corregirlo o retirarlo.'
+            : 'Con este folio y su teléfono puede corregir o retirar lo que mandó cuando quiera.'}</div>
+          <button class="btn btn-ok" id="g-guardar" style="margin-top:14px;font-size:16px;padding:15px 12px">
+            📷 Guardar el folio en mi galería
+          </button>
+          <div class="folio-t" id="g-guardar-msg" style="margin-top:8px">
+            Se guarda como una foto, para que no se le pierda.
+          </div>
+        </div>
+        <div id="g-tarjeta" style="display:none;margin-top:14px">
+          <img id="g-tarjeta-img" alt="Su folio" style="width:100%;max-width:340px;border-radius:14px;border:2px solid var(--borde)">
+          <div class="folio-t" style="margin-top:8px;color:var(--suave)">
+            Si no se guardó sola, <strong>mantenga el dedo sobre la imagen</strong>
+            y elija «Guardar imagen».
+          </div>
         </div>
 
         <div class="card" style="text-align:left">
@@ -1043,8 +1056,145 @@ function verGracias(folio, corregido) {
     B = nuevoBorrador(); EDITANDO = null; verPortada();
   });
   document.getElementById('g-compartir').addEventListener('click', () => waAbrir(textoCompartir()));
+
+  document.getElementById('g-guardar').addEventListener('click', async (ev) => {
+    const $b = ev.currentTarget, $m = document.getElementById('g-guardar-msg');
+    $b.disabled = true; $b.textContent = '⏳ Preparando…';
+    const r = await guardarTarjeta(folio, B.tel, B.clase);
+    // La imagen se enseña SIEMPRE, salga como salga el guardado: es la
+    // salida que funciona en todos los teléfonos, sin depender de que
+    // el navegador traiga el menú de compartir.
+    const caja = document.getElementById('g-tarjeta');
+    document.getElementById('g-tarjeta-img').src =
+      dibujaTarjeta(folio, B.tel, B.clase, isoDe(new Date())).toDataURL('image/png');
+    caja.style.display = 'block';
+    $b.disabled = false; $b.textContent = '📷 Guardar el folio en mi galería';
+    $m.textContent = r === 'compartido' ? 'Elija «Guardar imagen» o «Guardar en Fotos».'
+      : r === 'descargado' ? 'Se descargó. Búsquela en sus Descargas o guárdela desde aquí abajo.'
+      : 'Guárdela desde la imagen de abajo.';
+    caja.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
   document.getElementById('g-editar').addEventListener('click', () => abrirMio(folio, B.tel));
   document.getElementById('g-retirar').addEventListener('click', () => verMio(folio, B.tel));
+}
+
+/* ═════════ La tarjeta del folio, para la galería ═════════
+   Un folio en pantalla se pierde en cuanto se cierra la pestaña, y sin
+   él el lector no puede corregir ni retirar lo suyo: la promesa de que
+   puede arrepentirse se queda en el aire. Apuntarlo en un papel es
+   pedirle demasiado a quien está de pie en un pasillo con el teléfono
+   en la mano.
+
+   Así que se le da hecho: una imagen con su folio, su teléfono y la
+   dirección, que se guarda en la galería como una foto más y aparece
+   ahí el día que la necesite. */
+function dibujaTarjeta(folio, tel, clase, fechaISO) {
+  const W = 1080, H = 1250;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  const centro = (t, y, fuente, color) => {
+    x.font = fuente; x.fillStyle = color; x.textAlign = 'center';
+    x.fillText(t, W / 2, y);
+  };
+  // Los renglones se MIDEN antes de pintar nada, y por eso está partido
+  // en dos: primero cuántos salen, después se dibujan. Hacerlo del
+  // tirón obliga a adivinar cuánto va a ocupar un texto para poder
+  // pintar el recuadro de detrás, y el teléfono de cada quien tiene un
+  // largo distinto. Se adivinó una vez y el aviso del final se salió
+  // de su caja y se comió el pie de la tarjeta.
+  const partir = (t, ancho, fuente) => {
+    x.font = fuente;
+    const palabras = String(t).split(' ');
+    const salida = [];
+    let linea = '';
+    for (const p of palabras) {
+      const prueba = linea ? linea + ' ' + p : p;
+      if (x.measureText(prueba).width > ancho && linea) { salida.push(linea); linea = p; }
+      else { linea = prueba; }
+    }
+    if (linea) salida.push(linea);
+    return salida;
+  };
+  const parrafo = (t, y, ancho, alto, fuente, color) => {
+    const ls = partir(t, ancho, fuente);
+    x.fillStyle = color; x.textAlign = 'center';
+    ls.forEach((l, i) => x.fillText(l, W / 2, y + i * alto));
+    return y + ls.length * alto;
+  };
+
+  x.fillStyle = '#f0fdfa'; x.fillRect(0, 0, W, H);
+
+  const g = x.createLinearGradient(0, 0, W, 300);
+  g.addColorStop(0, '#0f766e'); g.addColorStop(1, '#14b8a6');
+  x.fillStyle = g; x.fillRect(0, 0, W, 300);
+  centro('📬', 130, '90px sans-serif', '#ffffff');
+  centro('BUZÓN DEL LECTOR', 210, 'bold 40px sans-serif', 'rgba(255,255,255,.92)');
+  centro('Su comprobante', 265, '34px sans-serif', 'rgba(255,255,255,.85)');
+
+  // El folio, tan grande como quepa: es lo único que hay que leer de
+  // un vistazo dentro de una galería llena de fotos.
+  x.fillStyle = '#ffffff';
+  x.fillRect(70, 360, W - 140, 230);
+  x.strokeStyle = '#5eead4'; x.lineWidth = 6;
+  x.strokeRect(70, 360, W - 140, 230);
+  centro('SU FOLIO', 425, 'bold 34px sans-serif', '#0f766e');
+  centro(folio, 540, 'bold 130px sans-serif', '#0f766e');
+
+  let y = 665;
+  centro('Su teléfono: ' + tel, y, 'bold 44px sans-serif', '#1f2937');
+  y = parrafo(
+    'Guarde esta imagen. Con el folio y su teléfono puede CORREGIR o RETIRAR lo que mandó.',
+    y + 70, W - 180, 52, '40px sans-serif', '#374151');
+
+  y = parrafo('metas.policastsapien.com/buzon.html', y + 40, W - 120, 50,
+    'bold 40px sans-serif', '#0f766e');
+
+  // El aviso que hace falta y que nadie pone: esta imagen ES la llave.
+  // Quien la tenga puede borrar lo que este lector mandó, y si lo que
+  // mandó era una denuncia, eso importa.
+  const AVISO = '⚠️ No la comparta: con estos datos, cualquiera podría retirar lo que usted mandó.';
+  const lineas = partir(AVISO, W - 200, '34px sans-serif');
+  const altoCaja = lineas.length * 48 + 60;
+  x.fillStyle = '#fef3c7';
+  x.fillRect(70, y + 40, W - 140, altoCaja);
+  parrafo(AVISO, y + 40 + 55, W - 200, 48, '34px sans-serif', '#92400e');
+
+  centro((claseDe(clase).t) + ' · ' + fechaLarga(fechaISO), H - 50, '32px sans-serif', '#6b7280');
+  return c;
+}
+
+/* Guardarla. En el teléfono, lo que de verdad la mete en la galería es
+   el menú de compartir (ahí sale «Guardar imagen» / «Guardar en
+   Fotos»); una descarga normal la deja en la carpeta de Descargas, que
+   no es donde la va a buscar. Se intenta lo primero y, si el navegador
+   no lo trae, se descarga. Y pase lo que pase la imagen queda pintada
+   en la pantalla, porque mantener el dedo encima y «Guardar imagen»
+   funciona siempre y en todos. */
+async function guardarTarjeta(folio, tel, clase) {
+  const lienzo = dibujaTarjeta(folio, tel, clase, isoDe(new Date()));
+  const nombre = 'buzon-' + folio + '.png';
+  const blob = await new Promise(r => lienzo.toBlob(r, 'image/png'));
+  if (!blob) return 'no';
+
+  try {
+    const archivo = new File([blob], nombre, { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [archivo] })) {
+      await navigator.share({ files: [archivo], title: 'Mi folio del buzón' });
+      return 'compartido';
+    }
+  } catch (e) {
+    // Si lo cancela él, no es un fallo: no hay que ofrecerle nada más.
+    if (e && e.name === 'AbortError') return 'compartido';
+  }
+  try {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = nombre;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    return 'descargado';
+  } catch (_) { return 'no'; }
 }
 
 function textoCompartir() {

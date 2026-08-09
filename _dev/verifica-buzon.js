@@ -411,7 +411,56 @@ async function adjuntaFoto(page) {
     await page.close();
   }
 
-  /* ── 8. Corregir lo que ya mandó ───────────────────────────── */
+  /* ── 8. El folio, guardado en la galería ───────────────────── */
+  console.log('\n📷 El folio se puede guardar como imagen');
+  {
+    const estado = nuevoEstado();
+    const page = await nuevaPagina(browser, estado);
+    await page.goto(URL_BUZON);
+    await page.waitForSelector('.puerta');
+    await llenaFormulario(page);
+    await page.click('#f-seguir');
+    await page.check('#e-ok');
+    await page.click('#e-enviar');
+    await page.waitForSelector('.folio-n');
+
+    comprueba(await page.locator('#g-guardar').count() === 1,
+      'el botón de guardarlo está donde se acaba de leer el folio');
+    await page.click('#g-guardar');
+    await page.waitForSelector('#g-tarjeta[style*="block"]');
+    const src = await page.getAttribute('#g-tarjeta-img', 'src');
+    comprueba(/^data:image\/png/.test(src) && src.length > 20000,
+      'se pinta una imagen de verdad, y se enseña para poder guardarla con el dedo');
+
+    // La tarjeta lleva DENTRO el folio: dos folios distintos no pueden
+    // dar la misma imagen.
+    const distintas = await page.evaluate(() => {
+      const a = dibujaTarjeta('B-7K3M', '9988-7766', 'nota', '2026-08-08').toDataURL();
+      const b = dibujaTarjeta('B-9WQ2', '9988-7766', 'nota', '2026-08-08').toDataURL();
+      return a !== b;
+    });
+    comprueba(distintas, 'y cada folio da su propia imagen');
+
+    /* Que el aviso del final no se salga de su caja y se coma el pie.
+       Pasó: el recuadro amarillo se dibujaba con una altura a ojo y con
+       un teléfono largo el texto se iba por debajo, encima de la fecha.
+       Se mira el color del recuadro en la franja de abajo: si aparece
+       ahí, es que creció más de la cuenta. */
+    const invade = await page.evaluate(() => {
+      const c = dibujaTarjeta('B-7K3M', '+504 9550-9428 ext. 12', 'aulas', '2026-08-08');
+      const x = c.getContext('2d');
+      const franja = x.getImageData(0, c.height - 90, c.width, 90).data;
+      for (let i = 0; i < franja.length; i += 4) {
+        // #fef3c7, el amarillo del aviso
+        if (franja[i] === 254 && franja[i + 1] === 243 && franja[i + 2] === 199) return true;
+      }
+      return false;
+    });
+    comprueba(!invade, 'el aviso de abajo cabe en su caja y no pisa el pie de la tarjeta');
+    await page.close();
+  }
+
+  /* ── 9. Corregir lo que ya mandó ───────────────────────────── */
   console.log('\n✏️ El lector corrige lo que mandó');
   {
     const estado = nuevoEstado();
@@ -476,7 +525,7 @@ async function adjuntaFoto(page) {
     await page.close();
   }
 
-  /* ── 9. Retirar lo mandado ─────────────────────────────────── */
+  /* ── 10. Retirar lo mandado ────────────────────────────────── */
   console.log('\n🗑️ El lector puede retirar lo que mandó');
   {
     const estado = nuevoEstado();
