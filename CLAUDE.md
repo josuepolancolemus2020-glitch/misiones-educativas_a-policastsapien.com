@@ -353,6 +353,77 @@ buses— y las dos formas de perder una respuesta: contarla doble y no
 contarla. La nube no se toca: se pone un Supabase de mentira con
 `page.route`, así corre sin internet y sin ensuciar datos reales.
 
+## Normativa: el Buzón del lector recoge, no publica
+
+`buzon.html` es una página **pública y autónoma** de M.E.T.A.S, pero lo que
+recoge **no es de M.E.T.A.S**: cae en la herramienta de Redacción de la
+revista quincenal, que vive en otro proyecto y detrás de una puerta con
+contraseña. Esa rareza no es un descuido, es la única forma de que
+funcione: una aplicación privada no puede recibir visitas de la calle.
+
+Un lector cualquiera manda **una nota, una opinión, una denuncia, una
+sugerencia**, o pide que le **cubran un evento de su escuela** en la
+sección Aulas en acción. Con una o dos fotos. El enlace va impreso en la
+revista como **código QR** y suelto en grupos de WhatsApp.
+
+Se parece a la Convocatoria y **no es lo mismo**: la convocatoria PREGUNTA
+por un evento concreto y muere con él; el buzón RECOGE, siempre, y lo que
+llega tiene una persona detrás esperando una llamada.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. **La página no nombra a la revista.** Se pidió expreso: el enlace
+   circula solo por grupos de gente que no tiene por qué saber de quién
+   es. `_dev/verifica-buzon.js` lo comprueba en el código fuente y en las
+   cinco pantallas ya pintadas.
+2. **El enlace no lleva código y no caduca.** La convocatoria sí lo lleva
+   (`?c=R4TP`), porque pregunta por una salida y se acaba. Este va
+   **impreso en papel**, y el papel se guarda: el número del año pasado
+   seguiría en una gaveta con un QR que ya no lleva a ninguna parte. La
+   dirección es una sola y para siempre.
+3. **Nombre y teléfono, siempre.** No es burocracia: es lo que separa una
+   nota de un anónimo. El teléfono **no se publica nunca** y sirve para
+   llamar y confirmar. Sin nombre, sin teléfono o sin aceptar los
+   requisitos, el envío no sale de la pantalla **ni entra en el servidor**:
+   las dos puertas lo comprueban.
+4. **Lo escrito no se pierde.** Si falla el internet queda guardado en el
+   teléfono, se reintenta al volver a abrir el buzón y se ofrece por
+   WhatsApp ya escrito. Un lector que cree que mandó su denuncia y no la
+   mandó es una denuncia que nadie va a echar de menos, porque nadie sabe
+   que existió.
+5. **Se puede retirar.** Con su folio y su teléfono, el lector borra lo
+   suyo sin pedirle permiso a nadie. Una denuncia da miedo al día
+   siguiente, y esa puerta tiene que existir de verdad, no en un párrafo
+   de buenas intenciones. Ahí no hay papelera **a propósito**: una
+   papelera es justo lo que él está pidiendo que no exista.
+
+**Los requisitos de ética se firman con su versión** (`ETICA_VERSION`, hoy
+`2026-08`). Si mañana cambian, la fila sigue diciendo cuáles aceptó **ese**
+lector: un reclamo dentro de un año se resuelve mirando el dato y no la
+memoria de alguien. Si se cambia el texto de los requisitos, **se sube la
+versión**.
+
+Las fotos se **achican en el teléfono** antes de mandarse (1600 px, y
+bajando hasta entrar en el tope). Una foto de cámara moderna pesa cinco
+megas y por el internet de un pueblo no sube nunca: el lector ve la rueda
+girar y se va. El tope lo hace cumplir **también el servidor**, porque la
+pantalla la escribe cualquiera.
+
+**Antes de publicar un cambio del buzón:**
+
+```
+node _dev/servidor-estatico.js      (en otra terminal)
+node _dev/verifica-buzon.js
+```
+
+Vigila lo que cuesta caro: que no se cuele el nombre de la revista, que no
+entre un anónimo, que con fotos se declare el permiso, que mandar dos veces
+CORRIJA en vez de duplicar, y que lo escrito no se pierda. La nube no se
+toca: se pone un Supabase de mentira con `page.route`.
+
+La otra mitad —la bandeja donde cae todo esto, el QR y el paso de envío a
+nota— vive en el repositorio de la revista, con su propia sonda.
+
 ## Normativa: los nombres propios llevan mayúscula, también en los juegos
 
 Vale para **todo texto que ve una persona**: tarjetas de repaso, quiz,

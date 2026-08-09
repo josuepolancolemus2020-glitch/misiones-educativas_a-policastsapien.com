@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meta-app-v102';
+const CACHE_NAME = 'meta-app-v103';
 const STATIC_ASSETS = [
   // Idioma inglés: se pre-cachea para que el botón EN/ES funcione sin red
   // desde la primera vez (antes se quedaba en español y sin avisar).
@@ -24,6 +24,7 @@ const STATIC_ASSETS = [
   './fichas/js/ficha-robot-decide-en.js',
   './padres.html',
   './salida.html',
+  './buzon.html',
   './manifest-padres.json',
   './img/qr-padres.png',
   './img/logo.png',
