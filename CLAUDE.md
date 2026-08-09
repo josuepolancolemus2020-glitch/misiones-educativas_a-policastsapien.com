@@ -38,6 +38,34 @@ el número en dos sitios:
 
 Si no se sella, el despliegue existe pero nadie lo ve.
 
+## Normativa: el SQL de Supabase se pega en el chat, SIEMPRE
+
+Los archivos `SUPABASE-*.sql` —y los de `supabase/sql/` del proyecto de la
+revista— **no se ejecutan solos**: hay que abrirlos, copiarlos enteros y
+pegarlos a mano en el SQL Editor de Supabase. Y eso lo hace el autor
+**desde el teléfono o la tableta**, casi siempre sin el repositorio
+delante.
+
+Por eso: cuando un cambio necesite correr SQL, **el código va escrito en
+la respuesta del chat**, entero y listo para copiar. No vale con decir
+«está en `supabase/sql/buzon_lector.sql`»: buscar un archivo dentro de
+GitHub desde una tableta es exactamente el paso donde el trabajo se queda
+parado una semana.
+
+Con el código van tres cosas más, y las tres hacen falta:
+
+1. **En qué orden** se corre, si son varios archivos.
+2. **Si hay que volver a correr algo que ya se corrió**, y por qué. Pasa
+   más de lo que parece: añadir una clase nueva al Buzón obligó a
+   re-correr los dos archivos, porque la lista de clases vive dentro de
+   las funciones.
+3. **Cómo se comprueba** que quedó puesto, sin tener que fiarse del
+   «Success» del editor.
+
+Se pega **el archivo completo**, no un trozo. Son idempotentes a
+propósito: correrlos dos veces no rompe nada, y un recorte pegado a
+medias sí.
+
 ## Normativa: el catálogo crece, y el texto tiene que saberlo
 
 Cuántas misiones hay **no es un dato del proyecto: es una foto**. Hoy son 57
