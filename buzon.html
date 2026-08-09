@@ -77,6 +77,7 @@
     .puerta-d { font-size: 13.5px; color: var(--suave); margin-top: 2px; }
     .puerta-aulas { border-color: #99f6e4; background: #f0fdfa; }
     .puerta-denuncia { border-color: #fed7aa; }
+    .puerta-metas { border-color: #c7d2fe; background: #eef2ff; }
 
     /* ── Botones ── */
     .botones { display: grid; gap: 10px; margin-top: 16px; }
@@ -275,7 +276,18 @@ const CLASES = [
   { id: 'aulas', ic: '🏫', t: 'Que cubran mi escuela',
     d: 'Un evento para la sección Aulas en acción.', cls: 'puerta-aulas',
     guia: '¿Qué va a pasar, quién participa y por qué vale la pena contarlo? Diga también a quién buscar el día del evento.' },
+  /* La sexta no es material de revista, y por eso lleva su propio
+     camino entero: la revista promociona M.E.T.A.S en sus páginas, y
+     hasta ahora quien la veía y se interesaba no tenía dónde tocar.
+     Un maestro que quiere usarla en su clase y no encuentra a quién
+     preguntarle, no vuelve. */
+  { id: 'metas', ic: '🎓', t: 'Quiero saber más de M.E.T.A.S',
+    d: 'Para usarla con mis alumnos, o si necesito ayuda.', cls: 'puerta-metas',
+    guia: '¿Qué le gustaría hacer con la plataforma? Si ya la usa y algo no le funciona, cuente qué pasó y en qué pantalla; puede mandar una foto de lo que ve.' },
 ];
+/* Lo que NO va a la revista. Cambia la pantalla de condiciones, el
+   formulario y lo que se le dice al final. */
+const ES_AYUDA = c => c === 'metas';
 const claseDe = id => CLASES.find(c => c.id === id) || CLASES[0];
 
 /* ── Estado ────────────────────────────────────────────────────── */
@@ -568,13 +580,14 @@ function verFormulario() {
     </div>
     <div class="wrap">
       <div class="card">
+        ${ES_AYUDA(B.clase) ? '' : `
         <div class="campo">
           <label for="f-tit">Póngale un título ${opcional()}</label>
           <input class="inp" id="f-tit" value="${esc(B.titulo)}" maxlength="140"
                  placeholder="En pocas palabras, ¿de qué se trata?" autocapitalize="sentences">
-        </div>
+        </div>`}
         <div class="campo">
-          <label for="f-txt">Cuéntelo aquí</label>
+          <label for="f-txt">${ES_AYUDA(B.clase) ? '¿En qué le podemos ayudar?' : 'Cuéntelo aquí'}</label>
           <textarea class="inp" id="f-txt" maxlength="${MAX_TEXTO}"
                     placeholder="Escriba con sus palabras.">${esc(B.texto)}</textarea>
           <div class="cuenta-letras" id="f-cuenta"></div>
@@ -622,25 +635,28 @@ function verFormulario() {
         <div class="fotos" id="f-fotos"></div>
         <input type="file" id="f-file" accept="image/*" style="display:none">
         <div class="pista" style="margin-top:10px">
-          Hasta <strong>dos</strong>. Se achican solas antes de mandarse, así que no gastan datos de más.
-          Salen mejor las <strong>horizontales</strong> y con la gente cerca.
+          ${ES_AYUDA(B.clase)
+            ? 'Si algo no le funciona, una <strong>foto de la pantalla</strong> ahorra media conversación.'
+            : 'Hasta <strong>dos</strong>. Se achican solas antes de mandarse, así que no gastan datos de más. Salen mejor las <strong>horizontales</strong> y con la gente cerca.'}
           ${(EDITANDO && EDITANDO.fotosAntes) ? '<br><strong>Ojo:</strong> lo que deje aquí sustituye a las de antes. Si lo deja vacío, se queda sin fotos.' : ''}
         </div>`}
       </div>
 
       <div class="card">
-        <div class="card-t">Para poder publicarlo, ¿quién lo manda?</div>
+        <div class="card-t">${ES_AYUDA(B.clase) ? '¿Cómo le contactamos?' : 'Para poder publicarlo, ¿quién lo manda?'}</div>
         <div class="campo">
           <label for="f-nom">Su nombre y apellido</label>
           <input class="inp" id="f-nom" value="${esc(B.nombre)}" maxlength="80"
-                 placeholder="Como quiere que salga firmado" autocapitalize="words" autocomplete="name">
+                 placeholder="${ES_AYUDA(B.clase) ? 'Para saber cómo llamarle' : 'Como quiere que salga firmado'}"
+                 autocapitalize="words" autocomplete="name">
         </div>
         <div class="campo">
           <label for="f-tel">Su teléfono (WhatsApp)</label>
           <input class="inp" id="f-tel" value="${esc(B.tel)}" maxlength="30"
                  placeholder="9999-8888" inputmode="tel" autocomplete="tel">
-          <div class="pista">🔒 <strong>No se publica nunca.</strong> Es para llamarle y confirmar
-            antes de imprimir, y para avisarle si sale.</div>
+          <div class="pista">🔒 <strong>No se publica nunca.</strong> ${ES_AYUDA(B.clase)
+            ? 'Es para escribirle y ayudarle, y para nada más.'
+            : 'Es para llamarle y confirmar antes de imprimir, y para avisarle si sale.'}</div>
         </div>
         <div class="fila2">
           <div class="campo">
@@ -758,6 +774,58 @@ function ligaSelectorDeFotos() {
   });
 }
 
+/* La versión corta, para quien pide ayuda con M.E.T.A.S */
+function verEticaAyuda() {
+  PASO = 'etica';
+  $app.innerHTML = `
+    <div class="hero" style="padding:18px 18px 22px">
+      <div class="hero-ic" style="font-size:40px">🎓</div>
+      <h1 style="font-size:21px">Un último paso</h1>
+      <div class="hero-sub">Esto no va a la revista: va a quien puede ayudarle.</div>
+    </div>
+    <div class="wrap">
+      <div class="card">
+        <ul class="etica">
+          <li><span class="etica-ic">🔒</span><span><b>Sus datos no se publican.</b>
+            Su nombre y su teléfono sirven para contactarle y ayudarle, y para
+            nada más. No se le pasan a nadie ni se usan para mandarle
+            publicidad.</span></li>
+          <li><span class="etica-ic">💬</span><span><b>Le van a escribir.</b>
+            Normalmente por WhatsApp, al número que dejó. M.E.T.A.S la lleva
+            una familia, no una empresa: puede tardar un par de días, pero
+            contesta una persona.</span></li>
+          <li><span class="etica-ic">🆓</span><span><b>No cuesta nada.</b>
+            Ni la plataforma ni la ayuda. Si alguien le pide dinero por
+            usarla, no somos nosotros.</span></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <label class="acepto">
+          <input type="checkbox" id="e-ok" ${B.etica_ok ? 'checked' : ''}>
+          <span>Acepto que me contacten a este número para ayudarme.</span>
+        </label>
+      </div>
+
+      <div class="err" id="e-err"></div>
+      <div class="botones">
+        <button class="btn btn-ok" id="e-enviar">🎓 Mandarlo</button>
+        <button class="volver" id="e-volver">‹ Volver a lo que escribí</button>
+      </div>
+    </div>`;
+  const $ok = document.getElementById('e-ok');
+  $ok.addEventListener('change', () => { B.etica_ok = $ok.checked; });
+  document.getElementById('e-volver').addEventListener('click', verFormulario);
+  document.getElementById('e-enviar').addEventListener('click', () => {
+    if (!B.etica_ok) {
+      document.getElementById('e-err').textContent = '👆 Falta marcar que podemos contactarle.';
+      return;
+    }
+    document.getElementById('e-err').textContent = '';
+    enviar(false);
+  });
+}
+
 /* ═════════ PANTALLA: los requisitos ═════════ */
 /* No es letra chica ni un párrafo para tocar «acepto» sin leer. Son
    las condiciones con las que esto se publica, escritas para que se
@@ -767,6 +835,14 @@ function ligaSelectorDeFotos() {
 function verEtica() {
   PASO = 'etica';
   const hayFotos = B.fotos.length > 0;
+
+  /* Quien pide ayuda con la plataforma NO va a salir en la revista, así
+     que enseñarle las cinco condiciones de lo que se publica sería
+     asustarlo con reglas que no le tocan —y espantar justo a quien
+     queremos que escriba—. Se le pide lo único que aquí sí importa:
+     permiso para contactarle. */
+  if (ES_AYUDA(B.clase)) { verEticaAyuda(); return; }
+
   $app.innerHTML = `
     <div class="hero" style="padding:18px 18px 22px">
       <div class="hero-ic" style="font-size:40px">🤝</div>
@@ -1002,11 +1078,13 @@ function verGracias(folio, corregido) {
   $app.innerHTML = `
     <div class="wrap">
       <div class="gracias">
-        <div class="gracias-ic">${corregido ? '✅' : '🎉'}</div>
+        <div class="gracias-ic">${corregido ? '✅' : ES_AYUDA(B.clase) ? '🎓' : '🎉'}</div>
         <h2>${corregido ? '¡Corregido!' : '¡Recibido!'}</h2>
         <p>${corregido
           ? 'Se cambió lo que ya tenían, no se mandó otro: en la bandeja sigue habiendo uno solo.'
-          : 'Su ' + esc(c.t.toLowerCase().replace(/^una?\s+/, '')) + ' ya está en la mesa de la redacción.'}</p>
+          : ES_AYUDA(B.clase)
+            ? 'Su mensaje ya le llegó a quien lleva M.E.T.A.S.'
+            : 'Su ' + esc(c.t.toLowerCase().replace(/^una?\s+/, '')) + ' ya está en la mesa de la redacción.'}</p>
 
         <div class="folio">
           <div class="folio-n">${esc(folio)}</div>
@@ -1033,14 +1111,29 @@ function verGracias(folio, corregido) {
           <ul class="pasos">
             <li><span class="n">1</span><span>${corregido
               ? 'Vuelve a la cola <strong>como sin leer</strong>, para que quien ya lo hubiera leído lo lea otra vez y no se quede con los datos viejos.'
-              : 'Alguien de la redacción lo lee y, si hace falta, <strong>le llama al ' + esc(B.tel) + '</strong> para confirmar.'}</span></li>
+              : ES_AYUDA(B.clase)
+                ? 'Le van a escribir al <strong>' + esc(B.tel) + '</strong>, normalmente por WhatsApp.'
+                : 'Alguien de la redacción lo lee y, si hace falta, <strong>le llama al ' + esc(B.tel) + '</strong> para confirmar.'}</span></li>
+            ${ES_AYUDA(B.clase) ? `
+            <li><span class="n">2</span><span>Mientras tanto, la plataforma está abierta y es
+              gratis: puede entrar y mirarla desde ya.</span></li>
+            <li><span class="n">3</span><span>Si le urge, escriba usted primero: en la portada de
+              M.E.T.A.S están los manuales y las guías del maestro.</span></li>
+            ` : `
             <li><span class="n">2</span><span>La próxima revista cierra el
               <strong>${esc(fechaLarga(cierre))}</strong>. Lo que entra antes se considera para ese número.</span></li>
             <li><span class="n">3</span><span>${esAulas
               ? 'Si se puede cubrir el evento, le avisan antes del día para ponerse de acuerdo.'
               : 'Si sale publicado, le avisan. Si no sale, casi siempre es porque no se pudo comprobar a tiempo.'}</span></li>
+            `}
           </ul>
         </div>
+
+        ${ES_AYUDA(B.clase) ? `
+        <div class="botones">
+          <a class="btn btn-1" href="https://metas.policastsapien.com" target="_blank" rel="noopener"
+             style="text-decoration:none;line-height:1.3">🚀 Entrar a M.E.T.A.S ahora</a>
+        </div>` : ''}
 
         <div class="botones">
           <button class="btn btn-1" id="g-otro">📬 Mandar otra cosa</button>

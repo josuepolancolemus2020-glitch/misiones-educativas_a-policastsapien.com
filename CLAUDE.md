@@ -366,6 +366,14 @@ sugerencia**, o pide que le **cubran un evento de su escuela** en la
 sección Aulas en acción. Con una o dos fotos. El enlace va impreso en la
 revista como **código QR** y suelto en grupos de WhatsApp.
 
+Y hay una sexta puerta que **no es material de revista**: 🎓 quien quiere
+saber más de **M.E.T.A.S** o necesita ayuda con ella. La revista
+promociona la plataforma en sus páginas, y sin esta puerta el maestro que
+se interesaba no tenía dónde tocar. Va por el mismo sitio pero con su
+propio camino: sin título, sin las condiciones de lo que se publica —solo
+permiso para contactarle—, y en la bandeja no se convierte en nota, se le
+responde.
+
 Se parece a la Convocatoria y **no es lo mismo**: la convocatoria PREGUNTA
 por un evento concreto y muere con él; el buzón RECOGE, siempre, y lo que
 llega tiene una persona detrás esperando una llamada.

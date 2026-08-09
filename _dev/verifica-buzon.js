@@ -222,8 +222,8 @@ async function adjuntaFoto(page) {
     const page = await nuevaPagina(browser, estado);
     await page.goto(URL_BUZON);
     await page.waitForSelector('.puerta', { timeout: 5000 }).catch(() => {});
-    comprueba(await page.locator('.puerta').count() === 5,
-      'sin internet, el buzón abre y enseña sus cinco puertas');
+    comprueba(await page.locator('.puerta').count() === 6,
+      'sin internet, el buzón abre y enseña sus seis puertas');
     await page.close();
   }
 
@@ -408,6 +408,57 @@ async function adjuntaFoto(page) {
       'el envío llega marcado como Aulas en acción, con su fecha y su centro');
     comprueba(/B-7K3M/.test(await page.textContent('.folio-n')),
       'y el lector se queda con su folio a la vista');
+    await page.close();
+  }
+
+  /* ── 7-bis. La puerta de M.E.T.A.S ─────────────────────────── */
+  console.log('\n🎓 Quien quiere saber más de M.E.T.A.S');
+  {
+    const estado = nuevoEstado();
+    const page = await nuevaPagina(browser, estado);
+    await page.goto(URL_BUZON);
+    await page.waitForSelector('.puerta');
+    comprueba(await page.locator('.puerta').count() === 6,
+      'la puerta está en la portada, con las demás');
+
+    await page.click('.puerta[data-clase="metas"]');
+    await page.waitForSelector('#f-txt');
+    comprueba(await page.locator('#f-tit').count() === 0,
+      'no le pide un título: no va a salir publicado, no hace falta titularlo');
+
+    await page.fill('#f-txt', 'Soy maestro de sexto y quiero usar la plataforma con mis alumnos. ¿Por dónde empiezo?');
+    await page.fill('#f-nom', 'Carlos Mejía');
+    await page.fill('#f-tel', '3333-4444');
+    await page.click('#f-seguir');
+    await page.waitForSelector('#e-ok');
+
+    /* La pantalla de condiciones es OTRA. Enseñarle a quien pide ayuda
+       las cinco reglas de lo que se publica —«sin insultos», «cuidado
+       con los niños»— sería asustarlo con normas que no le tocan. */
+    const condiciones = await page.textContent('#app');
+    comprueba(!/insultos/i.test(condiciones) && !/denuncia/i.test(condiciones),
+      'no le enseña las condiciones de lo que se publica, que no van con él');
+    comprueba(/no se publican/i.test(condiciones) && /contacten/i.test(condiciones),
+      'le pide lo único que aquí importa: permiso para contactarle');
+
+    await page.click('#e-enviar');
+    comprueba(/contactarle/i.test(await page.textContent('#e-err')),
+      'y sin ese permiso tampoco se manda');
+    await page.check('#e-ok');
+    await page.click('#e-enviar');
+    await page.waitForSelector('.folio-n');
+
+    const env = estado.llamadas.filter(l => l.fn === 'faro_buzon_enviar').pop().cuerpo;
+    comprueba(env.p_clase === 'metas',
+      'el envío llega marcado como «metas», no revuelto con lo de la revista');
+    comprueba(env.p_etica_ok === true && env.p_etica_version === '2026-08',
+      'y con su consentimiento firmado igual que los demás');
+
+    const gracias = await page.textContent('#app');
+    comprueba(!/revista cierra/i.test(gracias),
+      'al final no le hablan del cierre de la revista, que no le importa');
+    comprueba(/Entrar a M\.E\.T\.A\.S/i.test(gracias),
+      'y sí le dan la puerta para entrar a mirarla ya mismo');
     await page.close();
   }
 
