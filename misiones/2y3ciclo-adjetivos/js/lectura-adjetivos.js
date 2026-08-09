@@ -627,6 +627,14 @@ const LECTURA_ADJETIVOS_TALLER = [
       });
       return out;
     },
+    /* En el papel no se toca: se subraya, y sobre el texto de la hoja.
+       El motor no sabe de adjetivos, así que la frase de papel la pone
+       la misión — igual que la de pantalla. */
+    enPapel: function (t, u, info) {
+      return 'En esta lectura hay <strong>' + info.total + ' adjetivos</strong>. <strong>Subraya al menos ' +
+        info.meta + '</strong> en el texto de arriba: valen los que dicen <strong>cómo es</strong> algo y los ' +
+        'que dicen <strong>cuál, de quién o cuántos</strong>. Los artículos (el, la, un, una) no cuentan.';
+    },
     /* La zona gris de esta lectura más los artículos: tocarlas no suma
        ni resta, y la pantalla explica por qué en vez de decir «no». */
     neutros: function (t, u) {

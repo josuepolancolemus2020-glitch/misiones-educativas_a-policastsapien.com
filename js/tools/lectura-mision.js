@@ -75,6 +75,35 @@
     });
   }
   function palabras(texto) { return String(texto || '').trim().split(/\s+/); }
+
+  /* ── El texto impreso, cortado en renglones con el conteo ACUMULADO ──
+     En el papel el maestro marca la última palabra leída y toma el número
+     del final de ese renglón, como en las tomas clásicas de fluidez. Por
+     eso el renglón tiene que caber ENTERO de un lado a otro de la hoja:
+     si se parte en dos, el número queda descolgado y la hoja ya no sirve
+     para medir. De ahí que el tamaño de letra y las palabras por renglón
+     vayan siempre en pareja (LM_FZ y LM_PORLINEA). */
+  function lineasDe(texto, porLinea) {
+    var ps = palabras(texto), out = [];
+    for (var i = 0; i < ps.length; i += porLinea) {
+      out.push({ ps: ps.slice(i, i + porLinea), acumulado: Math.min(i + porLinea, ps.length) });
+    }
+    return out;
+  }
+
+  /* Tamaño de letra del texto en la hoja y palabras por renglón, por
+     grado. Son los MÁS GRANDES que caben, medidos con
+     _dev/verifica-impresion-lectura.js sobre las lecturas de las dos
+     misiones. Bajan al subir de grado porque los textos se alargan —58
+     palabras en 2º, hasta 200 en 9º— y la hoja es la misma.
+
+     Van más grandes que los de la ficha de Mi aula (LEC_FICHA_FZ) porque
+     esta primera hoja carga el texto y una sola actividad, no las cinco
+     preguntas: el sitio que sobra se gasta en letra, que es lo que
+     agradece el niño que lee. Cambiar un número de aquí obliga a volver
+     a medir. */
+  var LM_FZ = { 2: 27, 3: 25, 4: 22.5, 5: 20, 6: 18.5, 7: 17.5, 8: 16, 9: 15 };
+  var LM_PORLINEA = { 2: 7, 3: 8, 4: 8, 5: 9, 6: 9, 7: 10, 8: 11, 9: 12 };
   /* Quita puntuación para comparar palabras. \b de JavaScript no sirve con
      acentos («ú» no es carácter de palabra para el motor), así que se
      compara palabra contra palabra, ya limpias. Esta expresión tiene que
@@ -183,6 +212,24 @@
     '.lm-barra{flex:1;min-width:120px;height:10px;border-radius:8px;background:var(--lm-borde);overflow:hidden;}',
     '.lm-barra i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--lm-pri),var(--lm-sec));transition:width 0.1s linear;}',
     '.lm-crono-sub{font-size:0.85rem;color:var(--lm-gris);width:100%;}',
+    /* ── El panel del minuto va ABAJO, debajo del texto ──
+       Estuvo arriba, encima del texto, y el maestro lo probó en el aula:
+       al sonar el minuto el niño acaba de leer la ÚLTIMA línea y tiene
+       los ojos en el final del texto, pero la orden («toca la última
+       palabra que alcanzaste a leer») y el botón de seguir estaban
+       arriba del todo — fuera de la pantalla en cuanto el texto pasa de
+       diez renglones. Se quedaba quieto con el minuto ya cumplido,
+       creyendo que la pantalla se había trabado.
+
+       Abajo, la orden cae justo donde termina de mirar. `sticky` lo
+       mantiene a la vista aunque el texto de 9º no quepa de una vez;
+       donde el navegador no lo sostenga, se queda al final del texto,
+       que es exactamente donde tiene que estar. */
+    '.lm-panel{position:sticky;bottom:0;z-index:6;margin:-0.4rem 0 1.2rem;padding:0.75rem 0.9rem 0.9rem;',
+    'background:var(--lm-card);border:2px solid var(--lm-borde);border-radius:16px;',
+    'box-shadow:0 -6px 20px var(--shadow,rgba(0,0,0,0.13));}',
+    '.lm-panel .lm-crono-caja{margin:0;}',
+    '.lm-panel .lm-btns{margin-top:0.55rem;}',
     /* el texto que se lee y sobre el que se caza */
     /* text-align a la izquierda SIEMPRE, aunque la misión justifique sus
        párrafos: el texto justificado abre huecos desiguales entre palabras
@@ -266,6 +313,74 @@
     '.lm-preg-q{font-size:1.1rem;}.lm-op{font-size:1rem;}}'
   ].join('');
 
+  /* ══════════════ CSS DE LA HOJA IMPRESA ══════════════
+     Nada de las variables de color de la misión: esto sale por una
+     impresora de escuela, muchas veces en blanco y negro y con el tóner
+     justo. Colores oscuros, líneas finas y ni un fondo grande.
+
+     Los márgenes de 10 mm del @page dejan 259,4 mm de alto útil; la hoja
+     se planta en 248 mm a propósito. Ese colchón es el que salva cuando
+     el navegador ignora el @page y pone los suyos (Firefox usa 12,7 mm),
+     porque entonces la hoja SIGUE cabiendo en vez de partirse en dos. */
+  var PAPEL_CSS = [
+    '@page{size:letter portrait;margin:10mm;}',
+    '*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}',
+    'body{color:#12203c;font-family:Arial,Helvetica,sans-serif;}',
+    '.hoja{page-break-after:always;min-height:248mm;display:flex;flex-direction:column;}',
+    '.hoja:last-child{page-break-after:auto;}',
+    '.lp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;',
+    'border-bottom:2.5px solid #1e3a7c;padding-bottom:6px;}',
+    '.lp-head>div:first-child{min-width:0;}',
+    '.lp-tit{font-family:Georgia,serif;font-size:15px;font-weight:700;color:#1e3a7c;}',
+    '.lp-sub{font-size:11px;color:#55637d;margin-top:2px;}',
+    /* la banda no se parte: «125–134 ppm» en dos renglones se lee como
+       dos datos distintos */
+    '.lp-banda{text-align:right;font-size:11px;color:#333;flex:0 0 auto;white-space:nowrap;}',
+    '.lp-reg{display:flex;gap:6px;margin:9px 0;}',
+    '.lp-reg>div{flex:1;}',
+    '.lp-reg-ancho{flex:2.2;}',
+    '.lp-reg span{display:block;font-size:8.5px;text-transform:uppercase;letter-spacing:.4px;color:#7286a8;}',
+    '.lp-reg i{display:block;border-bottom:1.2px solid #55637d;height:16px;}',
+    '.lp-titulo{font-family:Georgia,serif;font-size:20px;text-align:center;margin:6px 0;}',
+    /* El renglón es una fila con el conteo a la derecha: si el texto se
+       le desbordara, el número dejaría de corresponderle. */
+    '.lp-texto{line-height:1.9;}',
+    '.lp-linea{display:flex;align-items:baseline;gap:8px;}',
+    '.lp-linea span{flex:1;}',
+    '.lp-linea em{font-style:normal;font-size:10px;color:#9aa8c0;min-width:26px;text-align:right;}',
+    '.lp-nota{font-size:10px;line-height:1.5;color:#55637d;margin:7px 0 9px;}',
+    '.lp-act{font-family:Georgia,serif;font-size:14px;font-weight:700;color:#1e3a7c;',
+    'border-bottom:1px solid #d4dbe6;padding-bottom:3px;margin:9px 0 5px;',
+    'break-after:avoid;page-break-after:avoid;}',
+    '.lp-ins{font-size:11px;line-height:1.5;color:#55637d;margin-bottom:6px;}',
+    /* Un ítem nunca se parte: su pregunta en una hoja y sus opciones en
+       la siguiente no se puede contestar. */
+    '.lp-item{margin-bottom:8px;break-inside:avoid;page-break-inside:avoid;}',
+    '.lp-q{font-size:12.5px;line-height:1.45;font-weight:700;color:#16305f;}',
+    '.lp-q b{color:#1e3a7c;}',
+    '.lp-q u{text-decoration:none;border-bottom:2px solid #1e3a7c;padding:0 1px;}',
+    /* Las opciones van en fila, como en la ficha de Mi aula: en columna
+       se comían la hoja y obligaban a una tercera. */
+    '.lp-ops{display:flex;flex-wrap:wrap;gap:2px 14px;margin:3px 0 0 16px;}',
+    '.lp-op{font-size:11.5px;line-height:1.4;display:inline-flex;align-items:baseline;gap:5px;}',
+    '.lp-op i{display:inline-block;width:11px;height:11px;border:1.3px solid #333;border-radius:50%;',
+    'flex-shrink:0;align-self:center;}',
+    '.lp-op b{color:#1e3a7c;}',
+    '.lp-hueco{display:inline-block;min-width:80px;border-bottom:1.5px solid #1e3a7c;}',
+    '.lp-dos{column-count:2;column-gap:16px;}',
+    '.lp-fichas{display:flex;flex-wrap:wrap;gap:6px 12px;margin:4px 0 0 16px;}',
+    '.lp-ficha{font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px;',
+    'border:1.2px solid #b9c4d6;border-radius:6px;padding:3px 7px;}',
+    '.lp-ficha i{display:inline-block;width:15px;height:15px;border:1.3px solid #333;border-radius:3px;flex-shrink:0;}',
+    /* la clave se consulta de reojo, con el alumno enfrente: letra mayor */
+    '.lp-aviso{font-size:12px;color:#8a1f1f;border:1.5px solid #8a1f1f;border-radius:6px;',
+    'padding:5px 8px;margin:9px 0;}',
+    '.lp-cl{margin-bottom:9px;break-inside:avoid;page-break-inside:avoid;}',
+    '.lp-cl-t{font-family:Georgia,serif;font-size:13.5px;font-weight:700;color:#1e3a7c;}',
+    '.lp-cl-r{font-size:12.5px;line-height:1.55;margin-top:2px;}',
+    '.lp-foot{margin-top:auto;padding-top:10px;font-size:9px;color:#7286a8;text-align:center;}'
+  ].join('');
+
   function inyectaCSS() {
     if (document.getElementById('lm-css')) return;
     var s = document.createElement('style');
@@ -309,7 +424,11 @@
     }
     function estadoInicial(a) {
       if (a.forma === 'cazar') return { hallados: [], fallos: 0, rendido: false };
-      if (a.forma === 'ordenar') return { i: 0, puestos: [], fallos: 0, rondaFallo: false, aciertos: 0 };
+      /* Una ficha de estado POR RONDA, no una sola para la de turno: con
+         el botón de atrás el alumno puede volver a una ronda ya resuelta,
+         y con el estado compartido se le borraba —y al rehacerla sumaba
+         otra vez—. Guardada por ronda, lo hecho queda hecho y visible. */
+      if (a.forma === 'ordenar') return { i: 0, fallos: 0, rondas: [] };
       return { i: 0, resp: [] };
     }
     st = limpio('elegir');
@@ -334,6 +453,12 @@
     }
 
     function textos() { return (st.grado && corpus[st.grado]) || []; }
+    function porId(id) {
+      if (!id) return actual();
+      var l = textos();
+      for (var i = 0; i < l.length; i++) if (l[i].id === id) return l[i];
+      return null;
+    }
     function actual() {
       var l = textos();
       for (var i = 0; i < l.length; i++) if (l[i].id === st.textoId) return l[i];
@@ -421,7 +546,10 @@
           '</div>' +
           '<div class="lm-btns">' +
             '<button class="btn btn-pri" id="lm-empezar"' + (st.textoId ? '' : ' disabled') + '>⏱️ Empezar el minuto</button>' +
+            '<button class="btn btn-g" id="lm-papel"' + (st.textoId ? '' : ' disabled') + '>🖨️ Imprimir en papel</button>' +
           '</div>' +
+          '<p class="lm-pista">🖨️ En papel salen <strong>tres hojas</strong>: dos con la lectura y sus actividades para el ' +
+            'alumno, y la clave para el maestro. En un aula de 43 no hay un teléfono por niño, y la lectura se toma igual.</p>' +
         '</div>');
 
       cada('[data-lm-grado]', function (b) {
@@ -435,6 +563,8 @@
       cada('[data-lm-texto]', function (b) {
         b.onclick = function () { suena('click'); st.textoId = b.dataset.lmTexto; pinta(); };
       });
+      var pa = document.getElementById('lm-papel');
+      if (pa) pa.onclick = function () { suena('click'); imprimir(actual()); };
       var e = document.getElementById('lm-empezar');
       if (e) e.onclick = function () {
         if (!actual()) return;
@@ -451,30 +581,35 @@
       if (!t) { reiniciar(); pinta(); return; }
       var ps = palabras(t.texto);
 
+      /* El texto arriba y TODO el mando abajo: el cronómetro, lo que hay
+         que hacer y los botones. Antes iban encima del texto y el alumno
+         terminaba el minuto mirando el final de la lectura, con la orden
+         y el botón fuera de la pantalla. */
       raiz.innerHTML =
         '<div class="card ac-teal">' +
           '<h2>⏱️ ' + esc(t.titulo) + '</h2>' +
+          '<div class="lm-texto" id="lm-texto" aria-label="Texto para leer en voz alta">' +
+            ps.map(function (p, i) { return '<span class="lm-p" data-i="' + i + '">' + esc(p) + '</span>'; }).join(' ') +
+          '</div>' +
+        '</div>' +
+        '<div class="lm-panel" id="lm-panel">' +
           '<div class="lm-crono-caja">' +
             '<div class="lm-crono" id="lm-crono" role="timer" aria-live="off"><span id="lm-num">' + SEGUNDOS + '</span><small>s</small></div>' +
             '<div class="lm-barra"><i id="lm-barra"></i></div>' +
-            '<div class="lm-crono-sub" id="lm-sub">Cuando arranques, <strong>lee en voz alta</strong>. ' +
-              'No tienes que tocar nada: al cumplirse el minuto te pregunto hasta dónde llegaste.</div>' +
           '</div>' +
-          /* El botón de seguir va ARRIBA y ABAJO: con un texto de 9º el
-             alumno termina el minuto mirando el final, y con uno de 4º
-             mirando el principio. Dejarlo en un solo sitio lo obliga a
-             buscar por dónde seguir justo cuando ya terminó. */
+          /* La instrucción se dice en dos renglones y no en cuatro: este
+             panel se queda encima del texto, así que cada renglón suyo es
+             un renglón de lectura tapado. Lo de «Terminé el texto» se
+             cuenta al arrancar, que es cuando ese botón existe. */
+          '<div class="lm-crono-sub" id="lm-sub">Al arrancar, <strong>lee en voz alta</strong>. ' +
+            'No toques nada: al cumplirse el minuto te pregunto hasta dónde llegaste.</div>' +
+          '<div id="lm-avisos"></div>' +
           '<div class="lm-btns">' +
             '<button class="btn btn-pri" id="lm-arrancar">▶️ Arrancar</button>' +
             '<button class="btn btn-g" id="lm-termine" style="display:none">✅ Terminé el texto</button>' +
             '<button class="btn btn-g" id="lm-seguir" style="display:none">👉 Seguir a las actividades</button>' +
             '<button class="btn btn-d" id="lm-cancelar">Cancelar</button>' +
           '</div>' +
-          '<div id="lm-avisos"></div>' +
-          '<div class="lm-texto" id="lm-texto" aria-label="Texto para leer en voz alta">' +
-            ps.map(function (p, i) { return '<span class="lm-p" data-i="' + i + '">' + esc(p) + '</span>'; }).join(' ') +
-          '</div>' +
-          '<div class="lm-btns"><button class="btn btn-g" id="lm-seguir2" style="display:none">👉 Seguir a las actividades</button></div>' +
         '</div>';
 
       var crono = document.getElementById('lm-crono');
@@ -485,8 +620,20 @@
       var caja = document.getElementById('lm-texto');
       var btnArr = document.getElementById('lm-arrancar');
       var btnFin = document.getElementById('lm-termine');
-      var btnsSeguir = [document.getElementById('lm-seguir'), document.getElementById('lm-seguir2')];
+      var btnSeguir = document.getElementById('lm-seguir');
       var spans = caja.querySelectorAll('.lm-p');
+      var panel = document.getElementById('lm-panel');
+
+      /* El panel se queda pegado abajo y TAPA lo que pase por debajo. Sin
+         este hueco, el último renglón de la lectura queda partido detrás
+         de él y el alumno no puede ni leerlo ni tocarlo al marcar. Se mide
+         el panel en vez de dejar un hueco a ojo, porque su alto cambia con
+         el aviso que tenga puesto y con el tamaño de letra del teléfono. */
+      function ajustaHueco() {
+        caja.style.paddingBottom = (panel.offsetHeight + 14) + 'px';
+      }
+      ajustaHueco();
+      window.addEventListener('resize', ajustaHueco);
 
       function marca(i) {
         if (i == null || i < 0 || i >= spans.length) return;
@@ -496,7 +643,10 @@
           spans[k].classList.toggle('lm-aqui', k === i);
         }
       }
-      function aviso(html, cls) { avisos.innerHTML = '<div class="lm-aviso ' + (cls || '') + '">' + html + '</div>'; }
+      function aviso(html, cls) {
+        avisos.innerHTML = '<div class="lm-aviso ' + (cls || '') + '">' + html + '</div>';
+        ajustaHueco();
+      }
 
       /* ── MIENTRAS SE LEE NO SE TOCA NADA ──
          Hubo una versión en la que el alumno iba pasando el dedo por
@@ -517,7 +667,7 @@
         marca(+el.dataset.i);
         suena('click');
         if (primera) {
-          btnsSeguir.forEach(function (b) { b.style.display = ''; });
+          btnSeguir.style.display = '';
           aviso('✅ <strong>Marcaste ' + (st.idx + 1) + ' palabra' + (st.idx ? 's' : '') + '.</strong> ' +
             'Si te equivocaste, toca otra; si está bien, sigue a las actividades.', 'lm-av-ok');
         }
@@ -532,7 +682,7 @@
         if (paso) { marca(Math.max(0, Math.min(spans.length - 1, (st.idx == null ? -1 : st.idx) + paso))); ev.preventDefault(); }
         else if (ev.key === 'Home') { marca(0); ev.preventDefault(); }
         else if (ev.key === 'End') { marca(spans.length - 1); ev.preventDefault(); }
-        if (antes == null && st.idx != null) btnsSeguir.forEach(function (b) { b.style.display = ''; });
+        if (antes == null && st.idx != null) btnSeguir.style.display = '';
       });
 
       function alTaller() {
@@ -560,7 +710,7 @@
           aviso('⏰ <strong>¡Minuto cumplido!</strong> Ahora toca la <strong>última palabra que alcanzaste a leer</strong>.');
         } else {
           marca(spans.length - 1);
-          btnsSeguir.forEach(function (b) { b.style.display = ''; });
+          btnSeguir.style.display = '';
           sub.innerHTML = 'Leíste el texto completo.';
           aviso('✅ <strong>Leíste todo el texto en ' + st.seg + ' segundos.</strong> Vamos a las actividades.', 'lm-av-ok');
         }
@@ -572,7 +722,8 @@
         st.ini = Date.now();
         btnArr.style.display = 'none';
         btnFin.style.display = '';
-        sub.innerHTML = 'Lee en voz alta, sin prisa. No toques nada todavía.';
+        sub.innerHTML = 'Lee en voz alta, sin prisa. Si acabas antes, toca <strong>«Terminé el texto»</strong>.';
+        ajustaHueco();
         st.timer = setInterval(function () {
           var ms = Date.now() - st.ini;
           var quedan = Math.max(0, SEGUNDOS - ms / 1000);
@@ -586,7 +737,7 @@
         if (!st.ini || st.congelado) return;
         terminarMinuto(false);   /* él ya marca la última palabra */
       };
-      btnsSeguir.forEach(function (b) { b.onclick = alTaller; });
+      btnSeguir.onclick = alTaller;
       document.getElementById('lm-cancelar').onclick = function () { suena('click'); reiniciar(); pinta(); };
     }
 
@@ -644,7 +795,8 @@
               esc(p.r) +
               (p.tipo === 'critica' ? '<br><br>🗣️ En las preguntas de <strong>opinión</strong> también vale otra respuesta si la ' +
                 'defiendes con un buen porqué. Cuéntasela a tu maestro.' : '') +
-            '</div>' + botonSiguiente(rotuloSiguiente(esUltima))) +
+            '</div>') +
+          barraNav(dada == null ? null : rotuloSiguiente(esUltima)) +
         '</div>';
 
       enlazaOpciones(function (j) { e.resp[i] = j; suena(j === p.c ? 'ok' : 'no'); pinta(); }, dada != null);
@@ -695,7 +847,7 @@
               return '<span class="lm-p ' + claseDe(i) + '" data-i="' + i + '">' + esc(p) + '</span>';
             }).join(' ') +
           '</div>' +
-          '<div class="lm-btns">' +
+          '<div class="lm-btns">' + botonAtras() +
             (cumplida ? '<button class="btn btn-pri" id="lm-sig">' + rotuloSiguiente(true) + '</button>' : '') +
             (!e.rendido ? '<button class="btn btn-d" id="lm-rindo">😕 No encuentro más</button>' : '') +
           '</div>' +
@@ -726,6 +878,8 @@
         setTimeout(function () { el.classList.remove('lm-fallo'); }, 320);
         avisos.innerHTML = '<div class="lm-aviso lm-av-no">' + a.fallo(ps[i].replace(LIMPIA, ''), u) + '</div>';
       });
+      var atr = document.getElementById('lm-atras');
+      if (atr) atr.onclick = function () { suena('click'); irAtras(); };
       var sig = document.getElementById('lm-sig');
       if (sig) sig.onclick = function () { suena('click'); siguienteActo(); };
       var rindo = document.getElementById('lm-rindo');
@@ -757,7 +911,8 @@
           (!dada ? '' :
             '<div class="lm-guia">' +
               (dada === it.grupo ? '✅ <strong>¡Correcto!</strong> ' : '💡 <strong>Era ' + esc(nombreGrupo(a, it.grupo)) + '.</strong> ') +
-              it.explica + '</div>' + botonSiguiente(rotuloSiguiente(esUltima, a.siguiente))) +
+              it.explica + '</div>') +
+          barraNav(dada ? rotuloSiguiente(esUltima, a.siguiente) : null) +
         '</div>';
 
       cada('[data-lm-grupo]', function (b) {
@@ -793,8 +948,8 @@
           opciones(it.ops, dada, it.c) +
           (dada == null ? '' :
             '<div class="lm-guia">' + (dada === it.c ? '✅ <strong>¡Así es!</strong> ' : '💡 ') +
-              (dada === it.c ? (it.bien || '') : (it.mal || '')) + '</div>' +
-            botonSiguiente(rotuloSiguiente(esUltima, a.siguiente))) +
+              (dada === it.c ? (it.bien || '') : (it.mal || '')) + '</div>') +
+          barraNav(dada == null ? null : rotuloSiguiente(esUltima, a.siguiente)) +
         '</div>';
 
       enlazaOpciones(function (j) { e.resp[i] = j; suena(j === it.c ? 'ok' : 'no'); pinta(); }, dada != null);
@@ -807,7 +962,8 @@
       var i = Math.min(e.i, items.length - 1);
       var it = items[i];
       var esUltima = i === items.length - 1;
-      var listo = e.puestos.length === it.fichas.length;
+      var r = e.rondas[i] || (e.rondas[i] = { puestos: [], fallo: false });
+      var listo = r.puestos.length === it.fichas.length;
       /* El orden correcto se calcula del valor, no se escribe: así una
          misión no puede equivocarse al declararlo. */
       var orden = it.fichas.map(function (f, k) { return k; })
@@ -819,13 +975,13 @@
           '<p class="lm-pista">' + (a.pista || '') + (a.pista ? ' · ' : '') + 'Ronda ' + (i + 1) + ' de ' + items.length + '</p>' +
           (it.enunciado ? '<div class="lm-preg-q">' + it.enunciado + '</div>' : '') +
           '<div class="lm-escalera" id="lm-escalera">' +
-            (e.puestos.length
-              ? e.puestos.map(function (k, n) { return (n ? '<span>&lt;</span>' : '') + '<b>' + esc(it.fichas[k].txt) + '</b>'; }).join(' ')
+            (r.puestos.length
+              ? r.puestos.map(function (k, n) { return (n ? '<span>&lt;</span>' : '') + '<b>' + esc(it.fichas[k].txt) + '</b>'; }).join(' ')
               : '<span>Toca primero el más pequeño…</span>') +
           '</div>' +
           '<div class="lm-fichas">' +
             it.fichas.map(function (f, k) {
-              var puesto = e.puestos.indexOf(k);
+              var puesto = r.puestos.indexOf(k);
               /* «cuatrocientos veinticinco mil» no cabe con la letra de
                  «425,000»: la ficha larga baja de tamaño para que se lea
                  entera en un teléfono. */
@@ -836,25 +992,24 @@
             }).join('') +
           '</div>' +
           '<div id="lm-avisos"></div>' +
-          (listo ? '<div class="lm-guia">' + (e.rondaFallo
+          (listo ? '<div class="lm-guia">' + (r.fallo
             ? '💡 ' + (it.mal || 'Ya está en orden. Fíjate en la cantidad de cifras: el que tiene más cifras es siempre mayor.')
-            : '✅ <strong>¡En orden, de una!</strong> ' + (it.bien || '')) + '</div>' +
-            botonSiguiente(rotuloSiguiente(esUltima, a.siguiente)) : '') +
+            : '✅ <strong>¡En orden, de una!</strong> ' + (it.bien || '')) + '</div>' : '') +
+          barraNav(listo ? rotuloSiguiente(esUltima, a.siguiente) : null) +
         '</div>';
 
       var avisos = document.getElementById('lm-avisos');
       cada('[data-lm-ficha]', function (b) {
         b.onclick = function () {
           var k = +b.dataset.lmFicha;
-          if (e.puestos.indexOf(k) >= 0) return;
-          var toca = orden[e.puestos.length];
+          if (r.puestos.indexOf(k) >= 0) return;
+          var toca = orden[r.puestos.length];
           if (k === toca) {
-            e.puestos.push(k);
+            r.puestos.push(k);
             suena('ok');
-            if (e.puestos.length === it.fichas.length && !e.rondaFallo) e.aciertos++;
             pinta();
           } else {
-            e.fallos++; e.rondaFallo = true;
+            e.fallos++; r.fallo = true;
             suena('no');
             b.classList.add('lm-fallo');
             setTimeout(function () { b.classList.remove('lm-fallo'); }, 320);
@@ -866,7 +1021,7 @@
       });
       enlazaSiguiente(function () {
         if (esUltima) siguienteActo();
-        else { e.i = i + 1; e.puestos = []; e.rondaFallo = false; pinta(); }
+        else { e.i = i + 1; pinta(); }
       });
     }
 
@@ -886,10 +1041,51 @@
     function enlazaOpciones(fn, yaHecho) {
       cada('[data-lm-op]', function (b) { b.onclick = function () { if (yaHecho) return; fn(+b.dataset.lmOp); }; });
     }
-    function botonSiguiente(rotulo) {
-      return '<div class="lm-btns"><button class="btn btn-pri" id="lm-sig">' + rotulo + '</button></div>';
+    /* ── VOLVER A LO ANTERIOR ──
+       Lo pidió el maestro viéndolo en el aula: el niño contesta de
+       prisa, quiere releer la pregunta de antes o mirar otra vez el
+       adjetivo que acaba de clasificar, y no había por dónde. Se
+       quedaba con la duda o abandonaba la actividad entera.
+
+       Volver deja MIRAR, no rehacer: lo contestado sigue contestado,
+       con su corrección puesta y los botones desactivados, igual que
+       cuando lo dejó. Por eso desde aquí no se puede tocar el puntaje.
+
+       No hay atrás en el primer ítem de la primera actividad: ahí
+       «atrás» sería volver al texto, y el minuto ya se tomó. */
+    function actoConItems(ai) { return ACTOS[ai].forma !== 'cazar'; }
+    function hayAtras() {
+      if (st.acto > 0) return true;
+      return actoConItems(st.acto) && st.est[st.acto].i > 0;
+    }
+    function irAtras() {
+      var t = actual();
+      if (!t) return;
+      var e = st.est[st.acto];
+      if (actoConItems(st.acto) && e.i > 0) { e.i--; pinta(); return; }
+      /* Una actividad sin ítems se salta sola hacia adelante; al volver
+         hay que saltarla también, o el alumno rebota entre las dos. */
+      var ai = st.acto - 1;
+      while (ai >= 0 && actoConItems(ai) && !itemsDe(t, ai).length) ai--;
+      if (ai < 0) return;
+      st.acto = ai;
+      if (actoConItems(ai)) st.est[ai].i = Math.max(0, itemsDe(t, ai).length - 1);
+      pinta();
+    }
+    function botonAtras() {
+      return hayAtras() ? '<button class="btn btn-d" id="lm-atras">◀ Atrás</button>' : '';
+    }
+    /* La barra de abajo de cada actividad: atrás siempre que haya sitio
+       a dónde volver, y seguir solo cuando ya contestó. */
+    function barraNav(rotulo) {
+      var izq = botonAtras();
+      if (!izq && !rotulo) return '';
+      return '<div class="lm-btns">' + izq +
+        (rotulo ? '<button class="btn btn-pri" id="lm-sig">' + rotulo + '</button>' : '') + '</div>';
     }
     function enlazaSiguiente(fn) {
+      var a = document.getElementById('lm-atras');
+      if (a) a.onclick = function () { suena('click'); irAtras(); };
       var b = document.getElementById('lm-sig');
       if (b) b.onclick = function () { suena('click'); fn(); };
     }
@@ -903,7 +1099,14 @@
         var meta = Math.min(a.meta || 10, total);
         return { puntos: Math.min(e.hallados.length, meta), de: meta, extra: e.hallados.length + ' de ' + total };
       }
-      if (a.forma === 'ordenar') return { puntos: e.aciertos, de: items.length };
+      if (a.forma === 'ordenar') {
+        /* Ronda ganada = ordenada entera y sin un solo fallo. Se cuenta de
+           las rondas guardadas y no de un contador que se va sumando: así
+           volver atrás y mirar una ronda no puede inflar el puntaje. */
+        return { puntos: (e.rondas || []).reduce(function (s, r, k) {
+          return s + (r && items[k] && r.puestos.length === items[k].fichas.length && !r.fallo ? 1 : 0);
+        }, 0), de: items.length };
+      }
       if (a.forma === 'dosGrupos') {
         return { puntos: items.reduce(function (s, it, i) { return s + (e.resp[i] === it.grupo ? 1 : 0); }, 0), de: items.length };
       }
@@ -983,11 +1186,13 @@
           '<div class="lm-btns">' +
             '<button class="btn btn-pri" id="lm-otra">📚 Otra lectura</button>' +
             '<button class="btn btn-g" id="lm-repetir">🔁 Repetir esta</button>' +
+            '<button class="btn btn-g" id="lm-papel">🖨️ Imprimir en papel</button>' +
           '</div>' +
           '<p class="lm-pista">Repetir <strong>el mismo texto</strong> dos o tres días seguidos es el ejercicio que más sube la ' +
             'fluidez, y las actividades son las mismas para que notes cuánto mejoraste. No es trampa: es entrenamiento.</p>' +
         '</div>';
 
+      document.getElementById('lm-papel').onclick = function () { suena('click'); imprimir(t); };
       document.getElementById('lm-otra').onclick = function () { suena('click'); reiniciar(); pinta(); };
       document.getElementById('lm-repetir').onclick = function () {
         suena('click');
@@ -1057,6 +1262,194 @@
         'alta, releyendo el mismo texto dos o tres días. La relectura es lo que más sube la fluidez.';
     }
 
+    /* ══════════════ LA LECTURA EN PAPEL ══════════════
+       En un aula de 43 alumnos hay tres o cuatro teléfonos. La sección
+       entera —el minuto y sus actividades— tenía que poder salir en
+       papel o se quedaba fuera la mayoría de la clase, que es justo la
+       que más lo necesita.
+
+       ── TRES HOJAS, y ni una más ──
+       El maestro fotocopia por grupo: cada hoja de más son 43 hojas de
+       más y una fotocopiadora de escuela pública. El reparto es fijo:
+
+         1ª · la lectura, con el conteo acumulado por renglón, y la
+              actividad que se hace SOBRE ese mismo texto (subrayar);
+         2ª · las demás actividades de la misión;
+         3ª · la clave del maestro — esta NO se fotocopia.
+
+       Así el alumno se lleva dos hojas y el maestro guarda la tercera.
+       Que de verdad quepan en tres se comprueba midiendo, no a ojo:
+       node _dev/verifica-impresion-lectura.js.
+
+       ── Lo que la máquina no sabe ──
+       El motor no conoce el tema de la misión, así que tampoco sabe
+       decir en papel «subraya los adjetivos». Cada actividad de cazar
+       puede traer su `enPapel`; si no la trae, se usa su instrucción de
+       pantalla, que dirá «tócalos» — se entiende, pero está peor. */
+    var LETRA = ['a', 'b', 'c', 'd'];
+
+    function papelOpciones(ops) {
+      return '<div class="lp-ops">' + ops.map(function (o, j) {
+        return '<span class="lp-op"><i></i><b>' + LETRA[j] + ')</b> ' + esc(o) + '</span>';
+      }).join('') + '</div>';
+    }
+    function papelItem(n, cuerpo, extra) {
+      return '<div class="lp-item"><div class="lp-q"><b>' + n + '.</b> ' + cuerpo + '</div>' + (extra || '') + '</div>';
+    }
+
+    /* Una actividad de la misión, pasada a papel. Devuelve el bloque y
+       la línea de la clave del maestro, que se arman de lo mismo para
+       que no se puedan desfasar. */
+    function papelActo(t, ai) {
+      var a = ACTOS[ai], u = utiles(t, a.id), items = itemsDe(t, ai);
+      var cab = '<div class="lp-act">' + a.icono + ' ' + esc(a.titulo) + '</div>';
+      var clave = '';
+
+      if (a.forma === 'cazar') {
+        var objetivos = a.objetivos(t, u) || [];
+        var meta = Math.min(a.meta || 10, objetivos.length);
+        var info = { total: objetivos.length, meta: meta };
+        var ins = a.enPapel ? a.enPapel(t, u, info) : a.instruccion(t, u, info);
+        clave = objetivos.map(function (o) {
+          return esc(u.ps.slice(o.ini, o.fin + 1).join(' ').replace(LIMPIA, ''));
+        }).join(' · ');
+        return { html: cab + '<p class="lp-ins">' + ins + '</p>', clave: clave, corta: true };
+      }
+
+      if (a.forma === 'comprension') {
+        return {
+          html: cab + '<p class="lp-ins">Marca con una ✗ la respuesta correcta. Contesta <strong>sin volver a mirar el texto</strong>.</p>' +
+            items.map(function (p, i) { return papelItem(i + 1, esc(p.q), papelOpciones(p.o)); }).join(''),
+          clave: items.map(function (p, i) { return (i + 1) + ') ' + LETRA[p.c]; }).join(' · ')
+        };
+      }
+
+      if (a.forma === 'dosGrupos') {
+        return {
+          html: cab + '<p class="lp-ins">' + (a.pista ? esc(a.pista) + '. ' : '') + 'Marca con una ✗ el grupo de la palabra subrayada.</p>' +
+            '<div class="lp-dos">' + items.map(function (it, i) {
+              return papelItem(i + 1, it.contexto, '<div class="lp-ops">' + a.grupos.map(function (g) {
+                return '<span class="lp-op"><i></i>' + g.titulo + '</span>';
+              }).join('') + '</div>');
+            }).join('') + '</div>',
+          clave: items.map(function (it, i) { return (i + 1) + ') ' + nombreGrupo(a, it.grupo); }).join(' · ')
+        };
+      }
+
+      if (a.forma === 'ordenar') {
+        return {
+          html: cab + '<p class="lp-ins">' + (a.pista ? esc(a.pista) + '. ' : '') +
+            'Escribe <strong>1, 2, 3…</strong> en el cuadro de cada ficha, del más pequeño al más grande.</p>' +
+            items.map(function (it, i) {
+              return papelItem(i + 1, it.enunciado || '', '<div class="lp-fichas">' + it.fichas.map(function (f) {
+                return '<span class="lp-ficha"><i></i>' + esc(f.txt) + '</span>';
+              }).join('') + '</div>');
+            }).join(''),
+          clave: items.map(function (it, i) {
+            return (i + 1) + ') ' + it.fichas.slice().sort(function (x, y) { return x.v - y.v; })
+              .map(function (f) { return esc(f.txt); }).join(' < ');
+          }).join(' · ')
+        };
+      }
+
+      /* tresOpciones */
+      return {
+        html: cab + '<p class="lp-ins">' + (a.pista ? esc(a.pista) + '. ' : '') + 'Marca con una ✗ la respuesta correcta.</p>' +
+          items.map(function (it, i) {
+            var cuerpo = it.frase ? it.frase.replace(HUECO, '<span class="lp-hueco"></span>') : (it.enunciado || '');
+            return papelItem(i + 1, cuerpo, papelOpciones(it.ops));
+          }).join(''),
+        clave: items.map(function (it, i) { return (i + 1) + ') ' + LETRA[it.c]; }).join(' · ')
+      };
+    }
+
+    function papelHTML(t) {
+      var grado = st.grado;
+      var banda = LECTURA_NORMAS.bandas[grado];
+      var porLinea = LM_PORLINEA[grado] || 12;
+      var fz = LM_FZ[grado] || 15;
+      var ps = palabras(t.texto);
+      var actos = ACTOS.map(function (a, i) { return papelActo(t, i); });
+      /* La que se hace SOBRE el texto va con el texto, en la primera
+         hoja; las demás, en la segunda. Si no hubiera ninguna de esas,
+         la primera actividad sube a acompañar al texto para que la hoja
+         no salga medio vacía. */
+      var enHoja1 = [], enHoja2 = [];
+      actos.forEach(function (b) { (b.corta ? enHoja1 : enHoja2).push(b); });
+      if (!enHoja1.length && enHoja2.length > 1) enHoja1.push(enHoja2.shift());
+
+      var cabecera =
+        '<header class="lp-head">' +
+          '<div><div class="lp-tit">📖 Control de lectura · ' + grado + 'º grado</div>' +
+          '<div class="lp-sub">Misión de ' + esc(tema) + ' · M.E.T.A.S</div></div>' +
+          (banda ? '<div class="lp-banda">Banda de ' + grado + 'º: <b>' + banda[0] + '–' + banda[1] + ' ppm</b></div>' : '') +
+        '</header>';
+      var registro =
+        '<div class="lp-reg">' +
+          ['Alumno/a', 'Fecha', 'Tiempo', 'Palabras leídas', 'PPM'].map(function (x, i) {
+            return '<div' + (i ? '' : ' class="lp-reg-ancho"') + '><span>' + x + '</span><i></i></div>';
+          }).join('') +
+        '</div>';
+
+      var hoja1 =
+        '<section class="hoja">' + cabecera + registro +
+          '<h2 class="lp-titulo">' + esc(t.titulo) + '</h2>' +
+          '<div class="lp-texto" style="font-size:' + fz + 'px">' +
+            lineasDe(t.texto, porLinea).map(function (l) {
+              return '<div class="lp-linea"><span>' + l.ps.map(esc).join(' ') + '</span><em>' + l.acumulado + '</em></div>';
+            }).join('') +
+          '</div>' +
+          '<p class="lp-nota"><strong>' + ps.length + ' palabras en total.</strong> El número del final de cada renglón es el ' +
+            'conteo acumulado: al cumplirse el minuto se marca la última palabra leída y se toma el número de su renglón. ' +
+            'Palabras leídas ÷ segundos × 60 = <strong>palabras por minuto</strong>.</p>' +
+          enHoja1.map(function (b) { return b.html; }).join('') +
+          '<footer class="lp-foot">M.E.T.A.S · ' + esc(t.titulo) + ' · hoja 1 de 2</footer>' +
+        '</section>';
+
+      var hoja2 =
+        '<section class="hoja">' +
+          '<header class="lp-head"><div><div class="lp-tit">✍️ Trabaja el texto que leíste</div>' +
+          '<div class="lp-sub">' + esc(t.titulo) + ' · ' + grado + 'º grado</div></div>' +
+          '<div class="lp-banda">Alumno/a: <b>&nbsp;</b></div></header>' +
+          enHoja2.map(function (b) { return b.html; }).join('') +
+          '<footer class="lp-foot">M.E.T.A.S · ' + esc(t.titulo) + ' · hoja 2 de 2</footer>' +
+        '</section>';
+
+      /* La clave se queda con el maestro: por eso va en su propia hoja y
+         lo dice en grande. Fotocopiada por error, se acabó el ejercicio. */
+      var clave =
+        '<section class="hoja lp-clave">' +
+          '<header class="lp-head"><div><div class="lp-tit">🔑 Clave · para el maestro</div>' +
+          '<div class="lp-sub">' + esc(t.titulo) + ' · ' + grado + 'º grado</div></div></header>' +
+          '<p class="lp-aviso">Esta hoja <strong>no se fotocopia</strong>: es la del maestro.</p>' +
+          ACTOS.map(function (a, i) {
+            return '<div class="lp-cl"><div class="lp-cl-t">' + a.icono + ' ' + esc(a.titulo) + '</div>' +
+              '<div class="lp-cl-r">' + (actos[i].clave || '—') + '</div></div>';
+          }).join('') +
+          '<div class="lp-cl"><div class="lp-cl-t">🩺 Cómo se lee el resultado</div><div class="lp-cl-r">' +
+            (banda ? 'En ' + grado + 'º se espera de <b>' + banda[0] + ' a ' + banda[1] + ' palabras por minuto</b> ' +
+              '(' + esc(LECTURA_NORMAS.fuenteCorta) + '), y es meta de <b>fin de grado</b>: a mitad de año es normal ir por debajo. ' : '') +
+            'En las preguntas <b>críticas</b> la letra marca la opinión mejor razonada; si el alumno defiende otra con un buen ' +
+            'porqué, <b>también vale</b>. Aquí no se mide la precisión —cuántas palabras cambia o se salta—: para eso hay que ' +
+            'escucharlo, y esa toma se hace en 📖 Lectura de Mi aula.</div></div>' +
+          '<footer class="lp-foot">M.E.T.A.S · clave de ' + esc(t.titulo) + '</footer>' +
+        '</section>';
+
+      return '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
+        '<title>' + esc(t.titulo) + ' (' + grado + 'º)</title><style>' + PAPEL_CSS + '</style></head><body>' +
+        hoja1 + hoja2 + clave +
+        '<script>window.onload=function(){setTimeout(function(){window.print();},300);}<\/script>' +
+        '</body></html>';
+    }
+
+    function imprimir(t) {
+      t = t || actual();
+      if (!t) return null;
+      var html = papelHTML(t);
+      window.LecturaMision.abrirImpresion(html);
+      return html;
+    }
+
     /* Evidencia para el maestro (registro.html y la nube). Si la misión
        no cargó la capa de registro, esto simplemente no ocurre. */
     function registra(t, ppm, leidas, total, comp, compDe, puntos, puntosDe) {
@@ -1081,8 +1474,21 @@
     }
 
     pinta();
-    return {
+    /* La última montada queda a mano en LecturaMision.ultima: las
+       herramientas de _dev la necesitan para pedirle la hoja impresa y
+       medirla, y la misión guarda su propia referencia en su variable. */
+    var api = {
       repintar: pinta,
+      /* La hoja impresa, para la misión y para _dev/verifica-impresion-lectura.js */
+      imprimir: function (textoId) { return imprimir(porId(textoId)); },
+      lecturas: function (grado) {
+        return ((grado && corpus[grado]) || []).map(function (t) { return t.id; });
+      },
+      papel: function (textoId, grado) {
+        if (grado) st.grado = grado;
+        var t = porId(textoId);
+        return t ? papelHTML(t) : null;
+      },
       /* Si el alumno se cambia de pestaña a media toma, el cronómetro no
          puede seguir corriendo a sus espaldas: se cancela y vuelve a la
          lista. Un minuto medido a medias no es un minuto. El taller, en
@@ -1090,7 +1496,25 @@
       soltar: function () { if (st.fase === 'leer' && st.ini) { reiniciar(); pinta(); } else pararTimer(); },
       estado: function () { return st.fase; }
     };
+    window.LecturaMision.ultima = api;
+    return api;
   }
 
-  window.LecturaMision = { montar: montar, version: 3 };
+  /* La hoja se abre en otra ventana para no perder la misión de vista.
+     Es un punto de entrada CON NOMBRE a propósito: las herramientas de
+     _dev lo sustituyen para quedarse con el HTML y medir las hojas sin
+     abrir nada ni gastar papel. */
+  function abrirImpresion(html) {
+    var w = window.open('', '_blank', '');
+    if (!w) {
+      var avisa = window.showToast || window.toast;
+      if (typeof avisa === 'function') avisa('⚠️ Activa las ventanas emergentes para imprimir');
+      return null;
+    }
+    w.document.write(html);
+    w.document.close();
+    return w;
+  }
+
+  window.LecturaMision = { montar: montar, abrirImpresion: abrirImpresion, version: 4 };
 })();

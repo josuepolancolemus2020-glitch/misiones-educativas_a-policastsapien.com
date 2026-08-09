@@ -18,6 +18,15 @@
    como error (la propia misión pone «un» entre los numerales, así que
    el alumno que lo toca ha leído bien).
 
+   Vigila además dónde está el MANDO del minuto. Tiene que quedar
+   DEBAJO del texto: al sonar el minuto el alumno acaba de leer la
+   última línea, y si la orden de marcar y el botón de seguir están
+   arriba del todo se queda parado creyendo que la pantalla se trabó.
+
+   Y el botón de atrás de las actividades: que deje volver a mirar lo
+   anterior, y que volver NO reabra lo ya contestado — si dejara
+   rehacerlo, el puntaje del alumno lo pondría el botón y no él.
+
    El tiempo NO se espera de verdad: se adelanta el reloj del
    navegador (page.clock), porque si no cada comprobación costaría un
    minuto y nadie las correría antes de publicar.
@@ -309,6 +318,72 @@ async function contestaComprension(page, op) {
     await page.click('[data-s="s-quiz"]');
     await page.click('[data-s="s-lectura"]');
     comprueba(await page.isVisible('.lm-grados'), 'al volver, la toma a medias se canceló y vuelve a la lista');
+
+    /* ══ 12. el mando del minuto va DEBAJO del texto ══ */
+    console.log('\n═══ El mando del minuto, debajo del texto ═══');
+    await abrirLectura(page);
+    await eligeGradoYTexto(page, 9, 0);   /* el texto más largo: 200 palabras */
+    await page.click('#lm-empezar');
+    const sitio = await page.evaluate(() => {
+      window.scrollTo(0, 0);
+      const t = document.getElementById('lm-texto').getBoundingClientRect();
+      const p = document.getElementById('lm-panel').getBoundingClientRect();
+      return {
+        despuesDelTexto: p.top > t.top,
+        /* pegado abajo: con el texto de 200 palabras sin caber de una
+           vez, el mando tiene que seguir a la vista sin desplazar */
+        aLaVista: p.top >= 0 && p.bottom <= window.innerHeight + 2,
+        texto: Math.round(t.height), pantalla: window.innerHeight,
+      };
+    });
+    comprueba(sitio.despuesDelTexto,
+      'el cronómetro, la instrucción y los botones van debajo del texto, no encima');
+    comprueba(sitio.aLaVista,
+      `el mando se queda pegado abajo y a la vista, aunque el texto de 9º (${sitio.texto}px) ` +
+      `no quepa en la pantalla (${sitio.pantalla}px)`);
+    await page.click('#lm-arrancar');
+    await page.clock.runFor(61000);
+    /* Al cumplirse el minuto, la orden de marcar tiene que estar en el
+       mismo sitio donde acaba de leer, no en otra pantalla. */
+    const ordenAbajo = await page.evaluate(() => {
+      const a = document.querySelector('#lm-panel .lm-aviso');
+      return !!a && /Minuto cumplido/.test(a.textContent);
+    });
+    comprueba(ordenAbajo, 'la orden de marcar la última palabra sale en ese mismo mando de abajo');
+    await page.click('.lm-p[data-i="40"]');
+    comprueba(await page.evaluate(() => {
+      const b = document.getElementById('lm-seguir');
+      return !!b && b.offsetParent !== null && document.getElementById('lm-panel').contains(b);
+    }), 'y el botón de seguir aparece ahí mismo, sin tener que buscarlo arriba');
+
+    /* ══ 13. volver a lo anterior en las actividades ══ */
+    console.log('\n═══ Volver a lo anterior ═══');
+    await page.click('#lm-seguir');
+    await page.waitForSelector('.lm-preg-q');
+    comprueba(!(await page.isVisible('#lm-atras')),
+      'en la primera pregunta no hay atrás: atrás sería volver al texto, y el minuto ya se tomó');
+    const preg1 = await page.textContent('.lm-preg-q');
+    await page.click('[data-lm-op="0"]');
+    await page.click('#lm-sig');
+    const preg2 = await page.textContent('.lm-preg-q');
+    comprueba(preg1 !== preg2, 'la segunda pregunta es otra');
+    await page.waitForSelector('#lm-atras');
+    await page.click('#lm-atras');
+    comprueba((await page.textContent('.lm-preg-q')) === preg1, 'el botón de atrás devuelve a la pregunta anterior');
+    comprueba(await page.isVisible('.lm-guia'), 'y la trae con su corrección puesta, como la dejó');
+    comprueba(await page.isDisabled('.lm-op'), 'no deja volver a contestarla: se puede mirar, no rehacer');
+    await page.click('#lm-sig');
+    comprueba((await page.textContent('.lm-preg-q')) === preg2, 'y desde ahí se sigue adelante con normalidad');
+
+    /* Volver de una actividad a la ANTERIOR, con el taller ya empezado. */
+    for (let i = 0; i < 4; i++) { await page.click('[data-lm-op="0"]'); await page.click('#lm-sig'); }
+    await page.waitForSelector('.lm-marcador');
+    await page.click('#lm-atras');
+    comprueba(await page.isVisible('.lm-preg-q'),
+      'desde la cacería, atrás devuelve a la última pregunta de la actividad anterior');
+    await page.click('#lm-sig');
+    await page.waitForSelector('.lm-marcador');
+    ok('y hacia adelante se vuelve a la cacería sin perder lo cazado');
 
     console.log('\n═══ Errores de JavaScript ═══');
     comprueba(errores.length === 0, errores.length ? 'sin errores en consola — salieron: ' + errores.join(' | ') : 'sin errores en consola');

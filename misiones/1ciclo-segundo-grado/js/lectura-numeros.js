@@ -580,6 +580,12 @@ const LECTURA_NUMEROS_TALLER = (function () {
       objetivos: function (t, u) {
         return grandes(u).map(function (x) { return { ini: x.ini, fin: x.fin, clase: 'a' }; });
       },
+      /* En el papel no se toca: se encierra, sobre el texto de la hoja. */
+      enPapel: function (t, u, info) {
+        return 'En esta lectura hay <strong>' + info.total + ' números mayores que mil</strong>. <strong>Encierra al ' +
+          'menos ' + info.meta + '</strong> en el texto de arriba. Ojo: valen los que están en cifras <em>y</em> los ' +
+          'que están escritos con palabras. Los que no llegan a mil no cuentan.';
+      },
       /* Los pequeños no son un error: son números de verdad, solo que no
          son los que se buscan. Decírselo así le enseña la comparación en
          vez de castigarlo por haber leído bien. */

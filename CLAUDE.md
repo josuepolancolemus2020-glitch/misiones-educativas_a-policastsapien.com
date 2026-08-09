@@ -266,6 +266,40 @@ con una semilla sacada de su id). La misión le pide al alumno que relea
 el mismo texto dos o tres días —es lo que más sube la fluidez— y con
 actividades distintas cada vez no podría notar que va mejorando.
 
+### La misma lectura, en papel
+
+En un aula de 43 hay tres o cuatro teléfonos. Por eso la lectura y sus
+actividades se imprimen, y salen en **tres hojas exactas**: la lectura
+con su conteo acumulado por renglón y la actividad que se hace sobre ese
+mismo texto; las demás actividades; y la clave del maestro, que **no se
+fotocopia**. Cada hoja de más son 43 hojas de más.
+
+El motor no sabe de qué tema son los textos, así que tampoco sabe decir
+en papel «subraya los adjetivos»: cada actividad de cazar trae su
+`enPapel`. Sin ella se usa la instrucción de pantalla, que dirá
+«tócalos» — se entiende, pero está peor.
+
+Los tamaños de `LM_FZ` y `LM_PORLINEA` son **los más grandes que caben,
+medidos**, y van siempre en pareja: si el renglón se parte en dos, el
+número del final —que es el conteo acumulado— queda descolgado y la hoja
+deja de servir para tomar la lectura. Se comprueba con
+`_dev/verifica-impresion-lectura.js`, que cuenta las páginas del PDF.
+
+### El mando del minuto va abajo
+
+El cronómetro, la instrucción y los botones van **debajo del texto**, no
+encima. Al cumplirse el minuto el alumno acaba de leer la última línea y
+tiene los ojos en el final del texto; con la orden de marcar arriba del
+todo se quedaba parado creyendo que la pantalla se había trabado. Se
+queda pegado abajo (`sticky`) para que no se pierda de vista en los
+textos largos, y por eso mismo el texto lleva un hueco al final del alto
+del panel: si no, el último renglón queda tapado y no se puede ni leer ni
+tocar al marcar.
+
+En las actividades hay **atrás**, y volver deja **mirar, no rehacer**: lo
+contestado sigue contestado y con su corrección puesta. El puntaje lo
+pone el alumno, no el botón.
+
 ### Reglas del corpus de una misión (`lectura-<tema>.js`)
 
 - **Cinco lecturas por grado**, con el largo dentro de la banda de
@@ -305,6 +339,7 @@ node _dev/verifica-nombres-propios.js    → mayúsculas de lugares y personas
 node _dev/servidor-estatico.js      (en otra terminal)
 node _dev/verifica-lectura-mision.js     → el minuto y el taller de los adjetivos
 node _dev/verifica-lectura-numeros.js    → el taller de los números
+node _dev/verifica-impresion-lectura.js  → las tres hojas de papel
 ```
 
 El **lector de numerales** tiene prueba propia porque es el que le dice
