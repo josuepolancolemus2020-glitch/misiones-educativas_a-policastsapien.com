@@ -482,6 +482,13 @@
   }
 
   // ---------- buzón de sugerencias ----------
+  /* Lo que se escribe aquí SÍ llega a alguien: metas-sugerencias.js lo
+     lleva a la bandeja del administrador del proyecto. Durante mucho
+     tiempo no fue así —se guardaba en este teléfono y ahí se quedaba—,
+     y por eso la pantalla ahora dice a dónde va: quien avisa de una
+     errata tiene derecho a saber si alguien la va a leer. */
+  var SUG_MIN = 5;   // el mismo mínimo que hacen cumplir el puente y el servidor
+
   function seccionActiva() {
     var t = document.querySelector('.nav-t.active[data-s]');
     return t ? t.getAttribute('data-s') : '';
@@ -493,7 +500,7 @@
     ov.className = 'metas-id-overlay'; ov.id = 'metasSugModal';
     ov.innerHTML = '<div class="metas-id-card" role="dialog" aria-modal="true" aria-label="Sugerencias">' +
       '<h3>💬 Buzón de sugerencias</h3>' +
-      '<p>¿Encontraste un error o tienes una idea? Tu mensaje ayuda a mejorar M.E.T.A.S. Se envía junto con la misión y la sección donde estás.</p>' +
+      '<p>¿Encontraste un error o tienes una idea? Tu mensaje llega al equipo que hace M.E.T.A.S y <strong>no se publica en ningún lado</strong>. Va con la misión y la sección donde estás, para que sepan dónde mirar.</p>' +
       '<label for="metasSugCat">🏷️ Tipo de mensaje</label>' +
       '<select id="metasSugCat">' +
       '<option value="error_contenido">📚 Encontré un error en el contenido</option>' +
@@ -503,6 +510,7 @@
       '</select>' +
       '<label for="metasSugTexto">✍️ Tu mensaje</label>' +
       '<textarea id="metasSugTexto" maxlength="500" placeholder="Escribe aquí con tus palabras..."></textarea>' +
+      '<div id="metasSugAviso" class="metas-id-aulamsg"></div>' +
       '<div class="metas-id-acciones">' +
       '<button type="button" class="metas-id-btn metas-id-luego" id="metasSugCancelar">Cancelar</button>' +
       '<button type="button" class="metas-id-btn metas-id-guardar" id="metasSugEnviar">📤 Enviar</button>' +
@@ -511,15 +519,28 @@
     function cerrar() { ov.remove(); st.remove(); }
     document.getElementById('metasSugCancelar').addEventListener('click', cerrar);
     document.getElementById('metasSugEnviar').addEventListener('click', function () {
-      var texto = document.getElementById('metasSugTexto').value.trim();
-      if (!texto) { document.getElementById('metasSugTexto').focus(); return; }
+      var area = document.getElementById('metasSugTexto');
+      var texto = area.value.trim();
+      /* Un mensaje de dos letras no lo acepta el servidor, así que si
+         se dejara pasar se quedaría dando vueltas en la cola del
+         teléfono para siempre. Mejor decirlo aquí, donde la persona
+         todavía está mirando y puede escribirlo. */
+      if (texto.length < SUG_MIN) {
+        var av = document.getElementById('metasSugAviso');
+        if (av) av.textContent = '✍️ Cuéntanos un poco más para poder buscarlo.';
+        area.focus();
+        return;
+      }
       registrar('sugerencia', {
         categoria: document.getElementById('metasSugCat').value,
         texto: texto.slice(0, 500),
         seccion: seccionActiva()
       });
       cerrar();
-      if (typeof window.showToast === 'function') window.showToast('💬 ¡Gracias! Tu mensaje fue registrado y se enviará al equipo.');
+      /* «Va camino» y no «se envió»: sin señal se guarda y sale solo
+         cuando vuelva el internet, y decir que ya se mandó cuando no es
+         verdad es exactamente el problema que este buzón tenía. */
+      if (typeof window.showToast === 'function') window.showToast('💬 ¡Gracias! Tu mensaje va camino al equipo.');
     });
   }
 
@@ -587,16 +608,28 @@
     acciones.appendChild(btnCambiar);
   }
 
-  // ---------- capa de nube (Supabase, Fase 1) ----------
-  // Se carga sola desde la misma carpeta que este archivo; las misiones
-  // no necesitan incluirla. Si el archivo no existe, no pasa nada.
+  // ---------- capas de nube ----------
+  // Se cargan solas desde la misma carpeta que este archivo; las
+  // misiones no necesitan incluirlas. Si un archivo no existe, no pasa
+  // nada. Son sesenta y cinco misiones: cualquier cosa que obligue a
+  // tocar sus HTML uno por uno se queda a medias.
+  //
+  //   · metas-supabase.js   → los RESULTADOS, al proyecto de M.E.T.A.S,
+  //                           que es lo que consulta el maestro.
+  //   · metas-sugerencias.js → las SUGERENCIAS, al proyecto de F.A.R.O,
+  //                           que es donde las lee el administrador.
+  //
+  // Son dos destinos distintos a propósito; el porqué está escrito en
+  // la cabecera de metas-sugerencias.js.
   try {
     var scriptPropio = document.currentScript && document.currentScript.src;
     if (scriptPropio && /metas-registro\.js/.test(scriptPropio)) {
-      var sbTag = document.createElement('script');
-      sbTag.src = scriptPropio.replace(/metas-registro\.js([?#].*)?$/, 'metas-supabase.js');
-      sbTag.defer = true;
-      document.head.appendChild(sbTag);
+      ['metas-supabase.js', 'metas-sugerencias.js'].forEach(function (archivo) {
+        var tag = document.createElement('script');
+        tag.src = scriptPropio.replace(/metas-registro\.js([?#].*)?$/, archivo);
+        tag.defer = true;
+        document.head.appendChild(tag);
+      });
     }
   } catch (e) {}
 

@@ -506,6 +506,66 @@ toca: se pone un Supabase de mentira con `page.route`.
 La otra mitad —la bandeja donde cae todo esto, el QR y el paso de envío a
 nota— vive en el repositorio de la revista, con su propia sonda.
 
+## Normativa: las Sugerencias de una misión salen del teléfono
+
+El botón **💬 Sugerencias** de cada misión lleva años ahí y durante todo
+ese tiempo **no llegó a nadie**. Guardaba lo escrito en el almacén de
+ESE teléfono, y para leerlo había que abrir la Evidencia de misiones en
+el mismo aparato: el del niño que escribió. Nadie lo leyó nunca.
+
+Un botón que promete «tu mensaje ayuda a mejorar M.E.T.A.S» y guarda en
+un cajón cerrado es **peor que no tener botón**: quien lo usó se queda
+tranquilo creyendo que avisó, y la errata sigue ahí el curso siguiente.
+
+Ahora salen. El camino, entero:
+
+| dónde | qué hace |
+|---|---|
+| `js/metas-registro.js` | el botón y la ventana de escribir |
+| `js/metas-sugerencias.js` | el puente: cola, reintento y envío |
+| `supabase/sql/metas_sugerencias.sql` **(en el repositorio de F.A.R.O)** | la tabla y su única puerta |
+| `js/tools/metas-sugerencias.js` **(en F.A.R.O)** | la bandeja donde se atienden |
+
+**Van al proyecto de Supabase de F.A.R.O, no al de M.E.T.A.S.** No es un
+descuido: los resultados los consulta el maestro y por eso viven en el
+proyecto de M.E.T.A.S; las sugerencias las lee el **administrador**, que
+trabaja en F.A.R.O. Es el mismo camino que ya hace `buzon.html`. Por eso
+el puente es un archivo aparte y no un tipo más en los `TIPOS` de
+`metas-supabase.js`: son **dos destinos distintos**, y esa cola es la
+que lleva las notas de los alumnos, así que no se toca para añadir un
+camino nuevo.
+
+**Cuatro reglas, y ninguna es de adorno:**
+
+1. **No se pierde.** Sin señal se guarda y sale al abrir la siguiente
+   misión. Es el caso normal, no el raro: el aula está en un pueblo.
+2. **Un «no» del servidor no es siempre el mismo «no».** «Texto de tres
+   letras» no va a entrar nunca y se tira de la cola; «el freno del día»
+   entra mañana y se guarda. Juntarlos atasca la cola o pierde mensajes
+   buenos, y las dos cosas se descubren tarde.
+3. **Reintentar CORRIGE, no duplica.** La llave es el `evento_id` que ya
+   trae cada registro. El teléfono no sabe si el primer envío entró.
+4. **Va la dirección exacta de la página**, no solo la carpeta: las
+   misiones no se llaman `index.html`. Sin ella, arreglar una errata
+   empieza por buscar la misión entre más de sesenta, que es justo el
+   paso donde el arreglo se pospone.
+
+Lo escrito **también sigue en el registro local**, como siempre: esto
+solo AÑADE la salida, no cambia la Evidencia de misiones.
+
+**Antes de publicar un cambio de las sugerencias:**
+
+```
+node _dev/servidor-estatico.js         (en otra terminal)
+node _dev/verifica-sugerencias-faro.js
+```
+
+Vigila lo que cuesta caro: que salgan, que salgan **al proyecto
+correcto**, que lleven la misión y la sección, que sin internet esperen
+en vez de perderse, que un reintento no deje gemelas y que las que
+llevaban meses atrapadas en los teléfonos salgan también. La nube no se
+toca: se pone un Supabase de mentira con `page.route`.
+
 ## Normativa: en papel, el círculo se RELLENA — la ✗ es para lo que está mal
 
 Vale para **todo ejercicio impreso de selección múltiple**: fichas de
