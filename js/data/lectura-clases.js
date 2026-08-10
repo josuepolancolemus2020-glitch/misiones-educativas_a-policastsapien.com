@@ -70,7 +70,8 @@ const LECTURA_CLASES = {
      validador lo canta — y así el alumno nunca toca un pronombre de
      verdad para que la pantalla le diga que se equivocó.
 
-     NO van aquí «lo, la, los, las»: son artículo y pronombre según la
+     NO van aquí «lo, la, los, las» ni «nuestro, nuestra»: son artículo o
+     determinativo y pronombre según la
      oración, y el motor compara por FORMA, no por posición, así que en
      un mismo texto no puede ser las dos cosas. Los corpus de esa misión
      evitan usarlos como pronombre a propósito. */
@@ -80,7 +81,7 @@ const LECTURA_CLASES = {
     'me', 'te', 'se', 'nos', 'os', 'le', 'les',
     'esto', 'eso', 'aquello',
     'mío', 'mía', 'míos', 'mías', 'tuyo', 'tuya', 'tuyos', 'tuyas',
-    'suyo', 'suya', 'suyos', 'suyas', 'nuestro', 'nuestra', 'nuestros', 'nuestras',
+    'suyo', 'suya', 'suyos', 'suyas',
     'alguien', 'nadie', 'algo', 'nada', 'quien', 'quienes', 'cuyo', 'cuya'
   ],
 };
