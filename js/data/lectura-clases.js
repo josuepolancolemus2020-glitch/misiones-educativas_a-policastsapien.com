@@ -62,6 +62,27 @@ const LECTURA_CLASES = {
     'otro otra otros otras cada varios varias cualquier cualquiera demás ' +
     'tanto tanta tantos tantas bastante bastantes cierto cierta ciertos ciertas'
   ).split(' '),
+
+  /* ── PRONOMBRES: clase cerrada ──
+     Sirve para lo mismo que la lista de determinativos: de una clase
+     cerrada SÍ se puede afirmar que falta algo. Si uno de estos aparece
+     en una lectura de la misión de pronombres y no está clasificado, el
+     validador lo canta — y así el alumno nunca toca un pronombre de
+     verdad para que la pantalla le diga que se equivocó.
+
+     NO van aquí «lo, la, los, las»: son artículo y pronombre según la
+     oración, y el motor compara por FORMA, no por posición, así que en
+     un mismo texto no puede ser las dos cosas. Los corpus de esa misión
+     evitan usarlos como pronombre a propósito. */
+  pronombres: [
+    'yo', 'tú', 'vos', 'usted', 'ustedes', 'él', 'ella', 'ello', 'nosotros', 'nosotras',
+    'vosotros', 'ellos', 'ellas', 'mí', 'ti', 'conmigo', 'contigo', 'consigo',
+    'me', 'te', 'se', 'nos', 'os', 'le', 'les',
+    'esto', 'eso', 'aquello',
+    'mío', 'mía', 'míos', 'mías', 'tuyo', 'tuya', 'tuyos', 'tuyas',
+    'suyo', 'suya', 'suyos', 'suyas', 'nuestro', 'nuestra', 'nuestros', 'nuestras',
+    'alguien', 'nadie', 'algo', 'nada', 'quien', 'quienes', 'cuyo', 'cuya'
+  ],
 };
 
 /* Node (las herramientas de _dev) y navegador con el mismo archivo. */

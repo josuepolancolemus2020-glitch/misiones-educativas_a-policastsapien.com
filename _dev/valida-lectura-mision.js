@@ -52,6 +52,11 @@ const CORPUS = [
     listas: [['susts', 'sustantivo común', true], ['propios', 'sustantivo propio', true],
              ['neutros', 'palabra que no cuenta', false]],
     cerrada: null, segunda: 'propios', minSegunda: 3 },
+  { archivo: 'misiones/2y3ciclo-pronombres/js/lectura-pronombres.js', constante: 'LECTURA_PRONOMBRES',
+    mision: 'Los Pronombres', prefijo: 'LP', inventario: 'pronombres',
+    listas: [['pers', 'pronombre personal', true], ['demPos', 'pronombre demostrativo o posesivo', true],
+             ['neutros', 'palabra que no cuenta', false]],
+    cerrada: 'pronombres', segunda: 'demPos', minSegunda: 3 },
   { archivo: 'misiones/2y3ciclo-adverbios/js/lectura-adverbios.js', constante: 'LECTURA_ADVERBIOS',
     mision: 'Los Adverbios', prefijo: 'LD', inventario: 'adverbios',
     listas: [['lugarTiempo', 'adverbio de lugar o tiempo', true], ['modoCantidad', 'adverbio de modo o cantidad', true],
@@ -173,11 +178,15 @@ function valida(entrada) {
          va a marcar mal al alumno cuando lo toque. Los calificativos no
          se pueden comprobar así —son clase abierta— y para eso está
          _dev/audita-adjetivos-lectura.js, que propone candidatos. */
-      if (entrada.cerrada === 'determinativos') {
+      /* De una clase CERRADA sí se puede afirmar que falta algo: si una
+         de sus palabras está en el texto y no se clasificó, al alumno se
+         le va a marcar mal cuando la toque teniendo razón. */
+      if (entrada.cerrada && CLASES[entrada.cerrada]) {
+        const cerrada = new Set(CLASES[entrada.cerrada].map(w => w.toLowerCase()));
         const sueltos = [...new Set(ps)].filter(p =>
-          DETERMINATIVOS.has(p) && !clasificadas.has(p) && !NEUTROS_GLOBAL.has(p));
+          cerrada.has(p) && !clasificadas.has(p) && !NEUTROS_GLOBAL.has(p));
         if (sueltos.length) {
-          err(`${quien}: determinativo(s) del texto sin clasificar en dets ni en neutros: «${sueltos.join('», «')}»`);
+          err(`${quien}: ${entrada.cerrada} del texto sin clasificar: «${sueltos.join('», «')}»`);
         }
       }
 
