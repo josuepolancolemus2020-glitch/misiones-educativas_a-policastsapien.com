@@ -634,25 +634,32 @@ function convHtmlConteo(c, t, d) {
    folio es el que la madre ya tiene guardado en su galería, así que los
    dos papeles —el suyo y el del maestro— dicen lo mismo.
 
-   Tres decisiones:
+   Cuatro decisiones:
    · UN boleto por FAMILIA, no por persona. Lleva escrito para cuántos
      vale. Uno por persona triplica el papel y en el portón se cuenta
      igual: la madre enseña el suyo y suben los que dice.
    · Con COLILLA. La parte de la izquierda se recorta y se la queda el
      maestro con la firma de quien pagó: es su respaldo cuando alguien
      diga que ya dio el dinero.
-   · SEIS por hoja carta. Con 42 familias son 7 hojas. Cada boleto que
-     no cupiera en su hoja son 7 hojas más de tinta y de tiempo, así
+   · TIRA ANCHA de página completa, no cuadro. Salió primero en dos
+     columnas y quedaba casi cuadrado, con un hueco en medio que se ve
+     en el papel: un boleto no tiene esa forma y no se lee de un
+     vistazo. La tira se llena de lado a lado —colilla, quién es, y el
+     folio a la derecha—, y de paso se recorta con seis tijeretazos
+     rectos de lado a lado en vez de una cuadrícula.
+   · SIETE por hoja carta. Con 42 familias son 6 hojas. Cada boleto que
+     no cupiera en su hoja son 6 hojas más de tinta y de tiempo, así
      que el alto está medido y se comprueba con
-     _dev/verifica-boletos.js, que cuenta las páginas del PDF. */
+     _dev/verifica-boletos.js, que cuenta las páginas del PDF y vigila
+     que la tira siga siendo más ancha que alta. */
 function convHtmlBoletos(c, si) {
   if (!si.length) return '';
-  const hojas = Math.ceil(si.length / 6);
+  const hojas = Math.ceil(si.length / 7);
   return `
     <div class="ad-btn-row" style="margin-top:12px">
       <button class="pa-generate-btn" id="cv-boletos">🎟️ Imprimir los ${si.length} boletos</button>
     </div>
-    <p class="pa-optional-hint">Salen <strong>${hojas} hoja${hojas === 1 ? '' : 's'}</strong> (seis por hoja).
+    <p class="pa-optional-hint">Salen <strong>${hojas} hoja${hojas === 1 ? '' : 's'}</strong> (siete por hoja).
       Recorta, y entrégale el suyo a cada familia <strong>cuando recibas el aporte</strong>: el boleto
       es el recibo y el pase para subir al bus. La colilla de la izquierda la firmas y te la quedas tú.</p>`;
 }
@@ -673,24 +680,22 @@ function convImprimirBoletos(c) {
         <div class="bo-col-t">COLILLA · para el maestro</div>
         <div class="bo-col-f">${adEsc(convFolioDe(c, x))}</div>
         <div class="bo-col-n">${adEsc(x.alumno)}</div>
-        <div class="bo-col-n">${adEsc(adGradoSeccion(x.grado, x.seccion))}</div>
-        <div class="bo-col-p">${x.personas} persona${x.personas === 1 ? '' : 's'}</div>
-        ${ap ? `<div class="bo-col-p">Recibí ${adEsc(adLps(total))}</div>` : ''}
+        <div class="bo-col-p">${adEsc(adGradoSeccion(x.grado, x.seccion))} ·
+          ${x.personas} persona${x.personas === 1 ? '' : 's'}${ap ? ' · recibí ' + adEsc(adLps(total)) : ''}</div>
         <div class="bo-firma">firma de quien paga</div>
       </div>
       <div class="bo-cuerpo">
         <div class="bo-tit">${adEsc((c.icono || '🎟️') + ' ' + (c.titulo || 'Salida'))}</div>
         <div class="bo-sub">${adEsc(cuando)}${c.punto ? ' · sube en ' + adEsc(c.punto) : ''}</div>
-        <div class="bo-nom">${adEsc(x.alumno)}</div>
-        <div class="bo-gr">${adEsc(adGradoSeccion(x.grado, x.seccion))}</div>
-        <div class="bo-caja">
-          <div class="bo-caja-i"><b>${x.personas}</b><span>persona${x.personas === 1 ? '' : 's'}</span></div>
-          <div class="bo-caja-i"><b>${ap ? adEsc(adLps(total)) : 'Sin costo'}</b><span>${ap ? 'aporte' : ''}</span></div>
-          <div class="bo-caja-i bo-folio"><b>${adEsc(convFolioDe(c, x))}</b><span>folio</span></div>
-        </div>
+        <div class="bo-nom">${adEsc(x.alumno)}<span class="bo-gr">${adEsc(adGradoSeccion(x.grado, x.seccion))}</span></div>
         <div class="bo-pie">${ap
           ? 'Entregado al recibir el aporte. Presente este boleto para subir.'
           : 'Presente este boleto para subir.'}${c.escuela ? ' · ' + adEsc(c.escuela) : ''}</div>
+      </div>
+      <div class="bo-cajas">
+        <div class="bo-caja-i"><b>${x.personas}</b><span>persona${x.personas === 1 ? '' : 's'}</span></div>
+        <div class="bo-caja-i"><b>${ap ? adEsc(adLps(total)) : 'Sin costo'}</b><span>${ap ? 'aporte' : ''}</span></div>
+        <div class="bo-caja-i bo-folio"><b>${adEsc(convFolioDe(c, x))}</b><span>folio</span></div>
       </div>
     </div>`;
   };
@@ -699,39 +704,52 @@ function convImprimirBoletos(c) {
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;padding:0;}
-/* 10 mm de margen deja 196 × 259 mm útiles en carta. Dos columnas de
-   96 mm y filas de 82 mm: tres filas por hoja (246 mm) con sitio de
-   sobra aunque el navegador ponga sus propios márgenes. */
+/* 10 mm de margen deja 196 × 259 mm útiles en carta. Una sola columna de
+   tiras de 34 mm: SIETE por hoja (238 mm con sus separaciones) y sobran
+   21 mm, así que sigue cabiendo aunque el navegador ignore el @page y
+   ponga los suyos. Con 42 familias son 6 hojas.
+   La tira es ancha a propósito —196 × 34 mm, casi seis a uno—: es la
+   forma de un boleto, se llena de lado a lado sin dejar huecos y se
+   recorta con seis tijeretazos rectos de lado a lado. */
 @page{size:letter;margin:10mm;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm;}
-.bo{display:flex;height:82mm;border:1.6px dashed #444;border-radius:3mm;overflow:hidden;
+.grid{display:grid;grid-template-columns:1fr;gap:3mm;}
+.bo{display:flex;height:34mm;border:1.6px dashed #444;border-radius:3mm;overflow:hidden;
     page-break-inside:avoid;break-inside:avoid;}
-.bo-col{width:28mm;flex:0 0 28mm;border-right:1.6px dashed #888;padding:3mm 2mm;background:#f7f7f7;}
-.bo-col-t{font-size:6.5px;font-weight:bold;color:#555;text-transform:uppercase;letter-spacing:.3px;}
-.bo-col-f{font-size:12px;font-weight:900;font-family:'Courier New',monospace;margin:1.5mm 0;}
-.bo-col-n{font-size:8px;line-height:1.25;}
-.bo-col-p{font-size:8px;font-weight:bold;margin-top:1.5mm;}
-.bo-firma{border-top:1px solid #999;margin-top:6mm;padding-top:1mm;font-size:6.5px;color:#666;text-align:center;}
-.bo-cuerpo{flex:1;padding:3.5mm 4mm;display:flex;flex-direction:column;min-width:0;}
-.bo-tit{font-size:11.5px;font-weight:900;line-height:1.2;}
-.bo-sub{font-size:8.5px;color:#444;margin-top:1mm;line-height:1.3;}
-.bo-nom{font-size:15px;font-weight:900;margin-top:3mm;line-height:1.15;}
-.bo-gr{font-size:10px;font-weight:bold;color:#c2410c;}
-.bo-caja{display:flex;gap:2mm;margin-top:auto;}
-.bo-caja-i{flex:1;border:1.2px solid #ddd;border-radius:2mm;padding:1.5mm 1mm;text-align:center;min-width:0;}
+.bo-col{width:34mm;flex:0 0 34mm;border-right:1.6px dashed #888;padding:2.5mm 2.5mm;
+    background:#f7f7f7;overflow:hidden;display:flex;flex-direction:column;}
+.bo-col-t{font-size:6px;font-weight:bold;color:#555;text-transform:uppercase;letter-spacing:.2px;line-height:1.2;}
+.bo-col-f{font-size:11.5px;font-weight:900;font-family:'Courier New',monospace;margin:1mm 0 .8mm;}
+.bo-col-n{font-size:7.5px;line-height:1.25;font-weight:bold;}
+.bo-col-p{font-size:7px;line-height:1.3;margin-top:.6mm;color:#333;}
+.bo-firma{border-top:1px solid #999;margin-top:auto;padding-top:.8mm;font-size:6px;color:#666;text-align:center;}
+/* Centrado, no repartido de arriba abajo: el texto son cuatro renglones
+   cortos y pegando el pie al borde de abajo queda un hueco en medio que
+   en el papel se ve como un boleto a medio hacer. */
+.bo-cuerpo{flex:1;padding:2.5mm 4mm;display:flex;flex-direction:column;justify-content:center;min-width:0;}
+.bo-tit{font-size:11px;font-weight:900;line-height:1.2;}
+.bo-sub{font-size:8px;color:#444;margin-top:.8mm;line-height:1.3;}
+/* El nombre es lo que el maestro busca al repartir cuarenta boletos, así
+   que va lo más grande que quepa; el grupo se le pega al lado en vez de
+   gastar un renglón suyo. */
+.bo-nom{font-size:15px;font-weight:900;margin-top:1.6mm;line-height:1.2;}
+.bo-gr{font-size:10px;font-weight:bold;color:#c2410c;margin-left:2mm;white-space:nowrap;}
+.bo-pie{font-size:6.5px;color:#555;margin-top:1.6mm;line-height:1.3;}
+.bo-cajas{width:58mm;flex:0 0 58mm;display:flex;gap:1.5mm;align-items:center;padding:0 3mm 0 1mm;}
+.bo-caja-i{flex:1;border:1.2px solid #ddd;border-radius:2mm;padding:1.5mm .5mm;text-align:center;min-width:0;}
 .bo-caja-i b{display:block;font-size:12px;font-weight:900;line-height:1.1;}
-.bo-caja-i span{font-size:6.5px;text-transform:uppercase;color:#666;letter-spacing:.3px;}
-.bo-folio b{font-family:'Courier New',monospace;font-size:11px;}
-.bo-pie{font-size:7px;color:#555;margin-top:2mm;line-height:1.3;}
+.bo-caja-i span{font-size:6px;text-transform:uppercase;color:#666;letter-spacing:.2px;}
+/* El folio en una sola pieza: partido en dos renglones se lee como dos
+   cosas distintas y se dicta mal por teléfono. */
+.bo-folio b{font-family:'Courier New',monospace;font-size:10px;white-space:nowrap;}
 .noprint{padding:6mm 6mm 0;}
 .noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;}
 .noprint p{font-size:12px;color:#444;margin-top:3mm;max-width:170mm;line-height:1.5;}
 @media print{.noprint{display:none;}}
 </style></head><body>
 <div class="noprint"><button onclick="window.print()">🖨️ Imprimir los boletos</button>
-<p>Recorte por la raya. Entregue cada boleto <strong>cuando reciba el aporte</strong>:
-es el recibo de la familia y su pase para subir al bus. La colilla de la izquierda
-la firma quien paga y se la queda usted.</p></div>
+<p>Recorte por la raya —seis tiras rectas por hoja—. Entregue cada boleto
+<strong>cuando reciba el aporte</strong>: es el recibo de la familia y su pase para subir al bus.
+La colilla de la izquierda la firma quien paga y se la queda usted.</p></div>
 <div class="grid">${orden.map(boleto).join('')}</div>
 </body></html>`;
   const w = (typeof adPrintAbrir === 'function') ? adPrintAbrir(html) : window.open('', '_blank');

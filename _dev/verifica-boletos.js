@@ -1,17 +1,17 @@
 /* ═══════════════════════════════════════════════════════════════
-   🎟️ ¿CABEN SEIS BOLETOS EN CADA HOJA?
+   🎟️ ¿CABEN SIETE BOLETOS EN CADA HOJA?
 
    Los boletos de la Convocatoria se imprimen en lote: el maestro manda
-   los 42 de su salida y se va a hacer otra cosa. Van seis por hoja
-   carta, así que 42 familias tienen que dar SIETE hojas. Si uno se
-   pasara de alto y arrastrara a los de su fila a la página siguiente,
+   los 42 de su salida y se va a hacer otra cosa. Van siete tiras por
+   hoja carta, así que 42 familias tienen que dar SEIS hojas. Si una se
+   pasara de alto y empujara a la siguiente a la otra página,
    el estropicio se descubre con las hojas ya impresas y la tinta
    gastada — y en una escuela pública eso no se repite «y ya».
 
    Es la misma regla de los informes del alumno (_dev/verifica-una-hoja.js)
-   y por la misma razón; aquí la cuenta es 6 por hoja en vez de 1.
+   y por la misma razón; aquí la cuenta es 7 por hoja en vez de 1.
 
-   Se comprueban además las dos cosas que hacen que el papel sirva:
+   Se comprueban además las tres cosas que hacen que el papel sirva:
 
    · EL FOLIO ES EL MISMO que el padre lleva en su teléfono. Si el
      boleto impreso dijera otro, en el portón no se puede comprobar
@@ -19,6 +19,9 @@
    · LA COLILLA. La parte que el maestro recorta y se queda con la
      firma de quien pagó: es su respaldo cuando alguien diga que ya dio
      el dinero.
+   · LA FORMA. Un boleto es una TIRA ancha. Salió primero en dos
+     columnas, casi cuadrado y con un hueco en medio, y en el papel se
+     ve enseguida que eso no es un boleto.
 
    Se mide como la impresora: media `print`, el ancho útil de una carta
    y el número de páginas que escupe el PDF. Medir en la pantalla ancha
@@ -43,7 +46,7 @@ catch (_) {
 }
 
 const BASE = process.env.METAS_BASE || process.env.METAS_URL || 'http://localhost:8123';
-const POR_HOJA = 6;
+const POR_HOJA = 7;
 /* carta menos los márgenes de 10 mm del @page, a 96 puntos por pulgada */
 const ANCHO = Math.round((8.5 - 20 / 25.4) * 96);
 const ALTO = Math.round((11 - 20 / 25.4) * 96);
@@ -146,6 +149,13 @@ async function mide(browser, cuantos) {
   comprueba(paginas === esperadas,
     'en ' + esperadas + ' hoja' + (esperadas === 1 ? '' : 's') + ' carta (el PDF trajo ' + paginas + ')');
   comprueba(datos.alto <= ALTO, 'ningún boleto se pasa del alto de la hoja (el más alto: ' + datos.alto + 'px de ' + ALTO + ')');
+  /* Un boleto es una TIRA, no un cuadro. Salió primero casi cuadrado y
+     con un hueco en medio; en el papel se ve enseguida que eso no tiene
+     forma de boleto. Aquí se le exige que sea al menos tres veces más
+     ancho que alto para que no vuelva a pasar sin que nadie se entere. */
+  const forma = datos.ancho / datos.alto;
+  comprueba(forma >= 3,
+    'y tiene forma de tira: ' + datos.ancho + ' × ' + datos.alto + 'px (' + forma.toFixed(1) + ' a 1)');
   comprueba(datos.desborde === 0, 'y a ninguno se le sale el texto de su recuadro');
   comprueba(datos.colillas === cuantos && datos.firmas === cuantos,
     'cada boleto lleva su colilla con la raya de la firma');
@@ -155,7 +165,7 @@ async function mide(browser, cuantos) {
   comprueba(!faltan.length,
     'los ' + salida.folios.length + ' folios salen impresos, uno por boleto' +
     (faltan.length ? ' (faltó ' + faltan[0] + ')' : ''));
-  comprueba(/COLILLA/.test(datos.texto) && /Recibí L 100/.test(datos.texto),
+  comprueba(/COLILLA/.test(datos.texto) && /recibí L 100/i.test(datos.texto),
     'y la colilla dice cuánto se recibió, que es el respaldo del maestro');
 }
 
@@ -164,9 +174,9 @@ async function mide(browser, cuantos) {
     process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
   console.log('🎟️ LOS BOLETOS DE LA CONVOCATORIA — seis por hoja carta, medido en el PDF');
   try {
-    await mide(browser, 42);      /* un aula entera: siete hojas clavadas */
-    await mide(browser, 6);       /* la hoja justa: ni una de más */
-    await mide(browser, 7);       /* uno más: dos hojas, no tres */
+    await mide(browser, 42);      /* un aula entera: seis hojas clavadas */
+    await mide(browser, 7);       /* la hoja justa: ni una de más */
+    await mide(browser, 8);       /* uno más: dos hojas, no tres */
   } finally {
     await browser.close();
     fs.rmSync(TMP, { recursive: true, force: true });

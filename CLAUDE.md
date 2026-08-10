@@ -171,7 +171,7 @@ acumulado y descolgado no sirve para nada.
 node _dev/servidor-estatico.js      (en otra terminal)
 node _dev/verifica-una-hoja.js         → informes del alumno y del grado
 node _dev/verifica-fichas-lectura.js   → las 400 fichas de lectura
-node _dev/verifica-boletos.js          → los boletos de la Convocatoria (seis por hoja)
+node _dev/verifica-boletos.js          → los boletos de la Convocatoria (siete tiras por hoja)
 ```
 
 Mide con media `print`, el ancho útil de una carta y **el número de
@@ -458,7 +458,7 @@ faltan tres días clavados se lee «3 días 00:00:00», no «2 días
 ### El boleto: un folio, dos pantallas
 
 Quien contesta se lleva un **boleto** con folio; el maestro lo imprime
-(seis por hoja carta, con colilla para su firma) y se lo entrega **al
+(siete tiras por hoja carta, con colilla para su firma) y se lo entrega **al
 recibir el aporte**: es el recibo de la familia y el pase para subir al
 bus. En el portón, con cuarenta familias apuradas, «yo contesté» no se
 puede comprobar.
@@ -486,7 +486,9 @@ El primero vigila las dos cifras que cuestan dinero —el día del evento y
 cuántos buses—, las dos formas de perder una respuesta —contarla doble y
 no contarla—, que el arranque no se cuele en las cuentas del maestro y
 que el folio del padre sea el del maestro. El segundo cuenta las páginas
-del PDF: 42 familias tienen que dar **7 hojas**, ni una más. La nube no
+del PDF: 42 familias tienen que dar **6 hojas**, ni una más, y el boleto
+tiene que seguir siendo una TIRA ancha y no un cuadro con un hueco en
+medio. La nube no
 se toca: se pone un Supabase de mentira con `page.route`, así corre sin
 internet y sin ensuciar datos reales.
 
