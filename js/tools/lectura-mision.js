@@ -293,6 +293,21 @@
     'font-size:1.02rem;font-weight:600;line-height:1.15;}',
     '.lm-vbtn:hover{border-color:var(--lm-pri);}',
     '.lm-vbtn.on{background:var(--lm-pri);color:#fff;border-color:transparent;}',
+    /* ── Proyectando, el minuto se mide con un reloj de arena chiquito ──
+       Al arrancar, la franja del cronómetro se va ENTERA. Ocupaba un
+       cuarto de la pared con un número de dos dedos de alto, y el que
+       está copiando del muro acababa mirando la cuenta atrás en vez del
+       texto. Queda un reloj pequeño en una esquina: al maestro le basta
+       un vistazo para saber cuánto falta, y al que lee no le grita nada.
+       Vuelve la franja al cumplirse el minuto, que es cuando hay que
+       marcar y seguir —y para entonces ya nadie está leyendo—. */
+    '.lm-reloj{position:fixed;right:0.7rem;bottom:0.7rem;z-index:99010;display:flex;align-items:center;gap:0.4rem;}',
+    '.lm-reloj b{display:inline-flex;align-items:center;gap:0.3rem;padding:0.3rem 0.7rem;border-radius:999px;',
+    'background:var(--lm-card);border:2px solid var(--lm-borde);color:var(--lm-gris);opacity:0.72;',
+    'font-family:"Fredoka",sans-serif;font-size:1rem;font-weight:600;font-variant-numeric:tabular-nums;}',
+    '.lm-reloj.lm-poco b{color:var(--lm-sec);border-color:var(--lm-sec);opacity:1;}',
+    '.lm-reloj .lm-vbtn{min-width:auto;padding:0.3rem 0.55rem;font-size:0.95rem;opacity:0.72;}',
+    '.lm-reloj .lm-vbtn:hover{opacity:1;}',
     /* ── El proyector: la lectura se queda con la pantalla entera ──
        La cabecera de la misión, las pestañas y el marco de la tarjeta se
        llevan como 200 px de alto; en una pantalla de aula eso es un
@@ -812,6 +827,14 @@
             '<button class="btn btn-g" id="lm-seguir" style="display:none">👉 Seguir a las actividades</button>' +
             '<button class="btn btn-d" id="lm-cancelar">Cancelar</button>' +
           '</div>' +
+        '</div>' +
+        /* El reloj de la esquina: solo sale proyectando y mientras corre
+           el minuto. Lleva al lado el «terminé», porque la franja donde
+           vivía ese botón ya no está y sin él, quien acabe antes de los
+           60 s no tendría cómo decirlo. */
+        '<div class="lm-reloj" id="lm-reloj" style="display:none">' +
+          '<b>⏳<span id="lm-reloj-n">' + SEGUNDOS + '</span></b>' +
+          '<button class="lm-vbtn" id="lm-reloj-fin" aria-label="Terminé el texto" title="Terminé el texto">✅</button>' +
         '</div>';
 
       var crono = document.getElementById('lm-crono');
@@ -825,6 +848,8 @@
       var btnSeguir = document.getElementById('lm-seguir');
       var spans = caja.querySelectorAll('.lm-p');
       var panel = document.getElementById('lm-panel');
+      var reloj = document.getElementById('lm-reloj');
+      var relojN = document.getElementById('lm-reloj-n');
 
       /* El panel se queda pegado abajo y TAPA lo que pase por debajo. Sin
          este hueco, el último renglón de la lectura queda partido detrás
@@ -832,7 +857,11 @@
          el panel en vez de dejar un hueco a ojo, porque su alto cambia con
          el aviso que tenga puesto y con el tamaño de letra del teléfono. */
       function ajustaHueco() {
-        caja.style.paddingBottom = (panel.offsetHeight + 14) + 'px';
+        /* Proyectando y con el minuto en marcha no hay franja: el hueco lo
+           marca el reloj de la esquina, que también tapa lo que pase por
+           debajo, aunque sea mucho menos. */
+        var abajo = panel.style.display === 'none' ? reloj.offsetHeight : panel.offsetHeight;
+        caja.style.paddingBottom = (abajo + 14) + 'px';
       }
 
       /* ── La letra más grande con la que el texto cabe ENTERO ──
@@ -905,7 +934,14 @@
         guardaVista();
         ajusta(true);
       }
-      refrescoVista = function () { ajusta(true); };
+      /* Entrar o salir de presentación a mitad del minuto tiene que dejar
+         el mando donde corresponda. Salir con la franja escondida dejaba
+         al alumno sin cronómetro y sin botones, mirando un texto quieto. */
+      refrescoVista = function () {
+        if (!vista.proy) { panel.style.display = ''; reloj.style.display = 'none'; }
+        else presenta(!!st.ini && !st.congelado);
+        ajusta(true);
+      };
       ajusta(true);
 
       var vst = document.getElementById('lm-vista');
@@ -970,9 +1006,21 @@
         pinta();
       }
 
+      /* Esconde o devuelve la franja del minuto. Solo proyectando: en el
+         teléfono la franja es lo único que hay y quitarla dejaría al
+         alumno sin saber qué hacer. */
+      function presenta(leyendo) {
+        if (!vista.proy) return;
+        panel.style.display = leyendo ? 'none' : '';
+        reloj.style.display = leyendo ? '' : 'none';
+      }
+
       function terminarMinuto(porTiempo) {
         pararTimer();
         st.congelado = true;
+        /* Vuelve la franja: se acabó el minuto y ahora toca marcar hasta
+           dónde llegó y seguir, y esos botones viven ahí. */
+        presenta(false);
         st.seg = porTiempo ? SEGUNDOS : Math.max(1, Math.round((Date.now() - st.ini) / 100) / 10);
         num.textContent = porTiempo ? '0' : Math.max(0, SEGUNDOS - Math.round(st.seg));
         crono.classList.add('lm-fin');
@@ -1006,12 +1054,18 @@
            y llegaba al minuto sin haber leído una línea. */
         if (vst) vst.style.display = 'none';
         sub.innerHTML = 'Lee en voz alta, sin prisa. Si acabas antes, toca <strong>«Terminé el texto»</strong>.';
+        /* Proyectando, la franja entera se va y deja el muro para el
+           texto: el que copia desde su pupitre necesita renglones, no
+           una cuenta atrás de dos dedos de alto. */
+        presenta(true);
         ajustaHueco();
         st.timer = setInterval(function () {
           var ms = Date.now() - st.ini;
           var quedan = Math.max(0, SEGUNDOS - ms / 1000);
           num.textContent = Math.ceil(quedan);
+          if (relojN) relojN.textContent = Math.ceil(quedan);
           crono.classList.toggle('lm-poco', quedan <= 10 && quedan > 0);
+          reloj.classList.toggle('lm-poco', quedan <= 10 && quedan > 0);
           barra.style.width = (quedan / SEGUNDOS * 100) + '%';
           if (ms >= SEGUNDOS * 1000) terminarMinuto(true);
         }, 60);
@@ -1020,6 +1074,7 @@
         if (!st.ini || st.congelado) return;
         terminarMinuto(false);   /* él ya marca la última palabra */
       };
+      document.getElementById('lm-reloj-fin').onclick = btnFin.onclick;
       btnSeguir.onclick = alTaller;
       document.getElementById('lm-cancelar').onclick = function () { suena('click'); reiniciar(); pinta(); };
     }

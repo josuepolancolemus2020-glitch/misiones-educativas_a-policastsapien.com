@@ -397,6 +397,7 @@ async function contestaComprension(page, op) {
     aula.on('pageerror', e => errores.push(String(e)));
     aula.on('console', m => { if (m.type() === 'error' && !/favicon|net::ERR|Failed to load/.test(m.text())) errores.push(m.text()); });
     await aula.addInitScript(() => { try { sessionStorage.setItem('METAS_ID_OMITIDA', '1'); } catch (e) {} });
+    await aula.clock.install();
 
     /* Mide sobre la PALABRA, no sobre la caja: varias misiones traen
        `body.letra-grande`, que infla los <span> un 25 % con !important,
@@ -414,6 +415,10 @@ async function contestaComprension(page, op) {
           c.getBoundingClientRect().top + alto <= p.getBoundingClientRect().top + 1,
         panel: Math.round(p.offsetHeight),
         mandos: !!document.querySelector('#lm-vista') && document.querySelector('#lm-vista').offsetParent !== null,
+        /* `offsetParent` no sirve con lo que va fijo a la pantalla:
+           en un elemento `position:fixed` siempre sale nulo. */
+        franja: getComputedStyle(p).display !== 'none',
+        reloj: getComputedStyle(document.getElementById('lm-reloj')).display !== 'none',
       };
     });
     const abreEnAula = async (grado, i) => {
@@ -479,8 +484,42 @@ async function contestaComprension(page, op) {
        niño se ponía a probarlo y llegaba al minuto sin haber leído. */
     comprueba(otraLectura.mandos, 'antes de arrancar, el maestro tiene a mano A−, A+ y el proyector');
     await aula.click('#lm-arrancar');
-    comprueba(!(await mide()).mandos,
+    const leyendo = await mide();
+    comprueba(!leyendo.mandos,
       'y al arrancar el minuto desaparecen: mientras se lee, la pantalla no pide nada');
+
+    /* ── Y la franja del minuto también se va ──
+       Ocupaba un cuarto de la pared con el número de dos dedos de alto,
+       y el que copia desde su pupitre acababa mirando la cuenta atrás en
+       vez del texto. Proyectando, al arrancar queda solo la lectura y un
+       reloj de arena chiquito en una esquina. */
+    comprueba(!leyendo.franja && leyendo.reloj,
+      'proyectando, al arrancar se va la franja entera y queda un reloj pequeño en la esquina');
+    await aula.clock.runFor(20000);
+    const quedanEnElReloj = +(await aula.textContent('#lm-reloj-n'));
+    comprueba(quedanEnElReloj >= 39 && quedanEnElReloj <= 41,
+      `el reloj pequeño lleva la cuenta: a los 20 s marca ${quedanEnElReloj} (deberían quedar 40)`);
+
+    await aula.clock.runFor(45000);
+    const cumplido = await mide();
+    comprueba(cumplido.franja && !cumplido.reloj,
+      'al cumplirse el minuto vuelve la franja, que es donde se marca hasta dónde llegó y se sigue');
+    comprueba(/Minuto cumplido/.test(await aula.textContent('#lm-panel .lm-aviso')),
+      'con la orden de marcar la última palabra, como en el teléfono');
+
+    /* Salir de la pantalla completa a MEDIA lectura tiene que devolver la
+       franja: sin ella y sin el reloj de la esquina, el alumno se queda
+       mirando un texto quieto, sin cronómetro y sin botones. */
+    await abreEnAula(6, 2);
+    await aula.click('#lm-arrancar');
+    await aula.clock.runFor(10000);
+    await aula.click('#lm-salir');
+    const fuera = await mide();
+    comprueba(fuera.franja && !fuera.reloj,
+      'y si sale de la pantalla completa a media lectura, la franja vuelve con el minuto todavía corriendo');
+    await aula.clock.runFor(5000);
+    comprueba(+(await aula.textContent('#lm-num')) <= 46,
+      'sin que el minuto se pare ni se reinicie por el camino');
     await aula.close();
 
     console.log('\n═══ Errores de JavaScript ═══');
