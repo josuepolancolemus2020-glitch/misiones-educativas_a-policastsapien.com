@@ -68,6 +68,7 @@ const MISIONES = [
   { nombre: 'Los adjetivos', url: '/misiones/2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html' },
   { nombre: 'Números grandes', url: '/misiones/1ciclo-segundo-grado/numeros-hasta-999.html' },
   { nombre: 'Los sustantivos', url: '/misiones/2y3ciclo-sustantivos/sustantivos-II-III-ciclo-basica.html' },
+  { nombre: 'Los verbos', url: '/misiones/2y3ciclo-verbos/verbos-II-III-ciclo-basica.html' },
 ];
 const GRADOS = process.argv[2] ? [Number(process.argv[2])] : [4, 5, 6, 7, 8, 9];
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'metas-papel-'));
@@ -100,7 +101,9 @@ function mal(t) { fallos++; console.log('  ✘ ' + t); }
     for (const grado of GRADOS) {
       const lista = await page.evaluate(g => window.LecturaMision.ultima.lecturas(g), grado);
 
-      if (!lista.length) { mal(grado + 'º: no se encontró ninguna lectura'); continue; }
+      /* Una misión puede no cubrir todavía un grado. No es un fallo, pero
+         se dice en voz alta: un salto silencioso se lee como «cubierto». */
+      if (!lista.length) { console.log('  ' + grado + 'º · sin lecturas todavía en esta misión'); continue; }
 
       let peorAlto = 0, peorTexto = '', renglonesRotos = 0, paginasMal = 0, conEquis = [];
       for (const id of lista) {

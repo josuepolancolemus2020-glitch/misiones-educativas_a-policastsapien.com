@@ -52,6 +52,11 @@ const CORPUS = [
     listas: [['susts', 'sustantivo común', true], ['propios', 'sustantivo propio', true],
              ['neutros', 'palabra que no cuenta', false]],
     cerrada: null, segunda: 'propios', minSegunda: 3 },
+  { archivo: 'misiones/2y3ciclo-verbos/js/lectura-verbos.js', constante: 'LECTURA_VERBOS',
+    mision: 'Los Verbos', prefijo: 'LV', inventario: 'verbos',
+    listas: [['verbos', 'verbo conjugado', true], ['noPers', 'forma no personal', true],
+             ['neutros', 'palabra que no cuenta', false]],
+    cerrada: null, segunda: 'noPers', minSegunda: 3 },
   { archivo: 'misiones/1ciclo-segundo-grado/js/lectura-numeros.js', constante: 'LECTURA_NUMEROS',
     mision: 'Números grandes', prefijo: 'LN', inventario: 'numeros' },
 ];

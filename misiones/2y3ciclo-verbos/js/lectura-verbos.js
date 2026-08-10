@@ -1,0 +1,549 @@
+/* ══════════════════════════════════════════════════════════════
+   📖 CORPUS DE LECTURA — MISIÓN DE LOS VERBOS
+
+   Cinco lecturas por grado, de 4º a 9º, para el Control de lectura que
+   vive dentro de la misión (js/tools/lectura-mision.js). El motor no
+   sabe de verbos: aquí van el corpus y el taller.
+
+   ── Por qué estos textos y no otros ──
+   Son de Honduras y en el español que se habla aquí. Y son textos donde
+   PASAN COSAS —se arma un barrilete, se ordeña una vaca, se apaga la
+   luz, se rescata a alguien de una quebrada—, porque un verbo se
+   reconoce mejor donde hay acción que en una descripción quieta. Un
+   texto de puros adjetivos no sirve para cazar verbos.
+
+   ── Las dos clases que se clasifican ──
+   La misión enseña el verbo «según su forma y función», así que la
+   segunda actividad separa lo que de verdad se confunde en 4º:
+
+     verbos  → CONJUGADO: dice quién y cuándo (llega, salieron, tapa)
+     noPers  → FORMA NO PERSONAL: no dice ni quién ni cuándo
+               (infinitivo: cortar · gerundio: cortando · participio:
+               cortado, cuando acompaña a haber o a ser)
+
+   ── verbos y noPers son el INVENTARIO COMPLETO ──
+   No una muestra. Con ellas el alumno caza verbos tocándolos sobre el
+   texto, así que un verbo que falte es la pantalla diciéndole que se
+   equivocó CUANDO ACERTÓ. Tienen que aparecer TAL CUAL en el texto: se
+   compara palabra contra palabra, no con indexOf.
+
+   `neutros` es la zona gris de ESE texto, y en los verbos es ancha:
+   el participio que ahí hace de adjetivo («el zacate cortado», «la
+   puerta abierta»), el infinitivo que ahí es sustantivo («el deber»,
+   «el amanecer»). Tocarlas no suma ni resta y la pantalla lo explica.
+   Esa decisión NO se puede automatizar: «cortado» es verbo en «ha
+   cortado» y adjetivo en «el zacate recién cortado», y eso lo dice la
+   oración, no una lista.
+
+   Antes de publicar un cambio:
+     node _dev/valida-lectura-mision.js
+     node _dev/verifica-nombres-propios.js
+     node _dev/verifica-impresion-lectura.js
+══════════════════════════════════════════════════════════════ */
+
+const LECTURA_VERBOS = {
+
+  /* ════════ 4º GRADO (95–115 palabras · 3 literales, 1 inferencial, 1 crítica) ════════ */
+  4: [
+    { id: 'LV4-01', titulo: 'Cómo se hace un barrilete', genero: 'instructivo',
+      texto: 'Primero busca dos varillas de caña brava y ráspalas hasta dejarlas parejas. Después amárralas en cruz con hilo de cáñamo y estira un hilo por todo el borde, porque ese hilo sostiene la forma. Recorta el papel de china dos dedos más grande que el marco y pégalo doblando las orillas. La cola se arma con tiras de trapo: si el barrilete cabecea, alárgala; si no sube, córtala. Amarra el hilo principal en el cruce y prueba en un potrero abierto. Cuando sientas que jala, suelta despacio. Nunca corras mirando hacia arriba, porque ahí es donde la gente tropieza.',
+      verbos: ['busca', 'ráspalas', 'amárralas', 'estira', 'sostiene', 'Recorta', 'pégalo', 'arma', 'cabecea', 'alárgala', 'sube', 'córtala', 'Amarra', 'prueba', 'sientas', 'jala', 'suelta', 'corras', 'es', 'tropieza'],
+      noPers: ['dejarlas', 'doblando', 'mirando', 'abierto'],
+      neutros: ['parejas', 'brava'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Con qué se amarran las varillas en cruz?', r: 'Con hilo de cáñamo.',
+          o: ['Con tiras de trapo.', 'Con hilo de cáñamo.', 'Con papel de china.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué se hace si el barrilete cabecea?', r: 'Se alarga la cola.',
+          o: ['Se alarga la cola.', 'Se corta la cola.', 'Se cambia el papel.'], c: 0 },
+        { tipo: 'literal', q: '¿Dónde se amarra el hilo principal?', r: 'En el cruce de las varillas.',
+          o: ['En el cruce de las varillas.', 'En la cola.', 'En la punta de arriba.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué el hilo del borde es importante?', r: 'Porque sostiene la forma del barrilete.',
+          o: ['Porque lo hace más liviano.', 'Porque sirve para amarrar la cola.', 'Porque sostiene la forma del barrilete.'], c: 2 },
+        { tipo: 'critica', q: '¿Por qué el texto advierte que no se corra mirando hacia arriba?', r: 'Respuesta abierta: se valora que relacione la advertencia con un peligro real y conocido.',
+          o: ['Porque el barrilete se puede romper.', 'Porque así el barrilete no sube.', 'Porque quien no mira el suelo tropieza y se lastima.'], c: 2 },
+      ] },
+
+    { id: 'LV4-02', titulo: 'La noche que se fue la luz', genero: 'narrativo',
+      texto: 'A las siete se apagó todo el barrio. Mi mamá encendió una candela y la puso sobre un plato. Mi hermano buscó la linterna y no la halló. Afuera los vecinos salieron a la acera y empezaron a conversar, porque adentro hacía calor. Doña Fina sacó una radio de pilas y nos quedamos escuchando las noticias juntos. Mi abuelo contó que antes, cuando él era niño, en la aldea no había luz ninguna noche. Nadie se quejaba. A las diez volvió la corriente y la gente aplaudió. Después cada quien entró a su casa y el barrio quedó callado otra vez.',
+      verbos: ['apagó', 'encendió', 'puso', 'buscó', 'halló', 'salieron', 'empezaron', 'hacía', 'sacó', 'quedamos', 'contó', 'era', 'había', 'quejaba', 'volvió', 'aplaudió', 'entró', 'quedó'],
+      noPers: ['conversar', 'escuchando', 'callado'],
+      neutros: ['juntos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué encendió la mamá?', r: 'Una candela, y la puso sobre un plato.',
+          o: ['Una linterna.', 'Una candela, y la puso sobre un plato.', 'Una radio de pilas.'], c: 1 },
+        { tipo: 'literal', q: '¿Por qué los vecinos salieron a la acera?', r: 'Porque adentro hacía calor.',
+          o: ['Porque adentro hacía calor.', 'Porque tenían miedo.', 'Porque esperaban al de la luz.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué contó el abuelo?', r: 'Que cuando él era niño, en la aldea no había luz ninguna noche.',
+          o: ['Que cuando él era niño no había luz ninguna noche.', 'Que la luz se iba todos los días.', 'Que él arreglaba la luz.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué el abuelo dice que nadie se quejaba?', r: 'Porque nunca habían tenido luz y no echaban de menos lo que no conocían.',
+          o: ['Porque nunca habían tenido luz y no echaban de menos lo que no conocían.', 'Porque la gente era más callada.', 'Porque tenían miedo de reclamar.'], c: 0 },
+        { tipo: 'critica', q: '¿Puede un apagón tener algo bueno? Defiende tu respuesta.', r: 'Respuesta abierta: se valora que note lo que ocurrió —la gente se juntó a conversar— sin negar la molestia.',
+          o: ['Algo bueno tuvo: sacó a los vecinos a conversar.', 'No, un apagón solo trae problemas.', 'Sí, porque así se ahorra dinero.'], c: 0 },
+      ] },
+
+    { id: 'LV4-03', titulo: 'La carrera de cintas', genero: 'narrativo',
+      texto: 'En la feria de la aldea corren la carrera de cintas. Los jinetes pasan al galope bajo un lazo del que cuelgan argollas pequeñas, y tienen que ensartar una con un clavo que llevan en la mano. Suena fácil y no lo es: el caballo no se detiene y la argolla se mueve con el viento. Rigoberto ganó tres años seguidos. Este año falló las dos primeras vueltas y la gente empezó a gritarle. En la tercera acertó, levantó el brazo y la plaza entera se puso de pie, aplaudiendo. Después dijo que la mano tiembla más cuando uno ya ganó antes.',
+      verbos: ['corren', 'pasan', 'cuelgan', 'tienen', 'llevan', 'Suena', 'es', 'detiene', 'mueve', 'ganó', 'falló', 'empezó', 'acertó', 'levantó', 'puso', 'dijo', 'tiembla'],
+      noPers: ['ensartar', 'gritarle', 'aplaudiendo'],
+      neutros: ['seguidos', 'pie'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué tienen que ensartar los jinetes?', r: 'Una argolla, con un clavo que llevan en la mano.',
+          o: ['Una cinta de colores.', 'Un lazo colgado.', 'Una argolla, con un clavo que llevan en la mano.'], c: 2 },
+        { tipo: 'literal', q: '¿Cuántos años seguidos había ganado Rigoberto?', r: 'Tres.',
+          o: ['Tres.', 'Dos.', 'Cinco.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué pasó en la tercera vuelta?', r: 'Acertó y la plaza entera se puso de pie.',
+          o: ['Se cayó del caballo.', 'Volvió a fallar.', 'Acertó y la plaza entera se puso de pie.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué la prueba es más difícil de lo que parece?', r: 'Porque el caballo no se detiene y la argolla se mueve con el viento.',
+          o: ['Porque el clavo pesa mucho.', 'Porque el caballo no se detiene y la argolla se mueve con el viento.', 'Porque la gente grita.'], c: 1 },
+        { tipo: 'critica', q: '¿Qué quiso decir Rigoberto con que «la mano tiembla más cuando uno ya ganó antes»?', r: 'Respuesta abierta: se valora que hable del peso de la expectativa o del miedo a perder lo ganado.',
+          o: ['Que pesa más el miedo a perder lo que ya se ganó.', 'Que se estaba poniendo viejo.', 'Que el clavo estaba flojo.'], c: 0 },
+      ] },
+
+    { id: 'LV4-04', titulo: 'Ordeñar antes del amanecer', genero: 'expositivo',
+      texto: 'Don Chico se levanta a las cuatro y camina hasta el corral. Primero amarra el ternero cerca de la madre, porque la vaca no baja la leche si no ve a su cría. Después lava la ubre con agua limpia y se sienta en un banco de madera. Aprieta con las dos manos, sin jalar, y la leche cae en el balde con un ruido parejo. Una vaca mansa se ordeña en diez minutos. Si el ordeñador se apura o le pega, la vaca patea y se pierde el balde entero. Por eso don Chico repite siempre lo mismo: aquí gana el que tiene paciencia.',
+      verbos: ['levanta', 'camina', 'amarra', 'baja', 've', 'lava', 'sienta', 'Aprieta', 'cae', 'ordeña', 'apura', 'pega', 'patea', 'pierde', 'repite', 'gana', 'tiene'],
+      noPers: ['jalar', 'limpia', 'mansa'],
+      neutros: ['parejo', 'entero'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Por qué se amarra el ternero cerca de la madre?', r: 'Porque la vaca no baja la leche si no ve a su cría.',
+          o: ['Para que tome primero.', 'Para que no se escape.', 'Porque la vaca no baja la leche si no ve a su cría.'], c: 2 },
+        { tipo: 'literal', q: '¿En cuánto tiempo se ordeña una vaca mansa?', r: 'En diez minutos.',
+          o: ['En una hora.', 'En diez minutos.', 'En media mañana.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué pasa si el ordeñador se apura o le pega?', r: 'La vaca patea y se pierde el balde entero.',
+          o: ['La vaca da menos leche.', 'La vaca patea y se pierde el balde entero.', 'El ternero se suelta.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué se aprieta la ubre sin jalar?', r: 'Porque jalar lastima a la vaca y ella reacciona.',
+          o: ['Porque así sale más rápido.', 'Porque jalar lastima a la vaca y ella reacciona.', 'Porque el balde se voltea.'], c: 1 },
+        { tipo: 'critica', q: '¿Por qué don Chico dice que «aquí gana el que tiene paciencia»?', r: 'Respuesta abierta: se valora que relacione la calma con el resultado del trabajo.',
+          o: ['Porque el trabajo es aburrido.', 'Porque las vacas son lentas.', 'Porque apurarse arruina el trabajo de toda la mañana.'], c: 2 },
+      ] },
+
+    { id: 'LV4-05', titulo: 'El perro que aprendió a esperar', genero: 'narrativo',
+      texto: 'Canelo llegó a la casa flaco y asustado. Al principio robaba comida de la mesa y salía corriendo. Mi papá no le pegó ninguna vez. Le servía en un traste aparte y esperaba a que se acercara. Pasaron dos semanas. Un día Canelo se sentó frente al traste y no comió hasta que mi papá le dijo que ya. Desde entonces no ha vuelto a robar. Mi hermana dice que el perro entendió una regla. Mi papá dice otra cosa: que el perro dejó de tener hambre de urgencia, y que un animal tranquilo aprende cualquier cosa.',
+      verbos: ['llegó', 'robaba', 'salía', 'pegó', 'servía', 'esperaba', 'acercara', 'Pasaron', 'sentó', 'comió', 'dijo', 'ha', 'dice', 'entendió', 'dejó', 'aprende'],
+      noPers: ['corriendo', 'vuelto', 'robar', 'tener'],
+      neutros: ['flaco', 'asustado', 'aparte', 'tranquilo'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué hacía Canelo al principio?', r: 'Robaba comida de la mesa y salía corriendo.',
+          o: ['Se escondía todo el día.', 'Robaba comida de la mesa y salía corriendo.', 'No comía nada.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué hizo el papá cuando el perro robaba?', r: 'No le pegó: le servía aparte y esperaba.',
+          o: ['No le pegó: le servía aparte y esperaba.', 'Lo amarró en el patio.', 'Lo sacó de la casa.'], c: 0 },
+        { tipo: 'literal', q: '¿Cuánto tiempo pasó antes del cambio?', r: 'Dos semanas.',
+          o: ['Un mes.', 'Dos semanas.', 'Dos días.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Qué quiere decir el papá con «hambre de urgencia»?', r: 'Que el perro robaba por miedo a no volver a comer, no por maldad.',
+          o: ['Que comía muy rápido.', 'Que tenía una enfermedad.', 'Que robaba por miedo a no volver a comer, no por maldad.'], c: 2 },
+        { tipo: 'critica', q: '¿Quién explica mejor lo que pasó, la hermana o el papá? Defiende tu postura.', r: 'Respuesta abierta: se valora que compare las dos explicaciones y sostenga una con razones.',
+          o: ['La hermana: el perro solo aprendió una regla.', 'Ninguno: fue casualidad.', 'El papá: el perro cambió porque dejó de sentirse en peligro.'], c: 2 },
+      ] },
+  ],
+
+  /* ════════ 5º GRADO (110–135 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
+  5: [
+    { id: 'LV5-01', titulo: 'El simulacro de la escuela', genero: 'narrativo',
+      texto: 'A las nueve sonó la campana tres veces seguidas y todos supimos que empezaba el simulacro. La maestra Reina levantó la mano y nadie habló. Salimos en fila, sin correr, pegados a la pared del corredor. En el patio nos formamos por grados y el maestro de guardia contó a cada grupo. Faltaban dos de sexto: se habían quedado guardando unos cuadernos. Cuando aparecieron, el director no los regañó delante de todos, pero explicó algo que nadie olvidó: en un terremoto de verdad, esos treinta segundos que uno gasta salvando una cosa son los que le faltan a otro para salir. Repetimos el simulacro tres días después. Esa vez salieron todos completos en un minuto y veinte segundos.',
+      verbos: ['sonó', 'supimos', 'empezaba', 'levantó', 'habló', 'Salimos', 'formamos', 'contó', 'Faltaban', 'habían', 'aparecieron', 'regañó', 'explicó', 'olvidó', 'gasta', 'son', 'faltan', 'Repetimos', 'salieron'],
+      noPers: ['correr', 'guardando', 'quedado', 'salvando', 'salir'],
+      neutros: ['seguidas', 'pegados', 'completos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo salieron los alumnos del aula?', r: 'En fila, sin correr, pegados a la pared del corredor.',
+          o: ['Cada quien por su lado.', 'Corriendo hacia el patio.', 'En fila, sin correr, pegados a la pared del corredor.'], c: 2 },
+        { tipo: 'literal', q: '¿Por qué faltaban dos alumnos de sexto?', r: 'Se habían quedado guardando unos cuadernos.',
+          o: ['Se habían quedado guardando unos cuadernos.', 'Estaban enfermos ese día.', 'Salieron por otra puerta.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué el director no los regañó delante de todos?', r: 'Porque prefirió explicar la razón en vez de avergonzarlos.',
+          o: ['Porque no le importaba el simulacro.', 'Porque no sabía quiénes eran.', 'Porque prefirió explicar la razón en vez de avergonzarlos.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Qué demuestra que la segunda vez salieran en un minuto y veinte?', r: 'Que la explicación sirvió y el grupo mejoró de verdad.',
+          o: ['Que la explicación sirvió y el grupo mejoró.', 'Que había menos alumnos ese día.', 'Que la campana sonó más fuerte.'], c: 0 },
+        { tipo: 'critica', q: '¿Sirven de algo los simulacros si nunca tiembla? Argumenta.', r: 'Respuesta abierta: se valora que hable de la preparación y de lo que cuesta improvisar en una emergencia.',
+          o: ['No: es tiempo de clase perdido.', 'Sí: en una emergencia nadie improvisa bien, se hace lo que se practicó.', 'Solo si tiembla ese mismo año.'], c: 1 },
+      ] },
+
+    { id: 'LV5-02', titulo: 'Cómo se arma un nacatamal', genero: 'instructivo',
+      texto: 'La víspera se remoja el maíz con cal y al otro día se muele para sacar la masa. La masa se bate con manteca hasta que flote una bolita en un vaso de agua: esa prueba avisa que ya está en su punto. Aparte se cocina la carne con achiote, ajo y culantro. Las hojas de plátano se pasan por el fuego para que se ablanden y no se rajen al doblarlas. Sobre la hoja se extiende la masa, se acomoda la carne, una rodaja de papa, una aceituna y unas pasas. Después se envuelve apretando bien las esquinas y se amarra con cibaque. Los nacatamales se cuecen tres horas, parados y con poca agua, para que no se deshagan.',
+      verbos: ['remoja', 'muele', 'bate', 'flote', 'avisa', 'está', 'cocina', 'pasan', 'ablanden', 'rajen', 'extiende', 'acomoda', 'envuelve', 'amarra', 'cuecen', 'deshagan'],
+      noPers: ['sacar', 'doblarlas', 'apretando', 'parados'],
+      neutros: ['punto', 'Aparte'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo se sabe que la masa está en su punto?', r: 'Cuando una bolita flota en un vaso de agua.',
+          o: ['Cuando se despega de las manos.', 'Cuando cambia de color.', 'Cuando una bolita flota en un vaso de agua.'], c: 2 },
+        { tipo: 'literal', q: '¿Cuánto tiempo se cuecen los nacatamales?', r: 'Tres horas.',
+          o: ['Una hora.', 'Toda la noche.', 'Tres horas.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué las hojas se pasan por el fuego?', r: 'Para que se ablanden y no se rajen al doblarlas.',
+          o: ['Para que se ablanden y no se rajen al doblarlas.', 'Para matarles los bichos.', 'Para que agarren sabor.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué se cuecen parados y con poca agua?', r: 'Para que no se deshagan dentro de la olla.',
+          o: ['Para que no se deshagan dentro de la olla.', 'Para que se cuezan más rápido.', 'Para que quepan más en la olla.'], c: 0 },
+        { tipo: 'critica', q: '¿Por qué crees que una comida así se hace para las fiestas y no cualquier día?', r: 'Respuesta abierta: se valora que relacione el trabajo y el tiempo que exige con el sentido de la ocasión.',
+          o: ['Porque los ingredientes están prohibidos.', 'Porque solo se consiguen en diciembre.', 'Porque lleva dos días de trabajo y muchas manos.'], c: 2 },
+      ] },
+
+    { id: 'LV5-03', titulo: 'La tormenta llegó de noche', genero: 'narrativo',
+      texto: 'Empezó a llover a las once y no paró. Mi tío salió con una lámpara a ver la quebrada y volvió corriendo: el agua ya lamía el palo del tendedero. Levantamos los colchones sobre las mesas y subimos los sacos de maíz al tapesco. Mi mamá metió los papeles importantes en una bolsa plástica y se la amarró a la cintura. A la una tocamos la puerta de los vecinos de la parte alta y nos recibieron sin preguntar nada. Desde ahí vimos cómo el agua entraba despacio a la casa, sin ruido, como si tuviera todo el tiempo del mundo. Al amanecer bajó. Perdimos dos gallinas y el piso, pero no perdimos los papeles.',
+      verbos: ['Empezó', 'paró', 'salió', 'volvió', 'lamía', 'Levantamos', 'subimos', 'metió', 'amarró', 'tocamos', 'recibieron', 'vimos', 'entraba', 'tuviera', 'bajó', 'Perdimos'],
+      noPers: ['llover', 'ver', 'corriendo', 'preguntar'],
+      neutros: ['importantes', 'alta', 'amanecer'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué hizo la mamá con los papeles importantes?', r: 'Los metió en una bolsa plástica y se la amarró a la cintura.',
+          o: ['Los guardó en el tapesco.', 'Los dejó sobre la mesa.', 'Los metió en una bolsa plástica y se la amarró a la cintura.'], c: 2 },
+        { tipo: 'literal', q: '¿Qué vio el tío cuando salió con la lámpara?', r: 'Que el agua ya lamía el palo del tendedero.',
+          o: ['Que la quebrada estaba seca.', 'Que el agua ya lamía el palo del tendedero.', 'Que el puente se había caído.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué el texto dice que el agua entraba «como si tuviera todo el tiempo del mundo»?', r: 'Para mostrar que subía despacio y sin ruido, y aun así no había cómo pararla.',
+          o: ['Porque el agua estaba tibia.', 'Para mostrar que subía despacio y sin ruido, y aun así no había cómo pararla.', 'Porque la tormenta ya había pasado.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué la última frase menciona los papeles y no las gallinas?', r: 'Porque los papeles no se pueden reponer y las gallinas sí.',
+          o: ['Porque las gallinas no valían nada.', 'Porque los papeles no se pueden reponer y las gallinas sí.', 'Porque la mamá quería presumir.'], c: 1 },
+        { tipo: 'critica', q: '¿Qué debería tener lista una familia que vive cerca de una quebrada? Propón algo.', r: 'Respuesta abierta: se valora que proponga medidas concretas —documentos aparte, un lugar alto, un aviso— y no solo el susto.',
+          o: ['Los papeles aparte, un lugar alto acordado y con quién avisarse.', 'Nada: si el agua sube, no hay nada que hacer.', 'Una lámpara más grande.'], c: 0 },
+      ] },
+
+    { id: 'LV5-04', titulo: 'Aprender a tejer una hamaca', genero: 'expositivo',
+      texto: 'En Yoro varias familias tejen hamacas de hilo de manila. El bastidor son dos horcones parados y un travesaño; ahí se tienden los hilos de la urdimbre, uno junto al otro, sin dejar que se crucen. Después se pasa la trama con una aguja de madera, jalando parejo, porque un hilo flojo se ve al colgarla. La orilla se remata con una trenza gruesa que aguanta el peso. Una hamaca de matrimonio lleva más de mil metros de hilo y dos semanas de trabajo. Quien aprende empieza tejiendo bolsas pequeñas, y solo después de fallar varias veces entiende que la mano tiene que ir siempre al mismo ritmo. El error no se nota tejiendo: se nota cuando alguien se acuesta.',
+      verbos: ['tejen', 'son', 'tienden', 'crucen', 'pasa', 've', 'remata', 'aguanta', 'lleva', 'aprende', 'empieza', 'entiende', 'tiene', 'nota', 'acuesta'],
+      noPers: ['parados', 'jalando', 'colgarla', 'tejiendo', 'fallar', 'ir'],
+      neutros: ['flojo', 'gruesa', 'parejo'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Con qué se pasa la trama?', r: 'Con una aguja de madera.',
+          o: ['Con los dedos.', 'Con una aguja de madera.', 'Con un gancho de metal.'], c: 1 },
+        { tipo: 'literal', q: '¿Cuánto hilo lleva una hamaca de matrimonio?', r: 'Más de mil metros.',
+          o: ['Cien metros.', 'Más de mil metros.', 'Diez metros.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué hay que jalar parejo la trama?', r: 'Porque un hilo flojo se nota al colgar la hamaca.',
+          o: ['Porque si no se rompe la aguja.', 'Porque así se termina más rápido.', 'Porque un hilo flojo se nota al colgar la hamaca.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Qué significa que «el error no se nota tejiendo: se nota cuando alguien se acuesta»?', r: 'Que el defecto aparece con el peso, cuando ya no se puede corregir.',
+          o: ['Que el defecto aparece con el peso, cuando ya no se puede corregir.', 'Que el tejedor no revisa su trabajo.', 'Que hay que tejer acostado.'], c: 0 },
+        { tipo: 'critica', q: '¿Por qué quien aprende empieza por bolsas pequeñas y no por una hamaca? Argumenta.', r: 'Respuesta abierta: se valora que hable de practicar el gesto antes de arriesgar dos semanas de material.',
+          o: ['Porque las bolsas se venden mejor.', 'Porque conviene practicar el gesto antes de arriesgar semanas de trabajo.', 'Porque las hamacas están prohibidas para principiantes.'], c: 1 },
+      ] },
+
+    { id: 'LV5-05', titulo: 'El primer día en la escuela nueva', genero: 'narrativo',
+      texto: 'Nos mudamos en enero y entré a mitad de curso. Esa mañana caminé despacio, buscando alguna cara conocida, y no encontré ninguna. La maestra me presentó y treinta pares de ojos se voltearon a verme. Me senté en el último pupitre y no hablé en todo el día. Al recreo salí solo y me quedé mirando un partido desde la orilla. Entonces un muchacho pateó la pelota hacia mí y me gritó: «¡Devolvéla, pues!». Se la devolví. Después me hizo un gesto para que entrara al equipo. No me preguntó cómo me llamaba ni de dónde venía. Ese día aprendí que a veces uno no necesita que lo presenten: necesita que lo inviten a jugar.',
+      verbos: ['mudamos', 'entré', 'caminé', 'encontré', 'presentó', 'voltearon', 'senté', 'hablé', 'salí', 'quedé', 'pateó', 'gritó', 'Devolvéla', 'devolví', 'hizo', 'entrara', 'preguntó', 'llamaba', 'venía', 'aprendí', 'necesita', 'presenten', 'inviten'],
+      noPers: ['buscando', 'verme', 'mirando', 'jugar', 'conocida'],
+      neutros: ['solo', 'último'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué hizo el narrador durante el recreo?', r: 'Se quedó mirando un partido desde la orilla.',
+          o: ['Se quedó en el aula.', 'Se puso a jugar de inmediato.', 'Se quedó mirando un partido desde la orilla.'], c: 2 },
+        { tipo: 'literal', q: '¿Qué le gritó el muchacho?', r: '«¡Devolvéla, pues!».',
+          o: ['«¿Cómo te llamás?».', '«¡Devolvéla, pues!».', '«¿De dónde venís?».'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué importa que el muchacho no le preguntara su nombre?', r: 'Porque lo incluyó sin exigirle explicaciones, y eso fue lo que lo hizo sentirse parte.',
+          o: ['Porque lo incluyó sin exigirle explicaciones.', 'Porque ya lo conocía de antes.', 'Porque no le interesaba saberlo.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Qué diferencia hay entre «presentar» e «invitar a jugar», según el texto?', r: 'Presentar es un trámite; invitar a jugar es lo que de verdad integra a alguien.',
+          o: ['Que presentar es un trámite e invitar a jugar es lo que integra.', 'Que ninguna de las dos sirve.', 'Que presentar lo hace la maestra.'], c: 0 },
+        { tipo: 'critica', q: '¿Qué podría hacer un grupo para recibir a un compañero nuevo? Propón algo concreto.', r: 'Respuesta abierta: se valora que proponga una acción concreta y no solo buenas intenciones.',
+          o: ['Invitarlo a algo el primer día, sin interrogarlo.', 'Nada: que él se acomode solo.', 'Hacerle muchas preguntas para conocerlo.'], c: 0 },
+      ] },
+  ],
+
+  /* ════════ 6º GRADO (125–150 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
+  6: [
+    { id: 'LV6-01', titulo: 'El rescate en la quebrada', genero: 'narrativo',
+      texto: 'El muchacho se resbaló en la piedra y cayó al pozo cuando la quebrada venía crecida. Sus compañeros gritaron desde la orilla, pero ninguno se tiró: los tres sabían nadar en el mar, pero ninguno de ellos conocía la fuerza de esa corriente. Uno corrió hasta la casa más cercana y volvió con una cuerda de amarrar ganado. Amarraron un extremo a un guayabo y lanzaron el otro tres veces antes de que él lo agarrara. No lo jalaron de frente: caminaron por la orilla hacia abajo, dejando que el agua misma lo arrimara. Cuando salió, temblaba y no podía hablar. El bombero que llegó después les dijo algo que no esperaban oír: lo que le salvó la vida fue que ninguno de ustedes se tiró a buscarlo.',
+      verbos: ['resbaló', 'cayó', 'venía', 'gritaron', 'tiró', 'sabían', 'conocía', 'corrió', 'volvió', 'Amarraron', 'lanzaron', 'agarrara', 'jalaron', 'caminaron', 'arrimara', 'salió', 'temblaba', 'podía', 'llegó', 'dijo', 'esperaban', 'salvó', 'fue'],
+      noPers: ['nadar', 'amarrar', 'dejando', 'hablar', 'oír', 'buscarlo'],
+      neutros: ['crecida', 'cercana'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Con qué lo sacaron del pozo?', r: 'Con una cuerda de amarrar ganado.',
+          o: ['Con una rama larga.', 'Con una cuerda de amarrar ganado.', 'Nadando hasta él.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué hicieron en vez de jalarlo de frente?', r: 'Caminaron por la orilla hacia abajo y dejaron que el agua lo arrimara.',
+          o: ['Caminaron por la orilla hacia abajo y dejaron que el agua lo arrimara.', 'Lo jalaron entre los tres.', 'Esperaron a que bajara la creciente.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué ninguno se tiró al agua aunque sabían nadar?', r: 'Porque saber nadar en el mar no sirve contra una corriente que no se conoce.',
+          o: ['Porque tenían miedo del muchacho.', 'Porque saber nadar en el mar no sirve contra una corriente desconocida.', 'Porque la cuerda ya venía en camino.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué el bombero les dijo que lo que lo salvó fue que nadie se tiró?', r: 'Porque en esas corrientes el que se tira suele convertirse en una segunda víctima.',
+          o: ['Porque el agua estaba muy fría.', 'Porque así llegaron más rápido.', 'Porque el que se tira suele convertirse en una segunda víctima.'], c: 2 },
+        { tipo: 'critica', q: '¿Es cobardía no tirarse al agua a salvar a alguien? Defiende tu postura.', r: 'Respuesta abierta: se valora que distinga entre valentía y decisión informada, con una razón.',
+          o: ['Sí: un amigo se tira sin pensarlo.', 'No: ayudar bien exige pensar, y un rescatador ahogado no salva a nadie.', 'Depende de si sabe nadar o no.'], c: 1 },
+      ] },
+
+    { id: 'LV6-02', titulo: 'Aprender a soldar', genero: 'expositivo',
+      texto: 'En el taller de don Marcial se aprende soldando, no oyendo. El primer día el aprendiz solo limpia el metal con cepillo de alambre, porque la soldadura no pega sobre óxido ni sobre grasa. Después practica el arco: acerca el electrodo, lo pega, lo despega y vuelve a acercarlo hasta que aprende a sostener la distancia. Si lo pega mucho, el electrodo se queda pegado; si lo aleja, el arco se corta. Todo se decide en unos milímetros que la mano tiene que aprender sola. Don Marcial revisa el cordón por debajo, no por arriba, porque arriba cualquier cosa se ve bonita. Dice que él no enseña a soldar: enseña a mirar el charco de metal mientras se enfría, que es donde se ve si el trabajo va a aguantar.',
+      verbos: ['aprende', 'limpia', 'pega', 'practica', 'acerca', 'despega', 'vuelve', 'queda', 'aleja', 'corta', 'decide', 'tiene', 'revisa', 've', 'Dice', 'enseña', 'enfría', 'es', 'va', 'aguantar'],
+      noPers: ['soldando', 'oyendo', 'sostener', 'acercarlo', 'pegado', 'soldar', 'mirar'],
+      neutros: ['bonita', 'sola'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué hace el aprendiz el primer día?', r: 'Limpia el metal con cepillo de alambre.',
+          o: ['Suelda una pieza pequeña.', 'Solo mira trabajar a don Marcial.', 'Limpia el metal con cepillo de alambre.'], c: 2 },
+        { tipo: 'literal', q: '¿Por dónde revisa don Marcial el cordón?', r: 'Por debajo.',
+          o: ['Por debajo.', 'Por arriba.', 'Por los dos lados.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué hay que limpiar el metal antes de soldar?', r: 'Porque la soldadura no pega sobre óxido ni sobre grasa.',
+          o: ['Porque así se ve más ordenado.', 'Porque el cepillo calienta el metal.', 'Porque la soldadura no pega sobre óxido ni sobre grasa.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Qué quiere decir que «arriba cualquier cosa se ve bonita»?', r: 'Que el aspecto de la superficie engaña y el defecto se esconde debajo.',
+          o: ['Que el aspecto de la superficie engaña y el defecto se esconde debajo.', 'Que hay que trabajar con buena luz.', 'Que don Marcial pinta las piezas.'], c: 0 },
+        { tipo: 'critica', q: '¿Por qué dice que enseña «a mirar» y no «a soldar»? Argumenta.', r: 'Respuesta abierta: se valora que reconozca que el criterio para juzgar el propio trabajo es lo que hace autónomo a alguien.',
+          o: ['Porque no sabe explicar bien.', 'Porque quien aprende a juzgar su propio trabajo ya no necesita maestro.', 'Porque soldar es muy fácil.'], c: 1 },
+      ] },
+
+    { id: 'LV6-03', titulo: 'El torneo de ajedrez', genero: 'narrativo',
+      texto: 'La escuela inscribió por primera vez un equipo en el torneo departamental. Nadie tenía reloj, así que entrenaron contando en voz alta. Marielos, que había aprendido mirando jugar a su abuelo, ganó las tres primeras partidas sin levantar la vista del tablero. En la cuarta se enfrentó a un muchacho de un colegio grande que movía rapidísimo para apurarla. Ella no se apuró. Pensó cada jugada igual que antes, perdió por tiempo en el reloj y salió llorando. El profesor no le habló de la derrota. Le preguntó qué había visto en la jugada quince, y estuvieron media hora repasando esa posición. Al año siguiente Marielos volvió con reloj propio y ganó el torneo. Todavía dice que aprendió más de esa partida perdida que de las tres ganadas.',
+      verbos: ['inscribió', 'tenía', 'entrenaron', 'había', 'ganó', 'enfrentó', 'movía', 'apuró', 'Pensó', 'perdió', 'salió', 'habló', 'preguntó', 'estuvieron', 'volvió', 'dice', 'aprendió'],
+      noPers: ['contando', 'aprendido', 'mirando', 'jugar', 'levantar', 'apurarla', 'llorando', 'visto', 'repasando', 'perdida', 'ganadas'],
+      neutros: ['propio', 'siguiente'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo entrenaron sin reloj?', r: 'Contando en voz alta.',
+          o: ['Sin controlar el tiempo.', 'Con el reloj del profesor.', 'Contando en voz alta.'], c: 2 },
+        { tipo: 'literal', q: '¿Qué le preguntó el profesor después de la derrota?', r: 'Qué había visto en la jugada quince.',
+          o: ['Qué había visto en la jugada quince.', 'Por qué se había apurado tan poco.', 'Si quería seguir jugando.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué el rival movía rapidísimo?', r: 'Para apurarla y hacerla fallar por tiempo.',
+          o: ['Para apurarla y hacerla fallar por tiempo.', 'Porque tenía prisa por irse.', 'Porque ya sabía todas las jugadas.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué el profesor no le habló de la derrota?', r: 'Porque le interesaba lo que ella había pensado, no el resultado.',
+          o: ['Porque le interesaba lo que ella había pensado, no el resultado.', 'Porque estaba enojado con ella.', 'Porque no le importaba el torneo.'], c: 0 },
+        { tipo: 'critica', q: '¿Se aprende más ganando o perdiendo? Defiende tu postura con una razón.', r: 'Respuesta abierta: se valora que sostenga su postura sin repetir el lugar común, apoyándose en el texto o en su experiencia.',
+          o: ['Ganando: perder solo desanima.', 'Da igual: se aprende con la práctica y ya.', 'Perdiendo, si alguien ayuda a mirar qué pasó; si no, solo duele.'], c: 2 },
+      ] },
+
+    { id: 'LV6-04', titulo: 'Cómo se levanta una champa', genero: 'instructivo',
+      texto: 'Escoge un terreno que no se empoce y márcalo con estacas antes de cavar. Los horcones se entierran a media vara y se aploman con una plomada de hilo, porque una champa torcida se descuadra sola con el primer viento. Amarra las soleras encima y clava las tijeras del techo, dejando la caída suficiente para que corra el agua. La palma se coloca de abajo hacia arriba, traslapando cada hilera sobre la anterior como escamas: así el agua resbala y no se mete. Nunca amarres la palma con alambre; usa bejuco o mecate, que ceden cuando el viento empuja. Al terminar, párate lejos y míralo desde tres lados distintos. Si algo se ve torcido desde uno solo de esos tres lados, está torcido de verdad y conviene desarmarlo ahora.',
+      verbos: ['Escoge', 'empoce', 'márcalo', 'entierran', 'aploman', 'descuadra', 'Amarra', 'clava', 'corra', 'coloca', 'resbala', 'mete', 'amarres', 'usa', 'ceden', 'empuja', 'párate', 'míralo', 've', 'está', 'conviene'],
+      noPers: ['cavar', 'dejando', 'traslapando', 'terminar', 'desarmarlo'],
+      neutros: ['torcida', 'suficiente', 'anterior', 'torcido', 'distintos'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo se coloca la palma del techo?', r: 'De abajo hacia arriba, traslapando cada hilera sobre la anterior.',
+          o: ['De abajo hacia arriba, traslapando cada hilera sobre la anterior.', 'De arriba hacia abajo, sin traslapar.', 'En cuatro capas parejas.'], c: 0 },
+        { tipo: 'literal', q: '¿Con qué NO se debe amarrar la palma?', r: 'Con alambre.',
+          o: ['Con bejuco.', 'Con mecate.', 'Con alambre.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué se prefiere bejuco o mecate al alambre?', r: 'Porque ceden cuando el viento empuja, en vez de cortar o romperse.',
+          o: ['Porque son más baratos.', 'Porque duran más años.', 'Porque ceden cuando el viento empuja.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué hay que mirar la champa desde tres lados?', r: 'Porque desde un solo lado una torcedura puede pasar desapercibida.',
+          o: ['Porque desde un solo lado una torcedura puede pasar desapercibida.', 'Para ver si cabe la mesa.', 'Para calcular cuánta palma falta.'], c: 0 },
+        { tipo: 'critica', q: '¿Por qué el texto insiste tanto en aplomar antes de seguir? Argumenta.', r: 'Respuesta abierta: se valora que note que un error en la base se arrastra a todo lo demás.',
+          o: ['Porque así queda más bonita.', 'Porque un error en la base se arrastra a todo lo que se construya encima.', 'Porque la plomada es barata.'], c: 1 },
+      ] },
+
+    { id: 'LV6-05', titulo: 'La huelga de los cortadores', genero: 'expositivo',
+      texto: 'En 1954 los trabajadores de las bananeras de la costa norte pararon el trabajo y no volvieron a los campos durante sesenta y nueve días. No pedían un imposible: reclamaban jornada de ocho horas, pago en dinero y no en vales, y atención médica. Hasta entonces se les pagaba con fichas que solo servían en la tienda de la compañía, de manera que el salario regresaba completo a quien lo había entregado. La huelga se extendió a otras empresas y paralizó buena parte del norte del país. Terminó con un acuerdo que no dio todo lo que se pedía, pero cambió el país: de ahí salieron el Código del Trabajo y el derecho a organizarse en sindicato. Los que empezaron aquello no leyeron ninguna ley: sabían que estaban trabajando de más.',
+      verbos: ['pararon', 'volvieron', 'pedían', 'reclamaban', 'pagaba', 'servían', 'regresaba', 'había', 'extendió', 'paralizó', 'Terminó', 'dio', 'pedía', 'cambió', 'salieron', 'empezaron', 'leyeron', 'sabían', 'estaban'],
+      noPers: ['entregado', 'organizarse', 'trabajando'],
+      neutros: ['completo', 'médica', 'buena'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cuánto duró la huelga?', r: 'Sesenta y nueve días.',
+          o: ['Un mes.', 'Todo un año.', 'Sesenta y nueve días.'], c: 2 },
+        { tipo: 'literal', q: '¿Qué reclamaban los trabajadores?', r: 'Jornada de ocho horas, pago en dinero y atención médica.',
+          o: ['Jornada de ocho horas, pago en dinero y atención médica.', 'Tierras propias para sembrar.', 'La salida de la compañía del país.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué pagar con fichas favorecía a la compañía?', r: 'Porque el salario solo servía en su tienda y regresaba completo a sus manos.',
+          o: ['Porque las fichas eran más fáciles de contar.', 'Porque el salario solo servía en su tienda y regresaba a sus manos.', 'Porque las fichas valían más que el dinero.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Qué significa que «no leyeron ninguna ley: sabían que estaban trabajando de más»?', r: 'Que el reclamo nació de la experiencia del cuerpo, no de un texto legal.',
+          o: ['Que eran analfabetos y no podían leer.', 'Que el reclamo nació de la experiencia, no de un texto legal.', 'Que la ley todavía no existía en ninguna parte.'], c: 1 },
+        { tipo: 'critica', q: '¿Cambia algo una huelga que no consigue todo lo que pedía? Defiende tu postura.', r: 'Respuesta abierta: se valora que note el resultado a largo plazo —leyes y derechos— frente al reclamo inmediato.',
+          o: ['No: si no consiguieron todo, fue una derrota.', 'Sí: de ahí salieron el Código del Trabajo y el derecho a sindicato.', 'Solo si duró más de dos meses.'], c: 1 },
+      ] },
+  ],
+
+  /* ════════ 7º GRADO (140–170 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
+  7: [
+    { id: 'LV7-01', titulo: 'La brigada que llegó primero', genero: 'narrativo',
+      texto: 'El temblor los agarró a las dos de la tarde y la pared de adobe se vino encima del corredor. Los bomberos tardarían dos horas en subir desde la cabecera, así que la gente empezó sola. Nadie dio órdenes al principio y por eso se estorbaban: unos jalaban de un lado mientras otros levantaban del otro. Entonces don Rigo se subió a una piedra y organizó el trabajo en voz alta. Formó tres grupos: uno que removía, otro que sacaba el escombro en carretillas y otro que se quedaba callado escuchando, por si alguien contestaba. La regla del tercer grupo era la más difícil de cumplir: cuando ellos levantaban la mano, todos tenían que parar y callarse. Fue en uno de esos silencios cuando se oyó el llanto de la niña. La sacaron a las seis, y estaba viva. Los bomberos llegaron cuando la niña ya iba camino del centro de salud.',
+      verbos: ['agarró', 'vino', 'tardarían', 'empezó', 'dio', 'estorbaban', 'jalaban', 'levantaban', 'subió', 'organizó', 'Formó', 'removía', 'sacaba', 'quedaba', 'contestaba', 'era', 'tenían', 'Fue', 'oyó', 'sacaron', 'estaba', 'llegaron', 'iba'],
+      noPers: ['escuchando', 'cumplir', 'parar', 'callarse'],
+      neutros: ['callado', 'viva', 'difícil'],
+      preguntas: [
+        { tipo: 'literal', q: '¿En cuántos grupos organizó don Rigo el trabajo?', r: 'En tres.',
+          o: ['En tres.', 'En dos.', 'En cinco.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué hacía el tercer grupo?', r: 'Se quedaba callado escuchando, por si alguien contestaba.',
+          o: ['Sacaba el escombro en carretillas.', 'Buscaba a los bomberos.', 'Se quedaba callado escuchando, por si alguien contestaba.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué al principio la gente se estorbaba?', r: 'Porque nadie coordinaba y cada quien jalaba por su lado.',
+          o: ['Porque eran demasiados.', 'Porque no tenían herramientas.', 'Porque nadie coordinaba y cada quien jalaba por su lado.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Por qué la regla del silencio era la más difícil de cumplir?', r: 'Porque obliga a detener el rescate justo cuando la urgencia empuja a seguir.',
+          o: ['Porque la gente no se conocía.', 'Porque obliga a parar justo cuando la urgencia empuja a seguir.', 'Porque había mucho ruido de máquinas.'], c: 1 },
+        { tipo: 'critica', q: '¿Debe la gente actuar antes de que lleguen los bomberos? Argumenta.', r: 'Respuesta abierta: se valora que reconozca la urgencia real y también el riesgo de actuar sin método.',
+          o: ['Nunca: hay que esperar a los expertos.', 'Siempre, sin pensarlo dos veces.', 'Sí cuando la ayuda tarda, pero organizándose, que fue lo que aquí funcionó.'], c: 2 },
+      ] },
+
+    { id: 'LV7-02', titulo: 'Sembrar en ladera sin perder el suelo', genero: 'expositivo',
+      texto: 'Sembrar en pendiente parece imposible y sin embargo es lo que hace la mayoría de los productores del occidente. El problema no es la inclinación: es el agua que baja arrastrando la capa fértil, esa que tardó siglos en formarse. Las barreras vivas resuelven buena parte. Se siembran hileras de zacate o de piña siguiendo la curva a nivel, de manera que el agua se topa con la barrera, pierde fuerza y suelta ahí la tierra que traía. Año con año esa tierra retenida va formando una terraza sola, sin que nadie la construya. También ayuda no quemar el rastrojo: quemarlo deja el suelo desnudo justo antes de que empiecen las lluvias. Un técnico lo resume así: aquí no se trata de traer tierra nueva, sino de no dejar ir la que ya está, porque nadie ha logrado nunca fabricar un centímetro de suelo fértil.',
+      verbos: ['parece', 'es', 'hace', 'baja', 'tardó', 'resuelven', 'siembran', 'topa', 'pierde', 'suelta', 'traía', 'va', 'construya', 'ayuda', 'deja', 'empiecen', 'resume', 'trata', 'está', 'ha'],
+      noPers: ['Sembrar', 'arrastrando', 'formarse', 'siguiendo', 'retenida', 'formando', 'quemar', 'quemarlo', 'traer', 'ir', 'logrado', 'fabricar'],
+      neutros: ['imposible', 'fértil', 'vivas', 'desnudo', 'nueva'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo se siembran las barreras vivas?', r: 'En hileras de zacate o piña, siguiendo la curva a nivel.',
+          o: ['En hileras de zacate o piña, siguiendo la curva a nivel.', 'De arriba hacia abajo de la ladera.', 'Alrededor de toda la parcela.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué pasa con el rastrojo quemado?', r: 'Deja el suelo desnudo justo antes de las lluvias.',
+          o: ['Mejora la tierra con la ceniza.', 'Ahuyenta las plagas del maíz.', 'Deja el suelo desnudo justo antes de las lluvias.'], c: 2 },
+        { tipo: 'inferencial', q: '¿Cómo se forma sola una terraza?', r: 'Porque la barrera detiene la tierra que baja y esa tierra se acumula año con año.',
+          o: ['Porque la barrera detiene la tierra que baja y se acumula año con año.', 'Porque el productor la cava con azadón.', 'Porque la piña levanta el terreno.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué el técnico dice que no se trata de traer tierra nueva?', r: 'Porque la capa fértil tardó siglos en formarse y no hay cómo reponerla trayéndola de otro lado.',
+          o: ['Porque traer tierra es caro.', 'Porque la tierra de otro lado no sirve.', 'Porque tardó siglos en formarse y no hay cómo reponerla.'], c: 2 },
+        { tipo: 'critica', q: '¿Por qué crees que muchos siguen quemando aunque conocen el daño? Argumenta.', r: 'Respuesta abierta: se valora que reconozca razones prácticas —tiempo, mano de obra, costumbre— y no solo ignorancia.',
+          o: ['Porque quemar es rápido y barato, y el daño se ve años después.', 'Porque no les importa la tierra.', 'Porque nadie se los ha dicho nunca.'], c: 0 },
+      ] },
+
+    { id: 'LV7-03', titulo: 'El día que el arbitraje se equivocó', genero: 'narrativo',
+      texto: 'Faltaban cuatro minutos y el marcador estaba empatado. El delantero se metió al área, el defensa lo tocó apenas y él se dejó caer. El árbitro pitó penal. La banca del equipo contrario reclamó, el público chifló y el capitán de los locales hizo algo que nadie esperaba: caminó hasta el árbitro y le dijo que no había sido falta. El árbitro dudó, consultó al asistente y mantuvo su decisión. Anotaron el penal y ganaron. Al terminar, varios compañeros le reclamaron al capitán por haber hablado. Él contestó que no lo había hecho por el otro equipo, sino porque no quería pasarse la semana explicándole a su hermano menor por qué se había tirado. El entrenador no lo castigó. Tampoco lo felicitó delante de todos: se lo dijo aparte, en el camerino y sin testigos, para no ponerlo de ejemplo obligatorio delante de los demás.',
+      verbos: ['Faltaban', 'estaba', 'metió', 'tocó', 'dejó', 'pitó', 'reclamó', 'chifló', 'hizo', 'esperaba', 'caminó', 'dijo', 'había', 'dudó', 'consultó', 'mantuvo', 'Anotaron', 'ganaron', 'reclamaron', 'contestó', 'quería', 'castigó', 'felicitó'],
+      noPers: ['caer', 'terminar', 'haber', 'hablado', 'hecho', 'pasarse', 'explicándole', 'tirado', 'ponerlo'],
+      neutros: ['empatado', 'menor', 'aparte', 'obligatorio'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Qué hizo el capitán de los locales?', r: 'Le dijo al árbitro que no había sido falta.',
+          o: ['Le dijo al árbitro que no había sido falta.', 'Reclamó el penal a favor.', 'Se retiró del campo.'], c: 0 },
+        { tipo: 'literal', q: '¿Qué decidió finalmente el árbitro?', r: 'Mantuvo su decisión después de consultar al asistente.',
+          o: ['Mantuvo su decisión después de consultar al asistente.', 'Anuló el penal.', 'Expulsó al capitán.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Por qué el capitán dijo que no lo hizo por el otro equipo?', r: 'Porque su razón era personal: no quería tener que justificarle la trampa a su hermano.',
+          o: ['Porque odiaba a su propio equipo.', 'Porque su razón era personal: no quería justificarle la trampa a su hermano.', 'Porque quería que lo felicitaran.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué el entrenador se lo dijo aparte y no delante de todos?', r: 'Para no convertir su decisión personal en una obligación para los demás.',
+          o: ['Para no convertir su decisión personal en una obligación para los demás.', 'Porque no quería que los otros se enteraran.', 'Porque no estaba de acuerdo con él.'], c: 0 },
+        { tipo: 'critica', q: '¿Hizo bien el capitán? Defiende tu postura con una razón.', r: 'Respuesta abierta: se valora que sostenga su posición reconociendo lo que su equipo perdía o ganaba.',
+          o: ['No: primero está el equipo, y le costó puntos a los suyos.', 'Sí, aunque le costara: ganó algo que el marcador no mide.', 'Da igual, el árbitro decidió al final.'], c: 1 },
+      ] },
+
+    { id: 'LV7-04', titulo: 'Cómo se toma la presión', genero: 'instructivo',
+      texto: 'Antes de medir, deja que la persona se siente y descanse cinco minutos, con la espalda apoyada y los pies en el suelo. No midas si acaba de caminar, de fumar o de tomar café: cualquiera de esas tres cosas sube la cifra y te hace registrar un dato que no existe. Coloca el brazo a la altura del corazón y ajusta el brazalete dos dedos arriba del codo, ni flojo ni apretando. Infla mientras palpas el pulso, y cuando deje de sentirse, sigue inflando treinta milímetros más. Después suelta despacio, escuchando: el primer golpe que oigas marca la sistólica y el último que se apaga marca la diastólica. Anota los dos números en el momento, sin confiar en la memoria. Si el valor sale alto, no alarmes a nadie: espera dos minutos y vuelve a medir en el otro brazo.',
+      verbos: ['deja', 'siente', 'descanse', 'midas', 'acaba', 'sube', 'hace', 'existe', 'Coloca', 'ajusta', 'Infla', 'palpas', 'deje', 'sigue', 'suelta', 'oigas', 'marca', 'apaga', 'Anota', 'sale', 'alarmes', 'espera', 'vuelve'],
+      noPers: ['medir', 'apoyada', 'caminar', 'fumar', 'tomar', 'registrar', 'apretando', 'sentirse', 'inflando', 'escuchando', 'confiar'],
+      neutros: ['flojo', 'sistólica', 'diastólica', 'alto'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cuánto debe descansar la persona antes de medir?', r: 'Cinco minutos.',
+          o: ['Media hora.', 'Cinco minutos.', 'No hace falta descansar.'], c: 1 },
+        { tipo: 'literal', q: '¿Qué marca el primer golpe que se oye?', r: 'La sistólica.',
+          o: ['La diastólica.', 'La sistólica.', 'El pulso por minuto.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué no se mide después de caminar, fumar o tomar café?', r: 'Porque esas tres cosas suben la cifra y el dato registrado no sería real.',
+          o: ['Porque el brazalete no ajusta bien.', 'Porque suben la cifra y el dato registrado no sería real.', 'Porque la persona no se queda quieta.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué se anotan los números en el momento?', r: 'Porque confiar en la memoria hace perder o cambiar el dato.',
+          o: ['Porque lo exige el reglamento.', 'Porque el aparato se apaga solo.', 'Porque confiar en la memoria hace perder o cambiar el dato.'], c: 2 },
+        { tipo: 'critica', q: '¿Por qué el texto pide no alarmar a nadie ante un valor alto? Argumenta.', r: 'Respuesta abierta: se valora que note que una sola medición puede estar equivocada y que el susto sube la presión.',
+          o: ['Porque no es asunto de quien mide.', 'Porque siempre se equivoca el aparato.', 'Porque una sola medición puede fallar, y el susto sube todavía más la presión.'], c: 2 },
+      ] },
+
+    { id: 'LV7-05', titulo: 'La radionovela del mediodía', genero: 'expositivo',
+      texto: 'Antes de que llegara la televisión a los pueblos, la radionovela detenía el país a la una de la tarde. Las familias comían escuchando y nadie hablaba durante esos treinta minutos. Los actores trabajaban en un estudio pequeño, leyendo el libreto de pie y turnándose frente a un solo micrófono. Los efectos se hacían a mano: una lámina que se sacudía era el trueno, dos cocos partidos golpeando una tabla eran los cascos de un caballo, y un puñado de sal cayendo sobre papel era la lluvia. El oyente no veía nada, y por eso lo veía todo. Cuando murió un personaje querido, llegaron cartas de condolencia a la emisora. Un locutor lo recordaba muchos años después con una idea que sigue sirviendo hoy: aquella gente no confundía la ficción con la vida, simplemente había aprendido a habitarla durante el rato que duraba.',
+      verbos: ['llegara', 'detenía', 'comían', 'hablaba', 'trabajaban', 'hacían', 'sacudía', 'era', 'eran', 'veía', 'murió', 'llegaron', 'recordaba', 'sigue', 'confundía', 'había', 'duraba'],
+      noPers: ['escuchando', 'leyendo', 'turnándose', 'partidos', 'golpeando', 'cayendo', 'querido', 'aprendido', 'habitarla', 'sirviendo'],
+      neutros: ['pequeño', 'pie'],
+      preguntas: [
+        { tipo: 'literal', q: '¿Cómo se hacía el sonido de la lluvia?', r: 'Con un puñado de sal cayendo sobre papel.',
+          o: ['Con dos cocos partidos.', 'Con una lámina que se sacudía.', 'Con un puñado de sal cayendo sobre papel.'], c: 2 },
+        { tipo: 'literal', q: '¿Cómo trabajaban los actores en el estudio?', r: 'De pie, leyendo el libreto y turnándose frente a un solo micrófono.',
+          o: ['De pie, leyendo el libreto y turnándose frente a un solo micrófono.', 'Cada uno con su micrófono.', 'Grabando por separado.'], c: 0 },
+        { tipo: 'inferencial', q: '¿Qué quiere decir que «no veía nada, y por eso lo veía todo»?', r: 'Que al no mostrarle imágenes, el oyente las construía él mismo y resultaban más vivas.',
+          o: ['Que la radio tenía mala señal.', 'Que al no mostrarle imágenes, el oyente las construía él mismo.', 'Que la gente cerraba los ojos.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Qué muestran las cartas de condolencia por un personaje?', r: 'Hasta qué punto el público vivía la historia como algo propio.',
+          o: ['Hasta qué punto el público vivía la historia como algo propio.', 'Que la emisora las inventaba para promocionarse.', 'Que la gente creía que era real.'], c: 0 },
+        { tipo: 'critica', q: '¿Se perdió algo cuando la imagen reemplazó al sonido? Defiende tu postura.', r: 'Respuesta abierta: se valora que compare lo que aporta cada medio sin caer en que todo pasado fue mejor.',
+          o: ['No: la televisión es mejor en todo.', 'Se perdió el trabajo de imaginar, aunque se ganaron otras cosas.', 'Sí: antes todo era mejor.'], c: 1 },
+      ] },
+  ],
+};
+
+/* ══════════════════════════════════════════════════════════════
+   🛠️ EL TALLER DE ESTA MISIÓN
+
+   1. las cinco preguntas del texto;
+   2. cazar los verbos tocándolos sobre lo que acaba de leer;
+   3. clasificar los que cazó: conjugado o forma no personal;
+   4. volver de memoria al texto a buscar el verbo exacto.
+══════════════════════════════════════════════════════════════ */
+const LECTURA_VERBOS_TALLER = [
+
+  { id: 'comprension', icono: '❓', titulo: '¿Qué entendiste?', forma: 'comprension' },
+
+  { id: 'caza', icono: '🎯', titulo: 'Caza de verbos', forma: 'cazar', meta: 10,
+    instruccion: function (t, u, info) {
+      return 'En esta lectura hay <strong>' + info.total + ' verbos</strong>. Encuentra ' +
+        '<strong>al menos ' + info.meta + '</strong> y tócalos: valen los <strong>conjugados</strong> ' +
+        '(llegó, sube, tenían) y también las <strong>formas no personales</strong> ' +
+        '(cortar, cortando, cortado).';
+    },
+    enPapel: function (t, u, info) {
+      return 'En esta lectura hay <strong>' + info.total + ' verbos</strong>. <strong>Subraya al menos ' +
+        info.meta + '</strong> en el texto de arriba: valen los <strong>conjugados</strong> (llegó, sube, tenían) ' +
+        'y también las <strong>formas no personales</strong> (cortar, cortando, cortado).';
+    },
+    objetivos: function (t, u) {
+      var con = {}, np = {};
+      (t.verbos || []).forEach(function (p) { con[u.clave(p)] = 1; });
+      (t.noPers || []).forEach(function (p) { np[u.clave(p)] = 1; });
+      var out = [];
+      u.ps.forEach(function (p, i) {
+        var k = u.clave(p);
+        if (con[k]) out.push({ ini: i, fin: i, clase: 'a' });
+        else if (np[k]) out.push({ ini: i, fin: i, clase: 'b' });
+      });
+      return out;
+    },
+    /* La zona gris de los verbos es ancha: el participio que ahí hace de
+       adjetivo, el infinitivo que ahí es sustantivo. Tocarlas no suma ni
+       resta, y la pantalla explica por qué. */
+    neutros: function (t, u) {
+      var neu = {};
+      (t.neutros || []).forEach(function (p) { neu[u.clave(p)] = 1; });
+      if (typeof LECTURA_CLASES !== 'undefined') LECTURA_CLASES.neutros.forEach(function (p) { neu[u.clave(p)] = 1; });
+      var out = [];
+      u.ps.forEach(function (p, i) {
+        if (neu[u.clave(p)]) {
+          out.push({ ini: i, fin: i, motivo: '«' + u.esc(p.replace(/[.,;:()¿?¡!«»"“”'’…—–]/g, '')) +
+            '» viene de un verbo, pero <strong>aquí no está haciendo de verbo</strong>: en esta oración ' +
+            'funciona como adjetivo o como sustantivo. No cuenta: ni bien ni mal.' });
+        }
+      });
+      return out;
+    },
+    fallo: function (palabra, u) {
+      return '❌ «' + u.esc(palabra) + '» no es verbo. Un verbo dice lo que <strong>pasa</strong> o lo que ' +
+        '<strong>se hace</strong>. Prueba a ponerle <em>yo</em> o <em>ayer</em> delante y fíjate si suena.';
+    } },
+
+  { id: 'clasifica', icono: '🗂️', titulo: '¿Conjugado o no personal?', forma: 'dosGrupos',
+    pista: 'Míralos en su oración antes de decidir',
+    grupos: [
+      { clave: 'a', titulo: '👤 Conjugado', pista: 'dice quién y cuándo', nombre: 'verbo conjugado' },
+      { clave: 'b', titulo: '♾️ No personal', pista: '-ar, -er, -ir, -ando, -ado', nombre: 'forma no personal' }
+    ],
+    items: function (t, u) {
+      var con = u.baraja(t.verbos || []), np = u.baraja(t.noPers || []);
+      var nNp = Math.min(3, np.length), nCon = Math.min(6 - nNp, con.length);
+      var lista = con.slice(0, nCon).map(function (p) { return { palabra: p, grupo: 'a' }; })
+        .concat(np.slice(0, nNp).map(function (p) { return { palabra: p, grupo: 'b' }; }));
+      return u.baraja(lista).map(function (it) {
+        it.contexto = u.contextoDe(it.palabra);
+        it.explica = '«' + u.esc(it.palabra) + '» ' + (it.grupo === 'a'
+          ? 'te dice <strong>quién</strong> lo hace y <strong>cuándo</strong>: está conjugado.'
+          : 'no dice ni quién ni cuándo. Es una <strong>forma no personal</strong>: infinitivo, gerundio o participio.');
+        return it;
+      });
+    } },
+
+  { id: 'completa', icono: '✏️', titulo: '¿Cómo lo decía el texto?', forma: 'tresOpciones',
+    pista: 'Las tres palabras salen de esta misma lectura',
+    items: function (t, u) {
+      var ver = {};
+      (t.verbos || []).forEach(function (p) { ver[u.clave(p)] = 1; });
+      var candidatos = [];
+      u.oraciones().forEach(function (o) {
+        for (var i = o.ini; i <= o.fin; i++) {
+          if (ver[u.clave(u.ps[i])]) { candidatos.push({ pos: i, ini: o.ini, fin: o.fin }); break; }
+        }
+      });
+      return u.baraja(candidatos).slice(0, 4).map(function (c) {
+        var correcta = u.ps[c.pos].replace(/[.,;:()¿?¡!«»"“”'’…—–]/g, '');
+        var otros = u.baraja((t.verbos || []).filter(function (p) { return u.clave(p) !== u.clave(correcta); })).slice(0, 2);
+        var ops = u.baraja([correcta].concat(otros));
+        var frase = [];
+        for (var i = c.ini; i <= c.fin; i++) {
+          frase.push(i === c.pos ? u.HUECO + u.esc(u.ps[i].replace(/^[^.,;:!?»]*/, '')) : u.esc(u.ps[i]));
+        }
+        return {
+          frase: frase.join(' '), ops: ops, c: ops.map(u.clave).indexOf(u.clave(correcta)),
+          bien: 'Fíjate en cuánto cambia la oración según el verbo que se le ponga.',
+          mal: 'La lectura decía <strong>«' + u.esc(correcta) + '»</strong>. Los otros dos también salen de este texto, ' +
+            'pero decían otra acción.'
+        };
+      });
+    } },
+];
+
+/* La hoja de respuestas del final: el texto entero con sus verbos. */
+const LECTURA_VERBOS_RESUMEN = {
+  titulo: '🏃 Todos los verbos de esta lectura',
+  leyenda: [
+    { clase: 'a', txt: 'llegó', dice: 'conjugado' },
+    { clase: 'b', txt: 'cortando', dice: 'no personal' }
+  ],
+  intro: function (t, u, cuenta) {
+    return 'En un solo texto había <strong>' + cuenta.a + ' verbos conjugados</strong> y <strong>' + cuenta.b +
+      ' formas no personales</strong>. El conjugado dice quién y cuándo; la forma no personal, no.';
+  },
+  marcar: function (t, u) {
+    var con = {}, np = {};
+    (t.verbos || []).forEach(function (p) { con[u.clave(p)] = 1; });
+    (t.noPers || []).forEach(function (p) { np[u.clave(p)] = 1; });
+    var out = [];
+    u.ps.forEach(function (p, i) {
+      var k = u.clave(p);
+      if (con[k]) out.push({ ini: i, fin: i, clase: 'a' });
+      else if (np[k]) out.push({ ini: i, fin: i, clase: 'b' });
+    });
+    return out;
+  }
+};
