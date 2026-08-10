@@ -69,6 +69,7 @@ const MISIONES = [
   { nombre: 'Números grandes', url: '/misiones/1ciclo-segundo-grado/numeros-hasta-999.html' },
   { nombre: 'Los sustantivos', url: '/misiones/2y3ciclo-sustantivos/sustantivos-II-III-ciclo-basica.html' },
   { nombre: 'Los verbos', url: '/misiones/2y3ciclo-verbos/verbos-II-III-ciclo-basica.html' },
+  { nombre: 'Los adverbios', url: '/misiones/2y3ciclo-adverbios/adverbios-II-III-ciclo-basica.html' },
 ];
 const GRADOS = process.argv[2] ? [Number(process.argv[2])] : [4, 5, 6, 7, 8, 9];
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'metas-papel-'));

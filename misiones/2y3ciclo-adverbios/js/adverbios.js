@@ -95,7 +95,12 @@ function loadProgress() {
     } catch (e) { }
 }
 // ===================== ACHIEVEMENTS =====================
+let _lecturaApi = null;
+
 const ACHIEVEMENTS = {
+    lector_minuto: { icon: '📖', label: 'Primer minuto de lectura cronometrado' },
+    lector_banda: { icon: '⏱️', label: 'Leíste dentro de la banda de tu grado' },
+    cazador_adverbios: { icon: '🎯', label: 'Cazaste todos los adverbios de una lectura' },
     primer_quiz: { icon: '🧠', label: 'Primera prueba superada' },
     flash_master: { icon: '🃏', label: 'Todas las flashcards vistas' },
     clasif_pro: { icon: '🗂️', label: 'Clasificador experto' },
@@ -176,6 +181,8 @@ function getProgress() { return Math.round((done.size / TOTAL_SECTIONS) * 100); 
 
 // ===================== NAV =====================
 function go(id) {
+  /* El cronómetro no puede seguir corriendo detrás de otra pestaña. */
+  if (id !== 's-lectura' && _lecturaApi) _lecturaApi.soltar();
     sfx('click');
     document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-t[role="tab"]').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
@@ -1797,3 +1804,32 @@ function _classroomHint(msg, ok) {
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ═════════════════ 📖 CONTROL DE LECTURA ═════════════════
+// Se paga UNA vez por lectura, no por repetirla: releer el mismo texto dos o
+// tres días es lo que más sube la fluidez.
+function initLectura(){
+  if (typeof LecturaMision === 'undefined' || typeof LECTURA_ADVERBIOS === 'undefined') return;
+  _lecturaApi = LecturaMision.montar({
+    contenedor: 'lm-root',
+    corpus: LECTURA_ADVERBIOS,
+    actividades: LECTURA_ADVERBIOS_TALLER,
+    resumen: LECTURA_ADVERBIOS_RESUMEN,
+    mision: 'adverbios',
+    tema: 'los adverbios',
+    alTerminar: function (r) {
+      fin('s-lectura');
+      unlockAchievement('lector_minuto');
+      if (r.nivelVelocidad === 'estandar' || r.nivelVelocidad === 'avanzado') unlockAchievement('lector_banda');
+      var caza = r.porActividad && r.porActividad.caza;
+      if (caza && caza.de && caza.puntos >= caza.de) unlockAchievement('cazador_adverbios');
+      if (!xpTracker.lec) xpTracker.lec = new Set();
+      if (!xpTracker.lec.has(r.textoId)) {
+        xpTracker.lec.add(r.textoId);
+        var bono = r.puntosDe ? Math.round((r.puntos / r.puntosDe) * 5) : 0;
+        pts(5 + bono);
+      }
+    }
+  });
+}
+initLectura();
