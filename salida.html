@@ -83,6 +83,30 @@
     .barra { height: 9px; background: #d1fae5; border-radius: 999px; margin-top: 9px; overflow: hidden; }
     .barra > i { display: block; height: 100%; background: var(--ok); border-radius: 999px; transition: width .5s; }
 
+    /* ── El reloj ──
+       Una fecha («conteste antes del martes 11») se lee y se archiva
+       para después; un reloj que baja no. Por eso los segundos se ven
+       moviéndose: es la diferencia entre leer un plazo y sentirlo.
+       Va pegado al conteo de los que ya dijeron que sí porque las dos
+       cosas empujan a lo mismo y por separado empujan menos. */
+    .reloj { margin-top: 12px; border-top: 1px dashed #a7f3d0; padding-top: 11px; }
+    .reloj-t {
+      font-size: 11.5px; font-weight: 900; letter-spacing: .5px;
+      text-transform: uppercase; color: #047857;
+    }
+    .reloj-c { display: flex; gap: 6px; justify-content: center; margin-top: 7px; }
+    .reloj-b {
+      background: #064e3b; color: #fff; border-radius: 10px;
+      padding: 7px 0; min-width: 56px; flex: 0 1 62px;
+    }
+    .reloj-b b { display: block; font-size: 23px; font-weight: 900; line-height: 1;
+      font-variant-numeric: tabular-nums; }
+    .reloj-b span { font-size: 9.5px; font-weight: 700; opacity: .8; letter-spacing: .3px; }
+    /* Las últimas horas se ven distintas sin tener que leer nada. */
+    .reloj.urge { border-top-color: #fecaca; }
+    .reloj.urge .reloj-t { color: #b91c1c; }
+    .reloj.urge .reloj-b { background: #b91c1c; }
+
     /* ── Botones ── */
     .botones { display: grid; gap: 10px; margin-top: 16px; }
     .btn {
@@ -163,6 +187,37 @@
       text-align: center; letter-spacing: 4px; text-transform: uppercase;
       border: 2px solid #e5e7eb; border-radius: 12px; font-family: inherit;
     }
+
+    /* ── El boleto ──
+       En el portón, el día de la salida, «yo contesté» no se puede
+       comprobar: hay cuarenta familias apuradas y un bus esperando.
+       Esto es lo que la madre enseña, y es lo mismo que el maestro
+       tiene impreso con su folio. */
+    .boleto {
+      margin-top: 16px; background: #fff; border: 2px dashed var(--nar1);
+      border-radius: 16px; overflow: hidden; text-align: left;
+    }
+    .boleto-top { background: var(--nar1); color: #fff; padding: 11px 14px; }
+    .boleto-top b { display: block; font-size: 15px; font-weight: 900; line-height: 1.25; }
+    .boleto-top span { font-size: 12.5px; opacity: .95; }
+    .boleto-in { padding: 13px 14px; }
+    .boleto-nom { font-size: 19px; font-weight: 900; line-height: 1.2; }
+    .boleto-gr { font-size: 13.5px; font-weight: 800; color: var(--nar1); }
+    .boleto-cajas { display: flex; gap: 8px; margin-top: 11px; }
+    .boleto-caja {
+      flex: 1; min-width: 0; border: 1.5px solid var(--borde); border-radius: 11px;
+      padding: 8px 4px; text-align: center;
+    }
+    .boleto-caja b { display: block; font-size: 17px; font-weight: 900; line-height: 1.15; }
+    .boleto-caja span { font-size: 9.5px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .3px; color: var(--suave); }
+    /* El folio en una sola pieza: partido en dos renglones se lee como
+       dos cosas distintas y se dicta mal por teléfono. */
+    .boleto-folio b { font-family: 'Courier New', monospace; font-size: 15px; white-space: nowrap; }
+    .boleto-pie {
+      background: #fff7ed; border-top: 1px solid var(--borde);
+      padding: 10px 14px; font-size: 12.5px; color: #9a3412; font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -188,6 +243,9 @@
    3. SE PUEDE CORREGIR. La huella (nombre + grado) hace que volver a
       contestar CAMBIE la respuesta en vez de contarla dos veces.
       Contar doble es justo lo que hace pagar un bus de sobra.
+   4. QUIEN CONTESTA SE LLEVA ALGO. Un «gracias» se olvida; un BOLETO
+      con folio, no. Es lo que la madre enseña en el portón y lo que el
+      maestro le entrega impreso al recibir el aporte.
    ═══════════════════════════════════════════════════════════════ */
 
 const SB_URL_DEF = 'https://uljjgrikyigdrkbikcxo.supabase.co';
@@ -247,7 +305,36 @@ function norm(s) {
     .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 function huella() {
-  return (norm(BORRADOR.alumno) + '|' + norm(BORRADOR.grado) + '|' + norm(BORRADOR.seccion)).slice(0, 120);
+  return huellaDe(BORRADOR.alumno, BORRADOR.grado, BORRADOR.seccion);
+}
+function huellaDe(alumno, grado, seccion) {
+  return (norm(alumno) + '|' + norm(grado) + '|' + norm(seccion)).slice(0, 120);
+}
+
+/* ── El folio del boleto ──
+   ⚠️ REGLA DE DOS ARCHIVOS: esto tiene que dar EXACTAMENTE lo mismo que
+   convFolio/convHuella de js/tools/convocatoria.js. El maestro imprime
+   el boleto desde allá y la madre lo lleva desde aquí: si las dos
+   cuentas se separan, los dos papeles no son el mismo y el niño se
+   queda discutiendo en el portón. Si cambia una, cambia la otra.
+
+   No se pide a la nube a propósito: se saca de lo que las dos pantallas
+   ya tienen (el código y la huella). Así sale igual en los dos lados,
+   sirve sin internet y no hubo que tocar el servidor. */
+const FOLIO_ALFA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';   /* sin 0/O/1/I/L: se dictan por teléfono */
+function folioDe(codigo, hue) {
+  const s = String(codigo || '') + '|' + String(hue || '');
+  let h = 0x811c9dc5;                     /* FNV-1a de 32 bits */
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+  }
+  let n = h % 923521, out = '';           /* 31⁴ */
+  for (let i = 0; i < 4; i++) { out = FOLIO_ALFA[n % 31] + out; n = Math.floor(n / 31); }
+  return String(codigo || '') + '-' + out;
+}
+function miFolio() {
+  return YO ? folioDe(CODIGO, huellaDe(YO.alumno, YO.grado, YO.seccion)) : '';
 }
 
 /* ── Fechas: se parten a mano porque new Date('2026-08-15') se lee en
@@ -270,6 +357,29 @@ function diasHasta(iso) {
   if (!f) return null;
   const h = new Date(); h.setHours(0, 0, 0, 0);
   return Math.round((f - h) / 86400000);
+}
+function horaTxt(hhmm) {
+  const m = String(hhmm || '').match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return '';
+  const h = +m[1];
+  return ((h % 12) || 12) + ':' + m[2] + ' ' + (h < 12 ? 'a. m.' : 'p. m.');
+}
+/* ── El instante exacto en que se cierra ──
+   Sin hora se cierra al ACABAR el día, no al empezarlo: si «11 de
+   agosto» se tomara como las 00:00, ese mismo día 11 la madre que iba a
+   contestar se encuentra el reloj en cero y la lista cerrada. */
+function cierreMs(e) {
+  const f = aFecha(e.limite);
+  if (!f) return null;
+  const m = String(e.limiteHora || '').match(/^(\d{1,2}):(\d{2})$/);
+  if (m) f.setHours(+m[1], +m[2], 0, 0);
+  else f.setHours(23, 59, 59, 999);
+  return f.getTime();
+}
+function estaCerrada(e) {
+  if (String(e.cerrada || '') === '1') return true;
+  const ms = cierreMs(e);
+  return ms != null && Date.now() > ms;
 }
 function dinero(n) {
   const v = Number(n) || 0;
@@ -329,22 +439,95 @@ function verCodigo(err) {
   document.getElementById('c-inp').addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
 }
 
+/* ── El reloj que baja ──
+   Se pinta ENTERO de una vez y después late cada segundo. Ese orden
+   importa: si el primer dibujo se dejara al primer tic, el padre vería
+   un hueco durante un segundo justo donde va lo que tiene que
+   empujarlo, y en un teléfono lento más de uno.
+
+   Al llegar a cero no se queda en «00:00:00»: se vuelve a pintar la
+   pantalla, que ya se encuentra la lista cerrada. Un reloj en cero con
+   el botón de contestar todavía debajo es una promesa que el servidor
+   va a romper. */
+let RELOJ = 0;
+function pararReloj() { if (RELOJ) { clearInterval(RELOJ); RELOJ = 0; } }
+function relojHtml(e) {
+  const ms = cierreMs(e);
+  if (ms == null) return '';
+  return `<div class="reloj" id="reloj"><div class="reloj-t" id="reloj-t"></div>
+    <div class="reloj-c" id="reloj-c"></div></div>`;
+}
+function pintaReloj(e) {
+  const $r = document.getElementById('reloj');
+  if (!$r) return;
+  const ms = cierreMs(e);
+  const falta = ms - Date.now();
+  if (falta <= 0) { pararReloj(); verPortada(); return; }
+  /* Hacia arriba, no hacia abajo: si faltan tres días clavados tiene
+     que leerse «3 días 00:00:00», no «2 días 23:59:59». El cero llega
+     cuando de verdad se acabó el plazo y no un segundo antes. */
+  const seg = Math.ceil(falta / 1000);
+  const d = Math.floor(seg / 86400), h = Math.floor((seg % 86400) / 3600);
+  const mi = Math.floor((seg % 3600) / 60), s = seg % 60;
+  const dd = n => String(n).padStart(2, '0');
+  /* Con menos de un día los «00 días» solo estorban: fuera la caja y
+     todo el reloj se pone rojo. */
+  const urge = falta < 86400000;
+  $r.className = 'reloj' + (urge ? ' urge' : '');
+  document.getElementById('reloj-t').textContent = urge
+    ? '⏰ Últimas horas para contestar'
+    : '⏳ Se cierra la lista en';
+  document.getElementById('reloj-c').innerHTML =
+    (urge ? '' : `<div class="reloj-b"><b>${d}</b><span>DÍA${d === 1 ? '' : 'S'}</span></div>`) +
+    `<div class="reloj-b"><b>${dd(urge ? h + d * 24 : h)}</b><span>HORAS</span></div>` +
+    `<div class="reloj-b"><b>${dd(mi)}</b><span>MIN</span></div>` +
+    `<div class="reloj-b"><b>${dd(s)}</b><span>SEG</span></div>`;
+}
+function arrancaReloj(e) {
+  pararReloj();
+  if (cierreMs(e) == null) return;
+  pintaReloj(e);
+  RELOJ = setInterval(() => pintaReloj(e), 1000);
+}
+
+/* ── Cuántos se ven confirmados ──
+   Los que contestaron MÁS el arranque que puso el maestro (`arranque`),
+   que es la gente que ya le dijo que sí de palabra o por WhatsApp y
+   nunca va a tocar el enlace. Sin eso, el primero que abre la
+   invitación se encuentra un cero, entiende que la salida no va a salir
+   y se espera «a ver si se llena» — y como todos hacen lo mismo, no se
+   llena nunca.
+
+   Lo que el maestro usa para contratar los buses NO lleva esta suma:
+   son las respuestas de verdad, y eso se calcula en su pantalla
+   (convTotales), no aquí. */
+function confirmados() {
+  const arr = Math.max(0, Number(EV.arranque) || 0);
+  return { personas: CUENTA.personas + arr, familias: CUENTA.familias + Math.ceil(arr / 2) };
+}
+
 /* ═════════ PANTALLA: la portada que convence ═════════ */
 function verPortada() {
+  pararReloj();
   const e = EV;
   const dias = diasHasta(e.limite);
-  const cerrada = String(e.cerrada || '') === '1' || (dias != null && dias < 0);
+  const cerrada = estaCerrada(e);
   let cuenta = '';
+  const hh = horaTxt(e.limiteHora);
   if (cerrada) cuenta = '<div class="hero-cuenta urge">⛔ Ya se cerró la lista</div>';
-  else if (dias === 0) cuenta = '<div class="hero-cuenta urge">⏰ HOY es el último día para contestar</div>';
-  else if (dias === 1) cuenta = '<div class="hero-cuenta urge">⏰ Mañana se cierra la lista</div>';
+  else if (dias === 0) cuenta = '<div class="hero-cuenta urge">⏰ HOY es el último día' +
+    (hh ? ': hasta las ' + esc(hh) : ' para contestar') + '</div>';
+  else if (dias === 1) cuenta = '<div class="hero-cuenta urge">⏰ Mañana se cierra la lista' +
+    (hh ? ' a las ' + esc(hh) : '') + '</div>';
   else if (dias != null && dias <= 5) cuenta = '<div class="hero-cuenta urge">⏰ Faltan ' + dias + ' días para contestar</div>';
-  else if (dias != null) cuenta = '<div class="hero-cuenta">🗓️ Conteste antes del ' + esc(fechaLarga(e.limite)) + '</div>';
+  else if (dias != null) cuenta = '<div class="hero-cuenta">🗓️ Conteste antes del ' +
+    esc(fechaLarga(e.limite)) + (hh ? ', ' + esc(hh) : '') + '</div>';
 
   const gana = (e.gana || []).filter(x => String(x || '').trim());
   const incluye = (e.incluye || []).filter(x => String(x || '').trim());
   const cupos = Number(e.cupos) || 0;
-  const pct = cupos ? Math.min(100, Math.round(CUENTA.personas * 100 / cupos)) : 0;
+  const YA = confirmados();
+  const pct = cupos ? Math.min(100, Math.round(YA.personas * 100 / cupos)) : 0;
 
   $app.innerHTML = `
     <div class="hero">
@@ -387,14 +570,15 @@ function verPortada() {
         ${e.nota ? '<div class="aviso">' + esc(e.nota) + '</div>' : ''}
       </div>
 
-      ${CUENTA.familias >= 3 ? `
+      ${(YA.familias >= 3 || (!cerrada && cierreMs(e) != null)) ? `
       <div class="prueba">
-        <div class="prueba-n">${CUENTA.personas}</div>
-        <div class="prueba-t">personas ya confirmadas${CUENTA.familias ? ' · ' + CUENTA.familias + ' familias' : ''}</div>
+        ${YA.familias >= 3 ? `<div class="prueba-n">${YA.personas}</div>
+        <div class="prueba-t">personas ya confirmadas · ${YA.familias} familias</div>
         ${cupos ? `<div class="barra"><i style="width:${pct}%"></i></div>
-          <div class="prueba-t" style="margin-top:6px">${cupos - CUENTA.personas > 0
-            ? 'Quedan ' + (cupos - CUENTA.personas) + ' asientos de ' + cupos
-            : '¡Los ' + cupos + ' asientos están tomados!'}</div>` : ''}
+          <div class="prueba-t" style="margin-top:6px">${cupos - YA.personas > 0
+            ? 'Quedan ' + (cupos - YA.personas) + ' asientos de ' + cupos
+            : '¡Los ' + cupos + ' asientos están tomados!'}</div>` : ''}` : ''}
+        ${cerrada ? '' : relojHtml(e)}
       </div>` : ''}
 
       ${YO ? `
@@ -402,7 +586,10 @@ function verPortada() {
         <div class="card-t">✅ Usted ya contestó</div>
         <p style="font-size:14.5px">${esc(YO.alumno)}${YO.grado ? ' (' + esc(grupoTxt(YO.grado, YO.seccion)) + ')' : ''}:
           <strong>${YO.va ? 'sí va' + (YO.personas > 1 ? ', ' + YO.personas + ' personas' : '') : 'esta vez no va'}</strong>.</p>
-        ${cerrada ? '' : '<button class="btn btn-sec" style="margin-top:12px" id="b-cambiar">✏️ Cambiar mi respuesta</button>'}
+        <div class="botones" style="margin-top:12px">
+          ${YO.va ? '<button class="btn btn-2" id="b-boleto">🎟️ Ver mi boleto</button>' : ''}
+          ${cerrada ? '' : '<button class="btn btn-sec" id="b-cambiar">✏️ Cambiar mi respuesta</button>'}
+        </div>
       </div>` : ''}
 
       ${cerrada ? `
@@ -435,9 +622,12 @@ function verPortada() {
     BORRADOR = Object.assign({}, BORRADOR, YO, { va: YO.va ? 1 : 0 });
     verFormulario();
   });
+  const bBol = document.getElementById('b-boleto');
+  if (bBol) bBol.addEventListener('click', () => verGracias(!!(YO && YO.subida)));
   const bWa = document.getElementById('b-wa-maestro');
   if (bWa) bWa.addEventListener('click', () => waAbrir('Buenas, le escribo por lo de «' + (EV.titulo || 'la salida') + '».', EV.wa));
   document.getElementById('b-compartir').addEventListener('click', () => waAbrir(textoCompartir()));
+  arrancaReloj(e);
 }
 
 function textoCompartir() {
@@ -453,6 +643,7 @@ function textoCompartir() {
 const GRADOS = ['Prebásica', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Media'];
 
 function verFormulario() {
+  pararReloj();
   const va = BORRADOR.va === 1;
   $app.innerHTML = `
     <div class="hero" style="padding:18px 18px 22px">
@@ -609,7 +800,38 @@ function textoRespuesta() {
     (!YO.va && YO.nota ? '💬 ' + YO.nota + '\n' : '');
 }
 
+/* ── El boleto en pantalla ──
+   Se enseña solo cuando la respuesta ENTRÓ (ok). Un boleto encima de un
+   envío que se quedó sin internet sería un asiento que nadie apartó, y
+   la madre llegaría el sábado con un papel que el maestro no tiene.
+   Mientras no entre, lo que se le ofrece es mandarlo por WhatsApp, que
+   es lo que sí resuelve. */
+function boletoHtml(e) {
+  const total = Number(e.aporte) > 0 ? dinero(Number(e.aporte) * YO.personas) : '';
+  const g = grupoTxt(YO.grado, YO.seccion);
+  return `
+    <div class="boleto" id="boleto">
+      <div class="boleto-top">
+        <b>${esc((e.icono || '🎟️') + ' ' + (e.titulo || 'Salida'))}</b>
+        <span>${esc(fechaLarga(e.fecha))}${e.hora ? ' · ' + esc(e.hora) : ''}${e.punto ? ' · sube en ' + esc(e.punto) : ''}</span>
+      </div>
+      <div class="boleto-in">
+        <div class="boleto-nom">${esc(YO.alumno)}</div>
+        <div class="boleto-gr">${esc(g)}</div>
+        <div class="boleto-cajas">
+          <div class="boleto-caja"><b>${YO.personas}</b><span>persona${YO.personas === 1 ? '' : 's'}</span></div>
+          <div class="boleto-caja"><b>${total ? esc(total) : 'Gratis'}</b><span>${total ? 'aporte' : 'sin costo'}</span></div>
+          <div class="boleto-caja boleto-folio"><b>${esc(miFolio())}</b><span>folio</span></div>
+        </div>
+      </div>
+      <div class="boleto-pie">${total
+        ? 'El maestro le entrega este boleto <strong>impreso</strong> cuando reciba los ' + esc(total) + '. Guarde esta imagen: lleva el mismo folio.'
+        : 'Guarde esta imagen. Con ella y su folio le apartan el asiento.'}</div>
+    </div>`;
+}
+
 function verGracias(ok) {
+  pararReloj();
   const e = EV;
   const g = grupoTxt(YO.grado, YO.seccion);
   const total = Number(e.aporte) > 0 ? dinero(Number(e.aporte) * YO.personas) : '';
@@ -639,14 +861,25 @@ function verGracias(ok) {
           <button class="btn btn-wa" id="g-wa">📲 Mandarla por WhatsApp</button>
           <button class="btn btn-sec" id="g-reintentar">🔄 Probar otra vez con internet</button>
         </div>` : (YO.va ? `
+        ${boletoHtml(e)}
+        <div class="botones" style="margin-top:12px">
+          <button class="btn btn-2" id="g-guardar">📷 Guardar el boleto en mi galería</button>
+        </div>
+        <div class="pie" id="g-guardar-msg" style="padding-top:6px"></div>
+        <div id="g-boleto-img" style="display:none;margin-top:10px">
+          <img id="g-boleto-png" alt="Su boleto" style="width:100%;max-width:340px;border-radius:14px;border:2px solid var(--borde)">
+          <p class="pie" style="padding-top:6px">Mantenga el dedo encima de la imagen y elija «Guardar imagen».</p>
+        </div>
+
         <div class="card" style="text-align:left">
           <div class="card-t">Lo que sigue</div>
           <ul class="pasos">
             <li><span class="n">1</span><span>${Number(e.aporte) > 0
               ? 'Mande el aporte de <strong>' + esc(total) + '</strong> esta semana. ' + esc(e.cobro || 'Con el maestro o con el alumno.')
+              + ' El maestro le devuelve su <strong>boleto impreso</strong>: ese es el recibo.'
               : 'No hay que pagar nada.'}</span></li>
             <li><span class="n">2</span><span>El <strong>${esc(fechaLarga(e.fecha))}</strong>${e.hora ? ', a las <strong>' + esc(e.hora) + '</strong>,' : ''}
-              esté en ${esc(e.punto || 'la escuela')}. El bus <strong>no espera</strong>.</span></li>
+              esté en ${esc(e.punto || 'la escuela')} con el boleto. El bus <strong>no espera</strong>.</span></li>
             <li><span class="n">3</span><span>${esc(e.nota || 'Lleve agua y lo que su hijo vaya a necesitar en el día.')}</span></li>
           </ul>
         </div>
@@ -671,6 +904,22 @@ function verGracias(ok) {
     bRe.disabled = true; bRe.textContent = '⏳ Probando…';
     await enviar();
   });
+  const bGua = document.getElementById('g-guardar');
+  if (bGua) bGua.addEventListener('click', async () => {
+    bGua.disabled = true; bGua.textContent = '⏳ Preparando…';
+    const r = await guardarBoleto();
+    /* La imagen se enseña SIEMPRE, salga como salga el guardado: es la
+       salida que funciona en todos los teléfonos, sin depender de que
+       el navegador traiga el menú de compartir. */
+    document.getElementById('g-boleto-png').src = dibujaBoleto().toDataURL('image/png');
+    document.getElementById('g-boleto-img').style.display = 'block';
+    bGua.disabled = false; bGua.textContent = '📷 Guardar el boleto en mi galería';
+    document.getElementById('g-guardar-msg').textContent =
+      r === 'compartido' ? 'Elija «Guardar imagen» o «Guardar en Fotos».'
+      : r === 'descargado' ? 'Se descargó. Búsquelo en sus Descargas, o guárdelo desde la imagen de abajo.'
+      : 'Guárdelo desde la imagen de abajo.';
+    document.getElementById('g-boleto-img').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
   const bComp = document.getElementById('g-compartir');
   if (bComp) bComp.addEventListener('click', () => waAbrir(textoCompartir()));
   const bWaM = document.getElementById('g-wa-maestro');
@@ -679,8 +928,123 @@ function verGracias(ok) {
   document.getElementById('g-volver').addEventListener('click', verPortada);
 }
 
+/* ═════════ El boleto, para la galería ═════════
+   Un boleto que solo vive en una pestaña se pierde en cuanto se cierra,
+   y con él el folio. Guardado como foto aparece el sábado por la mañana
+   entre las fotos del teléfono, que es justo cuando hace falta. Es el
+   mismo camino que el folio del Buzón, y por la misma razón. */
+function dibujaBoleto() {
+  const e = EV, W = 1080;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = 100;
+  const x = c.getContext('2d');
+  /* Los renglones se MIDEN antes de pintar nada, y por eso está partido
+     en dos: primero cuántos salen, después se dibujan. Hacerlo del
+     tirón obliga a adivinar cuánto va a ocupar un texto —el título lo
+     escribe el maestro y puede ser de tres palabras o de doce— y ya
+     pasó: el aviso del final se salió de su caja y se comió el renglón
+     de «válido para 3 personas». */
+  const partir = (t, ancho, fuente) => {
+    x.font = fuente;
+    const salida = []; let linea = '';
+    for (const p of String(t).split(' ')) {
+      const prueba = linea ? linea + ' ' + p : p;
+      if (x.measureText(prueba).width > ancho && linea) { salida.push(linea); linea = p; }
+      else { linea = prueba; }
+    }
+    if (linea) salida.push(linea);
+    return salida;
+  };
+
+  const ap = Number(e.aporte) || 0;
+  const lTit = partir(e.titulo || 'Salida educativa', W - 120, 'bold 46px sans-serif');
+  const AVISO = ap
+    ? 'Enséñeselo al maestro con el aporte: él le entrega el boleto impreso, que es el recibo y el pase para subir.'
+    : 'Enseñe este boleto el día de la salida para subir al bus.';
+  const lAviso = partir(AVISO, W - 200, '32px sans-serif');
+  const lPunto = e.punto ? partir('Se sube en ' + e.punto, W - 160, '34px sans-serif') : [];
+
+  /* Cada bloque sabe dónde empieza porque el de arriba ya se midió. */
+  const yFecha = 200 + lTit.length * 56 + 14;
+  const altoCab = yFecha + 34;
+  const yNom = altoCab + 92;
+  const yGrupo = yNom + 56;
+  const cajaY = yGrupo + 40, cajaH = 220;
+  const yVale = cajaY + cajaH + 66;
+  const yPunto = yVale + 48;
+  const avisoY = yPunto + lPunto.length * 44 + 26;
+  const avisoH = lAviso.length * 44 + 56;
+  const H = avisoY + avisoH + 90;
+
+  c.height = H;                       /* cambiar el alto BORRA el lienzo: se pinta después */
+  const centro = (t, y, fuente, color) => {
+    x.font = fuente; x.fillStyle = color; x.textAlign = 'center';
+    x.fillText(t, W / 2, y);
+  };
+  const bloque = (ls, y, alto, fuente, color) => {
+    x.font = fuente; x.fillStyle = color; x.textAlign = 'center';
+    ls.forEach((l, i) => x.fillText(l, W / 2, y + i * alto));
+  };
+
+  x.fillStyle = '#fff7ed'; x.fillRect(0, 0, W, H);
+  const g = x.createLinearGradient(0, 0, W, altoCab);
+  g.addColorStop(0, '#ea580c'); g.addColorStop(1, '#f59e0b');
+  x.fillStyle = g; x.fillRect(0, 0, W, altoCab);
+  centro('🎟️', 120, '84px sans-serif', '#ffffff');
+  bloque(lTit, 200, 56, 'bold 46px sans-serif', '#ffffff');
+  centro(fechaLarga(e.fecha) + (e.hora ? ' · ' + e.hora : ''), yFecha,
+    '34px sans-serif', 'rgba(255,255,255,.95)');
+
+  centro(YO.alumno, yNom, 'bold 54px sans-serif', '#1f2937');
+  centro(grupoTxt(YO.grado, YO.seccion), yGrupo, 'bold 40px sans-serif', '#c2410c');
+
+  /* El folio, tan grande como quepa: es lo único que el maestro va a
+     buscar en su lista cuando la madre le enseñe la foto. */
+  x.fillStyle = '#ffffff'; x.fillRect(70, cajaY, W - 140, cajaH);
+  x.strokeStyle = '#fed7aa'; x.lineWidth = 6; x.strokeRect(70, cajaY, W - 140, cajaH);
+  centro('FOLIO DEL BOLETO', cajaY + 62, 'bold 32px sans-serif', '#c2410c');
+  centro(miFolio(), cajaY + 172, 'bold 106px monospace', '#9a3412');
+
+  centro('Válido para ' + YO.personas + ' persona' + (YO.personas === 1 ? '' : 's') +
+    (ap ? ' · ' + dinero(ap * YO.personas) : ' · sin costo'), yVale, 'bold 40px sans-serif', '#1f2937');
+  bloque(lPunto, yPunto, 44, '34px sans-serif', '#4b5563');
+
+  x.fillStyle = '#fef3c7'; x.fillRect(70, avisoY, W - 140, avisoH);
+  bloque(lAviso, avisoY + 52, 44, '32px sans-serif', '#92400e');
+  centro((e.escuela || '') + (e.escuela ? ' · ' : '') + 'M.E.T.A.S', H - 42, '30px sans-serif', '#6b7280');
+  return c;
+}
+
+/* En el teléfono, lo que de verdad mete la imagen en la galería es el
+   menú de compartir; una descarga normal la deja en Descargas, que no es
+   donde la va a buscar. Se intenta lo primero y, si no está, se
+   descarga. Igual que en el Buzón. */
+async function guardarBoleto() {
+  const blob = await new Promise(r => dibujaBoleto().toBlob(r, 'image/png'));
+  if (!blob) return 'no';
+  const nombre = 'boleto-' + miFolio() + '.png';
+  try {
+    const archivo = new File([blob], nombre, { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [archivo] })) {
+      await navigator.share({ files: [archivo], title: 'Mi boleto' });
+      return 'compartido';
+    }
+  } catch (err) {
+    if (err && err.name === 'AbortError') return 'compartido';   /* lo canceló él: no es un fallo */
+  }
+  try {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = nombre;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    return 'descargado';
+  } catch (_) { return 'no'; }
+}
+
 /* ═════════ Arranque ═════════ */
 function verError(msg) {
+  pararReloj();
   $app.innerHTML = `
     <div class="centro">
       <div class="gr">📭</div>

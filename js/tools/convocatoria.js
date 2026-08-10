@@ -14,8 +14,14 @@
         tocan, contestan en veinte segundos, y el conteo aparece aquí:
         personas, buses que hacen falta y dinero que se recogería.
 
-   Por qué vive en ✅ Controles: es lo mismo que ya se hace ahí —saber
-   quién sí y quién no—, solo que preguntándolo en vez de anotándolo.
+   Por qué vive en 📣 Comunicados: lo que sale de aquí es un mensaje a
+   las familias, igual que un aviso. La diferencia es que el aviso
+   INFORMA y se acabó, y la convocatoria PREGUNTA y espera respuesta.
+   Estuvo primero en ✅ Controles —donde se anota quién sí y quién no—,
+   pero ahí el maestro la buscaba entre sus listas de fichas y
+   meriendas, que es lo contrario de lo que esto hace: un control se
+   ANOTA (él ya sabe la respuesta) y una convocatoria se PREGUNTA
+   (todavía no la sabe).
 
    TRES DECISIONES QUE NO SON DE ADORNO:
 
@@ -43,7 +49,7 @@ const CONV_ALFA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';   /* sin 0/O/1/I/L: se dict
 const CONV_PAGINA = 'salida.html';
 const CONV_CAP_DEF = 55;         /* asientos de un bus escolar corriente */
 
-let _adConvOn = 0;               /* dentro de 📣 Convocatoria (subsección de Controles) */
+let _adConvOn = 0;               /* dentro de 📣 Convocatoria (subsección de Comunicados) */
 let _adConvId = null;            /* convocatoria abierta */
 let _adConvCargando = 0;
 /* Cuál convocatoria ya trajo sola sus respuestas en esta visita. Sin esto
@@ -154,7 +160,7 @@ async function convRPC(fn, body) {
    La flecha del encabezado sube un escalón, nunca salta al final: es la
    misma regla que ya siguen las colectas y los controles, y viene del
    maestro que se salía del aula sin querer. Aquí hay dos escalones:
-   dentro de una convocatoria → la lista; en la lista → Controles. */
+   dentro de una convocatoria → la lista; en la lista → Comunicados. */
 function adConvNivel() { return _adConvId ? 2 : (_adConvOn ? 1 : 0); }
 function adConvAtras() {
   if (_adConvId) { _adConvId = null; _adConvTraido = ''; return true; }
@@ -178,9 +184,9 @@ function convNueva(p, d) {
     gancho: p.gancho, gana: (p.gana || []).slice(),
     lugar: '', fecha: '', hora: '', regreso: '', punto: '',
     aporte: 0, incluye: p.incluye || '', cobro: p.cobro || '', nota: p.nota || '',
-    limite: '', dirigido: 'Para las familias de toda la escuela',
+    limite: '', limiteHora: '', dirigido: 'Para las familias de toda la escuela',
     maestro: convMaestroDef(), wa: convWaDef(), escuela: (d && d.escuela) || '',
-    capacidad: CONV_CAP_DEF, costoBus: 0, cupos: 0,
+    capacidad: CONV_CAP_DEF, costoBus: 0, cupos: 0, arranque: 0,
     codigo: '', pin: '', cerrada: 0,
     resp: [], respFecha: '', creada: adHoy(),
   };
@@ -203,8 +209,10 @@ function convDatosPublicos(c) {
     incluye: String(c.incluye || '').split(',').map(s => s.trim()).filter(Boolean),
     gana: (c.gana || []).map(s => String(s || '').trim()).filter(Boolean),
     cobro: c.cobro || '', nota: c.nota || '', limite: c.limite || '',
+    limiteHora: c.limiteHora || '',
     maestro: c.maestro || '', wa: String(c.wa || '').replace(/\D/g, ''),
     escuela: c.escuela || '', cupos: Number(c.cupos) || 0,
+    arranque: Math.max(0, Number(c.arranque) || 0),
     cerrada: c.cerrada ? '1' : '0',
   };
 }
@@ -214,7 +222,13 @@ function convEnlace(c) {
   return (location.protocol === 'file:' ? 'https://metas.policastsapien.com/' : base) + CONV_PAGINA + '?c=' + c.codigo;
 }
 
-/* ── Las cuentas que decide el maestro ── */
+/* ── Las cuentas que decide el maestro ──
+   ⚠️ Aquí NO entra el arranque (las personas que el maestro añade para
+   que la lista no arranque en cero). Estas cifras son las que le hacen
+   firmar un contrato de buses y contar dinero: si se les suma un número
+   de empuje, contrata un bus para gente que no existe y lo paga de su
+   bolsa. El arranque solo toca lo que VE EL PADRE, y en la pantalla del
+   maestro se enseña aparte y rotulado. */
 function convTotales(c) {
   const r = Array.isArray(c.resp) ? c.resp : [];
   const si = r.filter(x => x.va);
@@ -267,10 +281,11 @@ function convMensaje(c) {
   if (Number(c.aporte) > 0) L.push('💵 ' + adLps(c.aporte) + ' por persona' + (c.incluye ? ' (' + c.incluye + ')' : ''));
   L.push('');
   const dias = convDiasHasta(c.limite);
+  const hh = c.limiteHora ? ' a las ' + convHoraTxt(c.limiteHora) : '';
   const cierre = c.limite
-    ? (dias === 0 ? '*HOY* es el último día'
-      : dias === 1 ? 'tengo hasta *mañana*'
-      : 'tengo hasta el *' + convFechaLarga(c.limite) + '*')
+    ? (dias === 0 ? '*HOY*' + (hh ? hh : ' es el último día')
+      : dias === 1 ? 'tengo hasta *mañana*' + hh
+      : 'tengo hasta el *' + convFechaLarga(c.limite) + hh + '*')
     : 'lo necesito ya';
   L.push('⚠️ Necesito saber *cuántos van* para contratar los buses: ' + cierre +
          '. Un asiento vacío lo terminamos pagando entre todos.');
@@ -302,6 +317,79 @@ function convDiasHasta(iso) {
   return Math.round((f - h) / 86400000);
 }
 
+/* «16:00» se le enseña al padre como «4:00 p. m.»: el reloj de 24 horas
+   se lee en el mismo aparato donde está la hora, pero en el papel y en
+   el mensaje de WhatsApp confunde a quien no lo usa nunca. */
+function convHoraTxt(hhmm) {
+  const m = String(hhmm || '').match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return '';
+  const h = +m[1], ap = h < 12 ? 'a. m.' : 'p. m.';
+  return ((h % 12) || 12) + ':' + m[2] + ' ' + ap;
+}
+
+/* ── El instante exacto en que se cierra ──
+   La fecha sola no basta desde que hay reloj en la pantalla del padre:
+   «11 de agosto» ¿es a las 00:00 o al final del día? Si se toma el
+   principio, el día 11 el reloj ya está en cero y la madre que iba a
+   contestar ese mismo día se encuentra la lista cerrada. Así que sin
+   hora se cierra al ACABAR el día, y el maestro puede poner una hora
+   suya («a las 4 pm cierro y llamo al del bus»). */
+function convCierreMs(c) {
+  const f = convFecha(c.limite);
+  if (!f) return null;
+  const m = String(c.limiteHora || '').match(/^(\d{1,2}):(\d{2})$/);
+  if (m) f.setHours(+m[1], +m[2], 0, 0);
+  else f.setHours(23, 59, 59, 999);
+  return f.getTime();
+}
+/* «2 días y 4 horas», para el maestro. El del padre tiene segundos y
+   late; este no, porque la pantalla del maestro no se repinta sola.
+   Se redondea hacia ARRIBA igual que el reloj del padre: si no, esta
+   pantalla diría «6 horas» donde la del padre marca 07:00:00, y lo que
+   se está enseñando aquí es justo lo que el padre está viendo. */
+function convFaltaTxt(ms) {
+  if (ms == null) return '';
+  if (ms <= 0) return 'ya se cerró';
+  const min = Math.ceil(ms / 60000);
+  const d = Math.floor(min / 1440), h = Math.floor((min % 1440) / 60), mi = min % 60;
+  if (d) return d + ' día' + (d === 1 ? '' : 's') + ' y ' + h + ' hora' + (h === 1 ? '' : 's');
+  if (h) return h + ' hora' + (h === 1 ? '' : 's') + ' y ' + mi + ' minuto' + (mi === 1 ? '' : 's');
+  return mi + ' minuto' + (mi === 1 ? '' : 's');
+}
+
+/* ── La huella y el folio del boleto ──
+   ⚠️ REGLA DE DOS ARCHIVOS: `convNorm` y `convFolio` tienen que dar
+   EXACTAMENTE lo mismo que `norm` y `folioDe` de salida.html. El padre
+   ve su folio en su teléfono y el maestro imprime el boleto con ese
+   mismo folio desde aquí; si las dos cuentas se separan, el papel que
+   entrega no es el que la madre lleva en la galería y el niño se queda
+   discutiendo en el portón. Si cambia una, cambian las dos.
+
+   El folio NO viaja por la nube: se calcula de lo que ya hay (el código
+   de la convocatoria y la huella del alumno). Así sale igual en los dos
+   lados y sirve aunque el maestro imprima sin internet. */
+function convNorm(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function convHuella(alumno, grado, seccion) {
+  return (convNorm(alumno) + '|' + convNorm(grado) + '|' + convNorm(seccion)).slice(0, 120);
+}
+function convFolio(codigo, huella) {
+  const s = String(codigo || '') + '|' + String(huella || '');
+  let h = 0x811c9dc5;                     /* FNV-1a de 32 bits */
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+  }
+  let n = h % 923521, out = '';           /* 31⁴: cuatro letras del alfabeto sin 0/O/1/I/L */
+  for (let i = 0; i < 4; i++) { out = CONV_ALFA[n % 31] + out; n = Math.floor(n / 31); }
+  return String(codigo || '') + '-' + out;
+}
+function convFolioDe(c, x) { return convFolio(c.codigo, convHuella(x.alumno, x.grado, x.seccion)); }
+window.convFolio = convFolio;
+window.convHuella = convHuella;
+
 /* ══════════════ PANTALLA: mis convocatorias ══════════════ */
 function adRenderConvocatoria(body, d) {
   if (_adConvId) { convRenderUna(body, d); return; }
@@ -309,7 +397,7 @@ function adRenderConvocatoria(body, d) {
   body.innerHTML = `
     <div class="pa-card">
       <nav class="nav-ruta" aria-label="Dónde estás">
-        <button class="nav-ruta-link" id="cv-a-ctrl">✅ Controles</button>
+        <button class="nav-ruta-link" id="cv-a-ctrl">📣 Comunicados</button>
         <span class="nav-ruta-sep" aria-hidden="true">›</span>
         <span class="nav-ruta-actual" aria-current="page">estás aquí</span>
       </nav>
@@ -419,6 +507,39 @@ function convHtmlMensaje(c) {
     </div>`;
 }
 
+/* ── Las dos cosas que empujan al padre que lo va dejando ──
+   Un enlace abierto sin nada más que la información no mueve a nadie:
+   la madre lo lee, dice «ahorita contesto» y el viernes el maestro
+   sigue sin número. Lo que sí mueve son dos: que se vea que otros ya
+   dijeron que sí, y que se vea el tiempo bajando.
+
+   Aquí el maestro ve las dos como las ve el padre, y —esto es lo
+   importante— con la cifra REAL al lado. Su pantalla nunca le miente:
+   la que empuja es la del enlace, la que él usa para contratar es
+   esta. */
+function convHtmlEmpuje(c, t) {
+  const arr = Math.max(0, Number(c.arranque) || 0);
+  const ms = convCierreMs(c);
+  const falta = ms == null ? null : ms - Date.now();
+  const cupos = Number(c.cupos) || 0;
+  const ven = t.personas + arr;
+  return `
+    <div class="ad-cv-espejo">
+      <div class="ad-cv-espejo-t">👀 Lo que ve el padre al abrir el enlace</div>
+      <div class="ad-cv-espejo-g">
+        <span><b>${ven}</b> persona${ven === 1 ? '' : 's'} confirmada${ven === 1 ? '' : 's'}</span>
+        ${cupos ? `<span>${cupos - ven > 0 ? 'quedan <b>' + (cupos - ven) + '</b> de ' + cupos + ' asientos'
+          : '<b>lleno</b>: los ' + cupos + ' asientos tomados'}</span>` : ''}
+        ${falta == null ? '<span>sin reloj: no le pusiste último día</span>'
+          : falta <= 0 ? '<span>⛔ el reloj llegó a cero: ya no puede contestar</span>'
+          : `<span>⏳ el reloj le dice que faltan <b>${adEsc(convFaltaTxt(falta))}</b></span>`}
+      </div>
+      ${arr ? `<p class="pa-optional-hint" style="margin:6px 0 0">De esas ${ven}, <strong>${arr} las pusiste tú</strong>
+        como arranque y ${t.personas} contestaron de verdad. Tus buses y tu dinero se calculan
+        con las ${t.personas}, nunca con las ${ven}.</p>` : ''}
+    </div>`;
+}
+
 function convHtmlConteo(c, t, d) {
   const r = (Array.isArray(c.resp) ? c.resp : []).slice();
   const si = r.filter(x => x.va);
@@ -461,6 +582,7 @@ function convHtmlConteo(c, t, d) {
       <p class="pa-optional-hint" id="cv-refresco">${c.respFecha
         ? 'Última vez que se trajeron: ' + adEsc(c.respFecha)
         : 'Todavía no has traído las respuestas. Toca «Traer las respuestas».'}</p>
+      ${convHtmlEmpuje(c, t)}
     </div>
 
     ${gk.length ? `
@@ -479,10 +601,11 @@ function convHtmlConteo(c, t, d) {
         avisarle un cambio de hora.</p>
       ${si.map(x => `<div class="ad-gasto-row">
         <span><strong>${adEsc(x.alumno)}</strong>${x.grado ? ' · ' + adEsc(adGradoSeccion(x.grado, x.seccion)) : ''}<br>
-          <small>${x.personas} persona${x.personas === 1 ? '' : 's'}${Number(c.aporte) > 0
+          <small>🎟️ ${adEsc(convFolioDe(c, x))} · ${x.personas} persona${x.personas === 1 ? '' : 's'}${Number(c.aporte) > 0
             ? ' · ' + adEsc(adLps(Number(c.aporte) * x.personas)) : ''}</small></span>
         <span>${x.tel ? '<button class="ad-al-code" data-cvtel="' + adEsc(x.tel) + '" data-cvnom="' + adEsc(x.alumno) + '">📲 ' + adEsc(x.tel) + '</button>' : ''}</span>
       </div>`).join('')}
+      ${convHtmlBoletos(c, si)}
       ${convHtmlPuentes(c, d)}
     </div>` : ''}
 
@@ -496,6 +619,123 @@ function convHtmlConteo(c, t, d) {
         <span>${adEsc(x.alumno)}${x.grado ? ' · ' + adEsc(adGradoSeccion(x.grado, x.seccion)) : ''}</span>
         <span><small>${adEsc(x.nota || '—')}</small></span></div>`).join('')}
     </div>` : ''}`;
+}
+
+/* ══════════════ 🎟️ EL BOLETO ══════════════
+   Quien contesta por el enlace se queda con un folio en la pantalla y
+   con la promesa de que tiene el asiento apartado. El maestro se queda
+   con una lista. Entre las dos cosas falta el papel: el día de la
+   salida, en el portón, con cuarenta familias apuradas y un bus
+   esperando, «yo contesté» no se puede comprobar y nadie va a ponerse a
+   buscar un nombre en un teléfono.
+
+   Por eso el boleto se IMPRIME y se entrega CUANDO SE RECIBE EL APORTE:
+   es a la vez el recibo de esos cien lempiras y el pase para subir. El
+   folio es el que la madre ya tiene guardado en su galería, así que los
+   dos papeles —el suyo y el del maestro— dicen lo mismo.
+
+   Tres decisiones:
+   · UN boleto por FAMILIA, no por persona. Lleva escrito para cuántos
+     vale. Uno por persona triplica el papel y en el portón se cuenta
+     igual: la madre enseña el suyo y suben los que dice.
+   · Con COLILLA. La parte de la izquierda se recorta y se la queda el
+     maestro con la firma de quien pagó: es su respaldo cuando alguien
+     diga que ya dio el dinero.
+   · SEIS por hoja carta. Con 42 familias son 7 hojas. Cada boleto que
+     no cupiera en su hoja son 7 hojas más de tinta y de tiempo, así
+     que el alto está medido y se comprueba con
+     _dev/verifica-boletos.js, que cuenta las páginas del PDF. */
+function convHtmlBoletos(c, si) {
+  if (!si.length) return '';
+  const hojas = Math.ceil(si.length / 6);
+  return `
+    <div class="ad-btn-row" style="margin-top:12px">
+      <button class="pa-generate-btn" id="cv-boletos">🎟️ Imprimir los ${si.length} boletos</button>
+    </div>
+    <p class="pa-optional-hint">Salen <strong>${hojas} hoja${hojas === 1 ? '' : 's'}</strong> (seis por hoja).
+      Recorta, y entrégale el suyo a cada familia <strong>cuando recibas el aporte</strong>: el boleto
+      es el recibo y el pase para subir al bus. La colilla de la izquierda la firmas y te la quedas tú.</p>`;
+}
+
+function convImprimirBoletos(c) {
+  const si = (Array.isArray(c.resp) ? c.resp : []).filter(x => x.va);
+  if (!si.length) { toast('Todavía no hay nadie que vaya'); return; }
+  const orden = si.slice().sort((a, b) =>
+    String(a.grado || '').localeCompare(String(b.grado || ''), 'es', { numeric: true }) ||
+    String(a.alumno || '').localeCompare(String(b.alumno || ''), 'es'));
+  const ap = Number(c.aporte) || 0;
+  const cuando = convFechaLarga(c.fecha) + (c.hora ? ' · ' + c.hora : '');
+  const boleto = x => {
+    const total = ap * (Number(x.personas) || 0);
+    return `
+    <div class="bo">
+      <div class="bo-col">
+        <div class="bo-col-t">COLILLA · para el maestro</div>
+        <div class="bo-col-f">${adEsc(convFolioDe(c, x))}</div>
+        <div class="bo-col-n">${adEsc(x.alumno)}</div>
+        <div class="bo-col-n">${adEsc(adGradoSeccion(x.grado, x.seccion))}</div>
+        <div class="bo-col-p">${x.personas} persona${x.personas === 1 ? '' : 's'}</div>
+        ${ap ? `<div class="bo-col-p">Recibí ${adEsc(adLps(total))}</div>` : ''}
+        <div class="bo-firma">firma de quien paga</div>
+      </div>
+      <div class="bo-cuerpo">
+        <div class="bo-tit">${adEsc((c.icono || '🎟️') + ' ' + (c.titulo || 'Salida'))}</div>
+        <div class="bo-sub">${adEsc(cuando)}${c.punto ? ' · sube en ' + adEsc(c.punto) : ''}</div>
+        <div class="bo-nom">${adEsc(x.alumno)}</div>
+        <div class="bo-gr">${adEsc(adGradoSeccion(x.grado, x.seccion))}</div>
+        <div class="bo-caja">
+          <div class="bo-caja-i"><b>${x.personas}</b><span>persona${x.personas === 1 ? '' : 's'}</span></div>
+          <div class="bo-caja-i"><b>${ap ? adEsc(adLps(total)) : 'Sin costo'}</b><span>${ap ? 'aporte' : ''}</span></div>
+          <div class="bo-caja-i bo-folio"><b>${adEsc(convFolioDe(c, x))}</b><span>folio</span></div>
+        </div>
+        <div class="bo-pie">${ap
+          ? 'Entregado al recibir el aporte. Presente este boleto para subir.'
+          : 'Presente este boleto para subir.'}${c.escuela ? ' · ' + adEsc(c.escuela) : ''}</div>
+      </div>
+    </div>`;
+  };
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Boletos — ${adEsc(c.titulo || 'Salida')}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;padding:0;}
+/* 10 mm de margen deja 196 × 259 mm útiles en carta. Dos columnas de
+   96 mm y filas de 82 mm: tres filas por hoja (246 mm) con sitio de
+   sobra aunque el navegador ponga sus propios márgenes. */
+@page{size:letter;margin:10mm;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm;}
+.bo{display:flex;height:82mm;border:1.6px dashed #444;border-radius:3mm;overflow:hidden;
+    page-break-inside:avoid;break-inside:avoid;}
+.bo-col{width:28mm;flex:0 0 28mm;border-right:1.6px dashed #888;padding:3mm 2mm;background:#f7f7f7;}
+.bo-col-t{font-size:6.5px;font-weight:bold;color:#555;text-transform:uppercase;letter-spacing:.3px;}
+.bo-col-f{font-size:12px;font-weight:900;font-family:'Courier New',monospace;margin:1.5mm 0;}
+.bo-col-n{font-size:8px;line-height:1.25;}
+.bo-col-p{font-size:8px;font-weight:bold;margin-top:1.5mm;}
+.bo-firma{border-top:1px solid #999;margin-top:6mm;padding-top:1mm;font-size:6.5px;color:#666;text-align:center;}
+.bo-cuerpo{flex:1;padding:3.5mm 4mm;display:flex;flex-direction:column;min-width:0;}
+.bo-tit{font-size:11.5px;font-weight:900;line-height:1.2;}
+.bo-sub{font-size:8.5px;color:#444;margin-top:1mm;line-height:1.3;}
+.bo-nom{font-size:15px;font-weight:900;margin-top:3mm;line-height:1.15;}
+.bo-gr{font-size:10px;font-weight:bold;color:#c2410c;}
+.bo-caja{display:flex;gap:2mm;margin-top:auto;}
+.bo-caja-i{flex:1;border:1.2px solid #ddd;border-radius:2mm;padding:1.5mm 1mm;text-align:center;min-width:0;}
+.bo-caja-i b{display:block;font-size:12px;font-weight:900;line-height:1.1;}
+.bo-caja-i span{font-size:6.5px;text-transform:uppercase;color:#666;letter-spacing:.3px;}
+.bo-folio b{font-family:'Courier New',monospace;font-size:11px;}
+.bo-pie{font-size:7px;color:#555;margin-top:2mm;line-height:1.3;}
+.noprint{padding:6mm 6mm 0;}
+.noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;}
+.noprint p{font-size:12px;color:#444;margin-top:3mm;max-width:170mm;line-height:1.5;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">🖨️ Imprimir los boletos</button>
+<p>Recorte por la raya. Entregue cada boleto <strong>cuando reciba el aporte</strong>:
+es el recibo de la familia y su pase para subir al bus. La colilla de la izquierda
+la firma quien paga y se la queda usted.</p></div>
+<div class="grid">${orden.map(boleto).join('')}</div>
+</body></html>`;
+  const w = (typeof adPrintAbrir === 'function') ? adPrintAbrir(html) : window.open('', '_blank');
+  if (w && typeof adPrintAbrir !== 'function') { w.document.write(html); w.document.close(); }
 }
 
 /* Los dos puentes a lo que el maestro YA tiene aquí: el dinero se cobra
@@ -532,6 +772,12 @@ function convHtmlDatos(c, pub) {
         <div class="pa-field"><label>Último día para contestar</label>
           <input id="cv-limite" class="pa-inp-field" type="date" value="${adEsc(c.limite)}"></div>
       </div>
+      <div class="pa-field"><label>¿A qué hora de ese día cierras? (opcional)</label>
+        <input id="cv-limitehora" class="pa-inp-field" type="time" value="${adEsc(c.limiteHora)}" style="max-width:170px">
+        <p class="pa-optional-hint">El padre ve un <strong>reloj bajando</strong> hasta ese momento, con
+          sus horas y sus minutos: es lo que mueve al que lo va dejando para después. Si no pones hora,
+          se cierra al <strong>acabar</strong> ese día, para no dejar fuera al que iba a contestar
+          ese mismo día.</p></div>
       <div class="pa-row-2">
         <div class="pa-field"><label>Hora de salida</label>
           <input id="cv-hora" class="pa-inp-field" value="${adEsc(c.hora)}" placeholder="6:30 a. m."></div>
@@ -576,6 +822,15 @@ function convHtmlDatos(c, pub) {
         <input id="cv-cupos" class="pa-inp-field" type="number" min="0" step="1" value="${Number(c.cupos) || 0}">
         <p class="pa-optional-hint">Si lo pones, el padre ve <strong>cuántos asientos quedan</strong>. Eso
           mueve a los que dejan todo para el final; déjalo en 0 si no quieres enseñarlo.</p></div>
+      <div class="pa-field"><label>👣 Arranque: personas con las que empieza el conteo</label>
+        <input id="cv-arranque" class="pa-inp-field" type="number" min="0" step="1" value="${Number(c.arranque) || 0}" style="max-width:170px">
+        <p class="pa-optional-hint">Una lista en <strong>cero no la estrena nadie</strong>: el primero que
+          abre el enlace cree que la salida no va a salir y se espera. Este número se le SUMA al que ve el
+          padre, para que encuentre la lista arrancada. Úsalo con los que ya te dijeron que sí de palabra
+          o por WhatsApp.</p>
+        <p class="pa-optional-hint"><strong>No entra en tus cuentas</strong>: los buses, el dinero y la
+          lista de arriba se calculan solo con los que contestaron de verdad. Y no te pases: si pones 80 y
+          el sábado llegan 20, la familia que te leyó «quedan pocos asientos» se dio cuenta.</p></div>
       <button class="pa-generate-btn" id="cv-guardar">💾 Guardar${pub ? ' y actualizar el enlace' : ''}</button>
     </div>`;
 }
@@ -586,7 +841,7 @@ function convLeerCampos(c) {
   c.titulo = String(v('cv-titulo')).trim();
   c.gancho = String(v('cv-gancho')).trim();
   c.gana = [0, 1, 2].map(i => String(v('cv-gana-' + i)).trim());
-  c.fecha = v('cv-fecha'); c.limite = v('cv-limite');
+  c.fecha = v('cv-fecha'); c.limite = v('cv-limite'); c.limiteHora = v('cv-limitehora');
   c.hora = String(v('cv-hora')).trim(); c.regreso = String(v('cv-regreso')).trim();
   c.lugar = String(v('cv-lugar')).trim(); c.punto = String(v('cv-punto')).trim();
   c.aporte = Math.max(0, Number(v('cv-aporte')) || 0);
@@ -597,6 +852,7 @@ function convLeerCampos(c) {
   c.capacidad = Math.max(5, Number(v('cv-capacidad')) || CONV_CAP_DEF);
   c.costoBus = Math.max(0, Number(v('cv-costobus')) || 0);
   c.cupos = Math.max(0, Number(v('cv-cupos')) || 0);
+  c.arranque = Math.max(0, Number(v('cv-arranque')) || 0);
   return c;
 }
 function convGuardar(mut) {
@@ -681,6 +937,9 @@ function convEnganchar(body, c, d, t, pub) {
     toast(ok === true ? (abrir ? '🔓 Abierta otra vez' : '🔒 Cerrada') : '⚠️ Sin internet: se aplicará cuando haya señal');
   });
 
+  const bBol = document.getElementById('cv-boletos');
+  if (bBol) bBol.addEventListener('click', () => convImprimirBoletos(c));
+
   const bCopLi = document.getElementById('cv-copiar-lista');
   if (bCopLi) bCopLi.addEventListener('click', () => adCopiar(convTextoLista(c, t),
     () => toast('📋 Lista copiada'), () => toast('No se pudo copiar')));
@@ -762,7 +1021,8 @@ function convTextoLista(c, t) {
   L.push('VAN (' + si.length + '):');
   si.forEach((x, i) => L.push((i + 1) + '. ' + x.alumno +
     (x.grado ? ' — ' + adGradoSeccion(x.grado, x.seccion) : '') +
-    ' — ' + x.personas + ' persona' + (x.personas === 1 ? '' : 's') + (x.tel ? ' — ' + x.tel : '')));
+    ' — ' + x.personas + ' persona' + (x.personas === 1 ? '' : 's') + (x.tel ? ' — ' + x.tel : '') +
+    ' — boleto ' + convFolioDe(c, x)));
   if (no.length) {
     L.push('');
     L.push('NO VAN (' + no.length + '):');
@@ -795,8 +1055,7 @@ async function convAEconomia(c) {
    gente en el registro del aula. */
 async function convAControl(c) {
   const d = adLoad();
-  const norm = s => String(s || '').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  const norm = convNorm;
   const si = (Array.isArray(c.resp) ? c.resp : []).filter(x => x.va);
   const datos = {};
   let hallados = 0;
@@ -829,3 +1088,4 @@ async function convAControl(c) {
 }
 
 window.adRenderConvocatoria = adRenderConvocatoria;
+window.convImprimirBoletos = convImprimirBoletos;

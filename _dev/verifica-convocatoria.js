@@ -22,6 +22,20 @@
      ofrecer mandarla por WhatsApp ya escrita, con el nombre, el grado
      y cuántas personas. Sin eso, el padre cree que contestó y no.
 
+   Y las dos cosas que empujan al que lo va dejando para después:
+
+   · EL ARRANQUE. El maestro puede arrancar el conteo con un número
+     suyo para que el primero que abra el enlace no se encuentre un
+     cero. Lo que se vigila aquí es que ese número NO se le meta en sus
+     cuentas: los buses y el dinero se calculan con los que contestaron
+     de verdad, o contrata un bus para gente que no existe.
+   · EL RELOJ. Baja de verdad, se pone rojo en las últimas horas y al
+     llegar a cero cierra la lista — un reloj en cero con el botón de
+     contestar debajo promete lo que el servidor va a rechazar.
+
+   Y el BOLETO, que es lo que se llevan los dos: el folio que ve la
+   madre en su teléfono tiene que ser el mismo que imprime el maestro.
+
    La nube NO se toca: se pone un Supabase de mentira con page.route,
    así la prueba corre sin internet y sin ensuciar los datos reales.
 
@@ -292,9 +306,14 @@ async function pruebaCuentas(browser) {
   await page.close();
 }
 
-/* ══════════════ 6) La puerta en ✅ Controles ══════════════ */
+/* ══════════════ 6) La puerta en 📣 Comunicados ══════════════
+   Vive ahí y no en ✅ Controles porque lo que sale de aquí es un
+   mensaje a las familias. Y va ANTES del candado de la lista: el enlace
+   se manda al grupo de toda la escuela y no necesita la lista del aula
+   para nada, así que un maestro que todavía no ha metido a sus alumnos
+   tiene que poder usarla igual. */
 async function pruebaPuerta(browser) {
-  console.log('\n── LA PUERTA EN CONTROLES ──');
+  console.log('\n── LA PUERTA EN COMUNICADOS ──');
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.clock.install({ time: HOY });
   await page.route('**/rest/v1/rpc/**', route => route.abort('failed'));  /* sin nube */
@@ -312,15 +331,25 @@ async function pruebaPuerta(browser) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('view-admin').classList.add('active');
     renderAdmin();
-    document.querySelector('[data-adtab="ctrl"]').click();
+    document.querySelector('[data-adtab="com"]').click();
   });
   await page.waitForSelector('#ad-ir-conv');
-  ok('sin lista de alumnos, la puerta 📣 Convocatoria sigue estando');
+  ok('sin lista de alumnos, la puerta 📣 Convocatoria sigue estando en Comunicados');
+
+  /* Y ya no está donde estaba: si se quedara en las dos, el maestro
+     acabaría con dos convocatorias distintas para la misma salida. */
+  const enCtrl = await page.evaluate(() => {
+    document.querySelector('[data-adtab="ctrl"]').click();
+    return !!document.querySelector('#ad-ir-conv');
+  });
+  comprueba(!enCtrl, 'y ya NO sale en Controles: hay una sola puerta');
+  await page.evaluate(() => document.querySelector('[data-adtab="com"]').click());
+  await page.waitForSelector('#ad-ir-conv');
 
   await page.click('#ad-ir-conv');
   await page.waitForSelector('[data-cvplant="0"]');
   const rot = await page.getAttribute('#admin-back-btn', 'aria-label');
-  comprueba(/Volver a Controles/.test(rot), 'la flecha de arriba sube a Controles (dijo «' + rot + '»)');
+  comprueba(/Volver a Comunicados/.test(rot), 'la flecha de arriba sube a Comunicados (dijo «' + rot + '»)');
 
   await page.click('[data-cvplant="0"]');       /* 🚌 Excursión o paseo */
   await page.waitForSelector('#cv-titulo');
@@ -414,12 +443,13 @@ async function pruebaPublicada(browser) {
         aporte: 250, incluye: 'transporte, entrada', cobro: '', nota: '', limite: '2026-08-11',
         dirigido: 'Para las familias de toda la escuela', maestro: 'Prof. Josué Polanco',
         wa: '50499998888', escuela: 'Escuela John Arnold Cook', capacidad: 55, costoBus: 3500,
-        cupos: 110, codigo: 'R4TP', pin: 'K7M2QP', cerrada: 0, resp: [], respFecha: '', creada: '2026-08-08' }],
+        cupos: 110, arranque: 30, limiteHora: '16:00',
+        codigo: 'R4TP', pin: 'K7M2QP', cerrada: 0, resp: [], respFecha: '', creada: '2026-08-08' }],
     }] }));
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('view-admin').classList.add('active');
     renderAdmin();
-    document.querySelector('[data-adtab="ctrl"]').click();
+    document.querySelector('[data-adtab="com"]').click();
   });
   await page.click('#ad-ir-conv');
   await page.waitForSelector('[data-cvid]');
@@ -441,11 +471,180 @@ async function pruebaPublicada(browser) {
   comprueba(/1 persona\b/.test(texto) === false || !/1 personas/.test(texto),
     'no escribe «1 personas»');
 
+  /* ── El arranque NO puede colarse en las cuentas del maestro ──
+     Es la comprobación que de verdad importa de todo el empujón: si las
+     30 personas de arranque se sumaran aquí, el maestro contrataría un
+     bus para gente que no existe y lo pagaría de su bolsa. Arriba tiene
+     que seguir leyendo 7, y el espejo —lo que ve el padre— 37. */
+  comprueba(cifras[0] === '7', 'el arranque de 30 NO se suma a las personas del maestro');
+  comprueba(cifras[2] === '1', 'ni a los buses: sigue siendo 1, no 1 de más');
+  const espejo = await page.textContent('.ad-cv-espejo');
+  comprueba(/\b37\b/.test(espejo), 'el espejo dice que el padre ve 37 personas (7 + 30)');
+  comprueba(/\b73\b/.test(espejo), 'y que le quedan 73 asientos de 110');
+  comprueba(/30 las pusiste tú/.test(espejo) && /7 contestaron/.test(espejo),
+    'y le recuerda cuántas puso él y cuántas son de verdad');
+  comprueba(/3 días/.test(espejo), 'y qué reloj está viendo el padre (3 días)');
+
+  /* El folio del boleto: el que imprime el maestro tiene que ser el
+     mismo que la madre lleva en su teléfono. */
+  const folio = await page.evaluate(() =>
+    convFolio('R4TP', convHuella('Ada Sarai Sevilla', '6', '1')));
+  comprueba(/^R4TP-[A-Z0-9]{4}$/.test(folio), 'el folio se lee y se dicta: ' + folio);
+  comprueba(texto.includes(folio), 'y sale junto al nombre en la lista de los que van');
+
   /* Traer a mano tampoco puede dispararse solo */
   const antes = veces;
   await page.click('#cv-refrescar');
   await page.waitForTimeout(1200);
   comprueba(veces === antes + 1, 'el botón «Traer las respuestas» pregunta exactamente una vez');
+  await page.close();
+  return folio;
+}
+
+/* ══════════════ 9) El empujón y el reloj, en la pantalla del padre ══════════════
+   Las dos cosas que mueven al que lo va dejando para después. Se
+   comprueban juntas porque juntas se enseñan, y porque las dos tienen
+   la misma trampa: pueden acabar diciéndole al padre algo que el
+   servidor no va a respetar. */
+async function pruebaEmpuje(browser) {
+  console.log('\n── EL ARRANQUE Y EL RELOJ ──');
+  const estado = { evento: Object.assign({}, EVENTO, { arranque: 30, limiteHora: '16:00' }),
+                   familias: 12, personas: 31, llamadas: [], caer: false };
+  const page = await nuevaPagina(browser, estado);
+  await page.goto(BASE + '/salida.html?c=R4TP', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#reloj-c');
+
+  const prueba = await page.textContent('.prueba');
+  comprueba(/\b61\b/.test(prueba), 'el padre ve 61 personas (31 que contestaron + 30 de arranque)');
+  comprueba(/Quedan 49 asientos/.test(prueba), 'y que quedan 49 asientos de 110');
+
+  /* Del sábado 8 a las 9:00 hasta el martes 11 a las 4:00 pm van
+     3 días, 7 horas y 0 minutos. Si el reloj tomara el límite como las
+     00:00 del día 11, aquí saldrían 2 días — y ese es justo el fallo
+     que deja fuera a quien iba a contestar el último día. */
+  const cajas = await page.$$eval('.reloj-b', ns =>
+    ns.map(n => n.querySelector('b').textContent + '|' + n.querySelector('span').textContent));
+  comprueba(cajas.join(' ') === '3|DÍAS 07|HORAS 00|MIN 00|SEG',
+    'el reloj marca 3 días 07:00:00 (dijo «' + cajas.join(' ') + '»)');
+  comprueba(/Se cierra la lista en/.test(await page.textContent('#reloj-t')),
+    'y dice para qué es ese reloj');
+
+  /* Y late: no es una foto de la hora a la que se abrió la página. */
+  await page.clock.runFor('00:05');
+  const seg = await page.$$eval('.reloj-b b', ns => ns[ns.length - 1].textContent);
+  comprueba(seg === '55', 'los segundos bajan solos: a los 5 segundos marca 55 (dijo «' + seg + '»)');
+
+  /* Las últimas horas se ven distintas sin leer nada, y los «00 días»
+     que no dicen nada desaparecen. Los saltos grandes van con
+     fastForward y no con runFor: runFor dispararía el latido un cuarto
+     de millón de veces y la prueba no acabaría nunca. */
+  await page.clock.fastForward(2 * 86400000 + 22 * 3600000);
+  await page.waitForSelector('.reloj.urge');
+  const urg = await page.$$eval('.reloj-b b', ns => ns.map(n => n.textContent));
+  comprueba(urg.length === 3, 'con menos de un día se quita la caja de los días');
+  comprueba(/Últimas horas/.test(await page.textContent('#reloj-t')), 'y lo dice: últimas horas');
+
+  /* Al llegar a cero, la pantalla NO se queda en 00:00:00 con el botón
+     de contestar debajo: eso sería prometer algo que el servidor va a
+     rechazar. Se cierra la lista. */
+  await page.clock.fastForward(9 * 3600000);
+  await page.waitForSelector('#b-compartir');
+  const fin = await page.textContent('#app');
+  comprueba(/se cerró/i.test(fin), 'al llegar a cero la lista se cierra sola');
+  comprueba(!(await page.$('#b-si')), 'y ya no ofrece contestar');
+  await page.close();
+}
+
+/* ══════════════ 10) El boleto del padre ══════════════ */
+async function pruebaBoleto(browser, folioMaestro) {
+  console.log('\n── EL BOLETO ──');
+  const estado = { evento: EVENTO, familias: 12, personas: 31, llamadas: [], caer: false };
+  const page = await nuevaPagina(browser, estado);
+  await page.goto(BASE + '/salida.html?c=R4TP', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#b-si');
+  await page.click('#b-si');
+  await page.waitForSelector('#f-enviar');
+  await page.fill('#f-al', 'Ada Sarai Sevilla');
+  await page.click('[data-g="6"]');
+  await page.fill('#f-sec', '1');
+  await page.click('#f-mas');
+  await page.click('#f-mas');
+  await page.click('#f-enviar');
+  await page.waitForSelector('#boleto');
+
+  const bol = await page.textContent('#boleto');
+  const cajas = await page.$$eval('#boleto .boleto-caja', ns =>
+    ns.map(n => n.querySelector('b').textContent + ' ' + n.querySelector('span').textContent));
+  comprueba(bol.includes('Ada Sarai Sevilla'), 'el boleto trae el nombre del alumno');
+  comprueba(bol.includes('6º-1'), 'y el grupo bien escrito');
+  comprueba(cajas[0] === '3 personas', 'y para cuántas personas vale (dijo «' + cajas[0] + '»)');
+  comprueba(bol.includes('L 750'), 'y el aporte que hay que llevar');
+
+  /* LO QUE SOSTIENE TODO: el folio del padre y el del maestro son el
+     mismo. Si se separan, el papel que el maestro entrega no es el que
+     la madre lleva en la galería, y en el portón no se puede comprobar
+     nada. */
+  const folio = await page.evaluate(() => miFolio());
+  comprueba(folio === folioMaestro,
+    'el folio del padre es el mismo que imprime el maestro (' + folio + ' = ' + folioMaestro + ')');
+  comprueba(bol.includes(folio), 'y se ve en el boleto');
+
+  /* Y se puede guardar como foto: en pantalla se pierde al cerrar la
+     pestaña, y con él se pierde el folio. */
+  const png = await page.evaluate(() => dibujaBoleto().toDataURL('image/png').slice(0, 22));
+  comprueba(png.indexOf('data:image/png') === 0, 'el boleto se dibuja como imagen para la galería');
+  comprueba(!!(await page.$('#g-guardar')), 'y hay botón para guardarlo');
+
+  /* La imagen se MIDE antes de pintarse. Si el alto fuera fijo, un
+     título largo empujaría al aviso del final encima del renglón que
+     dice para cuántas personas vale — pasó, y en una foto no se ve
+     hasta que ya está guardada. Aquí se comprueba que crece. */
+  const altos = await page.evaluate(() => {
+    const corto = EV.titulo;
+    const a = dibujaBoleto().height;
+    EV.titulo = 'Excursión al Museo Ferroviario Nacional de la ciudad de El Progreso, departamento de Yoro';
+    const b = dibujaBoleto().height;
+    EV.titulo = corto;
+    return { corto: a, largo: b };
+  });
+  comprueba(altos.largo > altos.corto,
+    'y si el título es largo, la imagen crece en vez de comerse lo de abajo (' +
+    altos.corto + 'px → ' + altos.largo + 'px)');
+
+  /* Al volver a la portada tiene que poder volver a verlo: el boleto no
+     es una pantalla de paso, es lo que enseña el día de la salida. */
+  await page.click('#g-volver');
+  await page.waitForSelector('#b-boleto');
+  await page.click('#b-boleto');
+  await page.waitForSelector('#boleto');
+  ok('y al volver, el boleto sigue ahí donde lo va a buscar');
+  await page.close();
+}
+
+/* ══════════════ 11) Sin internet no se promete un asiento ══════════════
+   Un boleto encima de un envío que no salió es un asiento que nadie
+   apartó: la madre llega el sábado con un papel que el maestro no
+   tiene. Mientras no entre, lo que se le ofrece es WhatsApp. */
+async function pruebaBoletoSinInternet(browser) {
+  console.log('\n── EL BOLETO SIN INTERNET ──');
+  const estado = { evento: EVENTO, familias: 12, personas: 31, llamadas: [], caer: false };
+  const page = await nuevaPagina(browser, estado);
+  await page.goto(BASE + '/salida.html?c=R4TP', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#b-si');
+  await page.click('#b-si');
+  await page.waitForSelector('#f-enviar');
+  await page.fill('#f-al', 'Carlos Josué Meza');
+  await page.click('[data-g="5"]');
+  estado.caer = true;
+  await page.click('#f-enviar');
+  await page.waitForSelector('#g-wa');
+  comprueba(!(await page.$('#boleto')), 'sin señal NO se le da boleto: no hay asiento apartado');
+  comprueba(!!(await page.$('#g-wa')), 'se le ofrece mandarlo por WhatsApp, que es lo que resuelve');
+
+  estado.caer = false;
+  await page.click('#g-reintentar');
+  await page.waitForSelector('#boleto');
+  ok('y en cuanto entra la respuesta, aparece el boleto');
   await page.close();
 }
 
@@ -460,7 +659,10 @@ async function pruebaPublicada(browser) {
     await pruebaCuentas(browser);
     await pruebaPuerta(browser);
     await pruebaMensaje(browser);
-    await pruebaPublicada(browser);
+    const folio = await pruebaPublicada(browser);
+    await pruebaEmpuje(browser);
+    await pruebaBoleto(browser, folio);
+    await pruebaBoletoSinInternet(browser);
   } finally {
     await browser.close();
   }

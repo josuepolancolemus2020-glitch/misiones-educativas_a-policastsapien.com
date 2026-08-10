@@ -454,7 +454,7 @@ function renderAdmin() {
     const rotulo = _adFichasOn ? 'Volver a Alumnos'
       : (_adGastosOn || _adInvOn) ? 'Volver a Economía'
       : nivelConv === 2 ? 'Volver a mis convocatorias'
-      : nivelConv === 1 ? 'Volver a Controles'
+      : nivelConv === 1 ? 'Volver a Comunicados'
       : _adColectaId ? 'Volver a mis colectas'
       : _adControlId ? 'Volver a mis controles' : 'Volver a la Zona Docente';
     _atras.setAttribute('aria-label', rotulo);
@@ -2969,7 +2969,13 @@ function adCtrlValorTxt(c, num) {
 }
 
 /* La puerta a 📣 Convocatoria. Se pinta en un solo sitio porque sale en
-   dos: en Controles con lista y en Controles sin lista. */
+   dos: en Comunicados con lista y en Comunicados sin lista.
+
+   Vive en 📣 Comunicados y no en ✅ Controles porque lo que sale de
+   aquí es un mensaje a las familias, como un aviso. La diferencia con
+   el aviso —y por eso lleva franja naranja y la palabra
+   «pregúntales»— es que el aviso INFORMA y se acabó, y la convocatoria
+   PREGUNTA y se queda esperando la respuesta. */
 function adConvPuertaHtml(d) {
   if (typeof adRenderConvocatoria !== 'function') return '';
   const abiertas = (d.convocatorias || []).filter(c => c.codigo && !c.cerrada);
@@ -2997,18 +3003,7 @@ function adConvPuertaEnganchar(body) {
 }
 
 function adRenderControles(body, d) {
-  /* 📣 La Convocatoria va ANTES del candado de la lista: el enlace se
-     manda al grupo de WhatsApp de TODA la escuela y no necesita la lista
-     del aula para nada. Un maestro que todavía no ha metido a sus
-     alumnos igual tiene que contratar los buses del sábado. */
-  if (typeof adConvNivel === 'function' && adConvNivel() &&
-      typeof adRenderConvocatoria === 'function') { adRenderConvocatoria(body, d); return; }
-  if (!d.lista.length) {
-    adSinLista(body, 'los controles del aula');
-    body.insertAdjacentHTML('beforeend', adConvPuertaHtml(d));
-    adConvPuertaEnganchar(body);
-    return;
-  }
+  if (!d.lista.length) { adSinLista(body, 'los controles del aula'); return; }
   if (_adControlId) { adRenderControl(body, d); return; }
 
   const lista = (d.controles || []).slice().reverse();
@@ -3024,7 +3019,9 @@ function adRenderControles(body, d) {
         ${AD_CTRL_PLANTILLAS.map((p, i) =>
           `<button class="ad-mes-btn" data-plant="${i}" title="Dato: ${adEsc(AD_CTRL_TIPOS[p.tipo].et)}">${p.icono} ${adEsc(p.nombre)}</button>`).join('')}
       </div>
-      ${adConvPuertaHtml(d)}
+      <p class="pa-optional-hint">Aquí se ANOTA lo que ya sabes. Si lo que necesitas es
+        <strong>preguntárselo a las familias</strong> —quién va a la excursión, cuántos llegan a la
+        reunión—, eso es una convocatoria y está en <strong>📣 Comunicados</strong>.</p>
     </div>
     ${lista.length ? `
     <div class="pa-card">
@@ -3111,8 +3108,6 @@ function adRenderControles(body, d) {
 
   body.querySelectorAll('[data-ctid]').forEach(b =>
     b.addEventListener('click', () => { _adControlId = b.dataset.ctid; renderAdmin(); }));
-
-  adConvPuertaEnganchar(body);
 }
 
 function adRenderControl(body, d) {
@@ -5051,7 +5046,18 @@ function avFaqsDe(gid) {
 let _avEditId = null;   /* aviso en edición en el formulario */
 
 function adRenderCom(body, d) {
-  if (!d.lista.length) { adSinLista(body, 'los comunicados'); return; }
+  /* 📣 La Convocatoria va ANTES del candado de la lista: el enlace se
+     manda al grupo de WhatsApp de TODA la escuela y no necesita la lista
+     del aula para nada. Un maestro que todavía no ha metido a sus
+     alumnos igual tiene que contratar los buses del sábado. */
+  if (typeof adConvNivel === 'function' && adConvNivel() &&
+      typeof adRenderConvocatoria === 'function') { adRenderConvocatoria(body, d); return; }
+  if (!d.lista.length) {
+    adSinLista(body, 'los comunicados');
+    body.insertAdjacentHTML('beforeend', adConvPuertaHtml(d));
+    adConvPuertaEnganchar(body);
+    return;
+  }
   const g = avGrupo(d.id);
   const vigentes = g.avisos.filter(avVigente);
   const faqs = avFaqsDe(d.id);
@@ -5085,6 +5091,9 @@ function adRenderCom(body, d) {
       <p class="pa-optional-hint">Lo que publiques aquí lo responde el <strong>asistente de padres</strong>
         («¿cuándo es la reunión?», «¿qué lleva mañana?»). Cada aviso <strong>vence solo</strong> para
         que el canal no se sature (máximo ${AV_MAX_ACTIVOS} activos).</p>
+      <p class="pa-optional-hint" style="margin-top:-2px">Un aviso <strong>informa</strong> y se acabó.
+        Si lo que necesitas es que te <strong>contesten</strong> —quién va a la excursión, cuántos llegan
+        a la reunión—, eso es una convocatoria: la puerta naranja de abajo.</p>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec av-tpl" data-tpl="noclases">🚫 No hay clases</button>
         <button class="pa-generate-btn ad-btn-sec av-tpl" data-tpl="reunion">👨‍👩‍👧 Reunión de padres</button>
@@ -5124,6 +5133,7 @@ function adRenderCom(body, d) {
         ${g.avisos.length ? g.avisos.slice().sort((a, b) => (avVigente(b) - avVigente(a)) || (String(a.hasta) < String(b.hasta) ? -1 : 1)).map(filaAviso).join('')
           : '<p class="pa-optional-hint">Sin avisos todavía. Usa una plantilla de arriba: dos toques y queda publicado.</p>'}
       </div>
+      ${adConvPuertaHtml(d)}
     </div>
 
     <div class="pa-card">
@@ -5201,6 +5211,7 @@ function adRenderCom(body, d) {
     document.getElementById('av-titulo').focus();
   };
 
+  adConvPuertaEnganchar(body);
   document.getElementById('av-nuevo').addEventListener('click', () => abrirForm({}));
   document.getElementById('av-cancelar').addEventListener('click', () => { _avEditId = null; renderAdmin(); });
   document.getElementById('av-tipo').addEventListener('change', e => {

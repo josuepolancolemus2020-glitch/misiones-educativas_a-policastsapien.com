@@ -5023,10 +5023,10 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .lec-veredicto { margin-top: 10px; font-size: 14px; color: var(--text); }
 
 /* ══════════════ 📣 CONVOCATORIA — «¿va o no va?» ══════════════
-   Franja naranja para distinguirla de un control corriente: el control
-   se ANOTA (el maestro ya sabe la respuesta) y la convocatoria se
-   PREGUNTA (todavía no la sabe). Es la misma pestaña, pero no es lo
-   mismo, y el maestro tiene que verlo sin leer. */
+   Vive dentro de 📣 Comunicados y lleva franja naranja para que no se
+   confunda con un aviso: el aviso INFORMA y se acabó, la convocatoria
+   PREGUNTA y se queda esperando la respuesta. Es la misma pestaña, pero
+   no es lo mismo, y el maestro tiene que verlo sin leer. */
 .ad-puerta-conv { border-left: 5px solid #ea580c; margin-top: 12px; }
 
 /* Las cifras con las que decide: personas, familias y BUSES. El número
@@ -5048,6 +5048,23 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-cv-plata b { font-size: 18px; white-space: nowrap; }
 .ad-cv-no { background: #f8fafc; }
 .ad-cv-no b, .ad-cv-no span { color: #64748b; }
+
+/* El espejo: lo MISMO que está viendo el padre en su teléfono —el
+   conteo con el arranque sumado y el reloj bajando—, puesto aparte y
+   rotulado. Va con otro fondo a propósito: las cifras de arriba son con
+   las que el maestro contrata buses y cuenta dinero, y estas no. Si las
+   dos se pintaran igual, un día firmaría por la que no era. */
+.ad-cv-espejo {
+  margin-top: 12px; padding: 10px 12px; border-radius: 12px;
+  background: #fff7ed; border: 1.5px dashed #fed7aa;
+}
+.ad-cv-espejo-t {
+  font-size: 10.5px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: .4px; color: #c2410c;
+}
+.ad-cv-espejo-g { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 5px; }
+.ad-cv-espejo-g span { font-size: 12.5px; color: var(--text); }
+.ad-cv-espejo-g b { font-weight: 900; color: #9a3412; }
 
 /* La vista previa del mensaje se ve COMO SE VA A VER en WhatsApp: el
    maestro lo lee ahí y corrige antes de mandarlo a doscientas personas,

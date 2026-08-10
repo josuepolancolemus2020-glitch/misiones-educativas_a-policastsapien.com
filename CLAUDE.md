@@ -171,6 +171,7 @@ acumulado y descolgado no sirve para nada.
 node _dev/servidor-estatico.js      (en otra terminal)
 node _dev/verifica-una-hoja.js         → informes del alumno y del grado
 node _dev/verifica-fichas-lectura.js   → las 400 fichas de lectura
+node _dev/verifica-boletos.js          → los boletos de la Convocatoria (seis por hoja)
 ```
 
 Mide con media `print`, el ancho útil de una carta y **el número de
@@ -365,11 +366,23 @@ por caso no la corre nadie antes de publicar.
 
 ## Normativa: la Convocatoria pregunta, no anota
 
-En ✅ Controles hay dos cosas que se parecen y no son lo mismo. Un
-**control** se ANOTA: el maestro ya sabe la respuesta y la marca sobre su
-lista. Una **convocatoria** PREGUNTA: todavía no la sabe, y la respuesta
-la dan las familias. Por eso la puerta lleva franja naranja y la palabra
-«pregúntales»; el maestro tiene que ver la diferencia sin leer.
+La Convocatoria vive en **📣 Comunicados**, que es donde vive todo lo que
+sale hacia las familias. Ahí hay dos cosas que se parecen y no son lo
+mismo: un **aviso** INFORMA y se acabó; una **convocatoria** PREGUNTA y
+se queda esperando la respuesta. Por eso la puerta lleva franja naranja y
+la palabra «pregúntales»; el maestro tiene que ver la diferencia sin
+leer.
+
+Estuvo primero en ✅ Controles y se movió: ahí el maestro la buscaba
+entre sus listas de fichas y meriendas, y un **control** es lo contrario
+de esto —se ANOTA, porque él ya sabe la respuesta—. La puerta está en
+**un solo sitio**; si algún día vuelve a salir en los dos, el maestro
+acabará con dos convocatorias distintas para la misma salida.
+
+Va **antes del candado de la lista de alumnos**: el enlace se manda al
+grupo de toda la escuela y no necesita la lista del aula para nada, así
+que un maestro que todavía no ha metido a sus alumnos tiene que poder
+usarla igual.
 
 Vive en `js/tools/convocatoria.js` (pantalla del maestro), `salida.html`
 (pantalla del padre) y `SUPABASE-CONVOCATORIA.sql` (las dos tablas y sus
@@ -405,17 +418,77 @@ Las fechas se parten a mano (`convFecha`, `aFecha`): `new Date('2026-08-15')`
 se lee en UTC y en Honduras enseña el día ANTERIOR. Un padre que lee el
 día equivocado no llega.
 
+### El arranque empuja al padre; NUNCA toca las cuentas del maestro
+
+Una lista en cero no la estrena nadie: el primero que abre el enlace
+entiende que la salida no va a salir y se espera «a ver si se llena» —y
+como todos hacen lo mismo, no se llena nunca—. Por eso el maestro puede
+arrancar el conteo con un número suyo (`arranque`), que se le SUMA al que
+ve el padre.
+
+**La regla que no se negocia: ese número no entra en `convTotales`.** Los
+buses, el dinero y la lista de los que van se calculan solo con las
+respuestas de verdad. Si el arranque se colara ahí, el maestro
+contrataría un bus para gente que no existe y lo pagaría de su bolsa —
+que es exactamente lo que esta herramienta existe para evitar. En su
+pantalla las dos cifras salen **separadas y rotuladas** (`.ad-cv-espejo`,
+con otro fondo a propósito): arriba lo real, abajo «lo que ve el padre».
+
+Y el aviso al maestro va escrito en la pantalla, porque el precio lo
+paga él: si pone 80 y el sábado llegan 20, la familia que leyó «quedan
+pocos asientos» se dio cuenta, y la convocatoria del año que viene ya no
+la cree nadie.
+
+### El reloj cierra de verdad
+
+El padre ve un reloj bajando hasta el cierre, con sus segundos. Dos
+cosas:
+
+- **Sin hora, se cierra al ACABAR el día** (`cierreMs`). Si «11 de
+  agosto» se tomara como las 00:00, ese mismo día 11 la madre que iba a
+  contestar se encuentra el reloj en cero.
+- **Al llegar a cero se cierra la lista, no se queda en 00:00:00.** Un
+  reloj en cero con el botón de contestar debajo promete un asiento que
+  el servidor va a rechazar.
+
+Los segundos se redondean **hacia arriba** en las dos pantallas: si
+faltan tres días clavados se lee «3 días 00:00:00», no «2 días
+23:59:59».
+
+### El boleto: un folio, dos pantallas
+
+Quien contesta se lleva un **boleto** con folio; el maestro lo imprime
+(seis por hoja carta, con colilla para su firma) y se lo entrega **al
+recibir el aporte**: es el recibo de la familia y el pase para subir al
+bus. En el portón, con cuarenta familias apuradas, «yo contesté» no se
+puede comprobar.
+
+⚠️ **El folio se calcula en dos archivos y tiene que dar lo mismo**:
+`convFolio`/`convHuella` (`js/tools/convocatoria.js`) y
+`folioDe`/`huellaDe` (`salida.html`). No viaja por la nube a propósito —
+sale del código de la convocatoria y de la huella del alumno, así que
+funciona sin internet y no hizo falta tocar el servidor. Si las dos
+cuentas se separan, el papel que el maestro entrega no es el que la
+madre lleva en la galería. **Si cambia una, cambia la otra.**
+
+El boleto **solo se le da si la respuesta ENTRÓ**. Sobre un envío que se
+quedó sin señal sería un asiento que nadie apartó.
+
 **Antes de publicar un cambio de la convocatoria:**
 
 ```
 node _dev/servidor-estatico.js      (en otra terminal)
-node _dev/verifica-convocatoria.js
+node _dev/verifica-convocatoria.js   → el padre, el maestro, el arranque, el reloj y el folio
+node _dev/verifica-boletos.js        → los boletos impresos, contando las páginas del PDF
 ```
 
-Vigila las dos cifras que cuestan dinero —el día del evento y cuántos
-buses— y las dos formas de perder una respuesta: contarla doble y no
-contarla. La nube no se toca: se pone un Supabase de mentira con
-`page.route`, así corre sin internet y sin ensuciar datos reales.
+El primero vigila las dos cifras que cuestan dinero —el día del evento y
+cuántos buses—, las dos formas de perder una respuesta —contarla doble y
+no contarla—, que el arranque no se cuele en las cuentas del maestro y
+que el folio del padre sea el del maestro. El segundo cuenta las páginas
+del PDF: 42 familias tienen que dar **7 hojas**, ni una más. La nube no
+se toca: se pone un Supabase de mentira con `page.route`, así corre sin
+internet y sin ensuciar datos reales.
 
 ## Normativa: el Buzón del lector recoge, no publica
 
