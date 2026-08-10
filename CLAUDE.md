@@ -333,6 +333,7 @@ pone el alumno, no el botón.
 
 ```
 node _dev/prueba-numerales.js            → ¿lee bien los números? (cincuenta casos)
+node _dev/prueba-acentos.js              → ¿separa sílabas y clasifica el acento?
 node _dev/audita-adjetivos-lectura.js    → ¿falta algún adjetivo en el inventario?
 node _dev/valida-lectura-mision.js       → largo, mezcla, opciones, inventario, números
 node _dev/verifica-nombres-propios.js    → mayúsculas de lugares y personas

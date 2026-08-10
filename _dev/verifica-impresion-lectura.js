@@ -71,6 +71,7 @@ const MISIONES = [
   { nombre: 'Los verbos', url: '/misiones/2y3ciclo-verbos/verbos-II-III-ciclo-basica.html' },
   { nombre: 'Los adverbios', url: '/misiones/2y3ciclo-adverbios/adverbios-II-III-ciclo-basica.html' },
   { nombre: 'Los pronombres', url: '/misiones/2y3ciclo-pronombres/pronombres-II-III-ciclo-basica.html' },
+  { nombre: 'La acentuación', url: '/misiones/2y3ciclo-acentuacion/acentuacion-II-III-ciclo-basica.html' },
 ];
 const GRADOS = process.argv[2] ? [Number(process.argv[2])] : [4, 5, 6, 7, 8, 9];
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'metas-papel-'));

@@ -579,6 +579,10 @@
     </div>
 
     <!-- ===== EVALUACIÓN ===== -->
+    <div class="sec" id="s-lectura" role="tabpanel">
+      <div id="lm-root"></div>
+    </div>
+
     <div class="sec" id="s-evaluacion" role="tabpanel">
       <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
         <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true"
@@ -744,6 +748,8 @@
       onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas"
       onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lectura" data-s="s-lectura"
+      onclick="go('s-lectura')"><span class="ico">📖</span> Lectura</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion"
       onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
     <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);"
@@ -770,7 +776,12 @@
     </div>
   </footer>
   <script src="js/html2canvas.min.js"></script>
-  <script src="js/acentuacion.js"></script>
+  <script src="../../js/data/lectura-normas.js?v=1"></script>
+  <script src="../../js/data/lectura-clases.js?v=1"></script>
+  <script src="../../js/data/lectura-acentos.js?v=1"></script>
+  <script src="js/lectura-acentuacion.js?v=1"></script>
+  <script src="../../js/tools/lectura-mision.js?v=1"></script>
+  <script src="js/acentuacion.js?v=1"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
