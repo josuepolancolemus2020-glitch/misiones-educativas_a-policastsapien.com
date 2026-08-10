@@ -338,24 +338,49 @@ niño se ponía a probarlo y llegaba al minuto sin haber leído una línea.
 El maestro deja la letra puesta antes de arrancar, que es como se
 proyecta de verdad.
 
-**Y proyectando, al arrancar se va la franja del minuto ENTERA.** Se
-llevaba un cuarto de la pared con un número de dos dedos de alto, y el
-que copia desde su pupitre acababa mirando la cuenta atrás en vez del
-texto. En su sitio queda un **reloj de arena pequeño** en una esquina,
-con los segundos y el «terminé» al lado —ese botón vivía en la franja, y
-sin él quien acabe antes de los 60 s no tendría cómo decirlo—. La franja
-**vuelve al cumplirse el minuto**, que es cuando hay que marcar hasta
-dónde llegó y seguir; para entonces ya nadie está leyendo. Vuelve
+**El cronómetro grande NO existe: el minuto se mide con un reloj de arena
+pequeño.** Eran un número de dos dedos de alto y una barra de lado a
+lado, y entre los dos se llevaban un cuarto de la pantalla; al cumplirse
+el minuto lo que quedaba era un «0» rojo enorme y una barra vacía, que no
+le dicen nada a nadie y siguen tapando. Ahora el minuto se cuenta con un
+`⏳ 42` chiquito, **en las dos pantallas**. Vive DENTRO de la franja
+cuando la hay —en el teléfono la franja no está pegada al pie de la
+pantalla, así que un reloj clavado abajo se caería encima de las
+pestañas— y **se muda a la esquina cuando se proyecta**, porque entonces
+la franja se esconde y se lo llevaría con ella.
+
+**Y proyectando, al arrancar se va la franja ENTERA.** El que copia desde
+su pupitre acababa mirando la cuenta atrás en vez del texto. Queda el
+reloj de la esquina con el «terminé» al lado —ese botón vivía en la
+franja, y sin él quien acabe antes de los 60 s no tendría cómo decirlo—.
+La franja **vuelve al cumplirse el minuto**, que es cuando hay que marcar
+hasta dónde llegó y seguir; para entonces ya nadie está leyendo. Vuelve
 también si se sale de la pantalla completa a media lectura: fuera del
 proyector la franja es lo único que hay, y sin ella el alumno se queda
 mirando un texto quieto.
+
+**Las preguntas y las actividades crecen con el texto** (`--lm-esc`, la
+proporción entre lo ajustado y lo que la misión pintaba). Con el texto
+enorme en la pared, las opciones salían de 17 px y desde el fondo del
+aula no se leían. Se multiplican todas por lo mismo, así que en el
+teléfono —donde la escala es 1— nada cambia. Proyectando, A− y A+
+aparecen también **en la esquina de las actividades**: el maestro no
+tiene por qué volverse a la lectura para agrandar una pregunta.
+
+Dos cosas NO escalan, y las dos por el mismo motivo: **la franja** y **el
+título de la tarjeta**. El ajuste mide el sitio que dejan; si crecieran
+con la letra se morderían la cola —franja más alta, menos sitio, letra
+más chica— y A+ se quedaba sin efecto, compensado por su propio
+crecimiento. Por si acaso, el ajuste vuelve a medir el hueco **con cada
+tamaño que prueba**, no una sola vez al principio.
 
 Lo comprueba `_dev/verifica-lectura-mision.js` en una pantalla de aula
 (1280×720): que el texto se vea entero, que el mando no pase de 130 px
 de alto, que 📽️ agrande la letra sin perder el final del texto, que al
 arrancar no quede nada que toquetear ni más cronómetro que el reloj de
-la esquina, y que la franja vuelva sola al acabar el minuto y al salir
-de la pantalla completa.
+la esquina, que la franja vuelva sola al acabar el minuto y al salir de
+la pantalla completa, y que la pregunta y sus opciones salgan de un
+tamaño que se lea desde el fondo del aula.
 
 ### Reglas del corpus de una misión (`lectura-<tema>.js`)
 

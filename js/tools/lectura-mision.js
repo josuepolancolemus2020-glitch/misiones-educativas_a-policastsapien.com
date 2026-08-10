@@ -222,27 +222,28 @@
     'border:2px solid var(--lm-borde);border-radius:12px;background:var(--lm-card);color:var(--lm-txt);cursor:pointer;transition:all 0.15s;}',
     '.lm-grado:hover{transform:translateY(-2px);}',
     '.lm-grado.on{background:linear-gradient(135deg,var(--lm-pri),var(--lm-sec));color:#fff;border-color:transparent;}',
-    '.lm-pista{font-size:0.88rem;color:var(--lm-gris);line-height:1.6;margin:0.4rem 0;}',
+    '.lm-pista{font-size:calc(0.88rem * var(--lm-esc,1));color:var(--lm-gris);line-height:1.6;margin:0.4rem 0;}',
     '.lm-lista{display:flex;flex-direction:column;gap:0.45rem;margin:0.6rem 0;}',
     '.lm-txt-row{display:block;width:100%;text-align:left;padding:0.65rem 0.8rem;border:2px solid var(--lm-borde);',
     'border-radius:12px;background:var(--lm-card);color:var(--lm-txt);cursor:pointer;font-family:inherit;transition:all 0.15s;}',
     '.lm-txt-row.on{border-color:var(--lm-pri);background:var(--pri-gl,rgba(65,155,136,0.12));}',
     '.lm-txt-tit{display:block;font-family:"Fredoka",sans-serif;font-size:1.02rem;font-weight:600;}',
     '.lm-txt-meta{display:block;font-size:0.8rem;color:var(--lm-gris);margin-top:0.15rem;}',
-    '.lm-pasos{display:flex;gap:0.35rem;align-items:center;font-size:0.8rem;color:var(--lm-gris);margin-bottom:0.5rem;flex-wrap:wrap;}',
+    '.lm-pasos{display:flex;gap:0.35rem;align-items:center;font-size:calc(0.8rem * var(--lm-esc,1));color:var(--lm-gris);margin-bottom:0.5rem;flex-wrap:wrap;}',
     '.lm-paso{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;',
     'border:2px solid var(--lm-borde);font-size:0.8rem;background:var(--lm-card);}',
     '.lm-paso.on{border-color:var(--lm-pri);background:var(--lm-pri);color:#fff;font-weight:700;}',
     '.lm-paso.ya{border-color:var(--lm-ok);color:var(--lm-ok);}',
-    /* cronómetro */
-    '.lm-crono-caja{display:flex;align-items:center;gap:0.9rem;margin:0.6rem 0;flex-wrap:wrap;}',
-    '.lm-crono{font-family:"Fredoka",sans-serif;font-size:2.6rem;font-weight:700;line-height:1;color:var(--lm-pri);',
-    'font-variant-numeric:tabular-nums;min-width:3.4ch;}',
-    '.lm-crono small{font-size:0.9rem;font-weight:400;color:var(--lm-gris);margin-left:0.1rem;}',
-    '.lm-crono.lm-poco{color:var(--lm-sec);}',
-    '.lm-crono.lm-fin{color:var(--lm-no);}',
-    '.lm-barra{flex:1;min-width:120px;height:10px;border-radius:8px;background:var(--lm-borde);overflow:hidden;}',
-    '.lm-barra i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--lm-pri),var(--lm-sec));transition:width 0.1s linear;}',
+    /* ── El cronómetro grande ya no existe ──
+       Eran un número de dos dedos de alto y una barra de lado a lado, y
+       entre los dos se llevaban el tercio de abajo de la pantalla. Al
+       cumplirse el minuto lo que quedaba era un «0» rojo enorme y una
+       barra vacía, que no le dicen nada a nadie y siguen tapando.
+
+       El minuto se mide ahora con el reloj de arena de la esquina, y en
+       las DOS pantallas: proyectando y en el teléfono. Lo que queda de
+       la franja es lo que hace falta —qué hay que hacer, el aviso y los
+       botones—, que sin el cronómetro cabe en la mitad de alto. */
     '.lm-crono-sub{font-size:0.85rem;color:var(--lm-gris);width:100%;}',
     /* ── El panel del minuto va ABAJO, debajo del texto ──
        Estuvo arriba, encima del texto, y el maestro lo probó en el aula:
@@ -260,7 +261,6 @@
     '.lm-panel{position:sticky;bottom:0;z-index:6;margin:-0.4rem 0 1.2rem;padding:0.75rem 0.9rem 0.9rem;',
     'background:var(--lm-card);border:2px solid var(--lm-borde);border-radius:16px;',
     'box-shadow:0 -6px 20px var(--shadow,rgba(0,0,0,0.13));}',
-    '.lm-panel .lm-crono-caja{margin:0;}',
     '.lm-panel .lm-btns{margin-top:0.55rem;}',
     /* Un aviso vacío no puede ocupar sitio: en el proyector cada hueco
        del mando es un renglón de lectura que se cae de la pared. */
@@ -273,11 +273,8 @@
        del minuto me tapa bastante». */
     '@media (min-width:700px){',
     '.lm-panel{display:flex;flex-wrap:wrap;align-items:center;gap:0.3rem 0.9rem;}',
-    /* El cronómetro se queda con su renglón entero y sin partirse: si se
-       le deja compartir sitio, el número, la barra y los mandos de la
-       vista se apilan en tres y el mando acaba MÁS alto que antes. */
-    '.lm-panel .lm-crono-caja{flex:1 1 100%;flex-wrap:nowrap;}',
     '.lm-panel .lm-crono-sub{width:auto;flex:1 1 200px;}',
+    '.lm-panel .lm-vista{flex:0 0 auto;}',
     '.lm-panel .lm-btns{margin-top:0;flex:0 0 auto;}',
     '.lm-panel #lm-avisos{flex:1 1 100%;order:9;}',
     '}',
@@ -293,20 +290,35 @@
     'font-size:1.02rem;font-weight:600;line-height:1.15;}',
     '.lm-vbtn:hover{border-color:var(--lm-pri);}',
     '.lm-vbtn.on{background:var(--lm-pri);color:#fff;border-color:transparent;}',
-    /* ── Proyectando, el minuto se mide con un reloj de arena chiquito ──
-       Al arrancar, la franja del cronómetro se va ENTERA. Ocupaba un
-       cuarto de la pared con un número de dos dedos de alto, y el que
-       está copiando del muro acababa mirando la cuenta atrás en vez del
-       texto. Queda un reloj pequeño en una esquina: al maestro le basta
-       un vistazo para saber cuánto falta, y al que lee no le grita nada.
-       Vuelve la franja al cumplirse el minuto, que es cuando hay que
-       marcar y seguir —y para entonces ya nadie está leyendo—. */
-    '.lm-reloj{position:fixed;right:0.7rem;bottom:0.7rem;z-index:99010;display:flex;align-items:center;gap:0.4rem;}',
+    /* ── El minuto se mide con un reloj de arena chiquito ──
+       En la esquina de abajo, discreto, y en las dos pantallas: el que
+       copia de la pared no puede tener la cuenta atrás gritándole, y el
+       niño con el teléfono en la mano tampoco la necesita del tamaño de
+       su cara. Al maestro le basta un vistazo para saber cuánto falta.
+
+       Va FIJO a la pantalla y fuera de la franja a propósito: cuando se
+       proyecta, la franja entera desaparece mientras se lee, y un reloj
+       metido dentro se iría con ella. JS lo sube por encima de la franja
+       cuando la hay. Desaparece al cumplirse el minuto: entonces manda
+       la franja, que es donde se marca y se sigue. */
+    '.lm-reloj{display:flex;align-items:center;gap:0.4rem;}',
+    /* Fijo a la esquina SOLO proyectando. En el teléfono la franja no está
+       pegada al pie de la pantalla —debajo sigue el resto de la misión—,
+       así que un reloj clavado abajo se iba a caer encima de las pestañas,
+       a media pantalla de su franja. Ahí vive DENTRO de ella. */
+    '.lm-proy .lm-reloj{position:fixed;right:0.7rem;bottom:0.7rem;z-index:99010;}',
     '.lm-reloj b{display:inline-flex;align-items:center;gap:0.3rem;padding:0.3rem 0.7rem;border-radius:999px;',
     'background:var(--lm-card);border:2px solid var(--lm-borde);color:var(--lm-gris);opacity:0.72;',
     'font-family:"Fredoka",sans-serif;font-size:1rem;font-weight:600;font-variant-numeric:tabular-nums;}',
+    /* El modo «letra grande» de la misión infla los <span> un 25 % con
+       !important, y los segundos son un <span>: sin esto el reloj deja
+       de ser pequeño, que es lo único que se le pide. */
+    '.lm-reloj b span{font-size:inherit!important;line-height:inherit!important;}',
     '.lm-reloj.lm-poco b{color:var(--lm-sec);border-color:var(--lm-sec);opacity:1;}',
-    '.lm-reloj .lm-vbtn{min-width:auto;padding:0.3rem 0.55rem;font-size:0.95rem;opacity:0.72;}',
+    /* El «terminé» solo hace falta proyectando: en el teléfono ese botón
+       sigue estando en la franja, que no se esconde. */
+    '.lm-reloj .lm-vbtn{display:none;min-width:auto;padding:0.3rem 0.55rem;font-size:0.95rem;opacity:0.72;}',
+    '.lm-proy .lm-reloj .lm-vbtn{display:inline-flex;}',
     '.lm-reloj .lm-vbtn:hover{opacity:1;}',
     /* ── El proyector: la lectura se queda con la pantalla entera ──
        La cabecera de la misión, las pestañas y el marco de la tarjeta se
@@ -324,13 +336,20 @@
     '.lm-proy{position:fixed;top:0;left:0;right:0;bottom:0;z-index:99000;overflow:auto;',
     'background:var(--lm-card);padding:0.4rem 1rem 0;}',
     '.lm-proy>.card{margin:0;padding:0.3rem 0 0;border:0;border-radius:0;box-shadow:none;background:transparent;}',
-    '.lm-proy>.card>h2{font-size:1.05rem;margin:0 0 0.25rem;}',
+    /* El título va pequeño y con !important: pequeño porque en la pared es
+       una etiqueta, no lo que se copia —cada milímetro suyo es texto que
+       se cae de la pantalla—, y con !important porque el modo «letra
+       grande» de la misión también infla los h2 y se lo comía. */
+    '.lm-proy>.card>h2{font-size:1.05rem!important;margin:0 0 0.25rem;}',
     '.lm-proy .lm-texto{margin:0.25rem 0 0;}',
     '.lm-proy .lm-panel{margin:0;}',
     /* El botón de salir se repone en cada repintado: sin él, el maestro
        que entra a pantalla completa y sigue a las actividades se queda
        encerrado. */
     '.lm-salir{position:fixed;top:0.45rem;right:0.6rem;z-index:99010;}',
+    /* En la lectura solo el ✕: A− y A+ ya están abajo, en la franja. */
+    '.lm-salir.lm-solo-salir .lm-vbtn{display:none;}',
+    '.lm-salir.lm-solo-salir #lm-salir{display:inline-flex;}',
     /* el texto que se lee y sobre el que se caza */
     /* text-align a la izquierda SIEMPRE, aunque la misión justifique sus
        párrafos: el texto justificado abre huecos desiguales entre palabras
@@ -348,10 +367,6 @@
        clase—, así que nadie lee más pequeño que antes; a partir de ahí
        manda el ajuste, y quien quiera más letra la pide con A+. */
     '.lm-texto.lm-manda .lm-p{font-size:inherit!important;line-height:inherit!important;}',
-    /* Y el cronómetro: inflado, el número se le iba a un segundo renglón
-       y el mando pasaba de 42 a 83 px de alto. Justo la mitad de lo que
-       al maestro le tapa la pantalla venía de aquí. */
-    '.lm-crono #lm-num{font-size:inherit!important;line-height:inherit!important;}',
     '.lm-viva .lm-p{cursor:pointer;}',
     '.lm-p.lm-leida{background:var(--pri-gl,rgba(65,155,136,0.18));}',
     '.lm-p.lm-aqui{background:var(--lm-pri);color:#fff;font-weight:700;box-shadow:0 0 0 2px var(--lm-pri);}',
@@ -365,34 +380,47 @@
     'box-shadow:inset 0 -0.18em 0 var(--lm-ok);}',
     '.lm-p.lm-fallo{background:var(--red-gl,rgba(214,48,49,0.16));animation:lm-tiembla 0.3s;}',
     '@keyframes lm-tiembla{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}',
-    '.lm-aviso{margin:0.5rem 0;padding:0.6rem 0.85rem;border-radius:10px;font-size:0.95rem;line-height:1.55;',
+    '.lm-aviso{margin:0.5rem 0;padding:0.6rem 0.85rem;border-radius:10px;font-size:calc(0.95rem * var(--lm-esc,1));line-height:1.55;',
     'background:var(--sec-gl,rgba(196,144,0,0.12));border-left:4px solid var(--lm-sec);color:var(--lm-txt);}',
     '.lm-aviso.lm-av-ok{background:var(--jade-gl,rgba(0,184,148,0.14));border-left-color:var(--lm-ok);}',
     '.lm-aviso.lm-av-no{background:var(--red-gl,rgba(214,48,49,0.10));border-left-color:var(--lm-no);}',
-    /* preguntas y actividades — letra grande a propósito */
-    '.lm-preg-q{font-size:1.18rem;font-weight:700;line-height:1.5;margin:0.5rem 0 0.7rem;color:var(--lm-txt);}',
+    /* ── La franja NO crece con la letra, y es a propósito ──
+       Es el mando del maestro, no lo que lee la clase: proyectando
+       desaparece en cuanto se arranca. Y si creciera, se mordería la
+       cola: el ajuste mide el sitio que deja la franja, así que una
+       franja más alta le hace elegir una letra más chica —y A+ se
+       quedaba sin efecto, compensado por su propio crecimiento—. */
+    '.lm-panel .lm-aviso{font-size:0.95rem;}',
+    /* ── Preguntas y actividades: crecen con el texto ──
+       Letra grande a propósito, y desde que la lectura se proyecta,
+       PROPORCIONAL a ella (`--lm-esc`). Si no, pasa lo que el maestro
+       vio en la pared: el texto enorme y, al pasar a las preguntas, unas
+       opciones que desde el pupitre no se leen. Se conservan las
+       proporciones de siempre, solo se multiplican todas por lo mismo,
+       así que en el teléfono —donde la escala es 1— nada cambia. */
+    '.lm-preg-q{font-size:calc(1.18rem * var(--lm-esc,1));font-weight:700;line-height:1.5;margin:0.5rem 0 0.7rem;color:var(--lm-txt);}',
     '.lm-ops{display:flex;flex-direction:column;gap:0.5rem;}',
     '.lm-op{text-align:left;padding:0.7rem 0.85rem;border:2px solid var(--lm-borde);border-radius:12px;',
-    'background:var(--lm-card);color:var(--lm-txt);cursor:pointer;font-family:inherit;font-size:1.05rem;line-height:1.5;}',
+    'background:var(--lm-card);color:var(--lm-txt);cursor:pointer;font-family:inherit;font-size:calc(1.05rem * var(--lm-esc,1));line-height:1.5;}',
     '.lm-op:hover{border-color:var(--lm-pri);}',
     '.lm-op b{color:var(--lm-pri);margin-right:0.3rem;}',
     '.lm-op.lm-ok{border-color:var(--lm-ok);background:var(--jade-gl,rgba(0,184,148,0.14));}',
     '.lm-op.lm-no{border-color:var(--lm-no);background:var(--red-gl,rgba(214,48,49,0.10));}',
     '.lm-op[disabled]{cursor:default;opacity:0.95;}',
-    '.lm-guia{margin-top:0.5rem;font-size:0.95rem;line-height:1.55;color:var(--lm-txt);',
+    '.lm-guia{margin-top:0.5rem;font-size:calc(0.95rem * var(--lm-esc,1));line-height:1.55;color:var(--lm-txt);',
     'background:var(--pri-gl,rgba(65,155,136,0.10));border-radius:10px;padding:0.55rem 0.75rem;}',
     '.lm-marcador{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;font-family:"Fredoka",sans-serif;',
-    'font-size:1.05rem;font-weight:600;color:var(--lm-txt);margin:0.4rem 0;}',
+    'font-size:calc(1.05rem * var(--lm-esc,1));font-weight:600;color:var(--lm-txt);margin:0.4rem 0;}',
     '.lm-marcador em{font-style:normal;color:var(--lm-gris);font-size:0.85rem;font-weight:400;}',
-    '.lm-frase{font-size:1.15rem;line-height:1.8;margin:0.6rem 0;color:var(--lm-txt);}',
+    '.lm-frase{font-size:calc(1.15rem * var(--lm-esc,1));line-height:1.8;margin:0.6rem 0;color:var(--lm-txt);}',
     '.lm-frase u{text-decoration:none;background:var(--sec-gl,rgba(196,144,0,0.28));border-radius:5px;',
     'padding:0.06em 0.25em;font-weight:700;box-shadow:inset 0 -0.18em 0 var(--lm-sec);}',
     '.lm-hueco{display:inline-block;min-width:5.5em;border-bottom:3px solid var(--lm-sec);text-align:center;',
     'font-weight:700;color:var(--lm-sec);}',
     '.lm-dosbtn{display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.5rem;}',
     '.lm-dosbtn button{flex:1;min-width:150px;padding:0.8rem 0.7rem;border-radius:14px;border:2px solid var(--lm-borde);',
-    'background:var(--lm-card);color:var(--lm-txt);cursor:pointer;font-family:inherit;font-size:1.02rem;line-height:1.4;text-align:center;}',
-    '.lm-dosbtn button b{display:block;font-family:"Fredoka",sans-serif;font-size:1.1rem;}',
+    'background:var(--lm-card);color:var(--lm-txt);cursor:pointer;font-family:inherit;font-size:calc(1.02rem * var(--lm-esc,1));line-height:1.4;text-align:center;}',
+    '.lm-dosbtn button b{display:block;font-family:"Fredoka",sans-serif;font-size:calc(1.1rem * var(--lm-esc,1));}',
     '.lm-dosbtn button small{display:block;color:var(--lm-gris);font-size:0.85rem;margin-top:0.15rem;}',
     '.lm-dosbtn button.lm-g0:hover{border-color:var(--lm-sec);}',
     '.lm-dosbtn button.lm-g1:hover{border-color:var(--lm-b);}',
@@ -402,14 +430,14 @@
     '.lm-fichas{display:flex;flex-wrap:wrap;gap:0.55rem;margin:0.7rem 0;}',
     '.lm-ficha{flex:1;min-width:110px;padding:0.85rem 0.6rem;border-radius:14px;border:2px solid var(--lm-borde);',
     'background:var(--lm-card);color:var(--lm-txt);cursor:pointer;font-family:"Fredoka",sans-serif;',
-    'font-size:1.25rem;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;}',
+    'font-size:calc(1.25rem * var(--lm-esc,1));font-weight:700;text-align:center;font-variant-numeric:tabular-nums;}',
     '.lm-ficha:hover{border-color:var(--lm-pri);}',
     '.lm-ficha.lm-larga{font-size:0.95rem;line-height:1.35;}',
     '.lm-ficha.lm-puesta{border-color:var(--lm-ok);background:var(--jade-gl,rgba(0,184,148,0.16));cursor:default;}',
     '.lm-ficha.lm-puesta i{display:block;font-style:normal;font-size:0.72rem;font-weight:400;color:var(--lm-gris);}',
     '.lm-ficha.lm-fallo{border-color:var(--lm-no);background:var(--red-gl,rgba(214,48,49,0.12));animation:lm-tiembla 0.3s;}',
     '.lm-escalera{display:flex;flex-wrap:wrap;gap:0.4rem;align-items:center;font-family:"Fredoka",sans-serif;',
-    'font-size:1.05rem;color:var(--lm-gris);margin:0.4rem 0;min-height:1.6em;}',
+    'font-size:calc(1.05rem * var(--lm-esc,1));color:var(--lm-gris);margin:0.4rem 0;min-height:1.6em;}',
     '.lm-escalera b{color:var(--lm-txt);}',
     /* resultado */
     '.lm-hero{text-align:center;margin:0.4rem 0 0.7rem;}',
@@ -418,8 +446,8 @@
     '.lm-chips{display:flex;flex-wrap:wrap;gap:0.45rem;margin:0.6rem 0;}',
     '.lm-chip{flex:1;min-width:136px;border:2px solid var(--lm-borde);border-radius:12px;padding:0.5rem 0.65rem;background:var(--lm-card);}',
     '.lm-chip span{display:block;font-size:0.75rem;color:var(--lm-gris);text-transform:uppercase;letter-spacing:0.4px;}',
-    '.lm-chip b{display:block;font-family:"Fredoka",sans-serif;font-size:1.02rem;margin-top:0.1rem;}',
-    '.lm-veredicto{margin:0.6rem 0;padding:0.75rem 0.9rem;border-radius:12px;font-size:1rem;line-height:1.65;',
+    '.lm-chip b{display:block;font-family:"Fredoka",sans-serif;font-size:calc(1.02rem * var(--lm-esc,1));margin-top:0.1rem;}',
+    '.lm-veredicto{margin:0.6rem 0;padding:0.75rem 0.9rem;border-radius:12px;font-size:calc(1rem * var(--lm-esc,1));line-height:1.65;',
     'background:var(--pri-gl,rgba(65,155,136,0.12));border-left:4px solid var(--lm-pri);}',
     '.lm-leyenda{display:flex;flex-wrap:wrap;gap:0.8rem;font-size:0.85rem;color:var(--lm-gris);margin:0.4rem 0;}',
     '.lm-leyenda i{font-style:normal;padding:0.05em 0.35em;border-radius:5px;font-weight:700;}',
@@ -593,9 +621,32 @@
     var refrescoVista = null;   /* la fase de turno dice cómo re-ajustarse */
     var btnSalir = null;
     function guardaVista() { guardarJSON(CLAVE_VISTA, vista); }
-    function ponLetra(px) {
+    /* `--lm-esc` es cuánto ha crecido el texto respecto a lo que la misión
+       pintaba: con ella crecen también las preguntas y las actividades, en
+       la misma proporción. Nunca baja de 1, ni siquiera cuando el ajuste
+       achica el texto para que quepa entero en el proyector: una pregunta
+       más pequeña que la de siempre no la quiere nadie. */
+    function ponLetra(px, suelo) {
       raiz.style.setProperty('--lm-tam', px + 'px');
       raiz.style.setProperty('--lm-alto', altoDe(px).toFixed(2));
+      raiz.style.setProperty('--lm-esc', Math.max(1, px / (suelo || px)).toFixed(3));
+    }
+    /* Lo que midió la última lectura. Las actividades no tienen texto que
+       medir —cada una trae lo suyo— pero A− y A+ tienen que seguir
+       moviéndose por la MISMA escala, o el maestro que agranda la pregunta
+       se encuentra la lectura siguiente de otro tamaño. */
+    var ultimoAjuste = null;
+    function aplicaOffset() {
+      if (!ultimoAjuste) return;
+      var i = Math.max(0, Math.min(ultimoAjuste.escala.length - 1, ultimoAjuste.auto + (vista.off || 0)));
+      ponLetra(ultimoAjuste.escala[i], ultimoAjuste.suelo);
+    }
+    function cambiaLetra(d) {
+      vista.off = Math.max(-4, Math.min(9, (vista.off || 0) + d));
+      guardaVista();
+      /* En la lectura se vuelve a medir —el texto puede caber de otra
+         forma—; en las actividades se aplica sobre lo ya medido. */
+      if (refrescoVista) refrescoVista(); else aplicaOffset();
     }
     /* ── Que la capa quede de verdad ENCIMA de la misión ──
        Ponerle un z-index gigante no basta: la misión mete su contenido
@@ -625,6 +676,14 @@
         el.style.zIndex = 'auto';
       }
     }
+    /* Los mandos de la esquina, mientras se proyecta. El ✕ siempre —sin él
+       el maestro se queda encerrado en la pantalla completa—, y A− y A+
+       solo FUERA de la lectura: en la lectura ya están en la franja, y
+       durante el minuto no puede haber nada que toquetear.
+
+       En las actividades hacen falta de verdad: el maestro proyecta la
+       pregunta para toda la clase y hasta ahora, si se leía pequeña desde
+       el fondo del aula, tenía que volverse a la lectura para agrandarla. */
     function aplicaVista() {
       raiz.classList.toggle('lm-proy', !!vista.proy);
       apila(!!vista.proy);
@@ -633,13 +692,17 @@
         return;
       }
       if (!btnSalir) {
-        btnSalir = document.createElement('button');
-        btnSalir.className = 'lm-vbtn lm-salir';
-        btnSalir.id = 'lm-salir';
-        btnSalir.textContent = '✕';
-        btnSalir.setAttribute('aria-label', 'Salir de la pantalla completa');
-        btnSalir.onclick = function () { suena('click'); proyector(false); };
+        btnSalir = document.createElement('div');
+        btnSalir.className = 'lm-vista lm-salir';
+        btnSalir.innerHTML =
+          '<button class="lm-vbtn" id="lm-p-menos" aria-label="Letra más pequeña" title="Letra más pequeña">A−</button>' +
+          '<button class="lm-vbtn" id="lm-p-mas" aria-label="Letra más grande" title="Letra más grande">A+</button>' +
+          '<button class="lm-vbtn" id="lm-salir" aria-label="Salir de la pantalla completa" title="Salir de la pantalla completa">✕</button>';
+        btnSalir.querySelector('#lm-p-menos').onclick = function () { suena('click'); cambiaLetra(-1); };
+        btnSalir.querySelector('#lm-p-mas').onclick = function () { suena('click'); cambiaLetra(1); };
+        btnSalir.querySelector('#lm-salir').onclick = function () { suena('click'); proyector(false); };
       }
+      btnSalir.classList.toggle('lm-solo-salir', st.fase === 'leer');
       raiz.appendChild(btnSalir);
     }
     /* Entrar y salir no repintan la fase: si el minuto está corriendo,
@@ -790,10 +853,11 @@
       if (!t) { reiniciar(); pinta(); return; }
       var ps = palabras(t.texto);
 
-      /* El texto arriba y TODO el mando abajo: el cronómetro, lo que hay
-         que hacer y los botones. Antes iban encima del texto y el alumno
-         terminaba el minuto mirando el final de la lectura, con la orden
-         y el botón fuera de la pantalla. */
+      /* El texto arriba y el mando abajo: qué hay que hacer y los botones.
+         Antes iban encima del texto y el alumno terminaba el minuto
+         mirando el final de la lectura, con la orden y el botón fuera de
+         la pantalla. El cronómetro ya no está aquí: se mide con el reloj
+         de arena de la esquina. */
       raiz.innerHTML =
         '<div class="card ac-teal">' +
           '<h2>⏱️ ' + esc(t.titulo) + '</h2>' +
@@ -802,24 +866,20 @@
           '</div>' +
         '</div>' +
         '<div class="lm-panel" id="lm-panel">' +
-          '<div class="lm-crono-caja">' +
-            '<div class="lm-crono" id="lm-crono" role="timer" aria-live="off"><span id="lm-num">' + SEGUNDOS + '</span><small>s</small></div>' +
-            '<div class="lm-barra"><i id="lm-barra"></i></div>' +
-            /* Para el maestro que proyecta. Se van al arrancar el minuto:
-               mientras se lee, la pantalla no pide nada. */
-            '<div class="lm-vista" id="lm-vista">' +
-              '<button class="lm-vbtn" id="lm-menos" aria-label="Letra más pequeña" title="Letra más pequeña">A−</button>' +
-              '<button class="lm-vbtn" id="lm-mas" aria-label="Letra más grande" title="Letra más grande">A+</button>' +
-              '<button class="lm-vbtn' + (vista.proy ? ' on' : '') + '" id="lm-proyector" ' +
-                'aria-label="Ver a pantalla completa, para el proyector" title="Pantalla completa (proyector)">📽️</button>' +
-            '</div>' +
-          '</div>' +
           /* La instrucción se dice en dos renglones y no en cuatro: este
              panel se queda encima del texto, así que cada renglón suyo es
              un renglón de lectura tapado. Lo de «Terminé el texto» se
              cuenta al arrancar, que es cuando ese botón existe. */
           '<div class="lm-crono-sub" id="lm-sub">Al arrancar, <strong>lee en voz alta</strong>. ' +
             'No toques nada: al cumplirse el minuto te pregunto hasta dónde llegaste.</div>' +
+          /* Para el maestro que proyecta. Se van al arrancar el minuto:
+             mientras se lee, la pantalla no pide nada. */
+          '<div class="lm-vista" id="lm-vista">' +
+            '<button class="lm-vbtn" id="lm-menos" aria-label="Letra más pequeña" title="Letra más pequeña">A−</button>' +
+            '<button class="lm-vbtn" id="lm-mas" aria-label="Letra más grande" title="Letra más grande">A+</button>' +
+            '<button class="lm-vbtn' + (vista.proy ? ' on' : '') + '" id="lm-proyector" ' +
+              'aria-label="Ver a pantalla completa, para el proyector" title="Pantalla completa (proyector)">📽️</button>' +
+          '</div>' +
           '<div id="lm-avisos"></div>' +
           '<div class="lm-btns">' +
             '<button class="btn btn-pri" id="lm-arrancar">▶️ Arrancar</button>' +
@@ -828,18 +888,15 @@
             '<button class="btn btn-d" id="lm-cancelar">Cancelar</button>' +
           '</div>' +
         '</div>' +
-        /* El reloj de la esquina: solo sale proyectando y mientras corre
-           el minuto. Lleva al lado el «terminé», porque la franja donde
-           vivía ese botón ya no está y sin él, quien acabe antes de los
-           60 s no tendría cómo decirlo. */
-        '<div class="lm-reloj" id="lm-reloj" style="display:none">' +
+        /* El reloj de la esquina: sale mientras corre el minuto, aquí y en
+           el teléfono. Lleva al lado el «terminé» para cuando se proyecta,
+           porque entonces la franja donde vive ese botón se esconde y sin
+           él quien acabe antes de los 60 s no tendría cómo decirlo. */
+        '<div class="lm-reloj" id="lm-reloj" style="display:none" role="timer" aria-live="off">' +
           '<b>⏳<span id="lm-reloj-n">' + SEGUNDOS + '</span></b>' +
           '<button class="lm-vbtn" id="lm-reloj-fin" aria-label="Terminé el texto" title="Terminé el texto">✅</button>' +
         '</div>';
 
-      var crono = document.getElementById('lm-crono');
-      var num = document.getElementById('lm-num');
-      var barra = document.getElementById('lm-barra');
       var sub = document.getElementById('lm-sub');
       var avisos = document.getElementById('lm-avisos');
       var caja = document.getElementById('lm-texto');
@@ -860,8 +917,9 @@
         /* Proyectando y con el minuto en marcha no hay franja: el hueco lo
            marca el reloj de la esquina, que también tapa lo que pase por
            debajo, aunque sea mucho menos. */
-        var abajo = panel.style.display === 'none' ? reloj.offsetHeight : panel.offsetHeight;
-        caja.style.paddingBottom = (abajo + 14) + 'px';
+        var franja = panel.style.display === 'none' ? 0 : panel.offsetHeight;
+        var esfera = (franja || reloj.style.display === 'none') ? 0 : reloj.offsetHeight + 8;
+        caja.style.paddingBottom = (franja + esfera + 14) + 'px';
       }
 
       /* ── La letra más grande con la que el texto cabe ENTERO ──
@@ -899,16 +957,22 @@
         });
         escala.push(suelo);
         escala.sort(function (a, b) { return a - b; });
-        /* Contra lo que se VE: la parte de pantalla que queda entre donde
-           empieza el texto y donde empieza el mando de abajo. */
-        var libre = window.innerHeight - Math.max(0, caja.getBoundingClientRect().top) - panel.offsetHeight - 16;
+        /* El sitio libre se vuelve a medir CON CADA tamaño probado, no una
+           vez al principio. Lo que va encima del texto —el título— crece
+           con él, así que un hueco medido antes miente; y peor: al pedir
+           A+ el título crecía, el hueco menguaba, el ajuste bajaba un
+           escalón y la letra se quedaba igual. */
         var auto = -1;
         for (var i = escala.length - 1; i >= 0; i--) {
-          ponLetra(escala[i]);
+          ponLetra(escala[i], suelo);
+          var libre = window.innerHeight - Math.max(0, caja.getBoundingClientRect().top) - panel.offsetHeight - 16;
           if (caja.scrollHeight <= libre) { auto = i; break; }
         }
         if (auto < 0) auto = escala.indexOf(suelo);   /* no cabe ni el más pequeño: el de siempre */
-        ponLetra(escala[Math.max(0, Math.min(escala.length - 1, auto + (vista.off || 0)))]);
+        /* Se guarda lo medido: en las actividades no hay texto que medir,
+           pero A− y A+ tienen que seguir moviéndose por esta misma escala. */
+        ultimoAjuste = { escala: escala, auto: auto, suelo: suelo };
+        aplicaOffset();
         caja.style.paddingBottom = hueco;
       }
       /* ── Primero, subir a donde empieza el texto ──
@@ -929,17 +993,11 @@
         if (letra && !st.ini) ajustaLetra();
         ajustaHueco();
       }
-      function cambiaLetra(d) {
-        vista.off = Math.max(-4, Math.min(9, (vista.off || 0) + d));
-        guardaVista();
-        ajusta(true);
-      }
       /* Entrar o salir de presentación a mitad del minuto tiene que dejar
          el mando donde corresponda. Salir con la franja escondida dejaba
          al alumno sin cronómetro y sin botones, mirando un texto quieto. */
       refrescoVista = function () {
-        if (!vista.proy) { panel.style.display = ''; reloj.style.display = 'none'; }
-        else presenta(!!st.ini && !st.congelado);
+        presenta(!!st.ini && !st.congelado);
         ajusta(true);
       };
       ajusta(true);
@@ -1006,13 +1064,23 @@
         pinta();
       }
 
-      /* Esconde o devuelve la franja del minuto. Solo proyectando: en el
-         teléfono la franja es lo único que hay y quitarla dejaría al
-         alumno sin saber qué hacer. */
+      /* El mando del minuto, según se esté leyendo o no.
+         El reloj de la esquina sale mientras corre el minuto en las dos
+         pantallas. La franja, en cambio, solo se esconde PROYECTANDO: en
+         el teléfono es lo único que hay, y quitarla dejaría al alumno sin
+         saber qué hacer. */
       function presenta(leyendo) {
-        if (!vista.proy) return;
-        panel.style.display = leyendo ? 'none' : '';
         reloj.style.display = leyendo ? '' : 'none';
+        panel.style.display = (leyendo && vista.proy) ? 'none' : '';
+        /* El reloj se muda: vive DENTRO de la franja cuando la hay —así va
+           donde vaya ella— y se sale a la esquina de la pantalla cuando se
+           proyecta, porque entonces la franja se esconde y se lo llevaría
+           con ella. Es el mismo botón de siempre, solo cambia de sitio. */
+        var sitio = vista.proy ? raiz : panel;
+        if (reloj.parentNode !== sitio) {
+          sitio.insertBefore(reloj, sitio === panel ? panel.firstChild : null);
+        }
+        ajustaHueco();
       }
 
       function terminarMinuto(porTiempo) {
@@ -1022,8 +1090,6 @@
            dónde llegó y seguir, y esos botones viven ahí. */
         presenta(false);
         st.seg = porTiempo ? SEGUNDOS : Math.max(1, Math.round((Date.now() - st.ini) / 100) / 10);
-        num.textContent = porTiempo ? '0' : Math.max(0, SEGUNDOS - Math.round(st.seg));
-        crono.classList.add('lm-fin');
         btnFin.style.display = 'none';
         suena('up'); vibra([180, 90, 180]);
         if (porTiempo) {
@@ -1062,13 +1128,10 @@
         st.timer = setInterval(function () {
           var ms = Date.now() - st.ini;
           var quedan = Math.max(0, SEGUNDOS - ms / 1000);
-          num.textContent = Math.ceil(quedan);
-          if (relojN) relojN.textContent = Math.ceil(quedan);
-          crono.classList.toggle('lm-poco', quedan <= 10 && quedan > 0);
+          relojN.textContent = Math.ceil(quedan);
           reloj.classList.toggle('lm-poco', quedan <= 10 && quedan > 0);
-          barra.style.width = (quedan / SEGUNDOS * 100) + '%';
           if (ms >= SEGUNDOS * 1000) terminarMinuto(true);
-        }, 60);
+        }, 250);
       };
       btnFin.onclick = function () {
         if (!st.ini || st.congelado) return;

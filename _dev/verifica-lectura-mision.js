@@ -136,19 +136,19 @@ async function contestaComprension(page, op) {
     comprueba(!(await page.isVisible('#lm-seguir')), 'y todavía no hay botón para seguir');
 
     await page.clock.runFor(12000);
-    let quedan = await page.textContent('#lm-num');
-    comprueba(+quedan >= 39 && +quedan <= 41, `a los 20 s el cronómetro va por ${quedan} (deberían quedar 40)`);
+    let quedan = await page.textContent('#lm-reloj-n');
+    comprueba(+quedan >= 39 && +quedan <= 41, `a los 20 s el reloj va por ${quedan} (deberían quedar 40)`);
 
     /* ══ 3. cumplido el minuto: UN toque marca hasta dónde llegó ══ */
     console.log('\n═══ Cumplido el minuto: un solo toque ═══');
     await page.clock.runFor(41000);
-    comprueba((await page.textContent('#lm-num')).trim() === '0', 'al cumplirse el minuto el cronómetro marca 0');
+    comprueba((await page.textContent('#lm-reloj-n')).trim() === '0', 'al cumplirse el minuto el reloj de la esquina marca 0');
     comprueba(/Minuto cumplido/.test(await page.textContent('.lm-aviso')), 'pide marcar la última palabra leída');
     comprueba(!(await page.isVisible('#lm-seguir')),
       'no deja seguir hasta que marque: sin marca no hay palabras por minuto');
 
     await page.clock.runFor(30000);
-    comprueba((await page.textContent('#lm-num')).trim() === '0', 'medio minuto después sigue detenido en 0');
+    comprueba((await page.textContent('#lm-reloj-n')).trim() === '0', 'medio minuto después sigue detenido en 0');
 
     await page.click('.lm-p[data-i="30"]');
     comprueba(await page.$$eval('.lm-leida', e => e.length) === 30,
@@ -160,7 +160,7 @@ async function contestaComprension(page, op) {
     await page.click('.lm-p[data-i="34"]');
     comprueba(await page.$$eval('.lm-leida', e => e.length) === 34, 'tocar otra palabra corrige la marca');
     await page.click('.lm-p[data-i="30"]');
-    comprueba((await page.textContent('#lm-num')).trim() === '0', 'y el cronómetro sigue parado en 0');
+    comprueba((await page.textContent('#lm-reloj-n')).trim() === '0', 'y el reloj sigue parado en 0');
 
     /* ══ 4. actividad 1 · comprensión, una a la vez y en letra grande ══ */
     console.log('\n═══ Actividad 1 · ¿Qué entendiste? ═══');
@@ -515,11 +515,36 @@ async function contestaComprension(page, op) {
     await aula.clock.runFor(10000);
     await aula.click('#lm-salir');
     const fuera = await mide();
-    comprueba(fuera.franja && !fuera.reloj,
-      'y si sale de la pantalla completa a media lectura, la franja vuelve con el minuto todavía corriendo');
+    comprueba(fuera.franja && fuera.reloj,
+      'y si sale de la pantalla completa a media lectura, la franja vuelve y el reloj sigue en su esquina');
     await aula.clock.runFor(5000);
-    comprueba(+(await aula.textContent('#lm-num')) <= 46,
+    comprueba(+(await aula.textContent('#lm-reloj-n')) <= 46,
       'sin que el minuto se pare ni se reinicie por el camino');
+
+    /* ── Y las actividades, del tamaño del texto ──
+       Con el texto enorme en la pared, las opciones de la primera
+       pregunta salían de 17 px: desde el pupitre del fondo no se leían.
+       Crecen con la misma escala que el texto, y el maestro las puede
+       retocar sin volverse a la lectura. */
+    await abreEnAula(6, 3);
+    await aula.click('#lm-proyector');
+    await aula.click('#lm-arrancar');
+    await aula.clock.runFor(61000);
+    await aula.click('.lm-p[data-i="40"]');
+    await aula.click('#lm-seguir');
+    await aula.waitForSelector('.lm-preg-q');
+    const letras = () => aula.evaluate(() => ({
+      pregunta: +parseFloat(getComputedStyle(document.querySelector('.lm-preg-q')).fontSize).toFixed(1),
+      opcion: +parseFloat(getComputedStyle(document.querySelector('.lm-op')).fontSize).toFixed(1),
+      mandos: getComputedStyle(document.getElementById('lm-p-mas')).display !== 'none',
+    }));
+    const taller = await letras();
+    comprueba(taller.pregunta >= 26 && taller.opcion >= 23,
+      `proyectando, la pregunta sale a ${taller.pregunta}px y las opciones a ${taller.opcion}px ` +
+      '(antes eran 19 y 17: desde el fondo del aula no se leían)');
+    comprueba(taller.mandos, 'y ahí también tiene A− y A+, sin volverse a la lectura para agrandarlas');
+    await aula.click('#lm-p-mas');
+    comprueba((await letras()).opcion > taller.opcion, 'que agrandan la pregunta en el acto');
     await aula.close();
 
     console.log('\n═══ Errores de JavaScript ═══');
