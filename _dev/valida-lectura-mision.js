@@ -35,8 +35,23 @@ const RAIZ = path.resolve(__dirname, '..');
 /* Corpus registrados. Al pilotar la sección en otra misión, se añade
    aquí su archivo y el validador la cubre sin tocar nada más. */
 const CORPUS = [
+  /* `listas` son los inventarios que la misión escribe a mano, y se
+     comprueban palabra contra palabra: un fallo aquí no es un fallo de
+     datos, es la pantalla diciéndole al alumno que se equivocó cuando
+     acertó. `cerrada` es la clase de la que SÍ se puede afirmar que
+     falta algo (los determinativos son lista cerrada; los sustantivos,
+     no); `segunda` es la lista que alimenta la actividad de clasificar
+     en dos grupos, y necesita un mínimo para no repetir ítems. */
   { archivo: 'misiones/2y3ciclo-adjetivos/js/lectura-adjetivos.js', constante: 'LECTURA_ADJETIVOS',
-    mision: 'Los Adjetivos', prefijo: 'LA', inventario: 'adjetivos' },
+    mision: 'Los Adjetivos', prefijo: 'LA', inventario: 'adjetivos',
+    listas: [['adjs', 'adjetivo calificativo', true], ['dets', 'adjetivo determinativo', true],
+             ['neutros', 'palabra que no cuenta', false]],
+    cerrada: 'determinativos', segunda: 'dets', minSegunda: 3 },
+  { archivo: 'misiones/2y3ciclo-sustantivos/js/lectura-sustantivos.js', constante: 'LECTURA_SUSTANTIVOS',
+    mision: 'Los Sustantivos', prefijo: 'LS', inventario: 'sustantivos',
+    listas: [['susts', 'sustantivo común', true], ['propios', 'sustantivo propio', true],
+             ['neutros', 'palabra que no cuenta', false]],
+    cerrada: null, segunda: 'propios', minSegunda: 3 },
   { archivo: 'misiones/1ciclo-segundo-grado/js/lectura-numeros.js', constante: 'LECTURA_NUMEROS',
     mision: 'Números grandes', prefijo: 'LN', inventario: 'numeros' },
 ];
@@ -114,14 +129,14 @@ function valida(entrada) {
       if (/\s\s/.test(t.texto)) err(`${quien}: dobles espacios en el texto`);
       if (t.texto !== String(t.texto).trim()) err(`${quien}: espacios colgantes en el texto`);
 
-      if (entrada.inventario === 'adjetivos') {
+      if (entrada.listas) {
       /* adjs, dets y neutros: con esto el alumno CAZA los adjetivos
          tocándolos sobre el texto, así que un fallo aquí no es un fallo
          de datos: es la pantalla diciéndole que se equivocó cuando
          acertó. Por eso se comprueba tan de cerca. */
       const enTexto = new Set(ps);
       const clasificadas = new Map();
-      [['adjs', 'adjetivo calificativo', true], ['dets', 'adjetivo determinativo', true], ['neutros', 'palabra que no cuenta', false]]
+      entrada.listas
         .forEach(([campo, etq, obligatorio]) => {
           const lista = t[campo];
           if (!Array.isArray(lista) || !lista.length) {
@@ -148,15 +163,20 @@ function valida(entrada) {
          va a marcar mal al alumno cuando lo toque. Los calificativos no
          se pueden comprobar así —son clase abierta— y para eso está
          _dev/audita-adjetivos-lectura.js, que propone candidatos. */
-      const sueltos = [...new Set(ps)].filter(p =>
-        DETERMINATIVOS.has(p) && !clasificadas.has(p) && !NEUTROS_GLOBAL.has(p));
-      if (sueltos.length) {
-        err(`${quien}: determinativo(s) del texto sin clasificar en dets ni en neutros: «${sueltos.join('», «')}»`);
+      if (entrada.cerrada === 'determinativos') {
+        const sueltos = [...new Set(ps)].filter(p =>
+          DETERMINATIVOS.has(p) && !clasificadas.has(p) && !NEUTROS_GLOBAL.has(p));
+        if (sueltos.length) {
+          err(`${quien}: determinativo(s) del texto sin clasificar en dets ni en neutros: «${sueltos.join('», «')}»`);
+        }
       }
 
-      /* Tres determinativos por lectura es el mínimo para que la
+      /* Tres de la segunda clase por lectura es el mínimo para que la
          actividad de clasificar tenga con qué jugar sin repetir. */
-      if ((t.dets || []).length < 3) err(`${quien}: solo ${(t.dets || []).length} determinativo(s); hacen falta 3 para la actividad de clasificar`);
+      const seg = entrada.segunda, minSeg = entrada.minSegunda || 3;
+      if (seg && (t[seg] || []).length < minSeg) {
+        err(`${quien}: solo ${(t[seg] || []).length} en ${seg}; hacen falta ${minSeg} para la actividad de clasificar`);
+      }
       }
 
       /* En la misión de los números el inventario NO se escribe: lo saca

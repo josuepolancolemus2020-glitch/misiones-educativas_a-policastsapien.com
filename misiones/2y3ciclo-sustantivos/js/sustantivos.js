@@ -90,12 +90,17 @@ function loadProgress() {
 }
 
 // ===================== ACHIEVEMENTS =====================
+let _lecturaApi = null;
+
 const ACHIEVEMENTS = {
     primer_quiz: { icon: '🧠', label: 'Primera prueba superada' },
     flash_master: { icon: '🃏', label: 'Todas las flashcards vistas' },
     clasif_pro: { icon: '🗂️', label: 'Clasificador experto' },
     id_master: { icon: '🔍', label: 'Identificador maestro' },
     reto_hero: { icon: '🏆', label: 'Héroe del reto final' },
+    lector_minuto: { icon: '📖', label: 'Primer minuto de lectura cronometrado' },
+    lector_banda: { icon: '⏱️', label: 'Leíste dentro de la banda de tu grado' },
+    cazador_sustantivos: { icon: '🎯', label: 'Cazaste todos los sustantivos de una lectura' },
     nivel3: { icon: '🔭', label: '¡Explorador alcanzado! Nivel 3' },
     nivel5: { icon: '🥇', label: '¡Campeón alcanzado! Nivel 6' }
 };
@@ -171,6 +176,9 @@ function getProgress() { return Math.round((done.size / TOTAL_SECTIONS) * 100); 
 
 // ===================== NAV =====================
 function go(id) {
+  /* El cronómetro no puede seguir corriendo detrás de otra pestaña: un
+     minuto medido a medias no es un minuto. */
+  if (id !== 's-lectura' && _lecturaApi) _lecturaApi.soltar();
     sfx('click');
     document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-t[role="tab"]').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
@@ -1948,3 +1956,37 @@ function maqShowEnd() {
 }
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ═════════════════ 📖 CONTROL DE LECTURA ═════════════════
+// El motor y el corpus son archivos aparte; aquí solo se dice qué gana el
+// alumno al terminar una toma: +5 XP por la lectura y hasta +5 más según lo
+// que haya sacado en las cuatro actividades del taller.
+//
+// Se paga UNA vez por lectura, no por repetirla. Releer el mismo texto dos o
+// tres días es el ejercicio que más sube la fluidez, y si se pagara cada vez
+// el alumno repetiría por los puntos y no por leer.
+function initLectura(){
+  if (typeof LecturaMision === 'undefined' || typeof LECTURA_SUSTANTIVOS === 'undefined') return;
+  _lecturaApi = LecturaMision.montar({
+    contenedor: 'lm-root',
+    corpus: LECTURA_SUSTANTIVOS,
+    actividades: LECTURA_SUSTANTIVOS_TALLER,
+    resumen: LECTURA_SUSTANTIVOS_RESUMEN,
+    mision: 'sustantivos',
+    tema: 'los sustantivos',
+    alTerminar: function (r) {
+      fin('s-lectura');
+      unlockAchievement('lector_minuto');
+      if (r.nivelVelocidad === 'estandar' || r.nivelVelocidad === 'avanzado') unlockAchievement('lector_banda');
+      var caza = r.porActividad && r.porActividad.caza;
+      if (caza && caza.de && caza.puntos >= caza.de) unlockAchievement('cazador_sustantivos');
+      if (!xpTracker.lec) xpTracker.lec = new Set();
+      if (!xpTracker.lec.has(r.textoId)) {
+        xpTracker.lec.add(r.textoId);
+        var bono = r.puntosDe ? Math.round((r.puntos / r.puntosDe) * 5) : 0;
+        pts(5 + bono);
+      }
+    }
+  });
+}
+initLectura();
