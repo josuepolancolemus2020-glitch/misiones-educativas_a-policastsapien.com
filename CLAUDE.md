@@ -301,6 +301,48 @@ En las actividades hay **atrás**, y volver deja **mirar, no rehacer**: lo
 contestado sigue contestado y con su corrección puesta. El puntaje lo
 pone el alumno, no el botón.
 
+### En el proyector: el texto ENTERO, y la letra la mide la máquina
+
+En el aula hay un proyector y tres teléfonos. El maestro proyecta la
+lectura en la pared y sus 43 alumnos la copian en el cuaderno; sin
+fotocopiadora es la única forma de que un texto le llegue a todos el
+mismo día. Y ahí la pantalla ya no es un teléfono en la mano: **el que
+copia desde su pupitre no hace scroll**, así que lo que se queda fuera
+de la pared, para él no existe.
+
+De ahí salen tres reglas:
+
+1. **El tamaño de la letra no se escribe: se busca.** Se prueban de
+   mayor a menor (`LM_TAMS`) y se queda con el más grande con el que el
+   texto cabe entero por encima del mando. Escribir una cifra no sirve:
+   la lectura de 2º tiene 58 palabras y la de 9º doscientas, y lo que
+   llena la pared con una deja a medias la otra. Lo que se guarda del
+   maestro es el **retoque** de A− y A+, no el tamaño: así se lo dice
+   una vez y no en cada una de las cinco lecturas del grado.
+2. **El interlineado va pegado al tamaño** (`altoDe`). Un renglón grande
+   necesita menos aire para no perderse, y en la pared ese aire de más
+   son renglones enteros que se caen de la pantalla.
+3. **📽️ pone la lectura a pantalla completa**, y ahí hay dos cosas que
+   parecen detalles y no lo son: el z-index no basta —la misión mete su
+   contenido en un `.main` con contexto de apilamiento propio, así que se
+   les quita el z-index a los padres mientras dure—, y el modo
+   `body.letra-grande` que traen varias misiones infla **todos** los
+   `<span>` un 25 % con `!important`: cada palabra del texto es un
+   `<span>`, y con dos sitios mandando sobre el tamaño no acierta
+   ninguno. Manda el ajuste (`.lm-manda`), que arranca midiendo lo que
+   la misión pintaba antes para que nadie lea más pequeño que ayer.
+
+**Mientras corre el minuto, A−, A+ y 📽️ desaparecen.** Es la misma regla
+de siempre: ya se quitó de esta pantalla un selector de modos porque el
+niño se ponía a probarlo y llegaba al minuto sin haber leído una línea.
+El maestro deja la letra puesta antes de arrancar, que es como se
+proyecta de verdad.
+
+Lo comprueba `_dev/verifica-lectura-mision.js` en una pantalla de aula
+(1280×720): que el texto se vea entero, que el mando no pase de 130 px
+de alto, que 📽️ agrande la letra sin perder el final del texto y que al
+arrancar no quede nada que toquetear.
+
 ### Reglas del corpus de una misión (`lectura-<tema>.js`)
 
 - **Cinco lecturas por grado**, con el largo dentro de la banda de

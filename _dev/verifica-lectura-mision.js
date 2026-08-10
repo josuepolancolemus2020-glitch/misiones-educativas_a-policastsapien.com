@@ -385,6 +385,104 @@ async function contestaComprension(page, op) {
     await page.waitForSelector('.lm-marcador');
     ok('y hacia adelante se vuelve a la cacería sin perder lo cazado');
 
+    /* ══ 14. la lectura en el proyector del aula ══
+       El maestro proyecta la lectura y sus 43 alumnos la copian del
+       muro. Lo que se vigila es lo que él pidió con estas palabras:
+       «ese número del minuto me tapa bastante», «que se reduzca el
+       interlineado», «que se pueda agrandar la letra» y «que se pueda
+       ver completa». El que copia desde su pupitre no hace scroll: lo
+       que se queda fuera de la pared, para él no existe. */
+    console.log('\n═══ La lectura en el proyector ═══');
+    const aula = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+    aula.on('pageerror', e => errores.push(String(e)));
+    aula.on('console', m => { if (m.type() === 'error' && !/favicon|net::ERR|Failed to load/.test(m.text())) errores.push(m.text()); });
+    await aula.addInitScript(() => { try { sessionStorage.setItem('METAS_ID_OMITIDA', '1'); } catch (e) {} });
+
+    /* Mide sobre la PALABRA, no sobre la caja: varias misiones traen
+       `body.letra-grande`, que infla los <span> un 25 % con !important,
+       y lo que el niño ve es la palabra. */
+    const mide = () => aula.evaluate(() => {
+      const c = document.getElementById('lm-texto');
+      const p = document.getElementById('lm-panel');
+      const w = document.querySelector('.lm-p');
+      const cs = getComputedStyle(w);
+      const alto = c.scrollHeight - parseFloat(getComputedStyle(c).paddingBottom || 0);
+      return {
+        fz: +parseFloat(cs.fontSize).toFixed(1),
+        interlineado: +(parseFloat(cs.lineHeight) / parseFloat(cs.fontSize)).toFixed(2),
+        cabeEntero: c.getBoundingClientRect().top >= 0 &&
+          c.getBoundingClientRect().top + alto <= p.getBoundingClientRect().top + 1,
+        panel: Math.round(p.offsetHeight),
+        mandos: !!document.querySelector('#lm-vista') && document.querySelector('#lm-vista').offsetParent !== null,
+      };
+    });
+    const abreEnAula = async (grado, i) => {
+      await aula.goto(URL, { waitUntil: 'domcontentloaded' });
+      await aula.click('[data-s="s-lectura"]');
+      await aula.waitForSelector('#lm-root .lm-grados');
+      await aula.click(`[data-lm-grado="${grado}"]`);
+      await aula.waitForSelector('[data-lm-texto]');
+      const l = await aula.$$eval('[data-lm-texto]', bs => bs.map(b => b.dataset.lmTexto));
+      await aula.click(`[data-lm-texto="${l[i]}"]`);
+      await aula.click('#lm-empezar');
+    };
+
+    await abreEnAula(6, 0);
+    const enPantalla = await mide();
+    comprueba(enPantalla.cabeEntero,
+      `en la pantalla del aula el texto de 6º se ve ENTERO, sin desplazar (letra ${enPantalla.fz}px)`);
+    /* El mando llegó a medir 165 px de alto en cuatro renglones: el
+       número del minuto, partido en dos por el modo de letra grande,
+       ponía la mitad. */
+    comprueba(enPantalla.panel <= 130,
+      `el mando del minuto no se come la pantalla: mide ${enPantalla.panel}px (tope 130)`);
+    comprueba(enPantalla.interlineado <= 1.55,
+      `los renglones van juntos, no sueltos: interlineado ${enPantalla.interlineado} (tope 1.55)`);
+
+    /* El botón del proyector: pantalla completa, letra más grande y el
+       texto SIGUE cabiendo entero, que es la condición de todo esto. */
+    await aula.click('#lm-proyector');
+    const proyectado = await mide();
+    comprueba(await aula.$eval('#lm-root', e => e.classList.contains('lm-proy')),
+      'el botón 📽️ pone la lectura a pantalla completa, sin cabecera ni pestañas');
+    comprueba(proyectado.fz > enPantalla.fz,
+      `y con la pantalla entera la letra crece de ${enPantalla.fz}px a ${proyectado.fz}px`);
+    comprueba(proyectado.cabeEntero, 'con el texto todavía entero a la vista, que es de lo que se copia');
+
+    /* Agrandar a mano, y que se quede puesto: el maestro lo dice una
+       vez, no en cada una de las cinco lecturas del grado. */
+    await aula.click('#lm-mas');
+    const masGrande = await mide();
+    comprueba(masGrande.fz > proyectado.fz,
+      `A+ agranda la letra a mano (${proyectado.fz}px → ${masGrande.fz}px)`);
+    await aula.click('#lm-menos');
+    comprueba((await mide()).fz === proyectado.fz, 'y A− la devuelve como estaba');
+    await aula.click('#lm-mas');
+    await abreEnAula(6, 1);
+    const otraLectura = await mide();
+    const recordado = await aula.evaluate(() => JSON.parse(localStorage.getItem('METAS_LECTURA_MISION_VISTA') || '{}'));
+    comprueba(recordado.proy === true && recordado.off >= 1 &&
+      await aula.$eval('#lm-root', e => e.classList.contains('lm-proy')),
+      'la siguiente lectura abre ya proyectada y con el retoque de letra puesto, sin repetirlo');
+    /* Lo que se guarda es el RETOQUE, no el tamaño: cada lectura se mide
+       sola y el retoque se le suma. Por eso al quitarlo el texto vuelve a
+       caber entero aunque esta lectura tenga otro largo que la anterior
+       —y por eso guardar el tamaño en sí no serviría: el que llena la
+       pared con 100 palabras deja a medias las de 172—. */
+    await aula.click('#lm-menos');
+    const sinRetoque = await mide();
+    comprueba(sinRetoque.fz < otraLectura.fz && sinRetoque.cabeEntero,
+      `y esta otra lectura también se ve entera con lo que le cabe a ella (${sinRetoque.fz}px)`);
+
+    /* Y lo que no puede pasar: que mientras se lee haya algo que
+       toquetear. Ya se quitó de aquí un selector de modos porque el
+       niño se ponía a probarlo y llegaba al minuto sin haber leído. */
+    comprueba(otraLectura.mandos, 'antes de arrancar, el maestro tiene a mano A−, A+ y el proyector');
+    await aula.click('#lm-arrancar');
+    comprueba(!(await mide()).mandos,
+      'y al arrancar el minuto desaparecen: mientras se lee, la pantalla no pide nada');
+    await aula.close();
+
     console.log('\n═══ Errores de JavaScript ═══');
     comprueba(errores.length === 0, errores.length ? 'sin errores en consola — salieron: ' + errores.join(' | ') : 'sin errores en consola');
   } catch (e) {
