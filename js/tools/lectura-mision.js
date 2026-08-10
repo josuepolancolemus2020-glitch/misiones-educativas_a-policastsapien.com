@@ -172,6 +172,34 @@
     return out;
   }
 
+  /* ══════════════ LA LECTURA EN EL PROYECTOR ══════════════
+     En el aula hay un proyector y tres teléfonos. El maestro proyecta
+     la lectura en la pared y sus 43 alumnos la copian en el cuaderno:
+     sin fotocopiadora, es la única forma de que un texto le llegue a
+     todos el mismo día.
+
+     Y ahí la pantalla ya no es un teléfono en la mano: es una pared a
+     cinco metros. Lo que sirve es lo contrario de lo que sirve en el
+     teléfono —letra grande, renglones juntos y el texto ENTERO a la
+     vista—, porque el que copia desde su pupitre no puede hacer
+     scroll: lo que se queda fuera de la pared, para él no existe.
+
+     Por eso el tamaño no se escribe aquí: se BUSCA. Se prueban de
+     mayor a menor y se queda con el más grande con el que el texto
+     cabe entero, cronómetro incluido. El mismo texto sale enorme en el
+     proyector del aula y del tamaño de siempre en el teléfono del
+     alumno —donde ningún tamaño grande cabe—, sin que nadie elija
+     nada. El maestro solo retoca con A− y A+ si quiere. */
+  var LM_TAMS = [16, 17, 18, 19, 20.5, 22, 24, 26, 28, 30.5, 33, 36, 39, 42, 46, 50, 54, 59, 64, 70];
+  var CLAVE_VISTA = 'METAS_LECTURA_MISION_VISTA';   /* letra y proyector, por aparato */
+
+  /* El interlineado va PEGADO al tamaño de la letra, no fijo. Un
+     renglón grande necesita menos aire que uno pequeño para que el ojo
+     no se pierda al saltar de línea, y en la pared ese aire de más son
+     renglones enteros que se quedan fuera de la pantalla — que es
+     justo lo que el maestro pidió arreglar. */
+  function altoDe(px) { return Math.max(1.25, 1.58 - (px - 19) * 0.02); }
+
   /* ══════════════ CSS ══════════════
      Va aquí y no en el CSS de la misión a propósito: así una misión
      nueva estrena la sección con un solo <script>. Usa las variables
@@ -184,7 +212,11 @@
   var CSS = [
     '.lm-wrap{--lm-pri:var(--pri,#419b88);--lm-sec:var(--sec,#c49000);--lm-card:var(--card,#fff);',
     '--lm-borde:var(--border,#e2ddd4);--lm-txt:var(--dark,#1b2838);--lm-gris:var(--gray,#636e72);',
-    '--lm-ok:var(--jade,#00b894);--lm-no:var(--red,#d63031);--lm-b:var(--purple,#6c5ce7);}',
+    '--lm-ok:var(--jade,#00b894);--lm-no:var(--red,#d63031);--lm-b:var(--purple,#6c5ce7);',
+    /* El tamaño del texto que se lee y su interlineado son variables
+       porque los mueve el ajuste al proyector (ver LM_TAMS). Aquí
+       queda el de siempre, que es el que ve el alumno en su teléfono. */
+    '--lm-tam:1.18rem;--lm-alto:1.58;}',
     '.lm-grados{display:flex;flex-wrap:wrap;gap:0.4rem;margin:0.6rem 0;}',
     '.lm-grado{font-family:"Fredoka",sans-serif;font-size:1rem;font-weight:600;min-width:58px;padding:0.55rem 0.85rem;',
     'border:2px solid var(--lm-borde);border-radius:12px;background:var(--lm-card);color:var(--lm-txt);cursor:pointer;transition:all 0.15s;}',
@@ -230,13 +262,81 @@
     'box-shadow:0 -6px 20px var(--shadow,rgba(0,0,0,0.13));}',
     '.lm-panel .lm-crono-caja{margin:0;}',
     '.lm-panel .lm-btns{margin-top:0.55rem;}',
+    /* Un aviso vacío no puede ocupar sitio: en el proyector cada hueco
+       del mando es un renglón de lectura que se cae de la pared. */
+    '#lm-avisos:empty{display:none;}',
+    /* ── En pantalla ancha el mando se aprieta en una fila ──
+       La tableta del maestro va en horizontal y enchufada al proyector.
+       Ahí el mando estaba en cuatro renglones —cronómetro, instrucción,
+       aviso y botones—, y entre los cuatro se comían el tercio de abajo
+       de la pared: el maestro lo dijo con estas palabras, «ese número
+       del minuto me tapa bastante». */
+    '@media (min-width:700px){',
+    '.lm-panel{display:flex;flex-wrap:wrap;align-items:center;gap:0.3rem 0.9rem;}',
+    /* El cronómetro se queda con su renglón entero y sin partirse: si se
+       le deja compartir sitio, el número, la barra y los mandos de la
+       vista se apilan en tres y el mando acaba MÁS alto que antes. */
+    '.lm-panel .lm-crono-caja{flex:1 1 100%;flex-wrap:nowrap;}',
+    '.lm-panel .lm-crono-sub{width:auto;flex:1 1 200px;}',
+    '.lm-panel .lm-btns{margin-top:0;flex:0 0 auto;}',
+    '.lm-panel #lm-avisos{flex:1 1 100%;order:9;}',
+    '}',
+    /* ── Los mandos de la vista (A−, A+, proyector) ──
+       Van con el cronómetro, a la derecha, y DESAPARECEN al arrancar el
+       minuto. Mientras se lee, la pantalla no pide nada: ya se quitó un
+       selector de modos de aquí porque el niño se ponía a probarlo y
+       llegaba al minuto sin haber leído. El tamaño se deja puesto
+       antes, que es como se proyecta de verdad. */
+    '.lm-vista{display:flex;gap:0.3rem;align-items:center;margin-left:auto;}',
+    '.lm-vbtn{min-width:46px;padding:0.45rem 0.5rem;border:2px solid var(--lm-borde);border-radius:11px;',
+    'background:var(--lm-card);color:var(--lm-txt);cursor:pointer;font-family:"Fredoka",sans-serif;',
+    'font-size:1.02rem;font-weight:600;line-height:1.15;}',
+    '.lm-vbtn:hover{border-color:var(--lm-pri);}',
+    '.lm-vbtn.on{background:var(--lm-pri);color:#fff;border-color:transparent;}',
+    /* ── El proyector: la lectura se queda con la pantalla entera ──
+       La cabecera de la misión, las pestañas y el marco de la tarjeta se
+       llevan como 200 px de alto; en una pantalla de aula eso es un
+       tercio del texto. Aquí se recuperan todos, y con ellos la letra
+       sube dos o tres tamaños sin que el texto deje de caber entero.
+       Se pide además la pantalla completa del navegador, que quita su
+       barra; si el aparato no deja, esta capa sola ya tapa la página.
+       Nada de `inset`: hay teléfonos en el aula que no lo entienden. */
+    /* Por encima de TODO lo de la misión. La barra de XP se queda pegada
+       arriba con z-index 1000 y el encabezado con el nombre de la misión
+       va detrás: con la capa por debajo, los primeros renglones de la
+       lectura salían tapados en la pared y el alumno copiaba desde la
+       mitad. Se sube muy por encima de lo que usa cualquier misión. */
+    '.lm-proy{position:fixed;top:0;left:0;right:0;bottom:0;z-index:99000;overflow:auto;',
+    'background:var(--lm-card);padding:0.4rem 1rem 0;}',
+    '.lm-proy>.card{margin:0;padding:0.3rem 0 0;border:0;border-radius:0;box-shadow:none;background:transparent;}',
+    '.lm-proy>.card>h2{font-size:1.05rem;margin:0 0 0.25rem;}',
+    '.lm-proy .lm-texto{margin:0.25rem 0 0;}',
+    '.lm-proy .lm-panel{margin:0;}',
+    /* El botón de salir se repone en cada repintado: sin él, el maestro
+       que entra a pantalla completa y sigue a las actividades se queda
+       encerrado. */
+    '.lm-salir{position:fixed;top:0.45rem;right:0.6rem;z-index:99010;}',
     /* el texto que se lee y sobre el que se caza */
     /* text-align a la izquierda SIEMPRE, aunque la misión justifique sus
        párrafos: el texto justificado abre huecos desiguales entre palabras
        y el lector que va despacio pierde el renglón justo en esos huecos. */
-    '.lm-texto{margin:0.7rem 0;font-size:1.18rem;line-height:2.05;text-align:left;',
+    '.lm-texto{margin:0.7rem 0;font-size:var(--lm-tam,1.18rem);line-height:var(--lm-alto,1.58);text-align:left;',
     'user-select:none;-webkit-user-select:none;touch-action:pan-y;}',
     '.lm-p{padding:0.08em 0.06em;border-radius:5px;transition:background 0.12s,color 0.12s;}',
+    /* ── Aquí manda el ajuste, no el modo «letra grande» de la misión ──
+       Varias misiones traen puesto `body.letra-grande`, que infla TODOS
+       los <span> un 25 % con !important. Cada palabra del texto es un
+       <span>, así que ese 25 % se colaba por debajo: el texto salía de
+       un tamaño que el ajuste no había medido y con el interlineado del
+       modo, no con el suyo. Con dos sitios mandando, ninguno acierta.
+       El tamaño de partida SÍ lo hereda —se mide antes de poner esta
+       clase—, así que nadie lee más pequeño que antes; a partir de ahí
+       manda el ajuste, y quien quiera más letra la pide con A+. */
+    '.lm-texto.lm-manda .lm-p{font-size:inherit!important;line-height:inherit!important;}',
+    /* Y el cronómetro: inflado, el número se le iba a un segundo renglón
+       y el mando pasaba de 42 a 83 px de alto. Justo la mitad de lo que
+       al maestro le tapa la pantalla venía de aquí. */
+    '.lm-crono #lm-num{font-size:inherit!important;line-height:inherit!important;}',
     '.lm-viva .lm-p{cursor:pointer;}',
     '.lm-p.lm-leida{background:var(--pri-gl,rgba(65,155,136,0.18));}',
     '.lm-p.lm-aqui{background:var(--lm-pri);color:#fff;font-weight:700;box-shadow:0 0 0 2px var(--lm-pri);}',
@@ -309,7 +409,7 @@
     '.lm-leyenda{display:flex;flex-wrap:wrap;gap:0.8rem;font-size:0.85rem;color:var(--lm-gris);margin:0.4rem 0;}',
     '.lm-leyenda i{font-style:normal;padding:0.05em 0.35em;border-radius:5px;font-weight:700;}',
     '.lm-btns{display:flex;flex-wrap:wrap;gap:0.55rem;margin-top:0.8rem;}',
-    '@media (max-width:520px){.lm-texto{font-size:1.1rem;line-height:1.95;}.lm-hero b{font-size:2.6rem;}',
+    '@media (max-width:520px){.lm-wrap{--lm-tam:1.1rem;}.lm-hero b{font-size:2.6rem;}',
     '.lm-preg-q{font-size:1.1rem;}.lm-op{font-size:1rem;}}'
   ].join('');
 
@@ -467,6 +567,95 @@
     function pararTimer() { if (st.timer) { clearInterval(st.timer); st.timer = null; } }
     function reiniciar() { pararTimer(); var g = st.grado; st = limpio('elegir'); st.grado = g; }
 
+    /* ══════════════ LA VISTA: letra y proyector ══════════════
+       `off` no es un tamaño, es un RETOQUE sobre el que se ajusta solo.
+       Guardar el tamaño en sí no serviría: la lectura de 2º tiene 58
+       palabras y la de 9º doscientas, así que el tamaño que llena la
+       pared con una deja a la otra a medias. Guardando el retoque, cada
+       texto sale con la letra más grande que le cabe y el maestro que
+       la quiere un punto mayor lo dice una vez, no en cada lectura. */
+    var vista = leerJSON(CLAVE_VISTA, {}) || {};
+    var refrescoVista = null;   /* la fase de turno dice cómo re-ajustarse */
+    var btnSalir = null;
+    function guardaVista() { guardarJSON(CLAVE_VISTA, vista); }
+    function ponLetra(px) {
+      raiz.style.setProperty('--lm-tam', px + 'px');
+      raiz.style.setProperty('--lm-alto', altoDe(px).toFixed(2));
+    }
+    /* ── Que la capa quede de verdad ENCIMA de la misión ──
+       Ponerle un z-index gigante no basta: la misión mete su contenido
+       en un `.main` con `position:relative` y `z-index:1`, y eso abre un
+       contexto de apilamiento. Dentro de él, NINGÚN número gana a la
+       barra de XP, que va por fuera. El resultado en la pared era que
+       los primeros renglones de la lectura salían tapados por la barra
+       y por el encabezado de la misión, y el alumno copiaba desde la
+       mitad del texto sin saber que le faltaba el principio.
+
+       Así que se le quita el z-index a los padres mientras se proyecta
+       —solo el z-index: siguen siendo `relative`, que es lo que sostiene
+       lo que tengan colocado dentro— y se les devuelve al salir. No se
+       esconde ni se mueve nada: si el alumno cambia de pestaña, la
+       misión sigue entera y la capa se va con su sección. */
+    var apilados = [];
+    function apila(on) {
+      if (!on) {
+        apilados.forEach(function (o) { o.el.style.zIndex = o.antes; });
+        apilados = [];
+        return;
+      }
+      if (apilados.length) return;
+      for (var el = raiz.parentNode; el && el.nodeType === 1 && el !== document.body; el = el.parentNode) {
+        if (window.getComputedStyle(el).zIndex === 'auto') continue;
+        apilados.push({ el: el, antes: el.style.zIndex });
+        el.style.zIndex = 'auto';
+      }
+    }
+    function aplicaVista() {
+      raiz.classList.toggle('lm-proy', !!vista.proy);
+      apila(!!vista.proy);
+      if (!vista.proy) {
+        if (btnSalir && btnSalir.parentNode) btnSalir.parentNode.removeChild(btnSalir);
+        return;
+      }
+      if (!btnSalir) {
+        btnSalir = document.createElement('button');
+        btnSalir.className = 'lm-vbtn lm-salir';
+        btnSalir.id = 'lm-salir';
+        btnSalir.textContent = '✕';
+        btnSalir.setAttribute('aria-label', 'Salir de la pantalla completa');
+        btnSalir.onclick = function () { suena('click'); proyector(false); };
+      }
+      raiz.appendChild(btnSalir);
+    }
+    /* Entrar y salir no repintan la fase: si el minuto está corriendo,
+       repintar lo mataría y el alumno perdería la toma a medias. Cada
+       fase deja dicho en `refrescoVista` cómo recolocarse sin eso. */
+    function proyector(on) {
+      vista.proy = !!on;
+      guardaVista();
+      aplicaVista();
+      try {
+        var d = document.documentElement;
+        var p = (on && !document.fullscreenElement && d.requestFullscreen) ? d.requestFullscreen()
+          : (!on && document.fullscreenElement && document.exitFullscreen) ? document.exitFullscreen() : null;
+        if (p && p.catch) p.catch(function () {});   /* si el aparato no deja, la capa sola basta */
+      } catch (e) {}
+      if (refrescoVista) refrescoVista();
+    }
+    /* Salir con Escape saca del pantalla completa del navegador. Si la
+       capa se quedara puesta, el maestro tendría media cosa de cada. */
+    document.addEventListener('fullscreenchange', function () {
+      if (document.fullscreenElement || !vista.proy) return;
+      vista.proy = false;
+      guardaVista();
+      aplicaVista();
+      if (refrescoVista) refrescoVista();
+    });
+    /* Un solo oyente para toda la sección, y no uno por repintado: al
+       girar la tableta hay que volver a medir, pero doce medidas sobre
+       pantallas que ya no existen solo gastan batería. */
+    window.addEventListener('resize', function () { if (refrescoVista) refrescoVista(); });
+
     /* ══════════════ utilidades que recibe cada misión ══════════════
        Con esto la misión construye sus ítems sin saber nada del motor.
        `rnd` va sembrada con el id del texto y el de la actividad: los
@@ -550,6 +739,11 @@
           '</div>' +
           '<p class="lm-pista">🖨️ En papel salen <strong>tres hojas</strong>: dos con la lectura y sus actividades para el ' +
             'alumno, y la clave para el maestro. En un aula de 43 no hay un teléfono por niño, y la lectura se toma igual.</p>' +
+          /* Al maestro, de tú, y contándole lo que gana: sin esta línea el
+             botón 📽️ del minuto no lo encuentra nadie. */
+          '<p class="lm-pista">📽️ <strong>¿La estás proyectando?</strong> Dentro de la lectura, el botón 📽️ la pone a ' +
+            'pantalla completa y agranda la letra hasta llenarla, con el texto entero a la vista para que tus alumnos ' +
+            'lo copien desde su pupitre. Con <strong>A−</strong> y <strong>A+</strong> la dejas a tu gusto y así se queda.</p>' +
         '</div>');
 
       cada('[data-lm-grado]', function (b) {
@@ -588,7 +782,7 @@
       raiz.innerHTML =
         '<div class="card ac-teal">' +
           '<h2>⏱️ ' + esc(t.titulo) + '</h2>' +
-          '<div class="lm-texto" id="lm-texto" aria-label="Texto para leer en voz alta">' +
+          '<div class="lm-texto lm-manda" id="lm-texto" aria-label="Texto para leer en voz alta">' +
             ps.map(function (p, i) { return '<span class="lm-p" data-i="' + i + '">' + esc(p) + '</span>'; }).join(' ') +
           '</div>' +
         '</div>' +
@@ -596,6 +790,14 @@
           '<div class="lm-crono-caja">' +
             '<div class="lm-crono" id="lm-crono" role="timer" aria-live="off"><span id="lm-num">' + SEGUNDOS + '</span><small>s</small></div>' +
             '<div class="lm-barra"><i id="lm-barra"></i></div>' +
+            /* Para el maestro que proyecta. Se van al arrancar el minuto:
+               mientras se lee, la pantalla no pide nada. */
+            '<div class="lm-vista" id="lm-vista">' +
+              '<button class="lm-vbtn" id="lm-menos" aria-label="Letra más pequeña" title="Letra más pequeña">A−</button>' +
+              '<button class="lm-vbtn" id="lm-mas" aria-label="Letra más grande" title="Letra más grande">A+</button>' +
+              '<button class="lm-vbtn' + (vista.proy ? ' on' : '') + '" id="lm-proyector" ' +
+                'aria-label="Ver a pantalla completa, para el proyector" title="Pantalla completa (proyector)">📽️</button>' +
+            '</div>' +
           '</div>' +
           /* La instrucción se dice en dos renglones y no en cuatro: este
              panel se queda encima del texto, así que cada renglón suyo es
@@ -632,8 +834,84 @@
       function ajustaHueco() {
         caja.style.paddingBottom = (panel.offsetHeight + 14) + 'px';
       }
-      ajustaHueco();
-      window.addEventListener('resize', ajustaHueco);
+
+      /* ── La letra más grande con la que el texto cabe ENTERO ──
+         Se prueban de mayor a menor y se para en la primera que quepa
+         por encima del mando. El suelo es el tamaño que manda el CSS
+         —el de siempre—: en el teléfono no cabe ninguno de los grandes,
+         así que el alumno ve exactamente lo que veía, y solo la pantalla
+         del aula se lleva la letra grande.
+
+         No se ajusta a media lectura: cambiar el tamaño mientras el niño
+         lee le mueve todos los renglones y le hace perder la línea, que
+         es la forma más tonta de estropear una toma de fluidez. El
+         maestro lo deja puesto antes de arrancar. */
+      function ajustaLetra() {
+        var hueco = caja.style.paddingBottom;
+        caja.style.paddingBottom = '0px';
+        raiz.style.removeProperty('--lm-tam');
+        raiz.style.removeProperty('--lm-alto');
+        /* El suelo se mide sobre una PALABRA y con el ajuste apartado: así
+           sale el tamaño con el que la misión pintaba este texto antes de
+           que existiera nada de esto —modo «letra grande» incluido— y
+           nadie acaba leyendo más pequeño que ayer. */
+        caja.classList.remove('lm-manda');
+        var una = caja.querySelector('.lm-p');
+        var suelo = parseFloat(window.getComputedStyle(una || caja).fontSize) || 19;
+        caja.classList.add('lm-manda');
+        /* EN EL PROYECTOR se prueban todos los tamaños, también los más
+           pequeños que el de siempre: la pared ya agranda, y allí lo que
+           no se puede perder es el final del texto —el alumno que copia
+           desde su pupitre no hace scroll—. En el TELÉFONO, en cambio, el
+           de siempre es el suelo: nadie tiene que leer más pequeño que
+           ayer para ganar un renglón que igual no cabe. */
+        var escala = LM_TAMS.filter(function (v) {
+          return vista.proy ? Math.abs(v - suelo) > 0.5 : v > suelo + 0.5;
+        });
+        escala.push(suelo);
+        escala.sort(function (a, b) { return a - b; });
+        /* Contra lo que se VE: la parte de pantalla que queda entre donde
+           empieza el texto y donde empieza el mando de abajo. */
+        var libre = window.innerHeight - Math.max(0, caja.getBoundingClientRect().top) - panel.offsetHeight - 16;
+        var auto = -1;
+        for (var i = escala.length - 1; i >= 0; i--) {
+          ponLetra(escala[i]);
+          if (caja.scrollHeight <= libre) { auto = i; break; }
+        }
+        if (auto < 0) auto = escala.indexOf(suelo);   /* no cabe ni el más pequeño: el de siempre */
+        ponLetra(escala[Math.max(0, Math.min(escala.length - 1, auto + (vista.off || 0)))]);
+        caja.style.paddingBottom = hueco;
+      }
+      /* ── Primero, subir a donde empieza el texto ──
+         Repintar no mueve la página. El maestro toca «Empezar el minuto»
+         con la lista de las cinco lecturas desplazada, la pantalla se
+         cambia por el texto… y el texto nace medio metro más arriba de
+         lo que se ve: el alumno arranca a leer por la mitad. Y de paso
+         el ajuste de la letra mediría contra un hueco que nadie mira.
+         Se deja sitio arriba por si la misión lleva barra pegada. */
+      function subeAlTexto() {
+        var r = raiz.getBoundingClientRect();
+        if (r.top >= 0 && r.top < window.innerHeight * 0.35) return;   /* ya se ve bien */
+        var y = (window.pageYOffset || document.documentElement.scrollTop || 0) + r.top - 56;
+        window.scrollTo(0, Math.max(0, y));
+      }
+      function ajusta(letra) {
+        if (!vista.proy) subeAlTexto();
+        if (letra && !st.ini) ajustaLetra();
+        ajustaHueco();
+      }
+      function cambiaLetra(d) {
+        vista.off = Math.max(-4, Math.min(9, (vista.off || 0) + d));
+        guardaVista();
+        ajusta(true);
+      }
+      refrescoVista = function () { ajusta(true); };
+      ajusta(true);
+
+      var vst = document.getElementById('lm-vista');
+      document.getElementById('lm-menos').onclick = function () { suena('click'); cambiaLetra(-1); };
+      document.getElementById('lm-mas').onclick = function () { suena('click'); cambiaLetra(1); };
+      document.getElementById('lm-proyector').onclick = function () { suena('click'); proyector(!vista.proy); };
 
       function marca(i) {
         if (i == null || i < 0 || i >= spans.length) return;
@@ -722,6 +1000,11 @@
         st.ini = Date.now();
         btnArr.style.display = 'none';
         btnFin.style.display = '';
+        /* Mientras corre el minuto no queda NADA que toquetear: ni el
+           tamaño de la letra ni el proyector. Ya se quitó de aquí un
+           selector de modos por esto mismo — el niño se ponía a probarlo
+           y llegaba al minuto sin haber leído una línea. */
+        if (vst) vst.style.display = 'none';
         sub.innerHTML = 'Lee en voz alta, sin prisa. Si acabas antes, toca <strong>«Terminé el texto»</strong>.';
         ajustaHueco();
         st.timer = setInterval(function () {
@@ -842,7 +1125,7 @@
             ? '<div class="lm-aviso lm-av-ok">🎉 <strong>' + (e.rendido ? 'Aquí los tienes todos.' : '¡Meta cumplida!') + '</strong> ' +
               (e.rendido ? 'Los que te faltaban quedaron marcados.' : 'Puedes seguir cazando o pasar a la siguiente actividad.') + '</div>'
             : '') + '</div>' +
-          '<div class="lm-texto lm-viva" id="lm-texto">' +
+          '<div class="lm-texto lm-viva lm-manda" id="lm-texto">' +
             ps.map(function (p, i) {
               return '<span class="lm-p ' + claseDe(i) + '" data-i="' + i + '">' + esc(p) + '</span>';
             }).join(' ') +
@@ -1474,10 +1757,16 @@
 
     function pinta() {
       pararTimer();
+      /* La capa del proyector va puesta ANTES de pintar: el sitio libre
+         que mide el ajuste de la letra depende de ella. Y el botón de
+         salir, DESPUÉS, porque el repintado se lo lleva por delante. */
+      refrescoVista = null;
+      raiz.classList.toggle('lm-proy', !!vista.proy);
       if (st.fase === 'leer') pintaLeer();
       else if (st.fase === 'taller') pintaTaller();
       else if (st.fase === 'resultado') pintaResultado();
       else pintaElegir();
+      aplicaVista();
     }
 
     pinta();
