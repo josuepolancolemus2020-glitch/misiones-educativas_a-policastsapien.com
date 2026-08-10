@@ -188,18 +188,43 @@
     });
   }
 
-  /* Qué se hace con la respuesta. Hay tres finales y son distintos:
+  /* Qué se hace con la respuesta. Hay CUATRO finales y son distintos:
 
      · entró            → fuera de la cola;
      · no y nunca va a entrar (texto de tres letras, sin identificador)
                         → fuera de la cola TAMBIÉN, porque reintentarlo
                           es dar vueltas hasta el fin de los tiempos;
-     · no, hoy no (el freno del día) o no contestó el servidor
-                        → se queda, y mañana entra.
+     · no, hoy no (el freno del día, o no contestó el servidor)
+                        → se queda entero y se para la tanda: si este
+                          aparato está frenado, los de detrás también;
+     · se atragantó con ESTE mensaje (motivo «error»)
+                        → ver la nota de abajo. Es el que muerde.
 
      Sin esta distinción la cola o se atasca con basura o tira mensajes
      buenos, y las dos cosas se descubren tarde. */
   var DEFINITIVOS = { corto: 1, sin_id: 1 };
+  var MAX_INTENTOS = 5;
+
+  /* El mensaje atragantado, y por qué tiene tratamiento propio.
+
+     La cola se manda SIEMPRE desde el principio, y si el primero no
+     sale, se para la tanda. Para el freno eso está bien —está frenado
+     el aparato entero—, pero para un mensaje que el servidor no logra
+     tragar es la peor avería posible: ese mensaje se queda de tapón y
+     TODOS los de detrás no salen nunca. Y como nadie mira esta cola,
+     no se enteraría nadie: el aparato seguiría diciendo «va camino al
+     equipo» y no llegaría ni uno más. Justo lo que este archivo vino a
+     arreglar, otra vez y peor, porque ahora estaría escondido.
+
+     Así que un «error» no para la tanda: cuenta un intento y manda el
+     mensaje al FINAL de la cola, para que los de detrás pasen. A los
+     cinco intentos se tira. Perder uno duele; perderlos todos y en
+     silencio, mucho más. */
+  function alFinal(f, cola) {
+    f.intentos = (f.intentos || 0) + 1;
+    var resto = cola.filter(function (x) { return x.evento_id !== f.evento_id; });
+    return f.intentos >= MAX_INTENTOS ? resto : resto.concat([f]);
+  }
 
   function sincronizar(opciones) {
     opciones = opciones || {};
@@ -213,12 +238,16 @@
     var f = cola[0];
     return enviarUno(f)
       .then(function (j) {
-        var fuera = !!(j && j.ok) || !!(j && j.motivo && DEFINITIVOS[j.motivo]);
+        var motivo = (j && j.motivo) || '';
+        var fuera = !!(j && j.ok) || !!DEFINITIVOS[motivo];
         if (fuera) {
           escribirCola(leerCola().filter(function (x) { return x.evento_id !== f.evento_id; }));
+        } else if (motivo === 'error') {
+          escribirCola(alFinal(f, leerCola()));
         }
         enCurso = false;
-        if (!fuera) return quedan();                       // el freno: se para y ya seguirá
+        // El freno (y el «error», que ya se apartó): se para y ya seguirá
+        if (!fuera) return quedan();
         if (opciones.unaSola) return { enviadas: 1, pendientes: leerCola().length };
         if (!leerCola().length) return { enviadas: 1, pendientes: 0 };
         return sincronizar(opciones).then(function (r2) {

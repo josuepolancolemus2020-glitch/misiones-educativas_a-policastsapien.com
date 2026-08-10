@@ -74,6 +74,12 @@ function nube(estado) {
         return route.fulfill({ status: 200, contentType: 'application/json',
           body: JSON.stringify({ ok: false, motivo: 'corto' }) });
       }
+      /* El mensaje con el que el servidor se atraganta siempre. Existe
+         porque es el que puede taponar la cola entera. */
+      if (estado.atragantado && cuerpo.p_evento_id === estado.atragantado) {
+        return route.fulfill({ status: 200, contentType: 'application/json',
+          body: JSON.stringify({ ok: false, motivo: 'error' }) });
+      }
       /* Como el servidor de verdad: la llave es el evento, así que un
          reintento corrige la fila en vez de añadir otra. */
       const ya = estado.filas.findIndex(f => f.p_evento_id === cuerpo.p_evento_id);
@@ -101,7 +107,7 @@ async function escribirSugerencia(page, { categoria, texto }) {
 
   const navegador = await chromium.launch();
   const contexto = await navegador.newContext();
-  const estado = { filas: [], llamadas: [], caido: false };
+  const estado = { filas: [], llamadas: [], caido: false, atragantado: null };
 
   /* Se intercepta por la ruta de la función, no por el nombre del
      servidor: es lo que hacen las demás sondas, y así la URL entera
@@ -245,6 +251,41 @@ async function escribirSugerencia(page, { categoria, texto }) {
   comprueba(vecesMandado() > mandadoAntes, 'El teléfono lo volvió a mandar');
   comprueba(estado.filas.length === antes,
     'Y el segundo intento corrigió la fila que ya estaba: sigue habiendo una sola');
+
+  /* ── 6b. Un mensaje atragantado no tapona a los de detrás ──── */
+  console.log('\n6b. Un mensaje con el que el servidor se atraganta no bloquea a los demás');
+  /* Es la avería peor de todas y la más silenciosa: la cola se manda
+     siempre desde el principio, así que un mensaje que nunca sale se
+     queda de tapón y NINGUNO de los de detrás llega jamás. El aparato
+     seguiría diciendo «va camino al equipo». */
+  await page.evaluate(() => {
+    const base = { categoria: 'idea', mision: 'm', mision_titulo: '', seccion: '',
+      url: '', alumno: '', grado: '', escuela: '', docente: '', codigo_aula: '',
+      dispositivo: 'D-TEST', escrito_at: null };
+    localStorage.setItem('METAS_SUG_OUTBOX_V1', JSON.stringify([
+      Object.assign({ evento_id: 'E-tapon', texto: 'El mensaje con el que el servidor se atraganta.' }, base),
+      Object.assign({ evento_id: 'E-detras1', texto: 'Yo venia detras del tapon y tengo algo que decir.' }, base),
+      Object.assign({ evento_id: 'E-detras2', texto: 'Y yo tambien venia detras, con otra errata.' }, base),
+    ]));
+  });
+  estado.atragantado = 'E-tapon';
+  // Varias tandas, como varias aperturas de misión seguidas
+  for (let i = 0; i < 4; i++) {
+    await page.evaluate(() => window.METAS_SUG.sincronizar());
+    await esperar(400);
+  }
+  comprueba(estado.filas.some(f => f.p_evento_id === 'E-detras1') &&
+            estado.filas.some(f => f.p_evento_id === 'E-detras2'),
+    'Los que venían detrás del tapón llegaron igual');
+
+  // Y el atragantado no se reintenta para siempre
+  for (let i = 0; i < 6; i++) {
+    await page.evaluate(() => window.METAS_SUG.sincronizar());
+    await esperar(300);
+  }
+  comprueba(await page.evaluate(() => window.METAS_SUG.pendientes()) === 0,
+    'Y el atragantado se deja de reintentar en vez de quedarse dando vueltas para siempre');
+  estado.atragantado = null;
 
   /* ── 7. Lo ya atrapado en el teléfono también sale ──────────── */
   console.log('\n7. Las sugerencias viejas, las que nadie leyó nunca, salen también');
