@@ -8,6 +8,7 @@
 <style>
   :root {
     --mat: #1e40af; --esp: #b45309; --bach: #7c3aed; --nat: #0d9488; --soc: #dc2626; --tec: #0e7490; --ing: #be185d;
+    --rep: #6d28d9;
     --tinta: #1a2733; --gris: #5b6773; --linea: #e2e8f0;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,7 +36,7 @@
   .m-mat h2 { background: var(--mat); } .m-esp h2 { background: var(--esp); }
   .m-bach h2 { background: var(--bach); } .m-nat h2 { background: var(--nat); }
   .m-soc h2 { background: var(--soc); } .m-tec h2 { background: var(--tec); }
-  .m-ing h2 { background: var(--ing); }
+  .m-ing h2 { background: var(--ing); } .m-rep h2 { background: var(--rep); }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
   a.card {
@@ -56,6 +57,7 @@
   .m-soc a.card { border-left-color: var(--soc); }
   .m-tec a.card { border-left-color: var(--tec); }
   .m-ing a.card { border-left-color: var(--ing); }
+  .m-rep a.card { border-left-color: var(--rep); }
 
   footer { text-align: center; font-size: 0.8rem; color: var(--gris); margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--linea); }
   footer b { color: var(--tinta); }
@@ -80,8 +82,8 @@
 <header class="hero">
   <div class="mascot">📚</div>
   <h1>Índice de Fichas Didácticas</h1>
-  <p>Proyecto Educativo M.E.T.A.S · Guías de estudio imprimibles de 7 páginas (teoría, actividades y evaluación) para repasar antes del examen.</p>
-  <span class="count">56 fichas · 7 materias</span>
+  <p>Proyecto Educativo M.E.T.A.S · Guías de estudio imprimibles de 7 páginas (teoría, actividades y evaluación) para repasar antes del examen. La de Repaso General es más larga: abarca el año entero.</p>
+  <span class="count">57 fichas · 8 materias</span>
 </header>
 
 <div class="wrap">
@@ -93,6 +95,14 @@
   <div class="intro">
     🗺️ <b>Planificación:</b> consulte el <a href="mapa-curricular-metas-dcnb.html"><b>Mapa Curricular M.E.T.A.S — DCNB</b></a> 🔐, documento imprimible con las misiones de las 4 materias básicas y sus rutas de aprendizaje. <b>Exclusivo docentes:</b> requiere sesión iniciada en la Zona Docente. También encontrará su programación por grado en ⚙️ Ajustes → Zona Docente → <b>Mi Programación DCNB</b>.
   </div>
+
+  <!-- REPASO GENERAL · va primero porque es la que se busca antes del examen -->
+  <section class="materia m-rep">
+    <h2>🎓 Repaso General <span class="n">1 ficha</span></h2>
+    <div class="grid">
+      <a class="card" href="ficha-fin-de-grado-6to.html"><span class="ico">🎓</span><span class="txt"><span class="t">Prueba de Fin de Grado: 6º Grado</span><span class="sub">Ruta de la Meta · Matemáticas y Español · 34 páginas</span></span><span class="go">→</span></a>
+    </div>
+  </section>
 
   <!-- MATEMÁTICAS -->
   <section class="materia m-mat">

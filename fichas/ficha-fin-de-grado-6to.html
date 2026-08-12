@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Prueba de Fin de Grado: 6º Grado</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: esta ficha abarca DOS, así que el
+       marco (portada, pies, simulacro, rúbrica) va en el MORADO de
+       Repaso General #7c3aed, y cada bloque de estudio lleva el color
+       de su materia: AZUL #1565c0 Matemáticas · DORADO #b45309 Español.
+       El alumno sabe qué está estudiando sin leer el título, y el
+       maestro reconoce sus dos materias dentro del mismo cuadernillo.
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · Cada página se comprueba con node _dev/verifica-ficha-paginas.js:
+       el papel deja 257,4 mm y una hoja que se pase se parte en dos.
+     · La pauta + nota del docente SIEMPRE en hojas sueltas (al final)
+     · En papel el círculo se RELLENA: la ✗ significa MALO en el aula */
+  :root {
+    --rep: #7c3aed; --rep-osc: #4c1d95; --rep-claro: #f3efff;
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --esp: #b45309; --esp-osc: #78350f; --esp-claro: #fefce8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #d7d3e6;
+    --num: #1e40af; --den: #c2410c; --res: #15803d;
+    --ac: var(--rep); --ac-osc: var(--rep-osc); --ac-claro: var(--rep-claro);
+  }
+  /* El color de la página lo fija su materia: todo lo de adentro
+     (títulos, tablas, cajas, números de ítem) lo hereda de --ac. */
+  .pagina.p-mat { --ac: var(--mat); --ac-osc: var(--mat-osc); --ac-claro: var(--mat-claro); }
+  .pagina.p-esp { --ac: var(--esp); --ac-osc: var(--esp-osc); --ac-claro: var(--esp-claro); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef0f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ac-osc); }
+  /* Cinta de materia en el borde: se ve con las hojas apiladas */
+  .pagina.p-mat::before, .pagina.p-esp::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 7px; background: var(--ac);
+  }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ac); background: var(--ac-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ac-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ac-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  /* Rótulo de materia al abrir cada bloque */
+  .materia-tag { display: inline-block; font-size: 8.5pt; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+                 color: #fff; background: var(--ac); border-radius: 999px; padding: 2px 11px; margin-bottom: 6px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ac); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  .contenido > h2:first-child, .materia-tag + h2 { margin-top: 4px; }
+  h3 { font-size: 11pt; color: var(--ac-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ac-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ac-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ac); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f7fb; }
+  td.k { font-weight: 700; color: var(--ac-osc); white-space: nowrap; }
+
+  /* Ejemplo resuelto paso a paso: el corazón de una guía de papel,
+     porque en casa no hay quien explique el procedimiento. */
+  .ejem { border: 1.5px solid var(--linea); border-left: 5px solid var(--ac); border-radius: 9px;
+          padding: 9px 12px; margin: 9px 0; background: #fcfcff; break-inside: avoid; }
+  .ejem-t { font-size: 10pt; font-weight: 800; color: var(--ac-osc); margin-bottom: 5px; }
+  .ejem-t span { font-weight: 400; color: var(--tinta); }
+  .ejem ol { margin: 4px 0 4px 22px; font-size: 10pt; }
+  .ejem ol li { margin-bottom: 2px; }
+  .ejem ol li::marker { font-weight: 800; color: var(--ac); }
+  .ejem .res { margin-top: 5px; font-size: 10.5pt; font-weight: 800; color: var(--res); }
+  .ejem .res::before { content: '✔ '; }
+  .ejem-txt { font-size: 10pt; font-style: italic; background: #fff; border: 1px dashed var(--linea);
+              border-radius: 6px; padding: 6px 9px; margin-bottom: 5px; text-align: justify; }
+
+  /* Error común: mal / por qué / bien, en tres renglones */
+  .err { border: 1.5px solid #f0c9c9; border-radius: 9px; padding: 8px 11px; margin: 8px 0; background: #fff7f7; break-inside: avoid; font-size: 10pt; }
+  .err-t { font-weight: 800; color: #9b1c1c; margin-bottom: 4px; font-size: 10.5pt; }
+  .err-t::before { content: '✖ '; }
+  .err div { margin-bottom: 2px; }
+  .err b.mal { color: #9b1c1c; } .err b.why { color: #92400e; } .err b.ok { color: var(--res); }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--ac-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ac); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* Selección múltiple: letras SIN círculo impreso, para que el niño
+     pueda encerrarlas y que su trazo se vea */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n { display: inline-block; flex: 0 0 22px; width: 22px; height: 22px; background: var(--ac); color: #fff;
+            border-radius: 6px; text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900; }
+  /* Cuando el ítem trae mini-texto, el texto va ARRIBA (con el número) y la
+     pregunta debajo, como en el cuadernillo oficial: primero se lee, después
+     se pregunta. */
+  .preg-q2 { font-weight: 700; color: var(--tinta); margin: 4px 0 4px 30px; }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i { font-style: normal; flex: 0 0 auto; font-size: 10.5pt; font-weight: 800; color: var(--ac-osc); }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  /* ─── SIMULACRO: aquí sí van los círculos, porque se contesta como
+     la prueba de verdad, RELLENANDO el círculo de la letra. ─── */
+  .sim-instr { background: var(--rep-claro); border: 1.5px solid #d9cdf7; border-radius: 9px;
+               padding: 9px 13px; font-size: 10pt; margin-bottom: 9px; break-inside: avoid; }
+  .sim-instr b { color: var(--rep-osc); }
+  .sim .preg-ops .op { align-items: center; gap: 6px; }
+  .sim .preg-ops .op i { display: inline-flex; align-items: center; justify-content: center;
+                         width: 14px; height: 14px; border: 1.4px solid #444; border-radius: 50%;
+                         font-size: 8pt; color: #444; font-weight: 700; }
+  .sim .preg-ops .op i::after { content: ''; }
+  .sim-txt { font-size: 10pt; background: #fbfbfe; border: 1px solid var(--linea); border-radius: 7px;
+             padding: 7px 10px; margin: 0 0 5px 30px; text-align: justify; }
+
+  /* Espacio para desarrollar el procedimiento con lápiz */
+  .desarrollo { border: 1px dashed #b9c2cf; border-radius: 8px; height: 74px; margin: 4px 0 9px; background:
+                repeating-linear-gradient(180deg, transparent 0 24px, #e6ebf2 24px 25px); }
+
+  .felic { background: linear-gradient(180deg, var(--rep-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--rep-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f5f4fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--rep-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--rep); box-shadow: 0 6px 16px rgba(124,58,237,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pagina.p-mat .contenido, .pagina.p-esp .contenido { padding-left: 11px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .ilus, .felic, .pauta, .ejem, .err, .materia-tag, .sim-instr, .pagina.p-mat::before, .pagina.p-esp::before
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+<div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+<div class="fh">
+  <div class="fh-txt">
+    <div class="f-badge">📄 Ficha Didáctica: Prueba de Fin de Grado, 6º Grado</div>
+    <div class="f-meta"><b>Asignaturas:</b> Matemáticas y Español &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica, 6º grado</div>
+    <div class="f-meta"><b>Tema:</b> Repaso general del año: fracciones, decimales, teoría de números, geometría y promedio; comprensión lectora, vocabulario, tipos de texto y escritura</div>
+  </div>
+  <div class="fh-qr">
+    <img src="../img/qr-mision-fin-de-grado.png" alt="QR de la misión">
+    <span>📷 Juega la misión en tu teléfono</span>
+  </div>
+</div>
+
+<div class="caja regla">📌 <b>Esta ficha es distinta a las demás:</b> no repasa un tema, repasa <b>todo el año</b> y las <b>dos materias</b> que se evalúan en la Prueba de Fin de Grado. Por eso es más larga: estúdiala por partes, no de una sentada. Las hojas con la franja <b>azul</b> son de Matemáticas y las de la franja <b>dorada</b> son de Español.</div>
+
+<h2>🎯 Objetivos de Aprendizaje</h2>
+<ol class="objetivos">
+  <li>Convertir <strong>fracciones en decimales y decimales en fracciones</strong>, compararlos y ordenarlos.</li>
+  <li>Sumar, restar, multiplicar y dividir <strong>fracciones</strong>, y simplificar el resultado.</li>
+  <li>Multiplicar y dividir <strong>decimales</strong> colocando bien el punto, y resolver compras con lempiras.</li>
+  <li>Aplicar los <strong>criterios de divisibilidad</strong> y distinguir cuándo se usa el <strong>m.c.m.</strong> y cuándo el <strong>M.C.D.</strong></li>
+  <li>Resolver problemas de <strong>velocidad, tiempo y distancia</strong>.</li>
+  <li>Calcular <strong>área</strong> del cuadrado y del círculo, <strong>volumen</strong> del prisma y del cilindro, y reconocer los sólidos y la simetría reflexiva.</li>
+  <li>Sacar el <strong>promedio</strong> de un grupo de calificaciones.</li>
+  <li>Encontrar la <strong>idea principal</strong> de un texto y distinguirla de un detalle.</li>
+  <li>Responder preguntas <strong>literales e inferenciales</strong> apoyándose siempre en el texto.</li>
+  <li>Descubrir el significado de una palabra <strong>por el contexto</strong> de la oración.</li>
+  <li>Reconocer el <strong>cuento, la fábula, la carta, la noticia y el instructivo</strong> por sus marcas.</li>
+  <li>Redactar una <strong>narración a partir de una secuencia</strong> y una <strong>opinión con argumentos</strong>.</li>
+</ol>
+
+<h2>📋 Cómo es la Prueba de Fin de Grado</h2>
+<p>La Secretaría de Educación aplica esta prueba al terminar el grado. Primero se contesta la parte de
+<strong>Matemáticas</strong>, luego hay un receso, y después la de <strong>Español</strong>. Cada pregunta trae cuatro
+opciones y una sola es correcta. Al final de Español hay <strong>dos ejercicios de escritura</strong> donde no hay
+opciones: ahí escribes tú.</p>
+
+<div class="caja idea">🖊️ <b>La regla de oro del examen:</b> se <b>rellena completo el círculo</b> de la letra escogida. Nunca se marca con una equis: en el aula la equis significa que algo está malo. Y una pregunta con dos círculos rellenados no se cuenta.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Presentación y objetivos</span><span>Página 1 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+<div class="caja truco">🗺️ <b>Cómo usar esta ficha:</b> primero estudia las hojas azules de Matemáticas y contesta sus actividades; después las doradas de Español con las suyas. Deja el <b>simulacro del final</b> para la víspera del examen y contéstalo de corrido, sin ver las hojas de estudio: así sabrás de verdad cómo llegas.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Presentación y objetivos (sigue)</span><span>Página 2 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="materia-tag">🔵 Matemáticas · Bloque 1 de 4</div>
+<h2>🍕 Fracciones: leerlas, compararlas y sumarlas</h2>
+<p>Una fracción te dice en cuántos pedazos iguales partiste algo y cuántos tomaste. El de abajo, el denominador, dice el tamaño del pedazo; el de arriba, el numerador, dice cuántos tomaste. Toda fracción es también una división: por eso 7/8 es lo mismo que 7 ÷ 8, que da 0.875. Para comparar o para sumar, los pedazos tienen que ser del mismo tamaño; si los denominadores son distintos, busca un denominador común y cambia las dos fracciones antes de operar.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> Para sumar o restar fracciones de distinto denominador, busca un denominador común, convierte las dos y suma solo los numeradores: el denominador se queda igual.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> De fracción a decimal, divide arriba entre abajo. De decimal a fracción, escribe las cifras sobre 10, 100 o 1000 según cuántas haya después del punto, y simplifica: 0.75 tiene dos cifras después del punto, así que es 75/100, y simplificando entre 25 queda 3/4.</div>
+
+<div class="caja hn">🇭🇳 <b>En Honduras:</b> En la pulpería te venden media libra de café: media libra es 1/2 y también 0.5. Son dos maneras de escribir el mismo pedazo.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>Ordena de menor a mayor: 3/4, 2/3 y 5/8.</span></div>
+  <ol>
+    <li>Busca un denominador común de 4, 3 y 8: el 24 sirve, porque los tres caben exacto en 24.</li>
+    <li>Convierte cada una: 3/4 = 18/24 (24 ÷ 4 = 6 y 3 x 6 = 18), 2/3 = 16/24 y 5/8 = 15/24.</li>
+    <li>Ya con el mismo denominador solo miras los numeradores: 15 es el menor y 18 el mayor.</li>
+    <li>Escribe el orden con las fracciones originales, no con las convertidas.</li>
+  </ol>
+  <div class="res">De menor a mayor: 5/8, 2/3, 3/4.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>Doña Rosa usó 1 y 1/3 de taza de harina en la mañana y 2/5 de taza en la tarde. ¿Cuánta harina usó en total?</span></div>
+  <ol>
+    <li>Un número mixto es un entero con su fracción, y aquí lo escribimos con una 'y' en medio (1 y 1/3) para que no se confunda con 11/3.</li>
+    <li>Convierte el número mixto a fracción: 1 y 1/3 = (1 x 3 + 1)/3 = 4/3.</li>
+    <li>Denominador común de 3 y 5: el 15. Entonces 4/3 = 20/15 y 2/5 = 6/15.</li>
+    <li>Suma solo los numeradores: 20/15 + 6/15 = 26/15.</li>
+    <li>Vuelve a número mixto: 26 ÷ 15 da 1 y sobran 11, así que 26/15 = 1 y 11/15.</li>
+  </ol>
+  <div class="res">Usó 1 y 11/15 de taza de harina.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: Fracciones: leerlas, compararlas y sumarlas</span><span>Página 3 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<table>
+  <tr><th>Fracción</th><th>División</th><th>Decimal</th></tr>
+  <tr><td class="k">1/4</td><td>1 ÷ 4</td><td>0.25</td></tr>
+  <tr><td class="k">1/5</td><td>1 ÷ 5</td><td>0.2</td></tr>
+  <tr><td class="k">1/8</td><td>1 ÷ 8</td><td>0.125</td></tr>
+  <tr><td class="k">2/5</td><td>2 ÷ 5</td><td>0.4</td></tr>
+  <tr><td class="k">7/8</td><td>7 ÷ 8</td><td>0.875</td></tr>
+  <tr><td class="k">9/10</td><td>9 ÷ 10</td><td>0.9</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> 2/5 + 1/3 = 3/8</div>
+  <div><b class="why">¿Por qué está mal?</b> Sumaste arriba con arriba y abajo con abajo. Los quintos y los tercios no son pedazos del mismo tamaño. Fíjate además que 3/8 es menor que 2/5: el total nunca puede quedar más pequeño que una de las partes.</div>
+  <div><b class="ok">Correcto:</b> Denominador común 15: 2/5 = 6/15 y 1/3 = 5/15, entonces 6/15 + 5/15 = 11/15.</div>
+</div>
+
+<div class="materia-tag">🔵 Matemáticas · Bloque 2 de 4</div>
+<h2>✖️ Multiplicar, dividir y el punto decimal</h2>
+<p>Multiplicar fracciones es lo más sencillo de todo: multiplicas numerador por numerador y denominador por denominador, sin buscar denominador común, y simplificas al final. Para dividir, dejas igual la primera, inviertes la segunda y multiplicas. Si te falta un factor, divides el resultado entre el factor que sí conoces. Con los decimales el trabajo es el mismo de siempre; lo único nuevo es dónde cae el punto: al multiplicar lo cuentas, al dividir lo corres.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> Al multiplicar decimales, multiplica como si no hubiera punto y después cuenta cuántas cifras decimales traían los dos factores juntos: esas mismas van en la respuesta.</div>
+
+<div class="caja regla">⚡ <b>Regla:</b> Al dividir entre un decimal, corre el punto del divisor hasta volverlo entero y corre el punto del dividendo los mismos lugares. El resultado no cambia.</div>
+
+<div class="caja hn">🇭🇳 <b>En Honduras:</b> Si 2.5 libras de frijol cuestan L.42.50, corres el punto un lugar en los dos números y te queda 425 ÷ 25 = 17: cada libra sale a L.17.00. Eso es lo que haces cada vez que sacas el precio por libra en el mercado.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: Fracciones: leerlas, compararlas y sumarlas y Multiplicar, dividir y el punto decimal</span><span>Página 4 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>Halla el factor que falta: 3/4 x ? = 9/20.</span></div>
+  <ol>
+    <li>Para hallar un factor que falta, divide el resultado entre el factor que ya tienes: 9/20 ÷ 3/4.</li>
+    <li>Dividir es multiplicar por la invertida: 9/20 x 4/3.</li>
+    <li>Multiplica arriba con arriba y abajo con abajo: 36/60.</li>
+    <li>Simplifica entre 12: 36 ÷ 12 = 3 y 60 ÷ 12 = 5, o sea 3/5. Comprueba: 3/4 x 3/5 = 9/20.</li>
+  </ol>
+  <div class="res">El factor que falta es 3/5.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>En el mercado la libra de tomate cuesta L.18.60. Doña Elena lleva 2.5 libras. ¿Cuánto paga?</span></div>
+  <ol>
+    <li>Multiplica sin fijarte en el punto: 1860 x 25 = 46500.</li>
+    <li>Cuenta las cifras decimales: 18.60 tiene dos y 2.5 tiene una, en total tres.</li>
+    <li>Corre el punto tres lugares desde la derecha en 46500 y queda 46.500, que es 46.5.</li>
+    <li>En dinero siempre se escriben dos cifras después del punto.</li>
+  </ol>
+  <div class="res">Paga L.46.50.</div>
+</div>
+
+<table>
+  <tr><th>Operación</th><th>Qué haces</th><th>Ejemplo</th></tr>
+  <tr><td class="k">Multiplicar fracciones</td><td>Arriba con arriba y abajo con abajo</td><td>3/7 x 2/5 = 6/35</td></tr>
+  <tr><td class="k">Dividir fracciones</td><td>Invierte la segunda y multiplica</td><td>3/4 ÷ 2/5 = 3/4 x 5/2 = 15/8 = 1 y 7/8</td></tr>
+  <tr><td class="k">Multiplicar decimales</td><td>Multiplica sin punto y cuenta los decimales</td><td>1.2 x 0.4 = 0.48</td></tr>
+  <tr><td class="k">Dividir decimales</td><td>Corre el punto en los dos números</td><td>7.2 ÷ 0.8 = 72 ÷ 8 = 9</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> 0.3 x 0.4 = 1.2</div>
+  <div><b class="why">¿Por qué está mal?</b> Multiplicaste 3 x 4 y pusiste el punto donde te pareció. Los dos factores son menores que uno, así que el resultado tiene que quedar todavía más pequeño, nunca más grande.</div>
+  <div><b class="ok">Correcto:</b> 3 x 4 = 12 y entre los dos factores hay dos cifras decimales, así que el punto va dos lugares: 0.12.</div>
+</div>
+
+<div class="materia-tag">🔵 Matemáticas · Bloque 3 de 4</div>
+<h2>🚌 Divisibilidad, m.c.m., M.C.D. y viajes</h2>
+<p>Saber si un número se divide exacto entre otro te ahorra hacer la división completa. Los múltiplos y los divisores contestan dos preguntas distintas: el mínimo común múltiplo (m.c.m.) sirve cuando dos cosas se repiten cada cierto tiempo y quieres saber cuándo vuelven a coincidir; el máximo común divisor (M.C.D.) sirve cuando repartes en grupos iguales y no quieres que sobre nada. Y en los viajes todo sale de una sola idea: la distancia es la velocidad por el tiempo.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> Un número es divisible entre 3 si la suma de sus cifras es múltiplo de 3. No importa qué tan largo sea el número: solo sumas sus cifras.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: Multiplicar, dividir y el punto decimal y Divisibilidad, m.c.m., M.C.D. y viajes</span><span>Página 5 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="caja idea">💡 <b>Idea clave:</b> El m.c.m. es para volver a coincidir y sale igual o más grande que los números dados. El M.C.D. es para repartir en partes iguales y sale igual o más pequeño.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> En los viajes: distancia = velocidad x tiempo. De ahí salen las otras dos: velocidad = distancia ÷ tiempo, y tiempo = distancia ÷ velocidad.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>Don Chepe tiene 24 mangos y 36 naranjas. Quiere armar bolsas iguales, todas con la misma cantidad de cada fruta y sin que sobre nada. ¿Cuántas bolsas arma como máximo y qué lleva cada una?</span></div>
+  <ol>
+    <li>Como se trata de repartir sin que sobre, se usa el M.C.D.</li>
+    <li>Divisores de 24: 1, 2, 3, 4, 6, 8, 12 y 24. Divisores de 36: 1, 2, 3, 4, 6, 9, 12, 18 y 36.</li>
+    <li>El mayor que aparece en las dos listas es 12: ese es el M.C.D.</li>
+    <li>Reparte: 24 ÷ 12 = 2 mangos y 36 ÷ 12 = 3 naranjas por bolsa.</li>
+  </ol>
+  <div class="res">12 bolsas, cada una con 2 mangos y 3 naranjas.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>Un bus sale de Comayagua y recorre 210 km en 3 horas. ¿A qué velocidad va? Si sigue igual, ¿cuánto tarda en un tramo de 350 km?</span></div>
+  <ol>
+    <li>La velocidad es la distancia entre el tiempo: 210 ÷ 3 = 70.</li>
+    <li>Va a 70 km/h, o sea que en cada hora avanza 70 km.</li>
+    <li>Para el tiempo, divide la distancia entre la velocidad: 350 ÷ 70 = 5.</li>
+    <li>Comprueba multiplicando: 70 x 5 = 350 km, así que está bien.</li>
+  </ol>
+  <div class="res">Va a 70 km/h y tarda 5 horas en los 350 km.</div>
+</div>
+
+<table>
+  <tr><th>Divisible entre</th><th>Cómo lo ves</th><th>Ejemplo</th></tr>
+  <tr><td class="k">2</td><td>Termina en 0, 2, 4, 6 u 8</td><td>138 termina en 8</td></tr>
+  <tr><td class="k">3</td><td>La suma de sus cifras es múltiplo de 3</td><td>471, porque 4 + 7 + 1 = 12</td></tr>
+  <tr><td class="k">5</td><td>Termina en 0 o en 5</td><td>285 termina en 5</td></tr>
+  <tr><td class="k">10</td><td>Termina en 0</td><td>940 termina en 0</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Dos buses salen de la terminal, uno cada 15 minutos y otro cada 20. Para saber cuándo vuelven a salir juntos busqué el M.C.D. y contesté 5 minutos.</div>
+  <div><b class="why">¿Por qué está mal?</b> El M.C.D. sirve para repartir, no para coincidir. Además 5 minutos es menos de lo que tarda cualquiera de los dos buses en volver a salir, así que la respuesta ni siquiera es posible.</div>
+  <div><b class="ok">Correcto:</b> Se usa el m.c.m.: múltiplos de 15 son 15, 30, 45 y 60; múltiplos de 20 son 20, 40 y 60. Coinciden a los 60 minutos.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: Divisibilidad, m.c.m., M.C.D. y viajes (sigue)</span><span>Página 6 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="materia-tag">🔵 Matemáticas · Bloque 4 de 4</div>
+<h2>📐 Áreas, volúmenes, sólidos y promedio</h2>
+<p>El área es el piso que cubre una figura y se mide en unidades cuadradas; el volumen es lo que cabe dentro de un cuerpo y se mide en unidades cúbicas. Tanto en el prisma rectangular como en el cilindro el volumen sale igual: área de la base por la altura. En el círculo ten cuidado con el radio, que es la mitad del diámetro. Y el promedio te dice cómo le fue en general a un grupo: sumas todos los datos y divides entre cuántos son.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> Área del cuadrado: lado x lado. Área del círculo: 3.14 x radio x radio. Volumen del prisma rectangular y del cilindro: área de la base x altura.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> El promedio se saca sumando todos los datos y dividiendo entre cuántos son: con 75, 88, 92 y 85 sumas 340 y divides entre 4, o sea 85.</div>
+
+<div class="caja hn">🇭🇳 <b>En Honduras:</b> Muchas cosas del pueblo tienen simetría reflexiva: la fachada de la iglesia, una mariposa. Si al doblar por una línea las dos mitades calzan exactas, esa línea es un eje de simetría.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>El comal de doña Rosa es redondo y tiene 20 cm de radio. ¿Cuál es el área de su superficie? Usa pi = 3.14.</span></div>
+  <ol>
+    <li>El área del círculo es 3.14 x radio x radio, así que primero multiplica el radio por sí mismo: 20 x 20 = 400.</li>
+    <li>Ahora multiplica por 3.14: 3.14 x 400 = 1256.</li>
+    <li>Como estás midiendo área, la unidad va al cuadrado: centímetros cuadrados.</li>
+  </ol>
+  <div class="res">El comal tiene 1256 cm² de superficie.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>El tanque de agua de la escuela es un cilindro de 2 m de radio y 3 m de altura. ¿Cuántos metros cúbicos de agua le caben?</span></div>
+  <ol>
+    <li>El volumen de un cilindro es el área de la base por la altura, y la base es un círculo.</li>
+    <li>Área de la base: 3.14 x 2 x 2 = 12.56 m².</li>
+    <li>Multiplica por la altura: 12.56 x 3 = 37.68.</li>
+    <li>Como estás midiendo volumen, la unidad va al cubo: metros cúbicos.</li>
+  </ol>
+  <div class="res">Al tanque le caben 37.68 m³ de agua.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: Áreas, volúmenes, sólidos y promedio</span><span>Página 7 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<table>
+  <tr><th>Cuerpo</th><th>Cómo se reconoce o se forma</th><th>En la vida diaria</th></tr>
+  <tr><td class="k">Prisma rectangular</td><td>Seis caras y todas rectangulares</td><td>La caja de tizas</td></tr>
+  <tr><td class="k">Pirámide</td><td>Una base plana y caras triangulares que se juntan en una punta</td><td>El techo de una torre</td></tr>
+  <tr><td class="k">Cilindro</td><td>Lo forma un rectángulo que gira sobre uno de sus lados</td><td>Un tarro de leche</td></tr>
+  <tr><td class="k">Cono</td><td>Lo forma un triángulo rectángulo que gira sobre uno de sus catetos</td><td>Un cucurucho de papel</td></tr>
+  <tr><td class="k">Esfera</td><td>La forma un semicírculo que gira sobre su diámetro</td><td>Una pelota</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Un círculo de 10 cm de diámetro: área = 3.14 x 10 x 10 = 314 cm².</div>
+  <div><b class="why">¿Por qué está mal?</b> En la fórmula va el radio, no el diámetro. El radio es la mitad: 10 ÷ 2 = 5 cm. Al usar el diámetro el área te sale cuatro veces más grande de lo que es.</div>
+  <div><b class="ok">Correcto:</b> Con el radio correcto: 3.14 x 5 x 5 = 78.5 cm².</div>
+</div>
+
+<div class="materia-tag">🔵 Matemáticas</div>
+<h2>⚠️ Errores que más cuestan puntos</h2>
+<p>Las opciones equivocadas del examen no están puestas al azar: cada una es un error que alguien comete
+de verdad. Si reconoces el error, reconoces la trampa.</p>
+
+<div class="err">
+  <div class="err-t">Sumar los de abajo también</div>
+  <div><b class="mal">Mal:</b> El alumno escribe 1/4 + 2/4 = 3/8. Suma los de arriba (1 + 2 = 3) y también los de abajo (4 + 4 = 8). En un problema de la pulpería: 1/4 de libra de café más 2/4 de libra de café le da 3/8 de libra, o sea menos de media libra.</div>
+  <div><b class="why">¿Por qué está mal?</b> El denominador no es un número que se suma: dice en cuántos pedazos iguales se partió la unidad, y esos pedazos siguen siendo cuartos antes y después de juntarlos. Fíjese en lo que salió: 3/8 es menos que 2/4 (2/4 son 4/8), o sea menos que una de las dos partes que juntó. Si al sumar pedazos el resultado sale más chico que una de las partes, la cuenta ya avisó que está mala.</div>
+  <div><b class="ok">Correcto:</b> Con el mismo denominador se suman solo los numeradores y el denominador se queda igual: 1/4 + 2/4 = 3/4. Tres cuartos de libra es más que 2/4 y más que 1/4, que es lo que tiene que pasar cuando se juntan dos pedazos. Si los denominadores son distintos, primero se busca el m.c.m. para igualarlos: en 1/2 + 1/3, el m.c.m. de 2 y 3 es 6, entonces 3/6 + 2/6 = 5/6.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: Áreas, volúmenes, sólidos y promedio y errores comunes</span><span>Página 8 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="err">
+  <div class="err-t">Se le perdió el punto decimal</div>
+  <div><b class="mal">Mal:</b> El alumno multiplica 2.5 por 1.2 y escribe 30: hizo 25 por 12 = 300 y no contó los lugares decimales. Otro cuenta lugares de más y escribe 0.3. Y cuando compra 2.5 libras de frijoles a L.12.50 la libra, multiplica 2.5 por 12.50 y contesta L.3125.00.</div>
+  <div><b class="why">¿Por qué está mal?</b> Al multiplicar decimales se hace primero la cuenta como si fueran números enteros, y ahí el punto desaparece de la vista; si nadie lo vuelve a poner en su lugar, la respuesta queda diez, cien o mil veces más grande (o más chica), según los lugares que se perdieron. En dinero eso se nota rapidito: nadie paga L.3125.00 por dos libras y media de frijoles.</div>
+  <div><b class="ok">Correcto:</b> Se cuentan los lugares decimales de los dos factores y el resultado lleva esa misma cantidad. 2.5 tiene 1 lugar y 1.2 tiene 1 lugar: en total 2 lugares. Se multiplica 25 por 12 = 300 y se corren 2 lugares desde la derecha: 3.00, o sea 3. En el otro caso, 2.5 (1 lugar) por 12.50 (2 lugares) son 3 lugares: 25 por 1250 = 31250, se corren 3 lugares y queda 31.250, o sea L.31.25. Antes de contestar conviene calcular por encima: 2.5 libras a un poquito más de L.12 son como L.31.</div>
+</div>
+
+<div class="err">
+  <div class="err-t">Cambiar el m.c.m. por el M.C.D.</div>
+  <div><b class="mal">Mal:</b> Le piden el m.c.m. de 8 y 12 y contesta 4. Le piden el M.C.D. de 8 y 12 y contesta 24. Confunde los dos porque los nombres se parecen y busca el que le salga primero.</div>
+  <div><b class="why">¿Por qué está mal?</b> El M.C.D. es el mayor número que cabe exacto en los dos, así que siempre sale menor o igual que el más chico; el m.c.m. es el primer múltiplo que comparten, así que siempre sale mayor o igual que el más grande. Contestar 4 en un m.c.m. es imposible, porque 4 es más chico que 8 y que 12.</div>
+  <div><b class="ok">Correcto:</b> M.C.D. de 8 y 12: los divisores de 8 son 1, 2, 4, 8; los de 12 son 1, 2, 3, 4, 6, 12; el mayor que comparten es 4. m.c.m. de 8 y 12: los múltiplos de 8 son 8, 16, 24, 32; los de 12 son 12, 24, 36; el primero que comparten es 24. Truco para revisar: el M.C.D. sirve para repartir en grupos iguales (repartir 8 lápices y 12 cuadernos en la mayor cantidad de bolsas iguales, salen 4 bolsas, con 2 lápices y 3 cuadernos cada una) y el m.c.m. sirve para saber cuándo dos cosas vuelven a coincidir (si un bus pasa cada 8 minutos y otro cada 12, vuelven a pasar juntos a los 24 minutos).</div>
+</div>
+
+<div class="err">
+  <div class="err-t">Área, perímetro y volumen revueltos</div>
+  <div><b class="mal">Mal:</b> Le piden el área de una cancha de 20 metros de largo por 10 de ancho y contesta 60, que es lo que mide el borde. En una caja de 4 cm por 3 cm por 2 cm contesta 12 centímetros cuadrados en vez del volumen, porque solo multiplicó dos medidas. Y las unidades las pone al tanteo: cm, cm cuadrados o cm cúbicos, lo que sea.</div>
+  <div><b class="why">¿Por qué está mal?</b> El perímetro mide el contorno y se suma (sirve para el alambre de la cerca), el área mide la superficie y multiplica largo por ancho (sirve para las baldosas del piso), y el volumen mide lo que cabe adentro y multiplica las tres medidas (sirve para el agua del tanque). Como el número solo no dice nada, la unidad es la que delata el error: si le piden baldosas y contesta en metros simples, midió el borde y no el piso.</div>
+  <div><b class="ok">Correcto:</b> Cancha de 20 m por 10 m: perímetro = 20 + 10 + 20 + 10 = 60 m (el alambre). Área = 20 por 10 = 200 metros cuadrados (la grama). Caja de 4 cm por 3 cm por 2 cm: volumen = 4 por 3 por 2 = 24 centímetros cúbicos (lo que cabe adentro). Regla para acordarse: una medida sola va en metros, dos medidas multiplicadas van en metros cuadrados, tres medidas multiplicadas van en metros cúbicos.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: errores comunes (sigue)</span><span>Página 9 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 10 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="err">
+  <div class="err-t">Dividir fracciones al revés y dejar la respuesta sin simplificar</div>
+  <div><b class="mal">Mal:</b> En 3/4 dividido entre 1/2 el alumno voltea la primera fracción y hace 4/3 por 1/2 = 4/6, o multiplica derecho y escribe 3/8. Y cuando le sale bien 6/4, deja 6/4 escrito así, sin simplificar.</div>
+  <div><b class="why">¿Por qué está mal?</b> En una división de fracciones la primera se queda tal como está y la que se invierte es la segunda, la del divisor. Dividir 3/4 entre 1/2 es preguntar cuántas mitades caben en 3/4, y cabe más de una: por eso la respuesta tiene que salir mayor que 1, y las dos cuentas malas dan 4/6 (que es 2/3) y 3/8, las dos menores que 1. Y una respuesta sin simplificar es una respuesta a medias: en la prueba 6/4 y 3/2 valen lo mismo, pero la hoja pide la fracción en su forma más simple.</div>
+  <div><b class="ok">Correcto:</b> 3/4 dividido entre 1/2: la primera se queda, la segunda se invierte y se multiplica: 3/4 por 2/1 = 6/4. Ahora se simplifica dividiendo arriba y abajo entre el M.C.D. de 6 y 4, que es 2: 6 entre 2 = 3 y 4 entre 2 = 2, queda 3/2, o sea 1 1/2. Se comprueba con la pregunta: en 3/4 de tortilla cabe una mitad entera (que es 2/4) y todavía sobra 1/4, que es la mitad de una mitad; por eso caben 1 1/2 mitades, igual que 3/2. Correcto.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: errores comunes (sigue)</span><span>Página 10 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 11 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="materia-tag">🟡 Español · Bloque 1 de 4</div>
+<h2>🎯 La idea principal: de qué trata el texto</h2>
+<p>Cuando terminas de leer un texto, alguien te pregunta: ¿de qué trataba? Si contestas con una sola oración que cubre todo lo leído, encontraste la idea principal. Si contestas con un dato suelto, encontraste un detalle. Los dos están en el texto, pero no valen lo mismo. La idea principal manda sobre las demás oraciones: los detalles existen para explicarla o darle ejemplos. En la prueba te van a pedir la idea principal, el mejor título o el tema. Son la misma pregunta con distinto disfraz.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> La idea principal cubre TODO el texto. Si una opción solo habla de una parte (de un párrafo, de un personaje, de un dato), es un detalle, no la idea principal.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> Lee el texto y hazte esta pregunta: ¿de quién o de qué habla? y ¿qué dice de eso? Junta las dos respuestas en una oración. Esa oración es la idea principal, aunque no esté escrita igual en el texto.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> Cuidado con la opción que es verdadera pero pequeña. En la prueba casi siempre hay un distractor que sí aparece en el texto, pero solo ocupa un renglón. Verdadero no es lo mismo que principal.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>¿cuál es la idea principal del texto?</span></div>
+  <div class="ejem-txt">En la aldea El Zapotal, doña Reina abre su pulpería a las cinco de la mañana. A esa hora pasan los que van a la milpa y compran su pan y su café. A media mañana llegan las señoras por manteca y sal. Al mediodía, los niños de la escuela compran topogigios. Y en la tarde, los que regresan del trabajo. Doña Reina dice que su pulpería cambia de clientes cuatro veces al día. Pregunta:</div>
+  <ol>
+    <li>Pregunto de quién o de qué habla el texto: de la pulpería de doña Reina.</li>
+    <li>Pregunto qué dice de eso: que a cada hora del día le llegan clientes distintos.</li>
+    <li>Reviso que mi respuesta cubra todo: la madrugada, la media mañana, el mediodía y la tarde caben adentro. Sí cubre.</li>
+    <li>Descarto los detalles: que los niños compren topogigios es cierto, pero solo ocupa un renglón del texto.</li>
+  </ol>
+  <div class="res">La idea principal es que la pulpería de doña Reina recibe distintos clientes según la hora del día, porque esa oración abarca los cuatro momentos que narra el texto.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: La idea principal: de qué trata el texto</span><span>Página 11 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 12 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>¿cuál es el mejor título para este texto?</span></div>
+  <div class="ejem-txt">El comal de barro se calienta despacio y guarda el calor mucho tiempo. Por eso la tortilla se cuece pareja y no se quema por un lado. En cambio, la plancha de metal se calienta rápido pero se enfría igual de rápido, y hay que estar atendiendo el fuego. Doña Elvira, de Comayagua, cambió su plancha por un comal de barro y dice que ahora hace el doble de tortillas con la misma leña. Pregunta:</div>
+  <ol>
+    <li>Busco de qué habla: del comal de barro comparado con la plancha de metal.</li>
+    <li>Busco qué dice: que el comal guarda mejor el calor y por eso rinde más.</li>
+    <li>Un título de una sola parte, como Doña Elvira de Comayagua, deja fuera casi todo el texto: es un detalle.</li>
+    <li>Un título general de más, como La cocina hondureña, no dice nada de lo que el texto explica.</li>
+  </ol>
+  <div class="res">El mejor título es Por qué el comal de barro rinde más que la plancha, porque nombra a los dos objetos comparados y la razón que explica el texto.</div>
+</div>
+
+<table>
+  <tr><th>En qué te fijas</th><th>Idea principal</th><th>Detalle</th></tr>
+  <tr><td class="k">Cuánto abarca</td><td>Todo el texto</td><td>Un renglón o un párrafo</td></tr>
+  <tr><td class="k">Si la quito</td><td>El texto pierde el sentido</td><td>El texto se entiende igual</td></tr>
+  <tr><td class="k">Cómo suena</td><td>Una oración general</td><td>Un dato, un nombre, un número</td></tr>
+  <tr><td class="k">Dónde suele estar</td><td>Cuando está escrita, en la primera o la última oración</td><td>En medio, dando ejemplos</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Marcar como idea principal la opción Los niños compran topogigios al mediodía.</div>
+  <div><b class="why">¿Por qué está mal?</b> Es verdadera y está escrita en el texto, y eso hace que el alumno la sienta segura. Pero solo cuenta uno de los cuatro momentos del día: deja fuera la madrugada, la media mañana y la tarde.</div>
+  <div><b class="ok">Correcto:</b> Antes de marcar, pregúntate si esa opción cubre el texto completo. Si le sobra texto por fuera, es un detalle.</div>
+</div>
+
+<div class="materia-tag">🟡 Español · Bloque 2 de 4</div>
+<h2>🔍 Literal e inferencial: lo que dice y lo que se deduce</h2>
+<p>Hay dos clases de preguntas de comprensión y conviene que sepas cuál te están haciendo. La literal te pide algo que está escrito con todas sus letras: la buscas y la copias. La inferencial te pide algo que el autor no escribió pero dejó ver: la deduces juntando pistas. Se reconocen por cómo empiezan. Según el texto, ¿qué hizo? es literal. ¿Por qué lo hizo? o ¿qué pretendía? es inferencial. Y en las dos, la respuesta se apoya en el texto: nunca en lo que tú imaginas.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> Toda respuesta tiene que poder defenderse señalando el texto con el dedo. En la literal señalas la oración. En la inferencial señalas las pistas que te llevaron a deducirla.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: La idea principal: de qué trata el texto y Literal e inferencial: lo que dice y lo que se deduce</span><span>Página 12 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 13 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="caja truco">🎯 <b>Truco:</b> En la literal, subraya en el texto la parte donde está la respuesta antes de marcar. Si no la encuentras subrayada, no la marques.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> Una inferencia no es adivinar. Es la única conclusión razonable que sale de las pistas. Si tu respuesta se sostiene con algo que sabes de tu casa pero que el texto no dice, no es inferencia: es invención.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>¿por qué Marvin no quiso jugar?</span></div>
+  <div class="ejem-txt">Marvin guardó la pelota en la mochila y se sentó en la grada más alta de la cancha. Sus compañeros lo llamaron dos veces para que bajara a jugar. Él contestó que se le había torcido el tobillo. Esa mañana el maestro le había devuelto el examen de matemáticas: Marvin lo dobló en cuatro y lo metió hasta el fondo del cuaderno, sin enseñárselo a nadie. Cuando el equipo se fue, Marvin bajó caminando normal y pateó una piedra hasta la esquina. Pregunta:</div>
+  <ol>
+    <li>Reviso si la respuesta está escrita: el texto nunca dice el motivo verdadero, así que la pregunta es inferencial.</li>
+    <li>Junto la primera pista: dijo que tenía el tobillo torcido, pero después bajó caminando normal y pateó una piedra hasta la esquina.</li>
+    <li>Junto la segunda pista: cuando le devolvieron el examen, lo dobló en cuatro y lo escondió sin enseñárselo a nadie.</li>
+    <li>Deduzco lo único razonable: el tobillo era una excusa y lo que traía era el disgusto por su examen.</li>
+  </ol>
+  <div class="res">No quiso jugar porque estaba desanimado por su examen, y eso se sostiene con dos cosas que el texto sí cuenta: escondió el examen sin enseñárselo a nadie y después caminó y pateó una piedra sin ninguna molestia.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>¿a qué hora salió el bus ese martes?</span></div>
+  <div class="ejem-txt">El bus de la ruta a La Esperanza sale de la terminal a las seis. Don Rigoberto, el chofer, revisa las llantas antes de arrancar. Ese martes encontró una casi lisa y avisó que saldrían hasta las siete, mientras la cambiaba. Tres pasajeros se bajaron molestos y buscaron otro bus. El resto esperó. A las siete en punto el bus salió con la llanta nueva. Pregunta: según el texto,</div>
+  <ol>
+    <li>Miro cómo empieza la pregunta: dice según el texto, así que la respuesta está escrita.</li>
+    <li>Busco la palabra clave salió en el texto y encuentro dos horas: las seis y las siete.</li>
+    <li>Leo con cuidado: las seis es la hora de siempre, no la de ese martes.</li>
+    <li>Subrayo la oración final: a las siete en punto el bus salió con la llanta nueva.</li>
+  </ol>
+  <div class="res">Salió a las siete, porque el texto lo dice en la última oración; las seis era su hora normal, no la de ese martes.</div>
+</div>
+
+<table>
+  <tr><th>Tipo</th><th>La pregunta empieza así</th><th>Qué haces</th></tr>
+  <tr><td class="k">Literal</td><td>Según el texto..., ¿Qué hizo?, ¿Dónde?, ¿Cuándo?</td><td>Buscas la oración y la subrayas</td></tr>
+  <tr><td class="k">Inferencial</td><td>¿Por qué?, ¿Para qué?, ¿Qué pretendía?</td><td>Juntas dos o tres pistas y deduces</td></tr>
+  <tr><td class="k">Inferencial</td><td>Se puede deducir que..., El personaje se sentía...</td><td>Buscas lo que el personaje hizo, no lo que dijo</td></tr>
+</table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: Literal e inferencial: lo que dice y lo que se deduce (sigue)</span><span>Página 13 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 14 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Responder que Marvin no jugó porque le dolía el tobillo.</div>
+  <div><b class="why">¿Por qué está mal?</b> El alumno copió lo que dijo el personaje sin fijarse en lo que el personaje hizo después. El texto muestra que bajó caminando normal y pateó una piedra: eso contradice el dolor.</div>
+  <div><b class="ok">Correcto:</b> En las preguntas de por qué, cree más en lo que el personaje hace que en lo que dice. El autor deja la verdad en las acciones.</div>
+</div>
+
+<div class="materia-tag">🟡 Español · Bloque 3 de 4</div>
+<h2>🔤 Vocabulario en contexto: la palabra que no conoces</h2>
+<p>En la prueba te van a subrayar una palabra difícil y te van a preguntar qué significa en ese texto. Tranquilo: no es prueba de memoria ni necesitas diccionario. La respuesta está en las palabras que rodean a la subrayada. Ese vecindario se llama contexto, y siempre trae pistas: un ejemplo, una explicación, una comparación o una palabra opuesta. Además hay una técnica que casi nunca falla y se llama sustituir: metes cada opción en el lugar de la palabra y lees la oración completa. La que suena bien y no cambia el sentido, esa es.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> La misma palabra cambia de significado según el texto. Banco puede ser un asiento, un lugar de dinero o un grupo de peces. No busques el significado que sabes: busca el que sirve ahí.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> Técnica de sustituir: tapa la palabra subrayada con el dedo, mete la opción A y lee la oración entera. Después la B, la C y la D. Descarta las que suenan raras o cambian lo que pasa.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> Fíjate en las palabras vecinas que avisan. Es decir y o sea traen la explicación pegada. Pero y en cambio traen lo contrario. Como y igual que traen una comparación.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>El río de la aldea venía manso desde hacía semanas. Los niños lo cruzaban a pie por el vado para ir a la escuela. Pero el jueves llovió toda la noche en la montaña y el viernes bajó bramando, arrastrando ramas y piedras. Don Chepe, que vive frente al vado, no dejó pasar a nadie ese día. Pregunta: en el texto, la palabra manso significa:</span></div>
+  <ol>
+    <li>Busco la palabra en su oración: el río venía manso desde hacía semanas.</li>
+    <li>Busco la pista del vecindario: la palabra pero anuncia lo contrario, y lo contrario es bajó bramando y arrastrando piedras.</li>
+    <li>Si bramando y arrastrando es lo contrario de manso, entonces manso es tranquilo y sin fuerza.</li>
+    <li>Sustituyo para comprobar: el río venía tranquilo desde hacía semanas. Encaja, y explica que los niños lo cruzaran a pie.</li>
+  </ol>
+  <div class="res">Manso significa tranquilo y de poca corriente, porque el texto lo opone a un río que baja bramando y arrastrando piedras.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: Literal e inferencial: lo que dice y lo que se deduce y Vocabulario en contexto: la palabra que no conoces</span><span>Página 14 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 15 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>En la feria de Copán, don Isidro vende sombreros de junco. Su puesto es el más concurrido de todo el corredor: hay gente esperando turno desde que abre hasta que cierra. Los otros vendedores lo miran y no entienden. Él dice que el secreto no es el precio, sino que se aprende el nombre de cada cliente que vuelve. Pregunta: en el texto, la palabra concurrido significa:</span></div>
+  <ol>
+    <li>Leo la oración completa: su puesto es el más concurrido de todo el corredor.</li>
+    <li>Busco la explicación pegada: los dos puntos avisan que viene la aclaración, y dice hay gente esperando turno desde que abre hasta que cierra.</li>
+    <li>Pruebo las opciones sustituyendo: caro no encaja, porque el texto dice que el secreto no es el precio.</li>
+    <li>Pruebo visitado por mucha gente: su puesto es el más visitado por mucha gente de todo el corredor. Encaja perfecto.</li>
+  </ol>
+  <div class="res">Concurrido significa visitado por mucha gente, porque el texto lo explica en seguida diciendo que hay gente esperando turno desde que abre hasta que cierra.</div>
+</div>
+
+<table>
+  <tr><th>Si ves...</th><th>Lo que viene es...</th><th>Ejemplo</th></tr>
+  <tr><td class="k">es decir, o sea, dos puntos</td><td>La explicación de la palabra</td><td>el vado, es decir, la parte del río donde se puede cruzar a pie</td></tr>
+  <tr><td class="k">pero, en cambio, sin embargo</td><td>Lo contrario de la palabra</td><td>venía manso, pero bajó bramando</td></tr>
+  <tr><td class="k">como, igual que, parecido a</td><td>Una comparación que aclara</td><td>áspero como un comal viejo</td></tr>
+  <tr><td class="k">por ejemplo, tales como</td><td>Casos que ilustran la palabra</td><td>granos básicos, por ejemplo frijoles y maíz</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Contestar que manso significa que no muerde, como cuando se dice que un perro es manso, porque así lo aprendió el alumno en su casa.</div>
+  <div><b class="why">¿Por qué está mal?</b> Trajo el significado que ya conocía en vez de leer el vecindario. En este texto la palabra no habla de un animal: habla de un río.</div>
+  <div><b class="ok">Correcto:</b> Sustituye siempre la opción dentro de la oración del texto y lee completo. Si la oración queda rara, esa opción no es.</div>
+</div>
+
+<div class="materia-tag">🟡 Español · Bloque 4 de 4</div>
+<h2>📚 Tipos de texto y la parte escrita</h2>
+<p>No todos los textos se leen igual, y en la prueba te van a preguntar de qué tipo es el que acabas de leer. Cada tipo deja marcas visibles: la fábula termina en moraleja, la carta lleva saludo y despedida, la noticia contesta qué, quién, cuándo y dónde en las primeras líneas, el instructivo lleva pasos numerados y verbos que mandan. Reconocer la marca es cuestión de segundos si sabes cuál buscar. Y al final de la prueba tendrás que escribir tú: narrar unas imágenes y dar tu opinión con razones.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: Vocabulario en contexto: la palabra que no conoces y Tipos de texto y la parte escrita</span><span>Página 15 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 16 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="caja regla">⚡ <b>Regla:</b> Cada tipo de texto se reconoce por su forma antes que por su tema. Un texto sobre el café puede ser noticia, instructivo o cuento: lo que decide es cómo está armado, no de qué habla.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> Para narrar una secuencia de imágenes, escribe un párrafo por imagen y encadénalos con conectores de tiempo: primero, después, entonces, al final. Ponles nombre a los personajes: un cuento sin nombres se enreda.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> Para opinar, usa esta fórmula de tres partes: digo lo que pienso, doy dos razones y cierro repitiendo mi postura. Una opinión sin razones no vale puntos, aunque esté bien escrita.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>¿qué tipo de texto es y cómo lo sabes?</span></div>
+  <div class="ejem-txt">La zorra andaba con hambre y vio un racimo de guineos colgando alto en la mata. Saltó tres veces y no alcanzó ninguno. Se fue diciendo que estaban verdes y que le iban a hacer daño. Desde la rama, la lora la vio irse y no dijo nada. Moraleja: quien no consigue lo que quiere a veces prefiere decir que no lo quería. Pregunta:</div>
+  <ol>
+    <li>Miro las marcas: los personajes son animales que hablan y piensan como personas.</li>
+    <li>Miro el final: hay una enseñanza escrita aparte, presentada con la palabra Moraleja.</li>
+    <li>Descarto el cuento: el cuento también narra, pero no termina con una enseñanza escrita aparte.</li>
+    <li>Descarto la noticia y el instructivo: no informa de un hecho real ni da pasos para hacer algo.</li>
+  </ol>
+  <div class="res">Es una fábula, porque los personajes son animales con conducta humana y cierra con una moraleja escrita al final.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>¿qué tipo de texto es y para qué sirve?</span></div>
+  <div class="ejem-txt">Cómo sembrar frijol en una cubeta. 1. Consigue una cubeta vieja y hazle tres hoyos en el fondo. 2. Llena con tierra negra hasta dos dedos del borde. 3. Entierra cuatro frijoles a dos centímetros de hondo. 4. Riega poquito cada tarde. 5. A los ocho días saldrán las primeras hojas. No mojes de más: el frijol se pudre. Pregunta:</div>
+  <ol>
+    <li>Miro el título: empieza con Cómo, que anuncia una manera de hacer algo.</li>
+    <li>Miro la forma: los renglones van numerados del 1 al 5, en orden.</li>
+    <li>Miro los verbos: consigue, llena, entierra, riega. Son verbos que dan órdenes al lector.</li>
+    <li>Confirmo la utilidad: al seguir los pasos en ese orden, se logra el resultado.</li>
+  </ol>
+  <div class="res">Es un texto instructivo, porque tiene pasos numerados y verbos que mandan, y sirve para que el lector haga algo por sí mismo.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: Tipos de texto y la parte escrita (sigue)</span><span>Página 16 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 17 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<table>
+  <tr><th>Tipo de texto</th><th>Marca que se ve</th><th>Para qué sirve</th></tr>
+  <tr><td class="k">Cuento</td><td>Personajes, un problema y un final</td><td>Entretener contando algo imaginado</td></tr>
+  <tr><td class="k">Fábula</td><td>Animales que hablan y moraleja al final</td><td>Dejar una enseñanza</td></tr>
+  <tr><td class="k">Carta</td><td>Lugar y fecha, saludo, despedida y firma</td><td>Decirle algo a una persona ausente</td></tr>
+  <tr><td class="k">Noticia</td><td>Titular y qué, quién, cuándo y dónde al inicio</td><td>Informar de un hecho real y reciente</td></tr>
+  <tr><td class="k">Texto informativo</td><td>Datos, ejemplos y a veces subtítulos</td><td>Explicar un tema</td></tr>
+  <tr><td class="k">Instructivo</td><td>Pasos numerados y verbos que ordenan</td><td>Enseñar a hacer algo</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Escribir en la pregunta de opinión: Yo pienso que sí está bien, porque me gusta.</div>
+  <div><b class="why">¿Por qué está mal?</b> Da la postura pero ninguna razón, y me gusta no es un argumento: no explica nada que el lector pueda comprobar o discutir. Ahí se pierden los puntos de la parte escrita.</div>
+  <div><b class="ok">Correcto:</b> Escribe la postura y agrega dos razones que se puedan defender. Si te preguntan si la escuela debería abrir la biblioteca los sábados: Yo pienso que sí, primero porque muchos alumnos no tienen libros en la casa y ahí podrían estudiar, y segundo porque los sábados el aula está vacía y no estorba a nadie. Por eso estoy de acuerdo.</div>
+</div>
+
+<div class="materia-tag">🟡 Español</div>
+<h2>⚠️ Errores que más cuestan puntos</h2>
+
+<div class="err">
+  <div class="err-t">Agarrar un detalle en vez de la idea principal</div>
+  <div><b class="mal">Mal:</b> El texto habla de cómo se prepara la feria del pueblo: quién arma las champas, quién cocina, quién limpia la cancha, y menciona de paso que doña Marta vende diez docenas de tortillas. Le preguntan cuál es la idea principal y el alumno contesta: que doña Marta vende diez docenas de tortillas.</div>
+  <div><b class="why">¿Por qué está mal?</b> La idea principal es de lo que trata el texto completo, y un detalle solo aparece en una línea o en un párrafo, aunque sea el dato que más llama la atención. Los números y los nombres se quedan pegados en la memoria, pero eso no los convierte en el tema del texto.</div>
+  <div><b class="ok">Correcto:</b> La idea principal es la que cubre todo el texto: que todo el pueblo se organiza y se reparte el trabajo para preparar la feria. Prueba rápida: se lee la opción y se pregunta si el texto entero habla de eso. De las tortillas de doña Marta habla una sola línea, así que es detalle; del trabajo repartido hablan todos los párrafos, así que es la idea principal.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: Tipos de texto y la parte escrita y errores comunes y estrategia</span><span>Página 17 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 18 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="err">
+  <div class="err-t">Contestar con lo que uno cree y no con lo que dice el texto</div>
+  <div><b class="mal">Mal:</b> El texto dice: 'Carlos se levantó a las cuatro de la mañana porque la milpa queda a dos horas de camino y él quería llegar antes de que pegara el sol'. Le preguntan por qué se levantó tan temprano y el alumno contesta: porque le gusta madrugar, o porque en el campo todos se levantan temprano. Ninguna de las dos cosas está escrita en el texto.</div>
+  <div><b class="why">¿Por qué está mal?</b> En una prueba de lectura la respuesta correcta es la que se puede señalar con el dedo en el texto, no la que uno supone por experiencia propia. Lo que el alumno sabe de su casa puede ser cierto en la vida y falso en ese texto, y la prueba califica el texto.</div>
+  <div><b class="ok">Correcto:</b> Se busca la parte del texto que contesta y se subraya antes de escoger. Aquí el texto lo dice completo: 'porque la milpa queda a dos horas de camino y él quería llegar antes de que pegara el sol'. Entonces la respuesta es esa: porque la milpa queda lejos y necesitaba llegar temprano. Regla del examen: si no puedo señalar el renglón donde está, no es la respuesta.</div>
+</div>
+
+<div class="err">
+  <div class="err-t">El significado del diccionario en vez del de la oración</div>
+  <div><b class="mal">Mal:</b> La oración dice: 'La abuela puso la olla en el fuego y esperó a que el caldo agarrara sabor'. Le preguntan qué significa 'agarrara' ahí y el alumno contesta: tomar algo con la mano, apretarlo con los dedos. Es el significado que se sabe de memoria, pero en esa oración un caldo no tiene manos.</div>
+  <div><b class="why">¿Por qué está mal?</b> Muchas palabras tienen varios significados y la oración es la que decide cuál está funcionando en ese momento. Contestar con el significado más conocido, sin volver a leer la oración completa, es responder a otra pregunta.</div>
+  <div><b class="ok">Correcto:</b> Se lee la oración entera, se tapa la palabra y se piensa qué otra cabría ahí sin cambiar el sentido. En 'esperó a que el caldo agarrara sabor' caben 'tomara' o 'fuera tomando': entonces 'agarrara' significa ahí ir tomando o adquiriendo sabor. Después se prueba la respuesta escogida dentro de la oración; si suena rara, no es esa.</div>
+</div>
+
+<h2>🧭 La víspera y el día del examen</h2>
+<ol class="objetivos">
+  <li>Duerma temprano y desayune: un examen largo con hambre no lo pasa nadie.</li>
+  <li>Lleve dos lápices con punta, borrador y regla, y revise la mochila la noche antes.</li>
+  <li>Lea cada pregunta completa hasta el punto final antes de mirar las opciones.</li>
+  <li>En lectura, subraye en el texto la parte donde encontró la respuesta.</li>
+  <li>En matemáticas, escriba el procedimiento en la hoja y revise si el resultado tiene sentido.</li>
+  <li>La pregunta que se le trabe déjela señalada al lado del número y siga: regrese al final con el tiempo que le sobre.</li>
+  <li>Rellene completo el círculo de la respuesta que escogió y no deje ninguna pregunta en blanco: una respuesta pensada vale más que un espacio vacío.</li>
+</ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: errores comunes y estrategia (sigue)</span><span>Página 18 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 19 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
+<div class="materia-tag">🔵 Matemáticas</div>
+<h2>✍️ ¡Ponte a Prueba! Actividades de Matemáticas</h2>
+<h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+<ol>
+  <li>El decimal 0.25 escrito como fracción irreducible es <span class="linea-resp"></span>.</li>
+  <li>El número 350 es divisible entre 2, entre 5 y también entre <span class="linea-resp"></span>, porque termina en cero.</li>
+  <li>3/8 + 1/8 = <span class="linea-resp"></span> (escribe el resultado simplificado).</li>
+  <li>El promedio de las notas 6, 8 y 10 es <span class="linea-resp"></span>.</li>
+  <li>El área de un cuadrado que mide 7 cm de lado es <span class="linea-resp"></span> centímetros cuadrados.</li>
+  <li>El mínimo común múltiplo (m.c.m.) de 5 y 9 es <span class="linea-resp"></span>.</li>
+  <li>Si un bus recorre 120 km en 2 horas, su velocidad promedio es de <span class="linea-resp"></span> km/h.</li>
+  <li>Al girar un rectángulo alrededor de uno de sus lados se forma un sólido llamado <span class="linea-resp"></span>.</li>
+  <li>Tres libras de azúcar a L.18.50 cada una cuestan L.<span class="linea-resp"></span></li>
+  <li>El máximo común divisor (M.C.D.) de 16 y 24 es <span class="linea-resp"></span>.</li>
+</ol>
+
+<h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span> · Escribe V o F en la línea.</h3>
+<ol>
+  <li>____ La fracción 4/5 es igual al decimal 0.8.</li>
+  <li>____ Para sumar 1/3 + 1/4 se suman los numeradores entre sí y los denominadores entre sí, así que el resultado es 2/7.</li>
+  <li>____ El número 415 es divisible entre 3.</li>
+  <li>____ Para dividir una fracción entre otra se multiplica la primera por la segunda invertida.</li>
+  <li>____ El área de un círculo de 5 cm de radio es 78.5 centímetros cuadrados (pi = 3.14).</li>
+  <li>____ Una pirámide tiene dos bases iguales, una arriba y otra abajo.</li>
+  <li>____ El volumen de un prisma rectangular se halla multiplicando el área de la base por la altura.</li>
+  <li>____ La fracción 3/4 es menor que 2/3.</li>
+  <li>____ El mínimo común múltiplo de 3 y 12 es 36.</li>
+  <li>____ Si el promedio de dos notas es 70, entonces la suma de esas dos notas es 140.</li>
+</ol>
+
+<h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> · Encierra en un círculo la letra correcta.</h3>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">1</span>Doña Rosa pagó L.63.75 por 2.5 libras de queso en el mercado. ¿Cuánto cuesta cada libra?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> L.2.55</span>
+    <span class="op"><i>b</i> L.25.50</span>
+    <span class="op"><i>c</i> L.159.38</span>
+    <span class="op"><i>d</i> L.61.25</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">2</span>¿Qué fracción multiplicada por 3/4 da como resultado 9/20?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 27/80</span>
+    <span class="op"><i>b</i> 5/3</span>
+    <span class="op"><i>c</i> 3/5</span>
+    <span class="op"><i>d</i> 9/5</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: actividades</span><span>Página 19 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 20 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">3</span>¿Cuál es el resultado de 7/8 ÷ 7/4, simplificado?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 1/2</span>
+    <span class="op"><i>b</i> 2</span>
+    <span class="op"><i>c</i> 49/32</span>
+    <span class="op"><i>d</i> 1/4</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">4</span>Un bus sale de Comayagua y recorre 270 km en 4.5 horas. ¿A qué velocidad promedio viajó?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 1215 km/h</span>
+    <span class="op"><i>b</i> 67.5 km/h</span>
+    <span class="op"><i>c</i> 54 km/h</span>
+    <span class="op"><i>d</i> 60 km/h</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="ejem-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">5</span>Don Chepe tiene 24 mangos y 36 naranjas. Quiere armar bolsas iguales, con la misma cantidad de mangos y la misma cantidad de naranjas en cada una, sin que sobre fruta.</div>
+  <div class="preg-q2">¿Cuál es el mayor número de bolsas que puede armar?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 6 bolsas</span>
+    <span class="op"><i>b</i> 12 bolsas</span>
+    <span class="op"><i>c</i> 72 bolsas</span>
+    <span class="op"><i>d</i> 4 bolsas</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">6</span>Un tanque de agua tiene forma de cilindro: la base mide 2 m de radio y el tanque mide 3 m de altura. ¿Cuál es su volumen? (pi = 3.14)</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 37.68 metros cúbicos</span>
+    <span class="op"><i>b</i> 18.84 metros cúbicos</span>
+    <span class="op"><i>c</i> 12.56 metros cúbicos</span>
+    <span class="op"><i>d</i> 150.72 metros cúbicos</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">7</span>¿Qué número decimal es igual a la fracción 7/8?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 0.78</span>
+    <span class="op"><i>b</i> 1.14</span>
+    <span class="op"><i>c</i> 0.875</span>
+    <span class="op"><i>d</i> 0.87</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">8</span>Marta caminó 2 1/3 km en la mañana y 5/6 km en la tarde. ¿Cuánto caminó en todo el día?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 2 2/3 km</span>
+    <span class="op"><i>b</i> 3 1/2 km</span>
+    <span class="op"><i>c</i> 2 7/9 km</span>
+    <span class="op"><i>d</i> 3 1/6 km</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="ejem-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">9</span>De la terminal salen dos rutas de buses a las 6:00 de la mañana. Los buses de una ruta salen cada 15 minutos y los de la otra cada 20 minutos.</div>
+  <div class="preg-q2">¿Cada cuántos minutos vuelven a salir juntos un bus de cada ruta?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 60 minutos</span>
+    <span class="op"><i>b</i> 35 minutos</span>
+    <span class="op"><i>c</i> 300 minutos</span>
+    <span class="op"><i>d</i> 5 minutos</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">10</span>¿Cuál de estas series está ordenada de menor a mayor?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 3/5, 2/5, 1/4</span>
+    <span class="op"><i>b</i> 1/4, 2/5, 3/5</span>
+    <span class="op"><i>c</i> 2/5, 1/4, 3/5</span>
+    <span class="op"><i>d</i> 1/4, 3/5, 2/5</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 20 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 21 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
+<h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea la letra de la Columna B que corresponde.</h3>
+<table>
+  <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+  <tr><td>1. ____ Mínimo común múltiplo (m.c.m.)</td><td>A. El número más grande que divide a dos o más números sin dejar residuo.</td></tr>
+  <tr><td>2. ____ Máximo común divisor (M.C.D.)</td><td>B. Se obtiene sumando todos los datos y dividiendo el resultado entre cuántos datos son.</td></tr>
+  <tr><td>3. ____ Fracciones homogéneas</td><td>C. Sólido de una sola base, con caras triangulares que se juntan en un vértice.</td></tr>
+  <tr><td>4. ____ Número mixto</td><td>D. Se calcula multiplicando pi por el radio y otra vez por el radio.</td></tr>
+  <tr><td>5. ____ Promedio</td><td>E. Las que tienen el mismo denominador, así que se suman o se restan solo los numeradores.</td></tr>
+  <tr><td>6. ____ Velocidad</td><td>F. El número más pequeño, distinto de cero, que es múltiplo de dos o más números a la vez.</td></tr>
+  <tr><td>7. ____ Área del círculo</td><td>G. La distancia recorrida dividida entre el tiempo que se tardó en recorrerla.</td></tr>
+  <tr><td>8. ____ Volumen del cilindro</td><td>H. Se da cuando una figura se dobla por una línea y las dos mitades coinciden exactamente.</td></tr>
+  <tr><td>9. ____ Pirámide</td><td>I. Un número entero acompañado de una fracción menor que uno, como 2 3/4.</td></tr>
+  <tr><td>10. ____ Simetría reflexiva</td><td>J. Se calcula multiplicando el área del círculo de la base por la altura del cuerpo.</td></tr>
+</table>
+
+<h3>V. Resuelve con procedimiento <span class="val">(Valor: 20 puntos c/u)</span> · Escribe todos los pasos en el espacio.</h3>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Resuelve y deja el resultado como número mixto: 3 1/4 menos 5/6.</div><div class="desarrollo"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">2</span>Resuelve y simplifica: 9/10 ÷ 3/5.</div><div class="desarrollo"></div></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 21 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 22 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
+<div class="preg"><div class="preg-q"><span class="preg-n">3</span>En la pulpería el litro de aceite cuesta L.32.50. Doña Carmen compra 1.8 litros. ¿Cuánto tiene que pagar?</div><div class="desarrollo"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">4</span>Un rollo de mecate de 9.6 metros se corta en pedazos de 0.8 metros cada uno. ¿Cuántos pedazos salen?</div><div class="desarrollo"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">5</span>Halla el mínimo común múltiplo de 9 y 12 descomponiendo cada número en factores primos.</div><div class="desarrollo"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">6</span>El patio de la escuela es un cuadrado de 12 m de lado. En el centro hay una fuente circular de 2 m de radio. ¿Cuántos metros cuadrados de patio quedan libres? (pi = 3.14)</div><div class="desarrollo"></div></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 22 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 23 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
+<div class="materia-tag">🟡 Español</div>
+<h2>✍️ ¡Ponte a Prueba! Actividades de Español</h2>
+<h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+<ol>
+  <li>La idea <span class="linea-resp"></span> de un texto es aquello de lo que trata todo el texto, no un detalle pequeño.</li>
+  <li>Cuando la respuesta aparece escrita con las mismas palabras del texto, la pregunta es de comprensión <span class="linea-resp"></span>.</li>
+  <li>Cuando el texto no lo dice con todas sus letras y hay que deducirlo, la pregunta es de comprensión <span class="linea-resp"></span>.</li>
+  <li>La <span class="linea-resp"></span> de una fábula es la enseñanza que se escribe al final.</li>
+  <li>El <span class="linea-resp"></span> de un texto informativo anuncia de qué se va a hablar y conviene leerlo antes que nada.</li>
+  <li>Las canastas del mercado de Comayagua estaban <span class="linea-resp"></span> de mangos maduros.</li>
+  <li>Los tamales que preparó mi abuela <span class="linea-resp"></span> muy sabrosos.</li>
+  <li>El río creció con la lluvia de anoche; <span class="linea-resp"></span> el bus no pudo pasar por el vado.</li>
+  <li><span class="linea-resp"></span> mi mamá torteaba en el comal, yo cuidaba el fuego.</li>
+  <li>Compramos frijoles, arroz y café en la pulpería. <span class="linea-resp"></span> tres productos nos costaron L.180.00.</li>
+</ol>
+
+<h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span> · Escribe V o F en la línea.</h3>
+<ol>
+  <li>____ La fábula termina con una enseñanza llamada moraleja.</li>
+  <li>____ En una noticia lo más importante se cuenta hasta el final, en la última línea.</li>
+  <li>____ Una carta lleva saludo, cuerpo del mensaje y despedida con la firma de quien escribe.</li>
+  <li>____ Un texto instructivo sirve para contar la historia de un personaje mágico.</li>
+  <li>____ Una pregunta literal se responde con información que aparece escrita en el texto.</li>
+  <li>____ Para responder una pregunta inferencial basta con copiar una oración del texto.</li>
+  <li>____ El texto informativo explica cómo es algo de la realidad y no inventa personajes.</li>
+  <li>____ En la fábula los personajes casi siempre son animales que hablan y actúan como personas.</li>
+  <li>____ La idea principal de un texto siempre es el dato más curioso o el número más grande que aparece.</li>
+  <li>____ Para saber qué significa una palabra dentro de un texto hay que buscarla en el diccionario sin leer la oración donde está.</li>
+</ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: actividades</span><span>Página 23 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 24 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
+<h3>III. Lee el texto y contesta <span class="val">(Valor: 10 puntos c/u)</span></h3>
+<div class="ejem">
+  <div class="ejem-t">Los jicotes: abejas sin aguijón</div>
+  <div class="ejem-txt">En muchos patios de Honduras vive una abeja pequeña que no pica. La gente del campo la llama jicote. Estas abejas no tienen aguijón, así que trabajan cerca de las personas sin causar miedo. Hacen su casa dentro de troncos huecos, en paredes viejas o en cajas de madera que el criador les prepara. Los jicotes son mansos y muy trabajadores. Salen temprano a buscar néctar en las flores del cafetal, del guayabo y del izote. Al ir de flor en flor llevan polen de una planta a otra y ayudan a que la milpa y los árboles frutales den mejor cosecha. Ese trabajo se llama polinización. Su miel es distinta a la de la abeja común: es más líquida, un poco ácida y se guarda en potes pequeños de cera. Cada colmena produce poca miel al año, por eso se vende cara y muchas familias la usan como remedio para la tos. Hoy varios pueblos crían jicotes en cajas para cuidarlos, porque al talar los árboles viejos se quedan sin casa.</div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">1</span>¿De qué trata principalmente el texto?</div>
+  <div class="preg-ops">
+    <span class="op full"><i>a</i> De cómo se prepara en la casa un remedio de miel para la tos</span>
+    <span class="op full"><i>b</i> De los jicotes, unas abejas sin aguijón que ayudan a las plantas y dan miel</span>
+    <span class="op full"><i>c</i> De los árboles viejos que se talan en los pueblos de Honduras</span>
+    <span class="op full"><i>d</i> De la diferencia entre las flores de la milpa y las del cafetal</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">2</span>Según el texto, ¿dónde hacen su casa los jicotes?</div>
+  <div class="preg-ops">
+    <span class="op full"><i>a</i> En el suelo, debajo de las piedras del río</span>
+    <span class="op full"><i>b</i> Dentro de las flores del cafetal</span>
+    <span class="op full"><i>c</i> En los potes de cera que se venden en el mercado</span>
+    <span class="op full"><i>d</i> En troncos huecos, paredes viejas o cajas de madera</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">3</span>Según el texto, ¿cómo es la miel del jicote comparada con la de la abeja común?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> Más líquida y un poco ácida</span>
+    <span class="op"><i>b</i> Más espesa y mucho más dulce</span>
+    <span class="op"><i>c</i> Igual en todo, solo cambia el color</span>
+    <span class="op"><i>d</i> Sin sabor y de color negro</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">4</span>Si en una comunidad desaparecieran los jicotes, ¿qué es más probable que ocurra?</div>
+  <div class="preg-ops">
+    <span class="op full"><i>a</i> Que las flores del izote cambien de color</span>
+    <span class="op full"><i>b</i> Que las abejas comunes también pierdan su aguijón</span>
+    <span class="op full"><i>c</i> Que la milpa y los árboles frutales den menos cosecha</span>
+    <span class="op full"><i>d</i> Que la miel de la abeja común se vuelva ácida</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">5</span>En el texto, la palabra mansos quiere decir que los jicotes son:</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> muy grandes, del tamaño de un abejón</span>
+    <span class="op"><i>b</i> flojos, que no les gusta trabajar</span>
+    <span class="op"><i>c</i> de color claro, casi blancos</span>
+    <span class="op"><i>d</i> tranquilos, que no atacan a la gente</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">6</span>En la última oración, talar los árboles significa:</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> cortarlos y tumbarlos</span>
+    <span class="op"><i>b</i> sembrarlos otra vez</span>
+    <span class="op"><i>c</i> regarlos con agua</span>
+    <span class="op"><i>d</i> quitarles solo las hojas secas</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 24 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 25 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
+<h3>IV. ¿Qué tipo de texto es? <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea: cuento, fábula, carta, noticia o instructivo.</h3>
+<ol>
+  <li>«Hace muchos años, en un caserío de La Esperanza, vivía una niña que juntaba luciérnagas en un frasco de vidrio.» <span class="linea-resp"></span></li>
+  <li>«Ayer, en Choluteca, la alcaldía entregó 300 pupitres nuevos a cinco escuelas del municipio, informó la directora de uno de los centros beneficiados.» <span class="linea-resp"></span></li>
+  <li>«Materiales: dos tazas de masa, agua tibia y sal. Paso 1: mezcle la masa con el agua hasta suavizarla.» <span class="linea-resp"></span></li>
+  <li>«Una tortuga lenta le dijo al conejo presumido: 'Corre cuanto quieras, que al final del camino te espero yo'.» <span class="linea-resp"></span></li>
+  <li>«Querida abuela Chepa: le escribo desde Tegucigalpa para contarle que ya empecé sexto grado y la extraño mucho.» <span class="linea-resp"></span></li>
+  <li>«El Comité de Emergencia informó esta mañana que la carretera hacia La Ceiba quedó habilitada después de tres días de lluvia.» <span class="linea-resp"></span></li>
+  <li>«Cuando el gallo cantó por tercera vez, Mario supo que el secreto del guacal enterrado ya no era solo suyo.» <span class="linea-resp"></span></li>
+  <li>«Cansada de que la hormiga trabajara tanto, la chicharra le dijo que dejara la carga y se fuera a cantar con ella.» <span class="linea-resp"></span></li>
+</ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 25 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 26 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
+<h3>V. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea la letra de la Columna B.</h3>
+<table>
+  <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+  <tr><td>1. ____ Idea principal</td><td>A. Escrito que da a conocer cómo es un tema de la realidad, como un animal o un lugar, sin narrar un hecho reciente.</td></tr>
+  <tr><td>2. ____ Moraleja</td><td>B. Texto que enseña a hacer algo, con materiales y pasos numerados.</td></tr>
+  <tr><td>3. ____ Noticia</td><td>C. La que se responde con lo que está escrito tal cual en el texto.</td></tr>
+  <tr><td>4. ____ Instructivo</td><td>D. Texto que informa un hecho real y reciente, con lugar, fecha y fuente.</td></tr>
+  <tr><td>5. ____ Carta</td><td>E. La que se responde deduciendo con pistas lo que el texto no dice completo.</td></tr>
+  <tr><td>6. ____ Cuento</td><td>F. Escrito dirigido a una persona, con saludo, mensaje y despedida firmada.</td></tr>
+  <tr><td>7. ____ Texto informativo</td><td>G. Narración corta e inventada, con personajes, un problema y un final.</td></tr>
+  <tr><td>8. ____ Pregunta literal</td><td>H. Averiguar qué significa una palabra usando las pistas de su propia oración.</td></tr>
+  <tr><td>9. ____ Pregunta inferencial</td><td>I. Enseñanza que se escribe al final de una fábula.</td></tr>
+  <tr><td>10. ____ Vocabulario en contexto</td><td>J. Aquello de lo que trata el texto completo, dicho en una sola oración.</td></tr>
+</table>
+
+<h3>VI. Escritura <span class="val">(Valor: 30 puntos c/u)</span> · Escribe en el espacio, con buena letra y cuidando la ortografía.</h3>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Escribe un cuento de por lo menos diez renglones con esta secuencia: 1) un perro flaco aparece en el portón de la escuela; 2) los alumnos le llevan tortillas y agua; 3) el perro se queda a dormir bajo el árbol del patio; 4) la maestra cuelga un letrero con su nombre nuevo: Canela. Ponle título.</div><div class="desarrollo" style="height:150px;"></div></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 26 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 27 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
+<div class="preg"><div class="preg-q"><span class="preg-n">2</span>En tu comunidad proponen cambiar la cancha de tierra por un parque con árboles y bancas. ¿Estás de acuerdo o no? Escribe tu opinión y defiéndela con dos argumentos distintos. Cierra con una oración de conclusión.</div><div class="desarrollo" style="height:150px;"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">3</span>Escribe una carta a la alcaldesa o al alcalde de tu municipio para pedirle que reparen el camino que lleva a tu escuela. Explícale por qué es urgente. La carta debe llevar todas sus partes.</div><div class="desarrollo" style="height:150px;"></div></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 27 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 28 ═══════════ -->
+<section class="pagina sim">
+  <div class="contenido">
+
+<h2>📝 Simulacro: así se siente la prueba de verdad</h2>
+<div class="sim-instr"><b>INSTRUCCIONES:</b> Lee con cuidado cada texto y cada problema. Después rellena por completo el círculo de la letra de la respuesta correcta. Cada pregunta tiene una sola respuesta correcta: si rellenas más de un círculo, la pregunta no se te cuenta.</div>
+<h3 style="color:var(--mat-osc);">Primera parte: Matemáticas</h3>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">1</span>Don Beto le echó 0.4 de litro de aceite al motor. ¿Qué fracción representa el decimal 0.4?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 4/100</span>
+    <span class="op"><i></i> b) 2/5</span>
+    <span class="op"><i></i> c) 1/4</span>
+    <span class="op"><i></i> d) 4/5</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">2</span>Tres botellas tienen 3/4, 1/2 y 5/8 de litro de jugo. ¿Cuál es el orden de esas fracciones de menor a mayor?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 1/2, 5/8, 3/4</span>
+    <span class="op"><i></i> b) 3/4, 5/8, 1/2</span>
+    <span class="op"><i></i> c) 1/2, 3/4, 5/8</span>
+    <span class="op"><i></i> d) 5/8, 1/2, 3/4</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">3</span>Doña Rosa usó 1 1/4 libras de maíz en la mañana y 2/3 de libra en la tarde. ¿Cuántas libras de maíz usó en total?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 1 3/7</span>
+    <span class="op"><i></i> b) 2 11/12</span>
+    <span class="op"><i></i> c) 7/12</span>
+    <span class="op"><i></i> d) 1 11/12</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">4</span>De un listón de 3/4 de metro se cortan pedazos de 1/8 de metro cada uno. ¿Cuántos pedazos salen?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 3/32</span>
+    <span class="op"><i></i> b) 8</span>
+    <span class="op"><i></i> c) 6</span>
+    <span class="op"><i></i> d) 24</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">5</span>La libra de queso cuesta L.48.75. Doña Carmen compró 2.4 libras. ¿Cuánto pagó?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) L.51.15</span>
+    <span class="op"><i></i> b) L.117.00</span>
+    <span class="op"><i></i> c) L.1170.00</span>
+    <span class="op"><i></i> d) L.11.70</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">6</span>Doña Elvira pagó L.153.60 por 4.8 libras de carne. ¿Cuánto cuesta la libra?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) L.3.20</span>
+    <span class="op"><i></i> b) L.320.00</span>
+    <span class="op"><i></i> c) L.32.00</span>
+    <span class="op"><i></i> d) L.148.80</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">7</span>Una moto sale de La Ceiba a 40 kilómetros por hora y viaja 2.5 horas seguidas. ¿Qué distancia recorre?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 100 kilómetros</span>
+    <span class="op"><i></i> b) 16 kilómetros</span>
+    <span class="op"><i></i> c) 42.5 kilómetros</span>
+    <span class="op"><i></i> d) 80 kilómetros</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">8</span>Del mercado sale un bus cada 9 minutos y otro cada 12 minutos. Si a las 6:00 salieron juntos, ¿cuántos minutos pasan hasta que vuelvan a salir juntos?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 3 minutos</span>
+    <span class="op"><i></i> b) 21 minutos</span>
+    <span class="op"><i></i> c) 108 minutos</span>
+    <span class="op"><i></i> d) 36 minutos</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Simulacro</span><span>Página 28 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 29 ═══════════ -->
+<section class="pagina sim">
+  <div class="contenido">
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">9</span>Un comal redondo mide 40 centímetros de diámetro. ¿Cuál es su área? (tome pi = 3.14)</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 125.6 cm²</span>
+    <span class="op"><i></i> b) 1256 cm²</span>
+    <span class="op"><i></i> c) 5024 cm²</span>
+    <span class="op"><i></i> d) 62.8 cm²</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">10</span>Las notas de Luis en cuatro pruebas fueron 75, 82, 90 y 93. ¿Cuál es su promedio?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 82</span>
+    <span class="op"><i></i> b) 90</span>
+    <span class="op"><i></i> c) 85</span>
+    <span class="op"><i></i> d) 340</span>
+  </div>
+</div>
+
+<h3 style="color:var(--esp-osc);">Segunda parte: Español</h3>
+<div class="sim-instr">Lee cada texto con cuidado. La respuesta siempre está en el texto: si no puedes señalar el renglón donde la encontraste, todavía no es tu respuesta.</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">11</span>En la escuela de El Zapotal los alumnos de sexto sembraron un huerto detrás de la cancha. Cada mañana, antes de entrar, dos alumnos riegan las plantas y quitan la hierba. En noviembre cosecharon rábanos y cilantro, y los repartieron en la merienda escolar. El huerto ya da para toda la escuela.</div>
+  <div class="preg-q2">¿De qué trata principalmente el texto?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) Del huerto que los alumnos de sexto cuidan en su escuela</span>
+    <span class="op full"><i></i> b) De la cancha que está detrás de la escuela</span>
+    <span class="op full"><i></i> c) De cómo se siembra el cilantro en noviembre</span>
+    <span class="op full"><i></i> d) De la merienda que dan en la escuela de El Zapotal</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">12</span>Cada sábado, don Rigoberto baja al mercado de Comayagua con sacos de naranjas. Sale de su aldea a las cuatro de la mañana, cuando todavía está oscuro. En el mercado acomoda su puesto, vende hasta el mediodía y regresa con la camioneta vacía. Así ha vivido su familia durante veinte años.</div>
+  <div class="preg-q2">¿Cuál es la idea principal del texto?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) La hora a la que don Rigoberto sale de su aldea</span>
+    <span class="op full"><i></i> b) El camino que hay de la aldea al mercado de Comayagua</span>
+    <span class="op full"><i></i> c) El trabajo de don Rigoberto vendiendo naranjas en el mercado</span>
+    <span class="op full"><i></i> d) El precio que tienen las naranjas los sábados</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">13</span>El verano fue largo y el agua se puso escasa en la aldea. La quebrada bajó tanto que apenas mojaba las piedras, y las familias tuvieron que acarrear baldes desde el pozo del centro. Don Nicolás midió el nivel cada mañana y anotó los números en un cuaderno.</div>
+  <div class="preg-q2">¿Qué significa la palabra escasa en el texto?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) Poca, casi no había</span>
+    <span class="op"><i></i> b) Sucia, con lodo del fondo</span>
+    <span class="op"><i></i> c) Fría, porque bajaba de la montaña</span>
+    <span class="op"><i></i> d) Repartida en baldes iguales</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Simulacro (sigue)</span><span>Página 29 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 30 ═══════════ -->
+<section class="pagina sim">
+  <div class="contenido">
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">14</span>Antes de que salga el sol, mi abuelo se va a la milpa con el machete al hombro. Limpia, siembra y regresa cuando el comal ya está caliente. Al llegar dice que la faena del día ya quedó cumplida, y solo entonces se sienta a tomar su café. Nunca lo he visto quedarse en la hamaca.</div>
+  <div class="preg-q2">¿Qué significa la palabra faena en el texto?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) El camino que lleva a la milpa</span>
+    <span class="op"><i></i> b) El trabajo del día</span>
+    <span class="op"><i></i> c) El desayuno de la mañana</span>
+    <span class="op"><i></i> d) El descanso después de sembrar</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">15</span>Doña Petrona hace las tortillas más parejas del barrio. Sus manos son tan diestras que palmea una tortilla mientras voltea otra en el comal, sin quemarse. Las muchachas se sientan a mirarla para aprender, pero ninguna le lleva el paso todavía.</div>
+  <div class="preg-q2">¿Qué significa la palabra diestras en el texto?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) Grandes y fuertes</span>
+    <span class="op"><i></i> b) Limpias y secas</span>
+    <span class="op"><i></i> c) Rápidas para escribir</span>
+    <span class="op"><i></i> d) Hábiles, con mucha práctica</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">16</span>El domingo la cancha del barrio amaneció barrida. Los muchachos de la colonia El Pedregal llegaron a las nueve con su uniforme amarillo y jugaron contra el equipo de la escuela. El partido terminó tres a dos. Al final, doña Chila repartió refresco de tamarindo a los dos equipos.</div>
+  <div class="preg-q2">Según el texto, ¿cómo terminó el partido?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) Dos a dos</span>
+    <span class="op"><i></i> b) Tres a dos</span>
+    <span class="op"><i></i> c) Nueve a tres</span>
+    <span class="op"><i></i> d) Tres a nueve</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">17</span>En la orilla del río Ulúa vive una garza blanca que los pescadores llaman Filomena. Llega cada tarde, se para en la misma piedra y espera a que alguien limpie el pescado. Los niños ya no la asustan: saben que si corren, no vuelve hasta el otro día.</div>
+  <div class="preg-q2">Según el texto, ¿qué hace la garza cada tarde?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) Vuela sobre el río hasta que oscurece</span>
+    <span class="op full"><i></i> b) Pesca junto a los niños en la orilla</span>
+    <span class="op full"><i></i> c) Se para en la misma piedra y espera</span>
+    <span class="op full"><i></i> d) Se esconde cuando llegan los pescadores</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">18</span>Marta guardó en su mochila el cuaderno de matemáticas, aunque el lunes no toca esa clase. La maestra le había dicho que quien llevara los ejercicios resueltos podría explicarlos en la pizarra. Marta se sentó en el bus repasando la última página, y movía los labios sin hacer ruido.</div>
+  <div class="preg-q2">¿Por qué Marta llevó el cuaderno el lunes?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) Porque el lunes le tocaba clase de matemáticas</span>
+    <span class="op full"><i></i> b) Porque se le olvidó sacarlo de la mochila</span>
+    <span class="op full"><i></i> c) Porque la maestra iba a recoger los cuadernos</span>
+    <span class="op full"><i></i> d) Porque quería explicar los ejercicios en la pizarra</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Simulacro (sigue)</span><span>Página 30 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 31 ═══════════ -->
+<section class="pagina sim">
+  <div class="contenido">
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">19</span>Cuando el bus se llenó, don Chepe se levantó y le ofreció el asiento a una señora que iba con un niño dormido en los brazos. Él se agarró del tubo y viajó de pie hasta la terminal, sin decir nada. La señora le dio las gracias dos veces.</div>
+  <div class="preg-q2">¿Qué se puede deducir de don Chepe por lo que hizo?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) Que no le gusta ir sentado en el bus</span>
+    <span class="op full"><i></i> b) Que es una persona considerada con los demás</span>
+    <span class="op full"><i></i> c) Que conocía a la señora desde antes</span>
+    <span class="op full"><i></i> d) Que se iba a bajar en la siguiente parada</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">20</span>Un zorro vio a una tortuga cruzando el camino y se burló de su paso lento. La retó a una carrera hasta el guamil. El zorro se durmió confiado bajo un árbol y la tortuga llegó primero. Quien se confía demasiado pierde lo que ya tenía ganado.</div>
+  <div class="preg-q2">¿Qué tipo de texto es el anterior?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) Una noticia, porque cuenta algo que pasó hace poco</span>
+    <span class="op full"><i></i> b) Una carta, porque está dirigida a alguien</span>
+    <span class="op full"><i></i> c) Una fábula, porque los animales actúan como personas y deja una enseñanza</span>
+    <span class="op full"><i></i> d) Un instructivo, porque explica paso a paso cómo hacer algo</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Simulacro (sigue)</span><span>Página 31 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 32 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+<div class="felic">
+  🏅 <b>¡Terminaste el repaso completo de tu grado!</b> Recorriste las dos materias que se evalúan en la
+  Prueba de Fin de Grado: las fracciones, los decimales, los múltiplos y divisores, la geometría y el promedio;
+  y la idea principal, lo que el texto dice y lo que deja entender, el significado por el contexto, los tipos de
+  texto y tu propia escritura. Llegas listo. 🎓✨
+</div>
+
+<h2>📏 Rúbrica de Evaluación</h2>
+<table class="rubrica">
+  <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+  <tr><td>Copió en su cuaderno los contenidos de estudio de las dos materias.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td>Resolvió las actividades de Matemáticas sobre esta ficha.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td>Resolvió las actividades de Español sobre esta ficha.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td>Contestó el simulacro rellenando el círculo, sin dejar preguntas en blanco.</td><td class="lg">Simulacro en el aula, la víspera</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+</table>
+<p style="font-size:9pt;color:var(--gris);">Ya sabes sacar el promedio: suma las cuatro notas y divide entre cuatro.
+Perderás puntos si dejas trabajo sin completar, si tu letra no se entiende o si escribes con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Cierre y rúbrica</span><span>Página 32 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 33 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+<h2>✅ Pauta de Respuestas: Hoja del Docente</h2>
+<p style="font-size:10pt;color:var(--gris);">Estas hojas se imprimen <strong>sueltas</strong>: son solo para el docente o para la autoevaluación guiada.</p>
+
+<h3 style="color:var(--mat-osc);">🔵 Actividades de Matemáticas</h3>
+<div class="pauta">
+  <div><span class="pt">I. Completar:</span> 1. 1/4 &nbsp; 2. 10 &nbsp; 3. 1/2 &nbsp; 4. 8 &nbsp; 5. 49 &nbsp; 6. 45 &nbsp; 7. 60 &nbsp; 8. cilindro &nbsp; 9. 55.50 &nbsp; 10. 8</div>
+  <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3F, 4V, 5V, 6F, 7V, 8F, 9F, 10V</div>
+  <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3a, 4d, 5b, 6a, 7c, 8d, 9a, 10b</div>
+  <div><span class="pt">IV. Pareados:</span> 1F, 2A, 3E, 4I, 5B, 6G, 7D, 8J, 9C, 10H</div>
+  <div><span class="pt">V. Procedimiento:</span> 1. 2 5/12 &nbsp; 2. 3/2, que es 1 1/2 &nbsp; 3. L.58.50 &nbsp; 4. 12 pedazos &nbsp; 5. 36 &nbsp; 6. 131.44 metros cuadrados</div>
+</div>
+
+<h3 style="color:var(--esp-osc);">🟡 Actividades de Español</h3>
+<div class="pauta">
+  <div><span class="pt">I. Completar:</span> 1. principal &nbsp; 2. literal &nbsp; 3. inferencial &nbsp; 4. moraleja &nbsp; 5. título &nbsp; 6. llenas &nbsp; 7. quedaron &nbsp; 8. por eso &nbsp; 9. Mientras &nbsp; 10. Esos</div>
+  <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6F, 7V, 8V, 9F, 10F</div>
+  <div><span class="pt">III. Lectura:</span> 1b, 2d, 3a, 4c, 5d, 6a</div>
+  <div><span class="pt">IV. Tipo de texto:</span> 1. cuento &nbsp; 2. noticia &nbsp; 3. instructivo &nbsp; 4. fabula &nbsp; 5. carta &nbsp; 6. noticia &nbsp; 7. cuento &nbsp; 8. fabula</div>
+  <div><span class="pt">V. Pareados:</span> 1J, 2I, 3D, 4B, 5F, 6G, 7A, 8C, 9E, 10H</div>
+</div>
+
+<h3>📝 Simulacro</h3>
+<div class="pauta">
+  <div><span class="pt">Matemáticas (1 al 10):</span> 1b, 2a, 3d, 4c, 5b, 6c, 7a, 8d, 9b, 10c</div>
+  <div><span class="pt">Español (11 al 20):</span> 11a, 12c, 13a, 14b, 15d, 16b, 17c, 18d, 19b, 20c</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Hoja del Docente</span><span>Página 33 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 34 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+<h3>✍️ Cómo se califica la escritura</h3>
+<div class="pauta">
+  <div><span class="pt">Consigna 1:</span> Una buena respuesta tiene título propio y respeta el orden de los cuatro momentos, sin saltarse ninguno. Debe verse un inicio que sitúa el lugar (la escuela, el portón), un desarrollo con lo que hacen los alumnos y un final que cierre con el nombre del perro. Se espera al menos un conector de tiempo (un día, después, al siguiente día, por fin) y verbos en pasado sostenidos de principio a fin. Suma calidad si aparece un detalle propio del alumno (el nombre de su escuela, quién le llevó las tortillas) o una línea de diálogo. Se descuenta si convierte la secuencia en una lista numerada en lugar de narrar, si cambia de tiempo verbal a mitad del texto o si deja el cuento sin cerrar.</div>
+  <div><span class="pt">Consigna 2:</span> Una buena respuesta empieza declarando la postura con claridad (estoy de acuerdo o no estoy de acuerdo) en la primera oración. Luego presenta dos argumentos que sean de verdad distintos, no el mismo dicho dos veces: por ejemplo, la sombra y la salud por un lado, y el sitio donde juegan los muchachos por el otro. Cada argumento debe ir acompañado de una razón o de un ejemplo de su comunidad. Se esperan conectores de orden y de causa (en primer lugar, además, ya que, por eso). Termina con una conclusión que retoma la postura. Se descuenta si solo dice que le gusta o no le gusta sin razones, si los dos argumentos repiten la misma idea o si no se entiende cuál es su posición.</div>
+  <div><span class="pt">Consigna 3:</span> Una buena respuesta incluye las partes completas: lugar y fecha arriba, saludo con el cargo y dos puntos (Estimada señora alcaldesa: o Estimado señor alcalde:, según quien gobierne su municipio), cuerpo, despedida y firma con el nombre del alumno. En el cuerpo debe estar la petición dicha con claridad y por lo menos una razón concreta de por qué urge (los alumnos llegan mojados, el bus no pasa cuando llueve, los pequeños se caen en el lodo). El trato es de usted en toda la carta, y el tono respetuoso: pide, no exige. Se descuenta si falta el saludo o la firma, si mezcla el tú y el usted, o si escribe un texto informativo sobre el camino en vez de dirigirse a una persona.</div>
+</div>
+
+<div class="nota-doc">
+  <strong>Nota para el docente:</strong> esta ficha está basada en la misión «Prueba de Fin de Grado: 6º Grado»
+  de la plataforma M.E.T.A.S y es la más extensa de la serie a propósito: no repasa un tema sino el temario
+  completo del año en las dos materias que la prueba oficial evalúa. Puede trabajarse por partes: las hojas de
+  franja azul en los días de Matemáticas y las de franja dorada en los de Español, dejando el simulacro para la
+  víspera del examen. Los ítems de esta ficha son <strong>distintos</strong> a los de la misión interactiva, así que
+  el estudiante que ya jugó la misión encuentra aquí práctica nueva y no respuestas memorizadas. En la misión
+  (código QR de la portada) hay además dos pruebas conceptuales calificables en línea, una por materia, con
+  veinte formas distintas para imprimir una versión diferente por fila. Al calificar la escritura, use la guía
+  de arriba: lo que se evalúa es que la idea se entienda, no que la letra sea bonita.
+</div>
+
+<div class="caja idea">🖨️ <b>Si no puede fotocopiar las 34 hojas para todo el grado:</b> imprima solo
+las de <b>actividades y simulacro (páginas 19 a 31)</b>, que son las que el alumno rellena, y
+trabaje las hojas de estudio con una sola copia, proyectándolas o dictando lo esencial para que las copien
+en el cuaderno. La rúbrica ya cuenta ese trabajo de copia como una de las cuatro notas.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Fin de Grado 6º · Hoja del Docente (sigue)</span><span>Página 34 de 34</span></div>
+</section>
+
+</div>
+</body>
+</html>
