@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Prueba de Fin de Grado: {{GRADO}} Grado</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: esta ficha abarca DOS, así que el
+       marco (portada, pies, simulacro, rúbrica) va en el MORADO de
+       Repaso General #7c3aed, y cada bloque de estudio lleva el color
+       de su materia: AZUL #1565c0 Matemáticas · DORADO #b45309 Español.
+       El alumno sabe qué está estudiando sin leer el título, y el
+       maestro reconoce sus dos materias dentro del mismo cuadernillo.
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · Cada página se comprueba con node _dev/verifica-ficha-paginas.js:
+       el papel deja 257,4 mm y una hoja que se pase se parte en dos.
+     · La pauta + nota del docente SIEMPRE en hojas sueltas (al final)
+     · En papel el círculo se RELLENA: la ✗ significa MALO en el aula */
+  :root {
+    --rep: #7c3aed; --rep-osc: #4c1d95; --rep-claro: #f3efff;
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --esp: #b45309; --esp-osc: #78350f; --esp-claro: #fefce8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #d7d3e6;
+    --num: #1e40af; --den: #c2410c; --res: #15803d;
+    --ac: var(--rep); --ac-osc: var(--rep-osc); --ac-claro: var(--rep-claro);
+  }
+  /* El color de la página lo fija su materia: todo lo de adentro
+     (títulos, tablas, cajas, números de ítem) lo hereda de --ac. */
+  .pagina.p-mat { --ac: var(--mat); --ac-osc: var(--mat-osc); --ac-claro: var(--mat-claro); }
+  .pagina.p-esp { --ac: var(--esp); --ac-osc: var(--esp-osc); --ac-claro: var(--esp-claro); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef0f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ac-osc); }
+  /* Cinta de materia en el borde: se ve con las hojas apiladas */
+  .pagina.p-mat::before, .pagina.p-esp::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 7px; background: var(--ac);
+  }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ac); background: var(--ac-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ac-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ac-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  /* Rótulo de materia al abrir cada bloque */
+  .materia-tag { display: inline-block; font-size: 8.5pt; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+                 color: #fff; background: var(--ac); border-radius: 999px; padding: 2px 11px; margin-bottom: 6px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ac); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  .contenido > h2:first-child, .materia-tag + h2 { margin-top: 4px; }
+  h3 { font-size: 11pt; color: var(--ac-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ac-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ac-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ac); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f7fb; }
+  td.k { font-weight: 700; color: var(--ac-osc); white-space: nowrap; }
+
+  /* Ejemplo resuelto paso a paso: el corazón de una guía de papel,
+     porque en casa no hay quien explique el procedimiento. */
+  .ejem { border: 1.5px solid var(--linea); border-left: 5px solid var(--ac); border-radius: 9px;
+          padding: 9px 12px; margin: 9px 0; background: #fcfcff; break-inside: avoid; }
+  .ejem-t { font-size: 10pt; font-weight: 800; color: var(--ac-osc); margin-bottom: 5px; }
+  .ejem-t span { font-weight: 400; color: var(--tinta); }
+  .ejem ol { margin: 4px 0 4px 22px; font-size: 10pt; }
+  .ejem ol li { margin-bottom: 2px; }
+  .ejem ol li::marker { font-weight: 800; color: var(--ac); }
+  .ejem .res { margin-top: 5px; font-size: 10.5pt; font-weight: 800; color: var(--res); }
+  .ejem .res::before { content: '✔ '; }
+  .ejem-txt { font-size: 10pt; font-style: italic; background: #fff; border: 1px dashed var(--linea);
+              border-radius: 6px; padding: 6px 9px; margin-bottom: 5px; text-align: justify; }
+
+  /* Error común: mal / por qué / bien, en tres renglones */
+  .err { border: 1.5px solid #f0c9c9; border-radius: 9px; padding: 8px 11px; margin: 8px 0; background: #fff7f7; break-inside: avoid; font-size: 10pt; }
+  .err-t { font-weight: 800; color: #9b1c1c; margin-bottom: 4px; font-size: 10.5pt; }
+  .err-t::before { content: '✖ '; }
+  .err div { margin-bottom: 2px; }
+  .err b.mal { color: #9b1c1c; } .err b.why { color: #92400e; } .err b.ok { color: var(--res); }
+
+  /* Fracción escrita como en el cuaderno: numerador arriba, raya en medio
+     y denominador abajo. Es la forma que el alumno ve en el pizarrón; «3/4»
+     es como se teclea, no como se lee. */
+  .fr { display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+        vertical-align: middle; line-height: 1.06; font-size: 0.86em; margin: 0 0.12em; text-align: center; }
+  .fr > b { display: block; font-weight: inherit; padding: 0 0.18em; }
+  .fr > b.fd { border-top: 0.085em solid currentColor; margin-top: 0.05em; padding-top: 0.05em; }
+  .fr-mix { margin-right: 0.1em; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--ac-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ac); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* Selección múltiple: letras SIN círculo impreso, para que el niño
+     pueda encerrarlas y que su trazo se vea */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n { display: inline-block; flex: 0 0 22px; width: 22px; height: 22px; background: var(--ac); color: #fff;
+            border-radius: 6px; text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900; }
+  /* Cuando el ítem trae mini-texto, el texto va ARRIBA (con el número) y la
+     pregunta debajo, como en el cuadernillo oficial: primero se lee, después
+     se pregunta. */
+  .preg-q2 { font-weight: 700; color: var(--tinta); margin: 4px 0 4px 30px; }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i { font-style: normal; flex: 0 0 auto; font-size: 10.5pt; font-weight: 800; color: var(--ac-osc); }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  /* ─── SIMULACRO: aquí sí van los círculos, porque se contesta como
+     la prueba de verdad, RELLENANDO el círculo de la letra. ─── */
+  .sim-instr { background: var(--rep-claro); border: 1.5px solid #d9cdf7; border-radius: 9px;
+               padding: 9px 13px; font-size: 10pt; margin-bottom: 9px; break-inside: avoid; }
+  .sim-instr b { color: var(--rep-osc); }
+  .sim .preg-ops .op { align-items: center; gap: 6px; }
+  .sim .preg-ops .op i { display: inline-flex; align-items: center; justify-content: center;
+                         width: 14px; height: 14px; border: 1.4px solid #444; border-radius: 50%;
+                         font-size: 8pt; color: #444; font-weight: 700; }
+  .sim .preg-ops .op i::after { content: ''; }
+  .sim-txt { font-size: 10pt; background: #fbfbfe; border: 1px solid var(--linea); border-radius: 7px;
+             padding: 7px 10px; margin: 0 0 5px 30px; text-align: justify; }
+
+  /* Espacio para desarrollar el procedimiento con lápiz */
+  .desarrollo { border: 1px dashed #b9c2cf; border-radius: 8px; height: 74px; margin: 4px 0 9px; background:
+                repeating-linear-gradient(180deg, transparent 0 24px, #e6ebf2 24px 25px); }
+
+  .felic { background: linear-gradient(180deg, var(--rep-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--rep-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f5f4fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--rep-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--rep); box-shadow: 0 6px 16px rgba(124,58,237,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pagina.p-mat .contenido, .pagina.p-esp .contenido { padding-left: 11px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .ilus, .felic, .pauta, .ejem, .err, .materia-tag, .sim-instr, .pagina.p-mat::before, .pagina.p-esp::before
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">

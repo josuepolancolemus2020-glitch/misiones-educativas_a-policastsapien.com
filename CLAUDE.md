@@ -445,6 +445,168 @@ madre. El tiempo no se espera de verdad: se adelanta el reloj del
 navegador (`page.clock`), porque una comprobación que cuesta un minuto
 por caso no la corre nadie antes de publicar.
 
+## Normativa: las Pruebas de Fin de Grado son una SERIE
+
+La Secretaría aplica una prueba al terminar cada grado y evalúa **dos
+materias en el mismo día**: Matemáticas y Español. La misión que repasa
+esa prueba no es una misión más, y por eso no vive en Matemáticas ni en
+Español: estrena su propia materia, **Repaso General** (`repaso`, morado
+`#7c3aed`), y su propia ruta, la **Ruta de la Meta** (`meta`, 🎯). Un
+maestro que busca «el repaso de fin de año» no lo busca dentro de una
+materia; lo busca aparte, y ahí está.
+
+La primera es **6º** (`misiones/fin-de-grado-6to/`, id 58, etapa 1 de la
+ruta). Está escrita para que las demás se calquen: **4º, 5º, 7º, 8º y 9º
+salen de ella**, cambiando el contenido y no el motor. Lo que sigue es lo
+que hay que tocar y lo que NO hay que tocar para estrenar un grado.
+
+### Estrenar un grado: dónde se toca
+
+Los archivos del grado nuevo, con el mismo patrón de nombre (`5to`,
+`7mo`… la carpeta manda y el resto la sigue):
+
+- `misiones/fin-de-grado-<grado>/fin-de-grado-<grado>.html` + su `css/` y
+  su `js/` (se copia la de 6º y se cambia el contenido);
+- `fichas/ficha-fin-de-grado-<grado>.html` (se ARMA, ver más abajo);
+- `_dev/fin-de-grado/<grado>/contenido.json` (el contenido de la ficha);
+- `img/qr-mision-fin-de-grado-<grado>.png` (el QR de la portada de la
+  ficha: sin él, el papel no lleva a la misión);
+- `_dev/test-determinismo-fin-de-grado-<grado>.js`.
+
+Y el catálogo, que es donde se olvida algo y la misión no aparece:
+
+| archivo | qué se añade |
+|---|---|
+| `js/data/misiones.js` | la misión, con `subject:'repaso'`, `color:'rep'`, `ruta:'meta'` y la **etapa siguiente** |
+| `js/data/diagnosticos.js` | sus preguntas dentro de la ruta `meta` |
+| `fichas/index.html` | la ficha en la sección `m-rep`, y **el conteo del encabezado** |
+| `_dev/verifica-fin-de-grado.js` | el total de misiones y **cuántas cuenta el chip Repaso General** |
+
+La materia y la ruta ya están puestas (`js/app.js`, `css/app.css`,
+`index.html`, `js/tools/campeonismo.js`): un grado nuevo **no las vuelve a
+tocar**.
+
+⚠️ **El `SAVE_KEY` lleva el grado dentro** (`repaso_fin_grado_6to_v1`). Si
+dos grados comparten la llave, el alumno que juega la de 5º le borra el
+avance al de 6º en el mismo teléfono, que en un aula con tres teléfonos
+prestados pasa el primer día.
+
+### Veinte formas, y cada una siembra su azar
+
+Esta misión trae **20 formas** y no 30 como las demás: cada forma abarca
+el temario del año entero, así que son veinte exámenes largos y no
+veinte variaciones de un tema. `EVAL_FORMAS = 20`.
+
+Son **tres pruebas** y cada una tiene su semilla, para que dos pruebas de
+la misma forma no salgan con el mismo azar:
+
+| prueba | semilla | qué viaja al registro |
+|---|---|---|
+| conceptual de Matemáticas | `_evalRng(0 + forma)` | `forma` |
+| conceptual de Español | `_evalRng(500000 + forma)` | `100 + forma` |
+| operativa | `_evalRng(100000 + forma)` | `forma` |
+
+Lo de `100 + forma` en Español no es capricho: el registro guarda un solo
+número de forma, y sin separarlas la Forma 3 de Español y la Forma 3 de
+Matemáticas se confunden en la Evidencia del maestro. Y el panel de
+resultado se sigue leyendo `Resultado: N/100 pts` **exactamente así**:
+`js/metas-registro.js` lo lee con esa forma para anotar la nota.
+
+### El impreso de esta misión NO se encoge a una hoja
+
+Es la **excepción pedida**, y está puesta a propósito: la prueba abarca
+todas las preguntas del temario y encogerlas para que quepan en una hoja
+las deja ilegibles. Aquí NO va el buscador de zoom que traen las demás
+misiones. Lo que sí se respeta, y lo comprueba la sonda:
+
+- **cada prueba sale con el color de su materia**: azul `#1565c0` la de
+  Matemáticas, dorado `#c49000` la de Español. El maestro reconoce el
+  examen por el color sin leerlo, que es como se reparten 43 hojas;
+- **la pauta arranca en hoja aparte** (`page-break-before:always`): se
+  imprime suelta y no se fotocopia;
+- **se rellena el círculo, nunca la ✗** (la normativa general de arriba);
+- la clave **ZipGrade** va en la pauta.
+
+### Las fracciones se escriben como en el cuaderno
+
+`js/metas-fracciones.js` convierte «3/4» en la fracción apilada, con la
+raya en medio. Se aplica **al pintar**, no en los bancos de datos: los
+bancos siguen en texto plano, que es lo que se puede buscar y corregir.
+Adoptarlo en otra misión es una línea de `<script>`.
+
+Dos avisos que costaron caro:
+
+1. **Lo que mueve elementos por su texto tiene que guardar el original.**
+   El clasificar leía `textContent` para llevar la ficha del banco a su
+   columna, y con la fracción apilada «3/4» se lee «34». El texto de
+   verdad va en `dataset.txt`.
+2. **La fracción apilada engorda el renglón.** Al ponerla, el examen de
+   Matemáticas se pasaba de hoja: 43 hojas de más por grado, descubiertas
+   con la fotocopiadora andando. Se arregló **quitando aire, nunca tamaño
+   de letra** (el examen se lee en un pupitre), y la sonda mide **las 20
+   formas** de las dos pruebas impresas, no una.
+
+### La ficha se ARMA, no se escribe a mano
+
+La ficha de Fin de Grado no repasa un tema: repasa el año y las dos
+materias, y pasa de **treinta hojas**. Cortar treinta hojas a ojo deja
+hojas a medio llenar, y cada hoja de más son 43 hojas de más en el
+fotocopiado del grado. Por eso el corte lo hace una herramienta:
+
+```
+node _dev/arma-ficha-fin-de-grado.js 6to
+```
+
+Lee `_dev/fin-de-grado/<grado>/contenido.json` y la cabecera compartida
+`_dev/fin-de-grado/cabeza.html`, y escribe la ficha. Para un grado nuevo
+se escribe **su `contenido.json`** (el `meta` de la portada más los
+bloques de teoría, actividades, simulacro y errores) y se corre la
+herramienta; lo que se publica es el HTML resultante, plano y editable a
+mano como las demás fichas.
+
+Cómo reparte las hojas, que es lo que no se puede improvisar:
+
+- **se mide en el navegador CON EL ANCHO DEL PAPEL**, no en pantalla
+  ancha: en pantalla ancha las columnas se estiran y el texto ocupa menos
+  alto del que ocupará en el papel;
+- **se mide el tramo pintado, no la suma de los bloques**: entre dos
+  bloques seguidos los márgenes se colapsan, y sumar cierra la hoja antes
+  de tiempo (así salieron las hojas 2 y 10 a medio llenar);
+- **primero el mínimo de hojas, después el reparto**: con las hojas ya
+  fijas se elige el corte que deja la hoja más cargada lo más liviana
+  posible, para que el aire sobrante se reparta en vez de amontonarse en
+  la última;
+- **un título nunca cierra una hoja**: baja con lo que encabeza;
+- **los recuadros de escribir se estiran** hasta llenar lo que sobre. Una
+  hoja de tarea a medio llenar invita a contestar en dos renglones.
+
+Las hojas llevan **la franja del color de su materia** (azul
+Matemáticas, dorado `#b45309` Español) y el marco morado de Repaso
+General; el alumno sabe qué está estudiando sin leer el título. La pauta
+y la nota del docente van **en hojas sueltas al final**.
+
+### Antes de publicar un cambio de una Prueba de Fin de Grado
+
+```
+node _dev/servidor-estatico.js              (en otra terminal)
+node _dev/verifica-fin-de-grado.js          → la misión, las dos pruebas, el impreso y el catálogo
+node _dev/test-determinismo-fin-de-grado-<grado>.js  → las 20 formas y sus cuentas
+node _dev/verifica-ficha-paginas.js ficha-fin-de-grado-<grado>  → una página, una hoja
+node _dev/verifica-nombres-propios.js       → mayúsculas de leyes, lugares y personas
+node _dev/mide-reparto-respuestas.js        → que la correcta no caiga siempre en la misma letra
+```
+
+`verifica-ficha-paginas.js` sirve para **cualquier** ficha del proyecto y
+cuenta las páginas del PDF, que es la verdad de la impresora. Al pasarlo
+por las fichas viejas salieron **20 que se parten al imprimir** (la peor,
+`ficha-programando-robot`, mide 350 mm donde el papel deja 257,4); están
+sin arreglar y esperan su propia pasada.
+
+**Nota de entorno:** estas herramientas necesitan Playwright, que en el
+entorno de trabajo se instala aparte (`npm install --no-save playwright`)
+y **se borra al terminar**, porque `node_modules` va versionado en este
+repositorio y si no queda el árbol sucio.
+
 ## Normativa: la Convocatoria pregunta, no anota
 
 La Convocatoria vive en **📣 Comunicados**, que es donde vive todo lo que
