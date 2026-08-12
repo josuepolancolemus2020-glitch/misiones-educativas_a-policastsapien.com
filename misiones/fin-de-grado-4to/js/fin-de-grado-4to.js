@@ -1501,7 +1501,13 @@ function genOpProblemas(){
     if(tipo===0){ const m=_opRint(3,45); items.push({ text:`El borde de una cancha mide ${m} metros. ¿Cuántos centímetros mide?`, ansNum:m*100, ansShow:`${_fmtNum(m*100)} cm: ${m} × 100` }); }
     else if(tipo===1){ const largo=_opRint(20,60), ancho=_opRint(10,40);
       items.push({ text:`Un campo mide ${largo} m de largo y ${ancho} m de ancho. ¿Cuánto mide su perímetro?`, ansNum:2*(largo+ancho), ansShow:`${2*(largo+ancho)} m: (${largo} + ${ancho}) × 2` }); }
-    else { const h=_opRint(7,10), min=[10,15,20,25,40][_opRint(0,4)], dur=[20,30,40,45,50][_opRint(0,4)];
+    else { const h=_opRint(7,10), min=[10,15,20,25,40][_opRint(0,4)]; let dur=[20,30,40,45,50][_opRint(0,4)];
+      /* Si la hora final cayera en punto (9:20 + 40 = 10:00) la respuesta sería
+         «0 minutos»: el alumno que acertó la hora deja la raya en blanco creyendo
+         que no hay nada que escribir, y la casilla vacía se califica MAL. Se le
+         añaden cinco minutos a la duración —nunca vuelve a dar en punto— en vez
+         de volver a sortear, para no mover el azar de las formas ya impresas. */
+      if((min+dur)%60===0) dur+=5;
       const t=h*60+min+dur, hf=Math.floor(t/60), mf=t%60;
       items.push({ text:`Luis empieza a estudiar a las ${h}:${String(min).padStart(2,'0')} am y estudia ${dur} minutos. ¿A qué hora termina? Escribe solo los minutos de la hora final.`, ansNum:mf, ansShow:`${hf}:${String(mf).padStart(2,'0')} am (se escribe ${mf})` }); }
   }

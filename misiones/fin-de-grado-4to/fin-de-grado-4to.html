@@ -132,49 +132,55 @@
           <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">🔑 La clave</th>
         </tr></thead>
         <tbody>
-        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Fracción ↔ decimal</td><td style="padding:0.45rem;border:1px solid var(--border);">3/4 = 3 ÷ 4 = 0.75 · y 0.6 son 6 décimas: 6/10</td></tr>
-        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Sumar fracciones</td><td style="padding:0.45rem;border:1px solid var(--border);">Mismo denominador: solo sumo arriba. Distinto: primero el común denominador</td></tr>
-        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Multiplicar decimales</td><td style="padding:0.45rem;border:1px solid var(--border);">Multiplico sin punto y al final lo coloco contando las cifras decimales</td></tr>
-        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">m.c.m. y M.C.D.</td><td style="padding:0.45rem;border:1px solid var(--border);">¿Cuándo COINCIDEN dos cosas? → m.c.m. · ¿REPARTIR sin sobras? → M.C.D.</td></tr>
-        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Viajes</td><td style="padding:0.45rem;border:1px solid var(--border);">tiempo = distancia ÷ velocidad · distancia = velocidad × tiempo</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Leer y escribir números</td><td style="padding:0.45rem;border:1px solid var(--border);">348,712 se lee trescientos cuarenta y ocho mil setecientos doce · manda el lugar de cada cifra</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Sumar y restar llevando</td><td style="padding:0.45rem;border:1px solid var(--border);">Si una columna pasa de 9 se LLEVA a la de al lado · si no alcanza para restar, se PRESTA</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Sumar y restar decimales</td><td style="padding:0.45rem;border:1px solid var(--border);">El punto debajo del punto y los centavos con los centavos: L 12.50 + L 3.75 = L 16.25</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Multiplicar por dos cifras</td><td style="padding:0.45rem;border:1px solid var(--border);">Primero por las unidades y después por las decenas: ese segundo renglón CORRE un lugar a la izquierda</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Dividir</td><td style="padding:0.45rem;border:1px solid var(--border);">Se comprueba al revés: cociente × divisor + residuo = dividendo</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Fracción de una figura</td><td style="padding:0.45rem;border:1px solid var(--border);">Abajo, en cuántas partes iguales se partió; arriba, cuántas están sombreadas: 3 de 8 son 3/8</td></tr>
         </tbody>
       </table>
     </div>
     <div class="mini-quiz-wrap" id="mqBlock2">
-      <p class="mq-pregunta">🤔 En la feria, dos ruedas dan la vuelta cada 4 y cada 6 minutos. Si arrancan juntas, ¿qué calculas para saber cuándo vuelven a coincidir?</p>
+      <p class="mq-pregunta">🤔 La escuela tenía 1,485 libros y le llegaron 968 más. ¿Cuántos libros tiene ahora?</p>
       <div class="mq-opts">
-        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! Coincidir es de m.c.m.: m.c.m.(4, 6) = 12 minutos.')">El m.c.m.</button>
-        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'El M.C.D. es para repartir en partes iguales, no para coincidir.')">El M.C.D.</button>
-        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'El promedio es para calificaciones y datos, no para vueltas que coinciden.')">El promedio</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Ahí se olvidó llevar: 4 + 9 más la que venía son 14, se escribe 4 y se lleva 1 al millar.')">1,453 libros</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! 1,485 + 968 = 2,453. Cada columna que pasa de 9 lleva una a la de al lado.')">2,453 libros</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Eso es restar. Si llegaron más libros, la escuela queda con más, no con menos.')">517 libros</button>
       </div>
       <div class="mq-fb" id="mqBlock2-fb"></div>
     </div>
   </div>
 
   <div class="card ac-jade">
-    <h2>📐 Geometría y datos: área, volumen y promedio</h2>
-    <p style="margin-bottom:0.6rem;">Las últimas preguntas de Matemáticas son de <strong>figuras, cuerpos y tablas</strong>. Tres fórmulas resuelven casi todo:</p>
+    <h2>📐 Ángulos, figuras y medidas</h2>
+    <p style="margin-bottom:0.6rem;">Las últimas preguntas de Matemáticas son de <strong>ángulos, figuras y medidas</strong>. Se reconocen mirando, sin fórmulas raras:</p>
     <div class="aprende-ejemplo">
-      <span class="ae-op">Área del círculo</span>
-      <span class="ae-flecha">→ 3.14 × radio × radio →</span>
-      <span class="ae-res">radio 2 m: 3.14 × 2 × 2 = <strong>12.56 m²</strong></span>
+      <span class="ae-op">Ángulos</span>
+      <span class="ae-flecha">→ los mido contra la esquina del pizarrón →</span>
+      <span class="ae-res">menos de 90° <strong>agudo</strong> · 90° <strong>recto</strong> · más de 90° <strong>obtuso</strong> · 180° <strong>llano</strong></span>
     </div>
     <div class="aprende-ejemplo">
-      <span class="ae-op">Volumen del prisma</span>
-      <span class="ae-flecha">→ largo × ancho × alto →</span>
-      <span class="ae-res">4 × 3 × 2 = <strong>24 m³</strong></span>
+      <span class="ae-op">Triángulos</span>
+      <span class="ae-flecha">→ les cuento los lados iguales →</span>
+      <span class="ae-res">tres iguales <strong>equilátero</strong> · dos iguales <strong>isósceles</strong> · todos distintos <strong>escaleno</strong></span>
     </div>
     <div class="aprende-ejemplo">
-      <span class="ae-op">Promedio</span>
-      <span class="ae-flecha">→ sumo todo y divido entre cuántos son →</span>
-      <span class="ae-res">(80 + 90 + 100) ÷ 3 = <strong>90</strong></span>
+      <span class="ae-op">Perímetro</span>
+      <span class="ae-flecha">→ sumo TODOS los lados →</span>
+      <span class="ae-res">solar de 20 m y 12 m: 20 + 12 + 20 + 12 = <strong>64 m</strong> de alambre</span>
+    </div>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Prisma rectangular</span>
+      <span class="ae-flecha">→ la caja de zapatos →</span>
+      <span class="ae-res"><strong>6 caras</strong> · <strong>12 aristas</strong> · <strong>8 vértices</strong></span>
     </div>
     <div class="mini-quiz-wrap" id="mqBlock3">
-      <p class="mq-pregunta">🤔 Una caja mide 5 m de largo, 2 m de ancho y 3 m de alto. ¿Cuál es su volumen?</p>
+      <p class="mq-pregunta">🤔 Una caja de zapatos es un prisma rectangular. ¿Cuántas aristas tiene?</p>
       <div class="mq-opts">
-        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'10 es solo largo × ancho: falta multiplicar por el alto.')">10 m³</button>
-        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Ese es el error de sumar las medidas: el volumen se multiplica.')">10 m</button>
-        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! 5 × 2 × 3 = 30 m³.')">30 m³</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Seis son sus CARAS: las dos tapaderas y los cuatro lados.')">6 aristas</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Ocho son sus VÉRTICES: las esquinas donde se juntan tres aristas.')">8 aristas</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! 12 aristas: cada línea donde se juntan dos caras.')">12 aristas</button>
       </div>
       <div class="mq-fb" id="mqBlock3-fb"></div>
     </div>
@@ -182,16 +188,16 @@
 
   <div class="card ac-purple">
     <h2>🖊️ La escritura también cuenta</h2>
-    <p style="margin-bottom:0.6rem;">La prueba de Español termina con <strong>dos ejercicios de escritura</strong>: contar una historia a partir de dibujos en secuencia y dar tu opinión con argumentos. Ahí no hay opciones: cuentan tu <strong>ortografía</strong> y la <strong>claridad de tus ideas</strong>.</p>
+    <p style="margin-bottom:0.6rem;">La prueba de Español termina con <strong>dos ejercicios de escritura</strong>: contar una anécdota, algo que te pasó de verdad, y escribir un instructivo que enseñe a hacer algo. Ahí no hay opciones: cuentan tu <strong>ortografía</strong> y la <strong>claridad de tus ideas</strong>.</p>
     <div class="tip">
       <span class="ti">✍️</span>
-      <div><strong>Para la historia:</strong> mira TODOS los cuadros antes de escribir, ponle título, y usa palabras de orden: primero, después, al final.</div>
+      <div><strong>Para la anécdota:</strong> ponle título y cuéntala en tres partes: cómo empezó, qué pasó y cómo terminó. Usa palabras de orden: un día, después, al final.</div>
     </div>
     <div class="tip" style="margin-top:0.5rem;">
-      <span class="ti">💪</span>
-      <div><strong>Para la opinión:</strong> di lo que piensas y defiéndelo con al menos dos razones. «Porque sí» no es una razón.</div>
+      <span class="ti">🧾</span>
+      <div><strong>Para el instructivo:</strong> primero la lista de materiales y después los pasos numerados, en orden. Cada paso empieza con un verbo: llena, pon, riega.</div>
     </div>
-    <p style="font-size:0.82rem;color:var(--gray);margin-top:0.6rem;">En la sección ✍️ Escritura de esta misión vas a practicar los dos, con pauta para revisarte.</p>
+    <p style="font-size:0.82rem;color:var(--gray);margin-top:0.6rem;">En la sección ✍️ Escritura de esta misión vas a practicar los dos, y también la descripción, el anuncio y el texto informativo, con pauta para revisarte.</p>
   </div>
 
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
@@ -209,10 +215,10 @@
       <div class="type-chip tc-gold"><div class="t-art">💬 ¿Qué significa?</div><div class="t-info">Vocabulario en contexto: cambia la palabra y prueba</div></div>
       <div class="type-chip tc-jade"><div class="t-art">🔍 Según el texto…</div><div class="t-info">Literal e inferencial: la respuesta vive en el texto</div></div>
       <div class="type-chip tc-purple"><div class="t-art">✍️ ___ que falta</div><div class="t-info">Completar: concordancia y conectores</div></div>
-      <div class="type-chip tc-amber"><div class="t-art">🍕 3/4 = 0.75</div><div class="t-info">Fracciones y decimales: sumar, restar, × y ÷</div></div>
-      <div class="type-chip tc-blue"><div class="t-art">🔁 m.c.m. · M.C.D.</div><div class="t-info">Coincidir → m.c.m. · repartir → M.C.D.</div></div>
-      <div class="type-chip tc-teal"><div class="t-art">📐 A = 3.14×r×r</div><div class="t-info">Área, volumen y sólidos</div></div>
-      <div class="type-chip tc-gold"><div class="t-art">📊 (a+b+c)÷3</div><div class="t-info">Promedio de calificaciones</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🍕 3 de 8 son 3/8</div><div class="t-info">Fracciones: qué parte de la figura está sombreada</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">✖️ 47 × 26 y 936 ÷ 4</div><div class="t-info">Multiplicar por dos cifras, dividir y sumar decimales</div></div>
+      <div class="type-chip tc-teal"><div class="t-art">📐 90° es recto</div><div class="t-info">Ángulos, triángulos, cuadriláteros y la caja</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🚧 Perímetro y medidas</div><div class="t-info">Sumar los lados, convertir metros y sumar minutos</div></div>
     </div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
@@ -229,38 +235,38 @@
     <div class="error-cards">
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Sumar fracciones «arriba y abajo»</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Escribir la fracción al revés</span></div>
         <div class="error-body">
-          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«1/2 + 1/4 = 2/6».</span></div>
-          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Los denominadores no se suman: dicen de qué tamaño son las partes. Con denominadores distintos, primero se busca el común denominador.</span></div>
-          <div class="error-row"><span class="er-label correct">Correcto:</span><span>1/2 = 2/4, entonces 2/4 + 1/4 = <strong>3/4</strong> ✔</span></div>
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«La tortilla se partió en 8 pedazos iguales y Marta se comió 3: se comió 8/3».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Abajo va siempre en cuántas partes iguales se partió el entero, y arriba cuántas se tomaron. Además 8/3 pasa de una tortilla entera, y Marta solo tenía una.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>8 pedazos abajo, 3 comidos arriba: <strong>3/8</strong> ✔</span></div>
         </div>
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Perder el punto decimal</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Perder el punto de los lempiras</span></div>
         <div class="error-body">
-          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«12.25 × 4 = 490».</span></div>
-          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se multiplicó 1225 × 4 = 4900 y el punto se olvidó. Las dos cifras decimales del factor deben volver al resultado.</span></div>
-          <div class="error-row"><span class="er-label correct">Correcto:</span><span>12.25 × 4 = <strong>49.00</strong> ✔ (estima antes: 12 × 4 son como 48)</span></div>
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«L 45.75 + L 8.50 = L 5,425».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se sumó 4575 + 850 sin el punto y ya no se volvió a poner. El punto separa los lempiras de los centavos: si desaparece, la cuenta se multiplica por cien.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>L 45.75 + L 8.50 = <strong>L 54.25</strong> ✔ (estima antes: 45 y 8 son como 54 lempiras)</span></div>
         </div>
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: Confundir el m.c.m. con el M.C.D.</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: No correr el renglón al multiplicar por dos cifras</span></div>
         <div class="error-body">
-          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«Para cortar dos cintas en pedazos iguales lo más largos posible, busco el m.c.m.»</span></div>
-          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Cortar y repartir sin sobras es de divisores: se busca el MAYOR divisor común. El m.c.m. es para cosas que se repiten y deben coincidir.</span></div>
-          <div class="error-row"><span class="er-label correct">Correcto:</span><span>cintas de 36 y 48 m → M.C.D. = <strong>12 m</strong> cada pedazo ✔</span></div>
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«Don Chico vendió 24 sacos de 35 libras: 24 × 35 = 192 libras».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se hizo 24 × 5 = 120 y 24 × 3 = 72, y los dos renglones se sumaron pegados. Pero el 3 de 35 no vale 3: vale 30, y 24 × 30 son 720. Por eso el segundo renglón corre un lugar a la izquierda.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>120 + 720 = <strong>840 libras</strong> ✔ (estima antes: 24 sacos pesados pasan de 800 libras)</span></div>
         </div>
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Confundir área con volumen</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Sumarle minutos a la hora como si tuviera 100</span></div>
         <div class="error-body">
-          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«La paila mide 2, 3 y 4 metros: su volumen es 2 + 3 + 4 = 9».</span></div>
-          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El volumen no se suma: se multiplica. Y lleva unidades cúbicas (m³), porque cuenta cubitos que caben adentro.</span></div>
-          <div class="error-row"><span class="er-label correct">Correcto:</span><span>2 × 3 × 4 = <strong>24 m³</strong> ✔</span></div>
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«El recreo empieza a las 9:50 y dura 20 minutos: termina a las 9:70».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Una hora tiene 60 minutos, no 100. Ningún reloj marca 9:70: al llegar a 60 se cambia a la hora siguiente y se sigue contando desde cero.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>de las 9:50 faltan 10 minutos para las 10:00, y quedan 10 más: <strong>10:10</strong> ✔</span></div>
         </div>
       </div>
 
@@ -594,7 +600,7 @@
       <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 31 páginas, la más amplia de la plataforma: repasa las dos materias del año con teoría, ejemplos resueltos, errores comunes, actividades y un simulacro de la prueba, más la pauta del maestro.</p>
       <a href="../../fichas/ficha-fin-de-grado-4to.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
     </div>
-    <p style="font-size:0.9rem;margin-bottom:1rem;">Esta misión repasa el temario de la Prueba de Fin de Grado de 4º: comprensión lectora, vocabulario, escritura, fracciones, decimales, teoría de números, geometría y promedio. Para profundizar en un tema, visita su misión completa desde el catálogo: Las Fracciones, Números Decimales, División de Decimales, Teoría de Números, Área de Círculos y Polígonos, y las misiones de la Ruta de la Palabra.</p>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Esta misión repasa el temario de la Prueba de Fin de Grado de 4º: comprensión lectora, vocabulario, tipos de texto y escritura, números hasta los cientos de miles, sumar y restar llevando, multiplicar por dos cifras, dividir, decimales, fracciones, ángulos y figuras, perímetro, conversiones y gráficos de barras. Para profundizar en un tema, visita su misión completa desde el catálogo: Valor Posicional hasta el Millón, Recta Numérica, Suma y Resta, Multiplicación Vertical, Las Fracciones, Números Decimales, Ángulos: Tipos y Transportador, Perímetro y Área de Cuadriláteros, Los Tipos de Textos, y las misiones de la Ruta de la Palabra.</p>
     <a href="https://drive.google.com/drive/folders/1vUVVqFSWv-I-b_2E_e-GudZ6qjkjD8se?usp=sharing"
        target="_blank" rel="noopener noreferrer"
        class="btn btn-pri"
