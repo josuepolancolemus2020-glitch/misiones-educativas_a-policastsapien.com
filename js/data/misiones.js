@@ -78,7 +78,11 @@ const MISSIONS = [
   { id: 54, title: 'Programando un Robot',                                subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 5, xp: 35, icon: '🕹️', pais: 'HN', url: 'misiones/2y3ciclo-programando-robot/programando-robot.html' },
   { id: 55, title: 'Robots que Resuelven Problemas',                    subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 6, xp: 35, icon: '🏆', pais: 'HN', url: 'misiones/2y3ciclo-robots-problemas/robots-problemas.html' },
   { id: 57, title: 'Hello! Saludos y Presentarme',                        subject: 'inglés',      color: 'ing',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'primeras', etapa: 1, xp: 30, icon: '🗣️', pais: 'HN', url: 'misiones/2y3ciclo-ingles-saludos/saludos-ingles.html' },
-  { id: 58, title: 'Prueba de Fin de Grado: 6º Grado',                    subject: 'repaso',      color: 'rep',  grade: '6º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 1, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-6to/fin-de-grado-6to.html' },
+  /* La Ruta de la Meta va POR GRADO, no por orden de llegada: la etapa 1 es 4º
+     aunque la primera que se escribió fuera la de 6º. El maestro de cuarto
+     entra por la etapa 1 y no por la mitad de la ruta. */
+  { id: 59, title: 'Prueba de Fin de Grado: 4º Grado',                    subject: 'repaso',      color: 'rep',  grade: '4º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 1, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-4to/fin-de-grado-4to.html' },
+  { id: 58, title: 'Prueba de Fin de Grado: 6º Grado',                    subject: 'repaso',      color: 'rep',  grade: '6º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 3, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-6to/fin-de-grado-6to.html' },
 ];
 
 /* ─────────────────────────────────────────────

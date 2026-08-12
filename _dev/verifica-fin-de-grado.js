@@ -1,5 +1,5 @@
 /* ============================================================
-   M.E.T.A.S · Sonda de la misión Prueba de Fin de Grado: 6º
+   M.E.T.A.S · Sonda de las misiones Prueba de Fin de Grado
    ------------------------------------------------------------
    Vigila lo que cuesta caro en esta misión:
    - que la página cargue SIN errores de consola y con sus 18 pestañas;
@@ -13,7 +13,7 @@
      pauta en página aparte y la orden de rellenar el círculo (nunca ✗);
    - que la prueba operativa se genere y califique;
    - que el catálogo estrene la materia Repaso General: chip con conteo,
-     filtro que deja solo esta misión, y 58 misiones en Todas.
+     filtro que deja solo las de esta materia, y 59 misiones en Todas.
 
    Uso:  node _dev/servidor-estatico.js   (en otra terminal)
          node _dev/verifica-fin-de-grado.js
@@ -21,6 +21,15 @@
 'use strict';
 const { chromium } = require('playwright');
 const BASE = 'http://localhost:8123';
+
+/* Los grados de la serie. Al estrenar uno nuevo se añade su línea y la
+   sonda lo revisa entero, sin tocar nada más. `esp` son palabras que TIENEN
+   que aparecer en su prueba de Español: es lo que distingue una prueba de
+   verdad de una copia de la de otro grado. */
+const GRADOS = [
+  { slug: '6to', grado: '6º', tabs: 18, esp: ['pino', 'colibrí', 'feria'] },
+  { slug: '4to', grado: '4º', tabs: 18, esp: ['tortuga', 'abuela', 'conejo', 'bosque', 'río'] },
+];
 
 let fallos = 0;
 const ok = (nombre, cond, extra) => {
@@ -48,10 +57,13 @@ async function lanzar() {
   // cualquier error de JavaScript.
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource|net::ERR/.test(m.text())) errores.push(m.text()); });
 
+  for (const G of GRADOS) {
+  console.log(`\n══ Prueba de Fin de Grado: ${G.grado} ══`);
+  errores.length = 0;
   console.log('La misión abre y respira');
-  await page.goto(BASE + '/misiones/fin-de-grado-6to/fin-de-grado-6to.html', { waitUntil: 'networkidle' });
+  await page.goto(`${BASE}/misiones/fin-de-grado-${G.slug}/fin-de-grado-${G.slug}.html`, { waitUntil: 'networkidle' });
   ok('sin errores de JavaScript al cargar', errores.length === 0, errores[0]);
-  ok('18 pestañas de navegación', await page.locator('.nav-t').count() === 18);
+  ok(`${G.tabs} pestañas de navegación`, await page.locator('.nav-t').count() === G.tabs);
   ok('el héroe anuncia la Ruta de la Meta', (await page.locator('.badge').innerText()).includes('Ruta de la Meta'));
 
   console.log('Los juegos responden');
@@ -60,7 +72,7 @@ async function lanzar() {
   ok('el cuento del repaso trae sus 4 preguntas', await page.locator('#textoLargoWrap .mini-quiz-wrap').count() === 4);
   await page.evaluate(() => go('s-lab'));
   ok('la pizza de fracciones se pinta', await page.locator('#widget-fraccion-lab svg path').count() > 0);
-  ok('la fábrica del volumen se pinta', (await page.locator('#widget-volumen-lab').innerText()).includes('V ='));
+  ok('el segundo laboratorio se pinta', (await page.locator('#s-lab .card:nth-child(2) > div').innerText()).length > 20);
   await page.evaluate(() => go('s-sopa'));
   await page.waitForTimeout(150);
   ok('la sopa arma su grid de 100 celdas', await page.locator('#sopaGrid .sopa-cell').count() === 100);
@@ -89,7 +101,7 @@ async function lanzar() {
   await page.evaluate(() => evalSwitchMode('esp'));
   ok('el título cambia a Español', (await page.locator('#eval-screen-title').innerText()).includes('Español'));
   const textoEsp = await page.locator('#evalOut').innerText();
-  ok('trae mini-textos de lectura (el pino aparece)', textoEsp.includes('pino') || textoEsp.includes('colibrí') || textoEsp.includes('feria'));
+  ok('trae mini-textos de lectura propios del grado', G.esp.some(w => textoEsp.includes(w)), textoEsp.slice(0, 90));
   await page.evaluate(() => gradeEval());
   ok('también se califica en línea', /Resultado: \d+\/100 pts/.test(await page.locator('#evalAutoResult').innerText()));
   await page.evaluate(() => printEval());
@@ -133,24 +145,26 @@ async function lanzar() {
   console.log('Nada de guiones largos a la vista del alumno');
   const cuerpo = await page.evaluate(() => document.body.innerText);
   ok('ni un guion largo en la pantalla de la misión', !cuerpo.includes('—'));
+  }
 
-  console.log('El catálogo estrena Repaso General');
+  console.log('\n══ El catálogo ══');
   const errores2 = [];
   const page2 = await browser.newPage({ viewport: { width: 412, height: 915 } });
   page2.on('pageerror', e => errores2.push(String(e)));
   await page2.goto(BASE + '/index.html?view=misiones', { waitUntil: 'networkidle' });
   await page2.waitForTimeout(300);
   ok('la portada carga sin errores', errores2.length === 0, errores2[0]);
-  ok('el filtro Todas cuenta 58 misiones', (await page2.locator('.pill-all .pill-count').innerText()).trim() === '58');
+  ok('el filtro Todas cuenta 59 misiones', (await page2.locator('.pill-all .pill-count').innerText()).trim() === '59');
   const pillRep = page2.locator('.pill.rep');
-  ok('el chip Repaso General existe y cuenta 1', (await pillRep.locator('.pill-count').innerText()).trim() === '1');
+  ok('el chip Repaso General existe y cuenta 2', (await pillRep.locator('.pill-count').innerText()).trim() === '2');
   await pillRep.click();
   await page2.waitForTimeout(300);
   const tarjetas = await page2.locator('#missions-container .mission-card').count();
-  ok('el filtro deja solo la misión de Fin de Grado', tarjetas === 1);
-  ok('la tarjeta anuncia la Prueba de Fin de Grado', (await page2.locator('#missions-container').innerText()).includes('Prueba de Fin de Grado'));
+  ok('el filtro deja solo las misiones de Fin de Grado', tarjetas === 2);
+  const rotulos = await page2.locator('#missions-container').innerText();
+  GRADOS.forEach(G => ok(`la tarjeta de ${G.grado} está en el catálogo`, rotulos.includes(`Prueba de Fin de Grado: ${G.grado} Grado`)));
 
   await browser.close();
-  console.log(fallos === 0 ? '\n✅ La misión de Fin de Grado está lista.' : `\n❌ ${fallos} fallo(s).`);
+  console.log(fallos === 0 ? `\n✅ Las ${GRADOS.length} misiones de Fin de Grado están listas.` : `\n❌ ${fallos} fallo(s).`);
   process.exit(fallos === 0 ? 0 : 1);
 })().catch(e => { console.error('✘ La sonda tropezó:', e.message); process.exit(1); });
